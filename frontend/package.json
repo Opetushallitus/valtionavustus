@@ -1,0 +1,30 @@
+{
+  "name": "va-web",
+  "version": "1.0.0",
+  "description": "OPH Valtionavustus Web UI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com:Opetushallitus/va.git"
+  },
+  "dependencies": {
+    "babelify": "^6.0.2",
+    "browserify": "^9.0.8",
+    "minifyify": "^6.4.0",
+    "react": "^0.13.2"
+  },
+  "devDependencies": {
+    "watchify": "^3.2.0"
+  },
+  "private": false,
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
+  "scripts": {
+    "build-app": "browserify src/app.jsx -o app/app.js",
+    "build": "npm run build-app",
+    "watch-app": "watchify src/app.jsx -o app/app.js --debug --verbose",
+    "watch": "npm run watch-app"
+  }
+}
