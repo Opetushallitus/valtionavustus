@@ -1,7 +1,6 @@
 .idea
-*/*.iml
+*.iml
 target
-.lein-env
-.lein-repl-history
+.lein-*
 .nrepl-port
 node_modules
