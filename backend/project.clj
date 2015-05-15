@@ -1,6 +1,6 @@
 (defproject oph-va-backend "0.1.0-SNAPSHOT"
   :description "OPH Valtionavustus backend"
-  :url "http://github.com/Opetushallitus/va/backend"
+  :url "https://github.com/Opetushallitus/valtionavustus/tree/master/backend"
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
   :dependencies [[org.clojure/clojure "1.6.0"]
