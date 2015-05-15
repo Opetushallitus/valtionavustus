@@ -34,3 +34,9 @@ Javascriptin automaattikäännöstä varten pitää käynnistää erilliseen
 terminaaliin oma watch komento:
 
     npm run watch
+
+# Muut komennot
+
+Ovatko riippuvuudet päivittyneet?
+
+    lein ancient

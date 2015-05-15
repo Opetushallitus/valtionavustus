@@ -1,7 +1,6 @@
 (ns oph.va.server-spec
   (:use [clojure.tools.trace])
-  (:require [clojure.string :as string]
-            [speclj.core :refer :all]
+  (:require [speclj.core :refer :all]
             [oph.va.server :refer :all]
             [org.httpkit.client :as http]
             [cheshire.core :refer :all]))

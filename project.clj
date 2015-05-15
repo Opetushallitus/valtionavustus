@@ -7,19 +7,19 @@
 
                  ;; HTTP server
                  [javax.servlet/servlet-api "2.5"]
-                 [http-kit "2.1.18"]
+                 [http-kit "2.1.19"]
                  [ring/ring-devel "1.3.2"]
                  [ring/ring-core "1.3.2"]
 
                  ;; Routing
                  [compojure "1.3.4"]
-                 [liberator "0.12.2"]
+                 [liberator "0.13"]
 
                  ;; JSON
                  [cheshire "5.4.0"]
 
                  ;; SQL + migrations
-                 [yesql "0.4.0"]
+                 [yesql "0.4.1"]
                  [ragtime "0.3.8"]
 
                  ;; Testing
@@ -36,11 +36,15 @@
 
   :main ^:skip-aot oph.va.server
   :target-path "target/%s"
+
+  ;; This hooks 'npm run build' to build preparation tasks
   :prep-tasks [["shell" "npm" "run" "build"]
                "javac" "compile"]
 
   :plugins [[speclj "3.2.0"]
             [lein-environ "1.0.0"]
-            [lein-shell "0.4.0"]]
+            [lein-shell "0.4.0"]
+            [lein-ancient "0.6.7"]]
+
   :test-paths ["spec"]
   :profiles {:uberjar {:aot :all}})
