@@ -22,9 +22,9 @@
     ]
   },
   "scripts": {
-    "build-app": "browserify src/app.jsx -o app/app.js",
+    "build-app": "browserify web/app.jsx -o resources/public/app.js",
     "build": "npm run build-app",
-    "watch-app": "watchify src/app.jsx -o app/app.js --debug --verbose",
+    "watch-app": "watchify web/app.jsx -o resources/public/app.js --debug --verbose",
     "watch": "npm run watch-app"
   }
 }
