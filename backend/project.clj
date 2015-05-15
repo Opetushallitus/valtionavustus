@@ -29,7 +29,10 @@
                  [metosin/ring-swagger "0.20.2"]
 
                  ;; Configuration
-                 [environ "1.0.0"]]
+                 [environ "1.0.0"]
+
+                 ;; Utils
+                 [org.clojure/tools.trace "0.7.8"]]
 
   :main ^:skip-aot oph.va.server
   :target-path "target/%s"

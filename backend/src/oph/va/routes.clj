@@ -5,7 +5,7 @@
 
 (defresource hello-world
   :available-media-types ["application/json"]
-  :handle-ok {:testing {:val "1-2-4"}})
+  :handle-ok {:testing {:val "1-2-3"}})
 
 (defroutes all-routes
   (ANY "/" [] hello-world)

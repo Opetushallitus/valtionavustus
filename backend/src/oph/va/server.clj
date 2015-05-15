@@ -5,12 +5,15 @@
             [compojure.handler :refer [site]]
             [environ.core :refer [env]]))
 
-(defn -main [& args]
-  (let [auto-reload? (env :autoreload)
-        port (env :port)
-        host (env :host)
-        handler (if auto-reload?
+(defn start-server [host port auto-reload?]
+  (let [handler (if auto-reload?
                   (reload/wrap-reload (site #'all-routes))
                   (site all-routes))]
-    (println (format "Starting server in URL http://%s:%d/" host port))
     (run-server handler {:host host :port port})))
+
+(defn -main [& args]
+  (let [auto-reload? (env :auto-reload?)
+        port (env :port)
+        host (env :host)]
+    (println (format "Starting server in URL http://%s:%d/" host port))
+    (start-server host port auto-reload?)))
