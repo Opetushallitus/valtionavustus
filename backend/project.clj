@@ -19,7 +19,13 @@
 
                  ;; SQL + migrations
                  [yesql "0.4.0"]
-                 [ragtime "0.3.8"]]
+                 [ragtime "0.3.8"]
+
+                 ;; Testing
+                 [speclj "3.2.0"]]
+
   :main ^:skip-aot oph.va.server
   :target-path "target/%s"
+  :plugins [[speclj "3.2.0"]]
+  :test-paths ["spec"]
   :profiles {:uberjar {:aot :all}})
