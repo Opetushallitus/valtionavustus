@@ -4,11 +4,16 @@ Valtionavustusten hakemiseen, käsittelyyn ja myöntämiseen tarkoitetut palvelu
 
 # Riippuvuudet
 
-* http://leiningen.org/
+* Node.js tai io.js
+* Leiningen (Clojure build tool): http://leiningen.org/
 
-Riippuvuudet asentuvat ajamalla komennon:
+Riippuvuudet asentuvat ajamalla komennot:
 
-   lein deps
+    lein deps
+
+ja
+
+    npm install
 
 # Komennot
 
@@ -24,3 +29,8 @@ tai (automaattisesti)
 
     lein spec -a
 
+Huom: Vaikka ```lein run``` lataa automaattisesti muuttuneet koodit,
+Javascriptin automaattikäännöstä varten pitää käynnistää erilliseen
+terminaaliin oma watch komento:
+
+    npm run watch
