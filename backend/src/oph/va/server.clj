@@ -6,7 +6,7 @@
             [environ.core :refer [env]]))
 
 (defn -main [& args]
-  (let [auto-reload? (or (env :autoreload) true)
+  (let [auto-reload? (env :autoreload)
         port (env :port)
         host (env :host)
         handler (if auto-reload?
