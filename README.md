@@ -1,6 +1,6 @@
-# Valtionavustus backend
+# Valtionavustus
 
-TBD
+Valtionavustusten hakemiseen, käsittelyyn ja myöntämiseen tarkoitetut palvelut.
 
 # Riippuvuudet
 
