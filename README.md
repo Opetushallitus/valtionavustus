@@ -1,4 +1,4 @@
-# va
+# Valtionavustus
 
-Valtionosuuksien hakemiseen, käsittelyyn ja myöntämiseen tarkoitetut palvelut.
+Valtionavustusten hakemiseen, käsittelyyn ja myöntämiseen tarkoitetut palvelut.
 
