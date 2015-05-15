@@ -18,7 +18,7 @@ Käynnistys:
 
 Testien ajo:
 
-    lein spec
+    lein spec -f d
 
 tai (automaattisesti)
 
