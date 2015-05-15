@@ -1,18 +1,16 @@
 (ns oph.va.server
-  (:use [org.httpkit.server :only [run-server]])
+  (:use [org.httpkit.server :only [run-server]]
+        [oph.va.routes :only [all-routes]])
   (:require [ring.middleware.reload :as reload]
             [compojure.handler :refer [site]]
-            [compojure.core :refer :all]
-            [compojure.route :as route]))
-
-(defroutes all-routes
-  (GET "/" [] "<h1>Hello world</h1>")
-  (route/not-found "<p>Page not found.</p>"))
-
-(defn in-dev? [& args] true)
+            [environ.core :refer [env]]))
 
 (defn -main [& args]
-  (let [handler (if (in-dev? args)
+  (let [auto-reload? (or (env :autoreload) true)
+        port (env :port)
+        host (env :host)
+        handler (if auto-reload?
                   (reload/wrap-reload (site #'all-routes))
                   (site all-routes))]
-    (run-server handler {:port 8080})))
+    (println (format "Starting server in URL http://%s:%d/" host port))
+    (run-server handler {:host host :port port})))
