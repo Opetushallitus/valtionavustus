@@ -4,3 +4,6 @@ target
 .lein-*
 .nrepl-port
 node_modules
+
+# Generated files
+resources/public/js/

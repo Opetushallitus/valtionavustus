@@ -36,7 +36,11 @@
 
   :main ^:skip-aot oph.va.server
   :target-path "target/%s"
+  :prep-tasks [["shell" "npm" "run" "build"]
+               "javac" "compile"]
+
   :plugins [[speclj "3.2.0"]
-            [lein-environ "1.0.0"]]
+            [lein-environ "1.0.0"]
+            [lein-shell "0.4.0"]]
   :test-paths ["spec"]
   :profiles {:uberjar {:aot :all}})
