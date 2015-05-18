@@ -12,8 +12,12 @@
                  [ring/ring-core "1.3.2"]
 
                  ;; Routing
-                 [compojure "1.3.4"]
-                 [metosin/compojure-api "0.20.3"]
+                 [compojure "1.3.4" :exclusions [instaparse]]
+                 [metosin/compojure-api "0.20.3" :exclusions [commons-codec
+                                                              instaparse
+                                                              joda-time
+                                                              clj-time
+                                                              org.clojure/tools.reader]]
 
                  ;; JSON
                  [cheshire "5.4.0"]
