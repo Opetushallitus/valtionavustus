@@ -6,9 +6,25 @@
             [compojure.api.sweet :refer :all]
             [schema.core :as s]))
 
+(s/defschema User {:name s/Str
+                   :sex (s/enum :male :female)
+                   :address {:street s/Str
+                             :zip s/Str}})
+
 (defroutes* api-routes
+  "API implementation"
+
   (GET* "/" []
-        :return )
+        :return {:id Long, :name String}
+        (ok {:id 1, :name "lolbal"}))
+
+  (GET* "/user" []
+        :return User
+        (ok {:name "Lol Bal"
+             :sex :male
+             :address {:street "Foobar"
+                       :zip "00100"}}))
+
   (GET* "/plus" []
         :return Long
         :query-params [x :- Long, {y :- Long 1}]
@@ -19,9 +35,10 @@
          :return      Long
          :body-params [x :- Long, y :- Long]
          :summary     "x-y with body-parameters."
-         (ok (- x y)))
+         (ok (- x y))))
 
-  ;; API documentation browser
+(defroutes* doc-routes
+  "API documentation browser"
   (swagger-ui))
 
 (defapi all-routes
@@ -31,6 +48,9 @@
 
   ;; Route all requests with API prefix to API routes
   (context "/api" [] api-routes)
+
+  ;; Documentation
+  (context "/doc" [] doc-routes)
 
   (GET "/" [] (resp/resource-response "index.html" {:root "public"}))
   (route/resources "/")
