@@ -1,0 +1,29 @@
+---
+# Create our virtual machines on Pouta.csc.fi
+#
+# You'll need to download and source your credentials before this will work:
+#  https://research.csc.fi/pouta-credentials
+#
+- name: Set up servers to Pouta with ansible
+  # The OpenStack modules only work with your local machine.
+  hosts: localhost
+  # And it doesn't use local facts
+  gather_facts: false
+
+  vars:
+    pouta_username: "{{ lookup('env','OS_USERNAME') }}"
+    pouta_password: "{{ lookup('env','OS_PASSWORD') }}"
+    tenant_name: "{{ lookup('env','OS_TENANT_NAME') }}"
+    auth_url: "{{ lookup('env','OS_AUTH_URL') }}"
+
+    # You can see the available flavors and images with nova flavor-list and nova image-list
+    pouta_tiny: 1a0f1143-47b5-4e8a-abda-eba52ae3c5b9
+    #pouta_centos65: cc001620e8b5ac640fed8f737eaaeefc78a6dd89
+    pouta_ubuntu_14_04: e0497384-7eb9-44dd-9707-440f8f870fc0
+
+    pouta_key: "{{ lookup('env', 'USER') }}"
+    va_security_groups: va-initial-secgroup
+    va_network: e15cfa1c-a214-415a-8909-e270b3ec344b
+
+  tasks:
+    - { include: tasks/create_machine.yml, machine_name: va-build, va_floating_ip: 86.50.169.218 }
