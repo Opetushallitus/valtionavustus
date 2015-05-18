@@ -34,6 +34,10 @@ Eri ympäristön voi ottaa käyttöön seuraavasti
     lein with-profile test run
     lein with-profile prod run
 
+# Dokumentaatio
+
+Swagger-pohjainen API-dokumentaatio löytyy osoitteesta http://localhost:8080/doc
+
 # Testien ajo
 
 Testien ajo:
