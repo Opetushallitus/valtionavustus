@@ -28,6 +28,8 @@
 
                  ;; Testing
                  [speclj "3.2.0"]
+                 ;; for junit output: lein spec -f junit
+                 [speclj-junit "0.0.9"]
 
                  ;; Configuration
                  [environ "1.0.0"]
