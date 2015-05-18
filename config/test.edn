@@ -1,0 +1,3 @@
+{:auto-reload? false
+ :host "localhost"
+ :port 8081}
