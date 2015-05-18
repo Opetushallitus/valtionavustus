@@ -13,7 +13,7 @@
 
                  ;; Routing
                  [compojure "1.3.4"]
-                 [liberator "0.13"]
+                 [metosin/compojure-api "0.20.3"]
 
                  ;; JSON
                  [cheshire "5.4.0"]
@@ -24,9 +24,6 @@
 
                  ;; Testing
                  [speclj "3.2.0"]
-
-                 ;; Swagger documentation
-                 [metosin/ring-swagger "0.20.2"]
 
                  ;; Configuration
                  [environ "1.0.0"]

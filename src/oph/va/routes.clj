@@ -1,24 +1,36 @@
 (ns oph.va.routes
-  (:use [liberator.core :only [defresource]])
   (:require [compojure.route :as route]
-            [compojure.core :refer :all]
-            [ring.util.response :as resp]))
+            [ring.util.http-response :refer :all]
+            [ring.util.response :as resp]
+            [compojure.core :refer [GET]]
+            [compojure.api.sweet :refer :all]
+            [schema.core :as s]))
 
-(defresource hello-world
-  :available-media-types ["application/json"]
-  :handle-ok {:testing {:val "1-2-3"}})
+(defroutes* api-routes
+  (GET* "/" []
+        :return )
+  (GET* "/plus" []
+        :return Long
+        :query-params [x :- Long, {y :- Long 1}]
+        :summary "x+y with query-parameters. y defaults to 1."
+        (ok (+ x y)))
 
-(defresource hello-test
-  :available-media-types ["application/json"]
-  :handle-ok {:test2 {:values [1 2 3 4]}})
+  (POST* "/minus" []
+         :return      Long
+         :body-params [x :- Long, y :- Long]
+         :summary     "x-y with body-parameters."
+         (ok (- x y)))
 
-(defn api-routes []
-  (routes (ANY "/test" [] hello-test)
-          (ANY "/" [] hello-world)))
+  ;; API documentation browser
+  (swagger-ui))
 
-(defroutes all-routes
+(defapi all-routes
+
+  ;; swagger.json generation
+  (swagger-docs {:info {:title "Valtionavustus API"}})
+
   ;; Route all requests with API prefix to API routes
-  (context "/api" [] (api-routes))
+  (context "/api" [] api-routes)
 
   (GET "/" [] (resp/resource-response "index.html" {:root "public"}))
   (route/resources "/")
