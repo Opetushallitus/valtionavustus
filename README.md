@@ -15,11 +15,26 @@ ja
 
     npm install
 
-# Komennot
+# Käynnistys
 
-Käynnistys:
+Paikallisesti:
 
     lein run
+
+Tuotantoversiona:
+
+    lein uberjar
+    java -jar target/uberjar/oph-valtionavustus-0.1.0-SNAPSHOT-standalone.jar
+
+**Huom:** Jar-tiedoston versio voi vaihtua
+
+Eri ympäristön voi ottaa käyttöön seuraavasti
+
+    lein with-profile dev run
+    lein with-profile test run
+    lein with-profile prod run
+
+# Testien ajo
 
 Testien ajo:
 
@@ -34,6 +49,13 @@ Javascriptin automaattikäännöstä varten pitää käynnistää erilliseen
 terminaaliin oma watch komento:
 
     npm run watch
+
+# Konfiguraatiot
+
+Eri konfiguraatiot sijaitsevat hakemistossa ```config```.
+
+Konfiguraatiotiedostot ovat EDN-formaatissa, joka on yksinkertaistettua
+Clojure-tyyppinen tietorakenne.
 
 # Muut komennot
 

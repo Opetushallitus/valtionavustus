@@ -1,7 +1,5 @@
 {
- :dev {:env {:auto-reload? true
-             :host "localhost"
-             :port 8080}}
- :test {:env {:auto-reload? false
-              :port 8081}}
+ :dev {:env {:config "config/dev.edn"}}
+ :test {:env {:config "config/test.edn"}}
+ :prod {:env {:config "config/prod.edn"}}
 }

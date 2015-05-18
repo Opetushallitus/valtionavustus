@@ -3,7 +3,8 @@
         [oph.va.routes :only [all-routes]])
   (:require [ring.middleware.reload :as reload]
             [compojure.handler :refer [site]]
-            [environ.core :refer [env]]))
+            [oph.va.config :refer [config]])
+  (:gen-class))
 
 (defn start-server [host port auto-reload?]
   (let [handler (if auto-reload?
@@ -12,8 +13,8 @@
     (run-server handler {:host host :port port})))
 
 (defn -main [& args]
-  (let [auto-reload? (env :auto-reload?)
-        port (env :port)
-        host (env :host)]
+  (let [auto-reload? (:auto-reload? config)
+        port (:port config)
+        host (:host config)]
     (println (format "Starting server in URL http://%s:%d/" host port))
     (start-server host port auto-reload?)))
