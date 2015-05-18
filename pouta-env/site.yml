@@ -1,0 +1,18 @@
+
+- hosts: all
+  user: cloud-user
+  sudo: yes
+  roles:
+  - common
+
+- hosts: va-build
+  user: cloud-user
+  sudo: yes
+  roles:
+  - buildmachine
+
+- hosts: va-test
+  user: cloud-user
+  sudo: yes
+  roles:
+  - testmachine

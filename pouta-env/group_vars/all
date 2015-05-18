@@ -1,0 +1,4 @@
+ubuntu_common_required_packages:
+  - ufw
+  - fail2ban
+  - unattended-upgrades

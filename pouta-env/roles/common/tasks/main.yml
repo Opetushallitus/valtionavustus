@@ -1,0 +1,24 @@
+- name: Update APT package cache
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: Upgrade pakcages
+  apt: upgrade=safe
+
+- name: Install required packages
+  apt: state=installed pkg={{ item }}
+  with_items: ubuntu_common_required_packages
+
+- name: Disallow password authentication
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^PasswordAuthentication"
+              line="PasswordAuthentication no"
+              state=present
+  notify: Restart ssh
+
+- name: Disallow root SSH access
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^PermitRootLogin"
+              line="PermitRootLogin no"
+              state=present
+  notify: Restart ssh
+
