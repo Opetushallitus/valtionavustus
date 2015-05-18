@@ -3,7 +3,7 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 
 * hanki pouta-tunnukset
 * [asenna Nova-työkalut](https://research.csc.fi/pouta-install-client)
-  - huom. OsX:ssä tulee valmiiksi six versio 1.4.1, joka ei ole nova-clientin kanssa yhteensopiva. Siksi asenna ja käytä novaa virtualenvissä:
+  - huom. OsX:ssä tulee valmiiksi six versio 1.4.1, joka ei ole nova-clientin kanssa yhteensopiva. Siksi asenna ja käytä novaa [virtualenvissä](http://docs.python-guide.org/en/latest/dev/virtualenvs/):
   - `pip install virtualenv`
   - `virtualenv pouta-venv`
   - `source pouta-venv/bin/activate`
