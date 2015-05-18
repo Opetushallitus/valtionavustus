@@ -4,6 +4,7 @@ target
 .lein-*
 .nrepl-port
 node_modules
+**/.*.swp
 
 # Generated files
 resources/public/js/
