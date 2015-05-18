@@ -14,3 +14,5 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 * asenna [Ansible](http://ansible.com/)
 * luo palvelimet komennolla `ansible-playbook -i va.hosts create_machines.yml`
 * testaa pääsetkö buildikoneelle komennolla `./ssh_to_build_machine.bash`
+* palvelinten pitäisi myös vastata ansiblen pingiin `ansible all -i va.hosts -m ping -u cloud-user`
+* alusta palvelimet komennolla `ansible-playbook -i va.hosts site.yml`  # perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
