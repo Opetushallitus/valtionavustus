@@ -18,8 +18,7 @@
                 (try (_) (finally (stop-server)))))
 
   (it "GET should return valid JSON"
-      (let [{:keys [status headers body error] :as resp} (get! "/")]
+      (let [{:keys [status headers body error] :as resp} (get! "/api")]
         (should= 200 status)
-        (should= {:testing {:val "1-2-3"}} (json->map body)))))
-
+        (should= {:id 1, :name "lolbal"} (json->map body)))))
 (run-specs)
