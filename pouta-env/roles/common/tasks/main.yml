@@ -22,3 +22,9 @@
               state=present
   notify: Restart ssh
 
+- name: Add all our authorized keys cloud user
+  authorized_key: user="{{ ansible_ssh_user }}"
+                  key="{{ lookup('file', item) }}"
+  with_fileglob:
+    - public_keys/*
+
