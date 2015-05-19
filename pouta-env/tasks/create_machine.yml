@@ -1,4 +1,4 @@
-- name: Create a virtual machine
+- name: Create a virtual machine {{ machine_name }} ({{ va_floating_ip }})
   nova_compute:
     state: present
     name: "{{ machine_name }}"
