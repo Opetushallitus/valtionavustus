@@ -80,7 +80,7 @@ Voit ajaa selaimella osoitteessa http://localhost:8080/test/runner.html
 
 Eri konfiguraatiot sijaitsevat hakemistossa ```config```.
 
-Konfiguraatiotiedostot ovat EDN-formaatissa, joka on yksinkertaistettua
+Konfiguraatiotiedostot ovat EDN-formaatissa, joka on yksinkertaistettu
 Clojure-tyyppinen tietorakenne.
 
 # Muut komennot
