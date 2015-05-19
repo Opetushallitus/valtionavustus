@@ -1,0 +1,20 @@
+---
+
+dependencies: []
+
+galaxy_info:
+  author: 'Maciej Delmanowski'
+  description: 'Manage sensitive data in a separate directory relative to Ansible inventory'
+  company: 'DebOps'
+  license: 'GNU General Public License v3'
+  min_ansible_version: '1.7.0'
+  platforms:
+  - name: Ubuntu
+    versions:
+    - all
+  - name: Debian
+    versions:
+    - all
+  categories:
+  - system
+

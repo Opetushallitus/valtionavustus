@@ -1,0 +1,113 @@
+---
+
+# Enable or disable iptables management
+ferm: True
+
+# Should ferm-rules be flushed when ferm is disabled? The default is
+# true, but you may need set both `ferm` and this to ``False`` if you
+# are running in some container and are not allowed to change
+# iptables.
+ferm_flush: '{{ ferm | bool }}'
+
+# List of packages to install
+ferm_packages: [ 'ferm' ]
+
+# List of iptables domains enabled in main ferm firewall
+# Currently supported domains:
+#   - 'ip'  - enables IPv4 support (iptables)
+#   - 'ip6' - enables IPv6 support (ip6tables)
+ferm_filter_domains: [ 'ip', 'ip6' ]
+
+# Optional list of CIDR hosts which are not included in ssh port recent filter
+# and won't be blocked by the firewall in case of too many connections.
+# Entries are saved in the local facts on remote hosts.
+# Remember to specify IP address from the remote host point of view.
+# Format: "IP address/netmask", for example: '192.168.1.1/32'
+# Note: If you are using debop.tcpwrappers, too (or the DebOps playbook),
+#       mind setting `tcpwrappers_ansible_controllers`. An easier way would
+#       be to use the `debops.sshd` role to configure ssh service.
+ferm_ansible_controllers: []
+
+# Default iptables policy for INPUT, OUTPUT and FORWARD chains
+ferm_default_policy_input: 'DROP'
+ferm_default_policy_output: 'ACCEPT'
+ferm_default_policy_forward: 'DROP'
+
+# ICMP flood mitigation
+ferm_icmp_limit: '10/second'
+ferm_icmp_burst: '10'
+
+# SYN flood mitigation
+ferm_syn_limit: '40/second'
+ferm_syn_burst: '20'
+
+# Enable recent filter in respective rules. You might need to disable it on
+# certain hosts, like OpenVZ containers that don't have 'recent' module
+# available.
+ferm_filter_recent: True
+
+# Name of recent list to block early
+ferm_block_recent: 'badguys'
+
+# Length of time in seconds to block recent offenders; if they try connecting
+# before the time is up, timer is reset
+ferm_block_time: '{{ (60 * 60 * 2) }}'
+
+# Mark packets on invalid ports as bad guys (block port scanning)
+ferm_mark_portscan: False
+
+# Enable or disable logging of blocked/dropped/marked packets to syslog.
+# Disabling might help reduce log spam but will make debugging issues harder.
+ferm_log_issues: True
+
+# List of iptables rules to manage, templates used by these rules are included
+# in templates/etc/ferm/ferm.d/ directory.
+# Additional variables are described below.
+ferm_rules: []
+ferm_group_rules: []
+ferm_host_rules: []
+ferm_dependent_rules: []
+
+# List of iptables INPUT rules to manage, many variables can be found in
+# template files, located in templates/etc/ferm/filter-input.d/ directory.
+# Additional variables are described below.
+ferm_input_list: []
+ferm_input_group_list: []
+ferm_input_host_list: []
+ferm_input_dependent_list: []
+
+  #- type: ''             # name of template file to use, required
+                          #   format: <type>.conf.j2
+  #  dport: []            # list of destination ports to manage, required
+  #  weight: '10'         # helps with file sorting in rule directory, optional
+  #  filename: ''         # custom filename instead of a generated one, optional
+  #  delete: False/True   # delete specified rule file, optional
+
+
+# Enable or disable fail2ban integration. ferm will send fail2ban reload
+# command after its own configuration is reloaded. If fail2ban is not present
+# or turned off, nothing will happen.
+ferm_fail2ban: True
+
+# Enable forwarding in ip(6)tables. This option can be used by other roles and
+# its status is saved in Ansible local facts, which will override variable
+# status from role defaults or inventory.
+ferm_forward: False
+
+# List of interfaces that are connected to external network, traffic on these
+# interfaces will be forwarded to all hosts
+ferm_external_interfaces:
+  - '{{ ansible_default_ipv4.interface | default("") }}'
+  - '{{ ansible_default_ipv6.interface | default("") }}'
+
+# List of interfaces that are connected to internal network, traffic on these
+# interfaces will be forwarded only between hosts on that network
+ferm_internal_interfaces: [ 'br1' ]
+
+# List of global root flags to check
+ferm_root_flags:
+
+  # If these flags are present, ignore status of "cap_net_admin" capability and
+  # manage firewall using ferm
+  cap_net_admin: [ 'ignore-cap12s', 'ignore-cap_net_admin' ]
+
