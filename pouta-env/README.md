@@ -11,8 +11,8 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 * ja [alusta todennus](https://research.csc.fi/pouta-credentials)
 * kun olet ajanut `source openrc.sh`, sinun pitäisi saada listattua tarjolla olevat käyttöjärjestelmä-imaget komennolla `nova image-list`
 * lisää poutaan henkilökohtainen avaimesi skriptillä `add_personal_key.bash`
-* luo palvelimet komennolla `../pouta-venv/bin/ansible-playbook -i va.hosts create_machines.yml`
+* luo palvelimet komennolla `./pouta-venv/bin/ansible-playbook -i va.hosts create_machines.yml`
 * testaa pääsetkö buildikoneelle komennolla `./ssh_to_build_machine.bash`
-* palvelinten pitäisi myös vastata ansiblen pingiin `../pouta-venv/bin/ansible all -i va.hosts -m ping -u cloud-user`
+* palvelinten pitäisi myös vastata ansiblen pingiin `./pouta-venv/bin/ansible all -i va.hosts -m ping -u cloud-user`
 * asenna Jenkins-rooli `../pouta-venv/bin/ansible-galaxy install Stouts.jenkins`
-* alusta palvelimet komennolla `../pouta-venv/bin/ansible-playbook -i va.hosts site.yml`  # perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
+* alusta palvelimet komennolla `./pouta-venv/bin/ansible-playbook -i va.hosts site.yml`  # perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
