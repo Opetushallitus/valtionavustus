@@ -2,7 +2,8 @@
   (:use [oph.va.config :only [config]])
   (:require [clojure.java.jdbc :as jdbc]
             [hikari-cp.core :refer :all]
-            [yesql.core :refer [defquery]]))
+            [yesql.core :refer [defquery]]
+            [oph.va.jdbc.jsonb]))
 
 (def datasource-spec
   "Merge configuration defaults and db config. Latter overrides the defaults"
