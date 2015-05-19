@@ -40,7 +40,7 @@ Swagger-pohjainen API-dokumentaatio löytyy osoitteesta http://localhost:8080/do
 
 # Testien ajo
 
-Testien ajo:
+Testien ajo (ajaa myös mocha testit):
 
     lein spec -f d
 
@@ -53,6 +53,10 @@ Javascriptin automaattikäännöstä varten pitää käynnistää erilliseen
 terminaaliin oma watch komento:
 
     npm run watch
+
+## Mocha testit
+
+Voit ajaa selaimella osoitteessa http://localhost:8080/test/runner.html
 
 # Konfiguraatiot
 

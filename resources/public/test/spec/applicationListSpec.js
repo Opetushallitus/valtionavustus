@@ -2,13 +2,10 @@
   var page = ApplicationListPage()
 
   afterEach(function() {
-    expect(window.uiError || null).to.be.null
-  })
-
-  afterEach(function () {
     if (this.currentTest.state == 'failed') {
       takeScreenshot()
     }
+    expect(window.uiError || null).to.be.null
   })
 
   describe('Dummy hakemuslistaus', function () {

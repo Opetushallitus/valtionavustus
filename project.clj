@@ -41,8 +41,12 @@
   :target-path "target/%s"
 
   ;; This hooks 'npm run build' to build preparation tasks
-  :prep-tasks [["shell" "npm" "run" "build"]
-               "javac" "compile"]
+  :prep-tasks [
+       ["shell" "npm" "install"]
+       ["shell" "npm" "run" "build"]
+       "javac"
+       "compile"
+  ]
 
   :plugins [[speclj "3.2.0"]
             [lein-environ "1.0.0"]
