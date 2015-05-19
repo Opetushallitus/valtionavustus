@@ -16,4 +16,5 @@
   user: cloud-user
   sudo: yes
   roles:
+  - java8
   - testmachine

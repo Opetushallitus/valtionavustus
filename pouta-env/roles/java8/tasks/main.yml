@@ -1,0 +1,14 @@
+- name: Add Java repository to sources
+  action: apt_repository repo='ppa:webupd8team/java'
+
+- name: Autoaccept license for Java
+  debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+
+- name: Update APT package cache
+  action: apt update_cache=yes
+
+- name: Install Java
+  action: apt pkg=oracle-java8-installer state=latest install_recommends=yes
+
+- name: Set Java Env
+  action: apt pkg=oracle-java8-set-default state=latest install_recommends=yes
