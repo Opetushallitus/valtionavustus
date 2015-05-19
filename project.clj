@@ -24,6 +24,8 @@
 
                  ;; SQL + migrations
                  [yesql "0.4.1"]
+                 [org.postgresql/postgresql "9.4-1201-jdbc41"]
+                 [hikari-cp "1.2.3"]
                  [ragtime "0.3.8"]
 
                  ;; Testing
