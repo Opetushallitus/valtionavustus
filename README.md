@@ -15,6 +15,24 @@ ja
 
     npm install
 
+# Tietokanta
+
+Luo käyttäjä ```va``` (salasana: va)
+
+    createuser -s va -P
+
+Luo ```va-dev``` tietokanta
+
+    createdb -E UTF-8 va-dev
+
+Luo skeema
+
+    psql va-dev < resources/ddl/create.sql
+
+Lataa initial data
+
+    psql va-dev < resources/ddl/initial.sql
+
 # Käynnistys
 
 Paikallisesti:
