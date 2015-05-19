@@ -6,6 +6,19 @@
             [compojure.api.sweet :refer :all]
             [schema.core :as s]))
 
+(s/defschema LocalizedString {:fi s/Str
+                              :sv s/Str})
+
+(s/defschema FormField {:label LocalizedString
+                        :description LocalizedString
+                        :type (s/enum :text-field
+                                      :text-area
+                                      :check-box
+                                      :radio-button)})
+
+(s/defschema Form {:name LocalizedString
+                   :fields [FormField]})
+
 (s/defschema User {:name s/Str
                    :sex (s/enum :male :female)
                    :address {:street s/Str
@@ -17,6 +30,16 @@
   (GET* "/" []
         :return {:id Long, :name String}
         (ok {:id 1, :name "lolbal"}))
+
+  (GET* "/form" []
+        :return Form
+        (ok {:name {:fi "Lol Bal"
+                    :sv "Lol bal sv"}
+             :fields [{:label {:fi "Kenttä"
+                               :sv "Kenttä"}
+                       :description {:fi "Kuvaus"
+                                     :sv "Kuvaus"}
+                       :type :text-field}]}))
 
   (GET* "/user" []
         :return User
