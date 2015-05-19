@@ -2,6 +2,6 @@
   (:require [clojure.edn]
             [environ.core :refer [env]]))
 
-(defonce config (-> (or (env :config) "config/prod.edn")
+(defonce config (-> (or (env :config) "config/dev.edn")
                     (slurp)
                     (clojure.edn/read-string)))

@@ -24,7 +24,7 @@ Paikallisesti:
 Tuotantoversiona:
 
     lein uberjar
-    java -jar target/uberjar/oph-valtionavustus-0.1.0-SNAPSHOT-standalone.jar
+    CONFIG=config/prod.edn java -jar target/uberjar/oph-valtionavustus-0.1.0-SNAPSHOT-standalone.jar
 
 **Huom:** Jar-tiedoston versio voi vaihtua
 

@@ -1,4 +1,4 @@
-CREATE TABLE cards (
+CREATE TABLE forms (
     id             serial PRIMARY KEY,
     start          date,
     finish         date,
