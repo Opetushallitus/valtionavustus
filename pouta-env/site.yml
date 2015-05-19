@@ -11,6 +11,7 @@
   roles:
   - buildmachine
   - Stouts.jenkins
+  - debops.nginx
 
 - hosts: va-test
   user: cloud-user

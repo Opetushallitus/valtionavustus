@@ -14,5 +14,7 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 * luo palvelimet komennolla `./pouta-venv/bin/ansible-playbook -i va.hosts create_machines.yml`
 * testaa pääsetkö buildikoneelle komennolla `./ssh_to_build_machine.bash`
 * palvelinten pitäisi myös vastata ansiblen pingiin `./pouta-venv/bin/ansible all -i va.hosts -m ping -u cloud-user`
-* asenna Jenkins-rooli `./pouta-venv/bin/ansible-galaxy install --roles-path=roles Stouts.jenkins`
+* asenna Ansible-roolit Ansible Galaxystä
+** `./pouta-venv/bin/ansible-galaxy install --roles-path=roles Stouts.jenkins`
+** `./pouta-venv/bin/ansible-galaxy install --roles-path=roles debops.nginx`
 * alusta palvelimet komennolla `./pouta-venv/bin/ansible-playbook -i va.hosts site.yml`  # perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
