@@ -10,6 +10,7 @@
   sudo: yes
   roles:
   - buildmachine
+  - Stouts.jenkins
 
 - hosts: va-test
   user: cloud-user

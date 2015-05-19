@@ -1,0 +1,27 @@
+#latest
+#jenkins_apt_key: "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
+#jenkins_apt_repository: "deb http://pkg.jenkins-ci.org/debian binary/"
+#latest stable
+jenkins_apt_key: http://pkg.jenkins-ci.org/debian-stable/jenkins-ci.org.key
+jenkins_apt_key_id: D50582E6
+jenkins_apt_repository: deb http://pkg.jenkins-ci.org/debian-stable binary/
+
+jenkins_apt_packages: []
+jenkins_plugins: [github, git, greenballs]
+jenkins_jobs:
+   - name: valtionavustus
+     repo: https://github.com/Opetushallitus/valtionavustus
+     branch: origin/master
+     chucknorris: true
+     command: lein spec -a
+
+
+# System config
+# =============
+jenkins_system_config:
+  admin_email: timo.rantalaiho@reaktor.com
+
+#jenkins_jobs:
+#- name: mixer
+#  repo: https://github.com/klen/mixer.git
+#  command: make test
