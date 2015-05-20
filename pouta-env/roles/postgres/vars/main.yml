@@ -1,0 +1,3 @@
+dbname: va-{{ app_profile }}
+dbuser: va
+dbpassword: va

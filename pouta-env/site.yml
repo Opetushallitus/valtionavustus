@@ -16,6 +16,9 @@
 - hosts: va-test
   user: cloud-user
   sudo: yes
+  vars:
+    app_profile: test
   roles:
   - java8
+  - postgres
   - testmachine
