@@ -15,5 +15,13 @@
     floating_ips:
       - "{{ va_floating_ip }}"
 
+- name: Wait for  {{ machine_name }} ({{ va_floating_ip }}) to start
+  local_action:
+    module: wait_for
+      host={{ va_floating_ip }}
+      port=22
+      delay=1
+      timeout=300
+
 - name: Copy user SSH public keys to {{ machine_name }} ({{ va_floating_ip }}) ~cloud-user/.ssh/authorized_keys
   shell: cat ./roles/common/files/public_keys/* | ssh -i ~/.ssh/pouta-`whoami`.pem cloud-user@{{ va_floating_ip }} 'cat >>  ~cloud-user/.ssh/authorized_keys'
