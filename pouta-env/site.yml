@@ -21,4 +21,5 @@
   roles:
   - java8
   - postgres
+  - nodesource.node
   - testmachine
