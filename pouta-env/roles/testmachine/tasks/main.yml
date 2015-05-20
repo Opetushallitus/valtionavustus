@@ -1,3 +1,23 @@
-- name: Hello world
-  shell: "echo \"I am `whoami` at `hostname`!\""
+- name: Create www group
+  group: name=www state=present
 
+- name: Create www user
+  user: name=www comment="WWW user" group=www
+
+- name: Create www dir
+  file: path=/www owner=www group=www state=directory
+
+- name: Install git
+  action: apt pkg=git state=latest install_recommends=yes
+
+- name: Git update valtionavustus
+  sudo: yes
+  sudo_user: www
+  git: repo=https://github.com/Opetushallitus/valtionavustus.git dest=/www/valtionavustus
+
+- name: Start valtionavustus server
+  sudo: yes
+  sudo_user: www
+  shell: nohup ./lein with-profile {{ app_profile }} run >> lein_run.log 2>&1 &
+  args:
+      chdir: /www/valtionavustus
