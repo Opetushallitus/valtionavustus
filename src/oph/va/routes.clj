@@ -35,7 +35,7 @@
   (GET* "/dbdata" []
         :return [{:id Long,
                   :metadata s/Any
-                  :start (s/maybe org.joda.time.DateTime)}]
+                  :start (s/maybe s/Inst)}]
         (ok (db/run-query)))
 
   (GET* "/form" []
