@@ -1,7 +1,10 @@
+- name: Add Java repository to sources
+  action: apt_repository repo='ppa:webupd8team/java'
+
 - name: Update APT package cache
   apt: update_cache=yes cache_valid_time=3600
 
-- name: Upgrade pakcages
+- name: Upgrade packages
   apt: upgrade=safe
 
 - name: Install required packages
