@@ -14,3 +14,6 @@
       - net-id: "{{ va_network }}"
     floating_ips:
       - "{{ va_floating_ip }}"
+
+- name: Copy user SSH public keys to {{ machine_name }} ({{ va_floating_ip }}) ~cloud-user/.ssh/authorized_keys
+  shell: cat ./roles/common/files/public_keys/* | ssh -i ~/.ssh/pouta-`whoami`.pem cloud-user@{{ va_floating_ip }} 'cat >>  ~cloud-user/.ssh/authorized_keys'
