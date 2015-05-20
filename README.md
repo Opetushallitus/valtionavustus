@@ -9,7 +9,7 @@ Valtionavustusten hakemiseen, käsittelyyn ja myöntämiseen tarkoitetut palvelu
 
 Riippuvuudet asentuvat ajamalla komennot:
 
-    lein deps
+    ./lein deps
 
 ja
 
@@ -37,20 +37,20 @@ Lataa initial data
 
 Paikallisesti:
 
-    lein run
+    ./lein run
 
 Tuotantoversiona:
 
-    lein uberjar
+    ./lein uberjar
     CONFIG=config/prod.edn java -jar target/uberjar/oph-valtionavustus-0.1.0-SNAPSHOT-standalone.jar
 
 **Huom:** Jar-tiedoston versio voi vaihtua
 
 Eri ympäristön voi ottaa käyttöön seuraavasti
 
-    lein with-profile dev run
-    lein with-profile test run
-    lein with-profile prod run
+    ./lein with-profile dev run
+    ./lein with-profile test run
+    ./lein with-profile prod run
 
 # Dokumentaatio
 
@@ -60,11 +60,11 @@ Swagger-pohjainen API-dokumentaatio löytyy osoitteesta http://localhost:8080/do
 
 Testien ajo (ajaa myös mocha testit):
 
-    lein spec -f d
+    ./lein spec -f d
 
 tai (automaattisesti)
 
-    lein spec -a
+    ./lein spec -a
 
 Huom: Vaikka ```lein run``` lataa automaattisesti muuttuneet koodit,
 Javascriptin automaattikäännöstä varten pitää käynnistää erilliseen
@@ -87,4 +87,4 @@ Clojure-tyyppinen tietorakenne.
 
 Ovatko riippuvuudet päivittyneet?
 
-    lein ancient
+    ./lein ancient
