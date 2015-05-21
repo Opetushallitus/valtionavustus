@@ -4,6 +4,7 @@ target
 .lein-*
 .nrepl-port
 node_modules
+npm-cache
 **/.*.swp
 
 # Generated files
