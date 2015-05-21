@@ -18,6 +18,8 @@
   sudo: yes
   vars:
     app_profile: test
+    postgresql_version: 9.4
+    postgresql_flavor: pgdg
     mountdisks:
       logs:
         mount_point: /logs
@@ -30,6 +32,7 @@
   roles:
   - mountdisks
   - java8
-  - postgres
+  - postgresql
+  - postgresql.db
   - nodesource.node
   - testmachine
