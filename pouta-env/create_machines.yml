@@ -26,5 +26,5 @@
     va_network: e15cfa1c-a214-415a-8909-e270b3ec344b
 
   tasks:
-    - { include: tasks/create_machine.yml, machine_name: va-build, va_floating_ip: 86.50.169.218 }
-    - { include: tasks/create_machine.yml, machine_name: va-test, va_floating_ip: 86.50.168.174 }
+    - { include: tasks/create_machine_if_needed.yml, machine_name: va-build, va_floating_ip: 86.50.169.218 }
+    - { include: tasks/create_machine_if_needed.yml, machine_name: va-test, va_floating_ip: 86.50.168.174 }

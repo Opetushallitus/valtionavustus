@@ -1,0 +1,13 @@
+- name: Check if {{ machine_name }} ({{ va_floating_ip }}) is already installed
+  local_action:
+    module: wait_for
+      host={{ va_floating_ip }}
+      port=22
+      delay=1
+      timeout=5
+  ignore_errors: True
+  register: isup
+
+- name: Create {{ machine_name }} ({{ va_floating_ip }}) if it is not up yet
+  include: create_machine_and_add_ssh_keys.yml
+  when: isup | failed

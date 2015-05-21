@@ -1,14 +1,4 @@
-- name: Check if {{ machine_name }} ({{ va_floating_ip }}) is already installed
-  local_action:
-    module: wait_for
-      host={{ va_floating_ip }}
-      port=22
-      delay=1
-      timeout=5
-  ignore_errors: True
-  register: isup
-
-- name: Create a virtual machine {{ machine_name }} ({{ va_floating_ip }}) if not up yet
+- name: Create a virtual machine {{ machine_name }} ({{ va_floating_ip }})
   nova_compute:
     state: present
     name: "{{ machine_name }}"
@@ -24,7 +14,6 @@
       - net-id: "{{ va_network }}"
     floating_ips:
       - "{{ va_floating_ip }}"
-  when: isup | failed
 
 - name: Wait for  {{ machine_name }} ({{ va_floating_ip }}) to start
   local_action:
@@ -33,7 +22,6 @@
       port=22
       delay=1
       timeout=300
-  when: isup | failed
 
 - name: Add our public keys to nova keys
   nova_keypair: state=present login_username="{{ pouta_username }}"
@@ -42,8 +30,6 @@
                 public_key="{{ lookup('file', item) }}"
   with_fileglob:
     - ../roles/common/files/public_keys/*
-  when: isup | failed
 
 - name: Copy our public keys to {{ machine_name }} ({{ va_floating_ip }}) ~cloud-user/.ssh/authorized_keys
   shell: cat ./roles/common/files/public_keys/* | ssh -i ~/.ssh/pouta-`whoami`.pem cloud-user@{{ va_floating_ip }} 'cat >>  ~cloud-user/.ssh/authorized_keys'
-  when: isup | failed

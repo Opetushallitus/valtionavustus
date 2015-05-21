@@ -12,6 +12,8 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 * kun olet ajanut `source openrc.sh`, sinun pitäisi saada listattua tarjolla olevat käyttöjärjestelmä-imaget komennolla `nova image-list`
 * lisää poutaan henkilökohtainen avaimesi skriptillä `add_personal_key.bash`
 * luo palvelimet komennolla `./pouta-venv/bin/ansible-playbook -i va.hosts create_machines.yml`
+  - jos jonkin palvelimen luominen keskeytyy virheeseen, saattaa olla parasta tuhota palvelin ja yrittää uudelleen. 
+  - virhetilanteissa komennon uudelleen ajaminen _ei_ korjaa tilannetta (komento ei ole atominen).
 * testaa pääsetkö buildikoneelle komennolla `./ssh_to_build_machine.bash`
 * palvelinten pitäisi myös vastata ansiblen pingiin `./pouta-venv/bin/ansible all -i va.hosts -m ping -u cloud-user`
 * asenna Ansible-roolit Ansible Galaxystä
