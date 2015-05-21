@@ -14,6 +14,7 @@
   sudo: yes
   sudo_user: postgres
   postgresql_db: name={{dbname}}
+                 encoding='UTF-8'
 
 - name: Ensure user has access to database
   sudo: yes
