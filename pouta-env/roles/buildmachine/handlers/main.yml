@@ -1,0 +1,3 @@
+- name: jenkins restart
+  shell: service jenkins restart
+  sudo: yes
