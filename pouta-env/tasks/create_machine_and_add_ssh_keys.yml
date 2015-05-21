@@ -31,5 +31,11 @@
   with_fileglob:
     - ../roles/common/files/public_keys/*
 
+- name: Remove the old SSH host key of {{ va_floating_ip }} from my ~/.ssh/known_hosts
+  shell: "ssh-keygen -R {{va_floating_ip}}"
+
+- name: Add the new SSH host key of {{ va_floating_ip }} to my ~/.ssh/known_hosts
+  shell: "ssh-keyscan -H  {{va_floating_ip}} >> ~/.ssh/known_hosts"
+
 - name: Copy our public keys to {{ machine_name }} ({{ va_floating_ip }}) ~cloud-user/.ssh/authorized_keys
   shell: cat ./roles/common/files/public_keys/* | ssh -i ~/.ssh/pouta-`whoami`.pem cloud-user@{{ va_floating_ip }} 'cat >>  ~cloud-user/.ssh/authorized_keys'
