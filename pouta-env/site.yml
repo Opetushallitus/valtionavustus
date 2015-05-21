@@ -18,7 +18,17 @@
   sudo: yes
   vars:
     app_profile: test
+    mountdisks:
+      logs:
+        mount_point: /logs
+        disk_label: va-test-logs
+        filesystem: xfs
+      data:
+        mount_point: /data
+        disk_label: va-test-data
+        filesystem: xfs
   roles:
+  - mountdisks
   - java8
   - postgres
   - nodesource.node
