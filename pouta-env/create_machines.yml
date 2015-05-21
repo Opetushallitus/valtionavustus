@@ -26,5 +26,13 @@
     va_network: e15cfa1c-a214-415a-8909-e270b3ec344b
 
   tasks:
-    - { include: tasks/create_machine_if_needed.yml, machine_name: va-build, va_floating_ip: 86.50.169.218 }
-    - { include: tasks/create_machine_if_needed.yml, machine_name: va-test, va_floating_ip: 86.50.168.174 }
+    - { include: tasks/create_machine_if_needed.yml,
+        machine_name: va-build,
+        va_floating_ip: 86.50.169.218,
+        volume_ids: []
+      }
+    - { include: tasks/create_machine_if_needed.yml,
+        machine_name: va-test,
+        va_floating_ip: 86.50.168.174,
+        volume_ids: [90d2349f-6b66-4313-afa3-a15fa3b35a6e, 02e6312e-121a-4ce4-bc7b-39466342a48d]
+      }
