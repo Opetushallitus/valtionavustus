@@ -37,7 +37,8 @@
                  [environ "1.0.0"]
 
                  ;; Utils
-                 [org.clojure/tools.trace "0.7.8"]]
+                 [org.clojure/tools.trace "0.7.8"]
+                 [org.slf4j/slf4j-log4j12 "1.7.12"]]
 
   :main ^:skip-aot oph.va.server
   :target-path "target/%s"
