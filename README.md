@@ -25,13 +25,9 @@ Luo ```va-dev``` tietokanta
 
     createdb -E UTF-8 va-dev
 
-Luo skeema
+Luo skeema ja lataa initial data
 
-    psql va-dev < resources/ddl/create.sql
-
-Lataa initial data
-
-    psql va-dev < resources/ddl/initial.sql
+    ./lein dbmigrate
 
 # Käynnistys
 

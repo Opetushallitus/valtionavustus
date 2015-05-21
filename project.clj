@@ -26,7 +26,7 @@
                  [yesql "0.4.1"]
                  [org.postgresql/postgresql "9.4-1201-jdbc41"]
                  [hikari-cp "1.2.3"]
-                 [ragtime "0.3.8"]
+                 [org.flywaydb/flyway-core "3.2.1"]
 
                  ;; Testing
                  [speclj "3.2.0"]
@@ -57,4 +57,5 @@
             [lein-ancient "0.6.7"]]
 
   :test-paths ["spec"]
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all}}
+  :aliases {"dbmigrate" ["run" "-m" "oph.va.db.migrations/migrate"]})
