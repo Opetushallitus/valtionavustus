@@ -10,12 +10,11 @@
 (s/defschema LocalizedString {:fi s/Str
                               :sv s/Str})
 
-(s/defschema FormField {:label LocalizedString
+(s/defschema FormField {:id s/Str
+                        :label LocalizedString
                         :description LocalizedString
-                        :type (s/enum :text-field
-                                      :text-area
-                                      :check-box
-                                      :radio-button)})
+                        :display-as (s/enum :text-field
+                                            :text-area)})
 
 (s/defschema Form {:name LocalizedString
                    :fields [FormField]})
@@ -25,12 +24,17 @@
                    :address {:street s/Str
                              :zip s/Str}})
 
+(def form {:name {:fi "Lol Bal"
+                  :sv "Lol bal sv"}
+           :fields [{:id "kentta"
+                     :label {:fi "Kenttä"
+                             :sv "Kenttä"}
+                     :description {:fi "Kuvaus"
+                                   :sv "Kuvaus"}
+                     :display-as :text-field}]})
+
 (defroutes* api-routes
   "API implementation"
-
-  (GET* "/" []
-        :return {:id Long, :name String}
-        (ok {:id 1, :name "lolbal"}))
 
   (GET* "/dbdata" []
         :return [{:id Long,
@@ -40,13 +44,7 @@
 
   (GET* "/form" []
         :return Form
-        (ok {:name {:fi "Lol Bal"
-                    :sv "Lol bal sv"}
-             :fields [{:label {:fi "Kenttä"
-                               :sv "Kenttä"}
-                       :description {:fi "Kuvaus"
-                                     :sv "Kuvaus"}
-                       :type :text-field}]}))
+        (ok form))
 
   (GET* "/user" []
         :return User
@@ -54,12 +52,6 @@
              :sex :male
              :address {:street "Foobar"
                        :zip "00100"}}))
-
-  (GET* "/plus" []
-        :return Long
-        :query-params [x :- Long, {y :- Long 1}]
-        :summary "x+y with query-parameters. y defaults to 1."
-        (ok (+ x y)))
 
   (POST* "/minus" []
          :return      Long
