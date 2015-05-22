@@ -2,7 +2,7 @@
   group: name=www state=present
 
 - name: Create www user
-  user: name=www comment="WWW user" group=www
+  user: name=www comment="WWW user" group=www home={{ logical_volumes.home2.mount_point }}/www
 
 - name: Create www dir
   file: path=/www owner=www group=www state=directory

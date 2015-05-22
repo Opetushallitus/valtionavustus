@@ -31,6 +31,10 @@
         filesystem: xfs
         size: 100g
         mount_point: /data
+      home2:
+        filesystem: xfs
+        size: 100g
+        mount_point: /home2
   roles:
   - logical.volumes
   - java8
