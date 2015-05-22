@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ -z $1 ]; then
+  echo "Usage: $0 <username to add>"
+  exit 1
+fi
+
+sudo htpasswd -c {{nginx_http_auth_basic_filename}} $1

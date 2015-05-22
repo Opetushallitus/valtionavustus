@@ -22,3 +22,7 @@ Valtionavustusjärjestelmän palvelimien provisiointi
   - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles nodesource.node`
   - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles debops.pki`
 * alusta palvelimet komennolla `./pouta-venv/bin/ansible-playbook -i va.hosts site.yml`  # perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
+
+
+# Uuden käyttäjän lisääminen buildikoneelle kirjautumista varten
+`./ssh_to_build_machine.bash add_va_jenkins_user.bash <käyttäjätunnus>`
