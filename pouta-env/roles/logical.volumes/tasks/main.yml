@@ -1,0 +1,26 @@
+- name: Create logical volume group persistent.volumes
+  lvg: vg=persistent.volumes pvs={{ persistent_volume_devices }} pesize=128
+
+- name: Create logical volumes in group persistent.volumes
+  lvol: vg=persistent.volumes lv={{ item.key }} size={{ item.value.size }}
+  with_dict: logical_volumes
+
+- name: Create filesystem on logical volumes
+  filesystem: fstype={{ item.value.filesystem }} dev=/dev/persistent.volumes/{{ item.key }}
+  with_dict: logical_volumes
+
+- name: Mount logical volumes
+  mount: name={{ item.value.mount_point }} src=/dev/persistent.volumes/{{ item.key }} fstype={{ item.value.filesystem }} state=mounted
+  with_dict: logical_volumes
+
+- name: Grow xfs disks automatically
+  command: xfs_growfs {{ item.value.mount_point }}
+  when: item.value.filesystem == 'xfs'
+  register: grow_xfs
+  changed_when: false
+  with_dict: logical_volumes
+
+- name: Report xfs disk size change
+  command: echo {{ item.stdout }}
+  when: item.stdout.find("changed") != -1
+  with_items: grow_xfs.results

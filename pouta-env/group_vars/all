@@ -3,3 +3,4 @@ ubuntu_common_required_packages:
   - fail2ban
   - unattended-upgrades
   - xfsprogs
+  - lvm2

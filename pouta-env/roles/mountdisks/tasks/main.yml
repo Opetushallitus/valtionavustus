@@ -1,3 +1,0 @@
-- name: Mount disks
-  mount: name={{ item.value.mount_point }} src='LABEL={{ item.value.disk_label }}' fstype={{ item.value.filesystem }} state=mounted
-  with_dict: mountdisks

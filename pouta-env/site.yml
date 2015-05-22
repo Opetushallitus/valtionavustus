@@ -21,17 +21,18 @@
     app_profile: test
     postgresql_version: 9.4
     postgresql_flavor: pgdg
-    mountdisks:
+    persistent_volume_devices: /dev/vdc
+    logical_volumes:
       logs:
+        filesystem: xfs
+        size: 100g
         mount_point: /logs
-        disk_label: va-test-logs
-        filesystem: xfs
       data:
-        mount_point: /data
-        disk_label: va-test-data
         filesystem: xfs
+        size: 100g
+        mount_point: /data
   roles:
-  - mountdisks
+  - logical.volumes
   - java8
   - postgresql
   - postgresql.db
