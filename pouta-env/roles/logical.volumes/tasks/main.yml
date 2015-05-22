@@ -1,5 +1,10 @@
 - name: Create logical volume group persistent.volumes
   lvg: vg=persistent.volumes pvs={{ persistent_volume_devices }} pesize=128
+  register: vg_create
+
+- name: Activate persistent.volumes volume group
+  command: vgchange -a y persistent.volumes
+  when: vg_create.changed
 
 - name: Create logical volumes in group persistent.volumes
   lvol: vg=persistent.volumes lv={{ item.key }} size={{ item.value.size }}
