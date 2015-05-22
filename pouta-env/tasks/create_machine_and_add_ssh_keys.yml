@@ -23,10 +23,6 @@
       delay=1
       timeout=300
 
-- name: Attach persistent volumes
-  command: nova volume-attach {{  machine_name }} {{ item }}
-  with_items: volume_ids
-
 - name: Add our public keys to nova keys
   nova_keypair: state=present login_username="{{ pouta_username }}"
                 login_password="{{ pouta_password }}"
