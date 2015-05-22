@@ -9,10 +9,10 @@ nginx_servers: [ "{{ nginx_server_build }}" ]
 nginx_server_build:
   name: [ "build.test.valtionavustus.oph.fi", "va-build" ]
   enabled: True
-  listen_ssl: [ "{{ ansible_all_ipv4_addresses[0] }}:443" ]
+  listen_ssl: [ "{{ va_gateway_ip }}:443" ]
   location:
     '/': |
-      proxy_pass http://127.0.0.1:8000;
+      proxy_pass "{{ jenkins_url }}";
       proxy_read_timeout 90;
       auth_basic "va-dev";
       auth_basic_user_file "{{ nginx_jenkins_http_auth_basic_filename }}";
@@ -27,6 +27,9 @@ jenkins_apt_key_id: D50582E6
 jenkins_apt_repository: deb http://pkg.jenkins-ci.org/debian-stable binary/
 
 jenkins_apt_packages: []
+
+jenkins_http_host: "{{ build_machine_name }}"
+
 jenkins_plugins: [github, git, greenballs]
 jenkins_jobs:
    - name: valtionavustus

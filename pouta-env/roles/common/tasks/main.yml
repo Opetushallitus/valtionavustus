@@ -31,3 +31,8 @@
   with_fileglob:
     - public_keys/*
 
+- name: Add va-gateway machine IP mapping to /etc/hosts
+  lineinfile: dest=/etc/hosts regexp='^{{ va_gateway_ip }}' line='"{{ va_gateway_ip }} {{ va_gateway_name }}"' owner=root group=root mode=0644
+
+- name: Add build machine IP mapping to /etc/hosts
+  lineinfile: dest=/etc/hosts regexp='^{{ build_machine_ip }}' line='"{{ build_machine_ip }} {{ build_machine_name }}"' owner=root group=root mode=0644
