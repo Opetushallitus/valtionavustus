@@ -26,12 +26,24 @@
 
 (def form {:name {:fi "Testilomake"
                   :sv "Testform"}
-           :fields [{:id "kentta"
-                     :label {:fi "Kenttä"
-                             :sv "Fält"}
-                     :description {:fi "Kuvaus"
-                                   :sv "Beskrivning"}
-                     :display-as :text-field}]})
+           :fields [{:id "nimi"
+                     :label {:fi "Nimi"
+                             :sv "Namn"}
+                     :description {:fi "Hakijan nimi"
+                                   :sv "Den sökandes namn"}
+                     :display-as :text-field}
+                    {:id "osoite"
+                     :label {:fi "Katuosoite"
+                             :sv "Gatuaddress"}
+                     :description {:fi "Hakijan katuosoite"
+                                   :sv "Den sökandes gatuaddress"}
+                     :display-as :text-field}
+                    {:id "kuvaus"
+                     :label {:fi "Kuvaus"
+                             :sv "Beskrivning"}
+                     :description {:fi ""
+                                   :sv ""}
+                     :display-as :text-area}]})
 
 (defroutes* api-routes
   "API implementation"
