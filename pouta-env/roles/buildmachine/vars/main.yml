@@ -1,8 +1,23 @@
 # nginx configs:
-nginx_http_auth_basic: True
-nginx_http_auth_basic_realm: va-dev
-nginx_http_auth_basic_filename: /etc/nginx/private/va-jenkins-nginx-passwd
+# No global http auth block so we can allow access without pw to other virtual hosts
+nginx_http_auth_basic: False
+#nginx_http_auth_basic_realm: va-dev
+nginx_jenkins_http_auth_basic_filename: /etc/nginx/private/va-jenkins-nginx-passwd
 
+nginx_servers: [ "{{ nginx_server_build }}" ]
+
+nginx_server_build:
+  name: [ "build.test.valtionavustus.oph.fi", "va-build" ]
+  enabled: True
+  listen_ssl: [ "{{ ansible_all_ipv4_addresses[0] }}:443" ]
+  location:
+    '/': |
+      proxy_pass http://127.0.0.1:8000;
+      proxy_read_timeout 90;
+      auth_basic "va-dev";
+      auth_basic_user_file "{{ nginx_jenkins_http_auth_basic_filename }}";
+
+# Jenkins configs:
 #latest
 #jenkins_apt_key: "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
 #jenkins_apt_repository: "deb http://pkg.jenkins-ci.org/debian binary/"

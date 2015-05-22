@@ -4,4 +4,4 @@ if [ -z $1 ]; then
   exit 1
 fi
 
-sudo htpasswd -c {{nginx_http_auth_basic_filename}} $1
+sudo htpasswd -c {{nginx_jenkins_http_auth_basic_filename}} $1
