@@ -1,4 +1,5 @@
 import React from 'react'
+import LocalizedString from './LocalizedString.jsx'
 
 export default class FormElement extends React.Component {
 
@@ -8,8 +9,12 @@ export default class FormElement extends React.Component {
 
   render() {
     var field = this.props.field;
+    console.log("field", field)
     return (
-      <input />
+      <div>
+        <label><LocalizedString data={field.description} lang={this.props.lang} /></label>
+        <input id={field.id} type="text" name={field.id}></input>
+      </div>
     )
   }
 }

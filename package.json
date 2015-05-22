@@ -10,7 +10,8 @@
     "babelify": "^6.0.2",
     "browserify": "^9.0.8",
     "minifyify": "^6.4.0",
-    "react": "^0.13.2"
+    "react": "^0.13.2",
+    "baconjs": "^0.7.59"
   },
   "devDependencies": {
     "watchify": "^3.2.0",
