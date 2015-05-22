@@ -8,12 +8,6 @@ export default class Form extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = {
-      data: {
-        name: {fi: "", sv: ""},
-        fields: []
-      }
-    }
   }
 
   render() {
