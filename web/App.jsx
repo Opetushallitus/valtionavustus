@@ -6,7 +6,7 @@ import Form from './Form.jsx'
 import {GET, POST, DELETE} from './request'
 
 const formP = Bacon.fromCallback(GET, "/api/form")
-const languageP = Bacon.constant('fi')
+const languageP = Bacon.repeatedly(2000, ['sv', 'fi']).merge(Bacon.once('fi'))
 
 const appState = Bacon.combineTemplate({
   form: formP,

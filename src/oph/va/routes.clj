@@ -24,13 +24,13 @@
                    :address {:street s/Str
                              :zip s/Str}})
 
-(def form {:name {:fi "Lol Bal"
-                  :sv "Lol bal sv"}
+(def form {:name {:fi "Testilomake"
+                  :sv "Testform"}
            :fields [{:id "kentta"
                      :label {:fi "Kenttä"
-                             :sv "Kenttä"}
+                             :sv "Fält"}
                      :description {:fi "Kuvaus"
-                                   :sv "Kuvaus"}
+                                   :sv "Beskrivning"}
                      :display-as :text-field}]})
 
 (defroutes* api-routes

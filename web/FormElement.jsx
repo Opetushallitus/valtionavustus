@@ -12,8 +12,9 @@ export default class FormElement extends React.Component {
     console.log("field", field)
     return (
       <div>
-        <label><LocalizedString data={field.description} lang={this.props.lang} /></label>
+        <label><LocalizedString data={field.label} lang={this.props.lang} /></label>
         <input id={field.id} type="text" name={field.id}></input>
+        <p><LocalizedString data={field.description} lang={this.props.lang} /></p>
       </div>
     )
   }
