@@ -23,14 +23,12 @@ export default class FormElement extends React.Component {
 
   render() {
     var field = this.props.field;
-    var displayAs = field["display-as"]
+    var displayAs = field.displayAs
     console.log("field", field)
-    var input = ""
-    // TODO: fix json conversion in backend to produce javascript style
-    // fields
-    if (displayAs == "text-field") {
+    var input = <span>Unsupported field type {displayAs}</span>
+    if (displayAs == "textField") {
       input = <TextField {...this.props} />
-    } else if (displayAs == "text-area") {
+    } else if (displayAs == "textArea") {
       input = <TextArea {...this.props} />
     }
     return (

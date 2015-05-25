@@ -13,8 +13,8 @@
 (s/defschema FormField {:id s/Str
                         :label LocalizedString
                         :description LocalizedString
-                        :display-as (s/enum :text-field
-                                            :text-area)})
+                        :displayAs (s/enum :textField
+                                           :textArea)})
 
 (s/defschema Form {:name LocalizedString
                    :fields [FormField]})
@@ -31,19 +31,19 @@
                              :sv "Namn"}
                      :description {:fi "Hakijan nimi"
                                    :sv "Den sökandes namn"}
-                     :display-as :text-field}
+                     :displayAs :textField}
                     {:id "osoite"
                      :label {:fi "Katuosoite"
                              :sv "Gatuaddress"}
                      :description {:fi "Hakijan katuosoite"
                                    :sv "Den sökandes gatuaddress"}
-                     :display-as :text-field}
+                     :displayAs :textField}
                     {:id "kuvaus"
                      :label {:fi "Kuvaus"
                              :sv "Beskrivning"}
                      :description {:fi ""
                                    :sv ""}
-                     :display-as :text-area}]})
+                     :displayAs :textArea}]})
 
 (defroutes* api-routes
   "API implementation"
