@@ -13,7 +13,7 @@
 
                  ;; Routing
                  [compojure "1.3.4" :exclusions [instaparse]]
-                 [metosin/compojure-api "0.20.3" :exclusions [commons-codec
+                 [metosin/compojure-api "0.21.0" :exclusions [commons-codec
                                                               instaparse
                                                               joda-time
                                                               clj-time
@@ -23,15 +23,15 @@
                  [cheshire "5.4.0"]
 
                  ;; SQL + migrations
-                 [yesql "0.4.1"]
+                 [yesql "0.4.2"]
                  [org.postgresql/postgresql "9.4-1201-jdbc41"]
-                 [hikari-cp "1.2.3"]
+                 [hikari-cp "1.2.4"]
                  [org.flywaydb/flyway-core "3.2.1"]
 
                  ;; Testing
                  [speclj "3.2.0"]
                  ;; for junit output: lein spec -f junit
-                 [speclj-junit "0.0.9"]
+                 [speclj-junit "0.0.10"]
 
                  ;; Configuration
                  [environ "1.0.0"]
