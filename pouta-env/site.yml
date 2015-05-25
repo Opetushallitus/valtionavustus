@@ -25,9 +25,13 @@
         filesystem: xfs
         size: 100g
         mount_point: /logs
-      postgresql:
+      postgresql_data:
         filesystem: xfs
         size: 100g
+        mount_point: /var/lib/postgresql
+      postgresql_config:
+        filesystem: xfs
+        size: 10g
         mount_point: /etc/postgresql
       home2:
         filesystem: xfs
@@ -37,8 +41,8 @@
     postgresql_flavor: pgdg
   roles:
   - logical.volumes
-  - java8
   - postgresql
   - postgresql.db
+  - java8
   - nodesource.node
   - valtionavustus.app
