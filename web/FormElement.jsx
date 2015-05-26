@@ -11,7 +11,7 @@ class BasicTextField extends React.Component {
 class BasicTextArea extends React.Component {
   render() {
     var field = this.props.field
-    return (<textarea id={field.id} rows="4" cols="50" />)
+    return (<textarea id={field.id} rows="4" cols="50" name={field.id} />)
   }
 }
 
@@ -38,7 +38,6 @@ export default class FormElement extends React.Component {
       <div>
         <label><LocalizedString data={field.label} lang={this.props.lang} /></label>
         {input}
-        <p><LocalizedString data={field.description} lang={this.props.lang} /></p>
       </div>
     )
   }

@@ -12,69 +12,32 @@
 
 (s/defschema FormField {:id s/Str
                         :label LocalizedString
-                        :description LocalizedString
                         :displayAs (s/enum :textField
                                            :textArea)})
 
-(s/defschema Form {:name LocalizedString
-                   :fields [FormField]})
+(s/defschema FormContent {:name LocalizedString
+                          :fields [FormField]})
 
-(s/defschema User {:name s/Str
-                   :sex (s/enum :male :female)
-                   :address {:street s/Str
-                             :zip s/Str}})
-
-(def form {:name {:fi "Testilomake"
-                  :sv "Testform"}
-           :fields [{:id "nimi"
-                     :label {:fi "Nimi"
-                             :sv "Namn"}
-                     :description {:fi "Hakijan nimi"
-                                   :sv "Den sökandes namn"}
-                     :displayAs :textField}
-                    {:id "osoite"
-                     :label {:fi "Katuosoite"
-                             :sv "Gatuaddress"}
-                     :description {:fi "Hakijan katuosoite"
-                                   :sv "Den sökandes gatuaddress"}
-                     :displayAs :textField}
-                    {:id "kuvaus"
-                     :label {:fi "Kuvaus"
-                             :sv "Beskrivning"}
-                     :description {:fi ""
-                                   :sv ""}
-                     :displayAs :textArea}]})
-
-(def form-data {})
+(s/defschema Form {:id Long,
+                   :content FormContent,
+                   :start s/Inst})
 
 (defroutes* api-routes
   "API implementation"
 
-  (GET* "/dbdata" []
-        :return [{:id Long,
-                  :metadata s/Any
-                  :start (s/maybe s/Inst)}]
+  (GET* "/form" []
+        :return [Form]
         (ok (db/execute-list-forms)))
 
-  (GET* "/form" []
+  (GET* "/form/:id" [id]
         :return Form
-        (ok form))
-
-  (GET* "/form/1" []
-        :return s/Any
-        (ok form-data))
-
-  (GET* "/user" []
-        :return User
-        (ok {:name "Lol Bal"
-             :sex :male
-             :address {:street "Foobar"
-                       :zip "00100"}}))
+        (let [form (db/execute-get-form (Long. id))]
+          (if form (ok form) (not-found id))))
 
   (POST* "/form_submission/:form_id" [form_id :as request]
-       :return      Integer
+       :return      Long
        :summary     "Submit form answers"
-         (ok (db/execute-submit-form (Integer. form_id) (:params request)))))
+         (ok (db/execute-submit-form (Long. form_id) (:params request)))))
 
 (defroutes* doc-routes
   "API documentation browser"

@@ -11,8 +11,8 @@ export default class Form extends React.Component {
   }
 
   render() {
-    var name = this.props.form.name
-    var fields = this.props.form.fields
+    var name = this.props.form.content.name
+    var fields = this.props.form.content.fields
     var lang = this.props.lang
 
     return (

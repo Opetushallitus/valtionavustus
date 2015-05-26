@@ -22,12 +22,16 @@
 (def datasource (future (make-datasource datasource-spec)))
 
 (defquery list-forms "sql/list-forms.sql")
-
+(defquery get-form "sql/get-form.sql")
 (defquery submit-form<! "sql/submit-form.sql")
 
 (defn execute-list-forms []
   (jdbc/with-db-transaction [connection {:datasource @datasource}]
     (list-forms {} {:connection connection})))
+
+(defn execute-get-form [id]
+  (jdbc/with-db-transaction [connection {:datasource @datasource}]
+    (first(get-form {:id id} {:connection connection}))))
 
 (defn execute-submit-form [form, answers]
   (jdbc/with-db-transaction [connection {:datasource @datasource}]
