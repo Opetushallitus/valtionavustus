@@ -1,20 +1,16 @@
 import React from 'react'
-import Bacon from 'baconjs'
 import Phantom from './phantom'
 
 import Form from './Form.jsx'
-import {GET, POST, DELETE} from './request'
+import FormModel from './FormModel'
 
-const formP = Bacon.fromCallback(GET, "/api/form")
-const languageP = Bacon.repeatedly(15000, ['sv', 'fi']).merge(Bacon.once('fi'))
+const model = new FormModel()
+const formModelP = model.init()
 
-const appState = Bacon.combineTemplate({
-  form: formP,
-  lang: languageP
-})
+console.log("Got form model", formModelP)
 
-appState.onValue((state) => {
-  console.log("Got state:", state)
+formModelP.onValue((state) => {
+  console.log("Updating UI with state:", state)
   React.render(
     <Form form={state.form} lang={state.lang} />,
     document.getElementById('container')

@@ -45,6 +45,8 @@
                                    :sv ""}
                      :displayAs :textArea}]})
 
+(def form-data {})
+
 (defroutes* api-routes
   "API implementation"
 
@@ -57,6 +59,10 @@
   (GET* "/form" []
         :return Form
         (ok form))
+
+  (GET* "/form/1" []
+        :return s/Any
+        (ok form-data))
 
   (GET* "/user" []
         :return User
