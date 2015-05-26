@@ -19,10 +19,10 @@
           :adapter "postgresql"}
          (:db config)))
 
-(def datasource (make-datasource datasource-spec))
+(def datasource (future (make-datasource datasource-spec)))
 
 (defquery list-forms "sql/list-forms.sql")
 
 (defn run-query []
-  (jdbc/with-db-transaction [connection {:datasource datasource}]
+  (jdbc/with-db-transaction [connection {:datasource @datasource}]
     (list-forms connection)))
