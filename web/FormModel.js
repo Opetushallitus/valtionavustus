@@ -14,30 +14,30 @@ export default class FormModel {
     const formP = Bacon.fromCallback(GET, "/api/form/1")
     const formValuesP = Bacon.fromCallback(GET, "/api/form_submission/1")
 
+
     const requests = Bacon.combineTemplate({
       form: formP,
       values: formValuesP,
       lang: langP
-    }).onValue(setInitialData)
+    }).onValue(setData)
 
     const formFieldValuesP = Bacon.update({},
-                                          [dispatcher.stream('initialData')], initialData,
-                                          [dispatcher.stream('updateField')], updateField)
+                                          [dispatcher.stream('data')], onData,
+                                          [dispatcher.stream('updateField')], onUpdateField)
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
 
-    function initialData(values, data) {
-      console.log("Initial data received", data)
+    function onData(values, data) {
       return data
     }
 
-    function updateField(state, fieldUpdate) {
+    function onUpdateField(state, fieldUpdate) {
       state.values[fieldUpdate.id] = fieldUpdate.value
       return state
     }
 
-    function setInitialData(data) {
-      dispatcher.push('initialData', data)
+    function setData(data) {
+      dispatcher.push('data', data)
     }
   }
 
