@@ -9,7 +9,7 @@ Valtionavustusjärjestelmän palvelimien provisiointi
   - `source pouta-venv/bin/activate`
   - `pip install python-novaclient ansible`
 * ja [alusta todennus](https://research.csc.fi/pouta-credentials)
-* kun olet ajanut `source openrc.sh`, sinun pitäisi saada listattua tarjolla olevat käyttöjärjestelmä-imaget komennolla `nova image-list`
+* kun olet ajanut `source openrc.sh`, sinun pitäisi saada listattua tarjolla olevat käyttöjärjestelmä-imaget komennolla `pouta-venv/bin/nova image-list`
 * lisää poutaan henkilökohtainen avaimesi skriptillä `add_personal_key.bash`
 * luo palvelimet komennolla `./pouta-venv/bin/ansible-playbook -i va.hosts create_machines.yml`
   - jos jonkin palvelimen luominen keskeytyy virheeseen, saattaa olla parasta tuhota palvelin ja yrittää uudelleen. 
