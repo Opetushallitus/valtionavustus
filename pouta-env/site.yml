@@ -10,9 +10,9 @@
   sudo: yes
   roles:
   - buildmachine
-  - Stouts.jenkins
-  - debops.pki
-  - debops.nginx
+  - 3rdparty/Stouts.jenkins
+  - 3rdparty/debops.pki
+  - 3rdparty/debops.nginx
 
 - hosts: va-test
   user: cloud-user
@@ -41,8 +41,8 @@
     postgresql_flavor: pgdg
   roles:
   - logical.volumes
-  - postgresql
+  - 3rdparty/postgresql
   - postgresql.db
   - java8
-  - nodesource.node
+  - 3rdparty/nodesource.node
   - valtionavustus.app
