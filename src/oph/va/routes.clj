@@ -39,7 +39,8 @@
   (GET* "/form_submission/:id" [id]
         :return  s/Any
         :summary "Get current answers"
-        (ok empty-answers))
+        (let [submission (db/execute-get-form-submission (Long. id))]
+          (if submission (ok (:answers submission)) (ok empty-answers))))
 
   (POST* "/form_submission/:form_id" [form_id :as request]
          :return  Long
