@@ -23,7 +23,7 @@
                  [cheshire "5.4.0"]
 
                  ;; SQL + migrations
-                 [yesql "0.4.2"]
+                 [yesql "0.5.0-rc3"]
                  [org.postgresql/postgresql "9.4-1201-jdbc41"]
                  [hikari-cp "1.2.4"]
                  [org.flywaydb/flyway-core "3.2.1"]

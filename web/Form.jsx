@@ -18,11 +18,14 @@ export default class Form extends React.Component {
     return (
       <section>
         <h1><LocalizedString data={name} lang={lang}/></h1>
-        {
-          fields.map(function(field) {
-            return <FormElement lang={lang} key={field.id} field={field} />
-          })
-        }
+        <form method="POST" action="/api/form_submission/1">
+          {
+            fields.map(function(field) {
+              return <FormElement lang={lang} key={field.id} field={field} />
+            })
+          }
+          <input type="submit"/>
+        </form>
       </section>
     )
   }

@@ -52,7 +52,7 @@
         :return [{:id Long,
                   :metadata s/Any
                   :start (s/maybe s/Inst)}]
-        (ok (db/run-query)))
+        (ok (db/execute-list-forms)))
 
   (GET* "/form" []
         :return Form
@@ -65,11 +65,10 @@
              :address {:street "Foobar"
                        :zip "00100"}}))
 
-  (POST* "/minus" []
-         :return      Long
-         :body-params [x :- Long, y :- Long]
-         :summary     "x-y with body-parameters."
-         (ok (- x y))))
+  (POST* "/form_submission/:form_id" [form_id :as request]
+       :return      Integer
+       :summary     "Submit form answers"
+         (ok (db/execute-submit-form (Integer. form_id) (:params request)))))
 
 (defroutes* doc-routes
   "API documentation browser"

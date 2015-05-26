@@ -23,6 +23,12 @@
 
 (defquery list-forms "sql/list-forms.sql")
 
-(defn run-query []
+(defquery submit-form<! "sql/submit-form.sql")
+
+(defn execute-list-forms []
   (jdbc/with-db-transaction [connection {:datasource @datasource}]
-    (list-forms connection)))
+    (list-forms {:connection connection})))
+
+(defn execute-submit-form [form, answers]
+  (jdbc/with-db-transaction [connection {:datasource @datasource}]
+    (:id (submit-form<! {:form form :answers answers} {:connection connection}))))

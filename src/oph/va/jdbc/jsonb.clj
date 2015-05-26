@@ -5,17 +5,17 @@
             [cheshire.core :as json])
   (:import org.postgresql.util.PGobject))
 
-(defn value-to-json-pgobject [value]
+(defn value-to-jsonb-pgobject [value]
   (doto (PGobject.)
-    (.setType "json")
+    (.setType "jsonb")
     (.setValue (json/generate-string value))))
 
 (extend-protocol jdbc/ISQLValue
   clojure.lang.IPersistentMap
-  (sql-value [value] (value-to-json-pgobject value))
+  (sql-value [value] (value-to-jsonb-pgobject value))
 
   clojure.lang.IPersistentVector
-  (sql-value [value] (value-to-json-pgobject value)))
+  (sql-value [value] (value-to-jsonb-pgobject value)))
 
 (extend-protocol jdbc/IResultSetReadColumn
   PGobject
