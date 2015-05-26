@@ -22,6 +22,8 @@
                    :content FormContent,
                    :start s/Inst})
 
+(def empty-answers {})
+
 (defroutes* api-routes
   "API implementation"
 
@@ -34,9 +36,14 @@
         (let [form (db/execute-get-form (Long. id))]
           (if form (ok form) (not-found id))))
 
+  (GET* "/form_submission/:id" [id]
+        :return  s/Any
+        :summary "Get current answers"
+        (ok empty-answers))
+
   (POST* "/form_submission/:form_id" [form_id :as request]
-       :return      Long
-       :summary     "Submit form answers"
+         :return  Long
+         :summary "Submit form answers"
          (ok (db/execute-submit-form (Long. form_id) (:params request)))))
 
 (defroutes* doc-routes

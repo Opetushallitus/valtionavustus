@@ -12,8 +12,8 @@ export default class FormModel {
 
     const langP = Bacon.repeatedly(15000, ['sv', 'fi']).merge(Bacon.once('fi'))
 
-    const formP = Bacon.fromCallback(GET, "/api/form")
-    const formValuesP = Bacon.fromCallback(GET, "/api/form/1")
+    const formP = Bacon.fromCallback(GET, "/api/form/1")
+    const formValuesP = Bacon.fromCallback(GET, "/api/form_submission/1")
 
     const requests = Bacon.combineTemplate({
       form: formP,
