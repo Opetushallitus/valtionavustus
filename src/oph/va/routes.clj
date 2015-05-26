@@ -86,6 +86,6 @@
   ;; Documentation
   (context "/doc" [] doc-routes)
 
-  (GET "/" [] (resp/resource-response "index.html" {:root "public"}))
-  (route/resources "/")
+  (GET "/" [](charset (content-type (resp/resource-response "index.html" {:root "public"}) "text/html") "utf-8"))
+  (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
