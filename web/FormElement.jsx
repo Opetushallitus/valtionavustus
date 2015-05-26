@@ -16,10 +16,6 @@ class BasicTextField extends React.Component {
 
 class BasicTextArea extends React.Component {
 
-  constructor(props) {
-    super(props)
-  }
-
   handleChange(event) {
     this.props.model.setFieldValue(this.props.id, event.target.value)
   }

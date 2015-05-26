@@ -41,7 +41,7 @@ export default class FormModel {
     }
   }
 
-  // Public
+  // Public API
   setFieldValue(id, value) {
     dispatcher.push('updateField', {id: id, value: value})
   }
