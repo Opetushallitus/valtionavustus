@@ -6,3 +6,9 @@
 
 - name: Add script to add users manually
   template: src=add_va_jenkins_user.bash.j2 dest=/usr/local/bin/add_va_jenkins_user.bash owner=root group=root mode=0755
+
+- name: Add build script
+  template: src=cibuild.bash.j2 dest=/usr/local/bin/cibuild.bash owner=root group=root mode=0755
+
+- name: Install git
+  action: apt pkg=git state=latest install_recommends=yes

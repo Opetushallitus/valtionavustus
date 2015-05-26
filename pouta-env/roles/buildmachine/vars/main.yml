@@ -36,7 +36,7 @@ jenkins_jobs:
      repo: https://github.com/Opetushallitus/valtionavustus
      branch: origin/master
      chucknorris: true
-     command: lein spec -a
+     command: /usr/local/bin/cibuild.bash
 
 
 # System config

@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euo pipefail
+
+#echo "Cleaning workspace"
+#./lein clean
+
+#echo "Running tests"
+#./lein spec -f d
+
+echo "Building uber jar"
+./lein uberjar
+
+echo "Transfering to test server {{ test_machine_name }}"
+SSH=ssh "{{ test_machine_name }}"
+TARGET_DIR=/var/www
+TARGET_PATH=${TARGET_DIR}/va-`date +'%Y%m%d%H%M%S'`
+scp -u www-data -r target/uberjar/oph-valtionavustus-*-standalone.jar @"{{ test_machine_name }}":${TARGET_PATH}
+$SSH -u www ln -sf ${TARGET_PATH} ${TARGET_DIR}/current.jar
+$SSH -u www nohup "java -jar ${TARGET_DIR}/current.jar &"
