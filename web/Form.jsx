@@ -1,19 +1,18 @@
 import React from 'react'
 import FormElement from './FormElement.jsx'
 import LocalizedString from './LocalizedString.jsx'
+import _ from 'lodash'
 
 import {GET, POST, DELETE} from './request'
 
 export default class Form extends React.Component {
 
-  constructor(props) {
-    super(props)
-  }
-
   render() {
     var name = this.props.form.content.name
     var fields = this.props.form.content.fields
     var lang = this.props.lang
+    var model = this.props.model
+    var values = this.props.values
 
     return (
       <section>
@@ -21,7 +20,8 @@ export default class Form extends React.Component {
         <form method="POST" action="/api/form_submission/1">
           {
             fields.map(function(field) {
-              return <FormElement lang={lang} key={field.id} field={field} />
+              var value = _.get(values, field.id, "")
+              return <FormElement model={model} lang={lang} key={field.id} value={value} field={field} />
             })
           }
           <input type="submit"/>

@@ -2,16 +2,32 @@ import React from 'react'
 import LocalizedString from './LocalizedString.jsx'
 
 class BasicTextField extends React.Component {
+
+  handleChange(event) {
+    this.props.model.setFieldValue(this.props.id, event.target.value)
+  }
+
   render() {
     var field = this.props.field
-    return (<input id={field.id} type="text" name={field.id}></input>)
+    var value = this.props.value
+    return (<input id={field.id} type="text" name={field.id} model={this.props.model} value={value} onChange={this.handleChange} />)
   }
 }
 
 class BasicTextArea extends React.Component {
+
+  constructor(props) {
+    super(props)
+  }
+
+  handleChange(event) {
+    this.props.model.setFieldValue(this.props.id, event.target.value)
+  }
+
   render() {
     var field = this.props.field
-    return (<textarea id={field.id} rows="4" cols="50" name={field.id} />)
+    var value = this.props.value
+    return (<textarea id={field.id} rows="4" cols="50" name={field.id} model={this.props.model} value={value} onChange={this.handleChange} />)
   }
 }
 

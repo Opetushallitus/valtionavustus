@@ -9,7 +9,6 @@ const dispatcher = new Dispatcher()
 export default class FormModel {
 
   init() {
-
     const langP = Bacon.repeatedly(15000, ['sv', 'fi']).merge(Bacon.once('fi'))
 
     const formP = Bacon.fromCallback(GET, "/api/form/1")
@@ -32,12 +31,13 @@ export default class FormModel {
       return data
     }
 
-    function updateField(values, update) {
-      return values[update.id] = update.value
+    function updateField(state, fieldUpdate) {
+      state.values[fieldUpdate.id] = fieldUpdate.value
+      return state
     }
 
     function setInitialData(data) {
-        dispatcher.push('initialData', data)
+      dispatcher.push('initialData', data)
     }
   }
 
