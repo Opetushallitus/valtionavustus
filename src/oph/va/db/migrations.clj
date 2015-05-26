@@ -4,5 +4,5 @@
             [oph.va.db :as db]))
 (defn migrate []
   (let [flyway (doto (Flyway.)
-                 (.setDataSource db/datasource))]
+                 (.setDataSource @db/datasource))]
     (.migrate flyway)))
