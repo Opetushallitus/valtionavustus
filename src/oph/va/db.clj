@@ -27,7 +27,7 @@
 
 (defn execute-list-forms []
   (jdbc/with-db-transaction [connection {:datasource @datasource}]
-    (list-forms {:connection connection})))
+    (list-forms {} {:connection connection})))
 
 (defn execute-submit-form [form, answers]
   (jdbc/with-db-transaction [connection {:datasource @datasource}]
