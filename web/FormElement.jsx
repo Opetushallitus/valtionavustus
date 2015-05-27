@@ -31,7 +31,7 @@ class BasicTextField extends BasicFieldComponent {
   }
 }
 
-class BasicTextArea extends BasicFieldComponent{
+class BasicTextArea extends BasicFieldComponent {
   render() {
     var field = this.props.field
     return (<textarea
@@ -47,13 +47,35 @@ class BasicTextArea extends BasicFieldComponent{
   }
 }
 
+class Dropdown extends BasicFieldComponent {
+  render() {
+    var field = this.props.field
+    var options = [];
+    if(field.options) {
+      for (var i=0; i < field.options.length; i++) {
+        var label = field.options[i].label ? <LocalizedString data={field.options[i].label} lang={this.props.lang} /> : field.options[i].value
+        if(field.options[i].value === this.props.value) {
+          options.push(<option value={field.options[i].value} selected>{label}</option>)
+        }
+        else {
+          options.push(<option value={field.options[i].value}>{label}</option>)
+        }
+      }
+    }
+    return (<select id={field.id} name={field.id} model={this.props.model} onChange={this.handleChange}>
+              {options}
+            </select>)
+  }
+}
+
 export default class FormElement extends React.Component {
 
   constructor(props) {
     super(props)
     this.fieldTypeMapping = {
       "textField": BasicTextField,
-      "textArea": BasicTextArea
+      "textArea": BasicTextArea,
+      "dropdown": Dropdown
     }
   }
 

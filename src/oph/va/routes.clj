@@ -10,11 +10,16 @@
 (s/defschema LocalizedString {:fi s/Str
                               :sv s/Str})
 
+(s/defschema Option {:value s/Str
+                     (s/optional-key :label) LocalizedString})
+
 (s/defschema FormField {:id s/Str
                         :label LocalizedString
                         (s/optional-key :params) s/Any
+                        (s/optional-key :options) [Option]
                         :displayAs (s/enum :textField
-                                           :textArea)})
+                                           :textArea
+                                           :dropdown)})
 
 (s/defschema FormContent {:name LocalizedString
                           :fields [FormField]})
