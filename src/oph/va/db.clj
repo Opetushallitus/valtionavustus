@@ -26,18 +26,24 @@
 (defquery submit-form<! "sql/submit-form.sql")
 (defquery get-form-submission "sql/get-form-submission.sql")
 
+(defmacro exec [query params]
+  `(jdbc/with-db-transaction [connection# {:datasource @datasource}]
+     (~query ~params {:connection connection#})))
+
 (defn execute-list-forms []
-  (jdbc/with-db-transaction [connection {:datasource @datasource}]
-    (list-forms {} {:connection connection})))
+  (->> {}
+       (exec list-forms)))
 
 (defn execute-get-form [id]
-  (jdbc/with-db-transaction [connection {:datasource @datasource}]
-    (first(get-form {:id id} {:connection connection}))))
+  (->> (exec get-form {:id id})
+       first))
 
 (defn execute-submit-form [form, answers]
-  (jdbc/with-db-transaction [connection {:datasource @datasource}]
-    (:id (submit-form<! {:form form :answers answers} {:connection connection}))))
+  (->> {:form form :answers answers}
+       (exec submit-form<!)
+       :id))
 
 (defn execute-get-form-submission [id]
-  (jdbc/with-db-transaction [connection {:datasource @datasource}]
-    (first(get-form-submission {:id id} {:connection connection}))))
+  (->> {:id id}
+       (exec get-form-submission)
+       first))
