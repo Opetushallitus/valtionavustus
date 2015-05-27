@@ -28,9 +28,9 @@
 - name: Start valtionavustus server
   sudo: yes
   sudo_user: www
-  shell: nohup ./lein with-profile {{ app_profile }} run >> {{ logical_volumes.logs.mount_point }}/valtionavustus/lein_run.log 2>&1 &
-  args:
-      chdir: /www/valtionavustus
+  shell: cd /www/valtionavustus; nohup ./lein with-profile {{ app_profile }} run >> {{ logical_volumes.logs.mount_point }}/valtionavustus/lein_run.log 2>&1 &
+  async: 5
+  poll: 0
 
 - name: Wait server to start
   wait_for: port=8081 delay=1 timeout=60
