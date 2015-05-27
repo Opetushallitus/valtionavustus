@@ -25,5 +25,8 @@
   args:
       chdir: /www/valtionavustus
 
+- name: Add script to stop the application
+  template: src=stop_app.bash.j2 dest=/usr/local/bin/stop_app.bash owner=root group=root mode=0755
+
 - name: Add script to run the application
   template: src=run_app.bash.j2 dest=/usr/local/bin/run_app.bash owner=root group=root mode=0755

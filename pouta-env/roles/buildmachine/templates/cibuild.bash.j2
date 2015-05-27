@@ -16,4 +16,5 @@ TARGET_DIR=/var/www
 TARGET_PATH=${TARGET_DIR}/va-`date +'%Y%m%d%H%M%S'`
 scp -r target/uberjar/oph-valtionavustus-*-standalone.jar www@"{{ test_machine_name }}":${TARGET_PATH}
 $SSH -l www ln -sf ${TARGET_PATH} ${TARGET_DIR}/current.jar
+$SSH -l www "/usr/local/bin/stop_app.bash"
 $SSH -l www "/usr/local/bin/run_app.bash ${TARGET_DIR}/current.jar"
