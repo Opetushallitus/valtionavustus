@@ -23,7 +23,8 @@ export default class FormModel {
 
     const formFieldValuesP = Bacon.update({},
                                           [dispatcher.stream('data')], onData,
-                                          [dispatcher.stream('updateField')], onUpdateField)
+                                          [dispatcher.stream('updateField')], onUpdateField,
+                                          [dispatcher.stream('save')], onSave)
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
 
@@ -36,6 +37,14 @@ export default class FormModel {
       return state
     }
 
+    function onSave(state) {
+      var url = "/api/form_submission/1"
+      POST(url,
+           () => { console.log("State saved") },
+           (error) => console.error('POST', url, error),
+           JSON.stringify(state.values))
+    }
+
     function setData(data) {
       dispatcher.push('data', data)
     }
@@ -44,5 +53,9 @@ export default class FormModel {
   // Public API
   setFieldValue(id, value) {
     dispatcher.push('updateField', {id: id, value: value})
+  }
+
+  save() {
+    dispatcher.push('save')
   }
 }
