@@ -12,6 +12,7 @@
 
 (s/defschema FormField {:id s/Str
                         :label LocalizedString
+                        (s/optional-key :params) s/Any
                         :displayAs (s/enum :textField
                                            :textArea)})
 

@@ -1,29 +1,49 @@
 import React from 'react'
 import LocalizedString from './LocalizedString.jsx'
 
-class BasicTextField extends React.Component {
+class BasicFieldComponent extends React.Component {
 
   handleChange(event) {
     this.props.model.setFieldValue(this.props.id, event.target.value)
   }
 
+  param(param, defaultValue) {
+    if(!this.props.field.params) return defaultValue
+    if(this.props.field.params[param] !== undefined) return this.props.field.params[param]
+    return defaultValue
+  }
+
+}
+
+class BasicTextField extends BasicFieldComponent {
   render() {
     var field = this.props.field
-    var value = this.props.value
-    return (<input id={field.id} type="text" name={field.id} model={this.props.model} value={value} onChange={this.handleChange} />)
+    return (<input
+              type="text"
+              id={field.id}
+              name={field.id}
+              size={this.param("size", this.param("maxlength", 80))}
+              maxLength={this.param("maxlength", 80)}
+              model={this.props.model}
+              value={this.props.value}
+              onChange={this.handleChange}
+            />)
   }
 }
 
-class BasicTextArea extends React.Component {
-
-  handleChange(event) {
-    this.props.model.setFieldValue(this.props.id, event.target.value)
-  }
-
+class BasicTextArea extends BasicFieldComponent{
   render() {
     var field = this.props.field
-    var value = this.props.value
-    return (<textarea id={field.id} rows="4" cols="50" name={field.id} model={this.props.model} value={value} onChange={this.handleChange} />)
+    return (<textarea
+              id={field.id}
+              name={field.id}
+              rows={this.param("rows", 10)}
+              cols={this.param("cols", 120)}
+              maxLength={this.param("maxlength", 2000)}
+              model={this.props.model}
+              value={this.props.value}
+              onChange={this.handleChange}
+            />)
   }
 }
 
