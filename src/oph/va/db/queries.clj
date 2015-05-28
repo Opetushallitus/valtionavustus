@@ -3,5 +3,6 @@
 
 (defquery list-forms "sql/list-forms.sql")
 (defquery get-form "sql/get-form.sql")
-(defquery submit-form! "sql/submit-form.sql")
+(defquery create-submission<! "sql/create-submission.sql")
+(defquery update-submission! "sql/update-submission.sql")
 (defquery get-form-submission "sql/get-form-submission.sql")

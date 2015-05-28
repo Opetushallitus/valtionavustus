@@ -33,12 +33,19 @@
   (->> (exec queries/get-form {:id id})
        first))
 
-(defn submit-form! [form answers]
-  (->> {:form form :answers answers}
-       (exec queries/submit-form!)
+(defn update-submission! [form-id submission-id answers]
+  (->> {:form_id (Long. form-id) :submission_id (Long. submission-id) :answers answers}
+       (exec queries/update-submission!)
        :id))
 
-(defn get-form-submission [id]
-  (->> {:id id}
+(defn create-submission! [form-id answers]
+  (->> {:form_id form-id
+        :answers answers}
+       (exec queries/create-submission<!)
+       :id))
+
+(defn get-form-submission [form-id submission-id]
+  (->> {:form_id (Long. form-id)
+        :submission_id (Long. submission-id)}
        (exec queries/get-form-submission)
        first))

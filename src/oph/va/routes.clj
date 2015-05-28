@@ -1,4 +1,5 @@
 (ns oph.va.routes
+  (:use [clojure.tools.trace :only [trace]])
   (:require [compojure.route :as route]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
@@ -49,24 +50,25 @@
   (GET* "/form/:form-id/values/:values-id" [form-id values-id]
         :return  s/Any
         :summary "Get current answers"
-        (let [submission (db/get-form-submission (Long. form-id))]
+        (let [submission (db/get-form-submission form-id values-id)]
           (if submission
             (ok (:answers submission))
             (ok empty-answers))))
 
   (PUT* "/form/:form-id/values" [form-id :as request]
-         :return  Long
-         :summary "Create initial form answers"
-         (let [submission (db/submit-form! (Long. form-id) (:params request))]
+        :return  s/Any
+        :body    [answers (describe s/Any "New answers")]
+        :summary "Create initial form answers"
+         (let [submission (db/create-submission! form-id answers)]
            (if submission
              (ok (:answers submission))
              (ok empty-answers))))
 
   (POST* "/form/:form-id/values/:values-id" [form-id values-id :as request]
          :return  s/Any
+         :body    [answers (describe s/Any "New answers")]
          :summary "Update form values"
-         (ok (db/submit-form! (Long. form-id)
-                              (:params request)))))
+         (ok (db/update-submission! form-id values-id answers))))
 
 (defroutes* doc-routes
   "API documentation browser"
