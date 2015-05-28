@@ -33,3 +33,9 @@
 
 - name: Add script to run the application
   template: src=run_app.bash.j2 dest=/usr/local/bin/run_app.bash owner=root group=root mode=0755
+
+- name: Allow va-deploy to stop the application
+  lineinfile: 'dest=/etc/sudoers line="va-deploy ALL=(ALL) NOPASSWD: /usr/local/bin/stop_app.bash" validate="visudo -cf %s"'
+
+- name: Allow va-deploy to start the application
+  lineinfile: 'dest=/etc/sudoers line="va-deploy ALL=(ALL) NOPASSWD: /usr/local/bin/run_app.bash" validate="visudo -cf %s"'

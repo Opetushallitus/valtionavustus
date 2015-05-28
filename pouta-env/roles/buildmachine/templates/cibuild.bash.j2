@@ -18,5 +18,8 @@ TARGET_DIR=/var/www
 TARGET_PATH=${TARGET_DIR}/va-`date +'%Y%m%d%H%M%S'`
 scp -p -i ${SSH_KEY} target/uberjar/oph-valtionavustus-*-standalone.jar ${SSH_USER}@"{{ test_machine_name }}":${TARGET_PATH}
 $SSH ln -sf ${TARGET_PATH} ${TARGET_DIR}/current.jar
-$SSH "/usr/local/bin/stop_app.bash"
-$SSH "/usr/local/bin/run_app.bash ${TARGET_DIR}/current.jar"
+echo "Stopping application..."
+$SSH "sudo /usr/local/bin/stop_app.bash"
+echo "Starting application..."
+$SSH "sudo /usr/local/bin/run_app.bash ${TARGET_DIR}/current.jar"
+echo "...start done!"

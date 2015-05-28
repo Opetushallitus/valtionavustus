@@ -10,6 +10,6 @@ pid_file=/var/tmp/va.pid
 daemon=/usr/bin/java
 daemon_args="-jar $1"
 
-CONFIG=/www/valtionavustus/config/test.edn  start-stop-daemon --start  \
+CONFIG=/www/valtionavustus/config/test.edn  start-stop-daemon --start --chuid=www  \
   --make-pidfile --pidfile $pid_file --background                      \
   --startas /bin/bash -- -c "exec $daemon $daemon_args > ${stdout_stderr_file} 2>&1"
