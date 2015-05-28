@@ -2,7 +2,7 @@
   (:use [oph.va.config :only [config]])
   (:require [clojure.java.jdbc :as jdbc]
             [hikari-cp.core :refer :all]
-            [yesql.core :refer [defquery]]
+            [oph.va.db.queries :as queries]
             [oph.va.jdbc.jsonb]))
 
 (def datasource-spec
@@ -21,29 +21,24 @@
 
 (def datasource (delay (make-datasource datasource-spec)))
 
-(defquery list-forms "sql/list-forms.sql")
-(defquery get-form "sql/get-form.sql")
-(defquery submit-form<! "sql/submit-form.sql")
-(defquery get-form-submission "sql/get-form-submission.sql")
-
 (defmacro exec [query params]
   `(jdbc/with-db-transaction [connection# {:datasource @datasource}]
      (~query ~params {:connection connection#})))
 
-(defn execute-list-forms []
+(defn list-forms []
   (->> {}
-       (exec list-forms)))
+       (exec queries/list-forms)))
 
-(defn execute-get-form [id]
-  (->> (exec get-form {:id id})
+(defn get-form [id]
+  (->> (exec queries/get-form {:id id})
        first))
 
-(defn execute-submit-form [form, answers]
+(defn submit-form [form, answers]
   (->> {:form form :answers answers}
-       (exec submit-form<!)
+       (exec queries/submit-form!)
        :id))
 
-(defn execute-get-form-submission [id]
+(defn get-form-submission [id]
   (->> {:id id}
-       (exec get-form-submission)
+       (exec queries/get-form-submission)
        first))

@@ -41,19 +41,32 @@
 
   (GET* "/form/:id" [id]
         :return Form
-        (let [form (db/execute-get-form (Long. id))]
-          (if form (ok form) (not-found id))))
+        (let [form (db/get-form (Long. id))]
+          (if form
+            (ok form)
+            (not-found id))))
 
-  (GET* "/form_submission/:id" [id]
+  (GET* "/form/:form-id/values/:values-id" [form-id values-id]
         :return  s/Any
         :summary "Get current answers"
-        (let [submission (db/execute-get-form-submission (Long. id))]
-          (if submission (ok (:answers submission)) (ok empty-answers))))
+        (let [submission (db/get-form-submission (Long. form-id))]
+          (if submission
+            (ok (:answers submission))
+            (ok empty-answers))))
 
-  (POST* "/form_submission/:form_id" [form_id :as request]
+  (PUT* "/form/:id/values" [id :as request]
          :return  Long
-         :summary "Submit form answers"
-         (ok (db/execute-submit-form (Long. form_id) (:params request)))))
+         :summary "Create initial form answers"
+         (let [submission (db/submit-form! (Long. form_id) (:params request))]
+           (if submission
+             (ok (:answers submission))
+             (ok empty-answers))))
+
+  (POST* "/form/:form-id/values/:values-id" [form-id values-id :as request]
+         :return  Long
+         :summary "Update form values"
+         (ok (db/submit-form! (Long. form-id)
+                              (:params request)))))
 
 (defroutes* doc-routes
   "API documentation browser"
