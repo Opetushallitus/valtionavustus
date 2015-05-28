@@ -63,7 +63,7 @@
              (ok empty-answers))))
 
   (POST* "/form/:form-id/values/:values-id" [form-id values-id :as request]
-         :return  Long
+         :return  s/Any
          :summary "Update form values"
          (ok (db/submit-form! (Long. form-id)
                               (:params request)))))
