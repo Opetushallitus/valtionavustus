@@ -19,7 +19,7 @@
           :adapter "postgresql"}
          (:db config)))
 
-(def datasource (future (make-datasource datasource-spec)))
+(def datasource (delay (make-datasource datasource-spec)))
 
 (defquery list-forms "sql/list-forms.sql")
 (defquery get-form "sql/get-form.sql")
