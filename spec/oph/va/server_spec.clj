@@ -18,28 +18,9 @@
                 (try (_) (finally (stop-server)))))
 
   (it "GET should return valid JSON from route /api/form"
-      (let [{:keys [status headers body error] :as resp} (get! "/api/form")]
+      (let [{:keys [status headers body error] :as resp} (get! "/api/form")
+            json (json->map body)]
         (should= 200 status)
-        (should= {:fields [{:displayAs "textField"
-                            :description {:sv "Den sökandes namn"
-                                          :fi "Hakijan nimi"}
-                            :label {:sv "Namn"
-                                    :fi "Nimi"}
-                            :id "nimi"}
-                           {:displayAs "textField"
-                            :description {:sv "Den sökandes gatuaddress"
-                                          :fi "Hakijan katuosoite"}
-                            :label {:sv "Gatuaddress"
-                                    :fi "Katuosoite"}
-                            :id "osoite"}
-                           {:displayAs "textArea"
-                            :description {:sv ""
-                                          :fi ""}
-                            :label {:sv "Beskrivning"
-                                    :fi "Kuvaus"}
-                            :id "kuvaus"}]
-                  :name {:sv "Testform"
-                         :fi "Testilomake"}}
-                 (json->map body)))))
+        (should= "Laatustrategian toimeenpanon tuki" (-> json first :content :name :fi)))))
 
 (run-specs)
