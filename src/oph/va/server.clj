@@ -3,8 +3,9 @@
         [oph.va.routes :only [all-routes]])
   (:require [ring.middleware.reload :as reload]
             [compojure.handler :refer [site]]
-            [oph.va.config :refer [config]])
-  (:gen-class))
+            [oph.va.config :refer [config]]
+            [oph.va.db.migrations :as dbmigrations])
+  (:gen-class)
   (:import (java.net Socket)
            (java.io IOException)))
 
@@ -25,5 +26,7 @@
         port (:port config)
         host (:host config)]
     (fail-if-server-running host port)
+    (println "Running db migrations")
+    (dbmigrations/migrate)
     (println (format "Starting server in URL http://%s:%d/" host port))
     (start-server host port auto-reload?)))

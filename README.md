@@ -25,7 +25,7 @@ Luo ```va-dev``` tietokanta
 
     createdb -E UTF-8 va-dev
 
-Luo skeema ja lataa initial data
+Luo skeema ja lataa initial data (myös serverin start ajaa automaattisesti migraatiot)
 
     ./lein dbmigrate
 
