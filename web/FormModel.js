@@ -55,7 +55,8 @@ export default class FormModel {
     dispatcher.push('updateField', {id: id, value: value})
   }
 
-  save() {
+  save(event) {
+    event.preventDefault()
     dispatcher.push('save')
   }
 }

@@ -14,6 +14,7 @@
                      (s/optional-key :label) LocalizedString})
 
 (s/defschema FormField {:id s/Str
+                        :required s/Bool
                         :label LocalizedString
                         (s/optional-key :params) s/Any
                         (s/optional-key :options) [Option]

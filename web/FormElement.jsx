@@ -22,6 +22,7 @@ class BasicTextField extends BasicFieldComponent {
               type="text"
               id={field.id}
               name={field.id}
+              required={field.required}
               size={this.param("size", this.param("maxlength", 80))}
               maxLength={this.param("maxlength", 80)}
               model={this.props.model}
@@ -37,6 +38,7 @@ class BasicTextArea extends BasicFieldComponent {
     return (<textarea
               id={field.id}
               name={field.id}
+              required={field.required}
               rows={this.param("rows", 10)}
               cols={this.param("cols", 120)}
               maxLength={this.param("maxlength", 2000)}
@@ -58,7 +60,7 @@ class Dropdown extends BasicFieldComponent {
                      </option>)
       }
     }
-    return (<select id={field.id} name={field.id} model={this.props.model} onChange={this.handleChange} value={this.props.value}>
+    return (<select id={field.id} name={field.id} required={field.required} model={this.props.model} onChange={this.handleChange} value={this.props.value}>
               {options}
             </select>)
   }
@@ -72,7 +74,7 @@ class RadioButton extends BasicFieldComponent {
     if(field.options) {
       for (var i=0; i < field.options.length; i++) {
         var label = field.options[i].label ? <LocalizedString key={field.id + "." + field.options[i].value + ".label"} data={field.options[i].label} lang={this.props.lang} /> : field.options[i].value
-        radiobuttons.push(<input {...this.props} type="radio" key={field.id + "." + field.options[i].value} name={field.id} value={field.options[i].value} onChange={this.handleChange} checked={field.options[i].value === this.props.value ? true: null}/>)
+        radiobuttons.push(<input {...this.props} type="radio" key={field.id + "." + field.options[i].value} name={field.id} required={field.required} value={field.options[i].value} onChange={this.handleChange} checked={field.options[i].value === this.props.value ? true: null}/>)
         radiobuttons.push(label)
       }
     }
