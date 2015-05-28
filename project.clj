@@ -38,6 +38,7 @@
 
                  ;; Utils
                  [org.clojure/tools.trace "0.7.8"]
+                 [org.clojure/tools.logging "0.3.1"]
                  [org.slf4j/slf4j-log4j12 "1.7.12"]]
 
   :main ^:skip-aot oph.va.server

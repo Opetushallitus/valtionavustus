@@ -3,6 +3,7 @@
         [oph.va.routes :only [all-routes]])
   (:require [ring.middleware.reload :as reload]
             [compojure.handler :refer [site]]
+            [clojure.tools.logging :as log]
             [oph.va.config :refer [config]]
             [oph.va.db.migrations :as dbmigrations])
   (:gen-class)
@@ -26,7 +27,7 @@
         port (:port config)
         host (:host config)]
     (fail-if-server-running host port)
-    (println "Running db migrations")
+    (log/info "Running db migrations")
     (dbmigrations/migrate)
-    (println (format "Starting server in URL http://%s:%d/" host port))
+    (log/info (format "Starting server in URL http://%s:%d/" host port))
     (start-server host port auto-reload?)))
