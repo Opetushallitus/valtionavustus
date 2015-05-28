@@ -4,7 +4,7 @@ import LocalizedString from './LocalizedString.jsx'
 class BasicFieldComponent extends React.Component {
 
   handleChange(event) {
-    this.props.model.setFieldValue(this.props.id, event.target.value)
+    this.props.model.setFieldValue(this.props.name, event.target.value)
   }
 
   param(param, defaultValue) {
@@ -53,18 +53,30 @@ class Dropdown extends BasicFieldComponent {
     var options = [];
     if(field.options) {
       for (var i=0; i < field.options.length; i++) {
-        var label = field.options[i].label ? <LocalizedString data={field.options[i].label} lang={this.props.lang} /> : field.options[i].value
-        if(field.options[i].value === this.props.value) {
-          options.push(<option value={field.options[i].value} selected>{label}</option>)
-        }
-        else {
-          options.push(<option value={field.options[i].value}>{label}</option>)
-        }
+        options.push(<option key={field.id + "." + field.options[i].value} value={field.options[i].value}>
+                      {field.options[i].label ? field.options[i].label[this.props.lang] : field.options[i].value}
+                     </option>)
       }
     }
-    return (<select id={field.id} name={field.id} model={this.props.model} onChange={this.handleChange}>
+    return (<select id={field.id} name={field.id} model={this.props.model} onChange={this.handleChange} value={this.props.value}>
               {options}
             </select>)
+  }
+}
+
+class RadioButton extends BasicFieldComponent {
+  render() {
+    var field = this.props.field
+    var radiobuttons = [];
+
+    if(field.options) {
+      for (var i=0; i < field.options.length; i++) {
+        var label = field.options[i].label ? <LocalizedString key={field.id + "." + field.options[i].value + ".label"} data={field.options[i].label} lang={this.props.lang} /> : field.options[i].value
+        radiobuttons.push(<input {...this.props} type="radio" key={field.id + "." + field.options[i].value} name={field.id} value={field.options[i].value} onChange={this.handleChange} checked={field.options[i].value === this.props.value ? true: null}/>)
+        radiobuttons.push(label)
+      }
+    }
+    return (<div>{radiobuttons}</div>)
   }
 }
 
@@ -75,7 +87,8 @@ export default class FormElement extends React.Component {
     this.fieldTypeMapping = {
       "textField": BasicTextField,
       "textArea": BasicTextArea,
-      "dropdown": Dropdown
+      "dropdown": Dropdown,
+      "radioButton": RadioButton
     }
   }
 

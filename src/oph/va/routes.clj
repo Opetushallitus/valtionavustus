@@ -19,7 +19,8 @@
                         (s/optional-key :options) [Option]
                         :displayAs (s/enum :textField
                                            :textArea
-                                           :dropdown)})
+                                           :dropdown
+                                           :radioButton)})
 
 (s/defschema FormContent {:name LocalizedString
                           :fields [FormField]})

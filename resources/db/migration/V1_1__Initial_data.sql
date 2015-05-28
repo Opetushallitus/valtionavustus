@@ -3,7 +3,7 @@ insert into forms (content) VALUES ('{
 "name":{"fi":"Laatustrategian toimeenpanon tuki","sv":"Stöd för genomförande av kvalitetsstrategin"},
 "fields":[
   {"id":"nimi","displayAs":"textField","label":{"fi":"Hankkeen nimi","sv":"Projektets namn"}},
-  {"id":"uusi","displayAs":"dropdown","label":{"fi":"Uusi/jatkava hanke","sv":"Nytt/fortsatt projekt"},"options":[
+  {"id":"uusi","displayAs":"radioButton","label":{"fi":"Uusi/jatkava hanke","sv":"Nytt/fortsatt projekt"},"options":[
     {"value":"uusi","label":{"fi":"Uusi hanke","sv":"Nytt projekt"}},
     {"value":"jatkava","label":{"fi":"Jatkava hanke","sv":"Fortsatt projekt"}}
   ]},
