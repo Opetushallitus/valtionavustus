@@ -11,6 +11,7 @@
   roles:
   - buildmachine
   - 3rdparty/Stouts.jenkins
+  - valtionavustus.deploy
   - 3rdparty/debops.pki
   - 3rdparty/debops.nginx
   - java8

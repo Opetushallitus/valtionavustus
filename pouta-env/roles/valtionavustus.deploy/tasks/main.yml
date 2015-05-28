@@ -1,0 +1,10 @@
+- name: Generate new SSH key for "{{ jenkins_user }}" user for application deploys
+  user: name="{{ jenkins_user }}" generate_ssh_key=yes ssh_key_file=.ssh/id_deploy
+
+- name: Fetch ~"{{ jenkins_user }}".ssh/id_deploy.pub for adding it to app server machine
+  fetch: src=~{{ jenkins_user }}/.ssh/id_deploy.pub dest=/tmp/{{ ansible_hostname }}-{{ jenkins_user }}.pub flat=yes fail_on_missing=yes
+
+- name: Add new jenkins public SSH key to deployer account on app server machine
+  authorized_key: user="va-deploy"
+                  key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
+  delegate_to: va-test

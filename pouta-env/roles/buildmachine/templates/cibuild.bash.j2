@@ -11,10 +11,12 @@ echo "Building uber jar"
 time ./lein uberjar
 
 echo "Transfering to test server {{ test_machine_name }}"
-SSH="ssh {{ test_machine_name }}"
+SSH_KEY=~/.ssh/id_deploy
+SSH_USER=va-deploy
+SSH="ssh -i $SSH_KEY va-deploy@{{ test_machine_name }}"
 TARGET_DIR=/var/www
 TARGET_PATH=${TARGET_DIR}/va-`date +'%Y%m%d%H%M%S'`
-scp -r target/uberjar/oph-valtionavustus-*-standalone.jar www@"{{ test_machine_name }}":${TARGET_PATH}
-$SSH -l www ln -sf ${TARGET_PATH} ${TARGET_DIR}/current.jar
-$SSH -l www "/usr/local/bin/stop_app.bash"
-$SSH -l www "/usr/local/bin/run_app.bash ${TARGET_DIR}/current.jar"
+scp -p -i ${SSH_KEY} target/uberjar/oph-valtionavustus-*-standalone.jar ${SSH_USER}@"{{ test_machine_name }}":${TARGET_PATH}
+$SSH ln -sf ${TARGET_PATH} ${TARGET_DIR}/current.jar
+$SSH "/usr/local/bin/stop_app.bash"
+$SSH "/usr/local/bin/run_app.bash ${TARGET_DIR}/current.jar"
