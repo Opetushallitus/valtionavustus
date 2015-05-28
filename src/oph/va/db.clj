@@ -33,7 +33,7 @@
   (->> (exec queries/get-form {:id id})
        first))
 
-(defn submit-form [form, answers]
+(defn submit-form! [form answers]
   (->> {:form form :answers answers}
        (exec queries/submit-form!)
        :id))

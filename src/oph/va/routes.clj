@@ -37,7 +37,7 @@
 
   (GET* "/form" []
         :return [Form]
-        (ok (db/execute-list-forms)))
+        (ok (db/list-forms)))
 
   (GET* "/form/:id" [id]
         :return Form
@@ -54,10 +54,10 @@
             (ok (:answers submission))
             (ok empty-answers))))
 
-  (PUT* "/form/:id/values" [id :as request]
+  (PUT* "/form/:form-id/values" [form-id :as request]
          :return  Long
          :summary "Create initial form answers"
-         (let [submission (db/submit-form! (Long. form_id) (:params request))]
+         (let [submission (db/submit-form! (Long. form-id) (:params request))]
            (if submission
              (ok (:answers submission))
              (ok empty-answers))))
