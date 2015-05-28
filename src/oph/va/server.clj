@@ -5,6 +5,14 @@
             [compojure.handler :refer [site]]
             [oph.va.config :refer [config]])
   (:gen-class))
+  (:import (java.net Socket)
+           (java.io IOException)))
+
+(defn fail-if-server-running [host port]
+  (try
+    (let [socket (Socket. host port)]
+      (do (.close socket) (throw (Exception. (format "Server is allready running %s:%d" host port)))))
+    (catch IOException e)))
 
 (defn start-server [host port auto-reload?]
   (let [handler (if auto-reload?
@@ -16,5 +24,6 @@
   (let [auto-reload? (:auto-reload? config)
         port (:port config)
         host (:host config)]
+    (fail-if-server-running host port)
     (println (format "Starting server in URL http://%s:%d/" host port))
     (start-server host port auto-reload?)))
