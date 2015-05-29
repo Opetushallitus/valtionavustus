@@ -11,14 +11,8 @@ export default class FormModel {
   init() {
     const langP = Bacon.repeatedly(15000, ['sv', 'fi']).merge(Bacon.once('fi'))
 
-<<<<<<< HEAD
     const formP = Bacon.fromPromise(qwest.get("/api/form/1"))
-    const formValuesP = Bacon.fromPromise(qwest.get("/api/form_submission/1"))
-=======
-    const formP = Bacon.fromCallback(GET, "/api/form/1")
-    const formValuesP = Bacon.fromCallback(GET, "/api/form/1/values/1")
->>>>>>> Fix paths
-
+    const formValuesP = Bacon.fromPromise(qwest.get("/api/form/1/values/1"))
 
     const requests = Bacon.combineTemplate({
       form: formP,
