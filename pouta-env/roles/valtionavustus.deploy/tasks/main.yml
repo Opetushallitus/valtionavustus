@@ -1,3 +1,7 @@
+- name: Kludge to force the Jenkins job installation. For some reason it does not get triggered properly.
+  command: "{{jenkins_home}}/jobs/job.sh {{item.name}}"
+  with_items: jenkins_jobs
+
 - name: Generate new SSH key for "{{ jenkins_user }}" user for application deploys
   user: name="{{ jenkins_user }}" generate_ssh_key=yes ssh_key_file=.ssh/id_deploy
 
