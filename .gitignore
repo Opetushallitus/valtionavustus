@@ -7,7 +7,8 @@ node_modules
 npm-cache
 **/.*.swp
 **/.DS_Store
+secret
 
 # Generated files
 resources/public/js/
-pouta-venv
+
