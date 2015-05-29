@@ -20,14 +20,14 @@
   (let [handler (if auto-reload?
                   (reload/wrap-reload (site #'all-routes))
                   (site all-routes))]
+    (fail-if-server-running host port)
+    (log/info "Running db migrations")
+    (dbmigrations/migrate)
+    (log/info (format "Starting server in URL http://%s:%d/" host port))
     (run-server handler {:host host :port port})))
 
 (defn -main [& args]
   (let [auto-reload? (:auto-reload? config)
         port (:port config)
         host (:host config)]
-    (fail-if-server-running host port)
-    (log/info "Running db migrations")
-    (dbmigrations/migrate)
-    (log/info (format "Starting server in URL http://%s:%d/" host port))
     (start-server host port auto-reload?)))
