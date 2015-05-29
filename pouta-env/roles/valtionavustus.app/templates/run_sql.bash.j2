@@ -5,6 +5,6 @@ if [ -z $1 ]; then
   exit 2
 fi
 
-echo "\tExecuting $1 as {{ dbuser }} to db {{ dbname }} ..."
+echo "    Executing $1 as {{ dbuser }} to db {{ dbname }} ..."
 time PGPASSWORD={{ dbpassword }} /usr/bin/psql -U {{ dbuser }} -h localhost -d {{ dbname }} -f $1
-echo "\t...SQL execution done."
+echo "    ...SQL execution done."
