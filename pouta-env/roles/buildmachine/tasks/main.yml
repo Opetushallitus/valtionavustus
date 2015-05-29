@@ -1,6 +1,3 @@
-- name: Hello world
-  shell: "echo \"I am `whoami` at `hostname`!\""
-
 - name: Install apache2-utils to get httpaswd
   apt: state=installed pkg=apache2-utils
 
