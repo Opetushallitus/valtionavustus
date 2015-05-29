@@ -37,6 +37,7 @@ jenkins_jobs:
      branch: origin/master
      chucknorris: true
      command: /usr/local/bin/cibuild.bash
+     poll:  "* * * * *"
 
 
 # System config
