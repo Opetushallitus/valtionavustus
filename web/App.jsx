@@ -1,5 +1,5 @@
+import PolyfillBind from './polyfill-bind'
 import React from 'react'
-import Phantom from './phantom'
 
 import Form from './Form.jsx'
 import FormModel from './FormModel'
