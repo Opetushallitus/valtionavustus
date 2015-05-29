@@ -30,4 +30,7 @@ $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/resources/ddl/
 APP_COMMAND="sudo /usr/local/bin/run_app.bash ${CURRENT_DIR}/va.jar ${CURRENT_DIR}/config/test.edn"
 echo "...starting application with command \"${APP_COMMAND}\" ..."
 $SSH "${APP_COMMAND}"
+HEALTH_CHECK_COMMAND="/usr/local/bin/health_check.bash"
+echo "...checking that it really comes up, with $HEALTH_CHECK_COMMAND ..."
+$HEALTH_CHECK_COMMAND
 echo "...start done!"
