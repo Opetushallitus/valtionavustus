@@ -25,6 +25,11 @@
   `(jdbc/with-db-transaction [connection# {:datasource @datasource}]
      (~query ~params {:connection connection#})))
 
+(defn clear-db! []
+  (if (:allow-db-clear? config)
+    (exec queries/clear-db! {})
+    (throw (RuntimeException. "Clearing database is not allowed! check that you run with correct mode"))))
+
 (defn list-forms []
   (->> {}
        (exec queries/list-forms)))
