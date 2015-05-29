@@ -20,6 +20,8 @@ scp -p -i ${SSH_KEY} target/uberjar/oph-valtionavustus-*-standalone.jar ${SSH_US
 $SSH ln -sf ${TARGET_PATH} ${TARGET_DIR}/current.jar
 echo "Stopping application..."
 $SSH "sudo /usr/local/bin/stop_app.bash"
-echo "Starting application..."
+echo "...dropping db.."
+$SSH "sudo -u postgres /usr/local/bin/run_sql.bash /www/valtionavustus/resources/ddl/drop.sql"
+echo "...starting application..."
 $SSH "sudo /usr/local/bin/run_app.bash ${TARGET_DIR}/current.jar"
 echo "...start done!"

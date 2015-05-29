@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+  echo "Usage: $0 <SQL file to run>"
+  exit 2
+fi
+
+echo "\tExecuting $1 as {{ dbuser }} to db {{ dbname }} ..."
+time PGPASSWORD={{ dbpassword }} /usr/bin/psql -U {{ dbuser }} -h localhost -d {{ dbname }} -f $1
+echo "\t...SQL execution done."
