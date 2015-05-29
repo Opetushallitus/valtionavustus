@@ -38,7 +38,7 @@ jenkins_jobs:
      chucknorris: true
      command: /usr/local/bin/cibuild.bash
      poll:  "* * * * *"
-
+     junit: target/junit.xml
 
 # System config
 # =============
