@@ -8,14 +8,14 @@
     expect(window.uiError || null).to.be.null
   })
 
-  describe('Dummy hakemuslistaus', function () {
+  describe('Laatustrategian toimeenpanon tuki', function () {
     before(
         page.openPage()
     )
 
-    it("näkyy hello world", function() {
+    it("näkyy oikea nimi", function() {
       expect(page.applications()).to.deep.equal([
-        { applicationName: 'Hello, world!' }
+        { applicationName: 'Laatustrategian toimeenpanon tuki' }
       ])
     })
   })

@@ -19,7 +19,7 @@ function ApplicationListPage() {
   }
 
   function applicationPageVisible() {
-    return S("#menu-hakemukset").is(":visible") && api.applications().length > 0
+    return S("#container").is(":visible") && api.applications().length > 0
   }
 
   return api
