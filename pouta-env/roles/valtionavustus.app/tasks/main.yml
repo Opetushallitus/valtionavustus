@@ -21,13 +21,6 @@
 - name: Create logs dir
   file: path={{ logical_volumes.logs.mount_point }}/valtionavustus owner=www group=www state=directory
 
-- name: Migrate db
-  sudo: yes
-  sudo_user: www
-  shell: ./lein with-profile {{ app_profile }} dbmigrate >> {{ logical_volumes.logs.mount_point }}/valtionavustus/lein_dbmigrate.log 2>&1
-  args:
-      chdir: /www/valtionavustus
-
 - name: Add script to stop the application
   template: src=stop_app.bash.j2 dest=/usr/local/bin/stop_app.bash owner=root group=root mode=0755
 
