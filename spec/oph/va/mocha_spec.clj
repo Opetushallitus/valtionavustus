@@ -1,4 +1,4 @@
-(ns oph.va.server-spec
+(ns oph.va.mocha-spec
   (:use [clojure.tools.trace]
         [clojure.java.shell :only [sh]])
   (:require [speclj.core :refer :all]
