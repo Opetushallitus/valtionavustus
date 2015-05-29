@@ -11,11 +11,11 @@
   roles:
   - buildmachine
   - valtionavustus.build
+  - java8
   - 3rdparty/Stouts.jenkins
   - valtionavustus.deploy
   - 3rdparty/debops.pki
   - 3rdparty/debops.nginx
-  - java8
   - 3rdparty/nodesource.node
 
 - hosts: va-test
