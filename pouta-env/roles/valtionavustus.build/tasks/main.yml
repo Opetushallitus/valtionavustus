@@ -1,2 +1,14 @@
 - name: Add build script
   template: src=cibuild.bash.j2 dest=/usr/local/bin/cibuild.bash owner=root group=root mode=0755
+
+- name: Make sure Jenkins user .ssh exists
+  sudo_user: "{{ jenkins_user }}"
+  file: path=~{{ jenkins_user }}/.ssh state=directory mode=0700
+
+- name: Make sure Jenkins user .ssh/known_hosts exists
+  sudo_user: "{{ jenkins_user }}"
+  file: "path=~{{ jenkins_user }}/.ssh/known_hosts state=touch mode=0600"
+
+- name: Add the new SSH host key of {{ test_machine_name }} to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
+  sudo_user: "{{ jenkins_user }}"
+  shell: "ssh-keyscan -H {{ test_machine_name }} >> ~{{ jenkins_user }}/.ssh/known_hosts"
