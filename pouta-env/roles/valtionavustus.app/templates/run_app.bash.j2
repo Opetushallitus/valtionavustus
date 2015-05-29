@@ -7,6 +7,7 @@ if [ -z $2 ]; then
 fi
 
 stdout_stderr_file={{ logical_volumes.logs.mount_point }}/valtionavustus/started_at_`date +'%Y%m%d%H%M%S'`_run.log
+sudo -u www ln -sf `basename $stdout_stderr_file` `dirname $stdout_stderr_file`/current_run.log
 pid_file=/var/tmp/va.pid
 daemon=/usr/bin/java
 daemon_args="-jar $1"
