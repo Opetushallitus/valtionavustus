@@ -1,0 +1,2 @@
+- name: Add build script
+  template: src=cibuild.bash.j2 dest=/usr/local/bin/cibuild.bash owner=root group=root mode=0755
