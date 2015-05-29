@@ -5,7 +5,7 @@ set -euo pipefail
 #./lein clean
 
 #echo "Running tests"
-#./lein spec -f d
+./lein spec -f junit || true
 
 echo "Building uber jar"
 time ./lein uberjar
