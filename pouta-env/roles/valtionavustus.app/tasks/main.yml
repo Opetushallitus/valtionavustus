@@ -10,14 +10,6 @@
 - name: Create www dir
   file: path=/www owner=www group=www state=directory
 
-- name: Install git
-  action: apt pkg=git state=latest install_recommends=yes
-
-- name: Git update valtionavustus
-  sudo: yes
-  sudo_user: www
-  git: repo=https://github.com/Opetushallitus/valtionavustus.git dest=/www/valtionavustus
-
 - name: Create logs dir
   file: path={{ logical_volumes.logs.mount_point }}/valtionavustus owner=www group=www state=directory
 
