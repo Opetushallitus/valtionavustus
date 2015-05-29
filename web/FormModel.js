@@ -2,7 +2,7 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 import Dispatcher from './Dispatcher'
 
-import {GET, POST, DELETE} from './request'
+import qwest from 'qwest'
 
 const dispatcher = new Dispatcher()
 
@@ -11,8 +11,8 @@ export default class FormModel {
   init() {
     const langP = Bacon.repeatedly(15000, ['sv', 'fi']).merge(Bacon.once('fi'))
 
-    const formP = Bacon.fromCallback(GET, "/api/form/1")
-    const formValuesP = Bacon.fromCallback(GET, "/api/form_submission/1")
+    const formP = Bacon.fromPromise(qwest.get("/api/form/1"))
+    const formValuesP = Bacon.fromPromise(qwest.get("/api/form_submission/1"))
 
 
     const requests = Bacon.combineTemplate({
@@ -39,10 +39,13 @@ export default class FormModel {
 
     function onSave(state) {
       var url = "/api/form_submission/1"
-      POST(url,
-           () => { console.log("State saved") },
-           (error) => console.error('POST', url, error),
-           JSON.stringify(state.values))
+      qwest.post(url, JSON.stringify(state.values))
+          .then(function(response) {
+            console.log("State saved")
+          })
+          .catch(function(error, url) {
+            console.error('POST', url, error)
+          })
     }
 
     function setData(data) {

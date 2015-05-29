@@ -12,7 +12,8 @@
     "minifyify": "^6.4.0",
     "react": "^0.13.2",
     "baconjs": "^0.7.59",
-    "lodash": "^3.9.3"
+    "lodash": "^3.9.3",
+    "qwest": "^1.6.0"
   },
   "devDependencies": {
     "watchify": "^3.2.0",

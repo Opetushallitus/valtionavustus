@@ -3,8 +3,6 @@ import FormElement from './FormElement.jsx'
 import LocalizedString from './LocalizedString.jsx'
 import _ from 'lodash'
 
-import {GET, POST, DELETE} from './request'
-
 export default class Form extends React.Component {
 
   render() {
