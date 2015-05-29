@@ -1,3 +1,10 @@
+- name: Wait untils Jenkins web API is available
+  shell: curl --head --silent http://{{ jenkins_http_host }}:{{ jenkins_http_port }}{{ jenkins_prefix }}/cli/
+  delay: 10
+  retries: 12
+  until: result.stdout.find("200 OK") != -1
+  register: result
+
 - name: Kludge to force the Jenkins job installation. For some reason it does not get triggered properly.
   command: "{{jenkins_home}}/jobs/job.sh {{item.name}}"
   with_items: jenkins_jobs
