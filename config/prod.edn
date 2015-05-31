@@ -1,4 +1,5 @@
 {:auto-reload? false
+ :allow-db-clear? false
  :host "localhost"
  :port 8081
  :db {:username "va"

@@ -2,6 +2,8 @@
   (:use [clojure.tools.trace])
   (:require [speclj.core :refer :all]
             [oph.va.server :refer :all]
+            [oph.va.db :as db]
+            [oph.va.db.migrations :as dbmigrations]
             [org.httpkit.client :as http]
             [cheshire.core :refer :all]))
 
@@ -14,32 +16,15 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
+              (db/clear-db!)
               (let [stop-server (start-server "localhost" 9000 false)]
-                (try (_) (finally (stop-server)))))
+                (try (_)
+                  (finally (stop-server)))))
 
   (it "GET should return valid JSON from route /api/form"
-      (let [{:keys [status headers body error] :as resp} (get! "/api/form")]
+      (let [{:keys [status headers body error] :as resp} (get! "/api/form")
+            json (json->map body)]
         (should= 200 status)
-        (should= {:fields [{:displayAs "textField"
-                            :description {:sv "Den sökandes namn"
-                                          :fi "Hakijan nimi"}
-                            :label {:sv "Namn"
-                                    :fi "Nimi"}
-                            :id "nimi"}
-                           {:displayAs "textField"
-                            :description {:sv "Den sökandes gatuaddress"
-                                          :fi "Hakijan katuosoite"}
-                            :label {:sv "Gatuaddress"
-                                    :fi "Katuosoite"}
-                            :id "osoite"}
-                           {:displayAs "textArea"
-                            :description {:sv ""
-                                          :fi ""}
-                            :label {:sv "Beskrivning"
-                                    :fi "Kuvaus"}
-                            :id "kuvaus"}]
-                  :name {:sv "Testform"
-                         :fi "Testilomake"}}
-                 (json->map body)))))
+        (should= "Laatustrategian toimeenpanon tuki" (-> json first :content :name :fi)))))
 
 (run-specs)

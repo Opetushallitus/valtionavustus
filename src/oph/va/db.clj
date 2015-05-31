@@ -1,8 +1,8 @@
 (ns oph.va.db
-  (:use [oph.va.config :only [config]])
+  (:use [oph.va.config :only [config config-name]])
   (:require [clojure.java.jdbc :as jdbc]
             [hikari-cp.core :refer :all]
-            [yesql.core :refer [defquery]]
+            [oph.va.db.queries :as queries]
             [oph.va.jdbc.jsonb]))
 
 (def datasource-spec
@@ -21,29 +21,38 @@
 
 (def datasource (delay (make-datasource datasource-spec)))
 
-(defquery list-forms "sql/list-forms.sql")
-(defquery get-form "sql/get-form.sql")
-(defquery submit-form<! "sql/submit-form.sql")
-(defquery get-form-submission "sql/get-form-submission.sql")
+(defn clear-db! []
+  (if (:allow-db-clear? config)
+    (jdbc/db-do-commands {:datasource @datasource} [queries/clear-db!])
+    (throw (RuntimeException. (str "Clearing database is not allowed! "
+                                   "check that you run with correct mode. "
+                                   "Current config name is " (config-name))))))
 
 (defmacro exec [query params]
   `(jdbc/with-db-transaction [connection# {:datasource @datasource}]
      (~query ~params {:connection connection#})))
 
-(defn execute-list-forms []
+(defn list-forms []
   (->> {}
-       (exec list-forms)))
+       (exec queries/list-forms)))
 
-(defn execute-get-form [id]
-  (->> (exec get-form {:id id})
+(defn get-form [id]
+  (->> (exec queries/get-form {:id id})
        first))
 
-(defn execute-submit-form [form, answers]
-  (->> {:form form :answers answers}
-       (exec submit-form<!)
+(defn update-submission! [form-id submission-id answers]
+  (->> {:form_id (Long. form-id) :submission_id (Long. submission-id) :answers answers}
+       (exec queries/update-submission!)
        :id))
 
-(defn execute-get-form-submission [id]
-  (->> {:id id}
-       (exec get-form-submission)
+(defn create-submission! [form-id answers]
+  (->> {:form_id form-id
+        :answers answers}
+       (exec queries/create-submission<!)
+       :id))
+
+(defn get-form-submission [form-id submission-id]
+  (->> {:form_id (Long. form-id)
+        :submission_id (Long. submission-id)}
+       (exec queries/get-form-submission)
        first))

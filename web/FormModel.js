@@ -12,8 +12,7 @@ export default class FormModel {
     const langP = Bacon.repeatedly(15000, ['sv', 'fi']).merge(Bacon.once('fi'))
 
     const formP = Bacon.fromPromise(qwest.get("/api/form/1"))
-    const formValuesP = Bacon.fromPromise(qwest.get("/api/form_submission/1"))
-
+    const formValuesP = Bacon.fromPromise(qwest.get("/api/form/1/values/1"))
 
     const requests = Bacon.combineTemplate({
       form: formP,
@@ -38,7 +37,7 @@ export default class FormModel {
     }
 
     function onSave(state) {
-      var url = "/api/form_submission/1"
+      var url = "/api/form/1/values/1"
       qwest.post(url, JSON.stringify(state.values))
           .then(function(response) {
             console.log("State saved")

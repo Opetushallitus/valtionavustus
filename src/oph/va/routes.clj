@@ -1,4 +1,5 @@
 (ns oph.va.routes
+  (:use [clojure.tools.trace :only [trace]])
   (:require [compojure.route :as route]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
@@ -37,23 +38,37 @@
 
   (GET* "/form" []
         :return [Form]
-        (ok (db/execute-list-forms)))
+        (ok (db/list-forms)))
 
   (GET* "/form/:id" [id]
         :return Form
-        (let [form (db/execute-get-form (Long. id))]
-          (if form (ok form) (not-found id))))
+        (let [form (db/get-form (Long. id))]
+          (if form
+            (ok form)
+            (not-found id))))
 
-  (GET* "/form_submission/:id" [id]
+  (GET* "/form/:form-id/values/:values-id" [form-id values-id]
         :return  s/Any
         :summary "Get current answers"
-        (let [submission (db/execute-get-form-submission (Long. id))]
-          (if submission (ok (:answers submission)) (ok empty-answers))))
+        (let [submission (db/get-form-submission form-id values-id)]
+          (if submission
+            (ok (:answers submission))
+            (ok empty-answers))))
 
-  (POST* "/form_submission/:form_id" [form_id :as request]
-         :return  Long
-         :summary "Submit form answers"
-         (ok (db/execute-submit-form (Long. form_id) (:params request)))))
+  (PUT* "/form/:form-id/values" [form-id :as request]
+        :return  s/Any
+        :body    [answers (describe s/Any "New answers")]
+        :summary "Create initial form answers"
+         (let [submission (db/create-submission! form-id answers)]
+           (if submission
+             (ok (:answers submission))
+             (ok empty-answers))))
+
+  (POST* "/form/:form-id/values/:values-id" [form-id values-id :as request]
+         :return  s/Any
+         :body    [answers (describe s/Any "New answers")]
+         :summary "Update form values"
+         (ok (db/update-submission! form-id values-id answers))))
 
 (defroutes* doc-routes
   "API documentation browser"
