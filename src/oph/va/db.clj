@@ -1,5 +1,5 @@
 (ns oph.va.db
-  (:use [oph.va.config :only [config]])
+  (:use [oph.va.config :only [config config-name]])
   (:require [clojure.java.jdbc :as jdbc]
             [hikari-cp.core :refer :all]
             [oph.va.db.queries :as queries]
@@ -21,14 +21,16 @@
 
 (def datasource (delay (make-datasource datasource-spec)))
 
+(defn clear-db! []
+  (if (:allow-db-clear? config)
+    (jdbc/db-do-commands {:datasource @datasource} [queries/clear-db!])
+    (throw (RuntimeException. (str "Clearing database is not allowed! "
+                                   "check that you run with correct mode. "
+                                   "Current config name is " (config-name))))))
+
 (defmacro exec [query params]
   `(jdbc/with-db-transaction [connection# {:datasource @datasource}]
      (~query ~params {:connection connection#})))
-
-(defn clear-db! []
-  (if (:allow-db-clear? config)
-    (exec queries/clear-db! {})
-    (throw (RuntimeException. "Clearing database is not allowed! check that you run with correct mode"))))
 
 (defn list-forms []
   (->> {}

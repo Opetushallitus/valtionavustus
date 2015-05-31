@@ -2,6 +2,8 @@
   (:use [clojure.tools.trace])
   (:require [speclj.core :refer :all]
             [oph.va.server :refer :all]
+            [oph.va.db :as db]
+            [oph.va.db.migrations :as dbmigrations]
             [org.httpkit.client :as http]
             [cheshire.core :refer :all]))
 
@@ -14,8 +16,10 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
+              (db/clear-db!)
               (let [stop-server (start-server "localhost" 9000 false)]
-                (try (_) (finally (stop-server)))))
+                (try (_)
+                  (finally (stop-server)))))
 
   (it "GET should return valid JSON from route /api/form"
       (let [{:keys [status headers body error] :as resp} (get! "/api/form")

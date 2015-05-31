@@ -58,13 +58,17 @@ Swagger-pohjainen API-dokumentaatio löytyy osoitteesta http://localhost:8080/do
 
 # Testien ajo
 
+**Huom!**: Testien ajaminen dev-profilella on estetty, koska testit tyhjentävät
+käytetyn kannan. Tämä ei ole kehitysaikaisesti haluttua, joten tämän vuoksi
+tarvitaan parametrit ```with-profile test``` testejä ajettaessa.
+
 Testien ajo (ajaa myös mocha testit):
 
-    ./lein spec -f d
+    ./lein with-profile test spec -f d
 
 tai (automaattisesti)
 
-    ./lein spec -a
+    ./lein with-profile test spec -a
 
 Huom: Vaikka ```lein run``` lataa automaattisesti muuttuneet koodit,
 Javascriptin automaattikäännöstä varten pitää käynnistää erilliseen
