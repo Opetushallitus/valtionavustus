@@ -4,6 +4,7 @@
             [oph.va.server :refer :all]
             [oph.va.db :as db]
             [oph.va.db.migrations :as dbmigrations]
+            [oph.va.spec-plumbing :refer :all]
             [org.httpkit.client :as http]
             [cheshire.core :refer :all]))
 
@@ -16,13 +17,10 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
-              (try
-                (db/clear-db!)
-                (let [stop-server (start-server "localhost" 9000 false)]
-                  (try (_)
-                    (finally (stop-server))))
-                (catch Exception e (.printStackTrace e))
-              )
+              (wrap-exception (db/clear-db!))
+              (let [stop-server (wrap-exception (start-server "localhost" 9000 false))]
+                (try (_)
+                  (finally (stop-server))))
   )
 
 

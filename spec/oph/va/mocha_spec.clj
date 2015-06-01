@@ -2,17 +2,16 @@
   (:use [clojure.tools.trace]
         [clojure.java.shell :only [sh]])
   (:require [speclj.core :refer :all]
-            [oph.va.server :refer :all]))
+            [oph.va.server :refer :all]
+            [oph.va.spec-plumbing :refer :all]
+            ))
 
 (describe "Mocha tests /"
 
   ;; Start HTTP server for running tests
   (around-all [_]
-              (try
-                (let [stop-server (start-server "localhost" 9000 false)]
-                  (try (_) (finally (stop-server))))
-                (catch Exception e (.printStackTrace e))
-              )
+      (let [stop-server (wrap-exception (start-server "localhost" 9000 false))]
+        (try (_) (finally (stop-server))))
   )
 
   (it "are successful"
