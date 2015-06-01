@@ -105,7 +105,7 @@ export default class FormElement extends React.Component {
 
     return (
       <div>
-        <label><LocalizedString data={field.label} lang={this.props.lang} /></label>
+        <label><LocalizedString data={field.label} lang={this.props.lang} />: </label>
         {input}
       </div>
     )
