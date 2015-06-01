@@ -20,7 +20,8 @@
               (wrap-exception (db/clear-db!))
               (let [stop-server (wrap-exception (start-server "localhost" 9000 false))]
                 (try (_)
-                  (finally (stop-server))))
+                  (finally
+                    (when stop-server (stop-server)))))
   )
 
 
