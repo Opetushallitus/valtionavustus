@@ -13,7 +13,8 @@
     "react": "^0.13.2",
     "baconjs": "^0.7.59",
     "lodash": "^3.9.3",
-    "qwest": "^1.6.0"
+    "qwest": "^1.6.0",
+    "query-string": "2.2.0"
   },
   "devDependencies": {
     "watchify": "^3.2.0",

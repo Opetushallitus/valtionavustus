@@ -1,26 +1,26 @@
 function ApplicationListPage() {
   var api = {
-    openPage: function(pageLoadedCheck) {
+    openPage: function(lang, pageLoadedCheck) {
+      if (!lang) {
+        lang = 'fi'
+      }
       if (!pageLoadedCheck) {
         pageLoadedCheck = applicationPageVisible
       }
-      return openPage("/", pageLoadedCheck)
+      return openPage("/?lang=" + lang, pageLoadedCheck)
     },
-
-    applications: function () {
-      return S("#container")
-          .filter(function () {
-            return $(this).find("h1").length > 0
-          })
-          .map(function () {
-            return { applicationName: $(this).find("h1").text().trim() }
-          }).toArray()
+    applicationName: function() {
+      return applicationElement().find("h1").first().text().trim()
     }
+  }
+  return api
+
+  function applicationElement() {
+    return S("#container")
   }
 
   function applicationPageVisible() {
-    return S("#container").is(":visible") && api.applications().length > 0
+    return applicationElement().is(":visible") && api.applicationName().length > 0
   }
 
-  return api
 }

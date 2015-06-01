@@ -8,15 +8,25 @@
     expect(window.uiError || null).to.be.null
   })
 
-  describe('Laatustrategian toimeenpanon tuki', function () {
+  describe('Laatustrategian toimeenpanon tuki haku suomeksi', function () {
     before(
         page.openPage()
     )
 
-    it("näkyy oikea nimi", function() {
-      expect(page.applications()).to.deep.equal([
-        { applicationName: 'Laatustrategian toimeenpanon tuki' }
-      ])
+    describe('Alkutilassa', function () {
+      it("näkyy haun nimi", function () {
+        expect(page.applicationName()).to.deep.equal('Laatustrategian toimeenpanon tuki')
+      })
+    })
+  })
+
+  describe('Laatustrategian toimeenpanon tuki haku ruotsiksi', function () {
+    before(
+        page.openPage('sv')
+    )
+
+    it("näkyy haun nimi ruotsiksi", function() {
+      expect(page.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
     })
   })
 

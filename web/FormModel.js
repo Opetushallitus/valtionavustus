@@ -4,20 +4,21 @@ import Dispatcher from './Dispatcher'
 
 import qwest from 'qwest'
 
+import queryString from 'query-string'
+
 const dispatcher = new Dispatcher()
 
 export default class FormModel {
-
   init() {
-    const langP = Bacon.repeatedly(15000, ['sv', 'fi']).merge(Bacon.once('fi'))
 
+    const langQueryParam =  queryString.parse(location.search).lang || 'fi'
     const formP = Bacon.fromPromise(qwest.get("/api/form/1"))
     const formValuesP = Bacon.fromPromise(qwest.get("/api/form/1/values/1"))
 
     const requests = Bacon.combineTemplate({
       form: formP,
       values: formValuesP,
-      lang: langP
+      lang: langQueryParam
     }).onValue(setData)
 
     const formFieldValuesP = Bacon.update({},
@@ -27,7 +28,7 @@ export default class FormModel {
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
 
-    function onData(values, data) {
+    function onData(state, data) {
       return data
     }
 
