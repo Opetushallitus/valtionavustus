@@ -31,7 +31,7 @@ Luo skeema ja lataa initial data (myös serverin start ajaa automaattisesti migr
 
 Tietokannan saa kokonaan tyhjättyä ajamalla
 
-    ./lein dbclean
+    ./lein dbclear
 
 # Käynnistys
 
