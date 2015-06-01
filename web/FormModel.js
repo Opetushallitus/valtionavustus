@@ -11,6 +11,7 @@ export default class FormModel {
 
     const query = queryString.parse(location.search)
     const langQueryParam =  query.lang || 'fi'
+    const langPreviewParam =  query.preview || false
     const formP = Bacon.fromPromise(qwest.get("/api/form/" + query.form || 1))
     const formValuesP = query.submission ? Bacon.fromPromise(qwest.get("/api/form/" + query.form + "/values/" + query.submission)) : {}
 
@@ -18,6 +19,7 @@ export default class FormModel {
       form: formP,
       valuesId: query.submission,
       values: formValuesP,
+      preview: langPreviewParam,
       lang: langQueryParam
     }).onValue(setData)
 
