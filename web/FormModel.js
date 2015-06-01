@@ -24,12 +24,18 @@ export default class FormModel {
     const formFieldValuesP = Bacon.update({},
                                           [dispatcher.stream('data')], onData,
                                           [dispatcher.stream('updateField')], onUpdateField,
+                                          [dispatcher.stream('changeLanguage')], onChangeLang,
                                           [dispatcher.stream('save')], onSave)
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
 
     function onData(state, data) {
       return data
+    }
+
+    function onChangeLang(state, lang) {
+      state.lang = lang
+      return state
     }
 
     function onUpdateField(state, fieldUpdate) {
@@ -54,6 +60,10 @@ export default class FormModel {
   }
 
   // Public API
+  changeLanguage(lang) {
+    dispatcher.push('changeLanguage', lang)
+  }
+
   setFieldValue(id, value) {
     dispatcher.push('updateField', {id: id, value: value})
   }

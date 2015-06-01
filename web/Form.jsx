@@ -1,5 +1,6 @@
 import React from 'react'
 import FormElement from './FormElement.jsx'
+import ChangeLanguageButton from './ChangeLanguageButton.jsx'
 import LocalizedString from './LocalizedString.jsx'
 import _ from 'lodash'
 
@@ -14,6 +15,8 @@ export default class Form extends React.Component {
 
     return (
       <section>
+        <ChangeLanguageButton model={model} lang={lang} id="fi" label="Suomeksi" />
+        <ChangeLanguageButton model={model} lang={lang} id="sv" label="På svenska" />
         <h1><LocalizedString data={name} lang={lang}/></h1>
         <form onSubmit={model.save}>
           {
