@@ -48,31 +48,33 @@ export default class FormModel {
       qwest.put(url, state.values, {dataType: "json"})
           .then(function(response) {
             console.log("State saved. Id=" + response)
+            state.valuesId = response
           })
           .catch(function(error, url) {
             console.error('PUT', url, error)
           })
+      return state
     }
 
     function updateOld(state, id) {
       var url = "/api/form/" + state.form.id + "/values/" + id
       qwest.post(url, state.values, {dataType: "json"})
           .then(function(response) {
-            console.log("State saved")
+            console.log("State updated. Id=" + response)
           })
           .catch(function(error, url) {
             console.error('POST', url, error)
           })
+      return state
     }
 
     function onSave(state) {
       if(state.valuesId) {
-        updateOld(state, state.valuesId)
+        return updateOld(state, state.valuesId)
       }
       else {
-        saveNew(state)
+        return saveNew(state)
       }
-      return state
     }
 
     function setData(data) {

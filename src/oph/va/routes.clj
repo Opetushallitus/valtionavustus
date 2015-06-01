@@ -61,7 +61,7 @@
         :summary "Create initial form answers"
          (let [submission (db/create-submission! form-id answers)]
            (if submission
-             (ok (:answers submission))
+             (ok submission)
              (internal-server-error!))))
 
   (POST* "/form/:form-id/values/:values-id" [form-id values-id :as request]
@@ -70,7 +70,7 @@
          :summary "Update form values"
          (let [submission (db/update-submission! form-id values-id answers)]
            (if submission
-             (ok (:answers submission))
+             (ok submission)
              (internal-server-error!)))))
 
 (defroutes* doc-routes
