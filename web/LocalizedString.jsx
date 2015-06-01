@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default class Form extends React.Component {
+export default class LocalizedString extends React.Component {
   constructor(props) {
     super(props)
   }
