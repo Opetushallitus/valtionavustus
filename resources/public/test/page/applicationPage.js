@@ -7,7 +7,7 @@ function ApplicationPage() {
       if (!pageLoadedCheck) {
         pageLoadedCheck = applicationPageVisible
       }
-      return openPage("/?lang=" + lang, pageLoadedCheck)
+      return openPage("/?form=1&lang=" + lang, pageLoadedCheck)
     },
     applicationName: function() {
       return applicationElement().find("h1").first().text().trim()

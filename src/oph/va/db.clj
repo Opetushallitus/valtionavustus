@@ -42,11 +42,11 @@
 
 (defn update-submission! [form-id submission-id answers]
   (->> {:form_id (Long. form-id) :submission_id (Long. submission-id) :answers answers}
-       (exec queries/update-submission!)
+       (exec queries/update-submission<!)
        :id))
 
 (defn create-submission! [form-id answers]
-  (->> {:form_id form-id
+  (->> {:form_id (Long. form-id)
         :answers answers}
        (exec queries/create-submission<!)
        :id))

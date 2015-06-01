@@ -62,19 +62,23 @@
          (let [submission (db/create-submission! form-id answers)]
            (if submission
              (ok (:answers submission))
-             (ok empty-answers))))
+             (internal-server-error!))))
 
   (POST* "/form/:form-id/values/:values-id" [form-id values-id :as request]
          :return  s/Any
          :body    [answers (describe s/Any "New answers")]
          :summary "Update form values"
-         (ok (db/update-submission! form-id values-id answers))))
+         (let [submission (db/update-submission! form-id values-id answers)]
+           (if submission
+             (ok (:answers submission))
+             (internal-server-error!)))))
 
 (defroutes* doc-routes
   "API documentation browser"
   (swagger-ui))
 
 (defapi all-routes
+  {:formats [:json-kw]}
 
   ;; swagger.json generation
   (swagger-docs {:info {:title "Valtionavustus API"}})

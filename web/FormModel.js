@@ -1,9 +1,7 @@
 import Bacon from 'baconjs'
 import _ from 'lodash'
 import Dispatcher from './Dispatcher'
-
 import qwest from 'qwest'
-
 import queryString from 'query-string'
 
 const dispatcher = new Dispatcher()
@@ -11,12 +9,14 @@ const dispatcher = new Dispatcher()
 export default class FormModel {
   init() {
 
-    const langQueryParam =  queryString.parse(location.search).lang || 'fi'
-    const formP = Bacon.fromPromise(qwest.get("/api/form/1"))
-    const formValuesP = Bacon.fromPromise(qwest.get("/api/form/1/values/1"))
+    const query = queryString.parse(location.search)
+    const langQueryParam =  query.lang || 'fi'
+    const formP = Bacon.fromPromise(qwest.get("/api/form/" + query.form || 1))
+    const formValuesP = query.application ? Bacon.fromPromise(qwest.get("/api/form/" + query.form + "/values/" + query.application)) : {}
 
     const requests = Bacon.combineTemplate({
       form: formP,
+      valuesId: query.application,
       values: formValuesP,
       lang: langQueryParam
     }).onValue(setData)
@@ -43,15 +43,36 @@ export default class FormModel {
       return state
     }
 
-    function onSave(state) {
-      var url = "/api/form/1/values/1"
-      qwest.post(url, JSON.stringify(state.values))
+    function saveNew(state) {
+      var url = "/api/form/" + state.form.id + "/values"
+      qwest.put(url, state.values, {dataType: "json"})
+          .then(function(response) {
+            console.log("State saved. Id=" + response)
+          })
+          .catch(function(error, url) {
+            console.error('PUT', url, error)
+          })
+    }
+
+    function updateOld(state, id) {
+      var url = "/api/form/" + state.form.id + "/values/" + id
+      qwest.post(url, state.values, {dataType: "json"})
           .then(function(response) {
             console.log("State saved")
           })
           .catch(function(error, url) {
             console.error('POST', url, error)
           })
+    }
+
+    function onSave(state) {
+      if(state.valuesId) {
+        updateOld(state, state.valuesId)
+      }
+      else {
+        saveNew(state)
+      }
+      return state
     }
 
     function setData(data) {
