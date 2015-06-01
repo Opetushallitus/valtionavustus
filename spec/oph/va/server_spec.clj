@@ -1,12 +1,9 @@
 (ns oph.va.server-spec
   (:use [clojure.tools.trace])
   (:require [speclj.core :refer :all]
-            [oph.va.server :refer :all]
-            [oph.va.db :as db]
-            [oph.va.db.migrations :as dbmigrations]
-            [oph.va.spec-plumbing :refer :all]
             [org.httpkit.client :as http]
-            [cheshire.core :refer :all]))
+            [cheshire.core :refer :all]
+            [oph.va.spec-plumbing :refer :all]))
 
 (def base-url "http://localhost:9000")
 (defn path->url [path] (str base-url path))
@@ -16,14 +13,7 @@
 (describe "HTTP server"
 
   ;; Start HTTP server for running tests
-  (around-all [_]
-              (wrap-exception (db/clear-db!))
-              (let [stop-server (wrap-exception (start-server "localhost" 9000 false))]
-                (try (_)
-                  (finally
-                    (when stop-server (stop-server)))))
-  )
-
+  (around-all [_] (with-test-server! (_)))
 
   (it "GET should return valid JSON from route /api/form"
       (let [{:keys [status headers body error] :as resp} (get! "/api/form")
