@@ -51,6 +51,7 @@ export default class FormModel {
           .then(function(response) {
             console.log("State saved. Id=" + response)
             state.valuesId = response
+            setData(state)
           })
           .catch(function(error, url) {
             console.error('PUT', url, error)

@@ -5,7 +5,8 @@ import _ from 'lodash'
 export default class Form extends React.Component {
 
   render() {
-    var fields = this.props.form.content.fields
+    var form = this.props.form
+    var fields = form.content.fields
     var lang = this.props.lang
     var model = this.props.model
     var values = this.props.values
@@ -19,6 +20,7 @@ export default class Form extends React.Component {
           })
         }
         <input type="submit"/>
+        { this.props.valuesId ? <a target="preview" href={"/?preview=true&form=" + form.id + "&submission=" + this.props.valuesId}>Tallennettu versio</a> : null}
       </form>
     )
   }

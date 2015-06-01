@@ -10,7 +10,7 @@ const formModelP = model.init()
 formModelP.onValue((state) => {
   console.log("Updating UI with state:", state)
   React.render(
-    <FormContainer model={model} form={state.form} values={state.values} lang={state.lang} preview={state.preview} />,
+    <FormContainer model={model} form={state.form} values={state.values} valuesId={state.valuesId} lang={state.lang} preview={state.preview} />,
     document.getElementById('container')
   )
 })
