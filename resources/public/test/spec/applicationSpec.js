@@ -1,5 +1,5 @@
 (function () {
-  var page = ApplicationListPage()
+  var page = ApplicationPage()
 
   afterEach(function() {
     if (this.currentTest.state == 'failed') {

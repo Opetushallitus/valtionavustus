@@ -1,4 +1,4 @@
-function ApplicationListPage() {
+function ApplicationPage() {
   var api = {
     openPage: function(lang, pageLoadedCheck) {
       if (!lang) {
