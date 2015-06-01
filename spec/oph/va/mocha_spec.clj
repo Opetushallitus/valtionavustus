@@ -8,8 +8,12 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
-              (let [stop-server (start-server "localhost" 9000 false)]
-                (try (_) (finally (stop-server)))))
+              (try
+                (let [stop-server (start-server "localhost" 9000 false)]
+                  (try (_) (finally (stop-server))))
+                (catch Exception e (.printStackTrace e))
+              )
+  )
 
   (it "are successful"
       (let [results (sh "node_modules/mocha-phantomjs/bin/mocha-phantomjs" "-R" "spec" "http://localhost:9000/test/runner.html")]

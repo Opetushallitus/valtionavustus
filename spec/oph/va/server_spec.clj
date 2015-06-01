@@ -16,10 +16,15 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
-              (db/clear-db!)
-              (let [stop-server (start-server "localhost" 9000 false)]
-                (try (_)
-                  (finally (stop-server)))))
+              (try
+                (db/clear-db!)
+                (let [stop-server (start-server "localhost" 9000 false)]
+                  (try (_)
+                    (finally (stop-server))))
+                (catch Exception e (.printStackTrace e))
+              )
+  )
+
 
   (it "GET should return valid JSON from route /api/form"
       (let [{:keys [status headers body error] :as resp} (get! "/api/form")
