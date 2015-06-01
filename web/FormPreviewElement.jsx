@@ -1,14 +1,14 @@
 import React from 'react'
 import LocalizedString from './LocalizedString.jsx'
 
-class BasicValueField extends React.Component {
+class BasicValue extends React.Component {
   render() {
     var field = this.props.field
     return (<span id={field.id}>{this.props.value}</span>)
   }
 }
 
-class OptionsValueField extends React.Component {
+class OptionsValue extends React.Component {
   render() {
     var field = this.props.field
     var value = ""
@@ -28,10 +28,10 @@ export default class FormPreviewElement extends React.Component {
   constructor(props) {
     super(props)
     this.fieldTypeMapping = {
-      "textField": BasicValueField,
-      "textArea": BasicValueField,
-      "dropdown": OptionsValueField,
-      "radioButton": OptionsValueField
+      "textField": BasicValue,
+      "textArea": BasicValue,
+      "dropdown": OptionsValue,
+      "radioButton": OptionsValue
     }
   }
 
