@@ -1,3 +1,10 @@
+- name: Set ssh MaxStartUps
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^MaxStartUps"
+              line="MaxStartUps 50:100:200"
+              state=present
+  notify: Restart ssh
+
 - name: Debug hostvars
   debug: var=hostvars
 
