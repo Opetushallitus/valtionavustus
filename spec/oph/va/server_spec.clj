@@ -10,6 +10,8 @@
 (defn get! [path] @(http/get (path->url path)))
 (defn put! [path body] @(http/put (path->url path) {:body (generate-string body true)
                                                     :headers {"Content-Type" "application/json"}}))
+(defn post! [path body] @(http/post (path->url path) {:body (generate-string body true)
+                                                      :headers {"Content-Type" "application/json"}}))
 (defn json->map [body] (parse-string body true))
 
 (describe "HTTP server"
@@ -30,11 +32,29 @@
         (should= 200 status)
         (should= true (empty? json))))
 
-  (it "PUT should create a new form submission and return id when done to route /api/form/1/values"
-      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:foo "foo"
-                                                                                     :bar "bar"})]
-        (should= 200 status)
-        (should= "1" body))))
+  (it "PUT should validate required values when done to route /api/form/1/values"
+      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:tiedotus "foo"
+                                                                                     :kohderyhma "bar"})]
+        (should= 400 status)
+        (should= "{\"tiedotus\":[],\"kohderyhma\":[],\"kuvaus\":[\"required\"],\"arviointi\":[\"required\"],\"alue\":[\"required\"],\"nimi\":[\"required\"],\"paikkakunnat\":[\"required\"],\"uusi\":[\"required\"],\"tavoitteet\":[\"required\"],\"www-osoite\":[]}" body)))
 
+  (it "PUT should create a new form submission and return id when done to route /api/form/1/values"
+      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:tiedotus "testi"
+                                                                                     :kohderyhma "testi"
+                                                                                     :kuvaus "testi"
+                                                                                     :arviointi "testi"
+                                                                                     :nimi "testi"
+                                                                                     :paikkakunnat "testi"
+                                                                                     :uusi "testi"
+                                                                                     :tavoitteet "testi"
+                                                                                     :alue "testi"})]
+        (should= 200 status)
+        (should= "1" body)))
+
+  (it "POST should validate required values when done to route /api/form/1/values/1"
+    (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/1" {:tiedotus "foo"
+                                                                                      :kohderyhma "bar"})]
+      (should= 400 status)
+      (should= "{\"tiedotus\":[],\"kohderyhma\":[],\"kuvaus\":[\"required\"],\"arviointi\":[\"required\"],\"alue\":[\"required\"],\"nimi\":[\"required\"],\"paikkakunnat\":[\"required\"],\"uusi\":[\"required\"],\"tavoitteet\":[\"required\"],\"www-osoite\":[]}" body))))
 
 (run-specs)
