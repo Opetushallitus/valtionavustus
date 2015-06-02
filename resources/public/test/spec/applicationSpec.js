@@ -10,7 +10,7 @@
 
   describe('Laatustrategian toimeenpanon tuki haku suomeksi', function () {
     before(
-        page.openPage()
+      page.openPage()
     )
 
     describe('Alkutilassa', function () {
@@ -19,6 +19,26 @@
       })
       it("kielen vaihto suomeksi on disabloitu", function () {
         expect(page.changeLanguageButton('fi').isEnabled()).to.deep.equal(false)
+      })
+    })
+
+    describe('Pakollisten tietojen syötön jälkeen', function () {
+      before(
+          page.setInputValue("nimi", "testinimi"),
+          page.setInputValue("uusi", "uusi"),
+          page.setInputValue("tavoitteet", "testin tavoitteet"),
+          page.setInputValue("kuvaus", "testin kuvaus"),
+          page.setInputValue("kohderyhma", "testin kohderyhmä"),
+          page.setInputValue("arviointi", "testin arviointi"),
+          page.setInputValue("arviointi", "testin arviointi"),
+          page.setInputValue("paikkakunnat", "testin paikkakunta"),
+          page.setInputValue("alue", "alueellinen"),
+          page.setInputValue("tiedotus", "testin tiedotus"),
+          page.submitButton().click,
+          wait.until(page.previewLink().isVisible)
+      )
+
+      it("tallennus onnistuu", function () {
       })
     })
 

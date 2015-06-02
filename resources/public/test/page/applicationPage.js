@@ -13,7 +13,22 @@ function ApplicationPage() {
       return applicationElement().find("h1").first().text().trim()
     },
     changeLanguageButton: function (lang) {
-      return Button(function() { return applicationElement().find("#" + lang)})
+      return Clickable(function() { return applicationElement().find("#" + lang)})
+    },
+    submitButton: function() {
+      return Clickable(function() { return applicationElement().find("[type='submit']")})
+    },
+    previewLink: function() {
+      return Clickable(function() { return applicationElement().find("a:contains(Tallennettu versio)")})
+    },
+    setInputValue: function(name, value) {
+      return function() {
+        var input = Input(function () {
+          return applicationElement().find("[name=" + name + "]")
+        })
+        return wait.until(input.isVisible)()
+            .then(input.setValue(value))
+      }
     },
     paSvenska: function () {
       var name = api.applicationName()
@@ -34,7 +49,41 @@ function ApplicationPage() {
     return applicationElement().is(":visible") && api.applicationName().length > 0
   }
 
-  function Button(el) {
+  function Input(el) {
+    return {
+      isVisible: function() {
+        return el().is(":visible")
+      },
+      setValue: function(value) {
+        var input = el()
+        switch (inputType(input)) {
+          case "TEXT":
+          case "TEXTAREA":
+            input.val(value)
+            triggerEvent(input, "input")
+            break;
+          case "RADIO":
+            var option = _(input).find(function(item) { return $(item).prop("value") == value })
+            $(option).click()
+            break;
+          case "SELECT":
+            var option = _(input.children()).find(function(item) { return $(item).prop("value") == value })
+            input.val($(option).attr("value"))
+            triggerEvent(input, "input")
+            break;
+        }
+      }
+    }
+
+    function inputType(el) {
+      if (el.prop("tagName") == "SELECT" || el.prop("tagName") == "TEXTAREA")
+        return el.prop("tagName")
+      else
+        return el.prop("type").toUpperCase()
+    }
+  }
+
+  function Clickable(el) {
     return {
       element: function() {
         return el()
