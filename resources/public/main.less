@@ -8,9 +8,10 @@ body {
 
 #logo {
   margin-top: 20px;
-  margin-left: 20px;
+  margin-left: 100px;
   height: 70px;
   width: 271px;
+  float: left;
   background-image: url("img/opetushallitus.gif");
 }
 
@@ -21,6 +22,15 @@ body {
   position: fixed;
   top: 0;
   border-bottom: solid @border-color;
+
+  h1 {
+    font-weight: 300;
+    font-size: 24px;
+    text-transform: uppercase;
+    position: relative;
+    top: 20px;
+    left: 250px;
+  }
 }
 
 #container {
@@ -34,11 +44,12 @@ body {
   content: " *";
 }
 
+label {
+  color: #747474;
+}
+
 input[type=radio] {
-  margin-left: 15px;
-  margin-top: 0px;
-  margin-bottom: 5px;
-  margin-right: 7px;
+  margin: 0 7px 5px 15px;
 }
 
 .preview {
