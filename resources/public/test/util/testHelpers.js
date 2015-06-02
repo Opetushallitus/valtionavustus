@@ -59,16 +59,22 @@ function testFrame() {
   return $("#testframe").get(0).contentWindow
 }
 
+function triggerEvent(element, eventName) {
+  const evt = testFrame().document.createEvent('HTMLEvents');
+  evt.initEvent(eventName, true, true);
+  element[0].dispatchEvent(evt);
+}
+
 function openPage(path, predicate) {
   if (!predicate) {
     predicate = function() { return testFrame().jQuery }
   }
   return function() {
     var newTestFrame = $('<iframe>').attr({src: path, width: 1024, height: 800, id: "testframe"}).load(function() {
-      var script = document.createElement("script")
-      script.type = "text/javascript"
-      script.src = "//code.jquery.com/jquery-1.11.1.min.js"
-      $(this).contents().find("head")[0].appendChild(script)
+      var jquery = document.createElement("script")
+      jquery.type = "text/javascript"
+      jquery.src = "//code.jquery.com/jquery-1.11.1.min.js"
+      $(this).contents().find("head")[0].appendChild(jquery)
     })
     $("#testframe").replaceWith(newTestFrame)
     return wait.until(
