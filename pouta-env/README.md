@@ -16,7 +16,8 @@ Valtionavustusjärjestelmän palvelimien provisiointi
   - jos jonkin palvelimen luominen keskeytyy virheeseen, saattaa olla parasta tuhota palvelin ja yrittää uudelleen.
   - virhetilanteissa komennon uudelleen ajaminen _ei_ korjaa tilannetta (komento ei ole atominen).
 * testaa pääsetkö buildikoneelle komennolla `./ssh_to_build_machine.bash`
-* palvelinten pitäisi myös vastata ansiblen pingiin `./pouta-venv/bin/ansible all -i openstack_inventory.py -m ping -u cloud-user`
+* tarkista, että kaikki palvelimet myös vastatavat ansiblen pingiin `./pouta-venv/bin/ansible all -i openstack_inventory.py -m ping -u cloud-user`
+  - jos jokin palvelimista on vielä käynnistymässä, se ei vastaa pingiin. Tällöin kannattaa odottaa käynnistymistä ennen kuin alkaa asentaa ohjelmistoja.
 * roles/3rdparty hakemistoon on asennettu muiden tekemät roolit. Nämä Ansible-roolit ovat asennettu Ansible Galaxystä:
   - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty Stouts.jenkins`
   - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty debops.nginx`
