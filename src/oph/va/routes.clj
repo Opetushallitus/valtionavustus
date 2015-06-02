@@ -32,6 +32,10 @@
                    :content FormContent,
                    :start s/Inst})
 
+(s/defschema Submission {s/Keyword s/Str})
+(s/defschema SubmissionValidationErrors {s/Keyword [s/Str]})
+(s/defschema SubmissionId {:id Long})
+
 (def empty-answers {})
 
 (defroutes* api-routes
@@ -57,8 +61,9 @@
             (ok empty-answers))))
 
   (PUT* "/form/:form-id/values" [form-id :as request]
-        :return  s/Any
-        :body    [answers (describe s/Any "New answers")]
+        :return  (s/either SubmissionId
+                           SubmissionValidationErrors)
+        :body    [answers (describe Submission "New answers")]
         :summary "Create initial form answers"
         (let [validation (validation/validate-form (db/get-form (Long. form-id)) answers)]
           (if (every? empty? (vals validation))
@@ -69,8 +74,9 @@
             (bad-request validation))))
 
   (POST* "/form/:form-id/values/:values-id" [form-id values-id :as request]
-         :return  s/Any
-         :body    [answers (describe s/Any "New answers")]
+         :return  (s/either Submission
+                            SubmissionValidationErrors)
+         :body    [answers (describe Submission "New answers")]
          :summary "Update form values"
          (if (not (db/submission-exists? form-id values-id))
            (not-found)
