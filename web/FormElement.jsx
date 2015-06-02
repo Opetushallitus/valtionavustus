@@ -23,8 +23,8 @@ class BasicTextField extends BasicFieldComponent {
               id={field.id}
               name={field.id}
               required={field.required}
-              size={this.param("size", 80)}
-              maxLength={this.param("maxlength", this.param("size", 80))}
+              size={this.param("size", this.param("maxlength",80))}
+              maxLength={this.param("maxlength")}
               model={this.props.model}
               value={this.props.value}
               onChange={this.handleChange}
@@ -41,7 +41,7 @@ class BasicTextArea extends BasicFieldComponent {
               required={field.required}
               rows={this.param("rows", 10)}
               cols={this.param("cols", 120)}
-              maxLength={this.param("maxlength", 2000)}
+              maxLength={this.param("maxlength")}
               model={this.props.model}
               value={this.props.value}
               onChange={this.handleChange}
