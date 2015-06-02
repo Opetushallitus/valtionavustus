@@ -1,0 +1,42 @@
+@form-width: 1200px;
+@topbar-width: @form-width + 200;
+@border-color: #d9d9d9;
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background-color: #ededed;
+}
+
+#logo {
+  margin-top: 20px;
+  margin-left: 20px;
+  height: 70px;
+  width: 271px;
+  background-image: url("img/opetushallitus.gif");
+}
+
+#topbar {
+  width: @topbar-width;
+  height: 120px;
+  background-color: white;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  margin-left: -@topbar-width / 2;
+  border-bottom: solid @border-color;
+}
+
+#container {
+  width: @form-width;
+  margin-top: 140px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.preview {
+  label {
+    font-weight: 600;
+    display: inline-block;
+    width: 600px;
+  }
+}

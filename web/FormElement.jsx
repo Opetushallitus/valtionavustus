@@ -78,7 +78,7 @@ class RadioButton extends BasicFieldComponent {
         radiobuttons.push(label)
       }
     }
-    return (<div>{radiobuttons}</div>)
+    return (<div className="pure-radio">{radiobuttons}</div>)
   }
 }
 

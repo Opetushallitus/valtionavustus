@@ -11,7 +11,7 @@ export default class FormPreview extends React.Component {
     var values = this.props.values
 
     return (
-      <div>
+      <div className="preview">
         {
           fields.map(function(field) {
             var value = _.get(values, field.id, "")

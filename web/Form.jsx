@@ -12,15 +12,17 @@ export default class Form extends React.Component {
     var values = this.props.values
 
     return (
-      <form onSubmit={model.save}>
-        {
-          fields.map(function(field) {
-            var value = _.get(values, field.id, "")
-            return <FormElement model={model} lang={lang} key={field.id} value={value} field={field} />
-          })
-        }
-        <input type="submit"/>
-        { this.props.valuesId ? <a target="preview" href={"/?preview=true&form=" + form.id + "&submission=" + this.props.valuesId}>Tallennettu versio</a> : null}
+      <form onSubmit={model.save} className="pure-form pure-form-stacked">
+        <fieldset>
+          {
+            fields.map(function(field) {
+              var value = _.get(values, field.id, "")
+              return <FormElement model={model} lang={lang} key={field.id} value={value} field={field} />
+            })
+          }
+          <button type="submit" className="pure-button pure-button-primary">Tallenna</button>
+          { this.props.valuesId ? <a target="preview" href={"/?preview=true&form=" + form.id + "&submission=" + this.props.valuesId}>Tallennettu versio</a> : null}
+        </fieldset>
       </form>
     )
   }
