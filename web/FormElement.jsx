@@ -23,8 +23,8 @@ class BasicTextField extends BasicFieldComponent {
               id={field.id}
               name={field.id}
               required={field.required}
-              size={this.param("size", this.param("maxlength", 80))}
-              maxLength={this.param("maxlength", 80)}
+              size={this.param("size", 80)}
+              maxLength={this.param("maxlength", this.param("size", 80))}
               model={this.props.model}
               value={this.props.value}
               onChange={this.handleChange}
