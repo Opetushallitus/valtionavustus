@@ -39,7 +39,8 @@
                  ;; Utils
                  [org.clojure/tools.trace "0.7.8"]
                  [org.clojure/tools.logging "0.3.1"]
-                 [org.slf4j/slf4j-log4j12 "1.7.12"]]
+                 [org.slf4j/slf4j-log4j12 "1.7.12"]
+                 [pandect "0.5.2"]]
 
   :main ^:skip-aot oph.va.server
   :target-path "target/%s"

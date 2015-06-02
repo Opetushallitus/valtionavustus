@@ -4,7 +4,14 @@
   (:require [clojure.java.jdbc :as jdbc]
             [hikari-cp.core :refer :all]
             [oph.va.db.queries :as queries]
-            [oph.va.jdbc.jsonb]))
+            [oph.va.jdbc.jsonb]
+            [pandect.algo.sha256 :refer :all])
+  (:import [java.security SecureRandom]))
+
+(def random (SecureRandom.))
+
+(defn generate-hash-id []
+  (sha256 (.generateSeed random (/ 512 8))))
 
 (def datasource-spec
   "Merge configuration defaults and db config. Latter overrides the defaults"
