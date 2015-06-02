@@ -34,9 +34,20 @@
 
   (it "PUT should validate required values when done to route /api/form/1/values"
       (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:tiedotus "foo"
-                                                                                     :kohderyhma "bar"})]
+                                                                                     :kohderyhma "bar"})
+            json (json->map body)]
         (should= 400 status)
-        (should= "{\"tiedotus\":[],\"kohderyhma\":[],\"kuvaus\":[\"required\"],\"arviointi\":[\"required\"],\"alue\":[\"required\"],\"nimi\":[\"required\"],\"paikkakunnat\":[\"required\"],\"uusi\":[\"required\"],\"tavoitteet\":[\"required\"],\"www-osoite\":[]}" body)))
+        (should= {:tiedotus []
+                  :kohderyhma []
+                  :kuvaus ["required"]
+                  :arviointi ["required"]
+                  :alue ["required"]
+                  :nimi ["required"]
+                  :paikkakunnat ["required"]
+                  :uusi ["required"]
+                  :tavoitteet ["required"]
+                  :www-osoite []}
+                 json)))
 
   (it "PUT should create a new form submission and return id when done to route /api/form/1/values"
       (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:tiedotus "testi"
@@ -53,8 +64,24 @@
 
   (it "POST should validate required values when done to route /api/form/1/values/1"
     (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/1" {:tiedotus "foo"
-                                                                                      :kohderyhma "bar"})]
+                                                                                      :kohderyhma "bar"})
+          json (json->map body)]
       (should= 400 status)
-      (should= "{\"tiedotus\":[],\"kohderyhma\":[],\"kuvaus\":[\"required\"],\"arviointi\":[\"required\"],\"alue\":[\"required\"],\"nimi\":[\"required\"],\"paikkakunnat\":[\"required\"],\"uusi\":[\"required\"],\"tavoitteet\":[\"required\"],\"www-osoite\":[]}" body))))
+      (should= {:tiedotus []
+                :kohderyhma []
+                :kuvaus ["required"]
+                :arviointi ["required"]
+                :alue ["required"]
+                :nimi ["required"]
+                :paikkakunnat ["required"]
+                :uusi ["required"]
+                :tavoitteet ["required"]
+                :www-osoite []}
+               json)))
+
+  (it "POST should fail if done to non-existing node /api/form/1/values/2"
+      (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/2" {:foo "foo2"
+                                                                                        :bar "bar2"})]
+        (should= 404 status))))
 
 (run-specs)

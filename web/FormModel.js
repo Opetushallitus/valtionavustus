@@ -63,7 +63,7 @@ export default class FormModel {
       var url = "/api/form/" + state.form.id + "/values/" + id
       qwest.post(url, state.values, {dataType: "json"})
           .then(function(response) {
-            console.log("State updated. Id=" + response)
+            console.log("State updated. Response=" + response)
           })
           .catch(function(error, url) {
             console.error('POST', url, error)
