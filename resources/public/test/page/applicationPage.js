@@ -69,7 +69,7 @@ function ApplicationPage() {
           case "SELECT":
             var option = _(input.children()).find(function(item) { return $(item).prop("value") == value })
             input.val($(option).attr("value"))
-            triggerEvent(input, "input")
+            triggerEvent(input, "change")
             break;
         }
       }
