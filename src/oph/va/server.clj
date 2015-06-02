@@ -5,6 +5,7 @@
             [compojure.handler :refer [site]]
             [clojure.tools.logging :as log]
             [oph.va.config :refer [config]]
+            [oph.va.db :as db]
             [oph.va.db.migrations :as dbmigrations])
   (:gen-class)
   (:import (java.net Socket)
@@ -24,7 +25,9 @@
     (log/info "Running db migrations")
     (dbmigrations/migrate)
     (log/info (format "Starting server in URL http://%s:%d/" host port))
-    (run-server handler {:host host :port port})))
+    (try (run-server handler {:host host :port port})
+         (finally
+           (db/close-datasource!)))))
 
 (defn -main [& args]
   (let [auto-reload? (:auto-reload? config)

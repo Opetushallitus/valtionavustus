@@ -20,11 +20,22 @@
           :adapter "postgresql"}
          (:db config)))
 
-(def datasource (delay (make-datasource datasource-spec)))
+(def datasource (atom nil))
+
+(defn get-datasource []
+  (swap! datasource (fn [ds]
+                      (if (nil? ds)
+                        (make-datasource datasource-spec)
+                        ds))))
+
+(defn close-datasource! []
+  (swap! datasource (fn [ds]
+                      (when ds
+                        (close-datasource ds)))))
 
 (defn clear-db! []
   (if (:allow-db-clear? config)
-    (apply (partial jdbc/db-do-commands {:datasource @datasource} true)
+    (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
            ["drop schema public cascade"
             "create schema public"])
     (throw (RuntimeException. (str "Clearing database is not allowed! "
@@ -32,7 +43,7 @@
                                    "Current config name is " (config-name))))))
 
 (defmacro exec [query params]
-  `(jdbc/with-db-transaction [connection# {:datasource @datasource}]
+  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)}]
      (~query ~params {:connection connection#})))
 
 (defn list-forms []
