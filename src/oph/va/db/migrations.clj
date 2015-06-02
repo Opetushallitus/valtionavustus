@@ -7,5 +7,5 @@
 
 (defn migrate []
   (let [flyway (doto (Flyway.)
-                 (.setDataSource @db/datasource))]
+                 (.setDataSource (db/get-datasource)))]
     (.migrate flyway)))
