@@ -59,10 +59,10 @@
         :return  s/Any
         :body    [answers (describe s/Any "New answers")]
         :summary "Create initial form answers"
-         (let [submission (db/create-submission! form-id answers)]
-           (if submission
-             (ok submission)
-             (internal-server-error!))))
+        (let [submission (db/create-submission! form-id answers)]
+          (if submission
+            (ok submission)
+            (internal-server-error!))))
 
   (POST* "/form/:form-id/values/:values-id" [form-id values-id :as request]
          :return  s/Any
