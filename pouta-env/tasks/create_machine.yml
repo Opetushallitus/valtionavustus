@@ -1,0 +1,52 @@
+- name: Create a virtual machine {{ machine_name }} ({{ va_floating_ip }}) for groups {{ va_ansible_host_groups }}
+  nova_compute:
+    state: present
+    name: "{{ machine_name }}"
+    login_username: "{{ pouta_username }}"
+    login_password: "{{ pouta_password }}"
+    login_tenant_name: "{{ tenant_name }}"
+    auth_url: "{{ auth_url }}"
+    image_id: "{{ pouta_ubuntu_14_04 }}"
+    key_name: "{{ pouta_key }}"
+    flavor_id: "{{ pouta_tiny }}"
+    security_groups: "{{ va_security_groups }}"
+    nics:
+      - net-id: "{{ va_network }}"
+    floating_ips:
+      - "{{ va_floating_ip }}"
+    meta:
+      ansible_host_groups: "{{ va_ansible_host_groups }}"
+  when: va_floating_ip[0] is defined
+
+- name: Create a virtual machine {{ machine_name }} (without floating IP) for groups {{ va_ansible_host_groups }}
+  nova_compute:
+    state: present
+    name: "{{ machine_name }}"
+    login_username: "{{ pouta_username }}"
+    login_password: "{{ pouta_password }}"
+    login_tenant_name: "{{ tenant_name }}"
+    auth_url: "{{ auth_url }}"
+    image_id: "{{ pouta_ubuntu_14_04 }}"
+    key_name: "{{ pouta_key }}"
+    flavor_id: "{{ pouta_tiny }}"
+    security_groups: "{{ va_security_groups }}"
+    nics:
+      - net-id: "{{ va_network }}"
+    meta:
+      ansible_host_groups: "{{ va_ansible_host_groups }}"
+  when: va_floating_ip[0] is not defined
+
+- name: Remove the old SSH host key of {{ machine_name }} from my ~/.ssh/known_hosts
+  shell: "ssh-keygen -R {{ machine_name }}"
+
+- name: Remove the old SSH host key of {{ va_floating_ip }} from my ~/.ssh/known_hosts
+  shell: "ssh-keygen -R {{ va_floating_ip }}"
+  when: va_floating_ip[0] is defined
+
+- name: Add the new SSH host key of {{ va_floating_ip }} to my ~/.ssh/known_hosts
+  shell: "ssh-keyscan -H  {{va_floating_ip}} >> ~/.ssh/known_hosts"
+  when: va_floating_ip[0] is defined
+
+- name: Add the new SSH host key of {{ machine_name }} ({{ va_floating_ip }}) to my ~/.ssh/known_hosts
+  shell: "ssh-keyscan -H  {{va_floating_ip}} >> ~/.ssh/known_hosts"
+  when: va_floating_ip[0] is defined

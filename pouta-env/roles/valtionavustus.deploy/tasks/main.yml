@@ -9,6 +9,18 @@
   command: "{{jenkins_home}}/jobs/job.sh {{item.name}}"
   with_items: jenkins_jobs
 
+- name: Make sure Jenkins user .ssh exists
+  sudo_user: "{{ jenkins_user }}"
+  file: path=~{{ jenkins_user }}/.ssh state=directory mode=0700
+
+- name: Make sure Jenkins user .ssh/known_hosts exists
+  sudo_user: "{{ jenkins_user }}"
+  file: "path=~{{ jenkins_user }}/.ssh/known_hosts state=touch mode=0600"
+
+- name: Add the new SSH host key of {{ test_machine_name }} to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
+  sudo_user: "{{ jenkins_user }}"
+  shell: "ssh-keyscan -H {{ test_machine_name }} >> ~{{ jenkins_user }}/.ssh/known_hosts"
+
 - name: Generate new SSH key for "{{ jenkins_user }}" user for application deploys
   user: name="{{ jenkins_user }}" generate_ssh_key=yes ssh_key_file=.ssh/id_deploy
 

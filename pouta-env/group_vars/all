@@ -5,11 +5,6 @@ ubuntu_common_required_packages:
   - xfsprogs
   - lvm2
 
-va_gateway_ip: 192.168.1.76
-va_gateway_name: va-gw
-
-build_machine_ip: 192.168.1.76
 build_machine_name: va-build
 
-test_machine_ip: 192.168.1.70
 test_machine_name: va-test
