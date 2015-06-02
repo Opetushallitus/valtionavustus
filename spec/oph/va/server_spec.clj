@@ -39,13 +39,31 @@
         (should= 400 status)
         (should= {:tiedotus []
                   :kohderyhma []
-                  :kuvaus ["required"]
-                  :arviointi ["required"]
-                  :alue ["required"]
-                  :nimi ["required"]
-                  :paikkakunnat ["required"]
-                  :uusi ["required"]
-                  :tavoitteet ["required"]
+                  :kuvaus [{:error "required"}]
+                  :arviointi [{:error "required"}]
+                  :alue [{:error "required"}]
+                  :nimi [{:error "required"}]
+                  :paikkakunnat [{:error "required"}]
+                  :uusi [{:error "required"}]
+                  :tavoitteet [{:error "required"}]
+                  :www-osoite []}
+                 json)))
+
+  (it "PUT should validate text field lengths values when done to route /api/form/1/values"
+      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:tiedotus "foo"
+                                                                                     :kohderyhma "123456789012345678901"
+                                                                                     :paikkakunnat "123456789012345678901"})
+            json (json->map body)]
+        (should= 400 status)
+        (should= {:tiedotus []
+                  :kohderyhma [{:error "maxlength", :max 20}]
+                  :kuvaus [{:error "required"}]
+                  :arviointi [{:error "required"}]
+                  :alue [{:error "required"}]
+                  :nimi [{:error "required"}]
+                  :paikkakunnat [{:error "maxlength", :max 20}]
+                  :uusi [{:error "required"}]
+                  :tavoitteet [{:error "required"}]
                   :www-osoite []}
                  json)))
 
@@ -70,13 +88,13 @@
       (should= 400 status)
       (should= {:tiedotus []
                 :kohderyhma []
-                :kuvaus ["required"]
-                :arviointi ["required"]
-                :alue ["required"]
-                :nimi ["required"]
-                :paikkakunnat ["required"]
-                :uusi ["required"]
-                :tavoitteet ["required"]
+                :kuvaus [{:error "required"}]
+                :arviointi [{:error "required"}]
+                :alue [{:error "required"}]
+                :nimi [{:error "required"}]
+                :paikkakunnat [{:error "required"}]
+                :uusi [{:error "required"}]
+                :tavoitteet [{:error "required"}]
                 :www-osoite []}
                json)))
 
