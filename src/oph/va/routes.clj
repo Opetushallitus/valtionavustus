@@ -32,9 +32,17 @@
                    :content FormContent,
                    :start s/Inst})
 
-(s/defschema Submission {s/Keyword s/Str})
-(s/defschema SubmissionValidationErrors {s/Keyword [s/Str]})
-(s/defschema SubmissionId {:id Long})
+(s/defschema Submission
+  "Submission consists of a flat field id to value mapping"
+  {s/Keyword s/Str})
+
+(s/defschema SubmissionValidationErrors
+  "Submission validation errors contain a mapping from field id to list of validation errors"
+  {s/Keyword [s/Str]})
+
+(s/defschema SubmissionId
+  "Submission id contains id of the newly created submission"
+  {:id Long})
 
 (def empty-answers {})
 
