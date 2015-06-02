@@ -13,6 +13,7 @@ insert into forms (content) VALUES ('{
   {"id":"arviointi","required":true,"displayAs":"textArea","label":{"fi":"Miten hankkeen tavoitteiden toteutumista ja vaikuttavuutta arvioidaan?","sv":"Vilka konkreta resultat eftersträvas och hur har man för avsikt att utnyttja dem?"}},
   {"id":"paikkakunnat","required":true,"displayAs":"textField","params":{"maxlength":200},"label":{"fi":"Paikkakunnat","sv":"Orter"}},
   {"id":"alue","required":true,"displayAs":"dropdown","label":{"fi":"Alue","sv":"Område"},"options":[
+    {"value":"","label":{"fi":"Valitse alue","sv":"Välj område"}},
     {"value":"valtakunnallinen","label":{"fi":"Valtakunnallinen","sv":"Riksomfattande"}},
     {"value":"alueellinen","label":{"fi":"Alueellinen","sv":"Regionalt"}},
     {"value":"paikallinen","label":{"fi":"Paikallinen","sv":"Lokalt"}}
