@@ -43,6 +43,12 @@
   (->> (exec queries/get-form {:id id})
        first))
 
+(defn submission-exists? [form-id submission-id]
+  (->> {:form_id (Long. form-id) :submission_id (Long. submission-id)}
+       (exec queries/submission-exists?)
+       empty?
+       not))
+
 (defn update-submission! [form-id submission-id answers]
   (->> {:form_id (Long. form-id) :submission_id (Long. submission-id) :answers answers}
        (exec queries/update-submission<!)

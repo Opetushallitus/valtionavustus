@@ -72,13 +72,15 @@
          :return  s/Any
          :body    [answers (describe s/Any "New answers")]
          :summary "Update form values"
-         (let [validation (validation/validate-form (db/get-form (Long. form-id)) answers)]
-           (if (every? empty? (vals validation))
-             (let [submission (db/update-submission! form-id values-id answers)]
-               (if submission
-                 (ok submission)
-                 (internal-server-error!)))
-             (bad-request validation)))))
+         (if (not (db/submission-exists? form-id values-id))
+           (not-found)
+           (let [validation (validation/validate-form (db/get-form (Long. form-id)) answers)]
+             (if (every? empty? (vals validation))
+               (let [submission (db/update-submission! form-id values-id answers)]
+                 (if submission
+                   (ok submission)
+                   (internal-server-error!)))
+               (bad-request validation))))))
 
 (defroutes* doc-routes
   "API documentation browser"
