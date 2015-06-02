@@ -36,6 +36,15 @@
       ansible_host_groups: "{{ va_ansible_host_groups }}"
   when: va_floating_ip[0] is not defined
 
+- name: Wait for  {{ machine_name }} ({{ va_floating_ip }}) to start
+  local_action:
+    module: wait_for
+      host={{ va_floating_ip }}
+      port=22
+      delay=1
+      timeout=300
+  when: va_floating_ip[0] is defined
+
 - name: Remove the old SSH host key of {{ machine_name }} from my ~/.ssh/known_hosts
   shell: "ssh-keygen -R {{ machine_name }}"
 
