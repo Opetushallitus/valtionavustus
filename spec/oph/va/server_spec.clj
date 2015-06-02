@@ -58,9 +58,10 @@
                                                                                      :paikkakunnat "testi"
                                                                                      :uusi "testi"
                                                                                      :tavoitteet "testi"
-                                                                                     :alue "testi"})]
+                                                                                     :alue "testi"})
+            json (json->map body)]
         (should= 200 status)
-        (should= "1" body)))
+        (should= 1 (:id json))))
 
   (it "POST should validate required values when done to route /api/form/1/values/1"
     (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/1" {:tiedotus "foo"

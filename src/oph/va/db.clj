@@ -66,10 +66,11 @@
        :answers))
 
 (defn create-submission! [form-id answers]
-  (->> {:form_id (Long. form-id)
-        :answers answers}
-       (exec queries/create-submission<!)
-       :id))
+  (let [id (->> {:form_id (Long. form-id)
+                 :answers answers}
+                (exec queries/create-submission<!)
+                :id)]
+    {:id id}))
 
 (defn get-form-submission [form-id submission-id]
   (->> {:form_id (Long. form-id)
