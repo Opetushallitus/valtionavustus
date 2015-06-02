@@ -1,5 +1,6 @@
 (ns oph.va.db
-  (:use [oph.va.config :only [config config-name]])
+  (:use [oph.va.config :only [config config-name]]
+        [clojure.tools.trace :only [trace]])
   (:require [clojure.java.jdbc :as jdbc]
             [hikari-cp.core :refer :all]
             [oph.va.db.queries :as queries]
@@ -23,7 +24,9 @@
 
 (defn clear-db! []
   (if (:allow-db-clear? config)
-    (jdbc/db-do-commands {:datasource @datasource} [queries/clear-db!])
+    (apply (partial jdbc/db-do-commands {:datasource @datasource} true)
+           ["drop schema public cascade"
+            "create schema public"])
     (throw (RuntimeException. (str "Clearing database is not allowed! "
                                    "check that you run with correct mode. "
                                    "Current config name is " (config-name))))))

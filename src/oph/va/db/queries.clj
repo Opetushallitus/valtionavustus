@@ -1,9 +1,5 @@
 (ns oph.va.db.queries
-  (:require [yesql.core :refer [defquery]]
-            [yesql.util :refer [slurp-from-classpath]]))
-
-;; This query is used in tests to clear the db
-(def clear-db! (slurp-from-classpath "db/clear-db.sql"))
+  (:require [yesql.core :refer [defquery]]))
 
 (defquery list-forms "sql/list-forms.sql")
 (defquery get-form "sql/get-form.sql")
