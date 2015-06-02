@@ -46,6 +46,7 @@
         (ok (db/list-forms)))
 
   (GET* "/form/:id" [id]
+        :path-params [id :- Long]
         :return Form
         (let [form (db/get-form (Long. id))]
           (if form
@@ -53,7 +54,8 @@
             (not-found id))))
 
   (GET* "/form/:form-id/values/:values-id" [form-id values-id]
-        :return  s/Any
+        :path-params [form-id :- Long, values-id :- Long]
+        :return  Submission
         :summary "Get current answers"
         (let [submission (db/get-form-submission form-id values-id)]
           (if submission
@@ -61,9 +63,10 @@
             (ok empty-answers))))
 
   (PUT* "/form/:form-id/values" [form-id :as request]
+        :path-params [form-id :- Long]
+        :body    [answers (describe Submission "New answers")]
         :return  (s/either SubmissionId
                            SubmissionValidationErrors)
-        :body    [answers (describe Submission "New answers")]
         :summary "Create initial form answers"
         (let [validation (validation/validate-form (db/get-form (Long. form-id)) answers)]
           (if (every? empty? (vals validation))
@@ -74,9 +77,10 @@
             (bad-request validation))))
 
   (POST* "/form/:form-id/values/:values-id" [form-id values-id :as request]
+         :path-params [form-id :- Long, values-id :- Long]
+         :body    [answers (describe Submission "New answers")]
          :return  (s/either Submission
                             SubmissionValidationErrors)
-         :body    [answers (describe Submission "New answers")]
          :summary "Update form values"
          (if (not (db/submission-exists? form-id values-id))
            (not-found)

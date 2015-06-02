@@ -62,25 +62,25 @@
        first))
 
 (defn submission-exists? [form-id submission-id]
-  (->> {:form_id (Long. form-id) :submission_id (Long. submission-id)}
+  (->> {:form_id form-id :submission_id submission-id}
        (exec queries/submission-exists?)
        empty?
        not))
 
 (defn update-submission! [form-id submission-id answers]
-  (->> {:form_id (Long. form-id) :submission_id (Long. submission-id) :answers answers}
+  (->> {:form_id form-id :submission_id submission-id :answers answers}
        (exec queries/update-submission<!)
        :answers))
 
 (defn create-submission! [form-id answers]
-  (let [id (->> {:form_id (Long. form-id)
+  (let [id (->> {:form_id form-id
                  :answers answers}
                 (exec queries/create-submission<!)
                 :id)]
     {:id id}))
 
 (defn get-form-submission [form-id submission-id]
-  (->> {:form_id (Long. form-id)
-        :submission_id (Long. submission-id)}
+  (->> {:form_id form-id
+        :submission_id submission-id}
        (exec queries/get-form-submission)
        first))
