@@ -1,9 +1,1 @@
-{:auto-reload? true
- :allow-db-clear? true
- :host "localhost"
- :port 8080
- :db {:username "va"
-      :password "va"
-      :database-name "va-dev"
-      :server-name "localhost"
-      :port-number 5432}}
+{}

@@ -4,6 +4,14 @@
 
 (defn config-name [] (env :config))
 
-(defonce config (-> (or (env :config) "config/dev.edn")
+(defonce defaults (-> "config/defaults.edn"
+                      (slurp)
+                      (clojure.edn/read-string)))
+
+(defn merge-with-defaults [config]
+  (merge-with merge defaults config))
+
+(defonce config (->> (or (env :config) "config/dev.edn")
                     (slurp)
-                    (clojure.edn/read-string)))
+                    (clojure.edn/read-string)
+                    (merge-with-defaults)))
