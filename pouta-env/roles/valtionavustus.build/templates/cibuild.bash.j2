@@ -1,14 +1,18 @@
 #!/bin/bash
 set -euo pipefail
 
-#echo "Cleaning workspace"
-#./lein clean
-
-echo "Running tests"
-./lein spec -f junit || true
+echo "Cleaning workspace"
+./lein clean
 
 echo "Building uber jar"
 time ./lein uberjar
+echo "Target contents after uberjar:"
+ls -alFtr target
+
+echo "Running tests"
+./lein spec -f junit || true
+echo "Target contents after running specs:"
+ls -alFtr target
 
 echo "Transfering to test server {{ test_machine_name }}"
 SSH_KEY=~/.ssh/id_deploy
@@ -34,3 +38,6 @@ HEALTH_CHECK_COMMAND="/usr/local/bin/health_check.bash"
 echo "...checking that it really comes up, with $HEALTH_CHECK_COMMAND ..."
 $HEALTH_CHECK_COMMAND
 echo "...start done!"
+
+echo "Target contents in the end of $0 :"
+ls -alFtr target
