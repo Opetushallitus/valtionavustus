@@ -26,7 +26,7 @@ echo "...copying artifcats to {{ test_machine_name }}:${TARGET_DIR} ..."
 $SSH "mkdir -p ${TARGET_DIR}"
 scp -p -i ${SSH_KEY} target/uberjar/oph-valtionavustus-*-standalone.jar ${SSH_USER}@"{{ test_machine_name }}":${TARGET_JAR_PATH}
 scp -pr -i ${SSH_KEY} config resources ${SSH_USER}@"{{ test_machine_name }}":${TARGET_DIR}
-$SSH ln -sf ${TARGET_DIR} ${CURRENT_DIR}
+$SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
 echo "Stopping application..."
 $SSH "sudo /usr/local/bin/stop_app.bash"
 echo "...dropping db.."
