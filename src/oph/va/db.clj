@@ -42,9 +42,10 @@
 
 (defn clear-db! []
   (if (:allow-db-clear? config)
-    (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
+    (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
            ["drop schema public cascade"
             "create schema public"])
+	(catch Exception e (.printStackTrace (.getNextException e))))
     (throw (RuntimeException. (str "Clearing database is not allowed! "
                                    "check that you run with correct mode. "
                                    "Current config name is " (config-name))))))
