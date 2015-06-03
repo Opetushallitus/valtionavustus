@@ -34,7 +34,8 @@
 
   (it "PUT should validate required values when done to route /api/form/1/values"
       (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:tiedotus "foo"
-                                                                                     :kohderyhma "bar"})
+                                                                                     :kohderyhma "bar"
+                                                                                     :alue ""})
             json (json->map body)]
         (should= 400 status)
         (should= {:tiedotus []
@@ -44,13 +45,14 @@
                   :alue [{:error "required"}]
                   :nimi [{:error "required"}]
                   :paikkakunnat [{:error "required"}]
-                  :uusi [{:error "required"}]
+                  :uusi [{:error "required"} {:error "invalid-option"}]
                   :tavoitteet [{:error "required"}]
                   :www-osoite []}
                  json)))
 
-  (it "PUT should validate text field lengths values when done to route /api/form/1/values"
+  (it "PUT should validate text field lengths and options when done to route /api/form/1/values"
       (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:tiedotus "foo"
+                                                                                     :alue "eri alue"
                                                                                      :kohderyhma "123456789012345678901"
                                                                                      :paikkakunnat "123456789012345678901"})
             json (json->map body)]
@@ -59,10 +61,10 @@
                   :kohderyhma [{:error "maxlength", :max 20}]
                   :kuvaus [{:error "required"}]
                   :arviointi [{:error "required"}]
-                  :alue [{:error "required"}]
+                  :alue [{:error "invalid-option"}]
                   :nimi [{:error "required"}]
                   :paikkakunnat [{:error "maxlength", :max 20}]
-                  :uusi [{:error "required"}]
+                  :uusi [{:error "required"} {:error "invalid-option"}]
                   :tavoitteet [{:error "required"}]
                   :www-osoite []}
                  json)))
@@ -74,9 +76,9 @@
                                                                                      :arviointi "testi"
                                                                                      :nimi "testi"
                                                                                      :paikkakunnat "testi"
-                                                                                     :uusi "testi"
+                                                                                     :uusi "uusi"
                                                                                      :tavoitteet "testi"
-                                                                                     :alue "testi"})
+                                                                                     :alue "alueellinen"})
             json (json->map body)]
         (should= 200 status)
         (should= 1 (:id json))))
@@ -90,10 +92,10 @@
                 :kohderyhma []
                 :kuvaus [{:error "required"}]
                 :arviointi [{:error "required"}]
-                :alue [{:error "required"}]
+                :alue [{:error "required"} {:error "invalid-option"}]
                 :nimi [{:error "required"}]
                 :paikkakunnat [{:error "required"}]
-                :uusi [{:error "required"}]
+                :uusi [{:error "required"} {:error "invalid-option"}]
                 :tavoitteet [{:error "required"}]
                 :www-osoite []}
                json)))

@@ -6,6 +6,11 @@
     [{:error "required"}]
     []))
 
+(defn validate-options [field answer]
+  (if (and (> (count (field :options)) 0) (not-any? #{answer} (map (fn [option] (option :value)) (field :options))))
+    [{:error "invalid-option"}]
+    []))
+
 (defn validate-textarea-maxlength [field answer]
   (let [maxlength ((get field :params {}) :maxlength)]
     (if (and (= (field :displayAs) "textArea") (> (count answer) maxlength))
@@ -22,6 +27,7 @@
   (let [answer (answers (keyword (field :id)))]
     {(keyword (field :id)) (concat
        (validate-required field answer)
+       (validate-options field answer)
        (validate-textarea-maxlength field answer)
        (validate-texfield-maxlength field answer))}))
 
