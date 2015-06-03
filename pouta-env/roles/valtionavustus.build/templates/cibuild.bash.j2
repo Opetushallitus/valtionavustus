@@ -9,8 +9,16 @@ time ./lein uberjar
 echo "Target contents after uberjar:"
 ls -alFtr target
 
+echo "Starting Postgresql in Docker"
+/usr/bin/docker pull sameersbn/postgresql:9.4
+time /usr/bin/docker run --name postgresql -d -p 5432:5432 -e 'DB_USER=va' -e 'DB_PASS=va' -e 'DB_NAME="va-dev"' sameersbn/postgresql:9.4
+echo 'echo "alter schema public owner to va;" | sudo -u postgres psql -d va-dev -f -' | docker exec -i postgresql /bin/bash -c 'cat > /tmp/give_public_schema_to_va.bash'
+docker exec postgresql bash -e /tmp/give_public_schema_to_va.bash
+
 echo "Running tests"
-./lein spec -f junit || true
+time ./lein spec -f junit || true
+/usr/bin/docker stop postgresql
+/usr/bin/docker rm postgresql
 echo "Target contents after running specs:"
 ls -alFtr target
 
