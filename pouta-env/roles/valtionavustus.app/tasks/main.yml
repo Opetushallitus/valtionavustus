@@ -8,7 +8,7 @@
   user: name=va-deploy comment="User for application deploys" group=www-data
 
 - name: Create application dir
-  file: path=/var/www owner=www-data group=www-data state=directory
+  file: path=/var/www owner=www-data group=www-data state=directory mode=0775
 
 - name: Create logs dir
   file: path={{ logical_volumes.logs.mount_point }}/valtionavustus owner=www group=www state=directory
