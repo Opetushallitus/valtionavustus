@@ -42,10 +42,10 @@
     - public_keys/*
 
 - name: Add va-gateway machine IP mapping to /etc/hosts
-  lineinfile: dest=/etc/hosts regexp='.* va-gw$' line='"{{ hostvars['va-build'].ansible_all_ipv4_addresses[0] }} va-gw"' owner=root group=root mode=0644
+  lineinfile: dest=/etc/hosts regexp='^[0-9]\.* va-gw$' line='"{{ hostvars['va-build'].ansible_all_ipv4_addresses[0] }} va-gw"' owner=root group=root mode=0644
 
 - name: Add build machine IP mapping to /etc/hosts
-  lineinfile: dest=/etc/hosts regexp='.* va-build$' line='"{{ hostvars['va-build'].ansible_all_ipv4_addresses[0] }} va-build"' owner=root group=root mode=0644
+  lineinfile: dest=/etc/hosts regexp='^[0-9]\.* va-build$' line='"{{ hostvars['va-build'].ansible_all_ipv4_addresses[0] }} va-build"' owner=root group=root mode=0644
 
 - name: Add test machine IP mapping to /etc/hosts
-  lineinfile: dest=/etc/hosts regexp='.* va-test$' line='"{{ hostvars['va-test'].ansible_all_ipv4_addresses[0] }} va-test"' owner=root group=root mode=0644
+  lineinfile: dest=/etc/hosts regexp='^[0-9]\.* va-test$' line='"{{ hostvars['va-test'].ansible_all_ipv4_addresses[0] }} va-test"' owner=root group=root mode=0644
