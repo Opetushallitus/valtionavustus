@@ -11,18 +11,20 @@ export default class Form extends React.Component {
     var lang = this.props.lang
     var model = this.props.model
     var values = this.props.values
+    var validationErrors = this.props.validationErrors
     var translations = this.props.translations
 
     return (
-      <form onSubmit={model.save} className="pure-form pure-form-stacked">
+      <form className="pure-form pure-form-stacked">
         <fieldset>
           {
             fields.map(function(field) {
               var value = _.get(values, field.id, "")
-              return <FormElement model={model} lang={lang} key={field.id} value={value} field={field} />
+              var fieldErrors = _.get(validationErrors, field.id, [])
+              return <FormElement validationErrors={fieldErrors} translations={translations} model={model} lang={lang} key={field.id} value={value} field={field} />
             })
           }
-          <button type="submit" className="pure-button pure-button-primary"><LocalizedString data={translations.form.submit} lang={lang}/></button>
+          <button type="submit" onClick={model.save} className="pure-button pure-button-primary"><LocalizedString data={translations.form.submit} lang={lang}/></button>
           { this.props.valuesId ? <a target="preview" href={"/?preview=true&form=" + form.id + "&submission=" + this.props.valuesId}><LocalizedString data={translations.form.preview} lang={lang}/></a> : null}
         </fieldset>
       </form>

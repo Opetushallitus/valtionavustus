@@ -22,6 +22,7 @@ export default class FormModel {
       values: formValuesP,
       preview: langPreviewParam,
       lang: langQueryParam,
+      validationErrors: {},
       translations: translationsP
     }).onValue(setData)
 
@@ -44,31 +45,40 @@ export default class FormModel {
 
     function onUpdateField(state, fieldUpdate) {
       state.values[fieldUpdate.id] = fieldUpdate.value
+    }
+
+    function handleSaveError(state, status, error, method, url, response) {
+      if(status === 400) {
+        state.validationErrors = JSON.parse(response)
+      }
+      else {
+        console.error(method, url, error)
+      }
       return state
     }
 
     function saveNew(state) {
       var url = "/api/form/" + state.form.id + "/values"
-      qwest.put(url, state.values, {dataType: "json"})
+      qwest.put(url, state.values, {dataType: "json", async: false})
           .then(function(response) {
             console.log("State saved. Response=", response)
             state.valuesId = response.id
             setData(state)
           })
-          .catch(function(error, url) {
-            console.error('PUT', url, error)
+          .catch(function(error) {
+            state = handleSaveError(state, this.status, error, this.method, url, this.response)
           })
       return state
     }
 
     function updateOld(state, id) {
       var url = "/api/form/" + state.form.id + "/values/" + id
-      qwest.post(url, state.values, {dataType: "json"})
+      qwest.post(url, state.values, {dataType: "json", async: false})
           .then(function(response) {
             console.log("State updated. Response=" + response)
           })
-          .catch(function(error, url) {
-            console.error('POST', url, error)
+          .catch(function(error) {
+            state = handleSaveError(state, this.status, error, this.method, url, this.response)
           })
       return state
     }

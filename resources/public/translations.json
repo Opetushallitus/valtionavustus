@@ -8,5 +8,11 @@
       "fi": "Tallennettu versio",
       "sv": "Sparat version"
     }
+  },
+  "errors": {
+    "required": {
+      "fi": "Pakollinen tieto",
+      "sv": "Obligatorisk uppgift"
+    }
   }
 }

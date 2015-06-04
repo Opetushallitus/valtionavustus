@@ -11,12 +11,13 @@ export default class FormContainer extends React.Component {
     var lang = this.props.lang
     var model = this.props.model
     var values = this.props.values
+    var validationErrors = this.props.validationErrors
     var translations = this.props.translations
     var formElement;
     if (this.props.preview) {
       formElement = <FormPreview model={model} form={form} lang={lang} values={values} valuesId={this.props.valuesId}/>
     } else {
-      formElement = <Form model={model} translations={translations} form={form} lang={lang} values={values} valuesId={this.props.valuesId}/>
+      formElement = <Form model={model} validationErrors={validationErrors} translations={translations} form={form} lang={lang} values={values} valuesId={this.props.valuesId}/>
     }
 
     return (

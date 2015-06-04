@@ -1,5 +1,6 @@
 import React from 'react'
 import LocalizedString from './LocalizedString.jsx'
+import FormElementError from './FormElementError.jsx'
 
 class BasicFieldComponent extends React.Component {
 
@@ -106,6 +107,7 @@ export default class FormElement extends React.Component {
     return (
       <div>
         <label className={field.required ? "required" : ""}><LocalizedString data={field.label} lang={this.props.lang} /></label>
+        <FormElementError validationErrors={this.props.validationErrors} translations={this.props.translations} lang={this.props.lang}/>
         {input}
       </div>
     )
