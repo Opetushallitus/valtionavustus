@@ -9,3 +9,6 @@
 
 - name: Install Docker
   apt: state=installed pkg=lxc-docker force=yes
+
+- name: Add "{{ jenkins_user }}" user to docker group
+  user: name="{{ jenkins_user }}" groups=docker
