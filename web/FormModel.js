@@ -45,6 +45,10 @@ export default class FormModel {
 
     function onUpdateField(state, fieldUpdate) {
       state.values[fieldUpdate.id] = fieldUpdate.value
+      if(fieldUpdate.validationErrors) {
+        state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
+      }
+      return state
     }
 
     function handleSaveError(state, status, error, method, url, response) {
@@ -102,8 +106,8 @@ export default class FormModel {
     dispatcher.push('changeLanguage', lang)
   }
 
-  setFieldValue(id, value) {
-    dispatcher.push('updateField', {id: id, value: value})
+  setFieldValue(id, value, validationErrors) {
+    dispatcher.push('updateField', {id: id, value: value, validationErrors: validationErrors})
   }
 
   save(event) {

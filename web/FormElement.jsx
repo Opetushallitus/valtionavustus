@@ -5,7 +5,12 @@ import FormElementError from './FormElementError.jsx'
 class BasicFieldComponent extends React.Component {
 
   handleChange(event) {
-    this.props.model.setFieldValue(this.props.name, event.target.value)
+    var value = event.target.value
+    var validationErrors = []
+    if(this.props.required && !value) {
+      validationErrors = [{error: "required"}]
+    }
+    this.props.model.setFieldValue(this.props.name, value, validationErrors)
   }
 
   param(param, defaultValue) {
