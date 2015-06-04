@@ -30,6 +30,7 @@ if [ $attempt -eq $max_attempts ]; then
   /usr/bin/docker rm postgresql
   exit 2
 fi
+/usr/bin/docker exec postgresql bash -e /tmp/give_public_schema_to_va.bash
 
 echo "Running tests"
 time ./lein spec -f junit || true
