@@ -14,12 +14,12 @@ host_postgres_port=5432
 container_postgres_port=5432
 time /usr/bin/docker pull sameersbn/postgresql:9.4
 time /usr/bin/docker run --name postgresql -d -p $host_postgres_port:$container_postgres_port -e 'DB_USER=va' -e 'DB_PASS=va' -e 'DB_NAME="va-dev"' sameersbn/postgresql:9.4
-echo 'echo "alter schema public owner to va;" | sudo -u postgres psql -d va-dev -f -' | docker exec -i postgresql /bin/bash -c 'cat > /tmp/give_public_schema_to_va.bash'
+echo 'echo "alter schema public owner to va;" | sudo -u postgres psql -d va-dev -f -' | /usr/bin/docker exec -i postgresql /bin/bash -c 'cat > /tmp/give_public_schema_to_va.bash'
 echo "Waiting for Postgresql to be listening to its port..."
 attempt=0
 max_attempts=60
 interval_seconds=0.5
-until (nc -z `docker inspect --format='{% raw %}{{.NetworkSettings.IPAddress}}{% endraw %}' postgresql` $container_postgres_port ) || [[ $attempt -ge $max_attempts ]] ; do
+until (nc -z `/usr/bin/docker inspect --format='{% raw %}{{.NetworkSettings.IPAddress}}{% endraw %}' postgresql` $container_postgres_port ) || [[ $attempt -ge $max_attempts ]] ; do
   echo "  Waiting for Postgresql to be available in the container , attempt $attempt/$max_attempts ..."
   sleep $interval_seconds
   attempt=$(( $attempt + 1 ))
