@@ -45,7 +45,7 @@
                   :alue [{:error "required"}]
                   :nimi [{:error "required"}]
                   :paikkakunnat [{:error "required"}]
-                  :uusi [{:error "required"} {:error "invalid-option"}]
+                  :uusi [{:error "required"}]
                   :tavoitteet [{:error "required"}]
                   :www-osoite []}
                  json)))
@@ -64,7 +64,7 @@
                   :alue [{:error "invalid-option"}]
                   :nimi [{:error "required"}]
                   :paikkakunnat [{:error "maxlength", :max 20}]
-                  :uusi [{:error "required"} {:error "invalid-option"}]
+                  :uusi [{:error "required"}]
                   :tavoitteet [{:error "required"}]
                   :www-osoite []}
                  json)))
@@ -92,10 +92,10 @@
                 :kohderyhma []
                 :kuvaus [{:error "required"}]
                 :arviointi [{:error "required"}]
-                :alue [{:error "required"} {:error "invalid-option"}]
+                :alue [{:error "required"}]
                 :nimi [{:error "required"}]
                 :paikkakunnat [{:error "required"}]
-                :uusi [{:error "required"} {:error "invalid-option"}]
+                :uusi [{:error "required"}]
                 :tavoitteet [{:error "required"}]
                 :www-osoite []}
                json)))

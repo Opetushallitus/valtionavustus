@@ -7,7 +7,7 @@
     []))
 
 (defn validate-options [field answer]
-  (if (and (> (count (field :options)) 0) (not-any? #{answer} (map (fn [option] (option :value)) (field :options))))
+  (if (and (not (string/blank? answer)) (> (count (field :options)) 0) (not-any? #{answer} (map (fn [option] (option :value)) (field :options))))
     [{:error "invalid-option"}]
     []))
 
