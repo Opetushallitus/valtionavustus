@@ -73,8 +73,8 @@ class RadioButton extends BasicFieldComponent {
 
     if(field.options) {
       for (var i=0; i < field.options.length; i++) {
-        var label = field.options[i].label ? <LocalizedString key={field.id + "." + field.options[i].value + ".label"} data={field.options[i].label} lang={this.props.lang} /> : field.options[i].value
-        radiobuttons.push(<input {...this.props} type="radio" key={field.id + "." + field.options[i].value} name={field.id} required={field.required} value={field.options[i].value} onChange={this.handleChange} checked={field.options[i].value === this.props.value ? true: null}/>)
+        var label = field.options[i].label ? <label htmlFor={field.id + ".radio." + i}><LocalizedString key={field.id + "." + field.options[i].value + ".label"} data={field.options[i].label} lang={this.props.lang} /></label> : field.options[i].value
+        radiobuttons.push(<input {...this.props} type="radio" id={field.id + ".radio." + i} key={field.id + "." + field.options[i].value} name={field.id} required={field.required} value={field.options[i].value} onChange={this.handleChange} checked={field.options[i].value === this.props.value ? true: null}/>)
         radiobuttons.push(label)
       }
     }

@@ -60,3 +60,32 @@ input[type=radio] {
     margin-top: 20px;
   }
 }
+
+input[type=radio] {
+  display: none;
+  margin: 10px;
+}
+
+input[type=radio] + label {
+  color: #000;
+  text-transform: uppercase;
+  display: inline-block;
+  margin: 4px 3px 4px 3px;
+  padding: 12px 20px 12px 35px;
+  background-color: #f4f4f4;
+  border: solid 1px #d9ceca;
+}
+
+input[type=radio]:checked + label {
+  @checkmark-width: 20px;
+  &:before {
+    color: #73ba21;
+    content: "\2713";
+    display: inline-block;
+    width: @checkmark-width;
+  }
+  margin: 0;
+  padding: 12px 20px 12px 15px;
+  background-image: none;
+  border: solid 4px #73ba21;
+}
