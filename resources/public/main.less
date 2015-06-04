@@ -1,18 +1,18 @@
 @form-width: 1200px;
-@border-color: #d9d9d9;
+@border-color-light: #e6e6e6;
+@border-color-darker: #999290;
 
 body {
   font-family: 'Open Sans', sans-serif;
   background-color: #ededed;
+  color: #1A1919;
+  font-size: 16px;
 }
 
-#logo {
-  margin-top: 20px;
-  margin-left: 100px;
-  height: 70px;
-  width: 271px;
-  float: left;
-  background-image: url("img/opetushallitus.gif");
+#top-container {
+  width: @form-width;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #topbar {
@@ -21,15 +21,22 @@ body {
   background-color: white;
   position: fixed;
   top: 0;
-  border-bottom: solid @border-color;
+  border-bottom: solid @border-color-light;
+
+  #logo {
+    margin-top: 20px;
+    float: left;
+    height: 70px;
+    width: 271px;
+    background-image: url("img/opetushallitus.gif");
+  }
 
   h1 {
-    font-weight: 300;
-    font-size: 24px;
+    margin-left: 100px;
+    margin-top: 40px;
+    float: left;
+    font-size: 22px;
     text-transform: uppercase;
-    position: relative;
-    top: 20px;
-    left: 250px;
   }
 }
 
@@ -44,8 +51,36 @@ body {
   content: " *";
 }
 
+h1 {
+  font-weight: 300;
+  font-size: 24px;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: 2px solid #00973a;
+}
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+input[type=text],
+textarea {
+  font-size: 18px;
+  border: 1px solid  @border-color-darker;
+  padding: 8px;
+  background-color: #fff;
+}
+
 label {
-  color: #747474;
+  color: #4A4A4A;
+  display: block;
+  margin: 20px 0 8px 0;
 }
 
 input[type=radio] {
@@ -71,9 +106,9 @@ input[type=radio] + label {
   text-transform: uppercase;
   display: inline-block;
   margin: 4px 3px 4px 3px;
-  padding: 12px 20px 12px 35px;
-  background-color: #f4f4f4;
-  border: solid 1px #d9ceca;
+  padding: 12px 35px 12px 35px;
+  background-color: #fff;
+  border: solid 1px @border-color-darker;
 }
 
 input[type=radio]:checked + label {
@@ -85,7 +120,7 @@ input[type=radio]:checked + label {
     width: @checkmark-width;
   }
   margin: 0;
-  padding: 12px 20px 12px 15px;
+  padding: 12px 35px 12px 15px;
   background-image: none;
   border: solid 4px #73ba21;
 }
