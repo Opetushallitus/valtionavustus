@@ -8,6 +8,14 @@
 @text-black: #1A1919;
 @form-label-black: #4A4A4A;
 
+
+.ease-in-out(@seconds) {
+  -webkit-transition: all @seconds ease-in-out;
+  -moz-transition: all @seconds ease-in-out;
+  -ms-transition: all @seconds ease-in-out;
+  -o-transition: all @seconds ease-in-out;
+}
+
 body {
   font-family: 'Open Sans', sans-serif;
   background-color: #ededed;
@@ -64,7 +72,16 @@ input:focus,
 select:focus,
 textarea:focus,
 button:focus {
-  outline: 2px solid #00973a;
+  box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+  outline: 1px solid rgba(123, 169, 192, 1);
+}
+
+input,
+select,
+textarea,
+button {
+  .ease-in-out(0.30s);
+  outline: none;
 }
 
 fieldset {
