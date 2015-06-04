@@ -1,5 +1,6 @@
 import React from 'react'
 import FormElement from './FormElement.jsx'
+import LocalizedString from './LocalizedString.jsx'
 import _ from 'lodash'
 
 export default class Form extends React.Component {
@@ -10,6 +11,7 @@ export default class Form extends React.Component {
     var lang = this.props.lang
     var model = this.props.model
     var values = this.props.values
+    var translations = this.props.translations
 
     return (
       <form onSubmit={model.save} className="pure-form pure-form-stacked">
@@ -20,8 +22,8 @@ export default class Form extends React.Component {
               return <FormElement model={model} lang={lang} key={field.id} value={value} field={field} />
             })
           }
-          <button type="submit" className="pure-button pure-button-primary">Tallenna</button>
-          { this.props.valuesId ? <a target="preview" href={"/?preview=true&form=" + form.id + "&submission=" + this.props.valuesId}>Tallennettu versio</a> : null}
+          <button type="submit" className="pure-button pure-button-primary"><LocalizedString data={translations.form.submit} lang={lang}/></button>
+          { this.props.valuesId ? <a target="preview" href={"/?preview=true&form=" + form.id + "&submission=" + this.props.valuesId}><LocalizedString data={translations.form.preview} lang={lang}/></a> : null}
         </fieldset>
       </form>
     )

@@ -1,0 +1,12 @@
+{
+  "form": {
+    "submit": {
+      "fi": "Tallenna",
+      "sv": "Spara"
+    },
+    "preview": {
+      "fi": "Tallennettu versio",
+      "sv": "Sparat version"
+    }
+  }
+}

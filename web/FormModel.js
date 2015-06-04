@@ -14,13 +14,15 @@ export default class FormModel {
     const langPreviewParam =  query.preview || false
     const formP = Bacon.fromPromise(qwest.get("/api/form/" + (query.form || 1)))
     const formValuesP = query.submission ? Bacon.fromPromise(qwest.get("/api/form/" + (query.form || 1) + "/values/" + query.submission)) : {}
+    const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
     const requests = Bacon.combineTemplate({
       form: formP,
       valuesId: query.submission,
       values: formValuesP,
       preview: langPreviewParam,
-      lang: langQueryParam
+      lang: langQueryParam,
+      translations: translationsP
     }).onValue(setData)
 
     const formFieldValuesP = Bacon.update({},
