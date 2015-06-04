@@ -10,32 +10,16 @@ echo "Target contents after uberjar:"
 ls -alFtr target
 
 echo "Starting Postgresql in Docker"
-host_postgres_port=5432
-container_postgres_port=5432
-time /usr/bin/docker pull sameersbn/postgresql:9.4
-time /usr/bin/docker run --name postgresql -d -p $host_postgres_port:$container_postgres_port -e 'DB_USER=va' -e 'DB_PASS=va' -e 'DB_NAME="va-dev"' sameersbn/postgresql:9.4
-echo 'echo "alter schema public owner to va;" | sudo -u postgres psql -d va-dev -f -' | /usr/bin/docker exec -i postgresql /bin/bash -c 'cat > /tmp/give_public_schema_to_va.bash'
-echo "Waiting for Postgresql to be listening to its port..."
-attempt=0
-max_attempts=60
-interval_seconds=0.5
-until (nc -z `/usr/bin/docker inspect --format='{% raw %}{{.NetworkSettings.IPAddress}}{% endraw %}' postgresql` $container_postgres_port ) || [[ $attempt -ge $max_attempts ]] ; do
-  echo "  Waiting for Postgresql to be available in the container , attempt $attempt/$max_attempts ..."
-  sleep $interval_seconds
-  attempt=$(( $attempt + 1 ))
-done
-if [ $attempt -eq $max_attempts ]; then
-  echo "Could not find running Postgresql in $max_attempts attempts with $interval_seconds second intervals, failing."
-  /usr/bin/docker stop postgresql
-  /usr/bin/docker rm postgresql
-  exit 2
-fi
-/usr/bin/docker exec postgresql bash -e /tmp/give_public_schema_to_va.bash
+source `dirname $0`/postgresql_container_functions
+start_postgresql_in_container
+wait_for_postgresql_to_be_available
+give_public_schema_to_va
 
 echo "Running tests"
 time ./lein spec -f junit || true
-/usr/bin/docker stop postgresql
-/usr/bin/docker rm postgresql
+
+remove_postgresql_container
+
 echo "Target contents after running specs:"
 ls -alFtr target
 
