@@ -41,7 +41,7 @@
                         (close-datasource ds)))))
 
 (defn clear-db! []
-  (if (:allow-db-clear? config)
+  (if (:allow-db-clear? (:server config))
     (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
            ["drop schema public cascade"
             "create schema public"])

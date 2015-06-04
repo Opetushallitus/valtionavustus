@@ -1,2 +1,2 @@
-{:port 8081
+{:server { :port 8081 }
  :db {:database-name "va-test"}}
