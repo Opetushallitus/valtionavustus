@@ -4,7 +4,7 @@
 
 (defn config-name [] (env :config))
 
-(defonce defaults (-> "config/defaults.edn"
+(defonce defaults (-> (or (env :configdefaults) "config/defaults.edn")
                       (slurp)
                       (clojure.edn/read-string)))
 
