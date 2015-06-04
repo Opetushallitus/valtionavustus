@@ -29,7 +29,7 @@
     - { include: tasks/create_machine.yml,
         machine_name: va-build,
         va_floating_ip: 86.50.169.218,
-        va_ansible_host_groups: ""
+        va_ansible_host_groups: va_build
       }
     - { include: tasks/create_machine.yml,
         machine_name: va-test,
