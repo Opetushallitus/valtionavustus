@@ -44,13 +44,14 @@ body {
   margin-right: auto;
 }
 
-.required:after {
-  content: " *";
-}
-
 h1 {
   font-weight: 300;
   font-size: 24px;
+}
+
+//Form elements
+.required:after {
+  content: " *";
 }
 
 input:focus,
@@ -80,35 +81,29 @@ label {
   margin: 20px 0 8px 0;
 }
 
-input[type=radio] {
-  margin: 0 7px 5px 15px;
-}
 
 .preview {
   label {
     font-weight: 600;
     display: block;
-    margin-bottom: 10px;
-    margin-top: 20px;
   }
 }
 
 input[type=radio] {
   display: none;
-  margin: 10px;
 }
 
 input[type=radio] + label {
-  color: #000;
   display: inline-block;
-  margin: 4px 3px 4px 3px;
-  padding: 12px 35px 12px 35px;
+  color: #000;
+  margin: 4px 3px;
+  padding: 12px 30px;
   background-color: #fff;
   border: solid 1px @border-color-darker;
 }
 
 input[type=radio]:checked + label {
-  background: #fff url('img/checkmark.png') no-repeat 17px 19px;
+  background: #fff url('img/checkmark.png') no-repeat 10px 19px;
   margin: 0;
   border: solid 4px #73ba21;
 }
