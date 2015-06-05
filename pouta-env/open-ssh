@@ -1,0 +1,21 @@
+#!./pouta-venv/bin/python
+import json
+import sys
+from subprocess import Popen, PIPE, call
+
+output, error = Popen(["./openstack_inventory.py"], stdout = PIPE, stderr= PIPE).communicate()
+inventory = json.loads(output)
+
+if len(sys.argv) != 2:
+  print "Usage " + sys.argv[0] + " [host]"
+  print "Available hosts:"
+  hosts = inventory['_meta']['hostvars'].keys()
+  print '\n'.join(str(k) for k in sorted(hosts))
+  exit(2)
+
+if sys.argv[1] in inventory['_meta']['hostvars']:
+  ip = inventory['_meta']['hostvars'][sys.argv[1]]['ansible_ssh_host']
+
+  call(['ssh', '-o', 'StrictHostKeyChecking=no', '-F', 'ssh.config', ip])
+else:
+  print "Unknown host " + sys.argv[1]
