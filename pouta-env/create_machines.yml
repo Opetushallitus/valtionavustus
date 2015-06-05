@@ -22,17 +22,18 @@
     pouta_ubuntu_14_04: Ubuntu-14.04
 
     pouta_key: "{{ lookup('env', 'USER') }}"
-    va_security_groups: va-initial-secgroup
     va_network: e15cfa1c-a214-415a-8909-e270b3ec344b
 
   tasks:
     - { include: tasks/create_machine.yml,
         machine_name: va-build,
-        va_ansible_host_groups: va_build
+        va_ansible_host_groups: va_build,
+        va_security_groups: qa-common, va-build
       }
     - { include: tasks/create_machine.yml,
         machine_name: va-test,
-        va_ansible_host_groups: va_backend
+        va_ansible_host_groups: va_backend,
+        va_security_groups: qa-common, va-app
       }
     - { include: tasks/attach_persistent_volumes_if_needed.yml,
         machine_name: va-test,
