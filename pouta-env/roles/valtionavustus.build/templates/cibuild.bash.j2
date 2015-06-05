@@ -4,20 +4,28 @@ set -euo pipefail
 echo "Cleaning workspace"
 ./lein clean
 
+echo "=============================="
+echo
 echo "Building uber jar"
 time ./lein uberjar
 
+echo "=============================="
+echo
 echo "Starting Postgresql in Docker"
 source `dirname $0`/postgresql_container_functions
 start_postgresql_in_container
 wait_for_postgresql_to_be_available
 give_public_schema_to_va
 
+echo "=============================="
+echo
 echo "Running tests"
 time ./lein spec -f junit || true
 
 remove_postgresql_container
 
+echo "=============================="
+echo
 echo "Transfering to test server {{ test_machine_name }}"
 SSH_KEY=~/.ssh/id_deploy
 SSH_USER=va-deploy
@@ -26,19 +34,32 @@ BASE_DIR=/var/www
 CURRENT_DIR=${BASE_DIR}/current
 TARGET_DIR=${BASE_DIR}/va-`date +'%Y%m%d%H%M%S'`
 TARGET_JAR_PATH=${TARGET_DIR}/va.jar
+echo "=============================="
+echo
 echo "...copying artifcats to {{ test_machine_name }}:${TARGET_DIR} ..."
 $SSH "mkdir -p ${TARGET_DIR}"
 scp -p -i ${SSH_KEY} target/uberjar/oph-valtionavustus-*-standalone.jar ${SSH_USER}@"{{ test_machine_name }}":${TARGET_JAR_PATH}
 scp -pr -i ${SSH_KEY} config resources ${SSH_USER}@"{{ test_machine_name }}":${TARGET_DIR}
 $SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
+echo "=============================="
+echo
 echo "Stopping application..."
 $SSH "sudo /usr/local/bin/stop_app.bash"
+echo "=============================="
+echo
 echo "...dropping db.."
 $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/resources/sql/drop_public_schema.sql"
 APP_COMMAND="sudo /usr/local/bin/run_app.bash ${CURRENT_DIR}/va.jar ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/test.edn"
+echo "=============================="
+echo
 echo "...starting application with command \"${APP_COMMAND}\" ..."
 $SSH "${APP_COMMAND}"
 HEALTH_CHECK_COMMAND="/usr/local/bin/health_check.bash"
+echo "=============================="
+echo
 echo "...checking that it really comes up, with $HEALTH_CHECK_COMMAND ..."
 $HEALTH_CHECK_COMMAND
+echo
+echo "=============================="
+echo
 echo "...start done!"
