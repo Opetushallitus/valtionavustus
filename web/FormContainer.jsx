@@ -24,7 +24,7 @@ export default class FormContainer extends React.Component {
         <section>
           <ChangeLanguageButton model={model} lang={lang} id="fi" label="Suomeksi" />
           <ChangeLanguageButton model={model} lang={lang} id="sv" label="På svenska" />
-          <h1><LocalizedString data={form.content.name} lang={lang}/></h1>
+          <h1><LocalizedString translations={form.content} translationKey="name" lang={lang}/></h1>
           {formElement}
         </section>
     )

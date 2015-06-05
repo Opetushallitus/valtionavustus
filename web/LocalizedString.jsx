@@ -1,20 +1,13 @@
 import React from 'react'
+import Translator from './Translator.js'
 
 export default class LocalizedString extends React.Component {
   constructor(props) {
     super(props)
   }
   render() {
-    var value = this.props.data[this.props.lang]
-    if(!value) {
-      console.error("No translation found: " + JSON.stringify(this.props))
-      for (var key in this.props.data) {
-        if (this.props.data[key]) {
-          value = this.props.data[key]
-          break;
-        }
-      }
-    }
+    const translator = new Translator(this.props.translations)
+    const value = translator.translate(this.props.translationKey, this.props.lang)
     return (<span>{value}</span>)
   }
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import LocalizedString from './LocalizedString.jsx'
+import Translator from './Translator.js'
 import FormElementError from './FormElementError.jsx'
 
 class BasicFieldComponent extends React.Component {
@@ -61,8 +62,9 @@ class Dropdown extends BasicFieldComponent {
     const options = [];
     if(field.options) {
       for (var i=0; i < field.options.length; i++) {
+        const label = new Translator(field.options[i]).translate("label", this.props.lang, field.options[i].value)
         options.push(<option key={field.id + "." + field.options[i].value} value={field.options[i].value}>
-                      {field.options[i].label ? field.options[i].label[this.props.lang] : field.options[i].value}
+                      {label}
                      </option>)
       }
     }
@@ -79,7 +81,7 @@ class RadioButton extends BasicFieldComponent {
 
     if(field.options) {
       for (var i=0; i < field.options.length; i++) {
-        const label = field.options[i].label ? field.options[i].label[this.props.lang] : field.options[i].value
+        const label = new Translator(field.options[i]).translate("label", this.props.lang, field.options[i].value)
         radiobuttons.push(<input {...this.props} type="radio" id={field.id + ".radio." + i} key={field.id + "." + field.options[i].value} name={field.id} required={field.required} value={field.options[i].value} onChange={this.handleChange} checked={field.options[i].value === this.props.value ? true: null}/>)
         radiobuttons.push(<label key={field.id + "." + field.options[i].value + ".label"} htmlFor={field.id + ".radio." + i}>{label}</label>)
       }
@@ -111,7 +113,7 @@ export default class FormElement extends React.Component {
 
     return (
       <div>
-        <label htmlFor={field.id} className={field.required ? "required" : ""}><LocalizedString data={field.label} lang={this.props.lang} /></label>
+        <label htmlFor={field.id} className={field.required ? "required" : ""}><LocalizedString  translations={field} translationKey="label" lang={this.props.lang} /></label>
         <FormElementError fieldId={field.id} validationErrors={this.props.validationErrors} translations={this.props.translations} lang={this.props.lang}/>
         {input}
       </div>
