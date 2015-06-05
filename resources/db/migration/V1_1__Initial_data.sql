@@ -224,8 +224,8 @@ insert into forms (content) VALUES ('{
       "required":false,
       "displayAs":"textField",
       "params":{
-        "size":50,
-        "maxlength":80
+        "size":10,
+        "maxlength":10
       },
       "label":{
         "fi":"Hankkeen päättymisaika",

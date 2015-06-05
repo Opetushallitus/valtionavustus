@@ -24,7 +24,7 @@
             json (json->map body)]
         (should= 200 status)
         (should= 1 (-> json :id))
-        (should= "Laatustrategian toimeenpanon tuki" (-> json :content :name :fi))))
+        (should= "Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen" (-> json :content :name :fi))))
 
   (it "GET should return valid empty form values from route /api/form/1/values/1"
       (let [{:keys [status headers body error] :as resp} (get! "/api/form/1/values/1")
@@ -33,71 +33,107 @@
         (should= true (empty? json))))
 
   (it "PUT should validate required values when done to route /api/form/1/values"
-      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:tiedotus "foo"
-                                                                                     :kohderyhma "bar"
-                                                                                     :alue ""})
+      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:organization "Testi Organisaatio"
+                                                                                     :primary-email "test@example.com"
+                                                                                     :signature ""})
             json (json->map body)]
         (should= 400 status)
-        (should= {:tiedotus []
-                  :kohderyhma []
-                  :kuvaus [{:error "required"}]
-                  :arviointi [{:error "required"}]
-                  :alue [{:error "required"}]
-                  :nimi [{:error "required"}]
-                  :paikkakunnat [{:error "required"}]
-                  :uusi [{:error "required"}]
-                  :tavoitteet [{:error "required"}]
-                  :www-osoite []}
+        (should= {:other-organization-1-email [{:error "required"}],
+                  :project-network [{:error "required"}],
+                  :other-organization-1 [{:error "required"}],
+                  :primary-email [], :signature [{:error "required"}],
+                  :project-explanation [{:error "required"}],
+                  :continuation-project [],
+                  :organization [],
+                  :project-measure [{:error "required"}],
+                  :combined-effort [{:error "required"}],
+                  :language [{:error "required"}],
+                  :project-www [],
+                  :signature-email [{:error "required"}],
+                  :project-goals [{:error "required"}],
+                  :project-target [{:error "required"}],
+                  :project-announce [{:error "required"}],
+                  :project-end []}
                  json)))
 
   (it "PUT should validate text field lengths and options when done to route /api/form/1/values"
-      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:tiedotus "foo"
-                                                                                     :alue "eri alue"
-                                                                                     :kohderyhma "123456789012345678901"
-                                                                                     :paikkakunnat "123456789012345678901"})
+      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:organization "Testi Organisaatio"
+                                                                                     :primary-email "test@example.com"
+                                                                                     :signature "Teemu Testaaja, CEO"
+                                                                                     :signature-email "teemu@example.com"
+                                                                                     :language "fi"
+                                                                                     :combined-effort "no"
+                                                                                     :other-organization-1 "E.T. Extra Terrestrial"
+                                                                                     :other-organization-1-email "et@example"
+                                                                                     :project-network "Verkko"
+                                                                                     :project-goals "Maaleja"
+                                                                                     :project-explanation "Selitys"
+                                                                                     :project-target "Maali"
+                                                                                     :project-measure "Mittaus"
+                                                                                     :project-announce "Julkaisut"
+                                                                                     :project-end "10.10.10000"})
             json (json->map body)]
         (should= 400 status)
-        (should= {:tiedotus []
-                  :kohderyhma [{:error "maxlength", :max 20}]
-                  :kuvaus [{:error "required"}]
-                  :arviointi [{:error "required"}]
-                  :alue [{:error "invalid-option"}]
-                  :nimi [{:error "required"}]
-                  :paikkakunnat [{:error "maxlength", :max 20}]
-                  :uusi [{:error "required"}]
-                  :tavoitteet [{:error "required"}]
-                  :www-osoite []}
+        (should= {:other-organization-1-email [],
+                  :project-network [],
+                  :other-organization-1 [],
+                  :primary-email [],
+                  :signature [],
+                  :project-explanation [],
+                  :continuation-project [],
+                  :organization [],
+                  :project-measure [],
+                  :combined-effort [],
+                  :language [],
+                  :project-www [],
+                  :signature-email [],
+                  :project-goals [],
+                  :project-target [],
+                  :project-announce [],
+                  :project-end [{:error "maxlength", :max 10}]}
                  json)))
 
   (it "PUT should create a new form submission and return id when done to route /api/form/1/values"
-      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:tiedotus "testi"
-                                                                                     :kohderyhma "testi"
-                                                                                     :kuvaus "testi"
-                                                                                     :arviointi "testi"
-                                                                                     :nimi "testi"
-                                                                                     :paikkakunnat "testi"
-                                                                                     :uusi "uusi"
-                                                                                     :tavoitteet "testi"
-                                                                                     :alue "alueellinen"})
+      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:organization "Testi Organisaatio"
+                                                                                     :primary-email "test@example.com"
+                                                                                     :signature "Teemu Testaaja, CEO"
+                                                                                     :signature-email "teemu@example.com"
+                                                                                     :language "fi"
+                                                                                     :combined-effort "no"
+                                                                                     :other-organization-1 "E.T. Extra Terrestrial"
+                                                                                     :other-organization-1-email "et@example"
+                                                                                     :project-network "Verkko"
+                                                                                     :project-goals "Maaleja"
+                                                                                     :project-explanation "Selitys"
+                                                                                     :project-target "Maali"
+                                                                                     :project-measure "Mittaus"
+                                                                                     :project-announce "Julkaisut"})
             json (json->map body)]
         (should= 200 status)
         (should= 1 (:id json))))
 
   (it "POST should validate required values when done to route /api/form/1/values/1"
-    (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/1" {:tiedotus "foo"
-                                                                                      :kohderyhma "bar"})
+    (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/1" {:organization "Testi Organisaatio"
+                                                                                      :primary-email "test@example.com"})
           json (json->map body)]
       (should= 400 status)
-      (should= {:tiedotus []
-                :kohderyhma []
-                :kuvaus [{:error "required"}]
-                :arviointi [{:error "required"}]
-                :alue [{:error "required"}]
-                :nimi [{:error "required"}]
-                :paikkakunnat [{:error "required"}]
-                :uusi [{:error "required"}]
-                :tavoitteet [{:error "required"}]
-                :www-osoite []}
+      (should= {:other-organization-1-email [{:error "required"}],
+                :project-network [{:error "required"}],
+                :other-organization-1 [{:error "required"}],
+                :primary-email [],
+                :signature [{:error "required"}],
+                :project-explanation [{:error "required"}],
+                :continuation-project [],
+                :organization [],
+                :project-measure [{:error "required"}],
+                :combined-effort [{:error "required"}],
+                :language [{:error "required"}],
+                :project-www [],
+                :signature-email [{:error "required"}],
+                :project-goals [{:error "required"}],
+                :project-target [{:error "required"}],
+                :project-announce [{:error "required"}],
+                :project-end []}
                json)))
 
   (it "POST should fail if done to non-existing node /api/form/1/values/2"
