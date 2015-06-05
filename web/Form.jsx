@@ -17,7 +17,7 @@ export default class Form extends React.Component {
     const submitErrors = _.get(validationErrors, "submit", [])
 
     return (
-      <form className="pure-form pure-form-stacked">
+      <form>
         <fieldset>
           {
             fields.map(function(field) {
@@ -27,7 +27,7 @@ export default class Form extends React.Component {
             })
           }
           <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
-          <button type="submit" onClick={model.save} className="pure-button pure-button-primary"><LocalizedString data={translations.form.submit} lang={lang}/></button>
+          <button type="submit" onClick={model.save}><LocalizedString data={translations.form.submit} lang={lang}/></button>
           { this.props.valuesId ? <a target="preview" href={"/?preview=true&form=" + form.id + "&submission=" + this.props.valuesId}><LocalizedString data={translations.form.preview} lang={lang}/></a> : null}
         </fieldset>
       </form>
