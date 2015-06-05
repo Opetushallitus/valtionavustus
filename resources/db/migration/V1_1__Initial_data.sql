@@ -83,7 +83,7 @@ insert into forms (content) VALUES ('{
       ]
     },
     {
-      "id":"combinedEffort",
+      "id":"combined-effort",
       "required":true,
       "displayAs":"radioButton",
       "label":{
@@ -208,7 +208,7 @@ insert into forms (content) VALUES ('{
     },
     {
       "id":"project-www",
-      "required":true,
+      "required":false,
       "displayAs":"textField",
       "params":{
         "size":50,
@@ -221,7 +221,7 @@ insert into forms (content) VALUES ('{
     },
     {
       "id":"project-end",
-      "required":true,
+      "required":false,
       "displayAs":"textField",
       "params":{
         "size":50,
@@ -233,8 +233,8 @@ insert into forms (content) VALUES ('{
       }
     },
     {
-      "id":"combined-effort",
-      "required":true,
+      "id":"continuation-project",
+      "required":false,
       "displayAs":"radioButton",
       "label":{
         "fi":"Liittyykö hanke aiempaan hankkeeseen",
