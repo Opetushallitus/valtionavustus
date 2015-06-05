@@ -54,9 +54,11 @@ export default class FormModel {
     function handleSaveError(state, status, error, method, url, response) {
       if(status === 400) {
         state.validationErrors = JSON.parse(response)
+        state.validationErrors["submit"] = [{error: "validation-errors"}]
       }
       else {
         console.error(method, url, error)
+        state.validationErrors["submit"] = [{error: "unexpected-server-error"}]
       }
       return state
     }
@@ -67,6 +69,7 @@ export default class FormModel {
           .then(function(response) {
             console.log("State saved. Response=", response)
             state.valuesId = response.id
+            state.validationErrors["submit"] = []
             setData(state)
           })
           .catch(function(error) {
@@ -80,6 +83,7 @@ export default class FormModel {
       qwest.post(url, state.values, {dataType: "json", async: false})
           .then(function(response) {
             console.log("State updated. Response=" + response)
+            state.validationErrors["submit"] = []
           })
           .catch(function(error) {
             state = handleSaveError(state, this.status, error, this.method, url, this.response)
@@ -88,11 +92,18 @@ export default class FormModel {
     }
 
     function onSave(state) {
-      if(state.valuesId) {
-        return updateOld(state, state.valuesId)
+      try {
+        if(state.valuesId) {
+          return updateOld(state, state.valuesId)
+        }
+        else {
+          return saveNew(state)
+        }
       }
-      else {
-        return saveNew(state)
+      catch(error) {
+        console.error("Unexpected server error: ", error)
+        state.validationErrors["submit"] = [{error: "unexpected-server-error"}]
+        return state
       }
     }
 
