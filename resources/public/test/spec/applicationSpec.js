@@ -8,14 +8,14 @@
     expect(window.uiError || null).to.be.null
   })
 
-  describe('Laatustrategian toimeenpanon tuki haku suomeksi', function () {
+  describe('Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku suomeksi', function () {
     before(
       page.openPage()
     )
 
     describe('Alkutilassa', function () {
       it("näkyy haun nimi", function () {
-        expect(page.applicationName()).to.deep.equal('Laatustrategian toimeenpanon tuki')
+        expect(page.applicationName()).to.deep.equal('Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
       })
       it("kielen vaihto suomeksi on disabloitu", function () {
         expect(page.changeLanguageButton('fi').isEnabled()).to.deep.equal(false)
@@ -52,7 +52,7 @@
     })
   })
 
-  describe('Laatustrategian toimeenpanon tuki haku ruotsiksi', function () {
+  describe('Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku ruotsiksi', function () {
     before(
         page.openPage('sv')
     )
