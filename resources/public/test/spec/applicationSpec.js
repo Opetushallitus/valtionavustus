@@ -37,17 +37,21 @@
 
     describe('Pakollisten tietojen syötön jälkeen', function () {
       before(
-          page.setInputValue("nimi", "testinimi"),
-          page.setInputValue("uusi", "uusi"),
-          page.setInputValue("tavoitteet", "testin tavoitteet"),
-          page.setInputValue("kuvaus", "testin kuvaus"),
-          page.setInputValue("kohderyhma", "testin kohderyhmä"),
-          page.setInputValue("arviointi", "testin arviointi"),
-          page.setInputValue("arviointi", "testin arviointi"),
-          page.setInputValue("paikkakunnat", "testin paikkakunta"),
-          page.setInputValue("alue", "alueellinen"),
-          page.setInputValue("tiedotus", "testin tiedotus"),
-          page.submitButton().click,
+        page.setInputValue("organization", "Testi Organisaatio"),
+        page.setInputValue("primary-email", "yhteyshenkilo@example.com"),
+        page.setInputValue("signature", "Matti Allekirjoitusoikeudellinen"),
+        page.setInputValue("signature-email", "matti.allekirjoitusoikeudellinen@example.com"),
+        page.setRadioValue("language", "sv"),
+        page.setRadioValue("combined-effort", "no"),
+        page.setInputValue("other-organization-1", "Muu Testi Organisaatio"),
+        page.setInputValue("other-organization-1-email", "muutestiorganisaatio@example.com"),
+        page.setInputValue("project-network", "Hankeverkon tarina tähän."),
+        page.setInputValue("project-goals", "Hankkeen tavoitteet tulee tähän."),
+        page.setInputValue("project-explanation", "Hankkeen kuvaus tulee tähän."),
+        page.setInputValue("project-target", "Kohderymämme on meidän kohderyhmä"),
+        page.setInputValue("project-measure", "Mittaamme toteutumista ja vaikutusta."),
+        page.setInputValue("project-announce", "Tiedoitamme hankkeesta kivasti sitten."),
+        page.submitButton().click,
           wait.until(page.previewLink().isVisible)
       )
 

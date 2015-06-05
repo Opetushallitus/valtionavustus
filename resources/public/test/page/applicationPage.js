@@ -40,6 +40,16 @@ function ApplicationPage() {
             .then(input.setValue(value))
       }
     },
+    setRadioValue: function(name, value) {
+      return function() {
+        var input = Input(function () {
+          return applicationElement().find("[name=" + name + "]")
+        })
+        return wait.until(function() {
+           return  applicationElement().find("[for=" + name + "]").is(":visible")
+          })().then(input.setValue(value))
+      }
+    },
     paSvenska: function () {
       var name = api.applicationName()
       return wait.until(api.changeLanguageButton('sv').isEnabled)()
