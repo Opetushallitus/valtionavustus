@@ -10,3 +10,10 @@ CREATE TABLE form_submissions (
     form           integer references forms(id) NOT NULL,
     answers        jsonb NOT NULL
 );
+
+CREATE TABLE avustushaut (
+    id             serial PRIMARY KEY,
+    submittime     timestamp with time zone default now(),
+    form           integer references forms(id) NOT NULL,
+    content        jsonb NOT NULL
+);
