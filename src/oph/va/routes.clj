@@ -15,10 +15,11 @@
 (s/defschema Option {:value s/Str
                      (s/optional-key :label) LocalizedString})
 
-(s/defschema InfoElement {:type (s/eq :infoElement)
-                          :id s/Str})
+(s/defschema InfoElement {:type (s/eq "infoElement")
+                          :id s/Str
+                          :displayAs (s/enum :h1)})
 
-(s/defschema FormField {:type (s/eq :formField)
+(s/defschema FormField {:type (s/eq "formField")
                         :id s/Str
                         :required s/Bool
                         :label LocalizedString
