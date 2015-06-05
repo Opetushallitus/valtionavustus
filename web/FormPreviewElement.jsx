@@ -3,14 +3,14 @@ import LocalizedString from './LocalizedString.jsx'
 
 class BasicValue extends React.Component {
   render() {
-    var field = this.props.field
+    const field = this.props.field
     return (<span id={field.id}>{this.props.value}</span>)
   }
 }
 
 class OptionsValue extends React.Component {
   render() {
-    var field = this.props.field
+    const field = this.props.field
     var value = ""
     if(field.options) {
       for (var i=0; i < field.options.length; i++) {
@@ -36,8 +36,8 @@ export default class FormPreviewElement extends React.Component {
   }
 
   render() {
-    var field = this.props.field;
-    var displayAs = field.displayAs
+    const field = this.props.field;
+    const displayAs = field.displayAs
     var preview = <span>Unsupported field type {displayAs}</span>
 
     if (displayAs in this.fieldTypeMapping) {

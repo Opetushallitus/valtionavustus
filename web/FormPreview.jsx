@@ -5,16 +5,16 @@ import _ from 'lodash'
 export default class FormPreview extends React.Component {
 
   render() {
-    var fields = this.props.form.content.fields
-    var lang = this.props.lang
-    var model = this.props.model
-    var values = this.props.values
+    const fields = this.props.form.content.fields
+    const lang = this.props.lang
+    const model = this.props.model
+    const values = this.props.values
 
     return (
       <div className="preview">
         {
           fields.map(function(field) {
-            var value = _.get(values, field.id, "")
+            const value = _.get(values, field.id, "")
             return <FormPreviewElement model={model} lang={lang} key={field.id} value={value} field={field} />
           })
         }

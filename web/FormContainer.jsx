@@ -7,12 +7,12 @@ import LocalizedString from './LocalizedString.jsx'
 export default class FormContainer extends React.Component {
 
   render() {
-    var form = this.props.form
-    var lang = this.props.lang
-    var model = this.props.model
-    var values = this.props.values
-    var validationErrors = this.props.validationErrors
-    var translations = this.props.translations
+    const form = this.props.form
+    const lang = this.props.lang
+    const model = this.props.model
+    const values = this.props.values
+    const validationErrors = this.props.validationErrors
+    const translations = this.props.translations
     var formElement;
     if (this.props.preview) {
       formElement = <FormPreview model={model} form={form} lang={lang} values={values} valuesId={this.props.valuesId}/>

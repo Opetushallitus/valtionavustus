@@ -4,12 +4,12 @@ import _ from 'lodash'
 
 export default class FormElementError extends React.Component {
   render() {
-    var id = this.props.fieldId + "-error"
+    const id = this.props.fieldId + "-error"
     if(this.props.validationErrors) {
-      var errors = []
+      const errors = []
       for (var i=0; i < this.props.validationErrors.length; i++) {
-        var error = this.props.validationErrors[i].error
-        var translations = _.get(this.props.translations.errors, error, {default: error})
+        const error = this.props.validationErrors[i].error
+        const translations = _.get(this.props.translations.errors, error, {default: error})
         errors.push(<LocalizedString key={error} data={translations} lang={this.props.lang} />)
       }
       return (<div id={id} className="error">{errors}</div>)

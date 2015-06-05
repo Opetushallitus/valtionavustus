@@ -7,22 +7,22 @@ import _ from 'lodash'
 export default class Form extends React.Component {
 
   render() {
-    var form = this.props.form
-    var fields = form.content.fields
-    var lang = this.props.lang
-    var model = this.props.model
-    var values = this.props.values
-    var validationErrors = this.props.validationErrors
-    var translations = this.props.translations
-    var submitErrors = _.get(validationErrors, "submit", [])
+    const form = this.props.form
+    const fields = form.content.fields
+    const lang = this.props.lang
+    const model = this.props.model
+    const values = this.props.values
+    const validationErrors = this.props.validationErrors
+    const translations = this.props.translations
+    const submitErrors = _.get(validationErrors, "submit", [])
 
     return (
       <form className="pure-form pure-form-stacked">
         <fieldset>
           {
             fields.map(function(field) {
-              var value = _.get(values, field.id, "")
-              var fieldErrors = _.get(validationErrors, field.id, [])
+              const value = _.get(values, field.id, "")
+              const fieldErrors = _.get(validationErrors, field.id, [])
               return <FormElement validationErrors={fieldErrors} translations={translations} model={model} lang={lang} key={field.id} value={value} field={field} />
             })
           }
