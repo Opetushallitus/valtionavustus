@@ -8,3 +8,5 @@
 (defquery create-submission<! "sql/submission/create.sql")
 (defquery update-submission<! "sql/submission/update.sql")
 (defquery get-form-submission "sql/submission/get.sql")
+
+(defquery get-avustushaku "sql/avustushaku/get.sql")

@@ -85,3 +85,6 @@
         :submission_id submission-id}
        (exec queries/get-form-submission)
        first))
+
+(defn get-avustushaku [id]
+  (exec queries/get-avustushaku {:id id}))
