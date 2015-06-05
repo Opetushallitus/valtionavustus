@@ -23,7 +23,7 @@
       [{:error "maxlength", :max maxlength}]
       [])))
 
-(defn validate-field [field answers]
+(defn validate-field [answers field]
   (let [answer (answers (keyword (field :id)))]
     {(keyword (field :id)) (concat
        (validate-required field answer)
@@ -31,5 +31,12 @@
        (validate-textarea-maxlength field answer)
        (validate-texfield-maxlength field answer))}))
 
+(defn- is-form-field? [field]
+  (= (:type field) "formField"))
+
 (defn validate-form [form answers]
-  (into {} (map (fn [field] (validate-field field answers)) ((form :content) :fields))))
+  (let [validator (partial validate-field answers)]
+    (->> (form :content)
+       (filter is-form-field?)
+       (map validator)
+       (into {}))))
