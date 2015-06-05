@@ -7,9 +7,9 @@ nginx_jenkins_http_auth_basic_filename: /etc/nginx/private/va-jenkins-nginx-pass
 nginx_servers: [ "{{ nginx_server_build }}" ]
 
 nginx_server_build:
-  name: [ "build.test.valtionavustus.oph.fi", "va-build" ]
+  name: [ "va-build" ]
   enabled: True
-  listen_ssl: [ "{{ hostvars['va-build'].ansible_all_ipv4_addresses[0] }}:443" ]
+  listen: [ "{{ hostvars['va-build'].ansible_all_ipv4_addresses[0] }}:80" ]
   location:
     '/': |
       proxy_pass "{{ jenkins_url }}";
