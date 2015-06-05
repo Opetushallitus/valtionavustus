@@ -9,7 +9,7 @@ nginx_servers: [ "{{ nginx_server_build }}" ]
 nginx_server_build:
   name: [ "va-build" ]
   enabled: True
-  listen: [ "{{ hostvars['va-build'].ansible_all_ipv4_addresses[0] }}:80" ]
+  listen: [ "{{ hostvars['va-build'].ansible_default_ipv4.address }}:80" ]
   location:
     '/': |
       proxy_pass "{{ jenkins_url }}";
