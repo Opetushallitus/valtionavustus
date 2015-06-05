@@ -45,7 +45,7 @@
   lineinfile: dest=/etc/hosts regexp='^([0-9]{1,3}\.){3}[0-9]{1,3} va-gw' state=absent owner=root group=root mode=0644
 
 - name: Add va-gateway machine IP mapping to /etc/hosts
-  lineinfile: dest=/etc/hosts line='"{{ hostvars['va-build'].ansible_all_ipv4_addresses[0] }} va-gw"' owner=root group=root mode=0644
+  lineinfile: dest=/etc/hosts line='"{{ hostvars['loadbalancer-test'].ansible_all_ipv4_addresses[0] }} va-gw"' owner=root group=root mode=0644
 
 - name: Remove previous build machine IP mapping from /etc/hosts
   lineinfile: dest=/etc/hosts regexp='^([0-9]{1,3}\.){3}[0-9]{1,3} va-build$' state=absent owner=root group=root mode=0644
