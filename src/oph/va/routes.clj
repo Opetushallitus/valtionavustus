@@ -60,7 +60,7 @@
   (GET* "/form/:id" [id]
         :path-params [id :- Long]
         :return Form
-        (let [form (db/get-form (Long. id))]
+        (let [form (db/get-form id)]
           (if form
             (ok form)
             (not-found id))))
