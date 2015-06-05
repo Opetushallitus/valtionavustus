@@ -41,8 +41,6 @@
         page.setInputValue("primary-email", "yhteyshenkilo@example.com"),
         page.setInputValue("signature", "Matti Allekirjoitusoikeudellinen"),
         page.setInputValue("signature-email", "matti.allekirjoitusoikeudellinen@example.com"),
-        page.setRadioValue("language", "sv"),
-        page.setRadioValue("combined-effort", "no"),
         page.setInputValue("other-organization-1", "Muu Testi Organisaatio"),
         page.setInputValue("other-organization-1-email", "muutestiorganisaatio@example.com"),
         page.setInputValue("project-network", "Hankeverkon tarina tähän."),

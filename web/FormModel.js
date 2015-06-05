@@ -13,7 +13,7 @@ export default class FormModel {
     const langQueryParam =  query.lang || 'fi'
     const langPreviewParam =  query.preview || false
     const formP = Bacon.fromPromise(qwest.get("/api/form/" + (query.form || 1)))
-    const formValuesP = query.submission ? Bacon.fromPromise(qwest.get("/api/form/" + (query.form || 1) + "/values/" + query.submission)) : {}
+    const formValuesP = query.submission ? Bacon.fromPromise(qwest.get("/api/form/" + (query.form || 1) + "/values/" + query.submission)) : formP.map(initDefaultValues)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
     const requests = Bacon.combineTemplate({
@@ -33,6 +33,17 @@ export default class FormModel {
                                           [dispatcher.stream('save')], onSave)
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
+
+    function initDefaultValues(form) {
+      const values = {}
+      for(var i=0; i < form.content.fields.length; i++) {
+        const field = form.content.fields[i]
+        if(field.options && field.options.length > 0) {
+          values[field.id] = field.options[0].value
+        }
+      }
+      return values
+    }
 
     function onData(state, data) {
       return data
