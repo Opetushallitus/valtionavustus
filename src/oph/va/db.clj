@@ -87,4 +87,5 @@
        first))
 
 (defn get-avustushaku [id]
-  (exec queries/get-avustushaku {:id id}))
+  (->> (exec queries/get-avustushaku {:id id})
+       first))

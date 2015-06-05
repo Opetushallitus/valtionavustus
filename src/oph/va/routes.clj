@@ -37,6 +37,11 @@
                    :content Content,
                    :start s/Inst})
 
+(s/defschema AvustusHaku {:id Long
+                          :content s/Any
+                          :form Long
+                          :submittime s/Inst})
+
 (s/defschema Submission
   "Submission consists of a flat field id to value mapping"
   {s/Keyword s/Str})
@@ -57,6 +62,14 @@
   (GET* "/form" []
         :return [Form]
         (ok (db/list-forms)))
+
+  (GET* "/avustushaku/:id" [id]
+        :path-params [id :- Long]
+        :return AvustusHaku
+        (let [avustushaku (db/get-avustushaku id)]
+          (if avustushaku
+            (ok avustushaku)
+            (not-found id))))
 
   (GET* "/form/:id" [id]
         :path-params [id :- Long]
