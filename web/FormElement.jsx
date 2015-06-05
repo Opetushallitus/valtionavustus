@@ -112,7 +112,7 @@ export default class FormElement extends React.Component {
     return (
       <div>
         <label htmlFor={field.id} className={field.required ? "required" : ""}><LocalizedString data={field.label} lang={this.props.lang} /></label>
-        <FormElementError validationErrors={this.props.validationErrors} translations={this.props.translations} lang={this.props.lang}/>
+        <FormElementError fieldId={field.id} validationErrors={this.props.validationErrors} translations={this.props.translations} lang={this.props.lang}/>
         {input}
       </div>
     )

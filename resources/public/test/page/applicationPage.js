@@ -18,6 +18,16 @@ function ApplicationPage() {
     submitButton: function() {
       return Clickable(function() { return applicationElement().find("[type='submit']")})
     },
+    saveWaitError: function() {
+      api.submitButton().click()
+      return wait.until(function() { return api.saveError().length > 0 })()
+    },
+    saveError: function() {
+      return applicationElement().find("#submit-error").first().text()
+    },
+    error: function(field) {
+      return applicationElement().find("#" + field + "-error").first().text()
+    },
     previewLink: function() {
       return Clickable(function() { return applicationElement().find("a:contains(Tallennettu versio)")})
     },

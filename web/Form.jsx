@@ -26,7 +26,7 @@ export default class Form extends React.Component {
               return <FormElement validationErrors={fieldErrors} translations={translations} model={model} lang={lang} key={field.id} value={value} field={field} />
             })
           }
-          <FormElementError validationErrors={submitErrors} translations={translations} lang={lang}/>
+          <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
           <button type="submit" onClick={model.save} className="pure-button pure-button-primary"><LocalizedString data={translations.form.submit} lang={lang}/></button>
           { this.props.valuesId ? <a target="preview" href={"/?preview=true&form=" + form.id + "&submission=" + this.props.valuesId}><LocalizedString data={translations.form.preview} lang={lang}/></a> : null}
         </fieldset>

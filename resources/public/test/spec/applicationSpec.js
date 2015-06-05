@@ -22,6 +22,19 @@
       })
     })
 
+    describe('Jos yritetään tallentaa syöttämättä kaikkia pakollisia tietoja', function () {
+      before(
+          page.saveWaitError
+      )
+      it("tulee yleinen virhe viesti", function () {
+        expect(page.saveError()).to.equal('Ei tallennettu - tarkista syöttämäsi tiedot.')
+      })
+      it("pakollisesta kentästä kerrotaan", function () {
+        expect(page.error("organization")).to.equal('Pakollinen tieto')
+      })
+    })
+
+
     describe('Pakollisten tietojen syötön jälkeen', function () {
       before(
           page.setInputValue("nimi", "testinimi"),
