@@ -14,7 +14,7 @@
 (defn fail-if-server-running [host port]
   (try
     (let [socket (Socket. host port)]
-      (do (.close socket) (throw (Exception. (format "Server is allready running %s:%d" host port)))))
+      (do (.close socket) (throw (Exception. (format "Server is already running %s:%d" host port)))))
     (catch IOException e)))
 
 (defn start-server [host port auto-reload?]
