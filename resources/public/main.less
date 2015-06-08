@@ -1,8 +1,8 @@
 @form-width: 1200px;
 
 // Colors
-@border-color-light: #e6e6e6;
-@border-color-darker: #999290;
+@light-gray: #e6e6e6;
+@dark-gray: #999290;
 @light-green: #73ba21;
 @dark-green: #00973a;
 @text-black: #1A1919;
@@ -35,7 +35,7 @@ body {
   background-color: #fff;
   position: fixed;
   top: 0;
-  border-bottom: solid @border-color-light;
+  border-bottom: solid @light-gray;
 
   #logo {
     margin-top: 20px;
@@ -97,7 +97,7 @@ fieldset {
 input[type=text],
 textarea {
   font-size: 18px;
-  border: 1px solid @border-color-darker;
+  border: 1px solid @dark-gray;
   padding: 8px;
   background-color: #fff;
 }
@@ -125,7 +125,7 @@ input[type=radio] + label {
   margin: 4px 3px;
   padding: 12px 30px;
   background-color: #fff;
-  border: solid 1px @border-color-darker;
+  border: solid 1px @dark-gray;
 }
 
 input[type=radio]:checked + label {
