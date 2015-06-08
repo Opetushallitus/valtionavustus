@@ -1,5 +1,9 @@
 {
   "form": {
+    "heading": {
+      "fi": "Avustushakemus",
+      "sv": "Understödansökan"
+    },
     "submit": {
       "fi": "Lähetä käsiteltäväksi",
       "sv": "Skicka"

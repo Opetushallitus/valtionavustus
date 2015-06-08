@@ -31,7 +31,7 @@ export default class FormContainer extends React.Component {
           <section id="topbar">
             <div id="top-container">
               <img id="logo" src="img/logo.png"/>
-              <h1 id="topic">Avustushakemus</h1>
+              <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
               <div id="form-controls">
                 <ChangeLanguageButton model={model} lang={lang} id="fi" label="Suomeksi" />
                 <ChangeLanguageButton model={model} lang={lang} id="sv" label="På svenska" />
