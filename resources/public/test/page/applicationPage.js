@@ -21,8 +21,8 @@ function ApplicationPage() {
     applicationName: function() {
       return applicationElement().find("#container h1").first().text().trim()
     },
-    changeLanguageButton: function (lang) {
-      return Clickable(function() { return applicationElement().find("#" + lang)})
+    toggleLanguageButton: function () {
+      return Clickable(function() { return applicationElement().find("#toggle-language")})
     },
     submitButton: function() {
       return Clickable(function() { return applicationElement().find("[type='submit']")})
@@ -59,10 +59,10 @@ function ApplicationPage() {
           })().then(input.setValue(value))
       }
     },
-    paSvenska: function () {
+    toggleLanguage: function () {
       var name = api.applicationName()
-      return wait.until(api.changeLanguageButton('sv').isEnabled)()
-             .then(api.changeLanguageButton('sv').click)
+      return wait.until(api.toggleLanguageButton().isEnabled)()
+             .then(api.toggleLanguageButton().click())
              .then(wait.until(function() {
                 return name != api.applicationName()
               }))
@@ -122,6 +122,9 @@ function ApplicationPage() {
       },
       isVisible: function() {
         return el().is(":visible")
+      },
+      text: function() {
+        return el().text()
       },
       click: function () {
         el()[0].click()

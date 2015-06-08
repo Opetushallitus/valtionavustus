@@ -2,7 +2,7 @@ import React from 'react'
 import Form from './Form.jsx'
 import FormPreview from './FormPreview.jsx'
 import FormElementError from './FormElementError.jsx'
-import ChangeLanguageButton from './ChangeLanguageButton.jsx'
+import ToggleLanguageButton from './ToggleLanguageButton.jsx'
 import LocalizedString from './LocalizedString.jsx'
 import _ from 'lodash'
 
@@ -33,8 +33,7 @@ export default class FormContainer extends React.Component {
               <img id="logo" src="img/logo.png"/>
               <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
               <div id="form-controls">
-                <ChangeLanguageButton model={model} lang={lang} id="fi" label="Suomeksi" />
-                <ChangeLanguageButton model={model} lang={lang} id="sv" label="På svenska" />
+                <ToggleLanguageButton id="toggle-language" model={model} languages={translations.languages} lang={lang}/>
                 <button type="submit" onClick={model.save}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
                 <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
                 { this.props.valuesId ? <a target="preview" href={"/?preview=true&form=" + form.id + "&submission=" + this.props.valuesId}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></a> : null}

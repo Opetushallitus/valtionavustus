@@ -17,8 +17,8 @@
       it("näkyy haun nimi", function () {
         expect(page.applicationName()).to.deep.equal('Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
       })
-      it("kielen vaihto suomeksi on disabloitu", function () {
-        expect(page.changeLanguageButton('fi').isEnabled()).to.deep.equal(false)
+      it("kielen vaihto osoittaa ruotsiin", function () {
+        expect(page.toggleLanguageButton().text()).to.deep.equal('På svenska')
       })
     })
 
@@ -59,7 +59,7 @@
 
     describe('Vaihdettaessa kieli ruotsiksi', function () {
       before(
-        page.paSvenska
+        page.toggleLanguage
       )
       it("näkyy haun nimi ruotsiksi", function() {
         expect(page.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
