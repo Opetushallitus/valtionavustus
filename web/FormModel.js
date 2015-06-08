@@ -13,10 +13,12 @@ export default class FormModel {
     const langQueryParam =  query.lang || 'fi'
     const langPreviewParam =  query.preview || false
     const formP = Bacon.fromPromise(qwest.get("/api/form/" + (query.form || 1)))
+    const avustusHakuP = Bacon.fromPromise(qwest.get("/api/avustushaku/" + (query.avustushaku || 1)))
     const formValuesP = query.submission ? Bacon.fromPromise(qwest.get("/api/form/" + (query.form || 1) + "/values/" + query.submission)) : formP.map(initDefaultValues)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
     const requests = Bacon.combineTemplate({
+      avustushaku: avustusHakuP,
       form: formP,
       valuesId: query.submission,
       values: formValuesP,
