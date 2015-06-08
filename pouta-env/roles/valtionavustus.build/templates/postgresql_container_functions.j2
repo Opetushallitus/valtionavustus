@@ -10,7 +10,7 @@ function start_postgresql_in_container() {
 function wait_for_postgresql_to_be_available() {
   echo "Waiting for Postgresql to be listening to its port..."
   attempt=0
-  max_attempts=60
+  max_attempts=120
   interval_seconds=0.5
   until (nc -z `$DOCKER inspect --format='{% raw %}{{.NetworkSettings.IPAddress}}{% endraw %}' postgresql` $container_postgres_port ) || [[ $attempt -ge $max_attempts ]] ; do
     echo "  Waiting for Postgresql to be available in the container , attempt $attempt/$max_attempts ..."
