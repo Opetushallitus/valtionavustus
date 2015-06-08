@@ -24,7 +24,17 @@
             json (json->map body)]
         (should= 200 status)
         (should= 1 (-> json :id))
-        (should= "Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen" (-> json :content :name :fi))))
+        (should= {:type "infoElement"
+                  :id "name"
+                  :displayAs "h1"} (-> json :content first))
+        (should= {:type "formField"
+                  :id "organization"
+                  :required true
+                  :displayAs "textField"
+                  :params {:size 50
+                           :maxlength 80}
+                  :label {:fi "Hakijaorganisaatio"
+                          :sv "Organisation"}} (-> json :content second))))
 
   (it "GET should return valid empty form values from route /api/form/1/values/1"
       (let [{:keys [status headers body error] :as resp} (get! "/api/form/1/values/1")

@@ -45,7 +45,7 @@
     (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
            ["drop schema public cascade"
             "create schema public"])
-	(catch Exception e (.printStackTrace (.getNextException e))))
+         (catch Exception e (.printStackTrace (.getNextException e))))
     (throw (RuntimeException. (str "Clearing database is not allowed! "
                                    "check that you run with correct mode. "
                                    "Current config name is " (config-name))))))
@@ -84,4 +84,8 @@
   (->> {:form_id form-id
         :submission_id submission-id}
        (exec queries/get-form-submission)
+       first))
+
+(defn get-avustushaku [id]
+  (->> (exec queries/get-avustushaku {:id id})
        first))

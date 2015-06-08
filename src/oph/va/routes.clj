@@ -15,7 +15,12 @@
 (s/defschema Option {:value s/Str
                      (s/optional-key :label) LocalizedString})
 
-(s/defschema FormField {:id s/Str
+(s/defschema InfoElement {:type (s/eq "infoElement")
+                          :id s/Str
+                          :displayAs (s/enum :h1)})
+
+(s/defschema FormField {:type (s/eq "formField")
+                        :id s/Str
                         :required s/Bool
                         :label LocalizedString
                         (s/optional-key :params) s/Any
@@ -25,12 +30,17 @@
                                            :dropdown
                                            :radioButton)})
 
-(s/defschema FormContent {:name LocalizedString
-                          :fields [FormField]})
+(s/defschema Content [(s/either FormField
+                                InfoElement)])
 
 (s/defschema Form {:id Long,
-                   :content FormContent,
+                   :content Content,
                    :start s/Inst})
+
+(s/defschema AvustusHaku {:id Long
+                          :content s/Any
+                          :form Long
+                          :submittime s/Inst})
 
 (s/defschema Submission
   "Submission consists of a flat field id to value mapping"
@@ -53,10 +63,18 @@
         :return [Form]
         (ok (db/list-forms)))
 
+  (GET* "/avustushaku/:id" [id]
+        :path-params [id :- Long]
+        :return AvustusHaku
+        (let [avustushaku (db/get-avustushaku id)]
+          (if avustushaku
+            (ok avustushaku)
+            (not-found id))))
+
   (GET* "/form/:id" [id]
         :path-params [id :- Long]
         :return Form
-        (let [form (db/get-form (Long. id))]
+        (let [form (db/get-form id)]
           (if form
             (ok form)
             (not-found id))))
@@ -76,7 +94,7 @@
         :return  (s/either SubmissionId
                            SubmissionValidationErrors)
         :summary "Create initial form answers"
-        (let [validation (validation/validate-form (db/get-form (Long. form-id)) answers)]
+        (let [validation (validation/validate-form (db/get-form form-id) answers)]
           (if (every? empty? (vals validation))
             (let [submission (db/create-submission! form-id answers)]
               (if submission
@@ -92,7 +110,7 @@
          :summary "Update form values"
          (if (not (db/submission-exists? form-id values-id))
            (not-found)
-           (let [validation (validation/validate-form (db/get-form (Long. form-id)) answers)]
+           (let [validation (validation/validate-form (db/get-form form-id) answers)]
              (if (every? empty? (vals validation))
                (let [submission (db/update-submission! form-id values-id answers)]
                  (if submission

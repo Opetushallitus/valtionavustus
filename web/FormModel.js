@@ -8,15 +8,16 @@ const dispatcher = new Dispatcher()
 
 export default class FormModel {
   init() {
-
     const query = queryString.parse(location.search)
     const langQueryParam =  query.lang || 'fi'
     const langPreviewParam =  query.preview || false
+    const avustusHakuP = Bacon.fromPromise(qwest.get("/api/avustushaku/" + (query.avustushaku || 1)))
     const formP = Bacon.fromPromise(qwest.get("/api/form/" + (query.form || 1)))
     const formValuesP = query.submission ? Bacon.fromPromise(qwest.get("/api/form/" + (query.form || 1) + "/values/" + query.submission)) : formP.map(initDefaultValues)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
     const requests = Bacon.combineTemplate({
+      avustushaku: avustusHakuP,
       form: formP,
       valuesId: query.submission,
       values: formValuesP,
@@ -36,8 +37,8 @@ export default class FormModel {
 
     function initDefaultValues(form) {
       const values = {}
-      for(var i=0; i < form.content.fields.length; i++) {
-        const field = form.content.fields[i]
+      for(var i=0; i < form.content.length; i++) {
+        const field = form.content[i]
         if(field.options && field.options.length > 0) {
           values[field.id] = field.options[0].value
         }
