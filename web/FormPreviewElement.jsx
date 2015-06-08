@@ -11,11 +11,13 @@ class BasicValue extends React.Component {
 class OptionsValue extends React.Component {
   render() {
     const field = this.props.field
+    const lang = this.props.lang
     var value = ""
-    if(field.options) {
+    if (field.options) {
       for (var i=0; i < field.options.length; i++) {
         if(field.options[i].value === this.props.value) {
-          value = <LocalizedString data={field.options[i].label} lang={this.props.lang} />
+          const val = field.options[i]
+          value = <LocalizedString translations={field} translationKey="label" lang={lang} />
         }
       }
     }

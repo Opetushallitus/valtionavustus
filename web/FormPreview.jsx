@@ -5,7 +5,7 @@ import _ from 'lodash'
 export default class FormPreview extends React.Component {
 
   render() {
-    const fields = this.props.form.content.fields
+    const fields = this.props.form.content
     const lang = this.props.lang
     const model = this.props.model
     const values = this.props.values
@@ -14,8 +14,10 @@ export default class FormPreview extends React.Component {
       <div className="preview">
         {
           fields.map(function(field) {
-            const value = _.get(values, field.id, "")
-            return <FormPreviewElement model={model} lang={lang} key={field.id} value={value} field={field} />
+            if (field.type == "formField") {
+              const value = _.get(values, field.id, "")
+              return <FormPreviewElement model={model} lang={lang} key={field.id} value={value} field={field} />
+            }
           })
         }
       </div>
