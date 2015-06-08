@@ -77,4 +77,12 @@
     })
   })
 
+  describe('Hakemuksen esikatselu', function() {
+    before(
+        page.openPreview()
+    )
+    it("näyttää hakemuksen nimen oikein", function () {
+        expect(page.applicationName()).to.deep.equal('Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+    })
+  })
 })()

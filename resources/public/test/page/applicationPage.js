@@ -9,6 +9,15 @@ function ApplicationPage() {
       }
       return openPage("/?form=1&lang=" + lang, pageLoadedCheck)
     },
+    openPreview: function(lang, pageLoadedCheck) {
+      if (!lang) {
+        lang = 'fi'
+      }
+      if (!pageLoadedCheck) {
+        pageLoadedCheck = applicationPageVisible
+      }
+      return openPage("/?preview=true&form=1&lang=" + lang, pageLoadedCheck)
+    },
     applicationName: function() {
       return applicationElement().find("#container h1").first().text().trim()
     },
