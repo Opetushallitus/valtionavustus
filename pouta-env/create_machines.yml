@@ -29,14 +29,14 @@
     - { include: tasks/create_machine.yml,
         machine_name: va-build,
         pouta_flavor_id: "{{ pouta_small }}",
-        va_ansible_host_groups: va_build,
-        va_security_groups: qa-common, va-build
+        va_ansible_host_groups: 'va_build',
+        va_security_groups: 'qa-common, va-build'
       }
     - { include: tasks/create_machine.yml,
         machine_name: va-test,
         pouta_flavor_id: "{{ pouta_tiny }}",
-        va_ansible_host_groups: va_backend,
-        va_security_groups: qa-common, va-app
+        va_ansible_host_groups: 'va_backend',
+        va_security_groups: 'qa-common, va-app'
       }
     - { include: tasks/attach_persistent_volumes_if_needed.yml,
         machine_name: va-test,
