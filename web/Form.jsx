@@ -8,7 +8,7 @@ export default class Form extends React.Component {
 
   render() {
     const form = this.props.form
-    const fields = form.content.fields
+    const fields = form.content
     const lang = this.props.lang
     const model = this.props.model
     const values = this.props.values
@@ -21,9 +21,11 @@ export default class Form extends React.Component {
         <fieldset>
           {
             fields.map(function(field) {
-              const value = _.get(values, field.id, "")
-              const fieldErrors = _.get(validationErrors, field.id, [])
-              return <FormElement validationErrors={fieldErrors} translations={translations} model={model} lang={lang} key={field.id} value={value} field={field} />
+              if (field.type == "formField") {
+                const value = _.get(values, field.id, "")
+                const fieldErrors = _.get(validationErrors, field.id, [])
+                return <FormElement validationErrors={fieldErrors} translations={translations} model={model} lang={lang} key={field.id} value={value} field={field} />
+              }
             })
           }
           <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
