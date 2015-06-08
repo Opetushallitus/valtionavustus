@@ -44,11 +44,41 @@ body {
 
   h1 {
     margin-left: 100px;
-    margin-top: 40px;
+    margin-right: 10px;
+    margin-top: 39px;
     float: left;
     font-size: 22px;
     text-transform: uppercase;
   }
+
+  #form-controls {
+    margin-top: 28px;
+    float: left;
+    border-left: solid;
+    border-width: 1px;
+    border-color: @light-gray;
+    height: 58px;
+    padding-left: 20px;
+  }
+
+  #form-controls button {
+    margin-top: 5px;
+  }
+}
+
+button {
+  color: #fff;
+  background-color: @light-green;
+  border-width: 0px;
+  margin: 4px 20px 4px 0px;
+  padding: 8px 25px;
+  float: left;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+button:disabled{
+  background-color: @light-gray;
 }
 
 #container {

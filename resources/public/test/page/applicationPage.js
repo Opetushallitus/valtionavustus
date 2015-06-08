@@ -10,7 +10,7 @@ function ApplicationPage() {
       return openPage("/?form=1&lang=" + lang, pageLoadedCheck)
     },
     applicationName: function() {
-      return applicationElement().find("h1").first().text().trim()
+      return applicationElement().find("#container h1").first().text().trim()
     },
     changeLanguageButton: function (lang) {
       return Clickable(function() { return applicationElement().find("#" + lang)})
@@ -62,7 +62,7 @@ function ApplicationPage() {
   return api
 
   function applicationElement() {
-    return S("#container")
+    return S("#app")
   }
 
   function applicationPageVisible() {

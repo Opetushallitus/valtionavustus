@@ -1,7 +1,5 @@
 import React from 'react'
 import FormElement from './FormElement.jsx'
-import FormElementError from './FormElementError.jsx'
-import LocalizedString from './LocalizedString.jsx'
 import _ from 'lodash'
 
 export default class Form extends React.Component {
@@ -14,7 +12,6 @@ export default class Form extends React.Component {
     const values = this.props.values
     const validationErrors = this.props.validationErrors
     const translations = this.props.translations
-    const submitErrors = _.get(validationErrors, "submit", [])
 
     return (
       <form>
@@ -28,9 +25,6 @@ export default class Form extends React.Component {
               }
             })
           }
-          <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
-          <button type="submit" onClick={model.save}><LocalizedString translations={translations.form} translationKey="submit"  lang={lang}/></button>
-          { this.props.valuesId ? <a target="preview" href={"/?preview=true&form=" + form.id + "&submission=" + this.props.valuesId}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></a> : null}
         </fieldset>
       </form>
     )

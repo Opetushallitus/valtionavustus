@@ -1,8 +1,10 @@
 import React from 'react'
 import Form from './Form.jsx'
 import FormPreview from './FormPreview.jsx'
+import FormElementError from './FormElementError.jsx'
 import ChangeLanguageButton from './ChangeLanguageButton.jsx'
 import LocalizedString from './LocalizedString.jsx'
+import _ from 'lodash'
 
 export default class FormContainer extends React.Component {
 
@@ -13,6 +15,7 @@ export default class FormContainer extends React.Component {
     const model = this.props.model
     const values = this.props.values
     const validationErrors = this.props.validationErrors
+    const submitErrors = _.get(validationErrors, "submit", [])
     const translations = this.props.translations
 
     var formElement;
@@ -24,12 +27,25 @@ export default class FormContainer extends React.Component {
     }
 
     return (
-        <section>
-          <ChangeLanguageButton model={model} lang={lang} id="fi" label="Suomeksi" />
-          <ChangeLanguageButton model={model} lang={lang} id="sv" label="På svenska" />
-          <h1><LocalizedString translations={infoElementValues.content} translationKey="name" lang={lang}/></h1>
-          {formElement}
-        </section>
+        <div>
+          <section id="topbar">
+            <div id="top-container">
+              <img id="logo" src="img/logo.png"/>
+              <h1 id="topic">Avustushakemus</h1>
+              <div id="form-controls">
+                <ChangeLanguageButton model={model} lang={lang} id="fi" label="Suomeksi" />
+                <ChangeLanguageButton model={model} lang={lang} id="sv" label="På svenska" />
+                <button type="submit" onClick={model.save}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
+                <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
+                { this.props.valuesId ? <a target="preview" href={"/?preview=true&form=" + form.id + "&submission=" + this.props.valuesId}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></a> : null}
+              </div>
+            </div>
+          </section>
+          <section id="container">
+            <h1><LocalizedString translations={infoElementValues.content} translationKey="name" lang={lang}/></h1>
+            {formElement}
+          </section>
+        </div>
     )
   }
 }

@@ -1,8 +1,8 @@
 {
   "form": {
     "submit": {
-      "fi": "Tallenna",
-      "sv": "Spara"
+      "fi": "Lähetä käsiteltäväksi",
+      "sv": "Skicka"
     },
     "preview": {
       "fi": "Tallennettu versio",
