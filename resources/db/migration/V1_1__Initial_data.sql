@@ -284,7 +284,9 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
   "name": {
     "fi": "Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen",
     "sv": "Stöd för genomförande av kvalitetsstrategin"
-  }
+  },
+  "startDate": "2015-08-12T00:00:00.000Z",
+  "endDate": "2015-09-12T17:00:00.000Z"
 }'
 );
 
