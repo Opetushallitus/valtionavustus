@@ -16,7 +16,7 @@ function ApplicationPage() {
       if (!pageLoadedCheck) {
         pageLoadedCheck = applicationPageVisible
       }
-      return openPage("/?preview=true&form=1&lang=" + lang, pageLoadedCheck)
+      return openPage("/?preview=true&form=1&submission=1&lang=" + lang, pageLoadedCheck)
     },
     applicationName: function() {
       return applicationElement().find("#container h1").first().text().trim()
