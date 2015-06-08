@@ -47,7 +47,7 @@ class BasicTextArea extends BasicFieldComponent {
               name={field.id}
               required={field.required}
               rows={this.param("rows", 10)}
-              cols={this.param("cols", 120)}
+              cols={this.param("cols", 70)}
               maxLength={this.param("maxlength")}
               model={this.props.model}
               value={this.props.value}
@@ -110,13 +110,13 @@ export default class FormElement extends React.Component {
     if (displayAs in this.fieldTypeMapping) {
       input = React.createElement(this.fieldTypeMapping[displayAs], this.props)
     }
-
     return (
       <div>
         <label htmlFor={field.id} className={field.required ? "required" : ""}><LocalizedString  translations={field} translationKey="label" lang={this.props.lang} /></label>
-        <FormElementError fieldId={field.id} validationErrors={this.props.validationErrors} translations={this.props.translations} lang={this.props.lang}/>
         {input}
+        <FormElementError fieldId={field.id} validationErrors={this.props.validationErrors} translations={this.props.translations} lang={this.props.lang}/>
       </div>
     )
+
   }
 }
