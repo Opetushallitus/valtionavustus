@@ -18,7 +18,8 @@
 (s/defschema InfoElement {:type (s/eq "infoElement")
                           :id s/Str
                           :displayAs (s/enum :h1
-                                             :bulletList)
+                                             :bulletList
+                                             :dateRange)
                           (s/optional-key :params) s/Any
                           (s/optional-key :label) LocalizedString})
 

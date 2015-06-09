@@ -28,13 +28,37 @@ class BulletListInfoElement extends React.Component {
   }
 }
 
+class DateRangeInfoElement extends React.Component {
+  render() {
+    const values = this.props.values
+    const lang = this.props.lang
+    const key = this.props.field.id
+    const field = this.props.field
+    const value = values[key]
+    const start = new Date(value.start)
+    const startDate = start.toLocaleDateString("fi-FI")
+    const startTime = start.toLocaleTimeString("fi-FI")
+    const end = new Date(value.end)
+    const endDate = end.toLocaleDateString("fi-FI")
+    const endTime = end.toLocaleTimeString("fi-FI")
+
+    return (
+      <div>
+      <label><LocalizedString translations={value} translationKey="label" lang={lang}/></label>
+      <span>{startDate} {startTime} - {endDate} {endTime}</span>
+      </div>
+    )
+  }
+}
+
 export default class InfoElement extends React.Component {
 
   constructor(props) {
     super(props)
     this.fieldTypeMapping = {
       "h1": H1InfoElement,
-      "bulletList": BulletListInfoElement
+      "bulletList": BulletListInfoElement,
+      "dateRange": DateRangeInfoElement
     }
   }
 
@@ -44,7 +68,6 @@ export default class InfoElement extends React.Component {
     const values = this.props.values
     const lang = this.props.lang
 
-    console.log("Rendering info element", field)
     var element = <span>Unsupported field type {displayAs}</span>
 
     if (displayAs in this.fieldTypeMapping) {
