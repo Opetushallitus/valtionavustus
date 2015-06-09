@@ -157,6 +157,18 @@ insert into forms (content) VALUES ('
     }
   },
   {
+    "type": "infoElement",
+    "id":"selection-criteria",
+    "displayAs":"bulletList",
+    "params":{
+      "initiallyOpen":true
+    },
+    "label":{
+      "fi":"Valintaperusteet",
+      "sv":"Urvalskriterier"
+    }
+  },
+  {
     "type": "formField",
     "id":"project-goals",
     "required":true,
@@ -286,7 +298,29 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
     "sv": "Stöd för genomförande av kvalitetsstrategin"
   },
   "startDate": "2015-08-12T00:00:00.000Z",
-  "endDate": "2015-09-12T17:00:00.000Z"
+  "endDate": "2015-09-12T17:00:00.000Z",
+  "selection-criteria": [
+    {
+      "fi": "Vaikuttavuuden edistäminen (ml. yhdensuuntaisuus koulutuksen järjestäjien strategisten tavoitteiden kanssa)",
+      "sv": "TODO"
+    },
+    {
+      "fi": "Hankesuunnitelman toteuttamiskelpoisuus ja kokonaistaloudellisuus suhteessa esitettyyn toimintaan",
+      "sv": "TODO"
+    },
+    {
+      "fi": "Henkilöstön ja sidosryhmien osallistumis- ja vaikutusmahdollisuudet verkoston toimintapainopisteiden mukaisten tavoitteiden saavuttamiseksi",
+      "sv": "TODO"
+    },
+    {
+      "fi": "Kehittämisverkoston laatu (sis. aiemmin rahoitetuissa laatuverkostoissa saavutetut tulokset) ja kattavuus",
+      "sv": "TODO"
+    },
+    {
+      "fi": "Aiempien hankkeiden ja verkostojen välinen hyvien käytäntöken tunnistaminen ja käyttö",
+      "sv": "TODO"
+    }
+  ]
 }'
 );
 

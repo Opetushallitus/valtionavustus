@@ -17,7 +17,10 @@
 
 (s/defschema InfoElement {:type (s/eq "infoElement")
                           :id s/Str
-                          :displayAs (s/enum :h1)})
+                          :displayAs (s/enum :h1
+                                             :bulletList)
+                          (s/optional-key :params) s/Any
+                          (s/optional-key :label) LocalizedString})
 
 (s/defschema FormField {:type (s/eq "formField")
                         :id s/Str
