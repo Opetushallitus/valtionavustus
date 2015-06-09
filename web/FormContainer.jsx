@@ -17,6 +17,7 @@ export default class FormContainer extends React.Component {
     const validationErrors = this.props.validationErrors
     const submitErrors = _.get(validationErrors, "submit", [])
     const translations = this.props.translations
+    const valuesId = this.props.valuesId
 
     var formElement;
 
@@ -25,6 +26,9 @@ export default class FormContainer extends React.Component {
     } else {
       formElement = <Form model={model} validationErrors={validationErrors} infoElementValues={infoElementValues} translations={translations} form={form} lang={lang} values={values} valuesId={this.props.valuesId}/>
     }
+    const openPreview = function() {
+      window.open("/?preview=true&form=" + form.id + "&submission=" + valuesId, "preview")
+    }
 
     return (
         <div>
@@ -32,11 +36,11 @@ export default class FormContainer extends React.Component {
             <div id="top-container">
               <img id="logo" src="img/logo.png"/>
               <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
-              <div id="form-controls">
+              <div id="form-controls" hidden={this.props.preview}>
                 <ToggleLanguageButton id="toggle-language" model={model} languages={translations.languages} lang={lang}/>
+                <button type="button" onClick={openPreview} disabled={!valuesId}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></button>
                 <button type="submit" onClick={model.save}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
                 <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
-                { this.props.valuesId ? <a target="preview" href={"/?preview=true&form=" + form.id + "&submission=" + this.props.valuesId}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></a> : null}
               </div>
             </div>
           </section>

@@ -37,8 +37,8 @@ function ApplicationPage() {
     error: function(field) {
       return applicationElement().find("#" + field + "-error").first().text()
     },
-    previewLink: function() {
-      return Clickable(function() { return applicationElement().find("a:contains(Tallennettu versio)")})
+    previewButton: function() {
+      return Clickable(function() { return applicationElement().find("button:contains(Tallennettu versio)")})
     },
     setInputValue: function(name, value) {
       return function() {

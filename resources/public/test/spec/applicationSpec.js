@@ -50,7 +50,7 @@
         page.setInputValue("project-measure", "Mittaamme toteutumista ja vaikutusta."),
         page.setInputValue("project-announce", "Tiedoitamme hankkeesta kivasti sitten."),
         page.submitButton().click,
-          wait.until(page.previewLink().isVisible)
+        wait.until(page.previewButton().isEnabled)
       )
 
       it("tallennus onnistuu", function () {
