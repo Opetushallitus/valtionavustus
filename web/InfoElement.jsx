@@ -11,12 +11,30 @@ class H1InfoElement extends React.Component {
   }
 }
 
+class BulletListInfoElement extends React.Component {
+  render() {
+    const values = this.props.values
+    const key = this.props.field.id
+    const field = this.props.field
+    const lang = this.props.lang
+    const items = []
+    for (var i=0; i < values[key].length; i++) {
+      const textContent = values[key][i][this.props.lang]
+      items.push((<li key={key + "." + i}>{textContent}</li>))
+    }
+    return (<div><ul id={field.id}><LocalizedString translations={field} translationKey="label" lang={lang}/>
+                {items}
+            </ul></div>)
+  }
+}
+
 export default class InfoElement extends React.Component {
 
   constructor(props) {
     super(props)
     this.fieldTypeMapping = {
-      "h1": H1InfoElement
+      "h1": H1InfoElement,
+      "bulletList": BulletListInfoElement
     }
   }
 
