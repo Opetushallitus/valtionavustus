@@ -48,7 +48,6 @@ export default class FormContainer extends React.Component {
             </div>
           </section>
           <section id="container">
-            <h1><LocalizedString translations={infoElementValues.content} translationKey="name" lang={lang}/></h1>
             {formElement}
           </section>
         </div>

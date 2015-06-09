@@ -1,5 +1,6 @@
 import React from 'react'
 import FormElement from './FormElement.jsx'
+import InfoElement from './InfoElement.jsx'
 import _ from 'lodash'
 
 export default class Form extends React.Component {
@@ -10,6 +11,7 @@ export default class Form extends React.Component {
     const lang = this.props.lang
     const model = this.props.model
     const values = this.props.values
+    const infoElementValues = this.props.infoElementValues.content
     const validationErrors = this.props.validationErrors
     const translations = this.props.translations
 
@@ -22,6 +24,8 @@ export default class Form extends React.Component {
                 const value = _.get(values, field.id, "")
                 const fieldErrors = _.get(validationErrors, field.id, [])
                 return <FormElement validationErrors={fieldErrors} translations={translations} model={model} lang={lang} key={field.id} value={value} field={field} />
+              } else if (field.type == "infoElement") {
+                return <InfoElement key={field.id} field={field} values={infoElementValues} lang={lang} />
               }
             })
           }

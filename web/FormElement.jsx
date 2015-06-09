@@ -33,7 +33,6 @@ class BasicFieldComponent extends React.Component {
     if(this.props.field.params[param] !== undefined) return this.props.field.params[param]
     return defaultValue
   }
-
 }
 
 class BasicTextField extends BasicFieldComponent {
@@ -131,6 +130,5 @@ export default class FormElement extends React.Component {
         <FormElementError fieldId={field.id} validationErrors={this.props.validationErrors} translations={this.props.translations} lang={this.props.lang}/>
       </div>
     )
-
   }
 }
