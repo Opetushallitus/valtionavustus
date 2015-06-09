@@ -16,6 +16,9 @@ export default class FormContainer extends React.Component {
     const values = this.props.values
     const validationErrors = this.props.validationErrors
     const submitErrors = _.get(validationErrors, "submit", [])
+    const formIsValid = _.reduce(this.props.clientSideValidation, function (allValid, valid, field) {
+      return allValid === true && valid === true
+    }, true)
     const translations = this.props.translations
     const valuesId = this.props.valuesId
 
@@ -39,7 +42,7 @@ export default class FormContainer extends React.Component {
               <div id="form-controls" hidden={this.props.preview}>
                 <ToggleLanguageButton id="toggle-language" model={model} languages={translations.languages} lang={lang}/>
                 <button type="button" onClick={openPreview} disabled={!valuesId}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></button>
-                <button type="submit" onClick={model.save}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
+                <button type="submit" onClick={model.save} disabled={!formIsValid}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
                 <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
               </div>
             </div>

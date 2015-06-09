@@ -5,13 +5,27 @@ import FormElementError from './FormElementError.jsx'
 
 class BasicFieldComponent extends React.Component {
 
-  handleChange(event) {
-    const value = event.target.value
+  validate(value) {
     var validationErrors = []
-    if(this.props.required && !value) {
+    if(this.props.field.required && !value) {
       validationErrors = [{error: "required"}]
     }
-    this.props.model.setFieldValue(this.props.name, value, validationErrors)
+    return validationErrors
+  }
+
+  createChangeListener() {
+    const component = this
+    return function(event) {
+      const value = event.target.value
+      component.props.model.setFieldValue(component.props.field.id, value, component.validate(value))
+    }
+  }
+
+  componentDidMount() {
+    const valid = this.validate(this.props.value).length === 0
+    if(valid) {
+      this.props.model.setFieldValid(this.props.field.id, valid)
+    }
   }
 
   param(param, defaultValue) {
@@ -34,7 +48,7 @@ class BasicTextField extends BasicFieldComponent {
               maxLength={this.param("maxlength")}
               model={this.props.model}
               value={this.props.value}
-              onChange={this.handleChange}
+              onChange={this.createChangeListener()}
             />)
   }
 }
@@ -51,7 +65,7 @@ class BasicTextArea extends BasicFieldComponent {
               maxLength={this.param("maxlength")}
               model={this.props.model}
               value={this.props.value}
-              onChange={this.handleChange}
+              onChange={this.createChangeListener()}
             />)
   }
 }
@@ -68,7 +82,7 @@ class Dropdown extends BasicFieldComponent {
                      </option>)
       }
     }
-    return (<select id={field.id} name={field.id} required={field.required} model={this.props.model} onChange={this.handleChange} value={this.props.value}>
+    return (<select id={field.id} name={field.id} required={field.required} model={this.props.model} onChange={this.createChangeListener()} value={this.props.value}>
               {options}
             </select>)
   }
@@ -82,7 +96,7 @@ class RadioButton extends BasicFieldComponent {
     if(field.options) {
       for (var i=0; i < field.options.length; i++) {
         const label = new Translator(field.options[i]).translate("label", this.props.lang, field.options[i].value)
-        radiobuttons.push(<input {...this.props} type="radio" id={field.id + ".radio." + i} key={field.id + "." + field.options[i].value} name={field.id} required={field.required} value={field.options[i].value} onChange={this.handleChange} checked={field.options[i].value === this.props.value ? true: null}/>)
+        radiobuttons.push(<input {...this.props} type="radio" id={field.id + ".radio." + i} key={field.id + "." + field.options[i].value} name={field.id} required={field.required} value={field.options[i].value} onChange={this.createChangeListener()} checked={field.options[i].value === this.props.value ? true: null}/>)
         radiobuttons.push(<label key={field.id + "." + field.options[i].value + ".label"} htmlFor={field.id + ".radio." + i}>{label}</label>)
       }
     }

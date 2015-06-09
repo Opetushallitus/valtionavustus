@@ -14,6 +14,7 @@ export default class FormModel {
     const avustusHakuP = Bacon.fromPromise(qwest.get("/api/avustushaku/" + (query.avustushaku || 1)))
     const formP = Bacon.fromPromise(qwest.get("/api/form/" + (query.form || 1)))
     const formValuesP = query.submission ? Bacon.fromPromise(qwest.get("/api/form/" + (query.form || 1) + "/values/" + query.submission)) : formP.map(initDefaultValues)
+    const clientSideValidationP = formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
     const requests = Bacon.combineTemplate({
@@ -24,12 +25,14 @@ export default class FormModel {
       preview: langPreviewParam,
       lang: langQueryParam,
       validationErrors: {},
+      clientSideValidation: clientSideValidationP,
       translations: translationsP
     }).onValue(setData)
 
     const formFieldValuesP = Bacon.update({},
                                           [dispatcher.stream('data')], onData,
                                           [dispatcher.stream('updateField')], onUpdateField,
+                                          [dispatcher.stream('fieldValidation')], onFieldValidation,
                                           [dispatcher.stream('changeLanguage')], onChangeLang,
                                           [dispatcher.stream('save')], onSave)
 
@@ -41,6 +44,17 @@ export default class FormModel {
         const field = form.content[i]
         if(field.options && field.options.length > 0) {
           values[field.id] = field.options[0].value
+        }
+      }
+      return values
+    }
+
+    function initClientSideValidationState(form) {
+      const values = {}
+      for(var i=0; i < form.content.length; i++) {
+        const field = form.content[i]
+        if(field.type === 'formField') {
+          values[field.id] = false
         }
       }
       return values
@@ -59,7 +73,16 @@ export default class FormModel {
       state.values[fieldUpdate.id] = fieldUpdate.value
       if(fieldUpdate.validationErrors) {
         state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
+        state.clientSideValidation[fieldUpdate.id] = fieldUpdate.validationErrors.length === 0
       }
+      else {
+        state.clientSideValidation[fieldUpdate.id] = true
+      }
+      return state
+    }
+
+    function onFieldValidation(state, validation) {
+      state.clientSideValidation[validation.id] = validation.valid
       return state
     }
 
@@ -131,6 +154,10 @@ export default class FormModel {
 
   setFieldValue(id, value, validationErrors) {
     dispatcher.push('updateField', {id: id, value: value, validationErrors: validationErrors})
+  }
+
+  setFieldValid(id, valid) {
+    dispatcher.push('fieldValidation', {id: id, valid: valid})
   }
 
   save(event) {

@@ -20,40 +20,43 @@
       it("kielen vaihto osoittaa ruotsiin", function () {
         expect(page.toggleLanguageButton().text()).to.deep.equal('På svenska')
       })
+      it("tallennus on disabloitu", function () {
+        expect(page.submitButton().isEnabled()).to.equal(false)
+      })
     })
 
-    describe('Jos yritetään tallentaa syöttämättä kaikkia pakollisia tietoja', function () {
+    describe('Jos ei olla syötetty kaikkia pakollisia tietoja', function () {
       before(
-          page.saveWaitError
+          page.setInputValue("organization", ""),
+          page.setInputValue("primary-email", "yhteyshenkilo@example.com"),
+          page.setInputValue("signature", "Matti Allekirjoitusoikeudellinen"),
+          page.setInputValue("signature-email", "matti.allekirjoitusoikeudellinen@example.com"),
+          page.setInputValue("other-organization-1", "Muu Testi Organisaatio"),
+          page.setInputValue("other-organization-1-email", "muutestiorganisaatio@example.com"),
+          page.setInputValue("project-network", "Hankeverkon tarina tähän."),
+          page.setInputValue("project-goals", "Hankkeen tavoitteet tulee tähän."),
+          page.setInputValue("project-explanation", "Hankkeen kuvaus tulee tähän."),
+          page.setInputValue("project-target", "Kohderymämme on meidän kohderyhmä"),
+          page.setInputValue("project-measure", "Mittaamme toteutumista ja vaikutusta."),
+          page.setInputValue("project-announce", "Tiedoitamme hankkeesta kivasti sitten.")
       )
-      it("tulee yleinen virhe viesti", function () {
-        expect(page.saveError()).to.equal('Ei tallennettu - tarkista syöttämäsi tiedot.')
+      it("tallennus on disabloitu", function () {
+        expect(page.submitButton().isEnabled()).to.equal(false)
       })
       it("pakollisesta kentästä kerrotaan", function () {
         expect(page.error("organization")).to.equal('Pakollinen tieto')
       })
-    })
 
+      describe('Pakollisten tietojen syötön jälkeen', function () {
+        before(
+            page.setInputValue("organization", "Testi Organisaatio"),
+            page.submitButton().click,
+            wait.until(page.previewButton().isEnabled)
+        )
 
-    describe('Pakollisten tietojen syötön jälkeen', function () {
-      before(
-        page.setInputValue("organization", "Testi Organisaatio"),
-        page.setInputValue("primary-email", "yhteyshenkilo@example.com"),
-        page.setInputValue("signature", "Matti Allekirjoitusoikeudellinen"),
-        page.setInputValue("signature-email", "matti.allekirjoitusoikeudellinen@example.com"),
-        page.setInputValue("other-organization-1", "Muu Testi Organisaatio"),
-        page.setInputValue("other-organization-1-email", "muutestiorganisaatio@example.com"),
-        page.setInputValue("project-network", "Hankeverkon tarina tähän."),
-        page.setInputValue("project-goals", "Hankkeen tavoitteet tulee tähän."),
-        page.setInputValue("project-explanation", "Hankkeen kuvaus tulee tähän."),
-        page.setInputValue("project-target", "Kohderymämme on meidän kohderyhmä"),
-        page.setInputValue("project-measure", "Mittaamme toteutumista ja vaikutusta."),
-        page.setInputValue("project-announce", "Tiedoitamme hankkeesta kivasti sitten."),
-        page.submitButton().click,
-        wait.until(page.previewButton().isEnabled)
-      )
-
-      it("tallennus onnistuu", function () {
+        it("tallennus onnistuu", function () {
+          expect(page.saveError()).to.equal('')
+        })
       })
     })
 
