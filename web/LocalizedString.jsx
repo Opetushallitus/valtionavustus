@@ -8,6 +8,6 @@ export default class LocalizedString extends React.Component {
   render() {
     const translator = new Translator(this.props.translations)
     const value = translator.translate(this.props.translationKey, this.props.lang)
-    return (<span>{value}</span>)
+    return (<span className={this.props.className}>{value}</span>)
   }
 }
