@@ -1,5 +1,22 @@
 import React from 'react'
 import LocalizedString from './LocalizedString.jsx'
+import Translator from './Translator.js'
+
+class BasicInfoComponent extends React.Component {
+  asDateString(date) {
+    return date.toLocaleDateString("fi-FI")
+  }
+
+  asTimeString(date) {
+    var options = {hour: "numeric", minute: "numeric"}
+    return date.toLocaleTimeString("fi-FI", options)
+  }
+
+  asDateTimeString(date) {
+    const timeLimiter = new Translator(this.props.translations["misc"]).translate("time", this.props.lang, "KLO")
+    return this.asDateString(date) + " " + timeLimiter + " " + this.asTimeString(date)
+  }
+}
 
 class H1InfoElement extends React.Component {
   render() {
@@ -29,7 +46,7 @@ class AccordionInfoElement extends React.Component {
   }
 }
 
-class DateRangeInfoElement extends React.Component {
+class DateRangeInfoElement extends BasicInfoComponent {
   render() {
     const values = this.props.values
     const lang = this.props.lang
@@ -37,35 +54,31 @@ class DateRangeInfoElement extends React.Component {
     const field = this.props.field
     const value = values[key]
     const start = new Date(value.start)
-    const startDate = start.toLocaleDateString("fi-FI")
-    const startTime = start.toLocaleTimeString("fi-FI")
+    const startDateTime = this.asDateTimeString(start)
     const end = new Date(value.end)
-    const endDate = end.toLocaleDateString("fi-FI")
-    const endTime = end.toLocaleTimeString("fi-FI")
+    const endDateTime = this.asDateTimeString(end)
 
     return (
       <div>
       <label><LocalizedString translations={value} translationKey="label" lang={lang}/></label>
-      <span>{startDate} {startTime} - {endDate} {endTime}</span>
+      <span>{startDateTime} - {endDateTime}</span>
       </div>
     )
   }
 }
 
-class EndOfDateRangeInfoElement extends React.Component {
+class EndOfDateRangeInfoElement extends BasicInfoComponent {
   render() {
     const values = this.props.values
     const lang = this.props.lang
     const key = this.props.field.id
     const value = values[key]
     const end = new Date(value.end)
-    const endDate = end.toLocaleDateString("fi-FI")
-    var options = {hour: "numeric", minute: "numeric"}
-    const endTime = end.toLocaleTimeString("fi-FI", options)
+    const endDateTime = this.asDateTimeString(end)
     return (
       <div>
         <span><LocalizedString translations={value} translationKey="label" lang={lang}/> </span>
-        <span>{endDate} <LocalizedString translations={this.props.translations.misc} translationKey="time" lang={lang}/> {endTime}</span>
+        <span>{endDateTime}</span>
       </div>
     )
   }
