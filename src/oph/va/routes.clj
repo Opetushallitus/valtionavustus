@@ -112,7 +112,7 @@
         :summary "Create initial form answers"
         (let [validation (validation/validate-form (db/get-form form-id) answers)]
           (if (every? empty? (vals validation))
-            (let [submission (db/create-submission! form-id answers)]
+            (let [submission (db/create-hakemus! form-id answers)]
               (if submission
                 (ok submission)
                 (internal-server-error!)))

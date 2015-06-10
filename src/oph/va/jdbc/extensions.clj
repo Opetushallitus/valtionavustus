@@ -1,4 +1,4 @@
-(ns oph.va.jdbc.jsonb
+(ns oph.va.jdbc.extensions
   "Inspired by http://hiim.tv/clojure/2014/05/15/clojure-postgres-json/. Uses cheshire instead of clojure.data.json and
    jsonb field instead of json field"
   (:require [clojure.java.jdbc :as jdbc]
@@ -10,12 +10,20 @@
     (.setType "jsonb")
     (.setValue (json/generate-string value))))
 
+(defn value-to-status [value]
+  (doto (PGobject.)
+    (.setType "status")
+    (.setValue (name value))))
+
 (extend-protocol jdbc/ISQLValue
   clojure.lang.IPersistentMap
   (sql-value [value] (value-to-jsonb-pgobject value))
 
   clojure.lang.IPersistentVector
-  (sql-value [value] (value-to-jsonb-pgobject value)))
+  (sql-value [value] (value-to-jsonb-pgobject value))
+
+  clojure.lang.Keyword
+  (sql-value [value] (value-to-status value)))
 
 (extend-protocol jdbc/IResultSetReadColumn
   PGobject
@@ -23,5 +31,7 @@
     (let [type  (.getType pgobj)
           value (.getValue pgobj)]
       (case type
+        "status" (keyword value)
         "jsonb" (json/parse-string value true)
         :else value))))
+

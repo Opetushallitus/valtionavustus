@@ -1,0 +1,1 @@
+INSERT INTO hakemukset (user_key, form_submission, status) VALUES (:user_key, :form_submission, :status)

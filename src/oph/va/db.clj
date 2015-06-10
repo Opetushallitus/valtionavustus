@@ -4,7 +4,7 @@
   (:require [clojure.java.jdbc :as jdbc]
             [hikari-cp.core :refer :all]
             [oph.va.db.queries :as queries]
-            [oph.va.jdbc.jsonb]
+            [oph.va.jdbc.extensions]
             [pandect.algo.sha256 :refer :all])
   (:import [java.security SecureRandom]))
 
@@ -73,12 +73,17 @@
        (exec queries/update-submission<!)
        :answers))
 
-(defn create-submission! [form-id answers]
-  (let [id (->> {:form_id form-id
+(defn- create-submission! [form-id answers]
+  (->> {:form_id form-id
                  :answers answers}
                 (exec queries/create-submission<!)
-                :id)]
-    {:id id}))
+                :id))
+
+(defn create-hakemus! [form-id answers]
+  (let [id (create-submission! form-id answers)]
+    (let [user-key (generate-hash-id)]
+      (exec queries/create-hakemus<! {:user_key user-key :form_submission id :status :initial})
+      {:id id})))
 
 (defn get-form-submission [form-id submission-id]
   (->> {:form_id form-id
