@@ -31,7 +31,7 @@
                   :displayAs "h1"} (-> json :content first))
         (should= {:type "infoElement"
                   :id "duration"
-                  :displayAs "dateRange"} (-> json :content second))
+                  :displayAs "endOfDateRange"} (-> json :content second))
         (should= {:type "formField"
                   :id "organization"
                   :required true

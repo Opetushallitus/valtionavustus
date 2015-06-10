@@ -52,6 +52,26 @@ class DateRangeInfoElement extends React.Component {
   }
 }
 
+class EndOfDateRangeInfoElement extends React.Component {
+  render() {
+    const values = this.props.values
+    const lang = this.props.lang
+    const key = this.props.field.id
+    const value = values[key]
+    const end = new Date(value.end)
+    const endDate = end.toLocaleDateString("fi-FI")
+    var options = {hour: "numeric", minute: "numeric"}
+    const endTime = end.toLocaleTimeString("fi-FI", options)
+
+    return (
+      <div>
+        <span><LocalizedString translations={value} translationKey="label" lang={lang}/> </span>
+        <span>{endDate} klo {endTime}</span>
+      </div>
+    )
+  }
+}
+
 export default class InfoElement extends React.Component {
 
   constructor(props) {
@@ -59,7 +79,8 @@ export default class InfoElement extends React.Component {
     this.fieldTypeMapping = {
       "h1": H1InfoElement,
       "bulletList": AccordionInfoElement,
-      "dateRange": DateRangeInfoElement
+      "dateRange": DateRangeInfoElement,
+      "endOfDateRange": EndOfDateRangeInfoElement
     }
   }
 

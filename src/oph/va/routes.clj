@@ -19,7 +19,8 @@
                           :id s/Str
                           :displayAs (s/enum :h1
                                              :bulletList
-                                             :dateRange)
+                                             :dateRange
+                                             :endOfDateRange)
                           (s/optional-key :params) s/Any
                           (s/optional-key :label) LocalizedString})
 
