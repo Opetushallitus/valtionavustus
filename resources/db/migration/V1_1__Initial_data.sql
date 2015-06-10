@@ -10,7 +10,11 @@ insert into forms (content) VALUES ('
   {
     "type": "infoElement",
     "id": "duration",
-    "displayAs": "endOfDateRange"
+    "displayAs": "endOfDateRange",
+    "label": {
+      "fi": "Hakuaika päättyy",
+      "sv": "Sista ansöknings"
+    }
   },
   {
     "type": "wrapperElement",
@@ -363,8 +367,8 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
     "start": "2015-08-12T00:00:00.000Z",
     "end": "2015-09-12T17:00:00.000Z",
     "label": {
-      "fi": "Hakuaika päättyy",
-      "sv": "Sista ansöknings"
+      "fi": "Hakuaika",
+      "sv": "Åtkomsttid"
     }
   }
 }'

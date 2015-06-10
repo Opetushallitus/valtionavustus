@@ -16,6 +16,18 @@ class BasicInfoComponent extends React.Component {
     const timeLimiter = new Translator(this.props.translations["misc"]).translate("time", this.props.lang, "KLO")
     return this.asDateString(date) + " " + timeLimiter + " " + this.asTimeString(date)
   }
+
+  labelSourceObject() {
+    const values = this.props.values
+    const key = this.props.field.id
+    const value = values[key]
+
+    if (this.props.field.label != undefined) {
+      return this.props.field
+    } else {
+      return value
+    }
+  }
 }
 
 class H1InfoElement extends React.Component {
@@ -75,9 +87,10 @@ class EndOfDateRangeInfoElement extends BasicInfoComponent {
     const value = values[key]
     const end = new Date(value.end)
     const endDateTime = this.asDateTimeString(end)
+    const labelSource = this.labelSourceObject()
     return (
       <div>
-        <span><LocalizedString translations={value} translationKey="label" lang={lang}/> </span>
+        <span><LocalizedString translations={labelSource} translationKey="label" lang={lang}/> </span>
         <span>{endDateTime}</span>
       </div>
     )
