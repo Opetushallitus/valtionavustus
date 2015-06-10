@@ -37,21 +37,21 @@
 (defn- is-wrapper-element? [field]
   (= (:type field) "wrapperElement"))
 
-(defn- is-wrapper-or-field-element? [field]
-  (or (is-form-field? field) (is-wrapper-element? field)))
+(declare flatten-elements)
 
-(declare find-fields)
+(defn unwrap-node [node]
+  (if (is-wrapper-element? node)
+    (list* node (flatten-elements (:children node)))
+    node))
 
-(defn process-node [node]
-  (if (is-form-field? node)
-    node
-    (find-fields (:children node))))
+(defn flatten-elements [node-list]
+  (->> node-list
+     (map unwrap-node)
+     flatten))
 
 (defn find-fields [node-list]
-  (->> node-list
-    (filter is-wrapper-or-field-element?)
-    (map process-node)
-    flatten))
+  (->> (flatten-elements node-list)
+    (filter is-form-field?)))
 
 (defn validate-form [form answers]
   (let [validator (partial validate-field answers)]
