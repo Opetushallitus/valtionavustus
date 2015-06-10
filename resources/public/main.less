@@ -4,6 +4,7 @@
 @lightest-gray: #fafafa;
 @light-gray: #e6e6e6;
 @dark-gray: #999290;
+@darker-gray: #807a78;
 @light-green: #73ba21;
 @dark-green: #00973a;
 @text-black: #1a1919;
@@ -102,6 +103,24 @@ button:disabled{
   ul {
     width: 663px;
   }
+
+  section.theme {
+    margin: 25px 0 0 0;
+    padding-top: 25px;
+    border-top: 1px solid @light-gray;
+
+    h2 {
+      color: @darker-gray;
+      font-weight: 300;
+      font-size: 18px;
+      text-transform: uppercase;
+      float: left;
+    }
+
+    > div {
+      margin: 15px 0 0 250px;
+    }
+  }
 }
 
 h1 {
@@ -184,7 +203,7 @@ textarea {
 label {
   color: @form-label-black;
   display: block;
-  margin: 20px 0 8px 0;
+  margin: 0 0 8px 0;
 }
 
 .preview {
