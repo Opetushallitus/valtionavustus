@@ -34,9 +34,27 @@
 (defn- is-form-field? [field]
   (= (:type field) "formField"))
 
+(defn- is-wrapper-element? [field]
+  (= (:type field) "wrapperElement"))
+
+(defn- is-wrapper-or-field-element? [field]
+  (or (is-form-field? field) (is-wrapper-element? field)))
+
+(declare find-fields)
+
+(defn process-node [node]
+  (if (is-form-field? node)
+    node
+    (find-fields (:children node))))
+
+(defn find-fields [node-list]
+  (->> node-list
+    (filter is-wrapper-or-field-element?)
+    (map process-node)
+    flatten))
+
 (defn validate-form [form answers]
   (let [validator (partial validate-field answers)]
-    (->> (form :content)
-       (filter is-form-field?)
+    (->> (find-fields (:content form))
        (map validator)
        (into {}))))
