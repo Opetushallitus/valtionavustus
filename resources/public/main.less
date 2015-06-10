@@ -1,6 +1,7 @@
 @form-width: 1200px;
 
 // Colors
+@lightest-gray: #fafafa;
 @light-gray: #e6e6e6;
 @dark-gray: #999290;
 @light-green: #73ba21;
@@ -9,7 +10,7 @@
 @form-label-black: #4a4a4a;
 @light-blue: #7ba9c0;
 @dark-blue: #4194bf;
-
+@bright-red: #c9302c;
 
 .ease-in-out(@seconds) {
   -webkit-transition: all @seconds ease-in-out;
@@ -20,7 +21,7 @@
 
 body {
   font-family: 'Open Sans', sans-serif;
-  background-color: #fafafa;
+  background-color: @lightest-gray;
   color: @text-black;
   font-size: 16px;
 }
@@ -147,7 +148,7 @@ ul {
 }
 
 .error {
-  color: #c9302c;
+  color: @bright-red;
 }
 
 input:focus,
