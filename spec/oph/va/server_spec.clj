@@ -32,7 +32,9 @@
                   :displayAs "h1"} (-> json :content first))
         (should= {:type "infoElement"
                   :id "duration"
-                  :displayAs "endOfDateRange"} (-> json :content second))
+                  :displayAs "endOfDateRange"
+                  :label {:fi "Hakuaika päättyy"
+                          :sv "Sista ansöknings"}} (-> json :content second))
         (should= {:type "formField"
                   :id "organization"
                   :required true
