@@ -320,7 +320,7 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
       "sv": "TODO"
     },
     {
-      "fi": "Aiempien hankkeiden ja verkostojen välinen hyvien käytäntöken tunnistaminen ja käyttö",
+      "fi": "Aiempien hankkeiden ja verkostojen välinen hyvien käytäntöjen tunnistaminen ja käyttö",
       "sv": "TODO"
     }
   ],
