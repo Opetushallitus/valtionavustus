@@ -73,23 +73,23 @@
        (exec queries/update-submission<!)
        :answers))
 
-(defn- create-submission! [form-id answers]
+(defn create-submission! [form-id answers]
   (->> {:form_id form-id
                  :answers answers}
                 (exec queries/create-submission<!)
                 :id))
-
-(defn create-hakemus! [form-id answers]
-  (let [id (create-submission! form-id answers)]
-    (let [user-key (generate-hash-id)]
-      (exec queries/create-hakemus<! {:user_key user-key :form_submission id :status :initial})
-      {:id id})))
 
 (defn get-form-submission [form-id submission-id]
   (->> {:form_id form-id
         :submission_id submission-id}
        (exec queries/get-form-submission)
        first))
+
+(defn create-hakemus! [form-id answers]
+  (let [id (create-submission! form-id answers)]
+    (let [user-key (generate-hash-id)]
+      (exec queries/create-hakemus<! {:user_key user-key :form_submission id :status :initial})
+      {:id user-key})))
 
 (defn get-avustushaku [id]
   (->> (exec queries/get-avustushaku {:id id})

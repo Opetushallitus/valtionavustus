@@ -70,6 +70,10 @@
   "Submission id contains id of the newly created submission"
   {:id Long})
 
+(s/defschema HakemusId
+  "Hakemus id contains id of the newly created hakemus"
+  {:id s/Str})
+
 (def empty-answers {})
 
 (defroutes* api-routes
@@ -112,9 +116,9 @@
         :summary "Create initial form answers"
         (let [validation (validation/validate-form (db/get-form form-id) answers)]
           (if (every? empty? (vals validation))
-            (let [submission (db/create-hakemus! form-id answers)]
+            (let [submission (db/create-submission! form-id answers)]
               (if submission
-                (ok submission)
+                (ok {:id submission})
                 (internal-server-error!)))
             (bad-request validation))))
 
@@ -132,7 +136,18 @@
                  (if submission
                    (ok submission)
                    (internal-server-error!)))
-               (bad-request validation))))))
+               (bad-request validation)))))
+
+  (PUT* "/avustushaku/:haku-id/hakemus" [haku-id :as request]
+      :path-params [haku-id :- Long]
+      :body    [answers (describe Submission "New answers")]
+      :return  HakemusId
+      :summary "Create initial hakemus"
+      (let [form-id (:form (db/get-avustushaku haku-id))]
+        (let [submission (db/create-hakemus! form-id answers)]
+          (if submission
+            (ok submission)
+            (internal-server-error!))))))
 
 (defroutes* doc-routes
   "API documentation browser"

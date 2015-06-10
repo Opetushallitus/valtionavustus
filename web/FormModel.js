@@ -113,7 +113,7 @@ export default class FormModel {
     }
 
     function saveNew(state) {
-      var url = "/api/form/" + state.form.id + "/values"
+      var url = "/api/avustushaku/" + state.avustushaku.id + "/hakemus"
       qwest.put(url, state.values, {dataType: "json", async: false})
           .then(function(response) {
             console.log("State saved. Response=", response)
