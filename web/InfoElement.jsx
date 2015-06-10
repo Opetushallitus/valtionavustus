@@ -22,8 +22,8 @@ class BulletListInfoElement extends React.Component {
       const textContent = values[key][i][this.props.lang]
       items.push((<li key={key + "." + i}>{textContent}</li>))
     }
-    return (<div><ul id={field.id}><LocalizedString translations={field} translationKey="label" lang={lang}/>
-                {items}
+    return (<div><LocalizedString translations={field} translationKey="label" lang={lang}/><ul id={field.id}>
+              {items}
             </ul></div>)
   }
 }
