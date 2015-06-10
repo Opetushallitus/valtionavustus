@@ -14,6 +14,8 @@
                                                       :headers {"Content-Type" "application/json"}}))
 (defn json->map [body] (parse-string body true))
 
+(defn find-by-id [json id] (first (filter (fn [e] (.equals ( :id e) id)) (-> json :content))))
+
 (describe "HTTP server"
 
   ;; Start HTTP server for running tests
@@ -37,13 +39,13 @@
                   :params {:size 50
                            :maxlength 80}
                   :label {:fi "Hakijaorganisaatio"
-                          :sv "Organisation"}} (nth (-> json :content) 2 ))
+                          :sv "Organisation"}} (find-by-id json "organization"))
         (should= {:type "infoElement"
                   :id "selection-criteria"
                   :displayAs "bulletList"
                   :label {:fi "Valintaperusteet"
                           :sv "Urvalskriterier"}
-                  :params {:initiallyOpen true}} (nth (-> json :content) 11 ))
+                  :params {:initiallyOpen true}} (find-by-id json "selection-criteria"))
         ))
 
   (it "GET should return valid empty form values from route /api/form/1/values/1"
