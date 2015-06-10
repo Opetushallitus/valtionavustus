@@ -34,7 +34,7 @@
                   :params {:size 50
                            :maxlength 80}
                   :label {:fi "Hakijaorganisaatio"
-                          :sv "Organisation"}} (-> json :content second))))
+                          :sv "Organisation"}} (nth (-> json :content) 2 ))))
 
   (it "GET should return valid empty form values from route /api/form/1/values/1"
       (let [{:keys [status headers body error] :as resp} (get! "/api/form/1/values/1")
