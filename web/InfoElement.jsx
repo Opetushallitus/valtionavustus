@@ -11,7 +11,7 @@ class H1InfoElement extends React.Component {
   }
 }
 
-class BulletListInfoElement extends React.Component {
+class AccordionInfoElement extends React.Component {
   render() {
     const values = this.props.values
     const key = this.props.field.id
@@ -57,7 +57,7 @@ export default class InfoElement extends React.Component {
     super(props)
     this.fieldTypeMapping = {
       "h1": H1InfoElement,
-      "bulletList": BulletListInfoElement,
+      "bulletList": AccordionInfoElement,
       "dateRange": DateRangeInfoElement
     }
   }
