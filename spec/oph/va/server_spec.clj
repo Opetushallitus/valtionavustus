@@ -49,11 +49,9 @@
                   :params {:initiallyOpen true}} (find-by-id json "selection-criteria"))
         ))
 
-  (it "GET should return valid empty form values from route /api/form/1/values/1"
-      (let [{:keys [status headers body error] :as resp} (get! "/api/form/1/values/1")
-            json (json->map body)]
-        (should= 200 status)
-        (should= true (empty? json))))
+  (it "GET should return not-found from route /api/form/1/values/1"
+      (let [{:keys [status headers body error] :as resp} (get! "/api/form/1/values/1")]
+        (should= 404 status)))
 
   (it "PUT should validate required values when done to route /api/form/1/values"
       (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:organization "Testi Organisaatio"

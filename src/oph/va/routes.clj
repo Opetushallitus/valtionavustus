@@ -74,8 +74,6 @@
   "Hakemus id contains id of the newly created hakemus"
   {:id s/Str})
 
-(def empty-answers {})
-
 (defroutes* api-routes
   "API implementation"
 
@@ -89,7 +87,7 @@
         (let [avustushaku (db/get-avustushaku id)]
           (if avustushaku
             (ok avustushaku)
-            (not-found id))))
+            (not-found))))
 
   (GET* "/form/:id" [id]
         :path-params [id :- Long]
@@ -97,7 +95,7 @@
         (let [form (db/get-form id)]
           (if form
             (ok form)
-            (not-found id))))
+            (not-found))))
 
   (GET* "/form/:form-id/values/:values-id" [form-id values-id]
         :path-params [form-id :- Long, values-id :- Long]
@@ -106,7 +104,7 @@
         (let [submission (db/get-form-submission form-id values-id)]
           (if submission
             (ok (:answers submission))
-            (ok empty-answers))))
+            (not-found))))
 
   (PUT* "/form/:form-id/values" [form-id :as request]
         :path-params [form-id :- Long]
