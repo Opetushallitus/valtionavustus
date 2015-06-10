@@ -40,10 +40,17 @@ export default class FormModel {
 
     function initDefaultValues(form) {
       const values = {}
-      for(var i=0; i < form.content.length; i++) {
-        const field = form.content[i]
+      const children = form.children ? form.children : form.content
+      for(var i=0; i < children.length; i++) {
+        const field = children[i]
         if(field.options && field.options.length > 0) {
           values[field.id] = field.options[0].value
+        }
+        if(field.type === 'wrapperElement') {
+          var childValues = initDefaultValues(field)
+          for (var fieldId in childValues) {
+            values[fieldId] = childValues[fieldId]
+          }
         }
       }
       return values
@@ -51,10 +58,17 @@ export default class FormModel {
 
     function initClientSideValidationState(form) {
       const values = {}
-      for(var i=0; i < form.content.length; i++) {
-        const field = form.content[i]
+      const children = form.children ? form.children : form.content
+      for(var i=0; i < children.length; i++) {
+        const field = children[i]
         if(field.type === 'formField') {
           values[field.id] = false
+        }
+        else if(field.type === 'wrapperElement') {
+          var childValues = initClientSideValidationState(field)
+          for (var fieldId in childValues) {
+            values[fieldId] = childValues[fieldId]
+          }
         }
       }
       return values

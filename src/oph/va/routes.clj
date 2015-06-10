@@ -34,8 +34,18 @@
                                            :dropdown
                                            :radioButton)})
 
-(s/defschema Content [(s/either FormField
-                                InfoElement)])
+(s/defschema BasicElement (s/either FormField
+                                    InfoElement))
+
+(s/defschema WrapperElement {:type (s/eq "wrapperElement")
+                             :id s/Str
+                             :displayAs (s/enum :theme)
+                             :children [BasicElement]
+                             (s/optional-key :params) s/Any
+                             (s/optional-key :label) LocalizedString})
+
+(s/defschema Content [(s/either BasicElement
+                                WrapperElement)])
 
 (s/defschema Form {:id Long,
                    :content Content,

@@ -1,6 +1,7 @@
 import React from 'react'
 import FormElement from './FormElement.jsx'
 import InfoElement from './InfoElement.jsx'
+import WrapperElement from './WrapperElement.jsx'
 import _ from 'lodash'
 
 export default class Form extends React.Component {
@@ -15,19 +16,27 @@ export default class Form extends React.Component {
     const validationErrors = this.props.validationErrors
     const translations = this.props.translations
 
+    const renderField = function (field) {
+      if (field.type == "formField") {
+        const value = _.get(values, field.id, "")
+        const fieldErrors = _.get(validationErrors, field.id, [])
+        return <FormElement validationErrors={fieldErrors} translations={translations} model={model} lang={lang} key={field.id} value={value} field={field} />
+      } else if (field.type == "infoElement") {
+        return <InfoElement key={field.id} field={field} values={infoElementValues} lang={lang} />
+      } else if (field.type == "wrapperElement") {
+        const children = []
+        for (var i=0; i < field.children.length; i++) {
+          children.push(renderField(field.children[i]))
+        }
+        return <WrapperElement key={field.id} field={field} lang={lang} children={children} />
+      }
+    }
+
     return (
       <form>
         <fieldset>
           {
-            fields.map(function(field) {
-              if (field.type == "formField") {
-                const value = _.get(values, field.id, "")
-                const fieldErrors = _.get(validationErrors, field.id, [])
-                return <FormElement validationErrors={fieldErrors} translations={translations} model={model} lang={lang} key={field.id} value={value} field={field} />
-              } else if (field.type == "infoElement") {
-                return <InfoElement key={field.id} field={field} values={infoElementValues} lang={lang} />
-              }
-            })
+            fields.map(renderField)
           }
         </fieldset>
       </form>
