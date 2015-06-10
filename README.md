@@ -39,6 +39,10 @@ Paikallisesti:
 
     ./lein run
 
+Kannan tyhjäys ja käynnistys paikallisesti:
+
+    ./lein do dbclear, run
+
 Tuotantoversiona:
 
     ./lein uberjar
