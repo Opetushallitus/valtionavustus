@@ -17,6 +17,12 @@
       "sv": "Sparat version"
     }
   },
+  "misc": {
+    "time": {
+      "fi": "klo",
+      "sv": "kl."
+    }
+  },
   "errors": {
     "required": {
       "fi": "Pakollinen tieto",

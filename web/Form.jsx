@@ -22,7 +22,7 @@ export default class Form extends React.Component {
         const fieldErrors = _.get(validationErrors, field.id, [])
         return <FormElement validationErrors={fieldErrors} translations={translations} model={model} lang={lang} key={field.id} value={value} field={field} />
       } else if (field.type == "infoElement") {
-        return <InfoElement key={field.id} field={field} values={infoElementValues} lang={lang} />
+        return <InfoElement key={field.id} field={field} values={infoElementValues} lang={lang} translations={translations} />
       } else if (field.type == "wrapperElement") {
         const children = []
         for (var i=0; i < field.children.length; i++) {

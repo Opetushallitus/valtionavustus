@@ -62,11 +62,10 @@ class EndOfDateRangeInfoElement extends React.Component {
     const endDate = end.toLocaleDateString("fi-FI")
     var options = {hour: "numeric", minute: "numeric"}
     const endTime = end.toLocaleTimeString("fi-FI", options)
-
     return (
       <div>
         <span><LocalizedString translations={value} translationKey="label" lang={lang}/> </span>
-        <span>{endDate} klo {endTime}</span>
+        <span>{endDate} <LocalizedString translations={this.props.translations.misc} translationKey="time" lang={lang}/> {endTime}</span>
       </div>
     )
   }
