@@ -27,6 +27,9 @@
         (should= {:type "infoElement"
                   :id "name"
                   :displayAs "h1"} (-> json :content first))
+        (should= {:type "infoElement"
+                  :id "duration"
+                  :displayAs "dateRange"} (-> json :content second))
         (should= {:type "formField"
                   :id "organization"
                   :required true
@@ -34,7 +37,14 @@
                   :params {:size 50
                            :maxlength 80}
                   :label {:fi "Hakijaorganisaatio"
-                          :sv "Organisation"}} (nth (-> json :content) 2 ))))
+                          :sv "Organisation"}} (nth (-> json :content) 2 ))
+        (should= {:type "infoElement"
+                  :id "selection-criteria"
+                  :displayAs "bulletList"
+                  :label {:fi "Valintaperusteet"
+                          :sv "Urvalskriterier"}
+                  :params {:initiallyOpen true}} (nth (-> json :content) 11 ))
+        ))
 
   (it "GET should return valid empty form values from route /api/form/1/values/1"
       (let [{:keys [status headers body error] :as resp} (get! "/api/form/1/values/1")
