@@ -43,8 +43,6 @@
         (should= {:type "infoElement"
                   :id "selection-criteria"
                   :displayAs "bulletList"
-                  :label {:fi "Valintaperusteet"
-                          :sv "Urvalskriterier"}
                   :params {:initiallyOpen true}} (find-by-id json "selection-criteria"))
         ))
 

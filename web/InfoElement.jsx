@@ -18,11 +18,12 @@ class AccordionInfoElement extends React.Component {
     const field = this.props.field
     const lang = this.props.lang
     const items = []
-    for (var i=0; i < values[key].length; i++) {
-      const textContent = values[key][i][this.props.lang]
+    var infoObject = values[key];
+      for (var i=0; i < infoObject.items.length; i++) {
+      const textContent = infoObject.items[i][this.props.lang]
       items.push((<li key={key + "." + i}>{textContent}</li>))
     }
-    return (<div><LocalizedString className="accordion-title open" translations={field} translationKey="label" lang={lang}/><ul id={field.id}>
+    return (<div><LocalizedString className="accordion-title open" translations={infoObject} translationKey="label" lang={lang}/><ul id={field.id}>
               {items}
             </ul></div>)
   }

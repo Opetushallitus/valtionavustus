@@ -198,10 +198,6 @@ insert into forms (content) VALUES ('
         "displayAs":"bulletList",
         "params":{
           "initiallyOpen":true
-        },
-        "label":{
-          "fi":"Valintaperusteet",
-          "sv":"Urvalskriterier"
         }
       },
       {
@@ -335,28 +331,34 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
     "fi": "Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen",
     "sv": "Stöd för genomförande av kvalitetsstrategin"
   },
-  "selection-criteria": [
-    {
-      "fi": "Vaikuttavuuden edistäminen (ml. yhdensuuntaisuus koulutuksen järjestäjien strategisten tavoitteiden kanssa)",
-      "sv": "TODO"
-    },
-    {
-      "fi": "Hankesuunnitelman toteuttamiskelpoisuus ja kokonaistaloudellisuus suhteessa esitettyyn toimintaan",
-      "sv": "TODO"
-    },
-    {
-      "fi": "Henkilöstön ja sidosryhmien osallistumis- ja vaikutusmahdollisuudet verkoston toimintapainopisteiden mukaisten tavoitteiden saavuttamiseksi",
-      "sv": "TODO"
-    },
-    {
-      "fi": "Kehittämisverkoston laatu (sis. aiemmin rahoitetuissa laatuverkostoissa saavutetut tulokset) ja kattavuus",
-      "sv": "TODO"
-    },
-    {
-      "fi": "Aiempien hankkeiden ja verkostojen välinen hyvien käytäntöjen tunnistaminen ja käyttö",
-      "sv": "TODO"
+  "selection-criteria": {
+    "items": [
+      {
+        "fi": "Vaikuttavuuden edistäminen (ml. yhdensuuntaisuus koulutuksen järjestäjien strategisten tavoitteiden kanssa)",
+        "sv": "TODO"
+      },
+      {
+        "fi": "Hankesuunnitelman toteuttamiskelpoisuus ja kokonaistaloudellisuus suhteessa esitettyyn toimintaan",
+        "sv": "TODO"
+      },
+      {
+        "fi": "Henkilöstön ja sidosryhmien osallistumis- ja vaikutusmahdollisuudet verkoston toimintapainopisteiden mukaisten tavoitteiden saavuttamiseksi",
+        "sv": "TODO"
+      },
+      {
+        "fi": "Kehittämisverkoston laatu (sis. aiemmin rahoitetuissa laatuverkostoissa saavutetut tulokset) ja kattavuus",
+        "sv": "TODO"
+      },
+      {
+        "fi": "Aiempien hankkeiden ja verkostojen välinen hyvien käytäntöjen tunnistaminen ja käyttö",
+        "sv": "TODO"
+      }
+    ],
+    "label":{
+      "fi":"Valintaperusteet",
+      "sv":"Urvalskriterier"
     }
-  ],
+  },
   "duration": {
     "start": "2015-08-12T00:00:00.000Z",
     "end": "2015-09-12T17:00:00.000Z",
