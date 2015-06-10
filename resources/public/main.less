@@ -107,6 +107,16 @@ h1 {
 // Info elements
 .accordion-title {
   color: @light-blue;
+
+  &.closed:after {
+    position: relative;
+    top: 3px;
+    content: " \2303";
+  }
+
+  &.open:after {
+    content: " \2304";
+  }
 }
 
 //Form elements
