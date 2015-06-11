@@ -8,14 +8,14 @@
     expect(window.uiError || null).to.be.null
   })
 
-  describe('Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku suomeksi', function () {
+  describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku suomeksi', function () {
     before(
       page.openPage()
     )
 
     describe('Alkutilassa', function () {
       it("näkyy haun nimi", function () {
-        expect(page.applicationName()).to.deep.equal('Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+        expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
       })
       it("kielen vaihto osoittaa ruotsiin", function () {
         expect(page.toggleLanguageButton().text()).to.deep.equal('På svenska')
@@ -70,7 +70,7 @@
     })
   })
 
-  describe('Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku ruotsiksi', function () {
+  describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku ruotsiksi', function () {
     before(
         page.openPage('sv')
     )
@@ -85,7 +85,7 @@
         page.openPreview()
     )
     it("näyttää hakemuksen nimen oikein", function () {
-        expect(page.applicationName()).to.deep.equal('Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+        expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
     })
   })
 })()

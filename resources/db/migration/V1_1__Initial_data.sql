@@ -332,7 +332,7 @@ insert into forms (content) VALUES ('
 INSERT INTO avustushaut (form, content) VALUES (1, '
 {
   "name": {
-    "fi": "Yleissivistävä koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen",
+    "fi": "Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen",
     "sv": "Stöd för genomförande av kvalitetsstrategin"
   },
   "selection-criteria": {
