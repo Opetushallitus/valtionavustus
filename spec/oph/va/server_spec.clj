@@ -17,6 +17,22 @@
 
 (defn find-by-id [json id] (first (filter (fn [e] (.equals ( :id e) id)) (-> (validation/flatten-elements (json :content))))))
 
+(def valid-answers
+  {:organization "Testi Organisaatio"
+   :primary-email "test@example.com"
+   :signature "Teemu Testaaja, CEO"
+   :signature-email "teemu@example.com"
+   :language "fi"
+   :combined-effort "no"
+   :other-organization-1 "E.T. Extra Terrestrial"
+   :other-organization-1-email "et@example"
+   :project-network "Verkko"
+   :project-goals "Maaleja"
+   :project-explanation "Selitys"
+   :project-target "Maali"
+   :project-measure "Mittaus"
+   :project-announce "Julkaisut"})
+
 (describe "HTTP server"
 
   ;; Start HTTP server for running tests
@@ -78,21 +94,7 @@
                  json)))
 
   (it "PUT should validate text field lengths and options when done to route /api/form/1/values"
-      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:organization "Testi Organisaatio"
-                                                                                     :primary-email "test@example.com"
-                                                                                     :signature "Teemu Testaaja, CEO"
-                                                                                     :signature-email "teemu@example.com"
-                                                                                     :language "fi"
-                                                                                     :combined-effort "no"
-                                                                                     :other-organization-1 "E.T. Extra Terrestrial"
-                                                                                     :other-organization-1-email "et@example"
-                                                                                     :project-network "Verkko"
-                                                                                     :project-goals "Maaleja"
-                                                                                     :project-explanation "Selitys"
-                                                                                     :project-target "Maali"
-                                                                                     :project-measure "Mittaus"
-                                                                                     :project-announce "Julkaisut"
-                                                                                     :project-end "10.10.10000"})
+      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" (assoc valid-answers :project-end "10.10.10000"))
             json (json->map body)]
         (should= 400 status)
         (should= {:other-organization-1-email [],
@@ -115,20 +117,7 @@
                  json)))
 
   (it "PUT should create a new form submission and return id when done to route /api/form/1/values"
-      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:organization "Testi Organisaatio"
-                                                                                     :primary-email "test@example.com"
-                                                                                     :signature "Teemu Testaaja, CEO"
-                                                                                     :signature-email "teemu@example.com"
-                                                                                     :language "fi"
-                                                                                     :combined-effort "no"
-                                                                                     :other-organization-1 "E.T. Extra Terrestrial"
-                                                                                     :other-organization-1-email "et@example"
-                                                                                     :project-network "Verkko"
-                                                                                     :project-goals "Maaleja"
-                                                                                     :project-explanation "Selitys"
-                                                                                     :project-target "Maali"
-                                                                                     :project-measure "Mittaus"
-                                                                                     :project-announce "Julkaisut"})
+      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" valid-answers)
             json (json->map body)]
         (should= 200 status)
         (should= 1 (:id json))))
@@ -158,8 +147,7 @@
                json)))
 
   (it "POST should fail if done to non-existing node /api/form/1/values/2"
-      (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/2" {:foo "foo2"
-                                                                                        :bar "bar2"})]
+      (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/2" valid-answers)]
         (should= 404 status))))
 
 (run-specs)

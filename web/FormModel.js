@@ -128,7 +128,7 @@ export default class FormModel {
     }
 
     function updateOld(state, id) {
-      var url = "/api/form/" + state.form.id + "/values/" + id
+      var url = "/api/avustushaku/" + state.avustushaku.id + "/hakemus/" + id
       qwest.post(url, state.values, {dataType: "json", async: false})
           .then(function(response) {
             console.log("State updated. Response=", response)

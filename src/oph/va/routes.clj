@@ -74,6 +74,26 @@
   "Hakemus id contains id of the newly created hakemus"
   {:id s/Str})
 
+(defn- create-form-submission [form-id answers]
+  (let [submission (db/create-submission! form-id answers)]
+    (if submission
+      (ok {:id submission})
+      (internal-server-error!))))
+
+(defn- get-form-submission [form-id values-id]
+  (let [submission (db/get-form-submission form-id values-id)]
+    (if submission
+      (ok (:answers submission))
+      (not-found))))
+
+(defn- update-form-submission [form-id values-id answers]
+  (if (not (db/submission-exists? form-id values-id))
+    (not-found)
+      (let [submission (db/update-submission! form-id values-id answers)]
+        (if submission
+          (ok submission)
+          (internal-server-error!)))))
+
 (defroutes* api-routes
   "API implementation"
 
@@ -101,10 +121,7 @@
         :path-params [form-id :- Long, values-id :- Long]
         :return  Submission
         :summary "Get current answers"
-        (let [submission (db/get-form-submission form-id values-id)]
-          (if submission
-            (ok (:answers submission))
-            (not-found))))
+        (get-form-submission form-id values-id))
 
   (PUT* "/form/:form-id/values" [form-id :as request]
         :path-params [form-id :- Long]
@@ -114,10 +131,7 @@
         :summary "Create initial form answers"
         (let [validation (validation/validate-form (db/get-form form-id) answers)]
           (if (every? empty? (vals validation))
-            (let [submission (db/create-submission! form-id answers)]
-              (if submission
-                (ok {:id submission})
-                (internal-server-error!)))
+            (create-form-submission form-id answers)
             (bad-request validation))))
 
   (POST* "/form/:form-id/values/:values-id" [form-id values-id :as request]
@@ -126,27 +140,10 @@
          :return  (s/either Submission
                             SubmissionValidationErrors)
          :summary "Update form values"
-         (if (not (db/submission-exists? form-id values-id))
-           (not-found)
-           (let [validation (validation/validate-form (db/get-form form-id) answers)]
-             (if (every? empty? (vals validation))
-               (let [submission (db/update-submission! form-id values-id answers)]
-                 (if submission
-                   (ok submission)
-                   (internal-server-error!)))
-               (bad-request validation)))))
-
-
-  (GET* "/avustushaku/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
-        :path-params [haku-id :- Long, hakemus-id :- s/Str]
-        :return  Submission
-        :summary "Get current answers"
-        (let [form-id (:form (db/get-avustushaku haku-id))]
-          (let [hakemus (db/get-hakemus hakemus-id)]
-            (let [submission (db/get-form-submission form-id (:form_submission hakemus))]
-              (if submission
-                (ok (:answers submission))
-                (not-found))))))
+         (let [validation (validation/validate-form (db/get-form form-id) answers)]
+           (if (every? empty? (vals validation))
+             (update-form-submission form-id values-id  answers)
+             (bad-request validation))))
 
   (PUT* "/avustushaku/:haku-id/hakemus" [haku-id :as request]
       :path-params [haku-id :- Long]
@@ -157,7 +154,24 @@
         (let [submission (db/create-hakemus! form-id answers)]
           (if submission
             (ok submission)
-            (internal-server-error!))))))
+            (internal-server-error!)))))
+
+  (GET* "/avustushaku/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
+        :path-params [haku-id :- Long, hakemus-id :- s/Str]
+        :return  Submission
+        :summary "Get current answers"
+        (let [form-id (:form (db/get-avustushaku haku-id))]
+          (let [hakemus (db/get-hakemus hakemus-id)]
+            (get-form-submission form-id (:form_submission hakemus)))))
+
+  (POST* "/avustushaku/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id :as request]
+       :path-params [haku-id :- Long, hakemus-id :- s/Str]
+       :body    [answers (describe Submission "New answers")]
+       :return  Submission
+       :summary "Update hakemus values"
+         (let [form-id (:form (db/get-avustushaku haku-id))]
+           (let [hakemus (db/get-hakemus hakemus-id)]
+             (update-form-submission form-id (:form_submission hakemus) answers)))))
 
 (defroutes* doc-routes
   "API documentation browser"
