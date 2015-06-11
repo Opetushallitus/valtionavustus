@@ -10,7 +10,7 @@
   (around-all [_] (with-test-server! (_)))
 
   (it "are successful"
-      (let [results (sh "node_modules/mocha-phantomjs/bin/mocha-phantomjs" "-R" "spec" "http://localhost:9000/test/runner.html")]
+      (let [results (sh "node_modules/mocha-phantomjs/bin/mocha-phantomjs" "-R" "spec" "-s" "webSecurityEnabled=false" "http://localhost:9000/test/runner.html")]
         (println (:out results))
         (should= 0 (:exit results)))))
 
