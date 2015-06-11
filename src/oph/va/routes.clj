@@ -136,6 +136,18 @@
                    (internal-server-error!)))
                (bad-request validation)))))
 
+
+  (GET* "/avustushaku/:haku-id/values/:hakemus-id" [haku-id hakemus-id]
+        :path-params [haku-id :- Long, hakemus-id :- HakemusId]
+        :return  Submission
+        :summary "Get current answers"
+        (let [form-id (:form (db/get-avustushaku haku-id))]
+          (let [hakemus (db/get-hakemus hakemus-id)]
+            (let [submission (db/get-form-submission form-id (:form_submission hakemus))]
+              (if submission
+                (ok submission)
+                (not-found))))))
+
   (PUT* "/avustushaku/:haku-id/hakemus" [haku-id :as request]
       :path-params [haku-id :- Long]
       :body    [answers (describe Submission "New answers")]

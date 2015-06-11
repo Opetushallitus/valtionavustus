@@ -91,6 +91,11 @@
       (exec queries/create-hakemus<! {:user_key user-key :form_submission id :status :initial})
       {:id user-key})))
 
+(defn get-hakemus [hakemus-id]
+  (->> {:user_key hakemus-id}
+       (exec queries/get-hakemus)
+       first))
+
 (defn get-avustushaku [id]
   (->> (exec queries/get-avustushaku {:id id})
        first))

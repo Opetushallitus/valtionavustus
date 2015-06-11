@@ -10,5 +10,6 @@
 (defquery get-form-submission "sql/submission/get.sql")
 
 (defquery create-hakemus<! "sql/hakemus/create.sql")
+(defquery get-hakemus "sql/hakemus/get.sql")
 
 (defquery get-avustushaku "sql/avustushaku/get.sql")

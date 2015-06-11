@@ -12,15 +12,15 @@ export default class FormModel {
     const langQueryParam =  query.lang || 'fi'
     const langPreviewParam =  query.preview || false
     const avustusHakuP = Bacon.fromPromise(qwest.get("/api/avustushaku/" + (query.avustushaku || 1)))
-    const formP = Bacon.fromPromise(qwest.get("/api/form/" + (query.form || 1)))
-    const formValuesP = query.submission ? Bacon.fromPromise(qwest.get("/api/form/" + (query.form || 1) + "/values/" + query.submission)) : formP.map(initDefaultValues)
+    const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(qwest.get("/api/form/" + avustusHaku.id))})
+    const formValuesP = query.submission ? Bacon.fromPromise(qwest.get("/api/avustushaku/" + (query.avustushaku || 1) + "/hakemus/" + query.hakemus)) : formP.map(initDefaultValues)
     const clientSideValidationP = formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
     const requests = Bacon.combineTemplate({
       avustushaku: avustusHakuP,
       form: formP,
-      valuesId: query.submission,
+      hakemusId: query.hakemus,
       values: formValuesP,
       preview: langPreviewParam,
       lang: langQueryParam,
@@ -117,7 +117,7 @@ export default class FormModel {
       qwest.put(url, state.values, {dataType: "json", async: false})
           .then(function(response) {
             console.log("State saved. Response=", response)
-            state.valuesId = response.id
+            state.hakemusId = response.id
             state.validationErrors["submit"] = []
             setData(state)
           })
@@ -142,8 +142,8 @@ export default class FormModel {
 
     function onSave(state) {
       try {
-        if(state.valuesId) {
-          return updateOld(state, state.valuesId)
+        if(state.hakemusId) {
+          return updateOld(state, state.hakemusId)
         }
         else {
           return saveNew(state)

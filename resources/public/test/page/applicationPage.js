@@ -7,7 +7,7 @@ function ApplicationPage() {
       if (!pageLoadedCheck) {
         pageLoadedCheck = applicationPageVisible
       }
-      return openPage("/?form=1&lang=" + lang, pageLoadedCheck)
+      return openPage("/?avustushaku=1&lang=" + lang, pageLoadedCheck)
     },
     openPreview: function(lang, pageLoadedCheck) {
       if (!lang) {
@@ -16,7 +16,7 @@ function ApplicationPage() {
       if (!pageLoadedCheck) {
         pageLoadedCheck = applicationPageVisible
       }
-      return openPage("/?preview=true&form=1&submission=1&lang=" + lang, pageLoadedCheck)
+      return openPage("/?preview=true&avustushaku=1&hakemus=1&lang=" + lang, pageLoadedCheck)
     },
     applicationName: function() {
       return applicationElement().find("#container h1").first().text().trim()
