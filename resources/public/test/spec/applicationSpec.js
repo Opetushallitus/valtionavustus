@@ -50,6 +50,7 @@
       describe('Pakollisten tietojen syötön jälkeen', function () {
         before(
             page.setInputValue("organization", "Testi Organisaatio"),
+            wait.until(page.submitButton().isEnabled),
             page.submitButton().click,
             wait.until(page.previewButton().isEnabled)
         )
