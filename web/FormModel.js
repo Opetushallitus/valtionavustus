@@ -101,7 +101,7 @@ export default class FormModel {
     }
 
     function handleUnexpectedSaveError(state, method, url, error) {
-      console.error("Unexpected save error ", error, " from " , window.location.href, " to ", method, url)
+      console.error("Unexpected save error ", error, " in ", method, " to ", url)
       state.validationErrors["submit"] = [{error: "unexpected-server-error"}]
       return state
     }
