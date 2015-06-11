@@ -137,15 +137,15 @@
                (bad-request validation)))))
 
 
-  (GET* "/avustushaku/:haku-id/values/:hakemus-id" [haku-id hakemus-id]
-        :path-params [haku-id :- Long, hakemus-id :- HakemusId]
+  (GET* "/avustushaku/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
+        :path-params [haku-id :- Long, hakemus-id :- s/Str]
         :return  Submission
         :summary "Get current answers"
         (let [form-id (:form (db/get-avustushaku haku-id))]
           (let [hakemus (db/get-hakemus hakemus-id)]
             (let [submission (db/get-form-submission form-id (:form_submission hakemus))]
               (if submission
-                (ok submission)
+                (ok (:answers submission))
                 (not-found))))))
 
   (PUT* "/avustushaku/:haku-id/hakemus" [haku-id :as request]
