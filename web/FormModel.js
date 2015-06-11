@@ -100,59 +100,65 @@ export default class FormModel {
       return state
     }
 
+    function handleUnexpectedSaveError(state, method, url, error) {
+      console.error(method, url, error)
+      state.validationErrors["submit"] = [{error: "unexpected-server-error"}]
+      return state
+    }
+
     function handleSaveError(state, status, error, method, url, response) {
       if(status === 400) {
         state.validationErrors = JSON.parse(response)
         state.validationErrors["submit"] = [{error: "validation-errors"}]
+        return state
       }
-      else {
-        console.error(method, url, error)
-        state.validationErrors["submit"] = [{error: "unexpected-server-error"}]
-      }
-      return state
+      return handleUnexpectedSaveError(state, method, url, error);
     }
 
     function saveNew(state) {
       var url = "/api/avustushaku/" + state.avustushaku.id + "/hakemus"
-      qwest.put(url, state.values, {dataType: "json", async: false})
-          .then(function(response) {
-            console.log("State saved. Response=", response)
-            state.hakemusId = response.id
-            state.validationErrors["submit"] = []
-            setData(state)
-          })
-          .catch(function(error) {
-            state = handleSaveError(state, this.status, error, this.method, url, this.response)
-          })
-      return state
+      try {
+        qwest.put(url, state.values, {dataType: "json", async: false})
+            .then(function(response) {
+              console.log("State saved. Response=", response)
+              state.hakemusId = response.id
+              state.validationErrors["submit"] = []
+              setData(state)
+            })
+            .catch(function(error) {
+              state = handleSaveError(state, this.status, error, this.method, url, this.response)
+            })
+        return state
+      }
+      catch(error) {
+        return handleUnexpectedSaveError(state, "PUT", url, error);
+      }
     }
 
     function updateOld(state, id) {
       var url = "/api/avustushaku/" + state.avustushaku.id + "/hakemus/" + id
-      qwest.post(url, state.values, {dataType: "json", async: false})
-          .then(function(response) {
-            console.log("State updated. Response=", response)
-            state.validationErrors["submit"] = []
-          })
-          .catch(function(error) {
-            state = handleSaveError(state, this.status, error, this.method, url, this.response)
-          })
-      return state
+      try {
+        qwest.post(url, state.values, {dataType: "json", async: false})
+            .then(function(response) {
+              console.log("State updated. Response=", response)
+              state.validationErrors["submit"] = []
+            })
+            .catch(function(error) {
+              state = handleSaveError(state, this.status, error, this.method, url, this.response)
+            })
+        return state
+      }
+      catch(error) {
+        return handleUnexpectedSaveError(state, "POST", url, error);
+      }
     }
 
     function onSave(state) {
-      try {
-        if(state.hakemusId) {
-          return updateOld(state, state.hakemusId)
-        }
-        else {
-          return saveNew(state)
-        }
+      if(state.hakemusId) {
+        return updateOld(state, state.hakemusId)
       }
-      catch(error) {
-        console.error("Unexpected server error: ", error)
-        state.validationErrors["submit"] = [{error: "unexpected-server-error"}]
-        return state
+      else {
+        return saveNew(state)
       }
     }
 
