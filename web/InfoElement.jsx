@@ -41,6 +41,27 @@ class H1InfoElement extends React.Component {
 }
 
 class AccordionInfoElement extends React.Component {
+  constructor(props) {
+    super(props)
+    this.handleClick = this.handleClick.bind(this)
+    this.determineCssClass = this.determineCssClass.bind(this)
+    const initiallyOpen = this.props.field.params.initiallyOpen
+    const accordionStateClassName = this.determineCssClass(initiallyOpen)
+    this.state = { open: initiallyOpen, accordionStateClassName: accordionStateClassName }
+  }
+
+  handleClick() {
+    var newIsOpen = !this.state.open;
+    this.setState({
+      open: newIsOpen,
+      accordionStateClassName: this.determineCssClass(newIsOpen)
+    })
+  }
+
+  determineCssClass(isOpen) {
+    return isOpen ? "open" : "closed"
+  }
+
   render() {
     const values = this.props.values
     const key = this.props.field.id
@@ -52,9 +73,15 @@ class AccordionInfoElement extends React.Component {
       const textContent = infoObject.items[i][this.props.lang]
       items.push((<li key={key + "." + i}>{textContent}</li>))
     }
-    return (<div><LocalizedString className="accordion-title open" translations={infoObject} translationKey="label" lang={lang}/><ul id={field.id}>
-              {items}
-            </ul></div>)
+    return (
+        <section onClick={this.handleClick}>
+          <div className={"accordion "  + this.state.accordionStateClassName}>
+            <LocalizedString onClick={this.handleClick} className={"accordion-title " + this.state.accordionStateClassName} translations={infoObject} translationKey="label" lang={lang}/>
+            <ul id={field.id}>
+                {items}
+            </ul>
+          </div>
+        </section>)
   }
 }
 

@@ -147,6 +147,27 @@ ul {
 }
 
 // Info elements
+.accordion {
+  // TODO: Fix transitions.
+  position: relative;
+  &.closed {
+    transition: all 0.5s ease-in-out;
+    height: 0;
+  }
+  &.open {
+    transition: all 0.5s ease-in-out;
+    height: 100%;
+  }
+  &.closed li {
+    transition: all 0.5s ease-in-out;
+    opacity: 0;
+  }
+  &.open li {
+    transition: all 0.5s ease-in-out;
+    opacity: 1.0;
+  }
+}
+
 .accordion-title {
   color: @dark-blue;
 
