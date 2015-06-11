@@ -151,9 +151,9 @@
       :return  HakemusId
       :summary "Create initial hakemus"
       (let [form-id (:form (db/get-avustushaku haku-id))]
-        (let [submission (db/create-hakemus! form-id answers)]
-          (if submission
-            (ok submission)
+        (let [hakemus-id (db/create-hakemus! form-id answers)]
+          (if hakemus-id
+            (ok hakemus-id)
             (internal-server-error!)))))
 
   (GET* "/avustushaku/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
