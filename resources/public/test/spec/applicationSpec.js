@@ -13,7 +13,7 @@
       page.openPage()
     )
 
-    describe('Alkutilassa', function () {
+    describe('alkutilassa', function () {
       it("näkyy haun nimi", function () {
         expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
       })
@@ -25,7 +25,7 @@
       })
     })
 
-    describe('Jos ei olla syötetty kaikkia pakollisia tietoja', function () {
+    describe('täytettäessä lomaketta', function () {
       before(
           page.setInputValue("organization", ""),
           page.setInputValue("primary-email", "yhteyshenkilo@example.com"),
@@ -40,23 +40,33 @@
           page.setInputValue("project-measure", "Mittaamme toteutumista ja vaikutusta."),
           page.setInputValue("project-announce", "Tiedoitamme hankkeesta kivasti sitten.")
       )
-      it("tallennus on disabloitu", function () {
-        expect(page.submitButton().isEnabled()).to.equal(false)
-      })
-      it("pakollisesta kentästä kerrotaan", function () {
-        expect(page.error("organization")).to.equal('Pakollinen tieto')
+
+      describe('jos ei ole annettu kaikkia pakollisia arvoja', function () {
+        it("tallennus on disabloitu", function () {
+          expect(page.submitButton().isEnabled()).to.equal(false)
+        })
+        it("pakollisesta kentästä kerrotaan", function () {
+          expect(page.error("organization")).to.equal('Pakollinen tieto')
+        })
       })
 
-      describe('Pakollisten tietojen syötön jälkeen', function () {
+      describe('pakollisten tietojen syötön jälkeen', function () {
         before(
             page.setInputValue("organization", "Testi Organisaatio"),
-            wait.until(page.submitButton().isEnabled),
-            page.submitButton().click,
-            wait.until(page.previewButton().isEnabled)
+            wait.until(page.submitButton().isEnabled)
         )
 
-        it("tallennus onnistuu", function () {
-          expect(page.saveError()).to.equal('')
+        it("tallennus nappi enabloituu", function () {
+        })
+
+        describe('painettaessa nappia', function () {
+          before(
+              page.submitButton().click,
+              wait.until(page.previewButton().isEnabled)
+          )
+          it("tallennus onnistuu", function () {
+            expect(page.saveError()).to.equal('')
+          })
         })
       })
     })
