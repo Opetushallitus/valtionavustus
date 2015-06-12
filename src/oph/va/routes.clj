@@ -171,7 +171,21 @@
        :summary "Update hakemus values"
          (let [form-id (:form (db/get-avustushaku haku-id))]
            (let [hakemus (db/get-hakemus hakemus-id)]
-             (update-form-submission form-id (:form_submission hakemus) answers)))))
+             (update-form-submission form-id (:form_submission hakemus) answers))))
+
+  (POST* "/avustushaku/:haku-id/hakemus/:hakemus-id/submit" [haku-id hakemus-id :as request]
+       :path-params [haku-id :- Long, hakemus-id :- s/Str]
+       :body    [answers (describe Submission "New answers")]
+       :return  Submission
+       :summary "Update hakemus values"
+         (let [form-id (:form (db/get-avustushaku haku-id))]
+           (let [validation (validation/validate-form (db/get-form form-id) answers)]
+             (if (every? empty? (vals validation))
+               (let [hakemus (db/get-hakemus hakemus-id)]
+                 (let [saved-answers (update-form-submission form-id (:form_submission hakemus) answers)]
+                   (db/submit-hakemus hakemus-id)
+                   saved-answers))
+               (bad-request validation))))))
 
 (defroutes* doc-routes
   "API documentation browser"

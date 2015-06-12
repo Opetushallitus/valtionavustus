@@ -11,12 +11,13 @@ CREATE TABLE form_submissions (
     answers        jsonb NOT NULL
 );
 
-CREATE TYPE status AS ENUM ('initial', 'draft', 'submitted');
+CREATE TYPE status AS ENUM ('draft', 'submitted');
 CREATE TABLE hakemukset (
     id              serial PRIMARY KEY,
     user_key        varchar(64) UNIQUE NOT NULL,
     form_submission integer references form_submissions(id) NOT NULL,
-    submittime      timestamp with time zone default now(),
+    created_at      timestamp with time zone default now(),
+    submittime      timestamp with time zone,
     status          status NOT NULL
 );
 

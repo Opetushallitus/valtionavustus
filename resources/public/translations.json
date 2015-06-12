@@ -8,6 +8,10 @@
       "fi": "Avustushakemus",
       "sv": "Understödansökan"
     },
+    "save": {
+      "fi": "Tallenna",
+      "sv": "Spara"
+    },
     "submit": {
       "fi": "Lähetä käsiteltäväksi",
       "sv": "Skicka"

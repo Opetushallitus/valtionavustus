@@ -34,7 +34,8 @@ export default class FormModel {
                                           [dispatcher.stream('updateField')], onUpdateField,
                                           [dispatcher.stream('fieldValidation')], onFieldValidation,
                                           [dispatcher.stream('changeLanguage')], onChangeLang,
-                                          [dispatcher.stream('save')], onSave)
+                                          [dispatcher.stream('save')], onSave,
+                                          [dispatcher.stream('submit')], onSubmit)
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
 
@@ -135,12 +136,12 @@ export default class FormModel {
       }
     }
 
-    function updateOld(state, id) {
-      var url = "/api/avustushaku/" + state.avustushaku.id + "/hakemus/" + id
+    function updateOld(state, id, submit) {
+      var url = "/api/avustushaku/" + state.avustushaku.id + "/hakemus/" + id + (submit ? "/submit" : "")
       try {
         qwest.post(url, state.values, {dataType: "json", async: false})
             .then(function(response) {
-              console.log("State updated. Response=", response)
+              console.log("State updated (submit=", submit, "). Response=", response)
               state.validationErrors["submit"] = []
             })
             .catch(function(error) {
@@ -155,11 +156,15 @@ export default class FormModel {
 
     function onSave(state) {
       if(state.hakemusId) {
-        return updateOld(state, state.hakemusId)
+        return updateOld(state, state.hakemusId, false)
       }
       else {
         return saveNew(state)
       }
+    }
+
+    function onSubmit(state) {
+      return updateOld(state, state.hakemusId, true)
     }
 
     function setData(data) {
@@ -183,5 +188,10 @@ export default class FormModel {
   save(event) {
     event.preventDefault()
     dispatcher.push('save')
+  }
+
+  submit(event) {
+    event.preventDefault()
+    dispatcher.push('submit')
   }
 }

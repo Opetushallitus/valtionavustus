@@ -88,12 +88,17 @@
 (defn create-hakemus! [form-id answers]
   (let [id (create-submission! form-id answers)]
     (let [user-key (generate-hash-id)]
-      (exec queries/create-hakemus<! {:user_key user-key :form_submission id :status :initial})
+      (exec queries/create-hakemus<! {:user_key user-key :form_submission id :status :draft})
       {:id user-key})))
 
 (defn get-hakemus [hakemus-id]
   (->> {:user_key hakemus-id}
        (exec queries/get-hakemus)
+       first))
+
+(defn submit-hakemus [hakemus-id]
+  (->> {:user_key hakemus-id :status :submitted}
+       (exec queries/update-hakemus<!)
        first))
 
 (defn get-avustushaku [id]

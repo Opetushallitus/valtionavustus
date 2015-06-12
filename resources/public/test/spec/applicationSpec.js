@@ -42,89 +42,103 @@
       )
 
       describe('jos ei ole annettu kaikkia pakollisia arvoja', function () {
-        it("tallennus on disabloitu", function () {
-          expect(page.submitButton().isEnabled()).to.equal(false)
-        })
-        it("pakollisesta kentästä kerrotaan", function () {
-          expect(page.error("organization")).to.equal('Pakollinen tieto')
-        })
-      })
-
-      describe('syötettäessä pakolliset tiedot', function () {
-        before(
-          page.setInputValue("organization", "Testi Organisaatio"),
-          wait.until(page.submitButton().isEnabled)
-        )
-
-        describe('syötön jälkeen', function () {
-          it("tallennus nappi enabloituu", function () {
+        describe('ennen tallentamista', function () {
+          it("tallennus on enabloitu", function () {
+            expect(page.saveButton().isEnabled()).to.equal(true)
+          })
+          it("lähetys on disabloitu", function () {
+            expect(page.submitButton().isEnabled()).to.equal(false)
+          })
+          it("pakollisesta kentästä kerrotaan", function () {
+            expect(page.error("organization")).to.equal('Pakollinen tieto')
           })
         })
 
-        describe('painettaessa tallennus nappia', function () {
+        describe('tallentamisen jälkeen', function () {
+          var hakemusId
+          function getHakemusId() {
+            return hakemusId
+          }
           before(
-              page.submitButton().click,
-              wait.until(function() {return page.hakemusId().length > 0})
+              page.saveButton().click,
+              wait.until(function() {return page.hakemusId().length > 0}),
+              function() {hakemusId = page.hakemusId()}
           )
 
-          describe('tallentamisen jälkeen', function () {
+          describe('alkuperäisessä näkymässä', function() {
             it("ei tule virhettä", function () {
               expect(page.saveError()).to.equal('')
             })
           })
 
-          describe('tallennuksen jälkeen', function () {
-            var hakemusId
-            function getHakemusId() {
-              return hakemusId
-            }
+          describe('hakemuksen esikatselussa', function() {
             before(
-                function() {hakemusId = page.hakemusId()}
-            )
-
-            describe('hakemuksen esikatselussa', function() {
-              before(
                 page.openPreview(getHakemusId)
+            )
+            it("näkyy haun nimen oikein", function () {
+              expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+            })
+            it("on organisaatio yhä tyhjä", function () {
+              expect(page.elementText("organization")).to.equal('')
+            })
+            it("näkyy hankkeen kuvaus oikein", function () {
+              expect(page.elementText("project-explanation")).to.equal('Hankkeen kuvaus tulee tähän.')
+            })
+          })
+
+          describe('hakemuksen muokkausnäkymässä', function() {
+            before(
+                page.openEditPage(getHakemusId)
+            )
+            it("näkyy haun nimi oikein", function () {
+              expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+            })
+            it("näkyy hankkeen kuvaus oikein", function () {
+              expect(page.getInput("project-explanation").value()).to.equal('Hankkeen kuvaus tulee tähän.')
+            })
+            it("lähetys on disabloitu", function () {
+              expect(page.submitButton().isEnabled()).to.equal(false)
+            })
+
+            describe('syötettäessä pakolliset tiedot', function () {
+              before(
+                  page.setInputValue("organization", "Testi Organisaatio"),
+                  wait.until(page.submitButton().isEnabled)
               )
-              it("näkyy haun nimen oikein", function () {
-                expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+
+              describe('syötön jälkeen', function () {
+                it("lähetä nappi enabloituu", function () {
+                })
               })
-              it("näkyy syötetyn organisaation nimen oikein", function () {
-                expect(page.elementText("organization")).to.equal('Testi Organisaatio')
+              describe('painettaessa lähetä nappia', function () {
+                before(
+                    page.submitButton().click
+                )
+
+                it('ei tule virhettä', function () {
+                  expect(page.saveError()).to.equal('')
+                })
               })
             })
 
-            describe('hakemuksen muokkausnäkymässä', function() {
+            describe('muokatessa vastauksia', function() {
               before(
-                page.openEditPage(getHakemusId)
+                  page.setInputValue("project-explanation", "Uusi kuvaus"),
+                  page.saveButton().click
               )
-              it("näkyy haun nimen oikein", function () {
-                expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
-              })
-              it("näkyy syötetyn organisaation nimen oikein", function () {
-                expect(page.getInput("organization").value()).to.equal('Testi Organisaatio')
-              })
 
-              describe('muokatessa vastauksia', function() {
-                before(
-                  page.setInputValue("organization", "Testi Organisaatio uusi"),
-                  wait.until(page.submitButton().isEnabled),
-                  page.submitButton().click
-                )
-
-                describe('tallentamisen jälkeen', function () {
-                  it("ei tule virhettä", function () {
-                    expect(page.saveError()).to.equal('')
-                  })
+              describe('tallentamisen jälkeen', function () {
+                it("ei tule virhettä", function () {
+                  expect(page.saveError()).to.equal('')
                 })
+              })
 
-                describe('muokkauksen jälkeen esikatselussa', function() {
-                  before(
-                      page.openPreview(getHakemusId)
-                  )
-                  it("näkyy uusi organisaation nimi oikein", function () {
-                    expect(page.elementText("organization")).to.equal('Testi Organisaatio uusi')
-                  })
+              describe('muokkauksen jälkeen esikatselussa', function() {
+                before(
+                    page.openPreview(getHakemusId)
+                )
+                it("näkyy uusi tieto oikein", function () {
+                  expect(page.elementText("project-explanation")).to.equal('Uusi kuvaus')
                 })
               })
             })

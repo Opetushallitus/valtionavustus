@@ -40,10 +40,13 @@ export default class FormContainer extends React.Component {
               <img id="logo" src="img/logo.png"/>
               <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
               <div id="form-controls" hidden={this.props.preview}>
-                <ToggleLanguageButton id="toggle-language" model={model} languages={translations.languages} lang={lang}/>
-                <button type="button" onClick={openPreview} disabled={!hakemusId}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></button>
-                <button type="submit" onClick={model.save} disabled={!formIsValid}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
+                <button id="save" type="submit" onClick={model.save}><LocalizedString translations={translations.form} translationKey="save" lang={lang}/></button>
+                <button id="submit" type="submit" onClick={model.submit} disabled={!(formIsValid && hakemusId)}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
                 <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
+                <div id="form-controls-dev" hidden={this.props.preview}>
+                  <ToggleLanguageButton id="toggle-language" model={model} languages={translations.languages} lang={lang}/>
+                  <button type="button" onClick={openPreview} disabled={!hakemusId}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></button>
+                </div>
               </div>
             </div>
             <span hidden={true} id="hakemus-id">{hakemusId}</span>
