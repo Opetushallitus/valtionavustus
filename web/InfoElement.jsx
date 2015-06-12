@@ -74,14 +74,14 @@ class AccordionInfoElement extends React.Component {
       items.push((<li key={key + "." + i}>{textContent}</li>))
     }
     return (
-        <section onClick={this.handleClick}>
-          <div className={"accordion "  + this.state.accordionStateClassName}>
-            <LocalizedString onClick={this.handleClick} className={"accordion-title " + this.state.accordionStateClassName} translations={infoObject} translationKey="label" lang={lang}/>
+        <div onClick={this.handleClick}>
+          <LocalizedString onClick={this.handleClick} className={"accordion-title " + this.state.accordionStateClassName} translations={infoObject} translationKey="label" lang={lang}/>
+          <div className={"accordion " + this.state.accordionStateClassName}>
             <ul id={field.id}>
                 {items}
             </ul>
           </div>
-        </section>)
+        </div>)
   }
 }
 
