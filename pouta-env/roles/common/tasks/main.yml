@@ -21,6 +21,16 @@
   apt: state=installed pkg={{ item }}
   with_items: ubuntu_common_required_packages
 
+- name: Install rng-tools to avoid /dev/random exhaust
+  apt: name=rng-tools
+  notify: Restart RNG
+
+- lineinfile: dest=/etc/default/rng-tools line="HRNGDEVICE=/dev/urandom"
+  notify: Restart RNG
+
+- name: Force rng-tools restart
+  service: name=rng-tools state=restarted enabled=yes
+
 - name: Disallow password authentication
   lineinfile: dest=/etc/ssh/sshd_config
               regexp="^PasswordAuthentication"
