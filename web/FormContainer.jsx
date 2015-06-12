@@ -46,6 +46,7 @@ export default class FormContainer extends React.Component {
                 <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
               </div>
             </div>
+            <span hidden={true} id="hakemus-id">{hakemusId}</span>
           </section>
           <section id="container">
             {formElement}

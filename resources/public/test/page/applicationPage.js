@@ -7,19 +7,25 @@ function ApplicationPage() {
       if (!pageLoadedCheck) {
         pageLoadedCheck = applicationPageVisible
       }
-      return openPage("/?avustushaku=1&lang=" + lang, pageLoadedCheck)
+      return openPage(function() { return "/?avustushaku=1&lang=" + lang}, pageLoadedCheck)
     },
-    openPreview: function(lang, pageLoadedCheck) {
+    openPreview: function(hakemusIdGetter, lang, pageLoadedCheck) {
       if (!lang) {
         lang = 'fi'
       }
       if (!pageLoadedCheck) {
         pageLoadedCheck = applicationPageVisible
       }
-      return openPage("/?preview=true&avustushaku=1&lang=" + lang, pageLoadedCheck)
+      return openPage(function() { return "/?preview=true&avustushaku=1&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
+    },
+    elementText: function(id) {
+      return applicationElement().find("#" + id).first().text().trim()
     },
     applicationName: function() {
       return applicationElement().find("#container h1").first().text().trim()
+    },
+    hakemusId: function() {
+      return api.elementText("hakemus-id")
     },
     toggleLanguageButton: function () {
       return Clickable(function() { return applicationElement().find("#toggle-language")})
@@ -40,20 +46,21 @@ function ApplicationPage() {
     previewButton: function() {
       return Clickable(function() { return applicationElement().find("button:contains(Tallennettu versio)")})
     },
+    getInput: function(name) {
+      return Input(function () {
+        return applicationElement().find("[name=" + name + "]")
+      })
+    },
     setInputValue: function(name, value) {
       return function() {
-        var input = Input(function () {
-          return applicationElement().find("[name=" + name + "]")
-        })
+        var input = api.getInput(name)
         return wait.until(input.isVisible)()
             .then(input.setValue(value))
       }
     },
     setRadioValue: function(name, value) {
       return function() {
-        var input = Input(function () {
-          return applicationElement().find("[name=" + name + "]")
-        })
+        var input = api.getInput(name)
         return wait.until(function() {
            return  applicationElement().find("[for=" + name + "]").is(":visible")
           })().then(input.setValue(value))
@@ -80,6 +87,12 @@ function ApplicationPage() {
 
   function Input(el) {
     return {
+      element: function() {
+        return el()
+      },
+      value: function() {
+        return el().val()
+      },
       isVisible: function() {
         return el().is(":visible")
       },

@@ -65,12 +65,12 @@ function triggerEvent(element, eventName) {
   element[0].dispatchEvent(evt);
 }
 
-function openPage(path, predicate) {
+function openPage(pathGetter, predicate) {
   if (!predicate) {
     predicate = function() { return testFrame().jQuery }
   }
   return function() {
-    var newTestFrame = $('<iframe>').attr({src: path, width: 1024, height: 800, id: "testframe"}).load(function() {
+    var newTestFrame = $('<iframe>').attr({src: pathGetter(), width: 1024, height: 800, id: "testframe"}).load(function() {
       var jquery = document.createElement("script")
       jquery.type = "text/javascript"
       jquery.src = "//code.jquery.com/jquery-1.11.1.min.js"

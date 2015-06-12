@@ -62,10 +62,32 @@
         describe('painettaessa nappia', function () {
           before(
               page.submitButton().click,
-              wait.until(page.previewButton().isEnabled)
+              wait.until(function() {return page.hakemusId().length > 0})
           )
           it("tallennus onnistuu", function () {
             expect(page.saveError()).to.equal('')
+          })
+
+          describe('tallennuksen jälkeen', function () {
+            var hakemusId
+            function getHakemusId() {
+              return hakemusId
+            }
+            before(
+                function() {hakemusId = page.hakemusId()}
+            )
+
+            describe('hakemuksen esikatselu', function() {
+              before(
+                  page.openPreview(getHakemusId)
+              )
+              it("näyttää haun nimen oikein", function () {
+                expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+              })
+              it("näyttää syötetyn organisaation nimen oikein", function () {
+                expect(page.elementText("organization")).to.equal('Testi Organisaatio')
+              })
+            })
           })
         })
       })
@@ -88,15 +110,6 @@
 
     it("näkyy haun nimi ruotsiksi", function() {
       expect(page.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
-    })
-  })
-
-  describe('Hakemuksen esikatselu', function() {
-    before(
-        page.openPreview()
-    )
-    it("näyttää hakemuksen nimen oikein", function () {
-        expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
     })
   })
 })()
