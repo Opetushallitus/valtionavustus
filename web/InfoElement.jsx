@@ -74,7 +74,7 @@ class AccordionInfoElement extends React.Component {
       items.push((<li key={key + "." + i}>{textContent}</li>))
     }
     return (
-        <div onClick={this.handleClick}>
+        <div>
           <LocalizedString onClick={this.handleClick} className={"accordion-title " + this.state.accordionStateClassName} translations={infoObject} translationKey="label" lang={lang}/>
           <div className={"accordion " + this.state.accordionStateClassName}>
             <ul id={field.id}>
