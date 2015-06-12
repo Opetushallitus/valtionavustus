@@ -164,12 +164,12 @@ ul {
   color: @dark-blue;
 
   &.closed:after {
+    vertical-align: top;
     content: " \2304";
   }
 
   &.open:after {
-    position: relative;
-    top: 3px;
+    vertical-align: sub;
     content: " \2303";
   }
 }
