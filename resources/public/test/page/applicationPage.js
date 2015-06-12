@@ -1,6 +1,6 @@
 function ApplicationPage() {
   var api = {
-    openPage: function(lang, pageLoadedCheck) {
+    openStartPage: function(lang, pageLoadedCheck) {
       if (!lang) {
         lang = 'fi'
       }
@@ -8,6 +8,15 @@ function ApplicationPage() {
         pageLoadedCheck = applicationPageVisible
       }
       return openPage(function() { return "/?avustushaku=1&lang=" + lang}, pageLoadedCheck)
+    },
+    openEditPage: function(hakemusIdGetter, lang, pageLoadedCheck) {
+      if (!lang) {
+        lang = 'fi'
+      }
+      if (!pageLoadedCheck) {
+        pageLoadedCheck = applicationPageVisible
+      }
+      return openPage(function() { return "/?avustushaku=1&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
     },
     openPreview: function(hakemusIdGetter, lang, pageLoadedCheck) {
       if (!lang) {

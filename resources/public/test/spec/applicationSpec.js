@@ -10,7 +10,7 @@
 
   describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku suomeksi', function () {
     before(
-      page.openPage()
+      page.openStartPage()
     )
 
     describe('alkutilassa', function () {
@@ -88,6 +88,18 @@
                 expect(page.elementText("organization")).to.equal('Testi Organisaatio')
               })
             })
+
+            describe('hakemuksen muokkaus', function() {
+              before(
+                  page.openEditPage(getHakemusId)
+              )
+              it("näyttää haun nimen oikein", function () {
+                expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+              })
+              it("näyttää syötetyn organisaation nimen oikein", function () {
+                expect(page.getInput("organization").value()).to.equal('Testi Organisaatio')
+              })
+            })
           })
         })
       })
@@ -105,7 +117,7 @@
 
   describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku ruotsiksi', function () {
     before(
-        page.openPage('sv')
+        page.openStartPage('sv')
     )
 
     it("näkyy haun nimi ruotsiksi", function() {
