@@ -50,22 +50,27 @@
         })
       })
 
-      describe('pakollisten tietojen syötön jälkeen', function () {
+      describe('syötettäessä pakolliset tiedot', function () {
         before(
-            page.setInputValue("organization", "Testi Organisaatio"),
-            wait.until(page.submitButton().isEnabled)
+          page.setInputValue("organization", "Testi Organisaatio"),
+          wait.until(page.submitButton().isEnabled)
         )
 
-        it("tallennus nappi enabloituu", function () {
+        describe('syötön jälkeen', function () {
+          it("tallennus nappi enabloituu", function () {
+          })
         })
 
-        describe('painettaessa nappia', function () {
+        describe('painettaessa tallennus nappia', function () {
           before(
               page.submitButton().click,
               wait.until(function() {return page.hakemusId().length > 0})
           )
-          it("tallennus onnistuu", function () {
-            expect(page.saveError()).to.equal('')
+
+          describe('tallentamisen jälkeen', function () {
+            it("ei tule virhettä", function () {
+              expect(page.saveError()).to.equal('')
+            })
           })
 
           describe('tallennuksen jälkeen', function () {
@@ -77,27 +82,50 @@
                 function() {hakemusId = page.hakemusId()}
             )
 
-            describe('hakemuksen esikatselu', function() {
+            describe('hakemuksen esikatselussa', function() {
               before(
-                  page.openPreview(getHakemusId)
+                page.openPreview(getHakemusId)
               )
-              it("näyttää haun nimen oikein", function () {
+              it("näkyy haun nimen oikein", function () {
                 expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
               })
-              it("näyttää syötetyn organisaation nimen oikein", function () {
+              it("näkyy syötetyn organisaation nimen oikein", function () {
                 expect(page.elementText("organization")).to.equal('Testi Organisaatio')
               })
             })
 
-            describe('hakemuksen muokkaus', function() {
+            describe('hakemuksen muokkausnäkymässä', function() {
               before(
-                  page.openEditPage(getHakemusId)
+                page.openEditPage(getHakemusId)
               )
-              it("näyttää haun nimen oikein", function () {
+              it("näkyy haun nimen oikein", function () {
                 expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
               })
-              it("näyttää syötetyn organisaation nimen oikein", function () {
+              it("näkyy syötetyn organisaation nimen oikein", function () {
                 expect(page.getInput("organization").value()).to.equal('Testi Organisaatio')
+              })
+
+              describe('muokatessa vastauksia', function() {
+                before(
+                  page.setInputValue("organization", "Testi Organisaatio uusi"),
+                  wait.until(page.submitButton().isEnabled),
+                  page.submitButton().click
+                )
+
+                describe('tallentamisen jälkeen', function () {
+                  it("ei tule virhettä", function () {
+                    expect(page.saveError()).to.equal('')
+                  })
+                })
+
+                describe('muokkauksen jälkeen esikatselussa', function() {
+                  before(
+                      page.openPreview(getHakemusId)
+                  )
+                  it("näkyy uusi organisaation nimi oikein", function () {
+                    expect(page.elementText("organization")).to.equal('Testi Organisaatio uusi')
+                  })
+                })
               })
             })
           })
