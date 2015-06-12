@@ -2,27 +2,16 @@
   (:use [oph.va.config :only [config config-name]]
         [clojure.tools.trace :only [trace]])
   (:require [clojure.java.jdbc :as jdbc]
-            [clojure.tools.logging :as log]
             [hikari-cp.core :refer :all]
             [oph.va.db.queries :as queries]
             [oph.va.jdbc.extensions]
             [pandect.algo.sha256 :refer :all])
-  (:import (java.security SecureRandom)
-           (java.util Random)))
+  (:import [java.security SecureRandom]))
 
-(def secure-random (SecureRandom.))
-
-(defn insecure-random [] (Random.))
-
-(defn generate-seed []
-  (comment(.generateSeed secure-random (/ 512 8)))
-  (let [seed (bytes (byte-array (/ 512 8)))]
-    (.nextBytes (insecure-random) seed)
-    (log/warn "using insecure seed " seed " because of limited /dev/random on servers")
-    seed))
+(def random (SecureRandom.))
 
 (defn generate-hash-id []
-  (sha256 (generate-seed)))
+  (sha256 (.generateSeed random (/ 512 8))))
 
 (def datasource-spec
   "Merge configuration defaults and db config. Latter overrides the defaults"
