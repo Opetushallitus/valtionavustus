@@ -90,10 +90,10 @@
 (defn- update-form-submission [form-id values-id answers]
   (if (not (db/submission-exists? form-id values-id))
     (not-found)
-      (let [submission (db/update-submission! form-id values-id answers)]
-        (if submission
-          (ok submission)
-          (internal-server-error!)))))
+    (let [submission (db/update-submission! form-id values-id answers)]
+      (if submission
+        (ok submission)
+        (internal-server-error!)))))
 
 (defroutes* api-routes
   "API implementation"
