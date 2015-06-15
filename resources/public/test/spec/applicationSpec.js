@@ -159,6 +159,65 @@
       })
     })
 
+    describe('jos on annettu väärän muotoinen sähköpostiosoite', function () {
+      before(
+        page.openStartPage(),
+        enterValidValues,
+        page.setInputValue("primary-email", "NOT VALID EMAIL")
+      )
+
+      describe('ennen tallentamista', function () {
+        it("tallennus on enabloitu", function () {
+          expect(page.saveButton().isEnabled()).to.equal(true)
+        })
+        it("lähetys on disabloitu", function () {
+          expect(page.submitButton().isEnabled()).to.equal(false)
+        })
+        it("Virheellisestä kentästä kerrotaan", function () {
+          expect(page.error("primary-email")).to.equal('Tarkista sähköpostiosoite')
+        })
+      })
+
+      describe('tallentamisen jälkeen', function () {
+        var hakemusId
+        function getHakemusId() {
+          return hakemusId
+        }
+        before(
+            page.saveButton().click,
+            wait.until(function() {return page.hakemusId().length > 0}),
+            function() {hakemusId = page.hakemusId()}
+        )
+
+        describe('alkuperäisessä näkymässä', function() {
+          it("ei tule virhettä", function () {
+            expect(page.saveError()).to.equal('')
+          })
+        })
+
+        describe('hakemuksen muokkausnäkymässä', function() {
+          before(
+              page.openEditPage(getHakemusId)
+          )
+          it("lähetys on disabloitu", function () {
+            expect(page.submitButton().isEnabled()).to.equal(false)
+          })
+
+          describe('syötettäessä oikean muotoinen sähköpostisoite', function () {
+            before(
+                page.setInputValue("primary-email", "yhteyshenkilo@example.com")
+            )
+
+            describe('syötön jälkeen', function () {
+              it("lähetä-nappi enabloituu", function () {
+                expect(page.submitButton().isEnabled()).to.equal(true)
+              })
+            })
+          })
+        })
+      })
+    })
+
     describe('Vaihdettaessa kieli ruotsiksi', function () {
       before(
         page.toggleLanguage
