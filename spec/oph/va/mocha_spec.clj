@@ -6,6 +6,8 @@
 
 (describe "Mocha tests /"
 
+  (tags :ui)
+
   ;; Start HTTP server for running tests
   (around-all [_] (with-test-server! (_)))
 
