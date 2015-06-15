@@ -107,7 +107,10 @@ export default class FormModel {
     }
 
     function onFieldValidation(state, validation) {
-      state.clientSideValidation[validation.id] = validation.valid
+      state.clientSideValidation[validation.id] = validation.validationErrors.length === 0
+      if(state.saveStatus.hakemusId) {
+        state.validationErrors[validation.id] = validation.validationErrors
+      }
       return state
     }
 
@@ -201,8 +204,8 @@ export default class FormModel {
     dispatcher.push('updateField', {id: id, value: value, validationErrors: validationErrors})
   }
 
-  setFieldValid(id, valid) {
-    dispatcher.push('fieldValidation', {id: id, valid: valid})
+  setFieldValid(id, validationErrors) {
+    dispatcher.push('fieldValidation', {id: id, validationErrors: validationErrors})
   }
 
   submit(event) {

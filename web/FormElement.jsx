@@ -22,10 +22,7 @@ class BasicFieldComponent extends React.Component {
   }
 
   componentDidMount() {
-    const valid = this.validate(this.props.value).length === 0
-    if(valid) {
-      this.props.model.setFieldValid(this.props.field.id, valid)
-    }
+    this.props.model.setFieldValid(this.props.field.id, this.validate(this.props.value))
   }
 
   param(param, defaultValue) {

@@ -92,14 +92,19 @@
             before(
                 page.openEditPage(getHakemusId)
             )
-            it("näkyy haun nimi oikein", function () {
-              expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
-            })
-            it("näkyy hankkeen kuvaus oikein", function () {
-              expect(page.getInput("project-explanation").value()).to.equal('Hankkeen kuvaus tulee tähän.')
-            })
-            it("lähetys on disabloitu", function () {
-              expect(page.submitButton().isEnabled()).to.equal(false)
+            describe('avattaessa', function () {
+              it("näkyy haun nimi oikein", function () {
+                expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+              })
+              it("näkyy validointi virheet", function () {
+                expect(page.error("organization")).to.equal('Pakollinen tieto')
+              })
+              it("näkyy hankkeen kuvaus oikein", function () {
+                expect(page.getInput("project-explanation").value()).to.equal('Hankkeen kuvaus tulee tähän.')
+              })
+              it("lähetys on disabloitu", function () {
+                expect(page.submitButton().isEnabled()).to.equal(false)
+              })
             })
 
             describe('syötettäessä pakolliset tiedot', function () {
