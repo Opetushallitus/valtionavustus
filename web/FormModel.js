@@ -35,7 +35,7 @@ export default class FormModel {
       translations: translationsP
     }).onValue(setData)
 
-    const autoSave = _.debounce(function(){dispatcher.push('save')}, 5000)
+    const autoSave = _.debounce(function(){dispatcher.push('save')}, develQueryParam? 100 : 5000)
 
     const formFieldValuesP = Bacon.update({},
                                           [dispatcher.stream('data')], onData,

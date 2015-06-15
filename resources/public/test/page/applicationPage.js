@@ -7,7 +7,7 @@ function ApplicationPage() {
       if (!pageLoadedCheck) {
         pageLoadedCheck = applicationPageVisible
       }
-      return openPage(function() { return "/?avustushaku=1&lang=" + lang}, pageLoadedCheck)
+      return openPage(function() { return "/?avustushaku=1&devel=true&lang=" + lang}, pageLoadedCheck)
     },
     openEditPage: function(hakemusIdGetter, lang, pageLoadedCheck) {
       if (!lang) {
@@ -16,7 +16,7 @@ function ApplicationPage() {
       if (!pageLoadedCheck) {
         pageLoadedCheck = applicationPageVisible
       }
-      return openPage(function() { return "/?avustushaku=1&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
+      return openPage(function() { return "/?avustushaku=1&devel=true&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
     },
     openPreview: function(hakemusIdGetter, lang, pageLoadedCheck) {
       if (!lang) {
@@ -25,7 +25,7 @@ function ApplicationPage() {
       if (!pageLoadedCheck) {
         pageLoadedCheck = applicationPageVisible
       }
-      return openPage(function() { return "/?preview=true&avustushaku=1&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
+      return openPage(function() { return "/?preview=true&devel=true&avustushaku=1&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
     },
     elementText: function(id) {
       return applicationElement().find("#" + id).first().text().trim()
