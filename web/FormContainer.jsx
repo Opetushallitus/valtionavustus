@@ -20,7 +20,7 @@ export default class FormContainer extends React.Component {
       return allValid === true && valid === true
     }, true)
     const translations = this.props.translations
-    const hakemusId = this.props.hakemusId
+    const saveStatus = this.props.saveStatus
 
     var formElement;
 
@@ -30,7 +30,7 @@ export default class FormContainer extends React.Component {
       formElement = <Form model={model} validationErrors={validationErrors} infoElementValues={avustushaku} translations={translations} form={form} lang={lang} values={values} hakemusId={this.props.hakemusId}/>
     }
     const openPreview = function() {
-      window.open("/?preview=true&avustushaku=" + avustushaku.id + "&hakemus=" + hakemusId, "preview")
+      window.open("/?preview=true&avustushaku=" + avustushaku.id + "&hakemus=" + saveStatus.hakemusId, "preview")
     }
 
     return (
@@ -41,15 +41,17 @@ export default class FormContainer extends React.Component {
               <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
               <div id="form-controls" hidden={this.props.preview}>
                 <button id="save" type="submit" onClick={model.save}><LocalizedString translations={translations.form} translationKey="save" lang={lang}/></button>
-                <button id="submit" type="submit" onClick={model.submit} disabled={!(formIsValid && hakemusId)}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
+                <button id="submit" type="submit" onClick={model.submit} disabled={!(formIsValid && saveStatus.hakemusId)}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
+                <div className="info" hidden={!saveStatus.changes}><LocalizedString translations={translations.form} translationKey="saving" lang={lang}/></div>
+                <div className="info" hidden={saveStatus.changes || !saveStatus.saveTime}><LocalizedString translations={translations.form} translationKey="saved" lang={lang}/></div>
                 <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
                 <div id="form-controls-dev" hidden={this.props.preview}>
                   <ToggleLanguageButton id="toggle-language" model={model} languages={translations.languages} lang={lang}/>
-                  <button type="button" onClick={openPreview} disabled={!hakemusId}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></button>
+                  <button type="button" onClick={openPreview} disabled={!saveStatus.hakemusId}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></button>
                 </div>
               </div>
             </div>
-            <span hidden={true} id="hakemus-id">{hakemusId}</span>
+            <span hidden={true} id="hakemus-id">{saveStatus.hakemusId}</span>
           </section>
           <section id="container">
             {formElement}

@@ -12,6 +12,14 @@
       "fi": "Tallenna",
       "sv": "Spara"
     },
+    "saving": {
+      "fi": "Tallennetaan...",
+      "sv": "Sparar..."
+    },
+    "saved": {
+      "fi": "Kaikki muutokset tallennettu",
+      "sv": "Alla ändringar sparat"
+    },
     "submit": {
       "fi": "Lähetä käsiteltäväksi",
       "sv": "Skicka"

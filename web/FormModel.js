@@ -20,7 +20,11 @@ export default class FormModel {
     const requests = Bacon.combineTemplate({
       avustushaku: avustusHakuP,
       form: formP,
-      hakemusId: query.hakemus,
+      saveStatus: {
+        hakemusId: query.hakemus,
+        changes: false,
+        saveTime: null
+      },
       values: formValuesP,
       preview: langPreviewParam,
       lang: langQueryParam,
@@ -28,6 +32,8 @@ export default class FormModel {
       clientSideValidation: clientSideValidationP,
       translations: translationsP
     }).onValue(setData)
+
+    const autoSave = _.debounce(function(){dispatcher.push('save')}, 5000)
 
     const formFieldValuesP = Bacon.update({},
                                           [dispatcher.stream('data')], onData,
@@ -93,6 +99,8 @@ export default class FormModel {
       else {
         state.clientSideValidation[fieldUpdate.id] = true
       }
+      state.saveStatus.changes = true
+      autoSave()
       return state
     }
 
@@ -104,6 +112,13 @@ export default class FormModel {
     function handleUnexpectedSaveError(state, method, url, error) {
       console.error("Unexpected save error ", error, " in ", method, " to ", url)
       state.validationErrors["submit"] = [{error: "unexpected-server-error"}]
+      return state
+    }
+
+    function handleOkSave(state) {
+      state.saveStatus.changes = false
+      state.saveStatus.saveTime = new Date()
+      state.validationErrors["submit"] = []
       return state
     }
 
@@ -122,9 +137,8 @@ export default class FormModel {
         qwest.put(url, state.values, {dataType: "json", async: false})
             .then(function(response) {
               console.log("State saved. Response=", response)
-              state.hakemusId = response.id
-              state.validationErrors["submit"] = []
-              setData(state)
+              state.saveStatus.hakemusId = response.id
+              state = handleOkSave(state)
             })
             .catch(function(error) {
               state = handleSaveError(state, this.status, error, this.method, url, this.response)
@@ -142,7 +156,7 @@ export default class FormModel {
         qwest.post(url, state.values, {dataType: "json", async: false})
             .then(function(response) {
               console.log("State updated (submit=", submit, "). Response=", response)
-              state.validationErrors["submit"] = []
+              state = handleOkSave(state)
             })
             .catch(function(error) {
               state = handleSaveError(state, this.status, error, this.method, url, this.response)
@@ -155,8 +169,8 @@ export default class FormModel {
     }
 
     function onSave(state) {
-      if(state.hakemusId) {
-        return updateOld(state, state.hakemusId, false)
+      if(state.saveStatus.hakemusId) {
+        return updateOld(state, state.saveStatus.hakemusId, false)
       }
       else {
         return saveNew(state)
@@ -164,7 +178,7 @@ export default class FormModel {
     }
 
     function onSubmit(state) {
-      return updateOld(state, state.hakemusId, true)
+      return updateOld(state, state.saveStatus.hakemusId, true)
     }
 
     function setData(data) {
