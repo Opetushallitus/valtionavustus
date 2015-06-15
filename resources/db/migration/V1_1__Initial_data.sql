@@ -63,7 +63,7 @@ insert into forms (content) VALUES ('
           "maxlength":80
         },
         "label":{
-          "fi":"Allekirjoitusoikeudellisen henkilön nimi ja tehtävä",
+          "fi":"Allekirjoitusoikeudellisen henkilön nimi",
           "sv":"Underskriftgiltiga personens namn och uppgift"
         }
       },
