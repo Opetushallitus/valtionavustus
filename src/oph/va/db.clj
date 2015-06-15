@@ -80,8 +80,7 @@
        :id))
 
 (defn get-form-submission [form-id submission-id]
-  (->> {:form_id form-id
-        :submission_id submission-id}
+  (->> {:form_id form-id :submission_id submission-id}
        (exec queries/get-form-submission)
        first))
 
