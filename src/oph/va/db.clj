@@ -75,10 +75,9 @@
        :answers))
 
 (defn create-submission! [form-id answers]
-  (->> {:form_id form-id
-                 :answers answers}
-                (exec queries/create-submission<!)
-                :id))
+  (->> {:form_id form-id :answers answers}
+       (exec queries/create-submission<!)
+       :id))
 
 (defn get-form-submission [form-id submission-id]
   (->> {:form_id form-id
