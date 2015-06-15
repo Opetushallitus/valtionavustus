@@ -59,17 +59,20 @@
                           :form Long
                           :submittime s/Inst})
 
-(s/defschema Submission
-  "Submission consists of a flat field id to value mapping"
+(s/defschema Answers
+  "Answers consists of a flat field id to value mapping"
   {s/Keyword s/Str})
+
+(s/defschema Submission {:id Long
+                         :submittime s/Inst
+                         :form Long
+                         :version Long
+                         :version_closed (s/maybe s/Inst)
+                         :answers Answers})
 
 (s/defschema SubmissionValidationErrors
   "Submission validation errors contain a mapping from field id to list of validation errors"
   {s/Keyword [s/Str]})
-
-(s/defschema SubmissionId
-  "Submission id contains id of the newly created submission"
-  {:id Long})
 
 (s/defschema HakemusId
   "Hakemus id contains id of the newly created hakemus"
@@ -78,13 +81,13 @@
 (defn- create-form-submission [form-id answers]
   (let [submission (db/create-submission! form-id answers)]
     (if submission
-      (ok {:id submission})
+      (ok submission)
       (internal-server-error!))))
 
 (defn- get-form-submission [form-id values-id]
   (let [submission (db/get-form-submission form-id values-id)]
     (if submission
-      (ok (:answers submission))
+      (ok submission)
       (not-found))))
 
 (defn- update-form-submission [form-id values-id answers]
@@ -126,8 +129,8 @@
 
   (PUT* "/form/:form-id/values" [form-id :as request]
         :path-params [form-id :- Long]
-        :body    [answers (describe Submission "New answers")]
-        :return  (s/either SubmissionId
+        :body    [answers (describe Answers "New answers")]
+        :return  (s/either Submission
                            SubmissionValidationErrors)
         :summary "Create initial form answers"
         (let [validation (validation/validate-form (db/get-form form-id) answers)]
@@ -137,7 +140,7 @@
 
   (POST* "/form/:form-id/values/:values-id" [form-id values-id :as request]
          :path-params [form-id :- Long, values-id :- Long]
-         :body    [answers (describe Submission "New answers")]
+         :body    [answers (describe Answers "New answers")]
          :return  (s/either Submission
                             SubmissionValidationErrors)
          :summary "Update form values"
@@ -157,7 +160,7 @@
 
   (PUT* "/avustushaku/:haku-id/hakemus" [haku-id :as request]
       :path-params [haku-id :- Long]
-      :body    [answers (describe Submission "New answers")]
+      :body    [answers (describe Answers "New answers")]
       :return  HakemusId
       :summary "Create initial hakemus"
       (let [form-id (:form (db/get-avustushaku haku-id))]
@@ -171,11 +174,11 @@
 
   (POST* "/avustushaku/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id :as request]
        :path-params [haku-id :- Long, hakemus-id :- s/Str]
-       :body    [answers (describe Submission "New answers")]
+       :body    [answers (describe Answers "New answers")]
        :return  Submission
        :summary "Update hakemus values"
        (let [form-id (:form (db/get-avustushaku haku-id))
-             validation (validation/validate-form (db/get-form form-id) answers)]
+             validation (validation/validate-form-security (db/get-form form-id) answers)]
          (if (every? empty? (vals validation))
            (let [hakemus (db/get-hakemus hakemus-id)]
              (update-form-submission form-id (:form_submission_id hakemus) answers))
@@ -183,7 +186,7 @@
 
   (POST* "/avustushaku/:haku-id/hakemus/:hakemus-id/submit" [haku-id hakemus-id :as request]
        :path-params [haku-id :- Long, hakemus-id :- s/Str]
-       :body    [answers (describe Submission "New answers")]
+       :body    [answers (describe Answers "New answers")]
        :return  Submission
        :summary "Update hakemus values"
        (let [form-id (:form (db/get-avustushaku haku-id))

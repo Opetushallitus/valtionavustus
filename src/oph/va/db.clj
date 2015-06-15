@@ -71,13 +71,11 @@
 (defn update-submission! [form-id submission-id answers]
   (exec queries/close-existing-submission! {:form_id form-id :submission_id submission-id})
   (->> {:form_id form-id :submission_id submission-id :answers answers}
-       (exec queries/update-submission<!)
-       :answers))
+       (exec queries/update-submission<!)))
 
 (defn create-submission! [form-id answers]
   (->> {:form_id form-id :answers answers}
-       (exec queries/create-submission<!)
-       :id))
+       (exec queries/create-submission<!)))
 
 (defn get-form-submission [form-id submission-id]
   (->> {:form_id form-id :submission_id submission-id}
@@ -85,9 +83,9 @@
        first))
 
 (defn create-hakemus! [form-id answers]
-  (let [id (create-submission! form-id answers)]
+  (let [submission (create-submission! form-id answers)]
     (let [user-key (generate-hash-id)]
-      (exec queries/create-hakemus<! {:user_key user-key :form_submission id :status :draft})
+      (exec queries/create-hakemus<! {:user_key user-key :form_submission (:id submission) :status :draft})
       {:id user-key})))
 
 (defn get-hakemus [hakemus-id]
