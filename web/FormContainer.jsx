@@ -40,8 +40,7 @@ export default class FormContainer extends React.Component {
               <img id="logo" src="img/logo.png"/>
               <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
               <div id="form-controls" hidden={this.props.preview}>
-                <button id="save" type="submit" onClick={model.save}><LocalizedString translations={translations.form} translationKey="save" lang={lang}/></button>
-                <button id="submit" type="submit" onClick={model.submit} disabled={!(formIsValid && saveStatus.hakemusId)}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
+                <button id="submit" type="submit" onClick={model.submit} disabled={!(formIsValid && saveStatus.hakemusId) || saveStatus.changes}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
                 <div className="info" hidden={!saveStatus.changes}><LocalizedString translations={translations.form} translationKey="saving" lang={lang}/></div>
                 <div className="info" hidden={saveStatus.changes || !saveStatus.saveTime}><LocalizedString translations={translations.form} translationKey="saved" lang={lang}/></div>
                 <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>

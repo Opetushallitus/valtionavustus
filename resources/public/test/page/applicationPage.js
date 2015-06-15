@@ -39,11 +39,17 @@ function ApplicationPage() {
     toggleLanguageButton: function () {
       return Clickable(function() { return applicationElement().find("#toggle-language")})
     },
-    saveButton: function() {
-      return Clickable(function() { return applicationElement().find("#save")})
+    waitAutoSave: function() {
+      var info = api.saveInfo()
+      return wait.until(function() {
+            return info !== api.saveInfo()
+          })()
     },
     submitButton: function() {
       return Clickable(function() { return applicationElement().find("#submit")})
+    },
+    saveInfo: function() {
+      return applicationElement().find("#form-controls .info :visible").text()
     },
     saveError: function() {
       return applicationElement().find("#submit-error").first().text()

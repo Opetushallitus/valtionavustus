@@ -20,7 +20,10 @@
       it("kielen vaihto osoittaa ruotsiin", function () {
         expect(page.toggleLanguageButton().text()).to.deep.equal('På svenska')
       })
-      it("tallennus on disabloitu", function () {
+      it("tallennus info on tyhjä", function () {
+        expect(page.saveInfo()).to.equal("")
+      })
+      it("lähetys on disabloitu", function () {
         expect(page.submitButton().isEnabled()).to.equal(false)
       })
     })
@@ -43,14 +46,14 @@
 
       describe('jos ei ole annettu kaikkia pakollisia arvoja', function () {
         describe('ennen tallentamista', function () {
-          it("tallennus on enabloitu", function () {
-            expect(page.saveButton().isEnabled()).to.equal(true)
-          })
           it("lähetys on disabloitu", function () {
             expect(page.submitButton().isEnabled()).to.equal(false)
           })
           it("pakollisesta kentästä kerrotaan", function () {
             expect(page.error("organization")).to.equal('Pakollinen tieto')
+          })
+          it("kerrotaan automaattitallennuksesta", function () {
+            expect(page.saveInfo()).to.equal("Tallennetaan...")
           })
         })
 
@@ -60,8 +63,7 @@
             return hakemusId
           }
           before(
-              page.saveButton().click,
-              wait.until(function() {return page.hakemusId().length > 0}),
+              page.waitAutoSave,
               function() {hakemusId = page.hakemusId()}
           )
 
@@ -124,7 +126,7 @@
             describe('muokatessa vastauksia', function() {
               before(
                   page.setInputValue("project-explanation", "Uusi kuvaus"),
-                  page.saveButton().click
+                  page.waitAutoSave
               )
 
               describe('tallentamisen jälkeen', function () {

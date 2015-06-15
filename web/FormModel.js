@@ -201,11 +201,6 @@ export default class FormModel {
     dispatcher.push('fieldValidation', {id: id, valid: valid})
   }
 
-  save(event) {
-    event.preventDefault()
-    dispatcher.push('save')
-  }
-
   submit(event) {
     event.preventDefault()
     dispatcher.push('submit')
