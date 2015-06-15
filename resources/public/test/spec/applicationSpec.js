@@ -8,6 +8,24 @@
     expect(window.uiError || null).to.be.null
   })
 
+  var hakemusId
+
+  function getHakemusId() {
+    return hakemusId
+  }
+
+  function storeHakemusIdFromHtml() {
+    hakemusId = readHakemusIdFromHtml()
+  }
+
+  function readHakemusIdFromHtml() {
+    return page.hakemusId()
+  }
+
+  function hakemusIdIsPresent() {
+    return readHakemusIdFromHtml().length > 0
+  }
+
   function enterValidValues() {
     page.setInputValue("organization", "Testi Organisaatio")()
     page.setInputValue("primary-email", "yhteyshenkilo@example.com")()
@@ -68,6 +86,7 @@
           }
           before(
               page.waitAutoSave,
+              wait.until(function() {return page.hakemusId().length > 0}),
               function() {hakemusId = page.hakemusId()}
           )
 
@@ -167,9 +186,6 @@
       )
 
       describe('ennen tallentamista', function () {
-        it("tallennus on enabloitu", function () {
-          expect(page.saveButton().isEnabled()).to.equal(true)
-        })
         it("lähetys on disabloitu", function () {
           expect(page.submitButton().isEnabled()).to.equal(false)
         })
@@ -179,14 +195,10 @@
       })
 
       describe('tallentamisen jälkeen', function () {
-        var hakemusId
-        function getHakemusId() {
-          return hakemusId
-        }
         before(
-            page.saveButton().click,
-            wait.until(function() {return page.hakemusId().length > 0}),
-            function() {hakemusId = page.hakemusId()}
+            page.waitAutoSave,
+            wait.until(hakemusIdIsPresent),
+            storeHakemusIdFromHtml
         )
 
         describe('alkuperäisessä näkymässä', function() {
@@ -205,7 +217,8 @@
 
           describe('syötettäessä oikean muotoinen sähköpostisoite', function () {
             before(
-                page.setInputValue("primary-email", "yhteyshenkilo@example.com")
+              page.setInputValue("primary-email", "yhteyshenkilo@example.com"),
+              page.waitAutoSave
             )
 
             describe('syötön jälkeen', function () {
