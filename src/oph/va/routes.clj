@@ -98,22 +98,14 @@
         (ok submission)
         (internal-server-error!)))))
 
-(defroutes* api-routes
-  "API implementation"
+(defroutes* form-routes
+  "Form routes"
 
-  (GET* "/form" []
+  (GET* "/" []
         :return [Form]
         (ok (db/list-forms)))
 
-  (GET* "/avustushaku/:id" [id]
-        :path-params [id :- Long]
-        :return AvustusHaku
-        (let [avustushaku (db/get-avustushaku id)]
-          (if avustushaku
-            (ok avustushaku)
-            (not-found))))
-
-  (GET* "/form/:id" [id]
+  (GET* "/:id" [id]
         :path-params [id :- Long]
         :return Form
         (let [form (db/get-form id)]
@@ -121,13 +113,13 @@
             (ok form)
             (not-found))))
 
-  (GET* "/form/:form-id/values/:values-id" [form-id values-id]
+  (GET* "/:form-id/values/:values-id" [form-id values-id]
         :path-params [form-id :- Long, values-id :- Long]
         :return  Submission
         :summary "Get current answers"
         (get-form-submission form-id values-id))
 
-  (PUT* "/form/:form-id/values" [form-id :as request]
+  (PUT* "/:form-id/values" [form-id :as request]
         :path-params [form-id :- Long]
         :body    [answers (describe Answers "New answers")]
         :return  (s/either Submission
@@ -138,7 +130,7 @@
             (create-form-submission form-id answers)
             (bad-request validation))))
 
-  (POST* "/form/:form-id/values/:values-id" [form-id values-id :as request]
+  (POST* "/:form-id/values/:values-id" [form-id values-id :as request]
          :path-params [form-id :- Long, values-id :- Long]
          :body    [answers (describe Answers "New answers")]
          :return  (s/either Submission
@@ -147,10 +139,20 @@
          (let [validation (validation/validate-form (db/get-form form-id) answers)]
            (if (every? empty? (vals validation))
              (update-form-submission form-id values-id  answers)
-             (bad-request validation))))
+             (bad-request validation)))))
 
+(defroutes* avustushaku-routes
+  "Avustushaku routes"
 
-  (GET* "/avustushaku/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
+  (GET* "/:id" [id]
+        :path-params [id :- Long]
+        :return AvustusHaku
+        (let [avustushaku (db/get-avustushaku id)]
+          (if avustushaku
+            (ok avustushaku)
+            (not-found))))
+
+  (GET* "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
         :path-params [haku-id :- Long, hakemus-id :- s/Str]
         :return  Submission
         :summary "Get current answers"
@@ -158,7 +160,7 @@
           (let [hakemus (db/get-hakemus hakemus-id)]
             (get-form-submission form-id (:form_submission_id hakemus)))))
 
-  (PUT* "/avustushaku/:haku-id/hakemus" [haku-id :as request]
+  (PUT* "/:haku-id/hakemus" [haku-id :as request]
       :path-params [haku-id :- Long]
       :body    [answers (describe Answers "New answers")]
       :return  HakemusId
@@ -172,7 +174,7 @@
                 (internal-server-error!)))
             (bad-request validation)))))
 
-  (POST* "/avustushaku/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id :as request]
+  (POST* "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id :as request]
        :path-params [haku-id :- Long, hakemus-id :- s/Str]
        :body    [answers (describe Answers "New answers")]
        :return  Submission
@@ -184,7 +186,7 @@
              (update-form-submission form-id (:form_submission_id hakemus) answers))
            (bad-request validation))))
 
-  (POST* "/avustushaku/:haku-id/hakemus/:hakemus-id/submit" [haku-id hakemus-id :as request]
+  (POST* "/:haku-id/hakemus/:hakemus-id/submit" [haku-id hakemus-id :as request]
        :path-params [haku-id :- Long, hakemus-id :- s/Str]
        :body    [answers (describe Answers "New answers")]
        :return  Submission
@@ -198,6 +200,16 @@
              saved-answers)
            (bad-request validation)))))
 
+(defroutes* api-routes
+  "API implementation"
+
+  ;; Bind form routes
+  (context* "/form" [] :tags ["forms"] form-routes)
+
+  ;; Bind avustushaku routes
+  (context* "/avustushaku" [] :tags ["avustushaut"] avustushaku-routes))
+
+
 (defroutes* doc-routes
   "API documentation browser"
   (swagger-ui))
@@ -206,7 +218,11 @@
   {:formats [:json-kw]}
 
   ;; swagger.json generation
-  (swagger-docs {:info {:title "Valtionavustus API"}})
+  (swagger-docs {:info {:title "Valtionavustus API"}
+                 :tags [{:name "forms"
+                         :description "Form and form submission management"}
+                        {:name "avustushaut"
+                         :description "Avustushaku"}]})
 
   ;; Route all requests with API prefix to API routes
   (context "/api" [] api-routes)
