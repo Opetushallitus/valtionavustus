@@ -69,19 +69,18 @@
        not))
 
 (defn update-submission! [form-id submission-id answers]
+  (exec queries/close-existing-submission! {:form_id form-id :submission_id submission-id})
   (->> {:form_id form-id :submission_id submission-id :answers answers}
        (exec queries/update-submission<!)
        :answers))
 
 (defn create-submission! [form-id answers]
-  (->> {:form_id form-id
-                 :answers answers}
-                (exec queries/create-submission<!)
-                :id))
+  (->> {:form_id form-id :answers answers}
+       (exec queries/create-submission<!)
+       :id))
 
 (defn get-form-submission [form-id submission-id]
-  (->> {:form_id form-id
-        :submission_id submission-id}
+  (->> {:form_id form-id :submission_id submission-id}
        (exec queries/get-form-submission)
        first))
 

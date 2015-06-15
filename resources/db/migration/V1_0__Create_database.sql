@@ -5,20 +5,26 @@ CREATE TABLE forms (
 );
 
 CREATE TABLE form_submissions (
-    id             serial PRIMARY KEY,
-    submittime     timestamp with time zone default now(),
-    form           integer references forms(id) NOT NULL,
-    answers        jsonb NOT NULL
+    id               integer NOT NULL,
+    submittime       timestamp with time zone default now(),
+    form             integer references forms(id) NOT NULL,
+    version          integer NOT NULL,
+    version_closed   timestamp with time zone default NULL,
+    answers          jsonb NOT NULL,
+    PRIMARY KEY (id, version)
 );
+CREATE SEQUENCE form_submissions_id_seq;
 
 CREATE TYPE status AS ENUM ('draft', 'submitted');
 CREATE TABLE hakemukset (
-    id              serial PRIMARY KEY,
-    user_key        varchar(64) UNIQUE NOT NULL,
-    form_submission integer references form_submissions(id) NOT NULL,
-    created_at      timestamp with time zone default now(),
-    submittime      timestamp with time zone,
-    status          status NOT NULL
+    id                      serial PRIMARY KEY,
+    user_key                varchar(64) UNIQUE NOT NULL,
+    form_submission_id      integer NOT NULL,
+    form_submission_version integer NOT NULL,
+    created_at              timestamp with time zone default now(),
+    submittime              timestamp with time zone default now(),
+    status                  status NOT NULL,
+    FOREIGN KEY (form_submission_id, form_submission_version) REFERENCES form_submissions (id, version)
 );
 
 CREATE TABLE avustushaut (

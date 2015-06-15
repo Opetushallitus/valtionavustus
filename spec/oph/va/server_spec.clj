@@ -35,6 +35,8 @@
 
 (describe "HTTP server"
 
+  (tags :server)
+
   ;; Start HTTP server for running tests
   (around-all [_] (with-test-server! (_)))
 
@@ -172,6 +174,13 @@
 
   (it "POST should fail if done to non-existing node /api/form/1/values/2"
       (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/2" valid-answers)]
-        (should= 404 status))))
+        (should= 404 status)))
+
+  (it "POST should create a new form submission version when done to route /api/form/1/values/1"
+      (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/1" valid-answers)
+            json (json->map (trace body))]
+        (should= 200 status)
+        ;; TBD: expand test after the API is restructured
+        )))
 
 (run-specs)
