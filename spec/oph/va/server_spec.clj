@@ -31,7 +31,9 @@
    :project-explanation "Selitys"
    :project-target "Maali"
    :project-measure "Mittaus"
-   :project-announce "Julkaisut"})
+   :project-announce "Julkaisut"
+   :project-effectiveness "Tehokkuus"
+   :project-spreading-plan "Jakelusuunnitelma"})
 
 (describe "HTTP server"
 
@@ -77,21 +79,24 @@
                                                                                      :signature ""})
             json (json->map body)]
         (should= 400 status)
-        (should= {:other-organization-1-email [{:error "required"}],
-                  :project-network [{:error "required"}],
-                  :other-organization-1 [{:error "required"}],
-                  :primary-email [], :signature [{:error "required"}],
-                  :project-explanation [{:error "required"}],
-                  :continuation-project [],
-                  :organization [],
-                  :project-measure [{:error "required"}],
-                  :combined-effort [{:error "required"}],
-                  :language [{:error "required"}],
-                  :project-www [],
-                  :signature-email [{:error "required"}],
-                  :project-goals [{:error "required"}],
-                  :project-target [{:error "required"}],
-                  :project-announce [{:error "required"}],
+        (should= {:other-organization-1-email [{:error "required"}]
+                  :project-network [{:error "required"}]
+                  :other-organization-1 [{:error "required"}]
+                  :primary-email []
+                  :signature [{:error "required"}]
+                  :project-explanation [{:error "required"}]
+                  :continuation-project []
+                  :organization []
+                  :project-effectiveness [{:error "required"}]
+                  :project-spreading-plan [{:error "required"}]
+                  :project-measure [{:error "required"}]
+                  :combined-effort [{:error "required"}]
+                  :language [{:error "required"}]
+                  :project-www []
+                  :signature-email [{:error "required"}]
+                  :project-goals [{:error "required"}]
+                  :project-target [{:error "required"}]
+                  :project-announce [{:error "required"}]
                   :project-end []}
                  json)))
 
@@ -99,23 +104,25 @@
       (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" (assoc valid-answers :project-end "10.10.10000"))
             json (json->map body)]
         (should= 400 status)
-        (should= {:other-organization-1-email [],
-                  :project-network [],
-                  :other-organization-1 [],
-                  :primary-email [],
-                  :signature [],
-                  :project-explanation [],
-                  :continuation-project [],
-                  :organization [],
-                  :project-measure [],
-                  :combined-effort [],
-                  :language [],
-                  :project-www [],
-                  :signature-email [],
-                  :project-goals [],
-                  :project-target [],
-                  :project-announce [],
-                  :project-end [{:error "maxlength", :max 10}]}
+        (should= {:other-organization-1-email []
+                  :project-network []
+                  :other-organization-1 []
+                  :primary-email []
+                  :signature []
+                  :project-explanation []
+                  :continuation-project []
+                  :organization []
+                  :project-effectiveness []
+                  :project-spreading-plan []
+                  :project-measure []
+                  :combined-effort []
+                  :language []
+                  :project-www []
+                  :signature-email []
+                  :project-goals []
+                  :project-target []
+                  :project-announce []
+                  :project-end [{:error "maxlength" :max 10}]}
                  json)))
 
   (it "PUT should validate text field lengths and options when done to route /api/avustushaku/1/hakemus"
@@ -123,23 +130,25 @@
                                                                                               :project-end "10.10.10000"})
             json (json->map body)]
         (should= 400 status)
-        (should= {:other-organization-1-email [],
-                  :project-network [],
-                  :other-organization-1 [],
-                  :primary-email [],
-                  :signature [],
-                  :project-explanation [],
-                  :continuation-project [],
-                  :organization [],
-                  :project-measure [],
-                  :combined-effort [],
-                  :language [{:error "invalid-option"}],
-                  :project-www [],
-                  :signature-email [],
-                  :project-goals [],
-                  :project-target [],
-                  :project-announce [],
-                  :project-end [{:error "maxlength", :max 10}]}
+        (should= {:other-organization-1-email []
+                  :project-network []
+                  :other-organization-1 []
+                  :primary-email []
+                  :signature []
+                  :project-explanation []
+                  :continuation-project []
+                  :organization []
+                  :project-effectiveness []
+                  :project-spreading-plan []
+                  :project-measure []
+                  :combined-effort []
+                  :language [{:error "invalid-option"}]
+                  :project-www []
+                  :signature-email []
+                  :project-goals []
+                  :project-target []
+                  :project-announce []
+                  :project-end [{:error "maxlength" :max 10}]}
                  json)))
 
   (it "PUT should create a new form submission and return id when done to route /api/form/1/values"
@@ -153,22 +162,24 @@
                                                                                       :primary-email "test@example.com"})
           json (json->map body)]
       (should= 400 status)
-      (should= {:other-organization-1-email [{:error "required"}],
-                :project-network [{:error "required"}],
-                :other-organization-1 [{:error "required"}],
-                :primary-email [],
-                :signature [{:error "required"}],
-                :project-explanation [{:error "required"}],
-                :continuation-project [],
-                :organization [],
-                :project-measure [{:error "required"}],
-                :combined-effort [{:error "required"}],
-                :language [{:error "required"}],
-                :project-www [],
-                :signature-email [{:error "required"}],
-                :project-goals [{:error "required"}],
-                :project-target [{:error "required"}],
-                :project-announce [{:error "required"}],
+      (should= {:other-organization-1-email [{:error "required"}]
+                :project-network [{:error "required"}]
+                :other-organization-1 [{:error "required"}]
+                :primary-email []
+                :signature [{:error "required"}]
+                :project-explanation [{:error "required"}]
+                :continuation-project []
+                :organization []
+                :project-effectiveness [{:error "required"}]
+                :project-spreading-plan [{:error "required"}]
+                :project-measure [{:error "required"}]
+                :combined-effort [{:error "required"}]
+                :language [{:error "required"}]
+                :project-www []
+                :signature-email [{:error "required"}]
+                :project-goals [{:error "required"}]
+                :project-target [{:error "required"}]
+                :project-announce [{:error "required"}]
                 :project-end []}
                json)))
 
