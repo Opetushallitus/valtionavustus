@@ -107,6 +107,7 @@ function ApplicationPage() {
       setValue: function(value) {
         var input = el()
         switch (inputType(input)) {
+          case "EMAIL":
           case "TEXT":
           case "TEXTAREA":
             input.val(value)
