@@ -111,9 +111,13 @@ export default class FormModel {
       return state
     }
 
-    function handleUnexpectedSaveError(state, method, url, error) {
-      console.error("Unexpected save error ", error, " in ", method, " to ", url)
-      state.validationErrors["submit"] = [{error: "unexpected-server-error"}]
+    function handleUnexpectedSaveError(state, method, url, error, submit) {
+      if (submit) {
+        console.error("Unexpected save error ", error, " in ", method, " to ", url)
+        state.validationErrors["submit"] = [{error: "unexpected-server-error"}]
+      } else {
+        autoSave()
+      }
       return state
     }
 
@@ -124,13 +128,13 @@ export default class FormModel {
       return state
     }
 
-    function handleSaveError(state, status, error, method, url, response) {
+    function handleSaveError(state, status, error, method, url, response, submit) {
       if(status === 400) {
         state.validationErrors = JSON.parse(response)
         state.validationErrors["submit"] = [{error: "validation-errors"}]
         return state
       }
-      return handleUnexpectedSaveError(state, method, url, error);
+      return handleUnexpectedSaveError(state, method, url, error, submit);
     }
 
     function saveNew(state) {
@@ -161,12 +165,12 @@ export default class FormModel {
               state = handleOkSave(state)
             })
             .catch(function(error) {
-              state = handleSaveError(state, this.status, error, this.method, url, this.response)
+              state = handleSaveError(state, this.status, error, this.method, url, this.response, submit)
             })
         return state
       }
       catch(error) {
-        return handleUnexpectedSaveError(state, "POST", url, error);
+        return handleUnexpectedSaveError(state, "POST", url, error, submit);
       }
     }
 

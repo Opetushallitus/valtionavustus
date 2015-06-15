@@ -9,10 +9,17 @@ export default class FormSaveStatus extends React.Component {
     const submitErrors = this.props.submitErrors
     const translations = this.props.translations
     const lang = this.props.lang
-    return(<div className="status">
-      <span className="info" hidden={!saveStatus.changes}><LocalizedString translations={translations.form} translationKey="saving" lang={lang}/></span>
-      <span className="info" hidden={saveStatus.changes || !saveStatus.saveTime}><LocalizedString translations={translations.form} translationKey="saved" lang={lang}/></span>
-      <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
-    </div>)
+
+    var status;
+    if (submitErrors && submitErrors.length > 0) {
+      status = <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
+    } else if(saveStatus.changes) {
+      status = <span className="info"><LocalizedString translations={translations.form} translationKey="saving" lang={lang}/></span>
+    }
+    else {
+      status = <span className="info" hidden={!saveStatus.saveTime}><LocalizedString translations={translations.form} translationKey="saved" lang={lang}/></span>
+    }
+
+    return(<div className="status">{status}</div>)
   }
 }
