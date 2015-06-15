@@ -105,11 +105,12 @@
             describe('syötettäessä pakolliset tiedot', function () {
               before(
                   page.setInputValue("organization", "Testi Organisaatio"),
-                  wait.until(page.submitButton().isEnabled)
+                  page.waitAutoSave
               )
 
-              describe('syötön jälkeen', function () {
+              describe('automaattitallennuksen jälkeen', function () {
                 it("lähetä nappi enabloituu", function () {
+                  expect(page.submitButton().isEnabled()).to.equal(true)
                 })
               })
               describe('painettaessa lähetä nappia', function () {
