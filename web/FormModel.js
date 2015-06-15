@@ -10,7 +10,8 @@ export default class FormModel {
   init() {
     const query = queryString.parse(location.search)
     const langQueryParam =  query.lang || 'fi'
-    const langPreviewParam =  query.preview || false
+    const previewQueryParam =  query.preview || false
+    const develQueryParam =  query.devel || false
     const avustusHakuP = Bacon.fromPromise(qwest.get("/api/avustushaku/" + (query.avustushaku || 1)))
     const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(qwest.get("/api/form/" + avustusHaku.id))})
     const formValuesP = query.hakemus ? Bacon.fromPromise(qwest.get("/api/avustushaku/" + (query.avustushaku || 1) + "/hakemus/" + query.hakemus)) : formP.map(initDefaultValues)
@@ -26,7 +27,8 @@ export default class FormModel {
         saveTime: null
       },
       values: formValuesP,
-      preview: langPreviewParam,
+      preview: previewQueryParam,
+      develMode: develQueryParam,
       lang: langQueryParam,
       validationErrors: {},
       clientSideValidation: clientSideValidationP,
