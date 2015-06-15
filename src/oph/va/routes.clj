@@ -146,16 +146,6 @@
              (update-form-submission form-id values-id  answers)
              (bad-request validation))))
 
-  (PUT* "/avustushaku/:haku-id/hakemus" [haku-id :as request]
-      :path-params [haku-id :- Long]
-      :body    [answers (describe Submission "New answers")]
-      :return  HakemusId
-      :summary "Create initial hakemus"
-      (let [form-id (:form (db/get-avustushaku haku-id))]
-        (let [hakemus-id (db/create-hakemus! form-id answers)]
-          (if hakemus-id
-            (ok hakemus-id)
-            (internal-server-error!)))))
 
   (GET* "/avustushaku/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
         :path-params [haku-id :- Long, hakemus-id :- s/Str]
@@ -165,14 +155,31 @@
           (let [hakemus (db/get-hakemus hakemus-id)]
             (get-form-submission form-id (:form_submission hakemus)))))
 
+  (PUT* "/avustushaku/:haku-id/hakemus" [haku-id :as request]
+      :path-params [haku-id :- Long]
+      :body    [answers (describe Submission "New answers")]
+      :return  HakemusId
+      :summary "Create initial hakemus"
+      (let [form-id (:form (db/get-avustushaku haku-id))]
+        (let [validation (validation/validate-form-security (db/get-form form-id) answers)]
+          (if (every? empty? (vals validation))
+            (let [hakemus-id (db/create-hakemus! form-id answers)]
+              (if hakemus-id
+                (ok hakemus-id)
+                (internal-server-error!)))
+            (bad-request validation)))))
+
   (POST* "/avustushaku/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id :as request]
        :path-params [haku-id :- Long, hakemus-id :- s/Str]
        :body    [answers (describe Submission "New answers")]
        :return  Submission
        :summary "Update hakemus values"
          (let [form-id (:form (db/get-avustushaku haku-id))]
-           (let [hakemus (db/get-hakemus hakemus-id)]
-             (update-form-submission form-id (:form_submission hakemus) answers))))
+           (let [validation (validation/validate-form-security (db/get-form form-id) answers)]
+             (if (every? empty? (vals validation))
+               (let [hakemus (db/get-hakemus hakemus-id)]
+                 (update-form-submission form-id (:form_submission hakemus) answers))
+               (bad-request validation)))))
 
   (POST* "/avustushaku/:haku-id/hakemus/:hakemus-id/submit" [haku-id hakemus-id :as request]
        :path-params [haku-id :- Long, hakemus-id :- s/Str]

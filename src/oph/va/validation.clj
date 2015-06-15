@@ -23,6 +23,13 @@
       [{:error "maxlength", :max maxlength}]
       [])))
 
+(defn validate-field-security [answers field]
+  (let [answer (answers (keyword (field :id)))]
+    {(keyword (field :id)) (concat
+       (validate-options field answer)
+       (validate-textarea-maxlength field answer)
+       (validate-texfield-maxlength field answer))}))
+
 (defn validate-field [answers field]
   (let [answer (answers (keyword (field :id)))]
     {(keyword (field :id)) (concat
@@ -52,6 +59,12 @@
 (defn find-fields [node-list]
   (->> (flatten-elements node-list)
     (filter is-form-field?)))
+
+(defn validate-form-security [form answers]
+  (let [validator (partial validate-field-security answers)]
+    (->> (find-fields (:content form))
+         (map validator)
+         (into {}))))
 
 (defn validate-form [form answers]
   (let [validator (partial validate-field answers)]

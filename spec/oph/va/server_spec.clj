@@ -93,7 +93,7 @@
                   :project-end []}
                  json)))
 
-  (it "PUT should validate text field lengths and options when done to route /api/form/1/values"
+  (it "PUT should validate text field lengths when done to route /api/form/1/values"
       (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" (assoc valid-answers :project-end "10.10.10000"))
             json (json->map body)]
         (should= 400 status)
@@ -108,6 +108,30 @@
                   :project-measure [],
                   :combined-effort [],
                   :language [],
+                  :project-www [],
+                  :signature-email [],
+                  :project-goals [],
+                  :project-target [],
+                  :project-announce [],
+                  :project-end [{:error "maxlength", :max 10}]}
+                 json)))
+
+  (it "PUT should validate text field lengths and options when done to route /api/avustushaku/1/hakemus"
+      (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus"  {:language "ru"
+                                                                                              :project-end "10.10.10000"})
+            json (json->map body)]
+        (should= 400 status)
+        (should= {:other-organization-1-email [],
+                  :project-network [],
+                  :other-organization-1 [],
+                  :primary-email [],
+                  :signature [],
+                  :project-explanation [],
+                  :continuation-project [],
+                  :organization [],
+                  :project-measure [],
+                  :combined-effort [],
+                  :language [{:error "invalid-option"}],
                   :project-www [],
                   :signature-email [],
                   :project-goals [],
