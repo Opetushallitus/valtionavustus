@@ -8,6 +8,21 @@
     expect(window.uiError || null).to.be.null
   })
 
+  function enterValidValues() {
+    page.setInputValue("organization", "Testi Organisaatio")()
+    page.setInputValue("primary-email", "yhteyshenkilo@example.com")()
+    page.setInputValue("signature", "Matti Allekirjoitusoikeudellinen")()
+    page.setInputValue("signature-email", "matti.allekirjoitusoikeudellinen@example.com")()
+    page.setInputValue("other-organization-1", "Muu Testi Organisaatio")()
+    page.setInputValue("other-organization-1-email", "muutestiorganisaatio@example.com")()
+    page.setInputValue("project-network", "Hankeverkon tarina tähän.")()
+    page.setInputValue("project-goals", "Hankkeen tavoitteet tulee tähän.")()
+    page.setInputValue("project-explanation", "Hankkeen kuvaus tulee tähän.")()
+    page.setInputValue("project-target", "Kohderymämme on meidän kohderyhmä")()
+    page.setInputValue("project-measure", "Mittaamme toteutumista ja vaikutusta.")()
+    page.setInputValue("project-announce", "Tiedoitamme hankkeesta kivasti sitten.")()
+  }
+
   describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku suomeksi', function () {
     before(
       page.openStartPage()
@@ -29,22 +44,11 @@
     })
 
     describe('täytettäessä lomaketta', function () {
-      before(
-          page.setInputValue("organization", ""),
-          page.setInputValue("primary-email", "yhteyshenkilo@example.com"),
-          page.setInputValue("signature", "Matti Allekirjoitusoikeudellinen"),
-          page.setInputValue("signature-email", "matti.allekirjoitusoikeudellinen@example.com"),
-          page.setInputValue("other-organization-1", "Muu Testi Organisaatio"),
-          page.setInputValue("other-organization-1-email", "muutestiorganisaatio@example.com"),
-          page.setInputValue("project-network", "Hankeverkon tarina tähän."),
-          page.setInputValue("project-goals", "Hankkeen tavoitteet tulee tähän."),
-          page.setInputValue("project-explanation", "Hankkeen kuvaus tulee tähän."),
-          page.setInputValue("project-target", "Kohderymämme on meidän kohderyhmä"),
-          page.setInputValue("project-measure", "Mittaamme toteutumista ja vaikutusta."),
-          page.setInputValue("project-announce", "Tiedoitamme hankkeesta kivasti sitten.")
-      )
+      before(enterValidValues)
 
       describe('jos ei ole annettu kaikkia pakollisia arvoja', function () {
+        before(page.setInputValue("organization", ""))
+
         describe('ennen tallentamista', function () {
           it("lähetys on disabloitu", function () {
             expect(page.submitButton().isEnabled()).to.equal(false)
