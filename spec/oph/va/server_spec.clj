@@ -189,9 +189,18 @@
 
   (it "POST should create a new form submission version when done to route /api/form/1/values/1"
       (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/1" valid-answers)
-            json (json->map (trace body))]
+            json (json->map body)]
         (should= 200 status)
-        ;; TBD: expand test after the API is restructured
-        )))
+        (should= 1 (:version json))
+        (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/1" valid-answers)
+              json (json->map body)]
+          (should= 200 status)
+          (should= 2 (:version json)))))
+
+  (it "GET should always return latest form submission version for /api/form/1/values/1"
+      (let [{:keys [status headers body error] :as resp} (get! "/api/form/1/values/1")
+            json (json->map body)]
+        (should= 200 status)
+        (should= 2 (:version json)))))
 
 (run-specs)
