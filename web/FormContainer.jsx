@@ -1,7 +1,7 @@
 import React from 'react'
 import Form from './Form.jsx'
 import FormPreview from './FormPreview.jsx'
-import FormElementError from './FormElementError.jsx'
+import FormSaveStatus from './FormSaveStatus.jsx'
 import ToggleLanguageButton from './ToggleLanguageButton.jsx'
 import LocalizedString from './LocalizedString.jsx'
 import _ from 'lodash'
@@ -41,9 +41,7 @@ export default class FormContainer extends React.Component {
               <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
               <div id="form-controls" hidden={this.props.preview}>
                 <button id="submit" type="submit" onClick={model.submit} disabled={!(formIsValid && saveStatus.hakemusId) || saveStatus.changes}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
-                <div className="info" hidden={!saveStatus.changes}><LocalizedString translations={translations.form} translationKey="saving" lang={lang}/></div>
-                <div className="info" hidden={saveStatus.changes || !saveStatus.saveTime}><LocalizedString translations={translations.form} translationKey="saved" lang={lang}/></div>
-                <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
+                <FormSaveStatus submitErrors={submitErrors} saveStatus={saveStatus} translations={translations} lang={lang}/>
                 <div id="form-controls-devel" hidden={!this.props.develMode}>
                   <ToggleLanguageButton id="toggle-language" model={model} languages={translations.languages} lang={lang}/>
                   <button type="button" onClick={openPreview} disabled={!saveStatus.hakemusId}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></button>
