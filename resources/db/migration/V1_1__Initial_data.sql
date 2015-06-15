@@ -210,10 +210,10 @@ insert into forms (content) VALUES ('
         "required":true,
         "displayAs":"textArea",
         "params":{
-          "maxlength":2000
+          "maxlength":1000
         },
         "label":{
-          "fi":"Hankkeen tavoitteet",
+          "fi":"Hanke pähkinänkuoressa",
           "sv":"Projektets mål"
         }
       },
@@ -226,7 +226,7 @@ insert into forms (content) VALUES ('
           "maxlength":2000
         },
         "label":{
-          "fi":"Hankkeen kuvaus",
+          "fi":"Hankkeen tavoitteet, toiminta ja tulokset",
           "sv":"Hur genomförs projektet i praktiken?"
         }
       },
@@ -240,7 +240,7 @@ insert into forms (content) VALUES ('
           "maxlength":80
         },
         "label":{
-          "fi":"Hankkeen kohderyhmä",
+          "fi":"Hankkeen kohderyhmät",
           "sv":"Projektets målgrupp"
         }
       },
@@ -253,8 +253,8 @@ insert into forms (content) VALUES ('
           "maxlength":2000
         },
         "label":{
-          "fi":"Miten hankkeen toteutumista ja vaikuttavuutta arvioidaan?",
-          "sv":"Vilka konkreta resultat eftersträvas och hur har man för avsikt att utnyttja dem?"
+          "fi":"Miten hanke tukee hankkeessa mukana olevien koulutuksen järjestäjien strategisten tavoitteiden saavuttamista?",
+          "sv":"TODO"
         }
       },
       {
@@ -266,8 +266,34 @@ insert into forms (content) VALUES ('
           "maxlength":2000
         },
         "label":{
-          "fi":"Miten hankkeesta tiedotetaan ja miten tulokset levitetään?",
-          "sv":"Hur kommer man att informera om projektet och hur kommer resultaten att spridas?"
+          "fi":"Miten hankkeen tavoitteiden toteutumista arvioidaan?",
+          "sv":"TODO Hur kommer man att informera om projektet och hur kommer resultaten att spridas?"
+        }
+      },
+      {
+        "type": "formField",
+        "id":"project-effectiveness",
+        "required":true,
+        "displayAs":"textArea",
+        "params":{
+          "maxlength":2000
+        },
+        "label":{
+          "fi":"Hankkeen vaikutukset/vaikuttavuus. Mikä muuttuu hankkeen myötä?",
+          "sv":"TODO"
+        }
+      },
+      {
+        "type": "formField",
+        "id":"project-spreading-plan",
+        "required":true,
+        "displayAs":"textArea",
+        "params":{
+          "maxlength":2000
+        },
+        "label":{
+          "fi":"Hankkeen levittämissuunnitelma",
+          "sv":"TODO"
         }
       },
       {
