@@ -40,9 +40,9 @@
       "fi": "Tarkista sähköpostiosoite",
       "sv": "Kontrollera e-postadress"
     },
-    "unexpected-server-error": {
-      "fi": "Tallentaminen epäonnistui. Yritä myöhemmin uudelleen.",
-      "sv": "Sparandet misslyckades. Försök på nytt senare."
+    "unexpected-submit-error": {
+      "fi": "Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.",
+      "sv": "Skickande misslyckades. Försök på nytt senare."
     },
     "validation-errors": {
       "fi": "Ei tallennettu - tarkista syöttämäsi tiedot.",
