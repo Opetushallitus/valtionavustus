@@ -83,7 +83,12 @@ class EmailTextField extends BasicFieldComponent {
   }
 
   validateEmail(input) {
-    return this.validEmailRegexp.test(input) ? undefined : {error: "email"};
+    function lastPartIsLongerThanOne(email) {
+      const parts = email.split('\.')
+      return parts[parts.length -1].length > 1
+    }
+    const validEmail = this.validEmailRegexp.test(input) && lastPartIsLongerThanOne(input)
+    return validEmail ? undefined : {error: "email"};
   }
 }
 
