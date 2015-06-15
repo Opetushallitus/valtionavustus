@@ -24,9 +24,9 @@ export default class FormModel {
       saveStatus: {
         hakemusId: query.hakemus,
         changes: false,
-        saveTime: null
+        saveTime: null,
+        values: formValuesP
       },
-      values: formValuesP,
       preview: previewQueryParam,
       develMode: develQueryParam,
       lang: langQueryParam,
@@ -93,7 +93,7 @@ export default class FormModel {
     }
 
     function onUpdateField(state, fieldUpdate) {
-      state.values[fieldUpdate.id] = fieldUpdate.value
+      state.saveStatus.values[fieldUpdate.id] = fieldUpdate.value
       if(fieldUpdate.validationErrors) {
         state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
         state.clientSideValidation[fieldUpdate.id] = fieldUpdate.validationErrors.length === 0
@@ -143,7 +143,7 @@ export default class FormModel {
     function saveNew(state) {
       var url = "/api/avustushaku/" + state.avustushaku.id + "/hakemus"
       try {
-        qwest.put(url, state.values, {dataType: "json", async: false})
+        qwest.put(url, state.saveStatus.values, {dataType: "json", async: false})
             .then(function(response) {
               console.log("State saved. Response=", response)
               state.saveStatus.hakemusId = response.id
@@ -162,7 +162,7 @@ export default class FormModel {
     function updateOld(state, id, submit) {
       var url = "/api/avustushaku/" + state.avustushaku.id + "/hakemus/" + id + (submit ? "/submit" : "")
       try {
-        qwest.post(url, state.values, {dataType: "json", async: false})
+        qwest.post(url, state.saveStatus.values, {dataType: "json", async: false})
             .then(function(response) {
               console.log("State updated (submit=", submit, "). Response=", response)
               state = handleOkSave(state)

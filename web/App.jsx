@@ -17,7 +17,6 @@ formModelP.onValue((state) => {
                    clientSideValidation={state.clientSideValidation}
                    validationErrors={state.validationErrors}
                    translations={state.translations}
-                   values={state.values}
                    saveStatus={state.saveStatus}
                    lang={state.lang}
                    preview={state.preview} />,

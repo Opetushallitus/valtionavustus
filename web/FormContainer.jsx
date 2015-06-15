@@ -13,7 +13,6 @@ export default class FormContainer extends React.Component {
     const avustushaku = this.props.avustushaku
     const lang = this.props.lang
     const model = this.props.model
-    const values = this.props.values
     const validationErrors = this.props.validationErrors
     const submitErrors = _.get(validationErrors, "submit", [])
     const formIsValid = _.reduce(this.props.clientSideValidation, function (allValid, valid, field) {
@@ -21,6 +20,7 @@ export default class FormContainer extends React.Component {
     }, true)
     const translations = this.props.translations
     const saveStatus = this.props.saveStatus
+    const values = saveStatus.values
 
     var formElement;
 
