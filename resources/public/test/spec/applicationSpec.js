@@ -37,6 +37,8 @@
     page.setInputValue("project-goals", "Hankkeen tavoitteet tulee tähän.")()
     page.setInputValue("project-explanation", "Hankkeen kuvaus tulee tähän.")()
     page.setInputValue("project-target", "Kohderymämme on meidän kohderyhmä")()
+    page.setInputValue("project-effectiveness", "Mittaamme vaikutusta.")()
+    page.setInputValue("project-spreading-plan", "Jakelusuunnitelma.")()
     page.setInputValue("project-measure", "Mittaamme toteutumista ja vaikutusta.")()
     page.setInputValue("project-announce", "Tiedoitamme hankkeesta kivasti sitten.")()
   }
