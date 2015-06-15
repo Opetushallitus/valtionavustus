@@ -32,6 +32,7 @@
                         (s/optional-key :options) [Option]
                         :displayAs (s/enum :textField
                                            :textArea
+                                           :emailField
                                            :dropdown
                                            :radioButton)})
 

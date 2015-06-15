@@ -43,7 +43,7 @@ insert into forms (content) VALUES ('
         "type": "formField",
         "id":"primary-email",
         "required":true,
-        "displayAs":"textField",
+        "displayAs":"emailField",
         "params":{
           "size":50,
           "maxlength":80
@@ -71,7 +71,7 @@ insert into forms (content) VALUES ('
         "type": "formField",
         "id":"signature-email",
         "required":true,
-        "displayAs":"textField",
+        "displayAs":"emailField",
         "params":{
           "size":50,
           "maxlength":80
@@ -162,7 +162,7 @@ insert into forms (content) VALUES ('
         "type": "formField",
         "id":"other-organization-1-email",
         "required":true,
-        "displayAs":"textField",
+        "displayAs":"emailField",
         "params":{
           "size":50,
           "maxlength":80

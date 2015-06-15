@@ -32,6 +32,7 @@ export default class FormPreviewElement extends React.Component {
     this.fieldTypeMapping = {
       "textField": BasicValue,
       "textArea": BasicValue,
+      "emailField": BasicValue,
       "dropdown": OptionsValue,
       "radioButton": OptionsValue
     }

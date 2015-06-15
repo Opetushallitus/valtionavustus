@@ -52,6 +52,44 @@ class BasicTextField extends BasicFieldComponent {
   }
 }
 
+class EmailTextField extends BasicFieldComponent {
+  constructor(props) {
+    super(props)
+    // Pretty basic regexp, allows anything@anything.anything
+    this.validEmailRegexp = /\S+@\S+\.\S+/
+  }
+
+  render() {
+    const field = this.props.field
+    return (<input
+      type="email"
+      id={field.id}
+      name={field.id}
+      required={field.required}
+      size={this.param("size", this.param("maxlength",80))}
+      maxLength={this.param("maxlength")}
+      model={this.props.model}
+      value={this.props.value}
+      onChange={this.createChangeListener()}
+      />)
+  }
+
+  validate(value) {
+    var validationErrors = super.validate(value)
+    if (value) {
+      const emailError = this.validateEmail(value)
+      if (emailError) {
+        validationErrors.push(emailError)
+      }
+    }
+    return validationErrors
+  }
+
+  validateEmail(input) {
+    return this.validEmailRegexp.test(input) ? undefined : {error: "email"};
+  }
+}
+
 class BasicTextArea extends BasicFieldComponent {
   render() {
     const field = this.props.field
@@ -110,6 +148,7 @@ export default class FormElement extends React.Component {
     this.fieldTypeMapping = {
       "textField": BasicTextField,
       "textArea": BasicTextArea,
+      "emailField": EmailTextField,
       "dropdown": Dropdown,
       "radioButton": RadioButton
     }
