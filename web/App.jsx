@@ -11,15 +11,12 @@ formModelP.onValue((state) => {
   console.log("Updating UI with state:", state)
   React.render(
     <FormContainer model={model}
-                   develMode={state.develMode}
                    form={state.form}
                    avustushaku={state.avustushaku}
                    clientSideValidation={state.clientSideValidation}
                    validationErrors={state.validationErrors}
-                   translations={state.translations}
-                   saveStatus={state.saveStatus}
-                   lang={state.lang}
-                   preview={state.preview} />,
+                   configuration={state.configuration}
+                   saveStatus={state.saveStatus} />,
     document.getElementById('app')
   )
 })

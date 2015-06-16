@@ -27,12 +27,14 @@ export default class FormModel {
         saveTime: null,
         values: formValuesP
       },
-      preview: previewQueryParam,
-      develMode: develQueryParam,
-      lang: langQueryParam,
+      configuration: {
+        preview: previewQueryParam,
+        develMode: develQueryParam,
+        lang: langQueryParam,
+        translations: translationsP
+      },
       validationErrors: {},
-      clientSideValidation: clientSideValidationP,
-      translations: translationsP
+      clientSideValidation: clientSideValidationP
     }).onValue(setData)
 
     const autoSave = _.debounce(function(){dispatcher.push('save')}, develQueryParam? 100 : 5000)
@@ -88,7 +90,7 @@ export default class FormModel {
     }
 
     function onChangeLang(state, lang) {
-      state.lang = lang
+      state.configuration.lang = lang
       return state
     }
 
