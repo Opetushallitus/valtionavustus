@@ -4,7 +4,18 @@ import React from 'react'
 import FormContainer from './FormContainer.jsx'
 import FormModel from './FormModel'
 
-const model = new FormModel()
+function redirectToUniqueUrlOnValidCallback(state, fieldId, newFieldValue) {
+  const hakemusId = state.saveStatus.hakemusId // in this temporary solution we assume that application is always saved before this redirect happens
+  const newUrl = "/?avustushaku=" + state.avustushaku.id + "&hakemus=" + hakemusId
+  if (typeof (history.pushState) != "undefined") {
+    history.pushState({}, window.title, newUrl);
+ } else {
+   window.location = newUrl
+ }}
+
+const model = new FormModel({"onValidCallbacks":
+  { "primary-email": [ redirectToUniqueUrlOnValidCallback ] }
+})
 const formModelP = model.init()
 
 formModelP.onValue((state) => {

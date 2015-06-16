@@ -7,7 +7,12 @@ import queryString from 'query-string'
 const dispatcher = new Dispatcher()
 
 export default class FormModel {
+  constructor(props) {
+    this.onValidCallbacks = props.onValidCallbacks
+  }
+
   init() {
+    const self = this
     const query = queryString.parse(location.search)
     const langQueryParam =  query.lang || 'fi'
     const previewQueryParam =  query.preview || false
@@ -102,6 +107,15 @@ export default class FormModel {
       }
       else {
         state.clientSideValidation[fieldUpdate.id] = true
+      }
+      const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id];
+      if (clientSideValidationPassed) {
+        const onValidCallBacksOfField = self.onValidCallbacks[fieldUpdate.id]
+        if (onValidCallBacksOfField && onValidCallBacksOfField.length > 0) {
+          _.each(onValidCallBacksOfField, function(callBackF) {
+            callBackF(state, fieldUpdate.id, fieldUpdate.value)
+          })
+        }
       }
       state.saveStatus.changes = true
       autoSave()
