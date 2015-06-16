@@ -210,7 +210,8 @@ export default class FormElement extends React.Component {
     const displayAs = field.displayAs
     const label = <label htmlFor={field.id} className={field.required ? "required" : ""}><LocalizedString  translations={field} translationKey="label" lang={this.props.lang} /></label>
     const errorElement = <FormElementError fieldId={field.id} validationErrors={this.props.validationErrors} translations={this.props.translations} lang={this.props.lang}/>
-    const componentProps =_.assign(this.props, { label: label }, { errorElement: errorElement }, { disabled: false })
+
+    const componentProps =_.assign(this.props, { label: label }, { errorElement: errorElement })
     var input = <span>Unsupported field type {displayAs}</span>
 
     if (displayAs in this.fieldTypeMapping) {

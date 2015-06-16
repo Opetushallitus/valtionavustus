@@ -28,9 +28,21 @@ export default class FormContainer extends React.Component {
     var formElement;
 
     if (preview) {
-      formElement = <FormPreview model={model} infoElementValues={avustushaku} form={form} lang={lang} translations={translations} values={values} hakemusId={this.props.hakemusId}/>
+      formElement = <FormPreview model={model}
+                                 infoElementValues={avustushaku}
+                                 form={form}
+                                 lang={lang}
+                                 translations={translations}
+                                 values={values} />
     } else {
-      formElement = <Form model={model} validationErrors={validationErrors} infoElementValues={avustushaku} translations={translations} form={form} lang={lang} values={values} hakemusId={this.props.hakemusId}/>
+      formElement = <Form model={model}
+                          validationErrors={validationErrors}
+                          infoElementValues={avustushaku}
+                          translations={translations}
+                          form={form}
+                          lang={lang}
+                          saved={saveStatus.hakemusId ? true : false}
+                          values={values} />
     }
     const openPreview = function() {
       window.open("/?preview=true&avustushaku=" + avustushaku.id + "&hakemus=" + saveStatus.hakemusId, "preview")
