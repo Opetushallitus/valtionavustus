@@ -171,19 +171,6 @@ insert into forms (content) VALUES ('
           "fi":"Yhteyshenkilön sähköposti",
           "sv":"Kontaktpersonens e-postadress"
         }
-      },
-      {
-        "type": "formField",
-        "id":"project-network",
-        "required":true,
-        "displayAs":"textArea",
-        "params":{
-          "maxlength":2000
-        },
-        "label":{
-          "fi":"Kerro hankeverkostanne",
-          "sv":"Förklara om nätet"
-        }
       }
     ]
   },
