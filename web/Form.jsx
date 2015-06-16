@@ -34,11 +34,9 @@ export default class Form extends React.Component {
 
     return (
       <form>
-        <fieldset>
-          {
-            fields.map(renderField)
-          }
-        </fieldset>
+        {
+          fields.map(renderField)
+        }
       </form>
     )
   }

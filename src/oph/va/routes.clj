@@ -41,7 +41,8 @@
 
 (s/defschema WrapperElement {:type (s/eq "wrapperElement")
                              :id s/Str
-                             :displayAs (s/enum :theme)
+                             :displayAs (s/enum :theme
+                                                :fieldset)
                              :children  [(s/either BasicElement
                                                    (s/recursive #'WrapperElement))]
                              (s/optional-key :params) s/Any

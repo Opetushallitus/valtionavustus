@@ -26,60 +26,74 @@ insert into forms (content) VALUES ('
     },
     "children": [
       {
-        "type": "formField",
-        "id":"organization",
-        "required":true,
-        "displayAs":"textField",
-        "params":{
-          "size":50,
-          "maxlength":80
-        },
-        "label":{
-          "fi":"Hakijaorganisaatio",
-          "sv":"Organisation"
-        }
+        "type": "wrapperElement",
+        "id":"applicant-fieldset",
+        "displayAs":"fieldset",
+        "children": [
+          {
+            "type": "formField",
+            "id":"organization",
+            "required":true,
+            "displayAs":"textField",
+            "params":{
+              "size":50,
+              "maxlength":80
+            },
+            "label":{
+              "fi":"Hakijaorganisaatio",
+              "sv":"Organisation"
+            }
+          },
+          {
+            "type": "formField",
+            "id":"primary-email",
+            "required":true,
+            "displayAs":"emailField",
+            "params":{
+              "size":30,
+              "maxlength":80
+            },
+            "label":{
+              "fi":"Yhteyshenkilön sähköposti",
+              "sv":"Kontaktpersonens e-postadress"
+            }
+          }
+        ]
       },
       {
-        "type": "formField",
-        "id":"primary-email",
-        "required":true,
-        "displayAs":"emailField",
-        "params":{
-          "size":50,
-          "maxlength":80
-        },
-        "label":{
-          "fi":"Yhteyshenkilön sähköposti",
-          "sv":"Kontaktpersonens e-postadress"
-        }
-      },
-      {
-        "type": "formField",
-        "id":"signature",
-        "required":true,
-        "displayAs":"textField",
-        "params":{
-          "size":50,
-          "maxlength":80
-        },
-        "label":{
-          "fi":"Allekirjoitusoikeudellisen henkilön nimi",
-          "sv":"Underskriftgiltiga personens namn och uppgift"
-        }
-      },
-      {
-        "type": "formField",
-        "id":"signature-email",
-        "required":true,
-        "displayAs":"emailField",
-        "params":{
-          "size":50,
-          "maxlength":80
-        },
-        "label":{
-          "fi":"Sähköposti",
-          "sv":"e-postadress"
-        }
+        "type": "wrapperElement",
+        "id":"signature-fieldset",
+        "displayAs":"fieldset",
+        "children": [
+          {
+            "type": "formField",
+            "id":"signature",
+            "required":true,
+            "displayAs":"textField",
+            "params":{
+              "size":50,
+              "maxlength":80
+            },
+            "label":{
+              "fi":"Allekirjoitusoikeudellisen henkilön nimi",
+              "sv":"Underskriftgiltiga personens namn och uppgift"
+            }
+          },
+          {
+            "type": "formField",
+            "id":"signature-email",
+            "required":true,
+            "displayAs":"emailField",
+            "params":{
+              "size":30,
+              "maxlength":80
+            },
+            "label":{
+              "fi":"Sähköposti",
+              "sv":"e-postadress"
+            }
+          }
+        ]
       }
     ]
   },
@@ -145,32 +159,39 @@ insert into forms (content) VALUES ('
         ]
       },
       {
-        "type": "formField",
-        "id":"other-organization-1",
-        "required":true,
-        "displayAs":"textField",
-        "params":{
-          "size":50,
-          "maxlength":80
-        },
-        "label":{
-          "fi":"Hankkeen muut organisaatiot",
-          "sv":"Andra organisation"
-        }
-      },
-      {
-        "type": "formField",
-        "id":"other-organization-1-email",
-        "required":true,
-        "displayAs":"emailField",
-        "params":{
-          "size":50,
-          "maxlength":80
-        },
-        "label":{
-          "fi":"Yhteyshenkilön sähköposti",
-          "sv":"Kontaktpersonens e-postadress"
-        }
+        "type": "wrapperElement",
+        "id":"other-organization-1-fieldset",
+        "displayAs":"fieldset",
+        "children": [
+          {
+            "type": "formField",
+            "id":"other-organization-1",
+            "required":true,
+            "displayAs":"textField",
+            "params":{
+              "size":50,
+              "maxlength":80
+            },
+            "label":{
+              "fi":"Hankkeen muut organisaatiot",
+              "sv":"Andra organisation"
+            }
+          },
+          {
+            "type": "formField",
+            "id":"other-organization-1-email",
+            "required":true,
+            "displayAs":"emailField",
+            "params":{
+              "size":30,
+              "maxlength":80
+            },
+            "label":{
+              "fi":"Yhteyshenkilön sähköposti",
+              "sv":"Kontaktpersonens e-postadress"
+            }
+          }
+        ]
       }
     ]
   },

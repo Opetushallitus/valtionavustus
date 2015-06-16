@@ -4,14 +4,25 @@ import LocalizedString from './LocalizedString.jsx'
 class ThemeWrapperElement extends React.Component {
   render() {
     const field = this.props.field
-    const key = field.id
     const lang = this.props.lang
     const children = this.props.children
     return (
-        <section className="theme">
+        <section className="theme" id={field.id}>
          <h2><LocalizedString translations={field} translationKey="label" lang={lang}/></h2>
           {children}
         </section>
+    )
+  }
+}
+
+class FieldsetElement extends React.Component {
+  render() {
+    const field = this.props.field
+    const children = this.props.children
+    return (
+        <fieldset id={field.id}>
+          {children}
+        </fieldset>
     )
   }
 }
@@ -21,7 +32,8 @@ export default class WrapperElement extends React.Component {
   constructor(props) {
     super(props)
     this.fieldTypeMapping = {
-      "theme": ThemeWrapperElement
+      "theme": ThemeWrapperElement,
+      "fieldset": FieldsetElement
     }
   }
 
