@@ -28,6 +28,8 @@
    :other-organization-1-email "et@example"
    :project-goals "Maaleja"
    :project-explanation "Selitys"
+   :bank-bic "5000"
+   :bank-iban "FI 32 5000 4699350600"
    :project-target "Maali"
    :project-measure "Mittaus"
    :project-announce "Julkaisut"
@@ -79,11 +81,13 @@
             json (json->map body)]
         (should= 400 status)
         (should= {:other-organization-1-email [{:error "required"}]
+                  :project-begin []
                   :other-organization-1 [{:error "required"}]
                   :primary-email []
                   :signature [{:error "required"}]
                   :project-explanation [{:error "required"}]
                   :continuation-project []
+                  :bank-bic [{:error "required"}]
                   :organization []
                   :project-effectiveness [{:error "required"}]
                   :project-spreading-plan [{:error "required"}]
@@ -92,6 +96,7 @@
                   :language [{:error "required"}]
                   :project-www []
                   :signature-email [{:error "required"}]
+                  :bank-iban [{:error "required"}]
                   :project-goals [{:error "required"}]
                   :project-target [{:error "required"}]
                   :project-announce [{:error "required"}]
@@ -103,11 +108,13 @@
             json (json->map body)]
         (should= 400 status)
         (should= {:other-organization-1-email []
+                  :project-begin []
                   :other-organization-1 []
                   :primary-email []
                   :signature []
                   :project-explanation []
                   :continuation-project []
+                  :bank-bic []
                   :organization []
                   :project-effectiveness []
                   :project-spreading-plan []
@@ -116,6 +123,7 @@
                   :language []
                   :project-www []
                   :signature-email []
+                  :bank-iban []
                   :project-goals []
                   :project-target []
                   :project-announce []
@@ -128,11 +136,13 @@
             json (json->map body)]
         (should= 400 status)
         (should= {:other-organization-1-email []
+                  :project-begin []
                   :other-organization-1 []
                   :primary-email []
                   :signature []
                   :project-explanation []
                   :continuation-project []
+                  :bank-bic []
                   :organization []
                   :project-effectiveness []
                   :project-spreading-plan []
@@ -141,6 +151,7 @@
                   :language [{:error "invalid-option"}]
                   :project-www []
                   :signature-email []
+                  :bank-iban []
                   :project-goals []
                   :project-target []
                   :project-announce []
@@ -159,11 +170,13 @@
           json (json->map body)]
       (should= 400 status)
       (should= {:other-organization-1-email [{:error "required"}]
+                :project-begin []
                 :other-organization-1 [{:error "required"}]
                 :primary-email []
                 :signature [{:error "required"}]
                 :project-explanation [{:error "required"}]
                 :continuation-project []
+                :bank-bic [{:error "required"}]
                 :organization []
                 :project-effectiveness [{:error "required"}]
                 :project-spreading-plan [{:error "required"}]
@@ -172,6 +185,7 @@
                 :language [{:error "required"}]
                 :project-www []
                 :signature-email [{:error "required"}]
+                :bank-iban [{:error "required"}]
                 :project-goals [{:error "required"}]
                 :project-target [{:error "required"}]
                 :project-announce [{:error "required"}]
