@@ -41,6 +41,8 @@
     page.setInputValue("project-measure", "Mittaamme toteutumista ja vaikutusta.")()
     page.setInputValue("project-announce", "Tiedoitamme hankkeesta kivasti sitten.")()
     page.setInputValue("continuation-project", "no")()
+    page.setInputValue("bank-iban", "FI 32 5000 4699350600")()
+    page.setInputValue("bank-bic", "5000")()
   }
 
   describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku suomeksi', function () {

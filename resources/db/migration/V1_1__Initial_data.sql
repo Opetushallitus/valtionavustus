@@ -118,7 +118,7 @@ insert into forms (content) VALUES ('
             "type": "formField",
             "id":"bank-bic",
             "required":true,
-            "displayAs":"emailField",
+            "displayAs":"textField",
             "params":{
               "size":30,
               "maxlength":80
