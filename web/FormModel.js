@@ -37,7 +37,7 @@ export default class FormModel {
       clientSideValidation: clientSideValidationP
     }).onValue(setData)
 
-    const autoSave = _.debounce(function(){dispatcher.push('save')}, develQueryParam? 100 : 5000)
+    const autoSave = _.debounce(function(){dispatcher.push('save')}, develQueryParam? 100 : 3000)
 
     const formFieldValuesP = Bacon.update({},
                                           [dispatcher.stream('data')], onData,
