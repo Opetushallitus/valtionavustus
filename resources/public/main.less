@@ -78,20 +78,6 @@ body {
   }
 }
 
-button {
-  color: #fff;
-  background-color: @light-green;
-  border-width: 0px;
-  margin: 4px 20px 4px 0px;
-  padding: 8px 15px;
-  float: left;
-  font-size: 18px;
-  font-weight: 300;
-}
-
-button:disabled{
-  background-color: @light-gray;
-}
 
 #container {
   width: @form-width;
@@ -269,4 +255,29 @@ input[type=radio]:checked + label {
   background: #fff url('img/checkmark.png') no-repeat 10px 19px;
   margin: 0;
   border: solid 4px @light-green;
+}
+
+button {
+  color: #fff;
+  background-color: @light-green;
+  border-width: 0px;
+  margin: 4px 20px 4px 0px;
+  padding: 8px 15px;
+  float: left;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+textarea[disabled], button[disabled], html input[disabled] {
+  cursor: default;
+  background-color: @light-gray;
+}
+
+input[disabled] + label {
+  color: @light-gray
+}
+
+input[disabled]:checked + label {
+  border: solid 4px @dark-gray;
+  color: @light-gray
 }
