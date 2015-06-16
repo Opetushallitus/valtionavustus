@@ -33,7 +33,6 @@
     page.setInputValue("signature-email", "matti.allekirjoitusoikeudellinen@example.com")()
     page.setInputValue("other-organization-1", "Muu Testi Organisaatio")()
     page.setInputValue("other-organization-1-email", "muutestiorganisaatio@example.com")()
-    page.setInputValue("project-network", "Hankeverkon tarina tähän.")()
     page.setInputValue("project-goals", "Hankkeen tavoitteet tulee tähän.")()
     page.setInputValue("project-explanation", "Hankkeen kuvaus tulee tähän.")()
     page.setInputValue("project-target", "Kohderymämme on meidän kohderyhmä")()

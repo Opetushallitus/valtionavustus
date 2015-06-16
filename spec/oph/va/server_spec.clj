@@ -26,7 +26,6 @@
    :combined-effort "no"
    :other-organization-1 "E.T. Extra Terrestrial"
    :other-organization-1-email "et@example"
-   :project-network "Verkko"
    :project-goals "Maaleja"
    :project-explanation "Selitys"
    :project-target "Maali"
@@ -80,7 +79,6 @@
             json (json->map body)]
         (should= 400 status)
         (should= {:other-organization-1-email [{:error "required"}]
-                  :project-network [{:error "required"}]
                   :other-organization-1 [{:error "required"}]
                   :primary-email []
                   :signature [{:error "required"}]
@@ -105,7 +103,6 @@
             json (json->map body)]
         (should= 400 status)
         (should= {:other-organization-1-email []
-                  :project-network []
                   :other-organization-1 []
                   :primary-email []
                   :signature []
@@ -131,7 +128,6 @@
             json (json->map body)]
         (should= 400 status)
         (should= {:other-organization-1-email []
-                  :project-network []
                   :other-organization-1 []
                   :primary-email []
                   :signature []
@@ -163,7 +159,6 @@
           json (json->map body)]
       (should= 400 status)
       (should= {:other-organization-1-email [{:error "required"}]
-                :project-network [{:error "required"}]
                 :other-organization-1 [{:error "required"}]
                 :primary-email []
                 :signature [{:error "required"}]
