@@ -320,6 +320,20 @@ insert into forms (content) VALUES ('
       },
       {
         "type": "formField",
+        "id":"project-begin",
+        "required":false,
+        "displayAs":"textField",
+        "params":{
+          "size":10,
+          "maxlength":10
+        },
+        "label":{
+          "fi":"Hankkeen alkamisaika",
+          "sv":"När startar projektet"
+        }
+      },
+      {
+        "type": "formField",
         "id":"project-end",
         "required":false,
         "displayAs":"textField",
