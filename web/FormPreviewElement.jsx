@@ -3,8 +3,12 @@ import LocalizedString from './LocalizedString.jsx'
 
 class BasicValue extends React.Component {
   render() {
+    var value = "\u00a0" //&nbsp;
     const field = this.props.field
-    return (<span id={field.id}>{this.props.value}</span>)
+    if(this.props.value) {
+      value = this.props.value
+    }
+    return (<span id={field.id}>{value}</span>)
   }
 }
 
@@ -12,7 +16,7 @@ class OptionsValue extends React.Component {
   render() {
     const field = this.props.field
     const lang = this.props.lang
-    var value = ""
+    var value = "\u00a0" //&nbsp;
     if (field.options) {
       for (var i=0; i < field.options.length; i++) {
         if(field.options[i].value === this.props.value) {
