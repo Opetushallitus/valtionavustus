@@ -92,18 +92,39 @@ insert into forms (content) VALUES ('
               "fi":"Sähköposti",
               "sv":"e-postadress"
             }
-          },
+          }
+        ]
+      },
+      {
+        "type": "wrapperElement",
+        "id":"signature-fieldset",
+        "displayAs":"fieldset",
+        "children": [
           {
             "type": "formField",
-            "id":"bank-account",
+            "id":"bank-iban",
             "required":true,
             "displayAs":"textField",
             "params":{
-              "size":30,
-              "maxlength":30
+              "size":50,
+              "maxlength":80
             },
             "label":{
-              "fi":"Hakijaorganisaation tilinumero IBAN -muodossa",
+              "fi":"Tilinumero IBAN-muodossa",
+              "sv":"TODO"
+            }
+          },
+          {
+            "type": "formField",
+            "id":"bank-bic",
+            "required":true,
+            "displayAs":"emailField",
+            "params":{
+              "size":30,
+              "maxlength":80
+            },
+            "label":{
+              "fi":"Pankin BIC/SWIFT-koodi",
               "sv":"TODO"
             }
           }
