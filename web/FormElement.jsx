@@ -104,19 +104,22 @@ class EmailTextField extends BasicFieldComponent {
 class BasicTextArea extends BasicFieldComponent {
   render() {
     const field = this.props.field
+    const lengthLeft = this.param("maxlength") - this.props.value.length
     return (<div>
               {this.props.label}
               <textarea
                 id={field.id}
                 name={field.id}
                 required={field.required}
-                rows={this.param("rows", 10)}
-                cols={this.param("cols", 70)}
                 maxLength={this.param("maxlength")}
                 model={this.props.model}
                 value={this.props.value}
                 onChange={this.createChangeListener()}
               />
+              <span id={field.id + ".length"} className="length-left">
+                {lengthLeft + " "}
+                <LocalizedString translations={this.props.translations.form} translationKey="lengthleft" lang={this.props.lang}/>
+              </span>
               {this.props.errorElement}
             </div>)
   }
