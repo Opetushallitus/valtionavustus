@@ -2,6 +2,7 @@ import React from 'react'
 import LocalizedString from './LocalizedString.jsx'
 import Translator from './Translator.js'
 import FormElementError from './FormElementError.jsx'
+import _ from 'lodash'
 
 class BasicFieldComponent extends React.Component {
 
@@ -35,17 +36,21 @@ class BasicFieldComponent extends React.Component {
 class BasicTextField extends BasicFieldComponent {
   render() {
     const field = this.props.field
-    return (<input
-              type="text"
-              id={field.id}
-              name={field.id}
-              required={field.required}
-              size={this.param("size", this.param("maxlength",80))}
-              maxLength={this.param("maxlength")}
-              model={this.props.model}
-              value={this.props.value}
-              onChange={this.createChangeListener()}
-            />)
+    return (<div>
+              {this.props.label}
+              <input
+                type="text"
+                id={field.id}
+                name={field.id}
+                required={field.required}
+                size={this.param("size", this.param("maxlength",80))}
+                maxLength={this.param("maxlength")}
+                model={this.props.model}
+                value={this.props.value}
+                onChange={this.createChangeListener()}
+              />
+              {this.props.errorElement}
+            </div>)
   }
 }
 
@@ -58,17 +63,21 @@ class EmailTextField extends BasicFieldComponent {
 
   render() {
     const field = this.props.field
-    return (<input
-      type="email"
-      id={field.id}
-      name={field.id}
-      required={field.required}
-      size={this.param("size", this.param("maxlength",80))}
-      maxLength={this.param("maxlength")}
-      model={this.props.model}
-      value={this.props.value}
-      onChange={this.createChangeListener()}
-      />)
+    return (<div>
+              {this.props.label}
+              <input
+              type="email"
+              id={field.id}
+              name={field.id}
+              required={field.required}
+              size={this.param("size", this.param("maxlength",80))}
+              maxLength={this.param("maxlength")}
+              model={this.props.model}
+              value={this.props.value}
+              onChange={this.createChangeListener()}
+              />
+              {this.props.errorElement}
+            </div>)
   }
 
   validate(value) {
@@ -95,17 +104,21 @@ class EmailTextField extends BasicFieldComponent {
 class BasicTextArea extends BasicFieldComponent {
   render() {
     const field = this.props.field
-    return (<textarea
-              id={field.id}
-              name={field.id}
-              required={field.required}
-              rows={this.param("rows", 10)}
-              cols={this.param("cols", 70)}
-              maxLength={this.param("maxlength")}
-              model={this.props.model}
-              value={this.props.value}
-              onChange={this.createChangeListener()}
-            />)
+    return (<div>
+              {this.props.label}
+              <textarea
+                id={field.id}
+                name={field.id}
+                required={field.required}
+                rows={this.param("rows", 10)}
+                cols={this.param("cols", 70)}
+                maxLength={this.param("maxlength")}
+                model={this.props.model}
+                value={this.props.value}
+                onChange={this.createChangeListener()}
+              />
+              {this.props.errorElement}
+            </div>)
   }
 }
 
@@ -121,9 +134,13 @@ class Dropdown extends BasicFieldComponent {
                      </option>)
       }
     }
-    return (<select id={field.id} name={field.id} required={field.required} model={this.props.model} onChange={this.createChangeListener()} value={this.props.value}>
-              {options}
-            </select>)
+    return (<div>
+              {this.props.label}
+              <select id={field.id} name={field.id} required={field.required} model={this.props.model} onChange={this.createChangeListener()} value={this.props.value}>
+                      {options}
+                    </select>
+              {this.props.errorElement}
+            </div>)
   }
 }
 
@@ -139,7 +156,11 @@ class RadioButton extends BasicFieldComponent {
         radiobuttons.push(<label key={field.id + "." + field.options[i].value + ".label"} htmlFor={field.id + ".radio." + i}>{label}</label>)
       }
     }
-    return (<div>{radiobuttons}</div>)
+    return (<div>
+              {this.props.label}
+              {radiobuttons}
+              {this.props.errorElement}
+            </div>)
   }
 }
 
@@ -157,19 +178,17 @@ export default class FormElement extends React.Component {
   }
 
   render() {
-    const field = this.props.field;
+    const field = this.props.field
     const displayAs = field.displayAs
+    const label = <label htmlFor={field.id} className={field.required ? "required" : ""}><LocalizedString  translations={field} translationKey="label" lang={this.props.lang} /></label>
+    const errorElement = <FormElementError fieldId={field.id} validationErrors={this.props.validationErrors} translations={this.props.translations} lang={this.props.lang}/>
+    const componentProps =_.assign(this.props, { label: label }, { errorElement: errorElement })
     var input = <span>Unsupported field type {displayAs}</span>
 
     if (displayAs in this.fieldTypeMapping) {
-      input = React.createElement(this.fieldTypeMapping[displayAs], this.props)
+      input = React.createElement(this.fieldTypeMapping[displayAs], componentProps)
     }
-    return (
-      <div>
-        <label htmlFor={field.id} className={field.required ? "required" : ""}><LocalizedString  translations={field} translationKey="label" lang={this.props.lang} /></label>
-        {input}
-        <FormElementError fieldId={field.id} validationErrors={this.props.validationErrors} translations={this.props.translations} lang={this.props.lang}/>
-      </div>
-    )
+    return input
+
   }
 }
