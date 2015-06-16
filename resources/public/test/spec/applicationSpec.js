@@ -40,6 +40,7 @@
     page.setInputValue("project-spreading-plan", "Jakelusuunnitelma.")()
     page.setInputValue("project-measure", "Mittaamme toteutumista ja vaikutusta.")()
     page.setInputValue("project-announce", "Tiedoitamme hankkeesta kivasti sitten.")()
+    page.setInputValue("continuation-project", "no")()
   }
 
   describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku suomeksi', function () {
@@ -106,6 +107,9 @@
             })
             it("on organisaatio yhä tyhjä", function () {
               expect(page.elementText("organization")).to.equal('')
+            })
+            it("näkyy, että ei liity aiempaan hankkeeseen", function () {
+              expect(page.elementText("continuation-project")).to.equal('Ei')
             })
             it("näkyy hankkeen kuvaus oikein", function () {
               expect(page.elementText("project-explanation")).to.equal('Hankkeen kuvaus tulee tähän.')

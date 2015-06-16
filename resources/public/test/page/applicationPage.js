@@ -72,14 +72,6 @@ function ApplicationPage() {
             .then(input.setValue(value))
       }
     },
-    setRadioValue: function(name, value) {
-      return function() {
-        var input = api.getInput(name)
-        return wait.until(function() {
-           return  applicationElement().find("[for=" + name + "]").is(":visible")
-          })().then(input.setValue(value))
-      }
-    },
     toggleLanguage: function () {
       var name = api.applicationName()
       return wait.until(api.toggleLanguageButton().isEnabled)()
