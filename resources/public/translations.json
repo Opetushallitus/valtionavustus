@@ -23,6 +23,10 @@
     "preview": {
       "fi": "Tallennettu versio",
       "sv": "Sparat version"
+    },
+    "lengthleft": {
+      "fi": "merkkiä jäljellä",
+      "sv": "tecken kvar"
     }
   },
   "misc": {

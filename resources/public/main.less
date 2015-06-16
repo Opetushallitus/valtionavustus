@@ -1,4 +1,5 @@
 @form-width: 1300px;
+@section-width: 800px;
 
 // Colors
 @lightest-gray: #fafafa;
@@ -102,13 +103,14 @@ button:disabled{
     margin: 5px 0 20px 0;
   }
 
+  textarea {
+    width: @section-width - 30px;
+    height: 150px;
+  }
+
   div.error {
     margin: 14px 0 0 10px;
     display: inline;
-  }
-
-  ul {
-    width: 663px;
   }
 
   fieldset div {
@@ -130,6 +132,7 @@ button:disabled{
 
     > div, fieldset {
       margin: 15px 0 0 250px;
+      width: @section-width;
     }
   }
 }
@@ -195,6 +198,13 @@ ul {
 
 .error {
   color: @bright-red;
+}
+
+.length-left {
+  color: @dark-gray;
+  font-size: 12px;
+  float: right;
+  margin: -17px 12px 0 0;
 }
 
 input:focus,
