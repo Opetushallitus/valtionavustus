@@ -47,6 +47,7 @@ class BasicTextField extends BasicFieldComponent {
                 maxLength={this.param("maxlength")}
                 model={this.props.model}
                 value={this.props.value}
+                disabled={this.props.disabled ? "disabled" : ""}
                 onChange={this.createChangeListener()}
               />
               {this.props.errorElement}
@@ -74,6 +75,7 @@ class EmailTextField extends BasicFieldComponent {
               maxLength={this.param("maxlength")}
               model={this.props.model}
               value={this.props.value}
+              disabled={this.props.disabled ? "disabled" : ""}
               onChange={this.createChangeListener()}
               />
               {this.props.errorElement}
@@ -114,8 +116,8 @@ class BasicTextArea extends BasicFieldComponent {
                 maxLength={this.param("maxlength")}
                 model={this.props.model}
                 value={this.props.value}
-                onChange={this.createChangeListener()}
-              />
+                disabled={this.props.disabled ? "disabled" : ""}
+                onChange={this.createChangeListener()} />
               <span id={field.id + ".length"} className="length-left">
                 {lengthLeft + " "}
                 <LocalizedString translations={this.props.translations.form} translationKey="lengthleft" lang={this.props.lang}/>
@@ -132,16 +134,26 @@ class Dropdown extends BasicFieldComponent {
     if(field.options) {
       for (var i=0; i < field.options.length; i++) {
         const label = new Translator(field.options[i]).translate("label", this.props.lang, field.options[i].value)
-        options.push(<option key={field.id + "." + field.options[i].value} value={field.options[i].value}>
-                      {label}
-                     </option>)
+        options.push(
+          <option key={field.id + "." + field.options[i].value}
+                  value={field.options[i].value}
+                  disabled={this.props.disabled ? "disabled" : ""}>
+            {label}
+          </option>
+        )
       }
     }
     return (<div>
               {this.props.label}
-              <select id={field.id} name={field.id} required={field.required} model={this.props.model} onChange={this.createChangeListener()} value={this.props.value}>
-                      {options}
-                    </select>
+              <select id={field.id}
+                      name={field.id}
+                      required={field.required}
+                      disabled={this.props.disabled ? "disabled" : ""}
+                      model={this.props.model}
+                      onChange={this.createChangeListener()}
+                      value={this.props.value}>
+                {options}
+              </select>
               {this.props.errorElement}
             </div>)
   }
@@ -155,8 +167,21 @@ class RadioButton extends BasicFieldComponent {
     if(field.options) {
       for (var i=0; i < field.options.length; i++) {
         const label = new Translator(field.options[i]).translate("label", this.props.lang, field.options[i].value)
-        radiobuttons.push(<input {...this.props} type="radio" id={field.id + ".radio." + i} key={field.id + "." + field.options[i].value} name={field.id} required={field.required} value={field.options[i].value} onChange={this.createChangeListener()} checked={field.options[i].value === this.props.value ? true: null}/>)
-        radiobuttons.push(<label key={field.id + "." + field.options[i].value + ".label"} htmlFor={field.id + ".radio." + i}>{label}</label>)
+        radiobuttons.push(<input {...this.props}
+                                 type="radio" id={field.id + ".radio." + i}
+                                 key={field.id + "." + field.options[i].value}
+                                 name={field.id}
+                                 required={field.required}
+                                 disabled={this.props.disabled ? "disabled" : ""}
+                                 value={field.options[i].value}
+                                 onChange={this.createChangeListener()}
+                                 checked={field.options[i].value === this.props.value ? true: null} />)
+        radiobuttons.push(
+          <label key={field.id + "." + field.options[i].value + ".label"}
+                 htmlFor={field.id + ".radio." + i}>
+            {label}
+          </label>
+        )
       }
     }
     return (<div>
@@ -185,7 +210,7 @@ export default class FormElement extends React.Component {
     const displayAs = field.displayAs
     const label = <label htmlFor={field.id} className={field.required ? "required" : ""}><LocalizedString  translations={field} translationKey="label" lang={this.props.lang} /></label>
     const errorElement = <FormElementError fieldId={field.id} validationErrors={this.props.validationErrors} translations={this.props.translations} lang={this.props.lang}/>
-    const componentProps =_.assign(this.props, { label: label }, { errorElement: errorElement })
+    const componentProps =_.assign(this.props, { label: label }, { errorElement: errorElement }, { disabled: false })
     var input = <span>Unsupported field type {displayAs}</span>
 
     if (displayAs in this.fieldTypeMapping) {
