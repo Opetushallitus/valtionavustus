@@ -17,7 +17,7 @@ class OptionsValue extends React.Component {
       for (var i=0; i < field.options.length; i++) {
         if(field.options[i].value === this.props.value) {
           const val = field.options[i]
-          value = <LocalizedString translations={field} translationKey="label" lang={lang} />
+          value = <LocalizedString translations={val} translationKey="label" lang={lang} />
         }
       }
     }
