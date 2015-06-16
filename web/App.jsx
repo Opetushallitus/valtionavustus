@@ -5,6 +5,14 @@ import FormContainer from './FormContainer.jsx'
 import FormModel from './FormModel'
 
 function redirectToUniqueUrlOnValidCallback(state, formModel, fieldId, newFieldValue) {
+  function hakemusIdIsAlreadyInUrl() {
+    return state.saveStatus.hakemusId &&
+      state.saveStatus.hakemusId.length > 0 &&
+      window.location.href.indexOf(state.saveStatus.hakemusId) > -1
+  }
+  if (hakemusIdIsAlreadyInUrl()) {
+    return
+  }
   formModel.saveImmediately(function(newState) {
     const hakemusId = newState.saveStatus.hakemusId
     const newUrl = "/?avustushaku=" + newState.avustushaku.id + "&hakemus=" + hakemusId
