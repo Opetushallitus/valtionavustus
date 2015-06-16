@@ -97,7 +97,7 @@ insert into forms (content) VALUES ('
       },
       {
         "type": "wrapperElement",
-        "id":"signature-fieldset",
+        "id":"bank-fieldset",
         "displayAs":"fieldset",
         "children": [
           {
