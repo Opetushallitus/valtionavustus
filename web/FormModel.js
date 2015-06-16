@@ -113,7 +113,7 @@ export default class FormModel {
         const onValidCallBacksOfField = self.onValidCallbacks[fieldUpdate.id]
         if (onValidCallBacksOfField && onValidCallBacksOfField.length > 0) {
           _.each(onValidCallBacksOfField, function(callBackF) {
-            callBackF(state, fieldUpdate.id, fieldUpdate.value)
+            callBackF(state, self, fieldUpdate.id, fieldUpdate.value)
           })
         }
       }
@@ -156,7 +156,7 @@ export default class FormModel {
       return handleUnexpectedSaveError(state, method, url, error, submit);
     }
 
-    function saveNew(state) {
+    function saveNew(state, onSuccessCallback) {
       var url = "/api/avustushaku/" + state.avustushaku.id + "/hakemus"
       try {
         qwest.put(url, state.saveStatus.values, {dataType: "json", async: false})
@@ -164,6 +164,9 @@ export default class FormModel {
               console.log("State saved. Response=", response)
               state.saveStatus.hakemusId = response.id
               state = handleOkSave(state)
+              if (onSuccessCallback) {
+                onSuccessCallback(state)
+              }
             })
             .catch(function(error) {
               state = handleSaveError(state, this.status, error, this.method, url, this.response)
@@ -175,13 +178,16 @@ export default class FormModel {
       }
     }
 
-    function updateOld(state, id, submit) {
+    function updateOld(state, id, submit, onSuccessCallback) {
       var url = "/api/avustushaku/" + state.avustushaku.id + "/hakemus/" + id + (submit ? "/submit" : "")
       try {
         qwest.post(url, state.saveStatus.values, {dataType: "json", async: false})
             .then(function(response) {
               console.log("State updated (submit=", submit, "). Response=", response)
               state = handleOkSave(state)
+              if (onSuccessCallback) {
+                onSuccessCallback(state)
+              }
             })
             .catch(function(error) {
               state = handleSaveError(state, this.status, error, this.method, url, this.response, submit)
@@ -193,12 +199,13 @@ export default class FormModel {
       }
     }
 
-    function onSave(state) {
+    function onSave(state, params) {
+      const onSuccessCallback = params ? params.onSuccessCallback : undefined
       if(state.saveStatus.hakemusId) {
-        return updateOld(state, state.saveStatus.hakemusId, false)
+        return updateOld(state, state.saveStatus.hakemusId, false, onSuccessCallback)
       }
       else {
-        return saveNew(state)
+        return saveNew(state, onSuccessCallback)
       }
     }
 
@@ -227,5 +234,9 @@ export default class FormModel {
   submit(event) {
     event.preventDefault()
     dispatcher.push('submit')
+  }
+
+  saveImmediately(callback) {
+    dispatcher.push('save', { onSuccessCallback: callback })
   }
 }
