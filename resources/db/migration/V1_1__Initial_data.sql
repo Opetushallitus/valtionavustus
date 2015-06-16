@@ -92,6 +92,20 @@ insert into forms (content) VALUES ('
               "fi":"Sähköposti",
               "sv":"e-postadress"
             }
+          },
+          {
+            "type": "formField",
+            "id":"bank-account",
+            "required":true,
+            "displayAs":"textField",
+            "params":{
+              "size":30,
+              "maxlength":30
+            },
+            "label":{
+              "fi":"Hakijaorganisaation tilinumero IBAN -muodossa",
+              "sv":"TODO"
+            }
           }
         ]
       }
