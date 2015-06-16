@@ -84,14 +84,10 @@
         })
 
         describe('tallentamisen jälkeen', function () {
-          var hakemusId
-          function getHakemusId() {
-            return hakemusId
-          }
           before(
               page.waitAutoSave,
-              wait.until(function() {return page.hakemusId().length > 0}),
-              function() {hakemusId = page.hakemusId()}
+              wait.until(hakemusIdIsPresent),
+              storeHakemusIdFromHtml
           )
 
           describe('alkuperäisessä näkymässä', function() {
