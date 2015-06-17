@@ -6,6 +6,15 @@ import queryString from 'query-string'
 
 const dispatcher = new Dispatcher()
 
+const events = {
+  data: 'data',
+  updateField: 'updateField',
+  fieldValidation: 'fieldValidation',
+  changeLanguage: 'changeLanguage',
+  save: 'save',
+  submit: 'submit'
+}
+
 export default class FormModel {
   constructor(props) {
     this.onValidCallbacks = props.onValidCallbacks
@@ -42,15 +51,15 @@ export default class FormModel {
       clientSideValidation: clientSideValidationP
     }).onValue(setData)
 
-    const autoSave = _.debounce(function(){dispatcher.push('save')}, develQueryParam? 100 : 3000)
+    const autoSave = _.debounce(function(){dispatcher.push(events.save)}, develQueryParam? 100 : 3000)
 
     const formFieldValuesP = Bacon.update({},
-                                          [dispatcher.stream('data')], onData,
-                                          [dispatcher.stream('updateField')], onUpdateField,
-                                          [dispatcher.stream('fieldValidation')], onFieldValidation,
-                                          [dispatcher.stream('changeLanguage')], onChangeLang,
-                                          [dispatcher.stream('save')], onSave,
-                                          [dispatcher.stream('submit')], onSubmit)
+                                          [dispatcher.stream(events.data)], onData,
+                                          [dispatcher.stream(events.updateField)], onUpdateField,
+                                          [dispatcher.stream(events.fieldValidation)], onFieldValidation,
+                                          [dispatcher.stream(events.changeLanguage)], onChangeLang,
+                                          [dispatcher.stream(events.save)], onSave,
+                                          [dispatcher.stream(events.submit)], onSubmit)
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
 
@@ -214,29 +223,29 @@ export default class FormModel {
     }
 
     function setData(data) {
-      dispatcher.push('data', data)
+      dispatcher.push(events.data, data)
     }
   }
 
   // Public API
   changeLanguage(lang) {
-    dispatcher.push('changeLanguage', lang)
+    dispatcher.push(events.changeLanguage, lang)
   }
 
   setFieldValue(id, value, validationErrors) {
-    dispatcher.push('updateField', {id: id, value: value, validationErrors: validationErrors})
+    dispatcher.push(events.updateField, {id: id, value: value, validationErrors: validationErrors})
   }
 
   setFieldValid(id, validationErrors) {
-    dispatcher.push('fieldValidation', {id: id, validationErrors: validationErrors})
+    dispatcher.push(events.fieldValidation, {id: id, validationErrors: validationErrors})
   }
 
   submit(event) {
     event.preventDefault()
-    dispatcher.push('submit')
+    dispatcher.push(events.submit)
   }
 
   saveImmediately(callback) {
-    dispatcher.push('save', { onSuccessCallback: callback })
+    dispatcher.push(events.save, { onSuccessCallback: callback })
   }
 }
