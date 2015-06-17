@@ -131,7 +131,9 @@ export default class FormModel {
         }
       }
       state.saveStatus.changes = true
-      autoSave()
+      if (state.saveStatus.hakemusId) {
+        autoSave()
+      }
       return state
     }
 
@@ -148,7 +150,9 @@ export default class FormModel {
         console.error("Unexpected save error ", error, " in ", method, " to ", url)
         state.validationErrors["submit"] = [{error: "unexpected-submit-error"}]
       } else {
-        autoSave()
+        if (state.saveStatus.hakemusId) {
+          autoSave()
+        }
       }
       return state
     }
