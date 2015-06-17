@@ -1,4 +1,5 @@
 import PolyfillBind from './polyfill-bind'
+import UrlCreator from './UrlCreator'
 import React from 'react'
 
 import FormContainer from './FormContainer.jsx'
@@ -15,7 +16,7 @@ function redirectToUniqueUrlOnValidCallback(state, formModel, fieldId, newFieldV
   }
   formModel.saveImmediately(function(newState) {
     const hakemusId = newState.saveStatus.hakemusId
-    const newUrl = "/?avustushaku=" + newState.avustushaku.id + "&hakemus=" + hakemusId
+    const newUrl = UrlCreator.existingHakemusEditUrl(newState.avustushaku.id, hakemusId)
     if (typeof (history.pushState) != "undefined") {
       history.pushState({}, window.title, newUrl);
    } else {

@@ -1,6 +1,7 @@
 import Bacon from 'baconjs'
 import _ from 'lodash'
 import Dispatcher from './Dispatcher'
+import UrlCreator from './UrlCreator.js'
 import qwest from 'qwest'
 import queryString from 'query-string'
 
@@ -26,9 +27,12 @@ export default class FormModel {
     const langQueryParam =  query.lang || 'fi'
     const previewQueryParam =  query.preview || false
     const develQueryParam =  query.devel || false
-    const avustusHakuP = Bacon.fromPromise(qwest.get("/api/avustushaku/" + (query.avustushaku || 1)))
-    const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(qwest.get("/api/form/" + avustusHaku.id))})
-    const formValuesP = query.hakemus ? Bacon.fromPromise(qwest.get("/api/avustushaku/" + (query.avustushaku || 1) + "/hakemus/" + query.hakemus)).map(function(submission){return submission.answers}) : formP.map(initDefaultValues)
+
+    const avustusHakuP = Bacon.fromPromise(qwest.get(UrlCreator.avustusHakuApiUrl(query.avustushaku || 1)))
+    const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(qwest.get(UrlCreator.formApiUrl(avustusHaku.id)))})
+    const formValuesP = query.hakemus ?
+      Bacon.fromPromise(qwest.get(UrlCreator.existingHakemusApiUrl((query.avustushaku || 1), query.hakemus))).map(function(submission){return submission.answers}) :
+      formP.map(initDefaultValues)
     const clientSideValidationP = formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
@@ -166,7 +170,7 @@ export default class FormModel {
     }
 
     function saveNew(state, onSuccessCallback) {
-      var url = "/api/avustushaku/" + state.avustushaku.id + "/hakemus"
+      var url = UrlCreator.newHakemusApiUrl(state.avustushaku.id)
       try {
         qwest.put(url, state.saveStatus.values, {dataType: "json", async: false})
             .then(function(response) {
@@ -188,7 +192,7 @@ export default class FormModel {
     }
 
     function updateOld(state, id, submit, onSuccessCallback) {
-      var url = "/api/avustushaku/" + state.avustushaku.id + "/hakemus/" + id + (submit ? "/submit" : "")
+      var url = UrlCreator.existingHakemusApiUrl(state.avustushaku.id, id)+ (submit ? "/submit" : "")
       try {
         qwest.post(url, state.saveStatus.values, {dataType: "json", async: false})
             .then(function(response) {

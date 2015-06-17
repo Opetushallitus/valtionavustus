@@ -5,10 +5,10 @@ import FormSaveStatus from './FormSaveStatus.jsx'
 import FormElementError from './FormElementError.jsx'
 import ToggleLanguageButton from './ToggleLanguageButton.jsx'
 import LocalizedString from './LocalizedString.jsx'
+import UrlCreator from './UrlCreator'
 import _ from 'lodash'
 
 export default class FormContainer extends React.Component {
-
   render() {
     const form = this.props.form
     const avustushaku = this.props.avustushaku
@@ -45,7 +45,7 @@ export default class FormContainer extends React.Component {
                           values={values} />
     }
     const openPreview = function() {
-      window.open("/?preview=true&avustushaku=" + avustushaku.id + "&hakemus=" + saveStatus.hakemusId, "preview")
+      window.open(UrlCreator.existingHakemusPreviewUrl(avustushaku.id, saveStatus.hakemusId), "preview")
     }
 
     return (
