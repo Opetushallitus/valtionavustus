@@ -73,6 +73,9 @@ Testien ajo (ajaa myös mocha testit):
 tai (automaattisesti)
 
     ./lein with-profile test spec -a
+    
+Ajettavaa testisettiä voi rajata tiettyyn tägiin lisäämällä esimerkiksi parametrin 
+```-t ui``` tai ```-t server``` .  
 
 Huom: Vaikka ```lein run``` lataa automaattisesti muuttuneet koodit,
 Javascriptin automaattikäännöstä varten pitää käynnistää erilliseen
