@@ -1,4 +1,5 @@
 function ApplicationPage() {
+  var storedHakemusId
   var api = {
     openStartPage: function(lang, pageLoadedCheck) {
       if (!lang) {
@@ -33,8 +34,17 @@ function ApplicationPage() {
     applicationName: function() {
       return applicationElement().find("#container h1").first().text().trim()
     },
-    hakemusId: function() {
+    storeHakemusIdFromHtml: function() {
+      storedHakemusId = api.readHakemusIdFromHtml()
+    },
+    hakemusIdIsPresent: function() {
+      return api.readHakemusIdFromHtml().length > 0
+    },
+    readHakemusIdFromHtml: function() {
       return api.elementText("hakemus-id")
+    },
+    getHakemusId: function() {
+      return storedHakemusId
     },
     toggleLanguageButton: function () {
       return Clickable(function() { return applicationElement().find("#toggle-language")})

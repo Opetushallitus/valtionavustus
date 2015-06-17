@@ -8,24 +8,6 @@
     expect(window.uiError || null).to.be.null
   })
 
-  var hakemusId
-
-  function getHakemusId() {
-    return hakemusId
-  }
-
-  function storeHakemusIdFromHtml() {
-    hakemusId = readHakemusIdFromHtml()
-  }
-
-  function readHakemusIdFromHtml() {
-    return page.hakemusId()
-  }
-
-  function hakemusIdIsPresent() {
-    return readHakemusIdFromHtml().length > 0
-  }
-
   function enterValidValues() {
     page.setInputValue("organization", "Testi Organisaatio")()
     page.setInputValue("primary-email", "yhteyshenkilo@example.com")()
@@ -86,8 +68,8 @@
         describe('tallentamisen jälkeen', function () {
           before(
               page.waitAutoSave,
-              wait.until(hakemusIdIsPresent),
-              storeHakemusIdFromHtml
+              wait.until(page.hakemusIdIsPresent),
+              page.storeHakemusIdFromHtml
           )
 
           describe('alkuperäisessä näkymässä', function() {
@@ -98,7 +80,7 @@
 
           describe('hakemuksen esikatselussa', function() {
             before(
-                page.openPreview(getHakemusId)
+                page.openPreview(page.getHakemusId)
             )
             it("näkyy haun nimen oikein", function () {
               expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
@@ -116,7 +98,7 @@
 
           describe('hakemuksen muokkausnäkymässä', function() {
             before(
-                page.openEditPage(getHakemusId)
+                page.openEditPage(page.getHakemusId)
             )
             describe('avattaessa', function () {
               it("näkyy haun nimi oikein", function () {
@@ -169,7 +151,7 @@
 
               describe('muokkauksen jälkeen esikatselussa', function() {
                 before(
-                    page.openPreview(getHakemusId)
+                    page.openPreview(page.getHakemusId)
                 )
                 it("näkyy uusi tieto oikein", function () {
                   expect(page.elementText("project-explanation")).to.equal('Uusi kuvaus')
@@ -200,8 +182,8 @@
       describe('tallentamisen jälkeen', function () {
         before(
             page.waitAutoSave,
-            wait.until(hakemusIdIsPresent),
-            storeHakemusIdFromHtml
+            wait.until(page.hakemusIdIsPresent),
+            page.storeHakemusIdFromHtml
         )
 
         describe('alkuperäisessä näkymässä', function() {
@@ -212,7 +194,7 @@
 
         describe('hakemuksen muokkausnäkymässä', function() {
           before(
-              page.openEditPage(getHakemusId)
+              page.openEditPage(page.getHakemusId)
           )
           it("lähetys on disabloitu", function () {
             expect(page.submitButton().isEnabled()).to.equal(false)
