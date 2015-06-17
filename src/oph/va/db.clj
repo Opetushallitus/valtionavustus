@@ -82,6 +82,10 @@
        (exec queries/get-form-submission)
        first))
 
+(defn get-form-submission-versions [form-id submission-id]
+  (->> {:form_id form-id :submission_id submission-id}
+       (exec queries/get-form-submission-versions)))
+
 (defn create-hakemus! [form-id answers]
   (let [submission (create-submission! form-id answers)]
     (let [user-key (generate-hash-id)]

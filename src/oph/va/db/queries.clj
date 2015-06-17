@@ -9,6 +9,7 @@
 (defquery update-submission<! "sql/submission/update.sql")
 (defquery close-existing-submission! "sql/submission/close-existing.sql")
 (defquery get-form-submission "sql/submission/get.sql")
+(defquery get-form-submission-versions "sql/submission/get-versions.sql")
 
 (defquery create-hakemus<! "sql/hakemus/create.sql")
 (defquery get-hakemus "sql/hakemus/get.sql")

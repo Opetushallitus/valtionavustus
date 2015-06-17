@@ -91,6 +91,12 @@
       (ok submission)
       (not-found))))
 
+(defn- get-form-submission-versions [form-id values-id]
+  (let [submission (db/get-form-submission-versions form-id values-id)]
+    (if submission
+      (ok submission)
+      (not-found))))
+
 (defn- update-form-submission [form-id values-id answers]
   (if (not (db/submission-exists? form-id values-id))
     (not-found)
@@ -119,6 +125,12 @@
         :return  Submission
         :summary "Get current answers"
         (get-form-submission form-id values-id))
+
+  (GET* "/:form-id/values/:values-id/versions" [form-id values-id]
+        :path-params [form-id :- Long, values-id :- Long]
+        :return  [Submission]
+        :summary "Get all versions of submitted answers"
+        (get-form-submission-versions form-id values-id))
 
   (PUT* "/:form-id/values" [form-id :as request]
         :path-params [form-id :- Long]
