@@ -5,7 +5,7 @@ import _ from 'lodash'
 export default class FormElementError extends React.Component {
   render() {
     const id = this.props.fieldId + "-error"
-    if(this.props.validationErrors) {
+    if (this.props.validationErrors) {
       const errors = []
       for (var i=0; i < this.props.validationErrors.length; i++) {
         const error = this.props.validationErrors[i].error

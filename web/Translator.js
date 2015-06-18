@@ -1,14 +1,13 @@
 export default class Translator {
-
   constructor(translations) {
     this.translations = translations;
   }
 
   translate(key, lang, defaultValue) {
     const values = this.translations[key]
-    if(values instanceof Object) {
+    if (values instanceof Object) {
       var value = values[lang]
-      if(value) {
+      if (value) {
         return value
       }
       console.error("No translations found for '" + key + "' in lang '" + lang + "' from:" + JSON.stringify(values))

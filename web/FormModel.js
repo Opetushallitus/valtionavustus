@@ -79,10 +79,10 @@ export default class FormModel {
       const children = form.children ? form.children : form.content
       for(var i=0; i < children.length; i++) {
         const field = children[i]
-        if(field.options && field.options.length > 0) {
+        if (field.options && field.options.length > 0) {
           values[field.id] = field.options[0].value
         }
-        if(field.type === 'wrapperElement') {
+        if (field.type === 'wrapperElement') {
           var childValues = initDefaultValues(field)
           for (var fieldId in childValues) {
             values[fieldId] = childValues[fieldId]
@@ -95,12 +95,11 @@ export default class FormModel {
     function initClientSideValidationState(form) {
       const values = {}
       const children = form.children ? form.children : form.content
-      for(var i=0; i < children.length; i++) {
+      for (var i = 0; i < children.length; i++) {
         const field = children[i]
-        if(field.type === 'formField') {
+        if (field.type === 'formField') {
           values[field.id] = false
-        }
-        else if(field.type === 'wrapperElement') {
+        } else if (field.type === 'wrapperElement') {
           var childValues = initClientSideValidationState(field)
           for (var fieldId in childValues) {
             values[fieldId] = childValues[fieldId]
@@ -121,7 +120,7 @@ export default class FormModel {
 
     function onUpdateField(state, fieldUpdate) {
       state.saveStatus.values[fieldUpdate.id] = fieldUpdate.value
-      if(fieldUpdate.validationErrors) {
+      if (fieldUpdate.validationErrors) {
         state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
         state.clientSideValidation[fieldUpdate.id] = fieldUpdate.validationErrors.length === 0
       }
@@ -144,7 +143,7 @@ export default class FormModel {
 
     function onFieldValidation(state, validation) {
       state.clientSideValidation[validation.id] = validation.validationErrors.length === 0
-      if(state.saveStatus.hakemusId) {
+      if (state.saveStatus.hakemusId) {
         state.validationErrors[validation.id] = validation.validationErrors
       }
       return state
@@ -170,7 +169,7 @@ export default class FormModel {
 
     function handleSaveError(state, status, error, method, url, response, submit) {
       state.saveStatus.saveInProgress = false
-      if(status === 400) {
+      if (status === 400) {
         state.validationErrors = JSON.parse(response)
         state.validationErrors["submit"] = [{error: "validation-errors"}]
         return state
@@ -223,7 +222,7 @@ export default class FormModel {
 
     function onSave(state, params) {
       const onSuccessCallback = params ? params.onSuccessCallback : undefined
-      if(state.saveStatus.hakemusId) {
+      if (state.saveStatus.hakemusId) {
         return updateOld(state, state.saveStatus.hakemusId, false, onSuccessCallback)
       }
       else {

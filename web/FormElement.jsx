@@ -8,7 +8,7 @@ class BasicFieldComponent extends React.Component {
 
   validate(value) {
     var validationErrors = []
-    if(this.props.field.required && !value) {
+    if (this.props.field.required && !value) {
       validationErrors = [{error: "required"}]
     }
     return validationErrors
@@ -27,8 +27,8 @@ class BasicFieldComponent extends React.Component {
   }
 
   param(param, defaultValue) {
-    if(!this.props.field.params) return defaultValue
-    if(this.props.field.params[param] !== undefined) return this.props.field.params[param]
+    if (!this.props.field.params) return defaultValue
+    if (this.props.field.params[param] !== undefined) return this.props.field.params[param]
     return defaultValue
   }
 }
@@ -131,7 +131,7 @@ class Dropdown extends BasicFieldComponent {
   render() {
     const field = this.props.field
     const options = [];
-    if(field.options) {
+    if (field.options) {
       for (var i=0; i < field.options.length; i++) {
         const label = new Translator(field.options[i]).translate("label", this.props.lang, field.options[i].value)
         options.push(
@@ -164,7 +164,7 @@ class RadioButton extends BasicFieldComponent {
     const field = this.props.field
     const radiobuttons = [];
 
-    if(field.options) {
+    if (field.options) {
       for (var i=0; i < field.options.length; i++) {
         const label = new Translator(field.options[i]).translate("label", this.props.lang, field.options[i].value)
         radiobuttons.push(<input {...this.props}
