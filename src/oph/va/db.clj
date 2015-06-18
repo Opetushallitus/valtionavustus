@@ -4,7 +4,7 @@
   (:require [clojure.java.jdbc :as jdbc]
             [hikari-cp.core :refer :all]
             [oph.va.db.queries :as queries]
-            [oph.va.jdbc.extensions]
+            [oph.common.jdbc.extensions]
             [pandect.algo.sha256 :refer :all])
   (:import [java.security SecureRandom]))
 
