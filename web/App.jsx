@@ -33,9 +33,14 @@ function isFieldEnabled(saved, formModel, fieldId) {
   return saved
 }
 
+function isSaveDraftAllowed(state) {
+  return state.saveStatus.hakemusId && state.saveStatus.hakemusId.length > 0
+}
+
 const model = new FormModel({
   "formOperations": {
     "isFieldEnabled": isFieldEnabled,
+    "isSaveDraftAllowed": isSaveDraftAllowed,
     "onValidCallbacks":
     { "primary-email": [ redirectToUniqueUrlOnValidCallback ] }
   }

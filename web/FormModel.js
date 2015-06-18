@@ -42,6 +42,7 @@ export default class FormModel {
       saveStatus: {
         hakemusId: query.hakemus,
         changes: false,
+        saveInProgress: false,
         saveTime: null,
         values: formValuesP
       },
@@ -56,6 +57,12 @@ export default class FormModel {
     }).onValue(setData)
 
     const autoSave = _.debounce(function(){dispatcher.push(events.save)}, develQueryParam? 100 : 3000)
+    function autoSaveIfAllowed(state) {
+      if (self.formOperations.isSaveDraftAllowed(state)) {
+        state.saveStatus.saveInProgress = true
+        autoSave()
+      }
+    }
 
     const formFieldValuesP = Bacon.update({},
                                           [dispatcher.stream(events.data)], onData,
@@ -131,9 +138,7 @@ export default class FormModel {
         }
       }
       state.saveStatus.changes = true
-      if (state.saveStatus.hakemusId) {
-        autoSave()
-      }
+      autoSaveIfAllowed(state)
       return state
     }
 
@@ -150,21 +155,21 @@ export default class FormModel {
         console.error("Unexpected save error ", error, " in ", method, " to ", url)
         state.validationErrors["submit"] = [{error: "unexpected-submit-error"}]
       } else {
-        if (state.saveStatus.hakemusId) {
-          autoSave()
-        }
+        autoSaveIfAllowed(state)
       }
       return state
     }
 
     function handleOkSave(state) {
       state.saveStatus.changes = false
+      state.saveStatus.saveInProgress = false
       state.saveStatus.saveTime = new Date()
       state.validationErrors["submit"] = []
       return state
     }
 
     function handleSaveError(state, status, error, method, url, response, submit) {
+      state.saveStatus.saveInProgress = false
       if(status === 400) {
         state.validationErrors = JSON.parse(response)
         state.validationErrors["submit"] = [{error: "validation-errors"}]

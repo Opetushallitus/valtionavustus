@@ -8,9 +8,7 @@ export default class FormSaveStatus extends React.Component {
     const lang = this.props.lang
 
     var status;
-    if (!saveStatus.hakemusId) {
-      status = ""
-    } else if(saveStatus.changes) {
+    if (saveStatus.saveInProgress) {
       status = <span className="info"><LocalizedString translations={translations.form} translationKey="saving" lang={lang}/></span>
     }
     else {
