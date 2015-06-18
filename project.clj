@@ -61,4 +61,4 @@
   :test-paths ["spec"]
   :profiles {:uberjar {:aot :all}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.db.migrations/migrate"]
-            "dbclear" ["run" "-m" "oph.va.db/clear-db!"]})
+            "dbclear" ["run" "-m" "oph.common.db/clear-db!"]})
