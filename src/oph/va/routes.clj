@@ -7,18 +7,11 @@
             [compojure.api.sweet :refer :all]
             [schema.core :as s]
             [oph.form.db :as form-db]
-            [oph.va.db :as va-db]
             [oph.form.validation :as validation]
-            [oph.form.routes :refer :all]))
-
-(s/defschema AvustusHaku {:id Long
-                          :content s/Any
-                          :form Long
-                          :submittime s/Inst})
-
-(s/defschema HakemusId
-  "Hakemus id contains id of the newly created hakemus"
-  {:id s/Str})
+            [oph.form.routes :refer :all]
+            [oph.form.schema :refer :all]
+            [oph.va.db :as va-db]
+            [oph.va.schema :refer :all]))
 
 (defroutes* avustushaku-routes
   "Avustushaku routes"
