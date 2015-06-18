@@ -3,7 +3,7 @@
   (:require [clojure.java.jdbc :refer [db-do-commands]]
             [clojure.tools.logging :as log]
             [yesql.core :refer [defquery]]
-            [oph.va.db :as db]))
+            [oph.common.db :as db]))
 
 (defn migrate []
   (let [flyway (doto (Flyway.)

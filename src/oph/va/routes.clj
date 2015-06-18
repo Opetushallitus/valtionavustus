@@ -6,7 +6,8 @@
             [compojure.core :refer [GET]]
             [compojure.api.sweet :refer :all]
             [schema.core :as s]
-            [oph.va.db :as db]
+            [oph.form.db :as form-db]
+            [oph.va.db :as va-db]
             [oph.va.validation :as validation]))
 
 (s/defschema LocalizedString {:fi s/Str
@@ -80,27 +81,27 @@
   {:id s/Str})
 
 (defn- create-form-submission [form-id answers]
-  (let [submission (db/create-submission! form-id answers)]
+  (let [submission (form-db/create-submission! form-id answers)]
     (if submission
       (ok submission)
       (internal-server-error!))))
 
 (defn- get-form-submission [form-id values-id]
-  (let [submission (db/get-form-submission form-id values-id)]
+  (let [submission (form-db/get-form-submission form-id values-id)]
     (if submission
       (ok submission)
       (not-found))))
 
 (defn- get-form-submission-versions [form-id values-id]
-  (let [submission (db/get-form-submission-versions form-id values-id)]
+  (let [submission (form-db/get-form-submission-versions form-id values-id)]
     (if submission
       (ok submission)
       (not-found))))
 
 (defn- update-form-submission [form-id values-id answers]
-  (if (not (db/submission-exists? form-id values-id))
+  (if (not (form-db/submission-exists? form-id values-id))
     (not-found)
-    (let [submission (db/update-submission! form-id values-id answers)]
+    (let [submission (form-db/update-submission! form-id values-id answers)]
       (if submission
         (ok submission)
         (internal-server-error!)))))
@@ -110,12 +111,12 @@
 
   (GET* "/" []
         :return [Form]
-        (ok (db/list-forms)))
+        (ok (form-db/list-forms)))
 
   (GET* "/:id" [id]
         :path-params [id :- Long]
         :return Form
-        (let [form (db/get-form id)]
+        (let [form (form-db/get-form id)]
           (if form
             (ok form)
             (not-found))))
@@ -138,7 +139,7 @@
         :return  (s/either Submission
                            SubmissionValidationErrors)
         :summary "Create initial form answers"
-        (let [validation (validation/validate-form (db/get-form form-id) answers)]
+        (let [validation (validation/validate-form (form-db/get-form form-id) answers)]
           (if (every? empty? (vals validation))
             (create-form-submission form-id answers)
             (bad-request validation))))
@@ -149,7 +150,7 @@
          :return  (s/either Submission
                             SubmissionValidationErrors)
          :summary "Update form values"
-         (let [validation (validation/validate-form (db/get-form form-id) answers)]
+         (let [validation (validation/validate-form (form-db/get-form form-id) answers)]
            (if (every? empty? (vals validation))
              (update-form-submission form-id values-id  answers)
              (bad-request validation)))))
@@ -160,7 +161,7 @@
   (GET* "/:id" [id]
         :path-params [id :- Long]
         :return AvustusHaku
-        (let [avustushaku (db/get-avustushaku id)]
+        (let [avustushaku (va-db/get-avustushaku id)]
           (if avustushaku
             (ok avustushaku)
             (not-found))))
@@ -169,8 +170,8 @@
         :path-params [haku-id :- Long, hakemus-id :- s/Str]
         :return  Submission
         :summary "Get current answers"
-        (let [form-id (:form (db/get-avustushaku haku-id))
-              hakemus (db/get-hakemus hakemus-id)]
+        (let [form-id (:form (va-db/get-avustushaku haku-id))
+              hakemus (va-db/get-hakemus hakemus-id)]
           (get-form-submission form-id (:form_submission_id hakemus))))
 
   (PUT* "/:haku-id/hakemus" [haku-id :as request]
@@ -178,10 +179,10 @@
       :body    [answers (describe Answers "New answers")]
       :return  HakemusId
       :summary "Create initial hakemus"
-      (let [form-id (:form (db/get-avustushaku haku-id))
-            validation (validation/validate-form-security (db/get-form form-id) answers)]
+      (let [form-id (:form (va-db/get-avustushaku haku-id))
+            validation (validation/validate-form-security (form-db/get-form form-id) answers)]
         (if (every? empty? (vals validation))
-                    (let [hakemus-id (db/create-hakemus! form-id answers)]
+                    (let [hakemus-id (va-db/create-hakemus! form-id answers)]
                       (if hakemus-id
                         (ok hakemus-id)
                         (internal-server-error!)))
@@ -192,10 +193,10 @@
        :body    [answers (describe Answers "New answers")]
        :return  Submission
        :summary "Update hakemus values"
-       (let [form-id (:form (db/get-avustushaku haku-id))
-             validation (validation/validate-form-security (db/get-form form-id) answers)]
+       (let [form-id (:form (va-db/get-avustushaku haku-id))
+             validation (validation/validate-form-security (form-db/get-form form-id) answers)]
          (if (every? empty? (vals validation))
-           (let [hakemus (db/get-hakemus hakemus-id)]
+           (let [hakemus (va-db/get-hakemus hakemus-id)]
              (update-form-submission form-id (:form_submission_id hakemus) answers))
            (bad-request validation))))
 
@@ -204,12 +205,12 @@
        :body    [answers (describe Answers "New answers")]
        :return  Submission
        :summary "Update hakemus values"
-       (let [form-id (:form (db/get-avustushaku haku-id))
-             validation (validation/validate-form (db/get-form form-id) answers)]
+       (let [form-id (:form (va-db/get-avustushaku haku-id))
+             validation (validation/validate-form (form-db/get-form form-id) answers)]
          (if (every? empty? (vals validation))
-           (let [hakemus (db/get-hakemus hakemus-id)
+           (let [hakemus (va-db/get-hakemus hakemus-id)
                  saved-answers (update-form-submission form-id (:form_submission_id hakemus) answers)]
-             (db/submit-hakemus hakemus-id)
+             (va-db/submit-hakemus hakemus-id)
              saved-answers)
            (bad-request validation)))))
 

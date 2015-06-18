@@ -1,4 +1,4 @@
-(ns oph.va.config
+(ns oph.common.config
   (:require [clojure.edn]
             [environ.core :refer [env]]))
 

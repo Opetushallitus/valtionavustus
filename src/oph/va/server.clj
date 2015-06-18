@@ -4,8 +4,8 @@
   (:require [ring.middleware.reload :as reload]
             [compojure.handler :refer [site]]
             [clojure.tools.logging :as log]
-            [oph.va.config :refer [config]]
-            [oph.va.db :as db]
+            [oph.common.config :refer [config]]
+            [oph.common.db :as db]
             [oph.va.db.migrations :as dbmigrations])
   (:gen-class)
   (:import (java.net Socket)

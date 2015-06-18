@@ -1,6 +1,6 @@
 (ns oph.va.spec-plumbing
   (:require [oph.va.server :refer :all]
-            [oph.va.db :as db]))
+            [oph.common.db :as db]))
 
 (defmacro wrap-exception [& form]
   `(try ~@form
