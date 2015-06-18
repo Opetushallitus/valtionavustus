@@ -1,6 +1,7 @@
 import PolyfillBind from './polyfill-bind'
 import UrlCreator from './UrlCreator'
 import React from 'react'
+import _ from 'lodash'
 
 import FormContainer from './FormContainer.jsx'
 import FormModel from './FormModel'
@@ -24,7 +25,17 @@ function redirectToUniqueUrlOnValidCallback(state, formModel, fieldId, newFieldV
    }})
 }
 
-const model = new FormModel({"onValidCallbacks":
+function isFieldEnabled(saved, formModel, fieldId) {
+  const disableExceptions = ["primary-email", "organization"]
+  if (_.contains(disableExceptions, fieldId)) {
+    return true
+  }
+  return saved
+}
+
+const model = new FormModel({
+  "isFieldEnabled": isFieldEnabled,
+  "onValidCallbacks":
   { "primary-email": [ redirectToUniqueUrlOnValidCallback ] }
 })
 const formModelP = model.init()

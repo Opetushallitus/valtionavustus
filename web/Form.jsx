@@ -15,14 +15,11 @@ export default class Form extends React.Component {
     const infoElementValues = this.props.infoElementValues.content
     const validationErrors = this.props.validationErrors
     const translations = this.props.translations
-
-    // TODO: generalize
-    const disableExceptions = ["primary-email", "organization"]
-    const disabled = this.props.saved ? false : true;
+    const saved = this.props.saved
 
     const renderField = function (field) {
       if (field.type == "formField") {
-        const fieldDisabled = _.contains(disableExceptions, field.id) ? false : disabled;
+        const fieldDisabled = !model.isFieldEnabled(saved, model, field.id)
         const value = _.get(values, field.id, "")
         const fieldErrors = _.get(validationErrors, field.id, [])
         return <FormElement validationErrors={fieldErrors}

@@ -19,6 +19,7 @@ const events = {
 export default class FormModel {
   constructor(props) {
     this.onValidCallbacks = props.onValidCallbacks
+    this.isFieldEnabled = props.isFieldEnabled
   }
 
   init() {
