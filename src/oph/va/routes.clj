@@ -169,23 +169,23 @@
         :path-params [haku-id :- Long, hakemus-id :- s/Str]
         :return  Submission
         :summary "Get current answers"
-        (let [form-id (:form (db/get-avustushaku haku-id))]
-          (let [hakemus (db/get-hakemus hakemus-id)]
-            (get-form-submission form-id (:form_submission_id hakemus)))))
+        (let [form-id (:form (db/get-avustushaku haku-id))
+              hakemus (db/get-hakemus hakemus-id)]
+          (get-form-submission form-id (:form_submission_id hakemus))))
 
   (PUT* "/:haku-id/hakemus" [haku-id :as request]
       :path-params [haku-id :- Long]
       :body    [answers (describe Answers "New answers")]
       :return  HakemusId
       :summary "Create initial hakemus"
-      (let [form-id (:form (db/get-avustushaku haku-id))]
-        (let [validation (validation/validate-form-security (db/get-form form-id) answers)]
-          (if (every? empty? (vals validation))
-            (let [hakemus-id (db/create-hakemus! form-id answers)]
-              (if hakemus-id
-                (ok hakemus-id)
-                (internal-server-error!)))
-            (bad-request validation)))))
+      (let [form-id (:form (db/get-avustushaku haku-id))
+            validation (validation/validate-form-security (db/get-form form-id) answers)]
+        (if (every? empty? (vals validation))
+                    (let [hakemus-id (db/create-hakemus! form-id answers)]
+                      (if hakemus-id
+                        (ok hakemus-id)
+                        (internal-server-error!)))
+                    (bad-request validation))))
 
   (POST* "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id :as request]
        :path-params [haku-id :- Long, hakemus-id :- s/Str]
