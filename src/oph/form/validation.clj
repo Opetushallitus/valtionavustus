@@ -1,4 +1,4 @@
-(ns oph.va.validation
+(ns oph.form.validation
   (:require [clojure.string :as string]))
 
 (defn validate-required [field answer]

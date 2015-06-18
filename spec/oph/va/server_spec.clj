@@ -3,7 +3,7 @@
   (:require [speclj.core :refer :all]
             [org.httpkit.client :as http]
             [cheshire.core :refer :all]
-            [oph.va.validation :as validation]
+            [oph.form.validation :as validation]
             [oph.va.spec-plumbing :refer :all]))
 
 (def base-url "http://localhost:9000")

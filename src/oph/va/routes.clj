@@ -8,7 +8,7 @@
             [schema.core :as s]
             [oph.form.db :as form-db]
             [oph.va.db :as va-db]
-            [oph.va.validation :as validation]))
+            [oph.form.validation :as validation]))
 
 (s/defschema LocalizedString {:fi s/Str
                               :sv s/Str})
