@@ -34,9 +34,11 @@ function isFieldEnabled(saved, formModel, fieldId) {
 }
 
 const model = new FormModel({
-  "isFieldEnabled": isFieldEnabled,
-  "onValidCallbacks":
-  { "primary-email": [ redirectToUniqueUrlOnValidCallback ] }
+  "formOperations": {
+    "isFieldEnabled": isFieldEnabled,
+    "onValidCallbacks":
+    { "primary-email": [ redirectToUniqueUrlOnValidCallback ] }
+  }
 })
 const formModelP = model.init()
 

@@ -19,7 +19,7 @@ export default class Form extends React.Component {
 
     const renderField = function (field) {
       if (field.type == "formField") {
-        const fieldDisabled = !model.isFieldEnabled(saved, model, field.id)
+        const fieldDisabled = !model.formOperations.isFieldEnabled(saved, model, field.id)
         const value = _.get(values, field.id, "")
         const fieldErrors = _.get(validationErrors, field.id, [])
         return <FormElement validationErrors={fieldErrors}

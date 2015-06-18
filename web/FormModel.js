@@ -18,8 +18,7 @@ const events = {
 
 export default class FormModel {
   constructor(props) {
-    this.onValidCallbacks = props.onValidCallbacks
-    this.isFieldEnabled = props.isFieldEnabled
+    this.formOperations = props.formOperations
   }
 
   init() {
@@ -124,7 +123,7 @@ export default class FormModel {
       }
       const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id];
       if (clientSideValidationPassed) {
-        const onValidCallBacksOfField = self.onValidCallbacks[fieldUpdate.id]
+        const onValidCallBacksOfField = self.formOperations.onValidCallbacks[fieldUpdate.id]
         if (onValidCallBacksOfField && onValidCallBacksOfField.length > 0) {
           _.each(onValidCallBacksOfField, function(callBackF) {
             callBackF(state, self, fieldUpdate.id, fieldUpdate.value)
