@@ -8,7 +8,7 @@ import queryString from 'query-string'
 const dispatcher = new Dispatcher()
 
 const events = {
-  data: 'data',
+  initialState: 'initialState',
   updateField: 'updateField',
   fieldValidation: 'fieldValidation',
   changeLanguage: 'changeLanguage',
@@ -36,7 +36,7 @@ export default class FormModel {
     const clientSideValidationP = formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
-    const requests = Bacon.combineTemplate({
+    const initialState = Bacon.combineTemplate({
       avustushaku: avustusHakuP,
       form: formP,
       saveStatus: {
@@ -54,7 +54,8 @@ export default class FormModel {
       },
       validationErrors: {},
       clientSideValidation: clientSideValidationP
-    }).onValue(setData)
+    })
+    initialState.onValue(function(state) { dispatcher.push(events.initialState, state) })
 
     const autoSave = _.debounce(function(){dispatcher.push(events.save)}, develQueryParam? 100 : 3000)
     function autoSaveIfAllowed(state) {
@@ -65,7 +66,7 @@ export default class FormModel {
     }
 
     const formFieldValuesP = Bacon.update({},
-                                          [dispatcher.stream(events.data)], onData,
+                                          [dispatcher.stream(events.initialState)], onInitialState,
                                           [dispatcher.stream(events.updateField)], onUpdateField,
                                           [dispatcher.stream(events.fieldValidation)], onFieldValidation,
                                           [dispatcher.stream(events.changeLanguage)], onChangeLang,
@@ -109,8 +110,8 @@ export default class FormModel {
       return values
     }
 
-    function onData(state, data) {
-      return data
+    function onInitialState(state, realInitialState) {
+      return realInitialState
     }
 
     function onChangeLang(state, lang) {
@@ -232,10 +233,6 @@ export default class FormModel {
 
     function onSubmit(state) {
       return updateOld(state, state.saveStatus.hakemusId, true)
-    }
-
-    function setData(data) {
-      dispatcher.push(events.data, data)
     }
   }
 
