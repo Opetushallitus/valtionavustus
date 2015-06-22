@@ -15,6 +15,7 @@ const events = {
   fieldValidation: 'fieldValidation',
   changeLanguage: 'changeLanguage',
   save: 'save',
+  saveCompleted: 'saveCompleted',
   submit: 'submit'
 }
 
@@ -74,6 +75,7 @@ export default class FormModel {
                                           [dispatcher.stream(events.fieldValidation)], onFieldValidation,
                                           [dispatcher.stream(events.changeLanguage)], onChangeLang,
                                           [dispatcher.stream(events.save)], onSave,
+                                          [dispatcher.stream(events.saveCompleted)], onSaveCompleted,
                                           [dispatcher.stream(events.submit)], onSubmit)
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
@@ -169,14 +171,6 @@ export default class FormModel {
       return state
     }
 
-    function handleOkSave(state) {
-      state.saveStatus.changes = false
-      state.saveStatus.saveInProgress = false
-      state.saveStatus.saveTime = new Date()
-      state.validationErrors["submit"] = []
-      return state
-    }
-
     function handleSaveError(state, status, error, method, url, response, submit) {
       state.saveStatus.saveInProgress = false
       if (status === 400) {
@@ -190,44 +184,51 @@ export default class FormModel {
     function saveNew(state, onSuccessCallback) {
       var url = UrlCreator.newHakemusApiUrl(state.avustushaku.id)
       try {
-        qwest.put(url, state.saveStatus.values, {dataType: "json", async: false})
+        state.saveStatus.saveInProgress = true
+        qwest.put(url, state.saveStatus.values, {dataType: "json", async: true})
             .then(function(response) {
               console.log("State saved. Response=", response)
               state.saveStatus.hakemusId = response.id
-              state = handleOkSave(state)
               if (onSuccessCallback) {
                 onSuccessCallback(state)
               }
+              var stateSkeletonFromServer = _.cloneDeep(state)
+              stateSkeletonFromServer.saveStatus.values = null // state from server is not loaded at all on initial save, so this will be null
+              dispatcher.push(events.saveCompleted, stateSkeletonFromServer)
             })
             .catch(function(error) {
-              state = handleSaveError(state, this.status, error, this.method, url, this.response)
+              handleSaveError(state, this.status, error, this.method, url, this.response)
             })
-        return state
       }
       catch(error) {
         return handleUnexpectedSaveError(state, "PUT", url, error);
       }
+      state.saveStatus.changes = false
+      return state
     }
 
-    function updateOld(state, id, submit, onSuccessCallback) {
-      var url = UrlCreator.existingHakemusApiUrl(state.avustushaku.id, id)+ (submit ? "/submit" : "")
+    function updateOld(stateToSave, id, submit, onSuccessCallback) {
+      var url = UrlCreator.existingHakemusApiUrl(stateToSave.avustushaku.id, id)+ (submit ? "/submit" : "")
       try {
-        qwest.post(url, state.saveStatus.values, {dataType: "json", async: false})
+        stateToSave.saveStatus.saveInProgress = true
+        qwest.post(url, stateToSave.saveStatus.values, {dataType: "json", async: true})
             .then(function(response) {
               console.log("Saved to server (submit=", submit, "). Response=", response)
-              state = handleOkSave(state)
+              stateToSave.saveStatus.values = response["answers"]
               if (onSuccessCallback) {
-                onSuccessCallback(state)
+                onSuccessCallback(stateToSave)
               }
+              dispatcher.push(events.saveCompleted, stateToSave)
             })
             .catch(function(error) {
-              state = handleSaveError(state, this.status, error, this.method, url, this.response, submit)
+              handleSaveError(stateToSave, this.status, error, this.method, url, this.response, submit)
             })
-        return state
       }
       catch(error) {
-        return handleUnexpectedSaveError(state, "POST", url, error, submit);
+        handleUnexpectedSaveError(stateToSave, "POST", url, error, submit);
       }
+      stateToSave.saveStatus.changes = false
+      return stateToSave
     }
 
     function onSave(state, params) {
@@ -238,6 +239,28 @@ export default class FormModel {
       else {
         return saveNew(state, onSuccessCallback)
       }
+    }
+
+    function onSaveCompleted(stateFromUiLoop, stateFromServer) {
+      // TODO: Resolve updates from UI with updates from server.
+      // At the moment we just discard the values from server here.
+      var locallyStoredState = LocalStorage.load(self.formOperations.createUiStateIdentifier, stateFromServer)
+      if (!locallyStoredState) {
+        LocalStorage.save(self.formOperations.createUiStateIdentifier, stateFromServer)
+        stateFromServer.saveStatus.saveInProgress = false
+        stateFromServer.saveStatus.saveTime = new Date()
+        stateFromServer.saveStatus.changes = false
+        return stateFromServer
+      }
+      locallyStoredState.saveStatus.hakemusId = stateFromServer.saveStatus.hakemusId
+      locallyStoredState.saveStatus.changes = !_.isEqual(locallyStoredState.saveStatus.values, stateFromServer.saveStatus.values)
+      locallyStoredState.saveStatus.saveInProgress = false
+      locallyStoredState.saveStatus.saveTime = new Date()
+      locallyStoredState.validationErrors["submit"] = []
+      if (locallyStoredState.saveStatus.changes) {
+        autoSaveIfAllowed(locallyStoredState)
+      }
+      return locallyStoredState
     }
 
     function onSubmit(state) {

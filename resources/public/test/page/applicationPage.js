@@ -50,10 +50,9 @@ function ApplicationPage() {
       return Clickable(function() { return applicationElement().find("#toggle-language")})
     },
     waitAutoSave: function() {
-      var info = api.saveInfo()
       return wait.until(function() {
-            return info !== api.saveInfo()
-          })()
+        return api.elementText("pending-changes") != "true" && "Kaikki muutokset tallennettu" === api.saveInfo()
+      })()
     },
     submitButton: function() {
       return Clickable(function() { return applicationElement().find("#submit")})
@@ -123,6 +122,7 @@ function ApplicationPage() {
             break;
           case "RADIO":
             var radioOption = _(input).find(function(item) { return $(item).prop("value") == value })
+            S(radioOption).click()
             triggerEvent(S(radioOption), "click")
             break;
           case "SELECT":

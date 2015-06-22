@@ -61,7 +61,7 @@
             expect(page.error("organization")).to.equal('Pakollinen tieto')
           })
           it("kerrotaan automaattitallennuksesta", function () {
-            expect(page.saveInfo()).to.equal("Tallennetaan...")
+            expect(["Tallennetaan...", "Kaikki muutokset tallennettu"]).to.include(page.saveInfo());
           })
         })
 
@@ -167,6 +167,7 @@
       before(
         page.openStartPage(),
         enterValidValues,
+        page.waitAutoSave,
         page.setInputValue("primary-email", "NOT VALID EMAIL")
       )
 

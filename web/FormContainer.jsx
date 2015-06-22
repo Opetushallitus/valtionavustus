@@ -65,6 +65,7 @@ export default class FormContainer extends React.Component {
               </div>
             </div>
             <span hidden={true} id="hakemus-id">{saveStatus.hakemusId}</span>
+            <span hidden={true} id="pending-changes">{(saveStatus.changes || saveStatus.saveInProgress) ? "true" : "false"}</span>
           </section>
           <section id="container">
             {formElement}
