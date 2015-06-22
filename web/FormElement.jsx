@@ -118,10 +118,11 @@ class BasicTextArea extends BasicFieldComponent {
                 value={this.props.value}
                 disabled={this.props.disabled ? "disabled" : ""}
                 onChange={this.createChangeListener()} />
-              <span id={field.id + ".length"} className="length-left">
+              <div className="length-left-spacer"></div>
+              <div id={field.id + ".length"} className="length-left">
                 {lengthLeft + " "}
                 <LocalizedString translations={this.props.translations.form} translationKey="lengthleft" lang={this.props.lang}/>
-              </span>
+              </div>
               {this.props.errorElement}
             </div>)
   }
