@@ -168,8 +168,7 @@ class RadioButton extends BasicFieldComponent {
     if (field.options) {
       for (var i=0; i < field.options.length; i++) {
         const label = new Translator(field.options[i]).translate("label", this.props.lang, field.options[i].value)
-        radiobuttons.push(<input {...this.props}
-                                 type="radio" id={field.id + ".radio." + i}
+        radiobuttons.push(<input type="radio" id={field.id + ".radio." + i}
                                  key={field.id + "." + field.options[i].value}
                                  name={field.id}
                                  required={field.required}
