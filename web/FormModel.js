@@ -214,7 +214,7 @@ export default class FormModel {
       try {
         qwest.post(url, state.saveStatus.values, {dataType: "json", async: false})
             .then(function(response) {
-              console.log("State updated (submit=", submit, "). Response=", response)
+              console.log("Saved to server (submit=", submit, "). Response=", response)
               state = handleOkSave(state)
               if (onSuccessCallback) {
                 onSuccessCallback(state)
