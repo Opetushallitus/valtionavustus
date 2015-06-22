@@ -1,5 +1,6 @@
 export default class LocalStorage {
-  static save(uiStateIdentifierSource, state) {
+  static save(uiStateIdentifierSource, state, fieldUpdate) {
+    // TODO : Track unsaved delta of fieldUpdates
     window.localStorage.setItem(LocalStorage.createIdentifier(uiStateIdentifierSource, state), state)
   }
 

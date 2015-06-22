@@ -142,12 +142,12 @@ export default class FormModel {
       }
       state.saveStatus.changes = true
       autoSaveIfAllowed(state)
-      dispatcher.push(events.uiStateUpdate, state)
+      dispatcher.push(events.uiStateUpdate, fieldUpdate)
       return state
     }
 
-    function onUiStateUpdated(state) {
-      LocalStorage.save(self.formOperations.createUiStateIdentifier, state)
+    function onUiStateUpdated(state, fieldUpdate) {
+      LocalStorage.save(self.formOperations.createUiStateIdentifier, state, fieldUpdate)
       return state
     }
 
