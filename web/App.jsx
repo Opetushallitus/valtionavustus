@@ -6,6 +6,8 @@ import _ from 'lodash'
 import FormContainer from './FormContainer.jsx'
 import FormModel from './FormModel'
 
+const sessionIdentifierForLocalStorageId = new Date().getTime()
+
 function redirectToUniqueUrlOnValidCallback(state, formModel, fieldId, newFieldValue) {
   function hakemusIdIsAlreadyInUrl() {
     return state.saveStatus.hakemusId &&
@@ -38,7 +40,7 @@ function isSaveDraftAllowed(state) {
 }
 
 function createUiStateIdentifier(state) {
-  return state.form.id + "-" + state.saveStatus.hakemusId
+  return state.form.id + "-" + sessionIdentifierForLocalStorageId
 }
 
 const model = new FormModel({
