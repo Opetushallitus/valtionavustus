@@ -122,8 +122,8 @@ function ApplicationPage() {
             triggerEvent(input, "input")
             break;
           case "RADIO":
-            var option = _(input).find(function(item) { return $(item).prop("value") == value })
-            $(option).click()
+            var radioOption = _(input).find(function(item) { return $(item).prop("value") == value })
+            triggerEvent(S(radioOption), "click")
             break;
           case "SELECT":
             var option = _(input.children()).find(function(item) { return $(item).prop("value") == value })
