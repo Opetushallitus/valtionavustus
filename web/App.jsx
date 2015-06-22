@@ -37,10 +37,15 @@ function isSaveDraftAllowed(state) {
   return state.saveStatus.hakemusId && state.saveStatus.hakemusId.length > 0
 }
 
+function createUiStateIdentifier(state) {
+  return state.form.id + "-" + state.saveStatus.hakemusId
+}
+
 const model = new FormModel({
   "formOperations": {
     "isFieldEnabled": isFieldEnabled,
     "isSaveDraftAllowed": isSaveDraftAllowed,
+    "createUiStateIdentifier": createUiStateIdentifier,
     "onValidCallbacks":
     { "primary-email": [ redirectToUniqueUrlOnValidCallback ] }
   }

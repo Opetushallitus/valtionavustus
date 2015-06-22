@@ -2,6 +2,7 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 import Dispatcher from './Dispatcher'
 import UrlCreator from './UrlCreator.js'
+import LocalStorage from './LocalStorage.js'
 import qwest from 'qwest'
 import queryString from 'query-string'
 
@@ -10,6 +11,7 @@ const dispatcher = new Dispatcher()
 const events = {
   initialState: 'initialState',
   updateField: 'updateField',
+  uiStateUpdate: 'uiStateUpdate',
   fieldValidation: 'fieldValidation',
   changeLanguage: 'changeLanguage',
   save: 'save',
@@ -68,6 +70,7 @@ export default class FormModel {
     const formFieldValuesP = Bacon.update({},
                                           [dispatcher.stream(events.initialState)], onInitialState,
                                           [dispatcher.stream(events.updateField)], onUpdateField,
+                                          [dispatcher.stream(events.uiStateUpdate)], onUiStateUpdated,
                                           [dispatcher.stream(events.fieldValidation)], onFieldValidation,
                                           [dispatcher.stream(events.changeLanguage)], onChangeLang,
                                           [dispatcher.stream(events.save)], onSave,
@@ -139,6 +142,12 @@ export default class FormModel {
       }
       state.saveStatus.changes = true
       autoSaveIfAllowed(state)
+      dispatcher.push(events.uiStateUpdate, state)
+      return state
+    }
+
+    function onUiStateUpdated(state) {
+      LocalStorage.save(self.formOperations.createUiStateIdentifier, state)
       return state
     }
 
