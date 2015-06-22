@@ -55,7 +55,6 @@
              validation (validation/validate-form-security (form-db/get-form form-id) answers)]
          (if (every? empty? (vals validation))
            (let [hakemus (va-db/get-hakemus hakemus-id)]
-             (Thread/sleep 2000)
              (update-form-submission form-id (:form_submission_id hakemus) answers))
            (bad-request validation))))
 
