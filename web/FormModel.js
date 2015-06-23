@@ -246,8 +246,8 @@ export default class FormModel {
         stateFromServer.saveStatus.changes = false
         return stateFromServer
       }
-      locallyStoredState.saveStatus.hakemusId = stateFromServer.saveStatus.hakemusId
       locallyStoredState.saveStatus.changes = !_.isEqual(locallyStoredState.saveStatus.values, stateFromServer.saveStatus.values)
+      locallyStoredState.saveStatus.hakemusId = stateFromServer.saveStatus.hakemusId
       locallyStoredState.saveStatus.saveInProgress = false
       locallyStoredState.saveStatus.saveTime = new Date()
       locallyStoredState.validationErrors["submit"] = []

@@ -32,7 +32,7 @@ function onFieldValid(state, formModel, fieldId, newFieldValue) {
     }
     formModel.saveImmediately(function(newState) {
       const hakemusId = newState.saveStatus.hakemusId
-      const newUrl = formModel.formOperations.urlCreator.existingHakemusEditUrl(newState.avustushaku.id, hakemusId)
+      const newUrl = formModel.formOperations.urlCreator.existingSubmissionEditUrl(newState.avustushaku.id, hakemusId)
       if (typeof (history.pushState) != "undefined") {
         history.pushState({}, window.title, newUrl);
      } else {
@@ -66,8 +66,8 @@ const urlCreator = new UrlCreator({
       return existingFormApiUrl(avustusHakuId, hakemusId)
     },
 
-    existingHakemusEditUrl: function(avustusHakuId, hakemusId) { return "/?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId },
-    existingHakemusPreviewUrl: function(avustusHakuId, hakemusId) { return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId}
+    existingSubmissionEditUrl: function(avustusHakuId, hakemusId) { return "/?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId },
+    existingSubmissionPreviewUrl: function(avustusHakuId, hakemusId) { return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId}
   }
 )
 

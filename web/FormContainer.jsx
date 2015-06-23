@@ -44,7 +44,7 @@ export default class FormContainer extends React.Component {
                           values={values} />
     }
     const openPreview = function() {
-      window.open(model.formOperations.urlCreator.existingHakemusPreviewUrl(avustushaku.id, saveStatus.hakemusId), "preview")
+      window.open(model.formOperations.urlCreator.existingSubmissionPreviewUrl(avustushaku.id, saveStatus.hakemusId), "preview")
     }
 
     return (

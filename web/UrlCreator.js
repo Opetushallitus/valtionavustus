@@ -12,7 +12,7 @@ export default class UrlCreator {
     this.existingFormApiUrl = props.existingFormApiUrl || defaultImpl
     this.existingFormApiUrlFromQuery = props.existingFormApiUrlFromQuery || defaultImpl
 
-    this.existingHakemusEditUrl = props.existingHakemusEditUrl || defaultImpl
-    this.existingHakemusPreviewUrl = props.existingHakemusPreviewUrl || defaultImpl
+    this.existingSubmissionEditUrl = props.existingSubmissionEditUrl || defaultImpl
+    this.existingSubmissionPreviewUrl = props.existingSubmissionPreviewUrl || defaultImpl
   }
 }
