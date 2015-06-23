@@ -28,7 +28,7 @@ function onFieldValid(state, formModel, fieldId, newFieldValue) {
     }
     formModel.saveImmediately(function(newState) {
       const hakemusId = newState.saveStatus.hakemusId
-      const newUrl = UrlCreator.existingHakemusEditUrl(newState.avustushaku.id, hakemusId)
+      const newUrl = formModel.formOperations.urlCreator.existingHakemusEditUrl(newState.avustushaku.id, hakemusId)
       if (typeof (history.pushState) != "undefined") {
         history.pushState({}, window.title, newUrl);
      } else {
@@ -46,11 +46,23 @@ function createUiStateIdentifier(state) {
   return state.form.id + "-" + sessionIdentifierForLocalStorageId
 }
 
+const urlCreator = new UrlCreator({
+    formApiUrl: function(avustusHakuId) { return "/api/form/" + avustusHakuId },
+    avustusHakuApiUrl: function(avustusHakuId) { return "/api/avustushaku/" + avustusHakuId },
+    newHakemusApiUrl: function(avustusHakuId) { return "/api/avustushaku/" + avustusHakuId + "/hakemus" },
+    existingHakemusApiUrl: function(avustusHakuId, hakemusId) { return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId },
+
+    existingHakemusEditUrl: function(avustusHakuId, hakemusId) { return "/?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId },
+    existingHakemusPreviewUrl: function(avustusHakuId, hakemusId) { return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId}
+  }
+)
+
 const model = new FormModel({
   "isFieldEnabled": isFieldEnabled,
   "onFieldValid": onFieldValid,
   "isSaveDraftAllowed": isSaveDraftAllowed,
-  "createUiStateIdentifier": createUiStateIdentifier
+  "createUiStateIdentifier": createUiStateIdentifier,
+  "urlCreator": urlCreator
 })
 const formModelP = model.init()
 

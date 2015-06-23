@@ -1,7 +1,6 @@
 import Bacon from 'baconjs'
 import _ from 'lodash'
 import Dispatcher from './form/Dispatcher'
-import UrlCreator from './UrlCreator.js'
 import LocalStorage from './form/LocalStorage.js'
 import qwest from 'qwest'
 import queryString from 'query-string'
@@ -31,10 +30,10 @@ export default class FormModel {
     const previewQueryParam =  query.preview || false
     const develQueryParam =  query.devel || false
 
-    const avustusHakuP = Bacon.fromPromise(qwest.get(UrlCreator.avustusHakuApiUrl(query.avustushaku || 1)))
-    const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(qwest.get(UrlCreator.formApiUrl(avustusHaku.id)))})
+    const avustusHakuP = Bacon.fromPromise(qwest.get(self.formOperations.urlCreator.avustusHakuApiUrl(query.avustushaku || 1)))
+    const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(qwest.get(self.formOperations.urlCreator.formApiUrl(avustusHaku.id)))})
     const formValuesP = query.hakemus ?
-      Bacon.fromPromise(qwest.get(UrlCreator.existingHakemusApiUrl((query.avustushaku || 1), query.hakemus))).map(function(submission){return submission.answers}) :
+      Bacon.fromPromise(qwest.get(self.formOperations.urlCreator.existingHakemusApiUrl((query.avustushaku || 1), query.hakemus))).map(function(submission){return submission.answers}) :
       formP.map(initDefaultValues)
     const clientSideValidationP = formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
@@ -177,7 +176,7 @@ export default class FormModel {
     }
 
     function saveNew(state, onSuccessCallback) {
-      var url = UrlCreator.newHakemusApiUrl(state.avustushaku.id)
+      var url = self.formOperations.urlCreator.newHakemusApiUrl(state.avustushaku.id)
       try {
         state.saveStatus.saveInProgress = true
         qwest.put(url, state.saveStatus.values, {dataType: "json", async: true})
@@ -203,7 +202,7 @@ export default class FormModel {
     }
 
     function updateOld(stateToSave, id, submit, onSuccessCallback) {
-      var url = UrlCreator.existingHakemusApiUrl(stateToSave.avustushaku.id, id)+ (submit ? "/submit" : "")
+      var url = self.formOperations.urlCreator.existingHakemusApiUrl(stateToSave.avustushaku.id, id)+ (submit ? "/submit" : "")
       try {
         stateToSave.saveStatus.saveInProgress = true
         qwest.post(url, stateToSave.saveStatus.values, {dataType: "json", async: true})
