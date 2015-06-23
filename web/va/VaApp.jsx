@@ -1,4 +1,4 @@
-import PolyfillBind from './polyfill-bind'
+import PolyfillBind from './../polyfill-bind'
 
 import React from 'react'
 import Bacon from 'baconjs'
@@ -6,9 +6,9 @@ import qwest from 'qwest'
 import _ from 'lodash'
 import queryString from 'query-string'
 
-import FormContainer from './form/FormContainer.jsx'
-import FormModel from './form/FormModel'
-import UrlCreator from './form/UrlCreator'
+import FormContainer from './../form/FormContainer.jsx'
+import FormModel from './../form/FormModel'
+import UrlCreator from './../form/UrlCreator'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 

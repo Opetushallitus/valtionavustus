@@ -28,9 +28,9 @@
     ]
   },
   "scripts": {
-    "build-app": "browserify web/App.jsx -o resources/public/js/app.js",
+    "build-app": "browserify web/va/VaApp.jsx -o resources/public/js/app.js",
     "build": "npm run build-app",
-    "watch-app": "watchify web/App.jsx -o resources/public/js/app.js --debug --verbose",
+    "watch-app": "watchify web/va/VaApp.jsx -o resources/public/js/app.js --debug --verbose",
     "watch": "npm run watch-app"
   }
 }
