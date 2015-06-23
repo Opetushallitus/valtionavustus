@@ -6,7 +6,7 @@ import qwest from 'qwest'
 import _ from 'lodash'
 import queryString from 'query-string'
 
-import FormContainer from './FormContainer.jsx'
+import FormContainer from './form/FormContainer.jsx'
 import FormModel from './FormModel'
 import UrlCreator from './UrlCreator'
 

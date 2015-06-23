@@ -1,10 +1,10 @@
 import React from 'react'
-import Form from './form/Form.jsx'
-import FormPreview from './form/FormPreview.jsx'
-import FormSaveStatus from './form/FormSaveStatus.jsx'
-import FormElementError from './form/FormElementError.jsx'
-import ToggleLanguageButton from './form/ToggleLanguageButton.jsx'
-import LocalizedString from './form/LocalizedString.jsx'
+import Form from './Form.jsx'
+import FormPreview from './FormPreview.jsx'
+import FormSaveStatus from './FormSaveStatus.jsx'
+import FormElementError from './FormElementError.jsx'
+import ToggleLanguageButton from './ToggleLanguageButton.jsx'
+import LocalizedString from './LocalizedString.jsx'
 import _ from 'lodash'
 
 export default class FormContainer extends React.Component {
