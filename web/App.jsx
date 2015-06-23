@@ -8,6 +8,10 @@ import FormModel from './FormModel'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
+function containsExistingEntityId(query) {
+  return query.hakemus && query.hakemus.length > 0
+}
+
 function isFieldEnabled(saved, formModel, fieldId) {
   const disableExceptions = ["primary-email", "organization"]
   if (_.contains(disableExceptions, fieldId)) {
@@ -37,7 +41,6 @@ function onFieldValid(state, formModel, fieldId, newFieldValue) {
   }
 }
 
-
 function isSaveDraftAllowed(state) {
   return state.saveStatus.hakemusId && state.saveStatus.hakemusId.length > 0
 }
@@ -46,11 +49,22 @@ function createUiStateIdentifier(state) {
   return state.form.id + "-" + sessionIdentifierForLocalStorageId
 }
 
+function existingFormApiUrl(avustusHakuId, hakemusId) { return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId }
+
 const urlCreator = new UrlCreator({
     formApiUrl: function(avustusHakuId) { return "/api/form/" + avustusHakuId },
     avustusHakuApiUrl: function(avustusHakuId) { return "/api/avustushaku/" + avustusHakuId },
-    newHakemusApiUrl: function(avustusHakuId) { return "/api/avustushaku/" + avustusHakuId + "/hakemus" },
-    existingHakemusApiUrl: function(avustusHakuId, hakemusId) { return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId },
+    newEntityApiUrl: function(state) { return "/api/avustushaku/" + state.avustushaku.id + "/hakemus" },
+    existingFormApiUrl: function(state) {
+      const avustusHakuId = state.avustushaku.id
+      const hakemusId = state.saveStatus.hakemusId
+      return existingFormApiUrl(avustusHakuId, hakemusId)
+    },
+    existingFormApiUrlFromQuery: function(query) {
+      const avustusHakuId = query.avustushaku || 1
+      const hakemusId = query.hakemus
+      return existingFormApiUrl(avustusHakuId, hakemusId)
+    },
 
     existingHakemusEditUrl: function(avustusHakuId, hakemusId) { return "/?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId },
     existingHakemusPreviewUrl: function(avustusHakuId, hakemusId) { return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId}
@@ -58,6 +72,7 @@ const urlCreator = new UrlCreator({
 )
 
 const model = new FormModel({
+  "containsExistingEntityId": containsExistingEntityId,
   "isFieldEnabled": isFieldEnabled,
   "onFieldValid": onFieldValid,
   "isSaveDraftAllowed": isSaveDraftAllowed,

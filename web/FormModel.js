@@ -32,8 +32,8 @@ export default class FormModel {
 
     const avustusHakuP = Bacon.fromPromise(qwest.get(self.formOperations.urlCreator.avustusHakuApiUrl(query.avustushaku || 1)))
     const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(qwest.get(self.formOperations.urlCreator.formApiUrl(avustusHaku.id)))})
-    const formValuesP = query.hakemus ?
-      Bacon.fromPromise(qwest.get(self.formOperations.urlCreator.existingHakemusApiUrl((query.avustushaku || 1), query.hakemus))).map(function(submission){return submission.answers}) :
+    const formValuesP = self.formOperations.containsExistingEntityId(query) ?
+      Bacon.fromPromise(qwest.get(self.formOperations.urlCreator.existingFormApiUrlFromQuery(query))).map(function(submission){return submission.answers}) :
       formP.map(initDefaultValues)
     const clientSideValidationP = formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
@@ -176,7 +176,7 @@ export default class FormModel {
     }
 
     function saveNew(state, onSuccessCallback) {
-      var url = self.formOperations.urlCreator.newHakemusApiUrl(state.avustushaku.id)
+      var url = self.formOperations.urlCreator.newEntityApiUrl(state)
       try {
         state.saveStatus.saveInProgress = true
         qwest.put(url, state.saveStatus.values, {dataType: "json", async: true})
@@ -201,8 +201,8 @@ export default class FormModel {
       return state
     }
 
-    function updateOld(stateToSave, id, submit, onSuccessCallback) {
-      var url = self.formOperations.urlCreator.existingHakemusApiUrl(stateToSave.avustushaku.id, id)+ (submit ? "/submit" : "")
+    function updateOld(stateToSave, submit, onSuccessCallback) {
+      var url = self.formOperations.urlCreator.existingFormApiUrl(stateToSave)+ (submit ? "/submit" : "")
       try {
         stateToSave.saveStatus.saveInProgress = true
         qwest.post(url, stateToSave.saveStatus.values, {dataType: "json", async: true})
@@ -227,8 +227,8 @@ export default class FormModel {
 
     function onSave(state, params) {
       const onSuccessCallback = params ? params.onSuccessCallback : undefined
-      if (state.saveStatus.hakemusId) {
-        return updateOld(state, state.saveStatus.hakemusId, false, onSuccessCallback)
+      if (self.formOperations.isSaveDraftAllowed(state)) {
+        return updateOld(state, false, onSuccessCallback)
       }
       else {
         return saveNew(state, onSuccessCallback)
@@ -258,7 +258,7 @@ export default class FormModel {
     }
 
     function onSubmit(state) {
-      return updateOld(state, state.saveStatus.hakemusId, true)
+      return updateOld(state, true)
     }
   }
 

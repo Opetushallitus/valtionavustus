@@ -8,8 +8,9 @@ export default class UrlCreator {
 
     this.formApiUrl = props.formApiUrl || defaultImpl
     this.avustusHakuApiUrl = props.avustusHakuApiUrl || defaultImpl
-    this.newHakemusApiUrl = props.newHakemusApiUrl || defaultImpl
-    this.existingHakemusApiUrl = props.existingHakemusApiUrl || defaultImpl
+    this.newEntityApiUrl = props.newEntityApiUrl || defaultImpl
+    this.existingFormApiUrl = props.existingFormApiUrl || defaultImpl
+    this.existingFormApiUrlFromQuery = props.existingFormApiUrlFromQuery || defaultImpl
 
     this.existingHakemusEditUrl = props.existingHakemusEditUrl || defaultImpl
     this.existingHakemusPreviewUrl = props.existingHakemusPreviewUrl || defaultImpl
