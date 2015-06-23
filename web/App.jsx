@@ -80,6 +80,10 @@ const urlCreator = new UrlCreator({
   }
 )
 
+function printEntityId(state) {
+  return state.saveStatus.hakemusId
+}
+
 const query = queryString.parse(location.search)
 const avustusHakuP = Bacon.fromPromise(qwest.get(avustusHakuApiUrl(query.avustushaku || 1)))
 const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(qwest.get(urlCreator.formApiUrl(avustusHaku.id)))})
@@ -96,7 +100,8 @@ const model = new FormModel({
     "onFieldValid": onFieldValid,
     "isSaveDraftAllowed": isSaveDraftAllowed,
     "createUiStateIdentifier": createUiStateIdentifier,
-    "urlCreator": urlCreator
+    "urlCreator": urlCreator,
+    "printEntityId": printEntityId
   },
   "initialStateTransformation": initialStateTransformation,
   "formP": formP

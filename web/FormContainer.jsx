@@ -64,7 +64,7 @@ export default class FormContainer extends React.Component {
                 </div>
               </div>
             </div>
-            <span hidden={true} id="hakemus-id">{saveStatus.hakemusId}</span>
+            <span hidden={true} id="entity-id">{model.formOperations.printEntityId(state)}</span>
             <span hidden={true} id="pending-changes">{ model.hasPendingChanges(state) ? "true" : "false"}</span>
           </section>
           <section id="container">

@@ -41,7 +41,7 @@ function ApplicationPage() {
       return api.readHakemusIdFromHtml().length > 0
     },
     readHakemusIdFromHtml: function() {
-      return api.elementText("hakemus-id")
+      return api.elementText("entity-id")
     },
     getHakemusId: function() {
       return storedHakemusId
