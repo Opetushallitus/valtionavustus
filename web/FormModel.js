@@ -19,8 +19,10 @@ const events = {
 }
 
 export default class FormModel {
-  constructor(formOperations) {
-    this.formOperations = formOperations
+  constructor(props) {
+    this.formOperations = props.formOperations
+    this.initialStateTransformation = props.initialStateTransformation
+    this.formP = props.formP
   }
 
   init() {
@@ -30,19 +32,15 @@ export default class FormModel {
     const previewQueryParam =  query.preview || false
     const develQueryParam =  query.devel || false
 
-    const avustusHakuP = Bacon.fromPromise(qwest.get(self.formOperations.urlCreator.avustusHakuApiUrl(query.avustushaku || 1)))
-    const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(qwest.get(self.formOperations.urlCreator.formApiUrl(avustusHaku.id)))})
     const formValuesP = self.formOperations.containsExistingEntityId(query) ?
       Bacon.fromPromise(qwest.get(self.formOperations.urlCreator.existingFormApiUrlFromQuery(query))).map(function(submission){return submission.answers}) :
-      formP.map(initDefaultValues)
-    const clientSideValidationP = formP.map(initClientSideValidationState)
+      self.formP.map(initDefaultValues)
+    const clientSideValidationP = self.formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
-    const initialState = Bacon.combineTemplate({
-      avustushaku: avustusHakuP,
-      form: formP,
+    const initialStateObject = {
+      form: self.formP,
       saveStatus: {
-        hakemusId: query.hakemus,
         changes: false,
         saveInProgress: false,
         saveTime: null,
@@ -56,7 +54,10 @@ export default class FormModel {
       },
       validationErrors: {},
       clientSideValidation: clientSideValidationP
-    })
+    }
+    self.initialStateTransformation(initialStateObject)
+
+    const initialState = Bacon.combineTemplate(initialStateObject)
     initialState.onValue(function(state) { dispatcher.push(events.initialState, state) })
 
     const autoSave = _.debounce(function(){dispatcher.push(events.save)}, develQueryParam? 100 : 3000)

@@ -1,10 +1,14 @@
 import PolyfillBind from './polyfill-bind'
-import UrlCreator from './UrlCreator'
+
 import React from 'react'
+import Bacon from 'baconjs'
+import qwest from 'qwest'
 import _ from 'lodash'
+import queryString from 'query-string'
 
 import FormContainer from './FormContainer.jsx'
 import FormModel from './FormModel'
+import UrlCreator from './UrlCreator'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
@@ -51,9 +55,10 @@ function createUiStateIdentifier(state) {
 
 function existingFormApiUrl(avustusHakuId, hakemusId) { return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId }
 
+function avustusHakuApiUrl(avustusHakuId) { return "/api/avustushaku/" + avustusHakuId }
+
 const urlCreator = new UrlCreator({
     formApiUrl: function(avustusHakuId) { return "/api/form/" + avustusHakuId },
-    avustusHakuApiUrl: function(avustusHakuId) { return "/api/avustushaku/" + avustusHakuId },
     newEntityApiUrl: function(state) { return "/api/avustushaku/" + state.avustushaku.id + "/hakemus" },
     existingFormApiUrl: function(state) {
       const avustusHakuId = state.avustushaku.id
@@ -71,13 +76,26 @@ const urlCreator = new UrlCreator({
   }
 )
 
+const query = queryString.parse(location.search)
+const avustusHakuP = Bacon.fromPromise(qwest.get(avustusHakuApiUrl(query.avustushaku || 1)))
+const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(qwest.get(urlCreator.formApiUrl(avustusHaku.id)))})
+
+function initialStateTransformation(initialState) {
+  initialState.avustushaku = avustusHakuP
+  initialState.saveStatus.hakemusId = query.hakemus
+}
+
 const model = new FormModel({
-  "containsExistingEntityId": containsExistingEntityId,
-  "isFieldEnabled": isFieldEnabled,
-  "onFieldValid": onFieldValid,
-  "isSaveDraftAllowed": isSaveDraftAllowed,
-  "createUiStateIdentifier": createUiStateIdentifier,
-  "urlCreator": urlCreator
+  "formOperations": {
+    "containsExistingEntityId": containsExistingEntityId,
+    "isFieldEnabled": isFieldEnabled,
+    "onFieldValid": onFieldValid,
+    "isSaveDraftAllowed": isSaveDraftAllowed,
+    "createUiStateIdentifier": createUiStateIdentifier,
+    "urlCreator": urlCreator
+  },
+  "initialStateTransformation": initialStateTransformation,
+  "formP": formP
 })
 const formModelP = model.init()
 

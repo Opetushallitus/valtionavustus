@@ -7,7 +7,6 @@ export default class UrlCreator {
     }
 
     this.formApiUrl = props.formApiUrl || defaultImpl
-    this.avustusHakuApiUrl = props.avustusHakuApiUrl || defaultImpl
     this.newEntityApiUrl = props.newEntityApiUrl || defaultImpl
     this.existingFormApiUrl = props.existingFormApiUrl || defaultImpl
     this.existingFormApiUrlFromQuery = props.existingFormApiUrlFromQuery || defaultImpl
