@@ -50,6 +50,10 @@ function isSaveDraftAllowed(state) {
   return state.saveStatus.hakemusId && state.saveStatus.hakemusId.length > 0
 }
 
+function onSaveCompletedCallback(currentStateInUi, savedStateOnServer) {
+  currentStateInUi.saveStatus.hakemusId = savedStateOnServer.saveStatus.hakemusId
+}
+
 function createUiStateIdentifier(state) {
   return state.form.id + "-" + sessionIdentifierForLocalStorageId
 }
@@ -100,6 +104,7 @@ const model = new FormModel({
     "isFieldEnabled": isFieldEnabled,
     "onFieldValid": onFieldValid,
     "isSaveDraftAllowed": isSaveDraftAllowed,
+    "onSaveCompletedCallback": onSaveCompletedCallback,
     "createUiStateIdentifier": createUiStateIdentifier,
     "urlCreator": urlCreator,
     "printEntityId": printEntityId

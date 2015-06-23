@@ -247,7 +247,7 @@ export default class FormModel {
         return stateFromServer
       }
       locallyStoredState.saveStatus.changes = !_.isEqual(locallyStoredState.saveStatus.values, stateFromServer.saveStatus.values)
-      locallyStoredState.saveStatus.hakemusId = stateFromServer.saveStatus.hakemusId
+      self.formOperations.onSaveCompletedCallback(locallyStoredState, stateFromServer)
       locallyStoredState.saveStatus.saveInProgress = false
       locallyStoredState.saveStatus.saveTime = new Date()
       locallyStoredState.validationErrors["submit"] = []
