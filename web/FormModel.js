@@ -150,7 +150,7 @@ export default class FormModel {
 
     function onFieldValidation(state, validation) {
       state.clientSideValidation[validation.id] = validation.validationErrors.length === 0
-      if (state.saveStatus.hakemusId) {
+      if (self.isSaveDraftAllowed(state)) {
         state.validationErrors[validation.id] = validation.validationErrors
       }
       return state
@@ -183,9 +183,8 @@ export default class FormModel {
         qwest.put(url, state.saveStatus.values, {dataType: "json", async: true})
             .then(function(response) {
               console.log("State saved. Response=", response)
-              state.saveStatus.hakemusId = response.id
               if (onSuccessCallback) {
-                onSuccessCallback(state)
+                onSuccessCallback(state, response)
               }
               var stateSkeletonFromServer = _.cloneDeep(state)
               stateSkeletonFromServer.saveStatus.values = null // state from server is not loaded at all on initial save, so this will be null

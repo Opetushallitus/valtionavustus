@@ -34,8 +34,9 @@ function onFieldValid(state, formModel, fieldId, newFieldValue) {
     if (hakemusIdIsAlreadyInUrl()) {
       return
     }
-    formModel.saveImmediately(function(newState) {
-      const hakemusId = newState.saveStatus.hakemusId
+    formModel.saveImmediately(function(newState, response) {
+      const hakemusId = response.id
+      newState.saveStatus.hakemusId = hakemusId
       const newUrl = formModel.formOperations.urlCreator.existingSubmissionEditUrl(newState.avustushaku.id, hakemusId)
       if (typeof (history.pushState) != "undefined") {
         history.pushState({}, window.title, newUrl);
