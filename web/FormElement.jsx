@@ -8,7 +8,7 @@ class BasicFieldComponent extends React.Component {
 
   validate(value) {
     var validationErrors = []
-    if (this.props.field.required && !value) {
+    if (this.props.field.required && (!value || _.trim(value).length < 1)) {
       validationErrors = [{error: "required"}]
     }
     return validationErrors
