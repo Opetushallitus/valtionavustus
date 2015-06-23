@@ -9,8 +9,9 @@ import _ from 'lodash'
 
 export default class FormContainer extends React.Component {
   render() {
+    const state = this.props.state
     const form = this.props.form
-    const avustushaku = this.props.avustushaku
+    const infoElementValues = this.props.infoElementValues
     const model = this.props.model
     const validationErrors = this.props.validationErrors
     const submitErrors = _.get(validationErrors, "submit", [])
@@ -28,7 +29,7 @@ export default class FormContainer extends React.Component {
 
     if (preview) {
       formElement = <FormPreview model={model}
-                                 infoElementValues={avustushaku}
+                                 infoElementValues={infoElementValues}
                                  form={form}
                                  lang={lang}
                                  translations={translations}
@@ -36,7 +37,7 @@ export default class FormContainer extends React.Component {
     } else {
       formElement = <Form model={model}
                           validationErrors={validationErrors}
-                          infoElementValues={avustushaku}
+                          infoElementValues={infoElementValues}
                           translations={translations}
                           form={form}
                           lang={lang}
@@ -44,7 +45,7 @@ export default class FormContainer extends React.Component {
                           values={values} />
     }
     const openPreview = function() {
-      window.open(model.formOperations.urlCreator.existingSubmissionPreviewUrl(avustushaku.id, saveStatus.hakemusId), "preview")
+      window.open(model.formOperations.urlCreator.existingSubmissionPreviewUrl(state), "preview")
     }
 
     return (

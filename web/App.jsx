@@ -72,7 +72,11 @@ const urlCreator = new UrlCreator({
     },
 
     existingSubmissionEditUrl: function(avustusHakuId, hakemusId) { return "/?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId },
-    existingSubmissionPreviewUrl: function(avustusHakuId, hakemusId) { return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId}
+    existingSubmissionPreviewUrl: function(state) {
+      const avustusHakuId = state.avustushaku.id
+      const hakemusId = state.saveStatus.hakemusId
+      return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId
+    }
   }
 )
 
@@ -103,8 +107,9 @@ formModelP.onValue((state) => {
   console.log("Updating UI with state:", state)
   React.render(
     <FormContainer model={model}
+                   state={state}
                    form={state.form}
-                   avustushaku={state.avustushaku}
+                   infoElementValues={state.avustushaku}
                    clientSideValidation={state.clientSideValidation}
                    validationErrors={state.validationErrors}
                    configuration={state.configuration}
