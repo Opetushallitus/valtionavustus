@@ -44,16 +44,12 @@ class AccordionInfoElement extends React.Component {
     super(props)
     this.handleClick = this.handleClick.bind(this)
     this.determineCssClass = this.determineCssClass.bind(this)
-    const initiallyOpen = this.props.field.params.initiallyOpen
-    const accordionStateClassName = this.determineCssClass(initiallyOpen)
-    this.state = { open: initiallyOpen, accordionStateClassName: accordionStateClassName }
+    this.state = { open: this.props.field.params.initiallyOpen }
   }
 
   handleClick() {
-    var newIsOpen = !this.state.open;
     this.setState({
-      open: newIsOpen,
-      accordionStateClassName: this.determineCssClass(newIsOpen)
+      open: !this.state.open
     })
   }
 
@@ -72,10 +68,11 @@ class AccordionInfoElement extends React.Component {
       const textContent = infoObject.items[i][this.props.lang]
       items.push((<li key={key + "." + i}>{textContent}</li>))
     }
+    const accordionStateClassName = this.determineCssClass(this.state.open)
     return (
         <div>
-          <LocalizedString onClick={this.handleClick} className={"accordion-title " + this.state.accordionStateClassName} translations={infoObject} translationKey="label" lang={lang}/>
-          <div className={"accordion " + this.state.accordionStateClassName}>
+          <LocalizedString onClick={this.handleClick} className={"accordion-title " + accordionStateClassName} translations={infoObject} translationKey="label" lang={lang}/>
+          <div className={"accordion " + accordionStateClassName}>
             <ul id={field.id}>
                 {items}
             </ul>
