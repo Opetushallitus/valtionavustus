@@ -8,25 +8,6 @@ import FormModel from './FormModel'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
-function redirectToUniqueUrlOnValidCallback(state, formModel, fieldId, newFieldValue) {
-  function hakemusIdIsAlreadyInUrl() {
-    return state.saveStatus.hakemusId &&
-      state.saveStatus.hakemusId.length > 0 &&
-      window.location.href.indexOf(state.saveStatus.hakemusId) > -1
-  }
-  if (hakemusIdIsAlreadyInUrl()) {
-    return
-  }
-  formModel.saveImmediately(function(newState) {
-    const hakemusId = newState.saveStatus.hakemusId
-    const newUrl = UrlCreator.existingHakemusEditUrl(newState.avustushaku.id, hakemusId)
-    if (typeof (history.pushState) != "undefined") {
-      history.pushState({}, window.title, newUrl);
-   } else {
-     window.location = newUrl
-   }})
-}
-
 function isFieldEnabled(saved, formModel, fieldId) {
   const disableExceptions = ["primary-email", "organization"]
   if (_.contains(disableExceptions, fieldId)) {
@@ -34,6 +15,28 @@ function isFieldEnabled(saved, formModel, fieldId) {
   }
   return saved
 }
+
+function onFieldValid(state, formModel, fieldId, newFieldValue) {
+  if ("primary-email" === fieldId) {
+    function hakemusIdIsAlreadyInUrl() {
+      return state.saveStatus.hakemusId &&
+        state.saveStatus.hakemusId.length > 0 &&
+        window.location.href.indexOf(state.saveStatus.hakemusId) > -1
+    }
+    if (hakemusIdIsAlreadyInUrl()) {
+      return
+    }
+    formModel.saveImmediately(function(newState) {
+      const hakemusId = newState.saveStatus.hakemusId
+      const newUrl = UrlCreator.existingHakemusEditUrl(newState.avustushaku.id, hakemusId)
+      if (typeof (history.pushState) != "undefined") {
+        history.pushState({}, window.title, newUrl);
+     } else {
+       window.location = newUrl
+     }})
+  }
+}
+
 
 function isSaveDraftAllowed(state) {
   return state.saveStatus.hakemusId && state.saveStatus.hakemusId.length > 0
@@ -46,10 +49,9 @@ function createUiStateIdentifier(state) {
 const model = new FormModel({
   "formOperations": {
     "isFieldEnabled": isFieldEnabled,
+    "onFieldValid": onFieldValid,
     "isSaveDraftAllowed": isSaveDraftAllowed,
-    "createUiStateIdentifier": createUiStateIdentifier,
-    "onValidCallbacks":
-    { "primary-email": [ redirectToUniqueUrlOnValidCallback ] }
+    "createUiStateIdentifier": createUiStateIdentifier
   }
 })
 const formModelP = model.init()

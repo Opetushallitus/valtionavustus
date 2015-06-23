@@ -135,12 +135,7 @@ export default class FormModel {
       }
       const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id];
       if (clientSideValidationPassed) {
-        const onValidCallBacksOfField = self.formOperations.onValidCallbacks[fieldUpdate.id]
-        if (onValidCallBacksOfField && onValidCallBacksOfField.length > 0) {
-          _.each(onValidCallBacksOfField, function(callBackF) {
-            callBackF(state, self, fieldUpdate.id, fieldUpdate.value)
-          })
-        }
+        self.formOperations.onFieldValid(state, self, fieldUpdate.id, fieldUpdate.value)
       }
       state.saveStatus.changes = true
       autoSaveIfAllowed(state)
