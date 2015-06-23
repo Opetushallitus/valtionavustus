@@ -1,7 +1,7 @@
 import Bacon from 'baconjs'
 import _ from 'lodash'
-import Dispatcher from './form/Dispatcher'
-import LocalStorage from './form/LocalStorage.js'
+import Dispatcher from './Dispatcher'
+import LocalStorage from './LocalStorage.js'
 import qwest from 'qwest'
 import queryString from 'query-string'
 

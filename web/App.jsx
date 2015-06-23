@@ -7,8 +7,8 @@ import _ from 'lodash'
 import queryString from 'query-string'
 
 import FormContainer from './form/FormContainer.jsx'
-import FormModel from './FormModel'
-import UrlCreator from './UrlCreator'
+import FormModel from './form/FormModel'
+import UrlCreator from './form/UrlCreator'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
