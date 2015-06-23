@@ -284,4 +284,12 @@ export default class FormModel {
   saveImmediately(callback) {
     dispatcher.push(events.save, { onSuccessCallback: callback })
   }
+
+  hasPendingChanges(state) {
+    return state.saveStatus.changes || state.saveStatus.saveInProgress
+  }
+
+  isSaveDraftAllowed(state) {
+    return this.formOperations.isSaveDraftAllowed(state)
+  }
 }

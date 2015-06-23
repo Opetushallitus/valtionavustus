@@ -41,7 +41,7 @@ export default class FormContainer extends React.Component {
                           translations={translations}
                           form={form}
                           lang={lang}
-                          saved={saveStatus.hakemusId ? true : false}
+                          saved={model.isSaveDraftAllowed(state)}
                           values={values} />
     }
     const openPreview = function() {
@@ -56,16 +56,16 @@ export default class FormContainer extends React.Component {
               <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
               <div id="form-controls" hidden={preview}>
                 <FormSaveStatus submitErrors={submitErrors} saveStatus={saveStatus} translations={translations} lang={lang}/>
-                <button id="submit" type="submit" onClick={model.submit} disabled={!(formIsValid && saveStatus.hakemusId) || saveStatus.changes || saveStatus.saveInProgress}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
+                <button id="submit" type="submit" onClick={model.submit} disabled={!(formIsValid && model.isSaveDraftAllowed(state)) || model.hasPendingChanges(state)}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
                 <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
                 <div id="form-controls-devel" hidden={!configuration.develMode}>
                   <ToggleLanguageButton id="toggle-language" model={model} languages={translations.languages} lang={lang}/>
-                  <button type="button" onClick={openPreview} disabled={!saveStatus.hakemusId}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></button>
+                  <button type="button" onClick={openPreview} disabled={!model.isSaveDraftAllowed(state)}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></button>
                 </div>
               </div>
             </div>
             <span hidden={true} id="hakemus-id">{saveStatus.hakemusId}</span>
-            <span hidden={true} id="pending-changes">{(saveStatus.changes || saveStatus.saveInProgress) ? "true" : "false"}</span>
+            <span hidden={true} id="pending-changes">{ model.hasPendingChanges(state) ? "true" : "false"}</span>
           </section>
           <section id="container">
             {formElement}
