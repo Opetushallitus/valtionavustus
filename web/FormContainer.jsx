@@ -56,7 +56,7 @@ export default class FormContainer extends React.Component {
               <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
               <div id="form-controls" hidden={preview}>
                 <FormSaveStatus submitErrors={submitErrors} saveStatus={saveStatus} translations={translations} lang={lang}/>
-                <button id="submit" type="submit" onClick={model.submit} disabled={!(formIsValid && saveStatus.hakemusId) || saveStatus.changes}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
+                <button id="submit" type="submit" onClick={model.submit} disabled={!(formIsValid && saveStatus.hakemusId) || saveStatus.changes || saveStatus.saveInProgress}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
                 <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
                 <div id="form-controls-devel" hidden={!configuration.develMode}>
                   <ToggleLanguageButton id="toggle-language" model={model} languages={translations.languages} lang={lang}/>
