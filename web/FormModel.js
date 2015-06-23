@@ -20,8 +20,8 @@ const events = {
 }
 
 export default class FormModel {
-  constructor(props) {
-    this.formOperations = props.formOperations
+  constructor(formOperations) {
+    this.formOperations = formOperations
   }
 
   init() {

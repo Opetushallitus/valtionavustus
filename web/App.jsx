@@ -47,12 +47,10 @@ function createUiStateIdentifier(state) {
 }
 
 const model = new FormModel({
-  "formOperations": {
-    "isFieldEnabled": isFieldEnabled,
-    "onFieldValid": onFieldValid,
-    "isSaveDraftAllowed": isSaveDraftAllowed,
-    "createUiStateIdentifier": createUiStateIdentifier
-  }
+  "isFieldEnabled": isFieldEnabled,
+  "onFieldValid": onFieldValid,
+  "isSaveDraftAllowed": isSaveDraftAllowed,
+  "createUiStateIdentifier": createUiStateIdentifier
 })
 const formModelP = model.init()
 
