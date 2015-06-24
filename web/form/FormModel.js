@@ -4,6 +4,7 @@ import Dispatcher from './Dispatcher'
 import LocalStorage from './LocalStorage.js'
 import qwest from 'qwest'
 import queryString from 'query-string'
+import traverse from 'traverse'
 
 const dispatcher = new Dispatcher()
 
@@ -135,12 +136,64 @@ export default class FormModel {
       }
       const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id];
       if (clientSideValidationPassed) {
+        if (growingFieldSetExpandMustBeTriggered(state, fieldUpdate.id)) {
+          console.log('TODO: Create a new repeating group now!')
+        }
         self.formOperations.onFieldValid(state, self, fieldUpdate.id, fieldUpdate.value)
       }
       state.saveStatus.changes = true
       autoSaveIfAllowed(state)
       dispatcher.push(events.uiStateUpdate, fieldUpdate)
       return state
+    }
+
+    function growingFieldSetExpandMustBeTriggered(state, fieldId) {
+      const allGrowingFieldsets = filterJson(state.form.content, function(node) {
+        return node.node.displayAs === "growingFieldset"
+      })
+      const growingSetOfThisField = findJsonNodeContainingId(allGrowingFieldsets, fieldId)
+      if (!growingSetOfThisField) {
+        return false
+      }
+      const allFieldIdsInSameGrowingSet = traverse(growingSetOfThisField).reduce(function(acc, node) {
+        if (node.id) {
+          acc.push(node.id)
+        }
+        return acc
+      }, [])
+      const wholeSetIsValid = _.reduce(allFieldIdsInSameGrowingSet, function(acc, fieldId) {
+        return acc && (state.clientSideValidation[fieldId] !== false)
+      }, true)
+
+      // TODO: Assess if the "last" check is needed. Possibly it's enough that the whole thing is valid, minus last row that needs to be skipped in validation, when there are filled rows.
+      const lastChildOfGrowingSet = _.last(growingSetOfThisField.children)
+      const thisFieldIsInLastChildToBeRepeated = _.some(lastChildOfGrowingSet.children, function(x) { return x.id === fieldId })
+
+      return wholeSetIsValid && thisFieldIsInLastChildToBeRepeated
+    }
+
+    // TODO: Move utility functions somewhere
+    function filterJson(objectOrArray, nodePredicate) {
+      return traverse(objectOrArray).reduce(function(acc, x) {
+        if (nodePredicate(this)) {
+          acc.push(x)
+        }
+        return acc
+      }, [])
+    }
+
+    // TODO: Move utility functions somewhere
+    function findJsonNodeContainingId(objectOrArray, idToFind) {
+      const allNodesContainingNode = _.filter(objectOrArray, function(fieldSetNode) {
+        return !_.isEmpty(filterJson(fieldSetNode, function(childNode) {
+          return childNode.key === "id" && childNode.node === idToFind
+        }))
+      })
+      if (allNodesContainingNode.length > 1) {
+        throw new Error("Cannot handle case with " + allNodesContainingNode.length +
+          " growing parents yet, expected a single one. fieldId=" + idToFind)
+      }
+      return _.first(allNodesContainingNode)
     }
 
     function onUiStateUpdated(state, fieldUpdate) {
