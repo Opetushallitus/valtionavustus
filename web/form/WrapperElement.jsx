@@ -33,7 +33,8 @@ export default class WrapperElement extends React.Component {
     super(props)
     this.fieldTypeMapping = {
       "theme": ThemeWrapperElement,
-      "fieldset": FieldsetElement
+      "fieldset": FieldsetElement,
+      "growingFieldset": FieldsetElement
     }
   }
 
