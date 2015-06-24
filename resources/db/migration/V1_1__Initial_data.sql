@@ -195,36 +195,43 @@ insert into forms (content) VALUES ('
       },
       {
         "type": "wrapperElement",
-        "id":"other-organization-1-fieldset",
+        "id":"other-organizations",
         "displayAs":"growingFieldset",
         "children": [
           {
-            "type": "formField",
-            "id":"other-organization-1",
-            "required":true,
-            "displayAs":"textField",
-            "params":{
-              "size":50,
-              "maxlength":80
-            },
-            "label":{
-              "fi":"Hankkeen muut organisaatiot",
-              "sv":"Andra organisation"
-            }
-          },
-          {
-            "type": "formField",
-            "id":"other-organization-1-email",
-            "required":true,
-            "displayAs":"emailField",
-            "params":{
-              "size":30,
-              "maxlength":80
-            },
-            "label":{
-              "fi":"Yhteyshenkilön sähköposti",
-              "sv":"Kontaktpersonens e-postadress"
-            }
+            "type": "wrapperElement",
+            "id":"other-organization-1-fieldset",
+            "displayAs":"fieldset",
+            "children": [
+              {
+                "type": "formField",
+                "id":"other-organization-1",
+                "required":true,
+                "displayAs":"textField",
+                "params":{
+                  "size":50,
+                  "maxlength":80
+                },
+                "label":{
+                  "fi":"Hankkeen muut organisaatiot",
+                  "sv":"Andra organisation"
+                }
+              },
+              {
+                "type": "formField",
+                "id":"other-organization-1-email",
+                "required":true,
+                "displayAs":"emailField",
+                "params":{
+                  "size":30,
+                  "maxlength":80
+                },
+                "label":{
+                  "fi":"Yhteyshenkilön sähköposti",
+                  "sv":"Kontaktpersonens e-postadress"
+                }
+              }
+            ]
           }
         ]
       }
