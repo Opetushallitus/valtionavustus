@@ -428,6 +428,10 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
   "selection-criteria": {
     "items": [
       {
+        "fi": "Painopisteet: Laatustrategian toiminnan tuki",
+        "sv": "TODO"
+      },
+      {
         "fi": "Vaikuttavuuden edistäminen (ml. yhdensuuntaisuus koulutuksen järjestäjien strategisten tavoitteiden kanssa)",
         "sv": "TODO"
       },
@@ -449,8 +453,8 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
       }
     ],
     "label":{
-      "fi":"Valintaperusteet",
-      "sv":"Urvalskriterier"
+      "fi":"Painopisteet ja valintaperusteet",
+      "sv":"TODO"
     }
   },
   "duration": {
