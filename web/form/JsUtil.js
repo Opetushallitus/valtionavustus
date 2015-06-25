@@ -4,7 +4,7 @@ import traverse from 'traverse'
 export default class JsUtil {
   static flatFilter(objectOrArray, nodePredicate) {
     return traverse(objectOrArray).reduce(function (acc, x) {
-      if (nodePredicate(this)) {
+      if (nodePredicate(x)) {
         acc.push(x)
       }
       return acc
@@ -14,7 +14,7 @@ export default class JsUtil {
   static findJsonNodeContainingId(objectOrArray, idToFind) {
     const allNodesContainingNode = _.filter(objectOrArray, function (fieldSetNode) {
       return !_.isEmpty(JsUtil.flatFilter(fieldSetNode, function (childNode) {
-        return childNode.key === "id" && childNode.node === idToFind
+        return childNode.id === idToFind
       }))
     })
     if (allNodesContainingNode.length > 1) {
