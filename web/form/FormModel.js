@@ -2,6 +2,7 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 import Dispatcher from './Dispatcher'
 import LocalStorage from './LocalStorage.js'
+import FormBranchGrower from './FormBranchGrower.js'
 import JsUtil from './JsUtil.js'
 import qwest from 'qwest'
 import queryString from 'query-string'
@@ -138,7 +139,7 @@ export default class FormModel {
       const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id];
       if (clientSideValidationPassed) {
         if (growingFieldSetExpandMustBeTriggered(state, fieldUpdate.id)) {
-          console.log('TODO: Create a new repeating group now!')
+          expandGrowingFieldset(state, fieldUpdate.id)
         }
         self.formOperations.onFieldValid(state, self, fieldUpdate.id, fieldUpdate.value)
       }
@@ -149,8 +150,7 @@ export default class FormModel {
     }
 
     function growingFieldSetExpandMustBeTriggered(state, fieldId) {
-      const allGrowingFieldsets = JsUtil.flatFilter(state.form.content, n => { return n.displayAs === "growingFieldset" })
-      const growingSetOfThisField = JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
+      const growingSetOfThisField = findGrowingParent(state, fieldId)
       if (!growingSetOfThisField) {
         return false
       }
@@ -167,6 +167,19 @@ export default class FormModel {
       const thisFieldIsInLastChildToBeRepeated = _.some(lastChildOfGrowingSet.children, x => { return x.id === fieldId })
 
       return wholeSetIsValid && thisFieldIsInLastChildToBeRepeated
+    }
+
+    function findGrowingParent(state, fieldId) {
+      const allGrowingFieldsets = JsUtil.flatFilter(state.form.content, n => { return n.displayAs === "growingFieldset" })
+      return JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
+    }
+
+    function expandGrowingFieldset(state, fieldId) {
+      const growingFieldSet = findGrowingParent(state, fieldId)
+      const allExistingFieldIds = JsUtil.flatFilter(state.form.content, n => { return !_.isUndefined(n.id) }).
+        map(n => { return n.id })
+      const newSet = FormBranchGrower.createNewChild(growingFieldSet, allExistingFieldIds)
+      growingFieldSet.children.push(newSet)
     }
 
     function onUiStateUpdated(state, fieldUpdate) {
