@@ -2,6 +2,7 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 import Dispatcher from './Dispatcher'
 import LocalStorage from './LocalStorage.js'
+import JsUtil from './JsUtil.js'
 import qwest from 'qwest'
 import queryString from 'query-string'
 import traverse from 'traverse'
@@ -148,10 +149,10 @@ export default class FormModel {
     }
 
     function growingFieldSetExpandMustBeTriggered(state, fieldId) {
-      const allGrowingFieldsets = filterJson(state.form.content, function(node) {
+      const allGrowingFieldsets = JsUtil.filterJson(state.form.content, function(node) {
         return node.node.displayAs === "growingFieldset"
       })
-      const growingSetOfThisField = findJsonNodeContainingId(allGrowingFieldsets, fieldId)
+      const growingSetOfThisField = JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
       if (!growingSetOfThisField) {
         return false
       }
@@ -170,30 +171,6 @@ export default class FormModel {
       const thisFieldIsInLastChildToBeRepeated = _.some(lastChildOfGrowingSet.children, function(x) { return x.id === fieldId })
 
       return wholeSetIsValid && thisFieldIsInLastChildToBeRepeated
-    }
-
-    // TODO: Move utility functions somewhere
-    function filterJson(objectOrArray, nodePredicate) {
-      return traverse(objectOrArray).reduce(function(acc, x) {
-        if (nodePredicate(this)) {
-          acc.push(x)
-        }
-        return acc
-      }, [])
-    }
-
-    // TODO: Move utility functions somewhere
-    function findJsonNodeContainingId(objectOrArray, idToFind) {
-      const allNodesContainingNode = _.filter(objectOrArray, function(fieldSetNode) {
-        return !_.isEmpty(filterJson(fieldSetNode, function(childNode) {
-          return childNode.key === "id" && childNode.node === idToFind
-        }))
-      })
-      if (allNodesContainingNode.length > 1) {
-        throw new Error("Cannot handle case with " + allNodesContainingNode.length +
-          " growing parents yet, expected a single one. fieldId=" + idToFind)
-      }
-      return _.first(allNodesContainingNode)
     }
 
     function onUiStateUpdated(state, fieldUpdate) {
