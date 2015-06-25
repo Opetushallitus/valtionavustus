@@ -430,7 +430,7 @@ insert into forms (content) VALUES ('
       {
         "type": "formField",
         "id":"other-funding",
-        "required":true,
+        "required":false,
         "displayAs":"textArea",
         "params":{
           "maxlength":1000
