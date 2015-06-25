@@ -12,10 +12,8 @@ export default class JsUtil {
   }
 
   static findJsonNodeContainingId(objectOrArray, idToFind) {
-    const allNodesContainingNode = _.filter(objectOrArray, function (fieldSetNode) {
-      return !_.isEmpty(JsUtil.flatFilter(fieldSetNode, function (childNode) {
-        return childNode.id === idToFind
-      }))
+    const allNodesContainingNode = _.filter(objectOrArray, function (parentNode) {
+      return !_.isEmpty(JsUtil.flatFilter(parentNode, childNode => { return childNode.id === idToFind }))
     })
     if (allNodesContainingNode.length > 1) {
       throw new Error("Cannot handle case with " + allNodesContainingNode.length +

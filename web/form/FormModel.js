@@ -149,9 +149,7 @@ export default class FormModel {
     }
 
     function growingFieldSetExpandMustBeTriggered(state, fieldId) {
-      const allGrowingFieldsets = JsUtil.flatFilter(state.form.content, function(node) {
-        return node.displayAs === "growingFieldset"
-      })
+      const allGrowingFieldsets = JsUtil.flatFilter(state.form.content, n => { return n.displayAs === "growingFieldset" })
       const growingSetOfThisField = JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
       if (!growingSetOfThisField) {
         return false
@@ -160,13 +158,13 @@ export default class FormModel {
       const allFieldIdsInSameGrowingSet = JsUtil.
         flatFilter(growingSetOfThisField, n => { return !_.isUndefined(n.id) }).
         map(n => { return n.id })
-      const wholeSetIsValid = _.reduce(allFieldIdsInSameGrowingSet, function(acc, fieldId) {
+      const wholeSetIsValid = _.reduce(allFieldIdsInSameGrowingSet, (acc, fieldId) => {
         return acc && (state.clientSideValidation[fieldId] !== false)
       }, true)
 
       // TODO: Assess if the "last" check is needed. Possibly it's enough that the whole thing is valid, minus last row that needs to be skipped in validation, when there are filled rows.
       const lastChildOfGrowingSet = _.last(growingSetOfThisField.children)
-      const thisFieldIsInLastChildToBeRepeated = _.some(lastChildOfGrowingSet.children, function(x) { return x.id === fieldId })
+      const thisFieldIsInLastChildToBeRepeated = _.some(lastChildOfGrowingSet.children, x => { return x.id === fieldId })
 
       return wholeSetIsValid && thisFieldIsInLastChildToBeRepeated
     }
