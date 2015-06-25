@@ -149,7 +149,7 @@ export default class FormModel {
     }
 
     function growingFieldSetExpandMustBeTriggered(state, fieldId) {
-      const allGrowingFieldsets = JsUtil.filterJson(state.form.content, function(node) {
+      const allGrowingFieldsets = JsUtil.flatFilter(state.form.content, function(node) {
         return node.node.displayAs === "growingFieldset"
       })
       const growingSetOfThisField = JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)

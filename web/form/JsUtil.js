@@ -2,7 +2,7 @@ import _ from 'lodash'
 import traverse from 'traverse'
 
 export default class JsUtil {
-  static filterJson(objectOrArray, nodePredicate) {
+  static flatFilter(objectOrArray, nodePredicate) {
     return traverse(objectOrArray).reduce(function (acc, x) {
       if (nodePredicate(this)) {
         acc.push(x)
@@ -13,7 +13,7 @@ export default class JsUtil {
 
   static findJsonNodeContainingId(objectOrArray, idToFind) {
     const allNodesContainingNode = _.filter(objectOrArray, function (fieldSetNode) {
-      return !_.isEmpty(JsUtil.filterJson(fieldSetNode, function (childNode) {
+      return !_.isEmpty(JsUtil.flatFilter(fieldSetNode, function (childNode) {
         return childNode.key === "id" && childNode.node === idToFind
       }))
     })
