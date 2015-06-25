@@ -99,6 +99,8 @@
                   :bank-iban [{:error "required"}]
                   :project-goals [{:error "required"}]
                   :project-target [{:error "required"}]
+                  :other-funding []
+                  :other-partners []
                   :project-announce [{:error "required"}]
                   :project-end []}
                  json)))
@@ -126,6 +128,8 @@
                   :bank-iban []
                   :project-goals []
                   :project-target []
+                  :other-funding []
+                  :other-partners []
                   :project-announce []
                   :project-end [{:error "maxlength" :max 10}]}
                  json)))
@@ -154,6 +158,8 @@
                   :bank-iban []
                   :project-goals []
                   :project-target []
+                  :other-funding []
+                  :other-partners []
                   :project-announce []
                   :project-end [{:error "maxlength" :max 10}]}
                  json)))
@@ -188,6 +194,8 @@
                 :bank-iban [{:error "required"}]
                 :project-goals [{:error "required"}]
                 :project-target [{:error "required"}]
+                :other-funding []
+                :other-partners []
                 :project-announce [{:error "required"}]
                 :project-end []}
                json)))
