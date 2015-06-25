@@ -156,12 +156,9 @@ export default class FormModel {
       if (!growingSetOfThisField) {
         return false
       }
-      const allFieldIdsInSameGrowingSet = traverse(growingSetOfThisField).reduce(function(acc, node) {
-        if (node.id) {
-          acc.push(node.id)
-        }
-        return acc
-      }, [])
+      const allFieldIdsInSameGrowingSet = JsUtil.
+        flatFilter(growingSetOfThisField, function(n) { return !_.isUndefined(n.id) }).
+        map(function(n) { return n.id })
       const wholeSetIsValid = _.reduce(allFieldIdsInSameGrowingSet, function(acc, fieldId) {
         return acc && (state.clientSideValidation[fieldId] !== false)
       }, true)
