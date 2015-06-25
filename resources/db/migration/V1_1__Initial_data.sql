@@ -244,7 +244,7 @@ insert into forms (content) VALUES ('
           "maxlength":1000
         },
         "label":{
-          "fi":"Muut yhteistyökumppanit, esim. hanketta konsultoivat yritykset",
+          "fi":"Muut yhteistyökumppanit",
           "sv":"TODO"
         }
       }
@@ -282,6 +282,45 @@ insert into forms (content) VALUES ('
       },
       {
         "type": "formField",
+        "id":"continuation-project",
+        "required":false,
+        "displayAs":"radioButton",
+        "label":{
+          "fi":"Liittyykö hanke aiempaan hankkeeseen",
+          "sv":"Är det uppföljning för en tidigare projekt?"
+        },
+        "options":[
+          {
+            "value":"yes",
+            "label":{
+              "fi":"Kyllä",
+              "sv":"Ja"
+            }
+          },
+          {
+            "value":"no",
+            "label":{
+              "fi":"Ei",
+              "sv":"Nej"
+            }
+          }
+        ]
+      },
+      {
+        "type": "formField",
+        "id":"project-measure",
+        "required":true,
+        "displayAs":"textArea",
+        "params":{
+          "maxlength":2000
+        },
+        "label":{
+          "fi":"Miten hanke tukee hankkeessa mukana olevien koulutuksen järjestäjien strategisten tavoitteiden saavuttamista?",
+          "sv":"TODO"
+        }
+      },
+      {
+        "type": "formField",
         "id":"project-explanation",
         "required":true,
         "displayAs":"textArea",
@@ -305,19 +344,6 @@ insert into forms (content) VALUES ('
         "label":{
           "fi":"Hankkeen kohderyhmät",
           "sv":"Projektets målgrupp"
-        }
-      },
-      {
-        "type": "formField",
-        "id":"project-measure",
-        "required":true,
-        "displayAs":"textArea",
-        "params":{
-          "maxlength":2000
-        },
-        "label":{
-          "fi":"Miten hanke tukee hankkeessa mukana olevien koulutuksen järjestäjien strategisten tavoitteiden saavuttamista?",
-          "sv":"TODO"
         }
       },
       {
@@ -400,32 +426,6 @@ insert into forms (content) VALUES ('
           "fi":"Hankkeen päättymisaika",
           "sv":"När slutar projektet"
         }
-      },
-      {
-        "type": "formField",
-        "id":"continuation-project",
-        "required":false,
-        "displayAs":"radioButton",
-        "label":{
-          "fi":"Liittyykö hanke aiempaan hankkeeseen",
-          "sv":"Är det uppföljning för en tidigare projekt?"
-        },
-        "options":[
-          {
-            "value":"yes",
-            "label":{
-              "fi":"Kyllä",
-              "sv":"Ja"
-            }
-          },
-          {
-            "value":"no",
-            "label":{
-              "fi":"Ei",
-              "sv":"Nej"
-            }
-          }
-        ]
       },
       {
         "type": "formField",
