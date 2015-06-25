@@ -200,12 +200,12 @@ insert into forms (content) VALUES ('
         "children": [
           {
             "type": "wrapperElement",
-            "id":"other-organization-1-fieldset",
+            "id":"other-organizations-1",
             "displayAs":"fieldset",
             "children": [
               {
                 "type": "formField",
-                "id":"other-organization-1",
+                "id":"other-organizations-1-name-1",
                 "required":true,
                 "displayAs":"textField",
                 "params":{
@@ -219,7 +219,7 @@ insert into forms (content) VALUES ('
               },
               {
                 "type": "formField",
-                "id":"other-organization-1-email",
+                "id":"other-organizations-1-email-1",
                 "required":true,
                 "displayAs":"emailField",
                 "params":{
