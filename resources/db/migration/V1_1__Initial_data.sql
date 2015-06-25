@@ -234,6 +234,19 @@ insert into forms (content) VALUES ('
             ]
           }
         ]
+      },
+      {
+        "type": "formField",
+        "id":"other-partners",
+        "required":false,
+        "displayAs":"textArea",
+        "params":{
+          "maxlength":1000
+        },
+        "label":{
+          "fi":"Muut yhteistyökumppanit, esim. hanketta konsultoivat yritykset",
+          "sv":"TODO"
+        }
       }
     ]
   },
