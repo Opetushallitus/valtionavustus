@@ -426,6 +426,19 @@ insert into forms (content) VALUES ('
             }
           }
         ]
+      },
+      {
+        "type": "formField",
+        "id":"other-funding",
+        "required":true,
+        "displayAs":"textArea",
+        "params":{
+          "maxlength":1000
+        },
+        "label":{
+          "fi":"Saako hanke muuta rahoitusta tai onko hankkeella tuloja?",
+          "sv":"TODO"
+        }
       }
     ]
   }
