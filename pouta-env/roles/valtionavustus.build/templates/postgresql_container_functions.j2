@@ -31,5 +31,5 @@ function give_public_schema_to_va() {
 
 function remove_postgresql_container() {
   $DOCKER stop postgresql
-  $DOCKER rm postgresql
+  $DOCKER rm -v postgresql
 }
