@@ -5,8 +5,13 @@ import FormElementError from './FormElementError.jsx'
 import _ from 'lodash'
 
 class BasicFieldComponent extends React.Component {
+  constructor(props) {
+    super(props)
+    this.validateSyntax = this.validateSyntax.bind(this)
+    this.componentDidMount = this.componentDidMount.bind(this)
+  }
 
-  validate(value) {
+  validateSyntax(value) {
     var validationErrors = []
     if (this.props.field.required && (!value || _.trim(value).length < 1)) {
       validationErrors = [{error: "required"}]
@@ -14,16 +19,8 @@ class BasicFieldComponent extends React.Component {
     return validationErrors
   }
 
-  createChangeListener() {
-    const component = this
-    return function(event) {
-      const value = event.target.value
-      component.props.model.setFieldValue(component.props.field.id, value, component.validate(value))
-    }
-  }
-
   componentDidMount() {
-    this.props.model.setFieldValid(this.props.field.id, this.validate(this.props.value))
+    this.props.model.componentDidMount(this.props.field.id, this.props.value, this.validateSyntax)
   }
 
   param(param, defaultValue) {
@@ -48,7 +45,7 @@ class BasicTextField extends BasicFieldComponent {
                 model={this.props.model}
                 value={this.props.value}
                 disabled={this.props.disabled ? "disabled" : ""}
-                onChange={this.createChangeListener()}
+                onChange={e => this.props.onChange(this.props.field.id, e.target.value, this.validateSyntax)}
               />
               {this.props.errorElement}
             </div>)
@@ -76,14 +73,14 @@ class EmailTextField extends BasicFieldComponent {
               model={this.props.model}
               value={this.props.value}
               disabled={this.props.disabled ? "disabled" : ""}
-              onChange={this.createChangeListener()}
+              onChange={e => this.props.onChange(this.props.field.id, e.target.value, this.validateSyntax)}
               />
               {this.props.errorElement}
             </div>)
   }
 
-  validate(value) {
-    var validationErrors = super.validate(value)
+  validateSyntax(value) {
+    var validationErrors = super.validateSyntax(value)
     if (value) {
       const emailError = this.validateEmail(value)
       if (emailError) {
@@ -117,7 +114,7 @@ class BasicTextArea extends BasicFieldComponent {
                 model={this.props.model}
                 value={this.props.value}
                 disabled={this.props.disabled ? "disabled" : ""}
-                onChange={this.createChangeListener()} />
+                onChange={e => this.props.onChange(this.props.field.id, e.target.value, this.validateSyntax)} />
               <div className="length-left-spacer"></div>
               <div id={field.id + ".length"} className="length-left">
                 {lengthLeft + " "}
@@ -151,7 +148,7 @@ class Dropdown extends BasicFieldComponent {
                       required={field.required}
                       disabled={this.props.disabled ? "disabled" : ""}
                       model={this.props.model}
-                      onChange={this.createChangeListener()}
+                      onChange={e => this.props.onChange(this.props.field.id, e.target.value, this.validateSyntax)}
                       value={this.props.value}>
                 {options}
               </select>
@@ -174,7 +171,7 @@ class RadioButton extends BasicFieldComponent {
                                  required={field.required}
                                  disabled={this.props.disabled ? "disabled" : ""}
                                  value={field.options[i].value}
-                                 onChange={this.createChangeListener()}
+                                 onChange={e => this.props.onChange(this.props.field.id, e.target.value, this.validateSyntax)}
                                  checked={field.options[i].value === this.props.value ? true: null} />)
         radiobuttons.push(
           <label key={field.id + "." + field.options[i].value + ".label"}

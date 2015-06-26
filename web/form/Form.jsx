@@ -29,7 +29,8 @@ export default class Form extends React.Component {
                             key={field.id}
                             value={value}
                             field={field}
-                            disabled={fieldDisabled} />
+                            disabled={fieldDisabled}
+                            onChange={model.componentOnChangeListener}/>
       } else if (field.type == "infoElement") {
         return <InfoElement key={field.id} field={field} values={infoElementValues} lang={lang} translations={translations} />
       } else if (field.type == "wrapperElement") {

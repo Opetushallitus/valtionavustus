@@ -26,6 +26,7 @@ export default class FormModel {
     this.formOperations = props.formOperations
     this.initialStateTransformation = props.initialStateTransformation
     this.formP = props.formP
+    this.setFieldValue = this.setFieldValue.bind(this)
   }
 
   init() {
@@ -325,6 +326,22 @@ export default class FormModel {
 
   hasPendingChanges(state) {
     return state.saveStatus.changes || state.saveStatus.saveInProgress
+  }
+
+  componentOnChangeListener(fieldId, newValue, syntaxValidator) {
+    var errors = []
+    if (syntaxValidator) {
+      errors = syntaxValidator(newValue)
+    }
+    dispatcher.push(events.updateField, {id: fieldId, value: newValue, validationErrors: errors})
+  }
+
+  componentDidMount(fieldId, initialValue, syntaxValidator) {
+    var errors = []
+    if (syntaxValidator) {
+      errors = syntaxValidator(initialValue)
+    }
+    dispatcher.push(events.fieldValidation, {id: fieldId, validationErrors: errors})
   }
 
   isSaveDraftAllowed(state) {
