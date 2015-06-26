@@ -20,7 +20,7 @@ class BasicFieldComponent extends React.Component {
   }
 
   componentDidMount() {
-    this.props.model.componentDidMount(this.props.field.id, this.props.value, this.validateSyntax)
+    this.props.model.componentDidMount(this.props.field, this.props.value, this.validateSyntax)
   }
 
   param(param, defaultValue) {

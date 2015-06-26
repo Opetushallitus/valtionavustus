@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import traverse from 'traverse'
+import JsUtil from './JsUtil.js'
 
 export default class FormBranchGrower {
   /**
@@ -29,6 +30,9 @@ export default class FormBranchGrower {
     const currentLastChild = _.last(parentNode.children)
     const newChild = _.cloneDeep(currentLastChild)
     populateNewIdsTo(newChild, parentId, parentId)
+    _.forEach(JsUtil.flatFilter(newChild, n => { return !_.isUndefined(n.id) }),
+      field => { field.skipValidationOnMount = true }
+    )
     return newChild
 
     function populateNewIdsTo(node, parentId, oldNonDistinguishingPrefix) {

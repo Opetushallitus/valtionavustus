@@ -336,12 +336,16 @@ export default class FormModel {
     dispatcher.push(events.updateField, {id: fieldId, value: newValue, validationErrors: errors})
   }
 
-  componentDidMount(fieldId, initialValue, syntaxValidator) {
+  componentDidMount(field, initialValue, syntaxValidator) {
+    if (field.skipValidationOnMount) {
+      field.skipValidationOnMount = false
+      return
+    }
     var errors = []
     if (syntaxValidator) {
       errors = syntaxValidator(initialValue)
     }
-    dispatcher.push(events.fieldValidation, {id: fieldId, validationErrors: errors})
+    dispatcher.push(events.fieldValidation, {id: field.id, validationErrors: errors})
   }
 
   isSaveDraftAllowed(state) {
