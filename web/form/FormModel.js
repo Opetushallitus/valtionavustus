@@ -129,15 +129,9 @@ export default class FormModel {
     }
 
     function onUpdateField(state, fieldUpdate) {
-      state.saveStatus.values[fieldUpdate.id] = fieldUpdate.value
-      if (fieldUpdate.validationErrors) {
-        state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
-        state.clientSideValidation[fieldUpdate.id] = fieldUpdate.validationErrors.length === 0
-      }
-      else {
-        state.clientSideValidation[fieldUpdate.id] = true
-      }
-      const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id];
+      FormModel.updateStateFromFieldUpdate(state, fieldUpdate)
+      triggerRelatedFieldValidationIfNeeded(state, fieldUpdate.id)
+      const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id]
       if (clientSideValidationPassed) {
         if (growingFieldSetExpandMustBeTriggered(state, fieldUpdate.id)) {
           expandGrowingFieldset(state, fieldUpdate.id)
@@ -181,6 +175,21 @@ export default class FormModel {
         map(n => { return n.id })
       const newSet = FormBranchGrower.createNewChild(growingFieldSet, allExistingFieldIds)
       growingFieldSet.children.push(newSet)
+    }
+
+    function triggerRelatedFieldValidationIfNeeded(state, triggeringFieldId) {
+      const growingFieldSet = findGrowingParent(state, triggeringFieldId)
+      if (growingFieldSet) {
+        const myGroup = JsUtil.findJsonNodeContainingId(growingFieldSet.children, triggeringFieldId)
+        const fieldsToValidate = JsUtil.flatFilter(myGroup, f => { return !_.isUndefined(f.id) && f.type === "formField" && f.id !== triggeringFieldId })
+        _.forEach(fieldsToValidate, relatedField => {
+          const relatedFieldValue = state.saveStatus.values[relatedField.id]
+          const relatedFieldUpdate = FormModel.createFieldUpdate(relatedField, relatedFieldValue)
+          FormModel.updateStateFromFieldUpdate(state, relatedFieldUpdate)
+        })
+        return !_.isEmpty(fieldsToValidate)
+      }
+      return false
     }
 
     function onUiStateUpdated(state, fieldUpdate) {
@@ -302,6 +311,20 @@ export default class FormModel {
     }
   }
 
+  static createFieldUpdate(field, value) {
+    return {id: field.id, value: value, validationErrors: FormModel.validateSyntax(field, value)};
+  }
+
+  static updateStateFromFieldUpdate(state, fieldUpdate) {
+    state.saveStatus.values[fieldUpdate.id] = fieldUpdate.value
+    if (fieldUpdate.validationErrors) {
+      state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
+      state.clientSideValidation[fieldUpdate.id] = fieldUpdate.validationErrors.length === 0
+    } else {
+      state.clientSideValidation[fieldUpdate.id] = true
+    }
+  }
+
   static validateSyntax(field, value) {
     var validationErrors = []
     if (field.required && (!value || _.trim(value).length < 1)) {
@@ -357,7 +380,7 @@ export default class FormModel {
   }
 
   componentOnChangeListener(field, newValue) {
-    dispatcher.push(events.updateField, {id: field.id, value: newValue, validationErrors: FormModel.validateSyntax(field, newValue)})
+    dispatcher.push(events.updateField, FormModel.createFieldUpdate(field, newValue))
   }
 
   componentDidMount(field, initialValue) {
