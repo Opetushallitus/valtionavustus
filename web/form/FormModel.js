@@ -302,6 +302,34 @@ export default class FormModel {
     }
   }
 
+  static validateSyntax(field, value) {
+    var validationErrors = []
+    if (field.required && (!value || _.trim(value).length < 1)) {
+      validationErrors = [{error: "required"}]
+    }
+
+    if (field.displayAs === 'emailField' && value) {
+      var emailError = FormModel.validateEmail(value);
+      if (emailError) {
+        validationErrors.push(emailError)
+      }
+    }
+
+    return validationErrors
+  }
+
+  static validateEmail(input) {
+    function lastPartIsLongerThanOne(email) {
+      const parts = email.split('\.')
+      return parts[parts.length -1].length > 1
+    }
+    // Pretty basic regexp, allows anything@anything.anything
+    const validEmailRegexp = /\S+@\S+\.\S+/
+    const validEmail = validEmailRegexp.test(input) && lastPartIsLongerThanOne(input)
+    return validEmail ? undefined : {error: "email"};
+  }
+
+
   // Public API
   changeLanguage(lang) {
     dispatcher.push(events.changeLanguage, lang)
@@ -328,24 +356,16 @@ export default class FormModel {
     return state.saveStatus.changes || state.saveStatus.saveInProgress
   }
 
-  componentOnChangeListener(fieldId, newValue, syntaxValidator) {
-    var errors = []
-    if (syntaxValidator) {
-      errors = syntaxValidator(newValue)
-    }
-    dispatcher.push(events.updateField, {id: fieldId, value: newValue, validationErrors: errors})
+  componentOnChangeListener(field, newValue) {
+    dispatcher.push(events.updateField, {id: field.id, value: newValue, validationErrors: FormModel.validateSyntax(field, newValue)})
   }
 
-  componentDidMount(field, initialValue, syntaxValidator) {
+  componentDidMount(field, initialValue) {
     if (field.skipValidationOnMount) {
       field.skipValidationOnMount = false
       return
     }
-    var errors = []
-    if (syntaxValidator) {
-      errors = syntaxValidator(initialValue)
-    }
-    dispatcher.push(events.fieldValidation, {id: field.id, validationErrors: errors})
+    dispatcher.push(events.fieldValidation, {id: field.id, validationErrors: FormModel.validateSyntax(field, initialValue)})
   }
 
   isSaveDraftAllowed(state) {

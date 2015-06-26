@@ -7,20 +7,11 @@ import _ from 'lodash'
 class BasicFieldComponent extends React.Component {
   constructor(props) {
     super(props)
-    this.validateSyntax = this.validateSyntax.bind(this)
     this.componentDidMount = this.componentDidMount.bind(this)
   }
 
-  validateSyntax(value) {
-    var validationErrors = []
-    if (this.props.field.required && (!value || _.trim(value).length < 1)) {
-      validationErrors = [{error: "required"}]
-    }
-    return validationErrors
-  }
-
   componentDidMount() {
-    this.props.model.componentDidMount(this.props.field, this.props.value, this.validateSyntax)
+    this.props.model.componentDidMount(this.props.field, this.props.value)
   }
 
   param(param, defaultValue) {
@@ -45,7 +36,7 @@ class BasicTextField extends BasicFieldComponent {
                 model={this.props.model}
                 value={this.props.value}
                 disabled={this.props.disabled ? "disabled" : ""}
-                onChange={e => this.props.onChange(this.props.field.id, e.target.value, this.validateSyntax)}
+                onChange={e => this.props.onChange(this.props.field, e.target.value)}
               />
               {this.props.errorElement}
             </div>)
@@ -53,12 +44,6 @@ class BasicTextField extends BasicFieldComponent {
 }
 
 class EmailTextField extends BasicFieldComponent {
-  constructor(props) {
-    super(props)
-    // Pretty basic regexp, allows anything@anything.anything
-    this.validEmailRegexp = /\S+@\S+\.\S+/
-  }
-
   render() {
     const field = this.props.field
     return (<div>
@@ -73,30 +58,10 @@ class EmailTextField extends BasicFieldComponent {
               model={this.props.model}
               value={this.props.value}
               disabled={this.props.disabled ? "disabled" : ""}
-              onChange={e => this.props.onChange(this.props.field.id, e.target.value, this.validateSyntax)}
+              onChange={e => this.props.onChange(this.props.field, e.target.value)}
               />
               {this.props.errorElement}
             </div>)
-  }
-
-  validateSyntax(value) {
-    var validationErrors = super.validateSyntax(value)
-    if (value) {
-      const emailError = this.validateEmail(value)
-      if (emailError) {
-        validationErrors.push(emailError)
-      }
-    }
-    return validationErrors
-  }
-
-  validateEmail(input) {
-    function lastPartIsLongerThanOne(email) {
-      const parts = email.split('\.')
-      return parts[parts.length -1].length > 1
-    }
-    const validEmail = this.validEmailRegexp.test(input) && lastPartIsLongerThanOne(input)
-    return validEmail ? undefined : {error: "email"};
   }
 }
 
@@ -114,7 +79,7 @@ class BasicTextArea extends BasicFieldComponent {
                 model={this.props.model}
                 value={this.props.value}
                 disabled={this.props.disabled ? "disabled" : ""}
-                onChange={e => this.props.onChange(this.props.field.id, e.target.value, this.validateSyntax)} />
+                onChange={e => this.props.onChange(this.props.field, e.target.value)} />
               <div className="length-left-spacer"></div>
               <div id={field.id + ".length"} className="length-left">
                 {lengthLeft + " "}
@@ -148,7 +113,7 @@ class Dropdown extends BasicFieldComponent {
                       required={field.required}
                       disabled={this.props.disabled ? "disabled" : ""}
                       model={this.props.model}
-                      onChange={e => this.props.onChange(this.props.field.id, e.target.value, this.validateSyntax)}
+                      onChange={e => this.props.onChange(this.props.field, e.target.value)}
                       value={this.props.value}>
                 {options}
               </select>
@@ -171,7 +136,7 @@ class RadioButton extends BasicFieldComponent {
                                  required={field.required}
                                  disabled={this.props.disabled ? "disabled" : ""}
                                  value={field.options[i].value}
-                                 onChange={e => this.props.onChange(this.props.field.id, e.target.value, this.validateSyntax)}
+                                 onChange={e => this.props.onChange(this.props.field, e.target.value)}
                                  checked={field.options[i].value === this.props.value ? true: null} />)
         radiobuttons.push(
           <label key={field.id + "." + field.options[i].value + ".label"}
