@@ -129,11 +129,11 @@ export default class FormModel {
 
     function onUpdateField(state, fieldUpdate) {
       updateStateFromFieldUpdate(state, fieldUpdate)
-      triggerRelatedFieldValidationIfNeeded(state, fieldUpdate.id)
+      triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
       const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id]
       if (clientSideValidationPassed) {
-        if (growingFieldSetExpandMustBeTriggered(state, fieldUpdate.id)) {
-          expandGrowingFieldset(state, fieldUpdate.id)
+        if (growingFieldSetExpandMustBeTriggered(state, fieldUpdate)) {
+          expandGrowingFieldset(state, fieldUpdate)
         }
         self.formOperations.onFieldValid(state, self, fieldUpdate.id, fieldUpdate.value)
       }
@@ -143,8 +143,8 @@ export default class FormModel {
       return state
     }
 
-    function growingFieldSetExpandMustBeTriggered(state, fieldId) {
-      const growingSetOfThisField = findGrowingParent(state, fieldId)
+    function growingFieldSetExpandMustBeTriggered(state, fieldUpdate) {
+      const growingSetOfThisField = fieldUpdate.growingParent
       if (!growingSetOfThisField) {
         return false
       }
@@ -158,7 +158,7 @@ export default class FormModel {
 
       // TODO: Assess if the "last" check is needed. Possibly it's enough that the whole thing is valid, minus last row that needs to be skipped in validation, when there are filled rows.
       const lastChildOfGrowingSet = _.last(growingSetOfThisField.children)
-      const thisFieldIsInLastChildToBeRepeated = _.some(lastChildOfGrowingSet.children, x => { return x.id === fieldId })
+      const thisFieldIsInLastChildToBeRepeated = _.some(lastChildOfGrowingSet.children, x => { return x.id === fieldUpdate.id })
 
       return wholeSetIsValid && thisFieldIsInLastChildToBeRepeated
     }
@@ -168,17 +168,18 @@ export default class FormModel {
       return JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
     }
 
-    function expandGrowingFieldset(state, fieldId) {
-      const growingFieldSet = findGrowingParent(state, fieldId)
+    function expandGrowingFieldset(state, fieldUpdate) {
+      const growingFieldSet = fieldUpdate.growingParent
       const allExistingFieldIds = JsUtil.flatFilter(state.form.content, n => { return !_.isUndefined(n.id) }).
         map(n => { return n.id })
       const newSet = FormBranchGrower.createNewChild(growingFieldSet, allExistingFieldIds)
       growingFieldSet.children.push(newSet)
     }
 
-    function triggerRelatedFieldValidationIfNeeded(state, triggeringFieldId) {
-      const growingFieldSet = findGrowingParent(state, triggeringFieldId)
+    function triggerRelatedFieldValidationIfNeeded(state, triggeringFieldUpdate) {
+      const growingFieldSet = triggeringFieldUpdate.growingParent
       if (growingFieldSet) {
+        const triggeringFieldId = triggeringFieldUpdate.id
         const myGroup = JsUtil.findJsonNodeContainingId(growingFieldSet.children, triggeringFieldId)
         const fieldsToValidate = JsUtil.flatFilter(myGroup, f => { return !_.isUndefined(f.id) && f.type === "formField" && f.id !== triggeringFieldId })
         _.forEach(fieldsToValidate, relatedField => {
@@ -319,6 +320,7 @@ export default class FormModel {
     }
 
     function updateStateFromFieldUpdate(state, fieldUpdate) {
+      _.assign(fieldUpdate, { growingParent: findGrowingParent(state, fieldUpdate.id) })
       writeFieldValue(state, fieldUpdate)
       if (fieldUpdate.validationErrors) {
         state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
