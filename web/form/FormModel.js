@@ -26,7 +26,6 @@ export default class FormModel {
     this.formOperations = props.formOperations
     this.initialStateTransformation = props.initialStateTransformation
     this.formP = props.formP
-    this.setFieldValue = this.setFieldValue.bind(this)
   }
 
   init() {
@@ -365,10 +364,6 @@ export default class FormModel {
   // Public API
   changeLanguage(lang) {
     dispatcher.push(events.changeLanguage, lang)
-  }
-
-  setFieldValue(id, value, validationErrors) {
-    dispatcher.push(events.updateField, {id: id, value: value, validationErrors: validationErrors})
   }
 
   setFieldValid(id, validationErrors) {
