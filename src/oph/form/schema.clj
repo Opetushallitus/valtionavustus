@@ -49,8 +49,9 @@
                    :start s/Inst})
 
 (s/defschema Answers
-  "Answers consists of a flat field id to value mapping"
-  {s/Keyword s/Str})
+  "Answers consists of a recursive field id to value mapping"
+  {s/Keyword (s/either s/Str
+                       (s/recursive #'Answers))})
 
 (s/defschema Submission {:id Long
                          :submittime s/Inst

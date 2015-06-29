@@ -163,11 +163,6 @@ export default class FormModel {
       return wholeSetIsValid && thisFieldIsInLastChildToBeRepeated
     }
 
-    function findGrowingParent(state, fieldId) {
-      const allGrowingFieldsets = JsUtil.flatFilter(state.form.content, n => { return n.displayAs === "growingFieldset" })
-      return JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
-    }
-
     function expandGrowingFieldset(state, fieldUpdate) {
       const growingFieldSet = fieldUpdate.growingParent
       const allExistingFieldIds = JsUtil.flatFilter(state.form.content, n => { return !_.isUndefined(n.id) }).
@@ -183,7 +178,7 @@ export default class FormModel {
         const myGroup = JsUtil.findJsonNodeContainingId(growingFieldSet.children, triggeringFieldId)
         const fieldsToValidate = JsUtil.flatFilter(myGroup, f => { return !_.isUndefined(f.id) && f.type === "formField" && f.id !== triggeringFieldId })
         _.forEach(fieldsToValidate, relatedField => {
-          const relatedFieldValue = readFieldValue(state, relatedField.id)
+          const relatedFieldValue = self.readFieldValue(state.form.content, state.saveStatus.values, relatedField.id)
           const relatedFieldUpdate = FormModel.createFieldUpdate(relatedField, relatedFieldValue)
           updateStateFromFieldUpdate(state, relatedFieldUpdate)
         })
@@ -311,16 +306,25 @@ export default class FormModel {
     }
 
 
-    function readFieldValue(state, fieldId) {
-      return state.saveStatus.values[fieldId]
-    }
-
     function writeFieldValue(state, fieldUpdate) {
-      state.saveStatus.values[fieldUpdate.id] = fieldUpdate.value
+      function addChildObjectIfDoesNotExist(parentObject, childId) {
+        if (!parentObject[childId]) {
+          parentObject[childId] = {}
+        }
+      }
+      const answersObject = state.saveStatus.values
+      if (!fieldUpdate.growingParent) {
+        answersObject[fieldUpdate.id] = fieldUpdate.value
+        return
+      }
+      addChildObjectIfDoesNotExist(answersObject, fieldUpdate.growingParent.id)
+      const groupOfField = JsUtil.findJsonNodeContainingId(fieldUpdate.growingParent.children, fieldUpdate.id)
+      addChildObjectIfDoesNotExist(answersObject[fieldUpdate.growingParent.id], groupOfField.id)
+      answersObject[fieldUpdate.growingParent.id][groupOfField.id][fieldUpdate.id] = fieldUpdate.value
     }
 
     function updateStateFromFieldUpdate(state, fieldUpdate) {
-      _.assign(fieldUpdate, { growingParent: findGrowingParent(state, fieldUpdate.id) })
+      _.assign(fieldUpdate, { growingParent: FormModel.findGrowingParent(state.form.content, fieldUpdate.id) })
       writeFieldValue(state, fieldUpdate)
       if (fieldUpdate.validationErrors) {
         state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
@@ -362,8 +366,24 @@ export default class FormModel {
     return validEmail ? undefined : {error: "email"};
   }
 
+  static findGrowingParent(formContent, fieldId) {
+    const allGrowingFieldsets = JsUtil.flatFilter(formContent, n => { return n.displayAs === "growingFieldset" })
+    return JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
+  }
 
   // Public API
+  readFieldValue(formContent, answers, fieldId) {
+    const growingParentOfField = FormModel.findGrowingParent(formContent, fieldId)
+    if (!growingParentOfField) {
+      return answers[fieldId]
+    }
+    const foundParentArray = JsUtil.flatFilter(answers, n => { return !_.isUndefined(n[fieldId]) })
+    if (foundParentArray.length === 0) {
+      return ""
+    }
+    return foundParentArray[0][fieldId]
+  }
+
   changeLanguage(lang) {
     dispatcher.push(events.changeLanguage, lang)
   }
