@@ -129,7 +129,7 @@ export default class FormModel {
     }
 
     function onUpdateField(state, fieldUpdate) {
-      FormModel.updateStateFromFieldUpdate(state, fieldUpdate)
+      updateStateFromFieldUpdate(state, fieldUpdate)
       triggerRelatedFieldValidationIfNeeded(state, fieldUpdate.id)
       const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id]
       if (clientSideValidationPassed) {
@@ -183,9 +183,9 @@ export default class FormModel {
         const myGroup = JsUtil.findJsonNodeContainingId(growingFieldSet.children, triggeringFieldId)
         const fieldsToValidate = JsUtil.flatFilter(myGroup, f => { return !_.isUndefined(f.id) && f.type === "formField" && f.id !== triggeringFieldId })
         _.forEach(fieldsToValidate, relatedField => {
-          const relatedFieldValue = FormModel.readFieldValue(state, relatedField.id)
+          const relatedFieldValue = readFieldValue(state, relatedField.id)
           const relatedFieldUpdate = FormModel.createFieldUpdate(relatedField, relatedFieldValue)
-          FormModel.updateStateFromFieldUpdate(state, relatedFieldUpdate)
+          updateStateFromFieldUpdate(state, relatedFieldUpdate)
         })
         return !_.isEmpty(fieldsToValidate)
       }
@@ -309,28 +309,29 @@ export default class FormModel {
     function onSubmit(state) {
       return updateOld(state, true)
     }
-  }
 
-  static readFieldValue(state, fieldId) {
-    return state.saveStatus.values[fieldId]
-  }
 
-  static writeFieldValue(state, fieldUpdate) {
-    state.saveStatus.values[fieldUpdate.id] = fieldUpdate.value
+    function readFieldValue(state, fieldId) {
+      return state.saveStatus.values[fieldId]
+    }
+
+    function writeFieldValue(state, fieldUpdate) {
+      state.saveStatus.values[fieldUpdate.id] = fieldUpdate.value
+    }
+
+    function updateStateFromFieldUpdate(state, fieldUpdate) {
+      writeFieldValue(state, fieldUpdate)
+      if (fieldUpdate.validationErrors) {
+        state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
+        state.clientSideValidation[fieldUpdate.id] = fieldUpdate.validationErrors.length === 0
+      } else {
+        state.clientSideValidation[fieldUpdate.id] = true
+      }
+    }
   }
 
   static createFieldUpdate(field, value) {
     return {id: field.id, value: value, validationErrors: FormModel.validateSyntax(field, value)};
-  }
-
-  static updateStateFromFieldUpdate(state, fieldUpdate) {
-    FormModel.writeFieldValue(state, fieldUpdate)
-    if (fieldUpdate.validationErrors) {
-      state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
-      state.clientSideValidation[fieldUpdate.id] = fieldUpdate.validationErrors.length === 0
-    } else {
-      state.clientSideValidation[fieldUpdate.id] = true
-    }
   }
 
   static validateSyntax(field, value) {
