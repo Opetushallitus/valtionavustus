@@ -454,7 +454,7 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
   "selection-criteria": {
     "items": [
       {
-        "fi": "Painopisteet: Laatustrategian toiminnan tuki",
+        "fi": "Painopiste: Laatustrategian toiminnan tuki",
         "sv": "TODO"
       },
       {
@@ -479,7 +479,7 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
       }
     ],
     "label":{
-      "fi":"Painopisteet ja valintaperusteet",
+      "fi":"Painopiste ja valintaperusteet",
       "sv":"TODO"
     }
   },
