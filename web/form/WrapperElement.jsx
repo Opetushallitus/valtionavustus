@@ -6,8 +6,9 @@ class ThemeWrapperElement extends React.Component {
     const field = this.props.field
     const lang = this.props.lang
     const children = this.props.children
+    const htmlId = this.props.htmlId
     return (
-        <section className="theme" id={field.id}>
+        <section className="theme" id={htmlId}>
          <h2><LocalizedString translations={field} translationKey="label" lang={lang}/></h2>
           {children}
         </section>
@@ -19,8 +20,9 @@ class FieldsetElement extends React.Component {
   render() {
     const field = this.props.field
     const children = this.props.children
+    const htmlId = this.props.htmlId
     return (
-        <fieldset id={field.id}>
+        <fieldset id={htmlId}>
           {children}
         </fieldset>
     )

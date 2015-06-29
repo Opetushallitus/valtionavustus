@@ -15,17 +15,19 @@ export default class FormPreview extends React.Component {
     const infoElementValues = this.props.infoElementValues.content
 
     const renderField = function (field) {
+      const htmlId = model.constructHtmlId(fields, field.id)
       if (field.type == "formField") {
-        const value = _.get(values, field.id, "")
-        return <FormPreviewElement model={model} lang={lang} key={field.id} value={value} field={field} />
+        var existingInputValue = model.readFieldValue(fields, values, field.id)
+        const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
+        return <FormPreviewElement model={model} lang={lang} key={htmlId} htmlId={htmlId} value={value} field={field} />
       } else if (field.type == "infoElement") {
-        return <InfoElement key={field.id} field={field} values={infoElementValues} lang={lang} translations={translations} />
+        return <InfoElement key={htmlId} htmlId={htmlId} field={field} values={infoElementValues} lang={lang} translations={translations} />
       } else if (field.type == "wrapperElement") {
         const children = []
         for (var i=0; i < field.children.length; i++) {
           children.push(renderField(field.children[i]))
         }
-        return <WrapperElement key={field.id} field={field} lang={lang} children={children} />
+        return <WrapperElement key={htmlId} htmlId={htmlId} field={field} lang={lang} children={children} />
       }
     }
 

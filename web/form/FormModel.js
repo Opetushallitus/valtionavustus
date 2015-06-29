@@ -384,6 +384,15 @@ export default class FormModel {
     return foundParentArray[0][fieldId]
   }
 
+  constructHtmlId(formContent, fieldId) {
+    const growingParentOfField = FormModel.findGrowingParent(formContent, fieldId)
+    const parentItemOfField = growingParentOfField ? JsUtil.findJsonNodeContainingId(growingParentOfField.children, fieldId) : null
+    if (!growingParentOfField || growingParentOfField.id === fieldId || parentItemOfField.id === fieldId) {
+      return fieldId
+    }
+    return parentItemOfField.id + "-" + fieldId
+  }
+
   changeLanguage(lang) {
     dispatcher.push(events.changeLanguage, lang)
   }

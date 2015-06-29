@@ -19,8 +19,8 @@ class BasicInfoComponent extends React.Component {
 
   labelSourceObject() {
     const values = this.props.values
-    const key = this.props.field.id
-    const value = values[key]
+    const key = this.props.key
+    const value = values[this.props.field.id]
 
     if (this.props.field.label != undefined) {
       return this.props.field
@@ -59,11 +59,11 @@ class AccordionInfoElement extends React.Component {
 
   render() {
     const values = this.props.values
-    const key = this.props.field.id
+    const key = this.props.htmlId
     const field = this.props.field
     const lang = this.props.lang
     const items = []
-    var infoObject = values[key];
+    var infoObject = values[field.id];
       for (var i=0; i < infoObject.items.length; i++) {
       const textContent = infoObject.items[i][this.props.lang]
       items.push((<li key={key + "." + i}>{textContent}</li>))
@@ -73,7 +73,7 @@ class AccordionInfoElement extends React.Component {
         <div>
           <LocalizedString onClick={this.handleClick} className={"accordion-title " + accordionStateClassName} translations={infoObject} translationKey="label" lang={lang}/>
           <div className={"accordion " + accordionStateClassName}>
-            <ul id={field.id}>
+            <ul id={key}>
                 {items}
             </ul>
           </div>
@@ -85,8 +85,8 @@ class DateRangeInfoElement extends BasicInfoComponent {
   render() {
     const values = this.props.values
     const lang = this.props.lang
-    const key = this.props.field.id
-    const value = values[key]
+    const key = this.props.key
+    const value = values[this.props.field.id]
     const start = new Date(value.start)
     const startDateTime = this.asDateTimeString(start)
     const end = new Date(value.end)
@@ -105,8 +105,7 @@ class EndOfDateRangeInfoElement extends BasicInfoComponent {
   render() {
     const values = this.props.values
     const lang = this.props.lang
-    const key = this.props.field.id
-    const value = values[key]
+    const value = values[this.props.field.id]
     const end = new Date(value.end)
     const endDateTime = this.asDateTimeString(end)
     const labelSource = this.labelSourceObject()

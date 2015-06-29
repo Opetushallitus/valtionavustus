@@ -4,11 +4,10 @@ import LocalizedString from './LocalizedString.jsx'
 class BasicValue extends React.Component {
   render() {
     var value = "\u00a0" //&nbsp;
-    const field = this.props.field
     if (this.props.value) {
       value = this.props.value
     }
-    return (<span id={field.id}>{value}</span>)
+    return (<span id={this.props.htmlId}>{value}</span>)
   }
 }
 
@@ -25,7 +24,7 @@ class OptionsValue extends React.Component {
         }
       }
     }
-    return (<span id={field.id}>{value}</span>)
+    return (<span id={this.props.htmlId}>{value}</span>)
   }
 }
 

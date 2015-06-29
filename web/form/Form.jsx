@@ -18,29 +18,30 @@ export default class Form extends React.Component {
     const saved = this.props.saved
 
     const renderField = function (field) {
+      const htmlId = model.constructHtmlId(fields, field.id)
       if (field.type == "formField") {
         const fieldDisabled = !model.formOperations.isFieldEnabled(saved, model, field.id)
-        var existingInputValue = model.readFieldValue(fields, values, field.id);
+        var existingInputValue = model.readFieldValue(fields, values, field.id)
         const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
-
         const fieldErrors = _.get(validationErrors, field.id, [])
         return <FormElement validationErrors={fieldErrors}
                             translations={translations}
                             model={model}
                             lang={lang}
-                            key={field.id}
+                            key={htmlId}
+                            htmlId={htmlId}
                             value={value}
                             field={field}
                             disabled={fieldDisabled}
                             onChange={model.componentOnChangeListener}/>
       } else if (field.type == "infoElement") {
-        return <InfoElement key={field.id} field={field} values={infoElementValues} lang={lang} translations={translations} />
+        return <InfoElement key={htmlId} htmlId={htmlId} field={field} values={infoElementValues} lang={lang} translations={translations} />
       } else if (field.type == "wrapperElement") {
         const children = []
         for (var i=0; i < field.children.length; i++) {
           children.push(renderField(field.children[i]))
         }
-        return <WrapperElement key={field.id} field={field} lang={lang} children={children} />
+        return <WrapperElement key={htmlId} htmlId={htmlId} field={field} lang={lang} children={children} />
       }
     }
 
