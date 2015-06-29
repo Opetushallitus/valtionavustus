@@ -183,7 +183,7 @@ export default class FormModel {
         const myGroup = JsUtil.findJsonNodeContainingId(growingFieldSet.children, triggeringFieldId)
         const fieldsToValidate = JsUtil.flatFilter(myGroup, f => { return !_.isUndefined(f.id) && f.type === "formField" && f.id !== triggeringFieldId })
         _.forEach(fieldsToValidate, relatedField => {
-          const relatedFieldValue = state.saveStatus.values[relatedField.id]
+          const relatedFieldValue = FormModel.readFieldValue(state, relatedField.id)
           const relatedFieldUpdate = FormModel.createFieldUpdate(relatedField, relatedFieldValue)
           FormModel.updateStateFromFieldUpdate(state, relatedFieldUpdate)
         })
@@ -311,12 +311,20 @@ export default class FormModel {
     }
   }
 
+  static readFieldValue(state, fieldId) {
+    return state.saveStatus.values[fieldId]
+  }
+
+  static writeFieldValue(state, fieldUpdate) {
+    state.saveStatus.values[fieldUpdate.id] = fieldUpdate.value
+  }
+
   static createFieldUpdate(field, value) {
     return {id: field.id, value: value, validationErrors: FormModel.validateSyntax(field, value)};
   }
 
   static updateStateFromFieldUpdate(state, fieldUpdate) {
-    state.saveStatus.values[fieldUpdate.id] = fieldUpdate.value
+    FormModel.writeFieldValue(state, fieldUpdate)
     if (fieldUpdate.validationErrors) {
       state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
       state.clientSideValidation[fieldUpdate.id] = fieldUpdate.validationErrors.length === 0
