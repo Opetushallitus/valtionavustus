@@ -119,8 +119,45 @@ export default class FormModel {
     }
 
     function onInitialState(state, realInitialState) {
+      addFormFieldsForGrowingFields(realInitialState.form.content, realInitialState.saveStatus.values)
       return realInitialState
     }
+
+    function addFormFieldsForGrowingFields(formContent, answers) {
+      function populateRepeatingItem(baseObject, key, valueOfElement) {
+        _.assign(baseObject, { "id": key })
+        baseObject.children = baseObject.children.map(c => {
+          const primitiveElement = _.cloneDeep(c)
+          const distinguisherOfElement = _.last(primitiveElement.id.split('.')) // e.g. "email"
+          _.forEach(_.keys(valueOfElement), k => {
+            if (_.endsWith(k, '.' + distinguisherOfElement)) {
+              primitiveElement.id = k
+            }
+          })
+          return primitiveElement
+        })
+        return baseObject
+      }
+
+      function populateGrowingSet(growingParentElement, valuesTreeOfElement) {
+        if (growingParentElement.children.length === 0) {
+          throw new Error("Expected an existing child for growing set '" + growingParentElement.id + "' to get the field configurations from there.")
+        }
+        const childPrototype = growingParentElement.children[0]
+        growingParentElement.children = _.map(_.sortBy(_.keys(valuesTreeOfElement)), k => {
+          const o = {}
+          _.assign(o, childPrototype)
+          populateRepeatingItem(o, k, valuesTreeOfElement[k])
+          return o
+        })
+      }
+      _.forEach(JsUtil.flatFilter(formContent, n => { return n.displayAs === "growingFieldset"}), g => {
+        if (!_.isUndefined(answers[g.id])) {
+          populateGrowingSet(g, answers[g.id])
+        }
+      })
+    }
+
 
     function onChangeLang(state, lang) {
       state.configuration.lang = lang
