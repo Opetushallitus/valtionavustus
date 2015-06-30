@@ -30,7 +30,10 @@ export default class FormBranchGrower {
     const newChild = _.cloneDeep(currentLastChild)
     populateNewIdsTo(newChild, parentId, parentNode)
     _.forEach(JsUtil.flatFilter(newChild, n => { return !_.isUndefined(n.id) }),
-      field => { field.skipValidationOnMount = true }
+      field => {
+        field.skipValidationOnMount = true
+        field.forceDisabled = true
+      }
     )
     return newChild
 

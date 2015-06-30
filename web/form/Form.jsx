@@ -20,7 +20,7 @@ export default class Form extends React.Component {
     const renderField = function (field, renderingParameters) {
       const htmlId = model.constructHtmlId(fields, field.id)
       if (field.type == "formField") {
-        const fieldDisabled = !model.formOperations.isFieldEnabled(saved, model, field.id)
+        const fieldDisabled = !model.formOperations.isFieldEnabled(saved, model, field.id) || field.forceDisabled === true
         var existingInputValue = model.readFieldValue(fields, values, field.id)
         const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
         const fieldErrors = _.get(validationErrors, field.id, [])

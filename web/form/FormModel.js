@@ -197,7 +197,7 @@ export default class FormModel {
       }, true)
 
       // TODO: Assess if the "last" check is needed. Possibly it's enough that the whole thing is valid, minus last row that needs to be skipped in validation, when there are filled rows.
-      const lastChildOfGrowingSet = _.last(growingSetOfThisField.children)
+      const lastChildOfGrowingSet = _.last(_.filter(growingSetOfThisField.children, f => { return !f.forceDisabled }))
       const thisFieldIsInLastChildToBeRepeated = _.some(lastChildOfGrowingSet.children, x => { return x.id === fieldUpdate.id })
 
       return wholeSetIsValid && thisFieldIsInLastChildToBeRepeated
@@ -205,6 +205,9 @@ export default class FormModel {
 
     function expandGrowingFieldset(state, fieldUpdate) {
       const growingFieldSet = fieldUpdate.growingParent
+      _.forEach(JsUtil.flatFilter(growingFieldSet.children, n => { return !_.isUndefined(n.id) }), n => {
+        n.forceDisabled = false
+      })
       const allExistingFieldIds = JsUtil.flatFilter(state.form.content, n => { return !_.isUndefined(n.id) }).
         map(n => { return n.id })
       const newSet = FormBranchGrower.createNewChild(growingFieldSet)
