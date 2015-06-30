@@ -205,7 +205,7 @@ insert into forms (content) VALUES ('
             "children": [
               {
                 "type": "formField",
-                "id":"name",
+                "id":"other-organizations.other-organizations-1.name",
                 "required":true,
                 "displayAs":"textField",
                 "params":{
@@ -219,7 +219,7 @@ insert into forms (content) VALUES ('
               },
               {
                 "type": "formField",
-                "id":"email",
+                "id":"other-organizations.other-organizations-1.email",
                 "required":true,
                 "displayAs":"emailField",
                 "params":{

@@ -24,8 +24,8 @@
    :signature-email "teemu@example.com"
    :language "fi"
    :combined-effort "no"
-   :name "E.T. Extra Terrestrial"
-   :email "et@example"
+   :other-organizations.other-organizations-1.name "E.T. Extra Terrestrial"
+   :other-organizations.other-organizations-1.email "et@example"
    :project-goals "Maaleja"
    :project-explanation "Selitys"
    :bank-bic "5000"
@@ -80,9 +80,9 @@
                                                                                      :signature ""})
             json (json->map body)]
         (should= 400 status)
-        (should= {:email [{:error "required"}]
+        (should= {:other-organizations.other-organizations-1.email [{:error "required"}]
                   :project-begin []
-                  :name [{:error "required"}]
+                  :other-organizations.other-organizations-1.name [{:error "required"}]
                   :primary-email []
                   :signature [{:error "required"}]
                   :project-explanation [{:error "required"}]
@@ -109,9 +109,9 @@
       (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" (assoc valid-answers :project-end "10.10.10000"))
             json (json->map body)]
         (should= 400 status)
-        (should= {:email []
+        (should= {:other-organizations.other-organizations-1.email []
                   :project-begin []
-                  :name []
+                  :other-organizations.other-organizations-1.name []
                   :primary-email []
                   :signature []
                   :project-explanation []
@@ -139,9 +139,9 @@
                                                                                               :project-end "10.10.10000"})
             json (json->map body)]
         (should= 400 status)
-        (should= {:email []
+        (should= {:other-organizations.other-organizations-1.email []
                   :project-begin []
-                  :name []
+                  :other-organizations.other-organizations-1.name []
                   :primary-email []
                   :signature []
                   :project-explanation []
@@ -175,9 +175,9 @@
                                                                                       :primary-email "test@example.com"})
           json (json->map body)]
       (should= 400 status)
-      (should= {:email [{:error "required"}]
+      (should= {:other-organizations.other-organizations-1.email [{:error "required"}]
                 :project-begin []
-                :name [{:error "required"}]
+                :other-organizations.other-organizations-1.name [{:error "required"}]
                 :primary-email []
                 :signature [{:error "required"}]
                 :project-explanation [{:error "required"}]

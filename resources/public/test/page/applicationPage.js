@@ -71,7 +71,7 @@ function ApplicationPage() {
     },
     getInput: function(name) {
       return Input(function () {
-        return applicationElement().find("[name=" + name + "]")
+        return applicationElement().find("[name='" + name + "']")
       })
     },
     setInputValue: function(name, value) {

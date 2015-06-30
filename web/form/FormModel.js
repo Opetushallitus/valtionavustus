@@ -167,7 +167,7 @@ export default class FormModel {
       const growingFieldSet = fieldUpdate.growingParent
       const allExistingFieldIds = JsUtil.flatFilter(state.form.content, n => { return !_.isUndefined(n.id) }).
         map(n => { return n.id })
-      const newSet = FormBranchGrower.createNewChild(growingFieldSet, allExistingFieldIds)
+      const newSet = FormBranchGrower.createNewChild(growingFieldSet)
       growingFieldSet.children.push(newSet)
     }
 
@@ -385,12 +385,7 @@ export default class FormModel {
   }
 
   constructHtmlId(formContent, fieldId) {
-    const growingParentOfField = FormModel.findGrowingParent(formContent, fieldId)
-    const parentItemOfField = growingParentOfField ? JsUtil.findJsonNodeContainingId(growingParentOfField.children, fieldId) : null
-    if (!growingParentOfField || growingParentOfField.id === fieldId || parentItemOfField.id === fieldId) {
-      return fieldId
-    }
-    return parentItemOfField.id + "-" + fieldId
+    return fieldId // For the time being, our field ids are unique within the form
   }
 
   changeLanguage(lang) {

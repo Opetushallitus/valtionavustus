@@ -6,51 +6,41 @@ export default class FormBranchGrower {
   /**
    * Assumes that the current direct children of parentNode have ids ending with numbers.
    * That number will be incremented for the direct children, and if those have more children,
-   * their ids will be replicated with their direct parents id as prefix. Like this:
+   * their ids will be replicated with their path from the growing parent as prefix. Like this:
    *
    * other-organisations
    * |
    * +-- other-organisations-1  // existing node
    * |   |
-   * |   +-- other-organisations-1-name
+   * |   +-- other-organisations.other-organisations-1.name
    * |   |
-   * |   +-- other-organisations-1-email
+   * |   +-- other-organisations.other-organisations-1.email
    * |
    * +-- other-organisations-2  // new node
    *     |
-   *     +-- other-organisations-2-name
+   *     +-- other-organisations.other-organisations-2.name
    *     |
-   *     +-- other-organisations-2-email
+   *     +-- other-organisations.other-organisations-2.email
    *
-   * @param parentNode  Node whose children are repeated
-   * @param reservedIds For safety, let's ensure the ids we generate are unique in the whole form
+   * @param parentNode  Node whose children are repeated For safety, let's ensure the ids we generate are unique in the whole form
    */
-  static createNewChild(parentNode, reservedIds) {
+  static createNewChild(parentNode) {
     const parentId = parentNode.id
     const currentLastChild = _.last(parentNode.children)
     const newChild = _.cloneDeep(currentLastChild)
-    populateNewIdsTo(newChild, parentId, parentId)
+    populateNewIdsTo(newChild, parentId, parentNode)
     _.forEach(JsUtil.flatFilter(newChild, n => { return !_.isUndefined(n.id) }),
       field => { field.skipValidationOnMount = true }
     )
     return newChild
 
-    function populateNewIdsTo(node, parentId, oldNonDistinguishingPrefix) {
+    function populateNewIdsTo(node) {
       const oldId = node.id
-      const distinguishingPartOfOldId = oldId.replace(oldNonDistinguishingPrefix, "")
-      var oldIndex = parseIndexFrom(distinguishingPartOfOldId)
-      node.id = joinAndIncrementIfNeeded(parentId, distinguishingPartOfOldId, oldIndex)
-      _.forEach(node.children, n => { populateNewIdsTo(n, node.id, oldId) })
-    }
-
-    function joinAndIncrementIfNeeded(parentId, oldDistinguisher, oldIndex) {
-      const newIndex = oldIndex === "" ? "" : oldIndex + 1
-      const newDistinguisher = oldDistinguisher.replace(new RegExp(oldIndex + '$'), newIndex)
-      const proposedId = parentId + (_.startsWith(newDistinguisher, "-") ? "" : "-") + newDistinguisher
-      if (!_.contains(reservedIds, proposedId)) {
-        return proposedId
-      }
-      return joinAndIncrementIfNeeded(parentId, oldDistinguisher, newIndex + 1)
+      var oldIndex = parseIndexFrom(oldId)
+      node.id = oldId.replace(oldIndex, oldIndex + 1)
+      _.forEach(node.children, n => {
+        n.id = n.id.replace(oldId, node.id)
+      })
     }
 
     function parseIndexFrom(id) {
