@@ -151,6 +151,7 @@ export default class FormModel {
           return o
         })
       }
+
       _.forEach(JsUtil.flatFilter(formContent, n => { return n.displayAs === "growingFieldset"}), g => {
         if (!_.isUndefined(answers[g.id])) {
           populateGrowingSet(g, answers[g.id])
