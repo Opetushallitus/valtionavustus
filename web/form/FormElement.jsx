@@ -170,7 +170,9 @@ export default class FormElement extends React.Component {
   render() {
     const field = this.props.field
     const displayAs = field.displayAs
-    const label = <label htmlFor={this.props.htmlId} className={field.required ? "required" : ""}><LocalizedString  translations={field} translationKey="label" lang={this.props.lang} /></label>
+    const label = this.props.renderingParameters && this.props.renderingParameters.hideLabels === true ?
+      "" :
+      <label htmlFor={this.props.htmlId} className={field.required ? "required" : ""}><LocalizedString  translations={field} translationKey="label" lang={this.props.lang} /></label>
     const errorElement = <FormElementError fieldId={this.props.htmlId} validationErrors={this.props.validationErrors} translations={this.props.translations} lang={this.props.lang}/>
 
     const componentProps =_.assign(this.props, { label: label }, { errorElement: errorElement })

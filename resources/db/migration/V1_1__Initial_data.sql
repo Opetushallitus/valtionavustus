@@ -197,6 +197,9 @@ insert into forms (content) VALUES ('
         "type": "wrapperElement",
         "id":"other-organizations",
         "displayAs":"growingFieldset",
+        "params":{
+          "showOnlyFirstLabels":true
+        },
         "children": [
           {
             "type": "wrapperElement",

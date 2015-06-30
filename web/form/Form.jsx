@@ -17,7 +17,7 @@ export default class Form extends React.Component {
     const translations = this.props.translations
     const saved = this.props.saved
 
-    const renderField = function (field) {
+    const renderField = function (field, renderingParameters) {
       const htmlId = model.constructHtmlId(fields, field.id)
       if (field.type == "formField") {
         const fieldDisabled = !model.formOperations.isFieldEnabled(saved, model, field.id)
@@ -32,6 +32,7 @@ export default class Form extends React.Component {
                             htmlId={htmlId}
                             value={value}
                             field={field}
+                            renderingParameters={renderingParameters}
                             disabled={fieldDisabled}
                             onChange={model.componentOnChangeListener}/>
       } else if (field.type == "infoElement") {
@@ -39,7 +40,16 @@ export default class Form extends React.Component {
       } else if (field.type == "wrapperElement") {
         const children = []
         for (var i=0; i < field.children.length; i++) {
-          children.push(renderField(field.children[i]))
+          function resolveChildRenderingParameters(childIndex) {
+            if (!_.isObject(renderingParameters)) {
+              const isFirstChild = childIndex !== 0;
+              return (field.params && field.params.showOnlyFirstLabels === true && isFirstChild) ? {"hideLabels": true} : null
+            }
+            return renderingParameters
+          }
+
+          const childRenderingParameters = resolveChildRenderingParameters(i)
+          children.push(renderField(field.children[i], childRenderingParameters))
         }
         return <WrapperElement key={htmlId} htmlId={htmlId} field={field} lang={lang} children={children} />
       }
