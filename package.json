@@ -18,8 +18,11 @@
     "traverse": "0.6.6"
   },
   "devDependencies": {
-    "babel-jest": "*",
-    "jest-cli": "^0.4.14",
+    "babel": "^5.6.14",
+    "chai": "^3.0.0",
+    "jsdom": "3.1.2",
+    "mocha": "^2.2.5",
+    "mocha-jsdom": "^0.5.0",
     "mocha-phantomjs": "^3.5.3",
     "phantomjs": "^1.9",
     "react-tools": "^0.13.2",
@@ -36,16 +39,6 @@
     "build": "npm run build-app",
     "watch-app": "watchify web/va/VaApp.jsx -o resources/public/js/app.js --debug --verbose",
     "watch": "npm run watch-app",
-    "test": "jest"
-  },
-  "jest": {
-    "scriptPreprocessor": "node_modules/babel-jest",
-    "testFileExtensions": ["es6", "js"],
-    "moduleFileExtensions": ["js", "json", "es6"],
-    "unmockedModulePathPatterns": [
-      "node_modules/react"
-    ],
-    "testDirectoryName": "test",
-    "testPathDirs": ["web"]
+    "test": "mocha --compilers js:babel/register web/test/*Test.js"
   }
 }
