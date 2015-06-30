@@ -44,6 +44,12 @@
 (defn- is-wrapper-element? [field]
   (= (:type field) "wrapperElement"))
 
+(defn unwrap-answers [answers]
+  (let [map-fields (filter map? (vals answers))]
+    (if (empty? map-fields)
+      answers
+      (into answers (map unwrap-answers map-fields)))))
+
 (declare flatten-elements)
 
 (defn unwrap-node [node]
@@ -67,7 +73,7 @@
          (into {}))))
 
 (defn validate-form [form answers]
-  (let [validator (partial validate-field answers)]
+  (let [validator (partial validate-field (unwrap-answers answers))]
     (->> (find-fields (:content form))
        (map validator)
        (into {}))))
