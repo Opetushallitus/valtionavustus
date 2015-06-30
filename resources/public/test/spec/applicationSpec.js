@@ -1,6 +1,10 @@
 (function () {
   var page = ApplicationPage()
 
+  beforeEach(function() {
+    window.localStorage.clear()
+  })
+
   afterEach(function() {
     if (this.currentTest.state == 'failed') {
       takeScreenshot()
