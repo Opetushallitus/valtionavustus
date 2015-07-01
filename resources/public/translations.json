@@ -33,6 +33,10 @@
     "time": {
       "fi": "klo",
       "sv": "kl."
+    },
+    "remove": {
+      "fi": "poista",
+      "sv": "ta bort"
     }
   },
   "errors": {

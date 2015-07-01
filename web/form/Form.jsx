@@ -19,8 +19,8 @@ export default class Form extends React.Component {
 
     const renderField = function (field, renderingParameters) {
       const htmlId = model.constructHtmlId(fields, field.id)
+      const fieldDisabled = !model.formOperations.isFieldEnabled(saved, model, field.id) || field.forceDisabled === true
       if (field.type == "formField") {
-        const fieldDisabled = !model.formOperations.isFieldEnabled(saved, model, field.id) || field.forceDisabled === true
         var existingInputValue = model.readFieldValue(fields, values, field.id)
         const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
         const fieldErrors = _.get(validationErrors, field.id, [])
@@ -53,7 +53,7 @@ export default class Form extends React.Component {
           const childRenderingParameters = resolveChildRenderingParameters(i)
           children.push(renderField(field.children[i], childRenderingParameters))
         }
-        return <WrapperElement key={htmlId} htmlId={htmlId} field={field} lang={lang} children={children} />
+        return <WrapperElement key={htmlId} htmlId={htmlId} field={field} lang={lang} children={children} disabled={fieldDisabled} translations={translations} />
       }
     }
 

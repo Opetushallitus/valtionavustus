@@ -1,4 +1,5 @@
 import React from 'react'
+import Translator from './Translator.js'
 import LocalizedString from './LocalizedString.jsx'
 
 class ThemeWrapperElement extends React.Component {
@@ -49,10 +50,13 @@ class GrowingFieldsetChildElement extends React.Component {
     const field = this.props.field
     const children = this.props.children
     const htmlId = this.props.htmlId
+    const removeImgPath = this.props.disabled ? "img/remove_line_disabled.png" : "img/remove_line_enabled.png"
+    const removeAltText = new Translator(this.props.translations["misc"]).translate("remove", this.props.lang, "POISTA")
     return (
       <li>
         <fieldset id={htmlId}>
           {children}
+          <img src={removeImgPath} alt={removeAltText} title={removeAltText}/>
         </fieldset>
       </li>
     )

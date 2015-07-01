@@ -27,7 +27,7 @@ export default class FormPreview extends React.Component {
         for (var i=0; i < field.children.length; i++) {
           children.push(renderField(field.children[i]))
         }
-        return <WrapperElement key={htmlId} htmlId={htmlId} field={field} lang={lang} children={children} />
+        return <WrapperElement key={htmlId} htmlId={htmlId} field={field} lang={lang} children={children} translations={translations} />
       }
     }
 
