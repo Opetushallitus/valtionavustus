@@ -35,10 +35,10 @@ class BasicTextField extends BasicFieldComponent {
                 maxLength={this.param("maxlength")}
                 model={this.props.model}
                 value={this.props.value}
+                className={!_.isEmpty(this.props.validationErrors) ? "error" : ""}
                 disabled={this.props.disabled ? "disabled" : ""}
                 onChange={e => this.props.onChange(this.props.field, e.target.value)}
               />
-              {this.props.errorElement}
             </div>)
   }
 }
@@ -57,10 +57,10 @@ class EmailTextField extends BasicFieldComponent {
               maxLength={this.param("maxlength")}
               model={this.props.model}
               value={this.props.value}
+              className={!_.isEmpty(this.props.validationErrors) ? "error" : ""}
               disabled={this.props.disabled ? "disabled" : ""}
               onChange={e => this.props.onChange(this.props.field, e.target.value)}
               />
-              {this.props.errorElement}
             </div>)
   }
 }
@@ -78,6 +78,7 @@ class BasicTextArea extends BasicFieldComponent {
                 maxLength={this.param("maxlength")}
                 model={this.props.model}
                 value={this.props.value}
+                className={!_.isEmpty(this.props.validationErrors) ? "error" : ""}
                 disabled={this.props.disabled ? "disabled" : ""}
                 onChange={e => this.props.onChange(this.props.field, e.target.value)} />
               <div className="length-left-spacer"></div>
@@ -85,7 +86,6 @@ class BasicTextArea extends BasicFieldComponent {
                 {lengthLeft + " "}
                 <LocalizedString translations={this.props.translations.form} translationKey="lengthleft" lang={this.props.lang}/>
               </div>
-              {this.props.errorElement}
             </div>)
   }
 }
@@ -111,13 +111,13 @@ class Dropdown extends BasicFieldComponent {
               <select id={this.props.htmlId}
                       name={this.props.htmlId}
                       required={field.required}
+                      className={!_.isEmpty(this.props.validationErrors) ? "error" : ""}
                       disabled={this.props.disabled ? "disabled" : ""}
                       model={this.props.model}
                       onChange={e => this.props.onChange(this.props.field, e.target.value)}
                       value={this.props.value}>
                 {options}
               </select>
-              {this.props.errorElement}
             </div>)
   }
 }
@@ -134,6 +134,7 @@ class RadioButton extends BasicFieldComponent {
                                  key={this.props.htmlId + "." + field.options[i].value}
                                  name={this.props.htmlId}
                                  required={field.required}
+                                 className={!_.isEmpty(this.props.validationErrors) ? "error" : ""}
                                  disabled={this.props.disabled ? "disabled" : ""}
                                  value={field.options[i].value}
                                  onChange={e => this.props.onChange(this.props.field, e.target.value)}
@@ -149,7 +150,6 @@ class RadioButton extends BasicFieldComponent {
     return (<div>
               {this.props.label}
               {radiobuttons}
-              {this.props.errorElement}
             </div>)
   }
 }
@@ -182,6 +182,5 @@ export default class FormElement extends React.Component {
       input = React.createElement(this.fieldTypeMapping[displayAs], componentProps)
     }
     return input
-
   }
 }

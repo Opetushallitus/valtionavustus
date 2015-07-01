@@ -89,7 +89,7 @@ body {
   padding: 0 20px 20px 20px;
 
   input[type=text], input[type=email], textarea {
-    margin: 5px 0 20px 0;
+    margin: 5px 10px 20px 0;
   }
 
   textarea {
@@ -205,10 +205,6 @@ ul {
   content: " *";
 }
 
-.error {
-  color: @bright-red;
-}
-
 .length-left {
   color: @dark-gray;
   font-size: 12px;
@@ -222,6 +218,13 @@ textarea:focus,
 button:focus {
   box-shadow: 0 0 5px rgba(97, 186, 233, 1);
   outline: 1px solid @light-blue;
+}
+
+input:focus.error,
+select:focus.error,
+textarea:focus.error {
+  box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+  outline: 1px solid @bright-red;
 }
 
 input,
@@ -245,6 +248,12 @@ textarea {
   border: 1px solid @dark-gray;
   padding: 8px;
   background-color: #fff;
+}
+
+input[type=text].error,
+input[type=email].error,
+textarea.error {
+  border: 1px solid @bright-red;
 }
 
 label {
