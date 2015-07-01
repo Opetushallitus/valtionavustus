@@ -128,13 +128,11 @@ body {
   ol {
     margin: 20px 0 0 -56px;
     list-style-type: none;
-
-    > li {
-      counter-increment: customlistcounter;
-    }
+    counter-reset: item;
 
     > li:before {
-      content: counter(customlistcounter) " ";
+      content: counter(item) "  ";
+      counter-increment: item;
       float: left;
       width: 1em;
       font-size: 18px;
