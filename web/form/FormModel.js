@@ -156,8 +156,12 @@ export default class FormModel {
         if (!_.isUndefined(answers[g.id])) {
           populateGrowingSet(g, answers[g.id])
         }
-        const emptyPlaceHolderChild = FormBranchGrower.createNewChild(g)
-        g.children.push(emptyPlaceHolderChild)
+        if (g.children.length > 1 || (!_.isUndefined(answers[g.id]) && !_.isUndefined(answers[g.id][g.children[0].id]))) {
+          const enabledPlaceHolderChild = FormBranchGrower.createNewChild(g, true)
+          g.children.push(enabledPlaceHolderChild)
+        }
+        const disabledPlaceHolderChild = FormBranchGrower.createNewChild(g, false)
+        g.children.push(disabledPlaceHolderChild)
       })
     }
 

@@ -24,7 +24,7 @@ export default class FormBranchGrower {
    *
    * @param parentNode  Node whose children are repeated For safety, let's ensure the ids we generate are unique in the whole form
    */
-  static createNewChild(parentNode) {
+  static createNewChild(parentNode, enable) {
     const parentId = parentNode.id
     const currentLastChild = _.last(parentNode.children)
     const newChild = _.cloneDeep(currentLastChild)
@@ -32,7 +32,7 @@ export default class FormBranchGrower {
     _.forEach(JsUtil.flatFilter(newChild, n => { return !_.isUndefined(n.id) }),
       field => {
         field.skipValidationOnMount = true
-        field.forceDisabled = true
+        field.forceDisabled = !enable
       }
     )
     return newChild
