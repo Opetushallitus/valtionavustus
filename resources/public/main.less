@@ -128,7 +128,24 @@ body {
   }
 
   ol {
-    margin: 20px 0 0 -40px;
+    margin: 20px 0 0 -56px;
+    list-style-type: none;
+
+    > li {
+      counter-increment: customlistcounter;
+    }
+
+    > li:before {
+      content: counter(customlistcounter) " ";
+      float: left;
+      width: 1em;
+      font-size: 18px;
+      margin-top: 15px;
+    }
+
+    li:first-child:before {
+      margin-top: 45px;
+    }
   }
 }
 
