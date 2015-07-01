@@ -41,11 +41,13 @@ export default class Form extends React.Component {
         const children = []
         for (var i=0; i < field.children.length; i++) {
           function resolveChildRenderingParameters(childIndex) {
-            if (!_.isObject(renderingParameters)) {
-              const isFirstChild = childIndex === 0;
-              return (field.params && field.params.showOnlyFirstLabels === true && !isFirstChild) ? {"hideLabels": true} : null
+            const result = _.isObject(renderingParameters) ? _.cloneDeep(renderingParameters) : { }
+            result.childIndex = childIndex
+            const isFirstChild = childIndex === 0
+            if (field.params && field.params.showOnlyFirstLabels === true && !isFirstChild) {
+              result.hideLabels = true
             }
-            return renderingParameters
+            return result
           }
 
           const childRenderingParameters = resolveChildRenderingParameters(i)
