@@ -204,7 +204,7 @@ insert into forms (content) VALUES ('
           {
             "type": "wrapperElement",
             "id":"other-organizations-1",
-            "displayAs":"fieldset",
+            "displayAs":"growingFieldsetChild",
             "children": [
               {
                 "type": "formField",

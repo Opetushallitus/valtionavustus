@@ -29,6 +29,36 @@ class FieldsetElement extends React.Component {
   }
 }
 
+class GrowingFieldsetElement extends React.Component {
+  render() {
+    const field = this.props.field
+    const children = this.props.children
+    const htmlId = this.props.htmlId
+    return (
+      <fieldset id={htmlId}>
+        <ol>
+          {children}
+        </ol>
+      </fieldset>
+    )
+  }
+}
+
+class GrowingFieldsetChildElement extends React.Component {
+  render() {
+    const field = this.props.field
+    const children = this.props.children
+    const htmlId = this.props.htmlId
+    return (
+      <li>
+        <fieldset id={htmlId}>
+          {children}
+        </fieldset>
+      </li>
+    )
+  }
+}
+
 export default class WrapperElement extends React.Component {
 
   constructor(props) {
@@ -36,7 +66,8 @@ export default class WrapperElement extends React.Component {
     this.fieldTypeMapping = {
       "theme": ThemeWrapperElement,
       "fieldset": FieldsetElement,
-      "growingFieldset": FieldsetElement
+      "growingFieldset": GrowingFieldsetElement,
+      "growingFieldsetChild": GrowingFieldsetChildElement
     }
   }
 

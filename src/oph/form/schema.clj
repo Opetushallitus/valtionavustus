@@ -35,7 +35,8 @@
                              :id s/Str
                              :displayAs (s/enum :theme
                                                 :fieldset
-                                                :growingFieldset)
+                                                :growingFieldset
+                                                :growingFieldsetChild)
                              :children  [(s/either BasicElement
                                                    (s/recursive #'WrapperElement))]
                              (s/optional-key :params) s/Any
