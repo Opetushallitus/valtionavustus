@@ -18,7 +18,8 @@ const events = {
   changeLanguage: 'changeLanguage',
   save: 'save',
   saveCompleted: 'saveCompleted',
-  submit: 'submit'
+  submit: 'submit',
+  removeField: 'removeField'
 }
 
 export default class FormModel {
@@ -79,7 +80,8 @@ export default class FormModel {
                                           [dispatcher.stream(events.changeLanguage)], onChangeLang,
                                           [dispatcher.stream(events.save)], onSave,
                                           [dispatcher.stream(events.saveCompleted)], onSaveCompleted,
-                                          [dispatcher.stream(events.submit)], onSubmit)
+                                          [dispatcher.stream(events.submit)], onSubmit,
+                                          [dispatcher.stream(events.removeField)], onRemoveField)
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
 
@@ -380,6 +382,18 @@ export default class FormModel {
         state.clientSideValidation[fieldUpdate.id] = true
       }
     }
+
+    function onRemoveField(state, fieldToRemove) {
+      const growingParent = FormModel.findGrowingParent(state.form.content, fieldToRemove.id)
+      const answersObject = state.saveStatus.values
+      if (answersObject[growingParent.id]) {
+        delete answersObject[growingParent.id][fieldToRemove.id]
+      }
+      delete state.clientSideValidation[fieldToRemove.id]
+      _.remove(growingParent.children, fieldToRemove)
+      autoSaveIfAllowed(state)
+      return state
+    }
   }
 
   static createFieldUpdate(field, value) {
@@ -470,5 +484,9 @@ export default class FormModel {
 
   isSaveDraftAllowed(state) {
     return this.formOperations.isSaveDraftAllowed(state)
+  }
+
+  removeField(field) {
+    dispatcher.push(events.removeField, field)
   }
 }

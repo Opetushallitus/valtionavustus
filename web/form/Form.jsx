@@ -43,6 +43,9 @@ export default class Form extends React.Component {
           function resolveChildRenderingParameters(childIndex) {
             const result = _.isObject(renderingParameters) ? _.cloneDeep(renderingParameters) : { }
             result.childIndex = childIndex
+            result.removeMe = function() {
+              model.removeField(field.children[childIndex])
+            }
             const isFirstChild = childIndex === 0
             if (field.params && field.params.showOnlyFirstLabels === true && !isFirstChild) {
               result.hideLabels = true
@@ -53,7 +56,8 @@ export default class Form extends React.Component {
           const childRenderingParameters = resolveChildRenderingParameters(i)
           children.push(renderField(field.children[i], childRenderingParameters))
         }
-        return <WrapperElement key={htmlId} htmlId={htmlId} field={field} lang={lang} children={children} disabled={fieldDisabled} translations={translations} />
+        return <WrapperElement key={htmlId} htmlId={htmlId} field={field} lang={lang} children={children}
+                               disabled={fieldDisabled} translations={translations} renderingParameters={renderingParameters} />
       }
     }
 
