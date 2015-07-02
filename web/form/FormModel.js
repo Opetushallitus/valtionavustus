@@ -333,23 +333,24 @@ export default class FormModel {
     function onSaveCompleted(stateFromUiLoop, stateFromServer) {
       // TODO: Resolve updates from UI with updates from server.
       // At the moment we just discard the values from server here.
-      var locallyStoredState = LocalStorage.load(self.formOperations.createUiStateIdentifier, stateFromServer)
-      if (!locallyStoredState) {
+      var locallyStoredValues = LocalStorage.load(self.formOperations.createUiStateIdentifier, stateFromServer)
+      if (!locallyStoredValues) {
         LocalStorage.save(self.formOperations.createUiStateIdentifier, stateFromServer)
         stateFromServer.saveStatus.saveInProgress = false
         stateFromServer.saveStatus.saveTime = new Date()
         stateFromServer.saveStatus.changes = false
         return stateFromServer
       }
-      locallyStoredState.saveStatus.changes = !_.isEqual(locallyStoredState.saveStatus.values, stateFromServer.saveStatus.values)
-      self.formOperations.onSaveCompletedCallback(locallyStoredState, stateFromServer)
-      locallyStoredState.saveStatus.saveInProgress = false
-      locallyStoredState.saveStatus.saveTime = new Date()
-      locallyStoredState.validationErrors["submit"] = []
-      if (locallyStoredState.saveStatus.changes) {
-        autoSaveIfAllowed(locallyStoredState)
+      stateFromUiLoop.saveStatus.values = locallyStoredValues
+      stateFromUiLoop.saveStatus.changes = !_.isEqual(locallyStoredValues, stateFromServer.saveStatus.values)
+      self.formOperations.onSaveCompletedCallback(stateFromUiLoop, stateFromServer)
+      stateFromUiLoop.saveStatus.saveInProgress = false
+      stateFromUiLoop.saveStatus.saveTime = new Date()
+      stateFromUiLoop.validationErrors["submit"] = []
+      if (stateFromUiLoop.saveStatus.changes) {
+        autoSaveIfAllowed(stateFromUiLoop)
       }
-      return locallyStoredState
+      return stateFromUiLoop
     }
 
     function onSubmit(state) {
