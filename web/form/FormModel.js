@@ -260,6 +260,8 @@ export default class FormModel {
     }
 
     function handleSaveError(state, status, error, method, url, response, submit) {
+      console.log('handleSaveError : error ', JSON.stringify(error))
+      console.log('handleSaveError : response ', JSON.stringify(response))
       state.saveStatus.saveInProgress = false
       if (status === 400) {
         state.validationErrors = JSON.parse(response)
@@ -275,7 +277,7 @@ export default class FormModel {
         state.saveStatus.saveInProgress = true
         qwest.put(url, state.saveStatus.values, {dataType: "json", async: true})
             .then(function(response) {
-              console.log("State saved. Response=", response)
+              console.log("State saved. Response=", JSON.stringify(response))
               if (onSuccessCallback) {
                 onSuccessCallback(state, response)
               }
@@ -300,7 +302,7 @@ export default class FormModel {
         stateToSave.saveStatus.saveInProgress = true
         qwest.post(url, stateToSave.saveStatus.values, {dataType: "json", async: true})
             .then(function(response) {
-              console.log("Saved to server (submit=", submit, "). Response=", response)
+              console.log("Saved to server (submit=", submit, "). Response=", JSON.stringify(response))
               stateToSave.saveStatus.values = response["answers"]
               if (onSuccessCallback) {
                 onSuccessCallback(stateToSave)
