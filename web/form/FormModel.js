@@ -438,9 +438,9 @@ export default class FormModel {
   readFieldValue(formContent, answers, fieldId) {
     const growingParentOfField = FormModel.findGrowingParent(formContent, fieldId)
     if (!growingParentOfField) {
-      return answers[fieldId]
+      return answers ? answers[fieldId] : ""
     }
-    const foundParentArray = JsUtil.flatFilter(answers, n => { return !_.isUndefined(n[fieldId]) })
+    const foundParentArray = JsUtil.flatFilter(answers, n => { return n && !_.isUndefined(n[fieldId]) })
     if (foundParentArray.length === 0) {
       return ""
     }
