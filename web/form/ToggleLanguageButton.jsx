@@ -14,6 +14,6 @@ export default class ToggleLanguageButton extends React.Component {
     const handleClick = function() {
       model.changeLanguage(nextLang)
     }
-    return (<button type="button" id={this.props.id} onClick={handleClick}>{nextLangLabel}</button>)
+    return (<button type="button" className="textButton" id={this.props.id} onClick={handleClick}>{nextLangLabel}</button>)
   }
 }

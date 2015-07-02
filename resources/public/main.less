@@ -290,7 +290,7 @@ input[type=radio]:checked + label {
   border: solid 4px @light-green;
 }
 
-button {
+button.textButton {
   color: #fff;
   background-color: @light-green;
   border-width: 0px;
@@ -301,7 +301,17 @@ button {
   font-weight: 300;
 }
 
-textarea[disabled], button[disabled], html input[disabled] {
+button.remove {
+  background: transparent url('img/remove_line_enabled.png') no-repeat left top;
+  border-width: 0px;
+  width: 20px;
+  height: 22px;
+}
+button[disabled].remove {
+  background: transparent url('img/remove_line_disabled.png') no-repeat left top;
+}
+
+textarea[disabled], button[disabled].textButton, html input[disabled] {
   cursor: default;
   background-color: @light-gray;
 }

@@ -47,17 +47,20 @@ class GrowingFieldsetElement extends React.Component {
 
 class GrowingFieldsetChildElement extends React.Component {
   render() {
-    const field = this.props.field
     const children = this.props.children
     const htmlId = this.props.htmlId
     const removalCallback = this.props.renderingParameters && !this.props.disabled ? this.props.renderingParameters.removeMe : function() {}
-    const removeImgPath = this.props.disabled ? "img/remove_line_disabled.png" : "img/remove_line_enabled.png"
     const removeAltText = new Translator(this.props.translations["misc"]).translate("remove", this.props.lang, "POISTA")
     return (
       <li>
         <fieldset id={htmlId}>
           {children}
-          <img src={removeImgPath} alt={removeAltText} title={removeAltText} onClick={removalCallback}/>
+          <button
+            className="remove"
+            alt={removeAltText}
+            title={removeAltText}
+            onClick={removalCallback}
+            disabled={this.props.disabled ? "disabled" : ""}/>
         </fieldset>
       </li>
     )
