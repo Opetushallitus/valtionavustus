@@ -66,6 +66,9 @@ function ApplicationPage() {
     error: function(field) {
       return applicationElement().find("#" + field + "-error").first().text()
     },
+    classAttributeOf: function(htmlId) {
+      return applicationElement().find("#" + htmlId).first().attr("class")
+    },
     previewButton: function() {
       return Clickable(function() { return applicationElement().find("button:contains(Tallennettu versio)")})
     },

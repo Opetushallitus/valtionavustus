@@ -62,7 +62,7 @@
             expect(page.submitButton().isEnabled()).to.equal(false)
           })
           it("pakollisesta kentästä kerrotaan", function () {
-            expect(page.error("organization")).to.equal('Pakollinen tieto')
+            expect(page.classAttributeOf("organization")).to.include('error')
           })
           it("kerrotaan automaattitallennuksesta", function () {
             expect(["Tallennetaan...", "Kaikki muutokset tallennettu"]).to.include(page.saveInfo());
@@ -109,7 +109,7 @@
                 expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
               })
               it("näkyy validointi virheet", function () {
-                expect(page.error("organization")).to.equal('Pakollinen tieto')
+                expect(page.classAttributeOf("organization")).to.include('error')
               })
               it("näkyy hankkeen kuvaus oikein", function () {
                 expect(page.getInput("project-explanation").value()).to.equal('Hankkeen kuvaus tulee tähän.')
@@ -180,7 +180,7 @@
           expect(page.submitButton().isEnabled()).to.equal(false)
         })
         it("Virheellisestä kentästä kerrotaan", function () {
-          expect(page.error("primary-email")).to.equal('Tarkista sähköpostiosoite')
+          expect(page.classAttributeOf("primary-email")).to.include('error')
         })
       })
 
