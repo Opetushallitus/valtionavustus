@@ -4,7 +4,7 @@
   (:require [speclj.core :refer :all]
             [oph.va.spec-plumbing :refer :all]))
 
-(describe "Mocha tests /"
+(describe "Mocha UI tests /"
 
   (tags :ui)
 
@@ -16,4 +16,13 @@
         (println (:out results))
         (should= 0 (:exit results)))))
 
+(describe "Mocha unit tests /"
+
+  (tags :js-unit)
+
+  (it "are successful"
+      ;; mocha --compilers js:babel/register web/test/*Test.js
+      (let [results (sh "./node_modules/mocha/bin/mocha" "--compilers" "js:babel/register" "web/test/*Test.js")]
+        (println (:out results))
+        (should= 0 (:exit results)))))
 (run-specs)
