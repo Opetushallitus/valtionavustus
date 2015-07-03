@@ -1,8 +1,12 @@
 (ns oph.va.mocha-spec
   (:use [clojure.tools.trace]
-        [clojure.java.shell :only [sh]])
+        [clojure.java.shell :only [sh]]
+        [clojure.string :only [split join]])
   (:require [speclj.core :refer :all]
             [oph.va.spec-plumbing :refer :all]))
+
+(defn is-test-output? [line]
+  (or (.contains line "testcase") (.contains line "testsuite")))
 
 (describe "Mocha UI tests /"
 
@@ -13,9 +17,14 @@
 
   (it "are successful"
       (let [results (sh "node_modules/mocha-phantomjs/bin/mocha-phantomjs"
-                        "-R" "spec"
+                        "-R" "xunit"
                         "-s" "webSecurityEnabled=false"
                         "http://localhost:9000/test/runner.html")]
+        (let [output-lines (split (:out results) #"\n")
+              test-run-output (filter is-test-output? output-lines)
+              test-report-xml-path "target/junit-mocha-js-ui.xml"]
+          (println (apply str "Writing xunit test report to " test-report-xml-path))
+          (spit test-report-xml-path (join test-run-output)))
         (println (:out results))
         (.println System/err (:err results))
         (should= 0 (:exit results)))))
