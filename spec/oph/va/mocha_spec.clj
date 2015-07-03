@@ -28,7 +28,9 @@
       ;; mocha --compilers js:babel/register web/test/*Test.js
       (let [results (sh "./node_modules/mocha/bin/mocha"
                         "--compilers" "js:babel/register"
-                        "web/test/*Test.js")]
+                        "--reporter" "mocha-junit-reporter"
+                        "web/test/*Test.js"
+                        :env {"MOCHA_FILE" "target/junit-mocha-js-unit.xml"})]
         (println (:out results))
         (.println System/err (:err results))
         (should= 0 (:exit results)))))
