@@ -40,6 +40,7 @@
     "build": "npm run build-app",
     "watch-app": "watchify web/va/VaApp.jsx -o resources/public/js/app.js --debug --verbose",
     "watch": "npm run watch-app",
-    "test": "mocha --compilers js:babel/register web/test/*Test.js"
+    "unittest": "mocha --compilers js:babel/register web/test/*Test.js",
+    "watch-unittest": "mocha --watch --compilers js:babel/register web/test/*Test.js"
   }
 }
