@@ -39,7 +39,7 @@ jenkins_jobs:
      chucknorris: true
      command: /usr/local/bin/cibuild.bash
      poll:  "* * * * *"
-     junit: target/junit.xml
+     junit: target/junit*.xml
      skip_tag: true
 
 # System config
