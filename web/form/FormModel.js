@@ -3,6 +3,7 @@ import _ from 'lodash'
 import Dispatcher from './Dispatcher'
 import LocalStorage from './LocalStorage.js'
 import FormBranchGrower from './FormBranchGrower.js'
+import InputValueStorage from './InputValueStorage.js'
 import JsUtil from './JsUtil.js'
 import qwest from 'qwest'
 import queryString from 'query-string'
@@ -227,7 +228,7 @@ export default class FormModel {
         const myGroup = JsUtil.findJsonNodeContainingId(growingFieldSet.children, triggeringFieldId)
         const fieldsToValidate = JsUtil.flatFilter(myGroup, f => { return !_.isUndefined(f.id) && f.type === "formField" && f.id !== triggeringFieldId })
         _.forEach(fieldsToValidate, relatedField => {
-          const relatedFieldValue = self.readFieldValue(state.form.content, state.saveStatus.values, relatedField.id)
+          const relatedFieldValue = InputValueStorage.readValue(state.form.content, state.saveStatus.values, relatedField.id)
           const relatedFieldUpdate = FormModel.createFieldUpdate(relatedField, relatedFieldValue)
           updateStateFromFieldUpdate(state, relatedFieldUpdate)
         })
@@ -357,27 +358,8 @@ export default class FormModel {
       return updateOld(state, true)
     }
 
-
-    function writeFieldValue(state, fieldUpdate) {
-      function addChildObjectIfDoesNotExist(parentObject, childId) {
-        if (!parentObject[childId]) {
-          parentObject[childId] = {}
-        }
-      }
-      const answersObject = state.saveStatus.values
-      if (!fieldUpdate.growingParent) {
-        answersObject[fieldUpdate.id] = fieldUpdate.value
-        return
-      }
-      addChildObjectIfDoesNotExist(answersObject, fieldUpdate.growingParent.id)
-      const groupOfField = JsUtil.findJsonNodeContainingId(fieldUpdate.growingParent.children, fieldUpdate.id)
-      addChildObjectIfDoesNotExist(answersObject[fieldUpdate.growingParent.id], groupOfField.id)
-      answersObject[fieldUpdate.growingParent.id][groupOfField.id][fieldUpdate.id] = fieldUpdate.value
-    }
-
     function updateStateFromFieldUpdate(state, fieldUpdate) {
-      _.assign(fieldUpdate, { growingParent: FormModel.findGrowingParent(state.form.content, fieldUpdate.id) })
-      writeFieldValue(state, fieldUpdate)
+      InputValueStorage.writeValue(state.form, state.saveStatus.values, fieldUpdate.id, fieldUpdate.value)
       if (fieldUpdate.validationErrors) {
         state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
         state.clientSideValidation[fieldUpdate.id] = fieldUpdate.validationErrors.length === 0
@@ -436,17 +418,6 @@ export default class FormModel {
   }
 
   // Public API
-  readFieldValue(formContent, answers, fieldId) {
-    const growingParentOfField = FormModel.findGrowingParent(formContent, fieldId)
-    if (!growingParentOfField) {
-      return answers ? answers[fieldId] : ""
-    }
-    const foundParentArray = JsUtil.flatFilter(answers, n => { return n && !_.isUndefined(n[fieldId]) })
-    if (foundParentArray.length === 0) {
-      return ""
-    }
-    return foundParentArray[0][fieldId]
-  }
 
   constructHtmlId(formContent, fieldId) {
     return fieldId // For the time being, our field ids are unique within the form

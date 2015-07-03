@@ -2,6 +2,7 @@ import React from 'react'
 import FormPreviewElement from './FormPreviewElement.jsx'
 import InfoElement from './InfoElement.jsx'
 import WrapperElement from './WrapperElement.jsx'
+import InputValueStorage from './InputValueStorage.js'
 import _ from 'lodash'
 
 export default class FormPreview extends React.Component {
@@ -17,7 +18,7 @@ export default class FormPreview extends React.Component {
     const renderField = function (field) {
       const htmlId = model.constructHtmlId(fields, field.id)
       if (field.type == "formField") {
-        var existingInputValue = model.readFieldValue(fields, values, field.id)
+        var existingInputValue = InputValueStorage.readValue(fields, values, field.id)
         const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
         return <FormPreviewElement model={model} lang={lang} key={htmlId} htmlId={htmlId} value={value} field={field} />
       } else if (field.type == "infoElement") {

@@ -2,6 +2,7 @@ import React from 'react'
 import FormElement from './FormElement.jsx'
 import InfoElement from './InfoElement.jsx'
 import WrapperElement from './WrapperElement.jsx'
+import InputValueStorage from './InputValueStorage.js'
 import _ from 'lodash'
 
 export default class Form extends React.Component {
@@ -20,8 +21,9 @@ export default class Form extends React.Component {
     const renderField = function (field, renderingParameters) {
       const htmlId = model.constructHtmlId(fields, field.id)
       const fieldDisabled = !model.formOperations.isFieldEnabled(saved, model, field.id) || field.forceDisabled === true
+
       if (field.type == "formField") {
-        var existingInputValue = model.readFieldValue(fields, values, field.id)
+        var existingInputValue = InputValueStorage.readValue(fields, values, field.id)
         const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
         const fieldErrors = _.get(validationErrors, field.id, [])
         return <FormElement validationErrors={fieldErrors}
