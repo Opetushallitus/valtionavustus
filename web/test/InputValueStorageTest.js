@@ -1,9 +1,13 @@
 const assert = require('assert')
 const InputValueStorage = require('../form/InputValueStorage.js')
 
-const answersObject = {}
+var answersObject = {}
 
 describe('Form input that is', function() {
+  beforeEach(() => {
+    answersObject = {}
+  })
+
   describe('flat values', function() {
     it('can be read and written', function() {
       InputValueStorage.writeValue(formContent, answersObject, "organization", "Rovaniemen koulutuskuntayhtymä")
