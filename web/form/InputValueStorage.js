@@ -1,4 +1,4 @@
-import FormModel from './FormModel.js'
+import FormUtil from './FormUtil.js'
 import JsUtil from './JsUtil.js'
 
 import _ from 'lodash'
@@ -10,7 +10,7 @@ export default class InputValueStorage {
         parentObject[childId] = {}
       }
     }
-    const growingParent = FormModel.findGrowingParent(formContent, fieldId)
+    const growingParent = FormUtil.findGrowingParent(formContent, fieldId)
     if (!growingParent) {
       answersObject[fieldId] = newValue
       return
@@ -23,7 +23,7 @@ export default class InputValueStorage {
   }
 
   static readValue(formContent, answersObject, fieldId) {
-    const growingParentOfField = FormModel.findGrowingParent(formContent, fieldId)
+    const growingParentOfField = FormUtil.findGrowingParent(formContent, fieldId)
     if (!growingParentOfField) {
       return answersObject ? answersObject[fieldId] : ""
     }

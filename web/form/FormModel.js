@@ -4,6 +4,7 @@ import Dispatcher from './Dispatcher'
 import LocalStorage from './LocalStorage.js'
 import FormBranchGrower from './FormBranchGrower.js'
 import InputValueStorage from './InputValueStorage.js'
+import FormUtil from './FormUtil.js'
 import JsUtil from './JsUtil.js'
 import qwest from 'qwest'
 import queryString from 'query-string'
@@ -370,7 +371,7 @@ export default class FormModel {
     }
 
     function onRemoveField(state, fieldToRemove) {
-      const growingParent = FormModel.findGrowingParent(state.form.content, fieldToRemove.id)
+      const growingParent = FormUtil.findGrowingParent(state.form.content, fieldToRemove.id)
       const answersObject = state.saveStatus.values
       InputValueStorage.deleteValue(growingParent, answersObject, fieldToRemove.id)
       delete state.clientSideValidation[fieldToRemove.id]
@@ -409,11 +410,6 @@ export default class FormModel {
     const validEmailRegexp = /\S+@\S+\.\S+/
     const validEmail = validEmailRegexp.test(input) && lastPartIsLongerThanOne(input)
     return validEmail ? undefined : {error: "email"};
-  }
-
-  static findGrowingParent(formContent, fieldId) {
-    const allGrowingFieldsets = JsUtil.flatFilter(formContent, n => { return n.displayAs === "growingFieldset" })
-    return JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
   }
 
   // Public API
