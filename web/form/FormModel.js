@@ -359,7 +359,8 @@ export default class FormModel {
     }
 
     function updateStateFromFieldUpdate(state, fieldUpdate) {
-      InputValueStorage.writeValue(state.form, state.saveStatus.values, fieldUpdate.id, fieldUpdate.value)
+      const growingParentIfFound = InputValueStorage.writeValue(state.form, state.saveStatus.values, fieldUpdate.id, fieldUpdate.value)
+      fieldUpdate.growingParent = growingParentIfFound
       if (fieldUpdate.validationErrors) {
         state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
         state.clientSideValidation[fieldUpdate.id] = fieldUpdate.validationErrors.length === 0

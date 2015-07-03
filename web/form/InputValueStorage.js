@@ -19,6 +19,7 @@ export default class InputValueStorage {
     const itemOfField = JsUtil.findJsonNodeContainingId(growingParent.children, fieldId)
     addChildObjectIfDoesNotExist(answersObject[growingParent.id], itemOfField.id)
     answersObject[growingParent.id][itemOfField.id][fieldId] = newValue
+    return growingParent
   }
 
   static readValue(formContent, answersObject, fieldId) {
