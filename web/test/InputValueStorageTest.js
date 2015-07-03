@@ -15,6 +15,14 @@ describe('Form input that is', function() {
       assert.equal(v, 'Rovaniemen koulutuskuntayhtymä')
     })
   })
+
+  describe('growing fieldset values', function() {
+    it('can be read and written', function() {
+      InputValueStorage.writeValue(formContent, answersObject, "other-organizations.other-organizations-1.name", "Kemijärven kaupunki, Itä-Lapin ammattiopisto")
+      const v = InputValueStorage.readValue(formContent, answersObject, "other-organizations.other-organizations-1.name")
+      assert.equal(v, "Kemijärven kaupunki, Itä-Lapin ammattiopisto")
+    })
+  })
 })
 
 const formContent = [
@@ -239,6 +247,41 @@ const formContent = [
               {
                 "type": "formField",
                 "id":"other-organizations.other-organizations-1.email",
+                "required":true,
+                "displayAs":"emailField",
+                "params":{
+                  "size":30,
+                  "maxlength":80
+                },
+                "label":{
+                  "fi":"Yhteyshenkilön sähköposti",
+                  "sv":"Kontaktpersonens e-postadress"
+                }
+              }
+            ]
+          },
+          {
+            "type": "wrapperElement",
+            "id":"other-organizations-2",
+            "displayAs":"growingFieldsetChild",
+            "children": [
+              {
+                "type": "formField",
+                "id":"other-organizations.other-organizations-2.name",
+                "required":true,
+                "displayAs":"textField",
+                "params":{
+                  "size":50,
+                  "maxlength":80
+                },
+                "label":{
+                  "fi":"Hankkeen muut organisaatiot",
+                  "sv":"Andra organisation"
+                }
+              },
+              {
+                "type": "formField",
+                "id":"other-organizations.other-organizations-2.email",
                 "required":true,
                 "displayAs":"emailField",
                 "params":{
