@@ -14,6 +14,7 @@
   (it "are successful"
       (let [results (sh "node_modules/mocha-phantomjs/bin/mocha-phantomjs" "-R" "spec" "-s" "webSecurityEnabled=false" "http://localhost:9000/test/runner.html")]
         (println (:out results))
+        (.println System/err (:err results))
         (should= 0 (:exit results)))))
 
 (describe "Mocha unit tests /"
@@ -24,5 +25,6 @@
       ;; mocha --compilers js:babel/register web/test/*Test.js
       (let [results (sh "./node_modules/mocha/bin/mocha" "--compilers" "js:babel/register" "web/test/*Test.js")]
         (println (:out results))
+        (.println System/err (:err results))
         (should= 0 (:exit results)))))
 (run-specs)
