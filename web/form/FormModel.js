@@ -371,9 +371,7 @@ export default class FormModel {
     function onRemoveField(state, fieldToRemove) {
       const growingParent = FormModel.findGrowingParent(state.form.content, fieldToRemove.id)
       const answersObject = state.saveStatus.values
-      if (answersObject[growingParent.id]) {
-        delete answersObject[growingParent.id][fieldToRemove.id]
-      }
+      InputValueStorage.deleteValue(growingParent, answersObject, fieldToRemove.id)
       delete state.clientSideValidation[fieldToRemove.id]
       _.remove(growingParent.children, fieldToRemove)
       autoSaveIfAllowed(state)

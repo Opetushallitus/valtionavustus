@@ -32,4 +32,10 @@ export default class InputValueStorage {
     }
     return foundParentArray[0][fieldId]
   }
+
+  static deleteValue(growingParent, answersObject, idOfFieldToRemove) {
+    if (answersObject[growingParent.id]) {
+      delete answersObject[growingParent.id][idOfFieldToRemove]
+    }
+  }
 }
