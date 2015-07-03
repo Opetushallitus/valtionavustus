@@ -1,6 +1,7 @@
 import React from 'react'
 import Translator from './Translator.js'
 import LocalizedString from './LocalizedString.jsx'
+import _ from 'lodash'
 
 class ThemeWrapperElement extends React.Component {
   render() {
@@ -49,8 +50,10 @@ class GrowingFieldsetChildElement extends React.Component {
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId
-    const removalCallback = this.props.renderingParameters && !this.props.disabled ? this.props.renderingParameters.removeMe : function() {}
+    const renderingParameters = this.props.renderingParameters
+    const removalCallback = renderingParameters && !this.props.disabled ? renderingParameters.removeMe : function() {}
     const removeAltText = new Translator(this.props.translations["misc"]).translate("remove", this.props.lang, "POISTA")
+    const mustNotBeRemoved = _.isObject(renderingParameters) ? renderingParameters.rowMustNotBeRemoved : false
     return (
       <li>
         <fieldset id={htmlId}>
@@ -60,7 +63,7 @@ class GrowingFieldsetChildElement extends React.Component {
             alt={removeAltText}
             title={removeAltText}
             onClick={removalCallback}
-            disabled={this.props.disabled ? "disabled" : ""}/>
+            disabled={this.props.disabled || mustNotBeRemoved ? "disabled" : ""}/>
         </fieldset>
       </li>
     )

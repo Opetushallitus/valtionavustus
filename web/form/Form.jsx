@@ -52,6 +52,14 @@ export default class Form extends React.Component {
             if (field.params && field.params.showOnlyFirstLabels === true && !isFirstChild) {
               result.hideLabels = true
             }
+            const isSecondToLastChild = childIndex === field.children.length - 2
+            if (isSecondToLastChild) {
+              const nextChild = field.children[childIndex + 1]
+              const nextChildIsDisabled = _.isObject(nextChild) ? nextChild.forceDisabled : false
+              if (nextChildIsDisabled) {
+                result.rowMustNotBeRemoved = true
+              }
+            }
             return result
           }
 
