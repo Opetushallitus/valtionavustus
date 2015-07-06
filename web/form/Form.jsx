@@ -38,7 +38,12 @@ export default class Form extends React.Component {
                             disabled={fieldDisabled}
                             onChange={model.componentOnChangeListener}/>
       } else if (field.type == "infoElement") {
-        return <InfoElement key={htmlId} htmlId={htmlId} field={field} values={infoElementValues} lang={lang} translations={translations} />
+        return <InfoElement key={htmlId}
+                            htmlId={htmlId}
+                            field={field}
+                            values={infoElementValues}
+                            lang={lang}
+                            ranslations={translations} />
       } else if (field.type == "wrapperElement") {
         const children = []
         for (var i=0; i < field.children.length; i++) {
@@ -66,8 +71,14 @@ export default class Form extends React.Component {
           const childRenderingParameters = resolveChildRenderingParameters(i)
           children.push(renderField(field.children[i], childRenderingParameters))
         }
-        return <WrapperElement key={htmlId} htmlId={htmlId} field={field} lang={lang} children={children}
-                               disabled={fieldDisabled} translations={translations} renderingParameters={renderingParameters} />
+        return <WrapperElement key={htmlId}
+                               htmlId={htmlId}
+                               field={field}
+                               lang={lang}
+                               children={children}
+                               disabled={fieldDisabled}
+                               translations={translations}
+                               renderingParameters={renderingParameters} />
       }
     }
 
