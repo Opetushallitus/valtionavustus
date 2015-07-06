@@ -43,7 +43,7 @@ export default class Form extends React.Component {
                             field={field}
                             values={infoElementValues}
                             lang={lang}
-                            ranslations={translations} />
+                            translations={translations} />
       } else if (field.type == "wrapperElement") {
         const children = []
         for (var i=0; i < field.children.length; i++) {
