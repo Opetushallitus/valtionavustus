@@ -21,13 +21,13 @@ wait = {
     return function() {
       if (maxWaitMs == undefined) maxWaitMs = testTimeoutDefault;
       var deferred = Q.defer()
-      var count = maxWaitMs / wait.waitIntervalMs;
+      var count = Math.floor(maxWaitMs / wait.waitIntervalMs);
 
       (function waitLoop(remaining) {
         if (condition()) {
           deferred.resolve()
         } else if (remaining === 0) {
-          deferred.reject("timeout of " + maxWaitMs + " in wait.until of condition:\n" + condition)
+          deferred.reject("timeout of " + maxWaitMs + " ms in wait.until for condition:\n" + condition)
         } else {
           setTimeout(function() {
             waitLoop(remaining-1)
