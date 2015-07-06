@@ -27,7 +27,9 @@ wait = {
         if (condition()) {
           deferred.resolve()
         } else if (remaining === 0) {
-          deferred.reject("timeout of " + maxWaitMs + " ms in wait.until for condition:\n" + condition)
+          const errorStr = "timeout of " + maxWaitMs + "ms in wait.until for condition:\n" + condition
+          console.error(new Error(errorStr))
+          deferred.reject(errorStr)
         } else {
           setTimeout(function() {
             waitLoop(remaining-1)
