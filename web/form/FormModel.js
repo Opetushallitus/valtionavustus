@@ -89,19 +89,12 @@ export default class FormModel {
 
     function initDefaultValues(form) {
       const values = {}
-      const children = form.children ? form.children : form.content
-      for(var i=0; i < children.length; i++) {
-        const field = children[i]
-        if (field.options && field.options.length > 0) {
-          values[field.id] = field.options[0].value
+      const fields = JsUtil.flatFilter(form.content, n => { return !_.isUndefined(n.id) })
+      _.forEach(fields, f => {
+        if (!_.isEmpty(f.options)) {
+          InputValueStorage.writeValue(form.content, values, f.id, f.options[0].value)
         }
-        if (field.type === 'wrapperElement') {
-          var childValues = initDefaultValues(field)
-          for (var fieldId in childValues) {
-            values[fieldId] = childValues[fieldId]
-          }
-        }
-      }
+      })
       return values
     }
 

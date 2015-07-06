@@ -1,5 +1,7 @@
 (ns oph.form.validation
-  (:require [clojure.string :as string]))
+  (:use [clojure.tools.trace :only [trace]])
+  (:require [clojure.string :as string])
+  )
 
 (defn validate-required [field answer]
   (if (and (= (field :required) true) (string/blank? answer))
@@ -23,15 +25,33 @@
       [{:error "maxlength", :max maxlength}]
       [])))
 
+(defn find-value-for-key [values key]
+  (if (some #(= key (:key %)) values)
+    (first (filter #(= key (:key %)) values))
+    (let [values-that-are-maps (filter map? values)
+          nested-map-values (map #(:value %) values-that-are-maps)
+          values-that-are-seqs (filter coll? nested-map-values)
+          nested-seq-values (mapcat #(:value %) (flatten values-that-are-seqs))
+          all-internal-values (concat nested-map-values nested-seq-values)]
+      (if (empty? all-internal-values)
+        nil
+        (find-value-for-key all-internal-values key)))))
+
+(defn find-answer-value [answers key]
+  ( let [found-record (find-value-for-key (answers :value) key)]
+    (if (nil? found-record)
+      nil
+      (:value found-record))))
+
 (defn validate-field-security [answers field]
-  (let [answer (answers (keyword (field :id)))]
+  (let [answer (find-answer-value answers (field :id))]
     {(keyword (field :id)) (concat
        (validate-options field answer)
        (validate-textarea-maxlength field answer)
        (validate-texfield-maxlength field answer))}))
 
 (defn validate-field [answers field]
-  (let [answer (answers (keyword (field :id)))]
+  (let [answer (find-answer-value answers (field :id))]
     {(keyword (field :id)) (concat
        (validate-required field answer)
        (validate-options field answer)
@@ -73,7 +93,7 @@
          (into {}))))
 
 (defn validate-form [form answers]
-  (let [validator (partial validate-field (unwrap-answers answers))]
+  (let [validator (partial validate-field answers)]
     (->> (find-fields (:content form))
        (map validator)
        (into {}))))
