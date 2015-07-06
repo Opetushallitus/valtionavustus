@@ -7,7 +7,7 @@ class BasicValue extends React.Component {
     if (this.props.value) {
       value = this.props.value
     }
-    return (<span id={this.props.htmlId}>{value}</span>)
+    return (<span className="value" id={this.props.htmlId}>{value}</span>)
   }
 }
 
@@ -24,7 +24,7 @@ class OptionsValue extends React.Component {
         }
       }
     }
-    return (<span id={this.props.htmlId}>{value}</span>)
+    return (<span className="value" id={this.props.htmlId}>{value}</span>)
   }
 }
 
@@ -50,9 +50,13 @@ export default class FormPreviewElement extends React.Component {
       preview = React.createElement(this.fieldTypeMapping[displayAs], this.props)
     }
 
+    const label = this.props.renderingParameters && this.props.renderingParameters.hideLabels === true ?
+      "" :
+      <LocalizedString className="key" translations={field} translationKey="label" lang={this.props.lang} />
+
     return (
       <div>
-        <label><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></label>
+        {label}
         {preview}
       </div>
     )

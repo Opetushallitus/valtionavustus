@@ -88,22 +88,48 @@ body {
   margin-right: auto;
   padding: 0 20px 20px 20px;
 
-  input[type=text], input[type=email], textarea {
-    margin: 5px 10px 20px 0;
+  form {
+    input[type=text], input[type=email], textarea {
+      margin: 5px 10px 20px 0;
+    }
+
+    textarea {
+      width: @section-width - 30px;
+      height: 150px;
+      margin-bottom: 0;
+    }
+
+    div.error {
+      margin: 14px 0 0 10px;
+      display: inline;
+    }
+
+    fieldset div {
+      display: inline-block;
+    }
+
+    ol {
+      margin: 20px 0 0 -56px;
+      list-style-type: none;
+      counter-reset: item;
+
+      > li:before {
+        content: counter(item) "  ";
+        counter-increment: item;
+        float: left;
+        width: 1em;
+        font-size: 18px;
+        margin-top: 15px;
+      }
+
+      li:first-child:before {
+        margin-top: 45px;
+      }
+    }
   }
 
-  textarea {
-    width: @section-width - 30px;
-    height: 150px;
-    margin-bottom: 0;
-  }
-
-  div.error {
-    margin: 14px 0 0 10px;
-    display: inline;
-  }
-
-  fieldset div {
+  div.fieldset > div {
+    width: 450px;
     display: inline-block;
   }
 
@@ -122,25 +148,6 @@ body {
 
     > div, > fieldset {
       margin: 15px 0 20px 250px;
-    }
-  }
-
-  ol {
-    margin: 20px 0 0 -56px;
-    list-style-type: none;
-    counter-reset: item;
-
-    > li:before {
-      content: counter(item) "  ";
-      counter-increment: item;
-      float: left;
-      width: 1em;
-      font-size: 18px;
-      margin-top: 15px;
-    }
-
-    li:first-child:before {
-      margin-top: 45px;
     }
   }
 }
@@ -262,11 +269,37 @@ label {
   margin: 0 0 8px 0;
 }
 
+.hidden {
+  display: none;
+}
+
 .preview {
-  label {
+  span.key {
     font-weight: 600;
     display: block;
     padding-right: 10px;
+  }
+
+  ol {
+    margin: 20px 0 0 -56px;
+    list-style-type: none;
+    counter-reset: item;
+
+    > li:before {
+      content: counter(item) "  ";
+      counter-increment: item;
+      float: left;
+      width: 1em;
+      font-weight: 600;
+    }
+
+    li:first-child:before {
+      margin-top: 22px;
+    }
+
+    > li {
+      margin: 0 0 10px 0;
+    }
   }
 }
 
