@@ -71,9 +71,9 @@
 
         describe('tallentamisen jälkeen', function () {
           before(
-              page.waitAutoSave,
-              wait.until(page.hakemusIdIsPresent),
-              page.storeHakemusIdFromHtml
+            page.waitAutoSave,
+            wait.until(page.hakemusIdIsPresent),
+            page.storeHakemusIdFromHtml
           )
 
           describe('alkuperäisessä näkymässä', function() {
@@ -84,7 +84,7 @@
 
           describe('hakemuksen esikatselussa', function() {
             before(
-                page.openPreview(page.getHakemusId)
+              page.openPreview(page.getHakemusId)
             )
             it("näkyy haun nimen oikein", function () {
               expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
@@ -102,7 +102,7 @@
 
           describe('hakemuksen muokkausnäkymässä', function() {
             before(
-                page.openEditPage(page.getHakemusId)
+              page.openEditPage(page.getHakemusId)
             )
             describe('avattaessa', function () {
               it("näkyy haun nimi oikein", function () {
@@ -121,8 +121,8 @@
 
             describe('syötettäessä pakolliset tiedot', function () {
               before(
-                  page.setInputValue("organization", "Testi Organisaatio"),
-                  page.waitAutoSave
+                page.setInputValue("organization", "Testi Organisaatio"),
+                page.waitAutoSave
               )
 
               describe('automaattitallennuksen jälkeen', function () {
@@ -132,7 +132,7 @@
               })
               describe('painettaessa lähetä nappia', function () {
                 before(
-                    page.submitButton().click
+                  page.submitButton().click
                 )
 
                 it('ei tule virhettä', function () {
@@ -143,8 +143,8 @@
 
             describe('muokatessa vastauksia', function() {
               before(
-                  page.setInputValue("project-explanation", "Uusi kuvaus"),
-                  page.waitAutoSave
+                page.setInputValue("project-explanation", "Uusi kuvaus"),
+                page.waitAutoSave
               )
 
               describe('tallentamisen jälkeen', function () {
@@ -155,7 +155,7 @@
 
               describe('muokkauksen jälkeen esikatselussa', function() {
                 before(
-                    page.openPreview(page.getHakemusId)
+                  page.openPreview(page.getHakemusId)
                 )
                 it("näkyy uusi tieto oikein", function () {
                   expect(page.elementText("project-explanation")).to.equal('Uusi kuvaus')
@@ -186,9 +186,9 @@
 
       describe('tallentamisen jälkeen', function () {
         before(
-            page.waitAutoSave,
-            wait.until(page.hakemusIdIsPresent),
-            page.storeHakemusIdFromHtml
+          page.waitAutoSave,
+          wait.until(page.hakemusIdIsPresent),
+          page.storeHakemusIdFromHtml
         )
 
         describe('alkuperäisessä näkymässä', function() {
@@ -199,7 +199,7 @@
 
         describe('hakemuksen muokkausnäkymässä', function() {
           before(
-              page.openEditPage(page.getHakemusId)
+            page.openEditPage(page.getHakemusId)
           )
           it("lähetys on disabloitu", function () {
             expect(page.submitButton().isEnabled()).to.equal(false)
@@ -233,7 +233,7 @@
 
   describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku ruotsiksi', function () {
     before(
-        page.openStartPage('sv')
+      page.openStartPage('sv')
     )
 
     it("näkyy haun nimi ruotsiksi", function() {

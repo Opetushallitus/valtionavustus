@@ -77,10 +77,17 @@ function ApplicationPage() {
         return applicationElement().find("[name='" + name + "']")
       })
     },
+    getRadioLabel: function(name) {
+      return Input(function () {
+        return applicationElement().find("[for='" + name + "']")
+      })
+    },
     setInputValue: function(name, value) {
       return function() {
+        var isRadio = api.getInput(name).attr("type") === "radio"
         var input = api.getInput(name)
-        return wait.until(input.isVisible)()
+        var visibleElement = isRadio ? api.getRadioLabel(name) : input
+        return wait.until(visibleElement.isVisible)()
             .then(input.setValue(value))
       }
     },
@@ -110,6 +117,9 @@ function ApplicationPage() {
       },
       value: function() {
         return el().val()
+      },
+      attr: function(name) {
+        return el().attr(name)
       },
       isVisible: function() {
         return el().is(":visible")
