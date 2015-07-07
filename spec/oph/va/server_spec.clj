@@ -18,23 +18,25 @@
 (defn find-by-id [json id] (first (filter (fn [e] (.equals ( :id e) id)) (-> (validation/flatten-elements (json :content))))))
 
 (def valid-answers
-  {:organization "Testi Organisaatio"
-   :primary-email "test@example.com"
-   :signature "Teemu Testaaja, CEO"
-   :signature-email "teemu@example.com"
-   :language "fi"
-   :combined-effort "no"
-   :other-organizations.other-organizations-1.name "E.T. Extra Terrestrial"
-   :other-organizations.other-organizations-1.email "et@example"
-   :project-goals "Maaleja"
-   :project-explanation "Selitys"
-   :bank-bic "5000"
-   :bank-iban "FI 32 5000 4699350600"
-   :project-target "Maali"
-   :project-measure "Mittaus"
-   :project-announce "Julkaisut"
-   :project-effectiveness "Tehokkuus"
-   :project-spreading-plan "Jakelusuunnitelma"})
+  {:value [
+           {:key "organization" :value "Testi Organisaatio"}
+           {:key "primary-email" :value "test@example.com"}
+           {:key "signature" :value "Teemu Testaaja, CEO"}
+           {:key "signature-email" :value "teemu@example.com"}
+           {:key "language" :value "fi"}
+           {:key "combined-effort" :value "no"}
+           {:key "other-organizations.other-organizations-1.name" :value "E.T. Extra Terrestrial"}
+           {:key "other-organizations.other-organizations-1.email" :value "et@example"}
+           {:key "project-goals" :value "Maaleja"}
+           {:key "project-explanation" :value "Selitys"}
+           {:key "bank-bic" :value "5000"}
+           {:key "bank-iban" :value "FI 32 5000 4699350600"}
+           {:key "project-target" :value "Maali"}
+           {:key "project-measure" :value "Mittaus"}
+           {:key "project-announce" :value "Julkaisut"}
+           {:key "project-effectiveness" :value "Tehokkuus"}
+           {:key "project-spreading-plan" :value "Jakelusuunnitelma"}
+           ]})
 
 (describe "HTTP server"
 
@@ -75,9 +77,10 @@
         (should= 404 status)))
 
   (it "PUT should validate required values when done to route /api/form/1/values"
-      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:organization "Testi Organisaatio"
-                                                                                     :primary-email "test@example.com"
-                                                                                     :signature ""})
+      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:value [ {:key "organization" :value "Testi Organisaatio" }
+                                                                                              {:key "primary-email" :value "test@example.com" }
+                                                                                              {:key "signature " :value "" }
+                                                                                             ] } )
             json (json->map body)]
         (should= 400 status)
         (should= {:other-organizations.other-organizations-1.email [{:error "required"}]
@@ -106,7 +109,7 @@
                  json)))
 
   (it "PUT should validate text field lengths when done to route /api/form/1/values"
-      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" (assoc valid-answers :project-end "10.10.10000"))
+      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" (update-in valid-answers [ :value ] concat [ {:key "project-end" :value "10.10.10000"} ]))
             json (json->map body)]
         (should= 400 status)
         (should= {:other-organizations.other-organizations-1.email []
@@ -135,8 +138,8 @@
                  json)))
 
   (it "PUT should validate text field lengths and options when done to route /api/avustushaku/1/hakemus"
-      (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus"  {:language "ru"
-                                                                                              :project-end "10.10.10000"})
+      (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" {:value [{:key "language" :value "ru"}
+                                                                                                     {:key "project-end" :value "10.10.10000"}  ]})
             json (json->map body)]
         (should= 400 status)
         (should= {:other-organizations.other-organizations-1.email []
@@ -171,8 +174,9 @@
         (should= 1 (:id json))))
 
   (it "POST should validate required values when done to route /api/form/1/values/1"
-    (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/1" {:organization "Testi Organisaatio"
-                                                                                      :primary-email "test@example.com"})
+      (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/1" {:value [{:key "organization" :value "Testi Organisaatio"}
+                                                                                                {:key "primary-email" :value "test@example.com"}
+                                                                                                ]})
           json (json->map body)]
       (should= 400 status)
       (should= {:other-organizations.other-organizations-1.email [{:error "required"}]
