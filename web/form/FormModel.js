@@ -131,9 +131,9 @@ export default class FormModel {
         baseObject.children = baseObject.children.map(c => {
           const primitiveElement = _.cloneDeep(c)
           const distinguisherOfElement = _.last(primitiveElement.id.split('.')) // e.g. "email"
-          _.forEach(_.keys(valueOfElement), k => {
-            if (_.endsWith(k, '.' + distinguisherOfElement)) {
-              primitiveElement.id = k
+          _.forEach(valueOfElement, primitiveElementValueObject => {
+            if (_.endsWith(primitiveElementValueObject.key, '.' + distinguisherOfElement)) {
+              primitiveElement.id = primitiveElementValueObject.key
             }
           })
           return primitiveElement
@@ -146,19 +146,21 @@ export default class FormModel {
           throw new Error("Expected an existing child for growing set '" + growingParentElement.id + "' to get the field configurations from there.")
         }
         const childPrototype = growingParentElement.children[0]
-        growingParentElement.children = _.map(_.sortBy(_.keys(valuesTreeOfElement)), k => {
+        growingParentElement.children = _.map(valuesTreeOfElement, itemValueObject => {
           const o = {}
           _.assign(o, childPrototype)
-          populateRepeatingItem(o, k, valuesTreeOfElement[k])
+          populateRepeatingItem(o, itemValueObject.key, itemValueObject.value)
           return o
         })
       }
 
       _.forEach(JsUtil.flatFilter(formContent, n => { return n.displayAs === "growingFieldset"}), g => {
-        if (!_.isUndefined(answers[g.id])) {
-          populateGrowingSet(g, answers[g.id])
+        const growingSetValue = InputValueStorage.readValue(formContent, answers, g.id)
+        if (!_.isUndefined(growingSetValue) && !_.isEmpty(growingSetValue)) {
+          populateGrowingSet(g, growingSetValue)
         }
-        if (g.children.length > 1 || (!_.isUndefined(answers[g.id]) && !_.isUndefined(answers[g.id][g.children[0].id]))) {
+        const firstChildValue = g.children.length > 0 ? InputValueStorage.readValue(formContent, answers, g.children[0].id) : undefined
+        if (g.children.length > 1 || (!_.isUndefined(growingSetValue) && !_.isUndefined(firstChildValue))) {
           const enabledPlaceHolderChild = FormBranchGrower.createNewChild(g, true)
           g.children.push(enabledPlaceHolderChild)
         }
