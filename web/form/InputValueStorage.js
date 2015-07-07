@@ -32,7 +32,7 @@ export default class InputValueStorage {
     var repeatingItemExistingValues = JsUtil.flatFilter(growingParentExistingValues, n => { return n.key === repeatingItemField.id })
     if (_.isEmpty(repeatingItemExistingValues)) {
       writeChildValue(growingParentExistingValues[0], repeatingItemField.id, [])
-      repeatingItemExistingValues = JsUtil.flatFilter(answersObject, n => { return n.key === growingParent.id })
+      repeatingItemExistingValues = JsUtil.flatFilter(answersObject, n => { return n.key === repeatingItemField.id })
     }
     writeChildValue(repeatingItemExistingValues[0], fieldId, newValue)
 
