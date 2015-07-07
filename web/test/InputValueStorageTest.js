@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const verboseAssert = require('assert')
 import { assert } from 'chai'
+const JsUtil = require('../form/JsUtil.js')
 const InputValueStorage = require('../form/InputValueStorage.js')
 
 var answersObject = {}
@@ -45,6 +46,19 @@ describe('Form input that is', function() {
       InputValueStorage.writeValue(formContent, answersObject, "other-organizations.other-organizations-1.email", "kemijarven.kaupunki@example.com")
       assert.equal(InputValueStorage.readValue(formContent, answersObject, "other-organizations.other-organizations-1.name"), "Kemijärven kaupunki")
       assert.equal(InputValueStorage.readValue(formContent, answersObject, "other-organizations.other-organizations-1.email"), "kemijarven.kaupunki@example.com")
+    })
+
+    it('can delete a row', function() {
+      InputValueStorage.writeValue(formContent, answersObject, "other-organizations.other-organizations-1.name", "Kemijärven kaupunki")
+      InputValueStorage.writeValue(formContent, answersObject, "other-organizations.other-organizations-2.name", "Jokilaaksojen koulutuskuntayhtymä")
+
+      const otherOrganizationsValue = answersObject.value[0].value
+      assert.isArray(otherOrganizationsValue)
+      assert.lengthOf(otherOrganizationsValue, 2, JSON.stringify(otherOrganizationsValue))
+
+      const growingParentFields = JsUtil.flatFilter(formContent, n => { return n.id === "other-organizations"})
+      InputValueStorage.deleteValue(growingParentFields[0], answersObject, "other-organizations-2" )
+      assert.lengthOf(otherOrganizationsValue, 1, JSON.stringify(otherOrganizationsValue))
     })
 
     it("do not produce extra content in answers", function() {

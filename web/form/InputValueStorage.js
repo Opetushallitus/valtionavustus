@@ -45,8 +45,9 @@ export default class InputValueStorage {
   }
 
   static deleteValue(growingParent, answersObject, idOfFieldToRemove) {
-    if (answersObject[growingParent.id]) {
-      delete answersObject[growingParent.id][idOfFieldToRemove]
+    const parentValues = JsUtil.flatFilter(answersObject, n => { return n.key === growingParent.id })
+    if (!_.isEmpty(parentValues)) {
+      _.remove(parentValues[0].value, row => { return row.key === idOfFieldToRemove })
     }
   }
 }
