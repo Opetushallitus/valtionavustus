@@ -29,7 +29,7 @@ function ApplicationPage() {
       return openPage(function() { return "/?preview=true&devel=true&avustushaku=1&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
     },
     elementText: function(id) {
-      var found = applicationElement().find("#" + id).first()
+      var found = applicationElement().find("#" + escapeSelector(id)).first()
       if (found.prop("tagName") === "TEXTAREA" ||
           found.prop("tagName") === "INPUT" ||
           found.prop("tagName") === "SELECT") {
@@ -70,10 +70,10 @@ function ApplicationPage() {
       return applicationElement().find("#submit-error").first().text()
     },
     error: function(field) {
-      return applicationElement().find("#" + field + "-error").first().text()
+      return applicationElement().find("#" + escapeSelector(field) + "-error").first().text()
     },
     classAttributeOf: function(htmlId) {
-      return applicationElement().find("#" + htmlId).first().attr("class")
+      return applicationElement().find("#" + escapeSelector(htmlId)).first().attr("class")
     },
     previewButton: function() {
       return Clickable(function() { return applicationElement().find("button:contains(Tallennettu versio)")})
@@ -114,6 +114,10 @@ function ApplicationPage() {
 
   function applicationPageVisible() {
     return applicationElement().is(":visible") && api.applicationName().length > 0
+  }
+
+  function escapeSelector(s){
+    return s.replace( /(:|\.|\[|\])/g, "\\$1" )
   }
 
   function Input(el) {
