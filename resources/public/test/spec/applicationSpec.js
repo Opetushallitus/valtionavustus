@@ -78,6 +78,7 @@
 
           describe('alkuperäisessä näkymässä', function() {
             it("ei tule virhettä", function () {
+              expect(page.elementText("organization")).to.equal('')
               expect(page.saveError()).to.equal('')
             })
           })
