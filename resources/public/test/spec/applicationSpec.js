@@ -55,9 +55,12 @@
       before(enterValidValues)
 
       describe('jos ei ole annettu kaikkia pakollisia arvoja', function () {
-        before(page.setInputValue("organization", ""))
+        before(
+          page.setInputValue("organization", ""),
+          page.waitAutoSave
+        )
 
-        describe('ennen tallentamista', function () {
+        describe('tallentamisen jälkeen 1', function () {
           it("lähetys on disabloitu", function () {
             expect(page.submitButton().isEnabled()).to.equal(false)
           })
@@ -69,9 +72,8 @@
           })
         })
 
-        describe('tallentamisen jälkeen', function () {
+        describe('tallentamisen jälkeen 2', function () {
           before(
-            page.waitAutoSave,
             wait.until(page.hakemusIdIsPresent),
             page.storeHakemusIdFromHtml
           )
