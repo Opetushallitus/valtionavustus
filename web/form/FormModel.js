@@ -287,7 +287,6 @@ export default class FormModel {
       catch(error) {
         return handleUnexpectedSaveError(state, "PUT", url, error);
       }
-      state.saveStatus.changes = false
       return state
     }
 
@@ -298,11 +297,12 @@ export default class FormModel {
         qwest.post(url, stateToSave.saveStatus.values, {dataType: "json", async: true})
             .then(function(response) {
               console.log("Saved to server (submit=", submit, "). Response=", JSON.stringify(response))
-              stateToSave.saveStatus.values = response["answers"]
+              const stateFromServer = _.cloneDeep(stateToSave)
+              stateFromServer.saveStatus.values = response["answers"]
               if (onSuccessCallback) {
-                onSuccessCallback(stateToSave)
+                onSuccessCallback(stateFromServer)
               }
-              dispatcher.push(events.saveCompleted, stateToSave)
+              dispatcher.push(events.saveCompleted, stateFromServer)
             })
             .catch(function(error) {
               handleSaveError(stateToSave, this.status, error, this.method, url, this.response, submit)
@@ -311,7 +311,6 @@ export default class FormModel {
       catch(error) {
         handleUnexpectedSaveError(stateToSave, "POST", url, error, submit);
       }
-      stateToSave.saveStatus.changes = false
       return stateToSave
     }
 
@@ -336,8 +335,7 @@ export default class FormModel {
         stateFromServer.saveStatus.changes = false
         return stateFromServer
       }
-      stateFromUiLoop.saveStatus.values = locallyStoredValues
-      stateFromUiLoop.saveStatus.changes = !_.isEqual(locallyStoredValues, stateFromServer.saveStatus.values)
+      stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateFromServer.saveStatus.values)
       self.formOperations.onSaveCompletedCallback(stateFromUiLoop, stateFromServer)
       stateFromUiLoop.saveStatus.saveInProgress = false
       stateFromUiLoop.saveStatus.saveTime = new Date()
