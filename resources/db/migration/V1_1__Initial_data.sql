@@ -323,17 +323,67 @@ insert into forms (content) VALUES ('
         }
       },
       {
-        "type": "formField",
-        "id":"project-explanation",
-        "required":true,
-        "displayAs":"textArea",
+        "type": "wrapperElement",
+        "id":"project-explanations",
+        "displayAs":"growingFieldset",
         "params":{
-          "maxlength":2000
+          "showOnlyFirstLabels":false
         },
         "label":{
           "fi":"Hankkeen tavoitteet, toiminta ja tulokset",
           "sv":"Hur genomförs projektet i praktiken?"
-        }
+        },
+        "children": [
+          {
+            "type": "wrapperElement",
+            "id":"project-explanations-1",
+            "displayAs":"growingFieldsetChild",
+            "children": [
+              {
+                "type": "formField",
+                "id":"project-explanations.project-explanations-1.goal",
+                "required":true,
+                "displayAs":"textField",
+                "params":{
+                  "size":59,
+                  "maxlength":1000
+                },
+                "label":{
+                  "fi":"Tavoite",
+                  "sv":"Målet"
+                }
+              },
+              {
+                "type": "formField",
+                "id":"project-explanations.project-explanations-1.activity",
+                "required":true,
+                "displayAs":"textField",
+                "params":{
+                  "size":59,
+                  "maxlength":1000
+                },
+                "label":{
+                  "fi":"Toiminta",
+                  "sv":"Aktivitet"
+                }
+              },
+              {
+                "type": "formField",
+                "id":"project-explanations.project-explanations-1.result",
+                "required":true,
+                "displayAs":"textField",
+                "params":{
+                  "size":59,
+                  "maxlength":1000
+                },
+                "label":{
+                  "fi":"Tulos",
+                  "sv":"Resultat"
+                }
+              }
+            ]
+          }
+        ]
       },
       {
         "type": "formField",

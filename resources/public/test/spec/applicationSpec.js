@@ -20,7 +20,9 @@
     page.setInputValue("other-organizations.other-organizations-1.name", "Muu Testi Organisaatio")()
     page.setInputValue("other-organizations.other-organizations-1.email", "muutestiorganisaatio@example.com")()
     page.setInputValue("project-goals", "Hankkeen tavoitteet tulee tähän.")()
-    page.setInputValue("project-explanation", "Hankkeen kuvaus tulee tähän.")()
+    page.setInputValue("project-explanations.project-explanations-1.goal", "Hankkeen ensimmäinen tavoite.")()
+    page.setInputValue("project-explanations.project-explanations-1.activity", "Hankkeen ensimmäinen toiminta.")()
+    page.setInputValue("project-explanations.project-explanations-1.result", "Hankkeen ensimmäinen tulos.")()
     page.setInputValue("project-target", "Kohderymämme on meidän kohderyhmä")()
     page.setInputValue("project-effectiveness", "Mittaamme vaikutusta.")()
     page.setInputValue("project-spreading-plan", "Jakelusuunnitelma.")()
@@ -99,7 +101,9 @@
               expect(page.elementText("continuation-project")).to.equal('Ei')
             })
             it("näkyy hankkeen kuvaus oikein", function () {
-              expect(page.elementText("project-explanation")).to.equal('Hankkeen kuvaus tulee tähän.')
+              expect(page.elementText("project-explanations.project-explanations-1.goal")).to.equal('Hankkeen ensimmäinen tavoite.')
+              expect(page.elementText("project-explanations.project-explanations-1.activity")).to.equal('Hankkeen ensimmäinen toiminta.')
+              expect(page.elementText("project-explanations.project-explanations-1.result")).to.equal('Hankkeen ensimmäinen tulos.')
             })
           })
 
@@ -115,7 +119,9 @@
                 expect(page.classAttributeOf("organization")).to.include('error')
               })
               it("näkyy hankkeen kuvaus oikein", function () {
-                expect(page.getInput("project-explanation").value()).to.equal('Hankkeen kuvaus tulee tähän.')
+                expect(page.getInput("project-explanations.project-explanations-1.goal").value()).to.equal('Hankkeen ensimmäinen tavoite.')
+                expect(page.getInput("project-explanations.project-explanations-1.activity").value()).to.equal('Hankkeen ensimmäinen toiminta.')
+                expect(page.getInput("project-explanations.project-explanations-1.result").value()).to.equal('Hankkeen ensimmäinen tulos.')
               })
               it("lähetys on disabloitu", function () {
                 expect(page.submitButton().isEnabled()).to.equal(false)
@@ -146,14 +152,18 @@
 
             describe('muokatessa vastauksia', function() {
               before(
-                page.setInputValue("project-explanation", "Uusi kuvaus"),
+                page.setInputValue("project-explanations.project-explanations-1.goal", "Uusi ensimmäinen tavoite."),
+                page.setInputValue("project-explanations.project-explanations-1.activity", "Uusi ensimmäinen toiminta."),
+                page.setInputValue("project-explanations.project-explanations-1.result", "Uusi ensimmäinen tulos."),
                 page.waitAutoSave
               )
 
               describe('tallentamisen jälkeen', function () {
                 it("ei tule virhettä", function () {
                   expect(page.saveError()).to.equal('')
-                  expect(page.getInput("project-explanation").value()).to.equal('Uusi kuvaus')
+                  expect(page.getInput("project-explanations.project-explanations-1.goal").value()).to.equal('Uusi ensimmäinen tavoite.')
+                  expect(page.getInput("project-explanations.project-explanations-1.activity").value()).to.equal('Uusi ensimmäinen toiminta.')
+                  expect(page.getInput("project-explanations.project-explanations-1.result").value()).to.equal('Uusi ensimmäinen tulos.')
                 })
               })
 
@@ -162,7 +172,9 @@
                   page.openPreview(page.getHakemusId)
                 )
                 it("näkyy uusi tieto oikein", function () {
-                  expect(page.elementText("project-explanation")).to.equal('Uusi kuvaus')
+                  expect(page.elementText("project-explanations.project-explanations-1.goal")).to.equal('Uusi ensimmäinen tavoite.')
+                  expect(page.elementText("project-explanations.project-explanations-1.activity")).to.equal('Uusi ensimmäinen toiminta.')
+                  expect(page.elementText("project-explanations.project-explanations-1.result")).to.equal('Uusi ensimmäinen tulos.')
                 })
               })
             })

@@ -28,7 +28,9 @@
            {:key "other-organizations.other-organizations-1.name" :value "E.T. Extra Terrestrial"}
            {:key "other-organizations.other-organizations-1.email" :value "et@example"}
            {:key "project-goals" :value "Maaleja"}
-           {:key "project-explanation" :value "Selitys"}
+           {:key "project-explanations.project-explanations-1.goal" :value "Paremmat oppimistulokset"}
+           {:key "project-explanations.project-explanations-1.activity" :value "Pidämme työpajoja"}
+           {:key "project-explanations.project-explanations-1.result" :value "Jotkut lähtevät jatko-opiskelemaan"}
            {:key "bank-bic" :value "5000"}
            {:key "bank-iban" :value "FI 32 5000 4699350600"}
            {:key "project-target" :value "Maali"}
@@ -88,7 +90,9 @@
                   :other-organizations.other-organizations-1.name [{:error "required"}]
                   :primary-email []
                   :signature [{:error "required"}]
-                  :project-explanation [{:error "required"}]
+                  :project-explanations.project-explanations-1.goal [{:error "required"}]
+                  :project-explanations.project-explanations-1.activity [{:error "required"}]
+                  :project-explanations.project-explanations-1.result [{:error "required"}]
                   :continuation-project []
                   :bank-bic [{:error "required"}]
                   :organization []
@@ -117,7 +121,9 @@
                   :other-organizations.other-organizations-1.name []
                   :primary-email []
                   :signature []
-                  :project-explanation []
+                  :project-explanations.project-explanations-1.goal []
+                  :project-explanations.project-explanations-1.activity []
+                  :project-explanations.project-explanations-1.result []
                   :continuation-project []
                   :bank-bic []
                   :organization []
@@ -147,7 +153,9 @@
                   :other-organizations.other-organizations-1.name []
                   :primary-email []
                   :signature []
-                  :project-explanation []
+                  :project-explanations.project-explanations-1.goal []
+                  :project-explanations.project-explanations-1.activity []
+                  :project-explanations.project-explanations-1.result []
                   :continuation-project []
                   :bank-bic []
                   :organization []
@@ -184,7 +192,9 @@
                 :other-organizations.other-organizations-1.name [{:error "required"}]
                 :primary-email []
                 :signature [{:error "required"}]
-                :project-explanation [{:error "required"}]
+                :project-explanations.project-explanations-1.goal [{:error "required"}]
+                :project-explanations.project-explanations-1.activity [{:error "required"}]
+                :project-explanations.project-explanations-1.result [{:error "required"}]
                 :continuation-project []
                 :bank-bic [{:error "required"}]
                 :organization []
