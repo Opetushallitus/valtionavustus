@@ -55,9 +55,12 @@
       before(enterValidValues)
 
       describe('jos ei ole annettu kaikkia pakollisia arvoja', function () {
-        before(page.setInputValue("organization", ""))
+        before(
+          page.setInputValue("organization", ""),
+          page.waitAutoSave
+        )
 
-        describe('ennen tallentamista', function () {
+        describe('tallentamisen jälkeen 1', function () {
           it("lähetys on disabloitu", function () {
             expect(page.submitButton().isEnabled()).to.equal(false)
           })
@@ -69,15 +72,15 @@
           })
         })
 
-        describe('tallentamisen jälkeen', function () {
+        describe('tallentamisen jälkeen 2', function () {
           before(
-            page.waitAutoSave,
             wait.until(page.hakemusIdIsPresent),
             page.storeHakemusIdFromHtml
           )
 
           describe('alkuperäisessä näkymässä', function() {
             it("ei tule virhettä", function () {
+              expect(page.getInput("organization").value()).to.equal('')
               expect(page.saveError()).to.equal('')
             })
           })
@@ -150,6 +153,7 @@
               describe('tallentamisen jälkeen', function () {
                 it("ei tule virhettä", function () {
                   expect(page.saveError()).to.equal('')
+                  expect(page.getInput("project-explanation").value()).to.equal('Uusi kuvaus')
                 })
               })
 

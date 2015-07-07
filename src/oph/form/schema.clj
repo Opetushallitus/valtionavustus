@@ -49,10 +49,13 @@
                    :content Content,
                    :start s/Inst})
 
+(s/defschema Answer {:key s/Str,
+                     :value (s/either s/Str
+                                      [(s/recursive #'Answer)])})
+
 (s/defschema Answers
-  "Answers consists of a recursive field id to value mapping"
-  {s/Keyword (s/either s/Str
-                       (s/recursive #'Answers))})
+  "Answers consists of a key (String) value pairs, where value may be String or an array of more answers"
+  { :value [Answer] })
 
 (s/defschema Submission {:id Long
                          :submittime s/Inst

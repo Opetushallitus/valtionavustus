@@ -89,19 +89,12 @@ export default class FormModel {
 
     function initDefaultValues(form) {
       const values = {}
-      const children = form.children ? form.children : form.content
-      for(var i=0; i < children.length; i++) {
-        const field = children[i]
-        if (field.options && field.options.length > 0) {
-          values[field.id] = field.options[0].value
+      const fields = JsUtil.flatFilter(form.content, n => { return !_.isUndefined(n.id) })
+      _.forEach(fields, f => {
+        if (!_.isEmpty(f.options)) {
+          InputValueStorage.writeValue(form.content, values, f.id, f.options[0].value)
         }
-        if (field.type === 'wrapperElement') {
-          var childValues = initDefaultValues(field)
-          for (var fieldId in childValues) {
-            values[fieldId] = childValues[fieldId]
-          }
-        }
-      }
+      })
       return values
     }
 
@@ -123,7 +116,12 @@ export default class FormModel {
     }
 
     function onInitialState(state, realInitialState) {
-      addFormFieldsForGrowingFields(realInitialState.form.content, realInitialState.saveStatus.values)
+      try {
+        addFormFieldsForGrowingFields(realInitialState.form.content, realInitialState.saveStatus.values)
+      } catch (e) {
+        console.log('Error when updating initial state', e)
+        throw e
+      }
       return realInitialState
     }
 
@@ -133,9 +131,9 @@ export default class FormModel {
         baseObject.children = baseObject.children.map(c => {
           const primitiveElement = _.cloneDeep(c)
           const distinguisherOfElement = _.last(primitiveElement.id.split('.')) // e.g. "email"
-          _.forEach(_.keys(valueOfElement), k => {
-            if (_.endsWith(k, '.' + distinguisherOfElement)) {
-              primitiveElement.id = k
+          _.forEach(valueOfElement, primitiveElementValueObject => {
+            if (_.endsWith(primitiveElementValueObject.key, '.' + distinguisherOfElement)) {
+              primitiveElement.id = primitiveElementValueObject.key
             }
           })
           return primitiveElement
@@ -148,19 +146,21 @@ export default class FormModel {
           throw new Error("Expected an existing child for growing set '" + growingParentElement.id + "' to get the field configurations from there.")
         }
         const childPrototype = growingParentElement.children[0]
-        growingParentElement.children = _.map(_.sortBy(_.keys(valuesTreeOfElement)), k => {
+        growingParentElement.children = _.map(valuesTreeOfElement, itemValueObject => {
           const o = {}
           _.assign(o, childPrototype)
-          populateRepeatingItem(o, k, valuesTreeOfElement[k])
+          populateRepeatingItem(o, itemValueObject.key, itemValueObject.value)
           return o
         })
       }
 
       _.forEach(JsUtil.flatFilter(formContent, n => { return n.displayAs === "growingFieldset"}), g => {
-        if (!_.isUndefined(answers[g.id])) {
-          populateGrowingSet(g, answers[g.id])
+        const growingSetValue = InputValueStorage.readValue(formContent, answers, g.id)
+        if (!_.isUndefined(growingSetValue) && !_.isEmpty(growingSetValue)) {
+          populateGrowingSet(g, growingSetValue)
         }
-        if (g.children.length > 1 || (!_.isUndefined(answers[g.id]) && !_.isUndefined(answers[g.id][g.children[0].id]))) {
+        const firstChildValue = g.children.length > 0 ? InputValueStorage.readValue(formContent, answers, g.children[0].id) : undefined
+        if (g.children.length > 1 || (!_.isUndefined(growingSetValue) && !_.isUndefined(firstChildValue))) {
           const enabledPlaceHolderChild = FormBranchGrower.createNewChild(g, true)
           g.children.push(enabledPlaceHolderChild)
         }
@@ -294,7 +294,6 @@ export default class FormModel {
       catch(error) {
         return handleUnexpectedSaveError(state, "PUT", url, error);
       }
-      state.saveStatus.changes = false
       return state
     }
 
@@ -305,11 +304,12 @@ export default class FormModel {
         qwest.post(url, stateToSave.saveStatus.values, {dataType: "json", async: true})
             .then(function(response) {
               console.log("Saved to server (submit=", submit, "). Response=", JSON.stringify(response))
-              stateToSave.saveStatus.values = response["answers"]
+              const stateFromServer = _.cloneDeep(stateToSave)
+              stateFromServer.saveStatus.values = response["answers"]
               if (onSuccessCallback) {
-                onSuccessCallback(stateToSave)
+                onSuccessCallback(stateFromServer)
               }
-              dispatcher.push(events.saveCompleted, stateToSave)
+              dispatcher.push(events.saveCompleted, stateFromServer)
             })
             .catch(function(error) {
               handleSaveError(stateToSave, this.status, error, this.method, url, this.response, submit)
@@ -318,7 +318,6 @@ export default class FormModel {
       catch(error) {
         handleUnexpectedSaveError(stateToSave, "POST", url, error, submit);
       }
-      stateToSave.saveStatus.changes = false
       return stateToSave
     }
 
@@ -343,8 +342,7 @@ export default class FormModel {
         stateFromServer.saveStatus.changes = false
         return stateFromServer
       }
-      stateFromUiLoop.saveStatus.values = locallyStoredValues
-      stateFromUiLoop.saveStatus.changes = !_.isEqual(locallyStoredValues, stateFromServer.saveStatus.values)
+      stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateFromServer.saveStatus.values)
       self.formOperations.onSaveCompletedCallback(stateFromUiLoop, stateFromServer)
       stateFromUiLoop.saveStatus.saveInProgress = false
       stateFromUiLoop.saveStatus.saveTime = new Date()
