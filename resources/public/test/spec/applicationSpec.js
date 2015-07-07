@@ -150,6 +150,7 @@
               describe('tallentamisen jälkeen', function () {
                 it("ei tule virhettä", function () {
                   expect(page.saveError()).to.equal('')
+                  expect(page.elementText("project-explanation")).to.equal('Uusi kuvaus')
                 })
               })
 
