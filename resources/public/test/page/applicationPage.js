@@ -29,7 +29,11 @@ function ApplicationPage() {
       return openPage(function() { return "/?preview=true&devel=true&avustushaku=1&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
     },
     elementText: function(id) {
-      return applicationElement().find("#" + id).first().text().trim()
+      var found = applicationElement().find("#" + id).first()
+      if (found.prop("tagName") === "TEXTAREA") {
+        return found.val().trim()
+      }
+      return found.text().trim()
     },
     applicationName: function() {
       return applicationElement().find("#container h1").first().text().trim()
