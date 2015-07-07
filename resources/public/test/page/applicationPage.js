@@ -30,8 +30,10 @@ function ApplicationPage() {
     },
     elementText: function(id) {
       var found = applicationElement().find("#" + id).first()
-      if (found.prop("tagName") === "TEXTAREA") {
-        return found.val().trim()
+      if (found.prop("tagName") === "TEXTAREA" ||
+          found.prop("tagName") === "INPUT" ||
+          found.prop("tagName") === "SELECT") {
+        throw new Error("Use Input.value() to read inputs from form elements")
       }
       return found.text().trim()
     },

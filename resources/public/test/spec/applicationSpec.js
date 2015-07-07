@@ -80,7 +80,7 @@
 
           describe('alkuperäisessä näkymässä', function() {
             it("ei tule virhettä", function () {
-              expect(page.elementText("organization")).to.equal('')
+              expect(page.getInput("organization").value()).to.equal('')
               expect(page.saveError()).to.equal('')
             })
           })
@@ -153,7 +153,7 @@
               describe('tallentamisen jälkeen', function () {
                 it("ei tule virhettä", function () {
                   expect(page.saveError()).to.equal('')
-                  expect(page.elementText("project-explanation")).to.equal('Uusi kuvaus')
+                  expect(page.getInput("project-explanation").value()).to.equal('Uusi kuvaus')
                 })
               })
 
