@@ -116,7 +116,12 @@ export default class FormModel {
     }
 
     function onInitialState(state, realInitialState) {
-      addFormFieldsForGrowingFields(realInitialState.form.content, realInitialState.saveStatus.values)
+      try {
+        addFormFieldsForGrowingFields(realInitialState.form.content, realInitialState.saveStatus.values)
+      } catch (e) {
+        console.log('Error when updating initial state', e)
+        throw e
+      }
       return realInitialState
     }
 
