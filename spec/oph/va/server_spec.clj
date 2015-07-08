@@ -43,6 +43,35 @@
            {:key "project-spreading-plan" :value "Jakelusuunnitelma"}
            ]})
 
+(def most-required-missing
+  {:other-organizations.other-organizations-1.email      [{:error "required"}]
+   :project-begin                                        []
+   :other-organizations.other-organizations-1.name       [{:error "required"}]
+   :primary-email                                        []
+   :signature                                            [{:error "required"}]
+   :project-explanations.project-explanations-1.goal     [{:error "required"}]
+   :project-explanations.project-explanations-1.activity [{:error "required"}]
+   :project-explanations.project-explanations-1.result   [{:error "required"}]
+   :continuation-project                                 []
+   :bank-bic                                             [{:error "required"}]
+   :organization                                         []
+   :project-effectiveness                                [{:error "required"}]
+   :project-spreading-plan                               [{:error "required"}]
+   :project-measure                                      [{:error "required"}]
+   :combined-effort                                      [{:error "required"}]
+   :language                                             [{:error "required"}]
+   :project-www                                          []
+   :signature-email                                      [{:error "required"}]
+   :bank-iban                                            [{:error "required"}]
+   :project-goals                                        [{:error "required"}]
+   :project-target                                       [{:error "required"}]
+   :other-funding                                        []
+   :other-partners                                       []
+   :project-announce                                     [{:error "required"}]
+   :project-end                                          []
+   :vat-included                                         []
+   :coordination-costs                                   []})
+
 (describe "HTTP server"
 
   (tags :server)
@@ -88,104 +117,21 @@
                                                                                              ] } )
             json (json->map body)]
         (should= 400 status)
-        (should= {:other-organizations.other-organizations-1.email [{:error "required"}]
-                  :project-begin []
-                  :other-organizations.other-organizations-1.name [{:error "required"}]
-                  :primary-email []
-                  :signature [{:error "required"}]
-                  :project-explanations.project-explanations-1.goal [{:error "required"}]
-                  :project-explanations.project-explanations-1.activity [{:error "required"}]
-                  :project-explanations.project-explanations-1.result [{:error "required"}]
-                  :continuation-project []
-                  :bank-bic [{:error "required"}]
-                  :organization []
-                  :project-effectiveness [{:error "required"}]
-                  :project-spreading-plan [{:error "required"}]
-                  :project-measure [{:error "required"}]
-                  :combined-effort [{:error "required"}]
-                  :language [{:error "required"}]
-                  :project-www []
-                  :signature-email [{:error "required"}]
-                  :bank-iban [{:error "required"}]
-                  :project-goals [{:error "required"}]
-                  :project-target [{:error "required"}]
-                  :other-funding []
-                  :other-partners []
-                  :project-announce [{:error "required"}]
-                  :project-end []
-                  :vat-included []
-                  :coordination-costs []
-                  }
-                 json)))
+        (should= most-required-missing json)))
 
   (it "PUT should validate text field lengths when done to route /api/form/1/values"
       (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" (update-in valid-answers [ :value ] concat [ {:key "project-end" :value "10.10.10000"} ]))
             json (json->map body)]
         (should= 400 status)
-        (should= {:other-organizations.other-organizations-1.email []
-                  :project-begin []
-                  :other-organizations.other-organizations-1.name []
-                  :primary-email []
-                  :signature []
-                  :project-explanations.project-explanations-1.goal []
-                  :project-explanations.project-explanations-1.activity []
-                  :project-explanations.project-explanations-1.result []
-                  :continuation-project []
-                  :bank-bic []
-                  :organization []
-                  :project-effectiveness []
-                  :project-spreading-plan []
-                  :project-measure []
-                  :combined-effort []
-                  :language []
-                  :project-www []
-                  :signature-email []
-                  :bank-iban []
-                  :project-goals []
-                  :project-target []
-                  :other-funding []
-                  :other-partners []
-                  :project-announce []
-                  :project-end [{:error "maxlength" :max 10}]
-                  :vat-included []
-                  :coordination-costs []
-                  }
-                 json)))
+        (should= (json :project-end) [{:error "maxlength", :max 10}])))
 
   (it "PUT should validate text field lengths and options when done to route /api/avustushaku/1/hakemus"
       (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" {:value [{:key "language" :value "ru"}
                                                                                                      {:key "project-end" :value "10.10.10000"}  ]})
             json (json->map body)]
         (should= 400 status)
-        (should= {:other-organizations.other-organizations-1.email []
-                  :project-begin []
-                  :other-organizations.other-organizations-1.name []
-                  :primary-email []
-                  :signature []
-                  :project-explanations.project-explanations-1.goal []
-                  :project-explanations.project-explanations-1.activity []
-                  :project-explanations.project-explanations-1.result []
-                  :continuation-project []
-                  :bank-bic []
-                  :organization []
-                  :project-effectiveness []
-                  :project-spreading-plan []
-                  :project-measure []
-                  :combined-effort []
-                  :language [{:error "invalid-option"}]
-                  :project-www []
-                  :signature-email []
-                  :bank-iban []
-                  :project-goals []
-                  :project-target []
-                  :other-funding []
-                  :other-partners []
-                  :project-announce []
-                  :project-end [{:error "maxlength" :max 10}]
-                  :vat-included []
-                  :coordination-costs []
-                  }
-                 json)))
+        (should= (json :language) [{:error "invalid-option"}])
+        (should= (json :project-end) [{:error "maxlength", :max 10}])))
 
   (it "PUT should create a new form submission and return id when done to route /api/form/1/values"
       (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" valid-answers)
@@ -199,35 +145,7 @@
                                                                                                 ]})
           json (json->map body)]
       (should= 400 status)
-      (should= {:other-organizations.other-organizations-1.email [{:error "required"}]
-                :project-begin []
-                :other-organizations.other-organizations-1.name [{:error "required"}]
-                :primary-email []
-                :signature [{:error "required"}]
-                :project-explanations.project-explanations-1.goal [{:error "required"}]
-                :project-explanations.project-explanations-1.activity [{:error "required"}]
-                :project-explanations.project-explanations-1.result [{:error "required"}]
-                :continuation-project []
-                :bank-bic [{:error "required"}]
-                :organization []
-                :project-effectiveness [{:error "required"}]
-                :project-spreading-plan [{:error "required"}]
-                :project-measure [{:error "required"}]
-                :combined-effort [{:error "required"}]
-                :language [{:error "required"}]
-                :project-www []
-                :signature-email [{:error "required"}]
-                :bank-iban [{:error "required"}]
-                :project-goals [{:error "required"}]
-                :project-target [{:error "required"}]
-                :other-funding []
-                :other-partners []
-                :project-announce [{:error "required"}]
-                :project-end []
-                :vat-included []
-                :coordination-costs []
-                }
-               json)))
+      (should= most-required-missing json)))
 
   (it "POST should fail if done to non-existing node /api/form/1/values/2"
       (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/2" valid-answers)]
