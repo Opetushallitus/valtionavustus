@@ -46,7 +46,7 @@ class GrowingFieldsetChildPreviewElement extends React.Component {
   }
 
   className() {
-    const classNames = ClassNames({hidden: isHidden()})
+    const classNames = ClassNames({hidden: this.isHidden()})
     return !_.isEmpty(classNames) ? classNames : undefined
   }
 
