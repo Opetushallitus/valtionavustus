@@ -32,10 +32,11 @@
   (s/defschema BasicElement (s/either FormField
                                       InfoElement))
 
-  (let [default-wrapper-element-types [:theme :fieldset :growingFieldset :growingFieldsetChild ]]
+  (let [default-wrapper-element-types [:theme :fieldset :growingFieldset :growingFieldsetChild ]
+        wrapper-element-types (into custom-wrapper-element-types default-wrapper-element-types)]
     (s/defschema WrapperElement {:type                    (s/eq "wrapperElement")
                                  :id                      s/Str
-                                 :displayAs               (apply s/enum  (into custom-wrapper-element-types default-wrapper-element-types))
+                                 :displayAs               (apply s/enum wrapper-element-types )
                                  :children                [(s/either BasicElement
                                                                      (s/recursive #'WrapperElement))]
                                  (s/optional-key :params) s/Any
