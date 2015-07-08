@@ -3,7 +3,7 @@ import React from 'react'
 export default class VaComponentFactory {
   constructor(props) {
     this.componentTypeMapping = {
-      "vaBudget": TotalBudgetElement
+      "vaBudget": VaBudgetElement
     }
   }
 
@@ -22,7 +22,7 @@ export default class VaComponentFactory {
 }
 
 
-class TotalBudgetElement extends React.Component {
+class VaBudgetElement extends React.Component {
   render() {
     const field = this.props.field
     const children = this.props.children
