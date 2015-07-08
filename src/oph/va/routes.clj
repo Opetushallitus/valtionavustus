@@ -13,6 +13,8 @@
             [oph.va.db :as va-db]
             [oph.va.schema :refer :all]))
 
+(create-form-schema)
+
 (defroutes* avustushaku-routes
   "Avustushaku routes"
 
