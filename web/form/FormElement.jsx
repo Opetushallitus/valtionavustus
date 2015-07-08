@@ -1,9 +1,9 @@
 import React from 'react'
+import ClassNames from 'classnames'
+import _ from 'lodash'
 import LocalizedString from './LocalizedString.jsx'
 import Translator from './Translator.js'
 import FormElementError from './FormElementError.jsx'
-import ClassNames from 'classnames'
-import _ from 'lodash'
 
 class BasicFieldComponent extends React.Component {
   constructor(props) {
