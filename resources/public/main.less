@@ -164,11 +164,6 @@ body {
     }
   }
 
-  div.fieldset > div {
-    width: 450px;
-    display: inline-block;
-  }
-
   section.theme {
     margin: 25px 0 0 0;
     padding-top: 25px;
@@ -310,6 +305,26 @@ label {
 }
 
 .preview {
+  div.fieldset > div {
+    display: inline-block;
+
+    &.extra-small {
+      width: ceil(@section-width / 4);
+    }
+    &.small {
+      width: ceil(@section-width / 3);
+    }
+    &.medium {
+      width: ceil(@section-width / 2);
+    }
+    &.large {
+      width: ceil(@section-width / 1.5);
+    }
+    &.extra-large {
+      width: @section-width;
+    }
+  }
+
   span.key {
     font-weight: 600;
     display: block;
