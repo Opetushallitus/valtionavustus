@@ -64,7 +64,7 @@
                   :id "organization"
                   :required true
                   :displayAs "textField"
-                  :params {:size 50
+                  :params {:size "large"
                            :maxlength 80}
                   :label {:fi "Hakijaorganisaatio"
                           :sv "Organisation"}} (find-by-id json "organization"))

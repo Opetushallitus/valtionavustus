@@ -36,7 +36,7 @@ insert into forms (content) VALUES ('
             "required":true,
             "displayAs":"textField",
             "params":{
-              "size":50,
+              "size":"large",
               "maxlength":80
             },
             "label":{
@@ -50,7 +50,7 @@ insert into forms (content) VALUES ('
             "required":true,
             "displayAs":"emailField",
             "params":{
-              "size":30,
+              "size":"small",
               "maxlength":80
             },
             "label":{
@@ -71,7 +71,7 @@ insert into forms (content) VALUES ('
             "required":true,
             "displayAs":"textField",
             "params":{
-              "size":50,
+              "size":"large",
               "maxlength":80
             },
             "label":{
@@ -85,7 +85,7 @@ insert into forms (content) VALUES ('
             "required":true,
             "displayAs":"emailField",
             "params":{
-              "size":30,
+              "size":"small",
               "maxlength":80
             },
             "label":{
@@ -106,7 +106,7 @@ insert into forms (content) VALUES ('
             "required":true,
             "displayAs":"textField",
             "params":{
-              "size":50,
+              "size":"large",
               "maxlength":80
             },
             "label":{
@@ -120,7 +120,7 @@ insert into forms (content) VALUES ('
             "required":true,
             "displayAs":"textField",
             "params":{
-              "size":30,
+              "size":"small",
               "maxlength":80
             },
             "label":{
@@ -212,7 +212,7 @@ insert into forms (content) VALUES ('
                 "required":true,
                 "displayAs":"textField",
                 "params":{
-                  "size":50,
+                  "size":"large",
                   "maxlength":80
                 },
                 "label":{
@@ -226,7 +226,7 @@ insert into forms (content) VALUES ('
                 "required":true,
                 "displayAs":"emailField",
                 "params":{
-                  "size":30,
+                  "size":"small",
                   "maxlength":80
                 },
                 "label":{
@@ -345,7 +345,7 @@ insert into forms (content) VALUES ('
                 "required":true,
                 "displayAs":"textField",
                 "params":{
-                  "size":59,
+                  "size":"extra-large",
                   "maxlength":1000
                 },
                 "label":{
@@ -359,7 +359,7 @@ insert into forms (content) VALUES ('
                 "required":true,
                 "displayAs":"textField",
                 "params":{
-                  "size":59,
+                  "size":"extra-large",
                   "maxlength":1000
                 },
                 "label":{
@@ -373,7 +373,7 @@ insert into forms (content) VALUES ('
                 "required":true,
                 "displayAs":"textField",
                 "params":{
-                  "size":59,
+                  "size":"extra-large",
                   "maxlength":1000
                 },
                 "label":{
@@ -391,7 +391,7 @@ insert into forms (content) VALUES ('
         "required":true,
         "displayAs":"textField",
         "params":{
-          "size":50,
+          "size":"large",
           "maxlength":80
         },
         "label":{
@@ -444,7 +444,7 @@ insert into forms (content) VALUES ('
         "required":false,
         "displayAs":"textField",
         "params":{
-          "size":50,
+          "size":"large",
           "maxlength":80
         },
         "label":{
@@ -458,7 +458,7 @@ insert into forms (content) VALUES ('
         "required":false,
         "displayAs":"textField",
         "params":{
-          "size":10,
+          "size":"extra-small",
           "maxlength":10
         },
         "label":{
@@ -472,7 +472,7 @@ insert into forms (content) VALUES ('
         "required":false,
         "displayAs":"textField",
         "params":{
-          "size":10,
+          "size":"extra-small",
           "maxlength":10
         },
         "label":{
@@ -545,7 +545,7 @@ insert into forms (content) VALUES ('
             "required":false,
             "displayAs":"textField",
             "params":{
-              "size":50,
+              "size":"large",
               "maxlength":80
             },
             "label":{

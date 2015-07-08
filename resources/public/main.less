@@ -1,5 +1,5 @@
 @form-width: 1300px;
-@section-width: 680px;
+@section-width: 800px;
 
 // Colors
 @lightest-gray: #fafafa;
@@ -93,8 +93,44 @@ body {
       margin: 5px 10px 20px 0;
     }
 
+    input[type=text], input[type=email], input[type=number] {
+      &.extra-small {
+        width: ceil(@section-width / 4)  - 18px;
+      }
+      &.small {
+        width: ceil(@section-width / 3) - 18px;
+      }
+      &.medium {
+        width: ceil(@section-width / 2) - 18px;
+      }
+      &.large {
+        width: ceil(@section-width / 1.5) - 28px;
+      }
+      &.extra-large {
+        width: @section-width - 18px;
+      }
+    }
+
+    label {
+      &.extra-small {
+        width: ceil(@section-width / 4)  - 8px;
+      }
+      &.small {
+        width: ceil(@section-width / 3) - 8px;
+      }
+      &.medium {
+        width: ceil(@section-width / 2) - 8px;
+      }
+      &.large {
+        width: ceil(@section-width / 1.5) - 18px;
+      }
+      &.extra-large {
+        width: @section-width - 8px;
+      }
+    }
+
     textarea {
-      width: @section-width - 30px;
+      width: @section-width - 18px;
       height: 150px;
       margin-bottom: 0;
     }
@@ -109,7 +145,7 @@ body {
     }
 
     ol {
-      margin: 20px 0 0 -56px;
+      margin: 20px 0 0 -58px;
       list-style-type: none;
       counter-reset: item;
 

@@ -2,6 +2,7 @@ import React from 'react'
 import LocalizedString from './LocalizedString.jsx'
 import Translator from './Translator.js'
 import FormElementError from './FormElementError.jsx'
+import ClassNames from 'classnames'
 import _ from 'lodash'
 
 class BasicFieldComponent extends React.Component {
@@ -14,6 +15,29 @@ class BasicFieldComponent extends React.Component {
     this.props.model.componentDidMount(this.props.field, this.props.value)
   }
 
+  label(className) {
+    if(this.hideLabel()) {
+      return undefined
+    } else {
+      return (<label htmlFor={this.props.htmlId}
+                     className={this.labelClassName(className)}>
+                <LocalizedString
+                  translations={this.props.field}
+                  translationKey="label"
+                  lang={this.props.lang} />
+              </label>)
+    }
+  }
+
+  labelClassName(className) {
+    const classNames = ClassNames(className, { required: this.props.field.required})
+    return !_.isEmpty(classNames) ? classNames : undefined
+  }
+
+  hideLabel() {
+    return this.props.renderingParameters && this.props.renderingParameters.hideLabels === true;
+  }
+
   param(param, defaultValue) {
     if (!this.props.field.params) return defaultValue
     if (this.props.field.params[param] !== undefined) return this.props.field.params[param]
@@ -21,56 +45,66 @@ class BasicFieldComponent extends React.Component {
   }
 }
 
-class BasicTextField extends BasicFieldComponent {
+class BasicTextComponent extends BasicFieldComponent {
+  sizeClassName() {
+    if (this.param("size")) {
+      const sizeIsNumber = Number.isInteger(this.param("size"))
+      return !sizeIsNumber ? this.param("size") : undefined
+    } else {
+      return undefined
+    }
+  }
+
+  resolveClassName() {
+    const classNames = ClassNames({error: !_.isEmpty(this.props.validationErrors)}, this.sizeClassName());
+    return !_.isEmpty(classNames) ? classNames : undefined
+  }
+}
+
+class BasicTextField extends BasicTextComponent {
+  constructor(props) {
+    super(props)
+    this.fieldtype = "text"
+  }
+
   render() {
+    const sizeNumber = Number.isInteger(this.param("size")) ? this.param("size") : ""
+    const classStr = this.resolveClassName()
     const field = this.props.field
     return (<div>
-              {this.props.label}
+              {this.label(classStr)}
               <input
-                type="text"
+                type={this.fieldtype}
                 id={this.props.htmlId}
                 name={this.props.htmlId}
                 required={field.required}
-                size={this.param("size", this.param("maxlength",80))}
+                size={sizeNumber}
                 maxLength={this.param("maxlength")}
                 model={this.props.model}
                 value={this.props.value}
-                className={!_.isEmpty(this.props.validationErrors) ? "error" : ""}
-                disabled={this.props.disabled ? "disabled" : ""}
+                className={classStr}
+                disabled={this.props.disabled}
                 onChange={e => this.props.onChange(this.props.field, e.target.value)}
               />
             </div>)
   }
 }
 
-class EmailTextField extends BasicFieldComponent {
-  render() {
-    const field = this.props.field
-    return (<div>
-              {this.props.label}
-              <input
-              type="email"
-              id={this.props.htmlId}
-              name={this.props.htmlId}
-              required={field.required}
-              size={this.param("size", this.param("maxlength",80))}
-              maxLength={this.param("maxlength")}
-              model={this.props.model}
-              value={this.props.value}
-              className={!_.isEmpty(this.props.validationErrors) ? "error" : ""}
-              disabled={this.props.disabled ? "disabled" : ""}
-              onChange={e => this.props.onChange(this.props.field, e.target.value)}
-              />
-            </div>)
+class EmailTextField extends BasicTextField {
+  constructor(props) {
+    super(props)
+    this.fieldtype = "email"
   }
 }
 
-class BasicTextArea extends BasicFieldComponent {
+class BasicTextArea extends BasicTextComponent {
   render() {
     const field = this.props.field
-    const lengthLeft = this.param("maxlength") - this.props.value.length
+    const length = _.isUndefined(this.props.value) ? 0 : this.props.value.length
+    const lengthLeft = this.param("maxlength") - length
+    const classStr = this.resolveClassName()
     return (<div>
-              {this.props.label}
+              {this.label(classStr)}
               <textarea
                 id={this.props.htmlId}
                 name={this.props.htmlId}
@@ -78,8 +112,8 @@ class BasicTextArea extends BasicFieldComponent {
                 maxLength={this.param("maxlength")}
                 model={this.props.model}
                 value={this.props.value}
-                className={!_.isEmpty(this.props.validationErrors) ? "error" : ""}
-                disabled={this.props.disabled ? "disabled" : ""}
+                className={classStr}
+                disabled={this.props.disabled}
                 onChange={e => this.props.onChange(this.props.field, e.target.value)} />
               <div className="length-left-spacer"></div>
               <div id={this.props.htmlId + ".length"} className="length-left">
@@ -100,19 +134,18 @@ class Dropdown extends BasicFieldComponent {
         options.push(
           <option key={this.props.htmlId + "." + field.options[i].value}
                   value={field.options[i].value}
-                  disabled={this.props.disabled ? "disabled" : ""}>
+                  disabled={this.props.disabled}>
             {label}
           </option>
         )
       }
     }
     return (<div>
-              {this.props.label}
+              {this.label()}
               <select id={this.props.htmlId}
                       name={this.props.htmlId}
                       required={field.required}
-                      className={!_.isEmpty(this.props.validationErrors) ? "error" : ""}
-                      disabled={this.props.disabled ? "disabled" : ""}
+                      disabled={this.props.disabled}
                       model={this.props.model}
                       onChange={e => this.props.onChange(this.props.field, e.target.value)}
                       value={this.props.value}>
@@ -134,8 +167,7 @@ class RadioButton extends BasicFieldComponent {
                                  key={this.props.htmlId + "." + field.options[i].value}
                                  name={this.props.htmlId}
                                  required={field.required}
-                                 className={!_.isEmpty(this.props.validationErrors) ? "error" : ""}
-                                 disabled={this.props.disabled ? "disabled" : ""}
+                                 disabled={this.props.disabled}
                                  value={field.options[i].value}
                                  onChange={e => this.props.onChange(this.props.field, e.target.value)}
                                  checked={field.options[i].value === this.props.value ? true: null} />)
@@ -148,14 +180,13 @@ class RadioButton extends BasicFieldComponent {
       }
     }
     return (<div>
-              {this.props.label}
+              {this.label()}
               {radiobuttons}
             </div>)
   }
 }
 
 export default class FormElement extends React.Component {
-
   constructor(props) {
     super(props)
     this.fieldTypeMapping = {
@@ -170,15 +201,10 @@ export default class FormElement extends React.Component {
   render() {
     const field = this.props.field
     const displayAs = field.displayAs
-    const label = this.props.renderingParameters && this.props.renderingParameters.hideLabels === true ?
-      "" :
-      <label htmlFor={this.props.htmlId} className={field.required ? "required" : ""}><LocalizedString  translations={field} translationKey="label" lang={this.props.lang} /></label>
-
-    const componentProps =_.assign(this.props, { label: label })
     var input = <span>Unsupported field type {displayAs}</span>
 
     if (displayAs in this.fieldTypeMapping) {
-      input = React.createElement(this.fieldTypeMapping[displayAs], componentProps)
+      input = React.createElement(this.fieldTypeMapping[displayAs], this.props)
     }
     return input
   }
