@@ -1,7 +1,7 @@
 (ns oph.form.schema
   (:require [schema.core :as s]))
 
-(defn create-form-schema []
+(defn create-form-schema [custom-wrapper-element-types]
   (s/defschema LocalizedString {:fi s/Str
                                 :sv s/Str})
 
@@ -32,17 +32,14 @@
   (s/defschema BasicElement (s/either FormField
                                       InfoElement))
 
-  (s/defschema WrapperElement {:type (s/eq "wrapperElement")
-                               :id s/Str
-                               :displayAs (s/enum :theme
-                                                  :fieldset
-                                                  :growingFieldset
-                                                  :growingFieldsetChild
-                                                  :vaBudget)  ;; TODO remove va-specific value from generic side
-                               :children  [(s/either BasicElement
-                                                     (s/recursive #'WrapperElement))]
-                               (s/optional-key :params) s/Any
-                               (s/optional-key :label) LocalizedString})
+  (let [default-wrapper-element-types [:theme :fieldset :growingFieldset :growingFieldsetChild ]]
+    (s/defschema WrapperElement {:type                    (s/eq "wrapperElement")
+                                 :id                      s/Str
+                                 :displayAs               (apply s/enum  (into custom-wrapper-element-types default-wrapper-element-types))
+                                 :children                [(s/either BasicElement
+                                                                     (s/recursive #'WrapperElement))]
+                                 (s/optional-key :params) s/Any
+                                 (s/optional-key :label)  LocalizedString}))
 
   (s/defschema Content [(s/either BasicElement
                                   WrapperElement)])
