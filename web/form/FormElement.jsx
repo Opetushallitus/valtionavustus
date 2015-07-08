@@ -68,7 +68,7 @@ class BasicTextField extends BasicTextComponent {
   }
 
   render() {
-    const sizeNumber = Number.isInteger(this.param("size")) ? this.param("size") : ""
+    const sizeNumber = Number.isInteger(this.param("size")) ? this.param("size") : undefined
     const classStr = this.resolveClassName()
     const field = this.props.field
     return (<div>
