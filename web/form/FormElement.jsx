@@ -16,9 +16,8 @@ class BasicFieldComponent extends React.Component {
   }
 
   label(className) {
-    if(this.hideLabel()) {
-      return undefined
-    } else {
+    if (this.hideLabel()) return undefined
+    else {
       return (<label htmlFor={this.props.htmlId}
                      className={this.labelClassName(className)}>
                 <LocalizedString
@@ -35,7 +34,7 @@ class BasicFieldComponent extends React.Component {
   }
 
   hideLabel() {
-    return this.props.renderingParameters && this.props.renderingParameters.hideLabels === true;
+    return this.props.renderingParameters && this.props.renderingParameters.hideLabels === true
   }
 
   param(param, defaultValue) {
@@ -47,16 +46,12 @@ class BasicFieldComponent extends React.Component {
 
 class BasicTextComponent extends BasicFieldComponent {
   sizeClassName() {
-    if (this.param("size")) {
-      const sizeIsNumber = Number.isInteger(this.param("size"))
-      return !sizeIsNumber ? this.param("size") : undefined
-    } else {
-      return undefined
-    }
+    if (this.param("size") && !Number.isInteger(this.param("size"))) return this.param("size")
+    else return undefined
   }
 
   resolveClassName() {
-    const classNames = ClassNames({error: !_.isEmpty(this.props.validationErrors)}, this.sizeClassName());
+    const classNames = ClassNames({ error: !_.isEmpty(this.props.validationErrors)}, this.sizeClassName())
     return !_.isEmpty(classNames) ? classNames : undefined
   }
 }
