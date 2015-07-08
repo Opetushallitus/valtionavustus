@@ -36,7 +36,8 @@
                              :displayAs (s/enum :theme
                                                 :fieldset
                                                 :growingFieldset
-                                                :growingFieldsetChild)
+                                                :growingFieldsetChild
+                                                :vaBudget)  ;; TODO remove va-specific value from generic side
                              :children  [(s/either BasicElement
                                                    (s/recursive #'WrapperElement))]
                              (s/optional-key :params) s/Any

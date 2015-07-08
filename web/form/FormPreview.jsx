@@ -59,7 +59,7 @@ export default class FormPreview extends React.Component {
                                       lang={lang}
                                       children={children}
                                       translations={translations}
-                                      renderingParameters={renderingParameters} />
+                                      renderingParameters={renderingParameters} model={model}/>
       }
     }
 

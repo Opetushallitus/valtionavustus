@@ -29,6 +29,7 @@ export default class FormModel {
     this.formOperations = props.formOperations
     this.initialStateTransformation = props.initialStateTransformation
     this.formP = props.formP
+    this.customComponentFactory = props.customComponentFactory
   }
 
   init() {
@@ -455,5 +456,16 @@ export default class FormModel {
 
   removeField(field) {
     dispatcher.push(events.removeField, field)
+  }
+
+  getCustomComponentTypeMapping() {
+    return this.customComponentFactory ? this.customComponentFactory.componentTypeMapping : {}
+  }
+
+  createCustomComponent(componentProps) {
+    if (!this.customComponentFactory) {
+      throw new Error("To create a custom field, supply customComponentFactory to FormModel")
+    }
+    return this.customComponentFactory.createComponent(componentProps)
   }
 }

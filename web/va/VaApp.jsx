@@ -10,6 +10,8 @@ import FormContainer from './../form/FormContainer.jsx'
 import FormModel from './../form/FormModel'
 import UrlCreator from './../form/UrlCreator'
 
+import VaComponentFactory from './VaComponents.jsx'
+
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
 function containsExistingEntityId(query) {
@@ -110,7 +112,8 @@ const model = new FormModel({
     "printEntityId": printEntityId
   },
   "initialStateTransformation": initialStateTransformation,
-  "formP": formP
+  "formP": formP,
+  "customComponentFactory": new VaComponentFactory()
 })
 const formModelP = model.init()
 

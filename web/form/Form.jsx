@@ -78,7 +78,8 @@ export default class Form extends React.Component {
                                children={children}
                                disabled={fieldDisabled}
                                translations={translations}
-                               renderingParameters={renderingParameters} />
+                               renderingParameters={renderingParameters}
+                               model={model} />
       }
     }
 

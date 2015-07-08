@@ -533,7 +533,7 @@ insert into forms (content) VALUES ('
       {
         "type": "wrapperElement",
         "id":"budget",
-        "displayAs":"fieldset",
+        "displayAs":"vaBudget",
         "label":{
           "fi":"Hankkeen kustannusarvio",
           "sv":"Projektkostnaderna"
