@@ -5,7 +5,8 @@ import LocalizedString from '../form/LocalizedString.jsx'
 export default class VaComponentFactory {
   constructor(props) {
     this.componentTypeMapping = {
-      "vaBudget": VaBudgetElement
+      "vaBudget": VaBudgetElement,
+      "vaSummingBudgetElement": SummingBudgetElement
     }
   }
 
@@ -31,10 +32,34 @@ class VaBudgetElement extends React.Component {
     const htmlId = this.props.htmlId
     return (
         <fieldset id={htmlId}>
-          <label htmlFor={this.props.htmlId} className={field.required ? "required" : ""}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></label>
-          <span>Hello from VaFieldFactory.jsx!</span>
           {children}
         </fieldset>
+    )
+  }
+}
+
+class SummingBudgetElement extends React.Component {
+  render() {
+    const field = this.props.field
+    const children = this.props.children
+    const htmlId = this.props.htmlId
+    const columnTitles = field.params.showColumnTitles ? <thead><tr>
+        <th><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
+        <th><LocalizedString translations={field.params.columnTitles} translationKey="description" lang={this.props.lang} /></th>
+        <th><LocalizedString translations={field.params.columnTitles} translationKey="amount" lang={this.props.lang} /></th>
+      </tr></thead> : ""
+    return (
+        <table id={htmlId}>
+          <caption className={field.required ? "required" : ""}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></caption>
+          {columnTitles}
+          <tbody>
+            <tr><td>TODO: Real row format here</td><td>{children}</td></tr>
+          </tbody>
+          <tfoot><tr>
+            <td colSpan="2"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
+            <td>TODO: sum here</td>
+          </tr></tfoot>
+        </table>
     )
   }
 }

@@ -534,24 +534,52 @@ insert into forms (content) VALUES ('
         "type": "wrapperElement",
         "id":"budget",
         "displayAs":"vaBudget",
-        "label":{
-          "fi":"Hankkeen kustannusarvio",
-          "sv":"Projektkostnaderna"
-        },
         "children": [
           {
-            "type": "formField",
-            "id":"coordination-costs",
-            "required":false,
-            "displayAs":"textField",
+            "type": "wrapperElement",
+            "id":"project-budget",
+            "displayAs":"vaSummingBudgetElement",
             "params":{
-              "size":"large",
-              "maxlength":80
+              "showColumnTitles":true,
+              "columnTitles": {
+                "label": {
+                  "fi":"Menot",
+                  "sv":"Kostnader"
+                },
+                "description": {
+                  "fi":"Selite, lyhyt kuvaus",
+                  "sv":"Förklaringen, kort deskription"
+                },
+                "amount": {
+                  "fi":"Yhteensä",
+                  "sv":"totalt"
+                }
+              },
+              "sumRowLabel": {
+                "fi":"Kustannukset yhteensä",
+                "sv":"Totala kostnader"
+              }
             },
             "label":{
-              "fi":"Yhteishankkeen koordinaatiokustannukset (VÄLIAIKAINEN KENTTÄ)",
-              "sv":"Samordningkostnaderna om gemensamt projekt"
-            }
+              "fi":"Hankkeen kustannusarvio",
+              "sv":"Projektkostnaderna"
+            },
+            "children": [
+              {
+                "type": "formField",
+                "id":"coordination-costs",
+                "required":false,
+                "displayAs":"textField",
+                "params":{
+                  "size":"large",
+                  "maxlength":80
+                },
+                "label":{
+                  "fi":"Yhteishankkeen koordinaatiokustannukset (VÄLIAIKAINEN KENTTÄ)",
+                  "sv":"Samordningkostnaderna om gemensamt projekt"
+                }
+              }
+            ]
           }
         ]
       }
