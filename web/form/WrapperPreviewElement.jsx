@@ -1,4 +1,5 @@
 import React from 'react'
+import ClassNames from 'classnames'
 import Translator from './Translator.js'
 import LocalizedString from './LocalizedString.jsx'
 import ThemeWrapperElement from './WrapperElement.jsx'
@@ -35,19 +36,26 @@ class GrowingFieldsetChildPreviewElement extends React.Component {
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId
-    const hidden = this.props.renderingParameters && this.props.renderingParameters.valueIsEmpty === true ? "hidden" : ""
     return (
-      <li className={hidden}>
+      <li className={this.className()}>
         <div className="fieldset" id={htmlId}>
           {children}
         </div>
       </li>
     )
   }
+
+  className() {
+    const classNames = ClassNames({hidden: isHidden()})
+    return !_.isEmpty(classNames) ? classNames : undefined
+  }
+
+  isHidden() {
+    return this.props.renderingParameters && this.props.renderingParameters.valueIsEmpty === true;
+  }
 }
 
 export default class WrapperPreviewElement extends React.Component {
-
   constructor(props) {
     super(props)
     this.fieldTypeMapping = {
