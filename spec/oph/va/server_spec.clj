@@ -109,7 +109,10 @@
                   :other-funding []
                   :other-partners []
                   :project-announce [{:error "required"}]
-                  :project-end []}
+                  :project-end []
+                  :vat-included []
+                  :coordination-costs []
+                  }
                  json)))
 
   (it "PUT should validate text field lengths when done to route /api/form/1/values"
@@ -140,7 +143,10 @@
                   :other-funding []
                   :other-partners []
                   :project-announce []
-                  :project-end [{:error "maxlength" :max 10}]}
+                  :project-end [{:error "maxlength" :max 10}]
+                  :vat-included []
+                  :coordination-costs []
+                  }
                  json)))
 
   (it "PUT should validate text field lengths and options when done to route /api/avustushaku/1/hakemus"
@@ -172,7 +178,10 @@
                   :other-funding []
                   :other-partners []
                   :project-announce []
-                  :project-end [{:error "maxlength" :max 10}]}
+                  :project-end [{:error "maxlength" :max 10}]
+                  :vat-included []
+                  :coordination-costs []
+                  }
                  json)))
 
   (it "PUT should create a new form submission and return id when done to route /api/form/1/values"
@@ -211,7 +220,10 @@
                 :other-funding []
                 :other-partners []
                 :project-announce [{:error "required"}]
-                :project-end []}
+                :project-end []
+                :vat-included []
+                :coordination-costs []
+                }
                json)))
 
   (it "POST should fail if done to non-existing node /api/form/1/values/2"

@@ -494,6 +494,68 @@ insert into forms (content) VALUES ('
         }
       }
     ]
+  },
+  {
+    "type": "wrapperElement",
+    "id":"financing-plan",
+    "displayAs":"theme",
+    "label":{
+      "fi":"RahoitussuunnitelmA",
+      "sv":"Finansieringsplan"
+    },
+    "children": [
+      {
+        "type": "formField",
+        "id":"vat-included",
+        "required":false,
+        "displayAs":"radioButton",
+        "label":{
+          "fi":"Onko kustannukset ilmoitettu arvonlisäverollisina?",
+          "sv":"Har kostnaderna förklaras momspliktig?"
+        },
+        "options":[
+          {
+            "value":"yes",
+            "label":{
+              "fi":"Kyllä",
+              "sv":"Ja"
+            }
+          },
+          {
+            "value":"no",
+            "label":{
+              "fi":"Ei",
+              "sv":"Nej"
+            }
+          }
+        ]
+      },
+      {
+        "type": "wrapperElement",
+        "id":"budget",
+        "displayAs":"fieldset",
+        "label":{
+          "fi":"Hankkeen kustannusarvio",
+          "sv":"Projektkostnaderna"
+        },
+        "children": [
+          {
+            "type": "formField",
+            "id":"coordination-costs",
+            "required":false,
+            "displayAs":"textField",
+            "params":{
+              "size":50,
+              "maxlength":80
+            },
+            "label":{
+              "fi":"Yhteishankkeen koordinaatiokustannukset (VÄLIAIKAINEN KENTTÄ)",
+              "sv":"Samordningkostnaderna om gemensamt projekt"
+            }
+          }
+        ]
+      }
+    ]
   }
 ]
 ');
