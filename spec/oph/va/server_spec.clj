@@ -25,8 +25,11 @@
            {:key "signature-email" :value "teemu@example.com"}
            {:key "language" :value "fi"}
            {:key "combined-effort" :value "no"}
-           {:key "other-organizations.other-organizations-1.name" :value "E.T. Extra Terrestrial"}
-           {:key "other-organizations.other-organizations-1.email" :value "et@example"}
+           {:key   "other-organizations"
+            :value [{:key   "other-organizations-1"
+                     :value [{:key "other-organizations.other-organizations-1.name" :value "E.T. Extra Terrestrial"}
+                             {:key "other-organizations.other-organizations-1.email" :value "et@example"}
+                             ]}]}
            {:key "project-goals" :value "Maaleja"}
            {:key "project-explanations.project-explanations-1.goal" :value "Paremmat oppimistulokset"}
            {:key "project-explanations.project-explanations-1.activity" :value "Pidämme työpajoja"}
