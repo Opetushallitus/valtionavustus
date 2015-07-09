@@ -69,7 +69,7 @@ class SummingBudgetElement extends React.Component {
           </tbody>
           <tfoot><tr>
             <td colSpan="2"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
-            <td>{sum}</td>
+            <td className="money">{sum}</td>
           </tr></tfoot>
         </table>
     )
@@ -87,7 +87,7 @@ class BudgetItemElement extends React.Component {
       <tr id={htmlId}>
         <td><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></td>
         <td>{descriptionComponent}</td>
-        <td>{amountComponent}</td>
+        <td className="money">{amountComponent}</td>
       </tr>
     )
   }
