@@ -29,7 +29,7 @@ class BasicFieldComponent extends React.Component {
   }
 
   labelClassName(className) {
-    const classNames = ClassNames(className, { required: this.props.field.required})
+    const classNames = ClassNames(className, { required: this.props.field.required, disabled: this.props.disabled })
     return !_.isEmpty(classNames) ? classNames : undefined
   }
 
