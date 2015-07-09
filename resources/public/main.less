@@ -3,7 +3,7 @@
 
 // Colors
 @lightest-gray: #fafafa;
-@light-gray: #e6e6e6;
+@light-gray: #d9d9d9;
 @dark-gray: #999290;
 @darker-gray: #807a78;
 @light-green: #73ba21;
@@ -420,16 +420,25 @@ button[disabled].remove {
   background: transparent url('img/remove_line_disabled.png') no-repeat left top;
 }
 
-textarea[disabled], button[disabled].textButton, html input[disabled] {
-  cursor: default;
+button[disabled].textButton {
   background-color: @light-gray;
+  border: 1px solid @dark-gray;
+}
+
+textarea[disabled], html input[disabled] {
+  cursor: default;
+  background-color: @lightest-gray;
+}
+
+textarea[disabled], button[disabled].textButton, input[disabled] {
+  border: 1px solid @light-gray;
 }
 
 input[disabled] + label {
-  color: @light-gray
+  color: @lightest-gray;
 }
 
 input[disabled]:checked + label {
   border: solid 4px @dark-gray;
-  color: @light-gray
+  color: @light-gray;
 }
