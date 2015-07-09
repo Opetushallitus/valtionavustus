@@ -6,7 +6,8 @@ export default class VaComponentFactory {
   constructor(props) {
     this.componentTypeMapping = {
       "vaBudget": VaBudgetElement,
-      "vaSummingBudgetElement": SummingBudgetElement
+      "vaSummingBudgetElement": SummingBudgetElement,
+      "vaBudgetItemElement": BudgetItemElement
     }
   }
 
@@ -53,13 +54,29 @@ class SummingBudgetElement extends React.Component {
           <caption className={field.required ? "required" : ""}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></caption>
           {columnTitles}
           <tbody>
-            <tr><td>TODO: Real row format here</td><td>{children}</td></tr>
+            {children}
           </tbody>
           <tfoot><tr>
             <td colSpan="2"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
             <td>TODO: sum here</td>
           </tr></tfoot>
         </table>
+    )
+  }
+}
+
+class BudgetItemElement extends React.Component {
+  render() {
+    const field = this.props.field
+    const children = this.props.children
+    const htmlId = this.props.htmlId
+    const incrementsTotal = field.params.incrementsTotal
+    return (
+      <tr id={htmlId}>
+        <td><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></td>
+        <td>{children[0]}</td>
+        <td>TODO: real data here</td>
+      </tr>
     )
   }
 }

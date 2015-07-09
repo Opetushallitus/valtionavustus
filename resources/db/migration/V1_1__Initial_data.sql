@@ -566,18 +566,32 @@ insert into forms (content) VALUES ('
             },
             "children": [
               {
-                "type": "formField",
-                "id":"coordination-costs",
-                "required":false,
-                "displayAs":"textField",
+                "type": "wrapperElement",
+                "id":"coordination-costs-row",
+                "displayAs":"vaBudgetItemElement",
                 "params":{
-                  "size":"large",
-                  "maxlength":80
+                  "incrementsTotal":true
                 },
                 "label":{
-                  "fi":"Yhteishankkeen koordinaatiokustannukset (VÄLIAIKAINEN KENTTÄ)",
+                  "fi":"Yhteishankkeen koordinaatiokustannukset",
                   "sv":"Samordningkostnaderna om gemensamt projekt"
-                }
+                },
+                "children": [
+                  {
+                    "type": "formField",
+                    "id":"coordination-costs-row.description",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"small",
+                      "maxlength":80
+                    },
+                    "label":{
+                      "fi":"Yhteishankkeen koordinaatiokustannukset",
+                      "sv":"Samordningkostnaderna om gemensamt projekt"
+                    }
+                  }
+                ]
               }
             ]
           }

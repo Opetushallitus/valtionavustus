@@ -13,7 +13,7 @@
             [oph.va.db :as va-db]
             [oph.va.schema :refer :all]))
 
-(create-form-schema [:vaBudget :vaSummingBudgetElement])
+(create-form-schema [:vaBudget :vaSummingBudgetElement :vaBudgetItemElement])
 
 (defroutes* avustushaku-routes
   "Avustushaku routes"
