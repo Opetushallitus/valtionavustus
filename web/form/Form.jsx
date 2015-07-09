@@ -79,7 +79,8 @@ export default class Form extends React.Component {
                                disabled={fieldDisabled}
                                translations={translations}
                                renderingParameters={renderingParameters}
-                               model={model} />
+                               model={model}
+                               answersObject={values} />
       }
     }
 

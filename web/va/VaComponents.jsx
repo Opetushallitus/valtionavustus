@@ -1,6 +1,8 @@
 import React from 'react'
+import _ from 'lodash'
 
 import LocalizedString from '../form/LocalizedString.jsx'
+import InputValueStorage from '../form/InputValueStorage.js'
 
 export default class VaComponentFactory {
   constructor(props) {
@@ -43,6 +45,15 @@ class SummingBudgetElement extends React.Component {
   render() {
     const field = this.props.field
     const children = this.props.children
+    const answersObject = this.props.answersObject
+    const amountValues = _.map(children, itemElement => {
+      const amountCoefficient = itemElement.props.field.params.incrementsTotal ? 1 : -1
+      const amountElement = itemElement.props.children[1]
+      const value = InputValueStorage.readValue(null, answersObject, amountElement.props.field.id)
+      return amountCoefficient * value
+    })
+    const sum = _.reduce(amountValues, (total, n) => { return total + n })
+
     const htmlId = this.props.htmlId
     const columnTitles = field.params.showColumnTitles ? <thead><tr>
         <th><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
@@ -58,7 +69,7 @@ class SummingBudgetElement extends React.Component {
           </tbody>
           <tfoot><tr>
             <td colSpan="2"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
-            <td>TODO: sum here</td>
+            <td>{sum}</td>
           </tr></tfoot>
         </table>
     )
@@ -70,7 +81,6 @@ class BudgetItemElement extends React.Component {
     const field = this.props.field
     const children = this.props.children
     const htmlId = this.props.htmlId
-    const incrementsTotal = field.params.incrementsTotal
     const descriptionComponent = children[0]
     const amountComponent = children[1]
     return (
