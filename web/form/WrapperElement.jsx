@@ -1,4 +1,5 @@
 import React from 'react'
+import ClassNames from 'classnames'
 import Translator from './Translator.js'
 import LocalizedString from './LocalizedString.jsx'
 import _ from 'lodash'
@@ -20,7 +21,6 @@ class ThemeWrapperElement extends React.Component {
 
 class FieldsetElement extends React.Component {
   render() {
-    const field = this.props.field
     const children = this.props.children
     const htmlId = this.props.htmlId
     return (
@@ -32,12 +32,17 @@ class FieldsetElement extends React.Component {
 }
 
 class GrowingFieldsetElement extends React.Component {
-  render() {
+  className() {
     const field = this.props.field
+    const classNames = ClassNames({ showOnlyFirstLabel: field.params.showOnlyFirstLabels })
+    return !_.isEmpty(classNames) ? classNames : undefined
+  }
+
+  render() {
     const children = this.props.children
     const htmlId = this.props.htmlId
     return (
-      <fieldset id={htmlId}>
+      <fieldset id={htmlId} className={this.className()}>
         <ol>
           {children}
         </ol>
@@ -46,14 +51,27 @@ class GrowingFieldsetElement extends React.Component {
   }
 }
 
-class GrowingFieldsetChildElement extends React.Component {
+export class RemoveButton extends React.Component {
   render() {
-    const children = this.props.children
-    const htmlId = this.props.htmlId
     const renderingParameters = this.props.renderingParameters
     const removalCallback = renderingParameters && !this.props.disabled ? renderingParameters.removeMe : function() {}
     const removeAltText = new Translator(this.props.translations["misc"]).translate("remove", this.props.lang, "POISTA")
     const mustNotBeRemoved = _.isObject(renderingParameters) ? renderingParameters.rowMustNotBeRemoved : false
+    return (<button
+        className="remove"
+        alt={removeAltText}
+        title={removeAltText}
+        onClick={removalCallback}
+        disabled={this.props.disabled || mustNotBeRemoved ? "disabled" : ""}/>
+    )
+  }
+}
+
+export class GrowingFieldsetChildElement extends React.Component {
+  render() {
+    const children = this.props.children
+    const htmlId = this.props.htmlId
+    const removeButton = React.createElement(RemoveButton, this.props)
     return (
       <li>
         <fieldset id={htmlId}>
@@ -61,12 +79,7 @@ class GrowingFieldsetChildElement extends React.Component {
             {children}
           </div>
           <div className="fieldset-control">
-            <button
-              className="remove"
-              alt={removeAltText}
-              title={removeAltText}
-              onClick={removalCallback}
-              disabled={this.props.disabled || mustNotBeRemoved ? "disabled" : ""}/>
+            {removeButton}
           </div>
           </fieldset>
       </li>
@@ -75,7 +88,6 @@ class GrowingFieldsetChildElement extends React.Component {
 }
 
 export default class WrapperElement extends React.Component {
-
   constructor(props) {
     super(props)
     this.fieldTypeMapping = {

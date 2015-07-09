@@ -1,6 +1,8 @@
 import React from 'react'
 import _ from 'lodash'
 
+import Translator from '../form/Translator.js'
+import {RemoveButton} from '../form/WrapperElement.jsx'
 import LocalizedString from '../form/LocalizedString.jsx'
 import InputValueStorage from '../form/InputValueStorage.js'
 
@@ -9,11 +11,12 @@ export default class VaComponentFactory {
     this.componentTypeMapping = {
       "vaBudget": VaBudgetElement,
       "vaSummingBudgetElement": SummingBudgetElement,
-      "vaBudgetItemElement": BudgetItemElement
+      "vaBudgetItemElement": BudgetItemElement,
+      "vaProjectDescription": VaProjectDescription
     }
   }
 
- createComponent(componentProps) {
+  createComponent(componentProps) {
     const field = componentProps.field;
     const displayAs = field.displayAs
     const model = componentProps.model
@@ -89,6 +92,26 @@ class BudgetItemElement extends React.Component {
         <td>{descriptionComponent}</td>
         <td className="money">{amountComponent}</td>
       </tr>
+    )
+  }
+}
+
+class VaProjectDescription extends React.Component {
+  render() {
+    const children = this.props.children
+    const htmlId = this.props.htmlId
+    const removeButton = React.createElement(RemoveButton, this.props)
+    return (
+      <li className="va-big-fieldset">
+        <fieldset id={htmlId}>
+          <div className="fieldset-elements">
+            {children}
+          </div>
+          <div className="fieldset-control">
+            {removeButton}
+          </div>
+        </fieldset>
+      </li>
     )
   }
 }

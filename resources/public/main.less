@@ -141,48 +141,37 @@ body {
       margin-bottom: 0;
     }
 
-    fieldset {
-      div {
+    fieldset div {
         display: inline-block;
-      }
-
-      > div.fieldset-elements {
-        float: left;
-        border-left: 1px solid @dark-gray;
-        border-right: 1px solid @dark-gray;
-        padding: 0 10px;
-        margin: 0 10px 40px 10px;
-
-        input[type=text], input[type=email], textarea {
-          margin: 5px 10px 10px 0;
-        }
-      }
-
-      > div.fieldset-control {
-        padding-top: 20px;
-        overflow: hidden;
-      }
     }
 
-    ol {
-      margin: 20px 0 0 -79px;
-      list-style-type: none;
-      counter-reset: item;
-      width: @section-width + 100px;
-
-      > li:before {
-        content: counter(item) "  ";
-        counter-increment: item;
-        float: left;
-        width: 1em;
-        font-size: 18px;
-        margin-top: 15px;
-      }
-
-      li:first-child:before {
+    fieldset.showOnlyFirstLabel ol {
+      > li:first-child:before {
         margin-top: 45px;
       }
     }
+
+    fieldset {
+      ol {
+        list-style-type: none;
+        counter-reset: item;
+        width: @section-width + 100px;
+
+        li {
+          margin: 20px 0 0 -58px;
+        }
+
+        > li:before {
+          content: counter(item) "  ";
+          counter-increment: item;
+          float: left;
+          width: 1em;
+          font-size: 18px;
+          margin-top: 15px;
+        }
+      }
+    }
+
 
     table {
       width: @section-width - 18px;
@@ -467,3 +456,27 @@ input[disabled]:checked + label {
   border: solid 4px @dark-gray;
   color: @light-gray;
 }
+
+#container form ol li.va-big-fieldset {
+  margin: 20px 0 0 -79px;
+}
+
+.va-big-fieldset {
+  div.fieldset-elements {
+    float: left;
+    border-left: 1px solid @dark-gray;
+    border-right: 1px solid @dark-gray;
+    padding: 0 10px;
+    margin: 0 10px 40px 10px;
+
+    input[type=text], input[type=email], textarea {
+      margin: 5px 10px 10px 0;
+    }
+  }
+
+  div.fieldset-control {
+    padding-top: 20px;
+    overflow: hidden;
+  }
+}
+
