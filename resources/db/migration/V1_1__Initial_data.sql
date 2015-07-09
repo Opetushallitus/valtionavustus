@@ -598,8 +598,279 @@ insert into forms (content) VALUES ('
                     }
                   }
                 ]
-              }
-            ]
+              },
+              {
+                "type": "wrapperElement",
+                "id":"personnel-costs-row",
+                "displayAs":"vaBudgetItemElement",
+                "params":{
+                  "incrementsTotal":true
+                },
+                "label":{
+                  "fi":"Henkilöstökustannukset",
+                  "sv":"TODO"
+                },
+                "children": [
+                  {
+                    "type": "formField",
+                    "id":"personnel-costs-row.description",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"small",
+                      "maxlength":80
+                    }
+                  },
+                  {
+                    "type": "formField",
+                    "id":"personnel-costs-row.amount",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"extra-small",
+                      "maxlength":16
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "wrapperElement",
+                "id":"service-purchase-costs-row",
+                "displayAs":"vaBudgetItemElement",
+                "params":{
+                  "incrementsTotal":true
+                },
+                "label":{
+                  "fi":"Palvelujen ostot",
+                  "sv":"TODO"
+                },
+                "children": [
+                  {
+                    "type": "formField",
+                    "id":"service-purchase-costs-row.description",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"small",
+                      "maxlength":80
+                    }
+                  },
+                  {
+                    "type": "formField",
+                    "id":"service-purchase-costs-row.amount",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"extra-small",
+                      "maxlength":16
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "wrapperElement",
+                "id":"material-costs-row",
+                "displayAs":"vaBudgetItemElement",
+                "params":{
+                  "incrementsTotal":true
+                },
+                "label":{
+                  "fi":"Tarvike- ja materiaalikustannukset",
+                  "sv":"TODO"
+                },
+                "children": [
+                  {
+                    "type": "formField",
+                    "id":"material-costs-row.description",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"small",
+                      "maxlength":80
+                    }
+                  },
+                  {
+                    "type": "formField",
+                    "id":"material-costs-row.amount",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"extra-small",
+                      "maxlength":16
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "wrapperElement",
+                "id":"rent-costs-row",
+                "displayAs":"vaBudgetItemElement",
+                "params":{
+                  "incrementsTotal":true
+                },
+                "label":{
+                  "fi":"Vuokrat",
+                  "sv":"TODO"
+                },
+                "children": [
+                  {
+                    "type": "formField",
+                    "id":"rent-costs-row.description",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"small",
+                      "maxlength":80
+                    }
+                  },
+                  {
+                    "type": "formField",
+                    "id":"rent-costs-row.amount",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"extra-small",
+                      "maxlength":16
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "wrapperElement",
+                "id":"equipment-costs-row",
+                "displayAs":"vaBudgetItemElement",
+                "params":{
+                  "incrementsTotal":true
+                },
+                "label":{
+                  "fi":"Laite- ym. hankinnat",
+                  "sv":"TODO"
+                },
+                "children": [
+                  {
+                    "type": "formField",
+                    "id":"equipment-costs-row.description",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"small",
+                      "maxlength":80
+                    }
+                  },
+                  {
+                    "type": "formField",
+                    "id":"equipment-costs-row.amount",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"extra-small",
+                      "maxlength":16
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "wrapperElement",
+                "id":"steamship-costs-row",
+                "displayAs":"vaBudgetItemElement",
+                "params":{
+                  "incrementsTotal":true
+                },
+                "label":{
+                  "fi":"Matkakustannukset",
+                  "sv":"TODO"
+                },
+                "children": [
+                  {
+                    "type": "formField",
+                    "id":"steamship-costs-row.description",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"small",
+                      "maxlength":80
+                    }
+                  },
+                  {
+                    "type": "formField",
+                    "id":"steamship-costs-row.amount",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"extra-small",
+                      "maxlength":16
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "wrapperElement",
+                "id":"other-costs-row",
+                "displayAs":"vaBudgetItemElement",
+                "params":{
+                  "incrementsTotal":true
+                },
+                "label":{
+                  "fi":"Muut kustannukset",
+                  "sv":"TODO"
+                },
+                "children": [
+                  {
+                    "type": "formField",
+                    "id":"other-costs-row.description",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"small",
+                      "maxlength":80
+                    }
+                  },
+                  {
+                    "type": "formField",
+                    "id":"other-costs-row.amount",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"extra-small",
+                      "maxlength":16
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "wrapperElement",
+                "id":"project-incomes-row",
+                "displayAs":"vaBudgetItemElement",
+                "params":{
+                  "incrementsTotal":false
+                },
+                "label":{
+                  "fi":"Hankkeen tulot",
+                  "sv":"TODO"
+                },
+                "children": [
+                  {
+                    "type": "formField",
+                    "id":"project-incomes-row.description",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"small",
+                      "maxlength":80
+                    }
+                  },
+                  {
+                    "type": "formField",
+                    "id":"project-incomes-row.amount",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"extra-small",
+                      "maxlength":16
+                    }
+                  }
+                ]
+              }            ]
           }
         ]
       }

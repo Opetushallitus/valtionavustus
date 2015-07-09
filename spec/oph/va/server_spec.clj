@@ -71,7 +71,23 @@
    :project-end                                          []
    :vat-included                                         []
    :coordination-costs-row.description                   []
-   :coordination-costs-row.amount                        []})
+   :coordination-costs-row.amount                        []
+   :personnel-costs-row.description                      []
+   :personnel-costs-row.amount                           []
+   :service-purchase-costs-row.description               []
+   :service-purchase-costs-row.amount                    []
+   :material-costs-row.description                       []
+   :material-costs-row.amount                            []
+   :rent-costs-row.description                           []
+   :rent-costs-row.amount                                []
+   :equipment-costs-row.description                      []
+   :equipment-costs-row.amount                           []
+   :steamship-costs-row.description                      []
+   :steamship-costs-row.amount                           []
+   :other-costs-row.description                          []
+   :other-costs-row.amount                               []
+   :project-incomes-row.description                      []
+   :project-incomes-row.amount                           []})
 
 (describe "HTTP server"
 
