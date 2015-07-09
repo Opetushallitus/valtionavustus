@@ -57,14 +57,18 @@ class GrowingFieldsetChildElement extends React.Component {
     return (
       <li>
         <fieldset id={htmlId}>
-          {children}
-          <button
-            className="remove"
-            alt={removeAltText}
-            title={removeAltText}
-            onClick={removalCallback}
-            disabled={this.props.disabled || mustNotBeRemoved ? "disabled" : ""}/>
-        </fieldset>
+          <div className="fieldset-elements">
+            {children}
+          </div>
+          <div className="fieldset-control">
+            <button
+              className="remove"
+              alt={removeAltText}
+              title={removeAltText}
+              onClick={removalCallback}
+              disabled={this.props.disabled || mustNotBeRemoved ? "disabled" : ""}/>
+          </div>
+          </fieldset>
       </li>
     )
   }

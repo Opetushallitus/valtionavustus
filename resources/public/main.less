@@ -129,25 +129,46 @@ body {
       }
     }
 
+    div {
+      &.extra-large {
+        display: block;
+      }
+    }
+
     textarea {
       width: @section-width - 18px;
       height: 150px;
       margin-bottom: 0;
     }
 
-    div.error {
-      margin: 14px 0 0 10px;
-      display: inline;
-    }
+    fieldset {
+      div {
+        display: inline-block;
+      }
 
-    fieldset div {
-      display: inline-block;
+      > div.fieldset-elements {
+        float: left;
+        border-left: 1px solid @dark-gray;
+        border-right: 1px solid @dark-gray;
+        padding: 0 10px;
+        margin: 0 10px 40px 10px;
+
+        input[type=text], input[type=email], textarea {
+          margin: 5px 10px 10px 0;
+        }
+      }
+
+      > div.fieldset-control {
+        padding-top: 20px;
+        overflow: hidden;
+      }
     }
 
     ol {
-      margin: 20px 0 0 -58px;
+      margin: 20px 0 0 -79px;
       list-style-type: none;
       counter-reset: item;
+      width: @section-width + 100px;
 
       > li:before {
         content: counter(item) "  ";
