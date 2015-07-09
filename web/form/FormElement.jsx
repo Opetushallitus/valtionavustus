@@ -16,7 +16,7 @@ class BasicFieldComponent extends React.Component {
   }
 
   label(className) {
-    if (this.hideLabel()) return undefined
+    if (this.hideLabel() || !this.props.field.label) return undefined
     else {
       return (<label htmlFor={this.props.htmlId}
                      className={this.labelClassName(className)}>

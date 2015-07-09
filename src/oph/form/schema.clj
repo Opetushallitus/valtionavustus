@@ -20,7 +20,7 @@
   (s/defschema FormField {:type (s/eq "formField")
                           :id s/Str
                           :required s/Bool
-                          :label LocalizedString
+                          (s/optional-key :label) LocalizedString
                           (s/optional-key :params) s/Any
                           (s/optional-key :options) [Option]
                           :displayAs (s/enum :textField

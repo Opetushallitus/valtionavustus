@@ -585,10 +585,6 @@ insert into forms (content) VALUES ('
                     "params":{
                       "size":"small",
                       "maxlength":80
-                    },
-                    "label":{
-                      "fi":"Yhteishankkeen koordinaatiokustannukset",
-                      "sv":"Samordningkostnaderna om gemensamt projekt"
                     }
                   }
                 ]
