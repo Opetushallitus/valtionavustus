@@ -324,7 +324,7 @@ insert into forms (content) VALUES ('
       },
       {
         "type": "wrapperElement",
-        "id":"project-explanations",
+        "id":"project-description",
         "displayAs":"growingFieldset",
         "params":{
           "showOnlyFirstLabels":false
@@ -336,12 +336,12 @@ insert into forms (content) VALUES ('
         "children": [
           {
             "type": "wrapperElement",
-            "id":"project-explanations-1",
-            "displayAs":"growingFieldsetChild",
+            "id":"project-description-1",
+            "displayAs":"vaProjectDescription",
             "children": [
               {
                 "type": "formField",
-                "id":"project-explanations.project-explanations-1.goal",
+                "id":"project-description.project-description-1.goal",
                 "required":true,
                 "displayAs":"textField",
                 "params":{
@@ -355,7 +355,7 @@ insert into forms (content) VALUES ('
               },
               {
                 "type": "formField",
-                "id":"project-explanations.project-explanations-1.activity",
+                "id":"project-description.project-description-1.activity",
                 "required":true,
                 "displayAs":"textField",
                 "params":{
@@ -369,7 +369,7 @@ insert into forms (content) VALUES ('
               },
               {
                 "type": "formField",
-                "id":"project-explanations.project-explanations-1.result",
+                "id":"project-description.project-description-1.result",
                 "required":true,
                 "displayAs":"textField",
                 "params":{

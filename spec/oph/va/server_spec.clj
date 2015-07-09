@@ -31,9 +31,9 @@
                              {:key "other-organizations.other-organizations-1.email" :value "et@example"}
                              ]}]}
            {:key "project-goals" :value "Maaleja"}
-           {:key "project-explanations.project-explanations-1.goal" :value "Paremmat oppimistulokset"}
-           {:key "project-explanations.project-explanations-1.activity" :value "Pidämme työpajoja"}
-           {:key "project-explanations.project-explanations-1.result" :value "Jotkut lähtevät jatko-opiskelemaan"}
+           {:key "project-description.project-description-1.goal" :value "Paremmat oppimistulokset"}
+           {:key "project-description.project-description-1.activity" :value "Pidämme työpajoja"}
+           {:key "project-description.project-description-1.result" :value "Jotkut lähtevät jatko-opiskelemaan"}
            {:key "bank-bic" :value "5000"}
            {:key "bank-iban" :value "FI 32 5000 4699350600"}
            {:key "project-target" :value "Maali"}
@@ -49,9 +49,9 @@
    :other-organizations.other-organizations-1.name       [{:error "required"}]
    :primary-email                                        []
    :signature                                            [{:error "required"}]
-   :project-explanations.project-explanations-1.goal     [{:error "required"}]
-   :project-explanations.project-explanations-1.activity [{:error "required"}]
-   :project-explanations.project-explanations-1.result   [{:error "required"}]
+   :project-description.project-description-1.goal     [{:error "required"}]
+   :project-description.project-description-1.activity [{:error "required"}]
+   :project-description.project-description-1.result   [{:error "required"}]
    :continuation-project                                 []
    :bank-bic                                             [{:error "required"}]
    :organization                                         []
