@@ -71,11 +71,13 @@ class BudgetItemElement extends React.Component {
     const children = this.props.children
     const htmlId = this.props.htmlId
     const incrementsTotal = field.params.incrementsTotal
+    const descriptionComponent = children[0]
+    const amountComponent = children[1]
     return (
       <tr id={htmlId}>
         <td><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></td>
-        <td>{children[0]}</td>
-        <td>{children[1]}</td>
+        <td>{descriptionComponent}</td>
+        <td>{amountComponent}</td>
       </tr>
     )
   }
