@@ -69,7 +69,7 @@ class SummingBudgetElement extends React.Component {
           </tbody>
           <tfoot><tr>
             <td colSpan="2"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
-            <td className="money">{sum}</td>
+            <td className="money sum">{sum}</td>
           </tr></tfoot>
         </table>
     )
