@@ -70,7 +70,8 @@
    :project-announce                                     [{:error "required"}]
    :project-end                                          []
    :vat-included                                         []
-   :coordination-costs-row.description                   []})
+   :coordination-costs-row.description                   []
+   :coordination-costs-row.amount                        []})
 
 (describe "HTTP server"
 

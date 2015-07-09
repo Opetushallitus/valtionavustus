@@ -75,7 +75,7 @@ class BudgetItemElement extends React.Component {
       <tr id={htmlId}>
         <td><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></td>
         <td>{children[0]}</td>
-        <td>TODO: real data here</td>
+        <td>{children[1]}</td>
       </tr>
     )
   }

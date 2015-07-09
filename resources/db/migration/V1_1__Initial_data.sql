@@ -586,6 +586,16 @@ insert into forms (content) VALUES ('
                       "size":"small",
                       "maxlength":80
                     }
+                  },
+                  {
+                    "type": "formField",
+                    "id":"coordination-costs-row.amount",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"extra-small",
+                      "maxlength":16
+                    }
                   }
                 ]
               }
