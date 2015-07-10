@@ -1,74 +1,19 @@
 import React from 'react'
 import ClassNames from 'classnames'
-import Translator from './Translator.js'
-import LocalizedString from './element/LocalizedString.jsx'
-import ThemeWrapperElement from './WrapperElement.jsx'
 import _ from 'lodash'
-
-
-class FieldsetPreviewElement extends React.Component {
-  render() {
-    const children = this.props.children
-    const htmlId = this.props.htmlId
-    return (
-      <div className="soresu-preview-fieldset" id={htmlId}>
-        {children}
-      </div>
-    )
-  }
-}
-
-class GrowingFieldsetPreviewElement extends React.Component {
-  className(className) {
-    const field = this.props.field
-    const classNames = ClassNames(className, {"show-only-first-label": field.params.showOnlyFirstLabels })
-    return !_.isEmpty(classNames) ? classNames : undefined
-  }
-
-  render() {
-    const children = this.props.children
-    const htmlId = this.props.htmlId
-    return (
-      <div id={htmlId} className={this.className("soresu-preview-growing-fieldset")}>
-        <ol>
-          {children}
-        </ol>
-      </div>
-    )
-  }
-}
-
-class GrowingFieldsetChildPreviewElement extends React.Component {
-  render() {
-    const children = this.props.children
-    const htmlId = this.props.htmlId
-    return (
-      <li className={this.className()}>
-        <div id={htmlId}>
-          {children}
-        </div>
-      </li>
-    )
-  }
-
-  className() {
-    const classNames = ClassNames("soresu-preview-growing-fieldset-child", {hidden: this.isHidden()})
-    return !_.isEmpty(classNames) ? classNames : undefined
-  }
-
-  isHidden() {
-    return this.props.renderingParameters && this.props.renderingParameters.valueIsEmpty === true;
-  }
-}
+import ThemeWrapperElement from './WrapperElement.jsx'
+import FieldsetPreview from './preview/wrapper/FieldsetPreview.jsx'
+import GrowingFieldsetPreview from './preview/wrapper/GrowingFieldsetPreview.jsx'
+import GrowingFieldsetChildPreview from './preview/wrapper/GrowingFieldsetChildPreview.jsx'
 
 export default class WrapperPreviewElement extends React.Component {
   constructor(props) {
     super(props)
     this.fieldTypeMapping = {
       "theme": ThemeWrapperElement,
-      "fieldset": FieldsetPreviewElement,
-      "growingFieldset": GrowingFieldsetPreviewElement,
-      "growingFieldsetChild": GrowingFieldsetChildPreviewElement
+      "fieldset": FieldsetPreview,
+      "growingFieldset": GrowingFieldsetPreview,
+      "growingFieldsetChild": GrowingFieldsetChildPreview
     }
   }
 

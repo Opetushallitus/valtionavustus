@@ -2,33 +2,8 @@ import React from 'react'
 import ClassNames from 'classnames'
 import _ from 'lodash'
 import LocalizedString from './element/LocalizedString.jsx'
-
-class BasicValue extends React.Component {
-  render() {
-    var value = "\u00a0" //&nbsp;
-    if (this.props.value) {
-      value = this.props.value
-    }
-    return (<span className="soresu-value" id={this.props.htmlId}>{value}</span>)
-  }
-}
-
-class OptionsValue extends React.Component {
-  render() {
-    const field = this.props.field
-    const lang = this.props.lang
-    var value = "\u00a0" //&nbsp;
-    if (field.options) {
-      for (var i=0; i < field.options.length; i++) {
-        if (field.options[i].value === this.props.value) {
-          const val = field.options[i]
-          value = <LocalizedString translations={val} translationKey="label" lang={lang} />
-        }
-      }
-    }
-    return (<span className="soresu-value" id={this.props.htmlId}>{value}</span>)
-  }
-}
+import BasicValue from './preview/BasicValue.jsx'
+import OptionValue from './preview/OptionValue.jsx'
 
 export default class FormPreviewElement extends React.Component {
   constructor(props) {
@@ -37,8 +12,8 @@ export default class FormPreviewElement extends React.Component {
       "textField": BasicValue,
       "textArea": BasicValue,
       "emailField": BasicValue,
-      "dropdown": OptionsValue,
-      "radioButton": OptionsValue
+      "dropdown": OptionValue,
+      "radioButton": OptionValue
     }
   }
 
