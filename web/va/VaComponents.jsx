@@ -126,7 +126,7 @@ class BudgetSummaryElement extends React.Component {
     const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
 
     const totalNeeded = this.props.totalNeeded
-    const selfFinancingShare = (selfFinancingPercentage / 100) * totalNeeded
+    const selfFinancingShare = Math.ceil((selfFinancingPercentage / 100) * totalNeeded)
     const ophShare = totalNeeded - selfFinancingShare
     return (
       <table id={htmlId}>
