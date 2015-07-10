@@ -41,7 +41,10 @@ class VaBudgetElement extends React.Component {
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId
-    const projectBudgetTotal = this.populateProjectBudgetTotal()
+
+    const projectBudgetElement = this.props.children[0]
+    const projectBudgetTotal = this.populateSummingElementSum(projectBudgetElement)
+
     const summaryElement = _.last(children)
     summaryElement.props.totalNeeded = projectBudgetTotal // TODO: Subtract third party financing
     return (
@@ -51,17 +54,16 @@ class VaBudgetElement extends React.Component {
     )
   }
 
-  populateProjectBudgetTotal() {
+  populateSummingElementSum(summingBudgetElement) {
     const answersObject = this.props.answersObject
-    const projectBudgetElement = this.props.children[0]
-    const amountValues = _.map(projectBudgetElement.props.children, itemElement => {
+    const amountValues = _.map(summingBudgetElement.props.children, itemElement => {
       const amountCoefficient = itemElement.props.field.params.incrementsTotal ? 1 : -1
       const amountElement = itemElement.props.children[1]
       const value = InputValueStorage.readValue(null, answersObject, amountElement.props.field.id)
       return amountCoefficient * value
     })
     const sum = _.reduce(amountValues, (total, n) => { return total + n })
-    projectBudgetElement.props.sum = sum
+    summingBudgetElement.props.sum = sum
     return sum
   }
 }
