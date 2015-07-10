@@ -875,6 +875,126 @@ insert into forms (content) VALUES ('
           },
           {
             "type": "wrapperElement",
+            "id":"third-party-income",
+            "displayAs":"vaSummingBudgetElement",
+            "params":{
+              "showColumnTitles":false,
+              "sumRowLabel": {
+                "fi":"Muu rahoitus yhteensä",
+                "sv":"Annan finansiering totalt"
+              }
+            },
+            "label":{
+              "fi":"Hankkeen rahoitus",
+              "sv":"Finansieringen av projektet"
+            },
+            "children": [
+              {
+                "type": "wrapperElement",
+                "id":"eu-programs-income-row",
+                "displayAs":"vaBudgetItemElement",
+                "params":{
+                  "incrementsTotal":false
+                },
+                "label":{
+                  "fi":"EU-ohjelmat",
+                  "sv":"EU-program"
+                },
+                "children": [
+                  {
+                    "type": "formField",
+                    "id":"eu-programs-income-row.description",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"small",
+                      "maxlength":80
+                    }
+                  },
+                  {
+                    "type": "formField",
+                    "id":"eu-programs-income-row.amount",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"extra-small",
+                      "maxlength":16
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "wrapperElement",
+                "id":"other-public-financing-income-row",
+                "displayAs":"vaBudgetItemElement",
+                "params":{
+                  "incrementsTotal":false
+                },
+                "label":{
+                  "fi":"Muu julkinen rahoitus",
+                  "sv":"TODO"
+                },
+                "children": [
+                  {
+                    "type": "formField",
+                    "id":"other-public-financing-income-row.description",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"small",
+                      "maxlength":80
+                    }
+                  },
+                  {
+                    "type": "formField",
+                    "id":"other-public-financing-income-row.amount",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"extra-small",
+                      "maxlength":16
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "wrapperElement",
+                "id":"private-financing-income-row",
+                "displayAs":"vaBudgetItemElement",
+                "params":{
+                  "incrementsTotal":false
+                },
+                "label":{
+                  "fi":"Yksityinen rahoitus",
+                  "sv":"TODO"
+                },
+                "children": [
+                  {
+                    "type": "formField",
+                    "id":"private-financing-income-row.description",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"small",
+                      "maxlength":80
+                    }
+                  },
+                  {
+                    "type": "formField",
+                    "id":"private-financing-income-row.amount",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"extra-small",
+                      "maxlength":16
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "wrapperElement",
             "id":"budget-summary",
             "displayAs":"vaBudgetSummaryElement",
             "params":{

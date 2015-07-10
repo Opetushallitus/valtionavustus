@@ -87,7 +87,13 @@
    :other-costs-row.description                          []
    :other-costs-row.amount                               []
    :project-incomes-row.description                      []
-   :project-incomes-row.amount                           []})
+   :project-incomes-row.amount                           []
+   :eu-programs-income-row.description []
+   :eu-programs-income-row.amount []
+   :other-public-financing-income-row.description []
+   :other-public-financing-income-row.amount []
+   :private-financing-income-row.description []
+   :private-financing-income-row.amount []})
 
 (describe "HTTP server"
 
