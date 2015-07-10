@@ -20,7 +20,7 @@ export default class WrapperElement extends React.Component {
     const displayAs = field.displayAs
     const model = this.props.model
 
-    var element = <span>WrapperElement: Unsupported field type {displayAs}</span>
+    var element = <span>{this.constructor.name} : Unsupported field type {displayAs}</span>
 
     if (displayAs in model.getCustomComponentTypeMapping()) {
       element = model.createCustomComponent(this.props)

@@ -23,7 +23,7 @@ export default class VaComponentFactory {
     const displayAs = field.displayAs
     const model = componentProps.model
 
-    var element = <span>VaComponentFactory: Unsupported field type {displayAs}</span>
+    var element = <span>{this.constructor.name} : Unsupported field type {displayAs}</span>
 
     if (displayAs in this.componentTypeMapping) {
       element = React.createElement(this.componentTypeMapping[displayAs], componentProps)

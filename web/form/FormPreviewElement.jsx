@@ -45,7 +45,7 @@ export default class FormPreviewElement extends React.Component {
   render() {
     const field = this.props.field;
     const displayAs = field.displayAs
-    var preview = <span>Unsupported field type {displayAs}</span>
+    var preview = <span>{this.constructor.name} : Unsupported field type {displayAs}</span>
 
     if (displayAs in this.fieldTypeMapping) {
       preview = React.createElement(this.fieldTypeMapping[displayAs], this.props)

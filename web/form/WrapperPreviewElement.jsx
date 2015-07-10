@@ -70,7 +70,7 @@ export default class WrapperPreviewElement extends React.Component {
     const field = this.props.field
     const displayAs = field.displayAs
 
-    var element = <span>Unsupported field type {displayAs}</span>
+    var element = <span>{this.constructor.name} : Unsupported field type {displayAs}</span>
 
     if (displayAs in this.fieldTypeMapping) {
       element = React.createElement(this.fieldTypeMapping[displayAs], this.props)
