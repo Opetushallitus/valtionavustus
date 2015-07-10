@@ -9,8 +9,8 @@ export default class BasicSizedComponent extends BasicFieldComponent {
     else return undefined
   }
 
-  resolveClassName() {
-    const classNames = ClassNames({ error: !_.isEmpty(this.props.validationErrors)}, this.sizeClassName())
+  resolveClassName(className) {
+    const classNames = ClassNames(className, { error: !_.isEmpty(this.props.validationErrors)}, this.sizeClassName())
     return !_.isEmpty(classNames) ? classNames : undefined
   }
 }
