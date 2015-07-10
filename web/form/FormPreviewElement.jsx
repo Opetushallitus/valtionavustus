@@ -9,7 +9,7 @@ class BasicValue extends React.Component {
     if (this.props.value) {
       value = this.props.value
     }
-    return (<span className="value" id={this.props.htmlId}>{value}</span>)
+    return (<span className="soresu-value" id={this.props.htmlId}>{value}</span>)
   }
 }
 
@@ -26,7 +26,7 @@ class OptionsValue extends React.Component {
         }
       }
     }
-    return (<span className="value" id={this.props.htmlId}>{value}</span>)
+    return (<span className="soresu-value" id={this.props.htmlId}>{value}</span>)
   }
 }
 
@@ -60,7 +60,7 @@ export default class FormPreviewElement extends React.Component {
   }
 
   className() {
-    const classNames = ClassNames(this.sizeClassName())
+    const classNames = ClassNames("soresu-preview-element", this.sizeClassName())
     return !_.isEmpty(classNames) ? classNames : undefined
   }
 
@@ -73,7 +73,7 @@ export default class FormPreviewElement extends React.Component {
     if( this.hideLabel()) return undefined
     else {
       return (<LocalizedString
-                className="key"
+                className="soresu-key"
                 translations={this.props.field}
                 translationKey="label"
                 lang={this.props.lang} />)

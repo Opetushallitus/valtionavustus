@@ -311,11 +311,6 @@ ul {
   }
 }
 
-//Form elements
-.required:after {
-  content: " *";
-}
-
 .soresu-text-field, .soresu-email-field, .soresu-text-area, .soresu-dropdown, .soresu-text-button {
   input:focus,
   select:focus,
@@ -359,16 +354,21 @@ ul {
       color: @darker-gray;
     }
   }
+
+  .required:after {
+    content: " *";
+  }
 }
 
-.hidden {
-  display: none;
-}
 
-.preview {
-  div.fieldset > div {
-    display: inline-block;
+.soresu-preview {
+  .soresu-key {
+    font-weight: 600;
+    display: block;
+    padding-right: 10px;
+  }
 
+  .soresu-preview-element {
     &.extra-small {
       width: ceil(@section-width / 4);
     }
@@ -386,31 +386,39 @@ ul {
     }
   }
 
-  span.key {
-    font-weight: 600;
-    display: block;
-    padding-right: 10px;
+  .soresu-preview-fieldset,  .soresu-preview-growing-fieldset {
+    .soresu-preview-element {
+      display: inline-block;
+    }
+
+    .hidden {
+      display: none;
+    }
   }
 
-  ol {
-    margin: 20px 0 0 -56px;
-    list-style-type: none;
-    counter-reset: item;
-
-    > li:before {
-      content: counter(item) "  ";
-      counter-increment: item;
-      float: left;
-      width: 1em;
-      font-weight: 600;
+  .soresu-preview-growing-fieldset {
+    &.show-only-first-label ol {
+      > li:first-child:before {
+        margin-top: 25px;
+      }
     }
 
-    li:first-child:before {
-      margin-top: 22px;
-    }
+    ol {
+      margin: 20px 0 0 -56px;
+      list-style-type: none;
+      counter-reset: item;
 
-    > li {
-      margin: 0 0 10px 0;
+      > li:before {
+        content: counter(item) "  ";
+        counter-increment: item;
+        float: left;
+        width: 1em;
+        font-weight: 600;
+      }
+
+      > li {
+        margin: 0 0 10px 0;
+      }
     }
   }
 }

@@ -11,7 +11,7 @@ class FieldsetPreviewElement extends React.Component {
     const children = this.props.children
     const htmlId = this.props.htmlId
     return (
-      <div className="fieldset" id={htmlId}>
+      <div className="soresu-preview-fieldset" id={htmlId}>
         {children}
       </div>
     )
@@ -19,11 +19,17 @@ class FieldsetPreviewElement extends React.Component {
 }
 
 class GrowingFieldsetPreviewElement extends React.Component {
+  className(className) {
+    const field = this.props.field
+    const classNames = ClassNames(className, {"show-only-first-label": field.params.showOnlyFirstLabels })
+    return !_.isEmpty(classNames) ? classNames : undefined
+  }
+
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId
     return (
-      <div id={htmlId}>
+      <div id={htmlId} className={this.className("soresu-preview-growing-fieldset")}>
         <ol>
           {children}
         </ol>
@@ -38,7 +44,7 @@ class GrowingFieldsetChildPreviewElement extends React.Component {
     const htmlId = this.props.htmlId
     return (
       <li className={this.className()}>
-        <div className="fieldset" id={htmlId}>
+        <div id={htmlId}>
           {children}
         </div>
       </li>
@@ -46,7 +52,7 @@ class GrowingFieldsetChildPreviewElement extends React.Component {
   }
 
   className() {
-    const classNames = ClassNames({hidden: this.isHidden()})
+    const classNames = ClassNames("soresu-preview-growing-fieldset-child", {hidden: this.isHidden()})
     return !_.isEmpty(classNames) ? classNames : undefined
   }
 

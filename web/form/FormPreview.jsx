@@ -64,7 +64,7 @@ export default class FormPreview extends React.Component {
     }
 
     return (
-      <div className="preview">
+      <div className="soresu-preview">
         {
           fields.map(renderField)
         }
