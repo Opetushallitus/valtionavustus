@@ -80,6 +80,114 @@ body {
   }
 }
 
+.soresu-text-field, .soresu-email-field, .soresu-text-area {
+  input[type=text], input[type=email], textarea {
+    margin: 5px 10px 20px 0;
+  }
+
+  label {
+    &.extra-small {
+      width: ceil(@section-width / 4)  - 8px;
+    }
+    &.small {
+      width: ceil(@section-width / 3) - 8px;
+    }
+    &.medium {
+      width: ceil(@section-width / 2) - 8px;
+    }
+    &.large {
+      width: ceil(@section-width / 1.5) - 18px;
+    }
+    &.extra-large {
+      width: @section-width - 8px;
+    }
+  }
+}
+
+.soresu-text-field, .soresu-email-field {
+  input[type=text], input[type=email] {
+    &.extra-small {
+      width: ceil(@section-width / 4)  - 18px;
+    }
+    &.small {
+      width: ceil(@section-width / 3) - 18px;
+    }
+    &.medium {
+      width: ceil(@section-width / 2) - 18px;
+    }
+    &.large {
+      width: ceil(@section-width / 1.5) - 28px;
+    }
+    &.extra-large {
+      width: @section-width - 18px;
+    }
+  }
+}
+
+.soresu-growing-fieldset {
+  div.extra-large {
+    display: block;
+  }
+}
+
+.soresu-text-area {
+  textarea {
+    width: @section-width - 18px;
+    height: 150px;
+    margin-bottom: 0;
+  }
+}
+
+.soresu-fieldset, .soresu-growing-fieldset {
+  div {
+    display: inline-block;
+  }
+}
+
+.soresu-growing-fieldset {
+  &.showOnlyFirstLabel ol {
+    > li:first-child:before {
+      margin-top: 45px;
+    }
+  }
+
+  ol {
+    list-style-type: none;
+    counter-reset: item;
+    width: @section-width + 100px;
+
+    li {
+      margin: 20px 0 0 -58px;
+    }
+
+    > li:before {
+      content: counter(item) "  ";
+      counter-increment: item;
+      float: left;
+      width: 1em;
+      font-size: 18px;
+      margin-top: 15px;
+    }
+  }
+}
+
+section.soresu-theme {
+  margin: 25px 0 0 0;
+  padding-top: 25px;
+  border-top: 1px solid @light-gray;
+
+  h2 {
+    color: @darker-gray;
+    font-weight: 300;
+    font-size: 18px;
+    text-transform: uppercase;
+    float: left;
+  }
+
+  > div, > fieldset {
+    margin: 15px 0 20px 250px;
+  }
+}
 
 #container {
   max-width: @form-width;
@@ -89,90 +197,6 @@ body {
   padding: 0 20px 20px 20px;
 
   form {
-    input[type=text], input[type=email], textarea {
-      margin: 5px 10px 20px 0;
-    }
-
-    input[type=text], input[type=email], input[type=number] {
-      &.extra-small {
-        width: ceil(@section-width / 4)  - 18px;
-      }
-      &.small {
-        width: ceil(@section-width / 3) - 18px;
-      }
-      &.medium {
-        width: ceil(@section-width / 2) - 18px;
-      }
-      &.large {
-        width: ceil(@section-width / 1.5) - 28px;
-      }
-      &.extra-large {
-        width: @section-width - 18px;
-      }
-    }
-
-    label {
-      &.extra-small {
-        width: ceil(@section-width / 4)  - 8px;
-      }
-      &.small {
-        width: ceil(@section-width / 3) - 8px;
-      }
-      &.medium {
-        width: ceil(@section-width / 2) - 8px;
-      }
-      &.large {
-        width: ceil(@section-width / 1.5) - 18px;
-      }
-      &.extra-large {
-        width: @section-width - 8px;
-      }
-    }
-
-    div {
-      &.extra-large {
-        display: block;
-      }
-    }
-
-    textarea {
-      width: @section-width - 18px;
-      height: 150px;
-      margin-bottom: 0;
-    }
-
-    fieldset div {
-        display: inline-block;
-    }
-
-    fieldset.showOnlyFirstLabel ol {
-      > li:first-child:before {
-        margin-top: 45px;
-      }
-    }
-
-    fieldset {
-      ol {
-        list-style-type: none;
-        counter-reset: item;
-        width: @section-width + 100px;
-
-        li {
-          margin: 20px 0 0 -58px;
-        }
-
-        > li:before {
-          content: counter(item) "  ";
-          counter-increment: item;
-          float: left;
-          width: 1em;
-          font-size: 18px;
-          margin-top: 15px;
-        }
-      }
-    }
-
-
     table {
       width: @section-width - 18px;
       text-align: left;
@@ -199,24 +223,6 @@ body {
     }
     &.sum:after {
       content: " €"
-    }
-  }
-
-  section.soresu-theme {
-    margin: 25px 0 0 0;
-    padding-top: 25px;
-    border-top: 1px solid @light-gray;
-
-    h2 {
-      color: @darker-gray;
-      font-weight: 300;
-      font-size: 18px;
-      text-transform: uppercase;
-      float: left;
-    }
-
-    > div, > fieldset {
-      margin: 15px 0 20px 250px;
     }
   }
 }
