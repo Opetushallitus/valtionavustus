@@ -13,6 +13,7 @@ export default class VaComponentFactory {
       "vaBudget": VaBudgetElement,
       "vaSummingBudgetElement": SummingBudgetElement,
       "vaBudgetItemElement": BudgetItemElement,
+      "vaBudgetSummaryElement": BudgetSummaryElement,
       "vaProjectDescription": VaProjectDescription
     }
   }
@@ -40,8 +41,9 @@ class VaBudgetElement extends React.Component {
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId
-    console.log('this.populateProjectBudgetTotal()', this.populateProjectBudgetTotal())
-    console.log('this.props.customProps', this.props.customProps)
+    const projectBudgetTotal = this.populateProjectBudgetTotal()
+    const summaryElement = _.last(children)
+    summaryElement.props.totalNeeded = projectBudgetTotal // TODO: Subtract third party financing
     return (
         <fieldset id={htmlId}>
           {children}
@@ -106,6 +108,39 @@ class BudgetItemElement extends React.Component {
         <td>{descriptionComponent}</td>
         <td className="money">{amountComponent}</td>
       </tr>
+    )
+  }
+}
+
+class BudgetSummaryElement extends React.Component {
+  render() {
+    const htmlId = this.props.htmlId
+    const field = this.props.field
+
+    const vaSpecificProperties = this.props.customProps
+    const avustushaku = vaSpecificProperties.avustushaku
+    const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
+
+    const totalNeeded = this.props.totalNeeded
+    const selfFinancingShare = (selfFinancingPercentage / 100) * totalNeeded
+    const ophShare = totalNeeded - selfFinancingShare
+    return (
+      <table id={htmlId}>
+        <tbody>
+          <tr>
+            <td colSpan="2"><LocalizedString translations={field.params} translationKey="totalSumRowLabel" lang={this.props.lang} /></td>
+            <td className="money sum">{totalNeeded}</td>
+          </tr>
+          <tr>
+            <td colSpan="2"><LocalizedString translations={field.params} translationKey="ophFinancingLabel" lang={this.props.lang} /> {100 - selfFinancingPercentage} %</td>
+            <td className="money sum">{ophShare}</td>
+          </tr>
+          <tr>
+            <td colSpan="2"><LocalizedString translations={field.params} translationKey="selfFinancingLabel" lang={this.props.lang} /> {selfFinancingPercentage} %</td>
+            <td className="money sum">{selfFinancingShare}</td>
+          </tr>
+        </tbody>
+      </table>
     )
   }
 }

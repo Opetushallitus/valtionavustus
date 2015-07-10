@@ -871,6 +871,27 @@ insert into forms (content) VALUES ('
                   }
                 ]
               }            ]
+          },
+          {
+            "type": "wrapperElement",
+            "id":"budget-summary",
+            "displayAs":"vaBudgetSummaryElement",
+            "params":{
+              "showColumnTitles":false,
+              "totalSumRowLabel": {
+                "fi":"Hankkeen rahoitus yhteensä",
+                "sv":"Finansiering av den totala projekt"
+              },
+              "ophFinancingLabel": {
+                "fi":"Opetushallitukselta haettava rahoitus",
+                "sv":"TODO"
+              },
+              "selfFinancingLabel": {
+                "fi":"Omarahoitus",
+                "sv":"TODO"
+              }
+            },
+            "children":[]
           }
         ]
       }
@@ -920,7 +941,8 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
       "fi": "Hakuaika",
       "sv": "Åtkomsttid"
     }
-  }
+  },
+  "self-financing-percentage": 25
 }'
 );
 
