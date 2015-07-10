@@ -1,5 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
+import ClassNames from 'classnames'
 
 import Translator from '../form/Translator.js'
 import {RemoveButton} from '../form/WrapperElement.jsx'
@@ -69,10 +70,11 @@ class SummingBudgetElement extends React.Component {
         <th><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
         <th><LocalizedString translations={field.params.columnTitles} translationKey="description" lang={this.props.lang} /></th>
         <th><LocalizedString translations={field.params.columnTitles} translationKey="amount" lang={this.props.lang} /></th>
-      </tr></thead> : ""
+      </tr></thead> : undefined
+    const classNames = ClassNames({"required": field.required })
     return (
         <table id={htmlId}>
-          <caption className={field.required ? "required" : ""}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></caption>
+          <caption className={!_.isEmpty(classNames) ? classNames : undefined}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></caption>
           {columnTitles}
           <tbody>
             {children}
