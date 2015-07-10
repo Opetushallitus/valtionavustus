@@ -29,6 +29,24 @@ body {
   font-size: 16px;
 }
 
+ul {
+  // VA-specific style?
+  margin: 10px 0 0 -40px;
+  list-style: none;
+
+  li {
+    display: table-row;
+  }
+
+  li:before {
+    color: @light-green;
+    content:"•";
+    font-size: 14px;
+    padding-right: 10px;
+    display: table-cell;
+  }
+}
+
 #top-container {
   width: @form-width;
   margin-left: auto;
@@ -80,7 +98,102 @@ body {
   }
 }
 
-.soresu-text-field, .soresu-email-field, .soresu-text-area {
+#container {
+  max-width: @form-width;
+  margin-top: 140px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px 20px 20px;
+}
+
+// SORESU FORM STYLES
+.soresu-form {
+  fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  label {
+    color: @form-label-black;
+    display: block;
+    margin: 0 0 8px 0;
+
+    &.disabled {
+      color: @darker-gray;
+    }
+  }
+
+  .required:after {
+    content: " *";
+  }
+
+  h1 {
+    font-weight: 300;
+    font-size: 24px;
+  }
+}
+
+section.soresu-theme {
+  margin: 25px 0 0 0;
+  padding-top: 25px;
+  border-top: 1px solid @light-gray;
+
+  h2 {
+    color: @darker-gray;
+    font-weight: 300;
+    font-size: 18px;
+    text-transform: uppercase;
+    float: left;
+  }
+
+  > div, > fieldset {
+    margin: 15px 0 20px 250px;
+  }
+}
+
+// FIELDSETS / WRAPPERS
+.soresu-fieldset,
+.soresu-growing-fieldset {
+  div {
+    display: inline-block;
+  }
+}
+
+.soresu-growing-fieldset {
+  div.extra-large {
+    display: block;
+  }
+
+  ol {
+    list-style-type: none;
+    counter-reset: item;
+    width: @section-width + 100px;
+
+    li {
+      margin: 20px 0 0 -58px;
+    }
+
+    > li:before {
+      content: counter(item) "  ";
+      counter-increment: item;
+      float: left;
+      width: 1em;
+      font-size: 18px;
+      margin-top: 15px;
+    }
+  }
+
+  &.show-only-first-label ol {
+    > li:first-child:before {
+      margin-top: 45px;
+    }
+  }
+}
+// END FIELDSETS / WRAPPERS
+
+// FORM COMPONENTS
+.soresu-text-component() {
   input[type=text],
   input[type=email],
   textarea {
@@ -100,9 +213,6 @@ body {
   textarea[disabled], input[disabled] {
     cursor: default;
     background-color: @lightest-gray;
-  }
-
-  textarea[disabled], button[disabled].soresu-text-button, input[disabled] {
     border: 1px solid @light-gray;
   }
 
@@ -125,7 +235,39 @@ body {
   }
 }
 
-.soresu-text-field, .soresu-email-field {
+.soresu-focus-animation() {
+  input:focus,
+  select:focus,
+  textarea:focus,
+  button:focus {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid @light-blue;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    .ease-in-out(0.30s);
+    outline: none;
+  }
+}
+
+.soresu-focus-show-error() {
+  input:focus.error,
+  select:focus.error,
+  textarea:focus.error {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid @bright-red;
+  }
+}
+
+.soresu-text-field,
+.soresu-email-field {
+  .soresu-text-component();
+  .soresu-focus-animation();
+  .soresu-focus-show-error();
+
   input[type=text], input[type=email] {
     &.extra-small {
       width: ceil(@section-width / 4)  - 18px;
@@ -145,13 +287,19 @@ body {
   }
 }
 
-.soresu-growing-fieldset {
-  div.extra-large {
-    display: block;
+.soresu-money-field {
+  .soresu-text-field();
+
+  input {
+    text-align: right;
   }
 }
 
 .soresu-text-area {
+  .soresu-text-component();
+  .soresu-focus-animation();
+  .soresu-focus-show-error();
+
   textarea {
     width: @section-width - 18px;
     height: 150px;
@@ -166,261 +314,13 @@ body {
   }
 }
 
-.soresu-fieldset, .soresu-growing-fieldset {
-  div {
-    display: inline-block;
-  }
+.soresu-text-button {
+  .soresu-focus-animation();
 }
 
-.soresu-growing-fieldset {
-  &.show-only-first-label ol {
-    > li:first-child:before {
-      margin-top: 45px;
-    }
-  }
-
-  ol {
-    list-style-type: none;
-    counter-reset: item;
-    width: @section-width + 100px;
-
-    li {
-      margin: 20px 0 0 -58px;
-    }
-
-    > li:before {
-      content: counter(item) "  ";
-      counter-increment: item;
-      float: left;
-      width: 1em;
-      font-size: 18px;
-      margin-top: 15px;
-    }
-  }
-}
-
-section.soresu-theme {
-  margin: 25px 0 0 0;
-  padding-top: 25px;
-  border-top: 1px solid @light-gray;
-
-  h2 {
-    color: @darker-gray;
-    font-weight: 300;
-    font-size: 18px;
-    text-transform: uppercase;
-    float: left;
-  }
-
-  > div, > fieldset {
-    margin: 15px 0 20px 250px;
-  }
-}
-
-#container {
-  max-width: @form-width;
-  margin-top: 140px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 20px 20px 20px;
-
-  form {
-    table {
-      width: @section-width - 18px;
-      text-align: left;
-      caption {
-        text-align: left;
-        text-transform: uppercase;
-      }
-      tr {
-        line-height: 40px;
-        input[type=text] {
-          margin-bottom: 0;
-        }
-      }
-    }
-  }
-
-  .money {
-    text-align: right;
-    input {
-      text-align: right;
-    }
-    &.sum {
-      font-weight: bold;
-    }
-    &.sum:after {
-      content: " €"
-    }
-  }
-}
-
-h1 {
-  font-weight: 300;
-  font-size: 24px;
-}
-
-ul {
-  // VA-specific style?
-  margin: 10px 0 0 -40px;
-  list-style: none;
-
-  li {
-    display: table-row;
-  }
-
-  li:before {
-    color: @light-green;
-    content:"•";
-    font-size: 14px;
-    padding-right: 10px;
-    display: table-cell;
-  }
-}
-
-// Info elements
-.accordion {
-  overflow-y: hidden;
-  margin-bottom: 40px;
-  transition-property: all;
-  transition-duration: 0.5s;
-  transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
-  width: @section-width;
-  &.closed {
-    max-height: 0;
-  }
-  &.open {
-    max-height: 320px; /* This should be slightly greater than real max height, and given to make slide animation work */
-  }
-}
-
-.accordion-title {
-  color: @dark-blue;
-  cursor: pointer;
-
-  &.closed:after {
-    vertical-align: bottom;
-    content: " \02C5";
-    font-family: Arial, sans-serif;
-  }
-
-  &.open:after {
-    vertical-align: bottom;
-    content: " \02C4";
-    font-family: Arial, sans-serif;
-  }
-}
-
-.soresu-text-field, .soresu-email-field, .soresu-text-area, .soresu-dropdown, .soresu-text-button {
-  input:focus,
-  select:focus,
-  textarea:focus,
-  button:focus {
-    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
-    outline: 1px solid @light-blue;
-  }
-
-  input,
-  select,
-  textarea,
-  button {
-    .ease-in-out(0.30s);
-    outline: none;
-  }
-}
-
-.soresu-text-field, .soresu-email-field, .soresu-text-area, .soresu-dropdown {
-  input:focus.error,
-  select:focus.error,
-  textarea:focus.error {
-    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
-    outline: 1px solid @bright-red;
-  }
-}
-
-.soresu-form {
-  fieldset {
-    border: 0;
-    margin: 0;
-    padding: 0;
-  }
-
-  label {
-    color: @form-label-black;
-    display: block;
-    margin: 0 0 8px 0;
-
-    &.disabled {
-      color: @darker-gray;
-    }
-  }
-
-  .required:after {
-    content: " *";
-  }
-}
-
-
-.soresu-preview {
-  .soresu-key {
-    font-weight: 600;
-    display: block;
-    padding-right: 10px;
-  }
-
-  .soresu-preview-element {
-    &.extra-small {
-      width: ceil(@section-width / 4);
-    }
-    &.small {
-      width: ceil(@section-width / 3);
-    }
-    &.medium {
-      width: ceil(@section-width / 2);
-    }
-    &.large {
-      width: ceil(@section-width / 1.5);
-    }
-    &.extra-large {
-      width: @section-width;
-    }
-  }
-
-  .soresu-preview-fieldset,  .soresu-preview-growing-fieldset {
-    .soresu-preview-element {
-      display: inline-block;
-    }
-
-    .hidden {
-      display: none;
-    }
-  }
-
-  .soresu-preview-growing-fieldset {
-    &.show-only-first-label ol {
-      > li:first-child:before {
-        margin-top: 25px;
-      }
-    }
-
-    ol {
-      margin: 20px 0 0 -56px;
-      list-style-type: none;
-      counter-reset: item;
-
-      > li:before {
-        content: counter(item) "  ";
-        counter-increment: item;
-        float: left;
-        width: 1em;
-        font-weight: 600;
-      }
-
-      > li {
-        margin: 0 0 10px 0;
-      }
-    }
-  }
+.soresu-dropdown() {
+  .soresu-focus-animation();
+  .soresu-focus-show-error();
 }
 
 .soresu-radio {
@@ -479,6 +379,131 @@ button.soresu-text-button {
 button[disabled].soresu-text-button {
   background-color: @light-gray;
   border: 1px solid @light-gray;
+}
+// END FORM COMPONENTS
+
+.soresu-preview {
+  .soresu-key {
+    font-weight: 600;
+    display: block;
+    padding-right: 10px;
+  }
+
+  .soresu-preview-element {
+    &.extra-small {
+      width: ceil(@section-width / 4);
+    }
+    &.small {
+      width: ceil(@section-width / 3);
+    }
+    &.medium {
+      width: ceil(@section-width / 2);
+    }
+    &.large {
+      width: ceil(@section-width / 1.5);
+    }
+    &.extra-large {
+      width: @section-width;
+    }
+  }
+
+  .soresu-preview-fieldset,  .soresu-preview-growing-fieldset {
+    .soresu-preview-element {
+      display: inline-block;
+    }
+
+    .hidden {
+      display: none;
+    }
+  }
+
+  .soresu-preview-growing-fieldset {
+    ol {
+      margin: 20px 0 0 -56px;
+      list-style-type: none;
+      counter-reset: item;
+
+      > li:before {
+        content: counter(item) "  ";
+        counter-increment: item;
+        float: left;
+        width: 1em;
+        font-weight: 600;
+      }
+
+      > li {
+        margin: 0 0 10px 0;
+      }
+    }
+
+    &.show-only-first-label ol {
+      > li:first-child:before {
+        margin-top: 25px;
+      }
+    }
+  }
+}
+// END SORESU FORM STYLES
+
+// Info elements
+.accordion {
+  overflow-y: hidden;
+  margin-bottom: 40px;
+  transition-property: all;
+  transition-duration: 0.5s;
+  transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+  width: @section-width;
+  &.closed {
+    max-height: 0;
+  }
+  &.open {
+    max-height: 320px; /* This should be slightly greater than real max height, and given to make slide animation work */
+  }
+}
+
+.accordion-title {
+  color: @dark-blue;
+  cursor: pointer;
+
+  &.closed:after {
+    vertical-align: bottom;
+    content: " \02C5";
+    font-family: Arial, sans-serif;
+  }
+
+  &.open:after {
+    vertical-align: bottom;
+    content: " \02C4";
+    font-family: Arial, sans-serif;
+  }
+}
+
+// VA SPECIFIC STYLES
+#financing-plan {
+  table {
+    width: @section-width - 18px;
+    text-align: left;
+    caption {
+      text-align: left;
+      text-transform: uppercase;
+    }
+    tr {
+      line-height: 40px;
+      input[type=text] {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.money {
+  text-align: right;
+  &.sum {
+    font-weight: bold;
+  }
+  &.sum:after {
+    content: " €"
+  }
 }
 
 ol li.va-big-fieldset {
