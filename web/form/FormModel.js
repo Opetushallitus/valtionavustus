@@ -397,6 +397,13 @@ export default class FormModel {
       }
     }
 
+    if (field.displayAs === 'moneyField' && value) {
+      const moneyError = FormModel.validateMoney(value);
+      if (moneyError) {
+        validationErrors.push(moneyError)
+      }
+    }
+
     return validationErrors
   }
 
@@ -409,6 +416,13 @@ export default class FormModel {
     const validEmailRegexp = /\S+@\S+\.\S+/
     const validEmail = validEmailRegexp.test(input) && lastPartIsLongerThanOne(input)
     return validEmail ? undefined : {error: "email"};
+  }
+
+  static validateMoney(input) {
+    function isNumeric(n) {
+      return !isNaN(parseFloat(n)) && isFinite(n)
+    }
+    return /^[0-9]*$/.test(input) && isNumeric(input) ? undefined : {error: "money"}
   }
 
   // Public API

@@ -2,6 +2,7 @@ import React from 'react'
 import BasicTextField from './element/BasicTextField.jsx'
 import BasicTextArea from './element/BasicTextArea.jsx'
 import EmailTextField from './element/EmailTextField.jsx'
+import MoneyTextField from './element/MoneyTextField.jsx'
 import Dropdown from './element/Dropdown.jsx'
 import RadioButton from './element/RadioButton.jsx'
 
@@ -12,6 +13,7 @@ export default class FormElement extends React.Component {
       "textField": BasicTextField,
       "textArea": BasicTextArea,
       "emailField": EmailTextField,
+      "moneyField": MoneyTextField,
       "dropdown": Dropdown,
       "radioButton": RadioButton
     }

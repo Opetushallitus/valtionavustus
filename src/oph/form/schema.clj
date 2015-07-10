@@ -26,6 +26,7 @@
                           :displayAs (s/enum :textField
                                              :textArea
                                              :emailField
+                                             :moneyField
                                              :dropdown
                                              :radioButton)})
 

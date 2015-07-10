@@ -48,6 +48,10 @@
       "fi": "Tarkista sähköpostiosoite",
       "sv": "Kontrollera e-postadress"
     },
+    "money": {
+      "fi": "Syötä arvo kokonaisina euroina",
+      "sv": "TODO"
+    },
     "unexpected-submit-error": {
       "fi": "Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.",
       "sv": "Skickande misslyckades. Försök på nytt senare."

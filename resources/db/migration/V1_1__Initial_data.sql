@@ -591,7 +591,7 @@ insert into forms (content) VALUES ('
                     "type": "formField",
                     "id":"coordination-costs-row.amount",
                     "required":false,
-                    "displayAs":"textField",
+                    "displayAs":"moneyField",
                     "params":{
                       "size":"extra-small",
                       "maxlength":16
@@ -625,7 +625,7 @@ insert into forms (content) VALUES ('
                     "type": "formField",
                     "id":"personnel-costs-row.amount",
                     "required":false,
-                    "displayAs":"textField",
+                    "displayAs":"moneyField",
                     "params":{
                       "size":"extra-small",
                       "maxlength":16
@@ -659,7 +659,7 @@ insert into forms (content) VALUES ('
                     "type": "formField",
                     "id":"service-purchase-costs-row.amount",
                     "required":false,
-                    "displayAs":"textField",
+                    "displayAs":"moneyField",
                     "params":{
                       "size":"extra-small",
                       "maxlength":16
@@ -693,7 +693,7 @@ insert into forms (content) VALUES ('
                     "type": "formField",
                     "id":"material-costs-row.amount",
                     "required":false,
-                    "displayAs":"textField",
+                    "displayAs":"moneyField",
                     "params":{
                       "size":"extra-small",
                       "maxlength":16
@@ -727,7 +727,7 @@ insert into forms (content) VALUES ('
                     "type": "formField",
                     "id":"rent-costs-row.amount",
                     "required":false,
-                    "displayAs":"textField",
+                    "displayAs":"moneyField",
                     "params":{
                       "size":"extra-small",
                       "maxlength":16
@@ -761,7 +761,7 @@ insert into forms (content) VALUES ('
                     "type": "formField",
                     "id":"equipment-costs-row.amount",
                     "required":false,
-                    "displayAs":"textField",
+                    "displayAs":"moneyField",
                     "params":{
                       "size":"extra-small",
                       "maxlength":16
@@ -795,7 +795,7 @@ insert into forms (content) VALUES ('
                     "type": "formField",
                     "id":"steamship-costs-row.amount",
                     "required":false,
-                    "displayAs":"textField",
+                    "displayAs":"moneyField",
                     "params":{
                       "size":"extra-small",
                       "maxlength":16
@@ -829,7 +829,7 @@ insert into forms (content) VALUES ('
                     "type": "formField",
                     "id":"other-costs-row.amount",
                     "required":false,
-                    "displayAs":"textField",
+                    "displayAs":"moneyField",
                     "params":{
                       "size":"extra-small",
                       "maxlength":16
@@ -863,7 +863,7 @@ insert into forms (content) VALUES ('
                     "type": "formField",
                     "id":"project-incomes-row.amount",
                     "required":false,
-                    "displayAs":"textField",
+                    "displayAs":"moneyField",
                     "params":{
                       "size":"extra-small",
                       "maxlength":16
@@ -915,7 +915,7 @@ insert into forms (content) VALUES ('
                     "type": "formField",
                     "id":"eu-programs-income-row.amount",
                     "required":false,
-                    "displayAs":"textField",
+                    "displayAs":"moneyField",
                     "params":{
                       "size":"extra-small",
                       "maxlength":16
@@ -949,7 +949,7 @@ insert into forms (content) VALUES ('
                     "type": "formField",
                     "id":"other-public-financing-income-row.amount",
                     "required":false,
-                    "displayAs":"textField",
+                    "displayAs":"moneyField",
                     "params":{
                       "size":"extra-small",
                       "maxlength":16
@@ -983,7 +983,7 @@ insert into forms (content) VALUES ('
                     "type": "formField",
                     "id":"private-financing-income-row.amount",
                     "required":false,
-                    "displayAs":"textField",
+                    "displayAs":"moneyField",
                     "params":{
                       "size":"extra-small",
                       "maxlength":16
