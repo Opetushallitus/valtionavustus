@@ -13,7 +13,7 @@ export default class RemoveButton extends React.Component {
         alt={removeAltText}
         title={removeAltText}
         onClick={removalCallback}
-        disabled={this.props.disabled || mustNotBeRemoved ? "disabled" : ""}/>
+        disabled={this.props.disabled || mustNotBeRemoved}/>
     )
   }
 }
