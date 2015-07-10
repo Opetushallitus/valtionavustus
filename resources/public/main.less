@@ -81,8 +81,29 @@ body {
 }
 
 .soresu-text-field, .soresu-email-field, .soresu-text-area {
-  input[type=text], input[type=email], textarea {
+  input[type=text],
+  input[type=email],
+  textarea {
     margin: 5px 10px 20px 0;
+    font-size: 18px;
+    border: 1px solid @dark-gray;
+    padding: 8px;
+    background-color: #fff;
+  }
+
+  input[type=text].error,
+  input[type=email].error,
+  textarea.error {
+    border: 1px solid @bright-red;
+  }
+
+  textarea[disabled], input[disabled] {
+    cursor: default;
+    background-color: @lightest-gray;
+  }
+
+  textarea[disabled], button[disabled].soresu-text-button, input[disabled] {
+    border: 1px solid @light-gray;
   }
 
   label {
@@ -295,57 +316,48 @@ ul {
   content: " *";
 }
 
-input:focus,
-select:focus,
-textarea:focus,
-button:focus {
-  box-shadow: 0 0 5px rgba(97, 186, 233, 1);
-  outline: 1px solid @light-blue;
+.soresu-text-field, .soresu-email-field, .soresu-text-area, .soresu-dropdown, .soresu-text-button {
+  input:focus,
+  select:focus,
+  textarea:focus,
+  button:focus {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid @light-blue;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    .ease-in-out(0.30s);
+    outline: none;
+  }
 }
 
-input:focus.error,
-select:focus.error,
-textarea:focus.error {
-  box-shadow: 0 0 5px rgba(97, 186, 233, 1);
-  outline: 1px solid @bright-red;
+.soresu-text-field, .soresu-email-field, .soresu-text-area, .soresu-dropdown {
+  input:focus.error,
+  select:focus.error,
+  textarea:focus.error {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid @bright-red;
+  }
 }
 
-input,
-select,
-textarea,
-button {
-  .ease-in-out(0.30s);
-  outline: none;
-}
+.soresu-form {
+  fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
 
-fieldset {
-  border: 0;
-  margin: 0;
-  padding: 0;
-}
+  label {
+    color: @form-label-black;
+    display: block;
+    margin: 0 0 8px 0;
 
-input[type=text],
-input[type=email],
-textarea {
-  font-size: 18px;
-  border: 1px solid @dark-gray;
-  padding: 8px;
-  background-color: #fff;
-}
-
-input[type=text].error,
-input[type=email].error,
-textarea.error {
-  border: 1px solid @bright-red;
-}
-
-label {
-  color: @form-label-black;
-  display: block;
-  margin: 0 0 8px 0;
-
-  &.disabled {
-    color: @darker-gray;
+    &.disabled {
+      color: @darker-gray;
+    }
   }
 }
 
@@ -403,24 +415,46 @@ label {
   }
 }
 
-input[type=radio] {
-  display: none;
+.soresu-radio {
+  input[type=radio] {
+    display: none;
+  }
+
+  input[type=radio] + label {
+    display: inline-block;
+    color: #000;
+    margin: 4px 3px;
+    padding: 12px 30px;
+    background-color: #fff;
+    border: solid 1px @dark-gray;
+    cursor: pointer;
+  }
+
+  input[type=radio]:checked + label {
+    background: #fff url('img/checkmark.png') no-repeat 10px 19px;
+    margin: 0;
+    border: solid 4px @light-green;
+  }
+
+  input[disabled] + label {
+    color: @light-gray;
+    background-color: @lightest-gray;
+  }
+
+  input[disabled]:checked + label {
+    border: solid 4px @dark-gray;
+    background-color: @lightest-gray;
+  }
 }
 
-input[type=radio] + label {
-  display: inline-block;
-  color: #000;
-  margin: 4px 3px;
-  padding: 12px 30px;
-  background-color: #fff;
-  border: solid 1px @dark-gray;
-  cursor: pointer;
+button.soresu-remove {
+  background: transparent url('img/remove_line_enabled.png') no-repeat left top;
+  border-width: 0px;
+  width: 20px;
+  height: 22px;
 }
-
-input[type=radio]:checked + label {
-  background: #fff url('img/checkmark.png') no-repeat 10px 19px;
-  margin: 0;
-  border: solid 4px @light-green;
+button[disabled].soresu-remove {
+  background: transparent url('img/remove_line_disabled.png') no-repeat left top;
 }
 
 button.soresu-text-button {
@@ -434,37 +468,9 @@ button.soresu-text-button {
   font-weight: 300;
 }
 
-button.soresu-remove {
-  background: transparent url('img/remove_line_enabled.png') no-repeat left top;
-  border-width: 0px;
-  width: 20px;
-  height: 22px;
-}
-button[disabled].remove {
-  background: transparent url('img/remove_line_disabled.png') no-repeat left top;
-}
-
 button[disabled].soresu-text-button {
   background-color: @light-gray;
-  border: 1px solid @dark-gray;
-}
-
-textarea[disabled], html input[disabled] {
-  cursor: default;
-  background-color: @lightest-gray;
-}
-
-textarea[disabled], button[disabled].soresu-text-button, input[disabled] {
   border: 1px solid @light-gray;
-}
-
-input[disabled] + label {
-  color: @lightest-gray;
-}
-
-input[disabled]:checked + label {
-  border: solid 4px @dark-gray;
-  color: @light-gray;
 }
 
 ol li.va-big-fieldset {

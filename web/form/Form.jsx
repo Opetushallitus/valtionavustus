@@ -87,7 +87,7 @@ export default class Form extends React.Component {
     }
 
     return (
-      <form>
+      <form className="soresu-form">
         {
           fields.map(renderField)
         }
