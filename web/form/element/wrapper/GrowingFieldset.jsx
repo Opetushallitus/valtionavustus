@@ -5,7 +5,7 @@ import _ from 'lodash'
 export default class GrowingFieldset extends React.Component {
   className(className) {
     const field = this.props.field
-    const classNames = ClassNames(className, { showOnlyFirstLabel: field.params.showOnlyFirstLabels })
+    const classNames = ClassNames(className, { "show-only-first-label": field.params.showOnlyFirstLabels })
     return !_.isEmpty(classNames) ? classNames : undefined
   }
 
