@@ -42,11 +42,12 @@ class VaBudgetElement extends React.Component {
     const children = this.props.children
     const htmlId = this.props.htmlId
 
-    const projectBudgetElement = this.props.children[0]
-    const projectBudgetTotal = this.populateSummingElementSum(projectBudgetElement)
+    const summingElementChildren = _.filter(this.props.children, child => { return child.props.field.displayAs === "vaSummingBudgetElement" })
+    const subTotals = _.map(summingElementChildren, this.populateSummingElementSum(this.props.answersObject))
+    const total = _.reduce(subTotals, (acc, n) => { return acc + n })
 
     const summaryElement = _.last(children)
-    summaryElement.props.totalNeeded = projectBudgetTotal // TODO: Subtract third party financing
+    summaryElement.props.totalNeeded = total // TODO: Subtract third party financing
     return (
         <fieldset id={htmlId}>
           {children}
@@ -54,17 +55,18 @@ class VaBudgetElement extends React.Component {
     )
   }
 
-  populateSummingElementSum(summingBudgetElement) {
-    const answersObject = this.props.answersObject
-    const amountValues = _.map(summingBudgetElement.props.children, itemElement => {
-      const amountCoefficient = itemElement.props.field.params.incrementsTotal ? 1 : -1
-      const amountElement = itemElement.props.children[1]
-      const value = InputValueStorage.readValue(null, answersObject, amountElement.props.field.id)
-      return amountCoefficient * value
-    })
-    const sum = _.reduce(amountValues, (total, n) => { return total + n })
-    summingBudgetElement.props.sum = sum
-    return sum
+  populateSummingElementSum(answersObject) {
+    return function(summingBudgetElement) {
+      const amountValues = _.map(summingBudgetElement.props.children, itemElement => {
+        const amountCoefficient = itemElement.props.field.params.incrementsTotal ? 1 : -1
+        const amountElement = itemElement.props.children[1]
+        const value = InputValueStorage.readValue(null, answersObject, amountElement.props.field.id)
+        return amountCoefficient * value
+      })
+      const sum = _.reduce(amountValues, (total, n) => { return total + n })
+      summingBudgetElement.props.sum = sum
+      return sum
+    }
   }
 }
 
