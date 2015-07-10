@@ -870,7 +870,8 @@ insert into forms (content) VALUES ('
                     }
                   }
                 ]
-              }            ]
+              }
+            ]
           },
           {
             "type": "wrapperElement",
