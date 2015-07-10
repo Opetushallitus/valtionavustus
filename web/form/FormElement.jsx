@@ -20,7 +20,7 @@ export default class FormElement extends React.Component {
   render() {
     const field = this.props.field
     const displayAs = field.displayAs
-    var input = <span>Unsupported field type {displayAs}</span>
+    var input = <span>{this.constructor.name} : Unsupported field type {displayAs}</span>
 
     if (displayAs in this.fieldTypeMapping) {
       input = React.createElement(this.fieldTypeMapping[displayAs], this.props)
