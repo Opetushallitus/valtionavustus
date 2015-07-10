@@ -468,4 +468,8 @@ export default class FormModel {
     }
     return this.customComponentFactory.createComponent(componentProps)
   }
+
+  getCustomWrapperComponentProperties(state) {
+    return this.customComponentFactory ? this.customComponentFactory.getCustomWrapperComponentProperties(state) : {}
+  }
 }

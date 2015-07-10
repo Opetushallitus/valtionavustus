@@ -42,7 +42,8 @@ export default class FormContainer extends React.Component {
                           form={form}
                           lang={lang}
                           saved={model.isSaveDraftAllowed(state)}
-                          values={values} />
+                          values={values}
+                          state={state}/>
     }
     const openPreview = function() {
       window.open(model.formOperations.urlCreator.existingSubmissionPreviewUrl(state), "preview")

@@ -17,6 +17,7 @@ export default class Form extends React.Component {
     const validationErrors = this.props.validationErrors
     const translations = this.props.translations
     const saved = this.props.saved
+    const state = this.props.state
 
     const renderField = function (field, renderingParameters) {
       const htmlId = model.constructHtmlId(fields, field.id)
@@ -80,6 +81,7 @@ export default class Form extends React.Component {
                                translations={translations}
                                renderingParameters={renderingParameters}
                                model={model}
+                               customProps={model.getCustomWrapperComponentProperties(state)}
                                answersObject={values} />
       }
     }

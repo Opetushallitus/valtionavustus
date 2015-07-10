@@ -29,6 +29,10 @@ export default class VaComponentFactory {
     }
     return element
   }
+
+  getCustomWrapperComponentProperties(state) {
+    return { "avustushaku": state.avustushaku }
+  }
 }
 
 
@@ -37,6 +41,7 @@ class VaBudgetElement extends React.Component {
     const children = this.props.children
     const htmlId = this.props.htmlId
     console.log('this.populateProjectBudgetTotal()', this.populateProjectBudgetTotal())
+    console.log('this.props.customProps', this.props.customProps)
     return (
         <fieldset id={htmlId}>
           {children}
