@@ -33,14 +33,28 @@ export default class VaComponentFactory {
 
 class VaBudgetElement extends React.Component {
   render() {
-    const field = this.props.field
     const children = this.props.children
     const htmlId = this.props.htmlId
+    console.log('this.populateProjectBudgetTotal()', this.populateProjectBudgetTotal())
     return (
         <fieldset id={htmlId}>
           {children}
         </fieldset>
     )
+  }
+
+  populateProjectBudgetTotal() {
+    const answersObject = this.props.answersObject
+    const projectBudgetElement = this.props.children[0]
+    const amountValues = _.map(projectBudgetElement.props.children, itemElement => {
+      const amountCoefficient = itemElement.props.field.params.incrementsTotal ? 1 : -1
+      const amountElement = itemElement.props.children[1]
+      const value = InputValueStorage.readValue(null, answersObject, amountElement.props.field.id)
+      return amountCoefficient * value
+    })
+    const sum = _.reduce(amountValues, (total, n) => { return total + n })
+    projectBudgetElement.props.sum = sum
+    return sum
   }
 }
 
@@ -48,14 +62,7 @@ class SummingBudgetElement extends React.Component {
   render() {
     const field = this.props.field
     const children = this.props.children
-    const answersObject = this.props.answersObject
-    const amountValues = _.map(children, itemElement => {
-      const amountCoefficient = itemElement.props.field.params.incrementsTotal ? 1 : -1
-      const amountElement = itemElement.props.children[1]
-      const value = InputValueStorage.readValue(null, answersObject, amountElement.props.field.id)
-      return amountCoefficient * value
-    })
-    const sum = _.reduce(amountValues, (total, n) => { return total + n })
+    const sum = this.props.sum
 
     const htmlId = this.props.htmlId
     const columnTitles = field.params.showColumnTitles ? <thead><tr>
