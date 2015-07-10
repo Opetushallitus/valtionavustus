@@ -8,7 +8,7 @@ export default class ThemeWrapper extends React.Component {
     const children = this.props.children
     const htmlId = this.props.htmlId
     return (
-      <section className="theme" id={htmlId}>
+      <section className="soresu-theme" id={htmlId}>
         <h2><LocalizedString translations={field} translationKey="label" lang={lang}/></h2>
         {children}
       </section>

@@ -7,7 +7,7 @@ export default class GrowingFieldsetChild extends React.Component {
     const htmlId = this.props.htmlId
     const removeButton = React.createElement(RemoveButton, this.props)
     return (
-      <li>
+      <li className="soresu-growing-fieldset-child">
         <fieldset id={htmlId}>
           <div className="fieldset-elements">
             {children}

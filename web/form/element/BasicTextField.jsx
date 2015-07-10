@@ -7,6 +7,10 @@ export default class BasicTextField extends BasicSizedComponent {
     this.fieldtype = "text"
   }
 
+  baseClassName() {
+    return "soresu-text-field"
+  }
+
   render() {
     const sizeNumber = Number.isInteger(this.param("size")) ? this.param("size") : undefined
     const classStr = this.resolveClassName()

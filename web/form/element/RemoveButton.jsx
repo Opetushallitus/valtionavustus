@@ -9,7 +9,7 @@ export default class RemoveButton extends React.Component {
     const removeAltText = new Translator(this.props.translations["misc"]).translate("remove", this.props.lang, "POISTA")
     const mustNotBeRemoved = _.isObject(renderingParameters) ? renderingParameters.rowMustNotBeRemoved : false
     return (<button
-        className="remove"
+        className="soresu-remove"
         alt={removeAltText}
         title={removeAltText}
         onClick={removalCallback}

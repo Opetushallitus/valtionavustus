@@ -9,7 +9,7 @@ export default class BasicTextArea extends BasicSizedComponent {
     const length = _.isUndefined(this.props.value) ? 0 : this.props.value.length
     const lengthLeft = this.param("maxlength") - length
     const classStr = this.resolveClassName()
-    return (<div>
+    return (<div className="soresu-text-area">
       {this.label(classStr)}
               <textarea
                 id={this.props.htmlId}

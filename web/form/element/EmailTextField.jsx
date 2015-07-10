@@ -6,4 +6,8 @@ export default class EmailTextField extends BasicTextField {
     super(props)
     this.fieldtype = "email"
   }
+
+  baseClassName() {
+    return "soresu-email-field"
+  }
 }

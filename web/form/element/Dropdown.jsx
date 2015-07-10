@@ -18,7 +18,7 @@ export default class Dropdown extends BasicFieldComponent {
         )
       }
     }
-    return (<div>
+    return (<div className="soresu-dropdown">
       {this.label()}
       <select id={this.props.htmlId}
               name={this.props.htmlId}

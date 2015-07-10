@@ -26,7 +26,7 @@ export default class RadioButton extends BasicFieldComponent {
         )
       }
     }
-    return (<div>
+    return (<div className="soresu-radio">
       {this.label()}
       {radiobuttons}
     </div>)
