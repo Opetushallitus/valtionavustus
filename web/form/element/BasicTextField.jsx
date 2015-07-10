@@ -15,7 +15,7 @@ export default class BasicTextField extends BasicSizedComponent {
     const sizeNumber = Number.isInteger(this.param("size")) ? this.param("size") : undefined
     const classStr = this.resolveClassName()
     const field = this.props.field
-    return (<div className={classStr}>
+    return (<div className={this.resolveClassName(this.baseClassName())}>
       {this.label(classStr)}
       <input
         type={this.fieldtype}
