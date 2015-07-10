@@ -1,7 +1,7 @@
 import React from 'react'
 import RemoveButton from '../RemoveButton.jsx'
 
-export default class GrowingFieldsetChildElement extends React.Component {
+export default class GrowingFieldsetChild extends React.Component {
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId

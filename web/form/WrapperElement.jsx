@@ -1,17 +1,17 @@
 import React from 'react'
-import ThemeWrapperElement from './element/wrapper/ThemeWrapperElement.jsx'
-import FieldsetElement from './element/wrapper/FieldsetElement.jsx'
-import GrowingFieldsetElement from './element/wrapper/GrowingFieldsetElement.jsx'
-import GrowingFieldsetChildElement from './element/wrapper/GrowingFieldsetChildElement.jsx'
+import ThemeWrapper from './element/wrapper/ThemeWrapper.jsx'
+import Fieldset from './element/wrapper/Fieldset.jsx'
+import GrowingFieldset from './element/wrapper/GrowingFieldset.jsx'
+import GrowingFieldsetChild from './element/wrapper/GrowingFieldsetChild.jsx'
 
 export default class WrapperElement extends React.Component {
   constructor(props) {
     super(props)
     this.fieldTypeMapping = {
-      "theme": ThemeWrapperElement,
-      "fieldset": FieldsetElement,
-      "growingFieldset": GrowingFieldsetElement,
-      "growingFieldsetChild": GrowingFieldsetChildElement
+      "theme": ThemeWrapper,
+      "fieldset": Fieldset,
+      "growingFieldset": GrowingFieldset,
+      "growingFieldsetChild": GrowingFieldsetChild
     }
   }
 

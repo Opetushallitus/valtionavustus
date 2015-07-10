@@ -1,7 +1,7 @@
 import React from 'react'
 import LocalizedString from '../LocalizedString.jsx'
 
-export default class ThemeWrapperElement extends React.Component {
+export default class ThemeWrapper extends React.Component {
   render() {
     const field = this.props.field
     const lang = this.props.lang
