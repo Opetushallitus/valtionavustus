@@ -4,7 +4,7 @@ import ClassNames from 'classnames'
 
 import Translator from '../form/Translator.js'
 import {RemoveButton} from '../form/WrapperElement.jsx'
-import LocalizedString from '../form/LocalizedString.jsx'
+import LocalizedString from '../form/element/LocalizedString.jsx'
 import InputValueStorage from '../form/InputValueStorage.js'
 
 export default class VaComponentFactory {

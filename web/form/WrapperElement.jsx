@@ -1,7 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
 import Translator from './Translator.js'
-import LocalizedString from './LocalizedString.jsx'
+import LocalizedString from './element/LocalizedString.jsx'
 import _ from 'lodash'
 
 class ThemeWrapperElement extends React.Component {

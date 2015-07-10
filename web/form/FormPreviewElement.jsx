@@ -1,7 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
 import _ from 'lodash'
-import LocalizedString from './LocalizedString.jsx'
+import LocalizedString from './element/LocalizedString.jsx'
 
 class BasicValue extends React.Component {
   render() {

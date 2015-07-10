@@ -1,5 +1,5 @@
 import React from 'react'
-import LocalizedString from './LocalizedString.jsx'
+import LocalizedString from './element/LocalizedString.jsx'
 import _ from 'lodash'
 
 export default class FormElementError extends React.Component {
