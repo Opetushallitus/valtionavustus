@@ -51,6 +51,9 @@
       it("lähetys on disabloitu", function () {
         expect(page.submitButton().isEnabled()).to.equal(false)
       })
+      it("kerrotaan pakollisista kentästä", function () {
+        expect(page.validationErrors()).to.equal('17 vastauksessa puutteita')
+      })
     })
 
     describe('täytettäessä lomaketta', function () {
@@ -62,28 +65,25 @@
           page.waitAutoSave
         )
 
-        describe('tallentamisen jälkeen 1', function () {
-          it("lähetys on disabloitu", function () {
-            expect(page.submitButton().isEnabled()).to.equal(false)
-          })
-          it("pakollisesta kentästä kerrotaan", function () {
-            expect(page.classAttributeOf("organization")).to.include('error')
-          })
-          it("kerrotaan automaattitallennuksesta", function () {
-            expect(["Tallennetaan...", "Kaikki muutokset tallennettu"]).to.include(page.saveInfo());
-          })
-        })
-
-        describe('tallentamisen jälkeen 2', function () {
+        describe('automaattitallentamisen jälkeen', function () {
           before(
-            wait.until(page.hakemusIdIsPresent),
-            page.storeHakemusIdFromHtml
+              wait.until(page.hakemusIdIsPresent),
+              page.storeHakemusIdFromHtml
           )
 
-          describe('alkuperäisessä näkymässä', function() {
-            it("ei tule virhettä", function () {
+          describe('alkuperäisessä muokkausnäkymässä', function() {
+            it("lähetys on disabloitu", function () {
+              expect(page.submitButton().isEnabled()).to.equal(false)
+            })
+            it("pakollisesta kentästä kerrotaan", function () {
+              expect(page.classAttributeOf("organization")).to.include('error')
+            })
+            it("kerrotaan automaattitallennuksesta", function () {
+              expect(page.saveInfo()).to.equal("Kaikki muutokset tallennettu")
+            })
+            it("kerrotaan puuttuvasta kentästä", function () {
               expect(page.getInput("organization").value()).to.equal('')
-              expect(page.saveError()).to.equal('')
+              expect(page.validationErrors()).to.equal('1 vastauksessa puutteita')
             })
           })
 
@@ -105,7 +105,7 @@
             })
           })
 
-          describe('hakemuksen muokkausnäkymässä', function() {
+          describe('uudessa hakemuksen muokkausnäkymässä', function() {
             before(
               page.openEditPage(page.getHakemusId)
             )
@@ -115,6 +115,9 @@
               })
               it("näkyy validointi virheet", function () {
                 expect(page.classAttributeOf("organization")).to.include('error')
+              })
+              it("kerrotaan puuttuvasta kentästä", function () {
+                expect(page.validationErrors()).to.equal('1 vastauksessa puutteita')
               })
               it("näkyy hankkeen kuvaus oikein", function () {
                 expect(page.getInput("project-description.project-description-1.goal").value()).to.equal('Hankkeen ensimmäinen tavoite.')
@@ -143,7 +146,7 @@
                 )
 
                 it('ei tule virhettä', function () {
-                  expect(page.saveError()).to.equal('')
+                  expect(page.validationErrors()).to.equal('')
                 })
               })
             })
@@ -159,7 +162,7 @@
 
               describe('tallentamisen jälkeen', function () {
                 it("ei tule virhettä", function () {
-                  expect(page.saveError()).to.equal('')
+                  expect(page.validationErrors()).to.equal('')
                   expect(page.getInput("project-description.project-description-1.goal").value()).to.equal('Uusi ensimmäinen tavoite.')
                   expect(page.getInput("project-description.project-description-1.activity").value()).to.equal('Uusi ensimmäinen toiminta.')
                   expect(page.getInput("project-description.project-description-1.result").value()).to.equal('Uusi ensimmäinen tulos.')
@@ -205,8 +208,8 @@
         )
 
         describe('alkuperäisessä näkymässä', function() {
-          it("ei tule virhettä", function () {
-            expect(page.saveError()).to.equal('')
+          it("kerrotaan virheellisestä kentästä", function () {
+            expect(page.validationErrors()).to.equal('1 vastauksessa puutteita')
           })
         })
 

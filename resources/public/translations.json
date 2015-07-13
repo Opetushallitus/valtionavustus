@@ -54,13 +54,17 @@
     },
     "money": {
       "fi": "Syötä arvo kokonaisina euroina",
-      "sv": "TODO"
+      "sv": "TODO:Skriv in värdet på hela euro"
+    },
+    "validation-errors": {
+      "fi": "{{kpl}} vastauksessa puutteita",
+      "sv": "TODO:{{kpl}} svar fellaktigt"
     },
     "unexpected-submit-error": {
       "fi": "Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.",
       "sv": "Skickande misslyckades. Försök på nytt senare."
     },
-    "validation-errors": {
+    "submit-validation-errors": {
       "fi": "Ei tallennettu - tarkista syöttämäsi tiedot.",
       "sv": "Inte lagrad – svara först på alla frågor."
     }

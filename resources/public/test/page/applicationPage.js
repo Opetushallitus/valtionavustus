@@ -66,8 +66,8 @@ function ApplicationPage() {
     saveInfo: function() {
       return applicationElement().find("#form-controls .info :visible").text()
     },
-    saveError: function() {
-      return applicationElement().find("#submit-error").first().text()
+    validationErrors: function() {
+      return applicationElement().find("#validation-errors .error :visible").first().text()
     },
     error: function(field) {
       return applicationElement().find("#" + escapeSelector(field) + "-error").first().text()

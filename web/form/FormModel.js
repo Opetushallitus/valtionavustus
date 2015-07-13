@@ -269,7 +269,7 @@ export default class FormModel {
       state.saveStatus.saveInProgress = false
       if (status === 400) {
         state.validationErrors = JSON.parse(response)
-        state.validationErrors["submit"] = [{error: "validation-errors"}]
+        state.validationErrors["submit"] = [{error: "submit-validation-errors"}]
         return state
       }
       return handleUnexpectedSaveError(state, method, url, error, submit);

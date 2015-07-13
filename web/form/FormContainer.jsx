@@ -15,9 +15,9 @@ export default class FormContainer extends React.Component {
     const model = this.props.model
     const validationErrors = this.props.validationErrors
     const submitErrors = _.get(validationErrors, "submit", [])
-    const formIsValid = _.reduce(this.props.clientSideValidation, function (allValid, valid, field) {
-      return allValid === true && valid === true
-    }, true)
+    const invalidFieldsCount = _.reduce(this.props.clientSideValidation, function (count, valid, field) {
+      return valid === true ? count : count + 1
+    }, 0)
     const saveStatus = this.props.saveStatus
     const values = saveStatus.values
     const configuration = this.props.configuration
@@ -57,8 +57,11 @@ export default class FormContainer extends React.Component {
               <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
               <div id="form-controls" hidden={preview}>
                 <FormSaveStatus submitErrors={submitErrors} saveStatus={saveStatus} translations={translations} lang={lang}/>
-                <button id="submit" type="submit" className="soresu-text-button" onClick={model.submit} disabled={!(formIsValid && model.isSaveDraftAllowed(state)) || model.hasPendingChanges(state)}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
-                <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
+                <button id="submit" type="submit" className="soresu-text-button" onClick={model.submit} disabled={!(invalidFieldsCount === 0 && model.isSaveDraftAllowed(state)) || model.hasPendingChanges(state)}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
+                <div id="validation-errors">
+                  <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
+                  <div className="error" hidden={invalidFieldsCount === 0}><LocalizedString translations={translations.errors} translationKey="validation-errors" lang={lang} keyValues={{kpl: invalidFieldsCount}} /></div>
+                </div>
                 <div id="form-controls-devel" hidden={!configuration.develMode}>
                   <ToggleLanguageButton id="toggle-language" model={model} languages={translations.languages} lang={lang}/>
                   <button type="button" className="soresu-text-button" onClick={openPreview} disabled={!model.isSaveDraftAllowed(state)}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></button>
