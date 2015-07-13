@@ -530,8 +530,11 @@ button[disabled].soresu-text-button {
   &.sum {
     font-weight: bold;
   }
-  &.sum:after {
+  &:not(.error).sum:after {
     content: " €"
+  }
+  &.error.sum {
+    color: @bright-red;
   }
 }
 

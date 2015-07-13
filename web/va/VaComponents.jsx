@@ -38,6 +38,10 @@ export default class VaComponentFactory {
 
 
 class VaBudgetElement extends React.Component {
+  constructor(props) {
+    super(props)
+    this.miscTranslator = new Translator(this.props.translations["misc"])
+  }
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId
@@ -47,7 +51,7 @@ class VaBudgetElement extends React.Component {
     const total = _.reduce(subTotalsAndErrors, (acc, errorFlagAndSum) => { return acc + errorFlagAndSum.sum }, 0)
     const someFigureHasError = _.some(subTotalsAndErrors, (errorFlagAndSum) => { return errorFlagAndSum.containsErrors })
     const summaryElement = _.last(children)
-    summaryElement.props.totalNeeded = someFigureHasError ? "VIRHE" : total
+    summaryElement.props.totalNeeded = someFigureHasError ? this.miscTranslator.translate("check-numbers", this.props.lang, "VIRHE") : total
     return (
         <fieldset id={htmlId}>
           {children}
@@ -134,22 +138,24 @@ class BudgetSummaryElement extends React.Component {
     const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
 
     const totalNeeded = this.props.totalNeeded
-    const selfFinancingShare = isNumeric(totalNeeded) ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : "VIRHE 2"
-    const ophShare = isNumeric(totalNeeded) ? (totalNeeded - selfFinancingShare) : "VIRHE 3"
+    const figuresAreValid = isNumeric(totalNeeded);
+    const selfFinancingShare = figuresAreValid ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : totalNeeded
+    const ophShare = figuresAreValid ? (totalNeeded - selfFinancingShare) : totalNeeded
+    const sumClassNames = ClassNames("money sum", figuresAreValid ? undefined : "error")
     return (
       <table id={htmlId}>
         <tbody>
           <tr>
             <td colSpan="2"><LocalizedString translations={field.params} translationKey="totalSumRowLabel" lang={this.props.lang} /></td>
-            <td className="money sum">{totalNeeded}</td>
+            <td className={sumClassNames}>{totalNeeded}</td>
           </tr>
           <tr>
             <td colSpan="2"><LocalizedString translations={field.params} translationKey="ophFinancingLabel" lang={this.props.lang} /> {100 - selfFinancingPercentage} %</td>
-            <td className="money sum">{ophShare}</td>
+            <td className={sumClassNames}>{ophShare}</td>
           </tr>
           <tr>
             <td colSpan="2"><LocalizedString translations={field.params} translationKey="selfFinancingLabel" lang={this.props.lang} /> {selfFinancingPercentage} %</td>
-            <td className="money sum">{selfFinancingShare}</td>
+            <td className={sumClassNames}>{selfFinancingShare}</td>
           </tr>
         </tbody>
       </table>

@@ -37,6 +37,10 @@
     "remove": {
       "fi": "poista",
       "sv": "ta bort"
+    },
+    "check-numbers": {
+      "fi": "Tarkista luvut",
+      "sv": "Kolla siffrorna"
     }
   },
   "errors": {
