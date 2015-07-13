@@ -5,6 +5,7 @@ import LocalStorage from './LocalStorage.js'
 import FormBranchGrower from './FormBranchGrower.js'
 import InputValueStorage from './InputValueStorage.js'
 import FormUtil from './FormUtil.js'
+import {SyntaxValidator} from './SyntaxValidator.js'
 import JsUtil from './JsUtil.js'
 import qwest from 'qwest'
 import queryString from 'query-string'
@@ -381,48 +382,7 @@ export default class FormModel {
   }
 
   static createFieldUpdate(field, value) {
-    return {id: field.id, value: value, validationErrors: FormModel.validateSyntax(field, value)};
-  }
-
-  static validateSyntax(field, value) {
-    var validationErrors = []
-    if (field.required && (!value || _.trim(value).length < 1)) {
-      validationErrors = [{error: "required"}]
-    }
-
-    if (field.displayAs === 'emailField' && value) {
-      var emailError = FormModel.validateEmail(value);
-      if (emailError) {
-        validationErrors.push(emailError)
-      }
-    }
-
-    if (field.displayAs === 'moneyField' && value) {
-      const moneyError = FormModel.validateMoney(value);
-      if (moneyError) {
-        validationErrors.push(moneyError)
-      }
-    }
-
-    return validationErrors
-  }
-
-  static validateEmail(input) {
-    function lastPartIsLongerThanOne(email) {
-      const parts = email.split('\.')
-      return parts[parts.length -1].length > 1
-    }
-    // Pretty basic regexp, allows anything@anything.anything
-    const validEmailRegexp = /\S+@\S+\.\S+/
-    const validEmail = validEmailRegexp.test(input) && lastPartIsLongerThanOne(input)
-    return validEmail ? undefined : {error: "email"};
-  }
-
-  static validateMoney(input) {
-    function isNumeric(n) {
-      return !isNaN(parseFloat(n)) && isFinite(n)
-    }
-    return /^[0-9]*$/.test(input) && isNumeric(input) ? undefined : {error: "money"}
+    return {id: field.id, value: value, validationErrors: SyntaxValidator.validateSyntax(field, value)};
   }
 
   // Public API
@@ -461,7 +421,7 @@ export default class FormModel {
       field.skipValidationOnMount = false
       return
     }
-    dispatcher.push(events.fieldValidation, {id: field.id, validationErrors: FormModel.validateSyntax(field, initialValue)})
+    dispatcher.push(events.fieldValidation, {id: field.id, validationErrors: SyntaxValidator.validateSyntax(field, initialValue)})
   }
 
   isSaveDraftAllowed(state) {
