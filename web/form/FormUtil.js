@@ -5,4 +5,8 @@ export default class FormUtil {
     const allGrowingFieldsets = JsUtil.flatFilter(formContent, n => { return n.displayAs === "growingFieldset" })
     return JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
   }
+
+  static isNumeric(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n)
+  }
 }

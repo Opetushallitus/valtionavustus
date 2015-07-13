@@ -6,6 +6,7 @@ import Translator from '../form/Translator.js'
 import RemoveButton from '../form/element/RemoveButton.jsx'
 import LocalizedString from '../form/element/LocalizedString.jsx'
 import InputValueStorage from '../form/InputValueStorage.js'
+import FormUtil from '../form/FormUtil.js'
 
 export default class VaComponentFactory {
   constructor(props) {
@@ -126,10 +127,6 @@ class BudgetItemElement extends React.Component {
 
 class BudgetSummaryElement extends React.Component {
   render() {
-    function isNumeric(n) { // TODO reuse from FormModel
-      return !isNaN(parseFloat(n)) && isFinite(n)
-    }
-
     const htmlId = this.props.htmlId
     const field = this.props.field
 
@@ -138,7 +135,7 @@ class BudgetSummaryElement extends React.Component {
     const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
 
     const totalNeeded = this.props.totalNeeded
-    const figuresAreValid = isNumeric(totalNeeded);
+    const figuresAreValid = FormUtil.isNumeric(totalNeeded);
     const selfFinancingShare = figuresAreValid ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : totalNeeded
     const ophShare = figuresAreValid ? (totalNeeded - selfFinancingShare) : totalNeeded
     const sumClassNames = ClassNames("money sum", figuresAreValid ? undefined : "error")

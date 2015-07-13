@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import FormUtil from './FormUtil.js'
 
 export class SyntaxValidator {
   static validateSyntax(field, value) {
@@ -36,9 +37,6 @@ export class SyntaxValidator {
   }
 
   static validateMoney(input) {
-    function isNumeric(n) {
-      return !isNaN(parseFloat(n)) && isFinite(n)
-    }
-    return /^[0-9]*$/.test(input) && isNumeric(input) ? undefined : {error: "money"}
+    return /^[0-9]*$/.test(input) && FormUtil.isNumeric(input) ? undefined : {error: "money"}
   }
 }
