@@ -4,15 +4,15 @@ import BasicFieldComponent from './BasicFieldComponent.jsx'
 
 export default class Dropdown extends BasicFieldComponent {
   render() {
-    const field = this.props.field
+    const props = this.props;
     const options = [];
     if (field.options) {
       for (var i=0; i < field.options.length; i++) {
-        const label = new Translator(field.options[i]).translate("label", this.props.lang, field.options[i].value)
+        const label = new Translator(field.options[i]).translate("label", props.lang, field.options[i].value)
         options.push(
-          <option key={this.props.htmlId + "." + field.options[i].value}
+          <option key={props.htmlId + "." + field.options[i].value}
                   value={field.options[i].value}
-                  disabled={this.props.disabled}>
+                  disabled={props.disabled}>
             {label}
           </option>
         )
@@ -20,13 +20,12 @@ export default class Dropdown extends BasicFieldComponent {
     }
     return (<div className="soresu-dropdown">
       {this.label()}
-      <select id={this.props.htmlId}
-              name={this.props.htmlId}
-              required={field.required}
-              disabled={this.props.disabled}
-              model={this.props.model}
-              onChange={e => this.props.onChange(this.props.field, e.target.value)}
-              value={this.props.value}>
+      <select id={props.htmlId}
+              name={props.htmlId}
+              disabled={props.disabled}
+              model={props.model}
+              onChange={e => props.onChange(props.field, e.target.value)}
+              value={props.value}>
         {options}
       </select>
     </div>)

@@ -4,16 +4,22 @@ import Translator from '../Translator.js'
 
 export default class RemoveButton extends React.Component {
   render() {
+    const props = this.props
     const renderingParameters = this.props.renderingParameters
-    const removalCallback = renderingParameters && !this.props.disabled ? renderingParameters.removeMe : function() {}
-    const removeAltText = new Translator(this.props.translations["misc"]).translate("remove", this.props.lang, "POISTA")
     const mustNotBeRemoved = _.isObject(renderingParameters) ? renderingParameters.rowMustNotBeRemoved : false
+    const removalCallback = function(event) {
+      event.preventDefault()
+      if (renderingParameters && !props.disabled) {
+        renderingParameters.removeMe()
+      }
+    }
+    const removeAltText = new Translator(props.translations["misc"]).translate("remove", props.lang, "POISTA")
     return (<button
         className="soresu-remove"
         alt={removeAltText}
         title={removeAltText}
         onClick={removalCallback}
-        disabled={this.props.disabled || mustNotBeRemoved}/>
+        disabled={props.disabled || mustNotBeRemoved}/>
     )
   }
 }

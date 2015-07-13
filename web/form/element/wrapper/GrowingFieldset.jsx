@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react/addons'
 import ClassNames from 'classnames'
 import _ from 'lodash'
 
@@ -10,12 +10,15 @@ export default class GrowingFieldset extends React.Component {
   }
 
   render() {
+    const ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
     const children = this.props.children
     const htmlId = this.props.htmlId
     return (
       <fieldset id={htmlId} className={this.className("soresu-growing-fieldset")}>
         <ol>
-          {children}
+          <ReactCSSTransitionGroup transitionName="soresu-growing-fieldset-child">
+            {children}
+          </ReactCSSTransitionGroup>
         </ol>
       </fieldset>
     )

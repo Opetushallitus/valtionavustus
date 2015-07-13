@@ -20,6 +20,15 @@
   -moz-transition: all @seconds ease-in-out;
   -ms-transition: all @seconds ease-in-out;
   -o-transition: all @seconds ease-in-out;
+  transition: all @seconds ease-in-out;
+}
+
+.scale (@factor) {
+  -webkit-transform: scale(@factor);
+  -moz-transform: scale(@factor);
+  -ms-transform: scale(@factor);
+  -o-transform: scale(@factor);
+  transform: scale(@factor);
 }
 
 body {
@@ -59,7 +68,7 @@ ul {
   background-color: #fff;
   position: fixed;
   top: 0;
-  box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.10);
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.10);
 
   #logo {
     margin: 20px 100px 0 20px;
@@ -174,7 +183,7 @@ section.soresu-theme {
       margin: 20px 0 0 -58px;
     }
 
-    > li:before {
+    li:before {
       content: counter(item) "  ";
       counter-increment: item;
       float: left;
@@ -185,8 +194,28 @@ section.soresu-theme {
   }
 
   &.show-only-first-label ol {
-    > li:first-child:before {
+    li:first-child:before {
       margin-top: 45px;
+    }
+  }
+
+  .soresu-growing-fieldset-child-enter {
+    opacity: 0.01;
+    transition: opacity 0.3s linear;
+
+    &.soresu-growing-fieldset-child-enter-active {
+      opacity: 1;
+    }
+  }
+
+
+  .soresu-growing-fieldset-child-leave {
+    opacity: 1;
+    transition: all 0.3s linear;
+
+    &.soresu-growing-fieldset-child-leave-active {
+      opacity: 0.01;
+      .scale(0);
     }
   }
 }

@@ -14,21 +14,20 @@ export default class BasicTextField extends BasicSizedComponent {
   render() {
     const sizeNumber = Number.isInteger(this.param("size")) ? this.param("size") : undefined
     const classStr = this.resolveClassName()
-    const field = this.props.field
+    const props = this.props
     return (<div className={this.resolveClassName(this.baseClassName())}>
       {this.label(classStr)}
       <input
         type={this.fieldtype}
-        id={this.props.htmlId}
-        name={this.props.htmlId}
-        required={field.required}
+        id={props.htmlId}
+        name={props.htmlId}
         size={sizeNumber}
         maxLength={this.param("maxlength")}
-        model={this.props.model}
-        value={this.props.value}
+        model={props.model}
+        value={props.value}
         className={classStr}
-        disabled={this.props.disabled}
-        onChange={e => this.props.onChange(this.props.field, e.target.value)}
+        disabled={props.disabled}
+        onChange={e => props.onChange(props.field, e.target.value)}
         />
     </div>)
   }
