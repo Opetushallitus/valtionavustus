@@ -10,7 +10,7 @@ export default class BasicTextArea extends BasicSizedComponent {
     const lengthLeft = this.param("maxlength") - length
     const classStr = this.resolveClassName()
     return (<div className="soresu-text-area">
-      {this.label(classStr)}
+              {this.label(classStr)}
               <textarea
                 id={props.htmlId}
                 name={props.htmlId}
@@ -20,7 +20,6 @@ export default class BasicTextArea extends BasicSizedComponent {
                 className={classStr}
                 disabled={props.disabled}
                 onChange={e => props.onChange(props.field, e.target.value)} />
-      <div className="length-left-spacer"></div>
       <div id={props.htmlId + ".length"} className="length-left">
         {lengthLeft + " "}
         <LocalizedString translations={props.translations.form} translationKey="lengthleft" lang={props.lang}/>

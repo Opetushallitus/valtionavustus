@@ -315,7 +315,8 @@ insert into forms (content) VALUES ('
         "required":true,
         "displayAs":"textArea",
         "params":{
-          "maxlength":2000
+          "maxlength":2000,
+          "size": "large"
         },
         "label":{
           "fi":"Miten hanke tukee hankkeessa mukana olevien koulutuksen järjestäjien strategisten tavoitteiden saavuttamista?",
@@ -405,7 +406,8 @@ insert into forms (content) VALUES ('
         "required":true,
         "displayAs":"textArea",
         "params":{
-          "maxlength":2000
+          "maxlength":2000,
+          "size": "large"
         },
         "label":{
           "fi":"Miten hankkeen tavoitteiden toteutumista arvioidaan?",
@@ -418,7 +420,8 @@ insert into forms (content) VALUES ('
         "required":true,
         "displayAs":"textArea",
         "params":{
-          "maxlength":2000
+          "maxlength":2000,
+          "size": "large"
         },
         "label":{
           "fi":"Hankkeen vaikutukset/vaikuttavuus. Mikä muuttuu hankkeen myötä?",
@@ -431,7 +434,8 @@ insert into forms (content) VALUES ('
         "required":true,
         "displayAs":"textArea",
         "params":{
-          "maxlength":2000
+          "maxlength":2000,
+          "size": "large"
         },
         "label":{
           "fi":"Hankkeen levittämissuunnitelma",

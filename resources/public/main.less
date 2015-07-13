@@ -166,6 +166,7 @@ section.soresu-theme {
 .soresu-growing-fieldset {
   div {
     display: inline-block;
+    max-width: @section-width + 11px;
   }
 }
 
@@ -177,7 +178,6 @@ section.soresu-theme {
   ol {
     list-style-type: none;
     counter-reset: item;
-    width: @section-width + 100px;
 
     li {
       margin: 20px 0 0 -58px;
@@ -226,8 +226,6 @@ section.soresu-theme {
   input[type=text],
   input[type=email],
   textarea {
-    margin: 5px 10px 20px 0;
-    font-size: 18px;
     border: 1px solid @dark-gray;
     padding: 8px;
     background-color: #fff;
@@ -243,24 +241,6 @@ section.soresu-theme {
     cursor: default;
     background-color: @lightest-gray;
     border: 1px solid @light-gray;
-  }
-
-  label {
-    &.extra-small {
-      width: ceil(@section-width / 4)  - 8px;
-    }
-    &.small {
-      width: ceil(@section-width / 3) - 8px;
-    }
-    &.medium {
-      width: ceil(@section-width / 2) - 8px;
-    }
-    &.large {
-      width: ceil(@section-width / 1.5) - 18px;
-    }
-    &.extra-large {
-      width: @section-width - 8px;
-    }
   }
 }
 
@@ -298,6 +278,9 @@ section.soresu-theme {
   .soresu-focus-show-error();
 
   input[type=text], input[type=email] {
+    margin: 5px 10px 20px 0;
+    font-size: 18px;
+
     &.extra-small {
       width: ceil(@section-width / 4)  - 18px;
     }
@@ -312,6 +295,24 @@ section.soresu-theme {
     }
     &.extra-large {
       width: @section-width - 18px;
+    }
+  }
+
+  label {
+    &.extra-small {
+      width: ceil(@section-width / 4)  - 8px;
+    }
+    &.small {
+      width: ceil(@section-width / 3) - 8px;
+    }
+    &.medium {
+      width: ceil(@section-width / 2) - 8px;
+    }
+    &.large {
+      width: ceil(@section-width / 1.5) - 18px;
+    }
+    &.extra-large {
+      width: @section-width - 8px;
     }
   }
 }
@@ -329,10 +330,30 @@ section.soresu-theme {
   .soresu-focus-animation();
   .soresu-focus-show-error();
 
+  label {
+    max-width: @section-width;
+  }
+
   textarea {
     width: @section-width - 18px;
-    height: 150px;
-    margin-bottom: 0;
+    height: 12em;
+    font-size: 16px;
+
+    &.extra-small {
+      height: 3em;
+    }
+    &.small {
+      height: 6em;
+    }
+    &.medium {
+      height: 12em;
+    }
+    &.large {
+      height: 18em;
+    }
+    &.extra-large {
+      height: 24em;
+    }
   }
 
   .length-left {
@@ -538,7 +559,7 @@ button[disabled].soresu-text-button {
 }
 
 ol li.va-big-fieldset {
-  margin: 20px 0 0 -79px;
+  margin: 20px 0 0 -90px;
 }
 
 .va-big-fieldset {
@@ -546,10 +567,10 @@ ol li.va-big-fieldset {
     float: left;
     border-left: 1px solid @dark-gray;
     border-right: 1px solid @dark-gray;
-    padding: 0 10px;
+    padding: 0 10px 0 21px;
     margin: 0 10px 40px 10px;
 
-    input[type=text], input[type=email], textarea {
+    input[type=text], input[type=email] {
       margin: 5px 10px 10px 0;
     }
   }
