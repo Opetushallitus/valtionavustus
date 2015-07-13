@@ -43,11 +43,11 @@ class VaBudgetElement extends React.Component {
     const htmlId = this.props.htmlId
 
     const summingElementChildren = _.filter(this.props.children, child => { return child.props.field.displayAs === "vaSummingBudgetElement" })
-    const subTotals = _.map(summingElementChildren, this.populateSummingElementSum(this.props.answersObject))
-    const total = _.reduce(subTotals, (acc, n) => { return acc + n })
-
+    const subTotalsAndErrors = _.map(summingElementChildren, this.populateSummingElementSum(this.props.answersObject))
+    const total = _.reduce(subTotalsAndErrors, (acc, errorFlagAndSum) => { return acc + errorFlagAndSum.sum }, 0)
+    const someFigureHasError = _.some(subTotalsAndErrors, (errorFlagAndSum) => { return errorFlagAndSum.containsErrors })
     const summaryElement = _.last(children)
-    summaryElement.props.totalNeeded = total
+    summaryElement.props.totalNeeded = someFigureHasError ? "VIRHE" : total
     return (
         <fieldset id={htmlId}>
           {children}
@@ -60,12 +60,16 @@ class VaBudgetElement extends React.Component {
       const amountValues = _.map(summingBudgetElement.props.children, itemElement => {
         const amountCoefficient = itemElement.props.field.params.incrementsTotal ? 1 : -1
         const amountElement = itemElement.props.children[1]
-        const value = InputValueStorage.readValue(null, answersObject, amountElement.props.field.id)
-        return amountCoefficient * value
+        const errorsOfElement = amountElement.props.validationErrors
+        const value = _.isEmpty(errorsOfElement) ?
+          InputValueStorage.readValue(null, answersObject, amountElement.props.field.id) :
+          0
+        return { "containsErrors": !_.isEmpty(errorsOfElement), "value": amountCoefficient * value }
       })
-      const sum = _.reduce(amountValues, (total, n) => { return total + n })
+      const sum = _.reduce(amountValues, (total, errorsAndValue) => { return total + errorsAndValue.value }, 0)
+      const containsErrors = _.some(amountValues, (errorsAndValue) => { return errorsAndValue.containsErrors })
       summingBudgetElement.props.sum = sum
-      return sum
+      return { "containsErrors": containsErrors, "sum": sum}
     }
   }
 }
@@ -118,6 +122,10 @@ class BudgetItemElement extends React.Component {
 
 class BudgetSummaryElement extends React.Component {
   render() {
+    function isNumeric(n) { // TODO reuse from FormModel
+      return !isNaN(parseFloat(n)) && isFinite(n)
+    }
+
     const htmlId = this.props.htmlId
     const field = this.props.field
 
@@ -126,8 +134,8 @@ class BudgetSummaryElement extends React.Component {
     const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
 
     const totalNeeded = this.props.totalNeeded
-    const selfFinancingShare = Math.ceil((selfFinancingPercentage / 100) * totalNeeded)
-    const ophShare = totalNeeded - selfFinancingShare
+    const selfFinancingShare = isNumeric(totalNeeded) ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : "VIRHE 2"
+    const ophShare = isNumeric(totalNeeded) ? (totalNeeded - selfFinancingShare) : "VIRHE 3"
     return (
       <table id={htmlId}>
         <tbody>
