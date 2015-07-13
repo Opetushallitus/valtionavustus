@@ -552,10 +552,25 @@ button[disabled].soresu-text-button {
       text-align: left;
       text-transform: uppercase;
     }
+    colgroup {
+      .label-column {
+        width: 44%;
+      }
+      .description-column {
+        width: 43%;
+      }
+      .amount-column {
+        width: 13%;
+      }
+    }
     tr {
       line-height: 40px;
       input[type=text] {
         margin-bottom: 0;
+      }
+      .soresu-text-field.small input[type=text] {
+        width: 318px;
+        margin-right: 6px;
       }
       .money {
         text-align: right;

@@ -95,6 +95,11 @@ class SummingBudgetElement extends React.Component {
     return (
         <table id={htmlId}>
           <caption className={!_.isEmpty(classNames) ? classNames : undefined}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></caption>
+          <colgroup>
+            <col className="label-column" />
+            <col className="description-column" />
+            <col className="amount-column" />
+          </colgroup>
           {columnTitles}
           <tbody>
             {children}
@@ -141,6 +146,11 @@ class BudgetSummaryElement extends React.Component {
     const sumClassNames = ClassNames("money sum", figuresAreValid ? undefined : "error")
     return (
       <table id={htmlId}>
+        <colgroup>
+          <col className="label-column" />
+          <col className="description-column" />
+          <col className="amount-column" />
+        </colgroup>
         <tbody>
           <tr>
             <td colSpan="2"><LocalizedString translations={field.params} translationKey="totalSumRowLabel" lang={this.props.lang} /></td>
