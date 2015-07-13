@@ -508,7 +508,7 @@ button[disabled].soresu-text-button {
 }
 
 // VA SPECIFIC STYLES
-#financing-plan {
+.va-budget {
   table {
     width: @section-width - 18px;
     text-align: left;
@@ -521,20 +521,19 @@ button[disabled].soresu-text-button {
       input[type=text] {
         margin-bottom: 0;
       }
+      .money {
+        text-align: right;
+        &.sum {
+          font-weight: bold;
+        }
+        &:not(.error).sum:after {
+          content: " €"
+        }
+        &.error.sum {
+          color: @bright-red;
+        }
+      }
     }
-  }
-}
-
-.money {
-  text-align: right;
-  &.sum {
-    font-weight: bold;
-  }
-  &:not(.error).sum:after {
-    content: " €"
-  }
-  &.error.sum {
-    color: @bright-red;
   }
 }
 

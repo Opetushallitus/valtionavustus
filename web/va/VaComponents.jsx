@@ -54,7 +54,7 @@ class VaBudgetElement extends React.Component {
     const summaryElement = _.last(children)
     summaryElement.props.totalNeeded = someFigureHasError ? this.miscTranslator.translate("check-numbers", this.props.lang, "VIRHE") : total
     return (
-        <fieldset id={htmlId}>
+        <fieldset className="va-budget" id={htmlId}>
           {children}
         </fieldset>
     )
