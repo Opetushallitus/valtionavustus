@@ -287,6 +287,9 @@ section.soresu-theme {
     margin: 5px 10px 20px 0;
     font-size: 18px;
 
+    &.extra-extra-small {
+      width: ceil(@section-width / 8)  - 18px;
+    }
     &.extra-small {
       width: ceil(@section-width / 4)  - 18px;
     }
@@ -305,6 +308,9 @@ section.soresu-theme {
   }
 
   label {
+    &.extra-extra-small {
+      width: ceil(@section-width / 8)  - 8px;
+    }
     &.extra-small {
       width: ceil(@section-width / 4)  - 8px;
     }
@@ -446,6 +452,9 @@ button[disabled].soresu-text-button {
   }
 
   .soresu-preview-element {
+    &.extra-extra-small {
+      width: ceil(@section-width / 8);
+    }
     &.extra-small {
       width: ceil(@section-width / 4);
     }

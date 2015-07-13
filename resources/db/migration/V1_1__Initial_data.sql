@@ -597,7 +597,7 @@ insert into forms (content) VALUES ('
                     "required":false,
                     "displayAs":"moneyField",
                     "params":{
-                      "size":"extra-small",
+                      "size":"extra-extra-small",
                       "maxlength":16
                     }
                   }
@@ -631,7 +631,7 @@ insert into forms (content) VALUES ('
                     "required":false,
                     "displayAs":"moneyField",
                     "params":{
-                      "size":"extra-small",
+                      "size":"extra-extra-small",
                       "maxlength":16
                     }
                   }
@@ -665,7 +665,7 @@ insert into forms (content) VALUES ('
                     "required":false,
                     "displayAs":"moneyField",
                     "params":{
-                      "size":"extra-small",
+                      "size":"extra-extra-small",
                       "maxlength":16
                     }
                   }
@@ -699,7 +699,7 @@ insert into forms (content) VALUES ('
                     "required":false,
                     "displayAs":"moneyField",
                     "params":{
-                      "size":"extra-small",
+                      "size":"extra-extra-small",
                       "maxlength":16
                     }
                   }
@@ -733,7 +733,7 @@ insert into forms (content) VALUES ('
                     "required":false,
                     "displayAs":"moneyField",
                     "params":{
-                      "size":"extra-small",
+                      "size":"extra-extra-small",
                       "maxlength":16
                     }
                   }
@@ -767,7 +767,7 @@ insert into forms (content) VALUES ('
                     "required":false,
                     "displayAs":"moneyField",
                     "params":{
-                      "size":"extra-small",
+                      "size":"extra-extra-small",
                       "maxlength":16
                     }
                   }
@@ -801,7 +801,7 @@ insert into forms (content) VALUES ('
                     "required":false,
                     "displayAs":"moneyField",
                     "params":{
-                      "size":"extra-small",
+                      "size":"extra-extra-small",
                       "maxlength":16
                     }
                   }
@@ -835,7 +835,7 @@ insert into forms (content) VALUES ('
                     "required":false,
                     "displayAs":"moneyField",
                     "params":{
-                      "size":"extra-small",
+                      "size":"extra-extra-small",
                       "maxlength":16
                     }
                   }
@@ -869,7 +869,7 @@ insert into forms (content) VALUES ('
                     "required":false,
                     "displayAs":"moneyField",
                     "params":{
-                      "size":"extra-small",
+                      "size":"extra-extra-small",
                       "maxlength":16
                     }
                   }
@@ -921,7 +921,7 @@ insert into forms (content) VALUES ('
                     "required":false,
                     "displayAs":"moneyField",
                     "params":{
-                      "size":"extra-small",
+                      "size":"extra-extra-small",
                       "maxlength":16
                     }
                   }
@@ -955,7 +955,7 @@ insert into forms (content) VALUES ('
                     "required":false,
                     "displayAs":"moneyField",
                     "params":{
-                      "size":"extra-small",
+                      "size":"extra-extra-small",
                       "maxlength":16
                     }
                   }
@@ -989,7 +989,7 @@ insert into forms (content) VALUES ('
                     "required":false,
                     "displayAs":"moneyField",
                     "params":{
-                      "size":"extra-small",
+                      "size":"extra-extra-small",
                       "maxlength":16
                     }
                   }
