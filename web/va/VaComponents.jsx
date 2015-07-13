@@ -47,7 +47,7 @@ class VaBudgetElement extends React.Component {
     const total = _.reduce(subTotals, (acc, n) => { return acc + n })
 
     const summaryElement = _.last(children)
-    summaryElement.props.totalNeeded = total // TODO: Subtract third party financing
+    summaryElement.props.totalNeeded = total
     return (
         <fieldset id={htmlId}>
           {children}
