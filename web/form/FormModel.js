@@ -453,7 +453,7 @@ export default class FormModel {
     if (!this.customPreviewComponentFactory) {
       throw new Error("To create a custom field, supply customComponentFactory to FormModel")
     }
-    return this.customPreviewComponentFactory.createPreviewComponent(componentProps)
+    return this.customPreviewComponentFactory.createComponent(componentProps)
   }
 
   getCustomWrapperComponentProperties(state) {
