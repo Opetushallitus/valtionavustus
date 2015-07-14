@@ -10,7 +10,7 @@ import FormContainer from './../form/FormContainer.jsx'
 import FormModel from './../form/FormModel'
 import UrlCreator from './../form/UrlCreator'
 
-import VaComponentFactory from './VaComponentFactory.jsx'
+import VaComponentFactory from './VaComponentFactory.js'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
