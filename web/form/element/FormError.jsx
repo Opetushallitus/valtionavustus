@@ -2,7 +2,7 @@ import React from 'react'
 import LocalizedString from './LocalizedString.jsx'
 import _ from 'lodash'
 
-export default class FormElementError extends React.Component {
+export default class FormError extends React.Component {
   render() {
     const id = this.props.fieldId + "-error"
     if (this.props.validationErrors) {

@@ -2,7 +2,7 @@ import React from 'react'
 import Form from './Form.jsx'
 import FormPreview from './FormPreview.jsx'
 import FormSaveStatus from './FormSaveStatus.jsx'
-import FormElementError from './element/FormElementError.jsx'
+import FormError from './element/FormError.jsx'
 import ToggleLanguageButton from './element/ToggleLanguageButton.jsx'
 import LocalizedString from './element/LocalizedString.jsx'
 import _ from 'lodash'
@@ -25,7 +25,7 @@ export default class FormContainer extends React.Component {
     const preview = configuration.preview
     const lang = configuration.lang
 
-    var formElement;
+    var formElement
 
     if (preview) {
       formElement = <FormPreview model={model}
@@ -59,7 +59,7 @@ export default class FormContainer extends React.Component {
                 <FormSaveStatus submitErrors={submitErrors} saveStatus={saveStatus} translations={translations} lang={lang}/>
                 <button id="submit" type="submit" className="soresu-text-button" onClick={model.submit} disabled={!(invalidFieldsCount === 0 && model.isSaveDraftAllowed(state)) || model.hasPendingChanges(state)}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
                 <div id="validation-errors">
-                  <FormElementError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
+                  <FormError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
                   <div className="error" hidden={invalidFieldsCount === 0}><LocalizedString translations={translations.errors} translationKey="validation-errors" lang={lang} keyValues={{kpl: invalidFieldsCount}} /></div>
                 </div>
                 <div id="form-controls-devel" hidden={!configuration.develMode}>
