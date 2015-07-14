@@ -603,11 +603,22 @@ button[disabled].soresu-text-button {
         }
       }
     }
-    tfoot {
+    tfoot, .grand-total {
       border-top: 1px solid @light-gray;
       font-weight: bold;
       td {
         padding-top: 5px;
+      }
+    }
+    tr.grand-total {
+      border-bottom: 4px solid transparent;
+      td {
+        height: 30px;
+      }
+    }
+    &.budget-summary {
+      td {
+        height: 44px;
       }
     }
   }

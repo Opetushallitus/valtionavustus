@@ -145,14 +145,14 @@ class BudgetSummaryElement extends React.Component {
     const ophShare = figuresAreValid ? (totalNeeded - selfFinancingShare) : totalNeeded
     const sumClassNames = ClassNames("money sum", figuresAreValid ? undefined : "error")
     return (
-      <table id={htmlId}>
+      <table id={htmlId} className="budget-summary">
         <colgroup>
           <col className="label-column" />
           <col className="description-column" />
           <col className="amount-column" />
         </colgroup>
         <tbody>
-          <tr>
+          <tr className="grand-total">
             <td colSpan="2"><LocalizedString translations={field.params} translationKey="totalSumRowLabel" lang={this.props.lang} /></td>
             <td className={sumClassNames}>{totalNeeded}</td>
           </tr>
