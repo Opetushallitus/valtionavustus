@@ -1,10 +1,10 @@
 import React from 'react'
-import BasicTextField from './element/BasicTextField.jsx'
-import BasicTextArea from './element/BasicTextArea.jsx'
-import EmailTextField from './element/EmailTextField.jsx'
-import MoneyTextField from './element/MoneyTextField.jsx'
-import Dropdown from './element/Dropdown.jsx'
-import RadioButton from './element/RadioButton.jsx'
+import BasicTextField from './BasicTextField.jsx'
+import BasicTextArea from './BasicTextArea.jsx'
+import EmailTextField from './EmailTextField.jsx'
+import MoneyTextField from './MoneyTextField.jsx'
+import Dropdown from './Dropdown.jsx'
+import RadioButton from './RadioButton.jsx'
 
 export default class FormElement extends React.Component {
   constructor(props) {

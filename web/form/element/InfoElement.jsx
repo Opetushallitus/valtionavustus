@@ -1,6 +1,6 @@
 import React from 'react'
-import LocalizedString from './element/LocalizedString.jsx'
-import Translator from './Translator.js'
+import LocalizedString from './LocalizedString.jsx'
+import Translator from './../Translator.js'
 
 class BasicInfoComponent extends React.Component {
   asDateString(date) {

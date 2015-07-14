@@ -1,10 +1,10 @@
 import React from 'react'
 import ClassNames from 'classnames'
 import _ from 'lodash'
-import ThemeWrapperElement from './WrapperElement.jsx'
-import FieldsetPreview from './preview/wrapper/FieldsetPreview.jsx'
-import GrowingFieldsetPreview from './preview/wrapper/GrowingFieldsetPreview.jsx'
-import GrowingFieldsetChildPreview from './preview/wrapper/GrowingFieldsetChildPreview.jsx'
+import ThemeWrapperElement from './../../element/wrapper/WrapperElement.jsx'
+import FieldsetPreview from './FieldsetPreview.jsx'
+import GrowingFieldsetPreview from './GrowingFieldsetPreview.jsx'
+import GrowingFieldsetChildPreview from './GrowingFieldsetChildPreview.jsx'
 
 export default class WrapperPreviewElement extends React.Component {
   constructor(props) {

@@ -1,7 +1,7 @@
 import React from 'react'
-import FormPreviewElement from './FormPreviewElement.jsx'
-import InfoElement from './InfoElement.jsx'
-import WrapperPreviewElement from './WrapperPreviewElement.jsx'
+import FormPreviewElement from './preview/FormPreviewElement.jsx'
+import InfoElement from './element/InfoElement.jsx'
+import WrapperPreviewElement from './preview/wrapper/WrapperPreviewElement.jsx'
 import InputValueStorage from './InputValueStorage.js'
 import _ from 'lodash'
 

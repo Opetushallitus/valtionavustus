@@ -1,9 +1,9 @@
 import React from 'react'
 import ClassNames from 'classnames'
 import _ from 'lodash'
-import LocalizedString from './element/LocalizedString.jsx'
-import BasicValue from './preview/BasicValue.jsx'
-import OptionValue from './preview/OptionValue.jsx'
+import LocalizedString from './../element/LocalizedString.jsx'
+import BasicValue from './BasicValue.jsx'
+import OptionValue from './OptionValue.jsx'
 
 export default class FormPreviewElement extends React.Component {
   constructor(props) {

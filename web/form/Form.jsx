@@ -1,7 +1,7 @@
 import React from 'react'
-import FormElement from './FormElement.jsx'
-import InfoElement from './InfoElement.jsx'
-import WrapperElement from './WrapperElement.jsx'
+import FormElement from './element/FormElement.jsx'
+import InfoElement from './element/InfoElement.jsx'
+import WrapperElement from './element/wrapper/WrapperElement.jsx'
 import InputValueStorage from './InputValueStorage.js'
 import _ from 'lodash'
 

@@ -1,8 +1,8 @@
 import React from 'react'
-import ThemeWrapper from './element/wrapper/ThemeWrapper.jsx'
-import Fieldset from './element/wrapper/Fieldset.jsx'
-import GrowingFieldset from './element/wrapper/GrowingFieldset.jsx'
-import GrowingFieldsetChild from './element/wrapper/GrowingFieldsetChild.jsx'
+import ThemeWrapper from './ThemeWrapper.jsx'
+import Fieldset from './Fieldset.jsx'
+import GrowingFieldset from './GrowingFieldset.jsx'
+import GrowingFieldsetChild from './GrowingFieldsetChild.jsx'
 
 export default class WrapperElement extends React.Component {
   constructor(props) {
