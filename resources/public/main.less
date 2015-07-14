@@ -185,7 +185,7 @@ section.soresu-theme {
     list-style-type: none;
     counter-reset: item;
 
-    li {
+    li.soresu-growing-fieldset-child {
       margin: 20px 0 0 -58px;
     }
 
@@ -473,6 +473,10 @@ button[disabled].soresu-text-button {
   }
 
   .soresu-preview-fieldset,  .soresu-preview-growing-fieldset {
+    div.extra-large {
+      display: block;
+    }
+
     .soresu-preview-element {
       display: inline-block;
     }
@@ -488,7 +492,7 @@ button[disabled].soresu-text-button {
       list-style-type: none;
       counter-reset: item;
 
-      > li:before {
+      li:before {
         content: counter(item) "  ";
         counter-increment: item;
         float: left;
@@ -496,14 +500,14 @@ button[disabled].soresu-text-button {
         font-weight: 600;
       }
 
-      > li {
+      li.soresu-growing-fieldset-child {
         margin: 0 0 10px 0;
       }
     }
 
     &.show-only-first-label ol {
-      > li:first-child:before {
-        margin-top: 25px;
+      li:first-child:before {
+        margin-top: 22px;
       }
     }
   }
@@ -630,25 +634,45 @@ button[disabled].soresu-text-button {
   }
 }
 
-ol li.va-big-fieldset {
-  margin: 20px 0 0 -90px;
-}
+.soresu-growing-fieldset {
+  ol li.va-big-fieldset {
+    margin: 20px 0 0 -90px;
+  }
 
-.va-big-fieldset {
-  div.fieldset-elements {
-    float: left;
-    border-left: 1px solid @dark-gray;
-    border-right: 1px solid @dark-gray;
-    padding: 0 10px 0 21px;
-    margin: 0 10px 40px 10px;
+  .va-big-fieldset {
+    div.fieldset-elements {
+      float: left;
+      border-left: 1px solid @dark-gray;
+      border-right: 1px solid @dark-gray;
+      padding: 0 10px 0 21px;
+      margin: 0 10px 40px 10px;
 
-    input[type=text], input[type=email] {
-      margin: 5px 10px 10px 0;
+      input[type=text], input[type=email] {
+        margin: 5px 10px 10px 0;
+      }
+    }
+
+    div.fieldset-control {
+      padding-top: 20px;
+      overflow: hidden;
     }
   }
+}
 
-  div.fieldset-control {
-    padding-top: 20px;
-    overflow: hidden;
+.soresu-preview {
+  .soresu-preview-growing-fieldset {
+    ol li.va-big-fieldset {
+      margin: 0 0 40px -26px;
+    }
+
+    .va-big-fieldset {
+      div.fieldset-elements {
+        border-left: 1px solid @dark-gray;
+        padding: 0 0 0 21px;
+        margin: 0 0 0 20px;
+      }
+    }
   }
 }
+
+

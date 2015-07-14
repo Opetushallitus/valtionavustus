@@ -11,6 +11,7 @@ import FormModel from './../form/FormModel'
 import UrlCreator from './../form/UrlCreator'
 
 import VaComponentFactory from './VaComponentFactory.js'
+import VaPreviewComponentFactory from './VaPreviewComponentFactory.js'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
@@ -113,7 +114,8 @@ const model = new FormModel({
   },
   "initialStateTransformation": initialStateTransformation,
   "formP": formP,
-  "customComponentFactory": new VaComponentFactory()
+  "customComponentFactory": new VaComponentFactory(),
+  "customPreviewComponentFactory": new VaPreviewComponentFactory()
 })
 const formModelP = model.init()
 
