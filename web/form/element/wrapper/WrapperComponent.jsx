@@ -5,7 +5,7 @@ import Fieldset from './Fieldset.jsx'
 import GrowingFieldset from './GrowingFieldset.jsx'
 import GrowingFieldsetChild from './GrowingFieldsetChild.jsx'
 
-export default class WrapperElement extends React.Component {
+export default class WrapperComponent extends React.Component {
   constructor(props) {
     super(props)
     const fieldTypeMapping = {

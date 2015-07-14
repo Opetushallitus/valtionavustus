@@ -1,6 +1,6 @@
 import React from 'react'
 import ComponentFactory from '../../ComponentFactory.js'
-import ThemeWrapperElement from './../../element/wrapper/WrapperElement.jsx'
+import ThemeWrapper from './../../element/wrapper/ThemeWrapper.jsx'
 import FieldsetPreview from './FieldsetPreview.jsx'
 import GrowingFieldsetPreview from './GrowingFieldsetPreview.jsx'
 import GrowingFieldsetChildPreview from './GrowingFieldsetChildPreview.jsx'
@@ -9,7 +9,7 @@ export default class WrapperPreviewElement extends React.Component {
   constructor(props) {
     super(props)
     const fieldTypeMapping = {
-      "theme": ThemeWrapperElement,
+      "theme": ThemeWrapper,
       "fieldset": FieldsetPreview,
       "growingFieldset": GrowingFieldsetPreview,
       "growingFieldsetChild": GrowingFieldsetChildPreview

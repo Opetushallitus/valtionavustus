@@ -1,7 +1,7 @@
 import React from 'react'
 import FormElement from './element/FormElement.jsx'
 import InfoElement from './element/InfoElement.jsx'
-import WrapperElement from './element/wrapper/WrapperElement.jsx'
+import WrapperComponent from './element/wrapper/WrapperComponent.jsx'
 import InputValueStorage from './InputValueStorage.js'
 import _ from 'lodash'
 
@@ -72,17 +72,17 @@ export default class Form extends React.Component {
           const childRenderingParameters = resolveChildRenderingParameters(i)
           children.push(renderField(field.children[i], childRenderingParameters))
         }
-        return <WrapperElement key={htmlId}
-                               htmlId={htmlId}
-                               field={field}
-                               lang={lang}
-                               children={children}
-                               disabled={fieldDisabled}
-                               translations={translations}
-                               renderingParameters={renderingParameters}
-                               model={model}
-                               customProps={model.getCustomWrapperComponentProperties(state)}
-                               answersObject={values} />
+        return <WrapperComponent key={htmlId}
+                                 htmlId={htmlId}
+                                 field={field}
+                                 lang={lang}
+                                 children={children}
+                                 disabled={fieldDisabled}
+                                 translations={translations}
+                                 renderingParameters={renderingParameters}
+                                 model={model}
+                                 customProps={model.getCustomWrapperComponentProperties(state)}
+                                 answersObject={values} />
       }
     }
 
