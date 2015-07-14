@@ -1,25 +1,25 @@
 import React from 'react'
+import ComponentFactory from '../ComponentFactory.js'
 import LocalizedString from './LocalizedString.jsx'
 import Translator from './../Translator.js'
 
 class BasicInfoComponent extends React.Component {
-  asDateString(date) {
+  static asDateString(date) {
     return date.toLocaleDateString("fi-FI")
   }
 
-  asTimeString(date) {
+  static asTimeString(date) {
     const options = {hour: "numeric", minute: "numeric"}
     return date.toLocaleTimeString("fi-FI", options)
   }
 
   asDateTimeString(date) {
     const timeLimiter = new Translator(this.props.translations["misc"]).translate("time", this.props.lang, "KLO")
-    return this.asDateString(date) + " " + timeLimiter + " " + this.asTimeString(date)
+    return BasicInfoComponent.asDateString(date) + " " + timeLimiter + " " + BasicInfoComponent.asTimeString(date)
   }
 
   labelSourceObject() {
     const values = this.props.values
-    const key = this.props.key
     const value = values[this.props.field.id]
 
     if (this.props.field.label != undefined) {
@@ -43,7 +43,6 @@ class AccordionInfoElement extends React.Component {
   constructor(props) {
     super(props)
     this.handleClick = this.handleClick.bind(this)
-    this.determineCssClass = this.determineCssClass.bind(this)
     this.state = { open: this.props.field.params.initiallyOpen }
   }
 
@@ -53,7 +52,7 @@ class AccordionInfoElement extends React.Component {
     })
   }
 
-  determineCssClass(isOpen) {
+  static determineCssClass(isOpen) {
     return isOpen ? "open" : "closed"
   }
 
@@ -68,7 +67,7 @@ class AccordionInfoElement extends React.Component {
       const textContent = infoObject.items[i][this.props.lang]
       items.push((<li key={key + "." + i}>{textContent}</li>))
     }
-    const accordionStateClassName = this.determineCssClass(this.state.open)
+    const accordionStateClassName = AccordionInfoElement.determineCssClass(this.state.open)
     return (
         <div>
           <LocalizedString onClick={this.handleClick} className={"accordion-title " + accordionStateClassName} translations={infoObject} translationKey="label" lang={lang}/>
@@ -85,7 +84,6 @@ class DateRangeInfoElement extends BasicInfoComponent {
   render() {
     const values = this.props.values
     const lang = this.props.lang
-    const key = this.props.key
     const value = values[this.props.field.id]
     const start = new Date(value.start)
     const startDateTime = this.asDateTimeString(start)
@@ -119,26 +117,18 @@ class EndOfDateRangeInfoElement extends BasicInfoComponent {
 }
 
 export default class InfoElement extends React.Component {
-
   constructor(props) {
     super(props)
-    this.fieldTypeMapping = {
+    const fieldTypeMapping = {
       "h1": H1InfoElement,
       "bulletList": AccordionInfoElement,
       "dateRange": DateRangeInfoElement,
       "endOfDateRange": EndOfDateRangeInfoElement
     }
+    this.componentFactory = new ComponentFactory(fieldTypeMapping)
   }
 
   render() {
-    const field = this.props.field;
-    const displayAs = field.displayAs
-
-    var element = <span>{this.constructor.name} : Unsupported field type {displayAs}</span>
-
-    if (displayAs in this.fieldTypeMapping) {
-      element = React.createElement(this.fieldTypeMapping[displayAs], this.props)
-    }
-    return element
+    return this.componentFactory.createComponent(this.props)
   }
 }
