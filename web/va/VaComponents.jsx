@@ -2,34 +2,23 @@ import React from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
+import ComponentFactory from '../form/ComponentFactory.js'
 import Translator from '../form/Translator.js'
 import RemoveButton from '../form/element/RemoveButton.jsx'
 import LocalizedString from '../form/element/LocalizedString.jsx'
 import InputValueStorage from '../form/InputValueStorage.js'
 import FormUtil from '../form/FormUtil.js'
 
-export default class VaComponentFactory {
-  constructor(props) {
-    this.componentTypeMapping = {
+export default class VaComponentFactory extends ComponentFactory {
+  constructor() {
+    const fieldTypeMapping = {
       "vaBudget": VaBudgetElement,
       "vaSummingBudgetElement": SummingBudgetElement,
       "vaBudgetItemElement": BudgetItemElement,
       "vaBudgetSummaryElement": BudgetSummaryElement,
       "vaProjectDescription": VaProjectDescription
     }
-  }
-
-  createComponent(componentProps) {
-    const field = componentProps.field;
-    const displayAs = field.displayAs
-    const model = componentProps.model
-
-    var element = <span>{this.constructor.name} : Unsupported field type {displayAs}</span>
-
-    if (displayAs in this.componentTypeMapping) {
-      element = React.createElement(this.componentTypeMapping[displayAs], componentProps)
-    }
-    return element
+    super(fieldTypeMapping)
   }
 
   getCustomWrapperComponentProperties(state) {

@@ -1,4 +1,5 @@
 import React from 'react'
+import ComponentFactory from '../ComponentFactory.js'
 import BasicTextField from './BasicTextField.jsx'
 import BasicTextArea from './BasicTextArea.jsx'
 import EmailTextField from './EmailTextField.jsx'
@@ -9,7 +10,7 @@ import RadioButton from './RadioButton.jsx'
 export default class FormElement extends React.Component {
   constructor(props) {
     super(props)
-    this.fieldTypeMapping = {
+    const fieldTypeMapping = {
       "textField": BasicTextField,
       "textArea": BasicTextArea,
       "emailField": EmailTextField,
@@ -17,16 +18,10 @@ export default class FormElement extends React.Component {
       "dropdown": Dropdown,
       "radioButton": RadioButton
     }
+    this.componentFactory = new ComponentFactory(fieldTypeMapping)
   }
 
   render() {
-    const field = this.props.field
-    const displayAs = field.displayAs
-    var input = <span>{this.constructor.name} : Unsupported field type {displayAs}</span>
-
-    if (displayAs in this.fieldTypeMapping) {
-      input = React.createElement(this.fieldTypeMapping[displayAs], this.props)
-    }
-    return input
+    return this.componentFactory.createComponent(this.props)
   }
 }

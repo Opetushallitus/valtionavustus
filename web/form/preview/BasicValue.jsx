@@ -1,11 +1,12 @@
 import React from 'react'
+import PreviewElement from './PreviewElement.jsx'
 
-export default class BasicValue extends React.Component {
+export default class BasicValue extends PreviewElement {
   render() {
     var value = "\u00a0" //&nbsp;
     if (this.props.value) {
       value = this.props.value
     }
-    return (<span className="soresu-value" id={this.props.htmlId}>{value}</span>)
+    return super.render(<span className="soresu-value" id={this.props.htmlId}>{value}</span>)
   }
 }

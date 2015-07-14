@@ -31,6 +31,8 @@ export default class FormModel {
     this.initialStateTransformation = props.initialStateTransformation
     this.formP = props.formP
     this.customComponentFactory = props.customComponentFactory
+    this.customPreviewComponentFactory = props.customPreviewComponentFactory
+
   }
 
   init() {
@@ -433,7 +435,7 @@ export default class FormModel {
   }
 
   getCustomComponentTypeMapping() {
-    return this.customComponentFactory ? this.customComponentFactory.componentTypeMapping : {}
+    return this.customComponentFactory ? this.customComponentFactory.fieldTypeMapping : {}
   }
 
   createCustomComponent(componentProps) {
@@ -441,6 +443,17 @@ export default class FormModel {
       throw new Error("To create a custom field, supply customComponentFactory to FormModel")
     }
     return this.customComponentFactory.createComponent(componentProps)
+  }
+
+  getCustomPreviewComponentTypeMapping() {
+    return this.customPreviewComponentFactory ? this.customPreviewComponentFactory.fieldTypeMapping : {}
+  }
+
+  createCustomPreviewComponent(componentProps) {
+    if (!this.customPreviewComponentFactory) {
+      throw new Error("To create a custom field, supply customComponentFactory to FormModel")
+    }
+    return this.customPreviewComponentFactory.createPreviewComponent(componentProps)
   }
 
   getCustomWrapperComponentProperties(state) {

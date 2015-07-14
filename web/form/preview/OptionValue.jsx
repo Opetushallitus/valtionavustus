@@ -1,7 +1,8 @@
 import React from 'react'
+import PreviewElement from './PreviewElement.jsx'
 import LocalizedString from '../element/LocalizedString.jsx'
 
-export default class OptionValue extends React.Component {
+export default class OptionValue extends PreviewElement {
   render() {
     const field = this.props.field
     const lang = this.props.lang
@@ -14,6 +15,6 @@ export default class OptionValue extends React.Component {
         }
       }
     }
-    return (<span className="soresu-value" id={this.props.htmlId}>{value}</span>)
+    return super.render(<span className="soresu-value" id={this.props.htmlId}>{value}</span>)
   }
 }
