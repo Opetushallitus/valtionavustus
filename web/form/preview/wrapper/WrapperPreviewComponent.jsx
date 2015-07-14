@@ -5,7 +5,7 @@ import FieldsetPreview from './FieldsetPreview.jsx'
 import GrowingFieldsetPreview from './GrowingFieldsetPreview.jsx'
 import GrowingFieldsetChildPreview from './GrowingFieldsetChildPreview.jsx'
 
-export default class WrapperPreviewElement extends React.Component {
+export default class WrapperPreviewComponent extends React.Component {
   constructor(props) {
     super(props)
     const fieldTypeMapping = {

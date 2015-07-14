@@ -1,7 +1,7 @@
 import React from 'react'
 import FormPreviewComponent from './preview/FormPreviewComponent.jsx'
 import InfoElement from './element/InfoElement.jsx'
-import WrapperPreviewElement from './preview/wrapper/WrapperPreviewElement.jsx'
+import WrapperPreviewComponent from './preview/wrapper/WrapperPreviewComponent.jsx'
 import InputValueStorage from './InputValueStorage.js'
 import _ from 'lodash'
 
@@ -53,13 +53,13 @@ export default class FormPreview extends React.Component {
           const childRenderingParameters = resolveChildRenderingParameters(i)
           children.push(renderField(field.children[i], childRenderingParameters))
         }
-        return <WrapperPreviewElement key={htmlId}
-                                      htmlId={htmlId}
-                                      field={field}
-                                      lang={lang}
-                                      children={children}
-                                      translations={translations}
-                                      renderingParameters={renderingParameters} model={model}/>
+        return <WrapperPreviewComponent key={htmlId}
+                                        htmlId={htmlId}
+                                        field={field}
+                                        lang={lang}
+                                        children={children}
+                                        translations={translations}
+                                        renderingParameters={renderingParameters} model={model}/>
       }
     }
 
