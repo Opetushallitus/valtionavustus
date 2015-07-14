@@ -164,7 +164,7 @@ export default class FormModel {
           populateGrowingSet(g, growingSetValue)
         }
         const firstChildValue = g.children.length > 0 ? InputValueStorage.readValue(formContent, answers, g.children[0].id) : undefined
-        if (g.children.length > 1 || (!_.isUndefined(growingSetValue) && !_.isUndefined(firstChildValue))) {
+        if (g.children.length > 1 || (!_.isUndefined(growingSetValue) && !_.isEmpty(firstChildValue))) {
           const enabledPlaceHolderChild = FormBranchGrower.createNewChild(g, true)
           g.children.push(enabledPlaceHolderChild)
         }
