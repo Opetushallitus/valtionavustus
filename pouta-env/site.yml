@@ -24,6 +24,7 @@
     postgresql_version: 9.4
     postgresql_flavor: pgdg
   roles:
+  - ssh.init
   - common
   - logical.volumes
   - 3rdparty/postgresql
@@ -35,6 +36,7 @@
   user: cloud-user
   sudo: yes
   roles:
+  - ssh.init
   - common
   - buildmachine
   - valtionavustus.build

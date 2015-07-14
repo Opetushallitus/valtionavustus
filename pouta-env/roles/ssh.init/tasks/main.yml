@@ -1,0 +1,44 @@
+- name: Set ssh MaxStartUps
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^MaxStartUps"
+              line="MaxStartUps 50:100:200"
+              state=present
+  notify: Restart ssh
+
+- name: Disallow password authentication
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^PasswordAuthentication"
+              line="PasswordAuthentication no"
+              state=present
+  notify: Restart ssh
+
+- name: Disallow root SSH access
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^PermitRootLogin"
+              line="PermitRootLogin no"
+              state=present
+  notify: Restart ssh
+
+- name: Add all our authorized keys cloud user
+  authorized_key: user="{{ ansible_ssh_user }}"
+                  key="{{ lookup('file', item) }}"
+  with_fileglob:
+    - public_keys/*
+
+- name: Remove previous gw machine IP mapping from /etc/hosts
+  lineinfile: dest=/etc/hosts regexp='^([0-9]{1,3}\.){3}[0-9]{1,3} va-gw' state=absent owner=root group=root mode=0644
+
+- name: Add va-gateway machine IP mapping to /etc/hosts
+  lineinfile: dest=/etc/hosts line='"{{ hostvars['loadbalancer-test'].ansible_all_ipv4_addresses[0] }} va-gw"' owner=root group=root mode=0644
+
+- name: Remove previous build machine IP mapping from /etc/hosts
+  lineinfile: dest=/etc/hosts regexp='^([0-9]{1,3}\.){3}[0-9]{1,3} va-build$' state=absent owner=root group=root mode=0644
+
+- name: Add build machine IP mapping to /etc/hosts
+  lineinfile: dest=/etc/hosts line='"{{ hostvars['va-build'].ansible_all_ipv4_addresses[0] }} va-build"' owner=root group=root mode=0644
+
+- name: Remove previous test machine IP mapping from /etc/hosts
+  lineinfile: dest=/etc/hosts regexp='^([0-9]{1,3}\.){3}[0-9]{1,3} va-test$' state=absent owner=root group=root mode=0644
+
+- name: Add test machine IP mapping to /etc/hosts
+  lineinfile: dest=/etc/hosts line='"{{ hostvars['va-test'].ansible_all_ipv4_addresses[0] }} va-test"' owner=root group=root mode=0644

@@ -1,0 +1,5 @@
+- hosts: va-test:va-build
+  user: cloud-user
+  sudo: yes
+  roles:
+  - ssh.init
