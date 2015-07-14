@@ -17,6 +17,10 @@
         filesystem: xfs
         size: 10g
         mount_point: /etc/postgresql
+      data:
+        filesystem: xfs
+        size: 100g
+        mount_point: /data
       home2:
         filesystem: xfs
         size: 100g
