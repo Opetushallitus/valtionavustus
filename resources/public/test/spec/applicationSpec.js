@@ -31,6 +31,18 @@
     page.setInputValue("continuation-project", "no")()
     page.setInputValue("bank-iban", "FI 32 5000 4699350600")()
     page.setInputValue("bank-bic", "5000")()
+    page.setInputValue("coordination-costs-row.amount", "10")()
+    page.setInputValue("personnel-costs-row.amount", "10")()
+    page.setInputValue("service-purchase-costs-row.amount", "10")()
+    page.setInputValue("material-costs-row.amount", "10")()
+    page.setInputValue("rent-costs-row.amount", "10")()
+    page.setInputValue("equipment-costs-row.amount", "10")()
+    page.setInputValue("steamship-costs-row.amount", "10")()
+    page.setInputValue("other-costs-row.amount", "10")()
+    page.setInputValue("project-incomes-row.amount", "10")()
+    page.setInputValue("eu-programs-income-row.amount", "10")()
+    page.setInputValue("other-public-financing-income-row.amount", "10")()
+    page.setInputValue("private-financing-income-row.amount", "10")()
   }
 
   describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku suomeksi', function () {
@@ -52,7 +64,10 @@
         expect(page.submitButton().isEnabled()).to.equal(false)
       })
       it("kerrotaan pakollisista kentästä", function () {
-        expect(page.validationErrors()).to.equal('17 vastauksessa puutteita')
+        const validationErrorsSummaryMessage = page.validationErrors()
+        const errorCount = parseInt(validationErrorsSummaryMessage.split(' ')[0])
+        expect(errorCount).to.be.at.least(10)
+        expect(validationErrorsSummaryMessage).to.equal(errorCount + ' vastauksessa puutteita')
       })
     })
 

@@ -41,6 +41,18 @@
            {:key "project-announce" :value "Julkaisut"}
            {:key "project-effectiveness" :value "Tehokkuus"}
            {:key "project-spreading-plan" :value "Jakelusuunnitelma"}
+           {:key "coordination-costs-row.amount" :value "10"}
+           {:key "personnel-costs-row.amount" :value "10"}
+           {:key "service-purchase-costs-row.amount" :value "10"}
+           {:key "material-costs-row.amount" :value "10"}
+           {:key "rent-costs-row.amount" :value "10"}
+           {:key "equipment-costs-row.amount" :value "10"}
+           {:key "steamship-costs-row.amount" :value "10"}
+           {:key "other-costs-row.amount" :value "10"}
+           {:key "project-incomes-row.amount" :value "10"}
+           {:key "eu-programs-income-row.amount" :value "10"}
+           {:key "other-public-financing-income-row.amount" :value "10"}
+           {:key "private-financing-income-row.amount" :value "10"}
            ]})
 
 (def most-required-missing
@@ -71,29 +83,29 @@
    :project-end                                          []
    :vat-included                                         []
    :coordination-costs-row.description                   []
-   :coordination-costs-row.amount                        []
+   :coordination-costs-row.amount                        [{:error "required"}]
    :personnel-costs-row.description                      []
-   :personnel-costs-row.amount                           []
+   :personnel-costs-row.amount                           [{:error "required"}]
    :service-purchase-costs-row.description               []
-   :service-purchase-costs-row.amount                    []
+   :service-purchase-costs-row.amount                    [{:error "required"}]
    :material-costs-row.description                       []
-   :material-costs-row.amount                            []
+   :material-costs-row.amount                            [{:error "required"}]
    :rent-costs-row.description                           []
-   :rent-costs-row.amount                                []
+   :rent-costs-row.amount                                [{:error "required"}]
    :equipment-costs-row.description                      []
-   :equipment-costs-row.amount                           []
+   :equipment-costs-row.amount                           [{:error "required"}]
    :steamship-costs-row.description                      []
-   :steamship-costs-row.amount                           []
+   :steamship-costs-row.amount                           [{:error "required"}]
    :other-costs-row.description                          []
-   :other-costs-row.amount                               []
+   :other-costs-row.amount                               [{:error "required"}]
    :project-incomes-row.description                      []
-   :project-incomes-row.amount                           []
+   :project-incomes-row.amount                           [{:error "required"}]
    :eu-programs-income-row.description []
-   :eu-programs-income-row.amount []
+   :eu-programs-income-row.amount [{:error "required"}]
    :other-public-financing-income-row.description []
-   :other-public-financing-income-row.amount []
+   :other-public-financing-income-row.amount [{:error "required"}]
    :private-financing-income-row.description []
-   :private-financing-income-row.amount []})
+   :private-financing-income-row.amount [{:error "required"}]})
 
 (describe "HTTP server"
 
