@@ -4,30 +4,11 @@ import ClassNames from 'classnames'
 
 import ComponentFactory from '../form/ComponentFactory.js'
 import Translator from '../form/Translator.js'
-import RemoveButton from '../form/component/RemoveButton.jsx'
 import LocalizedString from '../form/component/LocalizedString.jsx'
 import InputValueStorage from '../form/InputValueStorage.js'
 import FormUtil from '../form/FormUtil.js'
 
-export default class VaComponentFactory extends ComponentFactory {
-  constructor() {
-    const fieldTypeMapping = {
-      "vaBudget": VaBudgetElement,
-      "vaSummingBudgetElement": SummingBudgetElement,
-      "vaBudgetItemElement": BudgetItemElement,
-      "vaBudgetSummaryElement": BudgetSummaryElement,
-      "vaProjectDescription": VaProjectDescription
-    }
-    super(fieldTypeMapping)
-  }
-
-  getCustomWrapperComponentProperties(state) {
-    return { "avustushaku": state.avustushaku }
-  }
-}
-
-
-class VaBudgetElement extends React.Component {
+export class VaBudgetElement extends React.Component {
   constructor(props) {
     super(props)
     this.miscTranslator = new Translator(this.props.translations["misc"])
@@ -43,9 +24,9 @@ class VaBudgetElement extends React.Component {
     const summaryElement = _.last(children)
     summaryElement.props.totalNeeded = someFigureHasError ? this.miscTranslator.translate("check-numbers", this.props.lang, "VIRHE") : total
     return (
-        <fieldset className="va-budget" id={htmlId}>
-          {children}
-        </fieldset>
+      <fieldset className="va-budget" id={htmlId}>
+        {children}
+      </fieldset>
     )
   }
 
@@ -68,7 +49,7 @@ class VaBudgetElement extends React.Component {
   }
 }
 
-class SummingBudgetElement extends React.Component {
+export class SummingBudgetElement extends React.Component {
   render() {
     const field = this.props.field
     const children = this.props.children
@@ -76,33 +57,33 @@ class SummingBudgetElement extends React.Component {
 
     const htmlId = this.props.htmlId
     const columnTitles = field.params.showColumnTitles ? <thead><tr>
-        <th><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
-        <th><LocalizedString translations={field.params.columnTitles} translationKey="description" lang={this.props.lang} /></th>
-        <th><LocalizedString translations={field.params.columnTitles} translationKey="amount" lang={this.props.lang} /></th>
-      </tr></thead> : undefined
+      <th><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
+      <th><LocalizedString translations={field.params.columnTitles} translationKey="description" lang={this.props.lang} /></th>
+      <th><LocalizedString translations={field.params.columnTitles} translationKey="amount" lang={this.props.lang} /></th>
+    </tr></thead> : undefined
     const classNames = ClassNames({"required": field.required })
     return (
-        <table id={htmlId}>
-          <caption className={!_.isEmpty(classNames) ? classNames : undefined}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></caption>
-          <colgroup>
-            <col className="label-column" />
-            <col className="description-column" />
-            <col className="amount-column" />
-          </colgroup>
-          {columnTitles}
-          <tbody>
-            {children}
-          </tbody>
-          <tfoot><tr>
-            <td colSpan="2"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
-            <td className="money sum">{sum}</td>
-          </tr></tfoot>
-        </table>
+      <table id={htmlId}>
+        <caption className={!_.isEmpty(classNames) ? classNames : undefined}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></caption>
+        <colgroup>
+          <col className="label-column" />
+          <col className="description-column" />
+          <col className="amount-column" />
+        </colgroup>
+        {columnTitles}
+        <tbody>
+        {children}
+        </tbody>
+        <tfoot><tr>
+          <td colSpan="2"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
+          <td className="money sum">{sum}</td>
+        </tr></tfoot>
+      </table>
     )
   }
 }
 
-class BudgetItemElement extends React.Component {
+export class BudgetItemElement extends React.Component {
   render() {
     const field = this.props.field
     const children = this.props.children
@@ -119,7 +100,7 @@ class BudgetItemElement extends React.Component {
   }
 }
 
-class BudgetSummaryElement extends React.Component {
+export class BudgetSummaryElement extends React.Component {
   render() {
     const htmlId = this.props.htmlId
     const field = this.props.field
@@ -141,40 +122,20 @@ class BudgetSummaryElement extends React.Component {
           <col className="amount-column" />
         </colgroup>
         <tbody>
-          <tr className="grand-total">
-            <td colSpan="2"><LocalizedString translations={field.params} translationKey="totalSumRowLabel" lang={this.props.lang} /></td>
-            <td className={sumClassNames}>{totalNeeded}</td>
-          </tr>
-          <tr>
-            <td colSpan="2"><LocalizedString translations={field.params} translationKey="ophFinancingLabel" lang={this.props.lang} /> {100 - selfFinancingPercentage} %</td>
-            <td className={sumClassNames}>{ophShare}</td>
-          </tr>
-          <tr>
-            <td colSpan="2"><LocalizedString translations={field.params} translationKey="selfFinancingLabel" lang={this.props.lang} /> {selfFinancingPercentage} %</td>
-            <td className={sumClassNames}>{selfFinancingShare}</td>
-          </tr>
+        <tr className="grand-total">
+          <td colSpan="2"><LocalizedString translations={field.params} translationKey="totalSumRowLabel" lang={this.props.lang} /></td>
+          <td className={sumClassNames}>{totalNeeded}</td>
+        </tr>
+        <tr>
+          <td colSpan="2"><LocalizedString translations={field.params} translationKey="ophFinancingLabel" lang={this.props.lang} /> {100 - selfFinancingPercentage} %</td>
+          <td className={sumClassNames}>{ophShare}</td>
+        </tr>
+        <tr>
+          <td colSpan="2"><LocalizedString translations={field.params} translationKey="selfFinancingLabel" lang={this.props.lang} /> {selfFinancingPercentage} %</td>
+          <td className={sumClassNames}>{selfFinancingShare}</td>
+        </tr>
         </tbody>
       </table>
-    )
-  }
-}
-
-class VaProjectDescription extends React.Component {
-  render() {
-    const children = this.props.children
-    const htmlId = this.props.htmlId
-    const removeButton = React.createElement(RemoveButton, this.props)
-    return (
-      <li className="va-big-fieldset">
-        <fieldset id={htmlId}>
-          <div className="fieldset-elements">
-            {children}
-          </div>
-          <div className="fieldset-control">
-            {removeButton}
-          </div>
-        </fieldset>
-      </li>
     )
   }
 }
