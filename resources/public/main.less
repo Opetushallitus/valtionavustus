@@ -591,9 +591,6 @@ button[disabled].soresu-text-button {
       }
       .money {
         text-align: right;
-        &.sum {
-          font-weight: bold;
-        }
         &:not(.error).sum:after {
           content: " €"
         }
@@ -604,6 +601,7 @@ button[disabled].soresu-text-button {
     }
     tfoot {
       border-top: 1px solid @light-gray;
+      font-weight: bold;
     }
   }
 }
