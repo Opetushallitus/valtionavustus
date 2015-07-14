@@ -1,5 +1,5 @@
 import React from 'react'
-import FormPreviewElement from './preview/FormPreviewElement.jsx'
+import FormPreviewComponent from './preview/FormPreviewComponent.jsx'
 import InfoElement from './element/InfoElement.jsx'
 import WrapperPreviewElement from './preview/wrapper/WrapperPreviewElement.jsx'
 import InputValueStorage from './InputValueStorage.js'
@@ -20,13 +20,13 @@ export default class FormPreview extends React.Component {
       if (field.type == "formField") {
         var existingInputValue = InputValueStorage.readValue(fields, values, field.id)
         const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
-        return <FormPreviewElement model={model}
-                                   lang={lang}
-                                   key={htmlId}
-                                   htmlId={htmlId}
-                                   value={value}
-                                   field={field}
-                                   renderingParameters={renderingParameters} />
+        return <FormPreviewComponent model={model}
+                                     lang={lang}
+                                     key={htmlId}
+                                     htmlId={htmlId}
+                                     value={value}
+                                     field={field}
+                                     renderingParameters={renderingParameters} />
       } else if (field.type == "infoElement") {
         return <InfoElement key={htmlId}
                             htmlId={htmlId}
