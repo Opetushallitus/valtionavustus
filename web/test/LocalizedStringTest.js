@@ -8,7 +8,7 @@ describe('Localized string', function() {
   it('has test', function() {
     var React = require('react/addons')
     var TestUtils = React.addons.TestUtils
-    var LocalizedString = require('../form/element/LocalizedString')
+    var LocalizedString = require('../form/component/LocalizedString')
 
     var string = TestUtils.renderIntoDocument(
       <LocalizedString translations={translations.form} translationKey="lengthleft" lang="fi" />
