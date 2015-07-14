@@ -110,7 +110,7 @@ export class BudgetSummaryElement extends React.Component {
     const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
 
     const totalNeeded = this.props.totalNeeded
-    const figuresAreValid = FormUtil.isNumeric(totalNeeded);
+    const figuresAreValid = FormUtil.isNumeric(totalNeeded) && totalNeeded > 0
     const selfFinancingShare = figuresAreValid ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : totalNeeded
     const ophShare = figuresAreValid ? (totalNeeded - selfFinancingShare) : totalNeeded
     const sumClassNames = ClassNames("money sum", figuresAreValid ? undefined : "error")
