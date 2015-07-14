@@ -4,8 +4,8 @@ import ClassNames from 'classnames'
 
 import ComponentFactory from '../form/ComponentFactory.js'
 import Translator from '../form/Translator.js'
-import RemoveButton from '../form/element/RemoveButton.jsx'
-import LocalizedString from '../form/element/LocalizedString.jsx'
+import RemoveButton from '../form/component/RemoveButton.jsx'
+import LocalizedString from '../form/component/LocalizedString.jsx'
 import InputValueStorage from '../form/InputValueStorage.js'
 import FormUtil from '../form/FormUtil.js'
 

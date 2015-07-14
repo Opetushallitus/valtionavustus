@@ -1,6 +1,6 @@
 import React from 'react'
 import PreviewComponent from './PreviewComponent.jsx'
-import LocalizedString from '../element/LocalizedString.jsx'
+import LocalizedString from '../component/LocalizedString.jsx'
 
 export default class OptionValue extends PreviewComponent {
   render() {
