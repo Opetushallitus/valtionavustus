@@ -7,7 +7,7 @@ import MoneyTextField from './MoneyTextField.jsx'
 import Dropdown from './Dropdown.jsx'
 import RadioButton from './RadioButton.jsx'
 
-export default class FormElement extends React.Component {
+export default class FormComponent extends React.Component {
   constructor(props) {
     super(props)
     const fieldTypeMapping = {

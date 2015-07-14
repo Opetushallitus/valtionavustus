@@ -1,5 +1,5 @@
 import React from 'react'
-import FormElement from './element/FormElement.jsx'
+import FormComponent from './element/FormComponent.jsx'
 import InfoElement from './element/InfoElement.jsx'
 import WrapperComponent from './element/wrapper/WrapperComponent.jsx'
 import InputValueStorage from './InputValueStorage.js'
@@ -27,17 +27,17 @@ export default class Form extends React.Component {
         var existingInputValue = InputValueStorage.readValue(fields, values, field.id)
         const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
         const fieldErrors = _.get(validationErrors, field.id, [])
-        return <FormElement validationErrors={fieldErrors}
-                            translations={translations}
-                            model={model}
-                            lang={lang}
-                            key={htmlId}
-                            htmlId={htmlId}
-                            value={value}
-                            field={field}
-                            renderingParameters={renderingParameters}
-                            disabled={fieldDisabled}
-                            onChange={model.componentOnChangeListener}/>
+        return <FormComponent validationErrors={fieldErrors}
+                              translations={translations}
+                              model={model}
+                              lang={lang}
+                              key={htmlId}
+                              htmlId={htmlId}
+                              value={value}
+                              field={field}
+                              renderingParameters={renderingParameters}
+                              disabled={fieldDisabled}
+                              onChange={model.componentOnChangeListener}/>
       } else if (field.type == "infoElement") {
         return <InfoElement key={htmlId}
                             htmlId={htmlId}
