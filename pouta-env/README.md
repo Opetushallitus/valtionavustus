@@ -15,16 +15,21 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 * luo palvelimet komennolla `./pouta-venv/bin/ansible-playbook -i openstack_inventory.py create_machines.yml`
   - jos jonkin palvelimen luominen keskeytyy virheeseen, saattaa olla parasta tuhota palvelin ja yrittää uudelleen.
   - virhetilanteissa komennon uudelleen ajaminen _ei_ korjaa tilannetta (komento ei ole atominen).
-* testaa pääsetkö buildikoneelle komennolla `./ssh_to_build_machine.bash`
-* tarkista, että kaikki palvelimet myös vastatavat ansiblen pingiin `./pouta-venv/bin/ansible all -i openstack_inventory.py -m ping -u cloud-user`
-  - jos jokin palvelimista on vielä käynnistymässä, se ei vastaa pingiin. Tällöin kannattaa odottaa käynnistymistä ennen kuin alkaa asentaa ohjelmistoja.
+* alusta uuden koneen ssh (huom. pitää siis antaa luojan pouta pem, koska muut eivät ole vielä luetettuja)
+  - `./pouta-venv/bin/ansible-playbook -i openstack_inventory.py init_ssh.yml --private-key ~/.ssh/pouta-$USER.pem -l va-test`
+* testaa pääsetkö koneelle ssh komennolla:
+  - `./open-ssh va-test` tai
+  - `./open-ssh va-build`
+* tarkista, että uusi palvelin myös vastaa ansiblen pingiin (esim. va-test tai kaikki `all`):
+  - `./pouta-venv/bin/ansible va-test -i openstack_inventory.py -m ping -u cloud-user`
 * roles/3rdparty hakemistoon on asennettu muiden tekemät roolit. Nämä Ansible-roolit ovat asennettu Ansible Galaxystä:
   - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty Stouts.jenkins`
   - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty debops.nginx`
   - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty nodesource.node`
   - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty debops.pki`
-* alusta palvelimet komennolla `./pouta-venv/bin/ansible-playbook -i openstack_inventory.py site.yml`  # perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
-
+* alusta palvelimet
+  - `./pouta-venv/bin/ansible-playbook -i openstack_inventory.py site.yml`
+  - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
 
 # Uuden käyttäjän lisääminen buildikoneelle kirjautumista varten
-`./ssh_to_build_machine.bash add_va_jenkins_user.bash <käyttäjätunnus>`
+`./open-ssh va-build add_va_jenkins_user.bash <käyttäjätunnus>`
