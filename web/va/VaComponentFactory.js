@@ -1,6 +1,4 @@
 import React from 'react'
-import _ from 'lodash'
-import ClassNames from 'classnames'
 
 import ComponentFactory from '../form/ComponentFactory.js'
 import {VaBudgetElement, SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
