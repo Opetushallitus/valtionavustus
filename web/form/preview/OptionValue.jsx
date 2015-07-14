@@ -1,8 +1,8 @@
 import React from 'react'
-import PreviewElement from './PreviewElement.jsx'
+import PreviewComponent from './PreviewComponent.jsx'
 import LocalizedString from '../element/LocalizedString.jsx'
 
-export default class OptionValue extends PreviewElement {
+export default class OptionValue extends PreviewComponent {
   render() {
     const field = this.props.field
     const lang = this.props.lang

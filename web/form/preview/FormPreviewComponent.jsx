@@ -3,7 +3,7 @@ import ComponentFactory from '../ComponentFactory.js'
 import BasicValue from './BasicValue.jsx'
 import OptionValue from './OptionValue.jsx'
 
-export default class FormPreviewElement extends React.Component {
+export default class FormPreviewComponent extends React.Component {
   constructor(props) {
     super(props)
     const fieldTypeMapping = {

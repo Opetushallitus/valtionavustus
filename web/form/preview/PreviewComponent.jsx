@@ -3,7 +3,7 @@ import ClassNames from 'classnames'
 import _ from 'lodash'
 import LocalizedString from './../element/LocalizedString.jsx'
 
-export default class PreviewElement extends React.Component {
+export default class PreviewComponent extends React.Component {
   render(preview) {
     return (
       <div className={this.className()}>

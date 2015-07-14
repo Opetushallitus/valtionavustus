@@ -1,7 +1,7 @@
 import React from 'react'
-import PreviewElement from './PreviewElement.jsx'
+import PreviewComponent from './PreviewComponent.jsx'
 
-export default class BasicValue extends PreviewElement {
+export default class BasicValue extends PreviewComponent {
   render() {
     var value = "\u00a0" //&nbsp;
     if (this.props.value) {
