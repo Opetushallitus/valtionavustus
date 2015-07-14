@@ -567,6 +567,11 @@ button[disabled].soresu-text-button {
     th {
       font-weight: normal;
     }
+    tbody tr:last-child {
+      td {
+        padding-bottom: 10px;
+      }
+    }
     tr {
       line-height: 40px;
       input[type=text] {
@@ -591,6 +596,9 @@ button[disabled].soresu-text-button {
           color: @bright-red;
         }
       }
+    }
+    tfoot {
+      border-top: 1px solid @light-gray;
     }
   }
 }
