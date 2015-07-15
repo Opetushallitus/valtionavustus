@@ -9,6 +9,7 @@ import queryString from 'query-string'
 import FormContainer from './../form/FormContainer.jsx'
 import FormModel from './../form/FormModel'
 import UrlCreator from './../form/UrlCreator'
+import JsUtil from './../form/JsUtil.js'
 
 import VaComponentFactory from './VaComponentFactory.js'
 import VaPreviewComponentFactory from './VaPreviewComponentFactory.js'
@@ -27,7 +28,8 @@ function isFieldEnabled(saved, formModel, fieldId) {
   return saved
 }
 
-function onFieldValid(state, formModel, fieldId, newFieldValue) {
+function onFieldValid(state, formModel, field, newFieldValue) {
+  const fieldId = field.id
   if ("primary-email" === fieldId) {
     function hakemusIdIsAlreadyInUrl() {
       return state.saveStatus.hakemusId &&
@@ -46,6 +48,16 @@ function onFieldValid(state, formModel, fieldId, newFieldValue) {
      } else {
        window.location = newUrl
      }})
+  } else if (field.displayAs === "moneyField") {
+    const budgetItemParentArray = JsUtil.flatFilter(state.form.content, p => {
+      return p.displayAs === "vaBudgetItemElement" && _.some(p.children, c => { return c.id === fieldId }) })
+    if (_.isEmpty(budgetItemParentArray)) {
+      console.log('Looks like an error - no vaBudgetItemElement parent found for ' + fieldId)
+    } else {
+      const descriptionField = budgetItemParentArray[0].children[0];
+      descriptionField.required = parseInt(newFieldValue) > 0
+      FormModel.triggerFieldUpdatesForValidation([ descriptionField ] , state)
+    }
   }
 }
 
