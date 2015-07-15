@@ -64,7 +64,7 @@ export class SummingBudgetElement extends React.Component {
     const columnTitles = field.params.showColumnTitles ? <thead><tr>
       <th><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
       <th><LocalizedString translations={field.params.columnTitles} translationKey="description" lang={this.props.lang} /></th>
-      <th className="required money-column"><LocalizedString className="money" translations={field.params.columnTitles} translationKey="amount" lang={this.props.lang} /></th>
+      <th className="money-column"><LocalizedString className="money required" translations={field.params.columnTitles} translationKey="amount" lang={this.props.lang} /></th>
     </tr></thead> : undefined
     const classNames = ClassNames({"required": field.required })
     return (
