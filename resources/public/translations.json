@@ -64,6 +64,10 @@
       "fi": "Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.",
       "sv": "Skickande misslyckades. Försök på nytt senare."
     },
+    "unexpected-save-error": {
+      "fi": "Tallentaminen epäonnistui. Yritä myöhemmin uudelleen.",
+      "sv": "TODO-SV: Lagrande misslyckades. Försök på nytt senare."
+    },
     "submit-validation-errors": {
       "fi": "Ei tallennettu - tarkista syöttämäsi tiedot.",
       "sv": "Inte lagrad – svara först på alla frågor."

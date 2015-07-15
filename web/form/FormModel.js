@@ -21,7 +21,9 @@ const events = {
   fieldValidation: 'fieldValidation',
   changeLanguage: 'changeLanguage',
   save: 'save',
+  autoSave: 'autoSave',
   saveCompleted: 'saveCompleted',
+  saveError: 'saveError',
   submit: 'submit',
   removeField: 'removeField'
 }
@@ -63,6 +65,7 @@ export default class FormModel {
         lang: langQueryParam,
         translations: translationsP
       },
+      submitError: "",
       validationErrors: {},
       clientSideValidation: clientSideValidationP
     }
@@ -72,12 +75,6 @@ export default class FormModel {
     initialState.onValue(function(state) { dispatcher.push(events.initialState, state) })
 
     const autoSave = _.debounce(function(){dispatcher.push(events.save)}, develQueryParam? 100 : 3000)
-    function autoSaveIfAllowed(state) {
-      if (self.formOperations.isSaveDraftAllowed(state)) {
-        state.saveStatus.saveInProgress = true
-        autoSave()
-      }
-    }
 
     const formFieldValuesP = Bacon.update({},
                                           [dispatcher.stream(events.initialState)], onInitialState,
@@ -86,7 +83,9 @@ export default class FormModel {
                                           [dispatcher.stream(events.fieldValidation)], onFieldValidation,
                                           [dispatcher.stream(events.changeLanguage)], onChangeLang,
                                           [dispatcher.stream(events.save)], onSave,
+                                          [dispatcher.stream(events.autoSave)], onAutoSave,
                                           [dispatcher.stream(events.saveCompleted)], onSaveCompleted,
+                                          [dispatcher.stream(events.saveError)], onSaveError,
                                           [dispatcher.stream(events.submit)], onSubmit,
                                           [dispatcher.stream(events.removeField)], onRemoveField)
 
@@ -139,7 +138,7 @@ export default class FormModel {
         self.formOperations.onFieldValid(state, self, fieldUpdate.field, fieldUpdate.value)
       }
       state.saveStatus.changes = true
-      autoSaveIfAllowed(state)
+      dispatcher.push(events.autoSave)
       dispatcher.push(events.uiStateUpdate, fieldUpdate)
       return state
     }
@@ -157,26 +156,26 @@ export default class FormModel {
       return state
     }
 
-    function handleUnexpectedSaveError(state, method, url, error, submit) {
-      if (submit) {
-        console.error("Unexpected save error ", error, " in ", method, " to ", url)
-        state.validationErrors["submit"] = [{error: "unexpected-submit-error"}]
+    function handleUnexpectedSaveError(method, url, error, event) {
+      console.error("Unexpected save error ", error, " in ", method, " to ", url)
+      if (event == events.submit) {
+        dispatcher.push(events.saveError, "unexpected-submit-error")
+      } else if (event == events.save) {
+        dispatcher.push(events.saveError, "unexpected-save-error")
       } else {
-        autoSaveIfAllowed(state)
+        dispatcher.push(events.autoSave)
       }
-      return state
     }
 
-    function handleSaveError(state, status, error, method, url, response, submit) {
+    function handleSaveError(status, error, method, url, response, event) {
       console.log('handleSaveError : error ', JSON.stringify(error))
       console.log('handleSaveError : response ', JSON.stringify(response))
-      state.saveStatus.saveInProgress = false
       if (status === 400) {
-        state.validationErrors = JSON.parse(response)
-        state.validationErrors["submit"] = [{error: "submit-validation-errors"}]
-        return state
+        dispatcher.push(events.saveError, "submit-validation-errors",  JSON.parse(response))
       }
-      return handleUnexpectedSaveError(state, method, url, error, submit);
+      else{
+        handleUnexpectedSaveError(method, url, error, event);
+      }
     }
 
     function saveNew(state, onSuccessCallback) {
@@ -194,22 +193,22 @@ export default class FormModel {
               dispatcher.push(events.saveCompleted, stateSkeletonFromServer)
             })
             .catch(function(error) {
-              handleSaveError(state, this.status, error, this.method, url, this.response)
+              handleSaveError(this.status, error, "PUT", url, this.response, events.save)
             })
       }
       catch(error) {
-        return handleUnexpectedSaveError(state, "PUT", url, error);
+        return handleUnexpectedSaveError(state, "PUT", url, error, events.save);
       }
       return state
     }
 
-    function updateOld(stateToSave, submit, onSuccessCallback) {
-      var url = self.formOperations.urlCreator.existingFormApiUrl(stateToSave)+ (submit ? "/submit" : "")
+    function updateOld(stateToSave, event, onSuccessCallback) {
+      var url = self.formOperations.urlCreator.existingFormApiUrl(stateToSave)+ (event === events.submit ? "/submit" : "")
       try {
         stateToSave.saveStatus.saveInProgress = true
         qwest.post(url, stateToSave.saveStatus.values, {dataType: "json", async: true})
             .then(function(response) {
-              console.log("Saved to server (submit=", submit, "). Response=", JSON.stringify(response))
+              console.log("Saved to server (event=", event, "). Response=", JSON.stringify(response))
               const stateFromServer = _.cloneDeep(stateToSave)
               stateFromServer.saveStatus.values = response["answers"]
               if (onSuccessCallback) {
@@ -218,11 +217,11 @@ export default class FormModel {
               dispatcher.push(events.saveCompleted, stateFromServer)
             })
             .catch(function(error) {
-              handleSaveError(stateToSave, this.status, error, this.method, url, this.response, submit)
+              handleSaveError(stateToSave, this.status, error, "POST", url, this.response, event)
             })
       }
       catch(error) {
-        handleUnexpectedSaveError(stateToSave, "POST", url, error, submit);
+        handleUnexpectedSaveError(stateToSave, "POST", url, error, event);
       }
       return stateToSave
     }
@@ -230,11 +229,28 @@ export default class FormModel {
     function onSave(state, params) {
       const onSuccessCallback = params ? params.onSuccessCallback : undefined
       if (self.formOperations.isSaveDraftAllowed(state)) {
-        return updateOld(state, false, onSuccessCallback)
+        return updateOld(state, events.autoSave, onSuccessCallback)
       }
       else {
         return saveNew(state, onSuccessCallback)
       }
+    }
+
+    function onAutoSave(state) {
+      if (self.formOperations.isSaveDraftAllowed(state)) {
+        state.saveStatus.saveInProgress = true
+        autoSave()
+      }
+      return state
+    }
+
+    function onSaveError(state, submitError, serverValidationErrors) {
+      state.saveStatus.saveInProgress = false
+      state.submitError = submitError
+      if(serverValidationErrors) {
+        state.validationErros = serverValidationErrors
+      }
+      return state
     }
 
     function onSaveCompleted(stateFromUiLoop, stateFromServer) {
@@ -252,15 +268,15 @@ export default class FormModel {
       self.formOperations.onSaveCompletedCallback(stateFromUiLoop, stateFromServer)
       stateFromUiLoop.saveStatus.saveInProgress = false
       stateFromUiLoop.saveStatus.saveTime = new Date()
-      stateFromUiLoop.validationErrors["submit"] = []
+      stateFromUiLoop.submitError = ""
       if (stateFromUiLoop.saveStatus.changes) {
-        autoSaveIfAllowed(stateFromUiLoop)
+        dispatcher.push(events.autoSave)
       }
       return stateFromUiLoop
     }
 
     function onSubmit(state) {
-      return updateOld(state, true)
+      return updateOld(state, events.submit)
     }
 
     function onRemoveField(state, fieldToRemove) {
@@ -269,7 +285,7 @@ export default class FormModel {
       InputValueStorage.deleteValue(growingParent, answersObject, fieldToRemove.id)
       delete state.clientSideValidation[fieldToRemove.id]
       _.remove(growingParent.children, fieldToRemove)
-      autoSaveIfAllowed(state)
+      dispatcher.push(events.autoSave)
       return state
     }
   }

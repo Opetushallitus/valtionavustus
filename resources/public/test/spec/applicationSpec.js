@@ -63,11 +63,9 @@
       it("lähetys on disabloitu", function () {
         expect(page.submitButton().isEnabled()).to.equal(false)
       })
-      it("kerrotaan pakollisista kentästä", function () {
+      it("ei valiteta vielä pakollisista kentästä", function () {
         const validationErrorsSummaryMessage = page.validationErrors()
-        const errorCount = parseInt(validationErrorsSummaryMessage.split(' ')[0])
-        expect(errorCount).to.be.at.least(10)
-        expect(validationErrorsSummaryMessage).to.equal(errorCount + ' vastauksessa puutteita')
+        expect(validationErrorsSummaryMessage).to.equal("")
       })
     })
 

@@ -67,7 +67,7 @@ function ApplicationPage() {
       return applicationElement().find("#form-controls .info :visible").text()
     },
     validationErrors: function() {
-      return applicationElement().find("#validation-errors .error :visible").first().text()
+      return applicationElement().find("#form-error-summary .error :visible").first().text()
     },
     error: function(field) {
       return applicationElement().find("#" + escapeSelector(field) + "-error").first().text()

@@ -131,12 +131,8 @@ formModelP.onValue((state) => {
     React.render(
       <FormContainer model={model}
                      state={state}
-                     form={state.form}
                      infoElementValues={state.avustushaku}
-                     clientSideValidation={state.clientSideValidation}
-                     validationErrors={state.validationErrors}
-                     configuration={state.configuration}
-                     saveStatus={state.saveStatus} />,
+      />,
       document.getElementById('app')
     )
   } catch (e) {
