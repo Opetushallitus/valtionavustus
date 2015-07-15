@@ -34,7 +34,8 @@ export default class FormContainer extends React.Component {
                                  form={form}
                                  lang={lang}
                                  translations={translations}
-                                 values={values} />
+                                 values={values}
+                                 state={state}/>
     } else {
       formElement = <Form model={model}
                           validationErrors={validationErrors}

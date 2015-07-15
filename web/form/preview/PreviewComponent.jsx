@@ -24,13 +24,12 @@ export default class PreviewComponent extends React.Component {
   }
 
   label() {
-    if( this.hideLabel()) return undefined
+    if (this.hideLabel() || !this.props.field.label) return undefined
     else {
-      return (<LocalizedString
-        className="soresu-key"
-        translations={this.props.field}
-        translationKey="label"
-        lang={this.props.lang} />)
+      return (<LocalizedString className="soresu-key"
+                               translations={this.props.field}
+                               translationKey="label"
+                               lang={this.props.lang} />)
     }
   }
 

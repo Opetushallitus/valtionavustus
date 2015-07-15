@@ -15,6 +15,7 @@ export class VaBudgetElement extends React.Component {
     super(props)
     this.miscTranslator = new Translator(this.props.translations["misc"])
   }
+
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId
@@ -25,11 +26,13 @@ export class VaBudgetElement extends React.Component {
     const someFigureHasError = _.some(subTotalsAndErrors, (errorFlagAndSum) => { return errorFlagAndSum.containsErrors })
     const summaryElement = _.last(children)
     summaryElement.props.totalNeeded = someFigureHasError ? this.miscTranslator.translate("check-numbers", this.props.lang, "VIRHE") : total
-    return (
-      <fieldset className="va-budget" id={htmlId}>
-        {children}
-      </fieldset>
-    )
+    return (this.html(htmlId, children))
+  }
+
+  html(htmlId, children) {
+    return (<fieldset className="va-budget" id={htmlId}>
+              {children}
+            </fieldset>)
   }
 
   populateSummingElementSum(answersObject) {
@@ -61,11 +64,11 @@ export class SummingBudgetElement extends React.Component {
     const columnTitles = field.params.showColumnTitles ? <thead><tr>
       <th><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
       <th><LocalizedString translations={field.params.columnTitles} translationKey="description" lang={this.props.lang} /></th>
-      <th className="required"><LocalizedString translations={field.params.columnTitles} translationKey="amount" lang={this.props.lang} /></th>
+      <th className="required money-column"><LocalizedString className="money" translations={field.params.columnTitles} translationKey="amount" lang={this.props.lang} /></th>
     </tr></thead> : undefined
     const classNames = ClassNames({"required": field.required })
     return (
-      <table id={htmlId}>
+      <table id={htmlId} className="summing-table">
         <caption className={!_.isEmpty(classNames) ? classNames : undefined}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></caption>
         <colgroup>
           <col className="label-column" />
@@ -78,7 +81,7 @@ export class SummingBudgetElement extends React.Component {
         </tbody>
         <tfoot><tr>
           <td colSpan="2"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
-          <td className="money sum">{sum}</td>
+          <td className="money-column"><span className="money sum">{sum}</span></td>
         </tr></tfoot>
       </table>
     )
@@ -93,10 +96,10 @@ export class BudgetItemElement extends React.Component {
     const descriptionComponent = children[0]
     const amountComponent = children[1]
     return (
-      <tr id={htmlId}>
+      <tr id={htmlId} className="budget-item">
         <td><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></td>
         <td>{descriptionComponent}</td>
-        <td className="money">{amountComponent}</td>
+        <td className="money-column">{amountComponent}</td>
       </tr>
     )
   }
@@ -133,21 +136,20 @@ export class BudgetSummaryElement extends React.Component {
       <table id={htmlId} className="budget-summary">
         <colgroup>
           <col className="label-column" />
-          <col className="description-column" />
           <col className="amount-column" />
         </colgroup>
         <tbody>
         <tr className="grand-total">
-          <td colSpan="2"><LocalizedString translations={field.params} translationKey="totalSumRowLabel" lang={this.props.lang} /></td>
-          <td className={sumClassNames}>{totalNeeded}</td>
+          <td><LocalizedString translations={field.params} translationKey="totalSumRowLabel" lang={this.props.lang} /></td>
+          <td className="money-column"><span className={sumClassNames}>{totalNeeded}</span></td>
         </tr>
         <tr>
-          <td colSpan="2"><LocalizedString translations={field.params} translationKey="ophFinancingLabel" lang={this.props.lang} /> {100 - selfFinancingPercentage} %</td>
-          <td className={sumClassNames}>{ophShare}</td>
+          <td><LocalizedString translations={field.params} translationKey="ophFinancingLabel" lang={this.props.lang} /> {100 - selfFinancingPercentage} %</td>
+          <td className="money-column"><span className={sumClassNames}>{ophShare}</span></td>
         </tr>
         <tr>
-          <td colSpan="2"><LocalizedString translations={field.params} translationKey="selfFinancingLabel" lang={this.props.lang} /> {selfFinancingPercentage} %</td>
-          <td className={sumClassNames}>{selfFinancingShare}</td>
+          <td><LocalizedString translations={field.params} translationKey="selfFinancingLabel" lang={this.props.lang} /> {selfFinancingPercentage} %</td>
+          <td className="money-column"><span className={sumClassNames}>{selfFinancingShare}</span></td>
         </tr>
         </tbody>
       </table>

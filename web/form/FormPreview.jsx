@@ -14,6 +14,7 @@ export default class FormPreview extends React.Component {
     const model = this.props.model
     const values = this.props.values
     const infoElementValues = this.props.infoElementValues.content
+    const state = this.props.state
 
     const renderField = function (field, renderingParameters) {
       const htmlId = model.constructHtmlId(fields, field.id)
@@ -59,7 +60,10 @@ export default class FormPreview extends React.Component {
                                         lang={lang}
                                         children={children}
                                         translations={translations}
-                                        renderingParameters={renderingParameters} model={model}/>
+                                        renderingParameters={renderingParameters}
+                                        model={model}
+                                        customProps={model.getCustomWrapperComponentProperties(state)}
+                                        answersObject={values} />
       }
     }
 

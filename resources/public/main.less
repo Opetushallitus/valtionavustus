@@ -470,6 +470,12 @@ button[disabled].soresu-text-button {
     &.extra-large {
       width: @section-width;
     }
+
+    .soresu-money {
+      &:after {
+        content: " €"
+      }
+    }
   }
 
   .soresu-preview-fieldset,  .soresu-preview-growing-fieldset {
@@ -549,87 +555,105 @@ button[disabled].soresu-text-button {
 
 // VA SPECIFIC STYLES
 .va-budget {
-  table {
-    width: @section-width - 18px;
-    text-align: left;
+  span {
+    color: @form-label-black
+  }
+
+  table.summing-table {
     margin-top: 13px;
     caption {
       text-align: left;
       text-transform: uppercase;
       margin: 8px 0 8px 0;
     }
-    colgroup {
-      .label-column {
-        width: 44%;
-      }
-      .description-column {
-        width: 43%;
-      }
-      .amount-column {
-        width: 13%;
-      }
-    }
     thead {
       tr {
+        // tr cannot have margin
         border-top: 10px transparent solid;
         border-bottom: 8px transparent solid;
-        th {
-          font-weight: normal;
-        }
       }
     }
-    tbody tr:last-child {
-      td {
-        padding-bottom: 10px;
+    colgroup {
+      .label-column {
+        width: 250px;
+      }
+      .description-column {
+        width: 332px;
+      }
+      .amount-column {
+        width: 200px;
       }
     }
-    tr {
-      input[type=text] {
-        margin-bottom: 0;
-      }
-      .soresu-text-field.small input[type=text] {
-        width: 318px;
-        margin-right: 6px;
-      }
-      .soresu-text-field input[type=text], .soresu-money-field input[type=text] {
-        font-size: 16px;
-      }
-      .money {
-        text-align: right;
-        &.sum {
-          padding-right: 18px;
-        }
-        &:not(.error).sum:after {
-          content: " €"
-        }
-        &.error.sum {
-          color: @bright-red;
-        }
-      }
-    }
-    tfoot, .grand-total {
+    tfoot {
       border-top: 1px solid @light-gray;
       font-weight: bold;
       td {
         padding-top: 5px;
       }
     }
-    tr.grand-total {
-      border-bottom: 4px solid transparent;
-      td {
-        height: 30px;
+  }
+
+  table.budget-summary {
+    margin-top: 26px;
+
+    colgroup {
+      .label-column {
+        width: 582px;
+      }
+      .amount-column {
+        width: 200px;
       }
     }
-    &.budget-summary {
+
+    tr.grand-total {
+      border-bottom: 1px solid @light-gray;
+      font-weight: bold;
+      height: 40px;
       td {
-        height: 44px;
+        padding-top: 5px;
       }
+    }
+
+    tr {
+      height: 50px;
     }
   }
-  table#third-party-income tfoot {
-    border-top: none;
-    td {
-      font-weight: normal;
+
+  table.summing-table, table.budget-summary {
+    width: @section-width - 18px;
+    text-align: left;
+    caption {
+      font-size: 18px;
+    }
+    tbody tr:last-child {
+      td {
+        padding-bottom: 10px;
+      }
+    }
+    .soresu-money-field {
+      input[type=text] {
+        margin: 0 6px 4px 0;
+      }
+    }
+    .soresu-text-field.small {
+      input[type=text] {
+        width: 314px;
+        margin: 0 4px 4px 0;
+      }
+    }
+    .money-column {
+      text-align: right;
+    }
+    span.money, span.soresu-money {
+      margin-right: 10px;
+    }
+    .money {
+      &:not(.error).sum:after {
+        content: " €"
+      }
+      &.error.sum {
+        color: @bright-red;
+      }
     }
   }
 }
