@@ -52,12 +52,10 @@ function onFieldValid(state, formModel, field, newFieldValue) {
   } else if (field.displayAs === "moneyField") {
     const budgetItemParentArray = JsUtil.flatFilter(state.form.content, p => {
       return p.displayAs === "vaBudgetItemElement" && _.some(p.children, c => { return c.id === fieldId }) })
-    if (_.isEmpty(budgetItemParentArray)) {
-      console.log('Looks like an error - no vaBudgetItemElement parent found for ' + fieldId)
-    } else {
+    if (!_.isEmpty(budgetItemParentArray)) {
       const descriptionField = budgetItemParentArray[0].children[0];
       descriptionField.required = parseInt(newFieldValue) > 0
-      FieldUpdateHandler.triggerFieldUpdatesForValidation([ descriptionField ] , state)
+      FieldUpdateHandler.triggerFieldUpdatesForValidation([descriptionField], state)
     }
   }
 }
