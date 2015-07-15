@@ -22,7 +22,7 @@ export default class FormBranchGrower {
    *     |
    *     +-- other-organisations.other-organisations-2.email
    *
-   * @param parentNode  Node whose children are repeated For safety, let's ensure the ids we generate are unique in the whole form
+   * @param parentNode  Node whose children are repeated
    */
   static createNewChild(parentNode, enable) {
     const parentId = parentNode.id
