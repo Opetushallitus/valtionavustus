@@ -121,12 +121,7 @@ export default class FormModel {
     }
 
     function onInitialState(state, realInitialState) {
-      try {
-        FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(realInitialState.form.content, realInitialState.saveStatus.values)
-      } catch (e) {
-        console.log('Error when updating initial state', e)
-        throw e
-      }
+      FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(realInitialState.form.content, realInitialState.saveStatus.values)
       return realInitialState
     }
 
