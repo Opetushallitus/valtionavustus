@@ -185,46 +185,13 @@ export default class FormModel {
       FieldUpdateHandler.triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
       const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id]
       if (clientSideValidationPassed) {
-        if (growingFieldSetExpandMustBeTriggered(state, fieldUpdate)) {
-          expandGrowingFieldset(state, fieldUpdate)
-        }
+        FormBranchGrower.expandGrowingFieldSetIfNeeded(state, fieldUpdate);
         self.formOperations.onFieldValid(state, self, fieldUpdate.field, fieldUpdate.value)
       }
       state.saveStatus.changes = true
       autoSaveIfAllowed(state)
       dispatcher.push(events.uiStateUpdate, fieldUpdate)
       return state
-    }
-
-    function growingFieldSetExpandMustBeTriggered(state, fieldUpdate) {
-      const growingSetOfThisField = fieldUpdate.growingParent
-      if (!growingSetOfThisField) {
-        return false
-      }
-
-      const allFieldIdsInSameGrowingSet = JsUtil.
-        flatFilter(growingSetOfThisField, n => { return !_.isUndefined(n.id) }).
-        map(n => { return n.id })
-      const wholeSetIsValid = _.reduce(allFieldIdsInSameGrowingSet, (acc, fieldId) => {
-        return acc && (state.clientSideValidation[fieldId] !== false)
-      }, true)
-
-      // TODO: Assess if the "last" check is needed. Possibly it's enough that the whole thing is valid, minus last row that needs to be skipped in validation, when there are filled rows.
-      const lastChildOfGrowingSet = _.last(_.filter(growingSetOfThisField.children, f => { return !f.forceDisabled }))
-      const thisFieldIsInLastChildToBeRepeated = _.some(lastChildOfGrowingSet.children, x => { return x.id === fieldUpdate.id })
-
-      return wholeSetIsValid && thisFieldIsInLastChildToBeRepeated
-    }
-
-    function expandGrowingFieldset(state, fieldUpdate) {
-      const growingFieldSet = fieldUpdate.growingParent
-      _.forEach(JsUtil.flatFilter(growingFieldSet.children, n => { return !_.isUndefined(n.id) }), n => {
-        n.forceDisabled = false
-      })
-      const allExistingFieldIds = JsUtil.flatFilter(state.form.content, n => { return !_.isUndefined(n.id) }).
-        map(n => { return n.id })
-      const newSet = FormBranchGrower.createNewChild(growingFieldSet)
-      growingFieldSet.children.push(newSet)
     }
 
     function onUiStateUpdated(state, fieldUpdate) {
