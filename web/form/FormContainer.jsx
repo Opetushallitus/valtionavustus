@@ -5,6 +5,7 @@ import FormSaveStatus from './FormSaveStatus.jsx'
 import FormError from './component/FormError.jsx'
 import ToggleLanguageButton from './component/ToggleLanguageButton.jsx'
 import LocalizedString from './component/LocalizedString.jsx'
+import ValidationErrorSummary from './component/ValidationErrorSummary.jsx'
 import _ from 'lodash'
 
 export default class FormContainer extends React.Component {
@@ -60,7 +61,7 @@ export default class FormContainer extends React.Component {
                 <button id="submit" type="submit" className="soresu-text-button" onClick={model.submit} disabled={!(invalidFieldsCount === 0 && model.isSaveDraftAllowed(state)) || model.hasPendingChanges(state)}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
                 <div id="validation-errors">
                   <FormError fieldId="submit" validationErrors={submitErrors} translations={translations} lang={lang}/>
-                  <div className="error" hidden={invalidFieldsCount === 0}><LocalizedString translations={translations.errors} translationKey="validation-errors" lang={lang} keyValues={{kpl: invalidFieldsCount}} /></div>
+                  <ValidationErrorSummary invalidFieldsCount={invalidFieldsCount} translations={translations.errors} lang={lang}></ValidationErrorSummary>
                 </div>
                 <div id="form-controls-devel" hidden={!configuration.develMode}>
                   <ToggleLanguageButton id="toggle-language" model={model} languages={translations.languages} lang={lang}/>
