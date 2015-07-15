@@ -5,8 +5,10 @@ import ClassNames from 'classnames'
 import ComponentFactory from '../form/ComponentFactory.js'
 import Translator from '../form/Translator.js'
 import LocalizedString from '../form/component/LocalizedString.jsx'
+import {FieldUpdateHandler} from '../form/FieldUpdateHandler.js'
 import InputValueStorage from '../form/InputValueStorage.js'
 import FormUtil from '../form/FormUtil.js'
+import JsUtil from '../form/JsUtil.js'
 
 export class VaBudgetElement extends React.Component {
   constructor(props) {
@@ -97,6 +99,19 @@ export class BudgetItemElement extends React.Component {
         <td className="money">{amountComponent}</td>
       </tr>
     )
+  }
+
+  static handleBudgetAmountUpdate(state, amountFieldId, newFieldValue) {
+    const budgetItemParentArray = JsUtil.flatFilter(state.form.content, p => {
+      return p.displayAs === "vaBudgetItemElement" && _.some(p.children, child => {
+          return child.id === amountFieldId
+        })
+    })
+    if (!_.isEmpty(budgetItemParentArray)) {
+      const descriptionField = budgetItemParentArray[0].children[0]
+      descriptionField.required = parseInt(newFieldValue) > 0
+      FieldUpdateHandler.triggerFieldUpdatesForValidation([descriptionField], state)
+    }
   }
 }
 

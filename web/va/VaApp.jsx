@@ -14,6 +14,7 @@ import JsUtil from './../form/JsUtil.js'
 
 import VaComponentFactory from './VaComponentFactory.js'
 import VaPreviewComponentFactory from './VaPreviewComponentFactory.js'
+import {BudgetItemElement} from './VaBudgetComponents.jsx'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
@@ -50,13 +51,7 @@ function onFieldValid(state, formModel, field, newFieldValue) {
        window.location = newUrl
      }})
   } else if (field.displayAs === "moneyField") {
-    const budgetItemParentArray = JsUtil.flatFilter(state.form.content, p => {
-      return p.displayAs === "vaBudgetItemElement" && _.some(p.children, c => { return c.id === fieldId }) })
-    if (!_.isEmpty(budgetItemParentArray)) {
-      const descriptionField = budgetItemParentArray[0].children[0];
-      descriptionField.required = parseInt(newFieldValue) > 0
-      FieldUpdateHandler.triggerFieldUpdatesForValidation([descriptionField], state)
-    }
+    BudgetItemElement.handleBudgetAmountUpdate(state, fieldId, newFieldValue)
   }
 }
 
