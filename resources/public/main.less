@@ -555,10 +555,6 @@ button[disabled].soresu-text-button {
 
 // VA SPECIFIC STYLES
 .va-budget {
-  span {
-    color: @form-label-black
-  }
-
   table.summing-table {
     margin-top: 13px;
     caption {
@@ -628,6 +624,13 @@ button[disabled].soresu-text-button {
     tbody tr:last-child {
       td {
         padding-bottom: 10px;
+      }
+    }
+    .budget-item {
+      color: @form-label-black;
+
+      &.disabled {
+        color: @darker-gray
       }
     }
     .soresu-money-field {

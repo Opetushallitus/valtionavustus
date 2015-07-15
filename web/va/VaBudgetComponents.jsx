@@ -95,8 +95,9 @@ export class BudgetItemElement extends React.Component {
     const htmlId = this.props.htmlId
     const descriptionComponent = children[0]
     const amountComponent = children[1]
+    const className = ClassNames("budget-item", { disabled: this.props.disabled })
     return (
-      <tr id={htmlId} className="budget-item">
+      <tr id={htmlId} className={className}>
         <td><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></td>
         <td>{descriptionComponent}</td>
         <td className="money-column">{amountComponent}</td>
