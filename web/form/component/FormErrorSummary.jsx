@@ -53,7 +53,7 @@ export default class FormErrorSummary extends React.Component {
     const fields = this.props.fields
     const validationErrors = this.props.validationErrors
     const translator = new Translator(this.translations)
-    const submitError = this.props.submitError.length > 0 ? translator.translate(this.props.submitError, lang) : ""
+    const saveError = this.props.saveError.length > 0 ? translator.translate(this.props.saveError, lang) : ""
     const children = []
     var invalidFieldsCount = 0
     if (validationErrors instanceof Object) {
@@ -69,8 +69,8 @@ export default class FormErrorSummary extends React.Component {
       }
     }
     return (
-      <div id="form-error-summary" hidden={invalidFieldsCount === 0 && submitError.length === 0}>
-        <div hidden={submitError.length === 0} className="error">{submitError}</div>
+      <div id="form-error-summary" hidden={invalidFieldsCount === 0 && saveError.length === 0}>
+        <div hidden={saveError.length === 0} className="error">{saveError}</div>
         <div className="error" id="validation-errors-summary" hidden={invalidFieldsCount === 0}>
           <LocalizedString hidden={invalidFieldsCount === 0} translations={this.translations} translationKey="validation-errors" lang={lang} keyValues={{kpl: invalidFieldsCount}} />
         </div>

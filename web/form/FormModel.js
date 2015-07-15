@@ -57,6 +57,7 @@ export default class FormModel {
         changes: false,
         saveInProgress: false,
         saveTime: null,
+        saveError: "",
         values: formValuesP
       },
       configuration: {
@@ -65,7 +66,6 @@ export default class FormModel {
         lang: langQueryParam,
         translations: translationsP
       },
-      submitError: "",
       validationErrors: {},
       clientSideValidation: clientSideValidationP
     }
@@ -244,9 +244,9 @@ export default class FormModel {
       return state
     }
 
-    function onSaveError(state, submitError, serverValidationErrors) {
+    function onSaveError(state, saveError, serverValidationErrors) {
       state.saveStatus.saveInProgress = false
-      state.submitError = submitError
+      state.saveStatus.saveError = saveError
       if(serverValidationErrors) {
         state.validationErros = serverValidationErrors
       }
@@ -268,7 +268,7 @@ export default class FormModel {
       self.formOperations.onSaveCompletedCallback(stateFromUiLoop, stateFromServer)
       stateFromUiLoop.saveStatus.saveInProgress = false
       stateFromUiLoop.saveStatus.saveTime = new Date()
-      stateFromUiLoop.submitError = ""
+      stateFromUiLoop.saveStatus.saveError = ""
       if (stateFromUiLoop.saveStatus.changes) {
         dispatcher.push(events.autoSave)
       }
