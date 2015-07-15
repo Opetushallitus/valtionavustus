@@ -57,12 +57,16 @@ export default class FormContainer extends React.Component {
               <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
               <div id="form-controls" hidden={preview}>
                 <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang}/>
-                <button id="submit" type="submit" className="soresu-text-button" onClick={model.submit} disabled={!(formIsValid && model.isSaveDraftAllowed(state)) || model.hasPendingChanges(state)}><LocalizedString translations={translations.form} translationKey="submit" lang={lang}/></button>
-                <FormErrorSummary fields={form.content} saveError={saveStatus.saveError} validationErrors={validationErrors} translations={translations.errors} lang={lang}></FormErrorSummary>
-                <div id="form-controls-devel" hidden={!configuration.develMode}>
+                <button id="submit" type="submit" className="soresu-text-button" onClick={model.submit} disabled={!(formIsValid && model.isSaveDraftAllowed(state)) || model.hasPendingChanges(state)}>
+                  <LocalizedString translations={translations.form} translationKey="submit" lang={lang}/>
+                </button>
+                <span id="form-controls-devel" hidden={!configuration.develMode}>
                   <ToggleLanguageButton id="toggle-language" model={model} languages={translations.languages} lang={lang}/>
-                  <button type="button" className="soresu-text-button" onClick={openPreview} disabled={!model.isSaveDraftAllowed(state)}><LocalizedString translations={translations.form} translationKey="preview" lang={lang}/></button>
-                </div>
+                  <button type="button" className="soresu-text-button" onClick={openPreview} disabled={!model.isSaveDraftAllowed(state)}>
+                    <LocalizedString translations={translations.form} translationKey="preview" lang={lang} />
+                  </button>
+                </span>
+                <FormErrorSummary fields={form.content} saveError={saveStatus.saveError} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
               </div>
             </div>
             <span hidden={true} id="entity-id">{model.formOperations.printEntityId(state)}</span>
