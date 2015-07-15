@@ -99,6 +99,7 @@ function printEntityId(state) {
 }
 
 const query = queryString.parse(location.search)
+const develQueryParam =  query.devel || false
 const avustusHakuP = Bacon.fromPromise(qwest.get(avustusHakuApiUrl(query.avustushaku || 1)))
 const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(qwest.get(urlCreator.formApiUrl(avustusHaku.id)))})
 
@@ -126,7 +127,9 @@ const model = new FormModel({
 const formModelP = model.init()
 
 formModelP.onValue((state) => {
-  console.log("Updating UI with state:", state)
+  if (develQueryParam) {
+    console.log("Updating UI with state:", state)
+  }
   try {
     React.render(
       <FormContainer model={model}
