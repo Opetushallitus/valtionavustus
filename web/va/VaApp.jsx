@@ -147,6 +147,6 @@ formModelP.onValue((state) => {
       document.getElementById('app')
     )
   } catch (e) {
-    console.log('Error from React.render', e)
+    console.log('Error from React.render with state', state, e)
   }
 })
