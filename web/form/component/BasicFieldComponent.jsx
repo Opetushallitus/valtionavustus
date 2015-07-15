@@ -18,11 +18,10 @@ export default class BasicFieldComponent extends React.Component {
     else {
       return (<label htmlFor={this.props.htmlId}
                      className={this.labelClassName(className)}>
-        <LocalizedString
-          translations={this.props.field}
-          translationKey="label"
-          lang={this.props.lang} />
-      </label>)
+                <LocalizedString translations={this.props.field}
+                                 translationKey="label"
+                                 lang={this.props.lang} />
+              </label>)
     }
   }
 
