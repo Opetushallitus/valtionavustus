@@ -181,7 +181,7 @@ export default class FormModel {
 
     function onUpdateField(state, fieldUpdate) {
       FormModel.updateStateFromFieldUpdate(state, fieldUpdate)
-      self.triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
+      FormModel.triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
       const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id]
       if (clientSideValidationPassed) {
         if (growingFieldSetExpandMustBeTriggered(state, fieldUpdate)) {
@@ -356,7 +356,7 @@ export default class FormModel {
     }
   }
 
-  triggerRelatedFieldValidationIfNeeded(state, triggeringFieldUpdate) {
+  static triggerRelatedFieldValidationIfNeeded(state, triggeringFieldUpdate) {
     const growingFieldSet = triggeringFieldUpdate.growingParent
     if (growingFieldSet) {
       const triggeringFieldId = triggeringFieldUpdate.id
