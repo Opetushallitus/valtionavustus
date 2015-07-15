@@ -1,8 +1,55 @@
 import _ from 'lodash'
 import traverse from 'traverse'
+
+import InputValueStorage from './InputValueStorage.js'
 import JsUtil from './JsUtil.js'
 
+
 export default class FormBranchGrower {
+  static addFormFieldsForGrowingFieldsInInitialRender(formContent, answers) {
+    function populateRepeatingItem(baseObject, key, valueOfElement) {
+      _.assign(baseObject, { "id": key })
+      baseObject.children = baseObject.children.map(c => {
+        const primitiveElement = _.cloneDeep(c)
+        const distinguisherOfElement = _.last(primitiveElement.id.split('.')) // e.g. "email"
+        _.forEach(valueOfElement, primitiveElementValueObject => {
+          if (_.endsWith(primitiveElementValueObject.key, '.' + distinguisherOfElement)) {
+            primitiveElement.id = primitiveElementValueObject.key
+          }
+        })
+        return primitiveElement
+      })
+      return baseObject
+    }
+
+    function populateGrowingSet(growingParentElement, valuesTreeOfElement) {
+      if (growingParentElement.children.length === 0) {
+        throw new Error("Expected an existing child for growing set '" + growingParentElement.id + "' to get the field configurations from there.")
+      }
+      const childPrototype = growingParentElement.children[0]
+      growingParentElement.children = _.map(valuesTreeOfElement, itemValueObject => {
+        const o = {}
+        _.assign(o, childPrototype)
+        populateRepeatingItem(o, itemValueObject.key, itemValueObject.value)
+        return o
+      })
+    }
+
+    _.forEach(JsUtil.flatFilter(formContent, n => { return n.displayAs === "growingFieldset"}), g => {
+      const growingSetValue = InputValueStorage.readValue(formContent, answers, g.id)
+      if (!_.isUndefined(growingSetValue) && !_.isEmpty(growingSetValue)) {
+        populateGrowingSet(g, growingSetValue)
+      }
+      const firstChildValue = g.children.length > 0 ? InputValueStorage.readValue(formContent, answers, g.children[0].id) : undefined
+      if (g.children.length > 1 || (!_.isUndefined(growingSetValue) && !_.isEmpty(firstChildValue))) {
+        const enabledPlaceHolderChild = FormBranchGrower.createNewChild(g, true)
+        g.children.push(enabledPlaceHolderChild)
+      }
+      const disabledPlaceHolderChild = FormBranchGrower.createNewChild(g, false)
+      g.children.push(disabledPlaceHolderChild)
+    })
+  }
+
   static expandGrowingFieldSetIfNeeded(state, fieldUpdate) {
     if (growingFieldSetExpandMustBeTriggered(state, fieldUpdate)) {
       expandGrowingFieldset(state, fieldUpdate)
