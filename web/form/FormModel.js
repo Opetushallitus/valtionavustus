@@ -157,10 +157,10 @@ export default class FormModel {
     }
 
     function handleUnexpectedSaveError(method, url, error, event) {
-      console.error("Unexpected save error ", error, " in ", method, " to ", url)
-      if (event == events.submit) {
+      console.error("Unexpected ", event, " error ", error, " in ", method, " to ", url)
+      if (event === events.submit) {
         dispatcher.push(events.saveError, "unexpected-submit-error")
-      } else if (event == events.save) {
+      } else if (event === events.save) {
         dispatcher.push(events.saveError, "unexpected-save-error")
       } else {
         dispatcher.push(events.autoSave)
@@ -197,7 +197,7 @@ export default class FormModel {
             })
       }
       catch(error) {
-        return handleUnexpectedSaveError(state, "PUT", url, error, events.save);
+        return handleUnexpectedSaveError("PUT", url, error, events.save);
       }
       return state
     }
@@ -217,11 +217,11 @@ export default class FormModel {
               dispatcher.push(events.saveCompleted, stateFromServer)
             })
             .catch(function(error) {
-              handleSaveError(stateToSave, this.status, error, "POST", url, this.response, event)
+              handleSaveError(this.status, error, "POST", url, this.response, event)
             })
       }
       catch(error) {
-        handleUnexpectedSaveError(stateToSave, "POST", url, error, event);
+        handleUnexpectedSaveError("POST", url, error, event);
       }
       return stateToSave
     }
