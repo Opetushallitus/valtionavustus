@@ -7,41 +7,50 @@ export default class FormErrorSummary extends React.Component {
   constructor(props) {
     super(props)
     this.translations = this.props.translations
+    this.handleClick = this.handleClick.bind(this)
+    this.state = { open: false }
   }
 
-  getField(field, id) {
+  handleClick() {
+    this.setState({
+      open: !this.state.open
+    })
+  }
+
+  getField(id, field, parents) {
     if(field && field.id === id) {
-      return field
+      return {field: field, parents: parents}
     }
     if(field.children) {
-      return this.findField(field.children, id)
+      return this.findField(id, field.children, parents.concat([field]))
     }
     return undefined
   }
 
-  findField(fields, id) {
+  findField(id, fields, parents) {
     for (var i=0; i < fields.length; i++) {
-      const field = this.getField(fields[i], id)
-      if(field) {
-        return field
+      const fieldInfo = this.getField(id, fields[i], parents)
+      if(fieldInfo) {
+        return fieldInfo
       }
     }
     return undefined
   }
 
-  renderFieldErrors(field, errors, lang) {
-    if(field && field.label) {
+  renderFieldErrors(fieldInfo, errors, lang) {
+    if(fieldInfo) {
       const fieldErrors = []
+      const labelHolder = fieldInfo.field.label ? fieldInfo.field : fieldInfo.parents[fieldInfo.parents.length - 1]
       for (var i=0; i < errors.length; i++) {
         const error = errors[i]
-        const key = field.id + "-validation-error-" + error.error
+        const key = fieldInfo.field.id + "-validation-error-" + error.error
         if(fieldErrors.length > 0){
           fieldErrors.push(<span key={key + "-separator"}>, </span>)
         }
         fieldErrors.push( <LocalizedString key={key} translations={this.translations} translationKey={error.error} lang={lang} />)
       }
-      return <div className="error" key={field.id + "-validation-error"}>
-              <LocalizedString translations={field} translationKey="label" lang={lang} /><span>: </span>
+      return <div className="error" key={fieldInfo.field.id + "-validation-error"}>
+              <LocalizedString translations={labelHolder} translationKey="label" defaultValue={fieldInfo.field.id} lang={lang} /><span>: </span>
               {fieldErrors}
             </div>
     }
@@ -61,7 +70,7 @@ export default class FormErrorSummary extends React.Component {
         const errors = validationErrors[fieldId]
         if(errors.length > 0) {
           invalidFieldsCount++
-          const fieldErrors = this.renderFieldErrors(this.findField(fields, fieldId), errors, lang)
+          const fieldErrors = this.renderFieldErrors(this.findField(fieldId, fields, []), errors, lang)
           if(fieldErrors) {
             children.push(fieldErrors)
           }
@@ -71,10 +80,11 @@ export default class FormErrorSummary extends React.Component {
     return (
       <div id="form-error-summary" hidden={invalidFieldsCount === 0 && saveError.length === 0}>
         <div hidden={saveError.length === 0} className="error">{saveError}</div>
-        <div className="error" id="validation-errors-summary" hidden={invalidFieldsCount === 0}>
-          <LocalizedString hidden={invalidFieldsCount === 0} translations={this.translations} translationKey="validation-errors" lang={lang} keyValues={{kpl: invalidFieldsCount}} />
-        </div>
-        <div id="validation-errors" hidden="true">
+        <a onClick={this.handleClick} role="button" className="error" id="validation-errors-summary" hidden={invalidFieldsCount === 0}>
+          {translator.translate("validation-errors", lang, null, {kpl: invalidFieldsCount})}
+        </a>
+        <div className="popup" hidden={!this.state.open || invalidFieldsCount === 0} id="validation-errors">
+          <a role="button" className="popup-close" onClick={this.handleClick}>&times;</a>
           {children}
         </div>
       </div>

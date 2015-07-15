@@ -38,6 +38,11 @@ body {
   font-size: 16px;
 }
 
+a {
+  color: @light-blue;
+  cursor: pointer;
+}
+
 ul {
   // VA-specific style?
   margin: 10px 0 0 -40px;
@@ -111,6 +116,23 @@ ul {
       margin-top: 5px;
     }
   }
+}
+
+.popup {
+  position: fixed;
+  max-height: 250px;
+  z-index: 100;
+  overflow: auto;
+  margin-right: 20px;
+  background-color: #fff;
+  padding: 10px;
+  box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28);
+}
+
+.popup-close {
+  cursor: pointer;
+  float: right;
+  font-size: 1.4em;
 }
 
 #container {
