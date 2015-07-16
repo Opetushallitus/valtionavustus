@@ -61,8 +61,8 @@
 
     describe('Negatiivisella budjetilla', function() {
       before(
-        page.setInputValue("eu-programs-income-row.description", "EU-laatutuki 2015"),
-        page.setInputValue("eu-programs-income-row.amount", "10000"),
+        page.setInputValue('eu-programs-income-row.description', 'EU-laatutuki 2015'),
+        page.setInputValue('eu-programs-income-row.amount', '10000'),
         page.waitAutoSave
       )
 
