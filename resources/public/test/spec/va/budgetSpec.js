@@ -28,6 +28,11 @@
       expect(page.submitButton().isEnabled()).to.equal(true)
     })
 
+    it('Näyttää summia', function() {
+      expect(page.elementTextBySelector('#project-budget span.sum')).to.equal('10')
+      expect(page.elementTextBySelector('.grand-total span.sum')).to.equal('10')
+    })
+
     describe('Ilman kuvausta kentältä, jonka arvo on yli nollan', function() {
       before(
         page.setInputValue('service-purchase-costs-row.description', ''),
