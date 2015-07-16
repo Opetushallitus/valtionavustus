@@ -20,13 +20,13 @@ export class VaBudgetElement extends React.Component {
     const children = this.props.children
     const htmlId = this.props.htmlId
 
-    return (this.html(htmlId, children))
+    return this.html(htmlId, children)
   }
 
   html(htmlId, children) {
-    return (<fieldset className="va-budget" id={htmlId}>
-              {children}
-            </fieldset>)
+    return <fieldset className="va-budget" id={htmlId}>
+      {children}
+    </fieldset>
   }
 }
 
