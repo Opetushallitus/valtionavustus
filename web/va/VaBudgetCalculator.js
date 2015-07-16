@@ -54,7 +54,7 @@ static handleBudgetAmountUpdate(state, amountFieldId) {
           const descriptionField = itemField.children[0]
           const amountField = itemField.children[1]
           const amountValue = InputValueStorage.readValue(null, answersObject, amountField.id)
-          var isAmountValid = SyntaxValidator.validateSyntax(amountField, amountValue)
+          const isAmountValid = _.isEmpty(SyntaxValidator.validateSyntax(amountField, amountValue))
           const valueToUse = isAmountValid ?
             amountValue :
             0
