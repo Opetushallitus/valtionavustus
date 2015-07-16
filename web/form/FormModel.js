@@ -31,7 +31,7 @@ const events = {
 export default class FormModel {
   constructor(props) {
     this.formOperations = props.formOperations
-    this.initialStateTransformation = props.initialStateTransformation
+    this.initialStateTemplateTransformation = props.initialStateTemplateTransformation
     this.onInitialStateLoaded = props.onInitialStateLoaded
     this.formP = props.formP
     this.customComponentFactory = props.customComponentFactory
@@ -52,7 +52,7 @@ export default class FormModel {
     const clientSideValidationP = self.formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
-    const initialStateObject = {
+    const initialStateTemplate = {
       form: self.formP,
       saveStatus: {
         changes: false,
@@ -70,9 +70,9 @@ export default class FormModel {
       validationErrors: {},
       clientSideValidation: clientSideValidationP
     }
-    self.initialStateTransformation(initialStateObject)
+    self.initialStateTemplateTransformation(initialStateTemplate)
 
-    const initialState = Bacon.combineTemplate(initialStateObject)
+    const initialState = Bacon.combineTemplate(initialStateTemplate)
     initialState.onValue(function(state) { dispatcher.push(events.initialState, state) })
 
     const autoSave = _.debounce(function(){dispatcher.push(events.save)}, develQueryParam? 100 : 3000)

@@ -108,9 +108,9 @@ const develQueryParam =  query.devel || false
 const avustusHakuP = Bacon.fromPromise(qwest.get(avustusHakuApiUrl(query.avustushaku || 1)))
 const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(qwest.get(urlCreator.formApiUrl(avustusHaku.id)))})
 
-function initialStateTransformation(initialState) {
-  initialState.avustushaku = avustusHakuP
-  initialState.saveStatus.hakemusId = query.hakemus
+function initialStateTemplateTransformation(template) {
+  template.avustushaku = avustusHakuP
+  template.saveStatus.hakemusId = query.hakemus
 }
 
 function onInitialStateLoaded(initialState) {
@@ -129,7 +129,7 @@ const model = new FormModel({
     "urlCreator": urlCreator,
     "printEntityId": printEntityId
   },
-  "initialStateTransformation": initialStateTransformation,
+  "initialStateTemplateTransformation": initialStateTemplateTransformation,
   "onInitialStateLoaded": onInitialStateLoaded,
   "formP": formP,
   "customComponentFactory": new VaComponentFactory(),
