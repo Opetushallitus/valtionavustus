@@ -25,24 +25,33 @@ export class VaBudgetElement extends React.Component {
   }
 
   html(htmlId, children) {
-    return <fieldset className="va-budget" id={htmlId}>
-      {children}
-    </fieldset>
+    return (
+      <fieldset className="va-budget" id={htmlId}>
+        {children}
+      </fieldset>
+    )
   }
 }
 
 export class SummingBudgetElement extends React.Component {
+  columnTitles(field) {
+    if (field.params.showColumnTitles) {
+      return (
+        <thead><tr>
+          <th className="label-column"><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
+          <th><LocalizedString translations={field.params.columnTitles} translationKey="description" lang={this.props.lang} /></th>
+          <th className="amount-column"><LocalizedString className="money required" translations={field.params.columnTitles} translationKey="amount" lang={this.props.lang} /></th>
+        </tr></thead>
+      )
+    }
+    return undefined
+  }
+
   render() {
     const field = this.props.field
     const children = this.props.children
     const sum = field.sum
-
     const htmlId = this.props.htmlId
-    const columnTitles = field.params.showColumnTitles ? <thead><tr>
-      <th className="label-column"><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
-      <th><LocalizedString translations={field.params.columnTitles} translationKey="description" lang={this.props.lang} /></th>
-      <th className="amount-column"><LocalizedString className="money required" translations={field.params.columnTitles} translationKey="amount" lang={this.props.lang} /></th>
-    </tr></thead> : undefined
     const classNames = ClassNames({"required": field.required })
     return (
       <table id={htmlId} className="summing-table">
@@ -52,7 +61,7 @@ export class SummingBudgetElement extends React.Component {
           <col className="description-column" />
           <col className="amount-column" />
         </colgroup>
-        {columnTitles}
+        {this.columnTitles(field)}
         <tbody>
         {children}
         </tbody>
@@ -102,8 +111,8 @@ export class BudgetSummaryElement extends React.Component {
 
     const selfFinancingShare = field.budgetIsValid ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : errorMessage
     const ophShare = field.budgetIsValid ? (totalNeeded - selfFinancingShare) : errorMessage
-    const sumClassNames = ClassNames("money sum", field.budgetIsValid ? undefined : "error", FormUtil.isNumeric(totalNeeded) ? undefined : "error-message")
-    const sumPartClassNames = ClassNames("money sum", field.budgetIsValid ? undefined: "error error-message")
+    const sumClassNames = ClassNames("money sum", { error: !field.budgetIsValid, 'error-message': !FormUtil.isNumeric(totalNeeded) })
+    const sumPartClassNames = ClassNames("money sum", { 'error error-message': !field.budgetIsValid  })
     return (
       <table id={htmlId} className="budget-summary">
         <colgroup>
