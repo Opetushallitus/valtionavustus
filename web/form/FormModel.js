@@ -70,7 +70,9 @@ export default class FormModel {
       validationErrors: {},
       clientSideValidation: clientSideValidationP
     }
-    self.initialStateTemplateTransformation(initialStateTemplate)
+    if (_.isFunction(self.initialStateTemplateTransformation)) {
+      self.initialStateTemplateTransformation(initialStateTemplate)
+    }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
     initialState.onValue(function(state) { dispatcher.push(events.initialState, state) })
@@ -122,7 +124,9 @@ export default class FormModel {
 
     function onInitialState(state, realInitialState) {
       FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(realInitialState.form.content, realInitialState.saveStatus.values)
-      self.onInitialStateLoaded(realInitialState)
+      if (_.isFunction(self.onInitialStateLoaded)) {
+        self.onInitialStateLoaded(realInitialState)
+      }
       return realInitialState
     }
 
@@ -133,12 +137,16 @@ export default class FormModel {
 
     function onUpdateField(state, fieldUpdate) {
       FieldUpdateHandler.updateStateFromFieldUpdate(state, fieldUpdate)
-      self.formOperations.onFieldUpdate(state, self, fieldUpdate.field, fieldUpdate.value)
+      if (_.isFunction(self.formOperations.onFieldUpdate)) {
+        self.formOperations.onFieldUpdate(state, self, fieldUpdate.field, fieldUpdate.value)
+      }
       FieldUpdateHandler.triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
       const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id]
       if (clientSideValidationPassed) {
         FormBranchGrower.expandGrowingFieldSetIfNeeded(state, fieldUpdate);
-        self.formOperations.onFieldValid(state, self, fieldUpdate.field, fieldUpdate.value)
+        if (_.isFunction(self.formOperations.onFieldValid)) {
+          self.formOperations.onFieldValid(state, self, fieldUpdate.field, fieldUpdate.value)
+        }
       }
       state.saveStatus.changes = true
       dispatcher.push(events.autoSave)
@@ -268,7 +276,9 @@ export default class FormModel {
         return stateFromServer
       }
       stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateFromServer.saveStatus.values)
-      self.formOperations.onSaveCompletedCallback(stateFromUiLoop, stateFromServer)
+      if (_.isFunction(self.formOperations.onSaveCompletedCallback)) {
+        self.formOperations.onSaveCompletedCallback(stateFromUiLoop, stateFromServer)
+      }
       stateFromUiLoop.saveStatus.saveInProgress = false
       stateFromUiLoop.saveStatus.saveTime = new Date()
       stateFromUiLoop.saveStatus.saveError = ""
