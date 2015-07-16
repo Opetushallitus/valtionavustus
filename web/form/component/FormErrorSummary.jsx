@@ -63,8 +63,16 @@ export default class FormErrorSummary extends React.Component {
                                         lang={lang}/>)
     }
     return <div className="error" key={field.id + "-validation-error"}>
-      <LocalizedString translations={labelHolder} translationKey="label" defaultValue={field.id} lang={lang}/><span>: </span>
+      <a role="button" onClick={this.jumpToField(field.id)}><LocalizedString translations={labelHolder} translationKey="label" defaultValue={field.id} lang={lang} /></a><span>: </span>
       {fieldErrors}
     </div>
+  }
+
+  jumpToField(id) {
+    return function(event) {
+      const field = document.getElementById(id)
+      FormUtil.scrollTo(field, 700, function(){field.focus()})
+      event.preventDefault()
+    }
   }
 }
