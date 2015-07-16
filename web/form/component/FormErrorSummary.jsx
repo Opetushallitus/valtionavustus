@@ -20,24 +20,6 @@ export default class FormErrorSummary extends React.Component {
     })
   }
 
-  renderFieldErrors(field, closestParent, errors, lang) {
-    const fieldErrors = []
-    const labelHolder = field.label ? field : closestParent
-    for (var i = 0; i < errors.length; i++) {
-      const error = errors[i]
-      const key = field.id + "-validation-error-" + error.error
-      if (fieldErrors.length > 0) {
-        fieldErrors.push(<span key={key + "-separator"}>, </span>)
-      }
-      fieldErrors.push(<LocalizedString key={key} translations={this.translations} translationKey={error.error}
-                                        lang={lang}/>)
-    }
-    return <div className="error" key={field.id + "-validation-error"}>
-      <LocalizedString translations={labelHolder} translationKey="label" defaultValue={field.id} lang={lang}/><span>: </span>
-      {fieldErrors}
-    </div>
-  }
-
   render() {
     const lang = this.props.lang
     const formContent = this.props.formContent
@@ -66,5 +48,23 @@ export default class FormErrorSummary extends React.Component {
         </div>
       </div>
     )
+  }
+
+  renderFieldErrors(field, closestParent, errors, lang) {
+    const fieldErrors = []
+    const labelHolder = field.label ? field : closestParent
+    for (var i = 0; i < errors.length; i++) {
+      const error = errors[i]
+      const key = field.id + "-validation-error-" + error.error
+      if (fieldErrors.length > 0) {
+        fieldErrors.push(<span key={key + "-separator"}>, </span>)
+      }
+      fieldErrors.push(<LocalizedString key={key} translations={this.translations} translationKey={error.error}
+                                        lang={lang}/>)
+    }
+    return <div className="error" key={field.id + "-validation-error"}>
+      <LocalizedString translations={labelHolder} translationKey="label" defaultValue={field.id} lang={lang}/><span>: </span>
+      {fieldErrors}
+    </div>
   }
 }
