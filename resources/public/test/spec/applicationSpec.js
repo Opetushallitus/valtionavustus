@@ -12,38 +12,8 @@
     expect(window.uiError || null).to.be.null
   })
 
-  function enterValidValues() {
-    page.setInputValue("organization", "Testi Organisaatio")()
-    page.setInputValue("primary-email", "yhteyshenkilo@example.com")()
-    page.setInputValue("signature", "Matti Allekirjoitusoikeudellinen")()
-    page.setInputValue("signature-email", "matti.allekirjoitusoikeudellinen@example.com")()
-    page.setInputValue("other-organizations.other-organizations-1.name", "Muu Testi Organisaatio")()
-    page.setInputValue("other-organizations.other-organizations-1.email", "muutestiorganisaatio@example.com")()
-    page.setInputValue("project-goals", "Hankkeen tavoitteet tulee tähän.")()
-    page.setInputValue("project-description.project-description-1.goal", "Hankkeen ensimmäinen tavoite.")()
-    page.setInputValue("project-description.project-description-1.activity", "Hankkeen ensimmäinen toiminta.")()
-    page.setInputValue("project-description.project-description-1.result", "Hankkeen ensimmäinen tulos.")()
-    page.setInputValue("project-target", "Kohderymämme on meidän kohderyhmä")()
-    page.setInputValue("project-effectiveness", "Mittaamme vaikutusta.")()
-    page.setInputValue("project-spreading-plan", "Jakelusuunnitelma.")()
-    page.setInputValue("project-measure", "Mittaamme toteutumista ja vaikutusta.")()
-    page.setInputValue("project-announce", "Tiedoitamme hankkeesta kivasti sitten.")()
-    page.setInputValue("continuation-project", "no")()
-    page.setInputValue("bank-iban", "FI 32 5000 4699350600")()
-    page.setInputValue("bank-bic", "5000")()
-    page.setInputValue("coordination-costs-row.amount", "0")()
-    page.setInputValue("personnel-costs-row.amount", "0")()
-    page.setInputValue("service-purchase-costs-row.amount", "0")()
-    page.setInputValue("material-costs-row.amount", "0")()
-    page.setInputValue("rent-costs-row.amount", "0")()
-    page.setInputValue("equipment-costs-row.amount", "0")()
-    page.setInputValue("steamship-costs-row.description", "Projektiorkesterin laivaus")()
-    page.setInputValue("steamship-costs-row.amount", "10")()
-    page.setInputValue("other-costs-row.amount", "0")()
-    page.setInputValue("project-incomes-row.amount", "0")()
-    page.setInputValue("eu-programs-income-row.amount", "0")()
-    page.setInputValue("other-public-financing-income-row.amount", "0")()
-    page.setInputValue("private-financing-income-row.amount", "0")()
+  function enterValidValuesToPage() {
+    enterValidValues(page)
   }
 
   describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku suomeksi', function () {
@@ -71,7 +41,7 @@
     })
 
     describe('täytettäessä lomaketta', function () {
-      before(enterValidValues)
+      before(enterValidValuesToPage)
 
       describe('jos ei ole annettu kaikkia pakollisia arvoja', function () {
         before(
@@ -200,7 +170,7 @@
     describe('jos on annettu väärän muotoinen sähköpostiosoite', function () {
       before(
         page.openStartPage(),
-        enterValidValues,
+        enterValidValuesToPage,
         page.waitAutoSave,
         page.setInputValue("primary-email", "NOT VALID EMAIL")
       )
