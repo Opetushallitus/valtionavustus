@@ -12,6 +12,7 @@
     "baconjs": "^0.7.59",
     "browserify": "^9.0.8",
     "classnames": "^2.1.3",
+    "exorcist": "^0.4.0",
     "lodash": "^3.9.3",
     "minifyify": "^7.0.2",
     "query-string": "2.2.0",
@@ -39,7 +40,7 @@
   "scripts": {
     "build-app": "browserify web/va/VaApp.jsx -d -p [minifyify --map app.map.json --output resources/public/js/app.map.json] -o resources/public/js/app.js",
     "build": "npm run build-app",
-    "watch-app": "watchify web/va/VaApp.jsx -o resources/public/js/app.js --debug --verbose",
+    "watch-app": "watchify web/va/VaApp.jsx -d -o 'exorcist resources/public/js/app.js.map > resources/public/js/app.js' --verbose",
     "watch": "npm run watch-app",
     "unittest": "mocha --compilers js:babel/register web/test/*Test.js",
     "watch-unittest": "mocha --watch --compilers js:babel/register web/test/*Test.js"
