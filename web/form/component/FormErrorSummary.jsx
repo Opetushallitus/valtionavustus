@@ -10,11 +10,11 @@ export default class FormErrorSummary extends React.Component {
   constructor(props) {
     super(props)
     this.translations = this.props.translations
-    this.handleClick = this.handleClick.bind(this)
+    this.toggleOpen = this.toggleOpen.bind(this)
     this.state = { open: false }
   }
 
-  handleClick() {
+  toggleOpen() {
     this.setState({
       open: !this.state.open
     })
@@ -39,11 +39,11 @@ export default class FormErrorSummary extends React.Component {
     return (
       <div id="form-error-summary" hidden={invalidFieldsCount === 0 && saveError.length === 0}>
         <div hidden={saveError.length === 0} className="error">{saveError}</div>
-        <a onClick={this.handleClick} role="button" className="error" id="validation-errors-summary" hidden={invalidFieldsCount === 0}>
+        <a onClick={this.toggleOpen} role="button" className="error" id="validation-errors-summary" hidden={invalidFieldsCount === 0}>
           {translator.translate("validation-errors", lang, null, {kpl: invalidFieldsCount})}
         </a>
         <div className="popup" hidden={!this.state.open || invalidFieldsCount === 0} id="validation-errors">
-          <a role="button" className="popup-close" onClick={this.handleClick}>&times;</a>
+          <a role="button" className="popup-close" onClick={this.toggleOpen}>&times;</a>
           {fieldErrorMessageElements}
         </div>
       </div>
