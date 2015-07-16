@@ -58,5 +58,24 @@
         })
       })
     })
+
+    describe('Negatiivisella budjetilla', function() {
+      before(
+        page.setInputValue("eu-programs-income-row.description", "EU-laatutuki 2015"),
+        page.setInputValue("eu-programs-income-row.amount", "10000"),
+        page.waitAutoSave
+      )
+
+      it('ilmoittaa että hankkeella on jo liikaa rahoitusta', function() {
+        expect(page.elementTextBySelector('#project-budget span.sum')).to.equal('1010')
+        expect(page.elementTextBySelector('#third-party-income span.sum')).to.equal('-10000')
+        expect(page.elementTextBySelector('.grand-total span.sum')).to.equal('-8990')
+
+        expect(page.validationErrors()).to.equal('1 vastauksessa puutteita')
+        expect(page.submitButton().isEnabled()).to.equal(false)
+        expect(page.detailedValidationErrors()).to.include('Rahoitussuunnitelma: Haettavan rahoituksen tulee olla positiivinen')
+        expect(page.detailedValidationErrors()).to.have.length(1)
+      })
+    })
   })
 })()
