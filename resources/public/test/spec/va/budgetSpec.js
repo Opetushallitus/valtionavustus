@@ -77,5 +77,30 @@
         expect(page.detailedValidationErrors()).to.have.length(1)
       })
     })
+
+    describe('Muilla kuin täysien eurojen syötteillä', function() {
+      before(
+        page.setInputValue('service-purchase-costs-row.description', 'Opetusasiantuntijoiden workshop'),
+        page.setInputValue('service-purchase-costs-row.amount', '999,90'),
+        page.setInputValue('material-costs-row.description', '50 kiloa muovailuvahaa'),
+        page.setInputValue('material-costs-row.amount', 'Tarkista hinta!'),
+        page.setInputValue('eu-programs-income-row.description', 'EU-laatutuki 2015'),
+        page.setInputValue('eu-programs-income-row.amount', '1000.10'),
+        page.waitAutoSave
+      )
+
+      it('ilmoittaa että määrät on syötettävä täysinä euroina', function() {
+        expect(page.submitButton().isEnabled()).to.equal(false)
+        expect(page.detailedValidationErrors()).to.include('Palvelujen ostot: Syötä arvo kokonaisina euroina')
+        expect(page.detailedValidationErrors()).to.include('Tarvike- ja materiaalikustannukset: Syötä arvo kokonaisina euroina')
+        expect(page.detailedValidationErrors()).to.include('EU-ohjelmat: Syötä arvo kokonaisina euroina')
+        expect(page.detailedValidationErrors()).to.have.length(3)
+        expect(page.validationErrors()).to.equal('3 vastauksessa puutteita')
+      })
+
+      it('näyttää numeerisista luvuista lasketun kokonaissumman', function() {
+        expect(page.elementTextBySelector('.grand-total span.sum')).to.equal('10')
+      })
+    })
   })
 })()
