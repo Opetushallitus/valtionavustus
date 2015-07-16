@@ -504,7 +504,7 @@ insert into forms (content) VALUES ('
     "id":"financing-plan",
     "displayAs":"theme",
     "label":{
-      "fi":"RahoitussuunnitelmA",
+      "fi":"Rahoitussuunnitelma",
       "sv":"Finansieringsplan"
     },
     "children": [
