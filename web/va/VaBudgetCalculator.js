@@ -8,7 +8,7 @@ import {FieldUpdateHandler} from '../form/FieldUpdateHandler.js'
 export class VaBudgetCalculator {
   static populateBudgetCalculatedValuesForAllBudgetFields(initialState) {
     const budgetFields = JsUtil.flatFilter(initialState.form.content, n => { return n.displayAs === "vaBudget" })
-    _.forEach(budgetFields, budgetField => { VaBudgetCalculator.populateBudgetCalculatedValues(initialState, budgetField ) })
+    _.forEach(budgetFields, budgetField => { VaBudgetCalculator.populateBudgetCalculatedValues(initialState, budgetField, false ) })
   }
 
 static handleBudgetAmountUpdate(state, amountFieldId) {
@@ -20,10 +20,10 @@ static handleBudgetAmountUpdate(state, amountFieldId) {
     if (vaBudgetFields.length !== 1) {
       throw new Error(amountFieldId + ' has ' + vaBudgetFields.length + ' budget parents, looks like bug.')
     }
-    return VaBudgetCalculator.populateBudgetCalculatedValues(state, vaBudgetFields[0])
+    return VaBudgetCalculator.populateBudgetCalculatedValues(state, vaBudgetFields[0], true)
   }
 
-  static populateBudgetCalculatedValues(state, vaBudgetField) {
+  static populateBudgetCalculatedValues(state, vaBudgetField, reportTotalError) {
     const answersObject = state.saveStatus.values
 
     const summingFieldChildren = JsUtil.flatFilter(vaBudgetField.children, child => { return child.displayAs === "vaSummingBudgetElement" })
@@ -33,7 +33,10 @@ static handleBudgetAmountUpdate(state, amountFieldId) {
     const someFigureHasError = _.some(subTotalsAndErrorsAndFieldIds, x => {
       return x.containsErrors
     })
-    const budgetIsValid = !someFigureHasError && total > 0
+    const budgetIsPositive = total > 0;
+    const budgetIsValid = !someFigureHasError && budgetIsPositive
+    state.validationErrors[vaBudgetField.id] = budgetIsPositive || !reportTotalError ? [] : [{ "error": "negative-budget" }]
+    state.clientSideValidation[vaBudgetField.id] = budgetIsPositive
 
     const resultObject = _.zipObject(_.pluck(subTotalsAndErrorsAndFieldIds, 'summingFieldId'), subTotalsAndErrorsAndFieldIds)
     resultObject.totalNeeded = total

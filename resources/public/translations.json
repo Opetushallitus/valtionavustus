@@ -56,6 +56,10 @@
       "fi": "Syötä arvo kokonaisina euroina",
       "sv": "TODO:Skriv in värdet på hela euro"
     },
+    "negative-budget": {
+      "fi": "Haettavan rahoituksen tulee olla positiivinen",
+      "sv": "TODO"
+    },
     "validation-errors": {
       "fi": "{{kpl}} vastauksessa puutteita",
       "sv": "TODO:{{kpl}} svar fellaktigt"
