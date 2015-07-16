@@ -55,9 +55,7 @@ static handleBudgetAmountUpdate(state, amountFieldId) {
           const amountField = itemField.children[1]
           const amountValue = InputValueStorage.readValue(null, answersObject, amountField.id)
           const isAmountValid = _.isEmpty(SyntaxValidator.validateSyntax(amountField, amountValue))
-          const valueToUse = isAmountValid ?
-            amountValue :
-            0
+          const valueToUse = isAmountValid ? amountValue : 0
           descriptionField.required = isAmountValid && valueToUse > 0
           FieldUpdateHandler.triggerFieldUpdatesForValidation([descriptionField], state)
           return { "containsErrors": !isAmountValid, "value": amountCoefficient * valueToUse }
