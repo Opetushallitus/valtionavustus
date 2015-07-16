@@ -37,6 +37,8 @@
       it('ilmoittaa kuvauksen pakollisuudesta', function() {
         expect(page.validationErrors()).to.equal('1 vastauksessa puutteita')
         expect(page.submitButton().isEnabled()).to.equal(false)
+        expect(page.detailedValidationErrors()).to.include('Palvelujen ostot: Pakollinen tieto')
+        expect(page.detailedValidationErrors()).to.have.length(1)
       })
 
       describe('Kuvauksen syöttämisen jälkeen', function() {

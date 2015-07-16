@@ -78,6 +78,14 @@ function ApplicationPage() {
     previewButton: function() {
       return Clickable(function() { return applicationElement().find("button:contains(Tallennettu versio)")})
     },
+    errorSummaryLink: function() {
+      return Clickable(function() { return applicationElement().find("#validation-errors-summary")})
+    },
+    detailedValidationErrors: function() {
+      const errorMessageElements = applicationElement().find("#validation-errors").find('div.error')
+      return _.map(errorMessageElements, function(element) { return S(element).text() })
+
+    },
     getInput: function(name) {
       return Input(function () {
         return applicationElement().find("[name='" + name + "']")
