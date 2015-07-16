@@ -59,7 +59,7 @@ export default class FormErrorSummary extends React.Component {
 
   render() {
     const lang = this.props.lang
-    const fields = this.props.fields
+    const formContent = this.props.formContent
     const validationErrors = this.props.validationErrors
     const translator = new Translator(this.translations)
     const saveError = this.props.saveError.length > 0 ? translator.translate(this.props.saveError, lang) : ""
@@ -70,7 +70,7 @@ export default class FormErrorSummary extends React.Component {
         const errors = validationErrors[fieldId]
         if(errors.length > 0) {
           invalidFieldsCount++
-          const fieldErrors = this.renderFieldErrors(this.findField(fieldId, fields, []), errors, lang)
+          const fieldErrors = this.renderFieldErrors(this.findField(fieldId, formContent, []), errors, lang)
           if(fieldErrors) {
             children.push(fieldErrors)
           }
