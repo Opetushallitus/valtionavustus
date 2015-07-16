@@ -38,13 +38,9 @@ static handleBudgetAmountUpdate(state, amountFieldId) {
     state.validationErrors[vaBudgetField.id] = budgetIsPositive || !reportTotalError ? [] : [{ "error": "negative-budget" }]
     state.clientSideValidation[vaBudgetField.id] = budgetIsPositive
 
-    const resultObject = _.zipObject(_.pluck(subTotalsAndErrorsAndFieldIds, 'summingFieldId'), subTotalsAndErrorsAndFieldIds)
-    resultObject.totalNeeded = total
     const summaryField = _.last(vaBudgetField.children)
     summaryField.totalNeeded = total
     summaryField.budgetIsValid = budgetIsValid
-    vaBudgetField.summary = resultObject
-    return resultObject
 
     function populateSummingFieldTotal(answersObject, state) {
       return function(summingBudgetField) {
