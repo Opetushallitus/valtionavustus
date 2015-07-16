@@ -32,6 +32,7 @@ export default class FormModel {
   constructor(props) {
     this.formOperations = props.formOperations
     this.initialStateTransformation = props.initialStateTransformation
+    this.onInitialStateLoaded = props.onInitialStateLoaded
     this.formP = props.formP
     this.customComponentFactory = props.customComponentFactory
     this.customPreviewComponentFactory = props.customPreviewComponentFactory
@@ -121,6 +122,7 @@ export default class FormModel {
 
     function onInitialState(state, realInitialState) {
       FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(realInitialState.form.content, realInitialState.saveStatus.values)
+      self.onInitialStateLoaded(realInitialState)
       return realInitialState
     }
 
@@ -131,6 +133,7 @@ export default class FormModel {
 
     function onUpdateField(state, fieldUpdate) {
       FieldUpdateHandler.updateStateFromFieldUpdate(state, fieldUpdate)
+      self.formOperations.onFieldUpdate(state, self, fieldUpdate.field, fieldUpdate.value)
       FieldUpdateHandler.triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
       const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id]
       if (clientSideValidationPassed) {

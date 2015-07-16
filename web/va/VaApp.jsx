@@ -15,6 +15,7 @@ import JsUtil from './../form/JsUtil.js'
 import VaComponentFactory from './VaComponentFactory.js'
 import VaPreviewComponentFactory from './VaPreviewComponentFactory.js'
 import {BudgetItemElement} from './VaBudgetComponents.jsx'
+import {VaBudgetCalculator} from './VaBudgetCalculator.js'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
@@ -50,8 +51,12 @@ function onFieldValid(state, formModel, field, newFieldValue) {
      } else {
        window.location = newUrl
      }})
-  } else if (field.displayAs === "moneyField") {
-    BudgetItemElement.handleBudgetAmountUpdate(state, fieldId, newFieldValue)
+  }
+}
+
+function onFieldUpdate(state, formModel, field, newFieldValue) {
+  if (field.displayAs === "moneyField") {
+    VaBudgetCalculator.handleBudgetAmountUpdate(state, field.id)
   }
 }
 
@@ -108,10 +113,15 @@ function initialStateTransformation(initialState) {
   initialState.saveStatus.hakemusId = query.hakemus
 }
 
+function onInitialStateLoaded(initialState) {
+  VaBudgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(initialState)
+}
+
 const model = new FormModel({
   "formOperations": {
     "containsExistingEntityId": containsExistingEntityId,
     "isFieldEnabled": isFieldEnabled,
+    "onFieldUpdate": onFieldUpdate,
     "onFieldValid": onFieldValid,
     "isSaveDraftAllowed": isSaveDraftAllowed,
     "onSaveCompletedCallback": onSaveCompletedCallback,
@@ -120,6 +130,7 @@ const model = new FormModel({
     "printEntityId": printEntityId
   },
   "initialStateTransformation": initialStateTransformation,
+  "onInitialStateLoaded": onInitialStateLoaded,
   "formP": formP,
   "customComponentFactory": new VaComponentFactory(),
   "customPreviewComponentFactory": new VaPreviewComponentFactory()
