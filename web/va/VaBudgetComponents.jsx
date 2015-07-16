@@ -4,6 +4,7 @@ import ClassNames from 'classnames'
 
 import ComponentFactory from '../form/ComponentFactory.js'
 import LocalizedString from '../form/component/LocalizedString.jsx'
+import Translator from '../form/Translator.js'
 import {FieldUpdateHandler} from '../form/FieldUpdateHandler.js'
 import InputValueStorage from '../form/InputValueStorage.js'
 import FormUtil from '../form/FormUtil.js'
@@ -83,6 +84,11 @@ export class BudgetItemElement extends React.Component {
 }
 
 export class BudgetSummaryElement extends React.Component {
+  constructor(props) {
+    super(props)
+    this.miscTranslator = new Translator(props.translations["misc"])
+  }
+
   render() {
     const htmlId = this.props.htmlId
     const field = this.props.field
@@ -92,10 +98,12 @@ export class BudgetSummaryElement extends React.Component {
     const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
 
     const totalNeeded = field.totalNeeded
-    const figuresAreValid = FormUtil.isNumeric(totalNeeded) && totalNeeded > 0
-    const selfFinancingShare = figuresAreValid ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : totalNeeded
-    const ophShare = figuresAreValid ? (totalNeeded - selfFinancingShare) : totalNeeded
-    const sumClassNames = ClassNames("money sum", figuresAreValid ? undefined : "error")
+    const errorMessage = this.miscTranslator.translate("check-numbers", this.props.lang, "VIRHE")
+
+    const selfFinancingShare = field.budgetIsValid ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : errorMessage
+    const ophShare = field.budgetIsValid ? (totalNeeded - selfFinancingShare) : errorMessage
+    const sumClassNames = ClassNames("money sum", field.budgetIsValid ? undefined : "error", FormUtil.isNumeric(totalNeeded) ? undefined : "error-message")
+    const sumPartClassNames = ClassNames("money sum", field.budgetIsValid ? undefined: "error error-message")
     return (
       <table id={htmlId} className="budget-summary">
         <colgroup>
@@ -109,11 +117,11 @@ export class BudgetSummaryElement extends React.Component {
         </tr>
         <tr>
           <td className="label-column"><LocalizedString translations={field.params} translationKey="ophFinancingLabel" lang={this.props.lang} /> {100 - selfFinancingPercentage} %</td>
-          <td className="amount-column"><span className={sumClassNames}>{ophShare}</span></td>
+          <td className="amount-column"><span className={sumPartClassNames}>{ophShare}</span></td>
         </tr>
         <tr>
           <td className="label-column"><LocalizedString translations={field.params} translationKey="selfFinancingLabel" lang={this.props.lang} /> {selfFinancingPercentage} %</td>
-          <td className="amount-column"><span className={sumClassNames}>{selfFinancingShare}</span></td>
+          <td className="amount-column"><span className={sumPartClassNames}>{selfFinancingShare}</span></td>
         </tr>
         </tbody>
       </table>

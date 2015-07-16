@@ -1,7 +1,6 @@
 import _ from 'lodash'
 
 import JsUtil from '../form/JsUtil.js'
-import Translator from '../form/Translator.js'
 import InputValueStorage from '../form/InputValueStorage.js'
 import {SyntaxValidator} from '../form/SyntaxValidator.js'
 import {FieldUpdateHandler} from '../form/FieldUpdateHandler.js'
@@ -36,14 +35,11 @@ static handleBudgetAmountUpdate(state, amountFieldId) {
     })
     const budgetIsValid = !someFigureHasError && total > 0
 
-    const configuration = state.configuration
-    const miscTranslator = new Translator(configuration.translations["misc"])
-
     const resultObject = _.zipObject(_.pluck(subTotalsAndErrorsAndFieldIds, 'summingFieldId'), subTotalsAndErrorsAndFieldIds)
-    const totalNeeded = budgetIsValid ? total : miscTranslator.translate("check-numbers", configuration.lang, "VIRHE")
-    resultObject.totalNeeded = totalNeeded
+    resultObject.totalNeeded = total
     const summaryField = _.last(vaBudgetField.children)
-    summaryField.totalNeeded = totalNeeded
+    summaryField.totalNeeded = total
+    summaryField.budgetIsValid = budgetIsValid
     vaBudgetField.summary = resultObject
     return resultObject
 
