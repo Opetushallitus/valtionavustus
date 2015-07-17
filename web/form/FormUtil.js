@@ -43,6 +43,17 @@ export default class FormUtil {
     return JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
   }
 
+  static parseIndexFrom(id) {
+    if (!id || id.length < 0) {
+      throw new Error("Cannot parse index from empty id")
+    }
+    const index = _.last(id.split("-"))
+    if (!index || index.length == 0 || isNaN(index) || !(_.isFinite(parseInt(index)))) {
+      return ""
+    }
+    return parseInt(index)
+  }
+
   static isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n)
   }

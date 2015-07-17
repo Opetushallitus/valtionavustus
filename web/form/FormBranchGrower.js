@@ -3,7 +3,7 @@ import traverse from 'traverse'
 
 import InputValueStorage from './InputValueStorage.js'
 import JsUtil from './JsUtil.js'
-
+import FormUtil from './FormUtil.js'
 
 export default class FormBranchGrower {
   static addFormFieldsForGrowingFieldsInInitialRender(formContent, answers) {
@@ -123,22 +123,11 @@ export default class FormBranchGrower {
 
     function populateNewIdsTo(node) {
       const oldId = node.id
-      var oldIndex = parseIndexFrom(oldId)
+      var oldIndex = FormUtil.parseIndexFrom(oldId)
       node.id = oldId.replace(oldIndex, oldIndex + 1)
       _.forEach(node.children, n => {
         n.id = n.id.replace(oldId, node.id)
       })
-    }
-
-    function parseIndexFrom(id) {
-      if (!id || id.length < 0) {
-        throw new Error("Cannot parse index from empty id")
-      }
-      const index = _.last(id.split("-"))
-      if (!index || index.length == 0 || isNaN(index) || !(_.isFinite(parseInt(index)))) {
-        return ""
-      }
-      return parseInt(index)
     }
   }
 }
