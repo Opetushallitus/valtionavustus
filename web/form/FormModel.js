@@ -14,14 +14,19 @@ import traverse from 'traverse'
 
 const dispatcher = new Dispatcher()
 
+const saveTypes = {
+  initialSave: 'initialSave',
+  autoSave: 'autoSave',
+  submit: 'submit'
+}
+
 const events = {
   initialState: 'initialState',
   updateField: 'updateField',
-  uiStateUpdate: 'uiStateUpdate',
   fieldValidation: 'fieldValidation',
   changeLanguage: 'changeLanguage',
   save: 'save',
-  autoSave: 'autoSave',
+  initAutoSave: 'initAutoSave',
   saveCompleted: 'saveCompleted',
   saveError: 'saveError',
   submit: 'submit',
@@ -78,15 +83,21 @@ export default class FormModel {
     initialState.onValue(function(state) { dispatcher.push(events.initialState, state) })
 
     const autoSave = _.debounce(function(){dispatcher.push(events.save)}, develQueryParam? 100 : 3000)
+    function startAutoSave(state) {
+      if (self.formOperations.isSaveDraftAllowed(state)) {
+        state.saveStatus.saveInProgress = true
+        autoSave()
+      }
+      return state
+    }
 
     const formFieldValuesP = Bacon.update({},
                                           [dispatcher.stream(events.initialState)], onInitialState,
                                           [dispatcher.stream(events.updateField)], onUpdateField,
-                                          [dispatcher.stream(events.uiStateUpdate)], onUiStateUpdated,
                                           [dispatcher.stream(events.fieldValidation)], onFieldValidation,
                                           [dispatcher.stream(events.changeLanguage)], onChangeLang,
                                           [dispatcher.stream(events.save)], onSave,
-                                          [dispatcher.stream(events.autoSave)], onAutoSave,
+                                          [dispatcher.stream(events.initAutoSave)], onInitAutoSave,
                                           [dispatcher.stream(events.saveCompleted)], onSaveCompleted,
                                           [dispatcher.stream(events.saveError)], onSaveError,
                                           [dispatcher.stream(events.submit)], onSubmit,
@@ -149,13 +160,8 @@ export default class FormModel {
         }
       }
       state.saveStatus.changes = true
-      dispatcher.push(events.autoSave)
-      dispatcher.push(events.uiStateUpdate, fieldUpdate)
-      return state
-    }
-
-    function onUiStateUpdated(state, fieldUpdate) {
       LocalStorage.save(self.formOperations.createUiStateIdentifier, state, fieldUpdate)
+      startAutoSave(state)
       return state
     }
 
@@ -167,25 +173,25 @@ export default class FormModel {
       return state
     }
 
-    function handleUnexpectedSaveError(method, url, error, event) {
-      console.error("Unexpected ", event, " error ", error, " in ", method, " to ", url)
-      if (event === events.submit) {
+    function handleUnexpectedSaveError(method, url, error, saveType) {
+      console.error("Unexpected ", saveType, " error ", error, " in ", method, " to ", url)
+      if (saveType === saveTypes.submit) {
         dispatcher.push(events.saveError, "unexpected-submit-error")
-      } else if (event === events.save) {
+      } else if (saveType === saveTypes.initialSave) {
         dispatcher.push(events.saveError, "unexpected-save-error")
       } else {
-        dispatcher.push(events.autoSave)
+        dispatcher.push(events.initAutoSave)
       }
     }
 
-    function handleSaveError(status, error, method, url, response, event) {
+    function handleSaveError(status, error, method, url, response, saveType) {
       console.log('handleSaveError : error ', JSON.stringify(error))
       console.log('handleSaveError : response ', JSON.stringify(response))
       if (status === 400) {
         dispatcher.push(events.saveError, "submit-validation-errors",  JSON.parse(response))
       }
       else{
-        handleUnexpectedSaveError(method, url, error, event);
+        handleUnexpectedSaveError(method, url, error, saveType);
       }
     }
 
@@ -204,22 +210,22 @@ export default class FormModel {
               dispatcher.push(events.saveCompleted, stateSkeletonFromServer)
             })
             .catch(function(error) {
-              handleSaveError(this.status, error, "PUT", url, this.response, events.save)
+              handleSaveError(this.status, error, "PUT", url, this.response, saveTypes.initialSave)
             })
       }
       catch(error) {
-        return handleUnexpectedSaveError("PUT", url, error, events.save);
+        return handleUnexpectedSaveError("PUT", url, error, saveTypes.initialSave);
       }
       return state
     }
 
-    function updateOld(stateToSave, event, onSuccessCallback) {
-      var url = self.formOperations.urlCreator.existingFormApiUrl(stateToSave)+ (event === events.submit ? "/submit" : "")
+    function updateOld(stateToSave, saveType, onSuccessCallback) {
+      var url = self.formOperations.urlCreator.existingFormApiUrl(stateToSave)+ (saveType === saveTypes.submit ? "/submit" : "")
       try {
         stateToSave.saveStatus.saveInProgress = true
         qwest.post(url, stateToSave.saveStatus.values, {dataType: "json", async: true})
             .then(function(response) {
-              console.log("Saved to server (event=", event, "). Response=", JSON.stringify(response))
+              console.log("Saved to server (", saveType, "). Response=", JSON.stringify(response))
               const stateFromServer = _.cloneDeep(stateToSave)
               stateFromServer.saveStatus.values = response["answers"]
               if (onSuccessCallback) {
@@ -228,11 +234,11 @@ export default class FormModel {
               dispatcher.push(events.saveCompleted, stateFromServer)
             })
             .catch(function(error) {
-              handleSaveError(this.status, error, "POST", url, this.response, event)
+              handleSaveError(this.status, error, "POST", url, this.response, saveType)
             })
       }
       catch(error) {
-        handleUnexpectedSaveError("POST", url, error, event);
+        handleUnexpectedSaveError("POST", url, error, saveType);
       }
       return stateToSave
     }
@@ -240,19 +246,15 @@ export default class FormModel {
     function onSave(state, params) {
       const onSuccessCallback = params ? params.onSuccessCallback : undefined
       if (self.formOperations.isSaveDraftAllowed(state)) {
-        return updateOld(state, events.autoSave, onSuccessCallback)
+        return updateOld(state, saveTypes.autoSave, onSuccessCallback)
       }
       else {
         return saveNew(state, onSuccessCallback)
       }
     }
 
-    function onAutoSave(state) {
-      if (self.formOperations.isSaveDraftAllowed(state)) {
-        state.saveStatus.saveInProgress = true
-        autoSave()
-      }
-      return state
+    function onInitAutoSave(state) {
+      startAutoSave(state)
     }
 
     function onSaveError(state, saveError, serverValidationErrors) {
@@ -283,13 +285,13 @@ export default class FormModel {
       stateFromUiLoop.saveStatus.saveTime = new Date()
       stateFromUiLoop.saveStatus.saveError = ""
       if (stateFromUiLoop.saveStatus.changes) {
-        dispatcher.push(events.autoSave)
+        startAutoSave(stateFromUiLoop)
       }
       return stateFromUiLoop
     }
 
     function onSubmit(state) {
-      return updateOld(state, events.submit)
+      return updateOld(state, saveTypes.submit)
     }
 
     function onRemoveField(state, fieldToRemove) {
@@ -298,7 +300,7 @@ export default class FormModel {
       InputValueStorage.deleteValue(growingParent, answersObject, fieldToRemove.id)
       delete state.clientSideValidation[fieldToRemove.id]
       _.remove(growingParent.children, fieldToRemove)
-      dispatcher.push(events.autoSave)
+      startAutoSave(state)
       return state
     }
   }
