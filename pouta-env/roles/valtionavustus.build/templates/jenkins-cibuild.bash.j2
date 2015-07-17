@@ -1,0 +1,14 @@
+#!/bin/bash
+set -euo pipefail
+
+deploy_target_test_server={{ test_machine_name }}
+if [ -z ${deploy_target_test_server+x} ]; then
+  echo "Excpected non-empty deploy target test machine information."
+  exit 2
+fi
+
+command_line="./cibuild.bash -s $deploy_target_test_server $@"
+echo "Executing :"
+echo $command_line
+
+eval $command_line

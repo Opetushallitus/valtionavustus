@@ -1,8 +1,5 @@
-- name: Add build script
-  template: src=cibuild.bash.j2 dest=/usr/local/bin/cibuild.bash owner=root group=root mode=0755
-
-- name: Add PostgreSQL in container script used by build script
-  template: src=postgresql_container_functions.j2 dest=/usr/local/bin/postgresql_container_functions owner=root group=root mode=0555
+- name: Add Jenkins build script
+  template: src=jenkins-cibuild.bash.j2 dest=/usr/local/bin/jenkins-cibuild.bash owner=root group=root mode=0755
 
 - name: Install Docker apt repo key
   apt_key: keyserver=p80.pool.sks-keyservers.net id=36A1D7869245C8950F966E92D8576A8BA88D21E9

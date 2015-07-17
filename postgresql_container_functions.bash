@@ -1,5 +1,9 @@
+#!/usr/bin/env bash
+
 DOCKER=/usr/bin/docker
-host_postgres_port=5432
+if [ -z ${host_postgres_port+x} ]; then
+  host_postgres_port=15432
+fi
 container_postgres_port=5432
 
 function start_postgresql_in_container() {
@@ -12,7 +16,7 @@ function wait_for_postgresql_to_be_available() {
   attempt=0
   max_attempts=120
   interval_seconds=0.5
-  until (nc -z `$DOCKER inspect --format='{% raw %}{{.NetworkSettings.IPAddress}}{% endraw %}' postgresql` $container_postgres_port ) || [[ $attempt -ge $max_attempts ]] ; do
+  until (nc -z `$DOCKER inspect --format='{{.NetworkSettings.IPAddress}}' postgresql` $container_postgres_port ) || [[ $attempt -ge $max_attempts ]] ; do
     echo "  Waiting for Postgresql to be available in the container , attempt $attempt/$max_attempts ..."
     sleep $interval_seconds
     attempt=$(( $attempt + 1 ))
