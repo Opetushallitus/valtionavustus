@@ -1,5 +1,6 @@
 import PolyfillBind from './../polyfill-bind'
 
+import ConsolePolyfill from 'console-polyfill'
 import React from 'react'
 import Bacon from 'baconjs'
 import qwest from 'qwest'
