@@ -313,10 +313,6 @@ export default class FormModel {
     dispatcher.push(events.changeLanguage, lang)
   }
 
-  setFieldValid(id, validationErrors) {
-    dispatcher.push(events.fieldValidation, {id: id, validationErrors: validationErrors})
-  }
-
   submit(event) {
     event.preventDefault()
     dispatcher.push(events.submit)
