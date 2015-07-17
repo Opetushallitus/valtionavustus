@@ -37,10 +37,18 @@ jenkins_jobs:
      repo: https://github.com/Opetushallitus/valtionavustus
      branch: origin/master
      chucknorris: true
-     command: /usr/local/bin/cibuild.bash
+     command: /usr/local/bin/jenkins-cibuild.bash clean test
      poll:  "* * * * *"
      junit: target/junit*.xml
      skip_tag: true
+   - name: valtionavustus-deploy
+     repo: https://github.com/Opetushallitus/valtionavustus
+     branch: origin/master
+     chucknorris: true
+     command: /usr/local/bin/jenkins-cibuild.bash clean uberjar deploy
+     poll:  "* * * * *"
+     skip_tag: true
+
 
 # System config
 # =============
