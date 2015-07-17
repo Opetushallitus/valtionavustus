@@ -40,8 +40,56 @@
       })
     })
 
-    describe('täytettäessä lomaketta', function () {
+    describe('täytettäessä lomaketta', function() {
       before(enterValidValuesToPage)
+
+      function removeButtonForOrg(nr) {
+        return page.createClickable(`#other-organizations-${nr} .soresu-remove`)
+      }
+
+      describe('toistuvassa kentässä', function() {
+        it('toista riviä ei voi poistaa', function() {
+          expect(removeButtonForOrg(2).isEnabled()).to.equal(false)
+        })
+
+        it('on uusi rivi auki', function() {
+          expect(page.getInput('other-organizations.other-organizations-2.name').isEnabled()).to.equal(true)
+          expect(page.getInput('other-organizations.other-organizations-2.email').isEnabled()).to.equal(true)
+        })
+
+        it('on kolmas rivi kiinni', function() {
+          expect(page.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(false)
+          expect(page.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(false)
+        })
+
+        describe('jos lisää uuden rivin', function() {
+          before(
+            page.setInputValue("other-organizations.other-organizations-2.name", "Muu testiorganisaatio 2"),
+            page.setInputValue("other-organizations.other-organizations-2.email", "muutest2@example.com"),
+            page.waitAutoSave
+          )
+
+          it('sen alle tulee uusi rivi', function() {
+            expect(page.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(true)
+            expect(page.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(true)
+          })
+
+          it('toisen rivin voi poistaa', function() {
+            expect(removeButtonForOrg(2).isEnabled()).to.equal(true)
+          })
+
+          describe('jos poistaa toisen organisaation', function() {
+            before(
+              removeButtonForOrg(2).click,
+              page.waitAutoSave
+            )
+
+            it('kolmatta ei voi poistaa', function() {
+              expect(removeButtonForOrg(3).isEnabled()).to.equal(false)
+            })
+          })
+        })
+      })
 
       describe('jos ei ole annettu kaikkia pakollisia arvoja', function () {
         before(

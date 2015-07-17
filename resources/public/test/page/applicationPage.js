@@ -87,7 +87,6 @@ function ApplicationPage() {
     detailedValidationErrors: function() {
       const errorMessageElements = applicationElement().find("#validation-errors").find('div.error')
       return _.map(errorMessageElements, function(element) { return S(element).text() })
-
     },
     getInput: function(name) {
       return Input(function () {
@@ -115,6 +114,9 @@ function ApplicationPage() {
              .then(wait.until(function() {
                 return name != api.applicationName()
               }))
+    },
+    createClickable: function(el) {
+      return new Clickable(function() { return applicationElement().find(el) })
     }
   }
   return api
@@ -144,6 +146,9 @@ function ApplicationPage() {
       },
       isVisible: function() {
         return el().is(":visible")
+      },
+      isEnabled: function () {
+        return el().is(":enabled")
       },
       setValue: function(value) {
         var input = el()
@@ -182,7 +187,7 @@ function ApplicationPage() {
         return el()
       },
       isEnabled: function () {
-        return !el().prop("disabled")
+        return el().is(":enabled")
       },
       isVisible: function() {
         return el().is(":visible")
