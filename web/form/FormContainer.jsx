@@ -66,7 +66,7 @@ export default class FormContainer extends React.Component {
                     <LocalizedString translations={translations.form} translationKey="preview" lang={lang} />
                   </button>
                 </span>
-                <FormErrorSummary formContent={form.content} saveError={saveStatus.saveError} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
+                <FormErrorSummary formContent={form.content} model={model} saveError={saveStatus.saveError} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
               </div>
             </div>
             <span hidden={true} id="entity-id">{model.formOperations.printEntityId(state)}</span>

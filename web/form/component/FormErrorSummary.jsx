@@ -10,6 +10,7 @@ export default class FormErrorSummary extends React.Component {
   constructor(props) {
     super(props)
     this.translations = this.props.translations
+    this.model = this.props.model
     this.toggleOpen = this.toggleOpen.bind(this)
     this.state = { open: false }
   }
@@ -34,7 +35,7 @@ export default class FormErrorSummary extends React.Component {
     const invalidFieldsCount = idsWithErrors.length
     const fieldErrorMessageElements = _.map(idsWithErrors, idWithErrors => {
       const closestParent = FormUtil.findFieldWithDirectChild(formContent, idWithErrors.fieldId)
-      return this.renderFieldErrors(FormUtil.findField(formContent, idWithErrors.fieldId), closestParent, idWithErrors.errors, lang)
+      return this.renderFieldErrors(formContent, FormUtil.findField(formContent, idWithErrors.fieldId), closestParent, idWithErrors.errors, lang)
     })
     return (
       <div id="form-error-summary" hidden={invalidFieldsCount === 0 && saveError.length === 0}>
@@ -50,20 +51,21 @@ export default class FormErrorSummary extends React.Component {
     )
   }
 
-  renderFieldErrors(field, closestParent, errors, lang) {
+  renderFieldErrors(formContent, field, closestParent, errors, lang) {
     const fieldErrors = []
     const labelHolder = field.label ? field : closestParent
+    const htmlId = this.model.constructHtmlId(formContent, field.id)
     for (var i = 0; i < errors.length; i++) {
       const error = errors[i]
-      const key = field.id + "-validation-error-" + error.error
+      const key = htmlId+ "-validation-error-" + error.error
       if (fieldErrors.length > 0) {
         fieldErrors.push(<span key={key + "-separator"}>, </span>)
       }
       fieldErrors.push(<LocalizedString key={key} translations={this.translations} translationKey={error.error}
                                         lang={lang}/>)
     }
-    return <div className="error" key={field.id + "-validation-error"}>
-      <a role="button" onClick={this.jumpToField(field.id)}><LocalizedString translations={labelHolder} translationKey="label" defaultValue={field.id} lang={lang} /></a><span>: </span>
+    return <div className="error" key={htmlId + "-validation-error"}>
+      <a role="button" onClick={this.jumpToField(htmlId)}><LocalizedString translations={labelHolder} translationKey="label" defaultValue={field.id} lang={lang} /></a><span>: </span>
       {fieldErrors}
     </div>
   }
