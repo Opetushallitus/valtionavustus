@@ -3,11 +3,14 @@ set -euo pipefail
 
 function show_usage() {
 cat << EOF
-  Usage: ${0##*/} [clean] [uberjar] [test] [-p <docker postgresql port>] [deploy] [-s <target server name> ]
+  Usage: ${0##*/} [clean] [uberjar] [test] [-p <docker postgresql port>] [deploy] [-s <target server name> ] -d
+    -p specifies the host port on which Docker binds Postgresql, it should be same in the app config
+    -d disables running Postgresql in Docker container around the build
 EOF
   exit 2
 }
 
+run_docker_postgresql=true
 
 function clean() {
   node_modules_location=node_modules
@@ -30,10 +33,15 @@ function start_postgresql_in_docker() {
 }
 
 function run_tests() {
-  start_postgresql_in_docker
+  if [ "$run_docker_postgresql" = true ]; then
+    start_postgresql_in_docker
+  fi
+
   time ./lein spec -f junit || true
 
-  remove_postgresql_container
+  if [ "$run_docker_postgresql" = true ]; then
+    remove_postgresql_container
+  fi
 }
 
 function deploy() {
@@ -111,6 +119,9 @@ while [[ $# > 0 ]]; do
       -p|--postgresql-port-for-host)
       host_postgres_port="$2"
       shift # past argument
+      ;;
+      -d|--disable-container-postgresql)
+      run_docker_postgresql=false
       ;;
       *)
       # unknown option
