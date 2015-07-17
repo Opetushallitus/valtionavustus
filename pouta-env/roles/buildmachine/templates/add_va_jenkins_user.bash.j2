@@ -4,4 +4,13 @@ if [ -z $1 ]; then
   exit 1
 fi
 
-sudo htpasswd -c {{nginx_jenkins_http_auth_basic_filename}} $1
+USERNAME_TO_ADD=$1  
+TARGET_FILE={{nginx_jenkins_http_auth_basic_filename}} 
+
+if sudo test -f $TARGET_FILE ; then
+  echo "Adding $USERNAME_TO_ADD to $TARGET_FILE with `sudo cat $TARGET_FILE | wc -l` existing lines."
+  sudo htpasswd $TARGET_FILE $USERNAME_TO_ADD
+else
+  echo "$TARGET_FILE does not exist, creating it and adding $USERNAME_TO_ADD ."
+  sudo htpasswd -c $TARGET_FILE $USERNAME_TO_ADD
+fi
