@@ -27,15 +27,7 @@ export default class FormErrorSummary extends React.Component {
     const validationErrors = this.props.validationErrors
     const translator = new Translator(this.translations)
     const saveError = this.props.saveError.length > 0 ? translator.translate(this.props.saveError, lang) : ""
-    const idsOfInvalidFields = _.keys(validationErrors);
-    const fieldsWithErrorsAndClosestParents = _(idsOfInvalidFields).
-                            map(id => {
-                              return { field: FormUtil.findField(formContent, id),
-                                       errors: validationErrors[id],
-                                       closestParent: FormUtil.findFieldWithDirectChild(formContent, id) }
-                            }).
-                            filter(x => { return x.errors.length !== 0} ).
-                            value()
+    const fieldsWithErrorsAndClosestParents = FormErrorSummary.resolveFieldsErrorsAndClosestParents(validationErrors, formContent)
     const invalidFieldsCount = fieldsWithErrorsAndClosestParents.length
     const fieldErrorMessageElements = _.map(fieldsWithErrorsAndClosestParents, x => {
       return this.renderFieldErrors(formContent, x.field, x.closestParent, x.errors, lang)
@@ -52,6 +44,23 @@ export default class FormErrorSummary extends React.Component {
         </div>
       </div>
     )
+  }
+
+  static resolveFieldsErrorsAndClosestParents(validationErrors, formContent) {
+    const idsOfInvalidFields = _.keys(validationErrors)
+    const fieldsWithErrorsAndClosestParents = _(idsOfInvalidFields).
+      map(id => {
+        return {
+          field: FormUtil.findField(formContent, id),
+          errors: validationErrors[id],
+          closestParent: FormUtil.findFieldWithDirectChild(formContent, id)
+        }
+      }).
+      filter(x => {
+        return x.errors.length !== 0
+      }).
+      value()
+    return fieldsWithErrorsAndClosestParents
   }
 
   renderFieldErrors(formContent, field, closestParent, errors, lang) {
