@@ -1,6 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
+import JsUtil from './../JsUtil.js'
 import FormUtil from './../FormUtil.js'
 import LocalizedString from './LocalizedString.jsx'
 import Translator from './../Translator.js'
@@ -47,20 +48,21 @@ export default class FormErrorSummary extends React.Component {
   }
 
   static resolveFieldsErrorsAndClosestParents(validationErrors, formContent) {
-    const idsOfInvalidFields = _.keys(validationErrors)
-    const fieldsWithErrorsAndClosestParents = _(idsOfInvalidFields).
-      map(id => {
-        return {
-          field: FormUtil.findField(formContent, id),
-          errors: validationErrors[id],
-          closestParent: FormUtil.findFieldWithDirectChild(formContent, id)
+    const allFormFields = JsUtil.flatFilter(formContent, x => { return x && !_.isUndefined(x.id) })
+    var results = []
+    _.forEach(allFormFields, parentField => {
+      _.forEach(parentField.children, childField => {
+        const errorsOfField = validationErrors[childField.id]
+        if (errorsOfField && errorsOfField.length > 0) {
+          results.push({
+            field: childField,
+            errors: validationErrors[childField.id],
+            closestParent: parentField
+          })
         }
-      }).
-      filter(x => {
-        return x.errors.length !== 0
-      }).
-      value()
-    return fieldsWithErrorsAndClosestParents
+      })
+    })
+    return results
   }
 
   renderFieldErrors(formContent, field, closestParent, errors, lang) {
