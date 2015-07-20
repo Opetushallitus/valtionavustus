@@ -48,9 +48,7 @@ export default class FormErrorSummary extends React.Component {
   }
 
   static resolveFieldsErrorsAndClosestParents(validationErrors, formContent) {
-    const allFormFields = JsUtil.flatFilter(formContent, x => { return x && !_.isUndefined(x.id) })
-    var results = []
-    _.forEach(allFormFields, parentField => {
+    function gatherParentAndErrorsFromChildren(parentField) {
       _.forEach(parentField.children, childField => {
         const errorsOfField = validationErrors[childField.id]
         if (errorsOfField && errorsOfField.length > 0) {
@@ -61,7 +59,10 @@ export default class FormErrorSummary extends React.Component {
           })
         }
       })
-    })
+    }
+
+    var results = []
+    JsUtil.traverseMatching(formContent, x => { return x && !_.isUndefined(x.id) }, gatherParentAndErrorsFromChildren)
     return results
   }
 

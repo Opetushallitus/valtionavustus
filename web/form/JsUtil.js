@@ -3,9 +3,14 @@ import traverse from 'traverse'
 
 export default class JsUtil {
   static flatFilter(objectOrArray, nodePredicate) {
+    return JsUtil.traverseMatching(objectOrArray, nodePredicate, _.identity)
+  }
+
+  static traverseMatching(objectOrArray, nodePredicate, operation) {
     return traverse(objectOrArray).reduce(function (acc, x) {
       if (nodePredicate(x)) {
-        acc.push(x)
+        const nodeResult = operation(x)
+        acc.push(nodeResult)
       }
       return acc
     }, [])
