@@ -6,9 +6,10 @@ import {SyntaxValidator} from '../form/SyntaxValidator.js'
 import {FieldUpdateHandler} from '../form/FieldUpdateHandler.js'
 
 export class VaBudgetCalculator {
-  static populateBudgetCalculatedValuesForAllBudgetFields(initialState) {
+  static populateBudgetCalculatedValuesForAllBudgetFields(initialState, editingExistingApplication) {
     const budgetFields = JsUtil.flatFilter(initialState.form.content, n => { return n.displayAs === "vaBudget" })
-    _.forEach(budgetFields, budgetField => { VaBudgetCalculator.populateBudgetCalculatedValues(initialState, budgetField, false ) })
+    const reportTotalError = editingExistingApplication
+    _.forEach(budgetFields, budgetField => { VaBudgetCalculator.populateBudgetCalculatedValues(initialState, budgetField, reportTotalError ) })
   }
 
 static handleBudgetAmountUpdate(state, amountFieldId) {

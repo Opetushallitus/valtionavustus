@@ -115,7 +115,8 @@ function initialStateTemplateTransformation(template) {
 }
 
 function onInitialStateLoaded(initialState) {
-  VaBudgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(initialState)
+  const editingExistingApplication = isSaveDraftAllowed(initialState)
+  VaBudgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(initialState, editingExistingApplication)
 }
 
 const model = new FormModel({
