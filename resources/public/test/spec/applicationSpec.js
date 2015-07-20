@@ -65,30 +65,49 @@
           expect(page.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(false)
         })
 
-        describe('jos lisää uuden rivin', function() {
+        describe('jos lisää keskeneräisen rivin', function() {
           before(
             page.setInputValue("other-organizations.other-organizations-2.name", "Muu testiorganisaatio 2"),
-            page.setInputValue("other-organizations.other-organizations-2.email", "muutest2@example.com"),
             page.waitAutoSave
           )
 
-          it('sen alle tulee uusi rivi', function() {
-            expect(page.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(true)
-            expect(page.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(true)
+          describe('lisäämisen jälkeen', function() {
+            it("valitetaan puuttuvista tiedoista", function () {
+              const validationErrorsSummaryMessage = page.validationErrors()
+              expect(validationErrorsSummaryMessage).to.equal("1 vastauksessa puutteita")
+            })
+            it('on kolmas rivi yhä kiinni', function() {
+              expect(page.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(false)
+              expect(page.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(false)
+            })
           })
 
-          it('toisen rivin voi poistaa', function() {
-            expect(removeButtonForOrg(2).isEnabled()).to.equal(true)
-          })
-
-          describe('jos poistaa toisen organisaation', function() {
+          describe('jos täydentää rivin lopuun', function() {
             before(
-              removeButtonForOrg(2).click,
+              page.setInputValue("other-organizations.other-organizations-2.email", "muutest2@example.com"),
               page.waitAutoSave
             )
 
-            it('kolmatta ei voi poistaa', function() {
-              expect(removeButtonForOrg(3).isEnabled()).to.equal(false)
+            describe('täydentämisen jälkeen', function() {
+              it('sen alle tulee uusi rivi', function() {
+                expect(page.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(true)
+                expect(page.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(true)
+              })
+
+              it('toisen rivin voi poistaa', function() {
+                expect(removeButtonForOrg(2).isEnabled()).to.equal(true)
+              })
+            })
+
+            describe('jos poistaa toisen organisaation', function() {
+              before(
+                removeButtonForOrg(2).click,
+                page.waitAutoSave
+              )
+
+              it('kolmatta ei voi poistaa', function() {
+                expect(removeButtonForOrg(3).isEnabled()).to.equal(false)
+              })
             })
           })
         })
