@@ -3,6 +3,7 @@ import InputValueStorage from './InputValueStorage.js'
 import {SyntaxValidator} from './SyntaxValidator.js'
 import JsUtil from '../form/JsUtil.js'
 
+import Immutable from 'seamless-immutable'
 import _ from 'lodash'
 
 export class FieldUpdateHandler {
@@ -18,7 +19,10 @@ export class FieldUpdateHandler {
     const growingParentIfFound = InputValueStorage.writeValue(state.form, state.saveStatus.values, fieldUpdate.id, fieldUpdate.value)
     fieldUpdate.growingParent = growingParentIfFound
     if (fieldUpdate.validationErrors) {
-      state.validationErrors[fieldUpdate.id] = fieldUpdate.validationErrors
+      if(_.isEmpty(state.validationErrors)) {
+        state.validationErrors = Immutable({})
+      }
+      state.validationErrors = state.validationErrors.merge({[fieldUpdate.id]: fieldUpdate.validationErrors})
       state.clientSideValidation[fieldUpdate.id] = fieldUpdate.validationErrors.length === 0
     } else {
       state.clientSideValidation[fieldUpdate.id] = true

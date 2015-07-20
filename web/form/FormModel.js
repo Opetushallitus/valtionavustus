@@ -8,9 +8,11 @@ import {FieldUpdateHandler} from './FieldUpdateHandler.js'
 import FormUtil from './FormUtil.js'
 import {SyntaxValidator} from './SyntaxValidator.js'
 import JsUtil from './JsUtil.js'
+
 import qwest from 'qwest'
 import queryString from 'query-string'
 import traverse from 'traverse'
+import Immutable from 'seamless-immutable'
 
 const dispatcher = new Dispatcher()
 
@@ -72,7 +74,7 @@ export default class FormModel {
         lang: langQueryParam,
         translations: translationsP
       },
-      validationErrors: {},
+      validationErrors: Immutable({}),
       clientSideValidation: clientSideValidationP
     }
     if (_.isFunction(self.initialStateTemplateTransformation)) {
@@ -168,7 +170,7 @@ export default class FormModel {
     function onFieldValidation(state, validation) {
       state.clientSideValidation[validation.id] = validation.validationErrors.length === 0
       if (self.isSaveDraftAllowed(state)) {
-        state.validationErrors[validation.id] = validation.validationErrors
+        state.validationErrors = state.validationErrors.merge({[validation.id]: validation.validationErrors})
       }
       return state
     }
@@ -261,7 +263,7 @@ export default class FormModel {
       state.saveStatus.saveInProgress = false
       state.saveStatus.saveError = saveError
       if(serverValidationErrors) {
-        state.validationErros = serverValidationErrors
+        state.validationErrors = Immutable(serverValidationErrors)
       }
       return state
     }

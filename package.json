@@ -19,7 +19,8 @@
     "qwest": "^1.6.0",
     "react": "^0.13.2",
     "traverse": "0.6.6",
-    "console-polyfill": "^0.2.1"
+    "console-polyfill": "^0.2.1",
+    "seamless-immutable": "^2.4.2"
   },
   "devDependencies": {
     "babel": "^5.6.14",

@@ -35,7 +35,8 @@ static handleBudgetAmountUpdate(state, amountFieldId) {
     })
     const budgetIsPositive = total > 0;
     const budgetIsValid = !someFigureHasError && budgetIsPositive
-    state.validationErrors[vaBudgetField.id] = budgetIsPositive || !reportTotalError ? [] : [{ "error": "negative-budget" }]
+    const newValidationErrors = budgetIsPositive || !reportTotalError ? [] : [{ "error": "negative-budget" }]
+    state.validationErrors = state.validationErrors.merge({[vaBudgetField.id]: newValidationErrors})
     state.clientSideValidation[vaBudgetField.id] = budgetIsPositive
 
     const summaryField = _.last(vaBudgetField.children)
