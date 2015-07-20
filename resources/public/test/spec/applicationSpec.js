@@ -96,6 +96,8 @@
 
       describe('jos ei ole annettu kaikkia pakollisia arvoja', function () {
         before(
+          page.openStartPage(),
+          enterValidValuesToPage,
           page.setInputValue("organization", ""),
           page.waitAutoSave
         )
