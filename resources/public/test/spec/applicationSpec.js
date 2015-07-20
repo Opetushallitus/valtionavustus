@@ -47,7 +47,7 @@
       )
 
       function removeButtonForOrg(nr) {
-        return page.createClickable(`#other-organizations-${nr} .soresu-remove`)
+        return page.createClickable('#other-organizations-' + nr + ' .soresu-remove')
       }
 
       describe('toistuvassa kentässä', function() {
