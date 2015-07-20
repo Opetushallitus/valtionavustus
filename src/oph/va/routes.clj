@@ -11,6 +11,7 @@
             [oph.form.routes :refer :all]
             [oph.form.schema :refer :all]
             [oph.va.db :as va-db]
+            [oph.va.email :as va-email]
             [oph.va.schema :refer :all]))
 
 (create-form-schema [:vaBudget
@@ -46,9 +47,11 @@
       (let [form-id (:form (va-db/get-avustushaku haku-id))
             validation (validation/validate-form-security (form-db/get-form form-id) answers)]
         (if (every? empty? (vals validation))
-                    (let [hakemus-ids (va-db/create-hakemus! form-id answers)]
-                      (if hakemus-ids
-                        (ok {:id (:id hakemus-ids)})
+                    (let [hakemus-id (va-db/create-hakemus! form-id answers)]
+                      (if hakemus-id
+                        (do
+                          (va-email/send-activation-message! ())
+                          (ok {:id (:id hakemus-ids)})
                         (internal-server-error!)))
                     (bad-request validation))))
 

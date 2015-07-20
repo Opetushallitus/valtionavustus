@@ -1,1 +1,6 @@
-{}
+{:email {:enabled? true
+         :host "localhost"
+         :port 2500
+         :user "user@localhost"
+         :pass "somePassword"}
+ }

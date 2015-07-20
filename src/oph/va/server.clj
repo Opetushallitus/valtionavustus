@@ -6,7 +6,8 @@
             [clojure.tools.logging :as log]
             [oph.common.config :refer [config]]
             [oph.common.db :as db]
-            [oph.va.db.migrations :as dbmigrations])
+            [oph.va.db.migrations :as dbmigrations]
+            [oph.va.email :as email])
   (:gen-class)
   (:import (java.net Socket)
            (java.io IOException)))
@@ -24,9 +25,12 @@
     (fail-if-server-running host port)
     (log/info "Running db migrations")
     (dbmigrations/migrate)
+    (log/info "Starting e-mail sender")
+    (email/start-background-sender)
     (log/info (format "Starting server in URL http://%s:%d/" host port))
     (try (run-server handler {:host host :port port})
          (finally
+           (email/stop-background-sender)
            (db/close-datasource!)))))
 
 (defn -main [& args]

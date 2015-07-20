@@ -6,4 +6,8 @@
       :password "va"
       :database-name "va-dev"
       :server-name "localhost"
-      :port-number 5432}}
+      :port-number 5432}
+ :email {:enabled? false
+         :host nil
+         :port nil
+         :from "no-reply@oph.fi"}}
