@@ -22,11 +22,10 @@ export default class FormErrorSummary extends React.Component {
     const oldValidationErrors = this.props.validationErrors
     const isUptoDate = this.state.open === nextState.open &&
                         this.props.lang === nextProps.lang &&
-                      oldIdsOfInvalidFields.length === newIdsOfInvalidFields.length &&
-                      _.reduce(oldIdsOfInvalidFields, function(acc, id) {
+                        oldIdsOfInvalidFields.length === newIdsOfInvalidFields.length &&
+                        _.reduce(oldIdsOfInvalidFields, function(acc, id) {
                           return acc && _.isEqual(oldValidationErrors[id], nextProps.validationErrors[id])
-                        },
-                        true)
+                        }, true)
     return !isUptoDate
   }
 
