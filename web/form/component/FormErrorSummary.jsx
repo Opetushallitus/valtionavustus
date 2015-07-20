@@ -16,6 +16,20 @@ export default class FormErrorSummary extends React.Component {
     this.state = { open: false }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const oldIdsOfInvalidFields = _.keys(this.props.validationErrors);
+    const newIdsOfInvalidFields = _.keys(nextProps.validationErrors);
+    const oldValidationErrors = this.props.validationErrors
+    const isUptoDate = this.state.open === nextState.open &&
+                        this.props.lang === nextProps.lang &&
+                      oldIdsOfInvalidFields.length === newIdsOfInvalidFields.length &&
+                      _.reduce(oldIdsOfInvalidFields, function(acc, id) {
+                          return acc && _.isEqual(oldValidationErrors[id], nextProps.validationErrors[id])
+                        },
+                        true)
+    return !isUptoDate
+  }
+
   toggleOpen() {
     this.setState({
       open: !this.state.open
