@@ -15,6 +15,10 @@ ja
 
     npm install
 
+Kehitysaikaisesti hyödyllisiä työkaluja:
+
+* FakeSMTP: https://nilhcem.github.io/FakeSMTP/
+
 # Tietokanta
 
 Luo käyttäjä ```va``` (salasana: va)
