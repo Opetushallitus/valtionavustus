@@ -69,7 +69,7 @@ function ApplicationPage() {
     saveInfo: function() {
       return applicationElement().find("#form-controls .info :visible").text()
     },
-    validationErrors: function() {
+    validationErrorsSummary: function() {
       return applicationElement().find("#validation-errors-summary:not([hidden])").text()
     },
     error: function(field) {

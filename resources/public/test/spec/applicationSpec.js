@@ -35,8 +35,7 @@
         expect(page.submitButton().isEnabled()).to.equal(false)
       })
       it("ei valiteta vielä pakollisista kentästä", function () {
-        const validationErrorsSummaryMessage = page.validationErrors()
-        expect(validationErrorsSummaryMessage).to.equal("")
+        expect(page.validationErrorsSummary()).to.equal("")
       })
     })
 
@@ -73,8 +72,7 @@
 
           describe('lisäämisen jälkeen', function() {
             it("valitetaan puuttuvista tiedoista", function () {
-              const validationErrorsSummaryMessage = page.validationErrors()
-              expect(validationErrorsSummaryMessage).to.equal("1 vastauksessa puutteita")
+              expect(page.validationErrorsSummary()).to.equal("1 vastauksessa puutteita")
             })
             it('on kolmas rivi yhä kiinni', function() {
               expect(page.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(false)

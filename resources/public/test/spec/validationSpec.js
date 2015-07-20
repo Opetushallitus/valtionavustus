@@ -47,7 +47,7 @@
           })
           it("kerrotaan puuttuvasta kentästä", function () {
             expect(page.getInput("organization").value()).to.equal('')
-            expect(page.validationErrors()).to.equal('1 vastauksessa puutteita')
+            expect(page.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
           })
         })
 
@@ -81,7 +81,7 @@
               expect(page.classAttributeOf("organization")).to.include('error')
             })
             it("kerrotaan puuttuvasta kentästä", function () {
-              expect(page.validationErrors()).to.equal('1 vastauksessa puutteita')
+              expect(page.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
             })
             it("näkyy hankkeen kuvaus oikein", function () {
               expect(page.getInput("project-description.project-description-1.goal").value()).to.equal('Hankkeen ensimmäinen tavoite.')
@@ -110,7 +110,7 @@
               )
 
               it('ei tule virhettä', function () {
-                expect(page.validationErrors()).to.equal('')
+                expect(page.validationErrorsSummary()).to.equal('')
               })
             })
           })
@@ -126,7 +126,7 @@
 
             describe('tallentamisen jälkeen', function () {
               it("ei tule virhettä", function () {
-                expect(page.validationErrors()).to.equal('')
+                expect(page.validationErrorsSummary()).to.equal('')
                 expect(page.getInput("project-description.project-description-1.goal").value()).to.equal('Uusi ensimmäinen tavoite.')
                 expect(page.getInput("project-description.project-description-1.activity").value()).to.equal('Uusi ensimmäinen toiminta.')
                 expect(page.getInput("project-description.project-description-1.result").value()).to.equal('Uusi ensimmäinen tulos.')
@@ -159,7 +159,7 @@
       describe('automaatti tallennuksen jälkeen', function () {
         describe('alkuperäisessä näkymässä', function () {
           it("ei herjata pakollisista tiedoista", function () {
-            expect(page.validationErrors()).to.equal('')
+            expect(page.validationErrorsSummary()).to.equal('')
           })
         })
 
@@ -171,10 +171,10 @@
             it("lähetys on disabloitu", function () {
               expect(page.submitButton().isEnabled()).to.equal(false)
             })
-            it("kerrotaan kaikista pakollisista kentistä", function () {
-              const errorCount = parseInt(page.validationErrors().split(' ')[0])
+            it('kerrotaan kaikista pakollisista kentistä', function () {
+              const errorCount = parseInt(page.validationErrorsSummary().split(' ')[0])
               expect(errorCount).to.be.at.least(10)
-              expect(page.validationErrors()).to.equal(errorCount + ' vastauksessa puutteita')
+              expect(page.validationErrorsSummary()).to.equal(errorCount + ' vastauksessa puutteita')
             })
           })
         })
@@ -207,7 +207,7 @@
 
         describe('alkuperäisessä näkymässä', function () {
           it("kerrotaan virheellisestä kentästä", function () {
-            expect(page.validationErrors()).to.equal('1 vastauksessa puutteita')
+            expect(page.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
           })
         })
 

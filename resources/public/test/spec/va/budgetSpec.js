@@ -24,7 +24,7 @@
     )
 
     it('Mahdollistaa hakemuksen lähettämisen oikein täytettynä', function() {
-      expect(page.validationErrors()).to.equal('')
+      expect(page.validationErrorsSummary()).to.equal('')
       expect(page.submitButton().isEnabled()).to.equal(true)
     })
 
@@ -40,7 +40,7 @@
       )
 
       it('ilmoittaa kuvauksen pakollisuudesta', function() {
-        expect(page.validationErrors()).to.equal('1 vastauksessa puutteita')
+        expect(page.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
         expect(page.submitButton().isEnabled()).to.equal(false)
         expect(page.detailedValidationErrors()).to.include('Palvelujen ostot: Pakollinen tieto')
         expect(page.detailedValidationErrors()).to.have.length(1)
@@ -53,7 +53,7 @@
         )
 
         it('sallii tallentamisen', function() {
-          expect(page.validationErrors()).to.equal('')
+          expect(page.validationErrorsSummary()).to.equal('')
           expect(page.submitButton().isEnabled()).to.equal(true)
         })
       })
@@ -71,7 +71,7 @@
         expect(page.elementTextBySelector('#third-party-income span.sum')).to.equal('-10000')
         expect(page.elementTextBySelector('.grand-total span.sum')).to.equal('-8990')
 
-        expect(page.validationErrors()).to.equal('1 vastauksessa puutteita')
+        expect(page.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
         expect(page.submitButton().isEnabled()).to.equal(false)
         expect(page.detailedValidationErrors()).to.include('Rahoitussuunnitelma: Haettavan rahoituksen tulee olla positiivinen')
         expect(page.detailedValidationErrors()).to.have.length(1)
@@ -95,7 +95,7 @@
         expect(page.detailedValidationErrors()).to.include('Tarvike- ja materiaalikustannukset: Syötä arvo kokonaisina euroina')
         expect(page.detailedValidationErrors()).to.include('EU-ohjelmat: Syötä arvo kokonaisina euroina')
         expect(page.detailedValidationErrors()).to.have.length(3)
-        expect(page.validationErrors()).to.equal('3 vastauksessa puutteita')
+        expect(page.validationErrorsSummary()).to.equal('3 vastauksessa puutteita')
       })
 
       it('näyttää numeerisista luvuista lasketun kokonaissumman', function() {
