@@ -41,7 +41,10 @@
     })
 
     describe('täytettäessä lomaketta', function() {
-      before(enterValidValuesToPage)
+      before(
+        enterValidValuesToPage,
+        page.waitAutoSave
+      )
 
       function removeButtonForOrg(nr) {
         return page.createClickable(`#other-organizations-${nr} .soresu-remove`)
