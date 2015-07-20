@@ -146,6 +146,41 @@
       })
     })
 
+    describe('Jos annettu pelkästään yhteyshenkilön sähköposti', function () {
+      before(
+          page.openStartPage(),
+          page.setInputValue("primary-email", "yhteyshenkilo@example.com"),
+          page.waitAutoSave,
+          wait.until(page.hakemusIdIsPresent),
+          page.storeHakemusIdFromHtml
+      )
+
+
+      describe('automaatti tallennuksen jälkeen', function () {
+        describe('alkuperäisessä näkymässä', function () {
+          it("ei herjata pakollisista tiedoista", function () {
+            expect(page.validationErrors()).to.equal('')
+          })
+        })
+
+        describe('hakemuksen muokkausnäkymässä', function () {
+          before(
+              page.openEditPage(page.getHakemusId)
+          )
+          describe('avaamisen jälkeen', function () {
+            it("lähetys on disabloitu", function () {
+              expect(page.submitButton().isEnabled()).to.equal(false)
+            })
+            it("kerrotaan kaikista pakollisista kentistä", function () {
+              const errorCount = parseInt(page.validationErrors().split(' ')[0])
+              expect(errorCount).to.be.at.least(10)
+              expect(page.validationErrors()).to.equal(errorCount + ' vastauksessa puutteita')
+            })
+          })
+        })
+      })
+    })
+
     describe('Jos lomakkeelle on syötetty väärän muotoinen sähköpostiosoite', function () {
       before(
         page.openStartPage(),
