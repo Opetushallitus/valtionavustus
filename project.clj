@@ -28,6 +28,9 @@
                  [hikari-cp "1.2.4"]
                  [org.flywaydb/flyway-core "3.2.1"]
 
+                 ;; E-mail
+                 [com.draines/postal "1.11.3"]
+
                  ;; Testing
                  [speclj "3.2.0"]
                  ;; for junit output: lein spec -f junit
