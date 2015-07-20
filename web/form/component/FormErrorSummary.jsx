@@ -76,7 +76,7 @@ export default class FormErrorSummary extends React.Component {
 
     var results = []
     JsUtil.traverseMatching(formContent, x => { return x && !_.isUndefined(x.id) }, gatherParentAndErrorsFromChildren)
-    return results
+    return _.sortBy(results, x => {return FormUtil.findFieldIndex(formContent, x.field.id)})
   }
 
   renderFieldErrors(formContent, field, closestParent, errors, lang) {

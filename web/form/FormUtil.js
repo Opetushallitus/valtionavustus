@@ -33,6 +33,10 @@ export default class FormUtil {
     return _.first(foundArray)
   }
 
+  static findFieldIndex(formContent, fieldId) {
+    return JsUtil.findIndexOfFirst(formContent, n => { return n.id === fieldId || FormUtil.isSameIfIndexIgnored(n.id, fieldId)})
+  }
+
   static findFieldWithDirectChild(formContent, childId) {
     const parentsArray = JsUtil.flatFilter(formContent, n => { return _.some(n.children, c => { return c.id === childId })})
     return _.first(parentsArray)
@@ -41,6 +45,24 @@ export default class FormUtil {
   static findGrowingParent(formContent, fieldId) {
     const allGrowingFieldsets = JsUtil.flatFilter(formContent, n => { return n.displayAs === "growingFieldset" })
     return JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
+  }
+
+  static isSameIfIndexIgnored(id1, id2) {
+    if(!id1 || !id2) return false
+    return this.withOutIndex(id1) === this.withOutIndex(id2)
+  }
+
+  static withOutIndex(id) {
+    const partWithOutIndex = function(part) {
+      const index = FormUtil.parseIndexFrom(part)
+      if(index === "") {
+        return part
+      }
+      else {
+        return part.substring(0, part.lastIndexOf("-"))
+      }
+    }
+    return _.map(id.split("."), part => {return partWithOutIndex(part)}).join(".")
   }
 
   static parseIndexFrom(id) {
