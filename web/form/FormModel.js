@@ -146,20 +146,21 @@ export default class FormModel {
     }
 
     function onUpdateField(state, fieldUpdate) {
+      const formOperations = self.formOperations;
       FieldUpdateHandler.updateStateFromFieldUpdate(state, fieldUpdate)
-      if (_.isFunction(self.formOperations.onFieldUpdate)) {
-        self.formOperations.onFieldUpdate(state, self, fieldUpdate.field, fieldUpdate.value)
+      if (_.isFunction(formOperations.onFieldUpdate)) {
+        formOperations.onFieldUpdate(state, self, fieldUpdate.field, fieldUpdate.value)
       }
       FieldUpdateHandler.triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
       const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id]
       if (clientSideValidationPassed) {
         FormBranchGrower.expandGrowingFieldSetIfNeeded(state, fieldUpdate);
-        if (_.isFunction(self.formOperations.onFieldValid)) {
-          self.formOperations.onFieldValid(state, self, fieldUpdate.field, fieldUpdate.value)
+        if (_.isFunction(formOperations.onFieldValid)) {
+          formOperations.onFieldValid(state, self, fieldUpdate.field, fieldUpdate.value)
         }
       }
       state.saveStatus.changes = true
-      LocalStorage.save(self.formOperations.createUiStateIdentifier, state, fieldUpdate)
+      LocalStorage.save(formOperations.createUiStateIdentifier, state, fieldUpdate)
       startAutoSave(state)
       return state
     }
@@ -268,17 +269,18 @@ export default class FormModel {
     function onSaveCompleted(stateFromUiLoop, stateFromServer) {
       // TODO: Resolve updates from UI with updates from server.
       // At the moment we just discard the values from server here.
-      var locallyStoredValues = LocalStorage.load(self.formOperations.createUiStateIdentifier, stateFromServer)
+      const formOperations = self.formOperations;
+      var locallyStoredValues = LocalStorage.load(formOperations.createUiStateIdentifier, stateFromServer)
       if (!locallyStoredValues) {
-        LocalStorage.save(self.formOperations.createUiStateIdentifier, stateFromServer)
+        LocalStorage.save(formOperations.createUiStateIdentifier, stateFromServer)
         stateFromServer.saveStatus.saveInProgress = false
         stateFromServer.saveStatus.saveTime = new Date()
         stateFromServer.saveStatus.changes = false
         return stateFromServer
       }
       stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateFromServer.saveStatus.values)
-      if (_.isFunction(self.formOperations.onSaveCompletedCallback)) {
-        self.formOperations.onSaveCompletedCallback(stateFromUiLoop, stateFromServer)
+      if (_.isFunction(formOperations.onSaveCompletedCallback)) {
+        formOperations.onSaveCompletedCallback(stateFromUiLoop, stateFromServer)
       }
       stateFromUiLoop.saveStatus.saveInProgress = false
       stateFromUiLoop.saveStatus.saveTime = new Date()
