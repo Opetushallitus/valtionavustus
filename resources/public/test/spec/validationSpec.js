@@ -164,17 +164,85 @@
         })
 
         describe('hakemuksen muokkausnäkymässä', function () {
+          var errorCount
           before(
-              page.openEditPage(page.getHakemusId)
+              page.openEditPage(page.getHakemusId),
+              function(){ errorCount = parseInt(page.validationErrorsSummary().split(' ')[0])}
           )
           describe('avaamisen jälkeen', function () {
             it("lähetys on disabloitu", function () {
               expect(page.submitButton().isEnabled()).to.equal(false)
             })
             it('kerrotaan kaikista pakollisista kentistä', function () {
-              const errorCount = parseInt(page.validationErrorsSummary().split(' ')[0])
               expect(errorCount).to.be.at.least(10)
               expect(page.validationErrorsSummary()).to.equal(errorCount + ' vastauksessa puutteita')
+            })
+            it('virhekuvakset eivät ole näkyvissä', function () {
+              expect(page.validationErrors().length).to.equal(0)
+            })
+            describe('klikattaessa virheyhteenvetoa', function () {
+              var tavoiteVirhe
+              before(
+                page.validationErrorsButton().click,
+                function() {
+                  tavoiteVirhe = page.validationErrors().find(".error[data-reactid*='project-description-1=1goal-validation-error']")
+                }
+              )
+              it("näkyy yhtä monta kuvausta kuin virhettä", function () {
+                expect(page.validationErrors().find('.error').length).to.equal(errorCount)
+              })
+              it("näkyy pakollinen tieto: Tavoite", function () {
+                expect(tavoiteVirhe.text()).to.equal('Tavoite: Pakollinen tieto')
+              })
+              it("tavoite virhettä edellinen virhe on edellinen pakollinen kohta lomakkeelta", function () {
+                expect(tavoiteVirhe.prev().text()).to.equal('Miten hanke tukee hankkeessa mukana olevien koulutuksen järjestäjien strategisten tavoitteiden saavuttamista?: Pakollinen tieto')
+              })
+              describe('klikattaessa tavoite kentän virhettä', function () {
+                before(
+                  function() {
+                    triggerEvent(tavoiteVirhe.find("a").first(), "click")
+                  }
+                )
+                it("focus siirtyy kenttään", function () {
+                  // tarkasta käsin ajamalla testiä
+                })
+              })
+              describe('syötettäessä ensimmäinen projektin tavoite', function () {
+                before(
+                  page.setInputValue("project-description.project-description-1.goal", "Tavoite 1"),
+                  page.setInputValue("project-description.project-description-1.activity", "Toiminta 1"),
+                  page.setInputValue("project-description.project-description-1.result", "Tulos 1"),
+                  page.waitAutoSave
+                )
+                it("näkyy vähemmän virheitä", function () {
+                  expect(page.validationErrors().find('.error').length).to.equal(errorCount - 3)
+                })
+                describe('syötettäessä toinen projektin tavoite osittain', function () {
+                  var tulosVirhe
+                  before(
+                      page.setInputValue("project-description.project-description-2.goal", "Tavoite 2"),
+                      page.waitAutoSave,
+                      function() {tulosVirhe = page.validationErrors().find(".error[data-reactid*='project-description-2=1result-validation-error']")}
+                  )
+                  it("näkyy uusia virheitä", function () {
+                    expect(page.validationErrors().find('.error').length).to.equal(errorCount - 3 + 2)
+                  })
+                  it("vaaditaan syöttämään toiselle tavoitteelle tulos", function () {
+                    expect(tulosVirhe.text()).to.equal('Tulos: Pakollinen tieto')
+                  })
+                  it("tulos virhettä seuraava virhe on seuraava pakollinen kohta lomakkeelta", function () {
+                    expect(tulosVirhe.next().text()).to.equal('Hankkeen kohderyhmät: Pakollinen tieto')
+                  })
+                })
+              })
+              describe('painettaessa x nappia virhe popupissa', function () {
+                before(
+                    page.validationErrorsCloseButton().click
+                )
+                it('virhekuvakset eivät ole enää näkyvissä', function () {
+                  expect(page.validationErrors().length).to.equal(0)
+                })
+              })
             })
           })
         })

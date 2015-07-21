@@ -72,6 +72,15 @@ function ApplicationPage() {
     validationErrorsSummary: function() {
       return applicationElement().find("#validation-errors-summary:not([hidden])").text()
     },
+    validationErrorsButton: function() {
+      return Clickable(function() { return applicationElement().find("#validation-errors-summary")})
+    },
+    validationErrors: function() {
+      return applicationElement().find("#validation-errors:not([hidden])")
+    },
+    validationErrorsCloseButton: function() {
+      return Clickable(function() { return applicationElement().find("#validation-errors .popup-close")})
+    },
     error: function(field) {
       return applicationElement().find("#" + escapeSelector(field) + "-error").first().text()
     },
@@ -196,7 +205,7 @@ function ApplicationPage() {
         return el().text()
       },
       click: function () {
-        el()[0].click()
+        triggerEvent(el().first(), "click")
       }
     }
   }
