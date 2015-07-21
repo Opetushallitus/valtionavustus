@@ -172,7 +172,7 @@ export default class FormModel {
 
     function onFieldValidation(state, validation) {
       state.clientSideValidation[validation.id] = validation.validationErrors.length === 0
-      if (model.isSaveDraftAllowed(state)) {
+      if (state.extensionApi.formOperations.isSaveDraftAllowed(state)) {
         state.validationErrors = state.validationErrors.merge({[validation.id]: validation.validationErrors})
       }
       return state
