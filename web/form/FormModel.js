@@ -151,7 +151,7 @@ export default class FormModel {
     }
 
     function onUpdateField(state, fieldUpdate) {
-      const formOperations = model.formOperations;
+      const formOperations = state.extensionApi.formOperations
       FieldUpdateHandler.updateStateFromFieldUpdate(state, fieldUpdate)
       if (_.isFunction(formOperations.onFieldUpdate)) {
         formOperations.onFieldUpdate(state, model, fieldUpdate.field, fieldUpdate.value)
@@ -196,7 +196,7 @@ export default class FormModel {
         dispatcher.push(events.saveError, "submit-validation-errors",  JSON.parse(response))
       }
       else{
-        handleUnexpectedSaveError(method, url, error, saveType);
+        handleUnexpectedSaveError(method, url, error, saveType)
       }
     }
 
