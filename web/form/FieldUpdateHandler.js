@@ -1,6 +1,6 @@
 import FormModel from './FormModel.js'
 import InputValueStorage from './InputValueStorage.js'
-import {SyntaxValidator} from './SyntaxValidator.js'
+import SyntaxValidator from './SyntaxValidator.js'
 import JsUtil from '../form/JsUtil.js'
 
 import Immutable from 'seamless-immutable'

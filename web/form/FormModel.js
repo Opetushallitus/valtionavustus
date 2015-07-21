@@ -9,7 +9,7 @@ import Dispatcher from './Dispatcher'
 import InputValueStorage from './InputValueStorage.js'
 import FieldUpdateHandler from './FieldUpdateHandler.js'
 import FormUtil from './FormUtil.js'
-import {SyntaxValidator} from './SyntaxValidator.js'
+import SyntaxValidator from './SyntaxValidator.js'
 import JsUtil from './JsUtil.js'
 import FormStateTransitions from './FormStateTransitions.js'
 

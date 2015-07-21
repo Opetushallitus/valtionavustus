@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import FormUtil from './FormUtil.js'
 
-export class SyntaxValidator {
+export default class SyntaxValidator {
   static validateSyntax(field, value) {
     var validationErrors = []
     if (field.required && (!value || _.trim(value).length < 1)) {
