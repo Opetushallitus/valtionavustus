@@ -98,12 +98,12 @@ export default class FormModel {
     const formFieldValuesP = Bacon.update({},
                                           [dispatcher.stream(events.initialState)], stateTransitions.onInitialState,
                                           [dispatcher.stream(events.updateField)], onUpdateField,
-                                          [dispatcher.stream(events.fieldValidation)], onFieldValidation,
-                                          [dispatcher.stream(events.changeLanguage)], onChangeLang,
+                                          [dispatcher.stream(events.fieldValidation)], stateTransitions.onFieldValidation,
+                                          [dispatcher.stream(events.changeLanguage)], stateTransitions.onChangeLang,
                                           [dispatcher.stream(events.save)], onSave,
                                           [dispatcher.stream(events.initAutoSave)], onInitAutoSave,
                                           [dispatcher.stream(events.saveCompleted)], onSaveCompleted,
-                                          [dispatcher.stream(events.saveError)], onSaveError,
+                                          [dispatcher.stream(events.saveError)], stateTransitions.onSaveError,
                                           [dispatcher.stream(events.submit)], onSubmit,
                                           [dispatcher.stream(events.removeField)], onRemoveField)
 
@@ -137,11 +137,6 @@ export default class FormModel {
       return values
     }
 
-    function onChangeLang(state, lang) {
-      state.configuration.lang = lang
-      return state
-    }
-
     function onUpdateField(state, fieldUpdate) {
       const formOperations = state.extensionApi.formOperations
       FieldUpdateHandler.updateStateFromFieldUpdate(state, fieldUpdate)
@@ -159,14 +154,6 @@ export default class FormModel {
       state.saveStatus.changes = true
       LocalStorage.save(formOperations.createUiStateIdentifier, state, fieldUpdate)
       startAutoSave(state)
-      return state
-    }
-
-    function onFieldValidation(state, validation) {
-      state.clientSideValidation[validation.id] = validation.validationErrors.length === 0
-      if (state.extensionApi.formOperations.isSaveDraftAllowed(state)) {
-        state.validationErrors = state.validationErrors.merge({[validation.id]: validation.validationErrors})
-      }
       return state
     }
 
@@ -255,15 +242,6 @@ export default class FormModel {
 
     function onInitAutoSave(state) {
       startAutoSave(state)
-    }
-
-    function onSaveError(state, saveError, serverValidationErrors) {
-      state.saveStatus.saveInProgress = false
-      state.saveStatus.saveError = saveError
-      if(serverValidationErrors) {
-        state.validationErrors = Immutable(serverValidationErrors)
-      }
-      return state
     }
 
     function onSaveCompleted(stateFromUiLoop, stateWithServerChanges) {
