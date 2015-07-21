@@ -82,7 +82,7 @@ export default class FormModel {
     const initialState = Bacon.combineTemplate(initialStateTemplate)
     initialState.onValue(function(state) { dispatcher.push(events.initialState, state) })
 
-    const autoSave = _.debounce(function(){dispatcher.push(events.save)}, develQueryParam? 3000 : 3000)
+    const autoSave = _.debounce(function(){dispatcher.push(events.save)}, develQueryParam? 100 : 3000)
 
     function startAutoSave(state) {
       const formOperations = state.extensionApi.formOperations
