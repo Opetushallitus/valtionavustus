@@ -53,11 +53,11 @@ export default class FormModel {
     const previewQueryParam =  query.preview || false
     const develQueryParam =  query.devel || false
 
-    const clientSideValidationP = self.formP.map(initClientSideValidationState)
+    const clientSideValidationP = this.formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
     const initialStateTemplate = {
-      form: self.formP,
+      form: this.formP,
       saveStatus: {
         changes: false,
         saveInProgress: false,
@@ -74,8 +74,8 @@ export default class FormModel {
       validationErrors: Immutable({}),
       clientSideValidation: clientSideValidationP
     }
-    if (_.isFunction(self.initialStateTemplateTransformation)) {
-      self.initialStateTemplateTransformation(initialStateTemplate)
+    if (_.isFunction(this.initialStateTemplateTransformation)) {
+      this.initialStateTemplateTransformation(initialStateTemplate)
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
