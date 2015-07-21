@@ -154,7 +154,7 @@ export default class FormModel {
       const formOperations = state.extensionApi.formOperations
       FieldUpdateHandler.updateStateFromFieldUpdate(state, fieldUpdate)
       if (_.isFunction(formOperations.onFieldUpdate)) {
-        formOperations.onFieldUpdate(state, model, fieldUpdate.field, fieldUpdate.value)
+        formOperations.onFieldUpdate(state, fieldUpdate.field, fieldUpdate.value)
       }
       FieldUpdateHandler.triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
       const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id]

@@ -24,7 +24,7 @@ function containsExistingEntityId(query) {
   return query.hakemus && query.hakemus.length > 0
 }
 
-function isFieldEnabled(saved, formModel, fieldId) {
+function isFieldEnabled(saved, fieldId) {
   const disableExceptions = ["primary-email", "organization"]
   if (_.contains(disableExceptions, fieldId)) {
     return true
@@ -55,7 +55,7 @@ function onFieldValid(state, formModel, field, newFieldValue) {
   }
 }
 
-function onFieldUpdate(state, formModel, field, newFieldValue) {
+function onFieldUpdate(state, field, newFieldValue) {
   if (field.displayAs === "moneyField") {
     VaBudgetCalculator.handleBudgetAmountUpdate(state, field.id)
   }
