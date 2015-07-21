@@ -21,6 +21,9 @@ export default class BasicFieldComponent extends React.Component {
         if(oldValue !== newValue) {
           onChange(field, newValue)
         }
+        else {
+          model.initFieldValidation(field, newValue, true)
+        }
       }
     }
   }

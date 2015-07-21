@@ -160,7 +160,11 @@ export default class FormModel {
       field.skipValidationOnMount = false
       return
     }
-    dispatcher.push(events.fieldValidation, {id: field.id, validationErrors: SyntaxValidator.validateSyntax(field, initialValue)})
+    this.initFieldValidation(field, initialValue, false)
+  }
+
+  initFieldValidation(field, value, showErrorsAlways) {
+    dispatcher.push(events.fieldValidation, {id: field.id, validationErrors: SyntaxValidator.validateSyntax(field, value), showErrorsAlways: showErrorsAlways})
   }
 
   isSaveDraftAllowed(state) {

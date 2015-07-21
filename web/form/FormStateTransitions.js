@@ -58,7 +58,7 @@ export default class FormStateTransitions {
 
   onFieldValidation(state, validation) {
     state.clientSideValidation[validation.id] = validation.validationErrors.length === 0
-    if (state.extensionApi.formOperations.isSaveDraftAllowed(state)) {
+    if (validation.showErrorsAlways || state.extensionApi.formOperations.isSaveDraftAllowed(state)) {
       state.validationErrors = state.validationErrors.merge({[validation.id]: validation.validationErrors})
     }
     return state

@@ -1,6 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 import LocalizedString from './LocalizedString.jsx'
+import BasicFieldComponent from './BasicFieldComponent.jsx'
 import BasicSizedComponent from './BasicSizedComponent.jsx'
 
 export default class BasicTextArea extends BasicSizedComponent {
@@ -19,6 +20,7 @@ export default class BasicTextArea extends BasicSizedComponent {
                 value={props.value}
                 className={classStr}
                 disabled={props.disabled}
+                onBlur={BasicFieldComponent.checkValueOnBlur(props.field, props.htmlId, props.value, props.onChange, props.model)}
                 onChange={e => props.onChange(props.field, e.target.value)} />
       <div id={props.htmlId + ".length"} className="length-left">
         {lengthLeft + " "}
