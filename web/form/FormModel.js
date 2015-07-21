@@ -217,19 +217,19 @@ export default class FormModel {
       return state
     }
 
-    function updateOld(stateToSave, saveType, onSuccessCallback) {
-      var url = model.formOperations.urlCreator.existingFormApiUrl(stateToSave)+ (saveType === saveTypes.submit ? "/submit" : "")
+    function updateOld(state, saveType, onSuccessCallback) {
+      var url = model.formOperations.urlCreator.existingFormApiUrl(state)+ (saveType === saveTypes.submit ? "/submit" : "")
       try {
-        stateToSave.saveStatus.saveInProgress = true
-        qwest.post(url, stateToSave.saveStatus.values, {dataType: "json", async: true})
+        state.saveStatus.saveInProgress = true
+        qwest.post(url, state.saveStatus.values, {dataType: "json", async: true})
             .then(function(response) {
               console.log("Saved to server (", saveType, "). Response=", JSON.stringify(response))
-              const stateFromServer = _.cloneDeep(stateToSave)
-              stateFromServer.saveStatus.values = response["answers"]
+              const updatedState = _.cloneDeep(state)
+              updatedState.saveStatus.values = response["answers"]
               if (onSuccessCallback) {
-                onSuccessCallback(stateFromServer)
+                onSuccessCallback(updatedState)
               }
-              dispatcher.push(events.saveCompleted, stateFromServer)
+              dispatcher.push(events.saveCompleted, updatedState)
             })
             .catch(function(error) {
               handleSaveError(this.status, error, "POST", url, this.response, saveType)
@@ -238,7 +238,7 @@ export default class FormModel {
       catch(error) {
         handleUnexpectedSaveError("POST", url, error, saveType);
       }
-      return stateToSave
+      return state
     }
 
     function onSave(state, params) {
