@@ -38,8 +38,7 @@
         expect(page.validationErrorsSummary()).to.equal("")
       })
     })
-
-    describe('täytettäessä lomaketta', function() {
+    describe('täytettäessä lomaketta, automaattitallennuksen jälkeen', function() {
       before(
         enterValidValuesToPage,
         page.waitAutoSave
@@ -48,6 +47,10 @@
       function removeButtonForOrg(nr) {
         return page.createClickable('#other-organizations-' + nr + ' .soresu-remove')
       }
+
+      it('ei virheitä tallennuksesta', function() {
+        expect(page.saveError()).to.equal('')
+      })
 
       describe('toistuvassa kentässä', function() {
         it('toista riviä ei voi poistaa', function() {
@@ -106,6 +109,51 @@
               it('kolmatta ei voi poistaa', function() {
                 expect(removeButtonForOrg(3).isEnabled()).to.equal(false)
               })
+            })
+          })
+        })
+      })
+
+      describe('server virhetilanteissa lomaketta käsiteltäväksi lähetettäessä', function () {
+        before(
+            mockAjax.init
+        )
+        describe("serveripään validointivirheissä", function() {
+          before(
+              function() { mockAjax.respondOnce("POST", "/api/avustushaku/1/hakemus/", 400, '{"organization":[{"error":"required"}]}') },
+              page.submitAndWaitErrorChange
+          )
+          it("yleinen virhe näytetään", function() {
+            expect(page.saveError()).to.equal('Ei tallennettu - tarkista syöttämäsi tiedot.')
+          })
+          // TODO sinon ei saa lähetettyä response bodyä takaisin
+          it.skip("kentän virhe näytetään", function() {
+            expect(page.error("organization")).to.equal('Pakollinen tieto')
+          })
+          it("nappi on enabloitu", function() {
+            expect(page.submitButton().isEnabled()).to.equal(true)
+          })
+        })
+
+        describe("lähetettäessä, kun serveriltä tulee odottamaton virhe", function() {
+          before(
+              function() { mockAjax.respondOnce("POST", "/api/avustushaku/1/hakemus/", 500, "{}") },
+              page.submitAndWaitErrorChange
+          )
+          describe("epäonnistumisen jälkeen", function() {
+            it("yleinen virhe näytetään", function() {
+              expect(page.saveError()).to.equal('Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.')
+            })
+            it("nappi on enabloitu", function() {
+              expect(page.submitButton().isEnabled()).to.equal(true)
+            })
+          })
+          describe("uudelleen lähetettäessä", function() {
+            before(
+                page.submitAndWaitErrorChange
+            )
+            it("virhe häviää", function() {
+              expect(page.saveError()).to.equal('')
             })
           })
         })

@@ -53,6 +53,40 @@ wait = {
   }
 }
 
+mockAjax = {
+  init: function() {
+    var deferred = Q.defer()
+    if (testFrame().sinon)
+      deferred.resolve()
+    else
+      testFrame().$.getScript('test/lib/sinon-server-1.15.0.js', function() { deferred.resolve() } )
+    return deferred.promise
+  },
+  respondOnce: function (method, url, responseCode, responseBody) {
+    var fakeAjax = function() {
+      var xhr = sinon.useFakeXMLHttpRequest()
+      xhr.useFilters = true
+      xhr.addFilter(function(method, url) {
+        var requestedFakeUrl = url.indexOf(_fakeAjaxParams.url) === 0
+        var notToFake = !requestedFakeUrl || method != _fakeAjaxParams.method
+        return notToFake
+      })
+      xhr.onCreate = function (request) {
+        window.setTimeout(function() {
+          if (window._fakeAjaxParams && request.method === _fakeAjaxParams.method && request.url.indexOf(_fakeAjaxParams.url) === 0) {
+            request.respond(_fakeAjaxParams.responseCode, { "Content-Type": "application/json" }, _fakeAjaxParams.responseBody)
+            xhr.restore()
+            delete _fakeAjaxParams
+          }
+        }, 0)
+      }
+    }
+
+    testFrame()._fakeAjaxParams = { method: method, url: url, responseCode: responseCode, responseBody: responseBody }
+    testFrame().eval("(" + fakeAjax.toString() + ")()")
+  }
+}
+
 function getJson(url) {
   return Q($.ajax({url: url, dataType: "json" }))
 }

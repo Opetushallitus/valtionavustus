@@ -85,7 +85,14 @@ export default class FormStateTransitions {
     console.log('handleSaveError : error ', JSON.stringify(error))
     console.log('handleSaveError : response ', JSON.stringify(response))
     if (status === 400) {
-      dispatcher.push(events.saveError, {error: "submit-validation-errors", validationErrors: JSON.parse(response)})
+      var validationErrors = null
+      try {
+        validationErrors = JSON.parse(response)
+      }
+      catch(e) {
+        console.error("Could not parse validationErrors", response)
+      }
+      dispatcher.push(events.saveError, {error: "submit-validation-errors", validationErrors})
     }
     else{
       FormStateTransitions.handleUnexpectedSaveError(dispatcher, events, method, url, error, saveType)
@@ -171,6 +178,7 @@ export default class FormStateTransitions {
       stateWithServerChanges.saveStatus.saveInProgress = false
       stateWithServerChanges.saveStatus.saveTime = new Date()
       stateWithServerChanges.saveStatus.changes = false
+      stateWithServerChanges.saveStatus.saveError = ""
       return stateWithServerChanges
     }
     stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateWithServerChanges.saveStatus.values)

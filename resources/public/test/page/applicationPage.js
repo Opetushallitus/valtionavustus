@@ -59,15 +59,26 @@ function ApplicationPage() {
       return Clickable(function() { return applicationElement().find("#toggle-language")})
     },
     waitAutoSave: function() {
+      var errorBefore =  api.saveError()
       return wait.until(function() {
-        return api.elementText("pending-changes") != "true" && "Kaikki muutokset tallennettu" === api.saveInfo()
+        return api.elementText("pending-changes") != "true" && "Kaikki muutokset tallennettu" === api.saveInfo() || api.saveError() !== errorBefore
       })()
     },
     submitButton: function() {
       return Clickable(function() { return applicationElement().find("#submit")})
     },
+    submitAndWaitErrorChange: function() {
+      var errorBefore =  api.saveError()
+      api.submitButton().click()
+      return wait.until(function() {
+        return api.saveError() !== errorBefore
+      })()
+    },
     saveInfo: function() {
       return applicationElement().find("#form-controls .info :visible").text()
+    },
+    saveError: function() {
+      return applicationElement().find("#form-error-summary .error:visible").text()
     },
     validationErrorsSummary: function() {
       return applicationElement().find("#validation-errors-summary:not([hidden])").text()
