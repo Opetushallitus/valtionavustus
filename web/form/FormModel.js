@@ -1,5 +1,10 @@
 import Bacon from 'baconjs'
 import _ from 'lodash'
+import qwest from 'qwest'
+import queryString from 'query-string'
+import traverse from 'traverse'
+import Immutable from 'seamless-immutable'
+
 import Dispatcher from './Dispatcher'
 import LocalStorage from './LocalStorage.js'
 import FormBranchGrower from './FormBranchGrower.js'
@@ -8,11 +13,7 @@ import {FieldUpdateHandler} from './FieldUpdateHandler.js'
 import FormUtil from './FormUtil.js'
 import {SyntaxValidator} from './SyntaxValidator.js'
 import JsUtil from './JsUtil.js'
-
-import qwest from 'qwest'
-import queryString from 'query-string'
-import traverse from 'traverse'
-import Immutable from 'seamless-immutable'
+import FormStateTransitions from './FormStateTransitions.js'
 
 const dispatcher = new Dispatcher()
 
@@ -82,7 +83,7 @@ export default class FormModel {
     const initialState = Bacon.combineTemplate(initialStateTemplate)
     initialState.onValue(function(state) { dispatcher.push(events.initialState, state) })
 
-    const autoSave = _.debounce(function(){dispatcher.push(events.save)}, develQueryParam? 100 : 3000)
+    const autoSave = _.debounce(function(){ dispatcher.push(events.save) }, develQueryParam? 100 : 3000)
 
     function startAutoSave(state) {
       const formOperations = state.extensionApi.formOperations
@@ -93,8 +94,9 @@ export default class FormModel {
       return state
     }
 
+    const stateTransitions = new FormStateTransitions()
     const formFieldValuesP = Bacon.update({},
-                                          [dispatcher.stream(events.initialState)], onInitialState,
+                                          [dispatcher.stream(events.initialState)], stateTransitions.onInitialState,
                                           [dispatcher.stream(events.updateField)], onUpdateField,
                                           [dispatcher.stream(events.fieldValidation)], onFieldValidation,
                                           [dispatcher.stream(events.changeLanguage)], onChangeLang,
@@ -133,15 +135,6 @@ export default class FormModel {
         }
       }
       return values
-    }
-
-    function onInitialState(state, realInitialState) {
-      const onInitialStateLoaded = realInitialState.extensionApi.onInitialStateLoaded
-      FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(realInitialState.form.content, realInitialState.saveStatus.values)
-      if (_.isFunction(onInitialStateLoaded)) {
-        onInitialStateLoaded(realInitialState)
-      }
-      return realInitialState
     }
 
     function onChangeLang(state, lang) {
