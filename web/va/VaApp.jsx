@@ -137,7 +137,7 @@ const model = new FormModel({
   "customComponentFactory": new VaComponentFactory(),
   "customPreviewComponentFactory": new VaPreviewComponentFactory()
 })
-const formModelP = model.init()
+const formModelP = FormModel.initialize(model)
 
 formModelP.onValue((state) => {
   if (develQueryParam) {

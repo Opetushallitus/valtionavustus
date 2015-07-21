@@ -43,27 +43,25 @@ export default class FormModel {
     this.formP = props.formP
     this.customComponentFactory = props.customComponentFactory
     this.customPreviewComponentFactory = props.customPreviewComponentFactory
-
   }
 
-  init() {
-    const self = this
+  static initialize(model) {
     const query = queryString.parse(location.search)
     const langQueryParam =  query.lang || 'fi'
     const previewQueryParam =  query.preview || false
     const develQueryParam =  query.devel || false
 
-    const clientSideValidationP = this.formP.map(initClientSideValidationState)
+    const clientSideValidationP = model.formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
     const initialStateTemplate = {
-      form: this.formP,
+      form: model.formP,
       saveStatus: {
         changes: false,
         saveInProgress: false,
         saveTime: null,
         saveError: "",
-        values: getInitialFormValuesPromise(this.formOperations, this.formP)
+        values: getInitialFormValuesPromise(model.formOperations, model.formP)
       },
       configuration: {
         preview: previewQueryParam,
@@ -74,8 +72,8 @@ export default class FormModel {
       validationErrors: Immutable({}),
       clientSideValidation: clientSideValidationP
     }
-    if (_.isFunction(this.initialStateTemplateTransformation)) {
-      this.initialStateTemplateTransformation(initialStateTemplate)
+    if (_.isFunction(model.initialStateTemplateTransformation)) {
+      model.initialStateTemplateTransformation(initialStateTemplate)
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
@@ -83,7 +81,7 @@ export default class FormModel {
 
     const autoSave = _.debounce(function(){dispatcher.push(events.save)}, develQueryParam? 3000 : 3000)
     function startAutoSave(state) {
-      if (self.formOperations.isSaveDraftAllowed(state)) {
+      if (model.formOperations.isSaveDraftAllowed(state)) {
         state.saveStatus.saveInProgress = true
         autoSave()
       }
@@ -134,8 +132,8 @@ export default class FormModel {
 
     function onInitialState(state, realInitialState) {
       FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(realInitialState.form.content, realInitialState.saveStatus.values)
-      if (_.isFunction(self.onInitialStateLoaded)) {
-        self.onInitialStateLoaded(realInitialState)
+      if (_.isFunction(model.onInitialStateLoaded)) {
+        model.onInitialStateLoaded(realInitialState)
       }
       return realInitialState
     }
@@ -146,17 +144,17 @@ export default class FormModel {
     }
 
     function onUpdateField(state, fieldUpdate) {
-      const formOperations = self.formOperations;
+      const formOperations = model.formOperations;
       FieldUpdateHandler.updateStateFromFieldUpdate(state, fieldUpdate)
       if (_.isFunction(formOperations.onFieldUpdate)) {
-        formOperations.onFieldUpdate(state, self, fieldUpdate.field, fieldUpdate.value)
+        formOperations.onFieldUpdate(state, model, fieldUpdate.field, fieldUpdate.value)
       }
       FieldUpdateHandler.triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
       const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id]
       if (clientSideValidationPassed) {
         FormBranchGrower.expandGrowingFieldSetIfNeeded(state, fieldUpdate);
         if (_.isFunction(formOperations.onFieldValid)) {
-          formOperations.onFieldValid(state, self, fieldUpdate.field, fieldUpdate.value)
+          formOperations.onFieldValid(state, model, fieldUpdate.field, fieldUpdate.value)
         }
       }
       state.saveStatus.changes = true
@@ -167,7 +165,7 @@ export default class FormModel {
 
     function onFieldValidation(state, validation) {
       state.clientSideValidation[validation.id] = validation.validationErrors.length === 0
-      if (self.isSaveDraftAllowed(state)) {
+      if (model.isSaveDraftAllowed(state)) {
         state.validationErrors = state.validationErrors.merge({[validation.id]: validation.validationErrors})
       }
       return state
@@ -196,7 +194,7 @@ export default class FormModel {
     }
 
     function saveNew(state, onSuccessCallback) {
-      var url = self.formOperations.urlCreator.newEntityApiUrl(state)
+      var url = model.formOperations.urlCreator.newEntityApiUrl(state)
       try {
         state.saveStatus.saveInProgress = true
         qwest.put(url, state.saveStatus.values, {dataType: "json", async: true})
@@ -220,7 +218,7 @@ export default class FormModel {
     }
 
     function updateOld(stateToSave, saveType, onSuccessCallback) {
-      var url = self.formOperations.urlCreator.existingFormApiUrl(stateToSave)+ (saveType === saveTypes.submit ? "/submit" : "")
+      var url = model.formOperations.urlCreator.existingFormApiUrl(stateToSave)+ (saveType === saveTypes.submit ? "/submit" : "")
       try {
         stateToSave.saveStatus.saveInProgress = true
         qwest.post(url, stateToSave.saveStatus.values, {dataType: "json", async: true})
@@ -245,7 +243,7 @@ export default class FormModel {
 
     function onSave(state, params) {
       const onSuccessCallback = params ? params.onSuccessCallback : undefined
-      if (self.formOperations.isSaveDraftAllowed(state)) {
+      if (model.formOperations.isSaveDraftAllowed(state)) {
         return updateOld(state, saveTypes.autoSave, onSuccessCallback)
       }
       else {
@@ -269,7 +267,7 @@ export default class FormModel {
     function onSaveCompleted(stateFromUiLoop, stateFromServer) {
       // TODO: Resolve updates from UI with updates from server.
       // At the moment we just discard the values from server here.
-      const formOperations = self.formOperations;
+      const formOperations = model.formOperations;
       var locallyStoredValues = LocalStorage.load(formOperations.createUiStateIdentifier, stateFromServer)
       if (!locallyStoredValues) {
         LocalStorage.save(formOperations.createUiStateIdentifier, stateFromServer)
@@ -308,7 +306,7 @@ export default class FormModel {
     function getInitialFormValuesPromise(formOperations, formP) {
       if (formOperations.containsExistingEntityId(query)) {
         return Bacon.fromPromise(
-          qwest.get(self.formOperations.urlCreator.existingFormApiUrlFromQuery(query))
+          qwest.get(model.formOperations.urlCreator.existingFormApiUrlFromQuery(query))
         ).map(function(submission){return submission.answers})
       }
       return formP.map(initDefaultValues)
