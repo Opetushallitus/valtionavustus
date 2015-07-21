@@ -11,6 +11,7 @@ export default class FormContainer extends React.Component {
   render() {
     const model = this.props.model
     const state = this.props.state
+    const formOperations = state.extensionApi.formOperations
     const infoElementValues = this.props.infoElementValues
     const form = state.form
     const validationErrors = state.validationErrors
@@ -46,7 +47,7 @@ export default class FormContainer extends React.Component {
                           state={state}/>
     }
     const openPreview = function() {
-      window.open(model.formOperations.urlCreator.existingSubmissionPreviewUrl(state), "preview")
+      window.open(formOperations.urlCreator.existingSubmissionPreviewUrl(state), "preview")
     }
 
     return (
@@ -69,7 +70,7 @@ export default class FormContainer extends React.Component {
                 <FormErrorSummary formContent={form.content} model={model} saveError={saveStatus.saveError} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
               </div>
             </div>
-            <span hidden={true} id="entity-id">{model.formOperations.printEntityId(state)}</span>
+            <span hidden={true} id="entity-id">{formOperations.printEntityId(state)}</span>
             <span hidden={true} id="pending-changes">{ model.hasPendingChanges(state) ? "true" : "false"}</span>
           </section>
           <section id="container">

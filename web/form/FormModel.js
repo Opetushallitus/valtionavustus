@@ -37,7 +37,6 @@ const events = {
 
 export default class FormModel {
   constructor(props) {
-    this.formOperations = props.formOperations
     this.initialStateTemplateTransformation = props.initialStateTemplateTransformation
     this.onInitialStateLoaded = props.onInitialStateLoaded
     this.formP = props.formP
@@ -45,7 +44,7 @@ export default class FormModel {
     this.customPreviewComponentFactory = props.customPreviewComponentFactory
   }
 
-  static initialize(model) {
+  static initialize(model, formOperations) {
     const query = queryString.parse(location.search)
     const langQueryParam =  query.lang || 'fi'
     const previewQueryParam =  query.preview || false
@@ -61,7 +60,7 @@ export default class FormModel {
         saveInProgress: false,
         saveTime: null,
         saveError: "",
-        values: getInitialFormValuesPromise(model.formOperations, model.formP)
+        values: getInitialFormValuesPromise(formOperations, model.formP)
       },
       configuration: {
         preview: previewQueryParam,
@@ -72,7 +71,7 @@ export default class FormModel {
       validationErrors: Immutable({}),
       clientSideValidation: clientSideValidationP,
       extensionApi: {
-        formOperations: model.formOperations,
+        formOperations: formOperations,
         onInitialStateLoaded: model.onInitialStateLoaded
       }
     }
@@ -161,7 +160,7 @@ export default class FormModel {
       if (clientSideValidationPassed) {
         FormBranchGrower.expandGrowingFieldSetIfNeeded(state, fieldUpdate);
         if (_.isFunction(formOperations.onFieldValid)) {
-          formOperations.onFieldValid(state, model, fieldUpdate.field, fieldUpdate.value)
+          formOperations.onFieldValid(state, fieldUpdate.field, fieldUpdate.value)
         }
       }
       state.saveStatus.changes = true

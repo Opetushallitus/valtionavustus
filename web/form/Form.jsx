@@ -21,7 +21,8 @@ export default class Form extends React.Component {
 
     const renderField = function (field, renderingParameters) {
       const htmlId = model.constructHtmlId(fields, field.id)
-      const fieldDisabled = !model.formOperations.isFieldEnabled(saved, field.id) || field.forceDisabled === true
+      const formOperations = state.extensionApi.formOperations
+      const fieldDisabled = !formOperations.isFieldEnabled(saved, field.id) || field.forceDisabled === true
 
       if (field.type == "formField") {
         var existingInputValue = InputValueStorage.readValue(fields, values, field.id)

@@ -32,7 +32,30 @@ function isFieldEnabled(saved, fieldId) {
   return saved
 }
 
-function onFieldValid(state, formModel, field, newFieldValue) {
+const urlCreator = new UrlCreator({
+    formApiUrl: function(avustusHakuId) { return "/api/form/" + avustusHakuId },
+    newEntityApiUrl: function(state) { return "/api/avustushaku/" + state.avustushaku.id + "/hakemus" },
+    existingFormApiUrl: function(state) {
+      const avustusHakuId = state.avustushaku.id
+      const hakemusId = state.saveStatus.hakemusId
+      return existingFormApiUrl(avustusHakuId, hakemusId)
+    },
+    existingFormApiUrlFromQuery: function(query) {
+      const avustusHakuId = query.avustushaku || 1
+      const hakemusId = query.hakemus
+      return existingFormApiUrl(avustusHakuId, hakemusId)
+    },
+
+    existingSubmissionEditUrl: function(avustusHakuId, hakemusId) { return "/?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId },
+    existingSubmissionPreviewUrl: function(state) {
+      const avustusHakuId = state.avustushaku.id
+      const hakemusId = state.saveStatus.hakemusId
+      return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId
+    }
+  }
+)
+
+function onFieldValid(formModel, state, field, newFieldValue) {
   const fieldId = field.id
   if ("primary-email" === fieldId) {
     function hakemusIdIsAlreadyInUrl() {
@@ -46,7 +69,7 @@ function onFieldValid(state, formModel, field, newFieldValue) {
     formModel.saveImmediately(function(newState, response) {
       const hakemusId = response.id
       newState.saveStatus.hakemusId = hakemusId
-      const newUrl = formModel.formOperations.urlCreator.existingSubmissionEditUrl(newState.avustushaku.id, hakemusId)
+      const newUrl = urlCreator.existingSubmissionEditUrl(newState.avustushaku.id, hakemusId)
       if (typeof (history.pushState) != "undefined") {
         history.pushState({}, window.title, newUrl);
      } else {
@@ -77,29 +100,6 @@ function existingFormApiUrl(avustusHakuId, hakemusId) { return "/api/avustushaku
 
 function avustusHakuApiUrl(avustusHakuId) { return "/api/avustushaku/" + avustusHakuId }
 
-const urlCreator = new UrlCreator({
-    formApiUrl: function(avustusHakuId) { return "/api/form/" + avustusHakuId },
-    newEntityApiUrl: function(state) { return "/api/avustushaku/" + state.avustushaku.id + "/hakemus" },
-    existingFormApiUrl: function(state) {
-      const avustusHakuId = state.avustushaku.id
-      const hakemusId = state.saveStatus.hakemusId
-      return existingFormApiUrl(avustusHakuId, hakemusId)
-    },
-    existingFormApiUrlFromQuery: function(query) {
-      const avustusHakuId = query.avustushaku || 1
-      const hakemusId = query.hakemus
-      return existingFormApiUrl(avustusHakuId, hakemusId)
-    },
-
-    existingSubmissionEditUrl: function(avustusHakuId, hakemusId) { return "/?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId },
-    existingSubmissionPreviewUrl: function(state) {
-      const avustusHakuId = state.avustushaku.id
-      const hakemusId = state.saveStatus.hakemusId
-      return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId
-    }
-  }
-)
-
 function printEntityId(state) {
   return state.saveStatus.hakemusId
 }
@@ -120,24 +120,23 @@ function onInitialStateLoaded(initialState) {
 }
 
 const model = new FormModel({
-  "formOperations": {
-    "containsExistingEntityId": containsExistingEntityId,
-    "isFieldEnabled": isFieldEnabled,
-    "onFieldUpdate": onFieldUpdate,
-    "onFieldValid": onFieldValid,
-    "isSaveDraftAllowed": isSaveDraftAllowed,
-    "onSaveCompletedCallback": onSaveCompletedCallback,
-    "createUiStateIdentifier": createUiStateIdentifier,
-    "urlCreator": urlCreator,
-    "printEntityId": printEntityId
-  },
   "initialStateTemplateTransformation": initialStateTemplateTransformation,
   "onInitialStateLoaded": onInitialStateLoaded,
   "formP": formP,
   "customComponentFactory": new VaComponentFactory(),
   "customPreviewComponentFactory": new VaPreviewComponentFactory()
 })
-const formModelP = FormModel.initialize(model)
+const formModelP = FormModel.initialize(model, {
+  "containsExistingEntityId": containsExistingEntityId,
+  "isFieldEnabled": isFieldEnabled,
+  "onFieldUpdate": onFieldUpdate,
+  "onFieldValid": _.partial(onFieldValid, model),
+  "isSaveDraftAllowed": isSaveDraftAllowed,
+  "onSaveCompletedCallback": onSaveCompletedCallback,
+  "createUiStateIdentifier": createUiStateIdentifier,
+  "urlCreator": urlCreator,
+  "printEntityId": printEntityId
+})
 
 formModelP.onValue((state) => {
   if (develQueryParam) {
