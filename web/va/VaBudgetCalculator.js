@@ -3,7 +3,7 @@ import _ from 'lodash'
 import JsUtil from '../form/JsUtil.js'
 import InputValueStorage from '../form/InputValueStorage.js'
 import {SyntaxValidator} from '../form/SyntaxValidator.js'
-import {FieldUpdateHandler} from '../form/FieldUpdateHandler.js'
+import FieldUpdateHandler from '../form/FieldUpdateHandler.js'
 
 export class VaBudgetCalculator {
   static populateBudgetCalculatedValuesForAllBudgetFields(initialState, editingExistingApplication) {

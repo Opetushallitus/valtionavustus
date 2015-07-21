@@ -9,7 +9,7 @@ import queryString from 'query-string'
 
 import FormContainer from './../form/FormContainer.jsx'
 import FormModel from './../form/FormModel'
-import {FieldUpdateHandler} from './../form/FieldUpdateHandler.js'
+import FieldUpdateHandler from './../form/FieldUpdateHandler.js'
 import UrlCreator from './../form/UrlCreator'
 import JsUtil from './../form/JsUtil.js'
 

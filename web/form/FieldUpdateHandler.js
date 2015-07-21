@@ -6,7 +6,7 @@ import JsUtil from '../form/JsUtil.js'
 import Immutable from 'seamless-immutable'
 import _ from 'lodash'
 
-export class FieldUpdateHandler {
+export default class FieldUpdateHandler {
   static createFieldUpdate(field, value) {
     return {id: field.id,
             field: field,
