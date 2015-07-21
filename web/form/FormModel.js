@@ -70,7 +70,10 @@ export default class FormModel {
         translations: translationsP
       },
       validationErrors: Immutable({}),
-      clientSideValidation: clientSideValidationP
+      clientSideValidation: clientSideValidationP,
+      extensionApi: {
+        formOperations: model.formOperations
+      }
     }
     if (_.isFunction(model.initialStateTemplateTransformation)) {
       model.initialStateTemplateTransformation(initialStateTemplate)
@@ -80,8 +83,10 @@ export default class FormModel {
     initialState.onValue(function(state) { dispatcher.push(events.initialState, state) })
 
     const autoSave = _.debounce(function(){dispatcher.push(events.save)}, develQueryParam? 3000 : 3000)
+
     function startAutoSave(state) {
-      if (model.formOperations.isSaveDraftAllowed(state)) {
+      const formOperations = state.extensionApi.formOperations
+      if (formOperations.isSaveDraftAllowed(state)) {
         state.saveStatus.saveInProgress = true
         autoSave()
       }
@@ -194,7 +199,8 @@ export default class FormModel {
     }
 
     function saveNew(state, onSuccessCallback) {
-      var url = model.formOperations.urlCreator.newEntityApiUrl(state)
+      const formOperations = state.extensionApi.formOperations
+      const url = formOperations.urlCreator.newEntityApiUrl(state)
       try {
         state.saveStatus.saveInProgress = true
         qwest.put(url, state.saveStatus.values, {dataType: "json", async: true})
@@ -218,7 +224,8 @@ export default class FormModel {
     }
 
     function updateOld(state, saveType, onSuccessCallback) {
-      var url = model.formOperations.urlCreator.existingFormApiUrl(state)+ (saveType === saveTypes.submit ? "/submit" : "")
+      const formOperations = state.extensionApi.formOperations
+      const url = formOperations.urlCreator.existingFormApiUrl(state)+ (saveType === saveTypes.submit ? "/submit" : "")
       try {
         state.saveStatus.saveInProgress = true
         qwest.post(url, state.saveStatus.values, {dataType: "json", async: true})
@@ -243,7 +250,8 @@ export default class FormModel {
 
     function onSave(state, params) {
       const onSuccessCallback = params ? params.onSuccessCallback : undefined
-      if (model.formOperations.isSaveDraftAllowed(state)) {
+      const formOperations = state.extensionApi.formOperations
+      if (formOperations.isSaveDraftAllowed(state)) {
         return updateOld(state, saveTypes.autoSave, onSuccessCallback)
       }
       else {
@@ -264,21 +272,21 @@ export default class FormModel {
       return state
     }
 
-    function onSaveCompleted(stateFromUiLoop, stateFromServer) {
+    function onSaveCompleted(stateFromUiLoop, stateWithServerChanges) {
       // TODO: Resolve updates from UI with updates from server.
       // At the moment we just discard the values from server here.
-      const formOperations = model.formOperations;
-      var locallyStoredValues = LocalStorage.load(formOperations.createUiStateIdentifier, stateFromServer)
+      const formOperations = stateFromUiLoop.extensionApi.formOperations
+      var locallyStoredValues = LocalStorage.load(formOperations.createUiStateIdentifier, stateWithServerChanges)
       if (!locallyStoredValues) {
-        LocalStorage.save(formOperations.createUiStateIdentifier, stateFromServer)
-        stateFromServer.saveStatus.saveInProgress = false
-        stateFromServer.saveStatus.saveTime = new Date()
-        stateFromServer.saveStatus.changes = false
-        return stateFromServer
+        LocalStorage.save(formOperations.createUiStateIdentifier, stateWithServerChanges)
+        stateWithServerChanges.saveStatus.saveInProgress = false
+        stateWithServerChanges.saveStatus.saveTime = new Date()
+        stateWithServerChanges.saveStatus.changes = false
+        return stateWithServerChanges
       }
-      stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateFromServer.saveStatus.values)
+      stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateWithServerChanges.saveStatus.values)
       if (_.isFunction(formOperations.onSaveCompletedCallback)) {
-        formOperations.onSaveCompletedCallback(stateFromUiLoop, stateFromServer)
+        formOperations.onSaveCompletedCallback(stateFromUiLoop, stateWithServerChanges)
       }
       stateFromUiLoop.saveStatus.saveInProgress = false
       stateFromUiLoop.saveStatus.saveTime = new Date()
@@ -306,7 +314,7 @@ export default class FormModel {
     function getInitialFormValuesPromise(formOperations, formP) {
       if (formOperations.containsExistingEntityId(query)) {
         return Bacon.fromPromise(
-          qwest.get(model.formOperations.urlCreator.existingFormApiUrlFromQuery(query))
+          qwest.get(formOperations.urlCreator.existingFormApiUrlFromQuery(query))
         ).map(function(submission){return submission.answers})
       }
       return formP.map(initDefaultValues)
@@ -349,7 +357,8 @@ export default class FormModel {
   }
 
   isSaveDraftAllowed(state) {
-    return this.formOperations.isSaveDraftAllowed(state)
+    const formOperations = state.extensionApi.formOperations
+    return formOperations.isSaveDraftAllowed(state)
   }
 
   removeField(field) {
