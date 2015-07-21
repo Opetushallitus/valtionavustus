@@ -1,4 +1,5 @@
 import React from 'react'
+import BasicFieldComponent from './BasicFieldComponent.jsx'
 import BasicSizedComponent from './BasicSizedComponent.jsx'
 
 export default class BasicTextField extends BasicSizedComponent {
@@ -27,6 +28,7 @@ export default class BasicTextField extends BasicSizedComponent {
         value={props.value}
         className={classStr}
         disabled={props.disabled}
+        onBlur={BasicFieldComponent.checkValueOnBlur(props.field, props.htmlId, props.value, props.onChange, props.model)}
         onChange={e => props.onChange(props.field, e.target.value)}
         />
     </div>)

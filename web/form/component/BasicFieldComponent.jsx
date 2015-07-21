@@ -13,6 +13,18 @@ export default class BasicFieldComponent extends React.Component {
     this.props.model.componentDidMount(this.props.field, this.props.value)
   }
 
+  static checkValueOnBlur(field, htmlId, oldValue, onChange, model) {
+    return function() {
+      const element = document.getElementById(htmlId)
+      if(element) {
+        const newValue = element.value
+        if(oldValue !== newValue) {
+          onChange(field, newValue)
+        }
+      }
+    }
+  }
+
   label(className) {
     if (this.hideLabel() || !this.props.field.label) return undefined
     else {
