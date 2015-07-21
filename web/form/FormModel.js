@@ -53,9 +53,6 @@ export default class FormModel {
     const previewQueryParam =  query.preview || false
     const develQueryParam =  query.devel || false
 
-    const formValuesP = self.formOperations.containsExistingEntityId(query) ?
-      Bacon.fromPromise(qwest.get(self.formOperations.urlCreator.existingFormApiUrlFromQuery(query))).map(function(submission){return submission.answers}) :
-      self.formP.map(initDefaultValues)
     const clientSideValidationP = self.formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
@@ -66,7 +63,7 @@ export default class FormModel {
         saveInProgress: false,
         saveTime: null,
         saveError: "",
-        values: formValuesP
+        values: getInitialFormValuesPromise(this.formOperations, this.formP)
       },
       configuration: {
         preview: previewQueryParam,
@@ -304,6 +301,15 @@ export default class FormModel {
       _.remove(growingParent.children, fieldToRemove)
       startAutoSave(state)
       return state
+    }
+
+    function getInitialFormValuesPromise(formOperations, formP) {
+      if (formOperations.containsExistingEntityId(query)) {
+        return Bacon.fromPromise(
+          qwest.get(self.formOperations.urlCreator.existingFormApiUrlFromQuery(query))
+        ).map(function(submission){return submission.answers})
+      }
+      return formP.map(initDefaultValues)
     }
   }
 
