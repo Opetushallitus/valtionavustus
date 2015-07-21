@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import qwest from 'qwest'
+import Immutable from 'seamless-immutable'
 
 import LocalStorage from './LocalStorage.js'
 import FormBranchGrower from './FormBranchGrower.js'
@@ -69,25 +70,25 @@ export default class FormStateTransitions {
     return state
   }
 
-  handleUnexpectedSaveError(method, url, error, saveType) {
+  static handleUnexpectedSaveError(dispatcher, events, method, url, error, saveType) {
     console.error("Unexpected ", saveType, " error ", error, " in ", method, " to ", url)
     if (saveType === saveTypes.submit) {
-      this.dispatcher.push(this.events.saveError, "unexpected-submit-error")
+      dispatcher.push(events.saveError, {error: "unexpected-submit-error"})
     } else if (saveType === saveTypes.initialSave) {
-      this.dispatcher.push(this.events.saveError, "unexpected-save-error")
+      dispatcher.push(events.saveError, {error: "unexpected-save-error"})
     } else {
-      this.dispatcher.push(this.events.initAutoSave)
+      dispatcher.push(events.initAutoSave)
     }
   }
 
-  handleSaveError(status, error, method, url, response, saveType) {
+  static handleSaveError(dispatcher, events, status, error, method, url, response, saveType) {
     console.log('handleSaveError : error ', JSON.stringify(error))
     console.log('handleSaveError : response ', JSON.stringify(response))
     if (status === 400) {
-      this.dispatcher.push(this.events.saveError, "submit-validation-errors",  JSON.parse(response))
+      dispatcher.push(events.saveError, {error: "submit-validation-errors", validationErrors: JSON.parse(response)})
     }
     else{
-      this.handleUnexpectedSaveError(method, url, error, saveType)
+      FormStateTransitions.handleUnexpectedSaveError(dispatcher, events, method, url, error, saveType)
     }
   }
 
@@ -96,7 +97,6 @@ export default class FormStateTransitions {
     const url = formOperations.urlCreator.newEntityApiUrl(state)
     const dispatcher = this.dispatcher
     const events = this.events
-    const handleSaveError = this.handleSaveError
     try {
       state.saveStatus.saveInProgress = true
       qwest.put(url, state.saveStatus.values, {dataType: "json", async: true})
@@ -110,11 +110,11 @@ export default class FormStateTransitions {
           dispatcher.push(events.saveCompleted, stateSkeletonFromServer)
         })
         .catch(function(error) {
-          handleSaveError(this.status, error, "PUT", url, this.response, saveTypes.initialSave)
+            FormStateTransitions.handleSaveError(dispatcher, events, this.status, error, "PUT", url, this.response, saveTypes.initialSave)
         })
     }
     catch(error) {
-      return this.handleUnexpectedSaveError("PUT", url, error, saveTypes.initialSave);
+      return FormStateTransitions.handleUnexpectedSaveError(dispatcher, events, "PUT", url, error, saveTypes.initialSave);
     }
     return state
   }
@@ -124,7 +124,6 @@ export default class FormStateTransitions {
     const url = formOperations.urlCreator.existingFormApiUrl(state)+ (saveType === saveTypes.submit ? "/submit" : "")
     const dispatcher = this.dispatcher
     const events = this.events
-    const handleSaveError = this.handleSaveError
     try {
       state.saveStatus.saveInProgress = true
       qwest.post(url, state.saveStatus.values, {dataType: "json", async: true})
@@ -138,11 +137,11 @@ export default class FormStateTransitions {
           dispatcher.push(events.saveCompleted, updatedState)
         })
         .catch(function(error) {
-          handleSaveError(this.status, error, "POST", url, this.response, saveType)
+            FormStateTransitions.handleSaveError(dispatcher, events, this.status, error, "POST", url, this.response, saveType)
         })
     }
     catch(error) {
-      this.handleUnexpectedSaveError("POST", url, error, saveType);
+      FormStateTransitions.handleUnexpectedSaveError(dispatcher, events, "POST", url, error, saveType);
     }
     return state
   }
@@ -201,11 +200,11 @@ export default class FormStateTransitions {
     return state
   }
 
-  onSaveError(state, saveError, serverValidationErrors) {
+  onSaveError(state, serverErrors) {
     state.saveStatus.saveInProgress = false
-    state.saveStatus.saveError = saveError
-    if(serverValidationErrors) {
-      state.validationErrors = Immutable(serverValidationErrors)
+    state.saveStatus.saveError = serverErrors.error
+    if(serverErrors.validationErrors) {
+      state.validationErrors = Immutable(serverErrors.validationErrors)
     }
     return state
   }
