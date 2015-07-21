@@ -72,7 +72,8 @@ export default class FormModel {
       validationErrors: Immutable({}),
       clientSideValidation: clientSideValidationP,
       extensionApi: {
-        formOperations: model.formOperations
+        formOperations: model.formOperations,
+        onInitialStateLoaded: model.onInitialStateLoaded
       }
     }
     if (_.isFunction(model.initialStateTemplateTransformation)) {
@@ -136,9 +137,10 @@ export default class FormModel {
     }
 
     function onInitialState(state, realInitialState) {
+      const onInitialStateLoaded = realInitialState.extensionApi.onInitialStateLoaded
       FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(realInitialState.form.content, realInitialState.saveStatus.values)
-      if (_.isFunction(model.onInitialStateLoaded)) {
-        model.onInitialStateLoaded(realInitialState)
+      if (_.isFunction(onInitialStateLoaded)) {
+        onInitialStateLoaded(realInitialState)
       }
       return realInitialState
     }
