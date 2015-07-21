@@ -126,7 +126,7 @@ const model = new FormModel({
   "customComponentFactory": new VaComponentFactory(),
   "customPreviewComponentFactory": new VaPreviewComponentFactory()
 })
-const formModelP = FormModel.initialize(model, {
+const formModelP = model.initialize(model, {
   "containsExistingEntityId": containsExistingEntityId,
   "isFieldEnabled": isFieldEnabled,
   "onFieldUpdate": onFieldUpdate,
