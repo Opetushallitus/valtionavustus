@@ -35,6 +35,10 @@ export default class FormErrorSummary extends React.Component {
     })
   }
 
+  static determineCssClass(isOpen) {
+    return isOpen ? "open" : "closed"
+  }
+
   render() {
     const lang = this.props.lang
     const formContent = this.props.formContent
@@ -46,14 +50,14 @@ export default class FormErrorSummary extends React.Component {
     const fieldErrorMessageElements = _.map(fieldsWithErrorsAndClosestParents, x => {
       return this.renderFieldErrors(formContent, x.field, x.closestParent, x.errors, lang)
     })
+    const openStateClassName = FormErrorSummary.determineCssClass(this.state.open)
     return (
       <div id="form-error-summary" hidden={invalidFieldsCount === 0 && saveError.length === 0}>
         <div hidden={saveError.length === 0} className="error">{saveError}</div>
-        <a onClick={this.toggleOpen} role="button" className="error" id="validation-errors-summary" hidden={invalidFieldsCount === 0}>
+        <a onClick={this.toggleOpen} role="button" className={"error " + openStateClassName} id="validation-errors-summary" hidden={invalidFieldsCount === 0}>
           {translator.translate("validation-errors", lang, null, {kpl: invalidFieldsCount})}
         </a>
         <div className="popup" hidden={!this.state.open || invalidFieldsCount === 0} id="validation-errors">
-          <a role="button" className="popup-close" onClick={this.toggleOpen}>&times;</a>
           {fieldErrorMessageElements}
         </div>
       </div>

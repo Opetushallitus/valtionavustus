@@ -78,8 +78,9 @@ function ApplicationPage() {
     validationErrors: function() {
       return applicationElement().find("#validation-errors:not([hidden])")
     },
-    validationErrorsCloseButton: function() {
-      return Clickable(function() { return applicationElement().find("#validation-errors .popup-close")})
+    detailedValidationErrors: function() {
+      const errorMessageElements = applicationElement().find("#validation-errors").find('div.error')
+      return _.map(errorMessageElements, function(element) { return S(element).text() })
     },
     error: function(field) {
       return applicationElement().find("#" + escapeSelector(field) + "-error").first().text()
@@ -89,13 +90,6 @@ function ApplicationPage() {
     },
     previewButton: function() {
       return Clickable(function() { return applicationElement().find("button:contains(Tallennettu versio)")})
-    },
-    errorSummaryLink: function() {
-      return Clickable(function() { return applicationElement().find("#validation-errors-summary")})
-    },
-    detailedValidationErrors: function() {
-      const errorMessageElements = applicationElement().find("#validation-errors").find('div.error')
-      return _.map(errorMessageElements, function(element) { return S(element).text() })
     },
     getInput: function(name) {
       return Input(function () {

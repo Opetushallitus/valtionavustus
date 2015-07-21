@@ -235,9 +235,9 @@
                   })
                 })
               })
-              describe('painettaessa x nappia virhe popupissa', function () {
+              describe('klikattaessa virheyhteenvetoa uudestaan', function () {
                 before(
-                    page.validationErrorsCloseButton().click
+                    page.validationErrorsButton().click
                 )
                 it('virhekuvakset eivät ole enää näkyvissä', function () {
                   expect(page.validationErrors().length).to.equal(0)
