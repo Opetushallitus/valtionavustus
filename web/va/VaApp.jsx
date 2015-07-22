@@ -8,7 +8,7 @@ import _ from 'lodash'
 import queryString from 'query-string'
 
 import FormContainer from './../form/FormContainer.jsx'
-import FormModel from './../form/FormModel'
+import FormController from './../form/FormController'
 import FieldUpdateHandler from './../form/FieldUpdateHandler.js'
 import UrlCreator from './../form/UrlCreator'
 import JsUtil from './../form/JsUtil.js'
@@ -55,7 +55,7 @@ const urlCreator = new UrlCreator({
   }
 )
 
-function onFieldValid(formModel, state, field, newFieldValue) {
+function onFieldValid(formController, state, field, newFieldValue) {
   const fieldId = field.id
   if ("primary-email" === fieldId) {
     function hakemusIdIsAlreadyInUrl() {
@@ -66,7 +66,7 @@ function onFieldValid(formModel, state, field, newFieldValue) {
     if (hakemusIdIsAlreadyInUrl()) {
       return
     }
-    formModel.saveImmediately(function(newState, response) {
+    formController.saveImmediately(function(newState, response) {
       const hakemusId = response.id
       newState.saveStatus.hakemusId = hakemusId
       const newUrl = urlCreator.existingSubmissionEditUrl(newState.avustushaku.id, hakemusId)
@@ -119,18 +119,18 @@ function onInitialStateLoaded(initialState) {
   VaBudgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(initialState, editingExistingApplication)
 }
 
-const model = new FormModel({
+const controller = new FormController({
   "initialStateTemplateTransformation": initialStateTemplateTransformation,
   "onInitialStateLoaded": onInitialStateLoaded,
   "formP": formP,
   "customComponentFactory": new VaComponentFactory(),
   "customPreviewComponentFactory": new VaPreviewComponentFactory()
 })
-const formModelP = model.initialize(model, {
+const formModelP = controller.initialize({
   "containsExistingEntityId": containsExistingEntityId,
   "isFieldEnabled": isFieldEnabled,
   "onFieldUpdate": onFieldUpdate,
-  "onFieldValid": _.partial(onFieldValid, model),
+  "onFieldValid": _.partial(onFieldValid, controller),
   "isSaveDraftAllowed": isSaveDraftAllowed,
   "onSaveCompletedCallback": onSaveCompletedCallback,
   "createUiStateIdentifier": createUiStateIdentifier,
@@ -144,7 +144,7 @@ formModelP.onValue((state) => {
   }
   try {
     React.render(
-      <FormContainer model={model}
+      <FormContainer controller={controller}
                      state={state}
                      infoElementValues={state.avustushaku}
       />,

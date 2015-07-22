@@ -13,23 +13,23 @@ export default class FormStateLoop {
     this.events = events
   }
 
-  initialize(model, formOperations, query) {
+  initialize(controller, formOperations, query) {
     const queryParams = {
       lang: query.lang || 'fi',
       preview: query.preview || false,
       devel: query.devel || false
     }
-    const clientSideValidationP = model.formP.map(initClientSideValidationState)
+    const clientSideValidationP = controller.formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
 
     const initialStateTemplate = {
-      form: model.formP,
+      form: controller.formP,
       saveStatus: {
         changes: false,
         saveInProgress: false,
         saveTime: null,
         saveError: "",
-        values: getInitialFormValuesPromise(formOperations, model.formP, query)
+        values: getInitialFormValuesPromise(formOperations, controller.formP, query)
       },
       configuration: {
         preview: queryParams.preview,
@@ -41,12 +41,12 @@ export default class FormStateLoop {
       clientSideValidation: clientSideValidationP,
       extensionApi: {
         formOperations: formOperations,
-        onInitialStateLoaded: model.onInitialStateLoaded
+        onInitialStateLoaded: controller.onInitialStateLoaded
       }
     }
 
-    if (_.isFunction(model.initialStateTemplateTransformation)) {
-      model.initialStateTemplateTransformation(initialStateTemplate)
+    if (_.isFunction(controller.initialStateTemplateTransformation)) {
+      controller.initialStateTemplateTransformation(initialStateTemplate)
     }
 
     const dispatcher = this.dispatcher

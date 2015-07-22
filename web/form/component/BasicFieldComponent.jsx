@@ -10,10 +10,10 @@ export default class BasicFieldComponent extends React.Component {
   }
 
   componentDidMount() {
-    this.props.model.componentDidMount(this.props.field, this.props.value)
+    this.props.controller.componentDidMount(this.props.field, this.props.value)
   }
 
-  static checkValueOnBlur(field, htmlId, oldValue, onChange, model) {
+  static checkValueOnBlur(field, htmlId, oldValue, onChange, controller) {
     return function() {
       const element = document.getElementById(htmlId)
       if(element) {
@@ -22,7 +22,7 @@ export default class BasicFieldComponent extends React.Component {
           onChange(field, newValue)
         }
         else {
-          model.initFieldValidation(field, newValue, true)
+          controller.initFieldValidation(field, newValue, true)
         }
       }
     }

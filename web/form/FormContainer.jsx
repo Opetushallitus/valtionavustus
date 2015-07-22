@@ -9,7 +9,7 @@ import _ from 'lodash'
 
 export default class FormContainer extends React.Component {
   render() {
-    const model = this.props.model
+    const controller = this.props.controller
     const state = this.props.state
     const formOperations = state.extensionApi.formOperations
     const infoElementValues = this.props.infoElementValues
@@ -28,7 +28,7 @@ export default class FormContainer extends React.Component {
     var formElement
 
     if (preview) {
-      formElement = <FormPreview model={model}
+      formElement = <FormPreview controller={controller}
                                  infoElementValues={infoElementValues}
                                  form={form}
                                  lang={lang}
@@ -36,13 +36,13 @@ export default class FormContainer extends React.Component {
                                  values={values}
                                  state={state}/>
     } else {
-      formElement = <Form model={model}
+      formElement = <Form controller={controller}
                           validationErrors={validationErrors}
                           infoElementValues={infoElementValues}
                           translations={translations}
                           form={form}
                           lang={lang}
-                          saved={model.isSaveDraftAllowed(state)}
+                          saved={controller.isSaveDraftAllowed(state)}
                           values={values}
                           state={state}/>
     }
@@ -58,20 +58,20 @@ export default class FormContainer extends React.Component {
               <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
               <div id="form-controls" hidden={preview}>
                 <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang}/>
-                <button id="submit" type="submit" className="soresu-text-button" onClick={model.submit} disabled={!(formIsValid && model.isSaveDraftAllowed(state)) || model.hasPendingChanges(state)}>
+                <button id="submit" type="submit" className="soresu-text-button" onClick={controller.submit} disabled={!(formIsValid && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state)}>
                   <LocalizedString translations={translations.form} translationKey="submit" lang={lang}/>
                 </button>
                 <span id="form-controls-devel" hidden={!configuration.develMode}>
-                  <ToggleLanguageButton id="toggle-language" model={model} languages={translations.languages} lang={lang}/>
-                  <button type="button" className="soresu-text-button" onClick={openPreview} disabled={!model.isSaveDraftAllowed(state)}>
+                  <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>
+                  <button type="button" className="soresu-text-button" onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)}>
                     <LocalizedString translations={translations.form} translationKey="preview" lang={lang} />
                   </button>
                 </span>
-                <FormErrorSummary formContent={form.content} model={model} saveError={saveStatus.saveError} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
+                <FormErrorSummary formContent={form.content} controller={controller} saveError={saveStatus.saveError} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
               </div>
             </div>
             <span hidden={true} id="entity-id">{formOperations.printEntityId(state)}</span>
-            <span hidden={true} id="pending-changes">{ model.hasPendingChanges(state) ? "true" : "false"}</span>
+            <span hidden={true} id="pending-changes">{ controller.hasPendingChanges(state) ? "true" : "false"}</span>
           </section>
           <section id="container">
             {formElement}

@@ -11,7 +11,7 @@ export default class FormErrorSummary extends React.Component {
   constructor(props) {
     super(props)
     this.translations = this.props.translations
-    this.model = this.props.model
+    this.controller = this.props.controller
     this.toggleOpen = this.toggleOpen.bind(this)
     this.state = { open: false }
   }
@@ -87,7 +87,7 @@ export default class FormErrorSummary extends React.Component {
   renderFieldErrors(formContent, field, closestParent, errors, lang) {
     const fieldErrors = []
     const labelHolder = field.label ? field : closestParent
-    const htmlId = this.model.constructHtmlId(formContent, field.id)
+    const htmlId = this.controller.constructHtmlId(formContent, field.id)
     for (var i = 0; i < errors.length; i++) {
       const error = errors[i]
       const key = htmlId+ "-validation-error-" + error.error

@@ -10,9 +10,9 @@ export default class ToggleLanguageButton extends React.Component {
         nextLangLabel = this.props.languages[key]
       }
     }
-    const model = this.props.model
+    const controller = this.props.controller
     const handleClick = function() {
-      model.changeLanguage(nextLang)
+      controller.changeLanguage(nextLang)
     }
     return (<button type="button" className="soresu-text-button" id={this.props.id} onClick={handleClick}>{nextLangLabel}</button>)
   }

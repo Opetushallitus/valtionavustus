@@ -11,7 +11,7 @@ export default class Form extends React.Component {
     const form = this.props.form
     const fields = form.content
     const lang = this.props.lang
-    const model = this.props.model
+    const controller = this.props.controller
     const values = this.props.values
     const infoElementValues = this.props.infoElementValues.content
     const validationErrors = this.props.validationErrors
@@ -20,7 +20,7 @@ export default class Form extends React.Component {
     const state = this.props.state
 
     const renderField = function (field, renderingParameters) {
-      const htmlId = model.constructHtmlId(fields, field.id)
+      const htmlId = controller.constructHtmlId(fields, field.id)
       const formOperations = state.extensionApi.formOperations
       const fieldDisabled = !formOperations.isFieldEnabled(saved, field.id) || field.forceDisabled === true
 
@@ -30,7 +30,7 @@ export default class Form extends React.Component {
         const fieldErrors = _.get(validationErrors, field.id, [])
         return <FormComponent validationErrors={fieldErrors}
                               translations={translations}
-                              model={model}
+                              controller={controller}
                               lang={lang}
                               key={htmlId}
                               htmlId={htmlId}
@@ -38,7 +38,7 @@ export default class Form extends React.Component {
                               field={field}
                               renderingParameters={renderingParameters}
                               disabled={fieldDisabled}
-                              onChange={model.componentOnChangeListener}/>
+                              onChange={controller.componentOnChangeListener}/>
       } else if (field.type == "infoElement") {
         return <InfoElement key={htmlId}
                             htmlId={htmlId}
@@ -53,7 +53,7 @@ export default class Form extends React.Component {
             const result = _.isObject(renderingParameters) ? _.cloneDeep(renderingParameters) : { }
             result.childIndex = childIndex
             result.removeMe = function() {
-              model.removeField(field.children[childIndex])
+              controller.removeField(field.children[childIndex])
             }
             const isFirstChild = childIndex === 0
             if (field.params && field.params.showOnlyFirstLabels === true && !isFirstChild) {
@@ -81,8 +81,8 @@ export default class Form extends React.Component {
                                  disabled={fieldDisabled}
                                  translations={translations}
                                  renderingParameters={renderingParameters}
-                                 model={model}
-                                 customProps={model.getCustomWrapperComponentProperties(state)}
+                                 controller={controller}
+                                 customProps={controller.getCustomWrapperComponentProperties(state)}
                                  answersObject={values} />
       }
     }

@@ -21,7 +21,7 @@ const events = {
   removeField: 'removeField'
 }
 
-export default class FormModel {
+export default class FormController {
   constructor(props) {
     this.initialStateTemplateTransformation = props.initialStateTemplateTransformation
     this.onInitialStateLoaded = props.onInitialStateLoaded
@@ -31,9 +31,9 @@ export default class FormModel {
     this.stateLoop = new FormStateLoop(dispatcher, events)
   }
 
-  initialize(model, formOperations) {
+  initialize(formOperations) {
     const query = queryString.parse(location.search)
-    return this.stateLoop.initialize(model, formOperations, query)
+    return this.stateLoop.initialize(this, formOperations, query)
   }
 
   // Public API
@@ -89,7 +89,7 @@ export default class FormModel {
 
   createCustomComponent(componentProps) {
     if (!this.customComponentFactory) {
-      throw new Error("To create a custom field, supply customComponentFactory to FormModel")
+      throw new Error("To create a custom field, supply customComponentFactory to FormController")
     }
     return this.customComponentFactory.createComponent(componentProps)
   }
@@ -100,7 +100,7 @@ export default class FormModel {
 
   createCustomPreviewComponent(componentProps) {
     if (!this.customPreviewComponentFactory) {
-      throw new Error("To create a custom field, supply customComponentFactory to FormModel")
+      throw new Error("To create a custom field, supply customComponentFactory to FormController")
     }
     return this.customPreviewComponentFactory.createComponent(componentProps)
   }

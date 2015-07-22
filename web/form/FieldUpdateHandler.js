@@ -1,10 +1,9 @@
-import FormModel from './FormModel.js'
+import Immutable from 'seamless-immutable'
+import _ from 'lodash'
+
 import InputValueStorage from './InputValueStorage.js'
 import SyntaxValidator from './SyntaxValidator.js'
 import JsUtil from '../form/JsUtil.js'
-
-import Immutable from 'seamless-immutable'
-import _ from 'lodash'
 
 export default class FieldUpdateHandler {
   static createFieldUpdate(field, value) {

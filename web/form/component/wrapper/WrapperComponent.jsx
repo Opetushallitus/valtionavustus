@@ -20,10 +20,10 @@ export default class WrapperComponent extends React.Component {
   render() {
     const field = this.props.field
     const displayAs = field.displayAs
-    const model = this.props.model
+    const controller = this.props.controller
 
-    if (displayAs in model.getCustomComponentTypeMapping()) {
-      return model.createCustomComponent(this.props)
+    if (displayAs in controller.getCustomComponentTypeMapping()) {
+      return controller.createCustomComponent(this.props)
     } else {
       return this.componentFactory.createComponent(this.props)
     }

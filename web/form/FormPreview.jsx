@@ -11,17 +11,17 @@ export default class FormPreview extends React.Component {
     const fields = this.props.form.content
     const lang = this.props.lang
     const translations = this.props.translations
-    const model = this.props.model
+    const controller = this.props.controller
     const values = this.props.values
     const infoElementValues = this.props.infoElementValues.content
     const state = this.props.state
 
     const renderField = function (field, renderingParameters) {
-      const htmlId = model.constructHtmlId(fields, field.id)
+      const htmlId = controller.constructHtmlId(fields, field.id)
       if (field.type == "formField") {
         var existingInputValue = InputValueStorage.readValue(fields, values, field.id)
         const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
-        return <FormPreviewComponent model={model}
+        return <FormPreviewComponent controller={controller}
                                      lang={lang}
                                      key={htmlId}
                                      htmlId={htmlId}
@@ -61,8 +61,8 @@ export default class FormPreview extends React.Component {
                                         children={children}
                                         translations={translations}
                                         renderingParameters={renderingParameters}
-                                        model={model}
-                                        customProps={model.getCustomWrapperComponentProperties(state)}
+                                        controller={controller}
+                                        customProps={controller.getCustomWrapperComponentProperties(state)}
                                         answersObject={values} />
       }
     }

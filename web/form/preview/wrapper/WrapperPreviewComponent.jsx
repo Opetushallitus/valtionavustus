@@ -20,10 +20,10 @@ export default class WrapperPreviewComponent extends React.Component {
   render() {
     const field = this.props.field
     const displayAs = field.displayAs
-    const model = this.props.model
+    const controller = this.props.controller
 
-    if (displayAs in model.getCustomPreviewComponentTypeMapping()) {
-      return model.createCustomPreviewComponent(this.props)
+    if (displayAs in controller.getCustomPreviewComponentTypeMapping()) {
+      return controller.createCustomPreviewComponent(this.props)
     } else {
       return this.componentFactory.createComponent(this.props)
     }

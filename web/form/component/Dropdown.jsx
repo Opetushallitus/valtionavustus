@@ -23,7 +23,7 @@ export default class Dropdown extends BasicFieldComponent {
       <select id={props.htmlId}
               name={props.htmlId}
               disabled={props.disabled}
-              model={props.model}
+              controller={props.controller}
               onChange={e => props.onChange(props.field, e.target.value)}
               value={props.value}>
         {options}
