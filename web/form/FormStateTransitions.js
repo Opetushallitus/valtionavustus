@@ -106,6 +106,7 @@ export default class FormStateTransitions {
           }
           var stateSkeletonFromServer = _.cloneDeep(state)
           stateSkeletonFromServer.saveStatus.values = null // state from server is not loaded at all on initial save, so this will be null
+          stateSkeletonFromServer.validationErrors = Immutable(stateSkeletonFromServer.validationErrors)
           dispatcher.push(events.saveCompleted, stateSkeletonFromServer)
         })
         .catch(function(error, response) {
@@ -130,6 +131,7 @@ export default class FormStateTransitions {
           console.log("Saved to server (", saveType, "). Response=", JSON.stringify(response))
           const updatedState = _.cloneDeep(state)
           updatedState.saveStatus.values = response["answers"]
+          updatedState.validationErrors = Immutable(updatedState.validationErrors)
           if (onSuccessCallback) {
             onSuccessCallback(updatedState)
           }
