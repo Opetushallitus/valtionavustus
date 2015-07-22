@@ -55,7 +55,7 @@ export default class FormErrorSummary extends React.Component {
     return (
       <div id="form-error-summary" hidden={invalidFieldsCount === 0 && saveError.length === 0}>
         <div hidden={saveError.length === 0} className="error">{saveError}</div>
-        <a onClick={this.toggleOpen} role="button" className={"error " + openStateClassName} id="validation-errors-summary" hidden={invalidFieldsCount === 0}>
+        <a onClick={this.toggleOpen} role="button" className={"error opener-handle " + openStateClassName} id="validation-errors-summary" hidden={invalidFieldsCount === 0}>
           {translator.translate("validation-errors", lang, null, {kpl: invalidFieldsCount})}
         </a>
         <div className="popup" hidden={!this.state.open || invalidFieldsCount === 0} id="validation-errors">

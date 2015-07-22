@@ -70,7 +70,7 @@ class AccordionInfoElement extends React.Component {
     const accordionStateClassName = AccordionInfoElement.determineCssClass(this.state.open)
     return (
         <div>
-          <LocalizedString onClick={this.handleClick} className={"accordion-title " + accordionStateClassName} translations={infoObject} translationKey="label" lang={lang}/>
+          <LocalizedString onClick={this.handleClick} className={"accordion-title opener-handle " + accordionStateClassName} translations={infoObject} translationKey="label" lang={lang}/>
           <div className={"accordion " + accordionStateClassName}>
             <ul id={key}>
                 {items}

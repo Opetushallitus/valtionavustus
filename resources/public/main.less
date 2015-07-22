@@ -112,20 +112,6 @@ ul {
       clear: left
     }
 
-    #validation-errors-summary {
-      &.closed:after {
-        vertical-align: bottom;
-        content: " \02C5";
-        font-family: Arial, sans-serif;
-      }
-
-      &.open:after {
-        vertical-align: bottom;
-        content: " \02C4";
-        font-family: Arial, sans-serif;
-      }
-    }
-
     button {
       margin-top: 5px;
     }
@@ -571,8 +557,7 @@ button[disabled].soresu-text-button {
     max-height: 320px; /* This should be slightly greater than real max height, and given to make slide animation work */
   }
 }
-
-.accordion-title {
+.opener-handle {
   color: @dark-blue;
   cursor: pointer;
 
