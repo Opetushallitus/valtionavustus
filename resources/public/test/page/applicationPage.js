@@ -93,9 +93,6 @@ function ApplicationPage() {
       const errorMessageElements = applicationElement().find("#validation-errors").find('div.error')
       return _.map(errorMessageElements, function(element) { return S(element).text() })
     },
-    error: function(field) {
-      return applicationElement().find("#" + escapeSelector(field) + "-error").first().text()
-    },
     classAttributeOf: function(htmlId) {
       return applicationElement().find("#" + escapeSelector(htmlId)).first().attr("class")
     },

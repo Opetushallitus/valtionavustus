@@ -120,31 +120,41 @@
         )
         describe("serveripään validointivirheissä", function() {
           before(
-              function() { mockAjax.respondOnce("POST", "/api/avustushaku/1/hakemus/", 400, '{"organization":[{"error":"required"}]}') },
+              function() { mockAjax.respondOnce("POST", "/api/avustushaku/1/hakemus/", 400, {organization:[{error:"required"}]}) },
               page.submitAndWaitErrorChange
           )
-          it("yleinen virhe näytetään", function() {
-            expect(page.saveError()).to.equal('Ei tallennettu - tarkista syöttämäsi tiedot.')
+          describe("epäonnistumisen jälkeen", function() {
+            it("yleinen virhe näytetään", function() {
+              expect(page.saveError()).to.equal('Ei tallennettu - tarkista syöttämäsi tiedot.1 vastauksessa puutteita')
+            })
+            it("kentän virhe näytetään", function() {
+              expect(page.detailedValidationErrors()).to.deep.equal(['Hakijaorganisaatio: Pakollinen tieto'])
+            })
+            it("lähetys nappi on yhä enabloitu", function() {
+              expect(page.submitButton().isEnabled()).to.equal(true)
+            })
           })
-          // TODO sinon ei saa lähetettyä response bodyä takaisin
-          it.skip("kentän virhe näytetään", function() {
-            expect(page.error("organization")).to.equal('Pakollinen tieto')
-          })
-          it("nappi on enabloitu", function() {
-            expect(page.submitButton().isEnabled()).to.equal(true)
+          describe("muokatessa kenttää", function() {
+            before(
+                page.setInputValue("organization", "Testi Organisaatio korjattu"),
+                page.waitAutoSave
+            )
+            it("virheet häviää", function() {
+              expect(page.saveError()).to.equal('')
+            })
           })
         })
 
         describe("lähetettäessä, kun serveriltä tulee odottamaton virhe", function() {
           before(
-              function() { mockAjax.respondOnce("POST", "/api/avustushaku/1/hakemus/", 500, "{}") },
+              function() { mockAjax.respondOnce("POST", "/api/avustushaku/1/hakemus/", 500, "ERROR!") },
               page.submitAndWaitErrorChange
           )
           describe("epäonnistumisen jälkeen", function() {
             it("yleinen virhe näytetään", function() {
               expect(page.saveError()).to.equal('Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.')
             })
-            it("nappi on enabloitu", function() {
+            it("lähetys nappi on yhä enabloitu", function() {
               expect(page.submitButton().isEnabled()).to.equal(true)
             })
           })

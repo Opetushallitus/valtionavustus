@@ -71,7 +71,7 @@ export default class FormStateTransitions {
   }
 
   static handleUnexpectedSaveError(dispatcher, events, method, url, error, saveType) {
-    console.error("Unexpected ", saveType, " error ", error, " in ", method, " to ", url)
+    console.error('Unexpected', saveType, 'error', error, 'in', method, 'to', url)
     if (saveType === saveTypes.submit) {
       dispatcher.push(events.saveError, {error: "unexpected-submit-error"})
     } else if (saveType === saveTypes.initialSave) {
@@ -82,17 +82,9 @@ export default class FormStateTransitions {
   }
 
   static handleSaveError(dispatcher, events, status, error, method, url, response, saveType) {
-    console.log('handleSaveError : error ', JSON.stringify(error))
-    console.log('handleSaveError : response ', JSON.stringify(response))
+    console.warn('Handle', saveType, 'error', error, 'in', method, 'to', url, 'with response', response)
     if (status === 400) {
-      var validationErrors = null
-      try {
-        validationErrors = JSON.parse(response)
-      }
-      catch(e) {
-        console.error("Could not parse validationErrors", response)
-      }
-      dispatcher.push(events.saveError, {error: "submit-validation-errors", validationErrors})
+      dispatcher.push(events.saveError, {error: "submit-validation-errors", validationErrors: response})
     }
     else{
       FormStateTransitions.handleUnexpectedSaveError(dispatcher, events, method, url, error, saveType)
@@ -116,8 +108,8 @@ export default class FormStateTransitions {
           stateSkeletonFromServer.saveStatus.values = null // state from server is not loaded at all on initial save, so this will be null
           dispatcher.push(events.saveCompleted, stateSkeletonFromServer)
         })
-        .catch(function(error) {
-            FormStateTransitions.handleSaveError(dispatcher, events, this.status, error, "PUT", url, this.response, saveTypes.initialSave)
+        .catch(function(error, response) {
+            FormStateTransitions.handleSaveError(dispatcher, events, this.status, error, "PUT", url, response, saveTypes.initialSave)
         })
     }
     catch(error) {
@@ -143,8 +135,8 @@ export default class FormStateTransitions {
           }
           dispatcher.push(events.saveCompleted, updatedState)
         })
-        .catch(function(error) {
-            FormStateTransitions.handleSaveError(dispatcher, events, this.status, error, "POST", url, this.response, saveType)
+        .catch(function(error, response) {
+            FormStateTransitions.handleSaveError(dispatcher, events, this.status, error, "POST", url, response, saveType)
         })
     }
     catch(error) {
@@ -212,7 +204,7 @@ export default class FormStateTransitions {
     state.saveStatus.saveInProgress = false
     state.saveStatus.saveError = serverErrors.error
     if(serverErrors.validationErrors) {
-      state.validationErrors = Immutable(serverErrors.validationErrors)
+      state.validationErrors = state.validationErrors.merge(serverErrors.validationErrors)
     }
     return state
   }

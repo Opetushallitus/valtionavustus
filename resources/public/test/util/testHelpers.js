@@ -62,7 +62,7 @@ mockAjax = {
       testFrame().$.getScript('test/lib/sinon-server-1.15.0.js', function() { deferred.resolve() } )
     return deferred.promise
   },
-  respondOnce: function (method, url, responseCode, responseBody) {
+  respondOnce: function (method, url, responseCode, responseObject) {
     var fakeAjax = function() {
       var xhr = sinon.useFakeXMLHttpRequest()
       xhr.useFilters = true
@@ -74,7 +74,7 @@ mockAjax = {
       xhr.onCreate = function (request) {
         window.setTimeout(function() {
           if (window._fakeAjaxParams && request.method === _fakeAjaxParams.method && request.url.indexOf(_fakeAjaxParams.url) === 0) {
-            request.respond(_fakeAjaxParams.responseCode, { "Content-Type": "application/json" }, _fakeAjaxParams.responseBody)
+            request.respond(_fakeAjaxParams.responseCode, { "Content-Type": "application/json" }, JSON.stringify(_fakeAjaxParams.responseObject))
             xhr.restore()
             delete _fakeAjaxParams
           }
@@ -82,7 +82,7 @@ mockAjax = {
       }
     }
 
-    testFrame()._fakeAjaxParams = { method: method, url: url, responseCode: responseCode, responseBody: responseBody }
+    testFrame()._fakeAjaxParams = { method: method, url: url, responseCode: responseCode, responseObject: responseObject }
     testFrame().eval("(" + fakeAjax.toString() + ")()")
   }
 }
