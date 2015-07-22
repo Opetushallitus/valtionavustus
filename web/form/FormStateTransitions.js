@@ -152,9 +152,15 @@ export default class FormStateTransitions {
     const formOperations = state.extensionApi.formOperations
     if (formOperations.isSaveDraftAllowed(state)) {
       return this.updateOld(state, saveTypes.autoSave, onSuccessCallback)
-    }
-    else {
+    } else {
       return this.saveNew(state, onSuccessCallback)
+    }
+  }
+
+  onBeforeUnload(state) {
+    const formOperations = state.extensionApi.formOperations
+    if (formOperations.isSaveDraftAllowed(state)) {
+      return this.updateOld(state, saveTypes.autoSave)
     }
   }
 

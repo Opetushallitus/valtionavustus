@@ -18,7 +18,8 @@ const events = {
   saveCompleted: 'saveCompleted',
   saveError: 'saveError',
   submit: 'submit',
-  removeField: 'removeField'
+  removeField: 'removeField',
+  beforeUnload: 'beforeUnload'
 }
 
 export default class FormController {

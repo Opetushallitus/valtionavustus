@@ -57,6 +57,12 @@ export default class FormStateLoop {
       dispatcher.push(events.initialState, state)
     })
 
+    Bacon.fromEvent(window, "beforeunload").onValue(function(event) {
+      // For some odd reason Safari always displays a dialog here
+      // But it's probably safer to always save the document anyway
+      dispatcher.push(events.beforeUnload)
+    })
+
     // Local functions are used to give scope to state transitions and to prevent 'this' from disappearing
     const stateTransitions = new FormStateTransitions(dispatcher, events, queryParams.devel)
     const formFieldValuesP = Bacon.update({},
@@ -69,7 +75,9 @@ export default class FormStateLoop {
       [dispatcher.stream(events.saveCompleted)], (...args) => stateTransitions.onSaveCompleted(...args),
       [dispatcher.stream(events.saveError)], (...args) => stateTransitions.onSaveError(...args),
       [dispatcher.stream(events.submit)], (...args) => stateTransitions.onSubmit(...args),
-      [dispatcher.stream(events.removeField)], (...args) => stateTransitions.onRemoveField(...args))
+      [dispatcher.stream(events.removeField)], (...args) => stateTransitions.onRemoveField(...args),
+      [dispatcher.stream(events.beforeUnload)], (...args) => stateTransitions.onBeforeUnload(...args))
+
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
 
