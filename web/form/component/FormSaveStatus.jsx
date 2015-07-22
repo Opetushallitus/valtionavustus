@@ -1,5 +1,5 @@
 import React from 'react'
-import LocalizedString from './component/LocalizedString.jsx'
+import LocalizedString from './LocalizedString.jsx'
 
 export default class FormSaveStatus extends React.Component {
   render() {
