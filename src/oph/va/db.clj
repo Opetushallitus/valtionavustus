@@ -17,8 +17,8 @@
        first))
 
 (defn submit-hakemus [hakemus-id]
-  (->> {:user_key hakemus-id :status :submitted}
-       (exec queries/update-hakemus<!)
+  (->> {:user_key hakemus-id}
+       (exec queries/submit-hakemus<!)
        first))
 
 (defn get-avustushaku [id]

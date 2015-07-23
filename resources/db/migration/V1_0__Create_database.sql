@@ -1,12 +1,13 @@
 CREATE TABLE forms (
     id             serial PRIMARY KEY,
+    created_at     timestamp with time zone default now(),
     start          timestamp with time zone default now(),
     content        jsonb NOT NULL
 );
 
 CREATE TABLE form_submissions (
     id               integer NOT NULL,
-    submittime       timestamp with time zone default now(),
+    created_at       timestamp with time zone default now(),
     form             integer references forms(id) NOT NULL,
     version          integer NOT NULL,
     version_closed   timestamp with time zone default NULL,
@@ -22,14 +23,14 @@ CREATE TABLE hakemukset (
     form_submission_id      integer NOT NULL,
     form_submission_version integer NOT NULL,
     created_at              timestamp with time zone default now(),
-    submittime              timestamp with time zone default now(),
+    submitted_at            timestamp with time zone,
     status                  status NOT NULL,
     FOREIGN KEY (form_submission_id, form_submission_version) REFERENCES form_submissions (id, version)
 );
 
 CREATE TABLE avustushaut (
     id             serial PRIMARY KEY,
-    submittime     timestamp with time zone default now(),
+    created_at     timestamp with time zone default now(),
     form           integer references forms(id) NOT NULL,
     content        jsonb NOT NULL
 );

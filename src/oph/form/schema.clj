@@ -48,7 +48,8 @@
 
   (s/defschema Form {:id Long,
                      :content Content,
-                     :start s/Inst})
+                     :start s/Inst,
+                     :created_at s/Inst})
 
   (s/defschema Answer {:key s/Str,
                        :value (s/either s/Str
@@ -59,7 +60,7 @@
     { :value [Answer] })
 
   (s/defschema Submission {:id Long
-                           :submittime s/Inst
+                           :created_at s/Inst
                            :form Long
                            :version Long
                            :version_closed (s/maybe s/Inst)
