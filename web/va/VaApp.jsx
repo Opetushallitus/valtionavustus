@@ -13,6 +13,7 @@ import FieldUpdateHandler from './../form/FieldUpdateHandler.js'
 import UrlCreator from './../form/UrlCreator'
 import JsUtil from './../form/JsUtil.js'
 
+import VaTopbar from './VaTopbar.jsx'
 import VaComponentFactory from './VaComponentFactory.js'
 import VaPreviewComponentFactory from './VaPreviewComponentFactory.js'
 import {BudgetItemElement} from './VaBudgetComponents.jsx'
@@ -144,10 +145,15 @@ formModelP.onValue((state) => {
   }
   try {
     React.render(
-      <FormContainer controller={controller}
-                     state={state}
-                     infoElementValues={state.avustushaku}
-      />,
+      <div>
+        <VaTopbar controller={controller}
+                  state={state}
+        />
+        <FormContainer controller={controller}
+                       state={state}
+                       infoElementValues={state.avustushaku}
+        />
+      </div>,
       document.getElementById('app')
     )
   } catch (e) {
