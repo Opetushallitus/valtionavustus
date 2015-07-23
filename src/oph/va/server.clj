@@ -18,6 +18,11 @@
       (do (.close socket) (throw (Exception. (format "Server is already running %s:%d" host port)))))
     (catch IOException e)))
 
+(defn- shutdown []
+  (log/info "Shutting down all services")
+  (email/stop-background-sender)
+  (db/close-datasource!))
+
 (defn start-server [host port auto-reload?]
   (let [handler (if auto-reload?
                   (reload/wrap-reload (site #'all-routes))
@@ -28,10 +33,12 @@
     (log/info "Starting e-mail sender")
     (email/start-background-sender)
     (log/info (format "Starting server in URL http://%s:%d/" host port))
-    (try (run-server handler {:host host :port port})
-         (finally
-           (email/stop-background-sender)
-           (db/close-datasource!)))))
+    (let [stop (run-server handler {:host host :port port})]
+      (.addShutdownHook (Runtime/getRuntime) (Thread. shutdown))
+      ;; Return stop-function with our own shutdown
+      (fn []
+        (stop)
+        (shutdown)))))
 
 (defn -main [& args]
   (let [server-config (:server config)

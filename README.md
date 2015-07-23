@@ -39,13 +39,17 @@ Tietokannan saa kokonaan tyhjättyä ajamalla
 
 # Käynnistys
 
+*Huom*: trampoline on tarpeellinen, koska muuten JVM:n shutdown-hookkia ei
+ajeta. Tämä taas jättää mahdollisesti resursseja vapauttamatta. Uberjarin
+kautta ajaessa ongelmaa ei ole.
+
 Paikallisesti:
 
-    ./lein run
+    ./lein trampoline run
 
 Kannan tyhjäys ja käynnistys paikallisesti:
 
-    ./lein do dbclear, run
+    ./lein trampoline do dbclear, run
 
 Tuotantoversiona:
 
