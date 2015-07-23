@@ -20,6 +20,16 @@
                      :vaBudgetSummaryElement
                      :vaProjectDescription])
 
+(defn- matches-key? [key value-container]
+  (= (:key value-container) key))
+
+(defn- find-value-by-key [answers key]
+  (->> answers
+       :value
+       (filter (partial matches-key? key))
+       first
+       :value))
+
 (defroutes* avustushaku-routes
   "Avustushaku routes"
 
@@ -47,11 +57,13 @@
       (let [form-id (:form (va-db/get-avustushaku haku-id))
             validation (validation/validate-form-security (form-db/get-form form-id) answers)]
         (if (every? empty? (vals validation))
-                    (let [hakemus-id (va-db/create-hakemus! form-id answers)]
-                      (if hakemus-id
+                    (let [hakemus-ids (va-db/create-hakemus! form-id answers)]
+                      (if hakemus-ids
                         (do
-                          (va-email/send-activation-message! :fi ())
-                          (ok {:id (:id hakemus-ids)})
+                          (let [language (keyword (find-value-by-key answers "language"))
+                                email (find-value-by-key answers "primary-email")]
+                            (va-email/send-activation-message! language email))
+                          (ok {:id (:id hakemus-ids)}))
                         (internal-server-error!)))
                     (bad-request validation))))
 
