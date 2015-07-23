@@ -8,13 +8,13 @@ import _ from 'lodash'
 export default class FormPreview extends React.Component {
 
   render() {
-    const fields = this.props.form.content
     const lang = this.props.lang
     const translations = this.props.translations
     const controller = this.props.controller
-    const values = this.props.values
     const infoElementValues = this.props.infoElementValues.content
     const state = this.props.state
+    const fields = state.form.content
+    const values = state.saveStatus.values
 
     const renderField = function (field, renderingParameters) {
       const htmlId = controller.constructHtmlId(fields, field.id)
@@ -54,6 +54,7 @@ export default class FormPreview extends React.Component {
           const childRenderingParameters = resolveChildRenderingParameters(i)
           children.push(renderField(field.children[i], childRenderingParameters))
         }
+        const customProperties = controller.getCustomWrapperComponentProperties(state);
         return <WrapperPreviewComponent key={htmlId}
                                         htmlId={htmlId}
                                         field={field}
@@ -62,7 +63,7 @@ export default class FormPreview extends React.Component {
                                         translations={translations}
                                         renderingParameters={renderingParameters}
                                         controller={controller}
-                                        customProps={controller.getCustomWrapperComponentProperties(state)}
+                                        customProps={customProperties}
                                         answersObject={values} />
       }
     }

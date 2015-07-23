@@ -8,17 +8,17 @@ import _ from 'lodash'
 export default class Form extends React.Component {
 
   render() {
-    const form = this.props.form
-    const fields = form.content
     const lang = this.props.lang
-    const controller = this.props.controller
-    const values = this.props.values
     const infoElementValues = this.props.infoElementValues.content
-    const validationErrors = this.props.validationErrors
     const translations = this.props.translations
-    const saved = this.props.saved
+    const controller = this.props.controller
     const state = this.props.state
+    const saved = controller.isSaveDraftAllowed(state)
+    const fields = state.form.content
+    const validationErrors = state.validationErrors
+    const values = state.saveStatus.values
 
+    console.log("hiiohoi", state)
     const renderField = function (field, renderingParameters) {
       const htmlId = controller.constructHtmlId(fields, field.id)
       const formOperations = state.extensionApi.formOperations
@@ -73,6 +73,7 @@ export default class Form extends React.Component {
           const childRenderingParameters = resolveChildRenderingParameters(i)
           children.push(renderField(field.children[i], childRenderingParameters))
         }
+        const customProperties = controller.getCustomWrapperComponentProperties(state);
         return <WrapperComponent key={htmlId}
                                  htmlId={htmlId}
                                  field={field}
@@ -82,7 +83,7 @@ export default class Form extends React.Component {
                                  translations={translations}
                                  renderingParameters={renderingParameters}
                                  controller={controller}
-                                 customProps={controller.getCustomWrapperComponentProperties(state)}
+                                 customProps={customProperties}
                                  answersObject={values} />
       }
     }
