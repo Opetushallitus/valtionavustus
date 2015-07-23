@@ -11,6 +11,7 @@
             [oph.form.routes :refer :all]
             [oph.form.schema :refer :all]
             [oph.va.db :as va-db]
+            [oph.va.email :as va-email]
             [oph.va.schema :refer :all]))
 
 (create-form-schema [:vaBudget
@@ -18,6 +19,16 @@
                      :vaBudgetItemElement
                      :vaBudgetSummaryElement
                      :vaProjectDescription])
+
+(defn- matches-key? [key value-container]
+  (= (:key value-container) key))
+
+(defn- find-value-by-key [answers key]
+  (->> answers
+       :value
+       (filter (partial matches-key? key))
+       first
+       :value))
 
 (defroutes* avustushaku-routes
   "Avustushaku routes"
@@ -48,7 +59,11 @@
         (if (every? empty? (vals validation))
                     (let [hakemus-ids (va-db/create-hakemus! form-id answers)]
                       (if hakemus-ids
-                        (ok {:id (:id hakemus-ids)})
+                        (do
+                          (let [language (keyword (find-value-by-key answers "language"))
+                                email (find-value-by-key answers "primary-email")]
+                            (va-email/send-activation-message! language email))
+                          (ok {:id (:id hakemus-ids)}))
                         (internal-server-error!)))
                     (bad-request validation))))
 
