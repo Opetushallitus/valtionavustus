@@ -8,32 +8,27 @@ import _ from 'lodash'
 export default class FormPreview extends React.Component {
 
   render() {
-    const lang = this.props.lang
-    const translations = this.props.translations
     const controller = this.props.controller
     const infoElementValues = this.props.infoElementValues.content
     const state = this.props.state
+    const lang = state.configuration.lang
+    const translations = state.configuration.translations
     const fields = state.form.content
     const values = state.saveStatus.values
 
-    const renderField = function (field, renderingParameters) {
+    const renderField = function(field, renderingParameters) {
       const htmlId = controller.constructHtmlId(fields, field.id)
+      const fieldProperties = { lang: lang, key: htmlId, htmlId: htmlId, field: field }
       if (field.type == "formField") {
         var existingInputValue = InputValueStorage.readValue(fields, values, field.id)
         const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
-        return <FormPreviewComponent controller={controller}
-                                     lang={lang}
-                                     key={htmlId}
-                                     htmlId={htmlId}
+        return <FormPreviewComponent {...fieldProperties}
+                                     controller={controller}
                                      value={value}
-                                     field={field}
                                      renderingParameters={renderingParameters} />
       } else if (field.type == "infoElement") {
-        return <InfoElement key={htmlId}
-                            htmlId={htmlId}
-                            field={field}
+        return <InfoElement {...fieldProperties}
                             values={infoElementValues}
-                            lang={lang}
                             translations={translations} />
       } else if (field.type == "wrapperElement") {
         const children = []
@@ -54,11 +49,8 @@ export default class FormPreview extends React.Component {
           const childRenderingParameters = resolveChildRenderingParameters(i)
           children.push(renderField(field.children[i], childRenderingParameters))
         }
-        const customProperties = controller.getCustomWrapperComponentProperties(state);
-        return <WrapperPreviewComponent key={htmlId}
-                                        htmlId={htmlId}
-                                        field={field}
-                                        lang={lang}
+        const customProperties = controller.getCustomWrapperComponentProperties(state)
+        return <WrapperPreviewComponent {...fieldProperties}
                                         children={children}
                                         translations={translations}
                                         renderingParameters={renderingParameters}
