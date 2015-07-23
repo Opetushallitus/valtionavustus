@@ -15,18 +15,18 @@ export default class FormContainer extends React.Component {
       infoElementValues: this.props.infoElementValues
     }
 
-    var formElement
-
-    if (preview) {
-      formElement = <FormPreview {...formElementProps} />
-    } else {
-      formElement = <Form {...formElementProps} />
-    }
-
     return (
       <section id="container">
-        {formElement}
+        {this.formElement(preview, formElementProps)}
       </section>
     )
+  }
+
+  formElement(preview, formElementProps) {
+    if (preview) {
+      return <FormPreview {...formElementProps} />
+    } else {
+      return <Form {...formElementProps} />
+    }
   }
 }
