@@ -6,19 +6,17 @@ import InputValueStorage from './InputValueStorage.js'
 import _ from 'lodash'
 
 export default class FormPreview extends React.Component {
-
   render() {
     const controller = this.props.controller
     const infoElementValues = this.props.infoElementValues.content
     const state = this.props.state
-    const lang = state.configuration.lang
     const translations = state.configuration.translations
     const fields = state.form.content
     const values = state.saveStatus.values
 
     const renderField = function(field, renderingParameters) {
       const htmlId = controller.constructHtmlId(fields, field.id)
-      const fieldProperties = { lang: lang, key: htmlId, htmlId: htmlId, field: field }
+      const fieldProperties = { lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field }
       if (field.type == "formField") {
         var existingInputValue = InputValueStorage.readValue(fields, values, field.id)
         const value = _.isUndefined(existingInputValue) ? "" : existingInputValue

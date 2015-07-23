@@ -6,14 +6,10 @@ import InputValueStorage from './InputValueStorage.js'
 import _ from 'lodash'
 
 export default class Form extends React.Component {
-
   render() {
     const infoElementValues = this.props.infoElementValues.content
     const controller = this.props.controller
     const state = this.props.state
-    const translations = state.configuration.translations
-    const lang = state.configuration.lang
-    const saved = controller.isSaveDraftAllowed(state)
     const fields = state.form.content
     const validationErrors = state.validationErrors
     const values = state.saveStatus.values
@@ -21,11 +17,12 @@ export default class Form extends React.Component {
     const renderField = function (field, renderingParameters) {
       const htmlId = controller.constructHtmlId(fields, field.id)
       const formOperations = state.extensionApi.formOperations
+      const saved = controller.isSaveDraftAllowed(state)
       const fieldDisabled = !formOperations.isFieldEnabled(saved, field.id) || field.forceDisabled === true
-      const fieldProperties = { lang: lang, key: htmlId, htmlId: htmlId, field: field, translations: {translations} }
+      const fieldProperties = { lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field, translations: state.configuration.translations }
 
       if (field.type == "formField") {
-        var existingInputValue = InputValueStorage.readValue(fields, values, field.id)
+        const existingInputValue = InputValueStorage.readValue(fields, values, field.id)
         const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
         const fieldErrors = _.get(validationErrors, field.id, [])
         return <FormComponent {...fieldProperties}
