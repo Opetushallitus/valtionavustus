@@ -16,15 +16,16 @@ CREATE TABLE form_submissions (
 );
 CREATE SEQUENCE form_submissions_id_seq;
 
-CREATE TYPE status AS ENUM ('draft', 'submitted');
+CREATE TYPE status AS ENUM ('draft_unverified', 'draft_verified', 'submitted');
 CREATE TABLE hakemukset (
     id                      serial PRIMARY KEY,
     user_key                varchar(64) UNIQUE NOT NULL,
+    email_key               varchar(64) UNIQUE NOT NULL,
     form_submission_id      integer NOT NULL,
     form_submission_version integer NOT NULL,
     created_at              timestamp with time zone default now(),
     submitted_at            timestamp with time zone,
-    status                  status NOT NULL,
+    status                  status NOT NULL default 'draft_unverified',
     FOREIGN KEY (form_submission_id, form_submission_version) REFERENCES form_submissions (id, version)
 );
 

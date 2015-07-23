@@ -46,9 +46,9 @@
       (let [form-id (:form (va-db/get-avustushaku haku-id))
             validation (validation/validate-form-security (form-db/get-form form-id) answers)]
         (if (every? empty? (vals validation))
-                    (let [hakemus-id (va-db/create-hakemus! form-id answers)]
-                      (if hakemus-id
-                        (ok hakemus-id)
+                    (let [hakemus-ids (va-db/create-hakemus! form-id answers)]
+                      (if hakemus-ids
+                        (ok {:id (:id hakemus-ids)})
                         (internal-server-error!)))
                     (bad-request validation))))
 

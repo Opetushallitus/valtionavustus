@@ -6,10 +6,11 @@
 
 
 (defn create-hakemus! [form-id answers]
-  (let [submission (form-db/create-submission! form-id answers)]
-    (let [user-key (generate-hash-id)]
-      (exec queries/create-hakemus<! {:user_key user-key :form_submission (:id submission) :status :draft})
-      {:id user-key})))
+  (let [submission (form-db/create-submission! form-id answers)
+        user-key (generate-hash-id)
+        email-key (generate-hash-id)]
+    (exec queries/create-hakemus<! {:user_key user-key :email_key email-key :form_submission (:id submission)})
+    {:id user-key :email-key email-key}))
 
 (defn get-hakemus [hakemus-id]
   (->> {:user_key hakemus-id}
