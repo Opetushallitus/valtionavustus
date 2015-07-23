@@ -30,7 +30,7 @@ export default class Form extends React.Component {
         if (field.type == "formField") {
           return createFormComponent(field, extendedProperties)
         } else if (field.type == "wrapperElement") {
-          return createWrapperElement(field, fieldProperties, renderingParameters)
+          return createWrapperElement(field, extendedProperties, renderingParameters)
         }
       }
     }
