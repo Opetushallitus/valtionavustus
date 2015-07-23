@@ -50,7 +50,7 @@
                     (let [hakemus-id (va-db/create-hakemus! form-id answers)]
                       (if hakemus-id
                         (do
-                          (va-email/send-activation-message! ())
+                          (va-email/send-activation-message! :fi ())
                           (ok {:id (:id hakemus-ids)})
                         (internal-server-error!)))
                     (bad-request validation))))

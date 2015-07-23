@@ -5,8 +5,11 @@
             [clostache.parser :refer [render]]
             [oph.common.config :refer [config]]))
 
-(def html-activation-template (slurp "resources/email-templates/activation.html"))
-(def plain-activation-template (slurp "resources/email-templates/activation.plain"))
+(def mail-templates
+  {:activation {:html {:fi (slurp "resources/email-templates/activation.html.fi")
+                       :sv (slurp "resources/email-templates/activation.html.sv")}
+                :plain {:fi (slurp "resources/email-templates/activation.plain.fi")
+                        :sv (slurp "resources/email-templates/activation.plain.sv")}}})
 
 (def smtp-config (:email config))
 (def mail-queue (chan 50))
@@ -33,20 +36,22 @@
   (reset! run? true)
   (go (while (= @run? true)
         (let [msg (<! mail-queue)]
-          (case (:type msg)
+          (case (:operation msg)
             :stop (reset! run? false)
-            :activation (send-msg! msg
-                                   (partial render plain-activation-template)
-                                   (partial render html-activation-template)))))
+            :send (send-msg! msg
+                             (partial render (get-in mail-templates [(:type msg) :plain (:lang msg)]))
+                             (partial render (get-in mail-templates [(:type msg) :plain (:lang msg)]))))))
       (println "Exiting mail sender")))
 
 (defn stop-background-sender []
-  (>!! mail-queue {:type :stop}))
+  (>!! mail-queue {:operation :stop}))
 
-(defn send-activation-message! [to]
+(defn send-activation-message! [lang to]
   (if (:enabled? smtp-config)
-    (>!! mail-queue {:type :activation
-                     :to to
+    (>!! mail-queue {:operation :send
+                     :type :activation
+                     :lang lang
                      :subject "TBD"
+                     :to to
                      :name "Lol"})
     (println "Mail sending disabled, skipping")))
