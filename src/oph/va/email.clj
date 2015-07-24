@@ -19,28 +19,50 @@
                         :sv (load-template "email-templates/activation.plain.sv")}}})
 
 (def smtp-config (:email config))
-(def mail-queue (chan 50))
-(def run? (atom true))
+(defonce mail-queue (chan 50))
+(defonce run? (atom true))
+
+(defn- try-send! [time multiplier max-time send-fn]
+  (if (>= time max-time)
+    (do
+      (log/error "Failed to send message after retrying, aborting")
+      false)
+    (let [{:keys [code error message]} (send-fn)]
+      (if (= code 0)
+        (do
+          (log/info "Message sent successfully")
+          true)
+        (do
+          (log/warn (format "Error: %d %s - %s" code (str error) message))
+          (Thread/sleep time)
+          (try-send! (* time multiplier) multiplier max-time send-fn))))))
+
 
 (defn- send-msg! [msg to-plain to-html]
   (let [from (:from smtp-config)
         to (:to msg)
         subject (:subject msg)]
     (log/info (format "Sending %s message to %s with subject '%s'"
-                      (:type msg)
+                      (str (:type msg))
                       to
                       subject))
-    (try (send-message smtp-config
-                       {:from from
-                        :to to
-                        :subject subject
-                        :body [:alternative
-                               {:type "text/plain"
-                                :content (to-plain msg)}
-                               {:type "text/html"
-                                :content (to-html msg)}]})
-         (catch Exception e
-           (log/error e)))))
+    (let [email {:from from
+                 :to to
+                 :subject subject
+                 :body [:alternative
+                        {:type "text/plain; charset=utf-8"
+                         :content (to-plain msg)}
+                        {:type "text/html; charset=utf-8"
+                         :content (to-html msg)}]}
+          send-fn (fn [] (send-message smtp-config email))]
+      (when (not (try-send! (:retry-initial-wait smtp-config)
+                            (:retry-multiplier smtp-config)
+                            (:retry-max-time smtp-config)
+                            send-fn))
+        (log/info (format "Failed to send %s message to %s with subject '%s'"
+                          (str (:type msg))
+                          to
+                          subject))))))
 
 (defn start-background-sender []
   (reset! run? true)

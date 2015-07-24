@@ -10,4 +10,7 @@
  :email {:enabled? false
          :host nil
          :port nil
-         :from "no-reply@oph.fi"}}
+         :from "no-reply@oph.fi"
+         :retry-initial-wait 2000
+         :retry-multiplier 4
+         :retry-max-time 60000}}
