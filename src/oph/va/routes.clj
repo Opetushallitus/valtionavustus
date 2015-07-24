@@ -98,7 +98,18 @@
                  saved-answers (update-form-submission form-id (:form_submission_id hakemus) answers)
                  submitted-hakemus (va-db/submit-hakemus hakemus-id)]
              (hakemus-ok-response submitted-hakemus (:body saved-answers)))
-           (bad-request! validation)))))
+           (bad-request! validation))))
+
+  (POST* "/:haku-id/hakemus/:hakemus-id/verify/:verification" [haku-id hakemus-id verification :as request]
+       :path-params [haku-id :- Long, hakemus-id :- s/Str, verification :- s/Str]
+       :return  Hakemus
+       :summary "Verify hakemus"
+       (let [form-id (:form (va-db/get-avustushaku haku-id))
+             verified-hakemus (va-db/verify-hakemus hakemus-id verification)
+             saved-answers (get-form-submission form-id (:form_submission_id verified-hakemus))]
+         (if verified-hakemus
+           (hakemus-ok-response verified-hakemus (:body saved-answers))
+           (bad-request! verification)))))
 
 (defroutes* api-routes
   "API implementation"

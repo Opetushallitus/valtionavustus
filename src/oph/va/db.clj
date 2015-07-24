@@ -19,6 +19,10 @@
   (->> {:user_key hakemus-id}
        (exec queries/submit-hakemus<!)))
 
+(defn verify-hakemus [hakemus-id verification]
+  (->> {:user_key hakemus-id :verify_key verification}
+       (exec queries/verify-hakemus<!)))
+
 (defn get-avustushaku [id]
   (->> (exec queries/get-avustushaku {:id id})
        first))

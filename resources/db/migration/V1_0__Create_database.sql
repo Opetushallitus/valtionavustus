@@ -24,6 +24,7 @@ CREATE TABLE hakemukset (
     form_submission_id      integer NOT NULL,
     form_submission_version integer NOT NULL,
     created_at              timestamp with time zone default now(),
+    verified_at             timestamp with time zone,
     submitted_at            timestamp with time zone,
     status                  status NOT NULL default 'draft_unverified',
     FOREIGN KEY (form_submission_id, form_submission_version) REFERENCES form_submissions (id, version)
