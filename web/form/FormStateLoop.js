@@ -85,7 +85,7 @@ export default class FormStateLoop {
       if (formOperations.containsExistingEntityId(query)) {
         return Bacon.fromPromise(
           qwest.get(formOperations.urlCreator.existingFormApiUrlFromQuery(query))
-        ).map(function(submission){ return submission.answers })
+        ).map(formOperations.responseParser.getFormAnswers)
       }
       return formP.map(initDefaultValues)
     }

@@ -22,17 +22,17 @@
   (let [submission (form-db/get-form-submission form-id values-id)]
     (if submission
       (ok submission)
-      (not-found))))
+      (not-found!))))
 
 (defn get-form-submission-versions [form-id values-id]
   (let [submission (form-db/get-form-submission-versions form-id values-id)]
     (if submission
       (ok submission)
-      (not-found))))
+      (not-found!))))
 
 (defn update-form-submission [form-id values-id answers]
   (if (not (form-db/submission-exists? form-id values-id))
-    (not-found)
+    (not-found!)
     (let [submission (form-db/update-submission! form-id values-id answers)]
       (if submission
         (ok submission)
@@ -74,7 +74,7 @@
         (let [validation (validation/validate-form (form-db/get-form form-id) answers)]
           (if (every? empty? (vals validation))
             (create-form-submission form-id answers)
-            (bad-request validation))))
+            (bad-request! validation))))
 
   (POST* "/:form-id/values/:values-id" [form-id values-id :as request]
          :path-params [form-id :- Long, values-id :- Long]
@@ -85,4 +85,4 @@
          (let [validation (validation/validate-form (form-db/get-form form-id) answers)]
            (if (every? empty? (vals validation))
              (update-form-submission form-id values-id  answers)
-             (bad-request validation)))))
+             (bad-request! validation)))))

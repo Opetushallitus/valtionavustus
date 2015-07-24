@@ -6,11 +6,9 @@
 
 
 (defn create-hakemus! [form-id answers]
-  (let [submission (form-db/create-submission! form-id answers)
-        user-key (generate-hash-id)
-        email-key (generate-hash-id)]
-    (exec queries/create-hakemus<! {:user_key user-key :email_key email-key :form_submission (:id submission)})
-    {:id user-key :email-key email-key}))
+  (let [submission (form-db/create-submission! form-id answers)]
+    (let [hakemus (exec queries/create-hakemus<! {:user_key (generate-hash-id) :verify_key (generate-hash-id) :form_submission (:id submission)})]
+      {:hakemus hakemus :submission submission})))
 
 (defn get-hakemus [hakemus-id]
   (->> {:user_key hakemus-id}
@@ -19,8 +17,7 @@
 
 (defn submit-hakemus [hakemus-id]
   (->> {:user_key hakemus-id}
-       (exec queries/submit-hakemus<!)
-       first))
+       (exec queries/submit-hakemus<!)))
 
 (defn get-avustushaku [id]
   (->> (exec queries/get-avustushaku {:id id})

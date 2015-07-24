@@ -20,7 +20,7 @@ CREATE TYPE status AS ENUM ('draft_unverified', 'draft_verified', 'submitted');
 CREATE TABLE hakemukset (
     id                      serial PRIMARY KEY,
     user_key                varchar(64) UNIQUE NOT NULL,
-    email_key               varchar(64) UNIQUE NOT NULL,
+    verify_key              varchar(64) UNIQUE NOT NULL,
     form_submission_id      integer NOT NULL,
     form_submission_version integer NOT NULL,
     created_at              timestamp with time zone default now(),

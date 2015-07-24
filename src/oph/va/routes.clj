@@ -30,6 +30,12 @@
        first
        :value))
 
+(defn hakemus-ok-response [hakemus submission]
+  (ok {:id (:user_key hakemus)
+  :status (:status hakemus)
+  :submission submission
+  }))
+
 (defroutes* avustushaku-routes
   "Avustushaku routes"
 
@@ -43,55 +49,56 @@
 
   (GET* "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
         :path-params [haku-id :- Long, hakemus-id :- s/Str]
-        :return  Submission
+        :return  Hakemus
         :summary "Get current answers"
         (let [form-id (:form (va-db/get-avustushaku haku-id))
-              hakemus (va-db/get-hakemus hakemus-id)]
-          (get-form-submission form-id (:form_submission_id hakemus))))
+              hakemus (va-db/get-hakemus hakemus-id)
+              submission (get-form-submission form-id (:form_submission_id hakemus))]
+          (hakemus-ok-response hakemus (:body submission))))
 
   (PUT* "/:haku-id/hakemus" [haku-id :as request]
       :path-params [haku-id :- Long]
       :body    [answers (describe Answers "New answers")]
-      :return  HakemusId
+      :return  Hakemus
       :summary "Create initial hakemus"
       (let [form-id (:form (va-db/get-avustushaku haku-id))
             validation (validation/validate-form-security (form-db/get-form form-id) answers)]
         (if (every? empty? (vals validation))
-                    (let [hakemus-ids (va-db/create-hakemus! form-id answers)]
-                      (if hakemus-ids
-                        (do
-                          (let [language (keyword (find-value-by-key answers "language"))
-                                email (find-value-by-key answers "primary-email")]
-                            (va-email/send-activation-message! language email))
-                          (ok {:id (:id hakemus-ids)}))
-                        (internal-server-error!)))
-                    (bad-request validation))))
+          (let [newHakemus (va-db/create-hakemus! form-id answers)]
+            (if newHakemus
+              (do
+                (let [language (keyword (find-value-by-key answers "language"))
+                      email (find-value-by-key answers "primary-email")]
+                  (va-email/send-activation-message! language email))
+                (hakemus-ok-response (:hakemus newHakemus) (:submission newHakemus)))
+            (internal-server-error!)))
+        (bad-request! validation))))
 
   (POST* "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id :as request]
        :path-params [haku-id :- Long, hakemus-id :- s/Str]
        :body    [answers (describe Answers "New answers")]
-       :return  Submission
+       :return  Hakemus
        :summary "Update hakemus values"
        (let [form-id (:form (va-db/get-avustushaku haku-id))
              validation (validation/validate-form-security (form-db/get-form form-id) answers)]
          (if (every? empty? (vals validation))
            (let [hakemus (va-db/get-hakemus hakemus-id)]
-             (update-form-submission form-id (:form_submission_id hakemus) answers))
-           (bad-request validation))))
+             (hakemus-ok-response hakemus (:body (update-form-submission form-id (:form_submission_id hakemus) answers))))
+           (bad-request! validation))))
 
   (POST* "/:haku-id/hakemus/:hakemus-id/submit" [haku-id hakemus-id :as request]
        :path-params [haku-id :- Long, hakemus-id :- s/Str]
        :body    [answers (describe Answers "New answers")]
-       :return  Submission
-       :summary "Update hakemus values"
+       :return  Hakemus
+       :summary "Submit hakemus"
        (let [form-id (:form (va-db/get-avustushaku haku-id))
              validation (validation/validate-form (form-db/get-form form-id) answers)]
          (if (every? empty? (vals validation))
            (let [hakemus (va-db/get-hakemus hakemus-id)
-                 saved-answers (update-form-submission form-id (:form_submission_id hakemus) answers)]
-             (va-db/submit-hakemus hakemus-id)
-             saved-answers)
-           (bad-request validation)))))
+                 saved-answers (update-form-submission form-id (:form_submission_id hakemus) answers)
+                 submitted-hakemus (va-db/submit-hakemus hakemus-id)]
+             (hakemus-ok-response submitted-hakemus (:body saved-answers)))
+           (bad-request! validation)))))
 
 (defroutes* api-routes
   "API implementation"

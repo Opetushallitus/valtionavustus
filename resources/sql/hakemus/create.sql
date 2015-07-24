@@ -1,6 +1,6 @@
-INSERT INTO hakemukset (user_key, email_key, form_submission_id, form_submission_version)
+INSERT INTO hakemukset (user_key, verify_key, form_submission_id, form_submission_version)
 SELECT :user_key,
-       :email_key,
+       :verify_key,
        submissions.id,
        submissions.version
 FROM form_submissions submissions

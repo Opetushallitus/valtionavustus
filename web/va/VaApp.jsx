@@ -11,6 +11,7 @@ import FormContainer from './../form/FormContainer.jsx'
 import FormController from './../form/FormController'
 import FieldUpdateHandler from './../form/FieldUpdateHandler.js'
 import UrlCreator from './../form/UrlCreator'
+import ResponseParser from './../form/ResponseParser'
 import JsUtil from './../form/JsUtil.js'
 
 import VaTopbar from './VaTopbar.jsx'
@@ -32,6 +33,10 @@ function isFieldEnabled(saved, fieldId) {
   }
   return saved
 }
+
+const responseParser = new ResponseParser({
+      getFormAnswers: function(response) { return response.submission.answers }
+})
 
 const urlCreator = new UrlCreator({
     formApiUrl: function(avustusHakuId) { return "/api/form/" + avustusHakuId },
@@ -136,6 +141,7 @@ const formModelP = controller.initialize({
   "onSaveCompletedCallback": onSaveCompletedCallback,
   "createUiStateIdentifier": createUiStateIdentifier,
   "urlCreator": urlCreator,
+  "responseParser": responseParser,
   "printEntityId": printEntityId
 })
 

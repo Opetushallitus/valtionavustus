@@ -130,7 +130,7 @@ export default class FormStateTransitions {
         .then(function(response) {
           console.log("Saved to server (", saveType, "). Response=", JSON.stringify(response))
           const updatedState = _.cloneDeep(state)
-          updatedState.saveStatus.values = response["answers"]
+          updatedState.saveStatus.values = formOperations.responseParser.getFormAnswers(response)
           updatedState.validationErrors = Immutable(updatedState.validationErrors)
           if (onSuccessCallback) {
             onSuccessCallback(updatedState)
