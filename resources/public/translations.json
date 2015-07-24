@@ -76,5 +76,19 @@
       "fi": "Ei tallennettu - tarkista syöttämäsi tiedot.",
       "sv": "Inte lagrad – svara först på alla frågor."
     }
+  },
+  "warning": {
+    "old-browser": {
+      "fi": "Käytät vanhaa versiota Internet Explorer-selaimesta, ",
+      "sv": "Du använder en gammal version av Internet Explorer, "
+    },
+    "old-browser-update-link-text": {
+      "fi": "päivitä selaimesi uudempaan.",
+      "sv": "uppdatera din webbläsare."
+    },
+    "old-browser-update-link": {
+      "fi": "https://browser-update.org/fi/update.html",
+      "sv": "https://browser-update.org/sv/update-outdated.html"
+    }
   }
 }

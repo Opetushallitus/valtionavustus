@@ -13,6 +13,7 @@
 @light-blue: #7ba9c0;
 @dark-blue: #4194bf;
 @bright-red: #c9302c;
+@yellow: #efc211;
 @chuck-norris: #bada55;
 
 .ease-in-out(@seconds) {
@@ -726,4 +727,29 @@ button[disabled].soresu-text-button {
   }
 }
 
+.va-old-browser-warning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 30px;
+  width: 100%;
+  z-index: 1;
+  background-color: @yellow;
 
+  .soresu-remove {
+    position: fixed;
+    right: 5px;
+    top: 4px;
+  }
+
+  .text {
+    font-size: 13px;
+    display: inline-block;
+    margin-left: 100px;
+    margin-top: 4px;
+  }
+
+  &.hidden {
+    display: none;
+  }
+}

@@ -32,8 +32,7 @@ export default class FormController {
     this.stateLoop = new FormStateLoop(dispatcher, events)
   }
 
-  initialize(formOperations) {
-    const query = queryString.parse(location.search)
+  initialize(formOperations, query) {
     return this.stateLoop.initialize(this, formOperations, query)
   }
 

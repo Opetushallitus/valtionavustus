@@ -1,6 +1,6 @@
 export default class Translator {
   constructor(translations) {
-    this.translations = translations;
+    this.translations = translations
   }
 
   getValue(key, lang, defaultValue) {
@@ -21,7 +21,7 @@ export default class Translator {
     return defaultValue ? defaultValue : key
   }
 
-  replaceKeys(value, keyValues) {
+  static replaceKeys(value, keyValues) {
     const NON_BREAKING_SPACE = "\u00A0"
     if(keyValues instanceof Object) {
       for (var key in keyValues) {
@@ -34,7 +34,7 @@ export default class Translator {
 
   translate(key, lang, defaultValue, keyValues) {
     const value = this.getValue(key, lang, defaultValue)
-    return this.replaceKeys(value, keyValues)
+    return Translator.replaceKeys(value, keyValues)
   }
 }
 

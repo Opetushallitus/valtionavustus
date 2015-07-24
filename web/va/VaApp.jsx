@@ -14,9 +14,10 @@ import UrlCreator from './../form/UrlCreator'
 import ResponseParser from './../form/ResponseParser'
 import JsUtil from './../form/JsUtil.js'
 
-import VaTopbar from './VaTopbar.jsx'
 import VaComponentFactory from './VaComponentFactory.js'
 import VaPreviewComponentFactory from './VaPreviewComponentFactory.js'
+import VaTopbar from './VaTopbar.jsx'
+import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'
 import {BudgetItemElement} from './VaBudgetComponents.jsx'
 import {VaBudgetCalculator} from './VaBudgetCalculator.js'
 
@@ -143,7 +144,7 @@ const formModelP = controller.initialize({
   "urlCreator": urlCreator,
   "responseParser": responseParser,
   "printEntityId": printEntityId
-})
+}, query)
 
 formModelP.onValue((state) => {
   if (develQueryParam) {
@@ -152,6 +153,10 @@ formModelP.onValue((state) => {
   try {
     React.render(
       <div>
+        <VaOldBrowserWarning lang={state.configuration.lang}
+                             translations={state.configuration.translations.warning}
+                             devel={develQueryParam}
+        />
         <VaTopbar controller={controller}
                   state={state}
         />
