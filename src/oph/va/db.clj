@@ -15,6 +15,11 @@
        (exec queries/get-hakemus)
        first))
 
+(defn get-hakemus-internal [id]
+  (->> {:id id}
+       (exec queries/get-hakemus-by-internal-id)
+       first))
+
 (defn submit-hakemus [hakemus-id]
   (->> {:user_key hakemus-id}
        (exec queries/submit-hakemus<!)))

@@ -104,12 +104,14 @@
        :path-params [haku-id :- Long, hakemus-id :- s/Str, verification :- s/Str]
        :return  Hakemus
        :summary "Verify hakemus"
-       (let [form-id (:form (va-db/get-avustushaku haku-id))
-             verified-hakemus (va-db/verify-hakemus hakemus-id verification)
-             saved-answers (get-form-submission form-id (:form_submission_id verified-hakemus))]
-         (if verified-hakemus
-           (hakemus-ok-response verified-hakemus (:body saved-answers))
-           (bad-request! verification)))))
+    (let [hakemus (va-db/get-hakemus hakemus-id)
+          form-id (:form (va-db/get-avustushaku haku-id))]
+      (if (and (= (:status hakemus) "draft_verified") (= (:verify_key hakemus) verification))
+        (hakemus-ok-response hakemus (:body (get-form-submission form-id (:form_submission_id hakemus))))
+        (let [verified-hakemus (va-db/verify-hakemus hakemus-id verification)]
+          (if verified-hakemus
+            (hakemus-ok-response verified-hakemus (:body (get-form-submission form-id (:form_submission_id verified-hakemus))))
+            (bad-request! verification)))))))
 
 (defroutes* api-routes
   "API implementation"
