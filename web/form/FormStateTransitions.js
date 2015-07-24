@@ -82,7 +82,7 @@ export default class FormStateTransitions {
   }
 
   static handleSaveError(dispatcher, events, status, error, method, url, response, saveType) {
-    console.warn('Handle', saveType, 'error', error, 'in', method, 'to', url, 'with response', response)
+    console.warn('Handle', saveType, 'error', error, 'in', method, 'to', url, 'with response', JSON.stringify(response))
     if (status === 400) {
       dispatcher.push(events.saveError, {error: "submit-validation-errors", validationErrors: response})
     }
