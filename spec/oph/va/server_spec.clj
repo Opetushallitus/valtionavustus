@@ -237,7 +237,7 @@
       (should= 200 status)
       (should= (:verified_at hakemus-from-db) (:verified_at hakemus-from-db-after))))
 
-(it "POST to /api/avustushaku/1/hakemus/<id>/verify/<key> with wrong key should fail hakemus even when allready verified"
+  (it "POST to /api/avustushaku/1/hakemus/<id>/verify/<key> with wrong key should fail hakemus even when allready verified"
     (let [hakemus-from-db (va-db/get-hakemus-internal 1)
           url (str "/api/avustushaku/1/hakemus/" (:user_key hakemus-from-db) "/verify/x")
           {:keys [status headers body error] :as resp} (post! url {})]
