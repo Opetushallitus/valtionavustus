@@ -17,6 +17,13 @@ export default class FormStateTransitions {
     this.dispatcher = dispatcher
     this.events = events
     this.autoSave = _.debounce(function(){ dispatcher.push(events.save) }, develQueryParam? 100 : 3000)
+    this._bind(
+      'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'saveNew', 'updateOld', 'onSave',
+      'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onSaveError')
+  }
+
+  _bind(...methods) {
+    methods.forEach((method) => this[method] = this[method].bind(this))
   }
 
   startAutoSave(state) {

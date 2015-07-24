@@ -63,20 +63,19 @@ export default class FormStateLoop {
       dispatcher.push(events.beforeUnload)
     })
 
-    // Local functions are used to give scope to state transitions and to prevent 'this' from disappearing
     const stateTransitions = new FormStateTransitions(dispatcher, events, queryParams.devel)
     const formFieldValuesP = Bacon.update({},
-      [dispatcher.stream(events.initialState)], (...args) => stateTransitions.onInitialState(...args),
-      [dispatcher.stream(events.updateField)], (...args) => stateTransitions.onUpdateField(...args),
-      [dispatcher.stream(events.fieldValidation)], (...args) => stateTransitions.onFieldValidation(...args),
-      [dispatcher.stream(events.changeLanguage)], (...args) => stateTransitions.onChangeLang(...args),
-      [dispatcher.stream(events.save)], (...args) => stateTransitions.onSave(...args),
-      [dispatcher.stream(events.initAutoSave)], (...args) => stateTransitions.onInitAutoSave(...args),
-      [dispatcher.stream(events.saveCompleted)], (...args) => stateTransitions.onSaveCompleted(...args),
-      [dispatcher.stream(events.saveError)], (...args) => stateTransitions.onSaveError(...args),
-      [dispatcher.stream(events.submit)], (...args) => stateTransitions.onSubmit(...args),
-      [dispatcher.stream(events.removeField)], (...args) => stateTransitions.onRemoveField(...args),
-      [dispatcher.stream(events.beforeUnload)], (...args) => stateTransitions.onBeforeUnload(...args))
+      [dispatcher.stream(events.initialState)], stateTransitions.onInitialState,
+      [dispatcher.stream(events.updateField)], stateTransitions.onUpdateField,
+      [dispatcher.stream(events.fieldValidation)],stateTransitions.onFieldValidation,
+      [dispatcher.stream(events.changeLanguage)], stateTransitions.onChangeLang,
+      [dispatcher.stream(events.save)], stateTransitions.onSave,
+      [dispatcher.stream(events.initAutoSave)], stateTransitions.onInitAutoSave,
+      [dispatcher.stream(events.saveCompleted)], stateTransitions.onSaveCompleted,
+      [dispatcher.stream(events.saveError)], stateTransitions.onSaveError,
+      [dispatcher.stream(events.submit)], stateTransitions.onSubmit,
+      [dispatcher.stream(events.removeField)], stateTransitions.onRemoveField,
+      [dispatcher.stream(events.beforeUnload)], stateTransitions.onBeforeUnload)
 
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
