@@ -7,17 +7,15 @@ import qwest from 'qwest'
 import _ from 'lodash'
 import queryString from 'query-string'
 
-import FormContainer from './../form/FormContainer.jsx'
 import FormController from './../form/FormController'
 import FieldUpdateHandler from './../form/FieldUpdateHandler.js'
 import UrlCreator from './../form/UrlCreator'
 import ResponseParser from './../form/ResponseParser'
 import JsUtil from './../form/JsUtil.js'
 
+import VaForm from './VaForm.jsx'
 import VaComponentFactory from './VaComponentFactory.js'
 import VaPreviewComponentFactory from './VaPreviewComponentFactory.js'
-import VaTopbar from './VaTopbar.jsx'
-import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'
 import {BudgetItemElement} from './VaBudgetComponents.jsx'
 import {VaBudgetCalculator} from './VaBudgetCalculator.js'
 
@@ -126,47 +124,38 @@ function onInitialStateLoaded(initialState) {
   VaBudgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(initialState, editingExistingApplication)
 }
 
-const controller = new FormController({
-  "initialStateTemplateTransformation": initialStateTemplateTransformation,
-  "onInitialStateLoaded": onInitialStateLoaded,
-  "formP": formP,
-  "customComponentFactory": new VaComponentFactory(),
-  "customPreviewComponentFactory": new VaPreviewComponentFactory()
-})
-const formModelP = controller.initialize({
-  "containsExistingEntityId": containsExistingEntityId,
-  "isFieldEnabled": isFieldEnabled,
-  "onFieldUpdate": onFieldUpdate,
-  "onFieldValid": _.partial(onFieldValid, controller),
-  "isSaveDraftAllowed": isSaveDraftAllowed,
-  "onSaveCompletedCallback": onSaveCompletedCallback,
-  "createUiStateIdentifier": createUiStateIdentifier,
-  "urlCreator": urlCreator,
-  "responseParser": responseParser,
-  "printEntityId": printEntityId
-}, query)
+function initVaForm() {
+  const controller = new FormController({
+    "initialStateTemplateTransformation": initialStateTemplateTransformation,
+    "onInitialStateLoaded": onInitialStateLoaded,
+    "formP": formP,
+    "customComponentFactory": new VaComponentFactory(),
+    "customPreviewComponentFactory": new VaPreviewComponentFactory()
+  })
+  const stateProperty = controller.initialize({
+    "containsExistingEntityId": containsExistingEntityId,
+    "isFieldEnabled": isFieldEnabled,
+    "onFieldUpdate": onFieldUpdate,
+    "onFieldValid": _.partial(onFieldValid, controller),
+    "isSaveDraftAllowed": isSaveDraftAllowed,
+    "onSaveCompletedCallback": onSaveCompletedCallback,
+    "createUiStateIdentifier": createUiStateIdentifier,
+    "urlCreator": urlCreator,
+    "responseParser": responseParser,
+    "printEntityId": printEntityId
+  }, query)
+  return {stateProperty: stateProperty, getReactComponent: function(state) {
+    return <VaForm controller={controller} state={state} develQueryParam={develQueryParam}/>
+  }}
+}
 
-formModelP.onValue((state) => {
+const app = initVaForm()
+app.stateProperty.onValue((state) => {
   if (develQueryParam) {
     console.log("Updating UI with state:", state)
   }
   try {
-    React.render(
-      <div>
-        <VaOldBrowserWarning lang={state.configuration.lang}
-                             translations={state.configuration.translations.warning}
-                             devel={develQueryParam}
-        />
-        <VaTopbar controller={controller}
-                  state={state}
-        />
-        <FormContainer controller={controller}
-                       state={state}
-                       infoElementValues={state.avustushaku}
-        />
-      </div>,
-      document.getElementById('app')
-    )
+    React.render(app.getReactComponent(state), document.getElementById('app'))
   } catch (e) {
     console.log('Error from React.render with state', state, e)
   }
