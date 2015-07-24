@@ -2,15 +2,21 @@
   (:require [clojure.core.async :refer [<! >!! go chan]]
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
+            [clojure.java.io :as io]
             [postal.core :refer [send-message]]
             [clostache.parser :refer [render]]
             [oph.common.config :refer [config]]))
 
+(defn- load-template [path]
+  (->> path
+       io/resource
+       slurp))
+
 (def mail-templates
-  {:activation {:html {:fi (slurp "resources/email-templates/activation.html.fi")
-                       :sv (slurp "resources/email-templates/activation.html.sv")}
-                :plain {:fi (slurp "resources/email-templates/activation.plain.fi")
-                        :sv (slurp "resources/email-templates/activation.plain.sv")}}})
+  {:activation {:html {:fi (load-template "email-templates/activation.html.fi")
+                       :sv (load-template "email-templates/activation.html.sv")}
+                :plain {:fi (load-template "email-templates/activation.plain.fi")
+                        :sv (load-template "email-templates/activation.plain.sv")}}})
 
 (def smtp-config (:email config))
 (def mail-queue (chan 50))
