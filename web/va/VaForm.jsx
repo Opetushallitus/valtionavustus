@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import VaTopbar from './VaTopbar.jsx'
+import VaFormTopbar from './VaFormTopbar.jsx'
 import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'
 import FormContainer from './../form/FormContainer.jsx'
 
@@ -16,8 +16,8 @@ export default class VaForm extends React.Component {
                              translations={state.configuration.translations.warning}
                              devel={develQueryParam}
         />
-        <VaTopbar controller={controller}
-                  state={state}
+        <VaFormTopbar controller={controller}
+                      state={state}
         />
         <FormContainer controller={controller}
                        state={state}

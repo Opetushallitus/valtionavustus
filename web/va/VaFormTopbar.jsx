@@ -6,7 +6,7 @@ import ToggleLanguageButton from '../form/component/ToggleLanguageButton.jsx'
 import LocalizedString from '../form/component/LocalizedString.jsx'
 import FormErrorSummary from '../form/component/FormErrorSummary.jsx'
 
-export default class VaTopbar extends React.Component {
+export default class VaFormTopbar extends React.Component {
   render() {
     const controller = this.props.controller
     const state = this.props.state
