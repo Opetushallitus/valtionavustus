@@ -118,8 +118,8 @@ export default class FormStateTransitions {
           stateSkeletonFromServer.validationErrors = Immutable(stateSkeletonFromServer.validationErrors)
           dispatcher.push(events.saveCompleted, stateSkeletonFromServer)
         })
-        .catch(function(error, response) {
-            FormStateTransitions.handleSaveError(dispatcher, events, this.status, error, "PUT", url, response, saveTypes.initialSave)
+        .catch(function(response) {
+            FormStateTransitions.handleSaveError(dispatcher, events, response.status, response.statusText, "PUT", url, response.data, saveTypes.initialSave)
         })
     }
     catch(error) {
@@ -146,8 +146,8 @@ export default class FormStateTransitions {
           }
           dispatcher.push(events.saveCompleted, updatedState)
         })
-        .catch(function(error, response) {
-            FormStateTransitions.handleSaveError(dispatcher, events, this.status, error, "POST", url, response, saveType)
+        .catch(function(response) {
+            FormStateTransitions.handleSaveError(dispatcher, events, response.status, response.statusText, "POST", url, response.data, saveType)
         })
     }
     catch(error) {
