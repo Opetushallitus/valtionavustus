@@ -51,7 +51,7 @@ const urlCreator = new UrlCreator({
       return existingFormApiUrl(avustusHakuId, hakemusId)
     },
 
-    existingSubmissionEditUrl: function(avustusHakuId, hakemusId) { return "/?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId },
+    existingSubmissionEditUrl: function(avustusHakuId, hakemusId, lang) { return "/?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId + "&lang=" + lang},
     existingSubmissionPreviewUrl: function(state) {
       const avustusHakuId = state.avustushaku.id
       const hakemusId = state.saveStatus.hakemusId
@@ -74,7 +74,7 @@ function onFieldValid(formController, state, field, newFieldValue) {
     formController.saveImmediately(function(newState, response) {
       const hakemusId = response.id
       newState.saveStatus.hakemusId = hakemusId
-      const newUrl = urlCreator.existingSubmissionEditUrl(newState.avustushaku.id, hakemusId)
+      const newUrl = urlCreator.existingSubmissionEditUrl(newState.avustushaku.id, hakemusId, newState.configuration.lang)
       if (typeof (history.pushState) != "undefined") {
         history.pushState({}, window.title, newUrl);
      } else {
