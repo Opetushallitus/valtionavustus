@@ -92,8 +92,12 @@
     }
   },
   "verification": {
+    "heading": {
+      "fi": "Tunnistautuminen",
+      "sv": "TODO SV: Tunnistautuminen"
+    },
     "ok": {
-      "heading": {
+      "message": {
         "fi": "Tunnistautuminen onnistui!",
         "sv": "TODO SV: Tunnistautuminen onnistui!"
       },
@@ -107,7 +111,7 @@
       }
     },
     "failed": {
-      "heading": {
+      "message": {
         "fi": "Tunnistautuminen epäonnistui!",
         "sv": "TODO SV: Tunnistautuminen epäonnistui!"
       },

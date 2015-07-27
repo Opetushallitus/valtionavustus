@@ -1,6 +1,7 @@
 import React from 'react'
 
 import LocalizedString from '../form/component/LocalizedString.jsx'
+import VaFormVerifyTopbar from './VaFormVerifyTopbar.jsx'
 
 export default class VaFormVerify extends React.Component {
   render() {
@@ -14,9 +15,10 @@ export default class VaFormVerify extends React.Component {
     const translations = state.configuration.translations.verification
     const translationsByStatus = ok ? translations.ok : translations.failed
     return(
-      <div id="container" className="centered-text">
-        <div id="verification-box">
-          <h1><LocalizedString translations={translationsByStatus} translationKey="heading" lang={lang}/></h1>
+      <div id="verification">
+        <VaFormVerifyTopbar state={state}/>
+        <div id="container">
+          <h1><LocalizedString translations={translationsByStatus} translationKey="message" lang={lang}/></h1>
           <div><LocalizedString translations={translationsByStatus} translationKey="info" lang={lang}/></div>
           <button hidden={!ok} className="soresu-text-button" onClick={closeWindow} type="button"><LocalizedString translations={translations.ok} translationKey="close" lang={lang}/></button>
         </div>
