@@ -16,7 +16,7 @@ CREATE TABLE form_submissions (
 );
 CREATE SEQUENCE form_submissions_id_seq;
 
-CREATE TYPE status AS ENUM ('draft_unverified', 'draft_verified', 'submitted');
+CREATE TYPE status AS ENUM ('draft', 'submitted');
 CREATE TABLE hakemukset (
     id                      serial PRIMARY KEY,
     user_key                varchar(64) UNIQUE NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE hakemukset (
     created_at              timestamp with time zone default now(),
     verified_at             timestamp with time zone,
     submitted_at            timestamp with time zone,
-    status                  status NOT NULL default 'draft_unverified',
+    status                  status NOT NULL default 'draft',
     FOREIGN KEY (form_submission_id, form_submission_version) REFERENCES form_submissions (id, version)
 );
 

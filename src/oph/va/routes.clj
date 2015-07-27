@@ -33,6 +33,8 @@
 (defn hakemus-ok-response [hakemus submission]
   (ok {:id (:user_key hakemus)
   :status (:status hakemus)
+  :created_at (:created_at hakemus)
+  :verified_at (:verified_at hakemus)
   :submission submission
   }))
 
@@ -106,7 +108,7 @@
        :summary "Verify hakemus"
     (let [hakemus (va-db/get-hakemus hakemus-id)
           form-id (:form (va-db/get-avustushaku haku-id))]
-      (if (and (= (:status hakemus) "draft_verified") (= (:verify_key hakemus) verification))
+      (if (and (:verified_at hakemus) (= (:verify_key hakemus) verification))
         (hakemus-ok-response hakemus (:body (get-form-submission form-id (:form_submission_id hakemus))))
         (let [verified-hakemus (va-db/verify-hakemus hakemus-id verification)]
           (if verified-hakemus
