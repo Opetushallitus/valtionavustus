@@ -13,7 +13,7 @@ export default class FormStateLoop {
     this.events = events
   }
 
-  initialize(controller, formOperations, query) {
+  initialize(controller, formOperations, initialValues, query) {
     const queryParams = {
       lang: query.lang || 'fi',
       preview: query.preview || false,
@@ -29,7 +29,7 @@ export default class FormStateLoop {
         saveInProgress: false,
         saveTime: null,
         saveError: "",
-        values: getInitialFormValuesPromise(formOperations, controller.formP, query)
+        values: getInitialFormValuesPromise(formOperations, controller.formP, initialValues, query)
       },
       configuration: {
         preview: queryParams.preview,
@@ -80,20 +80,22 @@ export default class FormStateLoop {
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
 
-    function getInitialFormValuesPromise(formOperations, formP, query) {
+    function getInitialFormValuesPromise(formOperations, formP, defaultValues, query) {
       if (formOperations.containsExistingEntityId(query)) {
         return Bacon.fromPromise(
           HttpUtil.get(formOperations.urlCreator.existingFormApiUrlFromQuery(query))
         ).map(formOperations.responseParser.getFormAnswers)
       }
-      return formP.map(initDefaultValues)
+      return formP.map(_.partial(initDefaultValues, initialValues))
     }
 
-    function initDefaultValues(form) {
+    function initDefaultValues(initialValues, form) {
       const values = {}
       const fields = JsUtil.flatFilter(form.content, n => { return !_.isUndefined(n.id) })
       _.forEach(fields, f => {
-        if (!_.isEmpty(f.options)) {
+        if (f.id in initialValues) {
+          InputValueStorage.writeValue(form.content, values, f.id, initialValues[f.id])
+        } else if (!_.isEmpty(f.options)) {
           InputValueStorage.writeValue(form.content, values, f.id, f.options[0].value)
         }
       })

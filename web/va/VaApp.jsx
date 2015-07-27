@@ -146,7 +146,7 @@ function initVaFormController() {
     "urlCreator": urlCreator,
     "responseParser": responseParser,
     "printEntityId": printEntityId
-  }, query)
+  }, {"language": query.lang}, query)
   return {stateProperty: stateProperty, getReactComponent: function(state) {
     return <VaForm controller={controller} state={state} develQueryParam={develQueryParam}/>
   }}
