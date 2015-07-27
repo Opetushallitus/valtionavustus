@@ -36,7 +36,7 @@ function isFieldEnabled(saved, fieldId) {
 }
 
 const responseParser = new ResponseParser({
-      getFormAnswers: function(response) { return response.submission.answers }
+  getFormAnswers: function(response) { return response.submission.answers }
 })
 
 const urlCreator = new UrlCreator({
