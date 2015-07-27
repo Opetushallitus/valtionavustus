@@ -23,30 +23,35 @@
       page.waitAutoSave
     )
 
-    it('Mahdollistaa hakemuksen lähettämisen oikein täytettynä', function() {
-      expect(page.validationErrorsSummary()).to.equal('')
-      expect(page.submitButton().isEnabled()).to.equal(true)
-    })
-
-    it('Näyttää summia', function() {
-      expect(page.elementTextBySelector('#project-budget span.sum')).to.equal('10')
-      expect(page.elementTextBySelector('.grand-total span.sum')).to.equal('10')
-    })
-
-    describe('Ilman kuvausta kentältä, jonka arvo on yli nollan', function() {
-      before(
-        page.setInputValue('service-purchase-costs-row.description', ''),
-        page.setInputValue('service-purchase-costs-row.amount', '1000')
-      )
-
-      it('ilmoittaa kuvauksen pakollisuudesta', function() {
-        expect(page.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
-        expect(page.submitButton().isEnabled()).to.equal(false)
-        expect(page.detailedValidationErrors()).to.include('Palvelujen ostot: Pakollinen tieto')
-        expect(page.detailedValidationErrors()).to.have.length(1)
+    describe('oikein täytettynä', function () {
+      it('mahdollistaa hakemuksen lähettämisen', function() {
+        expect(page.validationErrorsSummary()).to.equal('')
+        expect(page.submitButton().isEnabled()).to.equal(true)
       })
 
-      describe('Kuvauksen syöttämisen jälkeen', function() {
+      it('näyttää summia', function() {
+        expect(page.elementTextBySelector('#project-budget span.sum')).to.equal('10')
+        expect(page.elementTextBySelector('.grand-total span.sum')).to.equal('10')
+      })
+    })
+
+    describe('ilman kuvausta kentältä, jonka arvo on yli nollan', function() {
+      before(
+        page.setInputValue('service-purchase-costs-row.description', ''),
+        page.setInputValue('service-purchase-costs-row.amount', '1000'),
+        page.waitAutoSave
+      )
+
+      describe('ennen kuvauksen syöttämistä', function() {
+        it('ilmoittaa kuvauksen pakollisuudesta', function() {
+          expect(page.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
+          expect(page.submitButton().isEnabled()).to.equal(false)
+          expect(page.detailedValidationErrors()).to.include('Palvelujen ostot: Pakollinen tieto')
+          expect(page.detailedValidationErrors()).to.have.length(1)
+        })
+      })
+
+      describe('kuvauksen syöttämisen jälkeen', function() {
         before(
           page.setInputValue('service-purchase-costs-row.description', 'Nopean oppimisen konsultointia'),
           page.waitAutoSave
@@ -59,7 +64,7 @@
       })
     })
 
-    describe('Negatiivisella budjetilla', function() {
+    describe('negatiivisella budjetilla', function() {
       before(
         page.setInputValue('eu-programs-income-row.description', 'EU-laatutuki 2015'),
         page.setInputValue('eu-programs-income-row.amount', '10000'),
@@ -78,7 +83,7 @@
       })
     })
 
-    describe('Muilla kuin täysien eurojen syötteillä', function() {
+    describe('muilla kuin täysien eurojen syötteillä', function() {
       before(
         page.setInputValue('service-purchase-costs-row.description', 'Opetusasiantuntijoiden workshop'),
         page.setInputValue('service-purchase-costs-row.amount', '999,90'),
