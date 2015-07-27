@@ -41,7 +41,9 @@
     describe('täytettäessä lomaketta, automaattitallennuksen jälkeen', function() {
       before(
         enterValidValuesToPage,
-        page.waitAutoSave
+        page.waitAutoSave,
+        wait.until(page.hakemusIdIsPresent),
+        page.storeHakemusIdFromHtml
       )
 
       function removeButtonForOrg(nr) {
@@ -170,12 +172,30 @@
       })
     })
 
-    describe('Vaihdettaessa kieli ruotsiksi', function () {
+    describe('vaihdettaessa kieli ruotsiksi', function () {
       before(
         page.toggleLanguage
       )
       it("näkyy haun nimi ruotsiksi", function() {
         expect(page.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
+      })
+    })
+
+    describe('sähköpostin varmistussivulla suomeksi', function () {
+      before(
+          page.openVerifyPage(page.getHakemusId, "väärä tunniste")
+      )
+      it("kerrotaan, että tunniste on väärä", function() {
+        expect(page.applicationName()).to.deep.equal('Tunnistautuminen epäonnistui!')
+      })
+    })
+
+    describe('sähköpostin varmistussivulla ruotsiksi', function () {
+      before(
+          page.openVerifyPage(page.getHakemusId, "väärä tunniste", "sv")
+      )
+      it("kerrotaan ruotsiksi, että tunniste on väärä", function() {
+        expect(page.applicationName()).to.deep.equal('TODO SV: Tunnistautuminen epäonnistui!')
       })
     })
   })
