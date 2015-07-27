@@ -38,7 +38,7 @@ const responseParser = new ResponseParser({
 })
 
 const urlCreator = new UrlCreator({
-    formApiUrl: function(avustusHakuId) { return "/api/form/" + avustusHakuId },
+    formApiUrl: function(formId) { return "/api/form/" + formId },
     newEntityApiUrl: function(state) { return "/api/avustushaku/" + state.avustushaku.id + "/hakemus" },
     existingFormApiUrl: function(state) {
       const avustusHakuId = state.avustushaku.id
@@ -112,7 +112,6 @@ function printEntityId(state) {
 const query = queryString.parse(location.search)
 const develQueryParam =  query.devel || false
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(avustusHakuApiUrl(query.avustushaku || 1)))
-const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(HttpUtil.get(urlCreator.formApiUrl(avustusHaku.id)))})
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
@@ -125,6 +124,7 @@ function onInitialStateLoaded(initialState) {
 }
 
 function initVaForm() {
+  const formP = avustusHakuP.flatMap(function(avustusHaku) {console.log(avustusHaku);return Bacon.fromPromise(HttpUtil.get(urlCreator.formApiUrl(avustusHaku.form)))})
   const controller = new FormController({
     "initialStateTemplateTransformation": initialStateTemplateTransformation,
     "onInitialStateLoaded": onInitialStateLoaded,
