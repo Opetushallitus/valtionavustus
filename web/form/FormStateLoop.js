@@ -1,9 +1,9 @@
 import Bacon from 'baconjs'
 import _ from 'lodash'
-import qwest from 'qwest'
 import Immutable from 'seamless-immutable'
 
 import InputValueStorage from './InputValueStorage.js'
+import HttpUtil from './HttpUtil.js'
 import JsUtil from './JsUtil.js'
 import FormStateTransitions from './FormStateTransitions.js'
 
@@ -20,7 +20,7 @@ export default class FormStateLoop {
       devel: query.devel || false
     }
     const clientSideValidationP = controller.formP.map(initClientSideValidationState)
-    const translationsP = Bacon.fromPromise(qwest.get("/translations.json"))
+    const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json"))
 
     const initialStateTemplate = {
       form: controller.formP,
@@ -83,7 +83,7 @@ export default class FormStateLoop {
     function getInitialFormValuesPromise(formOperations, formP, query) {
       if (formOperations.containsExistingEntityId(query)) {
         return Bacon.fromPromise(
-          qwest.get(formOperations.urlCreator.existingFormApiUrlFromQuery(query))
+          HttpUtil.get(formOperations.urlCreator.existingFormApiUrlFromQuery(query))
         ).map(formOperations.responseParser.getFormAnswers)
       }
       return formP.map(initDefaultValues)

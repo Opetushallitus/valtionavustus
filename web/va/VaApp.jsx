@@ -3,7 +3,6 @@ import PolyfillBind from './../polyfill-bind'
 import ConsolePolyfill from 'console-polyfill'
 import React from 'react'
 import Bacon from 'baconjs'
-import qwest from 'qwest'
 import _ from 'lodash'
 import queryString from 'query-string'
 
@@ -12,6 +11,7 @@ import FieldUpdateHandler from './../form/FieldUpdateHandler.js'
 import UrlCreator from './../form/UrlCreator'
 import ResponseParser from './../form/ResponseParser'
 import JsUtil from './../form/JsUtil.js'
+import HttpUtil from './../form/HttpUtil'
 
 import VaForm from './VaForm.jsx'
 import VaComponentFactory from './VaComponentFactory.js'
@@ -111,8 +111,8 @@ function printEntityId(state) {
 
 const query = queryString.parse(location.search)
 const develQueryParam =  query.devel || false
-const avustusHakuP = Bacon.fromPromise(qwest.get(avustusHakuApiUrl(query.avustushaku || 1)))
-const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(qwest.get(urlCreator.formApiUrl(avustusHaku.id)))})
+const avustusHakuP = Bacon.fromPromise(HttpUtil.get(avustusHakuApiUrl(query.avustushaku || 1)))
+const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(HttpUtil.get(urlCreator.formApiUrl(avustusHaku.id)))})
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP

@@ -1,8 +1,8 @@
 import _ from 'lodash'
-import qwest from 'qwest'
 import Immutable from 'seamless-immutable'
 
 import LocalStorage from './LocalStorage.js'
+import HttpUtil from './HttpUtil.js'
 import FormBranchGrower from './FormBranchGrower.js'
 import FieldUpdateHandler from './FieldUpdateHandler.js'
 
@@ -105,7 +105,7 @@ export default class FormStateTransitions {
     const events = this.events
     try {
       state.saveStatus.saveInProgress = true
-      qwest.put(url, state.saveStatus.values, {dataType: "json", async: true})
+      HttpUtil.put(url, state.saveStatus.values)
         .then(function(response) {
           console.log("State saved. Response=", JSON.stringify(response))
           if (onSuccessCallback) {
@@ -133,7 +133,7 @@ export default class FormStateTransitions {
     const events = this.events
     try {
       state.saveStatus.saveInProgress = true
-      qwest.post(url, state.saveStatus.values, {dataType: "json", async: true})
+      HttpUtil.post(url, state.saveStatus.values)
         .then(function(response) {
           console.log("Saved to server (", saveType, "). Response=", JSON.stringify(response))
           const updatedState = _.cloneDeep(state)
