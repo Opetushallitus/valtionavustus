@@ -74,6 +74,7 @@ mockAjax = {
       xhr.onCreate = function (request) {
         window.setTimeout(function() {
           if (window._fakeAjaxParams && request.method === _fakeAjaxParams.method && request.url.indexOf(_fakeAjaxParams.url) === 0) {
+            console.log("Faking", _fakeAjaxParams.responseCode, "response", _fakeAjaxParams.responseObject, "to", _fakeAjaxParams.method, request.url)
             request.respond(_fakeAjaxParams.responseCode, { "Content-Type": "application/json" }, JSON.stringify(_fakeAjaxParams.responseObject))
             xhr.restore()
             delete _fakeAjaxParams
