@@ -42,9 +42,10 @@
   (let [from (:from smtp-config)
         to (:to msg)
         subject (:subject msg)]
-    (log/info (format "Sending %s message to %s with subject '%s'"
+    (log/info (format "Sending %s message to %s (lang: %s) with subject '%s'"
                       (str (:type msg))
                       to
+                      (:lang msg)
                       subject))
     (let [email {:from from
                  :to to
@@ -59,9 +60,10 @@
                             (:retry-multiplier smtp-config)
                             (:retry-max-time smtp-config)
                             send-fn))
-        (log/info (format "Failed to send %s message to %s with subject '%s'"
+        (log/info (format "Failed to send %s message to %s (lang: %s) with subject '%s'"
                           (str (:type msg))
                           to
+                          (:lang msg)
                           subject))))))
 
 (defn start-background-sender []
