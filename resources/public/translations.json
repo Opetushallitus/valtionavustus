@@ -90,5 +90,31 @@
       "fi": "https://browser-update.org/fi/update.html",
       "sv": "https://browser-update.org/sv/update-outdated.html"
     }
+  },
+  "verification": {
+    "ok": {
+      "heading": {
+        "fi": "Tunnistautuminen onnistui!",
+        "sv": "TODO SV: Tunnistautuminen onnistui!"
+      },
+      "info": {
+        "fi": "Voit nyt sulkea sivun ja jatkaa hakemuksen täyttämistä",
+        "sv": "TODO SV: Voit nyt sulkea sivun ja jatkaa hakemuksen täyttämistä"
+      },
+      "close": {
+        "fi": "Sulje",
+        "sv": "TODO SV: Sulje"
+      }
+    },
+    "failed": {
+      "heading": {
+        "fi": "Tunnistautuminen epäonnistui!",
+        "sv": "TODO SV: Tunnistautuminen epäonnistui!"
+      },
+      "info": {
+        "fi": "Ole hyvä tarkista linkki ja yritä uudelleen",
+        "sv": "TODO SV: Ole hyvä tarkista linkki ja yritä uudelleen"
+      }
+    }
   }
 }

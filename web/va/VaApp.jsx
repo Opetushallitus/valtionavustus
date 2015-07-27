@@ -14,6 +14,8 @@ import JsUtil from './../form/JsUtil.js'
 import HttpUtil from './../form/HttpUtil'
 
 import VaForm from './VaForm.jsx'
+import VaFormVerify from './VaFormVerify.jsx'
+import VaFormVerificationController from './VaFormVerificationController'
 import VaComponentFactory from './VaComponentFactory.js'
 import VaPreviewComponentFactory from './VaPreviewComponentFactory.js'
 import {BudgetItemElement} from './VaBudgetComponents.jsx'
@@ -111,6 +113,7 @@ function printEntityId(state) {
 
 const query = queryString.parse(location.search)
 const develQueryParam =  query.devel || false
+const tarkiste =  query.tarkiste || false
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(avustusHakuApiUrl(query.avustushaku || 1)))
 
 function initialStateTemplateTransformation(template) {
@@ -123,7 +126,7 @@ function onInitialStateLoaded(initialState) {
   VaBudgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(initialState, editingExistingApplication)
 }
 
-function initVaForm() {
+function initVaFormController() {
   const formP = avustusHakuP.flatMap(function(avustusHaku) {console.log(avustusHaku);return Bacon.fromPromise(HttpUtil.get(urlCreator.formApiUrl(avustusHaku.form)))})
   const controller = new FormController({
     "initialStateTemplateTransformation": initialStateTemplateTransformation,
@@ -149,7 +152,21 @@ function initVaForm() {
   }}
 }
 
-const app = initVaForm()
+function initVaFormVerificationController() {
+  const controller = new VaFormVerificationController()
+  const stateProperty = controller.initialize()
+  return {stateProperty: stateProperty, getReactComponent: function(state) {
+    return <VaFormVerify urlCreator={urlCreator} state={state} />
+  }}
+}
+
+function initAppController() {
+  if(tarkiste) {
+    return initVaFormVerificationController()
+  }
+  return initVaFormController()
+}
+const app = initAppController()
 app.stateProperty.onValue((state) => {
   if (develQueryParam) {
     console.log("Updating UI with state:", state)
