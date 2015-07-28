@@ -61,7 +61,7 @@ function deploy() {
   TARGET_JAR_PATH=${TARGET_DIR}/va.jar
   echo "=============================="
   echo
-  echo "...copying artifcats to ${target_server_name}:${TARGET_DIR} ..."
+  echo "...copying artifacts to ${target_server_name}:${TARGET_DIR} ..."
   $SSH "mkdir -p ${TARGET_DIR}"
   scp -p -i ${SSH_KEY} target/uberjar/oph-valtionavustus-*-standalone.jar ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
   scp -pr -i ${SSH_KEY} config resources ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
@@ -74,7 +74,7 @@ function deploy() {
   echo
   echo "...dropping db.."
   $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/resources/sql/drop_public_schema.sql"
-  APP_COMMAND="sudo /usr/local/bin/run_app.bash ${CURRENT_DIR}/va.jar ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/test.edn"
+  APP_COMMAND="sudo /usr/local/bin/run_app.bash ${CURRENT_DIR}/va.jar ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
   echo "=============================="
   echo
   echo "...starting application with command \"${APP_COMMAND}\" ..."
