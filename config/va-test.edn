@@ -3,7 +3,7 @@
           :port 8081
           :url "https://srv2.va-dev.oph.fi/"}
  :db {:database-name "va-test"}
- :email {:enabled? true
+ :email {:enabled? false
          :host "smtp.sdn.csc.fi"
          :port 25
          :sender "no-reply@csc.fi"
