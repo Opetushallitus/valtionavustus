@@ -36,10 +36,10 @@ export default class VaFormTopbar extends React.Component {
           <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
           <div id="form-controls" hidden={preview}>
             <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang}/>
-            <TextButton onClick={controller.submit} disabled={isSaveDisabled()} translations={translations.form} translationKey="submit" lang={lang} />
+            <TextButton htmlId="submit" onClick={controller.submit} disabled={isSaveDisabled()} translations={translations.form} translationKey="submit" lang={lang} />
             <span id="form-controls-devel" hidden={!configuration.develMode}>
               <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>
-              <TextButton onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)} translations={translations.form} translationKey="preview" lang={lang} />
+              <TextButton htmlId="preview-button" onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)} translations={translations.form} translationKey="preview" lang={lang} />
             </span>
             <FormErrorSummary formContent={form.content} controller={controller} saveError={saveStatus.saveError} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
           </div>
