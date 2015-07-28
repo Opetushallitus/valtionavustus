@@ -5,6 +5,7 @@ import FormSaveStatus from '../form/component/FormSaveStatus.jsx'
 import ToggleLanguageButton from '../form/component/ToggleLanguageButton.jsx'
 import LocalizedString from '../form/component/LocalizedString.jsx'
 import FormErrorSummary from '../form/component/FormErrorSummary.jsx'
+import TextButton from '../form/component/TextButton.jsx'
 
 export default class VaFormTopbar extends React.Component {
   render() {
@@ -24,6 +25,9 @@ export default class VaFormTopbar extends React.Component {
     const openPreview = function() {
       window.open(formOperations.urlCreator.existingSubmissionPreviewUrl(state), "preview")
     }
+    const isSaveDisabled = function() {
+      return !(formIsValid && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state)
+    }
 
     return(
       <section id="topbar">
@@ -32,15 +36,11 @@ export default class VaFormTopbar extends React.Component {
           <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
           <div id="form-controls" hidden={preview}>
             <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang}/>
-            <button id="submit" type="submit" className="soresu-text-button" onClick={controller.submit} disabled={!(formIsValid && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state)}>
-              <LocalizedString translations={translations.form} translationKey="submit" lang={lang}/>
-            </button>
-                <span id="form-controls-devel" hidden={!configuration.develMode}>
-                  <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>
-                  <button type="button" className="soresu-text-button" onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)}>
-                    <LocalizedString translations={translations.form} translationKey="preview" lang={lang} />
-                  </button>
-                </span>
+            <TextButton onClick={controller.submit} disabled={isSaveDisabled()} translations={translations.form} translationKey="submit" lang={lang} />
+            <span id="form-controls-devel" hidden={!configuration.develMode}>
+              <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>
+              <TextButton onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)} translations={translations.form} translationKey="preview" lang={lang} />
+            </span>
             <FormErrorSummary formContent={form.content} controller={controller} saveError={saveStatus.saveError} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
           </div>
         </div>

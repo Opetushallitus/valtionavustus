@@ -14,12 +14,11 @@ export default class RemoveButton extends React.Component {
       }
     }
     const removeAltText = new Translator(props.translations["misc"]).translate("remove", props.lang, "POISTA")
-    return (<button
-        className="soresu-remove"
-        alt={removeAltText}
-        title={removeAltText}
-        onClick={removalCallback}
-        disabled={props.disabled || mustNotBeRemoved}/>
+    return (<button className="soresu-remove"
+                    alt={removeAltText}
+                    title={removeAltText}
+                    onClick={removalCallback}
+                    disabled={props.disabled || mustNotBeRemoved} />
     )
   }
 }

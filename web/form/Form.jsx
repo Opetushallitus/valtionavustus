@@ -29,6 +29,8 @@ export default class Form extends React.Component {
 
         if (field.type == "formField") {
           return createFormComponent(field, extendedProperties)
+        } else if (field.type == "button") {
+          return createButton(field, extendedProperties)
         } else if (field.type == "wrapperElement") {
           return createWrapperElement(field, extendedProperties, renderingParameters)
         }
@@ -42,6 +44,20 @@ export default class Form extends React.Component {
     function createInfoElement(fieldProperties) {
       return <InfoElement {...fieldProperties}
                           values={infoElementValues} />
+    }
+
+    function createButton(field, extendedProperties) {
+      const hackField = { displayAs: field.displayAs }
+      const buttonProperties = { field: hackField,
+                                 lang: extendedProperties.lang,
+                                 htmlId: extendedProperties.htmlId,
+                                 translations: field,
+                                 translationKey: "label" }
+      if (field.displayAs in controller.getCustomComponentTypeMapping()) {
+        return controller.createCustomComponent(buttonProperties)
+      } else {
+        return <span>Unsupported field type {field.displayAs}</span>
+      }
     }
 
     function createFormComponent(field, extendedProperties) {

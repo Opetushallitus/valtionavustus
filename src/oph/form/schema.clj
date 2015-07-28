@@ -17,6 +17,12 @@
                             (s/optional-key :params) s/Any
                             (s/optional-key :label) LocalizedString})
 
+  (s/defschema Button {:type (s/eq "button")
+                       :id s/Str
+                       (s/optional-key :label) LocalizedString
+                       (s/optional-key :params) s/Any
+                       :displayAs s/Keyword})
+
   (s/defschema FormField {:type (s/eq "formField")
                           :id s/Str
                           :required s/Bool
@@ -31,6 +37,7 @@
                                              :radioButton)})
 
   (s/defschema BasicElement (s/either FormField
+                                      Button
                                       InfoElement))
 
   (let [default-wrapper-element-types [:theme :fieldset :growingFieldset :growingFieldsetChild ]
