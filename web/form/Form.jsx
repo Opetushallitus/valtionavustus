@@ -17,7 +17,14 @@ export default class Form extends React.Component {
 
     const renderField = function (field, renderingParameters) {
       const htmlId = controller.constructHtmlId(fields, field.id)
-      const fieldProperties = { lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field, translations: state.configuration.translations }
+      const fieldProperties = {
+        fieldType: field.displayAs,
+        lang: state.configuration.lang,
+        key: htmlId,
+        htmlId: htmlId,
+        field: field,
+        translations: state.configuration.translations
+      }
 
       if (field.type == "infoElement") {
         return createInfoElement(fieldProperties)

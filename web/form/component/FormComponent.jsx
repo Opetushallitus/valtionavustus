@@ -22,11 +22,9 @@ export default class FormComponent extends React.Component {
   }
 
   render() {
-    const field = this.props.field
-    const displayAs = field.displayAs
     const controller = this.props.controller
 
-    if (displayAs in controller.getCustomComponentTypeMapping()) {
+    if (this.props.fieldType in controller.getCustomComponentTypeMapping()) {
       return controller.createCustomComponent(this.props)
     } else {
       return this.componentFactory.createComponent(this.props)

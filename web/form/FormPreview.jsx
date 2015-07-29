@@ -17,7 +17,7 @@ export default class FormPreview extends React.Component {
 
     const renderField = function(field, renderingParameters) {
       const htmlId = controller.constructHtmlId(fields, field.id)
-      const fieldProperties = { lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field }
+      const fieldProperties = { fieldType: field.displayAs, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field }
       if (field.type == "formField") {
         return createFormPreviewComponent(field, fieldProperties, renderingParameters);
       } else if (field.type == "infoElement") {

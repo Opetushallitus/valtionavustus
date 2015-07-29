@@ -6,14 +6,10 @@ export default class ComponentFactory {
   }
 
   createComponent(componentProps) {
-    const field = componentProps.field
-    const displayAs = field.displayAs
-
-    var element = <span>{this.constructor.name} : Unsupported field type {displayAs}</span>
-
-    if (displayAs in this.fieldTypeMapping) {
-      element = React.createElement(this.fieldTypeMapping[displayAs], componentProps)
+    const fieldType = componentProps.fieldType;
+    if (fieldType in this.fieldTypeMapping) {
+      return React.createElement(this.fieldTypeMapping[fieldType], componentProps)
     }
-    return element
+    return <span>{this.constructor.name} : Unsupported field type {fieldType}</span>
   }
 }
