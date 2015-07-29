@@ -64,7 +64,6 @@ export default class FormController {
 
   componentDidMount(field, initialValue) {
     if (field.skipValidationOnMount) {
-      field.skipValidationOnMount = false
       return
     }
     this.initFieldValidation(field, initialValue, false)
