@@ -63,8 +63,7 @@ const urlCreator = new UrlCreator({
 )
 
 function onFieldValid(formController, state, field, newFieldValue) {
-  const fieldId = field.id
-  if ("primary-email" === fieldId) {
+  if ("primary-email" === field.id) {
     function hakemusIdIsAlreadyInUrl() {
       return state.saveStatus.hakemusId &&
         state.saveStatus.hakemusId.length > 0 &&
