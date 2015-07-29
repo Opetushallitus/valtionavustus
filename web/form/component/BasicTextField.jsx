@@ -24,7 +24,6 @@ export default class BasicTextField extends BasicSizedComponent {
         name={props.htmlId}
         size={sizeNumber}
         maxLength={this.param("maxlength")}
-        controller={props.controller}
         value={props.value}
         className={classStr}
         disabled={props.disabled}
