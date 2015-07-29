@@ -10,6 +10,6 @@ export default class ComponentFactory {
     if (fieldType in this.fieldTypeMapping) {
       return React.createElement(this.fieldTypeMapping[fieldType], componentProps)
     }
-    return <span>{this.constructor.name} : Unsupported field type {fieldType}</span>
+    return <span key={componentProps.htmlId}>{this.constructor.name} : Unsupported field type {fieldType}</span>
   }
 }
