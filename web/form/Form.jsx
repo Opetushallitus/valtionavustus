@@ -54,16 +54,17 @@ export default class Form extends React.Component {
     }
 
     function createButton(field, extendedProperties) {
-      const hackField = { displayAs: field.displayAs }
-      const buttonProperties = { field: hackField,
+      const fieldType = extendedProperties.fieldType
+      const buttonProperties = { fieldType: fieldType,
                                  lang: extendedProperties.lang,
+                                 key: extendedProperties.htmlId,
                                  htmlId: extendedProperties.htmlId,
                                  translations: field,
                                  translationKey: "label" }
-      if (field.displayAs in controller.getCustomComponentTypeMapping()) {
+      if (fieldType in controller.getCustomComponentTypeMapping()) {
         return controller.createCustomComponent(buttonProperties)
       } else {
-        return <span>Unsupported field type {field.displayAs}</span>
+        return <span>Unsupported field type {fieldType}</span>
       }
     }
 
