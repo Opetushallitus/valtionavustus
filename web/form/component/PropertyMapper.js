@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import BasicFieldComponent from './BasicFieldComponent.jsx'
 
-export default class DefaultPropertyMapper {
+export class DefaultPropertyMapper {
   static map(props) {
     return props
   }
@@ -14,11 +14,10 @@ export default class DefaultPropertyMapper {
   }
 }
 
-export class TextFieldPropertyMapper extends DefaultPropertyMapper {
+class CommonPropertyMapper extends DefaultPropertyMapper {
   static map(props) {
     const field = props.field
     const onChange = e => { props.onChange(field, e.target.value) }
-    const onBlur = BasicFieldComponent.checkValueOnBlur(field, props.htmlId, props.value, props.onChange, props.controller)
     return {
       htmlId: props.htmlId,
       value: props.value,
@@ -26,9 +25,6 @@ export class TextFieldPropertyMapper extends DefaultPropertyMapper {
       field: field,
       fieldType: props.fieldType,
       onChange: onChange,
-      onBlur: onBlur,
-      size: DefaultPropertyMapper.param(field, "size"),
-      maxLength: DefaultPropertyMapper.param(field, "maxlength"),
       renderingParameters: props.renderingParameters,
       disabled: props.disabled,
       required: field.required,
@@ -37,5 +33,27 @@ export class TextFieldPropertyMapper extends DefaultPropertyMapper {
       hasError: !_.isEmpty(props.validationErrors),
       lang: props.lang
     }
+  }
+}
+
+export class TextFieldPropertyMapper extends CommonPropertyMapper {
+  static map(props) {
+    const field = props.field
+    const commonProps = CommonPropertyMapper.map(props)
+    const onBlur = BasicFieldComponent.checkValueOnBlur(field, props.htmlId, props.value, props.onChange, props.controller)
+    return _.extend(commonProps, {
+      onBlur: onBlur,
+      size: DefaultPropertyMapper.param(field, "size"),
+      maxLength: DefaultPropertyMapper.param(field, "maxlength")
+    })
+  }
+}
+
+export class OptionFieldPropertyMapper extends DefaultPropertyMapper {
+  static map(props) {
+    const commonProps = CommonPropertyMapper.map(props)
+    return _.extend(commonProps, {
+      options: props.field.options
+    })
   }
 }
