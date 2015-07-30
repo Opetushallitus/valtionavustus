@@ -6,6 +6,7 @@ import EmailTextField from './EmailTextField.jsx'
 import MoneyTextField from './MoneyTextField.jsx'
 import Dropdown from './Dropdown.jsx'
 import RadioButton from './RadioButton.jsx'
+import {TextFieldPropertyMapper} from './PropertyMapper.js'
 
 export default class FormComponent extends React.Component {
   constructor(props) {
@@ -23,10 +24,15 @@ export default class FormComponent extends React.Component {
 
   render() {
     const controller = this.props.controller
+    const fieldType = this.props.fieldType
 
-    if (this.props.fieldType in controller.getCustomComponentTypeMapping()) {
+    if (fieldType in controller.getCustomComponentTypeMapping()) {
       return controller.createCustomComponent(this.props)
     } else {
+      if(fieldType == "textField" || fieldType == "emailField" || fieldType == "moneyField") {
+        var componentProps = TextFieldPropertyMapper.map(this.props)
+        return this.componentFactory.createComponent(componentProps)
+      }
       return this.componentFactory.createComponent(this.props)
     }
   }

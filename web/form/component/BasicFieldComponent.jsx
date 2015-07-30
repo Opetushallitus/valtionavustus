@@ -29,19 +29,19 @@ export default class BasicFieldComponent extends React.Component {
   }
 
   label(className) {
-    if (this.hideLabel() || !this.props.field.label) return undefined
+    if (this.hideLabel() || !this.props.translations.label) return undefined
     else {
       return (<label htmlFor={this.props.htmlId}
                      className={this.labelClassName(className)}>
-                <LocalizedString translations={this.props.field}
-                                 translationKey="label"
+                <LocalizedString translations={this.props.translations}
+                                 translationKey={this.props.translationKey}
                                  lang={this.props.lang} />
               </label>)
     }
   }
 
   labelClassName(className) {
-    const classNames = ClassNames(className, { required: this.props.field.required, disabled: this.props.disabled })
+    const classNames = ClassNames(className, { required: this.props.required, disabled: this.props.disabled })
     return !_.isEmpty(classNames) ? classNames : undefined
   }
 

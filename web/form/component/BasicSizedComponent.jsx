@@ -5,12 +5,12 @@ import BasicFieldComponent from './BasicFieldComponent.jsx'
 
 export default class BasicSizedComponent extends BasicFieldComponent {
   sizeClassName() {
-    if (this.param("size") && !Number.isInteger(this.param("size"))) return this.param("size")
+    if (this.props.size && !Number.isInteger(this.props.size)) return this.props.size
     else return undefined
   }
 
   resolveClassName(className) {
-    const classNames = ClassNames(className, { error: !_.isEmpty(this.props.validationErrors)}, this.sizeClassName())
+    const classNames = ClassNames(className, { error: this.props.hasError }, this.sizeClassName())
     return !_.isEmpty(classNames) ? classNames : undefined
   }
 }

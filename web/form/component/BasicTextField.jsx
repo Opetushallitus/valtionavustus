@@ -5,7 +5,7 @@ import BasicSizedComponent from './BasicSizedComponent.jsx'
 export default class BasicTextField extends BasicSizedComponent {
   constructor(props) {
     super(props)
-    this.fieldtype = "text"
+    this.inputType = "text"
   }
 
   baseClassName() {
@@ -13,22 +13,22 @@ export default class BasicTextField extends BasicSizedComponent {
   }
 
   render() {
-    const sizeNumber = Number.isInteger(this.param("size")) ? this.param("size") : undefined
-    const classStr = this.resolveClassName()
     const props = this.props
+    const sizeNumber = Number.isInteger(props.size) ? props.size : undefined
+    const classStr = this.resolveClassName()
     return (<div className={this.resolveClassName(this.baseClassName())}>
       {this.label(classStr)}
       <input
-        type={this.fieldtype}
+        type={this.inputType}
+        className={classStr}
+        size={sizeNumber}
         id={props.htmlId}
         name={props.htmlId}
-        size={sizeNumber}
-        maxLength={this.param("maxlength")}
+        maxLength={props.maxLength}
         value={props.value}
-        className={classStr}
         disabled={props.disabled}
-        onBlur={BasicFieldComponent.checkValueOnBlur(props.field, props.htmlId, props.value, props.onChange, props.controller)}
-        onChange={e => props.onChange(props.field, e.target.value)}
+        onBlur={props.onBlur}
+        onChange={props.onChange}
         />
     </div>)
   }
