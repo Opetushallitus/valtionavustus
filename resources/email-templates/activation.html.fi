@@ -1,5 +1,6 @@
 <html>
 <body>
-    <p>Hi {{ name }}, you just <b>won</b> the lottery!</p>
+    <p>Hei, {{ name }}</p>
+    <p>Aktivoi hakemus <a href="{{ url }}>tästä linkistä</a></p>
 </body>
 </html>

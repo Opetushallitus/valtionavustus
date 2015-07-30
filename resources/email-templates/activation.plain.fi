@@ -1,1 +1,5 @@
-Hi {{ name }}, you just won the lottery!
+Hei, {{ name }}
+
+Aktivoi hakemus klikkaamalla seuraavaa linkkiä:
+
+{{ url }}

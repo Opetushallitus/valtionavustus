@@ -80,7 +80,7 @@
             :stop (reset! run? false)
             :send (send-msg! msg
                              (partial render (get-in mail-templates [(:type msg) :plain (:lang msg)]))
-                             (partial render (get-in mail-templates [(:type msg) :plain (:lang msg)]))))))
+                             (partial render (get-in mail-templates [(:type msg) :html (:lang msg)]))))))
         (log/info "Exiting mail sender loop - mail sending is shut down")))
 
 (defn stop-background-sender []
