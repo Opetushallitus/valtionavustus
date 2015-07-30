@@ -31,7 +31,7 @@ export default class FormComponent extends React.Component {
     } else {
       if (fieldType == "textField" || fieldType == "emailField" || fieldType == "moneyField" || fieldType == "textArea") {
         return this.componentFactory.createComponent(TextFieldPropertyMapper.map(this.props))
-      } else if (fieldType == "radioButton") {
+      } else if (fieldType == "radioButton" || fieldType == "dropdown") {
         return this.componentFactory.createComponent(OptionFieldPropertyMapper.map(this.props))
       }
       return this.componentFactory.createComponent(this.props)

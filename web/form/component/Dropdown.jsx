@@ -6,12 +6,12 @@ export default class Dropdown extends BasicFieldComponent {
   render() {
     const props = this.props;
     const options = [];
-    if (field.options) {
-      for (var i=0; i < field.options.length; i++) {
-        const label = new Translator(field.options[i]).translate("label", props.lang, field.options[i].value)
+    if (props.options) {
+      for (var i=0; i < props.options.length; i++) {
+        const label = new Translator(props.options[i]).translate("label", props.lang, props.options[i].value)
         options.push(
-          <option key={props.htmlId + "." + field.options[i].value}
-                  value={field.options[i].value}
+          <option key={props.htmlId + "." + props.options[i].value}
+                  value={props.options[i].value}
                   disabled={props.disabled}>
             {label}
           </option>
@@ -23,7 +23,7 @@ export default class Dropdown extends BasicFieldComponent {
       <select id={props.htmlId}
               name={props.htmlId}
               disabled={props.disabled}
-              onChange={e => props.onChange(props.field, e.target.value)}
+              onChange={props.onChange}
               value={props.value}>
         {options}
       </select>
