@@ -29,7 +29,7 @@ export default class FormComponent extends React.Component {
     if (fieldType in controller.getCustomComponentTypeMapping()) {
       return controller.createCustomComponent(this.props)
     } else {
-      if(fieldType == "textField" || fieldType == "emailField" || fieldType == "moneyField") {
+      if(fieldType == "textField" || fieldType == "emailField" || fieldType == "moneyField" || fieldType == "textArea") {
         var componentProps = TextFieldPropertyMapper.map(this.props)
         return this.componentFactory.createComponent(componentProps)
       }

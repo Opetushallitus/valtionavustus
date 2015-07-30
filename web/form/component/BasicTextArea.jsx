@@ -8,20 +8,19 @@ export default class BasicTextArea extends BasicSizedComponent {
   render() {
     const props = this.props
     const length = _.isUndefined(props.value) ? 0 : props.value.length
-    const lengthLeft = this.param("maxlength") - length
+    const lengthLeft = props.maxLength - length
     const classStr = this.resolveClassName()
     return (<div className="soresu-text-area">
               {this.label(classStr)}
               <textarea
                 id={props.htmlId}
                 name={props.htmlId}
-                maxLength={this.param("maxlength")}
-                controller={props.controller}
+                maxLength={props.maxLength}
                 value={props.value}
                 className={classStr}
                 disabled={props.disabled}
-                onBlur={BasicFieldComponent.checkValueOnBlur(props.field, props.htmlId, props.value, props.onChange, props.controller)}
-                onChange={e => props.onChange(props.field, e.target.value)} />
+                onBlur={props.onBlur}
+                onChange={props.onChange} />
       <div id={props.htmlId + ".length"} className="length-left">
         {lengthLeft + " "}
         <LocalizedString translations={props.translations.form} translationKey="lengthleft" lang={props.lang}/>

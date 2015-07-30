@@ -32,7 +32,7 @@ export class TextFieldPropertyMapper extends DefaultPropertyMapper {
       renderingParameters: props.renderingParameters,
       disabled: props.disabled,
       required: field.required,
-      translations: { label: field.label },
+      translations: _.extend(props.translations, { label: field.label }),
       translationKey: "label",
       hasError: !_.isEmpty(props.validationErrors),
       lang: props.lang
