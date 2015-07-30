@@ -1,6 +1,7 @@
 (ns oph.va.routes
   (:use [clojure.tools.trace :only [trace]])
   (:require [compojure.route :as route]
+            [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
             [compojure.core :refer [GET]]

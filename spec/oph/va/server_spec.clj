@@ -28,7 +28,7 @@
            {:key "signature-email" :value "teemu@example.com"}
            {:key "language" :value "fi"}
            {:key "combined-effort" :value "no"}
-           {:key   "other-organizations"
+           {:key "other-organizations"
             :value [{:key   "other-organizations-1"
                      :value [{:key "other-organizations.other-organizations-1.name" :value "E.T. Extra Terrestrial"}
                              {:key "other-organizations.other-organizations-1.email" :value "et@example"}
@@ -221,10 +221,20 @@
 
   (it "GET to /api/verification/1/<id>/<key> should verify right key"
     (let [hakemus-from-db (va-db/get-hakemus-internal 1)
-          url (str "/api/verification/1/" (:user_key hakemus-from-db) "/" (:verify_key hakemus-from-db))
-          {:keys [status headers body error] :as resp} (get! url)]
-      (should= 200 status)
-      (should-contain "<body>" (str body))))
+          verify-url (str "/api/verification/1/" (:user_key hakemus-from-db) "/" (:verify_key hakemus-from-db))
+          {verify-status :status verify-headers :headers verify-body :body verify-error :error} (get! verify-url)
+          hakemus-url (str "/api/avustushaku/1/hakemus/" (:user_key hakemus-from-db))
+          {hakemus-status :status hakemus-headers :headers hakemus-body :body hakemus-error :error} (get! hakemus-url)
+          hakemus-json (json->map hakemus-body)
+          hakemus-from-db-after (va-db/get-hakemus-internal 1)
+          unparse-instant (fn [inst] (->> inst
+                                          l/to-local-date-time
+                                          (f/unparse (f/formatters :date-time-no-ms))))]
+      (should= 200 verify-status)
+      (should= 200 hakemus-status)
+      (should= nil (:verified_at hakemus-from-db))
+      (should= (unparse-instant (:verified_at hakemus-from-db-after)) (:verified_at hakemus-json))
+      (should-contain "<body>" (str verify-body))))
 
   (it "GET to /api/verification/1/<id>/<key> with key should redirect to correct URL"
     (let [hakemus-from-db (va-db/get-hakemus-internal 1)
