@@ -80,13 +80,16 @@
       (let [form-id (:form (va-db/get-avustushaku haku-id))
             validation (validation/validate-form-security (form-db/get-form form-id) answers)]
         (if (every? empty? (vals validation))
-          (let [newHakemus (va-db/create-hakemus! form-id answers)]
-            (if newHakemus
+          (let [new-hakemus (va-db/create-hakemus! form-id answers)]
+            (if new-hakemus
               (do
                 (let [language (keyword (find-value-by-key answers "language"))
-                      email (find-value-by-key answers "primary-email")]
-                  (va-email/send-activation-message! language email))
-                (hakemus-ok-response (:hakemus newHakemus) (:submission newHakemus)))
+                      email (find-value-by-key answers "primary-email")
+                      hakemus-id (-> new-hakemus :hakemus :id)
+                      user-key (-> new-hakemus :hakemus :user_key)
+                      verification-key (-> new-hakemus :hakemus :verify_key)]
+                  (va-email/send-activation-message! language email hakemus-id user-key verification-key))
+                (hakemus-ok-response (:hakemus new-hakemus) (:submission new-hakemus)))
             (internal-server-error!)))
         (bad-request! validation))))
 

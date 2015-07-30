@@ -55,7 +55,12 @@
                          :content (to-plain msg)}
                         {:type "text/html; charset=utf-8"
                          :content (to-html msg)}]}
-          send-fn (fn [] (send-message smtp-config email))]
+          send-fn (if (:enabled? smtp-config)
+                    (fn []
+                      (send-message smtp-config email))
+                    (fn []
+                      (log/info "Sending message: " email)
+                      {:code 0 :error nil :message nil}))]
       (when (not (try-send! (:retry-initial-wait smtp-config)
                             (:retry-multiplier smtp-config)
                             (:retry-max-time smtp-config)
@@ -82,12 +87,16 @@
   (log/info "Signaling mail sender to stop")
   (>!! mail-queue {:operation :stop}))
 
-(defn send-activation-message! [lang to]
-  (if (:enabled? smtp-config)
-    (>!! mail-queue {:operation :send
-                     :type :activation
-                     :lang lang
-                     :subject "TBD"
-                     :to to
-                     :name "Lol"})
-    (log/info "Mail sending disabled, skipping")))
+(defn send-activation-message! [lang to hakemus-id user-key verification-key]
+  (log/debug "Url would be: " (str "http://localhost:8080/api/verification/" hakemus-id "/" user-key "/" verification-key))
+  (>!! mail-queue {:operation :send
+                   :type :activation
+                   :lang lang
+                   :subject "TBD"
+                   :to to
+                   :name "Lol"
+                   :url (str (-> config :server :url)
+                             "api/verification/"
+                             user-key
+                             "/"
+                             verification-key)}))
