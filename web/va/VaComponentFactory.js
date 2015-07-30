@@ -14,7 +14,6 @@ export default class VaComponentFactory extends ComponentFactory {
       "vaBudgetSummaryElement": BudgetSummaryElement,
       "vaProjectDescription": VaProjectDescription,
       "vaEmailVerify": VaEmailVerifyButton
-
     }
     super(fieldTypeMapping)
   }

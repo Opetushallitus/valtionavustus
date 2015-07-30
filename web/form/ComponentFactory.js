@@ -6,7 +6,7 @@ export default class ComponentFactory {
   }
 
   createComponent(componentProps) {
-    const fieldType = componentProps.fieldType;
+    const fieldType = componentProps.fieldType
     if (fieldType in this.fieldTypeMapping) {
       return React.createElement(this.fieldTypeMapping[fieldType], componentProps)
     }
