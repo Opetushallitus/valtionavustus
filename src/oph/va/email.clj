@@ -87,14 +87,14 @@
   (log/info "Signaling mail sender to stop")
   (>!! mail-queue {:operation :stop}))
 
-(defn send-activation-message! [lang to hakemus-id user-key verification-key]
+(defn send-activation-message! [lang to name hakemus-id user-key verification-key]
   (log/debug "Url would be: " (str "http://localhost:8080/api/verification/" hakemus-id "/" user-key "/" verification-key))
   (>!! mail-queue {:operation :send
                    :type :activation
                    :lang lang
                    :subject "TBD"
                    :to to
-                   :name "Lol"
+                   :name name
                    :url (str (-> config :server :url)
                              "api/verification/"
                              user-key

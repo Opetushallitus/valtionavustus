@@ -85,10 +85,11 @@
               (do
                 (let [language (keyword (find-value-by-key answers "language"))
                       email (find-value-by-key answers "primary-email")
+                      name (find-value-by-key answers "organization")
                       hakemus-id (-> new-hakemus :hakemus :id)
                       user-key (-> new-hakemus :hakemus :user_key)
                       verification-key (-> new-hakemus :hakemus :verify_key)]
-                  (va-email/send-activation-message! language email hakemus-id user-key verification-key))
+                  (va-email/send-activation-message! language email name hakemus-id user-key verification-key))
                 (hakemus-ok-response (:hakemus new-hakemus) (:submission new-hakemus)))
             (internal-server-error!)))
         (bad-request! validation))))
