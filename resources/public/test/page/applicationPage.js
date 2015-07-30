@@ -28,15 +28,6 @@ function ApplicationPage() {
       }
       return openPage(function() { return "/?preview=true&devel=true&avustushaku=1&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
     },
-    openVerifyPage: function(hakemusIdGetter, verification, lang, pageLoadedCheck) {
-      if (!lang) {
-        lang = 'fi'
-      }
-      if (!pageLoadedCheck) {
-        pageLoadedCheck = applicationPageVisible
-      }
-      return openPage(function() { return "/?avustushaku=1&devel=true&hakemus=" + hakemusIdGetter() + "&lang=" + lang + "&tarkiste=" + verification}, pageLoadedCheck)
-    },
     elementText: function(id) {
       return api.elementTextBySelector("#" + escapeSelector(id))
     },
