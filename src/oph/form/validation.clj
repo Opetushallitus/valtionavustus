@@ -1,27 +1,31 @@
 (ns oph.form.validation
   (:use [clojure.tools.trace :only [trace]])
-  (:require [clojure.string :as string])
-  )
+  (:require [clojure.string :as string]))
 
 (defn validate-required [field answer]
-  (if (and (= (field :required) true) (string/blank? answer))
+  (if (and (= (field :required) true)
+           (string/blank? answer))
     [{:error "required"}]
     []))
 
 (defn validate-options [field answer]
-  (if (and (not (string/blank? answer)) (> (count (field :options)) 0) (not-any? #{answer} (map (fn [option] (option :value)) (field :options))))
+  (if (and (not (string/blank? answer))
+           (> (count (field :options)) 0)
+           (not-any? #{answer} (map (fn [option] (option :value)) (field :options))))
     [{:error "invalid-option"}]
     []))
 
 (defn validate-textarea-maxlength [field answer]
   (let [maxlength ((get field :params {}) :maxlength)]
-    (if (and (= (field :displayAs) "textArea") (> (count answer) maxlength))
+    (if (and (= (field :displayAs) "textArea")
+             (> (count answer) maxlength))
       [{:error "maxlength", :max maxlength}]
       [])))
 
 (defn validate-texfield-maxlength [field answer]
   (let [maxlength ((get field :params {}) :maxlength)]
-    (if (and (= (field :displayAs) "textField") (> (count answer) maxlength))
+    (if (and (= (field :displayAs) "textField")
+             (> (count answer) maxlength))
       [{:error "maxlength", :max maxlength}]
       [])))
 
@@ -33,15 +37,12 @@
           values-that-are-seqs (filter coll? nested-map-values)
           nested-seq-values (mapcat #(:value %) (flatten values-that-are-seqs))
           all-internal-values (concat nested-map-values nested-seq-values)]
-      (if (empty? all-internal-values)
-        nil
+      (when (not (empty? all-internal-values))
         (find-value-for-key all-internal-values key)))))
 
 (defn find-answer-value [answers key]
-  ( let [found-record (find-value-for-key (answers :value) key)]
-    (if (nil? found-record)
-      nil
-      (:value found-record))))
+  (when-let [found-record (find-value-for-key (answers :value) key)]
+    (:value found-record)))
 
 (defn validate-field-security [answers field]
   (let [answer (find-answer-value answers (field :id))]
