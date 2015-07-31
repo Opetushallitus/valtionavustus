@@ -47,10 +47,9 @@
              form-id (:form (va-db/get-avustushaku haku-id))]
          (if (and (:verified_at hakemus) (= (:verify_key hakemus) verification))
            (resp/redirect "/")
-           (let [verified-hakemus (va-db/verify-hakemus hakemus-id verification)]
-             (if verified-hakemus
-               (resp/resource-response "public/activated.html")
-               (bad-request! verification)))))))
+           (if-let [verified-hakemus (va-db/verify-hakemus hakemus-id verification)]
+             (resp/resource-response "public/activated.html")
+             (bad-request! verification))))))
 
 (defroutes* avustushaku-routes
   "Avustushaku routes"
@@ -58,10 +57,9 @@
   (GET* "/:id" [id]
         :path-params [id :- Long]
         :return AvustusHaku
-        (let [avustushaku (va-db/get-avustushaku id)]
-          (if avustushaku
-            (ok avustushaku)
-            (not-found))))
+        (if-let [avustushaku (va-db/get-avustushaku id)]
+          (ok avustushaku)
+          (not-found)))
 
   (GET* "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
         :path-params [haku-id :- Long, hakemus-id :- s/Str]
@@ -80,10 +78,8 @@
       (let [form-id (:form (va-db/get-avustushaku haku-id))
             validation (validation/validate-form-security (form-db/get-form form-id) answers)]
         (if (every? empty? (vals validation))
-          (let [new-hakemus (va-db/create-hakemus! form-id answers)]
-            (if new-hakemus
-              (do
-                (let [language (keyword (find-value-by-key answers "language"))
+          (if-let [new-hakemus (va-db/create-hakemus! form-id answers)]
+            (do (let [language (keyword (find-value-by-key answers "language"))
                       email (find-value-by-key answers "primary-email")
                       name (find-value-by-key answers "organization")
                       hakemus-id (-> new-hakemus :hakemus :id)
@@ -91,8 +87,8 @@
                       verification-key (-> new-hakemus :hakemus :verify_key)]
                   (va-email/send-activation-message! language email name hakemus-id user-key verification-key))
                 (hakemus-ok-response (:hakemus new-hakemus) (:submission new-hakemus)))
-            (internal-server-error!)))
-        (bad-request! validation))))
+            (internal-server-error!))
+          (bad-request! validation))))
 
   (POST* "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id :as request]
        :path-params [haku-id :- Long, hakemus-id :- s/Str]
