@@ -11,7 +11,7 @@ export default class VaFormVerify extends React.Component {
     function closeWindow() {
       window.location = urlCreator.existingSubmissionEditUrl(state.avustushakuId, state.hakemus.id, lang)
     }
-    const ok = state.hakemus.status && state.hakemus.status !== "draft_unverified"
+    const ok = state.hakemus.status && state.hakemus.status !== "draft"
     const translations = state.configuration.translations.verification
     const translationsByStatus = ok ? translations.ok : translations.failed
     return(
