@@ -6,6 +6,14 @@
   roles:
   - valtionavustus.app
 
+- hosts: va-prod
+  user: cloud-user
+  sudo: yes
+  vars:
+    app_profile: prod
+  roles:
+  - valtionavustus.app
+
 - hosts: va-build
   user: cloud-user
   sudo: yes

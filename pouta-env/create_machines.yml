@@ -38,7 +38,17 @@
         va_ansible_host_groups: 'va_backend',
         va_security_groups: 'qa-common,va-app'
       }
+    - { include: tasks/create_machine.yml,
+        machine_name: va-prod,
+        pouta_flavor_id: "{{ pouta_tiny }}",
+        va_ansible_host_groups: 'prod-va_backend',
+        va_security_groups: 'prod-common,prod-va-app'
+      }
     - { include: tasks/attach_persistent_volumes_if_needed.yml,
         machine_name: va-test,
         volume_ids: [9410dc1b-201a-4126-b11f-a2450e6f8396]
+      }
+    - { include: tasks/attach_persistent_volumes_if_needed.yml,
+        machine_name: va-prod,
+        volume_ids: [f10a7b7d-8d24-44af-ad80-4d97b09b3e9c]
       }
