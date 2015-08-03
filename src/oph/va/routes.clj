@@ -33,11 +33,10 @@
 
 (defn hakemus-ok-response [hakemus submission]
   (ok {:id (:user_key hakemus)
-  :status (:status hakemus)
-  :created_at (:created_at hakemus)
-  :verified_at (:verified_at hakemus)
-  :submission submission
-  }))
+       :status (:status hakemus)
+       :created_at (:created_at hakemus)
+       :verified_at (:verified_at hakemus)
+       :submission submission}))
 
 (defroutes* verification-routes
   "Verification routes"
