@@ -1,0 +1,7 @@
+dependencies:
+  - role: ssh.init
+  - role: common
+  - role: logical.volumes
+  - role: 3rdparty/postgresql
+  - role: postgresql.db
+  - role: java8
