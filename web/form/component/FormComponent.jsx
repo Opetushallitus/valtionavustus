@@ -6,7 +6,8 @@ import EmailTextField from './EmailTextField.jsx'
 import MoneyTextField from './MoneyTextField.jsx'
 import Dropdown from './Dropdown.jsx'
 import RadioButton from './RadioButton.jsx'
-import {TextFieldPropertyMapper, OptionFieldPropertyMapper} from './PropertyMapper.js'
+import TextButton from './TextButton.jsx'
+import {TextFieldPropertyMapper, OptionFieldPropertyMapper, ButtonPropertyMapper} from './PropertyMapper.js'
 
 export default class FormComponent extends React.Component {
   constructor(props) {
@@ -17,7 +18,17 @@ export default class FormComponent extends React.Component {
       "emailField": EmailTextField,
       "moneyField": MoneyTextField,
       "dropdown": Dropdown,
-      "radioButton": RadioButton
+      "radioButton": RadioButton,
+      "textButton": TextButton
+    }
+    this.fieldPropertyMapping = {
+      "textField": TextFieldPropertyMapper,
+      "textArea": TextFieldPropertyMapper,
+      "emailField": TextFieldPropertyMapper,
+      "moneyField": TextFieldPropertyMapper,
+      "dropdown": OptionFieldPropertyMapper,
+      "radioButton": OptionFieldPropertyMapper,
+      "textButton": ButtonPropertyMapper
     }
     this.componentFactory = new ComponentFactory(fieldTypeMapping)
   }
@@ -29,10 +40,8 @@ export default class FormComponent extends React.Component {
     if (fieldType in controller.getCustomComponentTypeMapping()) {
       return controller.createCustomComponent(this.props)
     } else {
-      if (fieldType == "textField" || fieldType == "emailField" || fieldType == "moneyField" || fieldType == "textArea") {
-        return this.componentFactory.createComponent(TextFieldPropertyMapper.map(this.props))
-      } else if (fieldType == "radioButton" || fieldType == "dropdown") {
-        return this.componentFactory.createComponent(OptionFieldPropertyMapper.map(this.props))
+      if (fieldType in this.fieldPropertyMapping) {
+        return this.componentFactory.createComponent(this.fieldPropertyMapping[fieldType].map(this.props))
       }
       return this.componentFactory.createComponent(this.props)
     }

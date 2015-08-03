@@ -17,29 +17,38 @@ export class DefaultPropertyMapper {
 class CommonPropertyMapper extends DefaultPropertyMapper {
   static map(props) {
     const field = props.field
-    const onChange = e => { props.onChange(field, e.target.value) }
     return {
       htmlId: props.htmlId,
-      value: props.value,
       controller: props.controller,
       field: field,
       fieldType: props.fieldType,
-      onChange: onChange,
-      renderingParameters: props.renderingParameters,
       disabled: props.disabled,
-      required: field.required,
       translations: _.extend(props.translations, { label: field.label }),
       translationKey: "label",
-      hasError: !_.isEmpty(props.validationErrors),
-      lang: props.lang
+      lang: props.lang,
+      renderingParameters: props.renderingParameters,
     }
+  }
+}
+
+class FieldPropertyMapper  extends DefaultPropertyMapper {
+  static map(props) {
+    const commonProps = CommonPropertyMapper.map(props)
+    const field = props.field
+    const onChange = e => { props.onChange(field, e.target.value) }
+    return _.extend(commonProps, {
+      value: props.value,
+      onChange: onChange,
+      required: field.required,
+      hasError: !_.isEmpty(props.validationErrors)
+    })
   }
 }
 
 export class TextFieldPropertyMapper extends CommonPropertyMapper {
   static map(props) {
     const field = props.field
-    const commonProps = CommonPropertyMapper.map(props)
+    const commonProps = FieldPropertyMapper.map(props)
     const onBlur = BasicFieldComponent.checkValueOnBlur(field, props.htmlId, props.value, props.onChange, props.controller)
     return _.extend(commonProps, {
       onBlur: onBlur,
@@ -51,9 +60,20 @@ export class TextFieldPropertyMapper extends CommonPropertyMapper {
 
 export class OptionFieldPropertyMapper extends DefaultPropertyMapper {
   static map(props) {
-    const commonProps = CommonPropertyMapper.map(props)
+    const commonProps = FieldPropertyMapper.map(props)
     return _.extend(commonProps, {
       options: props.field.options
+    })
+  }
+}
+
+export class ButtonPropertyMapper extends DefaultPropertyMapper {
+  static map(props) {
+    const commonProps = CommonPropertyMapper.map(props)
+    const controller = props.controller
+    const onClick = (e) => { controller.componentOnChangeListener(props.field, "click"); e.preventDefault() }
+    return _.extend(commonProps, {
+      onClick: onClick
     })
   }
 }

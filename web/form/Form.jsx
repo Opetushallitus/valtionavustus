@@ -54,18 +54,7 @@ export default class Form extends React.Component {
     }
 
     function createButton(field, extendedProperties) {
-      const fieldType = extendedProperties.fieldType
-      const buttonProperties = { fieldType: fieldType,
-                                 lang: extendedProperties.lang,
-                                 key: extendedProperties.htmlId,
-                                 htmlId: extendedProperties.htmlId,
-                                 translations: field,
-                                 translationKey: "label" }
-      if (fieldType in controller.getCustomComponentTypeMapping()) {
-        return controller.createCustomComponent(buttonProperties)
-      } else {
-        return <span>Unsupported field type {fieldType}</span>
-      }
+      return createFormComponent(field, extendedProperties)
     }
 
     function createFormComponent(field, extendedProperties) {
