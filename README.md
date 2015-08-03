@@ -6,6 +6,7 @@ Valtionavustusten hakemiseen, käsittelyyn ja myöntämiseen tarkoitetut palvelu
 
 * Node.js tai io.js
 * Leiningen (Clojure build tool): http://leiningen.org/
+* Postgres
 
 Riippuvuudet asentuvat ajamalla komennot:
 
@@ -20,6 +21,14 @@ Kehitysaikaisesti hyödyllisiä työkaluja:
 * FakeSMTP: https://nilhcem.github.io/FakeSMTP/
 
 # Tietokanta
+
+Luo paikallinen postgres-datahakemisto
+
+    initdb -d postgres
+
+Käynnistä tietokantaserveri
+
+    postgres -D postgres
 
 Luo käyttäjä ```va``` (salasana: va)
 

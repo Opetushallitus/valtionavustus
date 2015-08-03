@@ -8,6 +8,7 @@ npm-cache
 **/.*.swp
 **/.DS_Store
 secret
+postgres
 
 # Generated files
 resources/public/js/
