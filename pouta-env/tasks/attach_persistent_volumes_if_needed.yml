@@ -1,10 +1,10 @@
-- name: Get machine attachment info
+- name: Get machine {{ machine_name }} attachment info
   shell: pouta-venv/bin/nova show {{  machine_name }} | grep "volumes_attached"
   with_items: volume_ids
   register: attachment_info
   changed_when: false
 
-- name: Attach volumes
+- name: Attach volumes of {{ machine_name }}
   command: pouta-venv/bin/nova volume-attach {{  machine_name }} {{ item.0 }}
   when: item.1.stdout.find("{{ item.0 }}") == -1
   with_together:
