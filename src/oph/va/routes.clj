@@ -2,6 +2,7 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [compojure.route :as route]
             [clojure.tools.logging :as log]
+            [clj-time.format :as clj-time]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
             [compojure.core :refer [GET]]
@@ -24,7 +25,7 @@
 (defn- matches-key? [key value-container]
   (= (:key value-container) key))
 
-(defn- find-value-by-key [answers key]
+(defn- find-hakemus-value [answers key]
   (->> answers
        :value
        (filter (partial matches-key? key))
@@ -62,15 +63,28 @@
       :body    [answers (describe Answers "New answers")]
       :return  Hakemus
       :summary "Create initial hakemus"
-      (let [form-id (:form (va-db/get-avustushaku haku-id))
-            validation (validation/validate-form-security (form-db/get-form form-id) answers)]
+      (let [avustushaku (va-db/get-avustushaku haku-id)
+            avustushaku-content (:content avustushaku)
+            form-id (:form avustushaku)
+            form (form-db/get-form form-id)
+            validation (validation/validate-form-security form answers)]
         (if (every? empty? (vals validation))
           (if-let [new-hakemus (va-db/create-hakemus! form-id answers)]
-            (do (let [language (keyword (find-value-by-key answers "language"))
-                      email (find-value-by-key answers "primary-email")
-                      name (find-value-by-key answers "organization")
+            (do (let [language (keyword (find-hakemus-value answers "language"))
+                      avustushaku-title (-> avustushaku-content :name language)
+                      avustushaku-end-date (->> avustushaku-content
+                                                :duration
+                                                :end
+                                                (clj-time/parse (clj-time/formatters :date-time)))
+                      email (find-hakemus-value answers "primary-email")
+                      name (find-hakemus-value answers "organization")
                       user-key (-> new-hakemus :hakemus :user_key)]
-                  (va-email/send-activation-message! language email name haku-id user-key))
+                  (va-email/send-new-hakemus-message! language
+                                                      email
+                                                      haku-id
+                                                      avustushaku-title
+                                                      user-key
+                                                      avustushaku-end-date))
                 (hakemus-ok-response (:hakemus new-hakemus) (:submission new-hakemus)))
             (internal-server-error!))
           (bad-request! validation))))

@@ -1,5 +1,0 @@
-Hei, {{ name }}
-
-Aktivoi hakemus klikkaamalla seuraavaa linkkiä:
-
-{{ url }}

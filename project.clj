@@ -44,6 +44,7 @@
                  ;; Utils
                  [org.clojure/tools.trace "0.7.8"]
                  [org.clojure/tools.logging "0.3.1"]
+                 [clj-time "0.10.0"]
                  [org.slf4j/slf4j-log4j12 "1.7.12"]
                  [pandect "0.5.2"]]
 
