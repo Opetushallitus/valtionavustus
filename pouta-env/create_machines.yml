@@ -36,7 +36,7 @@
         machine_name: va-test,
         pouta_flavor_id: "{{ pouta_tiny }}",
         va_ansible_host_groups: 'va_backend',
-        va_security_groups: 'qa-common,va-app'
+        va_security_groups: 'qa-common,qa-va-app'
       }
     - { include: tasks/create_machine.yml,
         machine_name: va-prod,
