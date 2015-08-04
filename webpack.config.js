@@ -6,11 +6,16 @@ const commonsPlugin = new webpack.optimize.CommonsChunkPlugin({
   filename: "js/commons.js"
 })
 
-const uglifyJsPlugin = new webpack.optimize.UglifyJsPlugin({
-    compress: {
-        warnings: false
-    }
-})
+const plugins = [commonsPlugin]
+
+if (process.env.UGLIFY === "true") {
+  const uglifyJsPlugin = new webpack.optimize.UglifyJsPlugin({
+      compress: {
+          warnings: false
+      }
+  })
+  plugins.push(uglifyJsPlugin)
+}
 
 module.exports = {
   entry: {
@@ -35,5 +40,5 @@ module.exports = {
       }
     ]
   },
-  plugins: [commonsPlugin, uglifyJsPlugin]
+  plugins: plugins
 }
