@@ -22,14 +22,25 @@
   shell: "ssh-keyscan -H {{ item }} >> ~{{ jenkins_user }}/.ssh/known_hosts"
   with_items: groups.va_backend
 
+- name: Add the new SSH host key of production application servers to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
+  sudo_user: "{{ jenkins_user }}"
+  shell: "ssh-keyscan -H {{ item }} >> ~{{ jenkins_user }}/.ssh/known_hosts"
+  with_items: groups.prod-va_backend
+
 - name: Generate new SSH key for "{{ jenkins_user }}" user for application deploys
   user: name="{{ jenkins_user }}" generate_ssh_key=yes ssh_key_file=.ssh/id_deploy
 
 - name: Fetch ~"{{ jenkins_user }}".ssh/id_deploy.pub for adding it to app server machine
   fetch: src=~{{ jenkins_user }}/.ssh/id_deploy.pub dest=/tmp/{{ ansible_hostname }}-{{ jenkins_user }}.pub flat=yes fail_on_missing=yes
 
-- name: Add new jenkins public SSH key to deployer account on app server machine
+- name: Add new jenkins public SSH key to deployer account on test app server machines
   authorized_key: user="va-deploy"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
   with_items: groups.va_backend
+
+- name: Add new jenkins public SSH key to deployer account on production app server machines
+  authorized_key: user="va-deploy"
+                  key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
+  delegate_to: "{{ item }}"
+  with_items: groups.prod-va_backend
