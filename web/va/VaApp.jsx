@@ -144,7 +144,7 @@ function initVaFormController() {
     "responseParser": responseParser,
     "printEntityId": printEntityId
   }, {"language": query.lang || "fi"}, query)
-  return {stateProperty: stateProperty, getReactComponent: function(state) {
+  return { stateProperty: stateProperty, getReactComponent: function(state) {
     return <VaForm controller={controller} state={state} develQueryParam={develQueryParam}/>
   }}
 }
@@ -152,7 +152,7 @@ function initVaFormController() {
 function initVaFormVerificationController() {
   const controller = new VaFormVerificationController()
   const stateProperty = controller.initialize()
-  return {stateProperty: stateProperty, getReactComponent: function(state) {
+  return { stateProperty: stateProperty, getReactComponent: function(state) {
     return <VaFormVerify urlCreator={urlCreator} state={state} />
   }}
 }
