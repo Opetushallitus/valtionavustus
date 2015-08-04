@@ -57,10 +57,10 @@ function deploy() {
   SSH="ssh -i $SSH_KEY va-deploy@${target_server_name}"
   BASE_DIR=/data/www
   CURRENT_DIR=${BASE_DIR}/current
-  TARGET_DIR=${BASE_DIR}/va-`date +'%Y%m%d%H%M%S'`
-  TARGET_JAR_PATH=${TARGET_DIR}/va.jar
   echo "=============================="
   echo
+  TARGET_DIR=${BASE_DIR}/va-`date +'%Y%m%d%H%M%S'`
+  TARGET_JAR_PATH=${TARGET_DIR}/va.jar
   echo "...copying artifacts to ${target_server_name}:${TARGET_DIR} ..."
   $SSH "mkdir -p ${TARGET_DIR}"
   scp -p -i ${SSH_KEY} target/uberjar/oph-valtionavustus-*-standalone.jar ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
@@ -74,14 +74,14 @@ function deploy() {
   echo
   echo "...dropping db.."
   $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/resources/sql/drop_public_schema.sql"
-  APP_COMMAND="sudo /usr/local/bin/run_app.bash ${CURRENT_DIR}/va.jar ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
   echo "=============================="
   echo
+  APP_COMMAND="sudo /usr/local/bin/run_app.bash ${CURRENT_DIR}/va.jar ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
   echo "...starting application with command \"${APP_COMMAND}\" ..."
   $SSH "${APP_COMMAND}"
-  HEALTH_CHECK_COMMAND="/usr/local/bin/health_check.bash"
   echo "=============================="
   echo
+  HEALTH_CHECK_COMMAND="/usr/local/bin/health_check.bash"
   echo "...checking that it really comes up, with $HEALTH_CHECK_COMMAND ..."
   $HEALTH_CHECK_COMMAND
   echo
