@@ -6,11 +6,13 @@ cat << EOF
   Usage: ${0##*/} [clean] [uberjar] [test] [-p <docker postgresql port>] [deploy] [-s <target server name> ] -d
     -p specifies the host port on which Docker binds Postgresql, it should be same in the app config
     -d disables running Postgresql in Docker container around the build
+    -r recreate database when deploying (default: false)
 EOF
   exit 2
 }
 
 run_docker_postgresql=true
+recreate_database=false
 
 function clean() {
   node_modules_location=node_modules
@@ -44,6 +46,13 @@ function run_tests() {
   fi
 }
 
+function drop_database() {
+  echo "=============================="
+  echo
+  echo "...dropping db.."
+  $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/resources/sql/drop_public_schema.sql"
+}
+
 function deploy() {
   if [ -z ${target_server_name+x} ]; then
     echo "deploy: Please provide target server name with -s option."
@@ -70,10 +79,11 @@ function deploy() {
   echo
   echo "Stopping application..."
   $SSH "sudo /usr/local/bin/stop_app.bash"
-  echo "=============================="
-  echo
-  echo "...dropping db.."
-  $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/resources/sql/drop_public_schema.sql"
+  if [ "recreate_database" = true ]; then
+    drop_database
+  else
+    echo "Not dropping existing database."
+  fi
   echo "=============================="
   echo
   APP_COMMAND="sudo /usr/local/bin/run_app.bash ${CURRENT_DIR}/va.jar ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
@@ -122,6 +132,9 @@ while [[ $# > 0 ]]; do
       ;;
       -d|--disable-container-postgresql)
       run_docker_postgresql=false
+      ;;
+      -r|--recreate-database)
+      recreate_database=true
       ;;
       *)
       # unknown option
