@@ -79,7 +79,7 @@ function deploy() {
   echo
   echo "Stopping application..."
   $SSH "sudo /usr/local/bin/stop_app.bash"
-  if [ "recreate_database" = true ]; then
+  if [ "$recreate_database" = true ]; then
     drop_database
   else
     echo "Not dropping existing database."
