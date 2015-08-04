@@ -6,6 +6,12 @@ var commonsPlugin = new webpack.optimize.CommonsChunkPlugin({
   filename: "js/commons.js"
 });
 
+const uglifyJsPlugin = new webpack.optimize.UglifyJsPlugin({
+    compress: {
+        warnings: false
+    }
+})
+
 module.exports = {
   entry: {
     app: "./web/va/VaApp.jsx",
@@ -29,5 +35,5 @@ module.exports = {
       }
     ]
   },
-  plugins: [commonsPlugin]
+  plugins: [commonsPlugin, uglifyJsPlugin]
 }
