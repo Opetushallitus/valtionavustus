@@ -18,7 +18,7 @@
                 :plain {:fi (load-template "email-templates/activation.plain.fi")
                         :sv (load-template "email-templates/activation.plain.sv")}}})
 
-(def smtp-config (:email config))
+(def smtp-config (trace "smtp-config" (:email config)))
 (defonce mail-queue (chan 50))
 (defonce run? (atom true))
 
@@ -43,9 +43,9 @@
         to (:to msg)
         subject (:subject msg)]
     (log/info (format "Sending %s message to %s (lang: %s) with subject '%s'"
-                      (str (:type msg))
+                      (name (:type msg))
                       to
-                      (:lang msg)
+                      (name (:lang msg))
                       subject))
     (let [email {:from from
                  :to to
@@ -87,16 +87,20 @@
   (log/info "Signaling mail sender to stop")
   (>!! mail-queue {:operation :stop}))
 
-(defn send-activation-message! [lang to name hakemus-id user-key verification-key]
-  (log/debug "Url would be: " (str "http://localhost:8080/api/verification/" hakemus-id "/" user-key "/" verification-key))
-  (>!! mail-queue {:operation :send
+(defn send-activation-message! [lang to name avustushaku-id user-key]
+  (let [lang-str (or (clojure.core/name lang) "fi")
+        url (str (-> config :server :url)
+                 "?avustushaku"
+                 avustushaku-id
+                 "&hakemus="
+                 user-key
+                 "&lang="
+                 lang-str)]
+    (log/info "Url would be: " url)
+    (>!! mail-queue {:operation :send
                    :type :activation
                    :lang lang
                    :subject "TBD"
                    :to to
                    :name name
-                   :url (str (-> config :server :url)
-                             "api/verification/"
-                             user-key
-                             "/"
-                             verification-key)}))
+                   :url url})))

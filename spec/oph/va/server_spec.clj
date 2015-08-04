@@ -211,44 +211,5 @@
             json (json->map body)]
         (should= 200 status)
         (should= "draft" (:status json))))
-
-  (it "GET to /api/verification/1/<id>/<key> should fail to verify wrong key"
-      (let [hakemus-from-db (va-db/get-hakemus-internal 1)
-            url (str "/api/verification/1/" (:user_key hakemus-from-db) "/x")
-            {:keys [status headers body error] :as resp} (get! url)]
-        (should= nil (:verified_at hakemus-from-db))
-        (should= 400 status)))
-
-  (it "GET to /api/verification/1/<id>/<key> should verify right key"
-    (let [hakemus-from-db (va-db/get-hakemus-internal 1)
-          verify-url (str "/api/verification/1/" (:user_key hakemus-from-db) "/" (:verify_key hakemus-from-db))
-          {verify-status :status verify-headers :headers verify-body :body verify-error :error} (get! verify-url)
-          hakemus-url (str "/api/avustushaku/1/hakemus/" (:user_key hakemus-from-db))
-          {hakemus-status :status hakemus-headers :headers hakemus-body :body hakemus-error :error} (get! hakemus-url)
-          hakemus-json (json->map hakemus-body)
-          hakemus-from-db-after (va-db/get-hakemus-internal 1)
-          unparse-instant (fn [inst] (->> inst
-                                          l/to-local-date-time
-                                          (f/unparse (f/formatters :date-time-no-ms))))]
-      (should= 200 verify-status)
-      (should= 200 hakemus-status)
-      (should= nil (:verified_at hakemus-from-db))
-      (should= (unparse-instant (:verified_at hakemus-from-db-after)) (:verified_at hakemus-json))
-      (should-contain "<body>" (str verify-body))))
-
-  (it "GET to /api/verification/1/<id>/<key> with key should redirect to correct URL"
-    (let [hakemus-from-db (va-db/get-hakemus-internal 1)
-          url (str "/api/verification/1/" (:user_key hakemus-from-db) "/" (:verify_key hakemus-from-db))
-          {:keys [status headers body error] :as resp} (get! url)
-          hakemus-from-db-after (va-db/get-hakemus-internal 1)]
-      (should= 200 status)
-      (should= (:verified_at hakemus-from-db) (:verified_at hakemus-from-db-after))))
-
-  (it "POST to /api/verification/1/<id>/<key> with wrong key should fail hakemus even when already verified"
-    (let [hakemus-from-db (va-db/get-hakemus-internal 1)
-          url (str "/api/verification/1/" (:user_key hakemus-from-db) "/x")
-          {:keys [status headers body error] :as resp} (get! url)
-          hakemus-from-db-after (va-db/get-hakemus-internal 1)]
-      (should= 400 status)
-      (should= (:verified_at hakemus-from-db) (:verified_at hakemus-from-db-after)))))
+  )
 (run-specs)

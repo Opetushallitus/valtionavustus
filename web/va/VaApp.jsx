@@ -14,8 +14,6 @@ import JsUtil from './../form/JsUtil.js'
 import HttpUtil from './../form/HttpUtil'
 
 import VaForm from './VaForm.jsx'
-import VaFormVerify from './VaFormVerify.jsx'
-import VaFormVerificationController from './VaFormVerificationController'
 import VaComponentFactory from './VaComponentFactory.js'
 import VaPreviewComponentFactory from './VaPreviewComponentFactory.js'
 import {BudgetItemElement} from './VaBudgetComponents.jsx'

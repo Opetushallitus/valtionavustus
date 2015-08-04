@@ -38,18 +38,6 @@
        :verified_at (:verified_at hakemus)
        :submission submission}))
 
-(defroutes* verification-routes
-  "Verification routes"
-  (GET* "/:haku-id/:hakemus-id/:verification" [haku-id hakemus-id verification :as request]
-        :path-params [haku-id :- Long, hakemus-id :- s/Str, verification :- s/Str]
-       (let [hakemus (va-db/get-hakemus hakemus-id)
-             form-id (:form (va-db/get-avustushaku haku-id))]
-         (if (and (:verified_at hakemus) (= (:verify_key hakemus) verification))
-           (resp/redirect "/")
-           (if-let [verified-hakemus (va-db/verify-hakemus hakemus-id verification)]
-             (resp/resource-response "public/activated.html")
-             (bad-request! verification))))))
-
 (defroutes* avustushaku-routes
   "Avustushaku routes"
 
@@ -81,10 +69,8 @@
             (do (let [language (keyword (find-value-by-key answers "language"))
                       email (find-value-by-key answers "primary-email")
                       name (find-value-by-key answers "organization")
-                      hakemus-id (-> new-hakemus :hakemus :id)
-                      user-key (-> new-hakemus :hakemus :user_key)
-                      verification-key (-> new-hakemus :hakemus :verify_key)]
-                  (va-email/send-activation-message! language email name hakemus-id user-key verification-key))
+                      user-key (-> new-hakemus :hakemus :user_key)]
+                  (va-email/send-activation-message! language email name haku-id user-key))
                 (hakemus-ok-response (:hakemus new-hakemus) (:submission new-hakemus)))
             (internal-server-error!))
           (bad-request! validation))))
@@ -120,8 +106,6 @@
 (defroutes* api-routes
   "API implementation"
 
-  (context* "/verification" [] :tags ["verification"] verification-routes)
-
   ;; Bind form routes
   (context* "/form" [] :tags ["forms"] form-routes)
 
@@ -141,9 +125,7 @@
                  :tags [{:name "forms"
                          :description "Form and form submission management"}
                         {:name "avustushaut"
-                         :description "Avustushaku"}
-                        {:name "verification"
-                         :description "Hakemus verification"}]})
+                         :description "Avustushaku"}]})
 
   ;; Route all requests with API prefix to API routes
   (context "/api" [] api-routes)
