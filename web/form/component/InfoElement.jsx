@@ -1,7 +1,9 @@
 import React from 'react'
+
 import ComponentFactory from '../ComponentFactory.js'
 import LocalizedString from './LocalizedString.jsx'
 import Translator from './../Translator.js'
+import {InfoElementPropertyMapper, AccordionElementPropertyMapper} from './PropertyMapper.js'
 
 class BasicInfoComponent extends React.Component {
   static asDateString(date) {
@@ -9,7 +11,7 @@ class BasicInfoComponent extends React.Component {
   }
 
   static asTimeString(date) {
-    const options = {hour: "numeric", minute: "numeric"}
+    const options = { hour: "numeric", minute: "numeric" }
     return date.toLocaleTimeString("fi-FI", options)
   }
 
@@ -20,10 +22,10 @@ class BasicInfoComponent extends React.Component {
 
   labelSourceObject() {
     const values = this.props.values
-    const value = values[this.props.field.id]
+    const value = values[this.props.htmlId]
 
-    if (this.props.field.label != undefined) {
-      return this.props.field
+    if (this.props.translations.label != undefined) {
+      return this.props.translations
     } else {
       return value
     }
@@ -33,7 +35,7 @@ class BasicInfoComponent extends React.Component {
 class H1InfoElement extends React.Component {
   render() {
     const values = this.props.values
-    const key = this.props.field.id
+    const key = this.props.htmlId
     const lang = this.props.lang
     return <h1><LocalizedString translations={values} translationKey={key} lang={lang}/></h1>
   }
@@ -43,7 +45,7 @@ class AccordionInfoElement extends React.Component {
   constructor(props) {
     super(props)
     this.handleClick = this.handleClick.bind(this)
-    this.state = { open: this.props.field.params.initiallyOpen }
+    this.state = { open: this.props.renderingParameters.initiallyOpen }
   }
 
   handleClick() {
@@ -59,11 +61,10 @@ class AccordionInfoElement extends React.Component {
   render() {
     const values = this.props.values
     const key = this.props.htmlId
-    const field = this.props.field
     const lang = this.props.lang
     const items = []
-    var infoObject = values[field.id];
-      for (var i=0; i < infoObject.items.length; i++) {
+    var infoObject = values[this.props.htmlId]
+    for (var i=0; i < infoObject.items.length; i++) {
       const textContent = infoObject.items[i][this.props.lang]
       items.push((<li key={key + "." + i}>{textContent}</li>))
     }
@@ -84,7 +85,7 @@ class DateRangeInfoElement extends BasicInfoComponent {
   render() {
     const values = this.props.values
     const lang = this.props.lang
-    const value = values[this.props.field.id]
+    const value = values[this.props.htmlId]
     const start = new Date(value.start)
     const startDateTime = this.asDateTimeString(start)
     const end = new Date(value.end)
@@ -103,7 +104,7 @@ class EndOfDateRangeInfoElement extends BasicInfoComponent {
   render() {
     const values = this.props.values
     const lang = this.props.lang
-    const value = values[this.props.field.id]
+    const value = values[this.props.htmlId]
     const end = new Date(value.end)
     const endDateTime = this.asDateTimeString(end)
     const labelSource = this.labelSourceObject()
@@ -125,10 +126,18 @@ export default class InfoElement extends React.Component {
       "dateRange": DateRangeInfoElement,
       "endOfDateRange": EndOfDateRangeInfoElement
     }
+    this.fieldPropertyMapping = {
+      "h1": InfoElementPropertyMapper,
+      "bulletList": AccordionElementPropertyMapper,
+      "dateRange": InfoElementPropertyMapper,
+      "endOfDateRange": InfoElementPropertyMapper
+    }
     this.componentFactory = new ComponentFactory(fieldTypeMapping)
   }
 
   render() {
-    return this.componentFactory.createComponent(this.props)
+    const fieldType = this.props.fieldType
+    const props = this.fieldPropertyMapping[fieldType].map(this.props)
+    return this.componentFactory.createComponent(props)
   }
 }

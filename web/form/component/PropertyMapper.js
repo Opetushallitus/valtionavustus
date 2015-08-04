@@ -19,21 +19,30 @@ class CommonPropertyMapper extends DefaultPropertyMapper {
     const field = props.field
     return {
       htmlId: props.htmlId,
-      controller: props.controller,
-      field: field,
       fieldType: props.fieldType,
-      disabled: props.disabled,
       translations: _.extend(props.translations, { label: field.label }),
       translationKey: "label",
-      lang: props.lang,
-      renderingParameters: props.renderingParameters,
+      lang: props.lang
     }
   }
 }
 
-class FieldPropertyMapper  extends DefaultPropertyMapper {
+class FieldPropertyMapper extends DefaultPropertyMapper {
   static map(props) {
     const commonProps = CommonPropertyMapper.map(props)
+    const field = props.field
+    return _.extend(commonProps, {
+      controller: props.controller,
+      field: field,
+      disabled: props.disabled,
+      renderingParameters: props.renderingParameters
+    })
+  }
+}
+
+class FieldOnChangePropertyMapper extends DefaultPropertyMapper {
+  static map(props) {
+    const commonProps = FieldPropertyMapper.map(props)
     const field = props.field
     const onChange = e => { props.onChange(field, e.target.value) }
     return _.extend(commonProps, {
@@ -48,7 +57,7 @@ class FieldPropertyMapper  extends DefaultPropertyMapper {
 export class TextFieldPropertyMapper extends CommonPropertyMapper {
   static map(props) {
     const field = props.field
-    const commonProps = FieldPropertyMapper.map(props)
+    const commonProps = FieldOnChangePropertyMapper.map(props)
     const onBlur = BasicFieldComponent.checkValueOnBlur(field, props.htmlId, props.value, props.onChange, props.controller)
     return _.extend(commonProps, {
       onBlur: onBlur,
@@ -60,7 +69,7 @@ export class TextFieldPropertyMapper extends CommonPropertyMapper {
 
 export class OptionFieldPropertyMapper extends DefaultPropertyMapper {
   static map(props) {
-    const commonProps = FieldPropertyMapper.map(props)
+    const commonProps = FieldOnChangePropertyMapper.map(props)
     return _.extend(commonProps, {
       options: props.field.options
     })
@@ -69,11 +78,31 @@ export class OptionFieldPropertyMapper extends DefaultPropertyMapper {
 
 export class ButtonPropertyMapper extends DefaultPropertyMapper {
   static map(props) {
-    const commonProps = CommonPropertyMapper.map(props)
+    const commonProps = FieldPropertyMapper.map(props)
     const controller = props.controller
     const onClick = (e) => { controller.componentOnChangeListener(props.field, "click"); e.preventDefault() }
     return _.extend(commonProps, {
       onClick: onClick
+    })
+  }
+}
+
+export class InfoElementPropertyMapper extends DefaultPropertyMapper {
+  static map(props) {
+    const commonProps = CommonPropertyMapper.map(props)
+    return _.extend(commonProps, {
+      values: props.values
+    })
+  }
+}
+
+export class AccordionElementPropertyMapper extends DefaultPropertyMapper {
+  static map(props) {
+    const commonProps = InfoElementPropertyMapper.map(props)
+    const field = props.field
+    const initiallyOpen = DefaultPropertyMapper.param(field, "initiallyOpen", true)
+    return _.extend(commonProps, {
+      renderingParameters: { initiallyOpen: initiallyOpen }
     })
   }
 }
