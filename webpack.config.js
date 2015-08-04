@@ -1,10 +1,10 @@
-var outputDir = "./resources/public/"
+const outputDir = "./resources/public/"
 
-var webpack = require("webpack");
-var commonsPlugin = new webpack.optimize.CommonsChunkPlugin({
+const webpack = require("webpack");
+const commonsPlugin = new webpack.optimize.CommonsChunkPlugin({
   name: "commons",
   filename: "js/commons.js"
-});
+})
 
 const uglifyJsPlugin = new webpack.optimize.UglifyJsPlugin({
     compress: {
