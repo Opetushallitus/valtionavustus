@@ -5,7 +5,7 @@ import LocalizedString from './LocalizedString.jsx'
 import Translator from './../Translator.js'
 import {InfoElementPropertyMapper, AccordionElementPropertyMapper} from './PropertyMapper.js'
 
-class BasicInfoComponent extends React.Component {
+export class BasicInfoComponent extends React.Component {
   static asDateString(date) {
     return date.toLocaleDateString("fi-FI")
   }
@@ -32,7 +32,7 @@ class BasicInfoComponent extends React.Component {
   }
 }
 
-class H1InfoElement extends React.Component {
+export class H1InfoElement extends React.Component {
   render() {
     const values = this.props.values
     const key = this.props.htmlId
@@ -41,7 +41,7 @@ class H1InfoElement extends React.Component {
   }
 }
 
-class AccordionInfoElement extends React.Component {
+export class AccordionInfoElement extends React.Component {
   constructor(props) {
     super(props)
     this.handleClick = this.handleClick.bind(this)
@@ -81,7 +81,7 @@ class AccordionInfoElement extends React.Component {
   }
 }
 
-class DateRangeInfoElement extends BasicInfoComponent {
+export class DateRangeInfoElement extends BasicInfoComponent {
   render() {
     const values = this.props.values
     const lang = this.props.lang
@@ -100,7 +100,7 @@ class DateRangeInfoElement extends BasicInfoComponent {
   }
 }
 
-class EndOfDateRangeInfoElement extends BasicInfoComponent {
+export class EndOfDateRangeInfoElement extends BasicInfoComponent {
   render() {
     const values = this.props.values
     const lang = this.props.lang
