@@ -17,9 +17,10 @@
   sudo_user: "{{ jenkins_user }}"
   file: "path=~{{ jenkins_user }}/.ssh/known_hosts state=touch mode=0600"
 
-- name: Add the new SSH host key of {{ test_machine_name }} to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
+- name: Add the new SSH host key of test application servers to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
   sudo_user: "{{ jenkins_user }}"
-  shell: "ssh-keyscan -H {{ test_machine_name }} >> ~{{ jenkins_user }}/.ssh/known_hosts"
+  shell: "ssh-keyscan -H {{ item }} >> ~{{ jenkins_user }}/.ssh/known_hosts"
+  with_items: groups.va_backend
 
 - name: Generate new SSH key for "{{ jenkins_user }}" user for application deploys
   user: name="{{ jenkins_user }}" generate_ssh_key=yes ssh_key_file=.ssh/id_deploy
@@ -30,4 +31,5 @@
 - name: Add new jenkins public SSH key to deployer account on app server machine
   authorized_key: user="va-deploy"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
-  delegate_to: va-test
+  delegate_to: "{{ item }}"
+  with_items: groups.va_backend
