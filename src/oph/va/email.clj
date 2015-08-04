@@ -42,7 +42,8 @@
 
 
 (defn- send-msg! [msg format-plaintext-message]
-  (let [from (:from smtp-config)
+  (let [from (:from msg)
+        sender (:sender msg)
         to (:to msg)
         subject (:subject msg)]
     (log/info (format "Sending %s message to %s (lang: %s) with subject '%s'"
@@ -87,7 +88,7 @@
 
 (defn send-new-hakemus-message! [lang to avustushaku-id avustushaku user-key end-date]
   (let [lang-str (or (clojure.core/name lang) "fi")
-        url (str (-> config :server :url)
+        url (str (-> config :server :url lang)
                  "?avustushaku"
                  avustushaku-id
                  "&hakemus="
@@ -98,6 +99,8 @@
     (>!! mail-queue {:operation :send
                      :type :new-hakemus
                      :lang lang
+                     :from (-> smtp-config :from lang)
+                     :sender (-> smtp-config :sender)
                      :subject (get-in mail-titles [:new-hakemus lang])
                      :to to
                      :avustushaku avustushaku

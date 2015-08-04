@@ -1,1 +1,2 @@
-{:server {:url "http://localhost:8080/"}}
+{:server {:url {:fi "http://localhost:8080/"
+                :sv "http://localhost:8080/"}}}

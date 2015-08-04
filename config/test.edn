@@ -1,3 +1,4 @@
 {:server {:port 8081
-          :url "http://localhost:8081/"}
+          :url {:fi "http://localhost:8081/"
+                :sv "http://localhost:8081/"}}
  :db {:database-name "va-test"}}
