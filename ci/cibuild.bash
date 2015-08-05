@@ -60,7 +60,7 @@ function deploy() {
   fi
   echo "=============================="
   echo
-  echo "Transfering to test server ${target_server_name}"
+  echo "Transfering to application server ${target_server_name}"
   SSH_KEY=~/.ssh/id_deploy
   SSH_USER=va-deploy
   SSH="ssh -i $SSH_KEY va-deploy@${target_server_name}"
