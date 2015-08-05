@@ -10,7 +10,9 @@ export default class BasicFieldComponent extends React.Component {
   }
 
   componentDidMount() {
-    this.props.controller.componentDidMount(this.props.field, this.props.value)
+    if (this.props.field) {
+      this.props.controller.componentDidMount(this.props.field, this.props.value)
+    }
   }
 
   static checkValueOnBlur(field, htmlId, oldValue, onChange, controller) {
