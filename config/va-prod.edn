@@ -1,0 +1,14 @@
+{:server {:auto-reload? false
+          :allow-db-clear? false
+          :port 8081
+          :url {:fi "https://valtionavustukset.oph.fi/"
+                :sv "https://statsunderstod.oph.fi.oph.fi/"}}
+ :db {:database-name "va-prod"}
+ :email {:enabled? true
+         :host "smtp.sdn.csc.fi"
+         :port 25
+         :sender "no-reply@csc.fi"
+         :from "no-reply@oph.fi"
+         :retry-initial-wait 2000
+         :retry-multiplier 4
+         :retry-max-time 60000}}

@@ -1,4 +1,0 @@
-{ :server {:auto-reload? false
-           :allow-db-clear? false
-           :port 8081 }
- :db {:database-name "va-prod"}}
