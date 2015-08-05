@@ -52,6 +52,7 @@
                       (name (:lang msg))
                       subject))
     (let [email {:from from
+                 :sender sender
                  :to to
                  :subject subject
                  :body (format-plaintext-message msg)}
