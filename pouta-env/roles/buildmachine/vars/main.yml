@@ -37,7 +37,7 @@ jenkins_jobs:
      repo: https://github.com/Opetushallitus/valtionavustus
      branch: origin/master
      chucknorris: true
-     command: /usr/local/bin/jenkins-cibuild.bash clean test
+     command: ./ci/jenkins-cibuild.bash clean test
      poll:  "* * * * *"
      junit: target/junit*.xml
      skip_tag: true
@@ -45,14 +45,14 @@ jenkins_jobs:
      repo: https://github.com/Opetushallitus/valtionavustus
      branch: origin/master
      chucknorris: true
-     command: "/usr/local/bin/jenkins-cibuild.bash {{ test_application_server_names.msg }} clean uberjar deploy"
+     command: "./ci/jenkins-cibuild.bash {{ test_application_server_names.msg }} clean uberjar deploy"
      poll:  "* * * * *"
      skip_tag: true
    - name: valtionavustus-deploy-production
      repo: https://github.com/Opetushallitus/valtionavustus
      branch: origin/master
      chucknorris: true
-     command: "/usr/local/bin/jenkins-cibuild.bash {{ production_application_server_names.msg }} clean uberjar deploy"
+     command: "./ci/jenkins-cibuild.bash {{ production_application_server_names.msg }} clean uberjar deploy"
      poll:  "* * * * *"
      skip_tag: true
 
