@@ -6,5 +6,3 @@ ubuntu_common_required_packages:
   - lvm2
 
 build_machine_name: va-build
-
-test_machine_name: va-test

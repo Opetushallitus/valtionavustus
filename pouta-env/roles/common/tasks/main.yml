@@ -23,3 +23,22 @@
 
 - name: Force rng-tools restart
   service: name=rng-tools state=restarted enabled=yes
+
+- name: Gather test application server names to list
+  debug:
+    msg: |
+          {% set comma = joiner(",") %}
+          {% for server in groups['va_backend'] -%}
+              {{ comma() }}{{ server }}
+          {%- endfor %}
+  register: test_application_server_names
+
+
+- name: Gather production application server names to list
+  debug:
+    msg: |
+          {% set comma = joiner(",") %}
+          {% for server in groups['prod-va_backend'] -%}
+              {{ comma() }}{{ server }}
+          {%- endfor %}
+  register: production_application_server_names
