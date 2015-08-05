@@ -76,7 +76,7 @@ insert into forms (content) VALUES ('
             },
             "label":{
               "fi":"Yhteyshenkilö",
-              "sv":"Organisation"
+              "sv":"Kontaktperson"
             }
           },
           {
