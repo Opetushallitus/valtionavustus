@@ -91,7 +91,7 @@ function deploy() {
   $SSH "${APP_COMMAND}"
   echo "=============================="
   echo
-  CAT_LOG_COMMAND="$SSH ${target_server_name} cat /logs/valtionavustus/current_run.log"
+  CAT_LOG_COMMAND="$SSH cat /logs/valtionavustus/current_run.log"
   HEALTH_CHECK_COMMAND="`dirname $0`/health_check.bash ${target_server_name} $CAT_LOG_COMMAND"
   echo "...checking that it really comes up, with $HEALTH_CHECK_COMMAND ..."
   $HEALTH_CHECK_COMMAND
