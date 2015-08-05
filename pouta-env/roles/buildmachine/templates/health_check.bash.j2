@@ -1,6 +1,13 @@
 #!/bin/bash
 
-TEST_URL="http://{{ test_machine_name }}:8081/"
+if [ -z $1 ]; then
+  echo "Usage: $0 <target machine name>"
+  exit 3
+fi
+
+target_machine=$1
+
+TEST_URL="http://$target_machine:8081/"
 ATTEMPTS=20
 PAUSE_SECONDS=3
 
