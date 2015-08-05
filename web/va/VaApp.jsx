@@ -110,7 +110,6 @@ function printEntityId(state) {
 
 const query = queryString.parse(location.search)
 const develQueryParam =  query.devel || false
-const tarkiste =  query.tarkiste || false
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(avustusHakuApiUrl(query.avustushaku || 1)))
 
 function initialStateTemplateTransformation(template) {
@@ -149,20 +148,10 @@ function initVaFormController() {
   }}
 }
 
-function initVaFormVerificationController() {
-  const controller = new VaFormVerificationController()
-  const stateProperty = controller.initialize()
-  return { stateProperty: stateProperty, getReactComponent: function(state) {
-    return <VaFormVerify urlCreator={urlCreator} state={state} />
-  }}
-}
-
 function initAppController() {
-  if(tarkiste) {
-    return initVaFormVerificationController()
-  }
   return initVaFormController()
 }
+
 const app = initAppController()
 app.stateProperty.onValue((state) => {
   if (develQueryParam) {
