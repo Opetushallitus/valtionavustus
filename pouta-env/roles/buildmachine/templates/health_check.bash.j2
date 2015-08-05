@@ -12,7 +12,7 @@ ATTEMPTS=20
 PAUSE_SECONDS=3
 
 for N in `seq 1 $ATTEMPTS`; do
-  curl $TEST_URL
+  curl --connect-timeout 10 --max-time 20 $TEST_URL
   if [ 0 -eq $? ]; then
     echo "At `date`, application seems to be up at $TEST_URL , great!"
     exit 0
