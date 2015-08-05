@@ -13,7 +13,7 @@ for server in ${comma_separated_server_list//,/ }
 do
   echo "========================="
   echo "Deploying on $server: "
-  command_line="`dirname $0`/cibuild.bash -r -s $server -p $postgresql_host_port {@:2}"
+  command_line="`dirname $0`/cibuild.bash -r -s $server -p $postgresql_host_port ${@:2}"
   echo "Executing :"
   echo $command_line
 
