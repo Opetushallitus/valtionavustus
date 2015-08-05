@@ -44,3 +44,11 @@
 - name: Add test app servers IP mapping to /etc/hosts
   lineinfile: dest=/etc/hosts line='"{{ hostvars[item].ansible_all_ipv4_addresses[0] }} {{ item }}"' owner=root group=root mode=0644
   with_items: groups.va_backend
+
+- name: Remove previous production app server IP mapping from /etc/hosts
+  lineinfile: dest=/etc/hosts regexp='"^([0-9]{1,3}\.){3}[0-9]{1,3} {{ item }}$"' state=absent owner=root group=root mode=0644
+  with_items: groups['prod-va_backend']
+
+- name: Add production app servers IP mapping to /etc/hosts
+  lineinfile: dest=/etc/hosts line='"{{ hostvars[item].ansible_all_ipv4_addresses[0] }} {{ item }}"' owner=root group=root mode=0644
+  with_items: groups['prod-va_backend']
