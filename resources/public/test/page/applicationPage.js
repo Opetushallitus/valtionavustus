@@ -96,9 +96,6 @@ function ApplicationPage() {
     classAttributeOf: function(htmlId) {
       return applicationElement().find("#" + escapeSelector(htmlId)).first().attr("class")
     },
-    previewButton: function() {
-      return Clickable(function() { return applicationElement().find("button:contains(Tallennettu versio)")})
-    },
     getInput: function(name) {
       return Input(function () {
         return applicationElement().find("[name='" + name + "']")
