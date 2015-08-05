@@ -9,7 +9,7 @@ fi
 
 postgresql_host_port=5432
 
-command_line="./cibuild.bash -r -s $deploy_target_test_server -p $postgresql_host_port $@"
+command_line="./ci/cibuild.bash -r -s $deploy_target_test_server -p $postgresql_host_port $@"
 echo "Executing :"
 echo $command_line
 
