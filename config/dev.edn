@@ -1,2 +1,5 @@
 {:server {:url {:fi "http://localhost:8080/"
-                :sv "http://localhost:8080/"}}}
+                :sv "http://localhost:8080/"}}
+ :email {:enabled? false
+         :host "localhost"
+         :port 2500}}
