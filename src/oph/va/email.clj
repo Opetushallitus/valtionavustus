@@ -30,15 +30,18 @@
     (do
       (log/error "Failed to send message after retrying, aborting")
       false)
-    (let [{:keys [code error message]} (send-fn)]
-      (if (= code 0)
-        (do
-          (log/info "Message sent successfully")
-          true)
-        (do
-          (log/warn (format "Error: %d %s - %s" code (str error) message))
-          (Thread/sleep time)
-          (try-send! (* time multiplier) multiplier max-time send-fn))))))
+    (try
+      (let [{:keys [code error message]} (send-fn)]
+        (if (= code 0)
+          (do
+            (log/info "Message sent successfully")
+            true)
+          (do
+            (log/warn (format "Error: %d %s - %s" code (str error) message))
+            (Thread/sleep time)
+            (try-send! (* time multiplier) multiplier max-time send-fn))))
+      (catch Exception e
+        (.printStackTrace e)))))
 
 
 (defn- send-msg! [msg format-plaintext-message]
