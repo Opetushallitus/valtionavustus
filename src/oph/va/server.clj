@@ -28,6 +28,7 @@
                   (reload/wrap-reload (site #'all-routes))
                   (site all-routes))]
     (fail-if-server-running host port)
+    (log/info "Using configuration: " config)
     (log/info "Running db migrations")
     (dbmigrations/migrate)
     (log/info "Starting e-mail sender")
