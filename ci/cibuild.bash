@@ -91,7 +91,7 @@ function deploy() {
   $SSH "${APP_COMMAND}"
   echo "=============================="
   echo
-  HEALTH_CHECK_COMMAND="`dirname $0`./health_check.bash ${target_server_name}"
+  HEALTH_CHECK_COMMAND="`dirname $0`/health_check.bash ${target_server_name}"
   echo "...checking that it really comes up, with $HEALTH_CHECK_COMMAND ..."
   $HEALTH_CHECK_COMMAND
   echo
