@@ -76,7 +76,8 @@
                                                 :duration
                                                 :end
                                                 (clj-time/parse (clj-time/formatters :date-time)))
-                      email (find-hakemus-value answers "organization-email")
+                      email (find-hakemus-value answers "primary-email")
+                      name (find-hakemus-value answers "organization")
                       user-key (-> new-hakemus :hakemus :user_key)]
                   (va-email/send-new-hakemus-message! language
                                                       email
