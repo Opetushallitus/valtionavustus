@@ -27,7 +27,7 @@ insert into forms (content) VALUES ('
     "children": [
       {
         "type": "wrapperElement",
-        "id":"applicant-fieldset",
+        "id":"organization-fieldset",
         "displayAs":"fieldset",
         "children": [
           {
@@ -46,6 +46,41 @@ insert into forms (content) VALUES ('
           },
           {
             "type": "formField",
+            "id":"organization-email",
+            "required":true,
+            "displayAs":"emailField",
+            "params":{
+              "size":"small",
+              "maxlength":80
+            },
+            "label":{
+              "fi":"Sähköposti",
+              "sv":"e-postadress"
+            }
+          }
+        ]
+      },
+      {
+        "type": "wrapperElement",
+        "id":"applicant-fieldset",
+        "displayAs":"fieldset",
+        "children": [
+          {
+            "type": "formField",
+            "id":"applicant-name",
+            "required":true,
+            "displayAs":"textField",
+            "params":{
+              "size":"large",
+              "maxlength":80
+            },
+            "label":{
+              "fi":"Yhteyshenkilö",
+              "sv":"Organisation"
+            }
+          },
+          {
+            "type": "formField",
             "id":"primary-email",
             "required":true,
             "displayAs":"emailField",
@@ -54,8 +89,8 @@ insert into forms (content) VALUES ('
               "maxlength":80
             },
             "label":{
-              "fi":"Yhteyshenkilön sähköposti",
-              "sv":"Kontaktpersonens e-postadress"
+              "fi":"Sähköposti",
+              "sv":"e-postadress"
             }
           }
         ]
@@ -75,8 +110,8 @@ insert into forms (content) VALUES ('
               "maxlength":80
             },
             "label":{
-              "fi":"Allekirjoitusoikeudellisen henkilön nimi",
-              "sv":"Underskriftgiltiga personens namn och uppgift"
+              "fi":"Allekirjoitusoikeudellinen henkilö",
+              "sv":"Underskriftgiltiga personen"
             }
           },
           {

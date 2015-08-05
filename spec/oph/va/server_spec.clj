@@ -23,6 +23,8 @@
 (def valid-answers
   {:value [
            {:key "organization" :value "Testi Organisaatio"}
+           {:key "organization-email" :value "org@example.com"}
+           {:key "applicant-name" :value "Teemu Hakija"}
            {:key "primary-email" :value "test@example.com"}
            {:key "signature" :value "Teemu Testaaja, CEO"}
            {:key "signature-email" :value "teemu@example.com"}
@@ -62,6 +64,7 @@
   {:other-organizations.other-organizations-1.email      [{:error "required"}]
    :project-begin                                        []
    :other-organizations.other-organizations-1.name       [{:error "required"}]
+   :applicant-name                                       [{:error "required"}]
    :primary-email                                        []
    :signature                                            [{:error "required"}]
    :project-description.project-description-1.goal     [{:error "required"}]
@@ -70,6 +73,7 @@
    :continuation-project                                 []
    :bank-bic                                             [{:error "required"}]
    :organization                                         []
+   :organization-email                                   [{:error "required"}]
    :project-effectiveness                                [{:error "required"}]
    :project-spreading-plan                               [{:error "required"}]
    :project-measure                                      [{:error "required"}]

@@ -3,6 +3,8 @@ function enterValidValues(applicationPage) {
   applicationPage.setInputValue("organization", "Testi Organisaatio")()
   applicationPage.setInputValue("primary-email", "yhteyshenkilo@example.com")()
   applicationPage.waitAutoSave().then()
+  applicationPage.setInputValue("applicant-name", "Testi Hakija")()
+  applicationPage.setInputValue("organization-email", "organisaatio@example.com")()
   applicationPage.setInputValue("signature", "Matti Allekirjoitusoikeudellinen")()
   applicationPage.setInputValue("signature-email", "matti.allekirjoitusoikeudellinen@example.com")()
   applicationPage.setInputValue("other-organizations.other-organizations-1.name", "Muu Testi Organisaatio")()
