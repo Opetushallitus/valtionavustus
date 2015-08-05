@@ -21,7 +21,7 @@
   {:new-hakemus {:fi (load-template "email-templates/new-hakemus.plain.fi")
                  :sv (load-template "email-templates/new-hakemus.plain.sv")}})
 
-(def smtp-config (trace "smtp-config" (:email config)))
+(def smtp-config (:email config))
 (defonce mail-queue (chan 50))
 (defonce run? (atom true))
 
@@ -49,8 +49,10 @@
         sender (:sender msg)
         to (:to msg)
         subject (:subject msg)]
-    (log/info (format "Sending %s message to %s (lang: %s) with subject '%s'"
+    (log/info (format "Sending %s message from %s (with sender %s) to %s (lang: %s) with subject '%s'"
                       (name (:type msg))
+                      from
+                      sender
                       to
                       (name (:lang msg))
                       subject))
