@@ -4,7 +4,7 @@
           :url {:fi "https://srv2.va-dev.oph.fi/"
                 :sv "https://srv2.va-dev.oph.fi/"}}
  :db {:database-name "va-test"}
- :email {:enabled? false
+ :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25
          :sender "no-reply@csc.fi"
