@@ -1,6 +1,8 @@
 import React from 'react'
 import _ from 'lodash'
 
+import styles from './style/preview.less'
+
 import FormPreviewComponent from './preview/FormPreviewComponent.jsx'
 import InfoElement from './component/InfoElement.jsx'
 import WrapperPreviewComponent from './preview/wrapper/WrapperPreviewComponent.jsx'

@@ -1,0 +1,82 @@
+@import "variables"
+;
+.soresu-preview {
+  .soresu-key {
+    color: @form-label-black;
+    font-weight: 400;
+    display: block;
+    padding-right: 10px;
+  }
+
+  .soresu-value {
+    color: @text-black;
+    font-size: 18px;
+  }
+
+  .soresu-preview-element {
+    &.extra-extra-small {
+      width: ceil(@section-width / 8);
+    }
+    &.extra-small {
+      width: ceil(@section-width / 4);
+    }
+    &.small {
+      width: ceil(@section-width / 3);
+    }
+    &.medium {
+      width: ceil(@section-width / 2);
+    }
+    &.large {
+      width: ceil(@section-width / 1.5);
+    }
+    &.extra-large {
+      width: @section-width;
+    }
+
+    .soresu-money {
+      &:after {
+        content: " €"
+      }
+    }
+  }
+
+  .soresu-preview-fieldset,  .soresu-preview-growing-fieldset {
+    div.extra-large {
+      display: block;
+    }
+
+    .soresu-preview-element {
+      display: inline-block;
+    }
+
+    .hidden {
+      display: none;
+    }
+  }
+
+  .soresu-preview-growing-fieldset {
+    ol {
+      margin: 20px 0 0 -56px;
+      list-style-type: none;
+      counter-reset: item;
+
+      li:before {
+        content: counter(item) "  ";
+        counter-increment: item;
+        float: left;
+        width: 1em;
+        font-weight: 600;
+      }
+
+      li.soresu-growing-fieldset-child {
+        margin: 0 0 10px 0;
+      }
+    }
+
+    &.show-only-first-label ol {
+      li:first-child:before {
+        margin-top: 22px;
+      }
+    }
+  }
+}

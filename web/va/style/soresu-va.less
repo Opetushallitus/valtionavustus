@@ -1,0 +1,236 @@
+@import "../../form/style/variables.less";
+
+#topbar {
+  width: 100%;
+  height: 120px;
+  background-color: #fff;
+  position: fixed;
+  top: 0;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.10);
+
+  #logo {
+    margin: 20px 70px 0 20px;
+    float: left;
+  }
+
+  h1 {
+    margin: 39px 30px 0 0;
+    float: left;
+    font-size: 22px;
+    font-weight: normal;
+    text-transform: uppercase;
+    display: block;
+    text-align: right;
+    max-width: 300px;
+  }
+
+  #form-controls {
+    margin-top: 28px;
+    float: left;
+    border-left: 1px solid @light-gray;
+    height: 58px;
+    padding-left: 20px;
+
+    .status {
+      float: left;
+      min-width: 180px;
+      margin-top: 15px;
+      padding-right: 20px;
+      font-size: 13px;
+    }
+
+    #form-error-summary {
+      font-size: 13px;
+      padding-left: 200px;
+      clear: left
+    }
+
+    button {
+      margin-top: 5px;
+    }
+  }
+}
+
+#top-container {
+  width: @form-width;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.va-budget {
+  table.summing-table {
+    margin-top: 13px;
+    caption {
+      text-align: left;
+      text-transform: uppercase;
+      margin: 8px 0 8px 0;
+    }
+    thead {
+      tr {
+        // tr cannot have margin
+        border-top: 10px transparent solid;
+        border-bottom: 8px transparent solid;
+      }
+    }
+    colgroup {
+      .label-column {
+        width: 415px;
+      }
+      .description-column {
+        width: 267px;
+      }
+      .amount-column {
+        width: 100px;
+      }
+    }
+    tfoot {
+      border-top: 1px solid @light-gray;
+      font-weight: bold;
+      td {
+        padding-top: 5px;
+      }
+    }
+  }
+
+  table.budget-summary {
+    margin-top: 26px;
+
+    colgroup {
+      .label-column {
+        width: 682px;
+      }
+      .amount-column {
+        width: 100px;
+      }
+    }
+
+    tr.grand-total {
+      border-bottom: 1px solid @light-gray;
+      font-weight: bold;
+      height: 40px;
+      td {
+        padding-top: 5px;
+      }
+    }
+
+    tr {
+      height: 50px;
+    }
+  }
+
+  table.summing-table, table.budget-summary {
+    width: @section-width - 18px;
+    text-align: left;
+    caption {
+      font-size: 18px;
+    }
+    tbody tr:last-child {
+      td {
+        padding-bottom: 10px;
+      }
+    }
+    .label-column {
+      color: @form-label-black;
+      &.disabled {
+        color: @darker-gray
+      }
+    }
+    .soresu-money-field {
+      input[type=text] {
+        margin: 0 6px 4px 0;
+      }
+    }
+    .soresu-text-field.small {
+      input[type=text] {
+        margin: 0 4px 4px 0;
+      }
+    }
+    .amount-column {
+      text-align: right;
+    }
+    span.money, span.soresu-money {
+      margin-right: 10px;
+    }
+    .money {
+      &:not(.error-message).sum:after {
+        content: " €"
+      }
+      &.error.sum {
+        color: @bright-red;
+      }
+    }
+  }
+}
+
+.soresu-growing-fieldset {
+  ol li.va-big-fieldset {
+    margin: 20px 0 0 -90px;
+  }
+
+  .va-big-fieldset {
+    div.fieldset-elements {
+      float: left;
+      border-left: 1px solid @dark-gray;
+      border-right: 1px solid @dark-gray;
+      padding: 0 10px 0 21px;
+      margin: 0 10px 40px 10px;
+
+      input[type=text], input[type=email] {
+        margin: 5px 10px 10px 0;
+      }
+    }
+
+    div.fieldset-control {
+      padding-top: 20px;
+      overflow: hidden;
+    }
+  }
+}
+
+.soresu-preview {
+  .soresu-preview-growing-fieldset {
+    ol li.va-big-fieldset {
+      margin: 0 0 40px -26px;
+    }
+
+    .va-big-fieldset {
+      div.fieldset-elements {
+        border-left: 1px solid @dark-gray;
+        padding: 0 0 0 21px;
+        margin: 0 0 0 20px;
+      }
+    }
+  }
+  .va-budget {
+    .soresu-value {
+      font-size: 16px;
+    }
+  }
+}
+
+.va-old-browser-warning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 30px;
+  width: 100%;
+  z-index: 1;
+  background-color: @yellow;
+
+  .soresu-remove {
+    position: fixed;
+    right: 5px;
+    top: 4px;
+  }
+
+  .text {
+    font-size: 13px;
+    display: inline-block;
+    margin-left: 100px;
+    margin-top: 4px;
+  }
+
+  &.hidden {
+    display: none;
+  }
+}

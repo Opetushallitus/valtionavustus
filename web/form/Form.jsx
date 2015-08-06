@@ -1,6 +1,8 @@
 import React from 'react'
 import _ from 'lodash'
 
+import styles from './style/main.less'
+
 import FormComponent from './component/FormComponent.jsx'
 import InfoElement from './component/InfoElement.jsx'
 import WrapperComponent from './component/wrapper/WrapperComponent.jsx'

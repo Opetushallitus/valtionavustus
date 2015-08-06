@@ -1,11 +1,14 @@
 import React from 'react'
 import QueryString from 'query-string'
 import Bacon from 'baconjs'
-import HttpUtil from './../form/HttpUtil'
+
+import style from '../form/style/main.less'
+import vaStyle from './style/soresu-va.less'
 
 import VaLoginTopbar from './VaLoginTopbar.jsx'
 import VaUrlCreator from './VaUrlCreator.js'
 
+import HttpUtil from '../form/HttpUtil'
 import LocalizedString from '../form/component/LocalizedString.jsx'
 import EmailTextField from '../form/component/EmailTextField.jsx'
 import TextButton from '../form/component/TextButton.jsx'

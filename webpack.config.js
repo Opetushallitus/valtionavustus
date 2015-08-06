@@ -37,6 +37,11 @@ module.exports = {
       {
         test: /\.less$/,
         loader: "style!css!less"
+      },
+      {
+        test: /\.png$/,
+        loader: "url-loader",
+        query: { mimetype: "image/png" }
       }
     ]
   },
