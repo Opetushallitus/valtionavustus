@@ -14,7 +14,7 @@
        slurp))
 
 (def mail-titles
-  {:new-hakemus {:fi "Linkki avustushakemukseen"
+  {:new-hakemus {:fi "Linkki organisaationne avustushakemukseen"
                  :sv "TODO: Länk till bidragsansökan"}})
 
 (def mail-templates
