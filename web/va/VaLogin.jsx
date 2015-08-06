@@ -4,6 +4,7 @@ import Bacon from 'baconjs'
 import HttpUtil from './../form/HttpUtil'
 
 import VaLoginTopbar from './VaLoginTopbar.jsx'
+import VaUrlCreator from './VaUrlCreator.js'
 
 import LocalizedString from '../form/component/LocalizedString.jsx'
 import EmailTextField from '../form/component/EmailTextField.jsx'
@@ -33,11 +34,11 @@ export default class VaLogin extends React.Component {
   }
 }
 
-function avustusHakuApiUrl(avustusHakuId) { return "/api/avustushaku/" + avustusHakuId }
+const urlCreator = new VaUrlCreator()
 
 const query = QueryString.parse(location.search)
 const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json"))
-const avustusHakuP = Bacon.fromPromise(HttpUtil.get(avustusHakuApiUrl(query.avustushaku || 1)))
+const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(query.avustushaku || 1)))
 
 const initialStateTemplate = { translations: translationsP, lang: query.lang || "fi", avustushaku: avustusHakuP }
 const initialState = Bacon.combineTemplate(initialStateTemplate)
