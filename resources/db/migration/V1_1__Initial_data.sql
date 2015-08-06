@@ -1095,8 +1095,8 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
     }
   },
   "duration": {
-    "start": "2015-08-12T00:00:00.000Z",
-    "end": "2015-09-12T17:00:00.000Z",
+    "start": "2015-08-19T00:00:00.000Z",
+    "end": "2015-09-30T16:15:00.000Z",
     "label": {
       "fi": "Hakuaika",
       "sv": "Åtkomsttid"
