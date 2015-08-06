@@ -8,12 +8,12 @@ import queryString from 'query-string'
 
 import FormController from './../form/FormController'
 import FieldUpdateHandler from './../form/FieldUpdateHandler.js'
-import UrlCreator from './../form/UrlCreator'
 import ResponseParser from './../form/ResponseParser'
 import JsUtil from './../form/JsUtil.js'
 import HttpUtil from './../form/HttpUtil'
 
 import VaForm from './VaForm.jsx'
+import VaUrlCreator from './VaUrlCreator'
 import VaComponentFactory from './VaComponentFactory.js'
 import VaPreviewComponentFactory from './VaPreviewComponentFactory.js'
 import {BudgetItemElement} from './VaBudgetComponents.jsx'
@@ -37,28 +37,7 @@ const responseParser = new ResponseParser({
   getFormAnswers: function(response) { return response.submission.answers }
 })
 
-const urlCreator = new UrlCreator({
-    formApiUrl: function(formId) { return "/api/form/" + formId },
-    newEntityApiUrl: function(state) { return "/api/avustushaku/" + state.avustushaku.id + "/hakemus" },
-    existingFormApiUrl: function(state) {
-      const avustusHakuId = state.avustushaku.id
-      const hakemusId = state.saveStatus.hakemusId
-      return existingFormApiUrl(avustusHakuId, hakemusId)
-    },
-    existingFormApiUrlFromQuery: function(query) {
-      const avustusHakuId = query.avustushaku || 1
-      const hakemusId = query.hakemus
-      return existingFormApiUrl(avustusHakuId, hakemusId)
-    },
-
-    existingSubmissionEditUrl: function(avustusHakuId, hakemusId, lang) { return "/?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId + "&lang=" + lang},
-    existingSubmissionPreviewUrl: function(state) {
-      const avustusHakuId = state.avustushaku.id
-      const hakemusId = state.saveStatus.hakemusId
-      return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId
-    }
-  }
-)
+const urlCreator = new VaUrlCreator()
 
 function onFieldValid(formController, state, field, newFieldValue) {
   if ("primary-email" === field.id) {
@@ -100,17 +79,13 @@ function createUiStateIdentifier(state) {
   return state.form.id + "-" + sessionIdentifierForLocalStorageId
 }
 
-function existingFormApiUrl(avustusHakuId, hakemusId) { return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId }
-
-function avustusHakuApiUrl(avustusHakuId) { return "/api/avustushaku/" + avustusHakuId }
-
 function printEntityId(state) {
   return state.saveStatus.hakemusId
 }
 
 const query = queryString.parse(location.search)
 const develQueryParam =  query.devel || false
-const avustusHakuP = Bacon.fromPromise(HttpUtil.get(avustusHakuApiUrl(query.avustushaku || 1)))
+const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(query.avustushaku || 1)))
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
