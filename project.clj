@@ -29,7 +29,7 @@
                  [org.flywaydb/flyway-core "3.2.1"]
 
                  ;; E-mail
-                 [com.draines/postal "1.11.3"]
+                 [org.apache.commons/commons-email "1.4"]
                  [de.ubercode.clostache/clostache "1.4.0"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
 

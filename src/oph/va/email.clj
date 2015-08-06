@@ -4,9 +4,9 @@
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
             [clojure.java.io :as io]
-            [postal.core :refer [send-message]]
             [clostache.parser :refer [render]]
-            [oph.common.config :refer [config]]))
+            [oph.common.config :refer [config]])
+  (:import [org.apache.commons.mail SimpleEmail]))
 
 (defn- load-template [path]
   (->> path
@@ -31,18 +31,14 @@
       (log/error "Failed to send message after retrying, aborting")
       false)
     (try
-      (let [{:keys [code error message]} (send-fn)]
-        (if (= code 0)
-          (do
-            (log/info "Message sent successfully")
-            true)
-          (do
-            (log/warn (format "Error: %d %s - %s" code (str error) message))
-            (Thread/sleep time)
-            (try-send! (* time multiplier) multiplier max-time send-fn))))
+      (send-fn)
+      (log/info "Message sent successfully")
+      true
       (catch Exception e
-        (.printStackTrace e)))))
-
+        (.printStackTrace e)
+        (log/warn (format "Error: %s" (.getMessage e)))
+        (Thread/sleep time)
+        (try-send! (* time multiplier) multiplier max-time send-fn)))))
 
 (defn- send-msg! [msg format-plaintext-message]
   (let [from (:from msg)
@@ -56,14 +52,20 @@
                       to
                       (name (:lang msg))
                       subject))
-    (let [email {:from from
-                 :sender sender
-                 :to to
-                 :subject subject
-                 :body (format-plaintext-message msg)}
+    (let [email (format-plaintext-message msg)
           send-fn (if (:enabled? smtp-config)
                     (fn []
-                      (send-message smtp-config email))
+                      (let [msg (SimpleEmail.)]
+                        (doto msg
+                          (.setHostName (:host smtp-config))
+                          (.setSmtpPort (:port smtp-config))
+                          (.setFrom from)
+                          (.addHeader "Sender" sender)
+                          (.setBounceAddress "")
+                          (.setSubject subject)
+                          (.setMsg email)
+                          (.addTo to)
+                          (.send))))
                     (fn []
                       (log/info "Sending message: " email)
                       {:code 0 :error nil :message nil}))]
