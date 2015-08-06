@@ -12,12 +12,19 @@ TEST_URL="http://$target_machine:8081/"
 ATTEMPTS=20
 PAUSE_SECONDS=3
 
+function cat_latest_application_log() {
+  echo
+  echo "*** Latest application log (by $cat_log_command ): ***"
+  eval $cat_log_command
+  echo "*** /Latest application log ends *********************"
+  echo
+}
+
 for N in `seq 1 $ATTEMPTS`; do
   /usr/bin/curl --connect-timeout 10 --max-time 20 $TEST_URL
   if [ 0 -eq $? ]; then
     echo "At `date`, application seems to be up at $TEST_URL , great!"
-    echo "Maybe we can see the latest log with $cat_log_command :"
-    eval $cat_log_command
+    cat_latest_application_log
     exit 0
   fi
   echo "    ...no dice yet, sleeping for $PAUSE_SECONDS seconds and trying again..."
@@ -26,6 +33,5 @@ done
 
 echo "Giving up at `date` ."
 echo "Could not get OK response from $TEST_URL with $ATTEMPTS attempts with $PAUSE_SECONDS second intervals, what's wrong?"
-echo "Attempting to display latest log with $cat_log_command "
-eval $cat_log_command
+cat_latest_application_log
 exit 2
