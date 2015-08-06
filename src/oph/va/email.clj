@@ -1,6 +1,7 @@
 (ns oph.va.email
   (:require [clojure.core.async :refer [<! >!! go chan]]
-            [clj-time.format :as clj-time]
+            [clj-time.core :as time]
+            [clj-time.format :as time-format]
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
             [clojure.java.io :as io]
@@ -67,8 +68,7 @@
                           (.addTo to)
                           (.send))))
                     (fn []
-                      (log/info "Sending message: " email)
-                      {:code 0 :error nil :message nil}))]
+                      (log/info "Sending message: " email)))]
       (when (not (try-send! (:retry-initial-wait smtp-config)
                             (:retry-multiplier smtp-config)
                             (:retry-max-time smtp-config)
@@ -96,6 +96,12 @@
 
 (defn send-new-hakemus-message! [lang to avustushaku-id avustushaku user-key end-date]
   (let [lang-str (or (clojure.core/name lang) "fi")
+        end-date-in-local-time (->> (time/time-zone-for-id "Europe/Helsinki")
+                                    (time/to-time-zone end-date))
+        date-string (->> end-date-in-local-time
+                         (time-format/unparse (time-format/formatter "dd.MM.YYYY")))
+        time-string (->> end-date-in-local-time
+                         (time-format/unparse (time-format/formatter "HH:mm")))
         url (str (-> config :server :url lang)
                  "?avustushaku"
                  avustushaku-id
@@ -112,5 +118,6 @@
                      :subject (get-in mail-titles [:new-hakemus lang])
                      :to to
                      :avustushaku avustushaku
-                     :end-date (clj-time/unparse (clj-time/formatter "dd.MM.YYYY") end-date)
+                     :end-date date-string
+                     :end-time time-string
                      :url url})))

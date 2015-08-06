@@ -1,6 +1,6 @@
 Avustushakemus: {{ avustushaku }}
 
-Haku päättyy: {{ end-date }}
+Haku päättyy: {{ end-date }} kl. {{ end-time }}
 
 Pääset muokkaamaan avustushakemusta tästä linkistä: {{& url }}
 
