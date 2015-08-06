@@ -17,13 +17,40 @@ import {EndOfDateRangeInfoElement, H1InfoElement} from '../form/component/InfoEl
 export default class VaLogin extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {email: ""}
+    this.state = {
+      email: "",
+      sent: ""
+    }
   }
 
   handleEmailChange(event) {
     this.setState({
-      email: event.target.value
+      email: event.target.value,
+      sent: ""
     })
+  }
+
+  submit(event) {
+    const url = urlCreator.newEntityApiUrl(this.props.model)
+    const vaLogin = this
+    const email = this.state.email
+    try {
+      HttpUtil.put(url, {
+        value: [{key:"primary-email", value: email},{key:"language", value: this.props.model.lang}]
+      })
+      .then(function(response) {
+        console.log("Hakemus created. Response=", JSON.stringify(response))
+        vaLogin.setState({
+          sent: email
+        })
+      })
+      .catch(function(response) {
+        console.error("PUT error to", url, ". Response=", JSON.stringify(response))
+      })
+    }
+    catch(error) {
+      console.error("PUT error to", url, ". Error=", error)
+    }
   }
 
   render() {
@@ -32,23 +59,7 @@ export default class VaLogin extends React.Component {
     const translations = model.translations
     const content = model.avustushaku.content
     const email = this.state.email
-    function doSubmit() {
-      const url = urlCreator.newEntityApiUrl(model)
-      try {
-        HttpUtil.put(url, {
-              value: [{key:"primary-email", value: email},{key:"language", value: lang}]
-            })
-            .then(function(response) {
-              console.log("Hakemus created. Response=", JSON.stringify(response))
-            })
-            .catch(function(response) {
-              console.error("PUT error to", url, ". Response=", JSON.stringify(response))
-            })
-      }
-      catch(error) {
-        console.error("PUT error to", url, ". Error=", error)
-      }
-    }
+    const sent = this.state.sent
 
     return <div>
       <VaLoginTopbar translations={translations} lang={lang} />
@@ -57,8 +68,8 @@ export default class VaLogin extends React.Component {
         <EndOfDateRangeInfoElement htmlId="duration" translations={translations} translationKey="label" lang={lang} values={content} />
         <h2><LocalizedString translations={translations.login} translationKey="heading" lang={lang} /></h2>
         <EmailTextField htmlId="primary-email" onChange={this.handleEmailChange.bind(this)} translations={translations.login} value={email} translationKey="contact-email" lang={lang} required="true" size="small" maxLength="80" />
-        <TextButton htmlId="submit" onClick={doSubmit} translations={translations.login} translationKey="submit" lang={lang} />
-        <div className="message-container"><LocalizedString className="message" translations={translations.login} translationKey="message" lang={lang} /></div>
+        <TextButton htmlId="submit" disabled={email === sent} onClick={this.submit.bind(this)} translations={translations.login} translationKey="submit" lang={lang} />
+        <div className="message-container"><LocalizedString hidden={sent === ""} className="message" translations={translations.login} translationKey="message" lang={lang} /></div>
       </section>
     </div>
   }
