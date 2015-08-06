@@ -98,7 +98,7 @@ function onInitialStateLoaded(initialState) {
 }
 
 function initVaFormController() {
-  const formP = avustusHakuP.flatMap(function(avustusHaku) {console.log(avustusHaku);return Bacon.fromPromise(HttpUtil.get(urlCreator.formApiUrl(avustusHaku.form)))})
+  const formP = avustusHakuP.flatMap(function(avustusHaku) {return Bacon.fromPromise(HttpUtil.get(urlCreator.formApiUrl(avustusHaku.form)))})
   const controller = new FormController({
     "initialStateTemplateTransformation": initialStateTemplateTransformation,
     "onInitialStateLoaded": onInitialStateLoaded,
