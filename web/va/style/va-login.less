@@ -1,0 +1,27 @@
+@import "topbar";
+
+#container {
+  h2 {
+    margin-top: 40px;
+  }
+
+  label {
+    margin-right: 10px;
+  }
+
+  .required:after {
+    content: " *";
+  }
+
+  .message-container {
+    display: inline-block;
+    vertical-align: top;
+    width: 160px;
+    height: 40px;
+  }
+
+  .message {
+    color: @dark-green;
+    font-size: 12px;
+  }
+}

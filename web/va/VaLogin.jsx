@@ -3,7 +3,7 @@ import QueryString from 'query-string'
 import Bacon from 'baconjs'
 
 import style from '../form/style/main.less'
-import vaStyle from './style/soresu-va.less'
+import loginStyle from './style/va-login.less'
 
 import VaLoginTopbar from './VaLoginTopbar.jsx'
 import VaUrlCreator from './VaUrlCreator.js'
@@ -32,6 +32,7 @@ export default class VaLogin extends React.Component {
         <h2><LocalizedString translations={translations.login} translationKey="heading" lang={lang} /></h2>
         <EmailTextField htmlId="primary-email" translations={translations.login} translationKey="contact-email" lang={lang} required="true" size="small" maxLength="80" />
         <TextButton htmlId="submit" translations={translations.login} translationKey="submit" lang={lang} />
+        <div className="message-container"><LocalizedString className="message" translations={translations.login} translationKey="message" lang={lang} /></div>
       </section>
     </div>
   }
