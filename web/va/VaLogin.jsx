@@ -34,15 +34,20 @@ export default class VaLogin extends React.Component {
     const url = urlCreator.newEntityApiUrl(this.props.model)
     const vaLogin = this
     const email = this.state.email
+    const model = this.props.model
     try {
       HttpUtil.put(url, {
-        value: [{key:"primary-email", value: email},{key:"language", value: this.props.model.lang}]
+        value: [{key:"primary-email", value: email},{key:"language", value: model.lang}]
       })
       .then(function(response) {
-        console.log("Hakemus created. Response=", JSON.stringify(response))
         vaLogin.setState({
           sent: email
         })
+        console.log("Hakemus created. Response=", JSON.stringify(response))
+        const hakemusId = response.id
+        if(hakemusId) {
+          window.location = urlCreator.existingSubmissionEditUrl(model.avustushaku.id, hakemusId, model.lang)
+        }
       })
       .catch(function(response) {
         console.error("PUT error to", url, ". Response=", JSON.stringify(response))
