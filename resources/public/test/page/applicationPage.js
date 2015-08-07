@@ -1,14 +1,21 @@
 function ApplicationPage() {
   var storedHakemusId
   var api = {
-    openStartPage: function(lang, pageLoadedCheck) {
+    openLoginPage: function(lang, pageLoadedCheck) {
       if (!lang) {
         lang = 'fi'
       }
       if (!pageLoadedCheck) {
         pageLoadedCheck = applicationPageVisible
       }
-      return openPage(function() { return "/?avustushaku=1&devel=true&lang=" + lang}, pageLoadedCheck)
+      return openPage(function() { return "/login.html?avustushaku=1&devel=true&lang=" + lang}, pageLoadedCheck)
+    },
+    login: function() {
+      api.setInputValue("primary-email", "yhteyshenkilo@example.com")()
+      api.submitButton().click()
+      return wait.until(api.hakemusIdIsPresent)().then(
+        api.storeHakemusIdFromHtml
+      )
     },
     openEditPage: function(hakemusIdGetter, lang, pageLoadedCheck) {
       if (!lang) {

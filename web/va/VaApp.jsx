@@ -26,10 +26,6 @@ function containsExistingEntityId(query) {
 }
 
 function isFieldEnabled(saved, fieldId) {
-  const disableExceptions = ["primary-email", "organization"]
-  if (_.contains(disableExceptions, fieldId)) {
-    return true
-  }
   return saved
 }
 
@@ -39,28 +35,6 @@ const responseParser = new ResponseParser({
 
 const urlCreator = new VaUrlCreator()
 
-function onFieldValid(formController, state, field, newFieldValue) {
-  if ("primary-email" === field.id) {
-    function hakemusIdIsAlreadyInUrl() {
-      return state.saveStatus.hakemusId &&
-        state.saveStatus.hakemusId.length > 0 &&
-        window.location.href.indexOf(state.saveStatus.hakemusId) > -1
-    }
-    if (hakemusIdIsAlreadyInUrl()) {
-      return
-    }
-    formController.saveImmediately(function(newState, response) {
-      const hakemusId = response.id
-      newState.saveStatus.hakemusId = hakemusId
-      const newUrl = urlCreator.existingSubmissionEditUrl(newState.avustushaku.id, hakemusId, newState.configuration.lang)
-      if (typeof (history.pushState) != "undefined") {
-        history.pushState({}, window.title, newUrl);
-     } else {
-       window.location = newUrl
-     }})
-  }
-}
-
 function onFieldUpdate(state, field, newFieldValue) {
   if (field.displayAs === "moneyField") {
     VaBudgetCalculator.handleBudgetAmountUpdate(state, field.id)
@@ -69,10 +43,6 @@ function onFieldUpdate(state, field, newFieldValue) {
 
 function isSaveDraftAllowed(state) {
   return state.saveStatus.hakemusId && state.saveStatus.hakemusId.length > 0
-}
-
-function onSaveCompletedCallback(currentStateInUi, savedStateOnServer) {
-  currentStateInUi.saveStatus.hakemusId = savedStateOnServer.saveStatus.hakemusId
 }
 
 function createUiStateIdentifier(state) {
@@ -110,9 +80,7 @@ function initVaFormController() {
     "containsExistingEntityId": containsExistingEntityId,
     "isFieldEnabled": isFieldEnabled,
     "onFieldUpdate": onFieldUpdate,
-    "onFieldValid": _.partial(onFieldValid, controller),
     "isSaveDraftAllowed": isSaveDraftAllowed,
-    "onSaveCompletedCallback": onSaveCompletedCallback,
     "createUiStateIdentifier": createUiStateIdentifier,
     "urlCreator": urlCreator,
     "responseParser": responseParser,

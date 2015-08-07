@@ -18,7 +18,8 @@
 
   describe('Budjettitaulukko', function () {
     before(
-      page.openStartPage('fi'),
+      page.openLoginPage('fi'),
+      page.login,
       enterValidValuesToPage,
       page.waitAutoSave
     )
