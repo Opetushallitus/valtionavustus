@@ -1,3 +1,6 @@
+import PolyfillBind from './../polyfill-bind'
+
+import ConsolePolyfill from 'console-polyfill'
 import React from 'react'
 import QueryString from 'query-string'
 import Bacon from 'baconjs'
