@@ -1,5 +1,6 @@
 (ns oph.va.routes
-  (:use [clojure.tools.trace :only [trace]])
+  (:use [clojure.tools.trace :only [trace]]
+        [oph.common.config :only [config]])
   (:require [compojure.route :as route]
             [clojure.tools.logging :as log]
             [clj-time.format :as clj-time]
@@ -33,7 +34,7 @@
        :value))
 
 (defn hakemus-ok-response [hakemus submission]
-  (ok {:id (:user_key hakemus)
+  (ok {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
        :status (:status hakemus)
        :created_at (:created_at hakemus)
        :verified_at (:verified_at hakemus)

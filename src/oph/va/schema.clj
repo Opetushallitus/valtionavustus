@@ -6,10 +6,9 @@
                           :content s/Any
                           :form Long
                           :created_at s/Inst})
-
 (s/defschema Hakemus
   "Hakemus contains hakemus info and last submission"
-  {:id      s/Str
+  {:id     (s/maybe s/Str)
    :status (s/enum "draft" "submitted")
    :created_at s/Inst
    :verified_at (s/maybe s/Inst)
