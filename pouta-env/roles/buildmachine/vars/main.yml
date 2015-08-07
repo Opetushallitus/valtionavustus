@@ -42,12 +42,7 @@ jenkins_jobs:
      junit: target/junit*.xml
      skip_tag: true
    - name: valtionavustus-deploy-test
-     repo: https://github.com/Opetushallitus/valtionavustus
-     branch: origin/master
-     chucknorris: true
-     command: "./ci/jenkins-cibuild.bash {{ test_application_server_names.msg }} clean uberjar deploy"
-     poll:  "* * * * *"
-     skip_tag: true
+     template: roles/buildmachine/templates/valtionavustus-deploy-test-deploy-job.xml.j2
    - name: valtionavustus-deploy-production
      repo: https://github.com/Opetushallitus/valtionavustus
      branch: origin/master
