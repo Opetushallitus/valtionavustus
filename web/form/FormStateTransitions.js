@@ -20,7 +20,7 @@ export default class FormStateTransitions {
     this.events = events
     this.autoSave = _.debounce(function(){ dispatcher.push(events.save) }, develQueryParam? 100 : 3000)
     this._bind(
-      'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'saveNew', 'updateOld', 'onSave',
+      'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
       'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onSaveError')
   }
 
@@ -100,34 +100,6 @@ export default class FormStateTransitions {
     }
   }
 
-  saveNew(state, onSuccessCallback) {
-    const formOperations = state.extensionApi.formOperations
-    const url = formOperations.urlCreator.newEntityApiUrl(state)
-    const dispatcher = this.dispatcher
-    const events = this.events
-    try {
-      state.saveStatus.saveInProgress = true
-      HttpUtil.put(url, state.saveStatus.values)
-        .then(function(response) {
-          console.log("State saved. Response=", JSON.stringify(response))
-          if (onSuccessCallback) {
-            onSuccessCallback(state, response)
-          }
-          var stateSkeletonFromServer = _.cloneDeep(state)
-          stateSkeletonFromServer.saveStatus.values = null // state from server is not loaded at all on initial save, so this will be null
-          stateSkeletonFromServer.validationErrors = Immutable(stateSkeletonFromServer.validationErrors)
-          dispatcher.push(events.saveCompleted, stateSkeletonFromServer)
-        })
-        .catch(function(response) {
-            FormStateTransitions.handleSaveError(dispatcher, events, response.status, response.statusText, "PUT", url, response.data, saveTypes.initialSave)
-        })
-    }
-    catch(error) {
-      return FormStateTransitions.handleUnexpectedSaveError(dispatcher, events, "PUT", url, error, saveTypes.initialSave);
-    }
-    return state
-  }
-
   updateOld(state, saveType, onSuccessCallback) {
     const formOperations = state.extensionApi.formOperations
     const url = formOperations.urlCreator.existingFormApiUrl(state)+ (saveType === saveTypes.submit ? "/submit" : "")
@@ -161,9 +133,8 @@ export default class FormStateTransitions {
     const formOperations = state.extensionApi.formOperations
     if (formOperations.isSaveDraftAllowed(state)) {
       return this.updateOld(state, saveTypes.autoSave, onSuccessCallback)
-    } else {
-      return this.saveNew(state, onSuccessCallback)
     }
+    return state
   }
 
   onBeforeUnload(state) {

@@ -50,10 +50,6 @@ export default class FormController {
     dispatcher.push(events.submit)
   }
 
-  saveImmediately(callback) {
-    dispatcher.push(events.save, { onSuccessCallback: callback })
-  }
-
   hasPendingChanges(state) {
     return state.saveStatus.changes || state.saveStatus.saveInProgress
   }
