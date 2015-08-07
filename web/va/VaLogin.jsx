@@ -12,6 +12,7 @@ import VaLoginTopbar from './VaLoginTopbar.jsx'
 import VaUrlCreator from './VaUrlCreator.js'
 
 import HttpUtil from '../form/HttpUtil'
+import SyntaxValidator from '../form/SyntaxValidator.js'
 import LocalizedString from '../form/component/LocalizedString.jsx'
 import EmailTextField from '../form/component/EmailTextField.jsx'
 import TextButton from '../form/component/TextButton.jsx'
@@ -77,6 +78,8 @@ export default class VaLogin extends React.Component {
     const email = this.state.email
     const sent = this.state.sent
     const error = this.state.error
+    const emailIsInvalid = () => SyntaxValidator.validateEmail(this.state.email) && this.state.email != ""
+    const canSend = () => email === sent || emailIsInvalid()
 
     return <div>
       <VaLoginTopbar translations={translations} lang={lang} />
@@ -84,8 +87,9 @@ export default class VaLogin extends React.Component {
         <H1InfoElement htmlId="name" lang={lang} values={content} />
         <EndOfDateRangeInfoElement htmlId="duration" translations={translations} translationKey="label" lang={lang} values={content} />
         <h2><LocalizedString translations={translations.login} translationKey="heading" lang={lang} /></h2>
-        <EmailTextField htmlId="primary-email" onChange={this.handleEmailChange.bind(this)} translations={translations.login} value={email} translationKey="contact-email" lang={lang} required="true" size="small" maxLength="80" />
-        <TextButton htmlId="submit" disabled={email === sent} onClick={this.submit.bind(this)} translations={translations.login} translationKey="submit" lang={lang} />
+
+        <EmailTextField htmlId="primary-email" hasError={emailIsInvalid()} onChange={this.handleEmailChange.bind(this)} translations={translations.login} value={email} translationKey="contact-email" lang={lang} required="true" size="small" maxLength="80" />
+        <TextButton htmlId="submit" disabled={canSend()} onClick={this.submit.bind(this)} translations={translations.login} translationKey="submit" lang={lang} />
         <div className="message-container">
           <LocalizedString hidden={sent === ""} className="message" translations={translations.login} translationKey="message" lang={lang} />
           <LocalizedString hidden={error === ""} className="error" translations={translations.errors} translationKey="unexpected-submit-error" lang={lang} />
@@ -109,6 +113,6 @@ const initialStateTemplate = {
 const initialState = Bacon.combineTemplate(initialStateTemplate)
 
 initialState.onValue(function(state) {
-  const properties = { model: state}
+  const properties = { model: state }
   React.render(React.createElement(VaLogin, properties), document.getElementById('app'))
 })
