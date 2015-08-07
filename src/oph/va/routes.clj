@@ -1,6 +1,5 @@
 (ns oph.va.routes
-  (:use [clojure.tools.trace :only [trace]]
-        [oph.common.config :only [config]])
+  (:use [clojure.tools.trace :only [trace]])
   (:require [compojure.route :as route]
             [clojure.tools.logging :as log]
             [clj-time.format :as clj-time]
@@ -9,6 +8,7 @@
             [compojure.core :refer [GET]]
             [compojure.api.sweet :refer :all]
             [schema.core :as s]
+            [oph.common.config :refer [config]]
             [oph.form.db :as form-db]
             [oph.form.validation :as validation]
             [oph.form.routes :refer :all]
