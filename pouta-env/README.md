@@ -23,10 +23,8 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 * tarkista, että uusi palvelin myös vastaa ansiblen pingiin (esim. va-test tai kaikki `all`):
   - `./pouta-venv/bin/ansible va-test -i openstack_inventory.py -m ping -u cloud-user`
 * roles/3rdparty hakemistoon on asennettu muiden tekemät roolit. Nämä Ansible-roolit ovat asennettu Ansible Galaxystä:
-  - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty Stouts.jenkins`
-  - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty debops.nginx`
-  - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty nodesource.node`
-  - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty debops.pki`
+  - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty --role-file=third_party_roles.yml`
+  - roolin päivittäminen onnistuu samalla tavalla, mutta vaatii --force -vivun (ansible-galaxy kertoo kyllä siitä)
 * alusta palvelimet
   - `./pouta-venv/bin/ansible-playbook -i openstack_inventory.py site.yml`
   - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee

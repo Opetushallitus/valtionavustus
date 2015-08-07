@@ -1,0 +1,5 @@
+- src: https://github.com/Stouts/Stouts.jenkins
+  name: Stouts.jenkins
+- src: debops.nginx
+- src: nodesource.node
+- src: debops.pki
