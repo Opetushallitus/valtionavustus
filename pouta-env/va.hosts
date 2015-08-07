@@ -1,0 +1,11 @@
+# Note that these IPs change when the server is recreated, 
+# so they need to be updated then.
+
+[va-build]
+192.168.1.173
+
+[va-test]
+192.168.1.225
+
+[va-prod]
+192.168.1.229
