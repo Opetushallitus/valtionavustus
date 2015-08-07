@@ -51,7 +51,7 @@ export default class VaLogin extends React.Component {
         console.log("Hakemus created. Response=", JSON.stringify(response))
         const hakemusId = response.id
         if(hakemusId) {
-          window.location = urlCreator.existingSubmissionEditUrl(model.avustushaku.id, hakemusId, model.lang)
+          window.location = urlCreator.existingSubmissionEditUrl(model.avustushaku.id, hakemusId, model.lang, model.devel)
         }
       })
       .catch(function(response) {
@@ -103,6 +103,7 @@ const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl
 const initialStateTemplate = {
   translations: translationsP,
   lang: query.lang || "fi",
+  devel: query.devel,
   avustushaku: avustusHakuP
 }
 const initialState = Bacon.combineTemplate(initialStateTemplate)
