@@ -19,7 +19,8 @@ export default class VaLogin extends React.Component {
     super(props)
     this.state = {
       email: "",
-      sent: ""
+      sent: "",
+      error: ""
     }
   }
 
@@ -41,7 +42,8 @@ export default class VaLogin extends React.Component {
       })
       .then(function(response) {
         vaLogin.setState({
-          sent: email
+          sent: email,
+          error: ""
         })
         console.log("Hakemus created. Response=", JSON.stringify(response))
         const hakemusId = response.id
@@ -51,10 +53,16 @@ export default class VaLogin extends React.Component {
       })
       .catch(function(response) {
         console.error("PUT error to", url, ". Response=", JSON.stringify(response))
+        vaLogin.setState({
+          error: "error"
+        })
       })
     }
     catch(error) {
       console.error("PUT error to", url, ". Error=", error)
+      vaLogin.setState({
+        error: "error"
+      })
     }
   }
 
@@ -65,6 +73,7 @@ export default class VaLogin extends React.Component {
     const content = model.avustushaku.content
     const email = this.state.email
     const sent = this.state.sent
+    const error = this.state.error
 
     return <div>
       <VaLoginTopbar translations={translations} lang={lang} />
@@ -74,7 +83,10 @@ export default class VaLogin extends React.Component {
         <h2><LocalizedString translations={translations.login} translationKey="heading" lang={lang} /></h2>
         <EmailTextField htmlId="primary-email" onChange={this.handleEmailChange.bind(this)} translations={translations.login} value={email} translationKey="contact-email" lang={lang} required="true" size="small" maxLength="80" />
         <TextButton htmlId="submit" disabled={email === sent} onClick={this.submit.bind(this)} translations={translations.login} translationKey="submit" lang={lang} />
-        <div className="message-container"><LocalizedString hidden={sent === ""} className="message" translations={translations.login} translationKey="message" lang={lang} /></div>
+        <div className="message-container">
+          <LocalizedString hidden={sent === ""} className="message" translations={translations.login} translationKey="message" lang={lang} />
+          <LocalizedString hidden={error === ""} className="error" translations={translations.errors} translationKey="unexpected-submit-error" lang={lang} />
+        </div>
       </section>
     </div>
   }
