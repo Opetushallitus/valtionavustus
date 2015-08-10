@@ -154,7 +154,7 @@
 
       describe('automaatti tallennuksen jälkeen', function () {
         describe('alkuperäisessä näkymässä', function () {
-          it.skip("ei herjata pakollisista tiedoista", function () {
+          it("ei herjata pakollisista tiedoista", function () {
             expect(page.validationErrorsSummary()).to.equal('')
           })
         })

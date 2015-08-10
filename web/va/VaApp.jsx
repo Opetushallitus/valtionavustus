@@ -41,6 +41,10 @@ function onFieldUpdate(state, field, newFieldValue) {
   }
 }
 
+function isNotFirstEdit(state) {
+  return state.saveStatus.savedObject && state.saveStatus.savedObject['verified_at']
+}
+
 function isSaveDraftAllowed(state) {
   return state.saveStatus.hakemusId && state.saveStatus.hakemusId.length > 0
 }
@@ -63,8 +67,7 @@ function initialStateTemplateTransformation(template) {
 }
 
 function onInitialStateLoaded(initialState) {
-  const editingExistingApplication = isSaveDraftAllowed(initialState)
-  VaBudgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(initialState, editingExistingApplication)
+  VaBudgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(initialState, isNotFirstEdit(initialState))
 }
 
 function initVaFormController() {
@@ -81,6 +84,7 @@ function initVaFormController() {
     "isFieldEnabled": isFieldEnabled,
     "onFieldUpdate": onFieldUpdate,
     "isSaveDraftAllowed": isSaveDraftAllowed,
+    "isNotFirstEdit": isNotFirstEdit,
     "createUiStateIdentifier": createUiStateIdentifier,
     "urlCreator": urlCreator,
     "responseParser": responseParser,

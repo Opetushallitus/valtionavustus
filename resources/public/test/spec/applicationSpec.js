@@ -45,7 +45,7 @@
         it("tallennus info on tyhjä", function () {
           expect(page.saveInfo()).to.equal("")
         })
-        it.skip("ei valiteta vielä pakollisista kentästä", function () {
+        it("ei valiteta vielä pakollisista kentästä", function () {
           expect(page.validationErrorsSummary()).to.equal("")
         })
       })
