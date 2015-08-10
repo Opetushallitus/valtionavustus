@@ -27,7 +27,7 @@
       <hudson.plugins.git.UserRemoteConfig>
         <name>origin</name>
         <refspec>+refs/heads/*:refs/remotes/origin/*</refspec>
-        <url>https://github.com/Opetushallitus/valtionavustus</url>
+        <url>{{ va_git_repository }}</url>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
@@ -63,7 +63,7 @@
   <triggers>
     <jenkins.triggers.ReverseBuildTrigger>
       <spec></spec>
-      <upstreamProjects>valtionavustus-deploy-test</upstreamProjects>
+      <upstreamProjects>{{ va_deploy_to_test_job_name }}</upstreamProjects>
       <threshold>
         <name>SUCCESS</name>
         <ordinal>0</ordinal>

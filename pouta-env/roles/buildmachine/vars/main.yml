@@ -31,17 +31,21 @@ jenkins_apt_packages: []
 
 jenkins_http_host: "{{ build_machine_name }}"
 
+va_git_repository: https://github.com/Opetushallitus/valtionavustus
+va_compile_and_test_job_name: valtionavustus-compile-test
+va_deploy_to_test_job_name: valtionavustus-deploy-test
+
 jenkins_plugins: [github, git, greenballs]
 jenkins_jobs:
-   - name: valtionavustus
-     repo: https://github.com/Opetushallitus/valtionavustus
+   - name: "{{ va_compile_and_test_job_name }}"
+     repo: "{{ va_git_repository }}"
      branch: origin/master
      chucknorris: true
      command: ./ci/jenkins-cibuild.bash clean test
      poll:  "* * * * *"
      junit: target/junit*.xml
      skip_tag: true
-   - name: valtionavustus-deploy-test
+   - name: "{{ va_deploy_to_test_job_name }}"
      template: roles/buildmachine/templates/valtionavustus-deploy-test-deploy-job.xml.j2
    - name: valtionavustus-deploy-production
      template: roles/buildmachine/templates/valtionavustus-deploy-production-job.xml.j2
