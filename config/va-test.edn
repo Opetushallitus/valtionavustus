@@ -1,7 +1,7 @@
 {:server {:auto-reload? false
           :allow-db-clear? false
           :port 8081
-          :url {:fi "https://srv2.va-dev.oph.fi/"
+          :url {:fi "https://testi.valtionavustukset.oph.fi/"
                 :sv "https://srv2.va-dev.oph.fi/"}}
  :db {:database-name "va-test"}
  :email {:enabled? true
