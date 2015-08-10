@@ -91,25 +91,30 @@ export default class FormStateLoop {
       return Bacon.constant(null)
     }
 
-    function getInitialFormValuesPromise(formOperations, formP, defaultValues, savedObjectP) {
-      return savedObjectP.map(function(savedObject) {
+    function getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP) {
+      var valuesP = savedObjectP.map(function(savedObject) {
         if(savedObject) {
           return formOperations.responseParser.getFormAnswers(savedObject)
         }
         else {
-          return formP.map(_.partial(initDefaultValues, initialValues))
+          return {}
         }
+      })
+      return valuesP.combine(formP, function(values, form) {
+        return initDefaultValues(values, initialValues, form)
       })
     }
 
-    function initDefaultValues(initialValues, form) {
-      const values = {}
+    function initDefaultValues(values, initialValues, form) {
       const fields = JsUtil.flatFilter(form.content, n => { return !_.isUndefined(n.id) })
       _.forEach(fields, f => {
-        if (f.id in initialValues) {
-          InputValueStorage.writeValue(form.content, values, f.id, initialValues[f.id])
-        } else if (!_.isEmpty(f.options)) {
-          InputValueStorage.writeValue(form.content, values, f.id, f.options[0].value)
+        const value = InputValueStorage.readValue(form.content, values, f.id)
+        if(value === "") {
+          if (f.id in initialValues) {
+            InputValueStorage.writeValue(form.content, values, f.id, initialValues[f.id])
+          } else if (!_.isEmpty(f.options)) {
+            InputValueStorage.writeValue(form.content, values, f.id, f.options[0].value)
+          }
         }
       })
       return values
