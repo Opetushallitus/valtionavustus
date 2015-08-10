@@ -216,5 +216,19 @@
             json (json->map body)]
         (should= 200 status)
         (should= "draft" (:status json))))
-  )
+
+  (it "Email address validation should catch malformed email addresses"
+      (doseq [email ["testi@test.t"
+                     "notanemail"
+                     "hello;select * "
+                     "testi@test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.tes.test.test.test.test.tes.test.test.test.test.testtt.test.testes.test.test.test.test.tes.test.test.test.test.testtt.test.testes.test.test.test.test.tes.test.test.test.test.testtt.test.testtttes.test.test.test.test.tes.test.test.test.test.testtt.test.test.test.tt"]]
+        (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus"
+                  {:value [{:key "language" :value "sv"}
+                           {:key "primary-email" :value email}]})
+            json (json->map body)]
+        (should= 400 status)
+        (if (not (= [{:error "email"}] (:primary-email json)))
+          (should-fail (str "Value " email " did not generate error")))))
+      ))
+
 (run-specs)
