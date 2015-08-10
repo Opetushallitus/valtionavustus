@@ -59,8 +59,7 @@
     {(keyword (field :id)) (concat
        (validate-options field answer)
        (validate-textarea-maxlength field answer)
-       (validate-texfield-maxlength field answer)
-       (validate-email-field field answer))}))
+       (validate-texfield-maxlength field answer))}))
 
 (defn validate-field [answers field]
   (let [answer (find-answer-value answers (field :id))]
