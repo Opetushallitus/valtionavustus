@@ -48,8 +48,3 @@ jenkins_jobs:
 # =============
 jenkins_system_config:
   admin_email: va-dev@reaktor.com
-
-#jenkins_jobs:
-#- name: mixer
-#  repo: https://github.com/klen/mixer.git
-#  command: make test
