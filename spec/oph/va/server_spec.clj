@@ -21,8 +21,7 @@
 (defn find-by-id [json id] (first (filter (fn [e] (.equals ( :id e) id)) (-> (validation/flatten-elements (json :content))))))
 
 (def valid-answers
-  {:value [
-           {:key "organization" :value "Testi Organisaatio"}
+  {:value [{:key "organization" :value "Testi Organisaatio"}
            {:key "organization-email" :value "org@example.com"}
            {:key "applicant-name" :value "Teemu Hakija"}
            {:key "primary-email" :value "test@example.com"}
@@ -33,8 +32,7 @@
            {:key "other-organizations"
             :value [{:key   "other-organizations-1"
                      :value [{:key "other-organizations.other-organizations-1.name" :value "E.T. Extra Terrestrial"}
-                             {:key "other-organizations.other-organizations-1.email" :value "et@example"}
-                             ]}]}
+                             {:key "other-organizations.other-organizations-1.email" :value "et@example.com"}]}]}
            {:key "project-goals" :value "Maaleja"}
            {:key "project-description.project-description-1.goal" :value "Paremmat oppimistulokset"}
            {:key "project-description.project-description-1.activity" :value "Pidämme työpajoja"}
@@ -57,8 +55,7 @@
            {:key "project-incomes-row.amount" :value "10"}
            {:key "eu-programs-income-row.amount" :value "10"}
            {:key "other-public-financing-income-row.amount" :value "10"}
-           {:key "private-financing-income-row.amount" :value "10"}
-           ]})
+           {:key "private-financing-income-row.amount" :value "10"}]})
 
 (def most-required-missing
   {:other-organizations.other-organizations-1.email      [{:error "required"}]
@@ -210,8 +207,12 @@
         (should= 2 (:version json))))
 
   (it "PUT /api/avustushaku/1/hakemus/ should return hakemus status"
-      (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" {:value [{:key "language" :value "sv"}
-                                                                                                     {:key "primary-email" :value "testi@test.te"}  ]})
+      (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus"
+                  {:value [{:key "language" :value "sv"}
+                           {:key "primary-email" :value "testi@test.te"}
+                           {:key "signature-email" :value "signature@test.te"}
+                           {:key "other-organizations.other-organizations-1.email" :value "other@test.te"}
+                           {:key "organization-email" :value "organization@test.te"}]})
             json (json->map body)]
         (should= 200 status)
         (should= "draft" (:status json))))

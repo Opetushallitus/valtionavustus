@@ -3,7 +3,7 @@
   (:require [clojure.string :as string]))
 
 (defn validate-required [field answer]
-  (if (and (= (field :required) true)
+  (if (and (:required field)
            (string/blank? answer))
     [{:error "required"}]
     []))
@@ -17,17 +17,27 @@
 
 (defn validate-textarea-maxlength [field answer]
   (let [maxlength ((get field :params {}) :maxlength)]
-    (if (and (= (field :displayAs) "textArea")
+    (if (and (= (:displayAs field) "textArea")
              (> (count answer) maxlength))
       [{:error "maxlength", :max maxlength}]
       [])))
 
 (defn validate-texfield-maxlength [field answer]
   (let [maxlength ((get field :params {}) :maxlength)]
-    (if (and (= (field :displayAs) "textField")
+    (if (and (= (:displayAs field) "textField")
              (> (count answer) maxlength))
       [{:error "maxlength", :max maxlength}]
       [])))
+
+(defn validate-email-field [field answer]
+  (when (and (= (:displayAs field) "emailField")
+             (= (:required field)))
+    (if (and (not (nil? answer))
+             (re-matches #"\S+@\S+\.\S+" answer)
+             (<= (count answer) 254)
+             (> (-> answer (string/split #"\.") last count) 1))
+      []
+      [{:error "email"}])))
 
 (defn find-value-for-key [values key]
   (if (some #(= key (:key %)) values)
@@ -49,7 +59,8 @@
     {(keyword (field :id)) (concat
        (validate-options field answer)
        (validate-textarea-maxlength field answer)
-       (validate-texfield-maxlength field answer))}))
+       (validate-texfield-maxlength field answer)
+       (validate-email-field field answer))}))
 
 (defn validate-field [answers field]
   (let [answer (find-answer-value answers (field :id))]
