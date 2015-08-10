@@ -13,7 +13,7 @@
 
 (defn get-hakemus [hakemus-id]
   (->> {:user_key hakemus-id}
-       (exec queries/get-hakemus)
+       (exec queries/get-hakemus-by-user-id)
        first))
 
 (defn get-hakemus-internal [id]
