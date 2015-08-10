@@ -3,7 +3,7 @@ set -euo pipefail
 
 function show_usage() {
 cat << EOF
-  Usage: ${0##*/} [clean] [uberjar] [test] [-p <docker postgresql port>] [deploy] [-s <target server name> ] -d
+  Usage: ${0##*/} [clean] [uberjar] [test] [-p <docker postgresql port>] [deploy] [-s <target server name> ] [-d] [-r]
     -p specifies the host port on which Docker binds Postgresql, it should be same in the app config
     -d disables running Postgresql in Docker container around the build
     -r recreate database when deploying (default: false)
