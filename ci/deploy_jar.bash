@@ -7,7 +7,7 @@ if [ -z ${1+x} ]; then
 fi
 
 if [ -z ${2+x} ]; then
-  source_jar_path=../valtionavustus-deploy-test/builds/lastStableBuild/archive/target/uberjar/oph-valtionavustus-*-standalone.jar
+  source_jar_path=../../valtionavustus-deploy-test/builds/lastStableBuild/archive/target/uberjar/oph-valtionavustus-*-standalone.jar
 else
   source_jar_path=$2
 fi
