@@ -103,7 +103,7 @@
         time-string (->> end-date-in-local-time
                          (time-format/unparse (time-format/formatter "HH:mm")))
         url (str (-> config :server :url lang)
-                 "?avustushaku"
+                 "?avustushaku="
                  avustushaku-id
                  "&hakemus="
                  user-key
