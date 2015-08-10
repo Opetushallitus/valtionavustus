@@ -255,7 +255,7 @@ insert into forms (content) VALUES ('
                   "sv":"Andra organisation"
                 },
                 "helpText": {
-                  "fi": "Lisää hankkeen toteuttamiseen osallistuvat organisaatiot, jotka ovat hakukelpoisia ja vastaanottavat suoraan valtionavustusta."
+                  "fi": "Lisää hankkeen toteuttamiseen osallistuvat organisaatiot, jotka ovat hakukelpoisia ja vastaanottavat suoraan valtionavustusta.",
                   "sv": "TODO"
                 }
               },
@@ -290,7 +290,7 @@ insert into forms (content) VALUES ('
           "sv":"TODO"
         },
         "helpText": {
-          "fi": "Mainitse hankkeeseen osallistuvat tahot, jotka ovat mukana hankkeen toteutuksessa, mutta eivät vastaanota suoraan valtionavustusta – esimerkiksi yritykset tai yhteisöt, joilta ostetaan palveluita."
+          "fi": "Mainitse hankkeeseen osallistuvat tahot, jotka ovat mukana hankkeen toteutuksessa, mutta eivät vastaanota suoraan valtionavustusta – esimerkiksi yritykset tai yhteisöt, joilta ostetaan palveluita.",
           "sv": "TODO"
         }
       }
@@ -326,7 +326,7 @@ insert into forms (content) VALUES ('
           "sv":"Projektets mål"
         },
         "helpText": {
-          "fi": "Kuvaa lyhyesti mistä hankkeessa on kyse: mitä tavoitellaan, mitä tehdään, miten tehdään ja ketkä ovat hyödynsaajat."
+          "fi": "Kuvaa lyhyesti mistä hankkeessa on kyse: mitä tavoitellaan, mitä tehdään, miten tehdään ja ketkä ovat hyödynsaajat.",
           "sv": "TODO"
         }
       },
@@ -565,7 +565,7 @@ insert into forms (content) VALUES ('
           "sv":"Har kostnaderna förklaras momspliktig?"
         },
         "helpText": {
-          "fi": "Arvonlisävero on hyväksyttävä kustannus, jos se jää hakijan lopulliseksi kustannukseksi.Yhteishankkeissa, mikäli yhdelläkin osatoteuttajalla arvonlisävero jää osatoteuttajan maksettavaksi, on päähakijan valittavat vaihtoehto "kyllä""
+          "fi": "Arvonlisävero on hyväksyttävä kustannus, jos se jää hakijan lopulliseksi kustannukseksi.Yhteishankkeissa, mikäli yhdelläkin osatoteuttajalla arvonlisävero jää osatoteuttajan maksettavaksi, on päähakijan valittavat vaihtoehto \"kyllä\"",
           "sv": "TODO"
         },
         "options":[
