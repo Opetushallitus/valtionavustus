@@ -6,9 +6,8 @@ import SyntaxValidator from '../form/SyntaxValidator.js'
 import FieldUpdateHandler from '../form/FieldUpdateHandler.js'
 
 export class VaBudgetCalculator {
-  static populateBudgetCalculatedValuesForAllBudgetFields(initialState, editingExistingApplication) {
+  static populateBudgetCalculatedValuesForAllBudgetFields(initialState, reportTotalError) {
     const budgetFields = JsUtil.flatFilter(initialState.form.content, n => { return n.displayAs === "vaBudget" })
-    const reportTotalError = editingExistingApplication
     _.forEach(budgetFields, budgetField => { VaBudgetCalculator.populateBudgetCalculatedValues(initialState, budgetField, reportTotalError ) })
   }
 
