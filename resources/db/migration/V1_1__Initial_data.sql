@@ -1114,8 +1114,8 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
     "start": "2015-08-19T00:00:00.000Z",
     "end": "2015-09-30T16:15:00.000Z",
     "label": {
-      "fi": "Hakuaika",
-      "sv": "Åtkomsttid"
+      "fi": "Hakuaika päättyy",
+      "sv": "Sista ansöknings"
     }
   },
   "self-financing-percentage": 25
