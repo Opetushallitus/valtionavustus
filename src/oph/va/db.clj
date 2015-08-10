@@ -16,6 +16,10 @@
        (exec queries/get-hakemus-by-user-id)
        first))
 
+(defn verify-hakemus [hakemus-id]
+  (->> {:user_key hakemus-id}
+       (exec queries/verify-hakemus<!)))
+
 (defn get-hakemus-internal [id]
   (->> {:id id}
        (exec queries/get-hakemus-by-internal-id)

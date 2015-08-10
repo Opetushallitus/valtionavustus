@@ -57,6 +57,7 @@
         (let [form-id (:form (va-db/get-avustushaku haku-id))
               hakemus (va-db/get-hakemus hakemus-id)
               submission (get-form-submission form-id (:form_submission_id hakemus))]
+          (if (nil? (:verified_at hakemus)) (va-db/verify-hakemus hakemus-id))
           (hakemus-ok-response hakemus (:body submission))))
 
   (PUT* "/:haku-id/hakemus" [haku-id :as request]
