@@ -47,7 +47,7 @@ jenkins_jobs:
 # System config
 # =============
 jenkins_system_config:
-  admin_email: timo.rantalaiho@reaktor.com
+  admin_email: va-dev@reaktor.com
 
 #jenkins_jobs:
 #- name: mixer
