@@ -3,16 +3,18 @@ set -euo pipefail
 
 function show_usage() {
 cat << EOF
-  Usage: ${0##*/} [clean] [uberjar] [test] [-p <docker postgresql port>] [deploy] [-s <target server name> ] [-d] [-r]
+  Usage: ${0##*/} [clean] [uberjar] [test] [-p <docker postgresql port>] [deploy] [-s <target server name> ] [-d] [-r] [-j <source jar path>]
     -p specifies the host port on which Docker binds Postgresql, it should be same in the app config
     -d disables running Postgresql in Docker container around the build
     -r recreate database when deploying (default: false)
+    -j specifies the path to source jar
 EOF
   exit 2
 }
 
 run_docker_postgresql=true
 recreate_database=false
+source_jar_path="target/uberjar/oph-valtionavustus-*-standalone.jar"
 
 function clean() {
   node_modules_location=node_modules
@@ -72,7 +74,7 @@ function deploy() {
   TARGET_JAR_PATH=${TARGET_DIR}/va.jar
   echo "...copying artifacts to ${target_server_name}:${TARGET_DIR} ..."
   $SSH "mkdir -p ${TARGET_DIR}"
-  scp -p -i ${SSH_KEY} target/uberjar/oph-valtionavustus-*-standalone.jar ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
+  scp -p -i ${SSH_KEY} ${source_jar_path} ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
   scp -pr -i ${SSH_KEY} config resources ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
   $SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
   echo "=============================="
@@ -136,6 +138,10 @@ while [[ $# > 0 ]]; do
       ;;
       -r|--recreate-database)
       recreate_database=true
+      ;;
+      -j|--source-jar-path)
+      source_jar_path="$2"
+      shift # past argument
       ;;
       *)
       # unknown option
