@@ -111,6 +111,7 @@ export default class FormStateTransitions {
         .then(function(response) {
           console.log("Saved to server (", saveType, "). Response=", JSON.stringify(response))
           const updatedState = _.cloneDeep(state)
+          updatedState.saveStatus.savedObject = response
           updatedState.saveStatus.values = formOperations.responseParser.getFormAnswers(response)
           updatedState.validationErrors = Immutable(updatedState.validationErrors)
           if (onSuccessCallback) {
@@ -161,6 +162,7 @@ export default class FormStateTransitions {
       stateWithServerChanges.saveStatus.saveError = ""
       return stateWithServerChanges
     }
+    stateFromUiLoop.saveStatus.savedObject = stateWithServerChanges.saveStatus.savedObject
     stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateWithServerChanges.saveStatus.values)
     if (_.isFunction(formOperations.onSaveCompletedCallback)) {
       formOperations.onSaveCompletedCallback(stateFromUiLoop, stateWithServerChanges)

@@ -21,6 +21,7 @@ export default class FormStateLoop {
     }
     const clientSideValidationP = controller.formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json"))
+    const savedObjectP = loadSavedObjectPromise(formOperations, query)
 
     const initialStateTemplate = {
       form: controller.formP,
@@ -29,7 +30,8 @@ export default class FormStateLoop {
         saveInProgress: false,
         saveTime: null,
         saveError: "",
-        values: getInitialFormValuesPromise(formOperations, controller.formP, initialValues, query)
+        values: getInitialFormValuesPromise(formOperations, controller.formP, initialValues, savedObjectP),
+        savedObject: savedObjectP
       },
       configuration: {
         preview: queryParams.preview,
@@ -80,13 +82,24 @@ export default class FormStateLoop {
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
 
-    function getInitialFormValuesPromise(formOperations, formP, defaultValues, query) {
+    function loadSavedObjectPromise(formOperations, query) {
       if (formOperations.containsExistingEntityId(query)) {
         return Bacon.fromPromise(
-          HttpUtil.get(formOperations.urlCreator.existingFormApiUrlFromQuery(query))
-        ).map(formOperations.responseParser.getFormAnswers)
+            HttpUtil.get(formOperations.urlCreator.existingFormApiUrlFromQuery(query))
+        )
       }
-      return formP.map(_.partial(initDefaultValues, initialValues))
+      return Bacon.constant(null)
+    }
+
+    function getInitialFormValuesPromise(formOperations, formP, defaultValues, savedObjectP) {
+      return savedObjectP.map(function(savedObject) {
+        if(savedObject) {
+          return formOperations.responseParser.getFormAnswers(savedObject)
+        }
+        else {
+          return formP.map(_.partial(initDefaultValues, initialValues))
+        }
+      })
     }
 
     function initDefaultValues(initialValues, form) {
