@@ -25,8 +25,8 @@ function exec_in_container() {
 function wait_for_postgresql_to_be_available() {
   echo "Waiting for psql to be able to connect to database..."
   attempt=0
-  max_attempts=120
-  interval_seconds=0.5
+  max_attempts=60
+  interval_seconds=3.0
 
   store_sql_script_to_container "select 1;" /tmp/poll_psql.bash
   until (exec_in_container /tmp/poll_psql.bash) || [[ $attempt -ge $max_attempts ]] ; do
