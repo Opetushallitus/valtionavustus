@@ -105,7 +105,7 @@
       "sv": "Skapa nya ansökan"
     },
     "message": {
-      "fi": "Sähköpostiisi on lähetetty linkki hakulomakkeelle",
+      "fi": "Sähköpostiin on lähetetty linkki hakulomakkeelle. Tämän sivun voi sulkea.",
       "sv": "Ett meddelande har skickats till din e-postadress som innehåller en länk till ansökan"
     }
   }
