@@ -38,13 +38,7 @@ va_deploy_to_test_job_name: valtionavustus-deploy-test
 jenkins_plugins: [github, git, greenballs]
 jenkins_jobs:
    - name: "{{ va_compile_and_test_job_name }}"
-     repo: "{{ va_git_repository }}"
-     branch: origin/master
-     chucknorris: true
-     command: ./ci/jenkins-cibuild.bash clean test
-     poll:  "* * * * *"
-     junit: target/junit*.xml
-     skip_tag: true
+     template: roles/buildmachine/templates/valtionavustus-compile-job.xml.j2
    - name: "{{ va_deploy_to_test_job_name }}"
      template: roles/buildmachine/templates/valtionavustus-deploy-test-deploy-job.xml.j2
    - name: valtionavustus-deploy-production
