@@ -31,6 +31,7 @@ export default class VaFormTopbar extends React.Component {
     const isSubmitDisabled = function() {
       return !(formIsValid && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state) || isSubmitted()
     }
+    const submitTextKey = isSubmitted() ? "submitted" : "submit"
 
     return(
       <section id="topbar">
@@ -39,7 +40,7 @@ export default class VaFormTopbar extends React.Component {
           <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
           <div id="form-controls" hidden={preview}>
             <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang}/>
-            <TextButton htmlId="submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="submit" lang={lang} />
+            <TextButton htmlId="submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey={submitTextKey} lang={lang} />
             <span id="form-controls-devel" hidden={!configuration.develMode}>
               <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>
               <TextButton htmlId="preview-button" onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)} translations={translations.form} translationKey="preview" lang={lang} />

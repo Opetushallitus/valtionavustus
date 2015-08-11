@@ -20,6 +20,10 @@
       "fi": "Lähetä käsiteltäväksi",
       "sv": "Skicka"
     },
+    "submitted": {
+      "fi": "Hakemus lähetetty",
+      "sv": "TODO SV: Hakemus lähetetty"
+    },
     "preview": {
       "fi": "Esikatselu",
       "sv": "Utsikt"

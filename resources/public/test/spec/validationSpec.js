@@ -112,6 +112,9 @@
               it("lähetä nappi disabloituu", function() {
                 expect(applicationPage.submitButton().isEnabled()).to.equal(false)
               })
+              it.skip("lähetä napin teksti muuttuu", function() {
+                expect(applicationPage.submitButton().text()).to.equal("Hakemus lähetetty")
+              })
             })
           })
 
