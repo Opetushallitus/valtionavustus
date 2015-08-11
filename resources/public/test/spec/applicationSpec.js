@@ -17,22 +17,13 @@
     enterValidValues(applicationPage)
   }
 
-  describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku suomeksi', function() {
+  describe('Laatukehityksen hakulomake', function() {
     before(
-      loginPage.openLoginPage()
     )
-
-    describe('login sivulla', function() {
-      it("näkyy haun nimi", function() {
-        expect(loginPage.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
-      })
-      it("lähetys on disabloitu", function() {
-        expect(loginPage.submitButton().isEnabled()).to.equal(false)
-      })
-    })
 
     describe('sähköpostitarkistuksen jälkeen lomakkeella', function() {
       before(
+        loginPage.openLoginPage(),
         loginPage.login
       )
 
