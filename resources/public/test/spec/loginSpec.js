@@ -22,7 +22,7 @@
         expect(loginPage.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
       })
 
-      it("alkutilassa lähetys on disabloitu", function() {
+      it("alkutilassa hakemuksen luonti on disabloitu", function() {
         expect(loginPage.submitButton().isEnabled()).to.equal(false)
       })
 
@@ -30,6 +30,11 @@
         loginPage.setInputValue("primary-email", "notanemailaddress")()
         expect(loginPage.classAttributeOf("primary-email")).to.include('error')
         expect(loginPage.submitButton().isEnabled()).to.equal(false)
+      })
+
+      it("mikäli syöttää oikean sähköpostiosoitteen", function() {
+        loginPage.setInputValue("primary-email", "yhteyshenkilo@example.com")()
+        expect(loginPage.submitButton().isEnabled()).to.equal(true)
       })
     })
   })
