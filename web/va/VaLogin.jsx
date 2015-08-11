@@ -36,6 +36,10 @@ export default class VaLogin extends React.Component {
   }
 
   submit(event) {
+    event.preventDefault()
+    if (SyntaxValidator.validateEmail(this.state.email)) {
+      return
+    }
     const url = urlCreator.newEntityApiUrl(this.props.model)
     const vaLogin = this
     const email = this.state.email
@@ -87,9 +91,10 @@ export default class VaLogin extends React.Component {
         <H1InfoElement htmlId="name" lang={lang} values={content} />
         <EndOfDateRangeInfoElement htmlId="duration" translations={translations} translationKey="label" lang={lang} values={content} />
         <h2><LocalizedString translations={translations.login} translationKey="heading" lang={lang} /></h2>
-
-        <EmailTextField htmlId="primary-email" hasError={emailIsInvalid()} onChange={this.handleEmailChange.bind(this)} translations={translations.login} value={email} translationKey="contact-email" lang={lang} required="true" size="small" maxLength="80" />
-        <TextButton htmlId="submit" disabled={canSend()} onClick={this.submit.bind(this)} translations={translations.login} translationKey="submit" lang={lang} />
+        <form onSubmit={this.submit.bind(this)}>
+          <EmailTextField htmlId="primary-email" hasError={emailIsInvalid()} onChange={this.handleEmailChange.bind(this)} translations={translations.login} value={email} translationKey="contact-email" lang={lang} required="true" size="small" maxLength="80" />
+          <TextButton htmlId="submit" disabled={canSend()} onClick={this.submit.bind(this)} translations={translations.login} translationKey="submit" lang={lang} />
+        </form>
         <div className="message-container">
           <LocalizedString hidden={sent === ""} className="message" translations={translations.login} translationKey="message" lang={lang} />
           <LocalizedString hidden={error === ""} className="error" translations={translations.errors} translationKey="unexpected-submit-error" lang={lang} />
