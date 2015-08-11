@@ -1,6 +1,6 @@
 function LoginPage() {
   var storedHakemusId
-  var pageApi = Page()
+  var pageApi = Page(applicationElement)
 
   var api = {
     openLoginPage: function (lang, pageLoadedCheck) {

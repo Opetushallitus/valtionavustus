@@ -1,5 +1,5 @@
 function ApplicationPage() {
-  var pageApi = Page()
+  var pageApi = Page(applicationElement)
 
   var api = {
     openEditPage: function(hakemusIdGetter, lang, pageLoadedCheck) {

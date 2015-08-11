@@ -1,13 +1,13 @@
-function Page() {
+function Page(mainElement) {
   var api = {
     getInput: function(name) {
       return Input(function () {
-        return applicationElement().find("[name='" + name + "']")
+        return mainElement().find("[name='" + name + "']")
       })
     },
     getRadioLabel: function(name) {
       return Input(function () {
-        return applicationElement().find("[for='" + name + "']")
+        return mainElement().find("[for='" + name + "']")
       })
     },
     setInputValue: function(name, value) {
@@ -26,7 +26,7 @@ function Page() {
       return api.elementTextBySelector("#" + escapeSelector(id))
     },
     elementTextBySelector: function(selector) {
-      var found = applicationElement().find(selector).first()
+      var found = mainElement().find(selector).first()
       if (found.prop("tagName") === "TEXTAREA" ||
         found.prop("tagName") === "INPUT" ||
         found.prop("tagName") === "SELECT") {
@@ -35,14 +35,10 @@ function Page() {
       return found.text().trim()
     },
     classAttributeOf: function(htmlId) {
-      return applicationElement().find("#" + escapeSelector(htmlId)).first().attr("class")
+      return mainElement().find("#" + escapeSelector(htmlId)).first().attr("class")
     }
   }
   return api
-
-  function applicationElement() {
-    return S("#app")
-  }
 
   function Input(el) {
     return {
