@@ -39,7 +39,7 @@ function LoginPage() {
     getHakemusId: function() {
       return storedHakemusId
     },
-    waitUntilSubmitIsEnabled() {
+    waitUntilSubmitIsEnabled: function() {
       return wait.until(function() {
         return api.submitButton().isEnabled()
       })()
