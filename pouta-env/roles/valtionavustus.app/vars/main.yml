@@ -12,6 +12,10 @@ logical_volumes:
     filesystem: xfs
     size: 10g
     mount_point: /etc/postgresql
+  postgresql_backups:
+    filesystem: xfs
+    size: 20g
+    mount_point: /postgresql-backups
   data:
     filesystem: xfs
     size: 100g
@@ -22,7 +26,7 @@ logical_volumes:
     mount_point: /home2
 postgresql_version: 9.4
 postgresql_flavor: pgdg
-postgresql_backup_dir: "{{ logical_volumes.data.mount_point }}/postgresql-backups"
+postgresql_backup_dir: "{{ logical_volumes.postgresql_backups.mount_point }}"
 postgresql_backup_hour: 01
 postgresql_backup_minute: 00
 postgresql_backup_mail_recipient: va-dev@reaktor.com
