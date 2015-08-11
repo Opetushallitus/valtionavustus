@@ -69,7 +69,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>./ci/copy_database_backups.bash {{ test_application_server_names.msg[0] }} /postgresql-backups</command>
+      <command>./ci/copy_database_backups.bash {{ test_application_server_names.msg }} /postgresql-backups</command>
     </hudson.tasks.Shell>
   </builders>
   <buildWrappers/>
