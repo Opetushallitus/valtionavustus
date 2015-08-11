@@ -56,3 +56,6 @@
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
   with_items: groups['prod-va_backend']
+
+- name: Add directory for database backups storage
+  file: path=/mnt/database-backup owner={{ jenkins_user }} state=directory mode=0700
