@@ -134,7 +134,7 @@ export default class FormStateTransitions {
   onSave(state, params) {
     const onSuccessCallback = params ? params.onSuccessCallback : undefined
     const formOperations = state.extensionApi.formOperations
-    if (formOperations.isSaveDraftAllowed(state)) {
+    if (formOperations.isSaveDraftAllowed(state) && state.saveStatus.changes) {
       return this.updateOld(state, serverOperations.autoSave, onSuccessCallback)
     }
     return state
@@ -142,7 +142,7 @@ export default class FormStateTransitions {
 
   onBeforeUnload(state) {
     const formOperations = state.extensionApi.formOperations
-    if (formOperations.isSaveDraftAllowed(state)) {
+    if (formOperations.isSaveDraftAllowed(state) && state.saveStatus.changes) {
       return this.updateOld(state, serverOperations.autoSave)
     }
   }
@@ -156,22 +156,19 @@ export default class FormStateTransitions {
     // At the moment we just discard the values from server here.
     const formOperations = stateFromUiLoop.extensionApi.formOperations
     var locallyStoredValues = LocalStorage.load(formOperations.createUiStateIdentifier, stateWithServerChanges)
-    if (!locallyStoredValues) {
-      LocalStorage.save(formOperations.createUiStateIdentifier, stateWithServerChanges)
-      stateWithServerChanges.saveStatus.saveInProgress = false
-      stateWithServerChanges.saveStatus.saveTime = new Date()
-      stateWithServerChanges.saveStatus.changes = false
-      stateWithServerChanges.saveStatus.saveError = ""
-      return stateWithServerChanges
-    }
-    stateFromUiLoop.saveStatus.savedObject = stateWithServerChanges.saveStatus.savedObject
     stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateWithServerChanges.saveStatus.values)
-    if (_.isFunction(formOperations.onSaveCompletedCallback)) {
-      formOperations.onSaveCompletedCallback(stateFromUiLoop, stateWithServerChanges)
-    }
     stateFromUiLoop.saveStatus.saveInProgress = false
     stateFromUiLoop.saveStatus.saveTime = new Date()
     stateFromUiLoop.saveStatus.saveError = ""
+    stateFromUiLoop.saveStatus.savedObject = stateWithServerChanges.saveStatus.savedObject
+    if (!locallyStoredValues) {
+      stateFromUiLoop.saveStatus.values = stateWithServerChanges.saveStatus.values
+      stateFromUiLoop.validationErrors = stateWithServerChanges.validationErrors
+      LocalStorage.save(formOperations.createUiStateIdentifier, stateFromUiLoop)
+    }
+    if (_.isFunction(formOperations.onSaveCompletedCallback)) {
+      formOperations.onSaveCompletedCallback(stateFromUiLoop, stateWithServerChanges)
+    }
     if (stateFromUiLoop.saveStatus.changes) {
       this.startAutoSave(stateFromUiLoop)
     }
@@ -188,6 +185,7 @@ export default class FormStateTransitions {
     InputValueStorage.deleteValue(growingParent, answersObject, fieldToRemove.id)
     delete state.clientSideValidation[fieldToRemove.id]
     _.remove(growingParent.children, fieldToRemove)
+    state.saveStatus.changes = true
     this.startAutoSave(state)
     return state
   }
