@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import style from './style/soresu-va.less'
+import style from './style/main.less'
 
 import VaFormTopbar from './VaFormTopbar.jsx'
 import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'
