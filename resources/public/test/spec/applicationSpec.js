@@ -122,12 +122,12 @@
 
         describe('server virhetilanteissa lomaketta käsiteltäväksi lähetettäessä', function() {
           before(
-              mockAjax.init
+            mockAjax.init
           )
           describe("serveripään validointivirheissä", function() {
             before(
-                function() { mockAjax.respondOnce("POST", "/api/avustushaku/1/hakemus/", 400, {organization:[{error:"required"}]}) },
-                applicationPage.submitAndWaitErrorChange
+              function() { mockAjax.respondOnce("POST", "/api/avustushaku/1/hakemus/", 400, {organization:[{error:"required"}]}) },
+              applicationPage.submitAndWaitErrorChange
             )
             describe("epäonnistumisen jälkeen", function() {
               it("yleinen virhe näytetään", function() {
