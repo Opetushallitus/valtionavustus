@@ -1,6 +1,7 @@
 (ns oph.va.server-spec
   (:use [clojure.tools.trace])
-  (:require [speclj.core :refer :all]
+  (:require [clojure.string :as string]
+            [speclj.core :refer :all]
             [org.httpkit.client :as http]
             [cheshire.core :refer :all]
             [clj-time.format :as f]
@@ -218,18 +219,26 @@
         (should= "draft" (:status json))))
 
   (it "Email address validation should catch malformed email addresses"
-      (pending "fix server side email validation")
-      (doseq [email ["testi@test.t"
-                     "notanemail"
-                     "hello;select * "
-                     "testi@test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.test.tes.test.test.test.test.tes.test.test.test.test.testtt.test.testes.test.test.test.test.tes.test.test.test.test.testtt.test.testes.test.test.test.test.tes.test.test.test.test.testtt.test.testtttes.test.test.test.test.tes.test.test.test.test.testtt.test.test.test.tt"]]
-        (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus"
-                  {:value [{:key "language" :value "sv"}
-                           {:key "primary-email" :value email}]})
-            json (json->map body)]
-        (should= 400 status)
-        (if (not (= [{:error "email"}] (:primary-email json)))
-          (should-fail (str "Value " email " did not generate error")))))
+      ;; Create submission
+      (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" valid-answers)
+            json (json->map body)
+            id (:id json)]
+        (should= 200 status)
+
+        ;; Run different malformed emails through the validation
+        (doseq [email ["testi@test.t"
+                       "notanemail"
+                       "hello;select * "
+                       (string/join (concat ["test@"] (repeat 85 ".test") [".tt"]))]]
+          (let [update-answers (fn [key new-value] (fn [value]
+                                                     (if (= (:key value) key)
+                                                       {:key key :value new-value}
+                                                       value)))
+                answers {:value (map (update-answers "primary-email" email) (:value valid-answers))}
+                {:keys [status headers body error] :as resp} (post! (str "/api/avustushaku/1/hakemus/" id "/submit") answers)
+                json (json->map body)]
+            (if (not (= [{:error "email"}] (:primary-email json)))
+              (should-fail (str "Value " email " did not generate error, it should have"))))))
       ))
 
 (run-specs)

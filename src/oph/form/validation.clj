@@ -46,8 +46,8 @@
              (re-matches #"\S+@\S+\.\S+" answer)
              (<= (count answer) 254)
              (> (-> answer (string/split #"\.") last count) 1))
-      []
-      [{:error "email"}])))
+        []
+        [{:error "email"}])))
 
 (defn find-value-for-key [values key]
   (if (some #(= key (:key %)) values)
