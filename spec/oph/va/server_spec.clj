@@ -127,11 +127,12 @@
         (should= {:type "infoElement"
                   :id "name"
                   :displayAs "h1"} (-> json :content first))
-        (should= {:type "infoElement"
-                  :id "duration"
+        (should= {:label {:sv "Sista ansöknings"
+                          :fi "Hakemuksen muokkaus sulkeutuu"}
                   :displayAs "endOfDateRange"
-                  :label {:fi "Hakuaika päättyy"
-                          :sv "Sista ansöknings"}} (-> json :content second))
+                  :id "duration"
+                  :type "infoElement"}
+                 (-> json :content second))
         (should= {:type "formField"
                   :id "organization"
                   :required true
