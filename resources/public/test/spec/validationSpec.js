@@ -102,13 +102,15 @@
               })
             })
 
-            describe('painettaessa lähetä nappia', function() {
+            describe('lähetettäessä käsiteltäväksi', function() {
               before(
                 applicationPage.submitButton().click
               )
-
               it('ei tule virhettä', function() {
                 expect(applicationPage.validationErrorsSummary()).to.equal('')
+              })
+              it("lähetä nappi disabloituu", function() {
+                expect(applicationPage.submitButton().isEnabled()).to.equal(false)
               })
             })
           })

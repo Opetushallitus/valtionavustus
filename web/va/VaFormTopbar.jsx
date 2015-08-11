@@ -25,8 +25,11 @@ export default class VaFormTopbar extends React.Component {
     const openPreview = function() {
       window.open(formOperations.urlCreator.existingSubmissionPreviewUrl(state), "preview")
     }
-    const isSaveDisabled = function() {
-      return !(formIsValid && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state)
+    const isSubmitted = function() {
+      return saveStatus.savedObject && saveStatus.savedObject.status !== "draft"
+    }
+    const isSubmitDisabled = function() {
+      return !(formIsValid && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state) || isSubmitted()
     }
 
     return(
@@ -36,7 +39,7 @@ export default class VaFormTopbar extends React.Component {
           <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
           <div id="form-controls" hidden={preview}>
             <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang}/>
-            <TextButton htmlId="submit" onClick={controller.submit} disabled={isSaveDisabled()} translations={translations.form} translationKey="submit" lang={lang} />
+            <TextButton htmlId="submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="submit" lang={lang} />
             <span id="form-controls-devel" hidden={!configuration.develMode}>
               <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>
               <TextButton htmlId="preview-button" onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)} translations={translations.form} translationKey="preview" lang={lang} />
