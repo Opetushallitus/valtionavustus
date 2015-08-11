@@ -41,6 +41,9 @@
                  ;; Configuration
                  [environ "1.0.0"]
 
+                 ;; Logging
+                 [ring.middleware.logger "0.5.0"]
+
                  ;; Utils
                  [org.clojure/tools.trace "0.7.8"]
                  [org.clojure/tools.logging "0.3.1"]

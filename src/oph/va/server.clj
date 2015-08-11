@@ -2,6 +2,7 @@
   (:use [org.httpkit.server :only [run-server]]
         [oph.va.routes :only [all-routes]])
   (:require [ring.middleware.reload :as reload]
+            [ring.middleware.logger :as logger]
             [compojure.handler :refer [site]]
             [clojure.tools.logging :as log]
             [oph.common.config :refer [config]]
@@ -24,9 +25,10 @@
   (db/close-datasource!))
 
 (defn start-server [host port auto-reload?]
-  (let [handler (if auto-reload?
-                  (reload/wrap-reload (site #'all-routes))
-                  (site all-routes))]
+  (let [site (logger/wrap-with-logger (site #'all-routes))
+        handler (if auto-reload?
+                  (reload/wrap-reload site)
+                  site)]
     (fail-if-server-running host port)
     (log/info "Using configuration: " config)
     (log/info "Running db migrations")
