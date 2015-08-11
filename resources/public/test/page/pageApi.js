@@ -33,6 +33,9 @@ function Page() {
         throw new Error("Use Input.value() to read inputs from form elements")
       }
       return found.text().trim()
+    },
+    classAttributeOf: function(htmlId) {
+      return applicationElement().find("#" + escapeSelector(htmlId)).first().attr("class")
     }
   }
   return api

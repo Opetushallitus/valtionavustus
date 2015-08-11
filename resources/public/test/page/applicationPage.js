@@ -61,9 +61,6 @@ function ApplicationPage() {
       const errorMessageElements = applicationElement().find("#validation-errors").find('div.error')
       return _.map(errorMessageElements, function(element) { return S(element).text() })
     },
-    classAttributeOf: function(htmlId) {
-      return applicationElement().find("#" + escapeSelector(htmlId)).first().attr("class")
-    },
     toggleLanguage: function () {
       var name = api.applicationName()
       return wait.until(api.toggleLanguageButton().isEnabled)()
