@@ -1,5 +1,7 @@
 (function() {
-  const page = ApplicationPage()
+  const applicationPage = ApplicationPage()
+  const loginPage = LoginPage()
+
 
   beforeEach(function () {
     window.localStorage.clear()
@@ -13,132 +15,128 @@
   })
 
   function enterValidValuesToPage() {
-    enterValidValues(page)
+    enterValidValues(applicationPage)
   }
 
   describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku validointi', function () {
     before(
-      page.openLoginPage(),
-      page.login
+      loginPage.openLoginPage(),
+      loginPage.login
     )
 
     describe('Jos lomakkeelle ei ole annettu kaikkia pakollisia arvoja', function () {
       before(
         enterValidValuesToPage,
-        page.setInputValue("organization", ""),
-        page.waitAutoSave
+        applicationPage.setInputValue("organization", ""),
+        applicationPage.waitAutoSave
       )
 
       describe('automaattitallentamisen jälkeen', function () {
-        before(
-          wait.until(page.hakemusIdIsPresent),
-          page.storeHakemusIdFromHtml
-        )
-
         describe('alkuperäisessä muokkausnäkymässä', function () {
           it("lähetys on disabloitu", function () {
-            expect(page.submitButton().isEnabled()).to.equal(false)
+            expect(applicationPage.submitButton().isEnabled()).to.equal(false)
           })
           it("pakollisesta kentästä kerrotaan", function () {
-            expect(page.classAttributeOf("organization")).to.include('error')
+            expect(applicationPage.classAttributeOf("organization")).to.include('error')
           })
           it("kerrotaan automaattitallennuksesta", function () {
-            expect(page.saveInfo()).to.equal("Kaikki muutokset tallennettu")
+            expect(applicationPage.saveInfo()).to.equal("Kaikki muutokset tallennettu")
           })
           it("kerrotaan puuttuvasta kentästä", function () {
-            expect(page.getInput("organization").value()).to.equal('')
-            expect(page.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
+            expect(applicationPage.getInput("organization").value()).to.equal('')
+            expect(applicationPage.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
           })
         })
 
         describe('hakemuksen esikatselussa', function () {
           before(
-            page.openPreview(page.getHakemusId)
+            applicationPage.openPreview(loginPage.getHakemusId)
           )
           it("näkyy haun nimen oikein", function () {
-            expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+            expect(applicationPage.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
           })
           it("on organisaatio yhä tyhjä", function () {
-            expect(page.elementText("organization")).to.equal('')
+            expect(applicationPage.elementText("organization")).to.equal('')
           })
           it("näkyy, että ei liity aiempaan hankkeeseen", function () {
-            expect(page.elementText("continuation-project")).to.equal('Ei')
+            expect(applicationPage.elementText("continuation-project")).to.equal('Ei')
           })
           it("näkyy hankkeen kohderyhmä oikein", function () {
-            expect(page.elementText("project-target")).to.equal('Kohderymämme on meidän kohderyhmä')
+            expect(applicationPage.elementText("project-target")).to.equal('Kohderymämme on meidän kohderyhmä')
           })
         })
 
         describe('uudessa hakemuksen muokkausnäkymässä', function () {
           before(
-            page.openEditPage(page.getHakemusId)
+            applicationPage.openEditPage(loginPage.getHakemusId)
           )
           describe('avattaessa', function () {
             it("näkyy haun nimi oikein", function () {
-              expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+              expect(applicationPage.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
             })
             it("näkyy validointi virheet", function () {
-              expect(page.classAttributeOf("organization")).to.include('error')
+              expect(applicationPage.classAttributeOf("organization")).to.include('error')
             })
             it("kerrotaan puuttuvasta kentästä", function () {
-              expect(page.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
+              expect(applicationPage.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
             })
             it("näkyy hankkeen kuvaus oikein", function () {
-              expect(page.getInput("project-description.project-description-1.goal").value()).to.equal('Hankkeen ensimmäinen tavoite.')
-              expect(page.getInput("project-description.project-description-1.activity").value()).to.equal('Hankkeen ensimmäinen toiminta.')
-              expect(page.getInput("project-description.project-description-1.result").value()).to.equal('Hankkeen ensimmäinen tulos.')
+              expect(applicationPage.getInput("project-description.project-description-1.goal").value()).to.equal('Hankkeen ensimmäinen tavoite.')
+              expect(applicationPage.getInput("project-description.project-description-1.activity").value()).to.equal('Hankkeen ensimmäinen toiminta.')
+              expect(applicationPage.getInput("project-description.project-description-1.result").value()).to.equal('Hankkeen ensimmäinen tulos.')
             })
             it("lähetys on disabloitu", function () {
-              expect(page.submitButton().isEnabled()).to.equal(false)
+              expect(applicationPage.submitButton().isEnabled()).to.equal(false)
             })
           })
 
           describe('syötettäessä pakolliset tiedot', function () {
             before(
-              page.setInputValue("organization", "Testi Organisaatio"),
-              page.waitAutoSave
+              applicationPage.setInputValue("organization", "Testi Organisaatio"),
+              applicationPage.waitAutoSave
             )
 
             describe('automaattitallennuksen jälkeen', function () {
               it("lähetä nappi enabloituu", function () {
-                expect(page.submitButton().isEnabled()).to.equal(true)
+                expect(applicationPage.submitButton().isEnabled()).to.equal(true)
               })
             })
+
             describe('painettaessa lähetä nappia', function () {
               before(
-                page.submitButton().click
+                applicationPage.submitButton().click
               )
 
               it('ei tule virhettä', function () {
-                expect(page.validationErrorsSummary()).to.equal('')
+                expect(applicationPage.validationErrorsSummary()).to.equal('')
               })
             })
           })
 
           describe('muokatessa vastauksia', function () {
             before(
-              page.setInputValue("project-target", "Uusi kohderymämme on meidän uusi kohderyhmä"),
-              page.setInputValue("project-description.project-description-1.goal", "Uusi ensimmäinen tavoite."),
-              page.setInputValue("project-description.project-description-1.activity", "Uusi ensimmäinen toiminta."),
-              page.setInputValue("project-description.project-description-1.result", "Uusi ensimmäinen tulos."),
-              page.waitAutoSave
+              applicationPage.setInputValue("project-target", "Uusi kohderymämme on meidän uusi kohderyhmä"),
+              applicationPage.setInputValue("project-description.project-description-1.goal", "Uusi ensimmäinen tavoite."),
+              applicationPage.setInputValue("project-description.project-description-1.activity", "Uusi ensimmäinen toiminta."),
+              applicationPage.setInputValue("project-description.project-description-1.result", "Uusi ensimmäinen tulos."),
+              applicationPage.waitAutoSave
             )
 
             describe('tallentamisen jälkeen', function () {
               it("ei tule virhettä", function () {
-                expect(page.validationErrorsSummary()).to.equal('')
-                expect(page.getInput("project-description.project-description-1.goal").value()).to.equal('Uusi ensimmäinen tavoite.')
-                expect(page.getInput("project-description.project-description-1.activity").value()).to.equal('Uusi ensimmäinen toiminta.')
-                expect(page.getInput("project-description.project-description-1.result").value()).to.equal('Uusi ensimmäinen tulos.')
+                expect(applicationPage.validationErrorsSummary()).to.equal('')
+                expect(applicationPage.getInput("project-description.project-description-1.goal").value()).to.equal('Uusi ensimmäinen tavoite.')
+                expect(applicationPage.getInput("project-description.project-description-1.activity").value()).to.equal('Uusi ensimmäinen toiminta.')
+                expect(applicationPage.getInput("project-description.project-description-1.result").value()).to.equal('Uusi ensimmäinen tulos.')
               })
             })
 
             describe('muokkauksen jälkeen esikatselussa', function () {
               before(
-                page.openPreview(page.getHakemusId)
+                applicationPage.openPreview(loginPage.getHakemusId)
               )
               it("näkyy uusi tieto oikein", function () {
-                expect(page.elementText("project-target")).to.equal('Uusi kohderymämme on meidän uusi kohderyhmä')
+                expect(applicationPage.elementText("project-target")).to.equal('Uusi kohderymämme on meidän uusi kohderyhmä')
               })
             })
           })
@@ -148,44 +146,44 @@
 
     describe('Jos annettu pelkästään yhteyshenkilön sähköposti', function () {
       before(
-          page.openLoginPage(),
-          page.login
+        loginPage.openLoginPage(),
+        loginPage.login
       )
 
       describe('automaatti tallennuksen jälkeen', function () {
         describe('alkuperäisessä näkymässä', function () {
           it("ei herjata pakollisista tiedoista", function () {
-            expect(page.validationErrorsSummary()).to.equal('')
+            expect(applicationPage.validationErrorsSummary()).to.equal('')
           })
         })
 
         describe('hakemuksen muokkausnäkymässä', function () {
           var errorCount
           before(
-              page.openEditPage(page.getHakemusId),
-              function(){ errorCount = parseInt(page.validationErrorsSummary().split(' ')[0])}
+            applicationPage.openEditPage(loginPage.getHakemusId),
+            function(){ errorCount = parseInt(applicationPage.validationErrorsSummary().split(' ')[0])}
           )
           describe('avaamisen jälkeen', function () {
             it("lähetys on disabloitu", function () {
-              expect(page.submitButton().isEnabled()).to.equal(false)
+              expect(applicationPage.submitButton().isEnabled()).to.equal(false)
             })
             it('kerrotaan kaikista pakollisista kentistä', function () {
               expect(errorCount).to.be.at.least(10)
-              expect(page.validationErrorsSummary()).to.equal(errorCount + ' vastauksessa puutteita')
+              expect(applicationPage.validationErrorsSummary()).to.equal(errorCount + ' vastauksessa puutteita')
             })
             it('virhekuvakset eivät ole näkyvissä', function () {
-              expect(page.validationErrors().length).to.equal(0)
+              expect(applicationPage.validationErrors().length).to.equal(0)
             })
             describe('klikattaessa virheyhteenvetoa', function () {
               var tavoiteVirhe
               before(
-                page.validationErrorsButton().click,
+                applicationPage.validationErrorsButton().click,
                 function() {
-                  tavoiteVirhe = page.validationErrors().find(".error[data-reactid*='project-description-1=1goal-validation-error']")
+                  tavoiteVirhe = applicationPage.validationErrors().find(".error[data-reactid*='project-description-1=1goal-validation-error']")
                 }
               )
               it("näkyy yhtä monta kuvausta kuin virhettä", function () {
-                expect(page.validationErrors().find('.error').length).to.equal(errorCount)
+                expect(applicationPage.validationErrors().find('.error').length).to.equal(errorCount)
               })
               it("näkyy pakollinen tieto: Tavoite", function () {
                 expect(tavoiteVirhe.text()).to.equal('Tavoite: Pakollinen tieto')
@@ -205,23 +203,23 @@
               })
               describe('syötettäessä ensimmäinen projektin tavoite', function () {
                 before(
-                  page.setInputValue("project-description.project-description-1.goal", "Tavoite 1"),
-                  page.setInputValue("project-description.project-description-1.activity", "Toiminta 1"),
-                  page.setInputValue("project-description.project-description-1.result", "Tulos 1"),
-                  page.waitAutoSave
+                  applicationPage.setInputValue("project-description.project-description-1.goal", "Tavoite 1"),
+                  applicationPage.setInputValue("project-description.project-description-1.activity", "Toiminta 1"),
+                  applicationPage.setInputValue("project-description.project-description-1.result", "Tulos 1"),
+                  applicationPage.waitAutoSave
                 )
                 it("näkyy vähemmän virheitä", function () {
-                  expect(page.validationErrors().find('.error').length).to.equal(errorCount - 3)
+                  expect(applicationPage.validationErrors().find('.error').length).to.equal(errorCount - 3)
                 })
                 describe('syötettäessä toinen projektin tavoite osittain', function () {
                   var tulosVirhe
                   before(
-                      page.setInputValue("project-description.project-description-2.goal", "Tavoite 2"),
-                      page.waitAutoSave,
-                      function() {tulosVirhe = page.validationErrors().find(".error[data-reactid*='project-description-2=1result-validation-error']")}
+                    applicationPage.setInputValue("project-description.project-description-2.goal", "Tavoite 2"),
+                    applicationPage.waitAutoSave,
+                    function() {tulosVirhe = applicationPage.validationErrors().find(".error[data-reactid*='project-description-2=1result-validation-error']")}
                   )
                   it("näkyy uusia virheitä", function () {
-                    expect(page.validationErrors().find('.error').length).to.equal(errorCount - 3 + 2)
+                    expect(applicationPage.validationErrors().find('.error').length).to.equal(errorCount - 3 + 2)
                   })
                   it("vaaditaan syöttämään toiselle tavoitteelle tulos", function () {
                     expect(tulosVirhe.text()).to.equal('Tulos: Pakollinen tieto')
@@ -233,10 +231,10 @@
               })
               describe('klikattaessa virheyhteenvetoa uudestaan', function () {
                 before(
-                    page.validationErrorsButton().click
+                  applicationPage.validationErrorsButton().click
                 )
                 it('virhekuvakset eivät ole enää näkyvissä', function () {
-                  expect(page.validationErrors().length).to.equal(0)
+                  expect(applicationPage.validationErrors().length).to.equal(0)
                 })
               })
             })
@@ -247,50 +245,50 @@
 
     describe('Jos lomakkeelle on syötetty väärän muotoinen sähköpostiosoite', function () {
       before(
-        page.openLoginPage(),
-        page.login,
+        loginPage.openLoginPage(),
+        loginPage.login,
         enterValidValuesToPage,
-        page.waitAutoSave,
-        page.setInputValue("primary-email", "NOT VALID EMAIL")
+        applicationPage.waitAutoSave,
+        applicationPage.setInputValue("primary-email", "NOT VALID EMAIL")
       )
 
       describe('ennen tallentamista', function () {
         it("lähetys on disabloitu", function () {
-          expect(page.submitButton().isEnabled()).to.equal(false)
+          expect(applicationPage.submitButton().isEnabled()).to.equal(false)
         })
         it("virheellisestä kentästä kerrotaan", function () {
-          expect(page.classAttributeOf("primary-email")).to.include('error')
+          expect(applicationPage.classAttributeOf("primary-email")).to.include('error')
         })
       })
 
       describe('tallentamisen jälkeen', function () {
         before(
-          page.waitAutoSave
+          applicationPage.waitAutoSave
         )
 
         describe('alkuperäisessä näkymässä', function () {
           it("kerrotaan virheellisestä kentästä", function () {
-            expect(page.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
+            expect(applicationPage.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
           })
         })
 
         describe('hakemuksen muokkausnäkymässä', function () {
           before(
-            page.openEditPage(page.getHakemusId)
+            applicationPage.openEditPage(loginPage.getHakemusId)
           )
           it("lähetys on disabloitu", function () {
-            expect(page.submitButton().isEnabled()).to.equal(false)
+            expect(applicationPage.submitButton().isEnabled()).to.equal(false)
           })
 
           describe('syötettäessä oikean muotoinen sähköpostisoite', function () {
             before(
-              page.setInputValue("primary-email", "yhteyshenkilo@example.com"),
-              page.waitAutoSave
+              applicationPage.setInputValue("primary-email", "yhteyshenkilo@example.com"),
+              applicationPage.waitAutoSave
             )
 
             describe('syötön jälkeen', function () {
               it("lähetä-nappi enabloituu", function () {
-                expect(page.submitButton().isEnabled()).to.equal(true)
+                expect(applicationPage.submitButton().isEnabled()).to.equal(true)
               })
             })
           })

@@ -1,5 +1,6 @@
 (function() {
-  var page = ApplicationPage()
+  var applicationPage = ApplicationPage()
+  var loginPage = LoginPage()
 
   beforeEach(function() {
     window.localStorage.clear()
@@ -13,56 +14,56 @@
   })
 
   function enterValidValuesToPage() {
-    enterValidValues(page)
+    enterValidValues(applicationPage)
   }
 
   describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku suomeksi', function() {
     before(
-      page.openLoginPage()
+      loginPage.openLoginPage()
     )
 
     describe('login sivulla', function() {
       it("näkyy haun nimi", function() {
-        expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+        expect(loginPage.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
       })
       it("lähetys on disabloitu", function() {
-        expect(page.submitButton().isEnabled()).to.equal(false)
+        expect(loginPage.submitButton().isEnabled()).to.equal(false)
       })
     })
 
     describe('sähköpostitarkistuksen jälkeen lomakkeella', function() {
       before(
-        page.login
+        loginPage.login
       )
 
       describe('alkutilassa', function() {
         it("näkyy haun nimi", function() {
-          expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+          expect(applicationPage.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
         })
         it("kielen vaihto osoittaa ruotsiin", function() {
-          expect(page.toggleLanguageButton().text()).to.deep.equal('På svenska')
+          expect(applicationPage.toggleLanguageButton().text()).to.deep.equal('På svenska')
         })
         it("tallennus info on tyhjä", function() {
-          expect(page.saveInfo()).to.equal("")
+          expect(applicationPage.saveInfo()).to.equal("")
         })
         it.skip("ei valiteta vielä pakollisista kentästä", function() {
-          expect(page.validationErrorsSummary()).to.equal("")
+          expect(applicationPage.validationErrorsSummary()).to.equal("")
         })
       })
 
       describe('täytettäessä lomaketta kaikilla tiedoilla', function() {
         before(
           enterValidValuesToPage,
-          page.waitAutoSave
+          applicationPage.waitAutoSave
         )
 
         function removeButtonForOrg(nr) {
-          return page.createClickable('#other-organizations-' + nr + ' .soresu-remove')
+          return applicationPage.createClickable(function() { return S('#other-organizations-' + nr + ' .soresu-remove') })
         }
 
         describe('automaattitallennuksen jälkeen', function() {
           it('ei virheitä tallennuksesta', function() {
-            expect(page.saveError()).to.equal('')
+            expect(applicationPage.saveError()).to.equal('')
           })
         })
 
@@ -72,41 +73,41 @@
           })
 
           it('on uusi rivi auki', function() {
-            expect(page.getInput('other-organizations.other-organizations-2.name').isEnabled()).to.equal(true)
-            expect(page.getInput('other-organizations.other-organizations-2.email').isEnabled()).to.equal(true)
+            expect(applicationPage.getInput('other-organizations.other-organizations-2.name').isEnabled()).to.equal(true)
+            expect(applicationPage.getInput('other-organizations.other-organizations-2.email').isEnabled()).to.equal(true)
           })
 
           it('on kolmas rivi kiinni', function() {
-            expect(page.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(false)
-            expect(page.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(false)
+            expect(applicationPage.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(false)
+            expect(applicationPage.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(false)
           })
 
           describe('jos lisää keskeneräisen rivin', function() {
             before(
-              page.setInputValue("other-organizations.other-organizations-2.name", "Muu testiorganisaatio 2"),
-              page.waitAutoSave
+              applicationPage.setInputValue("other-organizations.other-organizations-2.name", "Muu testiorganisaatio 2"),
+              applicationPage.waitAutoSave
             )
 
             describe('lisäämisen jälkeen', function() {
               it("valitetaan puuttuvista tiedoista", function() {
-                expect(page.validationErrorsSummary()).to.equal("1 vastauksessa puutteita")
+                expect(applicationPage.validationErrorsSummary()).to.equal("1 vastauksessa puutteita")
               })
               it('on kolmas rivi yhä kiinni', function() {
-                expect(page.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(false)
-                expect(page.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(false)
+                expect(applicationPage.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(false)
+                expect(applicationPage.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(false)
               })
             })
 
             describe('jos täydentää rivin lopuun', function() {
               before(
-                page.setInputValue("other-organizations.other-organizations-2.email", "muutest2@example.com"),
-                page.waitAutoSave
+                applicationPage.setInputValue("other-organizations.other-organizations-2.email", "muutest2@example.com"),
+                applicationPage.waitAutoSave
               )
 
               describe('täydentämisen jälkeen', function() {
                 it('sen alle tulee uusi rivi', function() {
-                  expect(page.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(true)
-                  expect(page.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(true)
+                  expect(applicationPage.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(true)
+                  expect(applicationPage.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(true)
                 })
 
                 it('toisen rivin voi poistaa', function() {
@@ -117,7 +118,7 @@
               describe('jos poistaa toisen organisaation', function() {
                 before(
                   removeButtonForOrg(2).click,
-                  page.waitAutoSave
+                  applicationPage.waitAutoSave
                 )
 
                 it('kolmatta ei voi poistaa', function() {
@@ -135,26 +136,26 @@
           describe("serveripään validointivirheissä", function() {
             before(
                 function() { mockAjax.respondOnce("POST", "/api/avustushaku/1/hakemus/", 400, {organization:[{error:"required"}]}) },
-                page.submitAndWaitErrorChange
+                applicationPage.submitAndWaitErrorChange
             )
             describe("epäonnistumisen jälkeen", function() {
               it("yleinen virhe näytetään", function() {
-                expect(page.saveError()).to.equal('Ei tallennettu - tarkista syöttämäsi tiedot.1 vastauksessa puutteita')
+                expect(applicationPage.saveError()).to.equal('Ei tallennettu - tarkista syöttämäsi tiedot.1 vastauksessa puutteita')
               })
               it("kentän virhe näytetään", function() {
-                expect(page.detailedValidationErrors()).to.deep.equal(['Hakijaorganisaatio: Pakollinen tieto'])
+                expect(applicationPage.detailedValidationErrors()).to.deep.equal(['Hakijaorganisaatio: Pakollinen tieto'])
               })
               it("lähetys nappi on yhä enabloitu", function() {
-                expect(page.submitButton().isEnabled()).to.equal(true)
+                expect(applicationPage.submitButton().isEnabled()).to.equal(true)
               })
             })
             describe("muokatessa kenttää", function() {
               before(
-                  page.setInputValue("organization", "Testi Organisaatio korjattu"),
-                  page.waitAutoSave
+                  applicationPage.setInputValue("organization", "Testi Organisaatio korjattu"),
+                  applicationPage.waitAutoSave
               )
               it("virheet häviää", function() {
-                expect(page.saveError()).to.equal('')
+                expect(applicationPage.saveError()).to.equal('')
               })
             })
           })
@@ -162,22 +163,22 @@
           describe("lähetettäessä, kun serveriltä tulee odottamaton virhe", function() {
             before(
                 function() { mockAjax.respondOnce("POST", "/api/avustushaku/1/hakemus/", 500, "ERROR!") },
-                page.submitAndWaitErrorChange
+                applicationPage.submitAndWaitErrorChange
             )
             describe("epäonnistumisen jälkeen", function() {
               it("yleinen virhe näytetään", function() {
-                expect(page.saveError()).to.equal('Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.')
+                expect(applicationPage.saveError()).to.equal('Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.')
               })
               it("lähetys nappi on yhä enabloitu", function() {
-                expect(page.submitButton().isEnabled()).to.equal(true)
+                expect(applicationPage.submitButton().isEnabled()).to.equal(true)
               })
             })
             describe("uudelleen lähetettäessä", function() {
               before(
-                  page.submitAndWaitErrorChange
+                  applicationPage.submitAndWaitErrorChange
               )
               it("virhe häviää", function() {
-                expect(page.saveError()).to.equal('')
+                expect(applicationPage.saveError()).to.equal('')
               })
             })
           })
@@ -186,10 +187,10 @@
 
       describe('vaihdettaessa kieli ruotsiksi', function() {
         before(
-          page.toggleLanguage
+          applicationPage.toggleLanguage
         )
         it("näkyy haun nimi ruotsiksi", function() {
-          expect(page.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
+          expect(applicationPage.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
         })
       })
     })
@@ -197,37 +198,37 @@
 
   describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku tultaessa lomakeella ilman sähköpostitarkastusta', function() {
     before(
-      page.openEditPage(function(){return ""})
+      applicationPage.openEditPage(function(){return ""})
     )
     it("näkyy haun nimi", function() {
-      expect(page.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+      expect(applicationPage.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
     })
     it("lähetys on disabloitu", function() {
-      expect(page.submitButton().isEnabled()).to.equal(false)
+      expect(applicationPage.submitButton().isEnabled()).to.equal(false)
     })
     it("syöttökentät on disabloitu", function() {
-      expect(page.getInput('organization').isEnabled()).to.equal(false)
+      expect(applicationPage.getInput('organization').isEnabled()).to.equal(false)
     })
   })
 
   describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku ruotsiksi', function() {
     before(
-      page.openLoginPage('sv')
+      loginPage.openLoginPage('sv')
     )
 
     describe('login sivulla', function() {
       it("näkyy haun nimi ruotsiksi", function() {
-        expect(page.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
+        expect(loginPage.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
       })
     })
 
     describe('sähköpostitarkistuksen jälkeen lomakkeella', function() {
       before(
-        page.login
+        loginPage.login
       )
 
       it("näkyy haun nimi ruotsiksi", function() {
-        expect(page.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
+        expect(applicationPage.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
       })
     })
   })
