@@ -17,6 +17,16 @@
   sudo_user: "{{ jenkins_user }}"
   file: "path=~{{ jenkins_user }}/.ssh/known_hosts state=touch mode=0600"
 
+- name: Remove the old SSH host key of test application servers from to ~{{ jenkins_user }}/.ssh/known_hosts
+  sudo_user: "{{ jenkins_user }}"
+  shell: "ssh-keygen -R {{ item }}"
+  with_items: groups['va_backend']
+
+- name: Remove the old SSH host key of production application servers from to ~{{ jenkins_user }}/.ssh/known_hosts
+  sudo_user: "{{ jenkins_user }}"
+  shell: "ssh-keygen -R {{ item }}"
+  with_items: groups['prod-va_backend']
+
 - name: Add the new SSH host key of test application servers to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
   sudo_user: "{{ jenkins_user }}"
   shell: "ssh-keyscan -H {{ item }} >> ~{{ jenkins_user }}/.ssh/known_hosts"
