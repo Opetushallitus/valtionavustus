@@ -8,6 +8,11 @@ container_postgres_port=5432
 
 function start_postgresql_in_container() {
   time $DOCKER pull sameersbn/postgresql:9.4 || true
+  is_container_running=`docker inspect -f {{.State.Running}} postgresql || true`
+  if [ "$is_container_running" == true ]; then
+    echo "Warning: found running postgresql container, stopping it."
+    remove_postgresql_container
+  fi
   time $DOCKER run --name postgresql -d -p $host_postgres_port:$container_postgres_port -e 'DB_USER=va' -e 'DB_PASS=va' -e 'DB_NAME="va-dev"' sameersbn/postgresql:9.4
 }
 
