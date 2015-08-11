@@ -36,10 +36,33 @@
         loginPage.setInputValue("primary-email", "yhteyshenkilo@example.com")()
         expect(loginPage.submitButton().isEnabled()).to.equal(true)
       })
+
+      describe("kun luo hakemuksen", function() {
+        before(
+          mockAjax.init,
+          function() { mockAjax.respondOnce("PUT", "/api/avustushaku/1/hakemus", 200,
+            {
+              "submission": {
+                "answers": {
+                  "value":[{"value":"yhteyshenkilo@example.com","key":"primary-email"},{"value":"fi","key":"language"}]},
+                  "version_closed":null,"version":0,"form":1,"created_at":"2015-08-11T11:23:40Z","id":91
+              },
+              "verified_at":null,"created_at":"2015-08-11T11:23:40Z","status":"draft","id":""
+            })
+          },
+          loginPage.waitUntilSubmitIsEnabled,
+          loginPage.submitButton().click
+        )
+
+        it("Näkyy viesti", function() {
+          expect(loginPage.message().text()).to.equal("Sähköpostiin on lähetetty linkki hakulomakkeelle. Tämän sivun voi sulkea.")
+        })
+
+      })
     })
   })
 
-  describe('Ruotsinkielisellä sisäänkirjautumissivulla', function() {
+  describe('ruotsinkielisellä sisäänkirjautumissivulla', function() {
     before(
       loginPage.openLoginPage('sv')
     )

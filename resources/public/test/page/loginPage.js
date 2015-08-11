@@ -38,6 +38,14 @@ function LoginPage() {
     },
     getHakemusId: function() {
       return storedHakemusId
+    },
+    waitUntilSubmitIsEnabled() {
+      return wait.until(function() {
+        return api.submitButton().isEnabled()
+      })()
+    },
+    message: function() {
+      return applicationElement().find(".message")
     }
   }
   return _.extend(pageApi, api)
