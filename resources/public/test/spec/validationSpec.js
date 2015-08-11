@@ -18,7 +18,7 @@
     enterValidValues(applicationPage)
   }
 
-  describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku validointi', function() {
+  describe('Laatukehityksen haun validointi', function() {
     before(
       loginPage.openLoginPage(),
       loginPage.login

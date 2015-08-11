@@ -187,7 +187,7 @@
     })
   })
 
-  describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku tultaessa lomakeella ilman sähköpostitarkastusta', function() {
+  describe('Tultaessa laatukehityksen lomakeelle ilman sähköpostitarkastusta', function() {
     before(
       applicationPage.openEditPage(function(){return ""})
     )
@@ -202,12 +202,12 @@
     })
   })
 
-  describe('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen haku ruotsiksi', function() {
+  describe('Laatukehityksen haku ruotsiksi', function() {
     before(
       loginPage.openLoginPage('sv')
     )
 
-    describe('login sivulla', function() {
+    describe('sisäänkirjautumissivulla', function() {
       it("näkyy haun nimi ruotsiksi", function() {
         expect(loginPage.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
       })
