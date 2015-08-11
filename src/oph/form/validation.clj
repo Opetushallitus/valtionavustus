@@ -38,9 +38,11 @@
     [])
 
 (defn validate-email-field [field answer]
-  (when (and (= (:displayAs field) "emailField")
-             (= (:required field)))
+  (if (not (and (= (:displayAs field) "emailField")
+                (= (:required field))))
+    []
     (if (and (not (nil? answer))
+             (not (string/blank? answer))
              (re-matches #"\S+@\S+\.\S+" answer)
              (<= (count answer) 254)
              (> (-> answer (string/split #"\.") last count) 1))
@@ -64,14 +66,15 @@
 
 (defn validate-field-security [answers field]
   (let [answer (find-answer-value answers (field :id))]
-    {(keyword (field :id)) (concat
+    {(keyword (:id field)) (concat
        (validate-options field answer)
        (validate-textarea-maxlength field answer)
-       (validate-texfield-maxlength field answer))}))
+       (validate-texfield-maxlength field answer)
+       (validate-email-security field answer))}))
 
 (defn validate-field [answers field]
   (let [answer (find-answer-value answers (field :id))]
-    {(keyword (field :id)) (concat
+    {(keyword (:id field)) (concat
        (validate-required field answer)
        (validate-options field answer)
        (validate-textarea-maxlength field answer)
