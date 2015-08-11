@@ -2,23 +2,23 @@ persistent_volume_devices: /dev/vdc
 logical_volumes:
   logs:
     filesystem: xfs
-    size: 10g
+    size: 100g
     mount_point: /logs
   postgresql_data:
     filesystem: xfs
-    size: 10g
+    size: 100g
     mount_point: /var/lib/postgresql
   postgresql_config:
     filesystem: xfs
-    size: 1g
+    size: 10g
     mount_point: /etc/postgresql
   data:
     filesystem: xfs
-    size: 10g
+    size: 100g
     mount_point: /data
   home2:
     filesystem: xfs
-    size: 10g
+    size: 100g
     mount_point: /home2
 postgresql_version: 9.4
 postgresql_flavor: pgdg
