@@ -14,7 +14,7 @@ ephemeral_disk_mount_point=/mnt
 copy_target=${ephemeral_disk_mount_point}/database-backup/${timestamp}
 
 SSH_KEY=~/.ssh/id_deploy
-SSH_USER=va-deploy
+SSH_USER=postgres
 
 for server in ${comma_separated_server_list//,/ }
 do
