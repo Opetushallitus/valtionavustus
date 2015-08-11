@@ -29,6 +29,14 @@
       [{:error "maxlength", :max maxlength}]
       [])))
 
+(defn validate-email-security [field answer]
+  (if (and (= (:displayAs field) "emailField")
+           (not (nil? answer))
+           (not (string/blank? answer))
+           (> (count answer) 254))
+    [{:error "email"}])
+    [])
+
 (defn validate-email-field [field answer]
   (when (and (= (:displayAs field) "emailField")
              (= (:required field)))
