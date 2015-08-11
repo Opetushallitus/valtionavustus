@@ -8,7 +8,7 @@ import FormUtil from './FormUtil.js'
 import FormBranchGrower from './FormBranchGrower.js'
 import FieldUpdateHandler from './FieldUpdateHandler.js'
 
-const saveTypes = {
+const serverOperations = {
   initialSave: 'initialSave',
   autoSave: 'autoSave',
   submit: 'submit'
@@ -79,37 +79,37 @@ export default class FormStateTransitions {
     return state
   }
 
-  static handleUnexpectedSaveError(dispatcher, events, method, url, error, saveType) {
-    console.error('Unexpected', saveType, 'error', error, 'in', method, 'to', url)
-    if (saveType === saveTypes.submit) {
+  static handleUnexpectedServerError(dispatcher, events, method, url, error, serverOperation) {
+    console.error('Unexpected', serverOperation, 'error', error, 'in', method, 'to', url)
+    if (serverOperation === serverOperations.submit) {
       dispatcher.push(events.saveError, {error: "unexpected-submit-error"})
-    } else if (saveType === saveTypes.initialSave) {
+    } else if (serverOperation === serverOperations.initialSave) {
       dispatcher.push(events.saveError, {error: "unexpected-save-error"})
-    } else {
+    } else if (serverOperation === serverOperations.autoSave) {
       dispatcher.push(events.initAutoSave)
     }
   }
 
-  static handleSaveError(dispatcher, events, status, error, method, url, response, saveType) {
-    console.warn('Handle', saveType, 'error', error, 'in', method, 'to', url, 'with status', status, 'and response', JSON.stringify(response))
+  static handleServerError(dispatcher, events, status, error, method, url, response, serverOperation) {
+    console.warn('Handle', serverOperation, 'error', error, 'in', method, 'to', url, 'with status', status, 'and response', JSON.stringify(response))
     if (status === 400) {
       dispatcher.push(events.saveError, {error: "submit-validation-errors", validationErrors: response})
     }
     else{
-      FormStateTransitions.handleUnexpectedSaveError(dispatcher, events, method, url, error, saveType)
+      FormStateTransitions.handleUnexpectedServerError(dispatcher, events, method, url, error, serverOperation)
     }
   }
 
-  updateOld(state, saveType, onSuccessCallback) {
+  updateOld(state, serverOperation, onSuccessCallback) {
     const formOperations = state.extensionApi.formOperations
-    const url = formOperations.urlCreator.existingFormApiUrl(state)+ (saveType === saveTypes.submit ? "/submit" : "")
+    const url = formOperations.urlCreator.existingFormApiUrl(state)+ (serverOperation === serverOperations.submit ? "/submit" : "")
     const dispatcher = this.dispatcher
     const events = this.events
     try {
       state.saveStatus.saveInProgress = true
       HttpUtil.post(url, state.saveStatus.values)
         .then(function(response) {
-          console.log("Saved to server (", saveType, "). Response=", JSON.stringify(response))
+          console.log("Saved to server (", serverOperation, "). Response=", JSON.stringify(response))
           const updatedState = _.cloneDeep(state)
           updatedState.saveStatus.savedObject = response
           updatedState.saveStatus.values = formOperations.responseParser.getFormAnswers(response)
@@ -120,20 +120,22 @@ export default class FormStateTransitions {
           dispatcher.push(events.saveCompleted, updatedState)
         })
         .catch(function(response) {
-            FormStateTransitions.handleSaveError(dispatcher, events, response.status, response.statusText, "POST", url, response.data, saveType)
+            FormStateTransitions.handleServerError(dispatcher, events, response.status, response.statusText, "POST", url, response.data, serverOperation)
         })
     }
     catch(error) {
-      FormStateTransitions.handleUnexpectedSaveError(dispatcher, events, "POST", url, error, saveType);
+      FormStateTransitions.handleUnexpectedServerError(dispatcher, events, "POST", url, error, serverOperation);
     }
-    return state
+    finally {
+      return state
+    }
   }
 
   onSave(state, params) {
     const onSuccessCallback = params ? params.onSuccessCallback : undefined
     const formOperations = state.extensionApi.formOperations
     if (formOperations.isSaveDraftAllowed(state)) {
-      return this.updateOld(state, saveTypes.autoSave, onSuccessCallback)
+      return this.updateOld(state, serverOperations.autoSave, onSuccessCallback)
     }
     return state
   }
@@ -141,7 +143,7 @@ export default class FormStateTransitions {
   onBeforeUnload(state) {
     const formOperations = state.extensionApi.formOperations
     if (formOperations.isSaveDraftAllowed(state)) {
-      return this.updateOld(state, saveTypes.autoSave)
+      return this.updateOld(state, serverOperations.autoSave)
     }
   }
 
@@ -177,7 +179,7 @@ export default class FormStateTransitions {
   }
 
   onSubmit(state) {
-    return this.updateOld(state, saveTypes.submit)
+    return this.updateOld(state, serverOperations.submit)
   }
 
   onRemoveField(state, fieldToRemove) {
