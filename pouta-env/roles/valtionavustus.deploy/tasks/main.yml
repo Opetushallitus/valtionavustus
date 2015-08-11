@@ -45,3 +45,14 @@
   delegate_to: "{{ item }}"
   with_items: groups['prod-va_backend']
 
+- name: Add new jenkins public SSH key to Postgresql account on test app server machines for backups
+  authorized_key: user="postgres"
+                  key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
+  delegate_to: "{{ item }}"
+  with_items: groups['va_backend']
+
+- name: Add new jenkins public SSH key to Postgresql account on production app server machines for backups
+  authorized_key: user="postgres"
+                  key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
+  delegate_to: "{{ item }}"
+  with_items: groups['prod-va_backend']
