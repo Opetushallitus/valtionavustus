@@ -120,6 +120,23 @@
           })
         })
 
+        describe('kun joku muu muokkaa hakemusta yhtä aikaa', function() {
+          before(
+            function(){
+              $.ajax({
+                method: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "/api/avustushaku/1/hakemus/" + loginPage.getHakemusId(),
+                data: JSON.stringify({value: [{key: "other-organizations.other-organizations-1.name", value: "Oikea Organisaatio"}]})
+              })
+            },
+            applicationPage.waitServerError
+          )
+          it("yleinen virhe näytetään", function() {
+            expect(applicationPage.saveError()).to.equal('Joku muu muokkaa hakemusta yhtäaikaa. Lataa sivu uudestaan.')
+          })
+        })
+
         describe('server virhetilanteissa lomaketta käsiteltäväksi lähetettäessä', function() {
           before(
             mockAjax.init

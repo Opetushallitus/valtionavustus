@@ -14,6 +14,8 @@ const events = {
   fieldValidation: 'fieldValidation',
   changeLanguage: 'changeLanguage',
   save: 'save',
+  pollServerAnswers: 'pollServerAnswers',
+  reloadCompleted: 'reloadCompleted',
   initAutoSave: 'initAutoSave',
   saveCompleted: 'saveCompleted',
   serverError: 'serverError',

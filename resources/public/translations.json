@@ -88,6 +88,10 @@
       "fi": "Tallentaminen epäonnistui. Yritä myöhemmin uudelleen.",
       "sv": "Lagrande misslyckades. Försök på nytt senare."
     },
+    "changes-on-server": {
+      "fi": "Joku muu muokkaa hakemusta yhtäaikaa. Lataa sivu uudestaan.",
+      "sv": "TODO-SV: Joku muu muokkaa hakemusta yhtäaikaa. Lataa sivu uudestaan."
+    },
     "submit-validation-errors": {
       "fi": "Ei tallennettu - tarkista syöttämäsi tiedot.",
       "sv": "Inte lagrad – svara först på alla frågor."

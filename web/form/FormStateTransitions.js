@@ -11,7 +11,8 @@ import FieldUpdateHandler from './FieldUpdateHandler.js'
 const serverOperations = {
   initialSave: 'initialSave',
   autoSave: 'autoSave',
-  submit: 'submit'
+  submit: 'submit',
+  reload: 'reload'
 }
 
 export default class FormStateTransitions {
@@ -19,8 +20,9 @@ export default class FormStateTransitions {
     this.dispatcher = dispatcher
     this.events = events
     this.autoSave = _.debounce(function(){ dispatcher.push(events.save) }, develQueryParam? 100 : 3000)
+    this.pollServerAnswers = _.debounce(function(){ dispatcher.push(events.pollServerAnswers) },  develQueryParam? 500 : 5000)
     this._bind(
-      'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
+      'startAutoSave', 'onInitialState', 'onPollServerAnswers', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
       'onBeforeUnload', 'onInitAutoSave', 'onReloadCompleted', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError')
   }
 
@@ -43,6 +45,7 @@ export default class FormStateTransitions {
     if (_.isFunction(onInitialStateLoaded)) {
       onInitialStateLoaded(realInitialState)
     }
+    this.pollServerAnswers()
     return realInitialState
   }
 
@@ -140,6 +143,60 @@ export default class FormStateTransitions {
     return state
   }
 
+  checkAnswersFromServer(state, onSuccessCallback) {
+    const formOperations = state.extensionApi.formOperations
+    const url = formOperations.urlCreator.existingFormApiUrl(state)
+    const dispatcher = this.dispatcher
+    const events = this.events
+    const operation = serverOperations.reload
+    try {
+      HttpUtil.get(url)
+          .then(function(response) {
+            console.log("Loaded answers from server. Response=", JSON.stringify(response))
+            const updatedState = _.cloneDeep(state)
+            updatedState.saveStatus.savedObject = response
+            updatedState.saveStatus.values = formOperations.responseParser.getFormAnswers(response)
+            updatedState.validationErrors = Immutable(updatedState.validationErrors)
+            if (onSuccessCallback) {
+              onSuccessCallback(updatedState)
+            }
+            dispatcher.push(events.reloadCompleted, updatedState)
+          })
+          .catch(function(response) {
+            FormStateTransitions.handleServerError(dispatcher, events, response.status, response.statusText, "GET", url, response.data, operation)
+          })
+    }
+    catch(error) {
+      FormStateTransitions.handleUnexpectedServerError(dispatcher, events, "GET", url, error, operation);
+    }
+    finally {
+      return state
+    }
+  }
+
+  onPollServerAnswers(state, params) {
+    const onSuccessCallback = params ? params.onSuccessCallback : undefined
+    const formOperations = state.extensionApi.formOperations
+    this.pollServerAnswers()
+    if (formOperations.isSaveDraftAllowed(state) && !state.saveStatus.saveInProgress && !state.saveStatus.changes && state.saveStatus.serverError === "") {
+      return this.checkAnswersFromServer(state, onSuccessCallback)
+    }
+    return state
+  }
+
+  onReloadCompleted(stateFromUiLoop, stateWithServerChanges) {
+    // TODO: Resolve updates from UI with updates from server.
+    // At the moment just tell that something has changes
+    const formOperations = stateFromUiLoop.extensionApi.formOperations
+    const oldVersion = formOperations.responseParser.getSavedVersion(stateFromUiLoop.saveStatus.savedObject)
+    const newVersion = formOperations.responseParser.getSavedVersion(stateWithServerChanges.saveStatus.savedObject)
+    if (oldVersion > 1 && oldVersion != newVersion) {
+      console.warn("Client version:", oldVersion, ". Server version:", newVersion)
+      stateFromUiLoop.saveStatus.serverError = "changes-on-server"
+    }
+    return stateFromUiLoop
+  }
+
   onBeforeUnload(state) {
     const formOperations = state.extensionApi.formOperations
     if (formOperations.isSaveDraftAllowed(state) && state.saveStatus.changes) {
@@ -153,8 +210,6 @@ export default class FormStateTransitions {
   }
 
   onSaveCompleted(stateFromUiLoop, stateWithServerChanges) {
-    // TODO: Resolve updates from UI with updates from server.
-    // At the moment we just discard the values from server here.
     const formOperations = stateFromUiLoop.extensionApi.formOperations
     var locallyStoredValues = LocalStorage.load(formOperations.createUiStateIdentifier, stateWithServerChanges)
     stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateWithServerChanges.saveStatus.values)

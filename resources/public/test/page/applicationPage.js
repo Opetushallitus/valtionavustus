@@ -34,6 +34,12 @@ function ApplicationPage() {
         return pageApi.elementText("pending-changes") != "true" && "Kaikki muutokset tallennettu" === api.saveInfo() || api.saveError() !== errorBefore
       })()
     },
+    waitServerError: function() {
+      var errorBefore =  api.saveError()
+      return wait.until(function() {
+        return api.saveError() !== errorBefore
+      })()
+    },
     submitButton: function() {
       return pageApi.createClickable(function() { return applicationElement().find("#submit") })
     },
