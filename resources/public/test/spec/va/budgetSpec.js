@@ -1,4 +1,4 @@
-(function () {
+(function() {
   const applicationPage = ApplicationPage()
   const loginPage = LoginPage()
 
@@ -17,7 +17,7 @@
     enterValidValues(applicationPage)
   }
 
-  describe('Budjettitaulukko', function () {
+  describe('Budjettitaulukko', function() {
     before(
       loginPage.openLoginPage('fi'),
       loginPage.login,
@@ -25,7 +25,7 @@
       applicationPage.waitAutoSave
     )
 
-    describe('oikein täytettynä', function () {
+    describe('oikein täytettynä', function() {
       it('mahdollistaa hakemuksen lähettämisen', function() {
         expect(applicationPage.validationErrorsSummary()).to.equal('')
         expect(applicationPage.submitButton().isEnabled()).to.equal(true)
