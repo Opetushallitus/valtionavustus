@@ -58,7 +58,7 @@
            {:key "private-financing-income-row.amount" :value "10"}]})
 
 (def most-required-missing
-  {:other-organizations.other-organizations-1.email      [{:error "required"}]
+  {:other-organizations.other-organizations-1.email      [{:error "required"} {:error "email"}]
    :project-begin                                        []
    :other-organizations.other-organizations-1.name       [{:error "required"}]
    :applicant-name                                       [{:error "required"}]
@@ -70,14 +70,14 @@
    :continuation-project                                 []
    :bank-bic                                             [{:error "required"}]
    :organization                                         []
-   :organization-email                                   [{:error "required"}]
+   :organization-email                                   [{:error "required"} {:error "email"}]
    :project-effectiveness                                [{:error "required"}]
    :project-spreading-plan                               [{:error "required"}]
    :project-measure                                      [{:error "required"}]
    :combined-effort                                      [{:error "required"}]
    :language                                             [{:error "required"}]
    :project-www                                          []
-   :signature-email                                      [{:error "required"}]
+   :signature-email                                      [{:error "required"} {:error "email"}]
    :bank-iban                                            [{:error "required"}]
    :project-goals                                        [{:error "required"}]
    :project-target                                       [{:error "required"}]

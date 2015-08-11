@@ -78,7 +78,8 @@
        (validate-required field answer)
        (validate-options field answer)
        (validate-textarea-maxlength field answer)
-       (validate-texfield-maxlength field answer))}))
+       (validate-texfield-maxlength field answer)
+       (validate-email-field field answer))}))
 
 (defn- is-form-field? [field]
   (= (:type field) "formField"))
