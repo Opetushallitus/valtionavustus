@@ -27,4 +27,14 @@
       })
     })
   })
-})
+
+  describe('Ruotsinkielisellä sisäänkirjautumissivulla', function() {
+    before(
+      loginPage.openLoginPage('sv')
+    )
+
+    it("näkyy haun nimi ruotsiksi", function () {
+      expect(loginPage.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
+    })
+  })
+})()

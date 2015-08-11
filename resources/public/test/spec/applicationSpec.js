@@ -204,20 +204,11 @@
 
   describe('Laatukehityksen haku ruotsiksi', function() {
     before(
-      loginPage.openLoginPage('sv')
+      loginPage.openLoginPage('sv'),
+      loginPage.login
     )
 
-    describe('sisäänkirjautumissivulla', function() {
-      it("näkyy haun nimi ruotsiksi", function() {
-        expect(loginPage.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
-      })
-    })
-
     describe('sähköpostitarkistuksen jälkeen lomakkeella', function() {
-      before(
-        loginPage.login
-      )
-
       it("näkyy haun nimi ruotsiksi", function() {
         expect(applicationPage.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
       })
