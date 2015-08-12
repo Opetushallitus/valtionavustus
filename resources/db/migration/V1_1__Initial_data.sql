@@ -61,6 +61,20 @@ insert into forms (content) VALUES ('
         ]
       },
       {
+        "type": "formField",
+        "id":"business-id",
+        "required":true,
+        "displayAs":"textField",
+        "params":{
+            "size":"small",
+            "maxlength":9
+        },
+        "label":{
+            "fi":"Y-tunnus",
+            "sv":"Företags- och organisationsnummer"
+        }
+      },
+      {
         "type": "wrapperElement",
         "id":"applicant-fieldset",
         "displayAs":"fieldset",

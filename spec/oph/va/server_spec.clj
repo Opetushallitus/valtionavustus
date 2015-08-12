@@ -24,6 +24,7 @@
 (def valid-answers
   {:value [{:key "organization" :value "Testi Organisaatio"}
            {:key "organization-email" :value "org@example.com"}
+           {:key "business-id" :value "5278603-3"}
            {:key "applicant-name" :value "Teemu Hakija"}
            {:key "primary-email" :value "test@example.com"}
            {:key "signature" :value "Teemu Testaaja, CEO"}
@@ -72,6 +73,7 @@
    :bank-bic                                             [{:error "required"}]
    :organization                                         []
    :organization-email                                   [{:error "required"} {:error "email"}]
+   :business-id                                          [{:error "required"}]
    :project-effectiveness                                [{:error "required"}]
    :project-spreading-plan                               [{:error "required"}]
    :project-measure                                      [{:error "required"}]

@@ -1,6 +1,7 @@
 function enterValidValues(applicationPage) {
   applicationPage.setInputValue("organization", "Testi Organisaatio")()
   applicationPage.setInputValue("organization-email", "organisaatio@example.com")()
+  applicationPage.setInputValue("business-id", "5278603-3")()
   applicationPage.setInputValue("applicant-name", "Testi Hakija")()
   applicationPage.setInputValue("organization-email", "organisaatio@example.com")()
   applicationPage.setInputValue("signature", "Matti Allekirjoitusoikeudellinen")()
