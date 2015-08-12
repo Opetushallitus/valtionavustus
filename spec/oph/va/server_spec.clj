@@ -130,7 +130,7 @@
                   :id "name"
                   :displayAs "h1"} (-> json :content first))
         (should= {:label {:sv "Sista ansöknings"
-                          :fi "Hakemuksen muokkaus sulkeutuu"}
+                          :fi "Hakuaika päättyy"}
                   :displayAs "endOfDateRange"
                   :id "duration"
                   :type "infoElement"}
