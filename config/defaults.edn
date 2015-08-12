@@ -13,6 +13,7 @@
          :from {:fi "no-reply@valtionavustukset.oph.fi"
                 :sv "no-reply@statsunderstod.oph.fi"}
          :sender "no-reply@csc.fi"
+         :bounce-address "va-dev@reaktor.com"
          :retry-initial-wait 2000
          :retry-multiplier 4
          :retry-max-time 60000}}

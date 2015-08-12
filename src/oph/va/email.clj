@@ -62,7 +62,7 @@
                           (.setSmtpPort (:port smtp-config))
                           (.setFrom from)
                           (.addHeader "Sender" sender)
-                          (.setBounceAddress "")
+                          (.setBounceAddress (:bounce-address smtp-config))
                           (.setSubject subject)
                           (.setMsg email)
                           (.addTo to)
