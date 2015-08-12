@@ -1,7 +1,9 @@
 import React from 'react'
 import ClassNames from 'classnames'
 import _ from 'lodash'
+
 import LocalizedString from './LocalizedString.jsx'
+import Translator from './../Translator.js'
 
 export default class BasicFieldComponent extends React.Component {
   constructor(props) {
@@ -36,15 +38,28 @@ export default class BasicFieldComponent extends React.Component {
     else {
       return (<label htmlFor={this.props.htmlId}
                      className={this.labelClassName(className)}>
-                <LocalizedString translations={this.props.translations}
+                <LocalizedString className={ this.props.required ? "required" : undefined }
+                                 translations={this.props.translations}
                                  translationKey={translationKey}
                                  lang={this.props.lang} />
+                {this.helpText()}
               </label>)
     }
   }
 
+  helpText() {
+    if (this.props.translations.helpText) {
+      const translator = new Translator(this.props.translations)
+      const value = translator.translate("helpText", this.props.lang)
+      return <a data-helptext={value} className="tooltip">
+        <img src="img/show_tooltip.png"/>
+      </a>
+    }
+    return undefined
+  }
+
   labelClassName(className) {
-    const classNames = ClassNames(className, { required: this.props.required, disabled: this.props.disabled })
+    const classNames = ClassNames(className, { disabled: this.props.disabled })
     return !_.isEmpty(classNames) ? classNames : undefined
   }
 

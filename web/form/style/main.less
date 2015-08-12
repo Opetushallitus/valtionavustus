@@ -49,7 +49,7 @@ ul {
 .popup {
   position: fixed;
   max-height: 250px;
-  z-index: 100;
+  z-index: 101;
   overflow: auto;
   margin-right: 20px;
   background-color: rgba(255,255,255,1);
@@ -387,4 +387,35 @@ button.soresu-text-button {
 button[disabled].soresu-text-button {
   background-color: @light-gray;
   border: 1px solid @light-gray;
+}
+
+.tooltip {
+  margin-left: 5px;
+  display: inline;
+  position: relative;
+}
+
+.tooltip:hover:after {
+  background: #fff;
+  bottom: 26px;
+  border: 1px solid @light-gray;
+  color: @form-label-black;
+  content: attr(data-helptext);
+  left: -500%;
+  padding: 5px 15px;
+  position: absolute;
+  z-index: 98;
+  width: 600px;
+  font-size: 14px;
+}
+
+.tooltip:hover:before {
+  border: solid;
+  border-color: @light-gray transparent;
+  border-width: 6px 6px 0 6px;
+  bottom: 20px;
+  content: "";
+  left: 50%;
+  position: absolute;
+  z-index: 99;
 }
