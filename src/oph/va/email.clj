@@ -96,12 +96,11 @@
 
 (defn send-new-hakemus-message! [lang to avustushaku-id avustushaku user-key end-date]
   (let [lang-str (or (clojure.core/name lang) "fi")
-        end-date-in-local-time (->> (time/time-zone-for-id "Europe/Helsinki")
-                                    (time/to-time-zone end-date))
-        date-string (->> end-date-in-local-time
-                         (time-format/unparse (time-format/formatter "dd.MM.YYYY")))
-        time-string (->> end-date-in-local-time
-                         (time-format/unparse (time-format/formatter "HH:mm")))
+        local-time-zone (time/time-zone-for-id "Europe/Helsinki")
+        date-string (->> (time-format/formatter "dd.MM.YYYY" local-time-zone)
+                         (.toString end-date))
+        time-string (->> (time-format/formatter "HH:mm" local-time-zone)
+                         (.toString end-date))
         url (str (-> config :server :url lang)
                  "?avustushaku="
                  avustushaku-id
