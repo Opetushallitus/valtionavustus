@@ -12,7 +12,7 @@ insert into forms (content) VALUES ('
     "id": "duration",
     "displayAs": "endOfDateRange",
     "label": {
-      "fi": "Hakemuksen muokkaus sulkeutuu",
+      "fi": "Hakuaika päättyy",
       "sv": "Sista ansöknings"
     }
   },
