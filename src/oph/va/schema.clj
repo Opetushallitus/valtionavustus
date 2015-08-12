@@ -2,8 +2,20 @@
   (:require [schema.core :as s]
             [oph.form.schema :refer :all]))
 
+(s/defschema Duration {:label LocalizedString
+                       :start s/Inst
+                       :end s/Inst})
+
+(s/defschema SelectionCriteria {:label LocalizedString
+                                :items [LocalizedString]})
+
+(s/defschema AvustusHakuContent {:name LocalizedString
+                                 :duration Duration
+                                 :selection-criteria SelectionCriteria
+                                 :self-financing-percentage s/Num})
+
 (s/defschema AvustusHaku {:id Long
-                          :content s/Any
+                          :content AvustusHakuContent
                           :form Long
                           :created_at s/Inst})
 (s/defschema Hakemus
