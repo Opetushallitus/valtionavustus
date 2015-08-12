@@ -29,9 +29,9 @@ postgresql_flavor: pgdg
 postgresql_backup_dir: "{{ logical_volumes.postgresql_backups.mount_point }}"
 postgresql_backup_hour: 01
 postgresql_backup_minute: 00
-postgresql_backup_mail_recipient: va-dev@reaktor.com
+postgresql_backup_mail_recipient: root
 
 postfix_domain: 'valtionavustukset.oph.fi'
-postfix_notify_email: 'va-dev@reaktor.com'
+postfix_notify_email: 'root'
 postfix_use_smtp: false
 postfix_relayhost: ''
