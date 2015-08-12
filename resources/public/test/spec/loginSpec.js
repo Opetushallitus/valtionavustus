@@ -12,29 +12,39 @@
     expect(window.uiError || null).to.be.null
   })
 
-  describe('Sisäänkirjautuminen', function() {
+  describe('Laatukehityksen sisäänkirjautumissivulla', function() {
     before(
       loginPage.openLoginPage()
     )
 
-    describe('sisäänkirjautumissivulla', function() {
+    describe('alkutilassa', function() {
       it("näkyy haun nimi", function() {
         expect(loginPage.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
       })
 
-      it("alkutilassa hakemuksen luonti on disabloitu", function() {
+      it("hakemuksen luonti on disabloitu", function() {
         expect(loginPage.submitButton().isEnabled()).to.equal(false)
       })
+    })
 
-      it("mikäli syöttää jotain muuta kuin sähköpostiosoitteen", function() {
-        loginPage.setInputValue("primary-email", "notanemailaddress")()
+    describe('mikäli syöttää jotain muuta kuin sähköpostiosoitteenn', function() {
+      before(
+        loginPage.setInputValue("primary-email", "notanemailaddress")
+      )
+      it("näkyy virhe", function() {
         expect(loginPage.classAttributeOf("primary-email")).to.include('error')
         expect(loginPage.submitButton().isEnabled()).to.equal(false)
       })
+    })
 
-      it("mikäli syöttää oikean sähköpostiosoitteen", function() {
-        loginPage.setInputValue("primary-email", "yhteyshenkilo@example.com")()
-        expect(loginPage.submitButton().isEnabled()).to.equal(true)
+    describe('mikäli syöttää oikean sähköpostiosoitteen', function() {
+      before(
+        loginPage.setInputValue("primary-email", "yhteyshenkilo@example.com")
+      )
+      describe('syötön jälkeen', function() {
+        it("lähetä nappi enabloituut", function() {
+          expect(loginPage.submitButton().isEnabled()).to.equal(true)
+        })
       })
 
       describe("kun luo hakemuksen", function() {
@@ -62,7 +72,7 @@
     })
   })
 
-  describe('ruotsinkielisellä sisäänkirjautumissivulla', function() {
+  describe('Laatukehityksen ruotsinkielisellä sisäänkirjautumissivulla', function() {
     before(
       loginPage.openLoginPage('sv')
     )
