@@ -51,8 +51,9 @@ export default class BasicFieldComponent extends React.Component {
     if (this.props.translations.helpText) {
       const translator = new Translator(this.props.translations)
       const value = translator.translate("helpText", this.props.lang)
-      return <a data-helptext={value} className="tooltip">
+      return <a className="soresu-tooltip">
         <img src="img/show_tooltip.png"/>
+        <span>{value}</span>
       </a>
     }
     return undefined

@@ -389,33 +389,57 @@ button[disabled].soresu-text-button {
   border: 1px solid @light-gray;
 }
 
-.tooltip {
-  margin-left: 5px;
-  display: inline;
+a.soresu-tooltip {
   position: relative;
+  display: inline;
 }
 
-.tooltip:hover:after {
-  background: #fff;
-  bottom: 26px;
-  border: 1px solid @light-gray;
-  color: @form-label-black;
-  content: attr(data-helptext);
-  left: -500%;
-  padding: 5px 15px;
+a.soresu-tooltip img {
+  margin-left: 5px;
+}
+
+a.soresu-tooltip span {
   position: absolute;
-  z-index: 98;
   width: 600px;
+  color: @form-label-black;
+  background: #fff;
+  border: 1px solid @light-gray;
   font-size: 14px;
+  padding: 5px 15px;
+  visibility: hidden;
 }
 
-.tooltip:hover:before {
-  border: solid;
-  border-color: @light-gray transparent;
-  border-width: 6px 6px 0 6px;
-  bottom: 20px;
-  content: "";
-  left: 50%;
-  position: absolute;
+a:hover.soresu-tooltip span {
+  visibility: visible;
+  opacity: 0.95;
+  bottom: 32px;
+  left: -217px;
+  margin-left: -76px;
   z-index: 99;
+}
+
+a.soresu-tooltip span:before, a.soresu-tooltip span:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-bottom: 0;
+}
+
+a.soresu-tooltip span:before {
+  /* Stroke */
+  bottom: -11px;
+  left: 295px;
+  border-top-color: @light-gray;
+  border-width: 11px;
+}
+
+a.soresu-tooltip span:after {
+  /* Fill */
+  bottom: -10px;
+  left: 296px;
+  border-top-color: #fff;
+  border-width: 10px;
 }
