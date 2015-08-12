@@ -94,11 +94,11 @@ export default class VaLogin extends React.Component {
         <form onSubmit={this.submit.bind(this)}>
           <EmailTextField htmlId="primary-email" hasError={emailIsInvalid()} onChange={this.handleEmailChange.bind(this)} translations={translations.login} value={email} translationKey="contact-email" lang={lang} required="true" size="small" maxLength="80" />
           <TextButton htmlId="submit" disabled={canSend()} onClick={this.submit.bind(this)} translations={translations.login} translationKey="submit" lang={lang} />
+          <div className="message-container">
+            <LocalizedString hidden={sent === ""} className="message" translations={translations.login} translationKey="message" lang={lang} />
+            <LocalizedString hidden={error === ""} className="error" translations={translations.errors} translationKey="unexpected-submit-error" lang={lang} />
+          </div>
         </form>
-        <div className="message-container">
-          <LocalizedString hidden={sent === ""} className="message" translations={translations.login} translationKey="message" lang={lang} />
-          <LocalizedString hidden={error === ""} className="error" translations={translations.errors} translationKey="unexpected-submit-error" lang={lang} />
-        </div>
       </section>
     </div>
   }
