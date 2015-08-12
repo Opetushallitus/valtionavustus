@@ -42,6 +42,13 @@ function ApplicationPage() {
         return api.saveError() !== errorBefore
       })()
     },
+    submitAndWaitOk: function() {
+      var textBefore =  api.submitButton().text()
+      api.submitButton().click()
+      return wait.until(function() {
+        return api.submitButton().text() !== textBefore
+      })()
+    },
     saveInfo: function() {
       return applicationElement().find("#form-controls .info :visible").text()
     },

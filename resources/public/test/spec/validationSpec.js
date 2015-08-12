@@ -104,7 +104,7 @@
 
             describe('lähetettäessä käsiteltäväksi', function() {
               before(
-                applicationPage.submitButton().click
+                applicationPage.submitAndWaitOk
               )
               it('ei tule virhettä', function() {
                 expect(applicationPage.validationErrorsSummary()).to.equal('')
@@ -112,7 +112,7 @@
               it("lähetä nappi disabloituu", function() {
                 expect(applicationPage.submitButton().isEnabled()).to.equal(false)
               })
-              it.skip("lähetä napin teksti muuttuu", function() {
+              it("kerrotaan, että hakemus on lähetetty", function() {
                 expect(applicationPage.submitButton().text()).to.equal("Hakemus lähetetty")
               })
             })
