@@ -5,3 +5,4 @@ dependencies:
   - role: 3rdparty/postgresql
   - role: postgresql.db
   - role: java8
+  - role: postfix

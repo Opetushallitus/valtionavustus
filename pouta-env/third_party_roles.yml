@@ -3,3 +3,5 @@
 - src: debops.nginx
 - src: nodesource.node
 - src: debops.pki
+- src: https://github.com/petemcw/ansible-role-postfix
+  name: postfix
