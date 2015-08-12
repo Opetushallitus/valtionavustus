@@ -22,6 +22,13 @@ export default class SyntaxValidator {
       }
     }
 
+    if (field.displayAs === 'businessIdField' && value) {
+      const businessIdError = SyntaxValidator.validateBusinessId(value);
+      if (businessIdError) {
+        validationErrors.push(businessIdError)
+      }
+    }
+
     return validationErrors
   }
 
@@ -38,5 +45,9 @@ export default class SyntaxValidator {
 
   static validateMoney(input) {
     return /^[0-9]*$/.test(input) && FormUtil.isNumeric(input) ? undefined : {error: "money"}
+  }
+
+  static validateBusinessId(input) {
+    return true
   }
 }

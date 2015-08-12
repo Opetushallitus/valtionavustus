@@ -4,6 +4,7 @@ import BasicTextField from './BasicTextField.jsx'
 import BasicTextArea from './BasicTextArea.jsx'
 import EmailTextField from './EmailTextField.jsx'
 import MoneyTextField from './MoneyTextField.jsx'
+import BusinessIdTextField from './BusinessIdTextField.jsx'
 import Dropdown from './Dropdown.jsx'
 import RadioButton from './RadioButton.jsx'
 import TextButton from './TextButton.jsx'
@@ -17,6 +18,7 @@ export default class FormComponent extends React.Component {
       "textArea": BasicTextArea,
       "emailField": EmailTextField,
       "moneyField": MoneyTextField,
+      "businessIdField": BusinessIdTextField,
       "dropdown": Dropdown,
       "radioButton": RadioButton,
       "textButton": TextButton
@@ -26,6 +28,7 @@ export default class FormComponent extends React.Component {
       "textArea": TextFieldPropertyMapper,
       "emailField": TextFieldPropertyMapper,
       "moneyField": TextFieldPropertyMapper,
+      "businessIdField": TextFieldPropertyMapper,
       "dropdown": OptionFieldPropertyMapper,
       "radioButton": OptionFieldPropertyMapper,
       "textButton": ButtonPropertyMapper

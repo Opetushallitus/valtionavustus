@@ -69,7 +69,7 @@ insert into forms (content) VALUES ('
         "type": "formField",
         "id":"business-id",
         "required":true,
-        "displayAs":"textField",
+        "displayAs":"businessIdField",
         "params":{
             "size":"small",
             "maxlength":9
