@@ -1,7 +1,6 @@
 CREATE TABLE forms (
     id             serial PRIMARY KEY,
     created_at     timestamp with time zone default now(),
-    start          timestamp with time zone default now(),
     content        jsonb NOT NULL
 );
 

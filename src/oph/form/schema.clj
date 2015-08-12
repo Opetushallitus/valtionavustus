@@ -56,7 +56,6 @@
 
   (s/defschema Form {:id Long,
                      :content Content,
-                     :start s/Inst,
                      :created_at s/Inst})
 
   (s/defschema Answer {:key s/Str,
