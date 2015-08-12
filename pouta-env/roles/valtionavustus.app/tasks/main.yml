@@ -1,3 +1,6 @@
+- name: Restart PostgreSQL to get backup settings in effect
+  service: name=postgresql state=restarted
+
 - name: Create www group
   group: name=www state=present
 
