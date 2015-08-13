@@ -5,3 +5,5 @@
 - src: debops.pki
 - src: https://github.com/petemcw/ansible-role-postfix
   name: postfix
+- src: https://github.com/galaxyproject/ansible-postgresql
+  name: postgresql
