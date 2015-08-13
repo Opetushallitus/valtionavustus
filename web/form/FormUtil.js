@@ -4,11 +4,14 @@ import JsUtil from './JsUtil.js'
 
 export default class FormUtil {
   static scrollTo(element, duration, afterScroll) {
+    if(!afterScroll) {
+      afterScroll = function(){}
+    }
     const aboutSame = function(current, target) {
       return Math.abs(current - target) < 1
     }
     const startScrollPos = window.pageYOffset
-    const offsetFromTop = document.getElementById("container").getBoundingClientRect().top + startScrollPos + 30
+    const offsetFromTop = document.getElementById("container").getBoundingClientRect().top + startScrollPos
     const targetScrollPos = element.getBoundingClientRect().top + startScrollPos - offsetFromTop
     if (aboutSame(startScrollPos, targetScrollPos)) {
       afterScroll()
@@ -20,7 +23,7 @@ export default class FormUtil {
     const scrollInterval = setInterval(function(){
       count = count + 1
       const nextScrollPos = startScrollPos + diff * (0.5 - 0.5 * Math.cos(count * scrollStep))
-      window.scrollTo (0, nextScrollPos)
+      console.log('current', window.pageYOffset, 'next', nextScrollPos, 'target', targetScrollPos)
       if(aboutSame(nextScrollPos, targetScrollPos)) {
         clearInterval(scrollInterval)
         afterScroll()

@@ -176,7 +176,9 @@ export default class FormStateTransitions {
   }
 
   onSubmit(state) {
-    return this.updateOld(state, serverOperations.submit)
+    const newState = this.updateOld(state, serverOperations.submit)
+    FormUtil.scrollTo(document.getElementById('container'), 1500)
+    return newState
   }
 
   onRemoveField(state, fieldToRemove) {
