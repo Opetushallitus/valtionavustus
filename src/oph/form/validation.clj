@@ -62,7 +62,8 @@
             sum (apply + (map * multipliers digits))
             remainder (mod sum 11)
             calculated-check-digit (- 11 remainder)]
-        (if (= check-digit calculated-check-digit)
+        (if (and (not (= check-digit 1))
+                 (= check-digit calculated-check-digit))
           []
           [{:error "finnishBusinessId"}]))
       [{:error "finnishBusinessId"}])))
