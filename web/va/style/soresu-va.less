@@ -1,3 +1,5 @@
+@import "../../form/style/variables.less";
+
 .va-budget {
   table.summing-table {
     margin-top: 13px;
@@ -109,6 +111,10 @@
   }
 
   .va-big-fieldset {
+    &.disabled {
+      color: @darker-gray;
+    }
+
     div.fieldset-elements {
       float: left;
       border-left: 1px solid @dark-gray;

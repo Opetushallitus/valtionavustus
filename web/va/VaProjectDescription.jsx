@@ -1,4 +1,6 @@
 import React from 'react'
+import ClassNames from 'classnames'
+
 import RemoveButton from '../form/component/RemoveButton.jsx'
 
 export default class VaProjectDescription extends React.Component {
@@ -6,8 +8,9 @@ export default class VaProjectDescription extends React.Component {
     const children = this.props.children
     const htmlId = this.props.htmlId
     const removeButton = React.createElement(RemoveButton, this.props)
+    const className = ClassNames("va-big-fieldset", { disabled: this.props.disabled })
     return (
-      <li className="va-big-fieldset">
+      <li className={className}>
         <fieldset id={htmlId}>
           <div className="fieldset-elements">
             {children}
