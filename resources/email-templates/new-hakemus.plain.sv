@@ -1,6 +1,6 @@
 TODO SV Avustushakemus: {{ avustushaku }}
 
-Hakuaika: {{ start-date }} kl. {{ start-time }} - {{ end-date }} kl. {{ end-time }}
+Hakuaika: {{ start-date }} kl. {{ start-time }} — {{ end-date }} kl. {{ end-time }}
 
 Pääset muokkaamaan avustushakemusta tästä linkistä: {{& url }}
 

@@ -111,7 +111,7 @@ export class DateRangeInfoElement extends BasicInfoComponent {
     return (
       <div>
       <label><LocalizedString translations={labelSource} translationKey="label" lang={lang}/></label>
-      <span>{startDateTime} - {endDateTime}</span>
+      <span>{startDateTime} — {endDateTime}</span>
       </div>
     )
   }
