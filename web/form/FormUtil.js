@@ -23,7 +23,7 @@ export default class FormUtil {
     const scrollInterval = setInterval(function(){
       count = count + 1
       const nextScrollPos = startScrollPos + diff * (0.5 - 0.5 * Math.cos(count * scrollStep))
-      console.log('current', window.pageYOffset, 'next', nextScrollPos, 'target', targetScrollPos)
+      window.scrollTo (0, nextScrollPos)
       if(aboutSame(nextScrollPos, targetScrollPos)) {
         clearInterval(scrollInterval)
         afterScroll()
