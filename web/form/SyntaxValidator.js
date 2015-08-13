@@ -23,9 +23,9 @@ export default class SyntaxValidator {
     }
 
     if (field.displayAs === 'finnishBusinessIdField' && value) {
-      const businessIdError = SyntaxValidator.validateBusinessId(value);
-      if (businessIdError) {
-        validationErrors.push(businessIdError)
+      const finnishBusinessIdError = SyntaxValidator.validateBusinessId(value);
+      if (finnishBusinessIdError) {
+        validationErrors.push(finnishBusinessIdError)
       }
     }
 
@@ -48,6 +48,26 @@ export default class SyntaxValidator {
   }
 
   static validateBusinessId(input) {
-    return true
+    // see: http://tarkistusmerkit.teppovuori.fi/tarkmerk.htm#y-tunnus2
+    var hasValidForm = /^[0-9]{7}-[0-9]/.test(input)
+    if (!hasValidForm) {
+      return {error: "finnishBusinessId"}
+    }
+    var checkDigit = parseInt(input[8])
+    if (checkDigit == 1) {
+      return {error: "finnishBusinessId"}
+    }
+    var multipliers = [7, 9, 10, 5, 8, 4, 2]
+    var digits = []
+    for (var i = 0; i < 7; i++) {
+      digits.push(parseInt(input[i]))
+    }
+    var sum = 0
+    for (var i = 0; i < 7; i++) {
+      sum += multipliers[i] * digits[i]
+    }
+    var modulo = sum % 11
+    var calculatedCheckDigit = 11 - modulo
+    return calculatedCheckDigit == checkDigit ? undefined : {error: "finnishBusinessId"}
   }
 }
