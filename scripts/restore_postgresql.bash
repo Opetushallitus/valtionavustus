@@ -69,7 +69,9 @@ echo "Wrote recovery.conf : "
 echo "======== $recovery_conf begins =========="
 cat $recovery_conf
 echo "======== $recovery_conf ends ============"
+echo "You can edit it to add e.g. recovery_target_time or "
+echo "recovery_target_xid if you want to."
 
-echo "PostgreSQL might be ready to restore backups now."
+echo "PostgreSQL might be ready to restore backups now on startup."
 du -hsx $postgres_data_dir
 
