@@ -17,7 +17,7 @@ import SyntaxValidator from '../form/SyntaxValidator.js'
 import LocalizedString from '../form/component/LocalizedString.jsx'
 import EmailTextField from '../form/component/EmailTextField.jsx'
 import TextButton from '../form/component/TextButton.jsx'
-import {DateRangeInfoElement, H1InfoElement, ParagraphInfoElement} from '../form/component/InfoElement.jsx'
+import {DateRangeInfoElement, H1InfoElement} from '../form/component/InfoElement.jsx'
 
 export default class VaLogin extends React.Component {
   constructor(props) {
@@ -91,7 +91,6 @@ export default class VaLogin extends React.Component {
       <section id="container" className="soresu-fieldset">
         <H1InfoElement htmlId="name" lang={lang} values={content} />
         <DateRangeInfoElement htmlId="duration" translations={translations} translationKey="label" lang={lang} values={content} />
-        <ParagraphInfoElement htmlId="duration-help" translations={translations} lang={lang} values={content} />
         <h2><LocalizedString translations={translations.login} translationKey="heading" lang={lang} /></h2>
         <form onSubmit={this.submit.bind(this)}>
           <EmailTextField htmlId="primary-email" hasError={emailIsInvalid()} onChange={this.handleEmailChange.bind(this)} translations={translations.login} value={email} translationKey="contact-email" lang={lang} required="true" size="small" maxLength="80" />

@@ -15,7 +15,11 @@ insert into forms (content) VALUES ('
   {
     "type": "infoElement",
     "id": "duration-help",
-    "displayAs": "p"
+    "displayAs": "p",
+    "text":{
+      "fi":"Hakemusta on mahdollista muokata hakuajan loppuun asti. Hakemukset käsitellään hakuajan jälkeen.",
+      "sv":"TODO SV"
+    }
   },
   {
     "type": "wrapperElement",
@@ -1132,10 +1136,6 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
       "fi": "Hakuaika",
       "sv": "Ansökningstid"
     }
-  },
-  "duration-help": {
-    "fi":"Vastauksia on mahdollista muokata hakuajan loppuun asti. Hakemukset käsitellään hakuajan jälkeen.",
-    "sv":"TODO SV"
   },
   "self-financing-percentage": 25
 }'
