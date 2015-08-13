@@ -299,6 +299,32 @@
           })
         })
       })
+    }),
+    describe('Jos lomakkeelle on syötetty väärän muotoinen y-tunnus', function() {
+      before(
+        loginPage.openLoginPage(),
+        loginPage.login,
+        enterValidValuesToPage,
+        applicationPage.waitAutoSave,
+        applicationPage.setInputValue("business-id", "abcdefg-13")
+      )
+      describe('ennen tallentamista', function() {
+        it("lähetys on disabloitu", function() {
+          expect(applicationPage.submitButton().isEnabled()).to.equal(false)
+        })
+        it("virheellisestä kentästä kerrotaan", function() {
+          expect(applicationPage.classAttributeOf("business-id")).to.include('error')
+        })
+      })
+      describe('tarkistussumma varmistetaan oikein', function() {
+        before(
+          applicationPage.setInputValue("business-id", "5278603-1"),
+          applicationPage.waitAutoSave
+        )
+        it("y-tunnus, joka on muuten validi, mutta päättyy tarkistusmerkkiin 1 hylätään", function() {
+          expect(applicationPage.classAttributeOf("business-id")).to.include('error')
+        })
+      })
     })
   })
 })()
