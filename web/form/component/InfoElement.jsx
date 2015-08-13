@@ -127,7 +127,7 @@ export class EndOfDateRangeInfoElement extends BasicInfoComponent {
     const labelSource = this.labelSourceObject()
     return (
       <div>
-        <span><LocalizedString translations={labelSource} translationKey="label" lang={lang}/> </span>
+        <label><LocalizedString translations={labelSource} translationKey="label" lang={lang}/></label>
         <span>{endDateTime}</span>
       </div>
     )
