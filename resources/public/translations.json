@@ -60,6 +60,10 @@
       "fi": "Syötä arvo kokonaisina euroina",
       "sv": "TODO:Skriv in värdet på hela euro"
     },
+    "finnishBusinessId": {
+      "fi": "Tarkista y-tunnus",
+      "sv": "TODO: Kontrollera företags- och organisationsnummer"
+    },
     "negative-budget": {
       "fi": "Haettavan rahoituksen tulee olla positiivinen",
       "sv": "TODO"
