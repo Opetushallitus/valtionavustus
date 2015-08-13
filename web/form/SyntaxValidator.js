@@ -50,7 +50,7 @@ export default class SyntaxValidator {
 
   static validateBusinessId(input) {
     // see: http://tarkistusmerkit.teppovuori.fi/tarkmerk.htm#y-tunnus2
-    var hasValidForm = /^[0-9]{7}-[0-9]/.test(input)
+    var hasValidForm = /^[0-9]{7}-[0-9]$/.test(input)
     if (!hasValidForm) {
       return {error: "finnishBusinessId"}
     }

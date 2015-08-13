@@ -80,7 +80,7 @@
    :bank-bic                                             [{:error "required"}]
    :organization                                         []
    :organization-email                                   [{:error "required"} {:error "email"}]
-   :business-id                                          [{:error "required"}]
+   :business-id                                          [{:error "required"} {:error "finnishBusinessId"}]
    :project-effectiveness                                [{:error "required"}]
    :project-spreading-plan                               [{:error "required"}]
    :project-measure                                      [{:error "required"}]
