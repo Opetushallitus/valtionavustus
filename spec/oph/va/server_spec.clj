@@ -21,6 +21,13 @@
 
 (defn find-by-id [json id] (first (filter (fn [e] (.equals ( :id e) id)) (-> (validation/flatten-elements (json :content))))))
 
+(defn update-answers [answers key value]
+  (let [update-fn (fn [key new-value] (fn [value]
+                                        (if (= (:key value) key)
+                                          {:key key :value new-value}
+                                          value)))]
+    {:value (map (update-fn key value) (:value answers))}))
+
 (def valid-answers
   {:value [{:key "organization" :value "Testi Organisaatio"}
            {:key "organization-email" :value "org@example.com"}
@@ -218,6 +225,13 @@
         (should= 200 status)
         (should= "draft" (:status json))))
 
+  (it "PUT /api/avustushaku/1/hakemus/ should return hakemus status should detect SMTP injection"
+      (let [answers (update-answers valid-answers "primary-email" "misterburns@springfield.xxx%0ASubject:My%20Anonymous%20Subject")
+            {:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" answers)
+            json (json->map body)]
+        (should= 400 status)
+        (should= [{:error "email"}] (:primary-email json))))
+
   (it "Email address validation should catch malformed email addresses"
       ;; Create submission
       (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" valid-answers)
@@ -229,12 +243,9 @@
         (doseq [email ["testi@test.t"
                        "notanemail"
                        "hello;select * "
-                       (string/join (concat ["test@"] (repeat 85 ".test") [".tt"]))]]
-          (let [update-answers (fn [key new-value] (fn [value]
-                                                     (if (= (:key value) key)
-                                                       {:key key :value new-value}
-                                                       value)))
-                answers {:value (map (update-answers "primary-email" email) (:value valid-answers))}
+                       (string/join (concat ["test@"] (repeat 85 ".test") [".tt"]))
+                       "misterburns@springfield.xxx%0ASubject:My%20Anonymous%20Subject"]]
+          (let [answers (update-answers valid-answers "primary-email" email)
                 {:keys [status headers body error] :as resp} (post! (str "/api/avustushaku/1/hakemus/" id "/submit") answers)
                 json (json->map body)]
             (if (not (= [{:error "email"}] (:primary-email json)))

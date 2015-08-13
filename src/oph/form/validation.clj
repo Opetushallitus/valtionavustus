@@ -32,10 +32,10 @@
 (defn validate-email-security [field answer]
   (if (and (= (:displayAs field) "emailField")
            (not (nil? answer))
-           (not (string/blank? answer))
-           (> (count answer) 254))
-    [{:error "email"}])
-    [])
+           (or (re-matches #".*%0[aA].*" answer)
+               (> (count answer) 254)))
+    [{:error "email"}]
+    []))
 
 (defn validate-email-field [field answer]
   (if (not (and (= (:displayAs field) "emailField")
@@ -44,6 +44,7 @@
     (if (and (not (nil? answer))
              (not (string/blank? answer))
              (re-matches #"\S+@\S+\.\S+" answer)
+             (not (re-matches #".*%0[aA].*" answer))
              (<= (count answer) 254)
              (> (-> answer (string/split #"\.") last count) 1))
         []
