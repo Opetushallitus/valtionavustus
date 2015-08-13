@@ -53,7 +53,7 @@ export class H1InfoElement extends TextInfoComponent {
 export class ParagraphInfoElement extends TextInfoComponent {
   render() {
     const text = this.textValue()
-    return <p>{text}</p>
+    return <p className="soresu-info-element">{text}</p>
   }
 }
 
