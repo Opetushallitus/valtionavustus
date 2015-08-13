@@ -1,8 +1,10 @@
 TODO SV Avustushakemus: {{ avustushaku }}
 
-Haku päättyy: {{ end-date }} kl. {{ end-time }}
+Hakuaika: {{ start-date }} kl. {{ start-time }} - {{ end-date }} kl. {{ end-time }}
 
 Pääset muokkaamaan avustushakemusta tästä linkistä: {{& url }}
+
+Hakemusta on mahdollista muokata hakuajan loppuun asti. Hakemukset käsitellään hakuajan jälkeen.
 
 Huom! Voit jakaa tämän viestien muille hankkeen kumppaneille, mutta huomaa että
 jokainen linkin tietävä voi muokata hakemusta.

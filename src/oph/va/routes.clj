@@ -2,13 +2,13 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [compojure.route :as route]
             [clojure.tools.logging :as log]
-            [clj-time.format :as clj-time]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
             [compojure.core :refer [GET]]
             [compojure.api.sweet :refer :all]
             [schema.core :as s]
             [oph.common.config :refer [config]]
+            [oph.common.datetime :as datetime]
             [oph.form.db :as form-db]
             [oph.form.validation :as validation]
             [oph.form.routes :refer :all]
@@ -74,10 +74,14 @@
           (if-let [new-hakemus (va-db/create-hakemus! form-id answers)]
             (do (let [language (keyword (find-hakemus-value answers "language"))
                       avustushaku-title (-> avustushaku-content :name language)
-                      avustushaku-end-date (->> avustushaku-content
-                                                :duration
+                      avustushaku-duration (->> avustushaku-content
+                                                :duration)
+                      avustushaku-start-date (->> avustushaku-duration
+                                                  :start
+                                                  (datetime/parse))
+                      avustushaku-end-date (->> avustushaku-duration
                                                 :end
-                                                (clj-time/parse (clj-time/formatters :date-time)))
+                                                (datetime/parse))
                       email (find-hakemus-value answers "primary-email")
                       user-key (-> new-hakemus :hakemus :user_key)]
                   (va-email/send-new-hakemus-message! language
@@ -85,6 +89,7 @@
                                                       haku-id
                                                       avustushaku-title
                                                       user-key
+                                                      avustushaku-start-date
                                                       avustushaku-end-date))
                 (hakemus-ok-response (:hakemus new-hakemus) (:submission new-hakemus)))
             (internal-server-error!))

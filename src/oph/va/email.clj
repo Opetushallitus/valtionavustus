@@ -1,7 +1,6 @@
 (ns oph.va.email
   (:require [clojure.core.async :refer [<! >!! go chan]]
-            [clj-time.core :as time]
-            [clj-time.format :as time-format]
+            [oph.common.datetime :as datetime]
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
             [clojure.java.io :as io]
@@ -94,13 +93,12 @@
   (log/info "Signaling mail sender to stop")
   (>!! mail-queue {:operation :stop}))
 
-(defn send-new-hakemus-message! [lang to avustushaku-id avustushaku user-key end-date]
+(defn send-new-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
   (let [lang-str (or (clojure.core/name lang) "fi")
-        local-time-zone (time/time-zone-for-id "Europe/Helsinki")
-        date-string (->> (time-format/formatter "dd.MM.YYYY" local-time-zone)
-                         (.toString end-date))
-        time-string (->> (time-format/formatter "HH:mm" local-time-zone)
-                         (.toString end-date))
+        start-date-string (datetime/date-string start-date)
+        start-time-string (datetime/time-string start-date)
+        end-date-string (datetime/date-string end-date)
+        end-time-string (datetime/time-string end-date)
         url (str (-> config :server :url lang)
                  "?avustushaku="
                  avustushaku-id
@@ -117,6 +115,8 @@
                      :subject (get-in mail-titles [:new-hakemus lang])
                      :to to
                      :avustushaku avustushaku
-                     :end-date date-string
-                     :end-time time-string
+                     :start-date start-date-string
+                     :start-time start-time-string
+                     :end-date end-date-string
+                     :end-time end-time-string
                      :url url})))
