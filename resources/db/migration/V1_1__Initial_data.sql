@@ -10,11 +10,7 @@ insert into forms (content) VALUES ('
   {
     "type": "infoElement",
     "id": "duration",
-    "displayAs": "endOfDateRange",
-    "label": {
-      "fi": "Hakuaika päättyy",
-      "sv": "Sista ansöknings"
-    }
+    "displayAs": "dateRange"
   },
   {
     "type": "wrapperElement",

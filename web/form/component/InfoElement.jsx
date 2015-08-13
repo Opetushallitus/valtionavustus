@@ -90,10 +90,11 @@ export class DateRangeInfoElement extends BasicInfoComponent {
     const startDateTime = this.asDateTimeString(start)
     const end = new Date(value.end)
     const endDateTime = this.asDateTimeString(end)
+    const labelSource = this.labelSourceObject()
 
     return (
       <div>
-      <label><LocalizedString translations={value} translationKey="label" lang={lang}/></label>
+      <label><LocalizedString translations={labelSource} translationKey="label" lang={lang}/></label>
       <span>{startDateTime} - {endDateTime}</span>
       </div>
     )
