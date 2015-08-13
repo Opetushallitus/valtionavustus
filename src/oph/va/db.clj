@@ -29,6 +29,10 @@
   (->> {:user_key hakemus-id}
        (exec queries/submit-hakemus<!)))
 
+(defn cancel-hakemus [hakemus-id]
+  (->> {:user_key hakemus-id}
+       (exec queries/cancel-hakemus<!)))
+
 (defn get-avustushaku [id]
   (->> (exec queries/get-avustushaku {:id id})
        first))

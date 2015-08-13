@@ -239,6 +239,26 @@
                 json (json->map body)]
             (if (not (= [{:error "email"}] (:primary-email json)))
               (should-fail (str "Value " email " did not generate error, it should have"))))))
-      ))
+      )
+
+  (it "After cancellation hakemus is not returned from /api/avustushaku/1/hakemus/1"
+    ;; Create submission
+    (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" valid-answers)
+          json (json->map body)
+          id (:id json)]
+      (should= 200 status)
+      (should-not= "" id)
+
+      ;; Get before cancellation
+      (let [{:keys [status headers body error] :as resp} (get! (str "/api/avustushaku/1/hakemus/" id))
+            json (json->map body)
+            id (:id json)]
+        (should= 200 status)
+        (should= "draft" (:status json))
+        (va-db/cancel-hakemus id)
+
+        ;; Get after cancellation
+        (let [{:keys [status headers body error] :as resp} (get! (str "/api/avustushaku/1/hakemus/" id))]
+          (should= 404 status))))))
 
 (run-specs)

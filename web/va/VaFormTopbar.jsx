@@ -26,7 +26,7 @@ export default class VaFormTopbar extends React.Component {
       window.open(formOperations.urlCreator.existingSubmissionPreviewUrl(state), "preview")
     }
     const isSubmitted = function() {
-      return saveStatus.savedObject && saveStatus.savedObject.status !== "draft"
+      return saveStatus.savedObject && saveStatus.savedObject.status === "submitted"
     }
     const isSubmitDisabled = function() {
       return !(formIsValid && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state) || isSubmitted()
