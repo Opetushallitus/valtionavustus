@@ -5,7 +5,7 @@ import LocalizedString from './LocalizedString.jsx'
 import Translator from './../Translator.js'
 import {InfoElementPropertyMapper, AccordionElementPropertyMapper} from './PropertyMapper.js'
 
-export class BasicInfoComponent extends React.Component {
+class BasicInfoComponent extends React.Component {
   static asDateString(date) {
     return date.toLocaleDateString("fi-FI")
   }
@@ -32,12 +32,28 @@ export class BasicInfoComponent extends React.Component {
   }
 }
 
-export class H1InfoElement extends React.Component {
-  render() {
-    const values = this.props.values
-    const key = this.props.htmlId
+class TextInfoComponent extends React.Component {
+  textValue() {
     const lang = this.props.lang
-    return <h1><LocalizedString translations={values} translationKey={key} lang={lang}/></h1>
+    if (this.props.translations && this.props.translations.text != undefined) {
+      return new Translator(this.props.translations).translate('text', lang)
+    } else {
+      return new Translator(this.props.values).translate(this.props.htmlId, lang)
+    }
+  }
+}
+
+export class H1InfoElement extends TextInfoComponent {
+  render() {
+    const text = this.textValue()
+    return <h1>{text}</h1>
+  }
+}
+
+export class ParagraphInfoElement extends TextInfoComponent {
+  render() {
+    const text = this.textValue()
+    return <p>{text}</p>
   }
 }
 
@@ -123,12 +139,14 @@ export default class InfoElement extends React.Component {
     super(props)
     const fieldTypeMapping = {
       "h1": H1InfoElement,
+      "p": ParagraphInfoElement,
       "bulletList": AccordionInfoElement,
       "dateRange": DateRangeInfoElement,
       "endOfDateRange": EndOfDateRangeInfoElement
     }
     this.fieldPropertyMapping = {
       "h1": InfoElementPropertyMapper,
+      "p": InfoElementPropertyMapper,
       "bulletList": AccordionElementPropertyMapper,
       "dateRange": InfoElementPropertyMapper,
       "endOfDateRange": InfoElementPropertyMapper

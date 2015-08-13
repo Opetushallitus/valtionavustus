@@ -11,6 +11,7 @@
 
 (s/defschema AvustusHakuContent {:name LocalizedString
                                  :duration Duration
+                                 :duration-help LocalizedString
                                  :selection-criteria SelectionCriteria
                                  :self-financing-percentage s/Num})
 

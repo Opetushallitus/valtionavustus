@@ -20,7 +20,7 @@ class CommonPropertyMapper extends DefaultPropertyMapper {
     return {
       htmlId: props.htmlId,
       fieldType: props.fieldType,
-      translations: _.extend(props.translations, { label: field.label, helpText: field.helpText }),
+      translations: _.extend(props.translations, { label: field.label, helpText: field.helpText, text: field.text }),
       translationKey: "label",
       lang: props.lang
     }

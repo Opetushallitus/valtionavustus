@@ -11,11 +11,13 @@
   (s/defschema InfoElement {:type (s/eq "infoElement")
                             :id s/Str
                             :displayAs (s/enum :h1
+                                               :p
                                                :bulletList
                                                :dateRange
                                                :endOfDateRange)
                             (s/optional-key :params) s/Any
-                            (s/optional-key :label) LocalizedString})
+                            (s/optional-key :label) LocalizedString
+                            (s/optional-key :text) LocalizedString})
 
   (s/defschema Button {:type (s/eq "button")
                        :id s/Str
