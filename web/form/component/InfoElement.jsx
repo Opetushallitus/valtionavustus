@@ -1,4 +1,5 @@
 import React from 'react'
+import moment from 'moment'
 
 import ComponentFactory from '../ComponentFactory.js'
 import LocalizedString from './LocalizedString.jsx'
@@ -7,12 +8,11 @@ import {InfoElementPropertyMapper, AccordionElementPropertyMapper} from './Prope
 
 class BasicInfoComponent extends React.Component {
   static asDateString(date) {
-    return date.toLocaleDateString("fi-FI")
+    return moment(date).format('D.M.YYYY')
   }
 
   static asTimeString(date) {
-    const options = { hour: "numeric", minute: "numeric" }
-    return date.toLocaleTimeString("fi-FI", options)
+    return moment(date).format('H.mm')
   }
 
   asDateTimeString(date) {

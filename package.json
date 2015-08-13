@@ -19,7 +19,8 @@
     "query-string": "2.2.0",
     "react": "^0.13.2",
     "seamless-immutable": "^2.4.2",
-    "traverse": "0.6.6"
+    "traverse": "0.6.6",
+    "moment": "2.10.6"
   },
   "devDependencies": {
     "babel": "^5.6.14",
