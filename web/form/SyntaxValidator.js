@@ -22,7 +22,7 @@ export default class SyntaxValidator {
       }
     }
 
-    if (field.displayAs === 'businessIdField' && value) {
+    if (field.displayAs === 'finnishBusinessIdField' && value) {
       const businessIdError = SyntaxValidator.validateBusinessId(value);
       if (businessIdError) {
         validationErrors.push(businessIdError)

@@ -36,6 +36,7 @@
                                              :textArea
                                              :emailField
                                              :moneyField
+                                             :finnishBusinessIdField
                                              :dropdown
                                              :radioButton)})
 
