@@ -1,5 +1,5 @@
 import React from 'react'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 import ComponentFactory from '../ComponentFactory.js'
 import LocalizedString from './LocalizedString.jsx'
@@ -8,11 +8,11 @@ import {InfoElementPropertyMapper, AccordionElementPropertyMapper} from './Prope
 
 class BasicInfoComponent extends React.Component {
   static asDateString(date) {
-    return moment(date).format('D.M.YYYY')
+    return moment(date).tz('Europe/Helsinki').format('D.M.YYYY')
   }
 
   static asTimeString(date) {
-    return moment(date).format('H.mm')
+    return moment(date).tz('Europe/Helsinki').format('H.mm')
   }
 
   asDateTimeString(date) {
