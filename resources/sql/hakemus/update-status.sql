@@ -1,11 +1,11 @@
 INSERT INTO hakemukset(id, user_key, version, form_submission_id, form_submission_version, status, last_status_change_at)
-SELECT hakemukset.id,
+SELECT id,
        :user_key,
-       max(hakemukset.version) + 1,
+       max(version) + 1,
        :form_submission_id,
        :form_submission_version,
        :status,
        now()
 FROM hakemukset
 WHERE user_key = :user_key AND form_submission_id = :form_submission_id
-GROUP BY hakemukset.id
+GROUP BY id
