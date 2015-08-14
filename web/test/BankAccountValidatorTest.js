@@ -2,19 +2,17 @@ import { expect } from 'chai'
 import BankAccountValidator from '../form/BankAccountValidator.js'
 
 describe('Bank account validator', function() {
-  const bankAccountValidator = new BankAccountValidator()
-
   it('can validate a valid IBAN number', function() {
-    expect(bankAccountValidator.validate("FI2112345600000785")).to.equal(true)
+    expect(BankAccountValidator.isValidIban("FI2112345600000785")).to.equal(true)
   })
 
   it('can validate an IBAN number with spaces', function() {
-    expect(bankAccountValidator.validate("GB82 WEST 1234 5698 7654 32")).to.equal(true)
+    expect(BankAccountValidator.isValidIban("GB82 WEST 1234 5698 7654 32")).to.equal(true)
   })
 
   it('can recognize an invalid IBAN number', function() {
-    expect(bankAccountValidator.validate("FI2112345600000786")).to.equal(false)
-    expect(bankAccountValidator.validate("I am not an IBAN")).to.equal(false)
+    expect(BankAccountValidator.isValidIban("FI2112345600000786")).to.equal(false)
+    expect(BankAccountValidator.isValidIban("I am not an IBAN")).to.equal(false)
   })
 
   it('can recognize a valid BIC of 11 characters', function() {
