@@ -36,8 +36,8 @@
 (defn hakemus-ok-response [hakemus submission]
   (ok {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
        :status (:status hakemus)
-       :created_at (:created_at hakemus)
-       :verified_at (:verified_at hakemus)
+       :version (:version hakemus)
+       :last_status_change_at (:last_status_change_at hakemus)
        :submission submission}))
 
 (defroutes* avustushaku-routes
@@ -56,8 +56,9 @@
         :summary "Get current answers"
         (let [form-id (:form (va-db/get-avustushaku haku-id))
               hakemus (va-db/get-hakemus hakemus-id)
-              submission (get-form-submission form-id (:form_submission_id hakemus))]
-          (if (nil? (:verified_at hakemus)) (va-db/verify-hakemus hakemus-id))
+              submission-id (:form_submission_id hakemus)
+              submission (get-form-submission form-id submission-id)]
+          (if (= (:status hakemus) "new") (va-db/verify-hakemus hakemus-id))
           (hakemus-ok-response hakemus (:body submission))))
 
   (PUT* "/:haku-id/hakemus" [haku-id :as request]
@@ -116,7 +117,8 @@
              validation (validation/validate-form (form-db/get-form form-id) answers)]
          (if (every? empty? (vals validation))
            (let [hakemus (va-db/get-hakemus hakemus-id)
-                 saved-answers (update-form-submission form-id (:form_submission_id hakemus) answers)
+                 submission-id (:form_submission_id hakemus)
+                 saved-answers (update-form-submission form-id submission-id answers)
                  submitted-hakemus (va-db/submit-hakemus hakemus-id)]
              (hakemus-ok-response submitted-hakemus (:body saved-answers)))
            (bad-request! validation))))

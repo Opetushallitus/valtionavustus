@@ -16,19 +16,22 @@ CREATE TABLE form_submissions (
 CREATE SEQUENCE form_submissions_id_seq;
 CREATE INDEX ON form_submissions (form);
 
-CREATE TYPE status AS ENUM ('draft', 'submitted', 'cancelled');
+CREATE TYPE status AS ENUM ('new', 'draft', 'submitted', 'cancelled');
 CREATE TABLE hakemukset (
-    id                      serial PRIMARY KEY,
-    user_key                varchar(64) UNIQUE NOT NULL,
+    id                      integer NOT NULL,
+    user_key                varchar(64) NOT NULL,
+    created_at              timestamp with time zone default now(),
+    version                 integer NOT NULL,
+    version_closed          timestamp with time zone default NULL,
     form_submission_id      integer NOT NULL,
     form_submission_version integer NOT NULL,
-    created_at              timestamp with time zone default now(),
-    verified_at             timestamp with time zone,
-    submitted_at            timestamp with time zone,
-    cancelled_at            timestamp with time zone,
-    status                  status NOT NULL default 'draft',
+    status                  status NOT NULL default 'new',
+    last_status_change_at   timestamp with time zone NOT NULL,
+    PRIMARY KEY (id, version),
+    UNIQUE (user_key, version),
     FOREIGN KEY (form_submission_id, form_submission_version) REFERENCES form_submissions (id, version)
 );
+CREATE SEQUENCE hakemukset_id_seq;
 CREATE INDEX ON hakemukset (form_submission_id);
 
 CREATE TABLE avustushaut (

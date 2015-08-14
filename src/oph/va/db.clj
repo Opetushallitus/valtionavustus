@@ -16,22 +16,20 @@
        (exec queries/get-hakemus-by-user-id)
        first))
 
-(defn verify-hakemus [hakemus-id]
-  (->> {:user_key hakemus-id}
-       (exec queries/verify-hakemus<!)))
+(defn- update-status [hakemus-id status]
+  (let [params {:user_key hakemus-id :status status}]
+    (exec-all [queries/lock-hakemus params
+               queries/close-existing-hakemus! params
+               queries/update-hakemus-status<! params])))
 
-(defn get-hakemus-internal [id]
-  (->> {:id id}
-       (exec queries/get-hakemus-by-internal-id)
-       first))
+(defn verify-hakemus [hakemus-id]
+  (update-status hakemus-id :draft))
 
 (defn submit-hakemus [hakemus-id]
-  (->> {:user_key hakemus-id}
-       (exec queries/submit-hakemus<!)))
+  (update-status hakemus-id :submitted))
 
 (defn cancel-hakemus [hakemus-id]
-  (->> {:user_key hakemus-id}
-       (exec queries/cancel-hakemus<!)))
+  (update-status hakemus-id :cancelled))
 
 (defn get-avustushaku [id]
   (->> (exec queries/get-avustushaku {:id id})

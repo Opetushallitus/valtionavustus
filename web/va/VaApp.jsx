@@ -42,7 +42,7 @@ function onFieldUpdate(state, field, newFieldValue) {
 }
 
 function isNotFirstEdit(state) {
-  return state.saveStatus.savedObject && state.saveStatus.savedObject['verified_at']
+  return state.saveStatus.savedObject && state.saveStatus.savedObject.status && state.saveStatus.savedObject.status !== 'new'
 }
 
 function isSaveDraftAllowed(state) {

@@ -21,7 +21,7 @@
 (s/defschema Hakemus
   "Hakemus contains hakemus info and last submission"
   {:id     (s/maybe s/Str)
-   :status (s/enum "draft" "submitted")
-   :created_at s/Inst
-   :verified_at (s/maybe s/Inst)
+   :version Long
+   :status (s/enum "new" "draft" "submitted")
+   :last_status_change_at s/Inst
    :submission Submission})

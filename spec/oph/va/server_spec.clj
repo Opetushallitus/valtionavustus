@@ -223,7 +223,7 @@
                            {:key "organization-email" :value "organization@test.te"}]})
             json (json->map body)]
         (should= 200 status)
-        (should= "draft" (:status json))))
+        (should= "new" (:status json))))
 
   (it "PUT /api/avustushaku/1/hakemus/ should return hakemus status should detect SMTP injection"
       (let [answers (update-answers valid-answers "primary-email" "misterburns@springfield.xxx%0ASubject:My%20Anonymous%20Subject")
@@ -265,7 +265,7 @@
             json (json->map body)
             id (:id json)]
         (should= 200 status)
-        (should= "draft" (:status json))
+        (should= "new" (:status json))
         (va-db/cancel-hakemus id)
 
         ;; Get after cancellation
