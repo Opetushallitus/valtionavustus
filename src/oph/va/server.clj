@@ -1,6 +1,6 @@
 (ns oph.va.server
   (:use [org.httpkit.server :only [run-server]]
-        [oph.va.routes :only [all-routes]])
+        [oph.va.routes :only [all-routes restricted-routes]])
   (:require [ring.middleware.reload :as reload]
             [ring.middleware.logger :as logger]
             [compojure.handler :refer [site]]
@@ -25,7 +25,11 @@
   (db/close-datasource!))
 
 (defn start-server [host port auto-reload?]
-  (let [site (logger/wrap-with-logger (site #'all-routes))
+  (let [site (logger/wrap-with-logger (site (if (-> config :api :restricted-routes?)
+                                              #'restricted-routes
+                                              (do
+                                                (log/warn "Enabling all routes. This setting should be used only in development!")
+                                                #'all-routes))))
         handler (if auto-reload?
                   (reload/wrap-reload site)
                   site)]
