@@ -55,5 +55,5 @@
 
 (defmacro exec-all [query-list]
   `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)}]
-     (doseq [[query# params#] (partition 2 ~query-list)]
-       (query# params# {:connection connection#}))))
+     (last(for [[query# params#] (partition 2 ~query-list)]
+       (query# params# {:connection connection#})))))

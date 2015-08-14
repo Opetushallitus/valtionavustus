@@ -18,11 +18,11 @@
        not))
 
 (defn update-submission! [form-id submission-id answers]
-  (let [params {:form_id form-id :submission_id submission-id}]
-    (exec-all [queries/lock-submission params
-               queries/close-existing-submission! params]))
-  (->> {:form_id form-id :submission_id submission-id :answers answers}
-       (exec queries/update-submission<!)))
+  (let [lock-params {:form_id form-id :submission_id submission-id}
+        update-params {:form_id form-id :submission_id submission-id :answers answers}]
+    (exec-all [queries/lock-submission lock-params
+               queries/close-existing-submission! lock-params
+               queries/update-submission<! update-params])))
 
 (defn create-submission! [form-id answers]
   (->> {:form_id form-id :answers answers}
