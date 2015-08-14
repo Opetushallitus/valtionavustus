@@ -16,6 +16,12 @@
        (exec queries/get-hakemus-by-user-id)
        first))
 
+(defn update-submission [hakemus-id submission-id submission-version]
+  (let [params {:user_key hakemus-id :form_submission_id submission-id :form_submission_version submission-version}]
+    (exec-all [queries/lock-hakemus params
+               queries/close-existing-hakemus! params
+               queries/update-hakemus-submission<! params])))
+
 (defn- update-status [hakemus-id submission-id submission-version status]
   (let [params {:user_key hakemus-id :form_submission_id submission-id :form_submission_version submission-version :status status}]
     (exec-all [queries/lock-hakemus params

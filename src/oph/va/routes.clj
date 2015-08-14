@@ -105,8 +105,10 @@
        (let [form-id (:form (va-db/get-avustushaku haku-id))
              validation (validation/validate-form-security (form-db/get-form form-id) answers)]
          (if (every? empty? (vals validation))
-           (let [hakemus (va-db/get-hakemus hakemus-id)]
-             (hakemus-ok-response hakemus (:body (update-form-submission form-id (:form_submission_id hakemus) answers))))
+           (let [hakemus (va-db/get-hakemus hakemus-id)
+                 updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
+                 updated-hakemus (va-db/update-submission hakemus-id (:form_submission_id hakemus) (:version updated-submission))]
+             (hakemus-ok-response updated-hakemus updated-submission))
            (bad-request! validation))))
 
   (POST* "/:haku-id/hakemus/:hakemus-id/submit" [haku-id hakemus-id :as request]

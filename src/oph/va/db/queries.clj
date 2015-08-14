@@ -3,6 +3,7 @@
 
 (defquery create-hakemus<! "sql/hakemus/create.sql")
 (defquery get-hakemus-by-user-id "sql/hakemus/get_by_user_id.sql")
+(defquery update-hakemus-submission<! "sql/hakemus/update-submission.sql")
 (defquery update-hakemus-status<! "sql/hakemus/update-status.sql")
 (defquery lock-hakemus "sql/hakemus/lock.sql")
 (defquery close-existing-hakemus! "sql/hakemus/close-existing.sql")
