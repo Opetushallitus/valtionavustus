@@ -18,7 +18,7 @@ insert into forms (content) VALUES ('
     "displayAs": "p",
     "text":{
       "fi":"Hakemusta on mahdollista muokata hakuajan loppuun asti. Hakemukset käsitellään hakuajan jälkeen.",
-      "sv":"TODO SV"
+      "sv":"TODO SV.. testi 2"
     }
   },
   {
