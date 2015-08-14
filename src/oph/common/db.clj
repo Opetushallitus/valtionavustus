@@ -39,12 +39,17 @@
                       (when ds
                         (close-datasource ds)))))
 
+(defn get-next-exception-or-original [original-exception]
+  (try (.getNextException original-exception)
+       (catch IllegalArgumentException iae
+         original-exception)))
+
 (defn clear-db! []
   (if (:allow-db-clear? (:server config))
     (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
            ["drop schema public cascade"
             "create schema public"])
-         (catch Exception e (.printStackTrace (.getNextException e))))
+         (catch Exception e (.printStackTrace (get-next-exception-or-original e))))
     (throw (RuntimeException. (str "Clearing database is not allowed! "
                                    "check that you run with correct mode. "
                                    "Current config name is " (config-name))))))
