@@ -57,9 +57,10 @@
         (let [form-id (:form (va-db/get-avustushaku haku-id))
               hakemus (va-db/get-hakemus hakemus-id)
               submission-id (:form_submission_id hakemus)
-              submission (get-form-submission form-id submission-id)]
-          (if (= (:status hakemus) "new") (va-db/verify-hakemus hakemus-id))
-          (hakemus-ok-response hakemus (:body submission))))
+              submission (:body (get-form-submission form-id submission-id))
+              submission-version (:version submission)]
+          (if (= (:status hakemus) "new") (va-db/verify-hakemus hakemus-id submission-id submission-version))
+          (hakemus-ok-response hakemus submission)))
 
   (PUT* "/:haku-id/hakemus" [haku-id :as request]
       :path-params [haku-id :- Long]
@@ -118,12 +119,13 @@
          (if (every? empty? (vals validation))
            (let [hakemus (va-db/get-hakemus hakemus-id)
                  submission-id (:form_submission_id hakemus)
-                 saved-answers (update-form-submission form-id submission-id answers)
-                 submitted-hakemus (va-db/submit-hakemus hakemus-id)]
-             (hakemus-ok-response submitted-hakemus (:body saved-answers)))
+                 saved-submission (:body (update-form-submission form-id submission-id answers))
+                 submission-version (:version saved-submission)
+                 submitted-hakemus (va-db/submit-hakemus hakemus-id submission-id submission-version)]
+             (hakemus-ok-response submitted-hakemus saved-submission))
            (bad-request! validation))))
 
-  )
+)
 
 (defroutes* doc-routes
   "API documentation browser"

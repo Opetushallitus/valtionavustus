@@ -263,10 +263,12 @@
       ;; Get before cancellation
       (let [{:keys [status headers body error] :as resp} (get! (str "/api/avustushaku/1/hakemus/" id))
             json (json->map body)
-            id (:id json)]
+            id (:id json)
+            submission-version (:version (:submission json))
+            submission-id (:id (:submission json))]
         (should= 200 status)
         (should= "new" (:status json))
-        (va-db/cancel-hakemus id)
+        (va-db/cancel-hakemus id submission-id submission-version)
 
         ;; Get after cancellation
         (let [{:keys [status headers body error] :as resp} (get! (str "/api/avustushaku/1/hakemus/" id))]

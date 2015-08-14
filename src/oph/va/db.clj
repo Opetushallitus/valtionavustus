@@ -16,20 +16,20 @@
        (exec queries/get-hakemus-by-user-id)
        first))
 
-(defn- update-status [hakemus-id status]
-  (let [params {:user_key hakemus-id :status status}]
+(defn- update-status [hakemus-id submission-id submission-version status]
+  (let [params {:user_key hakemus-id :form_submission_id submission-id :form_submission_version submission-version :status status}]
     (exec-all [queries/lock-hakemus params
                queries/close-existing-hakemus! params
                queries/update-hakemus-status<! params])))
 
-(defn verify-hakemus [hakemus-id]
-  (update-status hakemus-id :draft))
+(defn verify-hakemus [hakemus-id submission-id submission-version]
+  (update-status hakemus-id submission-id submission-version :draft))
 
-(defn submit-hakemus [hakemus-id]
-  (update-status hakemus-id :submitted))
+(defn submit-hakemus [hakemus-id submission-id submission-version]
+  (update-status hakemus-id submission-id submission-version :submitted))
 
-(defn cancel-hakemus [hakemus-id]
-  (update-status hakemus-id :cancelled))
+(defn cancel-hakemus [hakemus-id submission-id submission-version]
+  (update-status hakemus-id submission-id submission-version :cancelled))
 
 (defn get-avustushaku [id]
   (->> (exec queries/get-avustushaku {:id id})
