@@ -299,7 +299,8 @@
           })
         })
       })
-    }),
+    })
+
     describe('Jos lomakkeelle on syötetty väärän muotoinen y-tunnus', function() {
       before(
         loginPage.openLoginPage(),
@@ -323,6 +324,27 @@
         )
         it("y-tunnus, joka on muuten validi, mutta päättyy tarkistusmerkkiin 1 hylätään", function() {
           expect(applicationPage.classAttributeOf("business-id")).to.include('error')
+        })
+      })
+    })
+
+    describe('Jos lomakkeelle on syötetty väärän muotoinen iban tai bic', function() {
+      before(
+        loginPage.openLoginPage(),
+        loginPage.login,
+        enterValidValuesToPage,
+        applicationPage.waitAutoSave,
+        applicationPage.setInputValue("bank-iban", "112233445566778899"),
+        applicationPage.setInputValue("bank-bic", "1122")
+
+      )
+      describe('ennen tallentamista', function() {
+        it("lähetys on disabloitu", function() {
+          expect(applicationPage.submitButton().isEnabled()).to.equal(false)
+        })
+        it("virheellisestä kentästä kerrotaan", function() {
+          expect(applicationPage.classAttributeOf("bank-iban")).to.include('error')
+          expect(applicationPage.classAttributeOf("bank-bic")).to.include('error')
         })
       })
     })

@@ -64,6 +64,14 @@
       "fi": "Tarkista y-tunnus",
       "sv": "TODO: Kontrollera företags- och organisationsnummer"
     },
+    "iban": {
+      "fi": "Tarkista tilinumero",
+      "sv": "TODO: Kontrollera kontonummer"
+    },
+    "bic": {
+      "fi": "Tarkista pankin BIC-koodi",
+      "sv": "TODO: Kontrollera bankens BIC-kod"
+    },
     "negative-budget": {
       "fi": "Haettavan rahoituksen tulee olla positiivinen",
       "sv": "TODO"

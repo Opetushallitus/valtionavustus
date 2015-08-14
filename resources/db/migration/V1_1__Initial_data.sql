@@ -158,7 +158,7 @@ insert into forms (content) VALUES ('
             "type": "formField",
             "id":"bank-iban",
             "required":true,
-            "displayAs":"textField",
+            "displayAs":"iban",
             "params":{
               "size":"large",
               "maxlength":80
@@ -172,7 +172,7 @@ insert into forms (content) VALUES ('
             "type": "formField",
             "id":"bank-bic",
             "required":true,
-            "displayAs":"textField",
+            "displayAs":"bic",
             "params":{
               "size":"small",
               "maxlength":80

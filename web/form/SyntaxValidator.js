@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import FormUtil from './FormUtil.js'
+import BankAccountValidator from './BankAccountValidator.js'
 
 export default class SyntaxValidator {
   static validateSyntax(field, value) {
@@ -9,23 +10,37 @@ export default class SyntaxValidator {
     }
 
     if (field.displayAs === 'emailField' && value) {
-      var emailError = SyntaxValidator.validateEmail(value);
+      var emailError = SyntaxValidator.validateEmail(value)
       if (emailError) {
         validationErrors.push(emailError)
       }
     }
 
     if (field.displayAs === 'moneyField' && value) {
-      const moneyError = SyntaxValidator.validateMoney(value);
+      const moneyError = SyntaxValidator.validateMoney(value)
       if (moneyError) {
         validationErrors.push(moneyError)
       }
     }
 
     if (field.displayAs === 'finnishBusinessIdField' && value) {
-      const finnishBusinessIdError = SyntaxValidator.validateBusinessId(value);
+      const finnishBusinessIdError = SyntaxValidator.validateBusinessId(value)
       if (finnishBusinessIdError) {
         validationErrors.push(finnishBusinessIdError)
+      }
+    }
+
+    if (field.displayAs === 'iban' && value) {
+      const ibanError = SyntaxValidator.validateIban(value)
+      if (ibanError) {
+        validationErrors.push(ibanError)
+      }
+    }
+
+    if (field.displayAs === 'bic' && value) {
+      const bicError = SyntaxValidator.validateBic(value)
+      if (bicError) {
+        validationErrors.push(bicError)
       }
     }
 
@@ -41,11 +56,12 @@ export default class SyntaxValidator {
     const validEmailRegexp = /\S+@\S+\.\S+/
     const invalidEmailRegexp = /.*%0[aA].*/
     const validEmail = validEmailRegexp.test(input) && lastPartIsLongerThanOne(input) && !invalidEmailRegexp.test(input)
-    return validEmail ? undefined : {error: "email"}
+    return validEmail ? undefined : { error: "email" }
+
   }
 
   static validateMoney(input) {
-    return /^[0-9]*$/.test(input) && FormUtil.isNumeric(input) ? undefined : {error: "money"}
+    return /^[0-9]*$/.test(input) && FormUtil.isNumeric(input) ? undefined : { error: "money" }
   }
 
   static validateBusinessId(input) {
@@ -69,6 +85,14 @@ export default class SyntaxValidator {
     }
     var modulo = sum % 11
     var calculatedCheckDigit = 11 - modulo
-    return calculatedCheckDigit == checkDigit ? undefined : {error: "finnishBusinessId"}
+    return calculatedCheckDigit == checkDigit ? undefined : { error: "finnishBusinessId" }
+  }
+
+  static validateIban(input) {
+    return BankAccountValidator.isValidIban(input) ? undefined : { error: "iban" }
+  }
+
+  static validateBic(input) {
+    return BankAccountValidator.isValidBic(input) ? undefined : { error: "bic" }
   }
 }

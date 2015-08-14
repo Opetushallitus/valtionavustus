@@ -20,7 +20,7 @@ function enterValidValues(applicationPage) {
   applicationPage.setInputValue("project-announce", "Tiedoitamme hankkeesta kivasti sitten.")()
   applicationPage.setInputValue("continuation-project", "no")()
   applicationPage.setInputValue("bank-iban", "FI 32 5000 4699350600")()
-  applicationPage.setInputValue("bank-bic", "5000")()
+  applicationPage.setInputValue("bank-bic", "TESTBANK")()
   applicationPage.setInputValue("coordination-costs-row.amount", "0")()
   applicationPage.setInputValue("personnel-costs-row.amount", "0")()
   applicationPage.setInputValue("service-purchase-costs-row.amount", "0")()

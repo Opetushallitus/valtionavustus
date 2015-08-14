@@ -1,4 +1,3 @@
-import React from 'react'
 import BasicTextField from './BasicTextField.jsx'
 
 export default class EmailTextField extends BasicTextField {

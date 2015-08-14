@@ -1,5 +1,5 @@
 export default class BankAccountValidator {
-  constructor() {
+  static codeLength(countryCode) {
     this.codeLengths = {
       AL: 28, AD: 24, AE: 23, AT: 20, AZ: 28, AX: 21, BA: 20, BE: 16, BG: 22,
       BH: 22, BR: 29, CH: 21, CR: 21, CY: 28, CZ: 24, DE: 22, DK: 18, DO: 28,
@@ -10,6 +10,7 @@ export default class BankAccountValidator {
       PS: 29, PT: 25, QA: 29, RO: 24, RS: 22, SA: 24, SE: 24, SI: 19, SK: 24,
       SM: 27, TL: 23, TN: 24, TR: 26, VG: 24, XK: 20
     }
+    return this.codeLengths[countryCode]
   }
 
   static iso7064Mod97_10(iban) {
@@ -37,14 +38,14 @@ export default class BankAccountValidator {
     return (testChar != "0" && testChar != "1" && testChar != "2")
   }
 
-  validate(input) {
+  static isValidIban(input) {
     const iban = String(input).toUpperCase().replace(/\s+/g, '')
     const isUpperCaseAlphanumeric = /^[A-Z0-9]+$/
     // match and capture (1) ISO 3166-1 alpha-2 country code, (2) check digits,
     // and (3) Basic Bank Account Number (BBAN)
     const ibanGroups = iban.match(/^([A-Z]{2})(\d{2})([A-Z\d]+)$/)
 
-    if (!isUpperCaseAlphanumeric.test(iban) || !ibanGroups || iban.length !== this.codeLengths[ibanGroups[1]]) {
+    if (!isUpperCaseAlphanumeric.test(iban) || !ibanGroups || iban.length !== BankAccountValidator.codeLength([ibanGroups[1]])) {
       return false
     }
 

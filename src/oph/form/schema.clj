@@ -37,6 +37,8 @@
                                              :emailField
                                              :moneyField
                                              :finnishBusinessIdField
+                                             :iban
+                                             :bic
                                              :dropdown
                                              :radioButton)})
 
