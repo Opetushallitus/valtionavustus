@@ -14,6 +14,7 @@ CREATE TABLE form_submissions (
     PRIMARY KEY (id, version)
 );
 CREATE SEQUENCE form_submissions_id_seq;
+CREATE INDEX ON form_submissions (form);
 
 CREATE TYPE status AS ENUM ('draft', 'submitted', 'cancelled');
 CREATE TABLE hakemukset (
@@ -28,6 +29,7 @@ CREATE TABLE hakemukset (
     status                  status NOT NULL default 'draft',
     FOREIGN KEY (form_submission_id, form_submission_version) REFERENCES form_submissions (id, version)
 );
+CREATE INDEX ON hakemukset (form_submission_id);
 
 CREATE TABLE avustushaut (
     id             serial PRIMARY KEY,
