@@ -8,22 +8,22 @@
                  ;; HTTP server
                  [javax.servlet/servlet-api "2.5"]
                  [http-kit "2.1.19"]
-                 [ring/ring-devel "1.3.2"]
-                 [ring/ring-core "1.3.2"]
+                 [ring/ring-devel "1.4.0"]
+                 [ring/ring-core "1.4.0"]
 
                  ;; Routing
-                 [compojure "1.3.4" :exclusions [instaparse]]
-                 [metosin/compojure-api "0.21.0" :exclusions [commons-codec
+                 [compojure "1.4.0" :exclusions [instaparse]]
+                 [metosin/compojure-api "0.22.0" :exclusions [commons-codec
                                                               instaparse
                                                               joda-time
                                                               clj-time
                                                               org.clojure/tools.reader]]
 
                  ;; JSON
-                 [cheshire "5.4.0"]
+                 [cheshire "5.5.0"]
 
                  ;; SQL + migrations
-                 [yesql "0.5.0-rc3"]
+                 [yesql "0.5.0"]
                  [org.postgresql/postgresql "9.4-1201-jdbc41"]
                  [hikari-cp "1.2.4"]
                  [org.flywaydb/flyway-core "3.2.1"]
@@ -34,7 +34,7 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
 
                  ;; Testing
-                 [speclj "3.2.0"]
+                 [speclj "3.3.1"]
                  ;; for junit output: lein spec -f junit
                  [speclj-junit "0.0.10"]
 
@@ -47,9 +47,9 @@
                  ;; Utils
                  [org.clojure/tools.trace "0.7.8"]
                  [org.clojure/tools.logging "0.3.1"]
-                 [clj-time "0.10.0"]
+                 [clj-time "0.11.0"]
                  [org.slf4j/slf4j-log4j12 "1.7.12"]
-                 [pandect "0.5.2"]]
+                 [pandect "0.5.3"]]
 
   :main ^:skip-aot oph.va.server
   :target-path "target/%s"
