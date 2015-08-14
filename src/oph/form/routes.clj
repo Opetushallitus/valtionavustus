@@ -38,6 +38,17 @@
         (ok submission)
         (internal-server-error!)))))
 
+(defroutes* form-restricted-routes
+  "Restricted form routes"
+
+  (GET* "/:id" [id]
+        :path-params [id :- Long]
+        :return Form
+        (let [form (form-db/get-form id)]
+          (if form
+            (ok form)
+            (not-found)))))
+
 (defroutes* form-routes
   "Form routes"
 

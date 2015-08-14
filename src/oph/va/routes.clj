@@ -125,17 +125,6 @@
 
   )
 
-(defroutes* api-routes
-  "API implementation"
-
-  ;; Bind form routes
-
-  (context* "/form" [] :tags ["forms"] form-routes)
-
-  ;; Bind avustushaku routes
-  (context* "/avustushaku" [] :tags ["avustushaut"] avustushaku-routes))
-
-
 (defroutes* doc-routes
   "API documentation browser"
   (swagger-ui))
@@ -150,6 +139,7 @@
                         {:name "avustushaut"
                          :description "Avustushaku"}]})
 
+  (context* "/api/form" [] :tags ["forms"] form-restricted-routes)
   (context* "/api/avustushaku" [] :tags ["avustushaut"] avustushaku-routes)
 
   (context "/doc" [] doc-routes)
