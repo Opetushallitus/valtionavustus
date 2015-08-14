@@ -7,4 +7,6 @@ fi
 
 echo "    Executing $1 as {{ dbuser }} to db {{ dbname }} ..."
 time PGPASSWORD={{ dbpassword }} /usr/bin/psql -U {{ dbuser }} -h localhost -d {{ dbname }} -f $1
+retval=$?
 echo "    ...SQL execution done."
+exit $retval
