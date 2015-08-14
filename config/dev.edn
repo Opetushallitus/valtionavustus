@@ -1,5 +1,7 @@
 {:server {:url {:fi "http://localhost:8080/"
                 :sv "http://localhost:8080/"}}
+ :api {:enable-form-routes? true
+       :enable-swagger? true}
  :email {:enabled? false
          :host "localhost"
          :port 2500}}

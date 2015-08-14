@@ -129,7 +129,10 @@
   "API implementation"
 
   ;; Bind form routes
-  (context* "/form" [] :tags ["forms"] form-routes)
+
+  (when (-> config :api :enable-form-api?)
+    (log/warn "Enabling form API - this should only be done in development or test environment!")
+    (context* "/form" [] :tags ["forms"] form-routes))
 
   ;; Bind avustushaku routes
   (context* "/avustushaku" [] :tags ["avustushaut"] avustushaku-routes))
@@ -143,17 +146,20 @@
   {:formats [:json-kw]}
 
   ;; swagger.json generation
-  (swagger-docs {:info {:title "Valtionavustus API"}
-                 :tags [{:name "forms"
-                         :description "Form and form submission management"}
-                        {:name "avustushaut"
-                         :description "Avustushaku"}]})
+  (when (-> config :api :enable-swagger?)
+    (swagger-docs {:info {:title "Valtionavustus API"}
+                   :tags [{:name "forms"
+                           :description "Form and form submission management"}
+                          {:name "avustushaut"
+                           :description "Avustushaku"}]}))
 
   ;; Route all requests with API prefix to API routes
   (context "/api" [] api-routes)
 
   ;; Documentation
-  (context "/doc" [] doc-routes)
+  (when (-> config :api :enable-swagger?)
+    (log/warn "Enabling swagger UI - this should only be done in development or test environment!")
+    (context "/doc" [] doc-routes))
 
   (GET "/" [](charset (content-type (resp/resource-response "index.html" {:root "public"}) "text/html") "utf-8"))
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})

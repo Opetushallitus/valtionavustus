@@ -2,6 +2,8 @@
           :allow-db-clear? true
           :host "localhost"
           :port 8080}
+ :api {:enable-form-api? false
+       :enable-swagger? false}
  :db {:username "va"
       :password "va"
       :database-name "va-dev"
