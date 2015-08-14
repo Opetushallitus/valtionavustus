@@ -14,7 +14,7 @@
   with_dict: logical_volumes
 
 - name: Mount logical volumes
-  mount: name={{ item.value.mount_point }} src=/dev/persistent.volumes/{{ item.key }} fstype={{ item.value.filesystem }} state=mounted
+  mount: name={{ item.value.mount_point }} src=/dev/persistent.volumes/{{ item.key }} fstype={{ item.value.filesystem }} state=mounted opts=nobootwait
   with_dict: logical_volumes
 
 - name: Grow xfs disks automatically
