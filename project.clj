@@ -34,7 +34,7 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
 
                  ;; Testing
-                 [speclj "3.3.1"]
+                 [speclj "3.2.0"]
                  ;; for junit output: lein spec -f junit
                  [speclj-junit "0.0.10"]
 
