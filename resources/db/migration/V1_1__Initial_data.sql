@@ -549,19 +549,6 @@ insert into forms (content) VALUES ('
           "fi":"Hankkeen päättymisaika",
           "sv":"Avslutandet av projektet"
         }
-      },
-      {
-        "type": "formField",
-        "id":"other-funding",
-        "required":false,
-        "displayAs":"textArea",
-        "params":{
-          "maxlength":1000
-        },
-        "label":{
-          "fi":"Saako hanke muuta rahoitusta tai onko hankkeella tuloja?",
-          "sv":"TODO"
-        }
       }
     ]
   },
