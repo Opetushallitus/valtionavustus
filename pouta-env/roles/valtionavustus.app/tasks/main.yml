@@ -30,3 +30,6 @@
 
 - name: Allow va-deploy to run SQL scripts
   lineinfile: 'dest=/etc/sudoers line="va-deploy ALL=(postgres) NOPASSWD: /usr/local/bin/run_sql.bash" validate="visudo -cf %s"'
+
+- name: Add script to dump database contents
+  template: src=dump_database_to_sql.bash.j2 dest=/usr/local/bin/dump_database_to_sql.bash owner=postgres group=postgres mode=0700
