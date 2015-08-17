@@ -666,6 +666,10 @@ insert into forms (content) VALUES ('
                   "fi":"Yhteishankkeen koordinaatiokustannukset",
                   "sv":"Koordineringskostnaderna för ett samprojekt"
                 },
+                "helpText":{
+                  "fi": "Helptest",
+                  "sv": "Helptest"
+                },
                 "children": [
                   {
                     "type": "formField",

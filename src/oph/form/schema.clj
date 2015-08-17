@@ -54,7 +54,8 @@
                                  :children                [(s/either BasicElement
                                                                      (s/recursive #'WrapperElement))]
                                  (s/optional-key :params) s/Any
-                                 (s/optional-key :label)  LocalizedString}))
+                                 (s/optional-key :label)  LocalizedString
+                                 (s/optional-key :helpText)  LocalizedString}))
 
   (s/defschema Content [(s/either BasicElement
                                   WrapperElement)])
