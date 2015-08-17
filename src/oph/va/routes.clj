@@ -129,6 +129,11 @@
 
 )
 
+(defroutes* resource-routes
+  (GET "/" [](charset (content-type (resp/resource-response "index.html" {:root "public"}) "text/html") "utf-8"))
+  (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
+  (route/not-found "<p>Page not found.</p>"))
+
 (defroutes* doc-routes
   "API documentation browser"
   (swagger-ui))
@@ -148,9 +153,8 @@
 
   (context "/doc" [] doc-routes)
 
-  (GET "/" [](charset (content-type (resp/resource-response "index.html" {:root "public"}) "text/html") "utf-8"))
-  (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
-  (route/not-found "<p>Page not found.</p>"))
+  ;; Resources
+  (routes resource-routes))
 
 (defapi all-routes
   {:formats [:json-kw]}
@@ -168,6 +172,5 @@
   ;; Documentation
   (context "/doc" [] doc-routes)
 
-  (GET "/" [](charset (content-type (resp/resource-response "index.html" {:root "public"}) "text/html") "utf-8"))
-  (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
-  (route/not-found "<p>Page not found.</p>"))
+  ;; Resources
+  (routes resource-routes))
