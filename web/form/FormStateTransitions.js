@@ -187,6 +187,14 @@ export default class FormStateTransitions {
     InputValueStorage.deleteValue(growingParent, answersObject, fieldToRemove.id)
     delete state.clientSideValidation[fieldToRemove.id]
     _.remove(growingParent.children, fieldToRemove)
+
+    // Reindex growing fields
+    for (var i = 0; i < growingParent.children.length; i++) {
+      var child = growingParent.children[i]
+      const nodeIndex = i + 1
+      child.id = child.id.replace(/-\d+$/, "-" + nodeIndex.toString())
+    }
+
     state.saveStatus.changes = true
     this.startAutoSave(state)
     return state
