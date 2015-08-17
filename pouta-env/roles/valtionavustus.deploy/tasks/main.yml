@@ -69,3 +69,6 @@
 
 - name: Add directory for database backups storage
   file: path=/mnt/database-backup owner={{ jenkins_user }} state=directory mode=0700
+
+- name: Add directory for database db dumps storage
+  file: path=/mnt/db-dumps owner={{ jenkins_user }} state=directory mode=0700
