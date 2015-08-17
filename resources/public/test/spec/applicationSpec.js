@@ -131,7 +131,7 @@
             )
             describe("epäonnistumisen jälkeen", function() {
               it("yleinen virhe näytetään", function() {
-                expect(applicationPage.saveError()).to.equal('Ei tallennettu - tarkista syöttämäsi tiedot.1 vastauksessa puutteita')
+                expect(applicationPage.saveError()).to.equal('Ei tallennettu - tarkista syöttämäsi tiedot.')
               })
               it("kentän virhe näytetään", function() {
                 expect(applicationPage.detailedValidationErrors()).to.deep.equal(['Hakijaorganisaatio: Pakollinen tieto'])

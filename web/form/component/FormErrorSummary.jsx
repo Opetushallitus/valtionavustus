@@ -22,7 +22,7 @@ export default class FormErrorSummary extends React.Component {
     const oldValidationErrors = this.props.validationErrors
     const isUptoDate = this.state.open === nextState.open &&
                         this.props.lang === nextProps.lang &&
-                        this.props.saveError === nextProps.saveError &&
+                        this.props.serverError === nextProps.serverError &&
                         oldIdsOfInvalidFields.length === newIdsOfInvalidFields.length &&
                         _.reduce(oldIdsOfInvalidFields, function(acc, id) {
                           return acc && _.isEqual(oldValidationErrors[id], nextProps.validationErrors[id])
@@ -45,7 +45,7 @@ export default class FormErrorSummary extends React.Component {
     const formContent = this.props.formContent
     const validationErrors = this.props.validationErrors
     const translator = new Translator(this.translations)
-    const saveError = this.props.saveError.length > 0 ? translator.translate(this.props.saveError, lang) : ""
+    const serverError = this.props.serverError.length > 0 ? translator.translate(this.props.serverError, lang) : ""
     const fieldsWithErrorsAndClosestParents = FormErrorSummary.resolveFieldsErrorsAndClosestParents(validationErrors, formContent)
     const invalidFieldsCount = fieldsWithErrorsAndClosestParents.length
     const fieldErrorMessageElements = _.map(fieldsWithErrorsAndClosestParents, x => {
@@ -53,8 +53,8 @@ export default class FormErrorSummary extends React.Component {
     })
     const openStateClassName = FormErrorSummary.determineCssClass(this.state.open)
     return (
-      <div id="form-error-summary" hidden={invalidFieldsCount === 0 && saveError.length === 0}>
-        <div hidden={saveError.length === 0} className="error">{saveError}</div>
+      <div id="form-error-summary" hidden={invalidFieldsCount === 0 && serverError.length === 0}>
+        <div hidden={serverError.length === 0} className="server-error">{serverError}</div>
         <a onClick={this.toggleOpen} role="button" className={"error opener-handle " + openStateClassName} id="validation-errors-summary" hidden={invalidFieldsCount === 0}>
           {translator.translate("validation-errors", lang, null, {kpl: invalidFieldsCount})}
         </a>

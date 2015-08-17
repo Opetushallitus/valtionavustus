@@ -21,7 +21,7 @@ export default class FormStateTransitions {
     this.autoSave = _.debounce(function(){ dispatcher.push(events.save) }, develQueryParam? 100 : 3000)
     this._bind(
       'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
-      'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onSaveError')
+      'onBeforeUnload', 'onInitAutoSave', 'onReloadCompleted', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError')
   }
 
   _bind(...methods) {
@@ -82,9 +82,9 @@ export default class FormStateTransitions {
   static handleUnexpectedServerError(dispatcher, events, method, url, error, serverOperation) {
     console.error('Unexpected', serverOperation, 'error', error, 'in', method, 'to', url)
     if (serverOperation === serverOperations.submit) {
-      dispatcher.push(events.saveError, {error: "unexpected-submit-error"})
+      dispatcher.push(events.serverError, {error: "unexpected-submit-error"})
     } else if (serverOperation === serverOperations.initialSave) {
-      dispatcher.push(events.saveError, {error: "unexpected-save-error"})
+      dispatcher.push(events.serverError, {error: "unexpected-save-error"})
     } else if (serverOperation === serverOperations.autoSave) {
       dispatcher.push(events.initAutoSave)
     }
@@ -93,7 +93,7 @@ export default class FormStateTransitions {
   static handleServerError(dispatcher, events, status, error, method, url, response, serverOperation) {
     console.warn('Handle', serverOperation, 'error', error, 'in', method, 'to', url, 'with status', status, 'and response', JSON.stringify(response))
     if (status === 400) {
-      dispatcher.push(events.saveError, {error: "submit-validation-errors", validationErrors: response})
+      dispatcher.push(events.serverError, {error: "submit-validation-errors", validationErrors: response})
     }
     else{
       FormStateTransitions.handleUnexpectedServerError(dispatcher, events, method, url, error, serverOperation)
@@ -160,7 +160,7 @@ export default class FormStateTransitions {
     stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateWithServerChanges.saveStatus.values)
     stateFromUiLoop.saveStatus.saveInProgress = false
     stateFromUiLoop.saveStatus.saveTime = new Date()
-    stateFromUiLoop.saveStatus.saveError = ""
+    stateFromUiLoop.saveStatus.serverError = ""
     stateFromUiLoop.saveStatus.savedObject = stateWithServerChanges.saveStatus.savedObject
     if (!locallyStoredValues) {
       stateFromUiLoop.saveStatus.values = stateWithServerChanges.saveStatus.values
@@ -201,9 +201,9 @@ export default class FormStateTransitions {
     return state
   }
 
-  onSaveError(state, serverErrors) {
+  onServerError(state, serverErrors) {
     state.saveStatus.saveInProgress = false
-    state.saveStatus.saveError = serverErrors.error
+    state.saveStatus.serverError = serverErrors.error
     if(serverErrors.validationErrors) {
       state.validationErrors = state.validationErrors.merge(serverErrors.validationErrors)
     }
