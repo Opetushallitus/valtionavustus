@@ -125,12 +125,28 @@
                  submission-version (:version saved-submission)
                  submitted-hakemus (va-db/submit-hakemus hakemus-id submission-id submission-version)]
              (hakemus-ok-response submitted-hakemus saved-submission))
-           (bad-request! validation))))
+           (bad-request! validation)))))
 
-)
+(defn return-html [filename]
+  (-> (resp/resource-response filename {:root "public"})
+      (content-type "text/html")
+      (charset  "utf-8")))
 
 (defroutes* resource-routes
-  (GET "/" [](charset (content-type (resp/resource-response "index.html" {:root "public"}) "text/html") "utf-8"))
+  (GET "/" [:as r]
+       (trace "r" r)
+       (resp/redirect "/avustushaku/1/login.html"))
+
+  ;; Finnish subcontext
+  (GET "/avustushaku/:avustushaku-id/index.html" [avustushaku-id] (return-html "index.html"))
+  (GET "/avustushaku/:avustushaku-id/login.html" [avustushaku-id] (return-html "login.html"))
+  (route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
+
+  ;; Swedish subcontext
+  (GET "/statsunderstod/:avustushaku-id/index.html" [avustushaku-id] (return-html "index.html"))
+  (GET "/statsunderstod/:avustushaku-id/login.html" [avustushaku-id] (return-html "login.html"))
+  (route/resources "/statsunderstod/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
+
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
