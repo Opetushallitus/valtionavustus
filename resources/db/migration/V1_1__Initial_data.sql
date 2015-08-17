@@ -47,6 +47,10 @@ insert into forms (content) VALUES ('
             "label":{
               "fi":"Hakijaorganisaatio",
               "sv":"Sökandeorganisation"
+            },
+            "helpText": {
+              "fi": "Ilmoita hakijaorganisaation nimi ja virallinen sähköpostiosoite.",
+              "sv": "Meddela sökandeorganisationens namn och officiella e-postadress."
             }
           },
           {
@@ -96,6 +100,10 @@ insert into forms (content) VALUES ('
             "label":{
               "fi":"Yhteyshenkilö",
               "sv":"Kontaktperson"
+            },
+            "helpText":{
+              "fi": "Yhteyshenkilöllä tarkoitetaan hankkeen vastuuhenkilöä hakijaorganisaatiossa.",
+              "sv": "Med kontaktperson avses den projektansvariga i sökandeorganisationen."
             }
           },
           {
@@ -418,6 +426,10 @@ insert into forms (content) VALUES ('
                 "label":{
                   "fi":"Tavoite",
                   "sv":"Mål"
+                },
+                "helpText": {
+                  "fi": "Hankkeen tavoitteet kuvataan kokonaisuuksina, joissa kunkin tavoitteen kuvaukseen liitetään kuvaus siihen liittyvästä toiminnasta hankkeessa sekä tämän seurauksena tavoiteltu tulos. Tavoitteita voidaan lisätä tarpeen mukaan.",
+                  "sv": "Projektets mål beskriv som helheter, i vilka till beskrivningen av varje mål fogas en beskrivning av verksamheten i anslutning detta mål inom projektet och det resultat som eftersträvas till följd av verksamheten. Mål kan läggas till efter behov."
                 }
               },
               {
@@ -478,6 +490,10 @@ insert into forms (content) VALUES ('
         "label":{
           "fi":"Miten hankkeen tavoitteiden toteutumista arvioidaan?",
           "sv":"TODO Hur kommer man att informera om projektet och hur kommer resultaten att spridas?"
+        },
+        "helpText": {
+          "fi": "Kuvaa hankkeen konkreettinen arviointisuunnitelma.",
+          "sv": "TODO"
         }
       },
       {
@@ -506,6 +522,10 @@ insert into forms (content) VALUES ('
         "label":{
           "fi":"Hankkeen levittämissuunnitelma",
           "sv":"Projektets spridningsplan"
+        },
+        "helpText": {
+          "fi": "Kuvaa hankkeen levittämissuunnitelma etenkin kohderyhmien, menetelmien ja tulosten osalta.",
+          "sv": "TODO"
         }
       },
       {
@@ -561,6 +581,15 @@ insert into forms (content) VALUES ('
       "sv":"Finansieringsplan"
     },
     "children": [
+      {
+        "type": "infoElement",
+        "id": "financing-plan-help",
+        "displayAs": "p",
+        "text": {
+          "fi": "Valtionavustuksen kokonaiskustannuksiin hyväksytään hankkeen toteuttamisesta aiheutuvat välittömät kustannukset sekä organisaation muista kustannuksista ne kustannuserät, jotka voidaan suoran dokumentoida aiheuttamisperiaatteen mukaisesti kirjata hankkeen menoksi kirjanpitoon hankkeen toteuttamisaikana. Vain todellisiin ja toteutuneisiin kustannuksiin perustuvat menot ovat hyväksyttäviä. Laskennallisilla ja prosentuaalisilla kustannuserillä ei ole suoraa aiheuttamisperiaatetta, joten niitä ei hyväksytä valtionavustushankkeen kustannukseksi. ",
+            "sv": "Till de totala kostnaderna för projektet godkänns de omedelbara kostnaderna för genomförandet av projektet och av de övriga kostnaderna de kostnadsposter som enligt direkt, dokumenterad upphovsprincip kan bokföras som utgifter för projektet under projekttiden. Endast utgifter som baserar sig på faktiska och förverkligade kostnader är godtagbara. Direkt upphovsprincip finns inte för kalkylerade och procentuella kostnadsposter, och sådana godkänns därför inte som kostnader för statsunderstödsprojektet."
+          }
+      },
       {
         "type": "formField",
         "id":"vat-included",
