@@ -91,7 +91,6 @@
    :bank-iban                                            [{:error "required"}]
    :project-goals                                        [{:error "required"}]
    :project-target                                       [{:error "required"}]
-   :other-funding                                        []
    :other-partners                                       []
    :project-announce                                     [{:error "required"}]
    :project-end                                          []
