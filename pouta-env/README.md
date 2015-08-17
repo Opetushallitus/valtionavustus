@@ -31,3 +31,5 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 
 # Uuden käyttäjän lisääminen buildikoneelle kirjautumista varten
 `./open-ssh va-build add_va_jenkins_user.bash <käyttäjätunnus>`
+# Buildikoneen päivittämisen jälkeen lisää jobeihin Slack-notifikaatiot päälle käsin: jobin Configure ->
+  Add post-build action -> Slack Notifications
