@@ -1,6 +1,3 @@
-- name: Restart PostgreSQL to get backup settings in effect
-  service: name=postgresql state=restarted
-
 - name: Create www group
   group: name=www state=present
 
@@ -15,9 +12,6 @@
 
 - name: Create logs dir
   file: path={{ logical_volumes.logs.mount_point }}/valtionavustus owner=www group=www state=directory
-
-- name: Create Postgresql backup directory
-  file: path={{ postgresql_backup_dir }} owner=postgres group=postgres state=directory
 
 - name: Add script to stop the application
   template: src=stop_app.bash.j2 dest=/usr/local/bin/stop_app.bash owner=root group=root mode=0755

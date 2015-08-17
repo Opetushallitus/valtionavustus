@@ -1,6 +1,12 @@
 - name: Install psycopg2
   apt: name=python-psycopg2
 
+- name: Create Postgresql backup directory
+  file: path={{ postgresql_backup_dir }} owner=postgres group=postgres state=directory
+
+- name: Restart PostgreSQL to get backup settings in effect
+  service: name=postgresql state=restarted
+
 - name: Ensure database is created
   sudo: yes
   sudo_user: postgres
