@@ -1,6 +1,8 @@
 function ApplicationPage() {
   var pageApi = Page(applicationElement)
 
+  var basePath = "/avustushaku/1/index.html"
+
   var api = {
     openEditPage: function(hakemusIdGetter, lang, pageLoadedCheck) {
       if (!lang) {
@@ -9,7 +11,7 @@ function ApplicationPage() {
       if (!pageLoadedCheck) {
         pageLoadedCheck = applicationPageVisible
       }
-      return openPage(function() { return "/?avustushaku=1&devel=true&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
+      return openPage(function() { return basePath + "?avustushaku=1&devel=true&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
     },
     openPreview: function(hakemusIdGetter, lang, pageLoadedCheck) {
       if (!lang) {
@@ -18,7 +20,7 @@ function ApplicationPage() {
       if (!pageLoadedCheck) {
         pageLoadedCheck = applicationPageVisible
       }
-      return openPage(function() { return "/?preview=true&devel=true&avustushaku=1&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
+      return openPage(function() { return basePath + "?preview=true&devel=true&avustushaku=1&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
     },
     applicationName: function() {
       return applicationElement().find("#container h1").first().text().trim()
