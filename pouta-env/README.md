@@ -33,3 +33,11 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 `./open-ssh va-build add_va_jenkins_user.bash <käyttäjätunnus>`
 # Buildikoneen päivittämisen jälkeen lisää jobeihin Slack-notifikaatiot päälle käsin: jobin Configure ->
   Add post-build action -> Slack Notifications
+
+
+Vinkkejä virhetilanteisiin
+==========================
+
+* Jos levyjärjestelmään tulee häiriö, joka saa aikaan levyjärjestelmän rikkoutumisen niin että se herjaa eri
+  operaatioille "Input/output error", sen saattaa saada korjattua xfs_repair \-komennolla. Ks.
+  [tarkemmat ohjeet](disk_io_error_repair.md).
