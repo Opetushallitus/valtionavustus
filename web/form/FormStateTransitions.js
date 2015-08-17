@@ -149,6 +149,7 @@ export default class FormStateTransitions {
 
   onInitAutoSave(state) {
     this.startAutoSave(state)
+    return state
   }
 
   onSaveCompleted(stateFromUiLoop, stateWithServerChanges) {
