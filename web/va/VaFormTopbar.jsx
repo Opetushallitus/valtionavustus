@@ -49,6 +49,7 @@ export default class VaFormTopbar extends React.Component {
           </div>
         </div>
         <span hidden={true} id="entity-id">{formOperations.printEntityId(state)}</span>
+        <span hidden={true} id="entity-version">{formOperations.responseParser.getSavedVersion(state.saveStatus.savedObject)}</span>
         <span hidden={true} id="pending-changes">{ controller.hasPendingChanges(state) ? "true" : "false"}</span>
       </section>
     )

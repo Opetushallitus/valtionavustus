@@ -28,16 +28,13 @@ function ApplicationPage() {
     toggleLanguageButton: function () {
       return pageApi.createClickable(function() { return applicationElement().find("#toggle-language") })
     },
+    readHakemusVersionFromHtml: function() {
+      return pageApi.elementText("entity-version")
+    },
     waitAutoSave: function() {
       var errorBefore =  api.saveError()
       return wait.until(function() {
         return pageApi.elementText("pending-changes") != "true" && "Kaikki muutokset tallennettu" === api.saveInfo() || api.saveError() !== errorBefore
-      })()
-    },
-    waitServerError: function() {
-      var errorBefore =  api.saveError()
-      return wait.until(function() {
-        return api.saveError() !== errorBefore
       })()
     },
     submitButton: function() {

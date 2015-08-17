@@ -88,9 +88,9 @@
       "fi": "Tallentaminen epäonnistui. Yritä myöhemmin uudelleen.",
       "sv": "Lagrande misslyckades. Försök på nytt senare."
     },
-    "changes-on-server": {
-      "fi": "Joku muu muokkaa hakemusta yhtäaikaa. Lataa sivu uudestaan.",
-      "sv": "TODO-SV: Joku muu muokkaa hakemusta yhtäaikaa. Lataa sivu uudestaan."
+    "conflict-save-error": {
+      "fi": "Hakemus on muuttunut. Lataa sivu uudestaan.",
+      "sv": "TODO-SV: Hakemus on muuttunut. Lataa sivu uudestaan."
     },
     "submit-validation-errors": {
       "fi": "Ei tallennettu - tarkista syöttämäsi tiedot.",

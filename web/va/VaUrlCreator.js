@@ -3,8 +3,8 @@ import UrlCreator from './../form/UrlCreator'
 
 export default class VaUrlCreator extends UrlCreator {
   constructor() {
-    function existingFormApiUrl(avustusHakuId, hakemusId) {
-      return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId
+    function existingFormApiUrl(avustusHakuId, hakemusId, hakemusBaseVersion) {
+      return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + (typeof hakemusBaseVersion == "number" ? "/" + hakemusBaseVersion : "")
     }
     const urls = {
       formApiUrl: function (formId) {
@@ -16,7 +16,7 @@ export default class VaUrlCreator extends UrlCreator {
       existingFormApiUrl: function (state) {
         const avustusHakuId = state.avustushaku.id
         const hakemusId = state.saveStatus.hakemusId
-        return existingFormApiUrl(avustusHakuId, hakemusId)
+        return existingFormApiUrl(avustusHakuId, hakemusId, state.saveStatus.savedObject.version)
       },
       existingFormApiUrlFromQuery: function (query) {
         const avustusHakuId = query.avustushaku || 1

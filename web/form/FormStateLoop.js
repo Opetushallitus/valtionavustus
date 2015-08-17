@@ -72,8 +72,6 @@ export default class FormStateLoop {
       [dispatcher.stream(events.fieldValidation)],stateTransitions.onFieldValidation,
       [dispatcher.stream(events.changeLanguage)], stateTransitions.onChangeLang,
       [dispatcher.stream(events.save)], stateTransitions.onSave,
-      [dispatcher.stream(events.pollServerAnswers)], stateTransitions.onPollServerAnswers,
-      [dispatcher.stream(events.reloadCompleted)], stateTransitions.onReloadCompleted,
       [dispatcher.stream(events.initAutoSave)], stateTransitions.onInitAutoSave,
       [dispatcher.stream(events.saveCompleted)], stateTransitions.onSaveCompleted,
       [dispatcher.stream(events.serverError)], stateTransitions.onServerError,
