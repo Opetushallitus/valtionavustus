@@ -14,11 +14,11 @@
     },
     "saved": {
       "fi": "Kaikki muutokset tallennettu",
-      "sv": "Alla ändringar sparat"
+      "sv": "Alla ändringar sparade"
     },
     "submit": {
       "fi": "Lähetä käsiteltäväksi",
-      "sv": "Skicka"
+      "sv": "Sänd för behandling"
     },
     "submitted": {
       "fi": "Hakemus lähetetty",
@@ -44,7 +44,7 @@
     },
     "check-numbers": {
       "fi": "Tarkista luvut",
-      "sv": "Kolla siffrorna"
+      "sv": "Kontrollera siffrorna  "
     }
   },
   "errors": {
@@ -66,11 +66,11 @@
     },
     "iban": {
       "fi": "Tarkista tilinumero",
-      "sv": "TODO: Kontrollera kontonummer"
+      "sv": "Kontrollera kontonummer"
     },
     "bic": {
       "fi": "Tarkista pankin BIC-koodi",
-      "sv": "TODO: Kontrollera bankens BIC-kod"
+      "sv": "Kontrollera bankens BIC-kod"
     },
     "negative-budget": {
       "fi": "Haettavan rahoituksen tulee olla positiivinen",
@@ -78,7 +78,7 @@
     },
     "validation-errors": {
       "fi": "{{kpl}} vastauksessa puutteita",
-      "sv": "TODO:{{kpl}} svar fellaktigt"
+      "sv": "brister i {{kpl}} svar"
     },
     "unexpected-submit-error": {
       "fi": "Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.",
@@ -114,11 +114,11 @@
     },
     "contact-email": {
       "fi": "Sähköpostiosoitteesi",
-      "sv": "Din e-postadress"
+      "sv": "Din e-post"
     },
     "submit": {
       "fi": "Luo uusi hakemus",
-      "sv": "Skapa nya ansökan"
+      "sv": "Skapa en ny ansökan"
     },
     "message": {
       "fi": "Sähköpostiin on lähetetty linkki hakulomakkeelle. Tämän sivun voi sulkea.",
