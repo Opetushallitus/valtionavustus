@@ -45,6 +45,8 @@ jenkins_jobs:
      template: roles/buildmachine/templates/valtionavustus-deploy-production-job.xml.j2
    - name: valtionavustus-copy-database-backups
      template: roles/buildmachine/templates/valtionavustus-copy-database-backups-job.xml.j2
+   - name: valtionavustus-dump-database-contents
+     template: roles/buildmachine/templates/valtionavustus-dump-database-contents-job.xml.j2
 
 # System config
 # =============
