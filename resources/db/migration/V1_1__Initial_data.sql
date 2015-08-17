@@ -413,7 +413,7 @@ insert into forms (content) VALUES ('
                 "displayAs":"textField",
                 "params":{
                   "size":"extra-large",
-                  "maxlength":200
+                  "maxlength":300
                 },
                 "label":{
                   "fi":"Tavoite",
@@ -427,7 +427,7 @@ insert into forms (content) VALUES ('
                 "displayAs":"textField",
                 "params":{
                   "size":"extra-large",
-                  "maxlength":200
+                  "maxlength":300
                 },
                 "label":{
                   "fi":"Toiminta",
@@ -441,7 +441,7 @@ insert into forms (content) VALUES ('
                 "displayAs":"textField",
                 "params":{
                   "size":"extra-large",
-                  "maxlength":200
+                  "maxlength":300
                 },
                 "label":{
                   "fi":"Tulos",
