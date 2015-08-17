@@ -682,7 +682,7 @@ insert into forms (content) VALUES ('
                 },
                 "label":{
                   "fi":"Henkilöstökustannukset",
-                  "sv":"TODO"
+                  "sv":"Personalkostnader"
                 },
                 "children": [
                   {
@@ -716,7 +716,7 @@ insert into forms (content) VALUES ('
                 },
                 "label":{
                   "fi":"Palvelujen ostot",
-                  "sv":"TODO"
+                  "sv":"Köp av tjänster"
                 },
                 "children": [
                   {
@@ -750,7 +750,7 @@ insert into forms (content) VALUES ('
                 },
                 "label":{
                   "fi":"Tarvike- ja materiaalikustannukset",
-                  "sv":"TODO"
+                  "sv":"Materialkostnader"
                 },
                 "children": [
                   {
@@ -784,7 +784,7 @@ insert into forms (content) VALUES ('
                 },
                 "label":{
                   "fi":"Vuokrat",
-                  "sv":"TODO"
+                  "sv":"Hyror"
                 },
                 "children": [
                   {
@@ -818,7 +818,7 @@ insert into forms (content) VALUES ('
                 },
                 "label":{
                   "fi":"Laite- ym. hankinnat",
-                  "sv":"TODO"
+                  "sv":"Anskaffning av data- och annan utrustning"
                 },
                 "children": [
                   {
@@ -852,7 +852,7 @@ insert into forms (content) VALUES ('
                 },
                 "label":{
                   "fi":"Matkakustannukset",
-                  "sv":"TODO"
+                  "sv":"Resekostnader"
                 },
                 "children": [
                   {
@@ -886,7 +886,7 @@ insert into forms (content) VALUES ('
                 },
                 "label":{
                   "fi":"Muut kustannukset",
-                  "sv":"TODO"
+                  "sv":"Övriga kostnader"
                 },
                 "children": [
                   {
@@ -920,7 +920,7 @@ insert into forms (content) VALUES ('
                 },
                 "label":{
                   "fi":"Hankkeen tulot",
-                  "sv":"TODO"
+                  "sv":"Inkomster"
                 },
                 "children": [
                   {
@@ -955,7 +955,7 @@ insert into forms (content) VALUES ('
               "showColumnTitles":false,
               "sumRowLabel": {
                 "fi":"Muu rahoitus yhteensä",
-                "sv":"Annan finansiering totalt"
+                "sv":"Övriga kostnader sammanlagt"
               }
             },
             "label":{
@@ -1006,7 +1006,7 @@ insert into forms (content) VALUES ('
                 },
                 "label":{
                   "fi":"Muu julkinen rahoitus",
-                  "sv":"TODO"
+                  "sv":"Annan offentlig finansiering"
                 },
                 "children": [
                   {
@@ -1040,7 +1040,7 @@ insert into forms (content) VALUES ('
                 },
                 "label":{
                   "fi":"Yksityinen rahoitus",
-                  "sv":"TODO"
+                    "sv":"Privat finansiering"
                 },
                 "children": [
                   {
@@ -1075,15 +1075,15 @@ insert into forms (content) VALUES ('
               "showColumnTitles":false,
               "totalSumRowLabel": {
                 "fi":"Hankkeen rahoitus yhteensä",
-                "sv":"Finansiering av den totala projekt"
+                "sv":"Projektets finansiering sammanlagt"
               },
               "ophFinancingLabel": {
                 "fi":"Opetushallitukselta haettava rahoitus",
-                "sv":"TODO"
+                "sv":"Finansiering som söks av Utbildningsstyrelsen"
               },
               "selfFinancingLabel": {
                 "fi":"Omarahoitus",
-                "sv":"TODO"
+                "sv":"Egen finansiering"
               }
             },
             "children":[]
