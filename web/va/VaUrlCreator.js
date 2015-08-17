@@ -24,7 +24,7 @@ export default class VaUrlCreator extends UrlCreator {
         return existingFormApiUrl(avustusHakuId, hakemusId)
       },
       existingSubmissionEditUrl: function (avustusHakuId, hakemusId, lang, devel) {
-        return "/?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId + "&lang=" + lang + (devel ? "&devel=true" : "")
+        return "/avustushaku/" + avustusHakuId + "/nayta?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId + "&lang=" + lang + (devel ? "&devel=true" : "")
       },
       existingSubmissionPreviewUrl: function (state) {
         const avustusHakuId = state.avustushaku.id

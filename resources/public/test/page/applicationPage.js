@@ -1,7 +1,7 @@
 function ApplicationPage() {
   var pageApi = Page(applicationElement)
 
-  var basePath = "/avustushaku/1/index.html"
+  var basePath = "/avustushaku/1/nayta"
 
   var api = {
     openEditPage: function(hakemusIdGetter, lang, pageLoadedCheck) {

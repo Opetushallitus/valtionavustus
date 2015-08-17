@@ -11,7 +11,7 @@ function LoginPage() {
         pageLoadedCheck = applicationPageVisible
       }
       return openPage(function () {
-        return "/login.html?avustushaku=1&devel=true&lang=" + lang
+        return "/avustushaku/1/?avustushaku=1&devel=true&lang=" + lang
       }, pageLoadedCheck)
     },
     login: function () {
