@@ -306,11 +306,11 @@ insert into forms (content) VALUES ('
         },
         "label":{
           "fi":"Muut yhteistyökumppanit",
-          "sv":"TODO"
+          "sv":"Övriga samarbetspartner"
         },
         "helpText": {
-          "fi": "Mainitse hankkeeseen osallistuvat tahot, jotka ovat mukana hankkeen toteutuksessa, mutta eivät vastaanota suoraan valtionavustusta – esimerkiksi yritykset tai yhteisöt, joilta ostetaan palveluita.",
-          "sv": "TODO"
+          "fi": "Mainitse hankkeeseen osallistuvat tahot, jotka ovat mukana hankkeen toteutuksessa, mutta eivät vastaanota valtionavustusta – esimerkiksi yritykset tai yhteisöt, joilta ostetaan palveluita.",
+          "sv": "Nämn de aktörer som deltar i genomförandet av projektet, men som inte mottar statsunderstöd – till exempel företag eller sammanslutningar, av vilka projektet köper tjänster."
         }
       }
     ]
@@ -321,7 +321,7 @@ insert into forms (content) VALUES ('
     "displayAs":"theme",
     "label":{
       "fi":"Hankesuunnitelma",
-      "sv":"Projektplanen"
+      "sv":"Projektplan"
     },
     "children": [
       {
@@ -342,11 +342,11 @@ insert into forms (content) VALUES ('
         },
         "label":{
           "fi":"Hanke pähkinänkuoressa",
-          "sv":"Projektets mål"
+          "sv":"Projektet i ett nötskal"
         },
         "helpText": {
           "fi": "Kuvaa lyhyesti mistä hankkeessa on kyse: mitä tavoitellaan, mitä tehdään, miten tehdään ja ketkä ovat hyödynsaajat.",
-          "sv": "TODO"
+          "sv": "Beskriv i korthet vad projektet handlar om: vad som eftersträvas, vad som görs, hur man gör och vilka nyttotagarna är."
         }
       },
       {
@@ -356,7 +356,7 @@ insert into forms (content) VALUES ('
         "displayAs":"radioButton",
         "label":{
           "fi":"Liittyykö hanke aiempaan hankkeeseen",
-          "sv":"Är det uppföljning för en tidigare projekt?"
+          "sv":"Är projektet uppföljning för en tidigare projekt?"
         },
         "options":[
           {
@@ -417,7 +417,7 @@ insert into forms (content) VALUES ('
                 },
                 "label":{
                   "fi":"Tavoite",
-                  "sv":"Målet"
+                  "sv":"Mål"
                 }
               },
               {
@@ -505,7 +505,7 @@ insert into forms (content) VALUES ('
         },
         "label":{
           "fi":"Hankkeen levittämissuunnitelma",
-          "sv":"TODO"
+          "sv":"Projektets spridningsplan"
         }
       },
       {
@@ -533,7 +533,7 @@ insert into forms (content) VALUES ('
         },
         "label":{
           "fi":"Hankkeen alkamisaika",
-          "sv":"När startar projektet"
+          "sv":"inledandet av projektet"
         }
       },
       {
@@ -547,7 +547,7 @@ insert into forms (content) VALUES ('
         },
         "label":{
           "fi":"Hankkeen päättymisaika",
-          "sv":"När slutar projektet"
+          "sv":"Avslutandet av projektet"
         }
       },
       {
@@ -581,11 +581,11 @@ insert into forms (content) VALUES ('
         "displayAs":"radioButton",
         "label":{
           "fi":"Onko kustannukset ilmoitettu arvonlisäverollisina?",
-          "sv":"Har kostnaderna förklaras momspliktig?"
+          "sv":"Har kostnaderna anmälts inkl. mervärdesskatt?"
         },
         "helpText": {
           "fi": "Arvonlisävero on hyväksyttävä kustannus, jos se jää hakijan lopulliseksi kustannukseksi. Yhteishankkeissa, mikäli yhdelläkin osatoteuttajalla arvonlisävero jää osatoteuttajan maksettavaksi, on päähakijan valittavat vaihtoehto \"kyllä\"",
-          "sv": "TODO"
+          "sv": "Mervärdesskatt är en godtagbar kostnad, om den blir en slutlig kostnad för sökanden. Om en enda delgenomförare i ett samprojekt betalar mervärdesskatten, ska huvudsökanden välja alternativet ”ja”."
         },
         "options":[
           {
@@ -622,16 +622,16 @@ insert into forms (content) VALUES ('
                 },
                 "description": {
                   "fi":"Selite, lyhyt kuvaus",
-                  "sv":"Förklaringen, kort deskription"
+                  "sv":"Förklaring, kort beskrivning"
                 },
                 "amount": {
                   "fi":"Yhteensä",
-                  "sv":"totalt"
+                  "sv":"Totalt"
                 }
               },
               "sumRowLabel": {
                 "fi":"Kustannukset yhteensä",
-                "sv":"Totala kostnader"
+                "sv":"Kostnader sammanlagt"
               }
             },
             "label":{
@@ -648,7 +648,7 @@ insert into forms (content) VALUES ('
                 },
                 "label":{
                   "fi":"Yhteishankkeen koordinaatiokustannukset",
-                  "sv":"Samordningkostnaderna om gemensamt projekt"
+                  "sv":"Koordineringskostnaderna för ett samprojekt"
                 },
                 "children": [
                   {
