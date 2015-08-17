@@ -146,7 +146,7 @@
                   :params {:size "large"
                            :maxlength 80}
                   :label {:fi "Hakijaorganisaatio"
-                          :sv "Organisation"}} (find-by-id json "organization"))
+                          :sv "Sökandeorganisation"}} (find-by-id json "organization"))
         (should= {:type "infoElement"
                   :id "selection-criteria"
                   :displayAs "bulletList"
