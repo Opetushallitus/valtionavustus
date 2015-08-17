@@ -12,8 +12,6 @@ ephemeral_disk_mount_point=/mnt
 dumps_directory=${ephemeral_disk_mount_point}/db-dumps
 mkdir -p ${dumps_directory}
 
-copy_target=${ephemeral_disk_mount_point}/database-backup/${timestamp}
-
 SSH_KEY=~/.ssh/id_deploy
 SSH_USER=postgres
 
