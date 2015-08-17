@@ -27,7 +27,7 @@ insert into forms (content) VALUES ('
     "displayAs":"theme",
     "label":{
       "fi":"Hakijan tiedot",
-      "sv":"Ansökaren"
+      "sv":"Uppgifter om sökanden"
     },
     "children": [
       {
@@ -46,7 +46,7 @@ insert into forms (content) VALUES ('
             },
             "label":{
               "fi":"Hakijaorganisaatio",
-              "sv":"Organisation"
+              "sv":"Sökandeorganisation"
             }
           },
           {
@@ -60,7 +60,7 @@ insert into forms (content) VALUES ('
             },
             "label":{
               "fi":"Sähköposti",
-              "sv":"e-postadress"
+              "sv":"E-post"
             }
           }
         ]
@@ -109,7 +109,7 @@ insert into forms (content) VALUES ('
             },
             "label":{
               "fi":"Sähköposti",
-              "sv":"e-postadress"
+              "sv":"E-post"
             }
           }
         ]
@@ -130,7 +130,7 @@ insert into forms (content) VALUES ('
             },
             "label":{
               "fi":"Allekirjoitusoikeudellinen henkilö",
-              "sv":"Underskriftgiltiga personen"
+              "sv":"Person med namnteckningsrätt"
             }
           },
           {
@@ -144,7 +144,7 @@ insert into forms (content) VALUES ('
             },
             "label":{
               "fi":"Sähköposti",
-              "sv":"e-postadress"
+              "sv":"E-post"
             }
           }
         ]
@@ -165,7 +165,7 @@ insert into forms (content) VALUES ('
             },
             "label":{
               "fi":"Tilinumero IBAN-muodossa",
-              "sv":"TODO"
+              "sv":"Kontonummer i IBAN-format"
             }
           },
           {
@@ -179,7 +179,7 @@ insert into forms (content) VALUES ('
             },
             "label":{
               "fi":"Pankin BIC/SWIFT-koodi",
-              "sv":"TODO"
+              "sv":"Bankens BIC/SWIFT-kod"
             }
           }
         ]
@@ -228,7 +228,7 @@ insert into forms (content) VALUES ('
         "displayAs":"radioButton",
         "label":{
           "fi":"Onko kyseessä yhteishanke",
-          "sv":"Är det gemensamt projekt"
+          "sv":"Är projektet ett samprojekt"
         },
         "options":[
           {
@@ -271,11 +271,11 @@ insert into forms (content) VALUES ('
                 },
                 "label":{
                   "fi":"Hankkeen muut organisaatiot",
-                  "sv":"Andra organisation"
+                  "sv":"Övriga samarbetspartner"
                 },
                 "helpText": {
                   "fi": "Lisää hankkeen toteuttamiseen osallistuvat organisaatiot, jotka ovat hakukelpoisia ja vastaanottavat suoraan valtionavustusta.",
-                  "sv": "TODO"
+                  "sv": "Lägg till de organisationer som deltar i projektet, som är behöriga att söka och som mottar statsunderstöd."
                 }
               },
               {
