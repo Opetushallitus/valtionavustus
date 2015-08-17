@@ -75,6 +75,27 @@ export class SummingBudgetElement extends React.Component {
 }
 
 export class BudgetItemElement extends React.Component {
+  constructor(props) {
+    super(props)
+    this._bind('helpText')
+  }
+
+  _bind(...methods) {
+    methods.forEach((method) => this[method] = this[method].bind(this))
+  }
+
+  helpText() {
+    if (this.props.translations.helpText) {
+      const translator = new Translator(this.props.translations)
+      const value = translator.translate("helpText", this.props.lang)
+      return <a className="soresu-tooltip">
+        <img src="img/show_tooltip.png"/>
+        <span>{value}</span>
+      </a>
+    }
+    return undefined
+  }
+
   render() {
     const field = this.props.field
     const children = this.props.children
@@ -84,7 +105,10 @@ export class BudgetItemElement extends React.Component {
     const labelClassName = ClassNames("label-column", { disabled: this.props.disabled })
     return (
       <tr id={htmlId} className="budget-item">
-        <td className={labelClassName}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></td>
+        <td className={labelClassName}>
+          <LocalizedString translations={field} translationKey="label" lang={this.props.lang} />
+          {this.helpText()}
+        </td>
         <td>{descriptionComponent}</td>
         <td className="amount-column">{amountComponent}</td>
       </tr>
