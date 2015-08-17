@@ -1103,6 +1103,10 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
         "sv": "TODO"
       },
       {
+        "fi": "Verkoston toiminta painopisteiden mukaisten tavoitteiden saavuttamiseksi",
+        "sv": "TODO"
+      },
+      {
         "fi": "Kehittämisverkoston laatu (sis. aiemmin rahoitetuissa laatuverkostoissa saavutetut tulokset) ja kattavuus",
         "sv": "TODO"
       },
