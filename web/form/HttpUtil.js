@@ -20,8 +20,7 @@ export default class HttpUtil {
       httpCall
         .then(function(response) {
           resolve(response.data)
-        }
-      )
+        })
         .catch(function(response) {
           reject({
             status: response.status,
