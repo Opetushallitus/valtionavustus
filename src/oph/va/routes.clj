@@ -125,9 +125,30 @@
                  submission-version (:version saved-submission)
                  submitted-hakemus (va-db/submit-hakemus hakemus-id submission-id submission-version)]
              (hakemus-ok-response submitted-hakemus saved-submission))
-           (bad-request! validation))))
+           (bad-request! validation)))))
 
-)
+(defn return-html [filename]
+  (-> (resp/resource-response filename {:root "public"})
+      (content-type "text/html")
+      (charset  "utf-8")))
+
+(defroutes* resource-routes
+  (GET "/" [:as r]
+       (trace "r" r)
+       (resp/redirect "/avustushaku/1/"))
+
+  ;; Finnish subcontext
+  (GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
+  (GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
+  (route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
+
+  ;; Swedish subcontext
+  (GET "/statsunderstod/:avustushaku-id/visa" [avustushaku-id] (return-html "index.html"))
+  (GET "/statsunderstod/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
+  (route/resources "/statsunderstod/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
+
+  (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
+  (route/not-found "<p>Page not found.</p>"))
 
 (defroutes* doc-routes
   "API documentation browser"
@@ -148,9 +169,8 @@
 
   (context "/doc" [] doc-routes)
 
-  (GET "/" [](charset (content-type (resp/resource-response "index.html" {:root "public"}) "text/html") "utf-8"))
-  (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
-  (route/not-found "<p>Page not found.</p>"))
+  ;; Resources
+  (routes resource-routes))
 
 (defapi all-routes
   {:formats [:json-kw]}
@@ -168,6 +188,5 @@
   ;; Documentation
   (context "/doc" [] doc-routes)
 
-  (GET "/" [](charset (content-type (resp/resource-response "index.html" {:root "public"}) "text/html") "utf-8"))
-  (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
-  (route/not-found "<p>Page not found.</p>"))
+  ;; Resources
+  (routes resource-routes))

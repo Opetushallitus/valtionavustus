@@ -100,6 +100,14 @@
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
         url (str (-> config :server :url lang)
+                 (if (= lang :sv)
+                   "statsunderstod/"
+                   "avustushaku/")
+                 avustushaku-id
+                 "/"
+                 (if (= lang :sv)
+                   "visa"
+                   "nayta")
                  "?avustushaku="
                  avustushaku-id
                  "&hakemus="
