@@ -5,4 +5,4 @@ if [ -z $1 ]; then
 fi
 TARGET_HOST=$1
 shift
-ssh -F ssh.config $TARGET_HOST $@
+ssh -F `dirname $0`/ssh.config $TARGET_HOST $@
