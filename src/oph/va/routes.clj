@@ -33,6 +33,12 @@
        first
        :value))
 
+(defn hakemus-conflict-response [hakemus]
+  (conflict! {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
+              :status (:status hakemus)
+              :version (:version hakemus)
+              :last_status_change_at (:last_status_change_at hakemus)}))
+
 (defn hakemus-ok-response [hakemus submission]
   (ok {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
        :status (:status hakemus)
@@ -59,8 +65,10 @@
               submission-id (:form_submission_id hakemus)
               submission (:body (get-form-submission form-id submission-id))
               submission-version (:version submission)]
-          (if (= (:status hakemus) "new") (va-db/verify-hakemus hakemus-id submission-id submission-version))
-          (hakemus-ok-response hakemus submission)))
+          (if (= (:status hakemus) "new")
+            (let [verified-hakemus (va-db/verify-hakemus hakemus-id submission-id submission-version)]
+              (hakemus-ok-response verified-hakemus submission))
+            (hakemus-ok-response hakemus submission))))
 
   (PUT* "/:haku-id/hakemus" [haku-id :as request]
       :path-params [haku-id :- Long]
@@ -97,34 +105,38 @@
             (internal-server-error!))
           (bad-request! validation))))
 
-  (POST* "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id :as request]
-       :path-params [haku-id :- Long, hakemus-id :- s/Str]
+  (POST* "/:haku-id/hakemus/:hakemus-id/:base-version" [haku-id hakemus-id base-version :as request]
+       :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
        :body    [answers (describe Answers "New answers")]
        :return  Hakemus
        :summary "Update hakemus values"
        (let [form-id (:form (va-db/get-avustushaku haku-id))
              validation (validation/validate-form-security (form-db/get-form form-id) answers)]
          (if (every? empty? (vals validation))
-           (let [hakemus (va-db/get-hakemus hakemus-id)
-                 updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
-                 updated-hakemus (va-db/update-submission hakemus-id (:form_submission_id hakemus) (:version updated-submission))]
-             (hakemus-ok-response updated-hakemus updated-submission))
+           (let [hakemus (va-db/get-hakemus hakemus-id)]
+             (if (= base-version (:version hakemus))
+               (let [updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
+                     updated-hakemus (va-db/update-submission hakemus-id (:form_submission_id hakemus) (:version updated-submission))]
+                 (hakemus-ok-response updated-hakemus updated-submission))
+               (hakemus-conflict-response hakemus)))
            (bad-request! validation))))
 
-  (POST* "/:haku-id/hakemus/:hakemus-id/submit" [haku-id hakemus-id :as request]
-       :path-params [haku-id :- Long, hakemus-id :- s/Str]
+  (POST* "/:haku-id/hakemus/:hakemus-id/:base-version/submit" [haku-id hakemus-id base-version :as request]
+       :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
        :body    [answers (describe Answers "New answers")]
        :return  Hakemus
        :summary "Submit hakemus"
        (let [form-id (:form (va-db/get-avustushaku haku-id))
              validation (validation/validate-form (form-db/get-form form-id) answers)]
          (if (every? empty? (vals validation))
-           (let [hakemus (va-db/get-hakemus hakemus-id)
-                 submission-id (:form_submission_id hakemus)
-                 saved-submission (:body (update-form-submission form-id submission-id answers))
-                 submission-version (:version saved-submission)
-                 submitted-hakemus (va-db/submit-hakemus hakemus-id submission-id submission-version)]
-             (hakemus-ok-response submitted-hakemus saved-submission))
+           (let [hakemus (va-db/get-hakemus hakemus-id)]
+             (if (= base-version (:version hakemus))
+               (let [submission-id (:form_submission_id hakemus)
+                   saved-submission (:body (update-form-submission form-id submission-id answers))
+                   submission-version (:version saved-submission)
+                   submitted-hakemus (va-db/submit-hakemus hakemus-id submission-id submission-version)]
+                 (hakemus-ok-response submitted-hakemus saved-submission))
+               (hakemus-conflict-response hakemus)))
            (bad-request! validation)))))
 
 (defn return-html [filename]

@@ -16,7 +16,7 @@ const events = {
   save: 'save',
   initAutoSave: 'initAutoSave',
   saveCompleted: 'saveCompleted',
-  saveError: 'saveError',
+  serverError: 'serverError',
   submit: 'submit',
   removeField: 'removeField',
   beforeUnload: 'beforeUnload'

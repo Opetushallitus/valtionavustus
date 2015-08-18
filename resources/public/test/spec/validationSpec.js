@@ -162,11 +162,23 @@
           })
         })
 
-        describe('hakemuksen muokkausnäkymässä', function() {
+        describe('toisessa hakemuksen muokkausnäkymässä ilman muutoksia', function() {
+          before(
+              applicationPage.openEditPage(loginPage.getHakemusId)
+          )
+          describe('avaamisen jälkeen', function() {
+            it("ei herjata pakollisista tiedoista", function() {
+              expect(applicationPage.validationErrorsSummary()).to.equal('')
+            })
+          })
+        })
+        describe('toisessa hakemuksen muokkausnäkymässä jonkun muutoksen jälkeen', function() {
           var errorCount
           before(
-            applicationPage.openEditPage(loginPage.getHakemusId),
-            function(){ errorCount = parseInt(applicationPage.validationErrorsSummary().split(' ')[0])}
+              applicationPage.setInputValue("organization", ""),
+              applicationPage.waitAutoSave,
+              applicationPage.openEditPage(loginPage.getHakemusId),
+              function(){ errorCount = parseInt(applicationPage.validationErrorsSummary().split(' ')[0])}
           )
           describe('avaamisen jälkeen', function() {
             it("lähetys on disabloitu", function() {
@@ -179,6 +191,8 @@
             it('virhekuvakset eivät ole näkyvissä', function() {
               expect(applicationPage.validationErrors().length).to.equal(0)
             })
+          })
+          describe('virheenyhteenvedossa', function() {
             describe('klikattaessa virheyhteenvetoa', function() {
               var tavoiteVirhe
               before(

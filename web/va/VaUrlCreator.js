@@ -3,8 +3,8 @@ import UrlCreator from './../form/UrlCreator'
 
 export default class VaUrlCreator extends UrlCreator {
   constructor() {
-    function existingFormApiUrl(avustusHakuId, hakemusId) {
-      return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId
+    function entityApiUrl(avustusHakuId, hakemusId, hakemusBaseVersion) {
+      return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + (typeof hakemusBaseVersion == "number" ? "/" + hakemusBaseVersion : "")
     }
     const urls = {
       formApiUrl: function (formId) {
@@ -13,15 +13,15 @@ export default class VaUrlCreator extends UrlCreator {
       newEntityApiUrl: function (state) {
         return "/api/avustushaku/" + state.avustushaku.id + "/hakemus"
       },
-      existingFormApiUrl: function (state) {
+      editEntityApiUrl: function (state) {
         const avustusHakuId = state.avustushaku.id
         const hakemusId = state.saveStatus.hakemusId
-        return existingFormApiUrl(avustusHakuId, hakemusId)
+        return entityApiUrl(avustusHakuId, hakemusId, state.saveStatus.savedObject.version)
       },
-      existingFormApiUrlFromQuery: function (query) {
+      loadEntityApiUrl: function (query) {
         const avustusHakuId = query.avustushaku || 1
         const hakemusId = query.hakemus
-        return existingFormApiUrl(avustusHakuId, hakemusId)
+        return entityApiUrl(avustusHakuId, hakemusId)
       },
       existingSubmissionEditUrl: function (avustusHakuId, hakemusId, lang, devel) {
         return "/avustushaku/" + avustusHakuId + "/nayta?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId + "&lang=" + lang + (devel ? "&devel=true" : "")

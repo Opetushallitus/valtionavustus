@@ -28,6 +28,9 @@ function ApplicationPage() {
     toggleLanguageButton: function () {
       return pageApi.createClickable(function() { return applicationElement().find("#toggle-language") })
     },
+    readHakemusVersionFromHtml: function() {
+      return pageApi.elementText("entity-version")
+    },
     waitAutoSave: function() {
       var errorBefore =  api.saveError()
       return wait.until(function() {
@@ -55,7 +58,7 @@ function ApplicationPage() {
       return applicationElement().find("#form-controls .info :visible").text()
     },
     saveError: function() {
-      return applicationElement().find("#form-error-summary .error:visible").text()
+      return applicationElement().find("#form-error-summary .server-error:visible").text()
     },
     validationErrorsSummary: function() {
       return applicationElement().find("#validation-errors-summary:not([hidden])").text()

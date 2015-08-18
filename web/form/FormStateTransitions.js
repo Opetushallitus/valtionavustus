@@ -19,9 +19,10 @@ export default class FormStateTransitions {
     this.dispatcher = dispatcher
     this.events = events
     this.autoSave = _.debounce(function(){ dispatcher.push(events.save) }, develQueryParam? 100 : 3000)
+    this.pollServerAnswers = _.debounce(function(){ dispatcher.push(events.pollServerAnswers) },  develQueryParam? 500 : 5000)
     this._bind(
       'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
-      'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onSaveError')
+      'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError')
   }
 
   _bind(...methods) {
@@ -43,6 +44,7 @@ export default class FormStateTransitions {
     if (_.isFunction(onInitialStateLoaded)) {
       onInitialStateLoaded(realInitialState)
     }
+    this.pollServerAnswers()
     return realInitialState
   }
 
@@ -82,9 +84,9 @@ export default class FormStateTransitions {
   static handleUnexpectedServerError(dispatcher, events, method, url, error, serverOperation) {
     console.error('Unexpected', serverOperation, 'error', error, 'in', method, 'to', url)
     if (serverOperation === serverOperations.submit) {
-      dispatcher.push(events.saveError, {error: "unexpected-submit-error"})
+      dispatcher.push(events.serverError, {error: "unexpected-submit-error"})
     } else if (serverOperation === serverOperations.initialSave) {
-      dispatcher.push(events.saveError, {error: "unexpected-save-error"})
+      dispatcher.push(events.serverError, {error: "unexpected-save-error"})
     } else if (serverOperation === serverOperations.autoSave) {
       dispatcher.push(events.initAutoSave)
     }
@@ -93,7 +95,12 @@ export default class FormStateTransitions {
   static handleServerError(dispatcher, events, status, error, method, url, response, serverOperation) {
     console.warn('Handle', serverOperation, 'error', error, 'in', method, 'to', url, 'with status', status, 'and response', JSON.stringify(response))
     if (status === 400) {
-      dispatcher.push(events.saveError, {error: "submit-validation-errors", validationErrors: response})
+      dispatcher.push(events.serverError, {error: "submit-validation-errors", validationErrors: response})
+    }
+    else if (status === 409) {
+      // TODO: Resolve updates from server.
+      // At the moment just tell that something has changes
+      dispatcher.push(events.serverError, {error: "conflict-save-error"})
     }
     else{
       FormStateTransitions.handleUnexpectedServerError(dispatcher, events, method, url, error, serverOperation)
@@ -102,7 +109,7 @@ export default class FormStateTransitions {
 
   updateOld(state, serverOperation, onSuccessCallback) {
     const formOperations = state.extensionApi.formOperations
-    const url = formOperations.urlCreator.existingFormApiUrl(state)+ (serverOperation === serverOperations.submit ? "/submit" : "")
+    const url = formOperations.urlCreator.editEntityApiUrl(state)+ (serverOperation === serverOperations.submit ? "/submit" : "")
     const dispatcher = this.dispatcher
     const events = this.events
     try {
@@ -153,14 +160,12 @@ export default class FormStateTransitions {
   }
 
   onSaveCompleted(stateFromUiLoop, stateWithServerChanges) {
-    // TODO: Resolve updates from UI with updates from server.
-    // At the moment we just discard the values from server here.
     const formOperations = stateFromUiLoop.extensionApi.formOperations
     var locallyStoredValues = LocalStorage.load(formOperations.createUiStateIdentifier, stateWithServerChanges)
     stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateWithServerChanges.saveStatus.values)
     stateFromUiLoop.saveStatus.saveInProgress = false
     stateFromUiLoop.saveStatus.saveTime = new Date()
-    stateFromUiLoop.saveStatus.saveError = ""
+    stateFromUiLoop.saveStatus.serverError = ""
     stateFromUiLoop.saveStatus.savedObject = stateWithServerChanges.saveStatus.savedObject
     if (!locallyStoredValues) {
       stateFromUiLoop.saveStatus.values = stateWithServerChanges.saveStatus.values
@@ -201,9 +206,9 @@ export default class FormStateTransitions {
     return state
   }
 
-  onSaveError(state, serverErrors) {
+  onServerError(state, serverErrors) {
     state.saveStatus.saveInProgress = false
-    state.saveStatus.saveError = serverErrors.error
+    state.saveStatus.serverError = serverErrors.error
     if(serverErrors.validationErrors) {
       state.validationErrors = state.validationErrors.merge(serverErrors.validationErrors)
     }

@@ -131,7 +131,7 @@
             )
             describe("epäonnistumisen jälkeen", function() {
               it("yleinen virhe näytetään", function() {
-                expect(applicationPage.saveError()).to.equal('Ei tallennettu - tarkista syöttämäsi tiedot.1 vastauksessa puutteita')
+                expect(applicationPage.saveError()).to.equal('Ei tallennettu - tarkista syöttämäsi tiedot.')
               })
               it("kentän virhe näytetään", function() {
                 expect(applicationPage.detailedValidationErrors()).to.deep.equal(['Hakijaorganisaatio: Pakollinen tieto'])
@@ -171,6 +171,35 @@
               it("virhe häviää", function() {
                 expect(applicationPage.saveError()).to.equal('')
               })
+            })
+          })
+        })
+
+        describe('kun joku muu muokkaa hakemusta yhtä aikaa', function() {
+          before(
+              function(){
+                $.ajax({
+                  method: "POST",
+                  async: false,
+                  contentType: "application/json; charset=utf-8",
+                  url: "/api/avustushaku/1/hakemus/" + loginPage.getHakemusId() + "/" + applicationPage.readHakemusVersionFromHtml(),
+                  data: JSON.stringify({value: [{key: "other-organizations.other-organizations-1.name", value: "Oikea Organisaatio"}]})
+                })
+              },
+              applicationPage.setInputValue("other-organizations.other-organizations-1.name", "Oma Testi Organisaatio"),
+              applicationPage.waitAutoSave
+          )
+          describe('muokattaessa jotain kenttää', function() {
+            it("yleinen virhe näytetään", function() {
+              expect(applicationPage.saveError()).to.equal('Hakemus on muuttunut. Lataa sivu uudestaan.')
+            })
+          })
+          describe('sivun uudelleen latauksen jälkeen', function() {
+            before(
+                applicationPage.openEditPage(loginPage.getHakemusId)
+            )
+            it("näkyy toisen muokkaus", function() {
+              expect(applicationPage.getInput("other-organizations.other-organizations-1.name").value()).to.equal('Oikea Organisaatio')
             })
           })
         })

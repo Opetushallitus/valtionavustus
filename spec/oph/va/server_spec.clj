@@ -238,7 +238,8 @@
       ;; Create submission
       (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" valid-answers)
             json (json->map body)
-            id (:id json)]
+            id (:id json)
+            version (:version json)]
         (should= 200 status)
 
         ;; Run different malformed emails through the validation
@@ -248,7 +249,7 @@
                        (string/join (concat ["test@"] (repeat 85 ".test") [".tt"]))
                        "misterburns@springfield.xxx%0ASubject:My%20Anonymous%20Subject"]]
           (let [answers (update-answers valid-answers "primary-email" email)
-                {:keys [status headers body error] :as resp} (post! (str "/api/avustushaku/1/hakemus/" id "/submit") answers)
+                {:keys [status headers body error] :as resp} (post! (str "/api/avustushaku/1/hakemus/" id "/" version "/submit") answers)
                 json (json->map body)]
             (if (not (= [{:error "email"}] (:primary-email json)))
               (should-fail (str "Value " email " did not generate error, it should have"))))))
@@ -269,7 +270,7 @@
             submission-version (:version (:submission json))
             submission-id (:id (:submission json))]
         (should= 200 status)
-        (should= "new" (:status json))
+        (should= "draft" (:status json))
         (va-db/cancel-hakemus id submission-id submission-version)
 
         ;; Get after cancellation

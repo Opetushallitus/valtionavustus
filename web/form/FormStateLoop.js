@@ -29,7 +29,7 @@ export default class FormStateLoop {
         changes: false,
         saveInProgress: false,
         saveTime: null,
-        saveError: "",
+        serverError: "",
         values: getInitialFormValuesPromise(formOperations, controller.formP, initialValues, savedObjectP),
         savedObject: savedObjectP
       },
@@ -74,7 +74,7 @@ export default class FormStateLoop {
       [dispatcher.stream(events.save)], stateTransitions.onSave,
       [dispatcher.stream(events.initAutoSave)], stateTransitions.onInitAutoSave,
       [dispatcher.stream(events.saveCompleted)], stateTransitions.onSaveCompleted,
-      [dispatcher.stream(events.saveError)], stateTransitions.onSaveError,
+      [dispatcher.stream(events.serverError)], stateTransitions.onServerError,
       [dispatcher.stream(events.submit)], stateTransitions.onSubmit,
       [dispatcher.stream(events.removeField)], stateTransitions.onRemoveField,
       [dispatcher.stream(events.beforeUnload)], stateTransitions.onBeforeUnload)
@@ -85,7 +85,7 @@ export default class FormStateLoop {
     function loadSavedObjectPromise(formOperations, query) {
       if (formOperations.containsExistingEntityId(query)) {
         return Bacon.fromPromise(
-          HttpUtil.get(formOperations.urlCreator.existingFormApiUrlFromQuery(query))
+          HttpUtil.get(formOperations.urlCreator.loadEntityApiUrl(query))
         )
       }
       return Bacon.constant(null)
