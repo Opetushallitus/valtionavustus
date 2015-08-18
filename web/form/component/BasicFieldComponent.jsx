@@ -3,6 +3,7 @@ import ClassNames from 'classnames'
 import _ from 'lodash'
 
 import LocalizedString from './LocalizedString.jsx'
+import HelpTooltip from './HelpTooltip.jsx'
 import Translator from './../Translator.js'
 
 export default class BasicFieldComponent extends React.Component {
@@ -49,12 +50,7 @@ export default class BasicFieldComponent extends React.Component {
 
   helpText() {
     if (this.props.translations.helpText) {
-      const translator = new Translator(this.props.translations)
-      const value = translator.translate("helpText", this.props.lang)
-      return <a className="soresu-tooltip">
-        <img src="img/show_tooltip.png"/>
-        <span>{value}</span>
-      </a>
+      return <HelpTooltip content={this.props.translations.helpText} lang={this.props.lang}/>
     }
     return undefined
   }

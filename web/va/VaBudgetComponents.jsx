@@ -4,6 +4,7 @@ import ClassNames from 'classnames'
 
 import ComponentFactory from '../form/ComponentFactory.js'
 import LocalizedString from '../form/component/LocalizedString.jsx'
+import HelpTooltip from '../form/component/HelpTooltip.jsx'
 import Translator from '../form/Translator.js'
 import FieldUpdateHandler from '../form/FieldUpdateHandler.js'
 import InputValueStorage from '../form/InputValueStorage.js'
@@ -86,12 +87,7 @@ export class BudgetItemElement extends React.Component {
 
   helpText() {
     if (this.props.translations.helpText) {
-      const translator = new Translator(this.props.translations)
-      const value = translator.translate("helpText", this.props.lang)
-      return <a className="soresu-tooltip">
-        <img src="img/show_tooltip.png"/>
-        <span>{value}</span>
-      </a>
+      return <HelpTooltip content={this.props.translations.helpText} lang={this.props.lang}/>
     }
     return undefined
   }
