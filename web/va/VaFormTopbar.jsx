@@ -7,6 +7,7 @@ import LocalizedString from '../form/component/LocalizedString.jsx'
 import FormErrorSummary from '../form/component/FormErrorSummary.jsx'
 import ServerError from '../form/component/ServerError.jsx'
 import TextButton from '../form/component/TextButton.jsx'
+import HelpTooltip from '../form/component/HelpTooltip.jsx'
 
 export default class VaFormTopbar extends React.Component {
   render() {
@@ -42,6 +43,7 @@ export default class VaFormTopbar extends React.Component {
           <div id="form-controls" hidden={preview}>
             <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang}/>
             <TextButton htmlId="submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey={submitTextKey} lang={lang} />
+            <HelpTooltip content={translations.form.savehelp} lang={lang}/>
             <span id="form-controls-devel" hidden={!configuration.develMode}>
               <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>
               <TextButton htmlId="preview-button" onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)} translations={translations.form} translationKey="preview" lang={lang} />
