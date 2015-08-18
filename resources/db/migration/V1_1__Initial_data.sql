@@ -394,7 +394,7 @@ insert into forms (content) VALUES ('
         },
         "label":{
           "fi":"Miten hanke tukee hankkeessa mukana olevien koulutuksen järjestäjien strategisten tavoitteiden saavuttamista?",
-          "sv":"TODO"
+          "sv":"Hur stöder projektet uppnåendet av de strategiska målen för de utbildningsanordnare som deltar i projektet?"
         }
       },
       {
@@ -489,11 +489,11 @@ insert into forms (content) VALUES ('
         },
         "label":{
           "fi":"Miten hankkeen tavoitteiden toteutumista arvioidaan?",
-          "sv":"TODO Hur kommer man att informera om projektet och hur kommer resultaten att spridas?"
+          "sv":"Hur utvärderas projektets måluppfyllelse?"
         },
         "helpText": {
           "fi": "Kuvaa hankkeen konkreettinen arviointisuunnitelma.",
-          "sv": "TODO"
+          "sv": "Beskriv den konkreta utvärderingsplanen för projektet."
         }
       },
       {
@@ -525,7 +525,7 @@ insert into forms (content) VALUES ('
         },
         "helpText": {
           "fi": "Kuvaa hankkeen levittämissuunnitelma etenkin kohderyhmien, menetelmien ja tulosten osalta.",
-          "sv": "TODO"
+          "sv": "Beskriv planen för att sprida projektets resultat i synnerhet med tanke på målgrupper, metoder och resultat."
         }
       },
       {
