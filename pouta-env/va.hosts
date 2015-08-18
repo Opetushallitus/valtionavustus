@@ -2,7 +2,7 @@
 # so they need to be updated then.
 
 [va-build]
-192.168.1.173
+192.168.1.9
 
 [va-test]
 192.168.1.244
