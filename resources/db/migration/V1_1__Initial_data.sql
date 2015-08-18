@@ -1169,32 +1169,32 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
     "items": [
       {
         "fi": "Vaikuttavuuden edistäminen (ml. yhdensuuntaisuus koulutuksen järjestäjien strategisten tavoitteiden kanssa)",
-        "sv": "TODO"
+        "sv": "Projektet främjar utbildningens effekter (inkl. att projektet stöder utbildningsanordnarnas strategiska mål)"
       },
       {
         "fi": "Hankesuunnitelman toteuttamiskelpoisuus ja kokonaistaloudellisuus suhteessa esitettyyn toimintaan",
-        "sv": "TODO"
+        "sv": "Projektplanens genomförbarhet och helhetsekonomi i förhållande till den föreslagna verksamheten"
       },
       {
         "fi": "Henkilöstön ja sidosryhmien osallistumis- ja vaikutusmahdollisuudet",
-        "sv": "TODO"
+        "sv": "Personalens och intressegruppernas möjligheter att delta och påverka uppnåendet av målen i enlighet med projektets tyngdpunkter"
       },
       {
         "fi": "Verkoston toiminta painopisteiden mukaisten tavoitteiden saavuttamiseksi",
-        "sv": "TODO"
+        "sv": "Nätverkets verksamhet för att nå tyngdpunkternas mål"
       },
       {
         "fi": "Kehittämisverkoston laatu (sis. aiemmin rahoitetuissa laatuverkostoissa saavutetut tulokset) ja kattavuus",
-        "sv": "TODO"
+        "sv": "Utvecklingsnätverkets kvalitet (innehåller de resultat som uppnåtts i tidigare finansierade kvalitetsnätverk) och täckning"
       },
       {
         "fi": "Aiempien hankkeiden ja verkostojen välinen hyvien käytäntöjen tunnistaminen ja käyttö",
-        "sv": "TODO"
+        "sv": "Identifiering och utnyttjande av goda modeller mellan tidigare projekt och nätverk"
       }
     ],
     "label":{
       "fi":"Valintaperusteet",
-      "sv":"TODO"
+      "sv":"Urvalsgrunder"
     }
   },
   "duration": {
