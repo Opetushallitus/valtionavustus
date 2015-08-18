@@ -27,7 +27,9 @@ export default class BasicFieldComponent extends React.Component {
           onChange(field, newValue)
         }
         else {
-          controller.initFieldValidation(field, newValue, true)
+          if (!field.skipValidationOnMount) {
+            controller.initFieldValidation(field, newValue, true)
+          }
         }
       }
     }
