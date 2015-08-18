@@ -1,8 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
 
-import ServerError from './ServerError.jsx'
-
 import JsUtil from './../JsUtil.js'
 import FormUtil from './../FormUtil.js'
 import LocalizedString from './LocalizedString.jsx'
@@ -24,7 +22,6 @@ export default class FormErrorSummary extends React.Component {
     const oldValidationErrors = this.props.validationErrors
     const isUptoDate = this.state.open === nextState.open &&
                         this.props.lang === nextProps.lang &&
-                        this.props.serverError === nextProps.serverError &&
                         oldIdsOfInvalidFields.length === newIdsOfInvalidFields.length &&
                         _.reduce(oldIdsOfInvalidFields, function(acc, id) {
                           return acc && _.isEqual(oldValidationErrors[id], nextProps.validationErrors[id])
@@ -55,7 +52,6 @@ export default class FormErrorSummary extends React.Component {
     const openStateClassName = FormErrorSummary.determineCssClass(this.state.open)
     return (
       <div id="form-error-summary">
-        <ServerError serverError={this.props.serverError} translations={this.translations} lang={lang}/>
         <a onClick={this.toggleOpen} role="button" className={"error opener-handle " + openStateClassName} id="validation-errors-summary" hidden={invalidFieldsCount === 0}>
           {translator.translate("validation-errors", lang, null, {kpl: invalidFieldsCount})}
         </a>

@@ -58,7 +58,7 @@ function ApplicationPage() {
       return applicationElement().find("#form-controls .info :visible").text()
     },
     saveError: function() {
-      return applicationElement().find("#form-error-summary .server-error:visible").text()
+      return applicationElement().find("#server-error .server-error:visible").text()
     },
     validationErrorsSummary: function() {
       return applicationElement().find("#validation-errors-summary:not([hidden])").text()

@@ -5,6 +5,7 @@ import FormSaveStatus from '../form/component/FormSaveStatus.jsx'
 import ToggleLanguageButton from '../form/component/ToggleLanguageButton.jsx'
 import LocalizedString from '../form/component/LocalizedString.jsx'
 import FormErrorSummary from '../form/component/FormErrorSummary.jsx'
+import ServerError from '../form/component/ServerError.jsx'
 import TextButton from '../form/component/TextButton.jsx'
 
 export default class VaFormTopbar extends React.Component {
@@ -45,8 +46,9 @@ export default class VaFormTopbar extends React.Component {
               <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>
               <TextButton htmlId="preview-button" onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)} translations={translations.form} translationKey="preview" lang={lang} />
             </span>
-            <FormErrorSummary formContent={form.content} controller={controller} serverError={saveStatus.serverError} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
+            <FormErrorSummary formContent={form.content} controller={controller} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
           </div>
+          <div id="server-error"><ServerError serverError={saveStatus.serverError} translations={translations.errors} lang={lang}/></div>
         </div>
         <span hidden={true} id="entity-id">{formOperations.printEntityId(state)}</span>
         <span hidden={true} id="entity-version">{formOperations.responseParser.getSavedVersion(state.saveStatus.savedObject)}</span>

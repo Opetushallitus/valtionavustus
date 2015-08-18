@@ -15,7 +15,7 @@ export default class ServerError extends React.Component {
     const translator = new Translator(this.translations)
     const serverError = this.props.serverError.length > 0 ? translator.translate(this.props.serverError, lang) : ""
     return (
-      <div hidden={serverError.length === 0} className="server-error">{serverError}</div>
+      <span hidden={serverError.length === 0} className="server-error">{serverError}</span>
     )
   }
 }
