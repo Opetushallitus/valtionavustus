@@ -507,7 +507,7 @@ insert into forms (content) VALUES ('
         },
         "label":{
           "fi":"Hankkeen vaikutukset/vaikuttavuus. Mikä muuttuu hankkeen myötä?",
-          "sv":"TODO"
+          "sv":"Projektets effekter/effektiviteet. Vad är det som ändras?"
         }
       },
       {
