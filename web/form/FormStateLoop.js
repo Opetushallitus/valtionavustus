@@ -85,7 +85,7 @@ export default class FormStateLoop {
     function loadSavedObjectPromise(formOperations, query) {
       if (formOperations.containsExistingEntityId(query)) {
         return Bacon.fromPromise(
-          HttpUtil.get(formOperations.urlCreator.existingFormApiUrlFromQuery(query))
+          HttpUtil.get(formOperations.urlCreator.loadEntityApiUrl(query))
         )
       }
       return Bacon.constant(null)
