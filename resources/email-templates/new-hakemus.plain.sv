@@ -1,21 +1,20 @@
-TODO SV Avustushakemus: {{ avustushaku }}
+Ansökan om understöd: {{ avustushaku }}
 
-Hakuaika: {{ start-date }} kl. {{ start-time }} — {{ end-date }} kl. {{ end-time }}
+Ansökningstid: {{ start-date }} kl. {{ start-time }} — {{ end-date }} kl. {{ end-time }}
 
-Pääset muokkaamaan avustushakemusta tästä linkistä: {{& url }}
+Du kan bearbeta ansökan via denna länk: {{& url }}
 
-Hakemusta on mahdollista muokata hakuajan loppuun asti. Hakemukset käsitellään hakuajan jälkeen.
+Ansökan kan bearbetas ända till  ansökningstidens slut. Ansökningarna behandlas efter ansökningstiden.
 
-Huom! Voit jakaa tämän viestien muille hankkeen kumppaneille, mutta huomaa että
-jokainen linkin tietävä voi muokata hakemusta.
+OBS! Du kan dela detta meddelande till andra projektpartner, men observera att de kan också bearbeta ansökan.
 
-Lisätietoja antaa opetusneuvos Leena Koski, puh. 029 533 1106,
-sähköposti leena.koski@oph.fi
+Tillägsuppgifter ger utbildningsråd Leena Koski, puh. 029 533 1106,
+e-post: leena.koski@oph.fi
 
-Opetushallitus
-Hakaniemenranta 6
-PL 380, 00531 Helsinki
+Utbildningsstyrelsen
+Hagnäskajen 6
+PB 380, 00531 Helsingfors
 
-puhelin 029 533 1000
-faksi 029 533 1035
-etunimi.sukunimi@oph.fi
+telefon 029 533 1000
+fax 029 533 1035
+fornamn.efternamn@oph.fi
