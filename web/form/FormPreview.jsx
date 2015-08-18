@@ -23,7 +23,7 @@ export default class FormPreview extends React.Component {
       if (field.type == "formField") {
         return createFormPreviewComponent(field, fieldProperties, renderingParameters);
       } else if (field.type == "infoElement") {
-        return createInfoComponent(fieldProperties);
+        return createInfoComponent(field, fieldProperties);
       } else if (field.type == "wrapperElement") {
         return createWrapperComponent(field, fieldProperties, renderingParameters);
       }
@@ -41,7 +41,10 @@ export default class FormPreview extends React.Component {
                                    renderingParameters={renderingParameters}/>
     }
 
-    function createInfoComponent(fieldProperties) {
+    function createInfoComponent(field, fieldProperties) {
+      if (field.displayAs === "p" || field.displayAs === "bulletList") {
+        return undefined
+      }
       return <InfoElement {...fieldProperties}
                           values={infoElementValues}
                           translations={translations} />
