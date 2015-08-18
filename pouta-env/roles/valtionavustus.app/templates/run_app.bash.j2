@@ -10,7 +10,7 @@ stdout_stderr_file={{ logical_volumes.logs.mount_point }}/valtionavustus/started
 sudo -u www ln -sf `basename $stdout_stderr_file` `dirname $stdout_stderr_file`/current_run.log
 pid_file=/var/tmp/va.pid
 daemon=/usr/bin/java
-daemon_args="-jar $1 -Dlog4j.configuration=$2"
+daemon_args="-jar -Dlog4j.configuration=$2 $1"
 
 configdefaults=$3 config=$4  start-stop-daemon --start --chuid=www  \
   --make-pidfile --pidfile $pid_file --background                      \
