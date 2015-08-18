@@ -428,7 +428,7 @@ a.soresu-tooltip img {
   margin-left: 5px;
 }
 
-a.soresu-tooltip span {
+a.soresu-tooltip > span {
   position: absolute;
   width: 600px;
   color: @form-label-black;
@@ -439,37 +439,71 @@ a.soresu-tooltip span {
   visibility: hidden;
 }
 
-a:hover.soresu-tooltip span {
+a:hover.soresu-tooltip > span {
   visibility: visible;
   opacity: 0.95;
-  bottom: 32px;
   left: -217px;
   margin-left: -76px;
   z-index: 99;
 }
 
-a.soresu-tooltip span:before, a.soresu-tooltip span:after {
+a.soresu-tooltip > span:before, a.soresu-tooltip > span:after {
   content: "";
   position: absolute;
   width: 0;
   height: 0;
   border-style: solid;
   border-color: transparent;
-  border-bottom: 0;
 }
 
-a.soresu-tooltip span:before {
+a.soresu-tooltip > span:before {
   /* Stroke */
-  bottom: -11px;
   left: 295px;
-  border-top-color: @light-gray;
   border-width: 11px;
 }
 
-a.soresu-tooltip span:after {
+a.soresu-tooltip > span:after {
+  /* Fill */
+  left: 296px;
+  border-width: 10px;
+}
+
+a.soresu-tooltip-up > span:before, a.soresu-tooltip-up > span:after {
+  border-bottom: 0;
+}
+
+a:hover.soresu-tooltip-up > span {
+  bottom: 32px;
+}
+
+a.soresu-tooltip-up > span:before {
+  /* Stroke */
+  bottom: -11px;
+  border-top-color: @light-gray;
+}
+
+a.soresu-tooltip-up > span:after {
   /* Fill */
   bottom: -10px;
-  left: 296px;
   border-top-color: #fff;
-  border-width: 10px;
+}
+
+a.soresu-tooltip-down > span:before, a.soresu-tooltip-down > span:after {
+  border-top: 0;
+}
+
+a:hover.soresu-tooltip-down > span {
+  top: 42px;
+}
+
+a.soresu-tooltip-down > span:before {
+  /* Stroke */
+  top: -11px;
+  border-bottom-color: @light-gray;
+}
+
+a.soresu-tooltip-down > span:after {
+  /* Fill */
+  top: -10px;
+  border-bottom-color: #fff;
 }
