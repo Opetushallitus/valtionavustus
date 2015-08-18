@@ -82,6 +82,7 @@
             validation (validation/validate-form-security form answers)]
         (if (every? empty? (vals validation))
           (if-let [new-hakemus (va-db/create-hakemus! form-id answers)]
+            ;; TODO: extract
             (do (let [language (keyword (find-hakemus-value answers "language"))
                       avustushaku-title (-> avustushaku-content :name language)
                       avustushaku-duration (->> avustushaku-content
@@ -95,7 +96,7 @@
                       email (find-hakemus-value answers "primary-email")
                       user-key (-> new-hakemus :hakemus :user_key)]
                   (va-email/send-new-hakemus-message! language
-                                                      email
+                                                      [email]
                                                       haku-id
                                                       avustushaku-title
                                                       user-key
@@ -132,10 +133,35 @@
            (let [hakemus (va-db/get-hakemus hakemus-id)]
              (if (= base-version (:version hakemus))
                (let [submission-id (:form_submission_id hakemus)
-                   saved-submission (:body (update-form-submission form-id submission-id answers))
-                   submission-version (:version saved-submission)
-                   submitted-hakemus (va-db/submit-hakemus hakemus-id submission-id submission-version)]
-                 (hakemus-ok-response submitted-hakemus saved-submission))
+                     saved-submission (:body (update-form-submission form-id submission-id answers))
+                     submission-version (:version saved-submission)
+                     submitted-hakemus (va-db/submit-hakemus hakemus-id submission-id submission-version)
+
+                     ;; TODO: extract
+                     avustushaku (va-db/get-avustushaku haku-id)
+                     avustushaku-content (:content avustushaku)
+                     language (keyword (find-hakemus-value answers "language"))
+                     avustushaku-title (-> avustushaku-content :name language)
+                     avustushaku-duration (->> avustushaku-content
+                                               :duration)
+                     avustushaku-start-date (->> avustushaku-duration
+                                                 :start
+                                                 (datetime/parse))
+                     avustushaku-end-date (->> avustushaku-duration
+                                               :end
+                                               (datetime/parse))
+                     organization-email (find-hakemus-value answers "organization-email")
+                     primary-email (find-hakemus-value answers "primary-email")
+                     signature-email (find-hakemus-value answers "signature-email")
+                     user-key (-> submitted-hakemus :user_key)]
+                  (va-email/send-hakemus-submitted-message! language
+                                                            [primary-email organization-email signature-email]
+                                                            haku-id
+                                                            avustushaku-title
+                                                            user-key
+                                                            avustushaku-start-date
+                                                            avustushaku-end-date)
+                  (hakemus-ok-response submitted-hakemus saved-submission))
                (hakemus-conflict-response hakemus)))
            (bad-request! validation)))))
 

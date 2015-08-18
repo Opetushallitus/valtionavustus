@@ -15,11 +15,15 @@
 
 (def mail-titles
   {:new-hakemus {:fi "Linkki organisaationne avustushakemukseen"
-                 :sv "Länk till er organisations ansökan om understöd"}})
+                 :sv "Länk till er organisations ansökan om understöd"}
+   :hakemus-submitted {:fi "Automaattinen viesti: organisaationne avustushakemus on kirjattu vastaanotetuksi"
+                       :sv "Automaattinen viesti: organisaationne avustushakemus on kirjattu vastaanotetuksi"}})
 
 (def mail-templates
   {:new-hakemus {:fi (load-template "email-templates/new-hakemus.plain.fi")
-                 :sv (load-template "email-templates/new-hakemus.plain.sv")}})
+                 :sv (load-template "email-templates/new-hakemus.plain.sv")}
+   :hakemus-submitted {:fi (load-template "email-templates/hakemus-submitted.plain.fi")
+                       :sv (load-template "email-templates/hakemus-submitted.plain.fi")}})
 
 (def smtp-config (:email config))
 (defonce mail-queue (chan 50))
@@ -63,9 +67,10 @@
                           (.addHeader "Sender" sender)
                           (.setBounceAddress (:bounce-address smtp-config))
                           (.setSubject subject)
-                          (.setMsg email)
-                          (.addTo to)
-                          (.send))))
+                          (.setMsg email))
+                        (doseq [address to]
+                          (.addTo msg address))
+                        (.send msg)))
                     (fn []
                       (log/info "Sending message: " email)))]
       (when (not (try-send! (:retry-initial-wait smtp-config)
@@ -93,27 +98,33 @@
   (log/info "Signaling mail sender to stop")
   (>!! mail-queue {:operation :stop}))
 
+(defn- generate-url [avustushaku-id lang lang-str user-key preview?]
+  (str (-> config :server :url lang)
+       (if (= lang :sv)
+         "statsunderstod/"
+         "avustushaku/")
+       avustushaku-id
+       "/"
+       (if (= lang :sv)
+         "visa"
+         "nayta")
+       "?avustushaku="
+       avustushaku-id
+       "&hakemus="
+       user-key
+       "&lang="
+       lang-str
+       (if preview?
+         "&preview=true"
+         "")))
+
 (defn send-new-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
   (let [lang-str (or (clojure.core/name lang) "fi")
         start-date-string (datetime/date-string start-date)
         start-time-string (datetime/time-string start-date)
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
-        url (str (-> config :server :url lang)
-                 (if (= lang :sv)
-                   "statsunderstod/"
-                   "avustushaku/")
-                 avustushaku-id
-                 "/"
-                 (if (= lang :sv)
-                   "visa"
-                   "nayta")
-                 "?avustushaku="
-                 avustushaku-id
-                 "&hakemus="
-                 user-key
-                 "&lang="
-                 lang-str)]
+        url (generate-url avustushaku-id lang lang-str user-key false)]
     (log/info "Url would be: " url)
     (>!! mail-queue {:operation :send
                      :type :new-hakemus
@@ -121,6 +132,28 @@
                      :from (-> smtp-config :from lang)
                      :sender (-> smtp-config :sender)
                      :subject (get-in mail-titles [:new-hakemus lang])
+                     :to to
+                     :avustushaku avustushaku
+                     :start-date start-date-string
+                     :start-time start-time-string
+                     :end-date end-date-string
+                     :end-time end-time-string
+                     :url url})))
+
+(defn send-hakemus-submitted-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
+  (let [lang-str (or (clojure.core/name lang) "fi")
+        start-date-string (datetime/date-string start-date)
+        start-time-string (datetime/time-string start-date)
+        end-date-string (datetime/date-string end-date)
+        end-time-string (datetime/time-string end-date)
+        url (generate-url avustushaku-id lang lang-str user-key true)]
+    (log/info "Url would be: " url)
+    (>!! mail-queue {:operation :send
+                     :type :hakemus-submitted
+                     :lang lang
+                     :from (-> smtp-config :from lang)
+                     :sender (-> smtp-config :sender)
+                     :subject (get-in mail-titles [:hakemus-submitted lang])
                      :to to
                      :avustushaku avustushaku
                      :start-date start-date-string
