@@ -68,6 +68,7 @@
 
   (s/defschema Answer {:key s/Str,
                        :value (s/either s/Str
+                                        s/Int
                                         [(s/recursive #'Answer)])})
 
   (s/defschema Answers
