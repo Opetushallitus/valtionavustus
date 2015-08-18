@@ -15,7 +15,7 @@
 
 (def mail-titles
   {:new-hakemus {:fi "Linkki organisaationne avustushakemukseen"
-                 :sv "TODO: Länk till bidragsansökan"}})
+                 :sv "Länk till er organisations ansökan om understöd"}})
 
 (def mail-templates
   {:new-hakemus {:fi (load-template "email-templates/new-hakemus.plain.fi")
