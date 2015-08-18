@@ -46,6 +46,76 @@
        :last_status_change_at (:last_status_change_at hakemus)
        :submission submission}))
 
+(defn- handle-hakemus-create [haku-id answers]
+  (let [avustushaku (va-db/get-avustushaku haku-id)
+        avustushaku-content (:content avustushaku)
+        form-id (:form avustushaku)
+        form (form-db/get-form form-id)
+        validation (validation/validate-form-security form answers)]
+    (if (every? empty? (vals validation))
+      (if-let [new-hakemus (va-db/create-hakemus! form-id answers)]
+        ;; TODO: extract
+        (do (let [language (keyword (find-hakemus-value answers "language"))
+                  avustushaku-title (-> avustushaku-content :name language)
+                  avustushaku-duration (->> avustushaku-content
+                                            :duration)
+                  avustushaku-start-date (->> avustushaku-duration
+                                              :start
+                                              (datetime/parse))
+                  avustushaku-end-date (->> avustushaku-duration
+                                            :end
+                                            (datetime/parse))
+                  email (find-hakemus-value answers "primary-email")
+                  user-key (-> new-hakemus :hakemus :user_key)]
+              (va-email/send-new-hakemus-message! language
+                                                  [email]
+                                                  haku-id
+                                                  avustushaku-title
+                                                  user-key
+                                                  avustushaku-start-date
+                                                  avustushaku-end-date))
+            (hakemus-ok-response (:hakemus new-hakemus) (:submission new-hakemus)))
+        (internal-server-error!))
+      (bad-request! validation))))
+
+(defn- handle-hakemus-submit [haku-id hakemus-id base-version answers]
+  (let [form-id (:form (va-db/get-avustushaku haku-id))
+        validation (validation/validate-form (form-db/get-form form-id) answers)]
+    (if (every? empty? (vals validation))
+      (let [hakemus (va-db/get-hakemus hakemus-id)]
+        (if (= base-version (:version hakemus))
+          (let [submission-id (:form_submission_id hakemus)
+                saved-submission (:body (update-form-submission form-id submission-id answers))
+                submission-version (:version saved-submission)
+                submitted-hakemus (va-db/submit-hakemus hakemus-id submission-id submission-version)
+                ;; TODO: extract
+                avustushaku (va-db/get-avustushaku haku-id)
+                avustushaku-content (:content avustushaku)
+                language (keyword (find-hakemus-value answers "language"))
+                avustushaku-title (-> avustushaku-content :name language)
+                avustushaku-duration (->> avustushaku-content
+                                          :duration)
+                avustushaku-start-date (->> avustushaku-duration
+                                            :start
+                                            (datetime/parse))
+                avustushaku-end-date (->> avustushaku-duration
+                                          :end
+                                          (datetime/parse))
+                organization-email (find-hakemus-value answers "organization-email")
+                primary-email (find-hakemus-value answers "primary-email")
+                signature-email (find-hakemus-value answers "signature-email")
+                user-key (-> submitted-hakemus :user_key)]
+            (va-email/send-hakemus-submitted-message! language
+                                                      [primary-email organization-email signature-email]
+                                                      haku-id
+                                                      avustushaku-title
+                                                      user-key
+                                                      avustushaku-start-date
+                                                      avustushaku-end-date)
+            (hakemus-ok-response submitted-hakemus saved-submission))
+          (hakemus-conflict-response hakemus)))
+      (bad-request! validation))))
+
 (defroutes* avustushaku-routes
   "Avustushaku routes"
 
@@ -75,36 +145,7 @@
       :body    [answers (describe Answers "New answers")]
       :return  Hakemus
       :summary "Create initial hakemus"
-      (let [avustushaku (va-db/get-avustushaku haku-id)
-            avustushaku-content (:content avustushaku)
-            form-id (:form avustushaku)
-            form (form-db/get-form form-id)
-            validation (validation/validate-form-security form answers)]
-        (if (every? empty? (vals validation))
-          (if-let [new-hakemus (va-db/create-hakemus! form-id answers)]
-            ;; TODO: extract
-            (do (let [language (keyword (find-hakemus-value answers "language"))
-                      avustushaku-title (-> avustushaku-content :name language)
-                      avustushaku-duration (->> avustushaku-content
-                                                :duration)
-                      avustushaku-start-date (->> avustushaku-duration
-                                                  :start
-                                                  (datetime/parse))
-                      avustushaku-end-date (->> avustushaku-duration
-                                                :end
-                                                (datetime/parse))
-                      email (find-hakemus-value answers "primary-email")
-                      user-key (-> new-hakemus :hakemus :user_key)]
-                  (va-email/send-new-hakemus-message! language
-                                                      [email]
-                                                      haku-id
-                                                      avustushaku-title
-                                                      user-key
-                                                      avustushaku-start-date
-                                                      avustushaku-end-date))
-                (hakemus-ok-response (:hakemus new-hakemus) (:submission new-hakemus)))
-            (internal-server-error!))
-          (bad-request! validation))))
+      (handle-hakemus-create haku-id answers))
 
   (POST* "/:haku-id/hakemus/:hakemus-id/:base-version" [haku-id hakemus-id base-version :as request]
        :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
@@ -127,43 +168,7 @@
        :body    [answers (describe Answers "New answers")]
        :return  Hakemus
        :summary "Submit hakemus"
-       (let [form-id (:form (va-db/get-avustushaku haku-id))
-             validation (validation/validate-form (form-db/get-form form-id) answers)]
-         (if (every? empty? (vals validation))
-           (let [hakemus (va-db/get-hakemus hakemus-id)]
-             (if (= base-version (:version hakemus))
-               (let [submission-id (:form_submission_id hakemus)
-                     saved-submission (:body (update-form-submission form-id submission-id answers))
-                     submission-version (:version saved-submission)
-                     submitted-hakemus (va-db/submit-hakemus hakemus-id submission-id submission-version)
-
-                     ;; TODO: extract
-                     avustushaku (va-db/get-avustushaku haku-id)
-                     avustushaku-content (:content avustushaku)
-                     language (keyword (find-hakemus-value answers "language"))
-                     avustushaku-title (-> avustushaku-content :name language)
-                     avustushaku-duration (->> avustushaku-content
-                                               :duration)
-                     avustushaku-start-date (->> avustushaku-duration
-                                                 :start
-                                                 (datetime/parse))
-                     avustushaku-end-date (->> avustushaku-duration
-                                               :end
-                                               (datetime/parse))
-                     organization-email (find-hakemus-value answers "organization-email")
-                     primary-email (find-hakemus-value answers "primary-email")
-                     signature-email (find-hakemus-value answers "signature-email")
-                     user-key (-> submitted-hakemus :user_key)]
-                  (va-email/send-hakemus-submitted-message! language
-                                                            [primary-email organization-email signature-email]
-                                                            haku-id
-                                                            avustushaku-title
-                                                            user-key
-                                                            avustushaku-start-date
-                                                            avustushaku-end-date)
-                  (hakemus-ok-response submitted-hakemus saved-submission))
-               (hakemus-conflict-response hakemus)))
-           (bad-request! validation)))))
+       (handle-hakemus-submit haku-id hakemus-id base-version answers)))
 
 (defn return-html [filename]
   (-> (resp/resource-response filename {:root "public"})
