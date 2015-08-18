@@ -22,11 +22,11 @@
     },
     "submitted": {
       "fi": "Hakemus lähetetty",
-      "sv": "Ansökan sänt"
+      "sv": "Ansökan sänd"
     },
     "preview": {
       "fi": "Esikatselu",
-      "sv": "Utsikt"
+      "sv": "Förhandsgranska"
     },
     "lengthleft": {
       "fi": "merkkiä jäljellä",
@@ -44,7 +44,7 @@
     },
     "check-numbers": {
       "fi": "Tarkista luvut",
-      "sv": "Kontrollera siffrorna  "
+      "sv": "Kontrollera siffrorna"
     }
   },
   "errors": {
@@ -58,11 +58,11 @@
     },
     "money": {
       "fi": "Syötä arvo kokonaisina euroina",
-      "sv": "TODO:Skriv in värdet på hela euro"
+      "sv": "Skriv in värdet som hela euro"
     },
     "finnishBusinessId": {
       "fi": "Tarkista y-tunnus",
-      "sv": "TODO: Kontrollera företags- och organisationsnummer"
+      "sv": "Kontrollera företags- och organisationsnummer"
     },
     "iban": {
       "fi": "Tarkista tilinumero",
@@ -74,11 +74,11 @@
     },
     "negative-budget": {
       "fi": "Haettavan rahoituksen tulee olla positiivinen",
-      "sv": "TODO"
+      "sv": "Ansökt finansiering ska vara positiv"
     },
     "validation-errors": {
       "fi": "{{kpl}} vastauksessa puutteita",
-      "sv": "brister i {{kpl}} svar"
+      "sv": "{{kpl}} svar felaktigt"
     },
     "unexpected-submit-error": {
       "fi": "Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.",
@@ -86,7 +86,7 @@
     },
     "unexpected-save-error": {
       "fi": "Tallentaminen epäonnistui. Yritä myöhemmin uudelleen.",
-      "sv": "TODO-SV: Lagrande misslyckades. Försök på nytt senare."
+      "sv": "Lagrande misslyckades. Försök på nytt senare."
     },
     "submit-validation-errors": {
       "fi": "Ei tallennettu - tarkista syöttämäsi tiedot.",
@@ -114,15 +114,15 @@
     },
     "contact-email": {
       "fi": "Sähköpostiosoitteesi",
-      "sv": "Din e-post"
+      "sv": "Din e-postadress"
     },
     "submit": {
       "fi": "Luo uusi hakemus",
-      "sv": "Skapa en ny ansökan"
+      "sv": "Skapa ny ansökan"
     },
     "message": {
       "fi": "Sähköpostiin on lähetetty linkki hakulomakkeelle. Tämän sivun voi sulkea.",
-      "sv": "Ett meddelande har skickats till din e-postadress som innehåller en länk till ansökan"
+      "sv": "Ett meddelande som innehåller en länk till ansökan har skickats till din e-postadress. Denna sida kan stängas"
     }
   }
 }
