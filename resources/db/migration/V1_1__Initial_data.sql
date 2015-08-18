@@ -1132,7 +1132,7 @@ INSERT INTO avustushaut (form, content) VALUES (1, '
         "sv": "TODO"
       },
       {
-        "fi": "Henkilöstön ja sidosryhmien osallistumis- ja vaikutusmahdollisuudet verkoston toimintapainopisteiden mukaisten tavoitteiden saavuttamiseksi",
+        "fi": "Henkilöstön ja sidosryhmien osallistumis- ja vaikutusmahdollisuudet",
         "sv": "TODO"
       },
       {
