@@ -17,7 +17,7 @@
   {:new-hakemus {:fi "Linkki organisaationne avustushakemukseen"
                  :sv "Länk till er organisations ansökan om understöd"}
    :hakemus-submitted {:fi "Automaattinen viesti: organisaationne avustushakemus on kirjattu vastaanotetuksi"
-                       :sv "Automaattinen viesti: organisaationne avustushakemus on kirjattu vastaanotetuksi"}})
+                       :sv "Automatisk meddelande: organisationens bidragsansökan mottogs"}})
 
 (def mail-templates
   {:new-hakemus {:fi (load-template "email-templates/new-hakemus.plain.fi")
