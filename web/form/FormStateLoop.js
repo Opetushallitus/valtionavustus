@@ -114,6 +114,8 @@ export default class FormStateLoop {
             InputValueStorage.writeValue(form.content, values, f.id, initialValues[f.id])
           } else if (!_.isEmpty(f.options)) {
             InputValueStorage.writeValue(form.content, values, f.id, f.options[0].value)
+          } else if (f.initialValue === parseInt(f.initialValue, 10)) {
+            InputValueStorage.writeValue(form.content, values, f.id, f.initialValue.toString())
           }
         }
       })
