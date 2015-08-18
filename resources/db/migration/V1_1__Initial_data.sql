@@ -63,7 +63,7 @@ insert into forms (content) VALUES ('
               "maxlength":80
             },
             "label":{
-              "fi":"Sähköposti",
+              "fi":"Organisaation sähköposti",
               "sv":"E-post"
             }
           }
