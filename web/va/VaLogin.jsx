@@ -18,6 +18,7 @@ import LocalizedString from '../form/component/LocalizedString.jsx'
 import EmailTextField from '../form/component/EmailTextField.jsx'
 import TextButton from '../form/component/TextButton.jsx'
 import {DateRangeInfoElement, H1InfoElement} from '../form/component/InfoElement.jsx'
+import HelpTooltip from '../form/component/HelpTooltip.jsx'
 
 export default class VaLogin extends React.Component {
   constructor(props) {
@@ -92,6 +93,7 @@ export default class VaLogin extends React.Component {
         <H1InfoElement htmlId="name" lang={lang} values={content} />
         <DateRangeInfoElement htmlId="duration" translations={translations} translationKey="label" lang={lang} values={content} />
         <h2><LocalizedString translations={translations.login} translationKey="heading" lang={lang} /></h2>
+        <HelpTooltip content={translations.login.help} lang={lang}/>
         <form onSubmit={this.submit.bind(this)}>
           <EmailTextField htmlId="primary-email" hasError={emailIsInvalid()} onChange={this.handleEmailChange.bind(this)} translations={translations.login} value={email} translationKey="contact-email" lang={lang} required="true" size="small" maxLength="80" />
           <TextButton htmlId="submit" disabled={canSend()} onClick={this.submit.bind(this)} translations={translations.login} translationKey="submit" lang={lang} />
