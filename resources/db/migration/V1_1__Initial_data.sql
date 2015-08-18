@@ -686,6 +686,7 @@ insert into forms (content) VALUES ('
                     "id":"coordination-costs-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
+                    "initialValue": 0,
                     "params":{
                       "size":"extra-extra-small",
                       "maxlength":16
@@ -720,6 +721,7 @@ insert into forms (content) VALUES ('
                     "id":"personnel-costs-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
+                    "initialValue": 0,
                     "params":{
                       "size":"extra-extra-small",
                       "maxlength":16
@@ -754,6 +756,7 @@ insert into forms (content) VALUES ('
                     "id":"service-purchase-costs-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
+                    "initialValue": 0,
                     "params":{
                       "size":"extra-extra-small",
                       "maxlength":16
@@ -788,6 +791,7 @@ insert into forms (content) VALUES ('
                     "id":"material-costs-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
+                    "initialValue": 0,
                     "params":{
                       "size":"extra-extra-small",
                       "maxlength":16
@@ -822,6 +826,7 @@ insert into forms (content) VALUES ('
                     "id":"rent-costs-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
+                    "initialValue": 0,
                     "params":{
                       "size":"extra-extra-small",
                       "maxlength":16
@@ -856,6 +861,7 @@ insert into forms (content) VALUES ('
                     "id":"equipment-costs-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
+                    "initialValue": 0,
                     "params":{
                       "size":"extra-extra-small",
                       "maxlength":16
@@ -890,6 +896,7 @@ insert into forms (content) VALUES ('
                     "id":"steamship-costs-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
+                    "initialValue": 0,
                     "params":{
                       "size":"extra-extra-small",
                       "maxlength":16
@@ -924,6 +931,7 @@ insert into forms (content) VALUES ('
                     "id":"other-costs-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
+                    "initialValue": 0,
                     "params":{
                       "size":"extra-extra-small",
                       "maxlength":16
@@ -958,6 +966,7 @@ insert into forms (content) VALUES ('
                     "id":"project-incomes-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
+                    "initialValue": 0,
                     "params":{
                       "size":"extra-extra-small",
                       "maxlength":16
@@ -1010,6 +1019,7 @@ insert into forms (content) VALUES ('
                     "id":"eu-programs-income-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
+                    "initialValue": 0,
                     "params":{
                       "size":"extra-extra-small",
                       "maxlength":16
@@ -1044,6 +1054,7 @@ insert into forms (content) VALUES ('
                     "id":"other-public-financing-income-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
+                    "initialValue": 0,
                     "params":{
                       "size":"extra-extra-small",
                       "maxlength":16
@@ -1078,6 +1089,7 @@ insert into forms (content) VALUES ('
                     "id":"private-financing-income-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
+                    "initialValue": 0,
                     "params":{
                       "size":"extra-extra-small",
                       "maxlength":16

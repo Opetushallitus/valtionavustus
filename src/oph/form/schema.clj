@@ -30,6 +30,8 @@
                           :required s/Bool
                           (s/optional-key :label) LocalizedString
                           (s/optional-key :helpText) LocalizedString
+                          (s/optional-key :initialValue) (s/either LocalizedString
+                                                                   s/Int)
                           (s/optional-key :params) s/Any
                           (s/optional-key :options) [Option]
                           :displayAs (s/enum :textField

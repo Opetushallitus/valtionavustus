@@ -40,6 +40,20 @@
         it("ei valiteta vielä pakollisista kentästä", function() {
           expect(applicationPage.validationErrorsSummary()).to.equal("")
         })
+        it("budjettitaulukossa on nollasummat", function() {
+          expect(applicationPage.getInput("coordination-costs-row.amount").value()).to.equal("0")
+          expect(applicationPage.getInput("personnel-costs-row.amount").value()).to.equal("0")
+          expect(applicationPage.getInput("service-purchase-costs-row.amount").value()).to.equal("0")
+          expect(applicationPage.getInput("material-costs-row.amount").value()).to.equal("0")
+          expect(applicationPage.getInput("rent-costs-row.amount").value()).to.equal("0")
+          expect(applicationPage.getInput("equipment-costs-row.amount").value()).to.equal("0")
+          expect(applicationPage.getInput("steamship-costs-row.amount").value()).to.equal("0")
+          expect(applicationPage.getInput("other-costs-row.amount").value()).to.equal("0")
+          expect(applicationPage.getInput("project-incomes-row.amount").value()).to.equal("0")
+          expect(applicationPage.getInput("eu-programs-income-row.amount").value()).to.equal("0")
+          expect(applicationPage.getInput("other-public-financing-income-row.amount").value()).to.equal("0")
+          expect(applicationPage.getInput("private-financing-income-row.amount").value()).to.equal("0")
+        })
       })
 
       describe('täytettäessä lomaketta kaikilla tiedoilla', function() {
