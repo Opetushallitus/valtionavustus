@@ -1,10 +1,10 @@
-(ns oph.va.routes
+(ns ^{:skip-aot true} oph.va.routes
   (:use [clojure.tools.trace :only [trace]])
   (:require [compojure.route :as route]
             [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
-            [compojure.core :refer [GET]]
+            [compojure.core :refer [defroutes GET]]
             [compojure.api.sweet :refer :all]
             [schema.core :as s]
             [oph.common.config :refer [config]]
@@ -144,8 +144,8 @@
       (content-type "text/html")
       (charset  "utf-8")))
 
-(defroutes* resource-routes
-  (GET "/" [:as r]
+(defroutes resource-routes
+  (GET "/" []
        (resp/redirect "/avustushaku/1/"))
 
   ;; Finnish subcontext
@@ -181,7 +181,7 @@
   (context "/doc" [] doc-routes)
 
   ;; Resources
-  (routes resource-routes))
+  resource-routes)
 
 (defapi all-routes
   {:formats [:json-kw]}
@@ -200,4 +200,4 @@
   (context "/doc" [] doc-routes)
 
   ;; Resources
-  (routes resource-routes))
+  resource-routes)
