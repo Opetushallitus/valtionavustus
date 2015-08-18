@@ -94,7 +94,7 @@
     },
     "conflict-save-error": {
       "fi": "Hakemus on muuttunut. Lataa sivu uudestaan.",
-      "sv": "TODO-SV: Hakemus on muuttunut. Lataa sivu uudestaan."
+      "sv": "Ansökan har ändrats. Ladda sidan på nytt."
     },
     "submit-validation-errors": {
       "fi": "Ei tallennettu - tarkista syöttämäsi tiedot.",
