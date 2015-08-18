@@ -1,5 +1,4 @@
 import React from 'react'
-import BasicFieldComponent from './BasicFieldComponent.jsx'
 import BasicSizedComponent from './BasicSizedComponent.jsx'
 
 export default class BasicTextField extends BasicSizedComponent {
