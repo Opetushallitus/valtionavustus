@@ -146,7 +146,6 @@
 
 (defroutes* resource-routes
   (GET "/" [:as r]
-       (trace "r" r)
        (resp/redirect "/avustushaku/1/"))
 
   ;; Finnish subcontext
