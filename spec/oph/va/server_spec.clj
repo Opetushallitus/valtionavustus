@@ -145,7 +145,10 @@
                   :params {:size "large"
                            :maxlength 80}
                   :label {:fi "Hakijaorganisaatio"
-                          :sv "Sökandeorganisation"}} (find-by-id json "organization"))
+                          :sv "Sökandeorganisation"}
+                  :helpText {:fi "Ilmoita hakijaorganisaation nimi ja virallinen sähköpostiosoite."
+                             :sv "Meddela sökandeorganisationens namn och officiella e-postadress."}}
+                 (find-by-id json "organization"))
         (should= {:type "infoElement"
                   :id "selection-criteria"
                   :displayAs "bulletList"
