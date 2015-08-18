@@ -13,7 +13,7 @@
 
                  ;; Routing
                  [compojure "1.4.0" :exclusions [instaparse]]
-                 [metosin/compojure-api "0.22.0" :exclusions [commons-codec
+                 [metosin/compojure-api "0.22.2" :exclusions [commons-codec
                                                               instaparse
                                                               joda-time
                                                               clj-time
