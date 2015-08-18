@@ -667,8 +667,8 @@ insert into forms (content) VALUES ('
                   "sv":"Koordineringskostnaderna för ett samprojekt"
                 },
                 "helpText":{
-                  "fi": "Helptest",
-                  "sv": "Helptest"
+                  "fi": "Ilmoita kokonaisarvio koordinaatiotyön kustannuksista. Kuvaa selitteessä pääpiirteittäin mistä toiminnasta kustannukset koostuvat.",
+                  "sv": "Ge en totaluppskattning av kostnaderna för koordineringsarbetet. Beskriv i förklaringen i allmänna drag den verksamhet av vilken kostnaderna består."
                 },
                 "children": [
                   {
@@ -705,6 +705,10 @@ insert into forms (content) VALUES ('
                   "fi":"Henkilöstökustannukset",
                   "sv":"Personalkostnader"
                 },
+                "helpText":{
+                  "fi": "Hyväksyttäviä kustannuksia ovat kohtuulliset palkkakustannukset, jotka aiheutuvat suoraan hankkeesta sekä palkan maksusta aiheutuvat erilaiset lakisääteiset henkilöstösivukulut. Hankkeelle osa-aikaisesti työskentelevien henkilöiden työajan käytöstä on tehtävä kokonaistyöajanseuranta ja päiväkohtainen kokonaistyöajanseuranta. Selite kohdassa kerrotaan, kuinka monta henkilöä hankkeessa työskentelee koko- ja osa- aikaisesti.",
+                  "sv": "Godtagbara kostnader är skäliga lönekostnader som direkt ansluter sig till genomförandet av projektet och lagstadgade personbikostnader för utbetalning av lönen. Över de personer som arbetar för projektet på deltid ska föras total arbetstidsuppföljning och daglig total arbetstidsuppföljning. I förklaringspunkten ska anges hur många personer som arbetar inom projektet på heltid och på deltid."
+                },
                 "children": [
                   {
                     "type": "formField",
@@ -739,6 +743,10 @@ insert into forms (content) VALUES ('
                 "label":{
                   "fi":"Palvelujen ostot",
                   "sv":"Köp av tjänster"
+                },
+                "helpText":{
+                  "fi": "Ulkopuolisista palveluntuottajilta ostettavat palvelut.  Hankkeen toteuttamiseen liittyvien asiantuntija- ja koulutuspalvelujen hankintamenot sekä muut maksut välittömästi hankkeen toteuttamiseen liittyvistä ostetuista palveluista ( esim. mainos- ja markkinointikulut). Palvelujen ostoissa on noudatettava lakia julkisista hankinnoista. Selite kohtaan selvitetään, mitä palveluja hankitaan.",
+                  "sv": "Tjänster som köps av externa serviceproducenter. Anskaffningsutgifter för sakkunnig- och utbildningstjänster i anslutning till projektets genomförande och övriga avgifter för köpta tjänster som omedelbart ansluter till projektets genomförande (till exempel kostnader för reklam och marknadsföring). Vid köp av tjänster ska lagen om offentlig upphandling följas. I förklaringspunkten utreds vilka tjänster som anskaffas."
                 },
                 "children": [
                   {
@@ -775,6 +783,10 @@ insert into forms (content) VALUES ('
                   "fi":"Tarvike- ja materiaalikustannukset",
                   "sv":"Materialkostnader"
                 },
+                "helpText":{
+                  "fi": "Hankkeeseen sisältyvien toimenpiteiden toteuttamiskustannukset. Hankkeen kohderyhmälle järjestettyyn toimintaan liittyvät opetus- ja koulutusmateriaalit. Hankkeen toteutuksen seurantaan liittyvät materiaalikustannukset. Postin ja sähköisen viestinnän hankkeelle kohdistuvat maksut ja puhelinkulut käytetyn työajan suhteessa.",
+                  "sv": "Kostnaderna för genomförandet av de åtgärder som ingår i projektet. Undervisnings- och utbildningsmaterial i anslutning till den verksamhet som ordnas för projektets målgrupp. Materialkostnader i anslutning till uppföljningen av projektets genomförande. Avgifter för post och digital kommunikation och telefon som hänför sig till projektet, i förhållande till använd arbetstid."
+                },
                 "children": [
                   {
                     "type": "formField",
@@ -809,6 +821,10 @@ insert into forms (content) VALUES ('
                 "label":{
                   "fi":"Vuokrat",
                   "sv":"Hyror"
+                },
+                "helpText":{
+                  "fi": "Hankkeen vuokrakuluihin voidaan kirjata koulutuksen toteuttamisessa tarvittavien tilojen todelliset vuokrakulut sekä muut tilavuokrakulut aiheuttamisperiaatteen mukaisesti; esimerkiksi koulutussuunnittelijan työtilan vuokra hankkeessa käytetyn työajan suhteessa. Selitekohdassa kerrotaan, mistä vuokrakuluista on kyse.",
+                  "sv": "I projektets hyreskostnader kan antecknas de faktiska hyreskostnaderna för de lokaler som behövs vid genomförandet av utbildningen och övriga hyreskostnader för lokaler enligt upphovsprincipen: till exempel hyran för utbildningsplanerarens arbetsrum i förhållande till den arbetstid som använts för projektet. I förklaringspunkten anges vad för hyreskostnader det handlar om."
                 },
                 "children": [
                   {
@@ -845,6 +861,10 @@ insert into forms (content) VALUES ('
                   "fi":"Laite- ym. hankinnat",
                   "sv":"Anskaffning av data- och annan utrustning"
                 },
+                "helpText":{
+                  "fi": "Hankkeelle hankittavien laitte ym. hankinnat sekä hankittavien laitteiden asennuksesta aiheutuvat kustannukset. Selite-kohdassa kerrotaan, mitä hankitaan ja mitkä on asennuksesta aiheutuvat kustannukset. Laite ym. hankinnoissa on noudatettava lakia julkisista hankinnoista. (Huom. Kaikissa valtionavustuksissa ei ole sallittua tehdä hankintoja)",
+                  "sv": "Anskaffning av data- och annan utrustning för projektet och kostnaderna för montering av utrustningen. I förklaringspunkten berättas vad som anskaffas och vilka monteringskostnaderna är. I anskaffningarna ska lagen om offentlig upphandling följas. (OBS Anskaffningar är inte tillåtna i alla statsunderstöd)"
+                },
                 "children": [
                   {
                     "type": "formField",
@@ -879,6 +899,10 @@ insert into forms (content) VALUES ('
                 "label":{
                   "fi":"Matkakustannukset",
                   "sv":"Resekostnader"
+                },
+                "helpText":{
+                  "fi": "Hankkeen henkilöstön kohtuulliset matka-ja majoituskustannukset sekä päivärahat valtion yleisen virka- ja työehtosopimuksen matkustusliitteen mukaisesti.Tehtyjen matkojen on liityttävä oleellisesti hankkeen toteutukseen. Selitekohdassa kerrotaan, mistä matkakustannukset syntyvät. (esim KV-hankkeiden ulkomaan matkat, kokousmatkat tai koulutusmatkat.)",
+                  "sv": "Rese- och inkvarteringskostnader för projektpersonalen och dagtraktamenten enligt resebilagan till statens allmänna tjänste- och arbetskollektivavtal. De resor som görs måste på ett väsentligt sätt ansluta sig till projektets genomförande. I förklaringspunkten berättas på vilket sätt resekostnaderna uppstår (till exempel utlandsresor, mötesresor eller utbildningsresor i samband med internationella projekt)."
                 },
                 "children": [
                   {
@@ -915,6 +939,10 @@ insert into forms (content) VALUES ('
                   "fi":"Muut kustannukset",
                   "sv":"Övriga kostnader"
                 },
+                "helpText":{
+                  "fi": "Muut kustannukset-kohtaan kirjataan ne kustannukset, joita ei kirjata muille tililuokille. Kohtaan voi kirjata esim. puhelimesta tai tilavuokrista aiheutuneet menot, jos niitä ei ole esitetty välittöminä menoina.  Muita kuluja, jota tähän kohtaan voi kirjata ovat tarjoilusta tai tilojen vuokrauksesta aiheutuneet kustannukset tai ohjelmistojen käyttömaksut.",
+                  "sv": "I punkten Övriga kostnader antecknas sådana kostnader som inte antecknas i de övriga kontoklasserna. I punkten kan antecknas t.ex. utgifter för telefon och lokalhyror, om dessa inte har antecknats som omedelbara utgifter. Andra kostnader som kan meddelas i denna punkt är till exempel kostnader för traktering eller lokalhyrning eller avgifter för användning av program."
+                },
                 "children": [
                   {
                     "type": "formField",
@@ -949,6 +977,10 @@ insert into forms (content) VALUES ('
                 "label":{
                   "fi":"Hankkeen tulot",
                   "sv":"Inkomster"
+                },
+                "helpText":{
+                  "fi": "Hankkeen toiminnasta aiheutuvat tulot (esim. tuotteiden myyntitulot, pääsyliput yms.) sekä ennakoidut että ennakoimattomat.",
+                  "sv": "Inkomster för projektets verksamhet (till exempel försäljningsinkomster för produkter, inträdesavgifter osv), både förutsedda och oförutsedda."
                 },
                 "children": [
                   {

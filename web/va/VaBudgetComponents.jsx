@@ -86,8 +86,8 @@ export class BudgetItemElement extends React.Component {
   }
 
   helpText() {
-    if (this.props.translations.helpText) {
-      return <HelpTooltip content={this.props.translations.helpText} lang={this.props.lang}/>
+    if (this.props.field.helpText) {
+      return <HelpTooltip content={this.props.field.helpText} lang={this.props.lang}/>
     }
     return undefined
   }
