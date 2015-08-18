@@ -18,7 +18,7 @@ insert into forms (content) VALUES ('
     "displayAs": "p",
     "text":{
       "fi":"Hakemusta on mahdollista muokata hakuajan loppuun asti. Hakemukset käsitellään hakuajan jälkeen.",
-      "sv":"TODO SV.. testi 2"
+      "sv":"Ansökan kan bearbetas ända till  ansökningstidens slut. Ansökningarna behandlas efter ansökningstiden."
     }
   },
   {
@@ -64,7 +64,7 @@ insert into forms (content) VALUES ('
             },
             "label":{
               "fi":"Organisaation sähköposti",
-              "sv":"E-post"
+              "sv":"Organisationens e-post"
             }
           }
         ]
@@ -282,7 +282,7 @@ insert into forms (content) VALUES ('
                   "sv":"Övriga samarbetspartner"
                 },
                 "helpText": {
-                  "fi": "Lisää hankkeen toteuttamiseen osallistuvat organisaatiot, jotka ovat hakukelpoisia ja vastaanottavat suoraan valtionavustusta.",
+                  "fi": "Lisää hankkeen toteuttamiseen osallistuvat organisaatiot, jotka ovat hakukelpoisia ja vastaanottavat valtionavustusta.",
                   "sv": "Lägg till de organisationer som deltar i projektet, som är behöriga att söka och som mottar statsunderstöd."
                 }
               },
