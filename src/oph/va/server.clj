@@ -14,7 +14,7 @@
   (:import (java.net Socket)
            (java.io IOException)))
 
-(defn fail-if-server-running [host port]
+(defn- fail-if-server-running [host port]
   (try
     (let [socket (Socket. host port)]
       (do (.close socket) (throw (Exception. (format "Server is already running %s:%d" host port)))))
