@@ -196,8 +196,14 @@
   "API documentation browser"
   (swagger-ui))
 
+(defn- exception-handler [^Exception e]
+  (log/error e e)
+  (internal-server-error {:type "unknown-exception"
+                          :class (.getName (.getClass e))}))
+
 (defapi restricted-routes
-  {:formats [:json-kw]}
+  {:formats [:json-kw]
+   :exceptions {:exception-handler exception-handler}}
 
   ;; swagger.json generation
   (swagger-docs {:info {:title "Valtionavustus API"}
@@ -215,7 +221,8 @@
   resource-routes)
 
 (defapi all-routes
-  {:formats [:json-kw]}
+  {:formats [:json-kw]
+   :exceptions {:exception-handler exception-handler}}
 
   ;; swagger.json generation
   (swagger-docs {:info {:title "Valtionavustus API"}
