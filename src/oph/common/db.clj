@@ -2,6 +2,7 @@
   (:use [oph.common.config :only [config config-name]]
         [clojure.tools.trace :only [trace]])
   (:require [clojure.java.jdbc :as jdbc]
+            [clojure.tools.logging :as log]
             [hikari-cp.core :refer :all]
             [oph.common.jdbc.extensions]
             [pandect.algo.sha256 :refer :all])
@@ -49,7 +50,7 @@
     (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
            ["drop schema public cascade"
             "create schema public"])
-         (catch Exception e (.printStackTrace (get-next-exception-or-original e))))
+         (catch Exception e (log/error (get-next-exception-or-original e) (.toString e))))
     (throw (RuntimeException. (str "Clearing database is not allowed! "
                                    "check that you run with correct mode. "
                                    "Current config name is " (config-name))))))
