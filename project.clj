@@ -4,7 +4,7 @@
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
   :repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.7.0"]
 
                  ;; HTTP server
                  [javax.servlet/servlet-api "2.5"]
@@ -35,7 +35,7 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
 
                  ;; Testing
-                 [speclj "3.2.0"]
+                 [speclj "3.3.1"]
                  ;; for junit output: lein spec -f junit
                  [speclj-junit "0.0.10"]
 
@@ -65,7 +65,7 @@
        "compile"
   ]
 
-  :plugins [[speclj "3.2.0"]
+  :plugins [[speclj "3.3.1"]
             [lein-environ "1.0.0"]
             [lein-shell "0.4.0"]
             [lein-ancient "0.6.7"]]
