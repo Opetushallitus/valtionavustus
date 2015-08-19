@@ -3,6 +3,7 @@
         [oph.va.routes :only [all-routes restricted-routes]])
   (:require [ring.middleware.reload :as reload]
             [ring.middleware.logger :as logger]
+            [ring.middleware.conditional :refer [if-url-doesnt-match]]
             [compojure.handler :refer [site]]
             [clojure.tools.logging :as log]
             [oph.common.config :refer [config]]
@@ -25,14 +26,16 @@
   (db/close-datasource!))
 
 (defn start-server [host port auto-reload?]
-  (let [site (logger/wrap-with-logger (site (if (-> config :api :restricted-routes?)
-                                              #'restricted-routes
-                                              (do
-                                                (log/warn "Enabling all routes. This setting should be used only in development!")
-                                                #'all-routes))))
+  (let [site (site (if (-> config :api :restricted-routes?)
+                     #'restricted-routes
+                     (do
+                       (log/warn "Enabling all routes. This setting should be used only in development!")
+                       #'all-routes)))
+        logged (-> site
+                   (if-url-doesnt-match #"/img/favicon.png" logger/wrap-with-logger))
         handler (if auto-reload?
-                  (reload/wrap-reload site)
-                  site)]
+                  (reload/wrap-reload logged)
+                  logged)]
     (fail-if-server-running host port)
     (log/info "Using configuration: " config)
     (log/info "Running db migrations")

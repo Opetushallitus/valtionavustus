@@ -46,6 +46,7 @@
                  [org.slf4j/slf4j-log4j12 "1.7.12"]
                  [org.clojure/tools.logging "0.3.1"]
                  [ring.middleware.logger "0.5.0"]
+                 [ring.middleware.conditional "0.2.0"]
                  [fi.reaktor.log4j/log4j-email-throttle "1.0.0"]
 
                  ;; Utils
