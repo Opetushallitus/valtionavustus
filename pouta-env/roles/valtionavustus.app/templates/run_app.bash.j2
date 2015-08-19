@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-if [ -z ${3+x} ]; then
-  echo "Usage: $0 <jar to run> <default configs edn file> <specific config edn file>"
+if [ -z ${4+x} ]; then
+  echo "Usage: $0 <jar to run> <log4j config location> <default configs edn file> <specific config edn file>"
   exit 2
 fi
 
