@@ -6,6 +6,7 @@ import InputValueStorage from './InputValueStorage.js'
 import HttpUtil from './HttpUtil.js'
 import JsUtil from './JsUtil.js'
 import FormStateTransitions from './FormStateTransitions.js'
+import Translator from './Translator.js'
 
 export default class FormStateLoop {
   constructor(dispatcher, events) {
@@ -23,6 +24,7 @@ export default class FormStateLoop {
     const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json"))
     const savedObjectP = loadSavedObjectPromise(formOperations, query)
 
+    const lang = queryParams.lang
     const initialStateTemplate = {
       form: controller.formP,
       saveStatus: {
@@ -30,13 +32,13 @@ export default class FormStateLoop {
         saveInProgress: false,
         saveTime: null,
         serverError: "",
-        values: getInitialFormValuesPromise(formOperations, controller.formP, initialValues, savedObjectP),
+        values: getInitialFormValuesPromise(formOperations, controller.formP, initialValues, savedObjectP, lang),
         savedObject: savedObjectP
       },
       configuration: {
         preview: queryParams.preview,
         develMode: queryParams.devel,
-        lang: queryParams.lang,
+        lang: lang,
         translations: translationsP
       },
       validationErrors: Immutable({}),
@@ -91,7 +93,7 @@ export default class FormStateLoop {
       return Bacon.constant(null)
     }
 
-    function getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP) {
+    function getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP, lang) {
       var valuesP = savedObjectP.map(function(savedObject) {
         if(savedObject) {
           return formOperations.responseParser.getFormAnswers(savedObject)
@@ -101,21 +103,34 @@ export default class FormStateLoop {
         }
       })
       return valuesP.combine(formP, function(values, form) {
-        return initDefaultValues(values, initialValues, form)
+        return initDefaultValues(values, initialValues, form, lang)
       })
     }
 
-    function initDefaultValues(values, initialValues, form) {
+    function initDefaultValues(values, initialValues, form, lang) {
+      function determineInitialValue(field) {
+        if (field.id in initialValues) {
+          return initialValues[field.id]
+        } else if (!_.isEmpty(field.options)) {
+          return field.options[0].value
+        } else if (!_.isUndefined(field.initialValue)) {
+          if (_.isObject(field.initialValue)) {
+            const translator = new Translator(field)
+            return translator.translate("initialValue", lang)
+          } else if (field.initialValue === parseInt(field.initialValue, 10)) {
+            return field.initialValue.toString()
+          }
+          return undefined
+        }
+      }
+
       const fields = JsUtil.flatFilter(form.content, n => { return !_.isUndefined(n.id) })
       _.forEach(fields, f => {
-        const value = InputValueStorage.readValue(form.content, values, f.id)
-        if(value === "") {
-          if (f.id in initialValues) {
-            InputValueStorage.writeValue(form.content, values, f.id, initialValues[f.id])
-          } else if (!_.isEmpty(f.options)) {
-            InputValueStorage.writeValue(form.content, values, f.id, f.options[0].value)
-          } else if (f.initialValue === parseInt(f.initialValue, 10)) {
-            InputValueStorage.writeValue(form.content, values, f.id, f.initialValue.toString())
+        const currentValueFromState = InputValueStorage.readValue(form.content, values, f.id)
+        if (currentValueFromState === "") {
+          const initialValueForField = determineInitialValue(f, initialValues)
+          if (!_.isUndefined(initialValueForField)) {
+            InputValueStorage.writeValue(form.content, values, f.id, initialValueForField)
           }
         }
       })

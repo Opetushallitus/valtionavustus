@@ -7,7 +7,6 @@ import FormComponent from './component/FormComponent.jsx'
 import InfoElement from './component/InfoElement.jsx'
 import WrapperComponent from './component/wrapper/WrapperComponent.jsx'
 import InputValueStorage from './InputValueStorage.js'
-import Translator from './Translator.js'
 
 export default class Form extends React.Component {
   render() {
@@ -60,19 +59,9 @@ export default class Form extends React.Component {
       return createFormComponent(field, extendedProperties)
     }
 
-    function getInitialValue(field, extendedProperties) {
-      const translator = new Translator(field)
-      if (_.isObject(field.initialValue)) {
-        return translator.translate("initialValue", extendedProperties.lang)
-      } else if (field.initialValue === parseInt(field.initialValue, 10)) {
-        return field.initialValue
-      }
-      return ""
-    }
-
     function createFormComponent(field, extendedProperties) {
       const existingInputValue = InputValueStorage.readValue(fields, values, field.id)
-      const value = _.isEmpty(existingInputValue) ? getInitialValue(field, extendedProperties) : existingInputValue
+      const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
       const fieldErrors = _.get(validationErrors, field.id, [])
       return <FormComponent {...extendedProperties}
                             validationErrors={fieldErrors}
