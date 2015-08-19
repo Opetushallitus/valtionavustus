@@ -3,6 +3,7 @@
   :url "https://github.com/Opetushallitus/valtionavustus"
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
+  :repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
   :dependencies [[org.clojure/clojure "1.6.0"]
 
                  ;; HTTP server
@@ -42,13 +43,14 @@
                  [environ "1.0.0"]
 
                  ;; Logging
+                 [org.slf4j/slf4j-log4j12 "1.7.12"]
+                 [org.clojure/tools.logging "0.3.1"]
                  [ring.middleware.logger "0.5.0"]
+                 [fi.reaktor.log4j/log4j-email-throttle "1.0.0"]
 
                  ;; Utils
                  [org.clojure/tools.trace "0.7.8"]
-                 [org.clojure/tools.logging "0.3.1"]
                  [clj-time "0.11.0"]
-                 [org.slf4j/slf4j-log4j12 "1.7.12"]
                  [pandect "0.5.3"]]
 
   :main ^:skip-aot oph.va.server
