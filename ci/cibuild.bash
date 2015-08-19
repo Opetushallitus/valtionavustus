@@ -55,6 +55,23 @@ function drop_database() {
   $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/resources/sql/drop_public_schema.sql"
 }
 
+function restart_application() {
+  echo "=============================="
+  echo
+  echo "Stopping application..."
+  $SSH "sudo /usr/local/bin/stop_app.bash"
+  if [ "$recreate_database" = true ]; then
+    drop_database
+  else
+    echo "Not dropping existing database."
+  fi
+  echo "=============================="
+  echo
+  APP_COMMAND="sudo /usr/local/bin/run_app.bash ${CURRENT_DIR}/va.jar file:${CURRENT_DIR}/resources/log4j-deployed.properties ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
+  echo "...starting application with command \"${APP_COMMAND}\" ..."
+  $SSH "${APP_COMMAND}"
+}
+
 function deploy() {
   if [ -z ${target_server_name+x} ]; then
     echo "deploy: Please provide target server name with -s option."
@@ -77,20 +94,7 @@ function deploy() {
   scp -p -i ${SSH_KEY} ${source_jar_path} ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
   scp -pr -i ${SSH_KEY} config resources ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
   $SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
-  echo "=============================="
-  echo
-  echo "Stopping application..."
-  $SSH "sudo /usr/local/bin/stop_app.bash"
-  if [ "$recreate_database" = true ]; then
-    drop_database
-  else
-    echo "Not dropping existing database."
-  fi
-  echo "=============================="
-  echo
-  APP_COMMAND="sudo /usr/local/bin/run_app.bash ${CURRENT_DIR}/va.jar file:${CURRENT_DIR}/resources/log4j-deployed.properties ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
-  echo "...starting application with command \"${APP_COMMAND}\" ..."
-  $SSH "${APP_COMMAND}"
+  restart_application
   echo "=============================="
   echo
   CAT_LOG_COMMAND="$SSH cat /logs/valtionavustus/current_run.log"
