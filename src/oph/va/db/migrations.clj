@@ -8,4 +8,7 @@
 (defn migrate []
   (let [flyway (doto (Flyway.)
                  (.setDataSource (db/get-datasource)))]
-    (.migrate flyway)))
+    (try (.migrate flyway)
+       (catch Throwable e
+         (log/error e)
+         (throw e)))))
