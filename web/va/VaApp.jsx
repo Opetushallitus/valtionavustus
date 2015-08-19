@@ -79,7 +79,7 @@ function initVaFormController() {
     "customComponentFactory": new VaComponentFactory(),
     "customPreviewComponentFactory": new VaPreviewComponentFactory()
   })
-  const stateProperty = controller.initialize({
+  const formOperations = {
     "containsExistingEntityId": containsExistingEntityId,
     "isFieldEnabled": isFieldEnabled,
     "onFieldUpdate": onFieldUpdate,
@@ -89,7 +89,9 @@ function initVaFormController() {
     "urlCreator": urlCreator,
     "responseParser": responseParser,
     "printEntityId": printEntityId
-  }, {"language": query.lang || "fi"}, query)
+  }
+  const initialValues = {"language": query.lang || "fi"}
+  const stateProperty = controller.initialize(formOperations, initialValues, query)
   return { stateProperty: stateProperty, getReactComponent: function(state) {
     return <VaForm controller={controller} state={state} develQueryParam={develQueryParam}/>
   }}
