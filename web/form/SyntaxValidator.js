@@ -71,9 +71,6 @@ export default class SyntaxValidator {
       return {error: "finnishBusinessId"}
     }
     var checkDigit = parseInt(input[8])
-    if (checkDigit == 1) {
-      return {error: "finnishBusinessId"}
-    }
     var multipliers = [7, 9, 10, 5, 8, 4, 2]
     var digits = []
     for (var i = 0; i < 7; i++) {
