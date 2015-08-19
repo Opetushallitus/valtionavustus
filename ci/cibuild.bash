@@ -59,7 +59,7 @@ function restart_application() {
   echo "=============================="
   echo
   echo "Stopping application..."
-  $SSH "sudo /usr/local/bin/stop_app.bash"
+  $SSH "sudo /usr/local/bin/va_app.bash --stop"
   if [ "$recreate_database" = true ]; then
     drop_database
   else
@@ -67,7 +67,7 @@ function restart_application() {
   fi
   echo "=============================="
   echo
-  APP_COMMAND="sudo /usr/local/bin/run_app.bash ${CURRENT_DIR}/va.jar file:${CURRENT_DIR}/resources/log4j-deployed.properties ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
+  APP_COMMAND="sudo /usr/local/bin/va_app.bash --start ${CURRENT_DIR}/va.jar file:${CURRENT_DIR}/resources/log4j-deployed.properties ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
   echo "...starting application with command \"${APP_COMMAND}\" ..."
   $SSH "${APP_COMMAND}"
 }
