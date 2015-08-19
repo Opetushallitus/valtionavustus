@@ -5,6 +5,7 @@ import Immutable from 'seamless-immutable'
 import InputValueStorage from './InputValueStorage.js'
 import HttpUtil from './HttpUtil.js'
 import JsUtil from './JsUtil.js'
+import FormUtil from './FormUtil.js'
 import FormStateTransitions from './FormStateTransitions.js'
 import Translator from './Translator.js'
 
@@ -117,7 +118,7 @@ export default class FormStateLoop {
           if (_.isObject(field.initialValue)) {
             const translator = new Translator(field)
             return translator.translate("initialValue", lang)
-          } else if (field.initialValue === parseInt(field.initialValue, 10)) {
+          } else if (FormUtil.isNumeric(field.initialValue)) {
             return field.initialValue.toString()
           }
           return undefined
