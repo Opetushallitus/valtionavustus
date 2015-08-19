@@ -39,8 +39,7 @@
       (log/info "Message sent successfully")
       true
       (catch Exception e
-        (.printStackTrace e)
-        (log/warn (format "Error: %s" (.getMessage e)))
+        (log/warn e (format "Error: %s" (.getMessage e)))
         (Thread/sleep time)
         (try-send! (* time multiplier) multiplier max-time send-fn)))))
 
