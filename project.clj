@@ -71,6 +71,9 @@
             [lein-ancient "0.6.7"]]
 
   :test-paths ["spec"]
+
+  :uberjar-exclusions [#"public/test"]
+
   :profiles {:uberjar {:aot [oph.va.server]}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.db.migrations/migrate"]
             "dbclear" ["run" "-m" "oph.common.db/clear-db!"]})
