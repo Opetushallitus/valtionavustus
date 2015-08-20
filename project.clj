@@ -57,10 +57,7 @@
   :main ^:skip-aot oph.va.server
   :target-path "target/%s"
 
-  ;; This hooks 'npm run build' to build preparation tasks
   :prep-tasks [
-       ["shell" "npm" "install"]
-       ["shell" "npm" "run" "build"]
        "javac"
        "compile"
   ]
@@ -76,4 +73,6 @@
 
   :profiles {:uberjar {:aot [oph.va.server]}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.db.migrations/migrate"]
-            "dbclear" ["run" "-m" "oph.common.db/clear-db!"]})
+            "dbclear" ["run" "-m" "oph.common.db/clear-db!"]
+            "buildfront" ^{:doc "Build frontend code with npm"}
+            ["do" ["shell" "npm" "install"] ["shell" "npm" "run" "build"]]})

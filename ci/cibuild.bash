@@ -24,7 +24,7 @@ function clean() {
 }
 
 function uberjar() {
-  time ./lein uberjar
+  time ./lein do buildfront, uberjar
 }
 
 function start_postgresql_in_docker() {
@@ -41,7 +41,7 @@ function run_tests() {
     start_postgresql_in_docker
   fi
 
-  time ./lein spec -f junit || true
+  time ./lein do buildfront, spec -f junit || true
 
   if [ "$run_docker_postgresql" = true ]; then
     remove_postgresql_container
