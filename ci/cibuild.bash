@@ -24,6 +24,7 @@ function clean() {
 }
 
 function uberjar() {
+  /usr/bin/git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
   time ./lein do buildfront, uberjar
 }
 
