@@ -107,9 +107,7 @@
        (if (= lang :sv)
          "visa"
          "nayta")
-       "?avustushaku="
-       avustushaku-id
-       "&hakemus="
+       "?hakemus="
        user-key
        "&lang="
        lang-str
