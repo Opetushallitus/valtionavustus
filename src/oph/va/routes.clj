@@ -223,7 +223,7 @@
   (context* "/api/form" [] :tags ["forms"] form-restricted-routes)
   (context* "/api/avustushaku" [] :tags ["avustushaut"] avustushaku-routes)
 
-  (context "/doc" [] doc-routes)
+  (context* "/doc" [] doc-routes)
 
   ;; Resources
   resource-routes)
@@ -245,7 +245,7 @@
   (context* "/api/avustushaku" [] :tags ["avustushaut"] avustushaku-routes)
 
   ;; Documentation
-  (context "/doc" [] doc-routes)
+  (context* "/doc" [] doc-routes)
 
   ;; Resources
   resource-routes)
