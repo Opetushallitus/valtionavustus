@@ -15,7 +15,8 @@ export default class FormStateLoop {
     this.events = events
   }
 
-  initialize(controller, formOperations, initialValues, query) {
+  initialize(controller, formOperations, initialValues, urlContent) {
+    const query = urlContent.parsedQuery
     const queryParams = {
       lang: query.lang || 'fi',
       preview: query.preview || false,
@@ -23,7 +24,7 @@ export default class FormStateLoop {
     }
     const clientSideValidationP = controller.formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json"))
-    const savedObjectP = loadSavedObjectPromise(formOperations, query)
+    const savedObjectP = loadSavedObjectPromise(formOperations, urlContent)
 
     const lang = queryParams.lang
     const initialStateTemplate = {
@@ -85,10 +86,10 @@ export default class FormStateLoop {
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
 
-    function loadSavedObjectPromise(formOperations, query) {
-      if (formOperations.containsExistingEntityId(query)) {
+    function loadSavedObjectPromise(formOperations, urlContent) {
+      if (formOperations.containsExistingEntityId(urlContent)) {
         return Bacon.fromPromise(
-          HttpUtil.get(formOperations.urlCreator.loadEntityApiUrl(query))
+          HttpUtil.get(formOperations.urlCreator.loadEntityApiUrl(urlContent))
         )
       }
       return Bacon.constant(null)

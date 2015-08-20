@@ -32,8 +32,8 @@ export default class FormController {
     this.stateLoop = new FormStateLoop(dispatcher, events)
   }
 
-  initialize(formOperations, initialValues, query) {
-    return this.stateLoop.initialize(this, formOperations, initialValues, query)
+  initialize(formOperations, initialValues, urlContent) {
+    return this.stateLoop.initialize(this, formOperations, initialValues, urlContent)
   }
 
   // Public API

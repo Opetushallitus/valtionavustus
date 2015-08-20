@@ -21,7 +21,8 @@ import {VaBudgetCalculator} from './VaBudgetCalculator.js'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
-function containsExistingEntityId(query) {
+function containsExistingEntityId(urlContent) {
+  const query = urlContent.parsedQuery
   return query.hakemus && query.hakemus.length > 0
 }
 
@@ -58,6 +59,7 @@ function printEntityId(state) {
 }
 
 const query = queryString.parse(location.search)
+const urlContent = { parsedQuery: query, location: location }
 const develQueryParam =  query.devel || false
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(query.avustushaku || 1)))
 
@@ -91,7 +93,7 @@ function initVaFormController() {
     "printEntityId": printEntityId
   }
   const initialValues = {"language": query.lang || "fi"}
-  const stateProperty = controller.initialize(formOperations, initialValues, query)
+  const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function(state) {
     return <VaForm controller={controller} state={state} develQueryParam={develQueryParam}/>
   }}
