@@ -1,5 +1,6 @@
-import UrlCreator from './../form/UrlCreator'
+import RouteParser from 'route-parser'
 
+import UrlCreator from './../form/UrlCreator'
 
 export default class VaUrlCreator extends UrlCreator {
   constructor() {
@@ -20,7 +21,7 @@ export default class VaUrlCreator extends UrlCreator {
       },
       loadEntityApiUrl: function (urlContent) {
         const query = urlContent.parsedQuery
-        const avustusHakuId = query.avustushaku || 1
+        const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
         const hakemusId = query.hakemus
         return entityApiUrl(avustusHakuId, hakemusId)
       },
@@ -38,5 +39,12 @@ export default class VaUrlCreator extends UrlCreator {
 
   avustusHakuApiUrl(avustusHakuId) {
     return "/api/avustushaku/" + avustusHakuId
+  }
+
+  static parseAvustusHakuId(urlContent) {
+    const location = urlContent.location
+    const pathname = location.pathname
+    const parsedAvustusHakuIdObject = new RouteParser('/avustushaku/:avustushaku_id/*ignore').match(pathname)
+    return parsedAvustusHakuIdObject.avustushaku_id
   }
 }

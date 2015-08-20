@@ -61,7 +61,8 @@ function printEntityId(state) {
 const query = queryString.parse(location.search)
 const urlContent = { parsedQuery: query, location: location }
 const develQueryParam =  query.devel || false
-const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(query.avustushaku || 1)))
+const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
+const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(avustusHakuId)))
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
