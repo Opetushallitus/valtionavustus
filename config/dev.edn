@@ -1,4 +1,5 @@
-{:server {:url {:fi "http://localhost:8080/"
+{:server {:allow-db-clear? true
+          :url {:fi "http://localhost:8080/"
                 :sv "http://localhost:8080/"}}
  :api {:restricted-routes? false}
  :email {:enabled? false

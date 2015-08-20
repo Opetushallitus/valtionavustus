@@ -1,4 +1,5 @@
-{:server {:port 8081
+{:server {:allow-db-clear? true
+          :port 8081
           :url {:fi "http://localhost:8081/"
                 :sv "http://localhost:8081/"}}
  :api {:restricted-routes? false}

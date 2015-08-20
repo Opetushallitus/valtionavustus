@@ -1,5 +1,5 @@
 {:server {:auto-reload? true
-          :allow-db-clear? true
+          :allow-db-clear? false
           :host "localhost"
           :port 8080}
  :api {:restricted-routes? true}
