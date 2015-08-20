@@ -117,6 +117,18 @@
           (hakemus-conflict-response hakemus)))
       (bad-request! validation))))
 
+(defroutes* healthcheck-routes
+  "Healthcheck routes"
+
+  (GET* "/" []
+        (if (va-db/health-check)
+          (ok {})
+          (not-found)))
+  (HEAD* "/" []
+        (if (va-db/health-check)
+          (ok {})
+          (not-found))))
+
 (defroutes* avustushaku-routes
   "Avustushaku routes"
 
@@ -218,8 +230,11 @@
                  :tags [{:name "forms"
                          :description "Form and form submission management"}
                         {:name "avustushaut"
-                         :description "Avustushaku"}]})
+                         :description "Avustushaku"}
+                        {:name "healthcheck"
+                         :description "Healthcheck"}]})
 
+  (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
   (context* "/api/form" [] :tags ["forms"] form-restricted-routes)
   (context* "/api/avustushaku" [] :tags ["avustushaut"] avustushaku-routes)
 
@@ -239,8 +254,11 @@
                  :tags [{:name "forms"
                          :description "Form and form submission management"}
                         {:name "avustushaut"
-                         :description "Avustushaku"}]})
+                         :description "Avustushaku"}
+                        {:name "healthcheck"
+                         :description "Healthcheck"}]})
 
+  (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
   (context* "/api/form" [] :tags ["forms"] form-routes)
   (context* "/api/avustushaku" [] :tags ["avustushaut"] avustushaku-routes)
 

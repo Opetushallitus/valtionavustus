@@ -5,6 +5,13 @@
   (:require [oph.va.db.queries :as queries]))
 
 
+(defn health-check []
+  (->> {}
+       (exec queries/health-check)
+       first
+       :?column?
+       (= 1)))
+
 (defn create-hakemus! [form-id answers]
   (let [submission (form-db/create-submission! form-id answers)]
     (let [hakemus (exec queries/create-hakemus<! {:user_key (generate-hash-id)
