@@ -198,7 +198,7 @@
   (swagger-ui))
 
 (defn- exception-handler [^Exception e]
-  (log/error e e)
+  (log/warn e e)
   (internal-server-error {:type "unknown-exception"
                           :class (.getName (.getClass e))}))
 
