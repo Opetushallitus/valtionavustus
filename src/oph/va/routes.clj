@@ -6,6 +6,7 @@
             [ring.util.response :as resp]
             [compojure.core :refer [defroutes GET]]
             [compojure.api.sweet :refer :all]
+            [ring.swagger.middleware :as swagger]
             [schema.core :as s]
             [oph.common.config :refer [config]]
             [oph.common.datetime :as datetime]
@@ -201,8 +202,15 @@
   (internal-server-error {:type "unknown-exception"
                           :class (.getName (.getClass e))}))
 
+(defn- validation-error-handler [{:keys [error]}]
+  (let [error-str (swagger/stringify-error error)]
+    (log/warn (format "Request validation error: %s" (print-str error-str)))
+    (bad-request {:errors error-str})))
+
 (defapi restricted-routes
   {:formats [:json-kw]
+   :validation-errors {:error-handler validation-error-handler
+                       :catch-core-errors? false}
    :exceptions {:exception-handler exception-handler}}
 
   ;; swagger.json generation
@@ -222,6 +230,8 @@
 
 (defapi all-routes
   {:formats [:json-kw]
+   :validation-errors {:error-handler validation-error-handler
+                       :catch-core-errors? false}
    :exceptions {:exception-handler exception-handler}}
 
   ;; swagger.json generation
