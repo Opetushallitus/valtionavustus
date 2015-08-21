@@ -52,26 +52,27 @@ Tietokannan saa kokonaan tyhjättyä ajamalla
 ajeta. Tämä taas jättää mahdollisesti resursseja vapauttamatta. Uberjarin
 kautta ajaessa ongelmaa ei ole.
 
-Paikallisesti:
+Paikallisesti (ilman fronttibuildia):
 
     ./lein trampoline run
 
-Kannan tyhjäys ja käynnistys paikallisesti:
+Kannan tyhjäys, fronttibuildi ja käynnistys paikallisesti:
 
-    ./lein trampoline do dbclear, run
+    ./lein trampoline do dbclear, buildfront, run
 
 Tuotantoversiona:
 
     ./lein uberjar
-    CONFIG=config/prod.edn java -jar target/uberjar/oph-valtionavustus-0.1.0-SNAPSHOT-standalone.jar
+    CONFIG=config/va-prod.edn java -jar target/uberjar/oph-valtionavustus-0.1.0-SNAPSHOT-standalone.jar
 
 **Huom:** Jar-tiedoston versio voi vaihtua
 
-Eri ympäristön voi ottaa käyttöön seuraavasti
+Eri ympäristön voi ottaa käyttöön seuraavasti (ympäristöjen konffit ovat ```config``` hakemistossa)
 
     ./lein with-profile dev run
     ./lein with-profile test run
-    ./lein with-profile prod run
+    ./lein with-profile va-test run
+    ./lein with-profile va-prod run
 
 # Dokumentaatio
 
@@ -79,11 +80,11 @@ Swagger-pohjainen API-dokumentaatio löytyy osoitteesta http://localhost:8080/do
 
 # Testien ajo
 
-Testien ajo (ajaa myös mocha testit):
+Testien ja fronttibuildin ajo (ajaa myös mocha testit):
 
-    ./lein with-profile test spec -f d
+    ./lein with-profile test do buildfront, spec -f d
 
-tai (automaattisesti)
+tai (automaattisesti pelkät testit aina muutoksissa)
 
     ./lein with-profile test spec -a
     
