@@ -21,7 +21,7 @@ function cat_latest_application_log() {
 }
 
 for N in `seq 1 $ATTEMPTS`; do
-  /usr/bin/curl --connect-timeout 10 --max-time 20 $TEST_URL
+  /usr/bin/curl --fail --connect-timeout 10 --max-time 20 $TEST_URL
   if [ 0 -eq $? ]; then
     echo "At `date`, application seems to be up at $TEST_URL , great!"
     cat_latest_application_log
