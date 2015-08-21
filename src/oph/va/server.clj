@@ -32,7 +32,7 @@
                        (log/warn "Enabling all routes. This setting should be used only in development!")
                        #'all-routes)))
         logged (-> site
-                   (if-url-doesnt-match #"/img/favicon.png" logger/wrap-with-logger))
+                   (if-url-doesnt-match #"/api/healthcheck" logger/wrap-with-logger))
         handler (if auto-reload?
                   (reload/wrap-reload logged)
                   logged)]
