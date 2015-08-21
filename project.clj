@@ -54,6 +54,7 @@
                  [clj-time "0.11.0"]
                  [pandect "0.5.3"]]
 
+  :aot [oph.va.db.migrations]
   :main ^:skip-aot oph.va.server
   :target-path "target/%s"
 
