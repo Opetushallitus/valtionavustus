@@ -8,7 +8,7 @@ fi
 target_machine=$1
 cat_log_command=${@:2}
 
-TEST_URL="http://$target_machine:8081/"
+TEST_URL="http://$target_machine:8081/api/healthcheck"
 ATTEMPTS=20
 PAUSE_SECONDS=3
 
