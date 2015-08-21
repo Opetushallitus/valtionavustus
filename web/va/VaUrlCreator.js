@@ -45,6 +45,7 @@ export default class VaUrlCreator extends UrlCreator {
     const location = urlContent.location
     const pathname = location.pathname
     const parsedAvustusHakuIdObject = new RouteParser('/avustushaku/:avustushaku_id/*ignore').match(pathname)
-    return parsedAvustusHakuIdObject.avustushaku_id
+    const fallbackHakuId = urlContent.parsedQuery.avustushaku // Leave this here for now in case of old ?avustushaku=1 URLs still around
+    return parsedAvustusHakuIdObject.avustushaku_id || fallbackHakuId
   }
 }
