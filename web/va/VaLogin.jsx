@@ -108,13 +108,14 @@ export default class VaLogin extends React.Component {
 
 const urlCreator = new VaUrlCreator()
 const query = QueryString.parse(location.search)
+const urlContent = { parsedQuery: query, location: location }
 const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json"))
-const avustusHakuId = VaUrlCreator.parseAvustusHakuId({ parsedQuery: query, location: location })
+const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(avustusHakuId)))
 
 const initialStateTemplate = {
   translations: translationsP,
-  lang: query.lang || "fi",
+  lang: urlCreator.chooseInitialLanguage(urlContent),
   devel: query.devel,
   avustushaku: avustusHakuP
 }

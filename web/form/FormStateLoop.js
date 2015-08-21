@@ -18,7 +18,6 @@ export default class FormStateLoop {
   initialize(controller, formOperations, initialValues, urlContent) {
     const query = urlContent.parsedQuery
     const queryParams = {
-      lang: query.lang || 'fi',
       preview: query.preview || false,
       devel: query.devel || false
     }
@@ -26,7 +25,7 @@ export default class FormStateLoop {
     const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json"))
     const savedObjectP = loadSavedObjectPromise(formOperations, urlContent)
 
-    const lang = queryParams.lang
+    const lang = formOperations.chooseInitialLanguage(urlContent)
     const initialStateTemplate = {
       form: controller.formP,
       saveStatus: {

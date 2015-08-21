@@ -41,6 +41,12 @@ export default class VaUrlCreator extends UrlCreator {
     return "/api/avustushaku/" + avustusHakuId
   }
 
+  chooseInitialLanguage(urlContent) {
+    const langQueryParam = urlContent.parsedQuery.lang
+    const hostname = urlContent.location.hostname
+    return langQueryParam ? langQueryParam : hostname.indexOf("statsunderstod.oph.fi") > -1 ? "sv" : "fi"
+  }
+
   static parseAvustusHakuId(urlContent) {
     const location = urlContent.location
     const pathname = location.pathname

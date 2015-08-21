@@ -83,6 +83,7 @@ function initVaFormController() {
     "customPreviewComponentFactory": new VaPreviewComponentFactory()
   })
   const formOperations = {
+    "chooseInitialLanguage": urlCreator.chooseInitialLanguage,
     "containsExistingEntityId": containsExistingEntityId,
     "isFieldEnabled": isFieldEnabled,
     "onFieldUpdate": onFieldUpdate,
@@ -93,7 +94,7 @@ function initVaFormController() {
     "responseParser": responseParser,
     "printEntityId": printEntityId
   }
-  const initialValues = {"language": query.lang || "fi"}
+  const initialValues = {"language": urlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function(state) {
     return <VaForm controller={controller} state={state} develQueryParam={develQueryParam}/>
