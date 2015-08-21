@@ -152,7 +152,7 @@
         (should= {:type "infoElement"
                   :id "selection-criteria"
                   :displayAs "bulletList"
-                  :params {:initiallyOpen true}} (find-by-id json "selection-criteria"))
+                  :params {:preview false :initiallyOpen true}} (find-by-id json "selection-criteria"))
         ))
 
   (it "GET should return not-found from route /api/form/1/values/1"

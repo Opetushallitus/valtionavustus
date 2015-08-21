@@ -42,7 +42,7 @@ export default class FormPreview extends React.Component {
     }
 
     function createInfoComponent(field, fieldProperties) {
-      if (field.displayAs === "p" || field.displayAs === "bulletList") {
+      if (field.params && field.params.preview === false) {
         return undefined
       }
       return <InfoElement {...fieldProperties}
