@@ -26,7 +26,7 @@
                  ;; SQL + migrations
                  [yesql "0.5.0"]
                  [org.postgresql/postgresql "9.4-1201-jdbc41"]
-                 [hikari-cp "1.2.4"]
+                 [hikari-cp "1.3.0"]
                  [org.flywaydb/flyway-core "3.2.1"]
 
                  ;; E-mail
