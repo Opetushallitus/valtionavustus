@@ -10,11 +10,11 @@ Valtionavustusten hakemiseen, käsittelyyn ja myöntämiseen tarkoitetut palvelu
 
 Riippuvuudet asentuvat ajamalla komennot:
 
-    ./lein deps
+    ./lein modules deps
 
 ja
 
-    npm install
+    cd va-hakija && npm install
 
 Kehitysaikaisesti hyödyllisiä työkaluja:
 
@@ -40,11 +40,13 @@ Luo ```va-dev``` tietokanta
 
 Luo skeema ja lataa initial data (myös serverin start ajaa automaattisesti migraatiot)
 
-    ./lein dbmigrate
+    cd va-hakija
+    ../lein dbmigrate
 
 Tietokannan saa kokonaan tyhjättyä ajamalla
 
-    ./lein dbclear
+    cd va-hakija
+    ../lein dbclear
 
 # Käynnistys
 
@@ -54,14 +56,17 @@ kautta ajaessa ongelmaa ei ole.
 
 Paikallisesti (ilman fronttibuildia):
 
+    cd va-hakija
     ./lein trampoline run
 
 Kannan tyhjäys, fronttibuildi ja käynnistys paikallisesti:
 
+    cd va-hakija
     ./lein trampoline do dbclear, buildfront, run
 
 Tuotantoversiona:
 
+    cd va-hakija
     ./lein uberjar
     CONFIG=config/va-prod.edn java -jar target/uberjar/oph-valtionavustus-0.1.0-SNAPSHOT-standalone.jar
 
@@ -82,10 +87,12 @@ Swagger-pohjainen API-dokumentaatio löytyy osoitteesta http://localhost:8080/do
 
 Testien ja fronttibuildin ajo (ajaa myös mocha testit):
 
+    cd va-hakija
     ./lein with-profile test do buildfront, spec -f d
 
 tai (automaattisesti pelkät testit aina muutoksissa)
 
+    cd va-hakija
     ./lein with-profile test spec -a
     
 Ajettavaa testisettiä voi rajata tiettyyn tägiin lisäämällä esimerkiksi parametrin 
@@ -95,6 +102,7 @@ Huom: Vaikka ```lein run``` lataa automaattisesti muuttuneet koodit,
 Javascriptin automaattikäännöstä varten pitää käynnistää erilliseen
 terminaaliin oma watch komento:
 
+    cd va-hakija
     npm run watch
 
 ## Mocha testit
@@ -112,4 +120,4 @@ Clojure-tyyppinen tietorakenne.
 
 Ovatko riippuvuudet päivittyneet?
 
-    ./lein ancient
+    ./lein modules ancient
