@@ -28,7 +28,7 @@ function clean() {
 }
 
 function uberjar() {
-  time $LEIN install
+  time $LEIN modules install
   cd va.public
   /usr/bin/git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
   time $LEIN do buildfront, uberjar
