@@ -50,8 +50,9 @@ export default class VaUrlCreator extends UrlCreator {
   static parseAvustusHakuId(urlContent) {
     const location = urlContent.location
     const pathname = location.pathname
-    const parsedAvustusHakuIdObject = new RouteParser('/avustushaku/:avustushaku_id/*ignore').match(pathname)
+    const parsedAvustusHakuIdObjectFi = new RouteParser('/avustushaku/:avustushaku_id/*ignore').match(pathname)
+    const parsedAvustusHakuIdObjectSv = new RouteParser('/statsunderstod/:avustushaku_id/*ignore').match(pathname)
     const fallbackHakuId = urlContent.parsedQuery.avustushaku // Leave this here for now in case of old ?avustushaku=1 URLs still around
-    return parsedAvustusHakuIdObject.avustushaku_id || fallbackHakuId
+    return parsedAvustusHakuIdObjectFi.avustushaku_id || parsedAvustusHakuIdObjectSv.avustushaku_id || fallbackHakuId
   }
 }
