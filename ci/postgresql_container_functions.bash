@@ -14,13 +14,13 @@ function start_postgresql_in_container() {
     echo "Warning: found running postgresql container, stopping it."
     remove_postgresql_container
   fi
-  time $DOCKER run --name postgresql -d -p $host_postgres_port:$container_postgres_port -e 'DB_USER=va' -e 'DB_PASS=va' -e 'DB_NAME="va-dev"' sameersbn/postgresql:9.4
+  time $DOCKER run --name postgresql -d -p $host_postgres_port:$container_postgres_port -e 'DB_USER=va' -e 'DB_PASS=va' -e 'DB_NAME="va-test"' sameersbn/postgresql:9.4
 }
 
 function store_sql_script_to_container() {
   command=$1
   script_path=$2
-  echo "echo \"${command}\" | sudo -u postgres psql -d va-dev -f -" | $DOCKER exec -i postgresql /bin/bash -c "cat > $script_path"
+  echo "echo \"${command}\" | sudo -u postgres psql -d va-test -f -" | $DOCKER exec -i postgresql /bin/bash -c "cat > $script_path"
 }
 
 function exec_in_container() {

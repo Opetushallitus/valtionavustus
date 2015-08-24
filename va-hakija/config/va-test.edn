@@ -3,7 +3,7 @@
           :port 8081
           :url {:fi "https://testi.valtionavustukset.oph.fi/"
                 :sv "https://srv2.va-dev.oph.fi/"}}
- :db {:database-name "va-test"}
+ :db {:database-name "va-qa"}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25
