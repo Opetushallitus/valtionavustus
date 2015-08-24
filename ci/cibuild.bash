@@ -28,6 +28,7 @@ function clean() {
 }
 
 function uberjar() {
+  time $LEIN install
   cd va.public
   /usr/bin/git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
   time $LEIN do buildfront, uberjar
@@ -48,6 +49,7 @@ function run_tests() {
     start_postgresql_in_docker
   fi
 
+  time $LEIN sub install
   cd va.public
   time $LEIN buildfront
   cd ..
