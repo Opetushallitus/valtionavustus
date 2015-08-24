@@ -71,7 +71,8 @@
                           (.addTo msg address))
                         (.send msg)))
                     (fn []
-                      (log/info "Sending message: " email)))]
+                      (when (:print-mail-on-disable? smtp-config)
+                        (log/info "Sending message: " email))))]
       (when (not (try-send! (:retry-initial-wait smtp-config)
                             (:retry-multiplier smtp-config)
                             (:retry-max-time smtp-config)

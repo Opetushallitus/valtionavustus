@@ -31,8 +31,10 @@
                      (do
                        (log/warn "Enabling all routes. This setting should be used only in development!")
                        #'all-routes)))
-        logged (-> site
-                   (if-url-doesnt-match #"/api/healthcheck" logger/wrap-with-logger))
+        logged (if (:enable-access-log? server-config)
+                   (-> site
+                       (if-url-doesnt-match #"/api/healthcheck" logger/wrap-with-logger))
+                   site)
         handler (if auto-reload?
                   (reload/wrap-reload logged)
                   logged)]

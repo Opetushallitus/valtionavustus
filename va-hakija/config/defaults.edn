@@ -1,5 +1,6 @@
 {:server {:auto-reload? true
           :allow-db-clear? false
+          :enable-access-log? true
           :host "localhost"
           :port 8080}
  :ui {:show-environment? true}
@@ -16,6 +17,7 @@
                 :sv "no-reply@statsunderstod.oph.fi"}
          :sender "no-reply@csc.fi"
          :bounce-address "va-dev@reaktor.com"
+         :print-mail-on-disable? true
          :retry-initial-wait 2000
          :retry-multiplier 4
          :retry-max-time 60000}}
