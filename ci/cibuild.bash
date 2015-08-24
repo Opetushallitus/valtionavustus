@@ -6,6 +6,8 @@ SCRIPTPATH=`pwd -P`
 popd > /dev/null
 LEIN=$SCRIPTPATH/../lein
 
+export PATH=$PATH:$(dirname $LEIN)
+
 function show_usage() {
 cat << EOF
   Usage: ${0##*/} [clean] [uberjar] [test] [-p <docker postgresql port>] [deploy] [-s <target server name> ] [-d] [-r] [-j <source jar path>]

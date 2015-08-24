@@ -31,7 +31,7 @@
                      (do
                        (log/warn "Enabling all routes. This setting should be used only in development!")
                        #'all-routes)))
-        logged (if (:enable-access-log? server-config)
+        logged (if (-> config :server :enable-access-log?)
                    (-> site
                        (if-url-doesnt-match #"/api/healthcheck" logger/wrap-with-logger))
                    site)
