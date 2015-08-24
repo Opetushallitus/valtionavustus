@@ -104,7 +104,7 @@ function deploy() {
   echo "...copying artifacts to ${target_server_name}:${TARGET_DIR} ..."
   $SSH "mkdir -p ${TARGET_DIR}"
   scp -p -i ${SSH_KEY} ${va_public_source_jar_path} ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
-  scp -pr -i ${SSH_KEY} config resources ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
+  scp -pr -i ${SSH_KEY} va.public/config va.public/resources ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
   $SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
   restart_application
   echo "=============================="
