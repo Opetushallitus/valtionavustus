@@ -57,17 +57,17 @@ kautta ajaessa ongelmaa ei ole.
 Paikallisesti (ilman fronttibuildia):
 
     cd va-hakija
-    ./lein trampoline run
+    ../lein trampoline run
 
 Kannan tyhjäys, fronttibuildi ja käynnistys paikallisesti:
 
     cd va-hakija
-    ./lein trampoline do dbclear, buildfront, run
+    ../lein trampoline do dbclear, buildfront, run
 
 Tuotantoversiona:
 
     cd va-hakija
-    ./lein uberjar
+    ../lein uberjar
     CONFIG=config/va-prod.edn java -jar target/uberjar/oph-valtionavustus-0.1.0-SNAPSHOT-standalone.jar
 
 **Huom:** Jar-tiedoston versio voi vaihtua
@@ -88,12 +88,12 @@ Swagger-pohjainen API-dokumentaatio löytyy osoitteesta http://localhost:8080/do
 Testien ja fronttibuildin ajo (ajaa myös mocha testit):
 
     cd va-hakija
-    ./lein with-profile test do buildfront, spec -f d
+    ../lein with-profile test do buildfront, spec -f d
 
 tai (automaattisesti pelkät testit aina muutoksissa)
 
     cd va-hakija
-    ./lein with-profile test spec -a
+    ../lein with-profile test spec -a
     
 Ajettavaa testisettiä voi rajata tiettyyn tägiin lisäämällä esimerkiksi parametrin 
 ```-t ui``` tai ```-t server``` .  
