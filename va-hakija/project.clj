@@ -4,7 +4,7 @@
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
   :repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
-  :dependencies [[oph-valtionavustus/va.common "0.1.0-SNAPSHOT"]]
+  :dependencies [[oph-valtionavustus/va-common "0.1.0-SNAPSHOT"]]
 
   :main ^:skip-aot oph.va.server
   :target-path "target/%s"

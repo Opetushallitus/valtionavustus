@@ -1,4 +1,0 @@
-commit 16edefa
-Author: Timo Rantalaiho <timo.rantalaiho@reaktor.com>
-
-    Move npm calls to separate leininingen aliases

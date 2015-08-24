@@ -19,7 +19,7 @@ EOF
 
 run_docker_postgresql=true
 recreate_database=false
-va_public_source_jar_path="va.public/target/uberjar/oph-valtionavustus-*-standalone.jar"
+va_hakija_source_path="va-hakija/target/uberjar/oph-valtionavustus-*-standalone.jar"
 
 function clean() {
   echo "Running lein clean and emptying all subdirectories with name 'node_modules'"
@@ -29,7 +29,7 @@ function clean() {
 
 function uberjar() {
   time $LEIN modules install
-  cd va.public
+  cd va-hakija
   /usr/bin/git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
   time $LEIN do buildfront, uberjar
   cd ..
@@ -50,7 +50,7 @@ function run_tests() {
   fi
 
   time $LEIN modules install
-  cd va.public
+  cd va-hakija
   time $LEIN buildfront
   cd ..
   time $LEIN modules spec -f junit || true
@@ -103,8 +103,8 @@ function deploy() {
   TARGET_JAR_PATH=${TARGET_DIR}/va.jar
   echo "...copying artifacts to ${target_server_name}:${TARGET_DIR} ..."
   $SSH "mkdir -p ${TARGET_DIR}"
-  scp -p -i ${SSH_KEY} ${va_public_source_jar_path} ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
-  scp -pr -i ${SSH_KEY} va.public/config va.public/resources ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
+  scp -p -i ${SSH_KEY} ${va_hakija_source_path} ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
+  scp -pr -i ${SSH_KEY} va-hakija/config va-hakija/resources ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
   $SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
   restart_application
   echo "=============================="
@@ -156,7 +156,7 @@ while [[ $# > 0 ]]; do
       recreate_database=true
       ;;
       -j|--source-jar-path)
-      va_public_source_jar_path="$2"
+      va_hakija_source_path="$2"
       shift # past argument
       ;;
       *)
