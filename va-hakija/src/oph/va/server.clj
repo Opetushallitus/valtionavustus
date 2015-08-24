@@ -41,7 +41,7 @@
     (fail-if-server-running host port)
     (log/info "Using configuration: " config)
     (log/info "Running db migrations")
-    (dbmigrations/migrate)
+    (dbmigrations/migrate "db.migration")
     (log/info "Starting e-mail sender")
     (email/start-background-sender)
     (log/info (format "Starting server in URL http://%s:%d/" host port))

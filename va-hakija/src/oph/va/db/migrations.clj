@@ -7,12 +7,10 @@
           [org.flywaydb.core.api.migration MigrationInfoProvider]
           [org.flywaydb.core.api MigrationVersion]))
 
-(defn migrate []
+(defn migrate [& migration-paths]
   (let [flyway (doto (Flyway.)
                  (.setDataSource (db/get-datasource))
-                 (.setLocations (into-array String ["db.migration"
-;;                                                  "oph.va.db.migrations"
-                                                    ])))]
+                 (.setLocations (into-array String migration-paths)))]
     (try (.migrate flyway)
        (catch Throwable e
          (log/error e)
@@ -20,11 +18,11 @@
 
 (defmacro defmigration [name version description & body]
   `(deftype ~name []
-     JdbcMigration
+            JdbcMigration
      (migrate [this connection]
        ~@body)
 
-     MigrationInfoProvider
+            MigrationInfoProvider
      (getDescription [this] ~description)
      (getVersion [this] (MigrationVersion/fromVersion ~version))))
 

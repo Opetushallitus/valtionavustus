@@ -25,7 +25,7 @@
 
   :aot [oph.va.db.migrations]
   :profiles {:uberjar {:aot [oph.va.server]}}
-  :aliases {"dbmigrate" ["run" "-m" "oph.va.db.migrations/migrate"]
+  :aliases {"dbmigrate" ["run" "-m" "oph.va.db.migrations/migrate" "db.migration"]
             "dbclear" ["run" "-m" "oph.common.db/clear-db!"]
             "buildfront" ^{:doc "Build frontend code with npm"}
             ["do" ["shell" "npm" "install"] ["shell" "npm" "run" "build"]]})
