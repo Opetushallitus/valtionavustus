@@ -16,5 +16,4 @@
             [lein-modules "0.3.11"]]
 
   :modules {:dirs ["va-common"
-                   "va-hakija"]
-            :subprocess nil})
+                   "va-hakija"] })

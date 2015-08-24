@@ -9,4 +9,4 @@ npm-cache
 **/.DS_Store
 secret
 postgres
-
+pom.xml

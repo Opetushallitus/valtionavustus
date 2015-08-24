@@ -23,15 +23,15 @@ va_hakija_source_path="va-hakija/target/uberjar/oph-valtionavustus-*-standalone.
 
 function clean() {
   echo "Running lein clean and emptying all subdirectories with name 'node_modules'"
-  $LEIN modules clean
+  $LEIN with-profile ci modules clean
   find . -type d -name 'node_modules' -depth -exec rm -rf {} \;
 }
 
 function uberjar() {
-  time $LEIN modules install
+  time $LEIN with-profile ci modules install
   cd va-hakija
   /usr/bin/git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
-  time $LEIN do buildfront, uberjar
+  time $LEIN with-profile ci do uberjar
   cd ..
 }
 
@@ -49,11 +49,8 @@ function run_tests() {
     start_postgresql_in_docker
   fi
 
-  time $LEIN modules install
-  cd va-hakija
-  time $LEIN buildfront
-  cd ..
-  time $LEIN modules spec -f junit || true
+  time $LEIN with-profile ci modules install
+  time $LEIN with-profile ci modules spec -f junit || true
 
   if [ "$run_docker_postgresql" = true ]; then
     remove_postgresql_container
