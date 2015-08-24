@@ -1,6 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
+pushd `dirname $0` > /dev/null
+SCRIPTPATH=`pwd -P`
+popd > /dev/null
+LEIN=$SCRIPTPATH/../lein
+
 function show_usage() {
 cat << EOF
   Usage: ${0##*/} [clean] [uberjar] [test] [-p <docker postgresql port>] [deploy] [-s <target server name> ] [-d] [-r] [-j <source jar path>]
@@ -14,18 +19,19 @@ EOF
 
 run_docker_postgresql=true
 recreate_database=false
-source_jar_path="target/uberjar/oph-valtionavustus-*-standalone.jar"
+va_public_source_jar_path="va.public/target/uberjar/oph-valtionavustus-*-standalone.jar"
 
 function clean() {
-  node_modules_location=node_modules
-  echo "Running lein clean and emptying $node_modules_location"
-  ./lein clean
-  rm -rf $node_modules_location
+  echo "Running lein clean and emptying all subdirectories with name 'node_modules'"
+  $LEIN sub clean
+  find . -type d -name 'node_modules' -exec rm -rf {} \;
 }
 
 function uberjar() {
+  cd va.public
   /usr/bin/git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
-  time ./lein do buildfront, uberjar
+  time $LEIN do buildfront, uberjar
+  cd ..
 }
 
 function start_postgresql_in_docker() {
@@ -42,7 +48,10 @@ function run_tests() {
     start_postgresql_in_docker
   fi
 
-  time ./lein do buildfront, spec -f junit || true
+  cd va.public
+  time $LEIN buildfront
+  cd ..
+  time $LEIN sub spec -f junit || true
 
   if [ "$run_docker_postgresql" = true ]; then
     remove_postgresql_container
@@ -92,7 +101,7 @@ function deploy() {
   TARGET_JAR_PATH=${TARGET_DIR}/va.jar
   echo "...copying artifacts to ${target_server_name}:${TARGET_DIR} ..."
   $SSH "mkdir -p ${TARGET_DIR}"
-  scp -p -i ${SSH_KEY} ${source_jar_path} ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
+  scp -p -i ${SSH_KEY} ${va_public_source_jar_path} ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
   scp -pr -i ${SSH_KEY} config resources ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
   $SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
   restart_application
@@ -145,7 +154,7 @@ while [[ $# > 0 ]]; do
       recreate_database=true
       ;;
       -j|--source-jar-path)
-      source_jar_path="$2"
+      va_public_source_jar_path="$2"
       shift # past argument
       ;;
       *)

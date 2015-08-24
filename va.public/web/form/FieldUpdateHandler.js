@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import InputValueStorage from './InputValueStorage.js'
 import SyntaxValidator from './SyntaxValidator.js'
-import JsUtil from '../form/JsUtil.js'
+import JsUtil from './JsUtil.js'
 
 export default class FieldUpdateHandler {
   static createFieldUpdate(field, value) {
