@@ -24,7 +24,7 @@ va_public_source_jar_path="va.public/target/uberjar/oph-valtionavustus-*-standal
 function clean() {
   echo "Running lein clean and emptying all subdirectories with name 'node_modules'"
   $LEIN modules clean
-  find . -type d -name 'node_modules' -exec rm -rf {} \;
+  find . -type d -name 'node_modules' -depth -exec rm -rf {} \;
 }
 
 function uberjar() {
