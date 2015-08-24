@@ -49,7 +49,7 @@ function run_tests() {
     start_postgresql_in_docker
   fi
 
-  time $LEIN sub install
+  time $LEIN modules install
   cd va.public
   time $LEIN buildfront
   cd ..
