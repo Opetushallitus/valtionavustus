@@ -9,6 +9,9 @@
                  ;; HTTP server
                  [javax.servlet/servlet-api "2.5"]
                  [http-kit "2.1.19"]
+                 [ring "1.4.0"]
+                 [ring/ring-jetty-adapter "1.4.0"]
+                 [ring/ring-servlet "1.4.0"]
                  [ring/ring-devel "1.4.0"]
                  [ring/ring-core "1.4.0"]
 
@@ -18,15 +21,17 @@
                                                               instaparse
                                                               joda-time
                                                               clj-time
-                                                              org.clojure/tools.reader]]
+                                                              org.clojure/tools.reader
+                                                              prismatic/schema]]
 
                  ;; JSON
                  [cheshire "5.5.0"]
+                 [prismatic/schema "0.4.4"]
 
                  ;; SQL + migrations
                  [yesql "0.5.0"]
                  [org.postgresql/postgresql "9.4-1201-jdbc41"]
-                 [hikari-cp "1.3.0"]
+                 [hikari-cp "1.3.0" :exclusions [prismatic/schema]]
                  [org.flywaydb/flyway-core "3.2.1"]
 
                  ;; E-mail
