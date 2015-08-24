@@ -13,6 +13,8 @@
   ]
 
   :plugins [[lein-ancient "0.6.7"]
-            [lein-sub "0.3.0"]]
+            [lein-modules "0.3.11"]]
 
-  :sub ["va.common" "va.public"])
+  :modules {:dirs ["va.common"
+                   "va.public"]
+            :subprocess nil})
