@@ -11,7 +11,8 @@
   (let [flyway (doto (Flyway.)
                  (.setDataSource (db/get-datasource))
                  (.setLocations (into-array String ["db.migration"
-                                                    "oph.va.db.migrations"])))]
+;;                                                  "oph.va.db.migrations"
+                                                    ])))]
     (try (.migrate flyway)
        (catch Throwable e
          (log/error e)
