@@ -2,6 +2,7 @@
           :allow-db-clear? false
           :host "localhost"
           :port 8080}
+ :ui {:show-environment? true}
  :api {:restricted-routes? true}
  :db {:username "va"
       :password "va"

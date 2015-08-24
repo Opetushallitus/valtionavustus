@@ -80,7 +80,8 @@ export default class VaLogin extends React.Component {
     const model = this.props.model
     const lang = model.lang
     const translations = model.translations
-    const content = model.avustushaku.content
+    const avustushaku =  model.avustushaku
+    const content = avustushaku.content
     const email = this.state.email
     const sent = this.state.sent
     const error = this.state.error
@@ -88,7 +89,7 @@ export default class VaLogin extends React.Component {
     const canSend = () => email === sent || emailIsInvalid()
 
     return <div>
-      <VaLoginTopbar translations={translations} lang={lang} />
+      <VaLoginTopbar avustushaku={avustushaku} translations={translations} lang={lang} />
       <section id="container" className="soresu-fieldset">
         <H1InfoElement htmlId="name" lang={lang} values={content} />
         <DateRangeInfoElement htmlId="duration" translations={translations} translationKey="label" lang={lang} values={content} />

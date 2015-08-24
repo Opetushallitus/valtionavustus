@@ -9,12 +9,15 @@ import ServerError from '../form/component/ServerError.jsx'
 import TextButton from '../form/component/TextButton.jsx'
 import Translator from '../form/Translator.js'
 
+import EnvironmentInfo from './EnvironmentInfo.jsx'
+
 export default class VaFormTopbar extends React.Component {
   render() {
     const controller = this.props.controller
     const state = this.props.state
     const saveStatus = state.saveStatus
     const configuration = state.configuration
+    const avustushaku = state.avustushaku
     const form = state.form
     const validationErrors = state.validationErrors
     const lang = configuration.lang
@@ -53,7 +56,10 @@ export default class VaFormTopbar extends React.Component {
             </span>
             <FormErrorSummary formContent={form.content} controller={controller} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
           </div>
-          <div id="server-error"><ServerError serverError={saveStatus.serverError} translations={translations.errors} lang={lang}/></div>
+          <div id="server-info">
+            <EnvironmentInfo avustushaku={avustushaku}/>
+            <ServerError serverError={saveStatus.serverError} translations={translations.errors} lang={lang}/>
+          </div>
         </div>
         <span hidden={true} id="entity-id">{formOperations.printEntityId(state)}</span>
         <span hidden={true} id="entity-version">{formOperations.responseParser.getSavedVersion(state.saveStatus.savedObject)}</span>

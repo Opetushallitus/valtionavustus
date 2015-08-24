@@ -14,10 +14,13 @@
                                  :selection-criteria SelectionCriteria
                                  :self-financing-percentage s/Num})
 
+(s/defschema Environment {:name s/Str
+                          :show-name s/Bool})
+
 (s/defschema AvustusHaku {:id Long
                           :content AvustusHakuContent
                           :form Long
-                          :created_at s/Inst})
+                          :environment Environment})
 (s/defschema Hakemus
   "Hakemus contains hakemus info and last submission"
   {:id     (s/maybe s/Str)

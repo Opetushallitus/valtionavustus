@@ -4,6 +4,9 @@
 
 (defn config-name [] (env :config))
 
+(defn config-simple-name []
+  (last (re-find #"\S+/(\S+).edn" (config-name))))
+
 (defonce defaults (-> (or (env :configdefaults) "config/defaults.edn")
                       (slurp)
                       (clojure.edn/read-string)))

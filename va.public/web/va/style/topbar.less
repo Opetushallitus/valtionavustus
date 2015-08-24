@@ -51,9 +51,16 @@
     }
   }
 
-  #server-error {
+  #server-info {
     float: left;
     color: @bright-red;
+    width: @form-width - 400px;
+    .environment {
+      text-transform: uppercase;
+    }
+    .environment:after {
+      content: " ";
+    }
   }
 }
 

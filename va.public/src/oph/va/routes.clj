@@ -8,7 +8,7 @@
             [compojure.api.sweet :refer :all]
             [ring.swagger.middleware :as swagger]
             [schema.core :as s]
-            [oph.common.config :refer [config]]
+            [oph.common.config :refer [config config-simple-name]]
             [oph.common.datetime :as datetime]
             [oph.form.db :as form-db]
             [oph.form.validation :as validation]
@@ -153,6 +153,13 @@
           (ok {})
           (not-found))))
 
+(defn avustushaku-ok-response [avustushaku]
+  (ok {:id (:id avustushaku)
+       :content (:content avustushaku)
+       :form (:form avustushaku)
+       :environment {:name (config-simple-name)
+                     :show-name (:show-environment? (:ui config))}}))
+
 (defroutes* avustushaku-routes
   "Avustushaku routes"
 
@@ -160,7 +167,7 @@
         :path-params [id :- Long]
         :return AvustusHaku
         (if-let [avustushaku (va-db/get-avustushaku id)]
-          (ok avustushaku)
+          (avustushaku-ok-response avustushaku)
           (not-found)))
 
   (GET* "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
