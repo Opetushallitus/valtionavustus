@@ -23,7 +23,7 @@ va_public_source_jar_path="va.public/target/uberjar/oph-valtionavustus-*-standal
 
 function clean() {
   echo "Running lein clean and emptying all subdirectories with name 'node_modules'"
-  $LEIN sub clean
+  $LEIN modules clean
   find . -type d -name 'node_modules' -exec rm -rf {} \;
 }
 
@@ -53,7 +53,7 @@ function run_tests() {
   cd va.public
   time $LEIN buildfront
   cd ..
-  time $LEIN sub spec -f junit || true
+  time $LEIN modules spec -f junit || true
 
   if [ "$run_docker_postgresql" = true ]; then
     remove_postgresql_container
