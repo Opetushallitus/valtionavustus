@@ -54,28 +54,28 @@
         :path-params [haku-id :- Long, hakemus-id :- s/Str]
         :return  Hakemus
         :summary "Get current answers"
-        (handle-get-current-answers haku-id hakemus-id))
+        (on-get-current-answers haku-id hakemus-id))
 
   (PUT* "/:haku-id/hakemus" [haku-id :as request]
       :path-params [haku-id :- Long]
       :body    [answers (describe Answers "New answers")]
       :return  Hakemus
       :summary "Create initial hakemus"
-      (handle-hakemus-create haku-id answers))
+      (on-hakemus-create haku-id answers))
 
   (POST* "/:haku-id/hakemus/:hakemus-id/:base-version" [haku-id hakemus-id base-version :as request]
        :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
        :body    [answers (describe Answers "New answers")]
        :return  Hakemus
        :summary "Update hakemus values"
-       (handle-hakemus-update haku-id hakemus-id base-version answers))
+       (on-hakemus-update haku-id hakemus-id base-version answers))
 
   (POST* "/:haku-id/hakemus/:hakemus-id/:base-version/submit" [haku-id hakemus-id base-version :as request]
        :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
        :body    [answers (describe Answers "New answers")]
        :return  Hakemus
        :summary "Submit hakemus"
-       (handle-hakemus-submit haku-id hakemus-id base-version answers)))
+       (on-hakemus-submit haku-id hakemus-id base-version answers)))
 
 (defn return-html [filename]
   (-> (resp/resource-response filename {:root "public"})

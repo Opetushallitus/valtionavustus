@@ -35,7 +35,7 @@
        :last_status_change_at (:last_status_change_at hakemus)
        :submission submission}))
 
-(defn handle-hakemus-create [haku-id answers]
+(defn on-hakemus-create [haku-id answers]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         avustushaku-content (:content avustushaku)
         form-id (:form avustushaku)
@@ -68,7 +68,7 @@
       (bad-request! validation))))
 
 
-(defn handle-get-current-answers [haku-id hakemus-id]
+(defn on-get-current-answers [haku-id hakemus-id]
   (let [form-id (:form (va-db/get-avustushaku haku-id))
                 hakemus (va-db/get-hakemus hakemus-id)
                 submission-id (:form_submission_id hakemus)
@@ -79,7 +79,7 @@
                 (hakemus-ok-response verified-hakemus submission))
               (hakemus-ok-response hakemus submission))))
 
-(defn handle-hakemus-update [haku-id hakemus-id base-version answers]
+(defn on-hakemus-update [haku-id hakemus-id base-version answers]
   (let [form-id (:form (va-db/get-avustushaku haku-id))
                validation (validation/validate-form-security (form-db/get-form form-id) answers)]
            (if (every? empty? (vals validation))
@@ -91,7 +91,7 @@
                  (hakemus-conflict-response hakemus)))
              (bad-request! validation))))
 
-(defn handle-hakemus-submit [haku-id hakemus-id base-version answers]
+(defn on-hakemus-submit [haku-id hakemus-id base-version answers]
   (let [form-id (:form (va-db/get-avustushaku haku-id))
         validation (validation/validate-form (form-db/get-form form-id) answers)]
     (if (every? empty? (vals validation))
