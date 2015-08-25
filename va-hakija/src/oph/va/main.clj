@@ -1,7 +1,6 @@
 (ns oph.va.main
   (:use [oph.va.server :only [start-server]])
-  (:require [oph.common.config :refer [config]]
-)
+  (:require [oph.common.config :refer [config]])
   (:gen-class))
 
 (defn -main [& args]

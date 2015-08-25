@@ -16,7 +16,8 @@
 (defn- fail-if-server-running [host port]
   (try
     (let [socket (Socket. host port)]
-      (do (.close socket) (throw (Exception. (format "Server is already running %s:%d" host port)))))
+      (.close socket)
+      (throw (Exception. (format "Server is already running %s:%d" host port))))
     (catch IOException e)))
 
 (defn- shutdown []
@@ -24,11 +25,8 @@
   (email/stop-background-sender)
   (db/close-datasource!))
 
-(defn- create-restricted-routes []
-  #'restricted-routes)
-
-(defn- create-all-routes []
-  #'all-routes)
+(defn- create-restricted-routes [] #'restricted-routes)
+(defn- create-all-routes [] #'all-routes)
 
 (defn- create-site []
   (site (if (-> config :api :restricted-routes?)
