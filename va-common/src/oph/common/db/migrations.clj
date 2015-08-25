@@ -2,13 +2,16 @@
   (:gen-class)
   (:require [clojure.tools.logging :as log]
             [oph.common.db :as db])
+  (:use [oph.common.config :only [config]])
   (import [org.flywaydb.core Flyway]
           [org.flywaydb.core.api.migration.jdbc JdbcMigration]
           [org.flywaydb.core.api.migration MigrationInfoProvider]
           [org.flywaydb.core.api MigrationVersion]))
 
 (defn migrate [& migration-paths]
-  (let [flyway (doto (Flyway.)
+  (let [schema-name (-> config :db :schema)
+        flyway (doto (Flyway.)
+                 (.setSchemas (into-array String [schema-name]))
                  (.setDataSource (db/get-datasource))
                  (.setLocations (into-array String migration-paths)))]
     (try (.migrate flyway)

@@ -24,8 +24,10 @@
           :minimum-idle 10
           :maximum-pool-size 10
           :pool-name "db-pool"
-          :adapter "postgresql"}
-         (:db config)))
+          :adapter "postgresql"
+          :currentSchema (-> config :db :schema)}
+         (-> (:db config)
+             (dissoc :schema))))
 
 (def datasource (atom nil))
 
@@ -45,11 +47,11 @@
        (catch IllegalArgumentException iae
          original-exception)))
 
-(defn clear-db! []
+(defn clear-db! [schema-name]
   (if (:allow-db-clear? (:server config))
     (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
-           ["drop schema public cascade"
-            "create schema public"])
+           [(str "drop schema " schema-name " cascade")
+            (str "create schema " schema-name) ])
          (catch Exception e (log/error (get-next-exception-or-original e) (.toString e))))
     (throw (RuntimeException. (str "Clearing database is not allowed! "
                                    "check that you run with correct mode. "

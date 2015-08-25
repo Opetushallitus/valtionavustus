@@ -47,9 +47,9 @@ function wait_for_postgresql_to_be_available() {
   fi
 }
 
-function give_public_schema_to_va() {
-  store_sql_script_to_container "alter schema public owner to va;" /tmp/give_public_schema_to_va.bash
-  exec_in_container /tmp/give_public_schema_to_va.bash
+function give_schema_to_va() {
+  store_sql_script_to_container "alter schema $1 owner to va;" /tmp/give_schema_to_va.bash
+  exec_in_container /tmp/give_schema_to_va.bash
 }
 
 function remove_postgresql_container() {

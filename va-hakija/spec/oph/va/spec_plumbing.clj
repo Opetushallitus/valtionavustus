@@ -1,4 +1,5 @@
 (ns oph.va.spec-plumbing
+  (:use [oph.common.config :only [config]])
   (:require [oph.va.server :refer :all]
             [oph.common.db :as db]))
 
@@ -8,7 +9,7 @@
 
 (defmacro with-test-server! [& form]
   `(do
-     (wrap-exception (db/clear-db!))
+     (wrap-exception (db/clear-db! (-> config :db :schema)))
      (let [stop-server# (wrap-exception (start-server "localhost" 9000 false))]
        (try
          ~@form
