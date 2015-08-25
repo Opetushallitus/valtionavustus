@@ -24,8 +24,10 @@
           :minimum-idle 10
           :maximum-pool-size 10
           :pool-name "db-pool"
-          :adapter "postgresql"}
-         (:db config)))
+          :adapter "postgresql"
+          :currentSchema (-> config :db :schema)}
+         (-> (:db config)
+             (dissoc :schema))))
 
 (def datasource (atom nil))
 

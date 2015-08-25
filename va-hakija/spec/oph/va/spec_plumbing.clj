@@ -9,7 +9,7 @@
 
 (defmacro with-test-server! [& form]
   `(do
-     (wrap-exception (db/clear-db! (-> config :db :currentSchema)))
+     (wrap-exception (db/clear-db! (-> config :db :schema)))
      (let [stop-server# (wrap-exception (start-server "localhost" 9000 false))]
        (try
          ~@form

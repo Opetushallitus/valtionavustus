@@ -9,7 +9,7 @@
           [org.flywaydb.core.api MigrationVersion]))
 
 (defn migrate [& migration-paths]
-  (let [schema-name (-> config :db :currentSchema)
+  (let [schema-name (-> config :db :schema)
         flyway (doto (Flyway.)
                  (.setSchemas (into-array String [schema-name]))
                  (.setDataSource (db/get-datasource))
