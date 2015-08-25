@@ -1,4 +1,4 @@
-(ns oph.va.db.migrations
+(ns oph.common.db.migrations
   (:gen-class)
   (:require [clojure.tools.logging :as log]
             [oph.common.db :as db])
@@ -25,7 +25,3 @@
             MigrationInfoProvider
      (getDescription [this] ~description)
      (getVersion [this] (MigrationVersion/fromVersion ~version))))
-
-;; (defmigration TestMigration "1.4"
-;;   "My test migration"
-;;   (println "foobar"))
