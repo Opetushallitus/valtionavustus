@@ -1,4 +1,4 @@
-(ns ^{:skip-aot true} oph.va.routes
+(ns ^{:skip-aot true} oph.va.hakija.routes
   (:use [clojure.tools.trace :only [trace]])
   (:require [compojure.route :as route]
             [clojure.tools.logging :as log]
@@ -11,9 +11,9 @@
             [oph.common.config :refer [config config-simple-name]]
             [oph.form.routes :refer :all]
             [oph.form.schema :refer :all]
-            [oph.va.db :as va-db]
-            [oph.va.schema :refer :all]
-            [oph.va.handlers :refer :all]))
+            [oph.va.hakija.db :as va-db]
+            [oph.va.hakija.schema :refer :all]
+            [oph.va.hakija.handlers :refer :all]))
 
 (create-form-schema [:vaBudget
                      :vaSummingBudgetElement

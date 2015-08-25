@@ -1,5 +1,5 @@
-(ns oph.va.server
-  (:use [oph.va.routes :only [all-routes restricted-routes]])
+(ns oph.va.hakija.server
+  (:use [oph.va.hakija.routes :only [all-routes restricted-routes]])
   (:require [ring.middleware.reload :as reload]
             [ring.middleware.logger :as logger]
             [ring.middleware.conditional :refer [if-url-doesnt-match]]
@@ -8,8 +8,8 @@
             [oph.common.server :as server]
             [oph.common.config :refer [config]]
             [oph.common.db :as db]
-            [oph.va.db.migrations :as dbmigrations]
-            [oph.va.email :as email]))
+            [oph.va.hakija.db.migrations :as dbmigrations]
+            [oph.va.hakija.email :as email]))
 
 (defn- startup [config]
   (log/info "Using configuration: " config)

@@ -1,4 +1,4 @@
-(ns oph.va.server-spec
+(ns oph.va.hakija.server-spec
   (:use [clojure.tools.trace])
   (:require [clojure.string :as string]
             [speclj.core :refer :all]
@@ -6,9 +6,9 @@
             [cheshire.core :refer :all]
             [clj-time.format :as f]
             [clj-time.local :as l]
-            [oph.va.db :as va-db]
+            [oph.va.hakija.db :as va-db]
             [oph.form.validation :as validation]
-            [oph.va.spec-plumbing :refer :all]))
+            [oph.va.hakija.spec-plumbing :refer :all]))
 
 (def base-url "http://localhost:9000")
 (defn path->url [path] (str base-url path))

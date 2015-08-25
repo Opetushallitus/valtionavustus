@@ -1,4 +1,4 @@
-(ns oph.va.db.migrations
+(ns oph.va.hakija.db.migrations
   (:require [oph.common.db.migrations :as migrations])
   (:gen-class))
 

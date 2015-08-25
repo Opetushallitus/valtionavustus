@@ -1,5 +1,5 @@
-(ns oph.va.main
-  (:use [oph.va.server :only [start-server]])
+(ns oph.va.hakija.main
+  (:use [oph.va.hakija.server :only [start-server]])
   (:require [oph.common.config :refer [config]])
   (:gen-class))
 

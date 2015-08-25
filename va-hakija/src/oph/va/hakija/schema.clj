@@ -1,4 +1,4 @@
-(ns oph.va.schema
+(ns oph.va.hakija.schema
   (:require [schema.core :as s]
             [oph.form.schema :refer :all]))
 

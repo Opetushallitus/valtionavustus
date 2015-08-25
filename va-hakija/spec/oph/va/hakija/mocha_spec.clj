@@ -1,9 +1,9 @@
-(ns oph.va.mocha-spec
+(ns oph.va.hakija.mocha-spec
   (:use [clojure.tools.trace]
         [clojure.java.shell :only [sh]]
         [clojure.string :only [split join]])
   (:require [speclj.core :refer :all]
-            [oph.va.spec-plumbing :refer :all]))
+            [oph.va.hakija.spec-plumbing :refer :all]))
 
 (defn is-test-output? [line]
   (or (.contains line "testcase") (.contains line "testsuite")))

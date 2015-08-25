@@ -1,6 +1,6 @@
-(ns oph.va.spec-plumbing
+(ns oph.va.hakija.spec-plumbing
   (:use [oph.common.config :only [config]])
-  (:require [oph.va.server :refer :all]
+  (:require [oph.va.hakija.server :refer :all]
             [oph.common.db :as db]))
 
 (defmacro wrap-exception [& form]

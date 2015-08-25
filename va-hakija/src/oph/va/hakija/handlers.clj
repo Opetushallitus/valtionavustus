@@ -1,4 +1,4 @@
-(ns ^{:skip-aot true} oph.va.handlers
+(ns ^{:skip-aot true} oph.va.hakija.handlers
   (:use [clojure.tools.trace :only [trace]])
   (:require [ring.util.http-response :refer :all]
             [compojure.core :refer [defroutes GET]]
@@ -9,8 +9,8 @@
             [oph.form.validation :as validation]
             [oph.form.routes :refer :all]
             [oph.form.schema :refer :all]
-            [oph.va.db :as va-db]
-            [oph.va.email :as va-email]))
+            [oph.va.hakija.db :as va-db]
+            [oph.va.hakija.email :as va-email]))
 
 (defn- matches-key? [key value-container]
   (= (:key value-container) key))

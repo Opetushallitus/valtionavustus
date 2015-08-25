@@ -1,8 +1,8 @@
-(ns oph.va.db
+(ns oph.va.hakija.db
   (:use [oph.common.db]
         [oph.form.db :as form-db]
         [clojure.tools.trace :only [trace]])
-  (:require [oph.va.db.queries :as queries]))
+  (:require [oph.va.hakija.db.queries :as queries]))
 
 
 (defn health-check []

@@ -1,4 +1,4 @@
-(ns oph.va.email
+(ns oph.va.hakija.email
   (:require [clojure.core.async :refer [<! >!! go chan]]
             [oph.common.datetime :as datetime]
             [clojure.tools.trace :refer [trace]]
