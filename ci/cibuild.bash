@@ -43,7 +43,7 @@ function start_postgresql_in_docker() {
   echo "Starting Postgresql in Docker"
   start_postgresql_in_container
   wait_for_postgresql_to_be_available
-  give_public_schema_to_va
+  give_schema_to_va hakija
 }
 
 function run_tests() {
@@ -63,7 +63,7 @@ function drop_database() {
   echo "=============================="
   echo
   echo "...dropping db.."
-  $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/resources/sql/drop_public_schema.sql"
+  $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/resources/sql/drop_hakija_schema.sql"
 }
 
 function restart_application() {

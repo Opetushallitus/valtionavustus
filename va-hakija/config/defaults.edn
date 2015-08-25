@@ -8,7 +8,8 @@
  :db {:username "va"
       :password "va"
       :server-name "localhost"
-      :port-number 5432}
+      :port-number 5432
+      :currentSchema "hakija"}
  :email {:enabled? false
          :host nil
          :port nil
