@@ -1,24 +1,22 @@
-(ns ^{:skip-aot true} oph.va.server
-  (:use [org.httpkit.server :only [run-server]]
-        [oph.va.routes :only [all-routes restricted-routes]])
+(ns oph.va.server
+  (:use [oph.va.routes :only [all-routes restricted-routes]])
   (:require [ring.middleware.reload :as reload]
             [ring.middleware.logger :as logger]
             [ring.middleware.conditional :refer [if-url-doesnt-match]]
             [compojure.handler :refer [site]]
             [clojure.tools.logging :as log]
+            [oph.common.server :as server]
             [oph.common.config :refer [config]]
             [oph.common.db :as db]
             [oph.va.db.migrations :as dbmigrations]
-            [oph.va.email :as email])
-  (:import (java.net Socket)
-           (java.io IOException)))
+            [oph.va.email :as email]))
 
-(defn- fail-if-server-running [host port]
-  (try
-    (let [socket (Socket. host port)]
-      (.close socket)
-      (throw (Exception. (format "Server is already running %s:%d" host port))))
-    (catch IOException e)))
+(defn- startup [config]
+  (log/info "Using configuration: " config)
+  (log/info "Running db migrations")
+  (dbmigrations/migrate "db.migration")
+  (log/info "Starting e-mail sender")
+  (email/start-background-sender))
 
 (defn- shutdown []
   (log/info "Shutting down all services")
@@ -46,16 +44,9 @@
         handler (if auto-reload?
                   (reload/wrap-reload logged)
                   logged)]
-    (fail-if-server-running host port)
-    (log/info "Using configuration: " config)
-    (log/info "Running db migrations")
-    (dbmigrations/migrate "db.migration")
-    (log/info "Starting e-mail sender")
-    (email/start-background-sender)
-    (log/info (format "Starting server in URL http://%s:%d/" host port))
-    (let [stop (run-server handler {:host host :port port})]
-      (.addShutdownHook (Runtime/getRuntime) (Thread. shutdown))
-      ;; Return stop-function with our own shutdown
-      (fn []
-        (stop)
-        (shutdown)))))
+    (server/start-server {:host host
+                          :port port
+                          :auto-reload? auto-reload?
+                          :routes handler
+                          :on-startup (partial startup config)
+                          :on-shutdown shutdown})))
