@@ -63,7 +63,7 @@ function drop_database() {
   echo "=============================="
   echo
   echo "...dropping db.."
-  $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/resources/sql/drop_hakija_schema.sql"
+  $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/va-hakija/resources/sql/drop_hakija_schema.sql"
 }
 
 function restart_application() {
