@@ -113,20 +113,22 @@
     (log/warn (format "Request validation error: %s" (print-str error-str)))
     (bad-request {:errors error-str})))
 
+(defn- create-swagger-docs []
+  (swagger-docs {:info {:title "Valtionavustus API"}
+                 :tags [{:name        "forms"
+                         :description "Form and form submission management"}
+                        {:name        "avustushaut"
+                         :description "Avustushaku"}
+                        {:name        "healthcheck"
+                         :description "Healthcheck"}]}))
+
 (defapi restricted-routes
   {:formats [:json-kw]
    :validation-errors {:error-handler validation-error-handler
                        :catch-core-errors? false}
    :exceptions {:exception-handler exception-handler}}
 
-  ;; swagger.json generation
-  (swagger-docs {:info {:title "Valtionavustus API"}
-                 :tags [{:name "forms"
-                         :description "Form and form submission management"}
-                        {:name "avustushaut"
-                         :description "Avustushaku"}
-                        {:name "healthcheck"
-                         :description "Healthcheck"}]})
+  (create-swagger-docs)
 
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
   (context* "/api/form" [] :tags ["forms"] form-restricted-routes)
@@ -143,14 +145,7 @@
                        :catch-core-errors? false}
    :exceptions {:exception-handler exception-handler}}
 
-  ;; swagger.json generation
-  (swagger-docs {:info {:title "Valtionavustus API"}
-                 :tags [{:name "forms"
-                         :description "Form and form submission management"}
-                        {:name "avustushaut"
-                         :description "Avustushaku"}
-                        {:name "healthcheck"
-                         :description "Healthcheck"}]})
+  (create-swagger-docs)
 
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
   (context* "/api/form" [] :tags ["forms"] form-routes)
