@@ -6,7 +6,7 @@ if [ -z $1 ]; then
 fi
 
 echo "    Executing $1 as {{ dbuser }} to db {{ dbname }} ..."
-time PGPASSWORD={{ dbpassword }} /usr/bin/psql -U {{ dbuser }} -h localhost -d {{ dbname }} -f $1
+time PGPASSWORD={{ dbpassword }} /usr/bin/psql -U {{ dbuser }} -h localhost -d {{ dbname }} -f $1 ${@:2}
 retval=$?
 echo "    ...SQL execution done."
 exit $retval
