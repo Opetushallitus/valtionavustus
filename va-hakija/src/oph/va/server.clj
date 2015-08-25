@@ -1,4 +1,4 @@
-(ns oph.va.server
+(ns ^{:skip-aot true} oph.va.server
   (:use [org.httpkit.server :only [run-server]]
         [oph.va.routes :only [all-routes restricted-routes]])
   (:require [ring.middleware.reload :as reload]
@@ -10,7 +10,6 @@
             [oph.common.db :as db]
             [oph.va.db.migrations :as dbmigrations]
             [oph.va.email :as email])
-  (:gen-class)
   (:import (java.net Socket)
            (java.io IOException)))
 
@@ -25,16 +24,27 @@
   (email/stop-background-sender)
   (db/close-datasource!))
 
+(defn- create-restricted-routes []
+  #'restricted-routes)
+
+(defn- create-all-routes []
+  #'all-routes)
+
+(defn- create-site []
+  (site (if (-> config :api :restricted-routes?)
+                       (create-restricted-routes)
+                       (do
+                         (log/warn "Enabling all routes. This setting should be used only in development!")
+                         (create-all-routes)))))
+
+(defn- with-log-wrapping [site]
+  (if (-> config :server :enable-access-log?)
+                     (-> site
+                         (if-url-doesnt-match #"/api/healthcheck" logger/wrap-with-logger))
+                     site))
+
 (defn start-server [host port auto-reload?]
-  (let [site (site (if (-> config :api :restricted-routes?)
-                     #'restricted-routes
-                     (do
-                       (log/warn "Enabling all routes. This setting should be used only in development!")
-                       #'all-routes)))
-        logged (if (-> config :server :enable-access-log?)
-                   (-> site
-                       (if-url-doesnt-match #"/api/healthcheck" logger/wrap-with-logger))
-                   site)
+  (let [logged (with-log-wrapping (create-site))
         handler (if auto-reload?
                   (reload/wrap-reload logged)
                   logged)]
@@ -51,10 +61,3 @@
       (fn []
         (stop)
         (shutdown)))))
-
-(defn -main [& args]
-  (let [server-config (:server config)
-        auto-reload? (:auto-reload? server-config)
-        port (:port server-config)
-        host (:host server-config)]
-    (start-server host port auto-reload?)))

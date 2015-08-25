@@ -6,7 +6,7 @@
   :repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
   :dependencies [[oph-valtionavustus/va-common "0.1.0-SNAPSHOT"]]
 
-  :main ^:skip-aot oph.va.server
+  :main ^:skip-aot oph.va.main
   :target-path "target/%s"
 
   :prep-tasks [
@@ -24,7 +24,7 @@
   :uberjar-exclusions [#"public/test"]
 
   :aot [oph.va.db.migrations]
-  :profiles {:uberjar {:aot [oph.va.server]}}
+  :profiles {:uberjar {:aot [oph.va.main]}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.db.migrations/migrate" "db.migration"]
             "dbclear" ["run" "-m" "oph.common.db/clear-db!"]
             "buildfront" ^{:doc "Build frontend code with npm"}
