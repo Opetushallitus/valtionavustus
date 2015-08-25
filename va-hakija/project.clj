@@ -6,7 +6,7 @@
   :repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
   :dependencies [[oph-valtionavustus/va-common "0.1.0-SNAPSHOT"]]
 
-  :main ^:skip-aot oph.va.main
+  :main oph.va.main
   :target-path "target/%s"
 
   :prep-tasks [
