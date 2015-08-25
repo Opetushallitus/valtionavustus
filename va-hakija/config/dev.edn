@@ -2,6 +2,7 @@
           :url {:fi "http://localhost:8080/"
                 :sv "http://localhost:8080/"}}
  :api {:restricted-routes? false}
+ :db {:database-name "va-dev"}
  :email {:enabled? false
          :host "localhost"
          :port 2500}}
