@@ -43,7 +43,7 @@ function start_postgresql_in_docker() {
   echo "Starting Postgresql in Docker"
   start_postgresql_in_container
   wait_for_postgresql_to_be_available
-  give_schema_to_va hakija
+  # give_schema_to_va hakija  # When using our own schema that is owned by va, we don't need to give it access
 }
 
 function run_tests() {
