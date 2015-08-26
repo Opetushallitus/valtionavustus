@@ -1,0 +1,8 @@
+{:server {:allow-db-clear? true
+          :enable-access-log? false
+          :port 8081
+          :url {:fi "http://localhost:8081/"
+                :sv "http://localhost:8081/"}}
+ :api {:restricted-routes? false}
+ :db {:database-name "va-test"}
+ :email {:print-mail-on-disable? false}}

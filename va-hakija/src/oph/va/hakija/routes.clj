@@ -11,7 +11,7 @@
             [oph.common.config :refer [config config-simple-name]]
             [oph.form.routes :refer :all]
             [oph.form.schema :refer :all]
-            [oph.va.hakija.db :as va-db]
+            [oph.va.hakija.db :as hakija-db]
             [oph.va.hakija.schema :refer :all]
             [oph.va.hakija.handlers :refer :all]))
 
@@ -25,11 +25,11 @@
   "Healthcheck routes"
 
   (GET* "/" []
-        (if (va-db/health-check)
+        (if (hakija-db/health-check)
           (ok {})
           (not-found)))
   (HEAD* "/" []
-        (if (va-db/health-check)
+        (if (hakija-db/health-check)
           (ok {})
           (not-found))))
 
@@ -46,7 +46,7 @@
   (GET* "/:id" [id]
         :path-params [id :- Long]
         :return AvustusHaku
-        (if-let [avustushaku (va-db/get-avustushaku id)]
+        (if-let [avustushaku (hakija-db/get-avustushaku id)]
           (avustushaku-ok-response avustushaku)
           (not-found)))
 
