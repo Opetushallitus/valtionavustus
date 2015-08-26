@@ -17,14 +17,9 @@
 
 (defn- shutdown []
   (log/info "Shutting down all services")
-  (email/stop-background-sender)
   (db/close-datasource!))
 
-(defn- create-restricted-routes [] #'restricted-routes)
-(defn- create-all-routes [] #'all-routes)
-
-(defn- create-site []
-  (site (create-all-routes)))
+(defn- create-site [] (site #'all-routes))
 
 (defn- with-log-wrapping [site]
   (if (-> config :server :enable-access-log?)

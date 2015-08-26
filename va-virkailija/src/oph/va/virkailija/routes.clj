@@ -9,7 +9,8 @@
             [ring.swagger.middleware :as swagger]
             [schema.core :as s]
             [oph.common.config :refer [config config-simple-name]]
-            [oph.va.virkailija.db :as va-db]
+            [oph.common.routes :refer :all]
+            [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.schema :refer :all]
             [oph.va.virkailija.handlers :refer :all]))
 
@@ -17,11 +18,11 @@
   "Healthcheck routes"
 
   (GET* "/" []
-        (if (va-db/health-check)
+        (if (virkailija-db/health-check)
           (ok {})
           (not-found)))
   (HEAD* "/" []
-        (if (va-db/health-check)
+        (if (virkailija-db/health-check)
           (ok {})
           (not-found))))
 
@@ -45,16 +46,6 @@
 (defroutes* doc-routes
   "API documentation browser"
   (swagger-ui))
-
-(defn- exception-handler [^Exception e]
-  (log/warn e e)
-  (internal-server-error {:type "unknown-exception"
-                          :class (.getName (.getClass e))}))
-
-(defn- validation-error-handler [{:keys [error]}]
-  (let [error-str (swagger/stringify-error error)]
-    (log/warn (format "Request validation error: %s" (print-str error-str)))
-    (bad-request {:errors error-str})))
 
 (defn- create-swagger-docs []
   (swagger-docs {:info {:title "Valtionavustus API"}
