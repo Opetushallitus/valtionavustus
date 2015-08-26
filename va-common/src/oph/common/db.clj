@@ -50,7 +50,7 @@
 (defn clear-db! [schema-name]
   (if (:allow-db-clear? (:server config))
     (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
-           [(str "drop schema " schema-name " cascade")
+           [(str "drop schema if exists " schema-name " cascade")
             (str "create schema " schema-name) ])
          (catch Exception e (log/error (get-next-exception-or-original e) (.toString e))))
     (throw (RuntimeException. (str "Clearing database is not allowed! "
