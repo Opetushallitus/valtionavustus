@@ -7,7 +7,7 @@ if [ -z ${1+x} ]; then
 fi
 
 if [ -z ${2+x} ]; then
-  va_hakija_source_path=../../valtionavustus-deploy-test/builds/lastStableBuild/archive/va-hakija/target/uberjar/oph-valtionavustus-*-standalone.jar
+  va_hakija_source_path=../../valtionavustus-deploy-test/builds/lastStableBuild/archive/va-hakija/target/uberjar/va-hakija-*-standalone.jar
 else
   va_hakija_source_path=$2
 fi

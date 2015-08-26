@@ -21,7 +21,7 @@ EOF
 
 run_docker_postgresql=true
 recreate_database=false
-va_hakija_source_path="va-hakija/target/uberjar/oph-valtionavustus-*-standalone.jar"
+va_hakija_source_path="va-hakija/target/uberjar/va-hakija-*-standalone.jar"
 
 function clean() {
   echo "Running lein clean and emptying all subdirectories with name 'node_modules'"

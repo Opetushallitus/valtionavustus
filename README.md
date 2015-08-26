@@ -68,7 +68,7 @@ Tuotantoversiona:
 
     cd va-hakija
     ../lein uberjar
-    CONFIG=config/va-prod.edn java -jar target/uberjar/oph-valtionavustus-0.1.0-SNAPSHOT-standalone.jar
+    CONFIG=config/va-prod.edn java -jar target/uberjar/va-hakija-0.1.0-SNAPSHOT-standalone.jar
 
 **Huom:** Jar-tiedoston versio voi vaihtua
 
