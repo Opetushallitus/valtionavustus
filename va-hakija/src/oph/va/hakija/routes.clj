@@ -9,6 +9,7 @@
             [ring.swagger.middleware :as swagger]
             [schema.core :as s]
             [oph.common.config :refer [config config-simple-name]]
+            [oph.common.routes :refer :all]
             [oph.form.routes :refer :all]
             [oph.form.schema :refer :all]
             [oph.va.hakija.db :as hakija-db]
@@ -77,11 +78,6 @@
        :summary "Submit hakemus"
        (on-hakemus-submit haku-id hakemus-id base-version answers)))
 
-(defn return-html [filename]
-  (-> (resp/resource-response filename {:root "public"})
-      (content-type "text/html")
-      (charset  "utf-8")))
-
 (defroutes resource-routes
   (GET "/" []
        (resp/redirect "/avustushaku/1/"))
@@ -102,16 +98,6 @@
 (defroutes* doc-routes
   "API documentation browser"
   (swagger-ui))
-
-(defn- exception-handler [^Exception e]
-  (log/warn e e)
-  (internal-server-error {:type "unknown-exception"
-                          :class (.getName (.getClass e))}))
-
-(defn- validation-error-handler [{:keys [error]}]
-  (let [error-str (swagger/stringify-error error)]
-    (log/warn (format "Request validation error: %s" (print-str error-str)))
-    (bad-request {:errors error-str})))
 
 (defn- create-swagger-docs []
   (swagger-docs {:info {:title "Valtionavustus API"}
