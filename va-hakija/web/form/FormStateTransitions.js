@@ -5,6 +5,7 @@ import LocalStorage from './LocalStorage.js'
 import InputValueStorage from './InputValueStorage.js'
 import HttpUtil from './HttpUtil.js'
 import FormUtil from './FormUtil.js'
+import FormRules from './FormRules.js'
 import FormBranchGrower from './FormBranchGrower.js'
 import FieldUpdateHandler from './FieldUpdateHandler.js'
 
@@ -51,6 +52,7 @@ export default class FormStateTransitions {
   onUpdateField(state, fieldUpdate) {
     const formOperations = state.extensionApi.formOperations
     FieldUpdateHandler.updateStateFromFieldUpdate(state, fieldUpdate)
+    FormRules.applyRulesToForm(state.form.specification, state.form.content, state.saveStatus.values)
     if (_.isFunction(formOperations.onFieldUpdate)) {
       formOperations.onFieldUpdate(state, fieldUpdate.field, fieldUpdate.value)
     }

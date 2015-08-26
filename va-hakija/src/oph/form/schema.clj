@@ -62,8 +62,16 @@
   (s/defschema Content [(s/either BasicElement
                                   WrapperElement)])
 
+  (s/defschema Rule {:type s/Str
+                     :triggeringId s/Str
+                     :targetIds [s/Str]
+                     (s/optional-key :params) s/Any})
+
+  (s/defschema Rules [Rule])
+
   (s/defschema Form {:id Long,
                      :content Content,
+                     :rules Rules,
                      :created_at s/Inst})
 
   (s/defschema Answer {:key s/Str,

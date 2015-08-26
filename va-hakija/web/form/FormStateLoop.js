@@ -7,6 +7,7 @@ import HttpUtil from './HttpUtil.js'
 import JsUtil from './JsUtil.js'
 import FormUtil from './FormUtil.js'
 import FormStateTransitions from './FormStateTransitions.js'
+import FormRules from './FormRules.js'
 import Translator from './Translator.js'
 
 export default class FormStateLoop {
@@ -21,19 +22,29 @@ export default class FormStateLoop {
       preview: query.preview || false,
       devel: query.devel || false
     }
-    const clientSideValidationP = controller.formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json"))
     const savedObjectP = loadSavedObjectPromise(formOperations, urlContent)
+    const formP = controller.formP.map(function(form) {
+      return Immutable(form)
+    })
+    const initialValuesP = getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP, lang)
+    const appliedForm = initialValuesP.combine(formP, function(values, form) {
+      return FormRules.applyRulesToForm(form, form.content.asMutable({deep: true}), values)
+    })
+    const clientSideValidationP = appliedForm.map(initClientSideValidationState)
 
     const lang = formOperations.chooseInitialLanguage(urlContent)
     const initialStateTemplate = {
-      form: controller.formP,
+      form: {
+        specification: formP,
+        content: appliedForm
+      },
       saveStatus: {
         changes: false,
         saveInProgress: false,
         saveTime: null,
         serverError: "",
-        values: getInitialFormValuesPromise(formOperations, controller.formP, initialValues, savedObjectP, lang),
+        values: initialValuesP,
         savedObject: savedObjectP
       },
       configuration: {
@@ -108,7 +119,7 @@ export default class FormStateLoop {
       })
     }
 
-    function initDefaultValues(values, initialValues, form, lang) {
+    function initDefaultValues(values, initialValues, formContent, lang) {
       function determineInitialValue(field) {
         if (field.id in initialValues) {
           return initialValues[field.id]
@@ -125,22 +136,22 @@ export default class FormStateLoop {
         }
       }
 
-      const fields = JsUtil.flatFilter(form.content, n => { return !_.isUndefined(n.id) })
+      const fields = JsUtil.flatFilter(formContent, n => { return !_.isUndefined(n.id) })
       _.forEach(fields, f => {
-        const currentValueFromState = InputValueStorage.readValue(form.content, values, f.id)
+        const currentValueFromState = InputValueStorage.readValue(formContent, values, f.id)
         if (currentValueFromState === "") {
           const initialValueForField = determineInitialValue(f, initialValues)
           if (!_.isUndefined(initialValueForField)) {
-            InputValueStorage.writeValue(form.content, values, f.id, initialValueForField)
+            InputValueStorage.writeValue(formContent, values, f.id, initialValueForField)
           }
         }
       })
       return values
     }
 
-    function initClientSideValidationState(form) {
+    function initClientSideValidationState(formContent) {
       const values = {}
-      const children = form.children ? form.children : form.content
+      const children = formContent.children ? formContent.children : formContent
       for (var i = 0; i < children.length; i++) {
         const field = children[i]
         if (field.type === 'formField') {

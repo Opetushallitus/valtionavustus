@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import traverse from 'traverse'
 
 import InputValueStorage from './InputValueStorage.js'
 import JsUtil from './JsUtil.js'

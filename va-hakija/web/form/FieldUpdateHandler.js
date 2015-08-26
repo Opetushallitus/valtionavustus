@@ -15,7 +15,7 @@ export default class FieldUpdateHandler {
   }
 
   static updateStateFromFieldUpdate(state, fieldUpdate) {
-    const growingParentIfFound = InputValueStorage.writeValue(state.form, state.saveStatus.values, fieldUpdate.id, fieldUpdate.value)
+    const growingParentIfFound = InputValueStorage.writeValue(state.form.content, state.saveStatus.values, fieldUpdate.id, fieldUpdate.value)
     fieldUpdate.growingParent = growingParentIfFound
     if (fieldUpdate.validationErrors) {
       if(_.isEmpty(state.validationErrors)) {
