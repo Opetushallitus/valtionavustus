@@ -6,7 +6,7 @@
   :repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
   :dependencies [[oph-va/common "0.1.0-SNAPSHOT"]]
 
-  :main oph.va.main
+  :main oph.va.virkailija.main
   :target-path "target/%s"
 
   :prep-tasks [
