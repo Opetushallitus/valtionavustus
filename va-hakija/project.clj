@@ -26,6 +26,6 @@
   :aot [oph.va.hakija.db.migrations]
   :profiles {:uberjar {:aot [oph.va.hakija.main]}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.hakija.db.migrations/migrate" "db.migration"]
-            "dbclear" ["run" "-m" "oph.common.db/clear-db!"]
+            "dbclear" ["run" "-m" "oph.common.db/clear-db!" "hakija"]
             "buildfront" ^{:doc "Build frontend code with npm"}
             ["do" ["shell" "npm" "install"] ["shell" "npm" "run" "build"]]})
