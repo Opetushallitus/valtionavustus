@@ -1,4 +1,4 @@
-(defproject oph-va-hakija "0.1.0-SNAPSHOT"
+(defproject oph-valtionavustus/va-hakija "0.1.0-SNAPSHOT"
   :description "OPH Valtionavustus, hakijan lomake"
   :url "https://github.com/Opetushallitus/valtionavustus"
   :license {:name "EUPL licence"
