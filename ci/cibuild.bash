@@ -29,8 +29,14 @@ function clean() {
   find . -depth  -type d -name 'node_modules' -exec rm -rf {} \;
 }
 
+function install_module() {
+  cd $1
+  time $LEIN install
+  cd ..
+}
+
 function uberjar() {
-  time $LEIN modules install
+  install_module va-common
   cd va-hakija
   /usr/bin/git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
   time $LEIN with-profile ci do uberjar
@@ -51,7 +57,7 @@ function run_tests() {
     start_postgresql_in_docker
   fi
 
-  time $LEIN modules install
+  install_module va-common
   time $LEIN with-profile ci modules spec -f junit || true
 
   if [ "$run_docker_postgresql" = true ]; then
