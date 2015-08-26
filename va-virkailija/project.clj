@@ -1,4 +1,4 @@
-(defproject oph-va-virkailija "0.1.0-SNAPSHOT"
+(defproject oph-va/virkailija "0.1.0-SNAPSHOT"
   :description "OPH Valtionavustus, virkailijakäyttöliittymä"
   :url "https://github.com/Opetushallitus/valtionavustus"
   :license {:name "EUPL licence"
