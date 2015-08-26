@@ -37,6 +37,7 @@
            {:key "signature" :value "Teemu Testaaja, CEO"}
            {:key "signature-email" :value "teemu@example.com"}
            {:key "language" :value "fi"}
+           {:key "project-name" :value "Server-spec-hanke"}
            {:key "combined-effort" :value "no"}
            {:key "other-organizations"
             :value [{:key   "other-organizations-1"
@@ -84,6 +85,7 @@
    :project-effectiveness                                [{:error "required"}]
    :project-spreading-plan                               [{:error "required"}]
    :project-measure                                      [{:error "required"}]
+   :project-name                                         [{:error "required"}]
    :combined-effort                                      [{:error "required"}]
    :language                                             [{:error "required"}]
    :project-www                                          []

@@ -7,6 +7,7 @@ function enterValidValues(applicationPage) {
   applicationPage.setInputValue("signature", "Matti Allekirjoitusoikeudellinen")()
   applicationPage.setInputValue("signature-email", "matti.allekirjoitusoikeudellinen@example.com")()
   applicationPage.setInputValue("combined-effort", "yes")()
+  applicationPage.setInputValue("project-name", "Automaattitestihanke")()
   applicationPage.setInputValue("other-organizations.other-organizations-1.name", "Muu Testi Organisaatio")()
   applicationPage.setInputValue("other-organizations.other-organizations-1.email", "muutestiorganisaatio@example.com")()
   applicationPage.setInputValue("project-goals", "Hankkeen tavoitteet tulee tähän.")()
