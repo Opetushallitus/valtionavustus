@@ -26,7 +26,7 @@ va_hakija_source_path="va-hakija/target/uberjar/oph-valtionavustus-*-standalone.
 function clean() {
   echo "Running lein clean and emptying all subdirectories with name 'node_modules'"
   $LEIN with-profile ci modules clean
-  find . -type d -name 'node_modules' -depth -exec rm -rf {} \;
+  find . -depth  -type d -name 'node_modules' -exec rm -rf {} \;
 }
 
 function uberjar() {
