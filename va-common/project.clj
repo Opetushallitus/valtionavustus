@@ -1,4 +1,4 @@
-(defproject oph-valtionavustus/va-common "0.1.0-SNAPSHOT"
+(defproject oph-va/common "0.1.0-SNAPSHOT"
   :description "OPH Valtionavustus common parts"
   :url "https://github.com/Opetushallitus/valtionavustus"
   :license {:name "EUPL licence"

@@ -1,10 +1,10 @@
-(defproject oph-valtionavustus/va-hakija "0.1.0-SNAPSHOT"
+(defproject oph-va/hakija "0.1.0-SNAPSHOT"
   :description "OPH Valtionavustus, hakijan lomake"
   :url "https://github.com/Opetushallitus/valtionavustus"
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
   :repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
-  :dependencies [[oph-valtionavustus/va-common "0.1.0-SNAPSHOT"]]
+  :dependencies [[oph-va/common "0.1.0-SNAPSHOT"]]
 
   :main oph.va.hakija.main
   :target-path "target/%s"
