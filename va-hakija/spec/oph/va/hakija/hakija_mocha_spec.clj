@@ -14,7 +14,7 @@
   (tags :ui)
 
   ;; Start HTTP server for running tests
-  (around-all [_] (with-test-server! #(start-server "localhost" 9000 false) (_)))
+  (around-all [_] (with-test-server! :db #(start-server "localhost" 9000 false) (_)))
 
   (it "are successful"
       (let [results (sh "node_modules/mocha-phantomjs/bin/mocha-phantomjs"

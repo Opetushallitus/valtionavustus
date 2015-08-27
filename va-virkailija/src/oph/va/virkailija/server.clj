@@ -13,11 +13,11 @@
 (defn- startup [config]
   (log/info "Using configuration: " config)
   (log/info "Running db migrations")
-  (dbmigrations/migrate "db.migration"))
+  (dbmigrations/migrate :db "db.migration"))
 
 (defn- shutdown []
   (log/info "Shutting down all services")
-  (db/close-datasource!))
+  (db/close-datasource! :db))
 
 (defn- create-site [] (site #'all-routes))
 

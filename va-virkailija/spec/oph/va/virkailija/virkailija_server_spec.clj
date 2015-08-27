@@ -24,7 +24,7 @@
   (tags :server)
 
   ;; Start HTTP server for running tests
-  (around-all [_] (with-test-server! #(start-server "localhost" test-server-port false) (_)))
+  (around-all [_] (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
 
   (it "GET should return valid form JSON from route /api/form/1"
       (pending "To be fixed")

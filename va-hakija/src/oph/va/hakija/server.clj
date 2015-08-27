@@ -14,14 +14,14 @@
 (defn- startup [config]
   (log/info "Using configuration: " config)
   (log/info "Running db migrations")
-  (dbmigrations/migrate "db.migration")
+  (dbmigrations/migrate :db "db.migration")
   (log/info "Starting e-mail sender")
   (email/start-background-sender))
 
 (defn- shutdown []
   (log/info "Shutting down all services")
   (email/stop-background-sender)
-  (db/close-datasource!))
+  (db/close-datasource! :db))
 
 (defn- create-restricted-routes [] #'restricted-routes)
 (defn- create-all-routes [] #'all-routes)

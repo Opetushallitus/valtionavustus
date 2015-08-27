@@ -6,9 +6,9 @@
   `(try ~@form
     (catch Throwable e# (.printStackTrace e# ))))
 
-(defmacro with-test-server! [server-starter & form]
+(defmacro with-test-server! [ds-key server-starter & form]
   `(do
-     (wrap-exception (db/clear-db! (-> config :db :schema)))
+     (wrap-exception (db/clear-db! ~ds-key (-> config ~ds-key :schema)))
      (let [stop-server# (wrap-exception (~server-starter))]
        (try
          ~@form

@@ -13,7 +13,7 @@
 (defn generate-hash-id []
   (sha256 (.generateSeed random (/ 512 8))))
 
-(def datasource-spec
+(defn- datasource-spec [ds-key]
   "Merge configuration defaults and db config. Latter overrides the defaults"
   (merge {:auto-commit false
           :read-only false
@@ -25,31 +25,36 @@
           :maximum-pool-size 10
           :pool-name "db-pool"
           :adapter "postgresql"
-          :currentSchema (-> config :db :schema)}
-         (-> (:db config)
+          :currentSchema (-> config ds-key :schema)}
+         (-> (ds-key config)
              (dissoc :schema))))
 
-(def datasource (atom nil))
+(defonce datasource (atom {}))
 
-(defn get-datasource []
-  (swap! datasource (fn [ds]
-                      (if (nil? ds)
-                        (make-datasource datasource-spec)
-                        ds))))
+(defn get-datasource [ds-key]
+  (swap! datasource (fn [datasources]
+                      (if (not (contains? datasources ds-key))
+                        (let [ds (make-datasource (datasource-spec ds-key))]
+                          (assoc datasources ds-key ds))
+                        datasources)))
+  (ds-key @datasource))
 
-(defn close-datasource! []
-  (swap! datasource (fn [ds]
-                      (when ds
-                        (close-datasource ds)))))
+(defn close-datasource! [ds-key]
+  (swap! datasource (fn [datasources]
+                      (if (contains? datasources ds-key)
+                        (let [ds (ds-key datasources)]
+                          (close-datasource ds)
+                          (dissoc datasources ds-key))
+                        datasources))))
 
 (defn get-next-exception-or-original [original-exception]
   (try (.getNextException original-exception)
        (catch IllegalArgumentException iae
          original-exception)))
 
-(defn clear-db! [schema-name]
+(defn clear-db! [ds-key schema-name]
   (if (:allow-db-clear? (:server config))
-    (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
+    (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource ds-key)} true)
            [(str "drop schema if exists " schema-name " cascade")
             (str "create schema " schema-name) ])
          (catch Exception e (log/error (get-next-exception-or-original e) (.toString e))))
@@ -57,11 +62,11 @@
                                    "check that you run with correct mode. "
                                    "Current config name is " (config-name))))))
 
-(defmacro exec [query params]
-  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)}]
+(defmacro exec [ds-key query params]
+  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource ~ds-key)}]
      (~query ~params {:connection connection#})))
 
-(defmacro exec-all [query-list]
-  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)}]
+(defmacro exec-all [ds-key query-list]
+  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource ~ds-key)}]
      (last(for [[query# params#] (partition 2 ~query-list)]
        (query# params# {:connection connection#})))))

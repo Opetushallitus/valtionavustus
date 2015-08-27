@@ -6,7 +6,7 @@
 
 (defn health-check []
   (->> {}
-       (exec queries/health-check)
+       (exec :db queries/health-check)
        first
        :?column?
        (= 1)))
