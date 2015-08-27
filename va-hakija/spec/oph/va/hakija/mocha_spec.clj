@@ -3,7 +3,8 @@
         [clojure.java.shell :only [sh]]
         [clojure.string :only [split join]])
   (:require [speclj.core :refer :all]
-            [oph.va.hakija.spec-plumbing :refer :all]))
+            [oph.common.testing.spec-plumbing :refer :all]
+            [oph.va.hakija.server :refer :all]))
 
 (defn is-test-output? [line]
   (or (.contains line "testcase") (.contains line "testsuite")))
@@ -13,7 +14,7 @@
   (tags :ui)
 
   ;; Start HTTP server for running tests
-  (around-all [_] (with-test-server! (_)))
+  (around-all [_] (with-test-server! #(start-server "localhost" 9000 false) (_)))
 
   (it "are successful"
       (let [results (sh "node_modules/mocha-phantomjs/bin/mocha-phantomjs"

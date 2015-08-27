@@ -8,9 +8,11 @@
             [clj-time.local :as l]
             [oph.va.hakija.db :as va-db]
             [oph.form.validation :as validation]
-            [oph.va.hakija.spec-plumbing :refer :all]))
+            [oph.common.testing.spec-plumbing :refer :all]
+            [oph.va.hakija.server :refer :all]))
 
-(def base-url "http://localhost:9000")
+(def test-server-port 9000)
+(def base-url (str "http://localhost:" test-server-port ) )
 (defn path->url [path] (str base-url path))
 (defn get! [path] @(http/get (path->url path) {:as :text}))
 (defn put! [path body] @(http/put (path->url path) {:body (generate-string body true)
@@ -127,7 +129,7 @@
   (tags :server)
 
   ;; Start HTTP server for running tests
-  (around-all [_] (with-test-server! (_)))
+  (around-all [_] (with-test-server! #(start-server "localhost" test-server-port false) (_)))
 
   (it "GET should return valid form JSON from route /api/form/1"
       (let [{:keys [status headers body error] :as resp} (get! "/api/form/1")

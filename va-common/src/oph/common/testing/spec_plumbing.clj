@@ -1,16 +1,15 @@
-(ns oph.va.hakija.spec-plumbing
+(ns oph.common.testing.spec-plumbing
   (:use [oph.common.config :only [config]])
-  (:require [oph.va.hakija.server :refer :all]
-            [oph.common.db :as db]))
+  (:require [oph.common.db :as db]))
 
 (defmacro wrap-exception [& form]
   `(try ~@form
     (catch Throwable e# (.printStackTrace e# ))))
 
-(defmacro with-test-server! [& form]
+(defmacro with-test-server! [server-starter & form]
   `(do
      (wrap-exception (db/clear-db! (-> config :db :schema)))
-     (let [stop-server# (wrap-exception (start-server "localhost" 9000 false))]
+     (let [stop-server# (wrap-exception (~server-starter))]
        (try
          ~@form
          (finally
