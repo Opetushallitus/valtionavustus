@@ -94,9 +94,9 @@ tai (automaattisesti pelkät testit aina muutoksissa)
 
     cd va-hakija
     ../lein with-profile test spec -a
-    
-Ajettavaa testisettiä voi rajata tiettyyn tägiin lisäämällä esimerkiksi parametrin 
-```-t ui``` tai ```-t server``` .  
+
+Ajettavaa testisettiä voi rajata tiettyyn tägiin lisäämällä esimerkiksi parametrin
+```-t ui``` tai ```-t server``` .
 
 Huom: Vaikka ```lein run``` lataa automaattisesti muuttuneet koodit,
 Javascriptin automaattikäännöstä varten pitää käynnistää erilliseen
@@ -104,6 +104,10 @@ terminaaliin oma watch komento:
 
     cd va-hakija
     npm run watch
+
+Kaikkien moduulien isntall ja testien ajo projektin juuressa:
+
+    ./lein modules do install, spec
 
 ## Mocha testit
 
