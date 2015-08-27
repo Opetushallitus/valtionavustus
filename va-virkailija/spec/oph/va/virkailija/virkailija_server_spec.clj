@@ -1,4 +1,4 @@
-(ns oph.va.virkailija.server-spec
+(ns oph.va.virkailija.virkailija-server-spec
   (:use [clojure.tools.trace])
   (:require [clojure.string :as string]
             [speclj.core :refer :all]

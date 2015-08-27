@@ -1,4 +1,4 @@
-(ns oph.va.hakija.server-spec
+(ns oph.va.hakija.hakija-server-spec
   (:use [clojure.tools.trace])
   (:require [clojure.string :as string]
             [speclj.core :refer :all]
