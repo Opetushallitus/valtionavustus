@@ -40,7 +40,7 @@ function uberjar() {
   install_module va-common
   for m in va-hakija va-virkailija; do
     cd $m
-    /usr/bin/git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
+    git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
     cd ..
   done
   /usr/bin/git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
