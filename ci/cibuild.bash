@@ -22,6 +22,7 @@ EOF
 run_docker_postgresql=true
 recreate_database=false
 va_hakija_source_path="va-hakija/target/uberjar/hakija-*-standalone.jar"
+va_virkailija_source_path="va-virkailija/target/uberjar/virkailija-*-standalone.jar"
 
 function clean() {
   echo "Running lein clean and emptying all subdirectories with name 'node_modules'"
@@ -77,10 +78,11 @@ function drop_database() {
 }
 
 function restart_application() {
+  module_name=$1
   echo "=============================="
   echo
   echo "Stopping application..."
-  $SSH "sudo /usr/local/bin/va_app.bash --stop"
+  $SSH "sudo /usr/local/bin/va_app.bash --stop $module_name"
   if [ "$recreate_database" = true ]; then
     drop_database
   else
@@ -88,44 +90,53 @@ function restart_application() {
   fi
   echo "=============================="
   echo
-  APP_COMMAND="sudo /usr/local/bin/va_app.bash --start ${CURRENT_DIR}/va.jar file:${CURRENT_DIR}/resources/log4j-deployed.properties ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
+  APP_COMMAND="sudo /usr/local/bin/va_app.bash --start $module_name ${CURRENT_DIR}/${module_name}.jar file:${CURRENT_DIR}/resources/log4j-deployed.properties ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
   echo "...starting application with command \"${APP_COMMAND}\" ..."
   $SSH "${APP_COMMAND}"
 }
 
-function deploy() {
+function deploy_jar() {
   if [ -z ${target_server_name+x} ]; then
     echo "deploy: Please provide target server name with -s option."
     exit 4
   fi
+  module_name=$1
+  jar_source_path=$2
+  application_port=$3
   echo "=============================="
+  echo "Starting $module_name : "
   echo
   echo "Transfering to application server ${target_server_name}"
   SSH_KEY=~/.ssh/id_deploy
   SSH_USER=va-deploy
   SSH="ssh -i $SSH_KEY va-deploy@${target_server_name}"
   BASE_DIR=/data/www
-  CURRENT_DIR=${BASE_DIR}/current
+  CURRENT_DIR=${BASE_DIR}/${module_name}-current
   echo "=============================="
   echo
-  TARGET_DIR=${BASE_DIR}/va-`date +'%Y%m%d%H%M%S'`
-  TARGET_JAR_PATH=${TARGET_DIR}/va.jar
+  TARGET_DIR=${BASE_DIR}/${module_name}-`date +'%Y%m%d%H%M%S'`
+  TARGET_JAR_PATH=${TARGET_DIR}/${module_name}.jar
   echo "...copying artifacts to ${target_server_name}:${TARGET_DIR} ..."
   $SSH "mkdir -p ${TARGET_DIR}"
-  scp -p -i ${SSH_KEY} ${va_hakija_source_path} ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
-  scp -pr -i ${SSH_KEY} va-hakija/config va-hakija/resources ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
+  scp -p -i ${SSH_KEY} ${jar_source_path} ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
+  scp -pr -i ${SSH_KEY} ${module_name}/config ${module_name}/resources ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
   $SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
-  restart_application
+  restart_application ${module_name}
   echo "=============================="
   echo
-  CAT_LOG_COMMAND="$SSH tail -n 100 /logs/valtionavustus/current_run.log /logs/valtionavustus/application.log"
-  HEALTH_CHECK_COMMAND="`dirname $0`/health_check.bash ${target_server_name} $CAT_LOG_COMMAND"
+  CAT_LOG_COMMAND="$SSH tail -n 100 /logs/valtionavustus/${module_name}_current_run.log /logs/valtionavustus/${module_name}_application.log"
+  HEALTH_CHECK_COMMAND="`dirname $0`/health_check.bash ${target_server_name} ${application_port} $CAT_LOG_COMMAND"
   echo "...checking that it really comes up, with $HEALTH_CHECK_COMMAND ..."
   $HEALTH_CHECK_COMMAND
   echo
   echo "=============================="
   echo
-  echo "...start done!"
+  echo "...start of $module_name done!"
+}
+
+function deploy() {
+  deploy_jar va-hakija ${va_hakija_source_path} 8081
+  #deploy_jar va-virkailija ${va_virkailija_source_path} 6071  # TODO : Make work
 }
 
 

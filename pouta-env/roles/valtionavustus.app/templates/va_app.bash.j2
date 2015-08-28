@@ -2,20 +2,22 @@
 set -euo pipefail
 
 function show_usage() {
-  echo "Usage: $0 --start <jar to run> <log4j config location> <default configs edn file> <specific config edn file>"
-  echo "or: $0 --stop"
+  echo "Usage: $0 --start <application name> <jar to run> <log4j config location> <default configs edn file> <specific config edn file>"
+  echo "or: $0 --stop <application name>"
   exit 2
 }
 
-if [ -z ${1+x} ]; then
+if [ -z ${2+x} ]; then
   show_usage
 fi
 
-pid_file=/var/tmp/va.pid
+app_name=$2
+
+pid_file=/var/tmp/${app_name}.pid
 
 function start_app() {
-  stdout_stderr_file={{ logical_volumes.logs.mount_point }}/valtionavustus/started_at_`date +'%Y%m%d%H%M%S'`_run.log
-  sudo -u www ln -sf `basename $stdout_stderr_file` `dirname $stdout_stderr_file`/current_run.log
+  stdout_stderr_file={{ logical_volumes.logs.mount_point }}/valtionavustus/${app_name}_started_at_`date +'%Y%m%d%H%M%S'`_run.log
+  sudo -u www ln -sf `basename $stdout_stderr_file` `dirname $stdout_stderr_file`/${app_name}_current_run.log
   daemon=/usr/bin/java
   daemon_args="-jar -Dlog4j.email.environment=$HOSTNAME -Dlog4j.configuration=$2 $1"
 
@@ -30,10 +32,10 @@ function stop_app() {
 }
 
 if [ "$1" == --start ]; then
-  if [ -z ${4+x} ]; then
+  if [ -z ${5+x} ]; then
     show_usage
   else
-    start_app $2 $3 $4 $5
+    start_app $3 $4 $5 $6
   fi
 elif [ "$1" == --stop ]; then
   stop_app

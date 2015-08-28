@@ -1,14 +1,15 @@
 #!/bin/bash
 
-if [ -z $2 ]; then
-  echo "Usage: $0 <target machine name> <command to cat latest log for debugging>"
+if [ -z $3 ]; then
+  echo "Usage: $0 <target machine name> <port where app will listen> <command to cat latest log for debugging>"
   exit 3
 fi
 
 target_machine=$1
-cat_log_command=${@:2}
+application_port=$2
+cat_log_command=${@:3}
 
-TEST_URL="http://$target_machine:8081/api/healthcheck"
+TEST_URL="http://$target_machine:$application_port/api/healthcheck"
 ATTEMPTS=20
 PAUSE_SECONDS=3
 
