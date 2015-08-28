@@ -43,7 +43,7 @@ function uberjar() {
     cd ..
   done
   /usr/bin/git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
-  time $LEIN with-profile ci do uberjar
+  time $LEIN with-profile ci do modules uberjar
 }
 
 function start_postgresql_in_docker() {
