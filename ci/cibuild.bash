@@ -43,7 +43,6 @@ function uberjar() {
     git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
     cd ..
   done
-  /usr/bin/git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
   time $LEIN with-profile ci do modules uberjar
 }
 
