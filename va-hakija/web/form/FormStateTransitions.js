@@ -57,7 +57,7 @@ export default class FormStateTransitions {
       formOperations.onFieldUpdate(state, fieldUpdate.field, fieldUpdate.value)
     }
     FieldUpdateHandler.triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
-    const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id]
+    const clientSideValidationPassed = state.form.validationErrors[fieldUpdate.id].length === 0
     if (clientSideValidationPassed) {
       FormBranchGrower.expandGrowingFieldSetIfNeeded(state, fieldUpdate);
       if (_.isFunction(formOperations.onFieldValid)) {
@@ -71,9 +71,8 @@ export default class FormStateTransitions {
   }
 
   onFieldValidation(state, validation) {
-    state.clientSideValidation[validation.id] = validation.validationErrors.length === 0
     if (validation.showErrorsAlways || state.extensionApi.formOperations.isNotFirstEdit(state)) {
-      state.validationErrors = state.validationErrors.merge({[validation.id]: validation.validationErrors})
+      state.form.validationErrors = state.form.validationErrors.merge({[validation.id]: validation.validationErrors})
     }
     return state
   }
@@ -122,7 +121,7 @@ export default class FormStateTransitions {
           const updatedState = _.cloneDeep(state)
           updatedState.saveStatus.savedObject = response
           updatedState.saveStatus.values = formOperations.responseParser.getFormAnswers(response)
-          updatedState.validationErrors = Immutable(updatedState.validationErrors)
+          updatedState.form.validationErrors = Immutable(updatedState.form.validationErrors)
           if (onSuccessCallback) {
             onSuccessCallback(updatedState)
           }
@@ -171,7 +170,7 @@ export default class FormStateTransitions {
     stateFromUiLoop.saveStatus.savedObject = stateWithServerChanges.saveStatus.savedObject
     if (!locallyStoredValues) {
       stateFromUiLoop.saveStatus.values = stateWithServerChanges.saveStatus.values
-      stateFromUiLoop.validationErrors = stateWithServerChanges.validationErrors
+      stateFromUiLoop.form.validationErrors = stateWithServerChanges.form.validationErrors
       LocalStorage.save(formOperations.createUiStateIdentifier, stateFromUiLoop)
     }
     if (_.isFunction(formOperations.onSaveCompletedCallback)) {
@@ -193,7 +192,6 @@ export default class FormStateTransitions {
     const growingParent = FormUtil.findGrowingParent(state.form.content, fieldToRemove.id)
     const answersObject = state.saveStatus.values
     InputValueStorage.deleteValue(growingParent, answersObject, fieldToRemove.id)
-    delete state.clientSideValidation[fieldToRemove.id]
     _.remove(growingParent.children, fieldToRemove)
 
     // Reindex growing fields
@@ -212,7 +210,7 @@ export default class FormStateTransitions {
     state.saveStatus.saveInProgress = false
     state.saveStatus.serverError = serverErrors.error
     if(serverErrors.validationErrors) {
-      state.validationErrors = state.validationErrors.merge(serverErrors.validationErrors)
+      state.form.validationErrors = state.form.validationErrors.merge(serverErrors.validationErrors)
     }
     return state
   }

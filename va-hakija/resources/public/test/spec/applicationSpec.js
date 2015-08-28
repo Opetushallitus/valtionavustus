@@ -150,8 +150,8 @@
               it("kentän virhe näytetään", function() {
                 expect(applicationPage.detailedValidationErrors()).to.deep.equal(['Hakijaorganisaatio: Pakollinen tieto'])
               })
-              it("lähetys nappi on yhä enabloitu", function() {
-                expect(applicationPage.submitButton().isEnabled()).to.equal(true)
+              it("lähetys nappi ei ole enabloitu", function() {
+                expect(applicationPage.submitButton().isEnabled()).to.equal(false)
               })
             })
             describe("muokatessa kenttää", function() {
@@ -161,6 +161,9 @@
               )
               it("virheet häviää", function() {
                 expect(applicationPage.saveError()).to.equal('')
+              })
+              it("lähetys nappi enabloituu", function() {
+                expect(applicationPage.submitButton().isEnabled()).to.equal(true)
               })
             })
           })

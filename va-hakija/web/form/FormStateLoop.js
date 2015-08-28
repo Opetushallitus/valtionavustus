@@ -31,13 +31,13 @@ export default class FormStateLoop {
     const appliedForm = initialValuesP.combine(formP, function(values, form) {
       return FormRules.applyRulesToForm(form, form.content.asMutable({deep: true}), values)
     })
-    const clientSideValidationP = appliedForm.map(initClientSideValidationState)
 
     const lang = formOperations.chooseInitialLanguage(urlContent)
     const initialStateTemplate = {
       form: {
         specification: formP,
-        content: appliedForm
+        content: appliedForm,
+        validationErrors: Immutable({})
       },
       saveStatus: {
         changes: false,
@@ -53,8 +53,6 @@ export default class FormStateLoop {
         lang: lang,
         translations: translationsP
       },
-      validationErrors: Immutable({}),
-      clientSideValidation: clientSideValidationP,
       extensionApi: {
         formOperations: formOperations,
         onInitialStateLoaded: controller.onInitialStateLoaded
@@ -146,23 +144,6 @@ export default class FormStateLoop {
           }
         }
       })
-      return values
-    }
-
-    function initClientSideValidationState(formContent) {
-      const values = {}
-      const children = formContent.children ? formContent.children : formContent
-      for (var i = 0; i < children.length; i++) {
-        const field = children[i]
-        if (field.type === 'formField') {
-          values[field.id] = false
-        } else if (field.type === 'wrapperElement') {
-          var childValues = initClientSideValidationState(field)
-          for (var fieldId in childValues) {
-            values[fieldId] = childValues[fieldId]
-          }
-        }
-      }
       return values
     }
   }

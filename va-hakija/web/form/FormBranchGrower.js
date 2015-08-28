@@ -64,7 +64,7 @@ export default class FormBranchGrower {
         flatFilter(growingSetOfThisField, n => { return !_.isUndefined(n.id) }).
         map(n => { return n.id })
       const wholeSetIsValid = _.reduce(allFieldIdsInSameGrowingSet, (acc, fieldId) => {
-        return acc && (state.clientSideValidation[fieldId] !== false)
+        return acc && (!state.form.validationErrors[fieldId] || state.form.validationErrors[fieldId].length === 0)
       }, true)
 
       // TODO: Assess if the "last" check is needed. Possibly it's enough that the whole thing is valid, minus last row that needs to be skipped in validation, when there are filled rows.

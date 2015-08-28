@@ -18,13 +18,10 @@ export default class FieldUpdateHandler {
     const growingParentIfFound = InputValueStorage.writeValue(state.form.content, state.saveStatus.values, fieldUpdate.id, fieldUpdate.value)
     fieldUpdate.growingParent = growingParentIfFound
     if (fieldUpdate.validationErrors) {
-      if(_.isEmpty(state.validationErrors)) {
-        state.validationErrors = Immutable({})
+      if(_.isEmpty(state.form.validationErrors)) {
+        state.form.validationErrors = Immutable({})
       }
-      state.validationErrors = state.validationErrors.merge({[fieldUpdate.id]: fieldUpdate.validationErrors})
-      state.clientSideValidation[fieldUpdate.id] = fieldUpdate.validationErrors.length === 0
-    } else {
-      state.clientSideValidation[fieldUpdate.id] = true
+      state.form.validationErrors = state.form.validationErrors.merge({[fieldUpdate.id]: fieldUpdate.validationErrors})
     }
   }
 
