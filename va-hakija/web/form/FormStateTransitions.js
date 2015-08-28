@@ -52,7 +52,7 @@ export default class FormStateTransitions {
   onUpdateField(state, fieldUpdate) {
     const formOperations = state.extensionApi.formOperations
     FieldUpdateHandler.updateStateFromFieldUpdate(state, fieldUpdate)
-    FormRules.applyRulesToForm(state.form.specification, state.form.content, state.saveStatus.values)
+    FormRules.applyRulesToForm(state.configuration.form, state.form.content, state.saveStatus.values)
     if (_.isFunction(formOperations.onFieldUpdate)) {
       formOperations.onFieldUpdate(state, fieldUpdate.field, fieldUpdate.value)
     }

@@ -51,7 +51,7 @@ function isSaveDraftAllowed(state) {
 }
 
 function createUiStateIdentifier(state) {
-  return state.form.specification.id + "-" + sessionIdentifierForLocalStorageId
+  return state.configuration.form.id + "-" + sessionIdentifierForLocalStorageId
 }
 
 function printEntityId(state) {

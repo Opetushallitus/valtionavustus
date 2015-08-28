@@ -35,7 +35,6 @@ export default class FormStateLoop {
     const lang = formOperations.chooseInitialLanguage(urlContent)
     const initialStateTemplate = {
       form: {
-        specification: formP,
         content: appliedForm,
         validationErrors: Immutable({})
       },
@@ -48,6 +47,7 @@ export default class FormStateLoop {
         savedObject: savedObjectP
       },
       configuration: {
+        form: formP,
         preview: queryParams.preview,
         develMode: queryParams.devel,
         lang: lang,
