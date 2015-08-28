@@ -6,8 +6,8 @@ if [ -z $1 ]; then
 fi
 
 # TODO: Solve how to handle the SQL runs to different dbs. Pass more parameters from command line?
-echo "    Executing $1 as {{ db_accounts[0].dbuser }} to db {{ db_accounts[0].dbname }} ..."
-time PGPASSWORD={{ db_accounts[0].dbpassword }} /usr/bin/psql -U {{ db_accounts[0].dbuser }} -h localhost -d {{ db_accounts[0].dbname }} -f $1 ${@:2}
+echo "    Executing $1 as {{ db_accounts[0].dbuser }} to db {{ dbname }} ..."
+time PGPASSWORD={{ db_accounts[0].dbpassword }} /usr/bin/psql -U {{ db_accounts[0].dbuser }} -h localhost -d {{ dbname }} -f $1 ${@:2}
 retval=$?
 echo "    ...SQL execution done."
 exit $retval

@@ -3,6 +3,7 @@
   sudo: yes
   vars:
     app_profile: test
+    dbname: va-qa
   roles:
   - valtionavustus.app
 
@@ -11,6 +12,7 @@
   sudo: yes
   vars:
     app_profile: prod
+    dbname: va-prod
   roles:
   - valtionavustus.app
 
