@@ -69,6 +69,7 @@
   :plugins [[speclj "3.3.1"]
             [lein-environ "1.0.0"]
             [lein-shell "0.4.0"]
+            [lein-auto "0.1.2"]
             [lein-ancient "0.6.7"]]
 
   :test-paths ["spec"]

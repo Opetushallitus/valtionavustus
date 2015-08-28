@@ -106,7 +106,12 @@ terminaaliin oma watch komento:
     cd va-hakija
     npm run watch
 
-Kaikkien moduulien isntall ja testien ajo projektin juuressa:
+Common jarrin teko automaattisesti aina muutoksista
+
+    cd va-common
+    ../lein auto install
+
+Kaikkien moduulien install ja testien ajo projektin juuressa:
 
     ./lein modules do install, spec
 
