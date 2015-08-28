@@ -37,10 +37,13 @@ function install_module() {
 
 function uberjar() {
   install_module va-common
-  cd va-hakija
+  for m in va-hakija va-virkailija; do
+    cd $m
+    /usr/bin/git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
+    cd ..
+  done
   /usr/bin/git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
   time $LEIN with-profile ci do uberjar
-  cd ..
 }
 
 function start_postgresql_in_docker() {

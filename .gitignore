@@ -10,3 +10,4 @@ npm-cache
 secret
 postgres
 pom.xml
+git-HEAD.txt
