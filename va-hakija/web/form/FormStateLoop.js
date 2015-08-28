@@ -28,16 +28,17 @@ export default class FormStateLoop {
       return Immutable(form)
     })
     const initialValuesP = getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP, lang)
-    const appliedForm = initialValuesP.combine(formP, function(values, form) {
-      return FormRules.applyRulesToForm(form, form.content.asMutable({deep: true}), values)
+    const initialFormStateP = initialValuesP.combine(formP, function(values, form) {
+      return FormRules.applyRulesToForm(form,
+              {
+                content: form.content.asMutable({deep: true}),
+                validationErrors: Immutable({})
+              }, values)
     })
 
     const lang = formOperations.chooseInitialLanguage(urlContent)
     const initialStateTemplate = {
-      form: {
-        content: appliedForm,
-        validationErrors: Immutable({})
-      },
+      form: initialFormStateP,
       saveStatus: {
         changes: false,
         saveInProgress: false,
