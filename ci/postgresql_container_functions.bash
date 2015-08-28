@@ -14,7 +14,7 @@ function start_postgresql_in_container() {
     echo "Warning: found running postgresql container, stopping it."
     remove_postgresql_container
   fi
-  time $DOCKER run --name postgresql -d -p $host_postgres_port:$container_postgres_port -e 'DB_USER=va' -e 'DB_PASS=va' -e 'DB_NAME="va-test"' sameersbn/postgresql:9.4
+  time $DOCKER run --name postgresql -d -p $host_postgres_port:$container_postgres_port -e 'DB_USER=va_hakija' -e 'DB_PASS=va' -e 'DB_NAME="va-test"' sameersbn/postgresql:9.4
 }
 
 function store_sql_script_to_container() {
@@ -48,8 +48,13 @@ function wait_for_postgresql_to_be_available() {
 }
 
 function give_schema_to_va() {
-  store_sql_script_to_container "alter schema $1 owner to va;" /tmp/give_schema_to_va.bash
+  store_sql_script_to_container "alter schema $1 owner to va_hakija;" /tmp/give_schema_to_va.bash
   exec_in_container /tmp/give_schema_to_va.bash
+}
+
+function create_va_virkailija_user() {
+  store_sql_script_to_container "create user va_virkailija with password 'va'; grant create on database \\\"va-test\\\" to va_virkailija; " /tmp/create_va_virkailija.bash
+  exec_in_container /tmp/create_va_virkailija.bash
 }
 
 function remove_postgresql_container() {

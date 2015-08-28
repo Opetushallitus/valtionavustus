@@ -5,7 +5,7 @@
           :port 8080}
  :ui {:show-environment? true}
  :api {:restricted-routes? true}
- :db {:username "va"
+ :db {:username "va_hakija"
       :password "va"
       :server-name "localhost"
       :port-number 5432

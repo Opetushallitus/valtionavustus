@@ -30,9 +30,10 @@ Käynnistä tietokantaserveri
 
     postgres -D postgres
 
-Luo käyttäjä ```va``` (salasana: va)
+Luo käyttäjät ```va-hakija``` ja ```va-virkailija``` (kummankin salasana: va)
 
-    createuser -s va -P
+    createuser -s va_hakija -P
+    createuser -s va_virkailija -P
 
 Luo ```va-dev``` tietokanta
 

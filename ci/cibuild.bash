@@ -50,6 +50,7 @@ function start_postgresql_in_docker() {
   start_postgresql_in_container
   wait_for_postgresql_to_be_available
   # give_schema_to_va hakija  # When using our own schema that is owned by va, we don't need to give it access
+  create_va_virkailija_user
 }
 
 function run_tests() {

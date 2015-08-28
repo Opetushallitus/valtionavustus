@@ -4,7 +4,7 @@
           :host "localhost"
           :port 8081}
  :ui {:show-environment? true}
- :db {:username "va"
+ :db {:username "va_virkailija"
       :password "va"
       :server-name "localhost"
       :port-number 5432

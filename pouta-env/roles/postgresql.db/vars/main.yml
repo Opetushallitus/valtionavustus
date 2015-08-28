@@ -1,3 +1,7 @@
-dbname: va-{{ app_profile }}
-dbuser: va
-dbpassword: va
+db_accounts:
+  - dbname: va-{{ app_profile }}
+    dbuser: va_hakija
+    dbpassword: va
+  - dbname: va-{{ app_profile }}
+    dbuser: va_virkailija
+    dbpassword: va
