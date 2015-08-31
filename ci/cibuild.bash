@@ -135,7 +135,7 @@ function deploy_jar() {
 
 function deploy() {
   deploy_jar va-hakija ${va_hakija_source_path} 8081
-  #deploy_jar va-virkailija ${va_virkailija_source_path} 6071  # TODO : Make work
+  deploy_jar va-virkailija ${va_virkailija_source_path} 6071
 }
 
 
