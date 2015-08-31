@@ -5,4 +5,5 @@
                 :sv "http://localhost:8081/"}}
  :api {:restricted-routes? false}
  :db {:database-name "va-test"}
+ :hakija-db {:database-name "va-test"}
  :email {:print-mail-on-disable? false}}

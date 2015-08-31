@@ -5,6 +5,7 @@
                 :sv "https://statsunderstod.oph.fi/"}}
  :ui {:show-environment? false}
  :db {:database-name "va-prod"}
+ :hakija-db {:database-name "va-prod"}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25

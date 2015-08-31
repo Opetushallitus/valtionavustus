@@ -10,6 +10,7 @@
             [schema.core :as s]
             [oph.common.config :refer [config config-simple-name]]
             [oph.common.routes :refer :all]
+            [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.schema :refer :all]
             [oph.va.virkailija.handlers :refer :all]))
@@ -18,11 +19,13 @@
   "Healthcheck routes"
 
   (GET* "/" []
-        (if (virkailija-db/health-check)
+        (if (and (virkailija-db/health-check)
+                 (hakija-api/health-check))
           (ok {})
           (not-found)))
   (HEAD* "/" []
-        (if (virkailija-db/health-check)
+         (if (and (virkailija-db/health-check)
+                  (hakija-api/health-check))
           (ok {})
           (not-found))))
 
@@ -43,16 +46,20 @@
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
+(defroutes* hakemus-routes
+  "Hakemus listing and filtering"
+
+  (GET* "/" []
+        (hakija-api/list-hakemukset)))
+
 (defroutes* doc-routes
   "API documentation browser"
   (swagger-ui))
 
 (defn- create-swagger-docs []
   (swagger-docs {:info {:title "Valtionavustus API"}
-                 :tags [{:name        "forms"
-                         :description "Form and form submission management"}
-                        {:name        "avustushaut"
-                         :description "Avustushaku"}
+                 :tags [{:name        "hakemus"
+                         :description "Hakemus listing and filtering"}
                         {:name        "healthcheck"
                          :description "Healthcheck"}]}))
 
@@ -64,6 +71,7 @@
 
   (create-swagger-docs)
 
+  (context* "/api/hakemus" [] :tags ["hakemus"] hakemus-routes)
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
 
   ;; Documentation

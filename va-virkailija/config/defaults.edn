@@ -4,11 +4,18 @@
           :host "localhost"
           :port 8081}
  :ui {:show-environment? true}
- :db {:username "va_virkailija"
+ :db {:pool-name "virkailija-pool"
+      :username "va_virkailija"
       :password "va"
       :server-name "localhost"
       :port-number 5432
       :schema "virkailija"}
+ :hakija-db {:pool-name "hakija-pool"
+             :username "va_hakija"
+             :password "va"
+             :server-name "localhost"
+             :port-number 5432
+             :schema "hakija"}
  :email {:enabled? false
          :host nil
          :port nil
