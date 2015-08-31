@@ -22,8 +22,8 @@ EOF
 
 run_docker_postgresql=true
 recreate_database=false
-va_hakija_source_path="va-hakija/target/uberjar/hakija-*-standalone.jar"
-va_virkailija_source_path="va-virkailija/target/uberjar/virkailija-*-standalone.jar"
+va_hakija_default_source_path="va-hakija/target/uberjar/hakija-*-standalone.jar"
+va_virkailija_default_source_path="va-virkailija/target/uberjar/virkailija-*-standalone.jar"
 
 function clean() {
   echo "Running lein clean and emptying all subdirectories with name 'node_modules'"
@@ -101,7 +101,11 @@ function do_deploy_jar() {
     exit 4
   fi
   module_name=$1
-  jar_source_path=$2
+  if [ -z ${jar_to_deploy_source_path+x} ]; then
+    jar_source_path=$2
+  else
+    jar_source_path=${jar_to_deploy_source_path}
+  fi
   application_port=$3
   echo "=============================="
   echo "Starting $module_name : "
@@ -135,11 +139,11 @@ function do_deploy_jar() {
 }
 
 function deploy_hakija() {
-  do_deploy_jar va-hakija ${va_hakija_source_path} 8081
+  do_deploy_jar va-hakija ${va_hakija_default_source_path} 8081
 }
 
 function deploy_virkailija() {
-  do_deploy_jar va-virkailija ${va_virkailija_source_path} 6071
+  do_deploy_jar va-virkailija ${va_virkailija_default_source_path} 6071
 }
 
 function deploy_jar() {
