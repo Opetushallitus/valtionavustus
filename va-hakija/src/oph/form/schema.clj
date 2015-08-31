@@ -63,7 +63,7 @@
                                   WrapperElement)])
 
   (s/defschema Rule {:type s/Str
-                     :triggeringId s/Str
+                     :triggerId s/Str
                      :targetIds [s/Str]
                      (s/optional-key :params) s/Any})
 

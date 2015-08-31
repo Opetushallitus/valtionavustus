@@ -22,10 +22,10 @@ export default class FormRules {
   }
 
   static handleIncludeIf(rule, formSpecification, formState, values) {
-    const triggeringId = rule.triggeringId
-    const triggeringValue = rule.params.triggeringValue
+    const triggerId = rule.triggerId
+    const triggerValue = rule.params.triggerValue
     const includeIds = rule.targetIds
-    const doInclude = InputValueStorage.readValue(formState.content, values, triggeringId) === triggeringValue
+    const doInclude = InputValueStorage.readValue(formState.content, values, triggerId) === triggerValue
     for(var i = 0; i < includeIds.length; i++) {
       FormRules.doIncludeOrRemoveField(doInclude, includeIds[i], formSpecification, formState, values)
     }

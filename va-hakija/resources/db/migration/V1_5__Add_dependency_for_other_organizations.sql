@@ -8,10 +8,10 @@ UPDATE forms set rules = '
 [
   {
     "type": "includeIf",
-    "triggeringId": "combined-effort",
+    "triggerId": "combined-effort",
     "targetIds": ["other-organizations"],
     "params": {
-      "triggeringValue": "yes"
+      "triggerValue": "yes"
     }
   }
 ]
