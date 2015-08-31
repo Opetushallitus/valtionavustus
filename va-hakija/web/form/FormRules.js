@@ -26,35 +26,48 @@ export default class FormRules {
     const triggeringValue = rule.params.triggeringValue
     const includeIds = rule.targetIds
     const doInclude = InputValueStorage.readValue(formState.content, values, triggeringId) === triggeringValue
-    console.log(triggeringId, InputValueStorage.readValue(formState.content, values, triggeringId), triggeringValue, "include", includeIds, doInclude)
     for(var i = 0; i < includeIds.length; i++) {
-      const includeId = includeIds[i]
-      const fieldParentFromSpecification = FormUtil.findFieldWithDirectChild(formSpecification.content, includeId)
-      const fieldParent = FormUtil.findField(formState.content, fieldParentFromSpecification.id)
-      if(fieldParent && fieldParent.children) {
-        const fieldToInclude = FormUtil.findField(formState.content, includeId)
-        if(doInclude) {
-          if(!fieldToInclude) {
-            const newField = FormUtil.findField(formSpecification.content, includeId)
-            const newFieldIndex = FormUtil.findChildIndexAccordingToFieldSpecification(fieldParentFromSpecification.children, fieldParent.children, includeId)
-            fieldParent.children.splice(newFieldIndex, 0, newField.asMutable({deep: true}))
-            FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(fieldParent, values)
-          }
+      FormRules.doIncludeOrRemoveField(doInclude, includeIds[i], formSpecification, formState, values)
+    }
+    return formState
+  }
+
+  static doIncludeOrRemoveField(doInclude, fieldId, formSpecification, formState, values) {
+    const fieldParentFromSpecification = FormUtil.findFieldWithDirectChild(formSpecification.content, fieldId)
+    const fieldParent = FormUtil.findField(formState.content, fieldParentFromSpecification.id)
+    if(fieldParent && fieldParent.children) {
+      const fieldToInclude = FormUtil.findField(formState.content, fieldId)
+      if(doInclude) {
+        if(!fieldToInclude) {
+          FormRules.addNewField(fieldParent, fieldParentFromSpecification, fieldId, values)
         }
-        else {
-          if(fieldToInclude) {
-            formState.validationErrors = formState.validationErrors.merge({[includeId]: []})
-            const subFieldIds = FormUtil.findSubFieldIds(fieldToInclude)
-            for(var i = 0; i < subFieldIds.length; i++) {
-              formState.validationErrors = formState.validationErrors.merge({[subFieldIds[i]]: []})
-            }
-            _.remove(fieldParent.children, function(child) {
-              return child.id === includeId;
-            })
-          }
+      }
+      else {
+        if(fieldToInclude) {
+          FormRules.removeField(formState, fieldParent, fieldToInclude)
         }
       }
     }
+    return formState
+  }
+
+  static addNewField(parentField, fieldParentFromSpecification, fieldId, values) {
+    const newFieldPrototype = FormUtil.findField(fieldParentFromSpecification.children, fieldId)
+    const newFieldIndex = FormUtil.findChildIndexAccordingToFieldSpecification(fieldParentFromSpecification.children, parentField.children, fieldId)
+    parentField.children.splice(newFieldIndex, 0, newFieldPrototype.asMutable({deep: true}))
+    FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(parentField, values)
+    return parentField
+  }
+
+  static removeField(formState, parentField, fieldToRemove) {
+    formState.validationErrors = formState.validationErrors.merge({[fieldToRemove.id]: []})
+    const subFieldIds = FormUtil.findSubFieldIds(fieldToRemove)
+    for(var i = 0; i < subFieldIds.length; i++) {
+      formState.validationErrors = formState.validationErrors.merge({[subFieldIds[i]]: []})
+    }
+    _.remove(parentField.children, function(child) {
+      return child.id === fieldToRemove.id;
+    })
     return formState
   }
 }
