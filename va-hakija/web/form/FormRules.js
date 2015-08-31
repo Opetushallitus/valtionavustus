@@ -15,7 +15,7 @@ export default class FormRules {
           formState = FormRules.handleIncludeIf(rule, formSpecification, formState, values)
           break;
         default:
-          console.error("Unsupported rule", rule)
+          console.error("Unsupported rule of type", rule.type, rule)
       }
     }
     return formState
