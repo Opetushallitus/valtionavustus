@@ -1,15 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
-if [ -z ${1+x} ]; then
-  echo "Usage: $0 <comma-separated list of target servers> [source jar path]"
+if [ -z ${2+x} ]; then
+  echo "Usage: $0 <comma-separated list of target servers> <module to deploy> [source jar path]"
   exit 3
 fi
 
-if [ -z ${2+x} ]; then
-  hakija_source_path=../../valtionavustus-deploy-test/builds/lastStableBuild/archive/va-hakija/target/uberjar/hakija-*-standalone.jar
+module_to_deploy=$2
+
+if [ -z ${3+x} ]; then
+  jar_source_path=../../valtionavustus-deploy-test/builds/lastStableBuild/archive/va-hakija/target/uberjar/hakija-*-standalone.jar
 else
-  hakija_source_path=$2
+  jar_source_path=$3
 fi
 
 comma_separated_server_list=$1
@@ -17,8 +19,8 @@ comma_separated_server_list=$1
 for server in ${comma_separated_server_list//,/ }
 do
   echo "========================="
-  echo "Deploying $hakija_source_path on $server: "
-  command_line="`dirname $0`/cibuild.bash -s $server -j $hakija_source_path deploy"
+  echo "Deploying $jar_source_path on $server: "
+  command_line="`dirname $0`/cibuild.bash -s $server -j $jar_source_path -m $module_to_deploy deploy_jar"
   echo "Executing :"
   echo $command_line
 

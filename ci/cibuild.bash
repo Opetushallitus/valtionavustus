@@ -10,11 +10,12 @@ export PATH=$PATH:$(dirname $LEIN)
 
 function show_usage() {
 cat << EOF
-  Usage: ${0##*/} [clean] [uberjar] [test] [-p <docker postgresql port>] [deploy] [-s <target server name> ] [-d] [-r] [-j <source jar path>]
+  Usage: ${0##*/} [clean] [uberjar] [test] [-p <docker postgresql port>] [deploy] [deploy_jar -m <module>] [-s <target server name> ] [-d] [-r] [-j <source jar path>]
     -p specifies the host port on which Docker binds Postgresql, it should be same in the app config
     -d disables running Postgresql in Docker container around the build
     -r recreate database when deploying (default: false)
     -j specifies the path to source jar
+    -m specifies the module to deploy: va-hakija or va-virkailija
 EOF
   exit 2
 }
@@ -94,7 +95,7 @@ function restart_application() {
   $SSH "${APP_COMMAND}"
 }
 
-function deploy_jar() {
+function do_deploy_jar() {
   if [ -z ${target_server_name+x} ]; then
     echo "deploy: Please provide target server name with -s option."
     exit 4
@@ -133,9 +134,34 @@ function deploy_jar() {
   echo "...start of $module_name done!"
 }
 
+function deploy_hakija() {
+  do_deploy_jar va-hakija ${va_hakija_source_path} 8081
+}
+
+function deploy_virkailija() {
+  do_deploy_jar va-virkailija ${va_virkailija_source_path} 6071
+}
+
+function deploy_jar() {
+  if [ -z ${module_to_deploy+x} ]; then
+    echo "deploy_jar: Please provide module name with -m option."
+    show_usage
+    exit 5
+  fi
+  if [ "$module_to_deploy" = "va-hakija" ]; then
+    deploy_hakija
+  elif [ "$module_to_deploy" = "va-virkailija" ]; then
+    deploy_virkailija
+  else
+    echo "deploy_jar: unknown module_name '$module_to_deploy' ."
+    show_usage
+    exit 6
+  fi
+}
+
 function deploy() {
-  deploy_jar va-hakija ${va_hakija_source_path} 8081
-  deploy_jar va-virkailija ${va_virkailija_source_path} 6071
+  deploy_hakija
+  deploy_virkailija
 }
 
 
@@ -160,6 +186,9 @@ while [[ $# > 0 ]]; do
       deploy)
       commands+=('deploy')
       ;;
+      deploy_jar)
+      commands+=('deploy_jar')
+      ;;
       -s|--target-server-name)
       target_server_name="$2"
       shift # past argument
@@ -175,7 +204,11 @@ while [[ $# > 0 ]]; do
       recreate_database=true
       ;;
       -j|--source-jar-path)
-      va_hakija_source_path="$2"
+      jar_to_deploy_source_path="$2"
+      shift # past argument
+      ;;
+      -m|--module-to-deploy)
+      module_to_deploy="$2"
       shift # past argument
       ;;
       *)
