@@ -1,6 +1,6 @@
 {:server {:auto-reload? false
           :allow-db-clear? false
-          :port 8081
+          :port 6071
           :url {:fi "https://valtionavustukset.oph.fi/"
                 :sv "https://statsunderstod.oph.fi/"}}
  :ui {:show-environment? false}
