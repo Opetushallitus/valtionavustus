@@ -91,6 +91,26 @@
           (it "Calculates trivial case correctly"
               (let [totals (oph.va.budget/calculate-totals complete-valid-answers avustushaku form-with-budget-field)]
                 (should= 12000 (:total-needed totals))
-                (should= 10800 (:oph-share totals)))))
+                (should= 10800 (:oph-share totals))))
+
+          (it "Skips empty fields"
+              (let [answers-with-empty-field {:value [
+                  {:key "coordination-costs-row.amount" :value "4000"}
+                  {:key "personnel-costs-row.amount" :value ""}
+                  {:key "project-incomes-row.amount" :value "1500"}
+                  {:key "eu-programs-income-row.amount" :value "500"}]}
+                    totals (oph.va.budget/calculate-totals answers-with-empty-field avustushaku form-with-budget-field)]
+                (should= 2000 (:total-needed totals))
+                (should= 1800 (:oph-share totals))))
+
+          (it "Skips non-numeric fields"
+                        (let [answers-with-empty-field {:value [
+                            {:key "coordination-costs-row.amount" :value "4000"}
+                            {:key "personnel-costs-row.amount" :value "invalid"}
+                            {:key "project-incomes-row.amount" :value "1500"}
+                            {:key "eu-programs-income-row.amount" :value "500"}]}
+                              totals (oph.va.budget/calculate-totals answers-with-empty-field avustushaku form-with-budget-field)]
+                          (should= 2000 (:total-needed totals))
+                          (should= 1800 (:oph-share totals)))))
 
 (run-specs)
