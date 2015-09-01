@@ -16,7 +16,7 @@ export default class GrowingFieldset extends React.Component {
     return (
       <fieldset id={htmlId} className={this.className("soresu-growing-fieldset")}>
         <ol>
-          <CSSTransitionGroup transitionName="soresu-dynamic-children-transition">
+          <CSSTransitionGroup component="span" transitionName="soresu-dynamic-children-transition">
             {children}
           </CSSTransitionGroup>
         </ol>

@@ -126,12 +126,12 @@ section.soresu-theme {
     display: block;
   }
 
-  > div, > fieldset {
-    margin: 15px 0 20px 250px;
-  }
+  >div {
+    margin: 0 0 0 250px;
 
-  p.soresu-info-element {
-    margin: 15px 0 20px 250px;
+    >div, >fieldset, >p.soresu-info-element {
+      margin: 15px 0 20px 0;
+    }
   }
 }
 
@@ -257,7 +257,7 @@ section.soresu-theme {
   .soresu-focus-show-error();
 
   input[type=text], input[type=email] {
-    margin: 5px 10px 20px 0;
+    margin: 5px 10px 0 0;
     font-size: 18px;
 
     &.extra-extra-small {
