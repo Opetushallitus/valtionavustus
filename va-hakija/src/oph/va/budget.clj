@@ -14,13 +14,29 @@
 
     (nth all-budget-summaries 0)))
 
+(defn- find-summing-fields [children]
+  (-> (fn [field] (= (:displayAs field) "vaSummingBudgetElement"))
+      (filter children)))
+
+(defn- find-budget-item-elements [children]
+  (-> (fn [summing-field] (:children summing-field))
+      (map children)
+      flatten))
+
+(defn- sum-budget-items [answers children]
+  (-> (fn [item] (read-amount item answers))
+      (map children)))
+
 (defn- do-calculate-totals [budget-field answers self-financing-percentage]
-  (let [all-budget-field-children (:children budget-field)
-        summing-fields (filter (fn [field] (= (:displayAs field) "vaSummingBudgetElement")) all-budget-field-children)
-        budget-item-elements (flatten (map (fn [summing-field] (:children summing-field)) summing-fields))
-        budget-item-sums (map (fn [item] (read-amount item answers)) budget-item-elements)
-        total-sum (r/fold + budget-item-sums)
-        self-financing-share (int (Math/ceil (* (/ self-financing-percentage 100) total-sum)))
+  (let [total-sum (->> (:children budget-field)
+                       find-summing-fields
+                       find-budget-item-elements
+                       (sum-budget-items answers)
+                       (r/fold +))
+        self-financing-share (-> (/ self-financing-percentage 100)
+                                 (* total-sum)
+                                 Math/ceil
+                                 int)
         oph-share (- total-sum self-financing-share)]
     {:total-needed total-sum
      :oph-share oph-share}))
