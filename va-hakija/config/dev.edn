@@ -1,4 +1,5 @@
 {:server {:allow-db-clear? true
+          :enable-access-log? false
           :url {:fi "http://localhost:8080/"
                 :sv "http://localhost:8080/"}}
  :api {:restricted-routes? false}
