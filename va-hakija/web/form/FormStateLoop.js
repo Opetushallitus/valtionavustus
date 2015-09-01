@@ -114,11 +114,11 @@ export default class FormStateLoop {
         }
       })
       return valuesP.combine(formP, function(values, form) {
-        return initDefaultValues(values, initialValues, form, lang)
+        return initDefaultValues(values, initialValues, form.content, lang)
       })
     }
 
-    function initDefaultValues(values, initialValues, formContent, lang) {
+    function initDefaultValues(values, initialValues, formSpecificationContent, lang) {
       function determineInitialValue(field) {
         if (field.id in initialValues) {
           return initialValues[field.id]
@@ -135,13 +135,13 @@ export default class FormStateLoop {
         }
       }
 
-      const fields = JsUtil.flatFilter(formContent, n => { return !_.isUndefined(n.id) })
+      const fields = JsUtil.flatFilter(formSpecificationContent, n => { return !_.isUndefined(n.id) })
       _.forEach(fields, f => {
-        const currentValueFromState = InputValueStorage.readValue(formContent, values, f.id)
+        const currentValueFromState = InputValueStorage.readValue(formSpecificationContent, values, f.id)
         if (currentValueFromState === "") {
           const initialValueForField = determineInitialValue(f, initialValues)
           if (!_.isUndefined(initialValueForField)) {
-            InputValueStorage.writeValue(formContent, values, f.id, initialValueForField)
+            InputValueStorage.writeValue(formSpecificationContent, values, f.id, initialValueForField)
           }
         }
       })

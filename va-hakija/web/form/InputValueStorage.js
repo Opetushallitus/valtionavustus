@@ -4,7 +4,7 @@ import JsUtil from './JsUtil.js'
 import _ from 'lodash'
 
 export default class InputValueStorage {
-  static writeValue(formContent, answersObject, fieldId, newValue) {
+  static writeValue(formSpecificationContent, answersObject, fieldId, newValue) {
     function writeChildValue(parentObject, childKey, value) {
       const existingChildren = _.filter(parentObject.value, child => { return child.key === childKey })
       if (!_.isUndefined(existingChildren) && !_.isEmpty(existingChildren)) {
@@ -17,7 +17,7 @@ export default class InputValueStorage {
       parentObject.value.push({ "key": childKey, "value": value})
     }
 
-    const growingParent = FormUtil.findGrowingParent(formContent, fieldId)
+    const growingParent = FormUtil.findGrowingParent(formSpecificationContent, fieldId)
     if (!growingParent) {
       writeChildValue(answersObject, fieldId, newValue)
       return
@@ -39,7 +39,7 @@ export default class InputValueStorage {
     return growingParent
   }
 
-  static readValue(formContent, answersObject, fieldId) {
+  static readValue(formSpecificationContent, answersObject, fieldId) {
     const existingValueObject = JsUtil.flatFilter(answersObject, n => { return !_.isUndefined(n) && !_.isNull(n) && n.key === fieldId })
     return !_.isEmpty(existingValueObject) ? existingValueObject[0].value : ""
   }

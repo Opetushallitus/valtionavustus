@@ -41,7 +41,7 @@ export default class FormStateTransitions {
 
   onInitialState(state, realInitialState) {
     const onInitialStateLoaded = realInitialState.extensionApi.onInitialStateLoaded
-    FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(realInitialState.form.content, realInitialState.saveStatus.values)
+    FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(realInitialState.configuration.form.content, realInitialState.form.content, realInitialState.saveStatus.values)
     if (_.isFunction(onInitialStateLoaded)) {
       onInitialStateLoaded(realInitialState)
     }
@@ -193,14 +193,6 @@ export default class FormStateTransitions {
     const answersObject = state.saveStatus.values
     InputValueStorage.deleteValue(growingParent, answersObject, fieldToRemove.id)
     _.remove(growingParent.children, fieldToRemove)
-
-    // Reindex growing fields
-    for (var i = 0; i < growingParent.children.length; i++) {
-      var child = growingParent.children[i]
-      const nodeIndex = i + 1
-      child.id = child.id.replace(/-\d+$/, "-" + nodeIndex.toString())
-    }
-
     state.saveStatus.changes = true
     this.startAutoSave(state)
     return state
