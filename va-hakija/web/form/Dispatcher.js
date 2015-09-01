@@ -14,7 +14,7 @@ export default class InternalBus {
     try {
       this.bus(name).push(value)
     } catch (e) {
-      console.log('Error when event "' + name + '" handling with value ', value, e)
+      console.error('Error when event "' + name + '" handling with value ', value, e)
     }
   }
 
