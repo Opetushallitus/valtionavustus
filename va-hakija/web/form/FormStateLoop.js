@@ -7,6 +7,7 @@ import HttpUtil from './HttpUtil.js'
 import JsUtil from './JsUtil.js'
 import FormUtil from './FormUtil.js'
 import FormStateTransitions from './FormStateTransitions.js'
+import FormRules from './FormRules.js'
 import Translator from './Translator.js'
 
 export default class FormStateLoop {
@@ -21,29 +22,38 @@ export default class FormStateLoop {
       preview: query.preview || false,
       devel: query.devel || false
     }
-    const clientSideValidationP = controller.formP.map(initClientSideValidationState)
     const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json"))
     const savedObjectP = loadSavedObjectPromise(formOperations, urlContent)
+    const formP = controller.formP.map(function(form) {
+      return Immutable(form)
+    })
+    const initialValuesP = getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP, lang)
+    const initialFormStateP = initialValuesP.combine(formP, function(values, form) {
+      return FormRules.applyRulesToForm(form,
+              {
+                content: form.content.asMutable({deep: true}),
+                validationErrors: Immutable({})
+              }, values)
+    })
 
     const lang = formOperations.chooseInitialLanguage(urlContent)
     const initialStateTemplate = {
-      form: controller.formP,
+      form: initialFormStateP,
       saveStatus: {
         changes: false,
         saveInProgress: false,
         saveTime: null,
         serverError: "",
-        values: getInitialFormValuesPromise(formOperations, controller.formP, initialValues, savedObjectP, lang),
+        values: initialValuesP,
         savedObject: savedObjectP
       },
       configuration: {
+        form: formP,
         preview: queryParams.preview,
         develMode: queryParams.devel,
         lang: lang,
         translations: translationsP
       },
-      validationErrors: Immutable({}),
-      clientSideValidation: clientSideValidationP,
       extensionApi: {
         formOperations: formOperations,
         onInitialStateLoaded: controller.onInitialStateLoaded
@@ -104,11 +114,11 @@ export default class FormStateLoop {
         }
       })
       return valuesP.combine(formP, function(values, form) {
-        return initDefaultValues(values, initialValues, form, lang)
+        return initDefaultValues(values, initialValues, form.content, lang)
       })
     }
 
-    function initDefaultValues(values, initialValues, form, lang) {
+    function initDefaultValues(values, initialValues, formSpecificationContent, lang) {
       function determineInitialValue(field) {
         if (field.id in initialValues) {
           return initialValues[field.id]
@@ -125,33 +135,16 @@ export default class FormStateLoop {
         }
       }
 
-      const fields = JsUtil.flatFilter(form.content, n => { return !_.isUndefined(n.id) })
+      const fields = JsUtil.flatFilter(formSpecificationContent, n => { return !_.isUndefined(n.id) })
       _.forEach(fields, f => {
-        const currentValueFromState = InputValueStorage.readValue(form.content, values, f.id)
+        const currentValueFromState = InputValueStorage.readValue(formSpecificationContent, values, f.id)
         if (currentValueFromState === "") {
           const initialValueForField = determineInitialValue(f, initialValues)
           if (!_.isUndefined(initialValueForField)) {
-            InputValueStorage.writeValue(form.content, values, f.id, initialValueForField)
+            InputValueStorage.writeValue(formSpecificationContent, values, f.id, initialValueForField)
           }
         }
       })
-      return values
-    }
-
-    function initClientSideValidationState(form) {
-      const values = {}
-      const children = form.children ? form.children : form.content
-      for (var i = 0; i < children.length; i++) {
-        const field = children[i]
-        if (field.type === 'formField') {
-          values[field.id] = false
-        } else if (field.type === 'wrapperElement') {
-          var childValues = initClientSideValidationState(field)
-          for (var fieldId in childValues) {
-            values[fieldId] = childValues[fieldId]
-          }
-        }
-      }
       return values
     }
   }

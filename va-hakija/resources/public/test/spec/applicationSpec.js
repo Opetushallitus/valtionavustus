@@ -150,8 +150,8 @@
               it("kentän virhe näytetään", function() {
                 expect(applicationPage.detailedValidationErrors()).to.deep.equal(['Hakijaorganisaatio: Pakollinen tieto'])
               })
-              it("lähetys nappi on yhä enabloitu", function() {
-                expect(applicationPage.submitButton().isEnabled()).to.equal(true)
+              it("lähetys nappi ei ole enabloitu", function() {
+                expect(applicationPage.submitButton().isEnabled()).to.equal(false)
               })
             })
             describe("muokatessa kenttää", function() {
@@ -161,6 +161,9 @@
               )
               it("virheet häviää", function() {
                 expect(applicationPage.saveError()).to.equal('')
+              })
+              it("lähetys nappi enabloituu", function() {
+                expect(applicationPage.submitButton().isEnabled()).to.equal(true)
               })
             })
           })
@@ -184,6 +187,70 @@
               )
               it("virhe häviää", function() {
                 expect(applicationPage.saveError()).to.equal('')
+              })
+            })
+          })
+        })
+
+        describe('riippuvassa kentässä', function() {
+          before(
+            applicationPage.setInputValue("other-organizations.other-organizations-1.email", "invalid@email"),
+            applicationPage.waitAutoSave
+          )
+
+          describe('alkutilassa', function() {
+            it('riippuva kenttä näkyy', function() {
+              expect(removeButtonForOrg(1).isVisible()).to.equal(true)
+            })
+            it('riippuvassa kentässä on arvo', function() {
+              expect(applicationPage.getInput("other-organizations.other-organizations-1.name").value()).to.equal('Muu Testi Organisaatio')
+            })
+            it('herjataan virheellisestä riippuvan kentän arvosta', function() {
+              expect(applicationPage.detailedValidationErrors()).to.deep.equal(['Yhteyshenkilön sähköposti: Tarkista sähköpostiosoite'])
+            })
+          })
+
+          describe('vaihdettesssa yhteishanke vastaukseksi "Ei"', function() {
+            before(
+              applicationPage.setInputValue("combined-effort", "no"),
+              applicationPage.waitAutoSave
+            )
+
+            describe('vaihdon jälkeen', function() {
+              it('riippuva kenttä häviää näkyvistä', function() {
+                expect(removeButtonForOrg(1).isVisible()).to.equal(false)
+              })
+              it('riippuvan kentän validaatiovirhe häviää', function() {
+                expect(applicationPage.detailedValidationErrors()).to.deep.equal([])
+              })
+            })
+
+            describe('ladattaessa sivu uudestaan', function() {
+              before(
+                  applicationPage.openEditPage(loginPage.getHakemusId)
+              )
+              describe('latauksen jälkeen', function() {
+                it("on yhä piilotettu riiippuva kenttä piilotettu", function() {
+                  expect(removeButtonForOrg(1).isVisible()).to.equal(false)
+                })
+                it('ei ole validaatiovirheitä', function() {
+                  expect(applicationPage.detailedValidationErrors()).to.deep.equal([])
+                })
+              })
+              describe('vaihdettesssa yhteishanke vastaukseksi takaisin "Kyllä"', function() {
+                before(
+                    applicationPage.setInputValue("combined-effort", "yes"),
+                    applicationPage.waitAutoSave
+                )
+                it('riippuva kenttä näkyy', function() {
+                  expect(removeButtonForOrg(1).isVisible()).to.equal(true)
+                })
+                it('riippuvassa kentässä on tallessa vanha arvo', function() {
+                  expect(applicationPage.getInput("other-organizations.other-organizations-1.name").value()).to.equal('Muu Testi Organisaatio')
+                })
+                it('herjataan virheellisestä riippuvan kentän arvosta', function() {
+                  expect(applicationPage.detailedValidationErrors()).to.deep.equal(['Yhteyshenkilön sähköposti: Tarkista sähköpostiosoite'])
+                })
               })
             })
           })

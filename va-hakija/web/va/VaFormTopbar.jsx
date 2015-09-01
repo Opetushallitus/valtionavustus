@@ -19,12 +19,12 @@ export default class VaFormTopbar extends React.Component {
     const configuration = state.configuration
     const avustushaku = state.avustushaku
     const form = state.form
-    const validationErrors = state.validationErrors
+    const validationErrors = state.form.validationErrors
     const lang = configuration.lang
     const translations = configuration.translations
     const preview = configuration.preview
-    const formIsValid = _.reduce(state.clientSideValidation, function (allValid, valid) {
-      return allValid === true && valid === true
+    const formIsValid = _.reduce(state.form.validationErrors, function (allValid, fieldErrors) {
+      return allValid === true && fieldErrors.length === 0
     }, true)
     const formOperations = state.extensionApi.formOperations
     const openPreview = function() {

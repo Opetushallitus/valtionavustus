@@ -14,7 +14,7 @@ export default class Form extends React.Component {
     const controller = this.props.controller
     const state = this.props.state
     const fields = state.form.content
-    const validationErrors = state.validationErrors
+    const validationErrors = state.form.validationErrors
     const values = state.saveStatus.values
 
     const renderField = function (field, renderingParameters) {

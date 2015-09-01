@@ -31,13 +31,33 @@ export default class FormUtil {
     },10)
   }
 
+  static idIsSameOrSameIfIndexIgnoredPredicate(fieldId) {
+    return field => { return field.id === fieldId || FormUtil.isSameIfIndexIgnored(field.id, fieldId)}
+  }
+
+  static findChildIndexAccordingToFieldSpecification(specificationChildren, currentChildren, fieldId) {
+    const newFieldSpecIndex = _.findIndex(specificationChildren, FormUtil.idIsSameOrSameIfIndexIgnoredPredicate(fieldId))
+    for (var index = 0; index < currentChildren.length; index++) {
+      const sibling = currentChildren[index]
+      const siblingSpecIndex = _.findIndex(specificationChildren, FormUtil.idIsSameOrSameIfIndexIgnoredPredicate(sibling.id))
+      if(siblingSpecIndex > newFieldSpecIndex){
+        break
+      }
+    }
+    return index
+  }
+
   static findField(formContent, fieldId) {
     const foundArray = JsUtil.flatFilter(formContent, n => { return n.id === fieldId })
     return _.first(foundArray)
   }
 
+  static findSubFieldIds(field) {
+    return JsUtil.traverseMatching(field.children, n => { return n.id}, n => { return n.id})
+  }
+
   static findFieldIndex(formContent, fieldId) {
-    return JsUtil.findIndexOfFirst(formContent, n => { return n.id === fieldId || FormUtil.isSameIfIndexIgnored(n.id, fieldId)})
+    return JsUtil.findIndexOfFirst(formContent, FormUtil.idIsSameOrSameIfIndexIgnoredPredicate(fieldId))
   }
 
   static findFieldWithDirectChild(formContent, childId) {

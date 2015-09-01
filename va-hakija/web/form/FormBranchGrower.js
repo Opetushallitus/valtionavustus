@@ -1,12 +1,11 @@
 import _ from 'lodash'
-import traverse from 'traverse'
 
 import InputValueStorage from './InputValueStorage.js'
 import JsUtil from './JsUtil.js'
 import FormUtil from './FormUtil.js'
 
 export default class FormBranchGrower {
-  static addFormFieldsForGrowingFieldsInInitialRender(formContent, answers) {
+  static addFormFieldsForGrowingFieldsInInitialRender(formSpecificationContent, formContent, answers) {
     function populateRepeatingItem(baseObject, key, valueOfElement) {
       _.assign(baseObject, { "id": key })
       baseObject.children = baseObject.children.map(c => {
@@ -22,14 +21,10 @@ export default class FormBranchGrower {
       return baseObject
     }
 
-    function populateGrowingSet(growingParentElement, valuesTreeOfElement) {
-      if (growingParentElement.children.length === 0) {
-        throw new Error("Expected an existing child for growing set '" + growingParentElement.id + "' to get the field configurations from there.")
-      }
-      const childPrototype = growingParentElement.children[0]
+    function populateGrowingSet(growingParentElement, childPrototype, valuesTreeOfElement) {
       growingParentElement.children = _.map(valuesTreeOfElement, itemValueObject => {
         const o = {}
-        _.assign(o, childPrototype)
+        _.assign(o, childPrototype.asMutable({deep: true}))
         populateRepeatingItem(o, itemValueObject.key, itemValueObject.value)
         return o
       })
@@ -37,17 +32,26 @@ export default class FormBranchGrower {
 
     _.forEach(JsUtil.flatFilter(formContent, n => { return n.displayAs === "growingFieldset"}), g => {
       const growingSetValue = InputValueStorage.readValue(formContent, answers, g.id)
+      const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(formSpecificationContent, g.id)
       if (!_.isUndefined(growingSetValue) && !_.isEmpty(growingSetValue)) {
-        populateGrowingSet(g, growingSetValue)
+        populateGrowingSet(g, childPrototype, growingSetValue)
       }
       const firstChildValue = g.children.length > 0 ? InputValueStorage.readValue(formContent, answers, g.children[0].id) : undefined
       if (g.children.length > 1 || (!_.isUndefined(growingSetValue) && !_.isEmpty(firstChildValue))) {
-        const enabledPlaceHolderChild = FormBranchGrower.createNewChild(g, true)
+        const enabledPlaceHolderChild = FormBranchGrower.createNewChild(g, childPrototype, true)
         g.children.push(enabledPlaceHolderChild)
       }
-      const disabledPlaceHolderChild = FormBranchGrower.createNewChild(g, false)
+      const disabledPlaceHolderChild = FormBranchGrower.createNewChild(g, childPrototype, false)
       g.children.push(disabledPlaceHolderChild)
     })
+  }
+
+  static getGrowingFieldSetChildPrototype(formSpecificationContent, growingParentId) {
+    const growingParentSpecification = FormUtil.findField(formSpecificationContent, growingParentId)
+    if (growingParentSpecification.children.length === 0) {
+        throw new Error("Expected an existing child for growing set '" + growingParentId + "' to get the field configurations from there.")
+    }
+    return growingParentSpecification.children[0]
   }
 
   static expandGrowingFieldSetIfNeeded(state, fieldUpdate) {
@@ -56,34 +60,31 @@ export default class FormBranchGrower {
     }
 
     function growingFieldSetExpandMustBeTriggered(state, fieldUpdate) {
-      const growingSetOfThisField = fieldUpdate.growingParent
-      if (!growingSetOfThisField) {
+      const growingParent = fieldUpdate.growingParent
+      if (!growingParent) {
         return false
       }
-
-      const allFieldIdsInSameGrowingSet = JsUtil.
-        flatFilter(growingSetOfThisField, n => { return !_.isUndefined(n.id) }).
+      const allFieldIdsInSameGrowingSet = JsUtil.flatFilter(growingParent.children, n => { return !_.isUndefined(n.id)}).
         map(n => { return n.id })
       const wholeSetIsValid = _.reduce(allFieldIdsInSameGrowingSet, (acc, fieldId) => {
-        return acc && (state.clientSideValidation[fieldId] !== false)
+        return acc && (!state.form.validationErrors[fieldId] || state.form.validationErrors[fieldId].length === 0)
       }, true)
 
-      // TODO: Assess if the "last" check is needed. Possibly it's enough that the whole thing is valid, minus last row that needs to be skipped in validation, when there are filled rows.
-      const lastChildOfGrowingSet = _.last(_.filter(growingSetOfThisField.children, f => { return !f.forceDisabled }))
+       // TODO: Assess if the "last" check is needed. Possibly it's enough that the whole thing is valid, minus last row that needs to be skipped in validation, when there are filled rows.
+      const lastChildOfGrowingSet = _.last(_.filter(growingParent.children, f => { return !f.forceDisabled }))
       const thisFieldIsInLastChildToBeRepeated = _.some(lastChildOfGrowingSet.children, x => { return x.id === fieldUpdate.id })
 
       return wholeSetIsValid && thisFieldIsInLastChildToBeRepeated
     }
 
     function expandGrowingFieldset(state, fieldUpdate) {
-      const growingFieldSet = fieldUpdate.growingParent
-      _.forEach(JsUtil.flatFilter(growingFieldSet.children, n => { return !_.isUndefined(n.id) }), n => {
+      const growingParent = fieldUpdate.growingParent
+      _.forEach(JsUtil.flatFilter(growingParent.children, n => { return !_.isUndefined(n.id) }), n => {
         n.forceDisabled = false
       })
-      const allExistingFieldIds = JsUtil.flatFilter(state.form.content, n => { return !_.isUndefined(n.id) }).
-        map(n => { return n.id })
-      const newSet = FormBranchGrower.createNewChild(growingFieldSet)
-      growingFieldSet.children.push(newSet)
+      const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(state.configuration.form.content, growingParent.id)
+      const newSet = FormBranchGrower.createNewChild(growingParent, childPrototype, false)
+      growingParent.children.push(newSet)
     }
   }
 
@@ -108,11 +109,10 @@ export default class FormBranchGrower {
    *
    * @param parentNode  Node whose children are repeated
    */
-  static createNewChild(parentNode, enable) {
-    const parentId = parentNode.id
+  static createNewChild(parentNode, childPrototype, enable) {
     const currentLastChild = _.last(parentNode.children)
-    const newChild = _.cloneDeep(currentLastChild)
-    populateNewIdsTo(newChild, parentId, parentNode)
+    const newChild = childPrototype.asMutable({deep: true})
+    populateNewIdsTo(newChild, currentLastChild)
     _.forEach(JsUtil.flatFilter(newChild, n => { return !_.isUndefined(n.id) }),
       field => {
         field.skipValidationOnMount = true
@@ -121,12 +121,13 @@ export default class FormBranchGrower {
     )
     return newChild
 
-    function populateNewIdsTo(node) {
-      const oldId = node.id
-      var oldIndex = FormUtil.parseIndexFrom(oldId)
-      node.id = oldId.replace(oldIndex, oldIndex + 1)
+    function populateNewIdsTo(node, currentLastChild) {
+      const prototypeId = node.id
+      var lastIndex = FormUtil.parseIndexFrom(currentLastChild.id)
+      var newId =  FormUtil.withOutIndex(prototypeId) + "-" + (lastIndex + 1)
+      node.id = newId
       _.forEach(node.children, n => {
-        n.id = n.id.replace(oldId, node.id)
+        n.id = n.id.replace(prototypeId, node.id)
       })
     }
   }

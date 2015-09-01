@@ -5,6 +5,7 @@ import LocalStorage from './LocalStorage.js'
 import InputValueStorage from './InputValueStorage.js'
 import HttpUtil from './HttpUtil.js'
 import FormUtil from './FormUtil.js'
+import FormRules from './FormRules.js'
 import FormBranchGrower from './FormBranchGrower.js'
 import FieldUpdateHandler from './FieldUpdateHandler.js'
 
@@ -40,7 +41,7 @@ export default class FormStateTransitions {
 
   onInitialState(state, realInitialState) {
     const onInitialStateLoaded = realInitialState.extensionApi.onInitialStateLoaded
-    FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(realInitialState.form.content, realInitialState.saveStatus.values)
+    FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(realInitialState.configuration.form.content, realInitialState.form.content, realInitialState.saveStatus.values)
     if (_.isFunction(onInitialStateLoaded)) {
       onInitialStateLoaded(realInitialState)
     }
@@ -51,11 +52,12 @@ export default class FormStateTransitions {
   onUpdateField(state, fieldUpdate) {
     const formOperations = state.extensionApi.formOperations
     FieldUpdateHandler.updateStateFromFieldUpdate(state, fieldUpdate)
+    FormRules.applyRulesToForm(state.configuration.form, state.form, state.saveStatus.values)
     if (_.isFunction(formOperations.onFieldUpdate)) {
       formOperations.onFieldUpdate(state, fieldUpdate.field, fieldUpdate.value)
     }
     FieldUpdateHandler.triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
-    const clientSideValidationPassed = state.clientSideValidation[fieldUpdate.id]
+    const clientSideValidationPassed = state.form.validationErrors[fieldUpdate.id].length === 0
     if (clientSideValidationPassed) {
       FormBranchGrower.expandGrowingFieldSetIfNeeded(state, fieldUpdate);
       if (_.isFunction(formOperations.onFieldValid)) {
@@ -69,9 +71,8 @@ export default class FormStateTransitions {
   }
 
   onFieldValidation(state, validation) {
-    state.clientSideValidation[validation.id] = validation.validationErrors.length === 0
     if (validation.showErrorsAlways || state.extensionApi.formOperations.isNotFirstEdit(state)) {
-      state.validationErrors = state.validationErrors.merge({[validation.id]: validation.validationErrors})
+      state.form.validationErrors = state.form.validationErrors.merge({[validation.id]: validation.validationErrors})
     }
     return state
   }
@@ -120,7 +121,7 @@ export default class FormStateTransitions {
           const updatedState = _.cloneDeep(state)
           updatedState.saveStatus.savedObject = response
           updatedState.saveStatus.values = formOperations.responseParser.getFormAnswers(response)
-          updatedState.validationErrors = Immutable(updatedState.validationErrors)
+          updatedState.form.validationErrors = Immutable(updatedState.form.validationErrors)
           if (onSuccessCallback) {
             onSuccessCallback(updatedState)
           }
@@ -169,7 +170,7 @@ export default class FormStateTransitions {
     stateFromUiLoop.saveStatus.savedObject = stateWithServerChanges.saveStatus.savedObject
     if (!locallyStoredValues) {
       stateFromUiLoop.saveStatus.values = stateWithServerChanges.saveStatus.values
-      stateFromUiLoop.validationErrors = stateWithServerChanges.validationErrors
+      stateFromUiLoop.form.validationErrors = stateWithServerChanges.form.validationErrors
       LocalStorage.save(formOperations.createUiStateIdentifier, stateFromUiLoop)
     }
     if (_.isFunction(formOperations.onSaveCompletedCallback)) {
@@ -191,16 +192,7 @@ export default class FormStateTransitions {
     const growingParent = FormUtil.findGrowingParent(state.form.content, fieldToRemove.id)
     const answersObject = state.saveStatus.values
     InputValueStorage.deleteValue(growingParent, answersObject, fieldToRemove.id)
-    delete state.clientSideValidation[fieldToRemove.id]
     _.remove(growingParent.children, fieldToRemove)
-
-    // Reindex growing fields
-    for (var i = 0; i < growingParent.children.length; i++) {
-      var child = growingParent.children[i]
-      const nodeIndex = i + 1
-      child.id = child.id.replace(/-\d+$/, "-" + nodeIndex.toString())
-    }
-
     state.saveStatus.changes = true
     this.startAutoSave(state)
     return state
@@ -210,7 +202,7 @@ export default class FormStateTransitions {
     state.saveStatus.saveInProgress = false
     state.saveStatus.serverError = serverErrors.error
     if(serverErrors.validationErrors) {
-      state.validationErrors = state.validationErrors.merge(serverErrors.validationErrors)
+      state.form.validationErrors = state.form.validationErrors.merge(serverErrors.validationErrors)
     }
     return state
   }
