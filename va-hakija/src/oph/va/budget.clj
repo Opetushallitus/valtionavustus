@@ -19,10 +19,11 @@
         summing-fields (filter (fn [field] (= (:displayAs field) "vaSummingBudgetElement")) all-budget-field-children)
         budget-item-elements (flatten (map (fn [summing-field] (:children summing-field)) summing-fields))
         budget-item-sums (map (fn [item] (read-amount item answers)) budget-item-elements)
-        total-sum (r/fold + budget-item-sums)]
+        total-sum (r/fold + budget-item-sums)
+        self-financing-share (int (Math/ceil (* (/ self-financing-percentage 100) total-sum)))
+        oph-share (- total-sum self-financing-share)]
     {:total-needed total-sum
-     :oph-share (* (/ (- 100 self-financing-percentage) 100) total-sum)}
-    ))
+     :oph-share oph-share}))
 
 (defn- amount-field-of [budget-item]
   (nth (:children budget-item) 1))

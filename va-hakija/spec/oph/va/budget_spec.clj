@@ -111,6 +111,14 @@
                             {:key "eu-programs-income-row.amount" :value "500"}]}
                               totals (oph.va.budget/calculate-totals answers-with-empty-field avustushaku form-with-budget-field)]
                           (should= 2000 (:total-needed totals))
-                          (should= 1800 (:oph-share totals)))))
+                          (should= 1800 (:oph-share totals))))
+
+          (it "Calculates corner cases correctly"
+                                  (let [answers-with-empty-field {:value [
+                                      {:key "coordination-costs-row.amount" :value "10"}
+                                      {:key "eu-programs-income-row.amount" :value "1"}]}
+                                        totals (oph.va.budget/calculate-totals answers-with-empty-field avustushaku form-with-budget-field)]
+                                    (should= 9 (:total-needed totals))
+                                    (should= 8 (:oph-share totals)))))
 
 (run-specs)
