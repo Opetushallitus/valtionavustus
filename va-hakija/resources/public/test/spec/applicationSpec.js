@@ -213,7 +213,8 @@
           describe('vaihdettesssa yhteishanke vastaukseksi "Ei"', function() {
             before(
               applicationPage.setInputValue("combined-effort", "no"),
-              applicationPage.waitAutoSave
+              applicationPage.waitAutoSave,
+              wait.until(function(){return removeButtonForOrg(1).isVisible() === false})
             )
 
             describe('vaihdon jälkeen', function() {

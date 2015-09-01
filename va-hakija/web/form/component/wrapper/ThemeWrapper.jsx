@@ -1,5 +1,6 @@
 import React from 'react'
 import LocalizedString from '../LocalizedString.jsx'
+import CSSTransitionGroup from './CSSTransitionGroup.jsx'
 
 export default class ThemeWrapper extends React.Component {
   render() {
@@ -10,7 +11,9 @@ export default class ThemeWrapper extends React.Component {
     return (
       <section className="soresu-theme" id={htmlId}>
         <h2><LocalizedString translations={field} translationKey="label" lang={lang}/></h2>
-        {children}
+        <CSSTransitionGroup transitionName="soresu-dynamic-children-transition">
+          {children}
+        </CSSTransitionGroup>
       </section>
     )
   }
