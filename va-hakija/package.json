@@ -18,6 +18,7 @@
     "lodash": "^3.9.3",
     "query-string": "2.2.0",
     "react": "^0.13.2",
+    "timeout-transition-group": "1.0.1",
     "seamless-immutable": "^2.4.2",
     "traverse": "0.6.6",
     "moment-timezone": "0.4.0",
