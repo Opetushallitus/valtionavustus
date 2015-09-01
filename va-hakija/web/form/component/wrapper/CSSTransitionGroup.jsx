@@ -6,7 +6,7 @@ export default class CSSTransitionGroup extends React.Component {
     const transitionName = this.props.transitionName
     const ReactTransitionGroup = React.addons.CSSTransitionGroup
     return (
-      <ReactTransitionGroup transitionName={transitionName}>
+      <ReactTransitionGroup component="div" transitionName={transitionName}>
         {children}
       </ReactTransitionGroup>
     )
