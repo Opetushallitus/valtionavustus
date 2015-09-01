@@ -20,6 +20,7 @@ if (process.env.UGLIFY === "true") {
 module.exports = {
   entry: {
     app: "./web/va/VirkailijaApp.jsx",
+    login: "./web/va/Login.jsx"
   },
   output: {
     path: outputDir,
