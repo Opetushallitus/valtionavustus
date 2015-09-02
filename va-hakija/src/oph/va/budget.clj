@@ -12,6 +12,7 @@
         budget-fields (filter (fn [field] (= (:displayAs field) "vaBudget")) all-form-elements)
         all-budget-summaries (map (fn [budget-field] (do-calculate-totals budget-field answers self-financing-percentage)) budget-fields )]
 
+    (assert (= 1 (count all-budget-summaries)) (str "Expected only one budget field but got " (count all-budget-summaries)))
     (nth all-budget-summaries 0)))
 
 (defn- find-summing-fields [children]
