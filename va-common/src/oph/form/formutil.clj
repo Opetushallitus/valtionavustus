@@ -18,6 +18,9 @@
 (defn has-attribute-value? [attribute-name expected-value field]
   (= (attribute-name field) expected-value))
 
+(defn has-display-as-value? [expected-value field]
+  (has-attribute-value? :displayAs expected-value field))
+
 (defn- is-form-field? [field]
   (has-attribute-value? :type "formField" field))
 

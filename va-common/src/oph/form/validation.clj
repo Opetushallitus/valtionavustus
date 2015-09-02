@@ -18,20 +18,20 @@
 
 (defn validate-textarea-maxlength [field answer]
   (let [maxlength ((get field :params {}) :maxlength)]
-    (if (and (= (:displayAs field) "textArea")
+    (if (and (has-display-as-value? "textArea" field)
              (> (count answer) maxlength))
       [{:error "maxlength", :max maxlength}]
       [])))
 
 (defn validate-texfield-maxlength [field answer]
   (let [maxlength ((get field :params {}) :maxlength)]
-    (if (and (= (:displayAs field) "textField")
+    (if (and (has-display-as-value? "textField" field)
              (> (count answer) maxlength))
       [{:error "maxlength", :max maxlength}]
       [])))
 
 (defn validate-email-security [field answer]
-  (if (and (= (:displayAs field) "emailField")
+  (if (and (has-display-as-value? "emailField" field)
            (not (nil? answer))
            (or (re-matches #".*%0[aA].*" answer)
                (> (count answer) 254)))
@@ -39,7 +39,7 @@
     []))
 
 (defn validate-email-field [field answer]
-  (if (not (and (= (:displayAs field) "emailField")
+  (if (not (and (has-display-as-value? "emailField" field)
                 (= (:required field))))
     []
     (if (and (not (nil? answer))
@@ -52,7 +52,7 @@
         [{:error "email"}])))
 
 (defn validate-finnish-business-id-field [field answer]
-  (if (not (and (= (:displayAs field) "finnishBusinessIdField")
+  (if (not (and (has-display-as-value? "finnishBusinessIdField" field)
                 (= (:required field))))
     []
     (if (and (not (nil? answer))

@@ -7,7 +7,7 @@
 (declare read-amount)
 
 (defn- is-budget-field? [element]
-  (= (:displayAs element) "vaBudget"))
+  (formutil/has-display-as-value? "vaBudget" element))
 
 (defn calculate-totals [answers avustushaku form]
   (let [self-financing-percentage (-> avustushaku :content :self-financing-percentage)
@@ -19,7 +19,7 @@
     (first all-budget-summaries)))
 
 (defn- find-summing-fields [children]
-  (-> (fn [field] (= (:displayAs field) "vaSummingBudgetElement"))
+  (-> (partial formutil/has-display-as-value? "vaSummingBudgetElement")
       (filter children)))
 
 (defn- find-budget-item-elements [children]
