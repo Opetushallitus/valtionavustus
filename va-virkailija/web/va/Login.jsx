@@ -2,11 +2,19 @@ import React from 'react'
 import Bacon from 'baconjs'
 
 import style from './style/main.less'
+import topbar from './style/topbar.less'
+
+import LoginTopbar from './LoginTopbar.jsx'
 
 export default class Login extends React.Component {
   render() {
     return (
-      <h1>Hello, login.</h1>
+      <div>
+        <LoginTopbar />
+        <section id="container">
+          <h1>Hello, login.</h1>
+        </section>
+      </div>
     )
   }
 }
