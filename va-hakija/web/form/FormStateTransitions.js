@@ -20,7 +20,6 @@ export default class FormStateTransitions {
     this.dispatcher = dispatcher
     this.events = events
     this.autoSave = _.debounce(function(){ dispatcher.push(events.save) }, develQueryParam? 100 : 3000)
-    this.pollServerAnswers = _.debounce(function(){ dispatcher.push(events.pollServerAnswers) },  develQueryParam? 500 : 5000)
     this._bind(
       'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
       'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError')
@@ -45,7 +44,6 @@ export default class FormStateTransitions {
     if (_.isFunction(onInitialStateLoaded)) {
       onInitialStateLoaded(realInitialState)
     }
-    this.pollServerAnswers()
     return realInitialState
   }
 
