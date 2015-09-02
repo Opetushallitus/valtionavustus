@@ -7,7 +7,7 @@
             [clj-time.format :as f]
             [clj-time.local :as l]
             [oph.va.hakija.db :as va-db]
-            [oph.form.validation :as validation]
+            [oph.form.formutil :as formutil]
             [oph.common.testing.spec-plumbing :refer :all]
             [oph.va.hakija.server :refer :all]))
 
@@ -21,7 +21,7 @@
                                                       :headers {"Content-Type" "application/json"}}))
 (defn json->map [body] (parse-string body true))
 
-(defn find-by-id [json id] (first (filter (fn [e] (.equals ( :id e) id)) (-> (validation/flatten-elements (json :content))))))
+(defn find-by-id [json id] (first (filter (fn [e] (.equals ( :id e) id)) (-> (formutil/flatten-elements (json :content))))))
 
 (defn update-answers [answers key value]
   (let [update-fn (fn [key new-value] (fn [value]

@@ -1,7 +1,7 @@
 (ns oph.va.budget
   (:use [clojure.tools.trace :only [trace]])
-  (:require [oph.form.validation :as validation])
-  (require [clojure.core.reducers :as r]))
+  (:require [oph.form.formutil :as formutil]
+            [clojure.core.reducers :as r]))
 
 (declare do-calculate-totals)
 (declare read-amount)
@@ -12,7 +12,7 @@
 (defn calculate-totals [answers avustushaku form]
   (let [self-financing-percentage (-> avustushaku :content :self-financing-percentage)
         all-budget-summaries (->> (:content form)
-                                  validation/flatten-elements
+                                  formutil/flatten-elements
                                   (filter is-budget-field?)
                                   (map (fn [f] (do-calculate-totals answers self-financing-percentage f))))]
     (assert (= 1 (count all-budget-summaries)) (str "Expected only one budget field but got " (count all-budget-summaries)))
@@ -55,7 +55,7 @@
       0)))
 
 (defn- read-amount [budget-item answers]
-  (let [raw-answer-value (validation/find-answer-value answers (:id (amount-field-of budget-item)))
+  (let [raw-answer-value (formutil/find-answer-value answers (:id (amount-field-of budget-item)))
         numeric-value (sanitise raw-answer-value)
         increments-total (-> budget-item :params :incrementsTotal)
         coefficient (if increments-total 1 -1)]
