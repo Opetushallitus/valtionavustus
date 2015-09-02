@@ -1,7 +1,8 @@
 (ns oph.common.routes
   (:require [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
-            [ring.swagger.middleware :as swagger]
+            [schema.utils :as schema]
+            [compojure.api.exception :as compojure-ex]
             [clojure.tools.logging :as log]))
 
 (defn return-html [filename]
@@ -9,12 +10,28 @@
       (content-type "text/html")
       (charset  "utf-8")))
 
-(defn exception-handler [^Exception e]
-  (log/warn e e)
+(defn exception-handler [^Exception ex data request]
+  (log/error ex ex)
   (internal-server-error {:type "unknown-exception"
-                          :class (.getName (.getClass e))}))
+                        :class (.getName (.getClass ex))}))
 
-(defn validation-error-handler [{:keys [error]}]
-  (let [error-str (swagger/stringify-error error)]
-    (log/warn (format "Request validation error: %s" (print-str error-str)))
-    (bad-request {:errors error-str})))
+(defn stringify-error [^Exception ex data]
+  (cond
+    (schema/error? data)
+      (compojure-ex/stringify-error (schema/error-val data))
+    (some? (.getCause ex))
+      (str (.getCause ex))
+    :else
+    (compojure-ex/stringify-error data)))
+
+(defn compojure-error-handler [^Exception ex data request]
+  (let [error-type (:type data)
+        error-str (stringify-error ex data)
+        log-str (format "%s error: %s" error-type error-str)]
+    (if (some #{error-type} [::compojure-ex/request-parsing ::compojure-ex/request-validation])
+      (do
+        (log/warn log-str)
+        (bad-request {:errors error-str}))
+      (do
+        (log/error log-str)
+        (internal-server-error {:errors error-str})))))

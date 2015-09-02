@@ -6,7 +6,7 @@
             [ring.util.response :as resp]
             [compojure.core :refer [defroutes GET]]
             [compojure.api.sweet :refer :all]
-            [ring.swagger.middleware :as swagger]
+            [compojure.api.exception :as compojure-ex]
             [schema.core :as s]
             [oph.common.config :refer [config config-simple-name]]
             [oph.common.routes :refer :all]
@@ -60,9 +60,10 @@
 
 (defapi all-routes
   {:formats [:json-kw]
-   :validation-errors {:error-handler validation-error-handler
-                       :catch-core-errors? false}
-   :exceptions {:exception-handler exception-handler}}
+   :exceptions {:handlers {::compojure-ex/response-validation compojure-error-handler
+                           ::compojure-ex/request-parsing compojure-error-handler
+                           ::compojure-ex/request-validation compojure-error-handler
+                           ::compojure-ex/default exception-handler}}}
 
   (create-swagger-docs)
 
