@@ -15,17 +15,17 @@
   (when-let [found-record (find-value-for-key (answers :value) key)]
     (:value found-record)))
 
-(defn has-attribute-value? [attribute-name expected-value field]
+(defn has-attribute? [attribute-name expected-value field]
   (= (attribute-name field) expected-value))
 
-(defn has-display-as-value? [expected-value field]
-  (has-attribute-value? :displayAs expected-value field))
+(defn has-display-as? [expected-value field]
+  (has-attribute? :displayAs expected-value field))
 
 (defn- is-form-field? [field]
-  (has-attribute-value? :type "formField" field))
+  (has-attribute? :type "formField" field))
 
 (defn- is-wrapper-element? [field]
-  (has-attribute-value? :type "wrapperElement" field))
+  (has-attribute? :type "wrapperElement" field))
 
 (defn unwrap-answers [answers]
   (let [map-fields (filter map? (vals answers))]
