@@ -6,12 +6,15 @@
 (declare do-calculate-totals)
 (declare read-amount)
 
+(defn- is-budget-field? [element]
+  (= (:displayAs element) "vaBudget"))
+
 (defn calculate-totals [answers avustushaku form]
   (let [self-financing-percentage (-> avustushaku :content :self-financing-percentage)
-        all-form-elements (validation/flatten-elements (:content form))
-        budget-fields (filter (fn [field] (= (:displayAs field) "vaBudget")) all-form-elements)
-        all-budget-summaries (map (fn [budget-field] (do-calculate-totals budget-field answers self-financing-percentage)) budget-fields )]
-
+        all-budget-summaries (->> (:content form)
+                                  validation/flatten-elements
+                                  (filter is-budget-field?)
+                                  (map (fn [f] (do-calculate-totals answers self-financing-percentage f))))]
     (assert (= 1 (count all-budget-summaries)) (str "Expected only one budget field but got " (count all-budget-summaries)))
     (first all-budget-summaries)))
 
@@ -28,7 +31,7 @@
   (-> (fn [item] (read-amount item answers))
       (map children)))
 
-(defn- do-calculate-totals [budget-field answers self-financing-percentage]
+(defn- do-calculate-totals [answers self-financing-percentage budget-field]
   (let [total-sum (->> (:children budget-field)
                        find-summing-fields
                        find-budget-item-elements
