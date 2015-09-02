@@ -36,7 +36,6 @@
        :submission submission}))
 
 (defn on-hakemus-create [haku-id answers]
-  (trace "haku id" haku-id)
   (let [avustushaku (va-db/get-avustushaku haku-id)
         avustushaku-content (:content avustushaku)
         form-id (:form avustushaku)
