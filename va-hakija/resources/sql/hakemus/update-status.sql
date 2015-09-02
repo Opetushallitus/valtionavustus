@@ -1,5 +1,6 @@
-INSERT INTO hakemukset(id, user_key, version, form_submission_id, form_submission_version, status, last_status_change_at)
+INSERT INTO hakemukset(id, avustushaku, user_key, version, form_submission_id, form_submission_version, status, last_status_change_at)
 SELECT id,
+       :avustushaku_id,
        :user_key,
        max(version) + 1,
        :form_submission_id,
