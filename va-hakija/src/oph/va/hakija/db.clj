@@ -24,11 +24,13 @@
        (exec :db queries/get-hakemus-by-user-id)
        first))
 
-(defn update-submission [avustushaku-id hakemus-id submission-id submission-version]
+(defn update-submission [avustushaku-id hakemus-id submission-id submission-version budget-total budget-oph-share]
   (let [params {:avustushaku_id avustushaku-id
                 :user_key hakemus-id
                 :form_submission_id submission-id
-                :form_submission_version submission-version}]
+                :form_submission_version submission-version
+                :budget_total budget-total
+                :budget_oph_share budget-oph-share}]
     (exec-all :db [queries/lock-hakemus params
                    queries/close-existing-hakemus! params
                    queries/update-hakemus-submission<! params])))

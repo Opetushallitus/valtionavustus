@@ -279,6 +279,19 @@
 
         ;; Get after cancellation
         (let [{:keys [status headers body error] :as resp} (get! (str "/api/avustushaku/1/hakemus/" id))]
-          (should= 404 status))))))
+          (should= 404 status)))))
+
+(it "Stores budget totals to database"
+    (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" valid-answers)
+          json (json->map body)
+          id (:id json)
+          version (:version json)]
+      (should= 200 status)
+
+      (let [{:keys [status headers body error] :as resp} (post! (str "/api/avustushaku/1/hakemus/" id "/" version) valid-answers)
+            posted-hakemus (va-db/get-hakemus id)]
+        (should= 200 status)
+        (should= 40 (:budget_total posted-hakemus))
+        (should= 30 (:budget_oph_share posted-hakemus))))))
 
 (run-specs)

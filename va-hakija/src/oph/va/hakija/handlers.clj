@@ -10,7 +10,8 @@
             [oph.form.routes :refer :all]
             [oph.form.schema :refer :all]
             [oph.va.hakija.db :as va-db]
-            [oph.va.hakija.email :as va-email]))
+            [oph.va.hakija.email :as va-email]
+            [oph.va.budget :as va-budget]))
 
 (defn- matches-key? [key value-container]
   (= (:key value-container) key))
@@ -80,16 +81,21 @@
       (hakemus-ok-response hakemus submission))))
 
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
-  (let [form-id (:form (va-db/get-avustushaku haku-id))
+  (let [avustushaku (va-db/get-avustushaku haku-id)
+        form-id (:form avustushaku)
+        form (form-db/get-form form-id)
         validation (validation/validate-form-security (form-db/get-form form-id) answers)]
     (if (every? empty? (vals validation))
       (let [hakemus (va-db/get-hakemus hakemus-id)]
         (if (= base-version (:version hakemus))
           (let [updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
+                budget-summary (va-budget/calculate-totals answers avustushaku form)
                 updated-hakemus (va-db/update-submission haku-id
                                                          hakemus-id
                                                          (:form_submission_id hakemus)
-                                                         (:version updated-submission))]
+                                                         (:version updated-submission)
+                                                         (:total-needed budget-summary)
+                                                         (:oph-share budget-summary))]
             (hakemus-ok-response updated-hakemus updated-submission))
           (hakemus-conflict-response hakemus)))
       (bad-request! validation))))
