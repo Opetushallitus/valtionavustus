@@ -25,7 +25,6 @@ export default class FieldUpdateHandler {
     }
   }
 
-
   static triggerRelatedFieldValidationIfNeeded(state, triggeringFieldUpdate) {
     const growingFieldSet = triggeringFieldUpdate.growingParent
     if (growingFieldSet) {

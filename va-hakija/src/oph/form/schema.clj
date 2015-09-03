@@ -90,6 +90,9 @@
                            :version_closed (s/maybe s/Inst)
                            :answers Answers})
 
+  (s/defschema SubmissionValidationError
+    {:error s/Str})
+
   (s/defschema SubmissionValidationErrors
     "Submission validation errors contain a mapping from field id to list of validation errors"
-    {s/Keyword [s/Str]}))
+    {s/Keyword [SubmissionValidationError]}))

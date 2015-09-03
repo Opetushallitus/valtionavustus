@@ -70,9 +70,7 @@
            {:key "private-financing-income-row.amount" :value "10"}]})
 
 (def most-required-missing
-  {:other-organizations.other-organizations-1.email      [{:error "required"} {:error "email"}]
-   :project-begin                                        []
-   :other-organizations.other-organizations-1.name       [{:error "required"}]
+  {:project-begin                                        []
    :applicant-name                                       [{:error "required"}]
    :primary-email                                        []
    :signature                                            [{:error "required"}]

@@ -94,12 +94,16 @@
             )
 
             describe('lisäämisen jälkeen', function() {
-              it("valitetaan puuttuvista tiedoista", function() {
+              it("valitetaan toisen rivin puuttuvista tiedoista", function() {
                 expect(applicationPage.validationErrorsSummary()).to.equal("1 vastauksessa puutteita")
               })
-              it('on kolmas rivi yhä kiinni', function() {
-                expect(applicationPage.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(false)
-                expect(applicationPage.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(false)
+              it('on kolmas rivi auki', function() {
+                expect(applicationPage.getInput('other-organizations.other-organizations-3.name').isEnabled()).to.equal(true)
+                expect(applicationPage.getInput('other-organizations.other-organizations-3.email').isEnabled()).to.equal(true)
+              })
+              it('on neljäs rivi kiinni', function() {
+                expect(applicationPage.getInput('other-organizations.other-organizations-4.name').isEnabled()).to.equal(false)
+                expect(applicationPage.getInput('other-organizations.other-organizations-4.email').isEnabled()).to.equal(false)
               })
             })
 
@@ -126,8 +130,62 @@
                   applicationPage.waitAutoSave
                 )
 
-                it('kolmatta ei voi poistaa', function() {
-                  expect(removeButtonForOrg(3).isEnabled()).to.equal(false)
+                describe('poiston jälkeen', function() {
+                  it('ensimmäisen voi yhä poistaa', function() {
+                    expect(removeButtonForOrg(1).isEnabled()).to.equal(true)
+                  })
+
+                  it('kolmatta ei voi poistaa', function() {
+                    expect(removeButtonForOrg(3).isEnabled()).to.equal(false)
+                  })
+
+                  it('neljättä ei voi poistaa', function() {
+                    expect(removeButtonForOrg(4).isEnabled()).to.equal(false)
+                  })
+                })
+
+                describe('jos poistaa ensimmäisen organisaation', function() {
+                  before(
+                      removeButtonForOrg(1).click,
+                      applicationPage.waitAutoSave
+                  )
+
+                  describe('poiston jälkeen', function() {
+                    it("valitetaan uuden ensimmäisen rivin puuttuvista tiedoista", function() {
+                      expect(applicationPage.validationErrorsSummary()).to.equal("2 vastauksessa puutteita")
+                    })
+
+                    it('uutta ensimmäistä ei voi poistaa', function() {
+                      expect(removeButtonForOrg(3).isEnabled()).to.equal(false)
+                    })
+
+                    it('neljättä ei voi poistaa', function() {
+                      expect(removeButtonForOrg(4).isEnabled()).to.equal(false)
+                    })
+                  })
+
+                  describe('täytettäessä rivi', function() {
+                    before(
+                      applicationPage.setInputValue("other-organizations.other-organizations-3.name", "Muu testiorganisaatio 3"),
+                      applicationPage.setInputValue("other-organizations.other-organizations-3.email", "muutest3@example.com"),
+                      applicationPage.waitAutoSave
+                    )
+                    it("virheet häviää", function() {
+                      expect(applicationPage.validationErrorsSummary()).to.equal("")
+                    })
+
+                    it('on neljäs rivi auki', function() {
+                      expect(applicationPage.getInput('other-organizations.other-organizations-4.name').isEnabled()).to.equal(true)
+                      expect(applicationPage.getInput('other-organizations.other-organizations-4.email').isEnabled()).to.equal(true)
+                    })
+                    it('on viides rivi kiinni', function() {
+                      expect(applicationPage.getInput('other-organizations.other-organizations-5.name').isEnabled()).to.equal(false)
+                      expect(applicationPage.getInput('other-organizations.other-organizations-5.email').isEnabled()).to.equal(false)
+                    })
+                    it('lomake on lähetettävissä', function() {
+                      expect(applicationPage.submitButton().isEnabled()).to.equal(true)
+                    })
+                  })
                 })
               })
             })
@@ -193,9 +251,16 @@
         })
 
         describe('riippuvassa kentässä', function() {
+          var originalValue = ""
           before(
-            applicationPage.setInputValue("other-organizations.other-organizations-1.email", "invalid@email"),
-            applicationPage.waitAutoSave
+              loginPage.openLoginPage(),
+              loginPage.login,
+              enterValidValuesToPage,
+              applicationPage.setInputValue("other-organizations.other-organizations-1.email", "invalid@email"),
+              applicationPage.waitAutoSave,
+              function() {
+                originalValue = applicationPage.getInput("other-organizations.other-organizations-1.name").value()
+              }
           )
 
           describe('alkutilassa', function() {
@@ -203,7 +268,7 @@
               expect(removeButtonForOrg(1).isVisible()).to.equal(true)
             })
             it('riippuvassa kentässä on arvo', function() {
-              expect(applicationPage.getInput("other-organizations.other-organizations-1.name").value()).to.equal('Muu Testi Organisaatio')
+              expect(originalValue.length > 0).to.equal(true)
             })
             it('herjataan virheellisestä riippuvan kentän arvosta', function() {
               expect(applicationPage.detailedValidationErrors()).to.deep.equal(['Yhteyshenkilön sähköposti: Tarkista sähköpostiosoite'])
@@ -223,6 +288,9 @@
               })
               it('riippuvan kentän validaatiovirhe häviää', function() {
                 expect(applicationPage.detailedValidationErrors()).to.deep.equal([])
+              })
+              it('lomake on lähetettävissä', function() {
+                expect(applicationPage.submitButton().isEnabled()).to.equal(true)
               })
             })
 
@@ -247,7 +315,7 @@
                   expect(removeButtonForOrg(1).isVisible()).to.equal(true)
                 })
                 it('riippuvassa kentässä on tallessa vanha arvo', function() {
-                  expect(applicationPage.getInput("other-organizations.other-organizations-1.name").value()).to.equal('Muu Testi Organisaatio')
+                  expect(applicationPage.getInput("other-organizations.other-organizations-1.name").value()).to.equal(originalValue)
                 })
                 it('herjataan virheellisestä riippuvan kentän arvosta', function() {
                   expect(applicationPage.detailedValidationErrors()).to.deep.equal(['Yhteyshenkilön sähköposti: Tarkista sähköpostiosoite'])

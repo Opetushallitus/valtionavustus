@@ -23,7 +23,10 @@ export default class VaFormTopbar extends React.Component {
     const lang = configuration.lang
     const translations = configuration.translations
     const preview = configuration.preview
-    const formIsValid = _.reduce(state.form.validationErrors, function (allValid, fieldErrors) {
+    const formIsValidOnClientSide = _.reduce(state.form.validationErrors, function (allValid, fieldErrors) {
+      return allValid === true && fieldErrors.length === 0
+    }, true)
+    const formIsValidOnServerSide = state.saveStatus.savedObject && _.reduce(state.saveStatus.savedObject.validation_errors, function (allValid, fieldErrors) {
       return allValid === true && fieldErrors.length === 0
     }, true)
     const formOperations = state.extensionApi.formOperations
@@ -34,7 +37,7 @@ export default class VaFormTopbar extends React.Component {
       return saveStatus.savedObject && saveStatus.savedObject.status === "submitted"
     }
     const isSubmitDisabled = function() {
-      return !(formIsValid && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state) || isSubmitted()
+      return !(formIsValidOnClientSide && formIsValidOnServerSide && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state) || isSubmitted()
     }
     const submitTextKey = isSubmitted() ? "submitted" : "submit"
     const helpText = new Translator(translations.form).translate("savehelp", lang)
