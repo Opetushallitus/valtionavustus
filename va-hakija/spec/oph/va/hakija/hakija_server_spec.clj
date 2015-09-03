@@ -124,6 +124,13 @@
    :private-financing-income-row.description []
    :private-financing-income-row.amount [{:error "required"}]})
 
+(defn- put-hakemus [answers]
+  (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" answers)
+        json (json->map body)
+        id (:id json)
+        version (:version json)]
+    {:hakemus-id id :json json :version version :status status}))
+
 (describe "HTTP server"
 
   (tags :server)
@@ -179,9 +186,8 @@
         (should= (json :project-end) [{:error "maxlength", :max 10}])))
 
   (it "PUT should validate text field lengths and options when done to route /api/avustushaku/1/hakemus"
-      (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" {:value [{:key "language" :value "ru"}
-                                                                                                     {:key "project-end" :value "10.10.10000"}  ]})
-            json (json->map body)]
+      (let [{:keys [status json] } (put-hakemus {:value [{:key "language" :value "ru"}
+                                                         {:key "project-end" :value "10.10.10000"}  ]})]
         (should= 400 status)
         (should= (json :language) [{:error "invalid-option"}])
         (should= (json :project-end) [{:error "maxlength", :max 10}])))
@@ -233,17 +239,13 @@
 
   (it "PUT /api/avustushaku/1/hakemus/ should return hakemus status should detect SMTP injection"
       (let [answers (update-answers valid-answers "primary-email" "misterburns@springfield.xxx%0ASubject:My%20Anonymous%20Subject")
-            {:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" answers)
-            json (json->map body)]
+            {:keys [status json]} (put-hakemus answers)]
         (should= 400 status)
         (should= [{:error "email"}] (:primary-email json))))
 
   (it "Email address validation should catch malformed email addresses"
       ;; Create submission
-      (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" valid-answers)
-            json (json->map body)
-            id (:id json)
-            version (:version json)]
+      (let [{:keys [status hakemus-id version]} (put-hakemus valid-answers)]
         (should= 200 status)
 
         ;; Run different malformed emails through the validation
@@ -253,7 +255,7 @@
                        (string/join (concat ["test@"] (repeat 85 ".test") [".tt"]))
                        "misterburns@springfield.xxx%0ASubject:My%20Anonymous%20Subject"]]
           (let [answers (update-answers valid-answers "primary-email" email)
-                {:keys [status headers body error] :as resp} (post! (str "/api/avustushaku/1/hakemus/" id "/" version "/submit") answers)
+                {:keys [status headers body error] :as resp} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version "/submit") answers)
                 json (json->map body)]
             (if (not (= [{:error "email"}] (:primary-email json)))
               (should-fail (str "Value " email " did not generate error, it should have"))))))
@@ -261,14 +263,12 @@
 
   (it "After cancellation hakemus is not returned from /api/avustushaku/1/hakemus/1"
     ;; Create submission
-    (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" valid-answers)
-          json (json->map body)
-          id (:id json)]
+    (let [{:keys [status hakemus-id ] } (put-hakemus valid-answers)]
       (should= 200 status)
-      (should-not= "" id)
+      (should-not= "" hakemus-id)
 
       ;; Get before cancellation
-      (let [{:keys [status headers body error] :as resp} (get! (str "/api/avustushaku/1/hakemus/" id))
+      (let [{:keys [status headers body error] :as resp} (get! (str "/api/avustushaku/1/hakemus/" hakemus-id))
             json (json->map body)
             id (:id json)
             submission-version (:version (:submission json))
@@ -281,17 +281,12 @@
         (let [{:keys [status headers body error] :as resp} (get! (str "/api/avustushaku/1/hakemus/" id))]
           (should= 404 status)))))
 
-(it "Stores budget totals to database"
-    (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" valid-answers)
-          json (json->map body)
-          id (:id json)
-          version (:version json)]
-      (should= 200 status)
-
-      (let [{:keys [status headers body error] :as resp} (post! (str "/api/avustushaku/1/hakemus/" id "/" version) valid-answers)
-            posted-hakemus (va-db/get-hakemus id)]
-        (should= 200 status)
-        (should= 40 (:budget_total posted-hakemus))
-        (should= 30 (:budget_oph_share posted-hakemus))))))
+  (it "Stores budget totals to database on post"
+      (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+            {:keys [status headers body error] :as resp} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version) valid-answers)
+              posted-hakemus (va-db/get-hakemus hakemus-id)]
+          (should= 200 status)
+          (should= 40 (:budget_total posted-hakemus))
+          (should= 30 (:budget_oph_share posted-hakemus)))))
 
 (run-specs)
