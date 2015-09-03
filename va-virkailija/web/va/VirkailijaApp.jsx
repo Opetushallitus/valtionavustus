@@ -4,7 +4,7 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 import HttpUtil from './HttpUtil.js'
 import Dispatcher from './Dispatcher.js'
-
+import TopBar from './TopBar.jsx'
 import React, { Component } from 'react'
 
 export default class App extends Component {
@@ -13,6 +13,7 @@ export default class App extends Component {
     const hakemusElements = _.map(hakemusList, this.renderHakemusListItem(hakemusList))
     return (
       <section>
+        <TopBar title="Hakemusten arviointi"/>
         <ul>
           {hakemusElements}
         </ul>
