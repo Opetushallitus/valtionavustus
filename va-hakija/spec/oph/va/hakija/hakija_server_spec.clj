@@ -290,18 +290,20 @@
 
   (it "Stores budget totals to database on post (update)"
       (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
-            {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version) valid-answers)
+            updated-answers (update-answers valid-answers "material-costs-row.amount" "1000")
+            {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version) updated-answers)
               posted-hakemus (va-db/get-hakemus hakemus-id)]
           (should= 200 status)
-          (should= 40 (:budget_total posted-hakemus))
-          (should= 30 (:budget_oph_share posted-hakemus))))
+          (should= 1030 (:budget_total posted-hakemus))
+          (should= 772 (:budget_oph_share posted-hakemus))))
 
   (it "Stores budget totals to database on submit"
       (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
-            {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version "/submit") valid-answers)
+            updated-answers (update-answers valid-answers "material-costs-row.amount" "2000")
+            {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version "/submit") updated-answers)
               posted-hakemus (va-db/get-hakemus hakemus-id)]
           (should= 200 status)
-          (should= 40 (:budget_total posted-hakemus))
-          (should= 30 (:budget_oph_share posted-hakemus)))))
+          (should= 2030 (:budget_total posted-hakemus))
+          (should= 1522 (:budget_oph_share posted-hakemus)))))
 
 (run-specs)
