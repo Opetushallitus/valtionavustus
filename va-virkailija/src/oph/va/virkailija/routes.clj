@@ -41,11 +41,12 @@
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
-(defroutes* hakemus-routes
+(defroutes* avustushaku-routes
   "Hakemus listing and filtering"
 
-  (GET* "/" []
-        (hakija-api/list-hakemukset)))
+  (GET* "/:avustushaku-id/hakemus" []
+        :path-params [avustushaku-id :- Long]
+        (hakija-api/list-hakemukset avustushaku-id)))
 
 (defroutes* doc-routes
   "API documentation browser"
@@ -53,8 +54,8 @@
 
 (defn- create-swagger-docs []
   (swagger-docs {:info {:title "Valtionavustus API"}
-                 :tags [{:name        "hakemus"
-                         :description "Hakemus listing and filtering"}
+                 :tags [{:name        "avustushaku"
+                         :description "Avustushaku and hakemus listing and filtering"}
                         {:name        "healthcheck"
                          :description "Healthcheck"}]}))
 
@@ -67,7 +68,7 @@
 
   (create-swagger-docs)
 
-  (context* "/api/hakemus" [] :tags ["hakemus"] hakemus-routes)
+  (context* "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
 
   ;; Documentation

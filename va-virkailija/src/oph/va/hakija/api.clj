@@ -11,5 +11,5 @@
        :?column?
        (= 1)))
 
-(defn list-hakemukset []
-  (exec :hakija-db hakija-queries/list-hakemukset {}))
+(defn list-hakemukset [avustushaku-id]
+  (exec :hakija-db hakija-queries/list-hakemukset { :avustushaku_id avustushaku-id }))
