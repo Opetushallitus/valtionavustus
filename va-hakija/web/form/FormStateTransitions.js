@@ -190,7 +190,8 @@ export default class FormStateTransitions {
     const growingParent = FormUtil.findGrowingParent(state.form.content, fieldToRemove.id)
     const answersObject = state.saveStatus.values
     InputValueStorage.deleteValue(growingParent, answersObject, fieldToRemove.id)
-    _.remove(growingParent.children, fieldToRemove)
+    FormRules.removeField(state.form, growingParent, fieldToRemove)
+    FormBranchGrower.ensureFirstChildIsRequired(state, growingParent)
     state.saveStatus.changes = true
     this.startAutoSave(state)
     return state
