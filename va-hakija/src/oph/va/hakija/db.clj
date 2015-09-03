@@ -17,18 +17,6 @@
   (->> (exec :db queries/get-avustushaku {:id id})
        first))
 
-(defn create-hakemus! [avustushaku-id form-id answers]
-  (let [submission (form-db/create-submission! form-id answers)]
-    (let [hakemus (exec :db queries/create-hakemus<! {:avustushaku_id avustushaku-id
-                                                      :user_key (generate-hash-id)
-                                                      :form_submission (:id submission)})]
-      {:hakemus hakemus :submission submission})))
-
-(defn get-hakemus [hakemus-id]
-  (->> {:user_key hakemus-id}
-       (exec :db queries/get-hakemus-by-user-id)
-       first))
-
 (defn- calculate-budget-summary [avustushaku-id answers]
   (let [avustushaku (get-avustushaku avustushaku-id)
         form-id (:form avustushaku)
@@ -43,6 +31,20 @@
 (defn- merge-calculated-params [params avustushaku-id answers]
   (merge params
          (get-budget-params avustushaku-id answers)))
+
+(defn create-hakemus! [avustushaku-id form-id answers]
+  (let [submission (form-db/create-submission! form-id answers)
+        params (-> {:avustushaku_id avustushaku-id
+                    :user_key (generate-hash-id)
+                    :form_submission (:id submission)}
+                   (merge-calculated-params avustushaku-id answers))
+        hakemus (exec :db queries/create-hakemus<! params)]
+    {:hakemus hakemus :submission submission}))
+
+(defn get-hakemus [hakemus-id]
+  (->> {:user_key hakemus-id}
+       (exec :db queries/get-hakemus-by-user-id)
+       first))
 
 (defn update-submission [avustushaku-id hakemus-id submission-id submission-version answers]
   (let [params (-> {:avustushaku_id avustushaku-id
