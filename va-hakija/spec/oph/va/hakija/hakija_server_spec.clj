@@ -283,7 +283,7 @@
 
   (it "Stores budget totals to database on put (creation)"
       (let [{:keys [hakemus-id status]} (put-hakemus valid-answers)
-              created-hakemus (va-db/get-hakemus hakemus-id)]
+            created-hakemus (va-db/get-hakemus hakemus-id)]
           (should= 200 status)
           (should= 40 (:budget_total created-hakemus))
           (should= 30 (:budget_oph_share created-hakemus))))
@@ -301,9 +301,40 @@
       (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
             updated-answers (update-answers valid-answers "material-costs-row.amount" "2000")
             {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version "/submit") updated-answers)
-              posted-hakemus (va-db/get-hakemus hakemus-id)]
+            posted-hakemus (va-db/get-hakemus hakemus-id)]
           (should= 200 status)
           (should= 2030 (:budget_total posted-hakemus))
-          (should= 1522 (:budget_oph_share posted-hakemus)))))
+          (should= 1522 (:budget_oph_share posted-hakemus))))
+
+
+  (it "Stores organization and project names to database on put (creation)"
+      (let [{:keys [hakemus-id status]} (put-hakemus valid-answers)
+            created-hakemus (va-db/get-hakemus hakemus-id)]
+          (should= 200 status)
+          (should= "Testi Organisaatio" (:organization_name created-hakemus))
+          (should= "Server-spec-hanke" (:project_name created-hakemus))))
+
+  (it "Stores organization and project names to database on post (update)"
+      (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+            updated-answers (-> valid-answers
+                                (update-answers "organization" "Uusi organisaatio")
+                                (update-answers "project-name" "Uusi projekti"))
+            {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version) updated-answers)
+            posted-hakemus (va-db/get-hakemus hakemus-id)]
+          (should= 200 status)
+          (should= "Uusi organisaatio" (:organization_name posted-hakemus))
+          (should= "Uusi projekti" (:project_name posted-hakemus))))
+
+  (it "Stores organization and project names to database on submit"
+      (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+            updated-answers (-> valid-answers
+                                (update-answers "organization" "Yet another organisaatio")
+                                (update-answers "project-name" "Uudempi projekti"))
+            {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version "/submit") updated-answers)
+              posted-hakemus (va-db/get-hakemus hakemus-id)]
+          (should= 200 status)
+          (should= "Yet another organisaatio" (:organization_name posted-hakemus))
+          (should= "Uudempi projekti" (:project_name posted-hakemus))))
+  )
 
 (run-specs)

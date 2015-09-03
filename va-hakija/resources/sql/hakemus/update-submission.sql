@@ -1,5 +1,5 @@
 INSERT INTO hakemukset(id, avustushaku, user_key, version, form_submission_id, form_submission_version,
-                       budget_total, budget_oph_share, status, last_status_change_at)
+                       budget_total, budget_oph_share, organization_name, project_name, status, last_status_change_at)
 SELECT id,
        :avustushaku_id,
        :user_key,
@@ -8,6 +8,8 @@ SELECT id,
        :form_submission_version,
        :budget_total,
        :budget_oph_share,
+       :organization_name,
+       :project_name,
        status,
        last_status_change_at
 FROM hakemukset
