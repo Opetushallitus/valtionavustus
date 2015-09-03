@@ -54,10 +54,10 @@ export default class FormStateTransitions {
     if (_.isFunction(formOperations.onFieldUpdate)) {
       formOperations.onFieldUpdate(state, fieldUpdate.field, fieldUpdate.value)
     }
+    FormBranchGrower.expandGrowingFieldSetIfNeeded(state, fieldUpdate)
     FieldUpdateHandler.triggerRelatedFieldValidationIfNeeded(state, fieldUpdate)
     const clientSideValidationPassed = state.form.validationErrors[fieldUpdate.id].length === 0
     if (clientSideValidationPassed) {
-      FormBranchGrower.expandGrowingFieldSetIfNeeded(state, fieldUpdate);
       if (_.isFunction(formOperations.onFieldValid)) {
         formOperations.onFieldValid(state, fieldUpdate.field, fieldUpdate.value)
       }
@@ -69,7 +69,7 @@ export default class FormStateTransitions {
   }
 
   onFieldValidation(state, validation) {
-    if (validation.showErrorsAlways || state.extensionApi.formOperations.isNotFirstEdit(state)) {
+    if (state.extensionApi.formOperations.isNotFirstEdit(state)) {
       state.form.validationErrors = state.form.validationErrors.merge({[validation.id]: validation.validationErrors})
     }
     return state

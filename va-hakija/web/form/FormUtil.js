@@ -52,6 +52,11 @@ export default class FormUtil {
     return _.first(foundArray)
   }
 
+  static findFirstFieldIgnoringIndex(formContent, fieldId) {
+    const foundArray = JsUtil.flatFilter(formContent, FormUtil.idIsSameOrSameIfIndexIgnoredPredicate(fieldId))
+    return _.first(foundArray)
+  }
+
   static findSubFieldIds(field) {
     return JsUtil.traverseMatching(field.children, n => { return n.id}, n => { return n.id})
   }
