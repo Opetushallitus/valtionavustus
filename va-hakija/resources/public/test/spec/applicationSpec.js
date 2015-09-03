@@ -40,6 +40,9 @@
         it("ei valiteta vielä pakollisista kentästä", function() {
           expect(applicationPage.validationErrorsSummary()).to.equal("")
         })
+        it('lomake ei ole lähetettävissä', function() {
+          expect(applicationPage.submitButton().isEnabled()).to.equal(false)
+        })
         it("budjettitaulukossa on nollasummat", function() {
           expect(applicationPage.getInput("coordination-costs-row.amount").value()).to.equal("0")
           expect(applicationPage.getInput("personnel-costs-row.amount").value()).to.equal("0")
@@ -53,6 +56,19 @@
           expect(applicationPage.getInput("eu-programs-income-row.amount").value()).to.equal("0")
           expect(applicationPage.getInput("other-public-financing-income-row.amount").value()).to.equal("0")
           expect(applicationPage.getInput("private-financing-income-row.amount").value()).to.equal("0")
+        })
+      })
+
+      describe('yhden pakollisen kentän täytön jälkeen', function() {
+        before(
+          applicationPage.setInputValue("project-name", "Semiautomaattitestihanke"),
+          applicationPage.waitAutoSave
+        )
+        it("ei valiteta vielä muista pakollisista kentästä", function() {
+          expect(applicationPage.validationErrorsSummary()).to.equal("")
+        })
+        it('lomake ei ole lähetettävissä', function() {
+          expect(applicationPage.submitButton().isEnabled()).to.equal(false)
         })
       })
 
