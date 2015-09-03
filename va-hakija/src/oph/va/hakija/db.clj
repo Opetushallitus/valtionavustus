@@ -3,7 +3,8 @@
         [oph.form.db :as form-db]
         [clojure.tools.trace :only [trace]])
   (:require [oph.va.hakija.db.queries :as queries]
-            [oph.va.budget :as va-budget]))
+            [oph.va.budget :as va-budget]
+            [oph.form.formutil :as form-util]))
 
 
 (defn health-check []
@@ -28,9 +29,18 @@
     {:budget_total (:total-needed budget-summary)
      :budget_oph_share (:oph-share budget-summary)}))
 
+(defn- pluck-key [answers key as default]
+  (let [value (or (form-util/find-answer-value answers key) default)]
+    {as value}))
+
+(defn- get-organization-name [answers] (pluck-key answers "organization" :organization_name ""))
+(defn- get-project-name [answers] (pluck-key answers "project-name" :project_name ""))
+
 (defn- merge-calculated-params [params avustushaku-id answers]
   (merge params
-         (get-budget-params avustushaku-id answers)))
+         (get-budget-params avustushaku-id answers)
+         (get-organization-name answers)
+         (get-project-name answers)))
 
 (defn create-hakemus! [avustushaku-id form-id answers]
   (let [submission (form-db/create-submission! form-id answers)
