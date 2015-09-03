@@ -73,14 +73,16 @@
         hakemus (va-db/get-hakemus hakemus-id)
         submission-id (:form_submission_id hakemus)
         submission (:body (get-form-submission form-id submission-id))
-        submission-version (:version submission)]
+        submission-version (:version submission)
+        answers (:answers submission)]
     (if (= (:status hakemus) "new")
-      (let [verified-hakemus (va-db/verify-hakemus haku-id hakemus-id submission-id submission-version)]
+      (let [verified-hakemus (va-db/verify-hakemus haku-id hakemus-id submission-id submission-version answers)]
         (hakemus-ok-response verified-hakemus submission))
       (hakemus-ok-response hakemus submission))))
 
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
-  (let [form-id (:form (va-db/get-avustushaku haku-id))
+  (let [avustushaku (va-db/get-avustushaku haku-id)
+        form-id (:form avustushaku)
         validation (validation/validate-form-security (form-db/get-form form-id) answers)]
     (if (every? empty? (vals validation))
       (let [hakemus (va-db/get-hakemus hakemus-id)]
@@ -89,13 +91,15 @@
                 updated-hakemus (va-db/update-submission haku-id
                                                          hakemus-id
                                                          (:form_submission_id hakemus)
-                                                         (:version updated-submission))]
+                                                         (:version updated-submission)
+                                                         answers)]
             (hakemus-ok-response updated-hakemus updated-submission))
           (hakemus-conflict-response hakemus)))
       (bad-request! validation))))
 
 (defn on-hakemus-submit [haku-id hakemus-id base-version answers]
-  (let [form-id (:form (va-db/get-avustushaku haku-id))
+  (let [avustushaku (va-db/get-avustushaku haku-id)
+        form-id (:form avustushaku)
         validation (validation/validate-form (form-db/get-form form-id) answers)]
     (if (every? empty? (vals validation))
       (let [hakemus (va-db/get-hakemus hakemus-id)]
@@ -106,9 +110,9 @@
                 submitted-hakemus (va-db/submit-hakemus haku-id
                                                         hakemus-id
                                                         submission-id
-                                                        submission-version)
+                                                        submission-version
+                                                        answers)
                 ;; TODO: extract
-                avustushaku (va-db/get-avustushaku haku-id)
                 avustushaku-content (:content avustushaku)
                 language (keyword (find-hakemus-value answers "language"))
                 avustushaku-title (-> avustushaku-content :name language)
