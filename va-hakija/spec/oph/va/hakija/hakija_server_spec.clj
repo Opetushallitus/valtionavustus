@@ -283,7 +283,7 @@
 
   (it "Stores budget totals to database on post"
       (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
-            {:keys [status headers body error] :as resp} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version) valid-answers)
+            {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version) valid-answers)
               posted-hakemus (va-db/get-hakemus hakemus-id)]
           (should= 200 status)
           (should= 40 (:budget_total posted-hakemus))
