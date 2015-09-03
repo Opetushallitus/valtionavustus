@@ -1,7 +1,8 @@
 (ns oph.form.validation
   (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.string :as string]
-            [oph.form.formutil :refer :all]))
+            [oph.form.formutil :refer :all]
+            [oph.form.rules :as rules]))
 
 (defn validate-required [field answer]
   (if (and (:required field)
@@ -87,13 +88,15 @@
        (validate-finnish-business-id-field field answer))}))
 
 (defn validate-form-security [form answers]
-  (let [validator (partial validate-field-security answers)]
-    (->> (find-fields (:content form))
+  (let [applied-form (rules/apply-rules form answers)
+        validator (partial validate-field-security answers)]
+    (->> (find-fields (:content applied-form))
          (map validator)
          (into {}))))
 
 (defn validate-form [form answers]
-  (let [validator (partial validate-field answers)]
-    (->> (find-fields (:content form))
+  (let [applied-form (rules/apply-rules form answers)
+        validator (partial validate-field answers)]
+    (->> (find-fields (:content applied-form))
        (map validator)
        (into {}))))
