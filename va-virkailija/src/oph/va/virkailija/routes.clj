@@ -31,12 +31,10 @@
 
 (defroutes resource-routes
   (GET "/" []
-       (resp/redirect "/avustushaku/1/"))
+    (return-html "index.html"))
 
-  ;; Finnish subcontext
-  (GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
-  (GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
-  (route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
+ (GET "/login" []
+      (return-html "login.html"))
 
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
