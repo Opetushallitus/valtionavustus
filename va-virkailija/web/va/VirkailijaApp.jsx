@@ -7,6 +7,9 @@ import Dispatcher from './Dispatcher.js'
 import TopBar from './TopBar.jsx'
 import React, { Component } from 'react'
 
+import style from './style/main.less'
+import topbar from './style/topbar.less'
+
 export default class App extends Component {
   render() {
     const hakemusList = this.props.state.hakemusList
