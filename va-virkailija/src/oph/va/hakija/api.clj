@@ -23,7 +23,7 @@
 (defn get-avustushaku [avustushaku-id]
   (let [avustushaku (exec :hakija-db hakija-queries/get-avustushaku {:id avustushaku-id})
         roles (get-avustushaku-roles 1)
-        hakemukset (exec :hakija-db hakija-queries/get-hakemukset {:avustushaku_id avustushaku-id})]
+        hakemukset (exec :hakija-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})]
     {:avustushaku (first avustushaku)
      :roles roles
-     :answers answers}))
+     :hakemukset hakemukset}))
