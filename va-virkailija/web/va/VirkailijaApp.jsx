@@ -7,28 +7,20 @@ import Dispatcher from './Dispatcher.js'
 import TopBar from './TopBar.jsx'
 import React, { Component } from 'react'
 
+import HakemusListing from './hakemus-list/HakemusListing.jsx'
+
 import style from './style/main.less'
 import topbar from './style/topbar.less'
 
 export default class App extends Component {
   render() {
     const hakemusList = this.props.state.hakemusList
-    const hakemusElements = _.map(hakemusList, this.renderHakemusListItem(hakemusList))
     return (
       <section>
         <TopBar title="Hakemusten arviointi"/>
-        <ul>
-          {hakemusElements}
-        </ul>
+        <HakemusListing hakemusList={hakemusList}/>
       </section>
     )
-  }
-
-  renderHakemusListItem(hakemusList) {
-    return function(hakemus) {
-      const key = hakemusList.indexOf(hakemus)
-      return <li key={key}>{JSON.stringify(hakemus)}</li>
-    }
   }
 }
 
