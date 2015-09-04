@@ -44,7 +44,11 @@
 
   (GET* "/:avustushaku-id/hakemus" []
         :path-params [avustushaku-id :- Long]
-        (hakija-api/list-hakemukset avustushaku-id)))
+        (hakija-api/list-hakemukset avustushaku-id))
+
+  (GET* "/:avustushaku-id" []
+        :path-params [avustushaku-id :- Long]
+        (trace "got data" (hakija-api/get-avustushaku avustushaku-id))))
 
 (defroutes* doc-routes
   "API documentation browser"
