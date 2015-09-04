@@ -42,6 +42,10 @@ function wait_for_postgresql_to_be_available() {
   done
   if [ $attempt -eq $max_attempts ]; then
     echo "Could not find running Postgresql in $max_attempts attempts with $interval_seconds second intervals, failing."
+    logs_command="$DOCKER logs postgresql"
+    echo "Running $logs_command : ============"
+    eval ${logs_command}
+    echo "======= / end of ${logs_command} output"
     remove_postgresql_container
     exit 2
   fi
