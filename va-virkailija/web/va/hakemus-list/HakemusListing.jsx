@@ -10,9 +10,9 @@ export default class HakemusListing extends Component {
     const hakemusElements = _.map(hakemusList, hakemus => {
       return <HakemusRow hakemus={hakemus} key={hakemusList.indexOf(hakemus)}/> })
     return (
-      <ul key="hakemusListing">
+      <table key="hakemusListing">
         {hakemusElements}
-      </ul>
+      </table>
     )
   }
 }
@@ -21,6 +21,8 @@ class HakemusRow extends Component {
   render() {
     const key = this.props.key
     const hakemus = this.props.hakemus
-    return <li key={key}>{JSON.stringify(hakemus)}</li>
+    return <tr key={key}>
+      <td>{JSON.stringify(hakemus)}</td>
+    </tr>
   }
 }
