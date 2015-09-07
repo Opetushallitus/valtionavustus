@@ -123,9 +123,16 @@ table.hakemus-list {
     }
   }
 
-  tbody tr:last-child {
-    td {
-      padding-bottom: 10px;
+  tbody {
+    tr {
+      &.selected {
+        background-color: #4093BE
+      }
+      &:last-child {
+        td {
+          padding-bottom: 10px;
+        }
+      }
     }
   }
   td.status-column {

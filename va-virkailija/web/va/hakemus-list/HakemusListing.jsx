@@ -7,9 +7,11 @@ import React, { Component } from 'react'
 export default class HakemusListing extends Component {
   render() {
     const hakemusList = this.props.hakemusList
-    const controller = this.props.controller
+    const selectedHakemus = this.props.selectedHakemus
     const hakemusElements = _.map(hakemusList, hakemus => {
-      return <HakemusRow hakemus={hakemus} key={hakemusList.indexOf(hakemus)} controller={controller}/> })
+      const controller = this.props.controller
+      return <HakemusRow hakemus={hakemus} key={hakemusList.indexOf(hakemus)}
+                         selectedHakemus={selectedHakemus} controller={controller}/> })
     return (
       <table key="hakemusListing" className="hakemus-list">
         <colgroup>
@@ -44,8 +46,10 @@ class HakemusRow extends Component {
   render() {
     const key = this.props.key
     const hakemus = this.props.hakemus
+    const selectedHakemus = this.props.selectedHakemus
+    const rowClass = hakemus === selectedHakemus ? "selected" : undefined
     const controller = this.props.controller
-    return <tr key={key} onClick={controller.selectHakemus(hakemus)}>
+    return <tr className={rowClass} key={key} onClick={controller.selectHakemus(hakemus)}>
       <td>{hakemus.organization_name}</td>
       <td>{hakemus.project_name}</td>
       <td>TODO</td>

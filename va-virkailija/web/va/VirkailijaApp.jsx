@@ -20,7 +20,7 @@ export default class App extends Component {
       <section>
         <TopBar title="Hakemusten arviointi"/>
         <section id="container">
-          <HakemusListing hakemusList={hakemusList} controller={controller}/>
+          <HakemusListing hakemusList={hakemusList} selectedHakemus={selectedHakemus} controller={controller}/>
           <HakemusPreview avustushakuId={avustushakuId} hakemus={selectedHakemus}/>
         </section>
       </section>
