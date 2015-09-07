@@ -16,26 +16,21 @@
             [oph.va.virkailija.schema :refer :all]
             [oph.va.virkailija.handlers :refer :all]))
 
+(defn- on-healthcheck []
+  (if (and (virkailija-db/health-check)
+           (hakija-api/health-check))
+    (ok {})
+    (not-found)))
+
 (defroutes* healthcheck-routes
   "Healthcheck routes"
 
-  (GET* "/" []
-        (if (and (virkailija-db/health-check)
-                 (hakija-api/health-check))
-          (ok {})
-          (not-found)))
-  (HEAD* "/" []
-         (if (and (virkailija-db/health-check)
-                  (hakija-api/health-check))
-          (ok {})
-          (not-found))))
+  (GET* "/" [] (on-healthcheck))
+  (HEAD* "/" [] (on-healthcheck)))
 
 (defroutes resource-routes
-  (GET "/" []
-    (return-html "index.html"))
-
- (GET "/login" []
-      (return-html "login.html"))
+  (GET "/" [] (return-html "index.html"))
+  (GET "/login" [] (return-html "login.html"))
 
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
