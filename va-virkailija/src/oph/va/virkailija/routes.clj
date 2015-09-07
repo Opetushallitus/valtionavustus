@@ -22,6 +22,12 @@
     (ok {})
     (not-found)))
 
+(defn- on-hakemus-preview [avustushaku-id hakemus-user-key]
+  (let [hakija-app-url (-> config :server :url :fi)
+        preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key "&preview=true")]
+    (resp/redirect preview-url ))
+)
+
 (defroutes* healthcheck-routes
   "Healthcheck routes"
 
@@ -31,6 +37,9 @@
 (defroutes resource-routes
   (GET "/" [] (return-html "index.html"))
   (GET "/login" [] (return-html "login.html"))
+  (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
+    :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
+    (on-hakemus-preview avustushaku-id hakemus-user-key))
 
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))

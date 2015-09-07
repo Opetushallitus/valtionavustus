@@ -13,6 +13,7 @@ import topbar from './style/topbar.less'
 
 export default class App extends Component {
   render() {
+    const avustushakuId = this.props.state.avustusHaku
     const hakemusList = this.props.state.hakemusList
     const selectedHakemus = this.props.state.selectedHakemus
     return (
@@ -20,7 +21,7 @@ export default class App extends Component {
         <TopBar title="Hakemusten arviointi"/>
         <section id="container">
           <HakemusListing hakemusList={hakemusList} controller={controller}/>
-          <HakemusPreview hakemus={selectedHakemus}/>
+          <HakemusPreview avustushakuId={avustushakuId} hakemus={selectedHakemus}/>
         </section>
       </section>
     )
