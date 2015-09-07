@@ -2,6 +2,8 @@
   (:use [oph.va.virkailija.routes :only [all-routes]])
   (:require [ring.middleware.reload :as reload]
             [ring.middleware.logger :as logger]
+            [ring.middleware.session :as session]
+            [ring.middleware.session.cookie :as cookie]
             [ring.middleware.conditional :refer [if-url-doesnt-match]]
             [compojure.handler :refer [site]]
             [clojure.tools.logging :as log]
@@ -23,12 +25,16 @@
 
 (defn- with-log-wrapping [site]
   (if (-> config :server :enable-access-log?)
-                     (-> site
-                         (if-url-doesnt-match #"/api/healthcheck" logger/wrap-with-logger))
-                     site))
+    (if-url-doesnt-match site #"/api/healthcheck" logger/wrap-with-logger)
+    site))
+
+(defn- with-session [site]
+  (session/wrap-session site {:store (cookie/cookie-store {:key "a 16-byte secret"})}))
 
 (defn start-server [host port auto-reload?]
-  (let [logged (with-log-wrapping (create-site))
+  (let [logged (-> (create-site)
+                   (with-log-wrapping)
+                   (with-session))
         handler (if auto-reload?
                   (reload/wrap-reload logged)
                   logged)]
