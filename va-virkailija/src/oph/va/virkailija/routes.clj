@@ -1,5 +1,6 @@
 (ns ^{:skip-aot true} oph.va.virkailija.routes
-  (:use [clojure.tools.trace :only [trace]])
+    (:use [clojure.tools.trace :only [trace]]
+          [clojure.pprint :only [pprint]])
   (:require [compojure.route :as route]
             [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
