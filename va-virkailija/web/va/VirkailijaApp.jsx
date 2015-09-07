@@ -8,21 +8,38 @@ import TopBar from './TopBar.jsx'
 import React, { Component } from 'react'
 
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
+import HakemusPreview from './hakemus-details/HakemusPreview.jsx'
 
 import style from './style/main.less'
 import topbar from './style/topbar.less'
 
 export default class App extends Component {
+  constructor(props) {
+    super(props)
+    const hakemusList = props.state.hakemusList
+    const initialSelection = hakemusList ? hakemusList[0] : undefined
+    this.state = { selectedHakemus: initialSelection }
+  }
+
   render() {
+    this.selectHakemus = this.selectHakemus.bind(this)
     const hakemusList = this.props.state.hakemusList
+    const self = this
     return (
       <section>
         <TopBar title="Hakemusten arviointi"/>
         <section id="container">
-          <HakemusListing hakemusList={hakemusList}/>
+          <HakemusListing hakemusList={hakemusList} handleRowClick={this.selectHakemus}/>
+          <HakemusPreview hakemus={self.state.selectedHakemus}/>
         </section>
       </section>
     )
+  }
+
+  selectHakemus(hakemus) {
+    return () => {
+      this.setState({ selectedHakemus: hakemus })
+    }
   }
 }
 

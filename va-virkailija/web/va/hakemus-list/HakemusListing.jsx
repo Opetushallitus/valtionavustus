@@ -7,8 +7,9 @@ import React, { Component } from 'react'
 export default class HakemusListing extends Component {
   render() {
     const hakemusList = this.props.hakemusList
+    const handleRowClick = this.props.handleRowClick
     const hakemusElements = _.map(hakemusList, hakemus => {
-      return <HakemusRow hakemus={hakemus} key={hakemusList.indexOf(hakemus)}/> })
+      return <HakemusRow hakemus={hakemus} key={hakemusList.indexOf(hakemus)} handleRowClick={handleRowClick}/> })
     return (
       <table key="hakemusListing" className="hakemus-list">
         <colgroup>
@@ -43,7 +44,8 @@ class HakemusRow extends Component {
   render() {
     const key = this.props.key
     const hakemus = this.props.hakemus
-    return <tr key={key}>
+    const handleRowClick = this.props.handleRowClick
+    return <tr key={key} onClick={handleRowClick(hakemus)}>
       <td>{hakemus.organization_name}</td>
       <td>{hakemus.project_name}</td>
       <td>TODO</td>
