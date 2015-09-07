@@ -18,7 +18,9 @@ export default class App extends Component {
     return (
       <section>
         <TopBar title="Hakemusten arviointi"/>
-        <HakemusListing hakemusList={hakemusList}/>
+        <section id="container">
+          <HakemusListing hakemusList={hakemusList}/>
+        </section>
       </section>
     )
   }
