@@ -33,7 +33,6 @@
 
 (defn- hakemukset->json [hakemukset]
   (-> (fn [hakemus]
-        (trace "Hakemus" hakemus)
         {:id (:id hakemus)
          :project-name (:project_name hakemus)
          :organization-name (:organization_name hakemus)
