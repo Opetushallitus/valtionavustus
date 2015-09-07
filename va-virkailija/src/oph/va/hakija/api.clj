@@ -12,9 +12,6 @@
        :?column?
        (= 1)))
 
-(defn list-hakemukset [avustushaku-id]
-  (exec :hakija-db hakija-queries/list-hakemukset { :avustushaku_id avustushaku-id }))
-
 (defn list-avustushaut []
   (exec :hakija-db hakija-queries/list-avustushaut {}))
 
@@ -43,6 +40,7 @@
          :budget-oph-share (:budget_oph_share hakemus)
          :budget-total (:budget_total hakemus)
          :status (:status hakemus)
+         :user-key (:user_key hakemus)
          :answers (:answer_values hakemus)})
       (map hakemukset)))
 

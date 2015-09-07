@@ -57,6 +57,7 @@
                       :status (s/enum "new" "draft" "submitted")
                       :budget-total s/Int
                       :budget-oph-share s/Int
+                      :user-key s/Str
                       :answers [Answer]})
 
 (s/defschema Role {:id s/Int
@@ -81,13 +82,6 @@
         :path-params [avustushaku-id :- Long]
         :return Avustushaku
         (if-let [response (hakija-api/get-avustushaku avustushaku-id)]
-          (ok response)
-          (not-found)))
-
-  (GET* "/:avustushaku-id/hakemus" []
-        :path-params [avustushaku-id :- Long]
-        :return s/Any
-        (if-let [response (hakija-api/list-hakemukset avustushaku-id)]
           (ok response)
           (not-found))))
 

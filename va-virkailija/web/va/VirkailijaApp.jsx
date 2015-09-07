@@ -13,8 +13,9 @@ import topbar from './style/topbar.less'
 
 export default class App extends Component {
   render() {
-    const avustushakuId = this.props.state.avustusHaku
-    const hakemusList = this.props.state.hakemusList
+    const avustusHakuWithHakemusList = this.props.state.avustusHakuWithHakemusList
+    const avustushakuId = avustusHakuWithHakemusList ? avustusHakuWithHakemusList.avustushaku.id : undefined
+    const hakemusList = avustusHakuWithHakemusList ? avustusHakuWithHakemusList.hakemukset : undefined
     const selectedHakemus = this.props.state.selectedHakemus
     return (
       <section>
