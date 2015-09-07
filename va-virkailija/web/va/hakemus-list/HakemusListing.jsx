@@ -7,9 +7,9 @@ import React, { Component } from 'react'
 export default class HakemusListing extends Component {
   render() {
     const hakemusList = this.props.hakemusList
-    const handleRowClick = this.props.handleRowClick
+    const controller = this.props.controller
     const hakemusElements = _.map(hakemusList, hakemus => {
-      return <HakemusRow hakemus={hakemus} key={hakemusList.indexOf(hakemus)} handleRowClick={handleRowClick}/> })
+      return <HakemusRow hakemus={hakemus} key={hakemusList.indexOf(hakemus)} controller={controller}/> })
     return (
       <table key="hakemusListing" className="hakemus-list">
         <colgroup>
@@ -44,8 +44,8 @@ class HakemusRow extends Component {
   render() {
     const key = this.props.key
     const hakemus = this.props.hakemus
-    const handleRowClick = this.props.handleRowClick
-    return <tr key={key} onClick={handleRowClick(hakemus)}>
+    const controller = this.props.controller
+    return <tr key={key} onClick={controller.selectHakemus(hakemus)}>
       <td>{hakemus.organization_name}</td>
       <td>{hakemus.project_name}</td>
       <td>TODO</td>
