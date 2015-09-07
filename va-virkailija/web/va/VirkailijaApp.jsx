@@ -5,6 +5,7 @@ import TopBar from './TopBar.jsx'
 import React, { Component } from 'react'
 
 import VirkailijaController from './VirkailijaController.jsx'
+import AvustushakuSelector from './avustushaku/AvustushakuSelector.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusPreview from './hakemus-details/HakemusPreview.jsx'
 
@@ -13,16 +14,16 @@ import topbar from './style/topbar.less'
 
 export default class App extends Component {
   render() {
-    const avustusHakuWithHakemusList = this.props.state.avustusHakuWithHakemusList
-    const avustushakuId = avustusHakuWithHakemusList ? avustusHakuWithHakemusList.avustushaku.id : undefined
-    const hakemusList = avustusHakuWithHakemusList ? avustusHakuWithHakemusList.hakemukset : undefined
+    const avustushaku = this.props.state.avustushaku.avustushaku
+    const hakemusList = this.props.state.avustushaku.hakemukset
     const selectedHakemus = this.props.state.selectedHakemus
     return (
       <section>
         <TopBar title="Hakemusten arviointi"/>
         <section id="container">
+          <AvustushakuSelector avustushaku={avustushaku} controller={controller} />
           <HakemusListing hakemusList={hakemusList} selectedHakemus={selectedHakemus} controller={controller}/>
-          <HakemusPreview avustushakuId={avustushakuId} hakemus={selectedHakemus}/>
+          <HakemusPreview avustushakuId={avustushaku.id} hakemus={selectedHakemus}/>
         </section>
       </section>
     )
@@ -36,7 +37,9 @@ const stateP = controller.initializeState()
 
 stateP.onValue((state) => {
   try {
-    React.render(<App state={state} controller={controller}/>, document.getElementById('app'))
+    if (state.avustushaku) {
+      React.render(<App state={state} controller={controller}/>, document.getElementById('app'))
+    }
   } catch (e) {
     console.log('Error from React.render with state', state, e)
   }

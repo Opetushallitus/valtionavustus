@@ -14,8 +14,7 @@ const events = {
 export default class VirkailijaController {
   initializeState() {
     const initialStateTemplate = {
-      avustusHaku: 1, // TODO load all avustushaku objects and select one
-      avustusHakuWithHakemusList: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/1")),
+      avustushaku: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/1")),
       selectedHakemus: undefined
     }
 
@@ -31,7 +30,7 @@ export default class VirkailijaController {
   }
 
   onInitialState(emptyState, realInitialState) {
-    var hakemusList = realInitialState.avustusHakuWithHakemusList.hakemukset;
+    var hakemusList = realInitialState.avustushaku.hakemukset;
     if (hakemusList && !_.isEmpty(hakemusList)) {
       realInitialState.selectedHakemus = hakemusList[0]
     }
