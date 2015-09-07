@@ -53,7 +53,7 @@ class HakemusRow extends Component {
       <td>{hakemus["organization-name"]}</td>
       <td>{hakemus["project-name"]}</td>
       <td>TODO</td>
-      <td className="status-column">{hakemus.status}</td>
+      <td className="status-column">TODO</td>
       <td className="applied-sum-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
       <td className="granted-sum-column"><span className="money">TODO</span></td>
     </tr>
