@@ -38,7 +38,7 @@ ul {
 
   li:before {
     color: @light-green;
-    content:"•";
+    content: "•";
     font-size: 14px;
     padding-right: 10px;
     display: table-cell;
@@ -51,9 +51,9 @@ ul {
   z-index: 101;
   overflow: auto;
   margin-right: 20px;
-  background-color: rgba(255,255,255,1);
+  background-color: rgba(255, 255, 255, 1);
   padding: 10px;
-  box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28);
+  box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
 }
 
 #container {
@@ -77,5 +77,67 @@ ul {
     > span {
       text-transform: uppercase;
     }
+  }
+}
+
+table.hakemus-list {
+  margin-top: 13px;
+  width: @section-width - 18px;
+  text-align: left;
+  thead {
+    tr {
+      // tr cannot have margin
+      border-top: 10px transparent solid;
+      border-bottom: 8px transparent solid;
+      th {
+        font-weight: normal;
+      }
+    }
+  }
+
+  colgroup {
+    .organization-column {
+      width: 330px;
+    }
+    .project-name-column {
+      width: 330px;
+    }
+    .score-column {
+      width: 100px;
+    }
+    .status-column {
+      width: 160px;
+    }
+    .applied-sum-column {
+      width: 100px;
+    }
+    .granted-sum-column {
+      width: 100px;
+    }
+  }
+  tfoot {
+    border-top: 1px solid @light-gray;
+    font-weight: bold;
+    td {
+      padding-top: 5px;
+    }
+  }
+
+  tbody tr:last-child {
+    td {
+      padding-bottom: 10px;
+    }
+  }
+  td.status-column {
+    text-transform: uppercase;
+  }
+  .applied-sum-column, .granted-sum-column {
+    text-align: right;
+  }
+  span.money {
+    margin-right: 10px;
+  }
+  .money:after {
+    content: " €"
   }
 }

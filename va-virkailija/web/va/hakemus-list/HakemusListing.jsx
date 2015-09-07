@@ -10,12 +10,12 @@ export default class HakemusListing extends Component {
     const hakemusElements = _.map(hakemusList, hakemus => {
       return <HakemusRow hakemus={hakemus} key={hakemusList.indexOf(hakemus)}/> })
     return (
-      <table key="hakemusListing">
+      <table key="hakemusListing" className="hakemus-list">
         <colgroup>
           <col className="organization-column"/>
           <col className="project-name-column"/>
           <col className="score-column"/>
-          <col className="state-column"/>
+          <col className="status-column"/>
           <col className="applied-sum-column"/>
           <col className="granted-sum-column"/>
         </colgroup>
@@ -23,7 +23,7 @@ export default class HakemusListing extends Component {
           <th className="organization-column">Hakijaorganisaatio</th>
           <th className="project-name-column">Hanke</th>
           <th className="score-column">Arvio</th>
-          <th className="state-column">Tila</th>
+          <th className="status-column">Tila</th>
           <th className="applied-sum-column">Haettu</th>
           <th className="granted-sum-column">Myönnetty</th>
         </tr></thead>
@@ -47,9 +47,9 @@ class HakemusRow extends Component {
       <td>{hakemus.organization_name}</td>
       <td>{hakemus.project_name}</td>
       <td>TODO</td>
-      <td>{hakemus.status}</td>
-      <td>{hakemus.budget_oph_share}</td>
-      <td>TODO</td>
+      <td className="status-column">{hakemus.status}</td>
+      <td className="applied-sum-column"><span className="money">{hakemus.budget_oph_share}</span></td>
+      <td className="granted-sum-column"><span className="money">TODO</span></td>
     </tr>
   }
 }
