@@ -35,23 +35,34 @@
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
+(s/defschema Hakemus s/Any)
+
+(s/defschema Role s/Any)
+
+(s/defschema Avustushaku
+  "Avustushaku structured response"
+  {:avustushaku {:name {:fi s/Str
+                        :sv s/Str}
+                 :self-financing-percentage s/Int}
+   :roles [Role]
+   :hakemukset [Hakemus]})
+
 (defroutes* avustushaku-routes
   "Hakemus listing and filtering"
 
-  (GET* "/:avustushaku-id" []
+  (GET* "/:avustushaku-id" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
-        :return {:avustushaku s/Any
-                 :roles s/Any}
-        (let [response (hakija-api/get-avustushaku avustushaku-id)]
-          (pprint response)
-          response))
+        :return Avustushaku
+        (if-let [response (hakija-api/get-avustushaku avustushaku-id)]
+          (ok response)
+          (not-found)))
 
   (GET* "/:avustushaku-id/hakemus" []
         :path-params [avustushaku-id :- Long]
         :return s/Any
-        (let [response (hakija-api/list-hakemukset avustushaku-id)]
-          (pprint response)
-          response)))
+        (if-let [response (hakija-api/list-hakemukset avustushaku-id)]
+          (ok response)
+          (not-found))))
 
 (defroutes* doc-routes
   "API documentation browser"
