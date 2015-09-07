@@ -22,14 +22,29 @@
   (exec :hakija-db hakija-queries/get-avustushaku-roles {:avustushaku_id avustushaku-id}))
 
 (defn- avustushaku->json [avustushaku]
-  {:name (-> avustushaku :content :name)
+  {:id (:id avustushaku)
+   :name (-> avustushaku :content :name)
    :self-financing-percentage (-> avustushaku :content :self-financing-percentage)})
 
 (defn- roles->json [roles]
-  roles)
+  (-> (fn [role]
+        {:id (:id role)
+         :name (:name role)
+         :email (:email role)
+         :role (:role role)})
+      (map roles)))
 
 (defn- hakemukset->json [hakemukset]
-  hakemukset)
+  (-> (fn [hakemus]
+        (trace "Hakemus" hakemus)
+        {:id (:id hakemus)
+         :project-name (:project_name hakemus)
+         :organization-name (:organization_name hakemus)
+         :budget-oph-share (:budget_oph_share hakemus)
+         :budget-total (:budget_total hakemus)
+         :status (:status hakemus)
+         :answers (:answer_values hakemus)})
+      (map hakemukset)))
 
 (defn get-avustushaku [avustushaku-id]
   (let [avustushaku (first (exec :hakija-db hakija-queries/get-avustushaku {:id avustushaku-id}))

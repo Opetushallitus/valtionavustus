@@ -44,13 +44,31 @@
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
-(s/defschema Hakemus s/Any)
+;; TODO: use form definition
+(s/defschema Answer {:key s/Str
+                     :value (s/either s/Str
+                                      s/Int
+                                      [(s/recursive #'Answer)])})
 
-(s/defschema Role s/Any)
+;; TODO: use submission definition for status
+(s/defschema Hakemus {:id s/Int
+                      :project-name s/Str
+                      :organization-name s/Str
+                      :status (s/enum "new" "draft" "submitted")
+                      :budget-total s/Int
+                      :budget-oph-share s/Int
+                      :answers [Answer]})
+
+(s/defschema Role {:id s/Int
+                   :name s/Str
+                   :email s/Str
+                   :role (s/enum "presenting_officer"
+                                 "evaluator")})
 
 (s/defschema Avustushaku
   "Avustushaku structured response"
-  {:avustushaku {:name {:fi s/Str
+  {:avustushaku {:id s/Int
+                 :name {:fi s/Str
                         :sv s/Str}
                  :self-financing-percentage s/Int}
    :roles [Role]
