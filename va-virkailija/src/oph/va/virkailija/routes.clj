@@ -38,13 +38,20 @@
 (defroutes* avustushaku-routes
   "Hakemus listing and filtering"
 
-  (GET* "/:avustushaku-id/hakemus" []
-        :path-params [avustushaku-id :- Long]
-        (hakija-api/list-hakemukset avustushaku-id))
-
   (GET* "/:avustushaku-id" []
         :path-params [avustushaku-id :- Long]
-        (trace "got data" (hakija-api/get-avustushaku avustushaku-id))))
+        :return {:avustushaku s/Any
+                 :roles s/Any}
+        (let [response (hakija-api/get-avustushaku avustushaku-id)]
+          (pprint response)
+          response))
+
+  (GET* "/:avustushaku-id/hakemus" []
+        :path-params [avustushaku-id :- Long]
+        :return s/Any
+        (let [response (hakija-api/list-hakemukset avustushaku-id)]
+          (pprint response)
+          response)))
 
 (defroutes* doc-routes
   "API documentation browser"
