@@ -27,7 +27,7 @@
   (around-all [_] (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
 
   (it "GET should return valid form JSON for hakemus listing"
-      (let [{:keys [status body]} (get! "/api/avustushaku/1/hakemus")
+      (let [{:keys [status body]} (get! "/api/avustushaku/1")
             json #(json->map body)]
         (should= 200 status)
         (should-not= "" (json)))))
