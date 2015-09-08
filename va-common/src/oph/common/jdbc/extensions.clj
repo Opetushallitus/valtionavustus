@@ -16,11 +16,9 @@
     (.setValue (name value))))
 
 (extend-protocol jdbc/ISQLValue
-  clojure.lang.IPersistentMap
-  (sql-value [value] (value-to-jsonb-pgobject value))
-
-  clojure.lang.IPersistentVector
-  (sql-value [value] (value-to-jsonb-pgobject value))
+  clojure.lang.IPersistentCollection
+  (sql-value [value]
+    (value-to-jsonb-pgobject value))
 
   clojure.lang.Keyword
   (sql-value [value] (value-to-status value)))
