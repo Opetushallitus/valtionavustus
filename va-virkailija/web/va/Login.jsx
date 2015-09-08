@@ -8,11 +8,25 @@ import TopBar from './TopBar.jsx'
 
 export default class Login extends React.Component {
   render() {
+    const invisibleButton= {
+      position: 'absolute',
+      left: '-9999px',
+      width: '1px',
+      height: '1px'
+    }
+
     return (
       <div>
         <TopBar title="Virkailija" />
         <section id="container">
-          <h1>Hello, login.</h1>
+          <h1>Kirjaudu sisään</h1>
+          <form name="login" method="post">
+            <label for="username">Tunnus:</label>
+            <input type="text" id="username" />
+            <label for="password">Salasana:</label>
+            <input type="password" id="username" />
+            <input type="submit" name="login" style={invisibleButton} tabindex="-1"/>
+          </form>
         </section>
       </div>
     )
