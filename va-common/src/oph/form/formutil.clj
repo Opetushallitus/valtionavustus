@@ -1,4 +1,9 @@
-(ns oph.form.formutil)
+(ns oph.form.formutil
+  (:require [clojure.walk :as walk]))
+
+(defn transform-form-content [form node-transformer]
+  (let [new-content (walk/prewalk node-transformer (:content form))]
+    (assoc form :content new-content)))
 
 (defn find-value-for-key [values key]
   (if (some #(= key (:key %)) values)

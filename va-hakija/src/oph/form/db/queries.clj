@@ -3,6 +3,8 @@
 
 (defquery list-forms "sql/form/list.sql")
 (defquery get-form "sql/form/get.sql")
+(defquery archive-form! "sql/form/archive.sql")
+(defquery update-form! "sql/form/update.sql")
 
 (defquery submission-exists? "sql/submission/exists.sql")
 (defquery create-submission<! "sql/submission/create.sql")

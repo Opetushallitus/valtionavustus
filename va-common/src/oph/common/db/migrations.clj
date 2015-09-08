@@ -20,7 +20,7 @@
          (log/error e)
          (throw e)))))
 
-(defmacro defmigration [ds-key name version description & body]
+(defmacro defmigration [name version description & body]
   `(deftype ~name []
             JdbcMigration
      (migrate [this connection]

@@ -1,0 +1,1 @@
+UPDATE forms SET content = :content, rules = :rules WHERE id = :id
