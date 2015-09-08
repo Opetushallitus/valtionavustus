@@ -5,7 +5,7 @@
             [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
-            [compojure.core :refer [defroutes GET]]
+            [compojure.core :refer [defroutes GET POST]]
             [compojure.api.sweet :refer :all]
             [compojure.api.exception :as compojure-ex]
             [schema.core :as s]
@@ -14,7 +14,8 @@
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.schema :refer :all]
-            [oph.va.virkailija.handlers :refer :all]))
+            [oph.va.virkailija.handlers :refer :all]
+            [oph.va.virkailija.login :refer [login]]))
 
 (defn- on-healthcheck []
   (if (and (virkailija-db/health-check)
@@ -85,6 +86,16 @@
           (ok response)
           (not-found))))
 
+(defroutes* login-routes
+  "Authentication"
+
+  (POST* "/" [username password]
+        :form-params [username :- s/Str password :- s/Str]
+        :return s/Any
+        (if (= (login username password) true)
+          (resp/redirect "/")
+          (forbidden "Invalid credentials"))))
+
 (defroutes* doc-routes
   "API documentation browser"
   (swagger-ui))
@@ -106,6 +117,7 @@
   (create-swagger-docs)
 
   (context* "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
+  (context* "/api/login" [] :tags ["login"] login-routes)
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
 
   ;; Documentation

@@ -4,7 +4,8 @@
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
   :repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
-  :dependencies [[oph-va/common "0.1.0-SNAPSHOT"]]
+  :dependencies [[oph-va/common "0.1.0-SNAPSHOT"]
+                 [org.clojars.pntblnk/clj-ldap "0.0.9"]]
 
   :main oph.va.virkailija.main
   :target-path "target/%s"
