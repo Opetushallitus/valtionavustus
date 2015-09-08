@@ -37,7 +37,6 @@
 
 (defroutes resource-routes
   (GET "/" [] (return-html "index.html"))
-  (GET "/login" [] (return-html "login.html"))
   (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
     :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
     (on-hakemus-preview avustushaku-id hakemus-user-key))
@@ -89,6 +88,7 @@
 (defroutes* login-routes
   "Authentication"
 
+  (GET "/" [] (return-html "login.html"))
   (POST* "/" [username password]
         :form-params [username :- s/Str password :- s/Str]
         :return s/Any
@@ -117,7 +117,7 @@
   (create-swagger-docs)
 
   (context* "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
-  (context* "/api/login" [] :tags ["login"] login-routes)
+  (context* "/login" [] :tags ["login"] login-routes)
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
 
   ;; Documentation
