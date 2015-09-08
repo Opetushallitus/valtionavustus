@@ -1,11 +1,6 @@
 (ns oph.form.rules
   (:use [clojure.tools.trace :only [trace]])
-  (:require [clojure.walk :as walk]
-            [oph.form.formutil :refer :all]))
-
-(defn transform-form-content [form-state node-transformer]
-  (let [new-content (walk/prewalk node-transformer (:content (:form form-state)))]
-    (assoc-in form-state [:form :content] new-content)))
+  (:require [oph.form.formutil :refer :all]))
 
 (defn include-if [form-state rule]
   (let [trigger-value (:triggerValue (:params rule))
@@ -13,11 +8,11 @@
         target-ids (:targetIds rule)]
     (if (= trigger-value answers-value)
       form-state
-      (transform-form-content form-state
+      (assoc form-state :form (transform-form-content (:form form-state)
         (fn [node]
           (if (some #{(:id node)} target-ids)
             {}
-            node))))))
+            node)))))))
 
 (defn apply-rule [form-state rule]
   (case (:type rule)
