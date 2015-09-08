@@ -13,9 +13,9 @@
             [oph.common.routes :refer :all]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.db :as virkailija-db]
+            [oph.va.virkailija.auth :as auth]
             [oph.va.virkailija.schema :refer :all]
-            [oph.va.virkailija.handlers :refer :all]
-            [oph.va.virkailija.login :refer [login]]))
+            [oph.va.virkailija.handlers :refer :all]))
 
 (defn- on-healthcheck []
   (if (and (virkailija-db/health-check)
@@ -92,7 +92,7 @@
   (POST* "/" [username password]
         :form-params [username :- s/Str password :- s/Str]
         :return s/Any
-        (if (= (login username password) true)
+        (if (auth/authenticate username password)
           (resp/redirect "/")
           (forbidden "Invalid credentials"))))
 

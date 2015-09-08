@@ -5,7 +5,8 @@
             :url "http://opensource.org/licenses/EUPL-1.1"}
   :repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
   :dependencies [[oph-va/common "0.1.0-SNAPSHOT"]
-                 [org.clojars.pntblnk/clj-ldap "0.0.9"]]
+                 [org.clojars.pntblnk/clj-ldap "0.0.9"]
+                 [buddy/buddy-auth "0.6.1"]]
 
   :main oph.va.virkailija.main
   :target-path "target/%s"
