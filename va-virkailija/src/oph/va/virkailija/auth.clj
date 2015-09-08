@@ -4,4 +4,6 @@
 (defonce tokens (atom {}))
 
 (defn authenticate [username password]
-  (login username password))
+  (if-let [details (login username password)]
+    true
+    false))
