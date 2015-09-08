@@ -163,7 +163,8 @@
                 describe('jos poistaa ensimmäisen organisaation', function() {
                   before(
                       removeButtonForOrg(1).click,
-                      applicationPage.waitAutoSave
+                      applicationPage.waitAutoSave,
+                      wait.until(function(){return removeButtonForOrg(3).isVisible() === false})
                   )
 
                   describe('poiston jälkeen', function() {
@@ -172,7 +173,11 @@
                     })
 
                     it('uutta ensimmäistä ei voi poistaa', function() {
-                      expect(removeButtonForOrg(3).isEnabled()).to.equal(false)
+                      expect(removeButtonForOrg(1).isEnabled()).to.equal(false)
+                    })
+
+                    it('kolmatta riviä ei enää ole', function() {
+                      expect(removeButtonForOrg(3).isVisible()).to.equal(false)
                     })
 
                     it('neljättä ei voi poistaa', function() {
@@ -180,10 +185,10 @@
                     })
                   })
 
-                  describe('täytettäessä rivi', function() {
+                  describe('täytettäessä uusi ensimmäinen rivi', function() {
                     before(
-                      applicationPage.setInputValue("other-organizations.other-organizations-3.name", "Muu testiorganisaatio 3"),
-                      applicationPage.setInputValue("other-organizations.other-organizations-3.email", "muutest3@example.com"),
+                      applicationPage.setInputValue("other-organizations.other-organizations-1.name", "Muu testiorganisaatio 3"),
+                      applicationPage.setInputValue("other-organizations.other-organizations-1.email", "muutest3@example.com"),
                       applicationPage.waitAutoSave
                     )
                     it("virheet häviää", function() {
