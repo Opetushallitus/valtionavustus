@@ -5,6 +5,8 @@
             [ring.middleware.session :as session]
             [ring.middleware.session.cookie :as cookie]
             [ring.middleware.conditional :refer [if-url-doesnt-match]]
+            [buddy.auth.middleware :refer [wrap-authentication]]
+            [buddy.auth.backends.token :refer [token-backend]]
             [compojure.handler :refer [site]]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
@@ -31,10 +33,19 @@
 (defn- with-session [site]
   (session/wrap-session site {:store (cookie/cookie-store {:key "a 16-byte secret"})}))
 
+(defn authenticate [request token]
+  :admin)
+
+(def backend (token-backend {:authfn authenticate}))
+
+(defn- with-authentication [site]
+  (wrap-authentication site backend))
+
 (defn start-server [host port auto-reload?]
   (let [logged (-> (create-site)
                    (with-log-wrapping)
-                   (with-session))
+                   (with-session)
+                   (with-authentication))
         handler (if auto-reload?
                   (reload/wrap-reload logged)
                   logged)]
