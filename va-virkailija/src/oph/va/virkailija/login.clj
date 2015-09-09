@@ -8,7 +8,8 @@
   (:import (java.net InetAddress)))
 
 (defn- people-path [uid]
-  (str "uid=" uid ",ou=People,dc=opintopolku,dc=fi"))
+  (let [people-path-base (-> config :ldap :people-path-base)]
+    (str "uid=" uid people-path-base)))
 
 (defn- ldap-pool [{:keys [hostname port user password]}]
   (ldap/connect {:host [{:address (.getHostName hostname) :port port}]
@@ -32,7 +33,7 @@
 (defn- check-app-access [ldap-server username]
   (let [user-details (find-user-details ldap-server username)
         description (-> user-details :description json/parse-string)
-        required-group "APP_VALTIONAVUSTUS"
+        required-group (-> config :ldap :required-group)
         has-access? (some #{required-group} description)]
     (if has-access?
       description
