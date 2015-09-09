@@ -1,9 +1,10 @@
 import PolyfillBind from 'va-common/web/polyfill-bind'
 import ConsolePolyfill from 'console-polyfill'
-import Dispatcher from './Dispatcher.js'
-import TopBar from './TopBar.jsx'
 import React, { Component } from 'react'
 
+import Dispatcher from 'va-common/web/Dispatcher'
+
+import TopBar from './TopBar.jsx'
 import VirkailijaController from './VirkailijaController.jsx'
 import AvustushakuSelector from './avustushaku/AvustushakuSelector.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'

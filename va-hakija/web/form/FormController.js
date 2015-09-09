@@ -1,6 +1,7 @@
 import queryString from 'query-string'
 
-import Dispatcher from './Dispatcher'
+import Dispatcher from 'va-common/web/Dispatcher'
+
 import FieldUpdateHandler from './FieldUpdateHandler.js'
 import SyntaxValidator from './SyntaxValidator.js'
 import FormStateTransitions from './FormStateTransitions.js'

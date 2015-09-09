@@ -1,8 +1,9 @@
 import Bacon from 'baconjs'
 import _ from 'lodash'
-import HttpUtil from 'va-common/web/HttpUtil.js'
-import Dispatcher from '../Dispatcher.js'
 import React, { Component } from 'react'
+
+import HttpUtil from 'va-common/web/HttpUtil.js'
+import Dispatcher from 'va-common/web/Dispatcher'
 
 export default class HakemusListing extends Component {
   render() {

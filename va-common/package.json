@@ -12,6 +12,7 @@
   ],
   "dependencies": {
     "axios": "^0.5.4",
+    "baconjs": "^0.7.59",
     "bluebird": "2.9.34"
   },
   "private": true
