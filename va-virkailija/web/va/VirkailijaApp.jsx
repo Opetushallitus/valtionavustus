@@ -8,7 +8,7 @@ import TopBar from './TopBar.jsx'
 import VirkailijaController from './VirkailijaController.jsx'
 import AvustushakuSelector from './avustushaku/AvustushakuSelector.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
-import HakemusPreview from './hakemus-details/HakemusPreview.jsx'
+import HakemusDetails from './hakemus-details/HakemusDetails.jsx'
 
 import style from './style/main.less'
 import topbar from './style/topbar.less'
@@ -24,7 +24,7 @@ export default class App extends Component {
         <section id="container">
           <AvustushakuSelector avustushaku={avustushaku} controller={controller} />
           <HakemusListing hakemusList={hakemusList} selectedHakemus={selectedHakemus} controller={controller}/>
-          <HakemusPreview avustushakuId={avustushaku.id} hakemus={selectedHakemus}/>
+          <HakemusDetails avustushaku={avustushaku} hakemus={selectedHakemus}/>
         </section>
       </section>
     )
