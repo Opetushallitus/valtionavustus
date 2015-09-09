@@ -101,7 +101,7 @@
 
   (GET "/logout" []
        (-> (resp/redirect "/login")
-           (assoc :session {:identity nil}))))
+           (dissoc :session))))
 
 (defroutes* doc-routes
   "API documentation browser"
