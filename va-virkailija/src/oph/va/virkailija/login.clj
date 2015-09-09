@@ -27,7 +27,9 @@
                 :password (:password ldap-config)})))
 
 (defn- find-user-details [ldap-server username]
-  (ldap/bind? ldap-server (people-path (-> config :ldap :user)) (-> config :ldap :password))
+  (ldap/bind? ldap-server
+              (people-path (-> config :ldap :user))
+              (-> config :ldap :password))
   (ldap/get ldap-server (people-path username)))
 
 (defn- check-app-access [ldap-server username]
@@ -37,7 +39,10 @@
         has-access? (some #{required-group} description)]
     (if has-access?
       description
-      (log/info (str "Authorization failed for username '" username "' : " required-group " missing, got only " (pr-str description))))))
+      (log/info (str "Authorization failed for username '"
+                     username "' : "
+                     required-group " missing, got only "
+                     (pr-str description))))))
 
 (defn login [username password]
   (let [ldap-server (create-ldap-connection)
