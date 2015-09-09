@@ -36,11 +36,11 @@
         has-access? (some #{required-group} description)]
     (if has-access?
       description
-      (log/info (str "Authorization failed for username '" username "' : " required-group " missing, got only " (pr-str description) )))))
+      (log/info (str "Authorization failed for username '" username "' : " required-group " missing, got only " (pr-str description))))))
 
 (defn login [username password]
   (let [ldap-server (create-ldap-connection)
         credentials-valid? (ldap/bind? ldap-server (people-path username) password)]
     (if credentials-valid?
       (check-app-access ldap-server username)
-      (log/info (str "Login failed for username '" username "' ")))))
+      (log/info (str "Login failed for username '" username "'")))))
