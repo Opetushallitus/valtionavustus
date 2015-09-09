@@ -26,10 +26,9 @@
   ;; Start HTTP server for running tests
   (around-all [_] (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
 
-  (it "GET should return valid form JSON for hakemus listing"
-      (let [{:keys [status body]} (get! "/api/avustushaku/1")
-            json #(json->map body)]
+  (it "GET to / without authentication should redirect to login page"
+      (let [{:keys [status body]} (get! "/")]
         (should= 200 status)
-        (should-not= "" (json)))))
+        (should-contain #"login" body))))
 
 (run-specs)
