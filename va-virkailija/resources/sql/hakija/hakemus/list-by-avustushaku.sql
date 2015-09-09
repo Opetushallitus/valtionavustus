@@ -7,3 +7,4 @@ where h.avustushaku = :avustushaku_id
       and h.status != 'new'
       and s.version_closed is null
       and h.version_closed is null
+order by h.id
