@@ -53,7 +53,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>./ci/jenkins-cibuild.bash clean test</command>
+      <command>./ci/jenkins-cibuild.bash no-server clean test</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
