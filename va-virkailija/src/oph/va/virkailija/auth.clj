@@ -14,9 +14,10 @@
   (when-let [details (login username password)]
     (let [token (random-token)]
       (swap! tokens assoc token details)
-      (trace "tokens" @tokens)
-      token)))
+      {:username username
+       :token token
+       :details details})))
 
-(defn check-auth [identity]
+(defn check-identity [identity]
   (if-let [{:keys [token username]} identity]
     token))

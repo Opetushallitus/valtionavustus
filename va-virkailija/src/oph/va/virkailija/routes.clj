@@ -89,16 +89,19 @@
   "Authentication"
 
   (GET "/" [] (return-html "login.html"))
+
   (POST* "/" [username password :as request]
         :form-params [username :- s/Str password :- s/Str]
         :return s/Any
-        (if (auth/authenticate username password)
+        (if-let [identity (auth/authenticate username password)]
           (-> (resp/redirect "/")
-              (assoc :session {:identity "lolbal"})
+              (assoc :session {:identity identity})
               trace)
-          (forbidden "Invalid credentials"))))
+          (forbidden "Invalid credentials")))
+
   (GET "/logout" []
-    (resp/redirect "/login")))
+       (-> (resp/redirect "/login")
+           (assoc :session {:identity nil}))))
 
 (defroutes* doc-routes
   "API documentation browser"

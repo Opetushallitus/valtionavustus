@@ -15,6 +15,7 @@
             [oph.common.server :as server]
             [oph.common.config :refer [config]]
             [oph.common.db :as db]
+            [oph.va.virkailija.auth :as auth]
             [oph.va.virkailija.db.migrations :as dbmigrations]))
 
 (defn- startup [config]
@@ -42,7 +43,7 @@
 
 (defn authenticated-access [request]
   (trace "request" request)
-  (if (trace "identity" (-> request :session :identity))
+  (if (auth/check-identity (-> request :session :identity))
     true
     (error "Authentication required")))
 
