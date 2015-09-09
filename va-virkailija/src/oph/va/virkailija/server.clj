@@ -1,12 +1,15 @@
 (ns oph.va.virkailija.server
-  (:use [oph.va.virkailija.routes :only [all-routes]])
+  (:use [clojure.tools.trace :only [trace]]
+        [oph.va.virkailija.routes :only [all-routes]])
   (:require [ring.middleware.reload :as reload]
             [ring.middleware.logger :as logger]
             [ring.middleware.session :as session]
             [ring.middleware.session.cookie :as cookie]
             [ring.middleware.conditional :refer [if-url-doesnt-match]]
+            [buddy.auth :refer [authenticated?]]
             [buddy.auth.middleware :refer [wrap-authentication]]
-            [buddy.auth.backends.token :refer [token-backend]]
+            [buddy.auth.accessrules :refer [wrap-access-rules success error]]
+            [buddy.auth.backends.session :refer [session-backend]]
             [compojure.handler :refer [site]]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
@@ -31,15 +34,36 @@
     site))
 
 (defn- with-session [site]
-  (session/wrap-session site {:store (cookie/cookie-store {:key "a 16-byte secret"})}))
+  (session/wrap-session site {:store (cookie/cookie-store {:key "a 16-byte secret"})
+                              :cookie-attrs {:max-age 3600
+                                             :secure true}}))
 
-(defn authenticate [request token]
-  :admin)
+(def backend (session-backend))
 
-(def backend (token-backend {:authfn authenticate}))
+(defn any-access [request] true)
+
+(defn authenticated-access [request]
+  (if (authenticated? request)
+    true
+    ;;(error "Authentication required")
+    true))
+
+(def rules [{:pattern #"^/login$"
+             :handler any-access}
+            {:pattern #"^/js/.*"
+             :handler any-access}
+            {:pattern #"^/img/.*"
+             :handler any-access}
+            {:pattern #"^/css/.*"
+             :handler any-access}
+            {:pattern #"^/.*"
+             :handler authenticated-access
+             :redirect "/login"}])
 
 (defn- with-authentication [site]
-  (wrap-authentication site backend))
+  (-> site
+      (wrap-authentication backend)
+      (wrap-access-rules {:rules rules})))
 
 (defn start-server [host port auto-reload?]
   (let [logged (-> (create-site)
