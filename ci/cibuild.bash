@@ -3,8 +3,9 @@ set -euo pipefail
 
 pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd -P`
+PROJECTROOTPATH=$SCRIPTPATH/..
 popd > /dev/null
-LEIN=$SCRIPTPATH/../lein
+LEIN=$PROJECTROOTPATH/lein
 
 export PATH=$PATH:$(dirname $LEIN)
 
@@ -28,7 +29,7 @@ va_virkailija_default_source_path="va-virkailija/target/uberjar/virkailija-*-sta
 function clean() {
   echo "Running lein clean and emptying all subdirectories with name 'node_modules'"
   $LEIN modules clean
-  find . -depth  -type d -name 'node_modules' -exec rm -rf {} \;
+  find $PROJECTROOTPATH -depth -type d -name 'node_modules' -exec rm -rf {} \;
 }
 
 function install_module() {
