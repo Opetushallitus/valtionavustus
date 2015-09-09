@@ -16,3 +16,7 @@
       (swap! tokens assoc token details)
       (trace "tokens" @tokens)
       token)))
+
+(defn check-auth [identity]
+  (if-let [{:keys [token username]} identity]
+    token))

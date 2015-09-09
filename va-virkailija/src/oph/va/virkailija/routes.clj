@@ -89,12 +89,14 @@
   "Authentication"
 
   (GET "/" [] (return-html "login.html"))
-  (POST* "/" [username password]
+  (POST* "/" [username password :as request]
         :form-params [username :- s/Str password :- s/Str]
         :return s/Any
         (if (auth/authenticate username password)
-          (resp/redirect "/")
-          (forbidden "Invalid credentials")))
+          (-> (resp/redirect "/")
+              (assoc :session {:identity "lolbal"})
+              trace)
+          (forbidden "Invalid credentials"))))
   (GET "/logout" []
     (resp/redirect "/login")))
 

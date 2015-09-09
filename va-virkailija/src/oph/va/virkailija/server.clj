@@ -26,7 +26,7 @@
   (log/info "Shutting down all services")
   (db/close-datasource! :db))
 
-(defn- create-site [] (site #'all-routes))
+(defn- create-site [] )
 
 (defn- with-log-wrapping [site]
   (if (-> config :server :enable-access-log?)
@@ -34,19 +34,17 @@
     site))
 
 (defn- with-session [site]
-  (session/wrap-session site {:store (cookie/cookie-store {:key "a 16-byte secret"})
-                              :cookie-attrs {:max-age 3600
-                                             :secure true}}))
+  (session/wrap-session site ))
 
 (def backend (session-backend))
 
 (defn any-access [request] true)
 
 (defn authenticated-access [request]
-  (if (authenticated? request)
+  (trace "request" request)
+  (if (trace "identity" (-> request :session :identity))
     true
-    ;;(error "Authentication required")
-    true))
+    (error "Authentication required")))
 
 (def rules [{:pattern #"^/login$"
              :handler any-access}
@@ -65,11 +63,15 @@
       (wrap-authentication backend)
       (wrap-access-rules {:rules rules})))
 
+(defn- with-session [site]
+  (session/wrap-session site {:store (cookie/cookie-store {:key "a 16-byte secret"})
+                              :cookie-attrs {:max-age 3600}}))
+
 (defn start-server [host port auto-reload?]
-  (let [logged (-> (create-site)
+  (let [logged (-> #'all-routes
                    (with-log-wrapping)
-                   (with-session)
-                   (with-authentication))
+                   (with-authentication)
+                   (site {:session false}))
         handler (if auto-reload?
                   (reload/wrap-reload logged)
                   logged)]
