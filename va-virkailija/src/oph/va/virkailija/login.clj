@@ -2,6 +2,7 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [oph.common.config :refer [config config-simple-name]]
             [clojure.edn :as edn]
+            [cheshire.core :as json]
             [clj-ldap.client :as ldap]
             [clojure.tools.logging :as log])
   (:import (java.net InetAddress)))
@@ -28,9 +29,18 @@
   (ldap/bind? ldap-server (people-path (-> config :ldap :user)) (-> config :ldap :password))
   (ldap/get ldap-server (people-path username)))
 
+(defn- check-app-access [ldap-server username]
+  (let [user-details (find-user-details ldap-server username)
+        description (-> user-details :description json/parse-string)
+        required-group "APP_VALTIONAVUSTUS"
+        has-access? (some #{required-group} description)]
+    (if has-access?
+      description
+      (log/info (str "Authorization failed for username '" username "' : " required-group " missing, got only " (pr-str description) )))))
+
 (defn login [username password]
   (let [ldap-server (create-ldap-connection)
         credentials-valid? (ldap/bind? ldap-server (people-path username) password)]
     (if credentials-valid?
-      (find-user-details ldap-server username)
+      (check-app-access ldap-server username)
       (log/info (str "Login failed for username '" username "' ")))))
