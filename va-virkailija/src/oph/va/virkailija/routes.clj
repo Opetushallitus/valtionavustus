@@ -94,7 +94,9 @@
         :return s/Any
         (if (auth/authenticate username password)
           (resp/redirect "/")
-          (forbidden "Invalid credentials"))))
+          (forbidden "Invalid credentials")))
+  (GET "/logout" []
+    (resp/redirect "/login")))
 
 (defroutes* doc-routes
   "API documentation browser"
