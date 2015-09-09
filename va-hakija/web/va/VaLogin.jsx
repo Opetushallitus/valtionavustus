@@ -8,11 +8,12 @@ import Bacon from 'baconjs'
 import style from '../form/style/main.less'
 import loginStyle from './style/va-login.less'
 
+import HttpUtil from 'va-common/web/HttpUtil'
+
 import VaLoginTopbar from './VaLoginTopbar.jsx'
 import VaUrlCreator from './VaUrlCreator.js'
 
 import FormUtil from '../form/FormUtil.js'
-import HttpUtil from '../form/HttpUtil'
 import SyntaxValidator from '../form/SyntaxValidator.js'
 import LocalizedString from '../form/component/LocalizedString.jsx'
 import EmailTextField from '../form/component/EmailTextField.jsx'

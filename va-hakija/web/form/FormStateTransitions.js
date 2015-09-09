@@ -1,9 +1,10 @@
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
 
+import HttpUtil from 'va-common/web/HttpUtil'
+
 import LocalStorage from './LocalStorage.js'
 import InputValueStorage from './InputValueStorage.js'
-import HttpUtil from './HttpUtil.js'
 import FormUtil from './FormUtil.js'
 import FormRules from './FormRules.js'
 import FormBranchGrower from './FormBranchGrower.js'

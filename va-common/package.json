@@ -10,5 +10,9 @@
   "files": [
     "web"
   ],
+  "dependencies": {
+    "axios": "^0.5.4",
+    "bluebird": "2.9.34"
+  },
   "private": true
 }

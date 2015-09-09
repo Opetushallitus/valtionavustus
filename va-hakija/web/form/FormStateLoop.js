@@ -2,8 +2,9 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
 
+import HttpUtil from 'va-common/web/HttpUtil'
+
 import InputValueStorage from './InputValueStorage.js'
-import HttpUtil from './HttpUtil.js'
 import JsUtil from './JsUtil.js'
 import FormUtil from './FormUtil.js'
 import FormStateTransitions from './FormStateTransitions.js'
