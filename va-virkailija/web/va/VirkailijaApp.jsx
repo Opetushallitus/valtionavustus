@@ -1,4 +1,4 @@
-import PolyfillBind from './../polyfill-bind'
+import PolyfillBind from 'va-common/web/polyfill-bind'
 import ConsolePolyfill from 'console-polyfill'
 import Dispatcher from './Dispatcher.js'
 import TopBar from './TopBar.jsx'

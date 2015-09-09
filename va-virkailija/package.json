@@ -8,6 +8,7 @@
     "url": "https://github.com:Opetushallitus/va.git"
   },
   "dependencies": {
+    "va-common": "../va-common",
     "axios": "^0.5.4",
     "baconjs": "^0.7.59",
     "bluebird": "2.9.34",
@@ -42,6 +43,7 @@
     "style-loader": "^0.12.3",
     "url-loader": "^0.5.6",
     "json-loader": "^0.5.2",
+    "watch-spawn": "^1.0.5",
     "webpack": "^1.10.5"
   },
   "private": false,
@@ -49,6 +51,9 @@
     "unittest": "mocha --compilers js:babel/register web/test/*Test.js",
     "watch-unittest": "mocha --watch --compilers js:babel/register web/test/*Test.js",
     "build": "UGLIFY=true webpack -p",
-    "watch": "webpack -d --progress --colors --watch"
+    "watch-web": "webpack -d --progress --colors --watch",
+    "update-common-web": "rm -rf node_modules/va-common && npm install va-common",
+    "watch-common-web": "watch-spawn -p '../va-common/web/**/*.js*' -i npm run update-common-web",
+    "watch": "npm run watch-common-web & npm run watch-web"
   }
 }
