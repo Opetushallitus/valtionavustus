@@ -6,13 +6,13 @@
             [clojure.tools.logging :as log]
             [clojure.java.io :as java-io]))
 
-(defn return-from-classpath [filename]
-  (slurp (java-io/resource filename)))
+(defn return-from-classpath [filename-under-public contenttype]
+  (-> (resp/resource-response filename-under-public {:root "public"})
+        (content-type contenttype)
+        (charset  "utf-8")))
 
 (defn return-html [filename]
-  (-> (resp/resource-response filename {:root "public"})
-      (content-type "text/html")
-      (charset  "utf-8")))
+  (return-from-classpath filename "text/html"))
 
 (defn exception-handler [^Exception ex data request]
   (log/error ex ex)
