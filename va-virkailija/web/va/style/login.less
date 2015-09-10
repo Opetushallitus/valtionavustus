@@ -1,0 +1,22 @@
+@import "../../../../va-common/web/form/style/variables";
+
+#container {
+
+  max-width: @form-width;
+  margin-top: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px 20px 20px;
+
+  .required:after {
+    content: " *";
+  }
+
+  input {
+    margin-right: 10px;
+  }
+
+  label:after {
+    content: " ";
+  }
+}
