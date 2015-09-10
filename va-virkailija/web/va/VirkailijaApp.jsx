@@ -16,16 +16,19 @@ import topbar from './style/topbar.less'
 
 export default class App extends Component {
   render() {
-    const avustushaku = this.props.state.avustushaku.avustushaku
-    const hakemusList = this.props.state.avustushaku.hakemukset
+    const hakuData = this.props.state.avustushaku
+    const avustushaku = hakuData.avustushaku
+    const hakemusList = hakuData.hakemukset
     const selectedHakemus = this.props.state.selectedHakemus
+    const translations = this.props.state.translations
     return (
       <section>
         <TopBar user="Leena Koski" title="Hakemusten arviointi"/>
         <section id="container">
           <AvustushakuSelector avustushaku={avustushaku} controller={controller} />
           <HakemusListing hakemusList={hakemusList} selectedHakemus={selectedHakemus} controller={controller}/>
-          <HakemusDetails avustushaku={avustushaku} hakemus={selectedHakemus}/>
+          <HakemusDetails hakuData={hakuData} avustushaku={avustushaku} hakemus={selectedHakemus}
+                          translations={translations}/>
         </section>
       </section>
     )

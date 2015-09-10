@@ -15,6 +15,7 @@ export default class VirkailijaController {
   initializeState() {
     const initialStateTemplate = {
       avustushaku: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/1")),
+      translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
       selectedHakemus: undefined
     }
 
