@@ -2,11 +2,11 @@ const _ = require('lodash')
 const verboseAssert = require('assert')
 import { assert } from 'chai'
 require("babel/register")({
-  only: /(va-hakija\/web|va-common\/web)/
+  only: /(va-hakija\/web|va-common\/web|va-common\/web\/test)/
 });
 const JsUtil = require('va-common/web/form/JsUtil.js')
 const FormErrorSummary = require('../form/component/FormErrorSummary.jsx')
-import {TestUtil} from './TestUtil.js'
+const TestUtil = require('va-common/web/test/TestUtil.js')
 
 const formContent = TestUtil.testFormJson()
 var validationErrors = {}

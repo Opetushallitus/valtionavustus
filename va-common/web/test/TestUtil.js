@@ -1,4 +1,4 @@
-export class TestUtil {
+export default class TestUtil {
   static testFormJson() {
     return [
       {
