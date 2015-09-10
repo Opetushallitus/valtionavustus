@@ -4,13 +4,13 @@
   (:require [ring.middleware.reload :as reload]
             [ring.middleware.logger :as logger]
             [ring.middleware.session :as session]
-            [ring.middleware.session.cookie :as cookie]
+            [ring.middleware.session.cookie :refer [cookie-store]]
             [ring.middleware.conditional :refer [if-url-doesnt-match]]
+            [ring.middleware.defaults :refer :all]
             [buddy.auth :refer [authenticated?]]
             [buddy.auth.middleware :refer [wrap-authentication]]
             [buddy.auth.accessrules :refer [wrap-access-rules success error]]
             [buddy.auth.backends.session :refer [session-backend]]
-            [compojure.handler :refer [site]]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
             [oph.common.config :refer [config]]
@@ -33,9 +33,6 @@
   (if (-> config :server :enable-access-log?)
     (if-url-doesnt-match site #"/api/healthcheck" logger/wrap-with-logger)
     site))
-
-(defn- with-session [site]
-  (session/wrap-session site ))
 
 (def backend (session-backend))
 
@@ -64,18 +61,20 @@
       (wrap-authentication backend)
       (wrap-access-rules {:rules rules})))
 
-(defn- with-session [site]
-  (session/wrap-session site {:store (cookie/cookie-store {:key "a 16-byte secret"})
-                              :cookie-attrs {:max-age 3600}}))
-
 (defn start-server [host port auto-reload?]
-  (let [logged (-> #'all-routes
-                   (with-log-wrapping)
+  (let [defaults (-> site-defaults
+                     (assoc-in [:security :anti-forgery] false)
+                     (assoc :session {:store (cookie-store)
+                                      :cookie-name "identity"
+                                      :cookie-attrs {:max-age 3600
+                                                     :http-only false}}))
+        routes (-> #'all-routes
                    (with-authentication)
-                   (site {:session false}))
+                   (wrap-defaults defaults)
+                   (with-log-wrapping))
         handler (if auto-reload?
-                  (reload/wrap-reload logged)
-                  logged)]
+                  (reload/wrap-reload routes)
+                  routes)]
     (server/start-server {:host host
                           :port port
                           :auto-reload? auto-reload?

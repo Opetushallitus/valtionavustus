@@ -26,8 +26,7 @@
 (defn- on-hakemus-preview [avustushaku-id hakemus-user-key]
   (let [hakija-app-url (-> config :server :url :fi)
         preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key "&preview=true")]
-    (resp/redirect preview-url ))
-)
+    (resp/redirect preview-url)))
 
 (defroutes* healthcheck-routes
   "Healthcheck routes"
@@ -97,8 +96,7 @@
         :return s/Any
         (if-let [identity (auth/authenticate username password)]
           (-> (resp/redirect "/")
-              (assoc :session {:identity identity})
-              trace)
+              (assoc :session {:identity identity}))
           (forbidden "Invalid credentials")))
 
   (POST "/logout" []
