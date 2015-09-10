@@ -1,6 +1,7 @@
 import React from 'react'
 import Bacon from 'baconjs'
 
+import common from 'va-common/web/form/style/main.less'
 import style from './style/main.less'
 import topbar from './style/topbar.less'
 

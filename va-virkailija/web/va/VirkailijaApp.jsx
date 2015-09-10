@@ -10,6 +10,7 @@ import AvustushakuSelector from './avustushaku/AvustushakuSelector.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusDetails from './hakemus-details/HakemusDetails.jsx'
 
+import common from 'va-common/web/form/style/main.less'
 import style from './style/main.less'
 import topbar from './style/topbar.less'
 
@@ -20,7 +21,7 @@ export default class App extends Component {
     const selectedHakemus = this.props.state.selectedHakemus
     return (
       <section>
-        <TopBar title="Hakemusten arviointi"/>
+        <TopBar user="Leena Koski" title="Hakemusten arviointi"/>
         <section id="container">
           <AvustushakuSelector avustushaku={avustushaku} controller={controller} />
           <HakemusListing hakemusList={hakemusList} selectedHakemus={selectedHakemus} controller={controller}/>
