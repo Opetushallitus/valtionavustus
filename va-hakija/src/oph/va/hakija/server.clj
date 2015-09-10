@@ -26,19 +26,22 @@
 (defn- create-restricted-routes [] #'restricted-routes)
 (defn- create-all-routes [] #'all-routes)
 
+(defn- create-routes []
+  (if (-> config :api :restricted-routes?)
+    (create-restricted-routes)
+    (do
+      (log/warn "Enabling all routes. This setting should be used only in development!")
+      (create-all-routes))))
+
 (defn- create-site []
-  (-> (if (-> config :api :restricted-routes?)
-        (create-restricted-routes)
-        (do
-          (log/warn "Enabling all routes. This setting should be used only in development!")
-          (create-all-routes)))
-      (wrap-defaults site-defaults)))
+  (-> (create-routes)
+      (wrap-defaults (-> site-defaults
+                         (assoc-in [:security :anti-forgery] false)))))
 
 (defn- with-log-wrapping [site]
   (if (-> config :server :enable-access-log?)
-                     (-> site
-                         (if-url-doesnt-match #"/api/healthcheck" logger/wrap-with-logger))
-                     site))
+    (if-url-doesnt-match site #"/api/healthcheck" logger/wrap-with-logger)
+    site))
 
 (defn start-server [host port auto-reload?]
   (let [logged (with-log-wrapping (create-site))
