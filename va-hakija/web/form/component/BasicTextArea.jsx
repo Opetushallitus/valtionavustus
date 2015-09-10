@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
-import LocalizedString from './LocalizedString.jsx'
-import BasicFieldComponent from './BasicFieldComponent.jsx'
+import LocalizedString from 'va-common/web/form/component/LocalizedString.jsx'
+import BasicFieldComponent from 'va-common/web/form/component/BasicFieldComponent.jsx'
 import BasicSizedComponent from './BasicSizedComponent.jsx'
 
 export default class BasicTextArea extends BasicSizedComponent {

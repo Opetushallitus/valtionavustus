@@ -1,7 +1,7 @@
 import React from 'react/addons'
 import ClassNames from 'classnames'
 import _ from 'lodash'
-import CSSTransitionGroup from './CSSTransitionGroup.jsx'
+import CSSTransitionGroup from 'va-common/web/form/component/wrapper/CSSTransitionGroup.jsx'
 
 export default class GrowingFieldset extends React.Component {
   className(className) {

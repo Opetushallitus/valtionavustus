@@ -1,10 +1,10 @@
 import React from 'react'
 import _ from 'lodash'
 
-import JsUtil from './../JsUtil.js'
-import FormUtil from './../FormUtil.js'
-import LocalizedString from './LocalizedString.jsx'
-import Translator from './../Translator.js'
+import JsUtil from 'va-common/web/form/JsUtil'
+import FormUtil from 'va-common/web/form/FormUtil'
+import LocalizedString from 'va-common/web/form/component/LocalizedString.jsx'
+import Translator from 'va-common/web/form/Translator'
 
 export default class FormErrorSummary extends React.Component {
 

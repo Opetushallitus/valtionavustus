@@ -4,12 +4,12 @@ import Immutable from 'seamless-immutable'
 
 import HttpUtil from 'va-common/web/HttpUtil'
 
-import InputValueStorage from './InputValueStorage.js'
-import JsUtil from './JsUtil.js'
-import FormUtil from './FormUtil.js'
-import FormStateTransitions from './FormStateTransitions.js'
+import InputValueStorage from 'va-common/web/form/InputValueStorage'
+import JsUtil from 'va-common/web/form/JsUtil'
+import FormUtil from 'va-common/web/form/FormUtil'
+import FormStateTransitions from './FormStateTransitions'
 import FormRules from './FormRules.js'
-import Translator from './Translator.js'
+import Translator from 'va-common/web/form/Translator'
 
 export default class FormStateLoop {
   constructor(dispatcher, events) {

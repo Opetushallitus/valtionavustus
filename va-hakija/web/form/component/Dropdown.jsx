@@ -1,6 +1,6 @@
 import React from 'react'
-import Translator from '../Translator.js'
-import BasicFieldComponent from './BasicFieldComponent.jsx'
+import Translator from 'va-common/web/form/Translator'
+import BasicFieldComponent from 'va-common/web/form/component/BasicFieldComponent.jsx'
 
 export default class Dropdown extends BasicFieldComponent {
   render() {

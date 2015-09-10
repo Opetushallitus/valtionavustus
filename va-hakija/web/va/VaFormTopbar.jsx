@@ -3,11 +3,11 @@ import _ from 'lodash'
 
 import FormSaveStatus from '../form/component/FormSaveStatus.jsx'
 import ToggleLanguageButton from '../form/component/ToggleLanguageButton.jsx'
-import LocalizedString from '../form/component/LocalizedString.jsx'
+import LocalizedString from '../../../va-common/web/form/component/LocalizedString.jsx'
 import FormErrorSummary from '../form/component/FormErrorSummary.jsx'
 import ServerError from '../form/component/ServerError.jsx'
 import TextButton from '../form/component/TextButton.jsx'
-import Translator from '../form/Translator.js'
+import Translator from '../../../va-common/web/form/Translator.js'
 
 import EnvironmentInfo from './EnvironmentInfo.jsx'
 

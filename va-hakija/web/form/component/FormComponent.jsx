@@ -1,5 +1,5 @@
 import React from 'react'
-import ComponentFactory from '../ComponentFactory.js'
+import ComponentFactory from 'va-common/web/form/ComponentFactory'
 import BasicTextField from './BasicTextField.jsx'
 import BasicTextArea from './BasicTextArea.jsx'
 import EmailTextField from './EmailTextField.jsx'
@@ -10,7 +10,7 @@ import BicTextField from './BicTextField.jsx'
 import Dropdown from './Dropdown.jsx'
 import RadioButton from './RadioButton.jsx'
 import TextButton from './TextButton.jsx'
-import {TextFieldPropertyMapper, OptionFieldPropertyMapper, ButtonPropertyMapper} from './PropertyMapper.js'
+import {TextFieldPropertyMapper, OptionFieldPropertyMapper, ButtonPropertyMapper} from 'va-common/web/form/component/PropertyMapper'
 
 export default class FormComponent extends React.Component {
   constructor(props) {

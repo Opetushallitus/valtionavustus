@@ -1,7 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
 import _ from 'lodash'
-import BasicFieldComponent from './BasicFieldComponent.jsx'
+import BasicFieldComponent from 'va-common/web/form/component/BasicFieldComponent.jsx'
 
 export default class BasicSizedComponent extends BasicFieldComponent {
   sizeClassName() {

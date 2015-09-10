@@ -1,6 +1,6 @@
 import React from 'react'
 
-import CSSTransitionGroup from './CSSTransitionGroup.jsx'
+import CSSTransitionGroup from 'va-common/web/form/component/wrapper/CSSTransitionGroup.jsx'
 
 export default class Fieldset extends React.Component {
   render() {

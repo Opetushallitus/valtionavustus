@@ -13,13 +13,13 @@ import HttpUtil from 'va-common/web/HttpUtil'
 import VaLoginTopbar from './VaLoginTopbar.jsx'
 import VaUrlCreator from './VaUrlCreator.js'
 
-import FormUtil from '../form/FormUtil.js'
+import FormUtil from '../../../va-common/web/form/FormUtil.js'
 import SyntaxValidator from '../form/SyntaxValidator.js'
-import LocalizedString from '../form/component/LocalizedString.jsx'
+import LocalizedString from '../../../va-common/web/form/component/LocalizedString.jsx'
 import EmailTextField from '../form/component/EmailTextField.jsx'
 import TextButton from '../form/component/TextButton.jsx'
-import {DateRangeInfoElement, H1InfoElement} from '../form/component/InfoElement.jsx'
-import HelpTooltip from '../form/component/HelpTooltip.jsx'
+import {DateRangeInfoElement, H1InfoElement} from '../../../va-common/web/form/component/InfoElement.jsx'
+import HelpTooltip from '../../../va-common/web/form/component/HelpTooltip.jsx'
 
 export default class VaLogin extends React.Component {
   constructor(props) {

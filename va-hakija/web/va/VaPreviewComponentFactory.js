@@ -2,8 +2,8 @@ import React from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
-import ComponentFactory from '../form/ComponentFactory.js'
-import LocalizedString from '../form/component/LocalizedString.jsx'
+import ComponentFactory from '../../../va-common/web/form/ComponentFactory.js'
+import LocalizedString from '../../../va-common/web/form/component/LocalizedString.jsx'
 import {VaBudgetElement, SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
 
 export default class VaPreviewComponentFactory extends ComponentFactory {

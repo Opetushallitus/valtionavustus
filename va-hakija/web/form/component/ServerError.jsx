@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import Translator from './../Translator.js'
+import Translator from 'va-common/web/form/Translator'
 
 export default class ServerError extends React.Component {
 

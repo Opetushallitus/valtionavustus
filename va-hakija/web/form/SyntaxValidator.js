@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import FormUtil from './FormUtil.js'
+import FormUtil from 'va-common/web/form/FormUtil.js'
 import BankAccountValidator from './BankAccountValidator.js'
 
 export default class SyntaxValidator {

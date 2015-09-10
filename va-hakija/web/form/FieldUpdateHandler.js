@@ -1,9 +1,9 @@
 import Immutable from 'seamless-immutable'
 import _ from 'lodash'
 
-import InputValueStorage from './InputValueStorage.js'
+import InputValueStorage from 'va-common/web/form/InputValueStorage.js'
 import SyntaxValidator from './SyntaxValidator.js'
-import JsUtil from './JsUtil.js'
+import JsUtil from 'va-common/web/form/JsUtil.js'
 
 export default class FieldUpdateHandler {
   static createFieldUpdate(field, value) {

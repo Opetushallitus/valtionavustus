@@ -1,6 +1,6 @@
 import React from 'react'
 
-import LocalizedString from '../form/component/LocalizedString.jsx'
+import LocalizedString from '../../../va-common/web/form/component/LocalizedString.jsx'
 
 import EnvironmentInfo from './EnvironmentInfo.jsx'
 

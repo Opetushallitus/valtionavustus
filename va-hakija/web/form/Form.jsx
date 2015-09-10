@@ -4,9 +4,9 @@ import _ from 'lodash'
 import styles from './style/main.less'
 
 import FormComponent from './component/FormComponent.jsx'
-import InfoElement from './component/InfoElement.jsx'
+import InfoElement from 'va-common/web/form/component/InfoElement.jsx'
 import WrapperComponent from './component/wrapper/WrapperComponent.jsx'
-import InputValueStorage from './InputValueStorage.js'
+import InputValueStorage from 'va-common/web/form/InputValueStorage.js'
 
 export default class Form extends React.Component {
   render() {

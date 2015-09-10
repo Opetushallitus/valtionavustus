@@ -2,7 +2,7 @@ import React from 'react'
 import Form from './Form.jsx'
 import _ from 'lodash'
 
-import FormPreview from './FormPreview.jsx'
+import FormPreview from 'va-common/web/form/FormPreview.jsx'
 
 export default class FormContainer extends React.Component {
   render() {

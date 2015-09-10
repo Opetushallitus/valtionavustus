@@ -1,9 +1,9 @@
 import _ from 'lodash'
 
-import InputValueStorage from './InputValueStorage.js'
+import InputValueStorage from 'va-common/web/form/InputValueStorage.js'
 import FieldUpdateHandler from './FieldUpdateHandler.js'
-import JsUtil from './JsUtil.js'
-import FormUtil from './FormUtil.js'
+import JsUtil from 'va-common/web/form/JsUtil.js'
+import FormUtil from 'va-common/web/form/FormUtil.js'
 
 export default class FormBranchGrower {
   static addFormFieldsForGrowingFieldsInInitialRender(formSpecificationContent, formContent, answers) {

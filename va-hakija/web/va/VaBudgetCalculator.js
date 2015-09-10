@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
-import JsUtil from '../form/JsUtil.js'
-import InputValueStorage from '../form/InputValueStorage.js'
+import JsUtil from '../../../va-common/web/form/JsUtil.js'
+import InputValueStorage from '../../../va-common/web/form/InputValueStorage.js'
 import SyntaxValidator from '../form/SyntaxValidator.js'
 import FieldUpdateHandler from '../form/FieldUpdateHandler.js'
 

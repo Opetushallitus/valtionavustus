@@ -11,7 +11,7 @@ import HttpUtil from 'va-common/web/HttpUtil'
 import FormController from './../form/FormController'
 import FieldUpdateHandler from './../form/FieldUpdateHandler.js'
 import ResponseParser from './../form/ResponseParser'
-import JsUtil from './../form/JsUtil.js'
+import JsUtil from 'va-common/web/form/JsUtil.js'
 
 import VaForm from './VaForm.jsx'
 import VaUrlCreator from './VaUrlCreator'

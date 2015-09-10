@@ -1,7 +1,7 @@
 import React from 'react'
 import Bowser from 'bowser'
 
-import LocalizedString from '../form/component/LocalizedString.jsx'
+import LocalizedString from '../../../va-common/web/form/component/LocalizedString.jsx'
 import LocalizedLink from '../form/component/LocalizedLink.jsx'
 
 export default class VaOldBrowserWarning extends React.Component {

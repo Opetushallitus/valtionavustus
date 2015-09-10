@@ -1,6 +1,6 @@
 import React from 'react'
 
-import ComponentFactory from '../form/ComponentFactory.js'
+import ComponentFactory from '../../../va-common/web/form/ComponentFactory.js'
 import {VaBudgetElement, SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
 import VaProjectDescription from './VaProjectDescription.jsx'
 

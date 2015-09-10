@@ -1,6 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
-import Translator from '../Translator.js'
+import Translator from 'va-common/web/form/Translator'
 
 export default class RemoveButton extends React.Component {
   render() {
