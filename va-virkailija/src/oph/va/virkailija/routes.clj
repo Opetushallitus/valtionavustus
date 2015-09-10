@@ -106,7 +106,7 @@
         (if-let [identity (auth/authenticate username password)]
           (-> (resp/redirect "/")
               (assoc :session {:identity identity}))
-          (forbidden "Invalid credentials")))
+          (resp/redirect "/login")))
 
   (POST "/logout" [:as request]
         (auth/logout (-> request :session :identity))
