@@ -9,7 +9,7 @@
 (defn is-test-output? [line]
   (or (.contains line "testcase") (.contains line "testsuite")))
 
-(describe "Mocha UI tests /"
+(describe "va-hakija module Mocha UI tests /"
 
   (tags :ui)
 
@@ -30,7 +30,7 @@
         (.println System/err (:err results))
         (should= 0 (:exit results)))))
 
-(describe "Mocha unit tests /"
+(describe "va-hakija module Mocha unit tests /"
 
   (tags :js-unit)
 

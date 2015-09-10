@@ -7,7 +7,7 @@
 (defn is-test-output? [line]
   (or (.contains line "testcase") (.contains line "testsuite")))
 
-(describe "Mocha unit tests /"
+(describe "va-common module Mocha unit tests /"
 
   (tags :js-unit)
 
