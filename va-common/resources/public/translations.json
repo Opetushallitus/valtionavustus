@@ -120,6 +120,14 @@
       "fi": "Aloita hakemuksen täyttäminen",
       "sv": "Börja fylla i ansökan"
     },
+    "preview": {
+      "fi": "Esikatsele",
+      "sv": "Förhandsgranska"
+    },
+    "preview-link": {
+      "fi": "hakulomaketta",
+      "sv": "ansökningsblanketten"
+    },
     "contact-email": {
       "fi": "Sähköpostiosoitteesi",
       "sv": "Din e-postadress"
