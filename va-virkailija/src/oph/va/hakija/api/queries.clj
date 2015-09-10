@@ -7,3 +7,4 @@
 (defquery get-avustushaku "sql/hakija/avustushaku/get.sql")
 (defquery get-avustushaku-roles "sql/hakija/avustushaku/get-roles.sql")
 (defquery list-hakemukset-by-avustushaku "sql/hakija/hakemus/list-by-avustushaku.sql")
+(defquery get-form-by-avustushaku "sql/hakija/form/get-by-avustushaku.sql")

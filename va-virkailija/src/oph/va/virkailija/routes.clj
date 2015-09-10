@@ -72,6 +72,8 @@
                  :name {:fi s/Str
                         :sv s/Str}
                  :self-financing-percentage s/Int}
+   :form {:content s/Any
+          :rules s/Any}
    :roles [Role]
    :hakemukset [Hakemus]})
 
