@@ -3,7 +3,11 @@
             [ring.util.response :as resp]
             [schema.utils :as schema]
             [compojure.api.exception :as compojure-ex]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [clojure.java.io :as java-io]))
+
+(defn return-from-classpath [filename]
+  (slurp (java-io/resource filename)))
 
 (defn return-html [filename]
   (-> (resp/resource-response filename {:root "public"})
