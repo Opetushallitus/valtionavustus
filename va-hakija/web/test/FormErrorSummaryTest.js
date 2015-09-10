@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const verboseAssert = require('assert')
 import { assert } from 'chai'
-const JsUtil = require('../form/JsUtil.js')
+const JsUtil = require('va-common/web/form/JsUtil.js')
 const FormErrorSummary = require('../form/component/FormErrorSummary.jsx')
 import {TestUtil} from './TestUtil.js'
 
