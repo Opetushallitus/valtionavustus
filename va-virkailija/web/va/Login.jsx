@@ -21,11 +21,11 @@ export default class Login extends React.Component {
         <section id="container">
           <h1>Kirjaudu sisään</h1>
           <form name="login" method="post">
-            <label for="username">Tunnus:</label>
+            <label htmlFor="username">Tunnus:</label>
             <input type="text" id="username" name="username" />
-            <label for="password">Salasana:</label>
+            <label htmlFor="password">Salasana:</label>
             <input type="password" id="username" name="password" />
-            <input type="submit" style={invisibleButton} tabindex="-1"/>
+            <input type="submit" style={invisibleButton} tabIndex="-1"/>
           </form>
         </section>
       </div>
