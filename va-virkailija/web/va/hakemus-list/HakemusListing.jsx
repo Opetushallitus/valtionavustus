@@ -53,10 +53,10 @@ class HakemusRow extends Component {
     return <tr className={rowClass} key={key} onClick={controller.selectHakemus(hakemus)}>
       <td>{hakemus["organization-name"]}</td>
       <td>{hakemus["project-name"]}</td>
-      <td>TODO</td>
-      <td className="status-column">TODO</td>
+      <td>***</td>
+      <td className="status-column">Käsittelemättä</td>
       <td className="applied-sum-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
-      <td className="granted-sum-column"><span className="money">TODO</span></td>
+      <td className="granted-sum-column"><span hidden="true" className="money"></span></td>
     </tr>
   }
 }
