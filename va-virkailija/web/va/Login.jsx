@@ -25,7 +25,7 @@ export default class Login extends React.Component {
             <label htmlFor="username">Tunnus:</label>
             <input type="text" id="username" name="username" />
             <label htmlFor="password">Salasana:</label>
-            <input type="password" id="username" name="password" />
+            <input type="password" id="password" name="password" />
             <input type="submit" style={invisibleButton} tabIndex="-1"/>
           </form>
         </section>
