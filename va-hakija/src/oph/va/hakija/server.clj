@@ -3,7 +3,7 @@
   (:require [ring.middleware.reload :as reload]
             [ring.middleware.logger :as logger]
             [ring.middleware.conditional :refer [if-url-doesnt-match]]
-            [compojure.handler :refer [site]]
+            [ring.middleware.defaults :refer :all]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
             [oph.common.config :refer [config]]
@@ -27,11 +27,12 @@
 (defn- create-all-routes [] #'all-routes)
 
 (defn- create-site []
-  (site (if (-> config :api :restricted-routes?)
-                       (create-restricted-routes)
-                       (do
-                         (log/warn "Enabling all routes. This setting should be used only in development!")
-                         (create-all-routes)))))
+  (-> (if (-> config :api :restricted-routes?)
+        (create-restricted-routes)
+        (do
+          (log/warn "Enabling all routes. This setting should be used only in development!")
+          (create-all-routes)))
+      (wrap-defaults site-defaults)))
 
 (defn- with-log-wrapping [site]
   (if (-> config :server :enable-access-log?)

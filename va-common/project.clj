@@ -16,6 +16,7 @@
                  [ring/ring-core "1.4.0"]
 
                  ;; Routing
+                 [ring/ring-defaults "0.1.5"]
                  [compojure "1.4.0" :exclusions [instaparse]]
                  [metosin/compojure-api "0.23.0" :exclusions [commons-codec
                                                               instaparse
