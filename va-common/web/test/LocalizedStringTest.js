@@ -1,6 +1,6 @@
 import jsdom from 'mocha-jsdom'
 import { expect } from 'chai'
-import translations from '../../../va-hakija/resources/public/translations.json'
+import translations from '../../resources/public/translations.json'
 require("babel/register")({
   only: /(va-hakija\/web|va-common\/web)/
 });
