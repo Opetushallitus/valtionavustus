@@ -86,6 +86,12 @@
           (ok response)
           (not-found))))
 
+(defroutes* userinfo-routes
+  "User information"
+
+  (GET "/" [:as request]
+       (ok (auth/check-identity (-> request :session :identity)))))
+
 (defroutes* login-routes
   "Authentication"
 
@@ -110,9 +116,13 @@
 
 (defn- create-swagger-docs []
   (swagger-docs {:info {:title "Valtionavustus API"}
-                 :tags [{:name        "avustushaku"
+                 :tags [{:name "avustushaku"
                          :description "Avustushaku and hakemus listing and filtering"}
-                        {:name        "healthcheck"
+                        {:name "login"
+                         :description "Login and logout"}
+                        {:name "userinfo"
+                         :description "User information about currently logged in user"}
+                        {:name "healthcheck"
                          :description "Healthcheck"}]}))
 
 (defapi all-routes
@@ -126,6 +136,7 @@
 
   (context* "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
   (context* "/login" [] :tags ["login"] login-routes)
+  (context* "/userinfo" [] :tags ["userinfo"] userinfo-routes)
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
 
   ;; Documentation

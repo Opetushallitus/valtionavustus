@@ -49,6 +49,7 @@
     {:username (:uid details)
      :first-name (:cn details)
      :surname (:cn details)
+     :email (:email details)
      :lang (:preferredLanguage details)}))
 
 (defn get-details [username]
