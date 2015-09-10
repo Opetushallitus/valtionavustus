@@ -18,7 +18,7 @@ logical_volumes:
     mount_point: /postgresql-backups
   data:
     filesystem: xfs
-    size: 10g
+    size: 100g
     mount_point: /data
   home2:
     filesystem: xfs
