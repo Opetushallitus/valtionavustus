@@ -70,7 +70,8 @@
   {:avustushaku {:id s/Int
                  :name {:fi s/Str
                         :sv s/Str}
-                 :self-financing-percentage s/Int}
+                 :self-financing-percentage s/Int
+                 :content s/Any}
    :form {:content s/Any
           :rules s/Any}
    :roles [Role]

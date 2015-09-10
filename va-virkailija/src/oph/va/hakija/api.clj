@@ -21,7 +21,8 @@
 (defn- avustushaku->json [avustushaku]
   {:id (:id avustushaku)
    :name (-> avustushaku :content :name)
-   :self-financing-percentage (-> avustushaku :content :self-financing-percentage)})
+   :self-financing-percentage (-> avustushaku :content :self-financing-percentage)
+   :content (-> avustushaku :content)})
 
 (defn- form->json [form]
   {:content (:content form)
