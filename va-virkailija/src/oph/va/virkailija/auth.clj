@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.auth
   (:use [clojure.tools.trace :only [trace]])
-  (:require [oph.va.virkailija.login :refer [login]]
+  (:require [oph.va.virkailija.login :refer [login get-details]]
             [buddy.core.nonce :as nonce]
             [buddy.core.codecs :as codecs]))
 
@@ -19,4 +19,12 @@
 
 (defn check-identity [identity]
   (if-let [{:keys [token username]} identity]
-    token))
+    (if (contains? @tokens token)
+      (get @tokens token)
+      (when-let [details (get-details username)]
+        (swap! tokens assoc token details)
+        details))))
+
+(defn logout [identity]
+  (if-let [{:keys [token username]} identity]
+    (swap! tokens dissoc token)))

@@ -99,9 +99,10 @@
               (assoc :session {:identity identity}))
           (forbidden "Invalid credentials")))
 
-  (POST "/logout" []
-       (-> (resp/redirect "/login")
-           (dissoc :session))))
+  (POST "/logout" [:as request]
+        (auth/logout (-> request :session :identity))
+        (-> (resp/redirect "/login")
+            (assoc :session nil))))
 
 (defroutes* doc-routes
   "API documentation browser"

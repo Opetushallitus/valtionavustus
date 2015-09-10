@@ -44,9 +44,20 @@
                      required-group " missing, got only "
                      (pr-str description))))))
 
+(defn- details->map [details]
+  (when details
+    {:username (:uid details)
+     :first-name (:cn details)
+     :surname (:cn details)
+     :lang (:preferredLanguage details)}))
+
+(defn get-details [username]
+  (let [ldap-server (create-ldap-connection)]
+    (details->map (find-user-details ldap-server username))))
+
 (defn login [username password]
   (let [ldap-server (create-ldap-connection)
         credentials-valid? (ldap/bind? ldap-server (people-path username) password)]
     (if credentials-valid?
-      (check-app-access ldap-server username)
+      (details->map (check-app-access ldap-server username))
       (log/info (str "Login failed for username '" username "'")))))

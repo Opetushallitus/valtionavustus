@@ -39,7 +39,6 @@
 (defn any-access [request] true)
 
 (defn authenticated-access [request]
-  (trace "request" request)
   (if (auth/check-identity (-> request :session :identity))
     true
     (error "Authentication required")))
