@@ -49,7 +49,7 @@
     {:username (:uid details)
      :first-name (:cn details)
      :surname (:cn details)
-     :email (:email details)
+     :email (:mail details)
      :lang (:preferredLanguage details)}))
 
 (defn get-details [username]
@@ -60,5 +60,6 @@
   (let [ldap-server (create-ldap-connection)
         credentials-valid? (ldap/bind? ldap-server (people-path username) password)]
     (if credentials-valid?
-      (details->map (check-app-access ldap-server username))
+      (when (check-app-access ldap-server username)
+        (details->map (find-user-details ldap-server username)))
       (log/info (str "Login failed for username '" username "'")))))

@@ -91,7 +91,9 @@
   "User information"
 
   (GET "/" [:as request]
-       (ok (auth/check-identity (-> request :session :identity)))))
+       (ok (auth/check-identity (-> request
+                                    :session
+                                    :identity)))))
 
 (defroutes* login-routes
   "Authentication"
