@@ -99,7 +99,7 @@
               trace)
           (forbidden "Invalid credentials")))
 
-  (GET "/logout" []
+  (POST "/logout" []
        (-> (resp/redirect "/login")
            (dissoc :session))))
 
