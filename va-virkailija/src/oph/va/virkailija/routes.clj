@@ -39,7 +39,7 @@
   (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
     :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
     (on-hakemus-preview avustushaku-id hakemus-user-key))
-
+  (GET "/translations.json" [] (get-translations))
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 

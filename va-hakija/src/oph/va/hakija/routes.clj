@@ -92,7 +92,7 @@
   (GET "/statsunderstod/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
   (route/resources "/statsunderstod/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
 
-  (GET "/translations.json" [] (return-from-classpath "translations.json" "application/json"))
+  (GET "/translations.json" [] (get-translations))
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
