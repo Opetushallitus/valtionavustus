@@ -62,6 +62,7 @@
   :target-path "target/%s"
 
   :prep-tasks [
+       "buildfront"
        "javac"
        "compile"
   ]
@@ -77,4 +78,5 @@
   :uberjar-exclusions [#".*"]                               ;; Kludge to make top-level "lein sub uberjar" faster
 
   :aliases {"dbmigrate" ["run" "-m" "oph.va.db.migrations/migrate"]
-            "dbclear" ["run" "-m" "oph.common.db/clear-db!"]})
+            "dbclear" ["run" "-m" "oph.common.db/clear-db!"]
+            "buildfront" ^{:doc "Build frontend code with npm"} ["shell" "npm" "install"]})
