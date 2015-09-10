@@ -48,7 +48,7 @@
   (when details
     {:username (:uid details)
      :first-name (:cn details)
-     :surname (:cn details)
+     :surname (:sn details)
      :email (:mail details)
      :lang (:preferredLanguage details)}))
 
