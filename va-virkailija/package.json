@@ -51,7 +51,7 @@
     "build": "UGLIFY=true webpack -p",
     "watch-web": "webpack -d --progress --colors --watch",
     "update-common-web": "rm -rf node_modules/va-common && npm install va-common",
-    "watch-common-web": "watch-spawn -d 100 -p '../va-common/web/**/*.js*' -p '../va-common/package.json' npm run update-common-web",
+    "watch-common-web": "watch-spawn -d 100 -p '../va-common/web/**/*' -p '../va-common/package.json' npm run update-common-web",
     "watch": "npm run update-common-web && (npm run watch-common-web & npm run watch-web)"
   }
 }
