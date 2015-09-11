@@ -116,6 +116,7 @@
   (context* "/doc" [] doc-routes)
 
   ;; Resources
+  config-routes
   resource-routes)
 
 (defapi all-routes
