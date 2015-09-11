@@ -18,7 +18,7 @@ import VaUrlCreator from './VaUrlCreator'
 import VaComponentFactory from './VaComponentFactory.js'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import {BudgetItemElement} from 'va-common/web/va/VaBudgetComponents.jsx'
-import {VaBudgetCalculator} from './VaBudgetCalculator.js'
+import {VaBudgetCalculator} from 'va-common/web/va/VaBudgetCalculator'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 

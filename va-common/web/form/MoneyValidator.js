@@ -1,4 +1,4 @@
-import FormUtil from 'va-common/web/form/FormUtil'
+import FormUtil from './FormUtil.js'
 
 export default class MoneyValidator {
   static validateMoneyField(value, validationErrors) {

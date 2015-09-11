@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import FormUtil from 'va-common/web/form/FormUtil.js'
 import BankAccountValidator from './BankAccountValidator.js'
-import MoneyValidator from './MoneyValidator.js'
+import MoneyValidator from 'va-common/web/form/MoneyValidator'
 
 export default class SyntaxValidator {
   static validateSyntax(field, value) {
