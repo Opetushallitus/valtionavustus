@@ -72,7 +72,7 @@
         (if-let [identity (auth/authenticate username password)]
           (-> (resp/redirect "/")
               (assoc :session {:identity identity}))
-          (resp/redirect "/login")))
+          (resp/redirect "/login?error=true")))
 
   (POST "/logout" [:as request]
         (auth/logout (-> request :session :identity))
