@@ -1,0 +1,68 @@
+@import "../../../../va-common/web/form/style/variables";
+
+.ease-in-out(@seconds) {
+  -webkit-transition: all @seconds ease-in-out;
+  -moz-transition: all @seconds ease-in-out;
+  -ms-transition: all @seconds ease-in-out;
+  -o-transition: all @seconds ease-in-out;
+  transition: all @seconds ease-in-out;
+}
+
+.scale (@factor) {
+  -webkit-transform: scale(@factor);
+  -moz-transform: scale(@factor);
+  -ms-transform: scale(@factor);
+  -o-transform: scale(@factor);
+  transform: scale(@factor);
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background-color: @lightest-gray;
+  color: @text-black;
+  font-size: 16px;
+}
+
+#container {
+  max-width: @form-width;
+  margin-top: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px 20px 20px;
+
+  label:after {
+    content: " ";
+  }
+
+  h1 {
+    font-weight: 300;
+    font-size: 24px;
+    margin: 0;
+  }
+
+  h2 {
+    color: @darker-gray;
+    font-weight: 300;
+    font-size: 18px;
+  }
+}
+
+a {
+  color: @dark-blue;
+  cursor: pointer;
+}
+
+button {
+  color: #fff;
+  background-color: @light-green;
+  border-width: 0px;
+  margin: 4px 20px 4px 0px;
+  padding: 8px 15px;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+button[disabled] {
+  background-color: @light-gray;
+  border: 1px solid @light-gray;
+}

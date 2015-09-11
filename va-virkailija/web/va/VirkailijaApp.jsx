@@ -10,9 +10,9 @@ import AvustushakuSelector from './avustushaku/AvustushakuSelector.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusDetails from './hakemus-details/HakemusDetails.jsx'
 
-import common from 'va-common/web/form/style/main.less'
-import style from './style/main.less'
+import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'
+import style from './style/main.less'
 
 export default class App extends Component {
   render() {

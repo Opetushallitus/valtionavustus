@@ -5,7 +5,7 @@ import React from 'react'
 import QueryString from 'query-string'
 import Bacon from 'baconjs'
 
-import common from 'va-common/web/form/style/main.less'
+import common from '../form/style/main.less'
 import loginStyle from './style/va-login.less'
 
 import HttpUtil from 'va-common/web/HttpUtil'
