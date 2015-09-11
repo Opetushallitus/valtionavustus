@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 
 import FormPreview from 'va-common/web/form/FormPreview.jsx'
-import HakemusPreview from './HakemusPreview.jsx'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 
 export default class HakemusDetails extends Component {
@@ -29,7 +28,6 @@ export default class HakemusDetails extends Component {
     return (
       <div id="hakemus-details">
         <FormPreview {...formElementProps}/>
-        <HakemusPreview avustushakuId={avustushaku.id} hakemus={hakemus}/>
       </div>
     )
   }
