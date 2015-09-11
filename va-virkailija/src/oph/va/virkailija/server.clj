@@ -59,14 +59,19 @@
       (wrap-access-rules {:rules rules})))
 
 (defn start-server [host port auto-reload?]
-  (let [defaults (-> site-defaults
+  (let [cookie-defaults {:max-age 60000
+                         :http-only false}
+        defaults (-> site-defaults
                      (assoc-in [:security :anti-forgery] false)
                      (assoc :session {:store (cookie-store {:key (-> config
                                                                      :server
                                                                      :cookie-key)})
                                       :cookie-name "identity"
-                                      :cookie-attrs {:max-age 3600
-                                                     :http-only false}}))
+                                      :cookie-attrs (if (-> config
+                                                            :server
+                                                            :require-https?)
+                                                      (assoc cookie-defaults :secure true)
+                                                      cookie-defaults)}))
         routes (-> #'all-routes
                    (with-authentication)
                    (wrap-defaults defaults)

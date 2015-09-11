@@ -2,7 +2,8 @@
           :allow-db-clear? false
           :enable-access-log? true
           :host "localhost"
-          :port 8081}
+          :port 8081
+          :require-https? true}
  :ui {:show-environment? true}
  :db {:pool-name "virkailija-pool"
       :username "va_virkailija"
