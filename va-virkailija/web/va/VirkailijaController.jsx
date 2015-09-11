@@ -14,7 +14,7 @@ const events = {
 export default class VirkailijaController {
   initializeState() {
     const initialStateTemplate = {
-      avustushaku: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/1")),
+      hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/1")),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
       selectedHakemus: undefined
     }
@@ -31,7 +31,7 @@ export default class VirkailijaController {
   }
 
   onInitialState(emptyState, realInitialState) {
-    var hakemusList = realInitialState.avustushaku.hakemukset;
+    var hakemusList = realInitialState.hakuData.hakemukset;
     if (hakemusList && !_.isEmpty(hakemusList)) {
       realInitialState.selectedHakemus = hakemusList[0]
     }

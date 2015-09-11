@@ -65,8 +65,8 @@
                    :role (s/enum "presenting_officer"
                                  "evaluator")})
 
-(s/defschema Avustushaku
-  "Avustushaku structured response"
+(s/defschema HakuData
+  "Avustushaku structured response with related form, roles, hakemukset etc"
   {:avustushaku {:id s/Int
                  :name {:fi s/Str
                         :sv s/Str}
@@ -82,7 +82,7 @@
 
   (GET* "/:avustushaku-id" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
-        :return Avustushaku
+        :return HakuData
         (if-let [response (hakija-api/get-avustushaku avustushaku-id)]
           (ok response)
           (not-found))))

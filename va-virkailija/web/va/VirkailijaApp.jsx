@@ -16,7 +16,7 @@ import topbar from './style/topbar.less'
 
 export default class App extends Component {
   render() {
-    const hakuData = this.props.state.avustushaku
+    const hakuData = this.props.state.hakuData
     const avustushaku = hakuData.avustushaku
     const hakemusList = hakuData.hakemukset
     const selectedHakemus = this.props.state.selectedHakemus
@@ -42,7 +42,7 @@ const stateP = controller.initializeState()
 
 stateP.onValue((state) => {
   try {
-    if (state.avustushaku) {
+    if (state.hakuData) {
       React.render(<App state={state} controller={controller}/>, document.getElementById('app'))
     }
   } catch (e) {
