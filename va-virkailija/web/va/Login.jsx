@@ -11,9 +11,7 @@ import queryString from 'query-string'
 
 export default class Login extends React.Component {
   render() {
-    const lang = "fi"
     const query = queryString.parse(location.search)
-    const translations = {"login": {"fi": ">"}}
     const errorMessage = (<div className="error">Sisäänkirjautuminen epäonnistui. Tarkista käyttäjänimi ja salasana</div>)
     const error = query.error == "true" ? errorMessage : (<div></div>)
     return (
