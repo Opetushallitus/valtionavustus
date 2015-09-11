@@ -6,7 +6,7 @@ export default class AvustushakuSelector extends Component {
     return (
       <div className="avustushaku-name">
          <label>Avustushaku:</label>
-         <span>{avustushaku.name.fi}</span>
+         <span>{avustushaku.content.name.fi}</span>
       </div>
     )
   }

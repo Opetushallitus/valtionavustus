@@ -12,6 +12,7 @@
             [oph.common.routes :refer :all]
             [oph.form.routes :refer :all]
             [oph.form.schema :refer :all]
+            [oph.va.routes :refer :all]
             [oph.va.schema :refer :all]
             [oph.va.hakija.db :as hakija-db]
             [oph.va.hakija.schema :refer :all]
@@ -29,12 +30,8 @@
           (ok {})
           (not-found))))
 
-(defn avustushaku-ok-response [avustushaku]
-  (ok {:id (:id avustushaku)
-       :content (:content avustushaku)
-       :form (:form avustushaku)
-       :environment {:name (config-simple-name)
-                     :show-name (:show-environment? (:ui config))}}))
+(defn- avustushaku-ok-response [avustushaku]
+  (ok (avustushaku-response-content avustushaku)))
 
 (defroutes* avustushaku-routes
   "Avustushaku routes"

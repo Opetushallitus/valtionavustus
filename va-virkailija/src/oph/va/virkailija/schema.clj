@@ -20,11 +20,7 @@
 
 (s/defschema HakuData
   "Avustushaku structured response with related form, roles, hakemukset etc"
-  {:avustushaku {:id s/Int
-                 :name {:fi s/Str
-                        :sv s/Str}
-                 :self-financing-percentage s/Int
-                 :content s/Any}
+  {:avustushaku AvustusHaku
    :form {:content s/Any
           :rules s/Any}
    :roles [Role]

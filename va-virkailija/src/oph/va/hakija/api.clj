@@ -2,7 +2,8 @@
   (:use [clojure.tools.trace :only [trace]]
         [clojure.pprint :only [pprint]])
   (:require [oph.common.db :refer :all]
-            [oph.va.hakija.api.queries :as hakija-queries]))
+            [oph.va.hakija.api.queries :as hakija-queries]
+            [oph.va.routes :refer :all]))
 
 
 (defn health-check []
@@ -17,12 +18,6 @@
 
 (defn- get-avustushaku-roles [avustushaku-id]
   (exec :hakija-db hakija-queries/get-avustushaku-roles {:avustushaku_id avustushaku-id}))
-
-(defn- avustushaku->json [avustushaku]
-  {:id (:id avustushaku)
-   :name (-> avustushaku :content :name)
-   :self-financing-percentage (-> avustushaku :content :self-financing-percentage)
-   :content (-> avustushaku :content)})
 
 (defn- form->json [form]
   {:content (:content form)
@@ -53,7 +48,7 @@
         form (first (exec :hakija-db hakija-queries/get-form-by-avustushaku {:avustushaku_id avustushaku-id}))
         roles (get-avustushaku-roles 1)
         hakemukset (exec :hakija-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})]
-    {:avustushaku (avustushaku->json avustushaku)
+    {:avustushaku (avustushaku-response-content avustushaku)
      :roles (roles->json roles)
      :form (form->json form)
      :hakemukset (hakemukset->json hakemukset)
