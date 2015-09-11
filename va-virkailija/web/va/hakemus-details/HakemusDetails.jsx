@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
+import _ from 'lodash'
+import Immutable from 'seamless-immutable'
 
 import FormPreview from 'va-common/web/form/FormPreview.jsx'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
+import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 
 export default class HakemusDetails extends Component {
   render() {
@@ -10,6 +13,7 @@ export default class HakemusDetails extends Component {
     const hakuData = this.props.hakuData
     const translations = this.props.translations
     const controller = new FakeFormController(avustushaku)
+    hakuData.form.validationErrors = Immutable({})
     const formState = {
       configuration: {
         translations: translations,
@@ -25,6 +29,8 @@ export default class HakemusDetails extends Component {
       infoElementValues: avustushaku,
       controller: controller
     }
+    const budgetCalculator = new VaBudgetCalculator()
+    budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(formState, true)
     return (
       <div id="hakemus-details">
         <FormPreview {...formElementProps}/>

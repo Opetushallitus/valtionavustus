@@ -4,8 +4,9 @@ import JsUtil from '../form/JsUtil.js'
 import InputValueStorage from '../form/InputValueStorage.js'
 import MoneyValidator from '../form/MoneyValidator'
 
-export class VaBudgetCalculator {
+export default class VaBudgetCalculator {
   constructor(onSumCalculatedCallback) {
+    console.log('onSumCalculatedCallback', onSumCalculatedCallback)
     this.onSumCalculatedCallback = _.isFunction(onSumCalculatedCallback) ? onSumCalculatedCallback : _.noop
   }
 
