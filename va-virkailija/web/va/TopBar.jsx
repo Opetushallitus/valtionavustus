@@ -18,7 +18,7 @@ export default class VaLogin extends React.Component {
         <div hidden={!user} id="form-controls">
           <div className="user">{user}</div>
           <form action="/login/logout" name="logout" method="post">
-            <TextButton type="submit" htmlId="logout-button" hidden={false} translations={translations} translationKey="logout" lang={lang} />
+            <TextButton type="submit" htmlId="logout-button" translations={translations} translationKey="logout" lang={lang} />
           </form>
         </div>
       </div>

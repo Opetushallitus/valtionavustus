@@ -7,15 +7,12 @@ import style from './style/login.less'
 
 import TopBar from './TopBar.jsx'
 
+import TextButton from 'va-common/web/form/component/TextButton.jsx'
+
 export default class Login extends React.Component {
   render() {
-    const invisibleButton= {
-      position: 'absolute',
-      left: '-9999px',
-      width: '1px',
-      height: '1px'
-    }
-
+    const lang = "fi"
+    const translations = {"login": {"fi": ">"}}
     return (
       <div>
         <TopBar title="Virkailija" />
@@ -26,7 +23,7 @@ export default class Login extends React.Component {
             <input type="text" id="username" ref="nameInput" name="username" />
             <label htmlFor="password">Salasana:</label>
             <input type="password" id="password" name="password" />
-            <input type="submit" style={invisibleButton} tabIndex="-1"/>
+            <TextButton type="submit" translations={translations} translationKey="login" lang={lang} />
           </form>
         </section>
       </div>
