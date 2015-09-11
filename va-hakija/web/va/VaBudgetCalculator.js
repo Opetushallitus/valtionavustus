@@ -3,15 +3,18 @@ import _ from 'lodash'
 import JsUtil from '../../../va-common/web/form/JsUtil.js'
 import InputValueStorage from '../../../va-common/web/form/InputValueStorage.js'
 import SyntaxValidator from '../form/SyntaxValidator.js'
-import FieldUpdateHandler from '../form/FieldUpdateHandler.js'
 
 export class VaBudgetCalculator {
-  static populateBudgetCalculatedValuesForAllBudgetFields(initialState, reportTotalError) {
-    const budgetFields = JsUtil.flatFilter(initialState.form.content, n => { return n.displayAs === "vaBudget" })
-    _.forEach(budgetFields, budgetField => { VaBudgetCalculator.populateBudgetCalculatedValues(initialState, budgetField, reportTotalError ) })
+  constructor(onSumCalculatedCallback) {
+    this.onSumCalculatedCallback = _.isFunction(onSumCalculatedCallback) ? onSumCalculatedCallback : _.noop
   }
 
-static handleBudgetAmountUpdate(state, amountFieldId) {
+  populateBudgetCalculatedValuesForAllBudgetFields(initialState, reportTotalError) {
+    const budgetFields = JsUtil.flatFilter(initialState.form.content, n => { return n.displayAs === "vaBudget" })
+    _.forEach(budgetFields, budgetField => { this.populateBudgetCalculatedValues(initialState, budgetField, reportTotalError ) })
+  }
+
+  handleBudgetAmountUpdate(state, amountFieldId) {
     const formContent = state.form.content
     const vaBudgetFields = JsUtil.flatFilter(formContent, n => { return n.displayAs === "vaBudget" && !_.isEmpty(JsUtil.findJsonNodeContainingId(n, amountFieldId)) })
     if (_.isEmpty(vaBudgetFields)) {
@@ -20,10 +23,12 @@ static handleBudgetAmountUpdate(state, amountFieldId) {
     if (vaBudgetFields.length !== 1) {
       throw new Error(amountFieldId + ' has ' + vaBudgetFields.length + ' budget parents, looks like bug.')
     }
-    return VaBudgetCalculator.populateBudgetCalculatedValues(state, vaBudgetFields[0], true)
+    return this.populateBudgetCalculatedValues(state, vaBudgetFields[0], true)
   }
 
-  static populateBudgetCalculatedValues(state, vaBudgetField, reportTotalError) {
+  populateBudgetCalculatedValues(state, vaBudgetField, reportTotalError) {
+    const sumCalculatedCallback = this.onSumCalculatedCallback
+
     const answersObject = state.saveStatus.values
 
     const summingFieldChildren = JsUtil.flatFilter(vaBudgetField.children, child => { return child.displayAs === "vaSummingBudgetElement" })
@@ -52,7 +57,7 @@ static handleBudgetAmountUpdate(state, amountFieldId) {
           const isAmountValid = _.isEmpty(SyntaxValidator.validateSyntax(amountField, amountValue))
           const valueToUse = isAmountValid ? amountValue : 0
           descriptionField.required = isAmountValid && valueToUse > 0
-          FieldUpdateHandler.triggerFieldUpdatesForValidation([descriptionField], state)
+          sumCalculatedCallback(descriptionField, state)
           return { "containsErrors": !isAmountValid, "value": amountCoefficient * valueToUse }
         })
         const sum = _.reduce(amountValues, (total, errorsAndValue) => { return total + errorsAndValue.value }, 0)

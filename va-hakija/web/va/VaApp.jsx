@@ -36,10 +36,13 @@ const responseParser = new ResponseParser({
 })
 
 const urlCreator = new VaUrlCreator()
+const budgetCalculator = new VaBudgetCalculator((descriptionField, state) => {
+  FieldUpdateHandler.triggerFieldUpdatesForValidation([descriptionField], state)
+})
 
 function onFieldUpdate(state, field, newFieldValue) {
   if (field.displayAs === "moneyField") {
-    VaBudgetCalculator.handleBudgetAmountUpdate(state, field.id)
+    budgetCalculator.handleBudgetAmountUpdate(state, field.id)
   }
 }
 
@@ -71,7 +74,7 @@ function initialStateTemplateTransformation(template) {
 }
 
 function onInitialStateLoaded(initialState) {
-  VaBudgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(initialState, isNotFirstEdit(initialState))
+  budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(initialState, isNotFirstEdit(initialState))
 }
 
 function initVaFormController() {
