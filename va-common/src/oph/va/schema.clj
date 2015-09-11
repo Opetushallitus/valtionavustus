@@ -2,6 +2,12 @@
   (:require [schema.core :as s]
               [oph.form.schema :refer :all]))
 
+(create-form-schema [:vaBudget
+                     :vaSummingBudgetElement
+                     :vaBudgetItemElement
+                     :vaBudgetSummaryElement
+                     :vaProjectDescription])
+
 (s/defschema Duration {:label LocalizedString
                        :start s/Inst
                        :end s/Inst})

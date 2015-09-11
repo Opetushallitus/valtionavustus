@@ -17,12 +17,6 @@
             [oph.va.hakija.schema :refer :all]
             [oph.va.hakija.handlers :refer :all]))
 
-(create-form-schema [:vaBudget
-                     :vaSummingBudgetElement
-                     :vaBudgetItemElement
-                     :vaBudgetSummaryElement
-                     :vaProjectDescription])
-
 (defroutes* healthcheck-routes
   "Healthcheck routes"
 
