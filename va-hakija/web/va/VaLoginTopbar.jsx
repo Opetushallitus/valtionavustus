@@ -1,8 +1,8 @@
 import React from 'react'
 
-import LocalizedString from '../../../va-common/web/form/component/LocalizedString.jsx'
+import LocalizedString from 'va-common/web/form/component/LocalizedString.jsx'
 
-import EnvironmentInfo from './EnvironmentInfo.jsx'
+import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
 
 export default class VaLogin extends React.Component {
   constructor(props) {
@@ -14,7 +14,7 @@ export default class VaLogin extends React.Component {
       <div id="top-container">
         <img id="logo" src="img/logo.png"/>
         <h1 id="topic"><LocalizedString translations={this.props.translations.form} translationKey="heading" lang={this.props.lang}/></h1>
-        <div id="server-info"><EnvironmentInfo avustushaku={this.props.avustushaku}/></div>
+        <div id="server-info"><EnvironmentInfo environment={this.props.environment}/></div>
       </div>
     </section>
   }

@@ -49,6 +49,7 @@
         roles (get-avustushaku-roles 1)
         hakemukset (exec :hakija-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})]
     {:avustushaku (avustushaku-response-content avustushaku)
+     :environment (environment-content)
      :roles (roles->json roles)
      :form (form->json form)
      :hakemukset (hakemukset->json hakemukset)

@@ -25,7 +25,7 @@ export default class App extends Component {
     const username = user["first-name"] + " " + user["surname"]
     return (
       <section>
-        <TopBar user={username} title="Hakemusten arviointi"/>
+        <TopBar environment={hakuData.environment} user={username} title="Hakemusten arviointi"/>
         <section id="container">
           <AvustushakuSelector avustushaku={avustushaku} controller={controller} />
           <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]} hakemusList={hakemusList} selectedHakemus={selectedHakemus} controller={controller}/>

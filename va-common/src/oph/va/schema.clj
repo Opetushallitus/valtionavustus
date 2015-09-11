@@ -25,8 +25,7 @@
 
 (s/defschema AvustusHaku {:id Long
                           :content AvustusHakuContent
-                          :form Long
-                          :environment Environment})
+                          :form Long})
 
 (s/defschema HakemusStatus
   "Status from the application point of view"

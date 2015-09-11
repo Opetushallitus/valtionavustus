@@ -21,6 +21,7 @@
 (s/defschema HakuData
   "Avustushaku structured response with related form, roles, hakemukset etc"
   {:avustushaku AvustusHaku
+   :environment Environment
    :form {:content s/Any
           :rules s/Any}
    :roles [Role]

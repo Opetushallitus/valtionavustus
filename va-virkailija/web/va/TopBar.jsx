@@ -1,5 +1,7 @@
 import React from 'react'
 
+import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
+
 export default class VaLogin extends React.Component {
   constructor(props) {
     super(props)
@@ -7,6 +9,7 @@ export default class VaLogin extends React.Component {
 
   render() {
     const user = this.props.user
+    const environment = this.props.environment
     return <section id="topbar">
       <div id="top-container">
         <img id="logo" src="img/logo.png"/>
@@ -17,6 +20,7 @@ export default class VaLogin extends React.Component {
             <button type="submit">Kirjaudu ulos</button>
           </form>
         </div>
+        <div id="server-info"><EnvironmentInfo environment={environment}/></div>
       </div>
     </section>
   }

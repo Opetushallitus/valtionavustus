@@ -41,6 +41,10 @@ export default class VaUrlCreator extends UrlCreator {
     return "/api/avustushaku/" + avustusHakuId
   }
 
+  environmentConfigUrl() {
+    return "/environment"
+  }
+
   chooseInitialLanguage(urlContent) {
     const langQueryParam = urlContent.parsedQuery.lang
     const hostname = urlContent.location.hostname

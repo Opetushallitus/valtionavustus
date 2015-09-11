@@ -67,9 +67,11 @@ const urlContent = { parsedQuery: query, location: location }
 const develQueryParam =  query.devel || false
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(avustusHakuId)))
+const environmentP = Bacon.fromPromise(HttpUtil.get(urlCreator.environmentConfigUrl()))
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
+  template.configuration.environment = environmentP
   template.saveStatus.hakemusId = query.hakemus
 }
 

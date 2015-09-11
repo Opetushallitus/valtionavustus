@@ -82,6 +82,7 @@ export default class VaLogin extends React.Component {
     const lang = model.lang
     const translations = model.translations
     const avustushaku =  model.avustushaku
+    const environment =  model.environment
     const content = avustushaku.content
     const email = this.state.email
     const sent = this.state.sent
@@ -91,7 +92,7 @@ export default class VaLogin extends React.Component {
     const hakemusPreviewUrl = urlCreator.existingSubmissionEditUrl(avustushaku.id, "", lang, model.devel)
 
     return <div>
-      <VaLoginTopbar avustushaku={avustushaku} translations={translations} lang={lang} />
+      <VaLoginTopbar environment={environment} translations={translations} lang={lang} />
       <section id="container" className="soresu-fieldset">
         <H1InfoElement htmlId="name" lang={lang} values={content} />
         <DateRangeInfoElement htmlId="duration" translations={translations} translationKey="label" lang={lang} values={content} />
@@ -116,12 +117,14 @@ const urlContent = { parsedQuery: query, location: location }
 const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json"))
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(avustusHakuId)))
+const environmentP = Bacon.fromPromise(HttpUtil.get(urlCreator.environmentConfigUrl()))
 
 const initialStateTemplate = {
   translations: translationsP,
   lang: urlCreator.chooseInitialLanguage(urlContent),
   devel: query.devel,
-  avustushaku: avustusHakuP
+  avustushaku: avustusHakuP,
+  environment: environmentP
 }
 const initialState = Bacon.combineTemplate(initialStateTemplate)
 

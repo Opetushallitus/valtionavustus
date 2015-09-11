@@ -11,6 +11,7 @@
             [schema.core :as s]
             [oph.common.config :refer [config config-simple-name]]
             [oph.common.routes :refer :all]
+            [oph.va.routes :refer :all]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.auth :as auth]
@@ -31,7 +32,6 @@
 
 (defroutes resource-routes
   (GET "/" [] (return-html "index.html"))
-  (GET "/translations.json" [] (get-translations))
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
@@ -104,4 +104,5 @@
   (context* "/doc" [] doc-routes)
 
   ;; Resources
+  config-routes
   resource-routes)

@@ -1,6 +1,8 @@
 import React from 'react'
 import Bacon from 'baconjs'
 
+import HttpUtil from 'va-common/web/HttpUtil'
+
 import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'
 import style from './style/login.less'
@@ -11,12 +13,14 @@ import queryString from 'query-string'
 
 export default class Login extends React.Component {
   render() {
+    const model = this.props.model
+    const environment =  model.environment
     const query = queryString.parse(location.search)
     const errorMessage = (<div className="error">Sisäänkirjautuminen epäonnistui. Tarkista käyttäjänimi ja salasana</div>)
     const error = query.error == "true" ? errorMessage : (<div></div>)
     return (
       <div>
-        <TopBar title="Virkailija" />
+        <TopBar environment={environment} title="Virkailija" />
         <section id="container">
           <h1>Kirjaudu sisään</h1>
           {error}
@@ -37,7 +41,11 @@ export default class Login extends React.Component {
   }
 }
 
-const initialStateTemplate = {}
+const environmentP = Bacon.fromPromise(HttpUtil.get("/environment"))
+
+const initialStateTemplate = {
+  environment: environmentP
+}
 
 const initialState = Bacon.combineTemplate(initialStateTemplate)
 

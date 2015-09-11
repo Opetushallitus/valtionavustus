@@ -14,9 +14,6 @@
 (defn return-html [filename]
   (return-from-classpath filename "text/html"))
 
-(defn get-translations []
-  (return-from-classpath "translations.json" "application/json"))
-
 (defn exception-handler [^Exception ex data request]
   (log/error ex ex)
   (internal-server-error {:type "unknown-exception"
