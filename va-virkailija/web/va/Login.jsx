@@ -23,7 +23,7 @@ export default class Login extends React.Component {
           <h1>Kirjaudu sisään</h1>
           <form name="login" method="post">
             <label htmlFor="username">Tunnus:</label>
-            <input type="text" id="username" name="username" />
+            <input type="text" id="username" ref="nameInput" name="username" />
             <label htmlFor="password">Salasana:</label>
             <input type="password" id="password" name="password" />
             <input type="submit" style={invisibleButton} tabIndex="-1"/>
@@ -31,6 +31,10 @@ export default class Login extends React.Component {
         </section>
       </div>
     )
+  }
+
+  componentDidMount() {
+    React.findDOMNode(this.refs.nameInput).focus()
   }
 }
 
