@@ -14,6 +14,8 @@
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.auth :as auth]
+            [oph.form.schema :refer :all]
+            [oph.va.schema :refer :all]
             [oph.va.virkailija.schema :refer :all]
             [oph.va.virkailija.handlers :refer :all]))
 
@@ -43,17 +45,10 @@
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
-;; TODO: use form definition
-(s/defschema Answer {:key s/Str
-                     :value (s/either s/Str
-                                      s/Int
-                                      [(s/recursive #'Answer)])})
-
-;; TODO: use submission definition for status
 (s/defschema Hakemus {:id s/Int
                       :project-name s/Str
                       :organization-name s/Str
-                      :status (s/enum "new" "draft" "submitted")
+                      :status HakemusStatus
                       :budget-total s/Int
                       :budget-oph-share s/Int
                       :user-key s/Str

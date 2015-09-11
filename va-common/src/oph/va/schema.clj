@@ -21,3 +21,7 @@
                           :content AvustusHakuContent
                           :form Long
                           :environment Environment})
+
+(s/defschema HakemusStatus
+  "Status from the application point of view"
+  (s/enum "new" "draft" "submitted"))
