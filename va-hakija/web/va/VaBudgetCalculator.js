@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import JsUtil from '../../../va-common/web/form/JsUtil.js'
 import InputValueStorage from '../../../va-common/web/form/InputValueStorage.js'
-import SyntaxValidator from '../form/SyntaxValidator.js'
+import MoneyValidator from '../form/MoneyValidator.js'
 
 export class VaBudgetCalculator {
   constructor(onSumCalculatedCallback) {
@@ -54,7 +54,7 @@ export class VaBudgetCalculator {
           const descriptionField = itemField.children[0]
           const amountField = itemField.children[1]
           const amountValue = InputValueStorage.readValue(null, answersObject, amountField.id)
-          const isAmountValid = _.isEmpty(SyntaxValidator.validateSyntax(amountField, amountValue))
+          const isAmountValid = isNotEmpty(amountValue) && !MoneyValidator.validateMoney(amountValue)
           const valueToUse = isAmountValid ? amountValue : 0
           descriptionField.required = isAmountValid && valueToUse > 0
           sumCalculatedCallback(descriptionField, state)
@@ -68,6 +68,10 @@ export class VaBudgetCalculator {
           "sum": sum,
           "containsErrors": containsErrors
         }
+      }
+
+      function isNotEmpty(value) {
+        return value && _.trim(value).length > 0
       }
     }
   }

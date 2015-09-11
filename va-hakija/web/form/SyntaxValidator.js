@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import FormUtil from 'va-common/web/form/FormUtil.js'
 import BankAccountValidator from './BankAccountValidator.js'
+import MoneyValidator from './MoneyValidator.js'
 
 export default class SyntaxValidator {
   static validateSyntax(field, value) {
@@ -17,10 +18,7 @@ export default class SyntaxValidator {
     }
 
     if (field.displayAs === 'moneyField' && value) {
-      const moneyError = SyntaxValidator.validateMoney(value)
-      if (moneyError) {
-        validationErrors.push(moneyError)
-      }
+      MoneyValidator.validateMoneyField(value, validationErrors);
     }
 
     if (field.displayAs === 'finnishBusinessIdField' && value) {
@@ -58,10 +56,6 @@ export default class SyntaxValidator {
     const validEmail = validEmailRegexp.test(input) && lastPartIsLongerThanOne(input) && !invalidEmailRegexp.test(input)
     return validEmail ? undefined : { error: "email" }
 
-  }
-
-  static validateMoney(input) {
-    return /^[0-9]*$/.test(input) && FormUtil.isNumeric(input) ? undefined : { error: "money" }
   }
 
   static validateBusinessId(input) {
