@@ -2,9 +2,9 @@ import React from 'react'
 import _ from 'lodash'
 
 import LocalizedString from 'va-common/web/form/component/LocalizedString.jsx'
-import TextButton from 'va-common/web/form/component/TextButton.jsx'
 import Translator from 'va-common/web/form/Translator.js'
 
+import TextButton from '../form/component/TextButton.jsx'
 import FormSaveStatus from '../form/component/FormSaveStatus.jsx'
 import ToggleLanguageButton from '../form/component/ToggleLanguageButton.jsx'
 import FormErrorSummary from '../form/component/FormErrorSummary.jsx'

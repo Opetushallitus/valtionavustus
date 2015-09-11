@@ -7,8 +7,6 @@ import style from './style/login.less'
 
 import TopBar from './TopBar.jsx'
 
-import TextButton from 'va-common/web/form/component/TextButton.jsx'
-
 import queryString from 'query-string'
 
 export default class Login extends React.Component {
@@ -29,7 +27,7 @@ export default class Login extends React.Component {
             <input type="text" id="username" ref="nameInput" name="username" />
             <label htmlFor="password">Salasana:</label>
             <input type="password" id="password" name="password" />
-            <TextButton type="submit" translations={translations} translationKey="login" lang={lang} />
+            <button type="submit">&gt;</button>
           </form>
         </section>
       </div>
