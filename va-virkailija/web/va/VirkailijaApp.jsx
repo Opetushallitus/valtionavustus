@@ -26,7 +26,7 @@ export default class App extends Component {
         <TopBar user="Leena Koski" title="Hakemusten arviointi"/>
         <section id="container">
           <AvustushakuSelector avustushaku={avustushaku} controller={controller} />
-          <HakemusListing hakemusList={hakemusList} selectedHakemus={selectedHakemus} controller={controller}/>
+          <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]} hakemusList={hakemusList} selectedHakemus={selectedHakemus} controller={controller}/>
           <HakemusDetails hakuData={hakuData} avustushaku={avustushaku} hakemus={selectedHakemus}
                           translations={translations}/>
         </section>

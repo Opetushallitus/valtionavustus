@@ -28,4 +28,6 @@
    :form {:content s/Any
           :rules s/Any}
    :roles [Role]
-   :hakemukset [Hakemus]})
+   :hakemukset [Hakemus]
+   :budget-total-sum s/Int
+   :budget-oph-share-sum s/Int})

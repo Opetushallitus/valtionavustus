@@ -56,4 +56,6 @@
     {:avustushaku (avustushaku->json avustushaku)
      :roles (roles->json roles)
      :form (form->json form)
-     :hakemukset (hakemukset->json hakemukset)}))
+     :hakemukset (hakemukset->json hakemukset)
+     :budget-total-sum (reduce + (map :budget_total hakemukset))
+     :budget-oph-share-sum (reduce + (map :budget_oph_share hakemukset))}))

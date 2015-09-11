@@ -8,6 +8,7 @@ import Dispatcher from 'va-common/web/Dispatcher'
 export default class HakemusListing extends Component {
   render() {
     const hakemusList = this.props.hakemusList
+    const ophShareSum = this.props.ophShareSum
     const selectedHakemus = this.props.selectedHakemus
     const hakemusElements = _.map(hakemusList, hakemus => {
       const controller = this.props.controller
@@ -35,7 +36,7 @@ export default class HakemusListing extends Component {
           {hakemusElements}
         </tbody>
         <tfoot><tr>
-          <td className="applied-sum-column" colSpan="5"><span className="money sum">TODO</span></td>
+          <td className="applied-sum-column" colSpan="5"><span className="money sum">{ophShareSum}</span></td>
           <td className="granted-sum-column"><span className="money sum">TODO</span></td>
         </tr></tfoot>
       </table>
