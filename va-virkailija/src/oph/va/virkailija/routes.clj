@@ -97,7 +97,7 @@
 
   (context* "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
   (context* "/login" [] :tags ["login"] login-routes)
-  (context* "/userinfo" [] :tags ["userinfo"] userinfo-routes)
+  (context* "/api/userinfo" [] :tags ["userinfo"] userinfo-routes)
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
 
   ;; Documentation

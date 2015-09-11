@@ -21,9 +21,11 @@ export default class App extends Component {
     const hakemusList = hakuData.hakemukset
     const selectedHakemus = this.props.state.selectedHakemus
     const translations = this.props.state.translations
+    const user = this.props.state.userInfo
+    const username = user["first-name"] + " " + user["surname"]
     return (
       <section>
-        <TopBar user="Leena Koski" title="Hakemusten arviointi"/>
+        <TopBar user={username} title="Hakemusten arviointi"/>
         <section id="container">
           <AvustushakuSelector avustushaku={avustushaku} controller={controller} />
           <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]} hakemusList={hakemusList} selectedHakemus={selectedHakemus} controller={controller}/>
@@ -42,7 +44,7 @@ const stateP = controller.initializeState()
 
 stateP.onValue((state) => {
   try {
-    if (state.hakuData) {
+    if (state.hakuData && state.userInfo) {
       React.render(<App state={state} controller={controller}/>, document.getElementById('app'))
     } else {
       console.log('Not rendering yet, because state.hakuData not yet loaded.')
