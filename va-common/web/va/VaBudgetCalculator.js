@@ -6,7 +6,6 @@ import MoneyValidator from '../form/MoneyValidator'
 
 export default class VaBudgetCalculator {
   constructor(onSumCalculatedCallback) {
-    console.log('onSumCalculatedCallback', onSumCalculatedCallback)
     this.onSumCalculatedCallback = _.isFunction(onSumCalculatedCallback) ? onSumCalculatedCallback : _.noop
   }
 
