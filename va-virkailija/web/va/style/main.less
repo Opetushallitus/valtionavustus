@@ -12,24 +12,31 @@ table.hakemus-list {
       // tr cannot have margin
       border-top: 10px transparent solid;
       border-bottom: 8px transparent solid;
+
       th {
         font-weight: normal;
+        color: #4a4a4a;
+        padding-bottom: 7px;
+      }
+
+      th:first-child {
+        padding-left: 7px;
       }
     }
   }
 
   colgroup {
     .organization-column {
-      width: 330px;
+      width: 284px;
     }
     .project-name-column {
-      width: 330px;
+      width: 284px;
     }
     .score-column {
       width: 100px;
     }
     .status-column {
-      width: 160px;
+      width: 132px;
     }
     .applied-sum-column {
       width: 100px;
@@ -38,6 +45,7 @@ table.hakemus-list {
       width: 100px;
     }
   }
+
   tfoot {
     border-top: 1px solid @light-gray;
     font-weight: bold;
@@ -48,9 +56,24 @@ table.hakemus-list {
 
   tbody {
     tr {
+      &.hakemus-row {
+        td:first-child {
+          padding-left: 7px;
+        }
+        cursor: pointer; cursor: hand;
+        color: #1A1919;
+      }
+
+      &.unselected:hover {
+        background-color: lighten(#4093BE, 42%);
+      }
       &.selected {
         background-color: #4093BE;
         color: white;
+      }
+      td {
+        height: 36px;
+        padding: 3px;
       }
       &:last-child {
         td {
@@ -77,5 +100,4 @@ table.hakemus-list {
   margin-top: 10px;
   padding-top: 40px;
   border-top: 1px solid @light-gray;
-
 }
