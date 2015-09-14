@@ -28,8 +28,13 @@ export default class App extends Component {
         <TopBar environment={hakuData.environment} user={username} title="Hakemusten arviointi"/>
         <section id="container">
           <AvustushakuSelector avustushaku={avustushaku} controller={controller} />
-          <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]} hakemusList={hakemusList} selectedHakemus={selectedHakemus} controller={controller}/>
-          <HakemusDetails hakuData={hakuData} avustushaku={avustushaku} hakemus={selectedHakemus}
+          <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
+                          hakemusList={hakemusList}
+                          selectedHakemus={selectedHakemus}
+                          controller={controller} />
+          <HakemusDetails hakuData={hakuData}
+                          avustushaku={avustushaku}
+                          hakemus={selectedHakemus}
                           translations={translations}/>
         </section>
       </section>
