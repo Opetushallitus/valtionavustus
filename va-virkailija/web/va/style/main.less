@@ -109,13 +109,9 @@ table.hakemus-list {
   padding-top: 40px;
   border-top: 1px solid @light-gray;
 
-  .soresu-preview {
-    width: @left-side-width;
+  .soresu-preview-fieldset {
     .soresu-preview-element {
       text-align: justify;
-      &.large {
-        width: inherit;
-      }
     }
     .soresu-value {
       font-size: 16px;
@@ -124,6 +120,23 @@ table.hakemus-list {
       padding: 7px 0 3px 0;
       font-size: 18px;
       font-weight: bold;
+    }
+  }
+
+  .soresu-theme {
+    .soresu-preview-element {
+      &.large {
+        text-align: justify;
+        width: 100%;
+      }
+      .soresu-value {
+        font-size: 16px;
+      }
+      .soresu-key {
+        padding: 7px 0 3px 0;
+        font-size: 18px;
+        font-weight: bold;
+      }
     }
   }
 }
