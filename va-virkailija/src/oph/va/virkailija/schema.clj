@@ -3,10 +3,19 @@
             [oph.form.schema :refer :all]
             [oph.va.schema :refer :all]))
 
+(s/defschema ArvioStatus
+  "Status from the opetushallitus point of view"
+  (s/enum "unhandled" , "plausible" , "rejected", "accepted"))
+
+(s/defschema Arvio
+  "Arvio contains evaluation of hakemus"
+  {:status ArvioStatus})
+
 (s/defschema Hakemus {:id s/Int
                       :project-name s/Str
                       :organization-name s/Str
                       :status HakemusStatus
+                      :arvio Arvio
                       :budget-total s/Int
                       :budget-oph-share s/Int
                       :user-key s/Str

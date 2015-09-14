@@ -5,6 +5,8 @@ import React, { Component } from 'react'
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'va-common/web/Dispatcher'
 
+import HakemusStatus from '../hakemus-details/HakemusStatus.jsx'
+
 export default class HakemusListing extends Component {
   render() {
     const hakemusList = this.props.hakemusList
@@ -55,7 +57,7 @@ class HakemusRow extends Component {
       <td>{hakemus["organization-name"]}</td>
       <td>{hakemus["project-name"]}</td>
       <td>***</td>
-      <td className="status-column">Käsittelemättä</td>
+      <td className="status-column"><HakemusStatus status={hakemus.arvio.status}/></td>
       <td className="applied-sum-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
       <td className="granted-sum-column"><span className="money">0</span></td>
     </tr>

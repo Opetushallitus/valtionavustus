@@ -24,6 +24,23 @@
     (ok {})
     (not-found)))
 
+(defn- add-arvio [arviot hakemus]
+  (if-let [arvio (get arviot (:id hakemus))]
+    (assoc hakemus :arvio arvio)
+    (assoc hakemus :arvio {:status "unhandled"})))
+
+(defn- get-arviot-map [hakemukset]
+  (->> hakemukset
+       (map :id)
+       (virkailija-db/get-arviot)
+       (map (fn [arvio] [(:hakemus_id arvio) {:status (:status arvio)}]))
+       (into {})))
+
+(defn- add-arviot [haku-data]
+  (let [hakemukset (:hakemukset haku-data)
+        arviot (get-arviot-map hakemukset)]
+    (assoc haku-data :hakemukset (map (partial add-arvio arviot) hakemukset))))
+
 (defroutes* healthcheck-routes
   "Healthcheck routes"
 
@@ -42,7 +59,7 @@
         :path-params [avustushaku-id :- Long]
         :return HakuData
         (if-let [response (hakija-api/get-avustushaku avustushaku-id)]
-          (ok response)
+          (ok (add-arviot response))
           (not-found))))
 
 (defroutes* userinfo-routes
