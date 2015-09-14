@@ -104,7 +104,26 @@ table.hakemus-list {
 }
 
 #hakemus-details {
+  width: @left-side-width;
   margin-top: 10px;
   padding-top: 40px;
   border-top: 1px solid @light-gray;
+
+  .soresu-preview {
+    width: @left-side-width;
+    .soresu-preview-element {
+      text-align: justify;
+      &.large {
+        width: inherit;
+      }
+    }
+    .soresu-value {
+      font-size: 16px;
+    }
+    .soresu-key {
+      padding: 7px 0 3px 0;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
 }
