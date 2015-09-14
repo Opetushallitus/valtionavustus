@@ -31,3 +31,30 @@
     font-family: Arial, sans-serif;
   }
 }
+
+.va-old-browser-warning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 30px;
+  width: 100%;
+  z-index: 1;
+  background-color: @yellow;
+
+  .soresu-remove {
+    position: fixed;
+    right: 5px;
+    top: 4px;
+  }
+
+  .text {
+    font-size: 13px;
+    display: inline-block;
+    margin-left: 100px;
+    margin-top: 4px;
+  }
+
+  &.hidden {
+    display: none;
+  }
+}
