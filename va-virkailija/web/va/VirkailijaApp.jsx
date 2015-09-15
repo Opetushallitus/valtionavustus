@@ -35,7 +35,8 @@ export default class App extends Component {
           <HakemusDetails hakuData={hakuData}
                           avustushaku={avustushaku}
                           hakemus={selectedHakemus}
-                          translations={translations}/>
+                          translations={translations}
+                          controller={controller}/>
         </section>
       </section>
     )

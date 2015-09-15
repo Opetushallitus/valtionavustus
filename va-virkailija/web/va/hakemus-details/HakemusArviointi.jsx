@@ -4,6 +4,7 @@ import HakemusStatus from "./HakemusStatus.jsx"
 
 export default class HakemusArviointi extends Component {
   render() {
+    const controller = this.props.controller
     const hakemus = this.props.hakemus
     const arvio = hakemus.arvio
     const status = arvio.status
@@ -17,6 +18,7 @@ export default class HakemusArviointi extends Component {
                key={htmlId}
                name="status"
                value={statusValues[i]}
+               onClick={controller.setHakemusArvioStatus(hakemus, statusValues[i])}
                checked={statusValues[i] === status ? true: null}
         />
       )

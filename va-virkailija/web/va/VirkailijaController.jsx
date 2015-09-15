@@ -8,7 +8,8 @@ const dispatcher = new Dispatcher()
 
 const events = {
   initialState: 'initialState',
-  selectHakemus: 'selectHakemus'
+  selectHakemus: 'selectHakemus',
+  updateHakemusArvio: 'updateHakemusArvio'
 }
 
 export default class VirkailijaController {
@@ -28,7 +29,8 @@ export default class VirkailijaController {
 
     return Bacon.update({},
       [dispatcher.stream(events.initialState)], this.onInitialState,
-      [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection)
+      [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
+      [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio)
   }
 
   onInitialState(emptyState, realInitialState) {
@@ -44,10 +46,22 @@ export default class VirkailijaController {
     return state
   }
 
+  onUpdateHakemusArvio(state, updatedHakemus) {
+    // TODO save to server
+    return state
+  }
+
   // Public API
   selectHakemus(hakemus) {
     return function() {
       dispatcher.push(events.selectHakemus, hakemus)
+    }
+  }
+
+  setHakemusArvioStatus(hakemus, newStatus) {
+    return function() {
+      hakemus.arvio.status = newStatus
+      dispatcher.push(events.updateHakemusArvio, hakemus)
     }
   }
 }

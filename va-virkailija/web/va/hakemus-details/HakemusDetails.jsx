@@ -10,11 +10,11 @@ import HakemusArviointi from './HakemusArviointi.jsx'
 
 export default class HakemusDetails extends Component {
   render() {
+    const controller = this.props.controller
     const hakemus = this.props.hakemus
     const avustushaku = this.props.avustushaku
     const hakuData = this.props.hakuData
     const translations = this.props.translations
-    const controller = new FakeFormController(avustushaku)
     hakuData.form.validationErrors = Immutable({})
     const formState = {
       configuration: {
@@ -29,14 +29,14 @@ export default class HakemusDetails extends Component {
     const formElementProps = {
       state: formState,
       infoElementValues: avustushaku,
-      controller: controller
+      controller: new FakeFormController(avustushaku)
     }
     const budgetCalculator = new VaBudgetCalculator()
     budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(formState, true)
     return (
       <div id="hakemus-details">
         <FormPreview {...formElementProps}/>
-        <HakemusArviointi hakemus={hakemus}/>
+        <HakemusArviointi hakemus={hakemus} controller={controller}/>
       </div>
     )
   }
