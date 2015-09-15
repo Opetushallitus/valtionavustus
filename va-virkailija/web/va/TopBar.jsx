@@ -15,12 +15,12 @@ export default class VaLogin extends React.Component {
         <img id="logo" src="img/logo.png"/>
         <h1 id="topic">{this.props.title}</h1>
         <div hidden={!user} id="form-controls">
+          <div id="server-info"><EnvironmentInfo environment={environment}/></div>
           <div className="user">{user}</div>
           <form action="/login/logout" name="logout" method="post">
             <button type="submit">Kirjaudu ulos</button>
           </form>
         </div>
-        <div id="server-info"><EnvironmentInfo environment={environment}/></div>
       </div>
     </section>
   }

@@ -31,7 +31,7 @@
     margin-top: 10px;
     float: left;
     border-left: 1px solid @light-gray;
-    height: 58px;
+    height: 53px;
     padding-left: 61px;
 
     form {
@@ -47,25 +47,28 @@
     }
 
     .user {
+      width: 140px;
       float: left;
       margin-top: 15px;
-      padding-right: 40px;
+      padding-right: 20px;
+      text-align: right;
     }
 
     button {
       margin-top: 5px;
     }
-  }
 
-  #server-info {
-    margin-top: 25px;
-    float: left;
-    color: @bright-red;
-    .environment {
-      text-transform: uppercase;
-    }
-    .environment:after {
-      content: " ";
+    #server-info {
+      margin-top: 15px;
+      width: 360px;
+      float: left;
+      color: @bright-red;
+      .environment {
+        text-transform: uppercase;
+      }
+      .environment:after {
+        content: " ";
+      }
     }
   }
 }
