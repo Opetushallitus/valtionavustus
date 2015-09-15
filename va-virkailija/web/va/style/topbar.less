@@ -17,22 +17,38 @@
   }
 
   h1 {
-    margin: 24px 30px 0 0;
+    margin: 12px 30px 0 0;
     float: left;
+    height: 40px;
     font-size: 18px;
     font-weight: normal;
     text-transform: uppercase;
     display: block;
     text-align: right;
-    max-width: 300px;
+    width: 260px;
+    border-right: 1px solid @light-gray;
+    padding-top: 12px;
+    padding-right: 30px;
+  }
+
+  #server-info {
+    margin-top: 25px;
+    width: 80px;
+    float: left;
+    color: @bright-red;
+    .environment {
+      text-transform: uppercase;
+    }
+    .environment:after {
+      content: " ";
+    }
   }
 
   #form-controls {
+    float: right;
+    margin-right: 73px;
     margin-top: 10px;
-    float: left;
-    border-left: 1px solid @light-gray;
     height: 53px;
-    padding-left: 61px;
 
     form {
       display: inline-block;
@@ -56,19 +72,6 @@
 
     button {
       margin-top: 5px;
-    }
-
-    #server-info {
-      margin-top: 15px;
-      width: 260px;
-      float: left;
-      color: @bright-red;
-      .environment {
-        text-transform: uppercase;
-      }
-      .environment:after {
-        content: " ";
-      }
     }
   }
 }
