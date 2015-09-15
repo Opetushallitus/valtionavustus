@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-import FormBranchGrower from './FormBranchGrower.js'
+import FormBranchGrower from 'va-common/web/form/FormBranchGrower'
 import FieldUpdateHandler from './FieldUpdateHandler.js'
 import JsUtil from 'va-common/web/form/JsUtil.js'
 import FormUtil from 'va-common/web/form/FormUtil.js'

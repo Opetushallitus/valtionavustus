@@ -8,7 +8,7 @@ import InputValueStorage from 'va-common/web/form/InputValueStorage'
 import JsUtil from 'va-common/web/form/JsUtil'
 import FormUtil from 'va-common/web/form/FormUtil'
 import FormStateTransitions from './FormStateTransitions'
-import FormRules from './FormRules.js'
+import FormRules from 'va-common/web/form/FormRules'
 import Translator from 'va-common/web/form/Translator'
 
 export default class FormStateLoop {

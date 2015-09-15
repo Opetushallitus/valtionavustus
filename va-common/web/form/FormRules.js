@@ -1,11 +1,11 @@
 import _ from 'lodash'
 
-import JsUtil from 'va-common/web/form/JsUtil'
-import FormUtil from 'va-common/web/form/FormUtil'
+import JsUtil from './JsUtil.js'
+import FormUtil from './FormUtil.js'
 import FormBranchGrower from './FormBranchGrower.js'
-import InputValueStorage from 'va-common/web/form/InputValueStorage.js'
-export default class FormRules {
+import InputValueStorage from './InputValueStorage.js'
 
+export default class FormRules {
   static applyRulesToForm(formSpecification, formState, values) {
     for (var i = 0; i < formSpecification.rules.length; i++) {
       const rule = formSpecification.rules[i]
