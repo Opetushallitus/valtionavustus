@@ -5,6 +5,7 @@ import Immutable from 'seamless-immutable'
 import FormPreview from 'va-common/web/form/FormPreview.jsx'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
+import FormRules from 'va-common/web/form/FormRules'
 
 import HakemusArviointi from './HakemusArviointi.jsx'
 
@@ -15,15 +16,22 @@ export default class HakemusDetails extends Component {
     const avustushaku = this.props.avustushaku
     const hakuData = this.props.hakuData
     const translations = this.props.translations
-    hakuData.form.validationErrors = Immutable({})
+
+    const answers = hakemus.answers
+    const formSpecification = hakuData.form
+    formSpecification.validationErrors = Immutable({})
+    const effectiveForm = _.cloneDeep(formSpecification)
+    effectiveForm.validationErrors = Immutable({})
+    FormRules.applyRulesToForm(formSpecification, effectiveForm, answers)
+
     const formState = {
       configuration: {
         translations: translations,
         lang: "fi"
       },
-      form: hakuData.form,
+      form: effectiveForm,
       saveStatus: {
-        values: hakemus.answers
+        values: answers
       }
     }
     const formElementProps = {
