@@ -6,3 +6,6 @@
 (defquery create-arvio<! "sql/virkailija/arvio/create.sql")
 (defquery update-arvio<! "sql/virkailija/arvio/update.sql")
 (defquery get-arviot "sql/virkailija/arvio/get.sql")
+
+(defquery create-comment<! "sql/virkailija/comment/create.sql")
+(defquery list-comments "sql/virkailija/comment/list.sql")
