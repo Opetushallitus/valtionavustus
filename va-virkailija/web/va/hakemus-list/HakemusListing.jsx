@@ -20,14 +20,6 @@ export default class HakemusListing extends Component {
                          selectedHakemus={selectedHakemus} controller={controller}/> })
     return (
       <table key="hakemusListing" className="hakemus-list">
-        <colgroup>
-          <col className="organization-column"/>
-          <col className="project-name-column"/>
-          <col className="score-column"/>
-          <col className="status-column"/>
-          <col className="applied-sum-column"/>
-          <col className="granted-sum-column"/>
-        </colgroup>
         <thead><tr>
           <th className="organization-column">Hakijaorganisaatio</th>
           <th className="project-name-column">Hanke</th>
@@ -40,7 +32,7 @@ export default class HakemusListing extends Component {
           {hakemusElements}
         </tbody>
         <tfoot><tr>
-          <td colSpan="4"><AvustushakuSelector avustushaku={avustushaku} controller={controller} /></td>
+          <td className="avustushaku-selector-column"><AvustushakuSelector avustushaku={avustushaku} controller={controller} /></td>
           <td className="applied-sum-column"><span className="money sum">{ophShareSum}</span></td>
           <td className="granted-sum-column"><span className="money sum">TODO</span></td>
         </tr></tfoot>
@@ -59,7 +51,7 @@ class HakemusRow extends Component {
     return <tr className={rowClass} key={key} onClick={controller.selectHakemus(hakemus)}>
       <td className="organization-column">{hakemus["organization-name"]}</td>
       <td className="project-name-column">{hakemus["project-name"]}</td>
-      <td>***</td>
+      <td className="score-column">***</td>
       <td className="status-column"><HakemusStatus status={hakemus.arvio.status}/></td>
       <td className="applied-sum-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
       <td className="granted-sum-column"><span className="money">0</span></td>

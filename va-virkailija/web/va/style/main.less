@@ -1,77 +1,77 @@
 @import "variables";
 @import "formpreview";
 
+#list-container {
+  position: fixed;
+  width: @content-width;
+  top: @topbar-height;
+  height: @hakemus-list-height;
+  background-color: @lightest-gray;
+}
 table.hakemus-list {
-  margin-top: 13px;
+  margin-left: 10px;
   width: @content-width;
   text-align: left;
   thead {
+    display: block;
     tr {
       // tr cannot have margin
       border-top: 10px transparent solid;
       border-bottom: 8px transparent solid;
-
+      th:first-child {
+        padding-right: @table-indent;
+      }
       th {
         font-weight: normal;
         color: #4a4a4a;
         padding-bottom: 7px;
       }
-
-      th:first-child {
-        padding-left: 7px;
-      }
-
-      th.applied-sum-column {
-        padding-right: 12px;
-      }
-      th.granted-sum-column {
-        padding-right: 12px;
-      }
     }
   }
-
   .organization-column {
-    width: 284px;
-    max-width: 284px;
+    width: 350px;
   }
   .project-name-column {
-    width: 284px;
-    max-width: 284px;
+    width: 350px;
   }
-
-  colgroup {
-    .score-column {
-      width: 70px;
-    }
-    .status-column {
-      width: 132px;
-    }
-    .applied-sum-column {
-      width: 120px;
-    }
-    .granted-sum-column {
-      width: 120px;
-    }
+  .score-column {
+    width: 70px;
+  }
+  .status-column {
+    width: 130px;
+  }
+  .applied-sum-column {
+    width: 135px;
+  }
+  .granted-sum-column {
+    width: 135px;
   }
 
   tfoot {
+    display: block;
     border-top: 1px solid @light-gray;
     font-weight: bold;
+    td:first-child {
+      padding-right: @table-indent;
+      width: 900px;
+    }
     td {
       padding-top: 5px;
     }
     .avustushaku-name {
-      padding-left: 5px;
       font-size: 12px;
       font-weight: normal;
     }
   }
 
   tbody {
+    display: block;
+    overflow-y: scroll;
+    height: 180px;
     tr {
       &.hakemus-row {
         td:first-child {
-          padding-left: 7px;
+          padding-left: @table-indent;
         }
         cursor: pointer; cursor: hand;
         color: #1A1919;
@@ -88,13 +88,7 @@ table.hakemus-list {
         }
       }
       td {
-        height: 29px;
-        padding: 3px;
-      }
-      &:last-child {
-        td {
-          padding-bottom: 10px;
-        }
+        padding: 5px 0;
       }
     }
   }
@@ -116,18 +110,13 @@ table.hakemus-list {
   .applied-sum-column, .granted-sum-column {
     text-align: right;
   }
-  span.money {
-    margin-right: 10px;
-  }
   .money:after {
     content: " €"
   }
 }
 
 #hakemus-details {
-  margin-top: 10px;
-  padding-top: 40px;
-  border-top: 1px solid @light-gray;
+  margin-top: @topbar-height + @hakemus-list-height;
 
   #hakemus-arviointi {
     font-size: 12px;

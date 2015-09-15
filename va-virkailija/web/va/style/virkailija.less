@@ -1,4 +1,4 @@
-@import "../../../../va-common/web/form/style/variables";
+@import "variables";
 
 .ease-in-out(@seconds) {
   -webkit-transition: all @seconds ease-in-out;
@@ -25,7 +25,7 @@ body {
 
 #container {
   max-width: @form-width;
-  margin-top: 80px;
+  margin-top: @topbar-height + 10px;
   margin-left: auto;
   margin-right: auto;
   padding: 0 20px 20px 20px;
