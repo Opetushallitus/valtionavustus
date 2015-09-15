@@ -6,7 +6,6 @@ import Dispatcher from 'va-common/web/Dispatcher'
 
 import TopBar from './TopBar.jsx'
 import VirkailijaController from './VirkailijaController.jsx'
-import AvustushakuSelector from './avustushaku/AvustushakuSelector.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusDetails from './hakemus-details/HakemusDetails.jsx'
 
@@ -27,10 +26,10 @@ export default class App extends Component {
       <section>
         <TopBar environment={hakuData.environment} user={username} title="Hakemusten arviointi"/>
         <section id="container">
-          <AvustushakuSelector avustushaku={avustushaku} controller={controller} />
           <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
                           hakemusList={hakemusList}
                           selectedHakemus={selectedHakemus}
+                          avustushaku={avustushaku}
                           controller={controller} />
           <HakemusDetails hakuData={hakuData}
                           avustushaku={avustushaku}
