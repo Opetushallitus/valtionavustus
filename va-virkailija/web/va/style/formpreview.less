@@ -2,8 +2,11 @@
 @import "../../../../va-common/web/va/style/soresu-va";
 
 .soresu-preview {
+  padding: 14px 6px 14px 14px;
+  background-color: white;
   float: left;
-  width: @left-side-width;
+  width: @left-side-width - 30px;
+  text-align: justify;
   h2 {
     padding: 0;
     margin: 30px 0 8px 0;
@@ -13,14 +16,13 @@
     .soresu-preview-fieldset {
       .soresu-preview-element {
         &.large {
-          width: ceil(@left-side-width / 1.6); // original width from preview.less
+          width: ceil(@left-side-width / 1.7); // original width from preview.less
         }
       }
     }
     .soresu-preview-element {
       &.large {
-        text-align: justify;
-        width: 100%;
+        width: 99%;
       }
       .soresu-value {
         font-size: 16px;
