@@ -20,17 +20,21 @@ export default class Login extends React.Component {
     const error = query.error == "true" ? errorMessage : (<div></div>)
     return (
       <div>
-        <TopBar environment={environment} title="Virkailija" />
+        <TopBar environment={environment} title="Hakemusten arviointi" />
         <section id="container">
           <h1>Kirjaudu sisään</h1>
-          {error}
           <form name="login" method="post">
-            <label htmlFor="username">Tunnus:</label>
-            <input type="text" id="username" ref="nameInput" name="username" />
-            <label htmlFor="password">Salasana:</label>
-            <input type="password" id="password" name="password" />
-            <button type="submit">&gt;</button>
+            <div className="row">
+              <label htmlFor="username">Tunnus</label>
+              <input type="text" id="username" ref="nameInput" name="username" />
+            </div>
+            <div>
+              <label htmlFor="password">Salasana</label>
+              <input type="password" id="password" name="password" />
+              <button type="submit">&gt;</button>
+            </div>
           </form>
+          {error}
         </section>
       </div>
     )
