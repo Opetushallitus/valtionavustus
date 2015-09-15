@@ -20,6 +20,18 @@
         }
       }
     }
+    .soresu-preview-growing-fieldset {
+      .fieldset-elements {
+        .soresu-preview-element {
+          &.large {
+            width: ceil(@left-side-width / 1.7); // original width from preview.less
+          }
+          &.extra-large {
+            width: 98%; // original width from preview.less
+          }
+        }
+      }
+    }
     .soresu-preview-element {
       &.large {
         width: 99%;
