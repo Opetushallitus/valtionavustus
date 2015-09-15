@@ -118,7 +118,8 @@ table.hakemus-list {
     height: 100%;
     overflow-y: scroll;
     background-color: white;
-    width: @left-side-width;
+    padding: 10px;
+    width: @preview-width;
   }
 
   #hakemus-arviointi {
@@ -126,9 +127,9 @@ table.hakemus-list {
     background-color: white;
     display: inline-block;
     position: fixed;
-    margin-left: @left-side-width + 10px;
+    margin-left: @preview-width + 30px;
     padding: 10px;
-    width: @content-width - @left-side-width - 30px;
+    width: @content-width - @preview-width - 50px;
 
     input[type=radio] {
       display: none;

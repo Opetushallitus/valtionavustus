@@ -2,8 +2,7 @@
 @import "../../../../va-common/web/va/style/soresu-va";
 
 .soresu-preview {
-  padding: 10px 10px 10px 0px;
-  width: @left-side-width - 10px;
+  width: @preview-width;
   text-align: justify;
   h2 {
     padding: 0;
@@ -11,13 +10,6 @@
   }
 
   .soresu-theme {
-    .soresu-preview-fieldset {
-      .soresu-preview-element {
-        &.large {
-          width: ceil(@left-side-width / 1.7); // original width from preview.less
-        }
-      }
-    }
     .soresu-preview-growing-fieldset {
       .soresu-preview-growing-fieldset-child {
         margin-left: 20px;
@@ -36,7 +28,7 @@
     }
     .soresu-preview-element {
       &.large {
-        width: 99%;
+        width: ceil(@preview-width / 1.7); // original width from preview.less
       }
       .soresu-value {
         font-size: 16px;
