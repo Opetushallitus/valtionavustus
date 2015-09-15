@@ -12,6 +12,35 @@ table.hakemus-list {
   margin-left: 10px;
   width: @content-width;
   text-align: left;
+
+  .organization-column, .project-name-column {
+    width: 350px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .score-column {
+    width: 70px;
+  }
+  .status-column {
+    width: 130px;
+    text-transform: uppercase;
+    .accepted {
+      color: @light-green;
+    }
+    .rejected {
+      text-transform: none;
+      font-style: italic;
+    }
+  }
+  .applied-sum-column, .granted-sum-column {
+    width: 135px;
+    text-align: right;
+    .money:after {
+      content: " €"
+    }
+  }
+
   thead {
     display: block;
     tr {
@@ -28,42 +57,6 @@ table.hakemus-list {
       }
     }
   }
-  .organization-column {
-    width: 350px;
-  }
-  .project-name-column {
-    width: 350px;
-  }
-  .score-column {
-    width: 70px;
-  }
-  .status-column {
-    width: 130px;
-  }
-  .applied-sum-column {
-    width: 135px;
-  }
-  .granted-sum-column {
-    width: 135px;
-  }
-
-  tfoot {
-    display: block;
-    border-top: 1px solid @light-gray;
-    font-weight: bold;
-    td:first-child {
-      padding-right: @table-indent;
-      width: 900px;
-    }
-    td {
-      padding-top: 5px;
-    }
-    .avustushaku-name {
-      font-size: 12px;
-      font-weight: normal;
-    }
-  }
-
   tbody {
     display: block;
     overflow-y: scroll;
@@ -92,26 +85,21 @@ table.hakemus-list {
       }
     }
   }
-  .organization-column, .project-name-column {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  td.status-column {
-    text-transform: uppercase;
-    .accepted {
-      color: @light-green;
+  tfoot {
+    display: block;
+    border-top: 1px solid @light-gray;
+    font-weight: bold;
+    td:first-child {
+      padding-right: @table-indent;
+      width: 900px;
     }
-    .rejected {
-      text-transform: none;
-      font-style: italic;
+    td {
+      padding-top: 5px;
     }
-  }
-  .applied-sum-column, .granted-sum-column {
-    text-align: right;
-  }
-  .money:after {
-    content: " €"
+    .avustushaku-name {
+      font-size: 12px;
+      font-weight: normal;
+    }
   }
 }
 
