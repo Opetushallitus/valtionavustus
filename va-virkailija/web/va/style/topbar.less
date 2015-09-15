@@ -2,7 +2,6 @@
 
 #topbar {
   width: 100%;
-  height: @topbar-height;
   background-color: #fff;
   position: fixed;
   top: 0;
@@ -10,7 +9,7 @@
   z-index: 100;
 
   #logo {
-    margin: 10px 20px 10px 5px;
+    margin: 10px 20px 10px 0;
     float: left;
     padding-right: 15px;
     height: 50px;
@@ -46,7 +45,6 @@
 
   #form-controls {
     float: right;
-    margin-right: 73px;
     margin-top: 10px;
     height: 53px;
 
@@ -77,7 +75,9 @@
 }
 
 #top-container {
-  width: @form-width;
+  height: @topbar-height;
+  width: @content-width;
   margin-left: auto;
   margin-right: auto;
+  padding: 0 20px;
 }

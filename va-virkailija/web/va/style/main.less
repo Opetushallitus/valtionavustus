@@ -48,6 +48,9 @@ table.hakemus-list {
       th:first-child {
         padding-right: @table-indent;
       }
+      th:last-child {
+        padding-right: @table-indent;
+      }
       th {
         font-weight: normal;
         color: #4a4a4a;
@@ -63,6 +66,9 @@ table.hakemus-list {
       &.hakemus-row {
         td:first-child {
           padding-left: @table-indent;
+        }
+        td:last-child {
+          padding-right: @table-indent;
         }
         cursor: pointer; cursor: hand;
         color: #1A1919;
@@ -91,6 +97,9 @@ table.hakemus-list {
       padding-right: @table-indent;
       width: 900px;
     }
+    td:last-child {
+      padding-right: @table-indent;
+    }
     td {
       padding-top: 5px;
     }
@@ -104,6 +113,14 @@ table.hakemus-list {
 #hakemus-details {
   margin-top: @topbar-height + @hakemus-list-height;
 
+  #preview-container {
+    position: fixed;
+    height: 100%;
+    overflow-y: scroll;
+    background-color: white;
+    width: @left-side-width;
+  }
+
   #hakemus-arviointi {
     font-size: 12px;
     background-color: white;
@@ -111,7 +128,7 @@ table.hakemus-list {
     position: fixed;
     margin-left: @left-side-width + 10px;
     padding: 10px;
-    width: @right-side-width;
+    width: @content-width - @left-side-width - 30px;
 
     input[type=radio] {
       display: none;

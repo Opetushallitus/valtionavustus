@@ -43,7 +43,9 @@ export default class HakemusDetails extends Component {
     budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(formState, true)
     return (
       <div id="hakemus-details">
-        <FormPreview {...formElementProps}/>
+        <div id="preview-container">
+          <FormPreview {...formElementProps}/>
+        </div>
         <HakemusArviointi hakemus={hakemus} controller={controller}/>
       </div>
     )
