@@ -54,8 +54,8 @@ class HakemusRow extends Component {
     const rowClass = hakemus === selectedHakemus ? "selected hakemus-row" : "unselected hakemus-row"
     const controller = this.props.controller
     return <tr className={rowClass} key={key} onClick={controller.selectHakemus(hakemus)}>
-      <td>{hakemus["organization-name"]}</td>
-      <td>{hakemus["project-name"]}</td>
+      <td className="organization-column">{hakemus["organization-name"]}</td>
+      <td className="project-name-column">{hakemus["project-name"]}</td>
       <td>***</td>
       <td className="status-column"><HakemusStatus status={hakemus.arvio.status}/></td>
       <td className="applied-sum-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>

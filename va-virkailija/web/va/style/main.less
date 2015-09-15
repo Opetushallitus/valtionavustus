@@ -30,13 +30,16 @@ table.hakemus-list {
     }
   }
 
+  .organization-column {
+    width: 284px;
+    max-width: 284px;
+  }
+  .project-name-column {
+    width: 284px;
+    max-width: 284px;
+  }
+
   colgroup {
-    .organization-column {
-      width: 284px;
-    }
-    .project-name-column {
-      width: 284px;
-    }
     .score-column {
       width: 70px;
     }
@@ -86,6 +89,11 @@ table.hakemus-list {
         }
       }
     }
+  }
+  .organization-column, .project-name-column {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   td.status-column {
     text-transform: uppercase;
