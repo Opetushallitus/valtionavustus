@@ -11,6 +11,23 @@
   "Arvio contains evaluation of hakemus"
   {:status ArvioStatus})
 
+(s/defschema NewComment
+  "New comment to be added"
+  {:comment s/Str})
+
+(s/defschema Comment
+  "Contains comment about hakemus"
+  {:id Long
+   :created-at s/Inst
+   :first-name s/Str
+   :last-name s/Str
+   :email s/Str
+   :comment s/Str})
+
+(s/defschema Comments
+  "Comment list"
+  [Comment])
+
 (s/defschema Hakemus {:id s/Int
                       :project-name s/Str
                       :organization-name s/Str
