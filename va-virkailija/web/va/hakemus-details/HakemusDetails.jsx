@@ -6,6 +6,8 @@ import FormPreview from 'va-common/web/form/FormPreview.jsx'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 
+import HakemusArviointi from './HakemusArviointi.jsx'
+
 export default class HakemusDetails extends Component {
   render() {
     const hakemus = this.props.hakemus
@@ -34,6 +36,7 @@ export default class HakemusDetails extends Component {
     return (
       <div id="hakemus-details">
         <FormPreview {...formElementProps}/>
+        <HakemusArviointi hakemus={hakemus}/>
       </div>
     )
   }

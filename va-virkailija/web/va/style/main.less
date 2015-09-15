@@ -1,11 +1,13 @@
 @import "../../../../va-common/web/form/style/variables";
 @import "../../../../va-common/web/va/style/soresu-va";
 
-@left-side-width: 995px;
+@content-width: 1200px;
+@left-side-width: 730px;
+@right-side-width: 450px;
 
 table.hakemus-list {
   margin-top: 13px;
-  width: @left-side-width;
+  width: @content-width;
   text-align: left;
   thead {
     tr {
@@ -111,36 +113,67 @@ table.hakemus-list {
 }
 
 #hakemus-details {
-  width: @left-side-width;
   margin-top: 10px;
   padding-top: 40px;
   border-top: 1px solid @light-gray;
 
-  h2 {
-    padding: 0;
-    margin: 30px 0 8px 0;
+  #hakemus-arviointi {
+    font-size: 12px;
+    position: fixed;
+    margin-left: @left-side-width;
+    width: @right-side-width;
+
+    input[type=radio] {
+      display: none;
+    }
+
+    input[type=radio] + label {
+      text-transform: uppercase;
+      display: inline-block;
+      color: @dark-gray;
+      margin: 4px 3px;
+      padding: 12px;
+      background-color: #fff;
+      border: solid 1px @dark-gray;
+      cursor: pointer;
+    }
+
+    input[type=radio]:checked + label {
+      margin: 0;
+      color: @text-black;
+      border: solid 4px @light-green;
+    }
   }
 
-  .soresu-theme {
-    .soresu-preview-fieldset {
-      .soresu-preview-element {
-        &.large {
-          width: ceil(@section-width / 1.5); // original width from preview.less
+  .soresu-preview {
+    float: left;
+    width: @left-side-width;
+    h2 {
+      padding: 0;
+      margin: 30px 0 8px 0;
+    }
+
+    .soresu-theme {
+      .soresu-preview-fieldset {
+        .soresu-preview-element {
+          &.large {
+            width: ceil(@left-side-width / 1.6); // original width from preview.less
+          }
         }
       }
-    }
-    .soresu-preview-element {
-      &.large {
-        text-align: justify;
-        width: 100%;
-      }
-      .soresu-value {
-        font-size: 16px;
-      }
-      .soresu-key {
-        padding: 12px 0 6px 0;
-        font-size: 16px;
-        color: @dark-gray;
+      .soresu-preview-element {
+        &.large {
+          text-align: justify;
+          width: 100%;
+        }
+        .soresu-value {
+          font-size: 16px;
+        }
+        .soresu-key {
+          padding: 12px 0 6px 0;
+          font-size: 16px;
+          color: @dark-gray;
+        }
       }
     }
   }
