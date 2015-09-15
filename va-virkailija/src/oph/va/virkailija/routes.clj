@@ -24,6 +24,9 @@
     (ok {})
     (not-found)))
 
+(defn- arvio-json [arvio]
+  {:status (:status arvio)})
+
 (defn- add-arvio [arviot hakemus]
   (if-let [arvio (get arviot (:id hakemus))]
     (assoc hakemus :arvio arvio)
@@ -33,7 +36,7 @@
   (->> hakemukset
        (map :id)
        (virkailija-db/get-arviot)
-       (map (fn [arvio] [(:hakemus_id arvio) {:status (:status arvio)}]))
+       (map (fn [arvio] [(:hakemus_id arvio) (arvio-json arvio)]))
        (into {})))
 
 (defn- add-arviot [haku-data]
@@ -60,7 +63,13 @@
         :return HakuData
         (if-let [response (hakija-api/get-avustushaku avustushaku-id)]
           (ok (add-arviot response))
-          (not-found))))
+          (not-found)))
+
+  (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id]
+      :path-params [avustushaku-id :- Long hakemus-id :- Long]
+      :body    [arvio (describe Arvio "New arvio")]
+      :return Arvio
+      (ok (arvio-json (virkailija-db/update-or-create-hakemus-arvio hakemus-id arvio)))))
 
 (defroutes* userinfo-routes
   "User information"

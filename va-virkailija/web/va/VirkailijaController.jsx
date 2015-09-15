@@ -47,7 +47,8 @@ export default class VirkailijaController {
   }
 
   onUpdateHakemusArvio(state, updatedHakemus) {
-    // TODO save to server
+    const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + updatedHakemus.id + "/arvio"
+    HttpUtil.post(updateUrl, updatedHakemus.arvio)
     return state
   }
 
