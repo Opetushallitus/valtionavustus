@@ -1,7 +1,6 @@
 import _ from 'lodash'
 
 import InputValueStorage from 'va-common/web/form/InputValueStorage.js'
-import FieldUpdateHandler from './FieldUpdateHandler.js'
 import JsUtil from 'va-common/web/form/JsUtil.js'
 import FormUtil from 'va-common/web/form/FormUtil.js'
 
@@ -53,20 +52,6 @@ export default class FormBranchGrower {
         throw new Error("Expected an existing child for growing set '" + growingParentId + "' to get the field configurations from there.")
     }
     return growingParentSpecification.children[0]
-  }
-
-  static ensureFirstChildIsRequired(state, growingParent) {
-    const firstChildOfGrowingSet = _.first(growingParent.children)
-    const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(state.configuration.form.content, growingParent.id)
-    _.forEach(JsUtil.flatFilter(firstChildOfGrowingSet, n => { return !_.isUndefined(n.id) }), n => {
-      const grandChildPrototype = FormUtil.findFirstFieldIgnoringIndex(childPrototype, n.id)
-      n.id = grandChildPrototype.id
-      if(grandChildPrototype.required) {
-        n.required = true
-      }
-    })
-    const fieldsToValidate = JsUtil.flatFilter(_.first(growingParent.children), f => { return !_.isUndefined(f.id) && f.type === "formField"})
-    FieldUpdateHandler.triggerFieldUpdatesForValidation(fieldsToValidate, state)
   }
 
   static expandGrowingFieldSetIfNeeded(state, fieldUpdate) {

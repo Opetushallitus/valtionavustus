@@ -8,6 +8,7 @@ import InputValueStorage from 'va-common/web/form/InputValueStorage.js'
 import FormUtil from 'va-common/web/form/FormUtil.js'
 import FormRules from './FormRules.js'
 import FormBranchGrower from './FormBranchGrower.js'
+import FormBranchEditableFieldGrower from './FormBranchEditableFieldGrower.js'
 import FieldUpdateHandler from './FieldUpdateHandler.js'
 
 const serverOperations = {
@@ -192,7 +193,7 @@ export default class FormStateTransitions {
     const answersObject = state.saveStatus.values
     InputValueStorage.deleteValue(growingParent, answersObject, fieldToRemove.id)
     FormRules.removeField(state.form, growingParent, fieldToRemove)
-    FormBranchGrower.ensureFirstChildIsRequired(state, growingParent)
+    FormBranchEditableFieldGrower.ensureFirstChildIsRequired(state, growingParent)
     state.saveStatus.changes = true
     this.startAutoSave(state)
     return state
