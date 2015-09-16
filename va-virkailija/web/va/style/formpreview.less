@@ -10,10 +10,22 @@
   }
 
   .soresu-theme {
+    .soresu-preview-fieldset {
+      .soresu-preview-element {
+        &.large {
+          width: ceil(@preview-width / 1.7); // original width from preview.less
+        }
+      }
+    }
     .soresu-preview-growing-fieldset {
       .soresu-preview-growing-fieldset-child {
         margin-left: 20px;
         padding-bottom: 20px;
+        .soresu-preview-element {
+          &.large {
+            width: ceil(@preview-width / 1.7); // original width from preview.less
+          }
+        }
       }
       .va-big-fieldset {
         margin-left: 15px;
@@ -28,7 +40,7 @@
     }
     .soresu-preview-element {
       &.large {
-        width: ceil(@preview-width / 1.7); // original width from preview.less
+        width: 98%; // original width from preview.less
       }
       .soresu-value {
         font-size: 16px;
