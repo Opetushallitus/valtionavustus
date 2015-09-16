@@ -21,6 +21,7 @@ export default class HakemusCommentInput extends Component {
         event.preventDefault()
         const newComment = event.target.value
         controller.addComment(newComment)
+        event.target.value = ''
       }
     }
   }
