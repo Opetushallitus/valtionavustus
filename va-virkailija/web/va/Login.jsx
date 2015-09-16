@@ -22,19 +22,26 @@ export default class Login extends React.Component {
       <div>
         <TopBar environment={environment} title="Hakemusten arviointi" />
         <section id="container">
-          <h1>Kirjaudu sisään</h1>
           <form name="login" method="post">
             <div className="row">
               <label htmlFor="username">Tunnus</label>
+            </div>
+            <div className="row">
               <input type="text" id="username" ref="nameInput" name="username" />
             </div>
-            <div>
+            <div className="row">
               <label htmlFor="password">Salasana</label>
+            </div>
+            <div className="row">
               <input type="password" id="password" name="password" />
-              <button type="submit">&gt;</button>
+            </div>
+            <div className="row">
+              <button type="submit">Kirjaudu sisään</button>
             </div>
           </form>
-          {error}
+          <div className="row">
+            {error}
+          </div>
         </section>
       </div>
     )
