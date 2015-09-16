@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 
+import HakemusCommentInput from './HakemusCommentInput.jsx'
 import HakemusStatus from "./HakemusStatus.jsx"
 
 export default class HakemusArviointi extends Component {
@@ -31,6 +32,7 @@ export default class HakemusArviointi extends Component {
     }
     return (
      <div id="hakemus-arviointi">
+       <HakemusCommentInput controller={controller}/>
        <h2>Tila</h2>
        {statuses}
      </div>

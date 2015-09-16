@@ -10,7 +10,8 @@ const dispatcher = new Dispatcher()
 const events = {
   initialState: 'initialState',
   selectHakemus: 'selectHakemus',
-  updateHakemusArvio: 'updateHakemusArvio'
+  updateHakemusArvio: 'updateHakemusArvio',
+  addComment: 'addComment'
 }
 
 export default class VirkailijaController {
@@ -31,7 +32,8 @@ export default class VirkailijaController {
     return Bacon.update({},
       [dispatcher.stream(events.initialState)], this.onInitialState,
       [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
-      [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio)
+      [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio,
+      [dispatcher.stream(events.addComment)], this.onAddComment)
   }
 
   onInitialState(emptyState, realInitialState) {
@@ -54,6 +56,12 @@ export default class VirkailijaController {
     return state
   }
 
+  onAddComment(state, newComment) {
+    const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + state.selectedHakemus.id + "/comments"
+    HttpUtil.post(updateUrl, { comment: newComment })
+    return state
+  }
+
   // Public API
   selectHakemus(hakemus) {
     return function() {
@@ -66,5 +74,9 @@ export default class VirkailijaController {
       hakemus.arvio.status = newStatus
       dispatcher.push(events.updateHakemusArvio, hakemus)
     }
+  }
+
+  addComment(newComment) {
+    dispatcher.push(events.addComment, newComment)
   }
 }

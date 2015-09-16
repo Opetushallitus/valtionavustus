@@ -69,7 +69,25 @@
       :path-params [avustushaku-id :- Long hakemus-id :- Long]
       :body    [arvio (describe Arvio "New arvio")]
       :return Arvio
-      (ok (arvio-json (virkailija-db/update-or-create-hakemus-arvio hakemus-id arvio)))))
+      (ok (arvio-json (virkailija-db/update-or-create-hakemus-arvio hakemus-id arvio))))
+
+  (GET* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id]
+        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+        :return Comments
+        (ok (virkailija-db/list-comments hakemus-id)))
+
+  (POST* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id :as request]
+        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+        :body [comment (describe NewComment "New comment")]
+        :return Comments
+        (let [identity (auth/check-identity (-> request
+                                                :session
+                                                :identity))]
+          (ok (trace "lol" (virkailija-db/add-comment hakemus-id
+                                         (:first-name identity)
+                                         (:surname identity)
+                                         (:email identity)
+                                         (:comment comment)))))))
 
 (defroutes* userinfo-routes
   "User information"
