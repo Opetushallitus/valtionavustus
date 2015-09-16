@@ -6,6 +6,11 @@
 (defn get-arviot [hakemus-ids]
   (exec :db queries/get-arviot {:hakemus_ids hakemus-ids}))
 
+(defn get-arvio [hakemus-id]
+  (->> {:hakemus_id hakemus-id}
+       (exec :db queries/get-arvio)
+       first))
+
 (defn update-or-create-hakemus-arvio [hakemus-id arvio]
   (let [status (keyword (:status arvio))
         updated (exec :db queries/update-arvio<! {:hakemus_id hakemus-id :status status})]
@@ -21,14 +26,9 @@
        (= 1)))
 
 (defn- get-or-create-arvio [hakemus-id]
-  (if-let [arvio (first (get-arviot [hakemus-id]))]
+  (if-let [arvio (get-arvio hakemus-id)]
     arvio
-    (-> (update-or-create-hakemus-arvio hakemus-id {:status "unhandled"})
-        (map :id)
-        list
-        (get-arviot)
-        first
-        :id)))
+    (update-or-create-hakemus-arvio hakemus-id {:status "unhandled"})))
 
 (defn list-comments [hakemus-id]
   (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
@@ -41,5 +41,6 @@
                         :last_name last-name
                         :email email
                         :comment comment}
-                       (exec :db queries/create-comment<!))]
+                       (exec :db queries/create-comment<!)
+                       trace)]
       (list-comments hakemus-id))))

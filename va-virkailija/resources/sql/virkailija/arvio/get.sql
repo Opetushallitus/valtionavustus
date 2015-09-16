@@ -1,1 +1,1 @@
-select * from arviot where hakemus_id IN (:hakemus_ids)
+select * from arviot where hakemus_id = :hakemus_id
