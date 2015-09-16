@@ -5,6 +5,7 @@ import Immutable from 'seamless-immutable'
 import FormPreview from 'va-common/web/form/FormPreview.jsx'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
+import FormBranchGrower from 'va-common/web/form/FormBranchGrower'
 import FormRules from 'va-common/web/form/FormRules'
 
 import HakemusArviointi from './HakemusArviointi.jsx'
@@ -19,7 +20,6 @@ export default class HakemusDetails extends Component {
 
     const answers = hakemus.answers
     const formSpecification = hakuData.form
-    formSpecification.validationErrors = Immutable({})
     const effectiveForm = _.cloneDeep(formSpecification)
     effectiveForm.validationErrors = Immutable({})
     FormRules.applyRulesToForm(formSpecification, effectiveForm, answers)
@@ -39,8 +39,12 @@ export default class HakemusDetails extends Component {
       infoElementValues: avustushaku,
       controller: new FakeFormController(avustushaku)
     }
+
+    FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, answers)
+
     const budgetCalculator = new VaBudgetCalculator()
     budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(formState, true)
+
     return (
       <div id="hakemus-details">
         <div id="preview-container">

@@ -1,5 +1,6 @@
 import Bacon from 'baconjs'
 import _ from 'lodash'
+import Immutable from 'seamless-immutable'
 
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'va-common/web/Dispatcher'
@@ -38,6 +39,7 @@ export default class VirkailijaController {
     if (hakemusList && !_.isEmpty(hakemusList)) {
       realInitialState.selectedHakemus = hakemusList[0]
     }
+    realInitialState.hakuData.form = Immutable(realInitialState.hakuData.form)
     return realInitialState
   }
 
