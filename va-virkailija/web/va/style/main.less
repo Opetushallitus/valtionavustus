@@ -22,13 +22,8 @@ table.hakemus-list {
   }
   .status-column {
     width: 130px;
-    text-transform: uppercase;
     .accepted {
       color: @light-green;
-    }
-    .rejected {
-      text-transform: none;
-      font-style: italic;
     }
   }
   .applied-sum-column, .granted-sum-column {
@@ -44,7 +39,7 @@ table.hakemus-list {
     tr {
       // tr cannot have margin
       border-top: 10px transparent solid;
-      border-bottom: 8px transparent solid;
+      border-bottom: 2px transparent solid;
       th:first-child {
         padding-right: @table-indent;
       }
@@ -62,6 +57,9 @@ table.hakemus-list {
     display: block;
     overflow-y: scroll;
     height: 180px;
+    tr:first-child {
+      border-top: 1px solid @light-gray;
+    }
     tr {
       &.hakemus-row {
         td:first-child {
