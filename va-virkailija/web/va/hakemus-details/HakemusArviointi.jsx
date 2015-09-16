@@ -6,7 +6,6 @@ import HakemusStatus from "./HakemusStatus.jsx"
 export default class HakemusArviointi extends Component {
   render() {
     const controller = this.props.controller
-    const avustushaku = this.props.avustushaku
     const hakemus = this.props.hakemus
     const arvio = hakemus.arvio
     const status = arvio.status
@@ -33,7 +32,7 @@ export default class HakemusArviointi extends Component {
     }
     return (
      <div id="hakemus-arviointi">
-       <HakemusCommentInput avustushaku={avustushaku} hakemus={hakemus} controller={controller}/>
+       <HakemusCommentInput controller={controller}/>
        <h2>Tila</h2>
        {statuses}
      </div>
