@@ -48,7 +48,7 @@ class Comment {
     const commentLine = firstName + ' ' + lastNameInitial + ': ' + comment.comment
     const dateTime = new Date(comment.created_at)
     const dateTimeString = BasicInfoComponent.asDateString(dateTime) + ' ' + BasicInfoComponent.asTimeString(dateTime)
-    return <div>
+    return <div className="single-comment">
             <div>{commentLine}</div>
             <div className="comment-datetime">{dateTimeString}</div>
            </div>
