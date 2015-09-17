@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 import Dispatcher from 'va-common/web/Dispatcher'
 
 import TopBar from './TopBar.jsx'
-import VirkailijaController from './VirkailijaController.jsx'
+import HakemustenArviointiController from './HakemustenArviointiController.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusDetails from './hakemus-details/HakemusDetails.jsx'
 
@@ -47,7 +47,7 @@ export default class App extends Component {
 }
 
 
-const controller = new VirkailijaController()
+const controller = new HakemustenArviointiController()
 
 const stateP = controller.initializeState()
 

@@ -19,7 +19,7 @@ if (process.env.UGLIFY === "true") {
 
 module.exports = {
   entry: {
-    app: "./web/va/VirkailijaApp.jsx",
+    app: "./web/va/HakemustenArviointiApp.jsx",
     login: "./web/va/Login.jsx"
   },
   output: {

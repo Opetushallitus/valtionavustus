@@ -16,7 +16,7 @@ const events = {
   addComment: 'addComment'
 }
 
-export default class VirkailijaController {
+export default class HakemustenArviointiController {
   initializeState() {
     const initialStateTemplate = {
       hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/1")),
@@ -67,7 +67,7 @@ export default class VirkailijaController {
   onLoadComments(state) {
     if (!state.loadingComments) {
       state.loadingComments = true
-      HttpUtil.get(VirkailijaController.commentsUrl(state)).then(comments => {
+      HttpUtil.get(HakemustenArviointiController.commentsUrl(state)).then(comments => {
         dispatcher.push(events.commentsLoaded, comments)
       })
     }
@@ -83,7 +83,7 @@ export default class VirkailijaController {
   }
 
   onAddComment(state, newComment) {
-    HttpUtil.post(VirkailijaController.commentsUrl(state), { comment: newComment }).then(comments => {
+    HttpUtil.post(HakemustenArviointiController.commentsUrl(state), { comment: newComment }).then(comments => {
       dispatcher.push(events.commentsLoaded, comments)
     })
     return state
