@@ -11,6 +11,8 @@ const events = {
   initialState: 'initialState',
   selectHakemus: 'selectHakemus',
   updateHakemusArvio: 'updateHakemusArvio',
+  loadComments: 'loadcomments',
+  commentsLoaded: 'commentsLoaded',
   addComment: 'addComment'
 }
 
@@ -33,7 +35,13 @@ export default class VirkailijaController {
       [dispatcher.stream(events.initialState)], this.onInitialState,
       [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
       [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio,
+      [dispatcher.stream(events.loadComments)], this.onLoadComments,
+      [dispatcher.stream(events.commentsLoaded)], this.onCommentsLoaded,
       [dispatcher.stream(events.addComment)], this.onAddComment)
+  }
+
+  static commentsUrl(state) {
+    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + state.selectedHakemus.id + "/comments"
   }
 
   onInitialState(emptyState, realInitialState) {
@@ -56,9 +64,26 @@ export default class VirkailijaController {
     return state
   }
 
+  onLoadComments(state) {
+    if (!state.loadingComments) {
+      state.loadingComments = true
+      HttpUtil.get(VirkailijaController.commentsUrl(state)).then(comments => {
+        dispatcher.push(events.commentsLoaded, comments)
+      })
+    }
+    return state
+  }
+
+  onCommentsLoaded(state, comments) {
+    if (state.selectedHakemus) {
+      state.selectedHakemus.comments = comments
+    }
+    state.loadingComments = false
+    return state
+  }
+
   onAddComment(state, newComment) {
-    const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + state.selectedHakemus.id + "/comments"
-    HttpUtil.post(updateUrl, { comment: newComment })
+    HttpUtil.post(VirkailijaController.commentsUrl(state), { comment: newComment })
     return state
   }
 
@@ -74,6 +99,10 @@ export default class VirkailijaController {
       hakemus.arvio.status = newStatus
       dispatcher.push(events.updateHakemusArvio, hakemus)
     }
+  }
+
+  loadComments() {
+    dispatcher.push(events.loadComments)
   }
 
   addComment(newComment) {

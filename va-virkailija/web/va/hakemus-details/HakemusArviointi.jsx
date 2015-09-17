@@ -7,6 +7,8 @@ export default class HakemusArviointi extends Component {
   render() {
     const controller = this.props.controller
     const hakemus = this.props.hakemus
+    const comments = hakemus.comments
+    const loadingComments = this.props.loadingComments
     const arvio = hakemus.arvio
     const status = arvio.status
     const statuses = []
@@ -32,7 +34,7 @@ export default class HakemusArviointi extends Component {
     }
     return (
      <div id="hakemus-arviointi">
-       <HakemusComments controller={controller}/>
+       <HakemusComments controller={controller} comments={comments} loadingComments={loadingComments}/>
        <h2>Tila</h2>
        {statuses}
      </div>

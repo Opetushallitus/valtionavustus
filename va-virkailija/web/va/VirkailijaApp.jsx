@@ -20,6 +20,7 @@ export default class App extends Component {
     const hakemusList = hakuData.hakemukset
     const selectedHakemus = this.props.state.selectedHakemus
     const translations = this.props.state.translations
+    const loadingComments = this.props.state.loadingComments
     const user = this.props.state.userInfo
     const username = user["first-name"] + " " + user["surname"]
     return (
@@ -37,6 +38,7 @@ export default class App extends Component {
                           avustushaku={avustushaku}
                           hakemus={selectedHakemus}
                           translations={translations}
+                          loadingComments={loadingComments}
                           controller={controller}/>
         </section>
       </section>

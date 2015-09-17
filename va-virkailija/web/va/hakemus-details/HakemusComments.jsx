@@ -1,16 +1,26 @@
 import React, { Component } from 'react'
+import _ from 'lodash'
 
 import HakemusStatus from "./HakemusStatus.jsx"
 
 export default class HakemusComments extends Component {
   render() {
     const controller = this.props.controller
-    return (
-      <div id="hakemus-comment-container">
-        <textarea id="comment-input" placeholder="Kommentoi" onKeyDown={this.onKeyDown(controller)} >
-        </textarea>
-      </div>
-    )
+    const comments = this.props.comments
+    const loadingComments = this.props.loadingComments
+    if (_.isArray(comments)) {
+      return (
+        <div id="hakemus-comment-container">
+          <textarea id="comment-input" placeholder="Kommentoi" onKeyDown={this.onKeyDown(controller)} >
+          </textarea>
+        </div>
+      )
+    } else {
+      if (!loadingComments) {
+        controller.loadComments()
+      }
+      return <CommentsLoading/>
+    }
   }
 
   onKeyDown(controller) {
@@ -22,5 +32,11 @@ export default class HakemusComments extends Component {
         event.target.value = ''
       }
     }
+  }
+}
+
+class CommentsLoading extends Component {
+  render() {
+    return <div id="hakemus-comments-loading"/>
   }
 }
