@@ -7,25 +7,24 @@ import HakemusStatus from "./HakemusStatus.jsx"
 export default class HakemusComments extends Component {
   render() {
     const controller = this.props.controller
-    const comments = this.props.comments
+    const commentsInState = this.props.comments
     const loadingComments = this.props.loadingComments
-    if (_.isArray(comments)) {
-      const commentComponents = _.map(comments, c => <Comment comment={c} key={c.id}/>)
-      return (
-        <div id="hakemus-comment-container">
-          <div className="comment-list">
-            {commentComponents}
-          </div>
-          <textarea id="comment-input" placeholder="Kommentoi" onKeyDown={this.onKeyDown(controller)} >
-          </textarea>
-        </div>
-      )
-    } else {
-      if (!loadingComments) {
-        controller.loadComments()
-      }
-      return <CommentsLoading/>
+    const commentsHaveBeenLoaded = _.isArray(commentsInState)
+
+    var commentsToRender = []
+    if (commentsHaveBeenLoaded) {
+      commentsToRender = commentsInState
+    } else if (!loadingComments) {
+      controller.loadComments()
     }
+    const commentComponents = _.map(commentsToRender, c => <Comment comment={c} key={c.id}/>)
+    return <div id="hakemus-comment-container">
+             <div className="comment-list">
+               {commentComponents}
+              </div>
+              <textarea id="comment-input" placeholder="Kommentoi" onKeyDown={this.onKeyDown(controller)}>
+              </textarea>
+           </div>
   }
 
   onKeyDown(controller) {
@@ -54,11 +53,5 @@ class Comment {
             <div>{commentLine}</div>
             <div className="comment-datetime">{dateTimeString}</div>
            </div>
-  }
-}
-
-class CommentsLoading extends Component {
-  render() {
-    return <div id="hakemus-comments-loading"/>
   }
 }
