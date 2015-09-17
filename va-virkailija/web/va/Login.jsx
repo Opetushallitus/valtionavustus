@@ -20,7 +20,7 @@ export default class Login extends React.Component {
     const error = query.error == "true" ? errorMessage : (<div></div>)
     return (
       <div>
-        <TopBar environment={environment} title="Hakemusten arviointi" />
+        <TopBar environment={environment}/>
         <section id="container">
           <form name="login" method="post">
             <div className="row">
