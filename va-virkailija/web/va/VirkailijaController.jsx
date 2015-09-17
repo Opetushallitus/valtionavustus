@@ -83,7 +83,9 @@ export default class VirkailijaController {
   }
 
   onAddComment(state, newComment) {
-    HttpUtil.post(VirkailijaController.commentsUrl(state), { comment: newComment })
+    HttpUtil.post(VirkailijaController.commentsUrl(state), { comment: newComment }).then(comments => {
+      dispatcher.push(events.commentsLoaded, comments)
+    })
     return state
   }
 
