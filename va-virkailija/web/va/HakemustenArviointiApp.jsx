@@ -18,7 +18,7 @@ export default class App extends Component {
     const hakuData = this.props.state.hakuData
     const avustushaku = hakuData.avustushaku
     const hakemusList = hakuData.hakemukset
-    const selectedHakemus = this.props.state.selectedHakemus
+    const selectedHakemus = this.props.state.selectedHakemus ? this.props.state.selectedHakemus : {}
     const translations = this.props.state.translations
     const loadingComments = this.props.state.loadingComments
     const user = this.props.state.userInfo

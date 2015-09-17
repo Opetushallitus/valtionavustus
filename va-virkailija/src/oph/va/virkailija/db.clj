@@ -4,7 +4,9 @@
   (:require [oph.va.virkailija.db.queries :as queries]))
 
 (defn get-arviot [hakemus-ids]
-  (exec :db queries/get-arviot {:hakemus_ids hakemus-ids}))
+  (if (empty? hakemus-ids)
+    []
+    (exec :db queries/get-arviot {:hakemus_ids hakemus-ids})))
 
 (defn get-arvio [hakemus-id]
   (->> {:hakemus_id hakemus-id}

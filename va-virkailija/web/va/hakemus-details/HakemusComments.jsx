@@ -14,7 +14,7 @@ export default class HakemusComments extends Component {
     var commentsToRender = []
     if (commentsHaveBeenLoaded) {
       commentsToRender = commentsInState
-    } else if (!loadingComments) {
+    } else if (!loadingComments && this.props.hakemus.id) {
       controller.loadComments()
     }
     const commentComponents = _.map(commentsToRender, c => <Comment comment={c} key={c.id}/>)

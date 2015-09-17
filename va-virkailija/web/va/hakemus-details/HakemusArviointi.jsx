@@ -10,7 +10,7 @@ export default class HakemusArviointi extends Component {
     const comments = hakemus.comments
     const loadingComments = this.props.loadingComments
     const arvio = hakemus.arvio
-    const status = arvio.status
+    const status = arvio ? arvio.status : undefined
     const statuses = []
     const statusValues = ['unhandled', 'plausible', 'rejected', 'accepted'];
     for (var i=0; i < statusValues.length; i++) {
@@ -34,7 +34,7 @@ export default class HakemusArviointi extends Component {
     }
     return (
      <div id="hakemus-arviointi">
-       <HakemusComments controller={controller} comments={comments} loadingComments={loadingComments}/>
+       <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments}/>
        <h2>Tila</h2>
        {statuses}
      </div>
