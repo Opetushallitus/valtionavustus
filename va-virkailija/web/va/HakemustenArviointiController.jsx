@@ -31,13 +31,15 @@ export default class HakemustenArviointiController {
       dispatcher.push(events.initialState, state)
     })
 
-    return Bacon.update({},
+    return Bacon.update(
+      {},
       [dispatcher.stream(events.initialState)], this.onInitialState,
       [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
       [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio,
       [dispatcher.stream(events.loadComments)], this.onLoadComments,
       [dispatcher.stream(events.commentsLoaded)], this.onCommentsLoaded,
-      [dispatcher.stream(events.addComment)], this.onAddComment)
+      [dispatcher.stream(events.addComment)], this.onAddComment
+    )
   }
 
   static commentsUrl(state) {
