@@ -83,11 +83,11 @@
         (let [identity (auth/check-identity (-> request
                                                 :session
                                                 :identity))]
-          (ok (trace "lol" (virkailija-db/add-comment hakemus-id
-                                         (:first-name identity)
-                                         (:surname identity)
-                                         (:email identity)
-                                         (:comment comment)))))))
+          (ok (virkailija-db/add-comment hakemus-id
+                                                   (:first-name identity)
+                                                   (:surname identity)
+                                                   (:email identity)
+                                                   (:comment comment))))))
 
 (defroutes* userinfo-routes
   "User information"

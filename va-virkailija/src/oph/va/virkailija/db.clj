@@ -41,6 +41,5 @@
                         :last_name last-name
                         :email email
                         :comment comment}
-                       (exec :db queries/create-comment<!)
-                       trace)]
+                       (exec :db queries/create-comment<!))]
       (list-comments hakemus-id))))
