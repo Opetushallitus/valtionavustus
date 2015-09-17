@@ -128,6 +128,7 @@ table.hakemus-list {
     background-color: white;
     padding: 10px 15px 10px 10px;
     overflow-y: scroll;
+    display: inline-block;
     margin-left: @preview-width + 35px;
     top: @topbar-height + @hakemus-list-height;
     bottom: 20px;
@@ -136,6 +137,13 @@ table.hakemus-list {
     #hakemus-comments-loading {
       background-color: red;
       height: 56px;
+    }
+
+    .comment-list {
+      height: 92px;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      margin-bottom: 12px;
     }
 
     .single-comment {

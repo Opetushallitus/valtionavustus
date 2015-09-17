@@ -13,7 +13,7 @@ export default class HakemusComments extends Component {
       const commentComponents = _.map(comments, c => <Comment comment={c} key={c.id}/>)
       return (
         <div id="hakemus-comment-container">
-          <div>
+          <div className="comment-list">
             {commentComponents}
           </div>
           <textarea id="comment-input" placeholder="Kommentoi" onKeyDown={this.onKeyDown(controller)} >
