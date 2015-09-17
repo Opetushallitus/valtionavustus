@@ -10,7 +10,7 @@ export default class HakemusComments extends Component {
     const comments = this.props.comments
     const loadingComments = this.props.loadingComments
     if (_.isArray(comments)) {
-      const commentComponents = _.map(comments, c => <Comment comment={c}/>)
+      const commentComponents = _.map(comments, c => <Comment comment={c} key={c.id}/>)
       return (
         <div id="hakemus-comment-container">
           <div>
