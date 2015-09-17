@@ -52,6 +52,7 @@
 
 (defroutes resource-routes
   (GET "/" [] (return-html "index.html"))
+  (GET "/admin" [] (return-html "admin.html"))
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 

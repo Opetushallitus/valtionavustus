@@ -29,8 +29,8 @@ class TopBarTabs extends React.Component {
     const disabled = this.props.disabled
     return (
       <div id="tabs">
-        <TopBarTab id="arviointi" label="Hakemusten arviointi" disabled={disabled} activeTab={activeTab}/>
-        <TopBarTab id="admin" label="Hakujen hallinta" disabled={disabled} activeTab={activeTab}/>
+        <TopBarTab id="arviointi" label="Hakemusten arviointi" href="/" disabled={disabled} activeTab={activeTab}/>
+        <TopBarTab id="admin" label="Hakujen hallinta" href="/admin" disabled={disabled} activeTab={activeTab}/>
       </div>
     )
   }
@@ -40,11 +40,13 @@ class TopBarTab extends React.Component {
   render() {
     const id = this.props.id
     const label = this.props.label
+    const href = this.props.href
     const active = id === this.props.activeTab
     const disabled = this.props.disabled || active
     const classNames = ClassNames("tab", {active: active})
-    return (
-      <a id={id} disabled={disabled} className={classNames}>{label}</a>
-    )
+    if(disabled) {
+      return <h1 id={id} className={classNames}>{label}</h1>
+    }
+    return <a href={href} id={id}className={classNames}>{label}</a>
   }
 }
