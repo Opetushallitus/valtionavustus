@@ -127,7 +127,11 @@ table.hakemus-list {
     font-size: 12px;
     background-color: white;
     padding: 10px 15px 10px 10px;
+    overflow-y: auto;
+    display: inline-block;
     margin-left: @preview-width + 35px;
+    top: @topbar-height + @hakemus-list-height;
+    bottom: 20px;
     width: @content-width - @preview-width - 50px;
 
     .comment-list {
