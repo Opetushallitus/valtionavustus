@@ -14,7 +14,7 @@
        (= 1)))
 
 (defn list-avustushaut []
-  (exec :hakija-db hakija-queries/list-avustushaut {}))
+  (map avustushaku-response-content(exec :hakija-db hakija-queries/list-avustushaut {})))
 
 (defn- get-avustushaku-roles [avustushaku-id]
   (exec :hakija-db hakija-queries/get-avustushaku-roles {:avustushaku_id avustushaku-id}))

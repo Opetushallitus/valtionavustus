@@ -8,13 +8,14 @@ import Dispatcher from 'va-common/web/Dispatcher'
 const dispatcher = new Dispatcher()
 
 const events = {
-  initialState: 'initialState'
+  initialState: 'initialState',
+  selectHaku: 'selectHaku'
 }
 
 export default class HakujenHallintaController {
   initializeState() {
     const initialStateTemplate = {
-      hakuList: undefined,
+      hakuList: Bacon.fromPromise(HttpUtil.get("/api/avustushaku")),
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       environment: Bacon.fromPromise(HttpUtil.get("/environment")),
       selectedHaku: undefined
@@ -26,8 +27,11 @@ export default class HakujenHallintaController {
       dispatcher.push(events.initialState, state)
     })
 
-    return Bacon.update({},
-      [dispatcher.stream(events.initialState)], this.onInitialState)
+    return Bacon.update(
+      {},
+      [dispatcher.stream(events.initialState)], this.onInitialState,
+      [dispatcher.stream(events.selectHaku)], this.onHakuSelection
+    )
   }
 
   onInitialState(emptyState, realInitialState) {
@@ -36,5 +40,17 @@ export default class HakujenHallintaController {
       realInitialState.selectedHaku = hakuList[0]
     }
     return realInitialState
+  }
+
+  onHakuSelection(state, hakuToSelect) {
+    state.selectedHaku = hakuToSelect
+    return state
+  }
+
+  // Public API
+  selectHaku(hakemus) {
+    return function() {
+      dispatcher.push(events.selectHaku, hakemus)
+    }
   }
 }

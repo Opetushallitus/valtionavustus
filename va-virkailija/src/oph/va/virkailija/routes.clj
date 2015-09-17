@@ -15,6 +15,7 @@
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.auth :as auth]
+            [oph.va.schema :refer :all]
             [oph.va.virkailija.schema :refer :all]
             [oph.va.virkailija.handlers :refer :all]))
 
@@ -58,6 +59,12 @@
 
 (defroutes* avustushaku-routes
   "Hakemus listing and filtering"
+
+  (GET* "/" []
+        :return [AvustusHaku]
+        (if-let [response (hakija-api/list-avustushaut)]
+          (ok response)
+          (not-found)))
 
   (GET* "/:avustushaku-id" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
