@@ -22,8 +22,8 @@ export default class HakemusComments extends Component {
              <div className="comment-list">
                {commentComponents}
               </div>
-              <textarea id="comment-input" placeholder="Kommentoi" onKeyDown={this.onKeyDown(controller)}>
-              </textarea>
+              <input type="text" className="comment-input" id="comment-input" maxLength="180"
+                     placeholder="Kommentoi" onKeyDown={this.onKeyDown(controller)}/>
            </div>
   }
 
