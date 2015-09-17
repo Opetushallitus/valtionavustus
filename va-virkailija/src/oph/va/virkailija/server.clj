@@ -51,7 +51,7 @@
              :handler any-access}
             {:pattern #"^/css/.*"
              :handler any-access}
-            {:pattern #"^/.*"
+            {:pattern #".*"
              :handler authenticated-access
              :redirect "/login"}])
 
