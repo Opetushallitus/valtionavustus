@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import HakemusStatus from "./HakemusStatus.jsx"
 
-export default class HakemusCommentInput extends Component {
+export default class HakemusComments extends Component {
   render() {
     const controller = this.props.controller
     return (
