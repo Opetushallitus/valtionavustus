@@ -1,9 +1,5 @@
-import Bacon from 'baconjs'
 import _ from 'lodash'
 import React, { Component } from 'react'
-
-import HttpUtil from 'va-common/web/HttpUtil.js'
-import Dispatcher from 'va-common/web/Dispatcher'
 
 import HakemusStatus from '../hakemus-details/HakemusStatus.jsx'
 import AvustushakuSelector from '../avustushaku/AvustushakuSelector.jsx'
@@ -19,7 +15,7 @@ export default class HakemusListing extends Component {
       return <HakemusRow hakemus={hakemus} key={hakemusList.indexOf(hakemus)}
                          selectedHakemus={selectedHakemus} controller={controller}/> })
     return (
-      <table key="hakemusListing" className="hakemus-list">
+      <table key="hakemusListing" className="hakemus-list overview-list">
         <thead><tr>
           <th className="organization-column">Hakijaorganisaatio</th>
           <th className="project-name-column">Hanke</th>
@@ -46,7 +42,7 @@ class HakemusRow extends Component {
     const key = this.props.key
     const hakemus = this.props.hakemus
     const selectedHakemus = this.props.selectedHakemus
-    const rowClass = hakemus === selectedHakemus ? "selected hakemus-row" : "unselected hakemus-row"
+    const rowClass = hakemus === selectedHakemus ? "selected overview-row" : "unselected overview-row"
     const controller = this.props.controller
     return <tr className={rowClass} key={key} onClick={controller.selectHakemus(hakemus)}>
       <td className="organization-column">{hakemus["organization-name"]}</td>

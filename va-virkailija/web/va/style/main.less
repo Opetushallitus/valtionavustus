@@ -1,16 +1,7 @@
 @import "variables";
 @import "formpreview";
 
-#list-container {
-  position: fixed;
-  width: @content-width;
-  top: @topbar-height;
-  height: @hakemus-list-height;
-}
 table.hakemus-list {
-  width: @content-width;
-  text-align: left;
-
   .organization-column, .project-name-column {
     width: 350px;
     max-width: 350px;
@@ -34,74 +25,16 @@ table.hakemus-list {
       content: " €"
     }
   }
-
-  thead {
-    display: block;
-    tr {
-      // tr cannot have margin
-      border-top: 10px transparent solid;
-      border-bottom: 2px transparent solid;
-      th:first-child {
-        padding-right: @table-indent;
-      }
-      th:last-child {
-        padding-right: @table-indent;
-      }
-      th {
-        font-weight: normal;
-        color: #4a4a4a;
-        padding-bottom: 7px;
-      }
-    }
-  }
   tbody {
-    display: block;
-    overflow-y: scroll;
-    height: 180px;
-    tr:first-child {
-      border-top: 1px solid @light-gray;
-    }
     tr {
-      &.hakemus-row {
-        td:first-child {
-          padding-left: @table-indent;
-        }
-        td:last-child {
-          padding-right: @table-indent;
-        }
-        cursor: pointer; cursor: hand;
-        color: #1A1919;
-      }
-
-      &.unselected:hover {
-        background-color: lighten(#4093BE, 42%);
-      }
       &.selected {
-        background-color: #4093BE;
-        color: white;
         td.status-column .accepted {
           color: white;
         }
       }
-      td {
-        padding: 5px 0;
-      }
     }
   }
   tfoot {
-    display: block;
-    border-top: 1px solid @light-gray;
-    font-weight: bold;
-    td:first-child {
-      padding-right: @table-indent;
-      width: 900px;
-    }
-    td:last-child {
-      padding-right: @table-indent;
-    }
-    td {
-      padding-top: 5px;
-    }
     .avustushaku-name {
       font-size: 12px;
       font-weight: normal;
@@ -110,14 +43,14 @@ table.hakemus-list {
 }
 
 #hakemus-details {
-  margin-top: @topbar-height + @hakemus-list-height;
+  margin-top: @topbar-height + @overview-list-height;
 
   #preview-container {
     position: absolute;
     background-color: white;
     padding: 10px 15px 10px 10px;
     overflow-y: scroll;
-    top: @topbar-height + @hakemus-list-height;
+    top: @topbar-height + @overview-list-height;
     bottom: 20px;
     width: @preview-width;
   }
@@ -130,7 +63,7 @@ table.hakemus-list {
     overflow-y: auto;
     display: inline-block;
     margin-left: @preview-width + 35px;
-    top: @topbar-height + @hakemus-list-height;
+    top: @topbar-height + @overview-list-height;
     bottom: 20px;
     width: @content-width - @preview-width - 50px;
 
