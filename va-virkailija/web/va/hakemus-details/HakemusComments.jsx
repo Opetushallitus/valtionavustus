@@ -9,8 +9,12 @@ export default class HakemusComments extends Component {
     const comments = this.props.comments
     const loadingComments = this.props.loadingComments
     if (_.isArray(comments)) {
+      const commentComponents = _.map(comments, c => <Comment comment={c}/>)
       return (
         <div id="hakemus-comment-container">
+          <div>
+            {commentComponents}
+          </div>
           <textarea id="comment-input" placeholder="Kommentoi" onKeyDown={this.onKeyDown(controller)} >
           </textarea>
         </div>
@@ -32,6 +36,19 @@ export default class HakemusComments extends Component {
         event.target.value = ''
       }
     }
+  }
+}
+
+class Comment {
+  render() {
+    const comment = this.props.comment
+    const firstName = comment.first_name
+    const lastNameInitial = comment.last_name ? comment.last_name.charAt(0).toUpperCase() : ''
+    const commentLine = firstName + ' ' + lastNameInitial + ': ' + comment.comment
+    return <div>
+            <div>{commentLine}</div>
+            <div>{comment.created_at}</div>
+           </div>
   }
 }
 
