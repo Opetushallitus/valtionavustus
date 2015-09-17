@@ -1,22 +1,18 @@
 import PolyfillBind from 'va-common/web/polyfill-bind'
 import ConsolePolyfill from 'console-polyfill'
 import React, { Component } from 'react'
-import Bacon from 'baconjs'
-
-import HttpUtil from 'va-common/web/HttpUtil.js'
-
-import Dispatcher from 'va-common/web/Dispatcher'
 
 import TopBar from './TopBar.jsx'
+import HakujenHallintaController from './HakujenHallintaController.jsx'
 
 import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'
 
 export default class AdminApp extends Component {
   render() {
-    const model = this.props.model
-    const environment =  model.environment
-    const user = model.userInfo
+    const state = this.props.state
+    const environment =  state.environment
+    const user = state.userInfo
     const username = user["first-name"] + " " + user["surname"]
     return (
       <section>
@@ -28,16 +24,18 @@ export default class AdminApp extends Component {
   }
 }
 
-const environmentP = Bacon.fromPromise(HttpUtil.get("/environment"))
+const controller = new HakujenHallintaController()
 
-const initialStateTemplate = {
-  environment: environmentP,
-  userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo"))
-}
+const stateP = controller.initializeState()
 
-const initialState = Bacon.combineTemplate(initialStateTemplate)
-
-initialState.onValue(function(state) {
-  const properties = { model: state }
-  React.render(React.createElement(AdminApp, properties), document.getElementById('app'))
+stateP.onValue(function(state) {
+  try {
+    if (state.userInfo) {
+      React.render(<AdminApp state={state} controller={controller}/>, document.getElementById('app'))
+    } else {
+      console.log('Not rendering yet, because state.userInfo not yet loaded.')
+    }
+  } catch (e) {
+    console.log('Error from React.render with state', state, e)
+  }
 })
