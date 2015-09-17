@@ -115,7 +115,7 @@ table.hakemus-list {
   #preview-container {
     position: absolute;
     background-color: white;
-    padding: 10px;
+    padding: 10px 15px 10px 10px;
     overflow-y: scroll;
     top: @topbar-height + @hakemus-list-height;
     bottom: 20px;
@@ -123,13 +123,14 @@ table.hakemus-list {
   }
 
   #hakemus-arviointi {
+    position: absolute;
     font-size: 12px;
     background-color: white;
-    display: inline-block;
-    position: absolute;
+    padding: 10px 15px 10px 10px;
     overflow-y: scroll;
-    margin-left: @preview-width + 30px;
-    padding: 10px;
+    margin-left: @preview-width + 35px;
+    top: @topbar-height + @hakemus-list-height;
+    bottom: 20px;
     width: @content-width - @preview-width - 50px;
 
     #hakemus-comments-loading {
