@@ -50,7 +50,7 @@ class Comment {
     const dateTimeString = BasicInfoComponent.asDateString(dateTime) + ' ' + BasicInfoComponent.asTimeString(dateTime)
     return <div>
             <div>{commentLine}</div>
-            <div>{dateTimeString}</div>
+            <div className="comment-datetime">{dateTimeString}</div>
            </div>
   }
 }
