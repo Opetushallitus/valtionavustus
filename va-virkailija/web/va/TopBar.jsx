@@ -42,7 +42,7 @@ class TopBarTab extends React.Component {
     const label = this.props.label
     const href = this.props.href
     const active = id === this.props.activeTab
-    const disabled = this.props.disabled || active
+    const disabled = this.props.disabled
     const classNames = ClassNames("tab", {active: active})
     if(disabled) {
       return <h1 id={id} className={classNames}>{label}</h1>
