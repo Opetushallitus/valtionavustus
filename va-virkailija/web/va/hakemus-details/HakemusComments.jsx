@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
+import {BasicInfoComponent} from 'va-common/web/form/component/InfoElement.jsx'
 import HakemusStatus from "./HakemusStatus.jsx"
 
 export default class HakemusComments extends Component {
@@ -45,9 +46,11 @@ class Comment {
     const firstName = comment.first_name
     const lastNameInitial = comment.last_name ? comment.last_name.charAt(0).toUpperCase() : ''
     const commentLine = firstName + ' ' + lastNameInitial + ': ' + comment.comment
+    const dateTime = new Date(comment.created_at)
+    const dateTimeString = BasicInfoComponent.asDateString(dateTime) + ' ' + BasicInfoComponent.asTimeString(dateTime)
     return <div>
             <div>{commentLine}</div>
-            <div>{comment.created_at}</div>
+            <div>{dateTimeString}</div>
            </div>
   }
 }

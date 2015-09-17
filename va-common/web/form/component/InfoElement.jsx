@@ -6,7 +6,7 @@ import LocalizedString from './LocalizedString.jsx'
 import Translator from './../Translator.js'
 import {InfoElementPropertyMapper, AccordionElementPropertyMapper} from './PropertyMapper.js'
 
-class BasicInfoComponent extends React.Component {
+export class BasicInfoComponent extends React.Component {
   static asDateString(date) {
     return moment(date).tz('Europe/Helsinki').format('D.M.YYYY')
   }
