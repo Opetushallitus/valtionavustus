@@ -70,6 +70,12 @@ export default class FormStateTransitions {
     return state
   }
 
+  onFileUpload(state, uploadEvent) {
+    const { files, field } = uploadEvent
+    console.log('TODO: Trigger uploads of ', files , ' of attachment field ', field)
+    return state
+  }
+
   onFieldValidation(state, validation) {
     if (state.extensionApi.formOperations.isNotFirstEdit(state)) {
       state.form.validationErrors = state.form.validationErrors.merge({[validation.id]: validation.validationErrors})

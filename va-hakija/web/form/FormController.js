@@ -20,7 +20,8 @@ const events = {
   serverError: 'serverError',
   submit: 'submit',
   removeField: 'removeField',
-  beforeUnload: 'beforeUnload'
+  beforeUnload: 'beforeUnload',
+  startFileUpload: 'startFileUpload'
 }
 
 export default class FormController {
@@ -57,6 +58,10 @@ export default class FormController {
 
   componentOnChangeListener(field, newValue) {
     dispatcher.push(events.updateField, FieldUpdateHandler.createFieldUpdate(field, newValue))
+  }
+
+  fileUploadListener(field, files) {
+    dispatcher.push(events.startFileUpload, { field: field, files: files })
   }
 
   componentDidMount(field, initialValue) {

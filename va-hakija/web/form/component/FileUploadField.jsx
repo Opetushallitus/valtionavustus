@@ -17,13 +17,9 @@ export default class FileUploadField extends BasicSizedComponent {
 
     return <div className={classStr}>
              {this.label(classStr)}
-             <Dropzone style={{}} id={props.htmlId} name={props.htmlId} onDrop={this.onDrop} disableClick={props.disabled}>
+             <Dropzone style={{}} id={props.htmlId} name={props.htmlId} onDrop={props.onDrop} disableClick={props.disabled}>
                <LocalizedString translations={translations.form.attachment} translationKey="uploadhere" lang={lang}/>
              </Dropzone>
            </div>
-  }
-
-  onDrop(thing) {
-    console.log('TODO: Handle dropped file', thing)
   }
 }

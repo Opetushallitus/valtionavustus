@@ -87,6 +87,17 @@ export class ButtonPropertyMapper extends DefaultPropertyMapper {
   }
 }
 
+export class FileUploadFieldPropertyMapper extends DefaultPropertyMapper {
+  static map(props) {
+    const commonProps = FieldPropertyMapper.map(props)
+    const controller = props.controller
+    const onDrop = (files) => { controller.fileUploadListener(props.field, files) }
+    return _.extend(commonProps, {
+      onDrop: onDrop
+    })
+  }
+}
+
 export class InfoElementPropertyMapper extends DefaultPropertyMapper {
   static map(props) {
     const commonProps = CommonPropertyMapper.map(props)
