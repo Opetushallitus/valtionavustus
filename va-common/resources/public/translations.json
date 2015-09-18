@@ -39,6 +39,12 @@
     "has-ended": {
       "fi": "Hakuaika on päättynyt",
       "sv": "Ansökningstiden har slutats"
+    },
+    "attachment": {
+      "uploadhere": {
+        "fi": "Liitä tiedosto vetämällä se tähän, tai klikkaa tähän ja valitse liitettävä tiedosto koneeltasi.",
+        "sv": "TODO: Liitä tiedosto vetämällä se tähän, tai klikkaa tähän ja valitse liitettävä tiedosto koneeltasi."
+      }
     }
   },
   "misc": {

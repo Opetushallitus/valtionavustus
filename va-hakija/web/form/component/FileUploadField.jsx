@@ -11,11 +11,14 @@ import Translator from 'va-common/web/form/Translator'
 export default class FileUploadField extends BasicSizedComponent {
   render() {
     const props = this.props
+    const translations = this.props.translations
+    const lang = this.props.lang
     const classStr = this.resolveClassName("soresu-file-upload")
+
     return <div className={classStr}>
              {this.label(classStr)}
              <Dropzone style={{}} id={props.htmlId} name={props.htmlId} onDrop={this.onDrop}>
-               <span>TODO: Kielistä: Try dropping some files here, or click to select files to upload.</span>
+               <LocalizedString translations={translations.form.attachment} translationKey="uploadhere" lang={lang}/>
              </Dropzone>
            </div>
   }
