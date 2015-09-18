@@ -12,8 +12,7 @@ export default class HakemusListing extends Component {
     const selectedHakemus = this.props.selectedHakemus
     const controller = this.props.controller
     const hakemusElements = _.map(hakemusList, hakemus => {
-      return <HakemusRow hakemus={hakemus} key={hakemusList.indexOf(hakemus)}
-                         selectedHakemus={selectedHakemus} controller={controller}/> })
+      return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} controller={controller}/> })
     return (
       <table key="hakemusListing" className="hakemus-list overview-list">
         <thead><tr>
@@ -39,12 +38,12 @@ export default class HakemusListing extends Component {
 
 class HakemusRow extends Component {
   render() {
-    const key = this.props.key
     const hakemus = this.props.hakemus
-    const selectedHakemus = this.props.selectedHakemus
-    const rowClass = hakemus === selectedHakemus ? "selected overview-row" : "unselected overview-row"
+    const htmlId = "hakemus-" + hakemus.id
+    const thisIsSelected = hakemus === this.props.selectedHakemus
+    const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
     const controller = this.props.controller
-    return <tr className={rowClass} key={key} onClick={controller.selectHakemus(hakemus)}>
+    return <tr id={htmlId} className={rowClass} onClick={controller.selectHakemus(hakemus)}>
       <td className="organization-column">{hakemus["organization-name"]}</td>
       <td className="project-name-column">{hakemus["project-name"]}</td>
       <td className="score-column">***</td>
