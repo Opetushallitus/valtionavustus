@@ -5,17 +5,29 @@ import {BasicInfoComponent} from 'va-common/web/form/component/InfoElement.jsx'
 import HakemusStatus from "./HakemusStatus.jsx"
 
 export default class HakemusComments extends Component {
+
+  checkComments() {
+    const commentsHaveBeenLoaded = _.isArray(this.props.comments)
+    const loadingComments = this.props.loadingComments
+    if(!commentsHaveBeenLoaded && !loadingComments && this.props.hakemus.id) {
+      this.props.controller.loadComments()
+    }
+  }
+
+  componentWillMount() {
+    this.checkComments()
+  }
+
+  componentWillUpdate() {
+    this.checkComments()
+  }
+
   render() {
     const controller = this.props.controller
-    const commentsInState = this.props.comments
-    const loadingComments = this.props.loadingComments
-    const commentsHaveBeenLoaded = _.isArray(commentsInState)
-
     var commentsToRender = []
-    if (commentsHaveBeenLoaded) {
+    const commentsInState = this.props.comments
+    if (_.isArray(commentsInState)) {
       commentsToRender = commentsInState
-    } else if (!loadingComments && this.props.hakemus.id) {
-      controller.loadComments()
     }
     const commentComponents = _.map(commentsToRender, c => <Comment comment={c} key={c.id}/>)
     return <div id="hakemus-comment-container">
