@@ -24,7 +24,7 @@ export default class FormStateTransitions {
     this.autoSave = _.debounce(function(){ dispatcher.push(events.save) }, develQueryParam? 100 : 3000)
     this._bind(
       'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
-      'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError')
+      'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError', 'onFileUpload')
   }
 
   _bind(...methods) {
@@ -72,7 +72,39 @@ export default class FormStateTransitions {
 
   onFileUpload(state, uploadEvent) {
     const { files, field } = uploadEvent
-    console.log('TODO: Trigger uploads of ', files , ' of attachment field ', field)
+    const formOperations = state.extensionApi.formOperations
+    if (formOperations.isSaveDraftAllowed(state)) {
+
+      const url = formOperations.urlCreator.attachmentBaseUrl(state, field)
+      const dispatcher = this.dispatcher
+      const events = this.events
+      try {
+        const attachment = files[0]
+        if (files.length > 1) {
+          console.log('Warning: Only uploading first of ', files)
+        }
+        state.saveStatus.attachmentUploadsInProgress[field.id] = true
+        HttpUtil.putFile(url, attachment)
+          .then(function(response) {
+            console.log("Uploaded file to server. Response=", JSON.stringify(response))
+            // set state to not have attachment upload in progress anymore... via event
+            //dispatcher.push(events.saveCompleted, updatedState)
+          })
+          .catch(function(response) {
+            console.log('upload error', response)
+            alert('Virhe tallennuksessa.')
+            //FormStateTransitions.handleServerError(dispatcher, events, response.status, response.statusText, "POST", url, response.data, serverOperation)
+          })
+      }
+      catch(error) {
+        console.log('unexapected error', error)
+        alert('Virhe tallennuksessa.')
+        //  FormStateTransitions.handleUnexpectedServerError(dispatcher, events, "POST", url, error, serverOperation);
+      }
+      finally {
+        return state
+      }
+    }
     return state
   }
 

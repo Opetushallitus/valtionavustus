@@ -11,8 +11,14 @@ export default class HttpUtil {
     return HttpUtil.handleResponse(axios.post(url, jsonData))
   }
 
-  static put(url, jsonData) {
-    return HttpUtil.handleResponse(axios.put(url, jsonData))
+  static put(url, requestData, options) {
+    return HttpUtil.handleResponse(axios.put(url, requestData, options))
+  }
+
+  static putFile(url, file) {
+    const formData = new FormData()
+    formData.append('file', file)
+    return HttpUtil.put(url, formData)
   }
 
   static handleResponse(httpCall) {

@@ -46,7 +46,8 @@ export default class FormStateLoop {
         saveTime: null,
         serverError: "",
         values: initialValuesP,
-        savedObject: savedObjectP
+        savedObject: savedObjectP,
+        attachmentUploadsInProgress: {}
       },
       configuration: {
         form: formP,
