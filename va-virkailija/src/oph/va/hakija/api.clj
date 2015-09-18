@@ -2,8 +2,10 @@
   (:use [clojure.tools.trace :only [trace]]
         [clojure.pprint :only [pprint]])
   (:require [oph.common.db :refer :all]
+            [oph.common.jdbc.enums :refer :all]
             [oph.va.hakija.api.queries :as hakija-queries]
-            [oph.va.routes :refer :all]))
+            [oph.va.routes :refer :all])
+  (:import (oph.common.jdbc.enums HakuStatus)))
 
 
 (defn health-check []
@@ -26,8 +28,10 @@
     (first (map avustushaku-response-content (exec :hakija-db hakija-queries/get-avustushaku {:id avustushaku-id})))))
 
 (defn update-avustushaku [avustushaku]
-  (exec :hakija-db hakija-queries/update-avustushaku! avustushaku)
-  (first (map avustushaku-response-content (exec :hakija-db hakija-queries/get-avustushaku avustushaku))))
+  (let [haku-status (if (= (:status avustushaku) "new") (new HakuStatus "draft") (new HakuStatus (:status avustushaku)))
+        avustushaku-to-save (assoc avustushaku :status haku-status)]
+    (exec :hakija-db hakija-queries/update-avustushaku! avustushaku-to-save)
+    (first (map avustushaku-response-content (exec :hakija-db hakija-queries/get-avustushaku avustushaku-to-save)))))
 
 (defn list-avustushaut []
   (map avustushaku-response-content(exec :hakija-db hakija-queries/list-avustushaut {})))

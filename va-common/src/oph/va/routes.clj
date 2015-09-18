@@ -21,5 +21,6 @@
 
 (defn avustushaku-response-content [avustushaku]
   {:id          (:id avustushaku)
+   :status      (:status avustushaku)
    :content     (:content avustushaku)
    :form        (:form avustushaku)})
