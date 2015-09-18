@@ -417,6 +417,15 @@ section.soresu-theme {
     padding: 14px;
     border: 2px dashed #666;
     border-radius: 5px;
+    cursor: pointer;
+  }
+
+  &.disabled {
+    color: @darker-gray;
+    div {
+      border-color: @dark-gray;
+      cursor: default;
+    }
   }
 }
 

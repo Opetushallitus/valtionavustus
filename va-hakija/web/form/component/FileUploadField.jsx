@@ -13,11 +13,11 @@ export default class FileUploadField extends BasicSizedComponent {
     const props = this.props
     const translations = this.props.translations
     const lang = this.props.lang
-    const classStr = this.resolveClassName("soresu-file-upload")
+    const classStr = ClassNames(this.resolveClassName("soresu-file-upload"), { disabled: this.props.disabled })
 
     return <div className={classStr}>
              {this.label(classStr)}
-             <Dropzone style={{}} id={props.htmlId} name={props.htmlId} onDrop={this.onDrop}>
+             <Dropzone style={{}} id={props.htmlId} name={props.htmlId} onDrop={this.onDrop} disableClick={props.disabled}>
                <LocalizedString translations={translations.form.attachment} translationKey="uploadhere" lang={lang}/>
              </Dropzone>
            </div>
