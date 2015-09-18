@@ -5,6 +5,7 @@ import React, { Component } from 'react'
 import TopBar from './TopBar.jsx'
 import HakujenHallintaController from './HakujenHallintaController.jsx'
 import HakuListing from './haku-list/HakuListing.jsx'
+import HakuEdit from './haku-details/HakuEdit.jsx'
 
 import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'
@@ -16,6 +17,7 @@ export default class AdminApp extends Component {
     const controller = this.props.controller
     const environment =  state.environment
     const user = state.userInfo
+    const selectedHaku = state.selectedHaku ? state.selectedHaku : {}
     const username = user["first-name"] + " " + user["surname"]
     return (
       <section>
@@ -24,6 +26,9 @@ export default class AdminApp extends Component {
           <HakuListing hakuList={state.hakuList}
                        selectedHaku={state.selectedHaku}
                        controller={controller} />
+          <HakuEdit avustushaku={selectedHaku}
+                    controller={controller} />
+
         </section>
       </section>
     )

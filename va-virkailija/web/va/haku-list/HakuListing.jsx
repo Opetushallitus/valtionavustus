@@ -13,7 +13,7 @@ export default class HakuListing extends Component {
     return (
       <table key="hakuListing" className="haku-list overview-list">
         <thead><tr>
-          <th className="name-column">Haku</th>
+          <th className="name-column">Avustushaku</th>
           <th className="start-column">Alkaa</th>
           <th className="end-column">Loppuu</th>
         </tr></thead>
