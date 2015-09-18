@@ -3,6 +3,7 @@
           [clojure.pprint :only [pprint]])
   (:require [compojure.route :as route]
             [clojure.tools.logging :as log]
+            [clj-time.core :as clj-time]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
             [compojure.core :refer [defroutes GET POST]]
@@ -65,6 +66,22 @@
         (if-let [response (hakija-api/list-avustushaut)]
           (ok response)
           (not-found)))
+
+  (PUT* "/" []
+        :return AvustusHaku
+        (ok (hakija-api/create-avustushaku
+              {:name {:fi "Uusi haku"
+                      :sv ""}
+               :duration {:start (clj-time/plus (clj-time/now) (clj-time/months 1))
+                          :end (clj-time/plus (clj-time/now) (clj-time/months 2))
+                          :label {:fi "Hakuaika"
+                                  :sv "Ansökningstid"}}
+               :selection-criteria {:items []
+                                    :label {:fi "Valintaperusteet"
+                                           :sv "Urvalsgrunder"}}
+               :self-financing-percentage 25}
+              []
+              [])))
 
   (GET* "/:avustushaku-id" [avustushaku-id]
         :path-params [avustushaku-id :- Long]

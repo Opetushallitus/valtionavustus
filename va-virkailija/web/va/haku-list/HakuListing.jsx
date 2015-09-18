@@ -4,22 +4,31 @@ import { BasicInfoComponent }from 'va-common/web/form/component/InfoElement.jsx'
 
 export default class HakuListing extends Component {
   render() {
+    function onClick(e) {
+      controller.createHaku()
+      e.target.blur()
+      e.preventDefault()
+    }
     const hakuList = this.props.hakuList
     const selectedHaku = this.props.selectedHaku
     const controller = this.props.controller
     const hakuElements = _.map(hakuList, haku => {
       return <HakuRow haku={haku} key={haku.id} selectedHaku={selectedHaku} controller={controller}/> })
     return (
-      <table key="hakuListing" className="haku-list overview-list">
-        <thead><tr>
-          <th className="name-column">Avustushaku</th>
-          <th className="start-column">Alkaa</th>
-          <th className="end-column">Loppuu</th>
-        </tr></thead>
-        <tbody>
-          {hakuElements}
-        </tbody>
-      </table>
+      <div>
+        <button id="create-haku" onClick={onClick} >Luo uusi avustushaku</button>
+        <table key="hakuListing" className="haku-list overview-list">
+          <thead>
+          <tr>
+            <th className="name-column">Avustushaku</th>
+            <th className="start-column">Haku alkaa</th>
+            <th className="end-column">Haku päättyy</th>
+          </tr></thead>
+          <tbody>
+            {hakuElements}
+          </tbody>
+        </table>
+      </div>
     )
   }
 }
