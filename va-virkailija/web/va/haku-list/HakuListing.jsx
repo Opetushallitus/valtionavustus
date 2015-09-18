@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 
+import { BasicInfoComponent }from 'va-common/web/form/component/InfoElement.jsx'
+
 export default class HakuListing extends Component {
   render() {
     const hakuList = this.props.hakuList
@@ -24,6 +26,11 @@ export default class HakuListing extends Component {
 }
 
 class HakuRow extends Component {
+
+  toDateStr(dateTime) {
+    return BasicInfoComponent.asDateString(dateTime) + ' ' + BasicInfoComponent.asTimeString(dateTime)
+  }
+
   render() {
     const key = this.props.key
     const haku = this.props.haku
@@ -32,8 +39,8 @@ class HakuRow extends Component {
     const controller = this.props.controller
     return <tr className={rowClass} key={key} onClick={controller.selectHaku(haku)}>
       <td className="name-column">{haku.content.name.fi}</td>
-      <td className="start-column">{haku.content.duration.start}</td>
-      <td className="end-column">{haku.content.duration.end}</td>
+      <td className="start-column">{this.toDateStr(haku.content.duration.start)}</td>
+      <td className="end-column">{this.toDateStr(haku.content.duration.end)}</td>
     </tr>
   }
 }
