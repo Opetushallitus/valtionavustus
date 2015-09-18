@@ -2,10 +2,16 @@
   (:use [oph.common.db]
         [oph.form.db :as form-db]
         [clojure.tools.trace :only [trace]])
-  (:require [oph.va.hakija.db.queries :as queries]
+  (:require [clojure.java.io :as io]
+            [oph.va.hakija.db.queries :as queries]
             [oph.va.budget :as va-budget]
             [oph.form.formutil :as form-util]))
 
+(defn slurp-binary-file! [file]
+  (io! (with-open [reader (io/input-stream file)]
+         (let [buffer (byte-array (.length file))]
+           (.read reader buffer)
+           buffer))))
 
 (defn health-check []
   (->> {}
@@ -85,3 +91,17 @@
 
 (defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version answers]
   (update-status avustushaku-id hakemus-id submission-id submission-version answers :cancelled))
+
+(defn create-attachment [hakemus-id hakemus-version field-id filename content-type size file]
+  (let [blob (slurp-binary-file! file)
+        params (-> {:hakemus_id hakemus-id
+                    :hakemus_version hakemus-version
+                    :version 0
+                    :field_id field-id
+                    :filename filename
+                    :content_type content-type
+                    :file_size size
+                    :file_data blob})]
+    (->> params
+         (exec :db queries/create-attachment<!)
+         trace)))

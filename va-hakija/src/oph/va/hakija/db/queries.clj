@@ -11,3 +11,5 @@
 (defquery close-existing-hakemus! "sql/hakemus/close-existing.sql")
 
 (defquery get-avustushaku "sql/avustushaku/get.sql")
+
+(defquery create-attachment<! "sql/attachment/create.sql")

@@ -47,4 +47,12 @@
 
 (s/defschema Attachment
   "Attachment metadata"
-  {:foo s/Str})
+  {:id 2
+   :hakemus-id s/Str
+   :version s/Str
+   :version-closed (s/either nil s/Inst)
+   :field-id s/Str
+   :file-size Long
+   :content-type s/Str
+   :hakemus-version Long
+   :filename s/Str})

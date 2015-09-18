@@ -154,10 +154,25 @@
       (bad-request! validation))))
 
 (defn on-attachment-create [haku-id hakemus-id hakemus-base-version field-id filename content-type size tempfile]
-  (let [avustushaku (va-db/get-avustushaku haku-id)
-        form-id (:form avustushaku)
-        form (form-db/get-form form-id)]
-    (trace "filename" filename)
-    (trace "content-type" content-type)
-    (trace "size" size)
-    (ok {:foo "filename"})))
+  (if-let [hakemus (va-db/get-hakemus hakemus-id)]
+    (if-let [attachment (va-db/create-attachment (:id hakemus)
+                                               hakemus-base-version
+                                               field-id
+                                               filename
+                                               content-type
+                                               size
+                                               tempfile)]
+      (do
+        (trace "filename" filename)
+        (trace "content-type" content-type)
+        (trace "size" size)
+        (ok {:id (:id attachment)
+             :hakemus-id hakemus-id
+             :version (:version attachment)
+             :field-id (:field_id attachment)
+             :file-size (:file_size attachment)
+             :content-type (:content_type attachment)
+             :hakemus-version (:hakemus_version attachment)
+             :filename (:filename attachment)}))
+      (bad-request {:error true}))
+    (bad-request! {:error true})))
