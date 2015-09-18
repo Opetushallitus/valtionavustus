@@ -44,3 +44,7 @@
 (s/defschema HakemusStatus
   "Status from the application point of view"
   (s/enum "new" "draft" "submitted"))
+
+(s/defschema Attachment
+  "Attachment metadata"
+  {:foo s/Str})

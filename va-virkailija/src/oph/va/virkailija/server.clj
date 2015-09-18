@@ -7,7 +7,6 @@
             [ring.middleware.session.cookie :refer [cookie-store]]
             [ring.middleware.conditional :refer [if-url-doesnt-match]]
             [ring.middleware.defaults :refer :all]
-            [ring.middleware.multipart-params.byte-array :refer [byte-array-store]]
             [buddy.auth :refer [authenticated?]]
             [buddy.auth.middleware :refer [wrap-authentication]]
             [buddy.auth.accessrules :refer [wrap-access-rules success error]]
@@ -72,8 +71,7 @@
                      (assoc-in [:security :anti-forgery] false)
                      (assoc :session {:store cookie-store
                                       :cookie-name "identity"
-                                      :cookie-attrs cookie-attrs})
-                     (assoc-in [:params :multipart-params] {:store byte-array-store}))
+                                      :cookie-attrs cookie-attrs}))
         routes (-> #'all-routes
                    (with-authentication)
                    (wrap-defaults defaults)

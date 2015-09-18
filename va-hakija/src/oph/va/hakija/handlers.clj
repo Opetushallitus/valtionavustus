@@ -152,3 +152,12 @@
             (hakemus-ok-response submitted-hakemus saved-submission validation))
           (hakemus-conflict-response hakemus)))
       (bad-request! validation))))
+
+(defn on-attachment-create [haku-id hakemus-id hakemus-base-version field-id filename content-type size tempfile]
+  (let [avustushaku (va-db/get-avustushaku haku-id)
+        form-id (:form avustushaku)
+        form (form-db/get-form form-id)]
+    (trace "filename" filename)
+    (trace "content-type" content-type)
+    (trace "size" size)
+    (ok {:foo "filename"})))
