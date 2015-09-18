@@ -21,7 +21,7 @@ export default class HakemusArviointi extends Component {
                key={htmlId}
                name="status"
                value={statusValues[i]}
-               onClick={controller.setHakemusArvioStatus(hakemus, statusValues[i])}
+               onChange={controller.setHakemusArvioStatus(hakemus, statusValues[i])}
                checked={statusValues[i] === status ? true: null}
         />
       )
