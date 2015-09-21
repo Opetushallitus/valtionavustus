@@ -25,6 +25,7 @@ export default class FormStateLoop {
     }
     const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json"))
     const savedObjectP = loadSavedObjectPromise(formOperations, urlContent)
+    const existingAttachmentsP = loadAttachmentsPromise(formOperations, urlContent)
     const formP = controller.formP.map(function(form) {
       return Immutable(form)
     })
@@ -47,6 +48,7 @@ export default class FormStateLoop {
         serverError: "",
         values: initialValuesP,
         savedObject: savedObjectP,
+        attachments: existingAttachmentsP,
         attachmentUploadsInProgress: {}
       },
       configuration: {
@@ -105,6 +107,15 @@ export default class FormStateLoop {
         )
       }
       return Bacon.constant(null)
+    }
+
+    function loadAttachmentsPromise(formOperations, urlContent) {
+      if (formOperations.containsExistingEntityId(urlContent)) {
+        return Bacon.fromPromise(
+          HttpUtil.get(formOperations.urlCreator.loadAttachmentsApiUrl(urlContent))
+        )
+      }
+      return Bacon.constant({})
     }
 
     function getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP, lang) {

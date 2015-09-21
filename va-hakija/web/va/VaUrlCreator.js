@@ -33,6 +33,12 @@ export default class VaUrlCreator extends UrlCreator {
         const hakemusId = state.saveStatus.hakemusId
         return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId
       },
+      loadAttachmentsApiUrl: function (urlContent) {
+        const query = urlContent.parsedQuery
+        const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
+        const hakemusId = query.hakemus
+        return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/attachments"
+      },
       attachmentBaseUrl: function(state, field) {
         const avustusHakuId = state.avustushaku.id
         const hakemusId = state.saveStatus.hakemusId

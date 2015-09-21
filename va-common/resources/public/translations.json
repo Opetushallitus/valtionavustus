@@ -42,8 +42,8 @@
     },
     "attachment": {
       "uploadhere": {
-        "fi": "Liitä tiedosto vetämällä se tähän, tai klikkaa tähän ja valitse liitettävä tiedosto koneeltasi.",
-        "sv": "TODO: Liitä tiedosto vetämällä se tähän, tai klikkaa tähän ja valitse liitettävä tiedosto koneeltasi."
+        "fi": "Liitä",
+        "sv": "TODO: Liitä"
       }
     }
   },
