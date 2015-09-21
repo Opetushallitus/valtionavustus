@@ -94,7 +94,7 @@
 
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
        :path-params [haku-id :- Long, hakemus-id :- s/Str]
-       :return {s/Str Attachment}
+       :return s/Any
        :summary "List current attachments"
           (trace "TODO implement listing attachments"
                  (ok {"foo" {:id -1
