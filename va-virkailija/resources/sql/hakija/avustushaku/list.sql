@@ -1,1 +1,1 @@
-select * from avustushaut order by id desc;
+select * from avustushaut where status <> 'deleted' order by id desc;
