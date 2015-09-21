@@ -120,7 +120,10 @@
                                 filename
                                 content-type
                                 size
-                                tempfile))))
+                                tempfile)))
+
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
+        (on-attachment-get haku-id hakemus-id field-id)))
 
 (defroutes resource-routes
   (GET "/" []

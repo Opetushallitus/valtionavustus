@@ -120,3 +120,13 @@
 (defn list-attachments [hakemus-id]
   (->> {:hakemus_id hakemus-id}
        (exec :db queries/list-attachments)))
+
+(defn download-attachment [hakemus-id field-id]
+  (let [result (->> {:hakemus_id hakemus-id
+                     :field_id field-id}
+                    (exec :db queries/download-attachment)
+                    first)]
+    {:data (io/input-stream (:file_data result))
+     :content-type (:content_type result)
+     :filename (:filename result)
+     :size (:file_size result)}))
