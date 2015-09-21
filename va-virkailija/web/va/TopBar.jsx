@@ -1,8 +1,6 @@
 import React from 'react'
 import ClassNames from 'classnames'
 
-import FormSaveStatus from 'va-common/web/form/component/FormSaveStatus.jsx'
-
 import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
 
 export default class TopBar extends React.Component {
