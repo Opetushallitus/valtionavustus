@@ -92,6 +92,13 @@
        :summary "Submit hakemus"
        (on-hakemus-submit haku-id hakemus-id base-version answers))
 
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
+       :path-params [haku-id :- Long, hakemus-id :- s/Str]
+       :return [Attachment]
+       :summary "List current attachments"
+          (trace "TODO implement listing attachments"
+                 (ok [])))
+
   (PUT* "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id" [haku-id hakemus-id hakemus-base-version field-id]
         :path-params [haku-id :- Long, hakemus-id :- s/Str, hakemus-base-version :- Long, field-id :- s/Str]
         :multipart-params [file :- upload/TempFileUpload]
