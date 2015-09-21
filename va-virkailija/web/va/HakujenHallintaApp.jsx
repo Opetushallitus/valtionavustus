@@ -16,12 +16,10 @@ export default class AdminApp extends Component {
     const state = this.props.state
     const controller = this.props.controller
     const environment =  state.environment
-    const user = state.userInfo
     const selectedHaku = state.selectedHaku ? state.selectedHaku : {}
-    const username = user["first-name"] + " " + user["surname"]
     return (
       <section>
-        <TopBar activeTab="admin" environment={environment} user={username}/>
+        <TopBar activeTab="admin" environment={environment} state={state}/>
         <section id="container">
           <HakuListing hakuList={state.hakuList}
                        selectedHaku={state.selectedHaku}

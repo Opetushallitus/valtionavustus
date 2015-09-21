@@ -1,23 +1,21 @@
 import React from 'react'
 import ClassNames from 'classnames'
 
+import FormSaveStatus from 'va-common/web/form/component/FormSaveStatus.jsx'
+
 import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
 
 export default class TopBar extends React.Component {
   render() {
-    const user = this.props.user
     const environment = this.props.environment
+    const state = this.props.state
+    const controls = state ? <TopBarControls state={state}/> : ""
     return <section id="topbar">
       <div id="top-container">
         <img id="logo" src="img/logo.png"/>
         <div id="server-info"><EnvironmentInfo environment={environment}/></div>
-        <TopBarTabs disabled={!user} activeTab={this.props.activeTab}/>
-        <div hidden={!user} id="form-controls">
-          <div className="user">{user}</div>
-          <form action="/login/logout" name="logout" method="post">
-            <button type="submit">Kirjaudu ulos</button>
-          </form>
-        </div>
+        <TopBarTabs disabled={!state} activeTab={this.props.activeTab}/>
+        {controls}
       </div>
     </section>
   }
@@ -48,5 +46,22 @@ class TopBarTab extends React.Component {
       return <h1 id={id} className={classNames}>{label}</h1>
     }
     return <a href={href} id={id}className={classNames}>{label}</a>
+  }
+}
+
+class TopBarControls extends React.Component {
+  render() {
+    const state = this.props.state
+    const user = state.userInfo
+    const username = user["first-name"] + " " + user["surname"]
+
+    return (
+      <div id="form-controls">
+        <div className="user">{username}</div>
+        <form action="/login/logout" name="logout" method="post">
+          <button type="submit">Kirjaudu ulos</button>
+        </form>
+      </div>
+    )
   }
 }

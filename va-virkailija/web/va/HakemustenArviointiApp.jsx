@@ -15,17 +15,16 @@ import style from './style/main.less'
 
 export default class App extends Component {
   render() {
-    const hakuData = this.props.state.hakuData
+    const state = this.props.state
+    const hakuData = state.hakuData
     const avustushaku = hakuData.avustushaku
     const hakemusList = hakuData.hakemukset
-    const selectedHakemus = this.props.state.selectedHakemus ? this.props.state.selectedHakemus : {}
-    const translations = this.props.state.translations
-    const loadingComments = this.props.state.loadingComments
-    const user = this.props.state.userInfo
-    const username = user["first-name"] + " " + user["surname"]
+    const selectedHakemus = state.selectedHakemus ? state.selectedHakemus : {}
+    const translations = state.translations
+    const loadingComments = state.loadingComments
     return (
       <section>
-        <TopBar activeTab="arviointi" environment={hakuData.environment} user={username}/>
+        <TopBar activeTab="arviointi" environment={hakuData.environment} state={state}/>
         <section id="container">
           <div id="list-container">
             <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
