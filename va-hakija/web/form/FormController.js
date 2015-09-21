@@ -21,7 +21,8 @@ const events = {
   submit: 'submit',
   removeField: 'removeField',
   beforeUnload: 'beforeUnload',
-  startFileUpload: 'startFileUpload'
+  startFileUpload: 'startFileUpload',
+  attachmentUploadCompleted: 'attachmentUploadCompleted'
 }
 
 export default class FormController {
