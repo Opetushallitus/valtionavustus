@@ -162,14 +162,19 @@
                                                  content-type
                                                  size
                                                  tempfile)]
-      (do
-        (ok {:id (:id attachment)
-             :hakemus-id hakemus-id
-             :version (:version attachment)
-             :field-id (:field_id attachment)
-             :file-size (:file_size attachment)
-             :content-type (:content_type attachment)
-             :hakemus-version (:hakemus_version attachment)
-             :filename (:filename attachment)}))
+      (ok {:id (:id attachment)
+           :hakemus-id hakemus-id
+           :version (:version attachment)
+           :field-id (:field_id attachment)
+           :file-size (:file_size attachment)
+           :content-type (:content_type attachment)
+           :hakemus-version (:hakemus_version attachment)
+           :filename (:filename attachment)})
       (bad-request {:error true}))
     (bad-request! {:error true})))
+
+(defn on-attachment-delete [haku-id hakemus-id field-id]
+  (if-let [hakemus (va-db/get-hakemus hakemus-id)]
+    (if (va-db/attachment-exists? hakemus-id field-id)
+      (ok (va-db/close-existing-attachment! hakemus-id field-id))
+      (not-found))))

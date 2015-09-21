@@ -114,6 +114,14 @@
                              :hakemus-version 0
                              :filename        "bar.xls"}})))
 
+  (DELETE* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id"
+           [haku-id hakemus-id field-id]
+           :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
+           :summary "Delete attachment (marks attachment as closed)"
+           (on-attachment-delete haku-id
+                                 hakemus-id
+                                 field-id))
+
   (PUT* "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id"
         [haku-id hakemus-id hakemus-base-version field-id]
         :path-params [haku-id :- Long, hakemus-id :- s/Str, hakemus-base-version :- Long, field-id :- s/Str]
@@ -128,13 +136,7 @@
                                 filename
                                 content-type
                                 size
-                                tempfile)))
-
-  (DELETE* "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id"
-           [haku-id hakemus-id hakemus-base-version field-id]
-           :path-params [haku-id :- Long, hakemus-id :- s/Str, hakemus-base-version :- Long, field-id :- s/Str]
-           :summary "Delete attachment (marks attachment as closed)"
-           (ok {})))
+                                tempfile))))
 
 (defroutes resource-routes
   (GET "/" []

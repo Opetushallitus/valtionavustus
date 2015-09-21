@@ -92,6 +92,12 @@
 (defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version answers]
   (update-status avustushaku-id hakemus-id submission-id submission-version answers :cancelled))
 
+(defn attachment-exists? [hakemus-id field-id]
+  (->> {:hakemus_id hakemus-id
+        :field_id field-id}
+       (exec :db queries/attachment-exists?)
+       first))
+
 (defn create-attachment [hakemus-id hakemus-version field-id filename content-type size file]
   (let [blob (slurp-binary-file! file)
         params (-> {:hakemus_id hakemus-id
@@ -101,7 +107,7 @@
                     :content_type content-type
                     :file_size size
                     :file_data blob})]
-    (if (first (exec :db queries/attachment-exists? params))
+    (if (attachment-exists? hakemus-id field-id)
       (exec-all :db [queries/close-existing-attachment! params
                      queries/update-attachment<! params])
       (exec :db queries/create-attachment<! params))))
