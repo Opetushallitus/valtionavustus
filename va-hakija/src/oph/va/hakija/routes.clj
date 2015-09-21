@@ -99,11 +99,12 @@
           (trace "TODO implement listing attachments"
                  (ok [])))
 
-  (PUT* "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id" [haku-id hakemus-id hakemus-base-version field-id]
+  (PUT* "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id"
+        [haku-id hakemus-id hakemus-base-version field-id]
         :path-params [haku-id :- Long, hakemus-id :- s/Str, hakemus-base-version :- Long, field-id :- s/Str]
         :multipart-params [file :- upload/TempFileUpload]
         :return Attachment
-        :summary "Add new attachment"
+        :summary "Add new attachment. Existing attachment with same id is closed."
         (let [{:keys [filename content-type size tempfile]} file]
           (on-attachment-create haku-id
                                 hakemus-id
@@ -112,7 +113,13 @@
                                 filename
                                 content-type
                                 size
-                                tempfile))))
+                                tempfile)))
+
+  (DELETE* "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id"
+           [haku-id hakemus-id hakemus-base-version field-id]
+           :path-params [haku-id :- Long, hakemus-id :- s/Str, hakemus-base-version :- Long, field-id :- s/Str]
+           :summary "Delete attachment (marks attachment as closed)"
+           (ok {})))
 
 (defroutes resource-routes
   (GET "/" []
