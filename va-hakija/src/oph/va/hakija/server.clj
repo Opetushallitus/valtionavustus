@@ -47,10 +47,11 @@
   (let [logged (with-log-wrapping (create-site))
         handler (if auto-reload?
                   (reload/wrap-reload logged)
-                  logged)]
+                  logged)
+        non-caching-handler (server/wrap-nocache handler)]
     (server/start-server {:host host
                           :port port
                           :auto-reload? auto-reload?
-                          :routes handler
+                          :routes non-caching-handler
                           :on-startup (partial startup config)
                           :on-shutdown shutdown})))

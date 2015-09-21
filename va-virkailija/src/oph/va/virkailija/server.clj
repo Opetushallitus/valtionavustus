@@ -77,7 +77,8 @@
         routes (-> #'all-routes
                    (with-authentication)
                    (wrap-defaults defaults)
-                   (with-log-wrapping))
+                   (with-log-wrapping)
+                   (server/wrap-nocache))
         handler (if auto-reload?
                   (reload/wrap-reload routes)
                   routes)]

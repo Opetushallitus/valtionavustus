@@ -21,3 +21,11 @@
     (fn []
       (stop)
       (on-shutdown))))
+
+(defn wrap-nocache [handler]
+  (fn [request]
+     (let [response (handler request)]
+       (-> response
+           (assoc-in [:headers "Pragma"] "no-cache")
+           (assoc-in [:headers "Cache-Control"]  "no-cache, no-store, must-revalidate")
+           (assoc-in [:headers "Expires"]  0)))))
