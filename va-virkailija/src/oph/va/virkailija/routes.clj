@@ -83,6 +83,14 @@
               []
               [])))
 
+  (POST* "/:avustushaku-id" []
+         :path-params [avustushaku-id :- Long]
+         :body  [avustushaku (describe AvustusHaku "Updated avustushaku")]
+         :return AvustusHaku
+         (if-let [response (hakija-api/update-avustushaku avustushaku)]
+          (ok response)
+          (not-found)))
+
   (GET* "/:avustushaku-id" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
         :return HakuData

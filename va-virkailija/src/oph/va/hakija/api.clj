@@ -25,6 +25,10 @@
                                    :content avustuhaku-content}))]
     (first (map avustushaku-response-content (exec :hakija-db hakija-queries/get-avustushaku {:id avustushaku-id})))))
 
+(defn update-avustushaku [avustushaku]
+  (exec :hakija-db hakija-queries/update-avustushaku! avustushaku)
+  (first (map avustushaku-response-content (exec :hakija-db hakija-queries/get-avustushaku avustushaku))))
+
 (defn list-avustushaut []
   (map avustushaku-response-content(exec :hakija-db hakija-queries/list-avustushaut {})))
 

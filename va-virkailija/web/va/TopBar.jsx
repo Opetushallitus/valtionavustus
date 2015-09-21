@@ -55,8 +55,17 @@ class TopBarControls extends React.Component {
     const user = state.userInfo
     const username = user["first-name"] + " " + user["surname"]
 
+    const saveStatus = state.saveStatus
+    const okStatus = saveStatus.saveInProgress ?
+        <span className="info">Tallennetaan</span> :
+        <span className="info" hidden={!saveStatus.saveTime || saveStatus.serverError !== ""}>Kaikki tiedot tallennettu</span>
+    const status = saveStatus.serverError !== "" ?
+        <span className="error">Virhe tallennuksessa</span> :
+        okStatus
+
     return (
       <div id="form-controls">
+        <div className="status">{status}</div>
         <div className="user">{username}</div>
         <form action="/login/logout" name="logout" method="post">
           <button type="submit">Kirjaudu ulos</button>
