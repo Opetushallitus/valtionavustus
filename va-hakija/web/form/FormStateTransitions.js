@@ -87,8 +87,7 @@ export default class FormStateTransitions {
         HttpUtil.putFile(url, attachment)
           .then(function(response) {
             console.log("Uploaded file to server. Response=", JSON.stringify(response))
-            // set state to not have attachment upload in progress anymore... via event
-            //dispatcher.push(events.saveCompleted, updatedState)
+            dispatcher.push(events.attachmentUploadCompleted, response)
           })
           .catch(function(response) {
             console.log('upload error', response)
@@ -105,6 +104,13 @@ export default class FormStateTransitions {
         return state
       }
     }
+    return state
+  }
+
+  onFileUploadCompleted(state, reponseFromServer) {
+    const fieldId = reponseFromServer["field-id"]
+    state.saveStatus.attachments[fieldId] = reponseFromServer
+    state.saveStatus.attachmentUploadsInProgress[fieldId] = false
     return state
   }
 
