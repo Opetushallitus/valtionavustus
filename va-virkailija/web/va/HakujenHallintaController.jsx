@@ -59,7 +59,7 @@ export default class HakujenHallintaController {
     state.hakuList.unshift(newHaku)
     state.selectedHaku = newHaku
     setTimeout(function() {
-      document.getElementById("haku-" + newHaku.id).scrollIntoView()
+      document.getElementById("haku-" + newHaku.id).scrollIntoView({block: "start", behavior: "smooth"})
     }, 300)
     return state
   }
