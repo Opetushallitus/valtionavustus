@@ -93,6 +93,7 @@ export class FileUploadFieldPropertyMapper extends DefaultPropertyMapper {
     const controller = props.controller
     const onDrop = (files) => { controller.fileUploadListener(props.field, files) }
     return _.extend(commonProps, {
+      required: props.field.required,
       onDrop: onDrop
     })
   }
