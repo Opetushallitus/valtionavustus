@@ -34,7 +34,9 @@ export default class Form extends React.Component {
         const formOperations = state.extensionApi.formOperations
         const saved = controller.isSaveDraftAllowed(state)
         const fieldDisabled = !formOperations.isFieldEnabled(saved, field.id) || field.forceDisabled === true
-        const extendedProperties = _.extend(fieldProperties, { controller: controller, disabled: fieldDisabled, renderingParameters: renderingParameters })
+        const extendedProperties = _.extend(fieldProperties, { controller: controller,
+                                                               disabled: fieldDisabled,
+                                                               renderingParameters: renderingParameters })
 
         if (field.type == "formField") {
           return createFormComponent(field, extendedProperties)
