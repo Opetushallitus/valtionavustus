@@ -96,12 +96,17 @@
   (let [blob (slurp-binary-file! file)
         params (-> {:hakemus_id hakemus-id
                     :hakemus_version hakemus-version
-                    :version 0
                     :field_id field-id
                     :filename filename
                     :content_type content-type
                     :file_size size
                     :file_data blob})]
-    (->> params
-         (exec :db queries/create-attachment<!)
-         trace)))
+    (if (first (exec :db queries/attachment-exists? params))
+      (exec-all :db [queries/close-existing-attachment! params
+                     queries/update-attachment<! params])
+      (exec :db queries/create-attachment<! params))))
+
+(defn close-existing-attachment! [hakemus-id field-id]
+  (->> {:hakemus_id hakemus-id
+        :field_id field-id}
+       (exec :db queries/close-existing-attachment!)))

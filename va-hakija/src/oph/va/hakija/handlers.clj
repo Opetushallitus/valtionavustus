@@ -156,16 +156,13 @@
 (defn on-attachment-create [haku-id hakemus-id hakemus-base-version field-id filename content-type size tempfile]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
     (if-let [attachment (va-db/create-attachment (:id hakemus)
-                                               hakemus-base-version
-                                               field-id
-                                               filename
-                                               content-type
-                                               size
-                                               tempfile)]
+                                                 hakemus-base-version
+                                                 field-id
+                                                 filename
+                                                 content-type
+                                                 size
+                                                 tempfile)]
       (do
-        (trace "filename" filename)
-        (trace "content-type" content-type)
-        (trace "size" size)
         (ok {:id (:id attachment)
              :hakemus-id hakemus-id
              :version (:version attachment)

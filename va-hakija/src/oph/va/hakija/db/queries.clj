@@ -12,4 +12,7 @@
 
 (defquery get-avustushaku "sql/avustushaku/get.sql")
 
+(defquery attachment-exists? "sql/attachment/exists.sql")
 (defquery create-attachment<! "sql/attachment/create.sql")
+(defquery update-attachment<! "sql/attachment/update.sql")
+(defquery close-existing-attachment! "sql/attachment/close-existing.sql")
