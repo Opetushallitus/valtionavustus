@@ -176,5 +176,5 @@
 (defn on-attachment-delete [haku-id hakemus-id field-id]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
     (if (va-db/attachment-exists? hakemus-id field-id)
-      (ok (va-db/close-existing-attachment! hakemus-id field-id))
+      (ok (va-db/close-existing-attachment! (:id hakemus) field-id))
       (not-found))))
