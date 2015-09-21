@@ -153,6 +153,24 @@
           (hakemus-conflict-response hakemus)))
       (bad-request! validation))))
 
+(defn- convert-attachment [hakemus-id attachment]
+  {:id (:id attachment)
+   :hakemus-id hakemus-id
+   :version (:version attachment)
+   :field-id (:field_id attachment)
+   :file-size (:file_size attachment)
+   :content-type (:content_type attachment)
+   :hakemus-version (:hakemus_version attachment)
+   :created-at (:created_at attachment)
+   :filename (:filename attachment)})
+
+(defn on-attachment-list [haku-id hakemus-id]
+  (if-let [hakemus (va-db/get-hakemus hakemus-id)]
+    (->> (va-db/list-attachments (:id hakemus))
+         (map (partial convert-attachment hakemus-id))
+         (map (fn [attachment] [(:field-id attachment) attachment]))
+         (into {}))))
+
 (defn on-attachment-create [haku-id hakemus-id hakemus-base-version field-id filename content-type size tempfile]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
     (if-let [attachment (va-db/create-attachment (:id hakemus)
@@ -162,14 +180,7 @@
                                                  content-type
                                                  size
                                                  tempfile)]
-      (ok {:id (:id attachment)
-           :hakemus-id hakemus-id
-           :version (:version attachment)
-           :field-id (:field_id attachment)
-           :file-size (:file_size attachment)
-           :content-type (:content_type attachment)
-           :hakemus-version (:hakemus_version attachment)
-           :filename (:filename attachment)})
+      (ok (convert-attachment hakemus-id attachment))
       (bad-request {:error true}))
     (bad-request! {:error true})))
 

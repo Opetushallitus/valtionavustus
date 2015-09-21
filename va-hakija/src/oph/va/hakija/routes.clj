@@ -93,26 +93,10 @@
        (on-hakemus-submit haku-id hakemus-id base-version answers))
 
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
-       :path-params [haku-id :- Long, hakemus-id :- s/Str]
-       :return s/Any
-       :summary "List current attachments"
-          (trace "TODO implement listing attachments"
-                 (ok {"foo" {:id -1
-                              :hakemus-id ""
-                              :version 0
-                              :field-id ""
-                              :file-size -1
-                              :content-type ""
-                              :hakemus-version 0
-                              :filename "foo.xls"}
-                      "bar" {:id              -2
-                             :hakemus-id      ""
-                             :version         0
-                             :field-id        ""
-                             :file-size       -1
-                             :content-type    ""
-                             :hakemus-version 0
-                             :filename        "bar.xls"}})))
+        :path-params [haku-id :- Long, hakemus-id :- s/Str]
+        :return s/Any
+        :summary "List current attachments"
+        (ok (on-attachment-list haku-id hakemus-id)))
 
   (DELETE* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id"
            [haku-id hakemus-id field-id]

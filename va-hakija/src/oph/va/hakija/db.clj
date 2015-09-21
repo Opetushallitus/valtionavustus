@@ -116,3 +116,7 @@
   (->> {:hakemus_id hakemus-id
         :field_id field-id}
        (exec :db queries/close-existing-attachment!)))
+
+(defn list-attachments [hakemus-id]
+  (->> {:hakemus_id hakemus-id}
+       (exec :db queries/list-attachments)))
