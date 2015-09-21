@@ -51,6 +51,7 @@
    :hakemus-id s/Str
    :version Long
    (s/optional-key :version-closed) s/Inst
+   (s/optional-key :created-at) s/Inst
    :field-id s/Str
    :file-size Long
    :content-type s/Str
