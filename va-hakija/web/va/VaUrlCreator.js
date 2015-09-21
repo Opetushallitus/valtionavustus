@@ -44,6 +44,11 @@ export default class VaUrlCreator extends UrlCreator {
         const hakemusId = state.saveStatus.hakemusId
         const hakemusVersion = state.saveStatus.savedObject.version
         return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/" + hakemusVersion + "/attachments/" + field.id
+      },
+      attachmentDeleteUrl: function(state, field) {
+        const avustusHakuId = state.avustushaku.id
+        const hakemusId = state.saveStatus.hakemusId
+        return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/attachments/" + field.id
       }
     }
     super(urls)

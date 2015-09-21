@@ -17,7 +17,7 @@ export default class FileUploadField extends BasicSizedComponent {
     const classStr = ClassNames(this.resolveClassName("soresu-file-upload"), { disabled: this.props.disabled })
     const existingAttachment = this.props.attachments[this.props.field.id]
 
-    const propertiesWithAttachment = _.extend(props, { attachment: existingAttachment })
+    const propertiesWithAttachment = _.extend({ attachment: existingAttachment }, props)
     const attachmentElement = existingAttachment ? <ExistingAttachmentComponent {...propertiesWithAttachment}  /> :
       <Dropzone className={classStr} id={props.htmlId} name={props.htmlId} onDrop={props.onDrop}
                              disableClick={props.disabled} multiple={false}>
@@ -34,7 +34,11 @@ export default class FileUploadField extends BasicSizedComponent {
 class ExistingAttachmentComponent {
   render() {
     const attachment = this.props.attachment
-    const removeButton = React.createElement(RemoveButton, this.props)
+    const removeProperties = _.cloneDeep(this.props)
+    removeProperties.renderingParameters = removeProperties.renderingParameters ? removeProperties.renderingParameters : {}
+    removeProperties.renderingParameters.removeMe = this.props.onRemove
+
+    const removeButton = React.createElement(RemoveButton, removeProperties)
     return <div>
              <a href="TODO">{attachment.filename}</a>
              <span> (liitetty TODO)</span>

@@ -22,7 +22,9 @@ const events = {
   removeField: 'removeField',
   beforeUnload: 'beforeUnload',
   startFileUpload: 'startFileUpload',
-  attachmentUploadCompleted: 'attachmentUploadCompleted'
+  attachmentUploadCompleted: 'attachmentUploadCompleted',
+  removeFile: 'removeFile',
+  fileDeleteCompleted: 'fileDeleteCompleted'
 }
 
 export default class FormController {
@@ -63,6 +65,10 @@ export default class FormController {
 
   fileUploadListener(field, files) {
     dispatcher.push(events.startFileUpload, { field: field, files: files })
+  }
+
+  deleteAttachment(field) {
+    dispatcher.push(events.removeFile, field)
   }
 
   componentDidMount(field, initialValue) {

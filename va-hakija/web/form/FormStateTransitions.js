@@ -24,7 +24,8 @@ export default class FormStateTransitions {
     this.autoSave = _.debounce(function(){ dispatcher.push(events.save) }, develQueryParam? 100 : 3000)
     this._bind(
       'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
-      'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError', 'onFileUpload')
+      'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError', 'onFileUpload',
+      'onRemoveFile')
   }
 
   _bind(...methods) {
@@ -110,6 +111,44 @@ export default class FormStateTransitions {
   onFileUploadCompleted(state, reponseFromServer) {
     const fieldId = reponseFromServer["field-id"]
     state.saveStatus.attachments[fieldId] = reponseFromServer
+    state.saveStatus.attachmentUploadsInProgress[fieldId] = false
+    return state
+  }
+
+  onRemoveFile(state, fieldOfFile) {
+    const formOperations = state.extensionApi.formOperations
+    if (formOperations.isSaveDraftAllowed(state)) {
+      const url = formOperations.urlCreator.attachmentDeleteUrl(state, fieldOfFile)
+      const dispatcher = this.dispatcher
+      const events = this.events
+      try {
+        state.saveStatus.attachmentUploadsInProgress[fieldOfFile.id] = true
+        HttpUtil.delete(url)
+          .then(function(response) {
+            console.log("Deleted attachment of field " + fieldOfFile.id + " . Response=", JSON.stringify(response))
+            dispatcher.push(events.fileDeleteCompleted, fieldOfFile)
+          })
+          .catch(function(response) {
+            console.log('upload error', response)
+            alert('Virhe poistossa.')
+            //FormStateTransitions.handleServerError(dispatcher, events, response.status, response.statusText, "POST", url, response.data, serverOperation)
+          })
+      }
+      catch(error) {
+        console.log('unexapected error', error)
+        alert('Virhe poistossa.')
+        //  FormStateTransitions.handleUnexpectedServerError(dispatcher, events, "POST", url, error, serverOperation);
+      }
+      finally {
+        return state
+      }
+    }
+    return state
+  }
+
+  onFileDeleteCompleted(state, fieldOfRemovedFile) {
+    const fieldId = fieldOfRemovedFile.id
+    state.saveStatus.attachments[fieldId] = undefined
     state.saveStatus.attachmentUploadsInProgress[fieldId] = false
     return state
   }

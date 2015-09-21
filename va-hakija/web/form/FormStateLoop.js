@@ -96,7 +96,9 @@ export default class FormStateLoop {
       [dispatcher.stream(events.removeField)], stateTransitions.onRemoveField,
       [dispatcher.stream(events.beforeUnload)], stateTransitions.onBeforeUnload,
       [dispatcher.stream(events.startFileUpload)], stateTransitions.onFileUpload,
-      [dispatcher.stream(events.attachmentUploadCompleted)], stateTransitions.onFileUploadCompleted)
+      [dispatcher.stream(events.attachmentUploadCompleted)], stateTransitions.onFileUploadCompleted,
+      [dispatcher.stream(events.removeFile)], stateTransitions.onRemoveFile,
+      [dispatcher.stream(events.fileDeleteCompleted)], stateTransitions.onFileDeleteCompleted)
 
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })

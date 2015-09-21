@@ -21,6 +21,10 @@ export default class HttpUtil {
     return HttpUtil.put(url, formData)
   }
 
+  static delete(url) {
+    return HttpUtil.handleResponse(axios.delete(url))
+  }
+
   static handleResponse(httpCall) {
     return new Promise(function(resolve, reject) {
       httpCall
