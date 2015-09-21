@@ -94,10 +94,25 @@
 
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
        :path-params [haku-id :- Long, hakemus-id :- s/Str]
-       :return [Attachment]
+       :return {s/Str Attachment}
        :summary "List current attachments"
           (trace "TODO implement listing attachments"
-                 (ok [])))
+                 (ok {"foo" {:id -1
+                              :hakemus-id ""
+                              :version 0
+                              :field-id ""
+                              :file-size -1
+                              :content-type ""
+                              :hakemus-version 0
+                              :filename "foo.xls"}
+                      "bar" {:id              -2
+                             :hakemus-id      ""
+                             :version         0
+                             :field-id        ""
+                             :file-size       -1
+                             :content-type    ""
+                             :hakemus-version 0
+                             :filename        "bar.xls"}})))
 
   (PUT* "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id"
         [haku-id hakemus-id hakemus-base-version field-id]
