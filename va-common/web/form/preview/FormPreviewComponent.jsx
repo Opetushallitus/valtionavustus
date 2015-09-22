@@ -13,11 +13,11 @@ export default class FormPreviewComponent extends React.Component {
       "textArea": TextAreaValue,
       "emailField": BasicValue,
       "moneyField": MoneyValue,
-      "dropdown": OptionValue,
-      "radioButton": OptionValue,
       "finnishBusinessIdField": BasicValue,
       "iban": BasicValue,
-      "bic": BasicValue
+      "bic": BasicValue,
+      "dropdown": OptionValue,
+      "radioButton": OptionValue
     }
     this.componentFactory = new ComponentFactory(fieldTypeMapping)
   }
