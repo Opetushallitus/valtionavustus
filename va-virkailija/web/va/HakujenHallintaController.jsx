@@ -84,6 +84,7 @@ export default class HakujenHallintaController {
     state = this.onHakuSelection(state, newHaku)
     setTimeout(function() {
       document.getElementById("haku-" + newHaku.id).scrollIntoView({block: "start", behavior: "smooth"})
+      document.getElementById("haku-name-fi").focus()
     }, 300)
     return state
   }
