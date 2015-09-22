@@ -1,5 +1,5 @@
-INSERT INTO attachments (id, version, hakemus_id, hakemus_version, field_id, filename, content_type, file_size, file_data)
-SELECT id,
+insert into attachments (id, version, hakemus_id, hakemus_version, field_id, filename, content_type, file_size, file_data)
+select id,
        max(version) + 1,
        :hakemus_id,
        :hakemus_version,
@@ -8,6 +8,6 @@ SELECT id,
        :content_type,
        :file_size,
        :file_data
-FROM attachments
-WHERE hakemus_id = :hakemus_id AND field_id = :field_id
-GROUP BY id
+from attachments
+where hakemus_id = :hakemus_id and field_id = :field_id
+group by id
