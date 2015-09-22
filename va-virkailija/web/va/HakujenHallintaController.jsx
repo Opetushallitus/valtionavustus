@@ -126,11 +126,9 @@ export default class HakujenHallintaController {
       state.saveStatus.serverError = response.error
     }
     else {
-      for (var i=0; i < state.hakuList.length; i++) {
-        if(state.hakuList[i].id == response.id) {
-          state.hakuList[i].status = response.status
-          break
-        }
+      const oldHaku = _.find(state.hakuList, haku => haku.id ===  response.id)
+      if(oldHaku) { 
+        oldHaku.status = response.status
       }
       state.saveStatus.saveTime = new Date()
       state.saveStatus.serverError = ""
