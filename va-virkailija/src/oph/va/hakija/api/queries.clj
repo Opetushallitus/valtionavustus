@@ -12,3 +12,7 @@
 (defquery list-hakemukset-by-avustushaku "sql/hakija/hakemus/list-by-avustushaku.sql")
 (defquery copy-form<! "sql/hakija/form/copy.sql")
 (defquery get-form-by-avustushaku "sql/hakija/form/get-by-avustushaku.sql")
+
+(defquery list-attachments "sql/hakija/attachment/list.sql")
+(defquery attachment-exists? "sql/hakija/attachment/exists.sql")
+(defquery download-attachment "sql/hakija/attachment/download.sql")

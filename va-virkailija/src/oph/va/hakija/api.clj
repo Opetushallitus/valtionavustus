@@ -1,12 +1,12 @@
 (ns oph.va.hakija.api
   (:use [clojure.tools.trace :only [trace]]
         [clojure.pprint :only [pprint]])
-  (:require [oph.common.db :refer :all]
+  (:require [clojure.java.io :as io]
+            [oph.common.db :refer :all]
             [oph.common.jdbc.enums :refer :all]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.routes :refer :all])
   (:import (oph.common.jdbc.enums HakuStatus)))
-
 
 (defn health-check []
   (->> {}
@@ -83,3 +83,23 @@
      :hakemukset (hakemukset->json hakemukset)
      :budget-total-sum (reduce + (map :budget_total hakemukset))
      :budget-oph-share-sum (reduce + (map :budget_oph_share hakemukset))}))
+
+(defn list-attachments [hakemus-id]
+  (->> {:hakemus_id hakemus-id}
+       (exec :hakija-db hakija-queries/list-attachments)))
+
+(defn attachment-exists? [hakemus-id field-id]
+  (->> {:hakemus_id hakemus-id
+        :field_id field-id}
+       (exec :hakija-db hakija-queries/attachment-exists?)
+       first))
+
+(defn download-attachment [hakemus-id field-id]
+  (let [result (->> {:hakemus_id hakemus-id
+                     :field_id field-id}
+                    (exec :hakija-db hakija-queries/download-attachment)
+                    first)]
+    {:data (io/input-stream (:file_data result))
+     :content-type (:content_type result)
+     :filename (:filename result)
+     :size (:file_size result)}))

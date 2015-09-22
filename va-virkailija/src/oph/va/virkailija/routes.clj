@@ -21,6 +21,17 @@
             [oph.va.virkailija.schema :refer :all]
             [oph.va.virkailija.handlers :refer :all]))
 
+(defn- convert-attachment [hakemus-id attachment]
+  {:id (:id attachment)
+   :hakemus-id hakemus-id
+   :version (:version attachment)
+   :field-id (:field_id attachment)
+   :file-size (:file_size attachment)
+   :content-type (:content_type attachment)
+   :hakemus-version (:hakemus_version attachment)
+   :created-at (:created_at attachment)
+   :filename (:filename attachment)})
+
 (defn- on-healthcheck []
   (if (and (virkailija-db/health-check)
            (hakija-api/health-check))
@@ -136,7 +147,25 @@
                                          (:first-name identity)
                                          (:surname identity)
                                          (:email identity)
-                                         (:comment comment))))))
+                                         (:comment comment)))))
+
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
+        :path-params [haku-id :- Long, hakemus-id :- Long]
+        :return s/Any
+        :summary "List current attachments"
+        (ok (->> (hakija-api/list-attachments hakemus-id)
+                 (map (partial convert-attachment hakemus-id))
+                 (map (fn [attachment] [(:field-id attachment) attachment]))
+                 (into {}))))
+
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
+        :path-params [haku-id :- Long, hakemus-id :- Long, field-id :- s/Str]
+        (if (hakija-api/attachment-exists? hakemus-id field-id)
+          (let [{:keys [data size filename content-type]} (hakija-api/download-attachment hakemus-id field-id)]
+            (-> (ok data)
+                (assoc-in [:headers "Content-Type"] content-type)
+                (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
+          (not-found))))
 
 (defroutes* userinfo-routes
   "User information"
