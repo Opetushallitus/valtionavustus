@@ -15,7 +15,9 @@ const events = {
   initAutoSave: 'initAutoSave',
   updateField: 'updateField',
   saveHaku: 'saveHaku',
-  saveCompleted: 'saveCompleted'
+  saveCompleted: 'saveCompleted',
+  addSelectionCriteria: 'addSelectionCriteria',
+  deleteSelectionCriteria: 'deleteSelectionCriteria'
 }
 
 export default class HakujenHallintaController {
@@ -43,7 +45,7 @@ export default class HakujenHallintaController {
       dispatcher.push(events.initialState, state)
     })
     this.autoSave = _.debounce(function(){ dispatcher.push(events.saveHaku) }, 3000)
-    this._bind('onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection', 'onHakuSave')
+    this._bind('onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection', 'onHakuSave', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria')
 
     return Bacon.update(
       {},
@@ -54,7 +56,9 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.updateField)], this.onUpdateField,
       [dispatcher.stream(events.initAutoSave)], this.onInitAutoSave,
       [dispatcher.stream(events.saveHaku)], this.onHakuSave,
-      [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted
+      [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted,
+      [dispatcher.stream(events.addSelectionCriteria)], this.onAddSelectionCriteria,
+      [dispatcher.stream(events.deleteSelectionCriteria)], this.onDeleteSelectionCriteria
     )
   }
 
@@ -112,6 +116,21 @@ export default class HakujenHallintaController {
     return state
   }
 
+  onAddSelectionCriteria(state, avustushaku) {
+    avustushaku.content['selection-criteria'].items.push({fi:"", sv:""})
+    setTimeout(function() {
+      document.getElementById("selection-criteria-" + (avustushaku.content['selection-criteria'].items.length -1) + "-fi").focus()
+    }, 300)
+    state = this.startAutoSave(state, avustushaku)
+    return state
+  }
+
+  onDeleteSelectionCriteria(state, deletion) {
+    deletion.avustushaku.content['selection-criteria'].items.splice(deletion.index, 1)
+    state = this.startAutoSave(state, deletion.avustushaku)
+    return state
+  }
+
   startAutoSave(state) {
     state.saveStatus.saveInProgress = true
     this.autoSave()
@@ -165,6 +184,18 @@ export default class HakujenHallintaController {
 
   onChangeListener(avustushaku, field, newValue) {
     dispatcher.push(events.updateField, {avustushaku: avustushaku, field: field, newValue: newValue})
+  }
+
+  addSelectionCriteria(avustushaku) {
+    return function() {
+      dispatcher.push(events.addSelectionCriteria, avustushaku)
+    }
+  }
+
+  deleteSelectionCriteria(avustushaku, index) {
+    return function() {
+      dispatcher.push(events.deleteSelectionCriteria, {avustushaku: avustushaku, index: index})
+    }
   }
 
   createHaku() {

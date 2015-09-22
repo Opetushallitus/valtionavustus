@@ -16,7 +16,7 @@ export default class HakuEdit extends Component {
         <h2>Muokkaa avustushakua</h2>
         <label htmlFor="haku-name-fi">Haun nimi:</label><input onChange={onChange} size="100" maxLength="200" id="haku-name-fi" type="text" value={avustushaku.content.name.fi}/>
         <label htmlFor="haku-name-sv">Haun nimi ruotsiksi:</label><input onChange={onChange} size="100" maxLength="200" id="haku-name-sv" type="text" value={avustushaku.content.name.sv}/>
-        <SelectionCriteria selectionCriteria={avustushaku.content['selection-criteria']} onChange={onChange} />
+        <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
         <SetStatus currentStatus={avustushaku.status} onChange={onChange} />
       </div>
     )
@@ -25,7 +25,9 @@ export default class HakuEdit extends Component {
 
 class SelectionCriteria extends React.Component {
   render() {
-    const selectionCriteria = this.props.selectionCriteria
+    const avustushaku = this.props.avustushaku
+    const selectionCriteria = avustushaku.content['selection-criteria']
+    const controller = this.props.controller
     const onChange = this.props.onChange
     const criteriaItems = []
     for (var index=0; index < selectionCriteria.items.length; index++) {
@@ -34,6 +36,7 @@ class SelectionCriteria extends React.Component {
         <tr key={index}>
           <td><textarea onChange={onChange} rows="2" maxLength="200" id={htmlId + "fi"} value={selectionCriteria.items[index].fi}/></td>
           <td><textarea onChange={onChange} rows="2" maxLength="200" id={htmlId + "sv"} value={selectionCriteria.items[index].sv}/></td>
+          <td><button onClick={controller.deleteSelectionCriteria(avustushaku, index)}>Poista</button></td>
         </tr>
       )
     }
@@ -44,6 +47,7 @@ class SelectionCriteria extends React.Component {
         <tbody>
         {criteriaItems}
         </tbody>
+        <tfoot><tr><td><button onClick={controller.addSelectionCriteria(avustushaku)}>Lisää uusi valintaperuste</button></td></tr></tfoot>
       </table>
     )
   }
