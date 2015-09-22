@@ -2,12 +2,9 @@
   (:gen-class
     :state value
     :init init
+    :main false
     :constructors {[String] []}
-    :name oph.common.jdbc.enums.HakuStatus
-    :implements [[value [] String]]))
+    :name oph.common.jdbc.enums.HakuStatus))
 
 (defn -init [value]
   [[] value])
-
-(defn -value [this]
-  (.state this))

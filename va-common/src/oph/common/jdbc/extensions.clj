@@ -17,7 +17,7 @@
   (sql-value [value]
     (doto (PGobject.)
       (.setType "haku_status")
-      (.setValue (.value value))))
+      (.setValue (.-value value))))
 
   clojure.lang.Keyword
   (sql-value [value]
