@@ -58,7 +58,7 @@ class TopBarControls extends React.Component {
         <span className="info">Tallennetaan</span> :
         <span className="info" hidden={!saveStatus.saveTime || saveStatus.serverError !== ""}>Kaikki tiedot tallennettu</span>
     const status = saveStatus.serverError !== "" ?
-        <span className="error">Virhe tallennuksessa</span> :
+        <span className="error">Virhe tallennuksessa. Lataa sivu uudelleen.</span> :
         okStatus
 
     return (

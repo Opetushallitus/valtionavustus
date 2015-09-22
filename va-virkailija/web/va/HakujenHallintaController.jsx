@@ -72,12 +72,16 @@ export default class HakujenHallintaController {
         console.log("Created new haku. Response=", JSON.stringify(response))
         dispatcher.push(events.hakuCreated, response)
       })
+      .catch(function(response) {
+        console.error('Unexpected create error:', response.statusText)
+        dispatcher.push(events.saveCompleted, {error: "unexpected-create-error"})
+      })
     return state
   }
 
   onHakuCreated(state, newHaku) {
     state.hakuList.unshift(newHaku)
-    state.selectedHaku = newHaku
+    state = onHakuSelection(state, newHaku)
     setTimeout(function() {
       document.getElementById("haku-" + newHaku.id).scrollIntoView({block: "start", behavior: "smooth"})
     }, 300)
