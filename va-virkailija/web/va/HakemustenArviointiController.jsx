@@ -23,7 +23,7 @@ export default class HakemustenArviointiController {
 
   initializeState() {
     const initialStateTemplate = {
-      hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/1")),
+      hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/2")),
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
       selectedHakemus: undefined,
