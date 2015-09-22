@@ -123,6 +123,7 @@
                                 tempfile)))
 
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
+        :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
         (on-attachment-get haku-id hakemus-id field-id)))
 
 (defroutes resource-routes
