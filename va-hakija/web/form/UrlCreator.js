@@ -16,6 +16,7 @@ export default class UrlCreator {
 
     this.loadAttachmentsApiUrl = props.loadAttachmentsApiUrl || defaultImpl
     this.attachmentBaseUrl = props.attachmentBaseUrl || defaultImpl
+    this.attachmentDownloadUrl = props.attachmentDownloadUrl || defaultImpl
     this.attachmentDeleteUrl = props.attachmentDeleteUrl || defaultImpl
   }
 }

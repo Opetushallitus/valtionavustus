@@ -63,6 +63,11 @@ export default class FormController {
     dispatcher.push(events.updateField, FieldUpdateHandler.createFieldUpdate(field, newValue))
   }
 
+  createAttachmentDownloadUrl(state, field) {
+    const formOperations = state.extensionApi.formOperations
+    return formOperations.urlCreator.attachmentDownloadUrl(state, field)
+  }
+
   uploadAttachment(field, files) {
     dispatcher.push(events.startAttachmentUpload, { field: field, files: files })
   }

@@ -34,13 +34,14 @@ export default class AttachmentField extends BasicSizedComponent {
 class ExistingAttachmentComponent {
   render() {
     const attachment = this.props.attachment
+    const downloadUrl = this.props.downloadUrl
     const removeProperties = _.cloneDeep(this.props)
     removeProperties.renderingParameters = removeProperties.renderingParameters ? removeProperties.renderingParameters : {}
     removeProperties.renderingParameters.removeMe = this.props.onRemove
 
     const removeButton = React.createElement(RemoveButton, removeProperties)
     return <div>
-             <a href="TODO">{attachment.filename}</a>
+             <a href={downloadUrl} target="_blank">{attachment.filename}</a>
              <span> (liitetty TODO)</span>
              {removeButton}
            </div>

@@ -7,6 +7,11 @@ export default class VaUrlCreator extends UrlCreator {
     function entityApiUrl(avustusHakuId, hakemusId, hakemusBaseVersion) {
       return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + (typeof hakemusBaseVersion == "number" ? "/" + hakemusBaseVersion : "")
     }
+    const attachmentDirectAccessUrl = function(state, field) {
+      const avustusHakuId = state.avustushaku.id
+      const hakemusId = state.saveStatus.hakemusId
+      return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/attachments/" + field.id
+    }
     const urls = {
       formApiUrl: function (formId) {
         return "/api/form/" + formId
@@ -45,11 +50,8 @@ export default class VaUrlCreator extends UrlCreator {
         const hakemusVersion = state.saveStatus.savedObject.version
         return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/" + hakemusVersion + "/attachments/" + field.id
       },
-      attachmentDeleteUrl: function(state, field) {
-        const avustusHakuId = state.avustushaku.id
-        const hakemusId = state.saveStatus.hakemusId
-        return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/attachments/" + field.id
-      }
+      attachmentDownloadUrl: attachmentDirectAccessUrl,
+      attachmentDeleteUrl: attachmentDirectAccessUrl
     }
     super(urls)
   }

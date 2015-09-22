@@ -91,12 +91,14 @@ export class AttachmentFieldPropertyMapper extends DefaultPropertyMapper {
   static map(props) {
     const commonProps = FieldPropertyMapper.map(props)
     const controller = props.controller
+    const downloadUrl = controller.createAttachmentDownloadUrl(props.state, props.field)
     const onDrop = (files) => { controller.uploadAttachment(props.field, files) }
     const onRemove = () => { controller.deleteAttachment(props.field) }
     return _.extend({
       required: props.field.required,
       attachments: props.attachments,
       attachmentUploadsInProgress: props.attachmentUploadsInProgress,
+      downloadUrl: downloadUrl,
       onDrop: onDrop,
       onRemove: onRemove
     }, commonProps)

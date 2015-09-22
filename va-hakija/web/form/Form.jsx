@@ -64,7 +64,8 @@ export default class Form extends React.Component {
       return <FormComponent {...extendedProperties}
                             validationErrors={fieldErrors}
                             value={value}
-                            onChange={controller.componentOnChangeListener} />
+                            onChange={controller.componentOnChangeListener}
+                            state={state}/>
     }
 
     function createWrapperElement(field, fieldProperties, renderingParameters) {
