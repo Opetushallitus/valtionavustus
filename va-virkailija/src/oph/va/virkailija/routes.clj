@@ -21,17 +21,6 @@
             [oph.va.virkailija.schema :refer :all]
             [oph.va.virkailija.handlers :refer :all]))
 
-(defn- convert-attachment [hakemus-id attachment]
-  {:id (:id attachment)
-   :hakemus-id hakemus-id
-   :version (:version attachment)
-   :field-id (:field_id attachment)
-   :file-size (:file_size attachment)
-   :content-type (:content_type attachment)
-   :hakemus-version (:hakemus_version attachment)
-   :created-at (:created_at attachment)
-   :filename (:filename attachment)})
-
 (defn- on-healthcheck []
   (if (and (virkailija-db/health-check)
            (hakija-api/health-check))
@@ -126,10 +115,11 @@
           (not-found)))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id]
-      :path-params [avustushaku-id :- Long hakemus-id :- Long]
-      :body    [arvio (describe Arvio "New arvio")]
-      :return Arvio
-      (ok (arvio-json (virkailija-db/update-or-create-hakemus-arvio hakemus-id arvio))))
+         :path-params [avustushaku-id :- Long hakemus-id :- Long]
+         :body    [arvio (describe Arvio "New arvio")]
+         :return Arvio
+         (ok (-> (virkailija-db/update-or-create-hakemus-arvio hakemus-id arvio)
+                 arvio-json)))
 
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
@@ -153,10 +143,8 @@
         :path-params [haku-id :- Long, hakemus-id :- Long]
         :return s/Any
         :summary "List current attachments"
-        (ok (->> (hakija-api/list-attachments hakemus-id)
-                 (map (partial convert-attachment hakemus-id))
-                 (map (fn [attachment] [(:field-id attachment) attachment]))
-                 (into {}))))
+        (ok (-> (hakija-api/list-attachments hakemus-id)
+                (hakija-api/attachments->map))))
 
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
         :path-params [haku-id :- Long, hakemus-id :- Long, field-id :- s/Str]

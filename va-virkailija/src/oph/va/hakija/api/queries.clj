@@ -14,5 +14,6 @@
 (defquery get-form-by-avustushaku "sql/hakija/form/get-by-avustushaku.sql")
 
 (defquery list-attachments "sql/hakija/attachment/list.sql")
+(defquery list-attachments-by-avustushaku "sql/hakija/attachment/list-by-avustushaku.sql")
 (defquery attachment-exists? "sql/hakija/attachment/exists.sql")
 (defquery download-attachment "sql/hakija/attachment/download.sql")
