@@ -11,12 +11,18 @@ const events = {
   initialState: 'initialState',
   selectHakemus: 'selectHakemus',
   updateHakemusArvio: 'updateHakemusArvio',
+  saveCompleted: 'saveCompleted',
   loadComments: 'loadcomments',
   commentsLoaded: 'commentsLoaded',
   addComment: 'addComment'
 }
 
 export default class HakemustenArviointiController {
+
+  _bind(...methods) {
+    methods.forEach((method) => this[method] = this[method].bind(this))
+  }
+
   initializeState() {
     const initialStateTemplate = {
       hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/1")),
@@ -24,6 +30,8 @@ export default class HakemustenArviointiController {
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
       selectedHakemus: undefined,
       saveStatus: {
+        saveInProgress: false,
+        saveTime: null,
         serverError: ""
       }
     }
@@ -34,11 +42,14 @@ export default class HakemustenArviointiController {
       dispatcher.push(events.initialState, state)
     })
 
+    this._bind('onCommentsLoaded')
+
     return Bacon.update(
       {},
       [dispatcher.stream(events.initialState)], this.onInitialState,
       [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
       [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio,
+      [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted,
       [dispatcher.stream(events.loadComments)], this.onLoadComments,
       [dispatcher.stream(events.commentsLoaded)], this.onCommentsLoaded,
       [dispatcher.stream(events.addComment)], this.onAddComment
@@ -65,7 +76,31 @@ export default class HakemustenArviointiController {
 
   onUpdateHakemusArvio(state, updatedHakemus) {
     const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + updatedHakemus.id + "/arvio"
+    state.saveStatus.saveInProgress = true
     HttpUtil.post(updateUrl, updatedHakemus.arvio)
+      .then(function(response) {
+        if(response instanceof Object) {
+          dispatcher.push(events.saveCompleted)
+        }
+        else {
+          dispatcher.push(events.saveCompleted, "unexpected-save-error")
+        }
+      })
+      .catch(function(response) {
+        dispatcher.push(events.saveCompleted, "unexpected-save-error")
+      })
+    return state
+  }
+
+  onSaveCompleted(state, error) {
+    state.saveStatus.saveInProgress = false
+    if(error) {
+      state.saveStatus.serverError = error
+    }
+    else {
+      state.saveStatus.saveTime = new Date()
+      state.saveStatus.serverError = ""
+    }
     return state
   }
 
@@ -84,13 +119,24 @@ export default class HakemustenArviointiController {
       state.selectedHakemus.comments = comments
     }
     state.loadingComments = false
+    state = this.onSaveCompleted(state)
     return state
   }
 
   onAddComment(state, newComment) {
-    HttpUtil.post(HakemustenArviointiController.commentsUrl(state), { comment: newComment }).then(comments => {
-      dispatcher.push(events.commentsLoaded, comments)
-    })
+    state.saveStatus.saveInProgress = true
+    HttpUtil.post(HakemustenArviointiController.commentsUrl(state), { comment: newComment })
+      .then(comments => {
+        if(comments instanceof Object) {
+          dispatcher.push(events.commentsLoaded, comments)
+        }
+        else {
+          dispatcher.push(events.saveCompleted, "unexpected-save-error")
+        }
+      })
+      .catch(function(response) {
+        dispatcher.push(events.saveCompleted, "unexpected-save-error")
+      })
     return state
   }
 
