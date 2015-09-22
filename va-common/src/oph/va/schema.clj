@@ -23,7 +23,11 @@
 (s/defschema Environment {:name s/Str
                           :show-name s/Bool})
 
+(s/defschema HakuStatus
+  (s/enum "new" "draft" "published"))
+
 (s/defschema AvustusHaku {:id Long
+                          :status HakuStatus
                           :content AvustusHakuContent
                           :form Long})
 

@@ -111,21 +111,25 @@ export default class HakujenHallintaController {
     HttpUtil.post("/api/avustushaku/" + state.selectedHaku.id, state.selectedHaku)
         .then(function(response) {
           console.log("Saved haku. Response=", JSON.stringify(response))
-          dispatcher.push(events.saveCompleted)
+          dispatcher.push(events.saveCompleted, response)
         })
         .catch(function(response) {
           console.error('Unexpected save error:', response.statusText)
-          dispatcher.push(events.saveCompleted, "unexpected-save-error")
+          dispatcher.push(events.saveCompleted, {error: "unexpected-save-error"})
         })
     return state
   }
 
-  onSaveCompleted(state, error) {
+  onSaveCompleted(state, response) {
     state.saveStatus.saveInProgress = false
-    if(error) {
-      state.saveStatus.serverError = error
+    if(response.error) {
+      state.saveStatus.serverError = response.error
     }
     else {
+      const oldHaku = _.find(state.hakuList, haku => haku.id ===  response.id)
+      if(oldHaku) { 
+        oldHaku.status = response.status
+      }
       state.saveStatus.saveTime = new Date()
       state.saveStatus.serverError = ""
     }

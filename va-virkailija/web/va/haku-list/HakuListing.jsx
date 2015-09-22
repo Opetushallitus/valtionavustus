@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 
 import { BasicInfoComponent }from 'va-common/web/form/component/InfoElement.jsx'
 
+import HakuStatus from '../avustushaku/HakuStatus.jsx'
+
 export default class HakuListing extends Component {
   render() {
     function onClick(e) {
@@ -18,11 +20,11 @@ export default class HakuListing extends Component {
       <div>
         <button id="create-haku" onClick={onClick} >Luo uusi avustushaku</button>
         <table key="hakuListing" className="haku-list overview-list">
-          <thead>
-          <tr>
+          <thead><tr>
             <th className="name-column">Avustushaku</th>
-            <th className="start-column">Haku alkaa</th>
-            <th className="end-column">Haku päättyy</th>
+            <th className="status-column">Tila</th>
+            <th className="start-column">Alkaa</th>
+            <th className="end-column">Loppuu</th>
           </tr></thead>
           <tbody>
             {hakuElements}
@@ -47,6 +49,7 @@ class HakuRow extends Component {
     const controller = this.props.controller
     return <tr id={htmlId} className={rowClass} onClick={controller.selectHaku(haku)}>
       <td className="name-column">{haku.content.name.fi}</td>
+      <td className="status-column"><HakuStatus status={haku.status}/></td>
       <td className="start-column">{this.toDateStr(haku.content.duration.start)}</td>
       <td className="end-column">{this.toDateStr(haku.content.duration.end)}</td>
     </tr>
