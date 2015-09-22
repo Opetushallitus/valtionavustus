@@ -40,10 +40,8 @@ export default class Form extends React.Component {
                                                                attachments: state.saveStatus.attachments,
                                                                attachmentUploadsInProgress: state.saveStatus.attachmentUploadsInProgress})
 
-        if (field.type == "formField") {
+        if (field.type == "formField" || field.type == "button") {
           return createFormComponent(field, extendedProperties)
-        } else if (field.type == "button") {
-          return createButton(field, extendedProperties)
         } else if (field.type == "wrapperElement") {
           return createWrapperElement(field, extendedProperties, renderingParameters)
         }
@@ -57,10 +55,6 @@ export default class Form extends React.Component {
     function createInfoElement(fieldProperties) {
       return <InfoElement {...fieldProperties}
                           values={infoElementValues} />
-    }
-
-    function createButton(field, extendedProperties) {
-      return createFormComponent(field, extendedProperties)
     }
 
     function createFormComponent(field, extendedProperties) {
