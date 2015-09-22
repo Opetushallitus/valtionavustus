@@ -24,8 +24,8 @@ export default class FormStateTransitions {
     this.autoSave = _.debounce(function(){ dispatcher.push(events.save) }, develQueryParam? 100 : 3000)
     this._bind(
       'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
-      'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError', 'onFileUpload',
-      'onRemoveFile')
+      'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError', 'onUploadAttachment',
+      'onRemoveAttachment')
   }
 
   _bind(...methods) {
@@ -71,7 +71,7 @@ export default class FormStateTransitions {
     return state
   }
 
-  onFileUpload(state, uploadEvent) {
+  onUploadAttachment(state, uploadEvent) {
     const { files, field } = uploadEvent
     const formOperations = state.extensionApi.formOperations
     if (formOperations.isSaveDraftAllowed(state)) {
@@ -108,14 +108,14 @@ export default class FormStateTransitions {
     return state
   }
 
-  onFileUploadCompleted(state, reponseFromServer) {
+  onAttachmentUploadCompleted(state, reponseFromServer) {
     const fieldId = reponseFromServer["field-id"]
     state.saveStatus.attachments[fieldId] = reponseFromServer
     state.saveStatus.attachmentUploadsInProgress[fieldId] = false
     return state
   }
 
-  onRemoveFile(state, fieldOfFile) {
+  onRemoveAttachment(state, fieldOfFile) {
     const formOperations = state.extensionApi.formOperations
     if (formOperations.isSaveDraftAllowed(state)) {
       const url = formOperations.urlCreator.attachmentDeleteUrl(state, fieldOfFile)
@@ -126,7 +126,7 @@ export default class FormStateTransitions {
         HttpUtil.delete(url)
           .then(function(response) {
             console.log("Deleted attachment of field " + fieldOfFile.id + " . Response=", JSON.stringify(response))
-            dispatcher.push(events.fileDeleteCompleted, fieldOfFile)
+            dispatcher.push(events.attachmentRemovalCompleted, fieldOfFile)
           })
           .catch(function(response) {
             console.log('upload error', response)
@@ -146,7 +146,7 @@ export default class FormStateTransitions {
     return state
   }
 
-  onFileDeleteCompleted(state, fieldOfRemovedFile) {
+  onAttachementRemovalCompleted(state, fieldOfRemovedFile) {
     const fieldId = fieldOfRemovedFile.id
     state.saveStatus.attachments[fieldId] = undefined
     state.saveStatus.attachmentUploadsInProgress[fieldId] = false
