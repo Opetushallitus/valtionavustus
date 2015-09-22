@@ -10,7 +10,6 @@ import FinnishBusinessIdTextField from './FinnishBusinessIdTextField.jsx'
 import IbanTextField from './IbanTextField.jsx'
 import BicTextField from './BicTextField.jsx'
 import Dropdown from './Dropdown.jsx'
-import TextButton from './TextButton.jsx'
 import RadioButton from './RadioButton.jsx'
 import AttachmentField from './AttachmentField.jsx'
 import { TextFieldPropertyMapper,
@@ -31,7 +30,6 @@ export default class FormComponent extends React.Component {
       "bic": BicTextField,
       "dropdown": Dropdown,
       "radioButton": RadioButton,
-      "textButton": TextButton,
       "namedAttachment": AttachmentField
     }
     this.fieldPropertyMapping = {
@@ -44,7 +42,6 @@ export default class FormComponent extends React.Component {
       "bic": TextFieldPropertyMapper,
       "dropdown": OptionFieldPropertyMapper,
       "radioButton": OptionFieldPropertyMapper,
-      "textButton": ButtonPropertyMapper,
       "namedAttachment": AttachmentFieldPropertyMapper
     }
     this.componentFactory = new ComponentFactory(fieldTypeMapping)

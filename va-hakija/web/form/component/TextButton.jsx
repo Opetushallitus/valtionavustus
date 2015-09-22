@@ -3,6 +3,9 @@ import _ from 'lodash'
 
 import LocalizedString from 'va-common/web/form/component/LocalizedString.jsx'
 
+/**
+ * Button that is not bound to any form field.
+ */
 export default class TextButton extends React.Component {
   render() {
     const props = this.props
