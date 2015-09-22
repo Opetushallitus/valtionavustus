@@ -19,10 +19,6 @@ const events = {
 
 export default class HakemustenArviointiController {
 
-  _bind(...methods) {
-    methods.forEach((method) => this[method] = this[method].bind(this))
-  }
-
   initializeState() {
     const initialStateTemplate = {
       hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/1")),
@@ -41,8 +37,6 @@ export default class HakemustenArviointiController {
     initialState.onValue(state => {
       dispatcher.push(events.initialState, state)
     })
-
-    this._bind('onCommentsLoaded')
 
     return Bacon.update(
       {},
@@ -119,7 +113,6 @@ export default class HakemustenArviointiController {
       state.selectedHakemus.comments = comments
     }
     state.loadingComments = false
-    state = this.onSaveCompleted(state)
     return state
   }
 
@@ -129,6 +122,7 @@ export default class HakemustenArviointiController {
       .then(comments => {
         if(comments instanceof Object) {
           dispatcher.push(events.commentsLoaded, comments)
+          dispatcher.push(events.saveCompleted)
         }
         else {
           dispatcher.push(events.saveCompleted, "unexpected-save-error")
