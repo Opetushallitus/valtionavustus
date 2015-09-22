@@ -11,7 +11,21 @@ export default class HakuEdit extends Component {
       controller.onChangeListener(avustushaku, e.target, e.target.value)
     }
 
-    const status = avustushaku.status
+    return (
+      <div id="haku-edit">
+        <h2>Muokkaa avustushakua</h2>
+        <label htmlFor="haku-name-fi">Haun nimi:</label><input onChange={onChange} size="100" maxLength="200" id="haku-name-fi" type="text" value={avustushaku.content.name.fi}/>
+        <label htmlFor="haku-name-sv">Haun nimi ruotsiksi:</label><input onChange={onChange} size="100" maxLength="200" id="haku-name-sv" type="text" value={avustushaku.content.name.sv}/>
+        <SetStatus currentStatus={avustushaku.status} onChange={onChange} />
+      </div>
+    )
+  }
+}
+
+class SetStatus extends React.Component {
+  render() {
+    const currentStatus = this.props.currentStatus
+    const onChange = this.props.onChange
     const statuses = []
     const statusValues = ['draft', 'published', 'deleted'];
     for (var i=0; i < statusValues.length; i++) {
@@ -23,7 +37,7 @@ export default class HakuEdit extends Component {
                  name="status"
                  value={statusValues[i]}
                  onChange={onChange}
-                 checked={statusValues[i] === status ? true: null}
+                 checked={statusValues[i] === currentStatus ? true: null}
               />
       )
       statuses.push(
@@ -35,14 +49,9 @@ export default class HakuEdit extends Component {
     }
 
     return (
-      <div id="haku-edit">
-        <h2>Muokkaa avustushakua</h2>
-        <label htmlFor="haku-name-fi">Haun nimi:</label><input onChange={onChange} size="100" maxLength="200" id="haku-name-fi" type="text" value={avustushaku.content.name.fi}/>
-        <label htmlFor="haku-name-sv">Haun nimi ruotsiksi:</label><input onChange={onChange} size="100" maxLength="200" id="haku-name-sv" type="text" value={avustushaku.content.name.sv}/>
-        <div>
-          <label>Avustushaun tila:</label>
-          {statuses}
-        </div>
+      <div>
+        <label>Avustushaun tila:</label>
+        {statuses}
       </div>
     )
   }
