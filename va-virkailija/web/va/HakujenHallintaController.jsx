@@ -105,6 +105,7 @@ export default class HakujenHallintaController {
         }
         else {
           console.error("Unsuported update to field ", update.field.id, ":", update)
+          return state
         }
     }
     state = this.startAutoSave(state, update.avustushaku)
