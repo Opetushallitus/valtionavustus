@@ -25,13 +25,21 @@
                                   hakija-queries/create-avustushaku<!
                                   {:form form-id
                                    :content avustuhaku-content}))]
-    (first (map avustushaku-response-content (exec :hakija-db hakija-queries/get-avustushaku {:id avustushaku-id})))))
+    (->> {:id avustushaku-id}
+         (exec :hakija-db hakija-queries/get-avustushaku)
+         (map avustushaku-response-content )
+         first)))
 
 (defn update-avustushaku [avustushaku]
-  (let [haku-status (if (= (:status avustushaku) "new") (new HakuStatus "draft") (new HakuStatus (:status avustushaku)))
+  (let [haku-status (if (= (:status avustushaku) "new")
+                      (new HakuStatus "draft")
+                      (new HakuStatus (:status avustushaku)))
         avustushaku-to-save (assoc avustushaku :status haku-status)]
     (exec :hakija-db hakija-queries/update-avustushaku! avustushaku-to-save)
-    (first (map avustushaku-response-content (exec :hakija-db hakija-queries/get-avustushaku avustushaku-to-save)))))
+    (->> avustushaku-to-save
+         (exec :hakija-db hakija-queries/get-avustushaku)
+         (map avustushaku-response-content)
+         first)))
 
 (defn list-avustushaut []
   (map avustushaku-response-content(exec :hakija-db hakija-queries/list-avustushaut {})))
