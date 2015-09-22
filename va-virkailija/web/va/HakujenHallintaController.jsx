@@ -94,23 +94,24 @@ export default class HakujenHallintaController {
   }
 
   onUpdateField(state, update) {
-    switch (update.field.id) {
-      case "haku-name-fi": {
-        update.avustushaku.content.name.fi = update.newValue
-        break;
-      }
-      case "haku-name-sv": {
-        update.avustushaku.content.name.sv = update.newValue
-        break;
-      }
-      default:
-        if(update.field.id.indexOf("set-status-") === 0) {
-          update.avustushaku.status = update.newValue
-        }
-        else {
-          console.error("Unsuported update to field ", update.field.id, ":", update)
-          return state
-        }
+    const hakuname = /haku-name-(\w+)/.exec(update.field.id)
+    const status = /set-status-(\w+)/.exec(update.field.id)
+    const selectionCriteria = /selection-criteria-(\d+)-(\w+)/.exec(update.field.id)
+    if(hakuname) {
+      const lang = hakuname[1]
+      update.avustushaku.content.name[lang] = update.newValue
+    }
+    else if(status) {
+      update.avustushaku.status = update.newValue
+    }
+    else if(selectionCriteria) {
+      const index = selectionCriteria[1]
+      const lang = selectionCriteria[2]
+      update.avustushaku.content['selection-criteria'].items[index][lang] = update.newValue
+    }
+    else {
+      console.error("Unsuported update to field ", update.field.id, ":", update)
+      return state
     }
     state = this.startAutoSave(state, update.avustushaku)
     return state
