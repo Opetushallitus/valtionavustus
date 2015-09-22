@@ -43,7 +43,7 @@ export default class HakujenHallintaController {
       dispatcher.push(events.initialState, state)
     })
     this.autoSave = _.debounce(function(){ dispatcher.push(events.saveHaku) }, 3000)
-    this._bind('onUpdateField', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection', 'onHakuSave')
+    this._bind('onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection', 'onHakuSave')
 
     return Bacon.update(
       {},
@@ -81,7 +81,7 @@ export default class HakujenHallintaController {
 
   onHakuCreated(state, newHaku) {
     state.hakuList.unshift(newHaku)
-    state = onHakuSelection(state, newHaku)
+    state = this.onHakuSelection(state, newHaku)
     setTimeout(function() {
       document.getElementById("haku-" + newHaku.id).scrollIntoView({block: "start", behavior: "smooth"})
     }, 300)
