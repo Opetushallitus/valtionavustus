@@ -74,6 +74,27 @@ button[disabled] {
   height: @overview-list-height;
 }
 
+input[type=radio] {
+  display: none;
+}
+
+input[type=radio] + label {
+  text-transform: uppercase;
+  display: inline-block;
+  color: @dark-gray;
+  margin: 4px 3px;
+  padding: 12px;
+  background-color: #fff;
+  border: solid 1px @dark-gray;
+  cursor: pointer;
+}
+
+input[type=radio]:checked + label {
+  margin: 0;
+  color: @text-black;
+  border: solid 4px @light-green;
+}
+
 table.overview-list {
   width: @content-width;
   text-align: left;

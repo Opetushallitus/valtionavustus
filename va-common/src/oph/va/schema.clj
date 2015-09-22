@@ -24,7 +24,7 @@
                           :show-name s/Bool})
 
 (s/defschema HakuStatus
-  (s/enum "new" "draft" "published"))
+  (s/enum "new" "draft" "published" "deleted"))
 
 (s/defschema AvustusHaku {:id Long
                           :status HakuStatus
