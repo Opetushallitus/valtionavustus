@@ -3,6 +3,7 @@ import ClassNames from 'classnames'
 import _ from 'lodash'
 import Dropzone from 'react-dropzone-es6'
 
+import AttachmentDisplay from 'va-common/web/form/preview/AttachmentDisplay.jsx'
 import RemoveButton from './RemoveButton.jsx'
 import BasicSizedComponent from './BasicSizedComponent.jsx'
 import LocalizedString from 'va-common/web/form/component/LocalizedString.jsx'
@@ -39,10 +40,10 @@ class ExistingAttachmentComponent {
     removeProperties.renderingParameters = removeProperties.renderingParameters ? removeProperties.renderingParameters : {}
     removeProperties.renderingParameters.removeMe = this.props.onRemove
 
+    const attachmentDisplay = <AttachmentDisplay {...this.props} attachment={attachment} downloadUrl={downloadUrl}/>
     const removeButton = React.createElement(RemoveButton, removeProperties)
     return <div>
-             <a href={downloadUrl} target="_blank">{attachment.filename}</a>
-             <span> (liitetty TODO)</span>
+             {attachmentDisplay}
              {removeButton}
            </div>
   }
