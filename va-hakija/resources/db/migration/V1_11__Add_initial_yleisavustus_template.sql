@@ -210,7 +210,7 @@ insert into forms (content) VALUES ('
             "type": "formField",
             "id":"previous-income-statement-and-balance-sheet",
             "required":true,
-            "displayAs":"fileUpload",
+            "displayAs":"namedAttachment",
             "label":{
               "fi":"Edellisen tilikauden tuloslaskelma ja tase liitetietoineen",
               "sv":"TODO: Edellisen tilikauden tuloslaskelma ja tase liitetietoineen"

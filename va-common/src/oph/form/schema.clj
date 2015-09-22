@@ -43,7 +43,7 @@
                                              :bic
                                              :dropdown
                                              :radioButton
-                                             :fileUpload)})
+                                             :namedAttachment)})
 
   (s/defschema BasicElement (s/either FormField
                                       Button

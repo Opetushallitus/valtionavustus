@@ -12,11 +12,11 @@ import BicTextField from './BicTextField.jsx'
 import Dropdown from './Dropdown.jsx'
 import TextButton from './TextButton.jsx'
 import RadioButton from './RadioButton.jsx'
-import FileUploadField from './FileUploadField.jsx'
+import AttachmentField from './AttachmentField.jsx'
 import { TextFieldPropertyMapper,
          OptionFieldPropertyMapper,
          ButtonPropertyMapper,
-         FileUploadFieldPropertyMapper} from 'va-common/web/form/component/PropertyMapper'
+         AttachmentFieldPropertyMapper} from 'va-common/web/form/component/PropertyMapper'
 
 export default class FormComponent extends React.Component {
   constructor(props) {
@@ -32,7 +32,7 @@ export default class FormComponent extends React.Component {
       "dropdown": Dropdown,
       "radioButton": RadioButton,
       "textButton": TextButton,
-      "fileUpload": FileUploadField
+      "namedAttachment": AttachmentField
     }
     this.fieldPropertyMapping = {
       "textField": TextFieldPropertyMapper,
@@ -45,7 +45,7 @@ export default class FormComponent extends React.Component {
       "dropdown": OptionFieldPropertyMapper,
       "radioButton": OptionFieldPropertyMapper,
       "textButton": ButtonPropertyMapper,
-      "fileUpload": FileUploadFieldPropertyMapper
+      "namedAttachment": AttachmentFieldPropertyMapper
     }
     this.componentFactory = new ComponentFactory(fieldTypeMapping)
   }

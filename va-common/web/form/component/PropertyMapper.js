@@ -87,7 +87,7 @@ export class ButtonPropertyMapper extends DefaultPropertyMapper {
   }
 }
 
-export class FileUploadFieldPropertyMapper extends DefaultPropertyMapper {
+export class AttachmentFieldPropertyMapper extends DefaultPropertyMapper {
   static map(props) {
     const commonProps = FieldPropertyMapper.map(props)
     const controller = props.controller
