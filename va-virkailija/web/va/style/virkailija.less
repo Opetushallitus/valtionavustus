@@ -67,6 +67,16 @@ button[disabled] {
   border: 1px solid @light-gray;
 }
 
+button.remove {
+  background: transparent url('../img/remove_line_enabled.png') no-repeat left top;
+  border-width: 0px;
+  width: 20px;
+  height: 22px;
+}
+button[disabled].remove {
+  background: transparent url('../img/remove_line_disabled.png') no-repeat left top;
+}
+
 #list-container {
   position: fixed;
   width: @content-width;

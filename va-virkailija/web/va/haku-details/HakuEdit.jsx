@@ -36,7 +36,7 @@ class SelectionCriteria extends React.Component {
         <tr key={index}>
           <td><textarea onChange={onChange} rows="2" maxLength="200" id={htmlId + "fi"} value={selectionCriteria.items[index].fi}/></td>
           <td><textarea onChange={onChange} rows="2" maxLength="200" id={htmlId + "sv"} value={selectionCriteria.items[index].sv}/></td>
-          <td><button onClick={controller.deleteSelectionCriteria(avustushaku, index)}>Poista</button></td>
+          <td><button className="remove" onClick={controller.deleteSelectionCriteria(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={avustushaku.status === "published"} /></td>
         </tr>
       )
     }
