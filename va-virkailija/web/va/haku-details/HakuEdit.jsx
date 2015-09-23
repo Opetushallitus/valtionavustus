@@ -14,8 +14,13 @@ export default class HakuEdit extends Component {
     return (
       <div id="haku-edit">
         <h2>Muokkaa avustushakua</h2>
-        <label htmlFor="haku-name-fi">Haun nimi</label><input onChange={onChange} size="100" maxLength="200" id="haku-name-fi" type="text" value={avustushaku.content.name.fi}/>
-        <label htmlFor="haku-name-sv">Haun nimi ruotsiksi</label><input onChange={onChange} size="100" maxLength="200" id="haku-name-sv" type="text" value={avustushaku.content.name.sv}/>
+        <table id="name">
+          <thead><tr><th>Haun nimi</th><th>Haun nimi ruotsiksi</th></tr></thead>
+          <tbody><tr>
+            <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-fi" value={avustushaku.content.name.fi}/></td>
+            <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-sv" value={avustushaku.content.name.sv}/></td>
+          </tr></tbody>
+        </table>
         <SetStatus currentStatus={avustushaku.status} onChange={onChange} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
       </div>
