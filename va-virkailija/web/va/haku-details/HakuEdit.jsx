@@ -60,15 +60,17 @@ class SetStatus extends React.Component {
     const statuses = []
     const statusValues = ['deleted', 'draft', 'published'];
     for (var i=0; i < statusValues.length; i++) {
-      const htmlId = "set-status-" + statusValues[i]
+      const status = statusValues[i]
+      const htmlId = "set-status-" + status
       statuses.push(
         <input id={htmlId}
                type="radio"
                key={htmlId}
                name="status"
-               value={statusValues[i]}
+               value={status}
                onChange={onChange}
-               checked={statusValues[i] === currentStatus ? true: null}
+               checked={status === currentStatus ? true: null}
+               disabled={status === 'deleted' && currentStatus === 'published'}
             />
       )
       statuses.push(

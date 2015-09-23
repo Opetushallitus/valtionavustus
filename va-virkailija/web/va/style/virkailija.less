@@ -112,6 +112,12 @@ input[type=radio]:checked + label {
   border: solid 4px @light-green;
 }
 
+input[type=radio]:disabled + label {
+  color: @light-gray;
+  cursor: default;
+  border: solid 1px @light-gray;
+}
+
 table.overview-list {
   width: @content-width;
   text-align: left;
