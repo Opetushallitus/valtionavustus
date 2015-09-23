@@ -7,18 +7,20 @@ import HakemusStatus from "./HakemusStatus.jsx"
 export default class HakemusComments extends Component {
 
   checkComments() {
-    const commentsHaveBeenLoaded = _.isArray(this.props.comments)
     const loadingComments = this.props.loadingComments
-    if(!commentsHaveBeenLoaded && !loadingComments && this.props.hakemus.id) {
+    if (!loadingComments && this.props.hakemus.id) {
       this.props.controller.loadComments()
     }
   }
 
-  componentWillMount() {
-    this.checkComments()
+  shouldComponentUpdate (nextProps, nextState) {
+    if (this.props.hakemus.id !== nextProps.hakemus.id) {
+      this.checkComments()
+    }
+    return true
   }
 
-  componentWillUpdate() {
+  componentWillMount() {
     this.checkComments()
   }
 
