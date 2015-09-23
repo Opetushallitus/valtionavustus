@@ -49,10 +49,15 @@ export default class App extends Component {
   }
 }
 
+var parser = document.createElement('a');
+parser.href = location
+const pathElements = parser.pathname.split("/")
+console.log("Path elements", pathElements)
+const avustushakuId = pathElements.length == 3 ? pathElements[2] : "1"
+console.log("AvustushakuId", avustushakuId)
 
 const controller = new HakemustenArviointiController()
-
-const stateP = controller.initializeState()
+const stateP = controller.initializeState(avustushakuId)
 
 stateP.onValue((state) => {
   try {

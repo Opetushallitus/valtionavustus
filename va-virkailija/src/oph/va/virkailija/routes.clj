@@ -65,6 +65,7 @@
     :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
     (on-hakemus-preview avustushaku-id hakemus-user-key))
   (GET "/translations.json" [] (get-translations))
+  (GET "/avustushaku/:id" [id] (return-html "index.html"))
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
