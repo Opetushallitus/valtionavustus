@@ -52,7 +52,7 @@ export default class HakemusPreview extends Component {
   }
 
   resolveAttachmentsProperty(hakuData, hakemus) {
-    if (!hakuData.attachments || !hakemus ) {
+    if (!hakuData.attachments || !hakemus.id ) {
       return {}
     }
     const attachments = hakuData.attachments[hakemus.id.toString()]
