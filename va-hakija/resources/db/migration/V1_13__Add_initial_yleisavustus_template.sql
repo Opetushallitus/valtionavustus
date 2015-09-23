@@ -215,41 +215,56 @@ insert into forms (content) VALUES ('
               "fi":"Edellisen tilikauden tuloslaskelma ja tase liitetietoineen",
               "sv":"TODO: Edellisen tilikauden tuloslaskelma ja tase liitetietoineen"
             }
-          }
-        ]
-      },
-      {
-        "type": "wrapperElement",
-        "id":"arbitrary-attachments",
-        "displayAs":"growingFieldset",
-        "params":{
-          "showOnlyFirstLabels":false
-        },
-        "label":{
-          "fi":"Muut liitteet",
-          "sv":"TODO: Muut liitteet"
-        },
-        "children": [
+          },
           {
-            "type": "wrapperElement",
-            "id":"arbitrary-attachment-1",
-            "displayAs":"fieldset",
-            "children": [
-              {
-                "type": "formField",
-                "id":"arbitrary-attachments.arbitrary-attachment-1.attachment",
-                "required":false,
-                "displayAs":"textField",
-                "params":{
-                  "size":"extra-large",
-                  "maxlength":300
-                },
-                "label":{
-                  "fi":"Liitteen nimi",
-                  "sv":"TODO: Liitteen nimi"
-                }
-              }
-            ]
+            "type": "formField",
+            "id":"previous-financial-year-report",
+            "required":true,
+            "displayAs":"namedAttachment",
+            "label":{
+              "fi":"Toimintakertomus edelliseltä tilikaudelta",
+              "sv":"TODO: Toimintakertomus edelliseltä tilikaudelta"
+            }
+          },
+          {
+            "type": "formField",
+            "id":"previous-financial-year-auditor-report",
+            "required":true,
+            "displayAs":"namedAttachment",
+            "label":{
+              "fi":"Tilintarkastuskertomus edelliseltä tilikaudelta",
+              "sv":"TODO: Tilintarkastuskertomus edelliseltä tilikaudelta"
+            }
+          },
+          {
+            "type": "formField",
+            "id":"current-year-plan-for-action-and-budget",
+            "required":true,
+            "displayAs":"namedAttachment",
+            "label":{
+              "fi":"Oppilaitosta koskeva toimintasuunnitelma ja talousarvio vuodelle 2015",
+              "sv":"TODO: Oppilaitosta koskeva toimintasuunnitelma ja talousarvio vuodelle 2015"
+            }
+          },
+          {
+            "type": "formField",
+            "id":"description-of-functional-development-during-last-five-years",
+            "required":true,
+            "displayAs":"namedAttachment",
+            "label":{
+              "fi":"Oppilaitoksen toiminnallista kehitystä kuvaava esitys viiden viime vuoden ajalta",
+              "sv":"TODO: Oppilaitoksen toiminnallista kehitystä kuvaava esitys viiden viime vuoden ajalta"
+            }
+          },
+          {
+            "type": "formField",
+            "id":"financial-information-form",
+            "required":true,
+            "displayAs":"namedAttachment",
+            "label":{
+              "fi":"Taloustietolomake",
+              "sv":"TODO: Taloustietolomake"
+            }
           }
         ]
       }
