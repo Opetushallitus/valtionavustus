@@ -14,10 +14,10 @@ export default class HakuEdit extends Component {
     return (
       <div id="haku-edit">
         <h2>Muokkaa avustushakua</h2>
-        <label htmlFor="haku-name-fi">Haun nimi:</label><input onChange={onChange} size="100" maxLength="200" id="haku-name-fi" type="text" value={avustushaku.content.name.fi}/>
-        <label htmlFor="haku-name-sv">Haun nimi ruotsiksi:</label><input onChange={onChange} size="100" maxLength="200" id="haku-name-sv" type="text" value={avustushaku.content.name.sv}/>
-        <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
+        <label htmlFor="haku-name-fi">Haun nimi</label><input onChange={onChange} size="100" maxLength="200" id="haku-name-fi" type="text" value={avustushaku.content.name.fi}/>
+        <label htmlFor="haku-name-sv">Haun nimi ruotsiksi</label><input onChange={onChange} size="100" maxLength="200" id="haku-name-sv" type="text" value={avustushaku.content.name.sv}/>
         <SetStatus currentStatus={avustushaku.status} onChange={onChange} />
+        <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
       </div>
     )
   }
@@ -58,7 +58,7 @@ class SetStatus extends React.Component {
     const currentStatus = this.props.currentStatus
     const onChange = this.props.onChange
     const statuses = []
-    const statusValues = ['draft', 'published', 'deleted'];
+    const statusValues = ['deleted', 'draft', 'published'];
     for (var i=0; i < statusValues.length; i++) {
       const htmlId = "set-status-" + statusValues[i]
       statuses.push(
@@ -72,16 +72,16 @@ class SetStatus extends React.Component {
             />
       )
       statuses.push(
-          <label key={htmlId + "-label"}
-                 htmlFor={htmlId}>
-            <HakuStatus status={statusValues[i]}/>
-          </label>
+        <label key={htmlId + "-label"}
+               htmlFor={htmlId}>
+          <HakuStatus status={statusValues[i]}/>
+        </label>
       )
     }
 
     return (
       <div>
-        <label>Avustushaun tila:</label>
+        <h3>Tila</h3>
         {statuses}
       </div>
     )
