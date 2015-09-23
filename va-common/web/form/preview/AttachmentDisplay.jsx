@@ -13,6 +13,6 @@ export default class AttachmentDisplay extends BasicFieldComponent {
                  <a href={downloadUrl} target="_blank">{attachment.filename}</a>
                  <span> (liitetty TODO)</span>
                </span> :
-               label
+               <span/>
   }
 }
