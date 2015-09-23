@@ -16,7 +16,7 @@ export default class AttachmentField extends BasicSizedComponent {
     const translations = this.props.translations
     const lang = this.props.lang
     const classStr = ClassNames(this.resolveClassName("soresu-file-upload"), { disabled: this.props.disabled })
-    const existingAttachment = this.props.attachments[this.props.field.id]
+    const existingAttachment = this.props.allAttachments[this.props.field.id]
 
     const propertiesWithAttachment = _.extend({ attachment: existingAttachment }, props)
     const attachmentElement = existingAttachment ? <ExistingAttachmentComponent {...propertiesWithAttachment}  /> :

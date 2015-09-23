@@ -28,7 +28,8 @@ export default class HakemusPreview extends Component {
       },
       form: effectiveForm,
       saveStatus: {
-        values: answers
+        values: answers,
+        attachments: {}
       }
     }
     const formElementProps = {
@@ -74,5 +75,10 @@ class FakeFormController {
 
   getCustomWrapperComponentProperties(state) {
     return { "avustushaku": this.avustushaku }
+  }
+
+  createAttachmentDownloadUrl(state, field) {
+    // TODO: implement to create attachment download URL
+    return "/not/implemented/yet"
   }
 }

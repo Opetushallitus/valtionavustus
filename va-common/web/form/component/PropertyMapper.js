@@ -87,21 +87,30 @@ export class ButtonPropertyMapper extends DefaultPropertyMapper {
   }
 }
 
-export class AttachmentFieldPropertyMapper extends DefaultPropertyMapper {
+export class AttachmentDisplayPropertyMapper extends DefaultPropertyMapper {
   static map(props) {
     const commonProps = FieldPropertyMapper.map(props)
+    const downloadUrl = props.attachmentDownloadUrl
+    return _.extend({
+      required: props.field.required,
+      attachment: props.attachment,
+      attachmentUploadsInProgress: props.attachmentUploadsInProgress,
+      downloadUrl: downloadUrl
+    }, commonProps)
+  }
+}
+
+export class AttachmentFieldPropertyMapper {
+  static map(props) {
+    const commonAttachmentProps = AttachmentDisplayPropertyMapper.map(props)
     const controller = props.controller
-    const downloadUrl = controller.createAttachmentDownloadUrl(props.state, props.field)
     const onDrop = (files) => { controller.uploadAttachment(props.field, files) }
     const onRemove = () => { controller.deleteAttachment(props.field) }
     return _.extend({
-      required: props.field.required,
-      attachments: props.attachments,
-      attachmentUploadsInProgress: props.attachmentUploadsInProgress,
-      downloadUrl: downloadUrl,
+      allAttachments: props.allAttachments,
       onDrop: onDrop,
       onRemove: onRemove
-    }, commonProps)
+    }, commonAttachmentProps)
   }
 }
 

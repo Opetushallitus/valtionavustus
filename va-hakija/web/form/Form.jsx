@@ -37,7 +37,7 @@ export default class Form extends React.Component {
         const extendedProperties = _.extend(fieldProperties, { controller: controller,
                                                                disabled: fieldDisabled,
                                                                renderingParameters: renderingParameters,
-                                                               attachments: state.saveStatus.attachments,
+                                                               allAttachments: state.saveStatus.attachments,
                                                                attachmentUploadsInProgress: state.saveStatus.attachmentUploadsInProgress})
 
         if (field.type == "formField" || field.type == "button") {
@@ -65,7 +65,8 @@ export default class Form extends React.Component {
                             validationErrors={fieldErrors}
                             value={value}
                             onChange={controller.componentOnChangeListener}
-                            state={state}/>
+                            attachment={extendedProperties.allAttachments[field.id]}
+                            attachmentDownloadUrl={controller.createAttachmentDownloadUrl(state, field)} />
     }
 
     function createWrapperElement(field, fieldProperties, renderingParameters) {
