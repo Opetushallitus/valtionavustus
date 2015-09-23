@@ -13,6 +13,7 @@ export default class HakemusPreview extends Component {
     const hakemus = this.props.hakemus
     const avustushaku = this.props.avustushaku
     const hakuData = this.props.hakuData
+    const attachments = this.resolveAttachmentsProperty(hakuData, hakemus)
     const translations = this.props.translations
 
     const answers = hakemus.answers
@@ -29,13 +30,13 @@ export default class HakemusPreview extends Component {
       form: effectiveForm,
       saveStatus: {
         values: answers,
-        attachments: {}
+        attachments: attachments
       }
     }
     const formElementProps = {
       state: formState,
       infoElementValues: avustushaku,
-      controller: new FakeFormController(avustushaku)
+      controller: new FakeFormController(avustushaku, hakemus)
     }
 
     FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, answers)
@@ -49,11 +50,20 @@ export default class HakemusPreview extends Component {
       </div>
     )
   }
+
+  resolveAttachmentsProperty(hakuData, hakemus) {
+    if (!hakuData.attachments || !hakemus ) {
+      return {}
+    }
+    const attachments = hakuData.attachments[hakemus.id.toString()]
+    return attachments ? attachments : {}
+  }
 }
 
 class FakeFormController {
-  constructor(avustushaku) {
+  constructor(avustushaku, hakemus) {
     this.avustushaku = avustushaku
+    this.hakemus = hakemus
     this.customPreviewComponentFactory = new VaPreviewComponentFactory()
   }
 
@@ -78,7 +88,6 @@ class FakeFormController {
   }
 
   createAttachmentDownloadUrl(state, field) {
-    // TODO: implement to create attachment download URL
-    return "/not/implemented/yet"
+    return "api/avustushaku/" + this.avustushaku.id + "/hakemus/" + this.hakemus.id + "/attachments/" + field.id
   }
 }
