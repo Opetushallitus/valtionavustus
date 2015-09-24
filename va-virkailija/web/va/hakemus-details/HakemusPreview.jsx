@@ -3,6 +3,7 @@ import _ from 'lodash'
 import Immutable from 'seamless-immutable'
 
 import FormPreview from 'va-common/web/form/FormPreview.jsx'
+import AttachmentList from 'va-common/web/form/preview/AttachmentList.jsx'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 import FormBranchGrower from 'va-common/web/form/FormBranchGrower'
@@ -44,9 +45,13 @@ export default class HakemusPreview extends Component {
     const budgetCalculator = new VaBudgetCalculator()
     budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(formState, true)
 
+    const downloadUrlFn = (attachment) => {
+      return "/api/avustushaku/" + avustushaku.id + "/hakemus/" + attachment["hakemus-id"] + "/attachments/" + attachment["field-id"]
+    }
     return (
       <div id="preview-container">
-        <FormPreview {...formElementProps}/>
+        <FormPreview {...formElementProps} />
+        <AttachmentList {...formElementProps} translations={translations} lang="fi" toDownloadUrlFn={downloadUrlFn} attachments={attachments}/>
       </div>
     )
   }
