@@ -16,7 +16,7 @@ export default class AttachmentDisplay extends PreviewComponent {
 class ExistingAttachmentDisplay extends BasicInfoComponent {
   render() {
     const attachment = this.props.attachment
-    const dateTimeString = this.asDateTimeString(attachment.created_at)
+    const dateTimeString = this.asDateTimeString(attachment["created-at"])
     return <div className="soresu-attachment-display">
              <a href={this.props.downloadUrl} target="_blank">{attachment.filename}</a>
                <span> (<LocalizedString translations={this.props.translations.form.attachment}

@@ -88,6 +88,6 @@ class FakeFormController {
   }
 
   createAttachmentDownloadUrl(state, field) {
-    return "api/avustushaku/" + this.avustushaku.id + "/hakemus/" + this.hakemus.id + "/attachments/" + field.id
+    return "/api/avustushaku/" + this.avustushaku.id + "/hakemus/" + this.hakemus.id + "/attachments/" + field.id
   }
 }
