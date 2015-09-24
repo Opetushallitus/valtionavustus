@@ -9,10 +9,19 @@ export default class AttachmentDisplay extends PreviewComponent {
     const attachment = this.props.attachment
     const downloadUrl = this.props.downloadUrl
     return attachment ?
-               <span>
-                 <a href={downloadUrl} target="_blank">{attachment.filename}</a>
-                 <span> (liitetty TODO)</span>
-               </span> :
-               <span/>
+      <ExistingAttachmentDisplay attachment={attachment} downloadUrl={downloadUrl} labelText="liitetty" /> :
+      <span/>
+  }
+}
+
+class ExistingAttachmentDisplay extends React.Component {
+  render() {
+    const attachment = this.props.attachment
+    const labelText = this.props.labelText
+    const downloadUrl = this.props.downloadUrl
+    return <span>
+             <a href={downloadUrl} target="_blank">{attachment.filename}</a>
+               <span> ({labelText} TODO 0)</span>
+           </span>
   }
 }
