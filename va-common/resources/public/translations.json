@@ -43,7 +43,11 @@
     "attachment": {
       "uploadhere": {
         "fi": "Liitä",
-        "sv": "TODO: Liitä"
+        "sv": "TODO: Pasta"
+      },
+      "attached": {
+        "fi": "liitetty",
+        "sv": "TODO: ansluten"
       }
     }
   },

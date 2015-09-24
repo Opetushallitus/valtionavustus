@@ -8,7 +8,7 @@ import LocalizedString from '../component/LocalizedString.jsx'
 export default class AttachmentDisplay extends PreviewComponent {
   render() {
     return this.props.attachment ?
-      <ExistingAttachmentDisplay {...this.props} labelText="liitetty" /> :
+      <ExistingAttachmentDisplay {...this.props} /> :
       <span/>
   }
 }
@@ -16,12 +16,13 @@ export default class AttachmentDisplay extends PreviewComponent {
 class ExistingAttachmentDisplay extends BasicInfoComponent {
   render() {
     const attachment = this.props.attachment
-    const labelText = this.props.labelText
     const dateTimeString = this.asDateTimeString(attachment.created_at)
-    const downloadUrl = this.props.downloadUrl
     return <span>
-             <a href={downloadUrl} target="_blank">{attachment.filename}</a>
-               <span> (TODO {labelText} {dateTimeString})</span>
+             <a href={this.props.downloadUrl} target="_blank">{attachment.filename}</a>
+               <span> (<LocalizedString translations={this.props.translations.form.attachment}
+                                        translationKey="attached"
+                                        lang={this.props.lang}/> {dateTimeString})
+               </span>
            </span>
   }
 }
