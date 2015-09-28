@@ -30,7 +30,7 @@ export default class HakuEdit extends Component {
         </div>
         <SetStatus currentStatus={avustushaku.status} onChange={onChange} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
-        <div><h3>Omarahoitus</h3><input className="percentage" required="true" min="0" max="100" id="haku-self-financing-percentage" onChange={onChange} type="number" value={avustushaku.content["self-financing-percentage"]} /><span>%</span></div>
+        <div><h3>Omarahoitus</h3><input className="percentage" required="true" min="0" max="100" id="haku-self-financing-percentage" onChange={onChange} disabled={avustushaku.status === "published"} type="number" value={avustushaku.content["self-financing-percentage"]} /><span>%</span></div>
       </div>
     )
   }
