@@ -70,22 +70,27 @@
       [{:error "finnishBusinessId"}])))
 
 (defn validate-field-security [answers field]
-  (let [answer (find-answer-value answers (field :id))]
+  (let [answer (find-answer-value answers (:id field))]
     {(keyword (:id field)) (concat
        (validate-options field answer)
        (validate-textarea-maxlength field answer)
        (validate-texfield-maxlength field answer)
        (validate-email-security field answer))}))
 
+(defn validate-attachment [attachments field]
+  (contains? attachments (:id field)))
+
 (defn validate-field [answers attachments field]
-  (let [answer (find-answer-value answers (field :id))]
-    {(keyword (:id field)) (concat
-       (validate-required field answer)
-       (validate-options field answer)
-       (validate-textarea-maxlength field answer)
-       (validate-texfield-maxlength field answer)
-       (validate-email-field field answer)
-       (validate-finnish-business-id-field field answer))}))
+  (if (= (:displayAs field) "namedAttachment")
+    (validate-attachment attachments field)
+    (let [answer (find-answer-value answers (:id field))]
+      {(keyword (:id field)) (concat
+         (validate-required field answer)
+         (validate-options field answer)
+         (validate-textarea-maxlength field answer)
+         (validate-texfield-maxlength field answer)
+         (validate-email-field field answer)
+         (validate-finnish-business-id-field field answer))})))
 
 (defn validate-form-security [form answers]
   (let [applied-form (rules/apply-rules form answers {})
