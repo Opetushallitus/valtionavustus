@@ -428,6 +428,11 @@ div.soresu-attachment-input-field {
   margin-top: 10px;
   margin-bottom: 4px;
 
+  &.error {
+    span.required {
+      color: @bright-red;
+    }
+  }
   .soresu-upload-button {
     color: #fff;
     background-color: @light-green;
@@ -436,10 +441,6 @@ div.soresu-attachment-input-field {
     padding: 4px 24px;
     font-size: 16px;
     cursor: pointer;
-
-    &.error {
-      border: 1px solid @bright-red;
-    }
   }
 
   &.disabled {
