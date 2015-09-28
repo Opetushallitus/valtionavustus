@@ -93,6 +93,7 @@ export class AttachmentDisplayPropertyMapper extends DefaultPropertyMapper {
     const downloadUrl = props.attachmentDownloadUrl
     return _.extend({
       required: props.field.required,
+      hasError: !_.isEmpty(props.validationErrors),
       attachment: props.attachment,
       attachmentUploadsInProgress: props.attachmentUploadsInProgress,
       downloadUrl: downloadUrl
