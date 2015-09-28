@@ -88,7 +88,7 @@ class SelectionCriteria extends React.Component {
         <tbody>
         {criteriaItems}
         </tbody>
-        <tfoot><tr><td><button onClick={controller.addSelectionCriteria(avustushaku)}>Lisää uusi valintaperuste</button></td></tr></tfoot>
+        <tfoot><tr><td><button disabled={avustushaku.status === "published"} onClick={controller.addSelectionCriteria(avustushaku)}>Lisää uusi valintaperuste</button></td></tr></tfoot>
       </table>
     )
   }
