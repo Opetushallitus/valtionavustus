@@ -194,84 +194,6 @@ insert into forms (content) VALUES ('
   },
   {
     "type": "wrapperElement",
-    "id":"mandatory-attachments",
-    "displayAs":"theme",
-    "label":{
-      "fi":"Vaaditut liitteet",
-      "sv":"TODO: Vaaditut liitteet"
-    },
-    "children": [
-      {
-        "type": "wrapperElement",
-        "id":"named-attachments-fieldset",
-        "displayAs":"fieldset",
-        "children": [
-          {
-            "type": "formField",
-            "id":"previous-income-statement-and-balance-sheet",
-            "required":true,
-            "displayAs":"namedAttachment",
-            "label":{
-              "fi":"Edellisen tilikauden tuloslaskelma ja tase liitetietoineen",
-              "sv":"TODO: Edellisen tilikauden tuloslaskelma ja tase liitetietoineen"
-            }
-          },
-          {
-            "type": "formField",
-            "id":"previous-financial-year-report",
-            "required":true,
-            "displayAs":"namedAttachment",
-            "label":{
-              "fi":"Toimintakertomus edelliseltä tilikaudelta",
-              "sv":"TODO: Toimintakertomus edelliseltä tilikaudelta"
-            }
-          },
-          {
-            "type": "formField",
-            "id":"previous-financial-year-auditor-report",
-            "required":true,
-            "displayAs":"namedAttachment",
-            "label":{
-              "fi":"Tilintarkastuskertomus edelliseltä tilikaudelta",
-              "sv":"TODO: Tilintarkastuskertomus edelliseltä tilikaudelta"
-            }
-          },
-          {
-            "type": "formField",
-            "id":"current-year-plan-for-action-and-budget",
-            "required":true,
-            "displayAs":"namedAttachment",
-            "label":{
-              "fi":"Oppilaitosta koskeva toimintasuunnitelma ja talousarvio vuodelle 2015",
-              "sv":"TODO: Oppilaitosta koskeva toimintasuunnitelma ja talousarvio vuodelle 2015"
-            }
-          },
-          {
-            "type": "formField",
-            "id":"description-of-functional-development-during-last-five-years",
-            "required":true,
-            "displayAs":"namedAttachment",
-            "label":{
-              "fi":"Oppilaitoksen toiminnallista kehitystä kuvaava esitys viiden viime vuoden ajalta",
-              "sv":"TODO: Oppilaitoksen toiminnallista kehitystä kuvaava esitys viiden viime vuoden ajalta"
-            }
-          },
-          {
-            "type": "formField",
-            "id":"financial-information-form",
-            "required":true,
-            "displayAs":"namedAttachment",
-            "label":{
-              "fi":"Taloustietolomake",
-              "sv":"TODO: Taloustietolomake"
-            }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "type": "wrapperElement",
     "id":"financing-plan",
     "displayAs":"theme",
     "label":{
@@ -853,8 +775,86 @@ insert into forms (content) VALUES ('
         ]
       }
     ]
-  }
-]
+  },
+    {
+      "type": "wrapperElement",
+      "id":"mandatory-attachments",
+      "displayAs":"theme",
+      "label":{
+        "fi":"Vaaditut liitteet",
+        "sv":"TODO: Vaaditut liitteet"
+      },
+      "children": [
+        {
+          "type": "wrapperElement",
+          "id":"named-attachments-fieldset",
+          "displayAs":"fieldset",
+          "children": [
+            {
+              "type": "formField",
+              "id":"previous-income-statement-and-balance-sheet",
+              "required":true,
+              "displayAs":"namedAttachment",
+              "label":{
+                "fi":"Edellisen tilikauden tuloslaskelma ja tase liitetietoineen",
+                "sv":"TODO: Edellisen tilikauden tuloslaskelma ja tase liitetietoineen"
+              }
+            },
+            {
+              "type": "formField",
+              "id":"previous-financial-year-report",
+              "required":true,
+              "displayAs":"namedAttachment",
+              "label":{
+                "fi":"Toimintakertomus edelliseltä tilikaudelta",
+                "sv":"TODO: Toimintakertomus edelliseltä tilikaudelta"
+              }
+            },
+            {
+              "type": "formField",
+              "id":"previous-financial-year-auditor-report",
+              "required":true,
+              "displayAs":"namedAttachment",
+              "label":{
+                "fi":"Tilintarkastuskertomus edelliseltä tilikaudelta",
+                "sv":"TODO: Tilintarkastuskertomus edelliseltä tilikaudelta"
+              }
+            },
+            {
+              "type": "formField",
+              "id":"current-year-plan-for-action-and-budget",
+              "required":true,
+              "displayAs":"namedAttachment",
+              "label":{
+                "fi":"Oppilaitosta koskeva toimintasuunnitelma ja talousarvio vuodelle 2015",
+                "sv":"TODO: Oppilaitosta koskeva toimintasuunnitelma ja talousarvio vuodelle 2015"
+              }
+            },
+            {
+              "type": "formField",
+              "id":"description-of-functional-development-during-last-five-years",
+              "required":true,
+              "displayAs":"namedAttachment",
+              "label":{
+                "fi":"Oppilaitoksen toiminnallista kehitystä kuvaava esitys viiden viime vuoden ajalta",
+                "sv":"TODO: Oppilaitoksen toiminnallista kehitystä kuvaava esitys viiden viime vuoden ajalta"
+              }
+            },
+            {
+              "type": "formField",
+              "id":"financial-information-form",
+              "required":true,
+              "displayAs":"namedAttachment",
+              "label":{
+                "fi":"Taloustietolomake",
+                "sv":"TODO: Taloustietolomake"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
 ');
 
 INSERT INTO avustushaut (form, content) SELECT MAX(id), '
