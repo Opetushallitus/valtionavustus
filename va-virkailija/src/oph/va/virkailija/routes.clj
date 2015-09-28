@@ -9,6 +9,7 @@
             [compojure.core :refer [defroutes GET POST]]
             [compojure.api.sweet :refer :all]
             [compojure.api.exception :as compojure-ex]
+            [ring.swagger.json-schema-dirty]
             [schema.core :as s]
             [oph.common.config :refer [config config-simple-name]]
             [oph.common.routes :refer :all]
