@@ -25,7 +25,7 @@ export default class AttachmentField extends BasicSizedComponent {
                      <LocalizedString className="soresu-upload-button" translations={translations.form.attachment} translationKey="uploadhere" lang={lang}/>
                    </Dropzone>
 
-    return <div className="soresu-attachment-input-field">
+    return <div className="soresu-attachment-block soresu-attachment-input-field">
              {this.label(classStr)}
              {attachmentElement}
            </div>

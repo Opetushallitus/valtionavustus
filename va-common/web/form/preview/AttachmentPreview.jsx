@@ -7,7 +7,7 @@ import PreviewComponent from './PreviewComponent.jsx'
 export default class AttachmentPreview extends PreviewComponent {
   render() {
     const classStr = ClassNames("soresu-file-upload", { disabled: this.props.disabled })
-    return <div>
+    return <div className="soresu-attachment-block">
              {this.label(classStr)}
              <AttachmentDisplay {...this.props}/>
            </div>
