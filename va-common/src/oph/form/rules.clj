@@ -19,5 +19,5 @@
     "includeIf" (include-if form-state rule)
     (throw (ex-info (str "Unknown form rule of type " (:type rule)) rule))))
 
-(defn apply-rules [form answers]
+(defn apply-rules [form answers attachments]
   (:form (reduce apply-rule {:form form, :answers answers}  (:rules form))))
