@@ -54,7 +54,7 @@
 
 (defn validate-finnish-business-id-field [field answer]
   (if (not (and (has-display-as? "finnishBusinessIdField" field)
-                (= (:required field))))
+                (:required field)))
     []
     (if (and (not (nil? answer))
              (re-matches #"^[0-9]{7}-[0-9]$" answer))
@@ -78,12 +78,13 @@
        (validate-email-security field answer))}))
 
 (defn validate-attachment [attachments field]
-  (if (contains? attachments (:id field))
-    []
-    [{:error "missingAttachment"}]))
+  (if (and (not (contains? attachments (:id field)))
+           (:required field))
+    [{:error "required"}]
+    []))
 
 (defn validate-field [answers attachments field]
-  (if (= (:displayAs field) "namedAttachment")
+  (if (has-display-as? field "namedAttachment")
     {(keyword (:id field)) (concat
       (validate-attachment attachments field))}
     (let [answer (find-answer-value answers (:id field))]
