@@ -78,11 +78,14 @@
        (validate-email-security field answer))}))
 
 (defn validate-attachment [attachments field]
-  (contains? attachments (:id field)))
+  (if (contains? attachments (:id field))
+    []
+    [{:error "missingAttachment"}]))
 
 (defn validate-field [answers attachments field]
   (if (= (:displayAs field) "namedAttachment")
-    (validate-attachment attachments field)
+    {(keyword (:id field)) (concat
+      (validate-attachment attachments field))}
     (let [answer (find-answer-value answers (:id field))]
       {(keyword (:id field)) (concat
          (validate-required field answer)
