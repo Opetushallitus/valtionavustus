@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 import HakuStatus from "../avustushaku/HakuStatus.jsx"
+import { BasicInfoComponent }from 'va-common/web/form/component/InfoElement.jsx'
 
 export default class HakuEdit extends Component {
   render() {
@@ -21,11 +22,45 @@ export default class HakuEdit extends Component {
             <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-sv" value={avustushaku.content.name.sv}/></td>
           </tr></tbody>
         </table>
+        <div>
+          <h3>{avustushaku.content.duration.label.fi}</h3>
+          <DateField id="hakuaika-start" onChange={onChange} value={avustushaku.content.duration.start} disabled={avustushaku.status === "published"} />
+          <span className="dateDivider" />
+          <DateField id="hakuaika-end" onChange={onChange} value={avustushaku.content.duration.end} disabled={avustushaku.status === "published"} />
+        </div>
         <SetStatus currentStatus={avustushaku.status} onChange={onChange} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
         <div><h3>Omarahoitus</h3><input className="percentage" required="true" min="0" max="100" id="haku-self-financing-percentage" onChange={onChange} type="number" value={avustushaku.content["self-financing-percentage"]} /><span>%</span></div>
       </div>
     )
+  }
+}
+
+class DateField extends React.Component {
+  constructor(props) {
+    super(props)
+    this.handleChange = this.handleChange.bind(this)
+    const dateStr = BasicInfoComponent.asDateString(this.props.value) + " " + BasicInfoComponent.asTimeString(this.props.value)
+    this.state = {value: dateStr}
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(this.props.value !== nextProps.value) {
+      const dateStr = BasicInfoComponent.asDateString(nextProps.value) + " " + BasicInfoComponent.asTimeString(nextProps.value)
+      this.setState({value: dateStr})
+    }
+  }
+
+  handleChange(event) {
+    this.setState({value: event.target.value})
+  }
+
+  render() {
+    const id = this.props.id
+    const onChange = this.props.onChange
+    const disabled = this.props.disabled
+    const value = this.state.value
+    return <input className="date" type="text" id={id} onChange={this.handleChange} onBlur={onChange} value={value} disabled={disabled}/>
   }
 }
 

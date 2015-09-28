@@ -1,6 +1,7 @@
 import Bacon from 'baconjs'
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
+import moment from 'moment-timezone'
 
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'va-common/web/Dispatcher'
@@ -95,12 +96,24 @@ export default class HakujenHallintaController {
 
   onUpdateField(state, update) {
     const hakuname = /haku-name-(\w+)/.exec(update.field.id)
+    const hakuaika = /hakuaika-(\w+)/.exec(update.field.id)
     const status = /set-status-(\w+)/.exec(update.field.id)
     const financingProcentage = /haku-self-financing-percentage/.exec(update.field.id)
     const selectionCriteria = /selection-criteria-(\d+)-(\w+)/.exec(update.field.id)
+    var doSave = true
     if(hakuname) {
       const lang = hakuname[1]
       update.avustushaku.content.name[lang] = update.newValue
+    }
+    else if(hakuaika) {
+      const startOrEnd = hakuaika[1]
+      const newDate = moment(update.newValue, "DD.MM.YYYY HH.mm")
+      if(newDate.isSame(update.avustushaku.content.duration[startOrEnd])) {
+        doSave = false
+      }
+      else {
+        update.avustushaku.content.duration[startOrEnd] = newDate.toDate()
+      }
     }
     else if(financingProcentage) {
       update.avustushaku.content["self-financing-percentage"] = parseInt(update.newValue)
@@ -115,9 +128,11 @@ export default class HakujenHallintaController {
     }
     else {
       console.error("Unsuported update to field ", update.field.id, ":", update)
-      return state
+      doSave = false
     }
-    state = this.startAutoSave(state, update.avustushaku)
+    if(doSave) {
+      state = this.startAutoSave(state, update.avustushaku)
+    }
     return state
   }
 

@@ -17,6 +17,17 @@ table.haku-list {
 }
 
 #haku-edit {
+  .dateDivider {
+    margin: 0 10px;
+    &:after {
+      content: "—";
+    }
+  }
+
+  input:disabled {
+    color: @dark-gray;
+  }
+
   input.percentage {
     text-align: right;
   }
