@@ -48,6 +48,15 @@ class TopBarTab extends React.Component {
 }
 
 class TopBarControls extends React.Component {
+
+  getStatus(errorId, okStatus) {
+    switch (errorId) {
+      case "": return okStatus
+      case "validation-error": return <span className="error">Jossain kentässä puutteita. Tarkasta arvot.</span>
+      default: return <span className="error">Virhe tallennuksessa. Lataa sivu uudelleen.</span>
+    }
+  }
+
   render() {
     const state = this.props.state
     const user = state.userInfo
@@ -57,9 +66,7 @@ class TopBarControls extends React.Component {
     const okStatus = saveStatus.saveInProgress ?
         <span className="info">Tallennetaan</span> :
         <span className="info" hidden={!saveStatus.saveTime || saveStatus.serverError !== ""}>Kaikki tiedot tallennettu</span>
-    const status = saveStatus.serverError !== "" ?
-        <span className="error">Virhe tallennuksessa. Lataa sivu uudelleen.</span> :
-        okStatus
+    const status = this.getStatus(saveStatus.serverError, okStatus)
 
     return (
       <div id="form-controls">

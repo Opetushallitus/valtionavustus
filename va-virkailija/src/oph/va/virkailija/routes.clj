@@ -154,6 +154,7 @@
 
 (defn- create-swagger-docs []
   (swagger-docs {:info {:title "Valtionavustus API"}
+                 :ignore-missing-mappings? true
                  :tags [{:name "avustushaku"
                          :description "Avustushaku and hakemus listing and filtering"}
                         {:name "login"

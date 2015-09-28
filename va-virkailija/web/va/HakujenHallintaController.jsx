@@ -96,10 +96,14 @@ export default class HakujenHallintaController {
   onUpdateField(state, update) {
     const hakuname = /haku-name-(\w+)/.exec(update.field.id)
     const status = /set-status-(\w+)/.exec(update.field.id)
+    const financingProcentage = /haku-self-financing-percentage/.exec(update.field.id)
     const selectionCriteria = /selection-criteria-(\d+)-(\w+)/.exec(update.field.id)
     if(hakuname) {
       const lang = hakuname[1]
       update.avustushaku.content.name[lang] = update.newValue
+    }
+    else if(financingProcentage) {
+      update.avustushaku.content["self-financing-percentage"] = parseInt(update.newValue)
     }
     else if(status) {
       update.avustushaku.status = update.newValue
@@ -145,8 +149,13 @@ export default class HakujenHallintaController {
           dispatcher.push(events.saveCompleted, response)
         })
         .catch(function(response) {
-          console.error('Unexpected save error:', response.statusText)
-          dispatcher.push(events.saveCompleted, {error: "unexpected-save-error"})
+          if(response.status === 400) {
+            dispatcher.push(events.saveCompleted, {error: "validation-error"})
+          }
+          else {
+            console.error('Unexpected save error:', response.statusText)
+            dispatcher.push(events.saveCompleted, {error: "unexpected-save-error"})
+          }
         })
     return state
   }
