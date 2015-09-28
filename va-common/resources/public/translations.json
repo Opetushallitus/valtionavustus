@@ -48,6 +48,10 @@
       "attached": {
         "fi": "Liitetty",
         "sv": "TODO: Ansluten"
+      },
+      "attachmentMissing" : {
+        "fi": "Liite puuttuu",
+        "sv": "TODO: Tillägg missing"
       }
     }
   },

@@ -9,7 +9,10 @@ export default class AttachmentDisplay extends PreviewComponent {
   render() {
     return this.props.attachment ?
       <ExistingAttachmentDisplay {...this.props} /> :
-      <span/>
+      <span className="soresu-attachment-missing"> (<LocalizedString translations={this.props.translations.form.attachment}
+                                              translationKey="attachmentMissing"
+                                              lang={this.props.lang}/>)
+      </span>
   }
 }
 
