@@ -51,11 +51,6 @@ export default class HakemusPreview extends Component {
     return (
       <div id="preview-container">
         <FormPreview {...formElementProps} />
-        <AttachmentList {...formElementProps}
-                        translations={translations}
-                        lang="fi"
-                        toDownloadUrlFn={downloadUrlFn}
-                        attachments={attachments}/>
                         </div>
     )
   }
