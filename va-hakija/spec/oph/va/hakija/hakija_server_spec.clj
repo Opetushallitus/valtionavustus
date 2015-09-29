@@ -15,6 +15,7 @@
 (def base-url (str "http://localhost:" test-server-port ) )
 (defn path->url [path] (str base-url path))
 (defn get! [path] @(http/get (path->url path) {:as :text}))
+(defn delete! [path] @(http/delete (path->url path)))
 (defn put! [path body] @(http/put (path->url path) {:body (generate-string body true)
                                                     :headers {"Content-Type" "application/json"}}))
 (defn post! [path body] @(http/post (path->url path) {:body (generate-string body true)
@@ -129,12 +130,23 @@
         version (:version json)]
     {:hakemus-id id :json json :version version :status status}))
 
-(describe "HTTP server"
+(defmacro set-time [time-str & form]
+  `(do
+    (put! "/api/test/system-time" {:system-time ~time-str})
+    (try ~@form
+        (finally (delete! "/api/test/system-time")))))
+
+(describe "HTTP server when haku is open"
 
   (tags :server)
 
   ;; Start HTTP server for running tests
-  (around-all [_] (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
+  (around-all [_]
+    (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
+
+  ;; Set time
+  (around-all [_]
+    (set-time "2015-09-30T16:14:59.999+03" (_)))
 
   (it "GET should return valid form JSON from route /api/form/1"
       (let [{:keys [status headers body error] :as resp} (get! "/api/form/1")

@@ -1,5 +1,25 @@
 function Page(mainElement) {
   var api = {
+    setSystemTime: function(time) {
+      return function() {
+        $.ajax({
+          url: "/api/test/system-time",
+          method: "PUT",
+          contentType: "application/json",
+          data: JSON.stringify({ "system-time" : time }),
+          dataType: "json"
+        })
+      }
+    },
+    resetSystemTime: function() {
+      return function() {
+        $.ajax({
+          url: "/api/test/system-time",
+          method: "DELETE",
+          dataType: "json"
+        })
+      }
+    },
     getInput: function(name) {
       return Input(function () {
         return mainElement().find("[name='" + name + "']")

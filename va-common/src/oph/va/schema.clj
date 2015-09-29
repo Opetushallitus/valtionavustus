@@ -8,6 +8,8 @@
                      :vaBudgetSummaryElement
                      :vaProjectDescription])
 
+(s/defschema SystemTime {:system-time s/Inst})
+
 (s/defschema Duration {:label LocalizedString
                        :start s/Inst
                        :end s/Inst})

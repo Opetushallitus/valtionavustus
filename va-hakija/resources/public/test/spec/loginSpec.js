@@ -12,9 +12,14 @@
     expect(window.uiError || null).to.be.null
   })
 
-  describe('Laatukehityksen sisäänkirjautumissivulla', function() {
+  describe('Laatukehityksen sisäänkirjautumissivulla, kun haku on auki', function() {
     before(
+      loginPage.setSystemTime("2015-09-30T16:14:59.999+03"),
       loginPage.openLoginPage()
+    )
+
+    after(
+      loginPage.resetSystemTime()
     )
 
     describe('alkutilassa', function() {
@@ -42,7 +47,7 @@
         loginPage.setInputValue("primary-email", "yhteyshenkilo@example.com")
       )
       describe('syötön jälkeen', function() {
-        it("lähetä nappi enabloituut", function() {
+        it("lähetä nappi enabloitunut", function() {
           expect(loginPage.submitButton().isEnabled()).to.equal(true)
         })
       })

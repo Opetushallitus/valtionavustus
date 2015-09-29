@@ -19,10 +19,15 @@
 
   describe('Budjettitaulukko', function() {
     before(
+      loginPage.setSystemTime("2015-09-30T16:14:59.999+03"),
       loginPage.openLoginPage('fi'),
       loginPage.login,
       enterValidValuesToPage,
       applicationPage.waitAutoSave
+    )
+
+    after(
+      loginPage.resetSystemTime()
     )
 
     describe('oikein täytettynä', function() {
