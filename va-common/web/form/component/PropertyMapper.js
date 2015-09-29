@@ -107,10 +107,13 @@ export class AttachmentFieldPropertyMapper {
     const controller = props.controller
     const onDrop = (files) => { controller.uploadAttachment(props.field, files) }
     const onRemove = () => { controller.deleteAttachment(props.field) }
+    const value = props.attachment ? props.attachment.filename : ""
+
     return _.extend({
       allAttachments: props.allAttachments,
       onDrop: onDrop,
-      onRemove: onRemove
+      onRemove: onRemove,
+      value: value
     }, commonAttachmentProps)
   }
 }
