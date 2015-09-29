@@ -218,6 +218,20 @@
           })
         })
 
+        describe("hakuajan loppumisen jälkeen käsiteltäväksi lähetettäessä", function() {
+          before(
+            loginPage.setSystemTime("2015-09-30T16:15:00.000+03"),
+            applicationPage.submitAndWaitErrorChange
+          )
+
+          after(
+            loginPage.setSystemTime("2015-09-30T16:14:59.999+03")
+          )
+          it("yleinen virhe näytetään", function() {
+            expect(applicationPage.saveError()).to.equal('Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.')
+          })
+        })
+
         describe('server virhetilanteissa lomaketta käsiteltäväksi lähetettäessä', function() {
           before(
             mockAjax.init

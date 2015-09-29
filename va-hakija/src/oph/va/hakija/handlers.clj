@@ -4,6 +4,7 @@
             [compojure.core :refer [defroutes GET]]
             [compojure.api.sweet :refer :all]
             [ring.swagger.json-schema-dirty]
+            [clj-time.core :as t]
             [oph.common.config :refer [config config-simple-name]]
             [oph.common.datetime :as datetime]
             [oph.form.db :as form-db]
@@ -29,6 +30,14 @@
               :version (:version hakemus)
               :last_status_change_at (:last_status_change_at hakemus)}))
 
+(defn- get-open-avustushaku [haku-id]
+  (let [avustushaku (va-db/get-avustushaku haku-id)
+        duration (:duration (:content avustushaku))]
+    (if (t/within? (t/interval (datetime/parse (:start duration)) (datetime/parse (:end duration)))
+                   (datetime/now))
+      avustushaku
+      (method-not-allowed! {:error "Haku is closed"}))))
+
 (defn- hakemus-ok-response [hakemus submission validation]
   (ok {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
        :status (:status hakemus)
@@ -38,7 +47,7 @@
        :validation_errors validation}))
 
 (defn on-hakemus-create [haku-id answers]
-  (let [avustushaku (va-db/get-avustushaku haku-id)
+  (let [avustushaku (get-open-avustushaku haku-id)
         avustushaku-content (:content avustushaku)
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
@@ -85,7 +94,7 @@
       (hakemus-ok-response hakemus submission validation))))
 
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
-  (let [form-id (:form (va-db/get-avustushaku haku-id))
+  (let [form-id (:form (get-open-avustushaku haku-id))
         form (form-db/get-form form-id)
         security-validation (validation/validate-form-security form answers)]
     (if (every? empty? (vals security-validation))
@@ -103,7 +112,7 @@
       (bad-request! security-validation))))
 
 (defn on-hakemus-submit [haku-id hakemus-id base-version answers]
-  (let [avustushaku (va-db/get-avustushaku haku-id)
+  (let [avustushaku (get-open-avustushaku haku-id)
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
         validation (validation/validate-form form answers)]
