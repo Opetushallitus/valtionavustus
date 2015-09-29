@@ -84,7 +84,7 @@
     []))
 
 (defn validate-field [answers attachments field]
-  (if (has-display-as? field "namedAttachment")
+  (if (has-display-as? "namedAttachment" field)
     {(keyword (:id field)) (concat
       (validate-attachment attachments field))}
     (let [answer (find-answer-value answers (:id field))]
