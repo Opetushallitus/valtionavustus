@@ -10,32 +10,36 @@ export default class SyntaxValidator {
       validationErrors = [{error: "required"}]
     }
 
-    if (field.displayAs === 'emailField' && value) {
+    if (!value) {
+      return validationErrors
+    }
+
+    if (field.displayAs === 'emailField') {
       var emailError = SyntaxValidator.validateEmail(value)
       if (emailError) {
         validationErrors.push(emailError)
       }
     }
 
-    if (field.displayAs === 'moneyField' && value) {
+    if (field.displayAs === 'moneyField') {
       MoneyValidator.validateMoneyField(value, validationErrors);
     }
 
-    if (field.displayAs === 'finnishBusinessIdField' && value) {
+    if (field.displayAs === 'finnishBusinessIdField') {
       const finnishBusinessIdError = SyntaxValidator.validateBusinessId(value)
       if (finnishBusinessIdError) {
         validationErrors.push(finnishBusinessIdError)
       }
     }
 
-    if (field.displayAs === 'iban' && value) {
+    if (field.displayAs === 'iban') {
       const ibanError = SyntaxValidator.validateIban(value)
       if (ibanError) {
         validationErrors.push(ibanError)
       }
     }
 
-    if (field.displayAs === 'bic' && value) {
+    if (field.displayAs === 'bic') {
       const bicError = SyntaxValidator.validateBic(value)
       if (bicError) {
         validationErrors.push(bicError)
