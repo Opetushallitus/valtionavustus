@@ -81,8 +81,7 @@
                                     :label {:fi "Valintaperusteet"
                                            :sv "Urvalsgrunder"}}
                :self-financing-percentage 25}
-              []
-              [])))
+              1)))
 
   (POST* "/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]

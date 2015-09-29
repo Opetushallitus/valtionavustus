@@ -7,6 +7,9 @@ export default class HakuEdit extends Component {
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
+    const environment = this.props.environment
+    const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/nayta?lang=fi"
+    const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/nayta?lang=sv"
 
     const onChange = e => {
       controller.onChangeListener(avustushaku, e.target, e.target.value)
@@ -27,6 +30,10 @@ export default class HakuEdit extends Component {
           <DateField id="hakuaika-start" onChange={onChange} value={avustushaku.content.duration.start} disabled={avustushaku.status === "published"} />
           <span className="dateDivider" />
           <DateField id="hakuaika-end" onChange={onChange} value={avustushaku.content.duration.end} disabled={avustushaku.status === "published"} />
+        </div>
+        <div>
+          <h3>Hakulomakkeen esikatselu</h3>
+          <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a> <a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
         </div>
         <SetStatus currentStatus={avustushaku.status} onChange={onChange} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />

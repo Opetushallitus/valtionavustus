@@ -24,7 +24,8 @@
                                  :self-financing-percentage (s/conditional is-percentage? s/Num)})
 
 (s/defschema Environment {:name s/Str
-                          :show-name s/Bool})
+                          :show-name s/Bool
+                          :hakija-server {:url LocalizedString}})
 
 (s/defschema HakuStatus
   (s/enum "new" "draft" "published" "deleted"))

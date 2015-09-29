@@ -15,16 +15,14 @@
        :?column?
        (= 1)))
 
-(defn create-avustushaku [avustuhaku-content form-content form-rules]
+(defn create-avustushaku [avustushaku-content template-form-id]
   (let [form-id (:id (exec :hakija-db
-                           hakija-queries/create-form<!
-                           ;; NOTE: looks like yesql unwraps sequence parameters, thats way we wrap them one extra time here
-                           {:content (list form-content)
-                            :rules (list form-rules)}))
+                           hakija-queries/copy-form<!
+                           {:id template-form-id}))
         avustushaku-id (:id (exec :hakija-db
                                   hakija-queries/create-avustushaku<!
                                   {:form form-id
-                                   :content avustuhaku-content}))]
+                                   :content avustushaku-content}))]
     (->> {:id avustushaku-id}
          (exec :hakija-db hakija-queries/get-avustushaku)
          (map avustushaku-response-content )

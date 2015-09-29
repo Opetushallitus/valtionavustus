@@ -8,7 +8,8 @@
 
 (defn environment-content []
   {:name      (config-simple-name)
-   :show-name (:show-environment? (:ui config))})
+   :show-name (:show-environment? (:ui config))
+   :hakija-server {:url (:url (:server config))}})
 
 (defn get-translations []
   (return-from-classpath "translations.json" "application/json"))
