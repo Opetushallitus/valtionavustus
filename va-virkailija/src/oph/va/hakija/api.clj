@@ -35,7 +35,9 @@
                       (new HakuStatus "draft")
                       (new HakuStatus (:status avustushaku)))
         avustushaku-to-save (assoc avustushaku :status haku-status)]
-    (exec :hakija-db hakija-queries/update-avustushaku! avustushaku-to-save)
+    (exec-all :hakija-db
+              [hakija-queries/archive-avustushaku! avustushaku-to-save
+               hakija-queries/update-avustushaku! avustushaku-to-save])
     (->> avustushaku-to-save
          (exec :hakija-db hakija-queries/get-avustushaku)
          (map avustushaku-response-content)
