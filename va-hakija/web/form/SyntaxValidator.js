@@ -14,36 +14,34 @@ export default class SyntaxValidator {
       return validationErrors
     }
 
-    if (field.displayAs === 'emailField') {
-      var emailError = SyntaxValidator.validateEmail(value)
-      if (emailError) {
-        validationErrors.push(emailError)
-      }
-    }
-
-    if (field.displayAs === 'moneyField') {
-      MoneyValidator.validateMoneyField(value, validationErrors);
-    }
-
-    if (field.displayAs === 'finnishBusinessIdField') {
-      const finnishBusinessIdError = SyntaxValidator.validateBusinessId(value)
-      if (finnishBusinessIdError) {
-        validationErrors.push(finnishBusinessIdError)
-      }
-    }
-
-    if (field.displayAs === 'iban') {
-      const ibanError = SyntaxValidator.validateIban(value)
-      if (ibanError) {
-        validationErrors.push(ibanError)
-      }
-    }
-
-    if (field.displayAs === 'bic') {
-      const bicError = SyntaxValidator.validateBic(value)
-      if (bicError) {
-        validationErrors.push(bicError)
-      }
+    switch (field.displayAs) {
+      case 'emailField':
+        var emailError = SyntaxValidator.validateEmail(value)
+        if (emailError) {
+          validationErrors.push(emailError)
+        }
+        break;
+      case 'moneyField':
+        MoneyValidator.validateMoneyField(value, validationErrors);
+        break;
+      case 'finnishBusinessIdField':
+        const finnishBusinessIdError = SyntaxValidator.validateBusinessId(value)
+        if (finnishBusinessIdError) {
+          validationErrors.push(finnishBusinessIdError)
+        }
+        break;
+      case 'iban':
+        const ibanError = SyntaxValidator.validateIban(value)
+        if (ibanError) {
+          validationErrors.push(ibanError)
+        }
+        break;
+      case 'bic':
+        const bicError = SyntaxValidator.validateBic(value)
+        if (bicError) {
+          validationErrors.push(bicError)
+        }
+        break;
     }
 
     return validationErrors
