@@ -33,7 +33,7 @@ export default class HakuEdit extends Component {
         </div>
         <div>
           <h3>Hakulomakkeen esikatselu</h3>
-          <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a> <a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
+          <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a><span className="linkDivider"/><a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
         </div>
         <SetStatus currentStatus={avustushaku.status} onChange={onChange} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
