@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
+import queryString from 'query-string'
 
 import HttpUtil from 'va-common/web/HttpUtil'
 
@@ -25,7 +26,7 @@ export default class FormStateTransitions {
     this._bind(
       'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
       'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError', 'onUploadAttachment',
-      'onRemoveAttachment')
+      'onRemoveAttachment', 'onAttachmentUploadCompleted', 'pushSaveCompletedEvent')
   }
 
   _bind(...methods) {
@@ -117,11 +118,19 @@ export default class FormStateTransitions {
   onAttachmentUploadCompleted(state, responseFromServer) {
     const fieldId = responseFromServer["field-id"]
     state.saveStatus.attachments[fieldId] = responseFromServer
+    const self = this
 
     const placeHolderValue = responseFromServer.filename
     FormStateTransitions.updateFieldValueInState(fieldId, placeHolderValue, state)
 
     state.saveStatus.attachmentUploadsInProgress[fieldId] = false
+    const formOperations = state.extensionApi.formOperations
+
+    const query = queryString.parse(location.search)
+    const urlContent = { parsedQuery: query, location: location }
+    HttpUtil.get(formOperations.urlCreator.loadEntityApiUrl(urlContent)).then(response => {
+      self.pushSaveCompletedEvent(state, response, undefined)
+    })
     return state
   }
 
@@ -210,19 +219,13 @@ export default class FormStateTransitions {
     const url = formOperations.urlCreator.editEntityApiUrl(state)+ (serverOperation === serverOperations.submit ? "/submit" : "")
     const dispatcher = this.dispatcher
     const events = this.events
+    const self = this
     try {
       state.saveStatus.saveInProgress = true
       HttpUtil.post(url, state.saveStatus.values)
         .then(function(response) {
           console.log("Saved to server (", serverOperation, "). Response=", JSON.stringify(response))
-          const updatedState = _.cloneDeep(state)
-          updatedState.saveStatus.savedObject = response
-          updatedState.saveStatus.values = formOperations.responseParser.getFormAnswers(response)
-          updatedState.form.validationErrors = Immutable(updatedState.form.validationErrors)
-          if (onSuccessCallback) {
-            onSuccessCallback(updatedState)
-          }
-          dispatcher.push(events.saveCompleted, updatedState)
+          self.pushSaveCompletedEvent(state, response, onSuccessCallback)
         })
         .catch(function(response) {
             FormStateTransitions.handleServerError(dispatcher, events, response.status, response.statusText, "POST", url, response.data, serverOperation)
@@ -234,6 +237,18 @@ export default class FormStateTransitions {
     finally {
       return state
     }
+  }
+
+  pushSaveCompletedEvent(state, response, onSuccessCallback) {
+    const formOperations = state.extensionApi.formOperations
+    const updatedState = _.cloneDeep(state)
+    updatedState.saveStatus.savedObject = response
+    updatedState.saveStatus.values = formOperations.responseParser.getFormAnswers(response)
+    updatedState.form.validationErrors = Immutable(updatedState.form.validationErrors)
+    if (onSuccessCallback) {
+      onSuccessCallback(updatedState)
+    }
+    this.dispatcher.push(this.events.saveCompleted, updatedState)
   }
 
   onSave(state, params) {
