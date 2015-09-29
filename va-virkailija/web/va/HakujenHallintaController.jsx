@@ -18,7 +18,8 @@ const events = {
   saveHaku: 'saveHaku',
   saveCompleted: 'saveCompleted',
   addSelectionCriteria: 'addSelectionCriteria',
-  deleteSelectionCriteria: 'deleteSelectionCriteria'
+  deleteSelectionCriteria: 'deleteSelectionCriteria',
+  beforeUnload: 'beforeUnload'
 }
 
 export default class HakujenHallintaController {
@@ -46,7 +47,13 @@ export default class HakujenHallintaController {
       dispatcher.push(events.initialState, state)
     })
     this.autoSave = _.debounce(function(){ dispatcher.push(events.saveHaku) }, 3000)
-    this._bind('onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection', 'onHakuSave', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria')
+    this._bind('onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection', 'onHakuSave', 'onAddSelectionCriteria', 'onBeforeUnload', 'onDeleteSelectionCriteria')
+
+    Bacon.fromEvent(window, "beforeunload").onValue(function(event) {
+      // For some odd reason Safari always displays a dialog here
+      // But it's probably safer to always save the document anyway
+      dispatcher.push(events.beforeUnload)
+    })
 
     return Bacon.update(
       {},
@@ -59,7 +66,8 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.saveHaku)], this.onHakuSave,
       [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted,
       [dispatcher.stream(events.addSelectionCriteria)], this.onAddSelectionCriteria,
-      [dispatcher.stream(events.deleteSelectionCriteria)], this.onDeleteSelectionCriteria
+      [dispatcher.stream(events.deleteSelectionCriteria)], this.onDeleteSelectionCriteria,
+      [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload
     )
   }
 
@@ -154,6 +162,14 @@ export default class HakujenHallintaController {
   startAutoSave(state) {
     state.saveStatus.saveInProgress = true
     this.autoSave()
+    return state
+  }
+
+  onBeforeUnload(state) {
+    if (state.saveStatus.saveInProgress) {
+      this.autoSave.cancel()
+      return this.onHakuSave(state)
+    }
     return state
   }
 
