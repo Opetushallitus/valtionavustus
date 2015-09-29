@@ -77,6 +77,36 @@
     })
   })
 
+  describe('Laatukehityksen sisäänkirjautumissivulla, kun haku ei ole vielä alkanut', function() {
+    before(
+      loginPage.setSystemTime("2015-08-19T07:59:59.999+03"),
+      loginPage.openLoginPage()
+    )
+
+    after(
+        loginPage.resetSystemTime()
+    )
+
+    it.skip("on sähköpostikenttä disabloitu", function() {
+      expect(loginPage.getInput("primary-email").isEnabled()).to.equal(false)
+    })
+  })
+
+  describe('Laatukehityksen sisäänkirjautumissivulla, kun haku on mennyt kiinni', function() {
+    before(
+      loginPage.setSystemTime("2015-09-30T16:15:00.000+03"),
+      loginPage.openLoginPage()
+    )
+
+    after(
+      loginPage.resetSystemTime()
+    )
+
+    it.skip("on sähköpostikenttä disabloitu", function() {
+      expect(loginPage.getInput("primary-email").isEnabled()).to.equal(false)
+    })
+  })
+
   describe('Laatukehityksen ruotsinkielisellä sisäänkirjautumissivulla', function() {
     before(
       loginPage.openLoginPage('sv')
