@@ -30,7 +30,7 @@ export default class HakuEdit extends Component {
         </div>
         <SetStatus currentStatus={avustushaku.status} onChange={onChange} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
-        <div><h3>Omarahoitus</h3><input className="percentage" required="true" min="0" max="100" id="haku-self-financing-percentage" onChange={onChange} disabled={avustushaku.status === "published"} type="number" value={avustushaku.content["self-financing-percentage"]} /><span>%</span></div>
+        <div><h3>Hakijan omarahoitusvaatimus</h3><input className="percentage" required="true" min="0" max="99" id="haku-self-financing-percentage" onChange={onChange} disabled={avustushaku.status === "published"} type="number" value={avustushaku.content["self-financing-percentage"]} /><span>%</span></div>
       </div>
     )
   }
@@ -60,7 +60,7 @@ class DateField extends React.Component {
     const onChange = this.props.onChange
     const disabled = this.props.disabled
     const value = this.state.value
-    return <input className="date" type="text" id={id} onChange={this.handleChange} onBlur={onChange} value={value} disabled={disabled}/>
+    return <input className="date" maxLength="16" size="16" type="text" id={id} onChange={this.handleChange} onBlur={onChange} value={value} disabled={disabled}/>
   }
 }
 
