@@ -3,7 +3,9 @@
           :enable-access-log? true
           :host "localhost"
           :port 8081
-          :require-https? true}
+          :require-https? true
+          :attachment-max-size 50 ;in megabytes
+          :threads 16}
  :ui {:show-environment? true}
  :db {:pool-name "virkailija-pool"
       :username "va_virkailija"
