@@ -2,6 +2,8 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
 
+import queryString from 'query-string'
+
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'va-common/web/Dispatcher'
 
@@ -55,6 +57,12 @@ export default class HakemustenArviointiController {
   }
 
   onInitialState(emptyState, realInitialState) {
+    const query = queryString.parse(location.search)
+    if (query.showAll != "true") {
+      realInitialState.hakuData.hakemukset = _.filter(realInitialState.hakuData.hakemukset, (hakemus) => {
+        return hakemus.status === "submitted"
+      })
+    }
     var hakemusList = realInitialState.hakuData.hakemukset;
     if (hakemusList && !_.isEmpty(hakemusList)) {
       realInitialState.selectedHakemus = hakemusList[0]
