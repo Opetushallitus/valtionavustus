@@ -29,6 +29,7 @@ export default class FormStateLoop {
     const formP = controller.formP.map(function(form) {
       return Immutable(form)
     })
+    const lang = formOperations.chooseInitialLanguage(urlContent)
     const initialValuesP = getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP, lang)
     const initialFormStateP = initialValuesP.combine(formP, function(values, form) {
       return FormRules.applyRulesToForm(form,
@@ -38,7 +39,6 @@ export default class FormStateLoop {
               }, values)
     })
 
-    const lang = formOperations.chooseInitialLanguage(urlContent)
     const initialStateTemplate = {
       form: initialFormStateP,
       saveStatus: {
