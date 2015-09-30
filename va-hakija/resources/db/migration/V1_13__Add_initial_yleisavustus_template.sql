@@ -251,36 +251,6 @@ insert into forms (content) VALUES ('
           }
       },
       {
-        "type": "formField",
-        "id":"vat-included",
-        "required":false,
-        "displayAs":"radioButton",
-        "label":{
-          "fi":"Onko kustannukset ilmoitettu arvonlisäverollisina?",
-          "sv":"Har kostnaderna anmälts inkl. mervärdesskatt?"
-        },
-        "helpText": {
-          "fi": "Arvonlisävero on hyväksyttävä kustannus, jos se jää hakijan lopulliseksi kustannukseksi. Yhteishankkeissa, mikäli yhdelläkin osatoteuttajalla arvonlisävero jää osatoteuttajan maksettavaksi, on päähakijan valittavat vaihtoehto \"kyllä\"",
-          "sv": "Mervärdesskatt är en godtagbar kostnad, om den blir en slutlig kostnad för sökanden. Om en enda delgenomförare i ett samprojekt betalar mervärdesskatten, ska huvudsökanden välja alternativet ”ja”."
-        },
-        "options":[
-          {
-            "value":"yes",
-            "label":{
-              "fi":"Kyllä",
-              "sv":"Ja"
-            }
-          },
-          {
-            "value":"no",
-            "label":{
-              "fi":"Ei",
-              "sv":"Nej"
-            }
-          }
-        ]
-      },
-      {
         "type": "wrapperElement",
         "id":"budget",
         "displayAs":"vaBudget",
