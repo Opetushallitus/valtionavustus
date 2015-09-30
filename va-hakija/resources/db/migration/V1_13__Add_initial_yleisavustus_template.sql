@@ -121,6 +121,20 @@ insert into forms (content) VALUES ('
         ]
       },
       {
+        "type": "formField",
+        "id":"organization-postal-address",
+        "required":true,
+        "displayAs":"textArea",
+        "params":{
+          "maxlength":1000,
+          "size": "small"
+        },
+        "label":{
+            "fi":"Osoite",
+            "sv":"TODO: Adress"
+        }
+      },
+      {
         "type": "wrapperElement",
         "id":"signature-fieldset",
         "displayAs":"fieldset",
