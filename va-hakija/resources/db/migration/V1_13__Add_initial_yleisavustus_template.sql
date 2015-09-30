@@ -203,6 +203,32 @@ insert into forms (content) VALUES ('
             }
           }
         ]
+      },
+      {
+        "type": "formField",
+        "id":"type-of-organization",
+        "required":true,
+        "displayAs":"radioButton",
+        "label":{
+          "fi":"Oppilaitosmuoto",
+          "sv":"TODO: Oppilaitosmuoto"
+        },
+        "options":[
+          {
+            "value":"kansanopisto",
+            "label":{
+              "fi":"Kansanopisto",
+              "sv":"TODO: Kansanopisto"
+            }
+          },
+          {
+            "value":"kesäyliopisto",
+            "label":{
+              "fi":"Kesäyliopisto",
+              "sv":"TODO: Sommarskola"
+            }
+          }
+        ]
       }
     ]
   },
