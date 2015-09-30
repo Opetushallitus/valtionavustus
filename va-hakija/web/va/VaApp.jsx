@@ -76,7 +76,7 @@ function initialStateTemplateTransformation(template) {
 }
 
 function onInitialStateLoaded(initialState) {
-  if(initialState.avustushaku.phase !== "current" && !initialState.configuration.preview) {
+  if(initialState.avustushaku.phase !== "current" && !initialState.configuration.preview && initialState.saveStatus.savedObject) {
     window.location = urlCreator.existingSubmissionPreviewUrl(initialState)
     return
   }
