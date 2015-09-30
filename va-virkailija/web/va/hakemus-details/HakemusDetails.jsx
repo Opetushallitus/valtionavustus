@@ -15,7 +15,7 @@ export default class HakemusDetails extends Component {
     return (
       <div id="hakemus-details">
         <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
-        <HakemusArviointi hakemus={hakemus} loadingComments={loadingComments} controller={controller}/>
+        <HakemusArviointi avustushaku={avustushaku} hakemus={hakemus} loadingComments={loadingComments} controller={controller}/>
       </div>
     )
   }

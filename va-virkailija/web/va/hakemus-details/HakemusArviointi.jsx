@@ -2,17 +2,20 @@ import React, { Component } from 'react'
 
 import HakemusComments from './HakemusComments.jsx'
 import HakemusStatus from "./HakemusStatus.jsx"
+import HakemusHakijaSidePreviewLink from './HakemusHakijaSidePreviewLink.jsx'
 
 export default class HakemusArviointi extends Component {
   render() {
     const controller = this.props.controller
     const hakemus = this.props.hakemus
+    const avustushaku = this.props.avustushaku
     const comments = hakemus.comments
     const loadingComments = this.props.loadingComments
     return (
      <div id="hakemus-arviointi">
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments}/>
        <SetStatus controller={controller} hakemus={hakemus} />
+       <HakemusHakijaSidePreviewLink hakemus={hakemus} avustushaku={avustushaku} />
      </div>
     )
   }
