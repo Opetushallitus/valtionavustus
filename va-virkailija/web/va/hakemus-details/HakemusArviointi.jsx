@@ -28,7 +28,7 @@ class SetStatus extends React.Component {
     const status = arvio ? arvio.status : undefined
     const controller = this.props.controller
     const statuses = []
-    const statusValues = ['unhandled', 'plausible', 'rejected', 'accepted'];
+    const statusValues = ['unhandled', 'processing', 'plausible', 'rejected', 'accepted'];
     for (var i=0; i < statusValues.length; i++) {
       const htmlId = "set-status-" + statusValues[i]
       statuses.push(

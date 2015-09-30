@@ -8,6 +8,9 @@ export default class HakemusStatus extends Component {
       case "unhandled":
         value = "Käsittelemättä"
         break
+      case "processing":
+        value = "Käsittelyssä"
+        break
       case "plausible":
         value = "Mahdollinen"
         break

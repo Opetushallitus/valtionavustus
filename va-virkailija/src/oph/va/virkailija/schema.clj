@@ -5,7 +5,7 @@
 
 (s/defschema ArvioStatus
   "Status from the opetushallitus point of view"
-  (s/enum "unhandled" , "plausible" , "rejected", "accepted"))
+  (s/enum "unhandled", "processing", "plausible", "rejected", "accepted"))
 
 (s/defschema Arvio
   "Arvio contains evaluation of hakemus"
