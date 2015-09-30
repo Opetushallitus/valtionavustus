@@ -26,7 +26,8 @@ export default class FormStateTransitions {
     this._bind(
       'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
       'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError', 'onUploadAttachment',
-      'onRemoveAttachment', 'onAttachmentUploadCompleted', 'pushSaveCompletedEvent')
+      'onRemoveAttachment', 'onAttachmentUploadCompleted', 'onAttachmentRemovalCompleted', 'pushSaveCompletedEvent',
+      'refreshStateFromServer')
   }
 
   _bind(...methods) {
@@ -118,13 +119,11 @@ export default class FormStateTransitions {
   onAttachmentUploadCompleted(state, responseFromServer) {
     const fieldId = responseFromServer["field-id"]
     state.saveStatus.attachments[fieldId] = responseFromServer
-    const self = this
-
     const placeHolderValue = responseFromServer.filename
     FormStateTransitions.updateFieldValueInState(fieldId, placeHolderValue, state)
 
     state.saveStatus.attachmentUploadsInProgress[fieldId] = false
-    refreshStateFromServer(self, state);
+    this.refreshStateFromServer(this, state)
     return state
   }
 
