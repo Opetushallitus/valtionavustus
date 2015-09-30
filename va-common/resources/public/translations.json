@@ -143,6 +143,10 @@
     "help": {
       "fi": "Hakemuslomake avataan syöttämällä sähköpostiosoite ja painamalla \"Luo uusi hakemus\"-painiketta. Järjestelmä lähettää osoitteeseen linkin, jonka kautta lomakkeen voi avata. Muutokset lomakkeeseen tallentuvat automaattisesti. Linkin kautta hakulomaketta voi täyttää useammassa erässä. Linkin voi myös jakaa, jolloin useampi henkilö voi täyttää samaa lomaketta eri aikaan.",
       "sv": "Man öppnar ansökningsblanketten genom att mata in en e-postadress och klicka på Skapa ny ansökan. Systemet skickar en länk till adressen, genom vilken blanketten kan öppnas. De ändringar som görs i blanketten sparas automatiskt. Genom länken kan ansökningsblanketten fyllas i flera olika omgångar. Länken kan också delas, varvid flera personer kan fylla i samma blankett vid olika tider."
+    },
+    "notopen": {
+      "fi": "Hakemuslomakkeen voi täyttää vain hakuaikana.",
+      "sv": "Ansökningsblanketten är öppen endast i ansökningstiden"
     }
   }
 }
