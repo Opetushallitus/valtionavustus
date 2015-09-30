@@ -76,6 +76,10 @@ function initialStateTemplateTransformation(template) {
 }
 
 function onInitialStateLoaded(initialState) {
+  if(initialState.avustushaku.phase !== "current" && !initialState.configuration.preview) {
+    window.location = urlCreator.existingSubmissionPreviewUrl(initialState)
+    return
+  }
   budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(initialState, isNotFirstEdit(initialState))
 }
 
