@@ -20,8 +20,13 @@
 
   describe('Laatukehityksen haun validointi', function() {
     before(
+      loginPage.setSystemTime("2015-09-30T16:14:59.999+03"),
       loginPage.openLoginPage(),
       loginPage.login
+    )
+
+    after(
+      loginPage.resetSystemTime()
     )
 
     describe('Jos lomakkeelle ei ole annettu kaikkia pakollisia arvoja', function() {

@@ -17,8 +17,13 @@
     enterValidValues(applicationPage)
   }
 
-  describe('Laatukehityksen hakulomake', function() {
+  describe('Laatukehityksen hakulomake, kun haku on auki', function() {
     before(
+      loginPage.setSystemTime("2015-09-30T16:14:59.999+03")
+    )
+
+    after(
+      loginPage.resetSystemTime()
     )
 
     describe('sähköpostitarkistuksen jälkeen lomakkeella', function() {
@@ -213,6 +218,20 @@
           })
         })
 
+        describe("hakuajan loppumisen jälkeen käsiteltäväksi lähetettäessä", function() {
+          before(
+            loginPage.setSystemTime("2015-09-30T16:15:00.000+03"),
+            applicationPage.submitAndWaitErrorChange
+          )
+
+          after(
+            loginPage.setSystemTime("2015-09-30T16:14:59.999+03")
+          )
+          it("yleinen virhe näytetään", function() {
+            expect(applicationPage.saveError()).to.equal('Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.')
+          })
+        })
+
         describe('server virhetilanteissa lomaketta käsiteltäväksi lähetettäessä', function() {
           before(
             mockAjax.init
@@ -385,32 +404,32 @@
         })
       })
     })
-  })
 
-  describe('Tultaessa laatukehityksen lomakeelle ilman sähköpostitarkastusta', function() {
-    before(
-      applicationPage.openEditPage(function(){return ""})
-    )
-    it("näkyy haun nimi", function() {
-      expect(applicationPage.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+    describe('Tultaessa laatukehityksen lomakeelle ilman sähköpostitarkastusta', function() {
+      before(
+          applicationPage.openEditPage(function(){return ""})
+      )
+      it("näkyy haun nimi", function() {
+        expect(applicationPage.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+      })
+      it("lähetys on disabloitu", function() {
+        expect(applicationPage.submitButton().isEnabled()).to.equal(false)
+      })
+      it("syöttökentät on disabloitu", function() {
+        expect(applicationPage.getInput('organization').isEnabled()).to.equal(false)
+      })
     })
-    it("lähetys on disabloitu", function() {
-      expect(applicationPage.submitButton().isEnabled()).to.equal(false)
-    })
-    it("syöttökentät on disabloitu", function() {
-      expect(applicationPage.getInput('organization').isEnabled()).to.equal(false)
-    })
-  })
 
-  describe('Laatukehityksen haku ruotsiksi', function() {
-    before(
-      loginPage.openLoginPage('sv'),
-      loginPage.login
-    )
+    describe('Laatukehityksen haku ruotsiksi', function() {
+      before(
+          loginPage.openLoginPage('sv'),
+          loginPage.login
+      )
 
-    describe('sähköpostitarkistuksen jälkeen lomakkeella', function() {
-      it("näkyy haun nimi ruotsiksi", function() {
-        expect(applicationPage.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
+      describe('sähköpostitarkistuksen jälkeen lomakkeella', function() {
+        it("näkyy haun nimi ruotsiksi", function() {
+          expect(applicationPage.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
+        })
       })
     })
   })

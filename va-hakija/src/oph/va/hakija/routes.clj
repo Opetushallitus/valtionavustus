@@ -8,6 +8,7 @@
             [compojure.api.sweet :refer :all]
             [compojure.api.exception :as compojure-ex]
             [schema.core :as s]
+            [oph.common.datetime :as datetime]
             [oph.common.config :refer [config config-simple-name]]
             [oph.common.routes :refer :all]
             [oph.form.routes :refer :all]
@@ -29,6 +30,26 @@
         (if (hakija-db/health-check)
           (ok {})
           (not-found))))
+
+(defn- system-time-ok-response [datetime]
+  (ok {:system-time (.toDate datetime)}))
+
+(defroutes* test-routes
+  "Routes for testing"
+
+  (GET* "/system-time" []
+        :return SystemTime
+        (system-time-ok-response (datetime/now)))
+
+  (PUT* "/system-time" []
+        :body [time (describe SystemTime "New system time")]
+        :return SystemTime
+        (system-time-ok-response (datetime/set-time (:system-time time))))
+
+  (DELETE* "/system-time" []
+           :return SystemTime
+           (datetime/reset-time)
+           (system-time-ok-response (datetime/now))))
 
 (defn- avustushaku-ok-response [avustushaku]
   (ok (avustushaku-response-content avustushaku)))
@@ -130,6 +151,7 @@
 
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
   (context* "/api/form" [] :tags ["forms"] form-routes)
+  (context* "/api/test" [] :tags ["test"] test-routes)
   (context* "/api/avustushaku" [] :tags ["avustushaut"] avustushaku-routes)
 
   ;; Documentation

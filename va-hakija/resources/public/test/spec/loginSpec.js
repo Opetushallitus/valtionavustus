@@ -12,9 +12,14 @@
     expect(window.uiError || null).to.be.null
   })
 
-  describe('Laatukehityksen sisäänkirjautumissivulla', function() {
+  describe('Laatukehityksen sisäänkirjautumissivulla, kun haku on auki', function() {
     before(
+      loginPage.setSystemTime("2015-09-30T16:14:59.999+03"),
       loginPage.openLoginPage()
+    )
+
+    after(
+      loginPage.resetSystemTime()
     )
 
     describe('alkutilassa', function() {
@@ -42,7 +47,7 @@
         loginPage.setInputValue("primary-email", "yhteyshenkilo@example.com")
       )
       describe('syötön jälkeen', function() {
-        it("lähetä nappi enabloituut", function() {
+        it("lähetä nappi enabloitunut", function() {
           expect(loginPage.submitButton().isEnabled()).to.equal(true)
         })
       })
@@ -69,6 +74,36 @@
         })
 
       })
+    })
+  })
+
+  describe('Laatukehityksen sisäänkirjautumissivulla, kun haku ei ole vielä alkanut', function() {
+    before(
+      loginPage.setSystemTime("2015-08-19T07:59:59.999+03"),
+      loginPage.openLoginPage()
+    )
+
+    after(
+        loginPage.resetSystemTime()
+    )
+
+    it.skip("on sähköpostikenttä disabloitu", function() {
+      expect(loginPage.getInput("primary-email").isEnabled()).to.equal(false)
+    })
+  })
+
+  describe('Laatukehityksen sisäänkirjautumissivulla, kun haku on mennyt kiinni', function() {
+    before(
+      loginPage.setSystemTime("2015-09-30T16:15:00.000+03"),
+      loginPage.openLoginPage()
+    )
+
+    after(
+      loginPage.resetSystemTime()
+    )
+
+    it.skip("on sähköpostikenttä disabloitu", function() {
+      expect(loginPage.getInput("primary-email").isEnabled()).to.equal(false)
     })
   })
 
