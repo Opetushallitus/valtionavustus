@@ -87,7 +87,7 @@
         loginPage.resetSystemTime()
     )
 
-    it.skip("on sähköpostikenttä disabloitu", function() {
+    it("on sähköpostikenttä disabloitu", function() {
       expect(loginPage.getInput("primary-email").isEnabled()).to.equal(false)
     })
   })
@@ -102,7 +102,7 @@
       loginPage.resetSystemTime()
     )
 
-    it.skip("on sähköpostikenttä disabloitu", function() {
+    it("on sähköpostikenttä disabloitu", function() {
       expect(loginPage.getInput("primary-email").isEnabled()).to.equal(false)
     })
   })
