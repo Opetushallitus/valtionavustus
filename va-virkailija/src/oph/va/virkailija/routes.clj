@@ -126,10 +126,10 @@
                                                 :session
                                                 :identity))]
           (ok (virkailija-db/add-comment hakemus-id
-                                                   (:first-name identity)
-                                                   (:surname identity)
-                                                   (:email identity)
-                                                   (:comment comment))))))
+                                         (:first-name identity)
+                                         (:surname identity)
+                                         (:email identity)
+                                         (:comment comment))))))
 
 (defroutes* userinfo-routes
   "User information"
