@@ -347,7 +347,7 @@
           (should= "Uudempi projekti" (:project_name posted-hakemus))))
 )
 
-(describe "HTTP server when haku has closed"
+(describe "HTTP server when haku has ended"
 
   (tags :server)
 
@@ -363,19 +363,38 @@
     (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" valid-answers)
           json (json->map body)]
       (should= 405 status)
-      (should= "Haku is closed" (:error json))))
+      (should= "ended" (:phase json))))
 
   (it "POST /api/avustushaku/1/hakemus/<id>/<baseversion> should fail"
     (let [{:keys [status headers body error] :as resp} (post! "/api/avustushaku/1/hakemus/hakemus-id/1" valid-answers)
           json (json->map body)]
       (should= 405 status)
-      (should= "Haku is closed" (:error json))))
+      (should= "ended" (:phase json))))
 
   (it "POST /api/avustushaku/1/hakemus/<id>/<baseversion>/submit should fail"
       (let [{:keys [status headers body error] :as resp} (post! "/api/avustushaku/1/hakemus/hakemus-id/1/submit" valid-answers)
             json (json->map body)]
         (should= 405 status)
-        (should= "Haku is closed" (:error json))))
+        (should= "ended" (:phase json))))
+)
+
+(describe "HTTP server befere haku has started"
+
+  (tags :server)
+
+  ;; Start HTTP server for running tests
+  (around-all [_]
+    (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
+
+  ;; Set time
+  (around-all [_]
+    (set-time "2015-08-19T07:59:59.999+03" (_)))
+
+  (it "PUT /api/avustushaku/1/hakemus/ should fail"
+    (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" valid-answers)
+          json (json->map body)]
+      (should= 405 status)
+      (should= "upcoming" (:phase json))))
 )
 
 (run-specs)

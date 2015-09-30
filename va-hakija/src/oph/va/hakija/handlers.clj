@@ -4,12 +4,12 @@
             [compojure.core :refer [defroutes GET]]
             [compojure.api.sweet :refer :all]
             [ring.swagger.json-schema-dirty]
-            [clj-time.core :as t]
             [oph.common.config :refer [config config-simple-name]]
             [oph.common.datetime :as datetime]
             [oph.form.db :as form-db]
             [oph.form.validation :as validation]
             [oph.form.routes :refer :all]
+            [oph.va.routes :refer :all]
             [oph.form.schema :refer :all]
             [oph.va.hakija.db :as va-db]
             [oph.va.hakija.email :as va-email]))
@@ -32,11 +32,10 @@
 
 (defn- get-open-avustushaku [haku-id]
   (let [avustushaku (va-db/get-avustushaku haku-id)
-        duration (:duration (:content avustushaku))]
-    (if (t/within? (t/interval (datetime/parse (:start duration)) (datetime/parse (:end duration)))
-                   (datetime/now))
+        phase (avustushaku-phase avustushaku)]
+    (if (= phase "current")
       avustushaku
-      (method-not-allowed! {:error "Haku is closed"}))))
+      (method-not-allowed! {:phase phase}))))
 
 (defn- hakemus-ok-response [hakemus submission validation]
   (ok {:id (if (:enabled? (:email config)) "" (:user_key hakemus))

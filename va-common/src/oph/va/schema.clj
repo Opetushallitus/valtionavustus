@@ -32,8 +32,12 @@
 (s/defschema HakuStatus
   (s/enum "new" "draft" "published" "deleted"))
 
+(s/defschema HakuPhase
+  (s/enum "upcoming" "current" "ended"))
+
 (s/defschema AvustusHaku {:id Long
                           :status HakuStatus
+                          :phase HakuPhase
                           :content AvustusHakuContent
                           :form Long})
 
