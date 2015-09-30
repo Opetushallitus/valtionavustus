@@ -8,6 +8,7 @@ import TopBar from './TopBar.jsx'
 import HakemustenArviointiController from './HakemustenArviointiController.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusDetails from './hakemus-details/HakemusDetails.jsx'
+import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
 
 import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'
@@ -39,6 +40,9 @@ export default class App extends Component {
                           translations={translations}
                           loadingComments={loadingComments}
                           controller={controller}/>
+          <div id="footer">
+            <HakemusHakijaSidePreviewLink hakemus={selectedHakemus} avustushaku={avustushaku} />
+          </div>
         </section>
       </section>
     )
