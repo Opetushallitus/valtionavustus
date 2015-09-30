@@ -319,45 +319,6 @@ insert into forms (content) VALUES ('
                     }
                   }
                 ]
-              },
-              {
-                "type": "wrapperElement",
-                "id":"project-incomes-row",
-                "displayAs":"vaBudgetItemElement",
-                "params":{
-                  "incrementsTotal":false
-                },
-                "label":{
-                  "fi":"Hankkeen tulot",
-                  "sv":"Inkomster"
-                },
-                "helpText":{
-                  "fi": "Hankkeen toiminnasta aiheutuvat tulot (esim. tuotteiden myyntitulot, pääsyliput yms.) sekä ennakoidut että ennakoimattomat.",
-                  "sv": "Inkomster för projektets verksamhet (till exempel försäljningsinkomster för produkter, inträdesavgifter osv), både förutsedda och oförutsedda."
-                },
-                "children": [
-                  {
-                    "type": "formField",
-                    "id":"project-incomes-row.description",
-                    "required":false,
-                    "displayAs":"textField",
-                    "params":{
-                      "size":"small",
-                      "maxlength":80
-                    }
-                  },
-                  {
-                    "type": "formField",
-                    "id":"project-incomes-row.amount",
-                    "required":true,
-                    "displayAs":"moneyField",
-                    "initialValue": 0,
-                    "params":{
-                      "size":"extra-extra-small",
-                      "maxlength":16
-                    }
-                  }
-                ]
               }
             ]
           },
@@ -472,6 +433,41 @@ insert into forms (content) VALUES ('
                   {
                     "type": "formField",
                     "id":"private-financing-income-row.amount",
+                    "required":true,
+                    "displayAs":"moneyField",
+                    "initialValue": 0,
+                    "params":{
+                      "size":"extra-extra-small",
+                      "maxlength":16
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "wrapperElement",
+                "id":"project-other-income-row",
+                "displayAs":"vaBudgetItemElement",
+                "params":{
+                  "incrementsTotal":false
+                },
+                "label":{
+                  "fi":"Muut tulot",
+                  "sv":"TODO: Andra inkomster"
+                },
+                "children": [
+                  {
+                    "type": "formField",
+                    "id":"project-other-income-row.description",
+                    "required":false,
+                    "displayAs":"textField",
+                    "params":{
+                      "size":"small",
+                      "maxlength":80
+                    }
+                  },
+                  {
+                    "type": "formField",
+                    "id":"project-other-income-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
                     "initialValue": 0,
