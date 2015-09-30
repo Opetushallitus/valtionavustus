@@ -287,23 +287,19 @@ insert into forms (content) VALUES ('
             "children": [
               {
                 "type": "wrapperElement",
-                "id":"coordination-costs-row",
+                "id":"project-costs-row",
                 "displayAs":"vaBudgetItemElement",
                 "params":{
                   "incrementsTotal":true
                 },
                 "label":{
-                  "fi":"Yhteishankkeen koordinaatiokustannukset",
-                  "sv":"Koordineringskostnaderna för ett samprojekt"
-                },
-                "helpText":{
-                  "fi": "Ilmoita kokonaisarvio koordinaatiotyön kustannuksista. Kuvaa selitteessä pääpiirteittäin mistä toiminnasta kustannukset koostuvat.",
-                  "sv": "Ge en totaluppskattning av kostnaderna för koordineringsarbetet. Beskriv i förklaringen i allmänna drag den verksamhet av vilken kostnaderna består."
+                  "fi":"Hankkeen kustannukset",
+                  "sv":"TODO: Kostnaderna för projekt"
                 },
                 "children": [
                   {
                     "type": "formField",
-                    "id":"coordination-costs-row.description",
+                    "id":"project-costs-row.description",
                     "required":false,
                     "displayAs":"textField",
                     "params":{
@@ -313,7 +309,7 @@ insert into forms (content) VALUES ('
                   },
                   {
                     "type": "formField",
-                    "id":"coordination-costs-row.amount",
+                    "id":"project-costs-row.amount",
                     "required":true,
                     "displayAs":"moneyField",
                     "initialValue": 0,
