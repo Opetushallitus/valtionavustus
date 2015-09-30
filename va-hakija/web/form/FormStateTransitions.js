@@ -124,14 +124,17 @@ export default class FormStateTransitions {
     FormStateTransitions.updateFieldValueInState(fieldId, placeHolderValue, state)
 
     state.saveStatus.attachmentUploadsInProgress[fieldId] = false
-    const formOperations = state.extensionApi.formOperations
+    refreshStateFromServer(self, state);
+    return state
+  }
 
+  function refreshStateFromServer(self, state) {
     const query = queryString.parse(location.search)
-    const urlContent = { parsedQuery: query, location: location }
+    const urlContent = {parsedQuery: query, location: location}
+    const formOperations = state.extensionApi.formOperations
     HttpUtil.get(formOperations.urlCreator.loadEntityApiUrl(urlContent)).then(response => {
       self.pushSaveCompletedEvent(state, response, undefined)
     })
-    return state
   }
 
   onRemoveAttachment(state, fieldOfFile) {
