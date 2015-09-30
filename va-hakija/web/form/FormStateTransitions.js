@@ -128,7 +128,7 @@ export default class FormStateTransitions {
     return state
   }
 
-  function refreshStateFromServer(self, state) {
+  refreshStateFromServer(self, state) {
     const query = queryString.parse(location.search)
     const urlContent = {parsedQuery: query, location: location}
     const formOperations = state.extensionApi.formOperations
