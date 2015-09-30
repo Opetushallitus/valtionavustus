@@ -98,6 +98,9 @@ export default class FormStateTransitions {
     if (status === 400) {
       dispatcher.push(events.serverError, {error: "submit-validation-errors", validationErrors: response})
     }
+    else if (status === 405) {
+      dispatcher.push(events.serverError, {error: "save-not-allowed"})
+    }
     else if (status === 409) {
       // TODO: Resolve updates from server.
       // At the moment just tell that something has changes
@@ -200,6 +203,10 @@ export default class FormStateTransitions {
   }
 
   onServerError(state, serverErrors) {
+    if(serverErrors.error === "save-not-allowed") {
+      window.location = state.extensionApi.formOperations.urlCreator.existingSubmissionPreviewUrl(state)
+      return state
+    }
     state.saveStatus.saveInProgress = false
     state.saveStatus.serverError = serverErrors.error
     if(serverErrors.validationErrors) {
