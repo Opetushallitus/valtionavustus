@@ -85,10 +85,7 @@ export default class VaLogin extends React.Component {
     const avustushaku =  model.avustushaku
     const environment =  model.environment
     const content = avustushaku.content
-    const startdate = moment(content.duration.start).tz('Europe/Helsinki')
-    const enddate = moment(content.duration.end).tz('Europe/Helsinki')
-    const now = moment().tz('Europe/Helsinki')
-    const isOn = now.isBetween(startdate, enddate)
+    const isOpen = avustushaku.phase === "current"
     const email = this.state.email
     const sent = this.state.sent
     const error = this.state.error
@@ -101,11 +98,11 @@ export default class VaLogin extends React.Component {
       <section id="container" className="soresu-fieldset">
         <H1InfoElement htmlId="name" lang={lang} values={content} />
         <DateRangeInfoElement htmlId="duration" translations={translations} translationKey="label" lang={lang} values={content} />
-        <p><LocalizedString className="text-red" translations={translations.login} translationKey="notopen" lang={lang} hidden={isOn} /></p>
+        <p><LocalizedString className="text-red" translations={translations.login} translationKey="notopen" lang={lang} hidden={isOpen} /></p>
         <p><LocalizedString translations={translations.login} translationKey="preview" lang={lang} /> <a target="preview" href={hakemusPreviewUrl}><LocalizedString translations={translations.login} translationKey="preview-link" lang={lang} /></a></p>
         <h2><LocalizedString translations={translations.login} translationKey="heading" lang={lang} /><HelpTooltip content={translations.login.help} lang={lang}/></h2>
         <form onSubmit={this.submit.bind(this)}>
-          <EmailTextField htmlId="primary-email" hasError={emailIsInvalid()} onChange={this.handleEmailChange.bind(this)} translations={translations.login} value={email} translationKey="contact-email" lang={lang} required="true" disabled={!isOn} size="small" maxLength="80" />
+          <EmailTextField htmlId="primary-email" hasError={emailIsInvalid()} onChange={this.handleEmailChange.bind(this)} translations={translations.login} value={email} translationKey="contact-email" lang={lang} required="true" disabled={!isOpen} size="small" maxLength="80" />
           <TextButton htmlId="submit" disabled={canSend()} onClick={this.submit.bind(this)} translations={translations.login} translationKey="submit" lang={lang} />
           <div className="message-container">
             <LocalizedString hidden={sent === ""} className="message" translations={translations.login} translationKey="message" lang={lang} />
