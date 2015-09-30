@@ -302,6 +302,10 @@ insert into forms (content) VALUES ('
                     "id":"project-costs-row.description",
                     "required":false,
                     "displayAs":"textField",
+                    "initialValue": {
+                      "fi":"Tarkenna tarvittaessa",
+                      "sv":"TODO: Tarkenna tarvittaessa"
+                    },
                     "params":{
                       "size":"small",
                       "maxlength":80
