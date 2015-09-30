@@ -172,6 +172,7 @@ export default class FormStateTransitions {
     state.saveStatus.attachments[fieldId] = undefined
     FormStateTransitions.updateFieldValueInState(fieldId, "", state)
     state.saveStatus.attachmentUploadsInProgress[fieldId] = false
+    this.refreshStateFromServer(this, state)
     return state
   }
 
