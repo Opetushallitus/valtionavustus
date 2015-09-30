@@ -42,6 +42,7 @@ export default class VaFormTopbar extends React.Component {
     }
     const submitTextKey = isSubmitted() ? "submitted" : "submit"
     const helpText = new Translator(translations.form).translate("savehelp", lang)
+    const hasEnded = avustushaku.phase === "ended"
 
     return(
       <section id="topbar">
@@ -62,6 +63,7 @@ export default class VaFormTopbar extends React.Component {
           </div>
           <div id="server-info">
             <EnvironmentInfo environment={configuration.environment}/>
+            <LocalizedString translations={translations.form} translationKey="has-ended" lang={lang} hidden={!hasEnded} />
             <ServerError serverError={saveStatus.serverError} translations={translations.errors} lang={lang}/>
           </div>
         </div>

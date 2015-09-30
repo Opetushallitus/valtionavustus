@@ -35,6 +35,10 @@
     "savehelp": {
       "fi": "Kun hakemus on valmis, se lähetetään Opetushallitukseen käsiteltäväksi ennen hakuajan umpeutumista. Hakemusta voidaan muokata lähettämisen jälkeenkin aina hakuajan umpeutumiseen saakka. Järjestelmä lähettää käsittelyyn jätetystä hakemuksesta vahvistusviestin myös hakijaorganisaation viralliseen sähköpostiosoitteeseen ja allekirjoitusoikeuden omaavalle henkilölle. Valmista hakemusta voi katsella vahvistusviestissä olevan linkin kautta.",
       "sv": "Ansökan kan ändras också efter att den har skickats, ända till ansökningstidens slut. Systemet skickar ett bekräftelsemeddelande om att ansökan har kommit fram också till sökandeorganisationens officiella postadress och till den person som har namnteckningsrätt. Man kan titta på den färdiga ansökan genom en länk i bekräftelsemeddelandet."
+    },
+    "has-ended": {
+      "fi": "Hakuaika on päättynyt",
+      "sv": "Ansökningstiden har slutats"
     }
   },
   "misc": {
