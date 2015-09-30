@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import styles from './style/preview.less'
+import printStyles from './style/print.less'
 
 import FormPreviewComponent from './preview/FormPreviewComponent.jsx'
 import InfoElement from './component/InfoElement.jsx'
