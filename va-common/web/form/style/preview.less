@@ -5,7 +5,7 @@
     color: @form-label-black;
     font-weight: 400;
     display: block;
-    padding-right: 10px;
+    padding: 10px 10px 3px 0px;
   }
 
   .soresu-value {
@@ -40,7 +40,14 @@
     }
   }
 
+  .soresu-text-area {
+    &.extra-extra-small, &.extra-small, &.small, &.medium, &.large, &.extra-large {
+      width: @section-width;
+      text-align: justify;
+    }
+  }
   .soresu-preview-fieldset,  .soresu-preview-growing-fieldset {
+
     div.extra-large {
       display: block;
     }
