@@ -2,7 +2,7 @@ import jsdom from 'mocha-jsdom'
 import { expect } from 'chai'
 import translations from '../../resources/public/translations.json'
 require("babel/register")({
-  only: /(va-hakija\/web|va-common\/web)/
+  only: /(va-hakija\/web|va-common\/web|soresu-form\/web)/
 });
 
 describe('Localized string', function() {
@@ -11,7 +11,7 @@ describe('Localized string', function() {
   it('has test', function() {
     var React = require('react/addons')
     var TestUtils = React.addons.TestUtils
-    var LocalizedString = require('../../../soresu-form/web/form/component/LocalizedString')
+    var LocalizedString = require('soresu-form/web/form/component/LocalizedString')
 
     var string = TestUtils.renderIntoDocument(
       <LocalizedString translations={translations.form} translationKey="lengthleft" lang="fi" />
