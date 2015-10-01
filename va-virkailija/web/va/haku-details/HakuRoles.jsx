@@ -33,7 +33,7 @@ export default class HakuRoles extends Component {
         <tbody>
         {roleRows}
         </tbody>
-        <tfoot><tr><td><button>Lisää uusi henkilö</button></td></tr></tfoot>
+        <tfoot><tr><td><button onClick={controller.createRole(avustushaku)} disabled={!roles}>Lisää uusi henkilö</button></td></tr></tfoot>
       </table>
     )
 

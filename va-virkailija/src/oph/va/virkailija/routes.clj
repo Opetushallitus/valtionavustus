@@ -114,6 +114,14 @@
           (ok response)
           (not-found)))
 
+  (PUT* "/:avustushaku-id/roles" [avustushaku-id]
+        :path-params [avustushaku-id :- Long]
+        :return Role
+        (ok (hakija-api/create-avustushaku-role {:avustushaku avustushaku-id
+                                                 :role "presenting_officer"
+                                                 :name ""
+                                                 :email ""})))
+
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id]
       :path-params [avustushaku-id :- Long hakemus-id :- Long]
       :body    [arvio (describe Arvio "New arvio")]

@@ -19,6 +19,12 @@
       (.setType "haku_status")
       (.setValue (.-value value))))
 
+  oph.common.jdbc.enums.HakuRole
+  (sql-value [value]
+    (doto (PGobject.)
+      (.setType "role")
+      (.setValue (.-value value))))
+
   clojure.lang.Keyword
   (sql-value [value]
     (doto (PGobject.)

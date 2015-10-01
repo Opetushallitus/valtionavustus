@@ -18,6 +18,7 @@ const events = {
   saveHaku: 'saveHaku',
   saveCompleted: 'saveCompleted',
   rolesLoaded: 'rolesLoaded',
+  roleCreated: 'roleCreated',
   addSelectionCriteria: 'addSelectionCriteria',
   deleteSelectionCriteria: 'deleteSelectionCriteria',
   beforeUnload: 'beforeUnload'
@@ -71,6 +72,7 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.saveHaku)], this.onHakuSave,
       [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted,
       [dispatcher.stream(events.rolesLoaded)], this.onRolesLoaded,
+      [dispatcher.stream(events.roleCreated)], this.onRoleCreated,
       [dispatcher.stream(events.addSelectionCriteria)], this.onAddSelectionCriteria,
       [dispatcher.stream(events.deleteSelectionCriteria)], this.onDeleteSelectionCriteria,
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload
@@ -237,11 +239,20 @@ export default class HakujenHallintaController {
     return state
   }
 
+  onRoleCreated(state, newRole) {
+    newRole.haku.roles.push(newRole.role)
+    return state
+  }
+
   // Public API
   selectHaku(hakemus) {
     return function() {
       dispatcher.push(events.selectHaku, hakemus)
     }
+  }
+
+  createHaku() {
+    dispatcher.push(events.createHaku)
   }
 
   onChangeListener(avustushaku, field, newValue) {
@@ -260,7 +271,12 @@ export default class HakujenHallintaController {
     }
   }
 
-  createHaku() {
-    dispatcher.push(events.createHaku)
+  createRole(avustushaku) {
+    return function() {
+      HttpUtil.put(HakujenHallintaController.rolesUrl(avustushaku), {})
+        .then(function(response) {
+          dispatcher.push(events.roleCreated, {haku: avustushaku, role: response})
+        })
+    }
   }
 }

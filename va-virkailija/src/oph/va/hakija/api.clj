@@ -4,8 +4,9 @@
   (:require [oph.common.db :refer :all]
             [oph.common.jdbc.enums :refer :all]
             [oph.va.hakija.api.queries :as hakija-queries]
-            [oph.va.routes :refer :all])
-  (:import (oph.common.jdbc.enums HakuStatus)))
+            [oph.va.routes :refer :all]
+            [oph.common.jdbc.enums :refer :all])
+  (:import (oph.common.jdbc.enums HakuStatus HakuRole)))
 
 
 (defn health-check []
@@ -19,11 +20,11 @@
   (let [form-id (:id (exec :hakija-db
                            hakija-queries/copy-form<!
                            {:id template-form-id}))
-        avustushaku-id (:id (exec :hakija-db
-                                  hakija-queries/create-avustushaku<!
-                                  {:form form-id
-                                   :content avustushaku-content}))]
-    (->> {:id avustushaku-id}
+        avustushaku-id (exec :hakija-db
+                              hakija-queries/create-avustushaku<!
+                              {:form form-id
+                               :content avustushaku-content})]
+    (->> avustushaku-id
          (exec :hakija-db hakija-queries/get-avustushaku)
          (map avustushaku-response-content )
          first)))
@@ -44,13 +45,24 @@
 (defn list-avustushaut []
   (map avustushaku-response-content(exec :hakija-db hakija-queries/list-avustushaut {})))
 
+(defn- role->json [role]
+  {:id (:id role)
+   :name (:name role)
+   :email (:email role)
+   :role (:role role)})
+
 (defn- roles->json [roles]
-  (-> (fn [role]
-        {:id (:id role)
-         :name (:name role)
-         :email (:email role)
-         :role (:role role)})
+  (-> role->json
       (map roles)))
+
+(defn create-avustushaku-role [role]
+  (let [role-enum (new HakuRole (:role role))
+        role-to-save (assoc role :role role-enum)
+        role-id (exec :hakija-db hakija-queries/create-avustushaku-role<! role-to-save)]
+    (->> role-id
+         (exec :hakija-db hakija-queries/get-avustushaku-role)
+         (map role->json)
+         first)))
 
 (defn get-avustushaku-roles [avustushaku-id]
   (roles->json (exec :hakija-db hakija-queries/get-avustushaku-roles {:avustushaku_id avustushaku-id})))
