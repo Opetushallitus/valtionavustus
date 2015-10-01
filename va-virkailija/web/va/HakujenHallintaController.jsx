@@ -200,6 +200,7 @@ export default class HakujenHallintaController {
       const oldHaku = _.find(state.hakuList, haku => haku.id ===  response.id)
       if(oldHaku) { 
         oldHaku.status = response.status
+        oldHaku.phase = response.phase
       }
       state.saveStatus.saveTime = new Date()
       state.saveStatus.serverError = ""

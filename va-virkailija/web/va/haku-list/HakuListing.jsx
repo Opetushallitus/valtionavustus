@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { BasicInfoComponent }from 'va-common/web/form/component/InfoElement.jsx'
 
 import HakuStatus from '../avustushaku/HakuStatus.jsx'
+import HakuPhase from '../avustushaku/HakuPhase.jsx'
 
 export default class HakuListing extends Component {
   render() {
@@ -23,6 +24,7 @@ export default class HakuListing extends Component {
           <thead><tr>
             <th className="name-column">Avustushaku</th>
             <th className="status-column">Tila</th>
+            <th className="phase-column">Vaihe</th>
             <th className="start-column">Haku alkaa</th>
             <th className="end-column">Haku päättyy</th>
           </tr></thead>
@@ -50,6 +52,7 @@ class HakuRow extends Component {
     return <tr id={htmlId} className={rowClass} onClick={controller.selectHaku(haku)}>
       <td className="name-column">{haku.content.name.fi}</td>
       <td className="status-column"><HakuStatus status={haku.status}/></td>
+      <td className="phase-column"><HakuPhase phase={haku.phase}/></td>
       <td className="start-column">{this.toDateStr(haku.content.duration.start)}</td>
       <td className="end-column">{this.toDateStr(haku.content.duration.end)}</td>
     </tr>
