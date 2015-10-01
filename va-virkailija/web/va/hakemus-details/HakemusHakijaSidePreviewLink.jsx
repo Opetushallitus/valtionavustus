@@ -7,8 +7,8 @@ export default class HakemusHakijaSidePreviewLink extends Component {
     const avustushakuId = avustushaku.id
     const previewUrl = hakemus ? "/hakemus-preview/" + avustushakuId + "/" + hakemus["user-key"] : undefined
 
-    return hakemus ?
+    return hakemus && hakemus["user-key"] ?
       <a href={previewUrl} target="_blank">Tulostusversio</a>
-      : undefined
+      : <span/>
   }
 }
