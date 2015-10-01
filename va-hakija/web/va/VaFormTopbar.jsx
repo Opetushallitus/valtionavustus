@@ -1,16 +1,16 @@
 import React from 'react'
 import _ from 'lodash'
 
-import LocalizedString from 'va-common/web/form/component/LocalizedString.jsx'
-import Translator from 'va-common/web/form/Translator.js'
+import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
+import Translator from 'soresu-form/web/form/Translator.js'
 
 import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
 
-import TextButton from '../form/component/TextButton.jsx'
-import FormSaveStatus from '../form/component/FormSaveStatus.jsx'
-import ToggleLanguageButton from '../form/component/ToggleLanguageButton.jsx'
-import FormErrorSummary from '../form/component/FormErrorSummary.jsx'
-import ServerError from '../form/component/ServerError.jsx'
+import TextButton from 'soresu-form/web/form/component/TextButton.jsx'
+import FormSaveStatus from 'soresu-form/web/form/component/FormSaveStatus.jsx'
+import ToggleLanguageButton from 'soresu-form/web/form/component/ToggleLanguageButton.jsx'
+import FormErrorSummary from 'soresu-form/web/form/component/FormErrorSummary.jsx'
+import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
 
 export default class VaFormTopbar extends React.Component {
   render() {

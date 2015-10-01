@@ -1,6 +1,6 @@
 import React from 'react'
 
-import ComponentFactory from 'va-common/web/form/ComponentFactory.js'
+import ComponentFactory from 'soresu-form/web/form/ComponentFactory.js'
 import {VaBudgetElement, SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from 'va-common/web/va/VaBudgetComponents.jsx'
 import VaProjectDescription from './VaProjectDescription.jsx'
 

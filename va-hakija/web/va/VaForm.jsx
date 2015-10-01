@@ -5,7 +5,7 @@ import style from './style/main.less'
 
 import VaFormTopbar from './VaFormTopbar.jsx'
 import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'
-import FormContainer from './../form/FormContainer.jsx'
+import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 
 export default class VaForm extends React.Component {
   render() {

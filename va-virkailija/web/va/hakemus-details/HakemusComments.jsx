@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
-import {BasicInfoComponent} from 'va-common/web/form/component/InfoElement.jsx'
+import {BasicInfoComponent} from 'soresu-form/web/form/component/InfoElement.jsx'
 import HakemusStatus from "./HakemusStatus.jsx"
 
 export default class HakemusComments extends Component {

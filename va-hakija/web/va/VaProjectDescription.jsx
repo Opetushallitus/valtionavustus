@@ -1,7 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
 
-import RemoveButton from '../form/component/RemoveButton.jsx'
+import RemoveButton from 'soresu-form/web/form/component/RemoveButton.jsx'
 
 export default class VaProjectDescription extends React.Component {
   render() {

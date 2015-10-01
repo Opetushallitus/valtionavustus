@@ -4,7 +4,7 @@ import Immutable from 'seamless-immutable'
 import moment from 'moment-timezone'
 
 import HttpUtil from 'va-common/web/HttpUtil.js'
-import Dispatcher from 'va-common/web/Dispatcher'
+import Dispatcher from 'soresu-form/web/Dispatcher'
 
 const dispatcher = new Dispatcher()
 

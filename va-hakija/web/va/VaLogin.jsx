@@ -6,21 +6,21 @@ import QueryString from 'query-string'
 import Bacon from 'baconjs'
 import moment from 'moment-timezone'
 
-import common from '../form/style/main.less'
+import common from 'soresu-form/web/form/style/main.less'
 import loginStyle from './style/va-login.less'
 
 import HttpUtil from 'va-common/web/HttpUtil'
-import FormUtil from 'va-common/web/form/FormUtil.js'
-import LocalizedString from 'va-common/web/form/component/LocalizedString.jsx'
-import {DateRangeInfoElement, H1InfoElement} from 'va-common/web/form/component/InfoElement.jsx'
-import HelpTooltip from 'va-common/web/form/component/HelpTooltip.jsx'
+import FormUtil from 'soresu-form/web/form/FormUtil.js'
+import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
+import {DateRangeInfoElement, H1InfoElement} from 'soresu-form/web/form/component/InfoElement.jsx'
+import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
 
 import VaLoginTopbar from './VaLoginTopbar.jsx'
 import VaUrlCreator from './VaUrlCreator.js'
 
-import SyntaxValidator from '../form/SyntaxValidator.js'
-import TextButton from '../form/component/TextButton.jsx'
-import EmailTextField from '../form/component/EmailTextField.jsx'
+import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator.js'
+import TextButton from 'soresu-form/web/form/component/TextButton.jsx'
+import EmailTextField from 'soresu-form/web/form/component/EmailTextField.jsx'
 
 export default class VaLogin extends React.Component {
   constructor(props) {

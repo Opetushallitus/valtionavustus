@@ -2,13 +2,13 @@ import React from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
-import ComponentFactory from '../form/ComponentFactory.js'
-import LocalizedString from '../form/component/LocalizedString.jsx'
-import HelpTooltip from '../form/component/HelpTooltip.jsx'
-import Translator from '../form/Translator.js'
-import InputValueStorage from '../form/InputValueStorage.js'
-import FormUtil from '../form/FormUtil.js'
-import JsUtil from '../form/JsUtil.js'
+import ComponentFactory from 'soresu-form/web/form/ComponentFactory.js'
+import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
+import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
+import Translator from 'soresu-form/web/form/Translator.js'
+import InputValueStorage from 'soresu-form/web/form/InputValueStorage.js'
+import FormUtil from 'soresu-form/web/form/FormUtil.js'
+import JsUtil from 'soresu-form/web/form/JsUtil.js'
 
 export class VaBudgetElement extends React.Component {
   constructor(props) {

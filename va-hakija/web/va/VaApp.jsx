@@ -8,10 +8,10 @@ import queryString from 'query-string'
 
 import HttpUtil from 'va-common/web/HttpUtil'
 
-import FormController from './../form/FormController'
-import FieldUpdateHandler from './../form/FieldUpdateHandler.js'
-import ResponseParser from './../form/ResponseParser'
-import JsUtil from 'va-common/web/form/JsUtil.js'
+import FormController from 'soresu-form/web/form/FormController'
+import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler.js'
+import ResponseParser from 'soresu-form/web/form/ResponseParser'
+import JsUtil from 'soresu-form/web/form/JsUtil.js'
 
 import VaForm from './VaForm.jsx'
 import VaUrlCreator from './VaUrlCreator'

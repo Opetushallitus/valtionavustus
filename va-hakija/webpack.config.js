@@ -31,7 +31,7 @@ module.exports = {
     loaders: [
       {
         test: /\.jsx?$/,
-        include: /(va-hakija\/web|va-common\/web)/,
+        include: /(va-hakija\/web|va-common\/web|soresu-form\/web)/,
         loader: 'babel'
       },
       {

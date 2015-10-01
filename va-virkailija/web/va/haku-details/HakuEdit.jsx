@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import HakuStatus from "../avustushaku/HakuStatus.jsx"
-import { BasicInfoComponent }from 'va-common/web/form/component/InfoElement.jsx'
+import { BasicInfoComponent }from 'soresu-form/web/form/component/InfoElement.jsx'
 import HakuRoles from "./HakuRoles.jsx"
 
 export default class HakuEdit extends Component {

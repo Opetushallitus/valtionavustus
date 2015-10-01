@@ -32,7 +32,7 @@ module.exports = {
     loaders: [
       {
         test: /\.jsx?$/,
-        include: /(va-virkailija\/web|va-common\/web)/,
+        include: /(va-virkailija\/web|va-common\/web|soresu-form\/web)/,
         loader: 'babel'
       },
       {

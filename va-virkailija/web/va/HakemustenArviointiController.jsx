@@ -5,7 +5,7 @@ import Immutable from 'seamless-immutable'
 import queryString from 'query-string'
 
 import HttpUtil from 'va-common/web/HttpUtil.js'
-import Dispatcher from 'va-common/web/Dispatcher'
+import Dispatcher from 'soresu-form/web/Dispatcher'
 
 const dispatcher = new Dispatcher()
 

@@ -3,7 +3,7 @@ import ConsolePolyfill from 'console-polyfill'
 import React, { Component } from 'react'
 import _ from 'lodash'
 
-import Dispatcher from 'va-common/web/Dispatcher'
+import Dispatcher from 'soresu-form/web/Dispatcher'
 
 import TopBar from './TopBar.jsx'
 import HakemustenArviointiController from './HakemustenArviointiController.jsx'

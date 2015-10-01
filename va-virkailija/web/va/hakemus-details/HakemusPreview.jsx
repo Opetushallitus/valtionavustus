@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
 
-import FormPreview from 'va-common/web/form/FormPreview.jsx'
-import AttachmentList from 'va-common/web/form/preview/AttachmentList.jsx'
+import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
+import AttachmentList from 'soresu-form/web/form/preview/AttachmentList.jsx'
+import FormRules from 'soresu-form/web/form/FormRules'
+import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
-import FormBranchGrower from 'va-common/web/form/FormBranchGrower'
-import FormRules from 'va-common/web/form/FormRules'
 
 export default class HakemusPreview extends Component {
   render() {

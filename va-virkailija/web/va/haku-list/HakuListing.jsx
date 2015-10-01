@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { BasicInfoComponent }from 'va-common/web/form/component/InfoElement.jsx'
+import { BasicInfoComponent }from 'soresu-form/web/form/component/InfoElement.jsx'
 
 import HakuStatus from '../avustushaku/HakuStatus.jsx'
 import HakuPhase from '../avustushaku/HakuPhase.jsx'
