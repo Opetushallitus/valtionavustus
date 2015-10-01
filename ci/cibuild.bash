@@ -34,11 +34,17 @@ function clean() {
 
 function install_module() {
   cd $1
-  time $LEIN install
+  if [ -e "project.clj" ]
+  then
+    time $LEIN install
+  else
+    time npm install
+  fi
   cd ..
 }
 
 function uberjar() {
+  install_module soresu-form
   install_module va-common
   for m in va-hakija va-virkailija; do
     cd $m
@@ -63,6 +69,7 @@ function run_tests() {
     start_postgresql_in_docker
   fi
 
+  install_module soresu-form
   install_module va-common
   time $LEIN with-profile ci modules spec -f junit || true
 
