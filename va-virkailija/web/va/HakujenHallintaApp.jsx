@@ -23,11 +23,12 @@ export default class AdminApp extends Component {
         <section id="container">
           <HakuListing hakuList={state.hakuList}
                        selectedHaku={state.selectedHaku}
-                       controller={controller} />
+                       controller={controller}
+          />
           <HakuEdit avustushaku={selectedHaku}
                     environment={environment}
-                    controller={controller} />
-
+                    controller={controller}
+          />
         </section>
       </section>
     )
