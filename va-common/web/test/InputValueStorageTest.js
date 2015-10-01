@@ -4,8 +4,8 @@ import { assert } from 'chai'
 require("babel/register")({
   only: /(va-hakija\/web|va-common\/web|soresu-form\/web)/
 });
-const JsUtil = require('soresu-form/web/form/JsUtil.js')
-const InputValueStorage  = require('soresu-form/web/form/InputValueStorage.js')
+const JsUtil = require('form/JsUtil.js')
+const InputValueStorage  = require('form/InputValueStorage.js')
 import TestUtil from './TestUtil.js'
 
 var answersObject = {}
