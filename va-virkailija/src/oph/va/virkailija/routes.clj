@@ -108,20 +108,26 @@
           (ok (add-arviot response))
           (not-found)))
 
-  (GET* "/:avustushaku-id/roles" [avustushaku-id]
+  (GET* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
         :return [Role]
         (if-let [response (hakija-api/get-avustushaku-roles avustushaku-id)]
           (ok response)
           (not-found)))
 
-  (PUT* "/:avustushaku-id/roles" [avustushaku-id]
+  (PUT* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
         :return Role
         (ok (hakija-api/create-avustushaku-role {:avustushaku avustushaku-id
                                                  :role "presenting_officer"
                                                  :name ""
                                                  :email ""})))
+
+  (DELETE* "/:avustushaku-id/role/:role-id" [avustushaku-id role-id]
+        :path-params [avustushaku-id :- Long role-id :- Long]
+        :return {:id Long}
+        (hakija-api/delete-avustushaku-role avustushaku-id role-id)
+        (ok {:id role-id}))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id]
          :path-params [avustushaku-id :- Long hakemus-id :- Long]

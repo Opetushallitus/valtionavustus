@@ -10,6 +10,7 @@
 (defquery get-avustushaku "sql/hakija/avustushaku/get.sql")
 (defquery create-avustushaku-role<! "sql/hakija/avustushaku/create-role.sql")
 (defquery get-avustushaku-role "sql/hakija/avustushaku/get-role.sql")
+(defquery delete-avustushaku-role! "sql/hakija/avustushaku/delete-role.sql")
 (defquery get-avustushaku-roles "sql/hakija/avustushaku/get-roles.sql")
 (defquery list-hakemukset-by-avustushaku "sql/hakija/hakemus/list-by-avustushaku.sql")
 (defquery copy-form<! "sql/hakija/form/copy.sql")

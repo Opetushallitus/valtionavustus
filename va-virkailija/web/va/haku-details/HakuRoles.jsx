@@ -11,6 +11,7 @@ export default class HakuRoles extends Component {
       for (var i=0; i < roles.length; i++) {
         const role = roles[i]
         const htmlId = "role-" + role.id + "-"
+        const onDelete = controller.deleteRole(avustushaku, role)
         roleRows.push(
             <tr key={role.id}>
               <td>
@@ -21,7 +22,7 @@ export default class HakuRoles extends Component {
               </td>
               <td><input type="text" id={htmlId + "name"} value={role.name}/></td>
               <td><input type="text" id={htmlId + "email"} value={role.email}/></td>
-              <td><button className="remove" alt="Poista" title="Poista" tabIndex="-1" /></td>
+              <td><button onClick={onDelete} className="remove" alt="Poista" title="Poista" tabIndex="-1" /></td>
             </tr>
         )
       }

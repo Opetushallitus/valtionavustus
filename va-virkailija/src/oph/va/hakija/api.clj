@@ -81,6 +81,10 @@
          (map role->json)
          first)))
 
+(defn delete-avustushaku-role [avustushaku-id role-id]
+ (exec :hakija-db hakija-queries/delete-avustushaku-role! {:avustushaku-id avustushaku-id
+                                                           :id role-id}))
+
 (defn get-avustushaku-roles [avustushaku-id]
   (roles->json (exec :hakija-db hakija-queries/get-avustushaku-roles {:avustushaku_id avustushaku-id})))
 

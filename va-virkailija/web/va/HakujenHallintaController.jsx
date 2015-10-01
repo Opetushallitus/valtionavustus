@@ -13,12 +13,12 @@ const events = {
   selectHaku: 'selectHaku',
   createHaku: 'createHaku',
   hakuCreated: 'hakuCreated',
-  initAutoSave: 'initAutoSave',
   updateField: 'updateField',
   saveHaku: 'saveHaku',
   saveCompleted: 'saveCompleted',
   rolesLoaded: 'rolesLoaded',
   roleCreated: 'roleCreated',
+  roleDeleted: 'roleDeleted',
   addSelectionCriteria: 'addSelectionCriteria',
   deleteSelectionCriteria: 'deleteSelectionCriteria',
   beforeUnload: 'beforeUnload'
@@ -26,8 +26,8 @@ const events = {
 
 export default class HakujenHallintaController {
 
-  static rolesUrl(avustushaku) {
-    return "/api/avustushaku/" + avustushaku.id + "/roles"
+  static roleUrl(avustushaku) {
+    return "/api/avustushaku/" + avustushaku.id + "/role"
   }
 
   _bind(...methods) {
@@ -53,7 +53,8 @@ export default class HakujenHallintaController {
       dispatcher.push(events.initialState, state)
     })
     this.autoSave = _.debounce(function(){ dispatcher.push(events.saveHaku) }, 3000)
-    this._bind('onInitialState', 'onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection', 'onHakuSave', 'onAddSelectionCriteria', 'onBeforeUnload', 'onDeleteSelectionCriteria')
+    this._bind('onInitialState','onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
+               'onHakuSave', 'onAddSelectionCriteria', 'onBeforeUnload', 'onDeleteSelectionCriteria')
 
     Bacon.fromEvent(window, "beforeunload").onValue(function(event) {
       // For some odd reason Safari always displays a dialog here
@@ -68,11 +69,11 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.createHaku)], this.onHakuCreation,
       [dispatcher.stream(events.hakuCreated)], this.onHakuCreated,
       [dispatcher.stream(events.updateField)], this.onUpdateField,
-      [dispatcher.stream(events.initAutoSave)], this.onInitAutoSave,
       [dispatcher.stream(events.saveHaku)], this.onHakuSave,
       [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted,
       [dispatcher.stream(events.rolesLoaded)], this.onRolesLoaded,
       [dispatcher.stream(events.roleCreated)], this.onRoleCreated,
+      [dispatcher.stream(events.roleDeleted)], this.onRoleDeleted,
       [dispatcher.stream(events.addSelectionCriteria)], this.onAddSelectionCriteria,
       [dispatcher.stream(events.deleteSelectionCriteria)], this.onDeleteSelectionCriteria,
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload
@@ -228,7 +229,7 @@ export default class HakujenHallintaController {
 
   loadRoles(selectedHaku) {
     if (!_.isArray(selectedHaku.roles)) {
-      HttpUtil.get(HakujenHallintaController.rolesUrl(selectedHaku)).then(roles => {
+      HttpUtil.get(HakujenHallintaController.roleUrl(selectedHaku)).then(roles => {
         dispatcher.push(events.rolesLoaded, {haku: selectedHaku, roles: roles})
       })
     }
@@ -241,6 +242,13 @@ export default class HakujenHallintaController {
 
   onRoleCreated(state, newRole) {
     newRole.haku.roles.push(newRole.role)
+    return state
+  }
+
+  onRoleDeleted(state, roleDeletion) {
+    const deleteIndex = _.findIndex(roleDeletion.haku.roles, role => role.id === roleDeletion.role.id)
+    console.log(roleDeletion.haku.roles, deleteIndex, roleDeletion.role)
+    roleDeletion.haku.roles.splice(deleteIndex, 1)
     return state
   }
 
@@ -273,9 +281,18 @@ export default class HakujenHallintaController {
 
   createRole(avustushaku) {
     return function() {
-      HttpUtil.put(HakujenHallintaController.rolesUrl(avustushaku), {})
+      HttpUtil.put(HakujenHallintaController.roleUrl(avustushaku), {})
         .then(function(response) {
           dispatcher.push(events.roleCreated, {haku: avustushaku, role: response})
+        })
+    }
+  }
+
+  deleteRole(avustushaku, role) {
+    return function() {
+      HttpUtil.delete(HakujenHallintaController.roleUrl(avustushaku) + "/" + role.id)
+        .then(function(response) {
+          dispatcher.push(events.roleDeleted, {haku: avustushaku, role: role})
         })
     }
   }

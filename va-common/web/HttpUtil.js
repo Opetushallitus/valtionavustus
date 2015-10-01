@@ -7,6 +7,10 @@ export default class HttpUtil {
     return HttpUtil.handleResponse(axios.get(url))
   }
 
+  static delete(url) {
+    return HttpUtil.handleResponse(axios.delete(url))
+  }
+
   static post(url, jsonData) {
     return HttpUtil.handleResponse(axios.post(url, jsonData))
   }
