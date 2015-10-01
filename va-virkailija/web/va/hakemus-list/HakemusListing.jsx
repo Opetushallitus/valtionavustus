@@ -28,6 +28,7 @@ export default class HakemusListing extends Component {
         </tbody>
         <tfoot><tr>
           <td className="avustushaku-selector-column"><AvustushakuSelector avustushaku={avustushaku} controller={controller} /></td>
+          <td className="total-applications-column">Yhteensä näkyvissä {hakemusList.length} kpl hakemuksia</td>
           <td className="applied-sum-column"><span className="money sum">{ophShareSum}</span></td>
           <td className="granted-sum-column"><span className="money sum">TODO</span></td>
         </tr></tfoot>
