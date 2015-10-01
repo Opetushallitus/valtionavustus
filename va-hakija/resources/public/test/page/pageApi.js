@@ -3,6 +3,7 @@ function Page(mainElement) {
     setSystemTime: function(time) {
       return function() {
         $.ajax({
+          async: false,
           url: "/api/test/system-time",
           method: "PUT",
           contentType: "application/json",
@@ -14,6 +15,7 @@ function Page(mainElement) {
     resetSystemTime: function() {
       return function() {
         $.ajax({
+          async: false,
           url: "/api/test/system-time",
           method: "DELETE",
           dataType: "json"
