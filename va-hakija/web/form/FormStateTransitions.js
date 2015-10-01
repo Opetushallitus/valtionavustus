@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
+import queryString from 'query-string'
 
 import HttpUtil from 'va-common/web/HttpUtil'
 
@@ -24,7 +25,9 @@ export default class FormStateTransitions {
     this.autoSave = _.debounce(function(){ dispatcher.push(events.save) }, develQueryParam? 100 : 3000)
     this._bind(
       'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
-      'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError')
+      'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError', 'onUploadAttachment',
+      'onRemoveAttachment', 'onAttachmentUploadCompleted', 'onAttachmentRemovalCompleted', 'pushSaveCompletedEvent',
+      'refreshStateFromServer')
   }
 
   _bind(...methods) {
@@ -67,6 +70,109 @@ export default class FormStateTransitions {
     state.saveStatus.changes = true
     LocalStorage.save(formOperations.createUiStateIdentifier, state, fieldUpdate)
     this.startAutoSave(state)
+    return state
+  }
+
+  onUploadAttachment(state, uploadEvent) {
+    const { files, field } = uploadEvent
+    const formOperations = state.extensionApi.formOperations
+    if (formOperations.isSaveDraftAllowed(state)) {
+
+      const url = formOperations.urlCreator.attachmentBaseUrl(state, field)
+      const dispatcher = this.dispatcher
+      const events = this.events
+      try {
+        const attachment = files[0]
+        if (files.length > 1) {
+          console.log('Warning: Only uploading first of ', files)
+        }
+        state.saveStatus.attachmentUploadsInProgress[field.id] = true
+        HttpUtil.putFile(url, attachment)
+          .then(function(response) {
+            console.log("Uploaded file to server. Response=", JSON.stringify(response))
+            dispatcher.push(events.attachmentUploadCompleted, response)
+          })
+          .catch(function(response) {
+            console.log('upload error', response)
+            alert('Virhe tallennuksessa.')
+            //FormStateTransitions.handleServerError(dispatcher, events, response.status, response.statusText, "POST", url, response.data, serverOperation)
+          })
+      }
+      catch(error) {
+        console.log('unexapected error', error)
+        alert('Virhe tallennuksessa.')
+        //  FormStateTransitions.handleUnexpectedServerError(dispatcher, events, "POST", url, error, serverOperation);
+      }
+      finally {
+        return state
+      }
+    }
+    return state
+  }
+
+  static updateFieldValueInState(fieldId, newValue, state) {
+    const field = FormUtil.findField(state.form, fieldId)
+    const fieldUpdate = FieldUpdateHandler.createFieldUpdate(field, newValue)
+    FieldUpdateHandler.updateStateFromFieldUpdate(state, fieldUpdate)
+  }
+
+  onAttachmentUploadCompleted(state, responseFromServer) {
+    const fieldId = responseFromServer["field-id"]
+    state.saveStatus.attachments[fieldId] = responseFromServer
+    const placeHolderValue = responseFromServer.filename
+    FormStateTransitions.updateFieldValueInState(fieldId, placeHolderValue, state)
+
+    state.saveStatus.attachmentUploadsInProgress[fieldId] = false
+    this.refreshStateFromServer(this, state)
+    return state
+  }
+
+  refreshStateFromServer(self, state) {
+    const query = queryString.parse(location.search)
+    const urlContent = {parsedQuery: query, location: location}
+    const formOperations = state.extensionApi.formOperations
+    HttpUtil.get(formOperations.urlCreator.loadEntityApiUrl(urlContent)).then(response => {
+      self.pushSaveCompletedEvent(state, response, undefined)
+    })
+  }
+
+  onRemoveAttachment(state, fieldOfFile) {
+    const formOperations = state.extensionApi.formOperations
+    if (formOperations.isSaveDraftAllowed(state)) {
+      const url = formOperations.urlCreator.attachmentDeleteUrl(state, fieldOfFile)
+      const dispatcher = this.dispatcher
+      const events = this.events
+      try {
+        state.saveStatus.attachmentUploadsInProgress[fieldOfFile.id] = true
+        HttpUtil.delete(url)
+          .then(function(response) {
+            console.log("Deleted attachment of field " + fieldOfFile.id + " . Response=", JSON.stringify(response))
+            dispatcher.push(events.attachmentRemovalCompleted, fieldOfFile)
+          })
+          .catch(function(response) {
+            console.log('upload error', response)
+            alert('Virhe poistossa.')
+            //FormStateTransitions.handleServerError(dispatcher, events, response.status, response.statusText, "POST", url, response.data, serverOperation)
+          })
+      }
+      catch(error) {
+        console.log('unexapected error', error)
+        alert('Virhe poistossa.')
+        //  FormStateTransitions.handleUnexpectedServerError(dispatcher, events, "POST", url, error, serverOperation);
+      }
+      finally {
+        return state
+      }
+    }
+    return state
+  }
+
+  onAttachmentRemovalCompleted(state, fieldOfRemovedFile) {
+    const fieldId = fieldOfRemovedFile.id
+    state.saveStatus.attachments[fieldId] = undefined
+    FormStateTransitions.updateFieldValueInState(fieldId, "", state)
+    state.saveStatus.attachmentUploadsInProgress[fieldId] = false
+    this.refreshStateFromServer(this, state)
     return state
   }
 
@@ -116,19 +222,13 @@ export default class FormStateTransitions {
     const url = formOperations.urlCreator.editEntityApiUrl(state)+ (serverOperation === serverOperations.submit ? "/submit" : "")
     const dispatcher = this.dispatcher
     const events = this.events
+    const self = this
     try {
       state.saveStatus.saveInProgress = true
       HttpUtil.post(url, state.saveStatus.values)
         .then(function(response) {
           console.log("Saved to server (", serverOperation, "). Response=", JSON.stringify(response))
-          const updatedState = _.cloneDeep(state)
-          updatedState.saveStatus.savedObject = response
-          updatedState.saveStatus.values = formOperations.responseParser.getFormAnswers(response)
-          updatedState.form.validationErrors = Immutable(updatedState.form.validationErrors)
-          if (onSuccessCallback) {
-            onSuccessCallback(updatedState)
-          }
-          dispatcher.push(events.saveCompleted, updatedState)
+          self.pushSaveCompletedEvent(state, response, onSuccessCallback)
         })
         .catch(function(response) {
             FormStateTransitions.handleServerError(dispatcher, events, response.status, response.statusText, "POST", url, response.data, serverOperation)
@@ -140,6 +240,18 @@ export default class FormStateTransitions {
     finally {
       return state
     }
+  }
+
+  pushSaveCompletedEvent(state, response, onSuccessCallback) {
+    const formOperations = state.extensionApi.formOperations
+    const updatedState = _.cloneDeep(state)
+    updatedState.saveStatus.savedObject = response
+    updatedState.saveStatus.values = formOperations.responseParser.getFormAnswers(response)
+    updatedState.form.validationErrors = Immutable(updatedState.form.validationErrors)
+    if (onSuccessCallback) {
+      onSuccessCallback(updatedState)
+    }
+    this.dispatcher.push(this.events.saveCompleted, updatedState)
   }
 
   onSave(state, params) {

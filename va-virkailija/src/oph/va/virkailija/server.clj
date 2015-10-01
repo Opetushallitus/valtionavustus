@@ -63,17 +63,15 @@
 (defn start-server [host port auto-reload?]
   (let [cookie-defaults {:max-age 60000
                          :http-only false}
+        cookie-attrs (if (-> config :server :require-https?)
+                       (assoc cookie-defaults :secure true)
+                       cookie-defaults)
+        cookie-store (cookie-store {:key (-> config :server :cookie-key)})
         defaults (-> site-defaults
                      (assoc-in [:security :anti-forgery] false)
-                     (assoc :session {:store (cookie-store {:key (-> config
-                                                                     :server
-                                                                     :cookie-key)})
+                     (assoc :session {:store cookie-store
                                       :cookie-name "identity"
-                                      :cookie-attrs (if (-> config
-                                                            :server
-                                                            :require-https?)
-                                                      (assoc cookie-defaults :secure true)
-                                                      cookie-defaults)}))
+                                      :cookie-attrs cookie-attrs}))
         routes (-> #'all-routes
                    (with-authentication)
                    (wrap-defaults defaults)
@@ -81,10 +79,14 @@
                    (server/wrap-nocache))
         handler (if auto-reload?
                   (reload/wrap-reload routes)
-                  routes)]
+                  routes)
+        threads (or (-> config :server :threads) 16)
+        attachment-max-size (or (-> config :server :attachment-max-size) 50)]
     (server/start-server {:host host
                           :port port
                           :auto-reload? auto-reload?
                           :routes handler
                           :on-startup (partial startup config)
-                          :on-shutdown shutdown})))
+                          :on-shutdown shutdown
+                          :threads threads
+                          :attachment-max-size attachment-max-size})))

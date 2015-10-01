@@ -44,3 +44,16 @@
 (s/defschema HakemusStatus
   "Status from the application point of view"
   (s/enum "new" "draft" "submitted"))
+
+(s/defschema Attachment
+  "Attachment metadata"
+  {:id Long
+   :hakemus-id s/Str
+   :version Long
+   (s/optional-key :version-closed) s/Inst
+   (s/optional-key :created-at) s/Inst
+   :field-id s/Str
+   :file-size Long
+   :content-type s/Str
+   :hakemus-version Long
+   :filename s/Str})

@@ -10,9 +10,12 @@ import FinnishBusinessIdTextField from './FinnishBusinessIdTextField.jsx'
 import IbanTextField from './IbanTextField.jsx'
 import BicTextField from './BicTextField.jsx'
 import Dropdown from './Dropdown.jsx'
-import TextButton from './TextButton.jsx'
 import RadioButton from './RadioButton.jsx'
-import {TextFieldPropertyMapper, OptionFieldPropertyMapper, ButtonPropertyMapper} from 'va-common/web/form/component/PropertyMapper'
+import AttachmentField from './AttachmentField.jsx'
+import { TextFieldPropertyMapper,
+         OptionFieldPropertyMapper,
+         ButtonPropertyMapper,
+         AttachmentFieldPropertyMapper} from 'va-common/web/form/component/PropertyMapper'
 
 export default class FormComponent extends React.Component {
   constructor(props) {
@@ -27,7 +30,7 @@ export default class FormComponent extends React.Component {
       "bic": BicTextField,
       "dropdown": Dropdown,
       "radioButton": RadioButton,
-      "textButton": TextButton
+      "namedAttachment": AttachmentField
     }
     this.fieldPropertyMapping = {
       "textField": TextFieldPropertyMapper,
@@ -39,7 +42,7 @@ export default class FormComponent extends React.Component {
       "bic": TextFieldPropertyMapper,
       "dropdown": OptionFieldPropertyMapper,
       "radioButton": OptionFieldPropertyMapper,
-      "textButton": ButtonPropertyMapper
+      "namedAttachment": AttachmentFieldPropertyMapper
     }
     this.componentFactory = new ComponentFactory(fieldTypeMapping)
   }

@@ -7,6 +7,11 @@ export default class VaUrlCreator extends UrlCreator {
     function entityApiUrl(avustusHakuId, hakemusId, hakemusBaseVersion) {
       return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + (typeof hakemusBaseVersion == "number" ? "/" + hakemusBaseVersion : "")
     }
+    const attachmentDirectAccessUrl = function(state, field) {
+      const avustusHakuId = state.avustushaku.id
+      const hakemusId = state.saveStatus.hakemusId
+      return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/attachments/" + field.id
+    }
     const urls = {
       formApiUrl: function (formId) {
         return "/api/form/" + formId
@@ -32,7 +37,21 @@ export default class VaUrlCreator extends UrlCreator {
         const avustusHakuId = state.avustushaku.id
         const hakemusId = state.saveStatus.hakemusId
         return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId
-      }
+      },
+      loadAttachmentsApiUrl: function (urlContent) {
+        const query = urlContent.parsedQuery
+        const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
+        const hakemusId = query.hakemus
+        return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/attachments"
+      },
+      attachmentBaseUrl: function(state, field) {
+        const avustusHakuId = state.avustushaku.id
+        const hakemusId = state.saveStatus.hakemusId
+        const hakemusVersion = state.saveStatus.savedObject.version
+        return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/" + hakemusVersion + "/attachments/" + field.id
+      },
+      attachmentDownloadUrl: attachmentDirectAccessUrl,
+      attachmentDeleteUrl: attachmentDirectAccessUrl
     }
     super(urls)
   }

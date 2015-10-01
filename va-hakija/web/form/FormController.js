@@ -20,7 +20,11 @@ const events = {
   serverError: 'serverError',
   submit: 'submit',
   removeField: 'removeField',
-  beforeUnload: 'beforeUnload'
+  beforeUnload: 'beforeUnload',
+  startAttachmentUpload: 'startAttachmentUpload',
+  attachmentUploadCompleted: 'attachmentUploadCompleted',
+  startAttachmentRemoval: 'startAttachmentRemoval',
+  attachmentRemovalCompleted: 'attachmentRemovalCompleted'
 }
 
 export default class FormController {
@@ -57,6 +61,19 @@ export default class FormController {
 
   componentOnChangeListener(field, newValue) {
     dispatcher.push(events.updateField, FieldUpdateHandler.createFieldUpdate(field, newValue))
+  }
+
+  createAttachmentDownloadUrl(state, field) {
+    const formOperations = state.extensionApi.formOperations
+    return formOperations.urlCreator.attachmentDownloadUrl(state, field)
+  }
+
+  uploadAttachment(field, files) {
+    dispatcher.push(events.startAttachmentUpload, { field: field, files: files })
+  }
+
+  deleteAttachment(field) {
+    dispatcher.push(events.startAttachmentRemoval, field)
   }
 
   componentDidMount(field, initialValue) {

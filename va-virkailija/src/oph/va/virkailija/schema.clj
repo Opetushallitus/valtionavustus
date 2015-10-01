@@ -53,5 +53,6 @@
           :rules s/Any}
    :roles [Role]
    :hakemukset [Hakemus]
+   :attachments s/Any
    :budget-total-sum s/Int
    :budget-oph-share-sum s/Int})

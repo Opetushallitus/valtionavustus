@@ -2,7 +2,9 @@
           :allow-db-clear? false
           :enable-access-log? true
           :host "localhost"
-          :port 8080}
+          :port 8080
+          :attachment-max-size 50 ;in megabytes
+          :threads 16}
  :ui {:show-environment? true}
  :api {:restricted-routes? true}
  :db {:pool-name "hakija-pool"

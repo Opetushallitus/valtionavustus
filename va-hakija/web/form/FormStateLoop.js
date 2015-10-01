@@ -25,9 +25,11 @@ export default class FormStateLoop {
     }
     const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json"))
     const savedObjectP = loadSavedObjectPromise(formOperations, urlContent)
+    const existingAttachmentsP = loadAttachmentsPromise(formOperations, urlContent)
     const formP = controller.formP.map(function(form) {
       return Immutable(form)
     })
+    const lang = formOperations.chooseInitialLanguage(urlContent)
     const initialValuesP = getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP, lang)
     const initialFormStateP = initialValuesP.combine(formP, function(values, form) {
       return FormRules.applyRulesToForm(form,
@@ -37,7 +39,6 @@ export default class FormStateLoop {
               }, values)
     })
 
-    const lang = formOperations.chooseInitialLanguage(urlContent)
     const initialStateTemplate = {
       form: initialFormStateP,
       saveStatus: {
@@ -46,7 +47,9 @@ export default class FormStateLoop {
         saveTime: null,
         serverError: "",
         values: initialValuesP,
-        savedObject: savedObjectP
+        savedObject: savedObjectP,
+        attachments: existingAttachmentsP,
+        attachmentUploadsInProgress: {}
       },
       configuration: {
         form: formP,
@@ -91,7 +94,11 @@ export default class FormStateLoop {
       [dispatcher.stream(events.serverError)], stateTransitions.onServerError,
       [dispatcher.stream(events.submit)], stateTransitions.onSubmit,
       [dispatcher.stream(events.removeField)], stateTransitions.onRemoveField,
-      [dispatcher.stream(events.beforeUnload)], stateTransitions.onBeforeUnload)
+      [dispatcher.stream(events.beforeUnload)], stateTransitions.onBeforeUnload,
+      [dispatcher.stream(events.startAttachmentUpload)], stateTransitions.onUploadAttachment,
+      [dispatcher.stream(events.attachmentUploadCompleted)], stateTransitions.onAttachmentUploadCompleted,
+      [dispatcher.stream(events.startAttachmentRemoval)], stateTransitions.onRemoveAttachment,
+      [dispatcher.stream(events.attachmentRemovalCompleted)], stateTransitions.onAttachmentRemovalCompleted)
 
 
     return formFieldValuesP.filter((value) => { return !_.isEmpty(value) })
@@ -103,6 +110,15 @@ export default class FormStateLoop {
         )
       }
       return Bacon.constant(null)
+    }
+
+    function loadAttachmentsPromise(formOperations, urlContent) {
+      if (formOperations.containsExistingEntityId(urlContent)) {
+        return Bacon.fromPromise(
+          HttpUtil.get(formOperations.urlCreator.loadAttachmentsApiUrl(urlContent))
+        )
+      }
+      return Bacon.constant({})
     }
 
     function getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP, lang) {

@@ -82,7 +82,7 @@
         :return  (s/either Submission
                            SubmissionValidationErrors)
         :summary "Create initial form answers"
-        (let [validation (validation/validate-form (form-db/get-form form-id) answers)]
+        (let [validation (validation/validate-form (form-db/get-form form-id) answers {})]
           (if (every? empty? (vals validation))
             (create-form-submission form-id answers)
             (bad-request! validation))))
@@ -93,7 +93,7 @@
          :return  (s/either Submission
                             SubmissionValidationErrors)
          :summary "Update form values"
-         (let [validation (validation/validate-form (form-db/get-form form-id) answers)]
+         (let [validation (validation/validate-form (form-db/get-form form-id) answers {})]
            (if (every? empty? (vals validation))
              (update-form-submission form-id values-id  answers)
              (bad-request! validation)))))

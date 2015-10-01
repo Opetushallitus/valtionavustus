@@ -87,6 +87,37 @@ export class ButtonPropertyMapper extends DefaultPropertyMapper {
   }
 }
 
+export class AttachmentDisplayPropertyMapper extends DefaultPropertyMapper {
+  static map(props) {
+    const commonProps = FieldPropertyMapper.map(props)
+    const downloadUrl = props.attachmentDownloadUrl
+    return _.extend({
+      required: props.field.required,
+      hasError: !_.isEmpty(props.validationErrors),
+      attachment: props.attachment,
+      attachmentUploadsInProgress: props.attachmentUploadsInProgress,
+      downloadUrl: downloadUrl
+    }, commonProps)
+  }
+}
+
+export class AttachmentFieldPropertyMapper {
+  static map(props) {
+    const commonAttachmentProps = AttachmentDisplayPropertyMapper.map(props)
+    const controller = props.controller
+    const onDrop = (files) => { controller.uploadAttachment(props.field, files) }
+    const onRemove = () => { controller.deleteAttachment(props.field) }
+    const value = props.attachment ? props.attachment.filename : ""
+
+    return _.extend({
+      allAttachments: props.allAttachments,
+      onDrop: onDrop,
+      onRemove: onRemove,
+      value: value
+    }, commonAttachmentProps)
+  }
+}
+
 export class InfoElementPropertyMapper extends DefaultPropertyMapper {
   static map(props) {
     const commonProps = CommonPropertyMapper.map(props)

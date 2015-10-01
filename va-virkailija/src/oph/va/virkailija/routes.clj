@@ -65,6 +65,7 @@
     :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
     (on-hakemus-preview avustushaku-id hakemus-user-key))
   (GET "/translations.json" [] (get-translations))
+  (GET "/avustushaku/:id" [id] (return-html "index.html"))
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
@@ -123,10 +124,11 @@
                                                  :email ""})))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id]
-      :path-params [avustushaku-id :- Long hakemus-id :- Long]
-      :body    [arvio (describe Arvio "New arvio")]
-      :return Arvio
-      (ok (arvio-json (virkailija-db/update-or-create-hakemus-arvio hakemus-id arvio))))
+         :path-params [avustushaku-id :- Long hakemus-id :- Long]
+         :body    [arvio (describe Arvio "New arvio")]
+         :return Arvio
+         (ok (-> (virkailija-db/update-or-create-hakemus-arvio hakemus-id arvio)
+                 arvio-json)))
 
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
@@ -144,7 +146,23 @@
                                          (:first-name identity)
                                          (:surname identity)
                                          (:email identity)
-                                         (:comment comment))))))
+                                         (:comment comment)))))
+
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
+        :path-params [haku-id :- Long, hakemus-id :- Long]
+        :return s/Any
+        :summary "List current attachments"
+        (ok (-> (hakija-api/list-attachments hakemus-id)
+                (hakija-api/attachments->map))))
+
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
+        :path-params [haku-id :- Long, hakemus-id :- Long, field-id :- s/Str]
+        (if (hakija-api/attachment-exists? hakemus-id field-id)
+          (let [{:keys [data size filename content-type]} (hakija-api/download-attachment hakemus-id field-id)]
+            (-> (ok data)
+                (assoc-in [:headers "Content-Type"] content-type)
+                (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
+          (not-found))))
 
 (defroutes* userinfo-routes
   "User information"

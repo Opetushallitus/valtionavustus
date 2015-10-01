@@ -1,6 +1,7 @@
 import PolyfillBind from 'va-common/web/polyfill-bind'
 import ConsolePolyfill from 'console-polyfill'
 import React, { Component } from 'react'
+import _ from 'lodash'
 
 import Dispatcher from 'va-common/web/Dispatcher'
 
@@ -49,10 +50,13 @@ export default class App extends Component {
   }
 }
 
+var parser = document.createElement('a');
+parser.href = location
+const pathElements = _.filter(parser.pathname.split("/"), (element) => { return element != "" })
+const avustushakuId = pathElements.length == 2 && pathElements[0] == "avustushaku" ? pathElements[1] : "1"
 
 const controller = new HakemustenArviointiController()
-
-const stateP = controller.initializeState()
+const stateP = controller.initializeState(avustushakuId)
 
 stateP.onValue((state) => {
   try {

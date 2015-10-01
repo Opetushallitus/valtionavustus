@@ -3,6 +3,7 @@ import _ from 'lodash'
 import Immutable from 'seamless-immutable'
 
 import FormPreview from 'va-common/web/form/FormPreview.jsx'
+import AttachmentList from 'va-common/web/form/preview/AttachmentList.jsx'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 import FormBranchGrower from 'va-common/web/form/FormBranchGrower'
@@ -13,6 +14,7 @@ export default class HakemusPreview extends Component {
     const hakemus = this.props.hakemus
     const avustushaku = this.props.avustushaku
     const hakuData = this.props.hakuData
+    const attachments = this.resolveAttachmentsProperty(hakuData, hakemus)
     const translations = this.props.translations
 
     const answers = hakemus.answers
@@ -28,13 +30,14 @@ export default class HakemusPreview extends Component {
       },
       form: effectiveForm,
       saveStatus: {
-        values: answers
+        values: answers,
+        attachments: attachments
       }
     }
     const formElementProps = {
       state: formState,
       infoElementValues: avustushaku,
-      controller: new FakeFormController(avustushaku)
+      controller: new FakeFormController(avustushaku, hakemus)
     }
 
     FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, answers)
@@ -42,17 +45,29 @@ export default class HakemusPreview extends Component {
     const budgetCalculator = new VaBudgetCalculator()
     budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(formState, true)
 
+    const downloadUrlFn = (attachment) => {
+      return "/api/avustushaku/" + avustushaku.id + "/hakemus/" + attachment["hakemus-id"] + "/attachments/" + attachment["field-id"]
+    }
     return (
       <div id="preview-container">
-        <FormPreview {...formElementProps}/>
-      </div>
+        <FormPreview {...formElementProps} />
+                        </div>
     )
+  }
+
+  resolveAttachmentsProperty(hakuData, hakemus) {
+    if (!hakuData.attachments || !hakemus.id ) {
+      return {}
+    }
+    const attachments = hakuData.attachments[hakemus.id.toString()]
+    return attachments ? attachments : {}
   }
 }
 
 class FakeFormController {
-  constructor(avustushaku) {
+  constructor(avustushaku, hakemus) {
     this.avustushaku = avustushaku
+    this.hakemus = hakemus
     this.customPreviewComponentFactory = new VaPreviewComponentFactory()
   }
 
@@ -74,5 +89,9 @@ class FakeFormController {
 
   getCustomWrapperComponentProperties(state) {
     return { "avustushaku": this.avustushaku }
+  }
+
+  createAttachmentDownloadUrl(state, field) {
+    return "/api/avustushaku/" + this.avustushaku.id + "/hakemus/" + this.hakemus.id + "/attachments/" + field.id
   }
 }

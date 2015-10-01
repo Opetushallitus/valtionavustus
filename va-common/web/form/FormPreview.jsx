@@ -39,7 +39,10 @@ export default class FormPreview extends React.Component {
       const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
       return <FormPreviewComponent {...fieldProperties}
                                    value={value}
-                                   renderingParameters={renderingParameters}/>
+                                   renderingParameters={renderingParameters}
+                                   translations={translations}
+                                   attachment={state.saveStatus.attachments[field.id]}
+                                   attachmentDownloadUrl={controller.createAttachmentDownloadUrl(state, field) }/>
     }
 
     function createInfoComponent(field, fieldProperties) {

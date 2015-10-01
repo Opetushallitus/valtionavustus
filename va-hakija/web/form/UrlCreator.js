@@ -13,5 +13,10 @@ export default class UrlCreator {
 
     this.existingSubmissionEditUrl = props.existingSubmissionEditUrl || defaultImpl
     this.existingSubmissionPreviewUrl = props.existingSubmissionPreviewUrl || defaultImpl
+
+    this.loadAttachmentsApiUrl = props.loadAttachmentsApiUrl || defaultImpl
+    this.attachmentBaseUrl = props.attachmentBaseUrl || defaultImpl
+    this.attachmentDownloadUrl = props.attachmentDownloadUrl || defaultImpl
+    this.attachmentDeleteUrl = props.attachmentDeleteUrl || defaultImpl
   }
 }

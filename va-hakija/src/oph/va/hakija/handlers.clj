@@ -14,6 +14,23 @@
             [oph.va.hakija.db :as va-db]
             [oph.va.hakija.email :as va-email]))
 
+(defn- convert-attachment [hakemus-id attachment]
+  {:id (:id attachment)
+   :hakemus-id hakemus-id
+   :version (:version attachment)
+   :field-id (:field_id attachment)
+   :file-size (:file_size attachment)
+   :content-type (:content_type attachment)
+   :hakemus-version (:hakemus_version attachment)
+   :created-at (:created_at attachment)
+   :filename (:filename attachment)})
+
+(defn- get-attachments [external-hakemus-id hakemus-id]
+  (->> (va-db/list-attachments hakemus-id)
+     (map (partial convert-attachment external-hakemus-id))
+     (map (fn [attachment] [(:field-id attachment) attachment]))
+     (into {})))
+
 (defn- matches-key? [key value-container]
   (= (:key value-container) key))
 
@@ -54,7 +71,7 @@
     (if (every? empty? (vals security-validation))
       (if-let [new-hakemus (va-db/create-hakemus! haku-id form-id answers)]
         ;; TODO: extract
-        (let [validation (validation/validate-form form answers)
+        (let [validation (validation/validate-form form answers {})
               language (keyword (find-hakemus-value answers "language"))
               avustushaku-title (-> avustushaku-content :name language)
               avustushaku-duration (->> avustushaku-content
@@ -86,7 +103,8 @@
         submission (:body (get-form-submission form-id submission-id))
         submission-version (:version submission)
         answers (:answers submission)
-        validation (validation/validate-form form answers)]
+        attachments (get-attachments (:user_key hakemus) (:id hakemus))
+        validation (validation/validate-form form answers attachments)]
     (if (= (:status hakemus) "new")
       (let [verified-hakemus (va-db/verify-hakemus haku-id hakemus-id submission-id submission-version answers)]
         (hakemus-ok-response verified-hakemus submission validation))
@@ -95,60 +113,95 @@
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
   (let [form-id (:form (get-open-avustushaku haku-id))
         form (form-db/get-form form-id)
-        security-validation (validation/validate-form-security form answers)]
+        security-validation (validation/validate-form-security form answers)
+        hakemus (va-db/get-hakemus hakemus-id)]
     (if (every? empty? (vals security-validation))
-      (let [hakemus (va-db/get-hakemus hakemus-id)]
-        (if (= base-version (:version hakemus))
-          (let [validation (validation/validate-form form answers)
-                updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
-                updated-hakemus (va-db/update-submission haku-id
-                                                         hakemus-id
-                                                         (:form_submission_id hakemus)
-                                                         (:version updated-submission)
-                                                         answers)]
-            (hakemus-ok-response updated-hakemus updated-submission validation))
-          (hakemus-conflict-response hakemus)))
+      (if (= base-version (:version hakemus))
+        (let [attachments (get-attachments (:user_key hakemus) (:id hakemus))
+              validation (validation/validate-form form answers attachments)
+              updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
+              updated-hakemus (va-db/update-submission haku-id
+                                                       hakemus-id
+                                                       (:form_submission_id hakemus)
+                                                       (:version updated-submission)
+                                                       answers)]
+          (hakemus-ok-response updated-hakemus updated-submission validation))
+        (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
 
 (defn on-hakemus-submit [haku-id hakemus-id base-version answers]
   (let [avustushaku (get-open-avustushaku haku-id)
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
-        validation (validation/validate-form form answers)]
+        hakemus (va-db/get-hakemus hakemus-id)
+        attachments (get-attachments (:user_key hakemus) (:id hakemus))
+        validation (validation/validate-form form answers attachments)]
     (if (every? empty? (vals validation))
-      (let [hakemus (va-db/get-hakemus hakemus-id)]
-        (if (= base-version (:version hakemus))
-          (let [submission-id (:form_submission_id hakemus)
-                saved-submission (:body (update-form-submission form-id submission-id answers))
-                submission-version (:version saved-submission)
-                submitted-hakemus (va-db/submit-hakemus haku-id
-                                                        hakemus-id
-                                                        submission-id
-                                                        submission-version
-                                                        answers)
-                ;; TODO: extract
-                avustushaku-content (:content avustushaku)
-                language (keyword (find-hakemus-value answers "language"))
-                avustushaku-title (-> avustushaku-content :name language)
-                avustushaku-duration (->> avustushaku-content
-                                          :duration)
-                avustushaku-start-date (->> avustushaku-duration
-                                            :start
-                                            (datetime/parse))
-                avustushaku-end-date (->> avustushaku-duration
-                                          :end
+      (if (= base-version (:version hakemus))
+        (let [submission-id (:form_submission_id hakemus)
+              saved-submission (:body (update-form-submission form-id submission-id answers))
+              submission-version (:version saved-submission)
+              submitted-hakemus (va-db/submit-hakemus haku-id
+                                                      hakemus-id
+                                                      submission-id
+                                                      submission-version
+                                                      answers)
+              ;; TODO: extract
+              avustushaku-content (:content avustushaku)
+              language (keyword (find-hakemus-value answers "language"))
+              avustushaku-title (-> avustushaku-content :name language)
+              avustushaku-duration (->> avustushaku-content
+                                        :duration)
+              avustushaku-start-date (->> avustushaku-duration
+                                          :start
                                           (datetime/parse))
-                organization-email (find-hakemus-value answers "organization-email")
-                primary-email (find-hakemus-value answers "primary-email")
-                signature-email (find-hakemus-value answers "signature-email")
-                user-key (-> submitted-hakemus :user_key)]
-            (va-email/send-hakemus-submitted-message! language
-                                                      [primary-email organization-email signature-email]
-                                                      haku-id
-                                                      avustushaku-title
-                                                      user-key
-                                                      avustushaku-start-date
-                                                      avustushaku-end-date)
-            (hakemus-ok-response submitted-hakemus saved-submission validation))
-          (hakemus-conflict-response hakemus)))
+              avustushaku-end-date (->> avustushaku-duration
+                                        :end
+                                        (datetime/parse))
+              organization-email (find-hakemus-value answers "organization-email")
+              primary-email (find-hakemus-value answers "primary-email")
+              signature-email (find-hakemus-value answers "signature-email")
+              user-key (-> submitted-hakemus :user_key)]
+          (va-email/send-hakemus-submitted-message! language
+                                                    [primary-email organization-email signature-email]
+                                                    haku-id
+                                                    avustushaku-title
+                                                    user-key
+                                                    avustushaku-start-date
+                                                    avustushaku-end-date)
+          (hakemus-ok-response submitted-hakemus saved-submission validation))
+        (hakemus-conflict-response hakemus))
       (bad-request! validation))))
+
+(defn on-attachment-list [haku-id hakemus-id]
+  (if-let [hakemus (va-db/get-hakemus hakemus-id)]
+    (get-attachments hakemus-id (:id hakemus))))
+
+(defn on-attachment-create [haku-id hakemus-id hakemus-base-version field-id filename content-type size tempfile]
+  (if-let [hakemus (va-db/get-hakemus hakemus-id)]
+    (if-let [attachment (va-db/create-attachment (:id hakemus)
+                                                 hakemus-base-version
+                                                 field-id
+                                                 filename
+                                                 content-type
+                                                 size
+                                                 tempfile)]
+      (ok (convert-attachment hakemus-id attachment))
+      (bad-request {:error true}))
+    (bad-request! {:error true})))
+
+(defn on-attachment-delete [haku-id hakemus-id field-id]
+  (if-let [hakemus (va-db/get-hakemus hakemus-id)]
+    (if (va-db/attachment-exists? (:id hakemus) field-id)
+      (do (va-db/close-existing-attachment! (:id hakemus) field-id)
+          (ok))
+      (not-found))))
+
+(defn on-attachment-get [haku-id hakemus-id field-id]
+  (if-let [hakemus (va-db/get-hakemus hakemus-id)]
+    (if (va-db/attachment-exists? (:id hakemus) field-id)
+      (let [{:keys [data size filename content-type]} (va-db/download-attachment (:id hakemus) field-id)]
+        (-> (ok data)
+            (assoc-in [:headers "Content-Type"] content-type)
+            (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
+      (not-found))))

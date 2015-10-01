@@ -1,13 +1,30 @@
 (ns oph.va.hakija.api
   (:use [clojure.tools.trace :only [trace]]
         [clojure.pprint :only [pprint]])
-  (:require [oph.common.db :refer :all]
+  (:require [clojure.java.io :as io]
+            [oph.common.db :refer :all]
             [oph.common.jdbc.enums :refer :all]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.routes :refer :all]
             [oph.common.jdbc.enums :refer :all])
   (:import (oph.common.jdbc.enums HakuStatus HakuRole)))
 
+(defn- convert-attachment [attachment]
+  {:id (:id attachment)
+   :hakemus-id (:hakemus_id attachment)
+   :version (:version attachment)
+   :field-id (:field_id attachment)
+   :file-size (:file_size attachment)
+   :content-type (:content_type attachment)
+   :hakemus-version (:hakemus_version attachment)
+   :created-at (:created_at attachment)
+   :filename (:filename attachment)})
+
+(defn attachments->map [attachments]
+  (->> attachments
+       (map convert-attachment)
+       (map (fn [attachment] [(:field-id attachment) attachment]))
+       (into {})))
 
 (defn health-check []
   (->> {}
@@ -83,15 +100,44 @@
          :answers (:answer_values hakemus)})
       (map hakemukset)))
 
+(defn- convert-attachment-group [group]
+  (let [id (-> group first :hakemus_id)]
+    [id (attachments->map group)]))
+
 (defn get-avustushaku [avustushaku-id]
   (let [avustushaku (first (exec :hakija-db hakija-queries/get-avustushaku {:id avustushaku-id}))
         form (first (exec :hakija-db hakija-queries/get-form-by-avustushaku {:avustushaku_id avustushaku-id}))
         roles (get-avustushaku-roles avustushaku-id)
-        hakemukset (exec :hakija-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})]
+        hakemukset (exec :hakija-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})
+        attachments (exec :hakija-db hakija-queries/list-attachments-by-avustushaku {:avustushaku_id avustushaku-id})]
     {:avustushaku (avustushaku-response-content avustushaku)
      :environment (environment-content)
      :roles roles
      :form (form->json form)
      :hakemukset (hakemukset->json hakemukset)
+     :attachments (->> attachments
+                       (partition-by (fn [attachment] (:hakemus_id attachment)))
+                       (mapv convert-attachment-group)
+                       (into {}))
      :budget-total-sum (reduce + (map :budget_total hakemukset))
      :budget-oph-share-sum (reduce + (map :budget_oph_share hakemukset))}))
+
+(defn list-attachments [hakemus-id]
+  (->> {:hakemus_id hakemus-id}
+       (exec :hakija-db hakija-queries/list-attachments)))
+
+(defn attachment-exists? [hakemus-id field-id]
+  (->> {:hakemus_id hakemus-id
+        :field_id field-id}
+       (exec :hakija-db hakija-queries/attachment-exists?)
+       first))
+
+(defn download-attachment [hakemus-id field-id]
+  (let [result (->> {:hakemus_id hakemus-id
+                     :field_id field-id}
+                    (exec :hakija-db hakija-queries/download-attachment)
+                    first)]
+    {:data (io/input-stream (:file_data result))
+     :content-type (:content_type result)
+     :filename (:filename result)
+     :size (:file_size result)}))

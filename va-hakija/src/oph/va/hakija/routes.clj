@@ -7,6 +7,7 @@
             [compojure.core :refer [defroutes GET]]
             [compojure.api.sweet :refer :all]
             [compojure.api.exception :as compojure-ex]
+            [compojure.api.upload :as upload]
             [schema.core :as s]
             [oph.common.datetime :as datetime]
             [oph.common.config :refer [config config-simple-name]]
@@ -89,7 +90,41 @@
        :body    [answers (describe Answers "New answers")]
        :return  Hakemus
        :summary "Submit hakemus"
-       (on-hakemus-submit haku-id hakemus-id base-version answers)))
+       (on-hakemus-submit haku-id hakemus-id base-version answers))
+
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
+        :path-params [haku-id :- Long, hakemus-id :- s/Str]
+        :return s/Any
+        :summary "List current attachments"
+        (ok (on-attachment-list haku-id hakemus-id)))
+
+  (DELETE* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id"
+           [haku-id hakemus-id field-id]
+           :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
+           :summary "Delete attachment (marks attachment as closed)"
+           (on-attachment-delete haku-id
+                                 hakemus-id
+                                 field-id))
+
+  (PUT* "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id"
+        [haku-id hakemus-id hakemus-base-version field-id]
+        :path-params [haku-id :- Long, hakemus-id :- s/Str, hakemus-base-version :- Long, field-id :- s/Str]
+        :multipart-params [file :- upload/TempFileUpload]
+        :return Attachment
+        :summary "Add new attachment. Existing attachment with same id is closed."
+        (let [{:keys [filename content-type size tempfile]} file]
+          (on-attachment-create haku-id
+                                hakemus-id
+                                hakemus-base-version
+                                field-id
+                                filename
+                                content-type
+                                size
+                                tempfile)))
+
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
+        :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
+        (on-attachment-get haku-id hakemus-id field-id)))
 
 (defroutes resource-routes
   (GET "/" []

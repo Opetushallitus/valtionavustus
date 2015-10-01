@@ -39,6 +39,20 @@
     "has-ended": {
       "fi": "Hakuaika on päättynyt",
       "sv": "Ansökningstiden har slutats"
+    },
+    "attachment": {
+      "uploadhere": {
+        "fi": "Lisää",
+        "sv": "TODO: Pasta"
+      },
+      "attached": {
+        "fi": "Liitetty",
+        "sv": "TODO: Ansluten"
+      },
+      "attachmentMissing" : {
+        "fi": "Liite puuttuu",
+        "sv": "TODO: Tillägg missing"
+      }
     }
   },
   "misc": {

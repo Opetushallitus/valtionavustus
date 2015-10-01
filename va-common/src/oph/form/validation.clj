@@ -54,7 +54,7 @@
 
 (defn validate-finnish-business-id-field [field answer]
   (if (not (and (has-display-as? "finnishBusinessIdField" field)
-                (= (:required field))))
+                (:required field)))
     []
     (if (and (not (nil? answer))
              (re-matches #"^[0-9]{7}-[0-9]$" answer))
@@ -70,33 +70,42 @@
       [{:error "finnishBusinessId"}])))
 
 (defn validate-field-security [answers field]
-  (let [answer (find-answer-value answers (field :id))]
+  (let [answer (find-answer-value answers (:id field))]
     {(keyword (:id field)) (concat
        (validate-options field answer)
        (validate-textarea-maxlength field answer)
        (validate-texfield-maxlength field answer)
        (validate-email-security field answer))}))
 
-(defn validate-field [answers field]
-  (let [answer (find-answer-value answers (field :id))]
+(defn validate-attachment [attachments field]
+  (if (and (not (contains? attachments (:id field)))
+           (:required field))
+    [{:error "required"}]
+    []))
+
+(defn validate-field [answers attachments field]
+  (if (has-display-as? "namedAttachment" field)
     {(keyword (:id field)) (concat
-       (validate-required field answer)
-       (validate-options field answer)
-       (validate-textarea-maxlength field answer)
-       (validate-texfield-maxlength field answer)
-       (validate-email-field field answer)
-       (validate-finnish-business-id-field field answer))}))
+      (validate-attachment attachments field))}
+    (let [answer (find-answer-value answers (:id field))]
+      {(keyword (:id field)) (concat
+         (validate-required field answer)
+         (validate-options field answer)
+         (validate-textarea-maxlength field answer)
+         (validate-texfield-maxlength field answer)
+         (validate-email-field field answer)
+         (validate-finnish-business-id-field field answer))})))
 
 (defn validate-form-security [form answers]
-  (let [applied-form (rules/apply-rules form answers)
+  (let [applied-form (rules/apply-rules form answers {})
         validator (partial validate-field-security answers)]
     (->> (find-fields (:content applied-form))
          (map validator)
          (into {}))))
 
-(defn validate-form [form answers]
-  (let [applied-form (rules/apply-rules form answers)
-        validator (partial validate-field answers)]
+(defn validate-form [form answers attachments]
+  (let [applied-form (rules/apply-rules form answers attachments)
+        validator (partial validate-field answers attachments)]
     (->> (find-fields (:content applied-form))
        (map validator)
        (into {}))))

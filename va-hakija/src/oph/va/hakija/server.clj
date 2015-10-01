@@ -48,10 +48,14 @@
         handler (if auto-reload?
                   (reload/wrap-reload logged)
                   logged)
-        non-caching-handler (server/wrap-nocache handler)]
+        non-caching-handler (server/wrap-nocache handler)
+        threads (or (-> config :server :threads) 16)
+        attachment-max-size (or (-> config :server :attachment-max-size) 50)]
     (server/start-server {:host host
                           :port port
                           :auto-reload? auto-reload?
                           :routes non-caching-handler
                           :on-startup (partial startup config)
-                          :on-shutdown shutdown})))
+                          :on-shutdown shutdown
+                          :threads threads
+                          :attachment-max-size attachment-max-size})))

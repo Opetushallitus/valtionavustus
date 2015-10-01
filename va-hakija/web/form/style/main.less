@@ -411,6 +411,52 @@ section.soresu-theme {
   }
 }
 
+div.soresu-attachment-input-field {
+  button.soresu-remove {
+    position: relative;
+    top: 4px;
+    left: 6px;
+  }
+
+  div.soresu-attachment-display {
+    display: inline-block;
+    margin: 0;
+  }
+}
+
+.soresu-file-upload {
+  margin-top: 10px;
+  margin-bottom: 4px;
+
+  &.error {
+    span.required {
+      color: @bright-red;
+    }
+  }
+  .soresu-upload-button {
+    color: #fff;
+    background-color: @light-green;
+    border-width: 0;
+    margin: 4px 0 4px 0;
+    padding: 4px 24px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  &.disabled {
+    color: @darker-gray;
+    .soresu-upload-button {
+      background-color: @light-gray;
+      border: 1px solid @light-gray;
+      cursor: default;
+    }
+    div {
+      border-color: @dark-gray;
+      cursor: default;
+    }
+  }
+}
+
 button.soresu-remove {
   background: transparent url('../img/remove_line_enabled.png') no-repeat left top;
   border-width: 0px;

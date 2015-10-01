@@ -10,7 +10,7 @@ export default class TopBar extends React.Component {
     const controls = state ? <TopBarControls state={state}/> : ""
     return <section id="topbar">
       <div id="top-container">
-        <img id="logo" src="img/logo.png"/>
+        <img id="logo" src="/img/logo.png"/>
         <div id="server-info"><EnvironmentInfo environment={environment}/></div>
         <TopBarTabs disabled={!state} activeTab={this.props.activeTab}/>
         {controls}

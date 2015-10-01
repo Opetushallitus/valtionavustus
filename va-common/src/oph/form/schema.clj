@@ -42,7 +42,8 @@
                                              :iban
                                              :bic
                                              :dropdown
-                                             :radioButton)})
+                                             :radioButton
+                                             :namedAttachment)})
 
   (s/defschema BasicElement (s/either FormField
                                       Button

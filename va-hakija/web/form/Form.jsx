@@ -34,12 +34,14 @@ export default class Form extends React.Component {
         const formOperations = state.extensionApi.formOperations
         const saved = controller.isSaveDraftAllowed(state)
         const fieldDisabled = !formOperations.isFieldEnabled(saved, field.id) || field.forceDisabled === true
-        const extendedProperties = _.extend(fieldProperties, { controller: controller, disabled: fieldDisabled, renderingParameters: renderingParameters })
+        const extendedProperties = _.extend(fieldProperties, { controller: controller,
+                                                               disabled: fieldDisabled,
+                                                               renderingParameters: renderingParameters,
+                                                               allAttachments: state.saveStatus.attachments,
+                                                               attachmentUploadsInProgress: state.saveStatus.attachmentUploadsInProgress})
 
-        if (field.type == "formField") {
+        if (field.type == "formField" || field.type == "button") {
           return createFormComponent(field, extendedProperties)
-        } else if (field.type == "button") {
-          return createButton(field, extendedProperties)
         } else if (field.type == "wrapperElement") {
           return createWrapperElement(field, extendedProperties, renderingParameters)
         }
@@ -55,10 +57,6 @@ export default class Form extends React.Component {
                           values={infoElementValues} />
     }
 
-    function createButton(field, extendedProperties) {
-      return createFormComponent(field, extendedProperties)
-    }
-
     function createFormComponent(field, extendedProperties) {
       const existingInputValue = InputValueStorage.readValue(fields, values, field.id)
       const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
@@ -66,7 +64,9 @@ export default class Form extends React.Component {
       return <FormComponent {...extendedProperties}
                             validationErrors={fieldErrors}
                             value={value}
-                            onChange={controller.componentOnChangeListener} />
+                            onChange={controller.componentOnChangeListener}
+                            attachment={extendedProperties.allAttachments[field.id]}
+                            attachmentDownloadUrl={controller.createAttachmentDownloadUrl(state, field)} />
     }
 
     function createWrapperElement(field, fieldProperties, renderingParameters) {

@@ -2,10 +2,16 @@
   (:use [oph.common.db]
         [oph.form.db :as form-db]
         [clojure.tools.trace :only [trace]])
-  (:require [oph.va.hakija.db.queries :as queries]
+  (:require [clojure.java.io :as io]
+            [oph.va.hakija.db.queries :as queries]
             [oph.va.budget :as va-budget]
             [oph.form.formutil :as form-util]))
 
+(defn slurp-binary-file! [file]
+  (io! (with-open [reader (io/input-stream file)]
+         (let [buffer (byte-array (.length file))]
+           (.read reader buffer)
+           buffer))))
 
 (defn health-check []
   (->> {}
@@ -85,3 +91,42 @@
 
 (defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version answers]
   (update-status avustushaku-id hakemus-id submission-id submission-version answers :cancelled))
+
+(defn attachment-exists? [hakemus-id field-id]
+  (->> {:hakemus_id hakemus-id
+        :field_id field-id}
+       (exec :db queries/attachment-exists?)
+       first))
+
+(defn create-attachment [hakemus-id hakemus-version field-id filename content-type size file]
+  (let [blob (slurp-binary-file! file)
+        params (-> {:hakemus_id hakemus-id
+                    :hakemus_version hakemus-version
+                    :field_id field-id
+                    :filename filename
+                    :content_type content-type
+                    :file_size size
+                    :file_data blob})]
+    (if (attachment-exists? hakemus-id field-id)
+      (exec-all :db [queries/close-existing-attachment! params
+                     queries/update-attachment<! params])
+      (exec :db queries/create-attachment<! params))))
+
+(defn close-existing-attachment! [hakemus-id field-id]
+  (->> {:hakemus_id hakemus-id
+        :field_id field-id}
+       (exec :db queries/close-existing-attachment!)))
+
+(defn list-attachments [hakemus-id]
+  (->> {:hakemus_id hakemus-id}
+       (exec :db queries/list-attachments)))
+
+(defn download-attachment [hakemus-id field-id]
+  (let [result (->> {:hakemus_id hakemus-id
+                     :field_id field-id}
+                    (exec :db queries/download-attachment)
+                    first)]
+    {:data (io/input-stream (:file_data result))
+     :content-type (:content_type result)
+     :filename (:filename result)
+     :size (:file_size result)}))
