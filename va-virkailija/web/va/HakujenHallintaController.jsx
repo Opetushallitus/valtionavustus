@@ -17,12 +17,17 @@ const events = {
   updateField: 'updateField',
   saveHaku: 'saveHaku',
   saveCompleted: 'saveCompleted',
+  rolesLoaded: 'rolesLoaded',
   addSelectionCriteria: 'addSelectionCriteria',
   deleteSelectionCriteria: 'deleteSelectionCriteria',
   beforeUnload: 'beforeUnload'
 }
 
 export default class HakujenHallintaController {
+
+  static rolesUrl(avustushaku) {
+    return "/api/avustushaku/" + avustushaku.id + "/roles"
+  }
 
   _bind(...methods) {
     methods.forEach((method) => this[method] = this[method].bind(this))
@@ -47,7 +52,7 @@ export default class HakujenHallintaController {
       dispatcher.push(events.initialState, state)
     })
     this.autoSave = _.debounce(function(){ dispatcher.push(events.saveHaku) }, 3000)
-    this._bind('onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection', 'onHakuSave', 'onAddSelectionCriteria', 'onBeforeUnload', 'onDeleteSelectionCriteria')
+    this._bind('onInitialState', 'onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection', 'onHakuSave', 'onAddSelectionCriteria', 'onBeforeUnload', 'onDeleteSelectionCriteria')
 
     Bacon.fromEvent(window, "beforeunload").onValue(function(event) {
       // For some odd reason Safari always displays a dialog here
@@ -65,6 +70,7 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.initAutoSave)], this.onInitAutoSave,
       [dispatcher.stream(events.saveHaku)], this.onHakuSave,
       [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted,
+      [dispatcher.stream(events.rolesLoaded)], this.onRolesLoaded,
       [dispatcher.stream(events.addSelectionCriteria)], this.onAddSelectionCriteria,
       [dispatcher.stream(events.deleteSelectionCriteria)], this.onDeleteSelectionCriteria,
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload
@@ -74,7 +80,7 @@ export default class HakujenHallintaController {
   onInitialState(emptyState, realInitialState) {
     var hakuList = realInitialState.hakuList;
     if (hakuList && !_.isEmpty(hakuList)) {
-      realInitialState.selectedHaku = hakuList[0]
+      realInitialState = this.onHakuSelection(realInitialState, hakuList[0])
     }
     return realInitialState
   }
@@ -174,7 +180,7 @@ export default class HakujenHallintaController {
   }
 
   onHakuSave(state) {
-    HttpUtil.post("/api/avustushaku/" + state.selectedHaku.id, state.selectedHaku)
+    HttpUtil.post("/api/avustushaku/" + state.selectedHaku.id, _.omit(state.selectedHaku, "roles"))
         .then(function(response) {
           console.log("Saved haku. Response=", JSON.stringify(response))
           dispatcher.push(events.saveCompleted, response)
@@ -214,6 +220,20 @@ export default class HakujenHallintaController {
       state = this.onHakuSave(state)
     }
     state.selectedHaku = hakuToSelect
+    this.loadRoles(hakuToSelect)
+    return state
+  }
+
+  loadRoles(selectedHaku) {
+    if (!_.isArray(selectedHaku.roles)) {
+      HttpUtil.get(HakujenHallintaController.rolesUrl(selectedHaku)).then(roles => {
+        dispatcher.push(events.rolesLoaded, {haku: selectedHaku, roles: roles})
+      })
+    }
+  }
+
+  onRolesLoaded(state, loadedRoles) {
+    loadedRoles.haku.roles = loadedRoles.roles
     return state
   }
 

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import HakuStatus from "../avustushaku/HakuStatus.jsx"
 import { BasicInfoComponent }from 'va-common/web/form/component/InfoElement.jsx'
+import HakuRoles from "./HakuRoles.jsx"
 
 export default class HakuEdit extends Component {
   render() {
@@ -31,6 +32,7 @@ export default class HakuEdit extends Component {
           <span className="dateDivider" />
           <DateField id="hakuaika-end" onChange={onChange} value={avustushaku.content.duration.end} disabled={avustushaku.status === "published"} />
         </div>
+        <HakuRoles avustushaku={avustushaku} controller={controller}/>
         <div>
           <h3>Hakulomakkeen esikatselu</h3>
           <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a><span className="linkDivider"/><a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>

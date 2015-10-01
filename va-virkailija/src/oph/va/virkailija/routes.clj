@@ -107,6 +107,13 @@
           (ok (add-arviot response))
           (not-found)))
 
+  (GET* "/:avustushaku-id/roles" [avustushaku-id]
+        :path-params [avustushaku-id :- Long]
+        :return [Role]
+        (if-let [response (hakija-api/get-avustushaku-roles avustushaku-id)]
+          (ok response)
+          (not-found)))
+
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id]
       :path-params [avustushaku-id :- Long hakemus-id :- Long]
       :body    [arvio (describe Arvio "New arvio")]

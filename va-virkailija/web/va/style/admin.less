@@ -43,7 +43,7 @@ table.haku-list {
     text-align: right;
   }
 
-  #name, #selection-criteria {
+  table {
     margin-top: 10px;
     width: @content-width;
     text-align: left;
@@ -56,14 +56,23 @@ table.haku-list {
     td {
       padding: 5px 0;
     }
-    textarea {
-      resize: vertical;
-      max-width: @content-width / 2.1;
-      width: @content-width / 2.1;
-    }
     button {
       margin: 0;
       font-size: 16px;
+    }
+  }
+
+  #haku-roles {
+    input, select {
+      max-width: @content-width / 3.3;
+      width: @content-width / 3.3;
+    }
+  }
+
+  #name, #selection-criteria {
+    textarea {
+      max-width: @content-width / 2.1;
+      width: @content-width / 2.1;
     }
   }
 }

@@ -44,13 +44,6 @@
 (defn list-avustushaut []
   (map avustushaku-response-content(exec :hakija-db hakija-queries/list-avustushaut {})))
 
-(defn- get-avustushaku-roles [avustushaku-id]
-  (exec :hakija-db hakija-queries/get-avustushaku-roles {:avustushaku_id avustushaku-id}))
-
-(defn- form->json [form]
-  {:content (:content form)
-   :rules (:rules form)})
-
 (defn- roles->json [roles]
   (-> (fn [role]
         {:id (:id role)
@@ -58,6 +51,13 @@
          :email (:email role)
          :role (:role role)})
       (map roles)))
+
+(defn get-avustushaku-roles [avustushaku-id]
+  (roles->json (exec :hakija-db hakija-queries/get-avustushaku-roles {:avustushaku_id avustushaku-id})))
+
+(defn- form->json [form]
+  {:content (:content form)
+   :rules (:rules form)})
 
 (defn- hakemukset->json [hakemukset]
   (-> (fn [hakemus]
@@ -74,11 +74,11 @@
 (defn get-avustushaku [avustushaku-id]
   (let [avustushaku (first (exec :hakija-db hakija-queries/get-avustushaku {:id avustushaku-id}))
         form (first (exec :hakija-db hakija-queries/get-form-by-avustushaku {:avustushaku_id avustushaku-id}))
-        roles (get-avustushaku-roles 1)
+        roles (get-avustushaku-roles avustushaku-id)
         hakemukset (exec :hakija-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})]
     {:avustushaku (avustushaku-response-content avustushaku)
      :environment (environment-content)
-     :roles (roles->json roles)
+     :roles roles
      :form (form->json form)
      :hakemukset (hakemukset->json hakemukset)
      :budget-total-sum (reduce + (map :budget_total hakemukset))
