@@ -12,6 +12,7 @@
   (tags :js-unit)
 
   (it "are successful"
+      (pending)
       (let [results (sh "./node_modules/mocha/bin/mocha"
                         "--compilers" "js:babel/register"
                         "--reporter" "mocha-junit-reporter"
