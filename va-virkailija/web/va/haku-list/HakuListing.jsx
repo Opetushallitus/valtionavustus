@@ -21,7 +21,7 @@ export default class HakuListing extends Component {
       return <HakuRow haku={haku} key={haku.id} selectedHaku={selectedHaku} controller={controller}/> })
     return (
       <div>
-        <button id="create-haku" onClick={onClick} >Luo uusi avustushaku</button>
+        <button id="create-haku" onClick={onClick} title={"Luo uusi avustushaku valitun haun '" + selectedHaku.content.name.fi + "' pohjalta"} >Luo uusi avustushaku valitun pohjalta</button>
         <table key="hakuListing" className="haku-list overview-list">
           <thead><tr>
             <th className="name-column">Avustushaku</th>
