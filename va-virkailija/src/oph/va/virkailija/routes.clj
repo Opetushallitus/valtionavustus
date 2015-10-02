@@ -22,12 +22,6 @@
             [oph.va.virkailija.schema :refer :all]
             [oph.va.virkailija.handlers :refer :all]))
 
-(create-form-schema [:vaBudget
-                     :vaSummingBudgetElement
-                     :vaBudgetItemElement
-                     :vaBudgetSummaryElement
-                     :vaProjectDescription])
-
 (defn- on-healthcheck []
   (if (and (virkailija-db/health-check)
            (hakija-api/health-check))
