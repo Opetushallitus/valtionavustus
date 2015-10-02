@@ -37,7 +37,7 @@
   (it "are successful"
       ;; mocha --compilers js:babel/register web/test/*Test.js
       (let [results (sh "./node_modules/mocha/bin/mocha"
-                        "--compilers" "js:babel/register"
+                        "--require" "web/test/babelhook"
                         "--reporter" "mocha-junit-reporter"
                         "web/test/*Test.js"
                         :env {"MOCHA_FILE" "target/junit-mocha-js-unit.xml"})]
