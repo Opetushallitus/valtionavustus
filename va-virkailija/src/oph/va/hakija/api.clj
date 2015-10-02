@@ -82,7 +82,7 @@
          first)))
 
 (defn delete-avustushaku-role [avustushaku-id role-id]
- (exec :hakija-db hakija-queries/delete-avustushaku-role! {:avustushaku-id avustushaku-id
+ (exec :hakija-db hakija-queries/delete-avustushaku-role! {:avustushaku avustushaku-id
                                                            :id role-id}))
 
 (defn get-avustushaku-roles [avustushaku-id]

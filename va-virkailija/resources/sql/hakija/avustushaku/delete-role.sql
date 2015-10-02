@@ -1,1 +1,1 @@
-delete from avustushaku_roles where id = :id and avustushaku = :avustushaku-id
+delete from avustushaku_roles where id = :id and avustushaku = :avustushaku

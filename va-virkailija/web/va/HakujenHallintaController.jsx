@@ -254,7 +254,6 @@ export default class HakujenHallintaController {
 
   onRoleDeleted(state, roleDeletion) {
     const deleteIndex = _.findIndex(roleDeletion.haku.roles, role => role.id === roleDeletion.role.id)
-    console.log(roleDeletion.haku.roles, deleteIndex, roleDeletion.role)
     roleDeletion.haku.roles.splice(deleteIndex, 1)
     return state
   }
