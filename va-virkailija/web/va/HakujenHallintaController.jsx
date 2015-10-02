@@ -19,6 +19,7 @@ const events = {
   rolesLoaded: 'rolesLoaded',
   roleCreated: 'roleCreated',
   roleDeleted: 'roleDeleted',
+  formLoaded: 'formLoaded',
   addSelectionCriteria: 'addSelectionCriteria',
   deleteSelectionCriteria: 'deleteSelectionCriteria',
   beforeUnload: 'beforeUnload'
@@ -28,6 +29,10 @@ export default class HakujenHallintaController {
 
   static roleUrl(avustushaku) {
     return "/api/avustushaku/" + avustushaku.id + "/role"
+  }
+
+  static formUrl(avustushaku) {
+    return "/api/avustushaku/" + avustushaku.id + "/form"
   }
 
   _bind(...methods) {
@@ -74,6 +79,7 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.rolesLoaded)], this.onRolesLoaded,
       [dispatcher.stream(events.roleCreated)], this.onRoleCreated,
       [dispatcher.stream(events.roleDeleted)], this.onRoleDeleted,
+      [dispatcher.stream(events.formLoaded)], this.onFormLoaded,
       [dispatcher.stream(events.addSelectionCriteria)], this.onAddSelectionCriteria,
       [dispatcher.stream(events.deleteSelectionCriteria)], this.onDeleteSelectionCriteria,
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload
@@ -224,6 +230,7 @@ export default class HakujenHallintaController {
     }
     state.selectedHaku = hakuToSelect
     this.loadRoles(hakuToSelect)
+    this.loadForm(hakuToSelect)
     return state
   }
 
@@ -249,6 +256,19 @@ export default class HakujenHallintaController {
     const deleteIndex = _.findIndex(roleDeletion.haku.roles, role => role.id === roleDeletion.role.id)
     console.log(roleDeletion.haku.roles, deleteIndex, roleDeletion.role)
     roleDeletion.haku.roles.splice(deleteIndex, 1)
+    return state
+  }
+
+  loadForm(selectedHaku) {
+    if (!_.isObject(selectedHaku.form) || !selectedHaku.form.id) {
+      HttpUtil.get(HakujenHallintaController.formUrl(selectedHaku)).then(form => {
+        dispatcher.push(events.formLoaded, {haku: selectedHaku, form: form})
+      })
+    }
+  }
+
+  onFormLoaded(state, loadFormResult) {
+    loadFormResult.haku.form = loadFormResult.form
     return state
   }
 

@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import HakuStatus from "../avustushaku/HakuStatus.jsx"
 import { BasicInfoComponent }from 'soresu-form/web/form/component/InfoElement.jsx'
 import HakuRoles from "./HakuRoles.jsx"
+import FormJsonEditor from "./FormJsonEditor.jsx"
 
 export default class HakuEdit extends Component {
   render() {
@@ -40,6 +41,7 @@ export default class HakuEdit extends Component {
         <SetStatus currentStatus={avustushaku.status} onChange={onChange} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
         <div><h3>Hakijan omarahoitusvaatimus</h3><input className="percentage" required="true" maxLength="2" min="0" max="99" id="haku-self-financing-percentage" onChange={onChange} disabled={avustushaku.status === "published"} type="number" value={avustushaku.content["self-financing-percentage"]} /><span>%</span></div>
+        <FormJsonEditor controller={controller} avustushaku={avustushaku} />
       </div>
     )
   }

@@ -17,9 +17,16 @@
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.auth :as auth]
+            [oph.form.schema :refer :all]
             [oph.va.schema :refer :all]
             [oph.va.virkailija.schema :refer :all]
             [oph.va.virkailija.handlers :refer :all]))
+
+(create-form-schema [:vaBudget
+                     :vaSummingBudgetElement
+                     :vaBudgetItemElement
+                     :vaBudgetSummaryElement
+                     :vaProjectDescription])
 
 (defn- on-healthcheck []
   (if (and (virkailija-db/health-check)
@@ -133,6 +140,14 @@
         :return {:id Long}
         (hakija-api/delete-avustushaku-role avustushaku-id role-id)
         (ok {:id role-id}))
+
+
+  (GET* "/:avustushaku-id/form" [avustushaku-id]
+          :path-params [avustushaku-id :- Long]
+          :return Form
+          (if-let [found-form (hakija-api/get-form-by-avustushaku avustushaku-id)]
+            (ok found-form)
+            (not-found)))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id]
          :path-params [avustushaku-id :- Long hakemus-id :- Long]

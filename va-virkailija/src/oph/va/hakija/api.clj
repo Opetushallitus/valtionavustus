@@ -108,9 +108,12 @@
   (let [id (-> group first :hakemus_id)]
     [id (attachments->map group)]))
 
+(defn get-form-by-avustushaku [avustushaku-id]
+  (first (exec :hakija-db hakija-queries/get-form-by-avustushaku {:avustushaku_id avustushaku-id})))
+
 (defn get-avustushaku [avustushaku-id]
   (let [avustushaku (first (exec :hakija-db hakija-queries/get-avustushaku {:id avustushaku-id}))
-        form (first (exec :hakija-db hakija-queries/get-form-by-avustushaku {:avustushaku_id avustushaku-id}))
+        form (get-form-by-avustushaku avustushaku-id)
         roles (get-avustushaku-roles avustushaku-id)
         hakemukset (exec :hakija-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})
         attachments (exec :hakija-db hakija-queries/list-attachments-by-avustushaku {:avustushaku_id avustushaku-id})]
