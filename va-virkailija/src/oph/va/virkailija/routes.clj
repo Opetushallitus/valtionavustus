@@ -149,6 +149,14 @@
             (ok found-form)
             (not-found)))
 
+  (POST* "/:avustushaku-id/form" [avustushaku-id]
+         :path-params [avustushaku-id :- Long ]
+         :body  [updated-form (describe Form "Updated form")]
+         :return Form
+         (if-let [response (hakija-api/update-form-by-avustushaku avustushaku-id updated-form)]
+          (ok response)
+          (not-found)))
+
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id]
          :path-params [avustushaku-id :- Long hakemus-id :- Long]
          :body    [arvio (describe Arvio "New arvio")]

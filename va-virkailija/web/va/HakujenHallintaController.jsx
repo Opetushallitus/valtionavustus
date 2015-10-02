@@ -21,6 +21,8 @@ const events = {
   roleDeleted: 'roleDeleted',
   formLoaded: 'formLoaded',
   updateForm: 'updateForm',
+  saveForm: 'saveForm',
+  formSaveCompleted: 'formSaveCompleted',
   reRender: 'reRender',
   addSelectionCriteria: 'addSelectionCriteria',
   deleteSelectionCriteria: 'deleteSelectionCriteria',
@@ -84,6 +86,8 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.roleDeleted)], this.onRoleDeleted,
       [dispatcher.stream(events.formLoaded)], this.onFormLoaded,
       [dispatcher.stream(events.updateForm)], this.onFormUpdated,
+      [dispatcher.stream(events.saveForm)], this.onFormSaved,
+      [dispatcher.stream(events.formSaveCompleted)], this.onFormSaveCompleted,
       [dispatcher.stream(events.reRender)], this.onReRender,
       [dispatcher.stream(events.addSelectionCriteria)], this.onAddSelectionCriteria,
       [dispatcher.stream(events.deleteSelectionCriteria)], this.onDeleteSelectionCriteria,
@@ -273,7 +277,6 @@ export default class HakujenHallintaController {
 
   onFormLoaded(state, loadFormResult) {
     const haku = loadFormResult.haku
-    haku.form = loadFormResult.form
     state.formDrafts[haku.id] = JSON.stringify(loadFormResult.form, null, 2)
     loadFormResult.haku.formContent = loadFormResult.form
     return state
@@ -281,6 +284,10 @@ export default class HakujenHallintaController {
 
   onReRender(state) {
     return state
+  }
+
+  saveForm(avustushaku, form) {
+    dispatcher.push(events.saveForm, {haku: avustushaku, form: JSON.parse(form)})
   }
 
   // Public API
@@ -305,6 +312,31 @@ export default class HakujenHallintaController {
   onFormUpdated(state, formContentUpdateObject) {
     const avustushaku = formContentUpdateObject.avustushaku
     state.formDrafts[avustushaku.id] = formContentUpdateObject.newFormJson
+    return state
+  }
+
+  onFormSaved(state, formSaveObject) {
+    const avustushaku = formSaveObject.haku
+    const editedForm = formSaveObject.form
+
+    HttpUtil.post("/api/avustushaku/" + avustushaku.id + "/form", editedForm)
+        .then(function(response) {
+          console.log("Saved form. Response=", JSON.stringify(response))
+          // No need to do anything more? dispatcher.push(events.formSaveCompleted, response)
+        })
+        .catch(function(response) {
+          if(response.status === 400) {
+            dispatcher.push(events.saveCompleted, {error: "validation-error"})
+          }
+          else {
+            console.error('Unexpected save error:', response.statusText)
+            dispatcher.push(events.saveCompleted, {error: "unexpected-save-error"})
+          }
+        })
+    return state
+  }
+
+  onFormSaveCompleted(state, response) {
     return state
   }
 

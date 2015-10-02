@@ -8,8 +8,12 @@ export default class FormJsonEditor extends Component {
     const onChange = e => {
       controller.formOnChangeListener(avustushaku, e.target.value)
     }
-    return avustushaku.form ?
+    const onClick = e => {
+      controller.saveForm(avustushaku, formDraft)
+    }
+    return formDraft ?
       <div id="form-json-editor"><h3>Lomake</h3>
+        <button disabled={avustushaku.status === "published"} onClick={onClick}>Tallenna lomake</button>
         <textarea onChange={onChange} disabled={avustushaku.status === "published"} value={formDraft}/>
       </div>
       : <span/>
