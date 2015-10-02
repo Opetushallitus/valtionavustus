@@ -19,7 +19,10 @@ export default class HakuEdit extends Component {
 
     return (
       <div id="haku-edit">
-        <h2>Muokkaa avustushakua</h2>
+        <div id="haku-edit-header">
+          <h2>Muokkaa avustushakua</h2>
+          <CreateHaku controller={controller} avustushaku={avustushaku}/>
+        </div>
         <table id="name">
           <thead><tr><th>Haun nimi</th><th>Haun nimi ruotsiksi</th></tr></thead>
           <tbody><tr>
@@ -44,6 +47,19 @@ export default class HakuEdit extends Component {
         <FormJsonEditor controller={controller} avustushaku={avustushaku} />
       </div>
     )
+  }
+}
+
+class CreateHaku extends React.Component {
+  render() {
+    const controller = this.props.controller
+    const avustushaku = this.props.avustushaku
+    function onClick(e) {
+      controller.createHaku(avustushaku)
+      e.target.blur()
+      e.preventDefault()
+    }
+    return <a id="create-haku" onClick={onClick}>Kopioi uuden pohjaksi</a>
   }
 }
 
