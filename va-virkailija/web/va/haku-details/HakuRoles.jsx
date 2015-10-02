@@ -10,21 +10,7 @@ export default class HakuRoles extends Component {
     if(roles) {
       for (var i=0; i < roles.length; i++) {
         const role = roles[i]
-        const htmlId = "role-" + role.id + "-"
-        const onDelete = controller.deleteRole(avustushaku, role)
-        roleRows.push(
-            <tr key={role.id}>
-              <td>
-                <select id={htmlId + "role"} value={role.role}>
-                  <option value="presenting_officer">Esittelijä</option>
-                  <option value="evaluator">Arvioija</option>
-                </select>
-              </td>
-              <td><input type="text" id={htmlId + "name"} value={role.name}/></td>
-              <td><input type="text" id={htmlId + "email"} value={role.email}/></td>
-              <td><button onClick={onDelete} className="remove" alt="Poista" title="Poista" tabIndex="-1" /></td>
-            </tr>
-        )
+        roleRows.push(<RoleRow key={role.id} role={role} avustushaku={avustushaku} controller={controller}/>)
       }
     }
 
@@ -38,5 +24,48 @@ export default class HakuRoles extends Component {
       </table>
     )
 
+  }
+}
+
+class RoleRow extends React.Component {
+
+  constructor(props) {
+    super(props)
+    this.handleChange = this.handleChange.bind(this)
+    this.handleBlur = this.handleBlur.bind(this)
+    this.state = {changes: false}
+  }
+
+  handleChange(event) {
+    this.props.role[event.target.name] = event.target.value
+    this.setState({changes: true})
+    this.props.controller.reRender()
+  }
+
+  handleBlur(event) {
+    if(this.state.changes) {
+      this.setState({changes: false})
+      this.props.controller.saveRole(this.props.avustushaku, this.props.role)
+    }
+  }
+
+  render() {
+    const role = this.props.role
+    const controller = this.props.controller
+    const avustushaku = this.props.avustushaku
+    const onDelete = controller.deleteRole(avustushaku, role)
+    return (
+      <tr>
+        <td>
+          <select onChange={this.handleChange} name="role" onBlur={this.handleBlur} value={role.role}>
+            <option value="presenting_officer">Esittelijä</option>
+            <option value="evaluator">Arvioija</option>
+          </select>
+        </td>
+        <td><input onChange={this.handleChange} name="name" onBlur={this.handleBlur} type="text" value={role.name}/></td>
+        <td><input onChange={this.handleChange} name="email" onBlur={this.handleBlur} type="text" value={role.email}/></td>
+        <td><button onClick={onDelete} className="remove" alt="Poista" title="Poista" tabIndex="-1" /></td>
+      </tr>
+    )
   }
 }

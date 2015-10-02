@@ -20,6 +20,7 @@ const events = {
   roleCreated: 'roleCreated',
   roleDeleted: 'roleDeleted',
   formLoaded: 'formLoaded',
+  reRender: 'reRender',
   addSelectionCriteria: 'addSelectionCriteria',
   deleteSelectionCriteria: 'deleteSelectionCriteria',
   beforeUnload: 'beforeUnload'
@@ -80,6 +81,7 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.roleCreated)], this.onRoleCreated,
       [dispatcher.stream(events.roleDeleted)], this.onRoleDeleted,
       [dispatcher.stream(events.formLoaded)], this.onFormLoaded,
+      [dispatcher.stream(events.reRender)], this.onReRender,
       [dispatcher.stream(events.addSelectionCriteria)], this.onAddSelectionCriteria,
       [dispatcher.stream(events.deleteSelectionCriteria)], this.onDeleteSelectionCriteria,
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload
@@ -271,6 +273,10 @@ export default class HakujenHallintaController {
     return state
   }
 
+  onReRender(state) {
+    return state
+  }
+
   // Public API
   selectHaku(hakemus) {
     return function() {
@@ -314,5 +320,13 @@ export default class HakujenHallintaController {
           dispatcher.push(events.roleDeleted, {haku: avustushaku, role: role})
         })
     }
+  }
+
+  reRender() {
+    dispatcher.push(events.reRender)
+  }
+
+  saveRole(avustushaku, role) {
+    HttpUtil.post(HakujenHallintaController.roleUrl(avustushaku) + "/" + role.id, role)
   }
 }

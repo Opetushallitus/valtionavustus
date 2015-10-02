@@ -129,6 +129,12 @@
                                                  :name ""
                                                  :email ""})))
 
+  (POST* "/:avustushaku-id/role/:role-id" [avustushaku-id role-id]
+         :path-params [avustushaku-id :- Long role-id :- Long]
+         :body    [role (describe Role "Changed role")]
+         :return Role
+         (ok (hakija-api/update-avustushaku-role avustushaku-id role)))
+
   (DELETE* "/:avustushaku-id/role/:role-id" [avustushaku-id role-id]
         :path-params [avustushaku-id :- Long role-id :- Long]
         :return {:id Long}

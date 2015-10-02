@@ -85,6 +85,15 @@
  (exec :hakija-db hakija-queries/delete-avustushaku-role! {:avustushaku avustushaku-id
                                                            :id role-id}))
 
+(defn update-avustushaku-role [avustushaku-id role]
+  (let [role-enum (new HakuRole (:role role))
+        role-to-save (assoc (assoc role :role role-enum) :avustushaku avustushaku-id)]
+    (exec :hakija-db hakija-queries/update-avustushaku-role! role-to-save)
+    (->> role-to-save
+       (exec :hakija-db hakija-queries/get-avustushaku-role)
+         (map role->json)
+         first)))
+
 (defn get-avustushaku-roles [avustushaku-id]
   (roles->json (exec :hakija-db hakija-queries/get-avustushaku-roles {:avustushaku_id avustushaku-id})))
 
