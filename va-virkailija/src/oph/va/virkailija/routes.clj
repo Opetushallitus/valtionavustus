@@ -79,19 +79,24 @@
           (not-found)))
 
   (PUT* "/" []
+        :body [ base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base") ]
         :return AvustusHaku
-        (ok (hakija-api/create-avustushaku
-              {:name {:fi "Uusi haku"
-                      :sv ""}
-               :duration {:start (clj-time/plus (clj-time/now) (clj-time/months 1))
-                          :end (clj-time/plus (clj-time/now) (clj-time/months 2))
-                          :label {:fi "Hakuaika"
-                                  :sv "Ansökningstid"}}
-               :selection-criteria {:items []
-                                    :label {:fi "Valintaperusteet"
-                                           :sv "Urvalsgrunder"}}
-               :self-financing-percentage 25}
-              1)))
+        (let [ base-haku (-> base-haku-id-wrapper
+                             :baseHakuId
+                             (hakija-api/get-avustushaku)
+                             :avustushaku)
+               { name :name selection-criteria :selection-criteria
+                 self-financing-percentage :self-financing-percentage } (:content base-haku)
+               form-id (:form base-haku)]
+          (ok (hakija-api/create-avustushaku
+                        {:name name
+                         :duration {:start (clj-time/plus (clj-time/now) (clj-time/months 1))
+                                    :end (clj-time/plus (clj-time/now) (clj-time/months 2))
+                                    :label {:fi "Hakuaika"
+                                            :sv "Ansökningstid"}}
+                         :selection-criteria selection-criteria
+                         :self-financing-percentage self-financing-percentage}
+                        form-id))))
 
   (POST* "/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]

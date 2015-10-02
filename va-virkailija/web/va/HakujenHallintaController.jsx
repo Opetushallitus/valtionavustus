@@ -88,8 +88,8 @@ export default class HakujenHallintaController {
     return realInitialState
   }
 
-  onHakuCreation(state) {
-    HttpUtil.put("/api/avustushaku", {})
+  onHakuCreation(state, baseHaku) {
+    HttpUtil.put("/api/avustushaku", { baseHakuId: baseHaku.id })
       .then(function(response) {
         console.log("Created new haku. Response=", JSON.stringify(response))
         dispatcher.push(events.hakuCreated, response)
@@ -259,8 +259,8 @@ export default class HakujenHallintaController {
     }
   }
 
-  createHaku() {
-    dispatcher.push(events.createHaku)
+  createHaku(baseHaku) {
+    dispatcher.push(events.createHaku, baseHaku)
   }
 
   onChangeListener(avustushaku, field, newValue) {

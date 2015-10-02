@@ -7,14 +7,16 @@ import HakuPhase from '../avustushaku/HakuPhase.jsx'
 
 export default class HakuListing extends Component {
   render() {
-    function onClick(e) {
-      controller.createHaku()
-      e.target.blur()
-      e.preventDefault()
-    }
     const hakuList = this.props.hakuList
     const selectedHaku = this.props.selectedHaku
     const controller = this.props.controller
+
+    function onClick(e) {
+      controller.createHaku(selectedHaku)
+      e.target.blur()
+      e.preventDefault()
+    }
+
     const hakuElements = _.map(hakuList, haku => {
       return <HakuRow haku={haku} key={haku.id} selectedHaku={selectedHaku} controller={controller}/> })
     return (
