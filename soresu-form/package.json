@@ -35,7 +35,6 @@
     "mocha": "^2.2.5",
     "mocha-jsdom": "^0.5.0",
     "mocha-junit-reporter": "^1.5.0",
-    "mocha-phantomjs": "3.5.6",
     "phantomjs": "1.9.17",
     "react-tools": "^0.13.2",
     "style-loader": "^0.12.3",
@@ -44,5 +43,8 @@
     "watch-spawn": "^1.0.5",
     "webpack": "^1.10.5"
   },
-  "private": true
+  "private": true,
+  "scripts": {
+    "test": "mocha --compilers js:babel/register -R spec ./web/test/*.js"
+  }
 }
