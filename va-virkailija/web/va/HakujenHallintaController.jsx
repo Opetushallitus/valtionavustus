@@ -191,7 +191,7 @@ export default class HakujenHallintaController {
   }
 
   onHakuSave(state) {
-    HttpUtil.post("/api/avustushaku/" + state.selectedHaku.id, _.omit(state.selectedHaku, "roles"))
+    HttpUtil.post("/api/avustushaku/" + state.selectedHaku.id, _.omit(_.omit(state.selectedHaku, "roles"), "formContent"))
         .then(function(response) {
           console.log("Saved haku. Response=", JSON.stringify(response))
           dispatcher.push(events.saveCompleted, response)
@@ -269,7 +269,7 @@ export default class HakujenHallintaController {
   }
 
   onFormLoaded(state, loadFormResult) {
-    loadFormResult.haku.form = loadFormResult.form
+    loadFormResult.haku.formContent = loadFormResult.form
     return state
   }
 
