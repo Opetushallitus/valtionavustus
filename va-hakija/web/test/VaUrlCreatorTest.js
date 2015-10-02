@@ -1,4 +1,7 @@
 import { expect } from 'chai'
+require("babel/register")({
+  only: /(va-hakija\/web|va-common\/web|soresu-form\/web)/
+});
 import VaUrlCreator from '../va/VaUrlCreator'
 
 describe('Choosing initial language', function() {
