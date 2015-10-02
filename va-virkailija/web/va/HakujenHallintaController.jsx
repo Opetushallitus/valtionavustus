@@ -26,6 +26,8 @@ const events = {
   reRender: 'reRender',
   addSelectionCriteria: 'addSelectionCriteria',
   deleteSelectionCriteria: 'deleteSelectionCriteria',
+  addFocusArea: 'addFocusArea',
+  deleteFocusArea: 'deleteFocusArea',
   beforeUnload: 'beforeUnload'
 }
 
@@ -64,7 +66,7 @@ export default class HakujenHallintaController {
     })
     this.autoSave = _.debounce(function(){ dispatcher.push(events.saveHaku) }, 3000)
     this._bind('onInitialState','onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
-               'onHakuSave', 'onAddSelectionCriteria', 'onBeforeUnload', 'onDeleteSelectionCriteria')
+               'onHakuSave', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onBeforeUnload')
 
     Bacon.fromEvent(window, "beforeunload").onValue(function(event) {
       // For some odd reason Safari always displays a dialog here
@@ -91,6 +93,8 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.reRender)], this.onReRender,
       [dispatcher.stream(events.addSelectionCriteria)], this.onAddSelectionCriteria,
       [dispatcher.stream(events.deleteSelectionCriteria)], this.onDeleteSelectionCriteria,
+      [dispatcher.stream(events.addFocusArea)], this.onAddFocusArea,
+      [dispatcher.stream(events.deleteFocusArea)], this.onDeleteFocusArea,
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload
     )
   }
@@ -179,6 +183,21 @@ export default class HakujenHallintaController {
 
   onDeleteSelectionCriteria(state, deletion) {
     deletion.avustushaku.content['selection-criteria'].items.splice(deletion.index, 1)
+    state = this.startAutoSave(state, deletion.avustushaku)
+    return state
+  }
+
+  onAddFocusArea(state, avustushaku) {
+    avustushaku.content['focus-areas'].items.push({fi:"", sv:""})
+    setTimeout(function() {
+      document.getElementById("focus-area-" + (avustushaku.content['focus-area'].items.length -1) + "-fi").focus()
+    }, 300)
+    state = this.startAutoSave(state, avustushaku)
+    return state
+  }
+
+  onDeleteSelectionCriteria(state, deletion) {
+    deletion.avustushaku.content['focus-areas'].items.splice(deletion.index, 1)
     state = this.startAutoSave(state, deletion.avustushaku)
     return state
   }
@@ -353,6 +372,18 @@ export default class HakujenHallintaController {
   deleteSelectionCriteria(avustushaku, index) {
     return function() {
       dispatcher.push(events.deleteSelectionCriteria, {avustushaku: avustushaku, index: index})
+    }
+  }
+
+  addFocusArea(avustushaku) {
+    return function() {
+      dispatcher.push(events.addFocusArea, avustushaku)
+    }
+  }
+
+  deleteFocusArea(avustushaku, index) {
+    return function() {
+      dispatcher.push(events.deleteFocusArea, {avustushaku: avustushaku, index: index})
     }
   }
 
