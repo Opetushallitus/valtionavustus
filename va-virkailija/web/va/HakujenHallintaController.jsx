@@ -20,6 +20,7 @@ const events = {
   roleCreated: 'roleCreated',
   roleDeleted: 'roleDeleted',
   formLoaded: 'formLoaded',
+  updateForm: 'updateForm',
   reRender: 'reRender',
   addSelectionCriteria: 'addSelectionCriteria',
   deleteSelectionCriteria: 'deleteSelectionCriteria',
@@ -50,7 +51,8 @@ export default class HakujenHallintaController {
         saveInProgress: false,
         saveTime: null,
         serverError: ""
-      }
+      },
+      formDrafts: {}
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
@@ -81,6 +83,7 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.roleCreated)], this.onRoleCreated,
       [dispatcher.stream(events.roleDeleted)], this.onRoleDeleted,
       [dispatcher.stream(events.formLoaded)], this.onFormLoaded,
+      [dispatcher.stream(events.updateForm)], this.onFormUpdated,
       [dispatcher.stream(events.reRender)], this.onReRender,
       [dispatcher.stream(events.addSelectionCriteria)], this.onAddSelectionCriteria,
       [dispatcher.stream(events.deleteSelectionCriteria)], this.onDeleteSelectionCriteria,
@@ -269,6 +272,9 @@ export default class HakujenHallintaController {
   }
 
   onFormLoaded(state, loadFormResult) {
+    const haku = loadFormResult.haku
+    haku.form = loadFormResult.form
+    state.formDrafts[haku.id] = JSON.stringify(loadFormResult.form, null, 2)
     loadFormResult.haku.formContent = loadFormResult.form
     return state
   }
@@ -290,6 +296,16 @@ export default class HakujenHallintaController {
 
   onChangeListener(avustushaku, field, newValue) {
     dispatcher.push(events.updateField, {avustushaku: avustushaku, field: field, newValue: newValue})
+  }
+
+  formOnChangeListener(avustushaku, newFormJson) {
+    dispatcher.push(events.updateForm, {avustushaku: avustushaku, newFormJson: newFormJson})
+  }
+
+  onFormUpdated(state, formContentUpdateObject) {
+    const avustushaku = formContentUpdateObject.avustushaku
+    state.formDrafts[avustushaku.id] = formContentUpdateObject.newFormJson
+    return state
   }
 
   addSelectionCriteria(avustushaku) {

@@ -26,6 +26,7 @@ export default class AdminApp extends Component {
                        controller={controller}
           />
           <HakuEdit avustushaku={selectedHaku}
+                    formDraft={state.formDrafts[selectedHaku.id]}
                     environment={environment}
                     controller={controller}
           />
