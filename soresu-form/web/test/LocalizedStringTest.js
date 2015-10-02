@@ -1,9 +1,6 @@
 import jsdom from 'mocha-jsdom'
 import { expect } from 'chai'
 import translations from './translations.json'
-require("babel/register")({
-  only: /(va-hakija\/web|va-common\/web|soresu-form\/web)/
-});
 
 describe('Localized string', function() {
   jsdom()

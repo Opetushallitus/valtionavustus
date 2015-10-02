@@ -1,9 +1,6 @@
 const _ = require('lodash')
 const verboseAssert = require('assert')
 import { assert } from 'chai'
-require("babel/register")({
-  only: /(va-hakija\/web|va-common\/web|va-common\/web\/test|soresu-form\/web)/
-});
 const JsUtil = require('../form/JsUtil.js')
 const FormErrorSummary = require('../form/component/FormErrorSummary.jsx')
 const TestUtil = require('./TestUtil.js')
