@@ -2,7 +2,7 @@ import React from 'react'
 import Translator from '../Translator'
 import BasicFieldComponent from './BasicFieldComponent.jsx'
 
-export default class RadioButton extends BasicFieldComponent {
+export default class CheckboxButton extends BasicFieldComponent {
   render() {
     const props = this.props;
     const radiobuttons = [];
