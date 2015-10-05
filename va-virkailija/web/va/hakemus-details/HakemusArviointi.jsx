@@ -73,7 +73,7 @@ class BudgetGranted extends React.Component {
 
     return <div>
       <h2>Myönnetty avustus</h2>
-      <input type="text" value={budgetGranted} onChange={onChange} />
+      <input type="text" value={budgetGranted} onChange={onChange} maxLength="9" />
     </div>
   }
 }
