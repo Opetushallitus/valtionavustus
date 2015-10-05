@@ -8,7 +8,7 @@ export default class HakemusListing extends Component {
   render() {
     const hakemusList = this.props.hakemusList
     const avustushaku = this.props.avustushaku
-    const ophShareSum = HakemusListing.formatNumber(this.props.ophShareSum)
+    const ophShareSum = HakemusListing.formatNumber(_.reduce(hakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
     const selectedHakemus = this.props.selectedHakemus
     const controller = this.props.controller
     const hakemusElements = _.map(hakemusList, hakemus => {
