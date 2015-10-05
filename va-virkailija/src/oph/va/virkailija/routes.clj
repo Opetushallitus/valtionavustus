@@ -91,7 +91,8 @@
                              (hakija-api/get-avustushaku)
                              :avustushaku)
                { name :name selection-criteria :selection-criteria
-                 self-financing-percentage :self-financing-percentage } (:content base-haku)
+                 self-financing-percentage :self-financing-percentage
+                 focus-areas :focus-areas } (:content base-haku)
                form-id (:form base-haku)]
           (ok (hakija-api/create-avustushaku
                         {:name (add-copy-suffixes name)
@@ -100,7 +101,8 @@
                                     :label {:fi "Hakuaika"
                                             :sv "Ansökningstid"}}
                          :selection-criteria selection-criteria
-                         :self-financing-percentage self-financing-percentage}
+                         :self-financing-percentage self-financing-percentage
+                         :focus-areas focus-areas}
                         form-id))))
 
   (POST* "/:avustushaku-id" []
