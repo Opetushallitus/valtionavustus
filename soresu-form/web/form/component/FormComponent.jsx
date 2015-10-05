@@ -11,6 +11,7 @@ import IbanTextField from './IbanTextField.jsx'
 import BicTextField from './BicTextField.jsx'
 import Dropdown from './Dropdown.jsx'
 import RadioButton from './RadioButton.jsx'
+import CheckboxButton from './CheckboxButton.jsx'
 import AttachmentField from './AttachmentField.jsx'
 import { TextFieldPropertyMapper,
          OptionFieldPropertyMapper,
@@ -30,6 +31,7 @@ export default class FormComponent extends React.Component {
       "bic": BicTextField,
       "dropdown": Dropdown,
       "radioButton": RadioButton,
+      "checkboxButton": CheckboxButton,
       "namedAttachment": AttachmentField
     }
     this.fieldPropertyMapping = {
@@ -42,6 +44,7 @@ export default class FormComponent extends React.Component {
       "bic": TextFieldPropertyMapper,
       "dropdown": OptionFieldPropertyMapper,
       "radioButton": OptionFieldPropertyMapper,
+      "checkboxButton": OptionFieldPropertyMapper,
       "namedAttachment": AttachmentFieldPropertyMapper
     }
     this.componentFactory = new ComponentFactory(fieldTypeMapping)

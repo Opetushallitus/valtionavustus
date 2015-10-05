@@ -44,6 +44,7 @@ export default class HakuEdit extends Component {
         </div>
         <SetStatus currentStatus={avustushaku.status} onChange={onChange} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
+        <FocusArea controller={controller} avustushaku={avustushaku} onChange={onChange} />
         <div><h3>Hakijan omarahoitusvaatimus</h3><input className="percentage" required="true" maxLength="2" min="0" max="99" id="haku-self-financing-percentage" onChange={onChange} disabled={avustushaku.status === "published"} type="number" value={avustushaku.content["self-financing-percentage"]} /><span>%</span></div>
         <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} />
       </div>
@@ -117,6 +118,36 @@ class SelectionCriteria extends React.Component {
         {criteriaItems}
         </tbody>
         <tfoot><tr><td><button disabled={avustushaku.status === "published"} onClick={controller.addSelectionCriteria(avustushaku)}>Lisää uusi valintaperuste</button></td></tr></tfoot>
+      </table>
+    )
+  }
+}
+
+class FocusArea extends React.Component {
+  render() {
+    const avustushaku = this.props.avustushaku
+    const focusAreas = avustushaku.content['focus-areas']
+    const controller = this.props.controller
+    const onChange = this.props.onChange
+    const focusAreaItems = []
+    for (var index=0; index < focusAreas.items.length; index++) {
+      const htmlId = "focus-area-" + index + "-"
+      focusAreaItems.push(
+        <tr key={index}>
+          <td><textarea onChange={onChange} rows="2" id={htmlId + "fi"} value={focusAreas.items[index].fi}/></td>
+          <td><textarea onChange={onChange} rows="2" id={htmlId + "sv"} value={focusAreas.items[index].sv}/></td>
+          <td><button className="remove" onClick={controller.deleteFocusArea(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={avustushaku.status === "published"} /></td>
+        </tr>
+      )
+    }
+
+    return (
+      <table id="focus-areas">
+        <thead><tr><th>{focusAreas.label.fi}</th><th>{focusAreas.label.sv}</th></tr></thead>
+        <tbody>
+        {focusAreaItems}
+        </tbody>
+        <tfoot><tr><td><button disabled={avustushaku.status === "published"} onClick={controller.addFocusArea(avustushaku)}>Lisää uusi painopistealue</button></td></tr></tfoot>
       </table>
     )
   }
