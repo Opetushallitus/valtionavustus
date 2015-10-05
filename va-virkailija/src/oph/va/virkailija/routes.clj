@@ -70,6 +70,10 @@
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
+(defn- add-copy-suffixes [nameField]
+  { :fi (str (:fi nameField) " (kopio)" )
+    :sv (str (:sv nameField) " (kopia)")})
+
 (defroutes* avustushaku-routes
   "Hakemus listing and filtering"
 
@@ -90,7 +94,7 @@
                  self-financing-percentage :self-financing-percentage } (:content base-haku)
                form-id (:form base-haku)]
           (ok (hakija-api/create-avustushaku
-                        {:name name
+                        {:name (add-copy-suffixes name)
                          :duration {:start (clj-time/plus (clj-time/now) (clj-time/months 1))
                                     :end (clj-time/plus (clj-time/now) (clj-time/months 2))
                                     :label {:fi "Hakuaika"
