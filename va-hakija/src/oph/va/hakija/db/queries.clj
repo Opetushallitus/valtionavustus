@@ -11,6 +11,9 @@
 (defquery close-existing-hakemus! "sql/hakemus/close-existing.sql")
 
 (defquery get-avustushaku "sql/avustushaku/get.sql")
+(defquery list-avustushaut "sql/avustushaku/list.sql")
+(defquery archive-avustushaku! "sql/avustushaku/archive.sql")
+(defquery update-avustushaku!  "sql/avustushaku/update.sql")
 
 (defquery attachment-exists? "sql/attachment/exists.sql")
 (defquery list-attachments "sql/attachment/list.sql")

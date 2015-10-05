@@ -14,15 +14,16 @@
                        :start s/Inst
                        :end s/Inst})
 
-(s/defschema SelectionCriteria {:label LocalizedString
-                                :items [LocalizedString]})
+(s/defschema LocalizedStringList {:label LocalizedString
+                                  :items [LocalizedString]})
 
 (defn- is-percentage? [number]
   (and (number? number) (>= number 0) (<= number 100)))
 
 (s/defschema AvustusHakuContent {:name LocalizedString
                                  :duration Duration
-                                 :selection-criteria SelectionCriteria
+                                 :focus-areas LocalizedStringList
+                                 :selection-criteria LocalizedStringList
                                  :self-financing-percentage (s/conditional is-percentage? s/Num)})
 
 (s/defschema Environment {:name s/Str

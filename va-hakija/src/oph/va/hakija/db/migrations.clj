@@ -1,6 +1,7 @@
 (ns oph.va.hakija.db.migrations
   (:require [oph.common.db.migrations :as migrations]
             [oph.form.db :as db]
+            [oph.va.hakija.db :as va-db]
             [oph.form.formutil :as formutil])
   (:gen-class))
 
@@ -24,3 +25,14 @@
                                                           new-organization-email-field
                                                           node)))]
     (db/update-form! changed-form)))
+
+(migrations/defmigration migrate-add-painopistealueet-for-avustushaut "1.15"
+  "Add empty painopistealueet to all avustushaut"
+ (let [painopiste-alueet {:items []
+                          :label {
+                            :fi "Painopistealueet"
+                            :sv "Fokusområden"}}]
+    (doseq [avustushaku (va-db/list-avustushaut)]
+      (let [new-content (assoc (:content avustushaku) :focus-areas painopiste-alueet)
+            changed-avustushaku (assoc avustushaku :content new-content)]
+        (va-db/update-avustushaku changed-avustushaku)))))

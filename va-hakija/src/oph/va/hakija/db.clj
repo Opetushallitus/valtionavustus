@@ -24,6 +24,13 @@
   (->> (exec :db queries/get-avustushaku {:id id})
        first))
 
+(defn list-avustushaut []
+  (exec :db queries/list-avustushaut {}))
+
+(defn update-avustushaku [avustushaku]
+  (exec-all :db  [queries/archive-avustushaku! avustushaku
+                  queries/update-avustushaku! avustushaku]))
+
 (defn- calculate-budget-summary [avustushaku-id answers]
   (let [avustushaku (get-avustushaku avustushaku-id)
         form-id (:form avustushaku)

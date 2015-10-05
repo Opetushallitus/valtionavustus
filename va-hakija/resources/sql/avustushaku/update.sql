@@ -1,0 +1,1 @@
+UPDATE avustushaut SET content = :content WHERE id = :id
