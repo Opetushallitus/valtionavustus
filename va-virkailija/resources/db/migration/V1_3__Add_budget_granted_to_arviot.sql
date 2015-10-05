@@ -1,0 +1,1 @@
+alter table arviot add budget_granted integer not null default 0

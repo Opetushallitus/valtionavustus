@@ -29,12 +29,14 @@
     (not-found)))
 
 (defn- arvio-json [arvio]
-  {:status (:status arvio)})
+  {:status (:status arvio)
+   :budget-granted (:budget_granted arvio)})
 
 (defn- add-arvio [arviot hakemus]
   (if-let [arvio (get arviot (:id hakemus))]
     (assoc hakemus :arvio arvio)
-    (assoc hakemus :arvio {:status "unhandled"})))
+    (assoc hakemus :arvio {:status "unhandled"
+                           :budget-granted 0})))
 
 (defn- get-arviot-map [hakemukset]
   (->> hakemukset

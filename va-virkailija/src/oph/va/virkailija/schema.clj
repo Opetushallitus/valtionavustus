@@ -9,7 +9,8 @@
 
 (s/defschema Arvio
   "Arvio contains evaluation of hakemus"
-  {:status ArvioStatus})
+  {:status ArvioStatus
+   :budget-granted s/Int})
 
 (s/defschema NewComment
   "New comment to be added"
