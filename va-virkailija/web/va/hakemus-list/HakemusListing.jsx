@@ -9,11 +9,11 @@ export default class HakemusListing extends Component {
     const hakemusList = this.props.hakemusList
     const avustushaku = this.props.avustushaku
     const ophShareSum = this.props.ophShareSum
-    const budgetGrantedSum = this.props.budgetGrantedSum
     const selectedHakemus = this.props.selectedHakemus
     const controller = this.props.controller
     const hakemusElements = _.map(hakemusList, hakemus => {
       return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} controller={controller}/> })
+    const budgetGrantedSum = _.reduce(hakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0)
     return (
       <table key="hakemusListing" className="hakemus-list overview-list">
         <thead><tr>
