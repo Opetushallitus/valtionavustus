@@ -16,9 +16,9 @@ export default class FormJsonEditor extends Component {
     const disableSave = !formHasBeenEdited || avustushaku.status === "published"
 
     return formDraft ?
-      <div id="form-json-editor"><h3>Lomakkeen sisältö</h3>
+      <div id="form-json-editor"><h3>Hakulomakkeen sisältö</h3>
         <textarea onChange={onChange} disabled={avustushaku.status === "published"} value={formDraft}/>
-        <button disabled={disableSave} onClick={onClick}>Tallenna muutokset</button>
+        <button disabled={disableSave} onClick={onClick}>Tallenna hakulomakkeen muutokset</button>
       </div>
       : <span/>
   }

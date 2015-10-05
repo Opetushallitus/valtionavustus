@@ -30,6 +30,7 @@ export default class App extends Component {
         <section id="container">
           <div id="list-container">
             <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
+                            budgetGrantedSum={hakuData["budget-granted-sum"]}
                             hakemusList={hakemusList}
                             selectedHakemus={selectedHakemus}
                             avustushaku={avustushaku}

@@ -29,12 +29,14 @@
     (not-found)))
 
 (defn- arvio-json [arvio]
-  {:status (:status arvio)})
+  {:status (:status arvio)
+   :budget-granted (:budget_granted arvio)})
 
 (defn- add-arvio [arviot hakemus]
   (if-let [arvio (get arviot (:id hakemus))]
     (assoc hakemus :arvio arvio)
-    (assoc hakemus :arvio {:status "unhandled"})))
+    (assoc hakemus :arvio {:status "unhandled"
+                           :budget-granted 0})))
 
 (defn- get-arviot-map [hakemukset]
   (->> hakemukset
@@ -45,8 +47,11 @@
 
 (defn- add-arviot [haku-data]
   (let [hakemukset (:hakemukset haku-data)
-        arviot (get-arviot-map hakemukset)]
-    (assoc haku-data :hakemukset (map (partial add-arvio arviot) hakemukset))))
+        arviot (get-arviot-map hakemukset)
+        budget-granted-sum (reduce + (map :budget-granted (vals arviot)))]
+    (-> haku-data
+        (assoc :hakemukset (map (partial add-arvio arviot) hakemukset))
+        (assoc :budget-granted-sum budget-granted-sum))))
 
 (defn- on-hakemus-preview [avustushaku-id hakemus-user-key]
   (let [hakija-app-url (-> config :server :url :fi)
@@ -84,16 +89,14 @@
           (not-found)))
 
   (PUT* "/" []
-        :body [ base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base") ]
+        :body [base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base") ]
         :return AvustusHaku
-        (let [ base-haku (-> base-haku-id-wrapper
-                             :baseHakuId
-                             (hakija-api/get-avustushaku)
-                             :avustushaku)
-               { name :name selection-criteria :selection-criteria
-                 self-financing-percentage :self-financing-percentage
-                 focus-areas :focus-areas } (:content base-haku)
-               form-id (:form base-haku)]
+        (let [base-haku (-> base-haku-id-wrapper
+                            :baseHakuId
+                            (hakija-api/get-avustushaku)
+                            :avustushaku)
+              {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
+              form-id (:form base-haku)]
           (ok (hakija-api/create-avustushaku
                         {:name (add-copy-suffixes name)
                          :duration {:start (clj-time/plus (clj-time/now) (clj-time/months 1))

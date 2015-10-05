@@ -9,7 +9,8 @@
 
 (s/defschema Arvio
   "Arvio contains evaluation of hakemus"
-  {:status ArvioStatus})
+  {:status ArvioStatus
+   :budget-granted s/Int})
 
 (s/defschema NewComment
   "New comment to be added"
@@ -55,4 +56,5 @@
    :hakemukset [Hakemus]
    :attachments s/Any
    :budget-total-sum s/Int
-   :budget-oph-share-sum s/Int})
+   :budget-oph-share-sum s/Int
+   :budget-granted-sum s/Int})

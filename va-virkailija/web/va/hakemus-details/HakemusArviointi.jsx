@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 
+import FormUtil from 'soresu-form/web/form/FormUtil'
+
 import HakemusComments from './HakemusComments.jsx'
 import HakemusStatus from "./HakemusStatus.jsx"
 
@@ -13,6 +15,7 @@ export default class HakemusArviointi extends Component {
      <div id="hakemus-arviointi">
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments}/>
        <SetStatus controller={controller} hakemus={hakemus} />
+       <BudgetGranted controller={controller} hakemus={hakemus} />
      </div>
     )
   }
@@ -52,5 +55,25 @@ class SetStatus extends React.Component {
         {statuses}
       </div>
     )
+  }
+}
+
+class BudgetGranted extends React.Component {
+  render() {
+    const hakemus = this.props.hakemus
+    const arvio = hakemus.arvio
+    const budgetGranted = _.get(arvio, "budget-granted", 0)
+    const controller = this.props.controller
+    const onChange = e => {
+      const inputValue = e.target.value
+      const inputValueWithNumericInput = inputValue ? inputValue.replace(/\D/g,'') : "0"
+      const number = FormUtil.isNumeric(inputValueWithNumericInput) ? parseInt(inputValueWithNumericInput) : 0
+      controller.setHakemusArvioBudgetGranted(hakemus, number)
+    }
+
+    return <div>
+      <h2>Myönnetty avustus</h2>
+      <input type="text" value={budgetGranted} onChange={onChange} maxLength="9" /> €
+    </div>
   }
 }
