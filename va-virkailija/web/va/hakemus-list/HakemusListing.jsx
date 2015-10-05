@@ -8,12 +8,13 @@ export default class HakemusListing extends Component {
   render() {
     const hakemusList = this.props.hakemusList
     const avustushaku = this.props.avustushaku
-    const ophShareSum = this.props.ophShareSum
+    const ophShareSum = HakemusListing.formatNumber(this.props.ophShareSum)
     const selectedHakemus = this.props.selectedHakemus
     const controller = this.props.controller
     const hakemusElements = _.map(hakemusList, hakemus => {
       return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} controller={controller}/> })
-    const budgetGrantedSum = _.reduce(hakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0)
+    const budgetGrantedSum = HakemusListing.formatNumber(_.reduce(hakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
+
     return (
       <table key="hakemusListing" className="hakemus-list overview-list">
         <thead><tr>
@@ -36,6 +37,10 @@ export default class HakemusListing extends Component {
       </table>
     )
   }
+
+  static formatNumber (num) {
+      return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ")
+  }
 }
 
 class HakemusRow extends Component {
@@ -50,8 +55,8 @@ class HakemusRow extends Component {
       <td className="project-name-column">{hakemus["project-name"]}</td>
       <td className="score-column">***</td>
       <td className="status-column"><HakemusStatus status={hakemus.arvio.status}/></td>
-      <td className="applied-sum-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
-      <td className="granted-sum-column"><span className="money">{hakemus.arvio["budget-granted"]}</span></td>
+      <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>
+      <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>
     </tr>
   }
 }
