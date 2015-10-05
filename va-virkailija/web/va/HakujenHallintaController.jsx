@@ -137,6 +137,7 @@ export default class HakujenHallintaController {
     const status = /set-status-(\w+)/.exec(update.field.id)
     const financingProcentage = /haku-self-financing-percentage/.exec(update.field.id)
     const selectionCriteria = /selection-criteria-(\d+)-(\w+)/.exec(update.field.id)
+    const focusArea = /focus-area-(\d+)-(\w+)/.exec(update.field.id)
     var doSave = true
     if(hakuname) {
       const lang = hakuname[1]
@@ -163,8 +164,13 @@ export default class HakujenHallintaController {
       const lang = selectionCriteria[2]
       update.avustushaku.content['selection-criteria'].items[index][lang] = update.newValue
     }
+    else if (focusArea) {
+      const index = focusArea[1]
+      const lang = focusArea[2]
+      update.avustushaku.content['focus-areas'].items[index][lang] = update.newValue
+    }
     else {
-      console.error("Unsuported update to field ", update.field.id, ":", update)
+      console.error("Unsupported update to field ", update.field.id, ":", update)
       doSave = false
     }
     if(doSave) {
