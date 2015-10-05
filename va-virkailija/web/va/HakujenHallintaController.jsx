@@ -66,7 +66,8 @@ export default class HakujenHallintaController {
     })
     this.autoSave = _.debounce(function(){ dispatcher.push(events.saveHaku) }, 3000)
     this._bind('onInitialState','onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
-               'onHakuSave', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onBeforeUnload')
+               'onHakuSave', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
+               'onBeforeUnload')
 
     Bacon.fromEvent(window, "beforeunload").onValue(function(event) {
       // For some odd reason Safari always displays a dialog here
@@ -196,7 +197,7 @@ export default class HakujenHallintaController {
     return state
   }
 
-  onDeleteSelectionCriteria(state, deletion) {
+  onDeleteFocusArea(state, deletion) {
     deletion.avustushaku.content['focus-areas'].items.splice(deletion.index, 1)
     state = this.startAutoSave(state, deletion.avustushaku)
     return state
