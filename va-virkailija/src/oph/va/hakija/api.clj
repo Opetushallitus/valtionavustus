@@ -61,7 +61,7 @@
          first)))
 
 (defn list-avustushaut []
-  (map avustushaku-response-content(exec :hakija-db hakija-queries/list-avustushaut {})))
+  (map avustushaku-response-content (exec :hakija-db hakija-queries/list-avustushaut {})))
 
 (defn- role->json [role]
   {:id (:id role)
