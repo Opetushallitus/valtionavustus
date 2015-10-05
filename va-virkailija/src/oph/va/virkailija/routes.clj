@@ -86,16 +86,14 @@
           (not-found)))
 
   (PUT* "/" []
-        :body [ base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base") ]
+        :body [base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base") ]
         :return AvustusHaku
-        (let [ base-haku (-> base-haku-id-wrapper
-                             :baseHakuId
-                             (hakija-api/get-avustushaku)
-                             :avustushaku)
-               { name :name selection-criteria :selection-criteria
-                 self-financing-percentage :self-financing-percentage
-                 focus-areas :focus-areas } (:content base-haku)
-               form-id (:form base-haku)]
+        (let [base-haku (-> base-haku-id-wrapper
+                            :baseHakuId
+                            (hakija-api/get-avustushaku)
+                            :avustushaku)
+              {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
+              form-id (:form base-haku)]
           (ok (hakija-api/create-avustushaku
                         {:name (add-copy-suffixes name)
                          :duration {:start (clj-time/plus (clj-time/now) (clj-time/months 1))
