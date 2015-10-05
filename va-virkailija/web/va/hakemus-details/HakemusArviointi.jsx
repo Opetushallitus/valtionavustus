@@ -13,6 +13,7 @@ export default class HakemusArviointi extends Component {
      <div id="hakemus-arviointi">
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments}/>
        <SetStatus controller={controller} hakemus={hakemus} />
+       <BudgetGranted controller={controller} hakemus={hakemus} />
      </div>
     )
   }
@@ -52,5 +53,20 @@ class SetStatus extends React.Component {
         {statuses}
       </div>
     )
+  }
+}
+
+class BudgetGranted extends React.Component {
+  render() {
+    const hakemus = this.props.hakemus
+    const arvio = hakemus.arvio
+    const budgetGranted = _.get(arvio, "budget-granted", 0)
+    const controller = this.props.controller
+    const onChange = e => console.log('got', e)
+
+    return <div>
+      <h2>Myönnetty avustus</h2>
+      <input type="text" value={budgetGranted} onChange={onChange} />
+    </div>
   }
 }
