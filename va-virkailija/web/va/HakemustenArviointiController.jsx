@@ -156,6 +156,11 @@ export default class HakemustenArviointiController {
     }
   }
 
+  setHakemusArvioBudgetGranted(hakemus, newBudgetGranted) {
+    hakemus.arvio["budget-granted"] = newBudgetGranted
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }
+
   loadComments() {
     dispatcher.push(events.loadComments)
   }

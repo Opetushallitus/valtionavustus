@@ -62,7 +62,11 @@ class BudgetGranted extends React.Component {
     const arvio = hakemus.arvio
     const budgetGranted = _.get(arvio, "budget-granted", 0)
     const controller = this.props.controller
-    const onChange = e => console.log('got', e)
+    const onChange = e => {
+      const inputValue = e.target.value
+      const number = parseInt(inputValue)
+      controller.setHakemusArvioBudgetGranted(hakemus, number)
+    }
 
     return <div>
       <h2>Myönnetty avustus</h2>

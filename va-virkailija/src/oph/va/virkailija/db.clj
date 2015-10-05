@@ -15,7 +15,8 @@
 
 (defn update-or-create-hakemus-arvio [hakemus-id arvio]
   (let [status (keyword (:status arvio))
-        updated (exec :db queries/update-arvio<! {:hakemus_id hakemus-id :status status})]
+        budget-granted (:budget-granted arvio)
+        updated (exec :db queries/update-arvio<! {:hakemus_id hakemus-id :status status :budget_granted budget-granted})]
     (if updated
       updated
       (exec :db queries/create-arvio<! {:hakemus_id hakemus-id :status status}))))
