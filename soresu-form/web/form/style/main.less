@@ -379,24 +379,24 @@ section.soresu-theme {
   .soresu-focus-show-error();
 }
 
-.soresu-radio {
-  input[type=radio] {
+.soresu-radio, .soresu-checkbox {
+  input[type=radio], input[type=checkbox] {
     display: none;
   }
 
-  input[type=radio] + label {
+  input[type=radio] + label, input[type=checkbox] + label  {
     display: inline-block;
     color: #000;
-    margin: 4px 3px;
+    margin: 4px 4px;
     padding: 12px 30px;
     background-color: #fff;
     border: solid 1px @dark-gray;
     cursor: pointer;
   }
 
-  input[type=radio]:checked + label {
+  input[type=radio]:checked + label, input[type=checkbox]:checked + label {
     background: #fff url('../img/checkmark.png') no-repeat 10px 19px;
-    margin: 0;
+    margin: 1px 1px;
     border: solid 4px @light-green;
   }
 
