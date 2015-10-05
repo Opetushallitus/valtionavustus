@@ -47,8 +47,11 @@
 
 (defn- add-arviot [haku-data]
   (let [hakemukset (:hakemukset haku-data)
-        arviot (get-arviot-map hakemukset)]
-    (assoc haku-data :hakemukset (map (partial add-arvio arviot) hakemukset))))
+        arviot (get-arviot-map hakemukset)
+        budget-granted-sum (reduce + (map :budget-granted (vals arviot)))]
+    (-> haku-data
+        (assoc :hakemukset (map (partial add-arvio arviot) hakemukset))
+        (assoc :budget-granted-sum budget-granted-sum))))
 
 (defn- on-hakemus-preview [avustushaku-id hakemus-user-key]
   (let [hakija-app-url (-> config :server :url :fi)

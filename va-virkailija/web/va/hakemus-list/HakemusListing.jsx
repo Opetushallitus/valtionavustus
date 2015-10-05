@@ -9,6 +9,7 @@ export default class HakemusListing extends Component {
     const hakemusList = this.props.hakemusList
     const avustushaku = this.props.avustushaku
     const ophShareSum = this.props.ophShareSum
+    const budgetGrantedSum = this.props.budgetGrantedSum
     const selectedHakemus = this.props.selectedHakemus
     const controller = this.props.controller
     const hakemusElements = _.map(hakemusList, hakemus => {
@@ -30,7 +31,7 @@ export default class HakemusListing extends Component {
           <td className="avustushaku-selector-column"><AvustushakuSelector avustushaku={avustushaku} controller={controller} /></td>
           <td className="total-applications-column">Yhteensä näkyvissä {hakemusList.length} kpl hakemuksia</td>
           <td className="applied-sum-column"><span className="money sum">{ophShareSum}</span></td>
-          <td className="granted-sum-column"><span className="money sum">TODO</span></td>
+          <td className="granted-sum-column"><span className="money sum">{budgetGrantedSum}</span></td>
         </tr></tfoot>
       </table>
     )

@@ -56,4 +56,5 @@
    :hakemukset [Hakemus]
    :attachments s/Any
    :budget-total-sum s/Int
-   :budget-oph-share-sum s/Int})
+   :budget-oph-share-sum s/Int
+   :budget-granted-sum s/Int})
