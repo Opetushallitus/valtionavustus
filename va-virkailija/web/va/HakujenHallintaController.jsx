@@ -321,8 +321,8 @@ export default class HakujenHallintaController {
 
     HttpUtil.post("/api/avustushaku/" + avustushaku.id + "/form", editedForm)
         .then(function(response) {
-          console.log("Saved form. Response=", JSON.stringify(response))
-          // No need to do anything more? dispatcher.push(events.formSaveCompleted, response)
+          console.log("Saved form. Response=", response)
+          dispatcher.push(events.formSaveCompleted, { avustusHakuId: avustushaku.id, fromFromServer: response })
         })
         .catch(function(response) {
           if(response.status === 400) {
@@ -336,7 +336,11 @@ export default class HakujenHallintaController {
     return state
   }
 
-  onFormSaveCompleted(state, response) {
+  onFormSaveCompleted(state, hakuIdAndForm) {
+    const avustusHakuId = hakuIdAndForm.avustusHakuId
+    const formFromServer = hakuIdAndForm.fromFromServer
+    const haku = _.find(state.hakuList, haku => haku.id === avustusHakuId)
+    haku.formContent = formFromServer
     return state
   }
 

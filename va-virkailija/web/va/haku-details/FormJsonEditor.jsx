@@ -11,9 +11,13 @@ export default class FormJsonEditor extends Component {
     const onClick = e => {
       controller.saveForm(avustushaku, formDraft)
     }
+
+    const formHasBeenEdited = (formDraft && avustushaku.formContent) && !_.isEqual(JSON.parse(formDraft), avustushaku.formContent)
+    const disableSave = !formHasBeenEdited || avustushaku.status === "published"
+
     return formDraft ?
       <div id="form-json-editor"><h3>Lomake</h3>
-        <button disabled={avustushaku.status === "published"} onClick={onClick}>Tallenna lomake</button>
+        <button disabled={disableSave} onClick={onClick}>Tallenna muokattu lomake</button>
         <textarea onChange={onChange} disabled={avustushaku.status === "published"} value={formDraft}/>
       </div>
       : <span/>
