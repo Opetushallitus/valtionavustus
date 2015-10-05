@@ -50,7 +50,7 @@ class HakemusRow extends Component {
       <td className="score-column">***</td>
       <td className="status-column"><HakemusStatus status={hakemus.arvio.status}/></td>
       <td className="applied-sum-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
-      <td className="granted-sum-column"><span className="money">0</span></td>
+      <td className="granted-sum-column"><span className="money">{hakemus.arvio["budget-granted"]}</span></td>
     </tr>
   }
 }
