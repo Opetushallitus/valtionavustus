@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 
+import FormUtil from 'soresu-form/web/form/FormUtil'
+
 import HakemusComments from './HakemusComments.jsx'
 import HakemusStatus from "./HakemusStatus.jsx"
 
@@ -64,7 +66,8 @@ class BudgetGranted extends React.Component {
     const controller = this.props.controller
     const onChange = e => {
       const inputValue = e.target.value
-      const number = parseInt(inputValue)
+      const inputValueWithNumericInput = inputValue ? inputValue.replace(/\D/g,'') : "0"
+      const number = FormUtil.isNumeric(inputValueWithNumericInput) ? parseInt(inputValueWithNumericInput) : 0
       controller.setHakemusArvioBudgetGranted(hakemus, number)
     }
 
