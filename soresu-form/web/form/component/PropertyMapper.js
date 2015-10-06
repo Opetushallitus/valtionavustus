@@ -40,7 +40,7 @@ class FieldPropertyMapper extends DefaultPropertyMapper {
   }
 }
 
-class FieldOnChangePropertyMapper extends DefaultPropertyMapper {
+export class FieldOnChangePropertyMapper extends DefaultPropertyMapper {
   static map(props) {
     const commonProps = FieldPropertyMapper.map(props)
     const field = props.field

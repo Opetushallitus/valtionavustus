@@ -7,7 +7,7 @@
                      :vaBudgetItemElement
                      :vaBudgetSummaryElement
                      :vaProjectDescription]
-                    [])
+                    [:vaFocusAreas])
 
 (s/defschema SystemTime {:system-time s/Inst})
 
