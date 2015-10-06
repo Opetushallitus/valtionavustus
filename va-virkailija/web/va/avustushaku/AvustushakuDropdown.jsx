@@ -28,6 +28,7 @@ export default class AvustushakuDropdown extends AvustushakuSelector {
                                       caseSensitive={false}
                                       minLength={3}
                                       filter='contains'
+                                      duration={0}
                                       onChange={onChange} />
   }
 }
