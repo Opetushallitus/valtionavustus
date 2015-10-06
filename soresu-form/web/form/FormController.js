@@ -115,7 +115,7 @@ export default class FormController {
     return this.customPreviewComponentFactory.createComponent(componentProps)
   }
 
-  getCustomWrapperComponentProperties(state) {
-    return this.customComponentFactory ? this.customComponentFactory.getCustomWrapperComponentProperties(state) : {}
+  getCustomComponentProperties(state) {
+    return this.customComponentFactory ? this.customComponentFactory.getCustomComponentProperties(state) : {}
   }
 }

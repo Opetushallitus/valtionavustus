@@ -16,7 +16,7 @@ export default class VaComponentFactory extends ComponentFactory {
     super(fieldTypeMapping)
   }
 
-  getCustomWrapperComponentProperties(state) {
+  getCustomComponentProperties(state) {
     return { "avustushaku": state.avustushaku }
   }
 }

@@ -75,7 +75,7 @@ class FakeFormController {
     return fieldId
   }
 
-  getCustomWrapperComponentProperties() {
+  getCustomComponentProperties() {
     return this.avustushaku
   }
 
@@ -87,7 +87,7 @@ class FakeFormController {
     return this.customPreviewComponentFactory.createComponent(componentProps)
   }
 
-  getCustomWrapperComponentProperties(state) {
+  getCustomComponentProperties(state) {
     return { "avustushaku": this.avustushaku }
   }
 

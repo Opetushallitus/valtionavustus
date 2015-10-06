@@ -61,7 +61,9 @@ export default class Form extends React.Component {
       const existingInputValue = InputValueStorage.readValue(fields, values, field.id)
       const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
       const fieldErrors = _.get(validationErrors, field.id, [])
+      const customProperties = controller.getCustomComponentProperties(state);
       return <FormComponent {...extendedProperties}
+                            customProps={customProperties}
                             validationErrors={fieldErrors}
                             value={value}
                             onChange={controller.componentOnChangeListener}
@@ -96,7 +98,7 @@ export default class Form extends React.Component {
         const childRenderingParameters = resolveChildRenderingParameters(i)
         children.push(renderField(field.children[i], childRenderingParameters))
       }
-      const customProperties = controller.getCustomWrapperComponentProperties(state);
+      const customProperties = controller.getCustomComponentProperties(state);
       return <WrapperComponent {...fieldProperties}
                                children={children}
                                customProps={customProperties}

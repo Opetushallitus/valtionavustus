@@ -74,7 +74,7 @@ export default class FormPreview extends React.Component {
         const childRenderingParameters = resolveChildRenderingParameters(i)
         children.push(renderField(field.children[i], childRenderingParameters))
       }
-      const customProperties = controller.getCustomWrapperComponentProperties(state)
+      const customProperties = controller.getCustomComponentProperties(state)
       return <WrapperPreviewComponent {...fieldProperties}
                                       children={children}
                                       translations={translations}
