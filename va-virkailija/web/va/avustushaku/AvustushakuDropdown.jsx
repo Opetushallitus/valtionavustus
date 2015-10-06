@@ -18,7 +18,7 @@ export default class AvustushakuDropdown extends AvustushakuSelector {
     return <ReactWidgets.DropdownList valueField="id"
                                       textField={avustushakuToText}
                                       data={avustushakuList}
-                                      defaultValue={0}
+                                      defaultValue={avustushaku}
                                       caseSensitive={false}
                                       minLength={3}
                                       filter='contains' />
