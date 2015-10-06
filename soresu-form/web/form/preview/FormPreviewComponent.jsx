@@ -4,9 +4,11 @@ import BasicValue from './BasicValue.jsx'
 import TextAreaValue from './TextAreaValue.jsx'
 import MoneyValue from './MoneyValue.jsx'
 import OptionValue from './OptionValue.jsx'
+import MultipleOptionValue from './MultipleOptionValue.jsx'
 import AttachmentPreview from './AttachmentPreview.jsx'
 import { TextFieldPropertyMapper,
          OptionFieldPropertyMapper,
+         MultipleOptionFieldOnChangePropertyMapper,
          ButtonPropertyMapper,
   AttachmentDisplayPropertyMapper} from '../component/PropertyMapper.js'
 
@@ -23,6 +25,7 @@ export default class FormPreviewComponent extends React.Component {
       "bic": BasicValue,
       "dropdown": OptionValue,
       "radioButton": OptionValue,
+      "checkboxButton": MultipleOptionValue,
       "namedAttachment": AttachmentPreview
     }
     this.componentFactory = new ComponentFactory(fieldTypeMapping)
@@ -37,6 +40,7 @@ export default class FormPreviewComponent extends React.Component {
       "bic": TextFieldPropertyMapper,
       "dropdown": OptionFieldPropertyMapper,
       "radioButton": OptionFieldPropertyMapper,
+      "checkboxButton": MultipleOptionFieldOnChangePropertyMapper,
       "namedAttachment": AttachmentDisplayPropertyMapper
     }
   }
