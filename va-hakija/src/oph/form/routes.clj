@@ -10,8 +10,6 @@
             [oph.form.schema :refer :all]
             [oph.form.validation :as validation]))
 
-(create-form-schema [])
-
 (defn create-form-submission [form-id answers]
   (let [submission (form-db/create-submission! form-id answers)]
     (if submission

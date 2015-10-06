@@ -6,7 +6,8 @@
                      :vaSummingBudgetElement
                      :vaBudgetItemElement
                      :vaBudgetSummaryElement
-                     :vaProjectDescription])
+                     :vaProjectDescription]
+                    [])
 
 (s/defschema SystemTime {:system-time s/Inst})
 

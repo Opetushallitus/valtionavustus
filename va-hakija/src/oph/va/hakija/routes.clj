@@ -12,10 +12,10 @@
             [oph.common.datetime :as datetime]
             [oph.common.config :refer [config config-simple-name]]
             [oph.common.routes :refer :all]
-            [oph.form.routes :refer :all]
+            [oph.va.schema :refer :all]
             [oph.form.schema :refer :all]
             [oph.va.routes :refer :all]
-            [oph.va.schema :refer :all]
+            [oph.form.routes :refer :all]
             [oph.va.hakija.db :as hakija-db]
             [oph.va.hakija.schema :refer :all]
             [oph.va.hakija.handlers :refer :all]))

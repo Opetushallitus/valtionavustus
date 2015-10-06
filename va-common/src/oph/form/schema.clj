@@ -1,7 +1,7 @@
 (ns oph.form.schema
   (:require [schema.core :as s]))
 
-(defn create-form-schema [custom-wrapper-element-types]
+(defn create-form-schema [custom-wrapper-element-types custom-form-element-types]
   (s/defschema LocalizedString {:fi s/Str
                                 :sv s/Str})
 
@@ -25,25 +25,27 @@
                        (s/optional-key :params) s/Any
                        :displayAs s/Keyword})
 
-  (s/defschema FormField {:type (s/eq "formField")
-                          :id s/Str
-                          :required s/Bool
-                          (s/optional-key :label) LocalizedString
-                          (s/optional-key :helpText) LocalizedString
-                          (s/optional-key :initialValue) (s/either LocalizedString
-                                                                   s/Int)
-                          (s/optional-key :params) s/Any
-                          (s/optional-key :options) [Option]
-                          :displayAs (s/enum :textField
-                                             :textArea
-                                             :emailField
-                                             :moneyField
-                                             :finnishBusinessIdField
-                                             :iban
-                                             :bic
-                                             :dropdown
-                                             :radioButton
-                                             :namedAttachment)})
+  (let [default-form-element-types [:textField
+                                    :textArea
+                                    :emailField
+                                    :moneyField
+                                    :finnishBusinessIdField
+                                    :iban
+                                    :bic
+                                    :dropdown
+                                    :radioButton
+                                    :namedAttachment]
+        form-element-types (into custom-form-element-types default-form-element-types)]
+    (s/defschema FormField {:type (s/eq "formField")
+                            :id s/Str
+                            :required s/Bool
+                            (s/optional-key :label) LocalizedString
+                            (s/optional-key :helpText) LocalizedString
+                            (s/optional-key :initialValue) (s/either LocalizedString
+                                                                     s/Int)
+                            (s/optional-key :params) s/Any
+                            (s/optional-key :options) [Option]
+                            :displayAs (apply s/enum form-element-types)}))
 
   (s/defschema BasicElement (s/either FormField
                                       Button
