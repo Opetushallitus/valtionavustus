@@ -15,6 +15,7 @@ import CheckboxButton from './CheckboxButton.jsx'
 import AttachmentField from './AttachmentField.jsx'
 import { TextFieldPropertyMapper,
          OptionFieldPropertyMapper,
+         MultipleOptionFieldOnChangePropertyMapper,
          ButtonPropertyMapper,
          AttachmentFieldPropertyMapper} from './PropertyMapper'
 
@@ -44,7 +45,7 @@ export default class FormComponent extends React.Component {
       "bic": TextFieldPropertyMapper,
       "dropdown": OptionFieldPropertyMapper,
       "radioButton": OptionFieldPropertyMapper,
-      "checkboxButton": OptionFieldPropertyMapper,
+      "checkboxButton": MultipleOptionFieldOnChangePropertyMapper,
       "namedAttachment": AttachmentFieldPropertyMapper
     }
     this.componentFactory = new ComponentFactory(fieldTypeMapping)

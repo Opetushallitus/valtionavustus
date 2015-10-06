@@ -1,4 +1,7 @@
 import React from 'react'
+
+import _ from 'lodash'
+
 import Translator from '../Translator'
 import BasicFieldComponent from './BasicFieldComponent.jsx'
 
@@ -9,17 +12,19 @@ export default class CheckboxButton extends BasicFieldComponent {
 
     if (props.options) {
       for (var i=0; i < props.options.length; i++) {
-        const label = new Translator(props.options[i]).translate("label", props.lang, props.options[i].value)
-        radiobuttons.push(<input type="checkbox" id={props.htmlId + ".radio." + i}
-                                 key={props.htmlId + "." + props.options[i].value}
+        const optionValue = props.options[i].value
+        const checked = _.contains(props.value, optionValue)
+        const label = new Translator(props.options[i]).translate("label", props.lang, optionValue)
+        radiobuttons.push(<input type="checkbox" id={props.htmlId + ".checkbox." + i}
+                                 key={props.htmlId + "." + optionValue}
                                  name={props.htmlId}
                                  disabled={props.disabled}
-                                 value={props.options[i].value}
+                                 value={optionValue}
                                  onChange={props.onChange}
-                                 checked={props.options[i].value === props.value ? true: null} />)
+                                 checked={checked} />)
         radiobuttons.push(
-          <label key={props.htmlId + "." + props.options[i].value + ".label"}
-                 htmlFor={props.htmlId + ".radio." + i}>
+          <label key={props.htmlId + "." + optionValue + ".label"}
+                 htmlFor={props.htmlId + ".checkbox." + i}>
             {label}
           </label>
         )

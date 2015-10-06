@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import ComponentFactory from 'soresu-form/web/form/ComponentFactory.js'
 import CheckboxButton from 'soresu-form/web/form/component/CheckboxButton.jsx'
-import { DefaultPropertyMapper, FieldOnChangePropertyMapper } from 'soresu-form/web/form/component/PropertyMapper.js'
+import { DefaultPropertyMapper, MultipleOptionFieldOnChangePropertyMapper } from 'soresu-form/web/form/component/PropertyMapper.js'
 
 import {VaBudgetElement, SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from 'va-common/web/va/VaBudgetComponents.jsx'
 import VaProjectDescription from './VaProjectDescription.jsx'
@@ -45,7 +45,7 @@ class VaFocusAreasPropertyMapper extends DefaultPropertyMapper {
       return {value: value,
         label: item}
     })
-    const commonProps = FieldOnChangePropertyMapper.map(props)
+    const commonProps = MultipleOptionFieldOnChangePropertyMapper.map(props)
     const extendedProps = _.extend(commonProps, {options: options})
     if(!extendedProps.field.label) {
       extendedProps.field.label = focusAreas.label

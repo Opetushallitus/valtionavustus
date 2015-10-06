@@ -40,7 +40,7 @@ class FieldPropertyMapper extends DefaultPropertyMapper {
   }
 }
 
-export class FieldOnChangePropertyMapper extends DefaultPropertyMapper {
+class FieldOnChangePropertyMapper extends DefaultPropertyMapper {
   static map(props) {
     const commonProps = FieldPropertyMapper.map(props)
     const field = props.field
@@ -73,6 +73,28 @@ export class OptionFieldPropertyMapper extends DefaultPropertyMapper {
     return _.extend(commonProps, {
       options: props.field.options
     })
+  }
+}
+
+export class MultipleOptionFieldOnChangePropertyMapper extends FieldPropertyMapper {
+  static map(props) {
+    const optionProps = OptionFieldPropertyMapper.map(props)
+    const field = props.field
+    const value = _.isArray(props.value) ? props.value : []
+    const onChange = e => {
+      const targetValue = e.target.value
+      if(_.contains(value, targetValue)) {
+        props.onChange(field, _.without(value, targetValue))
+      }
+      else {
+        props.onChange(field, _.union(value, [targetValue]))
+      }
+    }
+    const extendedProperties =  _.extend(optionProps, {
+      value: value,
+      onChange: onChange
+    })
+    return extendedProperties
   }
 }
 

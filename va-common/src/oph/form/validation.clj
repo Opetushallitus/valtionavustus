@@ -6,14 +6,22 @@
 
 (defn validate-required [field answer]
   (if (and (:required field)
-           (string/blank? answer))
+           (empty? answer))
     [{:error "required"}]
     []))
 
+(defn- is-valid-option-value? [options value]
+  (some #{value} (map (fn [option] (option :value)) options)))
+
+(defn- is-valid-option? [options values]
+  (if (coll? values)
+    (every? (partial is-valid-option-value? options) values)
+    (is-valid-option-value? options values)))
+
 (defn validate-options [field answer]
-  (if (and (not (string/blank? answer))
-           (> (count (field :options)) 0)
-           (not-any? #{answer} (map (fn [option] (option :value)) (field :options))))
+  (if (and (> (count (field :options)) 0)
+           (not (empty? answer))
+           (not (is-valid-option? (field :options) answer)))
     [{:error "invalid-option"}]
     []))
 
