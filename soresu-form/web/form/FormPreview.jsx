@@ -37,10 +37,14 @@ export default class FormPreview extends React.Component {
     function createFormPreviewComponent(field, fieldProperties, renderingParameters) {
       var existingInputValue = InputValueStorage.readValue(fields, values, field.id)
       const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
+      const customProperties = controller.getCustomComponentProperties(state)
       return <FormPreviewComponent {...fieldProperties}
                                    value={value}
+                                   preview={true}
                                    renderingParameters={renderingParameters}
                                    translations={translations}
+                                   customProps={customProperties}
+                                   controller={controller}
                                    attachment={state.saveStatus.attachments[field.id]}
                                    attachmentDownloadUrl={controller.createAttachmentDownloadUrl(state, field) }/>
     }
