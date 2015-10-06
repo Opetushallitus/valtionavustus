@@ -10,10 +10,12 @@ import HakemustenArviointiController from './HakemustenArviointiController.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusDetails from './hakemus-details/HakemusDetails.jsx'
 import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
+import AvustushakuDropdown from './avustushaku/AvustushakuDropdown.jsx'
 
 import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'
 import style from './style/main.less'
+import selector from './style/switcher.less'
 
 export default class App extends Component {
   render() {
@@ -24,11 +26,13 @@ export default class App extends Component {
     const selectedHakemus = state.selectedHakemus ? state.selectedHakemus : {}
     const translations = state.translations
     const loadingComments = state.loadingComments
+    const avustushakuList = state.avustushakuList
     return (
       <section>
         <TopBar activeTab="arviointi" environment={hakuData.environment} state={state}/>
         <section id="container">
           <div id="list-container">
+            <AvustushakuDropdown controller={controller} avustushaku={avustushaku} avustushakuList={avustushakuList} />
             <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
                             budgetGrantedSum={hakuData["budget-granted-sum"]}
                             hakemusList={hakemusList}

@@ -26,6 +26,7 @@ export default class HakemustenArviointiController {
       hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId)),
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
+      avustushakuList: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/")),
       selectedHakemus: undefined,
       saveStatus: {
         saveInProgress: false,
