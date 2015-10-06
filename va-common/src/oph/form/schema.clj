@@ -34,6 +34,7 @@
                                     :bic
                                     :dropdown
                                     :radioButton
+                                    :checkboxButton
                                     :namedAttachment]
         form-element-types (into custom-form-element-types default-form-element-types)]
     (s/defschema FormField {:type (s/eq "formField")
