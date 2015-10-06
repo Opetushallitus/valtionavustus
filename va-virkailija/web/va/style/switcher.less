@@ -1,11 +1,19 @@
 @import "variables";
 
 .rw-dropdownlist {
+  &:active, &:focus {
+    outline: none;
+  }
+
   .rw-dropdownlist-picker {
     display: none;
   }
 
   .rw-input {
     margin-top: 7px;
+  }
+
+  .rw-input:active, .rw-input:focus {
+    outline: none;
   }
 }
