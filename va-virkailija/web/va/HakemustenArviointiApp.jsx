@@ -15,6 +15,7 @@ import AvustushakuDropdown from './avustushaku/AvustushakuDropdown.jsx'
 import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'
 import style from './style/main.less'
+import selector from './style/switcher.less'
 
 export default class App extends Component {
   render() {
