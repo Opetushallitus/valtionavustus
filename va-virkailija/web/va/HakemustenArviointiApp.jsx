@@ -10,7 +10,7 @@ import HakemustenArviointiController from './HakemustenArviointiController.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusDetails from './hakemus-details/HakemusDetails.jsx'
 import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
-import AvustushakuSelector from './avustushaku/AvustushakuSelector.jsx'
+import AvustushakuDropdown from './avustushaku/AvustushakuDropdown.jsx'
 
 import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'
@@ -31,7 +31,7 @@ export default class App extends Component {
         <TopBar activeTab="arviointi" environment={hakuData.environment} state={state}/>
         <section id="container">
           <div id="list-container">
-            <AvustushakuSelector controller={controller} avustushaku={avustushaku} avustushakuList={avustushakuList} />
+            <AvustushakuDropdown controller={controller} avustushaku={avustushaku} avustushakuList={avustushakuList} />
             <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
                             budgetGrantedSum={hakuData["budget-granted-sum"]}
                             hakemusList={hakemusList}
