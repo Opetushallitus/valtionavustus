@@ -20,7 +20,7 @@
   &.rw-open {
     height: 240px;
 
-    .rw-input {
+    div.rw-input {
       padding-bottom: 4px;
       margin-bottom: 12px;
       border-bottom: 1px solid @light-gray;
@@ -79,8 +79,12 @@
     max-height: 198px;
     overflow: auto !important; // to override inline style of ReactWidgets.DropdownList
 
+    ul {
+      padding: 0;
+    }
     li {
       list-style: none;
+      padding-bottom: 10px;
     }
   }
 }
