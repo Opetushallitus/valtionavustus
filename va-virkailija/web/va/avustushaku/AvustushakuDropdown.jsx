@@ -20,17 +20,18 @@ export default class AvustushakuDropdown extends AvustushakuSelector {
       location.path = "/avustushaku/" + value.id
       window.location.href = "/avustushaku/" + value.id
     }
-    return <ReactWidgets.DropdownList id="avustushaku-dropdown"
-                                      valueField="id"
-                                      textField={avustushakuToText}
-                                      data={avustushakuList}
-                                      defaultValue={avustushaku}
-                                      valueComponent={AvustushakuEntry}
-                                      caseSensitive={false}
-                                      minLength={3}
-                                      filter='contains'
-                                      duration={0}
-                                      onChange={onChange} />
+    return <div id="avustushaku-dropdown">
+              <ReactWidgets.DropdownList  valueField="id"
+                                          textField={avustushakuToText}
+                                          data={avustushakuList}
+                                          defaultValue={avustushaku}
+                                          valueComponent={AvustushakuEntry}
+                                          caseSensitive={false}
+                                          minLength={3}
+                                          filter='contains'
+                                          duration={0}
+                                          onChange={onChange} />
+      </div>
   }
 }
 
