@@ -20,6 +20,11 @@ export default class AvustushakuDropdown extends AvustushakuSelector {
       location.path = "/avustushaku/" + value.id
       window.location.href = "/avustushaku/" + value.id
     }
+    const messages = {
+      filterPlaceholder: 'Hae...',
+      emptyList: 'Ei avustushakuja',
+      emptyFilter: 'Ei tuloksia – laajenna hakua'
+    }
     return <div id="avustushaku-dropdown">
               <ReactWidgets.DropdownList  valueField="id"
                                           textField={avustushakuToText}
@@ -30,7 +35,8 @@ export default class AvustushakuDropdown extends AvustushakuSelector {
                                           minLength={3}
                                           filter='contains'
                                           duration={0}
-                                          onChange={onChange} />
+                                          onChange={onChange}
+                                          messages={messages} />
       </div>
   }
 }
