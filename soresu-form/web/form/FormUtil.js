@@ -11,7 +11,7 @@ export default class FormUtil {
       return Math.abs(current - target) < 1
     }
     const startScrollPos = window.pageYOffset
-    const offsetFromTop = document.getElementById("container").getBoundingClientRect().top + startScrollPos + 18
+    const offsetFromTop = document.getElementById("container").getBoundingClientRect().top + startScrollPos
     const targetScrollPos = element.getBoundingClientRect().top + startScrollPos - offsetFromTop
     if (aboutSame(startScrollPos, targetScrollPos)) {
       afterScroll()
