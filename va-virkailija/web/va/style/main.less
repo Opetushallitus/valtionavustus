@@ -57,14 +57,14 @@ table.hakemus-list {
 }
 
 #hakemus-details {
-  margin-top: @topbar-height + @overview-list-height;
+  margin-top: @overview-and-top-total-height;
 
   #preview-container {
     position: absolute;
     background-color: white;
     padding: 10px 15px 10px 10px;
     overflow-y: scroll;
-    top: @topbar-height + @overview-list-height;
+    top: @overview-and-top-total-height;
     bottom: 20px;
     width: @preview-width;
 
@@ -81,7 +81,7 @@ table.hakemus-list {
     overflow-y: auto;
     display: inline-block;
     margin-left: @preview-width + 35px;
-    top: @topbar-height + @overview-list-height;
+    top: @overview-and-top-total-height;
     bottom: 20px;
     width: @content-width - @preview-width - 50px;
 
