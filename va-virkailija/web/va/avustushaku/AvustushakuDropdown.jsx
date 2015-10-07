@@ -20,7 +20,8 @@ export default class AvustushakuDropdown extends AvustushakuSelector {
       location.path = "/avustushaku/" + value.id
       window.location.href = "/avustushaku/" + value.id
     }
-    return <ReactWidgets.DropdownList valueField="id"
+    return <ReactWidgets.DropdownList id="avustushaku-dropdown"
+                                      valueField="id"
                                       textField={avustushakuToText}
                                       data={avustushakuList}
                                       defaultValue={avustushaku}
