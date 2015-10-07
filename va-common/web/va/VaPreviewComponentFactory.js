@@ -4,7 +4,10 @@ import ClassNames from 'classnames'
 
 import ComponentFactory from 'soresu-form/web/form/ComponentFactory.js'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
+import MultipleOptionValue from 'soresu-form/web/form/preview/MultipleOptionValue.jsx'
+
 import {VaBudgetElement, SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
+import {VaFocusAreasPropertyMapper} from 'va-common/web/va/VaPropertyMapper.js'
 
 export default class VaPreviewComponentFactory extends ComponentFactory {
   constructor() {
@@ -13,9 +16,18 @@ export default class VaPreviewComponentFactory extends ComponentFactory {
       "vaSummingBudgetElement": SummingBudgetElement,
       "vaBudgetItemElement": VaPreviewBudgetItemElement,
       "vaBudgetSummaryElement": BudgetSummaryElement,
-      "vaProjectDescription": VaProjectDescriptionPreview
+      "vaProjectDescription": VaProjectDescriptionPreview,
+      "vaFocusAreas": MultipleOptionValue
     }
     super(fieldTypeMapping)
+  }
+
+  createComponent(componentProps) {
+    const fieldType = componentProps.fieldType
+    if (fieldType === "vaFocusAreas") {
+      return React.createElement(this.fieldTypeMapping[fieldType], VaFocusAreasPropertyMapper.map(componentProps))
+    }
+    return super.createComponent(componentProps)
   }
 }
 

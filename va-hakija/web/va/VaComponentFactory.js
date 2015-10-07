@@ -1,11 +1,10 @@
 import React from 'react'
-import _ from 'lodash'
 
 import ComponentFactory from 'soresu-form/web/form/ComponentFactory.js'
 import CheckboxButton from 'soresu-form/web/form/component/CheckboxButton.jsx'
-import { DefaultPropertyMapper, MultipleOptionFieldOnChangePropertyMapper } from 'soresu-form/web/form/component/PropertyMapper.js'
 
 import {VaBudgetElement, SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from 'va-common/web/va/VaBudgetComponents.jsx'
+import {VaFocusAreasPropertyMapper} from 'va-common/web/va/VaPropertyMapper.js'
 import VaProjectDescription from './VaProjectDescription.jsx'
 
 export default class VaComponentFactory extends ComponentFactory {
@@ -31,25 +30,5 @@ export default class VaComponentFactory extends ComponentFactory {
       return React.createElement(this.fieldTypeMapping[fieldType], VaFocusAreasPropertyMapper.map(componentProps))
     }
     return super.createComponent(componentProps)
-  }
-}
-
-class VaFocusAreasPropertyMapper extends DefaultPropertyMapper {
-  static map(props) {
-    const avustushaku = props.customProps.avustushaku
-    const focusAreas = avustushaku.content['focus-areas']
-    var index = 0
-    const options = _.map(focusAreas.items, item => {
-      const value = 'focus-area-' + index
-      index++
-      return {value: value,
-        label: item}
-    })
-    const commonProps = MultipleOptionFieldOnChangePropertyMapper.map(props)
-    const extendedProps = _.extend(commonProps, {options: options})
-    if(!extendedProps.field.label) {
-      extendedProps.field.label = focusAreas.label
-    }
-    return extendedProps
   }
 }
