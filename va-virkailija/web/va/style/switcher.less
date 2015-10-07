@@ -37,11 +37,6 @@
   //&.unselected:hover {
   //  background-color: lighten(#4093BE, 42%);
   //}
-  //&.selected {
-  //  background-color: #4093BE;
-  //  color: white;
-  //}
-
 
   .rw-sr {
     display: none;
@@ -85,6 +80,11 @@
     li {
       list-style: none;
       padding-bottom: 10px;
+
+      &[aria-selected="true"] {
+        background-color: @selected-blue;
+        color: white;
+      }
     }
   }
 }
