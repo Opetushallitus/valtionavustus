@@ -386,7 +386,7 @@ section.soresu-theme {
 
   input[type=radio] + label, input[type=checkbox] + label  {
     display: inline-block;
-    color: #000;
+    color: @dark-gray;
     margin: 4px 3px;
     padding: 12px 30px;
     background-color: #fff;
@@ -399,6 +399,7 @@ section.soresu-theme {
   }
 
   input[type=radio]:checked + label, input[type=checkbox]:checked + label {
+    color: #000;
     background: #fff url('../img/checkmark.png') no-repeat 10px 19px;
     margin: 1px 1px;
     border: solid 4px @light-green;
@@ -406,11 +407,14 @@ section.soresu-theme {
 
   input[disabled] + label {
     color: @light-gray;
+    border-color: @light-gray;
     background-color: @lightest-gray;
+    cursor: default;
   }
 
   input[disabled]:checked + label {
-    border: solid 4px @dark-gray;
+    color: @dark-gray;
+    border: solid 4px @light-gray;
     background-color: @lightest-gray;
   }
 }
