@@ -1,6 +1,22 @@
 @import "variables";
 @import "formpreview";
 
+.input-placeholder(@styles) {
+
+  &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    @styles();
+  }
+  &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    @styles();
+  }
+  &::-moz-placeholder { /* Mozilla Firefox 19+ */
+    @styles();
+  }
+  &:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    @styles();
+  }
+}
+
 table.hakemus-list {
   .organization-column, .project-name-column {
     width: 350px;
@@ -104,18 +120,9 @@ table.hakemus-list {
       width: @content-width - @preview-width - 80px;
       padding: 10px;
 
-      &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+      .input-placeholder({
         font-style: italic;
-      }
-      &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-        font-style: italic;
-      }
-      &::-moz-placeholder { /* Mozilla Firefox 19+ */
-        font-style: italic;
-      }
-      &:-ms-input-placeholder { /* Internet Explorer 10-11 */
-        font-style: italic;
-      }
+      })
     }
 
     input[type=radio] + label {
