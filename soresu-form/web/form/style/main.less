@@ -387,11 +387,15 @@ section.soresu-theme {
   input[type=radio] + label, input[type=checkbox] + label  {
     display: inline-block;
     color: #000;
-    margin: 4px 4px;
+    margin: 4px 3px;
     padding: 12px 30px;
     background-color: #fff;
     border: solid 1px @dark-gray;
     cursor: pointer;
+  }
+
+  input[type=checkbox] + label  {
+    width: @section-width - 68px;
   }
 
   input[type=radio]:checked + label, input[type=checkbox]:checked + label {
