@@ -11,6 +11,7 @@
   position: absolute;
   display: inline-block;
 
+  min-width: @preview-width;
   background-color: @off-white;
   margin: 4px 4px 4px 0;
   padding: 4px 20px 4px 22px;
@@ -77,6 +78,7 @@
     position: absolute;
     background-color: @off-white;
     max-height: 198px;
+    width: 97%;
     overflow: auto !important; // to override inline style of ReactWidgets.DropdownList
 
     ul {
