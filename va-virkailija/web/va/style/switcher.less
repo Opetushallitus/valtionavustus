@@ -1,19 +1,47 @@
 @import "variables";
 
 .rw-dropdownlist {
+  position: relative;
+  display: inline-block;
+  margin: 4px;
+  padding: 4px 20px 4px 4px;
+  border: 1px solid @light-gray;
+  border-radius: 4px;
+  cursor: pointer;
+
+  .rw-sr {
+    display: none;
+  }
+
   &:active, &:focus {
     outline: none;
   }
 
-  .rw-dropdownlist-picker {
-    display: none;
+  .rw-i {
+    display: inline-block;
+    box-sizing: border-box;
   }
 
-  .rw-input {
-    margin-top: 7px;
+  .rw-select {
+    position: absolute;
+    top: 7px;
+    right: 3px;
+    font-size: 24px;
+    i.rw-i-caret-down {
+      &:before {
+        content: " \02C5";
+      }
+      font-style: normal;
+    }
   }
 
   .rw-input:active, .rw-input:focus {
     outline: none;
+  }
+
+  .rw-popup-container {
+    position: absolute;
+    background-color: white;
+    border: 1px solid @dark-gray;
   }
 }
