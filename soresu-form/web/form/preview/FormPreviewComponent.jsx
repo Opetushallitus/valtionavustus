@@ -46,15 +46,8 @@ export default class FormPreviewComponent extends React.Component {
   }
 
   render() {
-    const controller = this.props.controller
     const fieldType = this.props.fieldType
-    if (fieldType in controller.getCustomComponentTypeMapping()) {
-      return controller.createCustomComponent(this.props)
-    } else {
-      if (fieldType in this.fieldPropertyMapping) {
-        return this.componentFactory.createComponent(this.fieldPropertyMapping[fieldType].map(this.props))
-      }
-      return this.componentFactory.createComponent(this.props)
-    }
+    const props = this.fieldPropertyMapping[fieldType].map(this.props)
+    return this.componentFactory.createComponent(props)
   }
 }
