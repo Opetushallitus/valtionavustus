@@ -19,6 +19,12 @@
 
   &.rw-open {
     height: 240px;
+
+    .rw-input {
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid @light-gray;
+    }
   }
 
   input {
@@ -70,6 +76,8 @@
   .rw-popup-container {
     position: absolute;
     background-color: @off-white;
+    max-height: 198px;
+    overflow: auto !important; // to override inline style of ReactWidgets.DropdownList
 
     li {
       list-style: none;
