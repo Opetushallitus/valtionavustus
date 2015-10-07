@@ -1,5 +1,7 @@
 @import "variables";
 
+@popup-height: 240px;
+
 #avustushaku-dropdown {
   position: relative;
   height: 35px;
@@ -18,7 +20,7 @@
   color: @selected-blue;
 
   &.rw-open {
-    height: 240px;
+    height: @popup-height;
 
     div.rw-input {
       padding-bottom: 4px;
@@ -58,6 +60,9 @@
     font-size: 24px;
     i.rw-i-caret-down {
       &:before {
+        position: absolute;
+        top: -5px;
+        right: 4px;
         content: " \02C5";
       }
       font-style: normal;
