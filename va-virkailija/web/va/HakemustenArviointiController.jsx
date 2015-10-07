@@ -11,6 +11,7 @@ const dispatcher = new Dispatcher()
 
 const events = {
   initialState: 'initialState',
+  setFilter: 'setFilter',
   selectHakemus: 'selectHakemus',
   updateHakemusArvio: 'updateHakemusArvio',
   saveCompleted: 'saveCompleted',
@@ -24,6 +25,10 @@ export default class HakemustenArviointiController {
   initializeState(avustushakuId) {
     const initialStateTemplate = {
       hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId)),
+      hakuFilter: {
+        organization: "",
+        name: ""
+      },
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
       avustushakuList: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/")),
@@ -49,7 +54,8 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted,
       [dispatcher.stream(events.loadComments)], this.onLoadComments,
       [dispatcher.stream(events.commentsLoaded)], this.onCommentsLoaded,
-      [dispatcher.stream(events.addComment)], this.onAddComment
+      [dispatcher.stream(events.addComment)], this.onAddComment,
+      [dispatcher.stream(events.setFilter)], this.onFilterSet
     )
   }
 
@@ -143,11 +149,21 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  onFilterSet(state, newFilter) {
+    state.hakuFilter[newFilter.filterId] = newFilter.filter
+    return state
+  }
+
   // Public API
   selectHakemus(hakemus) {
     return function() {
       dispatcher.push(events.selectHakemus, hakemus)
     }
+  }
+
+  setFilter(filterId, newFilter) {
+    dispatcher.push(events.setFilter, {filterId: filterId,
+                                         filter: newFilter})
   }
 
   setHakemusArvioStatus(hakemus, newStatus) {

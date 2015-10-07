@@ -35,6 +35,7 @@ export default class App extends Component {
             <AvustushakuDropdown controller={controller} avustushaku={avustushaku} avustushakuList={avustushakuList} />
             <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
                             budgetGrantedSum={hakuData["budget-granted-sum"]}
+                            hakuFilter={state.hakuFilter}
                             hakemusList={hakemusList}
                             selectedHakemus={selectedHakemus}
                             avustushaku={avustushaku}

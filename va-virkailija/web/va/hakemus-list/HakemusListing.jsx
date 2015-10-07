@@ -5,21 +5,47 @@ import HakemusStatus from '../hakemus-details/HakemusStatus.jsx'
 import AvustushakuSelector from '../avustushaku/AvustushakuSelector.jsx'
 
 export default class HakemusListing extends Component {
+
+  _filterWithStrPredicate(field, filter) {
+    if(_.isEmpty(filter)) {
+      return function() {return true}
+    }
+    return function(hakemus) {
+      if(_.isEmpty(hakemus[field])) {
+        return false
+      }
+      return hakemus[field].toUpperCase().indexOf(filter.toUpperCase()) >= 0
+    }
+  }
+
+  _filter(list, filter) {
+    return _.filter(list, this._filterWithStrPredicate("project-name", filter.name))
+            .filter(this._filterWithStrPredicate("organization-name", filter.organization))
+  }
+
   render() {
-    const hakemusList = this.props.hakemusList
-    const avustushaku = this.props.avustushaku
-    const ophShareSum = HakemusListing.formatNumber(_.reduce(hakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
-    const selectedHakemus = this.props.selectedHakemus
     const controller = this.props.controller
-    const hakemusElements = _.map(hakemusList, hakemus => {
+    const avustushaku = this.props.avustushaku
+    const selectedHakemus = this.props.selectedHakemus
+    const filter = this.props.hakuFilter
+    const hakemusList = this.props.hakemusList
+    const filteredHakemusList = this._filter(hakemusList, filter)
+    const ophShareSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
+    const hakemusElements = _.map(filteredHakemusList, hakemus => {
       return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} controller={controller}/> })
-    const budgetGrantedSum = HakemusListing.formatNumber(_.reduce(hakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
+    const budgetGrantedSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
+
+    const onFilterChange = function(filterId) {
+      return function(e) {
+        controller.setFilter(filterId, e.target.value)
+      }
+    }
 
     return (
       <table key="hakemusListing" className="hakemus-list overview-list">
         <thead><tr>
-          <th className="organization-column">Hakijaorganisaatio</th>
-          <th className="project-name-column">Hanke</th>
+          <th className="organization-column"><input placeholder="Hakijaorganisaatio" onChange={onFilterChange("organization")} name="filter-by-organization" value={filter.organization}></input></th>
+          <th className="project-name-column"><input placeholder="Hanke" onChange={onFilterChange("name")} name="filter-by-name" value={filter.name}></input></th>
           <th className="score-column">Arvio</th>
           <th className="status-column">Tila</th>
           <th className="applied-sum-column">Haettu</th>
@@ -30,7 +56,7 @@ export default class HakemusListing extends Component {
         </tbody>
         <tfoot><tr>
           <td className="avustushaku-selector-column"><AvustushakuSelector avustushaku={avustushaku} controller={controller} /></td>
-          <td className="total-applications-column">Yhteensä näkyvissä {hakemusList.length} kpl hakemuksia</td>
+          <td className="total-applications-column">{filteredHakemusList.length} /  {hakemusList.length} kpl hakemusta</td>
           <td className="applied-sum-column"><span className="money sum">{ophShareSum}</span></td>
           <td className="granted-sum-column"><span className="money sum">{budgetGrantedSum}</span></td>
         </tr></tfoot>
