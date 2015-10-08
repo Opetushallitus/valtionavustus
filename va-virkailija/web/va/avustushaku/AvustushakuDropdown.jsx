@@ -54,7 +54,7 @@ class AvustushakuEntry extends React.Component {
     const name = this.props.item.content.name.fi
     const date = moment(this.props.item.content.duration.start).tz('Europe/Helsinki').format('D.M.YYYY')
     return <span>
-             {name}&nbsp;(<strong>{date}</strong>)
+             {name}&nbsp;({date})
            </span>
   }
 }
