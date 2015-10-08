@@ -4,6 +4,7 @@
 
 #avustushaku-dropdown {
   position: relative;
+  right: 11px;
   height: 35px;
 }
 
@@ -13,11 +14,10 @@
 
   height: 22px;
   min-width: @preview-width;
-  background-color: @off-white;
-  margin: 4px 4px 4px 0;
-  padding: 4px 20px 4px 22px;
+  background-color: @lightest-gray;
+  margin: 5px 4px 4px 0;
+  padding: 4px 20px 4px 11px;
   border: 1px solid @lightest-gray;
-  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.40);
   cursor: pointer;
   color: @selected-blue;
 
@@ -26,7 +26,9 @@
 
   &.rw-open {
     height: @popup-height;
-    
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.40);
+    background-color: @off-white;
+
     .rw-popup-container {
       opacity: 1;
       height: @popup-height - 42px !important;
@@ -36,14 +38,6 @@
       padding-bottom: 4px;
       margin-bottom: 12px;
       border-bottom: 1px solid @light-gray;
-    }
-
-    .rw-select {
-      i.rw-i-caret-down {
-        &:before {
-          content: " \02C4";
-        }
-      }
     }
   }
 
@@ -70,17 +64,7 @@
   .rw-select {
     position: absolute;
     top: 7px;
-    right: 3px;
-    font-size: 16px;
-    i.rw-i-caret-down {
-      &:before {
-        position: absolute;
-        top: 0;
-        right: 4px;
-        content: " \02C5";
-      }
-      font-style: normal;
-    }
+    left: 22px;
   }
 
   .rw-input:active, .rw-input:focus {
