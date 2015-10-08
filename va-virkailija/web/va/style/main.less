@@ -17,6 +17,22 @@
   }
 }
 
+.status-filter {
+  position: relative;
+  .status-filter-popup {
+    color: @selected-blue;
+    position: absolute;
+    padding: 10px;
+    width: 100%;
+    background-color: @off-white;
+    font-size: 12px;
+    line-height: 1.6em;
+    input[type=checkbox] {
+      margin-right: 5px;
+    }
+  }
+}
+
 table.hakemus-list {
   .organization-column, .project-name-column {
     width: 350px;

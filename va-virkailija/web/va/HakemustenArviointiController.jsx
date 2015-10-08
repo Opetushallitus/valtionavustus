@@ -7,6 +7,8 @@ import queryString from 'query-string'
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'soresu-form/web/Dispatcher'
 
+import HakemusStatuses from './hakemus-details/HakemusStatuses.js'
+
 const dispatcher = new Dispatcher()
 
 const events = {
@@ -27,7 +29,8 @@ export default class HakemustenArviointiController {
       hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId)),
       hakuFilter: {
         organization: "",
-        name: ""
+        name: "",
+        status: HakemusStatuses.allStatuses()
       },
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),

@@ -6,21 +6,31 @@ import AvustushakuSelector from '../avustushaku/AvustushakuSelector.jsx'
 
 export default class HakemusListing extends Component {
 
-  _filterWithStrPredicate(field, filter) {
+  _filterWithArrayPredicate(fieldGetter, filter) {
     if(_.isEmpty(filter)) {
       return function() {return true}
     }
     return function(hakemus) {
-      if(_.isEmpty(hakemus[field])) {
-        return false
-      }
-      return hakemus[field].toUpperCase().indexOf(filter.toUpperCase()) >= 0
+      return _.contains(filter, fieldGetter(hakemus))
     }
   }
 
+  _filterWithStrPredicate(fieldGetter, filter) {
+    if(_.isEmpty(filter)) {
+      return function() {return true}
+    }
+    return function(hakemus) {
+      if(_.isEmpty(fieldGetter(hakemus))) {
+        return false
+      }
+      return fieldGetter(hakemus).toUpperCase().indexOf(filter.toUpperCase()) >= 0
+    }
+  }
   _filter(list, filter) {
-    return _.filter(list, this._filterWithStrPredicate("project-name", filter.name))
-            .filter(this._filterWithStrPredicate("organization-name", filter.organization))
+    return _.filter(list, this._filterWithStrPredicate(hakemus => hakemus["project-name"], filter.name))
+            .filter(this._filterWithStrPredicate(hakemus => hakemus["organization-name"], filter.organization))
+            .filter(this._filterWithArrayPredicate(hakemus => hakemus.arvio.status, filter.status))
+
   }
 
   render() {
@@ -47,7 +57,7 @@ export default class HakemusListing extends Component {
           <th className="organization-column"><input className="text-filter" placeholder="Hakijaorganisaatio" onChange={onFilterChange("organization")} value={filter.organization}></input></th>
           <th className="project-name-column"><input className="text-filter" placeholder="Hanke" onChange={onFilterChange("name")} value={filter.name}></input></th>
           <th className="score-column">Arvio</th>
-          <th className="status-column">Tila</th>
+          <th className="status-column"><StatusFilter controller={controller} filter={filter}/></th>
           <th className="applied-sum-column">Haettu</th>
           <th className="granted-sum-column">Myönnetty</th>
         </tr></thead>
@@ -66,6 +76,57 @@ export default class HakemusListing extends Component {
 
   static formatNumber (num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ")
+  }
+}
+
+class StatusFilter extends Component {
+  constructor(props) {
+    super(props)
+    this.handleClick = this.handleClick.bind(this)
+    this.state = { open: false }
+  }
+
+  handleClick() {
+    this.setState({
+      open: !this.state.open
+    })
+  }
+
+  render() {
+    const controller = this.props.controller
+    const statusFilter = this.props.filter.status
+    const statuses = []
+    const onCheckboxChange = function(status) {
+      return function(e) {
+        if(_.contains(statusFilter, status)) {
+          controller.setFilter("status",  _.without(statusFilter, status))
+        }
+        else {
+          controller.setFilter("status", _.union(statusFilter, [status]))
+        }
+      }
+    }
+
+    const statusValues = HakemusStatuses.allStatuses()
+    for (var i=0; i < statusValues.length; i++) {
+      const status = statusValues[i]
+      const checked = _.contains(statusFilter, status)
+      const htmlId = "filter-by-status-" + status
+      statuses.push(
+        <div>
+          <input id={htmlId} key={status} type="checkbox" checked={checked} onChange={onCheckboxChange(status)} value={statusValues[status]}/>
+          <label htmlFor={htmlId}>{HakemusStatuses.statusToFI(status)}</label>
+        </div>
+      )
+    }
+    return (
+      <div className="status-filter">
+        <a onClick={this.handleClick}>Tila</a>
+        <div className="status-filter-popup popup-box-shadow" hidden={!this.state.open}>
+          {statuses}
+        </div>
+      </div>
+    )
   }
 }
 
