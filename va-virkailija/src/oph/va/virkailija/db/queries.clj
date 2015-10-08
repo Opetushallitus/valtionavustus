@@ -10,3 +10,7 @@
 
 (defquery create-comment<! "sql/virkailija/comment/create.sql")
 (defquery list-comments "sql/virkailija/comment/list.sql")
+
+(defquery create-score<! "sql/virkailija/score/create.sql")
+(defquery update-score<! "sql/virkailija/score/update.sql")
+(defquery list-scores "sql/virkailija/score/list.sql")

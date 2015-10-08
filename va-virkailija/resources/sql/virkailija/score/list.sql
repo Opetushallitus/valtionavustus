@@ -1,0 +1,1 @@
+select * from scores where arvio_id = :arvio_id

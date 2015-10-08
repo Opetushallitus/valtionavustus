@@ -46,3 +46,29 @@
                         :comment comment}
                        (exec :db queries/create-comment<!))]
       (list-comments hakemus-id))))
+
+(defn score->map [score]
+  {:arvio-id (:arvio_id score)
+   :person-oid (:person_oid score)
+   :selection-criteria-index (:selection_criteria_index score)
+   :score (:score score)
+   :created-at (:created_at score)
+   :modified-at (:modified_at score)})
+
+(defn list-scores [arvio-id]
+  (->> (exec :db queries/list-scores {:arvio_id arvio-id})
+       (map score->map)))
+
+(defn- update-or-create-score [arvio-id person-oid selection-criteria-index score]
+  (let [params {:arvio_id                 arvio-id
+                :person_oid               person-oid
+                :selection_criteria_index selection-criteria-index
+                :score                    score}]
+    (if-let [updated (exec :db queries/update-score<! params)]
+        updated
+        (exec :db queries/create-score<! params))))
+
+(defn add-score [hakemus-id person-oid selection-criteria-index score]
+  (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
+    (update-or-create-score arvio-id person-oid selection-criteria-index score)
+    (list-scores arvio-id)))

@@ -30,6 +30,24 @@
   "Comment list"
   [Comment])
 
+(s/defschema NewScore
+  "New or updated scoring entry"
+  {:selection-criteria-index s/Int
+   :score s/Int})
+
+(s/defschema Score
+  "Single person and selection criteria specific score of hakemus"
+  {:arvio-id Long
+   :person-oid s/Str
+   :selection-criteria-index s/Int
+   :score s/Int
+   :created-at s/Inst
+   :modified-at s/Inst})
+
+(s/defschema Scores
+  "All scores of single hakemus"
+  [Score])
+
 (s/defschema Hakemus {:id s/Int
                       :project-name s/Str
                       :organization-name s/Str

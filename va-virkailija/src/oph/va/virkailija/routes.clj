@@ -203,7 +203,17 @@
             (-> (ok data)
                 (assoc-in [:headers "Content-Type"] content-type)
                 (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
-          (not-found))))
+          (not-found)))
+
+  (POST* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
+        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+        :body [score (describe NewScore "Stored or updated score")]
+        :return Scores
+        (let [identity (auth/get-identity request)]
+          (ok (virkailija-db/add-score hakemus-id
+                                       (:person-oid identity)
+                                       (:selection-criteria-index score)
+                                       (:score score))))))
 
 (defroutes* userinfo-routes
   "User information"
