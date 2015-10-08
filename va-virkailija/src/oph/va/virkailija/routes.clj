@@ -218,7 +218,7 @@
         :return Scores
         (let [identity (auth/get-identity request)]
           (ok (virkailija-db/add-score hakemus-id
-                                       (:person-oid identity)
+                                       identity
                                        (:selection-criteria-index score)
                                        (:score score))))))
 

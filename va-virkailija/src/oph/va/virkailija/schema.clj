@@ -39,6 +39,9 @@
   "Single person and selection criteria specific score of hakemus"
   {:arvio-id Long
    :person-oid s/Str
+   :first-name s/Str
+   :last-name s/Str
+   :email s/Str
    :selection-criteria-index s/Int
    :score s/Int
    :created-at s/Inst

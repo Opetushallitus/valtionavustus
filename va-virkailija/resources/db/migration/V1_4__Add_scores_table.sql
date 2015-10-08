@@ -1,6 +1,9 @@
 create table scores (
     arvio_id       integer not null,
     person_oid     varchar(64) not null,
+    first_name     varchar(32) not null,
+    last_name      varchar(32) not null,
+    email          varchar(128) not null,
     selection_criteria_index integer not null,
     score          integer not null,
     created_at     timestamp with time zone not null default now(),
