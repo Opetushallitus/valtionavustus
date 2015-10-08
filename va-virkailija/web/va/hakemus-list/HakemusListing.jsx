@@ -2,7 +2,6 @@ import _ from 'lodash'
 import React, { Component } from 'react'
 
 import HakemusStatuses from '../hakemus-details/HakemusStatuses.js'
-import AvustushakuSelector from '../avustushaku/AvustushakuSelector.jsx'
 
 export default class HakemusListing extends Component {
 
@@ -65,8 +64,7 @@ export default class HakemusListing extends Component {
           {hakemusElements}
         </tbody>
         <tfoot><tr>
-          <td className="avustushaku-selector-column"><AvustushakuSelector avustushaku={avustushaku} controller={controller} /></td>
-          <td className="total-applications-column">{filteredHakemusList.length} /  {hakemusList.length} kpl hakemusta</td>
+          <td className="total-applications-column">{filteredHakemusList.length}/{hakemusList.length} hakemusta</td>
           <td className="applied-sum-column"><span className="money sum">{ophShareSum}</span></td>
           <td className="granted-sum-column"><span className="money sum">{budgetGrantedSum}</span></td>
         </tr></tfoot>

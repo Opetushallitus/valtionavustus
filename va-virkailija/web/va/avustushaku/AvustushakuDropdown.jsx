@@ -1,13 +1,11 @@
-import React from 'react'
+import React, { Component } from 'react'
 import _ from 'lodash'
-
-import AvustushakuSelector from './AvustushakuSelector.jsx'
 
 import ReactWidgets from 'react-widgets'
 
 import moment from 'moment-timezone'
 
-export default class AvustushakuDropdown extends AvustushakuSelector {
+export default class AvustushakuDropdown extends Component {
   render() {
     const avustushaku = this.props.avustushaku
     const avustushakuList = this.props.avustushakuList
