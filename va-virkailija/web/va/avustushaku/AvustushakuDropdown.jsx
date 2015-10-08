@@ -25,6 +25,13 @@ export default class AvustushakuDropdown extends AvustushakuSelector {
       emptyList: 'Ei avustushakuja',
       emptyFilter: 'Ei tuloksia – laajenna hakua'
     }
+    const scrollListToTopForIE = opening => {
+      if (opening) {
+        setTimeout(() => {
+          document.getElementById('rw_1__listbox').scrollTop = 0
+        }, 100)
+      }
+    }
     return <div id="avustushaku-dropdown">
              <ReactWidgets.DropdownList  valueField="id"
                                          textField={avustushakuToText}
@@ -36,7 +43,8 @@ export default class AvustushakuDropdown extends AvustushakuSelector {
                                          filter='contains'
                                          duration={0}
                                          onChange={onChange}
-                                         messages={messages} />
+                                         messages={messages}
+                                         onToggle={scrollListToTopForIE}/>
            </div>
   }
 }
