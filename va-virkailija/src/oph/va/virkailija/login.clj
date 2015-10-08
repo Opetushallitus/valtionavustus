@@ -47,6 +47,7 @@
 (defn- details->map [details]
   (when details
     {:username (:uid details)
+     :person-oid (:employeeNumber details)
      :first-name (:cn details)
      :surname (:sn details)
      :email (:mail details)

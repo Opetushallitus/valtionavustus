@@ -15,6 +15,7 @@
     (let [token (random-token)]
       (swap! tokens assoc token details)
       {:username username
+       :person-oid (:person-oid details)
        :token token})))
 
 (defn check-identity [identity]
