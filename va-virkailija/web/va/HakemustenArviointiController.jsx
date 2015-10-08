@@ -25,6 +25,8 @@ const events = {
 export default class HakemustenArviointiController {
 
   initializeState(avustushakuId) {
+    this._bind('onInitialState')
+
     const initialStateTemplate = {
       hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId)),
       hakuFilter: {
@@ -62,6 +64,10 @@ export default class HakemustenArviointiController {
     )
   }
 
+  _bind(...methods) {
+    methods.forEach((method) => this[method] = this[method].bind(this))
+  }
+
   static commentsUrl(state) {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + state.selectedHakemus.id + "/comments"
   }
@@ -75,7 +81,7 @@ export default class HakemustenArviointiController {
     }
     var hakemusList = realInitialState.hakuData.hakemukset;
     if (hakemusList && !_.isEmpty(hakemusList)) {
-      realInitialState.selectedHakemus = hakemusList[0]
+      this.onHakemusSelection(realInitialState, hakemusList[0])
     }
     realInitialState.hakuData.form = Immutable(realInitialState.hakuData.form)
     return realInitialState
