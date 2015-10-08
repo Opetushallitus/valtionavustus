@@ -205,6 +205,13 @@
                 (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
           (not-found)))
 
+  (GET* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
+        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+        :return Scores
+        (if-let [arvio (virkailija-db/get-arvio hakemus-id)]
+          (ok (virkailija-db/list-scores (:id arvio)))
+          (ok [])))
+
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
         :body [score (describe NewScore "Stored or updated score")]
