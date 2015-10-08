@@ -81,6 +81,7 @@ class StatusFilter extends Component {
   constructor(props) {
     super(props)
     this.handleClick = this.handleClick.bind(this)
+    this.render = this.render.bind(this)
     this.state = { open: false }
   }
 
@@ -107,6 +108,15 @@ class StatusFilter extends Component {
     }
 
     const statusValues = HakemusStatuses.allStatuses()
+    const self = this
+    const onDelete = function(e) {
+      self.setState({
+        open: false
+      })
+      controller.setFilter("status", statusValues)
+    }
+    const hasFilters = statusFilter.length !== statusValues.length
+
     for (var i=0; i < statusValues.length; i++) {
       const status = statusValues[i]
       const checked = _.contains(statusFilter, status)
@@ -122,6 +132,7 @@ class StatusFilter extends Component {
     return (
       <div className="status-filter">
         <a onClick={this.handleClick}>Tila</a>
+        <button hidden={!hasFilters} onClick={onDelete} className="filter-remove" alt="Poista tila rajaukset" title="Poista tila rajaukset" tabIndex="-1" />
         <div className="status-filter-popup popup-box-shadow" hidden={!this.state.open}>
           {statuses}
         </div>
