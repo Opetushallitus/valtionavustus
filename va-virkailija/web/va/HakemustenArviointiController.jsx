@@ -19,13 +19,14 @@ const events = {
   saveCompleted: 'saveCompleted',
   loadComments: 'loadcomments',
   commentsLoaded: 'commentsLoaded',
-  addComment: 'addComment'
+  addComment: 'addComment',
+  scoresLoaded: 'scoresLoaded'
 }
 
 export default class HakemustenArviointiController {
 
   initializeState(avustushakuId) {
-    this._bind('onInitialState')
+    this._bind('onInitialState', 'onHakemusSelection')
 
     const initialStateTemplate = {
       hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId)),
@@ -60,6 +61,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.loadComments)], this.onLoadComments,
       [dispatcher.stream(events.commentsLoaded)], this.onCommentsLoaded,
       [dispatcher.stream(events.addComment)], this.onAddComment,
+      [dispatcher.stream(events.scoresLoaded)], this.onScoresLoaded,
       [dispatcher.stream(events.setFilter)], this.onFilterSet
     )
   }
@@ -70,6 +72,10 @@ export default class HakemustenArviointiController {
 
   static commentsUrl(state) {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + state.selectedHakemus.id + "/comments"
+  }
+
+  static scoresUrl(state, hakemus) {
+    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemus.id + "/scores"
   }
 
   onInitialState(emptyState, realInitialState) {
@@ -89,6 +95,7 @@ export default class HakemustenArviointiController {
 
   onHakemusSelection(state, hakemusToSelect) {
     state.selectedHakemus = hakemusToSelect
+    this.loadScores(state, hakemusToSelect)
     return state
   }
 
@@ -160,6 +167,22 @@ export default class HakemustenArviointiController {
 
   onFilterSet(state, newFilter) {
     state.hakuFilter[newFilter.filterId] = newFilter.filter
+    return state
+  }
+
+  loadScores(state, hakemus) {
+    HttpUtil.get(HakemustenArviointiController.scoresUrl(state, hakemus)).then(scores => {
+      dispatcher.push(events.scoresLoaded, {hakemusId: hakemus.id, scores: scores})
+    })
+    return state
+  }
+
+  onScoresLoaded(state, hakemusIdWithScores) {
+    const hakemusId = hakemusIdWithScores.hakemusId
+    const relevantHakemus = _.find(state.hakuData.hakemukset, h => { return h.id === hakemusId })
+    if (relevantHakemus) {
+      relevantHakemus.scores = hakemusIdWithScores.scores
+    }
     return state
   }
 
