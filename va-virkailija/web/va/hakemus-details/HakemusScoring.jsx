@@ -23,7 +23,13 @@ class ValintaPerusteRow {
     const textInFinnish = valintaperuste.fi
     const textInSwedish = valintaperuste.sv
     return <div className="single-valintaperuste" >
-            <span title={textInFinnish + " / " + textInSwedish}>{textInFinnish}</span>
+            <div className="valintaperuste-text" title={textInFinnish + " / " + textInSwedish}>{textInFinnish}</div>
+            <div className="score-row">
+              <span className="single-score"><img src="/img/star_off.png"/></span>
+              <span className="single-score"><img src="/img/star_off.png"/></span>
+              <span className="single-score"><img src="/img/star_off.png"/></span>
+              <span className="single-score"><img src="/img/star_off.png"/></span>
+            </div>
            </div>
   }
 }

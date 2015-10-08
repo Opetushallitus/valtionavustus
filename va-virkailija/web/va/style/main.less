@@ -118,11 +118,21 @@ table.hakemus-list {
 
     #hakemus-scoring-container {
       .single-valintaperuste {
-        max-width: 222px;
+        position: relative;
         margin-bottom: 6px;
         line-height: 14px;
-        span {
+        .valintaperuste-text {
+          width: 222px;
+          display: inline-block;
           color: @dark-gray;
+        }
+      }
+      .score-row {
+        position: absolute;
+        display: inline-block;
+        right: 42px;
+        .single-score {
+          padding: 0 7px 0 7px;
         }
       }
     }
