@@ -9,7 +9,6 @@ export default class HakemusScoring extends Component {
     const valintaperusteet = _.get(avustushaku, "content.selection-criteria.items")
     const valintaPerusteRows = _.map(valintaperusteet, peruste => { return <ValintaPerusteRow valintaperuste={peruste}/> } )
     return <div id="hakemus-scoring-container">
-             <h2>Arvio tavoitteiden toteutumisesta</h2>
              <div className="valintaperuste-list">
                {valintaPerusteRows}
              </div>
