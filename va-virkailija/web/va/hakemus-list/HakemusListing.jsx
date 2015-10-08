@@ -6,9 +6,6 @@ import HakemusStatuses from '../hakemus-details/HakemusStatuses.js'
 export default class HakemusListing extends Component {
 
   static _filterWithArrayPredicate(fieldGetter, filter) {
-    if(_.isEmpty(filter)) {
-      return function() {return true}
-    }
     return function(hakemus) {
       return _.contains(filter, fieldGetter(hakemus))
     }
