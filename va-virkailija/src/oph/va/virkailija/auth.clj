@@ -26,6 +26,11 @@
         (swap! tokens assoc token details)
         details))))
 
+(defn get-identity [request]
+  (check-identity (-> request
+                      :session
+                      :identity)))
+
 (defn logout [identity]
   (if-let [{:keys [token username]} identity]
     (swap! tokens dissoc token)))

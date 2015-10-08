@@ -182,9 +182,7 @@
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
         :body [comment (describe NewComment "New comment")]
         :return Comments
-        (let [identity (auth/check-identity (-> request
-                                                :session
-                                                :identity))]
+        (let [identity (auth/get-identity request)]
           (ok (virkailija-db/add-comment hakemus-id
                                          (:first-name identity)
                                          (:surname identity)
@@ -211,9 +209,7 @@
   "User information"
 
   (GET "/" [:as request]
-       (ok (auth/check-identity (-> request
-                                    :session
-                                    :identity)))))
+       (ok (auth/get-identity request))))
 
 (defroutes* login-routes
   "Authentication"
