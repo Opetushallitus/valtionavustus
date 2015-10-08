@@ -11,6 +11,7 @@
   position: absolute;
   display: inline-block;
 
+  height: 22px;
   min-width: @preview-width;
   background-color: @off-white;
   margin: 4px 4px 4px 0;
@@ -20,8 +21,16 @@
   cursor: pointer;
   color: @selected-blue;
 
+  transition-property: all;
+  transition-duration: 0.3s;
+
   &.rw-open {
     height: @popup-height;
+    
+    .rw-popup-container {
+      opacity: 1;
+      height: @popup-height - 42px !important;
+    }
 
     div.rw-input {
       padding-bottom: 4px;
@@ -83,7 +92,14 @@
     background-color: @off-white;
     max-height: 198px;
     width: 97%;
-    overflow: auto !important; // to override inline style of ReactWidgets.DropdownList
+    overflow: auto !important; // !important must be used in this container to override inline styles of ReactWidgets.DropdownList
+
+    transition-property: all;
+    transition-duration: 0.05s;
+    opacity: 0;
+
+    height: 0 !important;
+    display: block !important;
 
     ul {
       padding: 0;
