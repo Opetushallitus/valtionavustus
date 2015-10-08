@@ -21,9 +21,9 @@ export default class AvustushakuDropdown extends AvustushakuSelector {
       window.location.href = "/avustushaku/" + value.id
     }
     const messages = {
-      filterPlaceholder: 'Hae...',
+      filterPlaceholder: '',
       emptyList: 'Ei avustushakuja',
-      emptyFilter: 'Ei tuloksia – laajenna hakua'
+      emptyFilter: 'Ei tuloksia'
     }
     const scrollListToTopForIE = opening => {
       if (opening) {
