@@ -34,7 +34,6 @@ export default class HakemusListing extends Component {
 
   render() {
     const controller = this.props.controller
-    const avustushaku = this.props.avustushaku
     const selectedHakemus = this.props.selectedHakemus
     const filter = this.props.hakuFilter
     const hakemusList = this.props.hakemusList

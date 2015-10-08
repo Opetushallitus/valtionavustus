@@ -38,7 +38,6 @@ export default class App extends Component {
                             hakuFilter={state.hakuFilter}
                             hakemusList={hakemusList}
                             selectedHakemus={selectedHakemus}
-                            avustushaku={avustushaku}
                             controller={controller} />
           </div>
           <HakemusDetails hakuData={hakuData}
