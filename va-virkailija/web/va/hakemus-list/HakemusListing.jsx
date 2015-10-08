@@ -56,7 +56,7 @@ export default class HakemusListing extends Component {
           <th className="organization-column"><input className="text-filter" placeholder="Hakijaorganisaatio" onChange={onFilterChange("organization")} value={filter.organization}></input></th>
           <th className="project-name-column"><input className="text-filter" placeholder="Hanke" onChange={onFilterChange("name")} value={filter.name}></input></th>
           <th className="score-column">Arvio</th>
-          <th className="status-column"><StatusFilter controller={controller} filter={filter}/></th>
+          <th className="status-column"><StatusFilter controller={controller} hakemusList={hakemusList} filter={filter}/></th>
           <th className="applied-sum-column">Haettu</th>
           <th className="granted-sum-column">Myönnetty</th>
         </tr></thead>
@@ -94,6 +94,7 @@ class StatusFilter extends Component {
     const controller = this.props.controller
     const statusFilter = this.props.filter.status
     const statuses = []
+    const hakemusList = this.props.hakemusList
     const onCheckboxChange = function(status) {
       return function(e) {
         if(_.contains(statusFilter, status)) {
@@ -110,10 +111,11 @@ class StatusFilter extends Component {
       const status = statusValues[i]
       const checked = _.contains(statusFilter, status)
       const htmlId = "filter-by-status-" + status
+      const kpl = _.filter(hakemusList, HakemusListing._filterWithArrayPredicate(hakemus => hakemus.arvio.status, [status])).length
       statuses.push(
-        <div>
-          <input id={htmlId} key={status} type="checkbox" checked={checked} onChange={onCheckboxChange(status)} value={statusValues[status]}/>
-          <label htmlFor={htmlId}>{HakemusStatuses.statusToFI(status)}</label>
+        <div key={status}>
+          <input id={htmlId} type="checkbox" checked={checked} onChange={onCheckboxChange(status)} value={statusValues[status]}/>
+          <label htmlFor={htmlId}>{HakemusStatuses.statusToFI(status)} ({kpl})</label>
         </div>
       )
     }
