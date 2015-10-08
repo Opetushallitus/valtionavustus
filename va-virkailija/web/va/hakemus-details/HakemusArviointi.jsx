@@ -4,7 +4,7 @@ import FormUtil from 'soresu-form/web/form/FormUtil'
 
 import HakemusScoring from './HakemusScoring.jsx'
 import HakemusComments from './HakemusComments.jsx'
-import HakemusStatus from "./HakemusStatus.jsx"
+import HakemusStatuses from "./HakemusStatuses.js"
 
 export default class HakemusArviointi extends Component {
   render() {
@@ -34,6 +34,7 @@ class SetStatus extends React.Component {
     const statusValues = ['unhandled', 'processing', 'plausible', 'rejected', 'accepted'];
     for (var i=0; i < statusValues.length; i++) {
       const htmlId = "set-status-" + statusValues[i]
+      const statusFI = HakemusStatuses.statusToFI(statusValues[i])
       statuses.push(
           <input id={htmlId}
                  type="radio"
@@ -45,10 +46,7 @@ class SetStatus extends React.Component {
               />
       )
       statuses.push(
-          <label key={htmlId + "-label"}
-                 htmlFor={htmlId}>
-            <HakemusStatus status={statusValues[i]}/>
-          </label>
+          <label key={htmlId + "-label"} htmlFor={htmlId}>{statusFI}</label>
       )
     }
 

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
 
-import HakemusStatus from '../hakemus-details/HakemusStatus.jsx'
+import HakemusStatuses from '../hakemus-details/HakemusStatuses.js'
 import AvustushakuSelector from '../avustushaku/AvustushakuSelector.jsx'
 
 export default class HakemusListing extends Component {
@@ -76,11 +76,12 @@ class HakemusRow extends Component {
     const thisIsSelected = hakemus === this.props.selectedHakemus
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
     const controller = this.props.controller
+    const statusFI = HakemusStatuses.statusToFI(hakemus.arvio.status)
     return <tr id={htmlId} className={rowClass} onClick={controller.selectHakemus(hakemus)}>
       <td className="organization-column">{hakemus["organization-name"]}</td>
       <td className="project-name-column">{hakemus["project-name"]}</td>
       <td className="score-column">***</td>
-      <td className="status-column"><HakemusStatus status={hakemus.arvio.status}/></td>
+      <td className="status-column">{statusFI}</td>
       <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>
       <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>
     </tr>
