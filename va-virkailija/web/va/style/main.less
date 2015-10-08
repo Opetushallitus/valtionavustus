@@ -42,14 +42,15 @@ table.hakemus-list {
     }
   }
   th {
-    input {
+
+    input.text-filter {
       width: 95%;
       padding-left: 4px;
       .input-placeholder({
         color: @form-label-black;
       })
     }
-    input:focus {
+    input.text-filter:focus {
       outline: none;
       .input-placeholder({
         color: @light-gray;

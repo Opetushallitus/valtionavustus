@@ -44,8 +44,8 @@ export default class HakemusListing extends Component {
     return (
       <table key="hakemusListing" className="hakemus-list overview-list">
         <thead><tr>
-          <th className="organization-column"><input placeholder="Hakijaorganisaatio" onChange={onFilterChange("organization")} name="filter-by-organization" value={filter.organization}></input></th>
-          <th className="project-name-column"><input placeholder="Hanke" onChange={onFilterChange("name")} name="filter-by-name" value={filter.name}></input></th>
+          <th className="organization-column"><input className="text-filter" placeholder="Hakijaorganisaatio" onChange={onFilterChange("organization")} value={filter.organization}></input></th>
+          <th className="project-name-column"><input className="text-filter" placeholder="Hanke" onChange={onFilterChange("name")} value={filter.name}></input></th>
           <th className="score-column">Arvio</th>
           <th className="status-column">Tila</th>
           <th className="applied-sum-column">Haettu</th>
