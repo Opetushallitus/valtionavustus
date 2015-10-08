@@ -5,7 +5,7 @@ import HakemusStatuses from '../hakemus-details/HakemusStatuses.js'
 
 export default class HakemusListing extends Component {
 
-  _filterWithArrayPredicate(fieldGetter, filter) {
+  static _filterWithArrayPredicate(fieldGetter, filter) {
     if(_.isEmpty(filter)) {
       return function() {return true}
     }
@@ -14,7 +14,7 @@ export default class HakemusListing extends Component {
     }
   }
 
-  _filterWithStrPredicate(fieldGetter, filter) {
+  static _filterWithStrPredicate(fieldGetter, filter) {
     if(_.isEmpty(filter)) {
       return function() {return true}
     }
@@ -25,10 +25,11 @@ export default class HakemusListing extends Component {
       return fieldGetter(hakemus).toUpperCase().indexOf(filter.toUpperCase()) >= 0
     }
   }
-  _filter(list, filter) {
-    return _.filter(list, this._filterWithStrPredicate(hakemus => hakemus["project-name"], filter.name))
-            .filter(this._filterWithStrPredicate(hakemus => hakemus["organization-name"], filter.organization))
-            .filter(this._filterWithArrayPredicate(hakemus => hakemus.arvio.status, filter.status))
+
+  static _filter(list, filter) {
+    return _.filter(list, HakemusListing._filterWithStrPredicate(hakemus => hakemus["project-name"], filter.name))
+            .filter(HakemusListing._filterWithStrPredicate(hakemus => hakemus["organization-name"], filter.organization))
+            .filter(HakemusListing._filterWithArrayPredicate(hakemus => hakemus.arvio.status, filter.status))
 
   }
 
@@ -37,7 +38,7 @@ export default class HakemusListing extends Component {
     const selectedHakemus = this.props.selectedHakemus
     const filter = this.props.hakuFilter
     const hakemusList = this.props.hakemusList
-    const filteredHakemusList = this._filter(hakemusList, filter)
+    const filteredHakemusList = HakemusListing._filter(hakemusList, filter)
     const ophShareSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
       return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} controller={controller}/> })
