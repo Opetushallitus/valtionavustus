@@ -36,6 +36,11 @@ export default class HakemustenArviointiController {
         name: "",
         status: HakemusStatuses.allStatuses()
       },
+      hakemusSorter: [
+        {field: "name", order: "asc"},
+        {field: "organization", order: "asc"},
+        {field: "status", order: "asc"}
+      ],
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
       avustushakuList: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/")),

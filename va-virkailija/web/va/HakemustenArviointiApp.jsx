@@ -36,6 +36,7 @@ export default class App extends Component {
             <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
                             budgetGrantedSum={hakuData["budget-granted-sum"]}
                             hakemusFilter={state.hakemusFilter}
+                            hakemusSorter={state.hakemusSorter}
                             hakemusList={hakemusList}
                             selectedHakemus={selectedHakemus}
                             controller={controller} />

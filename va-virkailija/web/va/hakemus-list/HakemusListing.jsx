@@ -5,6 +5,22 @@ import HakemusStatuses from '../hakemus-details/HakemusStatuses.js'
 
 export default class HakemusListing extends Component {
 
+  static _fieldGetter(fieldName) {
+    switch(fieldName) {
+      case "name":
+        return hakemus => hakemus["project-name"]
+      case "organization":
+        return hakemus => hakemus["organization-name"]
+      case "status":
+        return hakemus => hakemus.arvio.status
+      case "applied-sum":
+        return hakemus => hakemus["budget-oph-share"]
+      case "granted-sum":
+        return hakemus => hakemus.arvio["budget-granted"]
+    }
+    throw Error("No field getter for " + fieldName)
+  }
+
   static _filterWithArrayPredicate(fieldGetter, filter) {
     return function(hakemus) {
       return _.contains(filter, fieldGetter(hakemus))
@@ -24,9 +40,29 @@ export default class HakemusListing extends Component {
   }
 
   static _filter(list, filter) {
-    return _.filter(list, HakemusListing._filterWithStrPredicate(hakemus => hakemus["project-name"], filter.name))
-            .filter(HakemusListing._filterWithStrPredicate(hakemus => hakemus["organization-name"], filter.organization))
-            .filter(HakemusListing._filterWithArrayPredicate(hakemus => hakemus.arvio.status, filter.status))
+    return _.filter(list, HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("name"), filter.name))
+            .filter(HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("organization"), filter.organization))
+            .filter(HakemusListing._filterWithArrayPredicate(HakemusListing._fieldGetter("status"), filter.status))
+
+  }
+
+  static _sortByArray(fieldGetter, array, order) {
+    return function(hakemus) {
+      const sortValue = array.indexOf(fieldGetter(hakemus))
+      return order === 'asc' ? sortValue: - sortValue
+    }
+  }
+
+  static _sortBy(list, sorter) {
+    switch (sorter.field) {
+      case "status":
+        return _.sortBy(list, HakemusListing._sortByArray(hakemus => hakemus.arvio.status, HakemusStatuses.allStatuses(), sorter.order))
+    }
+    return _.sortByOrder(list, HakemusListing._fieldGetter(sorter.field), sorter.order)
+  }
+
+  static _sort(list, sorterList) {
+    return _.reduce(sorterList, HakemusListing._sortBy, list)
 
   }
 
@@ -34,8 +70,9 @@ export default class HakemusListing extends Component {
     const controller = this.props.controller
     const selectedHakemus = this.props.selectedHakemus
     const filter = this.props.hakemusFilter
+    const sorter = this.props.hakemusSorter
     const hakemusList = this.props.hakemusList
-    const filteredHakemusList = HakemusListing._filter(hakemusList, filter)
+    const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter)
     const ophShareSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
       return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} controller={controller}/> })
