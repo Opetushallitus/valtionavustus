@@ -19,16 +19,17 @@
 
 .status-filter {
   position: relative;
+  display: inline-block;
   .status-filter-popup {
     color: @selected-blue;
     position: absolute;
     padding: 10px;
-    width: 100%;
+    width: 160px;
     background-color: @off-white;
     font-size: 12px;
     line-height: 1.7em;
     top: 37px;
-    right: 0;
+    left: -20px;
     input[type=checkbox] {
       margin-right: 5px;
     }
@@ -74,7 +75,7 @@ table.hakemus-list {
       outline: none;
     }
     input.text-filter {
-      width: 95%;
+      width: 90%;
       padding-left: 4px;
       .input-placeholder({
         color: @form-label-black;

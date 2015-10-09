@@ -14,6 +14,7 @@ const dispatcher = new Dispatcher()
 const events = {
   initialState: 'initialState',
   setFilter: 'setFilter',
+  setSorter: 'setSorter',
   selectHakemus: 'selectHakemus',
   updateHakemusArvio: 'updateHakemusArvio',
   saveCompleted: 'saveCompleted',
@@ -69,7 +70,8 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.addComment)], this.onAddComment,
       [dispatcher.stream(events.scoresLoaded)], this.onScoresLoaded,
       [dispatcher.stream(events.setScore)], this.onSetScore,
-      [dispatcher.stream(events.setFilter)], this.onFilterSet
+      [dispatcher.stream(events.setFilter)], this.onFilterSet,
+      [dispatcher.stream(events.setSorter)], this.onSorterSet
     )
   }
 
@@ -177,6 +179,11 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  onSorterSet(state, newSorter) {
+    state.hakemusSorter = newSorter
+    return state
+  }
+
   loadScores(state, hakemus) {
     HttpUtil.get(HakemustenArviointiController.scoresUrl(state, hakemus)).then(scores => {
       dispatcher.push(events.scoresLoaded, {hakemusId: hakemus.id, scores: scores})
@@ -224,6 +231,10 @@ export default class HakemustenArviointiController {
   setFilter(filterId, newFilter) {
     dispatcher.push(events.setFilter, {filterId: filterId,
                                          filter: newFilter})
+  }
+
+  setSorter(newSorter) {
+    dispatcher.push(events.setSorter, newSorter)
   }
 
   setHakemusArvioStatus(hakemus, newStatus) {

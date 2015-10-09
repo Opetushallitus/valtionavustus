@@ -64,10 +64,29 @@ a {
   text-decoration: none;
 }
 
+.sorter {
+  display: inline-block;
+  margin-left: 3px;
+  a {
+    border-width: 0;
+    margin: 0 2px 0 0;
+    font-family: Arial, sans-serif;
+  }
+  .sorted {
+    font-weight: bold;
+  }
+  .sort-desc:after {
+    content: "\02C5";
+  }
+  .sort-asc:after {
+    content: "\02C4";
+  }
+}
+
 button {
   color: #fff;
   background-color: @light-green;
-  border-width: 0px;
+  border-width: 0;
   margin: 4px 0;
   padding: 8px 15px;
   font-size: 18px;

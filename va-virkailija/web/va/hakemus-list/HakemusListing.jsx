@@ -87,12 +87,21 @@ export default class HakemusListing extends Component {
     return (
       <table key="hakemusListing" className="hakemus-list overview-list">
         <thead><tr>
-          <th className="organization-column"><input className="text-filter" placeholder="Hakijaorganisaatio" onChange={onFilterChange("organization")} value={filter.organization}></input></th>
-          <th className="project-name-column"><input className="text-filter" placeholder="Hanke" onChange={onFilterChange("name")} value={filter.name}></input></th>
+          <th className="organization-column">
+            <input className="text-filter" placeholder="Hakijaorganisaatio" onChange={onFilterChange("organization")} value={filter.organization}></input>
+            <HakemusSorter field="organization" sorter={sorter} controller={controller}/>
+          </th>
+          <th className="project-name-column">
+            <input className="text-filter" placeholder="Hanke" onChange={onFilterChange("name")} value={filter.name}></input>
+            <HakemusSorter field="name" sorter={sorter} controller={controller}/>
+          </th>
           <th className="score-column">Arvio</th>
-          <th className="status-column"><StatusFilter controller={controller} hakemusList={hakemusList} filter={filter}/></th>
-          <th className="applied-sum-column">Haettu</th>
-          <th className="granted-sum-column">Myönnetty</th>
+          <th className="status-column">
+            <StatusFilter controller={controller} hakemusList={hakemusList} filter={filter}/>
+            <HakemusSorter field="status" sorter={sorter} controller={controller}/>
+          </th>
+          <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>
+          <th className="granted-sum-column">Myönnetty <HakemusSorter field="granted-sum" sorter={sorter} controller={controller}/></th>
         </tr></thead>
         <tbody>
           {hakemusElements}
@@ -108,6 +117,44 @@ export default class HakemusListing extends Component {
 
   static formatNumber (num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ")
+  }
+}
+
+class HakemusSorter extends Component {
+
+  static determineCssClass(sorter, order) {
+    return sorter && sorter.order === order ? "sorted" : ""
+  }
+
+  render() {
+    const field = this.props.field
+    const sorterList = this.props.sorter
+    const sorter = _.find(sorterList, sorter => sorter.field === field)
+    const controller = this.props.controller
+
+    const onSorterChange = function(order) {
+      return function(e) {
+        console.log(field, sorterList, sorter)
+        if(sorter) {
+          const sorterListWithoutThis =  _.without(sorterList, sorter)
+          if(sorter.order == order) {
+            controller.setSorter(sorterListWithoutThis)
+          }
+          else {
+            controller.setSorter(_.union(sorterListWithoutThis, [{field: field, order: order}]))
+          }
+        }
+        else {
+          controller.setSorter(_.union(sorterList, [{field: field, order: order}]))
+        }
+      }
+    }
+    return (
+      <div className="sorter">
+        <a onClick={onSorterChange("desc")} className={"sort-desc " + HakemusSorter.determineCssClass(sorter, "desc")}/>
+        <a onClick={onSorterChange("asc")} className={"sort-asc " + HakemusSorter.determineCssClass(sorter, "asc")}/>
+      </div>
+    )
   }
 }
 
