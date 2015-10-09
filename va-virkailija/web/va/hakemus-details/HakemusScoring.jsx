@@ -2,6 +2,22 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 
 export default class HakemusScoring extends Component {
+
+  static scoreToFI(score) {
+    console.log(score)
+    switch(score) {
+      case 0:
+        return "Ei toteudu"
+      case 1:
+        return "Toteutuu"
+      case 2:
+        return "Toteutuu hyvin"
+      case 3:
+        return "Toteutuu erinomaisesti"
+    }
+    return "Ei arviota"
+  }
+
   render() {
     const controller = this.props.controller
     const hakemus = this.props.hakemus
@@ -38,6 +54,7 @@ class ValintaPerusteRow extends Component {
     const userInfo = this.props.userInfo
     const controller = this.props.controller
     const myScore = _.find(allScoresOfThisPeruste, s => { return s["person-oid"] === userInfo["person-oid"] })
+    const myScoreFI = HakemusScoring.scoreToFI(myScore ? myScore.score : null)
     const starElements = _.map(_.range(4), i => <StarElement key={i}
                                                              index={i}
                                                              myScore={myScore}
@@ -47,12 +64,15 @@ class ValintaPerusteRow extends Component {
     const textInFinnish = valintaperuste.fi
     const textInSwedish = valintaperuste.sv
 
-    return <div className="single-valintaperuste">
-            <div className="valintaperuste-text" title={textInFinnish + " / " + textInSwedish}>{textInFinnish}</div>
-            <div className="score-row">
-              {starElements}
-            </div>
-           </div>
+    return (
+      <div className="single-valintaperuste">
+        <div className="valintaperuste-text" title={textInFinnish + " / " + textInSwedish}>{textInFinnish}</div>
+        <div className="score-row">
+          {starElements}
+          <div className="score-text">{myScoreFI}</div>
+        </div>
+      </div>
+    )
   }
 }
 
@@ -66,9 +86,10 @@ class StarElement extends Component {
     const starImage = myScore && myScore.score >= indexOfStar ? "/img/star_on.png" : "/img/star_off.png"
     const showHover = event => { event.target.setAttribute("src", "/img/star_hover.png") }
     const hideHover = event => { event.target.setAttribute("src", starImage)}
-    return <span className="single-score"><img src={starImage}
-                                               onClick={onClick}
-                                               onMouseOver={showHover}
-                                               onMouseOut={hideHover}/></span>
+    return <img className="single-score"
+                src={starImage}
+                onClick={onClick}
+                onMouseOver={showHover}
+                onMouseOut={hideHover}/>
   }
 }

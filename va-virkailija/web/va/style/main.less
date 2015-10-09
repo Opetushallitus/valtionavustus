@@ -144,22 +144,25 @@ table.hakemus-list {
 
     #hakemus-scoring-container {
       .single-valintaperuste {
-        position: relative;
         margin-bottom: 6px;
         line-height: 14px;
         .valintaperuste-text {
-          width: 222px;
+          width: 290px;
           display: inline-block;
           color: @dark-gray;
         }
-      }
-      .score-row {
-        position: absolute;
-        display: inline-block;
-        right: 42px;
-        .single-score {
-          padding: 0 7px 0 7px;
-          cursor: pointer;
+        .score-row {
+          margin-left: 10px;
+          vertical-align: top;
+          display: inline-block;
+          .single-score {
+            height: 20px;
+            padding: 0 14px 0 0;
+            cursor: pointer;
+          }
+          .score-text {
+            color: @dark-gray;
+          }
         }
       }
     }
