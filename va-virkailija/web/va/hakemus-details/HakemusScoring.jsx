@@ -79,6 +79,7 @@ class ValintaPerusteRow extends Component {
 class StarElement extends Component {
   render() {
     const indexOfStar = this.props.index
+    const starTitle = HakemusScoring.scoreToFI(indexOfStar)
     const myScore = this.props.myScore
     const selectionCriteriaIndex = this.props.selectionCriteriaIndex
     const controller = this.props.controller
@@ -88,6 +89,7 @@ class StarElement extends Component {
     const hideHover = event => { event.target.setAttribute("src", starImage)}
     return <img className="single-score"
                 src={starImage}
+                title={starTitle}
                 onClick={onClick}
                 onMouseOver={showHover}
                 onMouseOut={hideHover}/>
