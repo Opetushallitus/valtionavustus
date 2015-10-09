@@ -8,12 +8,65 @@
   transition: all @seconds ease-in-out;
 }
 
-.scale (@factor) {
+.scale(@factor) {
   -webkit-transform: scale(@factor);
   -moz-transform: scale(@factor);
   -ms-transform: scale(@factor);
   -o-transform: scale(@factor);
   transform: scale(@factor);
+}
+
+.box-triangle(@position) {
+  &:before, &:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-color: transparent;
+  }
+
+  &:before {
+    left: @position;
+    border-width: 11px;
+  }
+
+  &:after {
+    left: @position + 1px;
+    border-width: 10px;
+  }
+}
+
+.box-triangle-up(@stroke, @fill) {
+  &:before, &:after {
+    border-top: 0;
+  }
+
+  &:before {
+    top: -11px;
+    border-bottom-color: @stroke;
+  }
+
+  &:after {
+    top: -10px;
+    border-bottom-color: @fill;
+  }
+}
+
+.box-triangle-down(@stroke, @fill) {
+  &:before, &:after {
+    border-bottom: 0;
+  }
+
+  &:before {
+    bottom: -11px;
+    border-top-color: @stroke;
+  }
+
+  &:after {
+    bottom: -10px;
+    border-top-color: @fill;
+  }
 }
 
 body {
@@ -518,63 +571,22 @@ a:hover.soresu-tooltip > span {
   z-index: 99;
 }
 
-a.soresu-tooltip > span:before, a.soresu-tooltip > span:after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-color: transparent;
+a.soresu-tooltip > span {
+  .box-triangle(295px);
 }
 
-a.soresu-tooltip > span:before {
-  /* Stroke */
-  left: 295px;
-  border-width: 11px;
-}
-
-a.soresu-tooltip > span:after {
-  /* Fill */
-  left: 296px;
-  border-width: 10px;
-}
-
-a.soresu-tooltip-up > span:before, a.soresu-tooltip-up > span:after {
-  border-bottom: 0;
+a.soresu-tooltip-up > span {
+  .box-triangle-down(@light-gray, #fff);
 }
 
 a:hover.soresu-tooltip-up > span {
   bottom: 32px;
 }
 
-a.soresu-tooltip-up > span:before {
-  /* Stroke */
-  bottom: -11px;
-  border-top-color: @light-gray;
-}
-
-a.soresu-tooltip-up > span:after {
-  /* Fill */
-  bottom: -10px;
-  border-top-color: #fff;
-}
-
-a.soresu-tooltip-down > span:before, a.soresu-tooltip-down > span:after {
-  border-top: 0;
+a.soresu-tooltip-down > span {
+  .box-triangle-up(@light-gray, #fff);
 }
 
 a:hover.soresu-tooltip-down > span {
   top: 42px;
-}
-
-a.soresu-tooltip-down > span:before {
-  /* Stroke */
-  top: -11px;
-  border-bottom-color: @light-gray;
-}
-
-a.soresu-tooltip-down > span:after {
-  /* Fill */
-  top: -10px;
-  border-bottom-color: #fff;
 }
