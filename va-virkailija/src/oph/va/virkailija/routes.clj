@@ -217,7 +217,8 @@
         :body [score (describe NewScore "Stored or updated score")]
         :return Scores
         (let [identity (auth/get-identity request)]
-          (ok (virkailija-db/add-score hakemus-id
+          (ok (virkailija-db/add-score avustushaku-id
+                                       hakemus-id
                                        identity
                                        (:selection-criteria-index score)
                                        (:score score))))))

@@ -62,8 +62,9 @@
   (->> (exec :db queries/list-scores {:arvio_id arvio-id})
        (map score->map)))
 
-(defn- update-or-create-score [arvio-id identity selection-criteria-index score]
-  (let [params {:arvio_id                 arvio-id
+(defn- update-or-create-score [avustushaku-id arvio-id identity selection-criteria-index score]
+  (let [params {:avustushaku_id           avustushaku-id
+                :arvio_id                 arvio-id
                 :person_oid               (:person-oid identity)
                 :first_name               (:first-name identity)
                 :last_name                (:surname identity)
@@ -74,7 +75,7 @@
         updated
         (exec :db queries/create-score<! params))))
 
-(defn add-score [hakemus-id identity selection-criteria-index score]
+(defn add-score [avustushaku-id hakemus-id identity selection-criteria-index score]
   (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
-    (update-or-create-score arvio-id identity selection-criteria-index score)
+    (update-or-create-score avustushaku-id arvio-id identity selection-criteria-index score)
     (list-scores arvio-id)))
