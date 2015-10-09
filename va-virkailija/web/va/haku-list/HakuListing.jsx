@@ -23,7 +23,7 @@ export default class HakuListing extends Component {
             <th className="start-column">Haku alkaa</th>
             <th className="end-column">Haku päättyy</th>
           </tr></thead>
-          <tbody>
+          <tbody className="has-selected">
             {hakuElements}
           </tbody>
         </table>

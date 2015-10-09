@@ -23,7 +23,8 @@ export default class App extends Component {
     const hakuData = state.hakuData
     const avustushaku = hakuData.avustushaku
     const hakemusList = hakuData.hakemukset
-    const selectedHakemus = state.selectedHakemus ? state.selectedHakemus : {}
+    const hasSelected = typeof state.selectedHakemus === 'object'
+    const selectedHakemus = hasSelected ? state.selectedHakemus : {}
     const translations = state.translations
     const loadingComments = state.loadingComments
     const avustushakuList = state.avustushakuList
@@ -31,24 +32,26 @@ export default class App extends Component {
       <section>
         <TopBar activeTab="arviointi" environment={hakuData.environment} state={state}/>
         <section id="container">
-          <div id="list-container">
+          <div id="list-container" className={hasSelected ? "has-selected" : ""}>
             <AvustushakuDropdown controller={controller} avustushaku={avustushaku} avustushakuList={avustushakuList} />
             <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
                             budgetGrantedSum={hakuData["budget-granted-sum"]}
                             hakemusFilter={state.hakemusFilter}
                             hakemusSorter={state.hakemusSorter}
                             hakemusList={hakemusList}
+                            hasSelected={hasSelected}
                             selectedHakemus={selectedHakemus}
                             controller={controller} />
           </div>
-          <HakemusDetails hakuData={hakuData}
+          <HakemusDetails hidden={!hasSelected}
+                          hakuData={hakuData}
                           avustushaku={avustushaku}
                           hakemus={selectedHakemus}
                           translations={translations}
                           userInfo={state.userInfo}
                           loadingComments={loadingComments}
                           controller={controller}/>
-          <div id="footer">
+          <div hidden={!hasSelected} id="footer">
             <HakemusHakijaSidePreviewLink hakemus={selectedHakemus} avustushaku={avustushaku} />
           </div>
         </section>

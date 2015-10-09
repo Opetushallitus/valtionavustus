@@ -5,6 +5,7 @@ import HakemusArviointi from './HakemusArviointi.jsx'
 
 export default class HakemusDetails extends Component {
   render() {
+    const hidden = this.props.hidden
     const controller = this.props.controller
     const hakemus = this.props.hakemus
     const avustushaku = this.props.avustushaku
@@ -14,7 +15,7 @@ export default class HakemusDetails extends Component {
     const translations = this.props.translations
 
     return (
-      <div id="hakemus-details">
+      <div hidden={hidden} id="hakemus-details">
         <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
         <HakemusArviointi hakemus={hakemus}
                           avustushaku={avustushaku}

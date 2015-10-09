@@ -70,6 +70,7 @@ export default class HakemusListing extends Component {
 
   render() {
     const controller = this.props.controller
+    const hasSelected = this.props.hasSelected
     const selectedHakemus = this.props.selectedHakemus
     const filter = this.props.hakemusFilter
     const sorter = this.props.hakemusSorter
@@ -105,7 +106,7 @@ export default class HakemusListing extends Component {
           <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>
           <th className="granted-sum-column">Myönnetty <HakemusSorter field="granted-sum" sorter={sorter} controller={controller}/></th>
         </tr></thead>
-        <tbody>
+        <tbody className={hasSelected ? "has-selected" : ""}>
           {hakemusElements}
         </tbody>
         <tfoot><tr>

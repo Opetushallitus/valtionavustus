@@ -116,6 +116,8 @@ textarea {
   position: fixed;
   width: @content-width;
   top: @topbar-height;
+}
+#list-container.has-selected {
   height: @overview-list-height;
 }
 
@@ -169,10 +171,12 @@ table.overview-list {
       }
     }
   }
+  tbody.has-selected {
+    height: 180px;
+  }
   tbody {
     display: block;
     overflow-y: scroll;
-    height: 180px;
     tr:first-child {
       border-top: 1px solid @light-gray;
     }
