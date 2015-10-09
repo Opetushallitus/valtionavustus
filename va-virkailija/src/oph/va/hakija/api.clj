@@ -121,7 +121,7 @@
 (defn get-form-by-avustushaku [avustushaku-id]
   (first (exec :hakija-db hakija-queries/get-form-by-avustushaku {:avustushaku_id avustushaku-id})))
 
-(defn get-avustushaku [avustushaku-id]
+(defn get-hakudata [avustushaku-id]
   (let [avustushaku (first (exec :hakija-db hakija-queries/get-avustushaku {:id avustushaku-id}))
         form (get-form-by-avustushaku avustushaku-id)
         roles (get-avustushaku-roles avustushaku-id)

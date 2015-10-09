@@ -94,7 +94,7 @@
         :return AvustusHaku
         (let [base-haku (-> base-haku-id-wrapper
                             :baseHakuId
-                            (hakija-api/get-avustushaku)
+                            (hakija-api/get-hakudata)
                             :avustushaku)
               {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
               form-id (:form base-haku)]
@@ -120,7 +120,7 @@
   (GET* "/:avustushaku-id" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
         :return HakuData
-        (if-let [response (hakija-api/get-avustushaku avustushaku-id)]
+        (if-let [response (hakija-api/get-hakudata avustushaku-id)]
           (ok (add-arviot response))
           (not-found)))
 
