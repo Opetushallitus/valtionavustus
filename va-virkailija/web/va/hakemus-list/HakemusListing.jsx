@@ -17,6 +17,8 @@ export default class HakemusListing extends Component {
         return hakemus => hakemus["budget-oph-share"]
       case "granted-sum":
         return hakemus => hakemus.arvio["budget-granted"]
+      case "score":
+        return hakemus => hakemus.arvio.scoring ? hakemus.arvio.scoring["score-total-average"] : 0
     }
     throw Error("No field getter for " + fieldName)
   }
@@ -95,7 +97,7 @@ export default class HakemusListing extends Component {
             <input className="text-filter" placeholder="Hanke" onChange={onFilterChange("name")} value={filter.name}></input>
             <HakemusSorter field="name" sorter={sorter} controller={controller}/>
           </th>
-          <th className="score-column">Arvio</th>
+          <th className="score-column">Arvio <HakemusSorter field="score" sorter={sorter} controller={controller}/></th>
           <th className="status-column">
             <StatusFilter controller={controller} hakemusList={hakemusList} filter={filter}/>
             <HakemusSorter field="status" sorter={sorter} controller={controller}/>

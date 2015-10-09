@@ -40,7 +40,8 @@ export default class HakemustenArviointiController {
       hakemusSorter: [
         {field: "name", order: "asc"},
         {field: "organization", order: "asc"},
-        {field: "status", order: "asc"}
+        {field: "status", order: "desc"},
+        {field: "score", order: "desc"}
       ],
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
