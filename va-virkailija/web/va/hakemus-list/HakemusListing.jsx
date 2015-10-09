@@ -232,10 +232,27 @@ class HakemusRow extends Component {
     return <tr id={htmlId} className={rowClass} onClick={controller.selectHakemus(hakemus)}>
       <td className="organization-column">{hakemus["organization-name"]}</td>
       <td className="project-name-column">{hakemus["project-name"]}</td>
-      <td className="score-column">***</td>
+      <td className="score-column"><Scoring scoring={hakemus.arvio.scoring}/></td>
       <td className="status-column">{statusFI}</td>
       <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>
       <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>
     </tr>
+  }
+}
+
+
+class Scoring extends Component {
+  render() {
+    const meanScore = this.props.scoring ? this.props.scoring["score-total-average"] : 0
+    const starElements = _.map(_.range(4), indexOfStar => {
+      const starImage = meanScore && meanScore >= indexOfStar ? "/img/star_on.png" : "/img/star_off.png"
+      return (<img key={indexOfStar} className="single-score" src={starImage} />)
+    })
+
+    return (
+      <div className="score-row">
+        {starElements}
+      </div>
+    )
   }
 }
