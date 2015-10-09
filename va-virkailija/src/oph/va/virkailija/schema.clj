@@ -23,7 +23,7 @@
   {:id s/Int
    :status ArvioStatus
    :budget-granted s/Int
-   :scoring Scoring})
+   (s/optional-key :scoring) Scoring})
 
 (s/defschema NewComment
   "New comment to be added"

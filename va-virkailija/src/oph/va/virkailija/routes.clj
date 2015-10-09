@@ -37,7 +37,8 @@
 (defn- add-arvio [arviot hakemus]
   (if-let [arvio (get arviot (:id hakemus))]
     (assoc hakemus :arvio arvio)
-    (assoc hakemus :arvio {:status "unhandled"
+    (assoc hakemus :arvio {:id -1
+                           :status "unhandled"
                            :budget-granted 0})))
 
 (defn- get-arviot-map [hakemukset]
