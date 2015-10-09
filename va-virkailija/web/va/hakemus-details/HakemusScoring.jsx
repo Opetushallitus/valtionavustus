@@ -53,6 +53,8 @@ class StarElement extends Component {
     const index = this.props.index
     const myScore = this.props.myScore
     const starImage = myScore && myScore.score >= index ? "/img/star_on.png" : "/img/star_off.png"
-    return <span className="single-score"><img src={starImage}/></span>
+    const showHover = event => { event.target.setAttribute("src", "/img/star_hover.png") }
+    const hideHover = event => { event.target.setAttribute("src", starImage)}
+    return <span className="single-score"><img src={starImage} onMouseOver={showHover} onMouseOut={hideHover}/></span>
   }
 }
