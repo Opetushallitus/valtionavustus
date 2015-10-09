@@ -134,7 +134,6 @@ class HakemusSorter extends Component {
 
     const onSorterChange = function(order) {
       return function(e) {
-        console.log(field, sorterList, sorter)
         if(sorter) {
           const sorterListWithoutThis =  _.without(sorterList, sorter)
           if(sorter.order == order) {

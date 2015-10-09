@@ -4,7 +4,6 @@ import _ from 'lodash'
 export default class HakemusScoring extends Component {
 
   static scoreToFI(score) {
-    console.log(score)
     switch(score) {
       case 0:
         return "Ei toteudu"
