@@ -62,6 +62,10 @@
   (->> (exec :db queries/list-scores {:arvio_id arvio-id})
        (map score->map)))
 
+(defn list-avustushaku-scores [avustushaku-id]
+  (->> (exec :db queries/list-avustushaku-scores {:avustushaku_id avustushaku-id})
+       (map score->map)))
+
 (defn- update-or-create-score [avustushaku-id arvio-id identity selection-criteria-index score]
   (let [params {:avustushaku_id           avustushaku-id
                 :arvio_id                 arvio-id

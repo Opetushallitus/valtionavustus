@@ -14,3 +14,4 @@
 (defquery create-score<! "sql/virkailija/score/create.sql")
 (defquery update-score<! "sql/virkailija/score/update.sql")
 (defquery list-scores "sql/virkailija/score/list.sql")
+(defquery list-avustushaku-scores "sql/virkailija/score/list-by-avustushaku.sql")
