@@ -7,10 +7,23 @@
   "Status from the opetushallitus point of view"
   (s/enum "unhandled", "processing", "plausible", "rejected", "accepted"))
 
+(s/defschema PersonScoreAverage
+  "Averga score by person"
+  {:person-oid s/Str
+   :score-average s/Num})
+
+(s/defschema Scoring
+  "Scoring aggregate data for arvio"
+  {:arvio-id s/Int
+   :score-total-average s/Num
+   :score-averages-by-user [PersonScoreAverage]})
+
 (s/defschema Arvio
   "Arvio contains evaluation of hakemus"
-  {:status ArvioStatus
-   :budget-granted s/Int})
+  {:id s/Int
+   :status ArvioStatus
+   :budget-granted s/Int
+   :scoring Scoring})
 
 (s/defschema NewComment
   "New comment to be added"

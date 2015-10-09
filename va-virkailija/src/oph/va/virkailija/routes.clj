@@ -30,7 +30,8 @@
     (not-found)))
 
 (defn- arvio-json [arvio]
-  {:status (:status arvio)
+  {:id (:id arvio)
+   :status (:status arvio)
    :budget-granted (:budget_granted arvio)})
 
 (defn- add-arvio [arviot hakemus]
@@ -53,6 +54,18 @@
     (-> haku-data
         (assoc :hakemukset (map (partial add-arvio arviot) hakemukset))
         (assoc :budget-granted-sum budget-granted-sum))))
+
+(defn- add-scores-to-hakemus [scores hakemus]
+  (if-let [hakemus-scores (-> (fn [score-entry] (= (-> hakemus :arvio :id) (:arvio-id score-entry)))
+                              (filter scores)
+                              first)]
+    (assoc-in hakemus [:arvio :scoring] hakemus-scores)
+    hakemus))
+
+(defn- add-scores [scores haku-data]
+  (let [hakemukset (:hakemukset haku-data)]
+    (-> haku-data
+        (assoc :hakemukset (map (partial add-scores-to-hakemus scores) hakemukset)))))
 
 (defn- on-hakemus-preview [avustushaku-id hakemus-user-key]
   (let [hakija-app-url (-> config :server :url :fi)
@@ -109,13 +122,15 @@
                          :focus-areas focus-areas}
                         form-id))))
 
-  (POST* "/:avustushaku-id" []
-         :path-params [avustushaku-id :- Long]
-         :body  [avustushaku (describe AvustusHaku "Updated avustushaku")]
-         :return AvustusHaku
-         (if-let [response (hakija-api/update-avustushaku avustushaku)]
-          (ok response)
-          (not-found)))
+  (GET* "/:avustushaku-id" [avustushaku-id]
+        :path-params [avustushaku-id :- Long]
+        :return HakuData
+        (let [scores (get-avustushaku-scores avustushaku-id)]
+          (if-let [response (hakija-api/get-hakudata avustushaku-id)]
+                    (ok (->> response
+                             add-arviot
+                             (add-scores scores)))
+                    (not-found))))
 
   (GET* "/:avustushaku-id" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
