@@ -33,7 +33,7 @@ export default class HakemusListing extends Component {
   render() {
     const controller = this.props.controller
     const selectedHakemus = this.props.selectedHakemus
-    const filter = this.props.hakuFilter
+    const filter = this.props.hakemusFilter
     const hakemusList = this.props.hakemusList
     const filteredHakemusList = HakemusListing._filter(hakemusList, filter)
     const ophShareSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))

@@ -30,7 +30,7 @@ export default class HakemustenArviointiController {
 
     const initialStateTemplate = {
       hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId)),
-      hakuFilter: {
+      hakemusFilter: {
         organization: "",
         name: "",
         status: HakemusStatuses.allStatuses()
@@ -166,7 +166,7 @@ export default class HakemustenArviointiController {
   }
 
   onFilterSet(state, newFilter) {
-    state.hakuFilter[newFilter.filterId] = newFilter.filter
+    state.hakemusFilter[newFilter.filterId] = newFilter.filter
     return state
   }
 
