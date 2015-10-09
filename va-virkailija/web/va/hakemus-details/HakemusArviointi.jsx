@@ -11,11 +11,12 @@ export default class HakemusArviointi extends Component {
     const controller = this.props.controller
     const hakemus = this.props.hakemus
     const avustushaku = this.props.avustushaku
+    const userInfo = this.props.userInfo
     const comments = hakemus.comments
     const loadingComments = this.props.loadingComments
     return (
      <div id="hakemus-arviointi">
-       <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku} />
+       <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku} userInfo={userInfo} />
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments}/>
        <SetStatus controller={controller} hakemus={hakemus} />
        <BudgetGranted controller={controller} hakemus={hakemus} />

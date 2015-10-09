@@ -44,6 +44,7 @@ export default class App extends Component {
                           avustushaku={avustushaku}
                           hakemus={selectedHakemus}
                           translations={translations}
+                          userInfo={state.userInfo}
                           loadingComments={loadingComments}
                           controller={controller}/>
           <div id="footer">
