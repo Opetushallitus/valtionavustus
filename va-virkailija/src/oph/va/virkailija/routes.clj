@@ -20,7 +20,8 @@
             [oph.form.schema :refer :all]
             [oph.va.schema :refer :all]
             [oph.va.virkailija.schema :refer :all]
-            [oph.va.virkailija.handlers :refer :all]))
+            [oph.va.virkailija.handlers :refer :all]
+            [oph.va.virkailija.scoring :refer :all]))
 
 (defn- on-healthcheck []
   (if (and (virkailija-db/health-check)
@@ -209,7 +210,7 @@
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
         :return Scores
         (if-let [arvio (virkailija-db/get-arvio hakemus-id)]
-          (ok (virkailija-db/list-scores (:id arvio)))
+          (ok (get-arvio-scores (:id arvio)))
           (ok [])))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
@@ -217,11 +218,11 @@
         :body [score (describe NewScore "Stored or updated score")]
         :return Scores
         (let [identity (auth/get-identity request)]
-          (ok (virkailija-db/add-score avustushaku-id
-                                       hakemus-id
-                                       identity
-                                       (:selection-criteria-index score)
-                                       (:score score))))))
+          (ok (add-score avustushaku-id
+                         hakemus-id
+                         identity
+                         (:selection-criteria-index score)
+                         (:score score))))))
 
 (defroutes* userinfo-routes
   "User information"
