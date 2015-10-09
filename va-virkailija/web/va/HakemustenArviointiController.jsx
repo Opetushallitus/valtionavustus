@@ -96,9 +96,6 @@ export default class HakemustenArviointiController {
       })
     }
     var hakemusList = realInitialState.hakuData.hakemukset;
-    if (hakemusList && !_.isEmpty(hakemusList)) {
-      this.onHakemusSelection(realInitialState, hakemusList[0])
-    }
     realInitialState.hakuData.form = Immutable(realInitialState.hakuData.form)
     return realInitialState
   }
