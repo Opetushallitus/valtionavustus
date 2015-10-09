@@ -20,7 +20,8 @@ const events = {
   loadComments: 'loadcomments',
   commentsLoaded: 'commentsLoaded',
   addComment: 'addComment',
-  scoresLoaded: 'scoresLoaded'
+  scoresLoaded: 'scoresLoaded',
+  setScore: 'setScore'
 }
 
 export default class HakemustenArviointiController {
@@ -62,6 +63,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.commentsLoaded)], this.onCommentsLoaded,
       [dispatcher.stream(events.addComment)], this.onAddComment,
       [dispatcher.stream(events.scoresLoaded)], this.onScoresLoaded,
+      [dispatcher.stream(events.setScore)], this.onSetScore,
       [dispatcher.stream(events.setFilter)], this.onFilterSet
     )
   }
@@ -186,6 +188,27 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  onSetScore(state, indexAndScore) {
+    const { selectionCriteriaIndex, newScore } = indexAndScore
+    const hakemus = state.selectedHakemus;
+    const updateUrl = HakemustenArviointiController.scoresUrl(state, hakemus)
+    state.saveStatus.saveInProgress = true
+    HttpUtil.post(updateUrl, { "selection-criteria-index": selectionCriteriaIndex, "score": newScore })
+      .then(function(response) {
+        if(response instanceof Object) {
+          dispatcher.push(events.scoresLoaded, {hakemusId: hakemus.id, scores: response})
+          dispatcher.push(events.saveCompleted)
+        }
+        else {
+          dispatcher.push(events.saveCompleted, "unexpected-save-error")
+        }
+      })
+      .catch(function(response) {
+        dispatcher.push(events.saveCompleted, "unexpected-save-error")
+      })
+    return state
+  }
+
   // Public API
   selectHakemus(hakemus) {
     return function() {
@@ -216,5 +239,9 @@ export default class HakemustenArviointiController {
 
   addComment(newComment) {
     dispatcher.push(events.addComment, newComment)
+  }
+
+  setScore(selectionCriteriaIndex, newScore) {
+    dispatcher.push(events.setScore, { selectionCriteriaIndex: selectionCriteriaIndex, newScore: newScore })
   }
 }
