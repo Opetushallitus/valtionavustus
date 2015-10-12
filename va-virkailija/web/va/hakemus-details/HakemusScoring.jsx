@@ -97,9 +97,10 @@ class SeeOthersScores extends Component {
     const classNames = ClassNames("see-others-scoring", {disabled: !myScoringIsComplete || othersScoringsCount === 0})
 
     const labelText = resolveLabelText()
+    const titleText = myScoringIsComplete ? ScoreResolver.createAverageSummaryText(scoring, userInfo) : undefined
 
     return <div className={classNames}>
-      <a href="#">{labelText}</a>
+      <a href="#" title={titleText}>{labelText}</a>
     </div>
 
     function resolveLabelText() {
