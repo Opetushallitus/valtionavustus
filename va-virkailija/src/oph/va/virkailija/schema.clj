@@ -10,6 +10,9 @@
 (s/defschema PersonScoreAverage
   "Averga score by person"
   {:person-oid s/Str
+   :first-name s/Str
+   :last-name s/Str
+   :email s/Str
    :score-average s/Num})
 
 (s/defschema Scoring
