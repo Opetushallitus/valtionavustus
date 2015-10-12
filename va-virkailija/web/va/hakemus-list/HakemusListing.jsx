@@ -256,7 +256,7 @@ class Scoring extends Component {
     const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo)
     const normalizedMeanScore = meanScore + 1
     const starElements = _.map(_.range(4), indexOfStar => {
-      const isVisible = meanScore >= Math.ceil(indexOfStar)
+      const isVisible = Math.ceil(meanScore) >= indexOfStar
       const starImage = isVisible ? "/img/star_on.png" : "/img/star_off.png"
 
       var style = {"width": "16px", "height": "16px", "padding": "0px"}
