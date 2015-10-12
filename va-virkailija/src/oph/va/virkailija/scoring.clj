@@ -11,14 +11,16 @@
   (/ (sum-scores scores :score) selection-criteria-count))
 
 (defn- aggregate-complete-arvio-scores-by-user [arvio-scores selection-criteria-count]
-  (let [scores-by-user (group-by (fn [score] (:person-oid score)) arvio-scores)
-        complete-scorings-of-arvio (filter (fn [oid-with-scores]
-                                               (= selection-criteria-count (-> oid-with-scores second vals count)))
-                                           scores-by-user)
-        averages-with-oids (map (fn [oid-with-scores] {:person-oid (first oid-with-scores)
-                                                       :score-average (avg-of-scores (second oid-with-scores) selection-criteria-count)})
-                                complete-scorings-of-arvio)]
-    averages-with-oids))
+  (letfn [(scores-by-user [score] (:person-oid score))
+          (complete-scorings-by-arvio-and-user [oid-with-scores]
+            (= selection-criteria-count (-> oid-with-scores second vals count)))
+          (averages-with-oids [oid-with-scores] {:person-oid (first oid-with-scores)
+                                                 :score-average (avg-of-scores (second oid-with-scores)
+                                                                               selection-criteria-count)})]
+    (->> arvio-scores
+         (group-by scores-by-user)
+         (filter complete-scorings-by-arvio-and-user)
+         (map averages-with-oids))))
 
 (defn- avg-of-user-averages [user-averages]
   (let [user-avg-count (count user-averages)
