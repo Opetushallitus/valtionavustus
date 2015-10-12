@@ -41,6 +41,7 @@ export default class App extends Component {
                             hakemusList={hakemusList}
                             hasSelected={hasSelected}
                             selectedHakemus={selectedHakemus}
+                            userInfo={state.userInfo}
                             controller={controller} />
           </div>
           <HakemusDetails hidden={!hasSelected}

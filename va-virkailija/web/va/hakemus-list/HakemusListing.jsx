@@ -70,6 +70,7 @@ export default class HakemusListing extends Component {
 
   render() {
     const controller = this.props.controller
+    const userInfo = this.props.userInfo
     const hasSelected = this.props.hasSelected
     const selectedHakemus = this.props.selectedHakemus
     const filter = this.props.hakemusFilter
@@ -78,7 +79,7 @@ export default class HakemusListing extends Component {
     const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter)
     const ophShareSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
-      return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} controller={controller}/> })
+      return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} userInfo={userInfo} controller={controller}/> })
     const budgetGrantedSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
 
     const onFilterChange = function(filterId) {
@@ -227,6 +228,7 @@ class StatusFilter extends Component {
 class HakemusRow extends Component {
   render() {
     const hakemus = this.props.hakemus
+    const userInfo = this.props.userInfo
     const htmlId = "hakemus-" + hakemus.id
     const thisIsSelected = hakemus === this.props.selectedHakemus
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
@@ -235,7 +237,7 @@ class HakemusRow extends Component {
     return <tr id={htmlId} className={rowClass} onClick={controller.selectHakemus(hakemus)}>
       <td className="organization-column">{hakemus["organization-name"]}</td>
       <td className="project-name-column">{hakemus["project-name"]}</td>
-      <td className="score-column"><Scoring scoring={hakemus.arvio.scoring}/></td>
+      <td className="score-column"><Scoring scoring={hakemus.arvio.scoring} userInfo={userInfo}/></td>
       <td className="status-column">{statusFI}</td>
       <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>
       <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>
@@ -246,7 +248,9 @@ class HakemusRow extends Component {
 
 class Scoring extends Component {
   render() {
-    const meanScore = this.props.scoring ? this.props.scoring["score-total-average"] : undefined
+    const userInfo = this.props.userInfo
+    const scoring = this.props.scoring
+    const meanScore = scoring && _.some(scoring["score-averages-by-user"], isMyScore) ? scoring["score-total-average"] : undefined
     const starElements = _.map(_.range(4), indexOfStar => {
       const starImage = !_.isUndefined(meanScore) && meanScore >= indexOfStar ? "/img/star_on.png" : "/img/star_off.png"
       return (<img key={indexOfStar} className="single-score" src={starImage} />)
@@ -257,5 +261,9 @@ class Scoring extends Component {
         {starElements}
       </div>
     )
+
+    function isMyScore(scoreAverageByUser) {
+      return scoreAverageByUser && scoreAverageByUser["person-oid"] === userInfo["person-oid"]
+    }
   }
 }
