@@ -33,20 +33,21 @@
   {:arvio-id arvio-id
    :score-averages-by-user (aggregate-complete-arvio-scores-by-user arvio-scores selection-criteria-count)})
 
+(defn- complete-scorings-by-arvio-and-user [selection-criteria-count arvio-with-scores]
+  (aggregate-single-arvio-scores-by-user (first arvio-with-scores)
+                                         (second arvio-with-scores)
+                                         selection-criteria-count))
+
 (defn- create-single-arvio-aggregate [arvio-id-with-averages]
   {:arvio-id (:arvio-id arvio-id-with-averages)
    :score-total-average (avg-of-user-averages (:score-averages-by-user arvio-id-with-averages))
    :score-averages-by-user (:score-averages-by-user arvio-id-with-averages)})
 
 (defn aggregate-full-scores-by-arvio-and-user [all-avustushaku-scores selection-criteria-count]
-  (letfn [(scores-by-arvio [score] (:arvio-id score))
-          (complete-scorings-by-arvio-and-user [arvio-with-scores]
-            (aggregate-single-arvio-scores-by-user (first arvio-with-scores)
-                                                   (second arvio-with-scores)
-                                                   selection-criteria-count))]
+  (letfn [(scores-by-arvio [score] (:arvio-id score))]
     (->> all-avustushaku-scores
          (group-by scores-by-arvio)
-         (map complete-scorings-by-arvio-and-user)
+         (map (partial complete-scorings-by-arvio-and-user selection-criteria-count))
          (map create-single-arvio-aggregate))))
 
 (defn- get-selection-criteria-count [avustushaku-id]
