@@ -39,14 +39,15 @@
    :score-averages-by-user (:score-averages-by-user arvio-id-with-averages)})
 
 (defn aggregate-full-scores-by-arvio-and-user [all-avustushaku-scores selection-criteria-count]
-  (let [scores-by-arvio (group-by (fn [score] (:arvio-id score)) all-avustushaku-scores)
-        complete-scorings-by-arvio-and-user (map (fn [arvio-with-scores]
-                                                   (aggregate-single-arvio-scores-by-user (first arvio-with-scores)
-                                                                                          (second arvio-with-scores)
-                                                                                          selection-criteria-count))
-                                                 scores-by-arvio)
-        scoring-records (map create-single-arvio-aggregate complete-scorings-by-arvio-and-user)]
-    scoring-records))
+  (letfn [(scores-by-arvio [score] (:arvio-id score))
+          (complete-scorings-by-arvio-and-user [arvio-with-scores]
+            (aggregate-single-arvio-scores-by-user (first arvio-with-scores)
+                                                   (second arvio-with-scores)
+                                                   selection-criteria-count))]
+    (->> all-avustushaku-scores
+         (group-by scores-by-arvio)
+         (map complete-scorings-by-arvio-and-user)
+         (map create-single-arvio-aggregate))))
 
 (defn- get-selection-criteria-count [avustushaku-id]
   (count (-> (hakija-api/get-avustushaku avustushaku-id)
