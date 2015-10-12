@@ -1,22 +1,9 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
+import ScoreResolver from '../ScoreResolver.js'
+
 export default class HakemusScoring extends Component {
-
-  static scoreToFI(score) {
-    switch(score) {
-      case 0:
-        return "Ei toteudu"
-      case 1:
-        return "Toteutuu"
-      case 2:
-        return "Toteutuu hyvin"
-      case 3:
-        return "Toteutuu erinomaisesti"
-    }
-    return "Ei arviota"
-  }
-
   render() {
     const controller = this.props.controller
     const hakemus = this.props.hakemus
@@ -53,7 +40,7 @@ class ValintaPerusteRow extends Component {
     const userInfo = this.props.userInfo
     const controller = this.props.controller
     const myScore = _.find(allScoresOfThisPeruste, s => { return s["person-oid"] === userInfo["person-oid"] })
-    const myScoreFI = HakemusScoring.scoreToFI(myScore ? myScore.score : null)
+    const myScoreFI = ScoreResolver.scoreToFI(myScore ? myScore.score : null)
     const starElements = _.map(_.range(4), i => <StarElement key={i}
                                                              index={i}
                                                              myScore={myScore}
@@ -78,7 +65,7 @@ class ValintaPerusteRow extends Component {
 class StarElement extends Component {
   render() {
     const indexOfStar = this.props.index
-    const starTitle = HakemusScoring.scoreToFI(indexOfStar)
+    const starTitle = ScoreResolver.scoreToFI(indexOfStar)
     const myScore = this.props.myScore
     const selectionCriteriaIndex = this.props.selectionCriteriaIndex
     const controller = this.props.controller

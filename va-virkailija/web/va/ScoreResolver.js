@@ -1,4 +1,18 @@
 export default class ScoreResolver {
+  static scoreToFI(score) {
+    switch(score) {
+      case 0:
+        return "Ei toteudu"
+      case 1:
+        return "Toteutuu"
+      case 2:
+        return "Toteutuu hyvin"
+      case 3:
+        return "Toteutuu erinomaisesti"
+    }
+    return "Ei arviota"
+  }
+
   static effectiveAverage(scoring, userInfo) {
     return scoring && _.some(scoring["score-averages-by-user"], isMyScore) ? scoring["score-total-average"] : undefined
     function isMyScore(scoreAverageByUser) {
