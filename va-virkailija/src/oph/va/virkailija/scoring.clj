@@ -25,12 +25,16 @@
       (/ sum (count user-averages))
       0)))
 
+(defn aggregate-single-arvio-scores-by-user [arvio-id arvio-scores selection-criteria-count]
+  {:arvio-id arvio-id
+   :score-averages-by-user (aggregate-complete-arvio-scores-by-user arvio-scores selection-criteria-count)})
+
 (defn aggregate-full-scores-by-arvio-and-user [all-avustushaku-scores selection-criteria-count]
   (let [scores-by-arvio (group-by (fn [score] (:arvio-id score)) all-avustushaku-scores)
         complete-scorings-by-arvio-and-user (map (fn [arvio-with-scores]
-                                                   {:arvio-id (first arvio-with-scores)
-                                                    :score-averages-by-user (aggregate-complete-arvio-scores-by-user (second arvio-with-scores)
-                                                                                                                     selection-criteria-count)})
+                                                   (aggregate-single-arvio-scores-by-user (first arvio-with-scores)
+                                                                                          (second arvio-with-scores)
+                                                                                          selection-criteria-count))
                                                  scores-by-arvio)
         scoring-records (map (fn [arvio-with-averages]
                                {:arvio-id (:arvio-id arvio-with-averages)
