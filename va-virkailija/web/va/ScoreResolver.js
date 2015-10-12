@@ -13,6 +13,27 @@ export default class ScoreResolver {
     return "Ei arviota"
   }
 
+
+  static createAverageSummaryText(scoring, meanScore, userInfo) {
+    const numberOfScorings = scoring["score-averages-by-user"].length
+    const scoringSubstantive = numberOfScorings > 1 ? " arviota" : " arvio"
+    return numberOfScorings + scoringSubstantive + ". Keskiarvo: " + meanToDisplay(meanScore) + "\n" + createSummaryText();
+
+    function createSummaryText() {
+      const othersScorings = ScoreResolver.othersScorings(scoring, userInfo)
+      const textFromOthersResults = _.map(othersScorings, s => {
+        return " - " + s["first-name"] + " " + s["last-name"] + ": " + meanToDisplay(s["score-average"]) + "\n"
+      })
+
+      const myAverage = ScoreResolver.myAverage(scoring, userInfo)
+      return textFromOthersResults + " - oma arviosi: " + meanToDisplay(myAverage)
+    }
+
+    function meanToDisplay(meanScore) {
+      return (1 + Math.round(10 * meanScore) / 10.0) + " (" + ScoreResolver.scoreToFI(Math.round(meanScore)) + ")"
+    }
+  }
+
   static myScoringIsComplete(scoring, userInfo) {
     return scoring && _.some(scoring["score-averages-by-user"], isMyScore)
     function isMyScore(scoreAverageByUser) {
