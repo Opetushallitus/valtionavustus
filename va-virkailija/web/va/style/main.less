@@ -174,7 +174,9 @@ table.hakemus-list {
           display: inline-block;
           .single-score {
             padding: 0 14px 0 0;
-            cursor: pointer;
+            &.editable {
+              cursor: pointer;
+            }
           }
           .score-text {
             color: @dark-gray;
