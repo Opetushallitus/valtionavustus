@@ -259,10 +259,34 @@ class Scoring extends Component {
       return (<img key={indexOfStar} className="single-score" src={starImage} />)
     })
 
+    const titleText = _.isUndefined(meanScore) ?
+      "Pisteytä hakemus jokaisen valintaperusteen mukaan nähdäksesi kaikkien arvioiden keskiarvon" :
+      formatTotalText()
+
     return (
-      <div className="score-row">
+      <div className="score-row" title={titleText}>
         {starElements}
       </div>
     )
+
+    function formatTotalText() {
+      const numberOfScorings = scoring["score-averages-by-user"].length
+      const scoringSubstantive = numberOfScorings > 1 ? " arviota" : " arvio"
+      return numberOfScorings + scoringSubstantive + ". Keskiarvo: " + meanToDisplay(meanScore) + "\n" + createSummaryText();
+    }
+
+    function createSummaryText() {
+      const othersScorings = ScoreResolver.othersScorings(scoring, userInfo)
+      const textFromOthersResults = _.map(othersScorings, s => {
+        return s["person-oid"] + ": " + meanToDisplay(s["score-average"]) + "\n"
+      })
+
+      const myAverage = ScoreResolver.myAverage(scoring, userInfo)
+      return textFromOthersResults + "Oma arviosi: " + meanToDisplay(myAverage)
+    }
+
+    function meanToDisplay(meanScore) {
+      return 1 + Math.round(10 * meanScore) / 10.0
+    }
   }
 }
