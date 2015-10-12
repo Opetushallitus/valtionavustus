@@ -261,7 +261,7 @@ class Scoring extends Component {
 
     const titleText = _.isUndefined(meanScore) ?
       "Pisteytä hakemus jokaisen valintaperusteen mukaan nähdäksesi kaikkien arvioiden keskiarvon" :
-      ScoreResolver.createAverageSummaryText(scoring, meanScore, userInfo)
+      ScoreResolver.createAverageSummaryText(scoring, userInfo)
 
     return (
       <div className="score-row" title={titleText}>

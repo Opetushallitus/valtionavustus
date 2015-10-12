@@ -14,8 +14,9 @@ export default class ScoreResolver {
   }
 
 
-  static createAverageSummaryText(scoring, meanScore, userInfo) {
+  static createAverageSummaryText(scoring, userInfo) {
     const numberOfScorings = scoring["score-averages-by-user"].length
+    const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo)
     const scoringSubstantive = numberOfScorings > 1 ? " arviota" : " arvio"
     return numberOfScorings + scoringSubstantive + ". Keskiarvo: " + meanToDisplay(meanScore) + "\n" + createSummaryText();
 
