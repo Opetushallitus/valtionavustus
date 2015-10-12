@@ -13,11 +13,15 @@ export default class ScoreResolver {
     return "Ei arviota"
   }
 
-  static effectiveAverage(scoring, userInfo) {
-    return scoring && _.some(scoring["score-averages-by-user"], isMyScore) ? scoring["score-total-average"] : undefined
+  static myScoringIsComplete(scoring, userInfo) {
+    return scoring && _.some(scoring["score-averages-by-user"], isMyScore)
     function isMyScore(scoreAverageByUser) {
       return ScoreResolver._belongsToUser(scoreAverageByUser, userInfo)
     }
+  }
+
+  static effectiveAverage(scoring, userInfo) {
+    return ScoreResolver.myScoringIsComplete(scoring, userInfo) ? scoring["score-total-average"] : undefined
   }
 
   static myAverage(scoring, userInfo) {

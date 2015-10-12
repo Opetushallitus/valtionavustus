@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
+import ClassNames from 'classnames'
 
 import ScoreResolver from '../ScoreResolver.js'
 
@@ -8,6 +9,7 @@ export default class HakemusScoring extends Component {
     const controller = this.props.controller
     const hakemus = this.props.hakemus
     const allScoresOfHakemus = hakemus.scores
+    const scoringOfHakemus = hakemus.arvio ? hakemus.arvio.scoring : undefined
     const userInfo = this.props.userInfo
 
     function findScores(perusteIndex) {
@@ -28,6 +30,10 @@ export default class HakemusScoring extends Component {
              <div className="valintaperuste-list">
                {valintaPerusteRows}
              </div>
+             <SeeOthersScores allScores={allScoresOfHakemus}
+                              scoring={scoringOfHakemus}
+                              userInfo={userInfo}
+                              controller={controller} />
            </div>
   }
 }
@@ -79,5 +85,31 @@ class StarElement extends Component {
                 onClick={onClick}
                 onMouseOver={showHover}
                 onMouseOut={hideHover}/>
+  }
+}
+
+class SeeOthersScores extends Component {
+  render() {
+    const scoring = this.props.scoring
+    const userInfo = this.props.userInfo
+    const myScoringIsComplete = ScoreResolver.myScoringIsComplete(scoring, userInfo)
+    const othersScoringsCount = myScoringIsComplete ? ScoreResolver.othersScorings(scoring, userInfo).length : 0
+    const classNames = ClassNames("see-others-scoring", {disabled: !myScoringIsComplete || othersScoringsCount === 0})
+
+    const labelText = resolveLabelText()
+
+    return <div className={classNames}>
+      <a href="#">{labelText}</a>
+    </div>
+
+    function resolveLabelText() {
+      if (!myScoringIsComplete) {
+        return "Pisteytä hakemus kokonaan nähdäksesi muiden arviot"
+      }
+      if (othersScoringsCount === 0) {
+        return "Ei arvioita muilta"
+      }
+      return "Katso muiden arviot (" + othersScoringsCount + ")"
+    }
   }
 }
