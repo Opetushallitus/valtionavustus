@@ -51,6 +51,7 @@ export default class App extends Component {
                           translations={translations}
                           userInfo={state.userInfo}
                           loadingComments={loadingComments}
+                          showOthersScores={state.showOthersScores}
                           controller={controller}/>
           <div hidden={!hasSelected} id="footer">
             <HakemusHakijaSidePreviewLink hakemus={selectedHakemus} avustushaku={avustushaku} />

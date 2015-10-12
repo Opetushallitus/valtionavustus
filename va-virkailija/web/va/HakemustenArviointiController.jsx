@@ -229,7 +229,6 @@ export default class HakemustenArviointiController {
 
   onToggleOthersScoresDisplay(state) {
     state.showOthersScores = !state.showOthersScores
-    console.log('new state.showOthersScores', state.showOthersScores)
     return state
   }
 

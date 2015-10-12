@@ -10,7 +10,9 @@ export default class HakemusScoring extends Component {
     const hakemus = this.props.hakemus
     const allScoresOfHakemus = hakemus.scores
     const scoringOfHakemus = hakemus.arvio ? hakemus.arvio.scoring : undefined
-    const userInfo = this.props.userInfo
+    const showOthersScores = this.props.showOthersScores
+    console.log('showOthersScores', showOthersScores)
+    const myUserInfo = this.props.userInfo
 
     function findScores(perusteIndex) {
       return _.filter(allScoresOfHakemus, s => { return s["selection-criteria-index"] === perusteIndex })
@@ -23,7 +25,7 @@ export default class HakemusScoring extends Component {
                                      peruste => { return <ValintaPerusteRow valintaperuste={peruste}
                                                                             scores={findScores(perusteIndex)}
                                                                             selectionCriteriaIndex={perusteIndex}
-                                                                            userInfo={userInfo}
+                                                                            userInfo={myUserInfo}
                                                                             key={perusteIndex++}
                                                                             controller={controller} /> })
     return <div key="hakemus-scoring-container" id="hakemus-scoring-container">
@@ -32,7 +34,7 @@ export default class HakemusScoring extends Component {
              </div>
              <SeeOthersScores allScores={allScoresOfHakemus}
                               scoring={scoringOfHakemus}
-                              userInfo={userInfo}
+                              userInfo={myUserInfo}
                               controller={controller} />
            </div>
   }

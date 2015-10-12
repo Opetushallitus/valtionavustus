@@ -12,6 +12,7 @@ export default class HakemusDetails extends Component {
     const hakuData = this.props.hakuData
     const userInfo = this.props.userInfo
     const loadingComments = this.props.loadingComments
+    const showOthersScores = this.props.showOthersScores
     const translations = this.props.translations
 
     return (
@@ -21,6 +22,7 @@ export default class HakemusDetails extends Component {
                           avustushaku={avustushaku}
                           userInfo={userInfo}
                           loadingComments={loadingComments}
+                          showOthersScores={showOthersScores}
                           controller={controller}/>
       </div>
     )
