@@ -254,9 +254,27 @@ class Scoring extends Component {
     const userInfo = this.props.userInfo
     const scoring = this.props.scoring
     const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo)
+    const normalizedMeanScore = meanScore + 1
     const starElements = _.map(_.range(4), indexOfStar => {
-      const starImage = meanScore >= (indexOfStar - 0.5) ? "/img/star_on.png" : "/img/star_off.png"
-      return (<img key={indexOfStar} className="single-score" src={starImage} />)
+      const isVisible = meanScore >= (indexOfStar - 0.5)
+      const starImage = isVisible ? "/img/star_on.png" : "/img/star_off.png"
+
+      var style = {"width": "16px", "height": "16px", "padding": "0px"}
+
+      const needsScaling = normalizedMeanScore > indexOfStar && normalizedMeanScore < indexOfStar + 1
+      if (needsScaling) {
+        const delta = normalizedMeanScore - indexOfStar;
+        if (delta <= 0.25) {
+          style = {"width": "8px", "height": "8px", "padding": "4px"}
+        } else if (delta <= 0.5) {
+          style = {"width": "10px", "height": "10px", "padding": "3px"}
+        } else if (delta <= 0.75) {
+          style = {"width": "12px", "height": "12px", "padding": "2px"}
+        } else {
+          style = {"width": "14px", "height": "14px", "padding": "1px"}
+        }
+      }
+      return (<img key={indexOfStar} className="single-score" style={style} src={starImage} />)
     })
 
     const titleText = _.isUndefined(meanScore) ?
