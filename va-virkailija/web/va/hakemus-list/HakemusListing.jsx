@@ -278,15 +278,15 @@ class Scoring extends Component {
     function createSummaryText() {
       const othersScorings = ScoreResolver.othersScorings(scoring, userInfo)
       const textFromOthersResults = _.map(othersScorings, s => {
-        return s["first-name"] + " " + s["last-name"] + ": " + meanToDisplay(s["score-average"]) + "\n"
+        return " - " + s["first-name"] + " " + s["last-name"] + ": " + meanToDisplay(s["score-average"]) + "\n"
       })
 
       const myAverage = ScoreResolver.myAverage(scoring, userInfo)
-      return textFromOthersResults + "Oma arviosi: " + meanToDisplay(myAverage)
+      return textFromOthersResults + " - oma arviosi: " + meanToDisplay(myAverage)
     }
 
     function meanToDisplay(meanScore) {
-      return 1 + Math.round(10 * meanScore) / 10.0
+      return (1 + Math.round(10 * meanScore) / 10.0) + " (" + ScoreResolver.scoreToFI(Math.round(meanScore)) + ")"
     }
   }
 }
