@@ -50,11 +50,11 @@ class ValintaPerusteRow extends Component {
     const allScoresOfThisPeruste = this.props.scores
     const personOid = this.props.personOid
     const controller = this.props.controller
-    const myScore = _.find(allScoresOfThisPeruste, s => { return s["person-oid"] === personOid })
-    const myScoreFI = ScoreResolver.scoreToFI(myScore ? myScore.score : null)
+    const scoreOfUser = _.find(allScoresOfThisPeruste, s => { return s["person-oid"] === personOid })
+    const scoreOfUserFi = ScoreResolver.scoreToFI(scoreOfUser ? scoreOfUser.score : null)
     const starElements = _.map(_.range(4), i => <StarElement key={i}
                                                              index={i}
-                                                             myScore={myScore}
+                                                             scoreOfUser={scoreOfUser}
                                                              selectionCriteriaIndex={selectionCriteriaIndex}
                                                              controller={controller} />)
 
@@ -66,7 +66,7 @@ class ValintaPerusteRow extends Component {
         <div className="valintaperuste-text" title={textInFinnish + " / " + textInSwedish}>{textInFinnish}</div>
         <div className="score-row">
           {starElements}
-          <div className="score-text">{myScoreFI}</div>
+          <div className="score-text">{scoreOfUserFi}</div>
         </div>
       </div>
     )
@@ -77,11 +77,11 @@ class StarElement extends Component {
   render() {
     const indexOfStar = this.props.index
     const starTitle = ScoreResolver.scoreToFI(indexOfStar)
-    const myScore = this.props.myScore
+    const scoreOfUser = this.props.scoreOfUser
     const selectionCriteriaIndex = this.props.selectionCriteriaIndex
     const controller = this.props.controller
     const onClick = event => { controller.setScore(selectionCriteriaIndex, indexOfStar) }
-    const starImage = myScore && myScore.score >= indexOfStar ? "/img/star_on.png" : "/img/star_off.png"
+    const starImage = scoreOfUser && scoreOfUser.score >= indexOfStar ? "/img/star_on.png" : "/img/star_off.png"
     const showHover = event => { event.target.setAttribute("src", "/img/star_hover.png") }
     const hideHover = event => { event.target.setAttribute("src", starImage)}
     return <img className="single-score"
