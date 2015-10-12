@@ -4,9 +4,11 @@
   (:require [oph.va.virkailija.db :as virkailija-db]
             [oph.va.hakija.api :as hakija-api]))
 
+(defn- sum-scores [scores key-fn]
+  (reduce + (map key-fn scores)))
+
 (defn- avg-of-scores [scores selection-criteria-count]
-  (let [sum (reduce + (map :score scores))]
-    (/ sum selection-criteria-count)))
+  (/ (sum-scores scores :score) selection-criteria-count))
 
 (defn- aggregate-complete-arvio-scores-by-user [arvio-scores selection-criteria-count]
   (let [scores-by-user (group-by (fn [score] (:person-oid score)) arvio-scores)
@@ -19,10 +21,10 @@
     averages-with-oids))
 
 (defn- avg-of-user-averages [user-averages]
-  (let [count-of-user-averages (count user-averages)
-        sum (reduce + (map :score-average user-averages))]
-    (if (> count-of-user-averages 0)
-      (/ sum (count user-averages))
+  (let [user-avg-count (count user-averages)
+        sum (sum-scores user-averages :score-average)]
+    (if (> user-avg-count 0)
+      (/ sum user-avg-count)
       0)))
 
 (defn- aggregate-single-arvio-scores-by-user [arvio-id arvio-scores selection-criteria-count]
