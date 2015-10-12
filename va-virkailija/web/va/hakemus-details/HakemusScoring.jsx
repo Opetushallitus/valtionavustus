@@ -11,32 +11,35 @@ export default class HakemusScoring extends Component {
     const allScoresOfHakemus = hakemus.scores
     const scoringOfHakemus = hakemus.arvio ? hakemus.arvio.scoring : undefined
     const showOthersScores = this.props.showOthersScores
-    console.log('showOthersScores', showOthersScores)
     const myUserInfo = this.props.userInfo
-
-    function findScores(perusteIndex) {
-      return _.filter(allScoresOfHakemus, s => { return s["selection-criteria-index"] === perusteIndex })
-    }
 
     const avustushaku = this.props.avustushaku
     const valintaperusteet = _.get(avustushaku, "content.selection-criteria.items")
-    var perusteIndex = 0
-    const valintaPerusteRows = _.map(valintaperusteet,
-                                     peruste => { return <ValintaPerusteRow valintaperuste={peruste}
-                                                                            scores={findScores(perusteIndex)}
-                                                                            selectionCriteriaIndex={perusteIndex}
-                                                                            userInfo={myUserInfo}
-                                                                            key={perusteIndex++}
-                                                                            controller={controller} /> })
+    const myOwnValintaPerusteRows = HakemusScoring.createValintaPerusteRows(allScoresOfHakemus,
+      valintaperusteet, myUserInfo["person-oid"], controller)
     return <div key="hakemus-scoring-container" id="hakemus-scoring-container">
              <div className="valintaperuste-list">
-               {valintaPerusteRows}
+               {myOwnValintaPerusteRows}
              </div>
              <SeeOthersScores allScores={allScoresOfHakemus}
                               scoring={scoringOfHakemus}
                               userInfo={myUserInfo}
                               controller={controller} />
            </div>
+  }
+
+  static createValintaPerusteRows(allScoresOfHakemus, valintaperusteet, personOid, controller) {
+    var perusteIndex = 0
+    return _.map(valintaperusteet, peruste => { return <ValintaPerusteRow valintaperuste={peruste}
+                                                                          scores={findScores(perusteIndex)}
+                                                                          selectionCriteriaIndex={perusteIndex}
+                                                                          personOid={personOid}
+                                                                          key={personOid + perusteIndex++}
+                                                                          controller={controller} /> })
+
+    function findScores(perusteIndex) {
+      return _.filter(allScoresOfHakemus, s => { return s["selection-criteria-index"] === perusteIndex })
+    }
   }
 }
 
@@ -45,9 +48,9 @@ class ValintaPerusteRow extends Component {
     const valintaperuste = this.props.valintaperuste
     const selectionCriteriaIndex = this.props.selectionCriteriaIndex
     const allScoresOfThisPeruste = this.props.scores
-    const userInfo = this.props.userInfo
+    const personOid = this.props.personOid
     const controller = this.props.controller
-    const myScore = _.find(allScoresOfThisPeruste, s => { return s["person-oid"] === userInfo["person-oid"] })
+    const myScore = _.find(allScoresOfThisPeruste, s => { return s["person-oid"] === personOid })
     const myScoreFI = ScoreResolver.scoreToFI(myScore ? myScore.score : null)
     const starElements = _.map(_.range(4), i => <StarElement key={i}
                                                              index={i}
