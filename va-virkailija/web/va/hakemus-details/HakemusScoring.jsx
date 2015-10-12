@@ -90,6 +90,7 @@ class StarElement extends Component {
 
 class SeeOthersScores extends Component {
   render() {
+    const controller = this.props.controller
     const scoring = this.props.scoring
     const userInfo = this.props.userInfo
     const myScoringIsComplete = ScoreResolver.myScoringIsComplete(scoring, userInfo)
@@ -99,8 +100,15 @@ class SeeOthersScores extends Component {
     const labelText = resolveLabelText()
     const titleText = myScoringIsComplete ? ScoreResolver.createAverageSummaryText(scoring, userInfo) : undefined
 
+    const onClick = e => {
+      e.preventDefault()
+      if (othersScoringsCount > 0) {
+        controller.toggleOthersScoresDisplay()
+      }
+    }
+
     return <div className={classNames}>
-      <a href="#" title={titleText}>{labelText}</a>
+      <a href="#" title={titleText} onClick={onClick}>{labelText}</a>
     </div>
 
     function resolveLabelText() {

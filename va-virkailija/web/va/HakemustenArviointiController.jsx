@@ -22,7 +22,8 @@ const events = {
   commentsLoaded: 'commentsLoaded',
   addComment: 'addComment',
   scoresLoaded: 'scoresLoaded',
-  setScore: 'setScore'
+  setScore: 'setScore',
+  toggleOthersScoresDisplay: 'toggleOthersScoresDisplay'
 }
 
 export default class HakemustenArviointiController {
@@ -47,6 +48,7 @@ export default class HakemustenArviointiController {
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
       avustushakuList: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/")),
       selectedHakemus: undefined,
+      showOthersScores: false,
       saveStatus: {
         saveInProgress: false,
         saveTime: null,
@@ -71,6 +73,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.addComment)], this.onAddComment,
       [dispatcher.stream(events.scoresLoaded)], this.onScoresLoaded,
       [dispatcher.stream(events.setScore)], this.onSetScore,
+      [dispatcher.stream(events.toggleOthersScoresDisplay)], this.onToggleOthersScoresDisplay,
       [dispatcher.stream(events.setFilter)], this.onFilterSet,
       [dispatcher.stream(events.setSorter)], this.onSorterSet
     )
@@ -224,6 +227,12 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  onToggleOthersScoresDisplay(state) {
+    state.showOthersScores = !state.showOthersScores
+    console.log('new state.showOthersScores', state.showOthersScores)
+    return state
+  }
+
   // Public API
   selectHakemus(hakemus) {
     return function() {
@@ -262,5 +271,9 @@ export default class HakemustenArviointiController {
 
   setScore(selectionCriteriaIndex, newScore) {
     dispatcher.push(events.setScore, { selectionCriteriaIndex: selectionCriteriaIndex, newScore: newScore })
+  }
+
+  toggleOthersScoresDisplay() {
+    dispatcher.push(events.toggleOthersScoresDisplay)
   }
 }
