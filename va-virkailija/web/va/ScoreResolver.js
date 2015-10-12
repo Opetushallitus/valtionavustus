@@ -46,6 +46,12 @@ export default class ScoreResolver {
     return ScoreResolver.myScoringIsComplete(scoring, userInfo) ? scoring["score-total-average"] : undefined
   }
 
+  static scoringByOid(scoring, personOid) {
+    return _.find(scoring["score-averages-by-user"], a => {
+      return a && a["person-oid"] === personOid
+    })
+  }
+
   static myAverage(scoring, userInfo) {
     const myScore = _.find(scoring["score-averages-by-user"], a => ScoreResolver._belongsToUser(a, userInfo))
     return myScore["score-average"]

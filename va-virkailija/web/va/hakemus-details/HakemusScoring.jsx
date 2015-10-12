@@ -48,7 +48,12 @@ export default class HakemusScoring extends Component {
   static createOthersScoreDisplays(allScoresOfHakemus, scoringOfHakemus, valintaperusteet, myUserInfo) {
     const othersPersonOids = _.map(ScoreResolver.othersScorings(scoringOfHakemus, myUserInfo), s => { return s["person-oid"]})
     return _.map(othersPersonOids, oid => {
-      return  HakemusScoring.createValintaPerusteRows(allScoresOfHakemus, valintaperusteet, oid)
+      const userScoring = ScoreResolver.scoringByOid(scoringOfHakemus, oid)
+      const userLabel = userScoring["first-name"] + " " + userScoring["last-name"]
+      return <div className="valintaperuste-list">
+               <h2>{userLabel}</h2>
+               {HakemusScoring.createValintaPerusteRows(allScoresOfHakemus, valintaperusteet, oid)}
+             </div>
     })
   }
 }
