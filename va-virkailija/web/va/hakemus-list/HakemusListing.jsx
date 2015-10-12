@@ -2,10 +2,11 @@ import _ from 'lodash'
 import React, { Component } from 'react'
 
 import HakemusStatuses from '../hakemus-details/HakemusStatuses.js'
+import ScoreResolver from '../ScoreResolver.js'
 
 export default class HakemusListing extends Component {
 
-  static _fieldGetter(fieldName) {
+  static _fieldGetter(fieldName, userInfo) {
     switch(fieldName) {
       case "name":
         return hakemus => hakemus["project-name"]
@@ -18,7 +19,7 @@ export default class HakemusListing extends Component {
       case "granted-sum":
         return hakemus => hakemus.arvio["budget-granted"]
       case "score":
-        return hakemus => hakemus.arvio.scoring ? hakemus.arvio.scoring["score-total-average"] : 0
+        return hakemus => ScoreResolver.effectiveAverage(hakemus.arvio.scoring, userInfo)
     }
     throw Error("No field getter for " + fieldName)
   }
@@ -48,23 +49,25 @@ export default class HakemusListing extends Component {
 
   }
 
-  static _sortByArray(fieldGetter, array, order) {
+  static _sortByArray(fieldGetter, array, order, userInfo) {
     return function(hakemus) {
-      const sortValue = array.indexOf(fieldGetter(hakemus))
+      const sortValue = array.indexOf(fieldGetter(hakemus, userInfo))
       return order === 'asc' ? sortValue: - sortValue
     }
   }
 
-  static _sortBy(list, sorter) {
-    switch (sorter.field) {
-      case "status":
-        return _.sortBy(list, HakemusListing._sortByArray(hakemus => hakemus.arvio.status, HakemusStatuses.allStatuses(), sorter.order))
+  static _sortBy(userInfo) {
+    return function(list, sorter) {
+      switch (sorter.field) {
+        case "status":
+          return _.sortBy(list, HakemusListing._sortByArray(hakemus => hakemus.arvio.status, HakemusStatuses.allStatuses(), sorter.order, userInfo))
+      }
+      return _.sortByOrder(list, HakemusListing._fieldGetter(sorter.field, userInfo), sorter.order)
     }
-    return _.sortByOrder(list, HakemusListing._fieldGetter(sorter.field), sorter.order)
   }
 
-  static _sort(list, sorterList) {
-    return _.reduce(sorterList, HakemusListing._sortBy, list)
+  static _sort(list, sorterList, userInfo) {
+    return _.reduce(sorterList, HakemusListing._sortBy(userInfo), list)
 
   }
 
@@ -76,7 +79,7 @@ export default class HakemusListing extends Component {
     const filter = this.props.hakemusFilter
     const sorter = this.props.hakemusSorter
     const hakemusList = this.props.hakemusList
-    const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter)
+    const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter, userInfo)
     const ophShareSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
       return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} userInfo={userInfo} controller={controller}/> })
@@ -250,7 +253,7 @@ class Scoring extends Component {
   render() {
     const userInfo = this.props.userInfo
     const scoring = this.props.scoring
-    const meanScore = scoring && _.some(scoring["score-averages-by-user"], isMyScore) ? scoring["score-total-average"] : undefined
+    const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo)
     const starElements = _.map(_.range(4), indexOfStar => {
       const starImage = meanScore >= (indexOfStar - 0.5) ? "/img/star_on.png" : "/img/star_off.png"
       return (<img key={indexOfStar} className="single-score" src={starImage} />)
@@ -261,9 +264,5 @@ class Scoring extends Component {
         {starElements}
       </div>
     )
-
-    function isMyScore(scoreAverageByUser) {
-      return scoreAverageByUser && scoreAverageByUser["person-oid"] === userInfo["person-oid"]
-    }
   }
 }
