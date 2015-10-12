@@ -23,7 +23,7 @@ export default class HakemusScoring extends Component {
              <div className="valintaperuste-list">
                {myOwnValintaPerusteRows}
              </div>
-             <SeeOthersScores allScores={allScoresOfHakemus}
+             <SeeOthersScores showOthersScores={showOthersScores}
                               scoring={scoringOfHakemus}
                               userInfo={myUserInfo}
                               controller={controller} />
@@ -111,6 +111,7 @@ class SeeOthersScores extends Component {
     const controller = this.props.controller
     const scoring = this.props.scoring
     const userInfo = this.props.userInfo
+    const showOthersScores = this.props.showOthersScores
     const myScoringIsComplete = ScoreResolver.myScoringIsComplete(scoring, userInfo)
     const othersScoringsCount = myScoringIsComplete ? ScoreResolver.othersScorings(scoring, userInfo).length : 0
     const classNames = ClassNames("see-others-scoring", {disabled: !myScoringIsComplete || othersScoringsCount === 0})
@@ -136,7 +137,7 @@ class SeeOthersScores extends Component {
       if (othersScoringsCount === 0) {
         return "Ei arvioita muilta"
       }
-      return "Katso muiden arviot (" + othersScoringsCount + ")"
+      return showOthersScores ? "Piilota muiden arviot" : "Katso muiden arviot (" + othersScoringsCount + ")"
     }
   }
 }
