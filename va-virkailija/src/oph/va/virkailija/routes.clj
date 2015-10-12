@@ -224,15 +224,15 @@
 
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-        :return Scores
+        :return ScoringOfArvio
         (if-let [arvio (virkailija-db/get-arvio hakemus-id)]
-          (ok (get-arvio-scores (:id arvio)))
+          (ok (get-arvio-scores avustushaku-id (:id arvio)))
           (ok [])))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
         :body [score (describe NewScore "Stored or updated score")]
-        :return Scores
+        :return ScoringOfArvio
         (let [identity (auth/get-identity request)]
           (ok (add-score avustushaku-id
                          hakemus-id

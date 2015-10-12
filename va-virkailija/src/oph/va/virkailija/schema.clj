@@ -60,9 +60,10 @@
    :created-at s/Inst
    :modified-at s/Inst})
 
-(s/defschema Scores
-  "All scores of single hakemus"
-  [Score])
+(s/defschema ScoringOfArvio
+  "Single arvio scoring aggregate and complete score list"
+  {:scoring Scoring
+   :scores [Score]})
 
 (s/defschema Hakemus {:id s/Int
                       :project-name s/Str

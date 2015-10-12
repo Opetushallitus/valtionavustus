@@ -183,17 +183,20 @@ export default class HakemustenArviointiController {
   }
 
   loadScores(state, hakemus) {
-    HttpUtil.get(HakemustenArviointiController.scoresUrl(state, hakemus)).then(scores => {
-      dispatcher.push(events.scoresLoaded, {hakemusId: hakemus.id, scores: scores})
+    HttpUtil.get(HakemustenArviointiController.scoresUrl(state, hakemus)).then(response => {
+      dispatcher.push(events.scoresLoaded, {hakemusId: hakemus.id,
+                                            scoring: response.scoring,
+                                            scores: response.scores})
     })
     return state
   }
 
-  onScoresLoaded(state, hakemusIdWithScores) {
-    const hakemusId = hakemusIdWithScores.hakemusId
+  onScoresLoaded(state, hakemusIdWithScoring) {
+    const hakemusId = hakemusIdWithScoring.hakemusId
     const relevantHakemus = _.find(state.hakuData.hakemukset, h => { return h.id === hakemusId })
     if (relevantHakemus) {
-      relevantHakemus.scores = hakemusIdWithScores.scores
+      relevantHakemus.scores = hakemusIdWithScoring.scores
+      relevantHakemus.arvio.scoring = hakemusIdWithScoring.scoring
     }
     return state
   }
@@ -206,7 +209,9 @@ export default class HakemustenArviointiController {
     HttpUtil.post(updateUrl, { "selection-criteria-index": selectionCriteriaIndex, "score": newScore })
       .then(function(response) {
         if(response instanceof Object) {
-          dispatcher.push(events.scoresLoaded, {hakemusId: hakemus.id, scores: response})
+          dispatcher.push(events.scoresLoaded, {hakemusId: hakemus.id,
+                                                scoring: response.scoring,
+                                                scores: response.scores})
           dispatcher.push(events.saveCompleted)
         }
         else {

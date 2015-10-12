@@ -25,9 +25,14 @@
       (/ sum (count user-averages))
       0)))
 
-(defn aggregate-single-arvio-scores-by-user [arvio-id arvio-scores selection-criteria-count]
+(defn- aggregate-single-arvio-scores-by-user [arvio-id arvio-scores selection-criteria-count]
   {:arvio-id arvio-id
    :score-averages-by-user (aggregate-complete-arvio-scores-by-user arvio-scores selection-criteria-count)})
+
+(defn- create-single-arvio-aggregate [arvio-id-with-averages]
+  {:arvio-id (:arvio-id arvio-id-with-averages)
+   :score-total-average (avg-of-user-averages (:score-averages-by-user arvio-id-with-averages))
+   :score-averages-by-user (:score-averages-by-user arvio-id-with-averages)})
 
 (defn aggregate-full-scores-by-arvio-and-user [all-avustushaku-scores selection-criteria-count]
   (let [scores-by-arvio (group-by (fn [score] (:arvio-id score)) all-avustushaku-scores)
@@ -36,24 +41,31 @@
                                                                                           (second arvio-with-scores)
                                                                                           selection-criteria-count))
                                                  scores-by-arvio)
-        scoring-records (map (fn [arvio-with-averages]
-                               {:arvio-id (:arvio-id arvio-with-averages)
-                                :score-total-average (avg-of-user-averages (:score-averages-by-user arvio-with-averages))
-                                :score-averages-by-user (:score-averages-by-user arvio-with-averages)})
-                             complete-scorings-by-arvio-and-user)]
+        scoring-records (map create-single-arvio-aggregate complete-scorings-by-arvio-and-user)]
     ;(pprint scoring-records)
     scoring-records))
 
+(defn- get-selection-criteria-count [avustushaku-id]
+  (count (-> (hakija-api/get-avustushaku avustushaku-id)
+             :content
+             :selection-criteria
+             :items)))
+
 (defn get-avustushaku-scores [avustushaku-id]
   (let [all-avustushaku-scores (virkailija-db/list-avustushaku-scores avustushaku-id)
-        selection-criteria-count (count (-> (hakija-api/get-avustushaku avustushaku-id)
-                                            :content
-                                            :selection-criteria
-                                            :items))]
+        selection-criteria-count (get-selection-criteria-count avustushaku-id)]
     (aggregate-full-scores-by-arvio-and-user all-avustushaku-scores selection-criteria-count)))
 
-(defn get-arvio-scores [arvio-id]
-  (virkailija-db/list-scores arvio-id))
+(defn get-arvio-scores [avustushaku-id arvio-id]
+  (if-let [selection-criteria-count (get-selection-criteria-count avustushaku-id)]
+    (let [arvio-scores (virkailija-db/list-scores arvio-id)
+          arvio-id-with-averages (aggregate-single-arvio-scores-by-user arvio-id
+                                                                        (virkailija-db/list-scores arvio-id)
+                                                                        selection-criteria-count)]
+      {:scoring (create-single-arvio-aggregate arvio-id-with-averages)
+       :scores arvio-scores})))
 
 (defn add-score [avustushaku-id hakemus-id identity selection-criteria-index score]
-  (virkailija-db/add-score avustushaku-id hakemus-id identity selection-criteria-index score))
+  (let [arvio-id (:id (virkailija-db/get-or-create-arvio hakemus-id))]
+    (virkailija-db/add-score avustushaku-id arvio-id identity selection-criteria-index score)
+    (get-arvio-scores avustushaku-id arvio-id)))

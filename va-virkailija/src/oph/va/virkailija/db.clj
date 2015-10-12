@@ -28,7 +28,7 @@
        :?column?
        (= 1)))
 
-(defn- get-or-create-arvio [hakemus-id]
+(defn get-or-create-arvio [hakemus-id]
   (if-let [arvio (get-arvio hakemus-id)]
     arvio
     (update-or-create-hakemus-arvio hakemus-id {:status "unhandled"})))
@@ -79,7 +79,5 @@
         updated
         (exec :db queries/create-score<! params))))
 
-(defn add-score [avustushaku-id hakemus-id identity selection-criteria-index score]
-  (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
-    (update-or-create-score avustushaku-id arvio-id identity selection-criteria-index score)
-    (list-scores arvio-id)))
+(defn add-score [avustushaku-id arvio-id identity selection-criteria-index score]
+  (update-or-create-score avustushaku-id arvio-id identity selection-criteria-index score))
