@@ -252,7 +252,7 @@ class Scoring extends Component {
     const scoring = this.props.scoring
     const meanScore = scoring && _.some(scoring["score-averages-by-user"], isMyScore) ? scoring["score-total-average"] : undefined
     const starElements = _.map(_.range(4), indexOfStar => {
-      const starImage = !_.isUndefined(meanScore) && meanScore >= indexOfStar ? "/img/star_on.png" : "/img/star_off.png"
+      const starImage = meanScore >= indexOfStar ? "/img/star_on.png" : "/img/star_off.png"
       return (<img key={indexOfStar} className="single-score" src={starImage} />)
     })
 
