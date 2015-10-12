@@ -46,7 +46,6 @@
                                                                                           selection-criteria-count))
                                                  scores-by-arvio)
         scoring-records (map create-single-arvio-aggregate complete-scorings-by-arvio-and-user)]
-    ;(pprint scoring-records)
     scoring-records))
 
 (defn- get-selection-criteria-count [avustushaku-id]
