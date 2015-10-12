@@ -25,7 +25,7 @@
       (/ sum (count user-averages))
       0)))
 
-(defn- aggregate-full-scores-by-arvio-and-user [all-avustushaku-scores selection-criteria-count]
+(defn aggregate-full-scores-by-arvio-and-user [all-avustushaku-scores selection-criteria-count]
   (let [scores-by-arvio (group-by (fn [score] (:arvio-id score)) all-avustushaku-scores)
         complete-scorings-by-arvio-and-user (map (fn [arvio-with-scores]
                                                    {:arvio-id (first arvio-with-scores)
