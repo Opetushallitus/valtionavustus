@@ -246,9 +246,9 @@ class HakemusRow extends Component {
 
 class Scoring extends Component {
   render() {
-    const meanScore = this.props.scoring ? this.props.scoring["score-total-average"] : 0
+    const meanScore = this.props.scoring ? this.props.scoring["score-total-average"] : undefined
     const starElements = _.map(_.range(4), indexOfStar => {
-      const starImage = meanScore && meanScore >= indexOfStar ? "/img/star_on.png" : "/img/star_off.png"
+      const starImage = !_.isUndefined(meanScore) && meanScore >= indexOfStar ? "/img/star_on.png" : "/img/star_off.png"
       return (<img key={indexOfStar} className="single-score" src={starImage} />)
     })
 
