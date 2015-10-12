@@ -10,8 +10,8 @@ export default class HakemusScoring extends Component {
     const hakemus = this.props.hakemus
     const allScoresOfHakemus = hakemus.scores
     const scoringOfHakemus = hakemus.arvio ? hakemus.arvio.scoring : undefined
-    const showOthersScores = this.props.showOthersScores
     const myUserInfo = this.props.userInfo
+    const showOthersScores = this.props.showOthersScores && ScoreResolver.myScoringIsComplete(scoringOfHakemus, myUserInfo)
 
     const avustushaku = this.props.avustushaku
     const valintaperusteet = _.get(avustushaku, "content.selection-criteria.items")
