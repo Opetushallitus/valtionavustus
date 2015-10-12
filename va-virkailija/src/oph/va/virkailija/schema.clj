@@ -62,7 +62,7 @@
 
 (s/defschema ScoringOfArvio
   "Single arvio scoring aggregate and complete score list"
-  {:scoring Scoring
+  {:scoring (s/maybe Scoring)
    :scores [Score]})
 
 (s/defschema Hakemus {:id s/Int

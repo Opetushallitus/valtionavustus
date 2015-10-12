@@ -227,7 +227,8 @@
         :return ScoringOfArvio
         (if-let [arvio (virkailija-db/get-arvio hakemus-id)]
           (ok (get-arvio-scores avustushaku-id (:id arvio)))
-          (ok [])))
+          (ok {:scoring nil
+               :scores []})))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
