@@ -47,8 +47,8 @@
   (letfn [(scores-by-arvio [score] (:arvio-id score))]
     (->> all-avustushaku-scores
          (group-by scores-by-arvio)
-         (map (partial complete-scorings-by-arvio-and-user selection-criteria-count))
-         (map create-single-arvio-aggregate))))
+         (map (comp create-single-arvio-aggregate
+                    (partial complete-scorings-by-arvio-and-user selection-criteria-count))))))
 
 (defn- get-selection-criteria-count [avustushaku-id]
   (count (-> (hakija-api/get-avustushaku avustushaku-id)
