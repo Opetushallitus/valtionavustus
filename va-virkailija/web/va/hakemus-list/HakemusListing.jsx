@@ -278,7 +278,7 @@ class Scoring extends Component {
     function createSummaryText() {
       const othersScorings = ScoreResolver.othersScorings(scoring, userInfo)
       const textFromOthersResults = _.map(othersScorings, s => {
-        return s["person-oid"] + ": " + meanToDisplay(s["score-average"]) + "\n"
+        return s["first-name"] + " " + s["last-name"] + ": " + meanToDisplay(s["score-average"]) + "\n"
       })
 
       const myAverage = ScoreResolver.myAverage(scoring, userInfo)
