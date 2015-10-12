@@ -259,22 +259,17 @@ class Scoring extends Component {
       const isVisible = Math.ceil(meanScore) >= indexOfStar
       const starImage = isVisible ? "/img/star_on.png" : "/img/star_off.png"
 
-      var style = {"width": "16px", "height": "16px", "padding": "0px"}
+      var className = "single-score"
 
       const needsScaling = normalizedMeanScore > indexOfStar && normalizedMeanScore < indexOfStar + 1
       if (needsScaling) {
         const delta = normalizedMeanScore - indexOfStar;
-        if (delta <= 0.25) {
-          style = {"width": "8px", "height": "8px", "padding": "4px"}
-        } else if (delta <= 0.5) {
-          style = {"width": "10px", "height": "10px", "padding": "3px"}
-        } else if (delta <= 0.75) {
-          style = {"width": "12px", "height": "12px", "padding": "2px"}
-        } else {
-          style = {"width": "14px", "height": "14px", "padding": "1px"}
-        }
+        if (delta <= 0.25) className = "single-score-0"
+        else if (delta <= 0.5) className = "single-score-25"
+        else if (delta <= 0.75) className = "single-score-50"
+        else className = "single-score-75"
       }
-      return (<img key={indexOfStar} className="single-score" style={style} src={starImage} />)
+      return (<img key={indexOfStar} className={className} src={starImage} />)
     })
 
     const titleText = _.isUndefined(meanScore) ?
