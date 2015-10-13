@@ -54,7 +54,6 @@ class SetStatus extends React.Component {
 
     return (
       <div>
-        <h2>Tila</h2>
         {statuses}
       </div>
     )
@@ -75,8 +74,7 @@ class BudgetGranted extends React.Component {
     }
 
     return <div>
-      <h2>Myönnetty avustus</h2>
-      <input type="text" value={budgetGranted} onChange={onChange} maxLength="9" /> €
+      <input type="text" className="budget-granted" value={budgetGranted} onChange={onChange} maxLength="9" /> €
     </div>
   }
 }
