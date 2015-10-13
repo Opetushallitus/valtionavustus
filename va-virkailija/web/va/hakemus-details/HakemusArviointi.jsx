@@ -73,8 +73,9 @@ class BudgetGranted extends React.Component {
       controller.setHakemusArvioBudgetGranted(hakemus, number)
     }
 
-    return <div>
-      <input type="text" className="budget-granted" value={budgetGranted} onChange={onChange} maxLength="9" /> €
+    return <div className="budget-granted">
+      <label for="budget-granted">Myönnetty avustus</label>
+      <input id="budget-granted" type="text" value={budgetGranted} onChange={onChange} maxLength="9" /> €
     </div>
   }
 }
