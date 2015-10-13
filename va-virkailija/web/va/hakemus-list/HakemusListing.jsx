@@ -52,7 +52,7 @@ export default class HakemusListing extends Component {
   static _sortByArray(fieldGetter, array, order, userInfo) {
     return function(hakemus) {
       const sortValue = array.indexOf(fieldGetter(hakemus, userInfo))
-      return order === 'asc' ? sortValue: - sortValue
+      return order === 'asc' ? sortValue: -sortValue
     }
   }
 
@@ -129,36 +129,56 @@ export default class HakemusListing extends Component {
 
 class HakemusSorter extends Component {
 
-  static determineCssClass(sorter, order) {
-    return sorter && sorter.order === order ? "sorted" : ""
+  constructor(props) {
+    super(props)
+    this.onSorterClick = this.onSorterClick.bind(this)
+    this.render = this.render.bind(this)
+    this.state = {order: ""}
   }
 
-  render() {
+  onSorterClick() {
+    var currentOrder = this.state.order;
     const field = this.props.field
     const sorterList = this.props.sorter
     const sorter = _.find(sorterList, sorter => sorter.field === field)
     const controller = this.props.controller
 
-    const onSorterChange = function(order) {
-      return function(e) {
-        if(sorter) {
-          const sorterListWithoutThis =  _.without(sorterList, sorter)
-          if(sorter.order == order) {
-            controller.setSorter(sorterListWithoutThis)
-          }
-          else {
-            controller.setSorter(_.union(sorterListWithoutThis, [{field: field, order: order}]))
-          }
-        }
-        else {
-          controller.setSorter(_.union(sorterList, [{field: field, order: order}]))
-        }
+    if (currentOrder == "") {
+      currentOrder = "asc"
+    } else if (currentOrder == "asc") {
+      currentOrder = "desc"
+    } else {
+      currentOrder = ""
+    }
+
+    this.setState({order: currentOrder})
+
+    if(sorter) {
+      const sorterListWithoutThis =  _.without(sorterList, sorter)
+      if(sorter.order == currentOrder) {
+        controller.setSorter(sorterListWithoutThis)
+      }
+      else {
+        controller.setSorter(_.union(sorterListWithoutThis, [{field: field, order: currentOrder}]))
       }
     }
+    else {
+      controller.setSorter(_.union(sorterList, [{field: field, order: currentOrder}]))
+    }
+  }
+
+  render() {
+    const sort = this.state.order;
+    var sortedClass = "sort sort-none"
+    if (sort == "asc") {
+      sortedClass = "sort sort-asc"
+    } else if (sort == "desc") {
+      sortedClass = "sort sort-desc"
+    }
+
     return (
       <div className="sorter">
-        <a onClick={onSorterChange("desc")} className={"sort-desc " + HakemusSorter.determineCssClass(sorter, "desc")}/>
-        <a onClick={onSorterChange("asc")} className={"sort-asc " + HakemusSorter.determineCssClass(sorter, "asc")}/>
+        <a onClick={this.onSorterClick} className={sortedClass}/>
       </div>
     )
   }
