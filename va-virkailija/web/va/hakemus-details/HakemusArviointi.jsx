@@ -74,7 +74,7 @@ class BudgetGranted extends React.Component {
     }
 
     return <div className="budget-granted">
-      <label for="budget-granted">Myönnetty avustus</label>
+      <label htmlFor="budget-granted">Myönnetty avustus</label>
       <input id="budget-granted" type="text" value={budgetGranted} onChange={onChange} maxLength="9" /> €
     </div>
   }
