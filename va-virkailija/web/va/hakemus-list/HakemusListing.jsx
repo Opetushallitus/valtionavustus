@@ -144,9 +144,9 @@ class HakemusSorter extends Component {
     const controller = this.props.controller
 
     if (currentOrder == "") {
-      currentOrder = "asc"
-    } else if (currentOrder == "asc") {
       currentOrder = "desc"
+    } else if (currentOrder == "desc") {
+      currentOrder = "asc"
     } else {
       currentOrder = ""
     }
