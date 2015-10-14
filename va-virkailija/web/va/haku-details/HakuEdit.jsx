@@ -11,8 +11,12 @@ export default class HakuEdit extends Component {
     const avustushaku = this.props.avustushaku
     const formDraft = this.props.formDraft
     const environment = this.props.environment
+
     const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/nayta?lang=fi"
     const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/nayta?lang=sv"
+
+    const hakuUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/?lang=fi"
+    const hakuUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/?lang=sv"
 
     const onChange = e => {
       controller.onChangeListener(avustushaku, e.target, e.target.value)
@@ -26,10 +30,16 @@ export default class HakuEdit extends Component {
         </div>
         <table id="name">
           <thead><tr><th>Haun nimi</th><th>Haun nimi ruotsiksi</th></tr></thead>
-          <tbody><tr>
-            <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-fi" value={avustushaku.content.name.fi}/></td>
-            <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-sv" value={avustushaku.content.name.sv}/></td>
-          </tr></tbody>
+          <tbody>
+            <tr>
+              <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-fi" value={avustushaku.content.name.fi}/></td>
+              <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-sv" value={avustushaku.content.name.sv}/></td>
+            </tr>
+            <tr>
+              <td><a href={hakuUrlFi} target="_">Linkki hakuun (suomeksi)</a></td>
+              <td><a href={hakuUrlSv} target="_">Linkki hakuun (ruotsiksi)</a></td>
+            </tr>
+          </tbody>
         </table>
         <div>
           <h3>{avustushaku.content.duration.label.fi}</h3>
