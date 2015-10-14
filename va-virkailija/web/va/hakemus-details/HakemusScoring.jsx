@@ -137,7 +137,7 @@ class SeeOthersScores extends Component {
 
     function resolveLabelText() {
       if (!myScoringIsComplete) {
-        return "Pisteytä hakemus kokonaan nähdäksesi muiden arviot"
+        return ""
       }
       if (othersScoringsCount === 0) {
         return "Ei arvioita muilta"
