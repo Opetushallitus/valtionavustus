@@ -16,7 +16,7 @@ export default class AvustushakuDropdown extends Component {
     }
     const onChange = (value) => {
       location.path = "/avustushaku/" + value.id
-      window.location.href = "/avustushaku/" + value.id + "/"
+      window.location.href = "/avustushaku/" + value.id + "/" + location.search
     }
     const messages = {
       filterPlaceholder: '',
