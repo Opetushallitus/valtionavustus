@@ -65,7 +65,10 @@ export default class App extends Component {
 var parser = document.createElement('a');
 parser.href = location
 const pathElements = _.filter(parser.pathname.split("/"), (element) => { return element != "" })
-const avustushakuId = pathElements.length == 2 && pathElements[0] == "avustushaku" ? pathElements[1] : "1"
+if (pathElements.length < 2 || !pathElements[0] == "avustushaku") {
+  window.location.href = "/avustushaku/1"
+}
+const avustushakuId = pathElements[1]
 
 const controller = new HakemustenArviointiController()
 const stateP = controller.initializeState(avustushakuId)
