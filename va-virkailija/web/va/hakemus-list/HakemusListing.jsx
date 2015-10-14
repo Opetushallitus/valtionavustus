@@ -134,7 +134,6 @@ class HakemusSorter extends Component {
     this.isSortedByField = this.isSortedByField.bind(this)
     this.onSorterClick = this.onSorterClick.bind(this)
     this.render = this.render.bind(this)
-    this.state = {order: ""}
   }
 
   isSortedByField() {
@@ -142,40 +141,34 @@ class HakemusSorter extends Component {
   }
 
   onSorterClick() {
-    var currentOrder = this.state.order;
+    console.log("Order on click", this.props.order)
     const field = this.props.field
-    const sorterList = this.props.sorter
-    const sorter = _.find(sorterList, sorter => sorter.field === field)
+    const sorter = _.find(this.props.sorter, sorter => sorter.field === field)
+    var currentOrder = _.get(sorter, "order", "");
     const controller = this.props.controller
 
-    if (currentOrder == "asc") {
-      currentOrder = "desc"
-    } else {
+    if (currentOrder == "desc") {
       currentOrder = "asc"
+    } else {
+      currentOrder = "desc"
     }
-
-    this.setState({order: currentOrder})
-
-    if(sorter) {
-      const sorterListWithoutThis =  _.without(sorterList, sorter)
-      if(sorter.order == currentOrder) {
-        controller.setSorter(sorterListWithoutThis)
-      }
-      else {
-        controller.setSorter([{field: field, order: currentOrder}])
-      }
-    }
-    else {
-      controller.setSorter([{field: field, order: currentOrder}])
-    }
+    controller.setSorter([{field: field, order: currentOrder}])
   }
 
   render() {
-    const sort = this.state.order;
+    const field = this.props.field
+    const sorter = _.find(this.props.sorter, sorter => sorter.field === field)
+    const sort = _.get(sorter, "order", "");
+    console.log("Sort is", sort)
     var sortedClass = "sort sort-none"
     if (this.isSortedByField()) {
-      sortedClass = sort == "asc" ? "sort sort-asc" : "sort sort-desc"
+      if (sort == "") {
+        sortedClass = "sort sort-desc"
+      } else {
+        sortedClass = sort == "asc" ? "sort sort-asc" : "sort sort-desc"
+      }
     }
+    console.log("SortedClass is", sortedClass)
 
     return (
       <div className="sorter">
