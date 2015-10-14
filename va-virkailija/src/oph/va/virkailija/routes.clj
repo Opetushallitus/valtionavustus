@@ -123,6 +123,14 @@
                          :focus-areas focus-areas}
                         form-id))))
 
+  (POST* "/:avustushaku-id" []
+         :path-params [avustushaku-id :- Long]
+         :body  [avustushaku (describe AvustusHaku "Updated avustushaku")]
+         :return AvustusHaku
+         (if-let [response (hakija-api/update-avustushaku avustushaku)]
+          (ok response)
+          (not-found)))
+
   (GET* "/:avustushaku-id" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
         :return HakuData
@@ -132,13 +140,6 @@
                              add-arviot
                              (add-scores scores)))
                     (not-found))))
-
-  (GET* "/:avustushaku-id" [avustushaku-id]
-        :path-params [avustushaku-id :- Long]
-        :return HakuData
-        (if-let [response (hakija-api/get-hakudata avustushaku-id)]
-          (ok (add-arviot response))
-          (not-found)))
 
   (GET* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
