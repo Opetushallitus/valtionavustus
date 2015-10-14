@@ -2,6 +2,7 @@ import PolyfillBind from 'va-common/web/polyfill-bind'
 import ConsolePolyfill from 'console-polyfill'
 import React, { Component } from 'react'
 import _ from 'lodash'
+import RouteParser from 'route-parser'
 
 import Dispatcher from 'soresu-form/web/Dispatcher'
 
@@ -62,13 +63,13 @@ export default class App extends Component {
   }
 }
 
-var parser = document.createElement('a');
-parser.href = location
-const pathElements = _.filter(parser.pathname.split("/"), (element) => { return element != "" })
-if (pathElements.length < 2 || !pathElements[0] == "avustushaku") {
-  window.location.href = "/avustushaku/1/"
+const defaultHakuId = 1
+const parsedAvustusHakuIdObject = new RouteParser('/avustushaku/:avustushaku_id/*ignore').match(location.pathname)
+if (!parsedAvustusHakuIdObject || _.isUndefined(parsedAvustusHakuIdObject["avustushaku_id"])) {
+  window.location.href = "/avustushaku/" + defaultHakuId + "/"
 }
-const avustushakuId = pathElements[1]
+
+const avustushakuId = parsedAvustusHakuIdObject ? parsedAvustusHakuIdObject["avustushaku_id"] : defaultHakuId
 
 const controller = new HakemustenArviointiController()
 const stateP = controller.initializeState(avustushakuId)
