@@ -144,18 +144,23 @@
         start-time-string (datetime/time-string start-date)
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
-        url (generate-url avustushaku-id lang lang-str user-key true)]
+        url (generate-url avustushaku-id lang lang-str user-key true)
+        user-message {:operation :send
+                      :type :hakemus-submitted
+                      :lang lang
+                      :from (-> smtp-config :from lang)
+                      :sender (-> smtp-config :sender)
+                      :subject (get-in mail-titles [:hakemus-submitted lang])
+                      :to to
+                      :avustushaku avustushaku
+                      :start-date start-date-string
+                      :start-time start-time-string
+                      :end-date end-date-string
+                      :end-time end-time-string
+                      :url url}
+        registry-message (-> user-message
+                             (assoc :to (vector (-> smtp-config :registry-address)))
+                             (assoc :subject (str "[Valtionavustus] Uusi hakemus hakuun '" avustushaku "' (" start-date-string "-" end-date-string ")")))]
     (log/info "Url would be: " url)
-    (>!! mail-queue {:operation :send
-                     :type :hakemus-submitted
-                     :lang lang
-                     :from (-> smtp-config :from lang)
-                     :sender (-> smtp-config :sender)
-                     :subject (get-in mail-titles [:hakemus-submitted lang])
-                     :to to
-                     :avustushaku avustushaku
-                     :start-date start-date-string
-                     :start-time start-time-string
-                     :end-date end-date-string
-                     :end-time end-time-string
-                     :url url})))
+    (>!! mail-queue user-message)
+    (>!! mail-queue registry-message)))

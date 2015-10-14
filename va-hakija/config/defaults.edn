@@ -20,6 +20,7 @@
                 :sv "no-reply@statsunderstod.oph.fi"}
          :sender "no-reply@csc.fi"
          :bounce-address "va-dev@reaktor.com"
+         :registry-address "va-dev@reaktor.com"
          :print-mail-on-disable? true
          :retry-initial-wait 2000
          :retry-multiplier 4

@@ -4,6 +4,6 @@
                 :sv "http://localhost:8080/"}}
  :api {:restricted-routes? false}
  :db {:database-name "va-dev"}
- :email {:enabled? false
+ :email {:enabled? true
          :host "localhost"
          :port 2500}}
