@@ -147,7 +147,9 @@ class HakemusSorter extends Component {
     var currentOrder = _.get(sorter, "order", "");
     const controller = this.props.controller
 
-    if (currentOrder == "desc") {
+    if (this.props.sorter.length > 1) {
+      currentOrder = "desc"
+    } else if (currentOrder == "desc") {
       currentOrder = "asc"
     } else {
       currentOrder = "desc"
