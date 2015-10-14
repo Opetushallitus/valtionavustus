@@ -141,7 +141,6 @@ class HakemusSorter extends Component {
   }
 
   onSorterClick() {
-    console.log("Order on click", this.props.order)
     const field = this.props.field
     const sorter = _.find(this.props.sorter, sorter => sorter.field === field)
     var currentOrder = _.get(sorter, "order", "");
@@ -161,7 +160,6 @@ class HakemusSorter extends Component {
     const field = this.props.field
     const sorter = _.find(this.props.sorter, sorter => sorter.field === field)
     const sort = _.get(sorter, "order", "");
-    console.log("Sort is", sort)
     var sortedClass = "sort sort-none"
     if (this.isSortedByField()) {
       if (sort == "") {
@@ -170,7 +168,6 @@ class HakemusSorter extends Component {
         sortedClass = sort == "asc" ? "sort sort-asc" : "sort sort-desc"
       }
     }
-    console.log("SortedClass is", sortedClass)
 
     return (
       <div className="sorter">
