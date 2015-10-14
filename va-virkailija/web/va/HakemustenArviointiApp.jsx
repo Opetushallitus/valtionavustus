@@ -66,7 +66,7 @@ var parser = document.createElement('a');
 parser.href = location
 const pathElements = _.filter(parser.pathname.split("/"), (element) => { return element != "" })
 if (pathElements.length < 2 || !pathElements[0] == "avustushaku") {
-  window.location.href = "/avustushaku/1"
+  window.location.href = "/avustushaku/1/"
 }
 const avustushakuId = pathElements[1]
 
