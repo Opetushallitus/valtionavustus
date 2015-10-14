@@ -3,6 +3,7 @@ import _ from 'lodash'
 import Immutable from 'seamless-immutable'
 
 import queryString from 'query-string'
+import RouteParser from 'route-parser'
 
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'soresu-form/web/Dispatcher'
@@ -98,6 +99,14 @@ export default class HakemustenArviointiController {
         return hakemus.status === "submitted"
       })
     }
+    const parsedHakemusIdObject = new RouteParser('/*ignore/hakemus/:hakemus_id/*ignore').match(location.pathname)
+    if (parsedHakemusIdObject && parsedHakemusIdObject["hakemus_id"]) {
+      const hakemusIdFromUrl = parsedHakemusIdObject["hakemus_id"]
+      const initialHakemus = _.find(realInitialState.hakuData.hakemukset, h => { return h.id.toString() === hakemusIdFromUrl })
+      if (initialHakemus) {
+        this.onHakemusSelection(realInitialState, initialHakemus)
+      }
+    }
     var hakemusList = realInitialState.hakuData.hakemukset;
     realInitialState.hakuData.form = Immutable(realInitialState.hakuData.form)
     return realInitialState
@@ -105,6 +114,12 @@ export default class HakemustenArviointiController {
 
   onHakemusSelection(state, hakemusToSelect) {
     state.selectedHakemus = hakemusToSelect
+    const pathname = location.pathname
+    const parsedUrl = new RouteParser('/avustushaku/:avustushaku_id/(hakemus/:hakemus_id/)*ignore').match(pathname)
+    if (!_.isUndefined(history.pushState) && parsedUrl["hakemus_id"] != hakemusToSelect.id.toString()) {
+      const newUrl = "/avustushaku/" + parsedUrl["avustushaku_id"] + "/hakemus/" + hakemusToSelect.id + "/" + location.search
+      history.pushState({}, window.title, newUrl)
+    }
     this.loadScores(state, hakemusToSelect)
     return state
   }
