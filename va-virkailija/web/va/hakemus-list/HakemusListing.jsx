@@ -131,9 +131,14 @@ class HakemusSorter extends Component {
 
   constructor(props) {
     super(props)
+    this.isSortedByField = this.isSortedByField.bind(this)
     this.onSorterClick = this.onSorterClick.bind(this)
     this.render = this.render.bind(this)
     this.state = {order: ""}
+  }
+
+  isSortedByField() {
+    return !_.isEmpty(_.find(this.props.sorter, sorter => sorter.field === this.props.field))
   }
 
   onSorterClick() {
@@ -143,12 +148,10 @@ class HakemusSorter extends Component {
     const sorter = _.find(sorterList, sorter => sorter.field === field)
     const controller = this.props.controller
 
-    if (currentOrder == "") {
+    if (currentOrder == "asc") {
       currentOrder = "desc"
-    } else if (currentOrder == "desc") {
-      currentOrder = "asc"
     } else {
-      currentOrder = ""
+      currentOrder = "asc"
     }
 
     this.setState({order: currentOrder})
@@ -159,21 +162,19 @@ class HakemusSorter extends Component {
         controller.setSorter(sorterListWithoutThis)
       }
       else {
-        controller.setSorter(_.union(sorterListWithoutThis, [{field: field, order: currentOrder}]))
+        controller.setSorter([{field: field, order: currentOrder}])
       }
     }
     else {
-      controller.setSorter(_.union(sorterList, [{field: field, order: currentOrder}]))
+      controller.setSorter([{field: field, order: currentOrder}])
     }
   }
 
   render() {
     const sort = this.state.order;
     var sortedClass = "sort sort-none"
-    if (sort == "asc") {
-      sortedClass = "sort sort-asc"
-    } else if (sort == "desc") {
-      sortedClass = "sort sort-desc"
+    if (this.isSortedByField()) {
+      sortedClass = sort == "asc" ? "sort sort-asc" : "sort sort-desc"
     }
 
     return (
