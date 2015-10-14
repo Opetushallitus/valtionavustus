@@ -107,7 +107,6 @@ export default class HakemustenArviointiController {
         this.onHakemusSelection(realInitialState, initialHakemus)
       }
     }
-    var hakemusList = realInitialState.hakuData.hakemukset;
     realInitialState.hakuData.form = Immutable(realInitialState.hakuData.form)
     return realInitialState
   }
