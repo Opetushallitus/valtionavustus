@@ -5,16 +5,19 @@
   (let [new-content (walk/prewalk node-transformer (:content form))]
     (assoc form :content new-content)))
 
-(defn find-value-for-key [values key]
-  (if (some #(= key (:key %)) values)
-    (first (filter #(= key (:key %)) values))
+(defn filter-values [pred values]
+  (if (some pred values)
+    (filter pred values)
     (let [values-that-are-maps (filter map? values)
           nested-map-values (map #(:value %) values-that-are-maps)
           values-that-are-seqs (filter coll? nested-map-values)
           nested-seq-values (mapcat #(:value %) (flatten values-that-are-seqs))
           all-internal-values (concat nested-map-values nested-seq-values)]
       (when (not (empty? all-internal-values))
-        (find-value-for-key all-internal-values key)))))
+        (filter-values pred all-internal-values)))))
+
+(defn find-value-for-key [values key]
+  (first (filter-values #(= key (:key %)) values)))
 
 (defn find-answer-value [answers key]
   (when-let [found-record (find-value-for-key (answers :value) key)]
