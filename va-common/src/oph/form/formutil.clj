@@ -20,7 +20,7 @@
   (= (attribute-name field) expected-value))
 
 (defn find-value-for-key [values key]
-  (first (filter-values (partial has-attribute? "key" key) values)))
+  (first (filter-values (partial has-attribute? :key key) values)))
 
 (defn find-answer-value [answers key]
   (when-let [found-record (find-value-for-key (answers :value) key)]
