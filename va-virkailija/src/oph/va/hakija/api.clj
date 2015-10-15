@@ -41,17 +41,20 @@
         avustushaku-id (exec :hakija-db
                               hakija-queries/create-avustushaku<!
                               {:form form-id
-                               :content avustushaku-content})]
+                               :content avustushaku-content
+                               :register_number nil})]
     (->> avustushaku-id
          (exec :hakija-db hakija-queries/get-avustushaku)
-         (map avustushaku-response-content )
+         (map avustushaku-response-content)
          first)))
 
 (defn update-avustushaku [avustushaku]
   (let [haku-status (if (= (:status avustushaku) "new")
                       (new HakuStatus "draft")
                       (new HakuStatus (:status avustushaku)))
-        avustushaku-to-save (assoc avustushaku :status haku-status)]
+        register-number (:register-number avustushaku)
+        avustushaku-to-save (-> (assoc avustushaku :status haku-status)
+                                (assoc :register_number register-number))]
     (exec-all :hakija-db
               [hakija-queries/archive-avustushaku! avustushaku-to-save
                hakija-queries/update-avustushaku! avustushaku-to-save])
