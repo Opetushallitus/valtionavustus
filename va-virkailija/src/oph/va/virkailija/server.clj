@@ -36,9 +36,13 @@
 
 (defn any-access [request] true)
 
-(defn redirect-to-login [request response]
+(defn- query-string-for-redirect-location [original-request]
+  (if-let [original-query-string (:query-string original-request)]
+    (str "&" original-query-string)))
+
+(defn- redirect-to-login [request response]
   {:status  302
-   :headers {"Location" (str "/login/?target=" (:uri request) "&" (:query-string request))
+   :headers {"Location" (str "/login/?target=" (:uri request) (query-string-for-redirect-location request))
              "Content-Type" "text/plain"}
    :body    (str "Access to " (:uri request) " is not authorized, redirecting to login")})
 
