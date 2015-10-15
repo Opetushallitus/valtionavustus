@@ -11,6 +11,7 @@
             [compojure.api.exception :as compojure-ex]
             [ring.swagger.json-schema-dirty]
             [schema.core :as s]
+            [cemerick.url :refer [map->query]]
             [oph.common.config :refer [config config-simple-name]]
             [oph.common.routes :refer :all]
             [oph.va.routes :refer :all]
@@ -248,6 +249,12 @@
   (GET "/" [:as request]
        (ok (auth/get-identity request))))
 
+(defn- query-string-for-login [original-query-params params-to-add keys-to-remove]
+  (let [payload-params (apply dissoc original-query-params keys-to-remove)
+        complete-params (merge payload-params params-to-add)]
+    (if (not (empty? complete-params))
+      (->> complete-params map->query (str "?")))))
+
 (defroutes* login-routes
   "Authentication"
 
@@ -257,9 +264,9 @@
         :form-params [username :- s/Str password :- s/Str target :- s/Str]
         :return s/Any
         (if-let [identity (auth/authenticate username password)]
-          (-> (resp/redirect target)
+          (-> (resp/redirect (str target (query-string-for-login (:query-params request) {} ["target" "error"])))
               (assoc :session {:identity identity}))
-          (resp/redirect (str "/login/?target=" target "&error=true"))))
+          (resp/redirect (str "/login/" (query-string-for-login (:query-params request) {"error" "true"} [])))))
 
   (POST "/logout" [:as request]
         (auth/logout (-> request :session :identity))
