@@ -8,6 +8,7 @@
   {:id     (s/maybe s/Str)
    :version Long
    :status HakemusStatus
-   :last_status_change_at s/Inst
+   :register-number (s/maybe s/Str)
+   :last-status-change-at s/Inst
    :submission Submission
-   :validation_errors SubmissionValidationErrors})
+   :validation-errors SubmissionValidationErrors})

@@ -34,6 +34,7 @@
 (defn avustushaku-response-content [avustushaku]
   {:id          (:id avustushaku)
    :status      (:status avustushaku)
+   :register-number (:register_number avustushaku)
    :phase       (avustushaku-phase avustushaku)
    :content     (:content avustushaku)
    :form        (:form avustushaku)})

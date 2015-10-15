@@ -37,7 +37,7 @@
   (conflict! {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
               :status (:status hakemus)
               :version (:version hakemus)
-              :last_status_change_at (:last_status_change_at hakemus)}))
+              :last-status-change-at (:last_status_change_at hakemus)}))
 
 (defn- get-open-avustushaku [haku-id]
   (let [avustushaku (va-db/get-avustushaku haku-id)
@@ -49,10 +49,11 @@
 (defn- hakemus-ok-response [hakemus submission validation]
   (ok {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
        :status (:status hakemus)
+       :register-number (:register_number hakemus)
        :version (:version hakemus)
-       :last_status_change_at (:last_status_change_at hakemus)
+       :last-status-change-at (:last_status_change_at hakemus)
        :submission submission
-       :validation_errors validation}))
+       :validation-errors validation}))
 
 (defn on-hakemus-create [haku-id answers]
   (let [avustushaku (get-open-avustushaku haku-id)
