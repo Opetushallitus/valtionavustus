@@ -16,15 +16,15 @@
       (when (not (empty? all-internal-values))
         (filter-values pred all-internal-values)))))
 
-(defn has-attribute? [attribute-name expected-value field]
-  (= (attribute-name field) expected-value))
-
 (defn find-value-for-key [values key]
-  (first (filter-values (partial has-attribute? :key key) values)))
+  (first (filter-values #(= key (:key %)) values)))
 
 (defn find-answer-value [answers key]
   (when-let [found-record (find-value-for-key (answers :value) key)]
     (:value found-record)))
+
+(defn has-attribute? [attribute-name expected-value field]
+  (= (attribute-name field) expected-value))
 
 (defn has-display-as? [expected-value field]
   (has-attribute? :displayAs expected-value field))
