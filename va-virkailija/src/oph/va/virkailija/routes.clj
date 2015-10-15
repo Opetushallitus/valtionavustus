@@ -251,15 +251,15 @@
 (defroutes* login-routes
   "Authentication"
 
-  (GET "/" [] (return-html "login.html"))
+  (GET "/*" [] (return-html "login.html"))
 
   (POST* "/" [username password :as request]
-        :form-params [username :- s/Str password :- s/Str]
+        :form-params [username :- s/Str password :- s/Str target :- s/Str]
         :return s/Any
         (if-let [identity (auth/authenticate username password)]
-          (-> (resp/redirect "/")
+          (-> (resp/redirect target)
               (assoc :session {:identity identity}))
-          (resp/redirect "/login?error=true")))
+          (resp/redirect (str "/login/?target=" target "&error=true"))))
 
   (POST "/logout" [:as request]
         (auth/logout (-> request :session :identity))

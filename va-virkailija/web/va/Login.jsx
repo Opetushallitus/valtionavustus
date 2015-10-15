@@ -18,6 +18,7 @@ export default class Login extends React.Component {
     const query = queryString.parse(location.search)
     const errorMessage = (<div className="error">Sisäänkirjautuminen epäonnistui. Tarkista käyttäjänimi ja salasana</div>)
     const error = query.error == "true" ? errorMessage : (<div></div>)
+    const target = query.target ? query.target : "/"
     return (
       <div>
         <TopBar environment={environment}/>
@@ -38,6 +39,7 @@ export default class Login extends React.Component {
             <div className="row">
               <button type="submit">Kirjaudu sisään</button>
             </div>
+            <input type="hidden" name="target" value={target}/>
           </form>
           <div className="row">
             {error}

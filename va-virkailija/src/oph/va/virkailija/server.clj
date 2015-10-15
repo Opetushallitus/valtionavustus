@@ -36,12 +36,18 @@
 
 (defn any-access [request] true)
 
+(defn redirect-to-login [request response]
+  {:status  302
+   :headers {"Location" (str "/login/?target=" (:uri request) "&" (:query-string request))
+             "Content-Type" "text/plain"}
+   :body    (str "Access to " (:uri request) " is not authorized, redirecting to login")})
+
 (defn authenticated-access [request]
   (if (auth/check-identity (-> request :session :identity))
     true
     (error "Authentication required")))
 
-(def rules [{:pattern #"^/login$"
+(def rules [{:pattern #"^/login.*$"
              :handler any-access}
             {:pattern #"^/environment"
              :handler any-access}
@@ -53,7 +59,7 @@
              :handler any-access}
             {:pattern #".*"
              :handler authenticated-access
-             :redirect "/login"}])
+             :on-error redirect-to-login}])
 
 (defn- with-authentication [site]
   (-> site
