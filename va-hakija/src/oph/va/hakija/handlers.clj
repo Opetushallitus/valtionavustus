@@ -9,6 +9,7 @@
             [oph.form.db :as form-db]
             [oph.form.validation :as validation]
             [oph.form.routes :refer :all]
+            [oph.form.formutil :refer :all]
             [oph.va.routes :refer :all]
             [oph.form.schema :refer :all]
             [oph.va.hakija.db :as va-db]
@@ -30,16 +31,6 @@
      (map (partial convert-attachment external-hakemus-id))
      (map (fn [attachment] [(:field-id attachment) attachment]))
      (into {})))
-
-(defn- matches-key? [key value-container]
-  (= (:key value-container) key))
-
-(defn- find-hakemus-value [answers key]
-  (->> answers
-       :value
-       (filter (partial matches-key? key))
-       first
-       :value))
 
 (defn- hakemus-conflict-response [hakemus]
   (conflict! {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
@@ -72,7 +63,7 @@
       (if-let [new-hakemus (va-db/create-hakemus! haku-id form-id answers)]
         ;; TODO: extract
         (let [validation (validation/validate-form form answers {})
-              language (keyword (find-hakemus-value answers "language"))
+              language (keyword (find-answer-value answers "language"))
               avustushaku-title (-> avustushaku-content :name language)
               avustushaku-duration (->> avustushaku-content
                                         :duration)
@@ -82,7 +73,7 @@
               avustushaku-end-date (->> avustushaku-duration
                                         :end
                                         (datetime/parse))
-              email (find-hakemus-value answers "primary-email")
+              email (find-answer-value answers "primary-email")
               user-key (-> new-hakemus :hakemus :user_key)]
             (va-email/send-new-hakemus-message! language
                                                 [email]
@@ -148,7 +139,7 @@
                                                       answers)
               ;; TODO: extract
               avustushaku-content (:content avustushaku)
-              language (keyword (find-hakemus-value answers "language"))
+              language (keyword (find-answer-value answers "language"))
               avustushaku-title (-> avustushaku-content :name language)
               avustushaku-duration (->> avustushaku-content
                                         :duration)
@@ -158,9 +149,9 @@
               avustushaku-end-date (->> avustushaku-duration
                                         :end
                                         (datetime/parse))
-              organization-email (find-hakemus-value answers "organization-email")
-              primary-email (find-hakemus-value answers "primary-email")
-              signature-email (find-hakemus-value answers "signature-email")
+              organization-email (find-answer-value answers "organization-email")
+              primary-email (find-answer-value answers "primary-email")
+              signature-email (find-answer-value answers "signature-email")
               user-key (-> submitted-hakemus :user_key)]
           (va-email/send-hakemus-submitted-message! language
                                                     [primary-email organization-email signature-email]
