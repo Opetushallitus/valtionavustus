@@ -23,3 +23,5 @@
 (defquery list-attachments-by-avustushaku "sql/hakija/attachment/list-by-avustushaku.sql")
 (defquery attachment-exists? "sql/hakija/attachment/exists.sql")
 (defquery download-attachment "sql/hakija/attachment/download.sql")
+
+(defquery set-hakemus-register-number! "sql/hakija/hakemus/set-register-number.sql")

@@ -138,6 +138,7 @@ export default class HakujenHallintaController {
     const financingProcentage = /haku-self-financing-percentage/.exec(update.field.id)
     const selectionCriteria = /selection-criteria-(\d+)-(\w+)/.exec(update.field.id)
     const focusArea = /focus-area-(\d+)-(\w+)/.exec(update.field.id)
+    const registerNumber = /register-number/.exec(update.field.id)
     var doSave = true
     if(hakuname) {
       const lang = hakuname[1]
@@ -168,6 +169,9 @@ export default class HakujenHallintaController {
       const index = focusArea[1]
       const lang = focusArea[2]
       update.avustushaku.content['focus-areas'].items[index][lang] = update.newValue
+    }
+    else if (registerNumber) {
+      update.avustushaku["register-number"] = update.newValue
     }
     else {
       console.error("Unsupported update to field ", update.field.id, ":", update)

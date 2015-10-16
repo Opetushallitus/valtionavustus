@@ -27,7 +27,7 @@ export default class VaFormTopbar extends React.Component {
     const formIsValidOnClientSide = _.reduce(state.form.validationErrors, function (allValid, fieldErrors) {
       return allValid === true && fieldErrors.length === 0
     }, true)
-    const formIsValidOnServerSide = state.saveStatus.savedObject && _.reduce(state.saveStatus.savedObject.validation_errors, function (allValid, fieldErrors) {
+    const formIsValidOnServerSide = state.saveStatus.savedObject && _.reduce(state.saveStatus.savedObject["validation-errors"], function (allValid, fieldErrors) {
       return allValid === true && fieldErrors.length === 0
     }, true)
     const formOperations = state.extensionApi.formOperations

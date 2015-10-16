@@ -75,6 +75,7 @@
                       :arvio Arvio
                       :budget-total s/Int
                       :budget-oph-share s/Int
+                      :register-number (s/maybe s/Str)
                       :user-key s/Str
                       :answers [Answer]})
 

@@ -22,11 +22,16 @@ export default class HakuEdit extends Component {
       controller.onChangeListener(avustushaku, e.target, e.target.value)
     }
 
+    console.log("avustushaku", avustushaku)
     return (
       <div id="haku-edit">
         <div id="haku-edit-header">
           <h2>Muokkaa avustushakua</h2>
           <CreateHaku controller={controller} avustushaku={avustushaku}/>
+        </div>
+        <div>
+          <h3>Diaarinumero (jos tiedossa)</h3>
+          <input onChange={onChange} maxLength="128" id="register-number" value={avustushaku["register-number"]} />
         </div>
         <table id="name">
           <thead><tr><th>Haun nimi</th><th>Haun nimi ruotsiksi</th></tr></thead>

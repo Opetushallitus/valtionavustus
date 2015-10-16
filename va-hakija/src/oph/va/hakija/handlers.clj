@@ -37,7 +37,7 @@
   (conflict! {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
               :status (:status hakemus)
               :version (:version hakemus)
-              :last_status_change_at (:last_status_change_at hakemus)}))
+              :last-status-change-at (:last_status_change_at hakemus)}))
 
 (defn- get-open-avustushaku [haku-id]
   (let [avustushaku (va-db/get-avustushaku haku-id)
@@ -49,10 +49,11 @@
 (defn- hakemus-ok-response [hakemus submission validation]
   (ok {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
        :status (:status hakemus)
+       :register-number (:register_number hakemus)
        :version (:version hakemus)
-       :last_status_change_at (:last_status_change_at hakemus)
+       :last-status-change-at (:last_status_change_at hakemus)
        :submission submission
-       :validation_errors validation}))
+       :validation-errors validation}))
 
 (defn on-hakemus-create [haku-id answers]
   (let [avustushaku (get-open-avustushaku haku-id)
@@ -98,7 +99,12 @@
         attachments (get-attachments (:user_key hakemus) (:id hakemus))
         validation (validation/validate-form form answers attachments)]
     (if (= (:status hakemus) "new")
-      (let [verified-hakemus (va-db/verify-hakemus haku-id hakemus-id submission-id submission-version answers)]
+      (let [verified-hakemus (va-db/verify-hakemus haku-id
+                                                   hakemus-id
+                                                   submission-id
+                                                   submission-version
+                                                   (:register_number hakemus)
+                                                   answers)]
         (hakemus-ok-response verified-hakemus submission validation))
       (hakemus-ok-response hakemus submission validation))))
 
@@ -116,6 +122,7 @@
                                                        hakemus-id
                                                        (:form_submission_id hakemus)
                                                        (:version updated-submission)
+                                                       (:register_number hakemus)
                                                        answers)]
           (hakemus-ok-response updated-hakemus updated-submission validation))
         (hakemus-conflict-response hakemus))
@@ -137,6 +144,7 @@
                                                       hakemus-id
                                                       submission-id
                                                       submission-version
+                                                      (:register_number hakemus)
                                                       answers)]
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! answers submitted-hakemus avustushaku)
           (hakemus-ok-response submitted-hakemus saved-submission validation))
