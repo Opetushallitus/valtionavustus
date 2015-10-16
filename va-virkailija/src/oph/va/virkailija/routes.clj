@@ -245,10 +245,12 @@
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/register-number" [avustushaku-id hakemus-id]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-        :body [register-number (describe {:register-number s/Str} "Register number (diaarinumero)")]
-        :return {:register-number s/Str}
-        (hakija-api/set-register-number hakemus-id register-number)
-        (ok register-number)))
+        :body [body (describe {:register-number s/Str} "Register number (diaarinumero)")]
+        :return {:hakemus-id Long
+                 :register-number s/Str}
+        (hakija-api/set-register-number hakemus-id (:register-number body))
+        (ok {:hakemus-id hakemus-id
+             :register-number (:register-number body)})))
 
 (defroutes* userinfo-routes
   "User information"
