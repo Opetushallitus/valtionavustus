@@ -1,8 +1,7 @@
 (ns oph.va.hakija.submit-notification
   (:use [clojure.tools.trace :only [trace]])
    (:require [oph.common.datetime :as datetime]
-             [oph.form.formutil :refer :all]
-             [oph.va.hakija.email :as va-email]))
+             [oph.form.formutil :refer :all]))
 
 (def legacy-email-field-ids
   ["organization-email" "primary-email" "signature-email"])
@@ -16,7 +15,7 @@
   (let [notification-fields (filter-values is-notification-email-field (:value answers))]
     (mapv :value notification-fields)))
 
-(defn send-submit-notifications! [answers submitted-hakemus avustushaku]
+(defn send-submit-notifications! [send! answers submitted-hakemus avustushaku]
   (let [haku-id (:id avustushaku)
         avustushaku-content (:content avustushaku)
         language (keyword (find-answer-value answers "language"))
@@ -31,10 +30,10 @@
                                   (datetime/parse))
         destination-emails (find-emails-to-notify answers)
         user-key (-> submitted-hakemus :user_key)]
-    (va-email/send-hakemus-submitted-message! language
-                                              destination-emails
-                                              haku-id
-                                              avustushaku-title
-                                              user-key
-                                              avustushaku-start-date
-                                              avustushaku-end-date)))
+    (send! language
+           destination-emails
+           haku-id
+           avustushaku-title
+           user-key
+           avustushaku-start-date
+           avustushaku-end-date)))

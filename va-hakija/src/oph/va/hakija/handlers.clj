@@ -138,7 +138,7 @@
                                                       submission-id
                                                       submission-version
                                                       answers)]
-          (va-submit-notification/send-submit-notifications! answers submission-id avustushaku)
+          (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! answers submission-id avustushaku)
           (hakemus-ok-response submitted-hakemus saved-submission validation))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
