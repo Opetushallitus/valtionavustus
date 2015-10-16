@@ -1,5 +1,6 @@
 (ns oph.va.hakija.submit-notification
-  (:use [clojure.tools.trace :only [trace]])
+  (:use [clojure.tools.trace :only [trace]]
+        [clojure.pprint :only [pprint]])
    (:require [oph.common.datetime :as datetime]
              [oph.form.formutil :refer :all]))
 
