@@ -113,6 +113,7 @@
          :budget-oph-share (:budget_oph_share hakemus)
          :budget-total (:budget_total hakemus)
          :status (:status hakemus)
+         :register-number (:register_number hakemus)
          :user-key (:user_key hakemus)
          :answers (:answer_values hakemus)})
       (map hakemukset)))
@@ -170,7 +171,7 @@
   ;; TODO: Consolidate with oph.form.db currently in va-hakija
   (let [params {:form_id form-id :content (list (:content form-content)) :rules (list (:rules form-content))}]
     (exec-all :hakija-db [hakija-queries/archive-form! { :form_id form-id }
-                                   hakija-queries/update-form! params])))
+                          hakija-queries/update-form! params])))
 
 (defn update-form-by-avustushaku [avustushaku-id form]
   (let [form-id (-> avustushaku-id
@@ -180,3 +181,7 @@
     (try (update-form! form-id form-to-save)
          (catch Exception e (throw (get-next-exception-or-original e))))
     (get-form-by-avustushaku avustushaku-id)))
+
+(defn set-register-number [hakemus-id register-number]
+  (exec :hakija-db hakija-queries/set-hakemus-register-number! {:hakemus_id hakemus-id
+                                                               :register_number register-number}))
