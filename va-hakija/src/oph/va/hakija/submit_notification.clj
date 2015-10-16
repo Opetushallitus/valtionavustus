@@ -5,7 +5,7 @@
              [oph.va.hakija.email :as va-email]))
 
 (def legacy-email-field-ids
-  ["primary-email" "primary-email" "signature-email"])
+  ["organization-email" "primary-email" "signature-email"])
 
 (defn is-notification-email-field [field]
   (or
