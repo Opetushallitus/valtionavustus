@@ -41,7 +41,7 @@ const budgetCalculator = new VaBudgetCalculator((descriptionField, state) => {
 })
 
 function onFieldUpdate(state, field, newFieldValue) {
-  if (field.displayAs === "moneyField") {
+  if (field.fieldType === "moneyField") {
     budgetCalculator.handleBudgetAmountUpdate(state, field.id)
   }
 }

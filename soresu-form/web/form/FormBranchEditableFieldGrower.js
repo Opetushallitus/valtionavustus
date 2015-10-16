@@ -16,7 +16,7 @@ export default class FormBranchEditableFieldGrower {
         n.required = true
       }
     })
-    const fieldsToValidate = JsUtil.flatFilter(_.first(growingParent.children), f => { return !_.isUndefined(f.id) && f.type === "formField"})
+    const fieldsToValidate = JsUtil.flatFilter(_.first(growingParent.children), f => { return !_.isUndefined(f.id) && f.fieldClass === "formField"})
     FieldUpdateHandler.triggerFieldUpdatesForValidation(fieldsToValidate, state)
   }
 }

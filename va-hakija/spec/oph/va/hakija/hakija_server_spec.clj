@@ -153,16 +153,16 @@
             json (json->map body)]
         (should= 200 status)
         (should= 1 (-> json :id))
-        (should= {:type "infoElement"
+        (should= {:fieldClass "infoElement"
                   :id "name"
-                  :displayAs "h1"} (-> json :content first))
-        (should= {:displayAs "dateRange",
+                  :fieldType "h1"} (-> json :content first))
+        (should= {:fieldType "dateRange",
                   :id "duration",
-                  :type "infoElement"} (-> json :content second))
-        (should= {:type "formField"
+                  :fieldClass "infoElement"} (-> json :content second))
+        (should= {:fieldClass "formField"
                   :id "organization"
                   :required true
-                  :displayAs "textField"
+                  :fieldType "textField"
                   :params {:size "large"
                            :maxlength 80}
                   :label {:fi "Hakijaorganisaatio"
@@ -170,9 +170,9 @@
                   :helpText {:fi "Ilmoita hakijaorganisaation nimi ja virallinen sähköpostiosoite."
                              :sv "Meddela sökandeorganisationens namn och officiella e-postadress."}}
                  (find-by-id json "organization"))
-        (should= {:type "infoElement"
+        (should= {:fieldClass "infoElement"
                   :id "selection-criteria"
-                  :displayAs "bulletList"
+                  :fieldType "bulletList"
                   :params {:preview false :initiallyOpen true}} (find-by-id json "selection-criteria"))
         ))
 

@@ -20,7 +20,7 @@ export default class Form extends React.Component {
     const renderField = function (field, renderingParameters) {
       const htmlId = controller.constructHtmlId(fields, field.id)
       const fieldProperties = {
-        fieldType: field.displayAs,
+        fieldType: field.fieldType,
         lang: state.configuration.lang,
         key: htmlId,
         htmlId: htmlId,
@@ -28,7 +28,7 @@ export default class Form extends React.Component {
         translations: state.configuration.translations
       }
 
-      if (field.type == "infoElement") {
+      if (field.fieldClass == "infoElement") {
         return createInfoElement(fieldProperties)
       } else {
         const formOperations = state.extensionApi.formOperations
@@ -40,9 +40,9 @@ export default class Form extends React.Component {
                                                                allAttachments: state.saveStatus.attachments,
                                                                attachmentUploadsInProgress: state.saveStatus.attachmentUploadsInProgress})
 
-        if (field.type == "formField" || field.type == "button") {
+        if (field.fieldClass == "formField" || field.fieldClass == "button") {
           return createFormComponent(field, extendedProperties)
-        } else if (field.type == "wrapperElement") {
+        } else if (field.fieldClass == "wrapperElement") {
           return createWrapperElement(field, extendedProperties, renderingParameters)
         }
       }

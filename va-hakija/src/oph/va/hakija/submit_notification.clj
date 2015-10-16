@@ -10,7 +10,7 @@
 (defn is-notification-email-field [field]
   (or
     (some #(= (:key field) %) legacy-email-field-ids)
-    (has-attribute? :displayAs :vaEmailNotification field)))
+    (has-attribute? :fieldType :vaEmailNotification field)))
 
 (defn- find-emails-to-notify [answers]
   (let [notification-fields (filter-values is-notification-email-field (:value answers))]

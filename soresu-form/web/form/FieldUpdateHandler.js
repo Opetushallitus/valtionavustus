@@ -30,7 +30,7 @@ export default class FieldUpdateHandler {
     if (growingFieldSet) {
       const triggeringFieldId = triggeringFieldUpdate.id
       const myGroup = JsUtil.findJsonNodeContainingId(growingFieldSet.children, triggeringFieldId)
-      const fieldsToValidate = JsUtil.flatFilter(myGroup, f => { return !_.isUndefined(f.id) && f.type === "formField" && f.id !== triggeringFieldId })
+      const fieldsToValidate = JsUtil.flatFilter(myGroup, f => { return !_.isUndefined(f.id) && f.fieldClass === "formField" && f.id !== triggeringFieldId })
       FieldUpdateHandler.triggerFieldUpdatesForValidation(fieldsToValidate, state);
       return !_.isEmpty(fieldsToValidate)
     }

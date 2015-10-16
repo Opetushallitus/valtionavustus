@@ -2,38 +2,38 @@ export default class TestUtil {
   static testFormJson() {
     return [
       {
-        "type": "infoElement",
+        "fieldClass": "infoElement",
         "id": "name",
-        "displayAs": "h1"
+        "fieldType": "h1"
       },
       {
-        "type": "infoElement",
+        "fieldClass": "infoElement",
         "id": "duration",
-        "displayAs": "endOfDateRange",
+        "fieldType": "endOfDateRange",
         "label": {
           "fi": "Hakuaika päättyy",
           "sv": "Sista ansöknings"
         }
       },
       {
-        "type": "wrapperElement",
+        "fieldClass": "wrapperElement",
         "id":"applicant-info",
-        "displayAs":"theme",
+        "fieldType":"theme",
         "label":{
           "fi":"Hakijan tiedot",
           "sv":"Ansökaren"
         },
         "children": [
           {
-            "type": "wrapperElement",
+            "fieldClass": "wrapperElement",
             "id":"applicant-fieldset",
-            "displayAs":"fieldset",
+            "fieldType":"fieldset",
             "children": [
               {
-                "type": "formField",
+                "fieldClass": "formField",
                 "id":"organization",
                 "required":true,
-                "displayAs":"textField",
+                "fieldType":"textField",
                 "params":{
                   "size":"large",
                   "maxlength":80
@@ -44,10 +44,10 @@ export default class TestUtil {
                 }
               },
               {
-                "type": "formField",
+                "fieldClass": "formField",
                 "id":"primary-email",
                 "required":true,
-                "displayAs":"emailField",
+                "fieldType":"emailField",
                 "params":{
                   "size":"small",
                   "maxlength":80
@@ -60,15 +60,15 @@ export default class TestUtil {
             ]
           },
           {
-            "type": "wrapperElement",
+            "fieldClass": "wrapperElement",
             "id":"signature-fieldset",
-            "displayAs":"fieldset",
+            "fieldType":"fieldset",
             "children": [
               {
-                "type": "formField",
+                "fieldClass": "formField",
                 "id":"signature",
                 "required":true,
-                "displayAs":"textField",
+                "fieldType":"textField",
                 "params":{
                   "size":"large",
                   "maxlength":80
@@ -79,10 +79,10 @@ export default class TestUtil {
                 }
               },
               {
-                "type": "formField",
+                "fieldClass": "formField",
                 "id":"signature-email",
                 "required":true,
-                "displayAs":"emailField",
+                "fieldType":"emailField",
                 "params":{
                   "size":"small",
                   "maxlength":80
@@ -95,15 +95,15 @@ export default class TestUtil {
             ]
           },
           {
-            "type": "wrapperElement",
+            "fieldClass": "wrapperElement",
             "id":"bank-fieldset",
-            "displayAs":"fieldset",
+            "fieldType":"fieldset",
             "children": [
               {
-                "type": "formField",
+                "fieldClass": "formField",
                 "id":"bank-iban",
                 "required":true,
-                "displayAs":"textField",
+                "fieldType":"textField",
                 "params":{
                   "size":"large",
                   "maxlength":80
@@ -114,10 +114,10 @@ export default class TestUtil {
                 }
               },
               {
-                "type": "formField",
+                "fieldClass": "formField",
                 "id":"bank-bic",
                 "required":true,
-                "displayAs":"textField",
+                "fieldType":"textField",
                 "params":{
                   "size":"small",
                   "maxlength":80
@@ -132,19 +132,19 @@ export default class TestUtil {
         ]
       },
       {
-        "type": "wrapperElement",
+        "fieldClass": "wrapperElement",
         "id":"project-info",
-        "displayAs":"theme",
+        "fieldType":"theme",
         "label":{
           "fi":"Hanketiedot",
           "sv":"Projektinformation"
         },
         "children": [
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"language",
             "required":true,
-            "displayAs":"radioButton",
+            "fieldType":"radioButton",
             "label":{
               "fi":"Hankkeen asiointikieli",
               "sv":"Projektets språk"
@@ -167,10 +167,10 @@ export default class TestUtil {
             ]
           },
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"combined-effort",
             "required":true,
-            "displayAs":"radioButton",
+            "fieldType":"radioButton",
             "label":{
               "fi":"Onko kyseessä yhteishanke",
               "sv":"Är det gemensamt projekt"
@@ -193,23 +193,23 @@ export default class TestUtil {
             ]
           },
           {
-            "type": "wrapperElement",
+            "fieldClass": "wrapperElement",
             "id":"other-organizations",
-            "displayAs":"growingFieldset",
+            "fieldType":"growingFieldset",
             "params":{
               "showOnlyFirstLabels":true
             },
             "children": [
               {
-                "type": "wrapperElement",
+                "fieldClass": "wrapperElement",
                 "id":"other-organizations-1",
-                "displayAs":"growingFieldsetChild",
+                "fieldType":"growingFieldsetChild",
                 "children": [
                   {
-                    "type": "formField",
+                    "fieldClass": "formField",
                     "id":"other-organizations.other-organizations-1.name",
                     "required":true,
-                    "displayAs":"textField",
+                    "fieldType":"textField",
                     "params":{
                       "size":"large",
                       "maxlength":80
@@ -220,10 +220,10 @@ export default class TestUtil {
                     }
                   },
                   {
-                    "type": "formField",
+                    "fieldClass": "formField",
                     "id":"other-organizations.other-organizations-1.email",
                     "required":true,
-                    "displayAs":"emailField",
+                    "fieldType":"emailField",
                     "params":{
                       "size":"small",
                       "maxlength":80
@@ -236,15 +236,15 @@ export default class TestUtil {
                 ]
               },
               {
-                "type": "wrapperElement",
+                "fieldClass": "wrapperElement",
                 "id":"other-organizations-2",
-                "displayAs":"growingFieldsetChild",
+                "fieldType":"growingFieldsetChild",
                 "children": [
                   {
-                    "type": "formField",
+                    "fieldClass": "formField",
                     "id":"other-organizations.other-organizations-2.name",
                     "required":true,
-                    "displayAs":"textField",
+                    "fieldType":"textField",
                     "params":{
                       "size":"large",
                       "maxlength":80
@@ -255,10 +255,10 @@ export default class TestUtil {
                     }
                   },
                   {
-                    "type": "formField",
+                    "fieldClass": "formField",
                     "id":"other-organizations.other-organizations-2.email",
                     "required":true,
-                    "displayAs":"emailField",
+                    "fieldType":"emailField",
                     "params":{
                       "size":"small",
                       "maxlength":80
@@ -273,10 +273,10 @@ export default class TestUtil {
             ]
           },
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"other-partners",
             "required":false,
-            "displayAs":"textArea",
+            "fieldType":"textArea",
             "params":{
               "maxlength":1000
             },
@@ -288,27 +288,27 @@ export default class TestUtil {
         ]
       },
       {
-        "type": "wrapperElement",
+        "fieldClass": "wrapperElement",
         "id":"project-plan",
-        "displayAs":"theme",
+        "fieldType":"theme",
         "label":{
           "fi":"Hankesuunnitelma",
           "sv":"Projektplanen"
         },
         "children": [
           {
-            "type": "infoElement",
+            "fieldClass": "infoElement",
             "id":"selection-criteria",
-            "displayAs":"bulletList",
+            "fieldType":"bulletList",
             "params":{
               "initiallyOpen":true
             }
           },
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"project-goals",
             "required":true,
-            "displayAs":"textArea",
+            "fieldType":"textArea",
             "params":{
               "maxlength":1000
             },
@@ -318,10 +318,10 @@ export default class TestUtil {
             }
           },
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"continuation-project",
             "required":false,
-            "displayAs":"radioButton",
+            "fieldType":"radioButton",
             "label":{
               "fi":"Liittyykö hanke aiempaan hankkeeseen",
               "sv":"Är det uppföljning för en tidigare projekt?"
@@ -344,10 +344,10 @@ export default class TestUtil {
             ]
           },
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"project-measure",
             "required":true,
-            "displayAs":"textArea",
+            "fieldType":"textArea",
             "params":{
               "maxlength":2000,
               "size": "large"
@@ -358,9 +358,9 @@ export default class TestUtil {
             }
           },
           {
-            "type": "wrapperElement",
+            "fieldClass": "wrapperElement",
             "id":"project-description",
-            "displayAs":"growingFieldset",
+            "fieldType":"growingFieldset",
             "params":{
               "showOnlyFirstLabels":false
             },
@@ -370,15 +370,15 @@ export default class TestUtil {
             },
             "children": [
               {
-                "type": "wrapperElement",
+                "fieldClass": "wrapperElement",
                 "id":"project-description-1",
-                "displayAs":"vaProjectDescription",
+                "fieldType":"vaProjectDescription",
                 "children": [
                   {
-                    "type": "formField",
+                    "fieldClass": "formField",
                     "id":"project-description.project-description-1.goal",
                     "required":true,
-                    "displayAs":"textField",
+                    "fieldType":"textField",
                     "params":{
                       "size":"extra-large",
                       "maxlength":200
@@ -389,10 +389,10 @@ export default class TestUtil {
                     }
                   },
                   {
-                    "type": "formField",
+                    "fieldClass": "formField",
                     "id":"project-description.project-description-1.activity",
                     "required":true,
-                    "displayAs":"textField",
+                    "fieldType":"textField",
                     "params":{
                       "size":"extra-large",
                       "maxlength":200
@@ -403,10 +403,10 @@ export default class TestUtil {
                     }
                   },
                   {
-                    "type": "formField",
+                    "fieldClass": "formField",
                     "id":"project-description.project-description-1.result",
                     "required":true,
-                    "displayAs":"textField",
+                    "fieldType":"textField",
                     "params":{
                       "size":"extra-large",
                       "maxlength":200
@@ -421,10 +421,10 @@ export default class TestUtil {
             ]
           },
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"project-target",
             "required":true,
-            "displayAs":"textField",
+            "fieldType":"textField",
             "params":{
               "size":"large",
               "maxlength":80
@@ -435,10 +435,10 @@ export default class TestUtil {
             }
           },
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"project-announce",
             "required":true,
-            "displayAs":"textArea",
+            "fieldType":"textArea",
             "params":{
               "maxlength":2000,
               "size": "large"
@@ -449,10 +449,10 @@ export default class TestUtil {
             }
           },
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"project-effectiveness",
             "required":true,
-            "displayAs":"textArea",
+            "fieldType":"textArea",
             "params":{
               "maxlength":2000,
               "size": "large"
@@ -463,10 +463,10 @@ export default class TestUtil {
             }
           },
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"project-spreading-plan",
             "required":true,
-            "displayAs":"textArea",
+            "fieldType":"textArea",
             "params":{
               "maxlength":2000,
               "size": "large"
@@ -477,10 +477,10 @@ export default class TestUtil {
             }
           },
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"project-www",
             "required":false,
-            "displayAs":"textField",
+            "fieldType":"textField",
             "params":{
               "size":"large",
               "maxlength":80
@@ -491,10 +491,10 @@ export default class TestUtil {
             }
           },
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"project-begin",
             "required":false,
-            "displayAs":"textField",
+            "fieldType":"textField",
             "params":{
               "size":"extra-small",
               "maxlength":10
@@ -505,10 +505,10 @@ export default class TestUtil {
             }
           },
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"project-end",
             "required":false,
-            "displayAs":"textField",
+            "fieldType":"textField",
             "params":{
               "size":"extra-small",
               "maxlength":10
@@ -519,10 +519,10 @@ export default class TestUtil {
             }
           },
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"other-funding",
             "required":false,
-            "displayAs":"textArea",
+            "fieldType":"textArea",
             "params":{
               "maxlength":1000
             },
@@ -534,19 +534,19 @@ export default class TestUtil {
         ]
       },
       {
-        "type": "wrapperElement",
+        "fieldClass": "wrapperElement",
         "id":"financing-plan",
-        "displayAs":"theme",
+        "fieldType":"theme",
         "label":{
           "fi":"Rahoitussuunnitelma",
           "sv":"Finansieringsplan"
         },
         "children": [
           {
-            "type": "formField",
+            "fieldClass": "formField",
             "id":"vat-included",
             "required":false,
-            "displayAs":"radioButton",
+            "fieldType":"radioButton",
             "label":{
               "fi":"Onko kustannukset ilmoitettu arvonlisäverollisina?",
               "sv":"Har kostnaderna förklaras momspliktig?"
@@ -569,14 +569,14 @@ export default class TestUtil {
             ]
           },
           {
-            "type": "wrapperElement",
+            "fieldClass": "wrapperElement",
             "id":"budget",
-            "displayAs":"vaBudget",
+            "fieldType":"vaBudget",
             "children": [
               {
-                "type": "wrapperElement",
+                "fieldClass": "wrapperElement",
                 "id":"project-budget",
-                "displayAs":"vaSummingBudgetElement",
+                "fieldType":"vaSummingBudgetElement",
                 "params":{
                   "showColumnTitles":true,
                   "columnTitles": {
@@ -604,9 +604,9 @@ export default class TestUtil {
                 },
                 "children": [
                   {
-                    "type": "wrapperElement",
+                    "fieldClass": "wrapperElement",
                     "id":"coordination-costs-row",
-                    "displayAs":"vaBudgetItemElement",
+                    "fieldType":"vaBudgetItemElement",
                     "params":{
                       "incrementsTotal":true
                     },
@@ -616,20 +616,20 @@ export default class TestUtil {
                     },
                     "children": [
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"coordination-costs-row.description",
                         "required":false,
-                        "displayAs":"textField",
+                        "fieldType":"textField",
                         "params":{
                           "size":"small",
                           "maxlength":80
                         }
                       },
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"coordination-costs-row.amount",
                         "required":true,
-                        "displayAs":"moneyField",
+                        "fieldType":"moneyField",
                         "params":{
                           "size":"extra-extra-small",
                           "maxlength":16
@@ -638,9 +638,9 @@ export default class TestUtil {
                     ]
                   },
                   {
-                    "type": "wrapperElement",
+                    "fieldClass": "wrapperElement",
                     "id":"personnel-costs-row",
-                    "displayAs":"vaBudgetItemElement",
+                    "fieldType":"vaBudgetItemElement",
                     "params":{
                       "incrementsTotal":true
                     },
@@ -650,20 +650,20 @@ export default class TestUtil {
                     },
                     "children": [
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"personnel-costs-row.description",
                         "required":false,
-                        "displayAs":"textField",
+                        "fieldType":"textField",
                         "params":{
                           "size":"small",
                           "maxlength":80
                         }
                       },
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"personnel-costs-row.amount",
                         "required":true,
-                        "displayAs":"moneyField",
+                        "fieldType":"moneyField",
                         "params":{
                           "size":"extra-extra-small",
                           "maxlength":16
@@ -672,9 +672,9 @@ export default class TestUtil {
                     ]
                   },
                   {
-                    "type": "wrapperElement",
+                    "fieldClass": "wrapperElement",
                     "id":"service-purchase-costs-row",
-                    "displayAs":"vaBudgetItemElement",
+                    "fieldType":"vaBudgetItemElement",
                     "params":{
                       "incrementsTotal":true
                     },
@@ -684,20 +684,20 @@ export default class TestUtil {
                     },
                     "children": [
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"service-purchase-costs-row.description",
                         "required":false,
-                        "displayAs":"textField",
+                        "fieldType":"textField",
                         "params":{
                           "size":"small",
                           "maxlength":80
                         }
                       },
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"service-purchase-costs-row.amount",
                         "required":true,
-                        "displayAs":"moneyField",
+                        "fieldType":"moneyField",
                         "params":{
                           "size":"extra-extra-small",
                           "maxlength":16
@@ -706,9 +706,9 @@ export default class TestUtil {
                     ]
                   },
                   {
-                    "type": "wrapperElement",
+                    "fieldClass": "wrapperElement",
                     "id":"material-costs-row",
-                    "displayAs":"vaBudgetItemElement",
+                    "fieldType":"vaBudgetItemElement",
                     "params":{
                       "incrementsTotal":true
                     },
@@ -718,20 +718,20 @@ export default class TestUtil {
                     },
                     "children": [
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"material-costs-row.description",
                         "required":false,
-                        "displayAs":"textField",
+                        "fieldType":"textField",
                         "params":{
                           "size":"small",
                           "maxlength":80
                         }
                       },
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"material-costs-row.amount",
                         "required":true,
-                        "displayAs":"moneyField",
+                        "fieldType":"moneyField",
                         "params":{
                           "size":"extra-extra-small",
                           "maxlength":16
@@ -740,9 +740,9 @@ export default class TestUtil {
                     ]
                   },
                   {
-                    "type": "wrapperElement",
+                    "fieldClass": "wrapperElement",
                     "id":"rent-costs-row",
-                    "displayAs":"vaBudgetItemElement",
+                    "fieldType":"vaBudgetItemElement",
                     "params":{
                       "incrementsTotal":true
                     },
@@ -752,20 +752,20 @@ export default class TestUtil {
                     },
                     "children": [
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"rent-costs-row.description",
                         "required":false,
-                        "displayAs":"textField",
+                        "fieldType":"textField",
                         "params":{
                           "size":"small",
                           "maxlength":80
                         }
                       },
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"rent-costs-row.amount",
                         "required":true,
-                        "displayAs":"moneyField",
+                        "fieldType":"moneyField",
                         "params":{
                           "size":"extra-extra-small",
                           "maxlength":16
@@ -774,9 +774,9 @@ export default class TestUtil {
                     ]
                   },
                   {
-                    "type": "wrapperElement",
+                    "fieldClass": "wrapperElement",
                     "id":"equipment-costs-row",
-                    "displayAs":"vaBudgetItemElement",
+                    "fieldType":"vaBudgetItemElement",
                     "params":{
                       "incrementsTotal":true
                     },
@@ -786,20 +786,20 @@ export default class TestUtil {
                     },
                     "children": [
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"equipment-costs-row.description",
                         "required":false,
-                        "displayAs":"textField",
+                        "fieldType":"textField",
                         "params":{
                           "size":"small",
                           "maxlength":80
                         }
                       },
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"equipment-costs-row.amount",
                         "required":true,
-                        "displayAs":"moneyField",
+                        "fieldType":"moneyField",
                         "params":{
                           "size":"extra-extra-small",
                           "maxlength":16
@@ -808,9 +808,9 @@ export default class TestUtil {
                     ]
                   },
                   {
-                    "type": "wrapperElement",
+                    "fieldClass": "wrapperElement",
                     "id":"steamship-costs-row",
-                    "displayAs":"vaBudgetItemElement",
+                    "fieldType":"vaBudgetItemElement",
                     "params":{
                       "incrementsTotal":true
                     },
@@ -820,20 +820,20 @@ export default class TestUtil {
                     },
                     "children": [
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"steamship-costs-row.description",
                         "required":false,
-                        "displayAs":"textField",
+                        "fieldType":"textField",
                         "params":{
                           "size":"small",
                           "maxlength":80
                         }
                       },
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"steamship-costs-row.amount",
                         "required":true,
-                        "displayAs":"moneyField",
+                        "fieldType":"moneyField",
                         "params":{
                           "size":"extra-extra-small",
                           "maxlength":16
@@ -842,9 +842,9 @@ export default class TestUtil {
                     ]
                   },
                   {
-                    "type": "wrapperElement",
+                    "fieldClass": "wrapperElement",
                     "id":"other-costs-row",
-                    "displayAs":"vaBudgetItemElement",
+                    "fieldType":"vaBudgetItemElement",
                     "params":{
                       "incrementsTotal":true
                     },
@@ -854,20 +854,20 @@ export default class TestUtil {
                     },
                     "children": [
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"other-costs-row.description",
                         "required":false,
-                        "displayAs":"textField",
+                        "fieldType":"textField",
                         "params":{
                           "size":"small",
                           "maxlength":80
                         }
                       },
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"other-costs-row.amount",
                         "required":true,
-                        "displayAs":"moneyField",
+                        "fieldType":"moneyField",
                         "params":{
                           "size":"extra-extra-small",
                           "maxlength":16
@@ -876,9 +876,9 @@ export default class TestUtil {
                     ]
                   },
                   {
-                    "type": "wrapperElement",
+                    "fieldClass": "wrapperElement",
                     "id":"project-incomes-row",
-                    "displayAs":"vaBudgetItemElement",
+                    "fieldType":"vaBudgetItemElement",
                     "params":{
                       "incrementsTotal":false
                     },
@@ -888,20 +888,20 @@ export default class TestUtil {
                     },
                     "children": [
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"project-incomes-row.description",
                         "required":false,
-                        "displayAs":"textField",
+                        "fieldType":"textField",
                         "params":{
                           "size":"small",
                           "maxlength":80
                         }
                       },
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"project-incomes-row.amount",
                         "required":true,
-                        "displayAs":"moneyField",
+                        "fieldType":"moneyField",
                         "params":{
                           "size":"extra-extra-small",
                           "maxlength":16
@@ -912,9 +912,9 @@ export default class TestUtil {
                 ]
               },
               {
-                "type": "wrapperElement",
+                "fieldClass": "wrapperElement",
                 "id":"third-party-income",
-                "displayAs":"vaSummingBudgetElement",
+                "fieldType":"vaSummingBudgetElement",
                 "params":{
                   "showColumnTitles":false,
                   "sumRowLabel": {
@@ -928,9 +928,9 @@ export default class TestUtil {
                 },
                 "children": [
                   {
-                    "type": "wrapperElement",
+                    "fieldClass": "wrapperElement",
                     "id":"eu-programs-income-row",
-                    "displayAs":"vaBudgetItemElement",
+                    "fieldType":"vaBudgetItemElement",
                     "params":{
                       "incrementsTotal":false
                     },
@@ -940,20 +940,20 @@ export default class TestUtil {
                     },
                     "children": [
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"eu-programs-income-row.description",
                         "required":false,
-                        "displayAs":"textField",
+                        "fieldType":"textField",
                         "params":{
                           "size":"small",
                           "maxlength":80
                         }
                       },
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"eu-programs-income-row.amount",
                         "required":true,
-                        "displayAs":"moneyField",
+                        "fieldType":"moneyField",
                         "params":{
                           "size":"extra-extra-small",
                           "maxlength":16
@@ -962,9 +962,9 @@ export default class TestUtil {
                     ]
                   },
                   {
-                    "type": "wrapperElement",
+                    "fieldClass": "wrapperElement",
                     "id":"other-public-financing-income-row",
-                    "displayAs":"vaBudgetItemElement",
+                    "fieldType":"vaBudgetItemElement",
                     "params":{
                       "incrementsTotal":false
                     },
@@ -974,20 +974,20 @@ export default class TestUtil {
                     },
                     "children": [
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"other-public-financing-income-row.description",
                         "required":false,
-                        "displayAs":"textField",
+                        "fieldType":"textField",
                         "params":{
                           "size":"small",
                           "maxlength":80
                         }
                       },
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"other-public-financing-income-row.amount",
                         "required":true,
-                        "displayAs":"moneyField",
+                        "fieldType":"moneyField",
                         "params":{
                           "size":"extra-extra-small",
                           "maxlength":16
@@ -996,9 +996,9 @@ export default class TestUtil {
                     ]
                   },
                   {
-                    "type": "wrapperElement",
+                    "fieldClass": "wrapperElement",
                     "id":"private-financing-income-row",
-                    "displayAs":"vaBudgetItemElement",
+                    "fieldType":"vaBudgetItemElement",
                     "params":{
                       "incrementsTotal":false
                     },
@@ -1008,20 +1008,20 @@ export default class TestUtil {
                     },
                     "children": [
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"private-financing-income-row.description",
                         "required":false,
-                        "displayAs":"textField",
+                        "fieldType":"textField",
                         "params":{
                           "size":"small",
                           "maxlength":80
                         }
                       },
                       {
-                        "type": "formField",
+                        "fieldClass": "formField",
                         "id":"private-financing-income-row.amount",
                         "required":true,
-                        "displayAs":"moneyField",
+                        "fieldType":"moneyField",
                         "params":{
                           "size":"extra-extra-small",
                           "maxlength":16
@@ -1032,9 +1032,9 @@ export default class TestUtil {
                 ]
               },
               {
-                "type": "wrapperElement",
+                "fieldClass": "wrapperElement",
                 "id":"budget-summary",
-                "displayAs":"vaBudgetSummaryElement",
+                "fieldType":"vaBudgetSummaryElement",
                 "params":{
                   "showColumnTitles":false,
                   "totalSumRowLabel": {

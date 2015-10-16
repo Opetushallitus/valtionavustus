@@ -27,20 +27,20 @@
 
 (defn validate-textarea-maxlength [field answer]
   (let [maxlength ((get field :params {}) :maxlength)]
-    (if (and (has-display-as? "textArea" field)
+    (if (and (has-field-type? "textArea" field)
              (> (count answer) maxlength))
       [{:error "maxlength", :max maxlength}]
       [])))
 
 (defn validate-texfield-maxlength [field answer]
   (let [maxlength ((get field :params {}) :maxlength)]
-    (if (and (has-display-as? "textField" field)
+    (if (and (has-field-type? "textField" field)
              (> (count answer) maxlength))
       [{:error "maxlength", :max maxlength}]
       [])))
 
 (defn validate-email-security [field answer]
-  (if (and (has-display-as? "emailField" field)
+  (if (and (has-field-type? "emailField" field)
            (not (nil? answer))
            (or (re-matches #".*%0[aA].*" answer)
                (> (count answer) 254)))
@@ -48,7 +48,7 @@
     []))
 
 (defn validate-email-field [field answer]
-  (if (not (and (has-display-as? "emailField" field)
+  (if (not (and (has-field-type? "emailField" field)
                 (= (:required field))))
     []
     (if (and (not (nil? answer))
@@ -61,7 +61,7 @@
         [{:error "email"}])))
 
 (defn validate-finnish-business-id-field [field answer]
-  (if (not (and (has-display-as? "finnishBusinessIdField" field)
+  (if (not (and (has-field-type? "finnishBusinessIdField" field)
                 (:required field)))
     []
     (if (and (not (nil? answer))
@@ -92,7 +92,7 @@
     []))
 
 (defn validate-field [answers attachments field]
-  (if (has-display-as? "namedAttachment" field)
+  (if (has-field-type? "namedAttachment" field)
     {(keyword (:id field)) (concat
       (validate-attachment attachments field))}
     (let [answer (find-answer-value answers (:id field))]

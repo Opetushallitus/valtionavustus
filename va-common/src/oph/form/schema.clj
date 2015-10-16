@@ -8,9 +8,9 @@
   (s/defschema Option {:value s/Str
                        (s/optional-key :label) LocalizedString})
 
-  (s/defschema InfoElement {:type (s/eq "infoElement")
+  (s/defschema InfoElement {:fieldClass (s/eq "infoElement")
                             :id s/Str
-                            :displayAs (s/enum :h1
+                            :fieldType (s/enum :h1
                                                :p
                                                :bulletList
                                                :dateRange
@@ -19,11 +19,11 @@
                             (s/optional-key :label) LocalizedString
                             (s/optional-key :text) LocalizedString})
 
-  (s/defschema Button {:type (s/eq "button")
+  (s/defschema Button {:fieldClass (s/eq "button")
                        :id s/Str
                        (s/optional-key :label) LocalizedString
                        (s/optional-key :params) s/Any
-                       :displayAs s/Keyword})
+                       :fieldType s/Keyword})
 
   (let [default-form-element-types [:textField
                                     :textArea
@@ -37,7 +37,7 @@
                                     :checkboxButton
                                     :namedAttachment]
         form-element-types (into custom-form-element-types default-form-element-types)]
-    (s/defschema FormField {:type (s/eq "formField")
+    (s/defschema FormField {:fieldClass (s/eq "formField")
                             :id s/Str
                             :required s/Bool
                             (s/optional-key :label) LocalizedString
@@ -46,7 +46,7 @@
                                                                      s/Int)
                             (s/optional-key :params) s/Any
                             (s/optional-key :options) [Option]
-                            :displayAs (apply s/enum form-element-types)}))
+                            :fieldType (apply s/enum form-element-types)}))
 
   (s/defschema BasicElement (s/either FormField
                                       Button
@@ -54,9 +54,9 @@
 
   (let [default-wrapper-element-types [:theme :fieldset :growingFieldset :growingFieldsetChild ]
         wrapper-element-types (into custom-wrapper-element-types default-wrapper-element-types)]
-    (s/defschema WrapperElement {:type                    (s/eq "wrapperElement")
+    (s/defschema WrapperElement {:fieldClass                    (s/eq "wrapperElement")
                                  :id                      s/Str
-                                 :displayAs               (apply s/enum wrapper-element-types )
+                                 :fieldType               (apply s/enum wrapper-element-types )
                                  :children                [(s/either BasicElement
                                                                      (s/recursive #'WrapperElement))]
                                  (s/optional-key :params) s/Any
