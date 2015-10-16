@@ -80,7 +80,7 @@
                    queries/close-existing-hakemus! params
                    queries/update-hakemus-submission<! params])))
 
-(defn- update-status [avustushaku-id hakemus-id submission-id submission-version answers register-number status]
+(defn- update-status [avustushaku-id hakemus-id submission-id submission-version register-number answers status]
   (let [params (-> {:avustushaku_id avustushaku-id
                     :user_key hakemus-id
                     :form_submission_id submission-id
@@ -96,10 +96,10 @@
   (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers :draft))
 
 (defn submit-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers]
-  (update-status avustushaku-id hakemus-id submission-id submission-version answers register-number :submitted))
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers :submitted))
 
 (defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers]
-  (update-status avustushaku-id hakemus-id submission-id submission-version answers register-number :cancelled))
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers :cancelled))
 
 (defn attachment-exists? [hakemus-id field-id]
   (->> {:hakemus_id hakemus-id
