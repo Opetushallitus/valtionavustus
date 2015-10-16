@@ -10,13 +10,13 @@ export default class VaBudgetCalculator {
   }
 
   populateBudgetCalculatedValuesForAllBudgetFields(initialState, reportTotalError) {
-    const budgetFields = JsUtil.flatFilter(initialState.form.content, n => { return n.displayAs === "vaBudget" })
+    const budgetFields = JsUtil.flatFilter(initialState.form.content, n => { return n.fieldType === "vaBudget" })
     _.forEach(budgetFields, budgetField => { this.populateBudgetCalculatedValues(initialState, budgetField, reportTotalError ) })
   }
 
   handleBudgetAmountUpdate(state, amountFieldId) {
     const formContent = state.form.content
-    const vaBudgetFields = JsUtil.flatFilter(formContent, n => { return n.displayAs === "vaBudget" && !_.isEmpty(JsUtil.findJsonNodeContainingId(n, amountFieldId)) })
+    const vaBudgetFields = JsUtil.flatFilter(formContent, n => { return n.fieldType === "vaBudget" && !_.isEmpty(JsUtil.findJsonNodeContainingId(n, amountFieldId)) })
     if (_.isEmpty(vaBudgetFields)) {
       return
     }
@@ -31,7 +31,7 @@ export default class VaBudgetCalculator {
 
     const answersObject = state.saveStatus.values
 
-    const summingFieldChildren = JsUtil.flatFilter(vaBudgetField.children, child => { return child.displayAs === "vaSummingBudgetElement" })
+    const summingFieldChildren = JsUtil.flatFilter(vaBudgetField.children, child => { return child.fieldType === "vaSummingBudgetElement" })
     const subTotalsAndErrorsAndFieldIds = _.map(summingFieldChildren, populateSummingFieldTotal(answersObject, state))
 
     const total = _.reduce(subTotalsAndErrorsAndFieldIds, (acc, x) => { return acc + x.sum }, 0)

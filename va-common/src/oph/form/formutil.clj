@@ -26,14 +26,14 @@
 (defn has-attribute? [attribute-name expected-value field]
   (= (attribute-name field) expected-value))
 
-(defn has-display-as? [expected-value field]
-  (has-attribute? :displayAs expected-value field))
+(defn has-field-type? [expected-value field]
+  (has-attribute? :fieldType expected-value field))
 
 (defn- is-form-field? [field]
-  (has-attribute? :type "formField" field))
+  (has-attribute? :fieldClass "formField" field))
 
 (defn- is-wrapper-element? [field]
-  (has-attribute? :type "wrapperElement" field))
+  (has-attribute? :fieldClass "wrapperElement" field))
 
 (defn unwrap-answers [answers]
   (let [map-fields (filter map? (vals answers))]

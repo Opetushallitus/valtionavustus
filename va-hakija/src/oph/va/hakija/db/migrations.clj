@@ -36,3 +36,13 @@
       (let [new-content (assoc (:content avustushaku) :focus-areas painopiste-alueet)
             changed-avustushaku (assoc avustushaku :content new-content)]
         (va-db/update-avustushaku changed-avustushaku)))))
+
+(migrations/defmigration migrate-field-type-and-fieldType-terms "1.16"
+  "Change type to fieldClass and displayAs to fieldType"
+ (letfn [(rename-attributes [node]
+           (if (:displayAs node)
+             (clojure.set/rename-keys node {:type :fieldClass, :displayAs :fieldType})
+             node))]
+  (doseq [form (db/list-forms)]
+    (let [changed-form (formutil/transform-form-content form rename-attributes)]
+      (db/update-form! changed-form)))))

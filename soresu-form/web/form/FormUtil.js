@@ -71,7 +71,7 @@ export default class FormUtil {
   }
 
   static findGrowingParent(formContent, fieldId) {
-    const allGrowingFieldsets = JsUtil.flatFilter(formContent, n => { return n.displayAs === "growingFieldset" })
+    const allGrowingFieldsets = JsUtil.flatFilter(formContent, n => { return n.fieldType === "growingFieldset" })
     return JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
   }
 

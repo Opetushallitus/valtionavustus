@@ -7,69 +7,69 @@
   {:id 1
    :content [{
      :id "financing-plan"
-     :type "wrapperElement"
+     :fieldClass "wrapperElement"
      :children [
         {:id "budget"
-         :type "wrapperElement"
+         :fieldClass "wrapperElement"
          :children [
            {:id "project-budget"
-            :type "wrapperElement"
+            :fieldClass "wrapperElement"
             :children [
               {:id "coordination-costs-row"
-               :type "wrapperElement"
+               :fieldClass "wrapperElement"
                :params {:incrementsTotal true}
                :children [
                  {:id "coordination-costs-row.description"
-                  :type "formField"
-                  :displayAs "textField"}
+                  :fieldClass "formField"
+                  :fieldType "textField"}
                  {:id "coordination-costs-row.amount"
-                  :type "formField"
-                  :displayAs "moneyField"
+                  :fieldClass "formField"
+                  :fieldType "moneyField"
                   :initialValue 0}]
-               :displayAs "vaBudgetItemElement"}
+               :fieldType "vaBudgetItemElement"}
               {:id "personnel-costs-row"
-               :type "wrapperElement"
+               :fieldClass "wrapperElement"
                :params {:incrementsTotal true}
                :children [
                  {:id "personnel-costs-row.description"
-                  :type "formField"
-                  :displayAs "textField"}
+                  :fieldClass "formField"
+                  :fieldType "textField"}
                  {:id "personnel-costs-row.amount"
-                  :type "formField"
-                  :displayAs "moneyField"
+                  :fieldClass "formField"
+                  :fieldType "moneyField"
                   :initialValue 0}]
-               :displayAs "vaBudgetItemElement"}
+               :fieldType "vaBudgetItemElement"}
               {:id "project-incomes-row"
-               :type "wrapperElement"
+               :fieldClass "wrapperElement"
                :params {:incrementsTotal false}
                :children [
                  {:id "project-incomes-row.description"
-                  :type "formField"
-                  :displayAs "textField"}
+                  :fieldClass "formField"
+                  :fieldType "textField"}
                  {:id "project-incomes-row.amount"
-                  :type "formField"
-                  :displayAs "moneyField"
+                  :fieldClass "formField"
+                  :fieldType "moneyField"
                   :initialValue 0}]
-               :displayAs "vaBudgetItemElement"}]
-            :displayAs "vaSummingBudgetElement"}
+               :fieldType "vaBudgetItemElement"}]
+            :fieldType "vaSummingBudgetElement"}
            {:id "third-party-income"
-            :type "wrapperElement"
+            :fieldClass "wrapperElement"
             :children [
               {:id "eu-programs-income-row"
-               :type "wrapperElement"
+               :fieldClass "wrapperElement"
                :params {:incrementsTotal false}
                :children [
                  {:id "eu-programs-income-row.description"
-                  :type "formField"
-                  :displayAs "textField"}
+                  :fieldClass "formField"
+                  :fieldType "textField"}
                  {:id "eu-programs-income-row.amount"
-                  :type "formField"
-                  :displayAs "moneyField"
+                  :fieldClass "formField"
+                  :fieldType "moneyField"
                   :initialValue 0}],
-               :displayAs "vaBudgetItemElement"}]
-            :displayAs "vaSummingBudgetElement"}]
-         :displayAs "vaBudget"}]
-     :displayAs "theme"}] })
+               :fieldType "vaBudgetItemElement"}]
+            :fieldType "vaSummingBudgetElement"}]
+         :fieldType "vaBudget"}]
+     :fieldType "theme"}] })
 
 (def complete-valid-answers
   {:value [

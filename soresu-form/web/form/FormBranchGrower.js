@@ -30,7 +30,7 @@ export default class FormBranchGrower {
       })
     }
 
-    _.forEach(JsUtil.flatFilter(formContent, n => { return n.displayAs === "growingFieldset"}), g => {
+    _.forEach(JsUtil.flatFilter(formContent, n => { return n.fieldType === "growingFieldset"}), g => {
       const growingSetValue = InputValueStorage.readValue(formContent, answers, g.id)
       const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(formSpecificationContent, g.id)
       if (!_.isUndefined(growingSetValue) && !_.isEmpty(growingSetValue)) {
