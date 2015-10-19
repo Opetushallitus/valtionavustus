@@ -1,9 +1,12 @@
 (ns oph.form.formutil
   (:require [clojure.walk :as walk]))
 
+(defn transform-tree [document tree-key node-transformer]
+  (let [new-content (walk/prewalk node-transformer (tree-key document))]
+    (assoc document tree-key new-content)))
+
 (defn transform-form-content [form node-transformer]
-  (let [new-content (walk/prewalk node-transformer (:content form))]
-    (assoc form :content new-content)))
+  (transform-tree form :content node-transformer))
 
 (defn filter-values [pred values]
   (if (some pred values)
