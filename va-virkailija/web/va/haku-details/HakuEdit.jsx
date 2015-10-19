@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
 
-import HakuStatus from "../avustushaku/HakuStatus.jsx"
 import { BasicInfoComponent }from 'soresu-form/web/form/component/InfoElement.jsx'
+
+import HakuStatus from "../avustushaku/HakuStatus.jsx"
+
 import HakuRoles from "./HakuRoles.jsx"
+import FormEditor from "./FormEditor.jsx"
 import FormJsonEditor from "./FormJsonEditor.jsx"
 
 export default class HakuEdit extends Component {
@@ -11,6 +14,7 @@ export default class HakuEdit extends Component {
     const avustushaku = this.props.avustushaku
     const formDraft = this.props.formDraft
     const environment = this.props.environment
+    const translations = this.props.translations
 
     const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/nayta?lang=fi"
     const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/nayta?lang=sv"
@@ -62,6 +66,7 @@ export default class HakuEdit extends Component {
         <FocusArea controller={controller} avustushaku={avustushaku} onChange={onChange} />
         <div><h3>Hakijan omarahoitusvaatimus</h3><input className="percentage" required="true" maxLength="2" min="0" max="99" id="haku-self-financing-percentage" onChange={onChange} disabled={avustushaku.status === "published"} type="number" value={avustushaku.content["self-financing-percentage"]} /><span>%</span></div>
         <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} />
+        <FormEditor avustushaku={avustushaku} translations={translations}/>
       </div>
     )
   }

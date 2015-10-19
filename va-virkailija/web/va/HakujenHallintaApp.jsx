@@ -17,6 +17,7 @@ export default class AdminApp extends Component {
     const controller = this.props.controller
     const environment =  state.environment
     const selectedHaku = state.selectedHaku ? state.selectedHaku : {}
+    const translations = state.translations
     return (
       <section>
         <TopBar activeTab="admin" environment={environment} state={state}/>
@@ -29,6 +30,7 @@ export default class AdminApp extends Component {
                     formDraft={state.formDrafts[selectedHaku.id]}
                     environment={environment}
                     controller={controller}
+                    translations={translations}
           />
         </section>
       </section>
