@@ -67,7 +67,9 @@
                            #"signatories-fieldset-\d.name+" "textField"
                            #"signatories-fieldset-\d.email+" "vaEmailNotification"
                            #"other-organizations" "growingFieldset"
-                           #"other-organizations-\d+" "growingFieldsetChild"}]
+                           #"other-organizations-\d+" "growingFieldsetChild"
+                           #"other-organizations.other-organizations-\d+.name" "textField"
+                           #"other-organizations.other-organizations-\d+.email" "emailField"}]
    (letfn [(find-type-from-form [id form-fields]
               (->> (filter #(= (:id %) id) form-fields) first :fieldType))
            (find-type-by-id-string [id]
