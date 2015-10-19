@@ -39,7 +39,7 @@
         has-access? (some #{required-group} description)]
     (if has-access?
       description
-      (log/info (str "Authorization failed for username '"
+      (log/warn (str "Authorization failed for username '"
                      username "' : "
                      required-group " missing, got only "
                      (pr-str description))))))
