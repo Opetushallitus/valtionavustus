@@ -67,6 +67,10 @@
     "check-numbers": {
       "fi": "Tarkista luvut",
       "sv": "Kontrollera siffrorna"
+    },
+    "register-number": {
+      "fi": "Diaarinumero",
+      "sv": "TODO: Diarium"
     }
   },
   "errors": {
