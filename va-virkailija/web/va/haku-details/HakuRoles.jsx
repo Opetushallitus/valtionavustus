@@ -15,7 +15,7 @@ export default class HakuRoles extends Component {
     }
 
     return (
-      <table id="haku-roles">
+      <table id="haku-roles" className="translation">
         <thead><tr><th>Rooli</th><th>Nimi</th><th>Sähköposti</th></tr></thead>
         <tbody>
         {roleRows}

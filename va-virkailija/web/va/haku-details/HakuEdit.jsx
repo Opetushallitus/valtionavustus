@@ -33,7 +33,7 @@ export default class HakuEdit extends Component {
           <h3>Diaarinumero (jos tiedossa)</h3>
           <input onChange={onChange} maxLength="128" id="register-number" value={avustushaku["register-number"]} />
         </div>
-        <table id="name">
+        <table id="name" className="translation">
           <thead><tr><th>Haun nimi</th><th>Haun nimi ruotsiksi</th></tr></thead>
           <tbody>
             <tr>
@@ -127,7 +127,7 @@ class SelectionCriteria extends React.Component {
     }
 
     return (
-      <table id="selection-criteria">
+      <table id="selection-criteria" className="translation">
         <thead><tr><th>{selectionCriteria.label.fi}</th><th>{selectionCriteria.label.sv}</th></tr></thead>
         <tbody>
         {criteriaItems}
@@ -157,7 +157,7 @@ class FocusArea extends React.Component {
     }
 
     return (
-      <table id="focus-areas">
+      <table id="focus-areas" className="translation">
         <thead><tr><th>{focusAreas.label.fi}</th><th>{focusAreas.label.sv}</th></tr></thead>
         <tbody>
         {focusAreaItems}
