@@ -18,6 +18,7 @@ const events = {
   setSorter: 'setSorter',
   selectHakemus: 'selectHakemus',
   updateHakemusArvio: 'updateHakemusArvio',
+  updateHakemusRegisterNumber: 'updateHakemusRegisterNumber',
   saveCompleted: 'saveCompleted',
   loadComments: 'loadcomments',
   commentsLoaded: 'commentsLoaded',
@@ -68,6 +69,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.initialState)], this.onInitialState,
       [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
       [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio,
+      [dispatcher.stream(events.updateHakemusRegisterNumber)], this.onUpdateHakemusRegisterNumber,
       [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted,
       [dispatcher.stream(events.loadComments)], this.onLoadComments,
       [dispatcher.stream(events.commentsLoaded)], this.onCommentsLoaded,
@@ -127,6 +129,25 @@ export default class HakemustenArviointiController {
     const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + updatedHakemus.id + "/arvio"
     state.saveStatus.saveInProgress = true
     HttpUtil.post(updateUrl, updatedHakemus.arvio)
+      .then(function(response) {
+        if(response instanceof Object) {
+          dispatcher.push(events.saveCompleted)
+        }
+        else {
+          dispatcher.push(events.saveCompleted, "unexpected-save-error")
+        }
+      })
+      .catch(function(response) {
+        dispatcher.push(events.saveCompleted, "unexpected-save-error")
+      })
+    return state
+  }
+
+  onUpdateHakemusRegisterNumber(state, updatedHakemus) {
+    const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + updatedHakemus.id + "/register-number"
+    state.saveStatus.saveInProgress = true
+    const request = {"register-number": updatedHakemus["register-number"]}
+    HttpUtil.post(updateUrl, request)
       .then(function(response) {
         if(response instanceof Object) {
           dispatcher.push(events.saveCompleted)
@@ -272,6 +293,11 @@ export default class HakemustenArviointiController {
   setHakemusArvioBudgetGranted(hakemus, newBudgetGranted) {
     hakemus.arvio["budget-granted"] = newBudgetGranted
     dispatcher.push(events.updateHakemusArvio, hakemus)
+  }
+
+  setHakemusRegisterNumber(hakemus, registerNumber) {
+    hakemus["register-number"] = registerNumber
+    dispatcher.push(events.updateHakemusRegisterNumber, hakemus)
   }
 
   loadComments() {
