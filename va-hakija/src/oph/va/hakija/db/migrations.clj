@@ -50,10 +50,10 @@
     (let [changed-form (formutil/transform-form-content form rename-attributes)]
       (db/update-form! changed-form)))))
 
-(defquery list-all-submission-versions "db/migration/queries/m1_17-list-all-submission-versions.sql")
-(defquery update-submission-directly! "db/migration/queries/m1_17-update-submission-directly.sql")
+(defquery list-all-submission-versions "db/migration/queries/m1_18-list-all-submission-versions.sql")
+(defquery update-submission-directly! "db/migration/queries/m1_18-update-submission-directly.sql")
 
-(migrations/defmigration migrate-add-fieldtype-to-submissions "1.17"
+(migrations/defmigration migrate-add-fieldtype-to-submissions "1.18"
   "Add fieldType to each form_submissions value"
  (let [all-submission-versions (common-db/exec :db list-all-submission-versions {})
        all-forms (db/list-forms)
