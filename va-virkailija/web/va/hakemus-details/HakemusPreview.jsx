@@ -44,14 +44,10 @@ export default class HakemusPreview extends Component {
 
     const budgetCalculator = new VaBudgetCalculator()
     budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(formState, true)
-
-    const downloadUrlFn = (attachment) => {
-      return "/api/avustushaku/" + avustushaku.id + "/hakemus/" + attachment["hakemus-id"] + "/attachments/" + attachment["field-id"]
-    }
     return (
       <div id="preview-container">
         <FormPreview {...formElementProps} />
-                        </div>
+      </div>
     )
   }
 

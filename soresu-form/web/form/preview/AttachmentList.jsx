@@ -10,14 +10,12 @@ export default class AttachmentList extends PreviewComponent {
   render() {
     const form = this.props.state.form
     const attachments = this.props.attachments
-    const downloadUrlFn = this.props.toDownloadUrlFn
     if (attachments) {
       const attachmentList = _.map(attachments, (attachment) => {
         const field = FormUtil.findField(form, attachment["field-id"])
         return <div>
                  <h2><LocalizedString lang={this.props.lang} translations={field} translationKey="label" /></h2>
                  <AttachmentDisplay attachment={attachment}
-                                    downloadUrl={downloadUrlFn(attachment)}
                                     translations={this.props.translations}
                                     lang={this.props.lang} />
                </div>
