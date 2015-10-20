@@ -19,7 +19,10 @@ export default class HakemusListing extends Component {
       case "granted-sum":
         return hakemus => hakemus.arvio["budget-granted"]
       case "score":
-        return hakemus => ScoreResolver.effectiveAverage(hakemus.arvio.scoring, userInfo)
+        return hakemus => {
+          const score = ScoreResolver.effectiveAverage(hakemus.arvio.scoring, userInfo)
+          return score ? score : 0
+        }
     }
     throw Error("No field getter for " + fieldName)
   }
