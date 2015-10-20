@@ -1,5 +1,6 @@
 (ns oph.form.formutil
-  (:require [clojure.walk :as walk]))
+  (:require [clojure.walk :as walk]
+            [clojure.tools.trace :refer [trace]]))
 
 (defn transform-tree [document tree-key node-transformer]
   (let [new-content (walk/prewalk node-transformer (tree-key document))]
@@ -59,3 +60,15 @@
 (defn find-fields [node-list]
   (->> (flatten-elements node-list)
     (filter is-form-field?)))
+
+(defn decorate-matching [form lookup-table]
+  (let [field-list (find-fields (:content form))]
+    (letfn [(find-match [field]
+              (->> lookup-table
+                   keys
+                   (map (fn [r] {:match (r field)
+                                 :result (get lookup-table r)}))
+                   (filter :match)
+                   (map (fn [match-object] {:field field :result (:result match-object)}))
+                   first))]
+      (map find-match field-list))))
