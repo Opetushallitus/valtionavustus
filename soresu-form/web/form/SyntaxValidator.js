@@ -16,6 +16,7 @@ export default class SyntaxValidator {
 
     switch (field.fieldType) {
       case 'emailField':
+      case 'vaEmailNotification':
         var emailError = SyntaxValidator.validateEmail(value)
         if (emailError) {
           validationErrors.push(emailError)

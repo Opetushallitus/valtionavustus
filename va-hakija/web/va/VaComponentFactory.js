@@ -2,6 +2,8 @@ import React from 'react'
 
 import ComponentFactory from 'soresu-form/web/form/ComponentFactory.js'
 import CheckboxButton from 'soresu-form/web/form/component/CheckboxButton.jsx'
+import EmailTextField from 'soresu-form/web/form/component/EmailTextField.jsx'
+import {TextFieldPropertyMapper} from 'soresu-form/web/form/component/PropertyMapper'
 
 import {VaBudgetElement, SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from 'va-common/web/va/VaBudgetComponents.jsx'
 import {VaFocusAreasPropertyMapper} from 'va-common/web/va/VaPropertyMapper.js'
@@ -15,11 +17,13 @@ export default class VaComponentFactory extends ComponentFactory {
       "vaBudgetItemElement": BudgetItemElement,
       "vaBudgetSummaryElement": BudgetSummaryElement,
       "vaProjectDescription": VaProjectDescription,
-      "vaFocusAreas": CheckboxButton
+      "vaFocusAreas": CheckboxButton,
+      "vaEmailNotification": EmailTextField
     }
     super({ fieldTypeMapping: fieldTypeMapping,
             fieldPropertyMapperMapping: {
-              "vaFocusAreas": VaFocusAreasPropertyMapper }})
+              "vaFocusAreas": VaFocusAreasPropertyMapper,
+              "vaEmailNotification": TextFieldPropertyMapper }})
   }
 
   getCustomComponentProperties(state) {
