@@ -80,7 +80,7 @@ describe('Form input that is', function() {
       assert.isArray(storedRootValue)
       assert.lengthOf(storedRootValue, 1, JSON.stringify(storedRootValue))
       const otherOrganizationsItem = storedRootValue[0]
-      assert.deepEqual(_.keys(otherOrganizationsItem), ["key", "value"])
+      assert.deepEqual(_.keys(otherOrganizationsItem), ["key", "value", "fieldType"])
       assert.deepEqual(otherOrganizationsItem.key, "other-organizations")
       var otherOrganizationsValue = otherOrganizationsItem.value
       assert.isArray(otherOrganizationsValue)
@@ -91,8 +91,9 @@ describe('Form input that is', function() {
       assert.isArray(firstOtherOrganizationValue.value)
       assert.lengthOf(firstOtherOrganizationValue.value, 1, JSON.stringify(otherOrganizationsValue))
       verboseAssert.deepEqual(firstOtherOrganizationValue, {"key":"other-organizations-1","value":[
-        {"key":"other-organizations.other-organizations-1.name","value":"Kemijärven kaupunki"}
-      ]})
+        {"key":"other-organizations.other" +
+        "-organizations-1.name","value":"Kemijärven kaupunki","fieldType":"textField"}
+      ],"fieldType":"growingFieldsetChild"})
 
       writeValue(formContent, answersObject, "other-organizations.other-organizations-1.email", "kemi.jarven@kaupun.ki")
       assert.lengthOf(otherOrganizationsValue, 1, JSON.stringify(otherOrganizationsValue))
@@ -100,8 +101,10 @@ describe('Form input that is', function() {
 
       verboseAssert.deepEqual(firstOtherOrganizationValue.value[0].key, "other-organizations.other-organizations-1.name")
       verboseAssert.deepEqual(firstOtherOrganizationValue.value[0].value, "Kemijärven kaupunki")
+      verboseAssert.deepEqual(firstOtherOrganizationValue.value[0].fieldType, "textField")
       verboseAssert.deepEqual(firstOtherOrganizationValue.value[1].key, "other-organizations.other-organizations-1.email")
       verboseAssert.deepEqual(firstOtherOrganizationValue.value[1].value, "kemi.jarven@kaupun.ki")
+      verboseAssert.deepEqual(firstOtherOrganizationValue.value[1].fieldType, "emailField")
     })
   })
 })
