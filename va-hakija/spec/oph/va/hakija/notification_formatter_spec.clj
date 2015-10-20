@@ -3,7 +3,7 @@
        [clojure.pprint :only [pprint]])
   (:require
     [speclj.core :refer :all]
-    [oph.va.hakija.submit-notification :refer :all]))
+    [oph.va.hakija.notification-formatter :refer :all]))
 
 (def primary-email "primary@example.com")
 
@@ -11,24 +11,79 @@
 
 (def signature-email "signature@example.com")
 
-(def answers
+(def answers-with-old-fields
   {:value
-   [{:key "primary-email" :value primary-email}
-    {:key "language" :value "fi"}
-    {:key "combined-effort" :value "no"}
-    {:key "organization" :value "Our test organization"}
-    {:key "organization-email" :value organization-email}
-    {:key "signature-email" :value signature-email}
+   [{:key "primary-email" :value primary-email :fieldType "emailField"}
+    {:key "language" :value "fi" :fieldType "radioButton"}
+    {:key "combined-effort" :value "no"  :fieldType "radioButton"}
+    {:key "organization" :value "Our test organization" :fieldType "textField"}
+    {:key "organization-email" :value organization-email :fieldType "emailField"}
+    {:key "signature-email" :value signature-email :fieldType "emailField"}
     {:key "project-description"
      :value
      [{:key "project-description-1"
        :value
        [{:key "project-description.project-description-1.goal"
-         :value "Integrate new learners"}
+         :value "Integrate new learners"
+         :fieldType "textField"}
         {:key "project-description.project-description-1.activity"
-         :value "Opinion polls and newspaper ads"}
+         :value "Opinion polls and newspaper ads"
+         :fieldType "textField"}
         {:key "project-description.project-description-1.result"
-         :value "More interested people"}]}]}
+         :value "More interested people"
+         :fieldType "textField"}]
+       :fieldType "growingFieldsetChild"}]
+     :fieldType "growingFieldset"}
+    ]})
+
+(def first-repeat-signatory-email "first.repeated@signatory.example.com")
+
+(def second-repeat-signatory-email "second.repeated@signatory.example.com")
+
+(def answers-with-email-notification-fields
+  {:value
+   [{:key "primary-email" :value primary-email :fieldType "emailField"}
+    {:key "language" :value "fi" :fieldType "radioButton"}
+    {:key "combined-effort" :value "no"  :fieldType "radioButton"}
+    {:key "organization" :value "Our test organization" :fieldType "textField"}
+    {:key "organization-email" :value organization-email :fieldType "emailField"}
+    {:key "signature-email" :value signature-email :fieldType "emailField"}
+    {:key "signatories-fieldset"
+     :value
+     [{:key "signatories-fieldset-1"
+       :value
+       [{:key "signatories-fieldset.signatories-fieldset-1.name"
+         :value "First Repeatedsignatory"
+         :fieldType "textField"}
+        {:key "signatories-fieldset.signatories-fieldset-1.email"
+         :value first-repeat-signatory-email
+         :fieldType "vaEmailNotification"}]
+       :fieldType "growingFieldsetChild"}
+      {:key "signatories-fieldset-2"
+       :value
+       [{:key "signatories-fieldset.signatories-fieldset-2.name"
+         :value "Second Repeatedsignatory"
+         :fieldType "textField"}
+        {:key "signatories-fieldset.signatories-fieldset-2.email"
+         :value second-repeat-signatory-email
+         :fieldType "vaEmailNotification"}]
+       :fieldType "growingFieldsetChild"}]
+     :fieldType "growingFieldset"}
+    {:key "project-description"
+     :value
+     [{:key "project-description-1"
+       :value
+       [{:key "project-description.project-description-1.goal"
+         :value "Integrate new learners"
+         :fieldType "textField"}
+        {:key "project-description.project-description-1.activity"
+         :value "Opinion polls and newspaper ads"
+         :fieldType "textField"}
+        {:key "project-description.project-description-1.result"
+         :value "More interested people"
+         :fieldType "textField"}]
+       :fieldType "growingFieldsetChild"}]
+     :fieldType "growingFieldset"}
     ]})
 
 (def hakemus-key "f95d23ff1757c1ec79940c4b028de4372480e75ea0c84d6a26c98b411fac4d3e")
@@ -73,11 +128,25 @@
           (tags :server)
 
           (it "Sends notification email to all legacy fields"
-            (let [sent-data (send-submit-notifications! fake-sender answers submitted-hakemus avustushaku )]
+            (let [sent-data (send-submit-notifications! fake-sender answers-with-old-fields submitted-hakemus avustushaku )]
               (should= :fi (:language sent-data))
               (should= [primary-email organization-email signature-email] (:to sent-data))
               (should= hakemus-key (:user-key sent-data))
-              (should= haku-id (:haku-id sent-data))
-              )))
+              (should= haku-id (:haku-id sent-data)))))
+
+(describe "Form with fields with vaEmailNotification type"
+
+          (tags :server)
+
+          (it "Sends notification email to all vaEmailNotificationFields"
+            (let [sent-data (send-submit-notifications! fake-sender answers-with-email-notification-fields submitted-hakemus avustushaku )]
+              (should= :fi (:language sent-data))
+              (should= [primary-email
+                        organization-email
+                        signature-email
+                        first-repeat-signatory-email
+                        second-repeat-signatory-email] (:to sent-data))
+              (should= hakemus-key (:user-key sent-data))
+              (should= haku-id (:haku-id sent-data)))))
 
 (run-specs)

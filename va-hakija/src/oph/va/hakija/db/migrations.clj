@@ -1,8 +1,11 @@
 (ns oph.va.hakija.db.migrations
   (:require [oph.common.db.migrations :as migrations]
+            [oph.common.db :as common-db]
             [oph.form.db :as db]
             [oph.va.hakija.db :as va-db]
-            [oph.form.formutil :as formutil])
+            [oph.form.formutil :as formutil]
+            [clojure.tools.trace :refer [trace]]
+            [yesql.core :refer [defquery]])
   (:gen-class))
 
 (defn migrate [ds-key & migration-paths]
@@ -46,3 +49,53 @@
   (doseq [form (db/list-forms)]
     (let [changed-form (formutil/transform-form-content form rename-attributes)]
       (db/update-form! changed-form)))))
+
+(defquery list-all-submission-versions "db/migration/queries/m1_18-list-all-submission-versions.sql")
+(defquery update-submission-directly! "db/migration/queries/m1_18-update-submission-directly.sql")
+
+(migrations/defmigration migrate-add-fieldtype-to-submissions "1.18"
+  "Add fieldType to each form_submissions value"
+ (let [all-submission-versions (common-db/exec :db list-all-submission-versions {})
+       all-forms (db/list-forms)
+       id-regexp-type-map {#"language" "radioButton"
+                           #"project-description" "growingFieldset"
+                           #"project-description-\d+" "vaProjectDescription"
+                           #"project-description-\d+.(goal|activity|result)" "textField"
+                           #"project-description.project-description-\d+.(goal|activity|result)" "textField"
+                           #"signatories-fieldset" "growingFieldset"
+                           #"signatories-fieldset-\d+" "growingFieldsetChild"
+                           #"signatories-fieldset-\d.name+" "textField"
+                           #"signatories-fieldset-\d.email+" "vaEmailNotification"
+                           #"other-organizations" "growingFieldset"
+                           #"other-organizations-\d+" "growingFieldsetChild"
+                           #"other-organizations.other-organizations-\d+.name" "textField"
+                           #"other-organizations.other-organizations-\d+.email" "emailField"}]
+   (letfn [(find-type-from-form [id form-fields]
+              (->> (filter #(= (:id %) id) form-fields) first :fieldType))
+           (find-type-by-id-string [id]
+              (->> id-regexp-type-map
+                   keys
+                   (map (fn [r] {:match (re-matches r id)
+                                 :fieldType (get id-regexp-type-map r)}))
+                   (filter :match)
+                   (map :fieldType)
+                   first))
+           (resolve-field-type [id form-fields]
+                         (if-let [type-from-form (find-type-from-form id form-fields)]
+                           type-from-form
+                           (find-type-by-id-string id)))
+           (resolve-field-type-with-assert [id form-fields]
+              (let [found-type (resolve-field-type id form-fields)]
+                (assert found-type (str "No field type found for " id))
+                found-type))
+           (add-field-type [my-form-content node]
+             (if (:key node)
+               (merge node {:fieldType (resolve-field-type-with-assert (:key node) my-form-content)})
+               node))]
+        (doseq [submission all-submission-versions]
+          (let [my-form-content (->> all-forms (filter #(= (:id %) (:form submission))) first :content formutil/find-fields)
+                updated-submission (formutil/transform-tree submission :answers (partial add-field-type my-form-content))]
+            (common-db/exec :db update-submission-directly! {:answers (updated-submission :answers)
+                                                             :submission_id (:id submission)
+                                                             :version (:version submission)
+                                                             :form_id (:form submission)}))))))

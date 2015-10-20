@@ -25,50 +25,52 @@
 (defn find-by-id [json id] (first (filter (fn [e] (.equals ( :id e) id)) (-> (formutil/flatten-elements (json :content))))))
 
 (defn update-answers [answers key value]
-  (let [update-fn (fn [key new-value] (fn [value]
-                                        (if (= (:key value) key)
-                                          {:key key :value new-value}
-                                          value)))]
+  (let [update-fn (fn [key new-value] (fn [answer-node]
+                                        (if (= (:key answer-node) key)
+                                          {:key key :value new-value :fieldType (:fieldType answer-node)}
+                                          answer-node)))]
     {:value (map (update-fn key value) (:value answers))}))
 
 (def valid-answers
-  {:value [{:key "organization" :value "Testi Organisaatio"}
-           {:key "organization-email" :value "org@example.com"}
-           {:key "business-id" :value "5278603-3"}
-           {:key "applicant-name" :value "Teemu Hakija"}
-           {:key "primary-email" :value "test@example.com"}
-           {:key "signature" :value "Teemu Testaaja, CEO"}
-           {:key "signature-email" :value "teemu@example.com"}
-           {:key "language" :value "fi"}
-           {:key "project-name" :value "Server-spec-hanke"}
-           {:key "combined-effort" :value "no"}
+  {:value [{:key "organization" :value "Testi Organisaatio" :fieldType "textField"}
+           {:key "organization-email" :value "org@example.com" :fieldType "emailField"}
+           {:key "business-id" :value "5278603-3" :fieldType "finnishBusinessIdField"}
+           {:key "applicant-name" :value "Teemu Hakija" :fieldType "textField"}
+           {:key "primary-email" :value "test@example.com" :fieldType "emailField"}
+           {:key "signature" :value "Teemu Testaaja, CEO" :fieldType "textField"}
+           {:key "signature-email" :value "teemu@example.com" :fieldType "emailField"}
+           {:key "language" :value "fi" :fieldType "radioButton"}
+           {:key "project-name" :value "Server-spec-hanke" :fieldType "textField"}
+           {:key "combined-effort" :value "no" :fieldType "radioButton"}
            {:key "other-organizations"
-            :value [{:key   "other-organizations-1"
-                     :value [{:key "other-organizations.other-organizations-1.name" :value "E.T. Extra Terrestrial"}
-                             {:key "other-organizations.other-organizations-1.email" :value "et@example.com"}]}]}
-           {:key "project-goals" :value "Maaleja"}
-           {:key "project-description.project-description-1.goal" :value "Paremmat oppimistulokset"}
-           {:key "project-description.project-description-1.activity" :value "Pidämme työpajoja"}
-           {:key "project-description.project-description-1.result" :value "Jotkut lähtevät jatko-opiskelemaan"}
-           {:key "bank-bic" :value "5000"}
-           {:key "bank-iban" :value "FI 32 5000 4699350600"}
-           {:key "project-target" :value "Maali"}
-           {:key "project-measure" :value "Mittaus"}
-           {:key "project-announce" :value "Julkaisut"}
-           {:key "project-effectiveness" :value "Tehokkuus"}
-           {:key "project-spreading-plan" :value "Jakelusuunnitelma"}
-           {:key "coordination-costs-row.amount" :value "10"}
-           {:key "personnel-costs-row.amount" :value "10"}
-           {:key "service-purchase-costs-row.amount" :value "10"}
-           {:key "material-costs-row.amount" :value "10"}
-           {:key "rent-costs-row.amount" :value "10"}
-           {:key "equipment-costs-row.amount" :value "10"}
-           {:key "steamship-costs-row.amount" :value "10"}
-           {:key "other-costs-row.amount" :value "10"}
-           {:key "project-incomes-row.amount" :value "10"}
-           {:key "eu-programs-income-row.amount" :value "10"}
-           {:key "other-public-financing-income-row.amount" :value "10"}
-           {:key "private-financing-income-row.amount" :value "10"}]})
+            :value [{:key "other-organizations-1"
+                     :value [{:key "other-organizations.other-organizations-1.name" :value "E.T. Extra Terrestrial" :fieldType "textField"}
+                             {:key "other-organizations.other-organizations-1.email" :value "et@example.com" :fieldType "emailField"}]
+                     :fieldType "growingFieldsetChild"}]
+            :fieldType "growingFieldset"}
+           {:key "project-goals" :value "Maaleja" :fieldType "textField"}
+           {:key "project-description.project-description-1.goal" :value "Paremmat oppimistulokset" :fieldType "textField"}
+           {:key "project-description.project-description-1.activity" :value "Pidämme työpajoja" :fieldType "textField"}
+           {:key "project-description.project-description-1.result" :value "Jotkut lähtevät jatko-opiskelemaan" :fieldType "textField"}
+           {:key "bank-bic" :value "5000" :fieldType "bic"}
+           {:key "bank-iban" :value "FI 32 5000 4699350600" :fieldType "iban"}
+           {:key "project-target" :value "Maali" :fieldType "textField"}
+           {:key "project-measure" :value "Mittaus" :fieldType "textField"}
+           {:key "project-announce" :value "Julkaisut" :fieldType "textField"}
+           {:key "project-effectiveness" :value "Tehokkuus" :fieldType "textField"}
+           {:key "project-spreading-plan" :value "Jakelusuunnitelma" :fieldType "textField"}
+           {:key "coordination-costs-row.amount" :value "10" :fieldType "moneyField"}
+           {:key "personnel-costs-row.amount" :value "10" :fieldType "moneyField"}
+           {:key "service-purchase-costs-row.amount" :value "10" :fieldType "moneyField"}
+           {:key "material-costs-row.amount" :value "10" :fieldType "moneyField"}
+           {:key "rent-costs-row.amount" :value "10" :fieldType "moneyField"}
+           {:key "equipment-costs-row.amount" :value "10" :fieldType "moneyField"}
+           {:key "steamship-costs-row.amount" :value "10" :fieldType "moneyField"}
+           {:key "other-costs-row.amount" :value "10" :fieldType "moneyField"}
+           {:key "project-incomes-row.amount" :value "10" :fieldType "moneyField"}
+           {:key "eu-programs-income-row.amount" :value "10" :fieldType "moneyField"}
+           {:key "other-public-financing-income-row.amount" :value "10" :fieldType "moneyField"}
+           {:key "private-financing-income-row.amount" :value "10" :fieldType "moneyField"}]})
 
 (def most-required-missing
   {:project-begin                                        []
@@ -181,23 +183,27 @@
         (should= 404 status)))
 
   (it "PUT should validate required values when done to route /api/form/1/values"
-      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:value [ {:key "organization" :value "Testi Organisaatio" }
-                                                                                              {:key "primary-email" :value "test@example.com" }
-                                                                                              {:key "signature " :value "" }
+      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" {:value [ {:key "organization" :value "Testi Organisaatio" :fieldType "textField" }
+                                                                                              {:key "primary-email" :value "test@example.com" :fieldType "emailField" }
+                                                                                              {:key "signature " :value "" :fieldType "textField" }
                                                                                              ] } )
             json (json->map body)]
         (should= 400 status)
         (should= most-required-missing json)))
 
   (it "PUT should validate text field lengths when done to route /api/form/1/values"
-      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" (update-in valid-answers [ :value ] concat [ {:key "project-end" :value "10.10.10000"} ]))
+      (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" (update-in valid-answers
+                                                                                               [ :value ]
+                                                                                               concat [ {:key "project-end"
+                                                                                                         :value "10.10.10000"
+                                                                                                         :fieldType "textField"}]))
             json (json->map body)]
         (should= 400 status)
         (should= (json :project-end) [{:error "maxlength", :max 10}])))
 
   (it "PUT should validate text field lengths and options when done to route /api/avustushaku/1/hakemus"
-      (let [{:keys [status json] } (put-hakemus {:value [{:key "language" :value "ru"}
-                                                         {:key "project-end" :value "10.10.10000"}  ]})]
+      (let [{:keys [status json] } (put-hakemus {:value [{:key "language" :value "ru" :fieldType "radioButton"}
+                                                         {:key "project-end" :value "10.10.10000" :fieldType "textField"}  ]})]
         (should= 400 status)
         (should= (json :language) [{:error "invalid-option"}])
         (should= (json :project-end) [{:error "maxlength", :max 10}])))
@@ -209,8 +215,8 @@
         (should= 1 (:id json))))
 
   (it "POST should validate required values when done to route /api/form/1/values/1"
-      (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/1" {:value [{:key "organization" :value "Testi Organisaatio"}
-                                                                                                {:key "primary-email" :value "test@example.com"}
+      (let [{:keys [status headers body error] :as resp} (post! "/api/form/1/values/1" {:value [{:key "organization" :value "Testi Organisaatio" :fieldType "textField"}
+                                                                                                {:key "primary-email" :value "test@example.com" :fieldType "emailField"}
                                                                                                 ]})
           json (json->map body)]
       (should= 400 status)
@@ -238,11 +244,11 @@
 
   (it "PUT /api/avustushaku/1/hakemus/ should return hakemus status"
       (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus"
-                  {:value [{:key "language" :value "sv"}
-                           {:key "primary-email" :value "testi@test.te"}
-                           {:key "signature-email" :value "signature@test.te"}
-                           {:key "other-organizations.other-organizations-1.email" :value "other@test.te"}
-                           {:key "organization-email" :value "organization@test.te"}]})
+                  {:value [{:key "language" :value "sv" :fieldType "radioButton"}
+                           {:key "primary-email" :value "testi@test.te" :fieldType "emailField"}
+                           {:key "signature-email" :value "signature@test.te" :fieldType "emailField"}
+                           {:key "other-organizations.other-organizations-1.email" :value "other@test.te" :fieldType "emailField"}
+                           {:key "organization-email" :value "organization@test.te" :fieldType "emailField"}]})
             json (json->map body)]
         (should= 200 status)
         (should= "new" (:status json))))

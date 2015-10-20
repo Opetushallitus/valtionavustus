@@ -35,7 +35,7 @@ export default class FormComponent extends React.Component {
       "checkboxButton": CheckboxButton,
       "namedAttachment": AttachmentField
     }
-    this.fieldPropertyMapping = {
+    const fieldPropertyMapperMapping = {
       "textField": TextFieldPropertyMapper,
       "textArea": TextFieldPropertyMapper,
       "emailField": TextFieldPropertyMapper,
@@ -48,7 +48,7 @@ export default class FormComponent extends React.Component {
       "checkboxButton": MultipleOptionFieldOnChangePropertyMapper,
       "namedAttachment": AttachmentFieldPropertyMapper
     }
-    this.componentFactory = new ComponentFactory(fieldTypeMapping)
+    this.componentFactory = new ComponentFactory({ fieldTypeMapping: fieldTypeMapping, fieldPropertyMapperMapping: fieldPropertyMapperMapping })
   }
 
   render() {
@@ -58,9 +58,6 @@ export default class FormComponent extends React.Component {
     if (fieldType in controller.getCustomComponentTypeMapping()) {
       return controller.createCustomComponent(this.props)
     } else {
-      if (fieldType in this.fieldPropertyMapping) {
-        return this.componentFactory.createComponent(this.fieldPropertyMapping[fieldType].map(this.props))
-      }
       return this.componentFactory.createComponent(this.props)
     }
   }

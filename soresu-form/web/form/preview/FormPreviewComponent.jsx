@@ -28,9 +28,8 @@ export default class FormPreviewComponent extends React.Component {
       "checkboxButton": MultipleOptionValue,
       "namedAttachment": AttachmentPreview
     }
-    this.componentFactory = new ComponentFactory(fieldTypeMapping)
 
-    this.fieldPropertyMapping = {
+     const fieldPropertyMapping = {
       "textField": TextFieldPropertyMapper,
       "textArea": TextFieldPropertyMapper,
       "emailField": TextFieldPropertyMapper,
@@ -43,6 +42,8 @@ export default class FormPreviewComponent extends React.Component {
       "checkboxButton": MultipleOptionFieldOnChangePropertyMapper,
       "namedAttachment": AttachmentDisplayPropertyMapper
     }
+
+    this.componentFactory = new ComponentFactory({ fieldTypeMapping: fieldTypeMapping, fieldPropertyMapperMapping: fieldPropertyMapping})
   }
 
   render() {
@@ -52,7 +53,7 @@ export default class FormPreviewComponent extends React.Component {
     if (fieldType in controller.getCustomPreviewComponentTypeMapping()) {
       return controller.createCustomPreviewComponent(this.props)
     } else {
-      return this.componentFactory.createComponent(this.fieldPropertyMapping[fieldType].map(this.props))
+      return this.componentFactory.createComponent(this.props)
     }
   }
 }

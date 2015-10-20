@@ -14,7 +14,7 @@ export default class WrapperComponent extends React.Component {
       "growingFieldset": GrowingFieldset,
       "growingFieldsetChild": GrowingFieldsetChild
     }
-    this.componentFactory = new ComponentFactory(fieldTypeMapping)
+    this.componentFactory = new ComponentFactory({ fieldTypeMapping: fieldTypeMapping, fieldPropertyMapperMapping: {}})
   }
 
   render() {

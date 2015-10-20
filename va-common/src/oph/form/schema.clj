@@ -36,7 +36,10 @@
                                     :radioButton
                                     :checkboxButton
                                     :namedAttachment]
-        form-element-types (into custom-form-element-types default-form-element-types)]
+        form-element-types (into custom-form-element-types default-form-element-types)
+        default-wrapper-element-types [:theme :fieldset :growingFieldset :growingFieldsetChild ]
+        wrapper-element-types (into custom-wrapper-element-types default-wrapper-element-types)
+        all-element-types (into form-element-types wrapper-element-types)]
     (s/defschema FormField {:fieldClass (s/eq "formField")
                             :id s/Str
                             :required s/Bool
@@ -46,22 +49,28 @@
                                                                      s/Int)
                             (s/optional-key :params) s/Any
                             (s/optional-key :options) [Option]
-                            :fieldType (apply s/enum form-element-types)}))
+                            :fieldType (apply s/enum form-element-types)})
 
-  (s/defschema BasicElement (s/either FormField
-                                      Button
-                                      InfoElement))
+    (s/defschema BasicElement (s/either FormField
+                                          Button
+                                          InfoElement))
 
-  (let [default-wrapper-element-types [:theme :fieldset :growingFieldset :growingFieldsetChild ]
-        wrapper-element-types (into custom-wrapper-element-types default-wrapper-element-types)]
     (s/defschema WrapperElement {:fieldClass                    (s/eq "wrapperElement")
-                                 :id                      s/Str
-                                 :fieldType               (apply s/enum wrapper-element-types )
-                                 :children                [(s/either BasicElement
-                                                                     (s/recursive #'WrapperElement))]
-                                 (s/optional-key :params) s/Any
-                                 (s/optional-key :label)  LocalizedString
-                                 (s/optional-key :helpText)  LocalizedString}))
+                                     :id                      s/Str
+                                     :fieldType               (apply s/enum wrapper-element-types )
+                                     :children                [(s/either BasicElement
+                                                                         (s/recursive #'WrapperElement))]
+                                     (s/optional-key :params) s/Any
+                                     (s/optional-key :label)  LocalizedString
+                                     (s/optional-key :helpText)  LocalizedString})
+
+    (s/defschema Answer {:key s/Str,
+                           :value (s/either s/Str
+                                            s/Int
+                                            [s/Str]
+                                            [(s/recursive #'Answer)])
+                           :fieldType (apply s/enum all-element-types)}))
+
 
   (s/defschema Content [(s/either BasicElement
                                   WrapperElement)])
@@ -77,12 +86,6 @@
                      :content Content,
                      :rules Rules,
                      :created_at s/Inst})
-
-  (s/defschema Answer {:key s/Str,
-                       :value (s/either s/Str
-                                        s/Int
-                                        [s/Str]
-                                        [(s/recursive #'Answer)])})
 
   (s/defschema Answers
     "Answers consists of a key (String) value pairs, where value may be String or an array of more answers"

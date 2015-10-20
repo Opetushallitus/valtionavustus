@@ -144,19 +144,17 @@ export default class InfoElement extends React.Component {
       "dateRange": DateRangeInfoElement,
       "endOfDateRange": EndOfDateRangeInfoElement
     }
-    this.fieldPropertyMapping = {
+    const fieldPropertyMapping = {
       "h1": InfoElementPropertyMapper,
       "p": InfoElementPropertyMapper,
       "bulletList": AccordionElementPropertyMapper,
       "dateRange": InfoElementPropertyMapper,
       "endOfDateRange": InfoElementPropertyMapper
     }
-    this.componentFactory = new ComponentFactory(fieldTypeMapping)
+    this.componentFactory = new ComponentFactory({ fieldTypeMapping: fieldTypeMapping, fieldPropertyMapperMapping: fieldPropertyMapping })
   }
 
   render() {
-    const fieldType = this.props.fieldType
-    const props = this.fieldPropertyMapping[fieldType].map(this.props)
-    return this.componentFactory.createComponent(props)
+    return this.componentFactory.createComponent(this.props)
   }
 }
