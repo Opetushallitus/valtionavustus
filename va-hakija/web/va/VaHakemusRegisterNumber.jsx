@@ -5,7 +5,7 @@ import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 
 export default class VaHakemusRegisterNumber extends React.Component {
   render() {
-    if(!_.isUndefined(this.props.registerNumber)) {
+    if(!_.isNull(this.props.registerNumber)) {
       const registerNumber = this.props.registerNumber
       return <section className="va-register-number">
                <span className="title">
