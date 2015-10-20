@@ -9,7 +9,7 @@ var answersObject = {}
 const formContent = TestUtil.testFormJson()
 
 function writeValue(form, answers, fieldId, value) {
-  writeValue(form, answers,
+  InputValueStorage.writeValue(form, answers,
     { "id": fieldId,
       "field": _.first(JsUtil.flatFilter(formContent, n => { return n.id === fieldId})),
       "value": value
