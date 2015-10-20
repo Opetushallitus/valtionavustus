@@ -1,18 +1,29 @@
 import React, { Component } from 'react'
 import Immutable from 'seamless-immutable'
 
-import HakemusPreview from '../hakemus-details/HakemusPreview.jsx'
+import styles from '../style/formedit.less';
+
+import FormEdit from 'soresu-form/web/form/edit/FormEdit.jsx'
+import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
+
+import FakeFormController from '../form/FakeFormController.js'
+import FakeFormState from '../form/FakeFormState.js'
 
 export default class FormEditor extends Component {
   render() {
     const avustushaku = this.props.avustushaku
-    const hakuData = Immutable({form: avustushaku.formContent})
     const translations = this.props.translations
+    const formState = FakeFormState.createEditFormState(translations, avustushaku)
+    const formElementProps = {
+      state: formState,
+      infoElementValues: avustushaku,
+      controller: new FakeFormController(new VaPreviewComponentFactory(), avustushaku, {})
+    }
 
     return avustushaku.formContent ?
       <div id="form-editor">
         <h3>Hakulomakkeen muokkaus</h3>
-        <HakemusPreview avustushaku={avustushaku} hakuData={hakuData} translations={translations} hakemus={{}}/>
+        <FormEdit {...formElementProps} />
       </div> : <span/>
   }
 }

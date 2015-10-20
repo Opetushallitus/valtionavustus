@@ -16,11 +16,11 @@ export default class FormPreview extends React.Component {
     const htmlId = controller.constructHtmlId(fields, field.id)
     const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field }
     if (field.fieldClass == "formField") {
-      return FormPreview.createFormPreviewComponent(controller, state, field, fieldProperties, renderingParameters);
+      return FormPreview.createFormPreviewComponent(controller, state, field, fieldProperties, renderingParameters)
     } else if (field.fieldClass == "infoElement") {
-      return FormPreview.createInfoComponent(state, infoElementValues, field, fieldProperties);
+      return FormPreview.createInfoComponent(state, infoElementValues, field, fieldProperties, true)
     } else if (field.fieldClass == "wrapperElement") {
-      return FormPreview.createWrapperComponent(controller, state, infoElementValues, field, fieldProperties, renderingParameters);
+      return FormPreview.createWrapperComponent(FormPreview.renderField, controller, state, infoElementValues, field, fieldProperties, renderingParameters)
     }
   }
 
@@ -41,8 +41,8 @@ export default class FormPreview extends React.Component {
         attachmentDownloadUrl={controller.createAttachmentDownloadUrl(state, field) }/>
   }
 
-  static createInfoComponent(state, infoElementValues, field, fieldProperties) {
-    if (field.params && field.params.preview === false) {
+  static createInfoComponent(state, infoElementValues, field, fieldProperties, hideAccordingToPreviewParam) {
+    if (hideAccordingToPreviewParam && field.params && field.params.preview === false) {
       return undefined
     }
     const translations = state.configuration.translations
@@ -51,7 +51,7 @@ export default class FormPreview extends React.Component {
         translations={translations} />
   }
 
-  static createWrapperComponent(controller, state, infoElementValues, field, fieldProperties, renderingParameters) {
+  static createWrapperComponent(renderFieldFuction, controller, state, infoElementValues, field, fieldProperties, renderingParameters) {
     const translations = state.configuration.translations
     const values = state.saveStatus.values
     const fields = state.form.content
@@ -72,7 +72,7 @@ export default class FormPreview extends React.Component {
       }
 
       const childRenderingParameters = resolveChildRenderingParameters(i)
-      children.push(FormPreview.renderField(controller, state, infoElementValues, field.children[i], childRenderingParameters))
+      children.push(renderFieldFuction(controller, state, infoElementValues, field.children[i], childRenderingParameters))
     }
     const customProperties = controller.getCustomComponentProperties(state)
     return <WrapperPreviewComponent {...fieldProperties}
