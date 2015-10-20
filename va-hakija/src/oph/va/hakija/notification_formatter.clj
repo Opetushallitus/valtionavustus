@@ -10,10 +10,16 @@
 (defn is-notification-email-field [field]
   (or
     (some #(= (:key field) %) legacy-email-field-ids)
-    (has-attribute? :fieldType :vaEmailNotification field)))
+    (has-attribute? :fieldType "vaEmailNotification" field)))
+
+(defn- flatten-answers [answers acc]
+  (let [value (:value answers)]
+    (if (coll? value)
+      (flatten (cons (map #(flatten-answers % []) value) acc))
+      (cons answers acc))))
 
 (defn- find-emails-to-notify [answers]
-  (let [notification-fields (filter-values is-notification-email-field (:value answers))]
+  (let [notification-fields (filter is-notification-email-field (flatten-answers answers []))]
     (mapv :value notification-fields)))
 
 (defn send-submit-notifications! [send! answers submitted-hakemus avustushaku]
