@@ -10,7 +10,7 @@
 (defn is-notification-email-field [field]
   (or
     (some #(= (:key field) %) legacy-email-field-ids)
-    (has-attribute? :fieldType "vaEmailNotification" field)))
+    (has-attribute? :fieldType :vaEmailNotification field)))
 
 (defn- flatten-answers [answers acc]
   (let [value (:value answers)]
