@@ -94,14 +94,15 @@ class StarElement extends Component {
     const starTitle = ScoreResolver.scoreToFI(indexOfStar)
     const scoreOfUser = this.props.scoreOfUser
     const selectionCriteriaIndex = this.props.selectionCriteriaIndex
-    const starImage = scoreOfUser && scoreOfUser.score >= indexOfStar ? "/img/star_on.png" : "/img/star_off.png"
+    const starVisible = scoreOfUser && scoreOfUser.score >= indexOfStar
+    const starImage = starVisible ? "/img/star_on.png" : "/img/star_off.png"
 
     const controller = this.props.controller
     const enableEditing = !_.isUndefined(controller)
     const classNames = ClassNames("single-score", {editable: enableEditing})
     const onClick = enableEditing ? event => { controller.setScore(selectionCriteriaIndex, indexOfStar) } : undefined
-    const showHover = enableEditing ? event => { event.target.setAttribute("src", "/img/star_hover.png") } : undefined
-    const hideHover = enableEditing ? event => { event.target.setAttribute("src", starImage)} : undefined
+    const showHover = enableEditing && !starVisible ? event => { event.target.setAttribute("src", "/img/star_hover.png") } : undefined
+    const hideHover = enableEditing && !starVisible ? event => { event.target.setAttribute("src", starImage)} : undefined
     return <img className={classNames}
                 src={starImage}
                 title={starTitle}
