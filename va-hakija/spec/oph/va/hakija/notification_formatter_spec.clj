@@ -132,8 +132,7 @@
               (should= :fi (:language sent-data))
               (should= [primary-email organization-email signature-email] (:to sent-data))
               (should= hakemus-key (:user-key sent-data))
-              (should= haku-id (:haku-id sent-data))
-              )))
+              (should= haku-id (:haku-id sent-data)))))
 
 (describe "Form with fields with vaEmailNotification type"
 
