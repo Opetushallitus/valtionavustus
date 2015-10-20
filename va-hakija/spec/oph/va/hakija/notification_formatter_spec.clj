@@ -3,7 +3,7 @@
        [clojure.pprint :only [pprint]])
   (:require
     [speclj.core :refer :all]
-    [oph.va.hakija.submit-notification :refer :all]))
+    [oph.va.hakija.notification-formatter :refer :all]))
 
 (def primary-email "primary@example.com")
 

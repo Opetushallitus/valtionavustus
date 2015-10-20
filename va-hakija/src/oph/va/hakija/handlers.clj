@@ -13,7 +13,7 @@
             [oph.va.routes :refer :all]
             [oph.form.schema :refer :all]
             [oph.va.hakija.db :as va-db]
-            [oph.va.hakija.submit-notification :as va-submit-notification]
+            [oph.va.hakija.notification-formatter :as va-submit-notification]
             [oph.va.hakija.email :as va-email]))
 
 (defn- convert-attachment [hakemus-id attachment]
