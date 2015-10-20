@@ -13,14 +13,14 @@ export default class FormEditor extends Component {
   render() {
     const avustushaku = this.props.avustushaku
     const translations = this.props.translations
-    const formState = FakeFormState.createEditFormState(translations, avustushaku)
+    const formState = avustushaku.formContent ? FakeFormState.createEditFormState(translations, avustushaku) : undefined
     const formElementProps = {
       state: formState,
       infoElementValues: avustushaku,
       controller: new FakeFormController(new VaPreviewComponentFactory(), avustushaku, {})
     }
 
-    return avustushaku.formContent ?
+    return formState ?
       <div id="form-editor">
         <h3>Hakulomakkeen muokkaus</h3>
         <FormEdit {...formElementProps} />
