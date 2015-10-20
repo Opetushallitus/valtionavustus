@@ -26,7 +26,7 @@ export default class FormEdit extends React.Component {
       }
     }
     return (
-      <div key={htmlId} className="soresu-edit">
+      <div key={htmlId} className="soresu-edit soresu-field-edit">
         <h3>{field.fieldClass + ": " + field.fieldType}</h3>
         {fieldElement}
       </div>
@@ -43,7 +43,7 @@ export default class FormEdit extends React.Component {
       return FormEdit.renderField(controller, state, infoElementValues, field)
     }
 
-    return  <div className="soresu-edit">
+    return  <div className="soresu-edit soresu-form-edit">
       {fields.map(renderField) }
     </div>
   }
