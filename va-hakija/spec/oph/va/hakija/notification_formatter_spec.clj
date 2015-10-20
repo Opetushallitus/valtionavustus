@@ -11,24 +11,29 @@
 
 (def signature-email "signature@example.com")
 
-(def answers
+(def answers-with-old-fields
   {:value
-   [{:key "primary-email" :value primary-email}
-    {:key "language" :value "fi"}
-    {:key "combined-effort" :value "no"}
-    {:key "organization" :value "Our test organization"}
-    {:key "organization-email" :value organization-email}
-    {:key "signature-email" :value signature-email}
+   [{:key "primary-email" :value primary-email :fieldType "emailField"}
+    {:key "language" :value "fi" :fieldType "radioButton"}
+    {:key "combined-effort" :value "no"  :fieldType "radioButton"}
+    {:key "organization" :value "Our test organization" :fieldType "textField"}
+    {:key "organization-email" :value organization-email :fieldType "emailField"}
+    {:key "signature-email" :value signature-email :fieldType "emailField"}
     {:key "project-description"
      :value
      [{:key "project-description-1"
        :value
        [{:key "project-description.project-description-1.goal"
-         :value "Integrate new learners"}
+         :value "Integrate new learners"
+         :fieldType "textField"}
         {:key "project-description.project-description-1.activity"
-         :value "Opinion polls and newspaper ads"}
+         :value "Opinion polls and newspaper ads"
+         :fieldType "textField"}
         {:key "project-description.project-description-1.result"
-         :value "More interested people"}]}]}
+         :value "More interested people"
+         :fieldType "textField"}]
+       :fieldType "growingFieldsetChild"}]
+     :fieldType "growingFieldset"}
     ]})
 
 (def hakemus-key "f95d23ff1757c1ec79940c4b028de4372480e75ea0c84d6a26c98b411fac4d3e")
@@ -73,7 +78,7 @@
           (tags :server)
 
           (it "Sends notification email to all legacy fields"
-            (let [sent-data (send-submit-notifications! fake-sender answers submitted-hakemus avustushaku )]
+            (let [sent-data (send-submit-notifications! fake-sender answers-with-old-fields submitted-hakemus avustushaku )]
               (should= :fi (:language sent-data))
               (should= [primary-email organization-email signature-email] (:to sent-data))
               (should= hakemus-key (:user-key sent-data))
