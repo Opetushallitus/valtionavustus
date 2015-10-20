@@ -50,7 +50,7 @@ export default class VaLogin extends React.Component {
     const model = this.props.model
     try {
       HttpUtil.put(url, {
-        value: [{key:"primary-email", value: email},{key:"language", value: model.lang}]
+        value: [{key:"primary-email", value: email, fieldType: "emailField"},{key:"language", value: model.lang, fieldType: "radioButton"}]
       })
       .then(function(response) {
         vaLogin.setState({

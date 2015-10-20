@@ -158,7 +158,12 @@ export default class FormStateLoop {
         if (currentValueFromState === "") {
           const initialValueForField = determineInitialValue(f, initialValues)
           if (!_.isUndefined(initialValueForField)) {
-            InputValueStorage.writeValue(formSpecificationContent, values, f.id, initialValueForField)
+            InputValueStorage.writeValue(formSpecificationContent, values,
+              { id: f.id,
+                field: f,
+                value: initialValueForField,
+                fieldType: f.fieldType,
+                validationErrors: []})
           }
         }
       })

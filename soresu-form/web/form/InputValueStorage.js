@@ -4,9 +4,13 @@ import JsUtil from './JsUtil.js'
 import _ from 'lodash'
 
 export default class InputValueStorage {
-  static writeValue(formSpecificationContent, answersObject, fieldId, newValue) {
-    function writeChildValue(parentObject, childKey, value) {
-      const existingChildren = _.filter(parentObject.value, child => { return child.key === childKey })
+  static writeValue(formSpecificationContent, answersObject, fieldUpdate) {
+    const fieldId = fieldUpdate.id
+    const field = fieldUpdate.field
+    const newValue = fieldUpdate.value
+    function writeChildValue(parentObject, childField, value) {
+      const childKey = childField.id
+      const existingChildren = _.filter(parentObject.value, childValueObject => { return childValueObject.key === childKey })
       if (!_.isUndefined(existingChildren) && !_.isEmpty(existingChildren)) {
         existingChildren[0].value = value
         return
@@ -14,27 +18,27 @@ export default class InputValueStorage {
       if (_.isUndefined(parentObject.value)) {
         parentObject.value = []
       }
-      parentObject.value.push({ "key": childKey, "value": value})
+      parentObject.value.push({"key": childKey, "value": value, "fieldType": childField.fieldType})
     }
 
     const growingParent = FormUtil.findGrowingParent(formSpecificationContent, fieldId)
     if (!growingParent) {
-      writeChildValue(answersObject, fieldId, newValue)
+      writeChildValue(answersObject, field, newValue)
       return
     }
 
     var growingParentExistingValues = JsUtil.flatFilter(answersObject, n => { return n.key === growingParent.id })
     if (_.isEmpty(growingParentExistingValues)) {
-      writeChildValue(answersObject, growingParent.id, [])
+      writeChildValue(answersObject, growingParent, [])
       growingParentExistingValues = JsUtil.flatFilter(answersObject, n => { return n.key === growingParent.id })
     }
     const repeatingItemField = JsUtil.findJsonNodeContainingId(growingParent.children, fieldId)
     var repeatingItemExistingValues = JsUtil.flatFilter(growingParentExistingValues, n => { return n.key === repeatingItemField.id })
     if (_.isEmpty(repeatingItemExistingValues)) {
-      writeChildValue(growingParentExistingValues[0], repeatingItemField.id, [])
+      writeChildValue(growingParentExistingValues[0], repeatingItemField, [])
       repeatingItemExistingValues = JsUtil.flatFilter(answersObject, n => { return n.key === repeatingItemField.id })
     }
-    writeChildValue(repeatingItemExistingValues[0], fieldId, newValue)
+    writeChildValue(repeatingItemExistingValues[0], field, newValue)
 
     return growingParent
   }

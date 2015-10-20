@@ -373,7 +373,7 @@
                   async: false,
                   contentType: "application/json; charset=utf-8",
                   url: "/api/avustushaku/1/hakemus/" + loginPage.getHakemusId() + "/" + applicationPage.readHakemusVersionFromHtml(),
-                  data: JSON.stringify({value: [{key: "other-organizations.other-organizations-1.name", value: "Oikea Organisaatio"}]})
+                  data: JSON.stringify({value: [{key: "other-organizations.other-organizations-1.name", value: "Oikea Organisaatio", fieldType: "textField"}]})
                 })
               },
               applicationPage.setInputValue("other-organizations.other-organizations-1.name", "Oma Testi Organisaatio"),

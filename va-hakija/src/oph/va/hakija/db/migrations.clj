@@ -98,6 +98,4 @@
             (common-db/exec :db update-submission-directly! {:answers (updated-submission :answers)
                                                              :submission_id (:id submission)
                                                              :version (:version submission)
-                                                             :form_id (:form submission)})
-            (trace "updated answers" (updated-submission :answers)))))
-   (assert nil "Please do not migrate my data just yet.")))
+                                                             :form_id (:form submission)}))))))

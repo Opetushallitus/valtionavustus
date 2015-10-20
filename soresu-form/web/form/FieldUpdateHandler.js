@@ -10,12 +10,13 @@ export default class FieldUpdateHandler {
     return {id: field.id,
             field: field,
             value: value,
+            fieldType: field.fieldType,
             validationErrors:
             SyntaxValidator.validateSyntax(field, value) };
   }
 
   static updateStateFromFieldUpdate(state, fieldUpdate) {
-    const growingParentIfFound = InputValueStorage.writeValue(state.form.content, state.saveStatus.values, fieldUpdate.id, fieldUpdate.value)
+    const growingParentIfFound = InputValueStorage.writeValue(state.form.content, state.saveStatus.values, fieldUpdate)
     fieldUpdate.growingParent = growingParentIfFound
     if (fieldUpdate.validationErrors) {
       if(_.isEmpty(state.form.validationErrors)) {
