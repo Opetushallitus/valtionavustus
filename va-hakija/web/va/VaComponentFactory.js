@@ -17,18 +17,12 @@ export default class VaComponentFactory extends ComponentFactory {
       "vaProjectDescription": VaProjectDescription,
       "vaFocusAreas": CheckboxButton
     }
-    super(fieldTypeMapping)
+    super({ fieldTypeMapping: fieldTypeMapping,
+            fieldPropertyMapperMapping: {
+              "vaFocusAreas": VaFocusAreasPropertyMapper }})
   }
 
   getCustomComponentProperties(state) {
     return { "avustushaku": state.avustushaku }
-  }
-
-  createComponent(componentProps) {
-    const fieldType = componentProps.fieldType
-    if (fieldType === "vaFocusAreas") {
-      return React.createElement(this.fieldTypeMapping[fieldType], VaFocusAreasPropertyMapper.map(componentProps))
-    }
-    return super.createComponent(componentProps)
   }
 }

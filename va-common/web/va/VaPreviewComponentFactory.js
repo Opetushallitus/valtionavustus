@@ -19,15 +19,9 @@ export default class VaPreviewComponentFactory extends ComponentFactory {
       "vaProjectDescription": VaProjectDescriptionPreview,
       "vaFocusAreas": MultipleOptionValue
     }
-    super(fieldTypeMapping)
-  }
-
-  createComponent(componentProps) {
-    const fieldType = componentProps.fieldType
-    if (fieldType === "vaFocusAreas") {
-      return React.createElement(this.fieldTypeMapping[fieldType], VaFocusAreasPropertyMapper.map(componentProps))
-    }
-    return super.createComponent(componentProps)
+    super({ fieldTypeMapping,
+            fieldPropertyMapperMapping: {
+              "vaFocusAreas": VaFocusAreasPropertyMapper }})
   }
 }
 
