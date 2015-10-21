@@ -1,7 +1,7 @@
 import React from 'react'
 import ComponentFactory from '../ComponentFactory.js'
 import {TextFieldEdit} from './EditComponent.jsx'
-import { TextFieldPropertyMapper} from '../component/PropertyMapper.js'
+import {TextFieldPropertyMapper} from '../component/PropertyMapper.js'
 
 export default class FormEditComponent extends React.Component {
 
@@ -15,8 +15,8 @@ export default class FormEditComponent extends React.Component {
   constructor(props) {
     super(props)
     const fieldPropertyMapping = {
-      "textField": TextFieldPropertyMapper,
-      "textArea": TextFieldPropertyMapper
+      "textField": TextFieldEditPropertyMapper,
+      "textArea": TextFieldEditPropertyMapper
     }
 
     this.componentFactory = new ComponentFactory({ fieldTypeMapping: FormEditComponent.fieldTypeMapping(), fieldPropertyMapperMapping: fieldPropertyMapping})
@@ -31,5 +31,20 @@ export default class FormEditComponent extends React.Component {
     } else {
       return this.componentFactory.createComponent(this.props)
     }
+  }
+}
+
+class EditPropertyMapperExtender{
+  static extendedMap(baseMapper, props) {
+    const baseProps = baseMapper.map(props)
+    return _.extend(baseProps, {
+      formEditorController: props.formEditorController
+    })
+  }
+}
+
+class TextFieldEditPropertyMapper extends TextFieldPropertyMapper {
+  static map(props) {
+    return EditPropertyMapperExtender.extendedMap(TextFieldPropertyMapper, props)
   }
 }

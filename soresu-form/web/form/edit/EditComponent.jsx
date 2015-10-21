@@ -4,6 +4,7 @@ import ClassNames from 'classnames'
 export default class EditComponent extends React.Component {
   render(fieldSpecificEdit) {
     const field = this.props.field
+    const formEditorController = this.props.formEditorController
     const htmlId = this.props.htmlId
     var labelEdit = undefined
     if(field.label) {
@@ -29,11 +30,22 @@ export default class EditComponent extends React.Component {
         </table>
       )
     }
+    var requiredEdit = undefined
+    if(typeof field.required != 'undefined') {
+      requiredEdit = (
+       <div>
+         <label htmlFor={htmlId+"-required"}>Pakollinen tieto</label>
+         <input type="checkbox" id={htmlId+"-required"} name={htmlId+"-required"} checked={field.required}/>
+       </div>
+      )
+    }
+    const removeField = e => { formEditorController.removeField(field) }
     return (
-      <div className={this.className()}>
+      <div key={htmlId} className={this.className()}>
         <h3>{this.componentName()}</h3>
+        <span onClick={removeField} className="soresu-edit soresu-field-remove">Poista</span>
         {labelEdit}
-        <label htmlFor={htmlId+"-required"}>Pakollinen tieto</label><input type="checkbox" id={htmlId+"-required"} name={htmlId+"-required"} checked={field.required}/>
+        {requiredEdit}
         {helpTextEdit}
         {fieldSpecificEdit}
       </div>
@@ -41,7 +53,7 @@ export default class EditComponent extends React.Component {
   }
 
   componentName() {
-    return this.props.field.fieldType
+    return this.props.field.fieldClass + ": " + this.props.field.fieldType
   }
 
   className() {
@@ -58,6 +70,12 @@ export default class EditComponent extends React.Component {
     if (!this.props.field.params) return defaultValue
     if (this.props.field.params[param] !== undefined) return this.props.field.params[param]
     return defaultValue
+  }
+}
+
+export class EditWrapper extends EditComponent {
+  render() {
+    return super.render(this.props.wrappedElement)
   }
 }
 

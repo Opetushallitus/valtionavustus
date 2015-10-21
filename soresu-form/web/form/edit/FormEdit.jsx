@@ -4,19 +4,21 @@ import _ from 'lodash'
 import styles from '../style/preview.less'
 import printStyles from '../style/print.less'
 
+import {EditWrapper} from 'soresu-form/web/form/edit/EditComponent.jsx'
 import FormEditComponent from 'soresu-form/web/form/edit/FormEditComponent.jsx'
 
 import FormPreview from '../FormPreview.jsx'
 
 export default class FormEdit extends React.Component {
 
-  static createFormEditComponent(controller, state, field, fieldProperties, renderingParameters) {
+  static createFormEditComponent(controller, formEditorController, state, field, fieldProperties, renderingParameters) {
     const translations = state.configuration.translations
     const customProperties = controller.getCustomComponentProperties(state)
     return <FormEditComponent {...fieldProperties}
         renderingParameters={renderingParameters}
         translations={translations}
         controller={controller}
+        formEditorController={formEditorController}
         customProps={customProperties}
         attachment={state.saveStatus.attachments[field.id]}
         attachmentDownloadUrl={controller.createAttachmentDownloadUrl(state, field) }/>
@@ -29,10 +31,10 @@ export default class FormEdit extends React.Component {
     var fieldElement = undefined
     if (field.fieldClass == "formField") {
       if(FormEditComponent.fieldTypeMapping()[field.fieldType]) {
-        return FormEdit.createFormEditComponent(controller, state, field, fieldProperties, renderingParameters)
+        return FormEdit.createFormEditComponent(controller, formEditorController, state, field, fieldProperties, renderingParameters)
       }
       else {
-        fieldElement =  FormPreview.createFormPreviewComponent(controller, state, field, fieldProperties, renderingParameters)
+        fieldElement =  undefined
       }
     } else if (field.fieldClass == "infoElement") {
       fieldElement =  FormPreview.createInfoComponent(state, infoElementValues, field, fieldProperties, false)
@@ -44,14 +46,7 @@ export default class FormEdit extends React.Component {
         fieldElement = FormPreview.createWrapperComponent(FormEdit.renderField, controller, formEditorController, state, infoElementValues, field, fieldProperties, renderingParameters)
       }
     }
-    const removeField = e => { formEditorController.removeField(field) }
-    return (
-      <div key={htmlId} className="soresu-edit soresu-field-edit">
-        <h3>{field.fieldClass + ": " + field.fieldType}</h3>
-        {fieldElement}
-        <span onClick={removeField} className="soresu-edit soresu-field-remove">Poista</span>
-      </div>
-    )
+    return <EditWrapper formEditorController={formEditorController} wrappedElement={fieldElement} htmlId={htmlId} field={field}/>
   }
 
   render() {
