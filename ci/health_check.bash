@@ -10,7 +10,7 @@ application_port=$2
 cat_log_command=${@:3}
 
 TEST_URL="http://$target_machine:$application_port/api/healthcheck"
-ATTEMPTS=20
+ATTEMPTS=40
 PAUSE_SECONDS=3
 
 function cat_latest_application_log() {
