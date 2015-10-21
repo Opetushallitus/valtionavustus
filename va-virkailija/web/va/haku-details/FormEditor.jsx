@@ -56,8 +56,13 @@ class FormEditorController {
   }
 
   removeField(field) {
+    const fieldMatcher = f => { return f.id === field.id }
     const parent = FormUtil.findFieldWithDirectChild(this.formDraftJson.content, field.id)
-    _.remove(parent.children, c => { return c.id === field.id })
+    if (parent) {
+      _.remove(parent.children, fieldMatcher)
+    } else {
+      _.remove(this.formDraftJson.content, fieldMatcher)
+    }
     this.onEditCallback(JSON.stringify(this.formDraftJson, null, 2), field)
   }
 }
