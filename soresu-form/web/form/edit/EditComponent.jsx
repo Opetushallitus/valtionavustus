@@ -86,17 +86,23 @@ export class EditWrapper extends EditComponent {
 
 export class AppendableEditWrapper extends EditComponent {
   render() {
-    const editableComponent = super.render(this.props.wrappedElement)
     const formEditorController = this.props.formEditorController
     const field = this.props.field
     const onClick = e => {
       e.preventDefault()
       formEditorController.addChildFieldTo(field)
     }
-    return <div className="soresu-edit soresu-appendable-wrapper-edit">
-             {editableComponent}
-             <a className="soresu-edit soresu-add-field" onClick={onClick}>Lisää tekstikenttä</a>
-           </div>
+    return super.render(
+      <div>
+         {this.props.wrappedElement}
+         <a className="soresu-edit soresu-add-field" onClick={onClick}>Lisää tekstikenttä</a>
+      </div>
+    )
+  }
+
+  className() {
+    const classNames = ClassNames("soresu-edit", "soresu-appendable-wrapper-edit", this.sizeClassName())
+    return !_.isEmpty(classNames) ? classNames : undefined
   }
 }
 
