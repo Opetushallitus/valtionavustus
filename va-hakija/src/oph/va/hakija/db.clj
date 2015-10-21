@@ -55,6 +55,16 @@
          (get-organization-name answers)
          (get-project-name answers)))
 
+(defn get-hakemus [hakemus-id]
+  (->> {:user_key hakemus-id}
+       (exec :db queries/get-hakemus-by-user-id)
+       first))
+
+(defn generate-register-number [avustushaku-id user-key]
+  (if-let [avustushaku-register-number (-> (get-avustushaku avustushaku-id) trace :register_number)]
+    (let [hakemus (get-hakemus user-key)]
+      (format "%d/%s" (:id hakemus) avustushaku-register-number))))
+
 (defn create-hakemus! [avustushaku-id form-id answers]
   (let [submission (form-db/create-submission! form-id answers)
         params (-> {:avustushaku_id avustushaku-id
@@ -64,13 +74,10 @@
         hakemus (exec :db queries/create-hakemus<! params)]
     {:hakemus hakemus :submission submission}))
 
-(defn get-hakemus [hakemus-id]
-  (->> {:user_key hakemus-id}
-       (exec :db queries/get-hakemus-by-user-id)
-       first))
-
 (defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers]
-  (let [params (-> {:avustushaku_id avustushaku-id
+  (let [register-number (or register-number
+                            (generate-register-number avustushaku-id hakemus-id))
+        params (-> {:avustushaku_id avustushaku-id
                     :user_key hakemus-id
                     :register_number register-number
                     :form_submission_id submission-id
