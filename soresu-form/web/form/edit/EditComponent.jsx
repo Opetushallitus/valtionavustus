@@ -17,10 +17,23 @@ export default class EditComponent extends React.Component {
         </table>
       )
     }
+    var helpTextEdit = undefined
+    if(field.helpText) {
+      helpTextEdit = (
+        <table className="translation">
+          <thead><th>Ohjeteksti</th><th>Ohjeteksti ruotsiksi</th></thead>
+          <tr>
+            <td><textarea name={htmlId+"-help-text-fi"} value={field.helpText.fi}></textarea></td>
+            <td><textarea name={htmlId+"-help-text--sv"} value={field.helpText.sv}></textarea></td>
+          </tr>
+        </table>
+      )
+    }
     return (
       <div className={this.className()}>
         <h3>{this.componentName()}</h3>
         {labelEdit}
+        {helpTextEdit}
         {fieldSpecificEdit}
       </div>
     )
