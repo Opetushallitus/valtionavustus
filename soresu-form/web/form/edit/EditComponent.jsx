@@ -33,6 +33,7 @@ export default class EditComponent extends React.Component {
       <div className={this.className()}>
         <h3>{this.componentName()}</h3>
         {labelEdit}
+        <label htmlFor={htmlId+"-required"}>Pakollinen tieto</label><input type="checkbox" id={htmlId+"-required"} name={htmlId+"-required"} checked={field.required}/>
         {helpTextEdit}
         {fieldSpecificEdit}
       </div>
