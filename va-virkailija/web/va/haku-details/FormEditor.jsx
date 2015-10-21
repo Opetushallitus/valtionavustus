@@ -5,6 +5,7 @@ import styles from '../style/formedit.less';
 
 import FormEdit from 'soresu-form/web/form/edit/FormEdit.jsx'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
+import FormUtil from 'soresu-form/web/form/FormUtil'
 
 import FakeFormController from '../form/FakeFormController.js'
 import FakeFormState from '../form/FakeFormState.js'
@@ -14,8 +15,13 @@ export default class FormEditor extends Component {
     const avustushaku = this.props.avustushaku
     const translations = this.props.translations
     const hakuAdminController = this.props.controller
-    const formEditorController = new FormEditorController({ onRemove: hakuAdminController.onRemoveField })
     const formDraftJson = this.parseJson(this.props.formDraft)
+    const formEditedCallback = (newDraftJson, field) => {
+      hakuAdminController.formOnChangeListener(avustushaku, newDraftJson)
+    }
+    const formEditorController = new FormEditorController({
+      formDraftJson: formDraftJson,
+      onFormEdited: formEditedCallback })
     const formState = formDraftJson ? FakeFormState.createEditFormState(translations, formDraftJson) : undefined
     const formElementProps = {
       state: formState,
@@ -44,12 +50,14 @@ export default class FormEditor extends Component {
  * TODO: Maybe generalise and move this to soresu-form ?
  */
 class FormEditorController {
-  constructor(operations) {
-    this.onRemoveCallback = operations.onRemove
+  constructor(props) {
+    this.formDraftJson = props.formDraftJson
+    this.onEditCallback = props.onFormEdited
   }
 
   removeField(field) {
-    console.log('I am the initial FormEditorController, supposed to remove', field)
-    this.onRemoveCallback(field)
+    const parent = FormUtil.findFieldWithDirectChild(this.formDraftJson.content, field.id)
+    _.remove(parent.children, c => { return c.id === field.id })
+    this.onEditCallback(JSON.stringify(this.formDraftJson, null, 2), field)
   }
 }
