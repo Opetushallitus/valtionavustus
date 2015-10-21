@@ -7,13 +7,18 @@ export default class EditComponent extends React.Component {
     const formEditorController = this.props.formEditorController
     const htmlId = this.props.htmlId
     var labelEdit = undefined
+    const fieldValueUpdater =  function(valueContainerGetter, valueName, newValue) {
+      return e => {
+        formEditorController.editField(field.id, valueContainerGetter, valueName, typeof newValue === 'undefined' ? e.target.value : newValue)
+      }
+    }
     if(field.label) {
       labelEdit = (
         <table className="translation">
           <thead><th>Kysymys</th><th>Kysymys ruotsiksi</th></thead>
           <tr>
-            <td><textarea name={htmlId+"-label-fi"} value={field.label.fi}></textarea></td>
-            <td><textarea name={htmlId+"-label-sv"} value={field.label.sv}></textarea></td>
+            <td><textarea onChange={fieldValueUpdater(x => x.label, "fi")} name={htmlId+"-label-fi"} value={field.label.fi}></textarea></td>
+            <td><textarea onChange={fieldValueUpdater(x => x.label, "sv")} name={htmlId+"-label-sv"} value={field.label.sv}></textarea></td>
           </tr>
         </table>
       )
@@ -24,8 +29,8 @@ export default class EditComponent extends React.Component {
         <table className="translation">
           <thead><th>Ohjeteksti</th><th>Ohjeteksti ruotsiksi</th></thead>
           <tr>
-            <td><textarea name={htmlId+"-help-text-fi"} value={field.helpText.fi}></textarea></td>
-            <td><textarea name={htmlId+"-help-text-sv"} value={field.helpText.sv}></textarea></td>
+            <td><textarea onChange={fieldValueUpdater(x => x.helpText, "fi")} name={htmlId+"-help-text-fi"} value={field.helpText.fi}></textarea></td>
+            <td><textarea onChange={fieldValueUpdater(x => x.helpText, "sv")} name={htmlId+"-help-text-sv"} value={field.helpText.sv}></textarea></td>
           </tr>
         </table>
       )
@@ -35,7 +40,7 @@ export default class EditComponent extends React.Component {
       requiredEdit = (
        <div>
          <label htmlFor={htmlId+"-required"}>Pakollinen tieto</label>
-         <input type="checkbox" id={htmlId+"-required"} name={htmlId+"-required"} checked={field.required}/>
+         <input onChange={fieldValueUpdater(x => x, "required", !field.required)} type="checkbox" id={htmlId+"-required"} name={htmlId+"-required"} checked={field.required}/>
        </div>
       )
     }

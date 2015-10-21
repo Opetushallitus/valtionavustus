@@ -10,6 +10,12 @@ export default class FormEditorController {
     this.onEditCallback = props.onFormEdited
   }
 
+  editField(fieldId, valueContainerGetter, valueName, newValue) {
+    const fieldFromJson = FormUtil.findField(this.formDraftJson.content, fieldId)
+    valueContainerGetter(fieldFromJson)[valueName] = newValue
+    this.onEditCallback(JSON.stringify(this.formDraftJson, null, 2))
+  }
+
   removeField(field) {
     const fieldMatcher = f => { return f.id === field.id }
     const parent = FormUtil.findFieldWithDirectChild(this.formDraftJson.content, field.id)
@@ -18,7 +24,7 @@ export default class FormEditorController {
     } else {
       _.remove(this.formDraftJson.content, fieldMatcher)
     }
-    this.onEditCallback(JSON.stringify(this.formDraftJson, null, 2), field)
+    this.onEditCallback(JSON.stringify(this.formDraftJson, null, 2))
   }
 
   addChildFieldTo(parentField) {

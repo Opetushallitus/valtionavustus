@@ -15,7 +15,7 @@ export default class FormEditor extends Component {
     const translations = this.props.translations
     const hakuAdminController = this.props.controller
     const formDraftJson = this.parseJson(this.props.formDraft)
-    const formEditedCallback = (newDraftJson, field) => {
+    const formEditedCallback = (newDraftJson) => {
       hakuAdminController.formOnChangeListener(avustushaku, newDraftJson)
     }
     const formEditorController = new FormEditorController({
