@@ -24,7 +24,7 @@ export default class EditComponent extends React.Component {
           <thead><th>Ohjeteksti</th><th>Ohjeteksti ruotsiksi</th></thead>
           <tr>
             <td><textarea name={htmlId+"-help-text-fi"} value={field.helpText.fi}></textarea></td>
-            <td><textarea name={htmlId+"-help-text--sv"} value={field.helpText.sv}></textarea></td>
+            <td><textarea name={htmlId+"-help-text-sv"} value={field.helpText.sv}></textarea></td>
           </tr>
         </table>
       )
