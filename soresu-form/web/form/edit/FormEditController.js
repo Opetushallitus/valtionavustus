@@ -1,6 +1,8 @@
 import _ from 'lodash'
+import slug from 'slug'
 
 import FormUtil from '../FormUtil.js'
+import JsUtil from '../JsUtil.js'
 
 export default class FormEditorController {
   constructor(props) {
@@ -17,5 +19,45 @@ export default class FormEditorController {
       _.remove(this.formDraftJson.content, fieldMatcher)
     }
     this.onEditCallback(JSON.stringify(this.formDraftJson, null, 2), field)
+  }
+
+  addChildFieldTo(parentField) {
+    const newFieldType = "textField"
+    const formDraftJson = this.formDraftJson
+
+    function generateUniqueId(index) {
+      const proposed = slug(newFieldType) + index
+      if (_.isEmpty(JsUtil.flatFilter(formDraftJson.content, n => { return n.id === proposed}))) {
+        return proposed
+      }
+      return generateUniqueId(index + 1)
+    }
+
+    const newId = generateUniqueId(0)
+    const newChild = {
+      "params": {
+        "size": "large",
+        "maxlength": 80
+      },
+      "fieldClass": "formField",
+      "helpText": {
+        "fi": "Ohjeteksti",
+        "sv": "Hjälp på svenska"
+      },
+      "label": {
+        "fi": "Kuvaus",
+        "sv": "Kuvaus"
+      },
+      "id": newId,
+      "required": true,
+      "fieldType": newFieldType
+    }
+    const parent = FormUtil.findField(formDraftJson.content, parentField.id)
+    if (_.isArray(parent)) {
+      parent.push(newChild)
+    } else {
+      parent.children.push(newChild)
+    }
+    this.onEditCallback(JSON.stringify(formDraftJson, null, 2))
   }
 }

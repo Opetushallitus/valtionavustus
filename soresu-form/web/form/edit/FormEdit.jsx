@@ -4,7 +4,7 @@ import _ from 'lodash'
 import styles from '../style/preview.less'
 import printStyles from '../style/print.less'
 
-import {EditWrapper} from 'soresu-form/web/form/edit/EditComponent.jsx'
+import {EditWrapper,AppendableEditWrapper} from 'soresu-form/web/form/edit/EditComponent.jsx'
 import FormEditComponent from 'soresu-form/web/form/edit/FormEditComponent.jsx'
 
 import FormPreview from '../FormPreview.jsx'
@@ -44,6 +44,7 @@ export default class FormEdit extends React.Component {
       }
       else {
         fieldElement = FormPreview.createWrapperComponent(FormEdit.renderField, controller, formEditorController, state, infoElementValues, field, fieldProperties, renderingParameters)
+        return <AppendableEditWrapper formEditorController={formEditorController} wrappedElement={fieldElement} htmlId={htmlId} field={field}/>
       }
     }
     return <EditWrapper formEditorController={formEditorController} wrappedElement={fieldElement} htmlId={htmlId} field={field}/>
