@@ -2,12 +2,32 @@ import React from 'react'
 import ClassNames from 'classnames'
 
 export default class EditComponent extends React.Component {
-  render(edit) {
+  render(fieldSpecificEdit) {
+    const field = this.props.field
+    const htmlId = this.props.htmlId
+    var labelEdit = undefined
+    if(field.label) {
+      labelEdit = (
+        <table className="translation">
+          <thead><th>Kysymys</th><th>Kysymys ruotsiksi</th></thead>
+          <tr>
+            <td><textarea name={htmlId+"-label-fi"} value={field.label.fi}></textarea></td>
+            <td><textarea name={htmlId+"-label-sv"} value={field.label.sv}></textarea></td>
+          </tr>
+        </table>
+      )
+    }
     return (
       <div className={this.className()}>
-        {edit}
+        <h3>{this.componentName()}</h3>
+        {labelEdit}
+        {fieldSpecificEdit}
       </div>
     )
+  }
+
+  componentName() {
+    return this.props.field.fieldType
   }
 
   className() {
@@ -28,15 +48,7 @@ export default class EditComponent extends React.Component {
 }
 
 export class TextFieldEdit extends EditComponent {
-  render() {
-    const field = this.props.field
-    const htmlId = this.props.htmlId
-    return super.render(
-      <div>
-        <h3>Vapaa teksti</h3>
-        <label htmlFor={htmlId} htmlClass="required">Kysymys</label>
-        <input id={htmlId} size="80" value={field.label.fi}></input>
-      </div>
-    )
+  componentName() {
+    return "Vapaa teksti"
   }
 }

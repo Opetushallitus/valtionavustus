@@ -64,7 +64,7 @@ table.haku-list {
 
   table.translation {
     margin-top: 10px;
-    width: @content-width;
+    width: 100%;
     text-align: left;
     th {
       margin: 10px 0 0 0;
@@ -88,10 +88,10 @@ table.haku-list {
     }
   }
 
-  #name, #selection-criteria, #focus-areas {
-    textarea {
-      max-width: @content-width / 2.1;
-      width: @content-width / 2.1;
+  .translation {
+    textarea, input[type=text] {
+      max-width: 97%;
+      width: 97%;
     }
   }
 
