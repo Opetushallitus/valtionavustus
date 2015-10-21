@@ -91,7 +91,7 @@ export default class FormPreview extends React.Component {
     const fields = state.form.content
 
     const renderField = function(field) {
-      return FormPreview.renderField(controller, state, infoElementValues, field)
+      return FormPreview.renderField(controller, null, state, infoElementValues, field)
     }
 
     return  <div className="soresu-preview">
