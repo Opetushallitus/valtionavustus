@@ -18,8 +18,8 @@ export default class FakeFormState {
     return attachments ? attachments : {}
   }
 
-  static createEditFormState(translations, avustushaku) {
-    const hakuData = Immutable({form: avustushaku.formContent})
+  static createEditFormState(translations, formDraftJson) {
+    const hakuData = Immutable({form: formDraftJson})
     return FakeFormState.createHakemusFormState(translations, hakuData, {})
   }
 

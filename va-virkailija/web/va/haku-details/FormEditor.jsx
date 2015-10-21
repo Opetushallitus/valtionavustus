@@ -15,7 +15,8 @@ export default class FormEditor extends Component {
     const translations = this.props.translations
     const hakuAdminController = this.props.controller
     const formEditorController = new FormEditorController({ onRemove: hakuAdminController.onRemoveField })
-    const formState = avustushaku.formContent ? FakeFormState.createEditFormState(translations, avustushaku) : undefined
+    const formDraftJson = this.parseJson(this.props.formDraft)
+    const formState = formDraftJson ? FakeFormState.createEditFormState(translations, formDraftJson) : undefined
     const formElementProps = {
       state: formState,
       infoElementValues: avustushaku,
@@ -28,6 +29,14 @@ export default class FormEditor extends Component {
         <h3>Hakulomakkeen muokkaus</h3>
         <FormEdit {...formElementProps} />
       </div> : <span/>
+  }
+
+  parseJson(string) {
+    try {
+      return JSON.parse(string)
+    } catch (e) {
+      return false
+    }
   }
 }
 
