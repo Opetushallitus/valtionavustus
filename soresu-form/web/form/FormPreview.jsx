@@ -11,7 +11,7 @@ import InputValueStorage from './InputValueStorage.js'
 
 export default class FormPreview extends React.Component {
 
-  static renderField(controller, state, infoElementValues, field, renderingParameters) {
+  static renderField(controller, formEditController, state, infoElementValues, field, renderingParameters) {
     const fields = state.form.content
     const htmlId = controller.constructHtmlId(fields, field.id)
     const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field }
@@ -20,7 +20,7 @@ export default class FormPreview extends React.Component {
     } else if (field.fieldClass == "infoElement") {
       return FormPreview.createInfoComponent(state, infoElementValues, field, fieldProperties, true)
     } else if (field.fieldClass == "wrapperElement") {
-      return FormPreview.createWrapperComponent(FormPreview.renderField, controller, state, infoElementValues, field, fieldProperties, renderingParameters)
+      return FormPreview.createWrapperComponent(FormPreview.renderField, controller, formEditController, state, infoElementValues, field, fieldProperties, renderingParameters)
     }
   }
 
@@ -51,7 +51,7 @@ export default class FormPreview extends React.Component {
         translations={translations} />
   }
 
-  static createWrapperComponent(renderFieldFuction, controller, state, infoElementValues, field, fieldProperties, renderingParameters) {
+  static createWrapperComponent(renderFieldFunction, controller, editorController, state, infoElementValues, field, fieldProperties, renderingParameters) {
     const translations = state.configuration.translations
     const values = state.saveStatus.values
     const fields = state.form.content
@@ -72,7 +72,7 @@ export default class FormPreview extends React.Component {
       }
 
       const childRenderingParameters = resolveChildRenderingParameters(i)
-      children.push(renderFieldFuction(controller, state, infoElementValues, field.children[i], childRenderingParameters))
+      children.push(renderFieldFunction(controller, editorController, state, infoElementValues, field.children[i], childRenderingParameters))
     }
     const customProperties = controller.getCustomComponentProperties(state)
     return <WrapperPreviewComponent {...fieldProperties}

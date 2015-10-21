@@ -13,11 +13,14 @@ export default class FormEditor extends Component {
   render() {
     const avustushaku = this.props.avustushaku
     const translations = this.props.translations
+    const hakuAdminController = this.props.controller
+    const formEditorController = new FormEditorController({ onRemove: hakuAdminController.onRemoveField })
     const formState = avustushaku.formContent ? FakeFormState.createEditFormState(translations, avustushaku) : undefined
     const formElementProps = {
       state: formState,
       infoElementValues: avustushaku,
-      controller: new FakeFormController(new VaPreviewComponentFactory(), avustushaku, {})
+      controller: new FakeFormController(new VaPreviewComponentFactory(), avustushaku, {}),
+      formEditorController: formEditorController
     }
 
     return formState ?
@@ -25,5 +28,19 @@ export default class FormEditor extends Component {
         <h3>Hakulomakkeen muokkaus</h3>
         <FormEdit {...formElementProps} />
       </div> : <span/>
+  }
+}
+
+/**
+ * TODO: Maybe generalise and move this to soresu-form ?
+ */
+class FormEditorController {
+  constructor(operations) {
+    this.onRemoveCallback = operations.onRemove
+  }
+
+  removeField(field) {
+    console.log('I am the initial FormEditorController, supposed to remove', field)
+    this.onRemoveCallback(field)
   }
 }

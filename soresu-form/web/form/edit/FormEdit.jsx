@@ -22,7 +22,7 @@ export default class FormEdit extends React.Component {
         attachmentDownloadUrl={controller.createAttachmentDownloadUrl(state, field) }/>
   }
 
-  static renderField(controller, state, infoElementValues, field, renderingParameters) {
+  static renderField(controller, formEditorController, state, infoElementValues, field, renderingParameters) {
     const fields = state.form.content
     const htmlId = controller.constructHtmlId(fields, field.id)
     const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field }
@@ -38,28 +38,31 @@ export default class FormEdit extends React.Component {
       fieldElement =  FormPreview.createInfoComponent(state, infoElementValues, field, fieldProperties, false)
     } else if (field.fieldClass == "wrapperElement") {
       if(controller.getCustomPreviewComponentTypeMapping()[field.fieldType]) {
-        fieldElement = FormPreview.createWrapperComponent(FormPreview.renderField, controller, state, infoElementValues, field, fieldProperties, renderingParameters)
+        fieldElement = FormPreview.createWrapperComponent(FormPreview.renderField, controller, formEditorController, state, infoElementValues, field, fieldProperties, renderingParameters)
       }
       else {
-        fieldElement = FormPreview.createWrapperComponent(FormEdit.renderField, controller, state, infoElementValues, field, fieldProperties, renderingParameters)
+        fieldElement = FormPreview.createWrapperComponent(FormEdit.renderField, controller, formEditorController, state, infoElementValues, field, fieldProperties, renderingParameters)
       }
     }
+    const removeField = e => { formEditorController.removeField(field) }
     return (
       <div key={htmlId} className="soresu-edit soresu-field-edit">
         <h3>{field.fieldClass + ": " + field.fieldType}</h3>
         {fieldElement}
+        <span onClick={removeField} className="soresu-edit soresu-field-remove">Poista</span>
       </div>
     )
   }
 
   render() {
     const controller = this.props.controller
+    const formEditorController = this.props.formEditorController
     const infoElementValues = this.props.infoElementValues.content
     const state = this.props.state
     const fields = state.form.content
 
     const renderField = function(field) {
-      return FormEdit.renderField(controller, state, infoElementValues, field)
+      return FormEdit.renderField(controller, formEditorController, state, infoElementValues, field)
     }
 
     return  <div className="soresu-edit soresu-form-edit">

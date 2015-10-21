@@ -417,6 +417,10 @@ export default class HakujenHallintaController {
     }
   }
 
+  onRemoveField(field) {
+    console.log('I am HakujenHallintaController, now supposed to react to the removal of', field)
+  }
+
   reRender() {
     dispatcher.push(events.reRender)
   }
