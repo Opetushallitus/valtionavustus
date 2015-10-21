@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import Immutable from 'seamless-immutable'
 
 import styles from '../style/formedit.less';
 
 import FormEdit from 'soresu-form/web/form/edit/FormEdit.jsx'
+import FormEditorController from 'soresu-form/web/form/edit/FormEditController'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
-import FormUtil from 'soresu-form/web/form/FormUtil'
 
 import FakeFormController from '../form/FakeFormController.js'
 import FakeFormState from '../form/FakeFormState.js'
@@ -43,26 +42,5 @@ export default class FormEditor extends Component {
     } catch (e) {
       return false
     }
-  }
-}
-
-/**
- * TODO: Maybe generalise and move this to soresu-form ?
- */
-class FormEditorController {
-  constructor(props) {
-    this.formDraftJson = props.formDraftJson
-    this.onEditCallback = props.onFormEdited
-  }
-
-  removeField(field) {
-    const fieldMatcher = f => { return f.id === field.id }
-    const parent = FormUtil.findFieldWithDirectChild(this.formDraftJson.content, field.id)
-    if (parent) {
-      _.remove(parent.children, fieldMatcher)
-    } else {
-      _.remove(this.formDraftJson.content, fieldMatcher)
-    }
-    this.onEditCallback(JSON.stringify(this.formDraftJson, null, 2), field)
   }
 }
