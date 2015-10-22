@@ -175,3 +175,37 @@ export class TextFieldEdit extends EditComponent {
     return super.renderEditable()
   }
 }
+
+export class RadioButtonEdit extends EditComponent {
+  render() {
+    const field = this.props.field
+    const optionElements = _.map(field.options, renderOption)
+    return super.renderEditable(
+      <div>
+        {optionElements}
+        <span>Lisää vastausvaihtoehto</span>
+      </div>)
+
+    function renderOption(option) {
+      const indexOfOption = _.indexOf(field.options, option)
+      const labelGetter = f => { return f.options[indexOfOption].label }
+      const valueGetter = f => { return f.options[indexOfOption] }
+      function createOnChange(lang) {
+        return e => {
+          super.fieldValueUpdater(labelGetter, lang)(e)
+          const finnishLabelValue = labelGetter(field).fi
+          super.fieldValueUpdater(valueGetter, "value", finnishLabelValue)(e)
+        }
+      }
+      const removeOption = e => {
+        _.remove(field.options, option)
+      }
+      return <div key={field.id + "-option-" + indexOfOption}>
+               <input type="radio"/>
+               <input type="text" placeholder="Vastausvaihtoehto" onChange={createOnChange("fi")} value={labelGetter(field).fi}/>
+               <input type="text" placeholder="Vastausvaihtoehto ruotsiksi" onChange={createOnChange("sv")} value={labelGetter(field).sv}/>
+               <span onClick={removeOption} className="soresu-edit soresu-field-remove">Poista</span>
+             </div>
+    }
+  }
+}

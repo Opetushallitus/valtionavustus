@@ -77,10 +77,8 @@ export default class FormEditorController {
           break
         case "radioButton":
           newField.options = [
-            {
-              "value": "",
-              "label": { "fi": "", "sv": "" }
-            }
+            { "value": "", "label": { "fi": "", "sv": "" } },
+            { "value": "", "label": { "fi": "", "sv": "" } }
           ]
           break
         default:

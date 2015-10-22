@@ -1,6 +1,6 @@
 import React from 'react'
 import ComponentFactory from '../ComponentFactory.js'
-import {TextFieldEdit} from './EditComponent.jsx'
+import {TextFieldEdit,RadioButtonEdit} from './EditComponent.jsx'
 import {TextFieldPropertyMapper} from '../component/PropertyMapper.js'
 
 export default class FormEditComponent extends React.Component {
@@ -8,7 +8,8 @@ export default class FormEditComponent extends React.Component {
   static fieldTypeMapping(){
     return {
       "textField": TextFieldEdit,
-      "textArea": TextFieldEdit
+      "textArea": TextFieldEdit,
+      "radioButton": RadioButtonEdit
     }
   }
 
