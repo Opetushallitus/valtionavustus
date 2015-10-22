@@ -78,6 +78,7 @@ export default class FormEditorController {
           newField.params.size = "medium"
           break
         case "radioButton":
+        case "dropdown":
           newField.options = [
             FormEditorController.createEmptyOption(),
             FormEditorController.createEmptyOption()
