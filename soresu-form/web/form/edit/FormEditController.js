@@ -36,7 +36,7 @@ export default class FormEditorController {
 
   addChildFieldTo(parentField) {
     this.doEdit(() => {
-      const newFieldType = "textField"
+      const newFieldType = "textArea"
       const formDraftJson = this.formDraftJson
 
       function generateUniqueId(index) {
@@ -48,10 +48,9 @@ export default class FormEditorController {
       }
 
       const newId = generateUniqueId(0)
-      const newChild = {
+      const newChild =  {
         "params": {
-          "size": "large",
-          "maxlength": 80
+          "maxlength": 1000
         },
         "fieldClass": "formField",
         "helpText": {
@@ -60,7 +59,7 @@ export default class FormEditorController {
         },
         "label": {
           "fi": "Kuvaus",
-          "sv": "Kuvaus"
+          "sv": "Deskription"
         },
         "id": newId,
         "required": true,
