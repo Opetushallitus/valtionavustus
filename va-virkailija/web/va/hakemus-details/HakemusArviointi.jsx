@@ -93,7 +93,7 @@ class SetRegisterNumber extends React.Component {
 
     return <div className="register-number">
       <label htmlFor="register-number">Diaarinumero</label>
-      <input id="register-number" type="text" value={registerNumber} onChange={onChange} maxLength="128" />
+      <input id="register-number" disabled="disabled" type="text" value={registerNumber} onChange={onChange} maxLength="128" />
     </div>
   }
 }
