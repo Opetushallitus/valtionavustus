@@ -59,8 +59,25 @@ div.soresu-field-edit, div.soresu-appendable-wrapper-edit {
 
 div.soresu-radio-option-edit {
   position: relative;
+  margin-left: 10px;
+  span.soresu-radio-option-edit-title {
+    display: block;
+    margin-left: 30px;
+    font-size: 12px;
+    :after {
+      content: " *";
+    }
+  }
+  input[type="radio"] {
+    display: inline;
+    margin-right: 10px;
+  }
+  input[type="text"] {
+    margin: 4px;
+  }
   .soresu-field-remove {
     margin-left: 10px;
+    top: 20px;
     height: 100%;
     right: auto;
   }
