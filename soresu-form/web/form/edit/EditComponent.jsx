@@ -200,13 +200,13 @@ export class RadioButtonEdit extends EditComponent {
         }
       }
       const removeOption = e => {
-        _.remove(field.options, option)
+        formEditorController.removeOption(field, option)
       }
-      return <div key={field.id + "-option-" + indexOfOption}>
+      return <div className="soresu-radio-option-edit" key={field.id + "-option-" + indexOfOption}>
                <input type="radio"/>
                <input type="text" placeholder="Vastausvaihtoehto" onChange={createOnChange("fi")} value={labelGetter(field).fi}/>
                <input type="text" placeholder="Vastausvaihtoehto ruotsiksi" onChange={createOnChange("sv")} value={labelGetter(field).sv}/>
-               <span onClick={removeOption} className="soresu-edit soresu-field-remove">Poista</span>
+               <span onClick={removeOption} className="soresu-edit soresu-field-remove"></span>
              </div>
     }
   }

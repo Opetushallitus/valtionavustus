@@ -99,4 +99,11 @@ export default class FormEditorController {
       fieldInForm.options.push(FormEditorController.createEmptyOption())
     })
   }
+
+  removeOption(radioButtonField, optionToRemove) {
+    this.doEdit(() => {
+      const fieldInForm = FormUtil.findField(this.formDraftJson.content, radioButtonField.id)
+      _.remove(fieldInForm.options, optionToRemove)
+    })
+  }
 }
