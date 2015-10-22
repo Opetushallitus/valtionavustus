@@ -34,9 +34,8 @@ export default class FormEditorController {
     })
   }
 
-  addChildFieldTo(parentField) {
+  addChildFieldTo(parentField, newFieldType) {
     this.doEdit(() => {
-      const newFieldType = "textArea"
       const formDraftJson = this.formDraftJson
 
       function generateUniqueId(index) {
@@ -48,23 +47,8 @@ export default class FormEditorController {
       }
 
       const newId = generateUniqueId(0)
-      const newChild =  {
-        "params": {
-          "maxlength": 1000
-        },
-        "fieldClass": "formField",
-        "helpText": {
-          "fi": "Ohjeteksti",
-          "sv": "Hjälp på svenska"
-        },
-        "label": {
-          "fi": "Kuvaus",
-          "sv": "Deskription"
-        },
-        "id": newId,
-        "required": true,
-        "fieldType": newFieldType
-      }
+      const newChild = createNewField(newFieldType, newId)
+
       const parent = FormUtil.findField(formDraftJson.content, parentField.id)
       if (_.isArray(parent)) {
         parent.push(newChild)
@@ -72,5 +56,35 @@ export default class FormEditorController {
         parent.children.push(newChild)
       }
     })
+
+    function createNewField(fieldType, id) {
+      const newField = {
+        "params": {},
+        "fieldClass": "formField",
+        "helpText": { "fi": "Ohjeteksti", "sv": "Hjälp på svenska" },
+        "label": { "fi": "Kuvaus", "sv": "Deskription" },
+        "id": id,
+        "required": true,
+        "fieldType": fieldType
+      }
+
+      switch (fieldType) {
+        case "textArea":
+          newField.params.maxlength = 1000
+          break
+        case "radioButton":
+          newField.options = [
+            {
+              "value": "",
+              "label": { "fi": "", "sv": "" }
+            }
+          ]
+          break
+        default:
+          throw new Error("Don't know how to create field of type '" + fieldType + "'")
+      }
+
+      return newField
+    }
   }
 }

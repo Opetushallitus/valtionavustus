@@ -112,18 +112,23 @@ export class AppendableEditWrapper extends EditComponent {
   render() {
     const formEditorController = this.props.formEditorController
     const field = this.props.field
-    const onClick = e => {
-      e.preventDefault()
-      formEditorController.addChildFieldTo(field)
-    }
     return super.render(
       <div>
          {this.props.wrappedElement}
          <div className="soresu-field-add">
-           <span>Lisää kysymys</span> <button className="soresu-edit" onClick={onClick}>Tekstikenttä</button>
+           <span>Lisää kysymys</span>
+           <button className="soresu-edit" onClick={createOnclick("textArea")}>Tekstikenttä</button>
+           <button className="soresu-edit" onClick={createOnclick("radioButton")}>Monivalinta</button>
          </div>
       </div>
     )
+
+    function createOnclick(fieldType) {
+      return e => {
+        e.preventDefault()
+        formEditorController.addChildFieldTo(field, fieldType)
+      }
+    }
   }
 
   className() {
