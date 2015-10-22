@@ -26,7 +26,6 @@ export default class HakuEdit extends Component {
       controller.onChangeListener(avustushaku, e.target, e.target.value)
     }
 
-    console.log("avustushaku", avustushaku)
     return (
       <div id="haku-edit">
         <div id="haku-edit-header">
@@ -214,14 +213,18 @@ class RegisterNumber extends React.Component {
     const registerNumber = avustushaku["register-number"]
 
     const isRegisterNumberValid = registerNumber == null ? false : /^\d{1,5}\/\d{2,6}$/.test(registerNumber)
-    console.log("Is register number valid?", isRegisterNumberValid)
-    console.log("register number", registerNumber)
     const registerNumberClass = isRegisterNumberValid ? "" : "error"
     const errorStyle = {"padding-left": "5px"}
-    const errorString = isRegisterNumberValid ? "" : <span style={errorStyle} className="error">Diaarinumero ei ole oikean muotoinen (esim. 340/2015)</span>
-
+    var errorString = ""
+    if (_.isNull(registerNumber) || _.isEmpty(registerNumber)) {
+      errorString = <span style={errorStyle} className="error">Diaarinumero on pakollinen tieto</span>
+    } else if (!isRegisterNumberValid) {
+      errorString = <span style={errorStyle} className="error">
+                      Diaarinumero ei ole oikean muotoinen (esim. 340/2015)
+                    </span>
+    }
     return <div>
-             <h3>Diaarinumero</h3>
+             <h3 className="required">Diaarinumero</h3>
              <input onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
              {errorString}
            </div>
