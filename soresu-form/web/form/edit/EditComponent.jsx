@@ -105,6 +105,10 @@ export class InfoElementEditWrapper extends EditComponent {
 }
 
 export class AppendableEditWrapper extends EditComponent {
+  labelName() {
+    return "Otsikko"
+  }
+
   render() {
     const formEditorController = this.props.formEditorController
     const field = this.props.field
