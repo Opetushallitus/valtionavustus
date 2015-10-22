@@ -185,7 +185,7 @@ export class RadioButtonEdit extends EditComponent {
     return super.renderEditable(
       <div>
         {optionElements}
-        <button onClick={appendOption}>Lisää vastausvaihtoehto {field.options.length + 1}</button>
+        <button className="soresu-edit" onClick={appendOption}>Lisää vastausvaihtoehto {field.options.length + 1}</button>
       </div>)
 
     function renderOption(option) {
