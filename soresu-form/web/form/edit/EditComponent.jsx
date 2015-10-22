@@ -3,6 +3,37 @@ import ClassNames from 'classnames'
 
 export default class EditComponent extends React.Component {
 
+  static fieldName(){
+    return {
+      "h1": "Otsikko",
+      "p": "Ohjeteksti",
+      "dateRange": "Päivämääräväli",
+      "bulletList": "Lista",
+      "textField": "Vapaa tekstikenttä",
+      "textArea": "Vapaa tekstialue",
+      "emailField": "Sähköposti",
+      "moneyField": "Rahasumma",
+      "finnishBusinessIdField": "Y-tunnus",
+      "iban": "IBAN tilinumero",
+      "bic": "BIC pankkitunnus",
+      "dropdown": "Alasvetovalikko",
+      "radioButton": "Monivalinta (yksi valittavissa)",
+      "checkboxButton": "Monivalinta (useampi valittavissa)",
+      "namedAttachment": "Nimetty liitetiedosto",
+      "theme": "Lomakkeen osio",
+      "fieldset": "Kenttärivi",
+      "growingFieldset": "Kasvava kenttälista",
+      "growingFieldsetChild": "Kasvavan kenttälistan rivi",
+      "vaFocusAreas": "Painopistealueet",
+      "vaEmailNotification": "Sähköposti, johon lähetetään tiedoksi",
+      "vaProjectDescription": "Tavoite-Toiminta-Tulos",
+      "vaBudget": "Rahoituslaskelma",
+      "vaBudgetItemElement": "Rahoituslaskelman rivi",
+      "vaSummingBudgetElement": "Rahoituslaskelman summarivi",
+      "vaBudgetSummaryElement": "Rahoituslaskelman yhteenveto"
+    }
+  }
+
   fieldValueUpdater(valueContainerGetter, valueName, newValue) {
     const field = this.props.field
     const formEditorController = this.props.formEditorController
@@ -61,7 +92,8 @@ export default class EditComponent extends React.Component {
   }
 
   componentName() {
-    return this.props.field.fieldClass + ": " + this.props.field.fieldType
+    const name = EditComponent.fieldName()[this.props.field.fieldType]
+    return name ? name : this.props.field.fieldClass + ": " + this.props.field.fieldType
   }
 
   className() {
@@ -138,7 +170,4 @@ export class AppendableEditWrapper extends EditComponent {
 }
 
 export class TextFieldEdit extends EditComponent {
-  componentName() {
-    return "Vapaa teksti"
-  }
 }
