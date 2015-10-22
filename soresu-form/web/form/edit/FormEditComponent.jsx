@@ -9,7 +9,8 @@ export default class FormEditComponent extends React.Component {
     return {
       "textField": TextFieldEdit,
       "textArea": TextAreaEdit,
-      "radioButton": RadioButtonEdit
+      "radioButton": RadioButtonEdit,
+      "dropdown": RadioButtonEdit
     }
   }
 
