@@ -3,8 +3,8 @@ import ClassNames from 'classnames'
 
 export default class EditComponent extends React.Component {
 
-  static fieldName(){
-    return {
+  static fieldTypeInFI(fieldType){
+    const translations = {
       "h1": "Otsikko",
       "p": "Ohjeteksti",
       "dateRange": "Päivämääräväli",
@@ -32,6 +32,7 @@ export default class EditComponent extends React.Component {
       "vaSummingBudgetElement": "Rahoituslaskelman summarivi",
       "vaBudgetSummaryElement": "Rahoituslaskelman yhteenveto"
     }
+    return translations[fieldType] ? translations[fieldType] : field.fieldType
   }
 
   fieldValueUpdater(valueContainerGetter, valueName, newValue) {
@@ -77,7 +78,7 @@ export default class EditComponent extends React.Component {
     const removeField = e => { formEditorController.removeField(field) }
     return (
         <div key={htmlId} className={this.className()}>
-          <h3>{this.componentName()}</h3>
+          <h3>{EditComponent.fieldTypeInFI(field.fieldType)}</h3>
           <span onClick={removeField} className="soresu-edit soresu-field-remove">Poista</span>
           {labelEdit}
           {requiredEdit}
@@ -89,11 +90,6 @@ export default class EditComponent extends React.Component {
 
   labelName() {
     return "Kysymys"
-  }
-
-  componentName() {
-    const name = EditComponent.fieldName()[this.props.field.fieldType]
-    return name ? name : this.props.field.fieldClass + ": " + this.props.field.fieldType
   }
 
   className() {
@@ -144,13 +140,18 @@ export class AppendableEditWrapper extends EditComponent {
   render() {
     const formEditorController = this.props.formEditorController
     const field = this.props.field
+    const addableElements = ["textField", "textArea", "radioButton"]
+    const addElementButtons = []
+    for (var i = 0; i < addableElements.length; i++) {
+      addElementButtons.push(<button key={i} className="soresu-edit" onClick={createOnclick(addableElements[i])}>{EditComponent.fieldTypeInFI(addableElements[i])}</button>)
+    }
+
     return super.renderEditable(
       <div>
          {this.props.wrappedElement}
          <div className="soresu-field-add">
            <span>Lisää kysymys</span>
-           <button className="soresu-edit" onClick={createOnclick("textArea")}>Tekstikenttä</button>
-           <button className="soresu-edit" onClick={createOnclick("radioButton")}>Monivalinta</button>
+           {addElementButtons}
          </div>
       </div>
     )
