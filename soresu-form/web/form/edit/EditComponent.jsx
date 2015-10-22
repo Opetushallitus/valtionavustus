@@ -141,7 +141,7 @@ export class AppendableEditWrapper extends EditComponent {
   render() {
     const formEditorController = this.props.formEditorController
     const field = this.props.field
-    const addableElements = ["textField", "textArea", "radioButton"]
+    const addableElements = ["textField", "textArea", "radioButton", "dropdown"]
     const addElementButtons = []
     for (var i = 0; i < addableElements.length; i++) {
       addElementButtons.push(<button key={i} className="soresu-edit" onClick={createOnclick(addableElements[i])}>{EditComponent.fieldTypeInFI(addableElements[i])}</button>)
