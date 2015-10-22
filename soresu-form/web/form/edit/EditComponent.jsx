@@ -87,6 +87,23 @@ export class EditWrapper extends EditComponent {
   }
 }
 
+export class InfoElementEditWrapper extends EditComponent {
+  labelName() {
+    return "Otsikko"
+  }
+
+  render() {
+    const htmlId = this.props.htmlId
+    const textEdit = super.renderTranslationTable(htmlId + "-text", "Teksti", x => x.text)
+    return super.render(
+      <div>
+        {textEdit}
+        {this.props.wrappedElement}
+      </div>
+    )
+  }
+}
+
 export class AppendableEditWrapper extends EditComponent {
   render() {
     const formEditorController = this.props.formEditorController

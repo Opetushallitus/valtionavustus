@@ -4,7 +4,7 @@ import _ from 'lodash'
 import styles from '../style/preview.less'
 import printStyles from '../style/print.less'
 
-import {EditWrapper,AppendableEditWrapper} from 'soresu-form/web/form/edit/EditComponent.jsx'
+import {EditWrapper,AppendableEditWrapper,InfoElementEditWrapper} from 'soresu-form/web/form/edit/EditComponent.jsx'
 import FormEditComponent from 'soresu-form/web/form/edit/FormEditComponent.jsx'
 
 import FormPreview from '../FormPreview.jsx'
@@ -38,6 +38,7 @@ export default class FormEdit extends React.Component {
       }
     } else if (field.fieldClass == "infoElement") {
       fieldElement =  FormPreview.createInfoComponent(state, infoElementValues, field, fieldProperties, false)
+      return <InfoElementEditWrapper formEditorController={formEditorController} wrappedElement={fieldElement} htmlId={htmlId} key={htmlId} field={field}/>
     } else if (field.fieldClass == "wrapperElement") {
       if(controller.getCustomPreviewComponentTypeMapping()[field.fieldType]) {
         fieldElement = FormPreview.createWrapperComponent(FormPreview.renderField, controller, formEditorController, state, infoElementValues, field, fieldProperties, renderingParameters)
