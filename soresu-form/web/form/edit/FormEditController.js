@@ -61,8 +61,8 @@ export default class FormEditorController {
       const newField = {
         "params": {},
         "fieldClass": "formField",
-        "helpText": { "fi": "Ohjeteksti", "sv": "Hjälp på svenska" },
-        "label": { "fi": "Kuvaus", "sv": "Deskription" },
+        "helpText": { "fi": "", "sv": "" },
+        "label": { "fi": "", "sv": "" },
         "id": id,
         "required": true,
         "fieldType": fieldType
