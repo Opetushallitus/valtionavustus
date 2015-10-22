@@ -33,10 +33,7 @@ export default class HakuEdit extends Component {
           <h2>Muokkaa avustushakua</h2>
           <CreateHaku controller={controller} avustushaku={avustushaku}/>
         </div>
-        <div>
-          <h3>Diaarinumero (jos tiedossa)</h3>
-          <input onChange={onChange} maxLength="128" id="register-number" value={avustushaku["register-number"]} />
-        </div>
+        <RegisterNumber controller={controller} avustushaku={avustushaku} onChange={onChange} />
         <table id="name" className="translation">
           <thead><tr><th>Haun nimi</th><th>Haun nimi ruotsiksi</th></tr></thead>
           <tbody>
@@ -207,5 +204,26 @@ class SetStatus extends React.Component {
         {statuses}
       </div>
     )
+  }
+}
+
+class RegisterNumber extends React.Component {
+  render() {
+    const controller = this.props.controller
+    const avustushaku = this.props.avustushaku
+    const registerNumber = avustushaku["register-number"]
+
+    const isRegisterNumberValid = registerNumber == null ? false : /^\d{1,5}\/\d{2,6}$/.test(registerNumber)
+    console.log("Is register number valid?", isRegisterNumberValid)
+    console.log("register number", registerNumber)
+    const registerNumberClass = isRegisterNumberValid ? "" : "error"
+    const errorStyle = {"padding-left": "5px"}
+    const errorString = isRegisterNumberValid ? "" : <span style={errorStyle} className="error">Diaarinumero ei ole oikean muotoinen (esim. 340/2015)</span>
+
+    return <div>
+             <h3>Diaarinumero</h3>
+             <input onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
+             {errorString}
+           </div>
   }
 }
