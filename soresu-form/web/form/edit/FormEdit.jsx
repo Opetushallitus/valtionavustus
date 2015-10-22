@@ -44,10 +44,10 @@ export default class FormEdit extends React.Component {
       }
       else {
         fieldElement = FormPreview.createWrapperComponent(FormEdit.renderField, controller, formEditorController, state, infoElementValues, field, fieldProperties, renderingParameters)
-        return <AppendableEditWrapper formEditorController={formEditorController} wrappedElement={fieldElement} htmlId={htmlId} field={field}/>
+        return <AppendableEditWrapper formEditorController={formEditorController} wrappedElement={fieldElement} htmlId={htmlId} key={htmlId} field={field}/>
       }
     }
-    return <EditWrapper formEditorController={formEditorController} wrappedElement={fieldElement} htmlId={htmlId} field={field}/>
+    return <EditWrapper formEditorController={formEditorController} wrappedElement={fieldElement} htmlId={htmlId} key={htmlId} field={field}/>
   }
 
   render() {
