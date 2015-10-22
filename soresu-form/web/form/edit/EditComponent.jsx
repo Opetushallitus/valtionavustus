@@ -59,7 +59,7 @@ export default class EditComponent extends React.Component {
     )
   }
 
-  render(fieldSpecificEdit) {
+  renderEditable(fieldSpecificEdit) {
     const field = this.props.field
     const formEditorController = this.props.formEditorController
     const htmlId = this.props.htmlId
@@ -115,7 +115,7 @@ export default class EditComponent extends React.Component {
 
 export class EditWrapper extends EditComponent {
   render() {
-    return super.render(this.props.wrappedElement)
+    return super.renderEditable(this.props.wrappedElement)
   }
 }
 
@@ -127,7 +127,7 @@ export class InfoElementEditWrapper extends EditComponent {
   render() {
     const htmlId = this.props.htmlId
     const textEdit = super.renderTranslationTable(htmlId + "-text", "Teksti", x => x.text)
-    return super.render(
+    return super.renderEditable(
       <div>
         {textEdit}
         {this.props.wrappedElement}
@@ -144,7 +144,7 @@ export class AppendableEditWrapper extends EditComponent {
   render() {
     const formEditorController = this.props.formEditorController
     const field = this.props.field
-    return super.render(
+    return super.renderEditable(
       <div>
          {this.props.wrappedElement}
          <div className="soresu-field-add">
@@ -170,4 +170,7 @@ export class AppendableEditWrapper extends EditComponent {
 }
 
 export class TextFieldEdit extends EditComponent {
+  render() {
+    return super.renderEditable()
+  }
 }
