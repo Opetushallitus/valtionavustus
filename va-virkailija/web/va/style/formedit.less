@@ -2,6 +2,13 @@
 @import "../../../../va-common/web/va/style/soresu-va";
 
 div.soresu-form-edit {
+  &.soresu-edit {
+    border-left: none;
+  }
+  padding-top: 10px;
+  h3 {
+    text-transform: uppercase;
+  }
   button.soresu-edit {
     font-size: 16px;
     margin-left: 6px;
@@ -9,10 +16,16 @@ div.soresu-form-edit {
   }
 }
 
+ol {
+  div.soresu-field-edit {
+    padding-left: 30px;
+  }
+}
+
 div.soresu-edit {
-  padding: 0 0 10px 10px;
+  padding: 0 0 10px 15px;
   background-color: @off-white;
-  border: 1px solid @light-gray;
+  border-left: 1px solid #e6e6e6;
   :last-child  {
     margin-bottom: 0;
   }
@@ -28,6 +41,12 @@ div.soresu-field-edit, div.soresu-appendable-wrapper-edit {
   input[type=radio] + label {
     padding: 2px 4px;
   }
+}
+
+div.soresu-field-edit {
+  margin-bottom: 30px;
+  border-left-width: 10px;
+  padding-bottom: 0;
 }
 
 .soresu-field-remove {

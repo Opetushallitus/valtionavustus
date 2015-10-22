@@ -62,7 +62,7 @@ export default class FormEdit extends React.Component {
       return FormEdit.renderField(controller, formEditorController, state, infoElementValues, field)
     }
 
-    return  <div className="soresu-edit soresu-form-edit">
+    return  <div className="soresu-form-edit soresu-edit">
       {fields.map(renderField) }
     </div>
   }
