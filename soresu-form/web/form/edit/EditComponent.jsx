@@ -237,7 +237,7 @@ export class RadioButtonEdit extends EditComponent {
     const optionElements = _.map(field.options, renderOption)
     const appendOption = e => { formEditorController.appendOption(field) }
     return super.renderEditable(
-      <div>
+      <div className="soresu-radio-button-edit">
         {optionElements}
         <button className="soresu-edit" onClick={appendOption}>Lisää vastausvaihtoehto {field.options.length + 1}</button>
       </div>)
@@ -259,7 +259,6 @@ export class RadioButtonEdit extends EditComponent {
       const title = "Vastausvaihtoehto " + (indexOfOption + 1)
       return <div className="soresu-radio-option-edit" key={field.id + "-option-" + indexOfOption}>
                <span className="soresu-radio-option-edit-title">{title}</span>
-               <input type="radio"/>
                <input type="text" placeholder="Vastausvaihtoehto" onChange={createOnChange("fi")} value={labelGetter(field).fi}/>
                <input type="text" placeholder="Vastausvaihtoehto ruotsiksi" onChange={createOnChange("sv")} value={labelGetter(field).sv}/>
                <span onClick={removeOption} className="soresu-edit soresu-field-remove"></span>
