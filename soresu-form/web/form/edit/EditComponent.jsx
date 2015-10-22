@@ -119,7 +119,9 @@ export class AppendableEditWrapper extends EditComponent {
     return super.render(
       <div>
          {this.props.wrappedElement}
-         <a className="soresu-edit soresu-add-field" onClick={onClick}>Lisää tekstikenttä</a>
+         <div className="soresu-field-add">
+           <span>Lisää kysymys</span> <button className="soresu-edit" onClick={onClick}>Tekstikenttä</button>
+         </div>
       </div>
     )
   }
