@@ -77,8 +77,8 @@ export default class FormEditorController {
           break
         case "radioButton":
           newField.options = [
-            { "value": "", "label": { "fi": "", "sv": "" } },
-            { "value": "", "label": { "fi": "", "sv": "" } }
+            FormEditorController.createEmptyOption(),
+            FormEditorController.createEmptyOption()
           ]
           break
         default:
@@ -87,5 +87,16 @@ export default class FormEditorController {
 
       return newField
     }
+  }
+
+  static createEmptyOption() {
+    return { "value": "", "label": { "fi": "", "sv": "" } }
+  }
+
+  appendOption(radioButtonField) {
+    this.doEdit(() => {
+      const fieldInForm = FormUtil.findField(this.formDraftJson.content, radioButtonField.id)
+      fieldInForm.options.push(FormEditorController.createEmptyOption())
+    })
   }
 }

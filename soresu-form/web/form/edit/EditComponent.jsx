@@ -179,11 +179,13 @@ export class TextFieldEdit extends EditComponent {
 export class RadioButtonEdit extends EditComponent {
   render() {
     const field = this.props.field
+    const formEditorController = this.props.formEditorController
     const optionElements = _.map(field.options, renderOption)
+    const appendOption = e => { formEditorController.appendOption(field) }
     return super.renderEditable(
       <div>
         {optionElements}
-        <span>Lisää vastausvaihtoehto</span>
+        <button onClick={appendOption}>Lisää vastausvaihtoehto {field.options.length + 1}</button>
       </div>)
 
     function renderOption(option) {
