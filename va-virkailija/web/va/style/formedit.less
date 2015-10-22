@@ -21,6 +21,13 @@ div.soresu-edit {
 div.soresu-field-edit, div.soresu-appendable-wrapper-edit {
   position: relative;
   margin: 10px 10px 0 0;
+  label, table.translation th {
+    color: @form-label-black;
+    font-size: 13px;
+  }
+  input[type=radio] + label {
+    padding: 2px 4px;
+  }
 }
 
 .soresu-field-remove {
@@ -33,6 +40,11 @@ div.soresu-field-edit, div.soresu-appendable-wrapper-edit {
   margin-right: 4px;
   margin-top: 4px;
   cursor: pointer;
+}
+
+.soresu-edit-property {
+  margin-right: 10px;
+  font-size: 12px;
 }
 
 .soresu-field-add {

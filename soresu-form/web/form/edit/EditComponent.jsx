@@ -60,7 +60,7 @@ export default class EditComponent extends React.Component {
     )
   }
 
-  renderEditable(fieldSpecificEdit) {
+  renderEditable(fieldSpecificEditInEnd, fieldSpecificEditInMiddle) {
     const field = this.props.field
     const formEditorController = this.props.formEditorController
     const htmlId = this.props.htmlId
@@ -69,10 +69,10 @@ export default class EditComponent extends React.Component {
     var requiredEdit = undefined
     if(typeof field.required != 'undefined') {
       requiredEdit = (
-        <div>
-          <label htmlFor={htmlId+"-required"}>Pakollinen tieto</label>
+        <span className="soresu-edit-property">
           <input onChange={this.fieldValueUpdater(x => x, "required", !field.required)} type="checkbox" id={htmlId+"-required"} name={htmlId+"-required"} checked={field.required}/>
-        </div>
+          <label htmlFor={htmlId+"-required"}> Pakollinen tieto</label>
+        </span>
       )
     }
     const removeField = e => { formEditorController.removeField(field) }
@@ -82,8 +82,9 @@ export default class EditComponent extends React.Component {
           <span onClick={removeField} className="soresu-edit soresu-field-remove">Poista</span>
           {labelEdit}
           {requiredEdit}
+          {fieldSpecificEditInMiddle}
           {helpTextEdit}
-          {fieldSpecificEdit}
+          {fieldSpecificEditInEnd}
         </div>
     )
   }
@@ -171,8 +172,61 @@ export class AppendableEditWrapper extends EditComponent {
 }
 
 export class TextFieldEdit extends EditComponent {
+  sizeLabel() {
+    return "Leveys"
+  }
+
   render() {
-    return super.renderEditable()
+    const htmlId = this.props.htmlId
+    const field = this.props.field
+    const maxLengthEdit = (
+      <span className="soresu-edit-property">
+        <label htmlFor={htmlId+"-max-length"}>Merkkirajoitus</label>
+        <input type="number" min="1" max="9999" maxLength="4" onChange={this.fieldValueUpdater(x => x.params, "maxlength")} id={htmlId+"-max-length"} name={htmlId+"-max-length"} value={field.params.maxlength}/>
+      </span>
+    )
+    const sizeAlternatives = ["small", "medium", "large"]
+    const sizeTexts = {
+      "small": "S",
+      "medium": "M",
+      "large": "L"
+    }
+    const sizeAlternenativeButtons = []
+    for (var i = 0; i < sizeAlternatives.length; i++) {
+      sizeAlternenativeButtons.push(
+        <input type="radio" id={htmlId + ".size." + i}
+               key={"size-input-" + i}
+               name={htmlId + "-size"}
+               value={sizeAlternatives[i]}
+               onChange={this.fieldValueUpdater(x => x.params, "size")}
+               checked={sizeAlternatives[i] === field.params.size ? true: null} />
+      )
+      sizeAlternenativeButtons.push(
+        <label key={"size-label-" + i} htmlFor={htmlId + ".size." + i}>
+          {sizeTexts[sizeAlternatives[i]]}
+        </label>
+      )
+    }
+    const sizeEdit = (
+      <span className="soresu-edit-property">
+        <label>{this.sizeLabel()}</label>
+        {sizeAlternenativeButtons}
+      </span>
+    )
+
+    return super.renderEditable(
+        undefined,
+        <span>
+          {sizeEdit}
+          {maxLengthEdit}
+        </span>
+    )
+  }
+}
+
+export class TextAreaEdit extends TextFieldEdit {
+  sizeLabel() {
+    return "Korkeus"
   }
 }
 

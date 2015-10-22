@@ -70,10 +70,12 @@ export default class FormEditorController {
 
       switch (fieldType) {
         case "textField":
-          newField.params.maxlength = 200
+          newField.params.maxlength = 100
+          newField.params.size = "medium"
           break
         case "textArea":
           newField.params.maxlength = 1000
+          newField.params.size = "medium"
           break
         case "radioButton":
           newField.options = [
