@@ -79,6 +79,7 @@ export default class FormEditorController {
           break
         case "radioButton":
         case "dropdown":
+        case "checkboxButton":
           newField.options = [
             FormEditorController.createEmptyOption(),
             FormEditorController.createEmptyOption()

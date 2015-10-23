@@ -1,6 +1,8 @@
 import React from 'react'
 import ClassNames from 'classnames'
 
+import FormEditComponent from './FormEditComponent.jsx'
+
 export default class EditComponent extends React.Component {
 
   static fieldTypeInFI(fieldType){
@@ -141,7 +143,7 @@ export class AppendableEditWrapper extends EditComponent {
   render() {
     const formEditorController = this.props.formEditorController
     const field = this.props.field
-    const addableElements = ["textField", "textArea", "radioButton", "dropdown"]
+    const addableElements = _.keys(FormEditComponent.fieldTypeMapping())
     const addElementButtons = []
     for (var i = 0; i < addableElements.length; i++) {
       addElementButtons.push(<button key={i} className="soresu-edit" onClick={createOnclick(addableElements[i])}>{EditComponent.fieldTypeInFI(addableElements[i])}</button>)
@@ -230,7 +232,7 @@ export class TextAreaEdit extends TextFieldEdit {
   }
 }
 
-export class RadioButtonEdit extends EditComponent {
+export class MultipleChoiceEdit extends EditComponent {
   render() {
     const field = this.props.field
     const formEditorController = this.props.formEditorController

@@ -1,6 +1,6 @@
 import React from 'react'
 import ComponentFactory from '../ComponentFactory.js'
-import {TextFieldEdit,TextAreaEdit,RadioButtonEdit} from './EditComponent.jsx'
+import {TextFieldEdit,TextAreaEdit,MultipleChoiceEdit} from './EditComponent.jsx'
 import {TextFieldPropertyMapper} from '../component/PropertyMapper.js'
 
 export default class FormEditComponent extends React.Component {
@@ -9,8 +9,9 @@ export default class FormEditComponent extends React.Component {
     return {
       "textField": TextFieldEdit,
       "textArea": TextAreaEdit,
-      "radioButton": RadioButtonEdit,
-      "dropdown": RadioButtonEdit
+      "radioButton": MultipleChoiceEdit,
+      "checkboxButton": MultipleChoiceEdit,
+      "dropdown": MultipleChoiceEdit
     }
   }
 
