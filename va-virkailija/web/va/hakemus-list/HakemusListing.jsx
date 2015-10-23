@@ -9,7 +9,7 @@ export default class HakemusListing extends Component {
   static _fieldGetter(fieldName, userInfo) {
     switch(fieldName) {
       case "name":
-        return hakemus => hakemus["project-name"]
+        return hakemus => hakemus["project-name"] + " (" + hakemus["register-number"] + ")"
       case "organization":
         return hakemus => hakemus["organization-name"]
       case "status":
@@ -102,7 +102,7 @@ export default class HakemusListing extends Component {
             <HakemusSorter field="organization" sorter={sorter} controller={controller}/>
           </th>
           <th className="project-name-column">
-            <input className="text-filter" placeholder="Hanke" onChange={onFilterChange("name")} value={filter.name}></input>
+            <input className="text-filter" placeholder="Hanke tai diaarinumero" onChange={onFilterChange("name")} value={filter.name}></input>
             <HakemusSorter field="name" sorter={sorter} controller={controller}/>
           </th>
           <th className="score-column">Arvio <HakemusSorter field="score" sorter={sorter} controller={controller}/></th>

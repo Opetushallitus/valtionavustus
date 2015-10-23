@@ -273,7 +273,7 @@ export default class HakemustenArviointiController {
 
   setFilter(filterId, newFilter) {
     dispatcher.push(events.setFilter, {filterId: filterId,
-                                         filter: newFilter})
+                                       filter: newFilter})
   }
 
   setSorter(newSorter) {
