@@ -15,6 +15,7 @@
                                                :bulletList
                                                :dateRange
                                                :endOfDateRange)
+                            :helpText LocalizedString
                             (s/optional-key :params) s/Any
                             (s/optional-key :label) LocalizedString
                             (s/optional-key :text) LocalizedString})
@@ -44,7 +45,7 @@
                             :id s/Str
                             :required s/Bool
                             (s/optional-key :label) LocalizedString
-                            (s/optional-key :helpText) LocalizedString
+                            :helpText LocalizedString
                             (s/optional-key :initialValue) (s/either LocalizedString
                                                                      s/Int)
                             (s/optional-key :params) s/Any
@@ -52,17 +53,17 @@
                             :fieldType (apply s/enum form-element-types)})
 
     (s/defschema BasicElement (s/either FormField
-                                          Button
-                                          InfoElement))
+                                        Button
+                                        InfoElement))
 
-    (s/defschema WrapperElement {:fieldClass                    (s/eq "wrapperElement")
-                                     :id                      s/Str
-                                     :fieldType               (apply s/enum wrapper-element-types )
-                                     :children                [(s/either BasicElement
-                                                                         (s/recursive #'WrapperElement))]
-                                     (s/optional-key :params) s/Any
-                                     (s/optional-key :label)  LocalizedString
-                                     (s/optional-key :helpText)  LocalizedString})
+    (s/defschema WrapperElement {:fieldClass              (s/eq "wrapperElement")
+                                 :id                      s/Str
+                                 :fieldType               (apply s/enum wrapper-element-types )
+                                 :children                [(s/either BasicElement
+                                                           (s/recursive #'WrapperElement))]
+                                 (s/optional-key :params) s/Any
+                                 (s/optional-key :label)  LocalizedString
+                                 :helpText LocalizedString})
 
     (s/defschema Answer {:key s/Str,
                            :value (s/either s/Str

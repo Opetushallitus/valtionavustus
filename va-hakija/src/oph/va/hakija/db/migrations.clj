@@ -11,6 +11,11 @@
 (defn migrate [ds-key & migration-paths]
   (apply (partial migrations/migrate ds-key) migration-paths))
 
+(defn update-forms! [forms-to-transform transformation]
+  (doseq [form forms-to-transform]
+    (let [changed-form (formutil/transform-form-content form transformation)]
+      (db/update-form! changed-form))))
+
 (migrations/defmigration migrate-organization-email-of-form1 "1.10"
   "Change organization email description of form 1"
   (let [form (db/get-form 1)
@@ -99,3 +104,14 @@
                                                              :submission_id (:id submission)
                                                              :version (:version submission)
                                                              :form_id (:form submission)}))))))
+
+(migrations/defmigration migrate-add-helptext-to-all-form-fields "1.20"
+  "Add empty helpText to all form fields that currently don't have helpText"
+ (letfn [(missing-helptext? [node]
+           (and (:fieldClass node)
+                (not (:helpText node))))
+         (add-helptext [node]
+           (if (missing-helptext? node)
+             (assoc node :helpText {:fi "" :sv ""})
+             node))]
+   (update-forms! (db/list-forms) add-helptext)))
