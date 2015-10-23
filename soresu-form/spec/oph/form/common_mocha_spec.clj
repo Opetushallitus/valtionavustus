@@ -1,4 +1,4 @@
-(ns oph.va.common_mocha-spec
+(ns oph.soresu.common_mocha-spec
   (:use [clojure.tools.trace]
         [clojure.java.shell :only [sh]]
         [clojure.string :only [split join]])
@@ -7,12 +7,11 @@
 (defn is-test-output? [line]
   (or (.contains line "testcase") (.contains line "testsuite")))
 
-(describe "va-common module Mocha unit tests /"
+(describe "soresu Mocha unit tests /"
 
   (tags :js-unit)
 
   (it "are successful"
-      (pending)
       (let [results (sh "./node_modules/mocha/bin/mocha"
                         "--compilers" "js:babel/register"
                         "--reporter" "mocha-junit-reporter"

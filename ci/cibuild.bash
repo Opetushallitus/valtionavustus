@@ -29,6 +29,9 @@ va_virkailija_default_source_path="va-virkailija/target/uberjar/virkailija-*-sta
 function clean() {
   echo "Running lein clean and emptying all subdirectories with name 'node_modules'"
   $LEIN modules clean
+  cd soresu-form
+  $LEIN clean
+  cd ..
   find $PROJECTROOTPATH -depth -type d -name 'node_modules' -exec rm -rf {} \;
 }
 
@@ -46,6 +49,7 @@ function install_module() {
 }
 
 function uberjar() {
+  install_module soresu-form
   install_module va-common
   for m in va-hakija va-virkailija; do
     cd $m
@@ -71,6 +75,7 @@ function run_tests() {
   fi
 
   run_soresu_form_tests
+  install_module soresu-form
   install_module va-common
   time $LEIN with-profile ci modules spec -f junit || true
 
