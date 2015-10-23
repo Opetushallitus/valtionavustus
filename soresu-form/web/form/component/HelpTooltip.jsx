@@ -9,8 +9,7 @@ export default class HelpTooltip extends React.Component {
       return <span/>
     }
     const value = translator.translate("content", this.props.lang)
-    return <a className="soresu-tooltip soresu-tooltip-up">
-      <img src="img/show_tooltip.png"/>
+    return <a className="soresu-tooltip soresu-tooltip-up soresu-help-icon">
       <span>{value}</span>
     </a>
   }

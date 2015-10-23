@@ -546,17 +546,22 @@ button[disabled].soresu-text-button {
 a.soresu-tooltip {
   position: relative;
   display: inline;
-}
-
-a.soresu-tooltip img {
-  margin-left: 5px;
+  &.soresu-help-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-top: 1px;
+    margin-left: 5px;
+    background: transparent url('../img/show_tooltip.png') no-repeat left top;
+  }
 }
 
 a.soresu-tooltip > span {
   position: absolute;
   width: 600px;
-  left: -217px;
+  left: -223px;
   margin-left: -76px;
+  margin-bottom: -4px;
   color: @form-label-black;
   background: #fff;
   border: 1px solid @light-gray;
