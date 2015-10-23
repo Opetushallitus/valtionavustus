@@ -8,7 +8,7 @@ Ansökan kan bearbetas ända till  ansökningstidens slut. Ansökningarna behand
 
 OBS! Du kan dela detta meddelande till andra projektpartner, men observera att de kan också bearbeta ansökan.
 
-Tillägsuppgifter ger statsunderstod@op.fi
+Tillägsuppgifter ger statsunderstod@oph.fi
 
 Utbildningsstyrelsen
 Hagnäskajen 6
