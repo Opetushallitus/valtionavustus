@@ -8,6 +8,7 @@ div.soresu-form-edit {
   padding-top: 10px;
   h3 {
     text-transform: uppercase;
+    padding-bottom: 10px;
   }
   button.soresu-edit {
     font-size: 16px;
@@ -25,7 +26,8 @@ ol {
 div.soresu-edit {
   padding: 0 0 10px 15px;
   background-color: @off-white;
-  border-left: 1px solid #e6e6e6;
+  border: 1px solid #e6e6e6;
+  border-right: none;
   :last-child  {
     margin-bottom: 0;
   }
@@ -48,7 +50,9 @@ div.soresu-field-edit {
   border-left-width: 10px;
   padding-bottom: 0;
   &:hover {
-    border-left-color: @dark-blue;
+    border: 1px solid @dark-blue;
+    border-left-width: 10px;
+    border-right: none;
     //background-color: lighten(@dark-blue, 40%);
   }
 }
