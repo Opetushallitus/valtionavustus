@@ -214,7 +214,7 @@ class RegisterNumber extends React.Component {
 
     const isRegisterNumberValid = registerNumber == null ? false : /^\d{1,5}\/\d{2,6}$/.test(registerNumber)
     const registerNumberClass = isRegisterNumberValid ? "" : "error"
-    const errorStyle = {"padding-left": "5px"}
+    const errorStyle = {paddingLeft: "5px"}
     var errorString = ""
     if (_.isNull(registerNumber) || _.isEmpty(registerNumber)) {
       errorString = <span style={errorStyle} className="error">Diaarinumero on pakollinen tieto</span>
