@@ -253,9 +253,15 @@ class HakemusRow extends Component {
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
     const controller = this.props.controller
     const statusFI = HakemusStatuses.statusToFI(hakemus.arvio.status)
+    var hakemusName = ""
+    if (_.isEmpty(hakemus["project-name"])) {
+      hakemusName = hakemus["register-number"]
+    } else {
+      hakemusName = hakemus["project-name"] + " (" + hakemus["register-number"] + ")"
+    }
     return <tr id={htmlId} className={rowClass} onClick={controller.selectHakemus(hakemus)}>
       <td className="organization-column">{hakemus["organization-name"]}</td>
-      <td className="project-name-column">{hakemus["project-name"]}</td>
+      <td className="project-name-column">{hakemusName}</td>
       <td className="score-column"><Scoring scoring={hakemus.arvio.scoring} userInfo={userInfo}/></td>
       <td className="status-column">{statusFI}</td>
       <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>
