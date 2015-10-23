@@ -1,5 +1,5 @@
 (defproject oph/soresu "0.1.0-SNAPSHOT"
-  :description "OPH Sores forms"
+  :description "OPH Soresu forms"
   :url "https://github.com/Opetushallitus/valtionavustus"
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
