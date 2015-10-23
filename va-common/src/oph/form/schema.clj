@@ -53,14 +53,14 @@
                             :fieldType (apply s/enum form-element-types)})
 
     (s/defschema BasicElement (s/either FormField
-                                          Button
-                                          InfoElement))
+                                        Button
+                                        InfoElement))
 
-    (s/defschema WrapperElement {:fieldClass                    (s/eq "wrapperElement")
+    (s/defschema WrapperElement {:fieldClass              (s/eq "wrapperElement")
                                  :id                      s/Str
                                  :fieldType               (apply s/enum wrapper-element-types )
                                  :children                [(s/either BasicElement
-                                                                     (s/recursive #'WrapperElement))]
+                                                           (s/recursive #'WrapperElement))]
                                  (s/optional-key :params) s/Any
                                  (s/optional-key :label)  LocalizedString
                                  :helpText LocalizedString})
