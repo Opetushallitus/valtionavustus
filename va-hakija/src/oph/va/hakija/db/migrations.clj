@@ -107,11 +107,11 @@
 
 (migrations/defmigration migrate-add-helptext-to-all-form-fields "1.20"
   "Add empty helpText to all form fields that currently don't have helpText"
- (letfn [(is-form-node-without-helptext? [node]
+ (letfn [(missing-helptext? [node]
            (and (:fieldClass node)
                 (not (:helpText node))))
          (add-helptext [node]
-           (if (is-form-node-without-helptext? node)
+           (if (missing-helptext? node)
              (assoc node :helpText {:fi "" :sv ""})
              node))]
    (update-forms! (db/list-forms) add-helptext)))
