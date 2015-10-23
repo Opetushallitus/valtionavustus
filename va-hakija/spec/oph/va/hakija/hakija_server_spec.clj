@@ -157,10 +157,12 @@
         (should= 1 (-> json :id))
         (should= {:fieldClass "infoElement"
                   :id "name"
-                  :fieldType "h1"} (-> json :content first))
+                  :fieldType "h1"
+                  :helpText {:fi "" :sv ""}} (-> json :content first))
         (should= {:fieldType "dateRange",
                   :id "duration",
-                  :fieldClass "infoElement"} (-> json :content second))
+                  :fieldClass "infoElement"
+                  :helpText {:fi "" :sv ""}} (-> json :content second))
         (should= {:fieldClass "formField"
                   :id "organization"
                   :required true
@@ -175,7 +177,8 @@
         (should= {:fieldClass "infoElement"
                   :id "selection-criteria"
                   :fieldType "bulletList"
-                  :params {:preview false :initiallyOpen true}} (find-by-id json "selection-criteria"))
+                  :params {:preview false :initiallyOpen true}
+                  :helpText {:fi "" :sv ""}} (find-by-id json "selection-criteria"))
         ))
 
   (it "GET should return not-found from route /api/form/1/values/1"

@@ -15,6 +15,7 @@
                                                :bulletList
                                                :dateRange
                                                :endOfDateRange)
+                            :helpText LocalizedString
                             (s/optional-key :params) s/Any
                             (s/optional-key :label) LocalizedString
                             (s/optional-key :text) LocalizedString})
@@ -44,7 +45,7 @@
                             :id s/Str
                             :required s/Bool
                             (s/optional-key :label) LocalizedString
-                            (s/optional-key :helpText) LocalizedString
+                            :helpText LocalizedString
                             (s/optional-key :initialValue) (s/either LocalizedString
                                                                      s/Int)
                             (s/optional-key :params) s/Any
@@ -62,7 +63,7 @@
                                                                      (s/recursive #'WrapperElement))]
                                  (s/optional-key :params) s/Any
                                  (s/optional-key :label)  LocalizedString
-                                 (s/optional-key :helpText)  LocalizedString})
+                                 :helpText LocalizedString})
 
     (s/defschema Answer {:key s/Str,
                            :value (s/either s/Str

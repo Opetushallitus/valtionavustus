@@ -4,7 +4,8 @@ import Translator from '../Translator.js'
 export default class HelpTooltip extends React.Component {
   render() {
     const translator = new Translator(this.props)
-    if (!_.get(this.props, "content." + this.props.lang)) {
+    const helpText = _.get(this.props, "content." + this.props.lang);
+    if (!helpText || "" === helpText) {
       return <span/>
     }
     const value = translator.translate("content", this.props.lang)
