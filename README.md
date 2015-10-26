@@ -14,7 +14,10 @@ Riippuvuudet asentuvat ajamalla komennot:
 
 ja
 
-    cd va-hakija && npm install
+    cd soresu-form && npm install && cd ..
+    cd va-common && npm install && cd ..
+    cd va-hakija && npm install && cd ..
+    cd va-virkailija && npm install
 
 Kehitysaikaisesti hyödyllisiä työkaluja:
 
@@ -43,10 +46,16 @@ Luo skeema ja lataa initial data (myös serverin start ajaa automaattisesti migr
 
     cd va-hakija
     ../lein dbmigrate
+    cd ..
+    cd va-virkailija
+    ../lein dbmigrate
 
 Tietokannan saa kokonaan tyhjättyä ajamalla
 
     cd va-hakija
+    ../lein dbclear
+    cd ..
+    cd va-virkailija
     ../lein dbclear
 
 # Käynnistys
@@ -59,13 +68,20 @@ Paikallisesti (ilman fronttibuildia):
 
     cd va-hakija
     ../lein trampoline run
+    cd va-virkailija
+    ../lein trampoline run
 
-Kannan tyhjäys, fronttibuildi ja käynnistys paikallisesti:
+Kannan tyhjäys, fronttibuildi ja sovelluksen käynnistys paikallisesti:
 
     cd va-hakija
     ../lein trampoline do dbclear, buildfront, run
 
-Tuotantoversiona:
+Tai virkailijasovellukselle
+
+    cd va-virkailija
+    ../lein trampoline do dbclear, buildfront, run
+
+Hakijasovellus tuotantoversiona:
 
     cd va-hakija
     ../lein uberjar
@@ -75,10 +91,7 @@ Tuotantoversiona:
 
 Eri ympäristön voi ottaa käyttöön seuraavasti (ympäristöjen konffit ovat ```config``` hakemistossa)
 
-    ./lein with-profile dev run
-    ./lein with-profile test run
-    ./lein with-profile va-test run
-    ./lein with-profile va-prod run
+    ../lein with-profile [dev,test,va-test,va-prod] run
 
 # Dokumentaatio
 
@@ -86,12 +99,11 @@ Swagger-pohjainen API-dokumentaatio löytyy osoitteesta http://localhost:8080/do
 
 # Testien ajo
 
-Testien ja fronttibuildin ajo (ajaa myös mocha testit):
+Testien ajo (ajaa myös mocha testit):
 
-    cd va-hakija
-    ../lein with-profile test do buildfront, spec -f d
+    ./lein with-profile test do modules clean, modules spec -f d
 
-tai (automaattisesti pelkät testit aina muutoksissa)
+tai (automaattisesti pelkät hakijapuolen testit aina muutoksissa)
 
     cd va-hakija
     ../lein with-profile test spec -a
@@ -106,14 +118,20 @@ terminaaliin oma watch komento:
     cd va-hakija
     npm run watch
 
-Common jarrin teko automaattisesti aina muutoksista
+    cd va-virkailija
+    npm run watch
+
+Yhteisten jarrien teko automaattisesti aina muutoksista
+
+    cd soresu-form
+    ../lein auto install
 
     cd va-common
     ../lein auto install
 
 Kaikkien moduulien install ja testien ajo projektin juuressa:
 
-    ./lein modules do install, spec
+    ./lein with-profile test do modules install, modules spec -f d
 
 ## Mocha testit
 
