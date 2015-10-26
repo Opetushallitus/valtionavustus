@@ -60,8 +60,8 @@
        (exec :db queries/get-hakemus-by-user-id)
        first))
 
-(defn- register-number-exists? [register-number]
-  (->> (exec :db queries/register-number-exists? {:suffix register-number})
+(defn- register-number-sequence-exists? [register-number]
+  (->> (exec :db queries/register-number-sequence-exists? {:suffix register-number})
        first
        nil?
        not))
@@ -71,9 +71,9 @@
     (when (re-matches #"\d+/\d+" avustushaku-register-number)
       (let [hakemus (get-hakemus user-key)
             params {:suffix avustushaku-register-number}
-            {:keys [suffix seq_number]} (if (register-number-exists? avustushaku-register-number)
-                                          (exec :db queries/update-register-number<! params)
-                                          (exec :db queries/create-register-number<! params))]
+            {:keys [suffix seq_number]} (if (register-number-sequence-exists? avustushaku-register-number)
+                                          (exec :db queries/update-register-number-sequence<! params)
+                                          (exec :db queries/create-register-number-sequence<! params))]
         (format "%d/%s" seq_number avustushaku-register-number)))))
 
 (defn create-hakemus! [avustushaku-id form-id answers]
