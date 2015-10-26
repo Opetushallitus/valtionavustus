@@ -15,6 +15,7 @@
             [oph.common.config :refer [config config-simple-name]]
             [oph.common.routes :refer :all]
             [oph.va.routes :refer :all]
+            [oph.va.jdbc.enums :refer :all]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.auth :as auth]
