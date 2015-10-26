@@ -2,6 +2,7 @@ import React from 'react'
 import ClassNames from 'classnames'
 
 import FormEditComponent from './FormEditComponent.jsx'
+import FormUtil from '../FormUtil.js'
 
 class EditComponent extends React.Component {
 
@@ -203,10 +204,16 @@ export class TextFieldEdit extends FieldEditComponent {
   render() {
     const htmlId = this.props.htmlId
     const field = this.props.field
+    const formEditorController = this.props.formEditorController
+    const editMaxLength = e => {
+      const getter = f => f.params
+      const value = FormUtil.isNumeric(e.target.value) ? parseInt(e.target.value) : undefined
+      formEditorController.editField(field.id, getter, "maxlength", value)
+    }
     const maxLengthEdit = (
       <span className="soresu-edit-property">
         <label htmlFor={htmlId+"-max-length"}>Merkkirajoitus</label>
-        <input type="number" min="1" max="9999" maxLength="4" onChange={this.fieldValueUpdater(x => x.params, "maxlength")} id={htmlId+"-max-length"} name={htmlId+"-max-length"} value={field.params.maxlength}/>
+        <input type="number" min="1" max="9999" maxLength="4" onChange={editMaxLength} id={htmlId+"-max-length"} name={htmlId+"-max-length"} value={field.params.maxlength}/>
       </span>
     )
     const sizeAlternatives = ["small", "medium", "large"]
