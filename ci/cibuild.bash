@@ -29,9 +29,6 @@ va_virkailija_default_source_path="va-virkailija/target/uberjar/virkailija-*-sta
 function clean() {
   echo "Running lein clean and emptying all subdirectories with name 'node_modules'"
   $LEIN modules clean
-  cd soresu-form
-  $LEIN clean
-  cd ..
   find $PROJECTROOTPATH -depth -type d -name 'node_modules' -exec rm -rf {} \;
 }
 
