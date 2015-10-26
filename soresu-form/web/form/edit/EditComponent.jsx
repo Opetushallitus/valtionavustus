@@ -3,7 +3,7 @@ import ClassNames from 'classnames'
 
 import FormEditComponent from './FormEditComponent.jsx'
 
-export default class EditComponent extends React.Component {
+class EditComponent extends React.Component {
 
   static fieldTypeInFI(fieldType){
     const translations = {
@@ -62,21 +62,11 @@ export default class EditComponent extends React.Component {
     )
   }
 
-  renderEditable(fieldSpecificEditInEnd, fieldSpecificEditInMiddle) {
+  renderEditable(fieldSpecificEdit) {
     const field = this.props.field
     const formEditorController = this.props.formEditorController
     const htmlId = this.props.htmlId
     var labelEdit = this.renderTranslationTable(htmlId + "-label", this.labelName(), x => x.label)
-    var helpTextEdit = this.renderTranslationTable(htmlId + "-help-text", "Ohjeteksti", x => x.helpText)
-    var requiredEdit = undefined
-    if(typeof field.required != 'undefined') {
-      requiredEdit = (
-        <span className="soresu-edit-property">
-          <input onChange={this.fieldValueUpdater(x => x, "required", !field.required)} type="checkbox" id={htmlId+"-required"} name={htmlId+"-required"} checked={field.required}/>
-          <label htmlFor={htmlId+"-required"}> Pakollinen tieto</label>
-        </span>
-      )
-    }
     const removeFieldOnClick = e => { formEditorController.removeField(field) }
     const removeField = FormEditComponent.fieldTypeMapping()[field.fieldType] ?
         <span onClick={removeFieldOnClick} className="soresu-edit soresu-field-remove">Poista</span> :
@@ -86,10 +76,7 @@ export default class EditComponent extends React.Component {
           <h3>{EditComponent.fieldTypeInFI(field.fieldType)}</h3>
           {removeField}
           {labelEdit}
-          {requiredEdit}
-          {fieldSpecificEditInMiddle}
-          {helpTextEdit}
-          {fieldSpecificEditInEnd}
+          {fieldSpecificEdit}
         </div>
     )
   }
@@ -115,9 +102,35 @@ export default class EditComponent extends React.Component {
   }
 }
 
-export class EditWrapper extends EditComponent {
+export class FieldEditComponent extends EditComponent {
+  renderEditable(fieldSpecificElementEdit, fieldSpecificPropertyEdit) {
+    const field = this.props.field
+    const htmlId = this.props.htmlId
+    var requiredEdit = undefined
+    if(typeof field.required != 'undefined') {
+      requiredEdit = (
+          <span className="soresu-edit-property">
+          <input onChange={this.fieldValueUpdater(x => x, "required", !field.required)} type="checkbox" id={htmlId+"-required"} name={htmlId+"-required"} checked={field.required}/>
+          <label htmlFor={htmlId+"-required"}> Pakollinen tieto</label>
+        </span>
+      )
+    }
+    var helpTextEdit = this.renderTranslationTable(htmlId + "-help-text", "Ohjeteksti", x => x.helpText)
+    return super.renderEditable(
+      <div>
+        {requiredEdit}
+        {fieldSpecificPropertyEdit}
+        {helpTextEdit}
+        {fieldSpecificElementEdit}
+      </div>
+    )
+  }
+
+}
+
+export class BasicEditWrapper extends EditComponent {
   render() {
-    return super.renderEditable(this.props.wrappedElement)
+    return super.renderEditable()
   }
 }
 
@@ -176,7 +189,13 @@ export class AppendableEditWrapper extends EditComponent {
   }
 }
 
-export class TextFieldEdit extends EditComponent {
+export class BasicFieldEdit extends FieldEditComponent {
+  render() {
+    return super.renderEditable()
+  }
+}
+
+export class TextFieldEdit extends FieldEditComponent {
   sizeLabel() {
     return "Leveys"
   }
@@ -235,7 +254,7 @@ export class TextAreaEdit extends TextFieldEdit {
   }
 }
 
-export class MultipleChoiceEdit extends EditComponent {
+export class MultipleChoiceEdit extends FieldEditComponent {
   render() {
     const field = this.props.field
     const formEditorController = this.props.formEditorController
