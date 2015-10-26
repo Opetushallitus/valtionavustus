@@ -77,11 +77,14 @@ export default class EditComponent extends React.Component {
         </span>
       )
     }
-    const removeField = e => { formEditorController.removeField(field) }
+    const removeFieldOnClick = e => { formEditorController.removeField(field) }
+    const removeField = FormEditComponent.fieldTypeMapping()[field.fieldType] ?
+        <span onClick={removeFieldOnClick} className="soresu-edit soresu-field-remove">Poista</span> :
+        undefined
     return (
         <div key={htmlId} className={this.className()}>
           <h3>{EditComponent.fieldTypeInFI(field.fieldType)}</h3>
-          <span onClick={removeField} className="soresu-edit soresu-field-remove">Poista</span>
+          {removeField}
           {labelEdit}
           {requiredEdit}
           {fieldSpecificEditInMiddle}
