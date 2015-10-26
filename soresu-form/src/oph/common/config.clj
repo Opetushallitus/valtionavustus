@@ -19,15 +19,19 @@
       (log/warn (str "Could not read configuration from '" path "'"))
       "{}")))
 
-(defonce secrets (->  (or (env :configsecrets) (str "../../valtionavustus-secret/" (config-name)))
-                      (slurp-if-found)
-                      (clojure.edn/read-string)))
+(defonce secrets
+  (if-let [config-secrets (env :configsecrets)]
+    (->  config-secrets
+         (slurp-if-found)
+         (clojure.edn/read-string))))
 
 (defn- merge-with-defaults [config]
   (merge-with merge defaults config))
 
 (defn- merge-with-secrets [config]
-  (merge-with merge secrets config))
+  (if-let [secrets-config secrets]
+    (merge-with merge secrets-config config)
+    config))
 
 (defonce config (->> (or (env :config) "config/dev.edn")
                     (slurp)
