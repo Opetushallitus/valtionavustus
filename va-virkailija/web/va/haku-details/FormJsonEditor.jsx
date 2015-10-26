@@ -25,8 +25,8 @@ export default class FormJsonEditor extends Component {
 
     return formDraft ?
       <div id="form-json-editor"><h3>Hakulomakkeen sisältö</h3>
-        <textarea onChange={onChange} disabled={avustushaku.status === "published"} value={formDraft}/>
         <button disabled={disableSave} onClick={onClick}>Tallenna hakulomakkeen muutokset</button><span key="form-json-editor-error" className="error"> {parseError}</span>
+        <textarea onChange={onChange} disabled={avustushaku.status === "published"} value={formDraft}/>
       </div>
       : <span/>
   }
