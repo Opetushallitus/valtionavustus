@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.main
   (:use [oph.va.virkailija.server :only [start-server]])
   (:require [oph.va.va-config :refer [init-secret-config]]
-            [oph.common.config :refer [config]])
+            [oph.soresu.common.config :refer [config]])
   (:gen-class))
 
 (defn -main [& args]

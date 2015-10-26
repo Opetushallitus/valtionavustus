@@ -1,6 +1,6 @@
 (ns oph.common.testing.spec-plumbing
-  (:use [oph.common.config :only [config]])
-  (:require [oph.common.db :as db]))
+  (:use [oph.soresu.common.config :only [config]])
+  (:require [oph.soresu.common.db :as db]))
 
 (defmacro wrap-exception [& form]
   `(try ~@form

@@ -1,7 +1,7 @@
-(ns oph.form.formutil_spec
+(ns oph.soresu.form.formutil_spec
   (:require
     [speclj.core :refer :all]
-    [oph.form.formutil :refer :all]))
+    [oph.soresu.form.formutil :refer :all]))
 
 (def test-form
   {:id 1

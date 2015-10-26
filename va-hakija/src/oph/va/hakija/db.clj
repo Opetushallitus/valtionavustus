@@ -1,11 +1,11 @@
 (ns oph.va.hakija.db
-  (:use [oph.common.db]
-        [oph.form.db :as form-db]
+  (:use [oph.soresu.common.db]
+        [oph.soresu.form.db :as form-db]
         [clojure.tools.trace :only [trace]])
   (:require [clojure.java.io :as io]
             [oph.va.hakija.db.queries :as queries]
             [oph.va.budget :as va-budget]
-            [oph.form.formutil :as form-util]))
+            [oph.soresu.form.formutil :as form-util]))
 
 (defn slurp-binary-file! [file]
   (io! (with-open [reader (io/input-stream file)]

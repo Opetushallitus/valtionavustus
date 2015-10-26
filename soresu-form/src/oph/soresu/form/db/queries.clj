@@ -1,4 +1,4 @@
-(ns oph.form.db.queries
+(ns oph.soresu.form.db.queries
   (:require [yesql.core :refer [defquery]]))
 
 (defquery list-forms "sql/form/list.sql")

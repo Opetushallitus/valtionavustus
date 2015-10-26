@@ -1,6 +1,6 @@
 (ns oph.va.routes
-  (:require [oph.common.config :refer :all]
-            [oph.common.routes :refer :all]
+  (:require [oph.soresu.common.config :refer :all]
+            [oph.soresu.common.routes :refer :all]
             [ring.util.http-response :refer :all]
             [compojure.core :refer [defroutes GET POST]]
             [compojure.api.sweet :refer :all]

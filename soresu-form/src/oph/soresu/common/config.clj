@@ -1,4 +1,4 @@
-(ns oph.common.config
+(ns oph.soresu.common.config
   (:require [clojure.edn]
             [environ.core :refer [env]]
             [clojure.tools.logging :as log]))

@@ -1,6 +1,6 @@
 (ns oph.va.budget
   (:use [clojure.tools.trace :only [trace]])
-  (:require [oph.form.formutil :as formutil]
+  (:require [oph.soresu.form.formutil :as formutil]
             [clojure.core.reducers :as r]))
 
 (declare do-calculate-totals)

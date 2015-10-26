@@ -6,8 +6,8 @@
             [ring.middleware.defaults :refer :all]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
-            [oph.common.config :refer [config]]
-            [oph.common.db :as db]
+            [oph.soresu.common.config :refer [config]]
+            [oph.soresu.common.db :as db]
             [oph.va.hakija.db.migrations :as dbmigrations]
             [oph.va.hakija.email :as email]))
 

@@ -1,4 +1,4 @@
-(ns oph.common.routes
+(ns oph.soresu.common.routes
   (:require [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
             [schema.utils :as schema]

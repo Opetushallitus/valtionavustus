@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.schema
   (:require [schema.core :as s]
-            [oph.form.schema :refer :all]
+            [oph.soresu.form.schema :refer :all]
             [oph.va.schema :refer :all]))
 
 (s/defschema ArvioStatus

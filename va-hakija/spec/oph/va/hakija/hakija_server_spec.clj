@@ -7,7 +7,7 @@
             [clj-time.format :as f]
             [clj-time.local :as l]
             [oph.va.hakija.db :as va-db]
-            [oph.form.formutil :as formutil]
+            [oph.soresu.form.formutil :as formutil]
             [oph.common.testing.spec-plumbing :refer :all]
             [oph.va.hakija.server :refer :all]))
 

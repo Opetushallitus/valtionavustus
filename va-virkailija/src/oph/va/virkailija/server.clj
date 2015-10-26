@@ -13,8 +13,8 @@
             [buddy.auth.backends.session :refer [session-backend]]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
-            [oph.common.config :refer [config]]
-            [oph.common.db :as db]
+            [oph.soresu.common.config :refer [config]]
+            [oph.soresu.common.db :as db]
             [oph.va.virkailija.auth :as auth]
             [oph.va.virkailija.db.migrations :as dbmigrations]))
 

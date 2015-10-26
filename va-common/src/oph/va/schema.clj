@@ -1,6 +1,6 @@
 (ns oph.va.schema
   (:require [schema.core :as s]
-              [oph.form.schema :refer :all]))
+              [oph.soresu.form.schema :refer :all]))
 
 (create-form-schema [:vaBudget
                      :vaSummingBudgetElement

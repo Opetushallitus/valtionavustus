@@ -1,6 +1,6 @@
 (ns oph.va.va-config
   (:require [environ.core :refer [env]])
-  (:use [oph.common.config :only [config-name]]))
+  (:use [oph.soresu.common.config :only [config-name]]))
 
 (defn- set-default-va-secrets-location! []
   (System/setProperty "configsecrets" (str "../../valtionavustus-secret/" (config-name))))

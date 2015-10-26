@@ -1,6 +1,6 @@
 (ns oph.va.jdbc.extensions
   (:require [clojure.java.jdbc :as jdbc]
-            [oph.common.jdbc.extensions :refer :all]
+            [oph.soresu.common.jdbc.extensions :refer :all]
             [oph.va.jdbc.enums :refer :all])
   (:import org.postgresql.util.PGobject
            (org.postgresql.util PGobject)))

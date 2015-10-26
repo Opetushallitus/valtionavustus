@@ -1,9 +1,9 @@
 (ns oph.va.hakija.db.migrations
-  (:require [oph.common.db.migrations :as migrations]
-            [oph.common.db :as common-db]
-            [oph.form.db :as db]
+  (:require [oph.soresu.common.db.migrations :as migrations]
+            [oph.soresu.common.db :as common-db]
+            [oph.soresu.form.db :as db]
             [oph.va.hakija.db :as va-db]
-            [oph.form.formutil :as formutil]
+            [oph.soresu.form.formutil :as formutil]
             [clojure.tools.trace :refer [trace]]
             [yesql.core :refer [defquery]])
   (:gen-class))
