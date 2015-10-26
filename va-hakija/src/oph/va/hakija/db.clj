@@ -60,11 +60,21 @@
        (exec :db queries/get-hakemus-by-user-id)
        first))
 
+(defn- register-number-exists? [register-number]
+  (->> (exec :db queries/register-number-exists? {:suffix register-number})
+       first
+       nil?
+       not))
+
 (defn generate-register-number [avustushaku-id user-key]
   (if-let [avustushaku-register-number (-> (get-avustushaku avustushaku-id) :register_number)]
     (when (re-matches #"\d+/\d+" avustushaku-register-number)
-      (let [hakemus (get-hakemus user-key)]
-        (format "%d/%s" (:id hakemus) avustushaku-register-number)))))
+      (let [hakemus (get-hakemus user-key)
+            params {:suffix avustushaku-register-number}
+            {:keys [suffix seq_number]} (if (register-number-exists? avustushaku-register-number)
+                                          (exec :db queries/update-register-number<! params)
+                                          (exec :db queries/create-register-number<! params))]
+        (format "%d/%s" seq_number avustushaku-register-number)))))
 
 (defn create-hakemus! [avustushaku-id form-id answers]
   (let [submission (form-db/create-submission! form-id answers)

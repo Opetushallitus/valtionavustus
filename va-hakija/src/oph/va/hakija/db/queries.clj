@@ -21,3 +21,7 @@
 (defquery create-attachment<! "sql/attachment/create.sql")
 (defquery update-attachment<! "sql/attachment/update.sql")
 (defquery close-existing-attachment! "sql/attachment/close-existing.sql")
+
+(defquery register-number-exists? "sql/register-number/exists.sql")
+(defquery create-register-number<! "sql/register-number/create.sql")
+(defquery update-register-number<! "sql/register-number/update.sql")
