@@ -130,7 +130,7 @@ export class FieldEditComponent extends EditComponent {
 
 export class BasicEditWrapper extends EditComponent {
   render() {
-    return super.renderEditable()
+    return super.renderEditable(this.props.wrappedElement)
   }
 }
 
