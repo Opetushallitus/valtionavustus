@@ -32,13 +32,6 @@ function clean() {
   find $PROJECTROOTPATH -depth -type d -name 'node_modules' -exec rm -rf {} \;
 }
 
-function run_soresu_form_tests() {
-  cd soresu-form
-  time npm install
-  time npm run test-junit
-  cd ..
-}
-
 function install_module() {
   cd $1
   time $LEIN install
@@ -71,7 +64,6 @@ function run_tests() {
     start_postgresql_in_docker
   fi
 
-  run_soresu_form_tests
   install_module soresu-form
   install_module va-common
   time $LEIN with-profile ci modules spec -f junit || true
