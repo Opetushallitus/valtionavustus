@@ -7,6 +7,7 @@
 (defquery update-avustushaku! "sql/hakija/avustushaku/update.sql")
 (defquery archive-avustushaku! "sql/hakija/avustushaku/archive.sql")
 (defquery list-avustushaut "sql/hakija/avustushaku/list.sql")
+(defquery list-avustushaut-by-status "sql/hakija/avustushaku/list-by-status.sql")
 (defquery get-avustushaku "sql/hakija/avustushaku/get.sql")
 (defquery create-avustushaku-role<! "sql/hakija/avustushaku/create-role.sql")
 (defquery get-avustushaku-role "sql/hakija/avustushaku/get-role.sql")

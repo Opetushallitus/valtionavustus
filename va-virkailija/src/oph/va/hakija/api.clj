@@ -66,6 +66,9 @@
 (defn list-avustushaut []
   (map avustushaku-response-content (exec :hakija-db hakija-queries/list-avustushaut {})))
 
+(defn list-avustushaut-by-status [status]
+  (map avustushaku-response-content (exec :hakija-db hakija-queries/list-avustushaut-by-status {:status (new HakuStatus status)})))
+
 (defn- role->json [role]
   {:id (:id role)
    :name (:name role)

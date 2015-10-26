@@ -104,6 +104,13 @@
           (ok response)
           (not-found)))
 
+  (GET* "/status/:status" []
+        :path-params [status :- HakuStatus]
+        :return [AvustusHaku]
+        (if-let [response (hakija-api/list-avustushaut-by-status status)]
+          (ok response)
+          (not-found)))
+
   (PUT* "/" []
         :body [base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base") ]
         :return AvustusHaku
