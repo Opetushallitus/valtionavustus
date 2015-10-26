@@ -1,6 +1,7 @@
 (ns oph.common.server
   (:use [org.httpkit.server :only [run-server]])
-  (:require [clojure.tools.logging :as log])
+  (:require [clojure.tools.logging :as log]
+            [oph.va.jdbc.extensions])
   (:import (java.net Socket)
            (java.io IOException)))
 

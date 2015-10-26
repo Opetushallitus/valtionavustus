@@ -27,7 +27,8 @@
 
   :uberjar-exclusions [#"public/test"]
 
-  :aot [oph.va.virkailija.db.migrations]
+  :aot [oph.va.jdbc.enums
+        oph.va.virkailija.db.migrations]
   :profiles {:uberjar {:aot [oph.va.virkailija.main]}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.virkailija.db.migrations/migrate" "db.migration"]
             "dbclear" ["run" "-m" "oph.common.db/clear-db!" "db" "virkailija"]

@@ -3,12 +3,10 @@
         [clojure.pprint :only [pprint]])
   (:require [clojure.java.io :as io]
             [oph.common.db :refer :all]
-            [oph.common.jdbc.enums :refer :all]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.routes :refer :all]
-            [oph.common.jdbc.enums :refer :all]
             [clojure.tools.logging :as log])
-  (:import (oph.common.jdbc.enums HakuStatus HakuRole)))
+  (:import (oph.va.jdbc.enums HakuStatus HakuRole)))
 
 (defn- convert-attachment [attachment]
   {:id (:id attachment)
