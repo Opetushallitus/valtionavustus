@@ -253,7 +253,7 @@ export class TextFieldEdit extends FieldEditComponent {
       )
     }
     const sizeEdit = (
-      <span className="soresu-edit-property">
+      <span className="soresu-edit-property shift-left">
         <label>{this.sizeLabel()}</label>
         {sizeAlternenativeButtons}
       </span>
