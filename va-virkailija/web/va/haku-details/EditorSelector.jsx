@@ -38,12 +38,14 @@ export default class EditorSelector extends React.Component {
       }
     }
 
-    return <div id="editor-subtab-selector">
-             <span onClick={createSubTabSelector("haku-editor")}
-                   className={ClassNames({"selected": subTab === "haku-editor"})}>Haun tiedot</span>
-             <span onClick={createSubTabSelector("form-editor")}
-                   className={ClassNames({"selected": subTab === "form-editor"})}>Hakulomakkeen sisältö</span>
-             {subTabContent}
-           </div>
+    return <section id="editor-section">
+             <div id="editor-subtab-selector" className="section-container">
+               <span onClick={createSubTabSelector("haku-editor")}
+                     className={ClassNames({"selected": subTab === "haku-editor"})}>Haun tiedot</span>
+               <span onClick={createSubTabSelector("form-editor")}
+                     className={ClassNames({"selected": subTab === "form-editor"})}>Hakulomakkeen sisältö</span>
+               {subTabContent}
+             </div>
+           </section>
   }
 }

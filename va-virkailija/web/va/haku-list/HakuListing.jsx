@@ -14,7 +14,7 @@ export default class HakuListing extends Component {
     const hakuElements = _.map(hakuList, haku => {
       return <HakuRow haku={haku} key={haku.id} selectedHaku={selectedHaku} controller={controller}/> })
     return (
-      <div>
+      <div className="section-container">
         <table key="hakuListing" className="haku-list overview-list">
           <thead><tr>
             <th className="name-column">Avustushaku</th>

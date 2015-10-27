@@ -32,7 +32,7 @@ export default class App extends Component {
     return (
       <section>
         <TopBar activeTab="arviointi" environment={hakuData.environment} state={state}/>
-        <section id="container">
+        <section id="container" className="section-container">
           <div id="list-container" className={hasSelected ? "has-selected" : ""}>
             <AvustushakuDropdown controller={controller} avustushaku={avustushaku} avustushakuList={avustushakuList} />
             <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
