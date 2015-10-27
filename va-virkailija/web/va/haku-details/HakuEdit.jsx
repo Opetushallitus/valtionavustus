@@ -10,13 +10,6 @@ export default class HakuEdit extends Component {
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
-    const environment = this.props.environment
-
-    const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/nayta?lang=fi"
-    const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/nayta?lang=sv"
-
-    const hakuUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/?lang=fi"
-    const hakuUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/?lang=sv"
 
     const onChange = e => {
       controller.onChangeListener(avustushaku, e.target, e.target.value)
@@ -36,10 +29,6 @@ export default class HakuEdit extends Component {
               <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-fi" value={avustushaku.content.name.fi}/></td>
               <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-sv" value={avustushaku.content.name.sv}/></td>
             </tr>
-            <tr>
-              <td><a href={hakuUrlFi} target="_">Linkki hakuun (suomeksi)</a></td>
-              <td><a href={hakuUrlSv} target="_">Linkki hakuun (ruotsiksi)</a></td>
-            </tr>
           </tbody>
         </table>
         <div>
@@ -49,10 +38,6 @@ export default class HakuEdit extends Component {
           <DateField id="hakuaika-end" onChange={onChange} value={avustushaku.content.duration.end} disabled={avustushaku.status === "published"} />
         </div>
         <HakuRoles avustushaku={avustushaku} controller={controller}/>
-        <div>
-          <h3>Hakulomakkeen esikatselu</h3>
-          <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a><span className="linkDivider"/><a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
-        </div>
         <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} onChange={onChange} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
         <FocusArea controller={controller} avustushaku={avustushaku} onChange={onChange} />

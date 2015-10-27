@@ -18,11 +18,11 @@ export default class EditorSelector extends React.Component {
     switch (subTab) {
       case "haku-editor":
         subTabContent = <HakuEdit avustushaku={avustushaku}
-                                  environment={environment}
                                   controller={controller} />
         break
       case "form-editor":
         subTabContent = <FormEditorContainer avustushaku={avustushaku}
+                                             environment={environment}
                                              translations={translations}
                                              formDraft={formDraft}
                                              controller={controller} />
