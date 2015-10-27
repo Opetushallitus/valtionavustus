@@ -173,7 +173,7 @@ export class AppendableEditWrapper extends EditComponent {
     const addableElements = _.keys(FormEditorController.addableFieldTypes())
     const addElementButtons = []
     for (var i = 0; i < addableElements.length; i++) {
-      addElementButtons.push(<button key={i} className="soresu-edit" onClick={createOnclick(addableElements[i])}>{EditComponent.fieldTypeInFI(addableElements[i])}</button>)
+      addElementButtons.push(<a href="#" key={i} className="soresu-edit" onClick={createOnclick(addableElements[i])}>{EditComponent.fieldTypeInFI(addableElements[i])}</a>)
     }
 
     return super.renderEditable(
