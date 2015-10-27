@@ -212,7 +212,7 @@ export class BasicFieldEdit extends FieldEditComponent {
 
 export class TextFieldEdit extends FieldEditComponent {
   sizeLabel() {
-    return "Leveys"
+    return "Koko"
   }
 
   render() {
@@ -247,7 +247,7 @@ export class TextFieldEdit extends FieldEditComponent {
                checked={sizeAlternatives[i] === field.params.size ? true: null} />
       )
       sizeAlternenativeButtons.push(
-        <label key={"size-label-" + i} htmlFor={htmlId + ".size." + i}>
+        <label className="soresu-size-selection" key={"size-label-" + i} htmlFor={htmlId + ".size." + i}>
           {sizeTexts[sizeAlternatives[i]]}
         </label>
       )

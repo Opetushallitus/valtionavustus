@@ -91,7 +91,7 @@ div.soresu-field-edit {
   .soresu-edit-properties-line {
     display: table;
     table-layout: fixed;
-    width: 100%;
+    width: 97%;
     .soresu-edit-property {
       display: table-cell;
     }
@@ -114,6 +114,20 @@ div.soresu-field-edit {
   margin-right: 10px;
   padding: 4px 8px;
   font-size: 16px;
+  label {
+    margin-right: 10px;
+    &.soresu-size-selection {
+      margin: 0;
+      text-align: center;
+      width: 33px;
+      height: 35px;
+      line-height: 35px;
+    }
+  }
+  input {
+    height: 24px;
+    padding: 8px 0 8px 12px;
+  }
 }
 
 .soresu-field-add {
