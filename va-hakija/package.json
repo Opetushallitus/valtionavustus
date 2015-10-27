@@ -53,11 +53,11 @@
     "watch-unittest": "mocha --watch --compilers js:babel/register web/test/*Test.js",
     "build": "UGLIFY=true webpack -p",
     "dev-build": "webpack -d --progress --colors",
-    "watch-web": "watch-spawn -d 300 -i -p 'node_modules/va-common/package.json' -p 'node_modules/soresu-form/package.json' -p 'web/**/*' -p 'package.json' npm run dev-build",
+    "watch-web": "watch-spawn -k -i -p 'node_modules/va-common/package.json' -p 'node_modules/soresu-form/package.json' -p 'web/**/*' -p 'package.json' npm run dev-build",
     "update-common-web": "rm -rf node_modules/va-common && npm install va-common",
-    "watch-common-web": "watch-spawn -p '../va-common/web/**/*' -p '../va-common/package.json' npm run update-common-web",
+    "watch-common-web": "watch-spawn -k -p '../va-common/web/**/*' -p '../va-common/package.json' npm run update-common-web",
     "update-soresu-form-web": "rm -rf node_modules/soresu-form && npm install soresu-form",
-    "watch-soresu-form-web": "watch-spawn -p '../soresu-form/web/**/*' -p '../soresu-form/package.json' npm run update-soresu-form-web",
+    "watch-soresu-form-web": "watch-spawn -k -p '../soresu-form/web/**/*' -p '../soresu-form/package.json' npm run update-soresu-form-web",
     "watch": "npm run update-common-web && npm run update-soresu-form-web && (npm run watch-common-web & npm run watch-web & npm run watch-soresu-form-web)"
   }
 }
