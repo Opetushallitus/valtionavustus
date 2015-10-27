@@ -31,7 +31,6 @@ export default class FormEditor extends Component {
 
     return formState ?
       <div id="form-editor">
-        <h3>Hakulomakkeen muokkaus</h3>
         <FormEdit {...formElementProps} />
       </div> : <span/>
   }
