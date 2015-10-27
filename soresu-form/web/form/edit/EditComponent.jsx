@@ -127,9 +127,9 @@ export class FieldEditComponent extends EditComponent {
     var helpTextEdit = this.renderTranslationTable(htmlId + "-help-text", "Ohjeteksti", x => x.helpText, "larger-textarea")
     return super.renderEditable(
       <div>
+        {helpTextEdit}
         {requiredEdit}
         {fieldSpecificPropertyEdit}
-        {helpTextEdit}
         {fieldSpecificElementEdit}
       </div>
     )
