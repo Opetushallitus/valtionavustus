@@ -5,6 +5,7 @@ import React, { Component } from 'react'
 import TopBar from './TopBar.jsx'
 import HakujenHallintaController from './HakujenHallintaController.jsx'
 import HakuListing from './haku-list/HakuListing.jsx'
+import EditorSelector from './haku-details/EditorSelector.jsx'
 import HakuEdit from './haku-details/HakuEdit.jsx'
 
 import virkailija from './style/virkailija.less'
@@ -26,12 +27,12 @@ export default class AdminApp extends Component {
                        selectedHaku={state.selectedHaku}
                        controller={controller}
           />
-          <HakuEdit avustushaku={selectedHaku}
-                    formDraft={state.formDrafts[selectedHaku.id]}
-                    environment={environment}
-                    controller={controller}
-                    translations={translations}
-          />
+          <EditorSelector subTab={state.subTab}
+                          avustushaku={selectedHaku}
+                          formDraft={state.formDrafts[selectedHaku.id]}
+                          environment={environment}
+                          controller={controller}
+                          translations={translations} />
         </section>
       </section>
     )

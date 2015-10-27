@@ -38,6 +38,19 @@ table.translation {
   }
 }
 
+#editor-subtab-selector {
+  > span {
+    margin-right: 50px;
+    text-transform: uppercase;
+    color: @dark-gray;
+    cursor: pointer;
+    &.selected {
+      color: @light-green;
+      cursor: default;
+    }
+  }
+}
+
 #haku-edit {
 
   #haku-edit-header {

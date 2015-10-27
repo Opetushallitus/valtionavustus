@@ -28,7 +28,8 @@ const events = {
   deleteSelectionCriteria: 'deleteSelectionCriteria',
   addFocusArea: 'addFocusArea',
   deleteFocusArea: 'deleteFocusArea',
-  beforeUnload: 'beforeUnload'
+  beforeUnload: 'beforeUnload',
+  selectEditorSubTab: 'selectEditorSubTab'
 }
 
 export default class HakujenHallintaController {
@@ -57,7 +58,8 @@ export default class HakujenHallintaController {
         saveTime: null,
         serverError: ""
       },
-      formDrafts: {}
+      formDrafts: {},
+      subTab: "haku-editor"
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
@@ -97,7 +99,8 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.deleteSelectionCriteria)], this.onDeleteSelectionCriteria,
       [dispatcher.stream(events.addFocusArea)], this.onAddFocusArea,
       [dispatcher.stream(events.deleteFocusArea)], this.onDeleteFocusArea,
-      [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload
+      [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload,
+      [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab
     )
   }
 
@@ -375,6 +378,11 @@ export default class HakujenHallintaController {
     return state
   }
 
+  onSelectEditorSubTab(state, subTabToSelect) {
+    state.subTab = subTabToSelect
+    return state
+  }
+
   addSelectionCriteria(avustushaku) {
     return function() {
       dispatcher.push(events.addSelectionCriteria, avustushaku)
@@ -423,5 +431,9 @@ export default class HakujenHallintaController {
 
   saveRole(avustushaku, role) {
     HttpUtil.post(HakujenHallintaController.roleUrl(avustushaku) + "/" + role.id, role)
+  }
+
+  selectEditorSubtab(subTabToSelect) {
+    dispatcher.push(events.selectEditorSubTab, subTabToSelect)
   }
 }
