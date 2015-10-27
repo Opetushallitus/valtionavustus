@@ -1,7 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
 
-import FormEditComponent from './FormEditComponent.jsx'
+import FormEditorController from './FormEditController.js'
 import FormUtil from '../FormUtil.js'
 
 class EditComponent extends React.Component {
@@ -77,7 +77,7 @@ class EditComponent extends React.Component {
     const htmlId = this.props.htmlId
     var labelEdit = this.renderTranslationTable(htmlId + "-label", this.labelName(), x => x.label)
     const removeFieldOnClick = e => { formEditorController.removeField(field) }
-    const removeField = FormEditComponent.fieldTypeMapping()[field.fieldType] ?
+    const removeField = FormEditorController.addableFieldTypes()[field.fieldType] ?
         <span onClick={removeFieldOnClick} className="soresu-edit soresu-field-remove">Poista</span> :
         undefined
     return (
@@ -170,14 +170,10 @@ export class AppendableEditWrapper extends EditComponent {
   render() {
     const formEditorController = this.props.formEditorController
     const field = this.props.field
-    const addableFieldElements = _.union(_.keys(FormEditComponent.fieldTypeMapping()), ['emailField', 'moneyField', 'namedAttachment'])
-    const addableElements = _.map(addableFieldElements, function (fieldType) {
-      return {"fieldClass": "formField", "fieldType": fieldType}
-    })
-    addableElements.push({fieldClass: "infoElement", fieldType: "p"})
+    const addableElements = _.keys(FormEditorController.addableFieldTypes())
     const addElementButtons = []
     for (var i = 0; i < addableElements.length; i++) {
-      addElementButtons.push(<button key={i} className="soresu-edit" onClick={createOnclick(addableElements[i])}>{EditComponent.fieldTypeInFI(addableElements[i].fieldType)}</button>)
+      addElementButtons.push(<button key={i} className="soresu-edit" onClick={createOnclick(addableElements[i])}>{EditComponent.fieldTypeInFI(addableElements[i])}</button>)
     }
 
     return super.renderEditable(
@@ -194,10 +190,10 @@ export class AppendableEditWrapper extends EditComponent {
       </div>
     )
 
-    function createOnclick(fieldClassAndType) {
+    function createOnclick(fieldType) {
       return e => {
         e.preventDefault()
-        formEditorController.addChildFieldTo(field, fieldClassAndType.fieldClass, fieldClassAndType.fieldType)
+        formEditorController.addChildFieldTo(field, fieldType)
       }
     }
   }

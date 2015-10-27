@@ -5,6 +5,19 @@ import FormUtil from '../FormUtil.js'
 import JsUtil from '../JsUtil.js'
 
 export default class FormEditorController {
+
+  static addableFieldTypes() {
+    return {
+      "textField": "formField",
+      "textArea": "formField",
+      "radioButton": "formField",
+      "checkboxButton": "formField",
+      "namedAttachment": "formField",
+      "p": "infoElement"
+
+    }
+  }
+
   constructor(props) {
     this.formDraftJson = props.formDraftJson
     this.onEditCallback = props.onFormEdited
@@ -57,7 +70,8 @@ export default class FormEditorController {
       }
     })
 
-    function createNewField(fieldClass, fieldType, id) {
+    function createNewField(fieldType, id) {
+      const fieldClass = FormEditorController.addableFieldTypes(fieldType)
       const newField = {
         "params": {},
         "fieldClass": fieldClass,
@@ -74,7 +88,7 @@ export default class FormEditorController {
         case "infoElement":
           break
         default:
-          throw new Error("Don't know how to create field of class '" + fieldClass + "'")
+          throw new Error("Don't know how to create field of class '" + fieldClass + "' for type '" + fieldType + "'")
       }
 
       switch (fieldType) {
