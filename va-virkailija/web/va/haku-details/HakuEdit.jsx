@@ -53,7 +53,7 @@ export default class HakuEdit extends Component {
           <h3>Hakulomakkeen esikatselu</h3>
           <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a><span className="linkDivider"/><a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
         </div>
-        <SetStatus currentStatus={avustushaku.status} onChange={onChange} />
+        <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} onChange={onChange} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
         <FocusArea controller={controller} avustushaku={avustushaku} onChange={onChange} />
         <div><h3>Hakijan omarahoitusvaatimus</h3><input className="percentage" required="true" maxLength="2" min="0" max="99" id="haku-self-financing-percentage" onChange={onChange} disabled={avustushaku.status === "published"} type="number" value={avustushaku.content["self-financing-percentage"]} /><span>%</span></div>
@@ -167,8 +167,18 @@ class SetStatus extends React.Component {
   render() {
     const currentStatus = this.props.currentStatus
     const onChange = this.props.onChange
+    const hakuIsValid = this.props.hakuIsValid
     const statuses = []
     const statusValues = ['deleted', 'draft', 'published'];
+    const isDisabled = function(status) {
+      if(status === 'deleted' && currentStatus === 'published') {
+        return true
+      }
+      if(status === 'published' && !hakuIsValid) {
+        return true
+      }
+      return false
+    }
     for (var i=0; i < statusValues.length; i++) {
       const status = statusValues[i]
       const htmlId = "set-status-" + status
@@ -180,7 +190,7 @@ class SetStatus extends React.Component {
                value={status}
                onChange={onChange}
                checked={status === currentStatus ? true: null}
-               disabled={status === 'deleted' && currentStatus === 'published'}
+               disabled={isDisabled(status)}
             />
       )
       statuses.push(
@@ -201,12 +211,18 @@ class SetStatus extends React.Component {
 }
 
 class RegisterNumber extends React.Component {
+
+  static isValid(avustushaku) {
+    const registerNumber = avustushaku["register-number"]
+    return registerNumber == null ? false : /^\d{1,5}\/\d{2,6}$/.test(registerNumber)
+  }
+
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
     const registerNumber = avustushaku["register-number"]
 
-    const isRegisterNumberValid = registerNumber == null ? false : /^\d{1,5}\/\d{2,6}$/.test(registerNumber)
+    const isRegisterNumberValid = RegisterNumber.isValid(avustushaku)
     const registerNumberClass = isRegisterNumberValid ? "" : "error"
     const errorStyle = {paddingLeft: "5px"}
     var errorString = ""
@@ -219,7 +235,7 @@ class RegisterNumber extends React.Component {
     }
     return <div>
              <h3 className="required">Diaarinumero</h3>
-             <input onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
+             <input disabled={avustushaku.status === "published"} onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
              {errorString}
            </div>
   }
