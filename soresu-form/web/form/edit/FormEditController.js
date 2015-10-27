@@ -47,7 +47,7 @@ export default class FormEditorController {
     })
   }
 
-  addChildFieldTo(parentField, newFieldClass, newFieldType) {
+  addChildFieldTo(parentField, newFieldType) {
     this.doEdit(() => {
       const formDraftJson = this.formDraftJson
 
@@ -60,7 +60,7 @@ export default class FormEditorController {
       }
 
       const newId = generateUniqueId(0)
-      const newChild = createNewField(newFieldClass, newFieldType, newId)
+      const newChild = createNewField(newFieldType, newId)
 
       const parent = FormUtil.findField(formDraftJson.content, parentField.id)
       if (_.isArray(parent)) {
@@ -71,7 +71,7 @@ export default class FormEditorController {
     })
 
     function createNewField(fieldType, id) {
-      const fieldClass = FormEditorController.addableFieldTypes(fieldType)
+      const fieldClass = FormEditorController.addableFieldTypes()[fieldType]
       const newField = {
         "params": {},
         "fieldClass": fieldClass,
