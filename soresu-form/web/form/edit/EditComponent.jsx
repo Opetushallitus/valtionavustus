@@ -168,10 +168,14 @@ export class AppendableEditWrapper extends EditComponent {
   render() {
     const formEditorController = this.props.formEditorController
     const field = this.props.field
-    const addableElements = _.keys(FormEditComponent.fieldTypeMapping())
+    const addableFieldElements = _.union(_.keys(FormEditComponent.fieldTypeMapping()), ['emailField', 'moneyField', 'namedAttachment'])
+    const addableElements = _.map(addableFieldElements, function (fieldType) {
+      return {"fieldClass": "formField", "fieldType": fieldType}
+    })
+    addableElements.push({fieldClass: "infoElement", fieldType: "p"})
     const addElementButtons = []
     for (var i = 0; i < addableElements.length; i++) {
-      addElementButtons.push(<button key={i} className="soresu-edit" onClick={createOnclick(addableElements[i])}>{EditComponent.fieldTypeInFI(addableElements[i])}</button>)
+      addElementButtons.push(<button key={i} className="soresu-edit" onClick={createOnclick(addableElements[i])}>{EditComponent.fieldTypeInFI(addableElements[i].fieldType)}</button>)
     }
 
     return super.renderEditable(
@@ -184,10 +188,10 @@ export class AppendableEditWrapper extends EditComponent {
       </div>
     )
 
-    function createOnclick(fieldType) {
+    function createOnclick(fieldClassAndType) {
       return e => {
         e.preventDefault()
-        formEditorController.addChildFieldTo(field, fieldType)
+        formEditorController.addChildFieldTo(field, fieldClassAndType.fieldClass, fieldClassAndType.fieldType)
       }
     }
   }

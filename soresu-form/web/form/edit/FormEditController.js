@@ -34,7 +34,7 @@ export default class FormEditorController {
     })
   }
 
-  addChildFieldTo(parentField, newFieldType) {
+  addChildFieldTo(parentField, newFieldClass, newFieldType) {
     this.doEdit(() => {
       const formDraftJson = this.formDraftJson
 
@@ -47,7 +47,7 @@ export default class FormEditorController {
       }
 
       const newId = generateUniqueId(0)
-      const newChild = createNewField(newFieldType, newId)
+      const newChild = createNewField(newFieldClass, newFieldType, newId)
 
       const parent = FormUtil.findField(formDraftJson.content, parentField.id)
       if (_.isArray(parent)) {
@@ -57,18 +57,31 @@ export default class FormEditorController {
       }
     })
 
-    function createNewField(fieldType, id) {
+    function createNewField(fieldClass, fieldType, id) {
       const newField = {
         "params": {},
-        "fieldClass": "formField",
-        "helpText": { "fi": "", "sv": "" },
-        "label": { "fi": "", "sv": "" },
-        "id": id,
-        "required": true,
-        "fieldType": fieldType
+        "fieldClass": fieldClass,
+        "fieldType": fieldType,
+        "id": id
+      }
+
+      switch (fieldClass) {
+        case "formField":
+          newField.label = { "fi": "", "sv": "" }
+          newField.helpText = { "fi": "", "sv": "" }
+          newField.required = true
+          break
+        case "infoElement":
+          break
+        default:
+          throw new Error("Don't know how to create field of class '" + fieldClass + "'")
       }
 
       switch (fieldType) {
+        case "moneyField":
+        case "emailField":
+        case "namedAttachment":
+          break
         case "textField":
           newField.params.maxlength = 100
           newField.params.size = "medium"
@@ -84,6 +97,9 @@ export default class FormEditorController {
             FormEditorController.createEmptyOption(),
             FormEditorController.createEmptyOption()
           ]
+          break
+        case "p":
+          newField.text = {"fi": "", "sv": ""}
           break
         default:
           throw new Error("Don't know how to create field of type '" + fieldType + "'")
