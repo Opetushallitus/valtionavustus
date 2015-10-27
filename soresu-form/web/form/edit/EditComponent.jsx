@@ -54,7 +54,7 @@ class EditComponent extends React.Component {
     }
     return (
       <table className="translation">
-        <thead><th>{name}</th><th>{name + " ruotsiksi"}</th></thead>
+        <thead><th>{name + " suomeksi"}</th><th>{name + " ruotsiksi"}</th></thead>
         <tr>
           <td><textarea onChange={this.fieldValueUpdater(valueGetter, "fi")} name={htmlId+"-fi"} value={valueGetter(field).fi}></textarea></td>
           <td><textarea onChange={this.fieldValueUpdater(valueGetter, "sv")} name={htmlId+"-sv"} value={valueGetter(field).sv}></textarea></td>
@@ -83,7 +83,7 @@ class EditComponent extends React.Component {
   }
 
   labelName() {
-    return "Kysymys"
+    return "Otsikko"
   }
 
   className() {
