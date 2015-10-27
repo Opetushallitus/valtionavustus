@@ -47,7 +47,7 @@ class EditComponent extends React.Component {
 
   }
 
-  renderTranslationTable(htmlId, name, valueGetter) {
+  renderTranslationTable(htmlId, name, valueGetter, extraClassName) {
     const field = this.props.field
     if(typeof valueGetter(field) === 'undefined') {
       return undefined
@@ -56,8 +56,16 @@ class EditComponent extends React.Component {
       <table className="translation">
         <thead><th>{name + " suomeksi"}</th><th>{name + " ruotsiksi"}</th></thead>
         <tr>
-          <td><textarea onChange={this.fieldValueUpdater(valueGetter, "fi")} name={htmlId+"-fi"} value={valueGetter(field).fi}></textarea></td>
-          <td><textarea onChange={this.fieldValueUpdater(valueGetter, "sv")} name={htmlId+"-sv"} value={valueGetter(field).sv}></textarea></td>
+          <td><textarea className={extraClassName}
+                        onChange={this.fieldValueUpdater(valueGetter, "fi")}
+                        name={htmlId+"-fi"}
+                        value={valueGetter(field).fi}>
+          </textarea></td>
+          <td><textarea className={extraClassName}
+                        onChange={this.fieldValueUpdater(valueGetter, "sv")}
+                        name={htmlId+"-sv"}
+                        value={valueGetter(field).sv}>
+          </textarea></td>
         </tr>
       </table>
     )
@@ -116,7 +124,7 @@ export class FieldEditComponent extends EditComponent {
         </span>
       )
     }
-    var helpTextEdit = this.renderTranslationTable(htmlId + "-help-text", "Ohjeteksti", x => x.helpText)
+    var helpTextEdit = this.renderTranslationTable(htmlId + "-help-text", "Ohjeteksti", x => x.helpText, "larger-textarea")
     return super.renderEditable(
       <div>
         {requiredEdit}
@@ -142,7 +150,7 @@ export class InfoElementEditWrapper extends EditComponent {
 
   render() {
     const htmlId = this.props.htmlId
-    const textEdit = super.renderTranslationTable(htmlId + "-text", "Teksti", x => x.text)
+    const textEdit = super.renderTranslationTable(htmlId + "-text", "Teksti", x => x.text, "larger-textarea")
     return super.renderEditable(
       <div>
         {textEdit}
