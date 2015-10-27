@@ -2,6 +2,7 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
 import moment from 'moment-timezone'
+import RouteParser from 'route-parser'
 
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'soresu-form/web/Dispatcher'
@@ -47,6 +48,8 @@ export default class HakujenHallintaController {
   }
 
   initializeState() {
+    const subTab = consolidateSubTabSelectionWithUrl()
+
     const initialStateTemplate = {
       hakuList: Bacon.fromPromise(HttpUtil.get("/api/avustushaku")),
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
@@ -59,7 +62,7 @@ export default class HakujenHallintaController {
         serverError: ""
       },
       formDrafts: {},
-      subTab: "haku-editor"
+      subTab: subTab
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
@@ -102,6 +105,20 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload,
       [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab
     )
+
+    function consolidateSubTabSelectionWithUrl() {
+      var subTab = "haku-editor"
+      const parsedUrl = new RouteParser('/admin/:subTab/*ignore').match(location.pathname)
+      if (!_.isUndefined(history.pushState)) {
+        if (parsedUrl["subTab"]) {
+          subTab = parsedUrl["subTab"]
+        } else {
+          const newUrl = "/admin/" + subTab + "/" + location.search
+          history.pushState({}, window.title, newUrl)
+        }
+      }
+      return subTab
+    }
   }
 
   onInitialState(emptyState, realInitialState) {
@@ -380,6 +397,10 @@ export default class HakujenHallintaController {
 
   onSelectEditorSubTab(state, subTabToSelect) {
     state.subTab = subTabToSelect
+    if (!_.isUndefined(history.pushState)) {
+      const newUrl = "/admin/" + subTabToSelect + "/" + location.search
+      history.pushState({}, window.title, newUrl)
+    }
     return state
   }
 

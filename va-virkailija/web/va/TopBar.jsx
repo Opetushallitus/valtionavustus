@@ -26,7 +26,7 @@ class TopBarTabs extends React.Component {
     return (
       <div id="tabs">
         <TopBarTab id="arviointi" label="Hakemusten arviointi" href="/" disabled={disabled} activeTab={activeTab}/>
-        <TopBarTab id="admin" label="Hakujen hallinta" href="/admin" disabled={disabled} activeTab={activeTab}/>
+        <TopBarTab id="admin" label="Hakujen hallinta" href="/admin/" disabled={disabled} activeTab={activeTab}/>
       </div>
     )
   }

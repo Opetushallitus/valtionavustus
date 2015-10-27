@@ -83,7 +83,7 @@
 
 (defroutes resource-routes
   (GET "/" [] (return-html "index.html"))
-  (GET "/admin" [] (return-html "admin.html"))
+  (GET "/admin/*" [] (return-html "admin.html"))
   (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
     :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
     (on-hakemus-preview avustushaku-id hakemus-user-key))
