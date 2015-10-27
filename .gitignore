@@ -7,6 +7,7 @@ node_modules
 npm-cache
 **/.*.swp
 **/.DS_Store
+**/npm-debug.log
 secret
 postgres
 pom.xml
