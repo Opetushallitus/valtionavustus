@@ -92,7 +92,7 @@ div.soresu-field-edit {
     display: table;
     table-layout: fixed;
     margin-top: 10px;
-    width: 97%;
+    width: 96%;
     .soresu-edit-property {
       display: table-cell;
     }
@@ -130,6 +130,21 @@ div.soresu-field-edit {
     height: 24px;
     padding: 8px 0 8px 12px;
   }
+  input[type="checkbox"] {
+    position: relative;
+    top: 4px;
+    margin-right: 5px;
+    width: 20px;
+   	height: 20px;
+    background: #fff;
+    border: 1px solid @dark-gray;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    &:checked {
+      background: #fff url('../img/checkmark.png') no-repeat 4px 4px;
+    }
+  }
+
   &.shift-left {
     position: relative;
     left: -20px;
