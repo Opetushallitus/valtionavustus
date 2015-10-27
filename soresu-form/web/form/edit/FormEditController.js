@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import slug from 'slug'
 
 import FormUtil from '../FormUtil.js'
 import JsUtil from '../JsUtil.js'
@@ -52,7 +51,7 @@ export default class FormEditorController {
       const formDraftJson = this.formDraftJson
 
       function generateUniqueId(index) {
-        const proposed = slug(newFieldType) + index
+        const proposed = newFieldType + "-" +index
         if (_.isEmpty(JsUtil.flatFilter(formDraftJson.content, n => { return n.id === proposed}))) {
           return proposed
         }
