@@ -41,16 +41,22 @@ table.translation {
 #editor-section {
   width: 100%;
   background-color: #fff;
+  border-top: 2px solid @lighter-gray;
+  padding-top: 22px;
 }
 
 #editor-subtab-selector {
+  border-bottom: 2px solid @lightish-gray;
+  padding-bottom: 6px;
   > span {
+    padding-bottom: 6px;
     margin-right: 50px;
     text-transform: uppercase;
     color: @dark-gray;
     cursor: pointer;
     &.selected {
       color: @light-green;
+      border-bottom: 2px solid @light-green;
       cursor: default;
     }
   }
