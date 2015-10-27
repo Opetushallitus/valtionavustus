@@ -31,7 +31,6 @@ ol {
 div.soresu-edit {
   padding: 0 0 10px 15px;
   background-color: @off-white;
-  border: 1px solid #e6e6e6;
   border-right: none;
   :last-child  {
     margin-bottom: 0;
@@ -42,17 +41,24 @@ div.soresu-field-edit, div.soresu-appendable-wrapper-edit {
   position: relative;
   margin: 10px 10px 0 0;
   label, table.translation th {
-    color: @form-label-black;
-    font-size: 13px;
+    color: #000;
+    font-size: 16px;
   }
   input[type=radio] + label {
     padding: 2px 4px;
   }
 }
 
+.translation {
+  textarea, input[type=text] {
+    max-width: 97%;
+    width: 97%;
+  }
+}
+
 div.soresu-field-edit {
   margin-bottom: 30px;
-  border-left-width: 10px;
+  border-left: 1px solid #e6e6e6;
   padding-bottom: 0;
 }
 
