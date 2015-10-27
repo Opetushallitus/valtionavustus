@@ -5,6 +5,7 @@ Ansökningstid: {{ start-date }} klo {{ start-time }} — {{ end-date }} klo {{ 
 Du kan se ansökan via länken: {{& url }}
 
 Mer information ger statsunderstod@oph.fi
+Den föredragande som ansvarar för ansökningen har nämnts i ansökningsmeddelandet.
 
 Utbildningsstyrelsen
 Hagnäskajen 6
