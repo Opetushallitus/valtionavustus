@@ -154,10 +154,24 @@ div.soresu-field-edit {
 }
 
 .soresu-field-add {
-  margin-top: 8px;
+  margin-top: 12px;
+  border: 1px dashed #d3d3d3;
+  background-color: @lighterer-gray;
+  button {
+    display: none;
+  }
+  &:hover {
+    button {
+      display: inline-block;
+    }
+  }
   span {
+    display: inline;
     text-transform: uppercase;
-    color: @dark-gray;
+    font-size: 33px;
+    font-weight: 300;
+    padding-left: 10px;
+    color: #5da3c7;
     margin-right: 20px;
   }
 }

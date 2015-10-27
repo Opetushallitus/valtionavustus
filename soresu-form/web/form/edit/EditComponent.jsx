@@ -184,7 +184,7 @@ export class AppendableEditWrapper extends EditComponent {
       <div>
          {this.props.wrappedElement}
          <div className="soresu-field-add">
-           <span>Lisää kysymys</span>
+           <span>+</span>
            {addElementButtons}
          </div>
       </div>
