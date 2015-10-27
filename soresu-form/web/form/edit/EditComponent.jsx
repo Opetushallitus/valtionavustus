@@ -182,11 +182,15 @@ export class AppendableEditWrapper extends EditComponent {
 
     return super.renderEditable(
       <div>
-         {this.props.wrappedElement}
-         <div className="soresu-field-add">
-           <span>+</span>
-           {addElementButtons}
-         </div>
+        <div className="soresu-field-add">
+          <span>+</span>
+          {addElementButtons}
+        </div>
+       {this.props.wrappedElement}
+       <div className="soresu-field-add">
+         <span>+</span>
+         {addElementButtons}
+       </div>
       </div>
     )
 
