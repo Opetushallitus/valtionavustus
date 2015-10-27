@@ -87,6 +87,15 @@ div.soresu-field-edit {
   margin-bottom: 30px;
   border-left: 1px solid #e6e6e6;
   padding-bottom: 0;
+
+  .soresu-edit-properties-line {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    .soresu-edit-property {
+      display: table-cell;
+    }
+  }
 }
 
 .soresu-field-remove {
@@ -103,7 +112,8 @@ div.soresu-field-edit {
 
 .soresu-edit-property {
   margin-right: 10px;
-  font-size: 12px;
+  padding: 4px 8px;
+  font-size: 16px;
 }
 
 .soresu-field-add {

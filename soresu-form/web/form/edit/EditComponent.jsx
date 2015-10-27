@@ -112,7 +112,7 @@ class EditComponent extends React.Component {
 }
 
 export class FieldEditComponent extends EditComponent {
-  renderEditable(fieldSpecificElementEdit, fieldSpecificPropertyEdit) {
+  renderEditable(fieldSpecificElementEdit, fieldSpecificPropertyEditors) {
     const field = this.props.field
     const htmlId = this.props.htmlId
     var requiredEdit = undefined
@@ -128,8 +128,10 @@ export class FieldEditComponent extends EditComponent {
     return super.renderEditable(
       <div>
         {helpTextEdit}
-        {requiredEdit}
-        {fieldSpecificPropertyEdit}
+        <div className="soresu-edit-properties-line">
+          {requiredEdit}
+          {fieldSpecificPropertyEditors}
+        </div>
         {fieldSpecificElementEdit}
       </div>
     )
@@ -257,13 +259,7 @@ export class TextFieldEdit extends FieldEditComponent {
       </span>
     )
 
-    return super.renderEditable(
-        undefined,
-        <span>
-          {sizeEdit}
-          {maxLengthEdit}
-        </span>
-    )
+    return super.renderEditable(undefined, [{sizeEdit}, {maxLengthEdit}])
   }
 }
 
