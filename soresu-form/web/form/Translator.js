@@ -7,12 +7,12 @@ export default class Translator {
     const values = this.translations[key]
     if (values instanceof Object) {
       var value = values[lang]
-      if (value) {
+      if (typeof value !== 'undefined') {
         return value
       }
       console.error("No translations found for '" + key + "' in lang '" + lang + "' from:" + JSON.stringify(values))
       for (var key in values) {
-        if (values[key]) {
+        if (values[key] !== 'undefined') {
           return values[key]
         }
       }
