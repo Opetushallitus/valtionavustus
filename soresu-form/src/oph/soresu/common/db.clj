@@ -1,10 +1,10 @@
-(ns oph.common.db
-  (:use [oph.common.config :only [config config-name]]
+(ns oph.soresu.common.db
+  (:use [oph.soresu.common.config :only [config config-name]]
         [clojure.tools.trace :only [trace]])
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.tools.logging :as log]
             [hikari-cp.core :refer :all]
-            [oph.common.jdbc.extensions]
+            [oph.soresu.common.jdbc.extensions]
             [pandect.algo.sha256 :refer :all])
   (:import [java.security SecureRandom]))
 

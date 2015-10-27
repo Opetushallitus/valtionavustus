@@ -1,6 +1,6 @@
 (ns oph.va.hakija.main
   (:use [oph.va.hakija.server :only [start-server]])
-  (:require [oph.common.config :refer [config]])
+  (:require [oph.soresu.common.config :refer [config]])
   (:gen-class))
 
 (defn -main [& args]

@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.login
   (:use [clojure.tools.trace :only [trace]])
-  (:require [oph.common.config :refer [config config-simple-name]]
+  (:require [oph.soresu.common.config :refer [config config-simple-name]]
             [clojure.edn :as edn]
             [cheshire.core :as json]
             [clj-ldap.client :as ldap]

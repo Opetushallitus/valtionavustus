@@ -1,6 +1,6 @@
-(ns oph.form.rules
+(ns oph.soresu.form.rules
   (:use [clojure.tools.trace :only [trace]])
-  (:require [oph.form.formutil :refer :all]))
+  (:require [oph.soresu.form.formutil :refer :all]))
 
 (defn include-if [form-state rule]
   (let [trigger-value (:triggerValue (:params rule))

@@ -2,13 +2,11 @@
   (:use [clojure.tools.trace :only [trace]]
         [clojure.pprint :only [pprint]])
   (:require [clojure.java.io :as io]
-            [oph.common.db :refer :all]
-            [oph.common.jdbc.enums :refer :all]
+            [oph.soresu.common.db :refer :all]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.routes :refer :all]
-            [oph.common.jdbc.enums :refer :all]
             [clojure.tools.logging :as log])
-  (:import (oph.common.jdbc.enums HakuStatus HakuRole)))
+  (:import (oph.va.jdbc.enums HakuStatus HakuRole)))
 
 (defn- convert-attachment [attachment]
   {:id (:id attachment)
@@ -171,7 +169,7 @@
 
 (defn- update-form! [form-id form-content]
   ;; NOTE: looks like yesql unwraps sequence parameters, thats way we wrap them one extra time here
-  ;; TODO: Consolidate with oph.form.db currently in va-hakija
+  ;; TODO: Consolidate with oph.soresu.form.db currently in soresu-form
   (let [params {:form_id form-id :content (list (:content form-content)) :rules (list (:rules form-content))}]
     (exec-all :hakija-db [hakija-queries/archive-form! { :form_id form-id }
                           hakija-queries/update-form! params])))

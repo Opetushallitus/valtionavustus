@@ -15,7 +15,8 @@
   :plugins [[lein-ancient "0.6.7"]
             [lein-modules "0.3.11"]]
 
-  :modules {:dirs ["va-common"
+  :modules {:dirs ["soresu-form"
+                   "va-common"
                    "va-virkailija"
                    "va-hakija"]
             :subprocess "../lein"})

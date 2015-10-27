@@ -1,4 +1,4 @@
-(ns oph.form.routes
+(ns oph.soresu.form.routes
   (:use [clojure.tools.trace :only [trace]])
   (:require [compojure.route :as route]
             [ring.util.http-response :refer :all]
@@ -6,9 +6,9 @@
             [compojure.core :refer [GET]]
             [compojure.api.sweet :refer :all]
             [schema.core :as s]
-            [oph.form.db :as form-db]
-            [oph.form.schema :refer :all]
-            [oph.form.validation :as validation]))
+            [oph.soresu.form.db :as form-db]
+            [oph.soresu.form.schema :refer :all]
+            [oph.soresu.form.validation :as validation]))
 
 (defn create-form-submission [form-id answers]
   (let [submission (form-db/create-submission! form-id answers)]

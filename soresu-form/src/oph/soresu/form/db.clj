@@ -1,7 +1,7 @@
-(ns oph.form.db
-  (:use [oph.common.db]
+(ns oph.soresu.form.db
+  (:use [oph.soresu.common.db]
         [clojure.tools.trace :only [trace]])
-  (:require [oph.form.db.queries :as queries]))
+  (:require [oph.soresu.form.db.queries :as queries]))
 
 (defn list-forms []
   (->> {}

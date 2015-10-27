@@ -1,4 +1,4 @@
-(ns oph.form.schema
+(ns oph.soresu.form.schema
   (:require [schema.core :as s]))
 
 (defn create-form-schema [custom-wrapper-element-types custom-form-element-types]

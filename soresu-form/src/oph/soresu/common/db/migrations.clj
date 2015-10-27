@@ -1,9 +1,9 @@
-(ns oph.common.db.migrations
+(ns oph.soresu.common.db.migrations
   (:gen-class)
   (:use [clojure.tools.trace :only [trace]]
-        [oph.common.config :only [config]])
+        [oph.soresu.common.config :only [config]])
   (:require [clojure.tools.logging :as log]
-            [oph.common.db :as db])
+            [oph.soresu.common.db :as db])
   (import [org.flywaydb.core Flyway]
           [org.flywaydb.core.api.migration.jdbc JdbcMigration]
           [org.flywaydb.core.api.migration MigrationInfoProvider]

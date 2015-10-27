@@ -1,8 +1,8 @@
-(ns oph.form.validation
+(ns oph.soresu.form.validation
   (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.string :as string]
-            [oph.form.formutil :refer :all]
-            [oph.form.rules :as rules]))
+            [oph.soresu.form.formutil :refer :all]
+            [oph.soresu.form.rules :as rules]))
 
 (defn validate-required [field answer]
   (if (and (:required field)

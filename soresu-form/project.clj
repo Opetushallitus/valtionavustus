@@ -1,11 +1,10 @@
-(defproject oph-va/common "0.1.0-SNAPSHOT"
-  :description "OPH Valtionavustus common parts"
+(defproject oph/soresu "0.1.0-SNAPSHOT"
+  :description "OPH Soresu forms"
   :url "https://github.com/Opetushallitus/valtionavustus"
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
   :repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [oph/soresu "0.1.0-SNAPSHOT"]
 
                  ;; HTTP server
                  [javax.servlet/servlet-api "2.5"]
@@ -36,11 +35,6 @@
                  [hikari-cp "1.3.0" :exclusions [prismatic/schema]]
                  [org.flywaydb/flyway-core "3.2.1"]
 
-                 ;; E-mail
-                 [org.apache.commons/commons-email "1.4"]
-                 [de.ubercode.clostache/clostache "1.4.0"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-
                  ;; Testing
                  [speclj "3.3.1"]
                  ;; for junit output: lein spec -f junit
@@ -58,7 +52,6 @@
 
                  ;; Utils
                  [org.clojure/tools.trace "0.7.8"]
-                 [clj-time "0.11.0"]
                  [pandect "0.5.3"]]
 
   :target-path "target/%s"
@@ -79,6 +72,4 @@
 
   :uberjar-exclusions [#".*"]                               ;; Kludge to make top-level "lein sub uberjar" faster
 
-  :aliases {"dbmigrate" ["run" "-m" "oph.va.db.migrations/migrate"]
-            "dbclear" ["run" "-m" "oph.soresu.common.db/clear-db!"]
-            "buildfront" ^{:doc "Build frontend code with npm"} ["shell" "npm" "install"]})
+  :aliases {"buildfront" ^{:doc "Build frontend code with npm"} ["shell" "npm" "install"]})

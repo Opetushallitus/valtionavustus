@@ -24,9 +24,10 @@
 
   :uberjar-exclusions [#"public/test"]
 
-  :aot [oph.va.hakija.db.migrations]
+  :aot [oph.va.jdbc.enums
+        oph.va.hakija.db.migrations]
   :profiles {:uberjar {:aot [oph.va.hakija.main]}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.hakija.db.migrations/migrate" "db.migration"]
-            "dbclear" ["run" "-m" "oph.common.db/clear-db!" "db" "hakija"]
+            "dbclear" ["run" "-m" "oph.soresu.common.db/clear-db!" "db" "hakija"]
             "buildfront" ^{:doc "Build frontend code with npm"}
             ["do" ["shell" "npm" "install"] ["shell" "npm" "run" "build"]]})

@@ -5,7 +5,7 @@
             [clojure.tools.logging :as log]
             [clojure.java.io :as io]
             [clostache.parser :refer [render]]
-            [oph.common.config :refer [config]])
+            [oph.soresu.common.config :refer [config]])
   (:import [org.apache.commons.mail SimpleEmail]))
 
 (defn- load-template [path]
