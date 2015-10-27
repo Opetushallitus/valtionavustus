@@ -115,3 +115,15 @@
              (assoc node :helpText {:fi "" :sv ""})
              node))]
    (update-forms! (db/list-forms) add-helptext)))
+
+(migrations/defmigration migrate-remove-helptext-from-info-and-wrapper-elements "1.22"
+ "Remove helpText from info and wrapper elements"
+ (letfn [(has-empty-helptext? [node]
+           (and (:helpText node)
+                (= "" (:fi (:helpText node)))))
+         (remove-helptext [node]
+           (if (or (formutil/is-info-element? node)
+                   (and (formutil/is-wrapper-element? node) (has-empty-helptext? node)))
+             (dissoc node :helpText)
+             node))]
+   (update-forms! (db/list-forms) remove-helptext)))

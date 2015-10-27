@@ -33,11 +33,14 @@
 (defn has-field-type? [expected-value field]
   (has-attribute? :fieldType expected-value field))
 
-(defn- is-form-field? [field]
+(defn is-form-field? [field]
   (has-attribute? :fieldClass "formField" field))
 
-(defn- is-wrapper-element? [field]
+(defn is-wrapper-element? [field]
   (has-attribute? :fieldClass "wrapperElement" field))
+
+(defn is-info-element? [field]
+  (has-attribute? :fieldClass "infoElement" field))
 
 (defn unwrap-answers [answers]
   (let [map-fields (filter map? (vals answers))]
