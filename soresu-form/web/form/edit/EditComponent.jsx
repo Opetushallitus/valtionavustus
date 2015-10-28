@@ -1,5 +1,6 @@
 import React from 'react'
 import ClassNames from 'classnames'
+import slug from 'speakingurl'
 
 import FormEditorController from './FormEditController.js'
 import FormUtil from '../FormUtil.js'
@@ -284,8 +285,9 @@ export class MultipleChoiceEdit extends FieldEditComponent {
       function createOnChange(lang) {
         return e => {
           super.fieldValueUpdater(labelGetter, lang)(e)
-          const finnishLabelValue = labelGetter(field).fi
-          super.fieldValueUpdater(valueGetter, "value", finnishLabelValue)(e)
+          if(lang === "fi") {
+            super.fieldValueUpdater(valueGetter, "value", slug(e.target.value))(e)
+          }
         }
       }
       const removeOption = e => {
