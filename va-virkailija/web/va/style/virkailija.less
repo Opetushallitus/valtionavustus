@@ -40,31 +40,31 @@ body {
   color: @bright-red;
 }
 
+h1 {
+  font-weight: 300;
+  font-size: 24px;
+  margin: 0;
+}
+
+h2 {
+  color: @darker-gray;
+  font-weight: 300;
+  font-size: 18px;
+}
+
+h3 {
+  color: @darker-gray;
+  font-weight: 300;
+  font-size: 16px;
+  margin: 10px 0 0 0;
+}
+
 #container {
   margin-top: @topbar-height + 10px;
   padding-bottom: 20px;
 
   label:after {
     content: " ";
-  }
-
-  h1 {
-    font-weight: 300;
-    font-size: 24px;
-    margin: 0;
-  }
-
-  h2 {
-    color: @darker-gray;
-    font-weight: 300;
-    font-size: 18px;
-  }
-
-  h3 {
-    color: @darker-gray;
-    font-weight: 300;
-    font-size: 16px;
-    margin: 10px 0 0 0;
   }
 }
 
@@ -152,7 +152,29 @@ textarea, input[type=text] {
   height: @overview-list-height;
 }
 
-.linkDivider {
+.link-list {
+  margin-top: 10px;
+
+  .link-list-item {
+    display: inline-block;
+    text-align: center;
+    padding: 0 20px;
+    border-right: solid 1px @light-gray;
+    h3 {
+      margin-top: 0;
+    }
+  }
+
+  :first-child {
+    padding-left: 0;
+  }
+
+  :last-child {
+    border-right: none;
+  }
+}
+
+.link-divider {
   color: @light-gray;
   margin: 0 10px;
   &:after {

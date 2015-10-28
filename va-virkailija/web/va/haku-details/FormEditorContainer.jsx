@@ -17,17 +17,19 @@ export default class FormEditorContainer extends Component {
     const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/nayta?lang=sv"
     return (
       <section>
-        <div>
-          <h3>Haun aloitussivu</h3>
-          <a target="haku-preview-fi" href={hakuUrlFi}>Suomeksi</a><span className="linkDivider"/><a target="haku-preview-sv" href={hakuUrlSv}>Ruotsiksi</a>
+        <div className="link-list">
+          <div className="link-list-item">
+            <h3>Haun aloitussivu</h3>
+            <a target="haku-preview-fi" href={hakuUrlFi}>Suomeksi</a><span className="link-divider"/><a target="haku-preview-sv" href={hakuUrlSv}>Ruotsiksi</a>
+          </div>
+          <div className="link-list-item">
+            <h3>Hakulomakkeen esikatselu</h3>
+            <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a><span className="link-divider"/><a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
+          </div>
         </div>
-        <div>
-          <h3>Hakulomakkeen esikatselu</h3>
-          <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a><span className="linkDivider"/><a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
-        </div>
-       <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} controller={controller} />
-       <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} />
-       </section>
+        <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} controller={controller} />
+        <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} />
+      </section>
     )
   }
 }
