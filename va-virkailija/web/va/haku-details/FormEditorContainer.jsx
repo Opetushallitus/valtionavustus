@@ -19,7 +19,7 @@ export default class FormEditorContainer extends Component {
       <section>
         <div className="link-list">
           <div className="link-list-item">
-            <h3>Haun aloitussivu</h3>
+            <h3>Linkki hakuun</h3>
             <a target="haku-preview-fi" href={hakuUrlFi}>Suomeksi</a><span className="link-divider"/><a target="haku-preview-sv" href={hakuUrlSv}>Ruotsiksi</a>
           </div>
           <div className="link-list-item">
