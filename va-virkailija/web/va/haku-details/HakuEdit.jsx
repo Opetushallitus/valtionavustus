@@ -129,8 +129,8 @@ class FocusArea extends React.Component {
       const htmlId = "focus-area-" + index + "-"
       focusAreaItems.push(
         <tr key={index}>
-          <td><textarea onChange={onChange} rows="2" id={htmlId + "fi"} value={focusAreas.items[index].fi}/></td>
-          <td><textarea onChange={onChange} rows="2" id={htmlId + "sv"} value={focusAreas.items[index].sv}/></td>
+          <td><textarea onChange={onChange} rows="3" id={htmlId + "fi"} value={focusAreas.items[index].fi}/></td>
+          <td><textarea onChange={onChange} rows="3" id={htmlId + "sv"} value={focusAreas.items[index].sv}/></td>
           <td><button className="remove" onClick={controller.deleteFocusArea(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={avustushaku.status === "published"} /></td>
         </tr>
       )
