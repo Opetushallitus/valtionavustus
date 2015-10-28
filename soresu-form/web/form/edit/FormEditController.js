@@ -46,9 +46,13 @@ export default class FormEditorController {
     })
   }
 
-  addChildFieldTo(parentField, newFieldType) {
+  addChildFieldAfter(fieldToAddAfter, newFieldType) {
     this.doEdit(() => {
       const formDraftJson = this.formDraftJson
+      const parentField = FormUtil.findFieldWithDirectChild(formDraftJson.content, fieldToAddAfter.id)
+      const childArray = parentField ? parentField.children : formDraftJson.content
+      const fieldToAddAfterOnForm = FormUtil.findField(formDraftJson.content, fieldToAddAfter.id)
+      const indexOfNewChild = childArray.indexOf(fieldToAddAfterOnForm) + 1
 
       function generateUniqueId(index) {
         const proposed = newFieldType + "-" +index
@@ -61,11 +65,11 @@ export default class FormEditorController {
       const newId = generateUniqueId(0)
       const newChild = createNewField(newFieldType, newId)
 
-      const parent = FormUtil.findField(formDraftJson.content, parentField.id)
+      const parent = parentField ? FormUtil.findField(formDraftJson.content, parentField.id) : formDraftJson.content
       if (_.isArray(parent)) {
-        parent.push(newChild)
+        parent.splice(indexOfNewChild, 0, newChild);
       } else {
-        parent.children.push(newChild)
+        parent.children.splice(indexOfNewChild, 0, newChild);
       }
     })
 

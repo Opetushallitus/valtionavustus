@@ -75,6 +75,14 @@ class EditComponent extends React.Component {
     const field = this.props.field
     const formEditorController = this.props.formEditorController
     const htmlId = this.props.htmlId
+
+    const addableElements = _.keys(FormEditorController.addableFieldTypes())
+    const addElementButtons = []
+    for (var i = 0; i < addableElements.length; i++) {
+      addElementButtons.push(<a href="#" key={i} className="soresu-edit" onClick={createAddOnClick(addableElements[i])}>{EditComponent.fieldTypeInFI(addableElements[i])}</a>)
+    }
+
+
     var labelEdit = this.renderTranslationTable(htmlId + "-label", this.labelName(), x => x.label)
     const removeFieldOnClick = e => { formEditorController.removeField(field) }
     const removeField = FormEditorController.addableFieldTypes()[field.fieldType] ?
@@ -86,8 +94,19 @@ class EditComponent extends React.Component {
           {removeField}
           {labelEdit}
           {fieldSpecificEdit}
+          <div className="soresu-field-add">
+            <span>+</span>
+            {addElementButtons}
+          </div>
         </div>
     )
+
+    function createAddOnClick(fieldType) {
+      return e => {
+        e.preventDefault()
+        formEditorController.addChildFieldAfter(field, fieldType)
+      }
+    }
   }
 
   labelName() {
@@ -168,34 +187,11 @@ export class AppendableEditWrapper extends EditComponent {
   }
 
   render() {
-    const formEditorController = this.props.formEditorController
-    const field = this.props.field
-    const addableElements = _.keys(FormEditorController.addableFieldTypes())
-    const addElementButtons = []
-    for (var i = 0; i < addableElements.length; i++) {
-      addElementButtons.push(<a href="#" key={i} className="soresu-edit" onClick={createOnclick(addableElements[i])}>{EditComponent.fieldTypeInFI(addableElements[i])}</a>)
-    }
-
     return super.renderEditable(
       <div>
-        <div className="soresu-field-add">
-          <span>+</span>
-          {addElementButtons}
-        </div>
        {this.props.wrappedElement}
-       <div className="soresu-field-add">
-         <span>+</span>
-         {addElementButtons}
-       </div>
       </div>
     )
-
-    function createOnclick(fieldType) {
-      return e => {
-        e.preventDefault()
-        formEditorController.addChildFieldTo(field, fieldType)
-      }
-    }
   }
 
   className() {
