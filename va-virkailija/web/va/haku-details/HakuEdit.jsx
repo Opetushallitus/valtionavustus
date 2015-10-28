@@ -31,17 +31,23 @@ export default class HakuEdit extends Component {
             </tr>
           </tbody>
         </table>
-        <div>
-          <h3>{avustushaku.content.duration.label.fi}</h3>
-          <DateField id="hakuaika-start" onChange={onChange} value={avustushaku.content.duration.start} disabled={avustushaku.status === "published"} />
-          <span className="dateDivider" />
-          <DateField id="hakuaika-end" onChange={onChange} value={avustushaku.content.duration.end} disabled={avustushaku.status === "published"} />
+        <div className="haku-duration-and-self-financing">
+          <div className="haku-duration-edit-container">
+            <h3>{avustushaku.content.duration.label.fi}</h3>
+            <DateField id="hakuaika-start" onChange={onChange} value={avustushaku.content.duration.start} disabled={avustushaku.status === "published"} />
+            <span className="dateDivider" />
+            <DateField id="hakuaika-end" onChange={onChange} value={avustushaku.content.duration.end} disabled={avustushaku.status === "published"} />
+          </div>
+          <div className="haku-self-financing-edit-container">
+            <h3>Hakijan omarahoitusvaatimus</h3>
+            <input  id="haku-self-financing-percentage"  type="number" min="0" max="99" className="percentage" required="true" maxLength="2"
+                   onChange={onChange} disabled={avustushaku.status === "published"} value={avustushaku.content["self-financing-percentage"]} /><span>%</span>
+          </div>
         </div>
         <HakuRoles avustushaku={avustushaku} controller={controller}/>
         <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} onChange={onChange} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
         <FocusArea controller={controller} avustushaku={avustushaku} onChange={onChange} />
-        <div><h3>Hakijan omarahoitusvaatimus</h3><input className="percentage" required="true" maxLength="2" min="0" max="99" id="haku-self-financing-percentage" onChange={onChange} disabled={avustushaku.status === "published"} type="number" value={avustushaku.content["self-financing-percentage"]} /><span>%</span></div>
       </div>
     )
   }
