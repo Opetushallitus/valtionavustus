@@ -78,9 +78,11 @@
 
 (defn create-hakemus! [avustushaku-id form-id answers]
   (let [submission (form-db/create-submission! form-id answers)
+        user-key (generate-hash-id)
         params (-> {:avustushaku_id avustushaku-id
-                    :user_key (generate-hash-id)
-                    :form_submission (:id submission)}
+                    :user_key user-key
+                    :form_submission (:id submission)
+                    :register_number (generate-register-number avustushaku-id user-key)}
                    (merge-calculated-params avustushaku-id answers))
         hakemus (exec :db queries/create-hakemus<! params)]
     {:hakemus hakemus :submission submission}))
