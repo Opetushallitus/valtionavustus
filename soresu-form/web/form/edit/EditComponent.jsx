@@ -111,7 +111,7 @@ class EditComponent extends React.Component {
   }
 
   labelName() {
-    return "Otsikko"
+    return "Kysymys"
   }
 
   className() {
