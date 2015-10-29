@@ -1,6 +1,7 @@
 const outputDir = "./resources/public/"
 
-const webpack = require("webpack");
+const webpack = require("webpack")
+const LessPluginNpmImport = require('less-plugin-npm-import')
 const commonsPlugin = new webpack.optimize.CommonsChunkPlugin({
   name: "commons",
   filename: "js/commons.js"
@@ -50,5 +51,10 @@ module.exports = {
       }
     ]
   },
-  plugins: plugins
+  plugins: plugins,
+  lessLoader: {
+    lessPlugins: [
+      new LessPluginNpmImport()
+    ]
+  }
 }
