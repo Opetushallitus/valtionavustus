@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import traverse from 'traverse'
 
 export default class JsUtil {
   static flatFilter(objectOrArray, nodePredicate) {
@@ -7,25 +6,26 @@ export default class JsUtil {
   }
 
   static traverseMatching(objectOrArray, nodePredicate, operation) {
-    return traverse(objectOrArray).reduce(function (acc, x) {
-      if (nodePredicate(x)) {
-        const nodeResult = operation(x)
-        acc.push(nodeResult)
+    const results = []
+    JsUtil.fastTraverse(objectOrArray, element => {
+      if (nodePredicate(element)) {
+        results.push(operation(element))
       }
-      return acc
-    }, [])
+    })
+    return results
   }
 
   static findIndexOfFirst(objectOrArray, nodePredicate) {
-    const result = traverse(objectOrArray).reduce(function (acc, x) {
-      if(acc.found) {
-        return acc
+    const result = {found: false, index: 0}
+    JsUtil.fastTraverse(objectOrArray, element => {
+      if (!result.found) {
+        if (nodePredicate(element)) {
+          result.found = true
+        } else {
+          result.index++
+        }
       }
-      if (nodePredicate(x)) {
-        return {found: true, index: acc.index}
-      }
-      return {found: false, index: acc.index + 1}
-    }, {found: false, index: 0})
+    })
     return result.index
   }
 
@@ -38,5 +38,35 @@ export default class JsUtil {
         " growing parents yet, expected a single one. fieldId=" + idToFind)
     }
     return _.first(allNodesContainingNode)
+  }
+
+  static fastTraverse(x, func) {
+    func(x)
+    if (isObject(x)) {
+      traverseObject(x)
+    } else if (isArray(x)) {
+      traverseArray(x)
+    }
+
+    function traverseObject(o) {
+      for (var i in o) {
+        const element = o[i]
+        if (element !== null && (isObject(element) || isArray(element))) {
+          JsUtil.fastTraverse(element, func)
+        }
+      }
+    }
+    function traverseArray(arr) {
+      for (var i = 0; i < arr.length; i++) {
+        JsUtil.fastTraverse(arr[i])
+      }
+    }
+
+    function isObject(element) {
+      return typeof(element) === "object"
+    }
+    function isArray(element) {
+      return typeof(element) === "array"
+    }
   }
 }
