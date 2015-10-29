@@ -70,3 +70,21 @@
     border-top-color: @fill;
   }
 }
+
+.soresu-dynamic-children-transition-enter {
+  opacity: 0.3;
+  transition: opacity 0.5s linear;
+
+  &.soresu-dynamic-children-transition-enter-active {
+    opacity: 1;
+  }
+}
+
+.soresu-dynamic-children-transition-leave {
+  opacity: 1;
+  transition: opacity 0.4s linear;
+
+  &.soresu-dynamic-children-transition-leave-active {
+    opacity: 0.3;
+  }
+}

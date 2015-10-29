@@ -5,6 +5,7 @@ import styles from '../style/preview.less'
 import printStyles from '../style/print.less'
 
 import {BasicFieldEdit,BasicEditWrapper,AppendableEditWrapper,InfoElementEditWrapper} from 'soresu-form/web/form/edit/EditComponent.jsx'
+import CSSTransitionGroup from 'soresu-form/web/form/component/wrapper/CSSTransitionGroup.jsx'
 import FormEditComponent from 'soresu-form/web/form/edit/FormEditComponent.jsx'
 
 import FormPreview from '../FormPreview.jsx'
@@ -59,7 +60,9 @@ export default class FormEdit extends React.Component {
     }
 
     return  <div className="soresu-form-edit soresu-edit">
-      {fields.map(renderField)}
+      <CSSTransitionGroup transitionName="soresu-dynamic-children-transition">
+        {fields.map(renderField)}
+      </CSSTransitionGroup>
     </div>
   }
 }
