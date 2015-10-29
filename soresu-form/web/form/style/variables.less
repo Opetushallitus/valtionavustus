@@ -20,3 +20,67 @@
 @bright-red: #c9302c;
 @yellow: #efc211;
 @chuck-norris: #bada55;
+
+@content-width: 1200px;
+@preview-width: 700px;
+@topbar-height: 70px;
+@table-indent: 7px;
+@selected-blue: #4093BE;
+@off-white: #fefefe;
+
+.popup-box-shadow {
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.40);
+}
+
+.box-triangle(@position) {
+  &:before, &:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-color: transparent;
+  }
+
+  &:before {
+    left: @position;
+    border-width: 11px;
+  }
+
+  &:after {
+    left: @position + 1px;
+    border-width: 10px;
+  }
+}
+
+.box-triangle-up(@stroke, @fill) {
+  &:before, &:after {
+    border-top: 0;
+  }
+
+  &:before {
+    top: -11px;
+    border-bottom-color: @stroke;
+  }
+
+  &:after {
+    top: -10px;
+    border-bottom-color: @fill;
+  }
+}
+
+.box-triangle-down(@stroke, @fill) {
+  &:before, &:after {
+    border-bottom: 0;
+  }
+
+  &:before {
+    bottom: -11px;
+    border-top-color: @stroke;
+  }
+
+  &:after {
+    bottom: -10px;
+    border-top-color: @fill;
+  }
+}

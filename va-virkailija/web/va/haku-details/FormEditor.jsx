@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import styles from '../style/formedit.less';
+import styles from 'soresu-form/web/form/style/formedit.less';
 
 import FormEdit from 'soresu-form/web/form/edit/FormEdit.jsx'
 import FormEditorController from 'soresu-form/web/form/edit/FormEditController'
