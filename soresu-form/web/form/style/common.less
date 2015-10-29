@@ -1,3 +1,19 @@
+.ease-in-out(@seconds) {
+  -webkit-transition: all @seconds ease-in-out;
+  -moz-transition: all @seconds ease-in-out;
+  -ms-transition: all @seconds ease-in-out;
+  -o-transition: all @seconds ease-in-out;
+  transition: all @seconds ease-in-out;
+}
+
+.scale(@factor) {
+  -webkit-transform: scale(@factor);
+  -moz-transform: scale(@factor);
+  -ms-transform: scale(@factor);
+  -o-transform: scale(@factor);
+  transform: scale(@factor);
+}
+
 .popup-box-shadow {
   box-shadow: 0 1px 2px 0 rgba(0,0,0,0.40);
 }

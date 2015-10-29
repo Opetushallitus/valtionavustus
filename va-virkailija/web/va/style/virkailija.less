@@ -1,4 +1,5 @@
 @import "npm://soresu-form/web/form/style/variables.less";
+@import "npm://soresu-form/web/form/style/common.less";
 
 @haku-selector-combobox-height: 22px;
 @overview-list-height: 270px;
@@ -11,22 +12,6 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-}
-
-.ease-in-out(@seconds) {
-  -webkit-transition: all @seconds ease-in-out;
-  -moz-transition: all @seconds ease-in-out;
-  -ms-transition: all @seconds ease-in-out;
-  -o-transition: all @seconds ease-in-out;
-  transition: all @seconds ease-in-out;
-}
-
-.scale (@factor) {
-  -webkit-transform: scale(@factor);
-  -moz-transform: scale(@factor);
-  -ms-transform: scale(@factor);
-  -o-transform: scale(@factor);
-  transform: scale(@factor);
 }
 
 h3.required:after {
