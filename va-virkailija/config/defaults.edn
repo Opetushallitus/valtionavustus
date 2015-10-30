@@ -6,6 +6,8 @@
           :require-https? true
           :attachment-max-size 50 ;in megabytes
           :threads 16}
+ :opintopolku {:url "https://testi.virkailija.opintopolku.fi"
+               :cas-login "/cas/login?service="}
  :ui {:show-environment? true}
  :db {:pool-name "virkailija-pool"
       :username "va_virkailija"
