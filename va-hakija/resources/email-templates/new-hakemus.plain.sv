@@ -9,6 +9,7 @@ Ansökan kan bearbetas ända till  ansökningstidens slut. Ansökningarna behand
 OBS! Du kan dela detta meddelande till andra projektpartner, men observera att de kan också bearbeta ansökan.
 
 Tillägsuppgifter ger statsunderstod@oph.fi
+
 Den föredragande som ansvarar för ansökningen har nämnts i ansökningsmeddelandet.
 
 Utbildningsstyrelsen
