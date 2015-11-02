@@ -22,6 +22,7 @@ module.exports = {
   entry: {
     app: "./web/va/HakemustenArviointiApp.jsx",
     adminApp: "./web/va/HakujenHallintaApp.jsx",
+    summaryApp: "./web/va/YhteenvetoApp.jsx",
     login: "./web/va/Login.jsx"
   },
   output: {

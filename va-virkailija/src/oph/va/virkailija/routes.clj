@@ -23,7 +23,8 @@
             [oph.va.schema :refer :all]
             [oph.va.virkailija.schema :refer :all]
             [oph.va.virkailija.handlers :refer :all]
-            [oph.va.virkailija.scoring :refer :all]))
+            [oph.va.virkailija.scoring :refer :all]
+            [oph.va.virkailija.saved-search :refer :all]))
 
 (defn- on-healthcheck []
   (if (and (virkailija-db/health-check)
@@ -84,6 +85,7 @@
 (defroutes resource-routes
   (GET "/" [] (return-html "index.html"))
   (GET "/admin/*" [] (return-html "admin.html"))
+  (GET "/yhteenveto/*" [] (return-html "summary.html"))
   (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
     :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
     (on-hakemus-preview avustushaku-id hakemus-user-key))
@@ -258,7 +260,22 @@
                  :register-number s/Str}
         (hakija-api/set-register-number hakemus-id (:register-number body))
         (ok {:hakemus-id hakemus-id
-             :register-number (:register-number body)})))
+             :register-number (:register-number body)}))
+
+  (PUT* "/:avustushaku-id/searches" [avustushaku-id :as request]
+        :path-params [avustushaku-id :- Long]
+        :body [body (describe SavedSearch "New stored search")]
+        :return {:search-url s/Str}
+        (let [identity (auth/get-identity request)
+              search-id (create-or-get-search avustushaku-id body identity)
+              search-url (str "/yhteenveto/avustushaku/" avustushaku-id "/listaus/" search-id "/")]
+          (ok {:search-url search-url})))
+
+  (GET* "/:avustushaku-id/searches/:saved-search-id" [avustushaku-id saved-search-id]
+          :path-params [avustushaku-id :- Long, saved-search-id :- Long]
+          :return SavedSearch
+          (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
+            (ok (:query saved-search)))))
 
 (defroutes* userinfo-routes
   "User information"
