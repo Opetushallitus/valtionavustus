@@ -9,9 +9,8 @@ import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
 
 import virkailija from './style/virkailija.less'
-import topbar from './style/topbar.less'
 import style from './style/main.less'
-import selector from './style/switcher.less'
+import summaryStyle from './style/summary.less'
 
 export default class SummaryApp extends Component {
   render() {

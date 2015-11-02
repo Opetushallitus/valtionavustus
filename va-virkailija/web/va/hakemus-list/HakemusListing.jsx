@@ -139,7 +139,7 @@ class ApplicationSummaryLink extends Component {
     const controller = this.props.controller
     const disabled = _.isEmpty(filteredHakemusList)
     const linkText = filteredHakemusList.length + "/" + hakemusList.length + " hakemusta"
-    return disabled ? <span>{linkText}</span> : <a href="/yhteenveto/" target="_blank" onClick={onClick}>{linkText}</a>
+    return disabled ? <span>{linkText}</span> : <a className="summary-link" href="/yhteenveto/" target="_blank" onClick={onClick}>{linkText}</a>
 
     function onClick(e) {
       controller.gotoSavedSearch(filteredHakemusList)
