@@ -22,3 +22,6 @@
 
 (defn create-or-get-search [avustushaku-id search-query identity]
   (:id (resolve-search avustushaku-id search-query identity)))
+
+(defn get-saved-search [avustushaku-id saved-search-id]
+  (get-search avustushaku-id saved-search-id))

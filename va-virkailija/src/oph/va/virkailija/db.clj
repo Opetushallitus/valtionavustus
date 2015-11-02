@@ -92,3 +92,8 @@
                                      :query query
                                      :name name
                                      :oid person-oid}))
+
+(defn get-search [avustushaku-id saved-search-id]
+  (->> {:avustushaku_id avustushaku-id :id saved-search-id}
+       (exec :db queries/get-search)
+       first))

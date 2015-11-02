@@ -18,3 +18,4 @@
 
 (defquery find-search "sql/virkailija/saved_search/find.sql")
 (defquery create-search<! "sql/virkailija/saved_search/create.sql")
+(defquery get-search "sql/virkailija/saved_search/get.sql")
