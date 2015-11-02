@@ -75,3 +75,17 @@
                    (map (fn [match-object] {:field field :result (:result match-object)}))
                    first))]
       (map find-match field-list))))
+
+(defmulti generate-data type)
+
+(defmethod generate-data :default [value] value)
+
+(defn recursively-convert [value]
+  (letfn [(convert [value]
+            (if (is-form-field? value)
+              {:key (:id value) :value "foobar" :fieldType (:fieldType value)}
+              (if (is-wrapper-element? value)
+                {:key (:id value) :value (recursively-convert (:children value)) :fieldType (:fieldType value)}
+                nil)))]
+    (->> (mapv convert value)
+         (filterv (comp not nil?)))))
