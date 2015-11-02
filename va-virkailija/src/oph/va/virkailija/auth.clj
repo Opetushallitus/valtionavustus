@@ -2,7 +2,8 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [oph.va.virkailija.login :refer [login get-details]]
             [buddy.core.nonce :as nonce]
-            [buddy.core.codecs :as codecs]))
+            [buddy.core.codecs :as codecs]
+            [clojure.tools.logging :as log]))
 
 (defonce tokens (atom {}))
 
@@ -10,13 +11,16 @@
   (let [randomdata (nonce/random-bytes 16)]
     (codecs/bytes->hex randomdata)))
 
-(defn authenticate [username password]
-  (when-let [details (login username password)]
-    (let [token (random-token)]
+(defn authenticate [ticket]
+  (if-let [details (login ticket)]
+    (let [username (:username details)
+          token (random-token)]
+      (log/info username "logged in succesfully")
       (swap! tokens assoc token details)
       {:username username
        :person-oid (:person-oid details)
-       :token token})))
+       :token token})
+    (log/warn "Log-in failed for cas ticket " ticket)))
 
 (defn check-identity [identity]
   (if-let [{:keys [token username]} identity]

@@ -16,41 +16,18 @@ export default class Login extends React.Component {
     const model = this.props.model
     const environment =  model.environment
     const query = queryString.parse(location.search)
-    const errorMessage = (<div className="error">Sisäänkirjautuminen epäonnistui. Tarkista käyttäjänimi ja salasana</div>)
+    const errorMessage = (<div className="error">Sisäänkirjautuminen epäonnistui.</div>)
     const error = query.error == "true" ? errorMessage : (<div></div>)
-    const target = query.target ? query.target : "/"
     return (
       <div>
         <TopBar environment={environment}/>
         <section id="container">
-          <form name="login" method="post">
-            <div className="row">
-              <label htmlFor="username">Tunnus</label>
-            </div>
-            <div className="row">
-              <input type="text" id="username" ref="nameInput" name="username" />
-            </div>
-            <div className="row">
-              <label htmlFor="password">Salasana</label>
-            </div>
-            <div className="row">
-              <input type="password" id="password" name="password" />
-            </div>
-            <div className="row">
-              <button type="submit">Kirjaudu sisään</button>
-            </div>
-            <input type="hidden" name="target" value={target}/>
-          </form>
-          <div className="row">
-            {error}
-          </div>
+          <h2>Sinulla ei ole oikeuksia valtionavustusjärjestelmään.</h2>
+          <div className="row">{error}</div>
+          <div className="row"><a href="/">Kirjaudu sisään</a></div>
         </section>
       </div>
     )
-  }
-
-  componentDidMount() {
-    React.findDOMNode(this.refs.nameInput).focus()
   }
 }
 

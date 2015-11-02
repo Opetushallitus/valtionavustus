@@ -292,19 +292,23 @@
 (defroutes* login-routes
   "Authentication"
 
-  (GET "/*" [] (return-html "login.html"))
+  (GET "/failed" [] (return-html "login.html"))
 
-  (POST* "/" [username password :as request]
-        :form-params [username :- s/Str password :- s/Str target :- s/Str]
+  (GET "/ticket" [ticket :as request]
+        :query-params [ticket :- s/Str]
         :return s/Any
-        (if-let [identity (auth/authenticate username password)]
-          (-> (resp/redirect (str target (query-string-for-login (:query-params request) {} ["target" "error"])))
-              (assoc :session {:identity identity}))
-          (resp/redirect (str "/login/" (query-string-for-login (:query-params request) {"error" "true"} [])))))
+        (try
+          (if-let [identity (auth/authenticate ticket)]
+            (-> (resp/redirect "/") ; TODO redirect to orig (str target (query-string-for-login (:query-params request) {} ["target" "error"]))
+                (assoc :session {:identity identity}))
+            (resp/redirect (str "/login/failed" (query-string-for-login (:query-params request) {} []))))
+          (catch Exception e
+            (log/error "Error in login ticket handling" e)
+            (resp/redirect (str "/login/failed" (query-string-for-login (:query-params request) {"error" "true"} []))))))
 
   (POST "/logout" [:as request]
         (auth/logout (-> request :session :identity))
-        (-> (resp/redirect "/login")
+        (-> (resp/redirect "/")
             (assoc :session nil))))
 
 (defroutes* doc-routes

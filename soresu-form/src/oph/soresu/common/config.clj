@@ -44,4 +44,4 @@
          https (if (:require-https? server) "https" "http")]
           (str https "://" (:host server) ":" (:port server))))
 
-(defonce login-url (str server-url "/login"))
+(defonce login-url (str server-url "/login/ticket"))
