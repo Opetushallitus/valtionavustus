@@ -97,3 +97,7 @@
    :budget-total-sum s/Int
    :budget-oph-share-sum s/Int
    :budget-granted-sum s/Int})
+
+(s/defschema SavedSearch
+  "Saved search listing certain hakemukset by ids or possibly dynamic search in the future"
+  {:hakemus-ids (s/maybe [Long])})

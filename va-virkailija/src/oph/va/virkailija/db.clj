@@ -81,3 +81,14 @@
 
 (defn add-score [avustushaku-id arvio-id identity selection-criteria-index score]
   (update-or-create-score avustushaku-id arvio-id identity selection-criteria-index score))
+
+(defn find-search [avustushaku-id query]
+  (->> {:avustushaku_id avustushaku-id :query query}
+       (exec :db queries/find-search)
+       first))
+
+(defn create-search! [avustushaku-id query name person-oid]
+  (exec :db queries/create-search<! {:avustushaku_id avustushaku-id
+                                     :query query
+                                     :name name
+                                     :oid person-oid}))
