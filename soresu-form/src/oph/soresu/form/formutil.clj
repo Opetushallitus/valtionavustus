@@ -88,7 +88,7 @@
                 {:key (:id value) :value (recursively-convert (:children value) field-value-fn) :fieldType (:fieldType value)}
                 nil)))]
     (->> (mapv convert value)
-         (filterv (comp not nil?)))))
+         (filterv identity))))
 
 (defn generate-answers [form field-value-fn]
   {:value (recursively-convert (:content form) field-value-fn)})
