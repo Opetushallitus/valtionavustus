@@ -40,16 +40,16 @@
 
 (defn- query-string-for-redirect-location [original-request]
   (if-let [original-query-string (:query-string original-request)]
-    (str "&" original-query-string)))
-
+    (str "?" original-query-string)))
 
 (defn- redirect-to-login [request response]
-  ; TODO target url passing:  (:uri request) (query-string-for-redirect-location request)
-  (let [return-url login-url]
+  (let [original-url (str (:uri request) (query-string-for-redirect-location request))
+        return-url login-url]
     {:status  302
      :headers {"Location" (str opintopolku-login-url return-url)
                "Content-Type" "text/plain"}
-     :body    (str "Access to " (:uri request) " is not authorized, redirecting to login")}))
+     :body    (str "Access to " (:uri request) " is not authorized, redirecting to login")
+     :session {:original-url original-url}}))
 
 (defn authenticated-access [request]
   (if (auth/check-identity (-> request :session :identity))

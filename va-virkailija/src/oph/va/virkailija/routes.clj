@@ -302,8 +302,10 @@
         (try
           (if ticket
             (if-let [identity (auth/authenticate ticket)]
-              (-> (resp/redirect "/") ; TODO redirect to orig (str target (query-string-for-login (:query-params request) {} ["target" "error"]))
-                  (assoc :session {:identity identity}))
+              (let [original-url (-> request :session :original-url)]
+                (-> (if original-url original-url "/")
+                    (resp/redirect)
+                    (assoc :session {:identity identity})))
               (resp/redirect (str "/login/logged-out" (query-string-for-login (:query-params request) {"not-permitted" "true"} []))))
             (resp/redirect (str "/login/logged-out" (query-string-for-login (:query-params request) {} []))))
           (catch Exception e
