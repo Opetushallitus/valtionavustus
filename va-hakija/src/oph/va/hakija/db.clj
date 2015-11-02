@@ -3,9 +3,11 @@
         [oph.soresu.form.db :as form-db]
         [clojure.tools.trace :only [trace]])
   (:require [clojure.java.io :as io]
+            [oph.soresu.common.jdbc.extensions :refer :all]
+            [oph.soresu.form.formutil :as form-util]
+            [oph.va.jdbc.extensions :refer :all]
             [oph.va.hakija.db.queries :as queries]
-            [oph.va.budget :as va-budget]
-            [oph.soresu.form.formutil :as form-util]))
+            [oph.va.budget :as va-budget]))
 
 (defn slurp-binary-file! [file]
   (io! (with-open [reader (io/input-stream file)]
