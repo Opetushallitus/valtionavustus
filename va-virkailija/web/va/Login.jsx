@@ -17,14 +17,17 @@ export default class Login extends React.Component {
     const environment =  model.environment
     const query = queryString.parse(location.search)
     const errorMessage = (<div className="error">Sisäänkirjautuminen epäonnistui.</div>)
-    const error = query.error == "true" ? errorMessage : (<div></div>)
+    const notPermittedMessage = (<div className="error">Sinulla ei ole oikeuksia valtionavustusjärjestelmään.</div>)
+    const error = query.error == "true" ? errorMessage : undefined
+    const notPermitted = query["not-permitted"] == "true" ? notPermittedMessage : undefined
     return (
       <div>
         <TopBar environment={environment}/>
         <section id="container">
-          <h2>Sinulla ei ole oikeuksia valtionavustusjärjestelmään.</h2>
+          <div className="row">{notPermitted}</div>
           <div className="row">{error}</div>
-          <div className="row"><a href="/">Kirjaudu sisään</a></div>
+          <div hidden={notPermitted} className="row"><a href="/">Kirjaudu sisään</a></div>
+          <div hidden={!notPermitted} className="row"><a href="/login/logout">Kirjaudu ulos opintopolusta</a></div>
         </section>
       </div>
     )
