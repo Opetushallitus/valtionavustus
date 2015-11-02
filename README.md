@@ -149,3 +149,9 @@ Clojure-tyyppinen tietorakenne.
 Ovatko riippuvuudet päivittyneet?
 
     ./lein modules ancient
+
+Hakemusten generointi
+
+    cd va-hakija
+    lein populate 400
+
