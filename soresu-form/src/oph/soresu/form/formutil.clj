@@ -80,7 +80,7 @@
 
 (defmethod generate-data :default [value] value)
 
-(defn recursively-convert [value field-value-fn]
+(defn- recursively-convert [value field-value-fn]
   (letfn [(convert [value]
             (if (is-form-field? value)
               {:key (:id value) :value (field-value-fn value) :fieldType (:fieldType value)}
@@ -89,3 +89,6 @@
                 nil)))]
     (->> (mapv convert value)
          (filterv (comp not nil?)))))
+
+(defn generate-answers [form field-value-fn]
+  {:value (recursively-convert (:content form) field-value-fn)})
