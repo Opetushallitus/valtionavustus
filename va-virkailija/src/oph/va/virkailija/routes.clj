@@ -313,6 +313,12 @@
             (log/error "Error in login ticket handling" e)
             (resp/redirect (str "/login/logged-out" (query-string-for-login (:query-params request) {"error" "true"} []))))))
 
+  (POST* "/cas" [logoutRequest :as request]
+    :form-params [logoutRequest :- s/Str]
+    :return s/Any
+    :summary "Handle logout request from cas"
+      (auth/cas-initiated-logout logoutRequest))
+
   (GET "/logout" [:as request]
         (auth/logout (-> request :session :identity))
         (-> (resp/redirect (str opintopolku-logout-url login-url))
