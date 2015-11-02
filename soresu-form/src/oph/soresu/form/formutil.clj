@@ -80,12 +80,12 @@
 
 (defmethod generate-data :default [value] value)
 
-(defn recursively-convert [value]
+(defn recursively-convert [value field-value-fn]
   (letfn [(convert [value]
             (if (is-form-field? value)
-              {:key (:id value) :value "foobar" :fieldType (:fieldType value)}
+              {:key (:id value) :value (field-value-fn value) :fieldType (:fieldType value)}
               (if (is-wrapper-element? value)
-                {:key (:id value) :value (recursively-convert (:children value)) :fieldType (:fieldType value)}
+                {:key (:id value) :value (recursively-convert (:children value) field-value-fn) :fieldType (:fieldType value)}
                 nil)))]
     (->> (mapv convert value)
          (filterv (comp not nil?)))))
