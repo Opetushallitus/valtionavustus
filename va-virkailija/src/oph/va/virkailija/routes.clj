@@ -296,9 +296,10 @@
 
   (GET "/logged-out" [] (return-html "login.html"))
 
-  (GET "/cas" [ticket :as request]
-        :query-params [ticket :- s/Str]
+  (GET* "/cas" [ticket :as request]
+        :query-params [{ticket :- s/Str nil}]
         :return s/Any
+        :summary "Handle login ticket from cas"
         (try
           (if ticket
             (if-let [identity (auth/authenticate ticket)]
