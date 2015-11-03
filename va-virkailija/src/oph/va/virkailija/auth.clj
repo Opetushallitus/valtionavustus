@@ -21,9 +21,7 @@
   (if-let [{:keys [token username]} identity]
     (if (contains? @tokens token)
       (get @tokens token)
-      (when-let [details (get-details username)]
-        (swap! tokens assoc token details)
-        details))))
+      nil)))
 
 (defn get-identity [request]
   (check-identity (-> request
