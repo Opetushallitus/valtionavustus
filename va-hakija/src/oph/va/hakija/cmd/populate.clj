@@ -55,13 +55,71 @@
            {:key "other-public-financing-income-row.amount" :value "10" :fieldType "moneyField"}
            {:key "private-financing-income-row.amount" :value "10" :fieldType "moneyField"}]})
 
+
+(def person-names {:start ["Jorma" "Pertti" "Esko" "Anna" "Marjo" "Tiina"]
+                   "Jorma" ["Karhu." "Vasara." "Männikäinen."]
+                   "Pertti" ["Jorma" "Arinen." "Haahka."]
+                   "Esko" ["Pertti" "Tiittanen." "Hollokainen."]
+                   "Anna" ["Esko" "Helko." "Hyyppä."]
+                   "Marjo" ["Tiina" "Dufva." "Haapasalmi." "Haapoja."]
+                   "Tiina" ["Anna" "Vasara." "Kirves." "Ankkuri."]})
+
+(def project-names {:start ["Virtaa" "Voimaa" "Räjähtävää" "Tuulta"]
+                    "Virtaa" ["Tanssimalla" "Vasaroimalla." "Hirven"]
+                    "Voimaa" ["Punttisalilta." "Tanssimalla" "Mäntymetsästä."]
+                    "Tanssimalla" ["Hirven" "Taulun" "Colapullon"]
+                    "Hirven" ["Kanssa." "Mukana." "Tahtiin."]
+                    "Räjähtävää" ["Voimaa" "Tuulta" "Virtaa"]
+                    "Taulun" ["Äärellä."]
+                    "Tuulta" ["Purjeisiin." "Tanssimalla" "Hirven"]
+                    "Colapullon" ["Äärellä." "Pyörittämisellä." "Uusiokäytöstä."]})
+
+(def organization-names {:start ["Lohjan" "Valtimon" "Rovaniemen"]
+                         "Lohjan" ["Settlementti" "Koulutus"]
+                         "Rovaniemen" ["Valtimon" "Settlementti" "Koulutus"]
+                         "Valtimon" ["Settlementti"]
+                         "Settlementti" ["Yhdistys." "Oy."]
+                         "Koulutus" ["Oy." "Järjestö."]})
+
+(def random-text {:start ["Liiba" "Laaba"]
+                  "Liiba" ["Bup." "Laaba"]
+                  "Laaba" ["Dib." "Dibbiti" "Bobbiti"]
+                  "Dibbiti" ["Dobbiti" "Bobbiti"]
+                  "Dobbiti" ["Duh." "Bobbiti"]
+                  "Bobbiti" ["Liiba" "Bup."]})
+
+;; See: https://diegobasch.com/fun-with-markov-chains-and-clojure
+(defn sentence [data]
+  (loop [ws (data :start)
+         acc []]
+    (let [w (rand-nth ws)
+          nws (data w)
+          nacc (concat acc [w])]
+      (if (= \. (last w))
+        (clojure.string/join " " nacc)
+        (recur nws nacc)))))
+
+(defn generate-text [data field]
+  (-> (sentence data)
+      (clojure.string/replace  #"\." "")))
+
+(defmulti generate-text-field :id)
+(defmethod generate-text-field "organization" [field] (generate-text organization-names field))
+(defmethod generate-text-field "applicant-name" [field] (generate-text person-names field))
+(defmethod generate-text-field "signature" [field] (generate-text person-names field))
+(defmethod generate-text-field "project-name" [field] (generate-text project-names field))
+(defmethod generate-text-field "applicant-name" [field] (generate-text person-names field))
+(defmethod generate-text-field :default [field] (generate-text random-text field))
+
 (defmulti generate :fieldType)
 
-(defmethod generate "textField" [field] "foobar")
+(defmethod generate "textField" [field] (generate-text-field field))
+
 (defmethod generate "emailField" [field] "foobar@example.org")
 (defmethod generate "radioButton" [field] (:value (first (:options field))))
-(defmethod generate "textArea" [field] "foobar")
-(defmethod generate "moneyField" [field] 12)
+(defmethod generate "textArea" [field] (generate-text random-text field))
+
+(defmethod generate "moneyField" [field] (rand-int 120000))
 
 (defmethod generate "finnishBusinessIdField" [field] "0737546-2")
 (defmethod generate "iban" [field] "FI21 1234 5600 0007 85")
@@ -81,13 +139,15 @@
     (update-submission! form-id values-id answers)))
 
 (defn -main [& args]
+  (trace "Args" args)
   (let [avustushaku-id 1
         form-id 1
-        form (get-form form-id)
-        answers (form-util/generate-answers form generate not-attachment?)]
+        form (get-form form-id)]
     (doseq [x (range 1 (->> (first args)
                             (Long/parseLong)))]
-      (let [hakemus (->> (create-hakemus! avustushaku-id form-id valid-answers)
+      (trace "Generating hakemus")
+      (let [answers (form-util/generate-answers form generate not-attachment?)
+            hakemus (->> (create-hakemus! avustushaku-id form-id answers)
                          :hakemus)
             submission-id (:form_submission_id hakemus)
             saved-submission (update-form-submission form-id submission-id answers)
