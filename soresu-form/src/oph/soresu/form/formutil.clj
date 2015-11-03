@@ -88,10 +88,9 @@
                  :value (value-fn value)
                  :fieldType (:fieldType value)})
               (when (is-wrapper-element? value)
-                {:key (:id value)
-                 :value (recursively-generate (:children value) value-fn include-fn?)
-                 :fieldType (:fieldType value)})))]
+                (recursively-generate (:children value) value-fn include-fn?))))]
     (->> (mapv convert value)
+         (flatten)
          (filterv identity))))
 
 (defn generate-answers [form value-fn include-fn?]

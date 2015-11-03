@@ -1,6 +1,7 @@
 (ns oph.va.hakija.cmd.populate
   (:use [clojure.tools.trace :only [trace]])
   (:require [oph.va.hakija.db :refer :all]
+            [oph.soresu.form.validation :as validation]
             [oph.soresu.form.db :refer :all]
             [oph.soresu.form.formutil :as form-util]))
 
@@ -100,8 +101,12 @@
         (recur nws nacc)))))
 
 (defn generate-text [data field]
-  (-> (sentence data)
-      (clojure.string/replace  #"\." "")))
+  (let [text (-> (sentence data)
+                 (clojure.string/replace  #"\." ""))
+        max-length (-> field :params :maxlength)]
+    (if max-length
+      (subs text 0 (min (count text) max-length))
+      text)))
 
 (defmulti generate-text-field :id)
 (defmethod generate-text-field "organization" [field] (generate-text organization-names field))
@@ -119,9 +124,9 @@
 (defmethod generate "radioButton" [field] (:value (first (:options field))))
 (defmethod generate "textArea" [field] (generate-text random-text field))
 
-(defmethod generate "moneyField" [field] (rand-int 120000))
+(defmethod generate "moneyField" [field] (str (rand-int 120000)))
 
-(defmethod generate "finnishBusinessIdField" [field] "0737546-2")
+(defmethod generate "finnishBusinessIdField" [field] "5278603-3")
 (defmethod generate "iban" [field] "FI21 1234 5600 0007 85")
 (defmethod generate "bic" [field] "TESTBANK")
 
@@ -142,19 +147,25 @@
   (trace "Args" args)
   (let [avustushaku-id 1
         form-id 1
+        attachments []
         form (get-form form-id)]
     (doseq [x (range 1 (->> (first args)
                             (Long/parseLong)))]
-      (trace "Generating hakemus")
+      (trace "Generating hakemus" x)
       (let [answers (form-util/generate-answers form generate not-attachment?)
-            hakemus (->> (create-hakemus! avustushaku-id form-id answers)
-                         :hakemus)
-            submission-id (:form_submission_id hakemus)
-            saved-submission (update-form-submission form-id submission-id answers)
-            submission-version (:version saved-submission)]
-        (submit-hakemus avustushaku-id
-                        (:user_key hakemus)
-                        submission-id
-                        submission-version
-                        (:register_number hakemus)
-                        answers)))))
+            validation (validation/validate-form form answers attachments)]
+        (when (not (every? empty? (vals validation)))
+          (trace "Validation failed" validation)
+          (trace "Answers" answers)
+          (System/exit 1))
+        (let [hakemus (->> (create-hakemus! avustushaku-id form-id answers)
+                           :hakemus)
+              submission-id (:form_submission_id hakemus)
+              saved-submission (update-form-submission form-id submission-id answers)
+              submission-version (:version saved-submission)]
+          (submit-hakemus avustushaku-id
+                          (:user_key hakemus)
+                          submission-id
+                          submission-version
+                          (:register_number hakemus)
+                          answers))))))
