@@ -1,0 +1,76 @@
+@import "npm://soresu-form/web/form/style/variables.less";
+
+@score-column-width: 90px;
+@summary-content-width: @content-width - @score-column-width;
+@summary-total-applications-column-width: 900px - @score-column-width;
+
+#container {
+  margin: 10px auto 0 auto;
+  h2 {
+    color: black;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+  ul {
+    padding: 0;
+    list-style: none;
+  }
+}
+
+#list-container {
+  position: relative;
+  top: auto;
+  .score-column {
+    display: none;
+  }
+  width: @summary-content-width;
+  table.overview-list {
+    tbody {
+      overflow: auto;
+    }
+    width: @summary-content-width;
+    tr.overview-row {
+      cursor: default;
+      &.unselected:hover {
+        background-color: @lighterer-gray;
+      }
+    }
+  }
+
+  table.hakemus-list tfoot .total-applications-column {
+    width: @summary-total-applications-column-width;
+    .summary-link {
+      display: none;
+    }
+  }
+}
+
+@media print {
+  body {
+    background-color: white;
+    color: black;
+  }
+
+  h2, a, table.overview-list thead tr th {
+    color: black;
+  }
+
+  #container {
+    margin: 0;
+  }
+
+  input {
+    margin-left: -5px;
+    background-color: white;
+    border: none;
+    color: black;
+  }
+
+  .sorter {
+    display: none;
+  }
+
+  @page {
+    margin: 1.5cm;
+  }
+}

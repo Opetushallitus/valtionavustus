@@ -25,7 +25,8 @@ const events = {
   addComment: 'addComment',
   scoresLoaded: 'scoresLoaded',
   setScore: 'setScore',
-  toggleOthersScoresDisplay: 'toggleOthersScoresDisplay'
+  toggleOthersScoresDisplay: 'toggleOthersScoresDisplay',
+  gotoSavedSearch: 'gotoSavedSearch'
 }
 
 export default class HakemustenArviointiController {
@@ -75,7 +76,8 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.setScore)], this.onSetScore,
       [dispatcher.stream(events.toggleOthersScoresDisplay)], this.onToggleOthersScoresDisplay,
       [dispatcher.stream(events.setFilter)], this.onFilterSet,
-      [dispatcher.stream(events.setSorter)], this.onSorterSet
+      [dispatcher.stream(events.setSorter)], this.onSorterSet,
+      [dispatcher.stream(events.gotoSavedSearch)], this.onGotoSavedSearch
     )
   }
 
@@ -89,6 +91,10 @@ export default class HakemustenArviointiController {
 
   static scoresUrl(state, hakemus) {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemus.id + "/scores"
+  }
+
+  static savedSearchUrl(state) {
+    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/searches"
   }
 
   onInitialState(emptyState, realInitialState) {
@@ -217,6 +223,24 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  onGotoSavedSearch(state, hakemusList) {
+    const idsToList = _.map(hakemusList, h => { return h.id })
+    HttpUtil.put(HakemustenArviointiController.savedSearchUrl(state), { "hakemus-ids": idsToList })
+      .then(savedSearchResponse => {
+        if (savedSearchResponse instanceof Object) {
+          window.localStorage.setItem("va.arviointi.admin.summary.url", savedSearchResponse["search-url"])
+        }
+        else {
+          dispatcher.push(events.saveCompleted, "unexpected-save-error")
+        }
+      })
+      .catch(function(response) {
+        console.log('Got error on saved search initialization', response)
+        dispatcher.push(events.saveCompleted, "unexpected-save-error")
+      })
+    return state
+  }
+
   loadScores(state, hakemus) {
     HttpUtil.get(HakemustenArviointiController.scoresUrl(state, hakemus)).then(response => {
       dispatcher.push(events.scoresLoaded, {hakemusId: hakemus.id,
@@ -311,5 +335,9 @@ export default class HakemustenArviointiController {
 
   toggleOthersScoresDisplay() {
     dispatcher.push(events.toggleOthersScoresDisplay)
+  }
+
+  gotoSavedSearch(hakemusList) {
+    dispatcher.push(events.gotoSavedSearch, hakemusList)
   }
 }

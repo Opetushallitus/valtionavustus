@@ -117,7 +117,9 @@ export default class HakemusListing extends Component {
           {hakemusElements}
         </tbody>
         <tfoot><tr>
-          <td className="total-applications-column">{filteredHakemusList.length}/{hakemusList.length} hakemusta</td>
+          <td className="total-applications-column">
+            <ApplicationSummaryLink filteredHakemusList={filteredHakemusList} hakemusList={hakemusList} controller={controller} />
+          </td>
           <td className="applied-sum-column"><span className="money sum">{ophShareSum}</span></td>
           <td className="granted-sum-column"><span className="money sum">{budgetGrantedSum}</span></td>
         </tr></tfoot>
@@ -127,6 +129,21 @@ export default class HakemusListing extends Component {
 
   static formatNumber (num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ")
+  }
+}
+
+class ApplicationSummaryLink extends Component {
+  render() {
+    const filteredHakemusList = this.props.filteredHakemusList
+    const hakemusList = this.props.hakemusList
+    const controller = this.props.controller
+    const disabled = _.isEmpty(filteredHakemusList)
+    const linkText = filteredHakemusList.length + "/" + hakemusList.length + " hakemusta"
+    return disabled ? <span>{linkText}</span> : <a className="summary-link" href="/yhteenveto/" target="_blank" onClick={onClick}>{linkText}</a>
+
+    function onClick(e) {
+      controller.gotoSavedSearch(filteredHakemusList)
+    }
   }
 }
 

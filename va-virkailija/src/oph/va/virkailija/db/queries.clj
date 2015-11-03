@@ -15,3 +15,7 @@
 (defquery update-score<! "sql/virkailija/score/update.sql")
 (defquery list-scores "sql/virkailija/score/list.sql")
 (defquery list-avustushaku-scores "sql/virkailija/score/list-by-avustushaku.sql")
+
+(defquery find-search "sql/virkailija/saved_search/find.sql")
+(defquery create-search<! "sql/virkailija/saved_search/create.sql")
+(defquery get-search "sql/virkailija/saved_search/get.sql")
