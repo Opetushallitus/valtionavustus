@@ -8,6 +8,7 @@ popd > /dev/null
 LEIN=$PROJECTROOTPATH/lein
 
 export PATH=$PATH:$(dirname $LEIN)
+export DEBUG=true
 
 function show_usage() {
 cat << EOF
