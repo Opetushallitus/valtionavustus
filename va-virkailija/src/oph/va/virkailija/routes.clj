@@ -291,6 +291,13 @@
     (if (not (empty? complete-params))
       (->> complete-params map->query (str "?")))))
 
+(defn- url-after-login [request]
+ (let [original-url (-> request :session :original-url)]
+   (if original-url original-url "/")))
+
+(defn- redirect-to-loggged-out-page [request extra-query-params]
+  (resp/redirect (str "/login/logged-out" (query-string-for-login (:query-params request) extra-query-params []))))
+
 (defroutes* login-routes
   "Authentication"
 
@@ -299,19 +306,17 @@
   (GET* "/cas" [ticket :as request]
         :query-params [{ticket :- s/Str nil}]
         :return s/Any
-        :summary "Handle login ticket from cas"
+        :summary "Handle login ticket and logout callback from cas"
         (try
           (if ticket
             (if-let [identity (auth/authenticate ticket)]
-              (let [original-url (-> request :session :original-url)]
-                (-> (if original-url original-url "/")
-                    (resp/redirect)
-                    (assoc :session {:identity identity})))
-              (resp/redirect (str "/login/logged-out" (query-string-for-login (:query-params request) {"not-permitted" "true"} []))))
-            (resp/redirect (str "/login/logged-out" (query-string-for-login (:query-params request) {} []))))
+              (-> (resp/redirect (url-after-login request))
+                  (assoc :session {:identity identity}))
+              (redirect-to-loggged-out-page request {"not-permitted" "true"}))
+            (redirect-to-loggged-out-page request {}))
           (catch Exception e
             (log/error "Error in login ticket handling" e)
-            (resp/redirect (str "/login/logged-out" (query-string-for-login (:query-params request) {"error" "true"} []))))))
+            (redirect-to-loggged-out-page request {"error" "true"}))))
 
   (POST* "/cas" [logoutRequest :as request]
     :form-params [logoutRequest :- s/Str]
