@@ -13,10 +13,12 @@
             [buddy.auth.backends.session :refer [session-backend]]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
-            [oph.soresu.common.config :refer [config]]
+            [oph.soresu.common.config :refer [config login-url]]
             [oph.soresu.common.db :as db]
             [oph.va.virkailija.auth :as auth]
             [oph.va.virkailija.db.migrations :as dbmigrations]))
+
+(def opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
 
 (defn- startup [config]
   (log/info "Using configuration: " config)
@@ -38,13 +40,16 @@
 
 (defn- query-string-for-redirect-location [original-request]
   (if-let [original-query-string (:query-string original-request)]
-    (str "&" original-query-string)))
+    (str "?" original-query-string)))
 
 (defn- redirect-to-login [request response]
-  {:status  302
-   :headers {"Location" (str "/login/?target=" (:uri request) (query-string-for-redirect-location request))
-             "Content-Type" "text/plain"}
-   :body    (str "Access to " (:uri request) " is not authorized, redirecting to login")})
+  (let [original-url (str (:uri request) (query-string-for-redirect-location request))
+        return-url login-url]
+    {:status  302
+     :headers {"Location" (str opintopolku-login-url return-url)
+               "Content-Type" "text/plain"}
+     :body    (str "Access to " (:uri request) " is not authorized, redirecting to login")
+     :session {:original-url original-url}}))
 
 (defn authenticated-access [request]
   (if (auth/check-identity (-> request :session :identity))

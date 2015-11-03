@@ -16,41 +16,21 @@ export default class Login extends React.Component {
     const model = this.props.model
     const environment =  model.environment
     const query = queryString.parse(location.search)
-    const errorMessage = (<div className="error">Sisäänkirjautuminen epäonnistui. Tarkista käyttäjänimi ja salasana</div>)
-    const error = query.error == "true" ? errorMessage : (<div></div>)
-    const target = query.target ? query.target : "/"
+    const errorMessage = (<div className="error">Sisäänkirjautuminen epäonnistui.</div>)
+    const notPermittedMessage = (<div className="error">Sinulla ei ole oikeuksia valtionavustusjärjestelmään.</div>)
+    const error = query.error == "true" ? errorMessage : undefined
+    const notPermitted = query["not-permitted"] == "true" ? notPermittedMessage : undefined
     return (
       <div>
         <TopBar environment={environment}/>
         <section id="container">
-          <form name="login" method="post">
-            <div className="row">
-              <label htmlFor="username">Tunnus</label>
-            </div>
-            <div className="row">
-              <input type="text" id="username" ref="nameInput" name="username" />
-            </div>
-            <div className="row">
-              <label htmlFor="password">Salasana</label>
-            </div>
-            <div className="row">
-              <input type="password" id="password" name="password" />
-            </div>
-            <div className="row">
-              <button type="submit">Kirjaudu sisään</button>
-            </div>
-            <input type="hidden" name="target" value={target}/>
-          </form>
-          <div className="row">
-            {error}
-          </div>
+          <div className="row">{notPermitted}</div>
+          <div className="row">{error}</div>
+          <div hidden={notPermitted} className="row"><a href="/">Kirjaudu sisään</a></div>
+          <div hidden={!notPermitted} className="row"><a href="/login/logout">Kirjaudu ulos opintopolusta</a></div>
         </section>
       </div>
     )
-  }
-
-  componentDidMount() {
-    React.findDOMNode(this.refs.nameInput).focus()
   }
 }
 

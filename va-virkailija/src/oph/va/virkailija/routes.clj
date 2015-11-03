@@ -12,7 +12,7 @@
             [ring.swagger.json-schema-dirty]
             [schema.core :as s]
             [cemerick.url :refer [map->query]]
-            [oph.soresu.common.config :refer [config config-simple-name]]
+            [oph.soresu.common.config :refer [config config-simple-name login-url]]
             [oph.soresu.common.routes :refer :all]
             [oph.va.routes :refer :all]
             [oph.va.jdbc.enums :refer :all]
@@ -25,6 +25,8 @@
             [oph.va.virkailija.handlers :refer :all]
             [oph.va.virkailija.scoring :refer :all]
             [oph.va.virkailija.saved-search :refer :all]))
+
+(def opintopolku-logout-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-logout)))
 
 (defn- on-healthcheck []
   (if (and (virkailija-db/health-check)
@@ -292,19 +294,34 @@
 (defroutes* login-routes
   "Authentication"
 
-  (GET "/*" [] (return-html "login.html"))
+  (GET "/logged-out" [] (return-html "login.html"))
 
-  (POST* "/" [username password :as request]
-        :form-params [username :- s/Str password :- s/Str target :- s/Str]
+  (GET* "/cas" [ticket :as request]
+        :query-params [{ticket :- s/Str nil}]
         :return s/Any
-        (if-let [identity (auth/authenticate username password)]
-          (-> (resp/redirect (str target (query-string-for-login (:query-params request) {} ["target" "error"])))
-              (assoc :session {:identity identity}))
-          (resp/redirect (str "/login/" (query-string-for-login (:query-params request) {"error" "true"} [])))))
+        :summary "Handle login ticket from cas"
+        (try
+          (if ticket
+            (if-let [identity (auth/authenticate ticket)]
+              (let [original-url (-> request :session :original-url)]
+                (-> (if original-url original-url "/")
+                    (resp/redirect)
+                    (assoc :session {:identity identity})))
+              (resp/redirect (str "/login/logged-out" (query-string-for-login (:query-params request) {"not-permitted" "true"} []))))
+            (resp/redirect (str "/login/logged-out" (query-string-for-login (:query-params request) {} []))))
+          (catch Exception e
+            (log/error "Error in login ticket handling" e)
+            (resp/redirect (str "/login/logged-out" (query-string-for-login (:query-params request) {"error" "true"} []))))))
 
-  (POST "/logout" [:as request]
+  (POST* "/cas" [logoutRequest :as request]
+    :form-params [logoutRequest :- s/Str]
+    :return s/Any
+    :summary "Handle logout request from cas"
+      (auth/cas-initiated-logout logoutRequest))
+
+  (GET "/logout" [:as request]
         (auth/logout (-> request :session :identity))
-        (-> (resp/redirect "/login")
+        (-> (resp/redirect (str opintopolku-logout-url login-url))
             (assoc :session nil))))
 
 (defroutes* doc-routes

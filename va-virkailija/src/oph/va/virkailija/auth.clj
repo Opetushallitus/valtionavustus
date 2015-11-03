@@ -2,21 +2,22 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [oph.va.virkailija.login :refer [login get-details]]
             [buddy.core.nonce :as nonce]
-            [buddy.core.codecs :as codecs]))
+            [buddy.core.codecs :as codecs]
+            [clojure.tools.logging :as log])
+  (:import (fi.vm.sade.utils.cas CasLogout)))
 
 (defonce tokens (atom {}))
 
-(defn random-token []
-  (let [randomdata (nonce/random-bytes 16)]
-    (codecs/bytes->hex randomdata)))
-
-(defn authenticate [username password]
-  (when-let [details (login username password)]
-    (let [token (random-token)]
+(defn authenticate [ticket]
+  (if-let [details (login ticket)]
+    (let [username (:username details)
+          token ticket]
+      (log/info username "logged in succesfully with ticket" ticket)
       (swap! tokens assoc token details)
       {:username username
        :person-oid (:person-oid details)
-       :token token})))
+       :token token})
+    (log/warn "Log-in failed for cas ticket " ticket)))
 
 (defn check-identity [identity]
   (if-let [{:keys [token username]} identity]
@@ -31,6 +32,16 @@
                       :session
                       :identity)))
 
+(defn logout-ticket [ticket]
+  (log/info ticket "logged out")
+  (swap! tokens dissoc ticket))
+
+(defn cas-initiated-logout [logout-request]
+  (let [ticket (CasLogout/parseTicketFromLogoutRequest logout-request)]
+    (if (.isEmpty ticket)
+      (log/error "Could not parse ticket from CAS request" logout-request)
+      (logout-ticket (.get ticket)))))
+
 (defn logout [identity]
   (if-let [{:keys [token username]} identity]
-    (swap! tokens dissoc token)))
+    (logout-ticket token)))

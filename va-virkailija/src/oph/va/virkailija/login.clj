@@ -1,9 +1,10 @@
 (ns oph.va.virkailija.login
   (:use [clojure.tools.trace :only [trace]])
-  (:require [oph.soresu.common.config :refer [config config-simple-name]]
+  (:require [oph.soresu.common.config :refer [config config-simple-name login-url]]
             [clojure.edn :as edn]
             [cheshire.core :as json]
             [clj-ldap.client :as ldap]
+            [clj-util.cas :as cas]
             [clojure.tools.logging :as log])
   (:import (java.net InetAddress)))
 
@@ -57,10 +58,10 @@
   (let [ldap-server (create-ldap-connection)]
     (details->map (find-user-details ldap-server username))))
 
-(defn login [username password]
-  (let [ldap-server (create-ldap-connection)
-        credentials-valid? (ldap/bind? ldap-server (people-path username) password)]
-    (if credentials-valid?
+(defn login [cas-ticket]
+  (let [cas-client (cas/cas-client (-> config :opintopolku :url))
+        username (.run (.validateServiceTicket cas-client login-url cas-ticket))]
+  (if username
+    (let [ldap-server (create-ldap-connection)]
       (when (check-app-access ldap-server username)
-        (details->map (find-user-details ldap-server username)))
-      (log/info (str "Login failed for username '" username "'")))))
+        (details->map (find-user-details ldap-server username)))))))

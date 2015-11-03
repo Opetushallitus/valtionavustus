@@ -3,6 +3,7 @@
           :port 6071
           :url {:fi "https://valtionavustukset.oph.fi/"
                 :sv "https://statsunderstod.oph.fi/"}}
+ :opintopolku {:url "https://virkailija.opintopolku.fi"}
  :ui {:show-environment? false}
  :db {:database-name "va-prod"}
  :hakija-db {:database-name "va-prod"}
