@@ -4,8 +4,18 @@
 @summary-content-width: @content-width - @score-column-width;
 @summary-total-applications-column-width: 900px - @score-column-width;
 
+#container {
+  margin: 10px auto 0 auto;
+  h2 {
+    color: black;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+}
+
 #list-container {
-  position: absolute;
+  position: relative;
+  top: auto;
   .score-column {
     display: none;
   }

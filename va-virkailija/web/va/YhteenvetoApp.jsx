@@ -17,22 +17,29 @@ export default class SummaryApp extends Component {
     const state = this.props.state
     const hakuData = state.hakuData
     const hakemusList = hakuData.hakemukset
+    const avustushaku = hakuData.avustushaku
     return (
-      <section>
-        <section id="container" className="section-container">
-          <div id="list-container">
-            <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
-                            budgetGrantedSum={hakuData["budget-granted-sum"]}
-                            hakemusFilter={state.hakemusFilter}
-                            hakemusSorter={state.hakemusSorter}
-                            hakemusList={hakemusList}
-                            hasSelected={false}
-                            userInfo={state.userInfo}
-                            controller={controller} />
-          </div>
-        </section>
+      <section id="container" className="section-container">
+        <SummaryHeading avustushaku={avustushaku} />
+        <div id="list-container">
+          <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
+                          budgetGrantedSum={hakuData["budget-granted-sum"]}
+                          hakemusFilter={state.hakemusFilter}
+                          hakemusSorter={state.hakemusSorter}
+                          hakemusList={hakemusList}
+                          hasSelected={false}
+                          userInfo={state.userInfo}
+                          controller={controller} />
+        </div>
       </section>
     )
+  }
+}
+
+class SummaryHeading extends Component {
+  render() {
+    const avustushaku = this.props.avustushaku
+    return <h2>{avustushaku.content.name.fi}</h2>
   }
 }
 
