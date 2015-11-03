@@ -50,14 +50,16 @@ class SummaryHeading extends Component {
     _.each(this.statusesInOrder(), s => {
       if (_.contains(_.keys(applicationsByStatus), s)) {
         const text = HakemusStatuses.statusToFI(s) + " : " + applicationsByStatus[s].length + " kpl"
-        statusSummaryRows.push(<div>{text}</div>)
+        statusSummaryRows.push(<li>{text}</li>)
       }
     })
 
     return <div>
              <h2>{avustushaku.content.name.fi}</h2>
-             <span>{durationString}</span>
+             <div>{durationString}</div>
+             <ul>
              {statusSummaryRows}
+             </ul>
            </div>
   }
 
