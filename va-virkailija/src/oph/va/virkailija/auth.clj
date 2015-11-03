@@ -19,9 +19,7 @@
 
 (defn check-identity [identity]
   (if-let [{:keys [token username]} identity]
-    (if (contains? @tokens token)
-      (get @tokens token)
-      nil)))
+    (get @tokens token)))
 
 (defn get-identity [request]
   (check-identity (-> request
