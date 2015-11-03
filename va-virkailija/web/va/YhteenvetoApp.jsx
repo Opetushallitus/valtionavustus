@@ -6,6 +6,7 @@ import RouteParser from 'route-parser'
 
 import YhteenvetoController from './YhteenvetoController.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
+import HakemusStatuses from './hakemus-details/HakemusStatuses.js'
 import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
 import {BasicInfoComponent} from 'soresu-form/web/form/component/InfoElement.jsx'
 
@@ -21,7 +22,7 @@ export default class SummaryApp extends Component {
     const avustushaku = hakuData.avustushaku
     return (
       <section id="container" className="section-container">
-        <SummaryHeading avustushaku={avustushaku} />
+        <SummaryHeading avustushaku={avustushaku} hakemusList={hakemusList} />
         <div id="list-container">
           <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
                           budgetGrantedSum={hakuData["budget-granted-sum"]}
@@ -40,16 +41,34 @@ export default class SummaryApp extends Component {
 class SummaryHeading extends Component {
   render() {
     const avustushaku = this.props.avustushaku
+    const hakemusList = this.props.hakemusList
     const hakuDuration = avustushaku.content.duration
     const durationString = this.toDateStr(hakuDuration.start) + "–" + this.toDateStr(hakuDuration.end)
+
+    const applicationsByStatus = _.groupBy(hakemusList, h => { return h.arvio.status })
+    const statusSummaryRows = []
+    _.each(this.statusesInOrder(), s => {
+      if (_.contains(_.keys(applicationsByStatus), s)) {
+        const text = HakemusStatuses.statusToFI(s) + " : " + applicationsByStatus[s].length + " kpl"
+        statusSummaryRows.push(<div>{text}</div>)
+      }
+    })
+
     return <div>
              <h2>{avustushaku.content.name.fi}</h2>
              <span>{durationString}</span>
+             {statusSummaryRows}
            </div>
   }
 
   toDateStr(dateTime) {
     return BasicInfoComponent.asDateString(dateTime)
+  }
+
+  statusesInOrder() {
+    const statuses = _.cloneDeep(HakemusStatuses.allStatuses())
+    statuses.reverse()
+    return statuses
   }
 }
 
