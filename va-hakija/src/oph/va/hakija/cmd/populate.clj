@@ -65,22 +65,25 @@
                    "Marjo" ["Tiina" "Dufva." "Haapasalmi." "Haapoja."]
                    "Tiina" ["Anna" "Vasara." "Kirves." "Ankkuri."]})
 
-(def project-names {:start ["Virtaa" "Voimaa" "Räjähtävää" "Tuulta"]
+(def project-names {:start ["Virtaa" "Voimaa" "Räjähtävää" "Tuulta" "Rauhaa"]
                     "Virtaa" ["Tanssimalla" "Vasaroimalla." "Hirven"]
                     "Voimaa" ["Punttisalilta." "Tanssimalla" "Mäntymetsästä."]
                     "Tanssimalla" ["Hirven" "Taulun" "Colapullon"]
                     "Hirven" ["Kanssa." "Mukana." "Tahtiin."]
                     "Räjähtävää" ["Voimaa" "Tuulta" "Virtaa"]
-                    "Taulun" ["Äärellä."]
+                    "Taulun" ["Äärellä." "Maalauksesta."]
+                    "Rauhaa" ["Taulun" "Tuulta"]
                     "Tuulta" ["Purjeisiin." "Tanssimalla" "Hirven"]
                     "Colapullon" ["Äärellä." "Pyörittämisellä." "Uusiokäytöstä."]})
 
-(def organization-names {:start ["Lohjan" "Valtimon" "Rovaniemen"]
+(def organization-names {:start ["Lohjan" "Valtimon" "Rovaniemen" "Helsingin"]
                          "Lohjan" ["Settlementti" "Koulutus"]
                          "Rovaniemen" ["Valtimon" "Settlementti" "Koulutus"]
-                         "Valtimon" ["Settlementti"]
+                         "Valtimon" ["Settlementti" "Akatemia."]
                          "Settlementti" ["Yhdistys." "Oy."]
-                         "Koulutus" ["Oy." "Järjestö."]})
+                         "Helsingin" ["Valtimon" "Koulutus"]
+                         "Koulutus" ["Oy." "Järjestö." "Ja"]
+                         "Ja" ["Konferenssi." "Akatemia." "Rovaniemen" "Lohjan"]})
 
 (def random-text {:start ["Liiba" "Laaba"]
                   "Liiba" ["Bup." "Laaba"]
