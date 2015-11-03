@@ -131,6 +131,9 @@ export default class HakemustenArviointiController {
   onUpdateHakemusArvio(state, updatedHakemus) {
     const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + updatedHakemus.id + "/arvio"
     state.saveStatus.saveInProgress = true
+    if (_.isUndefined(updatedHakemus.arvio.scoring)) {
+      _.delete(updatedHakemus.arvio.scoring)
+    }
     HttpUtil.post(updateUrl, updatedHakemus.arvio)
       .then(function(response) {
         if(response instanceof Object) {
