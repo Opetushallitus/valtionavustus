@@ -129,6 +129,17 @@
        (exec :db queries/attachment-exists?)
        first))
 
+(defn convert-attachment [hakemus-id attachment]
+  {:id (:id attachment)
+   :hakemus-id hakemus-id
+   :version (:version attachment)
+   :field-id (:field_id attachment)
+   :file-size (:file_size attachment)
+   :content-type (:content_type attachment)
+   :hakemus-version (:hakemus_version attachment)
+   :created-at (:created_at attachment)
+   :filename (:filename attachment)})
+
 (defn create-attachment [hakemus-id hakemus-version field-id filename content-type size file]
   (let [blob (slurp-binary-file! file)
         params (-> {:hakemus_id hakemus-id
@@ -151,6 +162,12 @@
 (defn list-attachments [hakemus-id]
   (->> {:hakemus_id hakemus-id}
        (exec :db queries/list-attachments)))
+
+(defn get-attachments [external-hakemus-id hakemus-id]
+  (->> (list-attachments hakemus-id)
+       (map (partial convert-attachment external-hakemus-id))
+       (map (fn [attachment] [(:field-id attachment) attachment]))
+       (into {})))
 
 (defn download-attachment [hakemus-id field-id]
   (let [result (->> {:hakemus_id hakemus-id

@@ -147,39 +147,47 @@
   (trace "unknown fieldtype" field)
   (assert false))
 
-(defn not-attachment? [field]
-  true)
+(defn handle-attachment [hakemus-id hakemus-version field]
+  (if (= (:fieldType field) "namedAttachment")
+    (do
+      (create-attachment hakemus-id hakemus-version (:id field) "test.png" "image/png" 15924 "test-data/test.png")
+      false)
+    true))
 
 (defn update-form-submission [form-id values-id answers]
   (if (not (submission-exists? form-id values-id))
     (throw (Exception. "Submission not found"))
     (update-submission! form-id values-id answers)))
 
-(defn generate-data [amount]
-  (let [avustushaku-id 1
-        form-id 1
+(defn generate-data [avustushaku amount]
+  (let [avustushaku-id (:id avustushaku)
+        form-id (:form avustushaku)
         attachments []
         form (get-form form-id)]
-    (doseq [x (range 1 amount)]
+    (doseq [x (range 0 amount)]
       (trace "Generating hakemus" x)
-      (let [answers (form-util/generate-answers form generate not-attachment?)
-            validation (validation/validate-form form answers attachments)]
+      (let [hakemus (->> (create-hakemus! avustushaku-id form-id {})
+                         :hakemus)
+            submission-id (:form_submission_id hakemus)
+            answers (form-util/generate-answers form
+                                                generate
+                                                (partial handle-attachment (:id hakemus) (:version hakemus)))
+            saved-submission (update-form-submission form-id submission-id answers)
+            validation (validation/validate-form form answers (get-attachments (:user_key hakemus) (:id hakemus)))
+            submission-version (:version saved-submission)]
         (when (not (every? empty? (vals validation)))
           (trace "Validation failed" validation)
           (trace "Answers" answers)
           (System/exit 1))
-        (let [hakemus (->> (create-hakemus! avustushaku-id form-id answers)
-                           :hakemus)
-              submission-id (:form_submission_id hakemus)
-              saved-submission (update-form-submission form-id submission-id answers)
-              submission-version (:version saved-submission)]
-          (submit-hakemus avustushaku-id
-                          (:user_key hakemus)
-                          submission-id
-                          submission-version
-                          (:register_number hakemus)
-                          answers))))))
+        (submit-hakemus avustushaku-id
+                        (:user_key hakemus)
+                        submission-id
+                        submission-version
+                        (:register_number hakemus)
+                        answers)))))
 
 (defn -main [& args]
-  (generate-data (->> (first args)
-                      (Long/parseLong))))
+  (let [avustushaut (list-avustushaut)]
+    (doseq [avustushaku avustushaut]
+      (generate-data avustushaku (->> (first args)
+                                    (Long/parseLong))))))

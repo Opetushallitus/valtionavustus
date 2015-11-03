@@ -16,23 +16,6 @@
             [oph.va.hakija.notification-formatter :as va-submit-notification]
             [oph.va.hakija.email :as va-email]))
 
-(defn- convert-attachment [hakemus-id attachment]
-  {:id (:id attachment)
-   :hakemus-id hakemus-id
-   :version (:version attachment)
-   :field-id (:field_id attachment)
-   :file-size (:file_size attachment)
-   :content-type (:content_type attachment)
-   :hakemus-version (:hakemus_version attachment)
-   :created-at (:created_at attachment)
-   :filename (:filename attachment)})
-
-(defn- get-attachments [external-hakemus-id hakemus-id]
-  (->> (va-db/list-attachments hakemus-id)
-     (map (partial convert-attachment external-hakemus-id))
-     (map (fn [attachment] [(:field-id attachment) attachment]))
-     (into {})))
-
 (defn- hakemus-conflict-response [hakemus]
   (conflict! {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
               :status (:status hakemus)
@@ -164,7 +147,7 @@
                                                  content-type
                                                  size
                                                  tempfile)]
-      (ok (convert-attachment hakemus-id attachment))
+      (ok (va-db/convert-attachment hakemus-id attachment))
       (bad-request {:error true}))
     (bad-request! {:error true})))
 

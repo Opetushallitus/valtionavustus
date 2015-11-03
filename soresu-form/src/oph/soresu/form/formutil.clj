@@ -76,10 +76,6 @@
                    first))]
       (map find-match field-list))))
 
-(defmulti generate-data type)
-
-(defmethod generate-data :default [value] value)
-
 (defn- recursively-generate [value value-fn include-fn?]
   (letfn [(convert [value]
             (if (is-form-field? value)
