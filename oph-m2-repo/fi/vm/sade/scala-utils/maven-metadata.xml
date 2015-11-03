@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>fi.vm.sade</groupId>
+  <artifactId>scala-utils</artifactId>
+  <versioning>
+    <versions>
+      <version>0.2.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20151103124216</lastUpdated>
+  </versioning>
+</metadata>
