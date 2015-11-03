@@ -30,3 +30,33 @@
     }
   }
 }
+
+@media print {
+  body {
+    background-color: white;
+    color: black;
+  }
+
+  h2, a, table.overview-list thead tr th {
+    color: black;
+  }
+
+  #container {
+    margin: 0;
+  }
+
+  input {
+    margin-left: -5px;
+    background-color: white;
+    border: none;
+    color: black;
+  }
+
+  .sorter {
+    display: none;
+  }
+
+  @page {
+    margin: 1.5cm;
+  }
+}
