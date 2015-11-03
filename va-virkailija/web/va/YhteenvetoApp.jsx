@@ -7,6 +7,7 @@ import RouteParser from 'route-parser'
 import YhteenvetoController from './YhteenvetoController.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
+import {BasicInfoComponent} from 'soresu-form/web/form/component/InfoElement.jsx'
 
 import virkailija from './style/virkailija.less'
 import style from './style/main.less'
@@ -39,7 +40,16 @@ export default class SummaryApp extends Component {
 class SummaryHeading extends Component {
   render() {
     const avustushaku = this.props.avustushaku
-    return <h2>{avustushaku.content.name.fi}</h2>
+    const hakuDuration = avustushaku.content.duration
+    const durationString = this.toDateStr(hakuDuration.start) + "–" + this.toDateStr(hakuDuration.end)
+    return <div>
+             <h2>{avustushaku.content.name.fi}</h2>
+             <span>{durationString}</span>
+           </div>
+  }
+
+  toDateStr(dateTime) {
+    return BasicInfoComponent.asDateString(dateTime)
   }
 }
 
