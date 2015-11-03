@@ -1,7 +1,8 @@
 (ns oph.va.hakija.cmd.populate
   (:use [clojure.tools.trace :only [trace]])
   (:require [oph.va.hakija.db :refer :all]
-            [oph.soresu.form.db :refer :all]))
+            [oph.soresu.form.db :refer :all]
+            [oph.soresu.form.formutil :as form-util]))
 
 (def valid-answers
   {:value [{:key "organization" :value "Testi Organisaatio" :fieldType "textField"}
@@ -54,6 +55,26 @@
            {:key "other-public-financing-income-row.amount" :value "10" :fieldType "moneyField"}
            {:key "private-financing-income-row.amount" :value "10" :fieldType "moneyField"}]})
 
+(defmulti generate :fieldType)
+
+(defmethod generate "textField" [field] "foobar")
+(defmethod generate "emailField" [field] "foobar@example.org")
+(defmethod generate "radioButton" [field] (:value (first (:options field))))
+(defmethod generate "textArea" [field] "foobar")
+(defmethod generate "moneyField" [field] 12)
+
+(defmethod generate "finnishBusinessIdField" [field] "0737546-2")
+(defmethod generate "iban" [field] "FI21 1234 5600 0007 85")
+(defmethod generate "bic" [field] "TESTBANK")
+
+
+(defmethod generate :default [field]
+  (trace "unknown fieldtype" field)
+  (assert false))
+
+(defn not-attachment? [field]
+  true)
+
 (defn update-form-submission [form-id values-id answers]
   (if (not (submission-exists? form-id values-id))
     (throw (Exception. "Submission not found"))
@@ -62,7 +83,8 @@
 (defn -main [& args]
   (let [avustushaku-id 1
         form-id 1
-        answers valid-answers]
+        form (get-form form-id)
+        answers (form-util/generate-answers form generate not-attachment?)]
     (doseq [x (range 1 (->> (first args)
                             (Long/parseLong)))]
       (let [hakemus (->> (create-hakemus! avustushaku-id form-id valid-answers)

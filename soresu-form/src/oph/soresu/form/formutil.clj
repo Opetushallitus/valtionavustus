@@ -84,7 +84,9 @@
   (letfn [(convert [value]
             (if (is-form-field? value)
               (when (include-fn? value)
-                {:key (:id value) :value (value-fn value) :fieldType (:fieldType value)})
+                {:key (:id value)
+                 :value (value-fn value)
+                 :fieldType (:fieldType value)})
               (when (is-wrapper-element? value)
                 {:key (:id value)
                  :value (recursively-generate (:children value) value-fn include-fn?)
