@@ -49,7 +49,10 @@ class SummaryHeading extends Component {
     const statusSummaryRows = []
     _.each(this.statusesInOrder(), s => {
       if (_.contains(_.keys(applicationsByStatus), s)) {
-        const text = HakemusStatuses.statusToFI(s) + " : " + applicationsByStatus[s].length + " kpl"
+        const applications = applicationsByStatus[s]
+        const appliedOphShareSum = HakemusListing.formatNumber(_.reduce(applications, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
+        const budgetGrantedSum = HakemusListing.formatNumber(_.reduce(applications, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
+        const text = HakemusStatuses.statusToFI(s) + " " + applications.length + ". Haettu " + appliedOphShareSum + " €, myönnetty " + budgetGrantedSum + " €"
         statusSummaryRows.push(<li key={s}>{text}</li>)
       }
     })
