@@ -3,8 +3,7 @@
   :url "https://github.com/Opetushallitus/valtionavustus"
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
-  :repositories {"OPH-releases" "https://artifactory.oph.ware.fi/artifactory/oph-sade-release-local"
-                 "OPH-snapshots" "https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local"
+  :repositories {"OPH" ~(str (.toURI (.getCanonicalFile (java.io.File. "../oph-m2-repo"))))
                  "Laughing Panda" "http://maven.laughingpanda.org/maven2"}
   :dependencies [[oph-va/common "0.1.0-SNAPSHOT"]
                  [org.clojars.pntblnk/clj-ldap "0.0.9"]
