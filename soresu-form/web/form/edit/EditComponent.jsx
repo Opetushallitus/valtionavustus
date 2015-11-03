@@ -55,8 +55,8 @@ class EditComponent extends React.Component {
     }
     return (
       <table className="translation">
-        <thead><th>{name + " suomeksi"}</th><th>{name + " ruotsiksi"}</th></thead>
-        <tr>
+        <thead><tr><th>{name + " suomeksi"}</th><th>{name + " ruotsiksi"}</th></tr></thead>
+        <tbody><tr>
           <td><textarea className={extraClassName}
                         onChange={this.fieldValueUpdater(valueGetter, "fi")}
                         name={htmlId+"-fi"}
@@ -67,7 +67,7 @@ class EditComponent extends React.Component {
                         name={htmlId+"-sv"}
                         value={valueGetter(field).sv}>
           </textarea></td>
-        </tr>
+        </tr></tbody>
       </table>
     )
   }
@@ -222,7 +222,7 @@ export class TextFieldEdit extends FieldEditComponent {
       formEditorController.editField(field.id, getter, "maxlength", value)
     }
     const maxLengthEdit = (
-      <span className="soresu-edit-property">
+      <span className="soresu-edit-property" key={htmlId+"max-length-edit-property"}>
         <label htmlFor={htmlId+"-max-length"}>Merkkirajoitus</label>
         <input type="number" min="1" max="9999" maxLength="4" onChange={editMaxLength} id={htmlId+"-max-length"} name={htmlId+"-max-length"} value={field.params.maxlength}/>
       </span>
@@ -250,13 +250,14 @@ export class TextFieldEdit extends FieldEditComponent {
       )
     }
     const sizeEdit = (
-      <span className="soresu-edit-property shift-left">
+      <span className="soresu-edit-property shift-left" key={htmlId+"size-edit-property"}>
         <label>{this.sizeLabel()}</label>
         {sizeAlternenativeButtons}
       </span>
     )
+    const fieldSpecificEditors = [ sizeEdit, maxLengthEdit ]
 
-    return super.renderEditable(undefined, [{sizeEdit}, {maxLengthEdit}])
+    return super.renderEditable(undefined, fieldSpecificEditors)
   }
 }
 

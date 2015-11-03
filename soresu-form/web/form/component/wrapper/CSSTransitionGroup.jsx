@@ -1,6 +1,6 @@
 import React from 'react'
 
-import TimeoutTransitionGroup from 'timeout-transition-group'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 export default class CSSTransitionGroup extends React.Component {
   render() {
@@ -8,9 +8,9 @@ export default class CSSTransitionGroup extends React.Component {
     const transitionName = this.props.transitionName
     const component = this.props.component ? this.props.component : "div"
     return (
-      <TimeoutTransitionGroup component={component} transitionName={transitionName} enterTimeout={500} leaveTimeout={500}>
+      <ReactCSSTransitionGroup component={component} transitionName={transitionName} transitionEnterTimeout={500} transitionLeaveTimeout={500}>
         {children}
-      </TimeoutTransitionGroup>
+      </ReactCSSTransitionGroup>
     )
   }
 }
