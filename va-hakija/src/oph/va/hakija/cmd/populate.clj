@@ -76,9 +76,18 @@
                     "Tuulta" ["Purjeisiin." "Tanssimalla" "Hirven"]
                     "Colapullon" ["Äärellä." "Pyörittämisellä." "Uusiokäytöstä."]})
 
-(def organization-names {:start ["Lohjan" "Valtimon" "Rovaniemen" "Helsingin"]
+(def organization-names {:start ["Lohjan" "Valtimon" "Rovaniemen" "Helsingin" "Rauman" "Tampereen"
+                                 "Espoon" "Vantaan" "Pudasjärven" "Riihimäen" "Turun" "Raision"]
                          "Lohjan" ["Settlementti" "Koulutus"]
-                         "Rovaniemen" ["Valtimon" "Settlementti" "Koulutus"]
+                         "Rovaniemen" ["Valtimon" "Settlementti" "Koulutus" "Ja"]
+                         "Rauman" ["Valtimon" "Settlementti" "Koulutus" "Ja"]
+                         "Tampereen" ["Valtimon" "Settlementti" "Koulutus" "Ja"]
+                         "Espoon" ["Valtimon" "Settlementti" "Koulutus" "Ja"]
+                         "Vantaan" ["Valtimon" "Settlementti" "Koulutus" "Ja"]
+                         "Pudasjärven" ["Valtimon" "Settlementti" "Koulutus" "Ja"]
+                         "Riihimäen" ["Valtimon" "Settlementti" "Koulutus" "Ja"]
+                         "Turun" ["Valtimon" "Settlementti" "Koulutus" "Ja"]
+                         "Raision" ["Valtimon" "Settlementti" "Koulutus" "Ja"]
                          "Valtimon" ["Settlementti" "Akatemia."]
                          "Settlementti" ["Yhdistys." "Oy."]
                          "Helsingin" ["Valtimon" "Koulutus"]
@@ -146,14 +155,12 @@
     (throw (Exception. "Submission not found"))
     (update-submission! form-id values-id answers)))
 
-(defn -main [& args]
-  (trace "Args" args)
+(defn generate-data [amount]
   (let [avustushaku-id 1
         form-id 1
         attachments []
         form (get-form form-id)]
-    (doseq [x (range 1 (->> (first args)
-                            (Long/parseLong)))]
+    (doseq [x (range 1 amount)]
       (trace "Generating hakemus" x)
       (let [answers (form-util/generate-answers form generate not-attachment?)
             validation (validation/validate-form form answers attachments)]
@@ -172,3 +179,7 @@
                           submission-version
                           (:register_number hakemus)
                           answers))))))
+
+(defn -main [& args]
+  (generate-data (->> (first args)
+                      (Long/parseLong))))
