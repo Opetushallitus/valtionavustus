@@ -12,7 +12,7 @@
             [ring.swagger.json-schema-dirty]
             [schema.core :as s]
             [cemerick.url :refer [map->query]]
-            [oph.soresu.common.config :refer [config config-simple-name login-url]]
+            [oph.soresu.common.config :refer [config config-simple-name]]
             [oph.soresu.common.routes :refer :all]
             [oph.va.routes :refer :all]
             [oph.va.jdbc.enums :refer :all]
@@ -26,7 +26,11 @@
             [oph.va.virkailija.scoring :refer :all]
             [oph.va.virkailija.saved-search :refer :all]))
 
-(def opintopolku-logout-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-logout)))
+(defonce opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
+
+(defonce opintopolku-logout-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-logout)))
+
+(defonce virkailija-login-url (str (-> config :server :virkailija-url) "/login/cas"))
 
 (defn- on-healthcheck []
   (if (and (virkailija-db/health-check)
@@ -309,7 +313,7 @@
         :summary "Handle login ticket and logout callback from cas"
         (try
           (if ticket
-            (if-let [identity (auth/authenticate ticket)]
+            (if-let [identity (auth/authenticate ticket virkailija-login-url)]
               (-> (resp/redirect (url-after-login request))
                   (assoc :session {:identity identity}))
               (redirect-to-loggged-out-page request {"not-permitted" "true"}))
@@ -326,7 +330,7 @@
 
   (GET "/logout" [:as request]
         (auth/logout (-> request :session :identity))
-        (-> (resp/redirect (str opintopolku-logout-url login-url))
+        (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
             (assoc :session nil))))
 
 (defroutes* doc-routes

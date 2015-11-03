@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.login
   (:use [clojure.tools.trace :only [trace]])
-  (:require [oph.soresu.common.config :refer [config config-simple-name login-url]]
+  (:require [oph.soresu.common.config :refer [config config-simple-name]]
             [clojure.edn :as edn]
             [cheshire.core :as json]
             [clj-ldap.client :as ldap]
@@ -58,9 +58,9 @@
   (let [ldap-server (create-ldap-connection)]
     (details->map (find-user-details ldap-server username))))
 
-(defn login [cas-ticket]
+(defn login [cas-ticket virkailija-login-url]
   (let [cas-client (cas/cas-client (-> config :opintopolku :url))
-        username (.run (.validateServiceTicket cas-client login-url cas-ticket))]
+        username (.run (.validateServiceTicket cas-client virkailija-login-url cas-ticket))]
   (if username
     (let [ldap-server (create-ldap-connection)]
       (when (check-app-access ldap-server username)

@@ -1,15 +1,13 @@
 (ns oph.va.virkailija.auth
   (:use [clojure.tools.trace :only [trace]])
   (:require [oph.va.virkailija.login :refer [login get-details]]
-            [buddy.core.nonce :as nonce]
-            [buddy.core.codecs :as codecs]
             [clojure.tools.logging :as log])
   (:import (fi.vm.sade.utils.cas CasLogout)))
 
 (defonce tokens (atom {}))
 
-(defn authenticate [ticket]
-  (if-let [details (login ticket)]
+(defn authenticate [ticket virkailija-login-url]
+  (if-let [details (login ticket virkailija-login-url)]
     (let [username (:username details)
           token ticket]
       (log/info username "logged in succesfully with ticket" ticket)

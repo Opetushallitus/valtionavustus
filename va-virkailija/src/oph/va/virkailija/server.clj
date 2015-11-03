@@ -1,9 +1,8 @@
 (ns oph.va.virkailija.server
   (:use [clojure.tools.trace :only [trace]]
-        [oph.va.virkailija.routes :only [all-routes]])
+        [oph.va.virkailija.routes :only [all-routes opintopolku-login-url virkailija-login-url]])
   (:require [ring.middleware.reload :as reload]
             [ring.middleware.logger :as logger]
-            [ring.middleware.session :as session]
             [ring.middleware.session.cookie :refer [cookie-store]]
             [ring.middleware.conditional :refer [if-url-doesnt-match]]
             [ring.middleware.defaults :refer :all]
@@ -13,12 +12,10 @@
             [buddy.auth.backends.session :refer [session-backend]]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
-            [oph.soresu.common.config :refer [config login-url]]
+            [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :as db]
             [oph.va.virkailija.auth :as auth]
             [oph.va.virkailija.db.migrations :as dbmigrations]))
-
-(def opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
 
 (defn- startup [config]
   (log/info "Using configuration: " config)
@@ -44,7 +41,7 @@
 
 (defn- redirect-to-login [request response]
   (let [original-url (str (:uri request) (query-string-for-redirect-location request))
-        return-url login-url]
+        return-url virkailija-login-url]
     {:status  302
      :headers {"Location" (str opintopolku-login-url return-url)
                "Content-Type" "text/plain"}

@@ -39,9 +39,3 @@
                     (merge-with-defaults)
                     (merge-with-secrets)))
 
-(defonce server-url (
-    let [server (:server config)
-         https (if (:require-https? server) "https" "http")]
-          (str https "://" (:host server) ":" (:port server))))
-
-(defonce login-url (str server-url "/login/cas"))

@@ -1,6 +1,7 @@
 {:server {:auto-reload? false
           :allow-db-clear? false
           :port 6071
+          :virkailija-url "https://virkailija.valtionavustukset.oph.fi"
           :url {:fi "https://valtionavustukset.oph.fi/"
                 :sv "https://statsunderstod.oph.fi/"}}
  :opintopolku {:url "https://virkailija.opintopolku.fi"}
