@@ -2,6 +2,7 @@ import PolyfillBind from 'va-common/web/polyfill-bind.js'
 
 import ConsolePolyfill from 'console-polyfill'
 import React from 'react'
+import ReactDOM from 'react-dom'
 import Bacon from 'baconjs'
 import _ from 'lodash'
 import queryString from 'query-string'
@@ -121,8 +122,8 @@ app.stateProperty.onValue((state) => {
     console.log("Updating UI with state:", state)
   }
   try {
-    React.render(app.getReactComponent(state), document.getElementById('app'))
+    ReactDOM.render(app.getReactComponent(state), document.getElementById('app'))
   } catch (e) {
-    console.log('Error from React.render with state', state, e)
+    console.log('Error from ReactDOM.render with state', state, e)
   }
 })

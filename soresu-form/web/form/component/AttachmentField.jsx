@@ -1,7 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
 import _ from 'lodash'
-import Dropzone from 'react-dropzone-es6'
+import Dropzone from 'react-dropzone'
 
 import AttachmentDisplay from '../preview/AttachmentDisplay.jsx'
 import RemoveButton from './RemoveButton.jsx'

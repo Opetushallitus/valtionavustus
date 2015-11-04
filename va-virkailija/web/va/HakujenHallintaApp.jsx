@@ -1,6 +1,7 @@
 import PolyfillBind from 'va-common/web/polyfill-bind'
 import ConsolePolyfill from 'console-polyfill'
 import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
 
 import TopBar from './TopBar.jsx'
 import HakujenHallintaController from './HakujenHallintaController.jsx'
@@ -46,11 +47,11 @@ const stateP = controller.initializeState()
 stateP.onValue(function(state) {
   try {
     if (state.hakuList) {
-      React.render(<AdminApp state={state} controller={controller}/>, document.getElementById('app'))
+      ReactDOM.render(<AdminApp state={state} controller={controller}/>, document.getElementById('app'))
     } else {
       console.log('Not rendering yet, because state.hakuList not yet loaded.')
     }
   } catch (e) {
-    console.log('Error from React.render with state', state, e)
+    console.log('Error from ReactDOM.render with state', state, e)
   }
 })

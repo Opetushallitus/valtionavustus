@@ -2,6 +2,7 @@ import PolyfillBind from 'va-common/web/polyfill-bind'
 
 import ConsolePolyfill from 'console-polyfill'
 import React from 'react'
+import ReactDOM from 'react-dom'
 import QueryString from 'query-string'
 import Bacon from 'baconjs'
 import moment from 'moment-timezone'
@@ -133,5 +134,5 @@ const initialState = Bacon.combineTemplate(initialStateTemplate)
 
 initialState.onValue(function(state) {
   const properties = { model: state }
-  React.render(React.createElement(VaLogin, properties), document.getElementById('app'))
+  ReactDOM.render(React.createElement(VaLogin, properties), document.getElementById('app'))
 })

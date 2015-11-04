@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import Bacon from 'baconjs'
 
 import HttpUtil from 'va-common/web/HttpUtil'
@@ -44,5 +45,5 @@ const initialState = Bacon.combineTemplate(initialStateTemplate)
 
 initialState.onValue(function(state) {
   const properties = { model: state }
-  React.render(React.createElement(Login, properties), document.getElementById('app'))
+  ReactDOM.render(React.createElement(Login, properties), document.getElementById('app'))
 })

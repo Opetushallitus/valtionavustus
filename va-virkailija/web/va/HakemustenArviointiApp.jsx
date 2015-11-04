@@ -1,6 +1,7 @@
 import PolyfillBind from 'va-common/web/polyfill-bind'
 import ConsolePolyfill from 'console-polyfill'
 import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
 import _ from 'lodash'
 import RouteParser from 'route-parser'
 
@@ -77,11 +78,11 @@ const stateP = controller.initializeState(avustushakuId)
 stateP.onValue((state) => {
   try {
     if (state.hakuData && state.userInfo) {
-      React.render(<App state={state} controller={controller}/>, document.getElementById('app'))
+      ReactDOM.render(<App state={state} controller={controller}/>, document.getElementById('app'))
     } else {
       console.log('Not rendering yet, because state.hakuData not yet loaded.')
     }
   } catch (e) {
-    console.log('Error from React.render with state', state, e)
+    console.log('Error from ReactDOM.render with state', state, e)
   }
 })
