@@ -12,7 +12,7 @@
        first))
 
 (defn update-form! [form]
-  ;; NOTE: looks like yesql unwraps sequence parameters, thats way we wrap them one extra time here
+  ;; NOTE: looks like yesql unwraps sequence parameters, thats why we wrap them one extra time here
   (let [params {:id (:id form) :content (list (:content form)) :rules (list (:rules form))}]
     (exec-all :db [queries/archive-form! params
                    queries/update-form! params])))
