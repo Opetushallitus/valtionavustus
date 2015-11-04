@@ -79,7 +79,7 @@
         submission (:body (get-form-submission form-id submission-id))
         submission-version (:version submission)
         answers (:answers submission)
-        attachments (get-attachments (:user_key hakemus) (:id hakemus))
+        attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
         validation (validation/validate-form form answers attachments)]
     (if (= (:status hakemus) "new")
       (let [verified-hakemus (va-db/verify-hakemus haku-id
@@ -98,7 +98,7 @@
         hakemus (va-db/get-hakemus hakemus-id)]
     (if (every? empty? (vals security-validation))
       (if (= base-version (:version hakemus))
-        (let [attachments (get-attachments (:user_key hakemus) (:id hakemus))
+        (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
               validation (validation/validate-form form answers attachments)
               updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
               updated-hakemus (va-db/update-submission haku-id
@@ -116,7 +116,7 @@
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
         hakemus (va-db/get-hakemus hakemus-id)
-        attachments (get-attachments (:user_key hakemus) (:id hakemus))
+        attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
         validation (validation/validate-form form answers attachments)]
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
@@ -136,7 +136,7 @@
 
 (defn on-attachment-list [haku-id hakemus-id]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
-    (get-attachments hakemus-id (:id hakemus))))
+    (va-db/get-attachments hakemus-id (:id hakemus))))
 
 (defn on-attachment-create [haku-id hakemus-id hakemus-base-version field-id filename content-type size tempfile]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
