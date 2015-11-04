@@ -133,11 +133,11 @@ textarea, input[type=text] {
 }
 
 #list-container {
-  position: fixed;
   width: @content-width;
-  top: @topbar-height;
 }
 #list-container.has-selected {
+  position: fixed;
+  top: @topbar-height;
   height: @overview-list-height;
 }
 
@@ -226,7 +226,7 @@ table.overview-list {
   }
   tbody {
     display: block;
-    overflow-y: scroll;
+    overflow-y: auto;
     tr:first-child {
       border-top: 1px solid @light-gray;
     }
