@@ -53,14 +53,13 @@ class SummaryHeading extends Component {
         const applications = applicationsByStatus[s]
         const appliedOphShareSum = HakemusListing.formatNumber(_.reduce(applications, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
         const budgetGrantedSum = HakemusListing.formatNumber(_.reduce(applications, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
-        const text = HakemusStatuses.statusToFI(s) + " " + applications.length + ". Haettu " + appliedOphShareSum + " €, myönnetty " + budgetGrantedSum + " €"
+        const text = HakemusStatuses.statusToFI(s) + " " + applications.length + ", haettu " + appliedOphShareSum + " €, myönnetty " + budgetGrantedSum + " €"
         statusSummaryRows.push(<li key={s}>{text}</li>)
       }
     })
 
     return <div>
-             <h2>{avustushaku.content.name.fi}</h2>
-             <div>{durationString}</div>
+             <h2>{avustushaku.content.name.fi} ({durationString})</h2>
              <ul>
              {statusSummaryRows}
              </ul>
