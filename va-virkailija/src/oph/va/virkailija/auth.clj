@@ -15,7 +15,7 @@
       {:username username
        :person-oid (:person-oid details)
        :token token})
-    (log/warn "Log-in failed for cas ticket " ticket)))
+    (log/warn "Login failed for CAS ticket " ticket)))
 
 (defn check-identity [identity]
   (if-let [{:keys [token username]} identity]
@@ -27,8 +27,11 @@
                       :identity)))
 
 (defn logout-ticket [ticket]
-  (log/info ticket "logged out")
-  (swap! tokens dissoc ticket))
+  (if (contains? @tokens ticket)
+    (do
+      (log/info ticket "logged out")
+      (swap! tokens dissoc ticket))
+    (log/warn "trying to logout CAS ticket without active session" ticket)))
 
 (defn cas-initiated-logout [logout-request]
   (let [ticket (CasLogout/parseTicketFromLogoutRequest logout-request)]
