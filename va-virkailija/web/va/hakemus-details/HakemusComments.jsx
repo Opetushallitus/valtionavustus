@@ -52,7 +52,7 @@ export default class HakemusComments extends Component {
   }
 }
 
-class Comment {
+class Comment extends Component {
   render() {
     const comment = this.props.comment
     const firstName = comment.first_name
