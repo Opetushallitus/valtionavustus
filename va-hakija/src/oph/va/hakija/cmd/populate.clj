@@ -140,7 +140,10 @@
 (defmethod generate "checkboxButton" [field] [(:value (first (:options field)))])
 (defmethod generate "textArea" [field] (generate-text random-text field))
 
-(defmethod generate "moneyField" [field] (str (rand-int 120000)))
+(defmethod generate "moneyField" [field]
+  (if (re-find #"income" (:id field))
+    (str (rand-int 100))
+    (str (+ 1000 (rand-int 120000)))))
 
 (defmethod generate "finnishBusinessIdField" [field] "5278603-3")
 (defmethod generate "iban" [field] "FI21 1234 5600 0007 85")
