@@ -136,7 +136,7 @@
 (defmethod generate "emailField" [field] "foobar@example.org")
 (defmethod generate "vaEmailNotification" [field] "foobar@example.org")
 (defmethod generate "radioButton" [field] (:value (first (:options field))))
-(defmethod generate "vaFocusAreas" [field] [(:value (first (:options field)))])
+(defmethod generate "vaFocusAreas" [field] ["focus-area-0"])
 (defmethod generate "checkboxButton" [field] [(:value (first (:options field)))])
 (defmethod generate "textArea" [field] (generate-text random-text field))
 
