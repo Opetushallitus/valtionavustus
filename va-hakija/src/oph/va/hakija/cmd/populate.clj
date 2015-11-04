@@ -3,7 +3,8 @@
   (:require [oph.va.hakija.db :refer :all]
             [oph.soresu.form.validation :as validation]
             [oph.soresu.form.db :refer :all]
-            [oph.soresu.form.formutil :as form-util]))
+            [oph.soresu.form.formutil :as form-util])
+  (:import [java.io File]))
 
 (def valid-answers
   {:value [{:key "organization" :value "Testi Organisaatio" :fieldType "textField"}
@@ -135,7 +136,8 @@
 (defmethod generate "emailField" [field] "foobar@example.org")
 (defmethod generate "vaEmailNotification" [field] "foobar@example.org")
 (defmethod generate "radioButton" [field] (:value (first (:options field))))
-(defmethod generate "vaFocusAreas" [field] (:value (first (:options field))))
+(defmethod generate "vaFocusAreas" [field] [(:value (first (:options field)))])
+(defmethod generate "checkboxButton" [field] [(:value (first (:options field)))])
 (defmethod generate "textArea" [field] (generate-text random-text field))
 
 (defmethod generate "moneyField" [field] (str (rand-int 120000)))
@@ -151,8 +153,8 @@
 
 (defn handle-attachment [hakemus-id hakemus-version field]
   (if (= (:fieldType field) "namedAttachment")
-    (do
-      (create-attachment hakemus-id hakemus-version (:id field) "test.png" "image/png" 15924 "test-data/test.png")
+    (let [file (File. "test-data/test.png")]
+      (create-attachment hakemus-id hakemus-version (:id field) "test.png" "image/png" (.length file) (.getAbsoluteFile file))
       false)
     true))
 
@@ -166,6 +168,7 @@
         form-id (:form avustushaku)
         attachments []
         form (get-form form-id)]
+    (trace "Processing avustushaku" (-> avustushaku :content :name :fi))
     (doseq [x (range 0 amount)]
       (trace "Generating hakemus" x)
       (let [hakemus (->> (create-hakemus! avustushaku-id form-id {})
@@ -189,7 +192,8 @@
                         answers)))))
 
 (defn -main [& args]
-  (let [avustushaut (list-avustushaut)]
+  (let [avustushaut (->> (list-avustushaut)
+                         (filter (fn [haku] (= (:status haku) "published"))))]
     (doseq [avustushaku avustushaut]
       (generate-data avustushaku (->> (first args)
                                     (Long/parseLong))))))
