@@ -1,0 +1,3 @@
+[submodule "soresu-form"]
+	path = soresu-form
+	url = git@github.com:Opetushallitus/soresu-form.git
