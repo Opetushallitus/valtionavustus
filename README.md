@@ -7,6 +7,12 @@ Valtionavustusten hakemiseen, käsittelyyn ja myöntämiseen tarkoitetut palvelu
 * Node.js tai io.js
 * Leiningen (Clojure build tool): http://leiningen.org/
 * Postgres
+* Soresu https://github.com/Opetushallitus/soresu-form
+
+Lisää Soresu forms -submoduli paikalleen:
+
+    git submodule init
+    git submodule update
 
 Riippuvuudet asentuvat ajamalla komennot:
 
