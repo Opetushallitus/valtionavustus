@@ -19,7 +19,7 @@
                  ;; Routing
                  [ring/ring-defaults "0.1.5"]
                  [compojure "1.4.0" :exclusions [instaparse]]
-                 [metosin/compojure-api "0.23.0" :exclusions [commons-codec
+                 [metosin/compojure-api "0.23.1" :exclusions [commons-codec
                                                               instaparse
                                                               joda-time
                                                               clj-time
@@ -28,18 +28,18 @@
 
                  ;; JSON
                  [cheshire "5.5.0"]
-                 [prismatic/schema "0.4.4"]
+                 [prismatic/schema "1.0.3"]
 
                  ;; SQL + migrations
-                 [yesql "0.5.0"]
+                 [yesql "0.5.1"]
                  [org.postgresql/postgresql "9.4-1201-jdbc41"]
-                 [hikari-cp "1.3.0" :exclusions [prismatic/schema]]
+                 [hikari-cp "1.3.1" :exclusions [prismatic/schema]]
                  [org.flywaydb/flyway-core "3.2.1"]
 
                  ;; E-mail
                  [org.apache.commons/commons-email "1.4"]
                  [de.ubercode.clostache/clostache "1.4.0"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+                 [org.clojure/core.async "0.2.371"]
 
                  ;; Testing
                  [speclj "3.3.1"]
@@ -47,7 +47,7 @@
                  [speclj-junit "0.0.10"]
 
                  ;; Configuration
-                 [environ "1.0.0"]
+                 [environ "1.0.1"]
 
                  ;; Logging
                  [org.slf4j/slf4j-log4j12 "1.7.12"]
@@ -57,9 +57,9 @@
                  [fi.reaktor.log4j/log4j-email-throttle "1.0.0"]
 
                  ;; Utils
-                 [org.clojure/tools.trace "0.7.8"]
+                 [org.clojure/tools.trace "0.7.9"]
                  [clj-time "0.11.0"]
-                 [pandect "0.5.3"]]
+                 [pandect "0.5.4"]]
 
   :target-path "target/%s"
 
