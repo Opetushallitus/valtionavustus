@@ -67,10 +67,16 @@ function run_tests() {
 
   install_module soresu-form
   install_module va-common
-  time $LEIN with-profile ci modules spec -f junit || true
+  lein_modules_spec_exit_code=0
+  time $LEIN with-profile ci modules spec -f junit || lein_modules_spec_exit_code=$?
 
   if [ "$run_docker_postgresql" = true ]; then
     remove_postgresql_container
+  fi
+
+  if [ $lein_modules_spec_exit_code -ne 0 ]; then
+    echo "lein modules spec failed: $lein_modules_spec_exit_code"
+    exit 0
   fi
 }
 
