@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
 DOCKER=/usr/bin/docker
+if [ ! -x $DOCKER ]; then
+  DOCKER=/usr/local/bin/docker
+fi
+
 if [ -z ${host_postgres_port+x} ]; then
   host_postgres_port=15432
 fi
