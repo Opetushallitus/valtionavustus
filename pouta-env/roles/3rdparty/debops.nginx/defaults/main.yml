@@ -27,6 +27,10 @@ nginx_flavor_package_map:
   # repository. See http://phusionpassenger.com/ for more details.
   'passenger': [ 'nginx-extras', 'passenger', 'ruby' ]
 
+  # Upstream version from http://nginx.org/ packaged for Debian
+  'nginx.org': [ 'nginx' ]
+
+
 # System user used by nginx
 nginx_user: 'www-data'
 
@@ -35,6 +39,14 @@ nginx_user: 'www-data'
 
 # APT repository which will be added for Phusion Passenger support
 nginx_passenger_phusion_repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
+
+# Specify Phusion Passenger root paths manually (by default this variable is
+# detected automatically at Ansible run time)
+nginx_passenger_root: ''
+
+# Specify path to Ruby executable for Phusion Passenger manually (by default
+# this variable is detected automatically at Ansible run time)
+nginx_passenger_ruby: ''
 
 # Maximum number of Passenger processes
 nginx_passenger_max_pool_size: '{{ (ansible_processor_cores | int * 5) }}'
@@ -67,11 +79,22 @@ nginx_http_auth_basic_name: 'nginx_http'
 # restricted.
 nginx_http_auth_users: []
 
+# Default http { } options
+nginx_http_options: |
+  ssl_session_cache shared:SSL:10m;
+  ssl_session_timeout 5m;
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
+  types_hash_max_size 2048;
+  gzip on;
+  gzip_disable "msie6";
+
 
 nginx_default_keepalive_timeout: 60
 
 # Enable or disable support for PKI/SSL/TLS in nginx
-nginx_pki: '{{ (True if (ansible_local|d() and ansible_local.pki|d() and ansible_local.pki.enabled|d()) else False) | bool }}'
+nginx_pki: '{{ (True if (ansible_local|d() and ansible_local.pki|d() and ansible_local.pki.enabled|d() | bool) else False) | bool }}'
 
 # PKI base directory
 nginx_pki_path: '{% if (ansible_local is defined and ansible_local.pki is defined) %}{{ ansible_local.pki.base_path }}{% else %}/etc/pki{% endif %}'
@@ -94,8 +117,8 @@ nginx_default_ssl_ciphers: 'pfs'
 # See also: https://security.stackexchange.com/questions/31772/
 nginx_default_ssl_curve: 'secp384r1'
 
-# List od DNS servers used to resolve OCSP stapling. If it's empty, nginx role
-# will try to use nameservers from /etc/resolv.conf
+# List of DNS servers used to resolve OCSP stapling. If it's empty, nginx role
+# will try to use the nameservers from /etc/resolv.conf
 # Currently only the first nameserver is used
 nginx_ocsp_resolvers: []
 
@@ -131,7 +154,9 @@ nginx_webroot_mode: '0755'
 nginx_status: []
 
 # By default allow access to the status page from webserver itself
-nginx_status_localhost: '{{ [ "127.0.0.1/32", "::1/128" ] + ansible_all_ipv4_addresses + ansible_all_ipv6_addresses }}'
+nginx_status_localhost: '{{ [ "127.0.0.1/32", "::1/128" ] + ansible_all_ipv4_addresses +
+                            (ansible_all_ipv6_addresses |
+                             difference(ansible_all_ipv6_addresses | ipaddr("link-local"))) }}'
 
 # Name of the nginx status page location
 nginx_status_name: '/nginx_status'
@@ -183,13 +208,13 @@ nginx_htpasswd_default:
 
 # ---- nginx server access policy ----
 
-# Using dicts below you can define a named "access policy" consiting of list
+# Using the dicts below you can define a named "access policy" consisting of a list
 # of allowed hosts/CIDR networks and/or a name of a htpasswd file in
-# '/etc/nginx/private/' with list of user accounts to allow access. You can
+# '/etc/nginx/private/' with a list of user accounts to allow access. You can
 # also define if any or all restrictions need to be met to gain access to
 # a website. In website configuration dict, you can define an
-# 'item.access_policy' key with a name of a particular policy. Nginx role then
-# will use this information to generate a proper config file with given
+# 'item.access_policy' key with a name of a particular policy. The nginx role
+# will then use this information to generate a proper config file with given
 # restrictions in place.
 
 # List of IP addresses or CIDR networks which can access a particular site
@@ -247,4 +272,22 @@ nginx_default_index_html: |
     </body>
   </html>
 
+# Checks for the existence of files in order, and returns the
+# first file that is found for location /.
+# http://wiki.nginx.org/NginxHttpCoreModule#try_files
+nginx_default_try_files:
+  - '$uri'
+  - '$uri/'
+  - '$uri.html'
+  - '$uri.htm'
+  - '/index.html'
+  - '/index.htm'
+
+# Custom nginx configuration in /etc/nginx/conf.d/
+nginx_custom_config: []
+
+  #- name: 'other_config'
+  #  custom: |
+  #    text block {
+  #    }
 
