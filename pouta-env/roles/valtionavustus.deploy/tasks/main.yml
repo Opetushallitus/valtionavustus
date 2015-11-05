@@ -43,6 +43,10 @@
 - name: Fetch ~"{{ jenkins_user }}".ssh/id_deploy.pub for adding it to app server machine
   fetch: src=~{{ jenkins_user }}/.ssh/id_deploy.pub dest=/tmp/{{ ansible_hostname }}-{{ jenkins_user }}.pub flat=yes fail_on_missing=yes
 
+- name: Add deploy private key for github.com to ssh config
+  ssh_config: user={{ jenkins_user}} remote_user=git host=github.com hostname=github.com
+              identity_file=~{{ jenkins_user }}/.ssh/id_deploy port=22 state=present
+
 - name: Add new jenkins public SSH key to deployer account on test app server machines
   authorized_key: user="va-deploy"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
