@@ -6,58 +6,6 @@
             [oph.soresu.form.formutil :as form-util])
   (:import [java.io File]))
 
-(def valid-answers
-  {:value [{:key "organization" :value "Testi Organisaatio" :fieldType "textField"}
-           {:key "organization-email" :value "org@example.com" :fieldType "emailField"}
-           {:key "business-id" :value "5278603-3" :fieldType "finnishBusinessIdField"}
-           {:key "applicant-name" :value "Teemu Hakija" :fieldType "textField"}
-           {:key "primary-email" :value "test@example.com" :fieldType "emailField"}
-           {:key "signature" :value "Teemu Testaaja, CEO" :fieldType "textField"}
-           {:key "signature-email" :value "teemu@example.com" :fieldType "emailField"}
-           {:key "language" :value "fi" :fieldType "radioButton"}
-           {:key "project-name" :value "Server-spec-hanke" :fieldType "textField"}
-           {:key "combined-effort" :value "no" :fieldType "radioButton"}
-           {:key "other-organizations"
-            :value [{:key "other-organizations-1"
-                     :value [{:key "other-organizations.other-organizations-1.name"
-                              :value "E.T. Extra Terrestrial"
-                              :fieldType "textField"}
-                             {:key "other-organizations.other-organizations-1.email"
-                              :value "et@example.com"
-                              :fieldType "emailField"}]
-                     :fieldType "growingFieldsetChild"}]
-            :fieldType "growingFieldset"}
-           {:key "project-goals" :value "Maaleja" :fieldType "textField"}
-           {:key "project-description.project-description-1.goal"
-            :value "Paremmat oppimistulokset"
-            :fieldType "textField"}
-           {:key "project-description.project-description-1.activity"
-            :value "Pidämme työpajoja"
-            :fieldType "textField"}
-           {:key "project-description.project-description-1.result"
-            :value "Jotkut lähtevät jatko-opiskelemaan"
-            :fieldType "textField"}
-           {:key "bank-bic" :value "5000" :fieldType "bic"}
-           {:key "bank-iban" :value "FI 32 5000 4699350600" :fieldType "iban"}
-           {:key "project-target" :value "Maali" :fieldType "textField"}
-           {:key "project-measure" :value "Mittaus" :fieldType "textField"}
-           {:key "project-announce" :value "Julkaisut" :fieldType "textField"}
-           {:key "project-effectiveness" :value "Tehokkuus" :fieldType "textField"}
-           {:key "project-spreading-plan" :value "Jakelusuunnitelma" :fieldType "textField"}
-           {:key "coordination-costs-row.amount" :value "10" :fieldType "moneyField"}
-           {:key "personnel-costs-row.amount" :value "10" :fieldType "moneyField"}
-           {:key "service-purchase-costs-row.amount" :value "10" :fieldType "moneyField"}
-           {:key "material-costs-row.amount" :value "10" :fieldType "moneyField"}
-           {:key "rent-costs-row.amount" :value "10" :fieldType "moneyField"}
-           {:key "equipment-costs-row.amount" :value "10" :fieldType "moneyField"}
-           {:key "steamship-costs-row.amount" :value "10" :fieldType "moneyField"}
-           {:key "other-costs-row.amount" :value "10" :fieldType "moneyField"}
-           {:key "project-incomes-row.amount" :value "10" :fieldType "moneyField"}
-           {:key "eu-programs-income-row.amount" :value "10" :fieldType "moneyField"}
-           {:key "other-public-financing-income-row.amount" :value "10" :fieldType "moneyField"}
-           {:key "private-financing-income-row.amount" :value "10" :fieldType "moneyField"}]})
-
-
 (def person-names {:start ["Jorma" "Pertti" "Esko" "Anna" "Marjo" "Tiina"]
                    "Jorma" ["Karhu." "Vasara." "Männikäinen."]
                    "Pertti" ["Jorma" "Arinen." "Haahka."]
@@ -69,16 +17,17 @@
 (def project-names {:start ["Virtaa" "Voimaa" "Räjähtävää" "Tuulta" "Rauhaa"]
                     "Virtaa" ["Tanssimalla" "Vasaroimalla." "Hirven"]
                     "Voimaa" ["Punttisalilta." "Tanssimalla" "Mäntymetsästä."]
-                    "Tanssimalla" ["Hirven" "Taulun" "Colapullon"]
+                    "Tanssimalla" ["Hirven" "Taulun" "Pullon"]
                     "Hirven" ["Kanssa." "Mukana." "Tahtiin."]
                     "Räjähtävää" ["Voimaa" "Tuulta" "Virtaa"]
-                    "Taulun" ["Äärellä." "Maalauksesta."]
+                    "Taulun" ["Äärellä." "Maalauksesta." "Maalaamisesta."]
                     "Rauhaa" ["Taulun" "Tuulta"]
                     "Tuulta" ["Purjeisiin." "Tanssimalla" "Hirven"]
-                    "Colapullon" ["Äärellä." "Pyörittämisellä." "Uusiokäytöstä."]})
+                    "Pullon" ["Äärellä." "Pyörittämisellä." "Uusiokäytöstä."]})
 
 (def organization-names {:start ["Lohjan" "Valtimon" "Rovaniemen" "Helsingin" "Rauman" "Tampereen"
-                                 "Espoon" "Vantaan" "Pudasjärven" "Riihimäen" "Turun" "Raision"]
+                                 "Espoon" "Vantaan" "Pudasjärven" "Riihimäen" "Turun" "Raision"
+                                 "Etelä" "Pohjois" "Itä" "Etelä"]
                          "Lohjan" ["Settlementti" "Koulutus"]
                          "Rovaniemen" ["Valtimon" "Settlementti" "Koulutus" "Ja"]
                          "Rauman" ["Valtimon" "Settlementti" "Koulutus" "Ja"]
@@ -92,15 +41,40 @@
                          "Valtimon" ["Settlementti" "Akatemia."]
                          "Settlementti" ["Yhdistys." "Oy."]
                          "Helsingin" ["Valtimon" "Koulutus"]
-                         "Koulutus" ["Oy." "Järjestö." "Ja"]
-                         "Ja" ["Konferenssi." "Akatemia." "Rovaniemen" "Lohjan"]})
+                         "Koulutus" ["Oy." "Järjestö." "Seura." "Ja"]
+                         "Etelä" ["Lapin" "Kainuun" "Savon" "Uudenmaan" "Hämeen"]
+                         "Pohjois" ["Lapin" "Kainuun" "Savon" "Uudenmaan" "Hämeen"]
+                         "Itä" ["Lapin" "Kainuun" "Savon" "Uudenmaan" "Hämeen"]
+                         "Länsi" ["Lapin" "Kainuun" "Savon" "Uudenmaan" "Hämeen"]
+                         "Lapin" ["Konferenssi." "Akatemia." "Opisto." "Seura." "Settlementti"]
+                         "Kainuun" ["Konferenssi." "Akatemia." "Opisto." "Seura." "Settlementti"]
+                         "Savon" ["Konferenssi." "Akatemia." "Opisto." "Seura." "Settlementti"]
+                         "Uudenmaan" ["Konferenssi." "Akatemia." "Opisto." "Seura." "Settlementti"]
+                         "Hämeen" ["Konferenssi." "Akatemia." "Seura." "Settlementti"]
+                         "Ja" ["Konferenssi." "Akatemia." "Seura."
+                               "Rovaniemen" "Lohjan" "Rauman"
+                               "Tampereen"
+                               "Espoon"
+                               "Savon"]})
 
-(def random-text {:start ["Liiba" "Laaba"]
-                  "Liiba" ["Bup." "Laaba"]
-                  "Laaba" ["Dib." "Dibbiti" "Bobbiti"]
-                  "Dibbiti" ["Dobbiti" "Bobbiti"]
-                  "Dobbiti" ["Duh." "Bobbiti"]
-                  "Bobbiti" ["Liiba" "Bup."]})
+(def random-text
+  {:start ["Konsulin" "Frimanin" "Peruste" "Koko" "Suomen"
+           ]
+   "Konsulin" ["avuksi nimitetään varakonsuli Frimanilla oli apunaan suomenkielentaitoinen sihteeri Elsa Lantto."
+               "tulee olla varakas ja tukevapohjainen liikemies."
+               "Peruste"
+               "Ja"]
+   "Suomen" ["konsulille moinen käytös ei sotavuosina sopinut." "Konsulin" "Peruste"]
+   "Konsuli" ["nimittäin halusi jakaa konsulinvirkaa rasittavat menot jonkun muun kanssa."]
+   "Frimanin" ["Frimanin suosituksesta varakonsuliksi nimitettiin Otto Lesslie." "Konsulin"]
+   "Ja" ["Frimanin" "Koko"
+         "syynä oli se, että \"hallitus oli pitänyt olosuhteiden vaatimana järjestää edustus uudelleen\"."]
+   "Peruste" ["oli raadollinen."]
+   "Koko" ["Suomen ulkomaanedustushan nojasi vielä maailmansotien välillä konsuleihin, jotka tekivät työtä palkatta."
+           "Peruste"]
+
+
+   })
 
 ;; See: https://diegobasch.com/fun-with-markov-chains-and-clojure
 (defn sentence [data]
@@ -114,6 +88,7 @@
         (recur nws nacc)))))
 
 (defn generate-text [data field]
+  (trace "field id" (:id field))
   (let [text (-> (sentence data)
                  (clojure.string/replace  #"\." ""))
         max-length (-> field :params :maxlength)]
@@ -127,7 +102,14 @@
 (defmethod generate-text-field "signature" [field] (generate-text person-names field))
 (defmethod generate-text-field "project-name" [field] (generate-text project-names field))
 (defmethod generate-text-field "applicant-name" [field] (generate-text person-names field))
-(defmethod generate-text-field :default [field] (generate-text random-text field))
+(defmethod generate-text-field "project-begin" [field] "1.1.2015")
+(defmethod generate-text-field "project-end" [field] "15.8.2018")
+(defmethod generate-text-field "project-www" [field] "http://www.wikipedia.org")
+(defmethod generate-text-field :default [field]
+  (cond
+    (re-matches #".*organizations.*name.*" (:id field)) (generate-text organization-names field)
+    (re-matches #".*row.*description" (:id field)) (generate-text organization-names field)
+    :else (generate-text random-text field)))
 
 (defmulti generate :fieldType)
 
