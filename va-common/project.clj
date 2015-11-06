@@ -28,7 +28,6 @@
 
                  ;; JSON
                  [cheshire "5.5.0"]
-                 [prismatic/schema "1.0.3"]
 
                  ;; SQL + migrations
                  [yesql "0.5.1"]
