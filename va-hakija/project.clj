@@ -23,6 +23,7 @@
   :test-paths ["spec"]
 
   :uberjar-exclusions [#"public/test"]
+  :auto-clean false
 
   :aot [oph.va.jdbc.enums
         oph.va.hakija.db.migrations]
