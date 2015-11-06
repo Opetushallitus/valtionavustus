@@ -324,6 +324,11 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.updateHakemusRegisterNumber, hakemus)
   }
 
+  setHakemusSummaryComment(hakemus, newSummaryComment) {
+    hakemus.arvio["summary-comment"] = newSummaryComment
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }
+
   loadComments() {
     dispatcher.push(events.loadComments)
   }
