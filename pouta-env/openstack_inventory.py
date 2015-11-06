@@ -37,7 +37,7 @@
 ################################################################################
 
 from __future__ import print_function
-from novaclient.v1_1 import client
+from novaclient import client
 import os, sys, json
 
 OS_METADATA_KEY = {
@@ -49,7 +49,7 @@ OS_NETWORK_NAME = 'tlp20296'
 
 def main(args):
 	credentials = getOsCredentialsFromEnvironment()
-	nt = client.Client(credentials['USERNAME'], credentials['PASSWORD'], credentials['TENANT_NAME'], credentials['AUTH_URL'], service_type="compute")
+	nt = client.Client("1.1", credentials['USERNAME'], credentials['PASSWORD'], credentials['TENANT_NAME'], credentials['AUTH_URL'], service_type="compute")
 
 	inventory = {}
 	inventory['_meta'] = { 'hostvars': {} }
