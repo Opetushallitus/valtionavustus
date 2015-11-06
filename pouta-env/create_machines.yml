@@ -52,3 +52,7 @@
         machine_name: va-prod,
         volume_ids: [f10a7b7d-8d24-44af-ad80-4d97b09b3e9c]
       }
+    - { include: tasks/attach_persistent_volumes_if_needed.yml,
+        machine_name: va-build,
+        volume_ids: [6395f20b-509a-4336-8c41-189c7d4e6fb2]
+      }
