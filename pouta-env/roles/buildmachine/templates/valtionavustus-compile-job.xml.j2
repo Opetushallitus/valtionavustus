@@ -53,10 +53,17 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>./ci/jenkins-cibuild.bash no-server clean test</command>
+      <command>./ci/jenkins-cibuild.bash no-server clean test uberjar</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>va-hakija/target/uberjar/*.jar,va-virkailija/target/uberjar/*.jar</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>true</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+    </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.junit.JUnitResultArchiver plugin="junit@1.2-beta-4">
       <testResults>**/target/junit*.xml</testResults>
       <keepLongStdio>false</keepLongStdio>

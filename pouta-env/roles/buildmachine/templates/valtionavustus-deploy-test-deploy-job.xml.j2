@@ -22,7 +22,7 @@
       <notifyBackToNormal>true</notifyBackToNormal>
       <notifyRepeatedFailure>true</notifyRepeatedFailure>
       <includeTestSummary>false</includeTestSummary>
-      <showCommitList>true</showCommitList>
+      <showCommitList>false</showCommitList>
       <includeCustomMessage>false</includeCustomMessage>
       <customMessage></customMessage>
     </jenkins.plugins.slack.SlackNotifier_-SlackJobProperty>
@@ -81,7 +81,28 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>./ci/jenkins-cibuild.bash {{ test_application_server_names.msg }} clean uberjar deploy</command>
+      <command>mkdir -p va-hakija/target/uberjar/
+      </command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>cp ../../valtionavustus-compile-test/builds/lastStableBuild/archive/va-hakija/target/uberjar/hakija-*-standalone.jar va-hakija/target/uberjar/
+      </command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>mkdir -p va-virkailija/target/uberjar/
+      </command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>cp ../../valtionavustus-compile-test/builds/lastStableBuild/archive/va-virkailija/target/uberjar/virkailija-*-standalone.jar va-virkailija/target/uberjar/
+      </command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>./ci/deploy_jar.bash va-test va-hakija va-hakija/target/uberjar/hakija-*-standalone.jar
+      </command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>./ci/deploy_jar.bash va-test va-virkailija va-virkailija/target/uberjar/virkailija-*-standalone.jar
+      </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
