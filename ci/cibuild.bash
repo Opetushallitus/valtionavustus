@@ -76,7 +76,7 @@ function run_tests() {
 
   if [ $lein_modules_spec_exit_code -ne 0 ]; then
     echo "lein modules spec failed: $lein_modules_spec_exit_code"
-    exit 0
+    exit $lein_modules_spec_exit_code
   fi
 }
 
