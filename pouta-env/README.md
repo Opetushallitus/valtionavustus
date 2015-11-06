@@ -6,6 +6,10 @@ Valtionavustusjärjestelmän palvelimien provisiointi
   - huom. OsX:ssä tulee valmiiksi six versio 1.4.1, joka ei ole nova-clientin kanssa yhteensopiva. Siksi asenna ja käytä novaa [virtualenvissä](http://docs.python-guide.org/en/latest/dev/virtualenvs/):
   - `pip install virtualenv`
   - `virtualenv pouta-venv`
+    * huom. jos käytössä OsX, niin tarvitaan uudempi OpenSSL (jossa TLS1.2 tuki) ja python joka on käännetty sitä vasten:
+      brew install openssl
+      brew install python
+      virtualenv -p /usr/local/bin/python2.7 pouta-venv
   - `source pouta-venv/bin/activate`
   - `pip install python-novaclient ansible`
 * ja [alusta todennus](https://research.csc.fi/pouta-credentials)
@@ -26,7 +30,7 @@ Valtionavustusjärjestelmän palvelimien provisiointi
   - `./pouta-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty --role-file=third_party_roles.yml`
   - roolin päivittäminen onnistuu samalla tavalla, mutta vaatii --force -vivun (ansible-galaxy kertoo kyllä siitä)
 * Kolmannen osapuolen muut kirjastot
-  - `./pouta-venv/bin/ansible-galaxy install gaqzi.ssh-config -p library/`  
+  - `./pouta-venv/bin/ansible-galaxy install gaqzi.ssh-config -p library/`
 * alusta palvelimet
   - `./pouta-venv/bin/ansible-playbook -i openstack_inventory.py site.yml`
   - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
@@ -35,7 +39,7 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 `./open-ssh va-build add_va_jenkins_user.bash <käyttäjätunnus>`
 # Buildikoneen päivittämisen jälkeen lisää jobeihin Slack-notifikaatiot päälle käsin: jobin Configure ->
   Add post-build action -> Slack Notifications
-# Ja jos buildikoneen jenkins-käyttäjän SSH-avain on muuttunut, se tulee lisätä soresu-form -repon deployment-avaimiin.  
+# Ja jos buildikoneen jenkins-käyttäjän SSH-avain on muuttunut, se tulee lisätä soresu-form -repon deployment-avaimiin.
 
 
 Vinkkejä virhetilanteisiin
