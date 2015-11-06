@@ -6,7 +6,6 @@ import _ from 'lodash'
 import RouteParser from 'route-parser'
 
 import YhteenvetoController from './YhteenvetoController.jsx'
-import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusStatuses from './hakemus-details/HakemusStatuses.js'
 import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
 import {BasicInfoComponent} from 'soresu-form/web/form/component/InfoElement.jsx'
@@ -25,13 +24,9 @@ export default class SummaryApp extends Component {
       <section id="container" className="section-container">
         <SummaryHeading avustushaku={avustushaku} hakemusList={hakemusList} />
         <div id="list-container">
-          <HakemusListing ophShareSum={hakuData["budget-oph-share-sum"]}
+          <SummaryListing ophShareSum={hakuData["budget-oph-share-sum"]}
                           budgetGrantedSum={hakuData["budget-granted-sum"]}
-                          hakemusFilter={state.hakemusFilter}
-                          hakemusSorter={state.hakemusSorter}
                           hakemusList={hakemusList}
-                          hasSelected={false}
-                          userInfo={state.userInfo}
                           controller={controller} />
         </div>
       </section>
@@ -51,8 +46,8 @@ class SummaryHeading extends Component {
     _.each(this.statusesInOrder(), s => {
       if (_.contains(_.keys(applicationsByStatus), s)) {
         const applications = applicationsByStatus[s]
-        const appliedOphShareSum = HakemusListing.formatNumber(_.reduce(applications, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
-        const budgetGrantedSum = HakemusListing.formatNumber(_.reduce(applications, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
+        const appliedOphShareSum = SummaryListing.formatNumber(_.reduce(applications, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
+        const budgetGrantedSum = SummaryListing.formatNumber(_.reduce(applications, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
         const text = HakemusStatuses.statusToFI(s) + " " + applications.length + ", haettu " + appliedOphShareSum + " €, myönnetty " + budgetGrantedSum + " €"
         statusSummaryRows.push(<li key={s}>{text}</li>)
       }
@@ -74,6 +69,55 @@ class SummaryHeading extends Component {
     const statuses = _.cloneDeep(HakemusStatuses.allStatuses())
     statuses.reverse()
     return statuses
+  }
+}
+
+export default class SummaryListing extends Component {
+  render() {
+    const hakemusList = this.props.hakemusList
+    const ophShareSum = SummaryListing.formatNumber(_.reduce(hakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
+    const hakemusElements = _.map(hakemusList, hakemus => {
+      return <HakemusRow key={hakemus.id} hakemus={hakemus} /> })
+    const budgetGrantedSum = SummaryListing.formatNumber(_.reduce(hakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
+
+    return (
+      <table key="hakemusListing" className="hakemus-list overview-list">
+        <thead><tr>
+          <th className="organization-column">Hakijaorganisaatio</th>
+          <th className="project-name-column">Hanke</th>
+          <th className="applied-sum-column">Haettu</th>
+          <th className="granted-sum-column">Myönnetty</th>
+        </tr></thead>
+        <tbody>
+          {hakemusElements}
+        </tbody>
+        <tfoot><tr>
+          <td className="total-applications-column">
+            TODO
+          </td>
+          <td className="applied-sum-column"><span className="money sum">{ophShareSum}</span></td>
+          <td className="granted-sum-column"><span className="money sum">{budgetGrantedSum}</span></td>
+        </tr></tfoot>
+      </table>
+    )
+  }
+
+  static formatNumber (num) {
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ")
+  }
+}
+
+class HakemusRow extends Component {
+  render() {
+    const hakemus = this.props.hakemus
+    const htmlId = "hakemus-" + hakemus.id
+    const hakemusName = hakemus["project-name"]
+    return <tr id={htmlId} className="overview-row">
+      <td className="organization-column" title={hakemus["organization-name"]}>{hakemus["organization-name"]}</td>
+      <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
+      <td className="applied-sum-column"><span className="money">{SummaryListing.formatNumber(hakemus["budget-oph-share"])}</span></td>
+      <td className="granted-sum-column"><span className="money">{SummaryListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>
+    </tr>
   }
 }
 
