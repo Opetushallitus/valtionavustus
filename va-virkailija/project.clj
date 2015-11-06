@@ -28,11 +28,11 @@
   :test-paths ["spec"]
 
   :uberjar-exclusions [#"public/test"]
-  :auto-clean false
 
   :aot [oph.va.jdbc.enums
         oph.va.virkailija.db.migrations]
-  :profiles {:uberjar {:aot [oph.va.virkailija.main]}}
+  :profiles {:uberjar {:aot [oph.va.virkailija.main]
+                       :auto-clean false}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.virkailija.db.migrations/migrate" "db.migration"]
             "dbclear" ["run" "-m" "oph.soresu.common.db/clear-db!" "db" "virkailija"]
             "buildfront" ^{:doc "Build frontend code with npm"}
