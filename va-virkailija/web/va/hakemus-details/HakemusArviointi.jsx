@@ -21,7 +21,6 @@ export default class HakemusArviointi extends Component {
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments}/>
        <SetStatus controller={controller} hakemus={hakemus} />
        <BudgetGranted controller={controller} hakemus={hakemus} />
-       <SetRegisterNumber controller={controller} hakemus={hakemus} />
      </div>
     )
   }
@@ -77,23 +76,6 @@ class BudgetGranted extends React.Component {
     return <div className="budget-granted">
       <label htmlFor="budget-granted">Myönnetty avustus</label>
       <input id="budget-granted" type="text" value={budgetGranted} onChange={onChange} maxLength="9" /> €
-    </div>
-  }
-}
-
-class SetRegisterNumber extends React.Component {
-  render() {
-    const hakemus = this.props.hakemus
-    const registerNumber = _.get(hakemus, "register-number", 0)
-    const controller = this.props.controller
-    const onChange = e => {
-      const inputValue = e.target.value
-      controller.setHakemusRegisterNumber(hakemus, inputValue)
-    }
-
-    return <div className="register-number">
-      <label htmlFor="register-number">Diaarinumero</label>
-      <input id="register-number" disabled="disabled" type="text" value={registerNumber} onChange={onChange} maxLength="128" />
     </div>
   }
 }
