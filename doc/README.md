@@ -2,7 +2,9 @@
 
 ## API documentation
 
-See [Swagger](https://valtionavustukset.oph.fi/doc)
+For Hakija app, the API documentation can be viewed via [Swagger](https://valtionavustukset.oph.fi/doc)
+
+Virkailija app [Swagger](https://virkailija.valtionavustukset.oph.fi/doc) requires signing in with correct account.
 
 ## Database schemas
 
