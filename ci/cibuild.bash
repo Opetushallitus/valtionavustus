@@ -35,6 +35,7 @@ function clean() {
 
 function install_module() {
   cd $1
+  echo "Running lein install for $1"
   time $LEIN install
   cd ..
 }
