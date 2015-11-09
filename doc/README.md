@@ -1,5 +1,9 @@
 # Technical documentation
 
+## Architecture
+
+![General architecture](architecture.png)
+
 ## API documentation
 
 For Hakija app, the API documentation can be viewed via [Swagger](https://valtionavustukset.oph.fi/doc)
