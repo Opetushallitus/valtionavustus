@@ -26,6 +26,8 @@ nginx_server_build:
       auth_basic_user_file "{{ nginx_jenkins_http_auth_basic_filename }}";
 
 # Jenkins configs:
+jenkins_home: /data/jenkins
+
 #latest
 #jenkins_apt_key: "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
 #jenkins_apt_repository: "deb http://pkg.jenkins-ci.org/debian binary/"
