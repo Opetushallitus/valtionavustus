@@ -2,6 +2,8 @@
 
 Valtionavustusten hakemiseen, käsittelyyn ja myöntämiseen tarkoitetut palvelut.
 
+[Tekninen dokumentaatio](doc/README.md)
+
 # Riippuvuudet
 
 * Node.js tai io.js
@@ -98,10 +100,6 @@ Hakijasovellus tuotantoversiona:
 Eri ympäristön voi ottaa käyttöön seuraavasti (ympäristöjen konffit ovat ```config``` hakemistossa)
 
     ../lein with-profile [dev,test,va-test,va-prod] run
-
-# Dokumentaatio
-
-Swagger-pohjainen API-dokumentaatio löytyy osoitteesta http://localhost:8080/doc
 
 # Testien ajo
 
