@@ -46,8 +46,8 @@ class SummaryHeading extends Component {
     _.each(this.statusesInOrder(), s => {
       if (_.contains(_.keys(applicationsByStatus), s)) {
         const applications = applicationsByStatus[s]
-        const appliedOphShareSum = SummaryListing.formatNumber(_.reduce(applications, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
-        const budgetGrantedSum = SummaryListing.formatNumber(_.reduce(applications, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
+        const appliedOphShareSum = _.reduce(applications, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0)
+        const budgetGrantedSum = _.reduce(applications, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0)
         const text = HakemusStatuses.statusToFI(s) + " " + applications.length + ", haettu " + appliedOphShareSum + " €, myönnetty " + budgetGrantedSum + " €"
         statusSummaryRows.push(<li key={s}>{text}</li>)
       }
@@ -75,10 +75,10 @@ class SummaryHeading extends Component {
 export default class SummaryListing extends Component {
   render() {
     const hakemusList = this.props.hakemusList
-    const ophShareSum = SummaryListing.formatNumber(_.reduce(hakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
+    const ophShareSum = _.reduce(hakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0)
     const hakemusElements = _.map(hakemusList, hakemus => {
       return <HakemusRow key={hakemus.id} hakemus={hakemus} /> })
-    const budgetGrantedSum = SummaryListing.formatNumber(_.reduce(hakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
+    const budgetGrantedSum = _.reduce(hakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0)
 
     return (
       <table key="hakemusListing" className="hakemus-list overview-list">
@@ -101,10 +101,6 @@ export default class SummaryListing extends Component {
       </table>
     )
   }
-
-  static formatNumber (num) {
-    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ")
-  }
 }
 
 class HakemusRow extends Component {
@@ -115,8 +111,8 @@ class HakemusRow extends Component {
     return <tr id={htmlId} className="overview-row">
       <td className="organization-column" title={hakemus["organization-name"]}>{hakemus["organization-name"]}</td>
       <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
-      <td className="applied-sum-column"><span className="money">{SummaryListing.formatNumber(hakemus["budget-oph-share"])}</span></td>
-      <td className="granted-sum-column"><span className="money">{SummaryListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>
+      <td className="applied-sum-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
+      <td className="granted-sum-column"><span className="money">{hakemus.arvio["budget-granted"]}</span></td>
     </tr>
   }
 }
