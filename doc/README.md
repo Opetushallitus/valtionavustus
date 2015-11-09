@@ -1,4 +1,4 @@
-# Documentation
+# Technical documentation
 
 ## API documentation
 
