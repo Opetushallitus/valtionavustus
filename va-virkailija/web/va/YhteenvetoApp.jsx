@@ -20,49 +20,23 @@ export default class SummaryApp extends Component {
     const hakuData = state.hakuData
     const hakemusList = hakuData.hakemukset
     const avustushaku = hakuData.avustushaku
+    const applicationsByStatus = _.groupBy(hakemusList, h => { return h.arvio.status })
+    const summaryListings = []
+    _.each(this.statusesInOrder(), s => {
+      if (_.contains(_.keys(applicationsByStatus), s)) {
+        const applications = applicationsByStatus[s]
+        summaryListings.push(<SummaryListing key={s} arvioStatus={s} hakemusList={applications} />)
+      }
+    })
+
     return (
       <section id="container" className="section-container">
         <SummaryHeading avustushaku={avustushaku} hakemusList={hakemusList} />
         <div id="list-container">
-          <SummaryListing ophShareSum={hakuData["budget-oph-share-sum"]}
-                          budgetGrantedSum={hakuData["budget-granted-sum"]}
-                          hakemusList={hakemusList}
-                          controller={controller} />
+          {summaryListings}
         </div>
       </section>
     )
-  }
-}
-
-class SummaryHeading extends Component {
-  render() {
-    const avustushaku = this.props.avustushaku
-    const hakemusList = this.props.hakemusList
-    const hakuDuration = avustushaku.content.duration
-    const durationString = this.toDateStr(hakuDuration.start) + "–" + this.toDateStr(hakuDuration.end)
-
-    const applicationsByStatus = _.groupBy(hakemusList, h => { return h.arvio.status })
-    const statusSummaryRows = []
-    _.each(this.statusesInOrder(), s => {
-      if (_.contains(_.keys(applicationsByStatus), s)) {
-        const applications = applicationsByStatus[s]
-        const appliedOphShareSum = _.reduce(applications, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0)
-        const budgetGrantedSum = _.reduce(applications, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0)
-        const text = HakemusStatuses.statusToFI(s) + " " + applications.length + ", haettu " + appliedOphShareSum + " €, myönnetty " + budgetGrantedSum + " €"
-        statusSummaryRows.push(<li key={s}>{text}</li>)
-      }
-    })
-
-    return <div>
-             <h2>{avustushaku.content.name.fi} ({durationString})</h2>
-             <ul>
-             {statusSummaryRows}
-             </ul>
-           </div>
-  }
-
-  toDateStr(dateTime) {
-    return BasicInfoComponent.asDateString(dateTime)
   }
 
   statusesInOrder() {
@@ -72,8 +46,25 @@ class SummaryHeading extends Component {
   }
 }
 
+class SummaryHeading extends Component {
+  render() {
+    const avustushaku = this.props.avustushaku
+    const hakuDuration = avustushaku.content.duration
+    const durationString = this.toDateStr(hakuDuration.start) + "–" + this.toDateStr(hakuDuration.end)
+
+    return <div>
+             <h2>{avustushaku.content.name.fi} ({durationString})</h2>
+           </div>
+  }
+
+  toDateStr(dateTime) {
+    return BasicInfoComponent.asDateString(dateTime)
+  }
+}
+
 export default class SummaryListing extends Component {
   render() {
+    const heading = SummaryListing.arvioStatusFiForSummary(this.props.arvioStatus)
     const hakemusList = this.props.hakemusList
     const ophShareSum = _.reduce(hakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0)
     const hakemusElements = _.map(hakemusList, hakemus => {
@@ -82,7 +73,9 @@ export default class SummaryListing extends Component {
 
     return (
       <table key="hakemusListing" className="hakemus-list overview-list">
-        <thead><tr>
+        <thead>
+        <tr><th colSpan="4" className="status-heading-column">{heading}</th></tr>
+        <tr>
           <th className="organization-column">Hakijaorganisaatio</th>
           <th className="project-name-column">Hanke</th>
           <th className="applied-sum-column">Haettu</th>
@@ -100,6 +93,16 @@ export default class SummaryListing extends Component {
         </tr></tfoot>
       </table>
     )
+  }
+
+  static arvioStatusFiForSummary(status) {
+    switch(status) {
+      case "rejected":
+        return "Kielteiset päätökset"
+      case "accepted":
+        return "Myönteiset päätökset"
+    }
+    return "Ratkaisemattomat hakemukset, joiden tila on '" + HakemusStatuses.statusToFI(status).toLocaleLowerCase() + "'"
   }
 }
 
