@@ -53,7 +53,7 @@ class SummaryHeading extends Component {
     const durationString = this.toDateStr(hakuDuration.start) + "–" + this.toDateStr(hakuDuration.end)
 
     return <div>
-             <h2>{avustushaku.content.name.fi} ({durationString})</h2>
+             <h2>Ratkaisuyhteenveto – {avustushaku.content.name.fi} ({durationString})</h2>
            </div>
   }
 
@@ -76,7 +76,7 @@ export default class SummaryListing extends Component {
         <thead>
         <tr><th colSpan="4" className="status-heading-column">{heading}</th></tr>
         <tr>
-          <th className="organization-column">Hakijaorganisaatio</th>
+          <th className="organization-column">Hakija</th>
           <th className="project-name-column">Hanke</th>
           <th className="applied-sum-column">Haettu</th>
           <th className="granted-sum-column">Myönnetty</th>
