@@ -15,7 +15,6 @@
   :target-path "target/%s"
 
   :prep-tasks [
-       "javac"
        "compile"
   ]
 
