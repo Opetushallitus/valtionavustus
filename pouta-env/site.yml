@@ -20,11 +20,8 @@
   user: cloud-user
   sudo: yes
   roles:
-  - ssh.init
-  - common
   - buildmachine
   - valtionavustus.build
-  - java8
   - 3rdparty/Stouts.jenkins
   - valtionavustus.deploy
   - 3rdparty/debops.pki

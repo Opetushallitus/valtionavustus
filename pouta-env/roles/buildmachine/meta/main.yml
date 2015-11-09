@@ -1,0 +1,5 @@
+dependencies:
+  - role: ssh.init
+  - role: common
+  - role: logical.volumes
+  - role: java8
