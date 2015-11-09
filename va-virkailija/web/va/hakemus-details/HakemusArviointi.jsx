@@ -21,6 +21,7 @@ export default class HakemusArviointi extends Component {
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments}/>
        <SetStatus controller={controller} hakemus={hakemus} />
        <BudgetGranted controller={controller} hakemus={hakemus} />
+       <SummaryComment controller={controller} hakemus={hakemus} />
      </div>
     )
   }
@@ -76,6 +77,19 @@ class BudgetGranted extends React.Component {
     return <div className="budget-granted">
       <label htmlFor="budget-granted">Myönnetty avustus</label>
       <input id="budget-granted" type="text" value={budgetGranted} onChange={onChange} maxLength="9" /> €
+    </div>
+  }
+}
+
+class SummaryComment extends React.Component {
+  render() {
+    const hakemus = this.props.hakemus
+    const arvio = hakemus.arvio
+    const summaryComment = arvio ? arvio["summary-comment"] : undefined
+    const controller = this.props.controller
+    return <div className="summary-comment">
+      <label htmlFor="summary-comment">Huomautus ratkaisuyhteenvetoon</label>
+      <input id="summary-comment" type="text" value={summaryComment} onChange={e => { controller.setHakemusSummaryComment(hakemus, e.target.value) }} maxLength="128" />
     </div>
   }
 }

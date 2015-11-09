@@ -1,8 +1,9 @@
 @import "npm://soresu-form/web/form/style/variables.less";
 
 @score-column-width: 90px;
-@summary-content-width: @content-width - @score-column-width;
-@summary-total-applications-column-width: 900px - @score-column-width;
+@status-column-width: 110px;
+@summary-content-width: @content-width - @score-column-width - @status-column-width;
+@summary-total-applications-column-width: 900px - @score-column-width - @status-column-width;
 
 body {
   background-color: #fff;
@@ -28,6 +29,7 @@ body {
   width: @summary-content-width;
   table.overview-list {
     width: @summary-content-width;
+    margin-bottom: 30px;
     tr.overview-row {
       cursor: default;
       &.unselected:hover {
