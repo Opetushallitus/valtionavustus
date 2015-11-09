@@ -9,9 +9,14 @@
             [oph.va.schema :refer :all]))
 
 (defn environment-content []
-  {:name      (config-simple-name)
-   :show-name (:show-environment? (:ui config))
-   :hakija-server {:url (:url (:server config))}})
+  (let [common-environment {:name      (config-simple-name)
+                            :show-name (:show-environment? (:ui config))
+                            :hakija-server {:url (:url (:server config))}}
+        opintopolku (:opintopolku config)]
+    (if opintopolku
+      (assoc common-environment :opintopolku {:url (:url opintopolku)
+                                              :permission-request (:permission-request opintopolku)})
+      common-environment)))
 
 (defn get-translations []
   (return-from-classpath "translations.json" "application/json"))

@@ -16,6 +16,7 @@ export default class Login extends React.Component {
   render() {
     const model = this.props.model
     const environment =  model.environment
+    const opintopolku =  environment.opintopolku
     const query = queryString.parse(location.search)
     const errorMessage = (<div className="error">Sisäänkirjautuminen epäonnistui.</div>)
     const notPermittedMessage = (<div className="error">Sinulla ei ole oikeuksia valtionavustusjärjestelmään.</div>)
@@ -28,7 +29,7 @@ export default class Login extends React.Component {
           <div className="row">{notPermitted}</div>
           <div className="row">{error}</div>
           <div hidden={notPermitted} className="row"><a href="/">Kirjaudu sisään</a></div>
-          <div hidden={!notPermitted} className="row"><a href="/login/logout">Kirjaudu ulos opintopolusta</a></div>
+          <div hidden={!notPermitted} className="row"><a href={opintopolku.url + opintopolku["permission-request"]}>Ano lisää oikeuksia</a></div>
         </section>
       </div>
     )

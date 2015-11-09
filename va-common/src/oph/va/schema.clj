@@ -30,7 +30,9 @@
 
 (s/defschema Environment {:name s/Str
                           :show-name s/Bool
-                          :hakija-server {:url LocalizedString}})
+                          :hakija-server {:url LocalizedString}
+                          (s/optional-key :opintopolku) {:url s/Str
+                                                         :permission-request s/Str}})
 
 (s/defschema HakuStatus
   (s/enum "new" "draft" "published" "deleted"))

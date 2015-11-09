@@ -9,7 +9,8 @@
           :virkailija-url "http://localhost:8081"}
  :opintopolku {:url "https://testi.virkailija.opintopolku.fi"
                :cas-login "/cas/login?service="
-               :cas-logout "/cas/logout?service="}
+               :cas-logout "/cas/logout?service="
+               :permission-request "/authentication-henkiloui/html/#/omattiedot/uusianomus"}
  :ui {:show-environment? true}
  :db {:pool-name "virkailija-pool"
       :username "va_virkailija"
