@@ -37,7 +37,8 @@ export default class FakeFormState {
     const formState = {
       configuration: {
         translations: translations,
-        lang: "fi"
+        lang: "fi",
+        preview: true
       },
       form: effectiveForm,
       saveStatus: {

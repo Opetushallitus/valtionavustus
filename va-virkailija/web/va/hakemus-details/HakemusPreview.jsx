@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
 
-import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
+import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber.jsx'
 
@@ -23,13 +23,10 @@ export default class HakemusPreview extends Component {
     const formElementProps = {
       state: formState,
       infoElementValues: avustushaku,
-      controller: new FakeFormController(new VaPreviewComponentFactory(), avustushaku, hakemus)
+      controller: new FakeFormController(new VaPreviewComponentFactory(), avustushaku, hakemus),
+      containerId: "preview-container",
+      headerElements: registerNumberDisplay,
     }
-    return (
-      <div id="preview-container">
-        {registerNumberDisplay}
-        <FormPreview {...formElementProps} />
-      </div>
-    )
+    return <FormContainer {...formElementProps} />
   }
 }
