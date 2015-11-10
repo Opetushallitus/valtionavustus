@@ -61,6 +61,7 @@
   (GET* "/:id" [id]
         :path-params [id :- Long]
         :return AvustusHaku
+        :summary "Get avustushaku description"
         (if-let [avustushaku (hakija-db/get-avustushaku id)]
           (avustushaku-ok-response avustushaku)
           (not-found)))

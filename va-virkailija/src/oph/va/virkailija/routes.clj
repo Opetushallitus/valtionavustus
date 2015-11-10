@@ -110,6 +110,7 @@
 
   (GET* "/" []
         :return [AvustusHaku]
+        :summary "Return list of all avustushaku descriptions"
         (if-let [response (hakija-api/list-avustushaut)]
           (ok response)
           (not-found)))
@@ -117,6 +118,7 @@
   (GET* "/status/:status" []
         :path-params [status :- HakuStatus]
         :return [AvustusHaku]
+        :summary "Return list of avustushaku descriptions by status"
         (if-let [response (hakija-api/list-avustushaut-by-status status)]
           (ok response)
           (not-found)))
@@ -124,6 +126,7 @@
   (PUT* "/" []
         :body [base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base") ]
         :return AvustusHaku
+        :summary "Copy existing avustushaku as new one by id of the existing avustushaku"
         (let [base-haku (-> base-haku-id-wrapper
                             :baseHakuId
                             (hakija-api/get-hakudata)
@@ -145,6 +148,7 @@
          :path-params [avustushaku-id :- Long]
          :body  [avustushaku (describe AvustusHaku "Updated avustushaku")]
          :return AvustusHaku
+         :summary "Update avustushaku description"
          (if-let [response (hakija-api/update-avustushaku avustushaku)]
           (ok response)
           (not-found)))
@@ -152,6 +156,7 @@
   (GET* "/:avustushaku-id" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
         :return HakuData
+        :summary "Return all relevant avustushaku data (including answers, comments and form)"
         (let [scores (get-avustushaku-scores avustushaku-id)]
           (if-let [response (hakija-api/get-hakudata avustushaku-id)]
                     (ok (->> response
@@ -162,6 +167,7 @@
   (GET* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
         :return [Role]
+        :summary "List roles for given avustushaku"
         (if-let [response (hakija-api/get-avustushaku-roles avustushaku-id)]
           (ok response)
           (not-found)))
@@ -169,6 +175,7 @@
   (PUT* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
         :return Role
+        :summary "Create new role for avustushaku"
         (ok (hakija-api/create-avustushaku-role {:avustushaku avustushaku-id
                                                  :role "presenting_officer"
                                                  :name ""
@@ -178,11 +185,13 @@
          :path-params [avustushaku-id :- Long role-id :- Long]
          :body    [role (describe Role "Changed role")]
          :return Role
+         :summary "Update avustushaku role"
          (ok (hakija-api/update-avustushaku-role avustushaku-id role)))
 
   (DELETE* "/:avustushaku-id/role/:role-id" [avustushaku-id role-id]
         :path-params [avustushaku-id :- Long role-id :- Long]
         :return {:id Long}
+        :summary "Delete avustushaku rol"
         (hakija-api/delete-avustushaku-role avustushaku-id role-id)
         (ok {:id role-id}))
 
@@ -190,6 +199,7 @@
   (GET* "/:avustushaku-id/form" [avustushaku-id]
           :path-params [avustushaku-id :- Long]
           :return Form
+          :summary "Get form description that is linked to avustushaku"
           (if-let [found-form (hakija-api/get-form-by-avustushaku avustushaku-id)]
             (ok found-form)
             (not-found)))
@@ -198,6 +208,7 @@
          :path-params [avustushaku-id :- Long ]
          :body  [updated-form (describe Form "Updated form")]
          :return Form
+         :summary "Update form description that is linked to avustushaku"
          (if-let [response (hakija-api/update-form-by-avustushaku avustushaku-id updated-form)]
           (ok response)
           (not-found)))
@@ -327,10 +338,10 @@
     :form-params [logoutRequest :- s/Str]
     :return s/Any
     :summary "Handle logout request from cas"
-      (auth/cas-initiated-logout logoutRequest))
+    (auth/cas-initiated-logout logoutRequest))
 
   (GET "/logout" [:as request]
-        (auth/logout (-> request :session :identity))
+       (auth/logout (-> request :session :identity))
         (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
             (assoc :session nil))))
 
