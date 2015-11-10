@@ -9,6 +9,7 @@ Technical documentation
   * [Internal architecture](#internal-architecture)
   * [API documentation](#api-documentation)
   * [Database schemas](#database-schemas)
+    * [Schema migrations](#schema-migrations)
     * [hakija database](#hakija-database)
     * [virkailija database](#virkailija-database)
       
