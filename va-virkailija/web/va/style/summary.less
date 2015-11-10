@@ -74,6 +74,19 @@ body {
   }
 }
 
+#summary-link {
+  margin-bottom: 40px;
+  a {
+    color: #fff;
+    background-color: @light-green;
+    border-width: 0;
+    margin: 4px 0;
+    padding: 8px 15px;
+    font-size: 18px;
+    font-weight: 300;
+  }
+}
+
 @media print {
   body {
     background-color: white;
@@ -96,6 +109,10 @@ body {
   }
 
   .sorter {
+    display: none;
+  }
+
+  #summary-link {
     display: none;
   }
 
