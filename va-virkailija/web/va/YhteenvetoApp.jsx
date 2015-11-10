@@ -91,7 +91,7 @@ export default class SummaryListing extends Component {
         </tbody>
         <tfoot><tr>
           <td colSpan="2" className="total-applications-column">
-            {hakemusCount} hakemusta
+            &nbsp;
           </td>
           <td className="applied-sum-column"><span className="money sum">{ophShareSum}</span></td>
           <td className="granted-sum-column"><span className="money sum">{budgetGrantedSum}</span></td>
