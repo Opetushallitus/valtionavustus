@@ -3,7 +3,7 @@
 @score-column-width: 90px;
 @status-column-width: 110px;
 @summary-content-width: @content-width - @score-column-width - @status-column-width;
-@summary-total-applications-column-width: 900px - @score-column-width - @status-column-width;
+@summary-total-applications-column-width: @summary-content-width - @score-column-width - @status-column-width;
 
 body {
   background-color: #fff;
@@ -28,8 +28,18 @@ body {
   }
   width: @summary-content-width;
   table.overview-list {
-    width: @summary-content-width;
+    width: @summary-content-width - 50px;
     margin-bottom: 30px;
+    .organization-column, .project-name-column {
+      width: 350px;
+      max-width: 350px;
+    }
+    .applied-sum-column {
+      width: 120px;
+    }
+    .granted-sum-column {
+      width: 120px;
+    }
     tr.overview-row {
       cursor: default;
       &.unselected:hover {
@@ -38,14 +48,24 @@ body {
     }
   }
 
-  table thead .status-heading-column {
-    text-transform: uppercase;
+  table thead {
+    .organization-column, .project-name-column, .status-heading-column {
+      text-align: left;
+    }
+    .status-heading-column {
+      text-transform: uppercase;
+    }
   }
 
-  table.hakemus-list tfoot .total-applications-column {
-    width: @summary-total-applications-column-width;
-    .summary-link {
-      display: none;
+  table.hakemus-list tfoot {
+    .total-applications-column {
+      width: @summary-total-applications-column-width;
+    }
+    .applied-sum-column {
+      width: 120px;
+    }
+    .granted-sum-column {
+      width: 120px;
     }
   }
 }
