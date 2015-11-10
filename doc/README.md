@@ -46,6 +46,12 @@ General architecture including integrations and data flows (from originator towa
 
 ![General architecture](architecture.png)
 
+## Internal architecture
+
+Internal structure of application architecture
+
+![Internal architecture](internal-architecture.png)
+
 ## API documentation
 
 For Hakija app, the API documentation can be viewed via [Swagger](https://valtionavustukset.oph.fi/doc)
