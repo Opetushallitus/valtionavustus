@@ -4,8 +4,8 @@ Technical documentation
   * [Technologies](#technologies)
     * [Server software](#server-software)
     * [Client (Browser) software](#client-browser-software)
-    * [Deployment environment](#deployment-environment)
-  * [Software architecture](#software-architecture)
+  * [Architecture](#architecture)
+    * [Server &amp; Network architecture](#server--network-architecture)
     * [General architecture](#general-architecture)
     * [Application architecture](#application-architecture)
   * [API documentation](#api-documentation)
@@ -33,7 +33,7 @@ Technical documentation
 * [Babel](https://babeljs.io) For ES6 javascript support
 * [Node.js](https://nodejs.org) For [building](../README.md) JS packages with [Browserify](http://browserify.org)
 
-### Deployment environment
+## Architecture
 
 Valtionavustus application is deployed into CSC Pouta OpenStack environment.
 Environment provisioning is done with [Ansible scripts](../pouta-env/README.md).
@@ -43,7 +43,11 @@ Jar is built and deployed by [Jenkins CI server](https://dev.valtionavustukset.o
 
 Environment specific application configurations are in [va-hakija/config](../va-hakija/config/) and [va-virkailija/config](../va-virkailija/config/)
 
-## Software architecture
+### Server & Network architecture
+
+Servers used in test and pilot environment:
+
+![Server architecture](deployment.png)
 
 ### General architecture
 General architecture including integrations and data flows (from originator towards receiver) is described in picture below.
