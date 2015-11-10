@@ -21,8 +21,8 @@
 
 ### Deployment environment
 
-Valtionavustus application is deployed into CSC Pouta OpenStack environment
-Environment provisioning is done with [Ansible scripts](../pouta-env/README.md)
+Valtionavustus application is deployed into CSC Pouta OpenStack environment.
+Environment provisioning is done with [Ansible scripts](../pouta-env/README.md).
 
 Software is deployed as jar.
 Jar is built and deployed by [Jenkins CI server](https://dev.valtionavustukset.oph.fi/), which also runs in Pouta environment.
