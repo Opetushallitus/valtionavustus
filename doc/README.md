@@ -1,15 +1,15 @@
-# Technical documentation
+Technical documentation
+=======================
 
-  * [Technical documentation](#technical-documentation)
-    * [Technologies](#technologies)
-      * [Server software](#server-software)
-      * [Client (Browser) software](#client-browser-software)
-      * [Deployment environment](#deployment-environment)
-    * [Software architecture](#software-architecture)
-    * [API documentation](#api-documentation)
-    * [Database schemas](#database-schemas)
-      * [hakija database](#hakija-database)
-      * [virkailija database](#virkailija-database)
+  * [Technologies](#technologies)
+    * [Server software](#server-software)
+    * [Client (Browser) software](#client-browser-software)
+    * [Deployment environment](#deployment-environment)
+  * [Software architecture](#software-architecture)
+  * [API documentation](#api-documentation)
+  * [Database schemas](#database-schemas)
+    * [hakija database](#hakija-database)
+    * [virkailija database](#virkailija-database)
       
 ## Technologies
 
