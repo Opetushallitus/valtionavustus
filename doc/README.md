@@ -1,6 +1,16 @@
 # Technical documentation
 
-## Architecture
+## Technologies
+
+### Deployment environment
+
+Valtionavustus application is deployed into CSC Pouta OpenStack environment
+Environement Ppovisioning is done with [Ansible scripts](../pouta-env/README.md)
+
+Software is deployed as jar.
+Jar is built and deployed by [Jenkins server](https://dev.valtionavustukset.oph.fi/), which runs as separate server in Pouta.
+
+## Software architecture
 
 General architecture including integrations and data flows (from originator towards receiver) is described in picture below.
 
