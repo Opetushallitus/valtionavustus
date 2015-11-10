@@ -29,11 +29,18 @@ export default class SummaryApp extends Component {
       }
     })
 
+    const titleString = SummaryApp.titleString(avustushaku)
+    const mailToBody = encodeURIComponent(titleString + "\n\nLinkki ratkaisuyhteenvetoon:\n\n" + location.href)
+    const mailToLink = "mailto:?subject=" + titleString + "&body=" + mailToBody
+
     return (
       <section id="container" className="section-container">
         <SummaryHeading avustushaku={avustushaku} hakemusList={hakemusList} />
         <div id="list-container">
           {summaryListings}
+        </div>
+        <div id="summary-link">
+          <a href={mailToLink}>Lähetä linkki sähköpostilla</a>
         </div>
       </section>
     )
@@ -44,25 +51,24 @@ export default class SummaryApp extends Component {
     statuses.reverse()
     return statuses
   }
+
+  static titleString(avustushaku) {
+    const hakuDuration = avustushaku.content.duration
+    const durationString = toDateStr(hakuDuration.start) + "-" + toDateStr(hakuDuration.end)
+    return "Ratkaisuyhteenveto – " + avustushaku.content.name.fi +  " (" + durationString + ")"
+
+    function toDateStr(dateTime) {
+      return BasicInfoComponent.asDateString(dateTime)
+    }
+  }
 }
 
 class SummaryHeading extends Component {
   render() {
-    const avustushaku = this.props.avustushaku
-    const hakuDuration = avustushaku.content.duration
-    const durationString = this.toDateStr(hakuDuration.start) + "-" + this.toDateStr(hakuDuration.end)
-    const titleString = "Ratkaisuyhteenveto – " + avustushaku.content.name.fi +  " (" + durationString + ")"
-    const mailtoBody = encodeURIComponent(titleString + "\n\nLinkki ratkaisuyhteenvetoon:\n\n" + location.href)
-    const mailtoLink = "mailto:?subject=" + titleString + "&body=" + mailtoBody
-
+    const titleString = SummaryApp.titleString(this.props.avustushaku)
     return <div>
              <h2>{titleString}</h2>
-             <a href={mailtoLink}>Lähetä linkki sähköpostilla</a>
            </div>
-  }
-
-  toDateStr(dateTime) {
-    return BasicInfoComponent.asDateString(dateTime)
   }
 }
 
