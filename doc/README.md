@@ -47,12 +47,12 @@ Environment specific application configurations are in [va-hakija/config](../va-
 
 Servers used in test and pilot environment:
 
-![Server architecture](deployment.svg)
+![Server architecture](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/deployment.svg)
 
 ### General architecture
 General architecture including integrations and data flows (from originator towards receiver) is described in picture below.
 
-![General architecture](architecture.svg)
+![General architecture](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/architecture.svg)
 
 ### Application architecture
 
@@ -69,7 +69,7 @@ Valtionavustus application is divided to following major parts:
 
 Internal structure of application architecture
 
-![Internal architecture](internal-architecture.svg)
+![Internal architecture](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/internal-architecture.svg)
 
 ## API documentation
 
@@ -113,8 +113,8 @@ and hakija apps, and are forward-only.
 
 ### hakija database
 
-![hakija schema](hakija.svg)
+![hakija schema](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/hakija.svg)
 
 ### virkailija database
 
-![virkailija schema](virkailija.svg)
+![virkailija schema](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/virkailija.svg)
