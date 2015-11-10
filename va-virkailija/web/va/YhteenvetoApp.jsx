@@ -50,10 +50,14 @@ class SummaryHeading extends Component {
   render() {
     const avustushaku = this.props.avustushaku
     const hakuDuration = avustushaku.content.duration
-    const durationString = this.toDateStr(hakuDuration.start) + "–" + this.toDateStr(hakuDuration.end)
+    const durationString = this.toDateStr(hakuDuration.start) + "-" + this.toDateStr(hakuDuration.end)
+    const titleString = "Ratkaisuyhteenveto – " + avustushaku.content.name.fi +  " (" + durationString + ")"
+    const mailtoBody = encodeURIComponent(titleString + "\n\nLinkki ratkaisuyhteenvetoon:\n\n" + location.href)
+    const mailtoLink = "mailto:?subject=" + titleString + "&body=" + mailtoBody
 
     return <div>
-             <h2>Ratkaisuyhteenveto – {avustushaku.content.name.fi} ({durationString})</h2>
+             <h2>{titleString}</h2>
+             <a href={mailtoLink}>Lähetä linkki sähköpostilla</a>
            </div>
   }
 
