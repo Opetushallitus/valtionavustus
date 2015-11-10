@@ -64,8 +64,9 @@ class SummaryHeading extends Component {
 
 export default class SummaryListing extends Component {
   render() {
-    const heading = SummaryListing.arvioStatusFiForSummary(this.props.arvioStatus)
     const hakemusList = this.props.hakemusList
+    const hakemusCount = hakemusList.length
+    const heading = SummaryListing.arvioStatusFiForSummary(this.props.arvioStatus) + " (" + hakemusCount + ")"
     const ophShareSum = _.reduce(hakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0)
     const hakemusElements = _.map(hakemusList, hakemus => {
       return <HakemusRow key={hakemus.id} hakemus={hakemus} /> })
@@ -86,7 +87,7 @@ export default class SummaryListing extends Component {
         </tbody>
         <tfoot><tr>
           <td colSpan="2" className="total-applications-column">
-            {hakemusList.length} hakemusta
+            {hakemusCount} hakemusta
           </td>
           <td className="applied-sum-column"><span className="money sum">{ophShareSum}</span></td>
           <td className="granted-sum-column"><span className="money sum">{budgetGrantedSum}</span></td>
