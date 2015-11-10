@@ -2,6 +2,8 @@
 
 ## Architecture
 
+General architecture including integrations and data flows (from originator towards receiver) is described in picture below.
+
 ![General architecture](architecture.png)
 
 ## API documentation
