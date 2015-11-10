@@ -52,6 +52,18 @@ Internal structure of application architecture
 
 ![Internal architecture](internal-architecture.png)
 
+Valtionavustus application is divided to following major parts:
+
+* Soresu Form, which is the generic form library (including both React client
+  UI and Clojure server code),
+* VA common, which contains the React client UI and Clojure server code shared between the
+  applications,
+* Virkailija application, which contains React client UI and Clojure server for
+  handling the scoring and processing the applications, and
+* Hakija application, which has React client UI and Clojure server for
+  accepting the applications and showing the forms
+
+
 ## API documentation
 
 For Hakija app, the API documentation can be viewed via [Swagger](https://valtionavustukset.oph.fi/doc)
