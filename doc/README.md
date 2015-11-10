@@ -6,7 +6,8 @@ Technical documentation
     * [Client (Browser) software](#client-browser-software)
     * [Deployment environment](#deployment-environment)
   * [Software architecture](#software-architecture)
-  * [Internal architecture](#internal-architecture)
+    * [General architecture](#general-architecture)
+    * [Application architecture](#application-architecture)
   * [API documentation](#api-documentation)
   * [Database schemas](#database-schemas)
     * [Schema migrations](#schema-migrations)
@@ -44,26 +45,27 @@ Environment specific application configurations are in [va-hakija/config](../va-
 
 ## Software architecture
 
+### General architecture
 General architecture including integrations and data flows (from originator towards receiver) is described in picture below.
 
 ![General architecture](architecture.png)
 
-## Internal architecture
+### Application architecture
+
+Valtionavustus application is divided to following major parts:
+
+* [Soresu Form](https://github.com/Opetushallitus/soresu-form), which is the generic form library (including both React client
+  UI and Clojure server code),
+* [VA common](../va-common/), which contains the React client UI and Clojure server code shared between the
+  applications,
+* [Virkailija application](../va-virkailija/), which contains React client UI and Clojure server for
+  handling the scoring and processing the applications, and
+* [Hakija application](../va-hakija/), which has React client UI and Clojure server for
+  accepting the applications and showing the forms
 
 Internal structure of application architecture
 
 ![Internal architecture](internal-architecture.png)
-
-Valtionavustus application is divided to following major parts:
-
-* Soresu Form, which is the generic form library (including both React client
-  UI and Clojure server code),
-* VA common, which contains the React client UI and Clojure server code shared between the
-  applications,
-* Virkailija application, which contains React client UI and Clojure server for
-  handling the scoring and processing the applications, and
-* Hakija application, which has React client UI and Clojure server for
-  accepting the applications and showing the forms
 
 ## API documentation
 
