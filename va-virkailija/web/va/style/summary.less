@@ -20,6 +20,40 @@ body {
     padding: 0;
     list-style: none;
   }
+
+  .summary-heading-table {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    table-layout: fixed;
+    width: @summary-content-width - 100px;
+    white-space: nowrap;
+    text-align: right;
+    thead {
+      th {
+        padding-left: 10px;
+      }
+    }
+    .arvio-status-column {
+      width: 50%;
+    }
+    .count-column {
+      width: 10%;
+    }
+    .applied-column {
+      text-align: right;
+      width: 15%;
+    }
+    .granted-column {
+      text-align: right;
+      width: 15%;
+    }
+    td {
+      padding: 5px;
+      .money:after {
+        content: " \20AC";
+      }
+    }
+  }
 }
 
 #list-container {

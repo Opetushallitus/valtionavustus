@@ -6,6 +6,7 @@ import _ from 'lodash'
 import RouteParser from 'route-parser'
 
 import YhteenvetoController from './YhteenvetoController.jsx'
+import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusStatuses from './hakemus-details/HakemusStatuses.js'
 import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
 import {BasicInfoComponent} from 'soresu-form/web/form/component/InfoElement.jsx'
@@ -22,7 +23,7 @@ export default class SummaryApp extends Component {
     const avustushaku = hakuData.avustushaku
     const applicationsByStatus = _.groupBy(hakemusList, h => { return h.arvio.status })
     const summaryListings = []
-    _.each(this.statusesInOrder(), s => {
+    _.each(SummaryApp.statusesInOrder(), s => {
       if (_.contains(_.keys(applicationsByStatus), s)) {
         const applications = applicationsByStatus[s]
         summaryListings.push(<SummaryListing key={s} arvioStatus={s} hakemusList={applications} />)
@@ -46,7 +47,7 @@ export default class SummaryApp extends Component {
     )
   }
 
-  statusesInOrder() {
+  static statusesInOrder() {
     const statuses = _.cloneDeep(HakemusStatuses.allStatuses())
     statuses.reverse()
     return statuses
@@ -66,9 +67,54 @@ export default class SummaryApp extends Component {
 class SummaryHeading extends Component {
   render() {
     const titleString = SummaryApp.titleString(this.props.avustushaku)
+    const hakemusList = this.props.hakemusList
+    const ophShareSum = HakemusListing.formatNumber(_.reduce(hakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
+    const budgetGrantedSum = _.reduce(hakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0)
+
+    const applicationsByStatus = _.groupBy(hakemusList, h => { return h.arvio.status })
+    const statusSummaryRows = []
+    statusSummaryRows.push(<SummaryTableRow label="Haettu yhteensä" count={hakemusList.length} applied={ophShareSum} granted={budgetGrantedSum} />)
+    _.each(SummaryApp.statusesInOrder(), s => {
+      if (_.contains(_.keys(applicationsByStatus), s)) {
+        const applications = applicationsByStatus[s]
+        const appliedOphShareSum = _.reduce(applications, (total, hakemus) => {
+          return total + hakemus["budget-oph-share"]
+        }, 0)
+        const grantedSum = _.reduce(applications, (total, hakemus) => {
+          return total + hakemus.arvio["budget-granted"]
+        }, 0)
+        statusSummaryRows.push(<SummaryTableRow label={SummaryListing.arvioStatusFiForSummary(s)} count={applications.length} applied={appliedOphShareSum} granted={grantedSum} />)
+      }
+    })
+
     return <div>
              <h2>{titleString}</h2>
+               <table className="summary-heading-table">
+                 <thead>
+                   <tr>
+                     <th className="arvio-status-column">&nbsp;</th>
+                     <th className="count-column">Kpl</th>
+                     <th className="applied-column">Haettu</th>
+                     <th className="granted-column">Myönnetty</th></tr>
+                 </thead>
+                 {statusSummaryRows}
+               </table>
            </div>
+  }
+}
+
+class SummaryTableRow extends Component {
+  render() {
+    const label = this.props.label
+    const count = this.props.count
+    const appliedSum = this.props.applied
+    const grantedSum = this.props.granted
+    return <tr className="summary-heading-table-row">
+             <td>{label}</td>
+             <td>{count}</td>
+             <td className="applied-column"><span className="money">{appliedSum}</span></td>
+             <td className="granted-column"><span className="money">{grantedSum}</span></td>
+           </tr>
   }
 }
 
