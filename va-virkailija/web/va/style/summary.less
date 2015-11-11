@@ -2,7 +2,8 @@
 
 @score-column-width: 90px;
 @status-column-width: 110px;
-@summary-content-width: @content-width - @score-column-width - @status-column-width;
+@comment-column-width: 200px;
+@summary-content-width: @content-width - @score-column-width - @status-column-width + @comment-column-width;
 @summary-total-applications-column-width: @summary-content-width - @score-column-width - @status-column-width;
 
 body {
@@ -25,7 +26,7 @@ body {
     margin-top: 30px;
     margin-bottom: 30px;
     table-layout: fixed;
-    width: @summary-content-width - 100px;
+    width: @summary-content-width - 300px;
     white-space: nowrap;
     text-align: right;
     thead {
@@ -74,6 +75,14 @@ body {
     .granted-sum-column {
       width: 120px;
     }
+    .comment-column {
+      width: @comment-column-width;
+      padding: 0 0 0 7px;
+      max-width: @comment-column-width;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
     tr.overview-row {
       cursor: default;
       &.unselected:hover {
@@ -86,12 +95,15 @@ body {
     }
   }
 
-  table thead {
+  table.overview-list thead {
     .organization-column, .project-name-column, .status-heading-column {
       text-align: left;
     }
     .status-heading-column {
       text-transform: uppercase;
+    }
+    .comment-column {
+      padding-bottom: 7px;
     }
   }
 

@@ -137,6 +137,7 @@ export default class SummaryListing extends Component {
           <th className="project-name-column">Hanke</th>
           <th className="applied-sum-column">Haettu</th>
           <th className="granted-sum-column">Myönnetty</th>
+          <th className="comment-column">Huom</th>
         </tr></thead>
         <tbody>
           {hakemusElements}
@@ -147,6 +148,7 @@ export default class SummaryListing extends Component {
           </td>
           <td className="applied-sum-column"><span className="money sum">{ophShareSum}</span></td>
           <td className="granted-sum-column"><span className="money sum">{budgetGrantedSum}</span></td>
+          <td className="comment-column">&nbsp;</td>
         </tr></tfoot>
       </table>
     )
@@ -173,6 +175,7 @@ class HakemusRow extends Component {
       <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
       <td className="applied-sum-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
       <td className="granted-sum-column"><span className="money">{hakemus.arvio["budget-granted"]}</span></td>
+      <td className="comment-column" title={hakemus.arvio["summary-comment"]}>{hakemus.arvio["summary-comment"]}</td>
     </tr>
   }
 }
