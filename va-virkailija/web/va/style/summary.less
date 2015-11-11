@@ -26,8 +26,8 @@ body {
   }
 
   .summary-heading-table {
-    margin-top: 30px;
-    margin-bottom: 30px;
+    margin-top: 10px;
+    margin-bottom: 20px;
     white-space: nowrap;
     text-align: right;
     font-size: 15px;
@@ -78,7 +78,7 @@ body {
   width: @summary-content-width;
   table.overview-list {
     width: @summary-content-width - 50px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     .organization-column, .project-name-column {
       width: 350px;
       max-width: 350px;
@@ -91,10 +91,9 @@ body {
     }
     .comment-column {
       width: @comment-column-width;
-      padding: 0 0 0 7px;
+      padding: 5px 0 0 7px;
       max-width: @comment-column-width;
       overflow: hidden;
-      white-space: nowrap;
       text-overflow: ellipsis;
     }
     tr.overview-row {
@@ -103,21 +102,32 @@ body {
         background-color: @lighterer-gray;
       }
     }
-    tbody tr.overview-row td.organization-column:first-child {
-      padding-left: 0;
-      padding-right: 7px;
+    td {
+      vertical-align: top;
+    }
+    tbody {
+      td.comment-column {
+        padding-top: 7px;
+        font-style: italic;
+        font-size: 15px;
+        line-height: 100%;
+      }
+      tr.overview-row td.organization-column:first-child {
+        padding-left: 0;
+        padding-right: 7px;
+      }
     }
   }
 
   table.overview-list thead {
-    .organization-column, .project-name-column, .status-heading-column {
+    .organization-column, .project-name-column, .status-heading-column, .comment-column {
       text-align: left;
     }
     .status-heading-column {
       text-transform: uppercase;
     }
     .comment-column {
-      padding-bottom: 7px;
+      padding-bottom: 11px;
     }
   }
 
