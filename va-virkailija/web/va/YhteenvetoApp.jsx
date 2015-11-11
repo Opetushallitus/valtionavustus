@@ -54,9 +54,13 @@ export default class SummaryApp extends Component {
   }
 
   static titleString(avustushaku) {
+    return "Ratkaisuyhteenveto – " + SummaryApp.avustusHakuLabelString(avustushaku)
+  }
+
+  static avustusHakuLabelString(avustushaku) {
     const hakuDuration = avustushaku.content.duration
     const durationString = toDateStr(hakuDuration.start) + "-" + toDateStr(hakuDuration.end)
-    return "Ratkaisuyhteenveto – " + avustushaku.content.name.fi +  " (" + durationString + ")"
+    return avustushaku.content.name.fi +  " (" + durationString + ")"
 
     function toDateStr(dateTime) {
       return BasicInfoComponent.asDateString(dateTime)
@@ -66,14 +70,13 @@ export default class SummaryApp extends Component {
 
 class SummaryHeading extends Component {
   render() {
-    const titleString = SummaryApp.titleString(this.props.avustushaku)
+    const titleString = SummaryApp.avustusHakuLabelString(this.props.avustushaku)
     const hakemusList = this.props.hakemusList
-    const ophShareSum = HakemusListing.formatNumber(_.reduce(hakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
+    const ophShareSum = _.reduce(hakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0)
     const budgetGrantedSum = _.reduce(hakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0)
 
     const applicationsByStatus = _.groupBy(hakemusList, h => { return h.arvio.status })
     const statusSummaryRows = []
-    statusSummaryRows.push(<SummaryTableRow label="Haettu yhteensä" count={hakemusList.length} applied={ophShareSum} granted={budgetGrantedSum} />)
     _.each(SummaryApp.statusesInOrder(), s => {
       if (_.contains(_.keys(applicationsByStatus), s)) {
         const applications = applicationsByStatus[s]
@@ -83,12 +86,14 @@ class SummaryHeading extends Component {
         const grantedSum = _.reduce(applications, (total, hakemus) => {
           return total + hakemus.arvio["budget-granted"]
         }, 0)
-        statusSummaryRows.push(<SummaryTableRow label={SummaryListing.arvioStatusFiForSummary(s)} count={applications.length} applied={appliedOphShareSum} granted={grantedSum} />)
+        statusSummaryRows.push(<SummaryTableRow key={s} label={SummaryListing.arvioStatusFiForSummary(s)} count={applications.length} applied={appliedOphShareSum} granted={grantedSum} />)
       }
     })
+    statusSummaryRows.push(<SummaryTableRow key="total-summary-row" label="Yhteensä" count={hakemusList.length} applied={ophShareSum} granted={budgetGrantedSum} />)
 
     return <div>
-             <h2>{titleString}</h2>
+             <h1>{titleString}</h1>
+             <h2>Ratkaisuyhteenveto</h2>
                <table className="summary-heading-table">
                  <thead>
                    <tr>
@@ -97,7 +102,9 @@ class SummaryHeading extends Component {
                      <th className="applied-column">Haettu</th>
                      <th className="granted-column">Myönnetty</th></tr>
                  </thead>
-                 {statusSummaryRows}
+                 <tbody>
+                   {statusSummaryRows}
+                 </tbody>
                </table>
            </div>
   }
@@ -110,7 +117,7 @@ class SummaryTableRow extends Component {
     const appliedSum = this.props.applied
     const grantedSum = this.props.granted
     return <tr className="summary-heading-table-row">
-             <td>{label}</td>
+             <td className="arvio-status-column">{label}</td>
              <td>{count}</td>
              <td className="applied-column"><span className="money">{appliedSum}</span></td>
              <td className="granted-column"><span className="money">{grantedSum}</span></td>
@@ -161,7 +168,7 @@ export default class SummaryListing extends Component {
       case "accepted":
         return "Myönteiset päätökset"
     }
-    return "Ratkaisemattomat hakemukset, joiden tila on '" + HakemusStatuses.statusToFI(status).toLocaleLowerCase() + "'"
+    return HakemusStatuses.statusToFI(status)
   }
 }
 

@@ -12,10 +12,13 @@ body {
 
 #container {
   margin: 10px auto 0 auto;
+  h1, h2 {
+    margin: 0;
+  }
   h2 {
-    color: black;
-    font-weight: 400;
-    margin-bottom: 10px;
+    color: @form-label-black;
+    font-weight: 300;
+    font-size: 20px;
   }
   ul {
     padding: 0;
@@ -25,34 +28,45 @@ body {
   .summary-heading-table {
     margin-top: 30px;
     margin-bottom: 30px;
-    table-layout: fixed;
-    width: @summary-content-width - 300px;
     white-space: nowrap;
     text-align: right;
+    font-size: 15px;
     thead {
       th {
         padding-left: 10px;
       }
     }
     .arvio-status-column {
-      width: 50%;
+      width: 100px;
+      text-align: left;
     }
     .count-column {
-      width: 10%;
+      width: 100px;
     }
     .applied-column {
       text-align: right;
-      width: 15%;
+      width: 150px;
     }
     .granted-column {
       text-align: right;
-      width: 15%;
+      width: 150px;
     }
     td {
-      padding: 5px;
+      padding: 2px 0;
       .money:after {
         content: " \20AC";
       }
+    }
+    tbody {
+      tr:first-child {
+        border-top: 1px solid @light-gray;
+      }
+      tr:last-child {
+        border-top: 1px solid @light-gray;
+      }
+    }
+    tfoot {
+      border-top: 1px solid @light-gray;
     }
   }
 }
