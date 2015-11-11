@@ -191,7 +191,7 @@
   (DELETE* "/:avustushaku-id/role/:role-id" [avustushaku-id role-id]
         :path-params [avustushaku-id :- Long role-id :- Long]
         :return {:id Long}
-        :summary "Delete avustushaku rol"
+        :summary "Delete avustushaku role"
         (hakija-api/delete-avustushaku-role avustushaku-id role-id)
         (ok {:id role-id}))
 
@@ -217,18 +217,21 @@
          :path-params [avustushaku-id :- Long hakemus-id :- Long]
          :body    [arvio (describe Arvio "New arvio")]
          :return Arvio
+         :summary "Update arvio for given hakemus. Creates arvio if missing."
          (ok (-> (virkailija-db/update-or-create-hakemus-arvio hakemus-id arvio)
                  arvio-json)))
 
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
         :return Comments
+        :summary "Get current comments for hakemus"
         (ok (virkailija-db/list-comments hakemus-id)))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id :as request]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
         :body [comment (describe NewComment "New comment")]
         :return Comments
+        :summary "Add a comment for hakemus. As response, return all comments"
         (let [identity (auth/get-identity request)]
           (ok (virkailija-db/add-comment hakemus-id
                                          (:first-name identity)
@@ -239,12 +242,13 @@
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
         :path-params [haku-id :- Long, hakemus-id :- Long]
         :return s/Any
-        :summary "List current attachments"
+        :summary "List current attachments, without actual attachment data. Use download for getting the attachment data"
         (ok (-> (hakija-api/list-attachments hakemus-id)
                 (hakija-api/attachments->map))))
 
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
         :path-params [haku-id :- Long, hakemus-id :- Long, field-id :- s/Str]
+        :summary "Download attachment attached to given field"
         (if (hakija-api/attachment-exists? hakemus-id field-id)
           (let [{:keys [data size filename content-type]} (hakija-api/download-attachment hakemus-id field-id)]
             (-> (ok data)
@@ -255,6 +259,7 @@
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
         :return ScoringOfArvio
+        :summary "Get scorings (based on focus areas) for given hakemus"
         (if-let [arvio (virkailija-db/get-arvio hakemus-id)]
           (ok (get-arvio-scores avustushaku-id (:id arvio)))
           (ok {:scoring nil
@@ -264,6 +269,7 @@
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
         :body [score (describe NewScore "Stored or updated score")]
         :return ScoringOfArvio
+        :summary "Submit scorings for given arvio. Scorings are automatically assigned to logged in user."
         (let [identity (auth/get-identity request)]
           (ok (add-score avustushaku-id
                          hakemus-id
@@ -276,6 +282,7 @@
         :body [body (describe {:register-number s/Str} "Register number (diaarinumero)")]
         :return {:hakemus-id Long
                  :register-number s/Str}
+        :summary "Update register number (diaarinumero) associated with hakemus. This is normally not needed."
         (hakija-api/set-register-number hakemus-id (:register-number body))
         (ok {:hakemus-id hakemus-id
              :register-number (:register-number body)}))
@@ -284,6 +291,7 @@
         :path-params [avustushaku-id :- Long]
         :body [body (describe SavedSearch "New stored search")]
         :return {:search-url s/Str}
+        :summary "Create new stored search. Stored search captures the ids of selection, and provide a stable view to hakemus data."
         (let [identity (auth/get-identity request)
               search-id (create-or-get-search avustushaku-id body identity)
               search-url (str "/yhteenveto/avustushaku/" avustushaku-id "/listaus/" search-id "/")]
@@ -292,6 +300,7 @@
   (GET* "/:avustushaku-id/searches/:saved-search-id" [avustushaku-id saved-search-id]
           :path-params [avustushaku-id :- Long, saved-search-id :- Long]
           :return SavedSearch
+          :summary "Get stored search. Stored search captures the ids of selection, and provide a stable view to hakemus data."
           (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
             (ok (:query saved-search)))))
 
