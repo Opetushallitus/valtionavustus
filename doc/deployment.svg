@@ -84,7 +84,7 @@
     <g text-rendering="geometricPrecision" stroke-miterlimit="1.45" shape-rendering="geometricPrecision" font-family="sans-serif" transform="matrix(1,0,0,1,65,215)" stroke-linecap="butt">
       <text x="267.3309" xml:space="preserve" y="111.7882" clip-path="url(#clipPath2)" stroke="none">va-build</text>
       <text x="237.6474" xml:space="preserve" y="125.921" clip-path="url(#clipPath2)" stroke="none">4 core, 15GB RAM,</text>
-      <text x="227.1122" xml:space="preserve" y="140.0538" clip-path="url(#clipPath2)" stroke="none">100MB persistent disk</text>
+      <text x="227.9442" xml:space="preserve" y="140.0538" clip-path="url(#clipPath2)" stroke="none">100GB persistent disk</text>
       <text x="275.3641" xml:space="preserve" y="154.1866" clip-path="url(#clipPath2)" stroke="none">nginx</text>
       <text x="271.0106" xml:space="preserve" y="168.3194" clip-path="url(#clipPath2)" stroke="none">Jenkins</text>
     </g>
