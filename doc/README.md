@@ -7,13 +7,14 @@ Technical documentation
   * [Architecture](#architecture)
     * [Server &amp; Network architecture](#server--network-architecture)
     * [General architecture](#general-architecture)
+    * [Data flow](#data-flow)
     * [Application architecture](#application-architecture)
   * [API documentation](#api-documentation)
   * [Database schemas](#database-schemas)
     * [Schema migrations](#schema-migrations)
     * [hakija database](#hakija-database)
     * [virkailija database](#virkailija-database)
-      
+
 ## Technologies
 
 ### Server software
@@ -23,7 +24,7 @@ Technical documentation
 * [HTTP Kit](http://www.http-kit.org/) server
 * [RING](https://github.com/ring-clojure/ring) middleware
 * [Compojure API](https://github.com/metosin/compojure-api) for defining API routes, JSON schemas (with validation) and generating swagger documentation
-* [Flyway](http://flywaydb.org) for automated database data initialization and migrations 
+* [Flyway](http://flywaydb.org) for automated database data initialization and migrations
 * Postgresql 9.4 database, with support for **jsonb** type field
 
 ### Client (Browser) software
@@ -53,6 +54,11 @@ Servers used in test and pilot environment:
 General architecture including integrations and data flows (from originator towards receiver) is described in picture below.
 
 ![General architecture](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/architecture.svg)
+
+### Data flow
+
+Data flow of application (in Finnish, because all terms are in Finnish):
+![Data flow](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/data-flow.svg)
 
 ### Application architecture
 
