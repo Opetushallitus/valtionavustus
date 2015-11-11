@@ -43,15 +43,15 @@
     "attachment": {
       "uploadhere": {
         "fi": "Lisää",
-        "sv": "TODO: Pasta"
+        "sv": "Bifoga"
       },
       "attached": {
         "fi": "Liitetty",
-        "sv": "TODO: Ansluten"
+        "sv": "Bifogad"
       },
       "attachmentMissing" : {
         "fi": "Liite puuttuu",
-        "sv": "TODO: Tillägg missing"
+        "sv": "Bilaga saknas"
       }
     }
   },
@@ -70,7 +70,7 @@
     },
     "register-number": {
       "fi": "Diaarinumero",
-      "sv": "TODO: Diarium"
+      "sv": "Diarienumret"
     }
   },
   "errors": {
