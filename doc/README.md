@@ -102,7 +102,7 @@ Versioning is supported for for several tables, most notably
 running version index to create unique primary key.
 
 There's also more limited form of versioning in use, called **archiving**. This
-is used for forms. In this case the table in question doesn't have versioning
+is used for **forms** and **avustushaut**. In this case the table in question doesn't have versioning
 machinery, but old data is copied to separate archive-table.
 
 ### Schema migrations
