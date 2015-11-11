@@ -6,3 +6,9 @@
 
 - name: Install git
   action: apt pkg=git state=latest install_recommends=yes
+
+- name: Remove previous OPH artifactory IP mapping from /etc/hosts
+  lineinfile: dest=/etc/hosts regexp='^[0-9\.]* artifactory.oph.ware.fi$' state=absent owner=root group=root mode=0644
+
+- name: Add OPH artifactory IP mapping to /etc/hosts
+  lineinfile: dest=/etc/hosts line='178.217.133.55 artifactory.oph.ware.fi' owner=root group=root mode=0644
