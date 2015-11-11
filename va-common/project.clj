@@ -3,7 +3,6 @@
   :url "https://github.com/Opetushallitus/valtionavustus"
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
-  :repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [oph/soresu "0.1.0-SNAPSHOT"]
 
@@ -68,6 +67,7 @@
   ]
 
   :plugins [[speclj "3.3.1"]
+            [lein-modules "0.3.11"]
             [lein-environ "1.0.0"]
             [lein-shell "0.4.0"]
             [lein-auto "0.1.2"]
