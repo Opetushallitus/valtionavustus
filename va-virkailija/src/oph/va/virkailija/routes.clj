@@ -242,7 +242,8 @@
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
         :path-params [haku-id :- Long, hakemus-id :- Long]
         :return s/Any
-        :summary "List current attachments, without actual attachment data. Use download for getting the attachment data"
+        :summary "List current attachments"
+        :description "Listing does not return actual attachment data. Use per-field download for getting it."
         (ok (-> (hakija-api/list-attachments hakemus-id)
                 (hakija-api/attachments->map))))
 
@@ -259,7 +260,8 @@
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
         :return ScoringOfArvio
-        :summary "Get scorings (based on focus areas) for given hakemus"
+        :summary "Get scorings for given hakemus"
+        :description "Scorings are linked to avustushaku focus areas"
         (if-let [arvio (virkailija-db/get-arvio hakemus-id)]
           (ok (get-arvio-scores avustushaku-id (:id arvio)))
           (ok {:scoring nil
@@ -269,7 +271,8 @@
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
         :body [score (describe NewScore "Stored or updated score")]
         :return ScoringOfArvio
-        :summary "Submit scorings for given arvio. Scorings are automatically assigned to logged in user."
+        :summary "Submit scorings for given arvio."
+        :description "Scorings are automatically assigned to logged in user."
         (let [identity (auth/get-identity request)]
           (ok (add-score avustushaku-id
                          hakemus-id
@@ -282,7 +285,8 @@
         :body [body (describe {:register-number s/Str} "Register number (diaarinumero)")]
         :return {:hakemus-id Long
                  :register-number s/Str}
-        :summary "Update register number (diaarinumero) associated with hakemus. This is normally not needed."
+        :summary "Update register number for hakemus"
+        :description "Update register number (diaarinumero) associated with hakemus. This is normally not needed, but left here in case register numbers need to be modified to be in sync with external registry."
         (hakija-api/set-register-number hakemus-id (:register-number body))
         (ok {:hakemus-id hakemus-id
              :register-number (:register-number body)}))
@@ -291,7 +295,8 @@
         :path-params [avustushaku-id :- Long]
         :body [body (describe SavedSearch "New stored search")]
         :return {:search-url s/Str}
-        :summary "Create new stored search. Stored search captures the ids of selection, and provide a stable view to hakemus data."
+        :summary "Create new stored search"
+        :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
         (let [identity (auth/get-identity request)
               search-id (create-or-get-search avustushaku-id body identity)
               search-url (str "/yhteenveto/avustushaku/" avustushaku-id "/listaus/" search-id "/")]
@@ -300,7 +305,8 @@
   (GET* "/:avustushaku-id/searches/:saved-search-id" [avustushaku-id saved-search-id]
           :path-params [avustushaku-id :- Long, saved-search-id :- Long]
           :return SavedSearch
-          :summary "Get stored search. Stored search captures the ids of selection, and provide a stable view to hakemus data."
+          :summary "Get stored search"
+          :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
           (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
             (ok (:query saved-search)))))
 
