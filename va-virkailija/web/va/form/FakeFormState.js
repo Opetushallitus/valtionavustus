@@ -28,11 +28,11 @@ export default class FakeFormState {
     const answers = hakemus.answers
     const formSpecification = hakuData.form
     const effectiveForm = _.cloneDeep(formSpecification)
+    effectiveForm.validationErrors = Immutable({})
     if(answers) {
       effectiveForm.content = _.filter(effectiveForm.content, field => field.fieldClass !== "infoElement")
+      FormRules.applyRulesToForm(formSpecification, effectiveForm, answers)
     }
-    effectiveForm.validationErrors = Immutable({})
-    FormRules.applyRulesToForm(formSpecification, effectiveForm, answers)
 
     const formState = {
       configuration: {
