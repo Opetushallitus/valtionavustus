@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.auth
   (:use [clojure.tools.trace :only [trace]])
-  (:require [oph.va.virkailija.login :refer [login get-details]]
+  (:require [oph.va.virkailija.login :refer [login]]
+            [oph.va.virkailija.ldap :refer [get-details]]
             [clojure.tools.logging :as log])
   (:import (fi.vm.sade.utils.cas CasLogout)))
 
