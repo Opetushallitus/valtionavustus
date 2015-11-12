@@ -8,9 +8,11 @@
             [clojure.tools.logging :as log])
   (:import (java.net InetAddress)))
 
+(defn- people-path-base []
+  (-> config :ldap :people-path-base))
+
 (defn- people-path [uid]
-  (let [people-path-base (-> config :ldap :people-path-base)]
-    (str "uid=" uid people-path-base)))
+  (str "uid=" uid (people-path-base)))
 
 (defn- ldap-pool [{:keys [hostname port user password]}]
   (ldap/connect {:host [{:address (.getHostName hostname) :port port}]
@@ -60,6 +62,21 @@
 (defn get-details [username]
   (let [ldap-server (create-ldap-connection)]
     (details->map (find-user-details ldap-server username))))
+
+(defn- create-or-filter [search-term]
+  (letfn [(create-matcher [attribute] (str "(" attribute "=*" search-term ")(" attribute "=" search-term "*)"))]
+    (let [matchers (mapv create-matcher ["mail" "givenName" "sn" "cn"])]
+      (str "(|" (clojure.string/join matchers)")"))))
+
+(defn- create-and-filter [search-terms]
+  (let [conditions (mapv create-or-filter search-terms)]
+        (str "(&" (clojure.string/join conditions)")")))
+
+(defn search-users [search-terms]
+  (let [ldap-server (create-ldap-connection)
+        base-without-comma (subs (people-path-base) 1) ;; TODO Change config to not include comma
+        filter-string (create-and-filter search-terms)]
+    (do-with-ldap ldap-server #(ldap/search ldap-server base-without-comma {:filter filter-string}))))
 
 (defn login [cas-ticket virkailija-login-url]
   (let [cas-client (cas/cas-client (-> config :opintopolku :url))
