@@ -24,7 +24,8 @@
             [oph.va.virkailija.schema :refer :all]
             [oph.va.virkailija.scoring :as scoring]
             [oph.va.virkailija.saved-search :refer :all]
-            [oph.va.virkailija.handlers :as handlers]))
+            [oph.va.virkailija.handlers :as handlers]
+            [oph.va.virkailija.export :as export]))
 
 (defonce opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
 
@@ -121,6 +122,14 @@
         (if-let [response (handlers/get-combined-avustushaku-data avustushaku-id)]
           (ok response)
           (not-found)))
+
+  (GET* "/:haku-id/export/excel" [haku-id]
+        :path-params [haku-id :- Long]
+        :summary "Export Excel document for given avustushaku"
+        (let [document (export/export-avustushaku haku-id)]
+          (-> (ok document)
+              (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
+              (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"avustushaku-" haku-id ".xlsx\"")))))
 
   (GET* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
