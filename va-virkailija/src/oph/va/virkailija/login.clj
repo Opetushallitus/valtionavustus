@@ -27,11 +27,14 @@
                 :user (:user ldap-config)
                 :password (:password ldap-config)})))
 
-(defn- find-user-details [ldap-server username]
+(defn- do-with-ldap [ldap-server operation]
   (ldap/bind? ldap-server
               (people-path (-> config :ldap :user))
               (-> config :ldap :password))
-  (ldap/get ldap-server (people-path username)))
+  (operation))
+
+(defn- find-user-details [ldap-server username]
+  (do-with-ldap ldap-server #(ldap/get ldap-server (people-path username))))
 
 (defn- check-app-access [ldap-server username]
   (let [user-details (find-user-details ldap-server username)
