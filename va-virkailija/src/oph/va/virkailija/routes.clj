@@ -22,9 +22,10 @@
             [oph.soresu.form.schema :refer :all]
             [oph.va.schema :refer :all]
             [oph.va.virkailija.schema :refer :all]
-            [oph.va.virkailija.handlers :refer :all]
-            [oph.va.virkailija.scoring :refer :all]
-            [oph.va.virkailija.saved-search :refer :all]))
+            [oph.va.virkailija.scoring :as scoring]
+            [oph.va.virkailija.saved-search :refer :all]
+            [oph.va.virkailija.handlers :as handlers]
+            [oph.va.virkailija.export :as export]))
 
 (defonce opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
 
@@ -38,45 +39,6 @@
     (ok {})
     (not-found)))
 
-(defn- arvio-json [arvio]
-  {:id (:id arvio)
-   :status (:status arvio)
-   :budget-granted (:budget_granted arvio)
-   :summary-comment (:summary_comment arvio)})
-
-(defn- add-arvio [arviot hakemus]
-  (if-let [arvio (get arviot (:id hakemus))]
-    (assoc hakemus :arvio arvio)
-    (assoc hakemus :arvio {:id -1
-                           :status "unhandled"
-                           :budget-granted 0})))
-
-(defn- get-arviot-map [hakemukset]
-  (->> hakemukset
-       (map :id)
-       (virkailija-db/get-arviot)
-       (map (fn [arvio] [(:hakemus_id arvio) (arvio-json arvio)]))
-       (into {})))
-
-(defn- add-arviot [haku-data]
-  (let [hakemukset (:hakemukset haku-data)
-        arviot (get-arviot-map hakemukset)
-        budget-granted-sum (reduce + (map :budget-granted (vals arviot)))]
-    (-> haku-data
-        (assoc :hakemukset (map (partial add-arvio arviot) hakemukset))
-        (assoc :budget-granted-sum budget-granted-sum))))
-
-(defn- add-scores-to-hakemus [scores hakemus]
-  (if-let [hakemus-scores (-> (fn [score-entry] (= (-> hakemus :arvio :id) (:arvio-id score-entry)))
-                              (filter scores)
-                              first)]
-    (assoc-in hakemus [:arvio :scoring] hakemus-scores)
-    hakemus))
-
-(defn- add-scores [scores haku-data]
-  (let [hakemukset (:hakemukset haku-data)]
-    (-> haku-data
-        (assoc :hakemukset (map (partial add-scores-to-hakemus scores) hakemukset)))))
 
 (defn- on-hakemus-preview [avustushaku-id hakemus-user-key]
   (let [hakija-app-url (-> config :server :url :fi)
@@ -150,19 +112,24 @@
          :return AvustusHaku
          :summary "Update avustushaku description"
          (if-let [response (hakija-api/update-avustushaku avustushaku)]
-          (ok response)
-          (not-found)))
+           (ok response)
+           (not-found)))
 
   (GET* "/:avustushaku-id" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
         :return HakuData
         :summary "Return all relevant avustushaku data (including answers, comments and form)"
-        (let [scores (get-avustushaku-scores avustushaku-id)]
-          (if-let [response (hakija-api/get-hakudata avustushaku-id)]
-                    (ok (->> response
-                             add-arviot
-                             (add-scores scores)))
-                    (not-found))))
+        (if-let [response (handlers/get-combined-avustushaku-data avustushaku-id)]
+          (ok response)
+          (not-found)))
+
+  (GET* "/:haku-id/export/excel" [haku-id]
+        :path-params [haku-id :- Long]
+        :summary "Export Excel document for given avustushaku"
+        (let [document (export/export-avustushaku haku-id)]
+          (-> (ok document)
+              (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
+              (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"avustushaku-" haku-id ".xlsx\"")))))
 
   (GET* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
@@ -219,7 +186,7 @@
          :return Arvio
          :summary "Update arvio for given hakemus. Creates arvio if missing."
          (ok (-> (virkailija-db/update-or-create-hakemus-arvio hakemus-id arvio)
-                 arvio-json)))
+                 handlers/arvio-json)))
 
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
@@ -263,7 +230,7 @@
         :summary "Get scorings for given hakemus"
         :description "Scorings are linked to avustushaku focus areas"
         (if-let [arvio (virkailija-db/get-arvio hakemus-id)]
-          (ok (get-arvio-scores avustushaku-id (:id arvio)))
+          (ok (scoring/get-arvio-scores avustushaku-id (:id arvio)))
           (ok {:scoring nil
                :scores []})))
 
@@ -274,11 +241,11 @@
         :summary "Submit scorings for given arvio."
         :description "Scorings are automatically assigned to logged in user."
         (let [identity (auth/get-identity request)]
-          (ok (add-score avustushaku-id
-                         hakemus-id
-                         identity
-                         (:selection-criteria-index score)
-                         (:score score)))))
+          (ok (scoring/add-score avustushaku-id
+                                 hakemus-id
+                                 identity
+                                 (:selection-criteria-index score)
+                                 (:score score)))))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/register-number" [avustushaku-id hakemus-id]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
