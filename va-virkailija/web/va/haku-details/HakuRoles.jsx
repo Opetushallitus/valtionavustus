@@ -6,6 +6,7 @@ export default class HakuRoles extends Component {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
     const ldapSearchResults = this.props.ldapSearchResults
+    const minimumSearchInputLength = 2
     const roles = avustushaku.roles
     const roleRows = []
     if(roles) {
@@ -16,8 +17,8 @@ export default class HakuRoles extends Component {
     }
 
     const startSearch = e => {
-      const input = e.target.value
-      if (!input || input.length < 2) {
+      const input = _.trim(e.target.value)
+      if (input.length < minimumSearchInputLength) {
         return
       }
       controller.startLdapSearch(input)
@@ -27,24 +28,50 @@ export default class HakuRoles extends Component {
     const searchErrorClass = ldapSearchResults.error ? "error" : "hidden"
 
     return (
-      <table id="haku-roles">
-        <thead><tr><th>Rooli</th><th>Sidottu LDAPiin?</th><th>Nimi</th><th>Sähköposti</th></tr></thead>
-        <tbody>
-        {roleRows}
-        </tbody>
-        <tfoot>
-          <tr className={searchErrorClass}>
-            <td>Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.</td>
-          </tr>
-          <tr>
-            <td>Lisää uusi henkilö</td>
-            <td><input type="text" placeholder="Syötä nimi tai sähköpostiosoite" onChange={startSearch}/></td>
-            <td><button onClick={controller.createRole(avustushaku)} disabled={!roles}>Lisää uusi henkilö</button></td>
-          </tr>
-        </tfoot>
-      </table>
+      <div id="haku-roles">
+        <table>
+          <thead><tr><th>Rooli</th><th>Sidottu LDAPiin?</th><th>Nimi</th><th>Sähköposti</th></tr></thead>
+          <tbody>
+          {roleRows}
+          </tbody>
+        </table>
+
+        <div id="add-new-person-from-ldap">
+          <div className={searchErrorClass}>Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.</div>
+          <div className="person-adder-input">
+            Lisää uusi henkilö
+            <input type="text" placeholder={"Hae (vähintään " + minimumSearchInputLength + " merkkiä)"} onChange={startSearch}/>
+            <PersonSelectList ldapSearchResults={ldapSearchResults} avustushaku={avustushaku} controller={controller} />
+            <button onClick={controller.createRole(avustushaku)} disabled={!roles}>Lisää uusi henkilö</button>
+          </div>
+        </div>
+      </div>
     )
 
+  }
+}
+
+class PersonSelectList extends React.Component {
+  render() {
+    const ldapSearchResults = this.props.ldapSearchResults
+    const avustushaku = this.props.avustushaku
+    const controller = this.props.controller
+    const personRows = _.map(ldapSearchResults.results, r => {
+      const firstName = r["first-name"]
+      const lastName = r["surname"]
+      const email = r["email"]
+      const oid = r["person-oid"]
+      const name = firstName ? firstName + " "  + lastName : lastName
+      const displayText = name + " <" + email + ">" + "(" + oid + ")"
+      const newRole = { name: name, email: email, role: null, oid: oid }
+
+      const addButton = <button onClick={controller.createRole(avustushaku, newRole)}>Lisää</button>
+
+      return <li key={r["person-oid"]}>{addButton} {displayText}</li>
+    })
+    return <ul id="ldap-search-results">
+             {personRows}
+           </ul>
   }
 }
 

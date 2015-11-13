@@ -71,7 +71,8 @@
   {:id (:id role)
    :name (:name role)
    :email (:email role)
-   :role (:role role)})
+   :role (:role role)
+   :oid (:oid role)})
 
 (defn- roles->json [roles]
   (-> role->json

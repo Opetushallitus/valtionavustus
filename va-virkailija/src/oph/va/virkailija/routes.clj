@@ -141,12 +141,14 @@
 
   (PUT* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
+        :body  [new-role (describe NewRole "New role to add to avustushaku")]
         :return Role
         :summary "Create new role for avustushaku"
         (ok (hakija-api/create-avustushaku-role {:avustushaku avustushaku-id
-                                                 :role "presenting_officer"
-                                                 :name ""
-                                                 :email ""})))
+                                                 :role (or (:role new-role) "presenting_officer")
+                                                 :name (:name new-role)
+                                                 :email (:email new-role)
+                                                 :oid (:oid new-role)})))
 
   (POST* "/:avustushaku-id/role/:role-id" [avustushaku-id role-id]
          :path-params [avustushaku-id :- Long role-id :- Long]

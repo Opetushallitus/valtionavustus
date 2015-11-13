@@ -446,9 +446,9 @@ export default class HakujenHallintaController {
     }
   }
 
-  createRole(avustushaku) {
+  createRole(avustushaku, newRole) {
     return function() {
-      HttpUtil.put(HakujenHallintaController.roleUrl(avustushaku), {})
+      HttpUtil.put(HakujenHallintaController.roleUrl(avustushaku), newRole)
         .then(function(response) {
           dispatcher.push(events.roleCreated, {haku: avustushaku, role: response})
         })

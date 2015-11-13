@@ -19,7 +19,7 @@ table.haku-list {
   }
 }
 
-table.translation, #haku-roles {
+table.translation, #haku-roles table {
   margin-top: 10px;
   width: 100%;
   text-align: left;
@@ -102,8 +102,24 @@ table.translation, #haku-roles {
       max-width: @content-width / 3.3;
       width: @content-width / 3.3;
     }
+  }
+
+  #add-new-person-from-ldap {
     .hidden {
       display: none;
+    }
+    .person-adder-input {
+      * {
+        margin-right: 30px;
+      }
+    }
+    #ldap-search-results {
+      list-style: none;
+      position: absolute;
+      background: white;
+      li {
+        width: @content-width / 1.5;
+      }
     }
   }
 

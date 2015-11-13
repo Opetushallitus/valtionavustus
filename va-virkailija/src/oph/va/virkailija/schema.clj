@@ -80,11 +80,19 @@
                       :user-key s/Str
                       :answers [Answer]})
 
+(s/defschema RoleType
+  (s/enum "presenting_officer" "evaluator"))
+
+(s/defschema NewRole {:name s/Str
+                      :email s/Str
+                      :role (s/maybe RoleType)
+                      :oid s/Str})
+
 (s/defschema Role {:id s/Int
                    :name s/Str
                    :email s/Str
-                   :role (s/enum "presenting_officer"
-                                 "evaluator")})
+                   :role RoleType
+                   :oid (s/maybe s/Str)})
 
 (s/defschema HakuData
   "Avustushaku structured response with related form, roles, hakemukset etc"
