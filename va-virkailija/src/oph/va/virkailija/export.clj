@@ -15,12 +15,12 @@
 (defn- valid-hakemus? [hakemus]
   (= (:status hakemus) "submitted"))
 
-(defn- hakemus->main-sheet-rows [hakemus]
-  [(:organization-name hakemus)
-   (:register-number hakemus)
-   (:project-name hakemus)
-   (:budget-total hakemus)
-   (:budget-oph-share hakemus)])
+(def hakemus->main-sheet-rows
+  (juxt :organization-name
+        :register-number
+        :project-name
+        :budget-total
+        :budget-oph-share))
 
 (defn export-avustushaku [avustushaku-id]
   (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id)
