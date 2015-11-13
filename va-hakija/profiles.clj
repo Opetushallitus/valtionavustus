@@ -3,6 +3,5 @@
  :test {:env {:config "config/test.edn"}}
  :prod {:env {:config "config/prod.edn"}}
  :ci {:env {:config "config/test.edn"}
-      :prep-tasks ^:replace ["buildfront"
-                             "compile"]}
+      :prep-tasks ["buildfront"]}
 }
