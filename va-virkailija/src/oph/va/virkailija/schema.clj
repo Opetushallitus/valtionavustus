@@ -102,3 +102,18 @@
 (s/defschema SavedSearch
   "Saved search listing certain hakemukset by ids or possibly dynamic search in the future"
   {:hakemus-ids (s/maybe [Long])})
+
+(s/defschema LdapSearchResult
+  "Single person entity from LDAP search"
+  {:username (s/maybe s/Str)
+   :person-oid (s/maybe s/Str)
+   :first-name (s/maybe s/Str)
+   :surname (s/maybe s/Str)
+   :email (s/maybe s/Str)
+   :lang (s/maybe s/Str)})
+
+(s/defschema LdapSearchResults
+  "Complete results of an LDAP search"
+  {:results [LdapSearchResult]
+   :error s/Bool
+   :truncated s/Bool})

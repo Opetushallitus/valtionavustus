@@ -30,7 +30,8 @@ const events = {
   addFocusArea: 'addFocusArea',
   deleteFocusArea: 'deleteFocusArea',
   beforeUnload: 'beforeUnload',
-  selectEditorSubTab: 'selectEditorSubTab'
+  selectEditorSubTab: 'selectEditorSubTab',
+  ldapSearchFinished: 'ldapSearchFinished'
 }
 
 export default class HakujenHallintaController {
@@ -71,6 +72,7 @@ export default class HakujenHallintaController {
       dispatcher.push(events.initialState, state)
     })
     this.autoSave = _.debounce(function(){ dispatcher.push(events.saveHaku) }, 3000)
+    this.startLdapSearch = _.debounce(this.doStartLdapSearch, 300)
     this._bind('onInitialState','onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
                'onHakuSave', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
                'onBeforeUnload')
@@ -103,7 +105,8 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.addFocusArea)], this.onAddFocusArea,
       [dispatcher.stream(events.deleteFocusArea)], this.onDeleteFocusArea,
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload,
-      [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab
+      [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab,
+      [dispatcher.stream(events.ldapSearchFinished)], this.onLdapSearchFinished
     )
 
     function consolidateSubTabSelectionWithUrl() {
@@ -339,6 +342,20 @@ export default class HakujenHallintaController {
 
   saveForm(avustushaku, form) {
     dispatcher.push(events.saveForm, {haku: avustushaku, form: JSON.parse(form)})
+  }
+
+  doStartLdapSearch(searchInput) { // will be invoked from the debounced function
+    HttpUtil.post("/api/ldap/search", { searchInput: searchInput })
+            .then(r => { dispatcher.push(events.ldapSearchFinished, r) })
+            .catch(r => {
+              console.error('Got bad response from LDAP search', r)
+              dispatcher.push(events.ldapSearchFinished, { error: true, results: [], truncated: false })
+            })
+  }
+
+  onLdapSearchFinished(state, response) {
+    console.log('TODO: Do something with', response)
+    return state
   }
 
   // Public API

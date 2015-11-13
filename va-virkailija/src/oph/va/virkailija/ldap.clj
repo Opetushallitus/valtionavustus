@@ -70,9 +70,11 @@
   (let [conditions (mapv create-or-filter search-terms)]
         (str "(&" (clojure.string/join conditions)")")))
 
-(defn search-users [search-terms]
+(defn search-users [search-input]
   (let [ldap-server (create-ldap-connection)
         base-without-comma (subs (people-path-base) 1) ;; TODO Change config to not include comma
-        filter-string (create-and-filter search-terms)]
-    (do-with-ldap ldap-server #(ldap/search ldap-server base-without-comma {:filter filter-string}))))
+        search-terms (clojure.string/split search-input #" ")
+        filter-string (create-and-filter search-terms)
+        raw-results (do-with-ldap ldap-server #(ldap/search ldap-server base-without-comma {:filter filter-string}))]
+    (map details->map raw-results)))
 

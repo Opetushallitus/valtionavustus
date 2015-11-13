@@ -14,13 +14,25 @@ export default class HakuRoles extends Component {
       }
     }
 
+    const startSearch = e => {
+      const input = e.target.value
+      if (!input || input.length < 2) {
+        return
+      }
+      controller.startLdapSearch(input)
+    }
+
     return (
       <table id="haku-roles">
-        <thead><tr><th>Rooli</th><th>Nimi</th><th>Sähköposti</th></tr></thead>
+        <thead><tr><th>Rooli</th><th>Sidottu LDAPiin?</th><th>Nimi</th><th>Sähköposti</th></tr></thead>
         <tbody>
         {roleRows}
         </tbody>
-        <tfoot><tr><td><button onClick={controller.createRole(avustushaku)} disabled={!roles}>Lisää uusi henkilö</button></td></tr></tfoot>
+        <tfoot><tr>
+          <td>Lisää uusi henkilö</td>
+          <td><input type="text" placeholder="Syötä nimi tai sähköpostiosoite" onChange={startSearch}/></td>
+          <td><button onClick={controller.createRole(avustushaku)} disabled={!roles}>Lisää uusi henkilö</button></td>
+        </tr></tfoot>
       </table>
     )
 
@@ -54,6 +66,9 @@ class RoleRow extends React.Component {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
     const onDelete = controller.deleteRole(avustushaku, role)
+    const hasOid = role.oid && role.oid.length > 0
+    const oidStatusClass = hasOid ? undefined : "error"
+    const oidStatusText = hasOid ? "Valtuutus OK" : "Ei valtuutettu"
     return (
       <tr>
         <td>
@@ -62,8 +77,9 @@ class RoleRow extends React.Component {
             <option value="evaluator">Arvioija</option>
           </select>
         </td>
-        <td><input onChange={this.handleChange} name="name" onBlur={this.handleBlur} type="text" value={role.name}/></td>
-        <td><input onChange={this.handleChange} name="email" onBlur={this.handleBlur} type="text" value={role.email}/></td>
+        <td className={oidStatusClass}>{oidStatusText}</td>
+        <td>{role.name}</td>
+        <td>{role.email}</td>
         <td><button onClick={onDelete} className="remove" alt="Poista" title="Poista" tabIndex="-1" /></td>
       </tr>
     )
