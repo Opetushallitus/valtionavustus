@@ -24,7 +24,7 @@
             [oph.va.virkailija.schema :refer :all]
             [oph.va.virkailija.scoring :as scoring]
             [oph.va.virkailija.saved-search :refer :all]
-            [oph.va.virkailija.handlers :as handlers]
+            [oph.va.virkailija.hakudata :as hakudata]
             [oph.va.virkailija.export :as export]))
 
 (defonce opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
@@ -119,7 +119,7 @@
         :path-params [avustushaku-id :- Long]
         :return HakuData
         :summary "Return all relevant avustushaku data (including answers, comments and form)"
-        (if-let [response (handlers/get-combined-avustushaku-data avustushaku-id)]
+        (if-let [response (hakudata/get-combined-avustushaku-data avustushaku-id)]
           (ok response)
           (not-found)))
 
@@ -186,7 +186,7 @@
          :return Arvio
          :summary "Update arvio for given hakemus. Creates arvio if missing."
          (ok (-> (virkailija-db/update-or-create-hakemus-arvio hakemus-id arvio)
-                 handlers/arvio-json)))
+                 hakudata/arvio-json)))
 
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
