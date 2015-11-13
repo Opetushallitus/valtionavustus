@@ -123,9 +123,9 @@
           (ok response)
           (not-found)))
 
-  (GET* "/:haku-id/export/excel" [haku-id]
+  (GET* "/:haku-id/export.xslx" [haku-id]
         :path-params [haku-id :- Long]
-        :summary "Export Excel document for given avustushaku"
+        :summary "Export Excel XLSX document for given avustushaku"
         (let [document (export/export-avustushaku haku-id)]
           (-> (ok document)
               (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
