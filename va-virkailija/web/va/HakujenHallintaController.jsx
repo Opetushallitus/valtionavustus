@@ -63,7 +63,8 @@ export default class HakujenHallintaController {
         serverError: ""
       },
       formDrafts: {},
-      subTab: subTab
+      subTab: subTab,
+      ldapSearchResults: { error: false, results: [], truncated: false }
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
@@ -353,8 +354,8 @@ export default class HakujenHallintaController {
             })
   }
 
-  onLdapSearchFinished(state, response) {
-    console.log('TODO: Do something with', response)
+  onLdapSearchFinished(state, ldapSearchResponse) {
+    state.ldapSearchResults = ldapSearchResponse
     return state
   }
 

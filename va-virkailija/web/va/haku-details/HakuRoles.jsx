@@ -5,6 +5,7 @@ export default class HakuRoles extends Component {
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
+    const ldapSearchResults = this.props.ldapSearchResults
     const roles = avustushaku.roles
     const roleRows = []
     if(roles) {
@@ -22,17 +23,25 @@ export default class HakuRoles extends Component {
       controller.startLdapSearch(input)
     }
 
+    // ldapSearchResults: { error: false, results: [], truncated: false }
+    const searchErrorClass = ldapSearchResults.error ? "error" : "hidden"
+
     return (
       <table id="haku-roles">
         <thead><tr><th>Rooli</th><th>Sidottu LDAPiin?</th><th>Nimi</th><th>Sähköposti</th></tr></thead>
         <tbody>
         {roleRows}
         </tbody>
-        <tfoot><tr>
-          <td>Lisää uusi henkilö</td>
-          <td><input type="text" placeholder="Syötä nimi tai sähköpostiosoite" onChange={startSearch}/></td>
-          <td><button onClick={controller.createRole(avustushaku)} disabled={!roles}>Lisää uusi henkilö</button></td>
-        </tr></tfoot>
+        <tfoot>
+          <tr className={searchErrorClass}>
+            <td>Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.</td>
+          </tr>
+          <tr>
+            <td>Lisää uusi henkilö</td>
+            <td><input type="text" placeholder="Syötä nimi tai sähköpostiosoite" onChange={startSearch}/></td>
+            <td><button onClick={controller.createRole(avustushaku)} disabled={!roles}>Lisää uusi henkilö</button></td>
+          </tr>
+        </tfoot>
       </table>
     )
 
