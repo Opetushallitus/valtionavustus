@@ -10,7 +10,9 @@
                          "Diaarinumero"
                          "Hankkeen nimi"
                          "Ehdotettu budjetti"
-                         "OPH:n avustuksen osuus"])
+                         "OPH:n avustuksen osuus"
+                         "Myönnetty avustus"
+                         "Arviokeskiarvo"])
 
 (defn- valid-hakemus? [hakemus]
   (= (:status hakemus) "submitted"))
@@ -20,7 +22,9 @@
         :register-number
         :project-name
         :budget-total
-        :budget-oph-share))
+        :budget-oph-share
+        (comp :budget-granted :arvio)
+        (comp :score-total-average :scoring :arvio)))
 
 (defn export-avustushaku [avustushaku-id]
   (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id)
@@ -30,7 +34,14 @@
                   (mapv hakemus->main-sheet-rows))
         wb (spreadsheet/create-workbook main-sheet-name
                                         (apply conj [main-sheet-columns] rows))
-        main-sheet (spreadsheet/select-sheet main-sheet-name wb)]
+        main-sheet (spreadsheet/select-sheet main-sheet-name wb)
+        main-header-row (first (spreadsheet/row-seq main-sheet))]
+
+    ;; Style first row
+    (->> (spreadsheet/create-cell-style! wb {:background :yellow
+                                             :font {:bold true}})
+         (spreadsheet/set-row-style! main-header-row))
+
     ;; Make columns fit the data
     (doseq [index (range 0 (count main-sheet-columns))]
       (.autoSizeColumn main-sheet index))
