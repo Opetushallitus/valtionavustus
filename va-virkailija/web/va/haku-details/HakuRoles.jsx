@@ -38,7 +38,7 @@ export default class HakuRoles extends Component {
         </table>
 
         <div id="add-new-person-from-ldap">
-          <div className={searchErrorClass}>Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.</div>
+          <div className="ldap-error-display"><span className={searchErrorClass}>Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.</span></div>
           <div className="person-adder-input">
             Lisää uusi henkilö
             <input type="text" placeholder={"Hae (vähintään " + minimumSearchInputLength + " merkkiä)"} onChange={startSearch}/>
@@ -72,7 +72,7 @@ class PersonSelectList extends React.Component {
     })
     const searchResultClassName = ldapSearchResults.loading ? "loading" : undefined
     return <div id="ldap-search-results" className={searchResultClassName}>
-               <ul>
+               <ul className={searchResultClassName}>
                  {personRows}
                </ul>
            </div>

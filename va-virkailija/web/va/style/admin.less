@@ -105,6 +105,9 @@ table.translation, #haku-roles table {
   }
 
   #add-new-person-from-ldap {
+    .ldap-error-display {
+      min-height: 22px;
+    }
     .hidden {
       display: none;
     }
@@ -114,14 +117,27 @@ table.translation, #haku-roles table {
       }
     }
     #ldap-search-results {
-      list-style: none;
-      position: absolute;
-      background: white;
-      li {
-        width: @content-width / 1.5;
-      }
+      background: transparent;
       &.loading {
         background: white url('../img/ajax-loader.gif') no-repeat 4px 4px;
+      }
+      min-height: 20px;
+      position: relative;
+      left: 162px;
+      top: 0;
+      ul {
+        position: absolute;
+        top: -16px;
+        background: white;
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.40);
+        border-radius: 0 0 4px 4px;
+        list-style: none;
+        li {
+          width: @content-width / 1.5;
+        }
+        &.loading {
+          background: white url('../img/ajax-loader.gif') no-repeat 4px 4px;
+        }
       }
     }
   }
