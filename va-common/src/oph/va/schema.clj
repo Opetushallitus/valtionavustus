@@ -48,8 +48,8 @@
                           :form Long})
 
 (s/defschema HakemusStatus
-  "Status from the application point of view"
-  (s/enum "new" "draft" "submitted"))
+  "Status from the applicant point of view"
+  (s/enum "new" "draft" "submitted" "pending_change_request"))
 
 (s/defschema Attachment
   "Attachment metadata"
