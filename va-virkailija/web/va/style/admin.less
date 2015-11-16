@@ -134,7 +134,24 @@ table.translation, #haku-roles table {
         border-radius: 0 0 4px 4px;
         list-style: none;
         li {
-          width: @content-width / 1.5;
+          width: @content-width / 1.25;
+          .access-level {
+            display: inline-block;
+            width: 132px;
+          }
+          .va-admin {
+            font-weight: bold;
+          }
+          .va-user {
+            font-weight: 400;
+          }
+          .no-va-access {
+            font-weight: 200;
+            font-style: italic;
+          }
+          .person-description {
+            margin-left: 10px;
+          }
         }
         &.loading {
           background: white url('../img/ajax-loader.gif') no-repeat 4px 4px;

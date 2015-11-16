@@ -58,12 +58,17 @@ class PersonSelectList extends React.Component {
       const email = r["email"]
       const oid = r["person-oid"]
       const name = firstName ? firstName + " "  + lastName : lastName
-      const displayText = name + " <" + email + ">" + "(" + oid + ")"
       const newRole = { name: name, email: email, role: null, oid: oid }
+      const accessLevel = userDetailsToClassAndFi(r)
+      const titleText = name + " <" + email + ">" + "(" + accessLevel.description + ", oid " + oid + ")"
+      const displayText = name + " <" + email + ">"
 
       const addButton = <button onClick={controller.createRole(avustushaku, newRole)}>Lisää</button>
 
-      return <li key={r["person-oid"]}>{addButton} {displayText}</li>
+      return <li key={r["person-oid"]} title={titleText}>{addButton}
+               <span className={"access-level " + accessLevel.className}>{accessLevel.description}</span>
+               <span className="person-description">{displayText}</span>
+             </li>
     })
     const resultRows = personRows.length === 0 ? [ <li key="no-results-row">Ei hakutuloksia.</li>] : personRows
     const searchResultClassNames = ClassNames(undefined, { loading: ldapSearch.loading,
@@ -73,6 +78,17 @@ class PersonSelectList extends React.Component {
                  {resultRows}
                </ul>
            </div>
+
+
+    function userDetailsToClassAndFi(userDetails) {
+      if (userDetails["va-user"] && userDetails["va-admin"]) {
+        return { className: "va-admin", description: "VA-pääkäyttäjä" }
+      }
+      if (userDetails["va-user"]) {
+        return { className: "va-user", description: "VA-käyttäjä" }
+      }
+      return { className: "no-va-access", description: "Ei VA-oikeuksia" }
+    }
   }
 }
 
