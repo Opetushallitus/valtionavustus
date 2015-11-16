@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
+import ClassNames from 'classnames'
+
+import LdapSearchParameters from './LdapSearchParameters'
 
 export default class HakuRoles extends Component {
-
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
-    const ldapSearchResults = this.props.ldapSearchResults
-    const minimumSearchInputLength = 2
+    const ldapSearch = this.props.ldapSearch
     const roles = avustushaku.roles
     const roleRows = []
     if(roles) {
@@ -18,15 +19,10 @@ export default class HakuRoles extends Component {
 
     const startSearch = e => {
       const input = _.trim(e.target.value)
-      if (input.length < minimumSearchInputLength) {
-        controller.clearLdapSearchResults(input)
-      } else {
-        controller.startLdapSearch(input)
-      }
+      controller.startLdapSearch(input)
     }
 
-    // ldapSearchResults: { error: false, results: [], truncated: false }
-    const searchErrorClass = ldapSearchResults.error ? "error" : "hidden"
+    const searchErrorClass = ldapSearch.result.error ? "error" : "hidden"
 
     return (
       <div id="haku-roles">
@@ -41,8 +37,8 @@ export default class HakuRoles extends Component {
           <div className="ldap-error-display"><span className={searchErrorClass}>Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.</span></div>
           <div className="person-adder-input">
             Lisää uusi henkilö
-            <input type="text" placeholder={"Hae (vähintään " + minimumSearchInputLength + " merkkiä)"} onChange={startSearch} disabled={!roles}/>
-            <PersonSelectList ldapSearchResults={ldapSearchResults} avustushaku={avustushaku} controller={controller} />
+            <input type="text" placeholder={"Hae (vähintään " + LdapSearchParameters.minimumSearchInputLength() + " merkkiä)"} onChange={startSearch} disabled={!roles}/>
+            <PersonSelectList ldapSearch={ldapSearch} avustushaku={avustushaku} controller={controller} />
           </div>
         </div>
       </div>
@@ -53,10 +49,10 @@ export default class HakuRoles extends Component {
 
 class PersonSelectList extends React.Component {
   render() {
-    const ldapSearchResults = this.props.ldapSearchResults
+    const ldapSearch = this.props.ldapSearch
     const avustushaku = this.props.avustushaku
     const controller = this.props.controller
-    const personRows = _.map(ldapSearchResults.results, r => {
+    const personRows = _.map(ldapSearch.result.results, r => {
       const firstName = r["first-name"]
       const lastName = r["surname"]
       const email = r["email"]
@@ -69,9 +65,10 @@ class PersonSelectList extends React.Component {
 
       return <li key={r["person-oid"]}>{addButton} {displayText}</li>
     })
-    const searchResultClassName = ldapSearchResults.loading ? "loading" : undefined
-    return <div id="ldap-search-results" className={searchResultClassName}>
-               <ul className={searchResultClassName}>
+    const searchResultClassNames = ClassNames(undefined, { loading: ldapSearch.loading,
+                                                           hidden: ldapSearch.input.length < LdapSearchParameters.minimumSearchInputLength() })
+    return <div id="ldap-search-results" className={searchResultClassNames}>
+               <ul className={searchResultClassNames}>
                  {personRows}
                </ul>
            </div>

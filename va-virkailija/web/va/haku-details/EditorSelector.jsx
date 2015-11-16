@@ -11,7 +11,7 @@ export default class EditorSelector extends React.Component {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
     const formDraft = this.props.formDraft
-    const ldapSearchResults = this.props.ldapSearchResults
+    const ldapSearch = this.props.ldapSearch
     const environment = this.props.environment
     const translations = this.props.translations
 
@@ -19,7 +19,7 @@ export default class EditorSelector extends React.Component {
     switch (subTab) {
       case "haku-editor":
         subTabContent = <HakuEdit avustushaku={avustushaku}
-                                  ldapSearchResults={ldapSearchResults}
+                                  ldapSearch={ldapSearch}
                                   controller={controller} />
         break
       case "form-editor":

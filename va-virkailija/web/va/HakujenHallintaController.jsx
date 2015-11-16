@@ -7,6 +7,8 @@ import RouteParser from 'route-parser'
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'soresu-form/web/Dispatcher'
 
+import LdapSearchParameters from './haku-details/LdapSearchParameters.js'
+
 const dispatcher = new Dispatcher()
 
 const events = {
@@ -65,7 +67,11 @@ export default class HakujenHallintaController {
       },
       formDrafts: {},
       subTab: subTab,
-      ldapSearchResults: { error: false, results: [], truncated: false, loading: false }
+      ldapSearch: {
+        input: "",
+        loading: false,
+        result: { error: false, results: [], truncated: false }
+      }
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
@@ -74,7 +80,9 @@ export default class HakujenHallintaController {
       dispatcher.push(events.initialState, state)
     })
     this.autoSave = _.debounce(function(){ dispatcher.push(events.saveHaku) }, 3000)
-    this.startLdapSearch = _.debounce((searchInput) => { dispatcher.push(events.ldapSearchStarted, searchInput) }, 300)
+    this.startLdapSearch = _.debounce((searchInput) => {
+      dispatcher.push(events.ldapSearchStarted, searchInput)
+    }, LdapSearchParameters.ldapSearchDebounceMillis())
     this._bind('onInitialState','onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
                'onHakuSave', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
                'onBeforeUnload')
@@ -348,19 +356,22 @@ export default class HakujenHallintaController {
   }
 
   onStartLdapSearch(state, searchInput) {
-    state.ldapSearchResults.loading = true
-    HttpUtil.post("/api/ldap/search", { searchInput: searchInput })
-            .then(r => { dispatcher.push(events.ldapSearchFinished, r) })
-            .catch(r => {
-              console.error('Got bad response from LDAP search', r)
-              dispatcher.push(events.ldapSearchFinished, { error: true, results: [], truncated: false })
-            })
+    state.ldapSearch.input = searchInput
+    if (searchInput.length >= LdapSearchParameters.minimumSearchInputLength()) {
+      state.ldapSearch.loading = true
+      HttpUtil.post("/api/ldap/search", { searchInput: searchInput })
+              .then(r => { dispatcher.push(events.ldapSearchFinished, r) })
+              .catch(r => {
+                console.error('Got bad response from LDAP search', r)
+                dispatcher.push(events.ldapSearchFinished, { error: true, results: [], truncated: false })
+              })
+    }
     return state
   }
 
   onLdapSearchFinished(state, ldapSearchResponse) {
-    state.ldapSearchResults = ldapSearchResponse
-    state.ldapSearchResults.loading = false
+    state.ldapSearch.result = ldapSearchResponse
+    state.ldapSearch.loading = false
     return state
   }
 
@@ -479,9 +490,5 @@ export default class HakujenHallintaController {
 
   selectEditorSubtab(subTabToSelect) {
     dispatcher.push(events.selectEditorSubTab, subTabToSelect)
-  }
-
-  clearLdapSearchResults() {
-    dispatcher.push(events.ldapSearchFinished, { error: false, results: [], truncated: false })
   }
 }
