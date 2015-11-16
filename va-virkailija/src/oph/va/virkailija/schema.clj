@@ -118,7 +118,9 @@
    :first-name (s/maybe s/Str)
    :surname (s/maybe s/Str)
    :email (s/maybe s/Str)
-   :lang (s/maybe s/Str)})
+   :lang (s/maybe s/Str)
+   :va-user s/Bool
+   :va-admin s/Bool})
 
 (s/defschema LdapSearchResults
   "Complete results of an LDAP search"

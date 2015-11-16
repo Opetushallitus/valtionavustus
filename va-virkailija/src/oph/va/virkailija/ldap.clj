@@ -36,12 +36,15 @@
 (defn find-user-details [ldap-server username]
   (do-with-ldap ldap-server #(ldap/get ldap-server (people-path username))))
 
+(defn- has-group? [user-details required-group]
+  (let [description (-> user-details :description json/parse-string)]
+    (boolean (some #{required-group} description))))
+
 (defn check-app-access [ldap-server username]
   (let [user-details (find-user-details ldap-server username)
         description (-> user-details :description json/parse-string)
-        required-group (-> config :ldap :required-group)
-        has-access? (some #{required-group} description)]
-    (if has-access?
+        required-group (-> config :ldap :required-group)]
+    (if (has-group? user-details required-group)
       description
       (log/warn (str "Authorization failed for username '"
                      username "' : "
@@ -70,10 +73,20 @@
   (let [conditions (mapv create-or-filter search-terms)]
         (str "(&" (clojure.string/join conditions)")")))
 
+(defn- user-search-result [user-details]
+  (merge (details->map user-details)
+         {:va-user (has-group? user-details (-> config :ldap :required-group))
+          :va-admin (has-group? user-details (-> config :ldap :admin-group))}))
+
+(defn- by-access-and-name [user1 user2]
+  (compare [(:va-user user2) (:va-admin user2) (:surname user1) (:first-name user1)]
+           [(:va-user user1) (:va-admin user1) (:surname user2) (:first-name user2)]))
+
 (defn search-users [search-input]
   (let [ldap-server (create-ldap-connection)
         search-terms (clojure.string/split search-input #" ")
-        filter-string (create-and-filter search-terms)
-        raw-results (do-with-ldap ldap-server #(ldap/search ldap-server (people-path-base) {:filter filter-string}))]
-    (map details->map raw-results)))
+        filter-string (create-and-filter search-terms)]
+    (->> (do-with-ldap ldap-server #(ldap/search ldap-server (people-path-base) {:filter filter-string}))
+         (map user-search-result)
+         (sort by-access-and-name))))
 
