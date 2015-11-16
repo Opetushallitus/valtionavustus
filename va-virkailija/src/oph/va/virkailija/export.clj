@@ -26,9 +26,13 @@
   (= (:status hakemus) "submitted"))
 
 (defn- avustushaku->formids [avustushaku]
-  (->> (-> avustushaku :form :content)
-       (formutil/find-fields)
-       (map :id)))
+  (let [form (-> avustushaku :form :content)
+        wrappers (formutil/find-wrapper-elements form)]
+    (trace "wrappers" wrappers)
+    (->> form
+         (formutil/find-fields)
+         (map (fn [field] [(:id field) (-> field :label :fi)]))
+         (into {}))))
 
 (defn- avustushaku->hakemukset [avustushaku]
   (->> (:hakemukset avustushaku)
