@@ -10,7 +10,7 @@
   (-> config :ldap :people-path-base))
 
 (defn- people-path [uid]
-  (str "uid=" uid (people-path-base)))
+  (str "uid=" uid "," (people-path-base)))
 
 (defn- ldap-pool [{:keys [hostname port user password]}]
   (ldap/connect {:host [{:address (.getHostName hostname) :port port}]
@@ -36,16 +36,19 @@
 (defn find-user-details [ldap-server username]
   (do-with-ldap ldap-server #(ldap/get ldap-server (people-path username))))
 
+(defn- has-group? [user-details required-group]
+  (let [description (-> user-details :description json/parse-string)]
+    (boolean (some #{required-group} description))))
+
 (defn check-app-access [ldap-server username]
   (let [user-details (find-user-details ldap-server username)
         description (-> user-details :description json/parse-string)
         required-group (-> config :ldap :required-group)
-        has-access? (some #{required-group} description)]
-    (if has-access?
+        admin-group (-> config :ldap :admin-group)]
+    (if (or (has-group? user-details required-group) (has-group? user-details admin-group))
       description
-      (log/warn (str "Authorization failed for username '"
-                     username "' : "
-                     required-group " missing, got only "
+      (log/warn (str "Authorization failed for username '" username "' : did not have either "
+                     required-group " or " admin-group" , got only "
                      (pr-str description))))))
 
 (defn details->map [details]
@@ -70,9 +73,20 @@
   (let [conditions (mapv create-or-filter search-terms)]
         (str "(&" (clojure.string/join conditions)")")))
 
-(defn search-users [search-terms]
+(defn- user-search-result [user-details]
+  (merge (details->map user-details)
+         {:va-user (has-group? user-details (-> config :ldap :required-group))
+          :va-admin (has-group? user-details (-> config :ldap :admin-group))}))
+
+(defn- by-access-and-name [user1 user2]
+  (compare [(:va-user user2) (:va-admin user2) (:surname user1) (:first-name user1)]
+           [(:va-user user1) (:va-admin user1) (:surname user2) (:first-name user2)]))
+
+(defn search-users [search-input]
   (let [ldap-server (create-ldap-connection)
-        base-without-comma (subs (people-path-base) 1) ;; TODO Change config to not include comma
+        search-terms (clojure.string/split search-input #" ")
         filter-string (create-and-filter search-terms)]
-    (do-with-ldap ldap-server #(ldap/search ldap-server base-without-comma {:filter filter-string}))))
+    (->> (do-with-ldap ldap-server #(ldap/search ldap-server (people-path-base) {:filter filter-string}))
+         (map user-search-result)
+         (sort by-access-and-name))))
 

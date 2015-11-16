@@ -141,12 +141,14 @@
 
   (PUT* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
+        :body  [new-role (describe NewRole "New role to add to avustushaku")]
         :return Role
         :summary "Create new role for avustushaku"
         (ok (hakija-api/create-avustushaku-role {:avustushaku avustushaku-id
-                                                 :role "presenting_officer"
-                                                 :name ""
-                                                 :email ""})))
+                                                 :role (or (:role new-role) "presenting_officer")
+                                                 :name (:name new-role)
+                                                 :email (:email new-role)
+                                                 :oid (:oid new-role)})))
 
   (POST* "/:avustushaku-id/role/:role-id" [avustushaku-id role-id]
          :path-params [avustushaku-id :- Long role-id :- Long]
@@ -283,6 +285,20 @@
   (GET "/" [:as request]
        (ok (auth/get-identity request))))
 
+(defroutes* ldap-routes
+  "LDAP search"
+
+  (POST* "/search" [:as request]
+          :body [body (describe {:searchInput s/Str} "User input of LDAP search box")]
+          :return LdapSearchResults
+          :summary "Search users from OPH LDAP."
+          :description "Each search term must be found as part of user name or email. Case does not matter."
+         (let [search-input (:searchInput body)
+               search-results (oph.va.virkailija.ldap/search-users search-input)]
+                    (ok {:results search-results
+                         :error false
+                         :truncated false}))))
+
 (defn- query-string-for-login [original-query-params params-to-add keys-to-remove]
   (let [payload-params (apply dissoc original-query-params keys-to-remove)
         complete-params (merge payload-params params-to-add)]
@@ -355,6 +371,7 @@
   (context* "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
   (context* "/login" [] :tags ["login"] login-routes)
   (context* "/api/userinfo" [] :tags ["userinfo"] userinfo-routes)
+  (context* "/api/ldap" [] :tags ["ldap"] ldap-routes)
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
 
   ;; Documentation

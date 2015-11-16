@@ -7,6 +7,8 @@ import RouteParser from 'route-parser'
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'soresu-form/web/Dispatcher'
 
+import LdapSearchParameters from './haku-details/LdapSearchParameters.js'
+
 const dispatcher = new Dispatcher()
 
 const events = {
@@ -30,7 +32,9 @@ const events = {
   addFocusArea: 'addFocusArea',
   deleteFocusArea: 'deleteFocusArea',
   beforeUnload: 'beforeUnload',
-  selectEditorSubTab: 'selectEditorSubTab'
+  selectEditorSubTab: 'selectEditorSubTab',
+  ldapSearchStarted: 'ldapSearchStarted',
+  ldapSearchFinished: 'ldapSearchFinished'
 }
 
 export default class HakujenHallintaController {
@@ -62,7 +66,12 @@ export default class HakujenHallintaController {
         serverError: ""
       },
       formDrafts: {},
-      subTab: subTab
+      subTab: subTab,
+      ldapSearch: {
+        input: "",
+        loading: false,
+        result: { error: false, results: [], truncated: false }
+      }
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
@@ -71,6 +80,9 @@ export default class HakujenHallintaController {
       dispatcher.push(events.initialState, state)
     })
     this.autoSave = _.debounce(function(){ dispatcher.push(events.saveHaku) }, 3000)
+    this.startLdapSearch = _.debounce((searchInput) => {
+      dispatcher.push(events.ldapSearchStarted, searchInput)
+    }, LdapSearchParameters.ldapSearchDebounceMillis())
     this._bind('onInitialState','onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
                'onHakuSave', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
                'onBeforeUnload')
@@ -103,7 +115,9 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.addFocusArea)], this.onAddFocusArea,
       [dispatcher.stream(events.deleteFocusArea)], this.onDeleteFocusArea,
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload,
-      [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab
+      [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab,
+      [dispatcher.stream(events.ldapSearchStarted)], this.onStartLdapSearch,
+      [dispatcher.stream(events.ldapSearchFinished)], this.onLdapSearchFinished
     )
 
     function consolidateSubTabSelectionWithUrl() {
@@ -341,6 +355,26 @@ export default class HakujenHallintaController {
     dispatcher.push(events.saveForm, {haku: avustushaku, form: JSON.parse(form)})
   }
 
+  onStartLdapSearch(state, searchInput) {
+    state.ldapSearch.input = searchInput
+    if (searchInput.length >= LdapSearchParameters.minimumSearchInputLength()) {
+      state.ldapSearch.loading = true
+      HttpUtil.post("/api/ldap/search", { searchInput: searchInput })
+              .then(r => { dispatcher.push(events.ldapSearchFinished, r) })
+              .catch(r => {
+                console.error('Got bad response from LDAP search', r)
+                dispatcher.push(events.ldapSearchFinished, { error: true, results: [], truncated: false })
+              })
+    }
+    return state
+  }
+
+  onLdapSearchFinished(state, ldapSearchResponse) {
+    state.ldapSearch.result = ldapSearchResponse
+    state.ldapSearch.loading = false
+    return state
+  }
+
   // Public API
   selectHaku(hakemus) {
     return function() {
@@ -428,9 +462,9 @@ export default class HakujenHallintaController {
     }
   }
 
-  createRole(avustushaku) {
+  createRole(avustushaku, newRole) {
     return function() {
-      HttpUtil.put(HakujenHallintaController.roleUrl(avustushaku), {})
+      HttpUtil.put(HakujenHallintaController.roleUrl(avustushaku), newRole)
         .then(function(response) {
           dispatcher.push(events.roleCreated, {haku: avustushaku, role: response})
         })

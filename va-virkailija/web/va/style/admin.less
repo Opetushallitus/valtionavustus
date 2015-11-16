@@ -19,7 +19,7 @@ table.haku-list {
   }
 }
 
-table.translation, #haku-roles {
+table.translation, #haku-roles table {
   margin-top: 10px;
   width: 100%;
   text-align: left;
@@ -101,6 +101,62 @@ table.translation, #haku-roles {
     input, select {
       max-width: @content-width / 3.3;
       width: @content-width / 3.3;
+    }
+  }
+
+  #add-new-person-from-ldap {
+    min-height: 72px;
+    .ldap-error-display {
+      min-height: 22px;
+    }
+    .hidden {
+      display: none;
+    }
+    .person-adder-input {
+      * {
+        margin-right: 30px;
+      }
+    }
+    #ldap-search-results {
+      background: transparent;
+      &.loading {
+        background: white url('../img/ajax-loader.gif') no-repeat 4px 4px;
+      }
+      min-height: 20px;
+      position: relative;
+      left: 162px;
+      top: 0;
+      ul {
+        position: absolute;
+        top: -16px;
+        background: white;
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.40);
+        border-radius: 0 0 4px 4px;
+        list-style: none;
+        li {
+          width: @content-width / 1.25;
+          .access-level {
+            display: inline-block;
+            width: 132px;
+          }
+          .va-admin {
+            font-weight: bold;
+          }
+          .va-user {
+            font-weight: 400;
+          }
+          .no-va-access {
+            font-weight: 200;
+            font-style: italic;
+          }
+          .person-description {
+            margin-left: 10px;
+          }
+        }
+        &.loading {
+          background: white url('../img/ajax-loader.gif') no-repeat 4px 4px;
+        }
+      }
     }
   }
 

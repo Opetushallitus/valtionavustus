@@ -80,11 +80,19 @@
                       :user-key s/Str
                       :answers [Answer]})
 
+(s/defschema RoleType
+  (s/enum "presenting_officer" "evaluator"))
+
+(s/defschema NewRole {:name s/Str
+                      :email s/Str
+                      :role (s/maybe RoleType)
+                      :oid s/Str})
+
 (s/defschema Role {:id s/Int
                    :name s/Str
                    :email s/Str
-                   :role (s/enum "presenting_officer"
-                                 "evaluator")})
+                   :role RoleType
+                   :oid (s/maybe s/Str)})
 
 (s/defschema HakuData
   "Avustushaku structured response with related form, roles, hakemukset etc"
@@ -102,3 +110,20 @@
 (s/defschema SavedSearch
   "Saved search listing certain hakemukset by ids or possibly dynamic search in the future"
   {:hakemus-ids (s/maybe [Long])})
+
+(s/defschema LdapSearchResult
+  "Single person entity from LDAP search"
+  {:username (s/maybe s/Str)
+   :person-oid (s/maybe s/Str)
+   :first-name (s/maybe s/Str)
+   :surname (s/maybe s/Str)
+   :email (s/maybe s/Str)
+   :lang (s/maybe s/Str)
+   :va-user s/Bool
+   :va-admin s/Bool})
+
+(s/defschema LdapSearchResults
+  "Complete results of an LDAP search"
+  {:results [LdapSearchResult]
+   :error s/Bool
+   :truncated s/Bool})
