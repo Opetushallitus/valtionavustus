@@ -65,7 +65,7 @@ class PersonSelectList extends React.Component {
 
       return <li key={r["person-oid"]}>{addButton} {displayText}</li>
     })
-    const resultRows = personRows.length === 0 ? [ <li>Ei hakutuloksia.</li>] : personRows
+    const resultRows = personRows.length === 0 ? [ <li key="no-results-row">Ei hakutuloksia.</li>] : personRows
     const searchResultClassNames = ClassNames(undefined, { loading: ldapSearch.loading,
                                                            hidden: ldapSearch.input.length < LdapSearchParameters.minimumSearchInputLength() })
     return <div id="ldap-search-results" className={searchResultClassNames}>
