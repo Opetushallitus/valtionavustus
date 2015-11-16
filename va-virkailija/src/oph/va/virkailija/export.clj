@@ -38,7 +38,7 @@
   (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
         form-ids (avustushaku->formids avustushaku)
         hakemukset (avustushaku->hakemukset avustushaku)]
-    ))
+    form-ids))
 
 (def hakemus->main-sheet-rows
   (juxt :organization-name
