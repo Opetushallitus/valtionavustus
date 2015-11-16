@@ -31,6 +31,7 @@ const events = {
   deleteFocusArea: 'deleteFocusArea',
   beforeUnload: 'beforeUnload',
   selectEditorSubTab: 'selectEditorSubTab',
+  ldapSearchStarted: 'ldapSearchStarted',
   ldapSearchFinished: 'ldapSearchFinished'
 }
 
@@ -64,7 +65,7 @@ export default class HakujenHallintaController {
       },
       formDrafts: {},
       subTab: subTab,
-      ldapSearchResults: { error: false, results: [], truncated: false }
+      ldapSearchResults: { error: false, results: [], truncated: false, loading: false }
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
@@ -73,7 +74,7 @@ export default class HakujenHallintaController {
       dispatcher.push(events.initialState, state)
     })
     this.autoSave = _.debounce(function(){ dispatcher.push(events.saveHaku) }, 3000)
-    this.startLdapSearch = _.debounce(this.doStartLdapSearch, 300)
+    this.startLdapSearch = _.debounce((searchInput) => { dispatcher.push(events.ldapSearchStarted, searchInput) }, 300)
     this._bind('onInitialState','onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
                'onHakuSave', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
                'onBeforeUnload')
@@ -107,6 +108,7 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.deleteFocusArea)], this.onDeleteFocusArea,
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload,
       [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab,
+      [dispatcher.stream(events.ldapSearchStarted)], this.onStartLdapSearch,
       [dispatcher.stream(events.ldapSearchFinished)], this.onLdapSearchFinished
     )
 
@@ -345,17 +347,20 @@ export default class HakujenHallintaController {
     dispatcher.push(events.saveForm, {haku: avustushaku, form: JSON.parse(form)})
   }
 
-  doStartLdapSearch(searchInput) { // will be invoked from the debounced function
+  onStartLdapSearch(state, searchInput) {
+    state.ldapSearchResults.loading = true
     HttpUtil.post("/api/ldap/search", { searchInput: searchInput })
             .then(r => { dispatcher.push(events.ldapSearchFinished, r) })
             .catch(r => {
               console.error('Got bad response from LDAP search', r)
               dispatcher.push(events.ldapSearchFinished, { error: true, results: [], truncated: false })
             })
+    return state
   }
 
   onLdapSearchFinished(state, ldapSearchResponse) {
     state.ldapSearchResults = ldapSearchResponse
+    state.ldapSearchResults.loading = false
     return state
   }
 

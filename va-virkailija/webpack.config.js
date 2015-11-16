@@ -47,6 +47,11 @@ module.exports = {
         query: { mimetype: "image/png" }
       },
       {
+        test: /\.gif$/,
+        loader: "url-loader",
+        query: { mimetype: "image/gif" }
+      },
+      {
         include: /\.json$/,
         loaders: ["json-loader"]
       }

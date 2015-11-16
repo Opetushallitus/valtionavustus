@@ -69,9 +69,12 @@ class PersonSelectList extends React.Component {
 
       return <li key={r["person-oid"]}>{addButton} {displayText}</li>
     })
-    return <ul id="ldap-search-results">
-             {personRows}
-           </ul>
+    const searchResultClassName = ldapSearchResults.loading ? "loading" : undefined
+    return <div id="ldap-search-results" className={searchResultClassName}>
+               <ul>
+                 {personRows}
+               </ul>
+           </div>
   }
 }
 
