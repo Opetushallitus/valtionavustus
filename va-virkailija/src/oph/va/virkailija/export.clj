@@ -2,6 +2,7 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.java.io :as io]
             [dk.ative.docjure.spreadsheet :as spreadsheet]
+            [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.hakudata :as hakudata])
   (:import [java.io ByteArrayOutputStream ByteArrayInputStream]))
 
@@ -21,8 +22,23 @@
                             "Ehdotettu budjetti"
                             "OPH:n avustuksen osuus"])
 
+(defn- avustushaku->formids [avustushaku]
+  (->> (-> avustushaku :form :content)
+       (formutil/find-fields)
+       (map :id)))
+
+(defn- avustushaku->hakemukset [avustushaku]
+  (->> (:hakemukset avustushaku)
+       (filter valid-hakemus?)))
+
 (defn- valid-hakemus? [hakemus]
   (= (:status hakemus) "submitted"))
+
+(defn testbox []
+  (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
+        form-ids (avustushaku->formids avustushaku)
+        hakemukset (avustushaku->hakemukset avustushaku)]
+    ))
 
 (def hakemus->main-sheet-rows
   (juxt :organization-name
@@ -40,8 +56,7 @@
 
 (defn export-avustushaku [avustushaku-id]
   (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id)
-        hakemus-list (->> (:hakemukset avustushaku)
-                          (filter valid-hakemus?))
+        hakemus-list (avustushaku->hakemukset avustushaku)
         output (ByteArrayOutputStream.)
         main-sheet-rows (mapv hakemus->main-sheet-rows hakemus-list)
         wb (spreadsheet/create-workbook main-sheet-name
