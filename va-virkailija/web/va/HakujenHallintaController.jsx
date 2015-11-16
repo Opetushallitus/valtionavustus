@@ -480,4 +480,8 @@ export default class HakujenHallintaController {
   selectEditorSubtab(subTabToSelect) {
     dispatcher.push(events.selectEditorSubTab, subTabToSelect)
   }
+
+  clearLdapSearchResults() {
+    dispatcher.push(events.ldapSearchFinished, { error: false, results: [], truncated: false })
+  }
 }

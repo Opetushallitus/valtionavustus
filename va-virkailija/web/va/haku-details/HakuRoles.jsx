@@ -19,9 +19,10 @@ export default class HakuRoles extends Component {
     const startSearch = e => {
       const input = _.trim(e.target.value)
       if (input.length < minimumSearchInputLength) {
-        return
+        controller.clearLdapSearchResults(input)
+      } else {
+        controller.startLdapSearch(input)
       }
-      controller.startLdapSearch(input)
     }
 
     // ldapSearchResults: { error: false, results: [], truncated: false }
