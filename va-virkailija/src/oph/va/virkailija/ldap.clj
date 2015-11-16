@@ -43,12 +43,12 @@
 (defn check-app-access [ldap-server username]
   (let [user-details (find-user-details ldap-server username)
         description (-> user-details :description json/parse-string)
-        required-group (-> config :ldap :required-group)]
-    (if (has-group? user-details required-group)
+        required-group (-> config :ldap :required-group)
+        admin-group (-> config :ldap :admin-group)]
+    (if (or (has-group? user-details required-group) (has-group? user-details admin-group))
       description
-      (log/warn (str "Authorization failed for username '"
-                     username "' : "
-                     required-group " missing, got only "
+      (log/warn (str "Authorization failed for username '" username "' : did not have either "
+                     required-group " or " admin-group" , got only "
                      (pr-str description))))))
 
 (defn details->map [details]

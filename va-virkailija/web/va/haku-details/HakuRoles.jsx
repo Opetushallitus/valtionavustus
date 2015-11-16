@@ -81,7 +81,7 @@ class PersonSelectList extends React.Component {
 
 
     function userDetailsToClassAndFi(userDetails) {
-      if (userDetails["va-user"] && userDetails["va-admin"]) {
+      if (userDetails["va-admin"]) {
         return { className: "va-admin", description: "VA-pääkäyttäjä" }
       }
       if (userDetails["va-user"]) {
