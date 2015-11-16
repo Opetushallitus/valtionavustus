@@ -10,7 +10,7 @@
   (-> config :ldap :people-path-base))
 
 (defn- people-path [uid]
-  (str "uid=" uid (people-path-base)))
+  (str "uid=" uid "," (people-path-base)))
 
 (defn- ldap-pool [{:keys [hostname port user password]}]
   (ldap/connect {:host [{:address (.getHostName hostname) :port port}]
@@ -72,9 +72,8 @@
 
 (defn search-users [search-input]
   (let [ldap-server (create-ldap-connection)
-        base-without-comma (subs (people-path-base) 1) ;; TODO Change config to not include comma
         search-terms (clojure.string/split search-input #" ")
         filter-string (create-and-filter search-terms)
-        raw-results (do-with-ldap ldap-server #(ldap/search ldap-server base-without-comma {:filter filter-string}))]
+        raw-results (do-with-ldap ldap-server #(ldap/search ldap-server (people-path-base) {:filter filter-string}))]
     (map details->map raw-results)))
 
