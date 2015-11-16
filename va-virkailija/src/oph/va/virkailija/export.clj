@@ -22,6 +22,9 @@
                             "Ehdotettu budjetti"
                             "OPH:n avustuksen osuus"])
 
+(defn- valid-hakemus? [hakemus]
+  (= (:status hakemus) "submitted"))
+
 (defn- avustushaku->formids [avustushaku]
   (->> (-> avustushaku :form :content)
        (formutil/find-fields)
@@ -30,9 +33,6 @@
 (defn- avustushaku->hakemukset [avustushaku]
   (->> (:hakemukset avustushaku)
        (filter valid-hakemus?)))
-
-(defn- valid-hakemus? [hakemus]
-  (= (:status hakemus) "submitted"))
 
 (defn testbox []
   (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
