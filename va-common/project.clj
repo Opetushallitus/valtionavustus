@@ -42,7 +42,7 @@
                  ;; Testing
                  [speclj "3.3.1"]
                  ;; for junit output: lein spec -f junit
-                 [speclj-junit "0.0.10"]
+                 [speclj-junit "0.0.11-SNAPSHOT"]
 
                  ;; Configuration
                  [environ "1.0.1"]
