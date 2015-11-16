@@ -1,4 +1,4 @@
-export default class HakemusStatuses {
+export default class HakemusArviointiStatuses {
   static allStatuses() {
     return ['unhandled', 'processing', 'rejected', 'plausible', 'accepted']
   }

@@ -4,7 +4,7 @@ import FormUtil from 'soresu-form/web/form/FormUtil'
 
 import HakemusScoring from './HakemusScoring.jsx'
 import HakemusComments from './HakemusComments.jsx'
-import HakemusStatuses from "./HakemusStatuses.js"
+import HakemusArviointiStatuses from "./HakemusArviointiStatuses.js"
 
 export default class HakemusArviointi extends Component {
   render() {
@@ -23,7 +23,7 @@ export default class HakemusArviointi extends Component {
        <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku}
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments}/>
-       <SetStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <BudgetGranted controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
      </div>
@@ -31,7 +31,7 @@ export default class HakemusArviointi extends Component {
   }
 }
 
-class SetStatus extends React.Component {
+class SetArviointiStatus extends React.Component {
   render() {
     const hakemus = this.props.hakemus
     const allowEditing = this.props.allowEditing
@@ -41,8 +41,8 @@ class SetStatus extends React.Component {
     const statuses = []
     const statusValues = ['unhandled', 'processing', 'plausible', 'rejected', 'accepted'];
     for (var i=0; i < statusValues.length; i++) {
-      const htmlId = "set-status-" + statusValues[i]
-      const statusFI = HakemusStatuses.statusToFI(statusValues[i])
+      const htmlId = "set-arvio-status-" + statusValues[i]
+      const statusFI = HakemusArviointiStatuses.statusToFI(statusValues[i])
       const onChange = allowEditing ? controller.setHakemusArvioStatus(hakemus, statusValues[i]) : null
       statuses.push(
           <input id={htmlId}

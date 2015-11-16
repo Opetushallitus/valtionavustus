@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
 
-import HakemusStatuses from '../hakemus-details/HakemusStatuses.js'
+import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses.js'
 import ScoreResolver from '../ScoreResolver.js'
 
 export default class HakemusListing extends Component {
@@ -63,7 +63,7 @@ export default class HakemusListing extends Component {
     return function(list, sorter) {
       switch (sorter.field) {
         case "status":
-          return _.sortBy(list, HakemusListing._sortByArray(hakemus => hakemus.arvio.status, HakemusStatuses.allStatuses(), sorter.order, userInfo))
+          return _.sortBy(list, HakemusListing._sortByArray(hakemus => hakemus.arvio.status, HakemusArviointiStatuses.allStatuses(), sorter.order, userInfo))
       }
       return _.sortByOrder(list, HakemusListing._fieldGetter(sorter.field, userInfo), sorter.order)
     }
@@ -228,7 +228,7 @@ class StatusFilter extends Component {
       }
     }
 
-    const statusValues = HakemusStatuses.allStatuses()
+    const statusValues = HakemusArviointiStatuses.allStatuses()
     const self = this
     const onDelete = function(e) {
       self.setState({
@@ -246,7 +246,7 @@ class StatusFilter extends Component {
       statuses.push(
         <div key={status}>
           <input id={htmlId} type="checkbox" checked={checked} onChange={onCheckboxChange(status)} value={statusValues[status]}/>
-          <label htmlFor={htmlId}>{HakemusStatuses.statusToFI(status)} ({kpl})</label>
+          <label htmlFor={htmlId}>{HakemusArviointiStatuses.statusToFI(status)} ({kpl})</label>
         </div>
       )
     }
@@ -271,7 +271,7 @@ class HakemusRow extends Component {
     const thisIsSelected = hakemus === this.props.selectedHakemus
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
     const controller = this.props.controller
-    const statusFI = HakemusStatuses.statusToFI(hakemus.arvio.status)
+    const statusFI = HakemusArviointiStatuses.statusToFI(hakemus.arvio.status)
     var hakemusName = ""
     if (_.isEmpty(hakemus["project-name"])) {
       hakemusName = hakemus["register-number"]
