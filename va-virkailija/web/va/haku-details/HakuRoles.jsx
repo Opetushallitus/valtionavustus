@@ -41,9 +41,8 @@ export default class HakuRoles extends Component {
           <div className="ldap-error-display"><span className={searchErrorClass}>Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.</span></div>
           <div className="person-adder-input">
             Lisää uusi henkilö
-            <input type="text" placeholder={"Hae (vähintään " + minimumSearchInputLength + " merkkiä)"} onChange={startSearch}/>
+            <input type="text" placeholder={"Hae (vähintään " + minimumSearchInputLength + " merkkiä)"} onChange={startSearch} disabled={!roles}/>
             <PersonSelectList ldapSearchResults={ldapSearchResults} avustushaku={avustushaku} controller={controller} />
-            <button onClick={controller.createRole(avustushaku)} disabled={!roles}>Lisää uusi henkilö</button>
           </div>
         </div>
       </div>
