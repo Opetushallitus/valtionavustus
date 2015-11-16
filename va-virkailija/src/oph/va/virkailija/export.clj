@@ -22,16 +22,30 @@
                             "Ehdotettu budjetti"
                             "OPH:n avustuksen osuus"])
 
+(defn- has-child? [id node]
+  (when-let [children (:children node)]
+    (let [child-list (->> children
+                          (filter (fn [child]
+                                    (= (:id child) id))))]
+      (when (not (empty? child-list))
+        node))))
+
+(defn- find-parent-label [wrappers id]
+  (when-let [found-parent (->> wrappers
+                               (filter (partial has-child? id))
+                               first)]
+    (-> found-parent :label :fi)))
+
 (defn- valid-hakemus? [hakemus]
   (= (:status hakemus) "submitted"))
 
 (defn- avustushaku->formids [avustushaku]
   (let [form (-> avustushaku :form :content)
         wrappers (formutil/find-wrapper-elements form)]
-    (trace "wrappers" wrappers)
     (->> form
          (formutil/find-fields)
-         (map (fn [field] [(:id field) (-> field :label :fi)]))
+         (map (fn [field] [(:id field) (or (-> field :label :fi)
+                                           (find-parent-label wrappers (:id field)))]))
          (into {}))))
 
 (defn- avustushaku->hakemukset [avustushaku]
