@@ -63,7 +63,10 @@ class PersonSelectList extends React.Component {
       const titleText = name + " <" + email + ">" + "(" + accessLevel.description + ", oid " + oid + ")"
       const displayText = name + " <" + email + ">"
 
-      const addButton = <button onClick={controller.createRole(avustushaku, newRole)}>Lisää</button>
+      const personIsInRolesAlready = _.some(avustushaku.roles, r => { return r.oid === oid })
+      const addButtonTitle = personIsInRolesAlready ? "Käyttäjä on jo lisätty avustushakuun" : null
+      const addButtonOnClick = personIsInRolesAlready ? null : controller.createRole(avustushaku, newRole)
+      const addButton = <button title={addButtonTitle} onClick={addButtonOnClick} disabled={personIsInRolesAlready}>Lisää</button>
 
       return <li key={r["person-oid"]} title={titleText}>{addButton}
                <span className={"access-level " + accessLevel.className}>{accessLevel.description}</span>
