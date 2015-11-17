@@ -115,18 +115,20 @@
            (ok response)
            (not-found)))
 
-  (GET* "/:avustushaku-id" [avustushaku-id]
+  (GET* "/:avustushaku-id" [avustushaku-id :as request]
         :path-params [avustushaku-id :- Long]
         :return HakuData
-        :summary "Return all relevant avustushaku data (including answers, comments and form)"
-        (if-let [response (hakudata/get-combined-avustushaku-data avustushaku-id)]
-          (ok response)
-          (not-found)))
+        :summary "Return all relevant avustushaku data (including answers, comments, form and current user privileges)"
+        (let [identity (auth/get-identity request)]
+          (if-let [response (hakudata/get-combined-avustushaku-data avustushaku-id identity)]
+            (ok response)
+            (not-found))))
 
-  (GET* "/:haku-id/export.xslx" [haku-id]
+  (GET* "/:haku-id/export.xslx" [haku-id :as request]
         :path-params [haku-id :- Long]
         :summary "Export Excel XLSX document for given avustushaku"
-        (let [document (export/export-avustushaku haku-id)]
+        (let [identity (auth/get-identity request)
+              document (export/export-avustushaku haku-id identity)]
           (-> (ok document)
               (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
               (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"avustushaku-" haku-id ".xlsx\"")))))

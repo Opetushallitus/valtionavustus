@@ -53,7 +53,7 @@
        (filter valid-hakemus?)))
 
 (defn testbox []
-  (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
+  (let [avustushaku (hakudata/get-combined-avustushaku-data 1 nil)
         form-ids (avustushaku->formids avustushaku)
         hakemukset (avustushaku->hakemukset avustushaku)]
     form-ids))
@@ -72,8 +72,8 @@
   (doseq [index (range 0 (count columns))]
     (.autoSizeColumn sheet index)))
 
-(defn export-avustushaku [avustushaku-id]
-  (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id)
+(defn export-avustushaku [avustushaku-id identity]
+  (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id identity)
         hakemus-list (avustushaku->hakemukset avustushaku)
         output (ByteArrayOutputStream.)
         main-sheet-rows (mapv hakemus->main-sheet-rows hakemus-list)

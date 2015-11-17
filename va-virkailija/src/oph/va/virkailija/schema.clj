@@ -94,6 +94,12 @@
                    :role RoleType
                    :oid (s/maybe s/Str)})
 
+(s/defschema HakuPrivileges
+  "Privileges that curently logged in user has for certain avustushaku"
+  {:edit-haku s/Bool
+   :score-hakemus s/Bool
+   :change-hakemus-state s/Bool})
+
 (s/defschema HakuData
   "Avustushaku structured response with related form, roles, hakemukset etc"
   {:avustushaku AvustusHaku
@@ -101,6 +107,7 @@
    :form {:content s/Any
           :rules s/Any}
    :roles [Role]
+   :privileges HakuPrivileges
    :hakemukset [Hakemus]
    :attachments s/Any
    :budget-total-sum s/Int

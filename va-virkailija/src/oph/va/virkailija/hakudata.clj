@@ -2,7 +2,8 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.scoring :as scoring]
-            [oph.va.hakija.api :as hakija-api]))
+            [oph.va.hakija.api :as hakija-api]
+            [oph.va.virkailija.auth :as auth]))
 
 (defn arvio-json [arvio]
   {:id (:id arvio)
@@ -44,9 +45,13 @@
     (-> haku-data
         (assoc :hakemukset (map (partial add-scores-to-hakemus scores) hakemukset)))))
 
-(defn get-combined-avustushaku-data [avustushaku-id]
+(defn- add-privileges [identity haku-data]
+  (-> haku-data (assoc :privileges (auth/resolve-privileges identity haku-data))))
+
+(defn get-combined-avustushaku-data [avustushaku-id identity]
   (let [scores (scoring/get-avustushaku-scores avustushaku-id)]
     (when-let [avustushaku (hakija-api/get-hakudata avustushaku-id)]
       (->> avustushaku
            add-arviot
-           (add-scores scores)))))
+           (add-scores scores)
+           (add-privileges identity)))))
