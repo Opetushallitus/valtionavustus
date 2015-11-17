@@ -6,9 +6,9 @@
 (defquery create-hakemus<! "sql/hakemus/create.sql")
 (defquery get-hakemus-by-user-id "sql/hakemus/get_by_user_id.sql")
 (defquery update-hakemus-submission<! "sql/hakemus/update-submission.sql")
-(defquery update-hakemus-status<! "sql/hakemus/update-status.sql")
-(defquery lock-hakemus "sql/hakemus/lock.sql")
-(defquery close-existing-hakemus! "sql/hakemus/close-existing.sql")
+(defquery update-hakemus-status<! "sql/common/hakija/hakemus/update-status.sql")
+(defquery lock-hakemus "sql/common/hakija/hakemus/lock.sql")
+(defquery close-existing-hakemus! "sql/common/hakija/hakemus/close-existing.sql")
 
 (defquery get-avustushaku "sql/avustushaku/get.sql")
 (defquery list-avustushaut "sql/avustushaku/list.sql")
