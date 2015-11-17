@@ -77,6 +77,7 @@ export default class HakemusListing extends Component {
   render() {
     const controller = this.props.controller
     const userInfo = this.props.userInfo
+    const allowHakemusScoring = this.props.privileges["score-hakemus"]
     const hasSelected = this.props.hasSelected
     const selectedHakemus = this.props.selectedHakemus
     const filter = this.props.hakemusFilter
@@ -85,7 +86,7 @@ export default class HakemusListing extends Component {
     const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter, userInfo)
     const ophShareSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
-      return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} userInfo={userInfo} controller={controller}/> })
+      return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} userInfo={userInfo} allowHakemusScoring={allowHakemusScoring} controller={controller}/> })
     const budgetGrantedSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
 
     const onFilterChange = function(filterId) {
@@ -265,6 +266,7 @@ class HakemusRow extends Component {
   render() {
     const hakemus = this.props.hakemus
     const userInfo = this.props.userInfo
+    const allowHakemusScoring = this.props.allowHakemusScoring
     const htmlId = "hakemus-" + hakemus.id
     const thisIsSelected = hakemus === this.props.selectedHakemus
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
@@ -279,7 +281,7 @@ class HakemusRow extends Component {
     return <tr id={htmlId} className={rowClass} onClick={controller.selectHakemus(hakemus)}>
       <td className="organization-column" title={hakemus["organization-name"]}>{hakemus["organization-name"]}</td>
       <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
-      <td className="score-column"><Scoring scoring={hakemus.arvio.scoring} userInfo={userInfo}/></td>
+      <td className="score-column"><Scoring scoring={hakemus.arvio.scoring} userInfo={userInfo} allowHakemusScoring={allowHakemusScoring}/></td>
       <td className="status-column">{statusFI}</td>
       <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>
       <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>
@@ -291,6 +293,7 @@ class HakemusRow extends Component {
 class Scoring extends Component {
   render() {
     const userInfo = this.props.userInfo
+    const allowHakemusScoring = this.props.allowHakemusScoring
     const scoring = this.props.scoring
     const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo)
     const normalizedMeanScore = meanScore + 1
@@ -312,7 +315,7 @@ class Scoring extends Component {
     })
 
     const titleText = _.isUndefined(meanScore) ?
-      "Pisteytä hakemus jokaisen valintaperusteen mukaan nähdäksesi kaikkien arvioiden keskiarvon" :
+      (allowHakemusScoring ? "Pisteytä hakemus jokaisen valintaperusteen mukaan nähdäksesi kaikkien arvioiden keskiarvon" : null ) :
       ScoreResolver.createAverageSummaryText(scoring, userInfo)
 
     return (

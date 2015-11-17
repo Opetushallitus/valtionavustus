@@ -8,6 +8,7 @@ export default class HakemusScoring extends Component {
   render() {
     const controller = this.props.controller
     const hakemus = this.props.hakemus
+    const allowHakemusScoring = this.props.allowHakemusScoring
     const allScoresOfHakemus = hakemus.scores
     const scoringOfHakemus = hakemus.arvio ? hakemus.arvio.scoring : undefined
     const myUserInfo = this.props.userInfo
@@ -16,7 +17,7 @@ export default class HakemusScoring extends Component {
     const avustushaku = this.props.avustushaku
     const valintaperusteet = _.get(avustushaku, "content.selection-criteria.items")
     const myOwnValintaPerusteRows = HakemusScoring.createValintaPerusteRows(allScoresOfHakemus,
-      valintaperusteet, myUserInfo["person-oid"], controller)
+      valintaperusteet, myUserInfo["person-oid"], allowHakemusScoring, controller)
     const othersScoreDisplays = showOthersScores ?
       HakemusScoring.createOthersScoreDisplays(allScoresOfHakemus, scoringOfHakemus, valintaperusteet, myUserInfo) : undefined
     return <div key="hakemus-scoring-container" id="hakemus-scoring-container">
@@ -31,13 +32,14 @@ export default class HakemusScoring extends Component {
            </div>
   }
 
-  static createValintaPerusteRows(allScoresOfHakemus, valintaperusteet, personOid, controller) {
+  static createValintaPerusteRows(allScoresOfHakemus, valintaperusteet, personOid, allowHakemusScoring, controller) {
     var perusteIndex = 0
     return _.map(valintaperusteet, peruste => { return <ValintaPerusteRow valintaperuste={peruste}
                                                                           scores={findScores(perusteIndex)}
                                                                           selectionCriteriaIndex={perusteIndex}
                                                                           personOid={personOid}
                                                                           key={personOid + perusteIndex++}
+                                                                          allowHakemusScoring={allowHakemusScoring}
                                                                           controller={controller} /> })
 
     function findScores(perusteIndex) {
@@ -52,7 +54,7 @@ export default class HakemusScoring extends Component {
       const userLabel = userScoring["first-name"] + " " + userScoring["last-name"]
       return <div className="valintaperuste-list">
                <h2>{userLabel}</h2>
-               {HakemusScoring.createValintaPerusteRows(allScoresOfHakemus, valintaperusteet, oid)}
+               {HakemusScoring.createValintaPerusteRows(allScoresOfHakemus, valintaperusteet, oid, false, null)}
              </div>
     })
   }
@@ -63,6 +65,7 @@ class ValintaPerusteRow extends Component {
     const valintaperuste = this.props.valintaperuste
     const selectionCriteriaIndex = this.props.selectionCriteriaIndex
     const allScoresOfThisPeruste = this.props.scores
+    const allowHakemusScoring = this.props.allowHakemusScoring
     const personOid = this.props.personOid
     const controller = this.props.controller
     const scoreOfUser = _.find(allScoresOfThisPeruste, s => { return s["person-oid"] === personOid })
@@ -71,6 +74,7 @@ class ValintaPerusteRow extends Component {
                                                              index={i}
                                                              scoreOfUser={scoreOfUser}
                                                              selectionCriteriaIndex={selectionCriteriaIndex}
+                                                             allowHakemusScoring={allowHakemusScoring}
                                                              controller={controller} />)
 
     const textInFinnish = valintaperuste.fi
@@ -93,12 +97,13 @@ class StarElement extends Component {
     const indexOfStar = this.props.index
     const starTitle = ScoreResolver.scoreToFI(indexOfStar)
     const scoreOfUser = this.props.scoreOfUser
+    const allowHakemusScoring = this.props.allowHakemusScoring
     const selectionCriteriaIndex = this.props.selectionCriteriaIndex
     const starVisible = scoreOfUser && scoreOfUser.score >= indexOfStar
     const starImage = starVisible ? "/img/star_on.png" : "/img/star_off.png"
 
     const controller = this.props.controller
-    const enableEditing = !_.isUndefined(controller)
+    const enableEditing = allowHakemusScoring && !_.isUndefined(controller)
     const classNames = ClassNames("single-score", {editable: enableEditing})
     const onClick = enableEditing ? event => { controller.setScore(selectionCriteriaIndex, indexOfStar) } : undefined
     const showHover = enableEditing && !starVisible ? event => { event.target.setAttribute("src", "/img/star_hover.png") } : undefined

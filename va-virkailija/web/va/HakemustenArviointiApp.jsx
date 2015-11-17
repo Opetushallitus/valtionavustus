@@ -44,6 +44,7 @@ export default class App extends Component {
                             hasSelected={hasSelected}
                             selectedHakemus={selectedHakemus}
                             userInfo={state.userInfo}
+                            privileges={hakuData.privileges}
                             controller={controller} />
           </div>
           <HakemusDetails hidden={!hasSelected}

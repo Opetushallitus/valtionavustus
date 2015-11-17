@@ -20,6 +20,7 @@ export default class HakemusDetails extends Component {
         <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
         <HakemusArviointi hakemus={hakemus}
                           avustushaku={avustushaku}
+                          privileges={hakuData.privileges}
                           userInfo={userInfo}
                           loadingComments={loadingComments}
                           showOthersScores={showOthersScores}
