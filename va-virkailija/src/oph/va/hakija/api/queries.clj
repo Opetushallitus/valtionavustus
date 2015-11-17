@@ -25,7 +25,6 @@
 (defquery attachment-exists? "sql/hakija/attachment/exists.sql")
 (defquery download-attachment "sql/hakija/attachment/download.sql")
 
-(defquery set-hakemus-register-number! "sql/hakija/hakemus/set-register-number.sql")
 (defquery get-hakemus "sql/hakija/hakemus/get-by-id.sql")
 (defquery update-hakemus-status<! "sql/common/hakija/hakemus/update-status.sql")
 (defquery lock-hakemus "sql/common/hakija/hakemus/lock.sql")

@@ -241,17 +241,6 @@
          (ok {:hakemus-id hakemus-id
               :status (:status body)}))
 
-  (POST* "/:avustushaku-id/hakemus/:hakemus-id/register-number" [avustushaku-id hakemus-id]
-        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-        :body [body (describe {:register-number s/Str} "Register number (diaarinumero)")]
-        :return {:hakemus-id Long
-                 :register-number s/Str}
-        :summary "Update register number for hakemus"
-        :description "Update register number (diaarinumero) associated with hakemus. This is normally not needed, but left here in case register numbers need to be modified to be in sync with external registry."
-        (hakija-api/set-register-number hakemus-id (:register-number body))
-        (ok {:hakemus-id hakemus-id
-             :register-number (:register-number body)}))
-
   (PUT* "/:avustushaku-id/searches" [avustushaku-id :as request]
         :path-params [avustushaku-id :- Long]
         :body [body (describe SavedSearch "New stored search")]

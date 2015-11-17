@@ -184,10 +184,6 @@
          (catch Exception e (throw (get-next-exception-or-original e))))
     (get-form-by-avustushaku avustushaku-id)))
 
-(defn set-register-number [hakemus-id register-number]
-  (exec :hakija-db hakija-queries/set-hakemus-register-number! {:hakemus_id hakemus-id
-                                                               :register_number register-number}))
-
 (defn update-hakemus-status [hakemus-id status]
   (let [hakemus-to-update (first (exec :hakija-db hakija-queries/get-hakemus {:id hakemus-id}))
         updated-hakemus (merge hakemus-to-update {:status (keyword status)
