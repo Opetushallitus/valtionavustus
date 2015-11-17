@@ -61,18 +61,24 @@
   { :fi (str (:fi nameField) " (kopio)" )
     :sv (str (:sv nameField) " (kopia)")})
 
-(defn create-new-avustushaku [base-haku-id]
+(defn create-new-avustushaku [base-haku-id identity]
   (let [base-haku (-> base-haku-id
                       (hakija-api/get-hakudata)
                       :avustushaku)
         {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
-        form-id (:form base-haku)]
-    (hakija-api/create-avustushaku {:name (add-copy-suffixes name)
-                                    :duration {:start (clj-time/plus (clj-time/now) (clj-time/months 1))
-                                    :end (clj-time/plus (clj-time/now) (clj-time/months 2))
-                                    :label {:fi "Hakuaika"
-                                            :sv "Ansökningstid"}}
-                                    :selection-criteria selection-criteria
-                                    :self-financing-percentage self-financing-percentage
-                                    :focus-areas focus-areas}
-                                    form-id)))
+        form-id (:form base-haku)
+        new-haku (hakija-api/create-avustushaku {:name (add-copy-suffixes name)
+                                            :duration {:start (clj-time/plus (clj-time/now) (clj-time/months 1))
+                                            :end (clj-time/plus (clj-time/now) (clj-time/months 2))
+                                            :label {:fi "Hakuaika"
+                                                    :sv "Ansökningstid"}}
+                                            :selection-criteria selection-criteria
+                                            :self-financing-percentage self-financing-percentage
+                                            :focus-areas focus-areas}
+                                            form-id)]
+    (hakija-api/create-avustushaku-role {:avustushaku (:id new-haku)
+                                         :role "presenting_officer"
+                                         :name (str (:first-name identity) " " (:surname identity))
+                                         :email (:email identity)
+                                         :oid (:person-oid identity)})
+    new-haku))

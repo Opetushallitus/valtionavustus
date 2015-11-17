@@ -80,11 +80,11 @@
           (ok response)
           (not-found)))
 
-  (PUT* "/" []
-        :body [base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base") ]
+  (PUT* "/" [:as request]
+        :body [base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base")]
         :return AvustusHaku
         :summary "Copy existing avustushaku as new one by id of the existing avustushaku"
-        (ok (hakudata/create-new-avustushaku (:baseHakuId base-haku-id-wrapper))))
+        (ok (hakudata/create-new-avustushaku (:baseHakuId base-haku-id-wrapper) (auth/get-identity request))))
 
   (POST* "/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
