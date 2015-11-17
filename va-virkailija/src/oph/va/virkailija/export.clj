@@ -16,11 +16,6 @@
                          "Arviokeskiarvo"])
 
 (def answers-sheet-name "Vastaukset")
-(def answers-sheet-columns ["Hakijaorganisaatio"
-                            "Diaarinumero"
-                            "Hankkeen nimi"
-                            "Ehdotettu budjetti"
-                            "OPH:n avustuksen osuus"])
 
 (defn- has-child? [id node]
   (when-let [children (:children node)]
@@ -51,12 +46,14 @@
   (->> (:hakemukset avustushaku)
        (filter valid-hakemus?)))
 
-(defn testbox []
-  (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
-        form-ids (avustushaku->formlabels avustushaku)
-        hakemukset (avustushaku->hakemukset avustushaku)
-        answers (map (comp formutil/unwrap-answers :answers) hakemukset)]
-    (first answers)))
+(defn flatten-answers [avustushaku label-map]
+  (let [hakemukset (avustushaku->hakemukset avustushaku)
+        answers (map (comp formutil/unwrap-answers :answers) hakemukset)
+        flat-answers (map (fn [answer-set]
+                            (map (fn [formid]
+                                   (let [[id header] formid]
+                                     (get answer-set id))) label-map)) answers)]
+    (apply conj [(vals label-map)] flat-answers)))
 
 (def hakemus->main-sheet-rows
   (juxt :organization-name
@@ -83,8 +80,10 @@
         main-sheet (spreadsheet/select-sheet main-sheet-name wb)
         main-header-row (first (spreadsheet/row-seq main-sheet))
 
+        answer-label-map (avustushaku->formlabels avustushaku)
+        answer-flatdata (flatten-answers avustushaku answer-label-map)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
-                        (spreadsheet/add-row! sheet answers-sheet-columns)
+                        (spreadsheet/add-rows! sheet answer-flatdata)
                         sheet)
         answers-header-row (first (spreadsheet/row-seq answers-sheet))
 
@@ -92,7 +91,7 @@
                                                          :font {:bold true}})]
 
     (fit-columns main-sheet-columns main-sheet)
-    (fit-columns answers-sheet-columns answers-sheet)
+    (fit-columns (vals answer-label-map) answers-sheet)
 
     ;; Style first row
     (spreadsheet/set-row-style! main-header-row header-style)
