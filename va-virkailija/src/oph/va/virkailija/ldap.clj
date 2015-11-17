@@ -73,7 +73,7 @@
   (let [conditions (mapv create-or-filter search-terms)]
         (str "(&" (clojure.string/join conditions)")")))
 
-(defn- user-search-result [user-details]
+(defn details->map-with-roles [user-details]
   (merge (details->map user-details)
          {:va-user (has-group? user-details (-> config :ldap :required-group))
           :va-admin (has-group? user-details (-> config :ldap :admin-group))}))
@@ -87,6 +87,6 @@
         search-terms (clojure.string/split search-input #" ")
         filter-string (create-and-filter search-terms)]
     (->> (do-with-ldap ldap-server #(ldap/search ldap-server (people-path-base) {:filter filter-string}))
-         (map user-search-result)
+         (map details->map-with-roles)
          (sort by-access-and-name))))
 
