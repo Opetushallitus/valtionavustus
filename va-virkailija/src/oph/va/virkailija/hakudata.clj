@@ -47,7 +47,7 @@
         (assoc :hakemukset (map (partial add-scores-to-hakemus scores) hakemukset)))))
 
 (defn- add-privileges [identity haku-data]
-  (-> haku-data (assoc :privileges (authorization/resolve-privileges identity haku-data))))
+  (-> haku-data (assoc :privileges (authorization/resolve-privileges identity (:avustushaku haku-data) (:roles haku-data)))))
 
 (defn get-combined-avustushaku-data [avustushaku-id identity]
   (let [scores (scoring/get-avustushaku-scores avustushaku-id)]

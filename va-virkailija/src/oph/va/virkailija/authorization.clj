@@ -6,9 +6,9 @@
 (defn- has-oid? [oid role]
   (= oid (:oid role)))
 
-(defn- resolve-privileges-for-user [user-with-roles haku-data]
+(defn- resolve-privileges-for-user [user-with-roles haku-roles]
   (let [user-oid (:person-oid user-with-roles)
-        haku-role-of-user (->> (:roles haku-data)
+        haku-role-of-user (->> haku-roles
                                (filter #(has-oid? user-oid %))
                                first)
         is-presenter (= "presenting_officer" (:role haku-role-of-user))
@@ -17,14 +17,14 @@
      :score-hakemus (or is-presenter is-evaluator)
      :change-hakemus-state is-presenter}))
 
-(defn resolve-privileges [identity haku-data]
+(defn resolve-privileges [identity avustushaku haku-roles]
   (let [user-with-roles (->> identity
                              :username
                              (ldap/find-user-details (ldap/create-ldap-connection))
                              ldap/details->map-with-roles)]
     (if (:person-oid user-with-roles)
-        (resolve-privileges-for-user user-with-roles haku-data)
-        (do (log/error (str "Could not find user details for " identity " to access " (:avustushaku haku-data)))
+        (resolve-privileges-for-user user-with-roles haku-roles)
+        (do (log/error (str "Could not find user details for " identity " to access " avustushaku))
             {:edit-haku false
              :score-hakemus false
              :change-hakemus-state false}))))
