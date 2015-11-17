@@ -71,7 +71,7 @@
 
 (defn- create-and-filter [search-terms]
   (let [conditions (mapv create-or-filter search-terms)]
-        (str "(&" (clojure.string/join conditions)")")))
+        (str "(&" "(employeeNumber=*)" (clojure.string/join conditions)")")))
 
 (defn details->map-with-roles [user-details]
   (merge (details->map user-details)
