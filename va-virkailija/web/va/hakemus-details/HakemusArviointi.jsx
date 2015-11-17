@@ -73,16 +73,19 @@ class SetArviointiStatus extends React.Component {
 class ChangeRequest extends React.Component {
   render() {
     const hakemus = this.props.hakemus
+    const allowEditing = this.props.allowEditing
     const status = hakemus.status
     const statusFI = HakemusStatuses.statusToFI(status)
     const hasChangeRequired = status === 'pending_change_request'
     const controller = this.props.controller
+    const onClick = allowEditing ? controller.setHakemusStatus(hakemus, 'pending_change_request') : null
     return (
       <div className="value-edit">
         <label hidden={hasChangeRequired} htmlFor="require-change">Hakemus on {statusFI}</label>
         <label hidden={!hasChangeRequired} htmlFor="require-change">Hakemukseen on pyydetty täydennystä</label>
         <button hidden={hasChangeRequired}
-                onClick={controller.setHakemusStatus(hakemus, 'pending_change_request')}
+                onClick={onClick}
+                disabled={!allowEditing}
                 id="require-change"
                 name="require-change">Pyydä täydennystä</button>
       </div>
