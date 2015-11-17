@@ -5,6 +5,7 @@ import FormUtil from 'soresu-form/web/form/FormUtil'
 import HakemusScoring from './HakemusScoring.jsx'
 import HakemusComments from './HakemusComments.jsx'
 import HakemusArviointiStatuses from "./HakemusArviointiStatuses.js"
+import HakemusStatuses from './HakemusStatuses.js'
 
 export default class HakemusArviointi extends Component {
   render() {
@@ -24,6 +25,7 @@ export default class HakemusArviointi extends Component {
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <ChangeRequest controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <BudgetGranted controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
      </div>
@@ -63,6 +65,25 @@ class SetArviointiStatus extends React.Component {
     return (
       <div>
         {statuses}
+      </div>
+    )
+  }
+}
+
+class ChangeRequest extends React.Component {
+  render() {
+    const hakemus = this.props.hakemus
+    const status = hakemus.status
+    const statusFI = HakemusStatuses.statusToFI(status)
+    const hasChangeRequired = status === 'pending_change_request'
+    const controller = this.props.controller
+    return (
+      <div className="value-edit">
+        <label hidden={hasChangeRequired} htmlFor="require-change">Hakemus on {statusFI}</label>
+        <label hidden={!hasChangeRequired} htmlFor="require-change">Hakemukseen on pyydetty täydennystä</label>
+        <button hidden={hasChangeRequired}
+                id="require-change"
+                name="require-change">Pyydä täydennystä</button>
       </div>
     )
   }

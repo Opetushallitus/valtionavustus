@@ -101,7 +101,7 @@ export default class HakemustenArviointiController {
     const query = queryString.parse(location.search)
     if (query.showAll != "true") {
       realInitialState.hakuData.hakemukset = _.filter(realInitialState.hakuData.hakemukset, (hakemus) => {
-        return hakemus.status === "submitted"
+        return hakemus.status === "submitted" || hakemus.status === "pending_change_request"
       })
     }
     const parsedHakemusIdObject = new RouteParser('/*ignore/hakemus/:hakemus_id/*ignore').match(location.pathname)
