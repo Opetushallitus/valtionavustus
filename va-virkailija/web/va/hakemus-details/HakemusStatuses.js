@@ -3,16 +3,12 @@ export default class HakemusStatuses {
     return ['new', 'draft', 'submitted', 'pending_change_request']
   }
   static statusToFI(status) {
-    switch(status) {
-      case "new":
-        return "uusi"
-      case "draft":
-        return "luonnos"
-      case "submitted":
-        return "lähetetty"
-      case "pending_change_request":
-        return "täydennyspyyntö tehty"
+    const translations = {
+      "new": "uusi",
+      "draft": "luonnos",
+      "submitted": "lähetetty",
+      "pending_change_request": "täydennyspyyntö tehty"
     }
-    return status
+    return translations[status] ? translations[status] : status
   }
 }

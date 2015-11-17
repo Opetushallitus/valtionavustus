@@ -3,18 +3,13 @@ export default class HakemusArviointiStatuses {
     return ['unhandled', 'processing', 'plausible', 'rejected', 'accepted']
   }
   static statusToFI(status) {
-    switch(status) {
-      case "unhandled":
-        return "Käsittelemättä"
-      case "processing":
-        return "Käsittelyssä"
-      case "plausible":
-        return "Mahdollinen"
-      case "rejected":
-        return "Hylätty"
-      case "accepted":
-        return "Hyväksytty"
+    const translations = {
+      "unhandled": "Käsittelemättä",
+      "processing": "Käsittelyssä",
+      "plausible": "Mahdollinen",
+      "rejected": "Hylätty",
+      "accepted": "Hyväksytty"
     }
-    return status
+    return translations[status] ? translations[status] : status
   }
 }
