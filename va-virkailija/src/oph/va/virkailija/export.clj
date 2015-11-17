@@ -55,7 +55,7 @@
   (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
         form-ids (avustushaku->formlabels avustushaku)
         hakemukset (avustushaku->hakemukset avustushaku)
-        answers (map (comp unwrap-answers :answers) hakemukset)]
+        answers (map (comp formutil/unwrap-answers :answers) hakemukset)]
     (first answers)))
 
 (def hakemus->main-sheet-rows
