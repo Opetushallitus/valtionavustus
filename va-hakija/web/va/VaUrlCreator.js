@@ -24,6 +24,10 @@ export default class VaUrlCreator extends UrlCreator {
         const hakemusId = state.saveStatus.hakemusId
         return entityApiUrl(avustusHakuId, hakemusId, state.saveStatus.savedObject.version)
       },
+      submitEntityApiUrl: function (state) {
+        const baseEditUrl = this.editEntityApiUrl(state)
+        return baseEditUrl + "/submit"
+      },
       loadEntityApiUrl: function (urlContent) {
         const query = urlContent.parsedQuery
         const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
