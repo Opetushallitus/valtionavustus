@@ -3,7 +3,8 @@
   (:require [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.scoring :as scoring]
             [oph.va.hakija.api :as hakija-api]
-            [oph.va.virkailija.authorization :as authorization]))
+            [oph.va.virkailija.authorization :as authorization]
+            [clj-time.core :as clj-time]))
 
 (defn arvio-json [arvio]
   {:id (:id arvio)
@@ -55,3 +56,23 @@
            add-arviot
            (add-scores scores)
            (add-privileges identity)))))
+
+(defn- add-copy-suffixes [nameField]
+  { :fi (str (:fi nameField) " (kopio)" )
+    :sv (str (:sv nameField) " (kopia)")})
+
+(defn create-new-avustushaku [base-haku-id]
+  (let [base-haku (-> base-haku-id
+                      (hakija-api/get-hakudata)
+                      :avustushaku)
+        {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
+        form-id (:form base-haku)]
+    (hakija-api/create-avustushaku {:name (add-copy-suffixes name)
+                                    :duration {:start (clj-time/plus (clj-time/now) (clj-time/months 1))
+                                    :end (clj-time/plus (clj-time/now) (clj-time/months 2))
+                                    :label {:fi "Hakuaika"
+                                            :sv "Ansökningstid"}}
+                                    :selection-criteria selection-criteria
+                                    :self-financing-percentage self-financing-percentage
+                                    :focus-areas focus-areas}
+                                    form-id)))

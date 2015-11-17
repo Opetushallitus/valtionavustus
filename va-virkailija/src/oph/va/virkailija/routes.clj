@@ -3,7 +3,6 @@
           [clojure.pprint :only [pprint]])
   (:require [compojure.route :as route]
             [clojure.tools.logging :as log]
-            [clj-time.core :as clj-time]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
             [compojure.core :refer [defroutes GET POST]]
@@ -63,10 +62,6 @@
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
-(defn- add-copy-suffixes [nameField]
-  { :fi (str (:fi nameField) " (kopio)" )
-    :sv (str (:sv nameField) " (kopia)")})
-
 (defroutes* avustushaku-routes
   "Hakemus listing and filtering"
 
@@ -89,22 +84,7 @@
         :body [base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base") ]
         :return AvustusHaku
         :summary "Copy existing avustushaku as new one by id of the existing avustushaku"
-        (let [base-haku (-> base-haku-id-wrapper
-                            :baseHakuId
-                            (hakija-api/get-hakudata)
-                            :avustushaku)
-              {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
-              form-id (:form base-haku)]
-          (ok (hakija-api/create-avustushaku
-                        {:name (add-copy-suffixes name)
-                         :duration {:start (clj-time/plus (clj-time/now) (clj-time/months 1))
-                                    :end (clj-time/plus (clj-time/now) (clj-time/months 2))
-                                    :label {:fi "Hakuaika"
-                                            :sv "Ansökningstid"}}
-                         :selection-criteria selection-criteria
-                         :self-financing-percentage self-financing-percentage
-                         :focus-areas focus-areas}
-                        form-id))))
+        (ok (hakudata/create-new-avustushaku (:baseHakuId base-haku-id-wrapper))))
 
   (POST* "/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
