@@ -1,6 +1,6 @@
 export default class HakemusArviointiStatuses {
   static allStatuses() {
-    return ['unhandled', 'processing', 'rejected', 'plausible', 'accepted']
+    return ['unhandled', 'processing', 'plausible', 'rejected', 'accepted']
   }
   static statusToFI(status) {
     switch(status) {

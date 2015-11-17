@@ -39,7 +39,7 @@ class SetArviointiStatus extends React.Component {
     const status = arvio ? arvio.status : undefined
     const controller = this.props.controller
     const statuses = []
-    const statusValues = ['unhandled', 'processing', 'plausible', 'rejected', 'accepted'];
+    const statusValues = HakemusArviointiStatuses.allStatuses();
     for (var i=0; i < statusValues.length; i++) {
       const htmlId = "set-arvio-status-" + statusValues[i]
       const statusFI = HakemusArviointiStatuses.statusToFI(statusValues[i])
