@@ -18,6 +18,7 @@ const events = {
   setSorter: 'setSorter',
   selectHakemus: 'selectHakemus',
   updateHakemusArvio: 'updateHakemusArvio',
+  updateHakemusStatus: 'updateHakemusStatus',
   updateHakemusRegisterNumber: 'updateHakemusRegisterNumber',
   saveCompleted: 'saveCompleted',
   loadComments: 'loadcomments',
@@ -67,6 +68,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.initialState)], this.onInitialState,
       [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
       [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio,
+      [dispatcher.stream(events.updateHakemusStatus)], this.onUpdateHakemusStatus,
       [dispatcher.stream(events.updateHakemusRegisterNumber)], this.onUpdateHakemusRegisterNumber,
       [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted,
       [dispatcher.stream(events.loadComments)], this.onLoadComments,
@@ -146,6 +148,25 @@ export default class HakemustenArviointiController {
       .catch(function(response) {
         dispatcher.push(events.saveCompleted, "unexpected-save-error")
       })
+    return state
+  }
+
+  onUpdateHakemusStatus(state, updatedHakemus) {
+    const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + updatedHakemus.id + "/status"
+    state.saveStatus.saveInProgress = true
+    const request = {"status": updatedHakemus.status}
+    HttpUtil.post(updateUrl, request)
+        .then(function(response) {
+          if(response instanceof Object) {
+            dispatcher.push(events.saveCompleted)
+          }
+          else {
+            dispatcher.push(events.saveCompleted, "unexpected-save-error")
+          }
+        })
+        .catch(function(response) {
+          dispatcher.push(events.saveCompleted, "unexpected-save-error")
+        })
     return state
   }
 
@@ -311,6 +332,13 @@ export default class HakemustenArviointiController {
     return function() {
       hakemus.arvio.status = newStatus
       dispatcher.push(events.updateHakemusArvio, hakemus)
+    }
+  }
+
+  setHakemusStatus(hakemus, newStatus) {
+    return function() {
+      hakemus.status = newStatus
+      dispatcher.push(events.updateHakemusStatus, hakemus)
     }
   }
 

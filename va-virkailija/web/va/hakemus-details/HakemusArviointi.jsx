@@ -82,6 +82,7 @@ class ChangeRequest extends React.Component {
         <label hidden={hasChangeRequired} htmlFor="require-change">Hakemus on {statusFI}</label>
         <label hidden={!hasChangeRequired} htmlFor="require-change">Hakemukseen on pyydetty täydennystä</label>
         <button hidden={hasChangeRequired}
+                onClick={controller.setHakemusStatus(hakemus, 'pending_change_request')}
                 id="require-change"
                 name="require-change">Pyydä täydennystä</button>
       </div>
