@@ -82,7 +82,7 @@ class BudgetGranted extends React.Component {
       controller.setHakemusArvioBudgetGranted(hakemus, number)
     }
 
-    return <div className="budget-granted">
+    return <div className="value-edit budget-granted">
       <label htmlFor="budget-granted">Myönnetty avustus</label>
       <input id="budget-granted" disabled={!allowEditing} type="text" value={budgetGranted} onChange={onChange} maxLength="9" /> €
     </div>
@@ -96,7 +96,7 @@ class SummaryComment extends React.Component {
     const arvio = hakemus.arvio
     const summaryComment = arvio ? arvio["summary-comment"] : undefined
     const controller = this.props.controller
-    return <div className="summary-comment">
+    return <div className="value-edit summary-comment">
       <label htmlFor="summary-comment">Huomautus ratkaisuyhteenvetoon</label>
       <input id="summary-comment" type="text" disabled={!allowEditing} value={summaryComment} title={summaryComment}
              onChange={e => { controller.setHakemusSummaryComment(hakemus, e.target.value) }} maxLength="128" />
