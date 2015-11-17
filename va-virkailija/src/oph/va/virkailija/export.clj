@@ -25,8 +25,7 @@
 (defn- has-child? [id node]
   (when-let [children (:children node)]
     (let [child-list (->> children
-                          (filter (fn [child]
-                                    (= (:id child) id))))]
+                          (filter (fn [child] (= (:id child) id))))]
       (when (not (empty? child-list))
         node))))
 
