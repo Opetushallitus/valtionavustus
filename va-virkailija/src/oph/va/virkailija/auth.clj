@@ -55,8 +55,8 @@
         is-presenter (= "presenting_officer" (:role haku-role-of-user))
         is-evaluator (= "evaluator" (:role haku-role-of-user))]
     {:edit-haku (or is-presenter (:va-admin user-with-roles))
-       :score-hakemus (or is-presenter is-evaluator)
-       :change-hakemus-state is-presenter}))
+     :score-hakemus (or is-presenter is-evaluator)
+     :change-hakemus-state is-presenter}))
 
 (defn resolve-privileges [identity haku-data]
   (let [user-with-roles (->> identity
