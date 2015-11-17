@@ -22,6 +22,7 @@ const events = {
   rolesLoaded: 'rolesLoaded',
   roleCreated: 'roleCreated',
   roleDeleted: 'roleDeleted',
+  privilegesLoaded: 'privilegesLoaded',
   formLoaded: 'formLoaded',
   updateForm: 'updateForm',
   saveForm: 'saveForm',
@@ -41,6 +42,10 @@ export default class HakujenHallintaController {
 
   static roleUrl(avustushaku) {
     return "/api/avustushaku/" + avustushaku.id + "/role"
+  }
+
+  static privilegesUrl(avustushaku) {
+    return "/api/avustushaku/" + avustushaku.id + "/privileges"
   }
 
   static formUrl(avustushaku) {
@@ -85,7 +90,7 @@ export default class HakujenHallintaController {
     }, LdapSearchParameters.ldapSearchDebounceMillis())
     this._bind('onInitialState','onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
                'onHakuSave', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
-               'onBeforeUnload')
+               'onBeforeUnload', 'onRolesLoaded', 'onRoleCreated', 'onRoleDeleted', 'saveRole')
 
     Bacon.fromEvent(window, "beforeunload").onValue(function(event) {
       // For some odd reason Safari always displays a dialog here
@@ -105,6 +110,7 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.rolesLoaded)], this.onRolesLoaded,
       [dispatcher.stream(events.roleCreated)], this.onRoleCreated,
       [dispatcher.stream(events.roleDeleted)], this.onRoleDeleted,
+      [dispatcher.stream(events.privilegesLoaded)], this.onPrivilegesLoaded,
       [dispatcher.stream(events.formLoaded)], this.onFormLoaded,
       [dispatcher.stream(events.updateForm)], this.onFormUpdated,
       [dispatcher.stream(events.saveForm)], this.onFormSaved,
@@ -303,6 +309,7 @@ export default class HakujenHallintaController {
       state = this.onHakuSave(state)
     }
     state.selectedHaku = hakuToSelect
+    this.loadPrivileges(hakuToSelect)
     this.loadRoles(hakuToSelect)
     this.loadForm(hakuToSelect)
     return state
@@ -318,17 +325,31 @@ export default class HakujenHallintaController {
 
   onRolesLoaded(state, loadedRoles) {
     loadedRoles.haku.roles = loadedRoles.roles
+    this.loadPrivileges(loadedRoles.haku)
     return state
   }
 
   onRoleCreated(state, newRole) {
     newRole.haku.roles.push(newRole.role)
+    this.loadPrivileges(newRole.haku)
     return state
   }
 
   onRoleDeleted(state, roleDeletion) {
     const deleteIndex = _.findIndex(roleDeletion.haku.roles, role => role.id === roleDeletion.role.id)
     roleDeletion.haku.roles.splice(deleteIndex, 1)
+    this.loadPrivileges(roleDeletion.haku)
+    return state
+  }
+
+  loadPrivileges(selectedHaku) {
+    HttpUtil.get(HakujenHallintaController.privilegesUrl(selectedHaku)).then(privileges => {
+      dispatcher.push(events.privilegesLoaded, {haku: selectedHaku, privileges: privileges})
+    })
+  }
+
+  onPrivilegesLoaded(state, loadedPrivileges) {
+    loadedPrivileges.haku.privileges = loadedPrivileges.privileges
     return state
   }
 
@@ -486,6 +507,7 @@ export default class HakujenHallintaController {
 
   saveRole(avustushaku, role) {
     HttpUtil.post(HakujenHallintaController.roleUrl(avustushaku) + "/" + role.id, role)
+      .then(response => { this.loadPrivileges(avustushaku) })
   }
 
   selectEditorSubtab(subTabToSelect) {
