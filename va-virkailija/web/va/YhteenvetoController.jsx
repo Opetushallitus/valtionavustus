@@ -8,7 +8,7 @@ import RouteParser from 'route-parser'
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'soresu-form/web/Dispatcher'
 
-import HakemusStatuses from './hakemus-details/HakemusStatuses.js'
+import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
 
 const dispatcher = new Dispatcher()
 
@@ -34,7 +34,7 @@ export default class YhteenvetoController {
       hakemusFilter: {
         organization: "",
         name: "",
-        status: HakemusStatuses.allStatuses()
+        status: HakemusArviointiStatuses.allStatuses()
       },
       hakemusSorter: [
         {field: "score", order: "desc"}

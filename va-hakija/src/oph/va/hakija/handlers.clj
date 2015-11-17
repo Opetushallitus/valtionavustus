@@ -22,10 +22,10 @@
               :version (:version hakemus)
               :last-status-change-at (:last_status_change_at hakemus)}))
 
-(defn- get-open-avustushaku [haku-id]
+(defn- get-open-avustushaku [haku-id hakemus]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         phase (avustushaku-phase avustushaku)]
-    (if (= phase "current")
+    (if (or (= phase "current") (= (:status hakemus) "pending_change_request"))
       avustushaku
       (method-not-allowed! {:phase phase}))))
 
@@ -39,7 +39,7 @@
        :validation-errors validation}))
 
 (defn on-hakemus-create [haku-id answers]
-  (let [avustushaku (get-open-avustushaku haku-id)
+  (let [avustushaku (get-open-avustushaku haku-id {})
         avustushaku-content (:content avustushaku)
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
@@ -92,10 +92,10 @@
       (hakemus-ok-response hakemus submission validation))))
 
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
-  (let [form-id (:form (get-open-avustushaku haku-id))
+  (let [hakemus (va-db/get-hakemus hakemus-id)
+        form-id (:form (get-open-avustushaku haku-id hakemus))
         form (form-db/get-form form-id)
-        security-validation (validation/validate-form-security form answers)
-        hakemus (va-db/get-hakemus hakemus-id)]
+        security-validation (validation/validate-form-security form answers)]
     (if (every? empty? (vals security-validation))
       (if (= base-version (:version hakemus))
         (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
@@ -112,10 +112,10 @@
       (bad-request! security-validation))))
 
 (defn on-hakemus-submit [haku-id hakemus-id base-version answers]
-  (let [avustushaku (get-open-avustushaku haku-id)
+  (let [hakemus (va-db/get-hakemus hakemus-id)
+        avustushaku (get-open-avustushaku haku-id hakemus)
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
-        hakemus (va-db/get-hakemus hakemus-id)
         attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
         validation (validation/validate-form form answers attachments)]
     (if (every? empty? (vals validation))

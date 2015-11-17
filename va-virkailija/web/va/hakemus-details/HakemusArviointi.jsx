@@ -4,7 +4,8 @@ import FormUtil from 'soresu-form/web/form/FormUtil'
 
 import HakemusScoring from './HakemusScoring.jsx'
 import HakemusComments from './HakemusComments.jsx'
-import HakemusStatuses from "./HakemusStatuses.js"
+import HakemusArviointiStatuses from "./HakemusArviointiStatuses.js"
+import HakemusStatuses from './HakemusStatuses.js'
 
 export default class HakemusArviointi extends Component {
   render() {
@@ -23,7 +24,8 @@ export default class HakemusArviointi extends Component {
        <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku}
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments}/>
-       <SetStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <ChangeRequest controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <BudgetGranted controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
      </div>
@@ -31,7 +33,7 @@ export default class HakemusArviointi extends Component {
   }
 }
 
-class SetStatus extends React.Component {
+class SetArviointiStatus extends React.Component {
   render() {
     const hakemus = this.props.hakemus
     const allowEditing = this.props.allowEditing
@@ -39,10 +41,10 @@ class SetStatus extends React.Component {
     const status = arvio ? arvio.status : undefined
     const controller = this.props.controller
     const statuses = []
-    const statusValues = ['unhandled', 'processing', 'plausible', 'rejected', 'accepted'];
+    const statusValues = HakemusArviointiStatuses.allStatuses();
     for (var i=0; i < statusValues.length; i++) {
-      const htmlId = "set-status-" + statusValues[i]
-      const statusFI = HakemusStatuses.statusToFI(statusValues[i])
+      const htmlId = "set-arvio-status-" + statusValues[i]
+      const statusFI = HakemusArviointiStatuses.statusToFI(statusValues[i])
       const onChange = allowEditing ? controller.setHakemusArvioStatus(hakemus, statusValues[i]) : null
       statuses.push(
           <input id={htmlId}
@@ -68,6 +70,29 @@ class SetStatus extends React.Component {
   }
 }
 
+class ChangeRequest extends React.Component {
+  render() {
+    const hakemus = this.props.hakemus
+    const allowEditing = this.props.allowEditing
+    const status = hakemus.status
+    const statusFI = HakemusStatuses.statusToFI(status)
+    const hasChangeRequired = status === 'pending_change_request'
+    const controller = this.props.controller
+    const onClick = allowEditing ? controller.setHakemusStatus(hakemus, 'pending_change_request') : null
+    return (
+      <div className="value-edit">
+        <label hidden={hasChangeRequired} htmlFor="require-change">Hakemus on {statusFI}</label>
+        <label hidden={!hasChangeRequired} htmlFor="require-change">Hakemukseen on pyydetty täydennystä</label>
+        <button hidden={hasChangeRequired}
+                onClick={onClick}
+                disabled={!allowEditing}
+                id="require-change"
+                name="require-change">Pyydä täydennystä</button>
+      </div>
+    )
+  }
+}
+
 class BudgetGranted extends React.Component {
   render() {
     const hakemus = this.props.hakemus
@@ -82,7 +107,7 @@ class BudgetGranted extends React.Component {
       controller.setHakemusArvioBudgetGranted(hakemus, number)
     }
 
-    return <div className="budget-granted">
+    return <div className="value-edit budget-granted">
       <label htmlFor="budget-granted">Myönnetty avustus</label>
       <input id="budget-granted" disabled={!allowEditing} type="text" value={budgetGranted} onChange={onChange} maxLength="9" /> €
     </div>
@@ -96,7 +121,7 @@ class SummaryComment extends React.Component {
     const arvio = hakemus.arvio
     const summaryComment = arvio ? arvio["summary-comment"] : undefined
     const controller = this.props.controller
-    return <div className="summary-comment">
+    return <div className="value-edit summary-comment">
       <label htmlFor="summary-comment">Huomautus ratkaisuyhteenvetoon</label>
       <input id="summary-comment" type="text" disabled={!allowEditing} value={summaryComment} title={summaryComment}
              onChange={e => { controller.setHakemusSummaryComment(hakemus, e.target.value) }} maxLength="128" />

@@ -159,24 +159,27 @@ table.hakemus-list {
     bottom: 20px;
     width: @content-width - @preview-width - 43px;
 
-    .budget-granted {
+    .value-edit {
       label {
         color: @darker-gray;
         font-weight: 300;
         font-size: 14px;
         margin-right: 5px;
       }
+      button {
+        margin: 4px;
+        padding: 4px 8px;
+        font-size: 14px;
+      }
+    }
+
+    .budget-granted {
       #budget-granted {
         margin-top: 7px;
       }
     }
 
     .summary-comment {
-      label {
-        color: @darker-gray;
-        font-weight: 300;
-        font-size: 14px;
-      }
       #summary-comment {
         width: 47%;
         margin-top: 7px;

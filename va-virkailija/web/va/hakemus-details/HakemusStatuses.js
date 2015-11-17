@@ -1,20 +1,14 @@
 export default class HakemusStatuses {
   static allStatuses() {
-    return ['unhandled', 'processing', 'rejected', 'plausible', 'accepted']
+    return ['new', 'draft', 'submitted', 'pending_change_request']
   }
   static statusToFI(status) {
-    switch(status) {
-      case "unhandled":
-        return "Käsittelemättä"
-      case "processing":
-        return "Käsittelyssä"
-      case "plausible":
-        return "Mahdollinen"
-      case "rejected":
-        return "Hylätty"
-      case "accepted":
-        return "Hyväksytty"
+    const translations = {
+      "new": "uusi",
+      "draft": "luonnos",
+      "submitted": "lähetetty",
+      "pending_change_request": "täydennyspyyntö tehty"
     }
-    return status
+    return translations[status] ? translations[status] : status
   }
 }

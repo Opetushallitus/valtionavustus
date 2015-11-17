@@ -231,6 +231,16 @@
                                  (:selection-criteria-index score)
                                  (:score score)))))
 
+  (POST* "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id]
+         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+         :body [body {:status HakemusStatus}]
+         :return {:hakemus-id Long
+                  :status HakemusStatus}
+         :summary "Update status of hakemus"
+         (hakija-api/update-hakemus-status hakemus-id (:status body))
+         (ok {:hakemus-id hakemus-id
+              :status (:status body)}))
+
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/register-number" [avustushaku-id hakemus-id]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
         :body [body (describe {:register-number s/Str} "Register number (diaarinumero)")]

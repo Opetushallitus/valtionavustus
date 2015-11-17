@@ -7,7 +7,7 @@ import RouteParser from 'route-parser'
 
 import YhteenvetoController from './YhteenvetoController.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
-import HakemusStatuses from './hakemus-details/HakemusStatuses.js'
+import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
 import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
 import {BasicInfoComponent} from 'soresu-form/web/form/component/InfoElement.jsx'
 
@@ -48,7 +48,7 @@ export default class SummaryApp extends Component {
   }
 
   static statusesInOrder() {
-    const statuses = _.cloneDeep(HakemusStatuses.allStatuses())
+    const statuses = _.cloneDeep(HakemusArviointiStatuses.allStatuses())
     statuses.reverse()
     return statuses
   }
@@ -168,7 +168,7 @@ export default class SummaryListing extends Component {
       case "accepted":
         return "Myönteiset päätökset"
     }
-    return HakemusStatuses.statusToFI(status)
+    return HakemusArviointiStatuses.statusToFI(status)
   }
 }
 

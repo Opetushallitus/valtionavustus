@@ -187,3 +187,11 @@
 (defn set-register-number [hakemus-id register-number]
   (exec :hakija-db hakija-queries/set-hakemus-register-number! {:hakemus_id hakemus-id
                                                                :register_number register-number}))
+
+(defn update-hakemus-status [hakemus-id status]
+  (let [hakemus-to-update (first (exec :hakija-db hakija-queries/get-hakemus {:id hakemus-id}))
+        updated-hakemus (merge hakemus-to-update {:status (keyword status)
+                                                  :avustushaku_id (:avustushaku hakemus-to-update)})]
+    (exec-all :hakija-db [hakija-queries/lock-hakemus hakemus-to-update
+                          hakija-queries/close-existing-hakemus! hakemus-to-update
+                          hakija-queries/update-hakemus-status<! updated-hakemus])))
