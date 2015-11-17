@@ -38,7 +38,7 @@
 (defn- valid-hakemus? [hakemus]
   (= (:status hakemus) "submitted"))
 
-(defn- avustushaku->formids [avustushaku]
+(defn- avustushaku->formlabels [avustushaku]
   (let [form (-> avustushaku :form :content)
         wrappers (formutil/find-wrapper-elements form)]
     (->> form
@@ -52,10 +52,11 @@
        (filter valid-hakemus?)))
 
 (defn testbox []
-  (let [avustushaku (hakudata/get-combined-avustushaku-data 1 nil)
-        form-ids (avustushaku->formids avustushaku)
-        hakemukset (avustushaku->hakemukset avustushaku)]
-    form-ids))
+  (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
+        form-ids (avustushaku->formlabels avustushaku)
+        hakemukset (avustushaku->hakemukset avustushaku)
+        answers (map (comp unwrap-answers :answers) hakemukset)]
+    (first answers)))
 
 (def hakemus->main-sheet-rows
   (juxt :organization-name
