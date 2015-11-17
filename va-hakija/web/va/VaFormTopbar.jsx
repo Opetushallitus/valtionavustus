@@ -23,6 +23,7 @@ export default class VaFormTopbar extends React.Component {
     const validationErrors = state.form.validationErrors
     const lang = configuration.lang
     const translations = configuration.translations
+    const formTranslator = new Translator(translations.form)
     const preview = configuration.preview
     const formIsValidOnClientSide = _.reduce(state.form.validationErrors, function (allValid, fieldErrors) {
       return allValid === true && fieldErrors.length === 0
@@ -34,6 +35,9 @@ export default class VaFormTopbar extends React.Component {
     const openPreview = function() {
       window.open(formOperations.urlCreator.existingSubmissionPreviewUrl(state), "preview")
     }
+    const isChangeRequestResponse = function() {
+      return saveStatus.savedObject && saveStatus.savedObject.status === "pending_change_request"
+    }
     const isSubmitted = function() {
       return saveStatus.savedObject && saveStatus.savedObject.status === "submitted"
     }
@@ -41,7 +45,7 @@ export default class VaFormTopbar extends React.Component {
       return !(formIsValidOnClientSide && formIsValidOnServerSide && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state) || isSubmitted()
     }
     const submitTextKey = isSubmitted() ? "submitted" : "submit"
-    const helpText = new Translator(translations.form).translate("savehelp", lang)
+    const helpText = formTranslator.translate("savehelp", lang)
     const hasEnded = avustushaku.phase === "ended"
 
     return(
@@ -54,6 +58,10 @@ export default class VaFormTopbar extends React.Component {
             <span hidden={isChangeRequestResponse()} className="soresu-tooltip soresu-tooltip-down">
               <TextButton htmlId="submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey={submitTextKey} lang={lang} />
               <span>{helpText}</span>
+            </span>
+            <span hidden={!isChangeRequestResponse()} className="soresu-tooltip soresu-tooltip-down">
+              <TextButton htmlId="change-request-response" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="change-request-response" lang={lang} />
+              <span>{formTranslator.translate("change-request-response-help", lang)}</span>
             </span>
             <span id="form-controls-devel" hidden={!configuration.develMode}>
               <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>
