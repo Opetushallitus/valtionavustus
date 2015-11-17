@@ -17,14 +17,14 @@
      :score-hakemus (or is-presenter is-evaluator)
      :change-hakemus-state is-presenter}))
 
-(defn resolve-privileges [identity avustushaku haku-roles]
+(defn resolve-privileges [identity avustushaku-id haku-roles]
   (let [user-with-roles (->> identity
                              :username
                              (ldap/find-user-details (ldap/create-ldap-connection))
                              ldap/details->map-with-roles)]
     (if (:person-oid user-with-roles)
         (resolve-privileges-for-user user-with-roles haku-roles)
-        (do (log/error (str "Could not find user details for " identity " to access " avustushaku))
+        (do (log/error (str "Could not find user details for " identity " to access avustushaku " avustushaku-id))
             {:edit-haku false
              :score-hakemus false
              :change-hakemus-state false}))))

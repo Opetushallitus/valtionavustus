@@ -17,7 +17,8 @@
             [oph.va.jdbc.enums :refer :all]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.db :as virkailija-db]
-            [oph.va.virkailija.authentication :as auth]
+            [oph.va.virkailija.authentication :as authentication]
+            [oph.va.virkailija.authorization :as authorization]
             [oph.soresu.form.schema :refer :all]
             [oph.va.schema :refer :all]
             [oph.va.virkailija.schema :refer :all]
@@ -84,7 +85,7 @@
         :body [base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base")]
         :return AvustusHaku
         :summary "Copy existing avustushaku as new one by id of the existing avustushaku"
-        (ok (hakudata/create-new-avustushaku (:baseHakuId base-haku-id-wrapper) (auth/get-identity request))))
+        (ok (hakudata/create-new-avustushaku (:baseHakuId base-haku-id-wrapper) (authentication/get-identity request))))
 
   (POST* "/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
@@ -99,7 +100,7 @@
         :path-params [avustushaku-id :- Long]
         :return HakuData
         :summary "Return all relevant avustushaku data (including answers, comments, form and current user privileges)"
-        (let [identity (auth/get-identity request)]
+        (let [identity (authentication/get-identity request)]
           (if-let [response (hakudata/get-combined-avustushaku-data avustushaku-id identity)]
             (ok response)
             (not-found))))
@@ -107,7 +108,7 @@
   (GET* "/:haku-id/export.xslx" [haku-id :as request]
         :path-params [haku-id :- Long]
         :summary "Export Excel XLSX document for given avustushaku"
-        (let [identity (auth/get-identity request)
+        (let [identity (authentication/get-identity request)
               document (export/export-avustushaku haku-id identity)]
           (-> (ok document)
               (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
@@ -146,6 +147,16 @@
         (hakija-api/delete-avustushaku-role avustushaku-id role-id)
         (ok {:id role-id}))
 
+  (GET* "/:avustushaku-id/privileges" [avustushaku-id :as request]
+        :path-params [avustushaku-id :- Long]
+        :return HakuPrivileges
+        :summary "Show current user privileges for given avustushaku"
+        (let [identity (authentication/get-identity request)
+              haku-roles (hakija-api/get-avustushaku-roles avustushaku-id)
+              privileges (authorization/resolve-privileges identity avustushaku-id haku-roles)]
+          (if privileges
+            (ok privileges)
+            (not-found))))
 
   (GET* "/:avustushaku-id/form" [avustushaku-id]
           :path-params [avustushaku-id :- Long]
@@ -183,7 +194,7 @@
         :body [comment (describe NewComment "New comment")]
         :return Comments
         :summary "Add a comment for hakemus. As response, return all comments"
-        (let [identity (auth/get-identity request)]
+        (let [identity (authentication/get-identity request)]
           (ok (virkailija-db/add-comment hakemus-id
                                          (:first-name identity)
                                          (:surname identity)
@@ -224,7 +235,7 @@
         :return ScoringOfArvio
         :summary "Submit scorings for given arvio."
         :description "Scorings are automatically assigned to logged in user."
-        (let [identity (auth/get-identity request)]
+        (let [identity (authentication/get-identity request)]
           (ok (scoring/add-score avustushaku-id
                                  hakemus-id
                                  identity
@@ -247,7 +258,7 @@
         :return {:search-url s/Str}
         :summary "Create new stored search"
         :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
-        (let [identity (auth/get-identity request)
+        (let [identity (authentication/get-identity request)
               search-id (create-or-get-search avustushaku-id body identity)
               search-url (str "/yhteenveto/avustushaku/" avustushaku-id "/listaus/" search-id "/")]
           (ok {:search-url search-url})))
@@ -261,10 +272,10 @@
             (ok (:query saved-search)))))
 
 (defroutes* userinfo-routes
-  "User information"
+            "User information"
 
-  (GET "/" [:as request]
-       (ok (auth/get-identity request))))
+            (GET "/" [:as request]
+              (ok (authentication/get-identity request))))
 
 (defroutes* ldap-routes
   "LDAP search"
@@ -304,7 +315,7 @@
         :summary "Handle login ticket and logout callback from cas"
         (try
           (if ticket
-            (if-let [identity (auth/authenticate ticket virkailija-login-url)]
+            (if-let [identity (authentication/authenticate ticket virkailija-login-url)]
               (-> (resp/redirect (url-after-login request))
                   (assoc :session {:identity identity}))
               (redirect-to-loggged-out-page request {"not-permitted" "true"}))
@@ -314,13 +325,13 @@
             (redirect-to-loggged-out-page request {"error" "true"}))))
 
   (POST* "/cas" [logoutRequest :as request]
-    :form-params [logoutRequest :- s/Str]
-    :return s/Any
-    :summary "Handle logout request from cas"
-    (auth/cas-initiated-logout logoutRequest))
+         :form-params [logoutRequest :- s/Str]
+         :return s/Any
+         :summary "Handle logout request from cas"
+         (authentication/cas-initiated-logout logoutRequest))
 
   (GET "/logout" [:as request]
-       (auth/logout (-> request :session :identity))
+       (authentication/logout (-> request :session :identity))
         (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
             (assoc :session nil))))
 
