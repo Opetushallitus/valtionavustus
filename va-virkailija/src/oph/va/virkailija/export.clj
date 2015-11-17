@@ -46,14 +46,14 @@
   (->> (:hakemukset avustushaku)
        (filter valid-hakemus?)))
 
-(defn flatten-answers [avustushaku label-map]
+(defn flatten-answers [avustushaku answer-keys answer-labels]
   (let [hakemukset (avustushaku->hakemukset avustushaku)
         answers (map (comp formutil/unwrap-answers :answers) hakemukset)
         flat-answers (map (fn [answer-set]
-                            (map (fn [formid]
-                                   (let [[id header] formid]
-                                     (get answer-set id))) label-map)) answers)]
-    (apply conj [(vals label-map)] flat-answers)))
+                            (map (fn [id]
+                                   (get answer-set id)) answer-keys))
+                          answers)]
+    (apply conj [answer-labels] flat-answers)))
 
 (def hakemus->main-sheet-rows
   (juxt :organization-name
@@ -81,7 +81,9 @@
         main-header-row (first (spreadsheet/row-seq main-sheet))
 
         answer-label-map (avustushaku->formlabels avustushaku)
-        answer-flatdata (flatten-answers avustushaku answer-label-map)
+        answer-keys (sort (keys answer-label-map))
+        answer-labels (map (fn [key] (get answer-label-map key)) answer-keys)
+        answer-flatdata (flatten-answers avustushaku answer-keys answer-labels)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
                         (spreadsheet/add-rows! sheet answer-flatdata)
                         sheet)
@@ -91,7 +93,7 @@
                                                          :font {:bold true}})]
 
     (fit-columns main-sheet-columns main-sheet)
-    (fit-columns (vals answer-label-map) answers-sheet)
+    (fit-columns answer-keys answers-sheet)
 
     ;; Style first row
     (spreadsheet/set-row-style! main-header-row header-style)
