@@ -3,7 +3,7 @@
   (:require [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.scoring :as scoring]
             [oph.va.hakija.api :as hakija-api]
-            [oph.va.virkailija.auth :as auth]))
+            [oph.va.virkailija.authorization :as authorization]))
 
 (defn arvio-json [arvio]
   {:id (:id arvio)
@@ -46,7 +46,7 @@
         (assoc :hakemukset (map (partial add-scores-to-hakemus scores) hakemukset)))))
 
 (defn- add-privileges [identity haku-data]
-  (-> haku-data (assoc :privileges (auth/resolve-privileges identity haku-data))))
+  (-> haku-data (assoc :privileges (authorization/resolve-privileges identity haku-data))))
 
 (defn get-combined-avustushaku-data [avustushaku-id identity]
   (let [scores (scoring/get-avustushaku-scores avustushaku-id)]

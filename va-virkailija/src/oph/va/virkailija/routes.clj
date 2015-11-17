@@ -18,7 +18,7 @@
             [oph.va.jdbc.enums :refer :all]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.db :as virkailija-db]
-            [oph.va.virkailija.auth :as auth]
+            [oph.va.virkailija.authentication :as auth]
             [oph.soresu.form.schema :refer :all]
             [oph.va.schema :refer :all]
             [oph.va.virkailija.schema :refer :all]

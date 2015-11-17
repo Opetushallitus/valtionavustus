@@ -14,7 +14,7 @@
             [oph.common.server :as server]
             [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :as db]
-            [oph.va.virkailija.auth :as auth]
+            [oph.va.virkailija.authentication :as auth]
             [oph.va.virkailija.db.migrations :as dbmigrations]))
 
 (defn- startup [config]
