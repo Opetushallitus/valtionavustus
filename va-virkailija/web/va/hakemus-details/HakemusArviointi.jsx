@@ -71,23 +71,36 @@ class SetArviointiStatus extends React.Component {
 }
 
 class ChangeRequest extends React.Component {
+
   render() {
     const hakemus = this.props.hakemus
-    const allowEditing = this.props.allowEditing
+    const allowEditing = this.props.allowEditing && !hasChangeRequired
     const status = hakemus.status
-    const statusFI = HakemusStatuses.statusToFI(status)
+    const changeRequestText = hakemus.changeRequest
     const hasChangeRequired = status === 'pending_change_request'
     const controller = this.props.controller
-    const onClick = allowEditing ? controller.setHakemusStatus(hakemus, 'pending_change_request') : null
+    const openEdit = allowEditing ? controller.setChangeRequestText(hakemus, "") : null
+    const closeEdit = allowEditing ? controller.setChangeRequestText(hakemus, undefined) : null
+    const sendChangeRequest = allowEditing ? controller.setHakemusStatus(hakemus, 'pending_change_request') : null
+    const open = typeof changeRequestText !== 'undefined' || hasChangeRequired
+    const title = hasChangeRequired ? "Lähetetty täydennyspyyntö" : "Lähetä täydennyspyyntö"
     return (
       <div className="value-edit">
-        <label hidden={hasChangeRequired} htmlFor="require-change">Hakemus on {statusFI}</label>
-        <label hidden={!hasChangeRequired} htmlFor="require-change">Hakemukseen on pyydetty täydennystä</label>
-        <button hidden={hasChangeRequired}
-                onClick={onClick}
-                disabled={!allowEditing}
-                id="require-change"
-                name="require-change">Pyydä täydennystä</button>
+        <button hidden={open}
+                onClick={openEdit}
+                disabled={!allowEditing}>Pyydä täydennystä</button>
+        <div hidden={!open}>
+          <label>{title}</label><span hidden={hasChangeRequired}
+                                      onClick={closeEdit}
+                                      disabled={!allowEditing}
+                                      className="close"></span>
+          <textarea placeholder="Täydennyspyyntö hakijalle" rows="4" disabled={!allowEditing} value={changeRequestText}/>
+          <button hidden={hasChangeRequired}
+                  onClick={sendChangeRequest}
+                  disabled={!allowEditing}
+                  id="require-change"
+                  name="require-change">Lähetä</button>
+        </div>
       </div>
     )
   }

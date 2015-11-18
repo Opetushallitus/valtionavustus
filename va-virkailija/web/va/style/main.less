@@ -178,9 +178,21 @@ table.hakemus-list {
         margin-right: 5px;
       }
       button {
-        margin: 4px;
+        margin: 4px 4px 4px 0;
         padding: 4px 8px;
         font-size: 14px;
+      }
+      textarea {
+        width: @content-width - @preview-width - 80px;
+        padding: 10px;
+      }
+      .close {
+        cursor: pointer;
+        margin-right: 20px;
+        float: right;
+        &:after {
+          content: "x";
+        }
       }
     }
 

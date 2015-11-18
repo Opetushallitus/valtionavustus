@@ -14,6 +14,7 @@ const dispatcher = new Dispatcher()
 
 const events = {
   initialState: 'initialState',
+  reRender: 'reRender',
   setFilter: 'setFilter',
   setSorter: 'setSorter',
   selectHakemus: 'selectHakemus',
@@ -65,6 +66,7 @@ export default class HakemustenArviointiController {
     return Bacon.update(
       {},
       [dispatcher.stream(events.initialState)], this.onInitialState,
+      [dispatcher.stream(events.reRender)], this.onReRender,
       [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
       [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio,
       [dispatcher.stream(events.updateHakemusStatus)], this.onUpdateHakemusStatus,
@@ -114,6 +116,10 @@ export default class HakemustenArviointiController {
     }
     realInitialState.hakuData.form = Immutable(realInitialState.hakuData.form)
     return realInitialState
+  }
+
+  onReRender(state) {
+    return state
   }
 
   onHakemusSelection(state, hakemusToSelect) {
@@ -312,6 +318,13 @@ export default class HakemustenArviointiController {
     return function() {
       hakemus.arvio.status = newStatus
       dispatcher.push(events.updateHakemusArvio, hakemus)
+    }
+  }
+
+  setChangeRequestText(hakemus, text) {
+    return function() {
+      hakemus.changeRequest = text
+      dispatcher.push(events.reRender)
     }
   }
 
