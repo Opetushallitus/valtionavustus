@@ -23,6 +23,8 @@ export default class HakuRoles extends Component {
     }
 
     const searchErrorClass = ldapSearch.result.error ? "error" : "hidden"
+    const hasInput = ldapSearch.input.length > 0
+    const clearInputButtonClassname = ClassNames("remove", { enabled: hasInput })
 
     return (
       <div id="haku-roles">
@@ -37,8 +39,8 @@ export default class HakuRoles extends Component {
           <div className="ldap-error-display"><span className={searchErrorClass}>Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.</span></div>
           <div className="person-adder-input">
             Lisää uusi henkilö
-            <input id="ldap-search-input" type="text" placeholder={"Hae (vähintään " + LdapSearchParameters.minimumSearchInputLength() + " merkkiä)"} onChange={startSearch} disabled={!roles}/>
-            <button className="remove" title="Tyhjennä" onClick={(e) => {
+            <input id="ldap-search-input" type="text" placeholder={"Hae"} onChange={startSearch} disabled={!roles}/>
+            <button className={clearInputButtonClassname} title="Tyhjennä" disabled={!hasInput} onClick={(e) => {
                 const ldapSearchInput = document.getElementById('ldap-search-input')
                 ldapSearchInput.value = ''
                 startSearch(e)
@@ -65,20 +67,26 @@ class PersonSelectList extends React.Component {
       const name = firstName ? firstName + " "  + lastName : lastName
       const newRole = { name: name, email: email, role: null, oid: oid }
       const accessLevel = userDetailsToClassAndFi(r)
-      const titleText = name + " <" + email + ">" + "(" + accessLevel.description + ", oid " + oid + ")"
-      const displayText = name + " <" + email + ">"
+      const displayText = name + " (" + email + ", "
 
       const personIsInRolesAlready = _.some(avustushaku.roles, r => { return r.oid === oid })
-      const addButtonTitle = personIsInRolesAlready ? "Käyttäjä on jo lisätty avustushakuun" : null
-      const addButtonOnClick = personIsInRolesAlready ? null : controller.createRole(avustushaku, newRole)
-      const addButton = <button title={addButtonTitle} onClick={addButtonOnClick} disabled={personIsInRolesAlready}>Lisää</button>
+      const titleText = (name + " <" + email + ">" + "(" + accessLevel.description + ", oid " + oid + ")") +
+        (personIsInRolesAlready ? " (Käyttäjä on jo lisätty avustushakuun)" : "")
+      const onClick = e => {
+        e.preventDefault()
+        if (!personIsInRolesAlready) {
+          controller.createRole(avustushaku, newRole)()
+        }
+      }
 
-      return <li key={r["person-oid"]} title={titleText}>{addButton}
-               <span className={"access-level " + accessLevel.className}>{accessLevel.description}</span>
-               <span className="person-description">{displayText}</span>
+      return <li key={r["person-oid"]} title={titleText} className={personIsInRolesAlready ? "disabled" : null}>
+               <a href="#" onClick={onClick} className={personIsInRolesAlready ? "disabled" : null}>
+                 <span className="person-description">{displayText}</span>
+                 <span className={"access-level " + accessLevel.className}>{accessLevel.description + ")"}</span>
+               </a>
              </li>
     })
-    const resultRows = personRows.length === 0 ? [ <li key="no-results-row">Ei hakutuloksia.</li>] : personRows
+    const resultRows = personRows.length === 0 ? [ <li key="no-results-row" className="no-results-row">Ei hakutuloksia.</li>] : personRows
     const searchResultClassNames = ClassNames(undefined, { loading: ldapSearch.loading,
                                                            hidden: ldapSearch.input.length < LdapSearchParameters.minimumSearchInputLength() })
     return <div id="ldap-search-results" className={searchResultClassNames}>
