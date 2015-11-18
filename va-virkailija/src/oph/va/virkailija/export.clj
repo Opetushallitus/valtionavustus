@@ -72,7 +72,9 @@
 (defn export-avustushaku [avustushaku-id identity]
   (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id identity)
         hakemus-list (avustushaku->hakemukset avustushaku)
+
         output (ByteArrayOutputStream.)
+
         main-sheet-rows (mapv hakemus->main-sheet-rows hakemus-list)
         wb (spreadsheet/create-workbook main-sheet-name
                                         (apply conj [main-sheet-columns] main-sheet-rows))
