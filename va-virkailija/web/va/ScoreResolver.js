@@ -15,7 +15,11 @@ export default class ScoreResolver {
 
 
   static createAverageSummaryText(scoring, userInfo) {
-    const numberOfScorings = scoring["score-averages-by-user"].length
+    if (!scoring || !scoring["score-averages-by-user"] || scoring["score-averages-by-user"].length === 0) {
+      return "Ei arvioita"
+    }
+    const averagesByUser = scoring["score-averages-by-user"]
+    const numberOfScorings = averagesByUser.length
     const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo)
     const scoringSubstantive = numberOfScorings > 1 ? " arviota" : " arvio"
     return numberOfScorings + scoringSubstantive + ". Keskiarvo: " + meanToDisplay(meanScore) + "\n" + createSummaryText();
@@ -27,7 +31,7 @@ export default class ScoreResolver {
       })
 
       const myAverage = ScoreResolver.myAverage(scoring, userInfo)
-      return textFromOthersResults + " - oma arviosi: " + meanToDisplay(myAverage)
+      return textFromOthersResults + (myAverage ? " - oma arviosi: " + meanToDisplay(myAverage) : "")
     }
 
     function meanToDisplay(meanScore) {
@@ -42,8 +46,11 @@ export default class ScoreResolver {
     }
   }
 
-  static effectiveAverage(scoring, userInfo) {
-    return ScoreResolver.myScoringIsComplete(scoring, userInfo) ? scoring["score-total-average"] : undefined
+  static effectiveAverage(scoring, userInfo, allowHakemusScoring) {
+    if (!scoring || !scoring["score-averages-by-user"] || scoring["score-averages-by-user"].length === 0) {
+      return undefined
+    }
+    return !allowHakemusScoring || ScoreResolver.myScoringIsComplete(scoring, userInfo) ? scoring["score-total-average"] : undefined
   }
 
   static scoringByOid(scoring, personOid) {
@@ -53,12 +60,12 @@ export default class ScoreResolver {
   }
 
   static myAverage(scoring, userInfo) {
-    const myScore = _.find(scoring["score-averages-by-user"], a => ScoreResolver._belongsToUser(a, userInfo))
-    return myScore["score-average"]
+    const myScore = _.find(_.get(scoring, "score-averages-by-user"), a => ScoreResolver._belongsToUser(a, userInfo))
+    return myScore ? myScore["score-average"] : undefined
   }
 
   static othersScorings(scoring, userInfo) {
-    return _.filter(scoring["score-averages-by-user"], a => !ScoreResolver._belongsToUser(a, userInfo))
+    return _.filter(_.get(scoring, "score-averages-by-user"), a => !ScoreResolver._belongsToUser(a, userInfo))
   }
 
   static _belongsToUser(scoreAverageByUser, userInfo) {

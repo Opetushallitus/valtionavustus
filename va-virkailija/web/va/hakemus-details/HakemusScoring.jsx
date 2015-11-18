@@ -12,7 +12,8 @@ export default class HakemusScoring extends Component {
     const allScoresOfHakemus = hakemus.scores
     const scoringOfHakemus = hakemus.arvio ? hakemus.arvio.scoring : undefined
     const myUserInfo = this.props.userInfo
-    const showOthersScores = this.props.showOthersScores && ScoreResolver.myScoringIsComplete(scoringOfHakemus, myUserInfo)
+    const allowSeeingOthersScores = ScoreResolver.myScoringIsComplete(scoringOfHakemus, myUserInfo) || (!allowHakemusScoring)
+    const showOthersScores = this.props.showOthersScores && allowSeeingOthersScores
 
     const avustushaku = this.props.avustushaku
     const valintaperusteet = _.get(avustushaku, "content.selection-criteria.items")
@@ -27,6 +28,7 @@ export default class HakemusScoring extends Component {
              <SeeOthersScores showOthersScores={showOthersScores}
                               scoring={scoringOfHakemus}
                               userInfo={myUserInfo}
+                              allowSeeingOthersScores={allowSeeingOthersScores}
                               controller={controller} />
              {othersScoreDisplays}
            </div>
@@ -122,13 +124,13 @@ class SeeOthersScores extends Component {
     const controller = this.props.controller
     const scoring = this.props.scoring
     const userInfo = this.props.userInfo
+    const allowSeeingOthersScores = this.props.allowSeeingOthersScores
     const showOthersScores = this.props.showOthersScores
-    const myScoringIsComplete = ScoreResolver.myScoringIsComplete(scoring, userInfo)
-    const othersScoringsCount = myScoringIsComplete ? ScoreResolver.othersScorings(scoring, userInfo).length : 0
-    const classNames = ClassNames("see-others-scoring", {disabled: !myScoringIsComplete || othersScoringsCount === 0})
+    const othersScoringsCount = allowSeeingOthersScores ? ScoreResolver.othersScorings(scoring, userInfo).length : 0
+    const classNames = ClassNames("see-others-scoring", {disabled: !allowSeeingOthersScores || othersScoringsCount === 0})
 
     const labelText = resolveLabelText()
-    const titleText = myScoringIsComplete ? ScoreResolver.createAverageSummaryText(scoring, userInfo) : undefined
+    const titleText = allowSeeingOthersScores ? ScoreResolver.createAverageSummaryText(scoring, userInfo) : undefined
 
     const onClick = e => {
       e.preventDefault()
@@ -142,7 +144,7 @@ class SeeOthersScores extends Component {
     </div>
 
     function resolveLabelText() {
-      if (!myScoringIsComplete) {
+      if (!allowSeeingOthersScores) {
         return ""
       }
       if (othersScoringsCount === 0) {

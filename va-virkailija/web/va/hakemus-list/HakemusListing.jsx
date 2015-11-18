@@ -6,7 +6,7 @@ import ScoreResolver from '../ScoreResolver.js'
 
 export default class HakemusListing extends Component {
 
-  static _fieldGetter(fieldName, userInfo) {
+  static _fieldGetter(fieldName, userInfo, allowHakemusScoring) {
     switch(fieldName) {
       case "name":
         return hakemus => hakemus["project-name"] + " (" + hakemus["register-number"] + ")"
@@ -20,7 +20,7 @@ export default class HakemusListing extends Component {
         return hakemus => hakemus.arvio["budget-granted"]
       case "score":
         return hakemus => {
-          const score = ScoreResolver.effectiveAverage(hakemus.arvio.scoring, userInfo)
+          const score = ScoreResolver.effectiveAverage(hakemus.arvio.scoring, userInfo, allowHakemusScoring)
           return score ? score : 0
         }
     }
@@ -52,25 +52,25 @@ export default class HakemusListing extends Component {
 
   }
 
-  static _sortByArray(fieldGetter, array, order, userInfo) {
+  static _sortByArray(fieldGetter, array, order, userInfo, allowHakemusScoring) {
     return function(hakemus) {
-      const sortValue = array.indexOf(fieldGetter(hakemus, userInfo))
+      const sortValue = array.indexOf(fieldGetter(hakemus, userInfo, allowHakemusScoring))
       return order === 'asc' ? sortValue: -sortValue
     }
   }
 
-  static _sortBy(userInfo) {
+  static _sortBy(userInfo, allowHakemusScoring) {
     return function(list, sorter) {
       switch (sorter.field) {
         case "status":
-          return _.sortBy(list, HakemusListing._sortByArray(hakemus => hakemus.arvio.status, HakemusArviointiStatuses.allStatuses(), sorter.order, userInfo))
+          return _.sortBy(list, HakemusListing._sortByArray(hakemus => hakemus.arvio.status, HakemusArviointiStatuses.allStatuses(), sorter.order, userInfo, allowHakemusScoring))
       }
-      return _.sortByOrder(list, HakemusListing._fieldGetter(sorter.field, userInfo), sorter.order)
+      return _.sortByOrder(list, HakemusListing._fieldGetter(sorter.field, userInfo, allowHakemusScoring), sorter.order)
     }
   }
 
-  static _sort(list, sorterList, userInfo) {
-    return _.reduce(sorterList, HakemusListing._sortBy(userInfo), list)
+  static _sort(list, sorterList, userInfo, allowHakemusScoring) {
+    return _.reduce(sorterList, HakemusListing._sortBy(userInfo, allowHakemusScoring), list)
 
   }
 
@@ -83,7 +83,7 @@ export default class HakemusListing extends Component {
     const filter = this.props.hakemusFilter
     const sorter = this.props.hakemusSorter
     const hakemusList = this.props.hakemusList
-    const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter, userInfo)
+    const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter, userInfo, allowHakemusScoring)
     const ophShareSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
       return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} userInfo={userInfo} allowHakemusScoring={allowHakemusScoring} controller={controller}/> })
@@ -295,7 +295,7 @@ class Scoring extends Component {
     const userInfo = this.props.userInfo
     const allowHakemusScoring = this.props.allowHakemusScoring
     const scoring = this.props.scoring
-    const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo)
+    const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo, allowHakemusScoring)
     const normalizedMeanScore = meanScore + 1
     const starElements = _.map(_.range(4), indexOfStar => {
       const isVisible = Math.ceil(meanScore) >= indexOfStar
