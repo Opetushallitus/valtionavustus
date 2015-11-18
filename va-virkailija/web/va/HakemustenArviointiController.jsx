@@ -125,6 +125,7 @@ export default class HakemustenArviointiController {
       history.pushState({}, window.title, newUrl)
     }
     this.loadScores(state, hakemusToSelect)
+    this.loadComments()
     return state
   }
 
