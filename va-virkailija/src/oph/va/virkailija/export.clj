@@ -46,9 +46,16 @@
   (->> (:hakemukset avustushaku)
        (filter valid-hakemus?)))
 
+(defn- hakemus->map [hakemus]
+  (let [answers (formutil/unwrap-answers (:answers hakemus))]
+    (-> answers
+        (assoc "fixed-register-number" (:register-number hakemus))
+        (assoc "fixed-organization-name" (:organization-name hakemus))
+        (assoc "fixed-project-name" (:project-name hakemus)))))
+
 (defn flatten-answers [avustushaku answer-keys answer-labels]
   (let [hakemukset (avustushaku->hakemukset avustushaku)
-        answers (map (comp formutil/unwrap-answers :answers) hakemukset)
+        answers (map hakemus->map hakemukset)
         flat-answers (map (fn [answer-set]
                             (map (fn [id]
                                    (get answer-set id)) answer-keys))
@@ -83,8 +90,12 @@
         main-header-row (first (spreadsheet/row-seq main-sheet))
 
         answer-key-label-pairs (avustushaku->formlabels avustushaku)
-        answer-keys (map first answer-key-label-pairs)
-        answer-labels (map second answer-key-label-pairs)
+        answer-keys (apply conj
+                           ["fixed-register-number" "fixed-organization-name" "fixed-project-name"]
+                           (map first answer-key-label-pairs))
+        answer-labels (apply conj
+                             ["Diaarinumero" "Organisaation nimi" "Projektin nimi"]
+                             (map second answer-key-label-pairs))
         answer-flatdata (flatten-answers avustushaku answer-keys answer-labels)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
                         (spreadsheet/add-rows! sheet answer-flatdata)
