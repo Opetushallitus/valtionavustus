@@ -269,7 +269,7 @@ export default class HakujenHallintaController {
   }
 
   onHakuSave(state) {
-    HttpUtil.post("/api/avustushaku/" + state.selectedHaku.id, _.omit(_.omit(state.selectedHaku, "roles"), "formContent"))
+    HttpUtil.post("/api/avustushaku/" + state.selectedHaku.id, _.omit(state.selectedHaku, ["roles", "formContent", "privileges"]))
         .then(function(response) {
           console.log("Saved haku. Response=", JSON.stringify(response))
           dispatcher.push(events.saveCompleted, response)
