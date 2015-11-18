@@ -7,8 +7,8 @@
   (:import [java.io ByteArrayOutputStream ByteArrayInputStream]))
 
 (def main-sheet-name "Hakemukset")
-(def main-sheet-columns ["Hakijaorganisaatio"
-                         "Diaarinumero"
+(def main-sheet-columns ["Diaarinumero"
+                         "Hakijaorganisaatio"
                          "Hankkeen nimi"
                          "Ehdotettu budjetti"
                          "OPH:n avustuksen osuus"
@@ -56,8 +56,8 @@
     (apply conj [answer-labels] flat-answers)))
 
 (def hakemus->main-sheet-rows
-  (juxt :organization-name
-        :register-number
+  (juxt :register-number
+        :organization-name
         :project-name
         :budget-total
         :budget-oph-share
