@@ -40,8 +40,7 @@
     (->> form
          (formutil/find-fields)
          (map (fn [field] [(:id field) (or (-> field :label :fi)
-                                           (find-parent-label wrappers (:id field)))]))
-         (into {}))))
+                                           (find-parent-label wrappers (:id field)))])))))
 
 (defn- avustushaku->hakemukset [avustushaku]
   (->> (:hakemukset avustushaku)
@@ -83,9 +82,9 @@
         main-sheet (spreadsheet/select-sheet main-sheet-name wb)
         main-header-row (first (spreadsheet/row-seq main-sheet))
 
-        answer-label-map (avustushaku->formlabels avustushaku)
-        answer-keys (sort (keys answer-label-map))
-        answer-labels (map (fn [key] (get answer-label-map key)) answer-keys)
+        answer-key-label-pairs (avustushaku->formlabels avustushaku)
+        answer-keys (map first answer-key-label-pairs)
+        answer-labels (map second answer-key-label-pairs)
         answer-flatdata (flatten-answers avustushaku answer-keys answer-labels)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
                         (spreadsheet/add-rows! sheet answer-flatdata)
