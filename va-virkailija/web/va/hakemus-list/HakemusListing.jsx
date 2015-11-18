@@ -14,6 +14,8 @@ export default class HakemusListing extends Component {
         return hakemus => hakemus["organization-name"]
       case "status":
         return hakemus => hakemus.arvio.status
+      case "change-request":
+        return hakemus => hakemus.status === "pending_change_request"
       case "applied-sum":
         return hakemus => hakemus["budget-oph-share"]
       case "granted-sum":
@@ -111,6 +113,7 @@ export default class HakemusListing extends Component {
             <StatusFilter controller={controller} hakemusList={hakemusList} filter={filter}/>
             <HakemusSorter field="status" sorter={sorter} controller={controller}/>
           </th>
+          <ChangeRequestHeader hakemusList={filteredHakemusList} />
           <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>
           <th className="granted-sum-column">Myönnetty <HakemusSorter field="granted-sum" sorter={sorter} controller={controller}/></th>
         </tr></thead>
@@ -198,6 +201,18 @@ class HakemusSorter extends Component {
   }
 }
 
+class ChangeRequestHeader extends Component {
+  render(){
+    const hakemusList = this.props.hakemusList
+    const kplChangeRequest = _.filter(hakemusList, HakemusListing._filterWithArrayPredicate(hakemus => hakemus.status, ["pending_change_request"])).length
+    const value = kplChangeRequest > 0 ? "(" + kplChangeRequest + ")" : ""
+    const title = kplChangeRequest > 0 ? kplChangeRequest + " hakemusta odottaa hakijan täydennystä" : "Ei avoimia täydennyspyyntöjä"
+    return (
+      <th className="change-request-column" title={title} >{value}</th>
+    )
+  }
+}
+
 class StatusFilter extends Component {
   constructor(props) {
     super(props)
@@ -272,6 +287,8 @@ class HakemusRow extends Component {
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
     const controller = this.props.controller
     const statusFI = HakemusArviointiStatuses.statusToFI(hakemus.arvio.status)
+    const changeRequest = HakemusListing._fieldGetter("change-request")(hakemus) ? "\u26AC" : ""
+    const changeRequestTitle = changeRequest ? "Odottaa hakijan täydennystä" : ""
     var hakemusName = ""
     if (_.isEmpty(hakemus["project-name"])) {
       hakemusName = hakemus["register-number"]
@@ -283,6 +300,7 @@ class HakemusRow extends Component {
       <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
       <td className="score-column"><Scoring scoring={hakemus.arvio.scoring} userInfo={userInfo} allowHakemusScoring={allowHakemusScoring}/></td>
       <td className="status-column">{statusFI}</td>
+      <td className="change-request-column" title={changeRequestTitle}>{changeRequest}</td>
       <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>
       <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>
     </tr>
