@@ -93,6 +93,13 @@
        :summary "Submit hakemus"
        (on-hakemus-submit haku-id hakemus-id base-version answers))
 
+  (POST* "/:haku-id/hakemus/:hakemus-id/:base-version/change-request-response" [haku-id hakemus-id base-version :as request]
+         :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
+         :body    [answers (describe Answers "New answers")]
+         :return  nil
+         :summary "Submit response for hakemus change request"
+         (on-hakemus-change-request-response haku-id hakemus-id base-version answers))
+
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
         :path-params [haku-id :- Long, hakemus-id :- s/Str]
         :return s/Any

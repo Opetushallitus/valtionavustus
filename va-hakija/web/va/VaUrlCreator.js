@@ -26,7 +26,8 @@ export default class VaUrlCreator extends UrlCreator {
       },
       submitEntityApiUrl: function (state) {
         const baseEditUrl = this.editEntityApiUrl(state)
-        return baseEditUrl + "/submit"
+        const isChangeRequest = state.saveStatus.savedObject.status === "pending_change_request"
+        return baseEditUrl + (isChangeRequest ? "/change-request-response" : "/submit")
       },
       loadEntityApiUrl: function (urlContent) {
         const query = urlContent.parsedQuery

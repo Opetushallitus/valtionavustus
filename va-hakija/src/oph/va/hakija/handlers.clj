@@ -112,10 +112,10 @@
       (bad-request! security-validation))))
 
 (defn on-hakemus-submit [haku-id hakemus-id base-version answers]
-  (let [hakemus (va-db/get-hakemus hakemus-id)
-        avustushaku (get-open-avustushaku haku-id hakemus)
+  (let [avustushaku (get-open-avustushaku haku-id {})
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
+        hakemus (va-db/get-hakemus hakemus-id)
         attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
         validation (validation/validate-form form answers attachments)]
     (if (every? empty? (vals validation))
@@ -131,6 +131,28 @@
                                                       answers)]
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! answers submitted-hakemus avustushaku)
           (hakemus-ok-response submitted-hakemus saved-submission validation))
+        (hakemus-conflict-response hakemus))
+      (bad-request! validation))))
+
+(defn on-hakemus-change-request-response [haku-id hakemus-id base-version answers]
+  (let [hakemus (va-db/get-hakemus hakemus-id)
+        avustushaku (get-open-avustushaku haku-id hakemus)
+        form-id (:form avustushaku)
+        form (form-db/get-form form-id)
+        attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
+        validation (validation/validate-form form answers attachments)]
+    (if (every? empty? (vals validation))
+      (if (= base-version (:version hakemus))
+        (let [submission-id (:form_submission_id hakemus)
+              saved-submission (:body (update-form-submission form-id submission-id answers))
+              submission-version (:version saved-submission)]
+          (va-db/submit-hakemus haku-id
+                                hakemus-id
+                                submission-id
+                                submission-version
+                                (:register_number hakemus)
+                                answers)
+          (method-not-allowed! {:change-request-response "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 
