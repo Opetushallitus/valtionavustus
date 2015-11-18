@@ -31,7 +31,8 @@
     (-> found-parent :label :fi)))
 
 (defn- valid-hakemus? [hakemus]
-  (= (:status hakemus) "submitted"))
+  (or (= (:status hakemus) "submitted")
+      (= (:status hakemus) "pending_change_request")))
 
 (defn- avustushaku->formlabels [avustushaku]
   (let [form (-> avustushaku :form :content)
