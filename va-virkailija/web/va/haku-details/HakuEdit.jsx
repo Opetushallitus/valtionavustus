@@ -12,6 +12,8 @@ export default class HakuEdit extends Component {
     const avustushaku = this.props.avustushaku
     const ldapSearch = this.props.ldapSearch
     const userInfo = this.props.userInfo
+    const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
+    const allowHakuEdits = userHasEditPrivilege && avustushaku.status !== "published"
 
     const onChange = e => {
       controller.onChangeListener(avustushaku, e.target, e.target.value)
@@ -23,33 +25,33 @@ export default class HakuEdit extends Component {
           <h2>Muokkaa avustushakua</h2>
           <CreateHaku controller={controller} avustushaku={avustushaku}/>
         </div>
-        <RegisterNumber controller={controller} avustushaku={avustushaku} onChange={onChange} />
+        <RegisterNumber controller={controller} avustushaku={avustushaku} allowHakuEdits={allowHakuEdits} onChange={onChange} />
         <table id="name" className="translation">
           <thead><tr><th>Haun nimi</th><th>Haun nimi ruotsiksi</th></tr></thead>
           <tbody>
             <tr>
-              <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-fi" value={avustushaku.content.name.fi}/></td>
-              <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-sv" value={avustushaku.content.name.sv}/></td>
+              <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-fi" value={avustushaku.content.name.fi}  disabled={!allowHakuEdits}/></td>
+              <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-sv" value={avustushaku.content.name.sv}  disabled={!allowHakuEdits}/></td>
             </tr>
           </tbody>
         </table>
         <div className="haku-duration-and-self-financing">
           <div className="haku-duration-edit-container">
             <h3>{avustushaku.content.duration.label.fi}</h3>
-            <DateField id="hakuaika-start" onChange={onChange} value={avustushaku.content.duration.start} disabled={avustushaku.status === "published"} />
+            <DateField id="hakuaika-start" onChange={onChange} value={avustushaku.content.duration.start} disabled={!allowHakuEdits} />
             <span className="dateDivider" />
-            <DateField id="hakuaika-end" onChange={onChange} value={avustushaku.content.duration.end} disabled={avustushaku.status === "published"} />
+            <DateField id="hakuaika-end" onChange={onChange} value={avustushaku.content.duration.end} disabled={!allowHakuEdits} />
           </div>
           <div className="haku-self-financing-edit-container">
             <h3>Hakijan omarahoitusvaatimus</h3>
             <input  id="haku-self-financing-percentage"  type="number" min="0" max="99" className="percentage" required="true" maxLength="2"
-                   onChange={onChange} disabled={avustushaku.status === "published"} value={avustushaku.content["self-financing-percentage"]} /><span>%</span>
+                   onChange={onChange} disabled={!allowHakuEdits} value={avustushaku.content["self-financing-percentage"]} /><span>%</span>
           </div>
         </div>
-        <HakuRoles avustushaku={avustushaku} ldapSearch={ldapSearch} userInfo={userInfo} controller={controller}/>
-        <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} onChange={onChange} />
-        <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
-        <FocusArea controller={controller} avustushaku={avustushaku} onChange={onChange} />
+        <HakuRoles avustushaku={avustushaku} ldapSearch={ldapSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller} />
+        <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} />
+        <SelectionCriteria controller={controller} avustushaku={avustushaku} allowHakuEdits={allowHakuEdits} onChange={onChange} />
+        <FocusArea controller={controller} avustushaku={avustushaku} allowHakuEdits={allowHakuEdits} onChange={onChange} />
       </div>
     )
   }
@@ -102,6 +104,7 @@ class SelectionCriteria extends React.Component {
     const selectionCriteria = avustushaku.content['selection-criteria']
     const controller = this.props.controller
     const onChange = this.props.onChange
+    const allowHakuEdits = this.props.allowHakuEdits
     const criteriaItems = []
     for (var index=0; index < selectionCriteria.items.length; index++) {
       const htmlId = "selection-criteria-" + index + "-"
@@ -109,7 +112,7 @@ class SelectionCriteria extends React.Component {
         <tr key={index}>
           <td><textarea onChange={onChange} rows="2" id={htmlId + "fi"} value={selectionCriteria.items[index].fi}/></td>
           <td><textarea onChange={onChange} rows="2" id={htmlId + "sv"} value={selectionCriteria.items[index].sv}/></td>
-          <td><button className="remove" onClick={controller.deleteSelectionCriteria(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={avustushaku.status === "published"} /></td>
+          <td><button className="remove" onClick={controller.deleteSelectionCriteria(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={!allowHakuEdits} /></td>
         </tr>
       )
     }
@@ -120,7 +123,7 @@ class SelectionCriteria extends React.Component {
         <tbody>
         {criteriaItems}
         </tbody>
-        <tfoot><tr><td><button disabled={avustushaku.status === "published"} onClick={controller.addSelectionCriteria(avustushaku)}>Lisää uusi valintaperuste</button></td></tr></tfoot>
+        <tfoot><tr><td><button disabled={!allowHakuEdits} onClick={controller.addSelectionCriteria(avustushaku)}>Lisää uusi valintaperuste</button></td></tr></tfoot>
       </table>
     )
   }
@@ -132,6 +135,7 @@ class FocusArea extends React.Component {
     const focusAreas = avustushaku.content['focus-areas']
     const controller = this.props.controller
     const onChange = this.props.onChange
+    const allowHakuEdits = this.props.allowHakuEdits
     const focusAreaItems = []
     for (var index=0; index < focusAreas.items.length; index++) {
       const htmlId = "focus-area-" + index + "-"
@@ -139,7 +143,7 @@ class FocusArea extends React.Component {
         <tr key={index}>
           <td><textarea onChange={onChange} rows="3" id={htmlId + "fi"} value={focusAreas.items[index].fi}/></td>
           <td><textarea onChange={onChange} rows="3" id={htmlId + "sv"} value={focusAreas.items[index].sv}/></td>
-          <td><button className="remove" onClick={controller.deleteFocusArea(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={avustushaku.status === "published"} /></td>
+          <td><button className="remove" onClick={controller.deleteFocusArea(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={!allowHakuEdits} /></td>
         </tr>
       )
     }
@@ -150,7 +154,7 @@ class FocusArea extends React.Component {
         <tbody>
         {focusAreaItems}
         </tbody>
-        <tfoot><tr><td><button disabled={avustushaku.status === "published"} onClick={controller.addFocusArea(avustushaku)}>Lisää uusi painopistealue</button></td></tr></tfoot>
+        <tfoot><tr><td><button disabled={!allowHakuEdits} onClick={controller.addFocusArea(avustushaku)}>Lisää uusi painopistealue</button></td></tr></tfoot>
       </table>
     )
   }
@@ -161,9 +165,13 @@ class SetStatus extends React.Component {
     const currentStatus = this.props.currentStatus
     const onChange = this.props.onChange
     const hakuIsValid = this.props.hakuIsValid
+    const userHasEditPrivilege = this.props.userHasEditPrivilege
     const statuses = []
     const statusValues = ['deleted', 'draft', 'published'];
     const isDisabled = function(status) {
+      if (!userHasEditPrivilege) {
+        return true
+      }
       if(status === 'deleted' && currentStatus === 'published') {
         return true
       }
@@ -211,8 +219,8 @@ class RegisterNumber extends React.Component {
   }
 
   render() {
-    const controller = this.props.controller
     const avustushaku = this.props.avustushaku
+    const allowHakuEdits = this.props.allowHakuEdits
     const registerNumber = avustushaku["register-number"]
 
     const isRegisterNumberValid = RegisterNumber.isValid(avustushaku)
@@ -228,7 +236,7 @@ class RegisterNumber extends React.Component {
     }
     return <div>
              <h3 className="required">Diaarinumero</h3>
-             <input disabled={avustushaku.status === "published"} onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
+             <input disabled={!allowHakuEdits} onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
              {errorString}
            </div>
   }

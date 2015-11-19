@@ -7,6 +7,7 @@ export default class HakuRoles extends Component {
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
+    const userHasEditPrivilege = this.props.userHasEditPrivilege
     const ldapSearch = this.props.ldapSearch
     const userInfo = this.props.userInfo
     const roles = avustushaku.roles
@@ -14,7 +15,7 @@ export default class HakuRoles extends Component {
     if(roles) {
       for (var i=0; i < roles.length; i++) {
         const role = roles[i]
-        roleRows.push(<RoleRow key={role.id} role={role} avustushaku={avustushaku} userInfo={userInfo} controller={controller}/>)
+        roleRows.push(<RoleRow key={role.id} role={role} avustushaku={avustushaku} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller}/>)
       }
     }
 
@@ -40,7 +41,7 @@ export default class HakuRoles extends Component {
           <div className="ldap-error-display"><span className={searchErrorClass}>Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.</span></div>
           <div className="person-adder-input">
             Lisää uusi henkilö
-            <input id="ldap-search-input" type="text" placeholder={"Hae"} onChange={startSearch} disabled={!roles}/>
+            <input id="ldap-search-input" type="text" placeholder={"Hae"} onChange={startSearch} disabled={!roles || !userHasEditPrivilege}/>
             <button className={clearInputButtonClassname} title="Tyhjennä" disabled={!hasInput} onClick={(e) => {
                 const ldapSearchInput = document.getElementById('ldap-search-input')
                 ldapSearchInput.value = ''
@@ -128,9 +129,10 @@ class RoleRow extends React.Component {
     const avustushaku = this.props.avustushaku
     const userInfo = this.props.userInfo
     const myPrivileges = avustushaku.privileges
+    const userHasEditPrivilege = this.props.userHasEditPrivilege
     const thisRowIsMe = role.oid === userInfo["person-oid"]
-    const disableEditing = thisRowIsMe && myPrivileges && !myPrivileges["edit-my-haku-role"]
-    const removeTitleText = disableEditing ? "Et voi poistaa itseltäsi oikeuksia hakuun" : "Poista"
+    const disableEditing = !userHasEditPrivilege || (thisRowIsMe && myPrivileges && !myPrivileges["edit-my-haku-role"])
+    const removeTitleText = disableEditing && userHasEditPrivilege ? "Et voi poistaa itseltäsi oikeuksia hakuun" : "Poista"
     const onDelete = controller.deleteRole(avustushaku, role)
     const hasOid = role.oid && role.oid.length > 0
     const oidStatusClass = hasOid ? undefined : "error"
