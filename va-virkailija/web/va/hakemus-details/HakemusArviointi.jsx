@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 
+import DateUtil from 'soresu-form/web/form/DateUtil'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 
 import HakemusScoring from './HakemusScoring.jsx'
@@ -78,6 +79,8 @@ class ChangeRequest extends React.Component {
     const status = hakemus.status
     const changeRequestText = hakemus.changeRequest
     const hasChangeRequired = status === 'pending_change_request'
+    const lastChangeRequest = _.last(hakemus.changeRequests)
+    const lastChangeRequestTime = lastChangeRequest ? DateUtil.asDateString(lastChangeRequest["version-date"]) + " " + DateUtil.asTimeString(lastChangeRequest["version-date"]) : ""
     const controller = this.props.controller
     const openEdit = allowEditing ? controller.setChangeRequestText(hakemus, "") : null
     const closeEdit = allowEditing ? controller.setChangeRequestText(hakemus, undefined) : null
@@ -90,7 +93,7 @@ class ChangeRequest extends React.Component {
                 onClick={openEdit}
                 disabled={!allowEditing}>Pyydä täydennystä</button>
         <div hidden={!open}>
-          <label>{title}</label><span hidden={hasChangeRequired}
+          <label>{title}<span hidden={!hasChangeRequired}> {lastChangeRequestTime}</span></label><span hidden={hasChangeRequired}
                                       onClick={closeEdit}
                                       disabled={!allowEditing}
                                       className="close"></span>

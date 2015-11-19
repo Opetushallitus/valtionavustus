@@ -26,6 +26,7 @@ const events = {
   commentsLoaded: 'commentsLoaded',
   addComment: 'addComment',
   scoresLoaded: 'scoresLoaded',
+  changeRequestsLoaded: 'changeRequestsLoaded',
   setScore: 'setScore',
   toggleOthersScoresDisplay: 'toggleOthersScoresDisplay',
   gotoSavedSearch: 'gotoSavedSearch'
@@ -34,7 +35,7 @@ const events = {
 export default class HakemustenArviointiController {
 
   initializeState(avustushakuId) {
-    this._bind('onInitialState', 'onHakemusSelection')
+    this._bind('onInitialState', 'onHakemusSelection', 'onUpdateHakemusStatus')
 
     const initialStateTemplate = {
       hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId)),
@@ -76,6 +77,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.commentsLoaded)], this.onCommentsLoaded,
       [dispatcher.stream(events.addComment)], this.onAddComment,
       [dispatcher.stream(events.scoresLoaded)], this.onScoresLoaded,
+      [dispatcher.stream(events.changeRequestsLoaded)], this.onChangeRequestsLoaded,
       [dispatcher.stream(events.setScore)], this.onSetScore,
       [dispatcher.stream(events.toggleOthersScoresDisplay)], this.onToggleOthersScoresDisplay,
       [dispatcher.stream(events.setFilter)], this.onFilterSet,
@@ -94,6 +96,10 @@ export default class HakemustenArviointiController {
 
   static scoresUrl(state, hakemus) {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemus.id + "/scores"
+  }
+
+  static changeRequestsUrl(state, hakemus) {
+    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemus.id + "/change-requests"
   }
 
   static savedSearchUrl(state) {
@@ -133,6 +139,7 @@ export default class HakemustenArviointiController {
     }
     this.loadScores(state, hakemusToSelect)
     this.loadComments()
+    this.loadChangeRequests(state, hakemusToSelect)
     return state
   }
 
@@ -162,10 +169,12 @@ export default class HakemustenArviointiController {
     const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + updatedHakemus.id + "/status"
     state.saveStatus.saveInProgress = true
     const request = {"status": updatedHakemus.status}
+    const self = this
     HttpUtil.post(updateUrl, request)
         .then(function(response) {
           if(response instanceof Object) {
             dispatcher.push(events.saveCompleted)
+            self.loadChangeRequests(state, updatedHakemus)
           }
           else {
             dispatcher.push(events.saveCompleted, "unexpected-save-error")
@@ -264,12 +273,30 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  loadChangeRequests(state, hakemus) {
+    HttpUtil.get(HakemustenArviointiController.changeRequestsUrl(state, hakemus)).then(response => {
+      dispatcher.push(events.changeRequestsLoaded, {hakemusId: hakemus.id,
+                                                    changeRequests: response})
+    })
+    return state
+  }
+
+
   onScoresLoaded(state, hakemusIdWithScoring) {
     const hakemusId = hakemusIdWithScoring.hakemusId
     const relevantHakemus = _.find(state.hakuData.hakemukset, h => { return h.id === hakemusId })
     if (relevantHakemus) {
       relevantHakemus.scores = hakemusIdWithScoring.scores
       relevantHakemus.arvio.scoring = hakemusIdWithScoring.scoring
+    }
+    return state
+  }
+
+  onChangeRequestsLoaded(state, hakemusIdWithChangeRequests) {
+    const hakemusId = hakemusIdWithChangeRequests.hakemusId
+    const relevantHakemus = _.find(state.hakuData.hakemukset, h => { return h.id === hakemusId })
+    if (relevantHakemus) {
+      relevantHakemus.changeRequests = hakemusIdWithChangeRequests.changeRequests
     }
     return state
   }
