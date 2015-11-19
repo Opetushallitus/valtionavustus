@@ -23,7 +23,8 @@ export default class FormEditor extends Component {
     const formEditorController = new FormEditorController({
       formDraftJson: formDraftJson,
       onFormEdited: formEditedCallback,
-      allowEditing: userHasEditPrivilege })
+      allowEditing: userHasEditPrivilege,
+      readOnlyNotificationText: "Vain haun esittelijät ja pääkäyttäjät voivat muokata lomaketta"})
     const formState = formDraftJson ? FakeFormState.createEditFormState(translations, formDraftJson) : undefined
     const formElementProps = {
       state: formState,
