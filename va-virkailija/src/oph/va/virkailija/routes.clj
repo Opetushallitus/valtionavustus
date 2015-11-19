@@ -219,6 +219,12 @@
                 (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
           (not-found)))
 
+  (GET* "/:avustushaku-id/hakemus/:hakemus-id/change-requests" [avustushaku-id hakemus-id :as request]
+        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+        :return [Hakemus]
+        :summary "List change requests of given hakemus"
+        (hakija-api/list-hakemus-change-requests hakemus-id))
+
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
         :return ScoringOfArvio

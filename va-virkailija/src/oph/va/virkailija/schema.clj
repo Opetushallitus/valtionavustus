@@ -73,7 +73,7 @@
                       :project-name s/Str
                       :organization-name s/Str
                       :status HakemusStatus
-                      :arvio Arvio
+                      (s/optional-key :arvio)  Arvio
                       :budget-total s/Int
                       :budget-oph-share s/Int
                       :register-number (s/maybe s/Str)

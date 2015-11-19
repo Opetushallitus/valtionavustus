@@ -191,3 +191,6 @@
     (exec-all :hakija-db [hakija-queries/lock-hakemus hakemus-to-update
                           hakija-queries/close-existing-hakemus! hakemus-to-update
                           hakija-queries/update-hakemus-status<! updated-hakemus])))
+
+(defn list-hakemus-change-requests [hakemus-id]
+  (hakemukset->json (exec :hakija-db hakija-queries/list-hakemus-change-requests {:id hakemus-id})))

@@ -26,6 +26,7 @@
 (defquery download-attachment "sql/hakija/attachment/download.sql")
 
 (defquery get-hakemus "sql/hakija/hakemus/get-by-id.sql")
+(defquery list-hakemus-change-requests "sql/hakija/hakemus/list-change-requests-by-id.sql")
 (defquery update-hakemus-status<! "sql/common/hakija/hakemus/update-status.sql")
 (defquery lock-hakemus "sql/common/hakija/hakemus/lock.sql")
 (defquery close-existing-hakemus! "sql/common/hakija/hakemus/close-existing.sql")
