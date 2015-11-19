@@ -5,6 +5,7 @@ export default class FormJsonEditor extends Component {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
     const formDraft = this.props.formDraft
+    const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
     const onChange = e => {
       controller.formOnChangeListener(avustushaku, e.target.value)
     }
@@ -20,8 +21,7 @@ export default class FormJsonEditor extends Component {
     catch (error) {
       parseError = error.toString()
     }
-    const formHasBeenEdited = (formDraft && avustushaku.formContent) && !_.isEqual(parsedForm, avustushaku.formContent)
-    const disableSave = !formHasBeenEdited || avustushaku.status === "published" || parseError !== false
+    const disableSave = !allowSave() || !formHasBeenEdited()
 
     return formDraft ?
       <div id="form-json-editor"><h3>Hakulomakkeen sisältö</h3>
@@ -29,5 +29,13 @@ export default class FormJsonEditor extends Component {
         <textarea onChange={onChange} disabled={avustushaku.status === "published"} value={formDraft}/>
       </div>
       : <span/>
+
+    function allowSave() {
+      return userHasEditPrivilege && parseError === false && avustushaku.status !== "published"
+    }
+
+    function formHasBeenEdited() {
+      return (formDraft && avustushaku.formContent) && !_.isEqual(parsedForm, avustushaku.formContent)
+    }
   }
 }
