@@ -151,7 +151,8 @@ export default class HakemustenArviointiController {
           dispatcher.push(events.saveCompleted, "unexpected-save-error")
         }
       })
-      .catch(function(response) {
+      .catch(function(error) {
+        console.error(error)
         dispatcher.push(events.saveCompleted, "unexpected-save-error")
       })
     return state
@@ -170,7 +171,8 @@ export default class HakemustenArviointiController {
             dispatcher.push(events.saveCompleted, "unexpected-save-error")
           }
         })
-        .catch(function(response) {
+        .catch(function(error) {
+          console.error(error)
           dispatcher.push(events.saveCompleted, "unexpected-save-error")
         })
     return state
@@ -218,7 +220,8 @@ export default class HakemustenArviointiController {
           dispatcher.push(events.saveCompleted, "unexpected-save-error")
         }
       })
-      .catch(function(response) {
+      .catch(function(error) {
+        console.error(error)
         dispatcher.push(events.saveCompleted, "unexpected-save-error")
       })
     return state
@@ -245,8 +248,8 @@ export default class HakemustenArviointiController {
           dispatcher.push(events.saveCompleted, "unexpected-save-error")
         }
       })
-      .catch(function(response) {
-        console.log('Got error on saved search initialization', response)
+      .catch(function(error) {
+        console.error('Got error on saved search initialization', error)
         dispatcher.push(events.saveCompleted, "unexpected-save-error")
       })
     return state
@@ -288,7 +291,8 @@ export default class HakemustenArviointiController {
           dispatcher.push(events.saveCompleted, "unexpected-save-error")
         }
       })
-      .catch(function(response) {
+      .catch(function(error) {
+        console.error(error)
         dispatcher.push(events.saveCompleted, "unexpected-save-error")
       })
     return state
