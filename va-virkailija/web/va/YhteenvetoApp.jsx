@@ -9,7 +9,7 @@ import YhteenvetoController from './YhteenvetoController.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
 import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
-import {BasicInfoComponent} from 'soresu-form/web/form/component/InfoElement.jsx'
+import DateUtil from 'soresu-form/web/form/DateUtil'
 
 import virkailija from './style/virkailija.less'
 import style from './style/main.less'
@@ -63,7 +63,7 @@ export default class SummaryApp extends Component {
     return avustushaku.content.name.fi +  " (" + durationString + ")"
 
     function toDateStr(dateTime) {
-      return BasicInfoComponent.asDateString(dateTime)
+      return DateUtil.asDateString(dateTime)
     }
   }
 }

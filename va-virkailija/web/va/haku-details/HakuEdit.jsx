@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { BasicInfoComponent }from 'soresu-form/web/form/component/InfoElement.jsx'
+import DateUtil from 'soresu-form/web/form/DateUtil'
 
 import HakuStatus from "../avustushaku/HakuStatus.jsx"
 
@@ -74,13 +74,13 @@ class DateField extends React.Component {
   constructor(props) {
     super(props)
     this.handleChange = this.handleChange.bind(this)
-    const dateStr = BasicInfoComponent.asDateString(this.props.value) + " " + BasicInfoComponent.asTimeString(this.props.value)
+    const dateStr = DateUtil.asDateString(this.props.value) + " " + DateUtil.asTimeString(this.props.value)
     this.state = {value: dateStr}
   }
 
   componentWillReceiveProps(nextProps) {
     if(this.props.value !== nextProps.value) {
-      const dateStr = BasicInfoComponent.asDateString(nextProps.value) + " " + BasicInfoComponent.asTimeString(nextProps.value)
+      const dateStr = DateUtil.asDateString(nextProps.value) + " " + DateUtil.asTimeString(nextProps.value)
       this.setState({value: dateStr})
     }
   }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { BasicInfoComponent }from 'soresu-form/web/form/component/InfoElement.jsx'
+import DateUtil from 'soresu-form/web/form/DateUtil'
 
 import HakuStatus from '../avustushaku/HakuStatus.jsx'
 import HakuPhase from '../avustushaku/HakuPhase.jsx'
@@ -35,7 +35,7 @@ export default class HakuListing extends Component {
 class HakuRow extends Component {
 
   toDateStr(dateTime) {
-    return BasicInfoComponent.asDateString(dateTime) + ' ' + BasicInfoComponent.asTimeString(dateTime)
+    return DateUtil.asDateString(dateTime) + ' ' + DateUtil.asTimeString(dateTime)
   }
 
   render() {

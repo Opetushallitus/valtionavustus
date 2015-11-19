@@ -5,7 +5,6 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import QueryString from 'query-string'
 import Bacon from 'baconjs'
-import moment from 'moment-timezone'
 
 import common from 'soresu-form/web/form/style/main.less'
 import loginStyle from './style/va-login.less'

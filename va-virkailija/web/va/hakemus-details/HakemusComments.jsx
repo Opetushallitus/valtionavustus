@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
-import {BasicInfoComponent} from 'soresu-form/web/form/component/InfoElement.jsx'
+import DateUtil from 'soresu-form/web/form/DateUtil'
 
 export default class HakemusComments extends Component {
 
@@ -59,7 +59,7 @@ class Comment extends Component {
     const lastNameInitial = comment.last_name ? comment.last_name.charAt(0).toUpperCase() : ''
     const commentLine = firstName + ' ' + lastNameInitial + ': ' + comment.comment
     const dateTime = new Date(comment.created_at)
-    const dateTimeString = BasicInfoComponent.asDateString(dateTime) + ' ' + BasicInfoComponent.asTimeString(dateTime)
+    const dateTimeString = DateUtil.asDateString(dateTime) + ' ' + DateUtil.asTimeString(dateTime)
     const toolTipString = comment.first_name + ' ' + comment.last_name + ' ' + dateTimeString + ': ' +
         comment.comment
     return <div className="single-comment" title={toolTipString} >

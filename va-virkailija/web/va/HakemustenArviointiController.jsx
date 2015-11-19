@@ -7,6 +7,7 @@ import RouteParser from 'route-parser'
 
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'soresu-form/web/Dispatcher'
+import DateUtil from 'soresu-form/web/form/DateUtil'
 
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
 
