@@ -97,6 +97,7 @@
 (s/defschema HakuPrivileges
   "Privileges that curently logged in user has for certain avustushaku"
   {:edit-haku s/Bool
+   :edit-my-haku-role s/Bool
    :score-hakemus s/Bool
    :change-hakemus-state s/Bool})
 

@@ -14,6 +14,7 @@
         is-presenter (= "presenting_officer" (:role haku-role-of-user))
         is-evaluator (= "evaluator" (:role haku-role-of-user))]
     {:edit-haku (or is-presenter (:va-admin user-with-roles))
+     :edit-my-haku-role (:va-admin user-with-roles)
      :score-hakemus (or is-presenter is-evaluator)
      :change-hakemus-state is-presenter}))
 
@@ -26,5 +27,6 @@
         (resolve-privileges-for-user user-with-roles haku-roles)
         (do (log/error (str "Could not find user details for " identity " to access avustushaku " avustushaku-id))
             {:edit-haku false
+             :edit-my-haku-role false
              :score-hakemus false
              :change-hakemus-state false}))))

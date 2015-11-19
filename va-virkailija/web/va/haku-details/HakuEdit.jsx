@@ -11,6 +11,7 @@ export default class HakuEdit extends Component {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
     const ldapSearch = this.props.ldapSearch
+    const userInfo = this.props.userInfo
 
     const onChange = e => {
       controller.onChangeListener(avustushaku, e.target, e.target.value)
@@ -45,7 +46,7 @@ export default class HakuEdit extends Component {
                    onChange={onChange} disabled={avustushaku.status === "published"} value={avustushaku.content["self-financing-percentage"]} /><span>%</span>
           </div>
         </div>
-        <HakuRoles avustushaku={avustushaku} ldapSearch={ldapSearch} controller={controller}/>
+        <HakuRoles avustushaku={avustushaku} ldapSearch={ldapSearch} userInfo={userInfo} controller={controller}/>
         <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} onChange={onChange} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} onChange={onChange} />
         <FocusArea controller={controller} avustushaku={avustushaku} onChange={onChange} />

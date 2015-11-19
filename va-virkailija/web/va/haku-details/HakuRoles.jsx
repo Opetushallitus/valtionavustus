@@ -8,12 +8,13 @@ export default class HakuRoles extends Component {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
     const ldapSearch = this.props.ldapSearch
+    const userInfo = this.props.userInfo
     const roles = avustushaku.roles
     const roleRows = []
     if(roles) {
       for (var i=0; i < roles.length; i++) {
         const role = roles[i]
-        roleRows.push(<RoleRow key={role.id} role={role} avustushaku={avustushaku} controller={controller}/>)
+        roleRows.push(<RoleRow key={role.id} role={role} avustushaku={avustushaku} userInfo={userInfo} controller={controller}/>)
       }
     }
 
@@ -125,6 +126,11 @@ class RoleRow extends React.Component {
     const role = this.props.role
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
+    const userInfo = this.props.userInfo
+    const myPrivileges = avustushaku.privileges
+    const thisRowIsMe = role.oid === userInfo["person-oid"]
+    const disableEditing = thisRowIsMe && myPrivileges && !myPrivileges["edit-my-haku-role"]
+    const removeTitleText = disableEditing ? "Et voi poistaa itseltäsi oikeuksia hakuun" : "Poista"
     const onDelete = controller.deleteRole(avustushaku, role)
     const hasOid = role.oid && role.oid.length > 0
     const oidStatusClass = hasOid ? undefined : "error"
@@ -132,7 +138,7 @@ class RoleRow extends React.Component {
     return (
       <tr>
         <td>
-          <select onChange={this.handleChange} name="role" value={role.role}>
+          <select onChange={this.handleChange} name="role" value={role.role} disabled={disableEditing}>
             <option value="presenting_officer">Esittelijä</option>
             <option value="evaluator">Arvioija</option>
           </select>
@@ -140,7 +146,7 @@ class RoleRow extends React.Component {
         <td className={oidStatusClass}>{oidStatusText}</td>
         <td>{role.name}</td>
         <td>{role.email}</td>
-        <td><button onClick={onDelete} className="remove" alt="Poista" title="Poista" tabIndex="-1" /></td>
+        <td><button onClick={onDelete} className="remove" alt="Poista" title={removeTitleText} tabIndex="-1" disabled={disableEditing} /></td>
       </tr>
     )
   }

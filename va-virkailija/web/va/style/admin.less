@@ -102,6 +102,19 @@ table.translation, #haku-roles table {
       max-width: @content-width / 3.3;
       width: @content-width / 3.3;
     }
+
+    table button.remove {
+      opacity: 1.0;
+      cursor: pointer;
+      &:disabled {
+        cursor: default;
+        height: 23px;
+        left: -2px;
+        opacity: 0.4;
+        position: relative;
+        top: -4px;
+      }
+    }
   }
 
   #add-new-person-from-ldap {
