@@ -70,6 +70,8 @@
    :scores [Score]})
 
 (s/defschema Hakemus {:id s/Int
+                      :version s/Int
+                      :version-date s/Inst
                       :project-name s/Str
                       :organization-name s/Str
                       :status HakemusStatus

@@ -110,6 +110,8 @@
 (defn- hakemukset->json [hakemukset]
   (-> (fn [hakemus]
         {:id (:id hakemus)
+         :version (:version hakemus)
+         :version-date (:created_at hakemus)
          :project-name (:project_name hakemus)
          :organization-name (:organization_name hakemus)
          :budget-oph-share (:budget_oph_share hakemus)
