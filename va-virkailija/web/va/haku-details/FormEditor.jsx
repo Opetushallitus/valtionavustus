@@ -15,13 +15,15 @@ export default class FormEditor extends Component {
     const avustushaku = this.props.avustushaku
     const translations = this.props.translations
     const hakuAdminController = this.props.controller
+    const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
     const formDraftJson = this.parseJson(this.props.formDraft)
     const formEditedCallback = (newDraftJson) => {
       hakuAdminController.formOnChangeListener(avustushaku, newDraftJson)
     }
     const formEditorController = new FormEditorController({
       formDraftJson: formDraftJson,
-      onFormEdited: formEditedCallback })
+      onFormEdited: formEditedCallback,
+      allowEditing: userHasEditPrivilege })
     const formState = formDraftJson ? FakeFormState.createEditFormState(translations, formDraftJson) : undefined
     const formElementProps = {
       state: formState,
