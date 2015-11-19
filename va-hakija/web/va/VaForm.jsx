@@ -7,6 +7,8 @@ import VaFormTopbar from './VaFormTopbar.jsx'
 import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'
 import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber.jsx'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
+import Form from 'soresu-form/web/form/Form.jsx'
+import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 
 export default class VaForm extends React.Component {
   render() {
@@ -18,6 +20,7 @@ export default class VaForm extends React.Component {
                                                            lang={state.configuration.lang} />
 
     const develQueryParam = this.props.develQueryParam
+    const formContainerClass = state.configuration.preview ? FormPreview : Form
     return(
       <div>
         <VaOldBrowserWarning lang={state.configuration.lang}
@@ -29,6 +32,7 @@ export default class VaForm extends React.Component {
         />
         <FormContainer controller={controller}
                        state={state}
+                       formContainerClass={formContainerClass}
                        headerElements={registerNumberDisplay}
                        infoElementValues={state.avustushaku}
         />

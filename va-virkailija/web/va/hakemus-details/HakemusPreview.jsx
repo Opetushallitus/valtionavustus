@@ -3,6 +3,7 @@ import _ from 'lodash'
 import Immutable from 'seamless-immutable'
 
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
+import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber.jsx'
 
@@ -22,6 +23,7 @@ export default class HakemusPreview extends Component {
                                                            lang={formState.configuration.lang} />
     const formElementProps = {
       state: formState,
+      formContainerClass: FormPreview,
       infoElementValues: avustushaku,
       controller: new FakeFormController(new VaPreviewComponentFactory(), avustushaku, hakemus),
       containerId: "preview-container",
