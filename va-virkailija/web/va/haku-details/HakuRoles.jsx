@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import ClassNames from 'classnames'
 
+import CSSTransitionGroup from 'soresu-form/web/form/component/wrapper/CSSTransitionGroup.jsx'
 import LdapSearchParameters from './LdapSearchParameters'
+
 
 export default class HakuRoles extends Component {
   render() {
@@ -10,7 +12,7 @@ export default class HakuRoles extends Component {
     const userHasEditPrivilege = this.props.userHasEditPrivilege
     const ldapSearch = this.props.ldapSearch
     const userInfo = this.props.userInfo
-    const roles = avustushaku.roles
+    const roles = _.sortBy(avustushaku.roles, 'name')
     const roleRows = []
     if(roles) {
       for (var i=0; i < roles.length; i++) {
@@ -32,9 +34,9 @@ export default class HakuRoles extends Component {
       <div id="haku-roles">
         <table>
           <thead><tr><th>Rooli</th><th>Sidottu LDAPiin?</th><th>Nimi</th><th>Sähköposti</th></tr></thead>
-          <tbody>
+          <CSSTransitionGroup transitionName="haku-roles-transition" component="tbody">
           {roleRows}
-          </tbody>
+          </CSSTransitionGroup>
         </table>
 
         <div id="add-new-person-from-ldap">

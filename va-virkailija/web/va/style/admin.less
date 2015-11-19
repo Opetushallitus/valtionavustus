@@ -122,6 +122,24 @@ table.translation, #haku-roles table {
     }
   }
 
+  .haku-roles-transition-enter {
+    opacity: 0.3;
+    transition: opacity 0.5s linear;
+
+    &.haku-roles-transition-enter-active {
+      opacity: 1;
+    }
+  }
+
+  .haku-roles-transition-leave {
+    opacity: 1;
+    transition: opacity 0.4s linear;
+
+    &.haku-roles-transition-leave-active {
+      opacity: 0.3;
+    }
+  }
+
   #add-new-person-from-ldap {
     min-height: 72px;
     .ldap-error-display {
