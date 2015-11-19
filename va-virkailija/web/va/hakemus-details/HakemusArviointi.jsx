@@ -93,10 +93,11 @@ class ChangeRequest extends React.Component {
                 onClick={openEdit}
                 disabled={!allowEditing}>Pyydä täydennystä</button>
         <div hidden={!open}>
-          <label>{title}<span hidden={!hasChangeRequired}> {lastChangeRequestTime}</span></label><span hidden={hasChangeRequired}
-                                      onClick={closeEdit}
-                                      disabled={!allowEditing}
-                                      className="close"></span>
+          <label>{title}<span hidden={!hasChangeRequired}> {lastChangeRequestTime}</span></label>
+          <span hidden={hasChangeRequired}
+                onClick={closeEdit}
+                disabled={!allowEditing}
+                className="close"></span>
           <textarea placeholder="Täydennyspyyntö hakijalle" rows="4" disabled={!allowEditing} value={changeRequestText}/>
           <button hidden={hasChangeRequired}
                   onClick={sendChangeRequest}
