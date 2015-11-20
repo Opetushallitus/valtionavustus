@@ -17,6 +17,15 @@
 
 (def answers-sheet-name "Vastaukset")
 
+(def answers-fixed-fields
+  [["fixed-register-number" "Diaarinumero" :register-number]
+   ["fixed-organization-name" "Hakijaorganisaatio" :organization-name]
+   ["fixed-project-name" "Projektin nimi" :project-name]
+   ["fixed-budget-total" "Ehdotettu budjetti" :budget-total]
+   ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share]
+   ["fixed-budget-granted" "Myönnetty avustus" (comp :budget-granted :arvio)]
+   ["fixed-score-total-average" "Arviokeskiarvo" (comp :score-total-average :scoring :arvio)]])
+
 (defn- has-child? [id node]
   (when-let [children (:children node)]
     (let [child-list (->> children
@@ -48,14 +57,10 @@
 
 (defn- hakemus->map [hakemus]
   (let [answers (formutil/unwrap-answers (:answers hakemus))]
-    (-> answers
-        (assoc "fixed-register-number" (:register-number hakemus))
-        (assoc "fixed-organization-name" (:organization-name hakemus))
-        (assoc "fixed-project-name" (:project-name hakemus))
-        (assoc "fixed-budget-total" (:budget-total hakemus))
-        (assoc "fixed-budget-oph-share" (:budget-oph-share hakemus))
-        (assoc "fixed-budget-granted" (-> hakemus :arvio :budget-granted))
-        (assoc "fixed-score-total-average" (-> hakemus :arvio :scoring :score-total-average)))))
+    (reduce (fn [answer-map [field-name _ lookup-fn]]
+              (assoc answer-map field-name (lookup-fn hakemus)))
+            answers
+            answers-fixed-fields)))
 
 (defn flatten-answers [avustushaku answer-keys answer-labels]
   (let [hakemukset (avustushaku->hakemukset avustushaku)
@@ -95,14 +100,10 @@
 
         answer-key-label-pairs (avustushaku->formlabels avustushaku)
         answer-keys (apply conj
-                           ["fixed-register-number" "fixed-organization-name" "fixed-project-name"
-                            "fixed-budget-total" "fixed-budget-oph-share" "fixed-budget-granted"
-                            "fixed-score-total-average"]
+                           (mapv first answers-fixed-fields)
                            (map first answer-key-label-pairs))
         answer-labels (apply conj
-                             ["Diaarinumero" "Hakijaorganisaatio" "Projektin nimi"
-                              "Ehdotettu budjetti" "OPH:n avustuksen osuus" "Myönnetty avustus"
-                              "Arviokeskiarvo"]
+                             (mapv second answers-fixed-fields)
                              (map second answer-key-label-pairs))
         answer-flatdata (flatten-answers avustushaku answer-keys answer-labels)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
