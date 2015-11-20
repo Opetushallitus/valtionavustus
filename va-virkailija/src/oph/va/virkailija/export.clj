@@ -75,6 +75,16 @@
         flat-answers (->> (extract-answer-values avustushaku answer-keys answers)
                           (sort-by first))]
     (apply conj [answer-labels] flat-answers)))
+(defn- find-all-answer-keys [avustushaku]
+  (let [hakemukset (avustushaku->hakemukset avustushaku)]
+    (reduce (fn [answer-key-set hakemus]
+              (conj answer-key-set (keys (formutil/unwrap-answers (hakemus->map hakemus)))))
+            #{}
+            hakemukset)))
+
+(defn testbox []
+  (let [avustushaku (hakudata/get-combined-avustushaku-data 1 identity)]
+    (find-all-answer-keys avustushaku)))
 
 (def hakemus->main-sheet-rows
   (juxt :register-number
