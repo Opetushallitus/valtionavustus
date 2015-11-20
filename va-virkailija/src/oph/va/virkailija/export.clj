@@ -48,8 +48,10 @@
         wrappers (formutil/find-wrapper-elements form)]
     (->> form
          (formutil/find-fields)
-         (map (fn [field] [(:id field) (or (-> field :label :fi)
-                                           (find-parent-label wrappers (:id field)))])))))
+         (map (fn [field] [(:id field)
+                           (or (-> field :label :fi)
+                               (find-parent-label wrappers (:id field)))
+                           (:fieldType field)])))))
 
 (defn- avustushaku->hakemukset [avustushaku]
   (->> (:hakemukset avustushaku)
@@ -62,13 +64,15 @@
             answers
             answers-fixed-fields)))
 
+(defn- extract-answer-values [avustushaku answer-keys answers]
+  (let [get-by-id (fn [answer-set id] (get answer-set id))
+        extract-answers (fn [answer-set] (map (partial get-by-id answer-set) answer-keys))]
+    (map extract-answers answers)))
+
 (defn flatten-answers [avustushaku answer-keys answer-labels]
   (let [hakemukset (avustushaku->hakemukset avustushaku)
         answers (map hakemus->map hakemukset)
-        flat-answers (->> answers
-                          (map (fn [answer-set]
-                            (map (fn [id]
-                                   (get answer-set id)) answer-keys)))
+        flat-answers (->> (extract-answer-values avustushaku answer-keys answers)
                           (sort-by first))]
     (apply conj [answer-labels] flat-answers)))
 
@@ -100,13 +104,13 @@
         main-sheet (spreadsheet/select-sheet main-sheet-name wb)
         main-header-row (first (spreadsheet/row-seq main-sheet))
 
-        answer-key-label-pairs (avustushaku->formlabels avustushaku)
+        answer-key-label-type-triples (avustushaku->formlabels avustushaku)
         answer-keys (apply conj
                            (mapv first answers-fixed-fields)
-                           (map first answer-key-label-pairs))
+                           (map first answer-key-label-type-triples))
         answer-labels (apply conj
                              (mapv second answers-fixed-fields)
-                             (map second answer-key-label-pairs))
+                             (map second answer-key-label-type-triples))
         answer-flatdata (flatten-answers avustushaku answer-keys answer-labels)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
                         (spreadsheet/add-rows! sheet answer-flatdata)
