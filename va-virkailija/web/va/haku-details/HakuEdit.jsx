@@ -236,7 +236,7 @@ class RegisterNumber extends React.Component {
     }
     return <div>
              <h3 className="required">Diaarinumero</h3>
-             <input disabled={!allowHakuEdits} onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
+             <input type="text" disabled={!allowHakuEdits} onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
              {errorString}
            </div>
   }

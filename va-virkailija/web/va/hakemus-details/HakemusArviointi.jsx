@@ -64,7 +64,7 @@ class SetArviointiStatus extends React.Component {
     }
 
     return (
-      <div>
+      <div className="value-edit">
         {statuses}
       </div>
     )
@@ -126,7 +126,7 @@ class BudgetGranted extends React.Component {
 
     return <div className="value-edit budget-granted">
       <label htmlFor="budget-granted">Myönnetty avustus</label>
-      <input id="budget-granted" disabled={!allowEditing} type="text" value={budgetGranted} onChange={onChange} maxLength="9" /> €
+      <input id="budget-granted" disabled={!allowEditing} type="text" value={budgetGranted} onChange={onChange} maxLength="9" size="9"/> €
     </div>
   }
 }
@@ -140,7 +140,7 @@ class SummaryComment extends React.Component {
     const controller = this.props.controller
     return <div className="value-edit summary-comment">
       <label htmlFor="summary-comment">Huomautus ratkaisuyhteenvetoon</label>
-      <input id="summary-comment" type="text" disabled={!allowEditing} value={summaryComment} title={summaryComment}
+      <textarea id="summary-comment" rows="1" disabled={!allowEditing} value={summaryComment} title={summaryComment}
              onChange={e => { controller.setHakemusSummaryComment(hakemus, e.target.value) }} maxLength="128" />
     </div>
   }
