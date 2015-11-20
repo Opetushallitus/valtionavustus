@@ -7,6 +7,7 @@ import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber.jsx'
 
+import EditsDisplayingFormView from './EditsDisplayingFormView.jsx'
 import FakeFormController from '../form/FakeFormController.js'
 import FakeFormState from '../form/FakeFormState.js'
 
@@ -23,7 +24,7 @@ export default class HakemusPreview extends Component {
                                                            lang={formState.configuration.lang} />
     const formElementProps = {
       state: formState,
-      formContainerClass: FormPreview,
+      formContainerClass: EditsDisplayingFormView,
       infoElementValues: avustushaku,
       controller: new FakeFormController(new VaPreviewComponentFactory(), avustushaku, hakemus),
       containerId: "preview-container",

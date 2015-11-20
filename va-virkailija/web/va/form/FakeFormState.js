@@ -44,7 +44,8 @@ export default class FakeFormState {
       saveStatus: {
         values: answers,
         attachments: attachments
-      }
+      },
+      changeRequests: hakemus.changeRequests
     }
 
     if(answers) {

@@ -155,6 +155,21 @@ table.hakemus-list {
     div.soresu-attachment-block {
       width: @preview-width;
     }
+
+    .answer-old-value {
+      .soresu-value {
+        background-color: lighten(@bright-red, 40%);
+        text-decoration: line-through;
+      }
+    }
+    .answer-new-value {
+      .soresu-key {
+        display: none;
+      }
+      .soresu-value {
+        background-color: lighten(@light-green, 40%);
+      }
+    }
   }
 
   #hakemus-arviointi {
