@@ -94,6 +94,9 @@
                             (generate-register-number avustushaku-id hakemus-id))
         params (-> {:avustushaku_id avustushaku-id
                     :user_key hakemus-id
+                    :user_oid nil
+                    :user_first_name nil
+                    :user_last_name nil
                     :register_number register-number
                     :form_submission_id submission-id
                     :form_submission_version submission-version}
@@ -102,26 +105,30 @@
                    queries/close-existing-hakemus! params
                    queries/update-hakemus-submission<! params])))
 
-(defn- update-status [avustushaku-id hakemus-id submission-id submission-version register-number answers status]
+(defn- update-status [avustushaku-id hakemus-id submission-id submission-version register-number answers status status-change-comment]
   (let [params (-> {:avustushaku_id avustushaku-id
                     :user_key hakemus-id
+                    :user_oid nil
+                    :user_first_name nil
+                    :user_last_name nil
                     :form_submission_id submission-id
                     :form_submission_version submission-version
                     :register_number register-number
-                    :status status}
+                    :status status
+                    :status_change_comment status-change-comment}
                    (merge-calculated-params avustushaku-id answers))]
     (exec-all :db [queries/lock-hakemus params
                    queries/close-existing-hakemus! params
                    queries/update-hakemus-status<! params])))
 
 (defn verify-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers :draft))
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers :draft nil))
 
 (defn submit-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers :submitted))
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers :submitted nil))
 
-(defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers :cancelled))
+(defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers comment]
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers :cancelled comment))
 
 (defn attachment-exists? [hakemus-id field-id]
   (->> {:hakemus_id hakemus-id

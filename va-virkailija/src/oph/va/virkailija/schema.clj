@@ -75,6 +75,7 @@
                       :project-name s/Str
                       :organization-name s/Str
                       :status HakemusStatus
+                      :status-comment (s/maybe s/Str)
                       (s/optional-key :arvio)  Arvio
                       :budget-total s/Int
                       :budget-oph-share s/Int

@@ -291,7 +291,7 @@
             submission-id (:id (:submission json))]
         (should= 200 status)
         (should= "draft" (:status json))
-        (va-db/cancel-hakemus 1 id submission-id submission-version nil valid-answers)
+        (va-db/cancel-hakemus 1 id submission-id submission-version nil valid-answers "Peruttu hakijan pyynnöstä")
 
         ;; Get after cancellation
         (let [{:keys [status headers body error] :as resp} (get! (str "/api/avustushaku/1/hakemus/" id))]

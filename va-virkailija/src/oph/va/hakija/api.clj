@@ -117,6 +117,7 @@
          :budget-oph-share (:budget_oph_share hakemus)
          :budget-total (:budget_total hakemus)
          :status (:status hakemus)
+         :status-comment (:status_change_comment hakemus)
          :register-number (:register_number hakemus)
          :user-key (:user_key hakemus)
          :answers (:answer_values hakemus)})
@@ -186,9 +187,13 @@
          (catch Exception e (throw (get-next-exception-or-original e))))
     (get-form-by-avustushaku avustushaku-id)))
 
-(defn update-hakemus-status [hakemus-id status]
+(defn update-hakemus-status [hakemus-id status status-comment identity]
   (let [hakemus-to-update (first (exec :hakija-db hakija-queries/get-hakemus {:id hakemus-id}))
         updated-hakemus (merge hakemus-to-update {:status (keyword status)
+                                                  :status_change_comment status-comment
+                                                  :user_oid (:person-oid identity)
+                                                  :user_first_name (:first-name identity)
+                                                  :user_last_name (:surname identity)
                                                   :avustushaku_id (:avustushaku hakemus-to-update)})]
     (exec-all :hakija-db [hakija-queries/lock-hakemus hakemus-to-update
                           hakija-queries/close-existing-hakemus! hakemus-to-update

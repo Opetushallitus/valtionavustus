@@ -75,11 +75,11 @@ table.hakemus-list {
   }
   .change-request-column {
     color: @bright-red;
-    width: 20px;
+    width: 30px;
     text-align: center;
   }
   .applied-sum-column, .granted-sum-column {
-    width: 125px;
+    width: 120px;
     text-align: right;
     .money:after {
       content: " €"
@@ -209,6 +209,20 @@ table.hakemus-list {
         &:after {
           content: "x";
         }
+      }
+    }
+
+    .change-request-title {
+      font-weight: 600;
+      color: @bright-red;
+    }
+    .change-request-text {
+      font-style: italic;
+      &:before {
+        content: '"';
+      }
+      &:after {
+        content: '"';
       }
     }
 
