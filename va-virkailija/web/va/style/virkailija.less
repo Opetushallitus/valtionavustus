@@ -14,6 +14,22 @@
   user-select: none;
 }
 
+.input-placeholder(@styles) {
+
+  &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    @styles();
+  }
+  &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    @styles();
+  }
+  &::-moz-placeholder { /* Mozilla Firefox 19+ */
+    @styles();
+  }
+  &:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    @styles();
+  }
+}
+
 h3.required:after {
   content: " *";
 }
@@ -126,10 +142,17 @@ button[disabled].remove {
 
 textarea {
   resize: vertical;
+  padding: 10px;
+}
+
+input[type=text] {
+  padding: 0 4px;
 }
 
 textarea, input[type=text] {
-  padding: 0 4px;
+  .input-placeholder({
+    font-style: italic;
+  });
   &:enabled {
     border: 1px solid;
     border-color: @dark-gray;

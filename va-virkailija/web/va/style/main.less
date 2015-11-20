@@ -1,22 +1,6 @@
 @import "npm://soresu-form/web/form/style/common.less";
 @import "formpreview";
 
-.input-placeholder(@styles) {
-
-  &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-    @styles();
-  }
-  &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-    @styles();
-  }
-  &::-moz-placeholder { /* Mozilla Firefox 19+ */
-    @styles();
-  }
-  &:-ms-input-placeholder { /* Internet Explorer 10-11 */
-    @styles();
-  }
-}
-
 .status-filter {
   position: relative;
   display: inline-block;
@@ -280,11 +264,6 @@ table.hakemus-list {
 
     .comment-input {
       width: @content-width - @preview-width - 80px;
-      padding: 10px;
-
-      .input-placeholder({
-        font-style: italic;
-      })
     }
 
     input[type=radio] + label {
