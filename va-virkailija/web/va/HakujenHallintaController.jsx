@@ -242,7 +242,7 @@ export default class HakujenHallintaController {
   onAddFocusArea(state, avustushaku) {
     avustushaku.content['focus-areas'].items.push({fi:"", sv:""})
     setTimeout(function() {
-      document.getElementById("focus-area-" + (avustushaku.content['focus-area'].items.length -1) + "-fi").focus()
+      document.getElementById("focus-area-" + (avustushaku.content['focus-areas'].items.length -1) + "-fi").focus()
     }, 300)
     state = this.startAutoSave(state, avustushaku)
     return state
