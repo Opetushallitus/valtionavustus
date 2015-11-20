@@ -65,10 +65,11 @@
 (defn flatten-answers [avustushaku answer-keys answer-labels]
   (let [hakemukset (avustushaku->hakemukset avustushaku)
         answers (map hakemus->map hakemukset)
-        flat-answers (map (fn [answer-set]
+        flat-answers (->> answers
+                          (map (fn [answer-set]
                             (map (fn [id]
-                                   (get answer-set id)) answer-keys))
-                          answers)]
+                                   (get answer-set id)) answer-keys)))
+                          (sort-by first))]
     (apply conj [answer-labels] flat-answers)))
 
 (def hakemus->main-sheet-rows
@@ -87,7 +88,8 @@
 
 (defn export-avustushaku [avustushaku-id identity]
   (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id identity)
-        hakemus-list (avustushaku->hakemukset avustushaku)
+        hakemus-list (->> (avustushaku->hakemukset avustushaku)
+                          (sort-by first))
 
         output (ByteArrayOutputStream.)
 
