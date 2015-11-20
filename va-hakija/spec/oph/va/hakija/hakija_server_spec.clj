@@ -140,7 +140,7 @@
 
 (describe "HTTP server when haku is open"
 
-  (tags :server)
+  (tags :server :server-with-open-haku)
 
   ;; Start HTTP server for running tests
   (around-all [_]
