@@ -79,6 +79,10 @@
     "register-number": {
       "fi": "Diaarinumero",
       "sv": "Diarnummer"
+    },
+    "change-request": {
+      "fi": "Täydennyspyyntö",
+      "sv": "Begäran om komplettering"
     }
   },
   "errors": {

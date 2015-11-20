@@ -8,6 +8,7 @@
   {:id     (s/maybe s/Str)
    :version Long
    :status HakemusStatus
+   :status-comment (s/maybe s/Str)
    :register-number (s/maybe s/Str)
    :last-status-change-at s/Inst
    :submission Submission

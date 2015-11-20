@@ -1,6 +1,25 @@
 @import "npm://va-common/web/va/style/soresu-va.less";
 @import "topbar";
 
+.change-request {
+  border: dotted @dark-gray;
+  border-width: 1px 0 1px 0;
+  padding: 10px 0;
+  margin-bottom: 10px;
+  .change-request-title {
+    font-weight: 600;
+  }
+  .change-request-text {
+    font-style: italic;
+    &:before {
+      content: '"';
+    }
+    &:after {
+      content: '"';
+    }
+  }
+}
+
 .accordion {
   overflow-y: hidden;
   margin-bottom: 40px;
