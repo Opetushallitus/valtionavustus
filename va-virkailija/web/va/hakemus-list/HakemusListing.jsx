@@ -288,7 +288,8 @@ class HakemusRow extends Component {
     const controller = this.props.controller
     const statusFI = HakemusArviointiStatuses.statusToFI(hakemus.arvio.status)
     const changeRequest = HakemusListing._fieldGetter("change-request")(hakemus) ? "\u26AC" : ""
-    const changeRequestTitle = changeRequest ? "Odottaa hakijan täydennystä" : ""
+    const statusComment = hakemus["status-comment"] ? ":\n" + hakemus["status-comment"] : ""
+    const changeRequestTitle = changeRequest ? "Odottaa hakijan täydennystä" + statusComment : ""
     var hakemusName = ""
     if (_.isEmpty(hakemus["project-name"])) {
       hakemusName = hakemus["register-number"]

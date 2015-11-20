@@ -98,8 +98,8 @@ export default class HakemustenArviointiController {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemus.id + "/scores"
   }
 
-  static changeRequestsUrl(state, hakemus) {
-    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemus.id + "/change-requests"
+  static changeRequestsUrl(state, hakemusId) {
+    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemusId + "/change-requests"
   }
 
   static savedSearchUrl(state) {
@@ -139,7 +139,7 @@ export default class HakemustenArviointiController {
     }
     this.loadScores(state, hakemusToSelect)
     this.loadComments()
-    this.loadChangeRequests(state, hakemusToSelect)
+    this.loadChangeRequests(state, hakemusToSelect.id)
     return state
   }
 
@@ -165,16 +165,16 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onUpdateHakemusStatus(state, updatedHakemus) {
-    const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + updatedHakemus.id + "/status"
+  onUpdateHakemusStatus(state, statusChange) {
+    const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + statusChange.hakemusId + "/status"
     state.saveStatus.saveInProgress = true
-    const request = {"status": updatedHakemus.status}
+    const request = {"status": statusChange.status, "comment": statusChange.comment}
     const self = this
     HttpUtil.post(updateUrl, request)
         .then(function(response) {
           if(response instanceof Object) {
             dispatcher.push(events.saveCompleted)
-            self.loadChangeRequests(state, updatedHakemus)
+            self.loadChangeRequests(state, statusChange.hakemusId)
           }
           else {
             dispatcher.push(events.saveCompleted, "unexpected-save-error")
@@ -273,9 +273,9 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  loadChangeRequests(state, hakemus) {
-    HttpUtil.get(HakemustenArviointiController.changeRequestsUrl(state, hakemus)).then(response => {
-      dispatcher.push(events.changeRequestsLoaded, {hakemusId: hakemus.id,
+  loadChangeRequests(state, hakemusId) {
+    HttpUtil.get(HakemustenArviointiController.changeRequestsUrl(state, hakemusId)).then(response => {
+      dispatcher.push(events.changeRequestsLoaded, {hakemusId: hakemusId,
                                                     changeRequests: response})
     })
     return state
@@ -360,10 +360,15 @@ export default class HakemustenArviointiController {
     }
   }
 
-  setHakemusStatus(hakemus, newStatus) {
+  setHakemusStatus(hakemus, newStatus, commentGetter) {
     return function() {
       hakemus.status = newStatus
-      dispatcher.push(events.updateHakemusStatus, hakemus)
+      const statusChange = {
+        hakemusId: hakemus.id,
+        status: newStatus,
+        comment: commentGetter()
+      }
+      dispatcher.push(events.updateHakemusStatus, statusChange)
     }
   }
 

@@ -212,6 +212,20 @@ table.hakemus-list {
       }
     }
 
+    .change-request-title {
+      font-weight: 600;
+      color: @bright-red;
+    }
+    .change-request-text {
+      font-style: italic;
+      &:before {
+        content: '"';
+      }
+      &:after {
+        content: '"';
+      }
+    }
+
     .budget-granted {
       input {
         text-align: right;

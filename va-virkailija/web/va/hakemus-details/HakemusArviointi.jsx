@@ -75,35 +75,34 @@ class ChangeRequest extends React.Component {
 
   render() {
     const hakemus = this.props.hakemus
-    const allowEditing = this.props.allowEditing && !hasChangeRequired
     const status = hakemus.status
-    const changeRequestText = hakemus.changeRequest
     const hasChangeRequired = status === 'pending_change_request'
+    const allowEditing = this.props.allowEditing
     const lastChangeRequest = _.last(hakemus.changeRequests)
+    const lastChangeRequestText = lastChangeRequest ? lastChangeRequest["status-comment"] : ""
     const lastChangeRequestTime = lastChangeRequest ? DateUtil.asDateString(lastChangeRequest["version-date"]) + " " + DateUtil.asTimeString(lastChangeRequest["version-date"]) : ""
     const controller = this.props.controller
     const openEdit = allowEditing ? controller.setChangeRequestText(hakemus, "") : null
     const closeEdit = allowEditing ? controller.setChangeRequestText(hakemus, undefined) : null
-    const sendChangeRequest = allowEditing ? controller.setHakemusStatus(hakemus, 'pending_change_request') : null
-    const open = typeof changeRequestText !== 'undefined' || hasChangeRequired
-    const title = hasChangeRequired ? "Lähetetty täydennyspyyntö" : "Lähetä täydennyspyyntö"
+    const onTextChange = function(event) {
+      controller.setChangeRequestText(hakemus, event.target.value)()
+    }
+    const sendChangeRequest = allowEditing ? controller.setHakemusStatus(hakemus, "pending_change_request", _ => hakemus.changeRequest) : null
+    const newChangeRequest = typeof hakemus.changeRequest !== 'undefined' && !hasChangeRequired
     return (
       <div className="value-edit">
-        <button hidden={open}
+        <button hidden={newChangeRequest || hasChangeRequired}
                 onClick={openEdit}
                 disabled={!allowEditing}>Pyydä täydennystä</button>
-        <div hidden={!open}>
-          <label>{title}<span hidden={!hasChangeRequired}> {lastChangeRequestTime}</span></label>
-          <span hidden={hasChangeRequired}
-                onClick={closeEdit}
-                disabled={!allowEditing}
-                className="close"></span>
-          <textarea placeholder="Täydennyspyyntö hakijalle" rows="4" disabled={!allowEditing} value={changeRequestText}/>
-          <button hidden={hasChangeRequired}
-                  onClick={sendChangeRequest}
-                  disabled={!allowEditing}
-                  id="require-change"
-                  name="require-change">Lähetä</button>
+        <div hidden={!newChangeRequest}>
+          <label>Lähetä täydennyspyyntö</label>
+          <span onClick={closeEdit} className="close"></span>
+          <textarea placeholder="Täydennyspyyntö hakijalle" onChange={onTextChange} rows="4" disabled={!allowEditing} value={hakemus.changeRequest}/>
+          <button onClick={sendChangeRequest}>Lähetä</button>
+        </div>
+        <div hidden={!hasChangeRequired}>
+          <div className="change-request-title">* Täydennyspyyntö lähetetty {lastChangeRequestTime}</div>
+          <div className="change-request-text">{lastChangeRequestText}</div>
         </div>
       </div>
     )

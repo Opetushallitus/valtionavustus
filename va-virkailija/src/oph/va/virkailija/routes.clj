@@ -248,15 +248,17 @@
                                  (:selection-criteria-index score)
                                  (:score score)))))
 
-  (POST* "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id]
+  (POST* "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id :as request]
          :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-         :body [body {:status HakemusStatus}]
+         :body [body {:status HakemusStatus
+                      :comment s/Str}]
          :return {:hakemus-id Long
                   :status HakemusStatus}
          :summary "Update status of hakemus"
-         (hakija-api/update-hakemus-status hakemus-id (:status body))
-         (ok {:hakemus-id hakemus-id
-              :status (:status body)}))
+         (let [identity (authentication/get-identity request)]
+           (hakija-api/update-hakemus-status hakemus-id (:status body) (:comment body) identity)
+           (ok {:hakemus-id hakemus-id
+                :status (:status body)})))
 
   (PUT* "/:avustushaku-id/searches" [avustushaku-id :as request]
         :path-params [avustushaku-id :- Long]
