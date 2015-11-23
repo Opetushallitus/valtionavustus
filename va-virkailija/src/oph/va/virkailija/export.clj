@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.export
   (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.java.io :as io]
+            [clojure.set :refer :all]
             [dk.ative.docjure.spreadsheet :as spreadsheet]
             [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.hakudata :as hakudata])
@@ -77,20 +78,39 @@
     (apply conj [answer-labels] flat-answers)))
 
 (defn- find-all-answer-keys [avustushaku]
-  (let [hakemukset (avustushaku->hakemukset avustushaku)
-        answer-key-set (reduce (fn [answer-key-set hakemus]
+  (let [hakemukset (avustushaku->hakemukset avustushaku)]
+    (reduce (fn [answer-key-set hakemus]
                                  (apply conj
                                         answer-key-set
                                         (keys (hakemus->map hakemus))))
                                #{}
-                               hakemukset)]
-    (->> answer-key-set
-         vec
-         sort)))
+                               hakemukset)))
+
+(defn generate-growing-fieldset-lut [avustushaku]
+  (let [answer-list (->> (avustushaku->hakemukset avustushaku)
+                         (sort-by first)
+                         (map :answers))
+        list-keys (fn [child]
+                    (:key child))
+        descend-to-child (fn [child]
+                           [(:key child) (mapv list-keys (:value child))])
+        convert-answers-to-lookup-table (fn [value]
+                                          [(:key value) (mapv descend-to-child (:value value))])
+        process-answers (fn [answers] (->> answers
+                                           (filter (fn [value] (vector? (:value value))))
+                                           (mapv convert-answers-to-lookup-table)))
+        combine (fn [accumulated single-entry]
+                  (let [find-and-combine (fn [[parent children]]
+                                           (trace "parent" parent))]
+                    (apply conj accumulated (map find-and-combine single-entry))))]
+    (->> answer-list
+         (mapv process-answers)
+         (reduce combine []))))
 
 (defn testbox []
-  (let [avustushaku (hakudata/get-combined-avustushaku-data 1)]
-    (find-all-answer-keys avustushaku)))
+  (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
+        answer-key-label-type-triples (avustushaku->formlabels avustushaku)]
+    (generate-growing-fieldset-lut avustushaku)))
 
 (def hakemus->main-sheet-rows
   (juxt :register-number
