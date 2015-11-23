@@ -13,6 +13,9 @@
 - name: Create secret config dir
   file: path={{ logical_volumes.data.mount_point }}/www/secret owner=www group=www state=directory mode=0700
 
+- name: Create dumps dir
+  file: path={{ logical_volumes.data.mount_point }}/www/dumps owner=www-data group=www-data state=directory mode=0775
+
 - name: Create logs dir
   file: path={{ logical_volumes.logs.mount_point }}/valtionavustus owner=www group=www state=directory
 
