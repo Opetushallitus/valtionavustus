@@ -11,9 +11,15 @@ export default class EditsDisplayingFormView extends React.Component {
     const htmlId = controller.constructHtmlId(fields, field.id)
     const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field }
     if (field.fieldClass == "formField") {
-      const oldAnswer = _.find(state.originalValuesOfChangedFields, a => { return a.key === field.id })
+      const oldAnswer = _.find(state.answersDelta.changedAnswers, a => { return a.key === field.id })
       if (oldAnswer) {
         return <DiffDisplayingField key={"diff-display-" + field.id} field={field} oldAnswer={oldAnswer}
+                                    state={state} infoElementValues={infoElementValues} controller={controller} />
+      }
+      const previouslyInExistentAnswer = _.find(state.answersDelta.newAnswers, a => { return a.key === field.id })
+      if (previouslyInExistentAnswer) {
+        const dummyOldAnswer = { value: " " }
+        return <DiffDisplayingField key={"diff-display-" + field.id} field={field} oldAnswer={dummyOldAnswer}
                                     state={state} infoElementValues={infoElementValues} controller={controller} />
       }
       return FormPreview.createFormPreviewComponent(controller, state, field, fieldProperties)
@@ -30,7 +36,7 @@ export default class EditsDisplayingFormView extends React.Component {
     const infoElementValues = this.props.infoElementValues.content
     const state = this.props.state
     const fields = state.form.content
-    state.originalValuesOfChangedFields = resolveChangedFields(state.saveStatus.values, state.changeRequests)
+    state.answersDelta = resolveChangedFields(state.saveStatus.values, state.changeRequests)
 
     const renderField = field => {
       return EditsDisplayingFormView.renderField(controller, null, state, infoElementValues, field)
@@ -42,13 +48,18 @@ export default class EditsDisplayingFormView extends React.Component {
 
     function resolveChangedFields(currentAnswers, changeRequests) {
       if (!changeRequests || changeRequests.length === 0) {
-        return []
+        return { changedAnswers: [], newAnswers: [] }
       }
       const oldestAnswers = changeRequests[0].answers
-      return JsUtil.flatFilter(oldestAnswers, oldAnswer => {
+      const originalValuesOfChangedOldFields = JsUtil.flatFilter(oldestAnswers, oldAnswer => {
         const newValueArray = JsUtil.flatFilter(currentAnswers, newAnswer => newAnswer.key === oldAnswer.key)
-        return newValueArray.length === 0 || newValueArray[0].value != oldAnswer.value
+        return newValueArray.length === 0 || newValueArray[0].value !== oldAnswer.value
       })
+      const newValuesOfNewFields = JsUtil.flatFilter(currentAnswers, currentAnswer => {
+        const oldValueArray = JsUtil.flatFilter(oldestAnswers, oldAnswer => oldAnswer.key === currentAnswer.key)
+        return oldValueArray.length === 0 || oldValueArray[0].value !== currentAnswer.value
+      })
+      return { changedAnswers: originalValuesOfChangedOldFields, newAnswers: newValuesOfNewFields }
     }
   }
 }
