@@ -1,0 +1,19 @@
+Avustushakemus: {{ avustushaku }}
+
+Täydennyspyyntö:
+"{{ change-request }}"
+
+Pääset täydentämään avustushakemusta tästä linkistä: {{& url }}
+Muokkaa vain pyydettyjä kohtia.
+
+Lisätietoja voitte kysyä sähköpostitse osoitteesta valtionavustukset@oph.fi
+
+Hausta vastaava esittelijä on mainittu hakutiedotteessa.
+
+Opetushallitus
+Hakaniemenranta 6
+PL 380, 00531 Helsinki
+
+puhelin 029 533 1000
+faksi 029 533 1035
+etunimi.sukunimi@oph.fi

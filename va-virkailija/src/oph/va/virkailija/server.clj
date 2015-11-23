@@ -15,15 +15,19 @@
             [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :as db]
             [oph.va.virkailija.authentication :as auth]
-            [oph.va.virkailija.db.migrations :as dbmigrations]))
+            [oph.va.virkailija.db.migrations :as dbmigrations]
+            [oph.va.virkailija.email :as email]))
 
 (defn- startup [config]
   (log/info "Using configuration: " config)
   (log/info "Running db migrations")
-  (dbmigrations/migrate :db "db.migration"))
+  (dbmigrations/migrate :db "db.migration")
+  (log/info "Starting e-mail sender")
+  (email/start-background-sender))
 
 (defn- shutdown []
   (log/info "Shutting down all services")
+  (email/stop-background-sender)
   (db/close-datasource! :db))
 
 (defn- with-log-wrapping [site]

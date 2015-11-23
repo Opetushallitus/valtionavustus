@@ -196,6 +196,10 @@
          (catch Exception e (throw (get-next-exception-or-original e))))
     (get-form-by-avustushaku avustushaku-id)))
 
+(defn get-hakemus-submission [hakemus]
+  (first (exec :hakija-db hakija-queries/get-submission {:id (:form_submission_id hakemus)
+                                                         :version (:form_submission_version hakemus)})))
+
 (defn update-hakemus-status [hakemus-id status status-comment identity]
   (let [hakemus-to-update (first (exec :hakija-db hakija-queries/get-hakemus {:id hakemus-id}))
         updated-hakemus (merge hakemus-to-update {:status (keyword status)

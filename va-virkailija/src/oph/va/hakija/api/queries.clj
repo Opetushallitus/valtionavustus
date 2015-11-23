@@ -32,3 +32,5 @@
 (defquery update-hakemus-status<! "sql/common/hakija/hakemus/update-status.sql")
 (defquery lock-hakemus "sql/common/hakija/hakemus/lock.sql")
 (defquery close-existing-hakemus! "sql/common/hakija/hakemus/close-existing.sql")
+
+(defquery get-submission "sql/hakija/submission/get-by-id.sql")

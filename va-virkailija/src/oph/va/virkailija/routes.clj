@@ -13,6 +13,7 @@
             [cemerick.url :refer [map->query]]
             [oph.soresu.common.config :refer [config config-simple-name]]
             [oph.soresu.common.routes :refer :all]
+            [oph.soresu.form.formutil :as formutil]
             [oph.va.routes :refer :all]
             [oph.va.jdbc.enums :refer :all]
             [oph.va.hakija.api :as hakija-api]
@@ -25,7 +26,8 @@
             [oph.va.virkailija.scoring :as scoring]
             [oph.va.virkailija.saved-search :refer :all]
             [oph.va.virkailija.hakudata :as hakudata]
-            [oph.va.virkailija.export :as export]))
+            [oph.va.virkailija.export :as export]
+            [oph.va.virkailija.email :as email]))
 
 (defonce opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
 
@@ -264,10 +266,21 @@
          :return {:hakemus-id Long
                   :status HakemusStatus}
          :summary "Update status of hakemus"
-         (let [identity (authentication/get-identity request)]
-           (hakija-api/update-hakemus-status hakemus-id (:status body) (:comment body) identity)
+         (let [identity (authentication/get-identity request)
+               new-status (:status body)
+               status-comment (:comment body)
+               updated-hakemus (hakija-api/update-hakemus-status hakemus-id new-status status-comment identity)]
+           (if (= new-status "pending_change_request")
+             (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
+                   answers (:answers submission)
+                   language (keyword (formutil/find-answer-value answers "language"))
+                   avustushaku (hakija-api/get-avustushaku avustushaku-id)
+                   avustushaku-name (-> avustushaku :content :name language)
+                   email (formutil/find-answer-value answers "primary-email")
+                   user-key (:user_key updated-hakemus)]
+               (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment)))
            (ok {:hakemus-id hakemus-id
-                :status (:status body)})))
+                :status new-status})))
 
   (PUT* "/:avustushaku-id/searches" [avustushaku-id :as request]
         :path-params [avustushaku-id :- Long]
