@@ -219,9 +219,10 @@
 
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
         :path-params [haku-id :- Long, hakemus-id :- Long, field-id :- s/Str]
+        :query-params [{attachment-version :- Long nil}]
         :summary "Download attachment attached to given field"
         (if (hakija-api/attachment-exists? hakemus-id field-id)
-          (let [{:keys [data size filename content-type]} (hakija-api/download-attachment hakemus-id field-id)]
+          (let [{:keys [data size filename content-type]} (hakija-api/download-attachment hakemus-id field-id attachment-version)]
             (-> (ok data)
                 (assoc-in [:headers "Content-Type"] content-type)
                 (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))

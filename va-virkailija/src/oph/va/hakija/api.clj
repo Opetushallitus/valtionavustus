@@ -165,10 +165,15 @@
        (exec :hakija-db hakija-queries/attachment-exists?)
        first))
 
-(defn download-attachment [hakemus-id field-id]
-  (let [result (->> {:hakemus_id hakemus-id
-                     :field_id field-id}
-                    (exec :hakija-db hakija-queries/download-attachment)
+(defn- query-attachment [hakemus-id field-id attachment-version]
+  (let [params {:hakemus_id hakemus-id :field_id field-id}]
+    (if attachment-version
+      (->> (assoc params :version attachment-version)
+           (exec :hakija-db hakija-queries/download-attachment-version))
+      (exec :hakija-db hakija-queries/download-attachment params))))
+
+(defn download-attachment [hakemus-id field-id attachment-version]
+  (let [result (->> (query-attachment hakemus-id field-id attachment-version)
                     first)]
     {:data (io/input-stream (:file_data result))
      :content-type (:content_type result)

@@ -25,6 +25,7 @@
 (defquery list-attachments-by-avustushaku "sql/hakija/attachment/list-by-avustushaku.sql")
 (defquery attachment-exists? "sql/hakija/attachment/exists.sql")
 (defquery download-attachment "sql/hakija/attachment/download.sql")
+(defquery download-attachment-version "sql/hakija/attachment/download-version.sql")
 
 (defquery get-hakemus "sql/hakija/hakemus/get-by-id.sql")
 (defquery list-hakemus-change-requests "sql/hakija/hakemus/list-change-requests-by-id.sql")
