@@ -168,5 +168,9 @@ Hakemusten generointi
     * JMX portti on: va-hakija=10876, va.virkailija=11322
 * avaa uusi ssh yhteys koneelle ja putkita RMI portti (JMX portti putkitetaan valmiiksi ssh skriptissä): esim. `./pouta-env/ssh_to_va-test.bash -L46498:localhost:46498`
 * avaa jconsole omalla koneellasi: `jconsole &` ja ota remote yhteys käyttäen osoitteena:
-  - va-hakija: "localhost:10876"
-  - va-virkailija: "localhost:11322"
+  - testissä:
+   * va-hakija: "localhost:10876"
+   * va-virkailija: "localhost:11322"
+  - pilotissa:
+   * va-hakija: "localhost:20876"
+   * va-virkailija: "localhost:21322"
