@@ -6,6 +6,7 @@
   :dependencies [[oph-va/common "0.1.0-SNAPSHOT"]]
 
   :main oph.va.hakija.main
+  :jvm-opts ["-Xmx200m"]
   :target-path "target/%s"
 
   :prep-tasks [

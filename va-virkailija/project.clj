@@ -11,6 +11,7 @@
                  [dk.ative/docjure "1.9.0"]]
 
   :main oph.va.virkailija.main
+  :jvm-opts ["-Xmx200m"]
   :target-path "target/%s"
 
   :prep-tasks [
