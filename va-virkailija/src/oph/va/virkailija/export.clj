@@ -77,11 +77,16 @@
     (apply conj [answer-labels] flat-answers)))
 
 (defn- find-all-answer-keys [avustushaku]
-  (let [hakemukset (avustushaku->hakemukset avustushaku)]
-    (reduce (fn [answer-key-set hakemus]
-              (conj answer-key-set (keys (formutil/unwrap-answers (hakemus->map hakemus)))))
-            #{}
-            hakemukset)))
+  (let [hakemukset (avustushaku->hakemukset avustushaku)
+        answer-key-set (reduce (fn [answer-key-set hakemus]
+                                 (apply conj
+                                        answer-key-set
+                                        (keys (hakemus->map hakemus))))
+                               #{}
+                               hakemukset)]
+    (->> answer-key-set
+         vec
+         sort)))
 
 (defn testbox []
   (let [avustushaku (hakudata/get-combined-avustushaku-data 1)]
