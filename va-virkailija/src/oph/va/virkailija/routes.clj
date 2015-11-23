@@ -209,6 +209,14 @@
         (ok (-> (hakija-api/list-attachments hakemus-id)
                 (hakija-api/attachments->map))))
 
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments/versions" [haku-id hakemus-id ]
+        :path-params [haku-id :- Long, hakemus-id :- Long]
+        :return [Attachment]
+        :summary "List all versions of attachments of given hakemus"
+        :description "Listing does not return actual attachment data. Use per-field versioned download URL for getting it."
+        (ok (->> (hakija-api/list-attachment-versions hakemus-id)
+                (map hakija-api/convert-attachment))))
+
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
         :path-params [haku-id :- Long, hakemus-id :- Long, field-id :- s/Str]
         :summary "Download attachment attached to given field"

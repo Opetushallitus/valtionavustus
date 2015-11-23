@@ -8,7 +8,7 @@
             [clojure.tools.logging :as log])
   (:import (oph.va.jdbc.enums HakuStatus HakuRole)))
 
-(defn- convert-attachment [attachment]
+(defn convert-attachment [attachment]
   {:id (:id attachment)
    :hakemus-id (:hakemus_id attachment)
    :version (:version attachment)
@@ -154,6 +154,10 @@
 (defn list-attachments [hakemus-id]
   (->> {:hakemus_id hakemus-id}
        (exec :hakija-db hakija-queries/list-attachments)))
+
+(defn list-attachment-versions [hakemus-id]
+  (->> {:hakemus_id hakemus-id}
+       (exec :hakija-db hakija-queries/list-attachment-versions)))
 
 (defn attachment-exists? [hakemus-id field-id]
   (->> {:hakemus_id hakemus-id

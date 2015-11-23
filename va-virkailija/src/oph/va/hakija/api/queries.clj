@@ -21,6 +21,7 @@
 (defquery update-form! "sql/hakija/form/update.sql")
 
 (defquery list-attachments "sql/hakija/attachment/list.sql")
+(defquery list-attachment-versions "sql/hakija/attachment/list-versions.sql")
 (defquery list-attachments-by-avustushaku "sql/hakija/attachment/list-by-avustushaku.sql")
 (defquery attachment-exists? "sql/hakija/attachment/exists.sql")
 (defquery download-attachment "sql/hakija/attachment/download.sql")
