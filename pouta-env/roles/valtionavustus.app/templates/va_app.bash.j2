@@ -15,11 +15,34 @@ app_name=$2
 
 pid_file=/var/tmp/${app_name}.pid
 
+function ord() {
+  LC_CTYPE=C printf '%d' "'$1"
+}
+
+function port_from_app_name() {
+  app_name=$1
+  number=0
+  for((i=0; i<{{ '${#app_name}' }} ; i++))
+    do
+      ch=${app_name:i:1}
+      ch_value=`ord $ch`
+      number=$((number + ch_value))
+    done
+   echo $((number + 10000))
+}
+
 function start_app() {
   stdout_stderr_file={{ logical_volumes.logs.mount_point }}/valtionavustus/${app_name}_started_at_`date +'%Y%m%d%H%M%S'`_run.log
   sudo -u www ln -sf `basename $stdout_stderr_file` `dirname $stdout_stderr_file`/${app_name}_current_run.log
   daemon=/usr/bin/java
-  daemon_args="-jar -Xmx200m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath={{ logical_volumes.data.mount_point }}/www/dumps -Dlog4j.email.environment=$HOSTNAME -Dlog4j.configuration=$2 $1"
+  jmxremote_port=`port_from_app_name ${app_name}`
+  jmxremote_args="-Dcom.sun.management.jmxremote\
+            -Dcom.sun.management.jmxremote.port=$jmxremote_port\
+            -Djava.rmi.server.hostname=127.0.0.1\
+            -Dcom.sun.management.jmxremote.local.only=false\
+            -Dcom.sun.management.jmxremote.authenticate=false\
+            -Dcom.sun.management.jmxremote.ssl=false"
+  daemon_args="-jar -Xmx200m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath={{ logical_volumes.data.mount_point }}/www/dumps $jmxremote_args -Dlog4j.email.environment=$HOSTNAME -Dlog4j.configuration=$2 $1"
 
   configsecrets={{ logical_volumes.data.mount_point }}/www/secret/secret-va-{{ app_profile }}.edn \
   configdefaults=$3 config=$4  start-stop-daemon --start --chuid=www  \
