@@ -34,6 +34,8 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 * alusta palvelimet
   - `./pouta-venv/bin/ansible-playbook -i openstack_inventory.py site.yml`
   - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
+  - jos haluat ajaa vain tietyt taskit niin onnisttuu steppaamalal halutusta kohdasta alkaen.
+    * esim. `./pouta-venv/bin/ansible-playbook -i openstack_inventory.py site.yml -l va-test --step --start-at-task="Add script to start and stop the application"`
 
 # Uuden käyttäjän lisääminen buildikoneelle kirjautumista varten
 `./open-ssh va-build add_va_jenkins_user.bash <käyttäjätunnus>`
