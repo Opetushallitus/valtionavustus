@@ -84,7 +84,7 @@
             hakemukset)))
 
 (defn testbox []
-  (let [avustushaku (hakudata/get-combined-avustushaku-data 1 identity)]
+  (let [avustushaku (hakudata/get-combined-avustushaku-data 1)]
     (find-all-answer-keys avustushaku)))
 
 (def hakemus->main-sheet-rows
@@ -102,7 +102,7 @@
     (.autoSizeColumn sheet index)))
 
 (defn export-avustushaku [avustushaku-id identity]
-  (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id identity)
+  (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id)
         hakemus-list (->> (avustushaku->hakemukset avustushaku)
                           (sort-by first))
 
