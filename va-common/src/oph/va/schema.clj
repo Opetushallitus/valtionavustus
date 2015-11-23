@@ -54,7 +54,7 @@
 (s/defschema Attachment
   "Attachment metadata"
   {:id Long
-   :hakemus-id s/Str
+   :hakemus-id Long
    :version Long
    (s/optional-key :version-closed) s/Inst
    (s/optional-key :created-at) s/Inst

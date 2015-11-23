@@ -170,7 +170,7 @@
                                                  content-type
                                                  size
                                                  tempfile)]
-      (ok (va-db/convert-attachment hakemus-id attachment))
+      (ok (va-db/convert-attachment (:id hakemus) attachment))
       (bad-request {:error true}))
     (bad-request! {:error true})))
 
