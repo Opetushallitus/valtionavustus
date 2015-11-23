@@ -101,7 +101,7 @@
         :return HakuData
         :summary "Return all relevant avustushaku data (including answers, comments, form and current user privileges)"
         (let [identity (authentication/get-identity request)]
-          (if-let [response (hakudata/get-combined-avustushaku-data avustushaku-id identity)]
+          (if-let [response (hakudata/get-combined-avustushaku-data-with-privileges avustushaku-id identity)]
             (ok response)
             (not-found))))
 

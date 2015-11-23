@@ -75,6 +75,7 @@
         flat-answers (->> (extract-answer-values avustushaku answer-keys answers)
                           (sort-by first))]
     (apply conj [answer-labels] flat-answers)))
+
 (defn- find-all-answer-keys [avustushaku]
   (let [hakemukset (avustushaku->hakemukset avustushaku)]
     (reduce (fn [answer-key-set hakemus]

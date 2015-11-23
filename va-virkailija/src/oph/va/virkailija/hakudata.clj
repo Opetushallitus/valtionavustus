@@ -52,13 +52,16 @@
                                                            (-> haku-data :avustushaku :id)
                                                            (:roles haku-data)))))
 
-(defn get-combined-avustushaku-data [avustushaku-id identity]
+(defn get-combined-avustushaku-data [avustushaku-id]
   (let [scores (scoring/get-avustushaku-scores avustushaku-id)]
     (when-let [avustushaku (hakija-api/get-hakudata avustushaku-id)]
       (->> avustushaku
            add-arviot
-           (add-scores scores)
-           (add-privileges identity)))))
+           (add-scores scores)))))
+
+(defn get-combined-avustushaku-data-with-privileges [avustushaku-id identity]
+  (->> (get-combined-avustushaku-data avustushaku-id)
+       (add-privileges identity)))
 
 (defn- add-copy-suffixes [nameField]
   { :fi (str (:fi nameField) " (kopio)" )
