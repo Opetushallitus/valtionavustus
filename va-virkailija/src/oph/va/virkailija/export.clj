@@ -86,6 +86,13 @@
                                #{}
                                hakemukset)))
 
+(defn- find-and-combine [accumulated [parent children]]
+  (let [existing (->> accumulated
+                      (filter (fn [val] (= val parent))))]
+    (if (not (empty? existing))
+      (trace "parent found" parent)
+      (trace "no existing" parent))))
+
 (defn generate-growing-fieldset-lut [avustushaku]
   (let [answer-list (->> (avustushaku->hakemukset avustushaku)
                          (sort-by first)
@@ -100,9 +107,7 @@
                                            (filter (fn [value] (vector? (:value value))))
                                            (mapv convert-answers-to-lookup-table)))
         combine (fn [accumulated single-entry]
-                  (let [find-and-combine (fn [[parent children]]
-                                           (trace "parent" parent))]
-                    (apply conj accumulated (map find-and-combine single-entry))))]
+                  (map (partial find-and-combine accumulated) single-entry))]
     (->> answer-list
          (mapv process-answers)
          (reduce combine []))))
