@@ -18,6 +18,7 @@
 
     # You can see the available flavors and images with pouta-venv/bin/nova flavor-list && pouta-venv/bin/nova image-list
     pouta_tiny: 1a0f1143-47b5-4e8a-abda-eba52ae3c5b9
+    pouta_mini: 417fcb76-884b-405f-a4f4-8bce27058e4a
     pouta_small: 9e2c9a54-af51-40be-a9d9-977d6b6d8958
     #pouta_centos65: cc001620e8b5ac640fed8f737eaaeefc78a6dd89
     pouta_ubuntu_14_04: Ubuntu-14.04
@@ -34,7 +35,7 @@
       }
     - { include: tasks/create_machine.yml,
         machine_name: va-test,
-        pouta_flavor_id: "{{ pouta_tiny }}",
+        pouta_flavor_id: "{{ pouta_mini }}",
         va_ansible_host_groups: 'va_backend',
         va_security_groups: 'qa-common,qa-va-app'
       }
