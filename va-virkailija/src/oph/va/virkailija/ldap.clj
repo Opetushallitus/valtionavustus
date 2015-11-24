@@ -19,7 +19,7 @@
                  :ssl? true
                  :num-connections 1}))
 
-(defn create-ldap-connection []
+(defn- create-ldap-connection []
   (let [ldap-config (:ldap config)
         hostname (InetAddress/getByName (:server ldap-config))]
     (ldap-pool {:hostname hostname
@@ -27,31 +27,18 @@
                 :user (:user ldap-config)
                 :password (:password ldap-config)})))
 
-(defn- do-with-ldap [ldap-server operation]
-  (ldap/bind? ldap-server
-              (people-path (-> config :ldap :user))
-              (-> config :ldap :password))
-  (operation))
+(defn do-with-ldap [operation]
+  (with-open [ldap-server (create-ldap-connection)]
+    (operation ldap-server)))
 
-(defn find-user-details [ldap-server username]
-  (do-with-ldap ldap-server #(ldap/get ldap-server (people-path username))))
+(defn find-user-details [username]
+  (do-with-ldap (fn [ldap-server] (ldap/get ldap-server (people-path username)))))
 
 (defn- has-group? [user-details required-group]
   (let [description (-> user-details :description json/parse-string)]
     (boolean (some #{required-group} description))))
 
-(defn check-app-access [ldap-server username]
-  (let [user-details (find-user-details ldap-server username)
-        description (-> user-details :description json/parse-string)
-        required-group (-> config :ldap :required-group)
-        admin-group (-> config :ldap :admin-group)]
-    (if (or (has-group? user-details required-group) (has-group? user-details admin-group))
-      description
-      (log/warn (str "Authorization failed for username '" username "' : did not have either "
-                     required-group " or " admin-group" , got only "
-                     (pr-str description))))))
-
-(defn details->map [details]
+(defn- details->map [details]
   (when details
     {:username (:uid details)
      :person-oid (:employeeNumber details)
@@ -60,9 +47,16 @@
      :email (:mail details)
      :lang (:preferredLanguage details)}))
 
-(defn get-details [username]
-  (let [ldap-server (create-ldap-connection)]
-    (details->map (find-user-details ldap-server username))))
+(defn check-app-access [username]
+  (let [user-details (find-user-details username)
+        description (-> user-details :description json/parse-string)
+        required-group (-> config :ldap :required-group)
+        admin-group (-> config :ldap :admin-group)]
+    (if (or (has-group? user-details required-group) (has-group? user-details admin-group))
+      (details->map user-details)
+      (log/warn (str "Authorization failed for username '" username "' : did not have either "
+                     required-group " or " admin-group" , got only "
+                     (pr-str description))))))
 
 (defn- create-or-filter [search-term]
   (letfn [(create-matcher [attribute] (str "(" attribute "=*" search-term ")(" attribute "=" search-term "*)"))]
@@ -83,10 +77,9 @@
            [(:va-user user1) (:va-admin user1) (:surname user2) (:first-name user2)]))
 
 (defn search-users [search-input]
-  (let [ldap-server (create-ldap-connection)
-        search-terms (clojure.string/split search-input #" ")
+  (let [search-terms (clojure.string/split search-input #" ")
         filter-string (create-and-filter search-terms)]
-    (->> (do-with-ldap ldap-server #(ldap/search ldap-server (people-path-base) {:filter filter-string}))
+    (->> (do-with-ldap #(ldap/search % (people-path-base) {:filter filter-string}))
          (map details->map-with-roles)
          (sort by-access-and-name))))
 

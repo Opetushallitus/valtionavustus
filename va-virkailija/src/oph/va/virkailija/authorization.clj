@@ -21,7 +21,7 @@
 (defn resolve-privileges [identity avustushaku-id haku-roles]
   (let [user-with-roles (->> identity
                              :username
-                             (ldap/find-user-details (ldap/create-ldap-connection))
+                             ldap/find-user-details
                              ldap/details->map-with-roles)]
     (if (:person-oid user-with-roles)
         (resolve-privileges-for-user user-with-roles haku-roles)
