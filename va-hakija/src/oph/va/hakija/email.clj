@@ -11,7 +11,9 @@
   {:new-hakemus {:fi "Linkki organisaationne avustushakemukseen"
                  :sv "Länk till er organisations ansökan om understöd"}
    :hakemus-submitted {:fi "Automaattinen viesti: organisaationne avustushakemus on kirjattu vastaanotetuksi"
-                       :sv "Automatisk meddelande: organisationens bidragsansökan mottogs"}})
+                       :sv "Automatisk meddelande: organisationens bidragsansökan mottogs"}
+   :change-request-responded {:fi "Automaattinen viesti: organisaationne avustushakemusta on täydennetty"
+                              :sv "Automatisk meddelande: organisationens bidragsansökan har kompletterat"}})
 
 (def mail-templates
   {:new-hakemus {:fi (email/load-template "email-templates/new-hakemus.plain.fi")
@@ -24,6 +26,11 @@
 
 (defn stop-background-sender []
   (email/stop-background-sender))
+
+(defn oph-register-email-title [is-change-request-response? avustushaku-name start-date-string end-date-string]
+  (if is-change-request-response?
+    (str "[Valtionavustus] Täydennetty hakemus hakuun '" avustushaku-name "' (" start-date-string "-" end-date-string ")")
+    (str "[Valtionavustus] Uusi hakemus hakuun '" avustushaku-name "' (" start-date-string "-" end-date-string ")")))
 
 (defn send-new-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
   (let [lang-str (or (clojure.core/name lang) "fi")
@@ -47,7 +54,7 @@
                            :end-time end-time-string
                            :url url})))
 
-(defn send-hakemus-submitted-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
+(defn send-hakemus-submitted-message! [is-change-request-response? lang to avustushaku-id avustushaku user-key start-date end-date]
   (let [lang-str (or (clojure.core/name lang) "fi")
         start-date-string (datetime/date-string start-date)
         start-time-string (datetime/time-string start-date)
@@ -59,7 +66,7 @@
                       :lang lang
                       :from (-> email/smtp-config :from lang)
                       :sender (-> email/smtp-config :sender)
-                      :subject (get-in mail-titles [:hakemus-submitted lang])
+                      :subject (get-in mail-titles [(if is-change-request-response? :change-request-responded :hakemus-submitted) lang])
                       :to to
                       :avustushaku avustushaku
                       :start-date start-date-string
@@ -69,7 +76,7 @@
                       :url url}
         registry-message (-> user-message
                              (assoc :to (vector (-> email/smtp-config :registry-address)))
-                             (assoc :subject (str "[Valtionavustus] Uusi hakemus hakuun '" avustushaku "' (" start-date-string "-" end-date-string ")")))]
+                             (assoc :subject (oph-register-email-title is-change-request-response? avustushaku start-date-string end-date-string)))]
     (log/info "Url would be: " url)
     (>!! email/mail-queue user-message)
     (>!! email/mail-queue registry-message)))

@@ -130,7 +130,7 @@
                                                       submission-version
                                                       (:register_number hakemus)
                                                       answers)]
-          (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! answers submitted-hakemus avustushaku)
+          (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku)
           (hakemus-ok-response submitted-hakemus saved-submission validation))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
@@ -146,13 +146,14 @@
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
-              submission-version (:version saved-submission)]
-          (va-db/submit-hakemus haku-id
-                                hakemus-id
-                                submission-id
-                                submission-version
-                                (:register_number hakemus)
-                                answers)
+              submission-version (:version saved-submission)
+              submitted-hakemus (va-db/submit-hakemus haku-id
+                                                      hakemus-id
+                                                      submission-id
+                                                      submission-version
+                                                      (:register_number hakemus)
+                                                      answers)]
+          (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! true answers submitted-hakemus avustushaku)
           (method-not-allowed! {:change-request-response "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))

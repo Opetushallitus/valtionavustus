@@ -22,7 +22,7 @@
   (let [notification-fields (filter is-notification-email-field (flatten-answers answers []))]
     (mapv :value notification-fields)))
 
-(defn send-submit-notifications! [send! answers submitted-hakemus avustushaku]
+(defn send-submit-notifications! [send! is-change-request-response? answers submitted-hakemus avustushaku]
   (let [haku-id (:id avustushaku)
         avustushaku-content (:content avustushaku)
         language (keyword (find-answer-value answers "language"))
@@ -37,7 +37,8 @@
                                   (datetime/parse))
         destination-emails (find-emails-to-notify answers)
         user-key (-> submitted-hakemus :user_key)]
-    (send! language
+    (send! is-change-request-response?
+           language
            destination-emails
            haku-id
            avustushaku-title
