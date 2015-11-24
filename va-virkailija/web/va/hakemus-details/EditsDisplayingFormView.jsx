@@ -129,6 +129,9 @@ class DiffDisplayingField extends React.Component {
 
     function createOldAttachmentVersionDisplay() {
       const attachmentVersion = oldAnswer.attachmentVersion
+      if (!attachmentVersion) {
+        return null
+      }
       const fields = state.form.content
       const htmlId = controller.constructHtmlId(fields, field.id)
       const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field }
