@@ -69,7 +69,8 @@ export default class EditsDisplayingFormView extends React.Component {
         const oldestRelevantAttachmentVersion = _.first(versionsByAttachmentId[attachmentId])
         return { fieldType: "namedAttachment",
                  key: oldestRelevantAttachmentVersion["field-id"],
-                 value: oldestRelevantAttachmentVersion.filename }
+                 value: oldestRelevantAttachmentVersion.filename,
+                 attachmentVersion: oldestRelevantAttachmentVersion }
       }), newAnswers: [] }
 
       function stripNonSubmittedVersions(versionsOfAttachment) {
@@ -109,13 +110,31 @@ class DiffDisplayingField extends React.Component {
     const state = this.props.state
     const controller = this.props.controller
     const infoElementValues = this.props.infoElementValues
+    const oldValueDisplay = renderFieldWithOldValue()
     return <div>
              <div key="answer-old-value" className="answer-old-value">
-               {FormPreview.renderField(controller, null, state, infoElementValues, field, { overridingInputValue: oldAnswer.value })}
+               {oldValueDisplay}
              </div>
              <div key="answer-new-value" className="answer-new-value">
                {FormPreview.renderField(controller, null, state, infoElementValues, field)}
              </div>
            </div>
+
+    function renderFieldWithOldValue() {
+      if (field.fieldType === "namedAttachment") {
+        return createOldAttachmentVersionDisplay()
+      }
+      return FormPreview.renderField(controller, null, state, infoElementValues, field, { overridingInputValue: oldAnswer.value })
+    }
+
+    function createOldAttachmentVersionDisplay() {
+      const attachmentVersion = oldAnswer.attachmentVersion
+      const fields = state.form.content
+      const htmlId = controller.constructHtmlId(fields, field.id)
+      const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field }
+      const renderingParameters = { overridingInputValue: oldAnswer.value };
+      const downloadUrl = controller.createAttachmentVersionDownloadUrl(field, attachmentVersion.version);
+      return FormPreview._createFormPreviewComponent(controller, state, field, fieldProperties, renderingParameters, attachmentVersion, downloadUrl)
+    }
   }
 }

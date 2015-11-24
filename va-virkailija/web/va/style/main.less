@@ -157,17 +157,30 @@ table.hakemus-list {
     }
 
     .answer-old-value {
-      .soresu-value, .soresu-money {
+      .soresu-value, .soresu-money, .soresu-attachment-display {
         background-color: lighten(@bright-red, 40%);
         text-decoration: line-through;
+      }
+      .soresu-attachment-block {
+        border-bottom: none;
+        padding-bottom: 0;
+        .soresu-attachment-display {
+          display: inline-block;
+        }
       }
     }
     .answer-new-value {
       .soresu-key {
         display: none;
       }
-      .soresu-value, .soresu-money {
+      .soresu-value, .soresu-money, .soresu-attachment-display {
         background-color: lighten(@light-green, 40%);
+      }
+      .soresu-attachment-block {
+        border-top: none;
+        .soresu-attachment-display {
+          display: inline-block;
+        }
       }
     }
   }
