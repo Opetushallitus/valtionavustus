@@ -28,7 +28,7 @@
                            :from (-> email/smtp-config :from lang)
                            :sender (-> email/smtp-config :sender)
                            :subject (get-in mail-titles [:change-request lang])
-                           :to to
+                           :to [to]
                            :avustushaku avustushaku-name
                            :url url
                            :change-request change-request})))
