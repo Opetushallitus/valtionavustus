@@ -102,7 +102,7 @@ class ChangeRequest extends React.Component {
         </div>
         <div hidden={!hasChangeRequired}>
           <div className="change-request-title">* Täydennyspyyntö lähetetty {lastChangeRequestTime}</div>
-          <div className="change-request-text">{lastChangeRequestText}</div>
+          <pre className="change-request-text">{lastChangeRequestText}</pre>
         </div>
       </div>
     )

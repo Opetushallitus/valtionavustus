@@ -13,7 +13,7 @@ export default class VaChangeRequest extends React.Component {
       return (
         <div className="change-request">
           <div className="change-request-title">{translator.translate("change-request", this.props.lang)} {dateStr}</div>
-          <div className="change-request-text">{hakemus["status-comment"]}</div>
+          <pre className="change-request-text">{hakemus["status-comment"]}</pre>
         </div>
       )
     }
