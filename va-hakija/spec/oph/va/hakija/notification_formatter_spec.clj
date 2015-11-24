@@ -108,7 +108,8 @@
      :end haku-end
      :label {:fi "Hakuaika" :sv "Ansökningstid"}}}})
 
-(defn fake-sender [language
+(defn fake-sender [is-change-request-response?
+                   language
                    to
                    haku-id
                    haku-title
@@ -128,7 +129,7 @@
           (tags :server)
 
           (it "Sends notification email to all legacy fields"
-            (let [sent-data (send-submit-notifications! fake-sender answers-with-old-fields submitted-hakemus avustushaku )]
+            (let [sent-data (send-submit-notifications! fake-sender false answers-with-old-fields submitted-hakemus avustushaku )]
               (should= :fi (:language sent-data))
               (should= [primary-email organization-email signature-email] (:to sent-data))
               (should= hakemus-key (:user-key sent-data))
@@ -139,7 +140,7 @@
           (tags :server)
 
           (it "Sends notification email to all vaEmailNotificationFields"
-            (let [sent-data (send-submit-notifications! fake-sender answers-with-email-notification-fields submitted-hakemus avustushaku )]
+            (let [sent-data (send-submit-notifications! fake-sender false answers-with-email-notification-fields submitted-hakemus avustushaku )]
               (should= :fi (:language sent-data))
               (should= [primary-email
                         organization-email
