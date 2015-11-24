@@ -49,13 +49,24 @@
         wrappers (formutil/find-wrapper-elements form)]
     (->> form
          (formutil/find-fields)
-         (map (fn [field]
-                [(:id field)
-                 (or (-> field :label :fi)
-                     (-> (find-parent wrappers (:id field))
-                         :label
-                         :fi))
-                 (:fieldType field)])))))
+         (reduce (fn [data field]
+                   (let [parent (find-parent wrappers (:id field))
+                         grandparent (find-parent wrappers (:id parent))]
+                     (if (= "growingFieldset" (:fieldType grandparent))
+                       (let [reject? (contains? (-> data :rejects) (:id grandparent))
+                             data (assoc data :rejects (conj (:rejects data) (:id grandparent)))]
+                         (trace "rejects" (:rejects data))
+                         (if reject?
+                           data
+                           (assoc data :values (conj (:values data) {:growingField (:id grandparent)}))))
+                       (assoc data :values (conj
+                                                  (:values data)
+                                                  [(:id field)
+                                                   (or (-> field :label :fi)
+                                                       (-> parent :label :fi))
+                                                   (:fieldType field)])))))
+                 {:rejects #{} :values []})
+         :values)))
 
 (defn- avustushaku->hakemukset [avustushaku]
   (->> (:hakemukset avustushaku)
