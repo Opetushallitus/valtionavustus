@@ -67,6 +67,10 @@
              :handler any-access}
             {:pattern #"^/css/.*"
              :handler any-access}
+            {:pattern #"^/api/healthcheck"
+             :handler any-access}
+            {:pattern #"^/favicon.ico"
+             :handler any-access}
             {:pattern #".*"
              :handler authenticated-access
              :on-error redirect-to-login}])
