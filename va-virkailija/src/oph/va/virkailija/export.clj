@@ -34,25 +34,28 @@
       (when (not (empty? child-list))
         node))))
 
-(defn- find-parent-label [wrappers id]
+(defn- find-parent [wrappers id]
   (when-let [found-parent (->> wrappers
                                (filter (partial has-child? id))
                                first)]
-    (-> found-parent :label :fi)))
+    found-parent))
 
 (defn- valid-hakemus? [hakemus]
   (or (= (:status hakemus) "submitted")
       (= (:status hakemus) "pending_change_request")))
 
-(defn- avustushaku->formlabels [avustushaku]
+(defn- avustushaku->formlabels [avustushaku growing-fieldset-lut]
   (let [form (-> avustushaku :form :content)
         wrappers (formutil/find-wrapper-elements form)]
     (->> form
          (formutil/find-fields)
-         (map (fn [field] [(:id field)
-                           (or (-> field :label :fi)
-                               (find-parent-label wrappers (:id field)))
-                           (:fieldType field)])))))
+         (map (fn [field]
+                [(:id field)
+                 (or (-> field :label :fi)
+                     (-> (find-parent wrappers (:id field))
+                         :label
+                         :fi))
+                 (:fieldType field)])))))
 
 (defn- avustushaku->hakemukset [avustushaku]
   (->> (:hakemukset avustushaku)
@@ -81,10 +84,8 @@
   (let [answer-list (->> (avustushaku->hakemukset avustushaku)
                          (sort-by first)
                          (map :answers))
-        list-keys (fn [child]
-                    (:key child))
         descend-to-child (fn [acc child]
-                           (conj acc [(:key child) (mapv list-keys (:value child))]))
+                           (conj acc [(:key child) (mapv :key (:value child))]))
         convert-answers-to-lookup-table (fn [value]
                                           (array-map (:key value) (reduce descend-to-child (array-map) (:value value))))
         process-answers (fn [answers] (->> answers
@@ -101,8 +102,9 @@
 
 (defn testbox []
   (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
-        answer-key-label-type-triples (avustushaku->formlabels avustushaku)]
-    (generate-growing-fieldset-lut avustushaku)))
+        growing-fieldset-lut (generate-growing-fieldset-lut avustushaku)
+        answer-key-label-type-triples (avustushaku->formlabels avustushaku growing-fieldset-lut)]
+    answer-key-label-type-triples))
 
 (def hakemus->main-sheet-rows
   (juxt :register-number
@@ -131,6 +133,8 @@
 
         main-sheet (spreadsheet/select-sheet main-sheet-name wb)
         main-header-row (first (spreadsheet/row-seq main-sheet))
+
+        growing-fieldset-lut (generate-growing-fieldset-lut avustushaku)
 
         answer-key-label-type-triples (avustushaku->formlabels avustushaku)
         answer-keys (apply conj
