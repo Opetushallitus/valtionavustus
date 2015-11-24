@@ -77,15 +77,6 @@
                           (sort-by first))]
     (apply conj [answer-labels] flat-answers)))
 
-(defn- find-all-answer-keys [avustushaku]
-  (let [hakemukset (avustushaku->hakemukset avustushaku)]
-    (reduce (fn [answer-key-set hakemus]
-                                 (apply conj
-                                        answer-key-set
-                                        (keys (hakemus->map hakemus))))
-                               #{}
-                               hakemukset)))
-
 (defn generate-growing-fieldset-lut [avustushaku]
   (let [answer-list (->> (avustushaku->hakemukset avustushaku)
                          (sort-by first)
