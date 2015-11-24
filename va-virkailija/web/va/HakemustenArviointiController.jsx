@@ -27,6 +27,7 @@ const events = {
   addComment: 'addComment',
   scoresLoaded: 'scoresLoaded',
   changeRequestsLoaded: 'changeRequestsLoaded',
+  attachmentVersionsLoaded: 'attachmentVersionsLoaded',
   setScore: 'setScore',
   toggleOthersScoresDisplay: 'toggleOthersScoresDisplay',
   gotoSavedSearch: 'gotoSavedSearch'
@@ -78,6 +79,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.addComment)], this.onAddComment,
       [dispatcher.stream(events.scoresLoaded)], this.onScoresLoaded,
       [dispatcher.stream(events.changeRequestsLoaded)], this.onChangeRequestsLoaded,
+      [dispatcher.stream(events.attachmentVersionsLoaded)], this.onAttachmentVersionsLoaded,
       [dispatcher.stream(events.setScore)], this.onSetScore,
       [dispatcher.stream(events.toggleOthersScoresDisplay)], this.onToggleOthersScoresDisplay,
       [dispatcher.stream(events.setFilter)], this.onFilterSet,
@@ -100,6 +102,10 @@ export default class HakemustenArviointiController {
 
   static changeRequestsUrl(state, hakemusId) {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemusId + "/change-requests"
+  }
+
+  static attachmentVersionsUrl(state, hakemusId) {
+    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemusId + "/attachments/versions"
   }
 
   static savedSearchUrl(state) {
@@ -140,6 +146,7 @@ export default class HakemustenArviointiController {
     this.loadScores(state, hakemusToSelect)
     this.loadComments()
     this.loadChangeRequests(state, hakemusToSelect.id)
+    this.loadAttachmentVersions(state, hakemusToSelect.id)
     return state
   }
 
@@ -281,10 +288,19 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  loadAttachmentVersions(state, hakemusId) {
+    HttpUtil.get(HakemustenArviointiController.attachmentVersionsUrl(state, hakemusId)).then(response => {
+      dispatcher.push(events.attachmentVersionsLoaded, { hakemusId: hakemusId, attachmentVersions: response})
+    })
+    return state
+  }
+
+  static findHakemus(state, hakemusId) {
+    return _.find(state.hakuData.hakemukset, h => { return h.id === hakemusId })
+  }
 
   onScoresLoaded(state, hakemusIdWithScoring) {
-    const hakemusId = hakemusIdWithScoring.hakemusId
-    const relevantHakemus = _.find(state.hakuData.hakemukset, h => { return h.id === hakemusId })
+    const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithScoring.hakemusId)
     if (relevantHakemus) {
       relevantHakemus.scores = hakemusIdWithScoring.scores
       relevantHakemus.arvio.scoring = hakemusIdWithScoring.scoring
@@ -293,10 +309,17 @@ export default class HakemustenArviointiController {
   }
 
   onChangeRequestsLoaded(state, hakemusIdWithChangeRequests) {
-    const hakemusId = hakemusIdWithChangeRequests.hakemusId
-    const relevantHakemus = _.find(state.hakuData.hakemukset, h => { return h.id === hakemusId })
+    const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithChangeRequests.hakemusId)
     if (relevantHakemus) {
       relevantHakemus.changeRequests = hakemusIdWithChangeRequests.changeRequests
+    }
+    return state
+  }
+
+  onAttachmentVersionsLoaded(state, hakemusIdWithAttachmentVersions) {
+    const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithAttachmentVersions.hakemusId)
+    if (relevantHakemus) {
+      relevantHakemus.attachmentVersions = hakemusIdWithAttachmentVersions.attachmentVersions
     }
     return state
   }

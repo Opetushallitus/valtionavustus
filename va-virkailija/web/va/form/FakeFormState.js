@@ -45,7 +45,8 @@ export default class FakeFormState {
         values: answers,
         attachments: attachments
       },
-      changeRequests: hakemus.changeRequests
+      changeRequests: hakemus.changeRequests,
+      attachmentVersions: hakemus.attachmentVersions
     }
 
     if(answers) {
