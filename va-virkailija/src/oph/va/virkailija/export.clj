@@ -44,28 +44,33 @@
   (or (= (:status hakemus) "submitted")
       (= (:status hakemus) "pending_change_request")))
 
+(defn- mark-and-reject-growing-fields [wrappers data field]
+  (let [parent (find-parent wrappers (:id field))
+        grandparent (find-parent wrappers (:id parent))
+        add-reject (fn [data]
+                     (assoc data :rejects (conj (:rejects data) (:id grandparent))))
+        add-value (fn [data value]
+                    (assoc data :values (conj (:values data) value)))]
+    (if (= "growingFieldset" (:fieldType grandparent))
+      ;; Special case: handle growing field sets by placing marker
+      (let [reject? (contains? (-> data :rejects) (:id grandparent))
+            data (add-reject data)]
+        (if reject?
+          data
+          (add-value data {:growingField (:id grandparent)})))
+
+      ;; Normal case - add value to data
+      (add-value data [(:id field)
+                       (or (-> field :label :fi)
+                           (-> parent :label :fi))
+                       (:fieldType field)]))))
+
 (defn- avustushaku->formlabels [avustushaku growing-fieldset-lut]
   (let [form (-> avustushaku :form :content)
         wrappers (formutil/find-wrapper-elements form)]
     (->> form
          (formutil/find-fields)
-         (reduce (fn [data field]
-                   (let [parent (find-parent wrappers (:id field))
-                         grandparent (find-parent wrappers (:id parent))]
-                     (if (= "growingFieldset" (:fieldType grandparent))
-                       (let [reject? (contains? (-> data :rejects) (:id grandparent))
-                             data (assoc data :rejects (conj (:rejects data) (:id grandparent)))]
-                         (trace "rejects" (:rejects data))
-                         (if reject?
-                           data
-                           (assoc data :values (conj (:values data) {:growingField (:id grandparent)}))))
-                       (assoc data :values (conj
-                                                  (:values data)
-                                                  [(:id field)
-                                                   (or (-> field :label :fi)
-                                                       (-> parent :label :fi))
-                                                   (:fieldType field)])))))
-                 {:rejects #{} :values []})
+         (reduce (partial mark-and-reject-growing-fields wrappers) {:rejects #{} :values []})
          :values)))
 
 (defn- avustushaku->hakemukset [avustushaku]
