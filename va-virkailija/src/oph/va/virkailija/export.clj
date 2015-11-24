@@ -35,10 +35,9 @@
         node))))
 
 (defn- find-parent [wrappers id]
-  (when-let [found-parent (->> wrappers
-                               (filter (partial has-child? id))
-                               first)]
-    found-parent))
+  (->> wrappers
+       (filter (partial has-child? id))
+       first))
 
 (defn- valid-hakemus? [hakemus]
   (or (= (:status hakemus) "submitted")
