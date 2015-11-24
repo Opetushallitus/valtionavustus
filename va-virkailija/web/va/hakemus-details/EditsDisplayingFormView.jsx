@@ -36,7 +36,7 @@ export default class EditsDisplayingFormView extends React.Component {
     const infoElementValues = this.props.infoElementValues.content
     const state = this.props.state
     const fields = state.form.content
-    state.answersDelta = resolveChangedFields(state.saveStatus.values, state.changeRequests)
+    state.answersDelta = resolveChangedFields(state.saveStatus.values, state.changeRequests, state.attachmentVersions)
 
     const renderField = field => {
       return EditsDisplayingFormView.renderField(controller, null, state, infoElementValues, field)
@@ -46,20 +46,58 @@ export default class EditsDisplayingFormView extends React.Component {
               {fields.map(renderField) }
             </div>
 
-    function resolveChangedFields(currentAnswers, changeRequests) {
+    function resolveChangedFields(currentAnswers, changeRequests, attachmentVersions) {
       if (!changeRequests || changeRequests.length === 0) {
         return { changedAnswers: [], newAnswers: [] }
       }
       const oldestAnswers = changeRequests[0].answers
+      const answersDelta = createDeltaFromUpdatedAttachments(attachmentVersions, changeRequests[0].version)
+      addDeltaFromChangedAnswers(answersDelta, oldestAnswers, currentAnswers);
+      addDeltaFromNewAnswers(currentAnswers, oldestAnswers, answersDelta);
+      return answersDelta
+    }
+
+    function createDeltaFromUpdatedAttachments(attachmentVersions, oldestHakemusVersion) {
+      const versionsByAttachmentId = _.groupBy(attachmentVersions, v => { return v.id })
+      _.forEach(_.keys(versionsByAttachmentId), attachmentId => {
+        versionsByAttachmentId[attachmentId] = stripNonSubmittedVersions(versionsByAttachmentId[attachmentId])
+      })
+      const idsOfUpdatedAttachments = _.filter(_.keys(versionsByAttachmentId), attachmentId => { 
+        return versionsByAttachmentId[attachmentId].length > 1
+      })
+      return { changedAnswers: _.map(idsOfUpdatedAttachments, attachmentId => {
+        const oldestRelevantAttachmentVersion = _.first(versionsByAttachmentId[attachmentId])
+        return { fieldType: "namedAttachment",
+                 key: oldestRelevantAttachmentVersion["field-id"],
+                 value: oldestRelevantAttachmentVersion.filename }
+      }), newAnswers: [] }
+
+      function stripNonSubmittedVersions(versionsOfAttachment) {
+        const beforeAndAfterSubmission = _.partition(versionsOfAttachment, v => { return v["hakemus-version"] <= oldestHakemusVersion })
+        const originalSubmittedAttachmentVersion = _.first(_.sortByOrder(beforeAndAfterSubmission[0], "version", "desc"))
+        const attachmentVersionsAfterSubmissions = beforeAndAfterSubmission[1]
+        return [ originalSubmittedAttachmentVersion ].concat(attachmentVersionsAfterSubmissions)
+      }
+    }
+
+    function addDeltaFromChangedAnswers(answersDelta, oldestAnswers, currentAnswers) {
       const originalValuesOfChangedOldFields = JsUtil.flatFilter(oldestAnswers, oldAnswer => {
         const newValueArray = JsUtil.flatFilter(currentAnswers, newAnswer => newAnswer.key === oldAnswer.key)
         return newValueArray.length === 0 || newValueArray[0].value !== oldAnswer.value
       })
+      _.forEach(originalValuesOfChangedOldFields, originalValue => {
+        answersDelta.changedAnswers.push(originalValue)
+      })
+    }
+
+    function addDeltaFromNewAnswers(currentAnswers, oldestAnswers, answersDelta) {
       const newValuesOfNewFields = JsUtil.flatFilter(currentAnswers, currentAnswer => {
         const oldValueArray = JsUtil.flatFilter(oldestAnswers, oldAnswer => oldAnswer.key === currentAnswer.key)
         return oldValueArray.length === 0 || oldValueArray[0].value !== currentAnswer.value
       })
-      return { changedAnswers: originalValuesOfChangedOldFields, newAnswers: newValuesOfNewFields }
+      _.forEach(newValuesOfNewFields, newValue => {
+        answersDelta.newAnswers.push(newValue)
+      })
     }
   }
 }
