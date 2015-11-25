@@ -9,7 +9,7 @@ export default class VaChangeRequest extends React.Component {
     if(hakemus && hakemus.status === "pending_change_request") {
       const translator =  new Translator(this.props.translations["misc"])
       const timeLimiter = translator.translate("time", this.props.lang, "KLO")
-      const dateStr = DateUtil.asDateString(hakemus["last-status-change-at"]) + " " + timeLimiter + " " + DateUtil.asTimeString(hakemus["last-status-change-at"])
+      const dateStr = DateUtil.asDateString(hakemus["version-date"]) + " " + timeLimiter + " " + DateUtil.asTimeString(hakemus["version-date"])
       return (
         <div className="change-request">
           <div className="change-request-title">{translator.translate("change-request", this.props.lang)} {dateStr}</div>

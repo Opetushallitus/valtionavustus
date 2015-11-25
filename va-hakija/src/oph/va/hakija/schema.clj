@@ -7,9 +7,9 @@
   "Hakemus contains hakemus, last submission and server validation error info about it"
   {:id     (s/maybe s/Str)
    :version Long
+   :version-date s/Inst
    :status HakemusStatus
    :status-comment (s/maybe s/Str)
    :register-number (s/maybe s/Str)
-   :last-status-change-at s/Inst
    :submission Submission
    :validation-errors SubmissionValidationErrors})

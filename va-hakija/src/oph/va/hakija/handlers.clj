@@ -20,7 +20,7 @@
   (conflict! {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
               :status (:status hakemus)
               :version (:version hakemus)
-              :last-status-change-at (:last_status_change_at hakemus)}))
+              :version-date (:last_status_change_at hakemus)}))
 
 (defn- get-open-avustushaku [haku-id hakemus]
   (let [avustushaku (va-db/get-avustushaku haku-id)
@@ -35,7 +35,7 @@
        :status-comment (:status_change_comment hakemus)
        :register-number (:register_number hakemus)
        :version (:version hakemus)
-       :last-status-change-at (:last_status_change_at hakemus)
+       :version-date (:last_status_change_at hakemus)
        :submission submission
        :validation-errors validation}))
 
