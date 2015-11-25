@@ -64,13 +64,31 @@
                            (-> parent :label :fi))
                        (:fieldType field)]))))
 
+(defn- inject-growing-fieldsets [wrappers growing-fieldset-lut triples]
+  (if (map? triples)
+    (let [fieldset-id (:growingField triples)
+          fieldset-lut (get growing-fieldset-lut fieldset-id)]
+      (->> (keys fieldset-lut)
+           (mapv (fn [entry]
+                   (get fieldset-lut entry)))
+           (flatten)
+           (mapv (fn [value] [value value "Type (TBD)"]))))
+    triples))
+
+(defn- unwrap-double-nested-lists [list item]
+  (if (vector? (first item))
+    (apply conj list item)
+    (conj list item item)))
+
 (defn- avustushaku->formlabels [avustushaku growing-fieldset-lut]
   (let [form (-> avustushaku :form :content)
         wrappers (formutil/find-wrapper-elements form)]
     (->> form
          (formutil/find-fields)
          (reduce (partial mark-and-reject-growing-fields wrappers) {:rejects #{} :values []})
-         :values)))
+         :values
+         (map (partial inject-growing-fieldsets wrappers growing-fieldset-lut))
+         (reduce unwrap-double-nested-lists []))))
 
 (defn- avustushaku->hakemukset [avustushaku]
   (->> (:hakemukset avustushaku)
@@ -86,7 +104,7 @@
 (defn- extract-answer-values [avustushaku answer-keys answers]
   (let [get-by-id (fn [answer-set id] (get answer-set id))
         extract-answers (fn [answer-set] (map (partial get-by-id answer-set) answer-keys))]
-    (map extract-answers answers)))
+    (mapv extract-answers answers)))
 
 (defn flatten-answers [avustushaku answer-keys answer-labels]
   (let [hakemukset (avustushaku->hakemukset avustushaku)
@@ -118,7 +136,14 @@
 (defn testbox []
   (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
         growing-fieldset-lut (generate-growing-fieldset-lut avustushaku)
-        answer-key-label-type-triples (avustushaku->formlabels avustushaku growing-fieldset-lut)]
+        answer-key-label-type-triples (avustushaku->formlabels avustushaku growing-fieldset-lut)
+        answer-keys (apply conj
+                           (mapv first answers-fixed-fields)
+                           (mapv first answer-key-label-type-triples))
+        answer-labels (apply conj
+                             (mapv second answers-fixed-fields)
+                             (mapv second answer-key-label-type-triples))
+        answer-flatdata (flatten-answers avustushaku answer-keys answer-labels)]
     answer-key-label-type-triples))
 
 (def hakemus->main-sheet-rows
@@ -135,7 +160,7 @@
   (doseq [index (range 0 (count columns))]
     (.autoSizeColumn sheet index)))
 
-(defn export-avustushaku [avustushaku-id identity]
+(defn export-avustushaku [avustushaku-id]
   (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id)
         hakemus-list (->> (avustushaku->hakemukset avustushaku)
                           (sort-by first))
@@ -151,16 +176,18 @@
 
         growing-fieldset-lut (generate-growing-fieldset-lut avustushaku)
 
-        answer-key-label-type-triples (avustushaku->formlabels avustushaku)
+        answer-key-label-type-triples (avustushaku->formlabels avustushaku growing-fieldset-lut)
         answer-keys (apply conj
                            (mapv first answers-fixed-fields)
-                           (map first answer-key-label-type-triples))
+                           (mapv first answer-key-label-type-triples))
         answer-labels (apply conj
                              (mapv second answers-fixed-fields)
-                             (map second answer-key-label-type-triples))
+                             (mapv second answer-key-label-type-triples))
         answer-flatdata (flatten-answers avustushaku answer-keys answer-labels)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
-                        (spreadsheet/add-rows! sheet answer-flatdata)
+                        (doseq [row answer-flatdata]
+                          (trace "row" row)
+                          (spreadsheet/add-row! sheet row))
                         sheet)
         answers-header-row (first (spreadsheet/row-seq answers-sheet))
 
