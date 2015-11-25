@@ -72,7 +72,7 @@ class VaChangeRequests extends Component {
       changeRequestElements = _.map(changeRequests, cr => <VaChangeRequest hakemus={cr}
                                                                            key={cr.version}
                                                                            translations={this.props.translations}
-                                                                           lang={this.props.lang}/>)
+                                                                           lang={this.props.lang}/>).reverse()
     }
 
     return <div>{changeRequestElements}</div>
