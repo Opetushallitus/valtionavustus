@@ -63,7 +63,7 @@ export default class EditsDisplayingFormView extends React.Component {
         versionsByAttachmentId[attachmentId] = stripNonSubmittedVersions(versionsByAttachmentId[attachmentId])
       })
       const idsOfUpdatedAttachments = _.filter(_.keys(versionsByAttachmentId), attachmentId => { 
-        return versionsByAttachmentId[attachmentId].length > 1
+        return versionsByAttachmentId[attachmentId].length > 1 || (versionsByAttachmentId[attachmentId].length === 1 && versionsByAttachmentId[attachmentId][0]["hakemus-version"] <= oldestHakemusVersion)
       })
       return { changedAnswers: _.map(idsOfUpdatedAttachments, attachmentId => {
         const oldestRelevantAttachmentVersion = _.first(versionsByAttachmentId[attachmentId])
