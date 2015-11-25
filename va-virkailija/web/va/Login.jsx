@@ -29,7 +29,9 @@ export default class Login extends React.Component {
           <div className="row">{notPermitted}</div>
           <div className="row">{error}</div>
           <div hidden={notPermitted} className="row"><a href="/">Kirjaudu sisään</a></div>
-          <div hidden={!notPermitted} className="row"><a href={opintopolku.url + opintopolku["permission-request"]}>Ano lisää oikeuksia</a></div>
+          <div hidden={!notPermitted} className="row">
+            <a href={opintopolku.url + opintopolku["permission-request"]}>Ano lisää oikeuksia</a> tai <a href="/login/logout">kirjaudu ulos</a> opintopolusta
+          </div>
         </section>
       </div>
     )
