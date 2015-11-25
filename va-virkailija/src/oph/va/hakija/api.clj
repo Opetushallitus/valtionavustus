@@ -118,6 +118,8 @@
          :budget-total (:budget_total hakemus)
          :status (:status hakemus)
          :status-comment (:status_change_comment hakemus)
+         :user-first-name (:user_first_name hakemus)
+         :user-last-name (:user_last_name hakemus)
          :register-number (:register_number hakemus)
          :user-key (:user_key hakemus)
          :answers (:answer_values hakemus)})

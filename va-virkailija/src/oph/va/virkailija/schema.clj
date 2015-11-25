@@ -76,6 +76,8 @@
                       :organization-name s/Str
                       :status HakemusStatus
                       :status-comment (s/maybe s/Str)
+                      :user-first-name (s/maybe s/Str)
+                      :user-last-name (s/maybe s/Str)
                       (s/optional-key :arvio)  Arvio
                       :budget-total s/Int
                       :budget-oph-share s/Int
