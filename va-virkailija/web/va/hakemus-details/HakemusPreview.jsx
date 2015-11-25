@@ -39,8 +39,12 @@ export default class HakemusPreview extends Component {
       const effectiveForm = hakemusFormState.form
       effectiveForm.content = _.filter(effectiveForm.content, field => field.fieldClass !== "infoElement")
       const formSpecification = hakuData.form
-      FormRules.applyRulesToForm(formSpecification, effectiveForm, hakemus.answers)
-      FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, hakemus.answers)
+      const currentAnswers = hakemus.answers
+
+      hakemusFormState.answersDelta = EditsDisplayingFormView.resolveChangedFields(currentAnswers, hakemusFormState.changeRequests, hakemusFormState.attachmentVersions)
+
+      FormRules.applyRulesToForm(formSpecification, effectiveForm, currentAnswers)
+      FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, currentAnswers)
       return hakemusFormState
     }
   }

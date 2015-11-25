@@ -36,7 +36,6 @@ export default class EditsDisplayingFormView extends React.Component {
     const infoElementValues = this.props.infoElementValues.content
     const state = this.props.state
     const fields = state.form.content
-    state.answersDelta = resolveChangedFields(state.saveStatus.values, state.changeRequests, state.attachmentVersions)
 
     const renderField = field => {
       return EditsDisplayingFormView.renderField(controller, null, state, infoElementValues, field)
@@ -45,17 +44,18 @@ export default class EditsDisplayingFormView extends React.Component {
     return  <div className="soresu-preview">
               {fields.map(renderField) }
             </div>
+  }
 
-    function resolveChangedFields(currentAnswers, changeRequests, attachmentVersions) {
-      if (!changeRequests || changeRequests.length === 0) {
-        return { changedAnswers: [], newAnswers: [] }
-      }
-      const oldestAnswers = changeRequests[0].answers
-      const answersDelta = createDeltaFromUpdatedAttachments(attachmentVersions, changeRequests[0].version)
-      addDeltaFromChangedAnswers(answersDelta, oldestAnswers, currentAnswers);
-      addDeltaFromNewAnswers(currentAnswers, oldestAnswers, answersDelta);
-      return answersDelta
+  static resolveChangedFields(currentAnswers, changeRequests, attachmentVersions) {
+    if (!changeRequests || changeRequests.length === 0) {
+      return { changedAnswers: [], newAnswers: [] }
     }
+    const oldestAnswers = changeRequests[0].answers
+    const answersDelta = createDeltaFromUpdatedAttachments(attachmentVersions, changeRequests[0].version)
+    addDeltaFromChangedAnswers(answersDelta, oldestAnswers, currentAnswers);
+    addDeltaFromNewAnswers(currentAnswers, oldestAnswers, answersDelta);
+    return answersDelta
+
 
     function createDeltaFromUpdatedAttachments(attachmentVersions, oldestHakemusVersion) {
       const versionsByAttachmentId = _.groupBy(attachmentVersions, v => { return v.id })
