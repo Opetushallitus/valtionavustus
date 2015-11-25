@@ -56,12 +56,4 @@ export default class FakeFormState {
     budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(formState, true)
     return formState
   }
-
-  resolveAttachmentsProperty(hakuData, hakemus) {
-    if (!hakuData.attachments || !hakemus.id ) {
-      return {}
-    }
-    const attachments = hakuData.attachments[hakemus.id.toString()]
-    return attachments ? attachments : {}
-  }
 }
