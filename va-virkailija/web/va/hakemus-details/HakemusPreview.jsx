@@ -4,6 +4,8 @@ import Immutable from 'seamless-immutable'
 
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
+import FormRules from 'soresu-form/web/form/FormRules'
+import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber.jsx'
 
@@ -18,7 +20,7 @@ export default class HakemusPreview extends Component {
     const avustushaku = this.props.avustushaku
     const hakuData = this.props.hakuData
     const translations = this.props.translations
-    const formState = FakeFormState.createHakemusFormState(translations, hakuData, hakemus)
+    const formState = createPreviewHakemusFormState()
     const registerNumberDisplay = <VaHakemusRegisterNumber registerNumber={registerNumber}
                                                            translations={formState.configuration.translations}
                                                            lang={formState.configuration.lang} />
@@ -31,5 +33,15 @@ export default class HakemusPreview extends Component {
       headerElements: registerNumberDisplay,
     }
     return <FormContainer {...formElementProps} />
+
+    function createPreviewHakemusFormState() {
+      const hakemusFormState = FakeFormState.createHakemusFormState(translations, hakuData, hakemus)
+      const effectiveForm = hakemusFormState.form
+      effectiveForm.content = _.filter(effectiveForm.content, field => field.fieldClass !== "infoElement")
+      const formSpecification = hakuData.form
+      FormRules.applyRulesToForm(formSpecification, effectiveForm, hakemus.answers)
+      FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, hakemus.answers)
+      return hakemusFormState
+    }
   }
 }

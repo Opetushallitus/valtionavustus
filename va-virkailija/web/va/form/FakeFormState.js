@@ -29,10 +29,6 @@ export default class FakeFormState {
     const formSpecification = hakuData.form
     const effectiveForm = _.cloneDeep(formSpecification)
     effectiveForm.validationErrors = Immutable({})
-    if(answers) {
-      effectiveForm.content = _.filter(effectiveForm.content, field => field.fieldClass !== "infoElement")
-      FormRules.applyRulesToForm(formSpecification, effectiveForm, answers)
-    }
 
     const formState = {
       configuration: {
@@ -49,9 +45,6 @@ export default class FakeFormState {
       attachmentVersions: hakemus.attachmentVersions
     }
 
-    if(answers) {
-      FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, answers)
-    }
     const budgetCalculator = new VaBudgetCalculator()
     budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(formState, true)
     return formState
