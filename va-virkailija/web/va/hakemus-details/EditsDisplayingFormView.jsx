@@ -58,26 +58,30 @@ export default class EditsDisplayingFormView extends React.Component {
 
 
     function createDeltaFromUpdatedAttachments(attachmentVersions, oldestHakemusVersion) {
-      const versionsByAttachmentId = _.groupBy(attachmentVersions, v => { return v.id })
-      _.forEach(_.keys(versionsByAttachmentId), attachmentId => {
-        versionsByAttachmentId[attachmentId] = stripNonSubmittedVersions(versionsByAttachmentId[attachmentId])
+      const versionsByFieldId = _.groupBy(attachmentVersions, v => { return v["field-id"] })
+      _.forEach(_.keys(versionsByFieldId), fieldId => {
+        versionsByFieldId[fieldId] = stripNonSubmittedVersions(versionsByFieldId[fieldId])
       })
-      const idsOfUpdatedAttachments = _.filter(_.keys(versionsByAttachmentId), attachmentId => { 
-        return versionsByAttachmentId[attachmentId].length > 1 || (versionsByAttachmentId[attachmentId].length === 1 && versionsByAttachmentId[attachmentId][0]["hakemus-version"] <= oldestHakemusVersion)
+      const fieldIdsOfUpdatedAttachments = _.filter(_.keys(versionsByFieldId), fieldId => { 
+        return versionsByFieldId[fieldId].length > 1
       })
-      return { changedAnswers: _.map(idsOfUpdatedAttachments, attachmentId => {
-        const oldestRelevantAttachmentVersion = _.first(versionsByAttachmentId[attachmentId])
+      return { changedAnswers: _.map(fieldIdsOfUpdatedAttachments, fieldId => {
+        const oldestRelevantAttachmentVersion = _.first(versionsByFieldId[fieldId])
         return { fieldType: "namedAttachment",
-                 key: oldestRelevantAttachmentVersion["field-id"],
+                 key: fieldId,
                  value: oldestRelevantAttachmentVersion.filename,
                  attachmentVersion: oldestRelevantAttachmentVersion }
-      }), newAnswers: [] }
+      }), newAnswers: [], attachmentVersionsByFieldId: versionsByFieldId }
 
       function stripNonSubmittedVersions(versionsOfAttachment) {
         const beforeAndAfterSubmission = _.partition(versionsOfAttachment, v => { return v["hakemus-version"] <= oldestHakemusVersion })
         const originalSubmittedAttachmentVersion = _.first(_.sortByOrder(beforeAndAfterSubmission[0], "version", "desc"))
         const attachmentVersionsAfterSubmissions = beforeAndAfterSubmission[1]
-        return [ originalSubmittedAttachmentVersion ].concat(attachmentVersionsAfterSubmissions)
+        const result = []
+        if (originalSubmittedAttachmentVersion) {
+          result.push(originalSubmittedAttachmentVersion)
+        }
+        return result.concat(attachmentVersionsAfterSubmissions)
       }
     }
 
@@ -128,16 +132,24 @@ class DiffDisplayingField extends React.Component {
     }
 
     function createOldAttachmentVersionDisplay() {
-      const attachmentVersion = oldAnswer.attachmentVersion
-      if (!attachmentVersion) {
-        return null
-      }
+      const attachmentVersion = findOriginalAttachmentVersion()
       const fields = state.form.content
       const htmlId = controller.constructHtmlId(fields, field.id)
       const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field }
       const renderingParameters = { overridingInputValue: oldAnswer.value };
-      const downloadUrl = controller.createAttachmentVersionDownloadUrl(field, attachmentVersion.version);
+      const downloadUrl = attachmentVersion ? controller.createAttachmentVersionDownloadUrl(field, attachmentVersion.version) : null
       return FormPreview._createFormPreviewComponent(controller, state, field, fieldProperties, renderingParameters, attachmentVersion, downloadUrl)
+
+      function findOriginalAttachmentVersion() {
+        if (oldAnswer.attachmentVersion) {
+          return oldAnswer.attachmentVersion
+        }
+        const allAttachmentVersionsOfRemovedAttachment = state.answersDelta.attachmentVersionsByFieldId[oldAnswer.key]
+        if (allAttachmentVersionsOfRemovedAttachment) {
+          return allAttachmentVersionsOfRemovedAttachment[0]
+        }
+        return null
+      }
     }
   }
 }
