@@ -111,7 +111,7 @@
         :path-params [haku-id :- Long]
         :summary "Export Excel XLSX document for given avustushaku"
         (let [identity (authentication/get-identity request)
-              document (export/export-avustushaku haku-id identity)]
+              document (export/export-avustushaku haku-id)]
           (-> (ok document)
               (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
               (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"avustushaku-" haku-id ".xlsx\"")))))
