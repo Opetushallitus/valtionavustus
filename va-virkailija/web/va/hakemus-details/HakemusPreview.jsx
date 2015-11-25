@@ -42,9 +42,17 @@ export default class HakemusPreview extends Component {
       const currentAnswers = hakemus.answers
 
       hakemusFormState.answersDelta = EditsDisplayingFormView.resolveChangedFields(currentAnswers, hakemusFormState.changeRequests, hakemusFormState.attachmentVersions)
+      const oldestAnswers = (hakemusFormState.changeRequests && hakemusFormState.changeRequests.length > 0) ? hakemusFormState.changeRequests[0].answers : {}
+      const combinedAnswersForPopulatingGrowingFieldsets = _.merge(_.cloneDeep(currentAnswers), _.cloneDeep(oldestAnswers), (a, b) => {
+        return _.isArray(a) ? uniqueUnion(a, b) : undefined
+
+        function uniqueUnion(firstAnswerArray, secondAnswerArray) {
+          return _.uniq(_.union(firstAnswerArray, secondAnswerArray), answer => { return answer.key })
+        }
+      })
 
       FormRules.applyRulesToForm(formSpecification, effectiveForm, currentAnswers)
-      FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, currentAnswers)
+      FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, combinedAnswersForPopulatingGrowingFieldsets)
       return hakemusFormState
     }
   }
