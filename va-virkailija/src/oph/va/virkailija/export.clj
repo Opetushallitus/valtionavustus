@@ -78,7 +78,7 @@
 (defn- unwrap-double-nested-lists [list item]
   (if (vector? (first item))
     (apply conj list item)
-    (conj list item item)))
+    (conj list item)))
 
 (defn- avustushaku->formlabels [avustushaku growing-fieldset-lut]
   (let [form (-> avustushaku :form :content)
