@@ -209,6 +209,7 @@
                                                   :user_oid (:person-oid identity)
                                                   :user_first_name (:first-name identity)
                                                   :user_last_name (:surname identity)
+                                                  :user_email (:email identity)
                                                   :avustushaku_id (:avustushaku hakemus-to-update)})]
     (exec-all :hakija-db [hakija-queries/lock-hakemus hakemus-to-update
                           hakija-queries/close-existing-hakemus! hakemus-to-update

@@ -97,6 +97,7 @@
                     :user_oid nil
                     :user_first_name nil
                     :user_last_name nil
+                    :user_email nil
                     :register_number register-number
                     :form_submission_id submission-id
                     :form_submission_version submission-version}
@@ -111,6 +112,7 @@
                     :user_oid nil
                     :user_first_name nil
                     :user_last_name nil
+                    :user_email nil
                     :form_submission_id submission-id
                     :form_submission_version submission-version
                     :register_number register-number
