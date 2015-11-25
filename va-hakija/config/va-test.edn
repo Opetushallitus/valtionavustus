@@ -2,7 +2,8 @@
           :allow-db-clear? false
           :port 8081
           :url {:fi "https://testi.valtionavustukset.oph.fi/"
-                :sv "https://srv2.va-dev.oph.fi/"}}
+                :sv "https://srv2.va-dev.oph.fi/"}
+          :virkailija-url "https://testi.virkailija.valtionavustukset.oph.fi"}
  :db {:database-name "va-qa"}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"

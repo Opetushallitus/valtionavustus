@@ -102,3 +102,11 @@
        (if preview?
          "&preview=true"
          "")))
+
+(defn generate-virkailija-url [avustushaku-id hakemus-db-id]
+  (str (-> config :server :virkailija-url)
+       "/avustushaku/"
+       avustushaku-id
+       "/hakemus/"
+       hakemus-db-id
+       "/"))

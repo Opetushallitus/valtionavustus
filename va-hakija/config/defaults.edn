@@ -4,7 +4,8 @@
           :host "localhost"
           :port 8080
           :attachment-max-size 50 ;in megabytes
-          :threads 16}
+          :threads 16
+          :virkailija-url "http://localhost:8081"}
  :ui {:show-environment? true}
  :api {:restricted-routes? true}
  :db {:pool-name "hakija-pool"

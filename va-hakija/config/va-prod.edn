@@ -2,7 +2,8 @@
           :allow-db-clear? false
           :port 8081
           :url {:fi "https://valtionavustukset.oph.fi/"
-                :sv "https://statsunderstod.oph.fi/"}}
+                :sv "https://statsunderstod.oph.fi/"}
+          :virkailija-url "https://virkailija.valtionavustukset.oph.fi"}
  :ui {:show-environment? false}
  :db {:database-name "va-prod"}
  :email {:enabled? true

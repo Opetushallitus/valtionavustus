@@ -62,6 +62,10 @@
        (exec :db queries/get-hakemus-by-user-id)
        first))
 
+(defn list-hakemus-change-requests [hakemus-id]
+  (->> {:user_key hakemus-id}
+       (exec :db queries/list-hakemus-change-requests-by-user-id)))
+
 (defn- register-number-sequence-exists? [register-number]
   (->> (exec :db queries/register-number-sequence-exists? {:suffix register-number})
        first

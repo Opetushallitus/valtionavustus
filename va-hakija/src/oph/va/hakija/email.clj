@@ -12,14 +12,16 @@
                  :sv "Länk till er organisations ansökan om understöd"}
    :hakemus-submitted {:fi "Automaattinen viesti: organisaationne avustushakemus on kirjattu vastaanotetuksi"
                        :sv "Automatisk meddelande: organisationens bidragsansökan mottogs"}
-   :change-request-responded {:fi "Automaattinen viesti: organisaationne avustushakemusta on täydennetty"
-                              :sv "Automatisk meddelande: organisationens bidragsansökan har kompletterat"}})
+   :hakemus-submitted-after-change-request {:fi "Automaattinen viesti: organisaationne avustushakemusta on täydennetty"
+                                            :sv "Automatisk meddelande: organisationens bidragsansökan har kompletterat"}
+   :hakemus-change-request-responded {:fi "Automaattinen viesti: avustushakemusta on täydennetty"}})
 
 (def mail-templates
   {:new-hakemus {:fi (email/load-template "email-templates/new-hakemus.plain.fi")
                  :sv (email/load-template "email-templates/new-hakemus.plain.sv")}
    :hakemus-submitted {:fi (email/load-template "email-templates/hakemus-submitted.plain.fi")
-                       :sv (email/load-template "email-templates/hakemus-submitted.plain.fi")}})
+                       :sv (email/load-template "email-templates/hakemus-submitted.plain.fi")}
+   :hakemus-change-request-responded {:fi (email/load-template "email-templates/hakemus-change-request-responded.plain.fi")}})
 
 (defn start-background-sender []
   (email/start-background-sender mail-templates))
@@ -54,6 +56,20 @@
                            :end-time end-time-string
                            :url url})))
 
+(defn send-change-request-responded-message-to-virkailija! [to avustushaku-id avustushaku-name-fi hakemus-db-id]
+  (let [lang :fi
+        url (email/generate-virkailija-url avustushaku-id hakemus-db-id)]
+    (log/info "Url would be: " url)
+    (>!! email/mail-queue {:operation :send
+                           :type :hakemus-change-request-responded
+                           :lang lang
+                           :from (-> email/smtp-config :from lang)
+                           :sender (-> email/smtp-config :sender)
+                           :subject (get-in mail-titles [:hakemus-change-request-responded lang])
+                           :to to
+                           :avustushaku avustushaku-name-fi
+                           :url url})))
+
 (defn send-hakemus-submitted-message! [is-change-request-response? lang to avustushaku-id avustushaku user-key start-date end-date]
   (let [lang-str (or (clojure.core/name lang) "fi")
         start-date-string (datetime/date-string start-date)
@@ -66,7 +82,7 @@
                       :lang lang
                       :from (-> email/smtp-config :from lang)
                       :sender (-> email/smtp-config :sender)
-                      :subject (get-in mail-titles [(if is-change-request-response? :change-request-responded :hakemus-submitted) lang])
+                      :subject (get-in mail-titles [(if is-change-request-response? :hakemus-submitted-after-change-request :hakemus-submitted) lang])
                       :to to
                       :avustushaku avustushaku
                       :start-date start-date-string

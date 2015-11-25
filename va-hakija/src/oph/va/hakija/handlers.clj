@@ -140,7 +140,7 @@
         avustushaku (get-open-avustushaku haku-id hakemus)
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
-        attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
+        attachments (va-db/get-attachments hakemus-id (:id hakemus))
         validation (validation/validate-form form answers attachments)]
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
@@ -152,7 +152,11 @@
                                                       submission-id
                                                       submission-version
                                                       (:register_number hakemus)
-                                                      answers)]
+                                                      answers)
+              change-requests (va-db/list-hakemus-change-requests hakemus-id)
+              email-of-virkailija (:user_email (last change-requests))]
+          (if email-of-virkailija
+            (va-email/send-change-request-responded-message-to-virkailija! [email-of-virkailija] (:id avustushaku) (-> avustushaku :content :name :fi) (:id submitted-hakemus)))
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! true answers submitted-hakemus avustushaku)
           (method-not-allowed! {:change-request-response "saved"}))
         (hakemus-conflict-response hakemus))

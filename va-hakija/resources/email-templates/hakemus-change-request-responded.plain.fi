@@ -1,0 +1,4 @@
+Avustushaku: {{ avustushaku }}
+
+Hakemusta on täydennetty: {{& url }}
+
