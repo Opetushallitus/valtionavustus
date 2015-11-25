@@ -8,6 +8,7 @@ import FormRules from 'soresu-form/web/form/FormRules'
 import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber.jsx'
+import VaChangeRequest from 'va-common/web/va/VaChangeRequest.jsx'
 
 import EditsDisplayingFormView from './EditsDisplayingFormView.jsx'
 import FakeFormController from '../form/FakeFormController.js'
@@ -21,16 +22,21 @@ export default class HakemusPreview extends Component {
     const hakuData = this.props.hakuData
     const translations = this.props.translations
     const formState = createPreviewHakemusFormState()
-    const registerNumberDisplay = <VaHakemusRegisterNumber registerNumber={registerNumber}
+    const registerNumberDisplay = <VaHakemusRegisterNumber key="register-number"
+                                                           registerNumber={registerNumber}
                                                            translations={formState.configuration.translations}
                                                            lang={formState.configuration.lang} />
+    const changeRequests =  <VaChangeRequests key="change-request"
+                                              changeRequests={hakemus.changeRequests}
+                                              translations={formState.configuration.translations}
+                                              lang={formState.configuration.lang}/>
     const formElementProps = {
       state: formState,
       formContainerClass: EditsDisplayingFormView,
       infoElementValues: avustushaku,
       controller: new FakeFormController(new VaPreviewComponentFactory(), avustushaku, hakemus),
       containerId: "preview-container",
-      headerElements: registerNumberDisplay,
+      headerElements: [registerNumberDisplay, changeRequests]
     }
     return <FormContainer {...formElementProps} />
 
@@ -55,5 +61,20 @@ export default class HakemusPreview extends Component {
       FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, combinedAnswersForPopulatingGrowingFieldsets)
       return hakemusFormState
     }
+  }
+}
+
+class VaChangeRequests extends Component {
+  render() {
+    const changeRequests = this.props.changeRequests
+    var changeRequestElements = []
+    if(changeRequests) {
+      changeRequestElements = _.map(changeRequests, cr => <VaChangeRequest hakemus={cr}
+                                                                           key={cr.version}
+                                                                           translations={this.props.translations}
+                                                                           lang={this.props.lang}/>)
+    }
+
+    return <div>{changeRequestElements}</div>
   }
 }
