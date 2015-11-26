@@ -190,10 +190,12 @@
                     })
                   })
 
-                  describe('täytettäessä uusi ensimmäinen rivi', function() {
+                  describe('täytettäessä kaksi ensimmäistä riviä', function() {
                     before(
                       applicationPage.setInputValue("other-organizations.other-organizations-1.name", "Muu testiorganisaatio 3"),
                       applicationPage.setInputValue("other-organizations.other-organizations-1.email", "muutest3@example.com"),
+                      applicationPage.setInputValue("other-organizations.other-organizations-4.name", "Muu testiorganisaatio 4"),
+                      applicationPage.setInputValue("other-organizations.other-organizations-4.email", "muutest4@example.com"),
                       applicationPage.waitAutoSave
                     )
                     it("virheet häviää", function() {
@@ -201,15 +203,41 @@
                     })
 
                     it('on neljäs rivi auki', function() {
-                      expect(applicationPage.getInput('other-organizations.other-organizations-4.name').isEnabled()).to.equal(true)
-                      expect(applicationPage.getInput('other-organizations.other-organizations-4.email').isEnabled()).to.equal(true)
+                      expect(applicationPage.getInput('other-organizations.other-organizations-5.name').isEnabled()).to.equal(true)
+                      expect(applicationPage.getInput('other-organizations.other-organizations-5.email').isEnabled()).to.equal(true)
                     })
                     it('on viides rivi kiinni', function() {
-                      expect(applicationPage.getInput('other-organizations.other-organizations-5.name').isEnabled()).to.equal(false)
-                      expect(applicationPage.getInput('other-organizations.other-organizations-5.email').isEnabled()).to.equal(false)
+                      expect(applicationPage.getInput('other-organizations.other-organizations-6.name').isEnabled()).to.equal(false)
+                      expect(applicationPage.getInput('other-organizations.other-organizations-6.email').isEnabled()).to.equal(false)
                     })
                     it('lomake on lähetettävissä', function() {
                       expect(applicationPage.submitButton().isEnabled()).to.equal(true)
+                    })
+                    describe('jos poistaa ensimmäisen organisaation', function() {
+                      before(
+                          removeButtonForOrg(1).click,
+                          applicationPage.waitAutoSave,
+                          wait.until(function(){return removeButtonForOrg(3).isVisible() === false})
+                      )
+
+                      describe('poiston jälkeen', function() {
+                        it("ensimmäisellä rivillä on aiemmat toisen rivin tiedot", function() {
+                          expect(applicationPage.getInput('other-organizations.other-organizations-1.name').value()).to.equal("Muu testiorganisaatio 4")
+                          expect(applicationPage.getInput('other-organizations.other-organizations-1.email').value()).to.equal("muutest4@example.com")
+                        })
+
+                        it("lomakkeella ei ole virheitä", function() {
+                          expect(applicationPage.validationErrorsSummary()).to.equal("")
+                        })
+
+                        it('Uuden ensimmäisen rivin voi poistaa', function() {
+                          expect(removeButtonForOrg(1).isEnabled()).to.equal(true)
+                        })
+
+                        it('Kolmatta ei voi poistaa', function() {
+                          expect(removeButtonForOrg(3).isEnabled()).to.equal(false)
+                        })
+                      })
                     })
                   })
                 })
