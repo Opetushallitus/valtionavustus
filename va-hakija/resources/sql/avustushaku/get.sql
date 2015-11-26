@@ -1,1 +1,1 @@
-select * from avustushaut where id = :id
+select * from avustushaut where id = :id and status <> 'deleted'
