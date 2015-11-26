@@ -41,8 +41,8 @@
       "sv": "TODO: Merkitse täydennys tehdyksi"
     },
     "change-request-response-help": {
-      "fi": "Muokkaa vain pyydettyjä kohtia. Lähettämisen jälkeen hakemus ei ole enää muokattavissa.",
-      "sv": "TODO: Muokkaa vain pyydettyjä kohtia. Lähettämisen jälkeen hakemus ei ole enää muokattavissa."
+      "fi": "Muokkaa vain pyydettyjä kohtia. Lähettämisen jälkeen hakemus ei ole enää muokattavissa. Järjestelmä lähettää täydennetystä hakemuksesta vahvistusviestin myös hakijaorganisaation viralliseen sähköpostiosoitteeseen ja allekirjoitusoikeuden omaavalle henkilölle. Täydennettyä hakemusta voi katsella vahvistusviestissä olevan linkin kautta.",
+      "sv": "TODO: Muokkaa vain pyydettyjä kohtia. Lähettämisen jälkeen hakemus ei ole enää muokattavissa. Järjestelmä lähettää täydennetystä hakemuksesta vahvistusviestin myös hakijaorganisaation viralliseen sähköpostiosoitteeseen ja allekirjoitusoikeuden omaavalle henkilölle. Täydennettyä hakemusta voi katsella vahvistusviestissä olevan linkin kautta."
     },
     "has-ended": {
       "fi": "Hakuaika on päättynyt",
