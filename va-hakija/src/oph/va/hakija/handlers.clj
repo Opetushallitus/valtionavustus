@@ -14,6 +14,7 @@
             [oph.soresu.form.schema :refer :all]
             [oph.va.hakija.db :as va-db]
             [oph.va.hakija.notification-formatter :as va-submit-notification]
+            [oph.va.hakija.attachment-validator :as attachment-validator]
             [oph.va.hakija.email :as va-email]))
 
 (defn- hakemus-conflict-response [hakemus]
@@ -167,17 +168,19 @@
     (va-db/get-attachments hakemus-id (:id hakemus))))
 
 (defn on-attachment-create [haku-id hakemus-id hakemus-base-version field-id filename content-type size tempfile]
-  (if-let [hakemus (va-db/get-hakemus hakemus-id)]
-    (if-let [attachment (va-db/create-attachment (:id hakemus)
-                                                 hakemus-base-version
-                                                 field-id
-                                                 filename
-                                                 content-type
-                                                 size
-                                                 tempfile)]
-      (ok (va-db/convert-attachment (:id hakemus) attachment))
-      (bad-request {:error true}))
-    (bad-request! {:error true})))
+  (let [real-content-type (attachment-validator/validate-file tempfile filename content-type)
+        hakemus (va-db/get-hakemus hakemus-id)]
+    (if hakemus
+      (if-let [attachment (va-db/create-attachment (:id hakemus)
+                                                   hakemus-base-version
+                                                   field-id
+                                                   filename
+                                                   real-content-type
+                                                   size
+                                                   tempfile)]
+        (ok (va-db/convert-attachment (:id hakemus) attachment))
+        (bad-request {:error true}))
+      (bad-request! {:error true}))))
 
 (defn on-attachment-delete [haku-id hakemus-id field-id]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]

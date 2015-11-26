@@ -15,6 +15,9 @@
                  [ring/ring-devel "1.4.0"]
                  [ring/ring-core "1.4.0"]
 
+                 ;; MIME type checking
+                 [com.novemberain/pantomime "2.7.0"]
+
                  ;; Routing
                  [ring/ring-defaults "0.1.5"]
                  [compojure "1.4.0" :exclusions [instaparse]]

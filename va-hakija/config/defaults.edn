@@ -4,6 +4,13 @@
           :host "localhost"
           :port 8080
           :attachment-max-size 50 ;in megabytes
+          :attachment-mime-types ["text/plain"
+                                  "application/rtf"
+                                  "application/pdf"
+                                  "application/vnd.ms-excel"
+                                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                  "application/msword"
+                                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
           :threads 16
           :virkailija-url "http://localhost:8081"}
  :ui {:show-environment? true}
