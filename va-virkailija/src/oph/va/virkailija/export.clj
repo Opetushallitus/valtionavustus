@@ -148,19 +148,6 @@
          (mapv process-answers)
          (reduce combine (array-map)))))
 
-(defn testbox []
-  (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
-        growing-fieldset-lut (generate-growing-fieldset-lut avustushaku)
-        answer-key-label-type-triples (avustushaku->formlabels avustushaku growing-fieldset-lut)
-        answer-keys (apply conj
-                           (mapv first answers-fixed-fields)
-                           (mapv first answer-key-label-type-triples))
-        answer-labels (apply conj
-                             (mapv second answers-fixed-fields)
-                             (mapv second answer-key-label-type-triples))
-        answer-flatdata (flatten-answers avustushaku answer-keys answer-labels)]
-    answer-key-label-type-triples))
-
 (def hakemus->main-sheet-rows
   (juxt :register-number
         :organization-name
