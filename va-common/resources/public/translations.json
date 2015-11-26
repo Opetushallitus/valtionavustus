@@ -133,6 +133,18 @@
     "submit-validation-errors": {
       "fi": "Ei tallennettu - tarkista syöttämäsi tiedot.",
       "sv": "Inte lagrad – svara först på alla frågor."
+    },
+    "attachment-has-illegal-content-type-error": {
+      "fi": "Ei tuettu liitteen tiedostotyyppi: {{illegal-content-type}}",
+      "sv": "Ogiltig filtyp av bifogan: {{illegal-content-type}}"
+    },
+    "attachment-save-error": {
+      "fi": "Liitteen tallentaminen epäonnistui. Yritä myöhemmin uudelleen.",
+      "sv": "Lagrande av bifogan misslyckades. Försök på nytt senare."
+    },
+    "attachment-remove-error": {
+      "fi": "Liitteen poisto epäonnistui. Yritä myöhemmin uudelleen.",
+      "sv": "Borttagande av bifogan misslyckades. Försök på nytt senare."
     }
   },
   "warning": {
