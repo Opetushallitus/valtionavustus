@@ -82,7 +82,7 @@
 
 (defn start-server [host port auto-reload?]
   (let [cookie-defaults {:max-age 60000
-                         :http-only false}
+                         :http-only (-> config :server :require-https?)}
         cookie-attrs (if (-> config :server :require-https?)
                        (assoc cookie-defaults :secure true)
                        cookie-defaults)
