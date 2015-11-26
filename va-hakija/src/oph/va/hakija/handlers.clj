@@ -168,13 +168,13 @@
     (va-db/get-attachments hakemus-id (:id hakemus))))
 
 (defn on-attachment-create [haku-id hakemus-id hakemus-base-version field-id filename content-type size tempfile]
-  (let [real-content-type (attachment-validator/validate-file tempfile filename content-type)
+  (let [real-content-type (attachment-validator/validate-file-content-type tempfile filename content-type)
         hakemus (va-db/get-hakemus hakemus-id)]
     (if hakemus
       (if-let [attachment (va-db/create-attachment (:id hakemus)
                                                    hakemus-base-version
                                                    field-id
-                                                   filename
+                                                   (attachment-validator/file-name-according-to-content-type filename real-content-type)
                                                    real-content-type
                                                    size
                                                    tempfile)]
