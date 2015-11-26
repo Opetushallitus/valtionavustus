@@ -64,15 +64,29 @@
                            (-> parent :label :fi))
                        (:fieldType field)]))))
 
-(defn- inject-growing-fieldsets [wrappers growing-fieldset-lut triples]
+(defn- process-growing-field [fields wrappers id]
+  (let [seq-number (last (re-find #"([0-9]+)[^0-9]*$" id))
+        mangled-id (clojure.string/replace id #"[0-9]+([^0-9]*)$" "1$1")
+        field (->> fields
+                   (filter (fn [f] (= (:id f) mangled-id)))
+                   first)
+        parent (find-parent wrappers field)]
+    [id
+     (str (or (-> field :label :fi)
+              (-> parent :label :fi)) " " seq-number)
+     (:fieldType field)]))
+
+(defn- inject-growing-fieldsets [fields wrappers growing-fieldset-lut triples]
   (if (map? triples)
     (let [fieldset-id (:growingField triples)
           fieldset-lut (get growing-fieldset-lut fieldset-id)]
       (->> (keys fieldset-lut)
-           (mapv (fn [entry]
-                   (get fieldset-lut entry)))
-           (flatten)
-           (mapv (fn [value] [value value "Type (TBD)"]))))
+           (reduce (fn [acc entry]
+                     (apply conj acc (mapv (partial process-growing-field
+                                                    fields
+                                                    wrappers)
+                                           (get fieldset-lut entry))))
+                   [])))
     triples))
 
 (defn- unwrap-double-nested-lists [list item]
@@ -82,12 +96,13 @@
 
 (defn- avustushaku->formlabels [avustushaku growing-fieldset-lut]
   (let [form (-> avustushaku :form :content)
+        fields (formutil/find-fields form)
         wrappers (formutil/find-wrapper-elements form)]
     (->> form
          (formutil/find-fields)
          (reduce (partial mark-and-reject-growing-fields wrappers) {:rejects #{} :values []})
          :values
-         (map (partial inject-growing-fieldsets wrappers growing-fieldset-lut))
+         (map (partial inject-growing-fieldsets fields wrappers growing-fieldset-lut))
          (reduce unwrap-double-nested-lists []))))
 
 (defn- avustushaku->hakemukset [avustushaku]
@@ -185,9 +200,7 @@
                              (mapv second answer-key-label-type-triples))
         answer-flatdata (flatten-answers avustushaku answer-keys answer-labels)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
-                        (doseq [row answer-flatdata]
-                          (trace "row" row)
-                          (spreadsheet/add-row! sheet row))
+                        (spreadsheet/add-rows! sheet answer-flatdata)
                         sheet)
         answers-header-row (first (spreadsheet/row-seq answers-sheet))
 
