@@ -3,6 +3,8 @@ import _ from 'lodash'
 
 import DateUtil from 'soresu-form/web/form/DateUtil'
 
+import NameFormatter from 'va-common/web/va/util/NameFormatter.js'
+
 export default class HakemusComments extends Component {
 
   checkComments() {
@@ -55,12 +57,12 @@ export default class HakemusComments extends Component {
 class Comment extends Component {
   render() {
     const comment = this.props.comment
-    const firstName = comment.first_name
-    const lastNameInitial = comment.last_name ? comment.last_name.charAt(0).toUpperCase() : ''
-    const commentLine = firstName + ' ' + lastNameInitial + ': ' + comment.comment
+    const firstName = NameFormatter.onlyFirstForename(comment.first_name)
+    const lastName = comment.last_name
+    const commentLine = NameFormatter.shorten(firstName, lastName) + ': ' + comment.comment
     const dateTime = new Date(comment.created_at)
     const dateTimeString = DateUtil.asDateString(dateTime) + ' ' + DateUtil.asTimeString(dateTime)
-    const toolTipString = comment.first_name + ' ' + comment.last_name + ' ' + dateTimeString + ': ' +
+    const toolTipString = firstName + ' ' + lastName + ' ' + dateTimeString + ': ' +
         comment.comment
     return <div className="single-comment" title={toolTipString} >
             <div>{commentLine}</div>

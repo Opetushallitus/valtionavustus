@@ -2,6 +2,7 @@ import React from 'react'
 import ClassNames from 'classnames'
 
 import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
+import NameFormatter from 'va-common/web/va/util/NameFormatter.js'
 
 export default class TopBar extends React.Component {
   render() {
@@ -60,7 +61,7 @@ class TopBarControls extends React.Component {
   render() {
     const state = this.props.state
     const user = state.userInfo
-    const username = user["first-name"] + " " + user["surname"]
+    const username = NameFormatter.onlyFirstForename(user["first-name"]) + " " + user["surname"]
 
     const saveStatus = state.saveStatus
     const okStatus = saveStatus.saveInProgress ?
