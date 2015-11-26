@@ -3,7 +3,10 @@
   :url "https://github.com/Opetushallitus/valtionavustus"
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
-  :dependencies [[oph-va/common "0.1.0-SNAPSHOT"]]
+  :dependencies [[oph-va/common "0.1.0-SNAPSHOT"]
+
+                 ;; MIME type checking
+                 [com.novemberain/pantomime "2.7.0"]]
 
   :main oph.va.hakija.main
   :jvm-opts ["-Xmx200m"]
