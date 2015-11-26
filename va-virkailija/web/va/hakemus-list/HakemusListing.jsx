@@ -113,7 +113,7 @@ export default class HakemusListing extends Component {
             <StatusFilter controller={controller} hakemusList={hakemusList} filter={filter}/>
             <HakemusSorter field="status" sorter={sorter} controller={controller}/>
           </th>
-          <ChangeRequestHeader hakemusList={filteredHakemusList} />
+          <ChangeRequestHeader field="change-request" sorter={sorter} controller={controller} hakemusList={filteredHakemusList} />
           <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>
           <th className="granted-sum-column">Myönnetty <HakemusSorter field="granted-sum" sorter={sorter} controller={controller}/></th>
         </tr></thead>
@@ -201,14 +201,22 @@ class HakemusSorter extends Component {
   }
 }
 
-class ChangeRequestHeader extends Component {
+class ChangeRequestHeader extends HakemusSorter {
+  constructor(props) {
+    super(props)
+  }
+
+  onSorterClick() {
+    super.onSorterClick()
+  }
+
   render(){
     const hakemusList = this.props.hakemusList
     const kplChangeRequest = _.filter(hakemusList, HakemusListing._filterWithArrayPredicate(hakemus => hakemus.status, ["pending_change_request"])).length
     const value = kplChangeRequest > 0 ? "(" + kplChangeRequest + ")" : ""
     const title = kplChangeRequest > 0 ? kplChangeRequest + " hakemusta odottaa hakijan täydennystä" : "Ei avoimia täydennyspyyntöjä"
     return (
-      <th className="change-request-column" title={title} >{value}</th>
+      <th className="change-request-column" onClick={this.onSorterClick} title={title} >{value}</th>
     )
   }
 }
