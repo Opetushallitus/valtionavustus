@@ -19,13 +19,16 @@
 (def answers-sheet-name "Vastaukset")
 
 (def answers-fixed-fields
-  [["fixed-register-number" "Diaarinumero" :register-number]
-   ["fixed-organization-name" "Hakijaorganisaatio" :organization-name]
-   ["fixed-project-name" "Projektin nimi" :project-name]
-   ["fixed-budget-total" "Ehdotettu budjetti" :budget-total]
-   ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share]
-   ["fixed-budget-granted" "Myönnetty avustus" (comp :budget-granted :arvio)]
-   ["fixed-score-total-average" "Arviokeskiarvo" (comp :score-total-average :scoring :arvio)]])
+  [["fixed-register-number" "Diaarinumero" :register-number "textField"]
+   ["fixed-organization-name" "Hakijaorganisaatio" :organization-name "textField"]
+   ["fixed-project-name" "Projektin nimi" :project-name "textField"]
+   ["fixed-budget-total" "Ehdotettu budjetti" :budget-total "numberField"]
+   ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share "numberField"]
+   ["fixed-budget-granted" "Myönnetty avustus" (comp :budget-granted :arvio) "numberField"]
+   ["fixed-score-total-average" "Arviokeskiarvo" (comp :score-total-average :scoring :arvio) "numberField"]])
+
+(defn third [list] (nth list 2))
+(defn fourth [list] (nth list 3))
 
 (defn- has-child? [id node]
   (when-let [children (:children node)]
@@ -162,6 +165,15 @@
   (doseq [index (range 0 (count columns))]
     (.autoSizeColumn sheet index)))
 
+(defn testbox []
+  (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
+        growing-fieldset-lut (generate-growing-fieldset-lut avustushaku)
+        answer-key-label-type-triples (avustushaku->formlabels avustushaku growing-fieldset-lut)
+        answer-types (apply conj
+                            (mapv fourth answers-fixed-fields)
+                            (mapv third answer-key-label-type-triples))]
+    answer-types))
+
 (defn export-avustushaku [avustushaku-id]
   (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id)
         hakemus-list (->> (avustushaku->hakemukset avustushaku)
@@ -179,12 +191,17 @@
         growing-fieldset-lut (generate-growing-fieldset-lut avustushaku)
 
         answer-key-label-type-triples (avustushaku->formlabels avustushaku growing-fieldset-lut)
+
         answer-keys (apply conj
                            (mapv first answers-fixed-fields)
                            (mapv first answer-key-label-type-triples))
         answer-labels (apply conj
                              (mapv second answers-fixed-fields)
                              (mapv second answer-key-label-type-triples))
+        answer-types (apply conj
+                            (mapv fourth answers-fixed-fields)
+                            (mapv third answer-key-label-type-triples))]
+
         answer-flatdata (flatten-answers avustushaku answer-keys answer-labels)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
                         (spreadsheet/add-rows! sheet answer-flatdata)
