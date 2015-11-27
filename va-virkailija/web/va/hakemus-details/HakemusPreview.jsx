@@ -14,6 +14,8 @@ import EditsDisplayingFormView from './EditsDisplayingFormView.jsx'
 import FakeFormController from '../form/FakeFormController.js'
 import FakeFormState from '../form/FakeFormState.js'
 
+import style from '../style/formpreview.less'
+
 export default class HakemusPreview extends Component {
   render() {
     const hakemus = this.props.hakemus
