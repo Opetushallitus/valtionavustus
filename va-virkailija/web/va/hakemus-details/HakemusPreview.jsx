@@ -58,7 +58,7 @@ export default class HakemusPreview extends Component {
       })
 
       FormRules.applyRulesToForm(formSpecification, effectiveForm, currentAnswers)
-      FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, combinedAnswersForPopulatingGrowingFieldsets)
+      FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(formSpecification.content, effectiveForm.content, combinedAnswersForPopulatingGrowingFieldsets, false)
       return hakemusFormState
     }
   }
