@@ -41,6 +41,8 @@
     (ok {})
     (not-found)))
 
+(defn- without-id [x]
+  (dissoc x :id))
 
 (defn- on-hakemus-preview [avustushaku-id hakemus-user-key]
   (let [hakija-app-url (-> config :server :url :fi)
@@ -165,7 +167,7 @@
           :return Form
           :summary "Get form description that is linked to avustushaku"
           (if-let [found-form (hakija-api/get-form-by-avustushaku avustushaku-id)]
-            (ok found-form)
+            (ok (without-id found-form))
             (not-found)))
 
   (POST* "/:avustushaku-id/form" [avustushaku-id]
@@ -174,7 +176,7 @@
          :return Form
          :summary "Update form description that is linked to avustushaku"
          (if-let [response (hakija-api/update-form-by-avustushaku avustushaku-id updated-form)]
-          (ok response)
+          (ok (without-id response))
           (not-found)))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id]
