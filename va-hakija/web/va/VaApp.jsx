@@ -65,7 +65,7 @@ function printEntityId(state) {
 
 const query = queryString.parse(location.search)
 const urlContent = { parsedQuery: query, location: location }
-const develQueryParam =  query.devel || false
+const develMode =  query.devel === 'true'
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(avustusHakuId)))
 const environmentP = Bacon.fromPromise(HttpUtil.get(urlCreator.environmentConfigUrl()))
@@ -108,7 +108,7 @@ function initVaFormController() {
   const initialValues = {"language": urlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function(state) {
-    return <VaForm controller={controller} state={state} develQueryParam={develQueryParam}/>
+    return <VaForm controller={controller} state={state}/>
   }}
 }
 
@@ -118,7 +118,7 @@ function initAppController() {
 
 const app = initAppController()
 app.stateProperty.onValue((state) => {
-  if (develQueryParam) {
+  if (develMode) {
     console.log("Updating UI with state:", state)
   }
   try {

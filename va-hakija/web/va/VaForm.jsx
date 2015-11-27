@@ -28,13 +28,12 @@ export default class VaForm extends React.Component {
                                             translations={state.configuration.translations}
                                             lang={state.configuration.lang} />
     const headerElements = [registerNumberDisplay, changeRequest]
-    const develQueryParam = this.props.develQueryParam
     const formContainerClass = state.configuration.preview ? FormPreview : Form
     return(
       <div>
         <VaOldBrowserWarning lang={state.configuration.lang}
                              translations={state.configuration.translations.warning}
-                             devel={develQueryParam}
+                             devel={state.configuration.develMode}
         />
         <VaFormTopbar controller={controller}
                       state={state}
