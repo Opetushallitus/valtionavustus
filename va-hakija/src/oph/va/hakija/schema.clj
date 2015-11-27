@@ -11,5 +11,5 @@
    :status HakemusStatus
    :status-comment (s/maybe s/Str)
    :register-number (s/maybe s/Str)
-   :submission Submission
+   :submission VaSubmission
    :validation-errors SubmissionValidationErrors})

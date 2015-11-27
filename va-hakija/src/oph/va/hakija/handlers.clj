@@ -37,7 +37,7 @@
        :register-number (:register_number hakemus)
        :version (:version hakemus)
        :version-date (:last_status_change_at hakemus)
-       :submission submission
+       :submission (without-id submission)
        :validation-errors validation}))
 
 (defn on-hakemus-create [haku-id answers]
@@ -69,7 +69,7 @@
                                                 user-key
                                                 avustushaku-start-date
                                                 avustushaku-end-date)
-            (hakemus-ok-response (:hakemus new-hakemus) (:submission new-hakemus) validation))
+            (hakemus-ok-response (:hakemus new-hakemus) (without-id (:submission new-hakemus)) validation))
         (internal-server-error!))
       (bad-request! security-validation))))
 

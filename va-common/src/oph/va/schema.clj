@@ -63,3 +63,9 @@
    :content-type s/Str
    :hakemus-version Long
    :filename s/Str})
+
+(s/defschema VaSubmission {:created_at s/Inst
+                           :form Long
+                           :version Long
+                           :version_closed (s/maybe s/Inst)
+                           :answers Answers})

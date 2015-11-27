@@ -154,7 +154,7 @@
       (let [{:keys [status headers body error] :as resp} (get! "/api/form/1")
             json (json->map body)]
         (should= 200 status)
-        (should= 1 (-> json :id))
+        (should= nil (-> json :id))
         (should= {:fieldClass "infoElement"
                   :id "name"
                   :fieldType "h1"} (-> json :content first))
@@ -288,7 +288,9 @@
             json (json->map body)
             id (:id json)
             submission-version (:version (:submission json))
-            submission-id (:id (:submission json))]
+            submission-id (->> hakemus-id
+                               (va-db/get-hakemus)
+                               :form_submission_id)]
         (should= 200 status)
         (should= "draft" (:status json))
         (va-db/cancel-hakemus 1 id submission-id submission-version nil valid-answers "Peruttu hakijan pyynnöstä")
