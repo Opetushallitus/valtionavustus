@@ -200,7 +200,7 @@
                              (mapv second answer-key-label-type-triples))
         answer-types (apply conj
                             (mapv fourth answers-fixed-fields)
-                            (mapv third answer-key-label-type-triples))]
+                            (mapv third answer-key-label-type-triples))
 
         answer-flatdata (flatten-answers avustushaku answer-keys answer-labels)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
