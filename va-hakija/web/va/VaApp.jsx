@@ -16,7 +16,7 @@ import JsUtil from 'soresu-form/web/form/JsUtil.js'
 
 import VaForm from './VaForm.jsx'
 import VaUrlCreator from './VaUrlCreator'
-import VaComponentFactory from './VaComponentFactory.js'
+import VaComponentFactory from 'va-common/web/va/VaComponentFactory.js'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import {BudgetItemElement} from 'va-common/web/va/VaBudgetComponents.jsx'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
