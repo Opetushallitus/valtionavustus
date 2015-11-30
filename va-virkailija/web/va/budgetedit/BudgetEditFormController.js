@@ -1,10 +1,12 @@
 
 export default class BudgetEditFormController {
 
-  constructor(customComponentFactory, avustushaku, hakemus) {
+  constructor(arviointiController, customComponentFactory, avustushaku, hakemusId) {
+    this.arviointiController = arviointiController
     this.customComponentFactory = customComponentFactory
     this.avustushaku = avustushaku
-    this.hakemus = hakemus
+    this.hakemusId = hakemusId
+    this.componentOnChangeListener = this.componentOnChangeListener.bind(this)
   }
 
   constructHtmlId(formContent, fieldId) {
@@ -16,7 +18,7 @@ export default class BudgetEditFormController {
   }
 
   componentOnChangeListener(field, newValue) {
-    console.log(field, newValue)
+    this.arviointiController.setHakemusVirkailijaValue(this.hakemusId, field, newValue)
   }
 
   componentDidMount(field, initialValue) {
@@ -41,10 +43,10 @@ export default class BudgetEditFormController {
   }
 
   createAttachmentDownloadUrl(state, field) {
-    return "/api/avustushaku/" + this.avustushaku.id + "/hakemus/" + this.hakemus.id + "/attachments/" + field.id
+    return "/api/avustushaku/" + this.avustushaku.id + "/hakemus/" + this.hakemusId + "/attachments/" + field.id
   }
 
   createAttachmentVersionDownloadUrl(field, attachmentVersion) {
-    return "/api/avustushaku/" + this.avustushaku.id + "/hakemus/" + this.hakemus.id + "/attachments/" + field.id + "?attachment-version=" + attachmentVersion
+    return "/api/avustushaku/" + this.avustushaku.id + "/hakemus/" + this.hakemusId + "/attachments/" + field.id + "?attachment-version=" + attachmentVersion
   }
 }

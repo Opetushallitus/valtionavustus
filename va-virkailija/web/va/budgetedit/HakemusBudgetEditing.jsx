@@ -21,6 +21,8 @@ export default class HakemusBudgetEditing extends Component {
     const translations = this.props.translations
     const allowEditing = this.props.allowEditing
     const vaBudget = FormUtil.findFieldsByFieldType(hakuData.form.content, "vaBudget")
+    const fakeHakemus = {answers: hakemus.editedValues}
+    console.log(fakeHakemus)
     const formOperations = {
       chooseInitialLanguage: function() {return "fi"},
       containsExistingEntityId: undefined,
@@ -33,12 +35,12 @@ export default class HakemusBudgetEditing extends Component {
       responseParser: undefined,
       printEntityId: undefined
     }
-    const budgetEditFormState = FakeFormState.createEditFormState(translations, {"content": vaBudget}, formOperations)
+    const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: vaBudget}}, fakeHakemus, formOperations)
     const formElementProps = {
       state: budgetEditFormState,
       formContainerClass: Form,
       infoElementValues: avustushaku,
-      controller: new BudgetEditFormController(new VaComponentFactory(), avustushaku, {}),
+      controller: new BudgetEditFormController(controller, new VaComponentFactory(), avustushaku, hakemus.id),
       containerId: "budget-edit-container",
       headerElements: []
     }

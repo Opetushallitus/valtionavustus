@@ -5,9 +5,12 @@ import Immutable from 'seamless-immutable'
 import queryString from 'query-string'
 import RouteParser from 'route-parser'
 
-import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'soresu-form/web/Dispatcher'
 import DateUtil from 'soresu-form/web/form/DateUtil'
+import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
+import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
+
+import HttpUtil from 'va-common/web/HttpUtil.js'
 
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
 
@@ -28,6 +31,7 @@ const events = {
   commentsLoaded: 'commentsLoaded',
   addComment: 'addComment',
   scoresLoaded: 'scoresLoaded',
+  setEditedValue: 'setEditedValue',
   changeRequestsLoaded: 'changeRequestsLoaded',
   attachmentVersionsLoaded: 'attachmentVersionsLoaded',
   setScore: 'setScore',
@@ -89,6 +93,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.commentsLoaded)], this.onCommentsLoaded,
       [dispatcher.stream(events.addComment)], this.onAddComment,
       [dispatcher.stream(events.scoresLoaded)], this.onScoresLoaded,
+      [dispatcher.stream(events.setEditedValue)], this.onSetEditedValue,
       [dispatcher.stream(events.changeRequestsLoaded)], this.onChangeRequestsLoaded,
       [dispatcher.stream(events.attachmentVersionsLoaded)], this.onAttachmentVersionsLoaded,
       [dispatcher.stream(events.setScore)], this.onSetScore,
@@ -334,6 +339,17 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  onSetEditedValue(state, setEditedValue) {
+    const relevantHakemus = HakemustenArviointiController.findHakemus(state, setEditedValue.hakemusId)
+    if (relevantHakemus) {
+      if(!relevantHakemus.editedValues) {
+        relevantHakemus.editedValues = {value:[]}
+      }
+      InputValueStorage.writeValue([setEditedValue.field], relevantHakemus.editedValues, FieldUpdateHandler.createFieldUpdate(setEditedValue.field, setEditedValue.newValue))
+    }
+    return state
+  }
+
   onChangeRequestsLoaded(state, hakemusIdWithChangeRequests) {
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithChangeRequests.hakemusId)
     if (relevantHakemus) {
@@ -400,6 +416,15 @@ export default class HakemustenArviointiController {
       hakemus.arvio.status = newStatus
       dispatcher.push(events.updateHakemusArvio, hakemus)
     }
+  }
+
+  setHakemusVirkailijaValue(hakemusId, field, newValue) {
+    const setEditedValue = {
+      hakemusId: hakemusId,
+      field: field,
+      newValue: newValue
+    }
+    dispatcher.push(events.setEditedValue, setEditedValue)
   }
 
   setChangeRequestText(hakemus, text) {
