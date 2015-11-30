@@ -18,12 +18,12 @@ export default class FakeFormState {
     return attachments ? attachments : {}
   }
 
-  static createEditFormState(translations, formDraftJson) {
+  static createEditFormState(translations, formDraftJson, formOperations) {
     const hakuData = Immutable({form: formDraftJson})
-    return FakeFormState.createHakemusFormState(translations, hakuData, {})
+    return FakeFormState.createHakemusFormState(translations, hakuData, {}, formOperations)
   }
 
-  static createHakemusFormState(translations, hakuData, hakemus) {
+  static createHakemusFormState(translations, hakuData, hakemus, formOperations) {
     const attachments = FakeFormState.resolveAttachmentsProperty(hakuData, hakemus)
     const answers = hakemus.answers
     const formSpecification = hakuData.form
@@ -42,7 +42,10 @@ export default class FakeFormState {
         attachments: attachments
       },
       changeRequests: hakemus.changeRequests,
-      attachmentVersions: hakemus.attachmentVersions
+      attachmentVersions: hakemus.attachmentVersions,
+      extensionApi: {
+        formOperations: formOperations
+      }
     }
 
     const budgetCalculator = new VaBudgetCalculator()
