@@ -125,19 +125,21 @@
             answers
             answers-fixed-fields)))
 
+
+(defn get-by-id [answer-set id answer-type]
+  (case (:fieldType answer-type)
+    "radioButton" (let [value (get answer-set id)]
+                    (or (->> answer-type
+                             :options
+                             (filter (fn [val] (= (:value val) value)))
+                             first
+                             :label
+                             :fi)
+                        value))
+    (get answer-set id)))
+
 (defn- extract-answer-values [avustushaku answer-keys answer-types answers]
-  (let [get-by-id (fn [answer-set id answer-type]
-                    (case (:fieldType answer-type)
-                      "radioButton" (let [value (get answer-set id)]
-                                      (or (->> answer-type
-                                               :options
-                                               (filter (fn [val] (= (:value val) value)))
-                                               first
-                                               :label
-                                               :fi)
-                                          value))
-                      (get answer-set id)))
-        extract-answers (fn [answer-set] (mapv (partial get-by-id answer-set) answer-keys answer-types))]
+  (let [extract-answers (fn [answer-set] (mapv (partial get-by-id answer-set) answer-keys answer-types))]
     (mapv extract-answers answers)))
 
 (defn flatten-answers [avustushaku answer-keys answer-labels answer-types]
