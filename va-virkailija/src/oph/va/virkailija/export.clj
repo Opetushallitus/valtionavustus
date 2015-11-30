@@ -19,13 +19,13 @@
 (def answers-sheet-name "Vastaukset")
 
 (def answers-fixed-fields
-  [["fixed-register-number" "Diaarinumero" :register-number "textField"]
-   ["fixed-organization-name" "Hakijaorganisaatio" :organization-name "textField"]
-   ["fixed-project-name" "Projektin nimi" :project-name "textField"]
-   ["fixed-budget-total" "Ehdotettu budjetti" :budget-total "numberField"]
-   ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share "numberField"]
-   ["fixed-budget-granted" "Myönnetty avustus" (comp :budget-granted :arvio) "numberField"]
-   ["fixed-score-total-average" "Arviokeskiarvo" (comp :score-total-average :scoring :arvio) "numberField"]])
+  [["fixed-register-number" "Diaarinumero" :register-number {:fieldType "textField"}]
+   ["fixed-organization-name" "Hakijaorganisaatio" :organization-name {:fieldType "textField"}]
+   ["fixed-project-name" "Projektin nimi" :project-name {:fieldType "textField"}]
+   ["fixed-budget-total" "Ehdotettu budjetti" :budget-total {:fieldType "numberField"}]
+   ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share {:fieldType "numberField"}]
+   ["fixed-budget-granted" "Myönnetty avustus" (comp :budget-granted :arvio) {:fieldType "numberField"}]
+   ["fixed-score-total-average" "Arviokeskiarvo" (comp :score-total-average :scoring :arvio) {:fieldType "numberField"}]])
 
 (defn third [list] (nth list 2))
 (defn fourth [list] (nth list 3))
@@ -52,7 +52,11 @@
         add-reject (fn [data]
                      (assoc data :rejects (conj (:rejects data) (:id grandparent))))
         add-value (fn [data value]
-                    (assoc data :values (conj (:values data) value)))]
+                    (assoc data :values (conj (:values data) value)))
+        add-options (fn [type-map]
+                      (if (:options field)
+                        (assoc type-map :options (:options field))
+                        type-map))]
     (if (= "growingFieldset" (:fieldType grandparent))
       ;; Special case: handle growing field sets by placing marker
       (let [reject? (contains? (-> data :rejects) (:id grandparent))
@@ -65,7 +69,9 @@
       (add-value data [(:id field)
                        (or (-> field :label :fi)
                            (-> parent :label :fi))
-                       (:fieldType field)]))))
+                       (-> {}
+                           (assoc :fieldType (:fieldType field))
+                           add-options)]))))
 
 (defn- process-growing-field [fields wrappers id]
   (let [seq-number (last (re-find #"([0-9]+)[^0-9]*$" id))
@@ -119,15 +125,25 @@
             answers
             answers-fixed-fields)))
 
-(defn- extract-answer-values [avustushaku answer-keys answers]
-  (let [get-by-id (fn [answer-set id] (get answer-set id))
-        extract-answers (fn [answer-set] (map (partial get-by-id answer-set) answer-keys))]
+(defn- extract-answer-values [avustushaku answer-keys answer-types answers]
+  (let [get-by-id (fn [answer-set id answer-type]
+                    (case (:fieldType answer-type)
+                      "radioButton" (let [value (get answer-set id)]
+                                      (or (->> answer-type
+                                               :options
+                                               (filter (fn [val] (= (:value val) value)))
+                                               first
+                                               :label
+                                               :fi)
+                                          value))
+                      (get answer-set id)))
+        extract-answers (fn [answer-set] (mapv (partial get-by-id answer-set) answer-keys answer-types))]
     (mapv extract-answers answers)))
 
-(defn flatten-answers [avustushaku answer-keys answer-labels]
+(defn flatten-answers [avustushaku answer-keys answer-labels answer-types]
   (let [hakemukset (avustushaku->hakemukset avustushaku)
         answers (map hakemus->map hakemukset)
-        flat-answers (->> (extract-answer-values avustushaku answer-keys answers)
+        flat-answers (->> (extract-answer-values avustushaku answer-keys answer-types answers)
                           (sort-by first))]
     (apply conj [answer-labels] flat-answers)))
 
@@ -168,11 +184,22 @@
 (defn testbox []
   (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
         growing-fieldset-lut (generate-growing-fieldset-lut avustushaku)
+
         answer-key-label-type-triples (avustushaku->formlabels avustushaku growing-fieldset-lut)
+
+        answer-keys (apply conj
+                           (mapv first answers-fixed-fields)
+                           (mapv first answer-key-label-type-triples))
+        answer-labels (apply conj
+                             (mapv second answers-fixed-fields)
+                             (mapv second answer-key-label-type-triples))
         answer-types (apply conj
                             (mapv fourth answers-fixed-fields)
-                            (mapv third answer-key-label-type-triples))]
-    answer-types))
+                            (mapv third answer-key-label-type-triples))
+
+
+        answer-flatdata (flatten-answers avustushaku answer-keys answer-labels answer-types)]
+    nil))
 
 (defn export-avustushaku [avustushaku-id]
   (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id)
@@ -202,7 +229,7 @@
                             (mapv fourth answers-fixed-fields)
                             (mapv third answer-key-label-type-triples))
 
-        answer-flatdata (flatten-answers avustushaku answer-keys answer-labels)
+        answer-flatdata (flatten-answers avustushaku answer-keys answer-labels answer-types)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
                         (spreadsheet/add-rows! sheet answer-flatdata)
                         sheet)
