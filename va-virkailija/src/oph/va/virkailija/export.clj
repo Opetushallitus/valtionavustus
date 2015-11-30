@@ -112,7 +112,8 @@
          (reduce (partial mark-and-reject-growing-fields wrappers) {:rejects #{} :values []})
          :values
          (map (partial inject-growing-fieldsets fields wrappers growing-fieldset-lut))
-         (reduce unwrap-double-nested-lists []))))
+         (reduce unwrap-double-nested-lists [])
+         (filter (comp not empty?)))))
 
 (defn- avustushaku->hakemukset [avustushaku]
   (->> (:hakemukset avustushaku)
@@ -184,24 +185,15 @@
     (.autoSizeColumn sheet index)))
 
 (defn testbox []
-  (let [avustushaku (hakudata/get-combined-avustushaku-data 1)
+  (let [avustushaku (hakudata/get-combined-avustushaku-data 10)
         growing-fieldset-lut (generate-growing-fieldset-lut avustushaku)
 
         answer-key-label-type-triples (avustushaku->formlabels avustushaku growing-fieldset-lut)
 
         answer-keys (apply conj
                            (mapv first answers-fixed-fields)
-                           (mapv first answer-key-label-type-triples))
-        answer-labels (apply conj
-                             (mapv second answers-fixed-fields)
-                             (mapv second answer-key-label-type-triples))
-        answer-types (apply conj
-                            (mapv fourth answers-fixed-fields)
-                            (mapv third answer-key-label-type-triples))
-
-
-        answer-flatdata (flatten-answers avustushaku answer-keys answer-labels answer-types)]
-    nil))
+                           (mapv first answer-key-label-type-triples))]
+    answer-key-label-type-triples))
 
 (defn export-avustushaku [avustushaku-id]
   (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id)
