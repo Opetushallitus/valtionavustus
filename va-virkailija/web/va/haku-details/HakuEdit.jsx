@@ -14,6 +14,7 @@ export default class HakuEdit extends Component {
     const userInfo = this.props.userInfo
     const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
     const allowHakuEdits = userHasEditPrivilege && avustushaku.status !== "published"
+    const allowHakuEndEdit = userHasEditPrivilege && (allowHakuEdits || avustushaku.phase === "current")
 
     const onChange = e => {
       controller.onChangeListener(avustushaku, e.target, e.target.value)
@@ -40,7 +41,7 @@ export default class HakuEdit extends Component {
             <h3>{avustushaku.content.duration.label.fi}</h3>
             <DateField id="hakuaika-start" onChange={onChange} value={avustushaku.content.duration.start} disabled={!allowHakuEdits} />
             <span className="dateDivider" />
-            <DateField id="hakuaika-end" onChange={onChange} value={avustushaku.content.duration.end} disabled={!allowHakuEdits} />
+            <DateField id="hakuaika-end" onChange={onChange} value={avustushaku.content.duration.end} disabled={!allowHakuEndEdit} />
           </div>
           <div className="haku-self-financing-edit-container">
             <h3>Hakijan omarahoitusvaatimus</h3>
