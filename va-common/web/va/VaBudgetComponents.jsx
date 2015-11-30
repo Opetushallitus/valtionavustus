@@ -10,7 +10,7 @@ import InputValueStorage from 'soresu-form/web/form/InputValueStorage.js'
 import FormUtil from 'soresu-form/web/form/FormUtil.js'
 import JsUtil from 'soresu-form/web/form/JsUtil.js'
 
-export class VaBudgetElement extends React.Component {
+export default class VaBudgetElement extends React.Component {
   constructor(props) {
     super(props)
   }
