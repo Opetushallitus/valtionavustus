@@ -10,6 +10,7 @@
          :host "smtp.sdn.csc.fi"
          :port 25
          :sender "no-reply@csc.fi"
+         :bounce-address "valtionavustukset@oph.fi"
          :registry-address "kirjaamo@oph.fi"
          :retry-initial-wait 2000
          :retry-multiplier 4
