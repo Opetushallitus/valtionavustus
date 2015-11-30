@@ -7,7 +7,7 @@ import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import BasicValue from 'soresu-form/web/form/preview/BasicValue.jsx'
 import MultipleOptionValue from 'soresu-form/web/form/preview/MultipleOptionValue.jsx'
 
-import {VaBudgetElement, SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
+import VaBudgetElement, {SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
 import {VaFocusAreasPropertyMapper} from 'va-common/web/va/VaPropertyMapper.js'
 
 export default class VaPreviewComponentFactory extends ComponentFactory {

@@ -5,7 +5,7 @@ import CheckboxButton from 'soresu-form/web/form/component/CheckboxButton.jsx'
 import EmailTextField from 'soresu-form/web/form/component/EmailTextField.jsx'
 import {TextFieldPropertyMapper} from 'soresu-form/web/form/component/PropertyMapper'
 
-import {VaBudgetElement, SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
+import VaBudgetElement, {SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
 import {VaFocusAreasPropertyMapper} from './VaPropertyMapper.js'
 import VaProjectDescription from './VaProjectDescription.jsx'
 
