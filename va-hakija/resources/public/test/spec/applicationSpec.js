@@ -239,6 +239,109 @@
                         })
                       })
                     })
+                    describe('Muutaman uuden rivin syöttämisen, ensimmäisen rivin poistamisen ja sivulatauksen jälkeen', function() {
+                      before(
+                        applicationPage.setInputValue("other-organizations.other-organizations-5.name", "Muu testiorganisaatio 5"),
+                        applicationPage.setInputValue("other-organizations.other-organizations-5.email", "muutest5@example.com"),
+                        applicationPage.setInputValue("other-organizations.other-organizations-6.name", "Muu testiorganisaatio 6"),
+                        applicationPage.setInputValue("other-organizations.other-organizations-6.email", "muutest6@example.com"),
+                        applicationPage.setInputValue("other-organizations.other-organizations-7.name", "Muu testiorganisaatio 7"),
+                        applicationPage.setInputValue("other-organizations.other-organizations-7.email", "muutest7@example.com"),
+                        applicationPage.setInputValue("other-organizations.other-organizations-8.name", "Muu testiorganisaatio 8"),
+                        applicationPage.setInputValue("other-organizations.other-organizations-8.email", "muutest8@example.com"),
+                        applicationPage.setInputValue("other-organizations.other-organizations-9.name", "Muu testiorganisaatio 9"),
+                        applicationPage.setInputValue("other-organizations.other-organizations-9.email", "muutest9@example.com"),
+                        applicationPage.setInputValue("other-organizations.other-organizations-10.name", "Muu testiorganisaatio 10"),
+                        applicationPage.setInputValue("other-organizations.other-organizations-10.email", "muutest10@example.com"),
+                        removeButtonForOrg(1).click,
+                        applicationPage.waitAutoSave,
+                        wait.until(function(){return removeButtonForOrg(3).isVisible() === false}),
+                        applicationPage.openEditPage(loginPage.getHakemusId)
+                      )
+
+                      it("ensimmäisellä rivillä on aiemmat toisen rivin tiedot", function() {
+                        expect(applicationPage.getInput('other-organizations.other-organizations-1.name').value()).to.equal("Muu testiorganisaatio 5")
+                        expect(applicationPage.getInput('other-organizations.other-organizations-1.email').value()).to.equal("muutest5@example.com")
+                      })
+
+                      it("Toisella rivillä on aiemmat kolmannen rivin tiedot", function() {
+                        expect(applicationPage.getInput('other-organizations.other-organizations-6.name').value()).to.equal("Muu testiorganisaatio 6")
+                        expect(applicationPage.getInput('other-organizations.other-organizations-6.email').value()).to.equal("muutest6@example.com")
+                      })
+
+                      it("Kolmannella rivillä on aiemmat neljännen rivin tiedot", function() {
+                        expect(applicationPage.getInput('other-organizations.other-organizations-7.name').value()).to.equal("Muu testiorganisaatio 7")
+                        expect(applicationPage.getInput('other-organizations.other-organizations-7.email').value()).to.equal("muutest7@example.com")
+                      })
+
+                      it("Neljännellä rivillä on aiemmat viidennen rivin tiedot", function() {
+                        expect(applicationPage.getInput('other-organizations.other-organizations-8.name').value()).to.equal("Muu testiorganisaatio 8")
+                        expect(applicationPage.getInput('other-organizations.other-organizations-8.email').value()).to.equal("muutest8@example.com")
+                      })
+
+                      it("Viidennellä rivillä on aiemmat kuudennen rivin tiedot", function() {
+                        expect(applicationPage.getInput('other-organizations.other-organizations-9.name').value()).to.equal("Muu testiorganisaatio 9")
+                        expect(applicationPage.getInput('other-organizations.other-organizations-9.email').value()).to.equal("muutest9@example.com")
+                      })
+
+                      it("lomakkeella ei ole virheitä", function() {
+                        expect(applicationPage.validationErrorsSummary()).to.equal("")
+                      })
+
+                      it('Uuden ensimmäisen rivin voi poistaa', function() {
+                        expect(removeButtonForOrg(1).isEnabled()).to.equal(true)
+                      })
+
+                      it('Kolmatta ei voi poistaa', function() {
+                        expect(removeButtonForOrg(3).isEnabled()).to.equal(false)
+                      })
+
+                      describe('Muutaman eri rivin poistamisen ja sivulatauksen jälkeen', function() {
+                        before(
+                          removeButtonForOrg(1).click,
+                          applicationPage.waitAutoSave,
+                          removeButtonForOrg(1).click,
+                          applicationPage.waitAutoSave,
+                          applicationPage.openEditPage(loginPage.getHakemusId),
+                          removeButtonForOrg(8).click,
+                          applicationPage.waitAutoSave,
+                          applicationPage.openEditPage(loginPage.getHakemusId)
+                        )
+
+                        it("ensimmäisellä rivillä on aiemmat kolmannen rivin tiedot", function() {
+                          expect(applicationPage.getInput('other-organizations.other-organizations-1.name').value()).to.equal("Muu testiorganisaatio 7")
+                          expect(applicationPage.getInput('other-organizations.other-organizations-1.email').value()).to.equal("muutest7@example.com")
+                        })
+
+                        it("Toisella rivillä on aiemmat viidennen rivin tiedot", function() {
+                          expect(applicationPage.getInput('other-organizations.other-organizations-9.name').value()).to.equal("Muu testiorganisaatio 9")
+                          expect(applicationPage.getInput('other-organizations.other-organizations-9.email').value()).to.equal("muutest9@example.com")
+                        })
+
+                        it("Kolmannella rivillä on aiemmat kuudennen rivin tiedot", function() {
+                          expect(applicationPage.getInput('other-organizations.other-organizations-10.name').value()).to.equal("Muu testiorganisaatio 10")
+                          expect(applicationPage.getInput('other-organizations.other-organizations-10.email').value()).to.equal("muutest10@example.com")
+                        })
+
+                        it("Neljännellä rivillä on tyhjät arvot", function() {
+                          expect(applicationPage.getInput('other-organizations.other-organizations-11.name').value()).to.equal("")
+                          expect(applicationPage.getInput('other-organizations.other-organizations-11.email').value()).to.equal("")
+                        })
+
+                        it("lomakkeella ei ole virheitä", function() {
+                          expect(applicationPage.validationErrorsSummary()).to.equal("")
+                        })
+
+                        it('Uuden ensimmäisen rivin voi poistaa', function() {
+                          expect(removeButtonForOrg(1).isEnabled()).to.equal(true)
+                        })
+
+                        it('Kolmatta ei voi poistaa', function() {
+                          expect(removeButtonForOrg(3).isEnabled()).to.equal(false)
+                        })
+                      })
+                    })
+
                   })
                 })
               })
