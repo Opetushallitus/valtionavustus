@@ -19,7 +19,7 @@
       common-environment)))
 
 (defn get-translations []
-  (return-from-classpath "translations.json" "application/json"))
+  (return-from-classpath "translations.json" "application/json; charset=utf-8"))
 
 (defroutes config-routes
    (GET* "/environment" []
