@@ -3,6 +3,8 @@ import React, { Component } from 'react'
 import DateUtil from 'soresu-form/web/form/DateUtil'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 
+import HakemusBudgetEditing from '../budgetedit/HakemusBudgetEditing.jsx'
+
 import HakemusScoring from './HakemusScoring.jsx'
 import HakemusComments from './HakemusComments.jsx'
 import HakemusArviointiStatuses from "./HakemusArviointiStatuses.js"
@@ -13,6 +15,8 @@ export default class HakemusArviointi extends Component {
     const controller = this.props.controller
     const hakemus = this.props.hakemus
     const avustushaku = this.props.avustushaku
+    const hakuData = this.props.hakuData
+    const translations = this.props.translations
     const privileges = this.props.privileges
     const allowHakemusStateChanges = privileges["change-hakemus-state"]
     const allowHakemusScoring = privileges["score-hakemus"]
@@ -27,8 +31,8 @@ export default class HakemusArviointi extends Component {
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <ChangeRequest controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
-       <BudgetGranted controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
      </div>
     )
   }
@@ -106,27 +110,6 @@ class ChangeRequest extends React.Component {
         </div>
       </div>
     )
-  }
-}
-
-class BudgetGranted extends React.Component {
-  render() {
-    const hakemus = this.props.hakemus
-    const arvio = hakemus.arvio
-    const allowEditing = this.props.allowEditing
-    const budgetGranted = _.get(arvio, "budget-granted", 0)
-    const controller = this.props.controller
-    const onChange = e => {
-      const inputValue = e.target.value
-      const inputValueWithNumericInput = inputValue ? inputValue.replace(/\D/g,'') : "0"
-      const number = FormUtil.isNumeric(inputValueWithNumericInput) ? parseInt(inputValueWithNumericInput) : 0
-      controller.setHakemusArvioBudgetGranted(hakemus, number)
-    }
-
-    return <div className="value-edit budget-granted">
-      <label htmlFor="budget-granted">Myönnetty avustus</label>
-      <input id="budget-granted" disabled={!allowEditing} type="text" value={budgetGranted} onChange={onChange} maxLength="9" size="9"/> €
-    </div>
   }
 }
 

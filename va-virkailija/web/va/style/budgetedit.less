@@ -1,0 +1,18 @@
+@import "npm://va-common/web/va/style/soresu-va.less";
+@import "virkailija.less";
+
+#budget-edit-container {
+  .va-budget {
+    .soresu-tooltip {
+      display: none;
+    }
+    .summing-table, .budget-summary {
+      width: @content-width - @preview-width - 48px;
+    }
+    .soresu-text-field input[type=text]{
+      &.small, &.medium, &.large, &.extra-large {
+        width: 170px;
+      }
+    }
+  }
+}
