@@ -71,8 +71,10 @@
 (defn update-or-create-hakemus-arvio [hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
         budget-granted (:budget-granted arvio)
+        overrode-answers (:overrode-answers arvio)
         arvio-to-save  {:hakemus_id hakemus-id
                         :status status
+                        :overrode_answers overrode-answers
                         :budget_granted budget-granted
                         :summary_comment (:summary-comment arvio)}
         existing (get-arvio hakemus-id)

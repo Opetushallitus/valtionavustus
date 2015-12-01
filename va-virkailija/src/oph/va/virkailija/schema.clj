@@ -25,6 +25,7 @@
   "Arvio contains evaluation of hakemus"
   {:id s/Int
    :status ArvioStatus
+   :overrode-answers Answers
    :budget-granted s/Int
    (s/optional-key :scoring) (s/maybe Scoring)
    (s/optional-key :summary-comment) (s/maybe s/Str)})
