@@ -135,7 +135,7 @@ class SummaryComment extends React.Component {
     const hakemus = this.props.hakemus
     const allowEditing = this.props.allowEditing
     const arvio = hakemus.arvio
-    const summaryComment = arvio ? arvio["summary-comment"] : undefined
+    const summaryComment = arvio["summary-comment"] ? arvio["summary-comment"] : ""
     const controller = this.props.controller
     return <div className="value-edit summary-comment">
       <label htmlFor="summary-comment">Huomautus ratkaisuyhteenvetoon</label>
