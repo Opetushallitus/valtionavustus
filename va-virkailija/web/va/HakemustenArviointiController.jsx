@@ -14,12 +14,14 @@ import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses
 const dispatcher = new Dispatcher()
 
 const events = {
+  beforeUnload: 'beforeUnload',
   initialState: 'initialState',
   reRender: 'reRender',
   setFilter: 'setFilter',
   setSorter: 'setSorter',
   selectHakemus: 'selectHakemus',
   updateHakemusArvio: 'updateHakemusArvio',
+  saveHakemusArvio: 'saveHakemusArvio',
   updateHakemusStatus: 'updateHakemusStatus',
   saveCompleted: 'saveCompleted',
   loadComments: 'loadcomments',
@@ -36,7 +38,14 @@ const events = {
 export default class HakemustenArviointiController {
 
   initializeState(avustushakuId) {
-    this._bind('onInitialState', 'onHakemusSelection', 'onUpdateHakemusStatus')
+    this._bind('onInitialState', 'onHakemusSelection', 'onUpdateHakemusStatus', 'onUpdateHakemusArvio', 'onSaveHakemusArvio', 'onBeforeUnload')
+    this.autoSaveHakemusArvio = _.debounce(function(updatedHakemus){ dispatcher.push(events.saveHakemusArvio, updatedHakemus) }, 3000)
+
+    Bacon.fromEvent(window, "beforeunload").onValue(function(event) {
+      // For some odd reason Safari always displays a dialog here
+      // But it's probably safer to always save the document anyway
+      dispatcher.push(events.beforeUnload)
+    })
 
     const initialStateTemplate = {
       hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId)),
@@ -68,11 +77,13 @@ export default class HakemustenArviointiController {
 
     return Bacon.update(
       {},
+      [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload,
       [dispatcher.stream(events.initialState)], this.onInitialState,
       [dispatcher.stream(events.reRender)], this.onReRender,
       [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
       [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio,
       [dispatcher.stream(events.updateHakemusStatus)], this.onUpdateHakemusStatus,
+      [dispatcher.stream(events.saveHakemusArvio)], this.onSaveHakemusArvio,
       [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted,
       [dispatcher.stream(events.loadComments)], this.onLoadComments,
       [dispatcher.stream(events.commentsLoaded)], this.onCommentsLoaded,
@@ -135,7 +146,12 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  onBeforeUnload(state) {
+    return this.onSaveHakemusArvio(state, state.selectedHakemus)
+  }
+
   onHakemusSelection(state, hakemusToSelect) {
+    state = this.onSaveHakemusArvio(state, state.selectedHakemus)
     state.selectedHakemus = hakemusToSelect
     const pathname = location.pathname
     const parsedUrl = new RouteParser('/avustushaku/:avustushaku_id/(hakemus/:hakemus_id/)*ignore').match(pathname)
@@ -151,24 +167,34 @@ export default class HakemustenArviointiController {
   }
 
   onUpdateHakemusArvio(state, updatedHakemus) {
-    const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + updatedHakemus.id + "/arvio"
     state.saveStatus.saveInProgress = true
+    updatedHakemus.arvio.hasChanges = true
     if (_.isUndefined(updatedHakemus.arvio.scoring)) {
       _.delete(updatedHakemus.arvio.scoring)
     }
-    HttpUtil.post(updateUrl, updatedHakemus.arvio)
-      .then(function(response) {
-        if(response instanceof Object) {
-          dispatcher.push(events.saveCompleted)
-        }
-        else {
-          dispatcher.push(events.saveCompleted, "unexpected-save-error")
-        }
-      })
-      .catch(function(error) {
-        console.error(error)
-        dispatcher.push(events.saveCompleted, "unexpected-save-error")
-      })
+    this.autoSaveHakemusArvio(updatedHakemus)
+    return state
+  }
+
+  onSaveHakemusArvio(state, updatedHakemus) {
+    const arvio = updatedHakemus ? updatedHakemus.arvio : undefined
+    if(arvio && arvio.hasChanges) {
+      const updateUrl = "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + updatedHakemus.id + "/arvio"
+      HttpUtil.post(updateUrl, _.omit(arvio, "hasChanges"))
+          .then(function(response) {
+            if(response instanceof Object) {
+              arvio.hasChanges = false
+              dispatcher.push(events.saveCompleted)
+            }
+            else {
+              dispatcher.push(events.saveCompleted, "unexpected-save-error")
+            }
+          })
+          .catch(function(error) {
+            console.error(error)
+            dispatcher.push(events.saveCompleted, "unexpected-save-error")
+          })
+    }
     return state
   }
 
