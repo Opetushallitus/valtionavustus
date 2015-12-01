@@ -140,7 +140,7 @@
     (read-string str)
     nil))
 
-(defn get-by-id [answer-set id answer-type]
+(defn get-by-id [avustushaku answer-set id answer-type]
   (case (:fieldType answer-type)
     "radioButton" (let [value (get answer-set id)]
                     (or (->> answer-type
@@ -150,27 +150,24 @@
                              :label
                              :fi)
                         value))
-    "checkboxButton" (let [value (get answer-set id)]
-                       (trace "value" value)
-                       (or (->> answer-type
-                                :options
-                                (filter (fn [val] (= (:value val) value)))
-                                first
-                                :label
-                                :fi)
-                           value))
+    "checkboxButton" (let [value (get answer-set id)
+                           options (trace "options" (:options answer-type))]
+                       (->> options
+                            (filter (fn [val] (formutil/in? value (:value val))))
+                            (map (fn [val] (->> val :label :fi)))
+                            (clojure.string/join ", ")))
     "vaFocusAreas" (let [value (get answer-set id)]
                      (trace "value" value))
     "moneyField" (str->int (get answer-set id))
     (get answer-set id)))
 
 (defn- extract-answer-values [avustushaku answer-keys answer-types answers]
-  (let [extract-answers (fn [answer-set] (mapv (partial get-by-id answer-set) answer-keys answer-types))]
+  (let [extract-answers (fn [answer-set] (mapv (partial get-by-id avustushaku answer-set) answer-keys answer-types))]
     (mapv extract-answers answers)))
 
 (defn flatten-answers [avustushaku answer-keys answer-labels answer-types]
   (let [hakemukset (avustushaku->hakemukset avustushaku)
-        answers (trace "answer map" (map hakemus->map hakemukset))
+        answers (map hakemus->map hakemukset)
         flat-answers (->> (extract-answer-values avustushaku answer-keys answer-types answers)
                           (sort-by first))]
     (apply conj [answer-labels] flat-answers)))
