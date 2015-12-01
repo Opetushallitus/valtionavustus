@@ -46,6 +46,19 @@
   (or (= (:status hakemus) "submitted")
       (= (:status hakemus) "pending_change_request")))
 
+(defn- field->type [field]
+  (let [add-options (fn [type-map]
+                (if (:options field)
+                  (assoc type-map :options (:options field))
+                  type-map))]
+    (-> {}
+        (assoc :fieldType (:fieldType field))
+        add-options)))
+
+(defn- field->label [field parent suffix]
+  (str (or (-> field :label :fi)
+           (-> parent :label :fi)) suffix))
+
 (defn- mark-and-reject-growing-fields [wrappers data field]
   (let [parent (find-parent wrappers (:id field))
         grandparent (find-parent wrappers (:id parent))
@@ -67,11 +80,8 @@
 
       ;; Normal case - add value to data
       (add-value data [(:id field)
-                       (or (-> field :label :fi)
-                           (-> parent :label :fi))
-                       (-> {}
-                           (assoc :fieldType (:fieldType field))
-                           add-options)]))))
+                       (field->label field parent "")
+                       (field->type field)]))))
 
 (defn- process-growing-field [fields wrappers id]
   (let [seq-number (last (re-find #"([0-9]+)[^0-9]*$" id))
@@ -79,17 +89,10 @@
         field (->> fields
                    (filter (fn [f] (= (:id f) mangled-id)))
                    first)
-        parent (find-parent wrappers field)
-        add-options (fn [type-map]
-                      (if (:options field)
-                        (assoc type-map :options (:options field))
-                        type-map))]
+        parent (find-parent wrappers field)]
     [id
-     (str (or (-> field :label :fi)
-              (-> parent :label :fi)) " " seq-number)
-     (-> {}
-         (assoc :fieldType (:fieldType field))
-         add-options)]))
+     (field->label field parent (str " " seq-number))
+     (field->type field)]))
 
 (defn- inject-growing-fieldsets [fields wrappers growing-fieldset-lut triples]
   (if (map? triples)
