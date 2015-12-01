@@ -129,7 +129,7 @@
        (filter valid-hakemus?)))
 
 (defn- hakemus->map [hakemus]
-  (let [answers (unwrap-answers (:answers hakemus) ["checkboxButton" "vaFocusAreas"])]
+  (let [answers (formutil/unwrap-answers (:answers hakemus) ["checkboxButton" "vaFocusAreas"])]
     (reduce (fn [answer-map [field-name _ lookup-fn]]
               (assoc answer-map field-name (lookup-fn hakemus)))
             answers
