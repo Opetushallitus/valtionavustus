@@ -129,7 +129,7 @@
        (filter valid-hakemus?)))
 
 (defn- hakemus->map [hakemus]
-  (let [answers (formutil/unwrap-answers (:answers hakemus))]
+  (let [answers (unwrap-answers (:answers hakemus) ["checkboxButton" "vaFocusAreas"])]
     (reduce (fn [answer-map [field-name _ lookup-fn]]
               (assoc answer-map field-name (lookup-fn hakemus)))
             answers
@@ -150,6 +150,15 @@
                              :label
                              :fi)
                         value))
+    "checkboxButton" (let [value (get answer-set id)]
+                       (trace "value" value)
+                       (or (->> answer-type
+                                :options
+                                (filter (fn [val] (= (:value val) value)))
+                                first
+                                :label
+                                :fi)
+                           value))
     "vaFocusAreas" (let [value (get answer-set id)]
                      (trace "value" value))
     "moneyField" (str->int (get answer-set id))
@@ -161,7 +170,7 @@
 
 (defn flatten-answers [avustushaku answer-keys answer-labels answer-types]
   (let [hakemukset (avustushaku->hakemukset avustushaku)
-        answers (map hakemus->map hakemukset)
+        answers (trace "answer map" (map hakemus->map hakemukset))
         flat-answers (->> (extract-answer-values avustushaku answer-keys answer-types answers)
                           (sort-by first))]
     (apply conj [answer-labels] flat-answers)))
@@ -201,7 +210,7 @@
     (.autoSizeColumn sheet index)))
 
 (defn testbox []
-  (let [avustushaku (hakudata/get-combined-avustushaku-data 10)
+  (let [avustushaku (hakudata/get-combined-avustushaku-data 35)
         growing-fieldset-lut (generate-growing-fieldset-lut avustushaku)
 
         answer-key-label-type-triples (avustushaku->formlabels avustushaku growing-fieldset-lut)
