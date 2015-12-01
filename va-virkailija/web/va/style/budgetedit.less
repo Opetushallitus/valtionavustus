@@ -9,9 +9,13 @@
     .summing-table, .budget-summary {
       width: @content-width - @preview-width - 48px;
     }
-    .soresu-text-field input[type=text]{
+    .soresu-text-field input[type=text], .soresu-money-field input[type=text] {
+      font-size: inherit;
       &.small, &.medium, &.large, &.extra-large {
-        width: 170px;
+        width: 200px;
+      }
+      &.extra-extra-small {
+        width: 50px;
       }
     }
   }
