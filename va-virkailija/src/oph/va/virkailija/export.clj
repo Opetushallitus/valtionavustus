@@ -151,13 +151,25 @@
                              :fi)
                         value))
     "checkboxButton" (let [value (get answer-set id)
-                           options (trace "options" (:options answer-type))]
+                           options (:options answer-type)]
                        (->> options
                             (filter (fn [val] (formutil/in? value (:value val))))
                             (map (fn [val] (->> val :label :fi)))
-                            (clojure.string/join ", ")))
-    "vaFocusAreas" (let [value (get answer-set id)]
-                     (trace "value" value))
+                            (clojure.string/join "; ")))
+    "vaFocusAreas" (let [value (get answer-set id)
+                         focus-areas (->> avustushaku
+                                          :avustushaku
+                                          :content
+                                          :focus-areas
+                                          :items)]
+                     (->> value
+                          (map (fn [val] (->> val
+                                              (re-find #".*([0-9]+)$")
+                                              last
+                                              (Long/parseLong))))
+                          (map (fn [index] (->> (nth focus-areas index)
+                                                :fi)))
+                          (clojure.string/join "; ")))
     "moneyField" (str->int (get answer-set id))
     (get answer-set id)))
 
@@ -207,7 +219,7 @@
     (.autoSizeColumn sheet index)))
 
 (defn testbox []
-  (let [avustushaku (hakudata/get-combined-avustushaku-data 35)
+  (let [avustushaku (hakudata/get-combined-avustushaku-data 37)
         growing-fieldset-lut (generate-growing-fieldset-lut avustushaku)
 
         answer-key-label-type-triples (avustushaku->formlabels avustushaku growing-fieldset-lut)
