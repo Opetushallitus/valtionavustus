@@ -135,6 +135,10 @@
             answers
             answers-fixed-fields)))
 
+(defn- str->int [str]
+  (if str
+    (read-string str)
+    nil))
 
 (defn get-by-id [answer-set id answer-type]
   (case (:fieldType answer-type)
@@ -148,6 +152,7 @@
                         value))
     "vaFocusAreas" (let [value (get answer-set id)]
                      (trace "value" value))
+    "moneyField" (str->int (get answer-set id))
     (get answer-set id)))
 
 (defn- extract-answer-values [avustushaku answer-keys answer-types answers]
