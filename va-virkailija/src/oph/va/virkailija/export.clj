@@ -79,11 +79,17 @@
         field (->> fields
                    (filter (fn [f] (= (:id f) mangled-id)))
                    first)
-        parent (find-parent wrappers field)]
+        parent (find-parent wrappers field)
+        add-options (fn [type-map]
+                      (if (:options field)
+                        (assoc type-map :options (:options field))
+                        type-map))]
     [id
      (str (or (-> field :label :fi)
               (-> parent :label :fi)) " " seq-number)
-     (:fieldType field)]))
+     (-> {}
+         (assoc :fieldType (:fieldType field))
+         add-options)]))
 
 (defn- inject-growing-fieldsets [fields wrappers growing-fieldset-lut triples]
   (if (map? triples)
@@ -137,6 +143,8 @@
                              :label
                              :fi)
                         value))
+    "vaFocusAreas" (let [value (get answer-set id)]
+                     (trace "value" value))
     (get answer-set id)))
 
 (defn- extract-answer-values [avustushaku answer-keys answer-types answers]
@@ -192,8 +200,17 @@
 
         answer-keys (apply conj
                            (mapv first answers-fixed-fields)
-                           (mapv first answer-key-label-type-triples))]
-    answer-key-label-type-triples))
+                           (mapv first answer-key-label-type-triples))
+
+        answer-labels (apply conj
+                             (mapv second answers-fixed-fields)
+                             (mapv second answer-key-label-type-triples))
+        answer-types (apply conj
+                            (mapv fourth answers-fixed-fields)
+                            (mapv third answer-key-label-type-triples))
+
+        answer-flatdata (flatten-answers avustushaku answer-keys answer-labels answer-types)]
+    answer-flatdata))
 
 (defn export-avustushaku [avustushaku-id]
   (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id)
