@@ -11,9 +11,9 @@
   {:new-hakemus {:fi "Linkki organisaationne avustushakemukseen"
                  :sv "Länk till er organisations ansökan om understöd"}
    :hakemus-submitted {:fi "Automaattinen viesti: organisaationne avustushakemus on kirjattu vastaanotetuksi"
-                       :sv "Automatisk meddelande: organisationens bidragsansökan mottogs"}
+                       :sv "Automatisk meddelande: er organisations ansökan om understöd har mottagits"}
    :hakemus-submitted-after-change-request {:fi "Automaattinen viesti: organisaationne avustushakemusta on täydennetty"
-                                            :sv "Automatisk meddelande: organisationens bidragsansökan har kompletterat"}
+                                            :sv "Automatiskt meddelande: er ansökan om understöd har kompletterats"}
    :hakemus-change-request-responded {:fi "Automaattinen viesti: avustushakemusta on täydennetty"}})
 
 (def mail-templates
