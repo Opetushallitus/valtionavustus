@@ -56,8 +56,10 @@
         add-options)))
 
 (defn- field->label [field parent suffix]
-  (str (or (-> field :label :fi)
-           (-> parent :label :fi)) suffix))
+  (if (= (:fieldType field) "vaFocusAreas")
+    "Painopistealueet"
+    (str (or (-> field :label :fi)
+             (-> parent :label :fi)) suffix)))
 
 (defn- mark-and-reject-growing-fields [wrappers data field]
   (let [parent (find-parent wrappers (:id field))
