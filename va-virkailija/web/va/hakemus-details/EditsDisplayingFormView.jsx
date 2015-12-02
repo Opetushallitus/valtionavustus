@@ -87,8 +87,8 @@ export default class EditsDisplayingFormView extends React.Component {
 
     function addDeltaFromChangedAnswers(answersDelta, oldestAnswers, currentAnswers) {
       const originalValuesOfChangedOldFields = JsUtil.flatFilter(oldestAnswers, oldAnswer => {
-        const newValueArray = JsUtil.flatFilter(currentAnswers, newAnswer => newAnswer.key === oldAnswer.key)
-        return newValueArray.length === 0 || newValueArray[0].value !== oldAnswer.value
+        const newAnswerArray = JsUtil.flatFilter(currentAnswers, newAnswer => newAnswer.key === oldAnswer.key)
+        return newAnswerArray.length === 0 || valuesDiffer(newAnswerArray[0], oldAnswer)
       })
       _.forEach(originalValuesOfChangedOldFields, originalValue => {
         answersDelta.changedAnswers.push(originalValue)
@@ -97,12 +97,24 @@ export default class EditsDisplayingFormView extends React.Component {
 
     function addDeltaFromNewAnswers(currentAnswers, oldestAnswers, answersDelta) {
       const newValuesOfNewFields = JsUtil.flatFilter(currentAnswers, currentAnswer => {
-        const oldValueArray = JsUtil.flatFilter(oldestAnswers, oldAnswer => oldAnswer.key === currentAnswer.key)
-        return oldValueArray.length === 0 || oldValueArray[0].value !== currentAnswer.value
+        const oldAnswerArray = JsUtil.flatFilter(oldestAnswers, oldAnswer => oldAnswer.key === currentAnswer.key)
+        return oldAnswerArray.length === 0 || valuesDiffer(oldAnswerArray[0], currentAnswer)
       })
       _.forEach(newValuesOfNewFields, newValue => {
         answersDelta.newAnswers.push(newValue)
       })
+    }
+
+    function valuesDiffer(firstAnswer, secondAnswer) {
+      const firstValue = firstAnswer.value
+      const secondValue = secondAnswer.value
+      if (firstValue === secondValue) {
+        return false
+      }
+      if (_.isArray(firstValue) && _.isArray(secondValue)) {
+        return !_.isEqual(firstAnswer, secondAnswer)
+      }
+      return true
     }
   }
 }
