@@ -6,7 +6,7 @@
 
 (def mail-titles
   {:change-request {:fi "Täydennyspyyntö avustushakemukseesi"
-                    :sv "Begäran om komplettering till er ansökan om understöd"}})
+                    :sv "Begäran om komplettering av ansökan"}})
 
 (def mail-templates
   {:change-request {:fi (email/load-template "email-templates/change-request.plain.fi")
