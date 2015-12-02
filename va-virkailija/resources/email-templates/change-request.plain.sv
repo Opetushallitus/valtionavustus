@@ -6,7 +6,7 @@ Begäran om komplettering:
 Du kan komplettera ansökan via denna länk: {{& url }}
 Ändra bara begärda delar.
 
-Tillägsuppgifter ger statsunderstod@oph.fi
+Begär tilläggsuppgifter per e-post statsunderstod@oph.fi
 
 Den föredragande som ansvarar för ansökningen har nämnts i ansökningsmeddelandet.
 
@@ -16,3 +16,4 @@ PB 380, 00531 Helsingfors
 
 telefon 029 533 1000
 fax 029 533 1035
+fornamn.efternamn@ubs.fi
