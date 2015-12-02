@@ -55,13 +55,13 @@
         (assoc :fieldType (:fieldType field))
         add-options)))
 
-(defn- field->label [field parent suffix]
+(defn- field->label [avustushaku field parent suffix]
   (if (= (:fieldType field) "vaFocusAreas")
-    "Painopistealueet"
+    (->> avustushaku :avustushaku :content :focus-areas :label :fi)
     (str (or (-> field :label :fi)
              (-> parent :label :fi)) suffix)))
 
-(defn- mark-and-reject-growing-fields [wrappers data field]
+(defn- mark-and-reject-growing-fields [avustushaku wrappers data field]
   (let [parent (find-parent wrappers (:id field))
         grandparent (find-parent wrappers (:id parent))
         add-reject (fn [data]
@@ -82,10 +82,10 @@
 
       ;; Normal case - add value to data
       (add-value data [(:id field)
-                       (field->label field parent "")
+                       (field->label avustushaku field parent "")
                        (field->type field)]))))
 
-(defn- process-growing-field [fields wrappers id]
+(defn- process-growing-field [avustushaku fields wrappers id]
   (let [seq-number (last (re-find #"([0-9]+)[^0-9]*$" id))
         mangled-id (clojure.string/replace id #"[0-9]+([^0-9]*)$" "1$1")
         field (->> fields
@@ -93,16 +93,17 @@
                    first)
         parent (find-parent wrappers field)]
     [id
-     (field->label field parent (str " " seq-number))
+     (field->label avustushaku field parent (str " " seq-number))
      (field->type field)]))
 
-(defn- inject-growing-fieldsets [fields wrappers growing-fieldset-lut triples]
+(defn- inject-growing-fieldsets [avustushaku fields wrappers growing-fieldset-lut triples]
   (if (map? triples)
     (let [fieldset-id (:growingField triples)
           fieldset-lut (get growing-fieldset-lut fieldset-id)]
       (->> (keys fieldset-lut)
            (reduce (fn [acc entry]
                      (apply conj acc (mapv (partial process-growing-field
+                                                    avustushaku
                                                     fields
                                                     wrappers)
                                            (get fieldset-lut entry))))
@@ -120,9 +121,9 @@
         wrappers (formutil/find-wrapper-elements form)]
     (->> form
          (formutil/find-fields)
-         (reduce (partial mark-and-reject-growing-fields wrappers) {:rejects #{} :values []})
+         (reduce (partial mark-and-reject-growing-fields avustushaku wrappers) {:rejects #{} :values []})
          :values
-         (map (partial inject-growing-fieldsets fields wrappers growing-fieldset-lut))
+         (map (partial inject-growing-fieldsets avustushaku fields wrappers growing-fieldset-lut))
          (reduce unwrap-double-nested-lists [])
          (filter (comp not empty?)))))
 
