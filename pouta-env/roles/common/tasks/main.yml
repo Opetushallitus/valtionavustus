@@ -14,6 +14,14 @@
   apt: state=installed pkg={{ item }}
   with_items: ubuntu_common_required_packages
 
+- name: Disable RepeatedMsgReduction of rsyslogd because it is buggy
+  lineinfile: dest=/etc/rsyslog.conf regexp="^\$RepeatedMsgReduction" line="$RepeatedMsgReduction off" backup=yes
+  register: rsyslog_config
+
+- name: Restart rsyslog if config was changed
+  service: name=rsyslog state=restarted
+  when: rsyslog_config.changed
+
 - name: Install rng-tools to avoid /dev/random exhaust
   apt: name=rng-tools
   notify: Restart RNG
