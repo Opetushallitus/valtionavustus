@@ -13,17 +13,40 @@
        (exec :db queries/get-arvio)
        first))
 
-(defn update-or-create-hakemus-arvio [hakemus-id arvio]
+(defn- make-status-changelog-entry [old-status new-status identity]
+  {:old-status old-status
+   :new-status new-status
+   :person-oid (:person-oid identity)
+   :username (:username identity)
+   :first-name (:first-name identity)
+   :last-name (:surname identity)
+   :email (:email identity)})
+
+(defn update-or-create-hakemus-arvio [hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
         budget-granted (:budget-granted arvio)
         summary-comment (:summary-comment arvio)
+        existing (get-arvio hakemus-id)
+        status-changelog (trace "new changelog"
+                                (let [changelog (:status_changelog existing)]
+                                  (if (not (= status (:status existing)))
+                                    (cons (make-status-changelog-entry (:status existing)
+                                                                       status
+                                                                       identity)
+                                          changelog)
+                                    changelog)))
         updated (exec :db queries/update-arvio<! {:hakemus_id hakemus-id
                                                   :status status
                                                   :budget_granted budget-granted
-                                                  :summary_comment summary-comment})]
+                                                  :summary_comment summary-comment
+                                                  :status_changelog [status-changelog]})]
     (if updated
       updated
-      (exec :db queries/create-arvio<! {:hakemus_id hakemus-id :status status}))))
+      (exec :db queries/create-arvio<! {:hakemus_id hakemus-id
+                                        :status status
+                                        :status_changelog [[(make-status-changelog-entry nil
+                                                                                         status
+                                                                                         identity)]]}))))
 
 (defn health-check []
   (->> {}
