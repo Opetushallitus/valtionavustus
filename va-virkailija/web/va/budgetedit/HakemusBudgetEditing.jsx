@@ -45,30 +45,20 @@ export default class HakemusBudgetEditing extends Component {
     }
     return (
       <div className="budget-edit">
-        <BudgetGranted controller={controller} hakemus={hakemus} allowEditing={allowEditing} />
         <FormContainer {...formElementProps} />
       </div>
     )
   }
 }
 
-class BudgetGranted extends React.Component {
+export class BudgetGranted extends React.Component {
   render() {
     const hakemus = this.props.hakemus
     const arvio = hakemus.arvio
-    const allowEditing = this.props.allowEditing
     const budgetGranted = _.get(arvio, "budget-granted", 0)
-    const controller = this.props.controller
-    const onChange = e => {
-      const inputValue = e.target.value
-      const inputValueWithNumericInput = inputValue ? inputValue.replace(/\D/g,'') : "0"
-      const number = FormUtil.isNumeric(inputValueWithNumericInput) ? parseInt(inputValueWithNumericInput) : 0
-      controller.setHakemusArvioBudgetGranted(hakemus, number)
-    }
 
     return <div className="value-edit budget-granted">
-      <label htmlFor="budget-granted">Myönnetty avustus</label>
-      <input id="budget-granted" disabled={!allowEditing} type="text" value={budgetGranted} onChange={onChange} maxLength="9" size="9"/> €
+      <label htmlFor="budget-granted">Myönnettevä avustus <span id="budget-granted">{budgetGranted}</span> €</label>
     </div>
   }
 }

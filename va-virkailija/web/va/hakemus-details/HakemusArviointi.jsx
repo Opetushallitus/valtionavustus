@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import DateUtil from 'soresu-form/web/form/DateUtil'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 
-import HakemusBudgetEditing from '../budgetedit/HakemusBudgetEditing.jsx'
+import HakemusBudgetEditing, { BudgetGranted } from '../budgetedit/HakemusBudgetEditing.jsx'
 
 import HakemusScoring from './HakemusScoring.jsx'
 import HakemusComments from './HakemusComments.jsx'
@@ -30,6 +30,7 @@ export default class HakemusArviointi extends Component {
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <BudgetGranted hakemus={hakemus}/>
        <ChangeRequest controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
