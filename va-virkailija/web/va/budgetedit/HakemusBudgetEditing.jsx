@@ -58,7 +58,7 @@ export class BudgetGranted extends React.Component {
     const budgetGranted = _.get(arvio, "budget-granted", 0)
 
     return <div className="value-edit budget-granted">
-      <label htmlFor="budget-granted">Myönnettevä avustus <span id="budget-granted">{budgetGranted}</span> €</label>
+      <label htmlFor="budget-granted">Myönnettävä avustus on {budgetGranted} €</label>
     </div>
   }
 }
