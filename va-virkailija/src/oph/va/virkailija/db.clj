@@ -29,15 +29,14 @@
         budget-granted (:budget-granted arvio)
         summary-comment (:summary-comment arvio)
         existing (get-arvio hakemus-id)
-        status-changelog (trace "new changelog"
-                                (let [changelog (:status_changelog existing)]
-                                  (if (not (= status (:status existing)))
-                                    (cons (make-status-changelog-entry identity
-                                                                       "status-change"
-                                                                       {:old-status (:status existing)
-                                                                        :new-status status})
-                                          changelog)
-                                    changelog)))
+        status-changelog (let [changelog (:status_changelog existing)]
+                           (if (not (= status (:status existing)))
+                             (cons (make-status-changelog-entry identity
+                                                                "status-change"
+                                                                {:old-status (:status existing)
+                                                                 :new-status status})
+                                   changelog)
+                             changelog))
         updated (exec :db queries/update-arvio<! {:hakemus_id hakemus-id
                                                   :status status
                                                   :budget_granted budget-granted
