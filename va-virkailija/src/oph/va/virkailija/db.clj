@@ -1,7 +1,8 @@
 (ns oph.va.virkailija.db
   (:use [oph.soresu.common.db]
         [clojure.tools.trace :only [trace]])
-  (:require [oph.va.virkailija.db.queries :as queries]))
+  (:require [oph.va.virkailija.db.queries :as queries])
+  (:import [java.util Date]))
 
 (defn get-arviot [hakemus-ids]
   (if (empty? hakemus-ids)
@@ -13,9 +14,10 @@
        (exec :db queries/get-arvio)
        first))
 
-(defn- make-status-changelog-entry [old-status new-status identity]
-  {:old-status old-status
-   :new-status new-status
+(defn- make-status-changelog-entry [identity type data]
+  {:type type
+   :timestamp (Date.)
+   :data data
    :person-oid (:person-oid identity)
    :username (:username identity)
    :first-name (:first-name identity)
@@ -30,9 +32,10 @@
         status-changelog (trace "new changelog"
                                 (let [changelog (:status_changelog existing)]
                                   (if (not (= status (:status existing)))
-                                    (cons (make-status-changelog-entry (:status existing)
-                                                                       status
-                                                                       identity)
+                                    (cons (make-status-changelog-entry identity
+                                                                       "status-change"
+                                                                       {:old-status (:status existing)
+                                                                        :new-status status})
                                           changelog)
                                     changelog)))
         updated (exec :db queries/update-arvio<! {:hakemus_id hakemus-id
@@ -44,9 +47,10 @@
       updated
       (exec :db queries/create-arvio<! {:hakemus_id hakemus-id
                                         :status status
-                                        :status_changelog [[(make-status-changelog-entry nil
-                                                                                         status
-                                                                                         identity)]]}))))
+                                        :status_changelog [[(make-status-changelog-entry identity
+                                                                                         "status-change"
+                                                                                         {:old-status nil
+                                                                                          :new-status status})]]}))))
 
 (defn health-check []
   (->> {}
