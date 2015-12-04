@@ -123,6 +123,8 @@ export class BudgetSummaryElement extends React.Component {
     const avustushaku = vaSpecificProperties.avustushaku
     const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
 
+    const labelTranslations = this.props.labelTranslations ? this.props.labelTranslations  : field.params
+
     const totalNeeded = field.totalNeeded
     const errorMessage = this.miscTranslator.translate("check-numbers", this.props.lang, "VIRHE")
 
@@ -138,15 +140,15 @@ export class BudgetSummaryElement extends React.Component {
         </colgroup>
         <tbody>
         <tr className="grand-total">
-          <td className="label-column"><LocalizedString translations={field.params} translationKey="totalSumRowLabel" lang={this.props.lang} /></td>
+          <td className="label-column"><LocalizedString translations={labelTranslations} translationKey="totalSumRowLabel" lang={this.props.lang} /></td>
           <td className="amount-column"><span className={sumClassNames}>{totalNeeded}</span></td>
         </tr>
         <tr>
-          <td className="label-column"><LocalizedString translations={field.params} translationKey="ophFinancingLabel" lang={this.props.lang} /> {100 - selfFinancingPercentage} %</td>
+          <td className="label-column"><LocalizedString translations={labelTranslations} translationKey="ophFinancingLabel" lang={this.props.lang} /> {100 - selfFinancingPercentage} %</td>
           <td className="amount-column"><span className={sumPartClassNames}>{ophShare}</span></td>
         </tr>
         <tr>
-          <td className="label-column"><LocalizedString translations={field.params} translationKey="selfFinancingLabel" lang={this.props.lang} /> {selfFinancingPercentage} %</td>
+          <td className="label-column"><LocalizedString translations={labelTranslations} translationKey="selfFinancingLabel" lang={this.props.lang} /> {selfFinancingPercentage} %</td>
           <td className="amount-column"><span className={sumPartClassNames}>{selfFinancingShare}</span></td>
         </tr>
         </tbody>
