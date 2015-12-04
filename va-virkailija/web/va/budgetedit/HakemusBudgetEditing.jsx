@@ -4,10 +4,8 @@ import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
 
-import VaBudgetElement from 'va-common/web/va/VaBudgetComponents.jsx'
-import VaComponentFactory from 'va-common/web/va/VaComponentFactory.js'
-
 import BudgetEditFormController from './BudgetEditFormController.js'
+import BudgetEditComponentFactory from './BudgetEditComponentFactory.js'
 import FakeFormState from '../form/FakeFormState.js'
 
 import style from '../style/budgetedit.less'
@@ -34,12 +32,12 @@ export default class HakemusBudgetEditing extends Component {
       responseParser: undefined,
       printEntityId: undefined
     }
-    const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: vaBudget}}, fakeHakemus, formOperations)
+    const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: vaBudget}}, fakeHakemus, formOperations, hakemus)
     const formElementProps = {
       state: budgetEditFormState,
       formContainerClass: Form,
       infoElementValues: avustushaku,
-      controller: new BudgetEditFormController(controller, new VaComponentFactory(), avustushaku, hakemus.id),
+      controller: new BudgetEditFormController(controller, new BudgetEditComponentFactory(), avustushaku, hakemus),
       containerId: "budget-edit-container",
       headerElements: []
     }

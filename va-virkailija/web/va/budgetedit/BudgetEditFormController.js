@@ -1,11 +1,11 @@
 
 export default class BudgetEditFormController {
 
-  constructor(arviointiController, customComponentFactory, avustushaku, hakemusId) {
+  constructor(arviointiController, customComponentFactory, avustushaku, hakemus) {
     this.arviointiController = arviointiController
     this.customComponentFactory = customComponentFactory
     this.avustushaku = avustushaku
-    this.hakemusId = hakemusId
+    this.hakemus = hakemus
     this.componentOnChangeListener = this.componentOnChangeListener.bind(this)
   }
 
@@ -14,11 +14,12 @@ export default class BudgetEditFormController {
   }
 
   getCustomComponentProperties() {
-    return { "avustushaku": this.avustushaku }
+    return { "avustushaku": this.avustushaku,
+             "originalHakemus": this.hakemus}
   }
 
   componentOnChangeListener(field, newValue) {
-    this.arviointiController.setHakemusOverrodeAnswerValue(this.hakemusId, field, newValue)
+    this.arviointiController.setHakemusOverrodeAnswerValue(this.hakemus.id, field, newValue)
   }
 
   componentDidMount(field, initialValue) {
@@ -43,10 +44,10 @@ export default class BudgetEditFormController {
   }
 
   createAttachmentDownloadUrl(state, field) {
-    return "/api/avustushaku/" + this.avustushaku.id + "/hakemus/" + this.hakemusId + "/attachments/" + field.id
+    return "/api/avustushaku/" + this.avustushaku.id + "/hakemus/" + this.hakemus.id + "/attachments/" + field.id
   }
 
   createAttachmentVersionDownloadUrl(field, attachmentVersion) {
-    return "/api/avustushaku/" + this.avustushaku.id + "/hakemus/" + this.hakemusId + "/attachments/" + field.id + "?attachment-version=" + attachmentVersion
+    return "/api/avustushaku/" + this.avustushaku.id + "/hakemus/" + this.hakemus.id + "/attachments/" + field.id + "?attachment-version=" + attachmentVersion
   }
 }

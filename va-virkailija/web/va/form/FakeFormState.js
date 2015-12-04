@@ -23,7 +23,7 @@ export default class FakeFormState {
     return FakeFormState.createHakemusFormState(translations, hakuData, {}, formOperations)
   }
 
-  static createHakemusFormState(translations, hakuData, hakemus, formOperations) {
+  static createHakemusFormState(translations, hakuData, hakemus, formOperations, savedHakemus) {
     const attachments = FakeFormState.resolveAttachmentsProperty(hakuData, hakemus)
     const answers = hakemus.answers
     const formSpecification = hakuData.form
@@ -39,7 +39,8 @@ export default class FakeFormState {
       form: effectiveForm,
       saveStatus: {
         values: answers,
-        attachments: attachments
+        attachments: attachments,
+        savedObject: savedHakemus
       },
       changeRequests: hakemus.changeRequests,
       attachmentVersions: hakemus.attachmentVersions,
