@@ -24,18 +24,21 @@
    :last-name (:surname identity)
    :email (:email identity)})
 
+(defn- append-changelog [changelog entry]
+  (cons entry changelog))
+
 (defn update-or-create-hakemus-arvio [hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
         budget-granted (:budget-granted arvio)
         summary-comment (:summary-comment arvio)
         existing (get-arvio hakemus-id)
-        status-changelog (let [changelog (:status_changelog existing)]
+        status-changelog (let [changelog (:status_changelog existing)
+                               entry (make-status-changelog-entry identity
+                                                                  "status-change"
+                                                                  {:old-status (:status existing)
+                                                                   :new-status status})]
                            (if (not (= status (:status existing)))
-                             (cons (make-status-changelog-entry identity
-                                                                "status-change"
-                                                                {:old-status (:status existing)
-                                                                 :new-status status})
-                                   changelog)
+                             (append-changelog changelog entry)
                              changelog))
         updated (exec :db queries/update-arvio<! {:hakemus_id hakemus-id
                                                   :status status
