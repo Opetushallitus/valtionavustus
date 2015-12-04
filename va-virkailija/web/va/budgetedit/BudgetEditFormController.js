@@ -18,6 +18,10 @@ export default class BudgetEditFormController {
              "originalHakemus": this.hakemus}
   }
 
+  copyOriginalValues(event) {
+    console.log("TODO copyOriginalValues:", event)
+  }
+
   componentOnChangeListener(field, newValue) {
     this.arviointiController.setHakemusOverrodeAnswerValue(this.hakemus.id, field, newValue)
   }

@@ -33,17 +33,13 @@ export default class BudgetEditElement extends React.Component {
 
 export class EditSummingBudgetElement extends React.Component {
   columnTitles(field) {
-    if (field.params.showColumnTitles) {
-      return (
-        <thead><tr>
+    return field.params.showColumnTitles ? (
+        <tr>
           <th className="label-column"><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
           <th>Haettu</th>
           <th className="amount-column money required">Myönnetty</th>
           <th className="description-column">Kommentti</th>
-        </tr></thead>
-      )
-    }
-    return undefined
+        </tr>) : undefined
   }
 
   render() {
@@ -61,9 +57,12 @@ export class EditSummingBudgetElement extends React.Component {
           <col className="amount-column" />
           <col className="description-column" />
         </colgroup>
-        {this.columnTitles(field)}
+        <thead>
+          <tr><th></th><th colSpan="3"><button type="button" onClick={this.props.controller.copyOriginalValues}>Kopioi haetut myönnetyiksi</button></th></tr>
+          {this.columnTitles(field)}
+        </thead>
         <tbody>
-        {children}
+          {children}
         </tbody>
         <tfoot><tr>
           <td className="label-column" colSpan="2"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
