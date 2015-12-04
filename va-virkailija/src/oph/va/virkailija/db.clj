@@ -1,7 +1,9 @@
 (ns oph.va.virkailija.db
   (:use [oph.soresu.common.db]
         [clojure.tools.trace :only [trace]])
-  (:require [oph.va.virkailija.db.queries :as queries])
+  (:require [oph.va.virkailija.db.queries :as queries]
+            [oph.va.hakija.api :as hakija-api]
+            [oph.va.budget :as va-budget])
   (:import [java.util Date]))
 
 (defn get-arviot [hakemus-ids]
@@ -68,9 +70,18 @@
         (compare-summary-comment identity timestamp existing new))
       changelog)))
 
-(defn update-or-create-hakemus-arvio [hakemus-id arvio identity]
+(defn- calculate-total-oph-budget [avustushaku-id status arvio]
+  (cond
+    (= status :rejected) 0
+    (not (:overrode-answers arvio)) (:budget-granted arvio)
+    :else (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+                       form (hakija-api/get-form-by-avustushaku avustushaku-id)
+                       calculated-budget (va-budget/calculate-totals (:overrode-answers arvio) avustushaku form)]
+                    (:oph-share calculated-budget))))
+
+(defn update-or-create-hakemus-arvio [avustushaku-id hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
-        budget-granted (:budget-granted arvio)
+        budget-granted (calculate-total-oph-budget avustushaku-id status arvio)
         overrode-answers (:overrode-answers arvio)
         arvio-to-save  {:hakemus_id hakemus-id
                         :status status

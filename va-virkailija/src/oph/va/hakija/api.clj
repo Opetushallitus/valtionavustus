@@ -62,6 +62,9 @@
          (map avustushaku-response-content)
          first)))
 
+(defn get-avustushaku [id]
+  (first (exec :hakija-db hakija-queries/get-avustushaku {:id id})))
+
 (defn list-avustushaut []
   (map avustushaku-response-content (exec :hakija-db hakija-queries/list-avustushaut {})))
 

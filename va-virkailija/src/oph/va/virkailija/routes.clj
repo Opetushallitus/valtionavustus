@@ -186,7 +186,7 @@
          :return Arvio
          :summary "Update arvio for given hakemus. Creates arvio if missing."
          (let [identity (authentication/get-identity request)]
-           (ok (-> (virkailija-db/update-or-create-hakemus-arvio hakemus-id arvio identity)
+           (ok (-> (virkailija-db/update-or-create-hakemus-arvio avustushaku-id hakemus-id arvio identity)
                    hakudata/arvio-json))))
 
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id]

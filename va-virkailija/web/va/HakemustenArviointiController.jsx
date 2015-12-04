@@ -188,7 +188,11 @@ export default class HakemustenArviointiController {
       HttpUtil.post(updateUrl, _.omit(arvio, "hasChanges"))
           .then(function(response) {
             if(response instanceof Object) {
-              arvio.hasChanges = false
+              const relevantHakemus = HakemustenArviointiController.findHakemus(state, updatedHakemus.id)
+              if(relevantHakemus && relevantHakemus.arvio) {
+                relevantHakemus.arvio.hasChanges = false
+                relevantHakemus.arvio["budget-granted"] = response["budget-granted"]
+              }
               dispatcher.push(events.saveCompleted)
             }
             else {
@@ -211,6 +215,10 @@ export default class HakemustenArviointiController {
     HttpUtil.post(updateUrl, request)
         .then(function(response) {
           if(response instanceof Object) {
+            const relevantHakemus = HakemustenArviointiController.findHakemus(state, updatedHakemus.id)
+            if(relevantHakemus && relevantHakemus.arvio) {
+              relevantHakemus.arvio["budget-granted"] = response["budget-granted"]
+            }
             dispatcher.push(events.saveCompleted)
             self.loadChangeRequests(state, statusChange.hakemusId)
           }
