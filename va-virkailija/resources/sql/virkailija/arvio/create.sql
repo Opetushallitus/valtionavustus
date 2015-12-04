@@ -1,1 +1,1 @@
-INSERT INTO arviot (hakemus_id, status, status_changelog) VALUES (:hakemus_id, :status, :status_changelog)
+INSERT INTO arviot (hakemus_id, status, changelog) VALUES (:hakemus_id, :status, :changelog)

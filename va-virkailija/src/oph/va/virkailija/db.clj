@@ -14,9 +14,9 @@
        (exec :db queries/get-arvio)
        first))
 
-(defn- make-status-changelog-entry [identity type data]
+(defn- ->changelog-entry [identity type timestamp data]
   {:type type
-   :timestamp (Date.)
+   :timestamp timestamp
    :data data
    :person-oid (:person-oid identity)
    :username (:username identity)
@@ -27,32 +27,57 @@
 (defn- append-changelog [changelog entry]
   (cons entry changelog))
 
+(defn- compare-summary-comment [changelog timestamp identity existing new]
+  (if (not (= (:summary-comment existing) (:summary-comment new)))
+    (append-changelog changelog (->changelog-entry identity
+                                                   "budget-change"
+                                                   timestamp
+                                                   {:old (:budget-granted existing)
+                                                    :new (:budget-granted new)}))
+    changelog))
+
+(defn- compare-budget-granted [changelog timestamp identity existing new]
+  (if (not (= (:budget-granted existing) (:budget-granted new)))
+    (append-changelog changelog (->changelog-entry identity
+                                                   "budget-change"
+                                                   timestamp
+                                                   {:old (:budget-granted existing)
+                                                    :new (:budget-granted new)}))
+    changelog))
+
+(defn- compare-status [changelog timestamp identity existing new]
+  (if (not (= (:status new) (:status existing)))
+    (append-changelog changelog (->changelog-entry identity
+                                                   "status-change"
+                                                   timestamp
+                                                   {:old (:status existing)
+                                                    :new status}))
+    changelog))
+
+(defn- update-changelog [identity existing new]
+  (let [changelog (:status_changelog existing)
+        timestamp (Date.)]
+    (-> changelog
+        (compare-status identity timestamp existing new)
+        (compare-budget-granted identity timestamp existing new)
+        (compare-summary-comment identity timestamp existing new))))
+
 (defn update-or-create-hakemus-arvio [hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
         budget-granted (:budget-granted arvio)
         summary-comment (:summary-comment arvio)
         existing (get-arvio hakemus-id)
-        status-changelog (let [changelog (:status_changelog existing)
-                               entry (make-status-changelog-entry identity
-                                                                  "status-change"
-                                                                  {:old-status (:status existing)
-                                                                   :new-status status})]
-                           (if (not (= status (:status existing)))
-                             (append-changelog changelog entry)
-                             changelog))
+        changelog (update-changelog identity existing arvio)
         updated (exec :db queries/update-arvio<! {:hakemus_id hakemus-id
                                                   :status status
                                                   :budget_granted budget-granted
                                                   :summary_comment summary-comment
-                                                  :status_changelog [status-changelog]})]
+                                                  :changelog [changelog]})]
     (if updated
       updated
       (exec :db queries/create-arvio<! {:hakemus_id hakemus-id
                                         :status status
-                                        :status_changelog [[(make-status-changelog-entry identity
-                                                                                         "status-change"
-                                                                                         {:old-status nil
-                                                                                          :new-status status})]]}))))
+                                        :status_changelog [changelog]}))))
 
 (defn health-check []
   (->> {}
