@@ -12,6 +12,7 @@ export default class EditorSelector extends React.Component {
     const avustushaku = this.props.avustushaku
     const formDraft = this.props.formDraft
     const ldapSearch = this.props.ldapSearch
+    const koodisto = this.props.koodisto
     const userInfo = this.props.userInfo
     const environment = this.props.environment
     const translations = this.props.translations
@@ -28,6 +29,7 @@ export default class EditorSelector extends React.Component {
         subTabContent = <FormEditorContainer avustushaku={avustushaku}
                                              environment={environment}
                                              translations={translations}
+                                             koodisto={koodisto}
                                              formDraft={formDraft}
                                              controller={controller} />
         break

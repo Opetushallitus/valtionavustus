@@ -35,7 +35,9 @@ const events = {
   beforeUnload: 'beforeUnload',
   selectEditorSubTab: 'selectEditorSubTab',
   ldapSearchStarted: 'ldapSearchStarted',
-  ldapSearchFinished: 'ldapSearchFinished'
+  ldapSearchFinished: 'ldapSearchFinished',
+  ensureKoodistoLoaded: 'ensureKoodistoLoaded',
+  koodistoLoaded: 'koodistoLoaded'
 }
 
 export default class HakujenHallintaController {
@@ -76,6 +78,10 @@ export default class HakujenHallintaController {
         input: "",
         loading: false,
         result: { error: false, results: [], truncated: false }
+      },
+      koodisto: {
+        content: null,
+        loading: false
       }
     }
 
@@ -123,7 +129,9 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload,
       [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab,
       [dispatcher.stream(events.ldapSearchStarted)], this.onStartLdapSearch,
-      [dispatcher.stream(events.ldapSearchFinished)], this.onLdapSearchFinished
+      [dispatcher.stream(events.ldapSearchFinished)], this.onLdapSearchFinished,
+      [dispatcher.stream(events.ensureKoodistoLoaded)], this.onEnsureKoodistoLoaded,
+      [dispatcher.stream(events.koodistoLoaded)], this.onKoodistoLoaded
     )
 
     function consolidateSubTabSelectionWithUrl() {
@@ -413,6 +421,30 @@ export default class HakujenHallintaController {
 
   formOnChangeListener(avustushaku, newFormJson) {
     dispatcher.push(events.updateForm, {avustushaku: avustushaku, newFormJson: newFormJson})
+  }
+
+  ensureKoodistoLoaded() {
+    dispatcher.push(events.ensureKoodistoLoaded)
+  }
+
+  onEnsureKoodistoLoaded(state) {
+    if (state.koodisto.content || state.koodisto.loading) {
+      return
+    }
+    state.koodisto.loading = true
+    HttpUtil.get("/api/koodisto/")
+      .then(r => { dispatcher.push(events.koodistoLoaded, r) })
+      .catch(r => {
+        console.error('Got bad response when loading koodisto from server', r)
+        dispatcher.push(events.koodistoLoaded, null)
+      })
+    return state
+  }
+
+  onKoodistoLoaded(state, koodistoFromServer) {
+    state.koodisto.content = koodistoFromServer
+    state.koodisto.loading = false
+    return state
   }
 
   onFormUpdated(state, formContentUpdateObject) {
