@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
+import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 
 import BudgetEditFormController from './BudgetEditFormController.js'
 import BudgetEditComponentFactory from './BudgetEditComponentFactory.js'
@@ -33,6 +34,7 @@ export default class HakemusBudgetEditing extends Component {
       printEntityId: undefined
     }
     const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: vaBudget}}, fakeHakemus, formOperations, hakemus)
+    FormStateLoop.initDefaultValues(fakeHakemus.answers, {}, budgetEditFormState.form.content, budgetEditFormState.configuration.lang)
     const formElementProps = {
       state: budgetEditFormState,
       formContainerClass: Form,
