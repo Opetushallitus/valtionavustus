@@ -33,7 +33,7 @@ export default class AdminApp extends Component {
                           formDraft={state.formDrafts[selectedHaku.id]}
                           environment={environment}
                           ldapSearch={state.ldapSearch}
-                          koodisto={state.koodisto}
+                          koodistos={state.koodistos}
                           userInfo={state.userInfo}
                           controller={controller}
                           translations={translations} />

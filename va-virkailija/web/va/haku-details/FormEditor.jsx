@@ -14,13 +14,13 @@ export default class FormEditor extends Component {
   render() {
     const avustushaku = this.props.avustushaku
     const translations = this.props.translations
-    const koodisto = this.props.koodisto
+    const koodistos = this.props.koodistos
     const hakuAdminController = this.props.controller
     const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
     const formDraftJson = this.parseJson(this.props.formDraft)
     const formEditedCallback = (newDraftJson, operationResult) => {
       if (operationResult && operationResult.fieldType === "koodistoField") {
-        hakuAdminController.ensureKoodistoLoaded()
+        hakuAdminController.ensureKoodistosLoaded()
       }
       hakuAdminController.formOnChangeListener(avustushaku, newDraftJson)
     }
@@ -31,7 +31,7 @@ export default class FormEditor extends Component {
       readOnlyNotificationText: "Käyttäjätunnuksellasi ei ole oikeuksia muokata tätä hakua. Haun esittelijä voi lisätä sinulle oikeudet."})
     const formState = formDraftJson ? FakeFormState.createEditFormState(translations, formDraftJson) : undefined
     if (formState) {
-      formState.koodisto = koodisto
+      formState.koodistos = koodistos
     }
     const formElementProps = {
       state: formState,

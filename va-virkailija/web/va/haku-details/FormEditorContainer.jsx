@@ -7,7 +7,7 @@ export default class FormEditorContainer extends Component {
   render() {
     const avustushaku = this.props.avustushaku
     const translations = this.props.translations
-    const koodisto = this.props.koodisto
+    const koodistos = this.props.koodistos
     const formDraft = this.props.formDraft
     const controller = this.props.controller
 
@@ -28,7 +28,7 @@ export default class FormEditorContainer extends Component {
             <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a><span className="link-divider"/><a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
           </div>
         </div>
-        <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodisto={koodisto} controller={controller} />
+        <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} />
         <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} />
       </section>
     )

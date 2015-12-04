@@ -36,8 +36,8 @@ const events = {
   selectEditorSubTab: 'selectEditorSubTab',
   ldapSearchStarted: 'ldapSearchStarted',
   ldapSearchFinished: 'ldapSearchFinished',
-  ensureKoodistoLoaded: 'ensureKoodistoLoaded',
-  koodistoLoaded: 'koodistoLoaded'
+  ensureKoodistosLoaded: 'ensureKoodistosLoaded',
+  koodistosLoaded: 'koodistosLoaded'
 }
 
 export default class HakujenHallintaController {
@@ -79,7 +79,7 @@ export default class HakujenHallintaController {
         loading: false,
         result: { error: false, results: [], truncated: false }
       },
-      koodisto: {
+      koodistos: {
         content: null,
         loading: false
       }
@@ -130,8 +130,8 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab,
       [dispatcher.stream(events.ldapSearchStarted)], this.onStartLdapSearch,
       [dispatcher.stream(events.ldapSearchFinished)], this.onLdapSearchFinished,
-      [dispatcher.stream(events.ensureKoodistoLoaded)], this.onEnsureKoodistoLoaded,
-      [dispatcher.stream(events.koodistoLoaded)], this.onKoodistoLoaded
+      [dispatcher.stream(events.ensureKoodistosLoaded)], this.onEnsureKoodistoLoaded,
+      [dispatcher.stream(events.koodistosLoaded)], this.onKoodistosLoaded
     )
 
     function consolidateSubTabSelectionWithUrl() {
@@ -423,27 +423,27 @@ export default class HakujenHallintaController {
     dispatcher.push(events.updateForm, {avustushaku: avustushaku, newFormJson: newFormJson})
   }
 
-  ensureKoodistoLoaded() {
-    dispatcher.push(events.ensureKoodistoLoaded)
+  ensureKoodistosLoaded() {
+    dispatcher.push(events.ensureKoodistosLoaded)
   }
 
   onEnsureKoodistoLoaded(state) {
-    if (state.koodisto.content || state.koodisto.loading) {
+    if (state.koodistos.content || state.koodistos.loading) {
       return
     }
-    state.koodisto.loading = true
+    state.koodistos.loading = true
     HttpUtil.get("/api/koodisto/")
-      .then(r => { dispatcher.push(events.koodistoLoaded, r) })
+      .then(r => { dispatcher.push(events.koodistosLoaded, r) })
       .catch(r => {
-        console.error('Got bad response when loading koodisto from server', r)
-        dispatcher.push(events.koodistoLoaded, null)
+        console.error('Got bad response when loading koodistos from server', r)
+        dispatcher.push(events.koodistosLoaded, null)
       })
     return state
   }
 
-  onKoodistoLoaded(state, koodistoFromServer) {
-    state.koodisto.content = koodistoFromServer
-    state.koodisto.loading = false
+  onKoodistosLoaded(state, koodistosFromServer) {
+    state.koodistos.content = koodistosFromServer
+    state.koodistos.loading = false
     return state
   }
 
