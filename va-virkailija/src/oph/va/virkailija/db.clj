@@ -1,7 +1,8 @@
 (ns oph.va.virkailija.db
   (:use [oph.soresu.common.db]
         [clojure.tools.trace :only [trace]])
-  (:require [oph.va.virkailija.db.queries :as queries]))
+  (:require [oph.va.virkailija.db.queries :as queries])
+  (:import [java.util Date]))
 
 (defn get-arviot [hakemus-ids]
   (if (empty? hakemus-ids)
@@ -13,17 +14,74 @@
        (exec :db queries/get-arvio)
        first))
 
-(defn update-or-create-hakemus-arvio [hakemus-id arvio]
+(defn- ->changelog-entry [identity type timestamp data]
+  {:type type
+   :timestamp timestamp
+   :data data
+   :person-oid (:person-oid identity)
+   :username (:username identity)
+   :first-name (:first-name identity)
+   :last-name (:surname identity)
+   :email (:email identity)})
+
+(defn- append-changelog [changelog entry]
+  (cons entry changelog))
+
+(defn- compare-summary-comment [changelog identity timestamp existing new]
+  (let [old-comment (:summary_comment existing)
+        new-comment (:summary-comment new)]
+    (if (not (= old-comment new-comment))
+      (append-changelog changelog (->changelog-entry identity
+                                                     "summary-comment"
+                                                     timestamp
+                                                     {:old old-comment
+                                                      :new new-comment}))
+      changelog)))
+
+(defn- compare-budget-granted [changelog identity timestamp existing new]
+  (let [new-budget (:budget-granted new)
+        existing-budget (:budget_granted existing)]
+    (if (not (= new-budget existing-budget))
+      (append-changelog changelog (->changelog-entry identity
+                                                     "budget-change"
+                                                     timestamp
+                                                     {:old existing-budget
+                                                      :new new-budget}))
+      changelog)))
+
+(defn- compare-status [changelog identity timestamp existing new]
+  (if (not (= (:status new) (:status existing)))
+    (append-changelog changelog (->changelog-entry identity
+                                                   "status-change"
+                                                   timestamp
+                                                   {:old (:status existing)
+                                                    :new (:status new)}))
+    changelog))
+
+(defn- update-changelog [identity existing new]
+  (let [changelog (:changelog existing)
+        timestamp (Date.)]
+    (-> changelog
+        (compare-status identity timestamp existing new)
+        (compare-budget-granted identity timestamp existing new)
+        (compare-summary-comment identity timestamp existing new))))
+
+(defn update-or-create-hakemus-arvio [hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
         budget-granted (:budget-granted arvio)
         summary-comment (:summary-comment arvio)
+        existing (get-arvio hakemus-id)
+        changelog (update-changelog identity existing arvio)
         updated (exec :db queries/update-arvio<! {:hakemus_id hakemus-id
                                                   :status status
                                                   :budget_granted budget-granted
-                                                  :summary_comment summary-comment})]
+                                                  :summary_comment summary-comment
+                                                  :changelog [changelog]})]
     (if updated
       updated
-      (exec :db queries/create-arvio<! {:hakemus_id hakemus-id :status status}))))
+      (exec :db queries/create-arvio<! {:hakemus_id hakemus-id
+                                        :status status
+                                        :changelog [changelog]}))))
 
 (defn health-check []
   (->> {}

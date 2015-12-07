@@ -179,13 +179,14 @@
           (ok (without-id response))
           (not-found)))
 
-  (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id]
+  (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id :as request]
          :path-params [avustushaku-id :- Long hakemus-id :- Long]
          :body    [arvio (describe Arvio "New arvio")]
          :return Arvio
          :summary "Update arvio for given hakemus. Creates arvio if missing."
-         (ok (-> (virkailija-db/update-or-create-hakemus-arvio hakemus-id arvio)
-                 hakudata/arvio-json)))
+         (let [identity (authentication/get-identity request)]
+           (ok (-> (virkailija-db/update-or-create-hakemus-arvio hakemus-id arvio identity)
+                   hakudata/arvio-json))))
 
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
@@ -205,7 +206,7 @@
                                          (:email identity)
                                          (:comment comment)))))
 
-  (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id]
         :path-params [haku-id :- Long, hakemus-id :- Long]
         :return s/Any
         :summary "List current attachments"
@@ -213,7 +214,7 @@
         (ok (-> (hakija-api/list-attachments hakemus-id)
                 (hakija-api/attachments->map))))
 
-  (GET* "/:haku-id/hakemus/:hakemus-id/attachments/versions" [haku-id hakemus-id ]
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments/versions" [haku-id hakemus-id]
         :path-params [haku-id :- Long, hakemus-id :- Long]
         :return [Attachment]
         :summary "List all versions of attachments of given hakemus"
