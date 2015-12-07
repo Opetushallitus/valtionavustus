@@ -81,6 +81,6 @@
        :scores arvio-scores})))
 
 (defn add-score [avustushaku-id hakemus-id identity selection-criteria-index score]
-  (let [arvio-id (:id (virkailija-db/get-or-create-arvio hakemus-id identity))]
+  (let [arvio-id (:id (virkailija-db/get-or-create-arvio hakemus-id))]
     (virkailija-db/add-score avustushaku-id arvio-id identity selection-criteria-index score)
     (get-arvio-scores avustushaku-id arvio-id)))
