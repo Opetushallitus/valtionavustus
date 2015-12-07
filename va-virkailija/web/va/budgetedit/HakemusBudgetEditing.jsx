@@ -4,6 +4,7 @@ import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
 import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
+import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 
 import BudgetEditFormController from './BudgetEditFormController.js'
 import BudgetEditComponentFactory from './BudgetEditComponentFactory.js'
@@ -12,6 +13,16 @@ import FakeFormState from '../form/FakeFormState.js'
 import style from '../style/budgetedit.less'
 
 export default class HakemusBudgetEditing extends Component {
+
+  static initialValues(formContent, originalHakemus) {
+    const budgetItems =  FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
+    const initialValues = {}
+    budgetItems.map(budgetItem => initialValues[budgetItem.children[0].id] = "")
+    budgetItems.filter(budgetItem => budgetItem.params.incrementsTotal === false)
+        .map(budgetItem => initialValues[budgetItem.children[1].id] = InputValueStorage.readValue(formContent, originalHakemus.answers, budgetItem.children[1].id))
+    return initialValues
+  }
+
   render() {
     const controller = this.props.controller
     const hakemus = this.props.hakemus
@@ -34,10 +45,7 @@ export default class HakemusBudgetEditing extends Component {
       printEntityId: undefined
     }
     const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: vaBudget}}, fakeHakemus, formOperations, hakemus)
-    const budgetItems =  FormUtil.findFieldsByFieldType(budgetEditFormState.form.content, 'vaBudgetItemElement')
-    const initialDescriptionValues = {}
-    budgetItems.map(budgetItem => initialDescriptionValues[budgetItem.children[0].id] = "")
-    FormStateLoop.initDefaultValues(fakeHakemus.answers, initialDescriptionValues, budgetEditFormState.form.content, budgetEditFormState.configuration.lang)
+    FormStateLoop.initDefaultValues(fakeHakemus.answers, HakemusBudgetEditing.initialValues(budgetEditFormState.form.content, hakemus), budgetEditFormState.form.content, budgetEditFormState.configuration.lang)
     const formElementProps = {
       state: budgetEditFormState,
       formContainerClass: Form,
