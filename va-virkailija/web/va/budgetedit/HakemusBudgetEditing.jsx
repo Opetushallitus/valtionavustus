@@ -33,11 +33,18 @@ export default class HakemusBudgetEditing extends Component {
     return isAmountField ? parentElem.params.incrementsTotal : true
   }
 
-  static validateFields(form, answers) {
+  static validateFields(form, answers, originalHakemus) {
     const budgetItems = FormUtil.findFieldsByFieldType(form.content, 'vaBudgetItemElement')
     budgetItems.map(function(budgetItem) {
       const amountField = budgetItem.children[1]
-      const validationErrors = SyntaxValidator.validateSyntax(amountField, InputValueStorage.readValue(form.content, answers, amountField.id))
+      const overrodeValue = InputValueStorage.readValue(form.content, answers, amountField.id)
+      const validationErrors = SyntaxValidator.validateSyntax(amountField, overrodeValue)
+      if(budgetItem.params.incrementsTotal && _.isEmpty(validationErrors)) {
+        const originalValue = InputValueStorage.readValue(form.content, originalHakemus.answers, amountField.id)
+        if(parseInt(overrodeValue) > parseInt(originalValue)) {
+          validationErrors.push({ error: "oph-sum-bigger-than-original" })
+        }
+      }
       form.validationErrors = form.validationErrors.merge({[amountField.id]: validationErrors})
     })
   }
@@ -65,7 +72,7 @@ export default class HakemusBudgetEditing extends Component {
     }
     const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: vaBudget}}, fakeHakemus, formOperations, hakemus)
     FormStateLoop.initDefaultValues(fakeHakemus.answers, HakemusBudgetEditing.initialValues(budgetEditFormState.form.content, hakemus), budgetEditFormState.form.content, budgetEditFormState.configuration.lang)
-    HakemusBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers)
+    HakemusBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus)
     const formElementProps = {
       state: budgetEditFormState,
       formContainerClass: Form,
