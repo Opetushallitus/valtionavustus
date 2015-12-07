@@ -1,12 +1,16 @@
+import FormUtil from 'soresu-form/web/form/FormUtil'
+import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 
 export default class BudgetEditFormController {
 
-  constructor(arviointiController, customComponentFactory, avustushaku, hakemus) {
+  constructor(arviointiController, customComponentFactory, avustushaku, form,  hakemus) {
     this.arviointiController = arviointiController
     this.customComponentFactory = customComponentFactory
     this.avustushaku = avustushaku
+    this.form = form
     this.hakemus = hakemus
     this.componentOnChangeListener = this.componentOnChangeListener.bind(this)
+    this.copyOriginalValues = this.copyOriginalValues.bind(this)
   }
 
   constructHtmlId(formContent, fieldId) {
@@ -19,7 +23,8 @@ export default class BudgetEditFormController {
   }
 
   copyOriginalValues(event) {
-    console.log("TODO copyOriginalValues:", event)
+    const budgetItems = FormUtil.findFieldsByFieldType(this.form.content, 'vaBudgetItemElement')
+    budgetItems.map(budgetItem => this.componentOnChangeListener(budgetItem.children[1], InputValueStorage.readValue(this.form.content, this.hakemus.answers, budgetItem.children[1].id)))
   }
 
   componentOnChangeListener(field, newValue) {

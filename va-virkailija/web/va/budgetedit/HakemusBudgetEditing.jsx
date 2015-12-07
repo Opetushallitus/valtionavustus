@@ -39,7 +39,7 @@ export default class HakemusBudgetEditing extends Component {
       state: budgetEditFormState,
       formContainerClass: Form,
       infoElementValues: avustushaku,
-      controller: new BudgetEditFormController(controller, new BudgetEditComponentFactory(), avustushaku, hakemus),
+      controller: new BudgetEditFormController(controller, new BudgetEditComponentFactory(), avustushaku, budgetEditFormState.form, hakemus),
       containerId: "budget-edit-container",
       headerElements: []
     }
