@@ -2,13 +2,13 @@ import React from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
-import ComponentFactory from 'soresu-form/web/form/ComponentFactory.js'
+import ComponentFactory from 'soresu-form/web/form/ComponentFactory'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
-import Translator from 'soresu-form/web/form/Translator.js'
-import InputValueStorage from 'soresu-form/web/form/InputValueStorage.js'
-import FormUtil from 'soresu-form/web/form/FormUtil.js'
-import JsUtil from 'soresu-form/web/form/JsUtil.js'
+import Translator from 'soresu-form/web/form/Translator'
+import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
+import FormUtil from 'soresu-form/web/form/FormUtil'
+import JsUtil from 'soresu-form/web/form/JsUtil'
 
 export default class BudgetEditElement extends React.Component {
   constructor(props) {
