@@ -28,7 +28,7 @@
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.va.virkailija.export :as export]
             [oph.va.virkailija.email :as email]
-            [oph.va.virkailija.koodisto :as koodisto]))
+            [oph.soresu.common.koodisto :as koodisto]))
 
 (defonce opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
 
