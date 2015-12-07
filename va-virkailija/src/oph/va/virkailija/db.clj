@@ -27,35 +27,39 @@
 (defn- append-changelog [changelog entry]
   (cons entry changelog))
 
-(defn- compare-summary-comment [changelog timestamp identity existing new]
-  (if (not (= (:summary-comment existing) (:summary-comment new)))
-    (append-changelog changelog (->changelog-entry identity
-                                                   "budget-change"
-                                                   timestamp
-                                                   {:old (:budget-granted existing)
-                                                    :new (:budget-granted new)}))
-    changelog))
+(defn- compare-summary-comment [changelog identity timestamp existing new]
+  (let [old-comment (:summary_comment existing)
+        new-comment (:summary-comment new)]
+    (if (not (= old-comment new-comment))
+      (append-changelog changelog (->changelog-entry identity
+                                                     "summary-comment"
+                                                     timestamp
+                                                     {:old old-comment
+                                                      :new new-comment}))
+      changelog)))
 
-(defn- compare-budget-granted [changelog timestamp identity existing new]
-  (if (not (= (:budget-granted existing) (:budget-granted new)))
-    (append-changelog changelog (->changelog-entry identity
-                                                   "budget-change"
-                                                   timestamp
-                                                   {:old (:budget-granted existing)
-                                                    :new (:budget-granted new)}))
-    changelog))
+(defn- compare-budget-granted [changelog identity timestamp existing new]
+  (let [new-budget (:budget-granted new)
+        existing-budget (:budget_granted existing)]
+    (if (not (= new-budget existing-budget))
+      (append-changelog changelog (->changelog-entry identity
+                                                     "budget-change"
+                                                     timestamp
+                                                     {:old existing-budget
+                                                      :new new-budget}))
+      changelog)))
 
-(defn- compare-status [changelog timestamp identity existing new]
+(defn- compare-status [changelog identity timestamp existing new]
   (if (not (= (:status new) (:status existing)))
     (append-changelog changelog (->changelog-entry identity
                                                    "status-change"
                                                    timestamp
                                                    {:old (:status existing)
-                                                    :new status}))
+                                                    :new (:status new)}))
     changelog))
 
 (defn- update-changelog [identity existing new]
-  (let [changelog (:status_changelog existing)
+  (let [changelog (:changelog existing)
         timestamp (Date.)]
     (-> changelog
         (compare-status identity timestamp existing new)
@@ -77,7 +81,7 @@
       updated
       (exec :db queries/create-arvio<! {:hakemus_id hakemus-id
                                         :status status
-                                        :status_changelog [changelog]}))))
+                                        :changelog [changelog]}))))
 
 (defn health-check []
   (->> {}
