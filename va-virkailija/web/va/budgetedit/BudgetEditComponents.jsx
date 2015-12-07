@@ -32,10 +32,10 @@ export default class BudgetEditElement extends React.Component {
 }
 
 export class EditSummingBudgetElement extends React.Component {
-  columnTitles(field, controller) {
+  columnTitles(field, controller, disabled) {
     return field.params.showColumnTitles ? (
       <thead>
-        <tr><th></th><th colSpan="3"><button type="button" onClick={controller.copyOriginalValues}>Kopioi haetut myönnetyiksi</button></th></tr>
+        <tr><th></th><th colSpan="3"><button disabled={disabled} type="button" onClick={controller.copyOriginalValues}>Kopioi haetut myönnetyiksi</button></th></tr>
         <tr>
           <th className="label-column"><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
           <th>Haettu</th>
@@ -51,6 +51,7 @@ export class EditSummingBudgetElement extends React.Component {
     const children = this.props.children
     const sum = field.sum
     const htmlId = this.props.htmlId
+    const disabled = this.props.disabled
     const classNames = ClassNames({"required": field.required })
     return (
       <table id={htmlId} className="summing-table">
@@ -61,7 +62,7 @@ export class EditSummingBudgetElement extends React.Component {
           <col className="amount-column" />
           <col className="description-column" />
         </colgroup>
-        {this.columnTitles(field, this.props.controller)}
+        {this.columnTitles(field, this.props.controller, disabled)}
         <tbody>
           {children}
         </tbody>
