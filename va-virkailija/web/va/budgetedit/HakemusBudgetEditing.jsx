@@ -5,6 +5,7 @@ import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
 import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
+import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 
 import BudgetEditFormController from './BudgetEditFormController.js'
 import BudgetEditComponentFactory from './BudgetEditComponentFactory.js'
@@ -32,6 +33,15 @@ export default class HakemusBudgetEditing extends Component {
     return isAmountField ? parentElem.params.incrementsTotal : true
   }
 
+  static validateFields(form, answers) {
+    const budgetItems = FormUtil.findFieldsByFieldType(form.content, 'vaBudgetItemElement')
+    budgetItems.map(function(budgetItem) {
+      const amountField = budgetItem.children[1]
+      const validationErrors = SyntaxValidator.validateSyntax(amountField, InputValueStorage.readValue(form.content, answers, amountField.id))
+      form.validationErrors = form.validationErrors.merge({[amountField.id]: validationErrors})
+    })
+  }
+
   render() {
     const controller = this.props.controller
     const hakemus = this.props.hakemus
@@ -55,6 +65,7 @@ export default class HakemusBudgetEditing extends Component {
     }
     const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: vaBudget}}, fakeHakemus, formOperations, hakemus)
     FormStateLoop.initDefaultValues(fakeHakemus.answers, HakemusBudgetEditing.initialValues(budgetEditFormState.form.content, hakemus), budgetEditFormState.form.content, budgetEditFormState.configuration.lang)
+    HakemusBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers)
     const formElementProps = {
       state: budgetEditFormState,
       formContainerClass: Form,
