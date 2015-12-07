@@ -429,7 +429,7 @@ export default class HakujenHallintaController {
 
   onEnsureKoodistoLoaded(state) {
     if (state.koodistos.content || state.koodistos.loading) {
-      return
+      return state
     }
     state.koodistos.loading = true
     HttpUtil.get("/api/koodisto/")
