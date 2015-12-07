@@ -23,6 +23,15 @@ export default class HakemusBudgetEditing extends Component {
     return initialValues
   }
 
+  static isEditingAllowed(allowEditingArvio, formContent, fieldId) {
+    if(!allowEditingArvio) {
+      return false
+    }
+    const parentElem = FormUtil.findFieldWithDirectChild(formContent, fieldId)
+    const isAmountField = parentElem && parentElem.fieldType === 'vaBudgetItemElement'  && parentElem.children[1].id === fieldId
+    return isAmountField ? parentElem.params.incrementsTotal : true
+  }
+
   render() {
     const controller = this.props.controller
     const hakemus = this.props.hakemus
@@ -35,7 +44,7 @@ export default class HakemusBudgetEditing extends Component {
     const formOperations = {
       chooseInitialLanguage: function() {return "fi"},
       containsExistingEntityId: undefined,
-      isFieldEnabled: function() {return allowEditing},
+      isFieldEnabled: function(saved, fieldId) {return HakemusBudgetEditing.isEditingAllowed(allowEditing, vaBudget, fieldId)},
       onFieldUpdate: undefined,
       isSaveDraftAllowed: function() {return true},
       isNotFirstEdit: function() {return true},
