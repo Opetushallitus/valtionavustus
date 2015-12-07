@@ -61,10 +61,12 @@
 (defn- update-changelog [identity existing new]
   (let [changelog (:changelog existing)
         timestamp (Date.)]
-    (-> changelog
+    (if identity
+      (-> changelog
         (compare-status identity timestamp existing new)
         (compare-budget-granted identity timestamp existing new)
-        (compare-summary-comment identity timestamp existing new))))
+        (compare-summary-comment identity timestamp existing new))
+      changelog)))
 
 (defn update-or-create-hakemus-arvio [hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
@@ -93,7 +95,7 @@
 (defn get-or-create-arvio [hakemus-id]
   (if-let [arvio (get-arvio hakemus-id)]
     arvio
-    (update-or-create-hakemus-arvio hakemus-id {:status "unhandled"})))
+    (update-or-create-hakemus-arvio hakemus-id {:status "unhandled"} nil)))
 
 (defn list-comments [hakemus-id]
   (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
