@@ -48,7 +48,8 @@
 
 (defn- koodisto-version->uri-and-name [koodisto-version]
   {:uri (:koodistoUri koodisto-version)
-   :name (extract-name koodisto-version)})
+   :name (extract-name koodisto-version)
+   :version (-> koodisto-version :latestKoodistoVersio :versio)})
 
 (defn- compare-case-insensitively [s1 s2]
   (compare (str/upper-case s1) (str/upper-case s2)))
