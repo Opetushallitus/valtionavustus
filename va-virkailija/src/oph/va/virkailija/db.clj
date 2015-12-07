@@ -90,10 +90,10 @@
        :?column?
        (= 1)))
 
-(defn get-or-create-arvio [hakemus-id]
+(defn get-or-create-arvio [hakemus-id identity]
   (if-let [arvio (get-arvio hakemus-id)]
     arvio
-    (update-or-create-hakemus-arvio hakemus-id {:status "unhandled"})))
+    (update-or-create-hakemus-arvio hakemus-id {:status "unhandled"} identity)))
 
 (defn list-comments [hakemus-id]
   (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
