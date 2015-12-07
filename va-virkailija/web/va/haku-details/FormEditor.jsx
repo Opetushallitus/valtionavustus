@@ -32,6 +32,7 @@ export default class FormEditor extends Component {
     const formState = formDraftJson ? FakeFormState.createEditFormState(translations, formDraftJson) : undefined
     if (formState) {
       formState.koodistos = koodistos
+      formState.koodistosLoader = hakuAdminController.ensureKoodistosLoaded
     }
     const formElementProps = {
       state: formState,
