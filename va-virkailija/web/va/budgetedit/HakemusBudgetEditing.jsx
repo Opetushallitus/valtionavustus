@@ -34,7 +34,10 @@ export default class HakemusBudgetEditing extends Component {
       printEntityId: undefined
     }
     const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: vaBudget}}, fakeHakemus, formOperations, hakemus)
-    FormStateLoop.initDefaultValues(fakeHakemus.answers, {}, budgetEditFormState.form.content, budgetEditFormState.configuration.lang)
+    const budgetItems =  FormUtil.findFieldsByFieldType(budgetEditFormState.form.content, 'vaBudgetItemElement')
+    const initialDescriptionValues = {}
+    budgetItems.map(budgetItem => initialDescriptionValues[budgetItem.children[0].id] = "")
+    FormStateLoop.initDefaultValues(fakeHakemus.answers, initialDescriptionValues, budgetEditFormState.form.content, budgetEditFormState.configuration.lang)
     const formElementProps = {
       state: budgetEditFormState,
       formContainerClass: Form,
