@@ -332,7 +332,14 @@
           :summary "List the available koodisto items"
           :description "One of these can be selected for a Koodisto based input form field."
          (let [koodisto-list (koodisto/list-koodistos)]
-                    (ok koodisto-list))))
+                    (ok koodisto-list)))
+
+  (GET* "/:koodisto-uri/:version" [ koodisto-uri version ]
+    :return s/Any
+    :summary "List contents of certain version of certain koodisto"
+    :description "Choice values and labels for each value"
+    (let [koodi-options (koodisto/get-koodi-options koodisto-uri version)]
+      (ok koodi-options))))
 
 (defn- query-string-for-login [original-query-params params-to-add keys-to-remove]
   (let [payload-params (apply dissoc original-query-params keys-to-remove)

@@ -8,18 +8,22 @@
 (def all-koodisto-groups-path "codes")
 (def all-koodistos-group-uri "http://kaikkikoodistot")
 
+(def koodisto-version-path "codeelement/codes/")
+
 (defn json->map [body] (cheshire/parse-string body true))
 
-(defn- fetch-all-koodisto-groups []
-  (let [full-koodistos-url (str koodisto-base-url all-koodisto-groups-path)
-          {:keys [status headers body error] :as resp} @(http/get full-koodistos-url)]
+(defn- do-get [url]
+  (let [{:keys [status headers body error] :as resp} @(http/get url)]
     (if (= 200 status)
       (json->map body)
-      (throw (ex-info "Error when fetching koodisto groups" {:status status
-                                                             :url full-koodistos-url
+      (throw (ex-info "Error when fetching doing HTTP GET" {:status status
+                                                             :url url
                                                              :body body
                                                              :error error
                                                              :headers headers})))))
+
+(defn- fetch-all-koodisto-groups []
+  (do-get (str koodisto-base-url all-koodisto-groups-path)))
 
 (defn- koodisto-groups->uris-and-latest [koodisto-groups]
   (->> koodisto-groups
@@ -28,15 +32,19 @@
        (:koodistos)
        (mapv #(select-keys % [:koodistoUri :latestKoodistoVersio]))))
 
-(defn- extract-name [koodisto-version]
-  (->> koodisto-version
-       (:latestKoodistoVersio)
-       (:metadata)
-       (filter #(= "FI" (:kieli %)))
+(defn- extract-name-with-language [language metadata]
+  (->> metadata
+       (filter #(= language (:kieli %)))
        (filter :nimi)
        (set)
        (mapv :nimi)
        (first)))
+
+(defn- extract-name [koodisto-version]
+  (->> koodisto-version
+       (:latestKoodistoVersio)
+       (:metadata)
+       (extract-name-with-language "FI")))
 
 (defn- koodisto-version->uri-and-name [koodisto-version]
   {:uri (:koodistoUri koodisto-version)
@@ -45,8 +53,18 @@
 (defn- compare-case-insensitively [s1 s2]
   (compare (str/upper-case s1) (str/upper-case s2)))
 
+(defn- koodi-value->soresu-option [koodi-value]
+  {:value (:koodiArvo koodi-value)
+   :label {:fi (->> koodi-value :metadata (extract-name-with-language "FI"))
+           :sv (->> koodi-value :metadata (extract-name-with-language "SV"))}})
+
 (defn list-koodistos []
   (->> (fetch-all-koodisto-groups)
        (koodisto-groups->uris-and-latest)
        (mapv koodisto-version->uri-and-name)
        (sort compare-case-insensitively)))
+
+(defn get-koodi-options [koodisto-uri version]
+  (let [koodisto-version-url (str koodisto-base-url koodisto-version-path koodisto-uri "/" version)]
+    (->> (do-get koodisto-version-url)
+         (mapv koodi-value->soresu-option))))
