@@ -48,7 +48,7 @@
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="115.78515625" x="0.607421875" y="4.0">va-prod
-1 core, 1GB RAM,
+1 core, 3GB RAM,
 1TB persistent disk
 HTTP Kit
 PostgreSQL 9.4</y:NodeLabel>
@@ -65,7 +65,7 @@ PostgreSQL 9.4</y:NodeLabel>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="115.78515625" x="0.607421875" y="4.0">va-test
-1 core, 1GB RAM,
+1 core, 3GB RAM,
 1TB persistent disk
 HTTP Kit
 PostgreSQL 9.4</y:NodeLabel>

@@ -45,7 +45,7 @@
     </g>
     <g text-rendering="geometricPrecision" stroke-miterlimit="1.45" shape-rendering="geometricPrecision" font-family="sans-serif" transform="matrix(1,0,0,1,65,215)" stroke-linecap="butt">
       <text x="453.8994" xml:space="preserve" y="111.7882" clip-path="url(#clipPath2)" stroke="none">va-prod</text>
-      <text x="426.9579" xml:space="preserve" y="125.921" clip-path="url(#clipPath2)" stroke="none">1 core, 1GB RAM,</text>
+      <text x="426.9579" xml:space="preserve" y="125.921" clip-path="url(#clipPath2)" stroke="none">1 core, 3GB RAM,</text>
       <text x="421.5908" xml:space="preserve" y="140.0538" clip-path="url(#clipPath2)" stroke="none">1TB persistent disk</text>
       <text x="452.3759" xml:space="preserve" y="154.1866" clip-path="url(#clipPath2)" stroke="none">HTTP Kit</text>
       <text x="433.163" xml:space="preserve" y="168.3194" clip-path="url(#clipPath2)" stroke="none">PostgreSQL 9.4</text>
@@ -58,7 +58,7 @@
     </g>
     <g text-rendering="geometricPrecision" stroke-miterlimit="1.45" shape-rendering="geometricPrecision" font-family="sans-serif" transform="matrix(1,0,0,1,65,215)" stroke-linecap="butt">
       <text x="67.7031" xml:space="preserve" y="111.7882" clip-path="url(#clipPath2)" stroke="none">va-test</text>
-      <text x="37.958" xml:space="preserve" y="125.921" clip-path="url(#clipPath2)" stroke="none">1 core, 1GB RAM,</text>
+      <text x="37.958" xml:space="preserve" y="125.921" clip-path="url(#clipPath2)" stroke="none">1 core, 3GB RAM,</text>
       <text x="32.5908" xml:space="preserve" y="140.0538" clip-path="url(#clipPath2)" stroke="none">1TB persistent disk</text>
       <text x="63.3759" xml:space="preserve" y="154.1866" clip-path="url(#clipPath2)" stroke="none">HTTP Kit</text>
       <text x="44.163" xml:space="preserve" y="168.3194" clip-path="url(#clipPath2)" stroke="none">PostgreSQL 9.4</text>
