@@ -42,7 +42,7 @@ function start_app() {
             -Dcom.sun.management.jmxremote.local.only=false\
             -Dcom.sun.management.jmxremote.authenticate=false\
             -Dcom.sun.management.jmxremote.ssl=false"
-  daemon_args="-jar -Xmx200m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath={{ logical_volumes.data.mount_point }}/www/dumps $jmxremote_args -Dlog4j.email.environment=$HOSTNAME -Dlog4j.configuration=$2 $1"
+  daemon_args="-jar -Xms500m -Xmx500m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath={{ logical_volumes.data.mount_point }}/www/dumps $jmxremote_args -Dlog4j.email.environment=$HOSTNAME -Dlog4j.configuration=$2 $1"
 
   configsecrets={{ logical_volumes.data.mount_point }}/www/secret/secret-va-{{ app_profile }}.edn \
   configdefaults=$3 config=$4  start-stop-daemon --start --chuid=www  \

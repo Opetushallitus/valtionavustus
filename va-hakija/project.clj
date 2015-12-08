@@ -9,7 +9,7 @@
                  [com.novemberain/pantomime "2.7.0"]]
 
   :main oph.va.hakija.main
-  :jvm-opts ["-Xmx200m"]
+  :jvm-opts ["-Xmx500m"]
   :target-path "target/%s"
 
   :prep-tasks [
