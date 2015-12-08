@@ -9,6 +9,7 @@
 (defn arvio-json [arvio]
   {:id (:id arvio)
    :status (:status arvio)
+   :overridden-answers (:overridden_answers arvio)
    :budget-granted (:budget_granted arvio)
    :summary-comment (:summary_comment arvio)})
 
@@ -17,6 +18,7 @@
     (assoc hakemus :arvio arvio)
     (assoc hakemus :arvio {:id -1
                            :status "unhandled"
+                           :overridden-answers {:value []}
                            :budget-granted 0})))
 
 (defn- get-arviot-map [hakemukset]

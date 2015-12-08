@@ -1,7 +1,11 @@
 (ns oph.va.virkailija.db
   (:use [oph.soresu.common.db]
+        [clojure.data :as data]
         [clojure.tools.trace :only [trace]])
-  (:require [oph.va.virkailija.db.queries :as queries])
+  (:require [oph.soresu.form.formutil :as formutil]
+            [oph.va.virkailija.db.queries :as queries]
+            [oph.va.hakija.api :as hakija-api]
+            [oph.va.budget :as va-budget])
   (:import [java.util Date]))
 
 (defn get-arviot [hakemus-ids]
@@ -49,6 +53,20 @@
                                                       :new new-budget}))
       changelog)))
 
+(defn- compare-overridden-answers [changelog identity timestamp existing new]
+  (let [new-answers (formutil/unwrap-answers (:value (:overridden_answers new)) [])
+        existing-answers (formutil/unwrap-answers (:value (:overridden_answers existing)) [])
+        diff-answers (data/diff new-answers existing-answers)
+        added-answers (first diff-answers)
+        removed-answers (second diff-answers)]
+    (if (some some? [added-answers removed-answers])
+      (append-changelog changelog (->changelog-entry identity
+                                                     "overridden-answers-change"
+                                                     timestamp
+                                                     {:old removed-answers
+                                                      :new added-answers}))
+      changelog)))
+
 (defn- compare-status [changelog identity timestamp existing new]
   (if (not (= (:status new) (keyword (:status existing))))
     (append-changelog changelog (->changelog-entry identity
@@ -65,14 +83,26 @@
       (-> (if changelog changelog [])
         (compare-status identity timestamp existing new)
         (compare-budget-granted identity timestamp existing new)
-        (compare-summary-comment identity timestamp existing new))
+        (compare-summary-comment identity timestamp existing new)
+        (compare-overridden-answers identity timestamp existing new))
       changelog)))
 
-(defn update-or-create-hakemus-arvio [hakemus-id arvio identity]
+(defn- calculate-total-oph-budget [avustushaku-id status arvio]
+  (cond
+    (= status :rejected) 0
+    (not (:overridden-answers arvio)) (:budget-granted arvio)
+    :else (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+                       form (hakija-api/get-form-by-avustushaku avustushaku-id)
+                       calculated-budget (va-budget/calculate-totals (:overridden-answers arvio) avustushaku form)]
+                    (:oph-share calculated-budget))))
+
+(defn update-or-create-hakemus-arvio [avustushaku-id hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
-        budget-granted (:budget-granted arvio)
+        budget-granted (calculate-total-oph-budget avustushaku-id status arvio)
+        overridden-answers (:overridden-answers arvio)
         arvio-to-save  {:hakemus_id hakemus-id
                         :status status
+                        :overridden_answers overridden-answers
                         :budget_granted budget-granted
                         :summary_comment (:summary-comment arvio)}
         existing (get-arvio hakemus-id)

@@ -1,0 +1,47 @@
+@import "npm://va-common/web/va/style/soresu-va.less";
+@import "virkailija.less";
+
+#budget-edit-container {
+  .va-budget {
+    .soresu-tooltip {
+      display: none;
+    }
+    .summing-table, .budget-summary {
+      width: @content-width - @preview-width - 48px;
+    }
+    .summing-table {
+      caption {
+        margin: 0;
+      }
+      button {
+        padding: 4px 8px;
+        font-size: inherit;
+        margin: 0;
+      }
+      .label-column {
+        width: 100%;
+      }
+      .original-amount-column {
+        min-width: 45px;
+        text-align: right;
+        cursor: pointer;
+        &::after {
+          content: "\00A0\20AC";
+        }
+      }
+      .amount-column {
+        min-width: 80px;
+      }
+      .soresu-text-field input[type=text], .soresu-money-field input[type=text] {
+        font-size: inherit;
+        padding: 4px;
+        &.small, &.medium, &.large, &.extra-large {
+          width: 150px;
+        }
+        &.extra-extra-small {
+          width: 60px;
+        }
+      }
+    }
+  }
+}

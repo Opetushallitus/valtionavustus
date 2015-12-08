@@ -41,7 +41,7 @@
                                  (* total-sum)
                                  Math/ceil
                                  int)
-        oph-share (- total-sum self-financing-share)]
+        oph-share (max (- total-sum self-financing-share) 0)]
     {:total-needed total-sum
      :oph-share oph-share}))
 
