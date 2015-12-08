@@ -3,6 +3,7 @@
         [clojure.pprint :only [pprint]])
   (:require [clojure.java.io :as io]
             [oph.soresu.common.db :refer :all]
+            [oph.soresu.form.formhandler :as formhandler]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.routes :refer :all]
             [clojure.tools.logging :as log])
@@ -104,8 +105,9 @@
   (roles->json (exec :hakija-db hakija-queries/get-avustushaku-roles {:avustushaku_id avustushaku-id})))
 
 (defn- form->json [form]
-  {:content (:content form)
-   :rules (:rules form)})
+  (let [form-for-rendering (formhandler/add-koodisto-values form)]
+    {:content (:content form-for-rendering)
+       :rules (:rules form-for-rendering)}))
 
 (defn- hakemukset->json [hakemukset]
   (-> (fn [hakemus]
