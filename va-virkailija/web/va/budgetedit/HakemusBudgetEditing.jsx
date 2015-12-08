@@ -57,7 +57,7 @@ export default class HakemusBudgetEditing extends Component {
     const translations = this.props.translations
     const allowEditing = this.props.allowEditing
     const vaBudget = FormUtil.findFieldsByFieldType(hakuData.form.content, "vaBudget")
-    const fakeHakemus = {answers: hakemus.arvio ? hakemus.arvio["overridden-answers"] : {value: []}}
+    const fakeHakemus = {answers: _.get(hakemus, "arvio.overridden-answers", {value: []})}
     const formOperations = {
       chooseInitialLanguage: function() {return "fi"},
       containsExistingEntityId: undefined,

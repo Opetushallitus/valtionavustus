@@ -123,7 +123,7 @@ export class BudgetSummaryElement extends React.Component {
     const avustushaku = vaSpecificProperties.avustushaku
     const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
 
-    const labelTranslations = this.props.labelTranslations ? this.props.labelTranslations  : field.params
+    const labelTranslations = this.props.labelTranslations || field.params
 
     const totalNeeded = field.totalNeeded
     const errorMessage = this.miscTranslator.translate("check-numbers", this.props.lang, "VIRHE")

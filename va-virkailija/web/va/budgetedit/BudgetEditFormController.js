@@ -18,8 +18,8 @@ export default class BudgetEditFormController {
   }
 
   getCustomComponentProperties() {
-    return { "avustushaku": this.avustushaku,
-             "originalHakemus": this.hakemus}
+    return {avustushaku: this.avustushaku,
+            originalHakemus: this.hakemus}
   }
 
   copyOriginalValues(event) {

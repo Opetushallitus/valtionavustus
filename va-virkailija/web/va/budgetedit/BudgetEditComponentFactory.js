@@ -8,7 +8,7 @@ import {BudgetSummaryElement} from 'va-common/web/va/VaBudgetComponents.jsx'
 
 import BudgetEditElement, {EditSummingBudgetElement, EditBudgetItemElement} from './BudgetEditComponents.jsx'
 
-export default class VaBudgetEditComponentFactory extends ComponentFactory {
+export default class BudgetEditComponentFactory extends ComponentFactory {
   constructor() {
     const fieldTypeMapping = {
       "vaBudget": BudgetEditElement,
@@ -16,9 +16,9 @@ export default class VaBudgetEditComponentFactory extends ComponentFactory {
       "vaBudgetItemElement": EditBudgetItemElement,
       "vaBudgetSummaryElement": BudgetSummaryElement
     }
-    super({ fieldTypeMapping: fieldTypeMapping,
-            fieldPropertyMapperMapping:
-              {vaBudgetSummaryElement: BudgetSummaryEditPropertyMapper}})
+    super({fieldTypeMapping: fieldTypeMapping,
+           fieldPropertyMapperMapping:
+            {vaBudgetSummaryElement: BudgetSummaryEditPropertyMapper}})
   }
 }
 
