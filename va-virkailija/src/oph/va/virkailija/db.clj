@@ -29,7 +29,7 @@
 
 (defn- compare-summary-comment [changelog identity timestamp existing new]
   (let [old-comment (:summary_comment existing)
-        new-comment (:summary-comment new)]
+        new-comment (:summary_comment new)]
     (if (not (= old-comment new-comment))
       (append-changelog changelog (->changelog-entry identity
                                                      "summary-comment"
@@ -39,7 +39,7 @@
       changelog)))
 
 (defn- compare-budget-granted [changelog identity timestamp existing new]
-  (let [new-budget (:budget-granted new)
+  (let [new-budget (:budget_granted new)
         existing-budget (:budget_granted existing)]
     (if (not (= new-budget existing-budget))
       (append-changelog changelog (->changelog-entry identity
@@ -50,7 +50,7 @@
       changelog)))
 
 (defn- compare-status [changelog identity timestamp existing new]
-  (if (not (= (:status new) (:status existing)))
+  (if (not (= (:status new) (keyword (:status existing))))
     (append-changelog changelog (->changelog-entry identity
                                                    "status-change"
                                                    timestamp
@@ -62,7 +62,7 @@
   (let [changelog (:changelog existing)
         timestamp (Date.)]
     (if identity
-      (-> changelog
+      (-> (if changelog changelog [])
         (compare-status identity timestamp existing new)
         (compare-budget-granted identity timestamp existing new)
         (compare-summary-comment identity timestamp existing new))
@@ -71,19 +71,16 @@
 (defn update-or-create-hakemus-arvio [hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
         budget-granted (:budget-granted arvio)
-        summary-comment (:summary-comment arvio)
+        arvio-to-save  {:hakemus_id hakemus-id
+                        :status status
+                        :budget_granted budget-granted
+                        :summary_comment (:summary-comment arvio)}
         existing (get-arvio hakemus-id)
-        changelog (update-changelog identity existing arvio)
-        updated (exec :db queries/update-arvio<! {:hakemus_id hakemus-id
-                                                  :status status
-                                                  :budget_granted budget-granted
-                                                  :summary_comment summary-comment
-                                                  :changelog [changelog]})]
-    (if updated
-      updated
-      (exec :db queries/create-arvio<! {:hakemus_id hakemus-id
-                                        :status status
-                                        :changelog [changelog]}))))
+        changelog (update-changelog identity existing arvio-to-save)
+        arvio-with-changelog (assoc arvio-to-save :changelog [changelog])]
+    (if existing
+      (exec :db queries/update-arvio<! arvio-with-changelog)
+      (exec :db queries/create-arvio<! arvio-with-changelog))))
 
 (defn health-check []
   (->> {}
