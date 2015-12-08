@@ -27,7 +27,8 @@
             [oph.va.virkailija.saved-search :refer :all]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.va.virkailija.export :as export]
-            [oph.va.virkailija.email :as email]))
+            [oph.va.virkailija.email :as email]
+            [oph.soresu.common.koodisto :as koodisto]))
 
 (defonce opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
 
@@ -323,6 +324,22 @@
                     (ok {:results search-results
                          :error false
                          :truncated false}))))
+(defroutes* koodisto-routes
+  "Koodisto-service access"
+
+  (GET* "/" []
+          :return s/Any
+          :summary "List the available koodisto items"
+          :description "One of these can be selected for a Koodisto based input form field."
+         (let [koodisto-list (koodisto/list-koodistos)]
+                    (ok koodisto-list)))
+
+  (GET* "/:koodisto-uri/:version" [ koodisto-uri version ]
+    :return s/Any
+    :summary "List contents of certain version of certain koodisto"
+    :description "Choice values and labels for each value"
+    (let [koodi-options (koodisto/get-koodi-options koodisto-uri version)]
+      (ok koodi-options))))
 
 (defn- query-string-for-login [original-query-params params-to-add keys-to-remove]
   (let [payload-params (apply dissoc original-query-params keys-to-remove)
@@ -397,6 +414,7 @@
   (context* "/login" [] :tags ["login"] login-routes)
   (context* "/api/userinfo" [] :tags ["userinfo"] userinfo-routes)
   (context* "/api/ldap" [] :tags ["ldap"] ldap-routes)
+  (context* "/api/koodisto" [] :tags ["koodisto"] koodisto-routes)
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
 
   ;; Documentation
