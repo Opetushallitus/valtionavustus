@@ -92,7 +92,7 @@
 (defn get-or-create-arvio [hakemus-id]
   (if-let [arvio (get-arvio hakemus-id)]
     arvio
-    (update-or-create-hakemus-arvio hakemus-id {:status "unhandled"} nil)))
+    (exec :db queries/create-empty-arvio<! {:hakemus_id hakemus-id})))
 
 (defn list-comments [hakemus-id]
   (let [arvio-id (:id (get-or-create-arvio hakemus-id))]

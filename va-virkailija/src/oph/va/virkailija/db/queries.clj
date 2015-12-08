@@ -3,6 +3,7 @@
 
 (defquery health-check "sql/healthcheck.sql")
 
+(defquery create-empty-arvio<! "sql/virkailija/arvio/create-empty.sql")
 (defquery create-arvio<! "sql/virkailija/arvio/create.sql")
 (defquery update-arvio<! "sql/virkailija/arvio/update.sql")
 (defquery get-arviot "sql/virkailija/arvio/get-by-ids.sql")
