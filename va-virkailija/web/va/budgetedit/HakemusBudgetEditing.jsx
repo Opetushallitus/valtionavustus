@@ -37,11 +37,11 @@ export default class HakemusBudgetEditing extends Component {
     const budgetItems = FormUtil.findFieldsByFieldType(form.content, 'vaBudgetItemElement')
     budgetItems.map(function(budgetItem) {
       const amountField = budgetItem.children[1]
-      const overrodeValue = InputValueStorage.readValue(form.content, answers, amountField.id)
-      const validationErrors = SyntaxValidator.validateSyntax(amountField, overrodeValue)
+      const overriddenValue = InputValueStorage.readValue(form.content, answers, amountField.id)
+      const validationErrors = SyntaxValidator.validateSyntax(amountField, overriddenValue)
       if(budgetItem.params.incrementsTotal && _.isEmpty(validationErrors)) {
         const originalValue = InputValueStorage.readValue(form.content, originalHakemus.answers, amountField.id)
-        if(parseInt(overrodeValue) > parseInt(originalValue)) {
+        if(parseInt(overriddenValue) > parseInt(originalValue)) {
           validationErrors.push({ error: "oph-sum-bigger-than-original" })
         }
       }
@@ -57,7 +57,7 @@ export default class HakemusBudgetEditing extends Component {
     const translations = this.props.translations
     const allowEditing = this.props.allowEditing
     const vaBudget = FormUtil.findFieldsByFieldType(hakuData.form.content, "vaBudget")
-    const fakeHakemus = {answers: hakemus.arvio ? hakemus.arvio["overrode-answers"] : {value: []}}
+    const fakeHakemus = {answers: hakemus.arvio ? hakemus.arvio["overridden-answers"] : {value: []}}
     const formOperations = {
       chooseInitialLanguage: function() {return "fi"},
       containsExistingEntityId: undefined,

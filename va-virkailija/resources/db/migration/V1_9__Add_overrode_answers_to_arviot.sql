@@ -1,1 +1,0 @@
-alter table arviot add overrode_answers jsonb not null default '{"value": []}'

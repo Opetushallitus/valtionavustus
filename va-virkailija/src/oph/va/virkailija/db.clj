@@ -53,15 +53,15 @@
                                                       :new new-budget}))
       changelog)))
 
-(defn- compare-overrode-answers [changelog identity timestamp existing new]
-  (let [new-answers (formutil/unwrap-answers (:value (:overrode_answers new)) [])
-        existing-answers (formutil/unwrap-answers (:value (:overrode_answers existing)) [])
+(defn- compare-overridden-answers [changelog identity timestamp existing new]
+  (let [new-answers (formutil/unwrap-answers (:value (:overridden_answers new)) [])
+        existing-answers (formutil/unwrap-answers (:value (:overridden_answers existing)) [])
         diff-answers (data/diff new-answers existing-answers)
         added-answers (first diff-answers)
         removed-answers (second diff-answers)]
     (if (some some? [added-answers removed-answers])
       (append-changelog changelog (->changelog-entry identity
-                                                     "overrode-answers-change"
+                                                     "overridden-answers-change"
                                                      timestamp
                                                      {:old removed-answers
                                                       :new added-answers}))
@@ -84,25 +84,25 @@
         (compare-status identity timestamp existing new)
         (compare-budget-granted identity timestamp existing new)
         (compare-summary-comment identity timestamp existing new)
-        (compare-overrode-answers identity timestamp existing new))
+        (compare-overridden-answers identity timestamp existing new))
       changelog)))
 
 (defn- calculate-total-oph-budget [avustushaku-id status arvio]
   (cond
     (= status :rejected) 0
-    (not (:overrode-answers arvio)) (:budget-granted arvio)
+    (not (:overridden-answers arvio)) (:budget-granted arvio)
     :else (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
                        form (hakija-api/get-form-by-avustushaku avustushaku-id)
-                       calculated-budget (va-budget/calculate-totals (:overrode-answers arvio) avustushaku form)]
+                       calculated-budget (va-budget/calculate-totals (:overridden-answers arvio) avustushaku form)]
                     (:oph-share calculated-budget))))
 
 (defn update-or-create-hakemus-arvio [avustushaku-id hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
         budget-granted (calculate-total-oph-budget avustushaku-id status arvio)
-        overrode-answers (:overrode-answers arvio)
+        overridden-answers (:overridden-answers arvio)
         arvio-to-save  {:hakemus_id hakemus-id
                         :status status
-                        :overrode_answers overrode-answers
+                        :overridden_answers overridden-answers
                         :budget_granted budget-granted
                         :summary_comment (:summary-comment arvio)}
         existing (get-arvio hakemus-id)

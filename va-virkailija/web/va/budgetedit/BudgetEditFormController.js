@@ -28,7 +28,7 @@ export default class BudgetEditFormController {
   }
 
   componentOnChangeListener(field, newValue) {
-    this.arviointiController.setHakemusOverrodeAnswerValue(this.hakemus.id, field, newValue)
+    this.arviointiController.setHakemusOverriddenAnswerValue(this.hakemus.id, field, newValue)
   }
 
   componentDidMount(field, initialValue) {

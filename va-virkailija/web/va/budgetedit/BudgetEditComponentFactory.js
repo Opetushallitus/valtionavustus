@@ -24,12 +24,12 @@ export default class VaBudgetEditComponentFactory extends ComponentFactory {
 
 class BudgetSummaryEditPropertyMapper {
   static map(props) {
-    const overrodeLabels ={labelTranslations: {
+    const overriddenLabels ={labelTranslations: {
       totalSumRowLabel: {fi:"Hankkeen hyväksyttävä rahoitus yhteensä"},
       ophFinancingLabel: {fi:"Opetushallituksen myöntämä rahoitus"},
       selfFinancingLabel: {fi:"Omarahoitus"}
     }}
-    const extendedProps = _.extend(overrodeLabels, _.omit(props, "labelTranslations"))
+    const extendedProps = _.extend(overriddenLabels, _.omit(props, "labelTranslations"))
     return extendedProps
   }
 }

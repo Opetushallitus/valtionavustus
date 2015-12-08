@@ -31,7 +31,7 @@ const events = {
   commentsLoaded: 'commentsLoaded',
   addComment: 'addComment',
   scoresLoaded: 'scoresLoaded',
-  setOverrodeAnswerValue: 'setOverrodeAnswerValue',
+  setOverriddenAnswerValue: 'setOverriddenAnswerValue',
   changeRequestsLoaded: 'changeRequestsLoaded',
   attachmentVersionsLoaded: 'attachmentVersionsLoaded',
   setScore: 'setScore',
@@ -93,7 +93,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.commentsLoaded)], this.onCommentsLoaded,
       [dispatcher.stream(events.addComment)], this.onAddComment,
       [dispatcher.stream(events.scoresLoaded)], this.onScoresLoaded,
-      [dispatcher.stream(events.setOverrodeAnswerValue)], this.onSetOverrodeAnswerValue,
+      [dispatcher.stream(events.setOverriddenAnswerValue)], this.onSetOverriddenAnswerValue,
       [dispatcher.stream(events.changeRequestsLoaded)], this.onChangeRequestsLoaded,
       [dispatcher.stream(events.attachmentVersionsLoaded)], this.onAttachmentVersionsLoaded,
       [dispatcher.stream(events.setScore)], this.onSetScore,
@@ -347,10 +347,10 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onSetOverrodeAnswerValue(state, setOverrodeAnswerValue) {
-    const relevantHakemus = HakemustenArviointiController.findHakemus(state, setOverrodeAnswerValue.hakemusId)
+  onSetOverriddenAnswerValue(state, setOverriddenAnswerValue) {
+    const relevantHakemus = HakemustenArviointiController.findHakemus(state, setOverriddenAnswerValue.hakemusId)
     if (relevantHakemus) {
-      InputValueStorage.writeValue([setOverrodeAnswerValue.field], relevantHakemus.arvio["overrode-answers"], FieldUpdateHandler.createFieldUpdate(setOverrodeAnswerValue.field, setOverrodeAnswerValue.newValue))
+      InputValueStorage.writeValue([setOverriddenAnswerValue.field], relevantHakemus.arvio["overridden-answers"], FieldUpdateHandler.createFieldUpdate(setOverriddenAnswerValue.field, setOverriddenAnswerValue.newValue))
       dispatcher.push(events.updateHakemusArvio, relevantHakemus)
     }
     return state
@@ -424,13 +424,13 @@ export default class HakemustenArviointiController {
     }
   }
 
-  setHakemusOverrodeAnswerValue(hakemusId, field, newValue) {
-    const setOverrodeAnswerValue = {
+  setHakemusOverriddenAnswerValue(hakemusId, field, newValue) {
+    const setOverriddenAnswerValue = {
       hakemusId: hakemusId,
       field: field,
       newValue: newValue
     }
-    dispatcher.push(events.setOverrodeAnswerValue, setOverrodeAnswerValue)
+    dispatcher.push(events.setOverriddenAnswerValue, setOverriddenAnswerValue)
   }
 
   setChangeRequestText(hakemus, text) {
