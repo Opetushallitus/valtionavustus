@@ -1,7 +1,9 @@
 (ns oph.va.virkailija.db
   (:use [oph.soresu.common.db]
+        [clojure.data :as data]
         [clojure.tools.trace :only [trace]])
-  (:require [oph.va.virkailija.db.queries :as queries]
+  (:require [oph.soresu.form.formutil :as formutil]
+            [oph.va.virkailija.db.queries :as queries]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.budget :as va-budget])
   (:import [java.util Date]))
@@ -51,6 +53,20 @@
                                                       :new new-budget}))
       changelog)))
 
+(defn- compare-overrode-answers [changelog identity timestamp existing new]
+  (let [new-answers (formutil/unwrap-answers (:value (:overrode_answers new)) [])
+        existing-answers (formutil/unwrap-answers (:value (:overrode_answers existing)) [])
+        diff-answers (data/diff new-answers existing-answers)
+        added-answers (first diff-answers)
+        removed-answers (second diff-answers)]
+    (if (some some? [added-answers removed-answers])
+      (append-changelog changelog (->changelog-entry identity
+                                                     "overrode-answers-change"
+                                                     timestamp
+                                                     {:old removed-answers
+                                                      :new added-answers}))
+      changelog)))
+
 (defn- compare-status [changelog identity timestamp existing new]
   (if (not (= (:status new) (keyword (:status existing))))
     (append-changelog changelog (->changelog-entry identity
@@ -67,7 +83,8 @@
       (-> (if changelog changelog [])
         (compare-status identity timestamp existing new)
         (compare-budget-granted identity timestamp existing new)
-        (compare-summary-comment identity timestamp existing new))
+        (compare-summary-comment identity timestamp existing new)
+        (compare-overrode-answers identity timestamp existing new))
       changelog)))
 
 (defn- calculate-total-oph-budget [avustushaku-id status arvio]
