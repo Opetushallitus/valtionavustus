@@ -35,11 +35,11 @@ export class EditSummingBudgetElement extends React.Component {
   columnTitles(field, controller, disabled) {
     return field.params.showColumnTitles ? (
       <thead>
-        <tr><th></th><th colSpan="3"><button disabled={disabled} type="button" onClick={controller.copyOriginalValues}>Kopioi haetut myönnetyiksi</button></th></tr>
+        <tr><th></th><th colSpan="3"><button disabled={disabled} type="button" onClick={controller.copyOriginalValues}>Kopioi haetut hyväksytyiksi</button></th></tr>
         <tr>
           <th className="label-column"><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
           <th>Haettu</th>
-          <th className="amount-column money required">Myönnetty</th>
+          <th className="amount-column money required">Hyväksytty</th>
           <th className="description-column">Kommentti</th>
         </tr>
       </thead>
