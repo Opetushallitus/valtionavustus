@@ -331,6 +331,7 @@
                     (ok {:results search-results
                          :error false
                          :truncated false}))))
+
 (defroutes* koodisto-routes
   "Koodisto-service access"
 
@@ -341,11 +342,11 @@
          (let [koodisto-list (koodisto/list-koodistos)]
                     (ok koodisto-list)))
 
-  (GET* "/:koodisto-uri/:version" [ koodisto-uri version ]
+  (GET* "/:koodisto-uri/:version" [koodisto-uri version]
     :return s/Any
     :summary "List contents of certain version of certain koodisto"
     :description "Choice values and labels for each value"
-    (let [koodi-options (koodisto/get-koodi-options koodisto-uri version)]
+    (let [koodi-options (koodisto/get-cached-koodi-options koodisto-uri version)]
       (ok koodi-options))))
 
 (defn- query-string-for-login [original-query-params params-to-add keys-to-remove]

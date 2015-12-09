@@ -113,7 +113,7 @@
   (roles->json (exec :hakija-db hakija-queries/get-avustushaku-roles {:avustushaku_id avustushaku-id})))
 
 (defn- form->json [form]
-  (let [form-for-rendering (formhandler/add-koodisto-values form)]
+  (let [form-for-rendering (formhandler/add-koodisto-values :hakija-db form)]
     {:content (:content form-for-rendering)
        :rules (:rules form-for-rendering)}))
 
