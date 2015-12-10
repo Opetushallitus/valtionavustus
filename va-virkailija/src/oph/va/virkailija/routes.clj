@@ -71,17 +71,10 @@
 (defroutes* avustushaku-routes
   "Hakemus listing and filtering"
 
-  (GET* "/" []
+  (GET* "/" [status]
+        :query-params [{status :- [HakuStatus] nil}]
         :return [AvustusHaku]
         :summary "Return list of all avustushaku descriptions"
-        (if-let [response (hakija-api/list-avustushaut)]
-          (ok response)
-          (not-found)))
-
-  (GET* "/status/:status" []
-        :path-params [status :- HakuStatus]
-        :return [AvustusHaku]
-        :summary "Return list of avustushaku descriptions by status"
         (if-let [response (hakija-api/list-avustushaut-by-status status)]
           (ok response)
           (not-found)))

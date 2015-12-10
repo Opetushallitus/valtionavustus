@@ -68,8 +68,10 @@
 (defn list-avustushaut []
   (map avustushaku-response-content (exec :hakija-db hakija-queries/list-avustushaut {})))
 
-(defn list-avustushaut-by-status [status]
-  (map avustushaku-response-content (exec :hakija-db hakija-queries/list-avustushaut-by-status {:status (new HakuStatus status)})))
+(defn list-avustushaut-by-status [statuses]
+  (if statuses
+    (map avustushaku-response-content (exec :hakija-db hakija-queries/list-avustushaut-by-status {:statuses (map (fn [status] (new HakuStatus status)) statuses)}))
+    (list-avustushaut)))
 
 (defn- role->json [role]
   {:id (:id role)

@@ -63,7 +63,7 @@ export default class HakemustenArviointiController {
       ],
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
-      avustushakuList: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/status/published")),
+      avustushakuList: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/?status=published&status=resolved")),
       selectedHakemus: undefined,
       showOthersScores: false,
       saveStatus: {
