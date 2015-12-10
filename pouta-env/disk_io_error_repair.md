@@ -9,10 +9,12 @@ If there are disk errors like this in dmesg output
 
 you can check which partitions are broken for example like this:
 
-     for mountpoint in `mount | grep persistent.volumes | cut -f 3 -d ' '`; do echo == $mountpoint : =============; mount -o remount $mountpoint; df -h $mountpoint; done
+     for mountpoint in `mount | grep persistent.volumes | cut -f 3 -d ' '`; do echo == $mountpoint : =============; umount $mountpoint; mount $mountpoint; df -h $mountpoint; done
 
 Procedure for repair goes more or less like
 * kill all processes attempting to access the broken filesystem
+  * kill java processes: `pkill java`
+  * stop postgres: `sudo service postgresql stop`
 * unmount the broken filesystem
 * run xfs_repair on the device of the filesystem, following its instructions (they might include a mount + unmount and running xfs_repair again)
 * after xfs_repair has Finished successfully, mount the fixed filesystem.
