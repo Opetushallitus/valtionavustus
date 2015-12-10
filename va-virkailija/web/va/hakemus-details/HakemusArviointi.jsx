@@ -18,8 +18,8 @@ export default class HakemusArviointi extends Component {
     const hakuData = this.props.hakuData
     const translations = this.props.translations
     const privileges = this.props.privileges
-    const allowHakemusStateChanges = privileges["change-hakemus-state"]
-    const allowHakemusScoring = privileges["score-hakemus"]
+    const allowHakemusStateChanges = privileges["change-hakemus-state"] && avustushaku.status === "published" && avustushaku.phase === "ended"
+    const allowHakemusScoring = privileges["score-hakemus"] && avustushaku.status === "published" && avustushaku.phase === "ended"
     const userInfo = this.props.userInfo
     const comments = hakemus.comments
     const loadingComments = this.props.loadingComments
