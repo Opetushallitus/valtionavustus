@@ -87,18 +87,17 @@
         (compare-overridden-answers identity timestamp existing new))
       changelog)))
 
-(defn- calculate-total-oph-budget [avustushaku-id status arvio]
+(defn- calculate-total-oph-budget [avustushaku status arvio]
   (cond
     (= status :rejected) 0
     (not (:overridden-answers arvio)) (:budget-granted arvio)
-    :else (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
-                       form (hakija-api/get-form-by-avustushaku avustushaku-id)
-                       calculated-budget (va-budget/calculate-totals (:overridden-answers arvio) avustushaku form)]
+    :else (let [form (hakija-api/get-form-by-avustushaku (:id avustushaku))
+                calculated-budget (va-budget/calculate-totals (:overridden-answers arvio) avustushaku form)]
                     (:oph-share calculated-budget))))
 
-(defn update-or-create-hakemus-arvio [avustushaku-id hakemus-id arvio identity]
+(defn update-or-create-hakemus-arvio [avustushaku hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
-        budget-granted (calculate-total-oph-budget avustushaku-id status arvio)
+        budget-granted (calculate-total-oph-budget avustushaku status arvio)
         overridden-answers (:overridden-answers arvio)
         arvio-to-save  {:hakemus_id hakemus-id
                         :status status
