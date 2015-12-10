@@ -198,11 +198,13 @@
         :return Comments
         :summary "Add a comment for hakemus. As response, return all comments"
         (let [identity (authentication/get-identity request)]
-          (ok (virkailija-db/add-comment hakemus-id
-                                         (:first-name identity)
-                                         (:surname identity)
-                                         (:email identity)
-                                         (:comment comment)))))
+          (if-let [avustushaku (hakija-api/get-avustushaku-by-status avustushaku-id ["published"])]
+            (ok (virkailija-db/add-comment hakemus-id
+                                           (:first-name identity)
+                                           (:surname identity)
+                                           (:email identity)
+                                           (:comment comment)))
+            (method-not-allowed!))))
 
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id]
         :path-params [haku-id :- Long, hakemus-id :- Long]

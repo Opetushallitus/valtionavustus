@@ -27,6 +27,7 @@ export default class HakemusComments extends Component {
 
   render() {
     const controller = this.props.controller
+    const allowHakemusCommenting = this.props.allowHakemusCommenting
     var commentsToRender = []
     const commentsInState = this.props.comments
     if (_.isArray(commentsInState)) {
@@ -38,7 +39,8 @@ export default class HakemusComments extends Component {
                {commentComponents}
               </div>
               <textarea rows="2" className="comment-input" id="comment-input"
-                     placeholder="Kommentoi" onKeyDown={this.onKeyDown(controller)}/>
+                     placeholder="Kommentoi" onKeyDown={this.onKeyDown(controller)}
+                     hidden={!allowHakemusCommenting} disabled={!allowHakemusCommenting}/>
            </div>
   }
 

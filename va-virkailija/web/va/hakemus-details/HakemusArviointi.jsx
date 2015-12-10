@@ -18,8 +18,10 @@ export default class HakemusArviointi extends Component {
     const hakuData = this.props.hakuData
     const translations = this.props.translations
     const privileges = this.props.privileges
-    const allowHakemusStateChanges = privileges["change-hakemus-state"] && avustushaku.status === "published" && avustushaku.phase === "ended"
-    const allowHakemusScoring = privileges["score-hakemus"] && avustushaku.status === "published" && avustushaku.phase === "ended"
+    const hakuIsPublishedAndEnded = avustushaku.status === "published" && avustushaku.phase === "ended"
+    const allowHakemusCommenting = hakuIsPublishedAndEnded
+    const allowHakemusStateChanges = privileges["change-hakemus-state"] && hakuIsPublishedAndEnded
+    const allowHakemusScoring = privileges["score-hakemus"] && hakuIsPublishedAndEnded
     const userInfo = this.props.userInfo
     const comments = hakemus.comments
     const loadingComments = this.props.loadingComments
@@ -28,7 +30,7 @@ export default class HakemusArviointi extends Component {
      <div id="hakemus-arviointi">
        <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku}
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
-       <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments}/>
+       <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments} allowHakemusCommenting={allowHakemusCommenting}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <BudgetGranted hakemus={hakemus}/>
        <ChangeRequest controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
