@@ -35,7 +35,7 @@
                                                          :permission-request s/Str}})
 
 (s/defschema HakuStatus
-  (s/enum "new" "draft" "published" "deleted"))
+  (s/enum "new" "draft" "published" "resolved" "deleted"))
 
 (s/defschema HakuPhase
   (s/enum "unpublished" "upcoming" "current" "ended"))

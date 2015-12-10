@@ -14,6 +14,9 @@ export default class HakuStatus extends Component {
       case "published":
         value = "Julkaistu"
         break
+      case "resolved":
+        value = "Ratkaistu"
+        break
       case "deleted":
         value = "Poistettu"
         break

@@ -34,6 +34,7 @@
 (defmethod avustushaku-phase ["published" true true]  [_] "current")
 (defmethod avustushaku-phase ["published" true false] [_] "ended")
 (defmethod avustushaku-phase ["published" false true] [_] "upcoming")
+(defmethod avustushaku-phase ["resolved" true false] [_] "ended")
 (defmethod avustushaku-phase :default  [_] "unpublished")
 
 (defn avustushaku-response-content [avustushaku]

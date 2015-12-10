@@ -168,15 +168,21 @@ class SetStatus extends React.Component {
     const hakuIsValid = this.props.hakuIsValid
     const userHasEditPrivilege = this.props.userHasEditPrivilege
     const statuses = []
-    const statusValues = ['deleted', 'draft', 'published'];
+    const statusValues = ['deleted', 'draft', 'published', 'resolved'];
     const isDisabled = function(status) {
       if (!userHasEditPrivilege) {
         return true
       }
-      if(status === 'deleted' && currentStatus === 'published') {
+      if(status === 'deleted' && currentStatus !== 'draft') {
+        return true
+      }
+      if(status === 'draft' && currentStatus === 'resolved') {
         return true
       }
       if(status === 'published' && !hakuIsValid) {
+        return true
+      }
+      if(status === 'resolved' && currentStatus !== 'published') {
         return true
       }
       return false

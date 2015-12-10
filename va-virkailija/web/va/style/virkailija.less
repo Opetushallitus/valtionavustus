@@ -212,16 +212,16 @@ input[type=radio] + label {
   cursor: pointer;
 }
 
-input[type=radio]:checked + label {
-  margin: 0;
-  color: @text-black;
-  border: solid 4px @light-green;
-}
-
 input[type=radio]:disabled + label {
   color: @light-gray;
   cursor: default;
   border: solid 1px @light-gray;
+}
+
+input[type=radio]:checked + label {
+  margin: 0;
+  color: @text-black;
+  border: solid 4px @light-green;
 }
 
 table.overview-list {
