@@ -13,7 +13,7 @@ export default class HakuEdit extends Component {
     const ldapSearch = this.props.ldapSearch
     const userInfo = this.props.userInfo
     const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
-    const allowAllHakuEdits = userHasEditPrivilege && avustushaku.status === "draft"
+    const allowAllHakuEdits = userHasEditPrivilege && (avustushaku.status === "new" || avustushaku.status === "draft")
     const allowNondisruptiveHakuEdits = userHasEditPrivilege && (allowAllHakuEdits || avustushaku.phase === "current" || avustushaku.phase === "upcoming")
 
     const onChange = e => {
