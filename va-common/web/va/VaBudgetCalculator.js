@@ -26,6 +26,26 @@ export default class VaBudgetCalculator {
     return this.populateBudgetCalculatedValues(state, vaBudgetFields[0], true)
   }
 
+  static getAmountValues(summingBudgetField, answersObject, sumCalculatedCallback) {
+    return _.map(summingBudgetField.children, itemField => {
+      const amountCoefficient = itemField.params.incrementsTotal ? 1 : -1
+      const descriptionField = itemField.children[0]
+      const amountField = itemField.children[1]
+      const amountValue = InputValueStorage.readValue(null, answersObject, amountField.id)
+      const isAmountValid = isNotEmpty(amountValue) && !MoneyValidator.validateMoney(amountValue)
+      const valueToUse = isAmountValid ? amountValue : 0
+      descriptionField.required = isAmountValid && valueToUse > 0
+      if(sumCalculatedCallback) {
+        sumCalculatedCallback(descriptionField)
+      }
+      return {"containsErrors": !isAmountValid, "value": amountCoefficient * valueToUse}
+    })
+
+    function isNotEmpty(value) {
+      return value && _.trim(value).length > 0
+    }
+  }
+
   populateBudgetCalculatedValues(state, vaBudgetField, reportTotalError) {
     const sumCalculatedCallback = this.onSumCalculatedCallback
 
@@ -49,18 +69,8 @@ export default class VaBudgetCalculator {
 
     function populateSummingFieldTotal(answersObject, state) {
       return function(summingBudgetField) {
-        const amountValues = _.map(summingBudgetField.children, itemField => {
-          const amountCoefficient = itemField.params.incrementsTotal ? 1 : -1
-          const descriptionField = itemField.children[0]
-          const amountField = itemField.children[1]
-          const amountValue = InputValueStorage.readValue(null, answersObject, amountField.id)
-          const isAmountValid = isNotEmpty(amountValue) && !MoneyValidator.validateMoney(amountValue)
-          const valueToUse = isAmountValid ? amountValue : 0
-          descriptionField.required = isAmountValid && valueToUse > 0
-          sumCalculatedCallback(descriptionField, state)
-          return { "containsErrors": !isAmountValid, "value": amountCoefficient * valueToUse }
-        })
-        const sum = _.reduce(amountValues, (total, errorsAndValue) => { return total + errorsAndValue.value }, 0)
+        const amountValues = VaBudgetCalculator.getAmountValues(summingBudgetField, answersObject, function(descriptionField) { sumCalculatedCallback(descriptionField, state) })
+        const sum = _.reduce(amountValues, (total, errorsAndValue) => {return total + errorsAndValue.value}, 0)
         summingBudgetField.sum = sum
         const containsErrors = _.some(amountValues, (errorsAndValue) => { return errorsAndValue.containsErrors })
         return {
@@ -68,10 +78,6 @@ export default class VaBudgetCalculator {
           "sum": sum,
           "containsErrors": containsErrors
         }
-      }
-
-      function isNotEmpty(value) {
-        return value && _.trim(value).length > 0
       }
     }
   }

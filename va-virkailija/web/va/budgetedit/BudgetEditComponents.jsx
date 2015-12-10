@@ -10,6 +10,8 @@ import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import JsUtil from 'soresu-form/web/form/JsUtil'
 
+import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
+
 export default class BudgetEditElement extends React.Component {
   constructor(props) {
     super(props)
@@ -53,6 +55,10 @@ export class EditSummingBudgetElement extends React.Component {
     const htmlId = this.props.htmlId
     const disabled = this.props.disabled
     const classNames = ClassNames({"required": field.required })
+    const vaSpecificProperties = this.props.customProps
+    const originalHakemus = vaSpecificProperties.originalHakemus
+    const originalAmountValues = VaBudgetCalculator.getAmountValues(this.props.field, originalHakemus.answers)
+    const originalSum = _.reduce(originalAmountValues, (total, errorsAndValue) => {return total + errorsAndValue.value}, 0)
     return (
       <table id={htmlId} className="summing-table">
         <caption className={!_.isEmpty(classNames) ? classNames : undefined}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></caption>
@@ -67,7 +73,8 @@ export class EditSummingBudgetElement extends React.Component {
           {children}
         </tbody>
         <tfoot><tr>
-          <td className="label-column" colSpan="2"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
+          <td className="label-column"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
+          <td className="original-amount-column"><span className="money sum">{originalSum}</span></td>
           <td className="amount-column"><span className="money sum">{sum}</span></td>
         </tr></tfoot>
       </table>
@@ -111,7 +118,7 @@ export class EditBudgetItemElement extends React.Component {
           <LocalizedString translations={field} translationKey="label" lang={this.props.lang} />
           {this.helpText()}
         </td>
-        <td className="original-amount-column" title={originalDescription}>{originalValue}</td>
+        <td className="original-amount-column has-title" title={originalDescription}><span className="money sum">{originalValue}</span></td>
         <td className="amount-column">{amountComponent}</td>
         <td>{descriptionComponent}</td>
       </tr>
