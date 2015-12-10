@@ -89,8 +89,9 @@ table.translation, #haku-roles table {
     }
   }
 
-  input:disabled {
+  input:disabled, textarea:disabled {
     color: @dark-gray;
+    border: dotted 1px @light-gray;
   }
 
   input[type=radio]:checked + label {
