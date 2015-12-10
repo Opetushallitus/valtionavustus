@@ -13,8 +13,8 @@ export default class HakuEdit extends Component {
     const ldapSearch = this.props.ldapSearch
     const userInfo = this.props.userInfo
     const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
-    const allowHakuEdits = userHasEditPrivilege && avustushaku.status !== "published"
-    const allowHakuEndEdit = userHasEditPrivilege && (allowHakuEdits || avustushaku.phase === "current")
+    const allowAllHakuEdits = userHasEditPrivilege && avustushaku.status === "draft"
+    const allowNondisruptiveHakuEdits = userHasEditPrivilege && (allowAllHakuEdits || avustushaku.phase === "current" || avustushaku.phase === "upcoming")
 
     const onChange = e => {
       controller.onChangeListener(avustushaku, e.target, e.target.value)
@@ -26,33 +26,33 @@ export default class HakuEdit extends Component {
           <h2>Muokkaa avustushakua</h2>
           <CreateHaku controller={controller} avustushaku={avustushaku}/>
         </div>
-        <RegisterNumber controller={controller} avustushaku={avustushaku} allowHakuEdits={allowHakuEdits} onChange={onChange} />
+        <RegisterNumber controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} onChange={onChange} />
         <table id="name" className="translation">
           <thead><tr><th>Haun nimi</th><th>Haun nimi ruotsiksi</th></tr></thead>
           <tbody>
             <tr>
-              <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-fi" value={avustushaku.content.name.fi}  disabled={!allowHakuEdits}/></td>
-              <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-sv" value={avustushaku.content.name.sv}  disabled={!allowHakuEdits}/></td>
+              <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-fi" value={avustushaku.content.name.fi}  disabled={!allowNondisruptiveHakuEdits}/></td>
+              <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-sv" value={avustushaku.content.name.sv}  disabled={!allowNondisruptiveHakuEdits}/></td>
             </tr>
           </tbody>
         </table>
         <div className="haku-duration-and-self-financing">
           <div className="haku-duration-edit-container">
             <h3>{avustushaku.content.duration.label.fi}</h3>
-            <DateField id="hakuaika-start" onChange={onChange} value={avustushaku.content.duration.start} disabled={!allowHakuEdits} />
+            <DateField id="hakuaika-start" onChange={onChange} value={avustushaku.content.duration.start} disabled={!allowAllHakuEdits} />
             <span className="dateDivider" />
-            <DateField id="hakuaika-end" onChange={onChange} value={avustushaku.content.duration.end} disabled={!allowHakuEndEdit} />
+            <DateField id="hakuaika-end" onChange={onChange} value={avustushaku.content.duration.end} disabled={!allowNondisruptiveHakuEdits} />
           </div>
           <div className="haku-self-financing-edit-container">
             <h3>Hakijan omarahoitusvaatimus</h3>
             <input  id="haku-self-financing-percentage"  type="number" min="0" max="99" className="percentage" required="true" maxLength="2"
-                   onChange={onChange} disabled={!allowHakuEdits} value={avustushaku.content["self-financing-percentage"]} /><span>%</span>
+                   onChange={onChange} disabled={!allowAllHakuEdits} value={avustushaku.content["self-financing-percentage"]} /><span>%</span>
           </div>
         </div>
         <HakuRoles avustushaku={avustushaku} ldapSearch={ldapSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller} />
         <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} />
-        <SelectionCriteria controller={controller} avustushaku={avustushaku} allowHakuEdits={allowHakuEdits} onChange={onChange} />
-        <FocusArea controller={controller} avustushaku={avustushaku} allowHakuEdits={allowHakuEdits} onChange={onChange} />
+        <SelectionCriteria controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
+        <FocusArea controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
       </div>
     )
   }
@@ -105,15 +105,16 @@ class SelectionCriteria extends React.Component {
     const selectionCriteria = avustushaku.content['selection-criteria']
     const controller = this.props.controller
     const onChange = this.props.onChange
-    const allowHakuEdits = this.props.allowHakuEdits
+    const allowAllHakuEdits = this.props.allowAllHakuEdits
+    const allowNondisruptiveHakuEdits = this.props.allowNondisruptiveHakuEdits
     const criteriaItems = []
     for (var index=0; index < selectionCriteria.items.length; index++) {
       const htmlId = "selection-criteria-" + index + "-"
       criteriaItems.push(
         <tr key={index}>
-          <td><textarea onChange={onChange} rows="2" id={htmlId + "fi"} value={selectionCriteria.items[index].fi}/></td>
-          <td><textarea onChange={onChange} rows="2" id={htmlId + "sv"} value={selectionCriteria.items[index].sv}/></td>
-          <td><button className="remove" onClick={controller.deleteSelectionCriteria(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={!allowHakuEdits} /></td>
+          <td><textarea onChange={onChange} rows="2" id={htmlId + "fi"} value={selectionCriteria.items[index].fi} disabled={!allowNondisruptiveHakuEdits} /></td>
+          <td><textarea onChange={onChange} rows="2" id={htmlId + "sv"} value={selectionCriteria.items[index].sv} disabled={!allowNondisruptiveHakuEdits} /></td>
+          <td><button className="remove" onClick={controller.deleteSelectionCriteria(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={!allowAllHakuEdits} /></td>
         </tr>
       )
     }
@@ -124,7 +125,7 @@ class SelectionCriteria extends React.Component {
         <tbody>
         {criteriaItems}
         </tbody>
-        <tfoot><tr><td><button disabled={!allowHakuEdits} onClick={controller.addSelectionCriteria(avustushaku)}>Lisää uusi valintaperuste</button></td></tr></tfoot>
+        <tfoot><tr><td><button disabled={!allowAllHakuEdits} onClick={controller.addSelectionCriteria(avustushaku)}>Lisää uusi valintaperuste</button></td></tr></tfoot>
       </table>
     )
   }
@@ -136,15 +137,16 @@ class FocusArea extends React.Component {
     const focusAreas = avustushaku.content['focus-areas']
     const controller = this.props.controller
     const onChange = this.props.onChange
-    const allowHakuEdits = this.props.allowHakuEdits
+    const allowAllHakuEdits = this.props.allowAllHakuEdits
+    const allowNondisruptiveHakuEdits = this.props.allowNondisruptiveHakuEdits
     const focusAreaItems = []
     for (var index=0; index < focusAreas.items.length; index++) {
       const htmlId = "focus-area-" + index + "-"
       focusAreaItems.push(
         <tr key={index}>
-          <td><textarea onChange={onChange} rows="3" id={htmlId + "fi"} value={focusAreas.items[index].fi}/></td>
-          <td><textarea onChange={onChange} rows="3" id={htmlId + "sv"} value={focusAreas.items[index].sv}/></td>
-          <td><button className="remove" onClick={controller.deleteFocusArea(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={!allowHakuEdits} /></td>
+          <td><textarea onChange={onChange} rows="3" id={htmlId + "fi"} value={focusAreas.items[index].fi} disabled={!allowNondisruptiveHakuEdits} /></td>
+          <td><textarea onChange={onChange} rows="3" id={htmlId + "sv"} value={focusAreas.items[index].sv} disabled={!allowNondisruptiveHakuEdits} /></td>
+          <td><button className="remove" onClick={controller.deleteFocusArea(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={!allowAllHakuEdits} /></td>
         </tr>
       )
     }
@@ -155,7 +157,7 @@ class FocusArea extends React.Component {
         <tbody>
         {focusAreaItems}
         </tbody>
-        <tfoot><tr><td><button disabled={!allowHakuEdits} onClick={controller.addFocusArea(avustushaku)}>Lisää uusi painopistealue</button></td></tr></tfoot>
+        <tfoot><tr><td><button disabled={!allowAllHakuEdits} onClick={controller.addFocusArea(avustushaku)}>Lisää uusi painopistealue</button></td></tr></tfoot>
       </table>
     )
   }
@@ -227,7 +229,7 @@ class RegisterNumber extends React.Component {
 
   render() {
     const avustushaku = this.props.avustushaku
-    const allowHakuEdits = this.props.allowHakuEdits
+    const allowAllHakuEdits = this.props.allowAllHakuEdits
     const registerNumber = avustushaku["register-number"]
 
     const isRegisterNumberValid = RegisterNumber.isValid(avustushaku)
@@ -243,7 +245,7 @@ class RegisterNumber extends React.Component {
     }
     return <div>
              <h3 className="required">Diaarinumero</h3>
-             <input type="text" disabled={!allowHakuEdits} onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
+             <input type="text" disabled={!allowAllHakuEdits} onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
              {errorString}
            </div>
   }

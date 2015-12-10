@@ -31,7 +31,7 @@ export default class FormJsonEditor extends Component {
       : <span/>
 
     function allowSave() {
-      return userHasEditPrivilege && parseError === false && avustushaku.status !== "published"
+      return userHasEditPrivilege && parseError === false && avustushaku.status === "draft"
     }
 
     function formHasBeenEdited() {
