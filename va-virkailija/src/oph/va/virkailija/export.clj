@@ -4,6 +4,7 @@
             [clojure.set :refer :all]
             [dk.ative.docjure.spreadsheet :as spreadsheet]
             [oph.soresu.form.formutil :as formutil]
+            [oph.soresu.form.formhandler :as formhandler]
             [oph.va.virkailija.hakudata :as hakudata])
   (:import [java.io ByteArrayOutputStream ByteArrayInputStream]))
 
@@ -116,7 +117,10 @@
     (conj list item)))
 
 (defn- avustushaku->formlabels [avustushaku growing-fieldset-lut]
-  (let [form (-> avustushaku :form :content)
+  (let [form (->> avustushaku
+                  :form
+                  (formhandler/add-koodisto-values :hakija-db)
+                  :content)
         fields (formutil/find-fields form)
         wrappers (formutil/find-wrapper-elements form)]
     (->> form
@@ -146,6 +150,14 @@
 (defn get-by-id [avustushaku answer-set id answer-type]
   (case (:fieldType answer-type)
     "radioButton" (let [value (get answer-set id)]
+                    (or (->> answer-type
+                             :options
+                             (filter (fn [val] (= (:value val) value)))
+                             first
+                             :label
+                             :fi)
+                        value))
+    "dropdown" (let [value (get answer-set id)]
                     (or (->> answer-type
                              :options
                              (filter (fn [val] (= (:value val) value)))
