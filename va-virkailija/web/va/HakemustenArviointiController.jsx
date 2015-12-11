@@ -215,7 +215,7 @@ export default class HakemustenArviointiController {
     HttpUtil.post(updateUrl, request)
         .then(function(response) {
           if(response instanceof Object) {
-            const relevantHakemus = HakemustenArviointiController.findHakemus(state, updatedHakemus.id)
+            const relevantHakemus = HakemustenArviointiController.findHakemus(state, statusChange.hakemusId)
             if(relevantHakemus && relevantHakemus.arvio) {
               relevantHakemus.arvio["budget-granted"] = response["budget-granted"]
             }
