@@ -343,10 +343,11 @@
                     (ok koodisto-list)))
 
   (GET* "/:koodisto-uri/:version" [koodisto-uri version]
+    :path-params [koodisto-uri :- s/Str version :- Long]
     :return s/Any
     :summary "List contents of certain version of certain koodisto"
     :description "Choice values and labels for each value"
-    (let [koodi-options (koodisto/get-cached-koodi-options koodisto-uri version)]
+    (let [koodi-options (koodisto/get-cached-koodi-options :hakija-db koodisto-uri version)]
       (ok koodi-options))))
 
 (defn- query-string-for-login [original-query-params params-to-add keys-to-remove]
