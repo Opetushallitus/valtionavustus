@@ -211,21 +211,23 @@
          (catch Exception e (throw (get-next-exception-or-original e))))
     (get-form-by-avustushaku avustushaku-id)))
 
+(defn get-hakemus [hakemus-id]
+  (first (exec :hakija-db hakija-queries/get-hakemus {:id hakemus-id})))
+
 (defn get-hakemus-submission [hakemus]
   (first (exec :hakija-db hakija-queries/get-submission {:id (:form_submission_id hakemus)
                                                          :version (:form_submission_version hakemus)})))
 
-(defn update-hakemus-status [hakemus-id status status-comment identity]
-  (let [hakemus-to-update (first (exec :hakija-db hakija-queries/get-hakemus {:id hakemus-id}))
-        updated-hakemus (merge hakemus-to-update {:status (keyword status)
-                                                  :status_change_comment status-comment
-                                                  :user_oid (:person-oid identity)
-                                                  :user_first_name (:first-name identity)
-                                                  :user_last_name (:surname identity)
-                                                  :user_email (:email identity)
-                                                  :avustushaku_id (:avustushaku hakemus-to-update)})]
-    (exec-all :hakija-db [hakija-queries/lock-hakemus hakemus-to-update
-                          hakija-queries/close-existing-hakemus! hakemus-to-update
+(defn update-hakemus-status [hakemus status status-comment identity]
+  (let [updated-hakemus (merge hakemus {:status (keyword status)
+                                        :status_change_comment status-comment
+                                        :user_oid (:person-oid identity)
+                                        :user_first_name (:first-name identity)
+                                        :user_last_name (:surname identity)
+                                        :user_email (:email identity)
+                                        :avustushaku_id (:avustushaku hakemus)})]
+    (exec-all :hakija-db [hakija-queries/lock-hakemus hakemus
+                          hakija-queries/close-existing-hakemus! hakemus
                           hakija-queries/update-hakemus-status<! updated-hakemus])))
 
 (defn list-hakemus-change-requests [hakemus-id]

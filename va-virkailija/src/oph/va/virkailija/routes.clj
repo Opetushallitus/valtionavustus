@@ -50,6 +50,15 @@
         preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key "&preview=true")]
     (resp/redirect preview-url)))
 
+(defn- get-hakemus-and-published-avustushaku [avustushaku-id hakemus-id]
+  (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+        hakemus (hakija-api/get-hakemus hakemus-id)]
+    (cond
+      (not hakemus) (not-found!)
+      (not (= (:id avustushaku) (:avustushaku hakemus))) (bad-request!)
+      (not (= "published" (:status avustushaku))) (method-not-allowed!)
+      :else {:avustushaku avustushaku :hakemus hakemus})))
+
 (defroutes* healthcheck-routes
   "Healthcheck routes"
 
@@ -180,11 +189,10 @@
          :body    [arvio (describe Arvio "New arvio")]
          :return Arvio
          :summary "Update arvio for given hakemus. Creates arvio if missing."
-         (let [identity (authentication/get-identity request)]
-           (if-let [avustushaku (hakija-api/get-avustushaku-by-status avustushaku-id ["published"])]
-             (ok (-> (virkailija-db/update-or-create-hakemus-arvio avustushaku hakemus-id arvio identity)
-                     hakudata/arvio-json))
-             (method-not-allowed!))))
+         (let [identity (authentication/get-identity request)
+               {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
+           (ok (-> (virkailija-db/update-or-create-hakemus-arvio avustushaku hakemus-id arvio identity)
+                   hakudata/arvio-json))))
 
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
@@ -197,14 +205,13 @@
         :body [comment (describe NewComment "New comment")]
         :return Comments
         :summary "Add a comment for hakemus. As response, return all comments"
-        (let [identity (authentication/get-identity request)]
-          (if-let [avustushaku (hakija-api/get-avustushaku-by-status avustushaku-id ["published"])]
-            (ok (virkailija-db/add-comment hakemus-id
-                                           (:first-name identity)
-                                           (:surname identity)
-                                           (:email identity)
-                                           (:comment comment)))
-            (method-not-allowed!))))
+        (let [identity (authentication/get-identity request)
+              {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
+          (ok (virkailija-db/add-comment hakemus-id
+                                         (:first-name identity)
+                                         (:surname identity)
+                                         (:email identity)
+                                         (:comment comment)))))
 
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id]
         :path-params [haku-id :- Long, hakemus-id :- Long]
@@ -255,14 +262,13 @@
         :return ScoringOfArvio
         :summary "Submit scorings for given arvio."
         :description "Scorings are automatically assigned to logged in user."
-        (let [identity (authentication/get-identity request)]
-          (if-let [avustushaku (hakija-api/get-avustushaku-by-status avustushaku-id ["published"])]
-            (ok (scoring/add-score avustushaku-id
+        (let [identity (authentication/get-identity request)
+              {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
+          (ok (scoring/add-score avustushaku-id
                                  hakemus-id
                                  identity
                                  (:selection-criteria-index score)
-                                 (:score score)))
-            (method-not-allowed!))))
+                                 (:score score)))))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id :as request]
          :path-params [avustushaku-id :- Long, hakemus-id :- Long]
@@ -271,22 +277,21 @@
          :return {:hakemus-id Long
                   :status HakemusStatus}
          :summary "Update status of hakemus"
-         (if-let [avustushaku (hakija-api/get-avustushaku-by-status avustushaku-id ["published"])]
-           (let [identity (authentication/get-identity request)
-                 new-status (:status body)
-                 status-comment (:comment body)
-                 updated-hakemus (hakija-api/update-hakemus-status hakemus-id new-status status-comment identity)]
-             (if (= new-status "pending_change_request")
-               (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
-                     answers (:answers submission)
-                     language (keyword (formutil/find-answer-value answers "language"))
-                     avustushaku-name (-> avustushaku :content :name language)
-                     email (formutil/find-answer-value answers "primary-email")
-                     user-key (:user_key updated-hakemus)]
-                 (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment)))
-             (ok {:hakemus-id hakemus-id
-                  :status new-status}))
-           (method-not-allowed!)))
+         (let [{:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)
+               identity (authentication/get-identity request)
+               new-status (:status body)
+               status-comment (:comment body)
+               updated-hakemus (hakija-api/update-hakemus-status hakemus new-status status-comment identity)]
+           (if (= new-status "pending_change_request")
+             (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
+                   answers (:answers submission)
+                   language (keyword (formutil/find-answer-value answers "language"))
+                   avustushaku-name (-> avustushaku :content :name language)
+                   email (formutil/find-answer-value answers "primary-email")
+                   user-key (:user_key updated-hakemus)]
+               (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment)))
+           (ok {:hakemus-id hakemus-id
+                :status new-status})))
 
   (PUT* "/:avustushaku-id/searches" [avustushaku-id :as request]
         :path-params [avustushaku-id :- Long]
