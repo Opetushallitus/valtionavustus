@@ -83,22 +83,6 @@ export class EditSummingBudgetElement extends React.Component {
 }
 
 export class EditBudgetItemElement extends React.Component {
-  constructor(props) {
-    super(props)
-    this._bind('helpText')
-  }
-
-  _bind(...methods) {
-    methods.forEach((method) => this[method] = this[method].bind(this))
-  }
-
-  helpText() {
-    if (this.props.field.helpText) {
-      return <HelpTooltip content={this.props.field.helpText} lang={this.props.lang}/>
-    }
-    return undefined
-  }
-
   render() {
     const field = this.props.field
     const children = this.props.children
@@ -116,11 +100,10 @@ export class EditBudgetItemElement extends React.Component {
       <tr id={htmlId} className="budget-item">
         <td className={labelClassName}>
           <LocalizedString translations={field} translationKey="label" lang={this.props.lang} />
-          {this.helpText()}
         </td>
         <td className="original-amount-column has-title" title={originalDescription}><span className="money sum">{originalValue}</span></td>
         <td className="amount-column">{amountComponent}</td>
-        <td>{descriptionComponent}</td>
+        <td className="description-column">{descriptionComponent}</td>
       </tr>
     )
   }
