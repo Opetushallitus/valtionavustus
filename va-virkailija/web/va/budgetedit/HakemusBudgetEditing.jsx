@@ -3,12 +3,14 @@ import React, { Component } from 'react'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
+import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 
 import BudgetEditFormController from './BudgetEditFormController.js'
 import BudgetEditComponentFactory from './BudgetEditComponentFactory.js'
+import BudgetEditPreviewComponentFactory from './BudgetEditPreviewComponentFactory'
 import FakeFormState from '../form/FakeFormState.js'
 
 import style from '../style/budgetedit.less'
@@ -63,7 +65,7 @@ export default class HakemusBudgetEditing extends Component {
       containsExistingEntityId: undefined,
       isFieldEnabled: function(saved, fieldId) {return HakemusBudgetEditing.isEditingAllowed(allowEditing, vaBudget, fieldId)},
       onFieldUpdate: undefined,
-      isSaveDraftAllowed: function() {return true},
+      isSaveDraftAllowed: function() {return allowEditing},
       isNotFirstEdit: function() {return true},
       createUiStateIdentifier: undefined,
       urlCreator: undefined,
@@ -75,9 +77,9 @@ export default class HakemusBudgetEditing extends Component {
     HakemusBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus)
     const formElementProps = {
       state: budgetEditFormState,
-      formContainerClass: Form,
+      formContainerClass: allowEditing ? Form : FormPreview,
       infoElementValues: avustushaku,
-      controller: new BudgetEditFormController(controller, new BudgetEditComponentFactory(), avustushaku, budgetEditFormState.form, hakemus),
+      controller: new BudgetEditFormController(controller, new BudgetEditComponentFactory(), new BudgetEditPreviewComponentFactory(), avustushaku, budgetEditFormState.form, hakemus),
       containerId: "budget-edit-container",
       headerElements: []
     }
