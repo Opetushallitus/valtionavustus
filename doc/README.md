@@ -5,6 +5,7 @@ Technical documentation
     * [Server software](#server-software)
     * [Client (Browser) software](#client-browser-software)
   * [Architecture](#architecture)
+    * [Production environment](#production-environment)
     * [Server &amp; Network architecture](#server--network-architecture)
     * [General architecture](#general-architecture)
     * [Data flow](#data-flow)
