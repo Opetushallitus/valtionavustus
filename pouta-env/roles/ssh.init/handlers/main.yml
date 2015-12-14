@@ -9,10 +9,10 @@
   # service: name=ssh state=restarted  # this will work in Ansible 1.9.2 : https://github.com/ansible/ansible-modules-core/issues/1298
   # meanwhile:
   shell: service ssh restart
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_os_family == 'Debian'
 
 - name: Restart ssh CentOs
   # service: name=sshd state=restarted  # this will work in Ansible 1.9.2 : https://github.com/ansible/ansible-modules-core/issues/1298
   # meanwhile:
   shell: service sshd restart
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_os_family == 'RedHat'
