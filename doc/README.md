@@ -44,6 +44,10 @@ Jar is built and deployed by [Jenkins CI server](https://dev.valtionavustukset.o
 
 Environment specific application configurations are in [va-hakija/config](../va-hakija/config/) and [va-virkailija/config](../va-virkailija/config/)
 
+### Production environment
+
+![Production setup](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/production.svg)
+
 ### Server & Network architecture
 
 Servers used in test and pilot environment:
