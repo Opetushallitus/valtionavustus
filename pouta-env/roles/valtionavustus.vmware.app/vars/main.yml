@@ -1,0 +1,13 @@
+logs_dir: /logs
+data_dir: /data
+postgresql_version: 9.4
+postgresql_backup_dir: /postgresql-backups
+postgresql_backup_hour: 01
+postgresql_backup_minute: 00
+postgresql_backup_mail_recipient: root
+postgresql_backup_remote_rsync_path: None
+
+postfix_domain: 'valtionavustukset.oph.fi'
+postfix_notify_email: 'root'
+postfix_use_smtp: false
+postfix_relayhost: ''

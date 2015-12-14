@@ -14,8 +14,7 @@
     app_profile: test
     dbname: va-qa
   roles:
-  - ssh.init
-  - common
+  - valtionavustus.vmware.app
 
 - hosts: va-prod
   user: cloud-user
