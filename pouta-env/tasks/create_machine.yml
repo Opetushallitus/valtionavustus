@@ -6,7 +6,7 @@
     login_password: "{{ pouta_password }}"
     login_tenant_name: "{{ tenant_name }}"
     auth_url: "{{ auth_url }}"
-    image_name: "{{ pouta_ubuntu_14_04 }}"
+    image_name: "{{ pouta_image_name }}"
     key_name: "{{ pouta_key }}"
     flavor_id: "{{ pouta_flavor_id }}"
     security_groups: "{{ va_security_groups }}"

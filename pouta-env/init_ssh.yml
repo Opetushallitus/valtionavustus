@@ -1,4 +1,4 @@
-- hosts: va-test:va-build:va-prod
+- hosts: va-test:va-test-centos:va-build:va-prod
   user: cloud-user
   sudo: yes
   roles:
