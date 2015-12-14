@@ -1,8 +1,14 @@
-- name: Autoaccept license for Java
+- name: Autoaccept license for Oracle Java (Debian)
   debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+  when: ansible_os_family == 'Debian'
 
-- name: Install Java
+- name: Install Oracle Java (Debian)
   action: apt pkg=oracle-java8-installer state=latest install_recommends=yes
+  when: ansible_os_family == 'Debian'
 
-- name: Set Java Env
+- name: Set Oracle Java Env (Debian)
   action: apt pkg=oracle-java8-set-default state=latest install_recommends=yes
+  when: ansible_os_family == 'Debian'
+
+- name: Install OpenJDK Java (RedHat)
+  yum: name=java-1.8.0-openjdk
