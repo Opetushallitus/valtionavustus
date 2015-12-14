@@ -1,18 +1,26 @@
 - name: Debug hostvars
   debug: var=hostvars
 
-- name: Add Java repository to sources
+- name: Add Oracle Java APT repository to sources
   action: apt_repository repo='ppa:webupd8team/java'
+  when: ansible_os_family == 'Debian'
 
 - name: Update APT package cache
   apt: update_cache=yes cache_valid_time=3600
+  when: ansible_os_family == 'Debian'
 
-- name: Upgrade packages
+- name: Upgrade APT packages
   apt: upgrade=safe
+  when: ansible_os_family == 'Debian'
 
-- name: Install required packages
+- name: Update YUM package cache and upgrade packages
+  yum: update_cache=yes name=* state=latest
+  when: ansible_os_family == 'RedHat'
+
+- name: Install required APT packages
   apt: state=installed pkg={{ item }}
   with_items: ubuntu_common_required_packages
+  when: ansible_os_family == 'Debian'
 
 - name: Disable RepeatedMsgReduction of rsyslogd because it is buggy
   lineinfile: dest=/etc/rsyslog.conf regexp="^\$RepeatedMsgReduction" line="$RepeatedMsgReduction off" backup=yes
@@ -22,15 +30,35 @@
   service: name=rsyslog state=restarted
   when: rsyslog_config.changed
 
-- name: Install rng-tools to avoid /dev/random exhaust
+- name: APT Install rng-tools to avoid /dev/random exhaust
   apt: name=rng-tools
-  notify: Restart RNG
+  when: ansible_os_family == 'Debian'
+
+- name: YUM Install rng-tools to avoid /dev/random exhaust
+  yum: name=rng-tools
+  when: ansible_os_family == 'RedHat'
 
 - lineinfile: dest=/etc/default/rng-tools line="HRNGDEVICE=/dev/urandom"
-  notify: Restart RNG
+  when: ansible_os_family == 'Debian'
 
-- name: Force rng-tools restart
+- lineinfile: dest=/usr/lib/systemd/system/rngd.service
+              regexp="^ExecStart"
+              line="ExecStart=/sbin/rngd -f"
+              state=present
+  register: rngd_service_changed
+  when: ansible_os_family == 'RedHat'
+
+- name: reload systemd if rng daemon was changed
+  command: systemctl daemon-reload
+  when: rngd_service_changed.changed
+
+- name: Force rng-tools restart and run it on boot
   service: name=rng-tools state=restarted enabled=yes
+  when: ansible_os_family == 'Debian'
+
+- name: Force rng daemon restart and run it on boot
+  service: name=rngd state=restarted enabled=yes
+  when: ansible_os_family == 'RedHat'
 
 - name: Gather test application server names to list
   debug:

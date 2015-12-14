@@ -7,6 +7,16 @@
   roles:
   - valtionavustus.app
 
+- hosts: va-test-centos
+  user: cloud-user
+  sudo: yes
+  vars:
+    app_profile: test
+    dbname: va-qa
+  roles:
+  - ssh.init
+  - common
+
 - hosts: va-prod
   user: cloud-user
   sudo: yes

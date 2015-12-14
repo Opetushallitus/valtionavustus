@@ -1,2 +1,0 @@
-- name: Restart RNG
-  service: name=rng-tools state=restarted
