@@ -22,6 +22,11 @@
   with_items: ubuntu_common_required_packages
   when: ansible_os_family == 'Debian'
 
+- name: Install required YUM packages
+  yum: state=installed pkg={{ item }}
+  with_items: centos_common_required_packages
+  when: ansible_os_family == 'RedHat'
+
 - name: Disable RepeatedMsgReduction of rsyslogd because it is buggy
   lineinfile: dest=/etc/rsyslog.conf regexp="^\$RepeatedMsgReduction" line="$RepeatedMsgReduction off" backup=yes
   register: rsyslog_config

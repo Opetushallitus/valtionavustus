@@ -5,4 +5,7 @@ ubuntu_common_required_packages:
   - xfsprogs
   - lvm2
 
+centos_common_required_packages:
+  - fail2ban
+
 build_machine_name: va-build
