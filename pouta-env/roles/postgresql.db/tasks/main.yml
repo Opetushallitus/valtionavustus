@@ -1,11 +1,21 @@
-- name: Install psycopg2
+- name: APT Install psycopg2
   apt: name=python-psycopg2
+  when: ansible_os_family == 'Debian'
+
+- name: YUM Install psycopg2
+  yum: name=python-psycopg2
+  when: ansible_os_family == 'RedHat'
 
 - name: Create Postgresql backup directory
   file: path={{ postgresql_backup_dir }} owner=postgres group=postgres state=directory
 
-- name: Restart PostgreSQL to get backup settings in effect
+- name: Restart PostgreSQL to get backup settings in effect (Debian)
   service: name=postgresql state=restarted
+  when: ansible_os_family == 'Debian'
+
+- name: Restart PostgreSQL to get backup settings in effect (RedHat)
+  service: name=postgresql-9.4 state=restarted
+  when: ansible_os_family == 'RedHat'
 
 - name: Ensure database is created
   sudo: yes
