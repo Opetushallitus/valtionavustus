@@ -415,6 +415,12 @@
                          :description "Avustushaku and hakemus listing and filtering"}
                         {:name "login"
                          :description "Login and logout"}
+                        {:name "ldap"
+                         :description "LDAP queries"}
+                        {:name "decision"
+                         :description "Decision document generation"}
+                        {:name "koodisto"
+                         :description "Koodisto listing and data fetch"}
                         {:name "userinfo"
                          :description "User information about currently logged in user"}
                         {:name "healthcheck"
