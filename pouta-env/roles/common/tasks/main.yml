@@ -13,8 +13,11 @@
   apt: upgrade=safe
   when: ansible_os_family == 'Debian'
 
-- name: Update YUM package cache and upgrade packages
-  yum: update_cache=yes name=* state=latest
+- name: Run YUM security updates
+  command: yum --security update
+  register: yum_security_updates
+  when: ansible_os_family == 'RedHat'
+- debug: var=yum_security_updates.stdout_lines
   when: ansible_os_family == 'RedHat'
 
 - name: Install required APT packages
