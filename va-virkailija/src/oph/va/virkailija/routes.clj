@@ -332,6 +332,16 @@
                          :error false
                          :truncated false}))))
 
+(defroutes* decision-routes
+  "Decision document routes"
+
+  (GET* "/:avustushaku-id/:hakemus-id/decision.html" [:as request]
+        :path-params [avustushaku-id :- Long hakemus-id :- Long]
+        :return LdapSearchResults
+        :summary "Search users from OPH LDAP."
+        :description "Each search term must be found as part of user name or email. Case does not matter."
+        (ok {})))
+
 (defroutes* koodisto-routes
   "Koodisto-service access"
 
@@ -423,6 +433,7 @@
   (context* "/login" [] :tags ["login"] login-routes)
   (context* "/api/userinfo" [] :tags ["userinfo"] userinfo-routes)
   (context* "/api/ldap" [] :tags ["ldap"] ldap-routes)
+  (context* "/api/decision" [] :tags ["decision"] decision-routes)
   (context* "/api/koodisto" [] :tags ["koodisto"] koodisto-routes)
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
 
