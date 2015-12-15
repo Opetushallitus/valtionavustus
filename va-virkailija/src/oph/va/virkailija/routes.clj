@@ -322,10 +322,10 @@
   "LDAP search"
 
   (POST* "/search" [:as request]
-          :body [body (describe {:searchInput s/Str} "User input of LDAP search box")]
-          :return LdapSearchResults
-          :summary "Search users from OPH LDAP."
-          :description "Each search term must be found as part of user name or email. Case does not matter."
+         :body [body (describe {:searchInput s/Str} "User input of LDAP search box")]
+         :return LdapSearchResults
+         :summary "Search users from OPH LDAP."
+         :description "Each search term must be found as part of user name or email. Case does not matter."
          (let [search-input (:searchInput body)
                search-results (oph.va.virkailija.ldap/search-users search-input)]
                     (ok {:results search-results
