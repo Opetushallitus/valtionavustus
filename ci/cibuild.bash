@@ -93,7 +93,11 @@ function restart_application() {
   echo "=============================="
   echo
   echo "Stopping application..."
-  $SSH "sudo /usr/local/bin/va_app.bash --stop $module_name"
+  if [ "$target_server_name" = "va-test-centos" ]; then
+    $SSH "supervisorctl stop $module_name"
+  else
+    $SSH "sudo /usr/local/bin/va_app.bash --stop $module_name"
+  fi
   if [ "$recreate_database" = true ]; then
     drop_database
   else
@@ -101,7 +105,11 @@ function restart_application() {
   fi
   echo "=============================="
   echo
-  APP_COMMAND="sudo /usr/local/bin/va_app.bash --start $module_name ${CURRENT_DIR}/${module_name}.jar file:${CURRENT_DIR}/resources/log4j-deployed.properties ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
+  if [ "$target_server_name" = "va-test-centos" ]; then
+    APP_COMMAND="supervisorctl start $module_name"
+  else
+    APP_COMMAND="sudo /usr/local/bin/va_app.bash --start $module_name ${CURRENT_DIR}/${module_name}.jar file:${CURRENT_DIR}/resources/log4j-deployed.properties ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
+  fi
   echo "...starting application with command \"${APP_COMMAND}\" ..."
   $SSH "${APP_COMMAND}"
 }
