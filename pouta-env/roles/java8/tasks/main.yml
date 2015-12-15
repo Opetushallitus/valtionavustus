@@ -12,3 +12,4 @@
 
 - name: Install OpenJDK Java (RedHat)
   yum: name=java-1.8.0-openjdk
+  when: ansible_os_family == 'RedHat'
