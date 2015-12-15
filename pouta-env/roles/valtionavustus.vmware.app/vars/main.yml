@@ -6,6 +6,9 @@ postgresql_backup_hour: 01
 postgresql_backup_minute: 00
 postgresql_backup_mail_recipient: root
 postgresql_backup_remote_rsync_path: None
+postgresql_pg_hba_local_ipv4: false
+postgresql_pg_hba_conf:
+      - host all all 127.0.0.1/32 md5
 
 postfix_domain: 'valtionavustukset.oph.fi'
 postfix_notify_email: 'root'
