@@ -25,6 +25,12 @@
 - name: Add supervisor conf to start and stop the applications
   template: src=supervisord.conf.j2 dest=/etc/supervisord.conf owner=root group=root mode=0644
 
+- name: Add supervisor daemon service
+  template: src=supervisord.service.j2 dest=/etc/systemd/system/supervisord.service owner=root group=root mode=0644
+
+- name: Restart supervisor daemon
+  service: name=supervisord state=restarted enabled=yes
+
 - name: Check that va-hakija is present
   supervisorctl: name=va-hakija state=present
 
