@@ -44,7 +44,7 @@
     "url-loader": "^0.5.6",
     "json-loader": "^0.5.2",
     "watch-spawn": "^1.0.5",
-    "webpack": "^1.10.5",
+    "webpack": "^1.12.9",
     "less-plugin-npm-import": "2.1.0"
   },
   "private": false,
