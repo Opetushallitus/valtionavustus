@@ -11,7 +11,7 @@
   user: cloud-user
   sudo: yes
   vars:
-    app_profile: test
+    app_profile: va-test
     dbname: va-qa
   roles:
   - valtionavustus.vmware.app

@@ -22,11 +22,14 @@
 - name: Create logs dir
   file: path={{ logs_dir }}/valtionavustus owner=www group=www state=directory
 
-- name: Add script to start and stop the application
-  template: src=va_app.bash.j2 dest=/usr/local/bin/va_app.bash owner=root group=root mode=0755
+- name: Add supervisor conf to start and stop the applications
+  template: src=supervisord.conf.j2 dest=/etc/supervisord.conf owner=root group=root mode=0644
 
-- name: Allow va-deploy to start and stop the application
-  lineinfile: 'dest=/etc/sudoers line="va-deploy ALL=(ALL) NOPASSWD: /usr/local/bin/va_app.bash" validate="visudo -cf %s"'
+- name: Check that va-hakija is present
+  supervisorctl: name=va-hakija state=present
+
+- name: Check that va-virkailija is present
+  supervisorctl: name=va-virkailija state=present
 
 - name: Add script to run arbitrary SQL file to our db
   template: src=run_sql.bash.j2 dest=/usr/local/bin/run_sql.bash owner=postgres group=postgres mode=0700
