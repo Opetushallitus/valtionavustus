@@ -8,6 +8,7 @@ import {TrimmingTextFieldPropertyMapper} from 'soresu-form/web/form/component/Pr
 import VaBudgetElement, {SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
 import {VaFocusAreasPropertyMapper} from './VaPropertyMapper.js'
 import VaProjectDescription from './VaProjectDescription.jsx'
+import VaTraineeDayCalculator from './VaTraineeDayCalculator.jsx'
 
 export default class VaComponentFactory extends ComponentFactory {
   constructor() {
@@ -18,12 +19,13 @@ export default class VaComponentFactory extends ComponentFactory {
       "vaBudgetSummaryElement": BudgetSummaryElement,
       "vaProjectDescription": VaProjectDescription,
       "vaFocusAreas": CheckboxButton,
-      "vaEmailNotification": EmailTextField
+      "vaEmailNotification": EmailTextField,
+      "vaTraineeDayCalculator": VaTraineeDayCalculator
     }
-    super({ fieldTypeMapping: fieldTypeMapping,
-            fieldPropertyMapperMapping: {
-              "vaFocusAreas": VaFocusAreasPropertyMapper,
-              "vaEmailNotification": TrimmingTextFieldPropertyMapper }})
+    super({fieldTypeMapping: fieldTypeMapping,
+           fieldPropertyMapperMapping: {
+             "vaFocusAreas": VaFocusAreasPropertyMapper,
+             "vaEmailNotification": TrimmingTextFieldPropertyMapper }})
   }
 
   getCustomComponentProperties(state) {
