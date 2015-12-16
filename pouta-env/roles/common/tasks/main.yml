@@ -51,7 +51,7 @@
 
 - lineinfile: dest=/usr/lib/systemd/system/rngd.service
               regexp="^ExecStart"
-              line="ExecStart=/sbin/rngd -f"
+              line="ExecStart=/sbin/rngd -f -r /dev/urandom"
               state=present
   register: rngd_service_changed
   when: ansible_os_family == 'RedHat'
