@@ -1,6 +1,6 @@
 (ns ^{:skip-aot true} oph.va.virkailija.routes
-    (:use [clojure.tools.trace :only [trace]]
-          [clojure.pprint :only [pprint]])
+  (:use [clojure.tools.trace :only [trace]]
+        [clojure.pprint :only [pprint]])
   (:require [compojure.route :as route]
             [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
@@ -70,8 +70,8 @@
   (GET "/admin/*" [] (return-html "admin.html"))
   (GET "/yhteenveto/*" [] (return-html "summary.html"))
   (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
-    :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
-    (on-hakemus-preview avustushaku-id hakemus-user-key))
+        :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
+        (on-hakemus-preview avustushaku-id hakemus-user-key))
   (GET "/translations.json" [] (get-translations))
   (GET "/avustushaku/:id/*" [id] (return-html "index.html"))
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
@@ -148,11 +148,11 @@
          (ok (hakija-api/update-avustushaku-role avustushaku-id role)))
 
   (DELETE* "/:avustushaku-id/role/:role-id" [avustushaku-id role-id]
-        :path-params [avustushaku-id :- Long role-id :- Long]
-        :return {:id Long}
-        :summary "Delete avustushaku role"
-        (hakija-api/delete-avustushaku-role avustushaku-id role-id)
-        (ok {:id role-id}))
+           :path-params [avustushaku-id :- Long role-id :- Long]
+           :return {:id Long}
+           :summary "Delete avustushaku role"
+           (hakija-api/delete-avustushaku-role avustushaku-id role-id)
+           (ok {:id role-id}))
 
   (GET* "/:avustushaku-id/privileges" [avustushaku-id :as request]
         :path-params [avustushaku-id :- Long]
@@ -166,12 +166,12 @@
             (not-found))))
 
   (GET* "/:avustushaku-id/form" [avustushaku-id]
-          :path-params [avustushaku-id :- Long]
-          :return Form
-          :summary "Get form description that is linked to avustushaku"
-          (if-let [found-form (hakija-api/get-form-by-avustushaku avustushaku-id)]
-            (ok (without-id found-form))
-            (not-found)))
+        :path-params [avustushaku-id :- Long]
+        :return Form
+        :summary "Get form description that is linked to avustushaku"
+        (if-let [found-form (hakija-api/get-form-by-avustushaku avustushaku-id)]
+          (ok (without-id found-form))
+          (not-found)))
 
   (POST* "/:avustushaku-id/form" [avustushaku-id]
          :path-params [avustushaku-id :- Long ]
@@ -180,8 +180,8 @@
          :summary "Update form description that is linked to avustushaku"
          (if-let [avustushaku (hakija-api/get-avustushaku-by-status avustushaku-id ["new" "draft"])]
            (if-let [response (hakija-api/update-form-by-avustushaku avustushaku-id updated-form)]
-            (ok (without-id response))
-            (not-found))
+             (ok (without-id response))
+             (not-found))
            (method-not-allowed!)))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id :as request]
@@ -201,17 +201,17 @@
         (ok (virkailija-db/list-comments hakemus-id)))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id :as request]
-        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-        :body [comment (describe NewComment "New comment")]
-        :return Comments
-        :summary "Add a comment for hakemus. As response, return all comments"
-        (let [identity (authentication/get-identity request)
-              {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
-          (ok (virkailija-db/add-comment hakemus-id
-                                         (:first-name identity)
-                                         (:surname identity)
-                                         (:email identity)
-                                         (:comment comment)))))
+         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+         :body [comment (describe NewComment "New comment")]
+         :return Comments
+         :summary "Add a comment for hakemus. As response, return all comments"
+         (let [identity (authentication/get-identity request)
+               {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
+           (ok (virkailija-db/add-comment hakemus-id
+                                          (:first-name identity)
+                                          (:surname identity)
+                                          (:email identity)
+                                          (:comment comment)))))
 
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id]
         :path-params [haku-id :- Long, hakemus-id :- Long]
@@ -227,7 +227,7 @@
         :summary "List all versions of attachments of given hakemus"
         :description "Listing does not return actual attachment data. Use per-field versioned download URL for getting it."
         (ok (->> (hakija-api/list-attachment-versions hakemus-id)
-                (map hakija-api/convert-attachment))))
+                 (map hakija-api/convert-attachment))))
 
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
         :path-params [haku-id :- Long, hakemus-id :- Long, field-id :- s/Str]
@@ -257,18 +257,18 @@
                :scores []})))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
-        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-        :body [score (describe NewScore "Stored or updated score")]
-        :return ScoringOfArvio
-        :summary "Submit scorings for given arvio."
-        :description "Scorings are automatically assigned to logged in user."
-        (let [identity (authentication/get-identity request)
-              {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
-          (ok (scoring/add-score avustushaku-id
-                                 hakemus-id
-                                 identity
-                                 (:selection-criteria-index score)
-                                 (:score score)))))
+         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+         :body [score (describe NewScore "Stored or updated score")]
+         :return ScoringOfArvio
+         :summary "Submit scorings for given arvio."
+         :description "Scorings are automatically assigned to logged in user."
+         (let [identity (authentication/get-identity request)
+               {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
+           (ok (scoring/add-score avustushaku-id
+                                  hakemus-id
+                                  identity
+                                  (:selection-criteria-index score)
+                                  (:score score)))))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id :as request]
          :path-params [avustushaku-id :- Long, hakemus-id :- Long]
@@ -305,50 +305,50 @@
           (ok {:search-url search-url})))
 
   (GET* "/:avustushaku-id/searches/:saved-search-id" [avustushaku-id saved-search-id]
-          :path-params [avustushaku-id :- Long, saved-search-id :- Long]
-          :return SavedSearch
-          :summary "Get stored search"
-          :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
-          (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
-            (ok (:query saved-search)))))
+        :path-params [avustushaku-id :- Long, saved-search-id :- Long]
+        :return SavedSearch
+        :summary "Get stored search"
+        :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
+        (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
+          (ok (:query saved-search)))))
 
 (defroutes* userinfo-routes
-            "User information"
+  "User information"
 
-            (GET "/" [:as request]
-              (ok (authentication/get-identity request))))
+  (GET "/" [:as request]
+       (ok (authentication/get-identity request))))
 
 (defroutes* ldap-routes
   "LDAP search"
 
   (POST* "/search" [:as request]
-          :body [body (describe {:searchInput s/Str} "User input of LDAP search box")]
-          :return LdapSearchResults
-          :summary "Search users from OPH LDAP."
-          :description "Each search term must be found as part of user name or email. Case does not matter."
+         :body [body (describe {:searchInput s/Str} "User input of LDAP search box")]
+         :return LdapSearchResults
+         :summary "Search users from OPH LDAP."
+         :description "Each search term must be found as part of user name or email. Case does not matter."
          (let [search-input (:searchInput body)
                search-results (oph.va.virkailija.ldap/search-users search-input)]
-                    (ok {:results search-results
-                         :error false
-                         :truncated false}))))
+           (ok {:results search-results
+                :error false
+                :truncated false}))))
 
 (defroutes* koodisto-routes
   "Koodisto-service access"
 
   (GET* "/" []
-          :return s/Any
-          :summary "List the available koodisto items"
-          :description "One of these can be selected for a Koodisto based input form field."
-         (let [koodisto-list (koodisto/list-koodistos)]
-                    (ok koodisto-list)))
+        :return s/Any
+        :summary "List the available koodisto items"
+        :description "One of these can be selected for a Koodisto based input form field."
+        (let [koodisto-list (koodisto/list-koodistos)]
+          (ok koodisto-list)))
 
   (GET* "/:koodisto-uri/:version" [koodisto-uri version]
-    :path-params [koodisto-uri :- s/Str version :- Long]
-    :return s/Any
-    :summary "List contents of certain version of certain koodisto"
-    :description "Choice values and labels for each value"
-    (let [koodi-options (koodisto/get-cached-koodi-options :hakija-db koodisto-uri version)]
-      (ok (:content koodi-options)))))
+        :path-params [koodisto-uri :- s/Str version :- Long]
+        :return s/Any
+        :summary "List contents of certain version of certain koodisto"
+        :description "Choice values and labels for each value"
+        (let [koodi-options (koodisto/get-cached-koodi-options :hakija-db koodisto-uri version)]
+          (ok (:content koodi-options)))))
 
 (defn- query-string-for-login [original-query-params params-to-add keys-to-remove]
   (let [payload-params (apply dissoc original-query-params keys-to-remove)
@@ -357,8 +357,8 @@
       (->> complete-params map->query (str "?")))))
 
 (defn- url-after-login [request]
- (let [original-url (-> request :session :original-url)]
-   (if original-url original-url "/")))
+  (let [original-url (-> request :session :original-url)]
+    (if original-url original-url "/")))
 
 (defn- redirect-to-loggged-out-page [request extra-query-params]
   (resp/redirect (str "/login/logged-out" (query-string-for-login (:query-params request) extra-query-params []))))
@@ -391,8 +391,8 @@
 
   (GET "/logout" [:as request]
        (authentication/logout (-> request :session :identity))
-        (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
-            (assoc :session nil))))
+       (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
+           (assoc :session nil))))
 
 (defroutes* doc-routes
   "API documentation browser"
