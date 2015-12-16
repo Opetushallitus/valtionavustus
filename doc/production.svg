@@ -110,11 +110,11 @@
       <rect x="98.6977" y="372.5874" clip-path="url(#clipPath2)" fill="none" width="472.1392" stroke-dasharray="6,2" height="139.254"/>
     </g>
     <g fill="white" text-rendering="geometricPrecision" shape-rendering="geometricPrecision" transform="matrix(1,0,0,1,-83,225)" stroke="white">
-      <path d="M319.7673 327.5874 L334.7673 312.5873 L349.7673 327.5874 L334.7673 342.5874 Z" fill-rule="evenodd" clip-path="url(#clipPath2)" stroke="none"/>
+      <path d="M319.7673 327.5874 L334.7673 312.5874 L349.7673 327.5874 L334.7673 342.5874 Z" fill-rule="evenodd" clip-path="url(#clipPath2)" stroke="none"/>
     </g>
     <g text-rendering="geometricPrecision" stroke-miterlimit="1.45" shape-rendering="geometricPrecision" font-family="sans-serif" transform="matrix(1,0,0,1,-83,225)" stroke-linecap="butt">
       <text x="355.7673" xml:space="preserve" y="332.1225" clip-path="url(#clipPath2)" stroke="none">86.50.169.147</text>
-      <path fill="none" d="M319.7673 327.5874 L334.7673 312.5873 L349.7673 327.5874 L334.7673 342.5874 Z" clip-path="url(#clipPath2)" fill-rule="evenodd"/>
+      <path fill="none" d="M319.7673 327.5874 L334.7673 312.5874 L349.7673 327.5874 L334.7673 342.5874 Z" clip-path="url(#clipPath2)" fill-rule="evenodd"/>
     </g>
     <g fill="rgb(255,255,153)" text-rendering="geometricPrecision" shape-rendering="geometricPrecision" transform="matrix(1,0,0,1,-83,225)" stroke="rgb(255,255,153)">
       <path d="M618.8369 35.9604 L762.8369 35.9604 L762.8369 50.9604 L777.8369 50.9604 L777.8369 88.9604 L618.8369 88.9604 Z" stroke="none" clip-path="url(#clipPath2)"/>
@@ -127,10 +127,12 @@
       <text x="641.6352" font-size="10px" y="72.1283" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none" xml:space="preserve">SSH-yhteys internetistä</text>
       <path fill="none" d="M373.6458 21.7681 L448.0508 88.8303" clip-path="url(#clipPath2)"/>
       <path d="M453.9933 94.1864 L448.4271 82.4383 L447.308 88.1608 L441.7321 89.8664 Z" clip-path="url(#clipPath2)" stroke="none"/>
-      <text x="427.8743" xml:space="preserve" y="62.5084" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP / SSH</text>
+      <text x="435.7144" xml:space="preserve" y="55.442" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP (8081, 6071)</text>
+      <text x="480.105" xml:space="preserve" y="69.5748" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">SSH</text>
       <path fill="none" d="M283.0166 21.7768 L214.7025 88.5981" clip-path="url(#clipPath2)"/>
       <path d="M208.9835 94.1921 L221.0582 89.3754 L215.4174 87.8988 L214.0657 82.2267 Z" clip-path="url(#clipPath2)" stroke="none"/>
-      <text x="140.3512" xml:space="preserve" y="62.4194" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP / SSH</text>
+      <text x="103.8626" xml:space="preserve" y="40.6775" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP (8081, 6071)</text>
+      <text x="148.2533" xml:space="preserve" y="54.8103" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">SSH</text>
       <path fill="none" d="M326.4833 -151.6426 L326.4833 -71.2402" clip-path="url(#clipPath2)"/>
       <path d="M326.4833 -63.2402 L331.4833 -75.2402 L326.4833 -72.2402 L321.4833 -75.2402 Z" clip-path="url(#clipPath2)" stroke="none"/>
       <text x="330.4833" xml:space="preserve" y="-127.9401" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTPS / SSH</text>
@@ -138,10 +140,12 @@
       <path fill="none" d="M334.7673 342.5594 L334.7673 372.5874" clip-path="url(#clipPath2)"/>
       <path fill="none" d="M327.4882 319.8094 L214.4608 199.0354" clip-path="url(#clipPath2)"/>
       <path d="M208.9943 193.1943 L213.5433 205.3725 L215.1441 199.7655 L220.8447 198.5394 Z" clip-path="url(#clipPath2)" stroke="none"/>
-      <text x="200.2318" xml:space="preserve" y="267.6702" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP / SSH</text>
+      <text x="139.5072" xml:space="preserve" y="269.3557" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP (8081, 6071)</text>
+      <text x="183.8979" xml:space="preserve" y="283.4886" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">SSH</text>
       <path fill="none" d="M341.8405 319.6123 L448.6576 199.1756" clip-path="url(#clipPath2)"/>
       <path d="M453.9659 193.1904 L442.2628 198.8505 L447.9941 199.9237 L449.7442 205.4858 Z" clip-path="url(#clipPath2)" stroke="none"/>
-      <text x="400.026" xml:space="preserve" y="266.4023" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP / SSH</text>
+      <text x="419.8568" xml:space="preserve" y="266.3557" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP (8081, 6071)</text>
+      <text x="464.2474" xml:space="preserve" y="280.4886" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">SSH</text>
       <path fill="none" stroke-dasharray="6,2" d="M618.8504 62.4604 L570.8369 62.4604" clip-path="url(#clipPath2)"/>
     </g>
   </g>
