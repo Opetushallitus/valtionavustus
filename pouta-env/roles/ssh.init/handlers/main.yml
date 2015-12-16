@@ -1,18 +1,14 @@
 - name: Restart ssh
   debug: msg="Triggering OS specific ssh service restart"
   notify:
-    - Restart ssh Debian
-    - Restart ssh CentOs
+    - Restart ssh (Debian)
+    - Restart ssh (RedHat)
   changed_when: true
 
-- name: Restart ssh Debian
-  # service: name=ssh state=restarted  # this will work in Ansible 1.9.2 : https://github.com/ansible/ansible-modules-core/issues/1298
-  # meanwhile:
-  shell: service ssh restart
+- name: Restart ssh (Debian)
+  service: name=ssh state=restarted
   when: ansible_os_family == 'Debian'
 
-- name: Restart ssh CentOs
-  # service: name=sshd state=restarted  # this will work in Ansible 1.9.2 : https://github.com/ansible/ansible-modules-core/issues/1298
-  # meanwhile:
-  shell: service sshd restart
+- name: Restart ssh (RedHat)
+  service: name=sshd state=restarted
   when: ansible_os_family == 'RedHat'
