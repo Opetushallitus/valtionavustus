@@ -337,9 +337,9 @@
 
   (GET* "/:avustushaku-id/:hakemus-id/decision.html" [:as request]
         :path-params [avustushaku-id :- Long hakemus-id :- Long]
-        :return LdapSearchResults
-        :summary "Search users from OPH LDAP."
-        :description "Each search term must be found as part of user name or email. Case does not matter."
+        :return s/Any
+        :summary "Generate decision document for given hakemus"
+        :description "A HTML-document containing the decision document is returned"
         (ok {})))
 
 (defroutes* koodisto-routes
