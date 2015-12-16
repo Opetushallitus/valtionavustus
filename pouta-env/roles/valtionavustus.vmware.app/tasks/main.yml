@@ -16,6 +16,18 @@
 - name: Create secret config dir
   file: path={{ data_dir }}/www/secret owner=www group=www state=directory mode=0700
 
+- name: Check if secrets config is available
+  local_action: stat path="{{playbook_dir}}/../../valtionavustus-secret/config/secret-{{app_profile}}.edn"
+  sudo: no
+  register: secrets_file
+
+- name: Warn if no secrets_file dir
+  fail: msg='{{playbook_dir}}/../../valtionavustus-secret/config/secret-{{app_profile}}.edn file not available'
+  when: secrets_file.stat.isreg is not defined or secrets_file.stat.isreg == False
+
+- name: Copy secret config to the server
+  copy: src={{playbook_dir}}/../../valtionavustus-secret/config/secret-{{app_profile}}.edn  dest={{ data_dir }}/www/secret owner=www group=www mode=0700
+
 - name: Create dumps dir
   file: path={{ data_dir }}/www/dumps owner=www group=www-data state=directory mode=0775
 
