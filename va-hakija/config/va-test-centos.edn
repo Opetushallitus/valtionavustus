@@ -1,0 +1,14 @@
+{:server {:auto-reload? false
+          :allow-db-clear? false
+          :port 8081
+          :url {:fi "https://srv4.va-dev.oph.fi/"
+                :sv "https://srv4.va-dev.oph.fi/"}
+          :virkailija-url "https://srv5.va-dev.oph.fi"}
+ :db {:database-name "va-qa"}
+ :email {:enabled? true
+         :host "smtp.sdn.csc.fi"
+         :port 25
+         :sender "no-reply@csc.fi"
+         :retry-initial-wait 2000
+         :retry-multiplier 4
+         :retry-max-time 60000}}
