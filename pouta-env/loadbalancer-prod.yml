@@ -1,7 +1,5 @@
 ---
 
-env: 'qa'
-
 # ACL:s for different endpoints
 
 loadbalancer_acl:

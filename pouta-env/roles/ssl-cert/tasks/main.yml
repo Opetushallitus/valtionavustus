@@ -2,12 +2,12 @@
   file: path=/etc/pki/domain/certs state=directory owner=root group=haproxy mode=0750
 
 - name: Check if local certs are available
-  local_action: stat path="{{playbook_dir}}/../../certs/{{env}}/"
+  local_action: stat path="{{playbook_dir}}/../../certs/va/"
   sudo: no
   register: certs_dir
 
 - name: Warn if no certs
-  fail: msg='{{playbook_dir}}/../../certs/{{env}}/ dir not available'
+  fail: msg='{{playbook_dir}}/../../certs/va/ dir not available'
   when: certs_dir.stat.isdir is not defined or certs_dir.stat.isdir == False
   ignore_errors: yes
 
@@ -23,5 +23,5 @@
   when: cert_files.stdout_lines is defined
 
 - name: Copy SSL certificates to the server
-  copy: src={{playbook_dir}}/../../certs/{{env}}/ dest=/etc/pki/domain/certs/ owner=root group=haproxy mode=0640
+  copy: src={{playbook_dir}}/../../certs/va/ dest=/etc/pki/domain/certs/ owner=root group=haproxy mode=0640
   when: cert_files.stdout_lines is defined
