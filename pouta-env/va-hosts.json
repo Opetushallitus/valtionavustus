@@ -1,0 +1,46 @@
+{
+  "gateways": {
+    "hosts": [
+      "loadbalancer-test-centos"
+    ]
+  },
+  "va_backend_centos": {
+    "hosts": [
+      "va-test-centos"
+    ]
+  },
+  "prod-va_backend": {
+    "hosts": [
+    ]
+  },
+  "va_backend": {
+    "hosts": [
+    ]
+  },
+  "va_build": {
+    "hosts": [
+    ]
+  },
+  "_meta": {
+    "hostvars": {
+      "va-test-centos": {
+        "ansible_default_ipv4": {
+          "address": "192.168.1.16"
+        },
+        "ansible_ssh_host": "192.168.1.16",
+        "ansible_all_ipv4_addresses": [
+          "192.168.1.16"
+        ]
+      },
+      "loadbalancer-test-centos": {
+        "ansible_default_ipv4": {
+          "address": "192.168.1.19"
+        },
+        "ansible_ssh_host": "86.50.170.86",
+        "ansible_all_ipv4_addresses": [
+          "192.168.1.19"
+        ]
+      }
+    }
+  }
+}
