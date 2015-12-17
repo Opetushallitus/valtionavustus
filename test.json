@@ -1,0 +1,105 @@
+{
+  "content": [
+    {
+      "fieldClass": "infoElement",
+      "id": "name",
+      "fieldType": "h1"
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "koulutuspaivalaskuri-fieldset",
+      "fieldType": "growingFieldset",
+      "params":{
+        "showOnlyFirstLabels": false
+      },
+      "children": [
+        {
+          "fieldClass": "wrapperElement",
+          "id":"trainee-day-calculator-1",
+          "fieldType":"growingFieldsetChild",
+          "children": [
+            "fieldClass": "wrapperElement",
+            "id": "trainee-day-calculator",
+            "fieldType": "fieldset",
+            "children": [
+            {
+              "fieldClass": "formField",
+              "fieldType": "textField",
+              "params": {
+                "size": "large",
+                "maxlength": 80
+              },
+              "helpText": {
+                "fi": "Koulutusosion nimi",
+                "sv": "TODO Koulutusosion nimi"
+              },
+              "label": {
+                "fi": "Koulutusosion nimi",
+                "sv": "TODO Koulutusosion nimi"
+              },
+              "id": "koulutusosion-nimi",
+              "required": true
+            },
+            {
+              "fieldClass": "formField",
+              "fieldType": "textArea",
+              "id": "keskeiset-sisallot",
+              "params": {
+                "size": "large",
+                "maxlength": 1000
+              },
+              "helpText": {
+                "fi": "Keskeiset sisällöt ja toteuttamistapa",
+                "sv": "TODO Keskeiset sisällöt ja toteuttamistapa"
+              },
+              "label": {
+                "fi": "Keskeiset sisällöt ja toteuttamistapa",
+                "sv": "TODO Keskeiset sisällöt ja toteuttamistapa"
+              },
+              "required": true
+            },
+            {
+              "fieldClass": "formField",
+              "fieldType": "textField",
+              "id": "kohderyhmat",
+              "params": {
+                "size": "large",
+                "maxlength": 100
+              },
+              "helpText": {
+                "fi": "Kohderyhmät",
+                "sv": "TODO Kohderyhmät"
+              },
+              "label": {
+                "fi": "Kohderyhmät",
+                "sv": "TODO Kohderyhmät"
+              },
+              "required": true
+            },
+            {
+              "params": {
+                "size": "large",
+                "maxlength": 80
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "Koulutettavapäivälaskuri",
+                "sv": "Koulutettavapäivälaskuri"
+              },
+              "label": {
+                "fi": "Koulutettavapäivälaskuri",
+                "sv": "Koulutettavapäivälaskuri"
+              },
+              "id": "trainee-day-calculator",
+              "required": true,
+              "fieldType": "vaTraineeDayCalculator"
+            }
+
+          ]
+        }
+      ]
+    }
+  ],
+  "rules": [],
+  "created_at": "2015-12-11T15:29:48Z"
+}
