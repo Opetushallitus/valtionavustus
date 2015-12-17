@@ -1,0 +1,40 @@
+- name: Create ha proxy configuration directory for VA
+  file: path=/etc/haproxy/va state=directory owner=root mode=0755
+
+- name: Copy error pages into config
+  copy: src=errors dest=/etc/haproxy/va owner=root mode=0644
+
+- name: Haproxy need syslog UDP listening on
+  lineinfile: dest=/etc/rsyslog.conf regexp="\$ModLoad imudp" line="$ModLoad imudp" backup=yes
+  notify: Restart rsyslog
+
+- name: Haproxy need syslog UDP listening on
+  lineinfile: dest=/etc/rsyslog.conf regexp="\$ModLoad imudp" line="$ModLoad imudp" backup=yes
+  notify: Restart rsyslog
+
+- lineinfile: dest=/etc/rsyslog.conf regexp="\$UDPServerRun 514" line="$UDPServerRun 514" backup=yes
+  notify: Restart rsyslog
+
+- name: Config haproxy log
+  template: src=haproxy_syslog.conf.j2 dest=/etc/rsyslog.d/haproxy.conf owner=root group=root mode=0644
+  notify: Restart rsyslog
+
+- name: Mark port 8081 as http (RedHat)
+  command: semanage port -a --type http_port_t --proto tcp 8081
+  register: http_port_8081
+  when: ansible_os_family == 'RedHat'
+  ignore_errors: yes
+
+- name: Ensure port 8081 is http (RedHat)
+  command: semanage port -m --type http_port_t --proto tcp 8081
+  when: http_port_8081|failed
+
+- name: Mark port 6071 as http (RedHat)
+  command: semanage port -a --type http_port_t --proto tcp 6071
+  register: http_port_6071
+  when: ansible_os_family == 'RedHat'
+  ignore_errors: yes
+
+- name: Ensure port 6071 is http (RedHat)
+  command: semanage port -m --type http_port_t --proto tcp 6071
+  when: http_port_6071|failed

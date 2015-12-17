@@ -1,0 +1,27 @@
+- name: Make SSL certificate dir for the server
+  file: path=/etc/pki/domain/certs state=directory owner=root group=haproxy mode=0750
+
+- name: Check if local certs are available
+  local_action: stat path="{{playbook_dir}}/../../certs/{{env}}/"
+  sudo: no
+  register: certs_dir
+
+- name: Warn if no certs
+  fail: msg='{{playbook_dir}}/../../certs/{{env}}/ dir not available'
+  when: certs_dir.stat.isdir is not defined or certs_dir.stat.isdir == False
+  ignore_errors: yes
+
+- name: Get cert list
+  local_action: command ls -Al {{certs_dir.stat.path}}
+  sudo: no
+  register: cert_files
+  when: certs_dir.stat.isdir is defined and certs_dir.stat.isdir
+  changed_when: False
+
+- name: List certs
+  debug: var=cert_files.stdout_lines
+  when: cert_files.stdout_lines is defined
+
+- name: Copy SSL certificates to the server
+  copy: src={{playbook_dir}}/../../certs/{{env}}/ dest=/etc/pki/domain/certs/ owner=root group=haproxy mode=0640
+  when: cert_files.stdout_lines is defined

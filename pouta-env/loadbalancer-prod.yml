@@ -1,0 +1,108 @@
+---
+
+env: 'qa'
+
+# ACL:s for different endpoints
+
+loadbalancer_acl:
+  - name: va_backend_test_fi
+    condition: hdr(host) -i srv4.va-dev.oph.fi
+  - name: va_backend_test_sv
+    condition: hdr(host) -i srv4.va-dev.oph.fi
+  - name: va_virkailija_backend_test
+    condition: hdr(host) -i srv5.va-dev.oph.fi
+  - name: va_virkailija_backend_test_ip
+    condition: hdr(host) -i 86.50.170.86
+
+# Map from acl declaration to backend
+
+loadbalancer_acl_mapping:
+  - name: va_backend_test
+    condition: if va_backend_test_fi
+  - name: va_backend_test
+    condition: if va_backend_test_sv
+  - name: va_virkailija_backend_test
+    condition: if va_virkailija_backend_test
+  - name: va_virkailija_backend_test
+    condition: if va_virkailija_backend_test_ip
+
+# Define backends
+
+haproxy_backends:
+- name: 'va_backend_test'
+  balance: 'source'
+  server_group:
+    - name: "va_backend_centos"
+      port: 8081
+      params: ['check']
+  errorfile:
+    - code: 503
+      file: /etc/haproxy/va/errors/503.http
+  options:
+    - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ srv4.va-dev.oph.fi
+
+- name: 'va_virkailija_backend_test'
+  balance: 'source'
+  server_group:
+    - name: "va_backend_centos"
+      port: 6071
+      params: ['check']
+  errorfile:
+    - code: 503
+      file: /etc/haproxy/va/errors/503.http
+  options:
+    - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ srv5.va-dev.oph.fi
+
+# Global configuration - no need to change
+
+haproxy_frontends:
+  - name: 'loadbalancer'
+    maxconn: '1000'
+    bind: ["{{ ansible_default_ipv4.address }}:80"]
+    redirects:
+      - scheme https code 301
+  - name: 'loadbalancer-https'
+    maxconn: '1000'
+    bind: ["{{ ansible_default_ipv4.address }}:443"]
+    ssl:
+      cert: '/etc/pki/domain/certs/'
+      ciphers: 'ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DS no-sslv3'
+    acl: "{{ loadbalancer_acl }}"
+
+    use_backend: "{{ loadbalancer_acl_mapping }}"
+
+haproxy_defaults:
+  mode: http
+  log:
+    - address: 127.0.0.1
+      facility: local2
+      level: notice
+  timeout:
+      - param: 'connect'
+        value: '5000ms'
+      - param: 'http-request'
+        value: '5000ms'
+      - param: 'client'
+        value: '50000ms'
+      - param: 'server'
+        value: '300000ms'
+  options:
+    - httpclose
+    - forwardfor except 127.0.0.0/8
+    - redispatch
+    - abortonclose
+    - httplog
+    - dontlognull
+  errorfile:
+      - code: 400
+        file: /etc/haproxy/errors/400.http
+      - code: 403
+        file: /etc/haproxy/errors/403.http
+      - code: 408
+        file: /etc/haproxy/errors/408.http
+      - code: 500
+        file: /etc/haproxy/errors/500.http
+      - code: 502
+        file: /etc/haproxy/errors/502.http
+      - code: 504
+        file: /etc/haproxy/errors/504.http

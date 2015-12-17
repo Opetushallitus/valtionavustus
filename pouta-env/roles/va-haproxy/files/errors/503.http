@@ -1,0 +1,27 @@
+HTTP/1.0 503 Service Unavailable
+Cache-Control: no-cache
+Connection: close
+Content-Type: text/html
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Valtionavustus - Statsunderstöd</title>
+  <link href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css" rel="stylesheet" type="text/css">
+  <style type="text/css">body{font-family:'Open Sans',sans-serif;background-color:#fafafa;color:#1a1919;font-size:16px}a{color:#4194bf;cursor:pointer}#container{max-width:1300px;margin-top:140px;margin-left:auto;margin-right:auto;padding:0 20px 20px 20px}#container h1{font-weight:400;font-size:24px;margin:0;text-align:center}#container h2{color:#807a78;font-weight:300;font-size:20px;margin:0;text-align:center}#topbar{width:100%;height:120px;background-color:#fff;position:fixed;top:0;box-shadow:0 1px 2px 0 rgba(0,0,0,0.1);z-index:100}#topbar #logo{margin:20px 200px 0 20px;float:left}#topbar h1{margin:39px 30px 0 0;float:left;font-size:22px;font-weight:normal;text-transform:uppercase;display:block;text-align:right;max-width:300px}#top-container{width:1300px;margin-left:auto;margin-right:auto}</style>
+</head>
+<body>
+  <section id="topbar">
+    <div id="top-container">
+      <img id="logo" src="http://opetushallitus.fi/instancedata/prime_product_julkaisu/oph/pics/opetushallitus.gif" />
+      <h1 id="topic">Käyttökatko</h1>
+    </div>
+  </section>
+  <section id="container">
+    <h1>Palvelua päivitetään...</h1>
+    <h2>Palaathan sivulle hetken kuluttua uudelleen, kiitos.</h2>
+  </section>
+</body>
+</html>

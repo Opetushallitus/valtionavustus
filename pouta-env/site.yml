@@ -25,6 +25,17 @@
   roles:
   - valtionavustus.app
 
+- hosts: loadbalancer-test-centos
+  user: cloud-user
+  sudo: yes
+  vars_files: ['loadbalancer-prod.yml']
+  roles:
+  - {role: ssh.init}
+  - {role: common}
+  - {role: 3rdparty/info.haproxy, tags: ['update']}
+  - {role: ssl-cert, tags: ['install', 'certs']}
+  - {role: va-haproxy, tags: ['update']}
+
 - hosts: va-build
   user: cloud-user
   sudo: yes
