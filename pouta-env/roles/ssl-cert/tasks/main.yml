@@ -20,4 +20,4 @@
   debug: var=cert_files.stdout_lines
 
 - name: Copy SSL certificates to the server
-  copy: src={{certs_dir}} dest=/etc/pki/domain/certs/ owner=root group=haproxy mode=0640
+  copy: src={{certs_dir}}/ dest=/etc/pki/domain/certs/ owner=root group=haproxy mode=0640
