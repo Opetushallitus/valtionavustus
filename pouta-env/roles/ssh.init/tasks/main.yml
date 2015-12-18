@@ -41,26 +41,26 @@
   lineinfile: dest=/etc/hosts line='{{ hostvars[item].ansible_default_ipv4.address }} {{ item }}' owner=root group=root mode=0644
   with_items: groups.va_build
 
-- name: Remove previous test app server IP mapping from /etc/hosts
+- name: Remove previous app server IP mapping from /etc/hosts
+  lineinfile: dest=/etc/hosts regexp='^[0-9\.]* {{ item }}$' state=absent owner=root group=root mode=0644
+  with_items: groups.va_app
+
+- name: Add app servers IP mapping to /etc/hosts
+  lineinfile: dest=/etc/hosts line='{{ hostvars[item].ansible_default_ipv4.address }} {{ item }}' owner=root group=root mode=0644
+  with_items: groups.va_app
+
+- name: Remove previous pouta test app server IP mapping from /etc/hosts
   lineinfile: dest=/etc/hosts regexp='^[0-9\.]* {{ item }}$' state=absent owner=root group=root mode=0644
   with_items: groups.va_backend
 
-- name: Add test app servers IP mapping to /etc/hosts
+- name: Add pouta test app servers IP mapping to /etc/hosts
   lineinfile: dest=/etc/hosts line='{{ hostvars[item].ansible_default_ipv4.address }} {{ item }}' owner=root group=root mode=0644
   with_items: groups.va_backend
 
-- name: Remove previous test app server IP mapping from /etc/hosts
-  lineinfile: dest=/etc/hosts regexp='^[0-9\.]* {{ item }}$' state=absent owner=root group=root mode=0644
-  with_items: groups.va_backend_centos
-
-- name: Add test app servers IP mapping to /etc/hosts
-  lineinfile: dest=/etc/hosts line='{{ hostvars[item].ansible_default_ipv4.address }} {{ item }}' owner=root group=root mode=0644
-  with_items: groups.va_backend_centos
-
-- name: Remove previous production app server IP mapping from /etc/hosts
+- name: Remove previous pouta production app server IP mapping from /etc/hosts
   lineinfile: dest=/etc/hosts regexp='^[0-9\.]* {{ item }}$' state=absent owner=root group=root mode=0644
   with_items: groups['prod-va_backend']
 
-- name: Add production app servers IP mapping to /etc/hosts
+- name: Add pouta production app servers IP mapping to /etc/hosts
   lineinfile: dest=/etc/hosts line='{{ hostvars[item].ansible_default_ipv4.address }} {{ item }}' owner=root group=root mode=0644
   with_items: groups['prod-va_backend']

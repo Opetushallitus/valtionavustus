@@ -42,7 +42,7 @@
         va_security_groups: 'qa-common,qa-va-app'
       }
     - { include: tasks/create_machine.yml,
-        machine_name: loadbalancer-test-centos,
+        machine_name: va-loadbalancer-dev,
         pouta_flavor_id: "{{ pouta_tiny }}",
         pouta_image_name: "{{ pouta_centos_7_0 }}",
         floating_ip: 86.50.170.86,
@@ -50,10 +50,10 @@
         va_security_groups: 'qa-loadbalancer-secgroup'
       }
     - { include: tasks/create_machine.yml,
-        machine_name: va-test-centos,
+        machine_name: va-dev,
         pouta_flavor_id: "{{ pouta_mini }}",
         pouta_image_name: "{{ pouta_centos_7_0 }}",
-        va_ansible_host_groups: "va_backend_centos",
+        va_ansible_host_groups: "va_app,va_app_dev",
         va_security_groups: 'qa-common,qa-va-app'
       }
     - { include: tasks/create_machine.yml,

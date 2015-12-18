@@ -7,12 +7,12 @@
   roles:
   - valtionavustus.app
 
-- hosts: va-test-centos
+- hosts: va-dev
   user: cloud-user
   sudo: yes
   vars:
-    app_profile: va-test-centos
-    dbname: va-qa
+    app_profile: va-dev
+    dbname: va-dev
   roles:
   - valtionavustus.vmware.app
 
@@ -25,10 +25,10 @@
   roles:
   - valtionavustus.app
 
-- hosts: loadbalancer-test-centos
+- hosts: va-loadbalancer-dev
   user: cloud-user
   sudo: yes
-  vars_files: ['loadbalancer-prod.yml']
+  vars_files: ['loadbalancer-dev.yml']
   roles:
   - {role: ssh.init}
   - {role: common}

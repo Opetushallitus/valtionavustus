@@ -3,82 +3,53 @@
 # ACL:s for different endpoints
 
 loadbalancer_acl:
-  - name: va_backend_qa
-    condition: hdr(host) -i testi.valtionavustukset.oph.fi
-  - name: va_virkailija_backend_qa
-    condition: hdr(host) -i testi.virkailija.valtionavustukset.oph.fi
-  - name: va_backend_prod_fi
-    condition: hdr(host) -i valtionavustukset.oph.fi
-  - name: va_backend_prod_sv
-    condition: hdr(host) -i statsunderstod.oph.fi
-  - name: va_virkailija_backend_prod
-    condition: hdr(host) -i virkailija.valtionavustukset.oph.fi
-  - name: va_virkailija_backend_prod_ip
-    condition: hdr(host) -i 86.50.28.144
+  - name: va_backend_test_fi
+    condition: hdr(host) -i srv4.va-dev.oph.fi
+  - name: va_backend_test_sv
+    condition: hdr(host) -i srv4.va-dev.oph.fi
+  - name: va_virkailija_backend_test
+    condition: hdr(host) -i srv5.va-dev.oph.fi
+  - name: va_virkailija_backend_test_ip
+    condition: hdr(host) -i 86.50.170.86
 
 # Map from acl declaration to backend
 
 loadbalancer_acl_mapping:
-  - name: va_backend_qa
-    condition: if va_backend_qa
-  - name: va_virkailija_backend_qa
-    condition: if va_virkailija_backend_qa
-  - name: va_backend_prod
-    condition: if va_backend_prod_fi va_backend_prod_sv
-  - name: va_virkailija_backend_prod
-    condition: if va_virkailija_backend_prod va_virkailija_backend_prod_ip
+  - name: va_backend_test
+    condition: if va_backend_test_fi
+  - name: va_backend_test
+    condition: if va_backend_test_sv
+  - name: va_virkailija_backend_test
+    condition: if va_virkailija_backend_test
+  - name: va_virkailija_backend_test
+    condition: if va_virkailija_backend_test_ip
 
 # Define backends
 
 haproxy_backends:
-- name: 'va_backend_qa'
+- name: 'va_backend_test'
   balance: 'source'
   server_group:
-    - name: "va_app_qa"
+    - name: "va_app_dev"
       port: 8081
       params: ['check']
   errorfile:
     - code: 503
       file: /etc/haproxy/va/errors/503.http
   options:
-    - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ testi.valtionavustukset.oph.fi
+    - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ srv4.va-dev.oph.fi
 
-- name: 'va_virkailija_backend_qa'
+- name: 'va_virkailija_backend_test'
   balance: 'source'
   server_group:
-    - name: "va_app_qa"
+    - name: "va_app_dev"
       port: 6071
       params: ['check']
   errorfile:
     - code: 503
       file: /etc/haproxy/va/errors/503.http
   options:
-    - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ testi.virkailija.valtionavustukset.oph.fi
-
-haproxy_backends:
-- name: 'va_backend_prod'
-  balance: 'source'
-  server_group:
-    - name: "va_app_prod"
-      port: 8081
-      params: ['check']
-  errorfile:
-    - code: 503
-      file: /etc/haproxy/va/errors/503.http
-  options:
-    - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ valtionavustukset.oph.fi
-
-- name: 'va_virkailija_backend_prod'
-  balance: 'source'
-  server_group:
-    - name: "va_app_prod"
-      port: 6071
-      params: ['check']
-  errorfile:
-    - code: 503
-      file: /etc/haproxy/va/errors/503.http
-  options:
-    - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ virkailija.valtionavustukset.oph.fi
+    - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ srv5.va-dev.oph.fi
 
 # Global configuration - no need to change
 

@@ -4,8 +4,8 @@
           :url {:fi "https://srv4.va-dev.oph.fi/"
                 :sv "https://srv4.va-dev.oph.fi/"}
           :virkailija-url "https://srv5.va-dev.oph.fi"}
- :db {:database-name "va-qa"}
- :hakija-db {:database-name "va-qa"}
+ :db {:database-name "va-dev"}
+ :hakija-db {:database-name "va-dev"}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25

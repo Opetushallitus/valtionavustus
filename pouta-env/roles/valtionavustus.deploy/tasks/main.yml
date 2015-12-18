@@ -17,32 +17,32 @@
   sudo_user: "{{ jenkins_user }}"
   file: "path=~{{ jenkins_user }}/.ssh/known_hosts state=touch mode=0600"
 
-- name: Remove the old SSH host key of test application servers from to ~{{ jenkins_user }}/.ssh/known_hosts
+- name: Remove the old SSH host key of pouta test application servers from to ~{{ jenkins_user }}/.ssh/known_hosts
   sudo_user: "{{ jenkins_user }}"
   shell: "ssh-keygen -R {{ item }}"
   with_items: groups['va_backend']
 
-- name: Remove the old SSH host key of test application servers from to ~{{ jenkins_user }}/.ssh/known_hosts
+- name: Remove the old SSH host key of application servers from to ~{{ jenkins_user }}/.ssh/known_hosts
   sudo_user: "{{ jenkins_user }}"
   shell: "ssh-keygen -R {{ item }}"
-  with_items: groups['va_backend_centos']
+  with_items: groups['va_app']
 
-- name: Remove the old SSH host key of production application servers from to ~{{ jenkins_user }}/.ssh/known_hosts
+- name: Remove the old SSH host key of pouta production application servers from to ~{{ jenkins_user }}/.ssh/known_hosts
   sudo_user: "{{ jenkins_user }}"
   shell: "ssh-keygen -R {{ item }}"
   with_items: groups['prod-va_backend']
 
-- name: Add the new SSH host key of test application servers to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
+- name: Add the new SSH host key of pouta test application servers to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
   sudo_user: "{{ jenkins_user }}"
   shell: "ssh-keyscan -H {{ item }} >> ~{{ jenkins_user }}/.ssh/known_hosts"
   with_items: groups['va_backend']
 
-- name: Add the new SSH host key of test application servers to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
+- name: Add the new SSH host key of application servers to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
   sudo_user: "{{ jenkins_user }}"
   shell: "ssh-keyscan -H {{ item }} >> ~{{ jenkins_user }}/.ssh/known_hosts"
-  with_items: groups['va_backend_centos']
+  with_items: groups['va_app']
 
-- name: Add the new SSH host key of production application servers to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
+- name: Add the new SSH host key of pouta production application servers to ~{{ jenkins_user }}/.ssh/known_hosts for deploys
   sudo_user: "{{ jenkins_user }}"
   shell: "ssh-keyscan -H {{ item }} >> ~{{ jenkins_user }}/.ssh/known_hosts"
   with_items: groups['prod-va_backend']
@@ -57,37 +57,37 @@
   ssh_config: user={{ jenkins_user}} remote_user=git host=github.com hostname=github.com
               identity_file=~{{ jenkins_user }}/.ssh/id_deploy port=22 state=present
 
-- name: Add new jenkins public SSH key to deployer account on test app server machines
+- name: Add new jenkins public SSH key to deployer account on pouta test app server machines
   authorized_key: user="va-deploy"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
   with_items: groups['va_backend']
 
-- name: Add new jenkins public SSH key to deployer account on test app server machines
+- name: Add new jenkins public SSH key to deployer account on app server machines
   authorized_key: user="va-deploy"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
-  with_items: groups['va_backend_centos']
+  with_items: groups['va_app']
 
-- name: Add new jenkins public SSH key to deployer account on production app server machines
+- name: Add new jenkins public SSH key to deployer account on pouta production app server machines
   authorized_key: user="va-deploy"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
   with_items: groups['prod-va_backend']
 
-- name: Add new jenkins public SSH key to Postgresql account on test app server machines for backups
+- name: Add new jenkins public SSH key to Postgresql account on pouta test app server machines for backups
   authorized_key: user="postgres"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
   with_items: groups['va_backend']
 
-- name: Add new jenkins public SSH key to Postgresql account on test app server machines for backups
+- name: Add new jenkins public SSH key to Postgresql account on app server machines for backups
   authorized_key: user="postgres"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
-  with_items: groups['va_backend_centos']
+  with_items: groups['va_app']
 
-- name: Add new jenkins public SSH key to Postgresql account on production app server machines for backups
+- name: Add new jenkins public SSH key to Postgresql account on pouta production app server machines for backups
   authorized_key: user="postgres"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"

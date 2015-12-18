@@ -1,4 +1,4 @@
-- hosts: va-build:va-test:va-prod:va-test-centos:loadbalancer-test-centos
+- hosts: va-build:va-test:va-prod:va-dev:va-loadbalancer-dev
   user: cloud-user
   sudo: yes
   roles:
