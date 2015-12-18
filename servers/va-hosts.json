@@ -53,7 +53,8 @@
       "va-build": {
         "ansible_default_ipv4": {
           "address": "192.168.1.9"
-        }
+        },
+        "ansible_ssh_host": "192.168.1.9"
       }
     }
   }
