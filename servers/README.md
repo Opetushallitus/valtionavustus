@@ -41,7 +41,7 @@ Valtionavustusjärjestelmän palvelimien provisiointi
   - `./python-venv/bin/ansible-playbook -i openstack_inventory.py site.yml`
   - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
 * alusta yksittäinen palvelin
-  - `./python-venv/bin/ansible-playbook -i va-hosts.py site.yml -l va-test`
+  - `./python-venv/bin/ansible-playbook -i openstack_inventory.py site.yml -l va-test`
 
 ### Uuden käyttäjän lisääminen buildikoneelle kirjautumista varten
 `./open-ssh va-build add_va_jenkins_user.bash <käyttäjätunnus>`
@@ -57,18 +57,18 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 
 ### CSC vmware ympäristö
 
-* palvelinten inventory meta tiedot on listattu staattisesti tiedostossa: `va-hosts.json`
-  - käytetään va-hosts.py avulla
-  - myös poudan va-build kone on mukana, jotta saadaan sille tarvittavat oiekudet ja yhteydet vmware koneisiin
-* tarkista, että palvelimet vastaavat ansiblen pingiin (esim. oph-va-app-test01 tai kaikki `all`):
-  - `./python-venv/bin/ansible all -i va-hosts.py -m ping`
+* palvelinten inventory meta tiedot on listattu staattisesti tiedostossa: `vmware_inventory.json`
+  - käytetään `vmware_inventory.py` avulla
+  - myös poudan va-build kone on mukana, jotta saadaan sille tarvittavat oikeudet ja yhteydet vmware koneisiin
+* tarkista, että palvelimet vastaavat ansiblen pingiin (esim. oph-va-app-test01` tai kaikki `all`):
+  - `./python-venv/bin/ansible all -i vmware_inventory.py -m ping`
 * alusta kaikki palvelimet
-  - `./python-venv/bin/ansible-playbook -i va-hosts.py site.yml`
+  - `./python-venv/bin/ansible-playbook -i vmware_inventory.py site.yml`
   - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
   - huom. jos on täysin uusi CentOs kone täytyy käydä koneella kommentoimassa käsin `/etc/sudoers`:sta tämä rivi:
     * `Defaults    requiretty`
     * muuten ei Ansible saa sudotettua itseään
 * alusta yksittäinen palvelin
-  - `./python-venv/bin/ansible-playbook -i va-hosts.py site.yml -l oph-va-app-test01.csc.fi`
+  - `./python-venv/bin/ansible-playbook -i vmware_inventory.py site.yml -l oph-va-app-test01.csc.fi`
 * jos haluat ajaa vain tietyt taskit niin onnistuu steppaamalla halutusta kohdasta alkaen.
-    * esim. `./python-venv/bin/ansible-playbook -i va-hosts.py site.yml -l oph-va-app-test01.csc.fi --step --start-at-task="Add supervisor conf to start and stop the applications"`
+    * esim. `./python-venv/bin/ansible-playbook -i vmware_inventory.py site.yml -l oph-va-app-test01.csc.fi --step --start-at-task="Add supervisor conf to start and stop the applications"`

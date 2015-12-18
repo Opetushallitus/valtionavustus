@@ -2,7 +2,7 @@
 import sys
 
 def main(args):
-  f = open('va-hosts.json', 'r')
+  f = open('vmware_inventory.json', 'r')
   for line in f:
     print line
 
