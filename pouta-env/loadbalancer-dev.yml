@@ -5,31 +5,27 @@ certs_dir: '../../valtionavustus-secret/certs/dev'
 # ACL:s for different endpoints
 
 loadbalancer_acl:
-  - name: va_backend_test_fi
+  - name: va_backend_dev
     condition: hdr(host) -i srv4.va-dev.oph.fi
-  - name: va_backend_test_sv
-    condition: hdr(host) -i srv4.va-dev.oph.fi
-  - name: va_virkailija_backend_test
+  - name: va_virkailija_backend_dev
     condition: hdr(host) -i srv5.va-dev.oph.fi
-  - name: va_virkailija_backend_test_ip
+  - name: va_virkailija_backend_dev_ip
     condition: hdr(host) -i 86.50.170.86
 
 # Map from acl declaration to backend
 
 loadbalancer_acl_mapping:
-  - name: va_backend_test
-    condition: if va_backend_test_fi
-  - name: va_backend_test
-    condition: if va_backend_test_sv
-  - name: va_virkailija_backend_test
-    condition: if va_virkailija_backend_test
-  - name: va_virkailija_backend_test
-    condition: if va_virkailija_backend_test_ip
+  - name: va_backend_dev
+    condition: if va_backend_dev
+  - name: va_virkailija_backend_dev
+    condition: if va_virkailija_backend_dev
+  - name: va_virkailija_backend_dev
+    condition: if va_virkailija_backend_dev_ip
 
 # Define backends
 
 haproxy_backends:
-- name: 'va_backend_test'
+- name: 'va_backend_dev'
   balance: 'source'
   server_group:
     - name: "va_app_dev"
@@ -41,7 +37,7 @@ haproxy_backends:
   options:
     - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ srv4.va-dev.oph.fi
 
-- name: 'va_virkailija_backend_test'
+- name: 'va_virkailija_backend_dev'
   balance: 'source'
   server_group:
     - name: "va_app_dev"
