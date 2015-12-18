@@ -37,11 +37,11 @@ Valtionavustusjärjestelmän palvelimien provisiointi
   - `./open-ssh va-build`
 * tarkista, että uusi palvelin myös vastaa ansiblen pingiin (esim. va-test tai kaikki `all`):
   - `./python-venv/bin/ansible va-test -i openstack_inventory.py -m ping -u cloud-user`
-* alusta palvelimet
+* alusta kaikki palvelimet
   - `./python-venv/bin/ansible-playbook -i openstack_inventory.py site.yml`
   - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
-  - jos haluat ajaa vain tietyt taskit niin onnisttuu steppaamalal halutusta kohdasta alkaen.
-    * esim. `./python-venv/bin/ansible-playbook -i openstack_inventory.py site.yml -l va-test --step --start-at-task="Add script to start and stop the application"`
+* alusta yksittäinen palvelin
+  - `./python-venv/bin/ansible-playbook -i va-hosts.py site.yml -l va-test`
 
 ### Uuden käyttäjän lisääminen buildikoneelle kirjautumista varten
 `./open-ssh va-build add_va_jenkins_user.bash <käyttäjätunnus>`
@@ -60,8 +60,12 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 * palvelinten inventory meta tiedot on listattu staattisesti tiedostossa: `va-hosts.json`
   - käytetään va-hosts.py avulla
   - myös poudan va-build kone on mukana, jotta saadaan sille tarvittavat oiekudet ja yhteydet vmware koneisiin
-* alusta palvelimet
+* tarkista, että palvelimet vastaavat ansiblen pingiin (esim. oph-va-app-test01 tai kaikki `all`):
+  - `./python-venv/bin/ansible all -i va-hosts.py -m ping`
+* alusta kaikki palvelimet
   - `./python-venv/bin/ansible-playbook -i va-hosts.py site.yml`
   - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
-  - jos haluat ajaa vain tietyt taskit niin onnisttuu steppaamalal halutusta kohdasta alkaen.
+* alusta yksittäinen palvelin
+  - `./python-venv/bin/ansible-playbook -i va-hosts.py site.yml -l oph-va-app-test01.csc.fi`
+* jos haluat ajaa vain tietyt taskit niin onnistuu steppaamalla halutusta kohdasta alkaen.
     * esim. `./python-venv/bin/ansible-playbook -i va-hosts.py site.yml -l oph-va-app-test01.csc.fi --step --start-at-task="Add supervisor conf to start and stop the applications"`
