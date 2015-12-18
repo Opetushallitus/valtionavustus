@@ -1,5 +1,7 @@
 ---
 
+certs_dir: '../../valtionavustus-secret/certs/dev'
+
 # ACL:s for different endpoints
 
 loadbalancer_acl:
