@@ -161,12 +161,12 @@ Hakemusten generointi
 
 # JConsole yhteys palvelimelle
 
-* mene palvelimelle: esim. `./pouta-env/ssh_to_va-test.bash`
+* mene palvelimelle: esim. `./servers/ssh_to_va-test.bash`
 * katso java serverprosessin id: `ps -fe | grep java`
 * katso mitä portteja se kuuntelee: esim.`sudo netstat -apn | grep 32762 | grep LISTEN`
   - katso mikä on palvelun vaihtuva RMI portti (se on siis se, joka ei ole palvelun vakio http portti eikä vakio JMX portti)
     * JMX portti on: va-hakija=10876, va.virkailija=11322
-* avaa uusi ssh yhteys koneelle ja putkita RMI portti (JMX portti putkitetaan valmiiksi ssh skriptissä): esim. `./pouta-env/ssh_to_va-test.bash -L46498:localhost:46498`
+* avaa uusi ssh yhteys koneelle ja putkita RMI portti (JMX portti putkitetaan valmiiksi ssh skriptissä): esim. `.servers/ssh_to_va-test.bash -L46498:localhost:46498`
 * avaa jconsole omalla koneellasi: `jconsole &` ja ota remote yhteys käyttäen osoitteena:
   - testissä:
    * va-hakija: "localhost:10876"

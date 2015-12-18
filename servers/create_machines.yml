@@ -16,7 +16,7 @@
     tenant_name: "{{ lookup('env','OS_TENANT_NAME') }}"
     auth_url: "{{ lookup('env','OS_AUTH_URL') }}"
 
-    # You can see the available flavors and images with pouta-venv/bin/nova flavor-list && pouta-venv/bin/nova image-list
+    # You can see the available flavors and images with python-venv/bin/nova flavor-list && python-venv/bin/nova image-list
     pouta_tiny: 1a0f1143-47b5-4e8a-abda-eba52ae3c5b9
     pouta_mini: 417fcb76-884b-405f-a4f4-8bce27058e4a
     pouta_small: 9e2c9a54-af51-40be-a9d9-977d6b6d8958

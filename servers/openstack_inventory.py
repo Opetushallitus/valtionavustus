@@ -1,4 +1,4 @@
-#!./pouta-venv/bin/python
+#!./python-venv/bin/python
 ################################################################################
 # Dynamic inventory generation for Ansible
 # Author lukas.pustina@codecentric.de

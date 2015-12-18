@@ -1,4 +1,4 @@
-#!./pouta-venv/bin/python
+#!./python-venv/bin/python
 import sys
 
 def main(args):
