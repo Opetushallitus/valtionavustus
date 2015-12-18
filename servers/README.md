@@ -55,7 +55,7 @@ Valtionavustusjärjestelmän palvelimien provisiointi
   operaatioille "Input/output error", sen saattaa saada korjattua xfs_repair \-komennolla. Ks.
   [tarkemmat ohjeet](disk_io_error_repair.md).
 
-### CSC vmware ympäristö
+## CSC vmware ympäristö
 
 * palvelinten inventory meta tiedot on listattu staattisesti tiedostossa: `vmware_inventory.json`
   - käytetään `vmware_inventory.py` avulla
