@@ -65,6 +65,9 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 * alusta kaikki palvelimet
   - `./python-venv/bin/ansible-playbook -i va-hosts.py site.yml`
   - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
+  - huom. jos on täysin uusi CentOs kone täytyy käydä koneella kommentoimassa käsin `/etc/sudoers`:sta tämä rivi:
+    * `Defaults    requiretty`
+    * muuten ei Ansible saa sudotettua itseään
 * alusta yksittäinen palvelin
   - `./python-venv/bin/ansible-playbook -i va-hosts.py site.yml -l oph-va-app-test01.csc.fi`
 * jos haluat ajaa vain tietyt taskit niin onnistuu steppaamalla halutusta kohdasta alkaen.
