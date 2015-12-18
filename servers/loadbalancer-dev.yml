@@ -11,6 +11,8 @@ loadbalancer_acl:
     condition: hdr(host) -i srv5.va-dev.oph.fi
   - name: va_virkailija_backend_dev_ip
     condition: hdr(host) -i 86.50.170.86
+  - name: va_build
+    condition: hdr(host) -i dev.valtionavustukset.oph.fi
 
 # Map from acl declaration to backend
 
@@ -21,6 +23,8 @@ loadbalancer_acl_mapping:
     condition: if va_virkailija_backend_dev
   - name: va_virkailija_backend_dev
     condition: if va_virkailija_backend_dev_ip
+  - name: va_build
+    condition: if va_build
 
 # Define backends
 
@@ -48,6 +52,12 @@ haproxy_backends:
       file: /etc/haproxy/va/errors/503.http
   options:
     - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ srv5.va-dev.oph.fi
+
+- name: 'va_build'
+  balance: 'source'
+  server_group:
+    - name: "va_build"
+      port: 80
 
 # Global configuration - no need to change
 
