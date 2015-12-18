@@ -1,12 +1,23 @@
 {
   "gateways": {
     "hosts": [
-      "loadbalancer-test-centos"
+      "oph-va-lb-prod01.csc.fi"
     ]
   },
-  "va_backend_centos": {
+  "va_app": {
     "hosts": [
-      "va-test-centos"
+      "oph-va-app-test01.csc.fi",
+      "oph-va-app-prod01.csc.fi"
+    ]
+  },
+  "va_app_qa": {
+    "hosts": [
+      "oph-va-app-test01.csc.fi"
+    ]
+  },
+  "va_app_prod": {
+    "hosts": [
+      "oph-va-app-prod01.csc.fi"
     ]
   },
   "prod-va_backend": {
@@ -19,27 +30,30 @@
   },
   "va_build": {
     "hosts": [
+      "va-build"
     ]
   },
   "_meta": {
     "hostvars": {
-      "va-test-centos": {
+      "oph-va-lb-prod01.csc.fi": {
         "ansible_default_ipv4": {
-          "address": "192.168.1.16"
-        },
-        "ansible_ssh_host": "192.168.1.16",
-        "ansible_all_ipv4_addresses": [
-          "192.168.1.16"
-        ]
+          "address": "86.50.28.144"
+        }
       },
-      "loadbalancer-test-centos": {
+      "oph-va-app-test01.csc.fi": {
         "ansible_default_ipv4": {
-          "address": "192.168.1.19"
-        },
-        "ansible_ssh_host": "86.50.170.86",
-        "ansible_all_ipv4_addresses": [
-          "192.168.1.19"
-        ]
+          "address": "86.50.28.142"
+        }
+      },
+      "oph-va-app-prod01.csc.fi": {
+        "ansible_default_ipv4": {
+          "address": "86.50.28.143"
+        }
+      },
+      "va-build": {
+        "ansible_default_ipv4": {
+          "address": "192.168.1.9"
+        }
       }
     }
   }

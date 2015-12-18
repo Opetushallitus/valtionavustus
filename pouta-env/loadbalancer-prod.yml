@@ -16,7 +16,7 @@ loadbalancer_acl:
   - name: va_virkailija_backend_prod
     condition: hdr(host) -i virkailija.valtionavustukset.oph.fi
   - name: va_virkailija_backend_prod_ip
-    condition: hdr(host) -i 86.50.28.144
+    condition: hdr(host) -i 86.50.28.143
 
 # Map from acl declaration to backend
 
@@ -26,9 +26,13 @@ loadbalancer_acl_mapping:
   - name: va_virkailija_backend_qa
     condition: if va_virkailija_backend_qa
   - name: va_backend_prod
-    condition: if va_backend_prod_fi va_backend_prod_sv
+    condition: if va_backend_prod_fi
+  - name: va_backend_prod
+    condition: if va_backend_prod_sv
   - name: va_virkailija_backend_prod
-    condition: if va_virkailija_backend_prod va_virkailija_backend_prod_ip
+    condition: if va_virkailija_backend_prod
+  - name: va_virkailija_backend_prod
+    condition: if va_virkailija_backend_prod_ip
 
 # Define backends
 
