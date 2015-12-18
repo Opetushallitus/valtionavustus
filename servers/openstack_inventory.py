@@ -1,4 +1,4 @@
-#!./python-venv/bin/python
+#!/usr/bin/env python
 ################################################################################
 # Dynamic inventory generation for Ansible
 # Author lukas.pustina@codecentric.de
