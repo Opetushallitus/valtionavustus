@@ -41,8 +41,8 @@
 
 (defn- get-budget-params [avustushaku-id answers]
   (let [budget-summary (calculate-budget-summary avustushaku-id answers)]
-    {:budget_total (:total-needed budget-summary)
-     :budget_oph_share (:oph-share budget-summary)}))
+    {:budget_total (or (:total-needed budget-summary) 0)
+     :budget_oph_share (or (:oph-share budget-summary) 0)}))
 
 (defn- pluck-key [answers key as default]
   (let [value (or (form-util/find-answer-value answers key) default)]

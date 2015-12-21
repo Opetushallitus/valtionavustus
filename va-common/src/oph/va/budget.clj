@@ -15,7 +15,6 @@
                                   formutil/flatten-elements
                                   (filter is-budget-field?)
                                   (map (partial do-calculate-totals answers self-financing-percentage)))]
-    (assert (= 1 (count all-budget-summaries)) (str "Expected exactly one budget field but got " (count all-budget-summaries)))
     (first all-budget-summaries)))
 
 (defn- find-summing-fields [children]
