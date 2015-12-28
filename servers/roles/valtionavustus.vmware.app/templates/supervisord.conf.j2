@@ -90,6 +90,7 @@ command=/usr/bin/java
   -Dcom.sun.management.jmxremote.local.only=false
   -Dcom.sun.management.jmxremote.authenticate=false
   -Dcom.sun.management.jmxremote.ssl=false
+  -Djava.net.preferIPv4Stack=true
   -Dlog4j.email.environment="%(host_node_name)s %(program_name)s"
   -Dlog4j.configuration=file:{{ data_dir }}/www/%(program_name)s-current/resources/log4j-deployed.properties
   {{ data_dir }}/www/%(program_name)s-current/%(program_name)s.jar
@@ -133,6 +134,7 @@ command=/usr/bin/java
   -Dcom.sun.management.jmxremote.local.only=false
   -Dcom.sun.management.jmxremote.authenticate=false
   -Dcom.sun.management.jmxremote.ssl=false
+  -Djava.net.preferIPv4Stack=true
   -Dlog4j.email.environment="%(host_node_name)s %(program_name)s"
   -Dlog4j.configuration=file:{{ data_dir }}/www/%(program_name)s-current/resources/log4j-deployed.properties
   {{ data_dir }}/www/%(program_name)s-current/%(program_name)s.jar
