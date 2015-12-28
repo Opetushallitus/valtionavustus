@@ -1,6 +1,7 @@
 {:server {:auto-reload? false
           :allow-db-clear? false
           :port 8081
+          :host "*"
           :url {:fi "https://testi.valtionavustukset.oph.fi/"
                 :sv "https://srv2.va-dev.oph.fi/"}
           :virkailija-url "https://testi.virkailija.valtionavustukset.oph.fi"}

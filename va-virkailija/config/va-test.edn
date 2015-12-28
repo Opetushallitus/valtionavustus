@@ -1,5 +1,6 @@
 {:server {:auto-reload? false
           :allow-db-clear? false
+          :host "*"
           :port 6071
           :virkailija-url "https://testi.virkailija.valtionavustukset.oph.fi"
           :url {:fi "https://testi.valtionavustukset.oph.fi/"
