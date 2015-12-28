@@ -1,15 +1,17 @@
 #!/bin/bash
 
-if [ -z $3 ]; then
-  echo "Usage: $0 <target machine name> <port where app will listen> <command to cat latest log for debugging>"
+if [ -z $5 ]; then
+  echo "Usage: $0 <ssh-user> <ssh-key> <target machine name> <port where app will listen> <command to cat latest log for debugging>"
   exit 3
 fi
 
-target_machine=$1
-application_port=$2
-cat_log_command=${@:3}
+ssh_user=$1
+ssh_key=$2
+target_machine=$3
+application_port=$4
+cat_log_command=${@:5}
 
-TEST_URL="http://$target_machine:$application_port/api/healthcheck"
+TEST_URL="http://localhost:$application_port/api/healthcheck"
 ATTEMPTS=40
 PAUSE_SECONDS=3
 
@@ -22,7 +24,7 @@ function cat_latest_application_log() {
 }
 
 for N in `seq 1 $ATTEMPTS`; do
-  /usr/bin/curl --fail --connect-timeout 10 --max-time 20 $TEST_URL
+  ssh -i $ssh_key $ssh_user@$target_machine "/usr/bin/curl --fail --connect-timeout 10 --max-time 20 $TEST_URL"
   if [ 0 -eq $? ]; then
     echo
     echo "At `date`, application seems to be up at $TEST_URL , great!"
