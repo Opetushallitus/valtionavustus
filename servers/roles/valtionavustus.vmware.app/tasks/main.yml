@@ -1,10 +1,10 @@
 - name: Allow SSH access in firewall access
   firewalld: service=ssh permanent=true state=enabled
 
-- name: Allow port 8081 access in firewall access
+- name: Allow port 8081 access in firewall
   firewalld: immediate=true port=8081/tcp permanent=true state=enabled
 
-- name: Allow port 6071 access in firewall access
+- name: Allow port 6071 access in firewall
   firewalld: immediate=true port=6071/tcp permanent=true state=enabled
 
 - name: Mark port 8081 as http with semanage
