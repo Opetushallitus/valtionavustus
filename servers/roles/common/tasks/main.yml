@@ -57,7 +57,7 @@
   when: ansible_os_family == 'RedHat'
 
 - name: Disable firewall daemon (RedHat)
-  service: name=firewalld state=stopped enabled=no
+  service: name=firewalld state=started enabled=yes
   when: ansible_os_family == 'RedHat'
 
 - name: reload systemd if rng daemon was changed
