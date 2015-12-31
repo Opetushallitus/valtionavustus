@@ -36,6 +36,7 @@
 - name: Ensure port 8081 is http (RedHat)
   command: semanage port -m --type http_port_t --proto tcp 8081
   when: http_port_8081|failed
+  ignore_errors: yes
 
 - name: Mark port 6071 as http (RedHat)
   command: semanage port -a --type http_port_t --proto tcp 6071
@@ -46,3 +47,4 @@
 - name: Ensure port 6071 is http (RedHat)
   command: semanage port -m --type http_port_t --proto tcp 6071
   when: http_port_6071|failed
+  ignore_errors: yes
