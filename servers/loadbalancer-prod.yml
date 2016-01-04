@@ -61,7 +61,6 @@ haproxy_backends:
   options:
     - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ testi.virkailija.valtionavustukset.oph.fi
 
-haproxy_backends:
 - name: 'va_backend_prod'
   balance: 'source'
   server_group:
