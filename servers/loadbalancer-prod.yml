@@ -15,7 +15,7 @@ loadbalancer_acl:
     condition: hdr(host) -i statsunderstod.oph.fi
   - name: va_virkailija_backend_prod
     condition: hdr(host) -i virkailija.valtionavustukset.oph.fi
-  - name: va_virkailija_backend_qa_ip
+  - name: va_ip_test
     condition: hdr(host) -i 86.50.28.144
 
 # Map from acl declaration to backend
@@ -31,8 +31,8 @@ loadbalancer_acl_mapping:
     condition: if va_backend_prod_sv
   - name: va_virkailija_backend_prod
     condition: if va_virkailija_backend_prod
-  - name: va_virkailija_backend_prod
-    condition: if va_virkailija_backend_qa_ip
+  - name: va_ip_test
+    condition: if va_ip_test
 
 # Define backends
 
@@ -85,11 +85,11 @@ haproxy_backends:
   options:
     - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ virkailija.valtionavustukset.oph.fi
 
-- name: 'va_virkailija_backend_qa_ip'
+- name: 'va_ip_test'
   balance: 'source'
   server_group:
     - name: "va_app_qa"
-      port: 6071
+      port: 8081
       params: ['check']
   errorfile:
     - code: 503
