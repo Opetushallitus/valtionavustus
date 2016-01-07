@@ -35,7 +35,8 @@ export default class VaTraineeDayCalculator extends React.Component {
       }
     ]
     return (
-      <table className="va-trainee-day-fieldset" id={htmlId}>
+      <div id={htmlId}>
+        <table className="va-trainee-day-fieldset">
         <thead><tr>
           <th>{this.translator.translate("scope-type", this.props.lang)}</th>
           <th>{this.translator.translate("scope", this.props.lang)}</th>
@@ -68,6 +69,7 @@ export default class VaTraineeDayCalculator extends React.Component {
         <tr><td colSpan="3">{this.translator.translate("total", this.props.lang)}: 0</td></tr>
         </tfoot>
       </table>
+      </div>
     )
   }
 }
