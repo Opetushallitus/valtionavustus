@@ -68,30 +68,35 @@
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
   with_items: groups['va_app']
+  remote_user: "{{ lookup('env','USER') }}"
 
 - name: Add new jenkins public SSH key to deployer account on pouta production app server machines
   authorized_key: user="va-deploy"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
   with_items: groups['prod-va_backend']
+  remote_user: "{{ lookup('env','USER') }}"
 
 - name: Add new jenkins public SSH key to Postgresql account on pouta test app server machines for backups
   authorized_key: user="postgres"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
   with_items: groups['va_backend']
+  remote_user: "{{ lookup('env','USER') }}"
 
 - name: Add new jenkins public SSH key to Postgresql account on app server machines for backups
   authorized_key: user="postgres"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
   with_items: groups['va_app']
+  remote_user: "{{ lookup('env','USER') }}"
 
 - name: Add new jenkins public SSH key to Postgresql account on pouta production app server machines for backups
   authorized_key: user="postgres"
                   key='{{ lookup("file", "/tmp/" + ansible_hostname + "-" + jenkins_user + ".pub") }}'
   delegate_to: "{{ item }}"
   with_items: groups['prod-va_backend']
+  remote_user: "{{ lookup('env','USER') }}"
 
 - name: Add directory for database backups storage
   file: path=/mnt/database-backup owner={{ jenkins_user }} state=directory mode=0700
