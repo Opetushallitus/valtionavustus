@@ -19,10 +19,14 @@
 - hosts: oph-va-app-test01.csc.fi
   sudo: yes
   vars:
+    security_sudoers_passwordless: "{{ sudoers }}"
+    security_autoupdate_enabled: true
     app_profile: va-test
     dbname: va-qa
   roles:
   - valtionavustus.vmware.app
+  - geerlingguy.repo-epel
+  - geerlingguy.security
 
 - hosts: va-prod
   user: cloud-user
@@ -36,10 +40,14 @@
 - hosts: oph-va-app-prod01.csc.fi
   sudo: yes
   vars:
+    security_sudoers_passwordless: "{{ sudoers }}"
+    security_autoupdate_enabled: true
     app_profile: va-prod
     dbname: va-prod
   roles:
   - valtionavustus.vmware.app
+  - geerlingguy.repo-epel
+  - geerlingguy.security
 
 - hosts: va-loadbalancer-dev
   user: cloud-user
@@ -54,6 +62,9 @@
 
 - hosts: oph-va-lb-prod01.csc.fi
   sudo: yes
+  vars:
+    security_sudoers_passwordless: "{{ sudoers }}"
+    security_autoupdate_enabled: true
   vars_files: ['loadbalancer-prod.yml']
   roles:
   - {role: ssh.init}
@@ -61,6 +72,8 @@
   - {role: 3rdparty/info.haproxy, tags: ['update']}
   - {role: ssl-cert, tags: ['install', 'certs']}
   - {role: va-haproxy, tags: ['update']}
+  - {role: geerlingguy.repo-epel}
+  - {role: geerlingguy.security}
 
 - hosts: va-build
   user: cloud-user
