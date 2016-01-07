@@ -9,6 +9,7 @@ import MultipleOptionValue from 'soresu-form/web/form/preview/MultipleOptionValu
 
 import VaBudgetElement, {SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
 import {VaFocusAreasPropertyMapper} from 'va-common/web/va/VaPropertyMapper.js'
+import VaTraineeDayCalculator from './VaTraineeDayCalculator.jsx'
 
 export default class VaPreviewComponentFactory extends ComponentFactory {
   constructor() {
@@ -19,7 +20,8 @@ export default class VaPreviewComponentFactory extends ComponentFactory {
       "vaBudgetSummaryElement": BudgetSummaryElement,
       "vaProjectDescription": VaProjectDescriptionPreview,
       "vaFocusAreas": MultipleOptionValue,
-      "vaEmailNotification": BasicValue
+      "vaEmailNotification": BasicValue,
+      "vaTraineeDayCalculator": VaTraineeDayCalculator
     }
     super({ fieldTypeMapping,
             fieldPropertyMapperMapping: {
