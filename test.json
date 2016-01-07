@@ -7,94 +7,96 @@
     },
     {
       "fieldClass": "wrapperElement",
-      "id": "koulutuspaivalaskuri-fieldset",
-      "fieldType": "growingFieldset",
-      "params":{
-        "showOnlyFirstLabels": false
+      "id": "trainee-days",
+      "fieldType": "theme",
+      "label": {
+        "fi": "Koulutusosiot",
+        "sv": "TODO SV Koulutusosiot"
       },
       "children": [
         {
           "fieldClass": "wrapperElement",
-          "id":"trainee-day-calculator-1",
-          "fieldType":"growingFieldsetChild",
+          "id": "koulutuspaivalaskuri-fieldset",
+          "fieldType": "growingFieldset",
+          "params":{
+            "showOnlyFirstLabels": false
+          },
           "children": [
-            "fieldClass": "wrapperElement",
-            "id": "trainee-day-calculator",
-            "fieldType": "fieldset",
-            "children": [
             {
-              "fieldClass": "formField",
-              "fieldType": "textField",
-              "params": {
-                "size": "large",
-                "maxlength": 80
-              },
-              "helpText": {
-                "fi": "Koulutusosion nimi",
-                "sv": "TODO Koulutusosion nimi"
-              },
-              "label": {
-                "fi": "Koulutusosion nimi",
-                "sv": "TODO Koulutusosion nimi"
-              },
-              "id": "koulutusosion-nimi",
-              "required": true
-            },
-            {
-              "fieldClass": "formField",
-              "fieldType": "textArea",
-              "id": "keskeiset-sisallot",
-              "params": {
-                "size": "large",
-                "maxlength": 1000
-              },
-              "helpText": {
-                "fi": "Keskeiset sisällöt ja toteuttamistapa",
-                "sv": "TODO Keskeiset sisällöt ja toteuttamistapa"
-              },
-              "label": {
-                "fi": "Keskeiset sisällöt ja toteuttamistapa",
-                "sv": "TODO Keskeiset sisällöt ja toteuttamistapa"
-              },
-              "required": true
-            },
-            {
-              "fieldClass": "formField",
-              "fieldType": "textField",
-              "id": "kohderyhmat",
-              "params": {
-                "size": "large",
-                "maxlength": 100
-              },
-              "helpText": {
-                "fi": "Kohderyhmät",
-                "sv": "TODO Kohderyhmät"
-              },
-              "label": {
-                "fi": "Kohderyhmät",
-                "sv": "TODO Kohderyhmät"
-              },
-              "required": true
-            },
-            {
-              "params": {
-                "size": "large",
-                "maxlength": 80
-              },
-              "fieldClass": "formField",
-              "helpText": {
-                "fi": "Koulutettavapäivälaskuri",
-                "sv": "Koulutettavapäivälaskuri"
-              },
-              "label": {
-                "fi": "Koulutettavapäivälaskuri",
-                "sv": "Koulutettavapäivälaskuri"
-              },
-              "id": "trainee-day-calculator",
-              "required": true,
-              "fieldType": "vaTraineeDayCalculator"
+              "fieldClass": "wrapperElement",
+              "id":"trainee-day-calculator-1",
+              "fieldType":"growingFieldsetChild",
+              "children": [
+                {
+                  "fieldClass": "formField",
+                  "fieldType": "textField",
+                  "params": {
+                    "size": "large",
+                    "maxlength": 80
+                  },
+                  "helpText": {
+                    "fi": "Koulutusosion nimi",
+                    "sv": "TODO SV Koulutusosion nimi"
+                  },
+                  "label": {
+                    "fi": "Koulutusosion nimi",
+                    "sv": "TODO SV Koulutusosion nimi"
+                  },
+                  "id": "koulutusosion-nimi",
+                  "required": true
+                },
+                {
+                  "fieldClass": "formField",
+                  "fieldType": "textArea",
+                  "id": "keskeiset-sisallot",
+                  "params": {
+                    "size": "large",
+                    "maxlength": 1000
+                  },
+                  "helpText": {
+                    "fi": "Keskeiset sisällöt ja toteuttamistapa",
+                    "sv": "TODO SV Keskeiset sisällöt ja toteuttamistapa"
+                  },
+                  "label": {
+                    "fi": "Keskeiset sisällöt ja toteuttamistapa",
+                    "sv": "TODO SV Keskeiset sisällöt ja toteuttamistapa"
+                  },
+                  "required": true
+                },
+                {
+                  "fieldClass": "formField",
+                  "fieldType": "textField",
+                  "id": "kohderyhmat",
+                  "params": {
+                    "size": "large",
+                    "maxlength": 100
+                  },
+                  "helpText": {
+                    "fi": "Kohderyhmät",
+                    "sv": "TODO SV Kohderyhmät"
+                  },
+                  "label": {
+                    "fi": "Kohderyhmät",
+                    "sv": "TODO SV Kohderyhmät"
+                  },
+                  "required": true
+                },
+                {
+                  "fieldClass": "formField",
+                  "id": "trainee-days",
+                  "required": true,
+                  "fieldType": "vaTraineeDayCalculator",
+                  "helpText": {
+                    "fi": "",
+                    "sv": ""
+                  },
+                  "label": {
+                    "fi": "",
+                    "sv": ""
+                  }
+                }
+              ]
             }
-
           ]
         }
       ]

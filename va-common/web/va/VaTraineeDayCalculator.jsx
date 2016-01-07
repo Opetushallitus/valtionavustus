@@ -1,37 +1,70 @@
 import React from 'react'
 
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent.jsx'
-import CheckboxButton from 'soresu-form/web/form/component/CheckboxButton.jsx'
+import RadioButton from 'soresu-form/web/form/component/RadioButton.jsx'
+import BasicTextField from 'soresu-form/web/form/component/BasicTextField.jsx'
+import Translator from 'soresu-form/web/form/Translator.js'
 
 // Koulutettavapäivälaskuri in finnish
 export default class VaTraineeDayCalculator extends React.Component {
+  constructor(props) {
+    super(props)
+    this.translator = new Translator(props.translations.form["trainee-day-calculator"])
+  }
+
   render() {
-    const props = this.props;
+    const props = this.props
+    const htmlId = props.htmlId
     const onChange = (param) => {
       console.log("Param", param)
     }
     const selectionOptions = [
       {
-        "value": "fi",
+        "value": "op",
         "label": {
-          "fi": "Suomi",
-          "sv": "Finska"
+          "fi": "Opintopisteinä",
+          "sv": "TODO SV Opintopisteinä"
         }
       },
       {
-        "value": "sv",
+        "value": "kp",
         "label": {
-          "fi": "Ruotsi",
-          "sv": "Svenska"
+          "fi": "Koulutuspäivinä",
+          "sv": "TODO SV Koulutuspäivinä"
         }
       }
     ]
     return (
-      <CheckboxButton options={selectionOptions}
-                      onChange={onChange}
-                      value="fi"
-                      translations={this.props.translations}
-                      lang={this.props.lang} />
+      <table className="va-trainee-day-fieldset" id={htmlId}>
+        <thead><tr>
+          <th>{this.translator.translate("scope-type", this.props.lang)}</th>
+          <th>{this.translator.translate("scope", this.props.lang)}</th>
+          <th>{this.translator.translate("person-count", this.props.lang)}</th>
+        </tr></thead>
+        <tbody><tr>
+          <td>
+            <RadioButton options={selectionOptions}
+                          onChange={onChange}
+                          value="kp"
+                          translations={{}}
+                          lang={this.props.lang} />
+          </td>
+          <td>
+            <BasicTextField onChange={onChange}
+                            value=""
+                            translations={{}}
+                            size="extra-extra-small"
+                            lang={this.props.lang} />
+          </td>
+          <td>
+            <BasicTextField onChange={onChange}
+                            value=""
+                            translations={{}}
+                            size="extra-extra-small"
+                            lang={this.props.lang} />
+            </td>
+        </tr></tbody>
+      </table>
     )
   }
 }

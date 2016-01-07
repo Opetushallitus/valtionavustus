@@ -48,6 +48,20 @@
       "fi": "Hakuaika on päättynyt",
       "sv": "Ansökningstiden har slutats"
     },
+    "trainee-day-calculator": {
+      "scope-type": {
+        "fi": "Laajuus ilmoitettu",
+        "sv": "TODO SV Laajuus ilmoitettu"
+      },
+      "scope": {
+        "fi": "Laajuus",
+        "sv": "TODO SV Laajuus"
+      },
+      "person-count": {
+        "fi": "Osallistujamäärä",
+        "sv": "TODO SV Osallistujamäärä"
+      }
+    },
     "attachment": {
       "uploadhere": {
         "fi": "Lisää",
