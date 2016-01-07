@@ -9,6 +9,7 @@ import HakemusScoring from './HakemusScoring.jsx'
 import HakemusComments from './HakemusComments.jsx'
 import HakemusArviointiStatuses from "./HakemusArviointiStatuses.js"
 import HakemusStatuses from './HakemusStatuses.js'
+import HakemusSearchTextEdit from './HakemusSearchTextEdit.jsx'
 
 export default class HakemusArviointi extends Component {
   render() {
@@ -28,6 +29,8 @@ export default class HakemusArviointi extends Component {
     const showOthersScores = this.props.showOthersScores
     return (
      <div id="hakemus-arviointi">
+       <HakemusSearchTextEdit controller={controller} hakemus={hakemus} avustushaku={avustushaku}
+                              allowEditing={allowHakemusScoring} />
        <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku}
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments} allowHakemusCommenting={allowHakemusCommenting}/>
