@@ -147,7 +147,7 @@ function do_deploy_jar() {
   restart_application ${module_name}
   echo "=============================="
   echo
-  CAT_LOG_COMMAND="tail -n 100 /logs/valtionavustus/${module_name}_current_run.log /logs/valtionavustus/${module_name}_application.log"
+  CAT_LOG_COMMAND="$SSH tail -n 100 /logs/valtionavustus/${module_name}_run.log /logs/valtionavustus/${module_name}_application.log"
   HEALTH_CHECK_COMMAND="`dirname $0`/health_check.bash ${SSH_USER} ${SSH_KEY} ${target_server_name} ${application_port} $CAT_LOG_COMMAND"
   echo "...checking that it really comes up, with $HEALTH_CHECK_COMMAND ..."
   $HEALTH_CHECK_COMMAND
