@@ -79,7 +79,7 @@
 (defn- compare-search-text [changelog identity timestamp existing new]
   (if (not (= (:search_text new) (keyword (:search_text existing))))
     (append-changelog changelog (->changelog-entry identity
-                                                   "status-change"
+                                                   "search-text-change"
                                                    timestamp
                                                    {:old (:search_text existing)
                                                     :new (:search_text new)}))
