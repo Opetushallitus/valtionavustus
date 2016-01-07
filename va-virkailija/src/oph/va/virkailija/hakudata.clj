@@ -20,7 +20,8 @@
     (assoc hakemus :arvio {:id -1
                            :status "unhandled"
                            :overridden-answers {:value []}
-                           :budget-granted 0})))
+                           :budget-granted 0
+                           :search-text ""})))
 
 (defn- get-arviot-map [hakemukset]
   (->> hakemukset
