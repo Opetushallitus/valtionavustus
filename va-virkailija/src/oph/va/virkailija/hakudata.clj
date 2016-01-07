@@ -11,7 +11,8 @@
    :status (:status arvio)
    :overridden-answers (:overridden_answers arvio)
    :budget-granted (:budget_granted arvio)
-   :summary-comment (:summary_comment arvio)})
+   :summary-comment (:summary_comment arvio)
+   :search-text (:search_text arvio)})
 
 (defn- add-arvio [arviot hakemus]
   (if-let [arvio (get arviot (:id hakemus))]
