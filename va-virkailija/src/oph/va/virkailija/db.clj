@@ -107,7 +107,7 @@
 
 (defn update-or-create-hakemus-arvio [avustushaku hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
-        budget-granted (calculate-total-oph-budget avustushaku status arvio)
+        budget-granted (or (calculate-total-oph-budget avustushaku status arvio) 0)
         overridden-answers (:overridden-answers arvio)
         search-text (:search-text arvio)
         arvio-to-save  {:hakemus_id hakemus-id
