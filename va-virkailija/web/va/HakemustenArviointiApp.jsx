@@ -40,7 +40,7 @@ export default class App extends Component {
             <div id="list-heading">
               <AvustushakuDropdown controller={controller} avustushaku={avustushaku} avustushakuList={avustushakuList} />
               <div className="right-side">
-                <HakemusSearchTextQuery avustushaku={avustushaku} />
+                <HakemusSearchTextQuery controller={controller} />
                 <ExcelExportLink avustushaku={avustushaku} />
               </div>
             </div>

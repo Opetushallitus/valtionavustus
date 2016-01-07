@@ -25,6 +25,8 @@ export default class HakemusListing extends Component {
           const score = ScoreResolver.effectiveAverage(hakemus.arvio.scoring, userInfo, allowHakemusScoring)
           return score ? score : 0
         }
+      case "search-text":
+        return hakemus => hakemus["search-text"]
     }
     throw Error("No field getter for " + fieldName)
   }
