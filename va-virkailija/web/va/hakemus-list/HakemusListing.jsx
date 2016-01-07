@@ -26,7 +26,7 @@ export default class HakemusListing extends Component {
           return score ? score : 0
         }
       case "search-text":
-        return hakemus => hakemus["search-text"]
+        return hakemus => hakemus.arvio["search-text"]
     }
     throw Error("No field getter for " + fieldName)
   }
