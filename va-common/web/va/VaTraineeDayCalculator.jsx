@@ -64,6 +64,9 @@ export default class VaTraineeDayCalculator extends React.Component {
                             lang={this.props.lang} />
             </td>
         </tr></tbody>
+        <tfoot>
+        <tr><td colSpan="3">{this.translator.translate("total", this.props.lang)}: 0</td></tr>
+        </tfoot>
       </table>
     )
   }
