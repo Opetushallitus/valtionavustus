@@ -60,10 +60,6 @@
       "person-count": {
         "fi": "Osallistujamäärä",
         "sv": "TODO SV Osallistujamäärä"
-      },
-      "total": {
-        "fi": "Koulutettavapäivät yhteensä",
-        "sv": "TODO SV Koulutettavapäivät yhteensä"
       }
     },
     "attachment": {
