@@ -4,7 +4,8 @@ import ClassNames from 'classnames'
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent.jsx'
 import RadioButton from 'soresu-form/web/form/component/RadioButton.jsx'
 import BasicTextField from 'soresu-form/web/form/component/BasicTextField.jsx'
-import Translator from 'soresu-form/web/form/Translator.js'
+import Translator from 'soresu-form/web/form/Translator'
+import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 
 // Koulutettavapäivälaskuri in finnish
 export default class VaTraineeDayCalculator extends BasicFieldComponent {
@@ -21,9 +22,6 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
   render() {
     const props = this.props
     const htmlId = props.htmlId
-    const onChange = (param) => {
-      console.log("Param", param)
-    }
     const selectionOptions = [
       {
         "value": "op",
@@ -40,6 +38,24 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         }
       }
     ]
+    const subFields = {
+      "scope-type": {id: "scope-type", fieldType: "radioButton"},
+      "scope": {id: "scope", fieldType: "textField"},
+      "person-count": {id: "person-count", fieldType: "textField"}
+    }
+    const valueHolder = {value: this.props.value ? this.props.value :[]}
+    const total = valueHolder.value[1] ? valueHolder.value[1].value : 0
+    const onChange = (field) => {
+      return (event) => {
+        const fieldUpdate = {
+          id: field.id,
+          field: field,
+          value: event.target.value
+        }
+        InputValueStorage.writeValue({}, valueHolder, fieldUpdate)
+        props.onChange({"target": {"value": valueHolder.value}})
+      }
+    }
     const totalClassStr = this.resolveClassName("total")
     return (
       <div id={htmlId} className="va-trainee-day-calculator">
@@ -51,29 +67,32 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         </tr></thead>
         <tbody><tr>
           <td>
-            <RadioButton options={selectionOptions}
-                          onChange={onChange}
-                          value="kp"
+            <RadioButton htmlId={htmlId + ".scope-type"}
+                         options={selectionOptions}
+                          onChange={onChange(subFields["scope-type"])}
+                          value={InputValueStorage.readValue({}, valueHolder, "scope-type")}
                           translations={{}}
                           lang={this.props.lang} />
           </td>
           <td>
-            <BasicTextField onChange={onChange}
-                            value=""
+            <BasicTextField htmlId={htmlId + ".scope"}
+                            onChange={onChange(subFields["scope"])}
+                            value={InputValueStorage.readValue({}, valueHolder, "scope")}
                             translations={{}}
                             size="extra-extra-small"
                             lang={this.props.lang} />
           </td>
           <td>
-            <BasicTextField onChange={onChange}
-                            value=""
+            <BasicTextField htmlId={htmlId + ".person-count"}
+                            onChange={onChange(subFields["person-count"])}
+                            value={InputValueStorage.readValue({}, valueHolder, "person-count")}
                             translations={{}}
                             size="extra-extra-small"
                             lang={this.props.lang} />
             </td>
         </tr></tbody>
         <tfoot>
-        <tr><td colSpan="3">{this.label(totalClassStr)}: 0</td></tr>
+        <tr><td colSpan="3">{this.label(totalClassStr)}: {total}</td></tr>
         </tfoot>
       </table>
       </div>
