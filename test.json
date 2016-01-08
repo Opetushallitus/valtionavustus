@@ -7,7 +7,7 @@
     },
     {
       "fieldClass": "wrapperElement",
-      "id": "trainee-days",
+      "id": "koulutusosiot-theme",
       "fieldType": "theme",
       "label": {
         "fi": "Koulutusosiot",
@@ -16,7 +16,7 @@
       "children": [
         {
           "fieldClass": "wrapperElement",
-          "id": "koulutuspaivalaskuri-fieldset",
+          "id": "koulutusosiot",
           "fieldType": "growingFieldset",
           "params":{
             "showOnlyFirstLabels": false
@@ -24,12 +24,12 @@
           "children": [
             {
               "fieldClass": "wrapperElement",
-              "id":"trainee-day-calculator-1",
+              "id":"koulutusosio-1",
               "fieldType":"growingFieldsetChild",
               "children": [
                 {
                   "fieldClass": "formField",
-                  "fieldType": "textField",
+                  "fieldType": "nameField",
                   "params": {
                     "size": "large",
                     "maxlength": 80
@@ -42,13 +42,13 @@
                     "fi": "Koulutusosion nimi",
                     "sv": "TODO SV Koulutusosion nimi"
                   },
-                  "id": "koulutusosion-nimi",
+                  "id": "koulutusosiot.koulutusosio-1.nimi",
                   "required": true
                 },
                 {
                   "fieldClass": "formField",
                   "fieldType": "textArea",
-                  "id": "keskeiset-sisallot",
+                  "id": "koulutusosiot.koulutusosio-1.keskeiset-sisallot",
                   "params": {
                     "size": "large",
                     "maxlength": 1000
@@ -66,7 +66,7 @@
                 {
                   "fieldClass": "formField",
                   "fieldType": "textField",
-                  "id": "kohderyhmat",
+                  "id": "koulutusosiot.koulutusosio-1.kohderyhmat",
                   "params": {
                     "size": "large",
                     "maxlength": 100
@@ -83,7 +83,7 @@
                 },
                 {
                   "fieldClass": "formField",
-                  "id": "trainee-days",
+                  "id": "koulutusosiot.koulutusosio-1.koulutettavapaivat",
                   "required": true,
                   "fieldType": "vaTraineeDayCalculator",
                   "helpText": {
