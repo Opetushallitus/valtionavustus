@@ -19,7 +19,7 @@ export default class HakemusSearchTextEdit extends Component {
              <input type="text"
                     id="arvio-search-text-edit"
                     className="search-text-edit"
-                    placeholder="Lisää hakusanoja arvioon"
+                    placeholder="Hakusanat"
                     maxLength="32"
                     value={value}
                     onChange={onChange}

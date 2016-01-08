@@ -10,7 +10,7 @@ export default class HakemusSearchTextQuery extends Component {
     }
     return <div id="hakemus-search-text-container">
              <input className="comment-input" id="arvio-search-text-query"
-                    placeholder="Hae arvion hakusanoilla"
+                    placeholder="Hae hakusanoilla"
                     onChange={onChange} />
            </div>
   }
