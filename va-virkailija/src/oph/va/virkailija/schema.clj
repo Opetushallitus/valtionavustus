@@ -28,7 +28,8 @@
    :overridden-answers Answers
    :budget-granted s/Int
    (s/optional-key :scoring) (s/maybe Scoring)
-   (s/optional-key :summary-comment) (s/maybe s/Str)})
+   (s/optional-key :summary-comment) (s/maybe s/Str)
+   (s/optional-key :search-text) (s/maybe s/Str)})
 
 (s/defschema NewComment
   "New comment to be added"

@@ -11,7 +11,8 @@
    :status (:status arvio)
    :overridden-answers (:overridden_answers arvio)
    :budget-granted (:budget_granted arvio)
-   :summary-comment (:summary_comment arvio)})
+   :summary-comment (:summary_comment arvio)
+   :search-text (:search_text arvio)})
 
 (defn- add-arvio [arviot hakemus]
   (if-let [arvio (get arviot (:id hakemus))]
@@ -19,7 +20,8 @@
     (assoc hakemus :arvio {:id -1
                            :status "unhandled"
                            :overridden-answers {:value []}
-                           :budget-granted 0})))
+                           :budget-granted 0
+                           :search-text ""})))
 
 (defn- get-arviot-map [hakemukset]
   (->> hakemukset
