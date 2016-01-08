@@ -18,10 +18,6 @@ Lisää Soresu forms -submoduli paikalleen:
 
 Riippuvuudet asentuvat ajamalla komennot:
 
-    ./lein modules deps
-
-ja
-
     cd soresu-form && npm install && cd ..
     cd va-common && npm install && cd ..
     cd va-hakija && npm install && cd ..
@@ -32,6 +28,10 @@ Kehitysaikaisesti hyödyllisiä työkaluja:
 * FakeSMTP: https://nilhcem.github.io/FakeSMTP/
 
 # Tietokanta
+
+Huom: Linux-koneilla postgres-komennot on helpointa ajaa postgres-käyttäjänä
+
+   sudo su postgres
 
 Luo paikallinen postgres-datahakemisto
 
@@ -50,21 +50,24 @@ Luo ```va-dev``` tietokanta
 
     createdb -E UTF-8 va-dev
 
-Luo skeema ja lataa initial data (myös serverin start ajaa automaattisesti migraatiot)
+Asenna kaikki modulit paikalliseen m2-repositoryyn
+
+   lein modules do buildfront, install
+
+Serverin start ajaa automaattisesti migraatiot
 
     cd va-hakija
-    ../lein dbmigrate
-    cd ..
+    ../lein run
+
+ja eri terminaalissa
+
     cd va-virkailija
-    ../lein dbmigrate
+    ../lein run
 
 Tietokannan saa kokonaan tyhjättyä ajamalla
 
-    cd va-hakija
-    ../lein dbclear
-    cd ..
-    cd va-virkailija
-    ../lein dbclear
+    dropdb va-dev
+    createdb -E utf-8 va-dev
 
 # Käynnistys
 
@@ -150,9 +153,13 @@ Clojure-tyyppinen tietorakenne.
 
 # Muut komennot
 
-Ovatko riippuvuudet päivittyneet?
+Ovatko riippuvuudet päivittyneet? Aja alimodulissa seuraavat komennot
 
     ./lein modules ancient
+
+ja
+
+    npm outdated
 
 Hakemusten generointi
 
