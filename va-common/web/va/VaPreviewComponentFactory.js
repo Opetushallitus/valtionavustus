@@ -6,9 +6,10 @@ import ComponentFactory from 'soresu-form/web/form/ComponentFactory.js'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import BasicValue from 'soresu-form/web/form/preview/BasicValue.jsx'
 import MultipleOptionValue from 'soresu-form/web/form/preview/MultipleOptionValue.jsx'
+import {FieldOnChangePropertyMapper} from 'soresu-form/web/form/component/PropertyMapper'
 
 import VaBudgetElement, {SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
-import {VaFocusAreasPropertyMapper} from 'va-common/web/va/VaPropertyMapper.js'
+import {VaFocusAreasPropertyMapper} from 'va-common/web/va/VaPropertyMapper'
 import VaTraineeDayCalculator from './VaTraineeDayCalculator.jsx'
 
 export default class VaPreviewComponentFactory extends ComponentFactory {
@@ -25,7 +26,8 @@ export default class VaPreviewComponentFactory extends ComponentFactory {
     }
     super({ fieldTypeMapping,
             fieldPropertyMapperMapping: {
-              "vaFocusAreas": VaFocusAreasPropertyMapper }})
+              "vaFocusAreas": VaFocusAreasPropertyMapper,
+              "vaTraineeDayCalculator": FieldOnChangePropertyMapper}})
   }
 }
 
