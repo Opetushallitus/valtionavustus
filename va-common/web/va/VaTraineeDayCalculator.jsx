@@ -94,13 +94,15 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
           <td>
             <RadioButton htmlId={htmlId + ".scope-type"}
                          options={VaTraineeDayCalculator.scopeTypes()}
-                          onChange={onChange(VaTraineeDayCalculator.subField("scope-type"))}
-                          value={InputValueStorage.readValue({}, valueHolder, "scope-type")}
-                          translations={{}}
-                          lang={this.props.lang} />
+                         disabled={props.disabled}
+                         onChange={onChange(VaTraineeDayCalculator.subField("scope-type"))}
+                         value={InputValueStorage.readValue({}, valueHolder, "scope-type")}
+                         translations={{}}
+                         lang={this.props.lang} />
           </td>
           <td>
             <BasicTextField htmlId={htmlId + ".scope"}
+                            disabled={props.disabled}
                             onChange={onChange(VaTraineeDayCalculator.subField("scope"))}
                             value={InputValueStorage.readValue({}, valueHolder, "scope")}
                             translations={{}}
@@ -109,6 +111,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
           </td>
           <td>
             <BasicTextField htmlId={htmlId + ".person-count"}
+                            disabled={props.disabled}
                             onChange={onChange(VaTraineeDayCalculator.subField("person-count"))}
                             value={InputValueStorage.readValue({}, valueHolder, "person-count")}
                             translations={{}}
