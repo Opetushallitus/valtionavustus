@@ -9,20 +9,9 @@ import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 
 // Koulutettavapäivälaskuri in finnish
 export default class VaTraineeDayCalculator extends BasicFieldComponent {
-  constructor(props) {
-    super(props)
-    this.translator = new Translator(props.translations.form["trainee-day-calculator"])
-  }
 
-  resolveClassName(className) {
-    const classNames = ClassNames(className, { error: this.props.hasError })
-    return !_.isEmpty(classNames) ? classNames : undefined
-  }
-
-  render() {
-    const props = this.props
-    const htmlId = props.htmlId
-    const selectionOptions = [
+  static scopeTypes() {
+    return [
       {
         "value": "op",
         "label": {
@@ -38,16 +27,35 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         }
       }
     ]
+  }
+
+  static subField(id) {
     const subFields = {
       "scope-type": {id: "scope-type", fieldType: "radioButton"},
       "scope": {id: "scope", fieldType: "textField"},
       "person-count": {id: "person-count", fieldType: "textField"},
       "total": {id: "total", fieldType: "textField"}
     }
-    const valueHolder = {value: this.props.value ? this.props.value : [{"key":"scope-type","value":"kp","fieldType":"radioButton"},
-                                                                       {"key":"scope","value": "0","fieldType":"textField"},
-                                                                       {"key":"person-count", "value": "0","fieldType":"textField"},
-                                                                       {"key":"total", "value": "0","fieldType":"textField"}]}
+    return subFields[id]
+  }
+
+  constructor(props) {
+    super(props)
+    this.translator = new Translator(props.translations.form["trainee-day-calculator"])
+  }
+
+  resolveClassName(className) {
+    const classNames = ClassNames(className, { error: this.props.hasError })
+    return !_.isEmpty(classNames) ? classNames : undefined
+  }
+
+  render() {
+    const props = this.props
+    const htmlId = props.htmlId
+    const valueHolder = {value: this.props.value ? this.props.value : [{key:"scope-type", value: "kp", fieldType: "radioButton"},
+                                                                       {key:"scope", value: "0", fieldType: "textField"},
+                                                                       {key:"person-count", value: "0", fieldType: "textField"},
+                                                                       {key:"total", value: "0", fieldType: "textField"}]}
 
     const onChange = (field) => {
       return (event) => {
@@ -66,7 +74,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         const personCount = parseInt(InputValueStorage.readValue({}, valueHolder, "person-count")) ? parseInt(InputValueStorage.readValue({}, valueHolder, "person-count")) : 0
         const totalUpdate = {
           id: "total",
-          field: subFields["total"],
+          field: VaTraineeDayCalculator.subField("total"),
           value: (scopeMultiplier * scope * personCount).toString().replace('.', ',')
         }
         InputValueStorage.writeValue({}, valueHolder, totalUpdate)
@@ -85,15 +93,15 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         <tbody><tr>
           <td>
             <RadioButton htmlId={htmlId + ".scope-type"}
-                         options={selectionOptions}
-                          onChange={onChange(subFields["scope-type"])}
+                         options={VaTraineeDayCalculator.scopeTypes()}
+                          onChange={onChange(VaTraineeDayCalculator.subField("scope-type"))}
                           value={InputValueStorage.readValue({}, valueHolder, "scope-type")}
                           translations={{}}
                           lang={this.props.lang} />
           </td>
           <td>
             <BasicTextField htmlId={htmlId + ".scope"}
-                            onChange={onChange(subFields["scope"])}
+                            onChange={onChange(VaTraineeDayCalculator.subField("scope"))}
                             value={InputValueStorage.readValue({}, valueHolder, "scope")}
                             translations={{}}
                             size="extra-extra-small"
@@ -101,7 +109,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
           </td>
           <td>
             <BasicTextField htmlId={htmlId + ".person-count"}
-                            onChange={onChange(subFields["person-count"])}
+                            onChange={onChange(VaTraineeDayCalculator.subField("person-count"))}
                             value={InputValueStorage.readValue({}, valueHolder, "person-count")}
                             translations={{}}
                             size="extra-extra-small"
