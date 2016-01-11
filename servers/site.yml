@@ -60,9 +60,6 @@
 
 - hosts: oph-va-lb-prod01.csc.fi
   sudo: yes
-  vars:
-    security_sudoers_passwordless: "{{ sudoers }}"
-    security_autoupdate_enabled: false
   vars_files: ['loadbalancer-prod.yml']
   roles:
   - {role: ssh.init}
@@ -70,7 +67,6 @@
   - {role: 3rdparty/info.haproxy, tags: ['update']}
   - {role: ssl-cert, tags: ['install', 'certs']}
   - {role: va-haproxy, tags: ['update']}
-  - {role: geerlingguy.security}
 
 - hosts: va-build
   user: cloud-user
