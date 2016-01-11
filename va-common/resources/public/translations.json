@@ -60,6 +60,14 @@
       "person-count": {
         "fi": "Osallistujamäärä",
         "sv": "TODO SV Osallistujamäärä"
+      },
+      "op": {
+        "fi": "Opintopisteinä",
+        "sv": "TODO SV Opintopisteinä"
+      },
+      "kp": {
+        "fi": "Koulutuspäivinä",
+        "sv": "TODO SV Koulutuspäivinä"
       }
     },
     "attachment": {

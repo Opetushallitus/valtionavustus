@@ -10,25 +10,6 @@ import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 // Koulutettavapäivälaskuri in finnish
 export default class VaTraineeDayCalculator extends BasicFieldComponent {
 
-  static scopeTypes() {
-    return [
-      {
-        "value": "op",
-        "label": {
-          "fi": "Opintopisteinä",
-          "sv": "TODO SV Opintopisteinä"
-        }
-      },
-      {
-        "value": "kp",
-        "label": {
-          "fi": "Koulutuspäivinä",
-          "sv": "TODO SV Koulutuspäivinä"
-        }
-      }
-    ]
-  }
-
   static subField(id) {
     const subFields = {
       "scope-type": {id: "scope-type", fieldType: "radioButton"},
@@ -52,11 +33,28 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
   render() {
     const props = this.props
     const htmlId = props.htmlId
-    const valueHolder = {value: this.props.value ? this.props.value : [{key:"scope-type", value: "kp", fieldType: "radioButton"},
-                                                                       {key:"scope", value: "0", fieldType: "textField"},
-                                                                       {key:"person-count", value: "0", fieldType: "textField"},
-                                                                       {key:"total", value: "0", fieldType: "textField"}]}
+    const valueHolder = {value: this.props.value ? this.props.value : [
+      {key:"scope-type", value: "kp", fieldType: "radioButton"},
+      {key:"scope", value: "0", fieldType: "textField"},
+      {key:"person-count", value: "0", fieldType: "textField"},
+      {key:"total", value: "0", fieldType: "textField"}]}
 
+    const scopeTypeOptions = [
+      {
+        "value": "op",
+        "label": {
+          "fi": this.translator.translate("op", "fi"),
+          "sv": this.translator.translate("op", "sv")
+        }
+      },
+      {
+        "value": "kp",
+        "label": {
+          "fi": this.translator.translate("kp", "fi"),
+          "sv": this.translator.translate("kp", "sv")
+        }
+      }
+    ]
     const onChange = (field) => {
       return (event) => {
         var value = event.target.value
@@ -93,7 +91,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         <tbody><tr>
           <td>
             <RadioButton htmlId={htmlId + ".scope-type"}
-                         options={VaTraineeDayCalculator.scopeTypes()}
+                         options={scopeTypeOptions}
                          disabled={props.disabled}
                          onChange={onChange(VaTraineeDayCalculator.subField("scope-type"))}
                          value={InputValueStorage.readValue({}, valueHolder, "scope-type")}
