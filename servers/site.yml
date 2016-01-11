@@ -20,12 +20,11 @@
   sudo: yes
   vars:
     security_sudoers_passwordless: "{{ sudoers }}"
-    security_autoupdate_enabled: true
+    security_autoupdate_enabled: false
     app_profile: va-test
     dbname: va-qa
   roles:
   - valtionavustus.vmware.app
-  - geerlingguy.repo-epel
   - geerlingguy.security
 
 - hosts: va-prod
@@ -41,12 +40,11 @@
   sudo: yes
   vars:
     security_sudoers_passwordless: "{{ sudoers }}"
-    security_autoupdate_enabled: true
+    security_autoupdate_enabled: false
     app_profile: va-prod
     dbname: va-prod
   roles:
   - valtionavustus.vmware.app
-  - geerlingguy.repo-epel
   - geerlingguy.security
 
 - hosts: va-loadbalancer-dev
