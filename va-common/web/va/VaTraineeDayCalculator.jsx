@@ -39,7 +39,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     const props = this.props
     const htmlId = props.htmlId
     const valueHolder = {value: this.props.value ? this.props.value : [
-      {key:"scope-type", value: "kp", fieldType: "radioButton"},
+      {key:"scope-type", value: "op", fieldType: "radioButton"},
       {key:"scope", value: "0", fieldType: "textField"},
       {key:"person-count", value: "0", fieldType: "textField"},
       {key:"total", value: "0", fieldType: "textField"}]}
