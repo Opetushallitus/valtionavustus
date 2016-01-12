@@ -31,7 +31,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
   }
 
   static validateTotal(field, value) {
-    const total =  parseInt(InputValueStorage.readValue({}, value, "total"))
+    const total =  parseFloat(InputValueStorage.readValue({}, value, "total").replace(",", "."))
     return total > 0 ? undefined : { "error": "negative-trayneeday-total" }
   }
 
@@ -63,8 +63,15 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     const onChange = (field) => {
       return (event) => {
         var value = event.target.value
-        if(event.target.id.endsWith("scope") || event.target.id.endsWith("person-count")) {
+        var scopeValue = InputValueStorage.readValue({}, valueHolder, "scope")
+        var personCountValue = InputValueStorage.readValue({}, valueHolder, "person-count")
+        if(event.target.id.endsWith("scope")) {
+          value =  value.replace(/[^\d,]/g, "")
+          scopeValue = value
+        }
+        if(event.target.id.endsWith("person-count")) {
           value = parseInt(value) ? parseInt(value).toString() : ""
+          personCountValue = value
         }
         const fieldUpdate = {
           id: field.id,
@@ -73,12 +80,12 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         }
         InputValueStorage.writeValue({}, valueHolder, fieldUpdate)
         const scopeMultiplier = InputValueStorage.readValue({}, valueHolder, "scope-type") === "op" ? 4.5 : 1
-        const scope = parseInt(InputValueStorage.readValue({}, valueHolder, "scope")) ? parseInt(InputValueStorage.readValue({}, valueHolder, "scope")) : 0
-        const personCount = parseInt(InputValueStorage.readValue({}, valueHolder, "person-count")) ? parseInt(InputValueStorage.readValue({}, valueHolder, "person-count")) : 0
+        const scope = parseFloat(scopeValue.replace(",", ".")) ? parseFloat(scopeValue.replace(",", ".")) : 0
+        const personCount = parseInt(personCountValue) ? parseInt(personCountValue) : 0
         const totalUpdate = {
           id: "total",
           field: VaTraineeDayCalculator.subField("total"),
-          value: (scopeMultiplier * scope * personCount).toString().replace('.', ',')
+          value: (scopeMultiplier * scope * personCount).toFixed(2).toString().replace('.', ',')
         }
         InputValueStorage.writeValue({}, valueHolder, totalUpdate)
         props.onChange({"target": {"value": valueHolder.value}})
