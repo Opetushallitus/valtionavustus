@@ -15,6 +15,15 @@
       },
       "children": [
         {
+          "fieldClass": "infoElement",
+          "fieldType": "h3",
+          "id": "koulutusosiot-h3",
+          "text": {
+            "fi": "Enintään viisi koulutusosiota",
+            "sv": "TODO SV Enintään viisi koulutusosiota"
+          }
+        },
+        {
           "fieldClass": "wrapperElement",
           "id": "koulutusosiot",
           "fieldType": "growingFieldset",
