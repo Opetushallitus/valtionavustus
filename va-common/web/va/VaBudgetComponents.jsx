@@ -143,11 +143,11 @@ export class BudgetSummaryElement extends React.Component {
           <td className="label-column"><LocalizedString translations={labelTranslations} translationKey="totalSumRowLabel" lang={this.props.lang} /></td>
           <td className="amount-column"><span className={sumClassNames}>{totalNeeded}</span></td>
         </tr>
-        <tr>
+        <tr hidden={selfFinancingPercentage === 0}>
           <td className="label-column"><LocalizedString translations={labelTranslations} translationKey="ophFinancingLabel" lang={this.props.lang} /> {100 - selfFinancingPercentage} %</td>
           <td className="amount-column"><span className={sumPartClassNames}>{ophShare}</span></td>
         </tr>
-        <tr>
+        <tr hidden={selfFinancingPercentage === 0}>
           <td className="label-column"><LocalizedString translations={labelTranslations} translationKey="selfFinancingLabel" lang={this.props.lang} /> {selfFinancingPercentage} %</td>
           <td className="amount-column"><span className={sumPartClassNames}>{selfFinancingShare}</span></td>
         </tr>
