@@ -1,0 +1,107 @@
+{
+  "content": [
+    {
+      "fieldClass": "infoElement",
+      "id": "name",
+      "fieldType": "h1"
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "koulutusosiot-theme",
+      "fieldType": "theme",
+      "label": {
+        "fi": "Koulutusosiot",
+        "sv": "TODO SV Koulutusosiot"
+      },
+      "children": [
+        {
+          "fieldClass": "wrapperElement",
+          "id": "koulutusosiot",
+          "fieldType": "growingFieldset",
+          "params":{
+            "showOnlyFirstLabels": false
+          },
+          "children": [
+            {
+              "fieldClass": "wrapperElement",
+              "id":"koulutusosio-1",
+              "fieldType":"growingFieldsetChild",
+              "children": [
+                {
+                  "fieldClass": "formField",
+                  "fieldType": "nameField",
+                  "params": {
+                    "size": "large",
+                    "maxlength": 80
+                  },
+                  "helpText": {
+                    "fi": "Koulutusosion nimi",
+                    "sv": "TODO SV Koulutusosion nimi"
+                  },
+                  "label": {
+                    "fi": "Koulutusosion nimi",
+                    "sv": "TODO SV Koulutusosion nimi"
+                  },
+                  "id": "koulutusosiot.koulutusosio-1.nimi",
+                  "required": true
+                },
+                {
+                  "fieldClass": "formField",
+                  "fieldType": "textArea",
+                  "id": "koulutusosiot.koulutusosio-1.keskeiset-sisallot",
+                  "params": {
+                    "size": "large",
+                    "maxlength": 1000
+                  },
+                  "helpText": {
+                    "fi": "Keskeiset sisällöt ja toteuttamistapa",
+                    "sv": "TODO SV Keskeiset sisällöt ja toteuttamistapa"
+                  },
+                  "label": {
+                    "fi": "Keskeiset sisällöt ja toteuttamistapa",
+                    "sv": "TODO SV Keskeiset sisällöt ja toteuttamistapa"
+                  },
+                  "required": true
+                },
+                {
+                  "fieldClass": "formField",
+                  "fieldType": "textField",
+                  "id": "koulutusosiot.koulutusosio-1.kohderyhmat",
+                  "params": {
+                    "size": "large",
+                    "maxlength": 100
+                  },
+                  "helpText": {
+                    "fi": "Kohderyhmät",
+                    "sv": "TODO SV Kohderyhmät"
+                  },
+                  "label": {
+                    "fi": "Kohderyhmät",
+                    "sv": "TODO SV Kohderyhmät"
+                  },
+                  "required": true
+                },
+                {
+                  "fieldClass": "formField",
+                  "id": "koulutusosiot.koulutusosio-1.koulutettavapaivat",
+                  "required": true,
+                  "fieldType": "vaTraineeDayCalculator",
+                  "helpText": {
+                    "fi": "",
+                    "sv": ""
+                  },
+                  "label": {
+                    "fi": "Koulutettavapäivät yhteensä",
+                    "sv": "TODO SV Koulutettavapäivät yhteensä"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "rules": [],
+  "created_at": "2015-12-11T15:29:48Z"
+}

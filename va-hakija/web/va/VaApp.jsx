@@ -17,6 +17,7 @@ import JsUtil from 'soresu-form/web/form/JsUtil.js'
 import VaForm from './VaForm.jsx'
 import VaUrlCreator from './VaUrlCreator'
 import VaComponentFactory from 'va-common/web/va/VaComponentFactory.js'
+import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import {BudgetItemElement} from 'va-common/web/va/VaBudgetComponents.jsx'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
@@ -91,7 +92,8 @@ function initVaFormController() {
     "onInitialStateLoaded": onInitialStateLoaded,
     "formP": formP,
     "customComponentFactory": new VaComponentFactory(),
-    "customPreviewComponentFactory": new VaPreviewComponentFactory()
+    "customPreviewComponentFactory": new VaPreviewComponentFactory(),
+    "customFieldSyntaxValidator": VaSyntaxValidator
   })
   const formOperations = {
     "chooseInitialLanguage": urlCreator.chooseInitialLanguage,

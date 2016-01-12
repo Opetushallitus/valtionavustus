@@ -346,7 +346,7 @@ export default class HakemustenArviointiController {
   onSetOverriddenAnswerValue(state, setOverriddenAnswerValue) {
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, setOverriddenAnswerValue.hakemusId)
     if (relevantHakemus) {
-      InputValueStorage.writeValue([setOverriddenAnswerValue.field], relevantHakemus.arvio["overridden-answers"], FieldUpdateHandler.createFieldUpdate(setOverriddenAnswerValue.field, setOverriddenAnswerValue.newValue))
+      InputValueStorage.writeValue([setOverriddenAnswerValue.field], relevantHakemus.arvio["overridden-answers"], FieldUpdateHandler.createFieldUpdate(setOverriddenAnswerValue.field, setOverriddenAnswerValue.newValue, state.extensionApi.customFieldSyntaxValidator))
       dispatcher.push(events.updateHakemusArvio, relevantHakemus)
     }
     return state
