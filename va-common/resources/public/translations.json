@@ -136,6 +136,10 @@
       "fi": "Haettavan rahoituksen tulee olla positiivinen",
       "sv": "Ansökt finansiering ska vara positiv"
     },
+    "negative-trayneeday-total": {
+      "fi": "Koulutettavapäivien määrän tulee olla positiivinen",
+      "sv": "TODO SV Koulutettavapäivien määrän tulee olla positiivinen"
+    },
     "validation-errors": {
       "fi": "{{kpl}} vastauksessa puutteita",
       "sv": "{{kpl}} svar felaktigt"

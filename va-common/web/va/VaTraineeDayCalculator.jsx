@@ -30,6 +30,11 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     return !_.isEmpty(classNames) ? classNames : undefined
   }
 
+  static validateTotal(field, value) {
+    const total =  parseInt(InputValueStorage.readValue({}, value, "total"))
+    return total > 0 ? undefined : { "error": "negative-trayneeday-total" }
+  }
+
   render() {
     const props = this.props
     const htmlId = props.htmlId
@@ -104,6 +109,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
                             onChange={onChange(VaTraineeDayCalculator.subField("scope"))}
                             value={InputValueStorage.readValue({}, valueHolder, "scope")}
                             translations={{}}
+                            hasError={props.hasError}
                             size="extra-extra-small"
                             lang={this.props.lang} />
           </td>
@@ -113,6 +119,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
                             onChange={onChange(VaTraineeDayCalculator.subField("person-count"))}
                             value={InputValueStorage.readValue({}, valueHolder, "person-count")}
                             translations={{}}
+                            hasError={props.hasError}
                             size="extra-extra-small"
                             lang={this.props.lang} />
             </td>
