@@ -12,6 +12,9 @@ export default class FakeFormController {
     return fieldId
   }
 
+  componentDidMount(field, initialValue) {
+  }
+
   getCustomComponentProperties() {
     return this.avustushaku
   }
