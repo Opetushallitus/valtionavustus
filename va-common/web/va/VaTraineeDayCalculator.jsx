@@ -30,8 +30,25 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     return !_.isEmpty(classNames) ? classNames : undefined
   }
 
+  static formatFloat(floatValue) {
+    return floatValue ? floatValue.toFixed(1).replace(".", ",") : "0"
+  }
+
+  static formatFloatString(stringValue) {
+    const sanitizedString = stringValue.replace(".", ",").replace(/[^\d,]/g, "")
+    if(sanitizedString.indexOf(",") < 0 || sanitizedString.endsWith(",")) {
+      return sanitizedString
+    }
+    const floatValue = parseFloat(sanitizedString.replace(",", "."))
+    return VaTraineeDayCalculator.formatFloat(floatValue)
+  }
+
+  static readTotalAsFloat(value) {
+    return parseFloat(InputValueStorage.readValue({}, value, "total").replace(",", "."))
+  }
+
   static validateTotal(field, value) {
-    const total =  parseFloat(InputValueStorage.readValue({}, value, "total").replace(",", "."))
+    const total =  VaTraineeDayCalculator.readTotalAsFloat(value)
     return total > 0 ? undefined : { "error": "negative-trayneeday-total" }
   }
 
@@ -66,7 +83,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         var scopeValue = InputValueStorage.readValue({}, valueHolder, "scope")
         var personCountValue = InputValueStorage.readValue({}, valueHolder, "person-count")
         if(event.target.id.endsWith("scope")) {
-          value =  value.replace(/[^\d,]/g, "")
+          value =  VaTraineeDayCalculator.formatFloatString(value)
           scopeValue = value
         }
         if(event.target.id.endsWith("person-count")) {
@@ -85,7 +102,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         const totalUpdate = {
           id: "total",
           field: VaTraineeDayCalculator.subField("total"),
-          value: (scopeMultiplier * scope * personCount).toFixed(2).toString().replace('.', ',')
+          value: VaTraineeDayCalculator.formatFloat(scopeMultiplier * scope * personCount)
         }
         InputValueStorage.writeValue({}, valueHolder, totalUpdate)
         props.onChange({"target": {"value": valueHolder.value}})
