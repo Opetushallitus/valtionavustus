@@ -6,6 +6,7 @@ import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 import FormRules from 'soresu-form/web/form/FormRules'
 import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
+import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber.jsx'
 import VaChangeRequest from 'va-common/web/va/VaChangeRequest.jsx'
@@ -36,7 +37,7 @@ export default class HakemusPreview extends Component {
       state: formState,
       formContainerClass: EditsDisplayingFormView,
       infoElementValues: avustushaku,
-      controller: new FakeFormController(new VaPreviewComponentFactory(), avustushaku, hakemus),
+      controller: new FakeFormController(new VaComponentFactory(), new VaPreviewComponentFactory(), avustushaku, hakemus),
       containerId: "preview-container",
       headerElements: [registerNumberDisplay, changeRequests]
     }

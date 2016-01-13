@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 
 export default class FakeFormController {
 
-  constructor(customPreviewComponentFactory, avustushaku, hakemus) {
+  constructor(customComponentFactory, customPreviewComponentFactory, avustushaku, hakemus) {
+    this.customComponentFactory = customComponentFactory
     this.customPreviewComponentFactory = customPreviewComponentFactory
     this.avustushaku = avustushaku
     this.hakemus = hakemus
@@ -17,6 +18,17 @@ export default class FakeFormController {
 
   getCustomComponentProperties() {
     return this.avustushaku
+  }
+
+  getCustomComponentTypeMapping() {
+    return this.customComponentFactory ? this.customComponentFactory.fieldTypeMapping : {}
+  }
+
+  createCustomComponent(componentProps) {
+    if (!this.customComponentFactory) {
+      throw new Error("To create a custom field, supply customComponentFactory to FormController")
+    }
+    return this.customComponentFactory.createComponent(componentProps)
   }
 
   getCustomPreviewComponentTypeMapping() {

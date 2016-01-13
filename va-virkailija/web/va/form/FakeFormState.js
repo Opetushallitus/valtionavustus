@@ -7,8 +7,6 @@ import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 
-import FakeFormController from './FakeFormController.js'
-
 export default class FakeFormState {
 
   static resolveAttachmentsProperty(hakuData, hakemus) {

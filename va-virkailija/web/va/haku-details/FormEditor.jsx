@@ -5,6 +5,7 @@ import soresuFormEditStyles from 'soresu-form/web/form/style/formedit.less';
 
 import FormEdit from 'soresu-form/web/form/edit/FormEdit.jsx'
 import FormEditorController from 'soresu-form/web/form/edit/FormEditController'
+import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 
 import FakeFormController from '../form/FakeFormController.js'
@@ -37,7 +38,7 @@ export default class FormEditor extends Component {
     const formElementProps = {
       state: formState,
       infoElementValues: avustushaku,
-      controller: new FakeFormController(new VaPreviewComponentFactory(), avustushaku, {}),
+      controller: new FakeFormController(new VaComponentFactory(), new VaPreviewComponentFactory(), avustushaku, {}),
       formEditorController: formEditorController
     }
 
