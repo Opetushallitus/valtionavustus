@@ -8,7 +8,7 @@ import {TrimmingTextFieldPropertyMapper, FieldOnChangePropertyMapper} from 'sore
 import VaBudgetElement, {SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
 import {VaFocusAreasPropertyMapper} from './VaPropertyMapper.js'
 import VaProjectDescription from './VaProjectDescription.jsx'
-import VaTraineeDayCalculator from './VaTraineeDayCalculator.jsx'
+import VaTraineeDayCalculator, {VaTraineeDayTotalCalculator} from './VaTraineeDayCalculator.jsx'
 
 export default class VaComponentFactory extends ComponentFactory {
   constructor() {
@@ -20,7 +20,8 @@ export default class VaComponentFactory extends ComponentFactory {
       "vaProjectDescription": VaProjectDescription,
       "vaFocusAreas": CheckboxButton,
       "vaEmailNotification": EmailTextField,
-      "vaTraineeDayCalculator": VaTraineeDayCalculator
+      "vaTraineeDayCalculator": VaTraineeDayCalculator,
+      "vaTraineeDayTotalCalculator": VaTraineeDayTotalCalculator
     }
     super({fieldTypeMapping: fieldTypeMapping,
            fieldPropertyMapperMapping: {

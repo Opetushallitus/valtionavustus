@@ -100,13 +100,18 @@
                     "sv": ""
                   },
                   "label": {
-                    "fi": "Koulutettavapäivät yhteensä",
-                    "sv": "TODO SV Koulutettavapäivät yhteensä"
+                    "fi": "Koulutettavapäivät",
+                    "sv": "TODO SV Koulutettavapäivät"
                   }
                 }
               ]
             }
           ]
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "koulutettavapaivat-yhteensa",
+          "fieldType": "vaTraineeDayTotalCalculator"
         }
       ]
     }

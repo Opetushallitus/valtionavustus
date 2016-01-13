@@ -1,5 +1,6 @@
 import React from 'react'
 import ClassNames from 'classnames'
+import _ from 'lodash'
 
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent.jsx'
 import RadioButton from 'soresu-form/web/form/component/RadioButton.jsx'
@@ -152,6 +153,34 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         <tr><td colSpan="3">{this.label(totalClassStr)}: {InputValueStorage.readValue({}, valueHolder, "total")}</td></tr>
         </tfoot>
       </table>
+      </div>
+    )
+  }
+}
+
+export class VaTraineeDayTotalCalculator extends React.Component {
+
+  constructor(props) {
+    super(props)
+    this.translator = new Translator(props.translations.form["trainee-day-calculator"])
+  }
+
+  render() {
+    const answers = this.props.answersObject
+    const htmlId = this.props.htmlId
+    const vaTraineeDayCalculatorAnswers = InputValueStorage.readValues(answers, "vaTraineeDayCalculator")
+    const scopeTotal = _.reduce(vaTraineeDayCalculatorAnswers, (acc, answer) => {
+      const subTotal = VaTraineeDayCalculator.readTotalAsFloat(answer)
+      return (subTotal ? subTotal: 0) + acc }, 0
+    )
+    const personCountTotal = _.reduce(vaTraineeDayCalculatorAnswers, (acc, answer) => {
+      const subTotal = parseInt(InputValueStorage.readValue({}, answer, "person-count"))
+      return (subTotal ? subTotal: 0) + acc }, 0
+    )
+    return (
+      <div id={htmlId} className="va-trainee-day-calculator-total">
+        <p><label className="total">{this.translator.translate("person-count-total", this.props.lang)}:</label> {personCountTotal}</p>
+        <p><label className="total">{this.translator.translate("scope-total", this.props.lang)}:</label> {VaTraineeDayCalculator.formatFloat(scopeTotal)}</p>
       </div>
     )
   }

@@ -68,6 +68,14 @@
       "kp": {
         "fi": "Koulutuspäivinä",
         "sv": "TODO SV Koulutuspäivinä"
+      },
+      "scope-total": {
+        "fi": "Koulutettavapäiviä yhteensä",
+        "sv": "TODO SV Koulutettavapäiviä yhteensä"
+      },
+      "person-count-total": {
+        "fi": "Osallistujamäärä yhteensä",
+        "sv": "TODO SV Osallistujamäärä yhteensä"
       }
     },
     "attachment": {

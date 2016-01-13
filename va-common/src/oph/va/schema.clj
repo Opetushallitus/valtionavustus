@@ -10,7 +10,7 @@
                     [:vaFocusAreas
                      :vaEmailNotification
                      :vaTraineeDayCalculator]
-                    [])
+                    [:vaTraineeDayTotalCalculator])
 
 (s/defschema SystemTime {:system-time s/Inst})
 
