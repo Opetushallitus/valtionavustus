@@ -8,8 +8,9 @@ import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 export default class EditsDisplayingFormView extends React.Component {
   static renderField(controller, formEditController, state, infoElementValues, field) {
     const fields = state.form.content
+    const translations = state.configuration.translations
     const htmlId = controller.constructHtmlId(fields, field.id)
-    const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field }
+    const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field, controller: controller, translations: translations }
     if (field.fieldClass == "formField") {
       const oldAnswer = _.find(state.answersDelta.changedAnswers, a => { return a.key === field.id })
       if (oldAnswer) {
