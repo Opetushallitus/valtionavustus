@@ -5,6 +5,7 @@ import FormRules from 'soresu-form/web/form/FormRules'
 import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
 
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
+import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 
 import FakeFormController from './FakeFormController.js'
 
@@ -45,7 +46,8 @@ export default class FakeFormState {
       changeRequests: hakemus.changeRequests,
       attachmentVersions: hakemus.attachmentVersions,
       extensionApi: {
-        formOperations: formOperations
+        formOperations: formOperations,
+        customFieldSyntaxValidator: VaSyntaxValidator
       }
     }
 

@@ -10,7 +10,8 @@ import DateUtil from 'soresu-form/web/form/DateUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
 
-import HttpUtil from 'va-common/web/HttpUtil.js'
+import HttpUtil from 'va-common/web/HttpUtil'
+import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
 
@@ -346,7 +347,7 @@ export default class HakemustenArviointiController {
   onSetOverriddenAnswerValue(state, setOverriddenAnswerValue) {
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, setOverriddenAnswerValue.hakemusId)
     if (relevantHakemus) {
-      InputValueStorage.writeValue([setOverriddenAnswerValue.field], relevantHakemus.arvio["overridden-answers"], FieldUpdateHandler.createFieldUpdate(setOverriddenAnswerValue.field, setOverriddenAnswerValue.newValue, state.extensionApi.customFieldSyntaxValidator))
+      InputValueStorage.writeValue([setOverriddenAnswerValue.field], relevantHakemus.arvio["overridden-answers"], FieldUpdateHandler.createFieldUpdate(setOverriddenAnswerValue.field, setOverriddenAnswerValue.newValue, VaSyntaxValidator))
       dispatcher.push(events.updateHakemusArvio, relevantHakemus)
     }
     return state
