@@ -35,6 +35,10 @@ Technical documentation
 * [Babel](https://babeljs.io) For ES6 javascript support
 * [Node.js](https://nodejs.org) For [building](../README.md) JS packages with [Browserify](http://browserify.org)
 
+### In documentation
+* [Grip](https://github.com/joeyespo/grip) GitHub Readme Instant Preview for previewing markdown documents
+* [yEd](https://www.yworks.com/products/yed) for editing graphs
+
 ## Architecture
 
 Valtionavustus application is deployed into CSC Pouta OpenStack environment.
@@ -47,7 +51,7 @@ Environment specific application configurations are in [va-hakija/config](../va-
 
 ### Current Server & Network architecture (14.1.2016)
 
-Servers used in test and pilot environment:
+Servers used in test and production environment:
 
 ![Server architecture (14.1.2016)](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/deployment.svg)
 
