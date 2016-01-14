@@ -118,7 +118,7 @@
       <text x="481.4833" xml:space="preserve" y="57.7662" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP / SSH</text>
       <path fill="none" d="M420.3353 13.0577 L316.5703 95.7102" clip-path="url(#clipPath2)"/>
       <path d="M310.3128 100.6945 L322.8143 97.129 L317.3525 95.0872 L316.5839 89.3071 Z" clip-path="url(#clipPath2)" stroke="none"/>
-      <text x="380.6212" xml:space="preserve" y="61.0162" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">SSH</text>
+      <text x="380.6212" xml:space="preserve" y="61.0162" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP / SSH</text>
       <path fill="none" d="M402.4701 -5.6426 L130.8329 91.478" clip-path="url(#clipPath2)"/>
       <path d="M123.2999 94.1713 L136.2827 94.8395 L131.7745 91.1413 L132.9161 85.4232 Z" clip-path="url(#clipPath2)" stroke="none"/>
       <text x="284.2029" xml:space="preserve" y="-13.7637" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP / SSH</text>
