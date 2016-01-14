@@ -127,12 +127,10 @@
       <text x="247.7932" font-size="10px" y="542.8493" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none" xml:space="preserve">dev.valtionavustukset.oph.fi</text>
       <path fill="none" d="M288.7756 283.5633 L214.2796 199.1827" clip-path="url(#clipPath2)"/>
       <path d="M208.9849 193.1855 L213.1787 205.4904 L214.9414 199.9323 L220.6752 198.8721 Z" clip-path="url(#clipPath2)" stroke="none"/>
-      <text x="118.1378" xml:space="preserve" y="248.278" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP (8081, 6071)</text>
-      <text x="162.4112" xml:space="preserve" y="262.2467" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">SSH</text>
+      <text x="172.2852" xml:space="preserve" y="266.4464" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">SSH</text>
       <path fill="none" d="M338.2166 283.5795 L447.66 198.1058" clip-path="url(#clipPath2)"/>
       <path d="M453.965 193.1817 L441.43 196.6272 L446.8719 198.7213 L447.5851 204.5085 Z" clip-path="url(#clipPath2)" stroke="none"/>
-      <text x="420.307" xml:space="preserve" y="256.3994" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP (8081, 6071)</text>
-      <text x="464.5805" xml:space="preserve" y="270.3682" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">SSH</text>
+      <text x="455.6566" xml:space="preserve" y="270.3532" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">SSH</text>
       <path fill="none" d="M373.6458 21.7681 L448.0508 88.8303" clip-path="url(#clipPath2)"/>
       <path d="M453.9933 94.1864 L448.4271 82.4383 L447.308 88.1608 L441.7321 89.8664 Z" clip-path="url(#clipPath2)" stroke="none"/>
       <text x="435.5324" xml:space="preserve" y="55.1432" clip-path="url(#clipPath2)" font-family="sans-serif" stroke="none">HTTP (8081, 6071)</text>
