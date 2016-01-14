@@ -51,7 +51,7 @@
     "trainee-day-calculator": {
       "scope-type": {
         "fi": "Laajuus ilmoitettu",
-        "sv": "Omfattning angivits"
+        "sv": "Omfattning angivits i"
       },
       "scope": {
         "fi": "Laajuus",
@@ -75,7 +75,7 @@
       },
       "person-count-total": {
         "fi": "Osallistujamäärä yhteensä",
-        "sv": "Total Deltagarantal"
+        "sv": "Total deltagarantal"
       }
     },
     "attachment": {
