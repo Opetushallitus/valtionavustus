@@ -47,7 +47,9 @@ Environment specific application configurations are in [va-hakija/config](../va-
 
 ### Production environment
 
-![Production setup](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/production.svg)
+![Current production setup (14.1.2016)](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/production.svg)
+
+![Desired production setup (14.1.2016)](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/production-with-build.svg)
 
 ### Server & Network architecture
 
