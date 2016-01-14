@@ -45,19 +45,15 @@ Jar is built and deployed by [Jenkins CI server](https://dev.valtionavustukset.o
 
 Environment specific application configurations are in [va-hakija/config](../va-hakija/config/) and [va-virkailija/config](../va-virkailija/config/)
 
-### Current Production Environment (14.1.2016)
-
-![Current production setup (14.1.2016)](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/production.svg)
-
-### Desired Production Environment (14.1.2016)
-
-![Desired production setup (14.1.2016)](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/production-with-build.svg)
-
-### Server & Network architecture
+### Current Server & Network architecture (14.1.2016)
 
 Servers used in test and pilot environment:
 
-![Server architecture](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/deployment.svg)
+![Server architecture (14.1.2016)](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/deployment.svg)
+
+### Desired Server & Network architecture (14.1.2016)
+
+![Desired production setup (14.1.2016)](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/production-with-build.svg)
 
 ### General architecture
 General architecture including integrations and data flows (from originator towards receiver) is described in picture below.
