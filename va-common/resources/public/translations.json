@@ -146,7 +146,7 @@
     },
     "negative-trayneeday-total": {
       "fi": "Koulutettavapäivien määrän tulee olla positiivinen",
-      "sv": "TODO SV Koulutettavapäivien määrän tulee olla positiivinen"
+      "sv": "Deltagarantalet ska vara positivt"
     },
     "validation-errors": {
       "fi": "{{kpl}} vastauksessa puutteita",
