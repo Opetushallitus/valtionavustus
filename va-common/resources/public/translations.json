@@ -51,31 +51,31 @@
     "trainee-day-calculator": {
       "scope-type": {
         "fi": "Laajuus ilmoitettu",
-        "sv": "TODO SV Laajuus ilmoitettu"
+        "sv": "Omfattning angivits"
       },
       "scope": {
         "fi": "Laajuus",
-        "sv": "TODO SV Laajuus"
+        "sv": "Omfattning"
       },
       "person-count": {
         "fi": "Osallistujamäärä",
-        "sv": "TODO SV Osallistujamäärä"
+        "sv": "Deltagarantal"
       },
       "op": {
         "fi": "Opintopisteinä",
-        "sv": "TODO SV Opintopisteinä"
+        "sv": "Studiepoäng"
       },
       "kp": {
         "fi": "Koulutuspäivinä",
-        "sv": "TODO SV Koulutuspäivinä"
+        "sv": "Utbildningsdagar"
       },
       "scope-total": {
         "fi": "Koulutettavapäiviä yhteensä",
-        "sv": "TODO SV Koulutettavapäiviä yhteensä"
+        "sv": "Total kursdeltagardagar"
       },
       "person-count-total": {
         "fi": "Osallistujamäärä yhteensä",
-        "sv": "TODO SV Osallistujamäärä yhteensä"
+        "sv": "Total Deltagarantal"
       }
     },
     "attachment": {
