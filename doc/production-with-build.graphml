@@ -84,7 +84,7 @@ PostgreSQL 9.4</y:NodeLabel>
           <y:Geometry height="85.0" width="140.0" x="248.77461139896423" y="283.58736636120665"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="73.84375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="136.38671875" x="1.806640625" y="4.0">oph-va-build01.csc.fi
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="73.84375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="136.890625" x="1.5546875" y="4.0">oph-va-ci-test01.csc.fi
 2 core, 4GB RAM,
 200GB persistent disk
 nginx

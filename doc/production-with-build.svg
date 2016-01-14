@@ -69,7 +69,7 @@
       <path d="M249.5246 286.5874 Q249.5246 284.3374 251.7746 284.3374 L336.7746 284.3374 Q339.0246 284.3374 339.0246 286.5874 Q339.0246 288.8374 296.5246 319.8374 Q254.0246 350.8374 251.7746 350.8374 Q249.5246 350.8374 249.5246 348.5874 Z" stroke="none" clip-path="url(#clipPath2)"/>
     </g>
     <g text-rendering="geometricPrecision" stroke-miterlimit="1.45" shape-rendering="geometricPrecision" font-family="sans-serif" transform="matrix(1,0,0,1,-75,255)" stroke-linecap="butt">
-      <text x="256.2287" xml:space="preserve" y="300.726" clip-path="url(#clipPath2)" stroke="none">oph-va-build01.csc.fi</text>
+      <text x="252.3293" xml:space="preserve" y="300.726" clip-path="url(#clipPath2)" stroke="none">oph-va-ci-test01.csc.fi</text>
       <text x="266.2599" xml:space="preserve" y="314.6948" clip-path="url(#clipPath2)" stroke="none">2 core, 4GB RAM,</text>
       <text x="252.5813" xml:space="preserve" y="328.6635" clip-path="url(#clipPath2)" stroke="none">200GB persistent disk</text>
       <text x="302.1428" xml:space="preserve" y="342.6323" clip-path="url(#clipPath2)" stroke="none">nginx</text>
