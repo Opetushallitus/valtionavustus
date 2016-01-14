@@ -64,11 +64,11 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>./ci/deploy_jar.bash va-prod va-hakija ../../valtionavustus-deploy-test/builds/lastStableBuild/archive/va-hakija/target/uberjar/hakija-*-standalone.jar
+      <command>./ci/deploy_jar.bash oph-va-app-prod01.csc.fi va-hakija ../../valtionavustus-deploy-test/builds/lastStableBuild/archive/va-hakija/target/uberjar/hakija-*-standalone.jar
       </command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>./ci/deploy_jar.bash va-prod va-virkailija ../../valtionavustus-deploy-test/builds/lastStableBuild/archive/va-virkailija/target/uberjar/virkailija-*-standalone.jar
+      <command>./ci/deploy_jar.bash oph-va-app-prod01.csc.fi va-virkailija ../../valtionavustus-deploy-test/builds/lastStableBuild/archive/va-virkailija/target/uberjar/virkailija-*-standalone.jar
       </command>
     </hudson.tasks.Shell>
   </builders>
