@@ -1,5 +1,5 @@
 - name: Install Docker apt repo key
-  apt_key: keyserver=p80.pool.sks-keyservers.net id=36A1D7869245C8950F966E92D8576A8BA88D21E9
+  apt_key: keyserver=pgp.mit.edu id=36A1D7869245C8950F966E92D8576A8BA88D21E9
 
 - name: Add Docker apt repository
   apt_repository: repo='deb https://get.docker.com/ubuntu docker main' state=present
