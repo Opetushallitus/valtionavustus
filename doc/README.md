@@ -45,9 +45,11 @@ Jar is built and deployed by [Jenkins CI server](https://dev.valtionavustukset.o
 
 Environment specific application configurations are in [va-hakija/config](../va-hakija/config/) and [va-virkailija/config](../va-virkailija/config/)
 
-### Production environment
+### Current Production Environment (14.1.2016)
 
 ![Current production setup (14.1.2016)](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/production.svg)
+
+### Desired Production Environment (14.1.2016)
 
 ![Desired production setup (14.1.2016)](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/production-with-build.svg)
 
