@@ -76,7 +76,7 @@
   debug:
     msg: |
           {% set comma = joiner(",") %}
-          {% for server in groups['va_backend'] -%}
+          {% for server in groups['va_backend'] + groups['va_app_qa'] -%}
               {{ comma() }}{{ server }}
           {%- endfor %}
   register: test_application_server_names
@@ -86,7 +86,7 @@
   debug:
     msg: |
           {% set comma = joiner(",") %}
-          {% for server in groups['prod-va_backend'] -%}
+          {% for server in groups['prod-va_backend'] + groups['va_app_prod'] -%}
               {{ comma() }}{{ server }}
           {%- endfor %}
   register: production_application_server_names
