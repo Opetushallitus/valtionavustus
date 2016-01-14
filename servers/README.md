@@ -62,6 +62,8 @@ Valtionavustusjärjestelmän palvelimien provisiointi
   - myös poudan va-build kone on mukana, jotta saadaan sille tarvittavat oikeudet ja yhteydet vmware koneisiin
 * tarkista, että palvelimet vastaavat ansiblen pingiin (esim. oph-va-app-test01` tai kaikki `all`):
   - `./python-venv/bin/ansible all -i vmware_inventory.py -m ping`
+* asenna netaddr -python-paketti, esim
+  - `pip install netaddr`
 * alusta kaikki palvelimet
   - `./python-venv/bin/ansible-playbook -i vmware_inventory.py site.yml`
   - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
