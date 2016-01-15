@@ -90,11 +90,8 @@ class VaPreviewTraineeDayCalculator extends BasicFieldComponent {
   render() {
     const props = this.props
     const htmlId = props.htmlId
-    const valueHolder = {value: this.props.value ? this.props.value : [
-      {key:"scope-type", value: "kp", fieldType: "radioButton"},
-      {key:"scope", value: "0", fieldType: "textField"},
-      {key:"person-count", value: "0", fieldType: "textField"},
-      {key:"total", value: "0", fieldType: "textField"}]}
+    const field = props.field
+    const valueHolder = {value: this.props.value ? this.props.value : VaTraineeDayCalculator.emptyValue(field)}
     return (
         <div id={htmlId} className="va-trainee-day-calculator">
           <table>
@@ -104,12 +101,12 @@ class VaPreviewTraineeDayCalculator extends BasicFieldComponent {
               <th>{this.translator.translate("person-count", this.props.lang)}</th>
             </tr></thead>
             <tbody><tr>
-              <td>{this.translator.translate(InputValueStorage.readValue({}, valueHolder, "scope-type"), "fi")}</td>
-              <td>{InputValueStorage.readValue({}, valueHolder, "scope")}</td>
-              <td>{InputValueStorage.readValue({}, valueHolder, "person-count")}</td>
+              <td>{this.translator.translate(VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type"), "fi")}</td>
+              <td>{VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope")}</td>
+              <td>{VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count")}</td>
             </tr></tbody>
             <tfoot>
-            <tr><td colSpan="3">{this.label("total")}: {InputValueStorage.readValue({}, valueHolder, "total")}</td></tr>
+            <tr><td colSpan="3">{this.label("total")}: {VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "total")}</td></tr>
             </tfoot>
           </table>
         </div>

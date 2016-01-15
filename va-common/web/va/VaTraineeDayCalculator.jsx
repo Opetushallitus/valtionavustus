@@ -11,14 +11,21 @@ import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 // Koulutettavapäivälaskuri in finnish
 export default class VaTraineeDayCalculator extends BasicFieldComponent {
 
-  static subField(id) {
+  static subField(field, type) {
     const subFields = {
-      "scope-type": {id: "scope-type", fieldType: "radioButton"},
-      "scope": {id: "scope", fieldType: "textField"},
-      "person-count": {id: "person-count", fieldType: "textField"},
-      "total": {id: "total", fieldType: "textField"}
+      "scope-type": {id: field.id + ".scope-type", fieldType: "radioButton"},
+      "scope": {id: field.id + ".scope", fieldType: "textField"},
+      "person-count": {id: field.id + ".person-count", fieldType: "textField"},
+      "total": {id: field.id + ".total", fieldType: "textField"}
     }
-    return subFields[id]
+    return subFields[type]
+  }
+
+  static emptyValue(field) {
+    return [{key: field.id + ".scope-type", value: "op", fieldType: "radioButton"},
+            {key: field.id + ".scope", value: "0", fieldType: "textField"},
+            {key: field.id + ".person-count", value: "0", fieldType: "textField"},
+            {key: field.id + ".total", value: "0", fieldType: "textField"}]
   }
 
   constructor(props) {
@@ -44,24 +51,24 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     return VaTraineeDayCalculator.formatFloat(floatValue)
   }
 
-  static readTotalAsFloat(value) {
-    return parseFloat(InputValueStorage.readValue({}, value, "total").replace(",", "."))
+  static readSubValue(value, fieldId, type) {
+    return InputValueStorage.readValue({}, value, fieldId + "." + type)
+  }
+
+  static readTotalAsFloat(fieldId, value) {
+    return parseFloat(VaTraineeDayCalculator.readSubValue(value, fieldId, "total").replace(",", "."))
   }
 
   static validateTotal(field, value) {
-    const total =  VaTraineeDayCalculator.readTotalAsFloat(value)
+    const total =  VaTraineeDayCalculator.readTotalAsFloat(field.id, value)
     return total > 0 ? undefined : { "error": "negative-trayneeday-total" }
   }
 
   render() {
     const props = this.props
     const htmlId = props.htmlId
-    const valueHolder = {value: this.props.value ? this.props.value : [
-      {key:"scope-type", value: "op", fieldType: "radioButton"},
-      {key:"scope", value: "0", fieldType: "textField"},
-      {key:"person-count", value: "0", fieldType: "textField"},
-      {key:"total", value: "0", fieldType: "textField"}]}
-
+    const field = props.field
+    const valueHolder = {value: this.props.value ? this.props.value : VaTraineeDayCalculator.emptyValue(field)}
     const scopeTypeOptions = [
       {
         "value": "op",
@@ -78,11 +85,11 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         }
       }
     ]
-    const onChange = (field) => {
+    const onChange = (subField) => {
       return (event) => {
         var value = event.target.value
-        var scopeValue = InputValueStorage.readValue({}, valueHolder, "scope")
-        var personCountValue = InputValueStorage.readValue({}, valueHolder, "person-count")
+        var scopeValue = VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope")
+        var personCountValue = VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count")
         if(event.target.id.endsWith("scope")) {
           value =  VaTraineeDayCalculator.formatFloatString(value)
           scopeValue = value
@@ -92,17 +99,17 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
           personCountValue = value
         }
         const fieldUpdate = {
-          id: field.id,
-          field: field,
+          id: subField.id,
+          field: subField,
           value: value
         }
         InputValueStorage.writeValue({}, valueHolder, fieldUpdate)
-        const scopeMultiplier = InputValueStorage.readValue({}, valueHolder, "scope-type") === "op" ? 4.5 : 1
+        const scopeMultiplier = VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type") === "op" ? 4.5 : 1
         const scope = parseFloat(scopeValue.replace(",", ".")) ? parseFloat(scopeValue.replace(",", ".")) : 0
         const personCount = parseInt(personCountValue) ? parseInt(personCountValue) : 0
         const totalUpdate = {
-          id: "total",
-          field: VaTraineeDayCalculator.subField("total"),
+          id: field.id + "." +"total",
+          field: VaTraineeDayCalculator.subField(field, "total"),
           value: VaTraineeDayCalculator.formatFloat(scopeMultiplier * scope * personCount)
         }
         InputValueStorage.writeValue({}, valueHolder, totalUpdate)
@@ -123,16 +130,16 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
             <RadioButton htmlId={htmlId + ".scope-type"}
                          options={scopeTypeOptions}
                          disabled={props.disabled}
-                         onChange={onChange(VaTraineeDayCalculator.subField("scope-type"))}
-                         value={InputValueStorage.readValue({}, valueHolder, "scope-type")}
+                         onChange={onChange(VaTraineeDayCalculator.subField(field, "scope-type"))}
+                         value={VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type") }
                          translations={{}}
                          lang={this.props.lang} />
           </td>
           <td>
             <BasicTextField htmlId={htmlId + ".scope"}
                             disabled={props.disabled}
-                            onChange={onChange(VaTraineeDayCalculator.subField("scope"))}
-                            value={InputValueStorage.readValue({}, valueHolder, "scope")}
+                            onChange={onChange(VaTraineeDayCalculator.subField(field, "scope"))}
+                            value={VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope") }
                             translations={{}}
                             hasError={props.hasError}
                             size="extra-extra-small"
@@ -141,8 +148,8 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
           <td>
             <BasicTextField htmlId={htmlId + ".person-count"}
                             disabled={props.disabled}
-                            onChange={onChange(VaTraineeDayCalculator.subField("person-count"))}
-                            value={InputValueStorage.readValue({}, valueHolder, "person-count")}
+                            onChange={onChange(VaTraineeDayCalculator.subField(field, "person-count"))}
+                            value={VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count") }
                             translations={{}}
                             hasError={props.hasError}
                             size="extra-extra-small"
@@ -150,7 +157,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
             </td>
         </tr></tbody>
         <tfoot>
-        <tr><td colSpan="3">{this.label(totalClassStr)}: {InputValueStorage.readValue({}, valueHolder, "total")}</td></tr>
+        <tr><td colSpan="3">{this.label(totalClassStr)}: {InputValueStorage.readValue({}, valueHolder, field.id + ".total")}</td></tr>
         </tfoot>
       </table>
       </div>
@@ -170,11 +177,11 @@ export class VaTraineeDayTotalCalculator extends React.Component {
     const htmlId = this.props.htmlId
     const vaTraineeDayCalculatorAnswers = InputValueStorage.readValues(answers, "vaTraineeDayCalculator")
     const scopeTotal = _.reduce(vaTraineeDayCalculatorAnswers, (acc, answer) => {
-      const subTotal = VaTraineeDayCalculator.readTotalAsFloat(answer)
+      const subTotal = VaTraineeDayCalculator.readTotalAsFloat(answer.key, answer)
       return (subTotal ? subTotal: 0) + acc }, 0
     )
     const personCountTotal = _.reduce(vaTraineeDayCalculatorAnswers, (acc, answer) => {
-      const subTotal = parseInt(InputValueStorage.readValue({}, answer, "person-count"))
+      const subTotal = parseInt(VaTraineeDayCalculator.readSubValue(answer, answer.key, "person-count"))
       return (subTotal ? subTotal: 0) + acc }, 0
     )
     return (

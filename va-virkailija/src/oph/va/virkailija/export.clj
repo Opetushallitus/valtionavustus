@@ -142,6 +142,11 @@
             answers
             answers-fixed-fields)))
 
+(defn- str->float [str]
+  (if str
+    (read-string (clojure.string/replace str "," "."))
+    nil))
+
 (defn- str->int [str]
   (if str
     (read-string str)
@@ -186,6 +191,7 @@
                                                 :fi)))
                           (clojure.string/join "; ")))
     "moneyField" (str->int (get answer-set id))
+    "vaTraineeDayCalculator" (str->float (get answer-set (str id ".total")))
     (get answer-set id)))
 
 (defn- extract-answer-values [avustushaku answer-keys answer-types answers]
