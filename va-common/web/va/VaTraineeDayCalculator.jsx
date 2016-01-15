@@ -60,6 +60,12 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
   }
 
   static validateTotal(field, value) {
+    _.forEach(value, answer => {
+      if(answer.key && !answer.key.startsWith(field.id)) {
+        const subType = answer.key.substr(answer.key.lastIndexOf(".") + 1)
+        answer.key = field.id + "." + subType
+      }
+    })
     const total =  VaTraineeDayCalculator.readTotalAsFloat(field.id, value)
     return total > 0 ? undefined : { "error": "negative-trayneeday-total" }
   }
