@@ -34,7 +34,7 @@ export default class VaOldBrowserWarning extends React.Component {
                                 target="_blank"
                                 lang={this.props.lang} />
                </div>
-               <button className="soresu-remove" onClick={this.hideClick} />
+               <button type="button" className="soresu-remove" onClick={this.hideClick} />
              </div>
 
     }

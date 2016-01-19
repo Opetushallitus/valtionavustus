@@ -44,7 +44,7 @@ export default class HakuRoles extends Component {
           <div className="person-adder-input">
             Lisää uusi henkilö
             <input id="ldap-search-input" type="text" placeholder={"Hae"} onChange={startSearch} disabled={!roles || !userHasEditPrivilege}/>
-            <button className={clearInputButtonClassname} title="Tyhjennä" disabled={!hasInput} onClick={(e) => {
+            <button type="button" className={clearInputButtonClassname} title="Tyhjennä" disabled={!hasInput} onClick={(e) => {
                 const ldapSearchInput = document.getElementById('ldap-search-input')
                 ldapSearchInput.value = ''
                 startSearch(e)
@@ -150,7 +150,7 @@ class RoleRow extends React.Component {
         <td className={oidStatusClass}>{oidStatusText}</td>
         <td>{role.name}</td>
         <td>{role.email}</td>
-        <td><button onClick={onDelete} className="remove" alt="Poista" title={removeTitleText} tabIndex="-1" disabled={disableEditing} /></td>
+        <td><button type="button" onClick={onDelete} className="remove" alt="Poista" title={removeTitleText} tabIndex="-1" disabled={disableEditing} /></td>
       </tr>
     )
   }

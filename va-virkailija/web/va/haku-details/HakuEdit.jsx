@@ -114,7 +114,7 @@ class SelectionCriteria extends React.Component {
         <tr key={index}>
           <td><textarea onChange={onChange} rows="2" id={htmlId + "fi"} value={selectionCriteria.items[index].fi} disabled={!allowNondisruptiveHakuEdits} /></td>
           <td><textarea onChange={onChange} rows="2" id={htmlId + "sv"} value={selectionCriteria.items[index].sv} disabled={!allowNondisruptiveHakuEdits} /></td>
-          <td><button className="remove" onClick={controller.deleteSelectionCriteria(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={!allowAllHakuEdits} /></td>
+          <td><button type="button" className="remove" onClick={controller.deleteSelectionCriteria(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={!allowAllHakuEdits} /></td>
         </tr>
       )
     }
@@ -125,7 +125,7 @@ class SelectionCriteria extends React.Component {
         <tbody>
         {criteriaItems}
         </tbody>
-        <tfoot><tr><td><button disabled={!allowAllHakuEdits} onClick={controller.addSelectionCriteria(avustushaku)}>Lisää uusi valintaperuste</button></td></tr></tfoot>
+        <tfoot><tr><td><button type="button" disabled={!allowAllHakuEdits} onClick={controller.addSelectionCriteria(avustushaku)}>Lisää uusi valintaperuste</button></td></tr></tfoot>
       </table>
     )
   }
@@ -146,7 +146,7 @@ class FocusArea extends React.Component {
         <tr key={index}>
           <td><textarea onChange={onChange} rows="3" id={htmlId + "fi"} value={focusAreas.items[index].fi} disabled={!allowNondisruptiveHakuEdits} /></td>
           <td><textarea onChange={onChange} rows="3" id={htmlId + "sv"} value={focusAreas.items[index].sv} disabled={!allowNondisruptiveHakuEdits} /></td>
-          <td><button className="remove" onClick={controller.deleteFocusArea(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={!allowAllHakuEdits} /></td>
+          <td><button type="button" className="remove" onClick={controller.deleteFocusArea(avustushaku, index)} alt="Poista" title="Poista" tabIndex="-1" disabled={!allowAllHakuEdits} /></td>
         </tr>
       )
     }
@@ -157,7 +157,7 @@ class FocusArea extends React.Component {
         <tbody>
         {focusAreaItems}
         </tbody>
-        <tfoot><tr><td><button disabled={!allowAllHakuEdits} onClick={controller.addFocusArea(avustushaku)}>Lisää uusi painopistealue</button></td></tr></tfoot>
+        <tfoot><tr><td><button type="button" disabled={!allowAllHakuEdits} onClick={controller.addFocusArea(avustushaku)}>Lisää uusi painopistealue</button></td></tr></tfoot>
       </table>
     )
   }

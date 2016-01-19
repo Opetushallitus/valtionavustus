@@ -101,14 +101,15 @@ class ChangeRequest extends React.Component {
     const newChangeRequest = typeof hakemus.changeRequest !== 'undefined' && !hasChangeRequired
     return (
       <div className="value-edit">
-        <button hidden={newChangeRequest || hasChangeRequired}
+        <button type="button"
+                hidden={newChangeRequest || hasChangeRequired}
                 onClick={openEdit}
                 disabled={!allowEditing}>Pyydä täydennystä</button>
         <div hidden={!newChangeRequest}>
           <label>Lähetä täydennyspyyntö</label>
           <span onClick={closeEdit} className="close"></span>
           <textarea placeholder="Täydennyspyyntö hakijalle" onChange={onTextChange} rows="4" disabled={!allowEditing} value={hakemus.changeRequest}/>
-          <button disabled={_.isEmpty(hakemus.changeRequest)} onClick={sendChangeRequest}>Lähetä</button>
+          <button type="button" disabled={_.isEmpty(hakemus.changeRequest)} onClick={sendChangeRequest}>Lähetä</button>
         </div>
         <div hidden={!hasChangeRequired}>
           <div className="change-request-title">* Täydennyspyyntö lähetetty {lastChangeRequestTime}</div>
