@@ -61,7 +61,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
 
   static validateTotal(field, value) {
     _.forEach(value, answer => {
-      if(answer.key && !answer.key.startsWith(field.id)) {
+      if(answer.key && !_.startsWith(answer.key, field.id)) {
         const subType = answer.key.substr(answer.key.lastIndexOf(".") + 1)
         answer.key = field.id + "." + subType
       }
