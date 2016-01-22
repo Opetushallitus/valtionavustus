@@ -7,7 +7,8 @@
   "va_app": {
     "hosts": [
       "oph-va-app-test01.csc.fi",
-      "oph-va-app-prod01.csc.fi"
+      "oph-va-app-prod01.csc.fi",
+      "va-dev"
     ]
   },
   "va_app_qa": {
@@ -47,6 +48,12 @@
           "address": "192.168.1.9"
         },
         "ansible_ssh_host": "192.168.1.9"
+      },
+      "va-dev": {
+        "ansible_default_ipv4": {
+          "address": "192.168.1.25"
+        },
+        "ansible_ssh_host": "192.168.1.25"
       }
     }
   }
