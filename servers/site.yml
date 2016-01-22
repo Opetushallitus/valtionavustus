@@ -5,15 +5,6 @@
     app_profile: va-dev
     dbname: va-dev
   roles:
-  - valtionavustus.vmware.app
-
-- hosts: va-test
-  user: cloud-user
-  sudo: yes
-  vars:
-    app_profile: test
-    dbname: va-qa
-  roles:
   - valtionavustus.app
 
 - hosts: oph-va-app-test01.csc.fi
@@ -24,17 +15,8 @@
     app_profile: va-test
     dbname: va-qa
   roles:
-  - valtionavustus.vmware.app
-  - geerlingguy.security
-
-- hosts: va-prod
-  user: cloud-user
-  sudo: yes
-  vars:
-    app_profile: prod
-    dbname: va-prod
-  roles:
   - valtionavustus.app
+  - geerlingguy.security
 
 - hosts: oph-va-app-prod01.csc.fi
   sudo: yes
@@ -44,7 +26,7 @@
     app_profile: va-prod
     dbname: va-prod
   roles:
-  - valtionavustus.vmware.app
+  - valtionavustus.app
   - geerlingguy.security
 
 - hosts: va-loadbalancer-dev

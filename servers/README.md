@@ -31,17 +31,17 @@ Valtionavustusjärjestelmän palvelimien provisiointi
   - jos jonkin palvelimen luominen keskeytyy virheeseen, saattaa olla parasta tuhota palvelin ja yrittää uudelleen.
   - virhetilanteissa komennon uudelleen ajaminen _ei_ korjaa tilannetta (komento ei ole atominen).
 * alusta uuden koneen ssh (huom. pitää siis antaa luojan pouta pem, koska muut eivät ole vielä luetettuja)
-  - `./python-venv/bin/ansible-playbook -i openstack_inventory.py init_ssh.yml --private-key ~/.ssh/pouta-$USER.pem -l va-test`
+  - `./python-venv/bin/ansible-playbook -i openstack_inventory.py init_ssh.yml --private-key ~/.ssh/pouta-$USER.pem -l va-dev`
 * testaa pääsetkö koneelle ssh komennolla:
-  - `./open-ssh va-test` tai
+  - `./open-ssh va-dev` tai
   - `./open-ssh va-build`
-* tarkista, että uusi palvelin myös vastaa ansiblen pingiin (esim. va-test tai kaikki `all`):
-  - `./python-venv/bin/ansible va-test -i openstack_inventory.py -m ping -u cloud-user`
-* alusta kaikki palvelimet
-  - `./python-venv/bin/ansible-playbook -i openstack_inventory.py site.yml`
-  - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
+* tarkista, että uusi palvelin myös vastaa ansiblen pingiin (esim. va-dev tai kaikki `all`):
+  - `./python-venv/bin/ansible va-dev -i openstack_inventory.py -m ping -u cloud-user`
 * alusta yksittäinen palvelin
-  - `./python-venv/bin/ansible-playbook -i openstack_inventory.py site.yml -l va-test`
+  - `./python-venv/bin/ansible-playbook -i openstack_inventory.py site.yml -l va-dev`
+  - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
+* tai alusta kaikki palvelimet
+  - `./python-venv/bin/ansible-playbook -i openstack_inventory.py site.yml`
 
 ### Uuden käyttäjän lisääminen buildikoneelle kirjautumista varten
 `./open-ssh va-build add_va_jenkins_user.bash <käyttäjätunnus>`

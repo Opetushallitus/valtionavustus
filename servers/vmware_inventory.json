@@ -20,14 +20,6 @@
       "oph-va-app-prod01.csc.fi"
     ]
   },
-  "prod-va_backend": {
-    "hosts": [
-    ]
-  },
-  "va_backend": {
-    "hosts": [
-    ]
-  },
   "va_build": {
     "hosts": [
       "va-build"

@@ -1,38 +1,16 @@
-persistent_volume_devices: /dev/vdc
-logical_volumes:
-  logs:
-    filesystem: xfs
-    size: 10g
-    mount_point: /logs
-  postgresql_data:
-    filesystem: xfs
-    size: 10g
-    mount_point: /var/lib/postgresql
-  postgresql_config:
-    filesystem: xfs
-    size: 1g
-    mount_point: /etc/postgresql
-  postgresql_backups:
-    filesystem: xfs
-    size: 20g
-    mount_point: /postgresql-backups
-  data:
-    filesystem: xfs
-    size: 100g
-    mount_point: /data
-  home2:
-    filesystem: xfs
-    size: 10g
-    mount_point: /home2
+logs_dir: /logs
+data_dir: /data
 postgresql_version: 9.4
-postgresql_flavor: pgdg
-postgresql_backup_dir: "{{ logical_volumes.postgresql_backups.mount_point }}"
+postgresql_backup_dir: /postgresql-backups
 postgresql_backup_hour: 01
 postgresql_backup_minute: 00
-postgresql_backup_mail_recipient: root
+postgresql_backup_mail_recipient: va-dev@reaktor.com
 postgresql_backup_remote_rsync_path: None
+postgresql_pg_hba_local_ipv4: false
+postgresql_pg_hba_conf:
+      - host all all 127.0.0.1/32 md5
 
 postfix_domain: 'valtionavustukset.oph.fi'
-postfix_notify_email: 'root'
+postfix_notify_email: 'va-dev@reaktor.com'
 postfix_use_smtp: false
 postfix_relayhost: ''
