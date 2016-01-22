@@ -13,9 +13,15 @@
   filesystem: fstype={{ item.value.filesystem }} dev=/dev/persistent.volumes/{{ item.key }}
   with_dict: logical_volumes
 
-- name: Mount logical volumes
+- name: Mount logical volumes (Debian)
   mount: name={{ item.value.mount_point }} src=/dev/persistent.volumes/{{ item.key }} fstype={{ item.value.filesystem }} state=mounted opts=nobootwait
   with_dict: logical_volumes
+  when: ansible_os_family == "Debian"
+
+- name: Mount logical volumes (RedHat)
+  mount: name={{ item.value.mount_point }} src=/dev/mapper/persistent.volumes-{{ item.key }} fstype={{ item.value.filesystem }} state=mounted opts=defaults
+  with_dict: logical_volumes
+  when: ansible_os_family == "RedHat"
 
 - name: Grow xfs disks automatically
   command: xfs_growfs {{ item.value.mount_point }}

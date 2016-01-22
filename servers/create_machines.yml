@@ -50,6 +50,10 @@
         va_security_groups: 'qa-common,qa-va-app'
       }
     - { include: tasks/attach_persistent_volumes_if_needed.yml,
+        machine_name: va-dev,
+        volume_ids: [313a9338-c786-40bc-82a3-277625c4f989]
+      }
+    - { include: tasks/attach_persistent_volumes_if_needed.yml,
         machine_name: va-build,
         volume_ids: [6395f20b-509a-4336-8c41-189c7d4e6fb2]
       }
