@@ -199,14 +199,14 @@
                                                                                                          :fieldType "textField"}]))
             json (json->map body)]
         (should= 400 status)
-        (should= (json :project-end) [{:error "maxlength", :max 10}])))
+        (should= (json :project-end) [{:error "maxlength", :info {:max 10}}])))
 
   (it "PUT should validate text field lengths and options when done to route /api/avustushaku/1/hakemus"
       (let [{:keys [status json] } (put-hakemus {:value [{:key "language" :value "ru" :fieldType "radioButton"}
                                                          {:key "project-end" :value "10.10.10000" :fieldType "textField"}  ]})]
         (should= 400 status)
         (should= (json :language) [{:error "invalid-option"}])
-        (should= (json :project-end) [{:error "maxlength", :max 10}])))
+        (should= (json :project-end) [{:error "maxlength", :info {:max 10}}])))
 
   (it "PUT should create a new form submission and return id when done to route /api/form/1/values"
       (let [{:keys [status headers body error] :as resp} (put! "/api/form/1/values" valid-answers)
