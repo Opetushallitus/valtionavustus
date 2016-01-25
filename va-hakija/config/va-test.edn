@@ -3,7 +3,7 @@
           :port 8081
           :host "*"
           :url {:fi "https://testi.valtionavustukset.oph.fi/"
-                :sv "https://srv2.va-dev.oph.fi/"}
+                :sv "https://testi.valtionavustukset.oph.fi/"}
           :virkailija-url "https://testi.virkailija.valtionavustukset.oph.fi"}
  :db {:database-name "va-qa"}
  :email {:enabled? true

@@ -5,6 +5,7 @@
     app_profile: va-dev
     dbname: va-dev
   roles:
+  - valtionavustus.app.logical.volumes
   - valtionavustus.app
 
 - hosts: oph-va-app-test01.csc.fi
@@ -15,6 +16,8 @@
     app_profile: va-test
     dbname: va-qa
   roles:
+  - ssh.init
+  - common
   - valtionavustus.app
   - geerlingguy.security
 
@@ -26,6 +29,8 @@
     app_profile: va-prod
     dbname: va-prod
   roles:
+  - ssh.init
+  - common
   - valtionavustus.app
   - geerlingguy.security
 

@@ -5,12 +5,12 @@ certs_dir: '../../valtionavustus-secret/certs/dev'
 # ACL:s for different endpoints
 
 loadbalancer_acl:
-  - name: va_backend_dev
-    condition: hdr(host) -i srv4.va-dev.oph.fi
+  - name: va_backend_dev_fi
+    condition: hdr(host) -i srv1.va-dev.oph.fi
+  - name: va_backend_dev_sv
+    condition: hdr(host) -i srv2.va-dev.oph.fi
   - name: va_virkailija_backend_dev
-    condition: hdr(host) -i srv5.va-dev.oph.fi
-  - name: va_virkailija_backend_dev_ip
-    condition: hdr(host) -i 86.50.170.86
+    condition: hdr(host) -i srv3.va-dev.oph.fi
   - name: va_build
     condition: hdr(host) -i dev.valtionavustukset.oph.fi
 
@@ -18,11 +18,11 @@ loadbalancer_acl:
 
 loadbalancer_acl_mapping:
   - name: va_backend_dev
-    condition: if va_backend_dev
+    condition: if va_backend_dev_fi
+  - name: va_backend_dev
+    condition: if va_backend_dev_sv
   - name: va_virkailija_backend_dev
     condition: if va_virkailija_backend_dev
-  - name: va_virkailija_backend_dev
-    condition: if va_virkailija_backend_dev_ip
   - name: va_build
     condition: if va_build
 
@@ -39,7 +39,7 @@ haproxy_backends:
     - code: 503
       file: /etc/haproxy/va/errors/503.http
   options:
-    - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ srv4.va-dev.oph.fi
+    - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ srv1.va-dev.oph.fi
 
 - name: 'va_virkailija_backend_dev'
   balance: 'source'
@@ -51,7 +51,7 @@ haproxy_backends:
     - code: 503
       file: /etc/haproxy/va/errors/503.http
   options:
-    - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ srv5.va-dev.oph.fi
+    - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ srv3.va-dev.oph.fi
 
 - name: 'va_build'
   balance: 'source'

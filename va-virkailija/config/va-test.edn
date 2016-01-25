@@ -4,7 +4,7 @@
           :port 6071
           :virkailija-url "https://testi.virkailija.valtionavustukset.oph.fi"
           :url {:fi "https://testi.valtionavustukset.oph.fi/"
-                :sv "https://srv2.va-dev.oph.fi/"}}
+                :sv "https://testi.valtionavustukset.oph.fi/"}}
  :db {:database-name "va-qa"}
  :hakija-db {:database-name "va-qa"}
  :email {:enabled? true
