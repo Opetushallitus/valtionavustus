@@ -15,6 +15,7 @@ import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePre
 import AvustushakuDropdown from './avustushaku/AvustushakuDropdown.jsx'
 import ExcelExportLink from './avustushaku/ExcelExportLink.jsx'
 import HakemusSearchTextQuery from './hakemus-details/HakemusSearchTextQuery.jsx'
+import LocalStorage from './LocalStorage'
 
 import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'
@@ -73,13 +74,15 @@ export default class App extends Component {
   }
 }
 
-const defaultHakuId = 1
+const defaultHakuId = LocalStorage.avustushakuId() || 1
+
 const parsedAvustusHakuIdObject = new RouteParser('/avustushaku/:avustushaku_id/*ignore').match(location.pathname)
 if (!parsedAvustusHakuIdObject || _.isUndefined(parsedAvustusHakuIdObject["avustushaku_id"])) {
   window.location.href = "/avustushaku/" + defaultHakuId + "/"
 }
 
 const avustushakuId = parsedAvustusHakuIdObject ? parsedAvustusHakuIdObject["avustushaku_id"] : defaultHakuId
+LocalStorage.saveAvustushakuId(avustushakuId)
 
 const controller = new HakemustenArviointiController()
 const stateP = controller.initializeState(avustushakuId)
