@@ -70,6 +70,38 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     return total > 0 ? undefined : { "error": "negative-trayneeday-total" }
   }
 
+  static onChange(subField,props,valueHolder,field) {
+    return (event) => {
+      var value = event.target.value
+      var scopeValue = VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope")
+      var personCountValue = VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count")
+      if(event.target.id.endsWith("scope")) {
+        value =  VaTraineeDayCalculator.formatFloatString(value)
+        scopeValue = value
+      }
+      if(event.target.id.endsWith("person-count")) {
+        value = parseInt(value) ? parseInt(value).toString() : ""
+        personCountValue = value
+      }
+      const fieldUpdate = {
+        id: subField.id,
+        field: subField,
+        value: value
+      }
+      InputValueStorage.writeValue({}, valueHolder, fieldUpdate)
+      const scopeMultiplier = VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type") === "op" ? 4.5 : 1
+      const scope = parseFloat(scopeValue.replace(",", ".")) ? parseFloat(scopeValue.replace(",", ".")) : 0
+      const personCount = parseInt(personCountValue) ? parseInt(personCountValue) : 0
+      const totalUpdate = {
+        id: field.id + "." +"total",
+        field: VaTraineeDayCalculator.subField(field, "total"),
+        value: VaTraineeDayCalculator.formatFloat(scopeMultiplier * scope * personCount)
+      }
+      InputValueStorage.writeValue({}, valueHolder, totalUpdate)
+      props.onChange({"target": {"value": valueHolder.value}})
+    }
+  }
+
   render() {
     const props = this.props
     const htmlId = props.htmlId
@@ -92,35 +124,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
       }
     ]
     const onChange = (subField) => {
-      return (event) => {
-        var value = event.target.value
-        var scopeValue = VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope")
-        var personCountValue = VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count")
-        if(event.target.id.endsWith("scope")) {
-          value =  VaTraineeDayCalculator.formatFloatString(value)
-          scopeValue = value
-        }
-        if(event.target.id.endsWith("person-count")) {
-          value = parseInt(value) ? parseInt(value).toString() : ""
-          personCountValue = value
-        }
-        const fieldUpdate = {
-          id: subField.id,
-          field: subField,
-          value: value
-        }
-        InputValueStorage.writeValue({}, valueHolder, fieldUpdate)
-        const scopeMultiplier = VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type") === "op" ? 4.5 : 1
-        const scope = parseFloat(scopeValue.replace(",", ".")) ? parseFloat(scopeValue.replace(",", ".")) : 0
-        const personCount = parseInt(personCountValue) ? parseInt(personCountValue) : 0
-        const totalUpdate = {
-          id: field.id + "." +"total",
-          field: VaTraineeDayCalculator.subField(field, "total"),
-          value: VaTraineeDayCalculator.formatFloat(scopeMultiplier * scope * personCount)
-        }
-        InputValueStorage.writeValue({}, valueHolder, totalUpdate)
-        props.onChange({"target": {"value": valueHolder.value}})
-      }
+      return VaTraineeDayCalculator.onChange(subField,props,valueHolder,field)
     }
     const totalClassStr = this.resolveClassName("total")
     return (
