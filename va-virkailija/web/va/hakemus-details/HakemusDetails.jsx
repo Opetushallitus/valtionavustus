@@ -15,8 +15,15 @@ export default class HakemusDetails extends Component {
     const showOthersScores = this.props.showOthersScores
     const translations = this.props.translations
 
+    const onClose = (e) => {
+      controller.closeHakemusDetail()
+    }
+
+    const CloseButton = () => <button className="close" onClick={onClose} style={{position:"fixed",left:10,zIndex:"20000",marginTop:"-5"}}>x</button>
+
     return (
       <div hidden={hidden} id="hakemus-details">
+        <CloseButton/>
         <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
         <HakemusArviointi hakemus={hakemus}
                           avustushaku={avustushaku}

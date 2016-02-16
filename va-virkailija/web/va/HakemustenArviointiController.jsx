@@ -24,6 +24,7 @@ const events = {
   setFilter: 'setFilter',
   setSorter: 'setSorter',
   selectHakemus: 'selectHakemus',
+  closeHakemus: 'closeHakemus',
   updateHakemusArvio: 'updateHakemusArvio',
   saveHakemusArvio: 'saveHakemusArvio',
   updateHakemusStatus: 'updateHakemusStatus',
@@ -86,6 +87,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.initialState)], this.onInitialState,
       [dispatcher.stream(events.reRender)], this.onReRender,
       [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
+      [dispatcher.stream(events.closeHakemus)], this.onCloseHakemus,
       [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio,
       [dispatcher.stream(events.updateHakemusStatus)], this.onUpdateHakemusStatus,
       [dispatcher.stream(events.saveHakemusArvio)], this.onSaveHakemusArvio,
@@ -169,6 +171,11 @@ export default class HakemustenArviointiController {
     this.loadComments()
     this.loadChangeRequests(state, hakemusToSelect.id)
     this.loadAttachmentVersions(state, hakemusToSelect.id)
+    return state
+  }
+
+  onCloseHakemus(state) {
+    state.selectedHakemus = undefined
     return state
   }
 
@@ -403,6 +410,10 @@ export default class HakemustenArviointiController {
     return function() {
       dispatcher.push(events.selectHakemus, hakemus)
     }
+  }
+
+  closeHakemusDetail(){
+    dispatcher.push(events.closeHakemus, {})
   }
 
   setFilter(filterId, newFilter) {
