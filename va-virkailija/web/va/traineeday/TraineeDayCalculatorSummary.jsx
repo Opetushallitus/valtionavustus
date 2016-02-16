@@ -55,7 +55,7 @@ export default class TraineeDayCalculatorSummary extends React.Component {
           </tr>
           </tfoot>
         </table>
-        <p>Kustannukset per koulutettava päivä: {VaTraineeDayCalculator.formatFloat(costPerTraineeDayGranted)}€ <span className="text-grey">({VaTraineeDayCalculator.formatFloat(costPerTraineeDay)}€)</span></p>
+        <p>Kustannukset per koulutettava päivä: {VaTraineeDayCalculator.formatFloat(costPerTraineeDayGranted)} € <span className="text-grey">({VaTraineeDayCalculator.formatFloat(costPerTraineeDay)} €)</span></p>
       </div>
     )
   }
