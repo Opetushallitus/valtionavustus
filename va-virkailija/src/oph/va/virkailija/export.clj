@@ -143,13 +143,13 @@
             answers-fixed-fields)))
 
 (defn- str->float [str]
-  (if str
-    (read-string (clojure.string/replace str "," "."))
+  (if (not (empty? str))
+    (Float/parseFloat (clojure.string/replace str "," "."))
     nil))
 
 (defn- str->int [str]
-  (if str
-    (read-string str)
+  (if (not (empty? str))
+    (Integer/parseInt str)
     nil))
 
 (defn get-by-id [avustushaku answer-set id answer-type]
