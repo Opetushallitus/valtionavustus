@@ -37,6 +37,9 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
     return (
           <tr>
             <td>{name}</td>
+            <td className="text-grey original-value">
+              {VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope") }{VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope-type")}
+            </td>
             <td>
               <BasicTextField htmlId={htmlId + ".scope"}
                               disabled={!allowEditing}
@@ -47,8 +50,8 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
                               size="extra-extra-small"
                               lang={this.props.lang} />
             </td>
-            <td className="text-grey">
-              {VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope") }{VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope-type")}
+            <td className="text-grey original-value">
+              {VaTraineeDayCalculator.readSubValue(originalValues, field.id, "person-count")}
             </td>
             <td>
               <BasicTextField htmlId={htmlId + ".person-count"}
@@ -61,13 +64,10 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
                               lang={this.props.lang} />
             </td>
             <td className="text-grey">
-              {VaTraineeDayCalculator.readSubValue(originalValues, field.id, "person-count")}
+              {InputValueStorage.readValue({}, originalValues, field.id + ".total")}
             </td>
             <td>
               <strong>{InputValueStorage.readValue({}, valueHolder, field.id + ".total")}</strong>
-            </td>
-            <td className="text-grey">
-              {InputValueStorage.readValue({}, originalValues, field.id + ".total")}
             </td>
           </tr>
     )
