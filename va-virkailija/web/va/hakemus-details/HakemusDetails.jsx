@@ -19,7 +19,7 @@ export default class HakemusDetails extends Component {
       controller.closeHakemusDetail()
     }
 
-    const CloseButton = () => <button className="close" onClick={onClose} style={{position:"fixed",left:10,zIndex:"20000",marginTop:"-5"}}>x</button>
+    const CloseButton = () => <button className="close" onClick={onClose} style={{position:"fixed",zIndex:"20000",marginTop:"-5",marginLeft:"-40"}}>x</button>
 
     return (
       <div hidden={hidden} id="hakemus-details">
