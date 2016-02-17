@@ -53,9 +53,13 @@ export default class TraineeDayCalculatorSummary extends React.Component {
             <td className="text-grey">{VaTraineeDayCalculator.formatFloat(originalSum)}</td>
             <td><strong>{VaTraineeDayCalculator.formatFloat(grantedSum)}</strong></td>
           </tr>
+          <tr>
+            <td colSpan="5"><strong>Kustannukset per koulutettavapäivä:</strong></td>
+            <td className="text-grey">{VaTraineeDayCalculator.formatFloat(costPerTraineeDay)} €</td>
+            <td><strong>{VaTraineeDayCalculator.formatFloat(costPerTraineeDayGranted)} €</strong></td>
+          </tr>
           </tfoot>
         </table>
-        <p>Kustannukset per koulutettavapäivä: <span className="text-grey">(haettu {VaTraineeDayCalculator.formatFloat(costPerTraineeDay)} €)</span> {VaTraineeDayCalculator.formatFloat(costPerTraineeDayGranted)} €</p>
       </div>
     )
   }
