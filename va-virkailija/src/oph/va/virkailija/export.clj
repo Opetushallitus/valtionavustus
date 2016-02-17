@@ -142,15 +142,19 @@
             answers
             answers-fixed-fields)))
 
+(defn remove-white-spaces [str]
+  (clojure.string/replace str #"\s" ""))
+
+(defn comma-to-dot [str]
+  (clojure.string/replace str "," "."))
+
 (defn- str->float [str]
-  (if (not (empty? str))
-    (Float/parseFloat (clojure.string/replace str "," "."))
-    nil))
+  (when (not (empty? str))
+    (Float/parseFloat (comma-to-dot (remove-white-spaces str)))))
 
 (defn- str->int [str]
-  (if (not (empty? str))
-    (Integer/parseInt str)
-    nil))
+  (when (not (empty? str))
+    (Integer/parseInt (remove-white-spaces str))))
 
 (defn get-by-id [avustushaku answer-set id answer-type]
   (case (:fieldType answer-type)
