@@ -23,8 +23,8 @@ do
   copy_command="scp -Cpr -i ${SSH_KEY} ${SSH_USER}@${server}:${backups_path_on_server} ${server_copy_target}"
   echo "Running $copy_command"
   time eval ${copy_command}
-  server_copy_current=${target_dir}${server}-current
-  rm -rf ${server_copy_current}
-  mv ${server_copy_target} ${server_copy_current}
-  echo "Got: `du -hsx ${server_copy_ready}`"
+  server_copy_latest=${target_dir}${server}-latest
+  rm -rf ${server_copy_latest}
+  mv ${server_copy_target} ${server_copy_latest}
+  echo "Got: `du -hsx ${server_copy_latest}`"
 done
