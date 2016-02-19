@@ -38,7 +38,9 @@ const events = {
   attachmentVersionsLoaded: 'attachmentVersionsLoaded',
   setScore: 'setScore',
   toggleOthersScoresDisplay: 'toggleOthersScoresDisplay',
-  gotoSavedSearch: 'gotoSavedSearch'
+  gotoSavedSearch: 'gotoSavedSearch',
+  toggleHakemusFilter:'toggleHakemusFilter'
+
 }
 
 export default class HakemustenArviointiController {
@@ -58,7 +60,10 @@ export default class HakemustenArviointiController {
       hakemusFilter: {
         organization: "",
         name: "",
-        status: HakemusArviointiStatuses.allStatuses()
+        status: HakemusArviointiStatuses.allStatuses(),
+        answers:[],
+        isOpen:false,
+        openQuestions:[]
       },
       hakemusSorter: [
         {field: "score", order: "desc"}
@@ -103,7 +108,8 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.toggleOthersScoresDisplay)], this.onToggleOthersScoresDisplay,
       [dispatcher.stream(events.setFilter)], this.onFilterSet,
       [dispatcher.stream(events.setSorter)], this.onSorterSet,
-      [dispatcher.stream(events.gotoSavedSearch)], this.onGotoSavedSearch
+      [dispatcher.stream(events.gotoSavedSearch)], this.onGotoSavedSearch,
+      [dispatcher.stream(events.toggleHakemusFilter)], this.onToggleHakemusFilter
     )
   }
 
@@ -177,6 +183,11 @@ export default class HakemustenArviointiController {
   onCloseHakemus(state) {
     state.selectedHakemus = undefined
     return state
+  }
+
+  onToggleHakemusFilter(state){
+    state.hakemusFilter.isOpen = !state.hakemusFilter.isOpen
+    return state;
   }
 
   onUpdateHakemusArvio(state, updatedHakemus) {
@@ -494,5 +505,9 @@ export default class HakemustenArviointiController {
 
   gotoSavedSearch(hakemusList) {
     dispatcher.push(events.gotoSavedSearch, hakemusList)
+  }
+
+  toggleHakemusFilter() {
+    dispatcher.push(events.toggleHakemusFilter)
   }
 }

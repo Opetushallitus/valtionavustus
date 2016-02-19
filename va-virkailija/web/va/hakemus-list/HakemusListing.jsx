@@ -20,6 +20,8 @@ export default class HakemusListing extends Component {
         return hakemus => hakemus["budget-oph-share"]
       case "granted-sum":
         return hakemus => hakemus.arvio["budget-granted"]
+      case "answers":
+        return hakemus => hakemus.answers
       case "score":
         return hakemus => {
           const score = ScoreResolver.effectiveAverage(hakemus.arvio.scoring, userInfo, allowHakemusScoring)
@@ -34,6 +36,23 @@ export default class HakemusListing extends Component {
   static _filterWithArrayPredicate(fieldGetter, filter) {
     return function(hakemus) {
       return _.contains(filter, fieldGetter(hakemus))
+    }
+  }
+
+  static _filterAnswers(fieldGetter, filters) {
+    if(_.isEmpty(filters)) {
+      return function() {return true}
+    }
+    return function(hakemus) {
+      const answers = fieldGetter(hakemus)
+      if(_.isEmpty(answers)) {
+        return false
+      }
+      const answerMatchPredicate = (filter) => _.find(answers, (a)=> a.key == filter.id && a.value == filter.answer);
+      const groupedByQuestion = _.groupBy(filters, 'id');
+      const filterValuesByQuestion = _.values(groupedByQuestion)
+      const questionMatches = filterValuesByQuestion.map((v)=> _.some(v,answerMatchPredicate))
+      return _.every(questionMatches)
     }
   }
 
@@ -54,6 +73,7 @@ export default class HakemusListing extends Component {
             .filter(HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("organization"), filter.organization))
             .filter(HakemusListing._filterWithArrayPredicate(HakemusListing._fieldGetter("status"), filter.status))
             .filter(HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("search-text"), filter["search-text"]))
+            .filter(HakemusListing._filterAnswers(HakemusListing._fieldGetter("answers"), filter.answers))
   }
 
   static _sortByArray(fieldGetter, array, order, userInfo, allowHakemusScoring) {

@@ -15,6 +15,7 @@ import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePre
 import AvustushakuDropdown from './avustushaku/AvustushakuDropdown.jsx'
 import ExcelExportLink from './avustushaku/ExcelExportLink.jsx'
 import HakemusSearchTextQuery from './hakemus-details/HakemusSearchTextQuery.jsx'
+import HakemusFilter from './hakemus-filter/HakemusFilter.jsx'
 import LocalStorage from './LocalStorage'
 
 import virkailija from './style/virkailija.less'
@@ -41,6 +42,7 @@ export default class App extends Component {
             <div id="list-heading">
               <AvustushakuDropdown controller={controller} avustushaku={avustushaku} avustushakuList={avustushakuList} />
               <div className="right-side">
+                <HakemusFilter controller={controller} hakemusFilter={state.hakemusFilter} hakuData={hakuData}/>
                 <HakemusSearchTextQuery controller={controller} />
                 <ExcelExportLink avustushaku={avustushaku} />
               </div>
