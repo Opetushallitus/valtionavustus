@@ -5,9 +5,14 @@ import ClassNames from 'classnames'
 
 const ToggleFilterButton  = ({controller,hakemusFilter}) => {
   const activeFilterCount = hakemusFilter.answers.length
+  const hasActiveFilters = activeFilterCount>0
   const onFilter = () => controller.toggleHakemusFilter()
+  const buttonClass = ClassNames('btn btn-sm',{
+    'btn-blue': hasActiveFilters,
+    'btn-simple': !hasActiveFilters
+  });
   return (
-    <button className="btn btn-sm btn-blue" style={{fontSize:12}} onClick={onFilter}>Rajaa <span hidden={activeFilterCount==0}>({activeFilterCount})</span></button>
+    <button className={buttonClass} style={{fontSize:12}} onClick={onFilter}>Rajaa <span hidden={!hasActiveFilters}>({activeFilterCount})</span></button>
   )
 }
 
