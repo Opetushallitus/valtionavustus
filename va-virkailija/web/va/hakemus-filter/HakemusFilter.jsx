@@ -12,7 +12,7 @@ const ToggleFilterButton  = ({controller,hakemusFilter}) => {
     'btn-simple': !hasActiveFilters
   });
   return (
-    <button className={buttonClass} style={{fontSize:12}} onClick={onFilter}>Rajaa <span hidden={!hasActiveFilters}>({activeFilterCount})</span></button>
+    <button className={buttonClass} style={{fontSize:12,marginTop:-4}} onClick={onFilter}>Rajaa <span hidden={!hasActiveFilters}>({activeFilterCount})</span></button>
   )
 }
 
@@ -53,7 +53,7 @@ const FilterOption = ({question,option,controller,hakemusFilter}) => {
   });
 
   return (
-    <button className={btnClass} style={{marginRight:5}} onClick={onClick.bind(this, option)}>{option.label}</button>
+    <button className={btnClass} style={{marginRight:10}} onClick={onClick.bind(this, option)}>{option.label}</button>
   )
 }
 
@@ -88,7 +88,7 @@ const FilterList  = ({hakemusFilter,hakuData,controller}) => {
     const onToggleFilter = () => controller.toggleHakemusFilter()
 
     return (
-      <div hidden={!open} className="hakemus-filter-panel">
+      <div hidden={!open} className="panel hakemus-filter-panel">
         <button className="close" onClick={onToggleFilter}>x</button>
         {filterQuestions.map((question)=><FilterQuestion key={question.label} hakemusFilter={hakemusFilter} question={question} controller={controller}></FilterQuestion>)}
       </div>

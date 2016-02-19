@@ -80,6 +80,7 @@ h3 {
 
 .btn-sm{
   font-size: 11px;
+  line-height: 1.5;
   padding: 5px 7px;
 }
 
@@ -362,19 +363,12 @@ table.overview-list {
   }
 }
 
-.hakemus-filter-panel{
+.panel{
   background-color: #fff;
   padding: 15px;
   border: 1px solid #dfdfdf;
-  width: 500px;
-  position: absolute;
-  left: -50%;
-  top: 32px;
-  z-index: 10000;
   box-shadow: 0 1px 1px rgba(0,0,0,.5);
-
-  .box-triangle(140px);
-  .box-triangle-up(@light-gray, @off-white);
+  z-index: 10000;
 
   .close{
     color: @light-gray;
@@ -387,6 +381,24 @@ table.overview-list {
   }
 }
 
+.person-panel{
+  width: 400px;
+  position: absolute;
+  left: -400px;
+  top: 32px;
+  .box-triangle(380px);
+  .box-triangle-up(@light-gray, @off-white);
+}
+
+.hakemus-filter-panel{
+  width: 500px;
+  position: absolute;
+  left: -50%;
+  top: 32px;
+  .box-triangle(140px);
+  .box-triangle-up(@light-gray, @off-white);
+}
+
 .hakemus-filter-question{
   color: @blue;
   cursor: pointer;
@@ -397,7 +409,7 @@ table.overview-list {
   &:before{
     content: "\25BC";
     font-size: 10px;
-    margin-right: 10px;
+    margin-right: 5px;
   }
 
   &--open{
@@ -409,4 +421,7 @@ table.overview-list {
 
 .hakemus-filter-options{
   margin-bottom: 10px;
+  button{
+    margin-bottom: 10px;
+  }
 }
