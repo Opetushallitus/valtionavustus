@@ -45,6 +45,7 @@
 (s/defschema AvustusHaku {:id Long
                           :status HakuStatus
                           :phase HakuPhase
+                          :multiple-rahoitusalue s/Bool
                           :register-number (s/maybe s/Str)
                           :content AvustusHakuContent
                           :form Long})

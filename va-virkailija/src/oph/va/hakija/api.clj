@@ -51,9 +51,9 @@
   (let [haku-status (if (= (:status avustushaku) "new")
                       (new HakuStatus "draft")
                       (new HakuStatus (:status avustushaku)))
-        register-number (:register-number avustushaku)
         avustushaku-to-save (-> (assoc avustushaku :status haku-status)
-                                (assoc :register_number register-number))]
+                                (assoc :register_number (:register-number avustushaku))
+                                (assoc :multiple_rahoitusalue (:multiple-rahoitusalue avustushaku)))]
     (exec-all :hakija-db
               [hakija-queries/archive-avustushaku! avustushaku-to-save
                hakija-queries/update-avustushaku! avustushaku-to-save])

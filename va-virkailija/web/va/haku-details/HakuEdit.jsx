@@ -36,6 +36,7 @@ export default class HakuEdit extends Component {
             </tr>
           </tbody>
         </table>
+        <Rahoitusalueet multipleRahoitusalue={avustushaku["multiple-rahoitusalue"]} disabled={!allowAllHakuEdits} onChange={onChange} />
         <div className="haku-duration-and-self-financing">
           <div className="haku-duration-edit-container">
             <h3>{avustushaku.content.duration.label.fi}</h3>
@@ -159,6 +160,41 @@ class FocusArea extends React.Component {
         </tbody>
         <tfoot><tr><td><button type="button" disabled={!allowAllHakuEdits} onClick={controller.addFocusArea(avustushaku)}>Lisää uusi painopistealue</button></td></tr></tfoot>
       </table>
+    )
+  }
+}
+
+class Rahoitusalueet extends React.Component {
+  render() {
+    const multipleRahoitusalue = this.props.multipleRahoitusalue === true ? true : false
+    const onChange = this.props.onChange
+    const isDisabled = this.props.disabled
+    const options = []
+    const values = [false, true];
+    for (var i=0; i < values.length; i++) {
+      const value = values[i]
+      const htmlId = "set-multiple-rahoitusalue-" + value
+      options.push(
+          <input id={htmlId}
+                 type="radio"
+                 key={htmlId}
+                 name="multiple-rahoitusalue"
+                 value={value}
+                 onChange={onChange}
+                 checked={value === multipleRahoitusalue}
+                 disabled={isDisabled}
+          />
+      )
+      options.push(
+          <label key={htmlId + "-label"} htmlFor={htmlId}>{value ? "Useita rahoitusalueita" : "Yksi rahoitusalue"}</label>
+      )
+    }
+
+    return (
+        <div id="set-multiple-rahoitusalue">
+          <h3>Rahoitusalueet</h3>
+          {options}
+        </div>
     )
   }
 }

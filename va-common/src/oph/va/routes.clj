@@ -41,6 +41,7 @@
   {:id          (:id avustushaku)
    :status      (:status avustushaku)
    :register-number (:register_number avustushaku)
+   :multiple-rahoitusalue (:multiple_rahoitusalue avustushaku)
    :phase       (avustushaku-phase avustushaku)
    :content     (:content avustushaku)
    :form        (:form avustushaku)})
