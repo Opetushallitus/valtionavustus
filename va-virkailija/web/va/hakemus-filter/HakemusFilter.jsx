@@ -10,7 +10,7 @@ const ToggleFilterButton  = ({controller,hakemusFilter}) => {
   const buttonClass = ClassNames('btn btn-sm',{
     'btn-blue': hasActiveFilters,
     'btn-simple': !hasActiveFilters
-  });
+  })
   return (
     <button className={buttonClass} style={{fontSize:12,marginTop:-4}} onClick={onFilter}>Rajaa <span hidden={!hasActiveFilters}>({activeFilterCount})</span></button>
   )
@@ -66,7 +66,9 @@ const RemoveFilter = ({controller,hakemusFilter}) => {
 const FilterList  = ({hakemusFilter,hakuData,controller}) => {
     const open = hakemusFilter.isOpen
     const form = hakuData.form
-    const questions = FormUtil.findFieldsByFieldType(form.content,"radioButton")
+    const radioQuestions = FormUtil.findFieldsByFieldType(form.content,"radioButton")
+    const checkboxQuestions = FormUtil.findFieldsByFieldType(form.content,"checkboxButton")
+    const questions = radioQuestions.concat(checkboxQuestions)
     const answers = hakemusFilter.answers
     const mapOption = (questionId,option) =>(
       {
