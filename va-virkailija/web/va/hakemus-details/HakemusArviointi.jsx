@@ -30,6 +30,7 @@ export default class HakemusArviointi extends Component {
     const showOthersScores = this.props.showOthersScores
     return (
      <div id="hakemus-arviointi">
+       <ChooseRahoitusalue controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
        <HakemusSearchTextEdit controller={controller} hakemus={hakemus} avustushaku={avustushaku}
                               allowEditing={allowHakemusScoring} />
        <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku}
@@ -78,6 +79,48 @@ class SetArviointiStatus extends React.Component {
     return (
       <div className="value-edit">
         {statuses}
+      </div>
+    )
+  }
+}
+
+class ChooseRahoitusalue extends React.Component {
+  render() {
+    const avustushaku = this.props.avustushaku
+    if(!avustushaku["multiple-rahoitusalue"]) {
+      return null
+    }
+    const hakemus = this.props.hakemus
+    const allowEditing = this.props.allowEditing
+    const currentRahoitusalue = hakemus.arvio ? hakemus.arvio.rahoitusalue : undefined
+    const controller = this.props.controller
+    const rahoitusalueet = []
+    const rahoitusalueValues = ["Yleissivistävä koulutus, ml. varhaiskasvatus", "Ammatillinen koulutus", "Aikuiskoulutus ja vapaa sivistystyö" ,"Koko opetustoimi"]
+    for (var i=0; i < rahoitusalueValues.length; i++) {
+      const htmlId = "set-rahoitusalue-" + i
+      const onChange = allowEditing ? function(event) {
+        controller.setHakemusRahoitusalue(hakemus, event.target.value)
+      } : null
+      rahoitusalueet.push(
+        <input id={htmlId}
+               type="radio"
+               key={htmlId}
+               name="rahoitusalue"
+               value={rahoitusalueValues[i]}
+               disabled={!allowEditing}
+               onChange={onChange}
+               checked={rahoitusalueValues[i] === currentRahoitusalue ? true : false}
+        />
+      )
+      rahoitusalueet.push(
+        <label key={htmlId + "-label"} htmlFor={htmlId}>{rahoitusalueValues[i]}</label>
+      )
+    }
+
+    return (
+      <div className="value-edit">
+        <label>Rahoitusalue:</label>
+        {rahoitusalueet}
       </div>
     )
   }

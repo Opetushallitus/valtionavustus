@@ -471,6 +471,11 @@ export default class HakemustenArviointiController {
     }
   }
 
+  setHakemusRahoitusalue(hakemus, newRahoitusalue) {
+    hakemus.arvio["rahoitusalue"] = newRahoitusalue
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }
+
   setHakemusArvioBudgetGranted(hakemus, newBudgetGranted) {
     hakemus.arvio["budget-granted"] = newBudgetGranted
     dispatcher.push(events.updateHakemusArvio, hakemus)
@@ -483,7 +488,6 @@ export default class HakemustenArviointiController {
 
   setHakemusSearchText(hakemus, newSearchText) {
     hakemus.arvio["search-text"] = newSearchText
-    console.log("setting hakemus search text to", newSearchText)
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
