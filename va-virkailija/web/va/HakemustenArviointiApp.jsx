@@ -13,6 +13,7 @@ import HakemustenArviointiController from './HakemustenArviointiController.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusDetails from './hakemus-details/HakemusDetails.jsx'
 import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
+import HakemusDecisionLink from './hakemus-details/HakemusDecisionLink.jsx'
 import AvustushakuDropdown from './avustushaku/AvustushakuDropdown.jsx'
 import ExcelExportLink from './avustushaku/ExcelExportLink.jsx'
 import HakemusSearchTextQuery from './hakemus-details/HakemusSearchTextQuery.jsx'
@@ -71,6 +72,7 @@ export default class App extends Component {
                           controller={controller}/>
           <div hidden={!hasSelected} id="footer">
             <HakemusHakijaSidePreviewLink hakemus={selectedHakemus} avustushaku={avustushaku} />
+            <HakemusDecisionLink hakemus={selectedHakemus} avustushaku={avustushaku} />
           </div>
         </section>
       </section>
