@@ -8,7 +8,6 @@ import RouteParser from 'route-parser'
 import YhteenvetoController from './YhteenvetoController.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
-import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
 import DateUtil from 'soresu-form/web/form/DateUtil'
 
 import virkailija from './style/virkailija.less'
