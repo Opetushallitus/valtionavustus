@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import _ from 'lodash'
 import RouteParser from 'route-parser'
+import queryString from 'query-string'
 
 import Dispatcher from 'soresu-form/web/Dispatcher'
 
@@ -56,7 +57,8 @@ export default class App extends Component {
                             selectedHakemus={selectedHakemus}
                             userInfo={state.userInfo}
                             privileges={hakuData.privileges}
-                            controller={controller} />
+                            controller={controller}
+                            state={state}/>
           </div>
           <HakemusDetails hidden={!hasSelected}
                           hakuData={hakuData}
@@ -82,12 +84,12 @@ const parsedAvustusHakuIdObject = new RouteParser('/avustushaku/:avustushaku_id/
 if (!parsedAvustusHakuIdObject || _.isUndefined(parsedAvustusHakuIdObject["avustushaku_id"])) {
   window.location.href = "/avustushaku/" + defaultHakuId + "/"
 }
-
 const avustushakuId = parsedAvustusHakuIdObject ? parsedAvustusHakuIdObject["avustushaku_id"] : defaultHakuId
 LocalStorage.saveAvustushakuId(avustushakuId)
-
+const query = queryString.parse(location.search)
+const evaluator = query.arvioija ? parseInt(query.arvioija) : undefined
 const controller = new HakemustenArviointiController()
-const stateP = controller.initializeState(avustushakuId)
+const stateP = controller.initializeState(avustushakuId,evaluator)
 
 stateP.onValue((state) => {
   try {

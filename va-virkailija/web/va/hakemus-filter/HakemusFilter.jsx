@@ -58,8 +58,10 @@ const FilterOption = ({question,option,controller,hakemusFilter}) => {
 }
 
 const RemoveFilter = ({controller,hakemusFilter}) => {
-  const hidden = hakemusFilter.answers.length==0
-  const onRemove = () => controller.setFilter("answers",[])
+  const hidden = hakemusFilter.answers.length==0 &&
+    !_.isNumber(hakemusFilter.evaluator) &&
+    !_.isNumber(hakemusFilter.presenter)
+  const onRemove = () => controller.clearFilters()
   return <span hidden={hidden} className="hakemus-filter-remove" onClick={onRemove}>Poista rajaimet</span>
 }
 

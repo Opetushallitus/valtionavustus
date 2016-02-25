@@ -115,6 +115,8 @@
                         :overridden_answers overridden-answers
                         :budget_granted budget-granted
                         :summary_comment (:summary-comment arvio)
+                        :roles (:roles arvio)
+                        :presenter_role_id (:presenter-role-id arvio)
                         :search_text search-text}
         existing (get-arvio hakemus-id)
         changelog (update-changelog identity existing arvio-to-save)

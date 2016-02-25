@@ -3,6 +3,8 @@ import React, { Component } from 'react'
 
 import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses.js'
 import ScoreResolver from '../ScoreResolver.js'
+import PersonFilterButton from './PersonFilterButton.jsx'
+import PersonSelectButton from './PersonSelectButton.jsx'
 
 export default class HakemusListing extends Component {
 
@@ -22,6 +24,10 @@ export default class HakemusListing extends Component {
         return hakemus => hakemus.arvio["budget-granted"]
       case "answers":
         return hakemus => hakemus.answers
+      case "evaluators":
+        return hakemus => hakemus.arvio.roles.evaluators
+      case "presenter":
+        return hakemus => hakemus.arvio["presenter-role-id"]
       case "score":
         return hakemus => {
           const score = ScoreResolver.effectiveAverage(hakemus.arvio.scoring, userInfo, allowHakemusScoring)
@@ -36,6 +42,17 @@ export default class HakemusListing extends Component {
   static _filterWithArrayPredicate(fieldGetter, filter) {
     return function(hakemus) {
       return _.contains(filter, fieldGetter(hakemus))
+    }
+  }
+
+  static _filterWithArrayFilterPredicate(fieldGetter, filter) {
+    if(_.isUndefined(filter)) {
+      return function() {return true}
+    }
+    return function(hakemus) {
+      const fieldValue = fieldGetter(hakemus)
+
+      return _.contains(fieldValue, filter)
     }
   }
 
@@ -68,12 +85,26 @@ export default class HakemusListing extends Component {
     }
   }
 
+  static _filterWithNumberPredicate(fieldGetter, filter) {
+    if(!_.isNumber(filter)) {
+      return function() {return true}
+    }
+    return function(hakemus) {
+      if(!_.isNumber(fieldGetter(hakemus))) {
+        return false
+      }
+      return fieldGetter(hakemus)==filter
+    }
+  }
+
   static _filter(list, filter) {
     return _.filter(list, HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("name"), filter.name))
             .filter(HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("organization"), filter.organization))
             .filter(HakemusListing._filterWithArrayPredicate(HakemusListing._fieldGetter("status"), filter.status))
             .filter(HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("search-text"), filter["search-text"]))
             .filter(HakemusListing._filterAnswers(HakemusListing._fieldGetter("answers"), filter.answers))
+            .filter(HakemusListing._filterWithArrayFilterPredicate(HakemusListing._fieldGetter("evaluators"), filter.evaluator))
+            .filter(HakemusListing._filterWithNumberPredicate(HakemusListing._fieldGetter("presenter"), filter.presenter))
   }
 
   static _sortByArray(fieldGetter, array, order, userInfo, allowHakemusScoring) {
@@ -101,7 +132,9 @@ export default class HakemusListing extends Component {
   render() {
     const controller = this.props.controller
     const userInfo = this.props.userInfo
+    const state = this.props.state
     const allowHakemusScoring = this.props.privileges["score-hakemus"]
+    const allowChangeHakemusState = this.props.privileges["change-hakemus-state"]
     const hasSelected = this.props.hasSelected
     const selectedHakemus = this.props.selectedHakemus
     const filter = this.props.hakemusFilter
@@ -110,7 +143,7 @@ export default class HakemusListing extends Component {
     const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter, userInfo, allowHakemusScoring)
     const ophShareSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
-      return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} userInfo={userInfo} allowHakemusScoring={allowHakemusScoring} controller={controller}/> })
+      return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} userInfo={userInfo} allowHakemusScoring={allowHakemusScoring} allowChangeHakemusState={allowChangeHakemusState} controller={controller} state={state}/> })
     const budgetGrantedSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
 
     const onFilterChange = function(filterId) {
@@ -138,6 +171,7 @@ export default class HakemusListing extends Component {
           <ChangeRequestHeader field="change-request" sorter={sorter} controller={controller} hakemusList={filteredHakemusList} />
           <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>
           <th className="granted-sum-column">Myönnetty <HakemusSorter field="granted-sum" sorter={sorter} controller={controller}/></th>
+          <th className="person-filter-column"><PersonFilterButton controller={controller} state={state}/></th>
         </tr></thead>
         <tbody className={hasSelected ? "has-selected" : ""}>
           {hakemusElements}
@@ -309,9 +343,11 @@ class StatusFilter extends Component {
 
 class HakemusRow extends Component {
   render() {
+    const state = this.props.state
     const hakemus = this.props.hakemus
     const userInfo = this.props.userInfo
     const allowHakemusScoring = this.props.allowHakemusScoring
+    const allowChangeHakemusState = this.props.allowChangeHakemusState
     const htmlId = "hakemus-" + hakemus.id
     const thisIsSelected = hakemus === this.props.selectedHakemus
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
@@ -334,6 +370,7 @@ class HakemusRow extends Component {
       <td className="change-request-column" title={changeRequestTitle}>{changeRequest}</td>
       <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>
       <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>
+      <td className="person-filter-column"><PersonSelectButton show={allowChangeHakemusState} controller={controller} hakemus={hakemus} state={state}/></td>
     </tr>
   }
 }

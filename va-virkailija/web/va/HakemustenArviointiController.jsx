@@ -39,13 +39,14 @@ const events = {
   setScore: 'setScore',
   toggleOthersScoresDisplay: 'toggleOthersScoresDisplay',
   gotoSavedSearch: 'gotoSavedSearch',
-  toggleHakemusFilter:'toggleHakemusFilter'
-
+  toggleHakemusFilter:'toggleHakemusFilter',
+  togglePersonSelect:'togglePersonSelect',
+  clearFilters:'clearFilters'
 }
 
 export default class HakemustenArviointiController {
 
-  initializeState(avustushakuId) {
+  initializeState(avustushakuId,evaluator) {
     this._bind('onInitialState', 'onHakemusSelection', 'onUpdateHakemusStatus', 'onUpdateHakemusArvio', 'onSaveHakemusArvio', 'onBeforeUnload')
     this.autoSaveHakemusArvio = _.debounce(function(updatedHakemus){ dispatcher.push(events.saveHakemusArvio, updatedHakemus) }, 3000)
 
@@ -56,28 +57,32 @@ export default class HakemustenArviointiController {
     })
 
     const initialStateTemplate = {
+      avustushakuList: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/?status=published&status=resolved")),
       hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId)),
       hakemusFilter: {
-        organization: "",
-        name: "",
-        status: HakemusArviointiStatuses.allStatuses(),
         answers:[],
         isOpen:false,
-        openQuestions:[]
+        name: "",
+        openQuestions:[],
+        status: HakemusArviointiStatuses.allStatuses(),
+        organization: "",
+        roleIsOpen:false,
+        evaluator:evaluator,
+        presenter:undefined
       },
       hakemusSorter: [
         {field: "score", order: "desc"}
       ],
-      userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
-      translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
-      avustushakuList: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/?status=published&status=resolved")),
+      personSelectHakemusId:undefined,
       selectedHakemus: undefined,
       showOthersScores: false,
       saveStatus: {
         saveInProgress: false,
         saveTime: null,
         serverError: ""
-      }
+      },
+      translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
+      userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo"))
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
@@ -106,10 +111,12 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.attachmentVersionsLoaded)], this.onAttachmentVersionsLoaded,
       [dispatcher.stream(events.setScore)], this.onSetScore,
       [dispatcher.stream(events.toggleOthersScoresDisplay)], this.onToggleOthersScoresDisplay,
-      [dispatcher.stream(events.setFilter)], this.onFilterSet,
+      [dispatcher.stream(events.togglePersonSelect)], this.onTogglePersonSelect,
+      [dispatcher.stream(events.setFilter)], this.onSetFilter,
       [dispatcher.stream(events.setSorter)], this.onSorterSet,
       [dispatcher.stream(events.gotoSavedSearch)], this.onGotoSavedSearch,
-      [dispatcher.stream(events.toggleHakemusFilter)], this.onToggleHakemusFilter
+      [dispatcher.stream(events.toggleHakemusFilter)], this.onToggleHakemusFilter,
+      [dispatcher.stream(events.clearFilters)], this.onClearFilters
     )
   }
 
@@ -167,16 +174,20 @@ export default class HakemustenArviointiController {
   onHakemusSelection(state, hakemusToSelect) {
     state = this.onSaveHakemusArvio(state, state.selectedHakemus)
     state.selectedHakemus = hakemusToSelect
+    const hakemusId = hakemusToSelect.id
     const pathname = location.pathname
     const parsedUrl = new RouteParser('/avustushaku/:avustushaku_id/(hakemus/:hakemus_id/)*ignore').match(pathname)
-    if (!_.isUndefined(history.pushState) && parsedUrl["hakemus_id"] != hakemusToSelect.id.toString()) {
-      const newUrl = "/avustushaku/" + parsedUrl["avustushaku_id"] + "/hakemus/" + hakemusToSelect.id + "/" + location.search
+    if (!_.isUndefined(history.pushState) && parsedUrl["hakemus_id"] != hakemusId.toString()) {
+      const newUrl = "/avustushaku/" + parsedUrl["avustushaku_id"] + "/hakemus/" + hakemusId + "/" + location.search
       history.pushState({}, window.title, newUrl)
     }
     this.loadScores(state, hakemusToSelect)
     this.loadComments()
-    this.loadChangeRequests(state, hakemusToSelect.id)
-    this.loadAttachmentVersions(state, hakemusToSelect.id)
+    this.loadChangeRequests(state, hakemusId)
+    this.loadAttachmentVersions(state, hakemusId)
+    if(state.personSelectHakemusId!=null){
+      state.personSelectHakemusId=hakemusId
+    }
     return state
   }
 
@@ -194,7 +205,7 @@ export default class HakemustenArviointiController {
     state.saveStatus.saveInProgress = true
     updatedHakemus.arvio.hasChanges = true
     if (_.isUndefined(updatedHakemus.arvio.scoring)) {
-      _.delete(updatedHakemus.arvio.scoring)
+      delete updatedHakemus.arvio["scoring"];
     }
     this.autoSaveHakemusArvio(updatedHakemus)
     return state
@@ -297,8 +308,15 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onFilterSet(state, newFilter) {
+  onSetFilter(state, newFilter) {
     state.hakemusFilter[newFilter.filterId] = newFilter.filter
+    if(newFilter.filterId=="evaluator"){
+      const avustushakuId = state.hakuData.avustushaku.id
+      const evaluatorId = newFilter.filter
+      const avustushakuUrl =  `/avustushaku/${avustushakuId}/`
+      const url = evaluatorId ? `${avustushakuUrl}?arvioija=${evaluatorId}` : avustushakuUrl
+      history.pushState({}, window.title, url)
+    }
     return state
   }
 
@@ -416,6 +434,18 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  onTogglePersonSelect(state,hakemusId) {
+    state.personSelectHakemusId = hakemusId
+    return state
+  }
+
+  onClearFilters(state){
+    state.hakemusFilter.answers = []
+    state.hakemusFilter.evaluator = undefined
+    state.hakemusFilter.presenter = undefined
+    return state
+  }
+
   // Public API
   selectHakemus(hakemus) {
     return function() {
@@ -514,4 +544,25 @@ export default class HakemustenArviointiController {
   toggleHakemusFilter() {
     dispatcher.push(events.toggleHakemusFilter)
   }
+
+  togglePersonSelect(hakemusId) {
+    dispatcher.push(events.togglePersonSelect,hakemusId)
+  }
+
+  toggleHakemusRole(roleId,hakemus,roleField) {
+    if(roleField=="presenter"){
+        hakemus.arvio["presenter-role-id"]=roleId
+    }
+    else{
+      const currentRoles = hakemus.arvio.roles[roleField]
+      const newRoles = _.includes(currentRoles, roleId) ? _.without(currentRoles,roleId) : currentRoles.concat(roleId)
+      hakemus.arvio.roles[roleField] = newRoles
+    }
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }
+
+  clearFilters(){
+    dispatcher.push(events.clearFilters)
+  }
+
 }

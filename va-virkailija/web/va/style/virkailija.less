@@ -374,20 +374,35 @@ table.overview-list {
     color: @light-gray;
     font-weight: 200;
     font-family: "Helvetica Neue","Helvetica",Arial,sans-serif;
+    font-size: 30px;
     position: absolute;
-    right: 0;
-    top: 0;
+    right: -5px;
+    top: -5px;
     margin: 0;
   }
 }
 
 .person-panel{
-  width: 400px;
+  width: 333px;
   position: absolute;
-  left: -400px;
+  left: -314px;
   top: 32px;
-  .box-triangle(380px);
+  text-align: left;
+  .box-triangle(325px);
   .box-triangle-up(@light-gray, @off-white);
+  button{
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+
+  &&--top{
+    left: inherit;
+    right: 20px;
+    top:80px;
+    &:before,&:after{
+      content: none;
+    }
+  }
 }
 
 .hakemus-filter-panel{
@@ -423,5 +438,36 @@ table.overview-list {
   margin-bottom: 10px;
   button{
     margin-bottom: 10px;
+  }
+}
+
+.role-container{
+  margin-bottom: 10px;
+}
+
+.role-title{
+  font-size: 12px;
+  margin-bottom: 15px;
+  padding-left: 20px;
+  color: #C4C4C4;
+  background: transparent url('../img/person_icon.png') no-repeat 0 50%;
+}
+
+.btn-role{
+  background: transparent url('../img/person_icon.png') no-repeat 25% 50%;
+  position: relative;
+  width: 30px;
+  height: 25px;
+
+  &--center{
+    background-position-x: 50%;
+  }
+  &__count{
+    color: #C4C4C4;
+    font-size: 12px;
+    font-weight: bold;
+    position: absolute;
+    top: 2px;
+    right:3px;
   }
 }

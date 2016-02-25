@@ -12,6 +12,8 @@
    :overridden-answers (:overridden_answers arvio)
    :budget-granted (:budget_granted arvio)
    :summary-comment (:summary_comment arvio)
+   :roles (:roles arvio)
+   :presenter-role-id (:presenter_role_id arvio)
    :search-text (:search_text arvio)})
 
 (defn- add-arvio [arviot hakemus]
@@ -21,6 +23,7 @@
                            :status "unhandled"
                            :overridden-answers {:value []}
                            :budget-granted 0
+                           :roles {:evaluators []}
                            :search-text ""})))
 
 (defn- get-arviot-map [hakemukset]
