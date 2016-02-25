@@ -14,6 +14,7 @@
    :summary-comment (:summary_comment arvio)
    :roles (:roles arvio)
    :presenter-role-id (:presenter_role_id arvio)
+   :rahoitusalue (:rahoitusalue arvio)
    :search-text (:search_text arvio)})
 
 (defn- add-arvio [arviot hakemus]
