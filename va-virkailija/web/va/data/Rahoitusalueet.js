@@ -1,0 +1,1 @@
+export default ["Yleissivistävä koulutus, ml. varhaiskasvatus", "Ammatillinen koulutus", "Aikuiskoulutus ja vapaa sivistystyö" ,"Koko opetustoimi"]

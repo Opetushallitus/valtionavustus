@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import _ from 'lodash'
 import ClassNames from 'classnames'
+import RahoitusAlueet from '../data/Rahoitusalueet'
 
 const ToggleFilterButton  = ({controller,hakemusFilter}) => {
   const activeFilterCount = hakemusFilter.answers.length
@@ -66,37 +67,58 @@ const RemoveFilter = ({controller,hakemusFilter}) => {
 }
 
 const FilterList  = ({hakemusFilter,hakuData,controller}) => {
-    const open = hakemusFilter.isOpen
-    const form = hakuData.form
-    const radioQuestions = FormUtil.findFieldsByFieldType(form.content,"radioButton")
-    const checkboxQuestions = FormUtil.findFieldsByFieldType(form.content,"checkboxButton")
-    const questions = radioQuestions.concat(checkboxQuestions)
-    const answers = hakemusFilter.answers
-    const mapOption = (questionId,option) =>(
+  const open = hakemusFilter.isOpen
+  const form = hakuData.form
+  const multipleRahoitusalue = hakuData.avustushaku["multiple-rahoitusalue"]
+  const radioQuestions = FormUtil.findFieldsByFieldType(form.content, "radioButton")
+  const checkboxQuestions = FormUtil.findFieldsByFieldType(form.content, "checkboxButton")
+  const questions = radioQuestions.concat(checkboxQuestions)
+  const answers = hakemusFilter.answers
+
+  const buildQuestions = () => {
+    const selectedPredicate = (questionId, answer) => _.some(answers, (a)=>a.answer == answer && a.id == questionId)
+    const mapOption = (questionId, option) =>(
       {
         label: option.label.fi,
         value: option.value,
-        selected: _.some(answers, (a)=>a.answer==option.value && a.id==questionId)
+        selected: selectedPredicate(questionId, option.value)
       }
     )
     const openQuestions = hakemusFilter.openQuestions
     const filterQuestions = questions.map((r)=> {
       return {
-        id:r.id,
+        id: r.id,
         label: r.label.fi,
         options: r.options.asMutable().map(_.partial(mapOption, r.id)),
-        open:_.contains(openQuestions,r.id)
+        open: _.contains(openQuestions, r.id)
       }
     })
+    if (multipleRahoitusalue) {
+      filterQuestions.unshift({
+        id: "rahoitusalue",
+        label: "Rahoitusalue",
+        options: RahoitusAlueet.map((rahoitusalue)=>({
+          label: rahoitusalue,
+          value: rahoitusalue,
+          selected: selectedPredicate("rahoitusalue", rahoitusalue)
+        })),
+        open: _.contains(openQuestions, "rahoitusalue")
+      })
+    }
+    return filterQuestions
+  }
 
-    const onToggleFilter = () => controller.toggleHakemusFilter()
+  const filterQuestions = buildQuestions()
 
-    return (
-      <div hidden={!open} className="panel hakemus-filter-panel">
-        <button className="close" onClick={onToggleFilter}>x</button>
-        {filterQuestions.map((question)=><FilterQuestion key={question.label} hakemusFilter={hakemusFilter} question={question} controller={controller}></FilterQuestion>)}
-      </div>
-    )
+  const onToggleFilter = () => controller.toggleHakemusFilter()
+
+  return (
+    <div hidden={!open} className="panel hakemus-filter-panel">
+      <button className="close" onClick={onToggleFilter}>x</button>
+      {filterQuestions.map((question)=><FilterQuestion key={question.label} hakemusFilter={hakemusFilter}
+                                                       question={question} controller={controller}></FilterQuestion>)}
+    </div>
+  )
 }
 
 const HakemusFilter = (props) =>

@@ -11,6 +11,7 @@ import HakemusArviointiStatuses from "./HakemusArviointiStatuses.js"
 import HakemusStatuses from './HakemusStatuses.js'
 import HakemusSearchTextEdit from './HakemusSearchTextEdit.jsx'
 import TraineeDayEditing from '../traineeday/TraineeDayEditing.jsx'
+import RahoitusAlueet from '../data/Rahoitusalueet'
 
 export default class HakemusArviointi extends Component {
   render() {
@@ -95,7 +96,7 @@ class ChooseRahoitusalue extends React.Component {
     const currentRahoitusalue = hakemus.arvio ? hakemus.arvio.rahoitusalue : undefined
     const controller = this.props.controller
     const rahoitusalueet = []
-    const rahoitusalueValues = ["Yleissivistävä koulutus, ml. varhaiskasvatus", "Ammatillinen koulutus", "Aikuiskoulutus ja vapaa sivistystyö" ,"Koko opetustoimi"]
+    const rahoitusalueValues = RahoitusAlueet
     for (var i=0; i < rahoitusalueValues.length; i++) {
       const htmlId = "set-rahoitusalue-" + i
       const onChange = allowEditing ? function(event) {
