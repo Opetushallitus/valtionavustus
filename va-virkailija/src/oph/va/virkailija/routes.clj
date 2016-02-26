@@ -113,6 +113,15 @@
             (ok response)
             (not-found))))
 
+  (GET* "/:avustushaku-id/paatos/:hakemus-id" [avustushaku-id hakemus-id :as request]
+        :path-params [avustushaku-id :- Long
+                      hakemus-id :- Long]
+        :return PaatosData
+        :summary "Return relevant information for decision"
+        (if-let [response (hakudata/get-combined-paatos-data hakemus-id)]
+          (ok response)
+          (not-found)))
+
   (GET* "/:haku-id/export.xslx" [haku-id :as request]
         :path-params [haku-id :- Long]
         :summary "Export Excel XLSX document for given avustushaku"

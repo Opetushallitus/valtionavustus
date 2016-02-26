@@ -17,15 +17,19 @@
    :rahoitusalue (:rahoitusalue arvio)
    :search-text (:search_text arvio)})
 
-(defn- add-arvio [arviot hakemus]
-  (if-let [arvio (get arviot (:id hakemus))]
+
+(defn- add-arvio [arvio hakemus]
+  (if arvio
     (assoc hakemus :arvio arvio)
-    (assoc hakemus :arvio {:id -1
-                           :status "unhandled"
+    (assoc hakemus :arvio {:id                 -1
+                           :status             "unhandled"
                            :overridden-answers {:value []}
-                           :budget-granted 0
-                           :roles {:evaluators []}
-                           :search-text ""})))
+                           :budget-granted     0
+                           :roles              {:evaluators []}
+                           :search-text        ""})))
+
+(defn- find-and-add-arvio [arviot hakemus]
+  (add-arvio (get arviot (:id hakemus)) hakemus))
 
 (defn- get-arviot-map [hakemukset]
   (->> hakemukset
@@ -39,8 +43,13 @@
         arviot (get-arviot-map hakemukset)
         budget-granted-sum (reduce + (map :budget-granted (vals arviot)))]
     (-> haku-data
-        (assoc :hakemukset (map (partial add-arvio arviot) hakemukset))
+        (assoc :hakemukset (map (partial find-and-add-arvio arviot) hakemukset))
         (assoc :budget-granted-sum budget-granted-sum))))
+
+(defn- paatosdata-with-arvio [paatosdata]
+  (let [hakemus (:hakemus paatosdata)
+        arvio (virkailija-db/get-arvio (:id hakemus) )]
+    (assoc paatosdata :hakemus (add-arvio (arvio-json arvio) hakemus))))
 
 (defn- add-scores-to-hakemus [scores hakemus]
   (if-let [hakemus-scores (-> (fn [score-entry] (= (-> hakemus :arvio :id) (:arvio-id score-entry)))
@@ -66,6 +75,10 @@
       (->> avustushaku
            add-arviot
            (add-scores scores)))))
+
+(defn get-combined-paatos-data [hakemus-id]
+    (when-let [paatosdata (hakija-api/get-hakemusdata hakemus-id)]
+      (paatosdata-with-arvio paatosdata)))
 
 (defn get-combined-avustushaku-data-with-privileges [avustushaku-id identity]
   (->> (get-combined-avustushaku-data avustushaku-id)

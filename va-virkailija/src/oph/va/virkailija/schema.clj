@@ -129,6 +129,14 @@
    :budget-oph-share-sum s/Int
    :budget-granted-sum s/Int})
 
+(s/defschema PaatosData
+  "Decision response with related avustushaku, form, roles, hakemus"
+  {:avustushaku AvustusHaku
+   :form {:content s/Any
+          :rules s/Any}
+   :roles [Role]
+   :hakemus Hakemus})
+
 (s/defschema SavedSearch
   "Saved search listing certain hakemukset by ids or possibly dynamic search in the future"
   {:hakemus-ids (s/maybe [Long])})

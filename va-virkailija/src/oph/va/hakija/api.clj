@@ -167,6 +167,17 @@
      :budget-total-sum (reduce + (map :budget_total hakemukset))
      :budget-oph-share-sum (reduce + (map :budget_oph_share hakemukset))}))
 
+(defn get-hakemusdata [hakemus-id]
+  (let [hakemus (first (exec :hakija-db hakija-queries/get-hakemus {:id hakemus-id}))
+        avustushaku-id (:avustushaku hakemus)
+        avustushaku (get-avustushaku avustushaku-id)
+        form (get-form-by-avustushaku avustushaku-id)
+        roles (get-avustushaku-roles avustushaku-id)]
+    {:avustushaku (avustushaku-response-content avustushaku)
+     :roles roles
+     :form (form->json form)
+     :hakemus (hakemus->json hakemus)}))
+
 (defn list-attachments [hakemus-id]
   (->> {:hakemus_id hakemus-id}
        (exec :hakija-db hakija-queries/list-attachments)))
