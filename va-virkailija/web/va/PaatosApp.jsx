@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import _ from 'lodash'
 import RouteParser from 'route-parser'
+import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
 
 import PaatosController from './PaatosController.jsx'
 
@@ -14,7 +15,7 @@ export default class PaatosApp extends Component {
         <section>
         <h1>Päätös</h1>
         <h2>{data.avustushaku.content.name.fi}</h2>
-        <h2>{data.hakemus.arvio.status}</h2>
+        <h2>{HakemusArviointiStatuses.statusToFI(data.hakemus.arvio.status)}</h2>
         </section>
     )
   }
