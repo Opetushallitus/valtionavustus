@@ -48,11 +48,11 @@ export default class ChooseRahoitusalue extends React.Component {
     const controller = this.props.controller
     const onRahoitusalueChange = allowEditing ? (event) => {
       controller.setHakemusRahoitusalue(hakemus, event.target.value)
-      this.toggleOpen()
+      this.setState({open: false})
     } : null
     const toggleList = allowEditing ?  () => this.toggleOpen() : null
     const title = currentRahoitusalue || "Ei valittu"
-    const open = this.state.open
+    const open = this.state.open || (!currentRahoitusalue && allowEditing)
     return (
       <div className="hakemus-arviointi-section">
         <label>Rahoitusalue:</label>
