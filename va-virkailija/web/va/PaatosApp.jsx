@@ -9,11 +9,12 @@ import PaatosController from './PaatosController.jsx'
 
 export default class PaatosApp extends Component {
   render() {
-    const avustushaku = this.props.state.hakuData.avustushaku
+    const data = this.props.state.paatosData
     return (
         <section>
         <h1>Päätös</h1>
-        <h2>{avustushaku.content.name.fi}</h2>
+        <h2>{data.avustushaku.content.name.fi}</h2>
+        <h2>{data.hakemus.arvio.status}</h2>
         </section>
     )
   }
@@ -25,10 +26,10 @@ const stateP = controller.initializeState(parsedRoute)
 
 stateP.onValue((state) => {
   try {
-    if (state.hakuData) {
+    if (state.paatosData) {
       ReactDOM.render(<PaatosApp state={state} controller={controller}/>, document.getElementById('app'))
     } else {
-      console.log('Not rendering yet, because state.hakuData not yet loaded.')
+      console.log('Not rendering yet, because state.paatosData not yet loaded.')
     }
   } catch (e) {
     console.log('Error from ReactDOM.render with state', state, e)

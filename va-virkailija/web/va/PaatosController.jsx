@@ -19,9 +19,8 @@ export default class PaatosController {
     const avustushakuId = parsedRoute["avustushaku_id"]
     const hakemusId = parsedRoute["hakemus_id"]
     this._bind('onInitialState')
-
     const initialStateTemplate = {
-      hakuData: Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId))
+      paatosData: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}/paatos/${hakemusId}`))
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
