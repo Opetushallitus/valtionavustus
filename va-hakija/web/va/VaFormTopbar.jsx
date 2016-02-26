@@ -32,8 +32,9 @@ export default class VaFormTopbar extends React.Component {
       return allValid === true && fieldErrors.length === 0
     }, true)
     const formOperations = state.extensionApi.formOperations
+    const previewUrl = formOperations.urlCreator.existingSubmissionPreviewUrl(state);
     const openPreview = function() {
-      window.open(formOperations.urlCreator.existingSubmissionPreviewUrl(state), "preview")
+      window.open(previewUrl, "preview")
     }
     const isChangeRequestResponse = function() {
       return saveStatus.savedObject && saveStatus.savedObject.status === "pending_change_request"
@@ -68,6 +69,7 @@ export default class VaFormTopbar extends React.Component {
               <TextButton htmlId="preview-button" onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)} translations={translations.form} translationKey="preview" lang={lang} />
             </span>
             <FormErrorSummary formContent={form.content} controller={controller} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
+            <a className="preview-link" href={previewUrl} target="_blank">Tulostusversio</a>
           </div>
           <div id="server-info">
             <EnvironmentInfo environment={configuration.environment}/>

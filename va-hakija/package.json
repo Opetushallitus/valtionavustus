@@ -53,6 +53,7 @@
     "watch-unittest": "mocha --watch --compilers js:babel/register web/test/*Test.js",
     "build": "UGLIFY=true webpack -p",
     "dev-build": "webpack -d --progress --colors",
+    "watch-webpack": "webpack -d --progress --colors --watch",
     "watch-web": "watch-spawn -k -i -p 'node_modules/va-common/package.json' -p 'node_modules/soresu-form/package.json' -p 'web/**/*' -p 'package.json' npm run dev-build",
     "update-common-web": "rm -rf node_modules/va-common && npm install va-common",
     "watch-common-web": "watch-spawn -k -p '../va-common/web/**/*' -p '../va-common/package.json' npm run update-common-web",

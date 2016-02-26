@@ -44,6 +44,22 @@
       font-size: 13px;
       padding-left: 200px;
       clear: left;
+      float: left;
+      margin-right: 20px;
+      #validation-errors-summary{
+        margin-right: 10px;
+        position: relative;
+        &:before{
+          position: absolute;
+          right: -20px;
+          content:'|';
+          color:@light-gray;
+        }
+      }
+    }
+    .preview-link{
+      font-size: 13px;
+      float: right;
     }
 
     button {
