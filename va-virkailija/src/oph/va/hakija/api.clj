@@ -117,23 +117,24 @@
     {:content (:content form-for-rendering)
        :rules (:rules form-for-rendering)}))
 
+(defn- hakemus->json [hakemus]
+  {:id (:id hakemus)
+   :version (:version hakemus)
+   :version-date (:created_at hakemus)
+   :project-name (:project_name hakemus)
+   :organization-name (:organization_name hakemus)
+   :budget-oph-share (:budget_oph_share hakemus)
+   :budget-total (:budget_total hakemus)
+   :status (:status hakemus)
+   :status-comment (:status_change_comment hakemus)
+   :user-first-name (:user_first_name hakemus)
+   :user-last-name (:user_last_name hakemus)
+   :register-number (:register_number hakemus)
+   :user-key (:user_key hakemus)
+   :answers (:answer_values hakemus)})
+
 (defn- hakemukset->json [hakemukset]
-  (-> (fn [hakemus]
-        {:id (:id hakemus)
-         :version (:version hakemus)
-         :version-date (:created_at hakemus)
-         :project-name (:project_name hakemus)
-         :organization-name (:organization_name hakemus)
-         :budget-oph-share (:budget_oph_share hakemus)
-         :budget-total (:budget_total hakemus)
-         :status (:status hakemus)
-         :status-comment (:status_change_comment hakemus)
-         :user-first-name (:user_first_name hakemus)
-         :user-last-name (:user_last_name hakemus)
-         :register-number (:register_number hakemus)
-         :user-key (:user_key hakemus)
-         :answers (:answer_values hakemus)})
-      (map hakemukset)))
+  (map hakemus->json hakemukset))
 
 (defn- convert-attachment-group [group]
   (let [id (-> group first :hakemus_id)]
