@@ -11,7 +11,7 @@ import HakemusArviointiStatuses from "./HakemusArviointiStatuses.js"
 import HakemusStatuses from './HakemusStatuses.js'
 import HakemusSearchTextEdit from './HakemusSearchTextEdit.jsx'
 import TraineeDayEditing from '../traineeday/TraineeDayEditing.jsx'
-import RahoitusAlueet from '../data/Rahoitusalueet'
+import ChooseRahoitusalue from './ChooseRahoitusalue.jsx'
 
 export default class HakemusArviointi extends Component {
   render() {
@@ -85,47 +85,7 @@ class SetArviointiStatus extends React.Component {
   }
 }
 
-class ChooseRahoitusalue extends React.Component {
-  render() {
-    const avustushaku = this.props.avustushaku
-    if(!avustushaku["multiple-rahoitusalue"]) {
-      return null
-    }
-    const hakemus = this.props.hakemus
-    const allowEditing = this.props.allowEditing
-    const currentRahoitusalue = hakemus.arvio ? hakemus.arvio.rahoitusalue : undefined
-    const controller = this.props.controller
-    const rahoitusalueet = []
-    const rahoitusalueValues = RahoitusAlueet
-    for (var i=0; i < rahoitusalueValues.length; i++) {
-      const htmlId = "set-rahoitusalue-" + i
-      const onChange = allowEditing ? function(event) {
-        controller.setHakemusRahoitusalue(hakemus, event.target.value)
-      } : null
-      rahoitusalueet.push(
-        <input id={htmlId}
-               type="radio"
-               key={htmlId}
-               name="rahoitusalue"
-               value={rahoitusalueValues[i]}
-               disabled={!allowEditing}
-               onChange={onChange}
-               checked={rahoitusalueValues[i] === currentRahoitusalue ? true : false}
-        />
-      )
-      rahoitusalueet.push(
-        <label key={htmlId + "-label"} htmlFor={htmlId}>{rahoitusalueValues[i]}</label>
-      )
-    }
 
-    return (
-      <div className="value-edit">
-        <label>Rahoitusalue:</label>
-        {rahoitusalueet}
-      </div>
-    )
-  }
-}
 
 class ChangeRequest extends React.Component {
 

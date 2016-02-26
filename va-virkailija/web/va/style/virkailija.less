@@ -471,3 +471,38 @@ table.overview-list {
     right:3px;
   }
 }
+
+.radio-container{
+  border: 1px solid #dfdfdf;
+  box-shadow: 0 1px 1px rgba(0,0,0,.5);
+  width: 100%;
+  margin-top: 6px;
+  margin-bottom: 10px;
+  position: relative;
+  &--rahoitusalue{
+    .box-triangle(100px);
+    .box-triangle-up(@light-gray, @off-white);
+  }
+}
+
+.radio-row{
+  box-sizing: border-box;
+  color:@blue;
+  width: 100%;
+  padding: 5px 10px;
+  cursor:pointer;
+  &--unselected:hover{
+    background-color: lighten(@blue, 42%);
+  }
+  &--selected{
+    background-color: @blue;
+    color: #fff;
+  }
+  label{
+    cursor: pointer;
+  }
+
+  input[type="radio"]{
+    display: none;
+  }
+}
