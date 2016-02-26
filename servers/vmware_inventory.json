@@ -23,7 +23,8 @@
   },
   "va_build": {
     "hosts": [
-      "va-build"
+      "va-build",
+      "oph-va-ci-test01.csc.fi"
     ]
   },
   "_meta": {
@@ -42,6 +43,12 @@
         "ansible_default_ipv4": {
           "address": "86.50.28.143"
         }
+      },
+      "oph-va-ci-test01.csc.fi": {
+        "ansible_default_ipv4": {
+          "address": "86.50.28.148"
+        },
+        "ansible_ssh_host": "86.50.28.148"
       },
       "va-build": {
         "ansible_default_ipv4": {

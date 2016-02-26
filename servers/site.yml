@@ -55,6 +55,12 @@
   - {role: ssl-cert, tags: ['install', 'certs']}
   - {role: va-haproxy, tags: ['update']}
 
+- hosts: oph-va-ci-test01.csc.fi
+  sudo: yes
+  roles:
+  - {role: ssh.init}
+  - {role: common}
+
 - hosts: va-build
   user: cloud-user
   sudo: yes
