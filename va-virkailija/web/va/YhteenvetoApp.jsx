@@ -6,7 +6,6 @@ import _ from 'lodash'
 import RouteParser from 'route-parser'
 
 import YhteenvetoController from './YhteenvetoController.jsx'
-import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
 import DateUtil from 'soresu-form/web/form/DateUtil'
 
@@ -20,7 +19,7 @@ export default class SummaryApp extends Component {
     const hakuData = state.hakuData
     const hakemusList = hakuData.hakemukset
     const avustushaku = hakuData.avustushaku
-    const applicationsByStatus = _.groupBy(hakemusList, h => { return h.arvio.status })
+    const applicationsByStatus = _.groupBy(hakemusList, h => h.arvio.status)
     const summaryListings = []
     _.each(SummaryApp.statusesInOrder(), s => {
       if (_.contains(_.keys(applicationsByStatus), s)) {
@@ -67,24 +66,24 @@ export default class SummaryApp extends Component {
   }
 }
 
+const SumBy = (list,fieldFunc) => _.reduce(list, (total, item) => total + fieldFunc(item), 0)
+const SumByOphShare = _.partialRight(SumBy, (hakemus)=>hakemus["budget-oph-share"]);
+const SumByBudgetGranted = _.partialRight(SumBy, (hakemus)=>hakemus.arvio["budget-granted"]);
+
 class SummaryHeading extends Component {
   render() {
     const titleString = SummaryApp.avustusHakuLabelString(this.props.avustushaku)
     const hakemusList = this.props.hakemusList
-    const ophShareSum = _.reduce(hakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0)
-    const budgetGrantedSum = _.reduce(hakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0)
+    const ophShareSum = SumByOphShare(hakemusList)
+    const budgetGrantedSum = SumByBudgetGranted(hakemusList)
 
-    const applicationsByStatus = _.groupBy(hakemusList, h => { return h.arvio.status })
+    const applicationsByStatus = _.groupBy(hakemusList, h => h.arvio.status)
     const statusSummaryRows = []
     _.each(SummaryApp.statusesInOrder(), s => {
       if (_.contains(_.keys(applicationsByStatus), s)) {
         const applications = applicationsByStatus[s]
-        const appliedOphShareSum = _.reduce(applications, (total, hakemus) => {
-          return total + hakemus["budget-oph-share"]
-        }, 0)
-        const grantedSum = _.reduce(applications, (total, hakemus) => {
-          return total + hakemus.arvio["budget-granted"]
-        }, 0)
+        const appliedOphShareSum = SumByOphShare(applications)
+        const grantedSum = SumByBudgetGranted(applications)
         statusSummaryRows.push(<SummaryTableRow key={s} label={SummaryListing.arvioStatusFiForSummary(s)} count={applications.length} applied={appliedOphShareSum} granted={grantedSum} />)
       }
     })
@@ -109,30 +108,23 @@ class SummaryHeading extends Component {
   }
 }
 
-class SummaryTableRow extends Component {
-  render() {
-    const label = this.props.label
-    const count = this.props.count
-    const appliedSum = this.props.applied
-    const grantedSum = this.props.granted
-    return <tr className="summary-heading-table-row">
-             <td className="arvio-status-column">{label}</td>
-             <td>{count}</td>
-             <td className="applied-column"><span className="money">{appliedSum}</span></td>
-             <td className="granted-column"><span className="money">{grantedSum}</span></td>
-           </tr>
-  }
-}
+const SummaryTableRow = ({label,count,applied,granted}) =>(
+  <tr className="summary-heading-table-row">
+    <td className="arvio-status-column">{label}</td>
+    <td>{count}</td>
+    <td className="applied-column"><span className="money">{applied}</span></td>
+    <td className="granted-column"><span className="money">{granted}</span></td>
+  </tr>
+)
 
 export default class SummaryListing extends Component {
   render() {
     const hakemusList = this.props.hakemusList
     const hakemusCount = hakemusList.length
     const heading = SummaryListing.arvioStatusFiForSummary(this.props.arvioStatus) + " (" + hakemusCount + ")"
-    const ophShareSum = _.reduce(hakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0)
-    const hakemusElements = _.map(hakemusList, hakemus => {
-      return <HakemusRow key={hakemus.id} hakemus={hakemus} /> })
-    const budgetGrantedSum = _.reduce(hakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0)
+    const ophShareSum = SumByOphShare(hakemusList)
+    const hakemusElements = hakemusList.map(hakemus => <HakemusRow key={hakemus.id} hakemus={hakemus} />)
+    const budgetGrantedSum = SumByBudgetGranted(hakemusList)
 
     return (
       <table key="hakemusListing" className="hakemus-list overview-list">
