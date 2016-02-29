@@ -6,7 +6,7 @@ import queryString from 'query-string'
 import RouteParser from 'route-parser'
 
 import HttpUtil from 'va-common/web/HttpUtil.js'
-import Dispatcher from 'soresu-form/web/Dispatcher'
+import Dispatcher from '../../../../soresu-form/web/Dispatcher'
 
 const dispatcher = new Dispatcher()
 

@@ -1,10 +1,10 @@
-import PolyfillBind from 'va-common/web/polyfill-bind'
+import PolyfillBind from '../../../../va-common/web/polyfill-bind'
 import ConsolePolyfill from 'console-polyfill'
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import _ from 'lodash'
 import RouteParser from 'route-parser'
-import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
+import HakemusArviointiStatuses from './../hakemus-details/HakemusArviointiStatuses.js'
 
 import PaatosController from './PaatosController.jsx'
 import style from './paatos.less'
