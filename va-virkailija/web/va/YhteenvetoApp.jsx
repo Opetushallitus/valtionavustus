@@ -8,6 +8,7 @@ import RouteParser from 'route-parser'
 import YhteenvetoController from './YhteenvetoController.jsx'
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
 import DateUtil from 'soresu-form/web/form/DateUtil'
+import RahoitusAlueet from './data/Rahoitusalueet'
 
 import virkailija from './style/virkailija.less'
 import style from './style/main.less'
@@ -19,14 +20,11 @@ export default class SummaryApp extends Component {
     const hakuData = state.hakuData
     const hakemusList = hakuData.hakemukset
     const avustushaku = hakuData.avustushaku
+    const multipleRahoitusalue = avustushaku["multiple-rahoitusalue"]
     const applicationsByStatus = _.groupBy(hakemusList, h => h.arvio.status)
-    const summaryListings = []
-    _.each(SummaryApp.statusesInOrder(), s => {
-      if (_.contains(_.keys(applicationsByStatus), s)) {
-        const applications = applicationsByStatus[s]
-        summaryListings.push(<SummaryListing key={s} arvioStatus={s} hakemusList={applications} />)
-      }
-    })
+    const summaryListings = multipleRahoitusalue ?
+      <RahoitusalueList hakemusList={hakemusList}/> :
+      BuildSummaryList(SummaryApp.statusesInOrder(),applicationsByStatus)
 
     const titleString = SummaryApp.titleString(avustushaku)
     const mailToBody = encodeURIComponent(titleString + "\n\nLinkki ratkaisuyhteenvetoon:\n\n" + location.href)
@@ -66,6 +64,53 @@ export default class SummaryApp extends Component {
   }
 }
 
+const BuildSummaryList = (statuses,applicationsByStatuses)=>{
+  const summaryListingsAll = []
+  _.each(statuses, s => {
+    if (_.contains(_.keys(applicationsByStatuses), s)) {
+      const applications = applicationsByStatuses[s]
+      summaryListingsAll.push(<SummaryListing key={s} arvioStatus={s} hakemusList={applications} />)
+    }
+  })
+  return summaryListingsAll
+}
+
+const RahoitusalueList = ({hakemusList})=>{
+  const applicationsByRahoitusalue = _.groupBy(hakemusList, h => h.arvio.rahoitusalue)
+  const nullValue = "null"
+  const undefinedValue = "undefined"
+  const withoutLabel = "Muut"
+  const applicationsWithoutRahoitusalue = (applicationsByRahoitusalue[nullValue] || []).concat(applicationsByRahoitusalue[undefinedValue] || [])
+  if(applicationsWithoutRahoitusalue.length>0){
+    applicationsByRahoitusalue[withoutLabel] = applicationsWithoutRahoitusalue
+  }
+  const rahoitusAlueetNameValues = _.chain(applicationsByRahoitusalue).
+    omit([nullValue,undefinedValue]).
+    keys().
+    sortBy((x)=> x==withoutLabel ? 9999: RahoitusAlueet.indexOf(x)).
+    map((x)=>{return {
+      name:x,
+      values:applicationsByRahoitusalue[x]
+    }
+    }).
+    value()
+  const rahoitusalueet = rahoitusAlueetNameValues.map((item)=>{
+    const applicationsByStatuses = _.groupBy(item.values, h => h.arvio.status)
+    const summaryByStates = BuildSummaryList(SummaryApp.statusesInOrder(),applicationsByStatuses)
+    return (<div key={item.name}>
+      <h2 className="rahoitusalue-heading">{item.name}</h2>
+      {summaryByStates}
+    </div>)
+  })
+
+  return (
+    <div>
+      {rahoitusalueet}
+    </div>
+  )
+}
+
+
 const SumBy = (list,fieldFunc) => _.reduce(list, (total, item) => total + fieldFunc(item), 0)
 const SumByOphShare = _.partialRight(SumBy, (hakemus)=>hakemus["budget-oph-share"]);
 const SumByBudgetGranted = _.partialRight(SumBy, (hakemus)=>hakemus.arvio["budget-granted"]);
@@ -91,7 +136,7 @@ class SummaryHeading extends Component {
 
     return <div>
              <h1>{titleString}</h1>
-             <h2>Ratkaisuyhteenveto</h2>
+             <h2 style={{textTransform:'uppercase'}}>Ratkaisuyhteenveto</h2>
                <table className="summary-heading-table">
                  <thead>
                    <tr>
@@ -163,20 +208,20 @@ export default class SummaryListing extends Component {
   }
 }
 
-class HakemusRow extends Component {
-  render() {
-    const hakemus = this.props.hakemus
+const HakemusRow = ({hakemus}) => {
     const htmlId = "hakemus-" + hakemus.id
     const hakemusName = hakemus["project-name"]
-    return <tr id={htmlId} className="overview-row">
-      <td className="organization-column" title={hakemus["organization-name"]}>{hakemus["organization-name"]}</td>
-      <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
-      <td className="applied-sum-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
-      <td className="granted-sum-column"><span className="money">{hakemus.arvio["budget-granted"]}</span></td>
-      <td className="comment-column" title={hakemus.arvio["summary-comment"]}>{hakemus.arvio["summary-comment"]}</td>
+    return (
+      <tr id={htmlId} className="overview-row">
+        <td className="organization-column" title={hakemus["organization-name"]}>{hakemus["organization-name"]}</td>
+        <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
+        <td className="applied-sum-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
+        <td className="granted-sum-column"><span className="money">{hakemus.arvio["budget-granted"]}</span></td>
+        <td className="comment-column" title={hakemus.arvio["summary-comment"]}>{hakemus.arvio["summary-comment"]}</td>
     </tr>
-  }
+    )
 }
+
 
 const parsedRoute = new RouteParser('/yhteenveto/avustushaku/:avustushaku_id/listaus/:saved_search_id/').match(location.pathname)
 if (!parsedRoute || _.isUndefined(parsedRoute["avustushaku_id"])) {
