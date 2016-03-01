@@ -20,7 +20,6 @@ import HakemusSearchTextQuery from './hakemus-details/HakemusSearchTextQuery.jsx
 import HakemusFilter from './hakemus-filter/HakemusFilter.jsx'
 import LocalStorage from './LocalStorage'
 
-import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'
 import style from './style/main.less'
 import selector from './style/switcher.less'

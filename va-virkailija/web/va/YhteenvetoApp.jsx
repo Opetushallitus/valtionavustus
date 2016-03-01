@@ -10,7 +10,6 @@ import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses
 import DateUtil from 'soresu-form/web/form/DateUtil'
 import RahoitusAlueet from './data/Rahoitusalueet'
 
-import virkailija from './style/virkailija.less'
 import style from './style/main.less'
 import summaryStyle from './style/summary.less'
 
