@@ -18,7 +18,8 @@ export default class PaatosApp extends Component {
     return (
         <section>
           <header>
-            <h1>Päätös</h1>
+            <img src="/img/logo.png"/>
+            <h1>Päätös<br/>dd.mm.yyyy</h1>
           </header>
           <div className="body">
             <section className="section">
