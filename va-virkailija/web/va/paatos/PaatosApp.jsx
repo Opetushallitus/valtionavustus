@@ -11,7 +11,10 @@ import style from './paatos.less'
 
 export default class PaatosApp extends Component {
   render() {
-    const data = this.props.state.paatosData
+    const paatosData = this.props.state.paatosData
+    const hakemus = paatosData.hakemus
+    const avustushaku = paatosData.avustushaku
+    const decisionStatus = hakemus.arvio.status
     return (
         <section>
           <header>
@@ -21,13 +24,13 @@ export default class PaatosApp extends Component {
             <section className="section">
               <h2>Asia</h2>
               <div className="content">
-                {data.avustushaku.content.name.fi}
+                {avustushaku.content.name.fi}
               </div>
             </section>
-            {data.hakemus.arvio.status == 'rejected' ? <RejectedDecision hakemus={data.hakemus}/> :
-                <AcceptedDecision hakemus={data.hakemus} avustushaku={data.avustushaku}/>}
+            {decisionStatus == 'rejected' ? <RejectedDecision hakemus={hakemus}/> :
+                <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku}/>}
           </div>
-          <h2>{HakemusArviointiStatuses.statusToFI(data.hakemus.arvio.status)}</h2>
+          <h2>{HakemusArviointiStatuses.statusToFI(decisionStatus)}</h2>
         </section>
     )
   }
