@@ -18,20 +18,21 @@ export default class PaatosApp extends Component {
     return (
         <section>
           <header>
-            <img src="/img/logo.png"/>
-            <h1>Päätös<br/>dd.mm.yyyy</h1>
+            <div><img src="/img/logo.png" width="200" /></div>
+            <div>Päätös<br/>dd.mm.yyyy</div>
+            <div>Diary nro</div>
           </header>
-          <div className="body">
+          <div>
             <section className="section">
               <h2>Asia</h2>
               <div className="content">
+                VALTIONAVUSTUKSEN MYÖNTÄMINEN<br/>
                 {avustushaku.content.name.fi}
               </div>
             </section>
             {decisionStatus == 'rejected' ? <RejectedDecision hakemus={hakemus}/> :
                 <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku}/>}
           </div>
-          <h2>{HakemusArviointiStatuses.statusToFI(decisionStatus)}</h2>
         </section>
     )
   }
