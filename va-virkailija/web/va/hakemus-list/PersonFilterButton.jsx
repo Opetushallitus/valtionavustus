@@ -57,7 +57,8 @@ const PersonFilterButton = ({state,controller}) => {
     controller.setFilter("roleIsOpen",!hakemusFilter.roleIsOpen)
   }
   const buttonClass = ClassNames('btn btn-sm btn-simple btn-role ',{
-    'btn-role--center': activeFilterCount==0
+    'btn-role--center': activeFilterCount==0,
+    'btn-selected--border': activeFilterCount>0,
   })
   return (
     <div style={{position:'relative'}}>
