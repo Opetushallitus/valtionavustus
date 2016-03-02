@@ -20,7 +20,7 @@ export default class PaatosApp extends Component {
           <header>
             <div><img src="/img/logo.png" width="200" /></div>
             <div>Päätös<br/>dd.mm.yyyy</div>
-            <div>Diary nro</div>
+            <div>{hakemus['register-number']}</div>
           </header>
           <div>
             <section className="section">
