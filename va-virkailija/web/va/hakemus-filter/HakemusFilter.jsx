@@ -97,7 +97,7 @@ const FilterList  = ({hakemusFilter,hakuData,controller}) => {
       filterQuestions.unshift({
         id: "rahoitusalue",
         label: "Rahoitusalue",
-        options: RahoitusAlueet.map((rahoitusalue)=>({
+        options: RahoitusAlueet.concat(["Ei rahoitusaluetta"]).map((rahoitusalue)=>({
           label: rahoitusalue,
           value: rahoitusalue,
           selected: selectedPredicate("rahoitusalue", rahoitusalue)

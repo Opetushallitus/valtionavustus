@@ -107,8 +107,8 @@ export default class HakemusListing extends Component {
     }
     return function(hakemus) {
       const fieldValue = fieldGetter(hakemus);
-      if(_.isUndefined(fieldValue)) {
-        return false
+      if(_.isUndefined(fieldValue) || _.isNull(fieldValue)) {
+        return _.some(rahoitusAlueetFilter, (i)=>i.answer=="Ei rahoitusaluetta")
       }
       return _.contains(rahoitusAlueetFilter.map((i)=>i.answer),fieldValue)
     }
