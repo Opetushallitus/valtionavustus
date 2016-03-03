@@ -9,6 +9,21 @@ import HakemusArviointiStatuses from './../hakemus-details/HakemusArviointiStatu
 import PaatosController from './PaatosController.jsx'
 import style from './paatos.less'
 
+const parsedRoute = new RouteParser('/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id').match(location.pathname)
+const controller = new PaatosController()
+
+controller.initializeState(parsedRoute).onValue((state) => {
+  try {
+    if (state.paatosData) {
+      ReactDOM.render(<PaatosApp state={state} controller={controller}/>, document.getElementById('app'))
+    } else {
+      console.log('Not rendering yet, because state.paatosData not yet loaded.')
+    }
+  } catch (e) {
+    console.log('Error from ReactDOM.render with state', state, e)
+  }
+})
+
 export default class PaatosApp extends Component {
   render() {
     const paatosData = this.props.state.paatosData
@@ -83,18 +98,3 @@ class RejectedDecision extends Component {
     )
   }
 }
-const parsedRoute = new RouteParser('/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id').match(location.pathname)
-const controller = new PaatosController()
-const stateP = controller.initializeState(parsedRoute)
-
-stateP.onValue((state) => {
-  try {
-    if (state.paatosData) {
-      ReactDOM.render(<PaatosApp state={state} controller={controller}/>, document.getElementById('app'))
-    } else {
-      console.log('Not rendering yet, because state.paatosData not yet loaded.')
-    }
-  } catch (e) {
-    console.log('Error from ReactDOM.render with state', state, e)
-  }
-})
