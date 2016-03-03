@@ -85,10 +85,21 @@ class AcceptedDecision extends Component {
           <section className="section">
             <h2>Lisätietoja</h2>
             <div className="content">
-              Lisätietoja antaa {roles.map(role => role.name + ' <' + role.email + '>').join(', ')}
+              Lisätietoja antaa: {roles.map(role => <Role role={role}/>)}
             </div>
           </section>
         </section>
+    )
+  }
+}
+
+class Role extends Component {
+  render() {
+    const role = this.props.role
+    return (
+        <div>
+          {role.name} &lt;{role.email}&gt;
+        </div>
     )
   }
 }
