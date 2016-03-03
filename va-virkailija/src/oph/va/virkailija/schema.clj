@@ -136,6 +136,8 @@
    :form {:content s/Any
           :rules s/Any}
    :roles [Role]
+   :bank-iban s/Any
+   :bank-bic s/Any
    :hakemus Hakemus})
 
 (s/defschema SavedSearch

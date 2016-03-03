@@ -30,6 +30,8 @@ export default class PaatosApp extends Component {
     const hakemus = paatosData.hakemus
     const avustushaku = paatosData.avustushaku
     const decisionStatus = hakemus.arvio.status
+    const iban = paatosData['bank-iban']
+    const bic = paatosData['bank-bic']
     return (
         <section>
           <header>
@@ -46,7 +48,7 @@ export default class PaatosApp extends Component {
               </div>
             </section>
             {decisionStatus == 'rejected' ? <RejectedDecision hakemus={hakemus}/> :
-                <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku}/>}
+                <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} iban={iban} bic={bic}/>}
           </div>
         </section>
     )
@@ -57,6 +59,8 @@ class AcceptedDecision extends Component {
   render() {
     const hakemus = this.props.hakemus
     const avustushaku = this.props.avustushaku
+    const iban = this.props.iban
+    const bic = this.props.bic
     return (
         <section>
           <section className="section">
@@ -73,7 +77,7 @@ class AcceptedDecision extends Component {
           <section className="section">
             <h2>Avustuksen maksu</h2>
             <div className="content">
-              Pankkitili: xx
+              Pankkitili: <strong>{iban}, {bic}</strong>
             </div>
           </section>
         </section>
