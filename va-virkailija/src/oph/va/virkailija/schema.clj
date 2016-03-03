@@ -37,7 +37,7 @@
    (s/optional-key :summary-comment) (s/maybe s/Str)
    (s/optional-key :rahoitusalue) (s/maybe s/Str)
    (s/optional-key :perustelut) (s/maybe s/Str)
-   (s/optional-key :search-text) (s/maybe s/Str)})
+  })
 
 (s/defschema NewComment
   "New comment to be added"

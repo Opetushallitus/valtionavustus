@@ -35,8 +35,6 @@ export default class HakemusListing extends Component {
           const score = ScoreResolver.effectiveAverage(hakemus.arvio.scoring, userInfo, allowHakemusScoring)
           return score ? score : 0
         }
-      case "search-text":
-        return hakemus => hakemus.arvio["search-text"]
     }
     throw Error("No field getter for " + fieldName)
   }
@@ -118,7 +116,6 @@ export default class HakemusListing extends Component {
     return _.filter(list, HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("name"), filter.name))
             .filter(HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("organization"), filter.organization))
             .filter(HakemusListing._filterWithArrayPredicate(HakemusListing._fieldGetter("status"), filter.status))
-            .filter(HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("search-text"), filter["search-text"]))
             .filter(HakemusListing._filterAnswers(HakemusListing._fieldGetter("answers"), filter.answers))
             .filter(HakemusListing._filterWithArrayFilterPredicate(HakemusListing._fieldGetter("evaluators"), filter.evaluator))
             .filter(HakemusListing._filterWithNumberPredicate(HakemusListing._fieldGetter("presenter"), filter.presenter))

@@ -9,7 +9,6 @@ import HakemusScoring from './HakemusScoring.jsx'
 import HakemusComments from './HakemusComments.jsx'
 import HakemusArviointiStatuses from "./HakemusArviointiStatuses.js"
 import HakemusStatuses from './HakemusStatuses.js'
-import HakemusSearchTextEdit from './HakemusSearchTextEdit.jsx'
 import TraineeDayEditing from '../traineeday/TraineeDayEditing.jsx'
 import ChooseRahoitusalue from './ChooseRahoitusalue.jsx'
 import Perustelut from './Perustelut.jsx'
@@ -33,8 +32,6 @@ export default class HakemusArviointi extends Component {
     return (
      <div id="hakemus-arviointi">
        <ChooseRahoitusalue controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
-       <HakemusSearchTextEdit controller={controller} hakemus={hakemus} avustushaku={avustushaku}
-                              allowEditing={allowHakemusScoring} />
        <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku}
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments} allowHakemusCommenting={allowHakemusCommenting}/>

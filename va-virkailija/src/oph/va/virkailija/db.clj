@@ -76,15 +76,6 @@
                                                     :new (:status new)}))
     changelog))
 
-(defn- compare-search-text [changelog identity timestamp existing new]
-  (if (not (= (:search_text new) (keyword (:search_text existing))))
-    (append-changelog changelog (->changelog-entry identity
-                                                   "search-text-change"
-                                                   timestamp
-                                                   {:old (:search_text existing)
-                                                    :new (:search_text new)}))
-    changelog))
-
 (defn- update-changelog [identity existing new]
   (let [changelog (:changelog existing)
         timestamp (Date.)]
@@ -94,7 +85,7 @@
         (compare-budget-granted identity timestamp existing new)
         (compare-summary-comment identity timestamp existing new)
         (compare-overridden-answers identity timestamp existing new)
-        (compare-search-text identity timestamp existing new))
+      )
       changelog)))
 
 (defn- calculate-total-oph-budget [avustushaku status arvio]
@@ -109,7 +100,6 @@
   (let [status (keyword (:status arvio))
         budget-granted (or (calculate-total-oph-budget avustushaku status arvio) 0)
         overridden-answers (:overridden-answers arvio)
-        search-text (:search-text arvio)
         arvio-to-save  {:hakemus_id hakemus-id
                         :status status
                         :overridden_answers overridden-answers
@@ -119,7 +109,7 @@
                         :presenter_role_id (:presenter-role-id arvio)
                         :rahoitusalue (:rahoitusalue arvio)
                         :perustelut (:perustelut arvio)
-                        :search_text search-text}
+                        }
         existing (get-arvio hakemus-id)
         changelog (update-changelog identity existing arvio-to-save)
         arvio-with-changelog (assoc arvio-to-save :changelog [changelog])]

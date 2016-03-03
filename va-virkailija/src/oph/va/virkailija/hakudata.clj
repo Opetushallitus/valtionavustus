@@ -16,7 +16,7 @@
    :presenter-role-id (:presenter_role_id arvio)
    :rahoitusalue (:rahoitusalue arvio)
    :perustelut (:perustelut arvio)
-   :search-text (:search_text arvio)})
+   })
 
 
 (defn- add-arvio [arvio hakemus]
@@ -27,7 +27,7 @@
                            :overridden-answers {:value []}
                            :budget-granted     0
                            :roles              {:evaluators []}
-                           :search-text        ""})))
+                           })))
 
 (defn- find-and-add-arvio [arviot hakemus]
   (add-arvio (get arviot (:id hakemus)) hakemus))
