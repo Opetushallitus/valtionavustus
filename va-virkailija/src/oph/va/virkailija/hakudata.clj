@@ -15,6 +15,7 @@
    :roles (:roles arvio)
    :presenter-role-id (:presenter_role_id arvio)
    :rahoitusalue (:rahoitusalue arvio)
+   :perustelut (:perustelut arvio)
    :search-text (:search_text arvio)})
 
 

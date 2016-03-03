@@ -36,6 +36,7 @@
    (s/optional-key :scoring) (s/maybe Scoring)
    (s/optional-key :summary-comment) (s/maybe s/Str)
    (s/optional-key :rahoitusalue) (s/maybe s/Str)
+   (s/optional-key :perustelut) (s/maybe s/Str)
    (s/optional-key :search-text) (s/maybe s/Str)})
 
 (s/defschema NewComment

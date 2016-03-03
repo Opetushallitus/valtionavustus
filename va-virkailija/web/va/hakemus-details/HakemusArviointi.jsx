@@ -12,6 +12,7 @@ import HakemusStatuses from './HakemusStatuses.js'
 import HakemusSearchTextEdit from './HakemusSearchTextEdit.jsx'
 import TraineeDayEditing from '../traineeday/TraineeDayEditing.jsx'
 import ChooseRahoitusalue from './ChooseRahoitusalue.jsx'
+import Perustelut from './Perustelut.jsx'
 
 export default class HakemusArviointi extends Component {
   render() {
@@ -39,6 +40,7 @@ export default class HakemusArviointi extends Component {
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments} allowHakemusCommenting={allowHakemusCommenting}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <BudgetGranted hakemus={hakemus}/>
+       <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <ChangeRequest controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />

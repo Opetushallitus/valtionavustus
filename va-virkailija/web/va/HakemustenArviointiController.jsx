@@ -516,6 +516,11 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
+  setArvioPerustelut(hakemus, perustelut) {
+    hakemus.arvio.perustelut = perustelut
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }
+
   setHakemusSearchText(hakemus, newSearchText) {
     hakemus.arvio["search-text"] = newSearchText
     dispatcher.push(events.updateHakemusArvio, hakemus)
