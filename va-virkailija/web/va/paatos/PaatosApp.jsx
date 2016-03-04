@@ -127,6 +127,14 @@ const AcceptedDecision = ({hakemus, avustushaku, role}) => {
             <Todo>liitteet, hakukohtainen</Todo>
           </div>
         </section>
+        <h1>Käyttösuunnitelma</h1>
+        <section className="section">
+          <p><strong>{avustushaku.content.name.fi}</strong></p>
+          <p>Hanke: {hakemus['project-name']}</p>
+          <p>Opetushallitus on hyväksynyt hankkeen rahoituksen oheisen käyttösuunnitelman mukaisesti.</p>
+          <p>{hakemus.arvio.perustelut}</p>
+          <p><Todo>taulukko</Todo></p>
+        </section>
       </section>
   )
 }
