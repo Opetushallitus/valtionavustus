@@ -64,6 +64,9 @@ class AcceptedDecision extends Component {
     const iban = this.props.iban
     const bic = this.props.bic
     const roles = this.props.roles
+    const selectedRoleId = hakemus.arvio['presenter-role-id']
+    const role = selectedRoleId ? roles.find(role => role.id === selectedRoleId) : roles[0]
+
     return (
         <section>
           <section className="section">
@@ -92,23 +95,10 @@ class AcceptedDecision extends Component {
           <section className="section">
             <h2>Lisätietoja</h2>
             <div className="content">
-              Lisätietoja antaa: <Role roles={roles} selectedRoleId={hakemus.arvio['presenter-role-id']}/>
+              Lisätietoja antaa: {role.name} &lt;{role.email}&gt;
             </div>
           </section>
         </section>
-    )
-  }
-}
-
-class Role extends Component {
-  render() {
-    const roles = this.props.roles
-    const selectedRoleId = this.props.selectedRoleId
-    const role = selectedRoleId ? roles.find(role => role.id === selectedRoleId) : roles[0]
-    return (
-        <div>
-          {role.name} &lt;{role.email}&gt;
-        </div>
     )
   }
 }
