@@ -85,7 +85,7 @@ class AcceptedDecision extends Component {
           <section className="section">
             <h2>Lisätietoja</h2>
             <div className="content">
-              Lisätietoja antaa: {roles.map(role => <Role role={role}/>)}
+              Lisätietoja antaa: <Role roles={roles} selectedRoleId={hakemus.arvio['presenter-role-id']}/>
             </div>
           </section>
         </section>
@@ -95,7 +95,9 @@ class AcceptedDecision extends Component {
 
 class Role extends Component {
   render() {
-    const role = this.props.role
+    const roles = this.props.roles
+    const selectedRoleId = this.props.selectedRoleId
+    const role = selectedRoleId ? roles.find(role => role.id === selectedRoleId) : roles[0]
     return (
         <div>
           {role.name} &lt;{role.email}&gt;
