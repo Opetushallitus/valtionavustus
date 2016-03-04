@@ -177,8 +177,6 @@
     {:avustushaku (avustushaku-response-content avustushaku)
      :roles       roles
      :form        (form->json form)
-     :bank-iban    (keyword (formutil/find-answer-value (:answers hakemus) "bank-iban"))
-     :bank-bic    (keyword (formutil/find-answer-value (:answers hakemus) "bank-bic"))
      :hakemus     (hakemus->json hakemus)}))
 
 (defn list-attachments [hakemus-id]
