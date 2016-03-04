@@ -103,26 +103,21 @@ class AcceptedDecision extends Component {
   }
 }
 
-class RejectedDecision extends Component {
-  render() {
-    const hakemus = this.props.hakemus
-    return (
-        <section>
-          <section className="section">
-            <h2>Päätös</h2>
-            <div className="content">
-              <p>Opetushallitus on päättänyt olla myöntämättä valtionavustusta seuraavasti:</p>
-              <p>Hakija: {hakemus['organization-name']}<br/>
-                Hanke: {hakemus['project-name']}</p>
-            </div>
-          </section>
-          <section className="section">
-            <h2>Päätöksen perustelut</h2>
-            <div className="content">
-              {hakemus.arvio.perustelut}
-            </div>
-          </section>
-        </section>
-    )
-  }
-}
+const RejectedDecision = ({hakemus}) =>
+    <section>
+      <section className="section">
+        <h2>Päätös</h2>
+        <div className="content">
+          <p>Opetushallitus on päättänyt olla myöntämättä valtionavustusta seuraavasti:</p>
+          <p>Hakija: {hakemus['organization-name']}<br/>
+            Hanke: {hakemus['project-name']}</p>
+        </div>
+      </section>
+      <section className="section">
+        <h2>Päätöksen perustelut</h2>
+        <div className="content">
+          {hakemus.arvio.perustelut}
+        </div>
+      </section>
+    </section>
+
