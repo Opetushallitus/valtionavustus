@@ -32,7 +32,7 @@ export default class PaatosApp extends Component {
     return (
         <section>
           <header>
-            <div><img src="/img/logo.png" width="200" /></div>
+            <div><img src="/img/logo.png" width="200"/></div>
             <div>Päätös</div>
             <div>{hakemus['register-number']}</div>
           </header>
@@ -42,6 +42,12 @@ export default class PaatosApp extends Component {
               <div className="content">
                 VALTIONAVUSTUKSEN MYÖNTÄMINEN<br/>
                 {avustushaku.content.name.fi}
+              </div>
+            </section>
+            <section className="section">
+              <h2>Taustaa</h2>
+              <div className="content">
+                <i>[TODO: TAUSTAA, HAKUKOHTAINEN]</i>
               </div>
             </section>
             {decisionStatus == 'rejected' ? <RejectedDecision hakemus={hakemus}/> :
@@ -80,13 +86,45 @@ const AcceptedDecision = ({hakemus, avustushaku, roles}) => {
         <section className="section">
           <h2>Avustuksen maksu</h2>
           <div className="content">
-            Pankkitili: <strong>{iban}, {bic}</strong>
+            <p>Avustus maksetaan hakijan ilmoittamalle pankkitilille: <strong>{iban}, {bic}</strong></p>
+            <p><i>[TODO: AVUSTUKSEN MAKSU, VAKIOTEKSTI]</i></p>
+          </div>
+        </section>
+        <section className="section">
+          <h2>Avustuksen käyttö</h2>
+          <div className="content">
+            <i>[TODO: AVUSTUKSEN KÄYTTÖ, HAKUKOHTAINEN]</i>
+          </div>
+        </section>
+        <section className="section">
+          <h2>Käyttöoikeudet</h2>
+          <div className="content">
+            <i>[TODO: KÄYTTÖIKEUDET, TULEEKO MUKAAN?]</i>
+          </div>
+        </section>
+        <section className="section">
+          <h2>Selvitysvelvollisuus</h2>
+          <div className="content">
+            <i>[TODO: SELVITYSVELVOLLISUUS, HAKUKOHTAINEN]</i>
+          </div>
+        </section>
+        <section className="section">
+          <h2>Valtionavustuksen käyttöaika</h2>
+          <div className="content">
+            <i>[TODO: KÄYTTÖAIKA, HAKUKOHTAINEN]</i>
           </div>
         </section>
         <section className="section">
           <h2>Lisätietoja</h2>
           <div className="content">
-            Lisätietoja antaa: {role.name} &lt;{role.email}&gt;
+            <p>Lisätietoja antaa: {role.name} &lt;{role.email}&gt;</p>
+            <p><i>[TODO: LISÄTIETOJA, HAKUKOHTAINEN]</i></p>
+          </div>
+        </section>
+        <section className="section">
+          <h2>LIITTEET</h2>
+          <div className="content">
+            <i>[TODO: LIITTEET, HAKUKOHTAINEN]</i>
           </div>
         </section>
       </section>
