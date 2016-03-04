@@ -49,7 +49,7 @@ export default class PaatosApp extends Component {
             <section className="section">
               <h2>Taustaa</h2>
               <div className="content">
-                <i>[TODO: TAUSTAA, HAKUKOHTAINEN]</i>
+                <Todo>taustaa, hakukohtainen</Todo>
               </div>
             </section>
             {decisionStatus == 'rejected' ? <RejectedDecision hakemus={hakemus} role={role}/> :
@@ -87,44 +87,44 @@ const AcceptedDecision = ({hakemus, avustushaku, role}) => {
           <h2>Avustuksen maksu</h2>
           <div className="content">
             <p>Avustus maksetaan hakijan ilmoittamalle pankkitilille: <strong>{iban}, {bic}</strong></p>
-            <p><i>[TODO: AVUSTUKSEN MAKSU, VAKIOTEKSTI]</i></p>
+            <p><Todo>avustuksen maksu, vakioteksti</Todo></p>
           </div>
         </section>
         <section className="section">
           <h2>Avustuksen käyttö</h2>
           <div className="content">
-            <i>[TODO: AVUSTUKSEN KÄYTTÖ, HAKUKOHTAINEN]</i>
+            <Todo>avustuksen käyttö, hakukohtainen</Todo>
           </div>
         </section>
         <section className="section">
           <h2>Käyttöoikeudet</h2>
           <div className="content">
-            <i>[TODO: KÄYTTÖIKEUDET, TULEEKO MUKAAN?]</i>
+            <Todo>käyttöikeudet, tuleeko mukaan?</Todo>
           </div>
         </section>
         <section className="section">
           <h2>Selvitysvelvollisuus</h2>
           <div className="content">
-            <i>[TODO: SELVITYSVELVOLLISUUS, HAKUKOHTAINEN]</i>
+            <Todo>selvitysvelvollisuus, hakukohtainen</Todo>
           </div>
         </section>
         <section className="section">
           <h2>Valtionavustuksen käyttöaika</h2>
           <div className="content">
-            <i>[TODO: KÄYTTÖAIKA, HAKUKOHTAINEN]</i>
+            <Todo>käyttöaika, hakukohtainen</Todo>
           </div>
         </section>
         <section className="section">
           <h2>Lisätietoja</h2>
           <div className="content">
             <p>Lisätietoja antaa: {role.name} &lt;{role.email}&gt;</p>
-            <p><i>[TODO: LISÄTIETOJA, HAKUKOHTAINEN]</i></p>
+            <p><Todo>lisätietoja, hakukohtainen</Todo></p>
           </div>
         </section>
         <section className="section">
           <h2>LIITTEET</h2>
           <div className="content">
-            <i>[TODO: LIITTEET, HAKUKOHTAINEN]</i>
+            <Todo>liitteet, hakukohtainen</Todo>
           </div>
         </section>
       </section>
@@ -151,14 +151,15 @@ const RejectedDecision = ({hakemus, role}) =>
         <h2>Lisätietoja</h2>
         <div className="content">
           <p>Lisätietoja antaa: {role.name} &lt;{role.email}&gt;</p>
-          <p><i>[TODO: LISÄTIETOJA, HAKUKOHTAINEN]</i></p>
+          <p><Todo>lisätietoja, hakukohtainen</Todo></p>
         </div>
       </section>
       <section className="section">
         <h2>LIITTEET</h2>
         <div className="content">
-          <i>[TODO: LIITTEET, HAKUKOHTAINEN]</i>
+          <Todo>liitteet, hakukohtainen</Todo>
         </div>
       </section>
     </section>
 
+const Todo = ({children}) => <span className="todo">[TODO: {children}]</span>
