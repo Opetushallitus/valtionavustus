@@ -78,6 +78,12 @@ class AcceptedDecision extends Component {
             </div>
           </section>
           <section className="section">
+            <h2>Päätöksen perustelut</h2>
+            <div className="content">
+              {hakemus.arvio.perustelut}
+            </div>
+          </section>
+          <section className="section">
             <h2>Avustuksen maksu</h2>
             <div className="content">
               Pankkitili: <strong>{iban}, {bic}</strong>
@@ -118,6 +124,12 @@ class RejectedDecision extends Component {
               <p>Opetushallitus on päättänyt olla myöntämättä valtionavustusta seuraavasti:</p>
               <p>Hakija: {hakemus['organization-name']}<br/>
                 Hanke: {hakemus['project-name']}</p>
+            </div>
+          </section>
+          <section className="section">
+            <h2>Päätöksen perustelut</h2>
+            <div className="content">
+              {hakemus.arvio.perustelut}
             </div>
           </section>
         </section>
