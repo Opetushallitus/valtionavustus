@@ -28,6 +28,8 @@ export default class PaatosApp extends Component {
   render() {
     const {hakemus, avustushaku, roles} = this.props.state.paatosData
     const decisionStatus = hakemus.arvio.status
+    const selectedRoleId = hakemus.arvio['presenter-role-id']
+    const role = selectedRoleId ? roles.find(role => role.id === selectedRoleId) : roles[0]
 
     return (
         <section>
@@ -50,17 +52,15 @@ export default class PaatosApp extends Component {
                 <i>[TODO: TAUSTAA, HAKUKOHTAINEN]</i>
               </div>
             </section>
-            {decisionStatus == 'rejected' ? <RejectedDecision hakemus={hakemus}/> :
-                <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} roles={roles}/>}
+            {decisionStatus == 'rejected' ? <RejectedDecision hakemus={hakemus} role={role}/> :
+                <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} role={role}/>}
           </div>
         </section>
     )
   }
 }
 
-const AcceptedDecision = ({hakemus, avustushaku, roles}) => {
-  const selectedRoleId = hakemus.arvio['presenter-role-id']
-  const role = selectedRoleId ? roles.find(role => role.id === selectedRoleId) : roles[0]
+const AcceptedDecision = ({hakemus, avustushaku, role}) => {
   const answers = hakemus.answers
   const iban = InputValueStorage.readValues(answers, 'iban')[0].value
   const bic = InputValueStorage.readValues(answers, 'bic')[0].value
@@ -131,7 +131,7 @@ const AcceptedDecision = ({hakemus, avustushaku, roles}) => {
   )
 }
 
-const RejectedDecision = ({hakemus}) =>
+const RejectedDecision = ({hakemus, role}) =>
     <section>
       <section className="section">
         <h2>Päätös</h2>
@@ -145,6 +145,19 @@ const RejectedDecision = ({hakemus}) =>
         <h2>Päätöksen perustelut</h2>
         <div className="content">
           {hakemus.arvio.perustelut}
+        </div>
+      </section>
+      <section className="section">
+        <h2>Lisätietoja</h2>
+        <div className="content">
+          <p>Lisätietoja antaa: {role.name} &lt;{role.email}&gt;</p>
+          <p><i>[TODO: LISÄTIETOJA, HAKUKOHTAINEN]</i></p>
+        </div>
+      </section>
+      <section className="section">
+        <h2>LIITTEET</h2>
+        <div className="content">
+          <i>[TODO: LIITTEET, HAKUKOHTAINEN]</i>
         </div>
       </section>
     </section>
