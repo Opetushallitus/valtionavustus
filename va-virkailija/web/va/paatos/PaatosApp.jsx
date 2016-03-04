@@ -26,10 +26,7 @@ controller.initializeState(parsedRoute).onValue((state) => {
 
 export default class PaatosApp extends Component {
   render() {
-    const paatosData = this.props.state.paatosData
-    const hakemus = paatosData.hakemus
-    const avustushaku = paatosData.avustushaku
-    const roles = paatosData.roles
+    const {hakemus, avustushaku, roles} = this.props.state.paatosData
     const decisionStatus = hakemus.arvio.status
 
     return (
