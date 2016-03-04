@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom'
 import _ from 'lodash'
 import RouteParser from 'route-parser'
 import HakemusArviointiStatuses from './../hakemus-details/HakemusArviointiStatuses.js'
-
+import InputValueStorage from '../../../../soresu-form/web/form/InputValueStorage'
 import PaatosController from './PaatosController.jsx'
 import style from './paatos.less'
 
@@ -31,8 +31,9 @@ export default class PaatosApp extends Component {
     const avustushaku = paatosData.avustushaku
     const roles = paatosData.roles
     const decisionStatus = hakemus.arvio.status
-    const iban = paatosData['bank-iban']
-    const bic = paatosData['bank-bic']
+    const answers = paatosData.hakemus.answers
+    const iban = InputValueStorage.readValues(answers, 'iban')[0].value
+    const bic = InputValueStorage.readValues(answers, 'bic')[0].value
     return (
         <section>
           <header>
