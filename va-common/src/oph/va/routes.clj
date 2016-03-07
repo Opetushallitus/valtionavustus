@@ -44,4 +44,5 @@
    :multiple-rahoitusalue (:multiple_rahoitusalue avustushaku)
    :phase       (avustushaku-phase avustushaku)
    :content     (:content avustushaku)
+   :decision    (:decision avustushaku)
    :form        (:form avustushaku)})

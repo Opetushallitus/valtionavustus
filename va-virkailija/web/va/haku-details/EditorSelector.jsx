@@ -4,6 +4,7 @@ import ClassNames from 'classnames'
 
 import HakuEdit from './HakuEdit.jsx'
 import FormEditorContainer from './FormEditorContainer.jsx'
+import DecisionEditor from './DecisionEditor.jsx'
 
 export default class EditorSelector extends React.Component {
   render() {
@@ -33,6 +34,10 @@ export default class EditorSelector extends React.Component {
                                              formDraft={formDraft}
                                              controller={controller} />
         break
+      case "decision":
+        subTabContent = <DecisionEditor avustushaku={avustushaku}
+                                             controller={controller} />
+        break
       default:
         throw new Error("Bad subTab selection '" + subTab + "'")
     }
@@ -49,7 +54,9 @@ export default class EditorSelector extends React.Component {
                <span onClick={createSubTabSelector("haku-editor")}
                      className={ClassNames({"selected": subTab === "haku-editor"})}>Haun tiedot</span>
                <span onClick={createSubTabSelector("form-editor")}
-                     className={ClassNames({"selected": subTab === "form-editor"})}>Hakulomakkeen sisältö</span>
+                     className={ClassNames({"selected": subTab === "form-editor"})}>Hakulomake</span>
+               <span onClick={createSubTabSelector("decision")}
+                     className={ClassNames({"selected": subTab === "decision"})}>Päätös</span>
              </div>
              <div className="section-container">{subTabContent}</div>
            </section>

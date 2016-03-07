@@ -226,6 +226,10 @@ export default class HakujenHallintaController {
     else if (registerNumber) {
       update.avustushaku["register-number"] = update.newValue
     }
+    else if(update.field.id.indexOf("decision.")!=-1){
+      const fieldName = update.field.id.substr(9)
+      _.set(update.avustushaku.decision, fieldName, update.newValue)
+    }
     else {
       console.error("Unsupported update to field ", update.field.id, ":", update)
       doSave = false

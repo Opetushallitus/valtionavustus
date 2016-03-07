@@ -42,12 +42,29 @@
 (s/defschema HakuPhase
   (s/enum "unpublished" "upcoming" "current" "ended"))
 
+(s/defschema LocalizedStringOptional {
+                                      (s/optional-key :fi) s/Str
+                                      (s/optional-key :sv)  s/Str})
+
+(s/defschema Decision
+  "Decision fields"
+  {
+   (s/optional-key :taustaa) LocalizedStringOptional
+   (s/optional-key :maksu) LocalizedStringOptional
+   (s/optional-key :kaytto) LocalizedStringOptional
+   (s/optional-key :kayttooikeudet) LocalizedStringOptional
+   (s/optional-key :selvitysvelvollisuus) LocalizedStringOptional
+   (s/optional-key :kayttoaika) LocalizedStringOptional
+   (s/optional-key :lisatiedot) LocalizedStringOptional
+  }
+)
 (s/defschema AvustusHaku {:id Long
                           :status HakuStatus
                           :phase HakuPhase
                           :multiple-rahoitusalue s/Bool
                           :register-number (s/maybe s/Str)
                           :content AvustusHakuContent
+                          (s/optional-key :decision) Decision
                           :form Long})
 
 (s/defschema HakemusStatus
