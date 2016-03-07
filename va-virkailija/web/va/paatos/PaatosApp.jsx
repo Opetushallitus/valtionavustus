@@ -102,7 +102,7 @@ const Liitteet = ()=>
 
 const Kayttosuunnitelma = ({avustushaku,hakemus})=>
     <div>
-      <div class="sectionWrapper">
+      <div className="sectionWrapper">
         <section className="section">
           <h1>Käyttösuunnitelma</h1>
 
