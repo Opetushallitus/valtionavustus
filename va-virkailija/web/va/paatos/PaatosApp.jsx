@@ -25,7 +25,7 @@ controller.initializeState(parsedRoute).onValue((state) => {
 })
 
 const Section = ({title,content,children})=>
-  <section className="section">
+  <section className="section" hidden={!content && !children}>
     <h2>{title}</h2>
     <div className="content">
       {children || content}
