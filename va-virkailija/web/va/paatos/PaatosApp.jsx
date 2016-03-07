@@ -25,12 +25,15 @@ controller.initializeState(parsedRoute).onValue((state) => {
 })
 
 const Section = ({title,content,children})=>
-  <section className="section" hidden={!content && !children}>
-    <h2>{title}</h2>
-    <div className="content">
-      {children || content}
+    <div className="sectionWrapper" hidden={!content && !children}>
+      <section className="section">
+        <h2>{title}</h2>
+        <div className="content">
+          {children || content}
+        </div>
+      </section>
     </div>
-  </section>
+
 
 const DecisionContent = ({id,avustushaku}) =>{
   const language = "fi"
@@ -66,19 +69,19 @@ export default class PaatosApp extends Component {
     return (
         <section>
           <header>
-            <div><img src="/img/logo.png" width="200"/></div>
-            <div>Päätös</div>
-            <div>{hakemus['register-number']}</div>
+            <section>
+              <div><img src="/img/logo.png" width="200"/></div>
+              <div>Päätös</div>
+              <div>{hakemus['register-number']}</div>
+            </section>
           </header>
-          <div>
-            <Section title="Asia">
-              VALTIONAVUSTUKSEN MYÖNTÄMINEN<br/>
-              {avustushaku.content.name.fi}
-            </Section>
-            <OptionalSection title="Taustaa" id="taustaa" avustushaku={avustushaku}/>
-            {decisionStatus == 'rejected' ? <RejectedDecision avustushaku={avustushaku} hakemus={hakemus} role={role}/> :
-                <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} role={role}/>}
-          </div>
+          <Section title="Asia">
+            VALTIONAVUSTUKSEN MYÖNTÄMINEN<br/>
+            {avustushaku.content.name.fi}
+          </Section>
+          <OptionalSection title="Taustaa" id="taustaa" avustushaku={avustushaku}/>
+          {decisionStatus == 'rejected' ? <RejectedDecision avustushaku={avustushaku} hakemus={hakemus} role={role}/> :
+              <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} role={role}/>}
         </section>
     )
   }
@@ -98,16 +101,19 @@ const Liitteet = ()=>
   </Section>
 
 const Kayttosuunnitelma = ({avustushaku,hakemus})=>
-  <div>
-    <h1>Käyttösuunnitelma</h1>
-    <section className="section">
-      <p><strong>{avustushaku.content.name.fi}</strong></p>
-      <p>Hanke: {hakemus['project-name']}</p>
-      <p>Opetushallitus on hyväksynyt hankkeen rahoituksen oheisen käyttösuunnitelman mukaisesti.</p>
-      <p>{hakemus.arvio.perustelut}</p>
-      <p><Todo>taulukko</Todo></p>
-    </section>
-  </div>
+    <div>
+      <div class="sectionWrapper">
+        <section className="section">
+          <h1>Käyttösuunnitelma</h1>
+
+          <p><strong>{avustushaku.content.name.fi}</strong></p>
+          <p>Hanke: {hakemus['project-name']}</p>
+          <p>Opetushallitus on hyväksynyt hankkeen rahoituksen oheisen käyttösuunnitelman mukaisesti.</p>
+          <p>{hakemus.arvio.perustelut}</p>
+          <p><Todo>taulukko</Todo></p>
+        </section>
+      </div>
+    </div>
 
 const AcceptedDecision = ({hakemus, avustushaku, role}) => {
   const answers = hakemus.answers
