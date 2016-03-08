@@ -112,7 +112,7 @@ const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, total
               </tr>
               </thead>
               <tbody>
-              {budgetItems.map(budgetItem=><BudgetItemRow item={budgetItem}/>)}
+              {budgetItems.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem}/>)}
               </tbody>
               <tfoot>
               <tr>
