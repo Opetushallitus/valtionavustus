@@ -71,9 +71,9 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent}) => {
           <p>Opetushallitus on päättänyt myöntää valtionavustusta seuraavasti:</p>
           <p>Hakija: {hakemus['organization-name']}<br/>
             Hanke: {hakemus['project-name']}</p>
-          <p>Opetushallitus hyväksyy avustuksen saajan valtionavustukseen oikeuttavina menoina {totalCosts} euroa.
+          <p>Opetushallitus hyväksyy avustuksen saajan valtionavustukseen oikeuttavina menoina {totalCosts}&nbsp;.
             Valtionavustuksena tästä myönnetään {(100 - avustushaku.content['self-financing-percentage'])} %
-            eli {formatNumber(hakemus.arvio['budget-granted'])} euroa</p>
+            eli {formatNumber(hakemus.arvio['budget-granted'])}</p>
         </Section>
         <Perustelut hakemus={hakemus}/>
         <Section title="Avustuksen maksu">
@@ -91,52 +91,46 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent}) => {
   )
 }
 
-const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, totalOriginalCosts})=> {
-  return (
-      <div>
-        <div className="sectionWrapper">
-          <section className="section">
-            <h1>Käyttösuunnitelma</h1>
+const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, totalOriginalCosts}) =>
+    <div>
+      <div className="sectionWrapper">
+        <section className="section">
+          <h1>Käyttösuunnitelma</h1>
 
-            <p><strong>{avustushaku.content.name.fi}</strong></p>
-            <p>Hanke: {hakemus['project-name']}</p>
-            <p>Opetushallitus on hyväksynyt hankkeen rahoituksen oheisen käyttösuunnitelman mukaisesti.</p>
-            <p>{hakemus.arvio.perustelut}</p>
+          <p><strong>{avustushaku.content.name.fi}</strong></p>
+          <p>Hanke: {hakemus['project-name']}</p>
+          <p>Opetushallitus on hyväksynyt hankkeen rahoituksen oheisen käyttösuunnitelman mukaisesti.</p>
+          <p>{hakemus.arvio.perustelut}</p>
 
-            <table>
-              <thead>
-              <tr>
-                <th>Menot</th>
-                <th className="amount">Haettu</th>
-                <th className="amount">Hyväksytty</th>
-              </tr>
-              </thead>
-              <tbody>
-              {budgetItems.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem}/>)}
-              </tbody>
-              <tfoot>
-              <tr>
-                <th>Yhteensä</th>
-                <th className="amount">{totalOriginalCosts} €</th>
-                <th className="amount">{totalCosts} €</th>
-              </tr>
-              </tfoot>
-            </table>
-          </section>
-        </div>
+          <table>
+            <thead>
+            <tr>
+              <th>Menot</th>
+              <th className="amount">Haettu</th>
+              <th className="amount">Hyväksytty</th>
+            </tr>
+            </thead>
+            <tbody>
+            {budgetItems.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem}/>)}
+            </tbody>
+            <tfoot>
+            <tr>
+              <th>Yhteensä</th>
+              <th className="amount">{totalOriginalCosts}</th>
+              <th className="amount">{totalCosts}</th>
+            </tr>
+            </tfoot>
+          </table>
+        </section>
       </div>
-  )
-}
+    </div>
 
-const BudgetItemRow = ({item}) => {
-  return (
-      <tr>
-        <td>{item.label.fi}</td>
-        <td className="amount">{formatNumber(item.original)} €</td>
-        <td className="amount">{formatNumber(item.overridden)} €</td>
-      </tr>
-  )
-}
+const BudgetItemRow = ({item}) =>
+    <tr>
+      <td>{item.label.fi}</td>
+      <td className="amount">{formatNumber(item.original)}</td>
+      <td className="amount">{formatNumber(item.overridden)}</td>
+    </tr>
 
 const RejectedDecision = ({avustushaku, hakemus, role}) =>
     <section>
@@ -193,7 +187,7 @@ const DecisionContent = ({id,avustushaku}) =>{
   )
 }
 
-const Liitteet = ()=>
+const Liitteet = () =>
   <Section title="LIITTEET">
     <Todo>liitteet, hakukohtainen</Todo>
   </Section>
@@ -202,4 +196,4 @@ const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.
 
 const Todo = ({children}) => <span className="todo">[TODO: {children}]</span>
 
-const formatNumber = num => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ")
+const formatNumber = num => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1\u00A0") + '\u00A0€'
