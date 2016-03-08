@@ -6,6 +6,7 @@ import _ from 'lodash'
 import RouteParser from 'route-parser'
 import HakemusArviointiStatuses from './../hakemus-details/HakemusArviointiStatuses.js'
 import InputValueStorage from '../../../../soresu-form/web/form/InputValueStorage'
+import FormUtil from '../../../../soresu-form/web/form/FormUtil'
 import PaatosController from './PaatosController.jsx'
 import style from './paatos.less'
 
@@ -61,11 +62,11 @@ const OptionalSection = ({title,id,avustushaku}) =>{
 
 export default class PaatosApp extends Component {
   render() {
-    const {hakemus, avustushaku, roles} = this.props.state.paatosData
+    const {hakemus, avustushaku, roles, form} = this.props.state.paatosData
     const decisionStatus = hakemus.arvio.status
     const selectedRoleId = hakemus.arvio['presenter-role-id']
     const role = selectedRoleId ? roles.find(role => role.id === selectedRoleId) : roles[0]
-
+    const formContent = form.content
     return (
         <section>
           <header>
@@ -81,7 +82,7 @@ export default class PaatosApp extends Component {
           </Section>
           <OptionalSection title="Taustaa" id="taustaa" avustushaku={avustushaku}/>
           {decisionStatus == 'rejected' ? <RejectedDecision avustushaku={avustushaku} hakemus={hakemus} role={role}/> :
-              <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} role={role}/>}
+              <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} role={role} formContent={formContent}/>}
         </section>
     )
   }
@@ -100,25 +101,67 @@ const Liitteet = ()=>
     <Todo>liitteet, hakukohtainen</Todo>
   </Section>
 
-const Kayttosuunnitelma = ({avustushaku,hakemus})=>
-    <div>
-      <div className="sectionWrapper">
-        <section className="section">
-          <h1>Käyttösuunnitelma</h1>
+const Kayttosuunnitelma = ({avustushaku, hakemus, formContent})=> {
+  const budgetItems = FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
+      .filter(budgetItem => budgetItem.params.incrementsTotal)
+      .map(budgetItem => _.extend(budgetItem, {
+        original: findCost(formContent, hakemus.answers, budgetItem),
+        overridden: findCost(formContent, hakemus.arvio['overridden-answers'], budgetItem)
+      }))
+  console.log(budgetItems)
+  return (
+      <div>
+        <div className="sectionWrapper">
+          <section className="section">
+            <h1>Käyttösuunnitelma</h1>
 
-          <p><strong>{avustushaku.content.name.fi}</strong></p>
-          <p>Hanke: {hakemus['project-name']}</p>
-          <p>Opetushallitus on hyväksynyt hankkeen rahoituksen oheisen käyttösuunnitelman mukaisesti.</p>
-          <p>{hakemus.arvio.perustelut}</p>
-          <p><Todo>taulukko</Todo></p>
-        </section>
+            <p><strong>{avustushaku.content.name.fi}</strong></p>
+            <p>Hanke: {hakemus['project-name']}</p>
+            <p>Opetushallitus on hyväksynyt hankkeen rahoituksen oheisen käyttösuunnitelman mukaisesti.</p>
+            <p>{hakemus.arvio.perustelut}</p>
+
+            <table>
+              <thead>
+              <tr>
+              <th>Menot</th>
+              <th className="amount">Haettu</th>
+              <th className="amount">Hyväksytty</th>
+              </tr>
+              </thead>
+              <tbody>
+              {budgetItems.map(budgetItem=><BudgetItemRow item={budgetItem}/>)}
+              </tbody>
+              <tfoot>
+              <tr>
+                <th>Yhteensä</th>
+                <th className="amount">{formatNumber(_.sum(budgetItems.map(i=>Number(i.original))))} €</th>
+                <th className="amount">{formatNumber(_.sum(budgetItems.map(i=>Number(i.overridden))))} €</th>
+              </tr>
+              </tfoot>
+            </table>
+          </section>
+        </div>
       </div>
-    </div>
+  )
+}
 
-const AcceptedDecision = ({hakemus, avustushaku, role}) => {
+const BudgetItemRow = ({item}) => {
+  return (
+      <tr>
+        <td>{item.label.fi}</td>
+        <td className="amount">{formatNumber(item.original)} €</td>
+        <td className="amount">{formatNumber(item.overridden)} €</td>
+      </tr>
+  )
+}
+
+
+const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
+const AcceptedDecision = ({hakemus, avustushaku, role, formContent}) => {
   const answers = hakemus.answers
   const iban = InputValueStorage.readValues(answers, 'iban')[0].value
   const bic = InputValueStorage.readValues(answers, 'bic')[0].value
+
   return (
       <section>
         <Section title="Päätös">
@@ -140,7 +183,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role}) => {
         <OptionalSection title="Valtionavustuksen käyttöaika" id="kayttoaika" avustushaku={avustushaku}/>
         <Lisatietoja avustushaku={avustushaku} role={role}/>
         <Liitteet/>
-        <Kayttosuunnitelma avustushaku={avustushaku} hakemus={hakemus}/>
+        <Kayttosuunnitelma avustushaku={avustushaku} hakemus={hakemus} formContent={formContent}/>
       </section>
   )
 }
@@ -158,3 +201,5 @@ const RejectedDecision = ({avustushaku, hakemus, role}) =>
     </section>
 
 const Todo = ({children}) => <span className="todo">[TODO: {children}]</span>
+
+const formatNumber = num => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ")
