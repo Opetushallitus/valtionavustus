@@ -73,7 +73,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent}) => {
             Hanke: {hakemus['project-name']}</p>
           <p>Opetushallitus hyväksyy avustuksen saajan valtionavustukseen oikeuttavina menoina {totalCosts} euroa.
             Valtionavustuksena tästä myönnetään {(100 - avustushaku.content['self-financing-percentage'])} %
-            eli {hakemus.arvio['budget-granted']} euroa</p>
+            eli {formatNumber(hakemus.arvio['budget-granted'])} euroa</p>
         </Section>
         <Perustelut hakemus={hakemus}/>
         <Section title="Avustuksen maksu">
