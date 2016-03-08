@@ -65,6 +65,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent}) => {
       }))
   const totalOriginalCosts = formatNumber(_.sum(budgetItems.map(i=>Number(i.original))))
   const totalCosts = formatNumber(_.sum(budgetItems.map(i=>Number(i.overridden))))
+  const totalGranted = formatNumber(hakemus.arvio['budget-granted'])
   return (
       <section>
         <Section title="Päätös">
@@ -73,7 +74,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent}) => {
             Hanke: {hakemus['project-name']}</p>
           <p>Opetushallitus hyväksyy avustuksen saajan valtionavustukseen oikeuttavina menoina {totalCosts}&nbsp;.
             Valtionavustuksena tästä myönnetään {(100 - avustushaku.content['self-financing-percentage'])} %
-            eli {formatNumber(hakemus.arvio['budget-granted'])}</p>
+            eli {totalGranted}</p>
         </Section>
         <Perustelut hakemus={hakemus}/>
         <Section title="Avustuksen maksu">
@@ -86,12 +87,18 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent}) => {
         <OptionalSection title="Valtionavustuksen käyttöaika" id="kayttoaika" avustushaku={avustushaku}/>
         <Lisatietoja avustushaku={avustushaku} role={role}/>
         <Liitteet/>
-        <Kayttosuunnitelma budgetItems={budgetItems} avustushaku={avustushaku} hakemus={hakemus} totalCosts={totalCosts} totalOriginalCosts={totalOriginalCosts}/>
+        <Kayttosuunnitelma
+            budgetItems={budgetItems}
+            avustushaku={avustushaku}
+            hakemus={hakemus}
+            totalCosts={totalCosts}
+            totalOriginalCosts={totalOriginalCosts}
+            totalGranted={totalGranted}/>
       </section>
   )
 }
 
-const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, totalOriginalCosts}) =>
+const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, totalOriginalCosts, totalGranted}) =>
     <div>
       <div className="sectionWrapper">
         <section className="section">
@@ -118,6 +125,10 @@ const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, total
               <th>Yhteensä</th>
               <th className="amount">{totalOriginalCosts}</th>
               <th className="amount">{totalCosts}</th>
+            </tr>
+            <tr>
+              <th colSpan="2">Myönnetty avustus</th>
+              <th className="amount">{totalGranted}</th>
             </tr>
             </tfoot>
           </table>
