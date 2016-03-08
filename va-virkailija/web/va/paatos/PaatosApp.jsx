@@ -25,41 +25,6 @@ controller.initializeState(parsedRoute).onValue((state) => {
   }
 })
 
-const Section = ({title,content,children})=>
-    <div className="sectionWrapper" hidden={!content && !children}>
-      <section className="section">
-        <h2>{title}</h2>
-        <div className="content">
-          {children || content}
-        </div>
-      </section>
-    </div>
-
-
-const DecisionContent = ({id,avustushaku}) =>{
-  const language = "fi"
-  const content = _.get(avustushaku, `decision.${id}.${language}`,"")
-  if(_.isEmpty(content)) return <div></div>
-  const paragraphs = content.split("\n")
-  return (
-    <div>
-      {paragraphs.map((p)=><p key={p}>{p}</p>)}
-    </div>
-  )
-}
-
-const OptionalSection = ({title,id,avustushaku}) =>{
-  const language = "fi"
-  const content = _.get(avustushaku, `decision.${id}.${language}`,"")
-  if(_.isEmpty(content)) return <div></div>
-  const paragraphs = content.split("\n")
-  return (
-    <Section title={title}>
-      {paragraphs.map((p)=><p key={p}>{p}</p>)}
-    </Section>
-  )
-}
-
 export default class PaatosApp extends Component {
   render() {
     const {hakemus, avustushaku, roles, form} = this.props.state.paatosData
@@ -88,27 +53,45 @@ export default class PaatosApp extends Component {
   }
 }
 
-const Perustelut = ({hakemus}) => <Section title="Päätöksen perustelut" content={hakemus.arvio.perustelut}/>
-
-const Lisatietoja = ({avustushaku,role})=>
-  <Section title="Lisätietoja">
-    <p>Lisätietoja antaa: {role.name} &lt;{role.email}&gt;</p>
-    <DecisionContent avustushaku={avustushaku} id="lisatiedot"/>
-  </Section>
-
-const Liitteet = ()=>
-  <Section title="LIITTEET">
-    <Todo>liitteet, hakukohtainen</Todo>
-  </Section>
-
-const Kayttosuunnitelma = ({avustushaku, hakemus, formContent})=> {
+const AcceptedDecision = ({hakemus, avustushaku, role, formContent}) => {
+  const answers = hakemus.answers
+  const iban = InputValueStorage.readValues(answers, 'iban')[0].value
+  const bic = InputValueStorage.readValues(answers, 'bic')[0].value
   const budgetItems = FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
       .filter(budgetItem => budgetItem.params.incrementsTotal)
       .map(budgetItem => _.extend(budgetItem, {
         original: findCost(formContent, hakemus.answers, budgetItem),
         overridden: findCost(formContent, hakemus.arvio['overridden-answers'], budgetItem)
       }))
-  console.log(budgetItems)
+  const totalOriginalCosts = formatNumber(_.sum(budgetItems.map(i=>Number(i.original))))
+  const totalCosts = formatNumber(_.sum(budgetItems.map(i=>Number(i.overridden))))
+  return (
+      <section>
+        <Section title="Päätös">
+          <p>Opetushallitus on päättänyt myöntää valtionavustusta seuraavasti:</p>
+          <p>Hakija: {hakemus['organization-name']}<br/>
+            Hanke: {hakemus['project-name']}</p>
+          <p>Opetushallitus hyväksyy avustuksen saajan valtionavustukseen oikeuttavina menoina {totalCosts} euroa.
+            Valtionavustuksena tästä myönnetään {(100 - avustushaku.content['self-financing-percentage'])} %
+            eli {hakemus.arvio['budget-granted']} euroa</p>
+        </Section>
+        <Perustelut hakemus={hakemus}/>
+        <Section title="Avustuksen maksu">
+          <p>Avustus maksetaan hakijan ilmoittamalle pankkitilille: <strong>{iban}, {bic}</strong></p>
+          <DecisionContent avustushaku={avustushaku} id="maksu"/>
+        </Section>
+        <OptionalSection title="Avustuksen käyttö" id="kaytto" avustushaku={avustushaku}/>
+        <OptionalSection title="Käyttöoikeudet" id="kayttooikeudet" avustushaku={avustushaku}/>
+        <OptionalSection title="Selvitysvelvollisuus" id="selvitysvelvollisuus" avustushaku={avustushaku}/>
+        <OptionalSection title="Valtionavustuksen käyttöaika" id="kayttoaika" avustushaku={avustushaku}/>
+        <Lisatietoja avustushaku={avustushaku} role={role}/>
+        <Liitteet/>
+        <Kayttosuunnitelma budgetItems={budgetItems} avustushaku={avustushaku} hakemus={hakemus} totalCosts={totalCosts} totalOriginalCosts={totalOriginalCosts}/>
+      </section>
+  )
+}
+
+const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, totalOriginalCosts})=> {
   return (
       <div>
         <div className="sectionWrapper">
@@ -123,9 +106,9 @@ const Kayttosuunnitelma = ({avustushaku, hakemus, formContent})=> {
             <table>
               <thead>
               <tr>
-              <th>Menot</th>
-              <th className="amount">Haettu</th>
-              <th className="amount">Hyväksytty</th>
+                <th>Menot</th>
+                <th className="amount">Haettu</th>
+                <th className="amount">Hyväksytty</th>
               </tr>
               </thead>
               <tbody>
@@ -134,8 +117,8 @@ const Kayttosuunnitelma = ({avustushaku, hakemus, formContent})=> {
               <tfoot>
               <tr>
                 <th>Yhteensä</th>
-                <th className="amount">{formatNumber(_.sum(budgetItems.map(i=>Number(i.original))))} €</th>
-                <th className="amount">{formatNumber(_.sum(budgetItems.map(i=>Number(i.overridden))))} €</th>
+                <th className="amount">{totalOriginalCosts} €</th>
+                <th className="amount">{totalCosts} €</th>
               </tr>
               </tfoot>
             </table>
@@ -155,39 +138,6 @@ const BudgetItemRow = ({item}) => {
   )
 }
 
-
-const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
-const AcceptedDecision = ({hakemus, avustushaku, role, formContent}) => {
-  const answers = hakemus.answers
-  const iban = InputValueStorage.readValues(answers, 'iban')[0].value
-  const bic = InputValueStorage.readValues(answers, 'bic')[0].value
-
-  return (
-      <section>
-        <Section title="Päätös">
-            <p>Opetushallitus on päättänyt myöntää valtionavustusta seuraavasti:</p>
-            <p>Hakija: {hakemus['organization-name']}<br/>
-              Hanke: {hakemus['project-name']}</p>
-            <p>Opetushallitus hyväksyy avustuksen saajan valtionavustukseen oikeuttavina menoina xx euroa.
-              Valtionavustuksena tästä myönnetään {(100 - avustushaku.content['self-financing-percentage'])} %
-              eli {hakemus.arvio['budget-granted']} euroa</p>
-        </Section>
-        <Perustelut hakemus={hakemus}/>
-        <Section title="Avustuksen maksu">
-          <p>Avustus maksetaan hakijan ilmoittamalle pankkitilille: <strong>{iban}, {bic}</strong></p>
-          <DecisionContent avustushaku={avustushaku} id="maksu"/>
-        </Section>
-        <OptionalSection title="Avustuksen käyttö" id="kaytto" avustushaku={avustushaku}/>
-        <OptionalSection title="Käyttöoikeudet" id="kayttooikeudet" avustushaku={avustushaku}/>
-        <OptionalSection title="Selvitysvelvollisuus" id="selvitysvelvollisuus" avustushaku={avustushaku}/>
-        <OptionalSection title="Valtionavustuksen käyttöaika" id="kayttoaika" avustushaku={avustushaku}/>
-        <Lisatietoja avustushaku={avustushaku} role={role}/>
-        <Liitteet/>
-        <Kayttosuunnitelma avustushaku={avustushaku} hakemus={hakemus} formContent={formContent}/>
-      </section>
-  )
-}
-
 const RejectedDecision = ({avustushaku, hakemus, role}) =>
     <section>
       <Section title="Päätös">
@@ -199,6 +149,56 @@ const RejectedDecision = ({avustushaku, hakemus, role}) =>
       <Lisatietoja avustushaku={avustushaku} role={role}/>
       <Liitteet/>
     </section>
+
+const Section = ({title,content,children})=>
+    <div className="sectionWrapper" hidden={!content && !children}>
+      <section className="section">
+        <h2>{title}</h2>
+        <div className="content">
+          {children || content}
+        </div>
+      </section>
+    </div>
+
+
+const OptionalSection = ({title,id,avustushaku}) =>{
+  const language = "fi"
+  const content = _.get(avustushaku, `decision.${id}.${language}`,"")
+  if(_.isEmpty(content)) return <div></div>
+  const paragraphs = content.split("\n")
+  return (
+      <Section title={title}>
+        {paragraphs.map((p)=><p key={p}>{p}</p>)}
+      </Section>
+  )
+}
+
+const Perustelut = ({hakemus}) => <Section title="Päätöksen perustelut" content={hakemus.arvio.perustelut}/>
+
+const Lisatietoja = ({avustushaku,role})=>
+  <Section title="Lisätietoja">
+    <p>Lisätietoja antaa: {role.name} &lt;{role.email}&gt;</p>
+    <DecisionContent avustushaku={avustushaku} id="lisatiedot"/>
+  </Section>
+
+const DecisionContent = ({id,avustushaku}) =>{
+  const language = "fi"
+  const content = _.get(avustushaku, `decision.${id}.${language}`,"")
+  if(_.isEmpty(content)) return <div></div>
+  const paragraphs = content.split("\n")
+  return (
+      <div>
+        {paragraphs.map((p)=><p key={p}>{p}</p>)}
+      </div>
+  )
+}
+
+const Liitteet = ()=>
+  <Section title="LIITTEET">
+    <Todo>liitteet, hakukohtainen</Todo>
+  </Section>
+
+const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
 
 const Todo = ({children}) => <span className="todo">[TODO: {children}]</span>
 
