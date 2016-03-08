@@ -64,7 +64,7 @@ export default class HakujenHallintaController {
     const initialStateTemplate = {
       hakuList: Bacon.fromPromise(HttpUtil.get("/api/avustushaku")),
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
-      translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
+      translations: Bacon.fromPromise(HttpUtil.get("/translations.json")).map(Immutable),
       environment: Bacon.fromPromise(HttpUtil.get("/environment")),
       selectedHaku: undefined,
       saveStatus: {

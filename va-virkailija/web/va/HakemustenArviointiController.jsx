@@ -81,7 +81,7 @@ export default class HakemustenArviointiController {
         saveTime: null,
         serverError: ""
       },
-      translations: Bacon.fromPromise(HttpUtil.get("/translations.json")),
+      translations: Bacon.fromPromise(HttpUtil.get("/translations.json")).map(Immutable),
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo"))
     }
 
