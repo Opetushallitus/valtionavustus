@@ -41,21 +41,17 @@ class VaPreviewBudgetItemElement extends React.Component {
     const htmlId = this.props.htmlId
     const descriptionComponent = children[0]
     const amountComponent = children[1]
-    console.log(amountComponent)
     return (
       <tr id={htmlId} className="budget-item">
         <td className="label-column">
           <LocalizedString translations={field} translationKey="label" lang={this.props.lang} />
         </td>
         <td>{descriptionComponent}</td>
-        <td className="amount-column">{formatNumber(amountComponent.props.value)}</td>
+        <td className="amount-column">{amountComponent}</td>
       </tr>
     )
   }
 }
-
-//TODO move to some util module
-const formatNumber = num => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1\u00A0") + '\u00A0€'
 
 
 class VaPreviewBudgetElement extends VaBudgetElement {

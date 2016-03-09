@@ -65,15 +65,12 @@ export class SummingBudgetElement extends React.Component {
         </tbody>
         <tfoot><tr>
           <td className="label-column" colSpan="2"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
-          <td className="amount-column"><span className="money sum">{formatNumber(sum)}</span></td>
+          <td className="amount-column"><span className="money sum">{sum}</span></td>
         </tr></tfoot>
       </table>
     )
   }
 }
-
-//TODO move to some util module
-const formatNumber = num => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1\u00A0")
 
 export class BudgetItemElement extends React.Component {
   constructor(props) {
@@ -106,7 +103,7 @@ export class BudgetItemElement extends React.Component {
           {this.helpText()}
         </td>
         <td>{descriptionComponent}</td>
-        <td className="amount-column">{formatNumber(amountComponent)}</td>
+        <td className="amount-column">{amountComponent}</td>
       </tr>
     )
   }
@@ -144,15 +141,15 @@ export class BudgetSummaryElement extends React.Component {
         <tbody>
         <tr className="grand-total">
           <td className="label-column"><LocalizedString translations={labelTranslations} translationKey="totalSumRowLabel" lang={this.props.lang} /></td>
-          <td className="amount-column"><span className={sumClassNames}>{formatNumber(totalNeeded)}</span></td>
+          <td className="amount-column"><span className={sumClassNames}>{totalNeeded}</span></td>
         </tr>
         <tr hidden={selfFinancingPercentage === 0}>
           <td className="label-column"><LocalizedString translations={labelTranslations} translationKey="ophFinancingLabel" lang={this.props.lang} /> {100 - selfFinancingPercentage} %</td>
-          <td className="amount-column"><span className={sumPartClassNames}>{formatNumber(ophShare)}</span></td>
+          <td className="amount-column"><span className={sumPartClassNames}>{ophShare}</span></td>
         </tr>
         <tr hidden={selfFinancingPercentage === 0}>
           <td className="label-column"><LocalizedString translations={labelTranslations} translationKey="selfFinancingLabel" lang={this.props.lang} /> {selfFinancingPercentage} %</td>
-          <td className="amount-column"><span className={sumPartClassNames}>{formatNumber(selfFinancingShare)}</span></td>
+          <td className="amount-column"><span className={sumPartClassNames}>{selfFinancingShare}</span></td>
         </tr>
         </tbody>
       </table>

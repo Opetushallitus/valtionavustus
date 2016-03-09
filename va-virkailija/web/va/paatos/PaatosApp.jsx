@@ -207,5 +207,4 @@ const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.
 
 const Todo = ({children}) => <span className="todo">[TODO: {children}]</span>
 
-//TODO move to some util module
 const formatNumber = num => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1\u00A0") + '\u00A0€'
