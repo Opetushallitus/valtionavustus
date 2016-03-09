@@ -35,11 +35,9 @@ export default class PaatosApp extends Component {
     return (
         <section>
           <header>
-            <section>
-              <div><img src="/img/logo.png" width="200"/></div>
-              <div>Päätös</div>
-              <div>{hakemus['register-number']}</div>
-            </section>
+            <div className="logo"><img src="/img/logo.png" width="200"/></div>
+            <div className="title">Päätös</div>
+            <div className="registerNumber">{hakemus['register-number']}</div>
           </header>
           <Section title="Asia">
             VALTIONAVUSTUKSEN MYÖNTÄMINEN<br/>
@@ -100,40 +98,38 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent}) => {
 
 const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, totalOriginalCosts, totalGranted}) =>
     <div>
-      <div className="sectionWrapper">
-        <section className="section">
-          <h1>Käyttösuunnitelma</h1>
+      <section className="section">
+        <h1>Käyttösuunnitelma</h1>
 
-          <p><strong>{avustushaku.content.name.fi}</strong></p>
-          <p>Hanke: {hakemus['project-name']}</p>
-          <p>Opetushallitus on hyväksynyt hankkeen rahoituksen oheisen käyttösuunnitelman mukaisesti.</p>
-          <p>{hakemus.arvio.perustelut}</p>
+        <p><strong>{avustushaku.content.name.fi}</strong></p>
+        <p>Hanke: {hakemus['project-name']}</p>
+        <p>Opetushallitus on hyväksynyt hankkeen rahoituksen oheisen käyttösuunnitelman mukaisesti.</p>
+        <p>{hakemus.arvio.perustelut}</p>
 
-          <table>
-            <thead>
-            <tr>
-              <th>Menot</th>
-              <th className="amount">Haettu</th>
-              <th className="amount">Hyväksytty</th>
-            </tr>
-            </thead>
-            <tbody>
-            {budgetItems.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem}/>)}
-            </tbody>
-            <tfoot>
-            <tr>
-              <th>Yhteensä</th>
-              <th className="amount">{totalOriginalCosts}</th>
-              <th className="amount">{totalCosts}</th>
-            </tr>
-            <tr>
-              <th colSpan="2">Myönnetty avustus</th>
-              <th className="amount">{totalGranted}</th>
-            </tr>
-            </tfoot>
-          </table>
-        </section>
-      </div>
+        <table>
+          <thead>
+          <tr>
+            <th>Menot</th>
+            <th className="amount">Haettu</th>
+            <th className="amount">Hyväksytty</th>
+          </tr>
+          </thead>
+          <tbody>
+          {budgetItems.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem}/>)}
+          </tbody>
+          <tfoot>
+          <tr>
+            <th>Yhteensä</th>
+            <th className="amount">{totalOriginalCosts}</th>
+            <th className="amount">{totalCosts}</th>
+          </tr>
+          <tr>
+            <th colSpan="2">Myönnetty avustus</th>
+            <th className="amount">{totalGranted}</th>
+          </tr>
+          </tfoot>
+        </table>
+      </section>
     </div>
 
 const BudgetItemRow = ({item}) =>
@@ -156,14 +152,12 @@ const RejectedDecision = ({avustushaku, hakemus, role}) =>
     </section>
 
 const Section = ({title,content,children})=>
-    <div className="sectionWrapper" hidden={!content && !children}>
-      <section className="section">
-        <h2>{title}</h2>
-        <div className="content">
-          {children || content}
-        </div>
-      </section>
-    </div>
+    <section className="section" hidden={!content && !children}>
+      <h2>{title}</h2>
+      <div className="content">
+        {children || content}
+      </div>
+    </section>
 
 
 const OptionalSection = ({title,id,avustushaku}) =>{

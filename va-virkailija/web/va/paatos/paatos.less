@@ -1,17 +1,17 @@
-body {  font: 16px 'Open Sans', sans-serif;; margin: 2em 0;}
-header { font-size: 18px; padding-bottom: 30px; border-bottom: 1px solid #D9D9D9; text-transform: uppercase; }
-header > section {margin: 0 auto; max-width: 1000px; display: flex; justify-content: space-between; align-items: flex-end;padding: 0 10px;}
+body {  font: 16px 'Open Sans', sans-serif;margin: 0 auto; max-width: 1000px;}
+header { position:relative;font-size: 18px; text-transform: uppercase;  padding: 10px 10px 30px; height:50px; border-bottom: 1px solid #D9D9D9; text-align: center}
 header img { position: relative; top: 10px; }
-header div { }
-.sectionWrapper { border-bottom: 1px solid #D9D9D9; }
-.section { overflow: hidden; padding: 20px 10px; margin: 0 auto; max-width: 1000px;}
+.title { display: inline-block; position: relative; top:25px;}
+.registerNumber {position: absolute;right:0;}
+.logo {position: absolute;left:0;}
+.section { overflow: hidden; padding: 0 10px; margin: 0 auto; max-width: 1000px;border-bottom: 1px solid #D9D9D9;}
 h1 { text-transform: uppercase; font-weight: bold; font-size: 15px; margin: 2em 0;}
-h2 {width: 25%; float: left; margin:0; font-weight: normal; font-size: 16px; text-transform: uppercase;}
-.content { width: 75%; float: left}
+h2 {margin: 20px 0 0  ; width: 25%; float: left; font-weight: normal; font-size: 16px; text-transform: uppercase; min-width: 200px;}
+.content { width: 75%; float: left; min-width: 400px; margin: 20px 0;}
 p {margin-top: 0;}
 .todo { text-transform: uppercase; font-style: italic;}
 table {width: 100%; margin-bottom: 2em;}
-th,td { border:1px solid #000; padding: 10px 20px;}
+th,td { border:1px solid #000; padding: 6px 20px;}
 th { text-align: left;}
 .amount {text-align: right; width: 16%;}
 @media print {
