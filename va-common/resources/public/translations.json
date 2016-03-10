@@ -228,5 +228,111 @@
       "fi": "Hakulomakkeen voi täyttää vain hakuaikana.",
       "sv": "Ansökningsblanketten är öppen endast under ansökningstiden"
     }
+  },
+  "paatos":{
+    "paatos":{
+      "fi":"Päätös",
+      "sv":"Beslut"
+    },
+    "asia":{
+      "fi":"Asia",
+      "sv":"SV Asia"
+    },
+    "asia-title":{
+      "fi":"VALTIONAVUSTUKSEN MYÖNTÄMINEN",
+      "sv":"SV VALTIONAVUSTUKSEN MYÖNTÄMINEN"
+    },
+    "taustaa":{
+      "fi":"Taustaa",
+      "sv":"SV Taustaa"
+    },
+    "hylatty-title":{
+      "fi":"Opetushallitus on päättänyt olla myöntämättä valtionavustusta seuraavasti",
+      "sv":"SV Opetushallitus on päättänyt olla myöntämättä valtionavustusta seuraavasti"
+    },
+    "myonnetty-title":{
+      "fi":"Opetushallitus on päättänyt myöntää valtionavustusta seuraavasti",
+      "sv":"SV Opetushallitus on päättänyt myöntää valtionavustusta seuraavasti"
+    },
+    "hakija":{
+      "fi":"Hakija",
+      "sv":"SV Hakija"
+    },
+    "hanke":{
+      "fi":"Hanke",
+      "sv":"SV Hanke"
+    },
+    "paatoksen-perustelut":{
+      "fi":"Päätöksen perustelut",
+      "sv":"SV Päätöksen perustelut"
+    },
+    "lisatietoja":{
+      "fi":"Lisätietoja",
+      "sv":"SV Lisätietoja"
+    },
+    "lisatietoja-antaa":{
+      "fi":"Lisätietoja antaa",
+      "sv":"SV Lisätietoja antaa"
+    },
+    "liitteet":{
+      "fi":"LIITTEET",
+      "sv":"SV LIITTEET"
+    },
+    "avustuksen-maksu":{
+      "fi":"Avustuksen maksu",
+      "sv":"SV Avustuksen maksu"
+    },
+    "avustus-maksetaan":{
+      "fi":"Avustus maksetaan hakijan ilmoittamalle pankkitilille",
+      "sv":"SV Avustus maksetaan hakijan ilmoittamalle pankkitilille"
+    },
+    "avustuksen-kaytto":{
+      "fi":"Avustuksen käyttö",
+      "sv":"SV Avustuksen käyttö"
+    },
+    "kayttooikeudet":{
+      "fi":"Käyttöoikeudet",
+      "sv":"SV Käyttöoikeudet"
+    },
+    "selvitysvelvollisuus":{
+      "fi":"Selvitysvelvollisuus",
+      "sv":"SV Selvitysvelvollisuus"
+    },
+    "valtionavustuksen-kayttoaika":{
+      "fi":"Valtionavustuksen käyttöaika",
+      "sv":"SV Valtionavustuksen käyttöaika"
+    },
+    "kayttosuunnitelma":{
+      "fi":"Käyttösuunnitelma",
+      "sv":"SV Käyttösuunnitelma"
+    },
+    "menot":{
+      "fi":"Menot",
+      "sv":"SV Menot"
+    },
+    "haettu":{
+      "fi":"Haettu",
+      "sv":"SV Haettu"
+    },
+    "hyvaksytty":{
+      "fi":"Hyväksytty",
+      "sv":"SV Hyväksytty"
+    },
+    "paatos-myonnetty-1":{
+      "fi":"Opetushallitus hyväksyy avustuksen saajan valtionavustukseen oikeuttavina menoina",
+      "sv":"SV Opetushallitus hyväksyy avustuksen saajan valtionavustukseen oikeuttavina menoina"
+    },
+    "paatos-myonnetty-2":{
+      "fi":"Valtionavustuksena tästä myönnetään",
+      "sv":"SV Valtionavustuksena tästä myönnetään"
+    },
+    "yhteensa":{
+      "fi":"Yhteensä",
+      "sv":"SV Yhteensä"
+    },
+    "myonnetty-avustus":{
+      "fi":"Myönnetty avustus",
+      "sv":"SV Myönnetty avustus"
+    }
   }
 }

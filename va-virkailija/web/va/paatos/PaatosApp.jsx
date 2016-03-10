@@ -7,8 +7,11 @@ import RouteParser from 'route-parser'
 import HakemusArviointiStatuses from './../hakemus-details/HakemusArviointiStatuses.js'
 import InputValueStorage from '../../../../soresu-form/web/form/InputValueStorage'
 import FormUtil from '../../../../soresu-form/web/form/FormUtil'
+import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import PaatosController from './PaatosController.jsx'
 import style from './paatos.less'
+import queryString from 'query-string'
+
 
 const parsedRoute = new RouteParser('/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id').match(location.pathname)
 const controller = new PaatosController()
@@ -32,26 +35,31 @@ export default class PaatosApp extends Component {
     const selectedRoleId = hakemus.arvio['presenter-role-id']
     const role = selectedRoleId ? roles.find(role => role.id === selectedRoleId) : roles[0]
     const formContent = form.content
+    const translations = this.props.state.translations.paatos
+    const languageAnswer = _.find(hakemus.answers,(a)=>a.key=="language")
+    const query = queryString.parse(location.search)
+    const lang = query.lang ? query.lang : languageAnswer ? languageAnswer.value : "fi"
     return (
         <section>
           <header>
             <div className="logo"><img src="/img/logo.png" width="200"/></div>
-            <div className="title">Päätös {avustushaku.decision.date}</div>
+            <div className="title"><LocalizedString translationKey="paatos" translations={translations} lang={lang} /> {avustushaku.decision.date}</div>
             <div className="registerNumber">{hakemus['register-number']}</div>
           </header>
-          <Section title="Asia">
-            VALTIONAVUSTUKSEN MYÖNTÄMINEN<br/>
-            {avustushaku.content.name.fi}
+          <Section title="asia" lang={lang} translations={translations}>
+            <LocalizedString translationKey="asia-title" translations={translations} lang={lang}/>
+            <br/>
+            {avustushaku.content.name[lang]}
           </Section>
-          <OptionalSection title="Taustaa" id="taustaa" avustushaku={avustushaku}/>
-          {decisionStatus == 'rejected' ? <RejectedDecision avustushaku={avustushaku} hakemus={hakemus} role={role}/> :
-              <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} role={role} formContent={formContent}/>}
+          <OptionalSection title="taustaa" id="taustaa" avustushaku={avustushaku} lang={lang} translations={translations}/>
+          {decisionStatus == 'rejected' ? <RejectedDecision avustushaku={avustushaku} hakemus={hakemus} role={role} lang={lang} translations={translations}/> :
+              <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} role={role} formContent={formContent} lang={lang} translations={translations}/>}
         </section>
     )
   }
 }
 
-const AcceptedDecision = ({hakemus, avustushaku, role, formContent}) => {
+const AcceptedDecision = ({hakemus, avustushaku, role, formContent, lang, translations}) => {
   const answers = hakemus.answers
   const iban = InputValueStorage.readValues(answers, 'iban')[0].value
   const bic = InputValueStorage.readValues(answers, 'bic')[0].value
@@ -66,65 +74,69 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent}) => {
   const totalGranted = formatNumber(hakemus.arvio['budget-granted'])
   return (
       <section>
-        <Section title="Päätös">
-          <p>Opetushallitus on päättänyt myöntää valtionavustusta seuraavasti:</p>
-          <p>Hakija: {hakemus['organization-name']}<br/>
-            Hanke: {hakemus['project-name']}</p>
-          <p>Opetushallitus hyväksyy avustuksen saajan valtionavustukseen oikeuttavina menoina {totalCosts}&nbsp;.
-            Valtionavustuksena tästä myönnetään {(100 - avustushaku.content['self-financing-percentage'])} %
-            eli {totalGranted}</p>
+        <Section title="paatos" lang={lang} translations={translations}>
+          <p><LocalizedString translationKey="myonnetty-title" translations={translations} lang={lang}/>:</p>
+          <p><LocalizedString translationKey="hakija" translations={translations} lang={lang}/>: {hakemus['organization-name']}<br/>
+            <LocalizedString translationKey="hanke" translations={translations} lang={lang}/>: {hakemus['project-name']}
+          </p>
+          <p><LocalizedString translationKey="paatos-myonnetty-1" translations={translations} lang={lang}/> {totalCosts}&nbsp;.
+            <LocalizedString translationKey="paatos-myonnetty-2" translations={translations} lang={lang}/> {(100 - avustushaku.content['self-financing-percentage'])} % eli {totalGranted}
+          </p>
         </Section>
-        <Perustelut hakemus={hakemus}/>
-        <Section title="Avustuksen maksu">
-          <p>Avustus maksetaan hakijan ilmoittamalle pankkitilille: <strong>{iban}, {bic}</strong></p>
+        <Perustelut hakemus={hakemus} lang={lang} translations={translations}/>
+        <Section title="avustuksen-maksu" lang={lang} translations={translations}>
+          <p><LocalizedString translationKey="avustus-maksetaan" translations={translations} lang={lang}/>: <strong>{iban}, {bic}</strong></p>
           <DecisionContent avustushaku={avustushaku} id="maksu"/>
         </Section>
-        <OptionalSection title="Avustuksen käyttö" id="kaytto" avustushaku={avustushaku}/>
-        <OptionalSection title="Käyttöoikeudet" id="kayttooikeudet" avustushaku={avustushaku}/>
-        <OptionalSection title="Selvitysvelvollisuus" id="selvitysvelvollisuus" avustushaku={avustushaku}/>
-        <OptionalSection title="Valtionavustuksen käyttöaika" id="kayttoaika" avustushaku={avustushaku}/>
-        <Lisatietoja avustushaku={avustushaku} role={role}/>
-        <Liitteet/>
+        <OptionalSection title="avustuksen-kaytto" id="kaytto" avustushaku={avustushaku} lang={lang} translations={translations}/>
+        <OptionalSection title="kayttooikeudet" id="kayttooikeudet" avustushaku={avustushaku} lang={lang} translations={translations}/>
+        <OptionalSection title="selvitysvelvollisuus" id="selvitysvelvollisuus" avustushaku={avustushaku} lang={lang} translations={translations}/>
+        <OptionalSection title="valtionavustuksen-kayttoaika" id="kayttoaika" avustushaku={avustushaku} lang={lang} translations={translations}/>
+        <Lisatietoja avustushaku={avustushaku} role={role} lang={lang} translations={translations}/>
+        <Liitteet lang={lang} translations={translations}/>
         <Kayttosuunnitelma
             budgetItems={budgetItems}
             avustushaku={avustushaku}
             hakemus={hakemus}
             totalCosts={totalCosts}
             totalOriginalCosts={totalOriginalCosts}
-            totalGranted={totalGranted}/>
+            totalGranted={totalGranted}
+            lang={lang}
+            translations={translations}
+        />
       </section>
   )
 }
 
-const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, totalOriginalCosts, totalGranted}) =>
+const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, totalOriginalCosts, totalGranted, lang, translations}) =>
     <div>
       <section className="section">
-        <h1>Käyttösuunnitelma</h1>
+        <h1><LocalizedString translationKey="kayttosuunnitelma" translations={translations} lang={lang}/></h1>
 
-        <p><strong>{avustushaku.content.name.fi}</strong></p>
-        <p>Hanke: {hakemus['project-name']}</p>
-        <p>Opetushallitus on hyväksynyt hankkeen rahoituksen oheisen käyttösuunnitelman mukaisesti.</p>
+        <p><strong>{avustushaku.content.name[lang]}</strong></p>
+        <p><LocalizedString translationKey="hanke" translations={translations} lang={lang}/> {hakemus['project-name']}</p>
+        <p><LocalizedString translationKey="myonnetty-title" translations={translations} lang={lang}/></p>
         <p>{hakemus.arvio.perustelut}</p>
 
         <table>
           <thead>
           <tr>
-            <th>Menot</th>
-            <th className="amount">Haettu</th>
-            <th className="amount">Hyväksytty</th>
+            <th><LocalizedString translationKey="menot" translations={translations} lang={lang}/></th>
+            <th className="amount"><LocalizedString translationKey="haettu" translations={translations} lang={lang}/></th>
+            <th className="amount"><LocalizedString translationKey="hyvaksytty" translations={translations} lang={lang}/></th>
           </tr>
           </thead>
           <tbody>
-          {budgetItems.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem}/>)}
+          {budgetItems.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={lang}/>)}
           </tbody>
           <tfoot>
           <tr>
-            <th>Yhteensä</th>
+            <th><LocalizedString translationKey="yhteensa" translations={translations} lang={lang}/></th>
             <th className="amount">{totalOriginalCosts}</th>
             <th className="amount">{totalCosts}</th>
           </tr>
           <tr>
-            <th colSpan="2">Myönnetty avustus</th>
+            <th colSpan="2"><LocalizedString translationKey="myonnetty-avustus" translations={translations} lang={lang}/></th>
             <th className="amount">{totalGranted}</th>
           </tr>
           </tfoot>
@@ -132,57 +144,57 @@ const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, total
       </section>
     </div>
 
-const BudgetItemRow = ({item}) =>
+const BudgetItemRow = ({item,lang}) =>
     <tr>
-      <td>{item.label.fi}</td>
+      <td>{item.label[lang]}</td>
       <td className="amount">{formatNumber(item.original)}</td>
       <td className="amount">{formatNumber(item.overridden)}</td>
     </tr>
 
-const RejectedDecision = ({avustushaku, hakemus, role}) =>
+const RejectedDecision = ({avustushaku, hakemus, role, lang, translations}) =>
     <section>
-      <Section title="Päätös">
-        <p>Opetushallitus on päättänyt olla myöntämättä valtionavustusta seuraavasti:</p>
-        <p>Hakija: {hakemus['organization-name']}<br/>
-          Hanke: {hakemus['project-name']}</p>
+      <Section title="paatos" lang={lang} translations={translations}>
+        <p><LocalizedString translationKey="hylatty-title" translations={translations} lang={lang}/></p>
+        <p><LocalizedString translationKey="hakija" translations={translations} lang={lang}/>: {hakemus['organization-name']}<br/>
+          <LocalizedString translationKey="hanke" translations={translations} lang={lang}/>: {hakemus['project-name']}</p>
       </Section>
-      <Perustelut hakemus={hakemus}/>
-      <Lisatietoja avustushaku={avustushaku} role={role}/>
-      <Liitteet/>
+      <Perustelut hakemus={hakemus} lang={lang} translations={translations}/>
+      <Lisatietoja avustushaku={avustushaku} role={role} lang={lang} translations={translations}/>
+      <Liitteet lang={lang} translations={translations}/>
     </section>
 
-const Section = ({title,content,children})=>
+const Section = ({title, content, lang, translations, children})=>{
+  return(
     <section className="section" hidden={!content && !children}>
-      <h2>{title}</h2>
+      <h2><LocalizedString translationKey={title} translations={translations} lang={lang} /></h2>
       <div className="content">
         {children || content}
       </div>
     </section>
+  )
+}
 
-
-const OptionalSection = ({title,id,avustushaku}) =>{
-  const language = "fi"
-  const content = _.get(avustushaku, `decision.${id}.${language}`,"")
+const OptionalSection = ({title,id, avustushaku, lang, translations}) =>{
+  const content = _.get(avustushaku, `decision.${id}.${lang}`,"")
   if(_.isEmpty(content)) return <div></div>
   const paragraphs = content.split("\n")
   return (
-      <Section title={title}>
+      <Section title={title} lang={lang} translations={translations}>
         {paragraphs.map((p)=><p key={p}>{p}</p>)}
       </Section>
   )
 }
 
-const Perustelut = ({hakemus}) => <Section title="Päätöksen perustelut" content={hakemus.arvio.perustelut}/>
+const Perustelut = ({hakemus, lang, translations}) => <Section title="paatoksen-perustelut" lang={lang} translations={translations} content={hakemus.arvio.perustelut}/>
 
-const Lisatietoja = ({avustushaku,role})=>
-  <Section title="Lisätietoja">
-    <p>Lisätietoja antaa: {role.name} &lt;{role.email}&gt;</p>
-    <DecisionContent avustushaku={avustushaku} id="lisatiedot"/>
+const Lisatietoja = ({avustushaku, role, lang, translations})=>
+  <Section title="lisatietoja" lang={lang} translations={translations}>
+    <p><LocalizedString translationKey="lisatietoja-antaa" translations={translations} lang={lang} />: {role.name} &lt;{role.email}&gt;</p>
+    <DecisionContent avustushaku={avustushaku} id="lisatiedot" lang={lang}/>
   </Section>
 
-const DecisionContent = ({id,avustushaku}) =>{
-  const language = "fi"
-  const content = _.get(avustushaku, `decision.${id}.${language}`,"")
+const DecisionContent = ({id,avustushaku,lang}) =>{
+  const content = _.get(avustushaku, `decision.${id}.${lang}`,"")
   if(_.isEmpty(content)) return <div></div>
   const paragraphs = content.split("\n")
   return (
@@ -192,8 +204,8 @@ const DecisionContent = ({id,avustushaku}) =>{
   )
 }
 
-const Liitteet = () =>
-  <Section title="LIITTEET">
+const Liitteet = ({lang, translations}) =>
+  <Section title="liitteet" lang={lang} translations={translations}>
     <Todo>liitteet, hakukohtainen</Todo>
   </Section>
 
