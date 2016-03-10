@@ -49,6 +49,7 @@
 (s/defschema Decision
   "Decision fields"
   {
+   (s/optional-key :date) s/Str
    (s/optional-key :taustaa) LocalizedStringOptional
    (s/optional-key :maksu) LocalizedStringOptional
    (s/optional-key :kaytto) LocalizedStringOptional

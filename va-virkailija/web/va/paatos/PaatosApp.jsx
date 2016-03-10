@@ -36,7 +36,7 @@ export default class PaatosApp extends Component {
         <section>
           <header>
             <div className="logo"><img src="/img/logo.png" width="200"/></div>
-            <div className="title">Päätös</div>
+            <div className="title">Päätös {avustushaku.decision.date}</div>
             <div className="registerNumber">{hakemus['register-number']}</div>
           </header>
           <Section title="Asia">
