@@ -211,11 +211,22 @@ table.hakemus-list {
     width: @content-width - @preview-width - 43px;
 
     .hakemus-arviointi-section{
-      color: @dark-gray;
       margin-bottom: 20px;
+      color: @dark-gray;
+      label{
+        font-size: 14px;
+      }
       a[disabled]{
         color:@dark-gray;
         cursor: default;
+      }
+      button {
+        margin: 4px 4px 4px 0;
+        padding: 4px 8px;
+        font-size: 14px;
+      }
+      textarea{
+        color:#333;
       }
     }
 
@@ -298,9 +309,6 @@ table.hakemus-list {
     }
 
     .comment-list {
-      max-height: 92px;
-      overflow-y: scroll;
-      overflow-x: hidden;
       margin-bottom: 12px;
     }
 
@@ -309,6 +317,14 @@ table.hakemus-list {
       .comment-datetime {
         margin-top: -5px;
         color: @dark-gray;
+      }
+      p{
+        margin-top: 5px;
+        margin-bottom: 5px;
+        line-height: 1.1;
+      }
+      p:first-of-type{
+        display: inline-block;
       }
     }
 

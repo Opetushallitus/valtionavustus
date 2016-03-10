@@ -7,6 +7,11 @@ import NameFormatter from 'va-common/web/va/util/NameFormatter.js'
 
 export default class HakemusComments extends Component {
 
+  constructor(props){
+    super(props)
+    this.state = {comment:"",added:false}
+  }
+
   checkComments() {
     const loadingComments = this.props.loadingComments
     if (!loadingComments && this.props.hakemus.id) {
@@ -17,6 +22,7 @@ export default class HakemusComments extends Component {
   shouldComponentUpdate (nextProps, nextState) {
     if (this.props.hakemus.id !== nextProps.hakemus.id) {
       this.checkComments()
+      this.setState({comment:"",added:false})
     }
     return true
   }
@@ -33,42 +39,48 @@ export default class HakemusComments extends Component {
     if (_.isArray(commentsInState)) {
       commentsToRender = commentsInState
     }
-    const commentComponents = _.map(commentsToRender, c => <Comment comment={c} key={c.id}/>)
-    return <div id="hakemus-comment-container">
-             <div className="comment-list">
-               {commentComponents}
-              </div>
-              <textarea rows="2" className="comment-input" id="comment-input"
-                     placeholder="Kommentoi" onKeyDown={this.onKeyDown(controller)}
-                     hidden={!allowHakemusCommenting} disabled={!allowHakemusCommenting}/>
-           </div>
+
+    const handleChange = (event) => this.setState({comment: event.target.value})
+
+    const addComment = () =>{
+      controller.addComment(this.state.comment)
+      this.setState({comment:"",added:true})
+    }
+
+    const commentComponents = commentsToRender.map(c => <Comment comment={c} key={c.id}/>)
+    const noComments = commentsToRender.length==0
+    return (
+      <div id="hakemus-comment-container" className="hakemus-arviointi-section">
+        <label>Kommentit:</label>
+        <div hidden={!noComments}>Ei kommentteja</div>
+        <div className="comment-list">
+          {commentComponents}
+        </div>
+        <textarea rows="3" className="comment-input" id="comment-input"
+                  value={this.state.comment}
+                  onChange={handleChange}
+                  hidden={!allowHakemusCommenting} disabled={!allowHakemusCommenting}/>
+        <button type="button" disabled={this.state.comment.length==0} onClick={addComment}>Lisää</button>
+        <span hidden={!this.state.added}>Kommentti lisätty</span>
+      </div>
+    )
   }
 
-  onKeyDown(controller) {
-    return event => {
-      if (event.keyCode === 13) {
-        event.preventDefault()
-        const newComment = event.target.value
-        controller.addComment(newComment)
-        event.target.value = ''
-      }
-    }
-  }
 }
 
-class Comment extends Component {
-  render() {
-    const comment = this.props.comment
+const Comment = ({comment})=>{
     const firstName = NameFormatter.onlyFirstForename(comment.first_name)
     const lastName = comment.last_name
-    const commentLine = NameFormatter.shorten(firstName, lastName) + ': ' + comment.comment
+    const nameShort = NameFormatter.shorten(firstName, lastName)
+    const paragraphs = comment.comment.split("\n")
+
     const dateTime = new Date(comment.created_at)
     const dateTimeString = DateUtil.asDateString(dateTime) + ' ' + DateUtil.asTimeString(dateTime)
-    const toolTipString = firstName + ' ' + lastName + ' ' + dateTimeString + ': ' +
-        comment.comment
-    return <div className="single-comment" title={toolTipString} >
-            <div>{commentLine}</div>
-            <div className="comment-datetime">{dateTimeString}</div>
-           </div>
-  }
+    const toolTipString = firstName + ' ' + lastName + ' ' + dateTimeString + ': ' + comment.comment
+    return (
+      <div className="single-comment" title={toolTipString}>
+        <div>{nameShort}: {paragraphs.map((p)=><p key={p}>{p}</p>)}</div>
+        <div className="comment-datetime">{dateTimeString}</div>
+      </div>
+    )
 }
