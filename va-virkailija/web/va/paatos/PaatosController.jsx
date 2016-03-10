@@ -16,11 +16,10 @@ const events = {
 
 export default class PaatosController {
   initializeState(parsedRoute) {
-    const avustushakuId = parsedRoute["avustushaku_id"]
     const hakemusId = parsedRoute["hakemus_id"]
     this._bind('onInitialState')
     const initialStateTemplate = {
-      paatosData: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustushakuId}/paatos/${hakemusId}`)),
+      paatosData: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/paatos/${hakemusId}`)),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")).map(Immutable)
     }
 

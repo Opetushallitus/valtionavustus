@@ -121,9 +121,8 @@
             (ok response)
             (not-found))))
 
-  (GET* "/:avustushaku-id/paatos/:hakemus-id" [avustushaku-id hakemus-id :as request]
-        :path-params [avustushaku-id :- Long
-                      hakemus-id :- Long]
+  (GET* "/paatos/:hakemus-id" [hakemus-id :as request]
+        :path-params [hakemus-id :- Long]
         :return PaatosData
         :summary "Return relevant information for decision"
         (if-let [response (hakudata/get-combined-paatos-data hakemus-id)]
