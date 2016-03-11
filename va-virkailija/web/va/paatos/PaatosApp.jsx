@@ -177,15 +177,17 @@ const Section = ({title, content, lang, translations, children})=>{
 const OptionalSection = ({title,id, avustushaku, lang, translations}) =>{
   const content = _.get(avustushaku, `decision.${id}.${lang}`,"")
   if(_.isEmpty(content)) return <div></div>
-  const paragraphs = content.split("\n")
   return (
-      <Section title={title} lang={lang} translations={translations}>
-        {paragraphs.map((p)=><p key={p}>{p}</p>)}
-      </Section>
+    <Section title={title} lang={lang} translations={translations}>
+      <ContentWithParagraphs content={content}/>
+    </Section>
   )
 }
 
-const Perustelut = ({hakemus, lang, translations}) => <Section title="paatoksen-perustelut" lang={lang} translations={translations} content={hakemus.arvio.perustelut}/>
+const Perustelut = ({hakemus, lang, translations}) =>
+  <Section title="paatoksen-perustelut" lang={lang} translations={translations}>
+    <ContentWithParagraphs content={hakemus.arvio.perustelut}/>
+  </Section>
 
 const Lisatietoja = ({avustushaku, role, lang, translations})=>
   <Section title="lisatietoja" lang={lang} translations={translations}>
@@ -196,10 +198,9 @@ const Lisatietoja = ({avustushaku, role, lang, translations})=>
 const DecisionContent = ({id,avustushaku,lang}) =>{
   const content = _.get(avustushaku, `decision.${id}.${lang}`,"")
   if(_.isEmpty(content)) return <div></div>
-  const paragraphs = content.split("\n")
   return (
       <div>
-        {paragraphs.map((p)=><p key={p}>{p}</p>)}
+        <ContentWithParagraphs content={content}/>
       </div>
   )
 }
@@ -212,5 +213,12 @@ const Liitteet = ({lang, translations}) =>
 const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
 
 const Todo = ({children}) => <span className="todo">[TODO: {children}]</span>
+
+const ContentWithParagraphs = ({content}) => {
+  const paragraphs = content.split("\n")
+  return (
+    <div>{paragraphs.map((p)=><p key={p}>{p}</p>)}</div>
+  )
+}
 
 const formatNumber = num => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1\u00A0") + '\u00A0€'
