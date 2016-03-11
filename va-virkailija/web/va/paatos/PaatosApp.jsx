@@ -45,6 +45,7 @@ export default class PaatosApp extends Component {
             <div className="logo"><img src="/img/logo.png" width="200"/></div>
             <div className="title"><LocalizedString translationKey="paatos" translations={translations} lang={lang} /> {avustushaku.decision.date}</div>
             <div className="registerNumber">{hakemus['register-number']}</div>
+            <div className="organization">{hakemus['organization-name']}</div>
           </header>
           <Section title="asia" lang={lang} translations={translations}>
             <LocalizedString translationKey="asia-title" translations={translations} lang={lang}/>
@@ -79,8 +80,8 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, lang, transl
           <p><LocalizedString translationKey="hakija" translations={translations} lang={lang}/>: {hakemus['organization-name']}<br/>
             <LocalizedString translationKey="hanke" translations={translations} lang={lang}/>: {hakemus['project-name']}
           </p>
-          <p><LocalizedString translationKey="paatos-myonnetty-1" translations={translations} lang={lang}/> {totalCosts}&nbsp;.
-            <LocalizedString translationKey="paatos-myonnetty-2" translations={translations} lang={lang}/> {(100 - avustushaku.content['self-financing-percentage'])} % eli {totalGranted}
+          <p><LocalizedString translationKey="paatos-myonnetty-1" translations={translations} lang={lang}/> {totalCosts}&nbsp;.&nbsp;
+            <LocalizedString translationKey="paatos-myonnetty-2" translations={translations} lang={lang}/> {totalGranted}
           </p>
         </Section>
         <Perustelut hakemus={hakemus} lang={lang} translations={translations}/>
@@ -164,6 +165,7 @@ const RejectedDecision = ({avustushaku, hakemus, role, lang, translations}) =>
     </section>
 
 const Section = ({title, content, lang, translations, children})=>{
+  console.log(`children ${title}`,children)
   return(
     <section className="section" hidden={!content && !children}>
       <h2><LocalizedString translationKey={title} translations={translations} lang={lang} /></h2>
@@ -185,9 +187,14 @@ const OptionalSection = ({title,id, avustushaku, lang, translations}) =>{
 }
 
 const Perustelut = ({hakemus, lang, translations}) =>
-  <Section title="paatoksen-perustelut" lang={lang} translations={translations}>
-    <ContentWithParagraphs content={hakemus.arvio.perustelut}/>
-  </Section>
+{
+  if(_.isEmpty(hakemus.arvio.perustelut)) return (<div></div>)
+  return(
+    <Section title="paatoksen-perustelut" lang={lang} translations={translations}>
+      <ContentWithParagraphs content={hakemus.arvio.perustelut}/>
+    </Section>
+  )
+}
 
 const Lisatietoja = ({avustushaku, role, lang, translations})=>
   <Section title="lisatietoja" lang={lang} translations={translations}>
