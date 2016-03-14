@@ -46,6 +46,12 @@
                                       (s/optional-key :fi) s/Str
                                       (s/optional-key :sv)  s/Str})
 
+(s/defschema Liite {
+                    :group s/Str
+                    :id s/Str
+                    }
+)
+
 (s/defschema Decision
   "Decision fields"
   {
@@ -57,6 +63,7 @@
    (s/optional-key :selvitysvelvollisuus) LocalizedStringOptional
    (s/optional-key :kayttoaika) LocalizedStringOptional
    (s/optional-key :lisatiedot) LocalizedStringOptional
+   (s/optional-key :liitteet) [Liite]
   }
 )
 (s/defschema AvustusHaku {:id Long

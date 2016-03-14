@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Liitteet from '../data/Liitteet'
 
 const DecisionField = ({avustushaku, title, id,language, onChange}) => {
   const fieldId= `decision.${id}.${language}`
@@ -52,10 +53,53 @@ class DecisionDate extends React.Component {
   }
 }
 
+class LiitteetList extends React.Component{
+  render(){
+    const avustushaku = this.props.avustushaku
+    const controller = this.props.controller
+    const liitteet = _.get(avustushaku,"decision.liitteet",[])
+    const Liite = (group,liite) =>{
+      const liiteChanged = (event) => {
+        const newValue = {
+          group:group,
+          id:event.target.value
+        }
+        const newLiitteet = _.reject(liitteet,(l)=>l.group==newValue.group).concat([newValue])
+        controller.onChangeListener(avustushaku, {id:"decision.liitteet"}, newLiitteet)
+      }
+      const checked= _.any(liitteet,(currentLiite) => currentLiite.group==group && currentLiite.id==liite.id)
+      const link = `/liite/${liite.id}`
+      return(
+        <div key={liite.id}>
+          <label>
+            <input type="radio" name={group} onChange={liiteChanged} value={liite.id} checked={checked}/> {liite.fi} - {liite.id} <a href={`${link}/fi`} target="_blank">fi</a> <a href={`${link}/sv`} target="_blank">sv</a>
+          </label>
+        </div>
+        )
+      }
+    return(
+      <div>
+        <h4>Päätöksen liitteet</h4>
+        <div className="liite-row">
+          {Liitteet.map((group)=>{return (
+            <div key={group.group}>
+              <h5>{group.group}</h5>
+              {group.attachments.map(_.partial(Liite,group.group))}
+            </div>
+            )
+            }
+          )}
+        </div>
+
+      </div>
+    )
+  }
+}
+
 export default class DecisionEditor extends React.Component {
   render() {
     const {avustushaku,controller} = this.props
-    const onChange = (e) =>controller.onChangeListener(avustushaku, e.target, e.target.value)
+    const onChange = (e) => controller.onChangeListener(avustushaku, e.target, e.target.value)
     const fields = [
       {id:"taustaa",title:"Taustaa"},
       {id:"maksu",title:"Avustuksen maksu"},
@@ -69,6 +113,7 @@ export default class DecisionEditor extends React.Component {
       <div className="decision-editor">
         <DecisionDate {...this.props}/>
         {fields.map((field)=><DecisionFields key={field.id} title={field.title} avustushaku={avustushaku} id={field.id} onChange={onChange}/>)}
+        <LiitteetList avustushaku={avustushaku} controller={controller}/>
       </div>
     )
   }

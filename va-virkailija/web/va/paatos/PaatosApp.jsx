@@ -11,6 +11,7 @@ import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import PaatosController from './PaatosController.jsx'
 import style from './paatos.less'
 import queryString from 'query-string'
+import Liitteet from '../data/Liitteet'
 
 
 const parsedRoute = new RouteParser('/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id').match(location.pathname)
@@ -94,7 +95,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, lang, transl
         <OptionalSection title="selvitysvelvollisuus" id="selvitysvelvollisuus" avustushaku={avustushaku} lang={lang} translations={translations}/>
         <OptionalSection title="valtionavustuksen-kayttoaika" id="kayttoaika" avustushaku={avustushaku} lang={lang} translations={translations}/>
         <Lisatietoja avustushaku={avustushaku} role={role} lang={lang} translations={translations}/>
-        <Liitteet lang={lang} translations={translations}/>
+        <LiitteetList hakemus={hakemus} avustushaku={avustushaku} lang={lang} translations={translations}/>
         <Kayttosuunnitelma
             budgetItems={budgetItems}
             avustushaku={avustushaku}
@@ -161,11 +162,10 @@ const RejectedDecision = ({avustushaku, hakemus, role, lang, translations}) =>
       </Section>
       <Perustelut hakemus={hakemus} lang={lang} translations={translations}/>
       <Lisatietoja avustushaku={avustushaku} role={role} lang={lang} translations={translations}/>
-      <Liitteet lang={lang} translations={translations}/>
+      <LiitteetList hakemus={hakemus} avustushaku={avustushaku} lang={lang} translations={translations}/>
     </section>
 
 const Section = ({title, content, lang, translations, children})=>{
-  console.log(`children ${title}`,children)
   return(
     <section className="section" hidden={!content && !children}>
       <h2><LocalizedString translationKey={title} translations={translations} lang={lang} /></h2>
@@ -212,14 +212,46 @@ const DecisionContent = ({id,avustushaku,lang}) =>{
   )
 }
 
-const Liitteet = ({lang, translations}) =>
-  <Section title="liitteet" lang={lang} translations={translations}>
-    <Todo>liitteet, hakukohtainen</Todo>
-  </Section>
+const LiitteetList = ({hakemus,avustushaku, lang, translations})=>{
+  const liitteet = _.get(avustushaku,"decision.liitteet",[])
+  const decisionStatus = hakemus.arvio.status
+  const rejected = decisionStatus == 'rejected'
+
+  const ehdot = findLiite(Liitteet,liitteet,"Ehdot",lang)
+  const oikaisuvaatimus = findLiite(Liitteet,liitteet,"Oikaisuvaatimusosoitus",lang)
+
+  const AcceptedAttachments =
+    <div>
+      <div><LocalizedString translationKey="kayttosuunnitelma" translations={translations} lang={lang}/></div>
+      <div><LiiteRow liite={ehdot} lang={lang}/></div>
+    </div>
+  const RejectedAttachments = null
+  return(
+    <Section title="liitteet" lang={lang} translations={translations}>
+      {rejected ? RejectedAttachments : AcceptedAttachments}
+      <div><LiiteRow liite={oikaisuvaatimus} lang={lang}/></div>
+    </Section>
+  )
+}
+
+const findLiite = (allAttachments,attachments,groupName) => {
+  const row = _.find(attachments,(g)=>g.group==groupName)
+  if(!row) return {}
+  const group = _.find(allAttachments,(r)=>r.group==row.group)
+  return _.find(group.attachments,(a)=>a.id==row.id)
+}
+
+const LiiteRow = ({liite,lang}) =>{
+  if(!liite.id) return (<div></div>)
+  const link = `/liite/${liite.id}/${lang}`
+  return (
+    <div>
+      <a href={link} target="_blank">{liite[lang]}</a>
+    </div>
+  )
+}
 
 const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
-
-const Todo = ({children}) => <span className="todo">[TODO: {children}]</span>
 
 const ContentWithParagraphs = ({content}) => {
   const paragraphs = content.split("\n")
