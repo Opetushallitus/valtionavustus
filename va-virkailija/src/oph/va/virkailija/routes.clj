@@ -75,6 +75,7 @@
   (GET "/admin/*" [] (return-html "admin.html"))
   (GET "/yhteenveto/*" [] (return-html "summary.html"))
   (GET "/paatos/*" [] (return-html "paatos.html"))
+  (GET "/public/paatos/*" [] (return-html "paatos.html"))
   (GET* "/liite/:liite-id/:lang" []
           :path-params [liite-id :- s/Str,lang :- s/Str]
           (on-liite liite-id lang))
@@ -331,6 +332,17 @@
         (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
           (ok (:query saved-search)))))
 
+(defroutes* public-routes
+  "Public API"
+
+  (GET* "/avustushaku/paatos/:hakemus-id" [hakemus-id :as request]
+        :path-params [hakemus-id :- Long]
+        :return PaatosData
+        :summary "Return relevant information for decision"
+        (if-let [response (hakudata/get-combined-paatos-data hakemus-id)]
+          (ok response)
+          (not-found))))
+
 (defroutes* userinfo-routes
   "User information"
 
@@ -438,6 +450,7 @@
 
   (create-swagger-docs)
 
+  (context* "/public/api" [] :tags ["public"] public-routes)
   (context* "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
   (context* "/login" [] :tags ["login"] login-routes)
   (context* "/api/userinfo" [] :tags ["userinfo"] userinfo-routes)

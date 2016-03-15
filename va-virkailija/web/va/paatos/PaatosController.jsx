@@ -17,9 +17,12 @@ const events = {
 export default class PaatosController {
   initializeState(parsedRoute) {
     const hakemusId = parsedRoute["hakemus_id"]
+    const isPublic = parsedRoute.isPublic
     this._bind('onInitialState')
+    const privateUrl = `/api/avustushaku/paatos/${hakemusId}`
+    const publicUrl = `/public/api/avustushaku/paatos/${hakemusId}`
     const initialStateTemplate = {
-      paatosData: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/paatos/${hakemusId}`)),
+      paatosData: Bacon.fromPromise(HttpUtil.get(isPublic ? publicUrl : privateUrl)),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")).map(Immutable)
     }
 

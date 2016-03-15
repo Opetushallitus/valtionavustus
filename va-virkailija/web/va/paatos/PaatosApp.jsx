@@ -13,8 +13,11 @@ import style from './paatos.less'
 import queryString from 'query-string'
 import Liitteet from '../data/Liitteet'
 
-
-const parsedRoute = new RouteParser('/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id').match(location.pathname)
+const privatePath = '/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id'
+const publicPath = '/public/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id'
+const isPublic = location.pathname.indexOf('public') >=0
+const parsedRoute = new RouteParser(isPublic ? publicPath : privatePath).match(location.pathname)
+parsedRoute.isPublic = isPublic
 const controller = new PaatosController()
 
 controller.initializeState(parsedRoute).onValue((state) => {

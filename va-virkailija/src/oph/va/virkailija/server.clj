@@ -69,6 +69,8 @@
              :handler any-access}
             {:pattern #"^/api/healthcheck"
              :handler any-access}
+            {:pattern #"^/public/.*"
+             :handler any-access}
             {:pattern #"^/favicon.ico"
              :handler any-access}
             {:pattern #".*"
