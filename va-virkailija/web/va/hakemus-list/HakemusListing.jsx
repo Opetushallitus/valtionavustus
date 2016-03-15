@@ -197,6 +197,7 @@ export default class HakemusListing extends Component {
           </td>
           <td className="applied-sum-column"><span className="money sum">{ophShareSum}</span></td>
           <td className="granted-sum-column"><span className="money sum">{budgetGrantedSum}</span></td>
+          <td className="person-filter-column"></td>
         </tr></tfoot>
       </table>
     )
