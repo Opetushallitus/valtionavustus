@@ -337,9 +337,9 @@
 
   (GET* "/avustushaku/paatos/:hakemus-id" [hakemus-id :as request]
         :path-params [hakemus-id :- Long]
-        :return PaatosData
+        :return virkailija-schema/PaatosData
         :summary "Return relevant information for decision"
-        (if-let [response (hakudata/get-combined-paatos-data hakemus-id)]
+        (if-let [response (hakudata/get-final-combined-paatos-data hakemus-id)]
           (ok response)
           (not-found))))
 
