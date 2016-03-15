@@ -52,7 +52,7 @@ export default class HakemusComments extends Component {
     return (
       <div id="hakemus-comment-container" className="hakemus-arviointi-section">
         <label>Kommentit:</label>
-        <div hidden={!noComments}>Ei kommentteja</div>
+        <div hidden={!noComments} className="no-comments">Ei kommentteja</div>
         <div className="comment-list">
           {commentComponents}
         </div>
