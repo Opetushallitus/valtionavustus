@@ -20,9 +20,9 @@
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.authentication :as authentication]
             [oph.va.virkailija.authorization :as authorization]
-            [oph.soresu.form.schema :refer :all]
-            [oph.va.schema :refer :all]
-            [oph.va.virkailija.schema :refer :all]
+            [oph.soresu.form.schema :as form-schema]
+            [oph.va.schema :as va-schema]
+            [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.scoring :as scoring]
             [oph.va.virkailija.saved-search :refer :all]
             [oph.va.virkailija.hakudata :as hakudata]
@@ -86,27 +86,29 @@
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
-(defroutes* avustushaku-routes
-  "Hakemus listing and filtering"
-
+(defn- get-avustushaku-status []
   (GET* "/" [status]
-        :query-params [{status :- [HakuStatus] nil}]
-        :return [AvustusHaku]
+        :query-params [{status :- [va-schema/HakuStatus] nil}]
+        :return [va-schema/AvustusHaku]
         :summary "Return list of all avustushaku descriptions"
         (if-let [response (hakija-api/list-avustushaut-by-status status)]
           (ok response)
-          (not-found)))
+          (not-found))))
+
+(defroutes* avustushaku-routes
+  "Hakemus listing and filtering"
+  (get-avustushaku-status)
 
   (PUT* "/" [:as request]
         :body [base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base")]
-        :return AvustusHaku
+        :return va-schema/AvustusHaku
         :summary "Copy existing avustushaku as new one by id of the existing avustushaku"
         (ok (hakudata/create-new-avustushaku (:baseHakuId base-haku-id-wrapper) (authentication/get-identity request))))
 
   (POST* "/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
-         :body  [avustushaku (describe AvustusHaku "Updated avustushaku")]
-         :return AvustusHaku
+         :body  [avustushaku (describe va-schema/AvustusHaku "Updated avustushaku")]
+         :return va-schema/AvustusHaku
          :summary "Update avustushaku description"
          (if-let [response (hakija-api/update-avustushaku avustushaku)]
            (ok response)
@@ -114,7 +116,7 @@
 
   (GET* "/:avustushaku-id" [avustushaku-id :as request]
         :path-params [avustushaku-id :- Long]
-        :return HakuData
+        :return virkailija-schema/HakuData
         :summary "Return all relevant avustushaku data (including answers, comments, form and current user privileges)"
         (let [identity (authentication/get-identity request)]
           (if-let [response (hakudata/get-combined-avustushaku-data-with-privileges avustushaku-id identity)]
@@ -123,7 +125,7 @@
 
   (GET* "/paatos/:hakemus-id" [hakemus-id :as request]
         :path-params [hakemus-id :- Long]
-        :return PaatosData
+        :return virkailija-schema/PaatosData
         :summary "Return relevant information for decision"
         (if-let [response (hakudata/get-combined-paatos-data hakemus-id)]
           (ok response)
@@ -140,7 +142,7 @@
 
   (GET* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
-        :return [Role]
+        :return [virkailija-schema/Role]
         :summary "List roles for given avustushaku"
         (if-let [response (hakija-api/get-avustushaku-roles avustushaku-id)]
           (ok response)
@@ -148,8 +150,8 @@
 
   (PUT* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
-        :body  [new-role (describe NewRole "New role to add to avustushaku")]
-        :return Role
+        :body  [new-role (describe virkailija-schema/NewRole "New role to add to avustushaku")]
+        :return virkailija-schema/Role
         :summary "Create new role for avustushaku"
         (ok (hakija-api/create-avustushaku-role {:avustushaku avustushaku-id
                                                  :role (or (:role new-role) "presenting_officer")
@@ -159,8 +161,8 @@
 
   (POST* "/:avustushaku-id/role/:role-id" [avustushaku-id role-id]
          :path-params [avustushaku-id :- Long role-id :- Long]
-         :body    [role (describe Role "Changed role")]
-         :return Role
+         :body    [role (describe virkailija-schema/Role "Changed role")]
+         :return virkailija-schema/Role
          :summary "Update avustushaku role"
          (ok (hakija-api/update-avustushaku-role avustushaku-id role)))
 
@@ -173,7 +175,7 @@
 
   (GET* "/:avustushaku-id/privileges" [avustushaku-id :as request]
         :path-params [avustushaku-id :- Long]
-        :return HakuPrivileges
+        :return virkailija-schema/HakuPrivileges
         :summary "Show current user privileges for given avustushaku"
         (let [identity (authentication/get-identity request)
               haku-roles (hakija-api/get-avustushaku-roles avustushaku-id)
@@ -184,7 +186,7 @@
 
   (GET* "/:avustushaku-id/form" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
-        :return Form
+        :return form-schema/Form
         :summary "Get form description that is linked to avustushaku"
         (if-let [found-form (hakija-api/get-form-by-avustushaku avustushaku-id)]
           (ok (without-id found-form))
@@ -192,8 +194,8 @@
 
   (POST* "/:avustushaku-id/form" [avustushaku-id]
          :path-params [avustushaku-id :- Long ]
-         :body  [updated-form (describe Form "Updated form")]
-         :return Form
+         :body  [updated-form (describe form-schema/Form "Updated form")]
+         :return form-schema/Form
          :summary "Update form description that is linked to avustushaku"
          (if-let [avustushaku (hakija-api/get-avustushaku-by-status avustushaku-id ["new" "draft"])]
            (if-let [response (hakija-api/update-form-by-avustushaku avustushaku-id updated-form)]
@@ -203,8 +205,8 @@
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id :as request]
          :path-params [avustushaku-id :- Long hakemus-id :- Long]
-         :body    [arvio (describe Arvio "New arvio")]
-         :return Arvio
+         :body    [arvio (describe virkailija-schema/Arvio "New arvio")]
+         :return virkailija-schema/Arvio
          :summary "Update arvio for given hakemus. Creates arvio if missing."
          (let [identity (authentication/get-identity request)
                {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
@@ -213,14 +215,14 @@
 
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-        :return Comments
+        :return virkailija-schema/Comments
         :summary "Get current comments for hakemus"
         (ok (virkailija-db/list-comments hakemus-id)))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id :as request]
          :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-         :body [comment (describe NewComment "New comment")]
-         :return Comments
+         :body [comment (describe virkailija-schema/NewComment "New comment")]
+         :return virkailija-schema/Comments
          :summary "Add a comment for hakemus. As response, return all comments"
          (let [identity (authentication/get-identity request)
                {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
@@ -240,7 +242,7 @@
 
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments/versions" [haku-id hakemus-id]
         :path-params [haku-id :- Long, hakemus-id :- Long]
-        :return [Attachment]
+        :return [va-schema/Attachment]
         :summary "List all versions of attachments of given hakemus"
         :description "Listing does not return actual attachment data. Use per-field versioned download URL for getting it."
         (ok (->> (hakija-api/list-attachment-versions hakemus-id)
@@ -259,13 +261,13 @@
 
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/change-requests" [avustushaku-id hakemus-id :as request]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-        :return [Hakemus]
+        :return [virkailija-schema/Hakemus]
         :summary "List change requests of given hakemus"
         (hakija-api/list-hakemus-change-requests hakemus-id))
 
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-        :return ScoringOfArvio
+        :return virkailija-schema/ScoringOfArvio
         :summary "Get scorings for given hakemus"
         :description "Scorings are linked to avustushaku focus areas"
         (if-let [arvio (virkailija-db/get-arvio hakemus-id)]
@@ -275,8 +277,8 @@
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
          :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-         :body [score (describe NewScore "Stored or updated score")]
-         :return ScoringOfArvio
+         :body [score (describe virkailija-schema/NewScore "Stored or updated score")]
+         :return virkailija-schema/ScoringOfArvio
          :summary "Submit scorings for given arvio."
          :description "Scorings are automatically assigned to logged in user."
          (let [identity (authentication/get-identity request)
@@ -289,10 +291,10 @@
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id :as request]
          :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-         :body [body {:status HakemusStatus
+         :body [body {:status va-schema/HakemusStatus
                       :comment s/Str}]
          :return {:hakemus-id Long
-                  :status HakemusStatus}
+                  :status va-schema/HakemusStatus}
          :summary "Update status of hakemus"
          (let [{:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)
                identity (authentication/get-identity request)
@@ -312,7 +314,7 @@
 
   (PUT* "/:avustushaku-id/searches" [avustushaku-id :as request]
         :path-params [avustushaku-id :- Long]
-        :body [body (describe SavedSearch "New stored search")]
+        :body [body (describe virkailija-schema/SavedSearch "New stored search")]
         :return {:search-url s/Str}
         :summary "Create new stored search"
         :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
@@ -323,7 +325,7 @@
 
   (GET* "/:avustushaku-id/searches/:saved-search-id" [avustushaku-id saved-search-id]
         :path-params [avustushaku-id :- Long, saved-search-id :- Long]
-        :return SavedSearch
+        :return virkailija-schema/SavedSearch
         :summary "Get stored search"
         :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
         (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
@@ -340,7 +342,7 @@
 
   (POST* "/search" [:as request]
          :body [body (describe {:searchInput s/Str} "User input of LDAP search box")]
-         :return LdapSearchResults
+         :return virkailija-schema/LdapSearchResults
          :summary "Search users from OPH LDAP."
          :description "Each search term must be found as part of user name or email. Case does not matter."
          (let [search-input (:searchInput body)
