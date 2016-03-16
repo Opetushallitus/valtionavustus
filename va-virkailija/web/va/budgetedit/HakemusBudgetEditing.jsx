@@ -91,15 +91,3 @@ export default class HakemusBudgetEditing extends Component {
   }
 }
 
-export class BudgetGranted extends React.Component {
-  render() {
-    const hakemus = this.props.hakemus
-    const arvio = hakemus.arvio
-    const budgetGranted = _.get(arvio, "budget-granted", 0)
-
-    return <div className="value-edit budget-granted">
-      <label htmlFor="budget-granted">Myönnettävä avustus on {budgetGranted} €</label>
-    </div>
-  }
-}
-

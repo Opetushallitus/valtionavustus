@@ -36,7 +36,6 @@ export default class HakemusArviointi extends Component {
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments} allowHakemusCommenting={allowHakemusCommenting}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
-       <BudgetGranted hakemus={hakemus}/>
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <ChangeRequest controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
