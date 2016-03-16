@@ -96,16 +96,15 @@
           (ok response)
           (not-found))))
 
-(defroutes* avustushaku-routes
-  "Hakemus listing and filtering"
-  (get-avustushaku-status)
-
+(defn- put-avustushaku []
   (PUT* "/" [:as request]
         :body [base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base")]
         :return va-schema/AvustusHaku
         :summary "Copy existing avustushaku as new one by id of the existing avustushaku"
         (ok (hakudata/create-new-avustushaku (:baseHakuId base-haku-id-wrapper) (authentication/get-identity request))))
+)
 
+(defn- post-avustushaku []
   (POST* "/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
          :body  [avustushaku (describe va-schema/AvustusHaku "Updated avustushaku")]
@@ -114,7 +113,9 @@
          (if-let [response (hakija-api/update-avustushaku avustushaku)]
            (ok response)
            (not-found)))
+)
 
+(defn- get-avustushaku []
   (GET* "/:avustushaku-id" [avustushaku-id :as request]
         :path-params [avustushaku-id :- Long]
         :return virkailija-schema/HakuData
@@ -123,6 +124,14 @@
           (if-let [response (hakudata/get-combined-avustushaku-data-with-privileges avustushaku-id identity)]
             (ok response)
             (not-found))))
+)
+
+(defroutes* avustushaku-routes
+  "Hakemus listing and filtering"
+  (get-avustushaku-status)
+  (put-avustushaku)
+  (post-avustushaku)
+  (get-avustushaku)
 
   (GET* "/paatos/:hakemus-id" [hakemus-id :as request]
         :path-params [hakemus-id :- Long]
