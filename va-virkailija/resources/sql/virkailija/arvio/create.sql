@@ -1,1 +1,4 @@
-INSERT INTO arviot (hakemus_id, status, overridden_answers, budget_granted, summary_comment, changelog, roles, presenter_role_id, rahoitusalue, perustelut) VALUES (:hakemus_id, :status, :overridden_answers, :budget_granted, :summary_comment, :changelog, :roles,:presenter_role_id, :rahoitusalue,:perustelut)
+insert into arviot (hakemus_id, status, overridden_answers, budget_granted, summary_comment, changelog, roles, presenter_role_id, rahoitusalue, perustelut, costs_granted, use_overridden_detailed_costs)
+values
+  (:hakemus_id, :status, :overridden_answers, :budget_granted, :summary_comment, :changelog, :roles, :presenter_role_id,
+   :rahoitusalue, :perustelut, :costs_granted, :use_overridden_detailed_costs)

@@ -31,6 +31,8 @@
    :status ArvioStatus
    :overridden-answers Answers
    :budget-granted s/Int
+   :costsGranted s/Int
+   :useDetailedCosts s/Bool
    :roles ArvioRole
    (s/optional-key :presenter-role-id) (s/maybe Long)
    (s/optional-key :scoring) (s/maybe Scoring)

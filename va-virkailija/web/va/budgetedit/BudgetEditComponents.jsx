@@ -32,12 +32,44 @@ export default class BudgetEditElement extends React.Component {
     )
   }
 }
+class ToggleKonttaSumma extends React.Component {
+  render() {
+    const {controller, disabled, useDetailedCosts} = this.props
+    const statuses = _.flatten([
+      {useDetailedCosts: false, text: 'Kokonaiskustannukset'},
+      {useDetailedCosts: true, text: 'Menokohtainen erittely'}].map(obj => {
+      const htmlId = "useDetailedCosts-" + obj.useDetailedCosts
+      const onChange = !disabled ? controller.toggleDetailedCostsListener : null
+      return [
+        <input id={htmlId}
+               type="radio"
+               key={htmlId}
+               name="useDetailedCosts"
+               value={obj.useDetailedCosts}
+               disabled={disabled}
+               onChange={onChange}
+               checked={obj.useDetailedCosts === useDetailedCosts ? true: null}
+        />,
+        <label key={htmlId + "-label"} htmlFor={htmlId}>{obj.text}</label>
+      ]
+    }))
+    return (
+        <div className="value-edit">
+          {statuses}
+        </div>
+    )
+  }
+}
 
 export class EditSummingBudgetElement extends React.Component {
-  columnTitles(field, controller, disabled) {
+  columnTitles(field, controller, disabled, useDetailedCosts) {
     return field.params.showColumnTitles ? (
       <thead>
-        <tr hidden={disabled}><th></th><th colSpan="3"><button disabled={disabled} type="button" onClick={controller.copyOriginalValues}>Kopioi haetut hyväksytyiksi</button></th></tr>
+        <tr hidden={disabled}>
+          <th colSpan="4">
+            <ToggleKonttaSumma controller={controller} disabled={disabled} useDetailedCosts={useDetailedCosts}/>
+          </th>
+        </tr>
         <tr>
           <th className="label-column"><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
           <th className="original-amount-column">Haettu</th>
@@ -59,6 +91,8 @@ export class EditSummingBudgetElement extends React.Component {
     const originalHakemus = vaSpecificProperties.originalHakemus
     const originalAmountValues = VaBudgetCalculator.getAmountValues(this.props.field, originalHakemus.answers)
     const originalSum = _.reduce(originalAmountValues, (total, errorsAndValue) => {return total + errorsAndValue.value}, 0)
+    const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
+    const costsGranted = _.get(originalHakemus, 'arvio.costsGranted', 0)
     return (
       <table id={htmlId} className="summing-table">
         <caption className={!_.isEmpty(classNames) ? classNames : undefined}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></caption>
@@ -68,7 +102,7 @@ export class EditSummingBudgetElement extends React.Component {
           <col className="amount-column" />
           <col className="description-column" />
         </colgroup>
-        {this.columnTitles(field, this.props.controller, disabled)}
+        {this.columnTitles(field, this.props.controller, disabled, useDetailedCosts)}
         <tbody>
           {children}
         </tbody>

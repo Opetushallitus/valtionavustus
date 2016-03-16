@@ -473,6 +473,11 @@ export default class HakemustenArviointiController {
     }
   }
 
+  toggleDetailedCosts(hakemus, useDetailedCosts) {
+    hakemus.arvio.useDetailedCosts = useDetailedCosts
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }
+
   setHakemusOverriddenAnswerValue(hakemusId, field, newValue) {
     const setOverriddenAnswerValue = {
       hakemusId: hakemusId,

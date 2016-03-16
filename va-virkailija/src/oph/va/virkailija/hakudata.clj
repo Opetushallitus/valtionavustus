@@ -11,6 +11,8 @@
    :status (:status arvio)
    :overridden-answers (:overridden_answers arvio)
    :budget-granted (:budget_granted arvio)
+   :costsGranted (:costs_granted arvio)
+   :useDetailedCosts (:use_overridden_detailed_costs arvio)
    :summary-comment (:summary_comment arvio)
    :roles (:roles arvio)
    :presenter-role-id (:presenter_role_id arvio)
@@ -26,6 +28,8 @@
                            :status             "unhandled"
                            :overridden-answers {:value []}
                            :budget-granted     0
+                           :costsGranted       0
+                           :useDetailedCosts   false
                            :roles              {:evaluators []}
                            })))
 

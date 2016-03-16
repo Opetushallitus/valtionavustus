@@ -104,6 +104,8 @@
                         :status status
                         :overridden_answers overridden-answers
                         :budget_granted budget-granted
+                        :costs_granted (:costsGranted arvio)
+                        :use_overridden_detailed_costs (:useDetailedCosts arvio)
                         :summary_comment (:summary-comment arvio)
                         :roles (:roles arvio)
                         :presenter_role_id (:presenter-role-id arvio)

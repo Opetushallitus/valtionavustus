@@ -12,6 +12,7 @@ export default class BudgetEditFormController {
     this.hakemus = hakemus
     this.componentOnChangeListener = this.componentOnChangeListener.bind(this)
     this.copyOriginalValues = this.copyOriginalValues.bind(this)
+    this.toggleDetailedCostsListener = this.toggleDetailedCostsListener.bind(this)
   }
 
   constructHtmlId(formContent, fieldId) {
@@ -30,6 +31,10 @@ export default class BudgetEditFormController {
 
   componentOnChangeListener(field, newValue) {
     this.arviointiController.setHakemusOverriddenAnswerValue(this.hakemus.id, field, newValue)
+  }
+
+  toggleDetailedCostsListener(event) {
+    this.arviointiController.toggleDetailedCosts(this.hakemus, event.target.value === 'true')
   }
 
   componentDidMount(field, initialValue) {
