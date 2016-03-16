@@ -12,6 +12,8 @@ import PaatosController from './PaatosController.jsx'
 import style from './paatos.less'
 import queryString from 'query-string'
 import Liitteet from '../data/Liitteet'
+import Bacon from 'baconjs'
+import HttpUtil from 'va-common/web/HttpUtil.js'
 
 const privatePath = '/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id'
 const publicPath = '/public/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id'
@@ -59,6 +61,7 @@ export default class PaatosApp extends Component {
           <OptionalSection title="taustaa" id="taustaa" avustushaku={avustushaku} lang={lang} translations={translations}/>
           {decisionStatus == 'rejected' ? <RejectedDecision avustushaku={avustushaku} hakemus={hakemus} role={role} lang={lang} translations={translations}/> :
               <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} role={role} formContent={formContent} lang={lang} translations={translations}/>}
+          <SendDecisionButton avustushaku={avustushaku} hakemus={hakemus}/>
         </section>
     )
   }
@@ -111,6 +114,31 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, lang, transl
         />
       </section>
   )
+}
+
+class SendDecisionButton extends React.Component
+{
+  constructor(props){
+    super(props)
+    this.state = {sent:false}
+  }
+
+  render(){
+    const onClick = () =>{
+      const hakemus = this.props.hakemus
+      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/send/${hakemus.id}`,{}))
+      sendS.onValue((res)=>{
+          this.setState({sent:true,emails:res.emails.join(" ")})
+        }
+      )
+    }
+    return(
+      <div>
+        <div hidden={!this.state.sent}>Päätös lähetetty osoitteisiin: <strong>{this.state.emails}</strong></div>
+        <button onClick={onClick} hidden={this.state.sent}>Lähetä päätös</button>
+      </div>
+    )
+  }
 }
 
 const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, totalOriginalCosts, totalGranted, lang, translations}) =>

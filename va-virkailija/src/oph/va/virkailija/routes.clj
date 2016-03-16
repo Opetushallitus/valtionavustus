@@ -70,6 +70,26 @@
   (GET* "/" [] (on-healthcheck))
   (HEAD* "/" [] (on-healthcheck)))
 
+(defn- send-paatos [hakemus-id]
+  (let [hakemus (hakija-api/get-hakemus hakemus-id)
+        submission (hakija-api/get-hakemus-submission hakemus)
+        answers (:answers submission)
+        avustushaku (hakija-api/get-avustushaku (:avustushaku hakemus))
+        primary-email (formutil/find-answer-value answers "primary-email")
+        organization-email (formutil/find-answer-value answers "organization-email")
+        signature-email (formutil/find-answer-value answers "signature-email")
+        emails (vec (remove nil? (distinct [primary-email organization-email signature-email])))
+        language (keyword (formutil/find-answer-value answers "language"))
+        ]
+  (email/send-paatos! language emails avustushaku hakemus)
+  (ok {:status "sent" :hakemus hakemus-id :emails emails})))
+
+(defroutes* paatos-send-routes
+  "Paatos routes"
+  (POST* "/:hakemus-id" []
+    :path-params [hakemus-id :- Long]
+    (send-paatos hakemus-id)))
+
 (defroutes resource-routes
   (GET "/" [] (return-html "index.html"))
   (GET "/admin/*" [] (return-html "admin.html"))
@@ -466,6 +486,7 @@
   (context* "/api/ldap" [] :tags ["ldap"] ldap-routes)
   (context* "/api/koodisto" [] :tags ["koodisto"] koodisto-routes)
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
+  (context* "/api/paatos/send" [] :tags ["paatos send"] paatos-send-routes)
 
   ;; Documentation
   (context* "/doc" [] doc-routes)
