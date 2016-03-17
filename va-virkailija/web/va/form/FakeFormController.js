@@ -16,10 +16,6 @@ export default class FakeFormController {
   componentDidMount(field, initialValue) {
   }
 
-  getCustomComponentProperties() {
-    return this.avustushaku
-  }
-
   getCustomComponentTypeMapping() {
     return this.customComponentFactory ? this.customComponentFactory.fieldTypeMapping : {}
   }
