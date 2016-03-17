@@ -478,6 +478,11 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
+  setCostsGrantedValue(hakemus, newValue) {
+    hakemus.arvio.costsGranted = newValue
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }
+
   setHakemusOverriddenAnswerValue(hakemusId, field, newValue) {
     const setOverriddenAnswerValue = {
       hakemusId: hakemusId,

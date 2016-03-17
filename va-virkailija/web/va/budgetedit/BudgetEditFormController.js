@@ -13,6 +13,7 @@ export default class BudgetEditFormController {
     this.componentOnChangeListener = this.componentOnChangeListener.bind(this)
     this.copyOriginalValues = this.copyOriginalValues.bind(this)
     this.toggleDetailedCostsListener = this.toggleDetailedCostsListener.bind(this)
+    this.costsGrantedOnChangeListener = this.costsGrantedOnChangeListener.bind(this)
   }
 
   constructHtmlId(formContent, fieldId) {
@@ -35,6 +36,10 @@ export default class BudgetEditFormController {
 
   toggleDetailedCostsListener(event) {
     this.arviointiController.toggleDetailedCosts(this.hakemus, event.target.value === 'true')
+  }
+
+  costsGrantedOnChangeListener(event) {
+    this.arviointiController.setCostsGrantedValue(this.hakemus, Number(event.target.value))
   }
 
   componentDidMount(field, initialValue) {
