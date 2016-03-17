@@ -19,17 +19,15 @@ export default class BudgetEditElement extends React.Component {
   }
 
   render() {
-    const children = this.props.children
-    const htmlId = this.props.htmlId
-
+    const {children, htmlId} = this.props
     return this.html(htmlId, children)
   }
 
   html(htmlId, children) {
     return (
-      <fieldset className="va-budget" id={htmlId}>
-        {children}
-      </fieldset>
+        <fieldset className="va-budget" id={htmlId}>
+          {children}
+        </fieldset>
     )
   }
 }
@@ -65,92 +63,97 @@ class ToggleKonttaSumma extends React.Component {
 export class EditSummingBudgetElement extends React.Component {
   columnTitles(field, controller, disabled, useDetailedCosts) {
     return field.params.showColumnTitles ? (
-      <thead>
+        <thead>
         <tr hidden={disabled}>
           <th colSpan="4">
             <ToggleKonttaSumma controller={controller} disabled={disabled} useDetailedCosts={useDetailedCosts}/>
           </th>
         </tr>
         <tr>
-          <th className="label-column"><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
+          <th className="label-column">
+            <LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang}/>
+          </th>
           <th className="original-amount-column">Haettu</th>
           <th className="amount-column money required">Hyväksytty</th>
           <th className="description-column">Kommentti</th>
         </tr>
-      </thead>
+        </thead>
     ) : undefined
   }
 
   render() {
-    const field = this.props.field
-    const children = this.props.children
+    const {field, children, htmlId, disabledOrEmpty , controller, lang, customProps} = this.props
     const sum = field.sum
-    const htmlId = this.props.htmlId
-    const disabled = this.props.disabled || typeof this.props.disabled === 'undefined'
-    const classNames = ClassNames({"required": field.required })
-    const vaSpecificProperties = this.props.customProps
-    const originalHakemus = vaSpecificProperties.originalHakemus
-    const originalAmountValues = VaBudgetCalculator.getAmountValues(this.props.field, originalHakemus.answers)
-    const originalSum = _.reduce(originalAmountValues, (total, errorsAndValue) => {return total + errorsAndValue.value}, 0)
+    const disabled = disabledOrEmpty || typeof disabledOrEmpty === 'undefined'
+    const classNames = ClassNames({"required": field.required})
+    const originalHakemus = customProps.originalHakemus
+    const originalAmountValues = VaBudgetCalculator.getAmountValues(field, originalHakemus.answers)
+    const originalSum = _.reduce(originalAmountValues, (total, errorsAndValue) => {
+      return total + errorsAndValue.value
+    }, 0)
     const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
     const costsGranted = _.get(originalHakemus, 'arvio.costsGranted', 0)
-    const controller = this.props.controller
     const firstTable = field.params.showColumnTitles
     return (
-      <table id={htmlId} className="summing-table">
-        <caption className={!_.isEmpty(classNames) ? classNames : undefined}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></caption>
-        <colgroup>
-          <col className="label-column" />
-          <col className="original-amount-column" />
-          <col className="amount-column" />
-          <col className="description-column" />
-        </colgroup>
-        {this.columnTitles(field, controller, disabled, useDetailedCosts)}
-        <tbody>
+        <table id={htmlId} className="summing-table">
+          <caption className={!_.isEmpty(classNames) ? classNames : undefined}>
+            <LocalizedString translations={field} translationKey="label" lang={lang}/>
+          </caption>
+          <colgroup>
+            <col className="label-column"/>
+            <col className="original-amount-column"/>
+            <col className="amount-column"/>
+            <col className="description-column"/>
+          </colgroup>
+          {this.columnTitles(field, controller, disabled, useDetailedCosts)}
+          <tbody>
           {children}
-        </tbody>
-        <tfoot><tr>
-          <td className="label-column"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
-          <td className="original-amount-column"><span className="money sum">{originalSum}</span></td>
-          <td className="amount-column">
-            {useDetailedCosts || !firstTable ?
-            <span className="money sum">{sum}</span> :
-            <div className="soresu-money-field extra-extra-small">
-              <input type="text" className="extra-extra-small" value={costsGranted} onChange={controller.costsGrantedOnChangeListener}/>
-            </div>}
-          </td>
-        </tr></tfoot>
-      </table>
+          </tbody>
+          <tfoot>
+          <tr>
+            <td className="label-column">
+              <LocalizedString translations={field.params} translationKey="sumRowLabel" lang={lang}/>
+            </td>
+            <td className="original-amount-column"><span className="money sum">{originalSum}</span></td>
+            <td className="amount-column">
+              {useDetailedCosts || !firstTable ?
+                  <span className="money sum">{sum}</span> :
+                  <div className="soresu-money-field extra-extra-small">
+                    <input type="text" className="extra-extra-small" value={costsGranted}
+                           onChange={controller.costsGrantedOnChangeListener}/>
+                  </div>}
+            </td>
+          </tr>
+          </tfoot>
+        </table>
     )
   }
 }
 
 export class EditBudgetItemElement extends React.Component {
   render() {
-    const field = this.props.field
-    const children = this.props.children
-    const htmlId = this.props.htmlId
+    const {field, children,htmlId, disabled, lang, customProps} = this.props
     const descriptionComponent = children[0]
     const amountComponent = children[1]
-    const vaSpecificProperties = this.props.customProps
-    const originalHakemus = vaSpecificProperties.originalHakemus
+    const originalHakemus = customProps.originalHakemus
     const valueId = amountComponent.props.field.id
-    const originalValue = originalHakemus ? InputValueStorage.readValue(children, originalHakemus, valueId)  : ""
+    const originalValue = originalHakemus ? InputValueStorage.readValue(children, originalHakemus, valueId) : ""
     const descriptionId = descriptionComponent.props.field.id
-    const originalDescription = originalHakemus ? InputValueStorage.readValue(children, originalHakemus, descriptionId)  : ""
-    const labelClassName = ClassNames("label-column", { disabled: this.props.disabled })
+    const originalDescription = originalHakemus ? InputValueStorage.readValue(children, originalHakemus, descriptionId) : ""
+    const labelClassName = ClassNames("label-column", {disabled: disabled})
     const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
     const firstTable = field.params.incrementsTotal
     const allowEditing = useDetailedCosts || !firstTable
     return (
-      <tr id={htmlId} className="budget-item">
-        <td className={labelClassName}>
-          <LocalizedString translations={field} translationKey="label" lang={this.props.lang} />
-        </td>
-        <td className="original-amount-column has-title" title={originalDescription}><span className="money sum">{originalValue}</span></td>
-        <td className="amount-column">{allowEditing ? amountComponent : ''}</td>
-        <td className="description-column">{allowEditing ? descriptionComponent : ''}</td>
-      </tr>
+        <tr id={htmlId} className="budget-item">
+          <td className={labelClassName}>
+            <LocalizedString translations={field} translationKey="label" lang={lang}/>
+          </td>
+          <td className="original-amount-column has-title" title={originalDescription}><span
+              className="money sum">{originalValue}</span></td>
+          <td className="amount-column">{allowEditing ? amountComponent : ''}</td>
+          <td className="description-column">{allowEditing ? descriptionComponent : ''}</td>
+        </tr>
     )
   }
 }
