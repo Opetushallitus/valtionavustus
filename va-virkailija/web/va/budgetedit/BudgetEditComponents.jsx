@@ -137,14 +137,15 @@ export class EditBudgetItemElement extends React.Component {
     const descriptionId = descriptionComponent.props.field.id
     const originalDescription = originalHakemus ? InputValueStorage.readValue(children, originalHakemus, descriptionId)  : ""
     const labelClassName = ClassNames("label-column", { disabled: this.props.disabled })
+    const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
     return (
       <tr id={htmlId} className="budget-item">
         <td className={labelClassName}>
           <LocalizedString translations={field} translationKey="label" lang={this.props.lang} />
         </td>
         <td className="original-amount-column has-title" title={originalDescription}><span className="money sum">{originalValue}</span></td>
-        <td className="amount-column">{amountComponent}</td>
-        <td className="description-column">{descriptionComponent}</td>
+        <td className="amount-column">{useDetailedCosts ? amountComponent : ''}</td>
+        <td className="description-column">{useDetailedCosts ? descriptionComponent : ''}</td>
       </tr>
     )
   }
