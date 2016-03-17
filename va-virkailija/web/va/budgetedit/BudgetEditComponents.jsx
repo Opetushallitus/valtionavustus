@@ -3,6 +3,7 @@ import _ from 'lodash'
 import ClassNames from 'classnames'
 
 import ComponentFactory from 'soresu-form/web/form/ComponentFactory'
+import MoneyTextField from 'soresu-form/web/form/component/MoneyTextField.jsx'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
 import Translator from 'soresu-form/web/form/Translator'
@@ -109,7 +110,13 @@ export class EditSummingBudgetElement extends React.Component {
         <tfoot><tr>
           <td className="label-column"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
           <td className="original-amount-column"><span className="money sum">{originalSum}</span></td>
-          <td className="amount-column"><span className="money sum">{sum}</span></td>
+          <td className="amount-column">
+            {useDetailedCosts ?
+            <span className="money sum">{sum}</span> :
+            <div className="soresu-money-field extra-extra-small">
+              <input type="text" className="extra-extra-small"/>
+            </div>}
+          </td>
         </tr></tfoot>
       </table>
     )
