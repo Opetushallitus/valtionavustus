@@ -103,6 +103,8 @@
                       :role (s/maybe RoleType)
                       :oid s/Str})
 
+(s/defschema PaatosEmail {:email s/Str})
+
 (s/defschema Role {:id s/Int
                    :name s/Str
                    :email s/Str

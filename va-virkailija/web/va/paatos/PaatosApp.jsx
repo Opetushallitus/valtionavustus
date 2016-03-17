@@ -124,18 +124,35 @@ class SendDecisionButton extends React.Component
   }
 
   render(){
-    const onClick = () =>{
+    const onFindEmail = () =>{
       const hakemus = this.props.hakemus
-      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/send/${hakemus.id}`,{}))
-      sendS.onValue((res)=>{
-          this.setState({sent:true,emails:res.emails.join(" ")})
+      const emailsS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/emails/${hakemus.id}`))
+      emailsS.onValue((res)=>{
+          this.setState({...this.state,emails:res.emails.join(" ")})
         }
       )
     }
+
+    const onSend = () =>{
+      const hakemus = this.props.hakemus
+      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/send/${hakemus.id}`,{email:this.state.emails}))
+      sendS.onValue((res)=>{
+          this.setState({...this.state,sentEmails:res.emails.join(" ")})
+        }
+      )
+    }
+
+    const onEmailChanges = (event) => {
+      this.setState({emails:event.target.value})
+    }
+
+    if(isPublic) return null;
     return(
       <div>
-        <div hidden={!this.state.sent}>Päätös lähetetty osoitteisiin: <strong>{this.state.emails}</strong></div>
-        <button onClick={onClick} hidden={this.state.sent}>Lähetä päätös</button>
+        <div hidden={!this.state.sentEmails}>Päätös lähetetty osoitteisiin: <strong>{this.state.sentEmails}</strong></div>
+        <input type="text" value={this.state.emails} onChange={onEmailChanges} size="60" hidden={!this.state.emails}/>
+        <button onClick={onFindEmail} hidden={this.state.emails}>Päätös sähköposti</button>
+        <button onClick={onSend} hidden={!this.state.emails}>Lähetä</button>
       </div>
     )
   }
