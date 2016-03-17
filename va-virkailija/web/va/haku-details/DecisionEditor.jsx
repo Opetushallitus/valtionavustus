@@ -68,7 +68,7 @@ class LiitteetList extends React.Component{
         controller.onChangeListener(avustushaku, {id:"decision.liitteet"}, newLiitteet)
       }
       const checked= _.any(liitteet,(currentLiite) => currentLiite.group==group && currentLiite.id==liite.id)
-      const link = `/liite/${liite.id}`
+      const link = `/public/api/liite/${liite.id}`
       return(
         <div key={liite.id}>
           <label>
