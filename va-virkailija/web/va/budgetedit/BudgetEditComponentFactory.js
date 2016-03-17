@@ -29,7 +29,6 @@ class BudgetSummaryEditPropertyMapper {
       ophFinancingLabel: {fi:"Opetushallituksen myöntämä rahoitus"},
       selfFinancingLabel: {fi:"Omarahoitus"}
     }}
-    const extendedProps = _.extend(overriddenLabels, _.omit(props, "labelTranslations"))
-    return extendedProps
+    return _.extend(overriddenLabels, _.omit(props, "labelTranslations"))
   }
 }
