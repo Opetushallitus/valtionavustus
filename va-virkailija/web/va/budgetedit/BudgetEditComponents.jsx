@@ -95,6 +95,7 @@ export class EditSummingBudgetElement extends React.Component {
     const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
     const costsGranted = _.get(originalHakemus, 'arvio.costsGranted', 0)
     const controller = this.props.controller
+    const firstTable = field.params.showColumnTitles
     return (
       <table id={htmlId} className="summing-table">
         <caption className={!_.isEmpty(classNames) ? classNames : undefined}><LocalizedString translations={field} translationKey="label" lang={this.props.lang} /></caption>
@@ -112,7 +113,7 @@ export class EditSummingBudgetElement extends React.Component {
           <td className="label-column"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
           <td className="original-amount-column"><span className="money sum">{originalSum}</span></td>
           <td className="amount-column">
-            {useDetailedCosts ?
+            {useDetailedCosts || !firstTable ?
             <span className="money sum">{sum}</span> :
             <div className="soresu-money-field extra-extra-small">
               <input type="text" className="extra-extra-small" value={costsGranted} onChange={controller.costsGrantedOnChangeListener}/>
@@ -139,14 +140,16 @@ export class EditBudgetItemElement extends React.Component {
     const originalDescription = originalHakemus ? InputValueStorage.readValue(children, originalHakemus, descriptionId)  : ""
     const labelClassName = ClassNames("label-column", { disabled: this.props.disabled })
     const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
+    const firstTable = field.params.incrementsTotal
+    const allowEditing = useDetailedCosts || !firstTable
     return (
       <tr id={htmlId} className="budget-item">
         <td className={labelClassName}>
           <LocalizedString translations={field} translationKey="label" lang={this.props.lang} />
         </td>
         <td className="original-amount-column has-title" title={originalDescription}><span className="money sum">{originalValue}</span></td>
-        <td className="amount-column">{useDetailedCosts ? amountComponent : ''}</td>
-        <td className="description-column">{useDetailedCosts ? descriptionComponent : ''}</td>
+        <td className="amount-column">{allowEditing ? amountComponent : ''}</td>
+        <td className="description-column">{allowEditing ? descriptionComponent : ''}</td>
       </tr>
     )
   }
