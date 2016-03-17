@@ -37,7 +37,7 @@ export default class HakemusBudgetEditing extends Component {
 
   static validateFields(form, answers, originalHakemus) {
     const budgetItems = FormUtil.findFieldsByFieldType(form.content, 'vaBudgetItemElement')
-    budgetItems.map(function(budgetItem) {
+    budgetItems.map(budgetItem => {
       const amountField = budgetItem.children[1]
       const overriddenValue = InputValueStorage.readValue(form.content, answers, amountField.id)
       const validationErrors = SyntaxValidator.validateSyntax(amountField, overriddenValue)
@@ -61,12 +61,12 @@ export default class HakemusBudgetEditing extends Component {
     const vaBudget = FormUtil.findFieldsByFieldType(hakuData.form.content, "vaBudget")
     const fakeHakemus = {answers: _.get(hakemus, "arvio.overridden-answers", {value: []})}
     const formOperations = {
-      chooseInitialLanguage: function() {return "fi"},
+      chooseInitialLanguage: () => "fi",
       containsExistingEntityId: undefined,
-      isFieldEnabled: function(saved, fieldId) {return HakemusBudgetEditing.isEditingAllowed(allowEditing, vaBudget, fieldId)},
+      isFieldEnabled: (saved, fieldId) => HakemusBudgetEditing.isEditingAllowed(allowEditing, vaBudget, fieldId),
       onFieldUpdate: undefined,
-      isSaveDraftAllowed: function() {return allowEditing},
-      isNotFirstEdit: function() {return true},
+      isSaveDraftAllowed: () => allowEditing,
+      isNotFirstEdit: () => true,
       createUiStateIdentifier: undefined,
       urlCreator: undefined,
       responseParser: undefined,
