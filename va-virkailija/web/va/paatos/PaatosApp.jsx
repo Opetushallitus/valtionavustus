@@ -291,7 +291,7 @@ const findLiite = (allAttachments,attachments,groupName) => {
 
 const LiiteRow = ({liite,lang}) =>{
   if(!liite.id) return (<div></div>)
-  const link = `/liite/${liite.id}/${lang}`
+  const link = `/public/api/liite/${liite.id}/${lang}`
   return (
     <div>
       <a href={link} target="_blank">{liite[lang]}</a>

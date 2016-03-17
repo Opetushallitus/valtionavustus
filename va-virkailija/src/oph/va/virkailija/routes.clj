@@ -51,11 +51,6 @@
         preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key "&preview=true")]
     (resp/redirect preview-url)))
 
-(defn- on-liite [id,lang]
-  (let [hakija-app-url (-> config :server :url :fi)
-        liite-url (str hakija-app-url "liitteet/" id "_" lang ".pdf")]
-    (resp/redirect liite-url)))
-
 (defn- get-hakemus-and-published-avustushaku [avustushaku-id hakemus-id]
   (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
         hakemus (hakija-api/get-hakemus hakemus-id)]
@@ -77,9 +72,6 @@
   (GET "/yhteenveto/*" [] (return-html "summary.html"))
   (GET "/paatos/*" [] (return-html "paatos.html"))
   (GET "/public/paatos/*" [] (return-html "paatos.html"))
-  (GET* "/liite/:liite-id/:lang" []
-          :path-params [liite-id :- s/Str,lang :- s/Str]
-          (on-liite liite-id lang))
   (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
         :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
         (on-hakemus-preview avustushaku-id hakemus-user-key))
@@ -342,6 +334,11 @@
         (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
           (ok (:query saved-search)))))
 
+(defn- on-liite [id lang]
+  (let [hakija-app-url (-> config :server :url :fi)
+        liite-url (str hakija-app-url "liitteet/" id "_" lang ".pdf")]
+    (resp/redirect liite-url)))
+
 (defroutes* public-routes
   "Public API"
 
@@ -351,7 +348,11 @@
         :summary "Return relevant information for decision"
         (if-let [response (hakudata/get-final-combined-paatos-data hakemus-id)]
           (ok response)
-          (not-found))))
+          (not-found)))
+
+  (GET* "/liite/:liite-id/:lang" []
+        :path-params [liite-id :- s/Str,lang :- s/Str]
+        (on-liite liite-id lang)))
 
 (defroutes* userinfo-routes
   "User information"
