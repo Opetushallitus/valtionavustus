@@ -52,12 +52,7 @@ export default class HakemusBudgetEditing extends Component {
   }
 
   render() {
-    const controller = this.props.controller
-    const hakemus = this.props.hakemus
-    const hakuData = this.props.hakuData
-    const avustushaku = this.props.avustushaku
-    const translations = this.props.translations
-    const allowEditing = this.props.allowEditing
+    const {controller, hakemus, hakuData, avustushaku, translations, allowEditing} = this.props
     const vaBudget = FormUtil.findFieldsByFieldType(hakuData.form.content, "vaBudget")
     const fakeHakemus = {answers: _.get(hakemus, "arvio.overridden-answers", {value: []})}
     const formOperations = {
