@@ -82,9 +82,9 @@ export class EditSummingBudgetElement extends React.Component {
   }
 
   render() {
-    const {field, children, htmlId, disabledOrEmpty , controller, lang, customProps} = this.props
+    const {field, children, htmlId, controller, lang, customProps} = this.props
     const sum = field.sum
-    const disabled = disabledOrEmpty || typeof disabledOrEmpty === 'undefined'
+    const disabled = this.props.disabled || typeof this.props.disabled === 'undefined'
     const classNames = ClassNames({"required": field.required})
     const originalHakemus = customProps.originalHakemus
     const originalAmountValues = VaBudgetCalculator.getAmountValues(field, originalHakemus.answers)
