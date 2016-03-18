@@ -1,14 +1,29 @@
-- name: Install Docker apt repo key
+- name: Install Docker apt repo key (Debian)
   apt_key: keyserver=pgp.mit.edu id=36A1D7869245C8950F966E92D8576A8BA88D21E9
+  when: ansible_os_family == 'Debian'
 
-- name: Add Docker apt repository
+- name: Add Docker apt repository (Debian)
   apt_repository: repo='deb https://get.docker.com/ubuntu docker main' state=present
+  when: ansible_os_family == 'Debian'
 
-- name: Install Docker
+- name: Install Docker (Debian)
   apt: state=installed pkg=lxc-docker force=yes
+  when: ansible_os_family == 'Debian'
+
+- name: Install Docker (RedHat)
+  yum: state=installed pkg=lxc-docker
+  when: ansible_os_family == 'RedHat'
+
+- name: Create docker group
+  group: name=docker state=present
 
 - name: Add "{{ jenkins_user }}" user to docker group
   user: name="{{ jenkins_user }}" groups=docker
 
-- name: Install g++ for jest
+- name: Install g++ for jest (Debian)
   apt: state=installed pkg=g++
+  when: ansible_os_family == 'Debian'
+
+- name: Install g++ for jest (RedHat)
+  yum:  state=installed pkg=gcc-c++
+  when: ansible_os_family == 'RedHat'
