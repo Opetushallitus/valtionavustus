@@ -14,12 +14,3 @@ centos_common_required_packages:
   - supervisor
 
 build_machine_name: va-build
-
-sudoers:
- - hsalokor
- - pam
- - jhietama
- - thrantal
- - jkytomak
- - wallops
- - smensola

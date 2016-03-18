@@ -11,28 +11,22 @@
 - hosts: oph-va-app-test01.csc.fi
   sudo: yes
   vars:
-    security_sudoers_passwordless: "{{ sudoers }}"
-    security_autoupdate_enabled: false
     app_profile: va-test
     dbname: va-qa
   roles:
   - ssh.init
   - common
   - valtionavustus.app
-  - geerlingguy.security
 
 - hosts: oph-va-app-prod01.csc.fi
   sudo: yes
   vars:
-    security_sudoers_passwordless: "{{ sudoers }}"
-    security_autoupdate_enabled: false
     app_profile: va-prod
     dbname: va-prod
   roles:
   - ssh.init
   - common
   - valtionavustus.app
-  - geerlingguy.security
 
 - hosts: va-loadbalancer-dev
   user: cloud-user
