@@ -8,8 +8,8 @@
 (def mail-titles
   {:change-request {:fi "Täydennyspyyntö avustushakemukseesi"
                     :sv "Begäran om komplettering av ansökan"}
-   :paatos {:fi "Automaattinen viesti: organisaationne avustushakemus on ratkaistu - Linkki päätösasiakirjaan"
-            :sv "SV Automaattinen viesti: organisaationne avustushakemus on ratkaistu - Linkki päätösasiakirjaan"}
+   :paatos {:fi "Automaattinen viesti: organisaationne avustushakemus on käsitelty - Linkki päätösasiakirjaan"
+            :sv "SV Automaattinen viesti: organisaationne avustushakemus on käsitelty - Linkki päätösasiakirjaan"}
   })
 
 (def mail-templates

@@ -1,4 +1,4 @@
-Avustushakemus: {{ avustushaku-name }}
+{{ avustushaku-name }}
 
 Päätöstä voitte tarkastella tästä linkistä: {{& url }}
 

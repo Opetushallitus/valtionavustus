@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import Liitteet from '../data/Liitteet'
+import Bacon from 'baconjs'
+import HttpUtil from 'va-common/web/HttpUtil.js'
 
 const DecisionField = ({avustushaku, title, id,language, onChange}) => {
   const fieldId= `decision.${id}.${language}`
@@ -96,6 +98,50 @@ class LiitteetList extends React.Component{
   }
 }
 
+class SendDecisions extends React.Component {
+  constructor(props){
+    super(props)
+    this.state = {preview:false}
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.avustushaku.id!=this.props.avustushaku.id){
+      this.setState({preview:false,count:undefined,sending:false})
+    }
+  }
+
+  render(){
+    const avustushaku = this.props.avustushaku
+
+    const onPreview = () =>{
+      this.setState({preview:true})
+    }
+
+    const onSend = () =>{
+      this.setState({...this.state,sending:true})
+      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/sendall/${avustushaku.id}`,{}))
+      sendS.onValue((res)=>{
+        this.setState({count:res.count})
+        }
+      )
+    }
+    if(avustushaku.status!="resolved"){
+      return null;
+    }
+    return (
+      <div className="send-decisions-panel">
+        <h3>Päätösten lähettäminen</h3>
+        <p>Päätökset lähetetään kaikille hakemusten jättäjille</p>
+        <div hidden={!this.state.count}>Päätös lähetetty <strong>{this.state.count}:lle</strong> hakijalle</div>
+        <div hidden={this.state.count}>
+          <button hidden={!this.state.preview} onClick={onSend} className="btn btn-selected" disabled={this.state.sending}>Vahvista päätösten lähettäminen</button>
+          <button hidden={this.state.preview} onClick={onPreview} className="btn btn-blue">Aloita päätösten lähettäminen</button>
+        </div>
+      </div>
+    )
+  }
+}
+
 export default class DecisionEditor extends React.Component {
   render() {
     const {avustushaku,controller} = this.props
@@ -111,6 +157,7 @@ export default class DecisionEditor extends React.Component {
     ]
     return (
       <div className="decision-editor">
+        <SendDecisions avustushaku={this.props.avustushaku}/>
         <DecisionDate {...this.props}/>
         {fields.map((field)=><DecisionFields key={field.id} title={field.title} avustushaku={avustushaku} id={field.id} onChange={onChange}/>)}
         <LiitteetList avustushaku={avustushaku} controller={controller}/>

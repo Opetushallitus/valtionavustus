@@ -29,8 +29,14 @@
         avustushaku (hakija-api/get-avustushaku (:avustushaku hakemus))
         language (keyword (formutil/find-answer-value answers "language"))
         ]
+    (log/info "Sending paatos email for hakemus" hakemus-id " to " emails)
     (email/send-paatos! language emails avustushaku hakemus)
     (ok {:status "sent" :hakemus hakemus-id :emails emails})))
+
+(defn send-paatos-for-all [hakemus-id]
+  (log/info "send-paatos-for-all" hakemus-id)
+  (let [emails (paatos-emails hakemus-id)]
+    (send-paatos hakemus-id emails)))
 
 (defroutes* paatos-routes
             "Paatos routes"
@@ -44,7 +50,18 @@
                          ]
                      (send-paatos hakemus-id emailList)
                      ))
-
+            (POST* "/sendall/:avustushaku-id" []
+                   :path-params [avustushaku-id :- Long]
+                   (let [
+                         hakuData (hakija-api/get-submitted-hakemukset avustushaku-id)
+                         hakemukset (:hakemukset hakuData)
+                         count (count hakemukset)
+                         ids (vec (map #(get-in % [:id]) hakemukset))
+                         ]
+                      (log/info "Send all paatos ids " ids)
+                      (run! send-paatos-for-all ids)
+                       (ok {:status "ok" :count count})
+                     ))
 
             (GET* "/emails/:hakemus-id" []
                   :path-params [hakemus-id :- Long]

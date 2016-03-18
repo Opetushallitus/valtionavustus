@@ -150,6 +150,13 @@
 (defn get-avustushaku-by-status [avustushaku-id statuses]
   (first (exec :hakija-db hakija-queries/get-avustushaku-by-status {:id avustushaku-id :statuses (map-status-list statuses)})))
 
+(defn get-submitted-hakemukset [avustushaku-id]
+  (let [hakemukset (exec :hakija-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})
+        submittedHakemukset (filter #(= (:status %) "submitted") hakemukset)]
+    {:hakemukset (hakemukset->json submittedHakemukset)}
+    )
+)
+
 (defn get-hakudata [avustushaku-id]
   (let [avustushaku (get-avustushaku avustushaku-id)
         form (get-form-by-avustushaku avustushaku-id)
