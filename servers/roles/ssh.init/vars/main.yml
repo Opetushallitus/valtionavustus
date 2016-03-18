@@ -1,0 +1,25 @@
+adminusers:
+  jhietama:
+    state: present
+    name: Janne Hietamäki
+  jkytomak:
+    state: present
+    name: Jyri Kytömäki
+  hsalokor:
+    state: present
+    name: Harri Salokorpi
+  pam:
+    state: present
+    name: Petri Ämmälä
+  smensola:
+    state: present
+    name: Sami Mensola
+  thakkara:
+    state: present
+    name: Tuomas Hakkarainen
+  thrantal:
+    state: present
+    name: Timo Rantalaiho
+  wallops:
+    state: present
+    name: Wall Ops

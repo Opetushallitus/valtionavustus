@@ -19,7 +19,27 @@
               state=present
   notify: Restart ssh
 
-- name: Add all our authorized keys cloud user
+- name: Create / delete users
+  user: name={{ item.key }} comment="{{ item.value.name }}" state={{ item.value.state }} remove=yes
+  with_dict: adminusers
+  when: ansible_ssh_user != "cloud-user"
+
+- name: Set authorized keys for individual users
+  authorized_key: user={{ item.key }} key="{{ lookup('file', '../files/public_keys/' + item.key + '.pub') }}" state={{ item.value.state }} exclusive=yes
+  with_dict: adminusers
+  when: ansible_ssh_user != "cloud-user" and item.value.state == 'present'
+
+- name: Add configured user accounts to passwordless sudoers
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: '^{{ item.key }}'
+    line: '{{ item.key }} ALL=(ALL) NOPASSWD: ALL'
+    state: '{{ item.value.state }}'
+    validate: 'visudo -cf %s'
+  with_dict: adminusers
+  when: ansible_ssh_user != "cloud-user"
+
+- name: Add all our authorized keys for cloud user
   authorized_key: user="{{ ansible_ssh_user }}"
                   key="{{ lookup('file', item) }}"
   with_fileglob:
