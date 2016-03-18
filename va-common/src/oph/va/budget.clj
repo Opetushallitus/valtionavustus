@@ -9,13 +9,16 @@
 (defn- is-budget-field? [element]
   (formutil/has-field-type? "vaBudget" element))
 
-(defn calculate-totals [answers avustushaku form]
+(defn calculate-totals-virkailija [answers avustushaku form use-detailed-costs costs-granted]
   (let [self-financing-percentage (-> avustushaku :content :self-financing-percentage)
         all-budget-summaries (->> (:content form)
                                   formutil/flatten-elements
                                   (filter is-budget-field?)
-                                  (map (partial do-calculate-totals answers self-financing-percentage)))]
+                                  (map (partial do-calculate-totals answers self-financing-percentage use-detailed-costs costs-granted )))]
     (first all-budget-summaries)))
+
+(defn calculate-totals [answers avustushaku form]
+  (calculate-totals-virkailija answers avustushaku form true 0))
 
 (defn- find-summing-fields [children]
   (-> (partial formutil/has-field-type? "vaSummingBudgetElement")
@@ -26,21 +29,24 @@
       (map children)
       flatten))
 
-(defn- sum-budget-items [answers children]
-  (-> (fn [item] (read-amount item answers))
+(defn- sum-budget-items [answers only-incomes children]
+  (-> (fn [item] (read-amount item answers only-incomes))
       (map children)))
 
-(defn- do-calculate-totals [answers self-financing-percentage budget-field]
-  (let [total-sum (->> (:children budget-field)
+(defn- do-calculate-totals [answers self-financing-percentage use-detailed-costs costs-granted budget-field ]
+  (let [only-incomes (not use-detailed-costs)
+        total-row-sum (->> (:children budget-field)
                        find-summing-fields
                        find-budget-item-elements
-                       (sum-budget-items answers)
+                       (sum-budget-items answers only-incomes)
                        (r/fold +))
+        total-sum (if use-detailed-costs total-row-sum (+ total-row-sum costs-granted))
         self-financing-share (-> (/ self-financing-percentage 100)
                                  (* total-sum)
                                  Math/ceil
                                  int)
         oph-share (max (- total-sum self-financing-share) 0)]
+    (print use-detailed-costs costs-granted total-row-sum only-incomes total-sum)
     {:total-needed total-sum
      :oph-share oph-share}))
 
@@ -53,9 +59,9 @@
     (catch Exception e
       0)))
 
-(defn- read-amount [budget-item answers]
+(defn- read-amount [budget-item answers only-incomes]
   (let [raw-answer-value (formutil/find-answer-value answers (:id (amount-field-of budget-item)))
         numeric-value (sanitise raw-answer-value)
         increments-total (-> budget-item :params :incrementsTotal)
-        coefficient (if increments-total 1 -1)]
+        coefficient (if increments-total (if only-incomes 0 1) -1)]
     (* coefficient numeric-value)))

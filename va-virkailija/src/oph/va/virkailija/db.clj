@@ -93,7 +93,7 @@
     (= status :rejected) 0
     (not (:overridden-answers arvio)) (:budget-granted arvio)
     :else (let [form (hakija-api/get-form-by-avustushaku (:id avustushaku))
-                calculated-budget (va-budget/calculate-totals (:overridden-answers arvio) avustushaku form)]
+                calculated-budget (va-budget/calculate-totals-virkailija (:overridden-answers arvio) avustushaku form (:useDetailedCosts arvio) (:costsGranted arvio))]
                     (:oph-share calculated-budget))))
 
 (defn update-or-create-hakemus-arvio [avustushaku hakemus-id arvio identity]
