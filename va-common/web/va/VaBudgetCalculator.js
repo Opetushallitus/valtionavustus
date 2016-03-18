@@ -54,11 +54,12 @@ export default class VaBudgetCalculator {
     const summingFieldChildren = JsUtil.flatFilter(vaBudgetField.children, child => { return child.fieldType === "vaSummingBudgetElement" })
     const subTotalsAndErrorsAndFieldIds = _.map(summingFieldChildren, populateSummingFieldTotal(answersObject, state))
 
-    const total = _.reduce(subTotalsAndErrorsAndFieldIds, (acc, x) => { return acc + x.sum }, 0)
-    const someFigureHasError = _.some(subTotalsAndErrorsAndFieldIds, x => {
-      return x.containsErrors
-    })
-    const budgetIsPositive = total > 0;
+    const subTotals = _.map(subTotalsAndErrorsAndFieldIds, 'sum')
+    const useDetailedCosts = _.get(state, 'saveStatus.savedObject.arvio.useDetailedCosts', true)
+    const costsGranted = _.get(state, 'saveStatus.savedObject.arvio.costsGranted', 0)
+    const total = useDetailedCosts ? _.sum(subTotals) : _.sum(_.rest(subTotals)) + costsGranted
+    const someFigureHasError = useDetailedCosts && _.some(subTotalsAndErrorsAndFieldIds, x => x.containsErrors)
+    const budgetIsPositive = total > 0
     const budgetIsValid = !someFigureHasError && budgetIsPositive
     const newValidationErrors = budgetIsPositive || !reportTotalError ? [] : [{ "error": "negative-budget" }]
     state.form.validationErrors = state.form.validationErrors.merge({[vaBudgetField.id]: newValidationErrors})
