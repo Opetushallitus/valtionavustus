@@ -1,11 +1,21 @@
-- name: Install apache2-utils to get httpaswd
-  apt: state=installed pkg=apache2-utils
+- name: Install apache2-utils to get httpaswd (Debian)
+  apt:  pkg=apache2-utils state=installed
+  when: ansible_os_family == 'Debian'
+
+- name: Install httpd-tools to get httpaswd (RedHat)
+  yum:  pkg=httpd-tools state=installed
+  when: ansible_os_family == 'RedHat'
+
+- name: Install git (Debian)
+  apt:  pkg=git state=latest install_recommends=yes
+  when: ansible_os_family == 'Debian'
+
+- name: Install git (RedHat)
+  yum:  pkg=git state=latest
+  when: ansible_os_family == 'RedHat'
 
 - name: Add script to add users manually
   template: src=add_va_jenkins_user.bash.j2 dest=/usr/local/bin/add_va_jenkins_user.bash owner=root group=root mode=0755
-
-- name: Install git
-  action: apt pkg=git state=latest install_recommends=yes
 
 - name: Remove previous OPH artifactory IP mapping from /etc/hosts
   lineinfile: dest=/etc/hosts regexp='^[0-9\.]* artifactory.oph.ware.fi$' state=absent owner=root group=root mode=0644

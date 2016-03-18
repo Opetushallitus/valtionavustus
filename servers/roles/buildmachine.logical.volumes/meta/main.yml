@@ -1,0 +1,4 @@
+dependencies:
+  - role: ssh.init
+  - role: common
+  - role: logical.volumes
