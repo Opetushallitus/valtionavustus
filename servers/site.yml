@@ -64,9 +64,9 @@
   roles:
   - buildmachine.logical.volumes
   - buildmachine
+  - 3rdparty/nodesource.node
   - valtionavustus.build
   - 3rdparty/Stouts.jenkins
   - valtionavustus.deploy
   - 3rdparty/debops.pki
   - 3rdparty/debops.nginx
-  - 3rdparty/nodesource.node
