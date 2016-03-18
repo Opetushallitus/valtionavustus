@@ -4,6 +4,10 @@
   when: ansible_os_family == 'Debian'
   tags: [jenkins, jenkins-install]
 
+- include: install.redhat.yml
+  when: ansible_os_family == 'RedHat'
+  tags: [jenkins, jenkins-install]
+
 - include: configure.yml
   tags: [jenkins, jenkins-configure]
 

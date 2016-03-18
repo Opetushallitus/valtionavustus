@@ -1,0 +1,9 @@
+---
+# install manually yum repo: jenkins.repo
+
+- name: jenkins-install | Install jenkins
+  yum: pkg={{item}}
+  with_items: [curl, jenkins]
+  sudo: yes
+
+# vim:sw=2

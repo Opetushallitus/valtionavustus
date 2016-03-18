@@ -1,6 +1,8 @@
 ---
 apache_server_root: /etc/httpd
 apache_listen_port: "{{ jenkins_proxy_port }}"
+jenkins_configuration: /etc/sysconfig/jenkins
+jenkins_root: /usr/lib/jenkins
 
 apache_ports_configuration_items:
   - {
