@@ -98,14 +98,16 @@
 
 (defn update-or-create-hakemus-arvio [avustushaku hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
+        costs-granted (:costsGranted arvio)
+        use-detailed-costs (:useDetailedCosts arvio)
         budget-granted (or (calculate-total-oph-budget avustushaku status arvio) 0)
         overridden-answers (:overridden-answers arvio)
         arvio-to-save  {:hakemus_id hakemus-id
                         :status status
                         :overridden_answers overridden-answers
                         :budget_granted budget-granted
-                        :costs_granted (:costsGranted arvio)
-                        :use_overridden_detailed_costs (:useDetailedCosts arvio)
+                        :costs_granted costs-granted
+                        :use_overridden_detailed_costs use-detailed-costs
                         :summary_comment (:summary-comment arvio)
                         :roles (:roles arvio)
                         :presenter_role_id (:presenter-role-id arvio)
