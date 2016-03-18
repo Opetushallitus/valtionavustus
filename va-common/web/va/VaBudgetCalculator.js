@@ -10,17 +10,19 @@ export default class VaBudgetCalculator {
   }
 
   populateBudgetCalculatedValuesForAllBudgetFields(initialState, reportTotalError) {
-    const budgetFields = JsUtil.flatFilter(initialState.form.content, n => { return n.fieldType === "vaBudget" })
-    _.forEach(budgetFields, budgetField => { this.populateBudgetCalculatedValues(initialState, budgetField, reportTotalError ) })
+    const budgetFields = JsUtil.flatFilter(initialState.form.content, n => n.fieldType === "vaBudget")
+    _.forEach(budgetFields, budgetField => {
+      this.populateBudgetCalculatedValues(initialState, budgetField, reportTotalError)
+    })
   }
 
   handleBudgetAmountUpdate(state, amountFieldId) {
     const formContent = state.form.content
-    const vaBudgetFields = JsUtil.flatFilter(formContent, n => { return n.fieldType === "vaBudget" && !_.isEmpty(JsUtil.findJsonNodeContainingId(n, amountFieldId)) })
-    if (_.isEmpty(vaBudgetFields)) {
-      return
+    const vaBudgetFields = JsUtil.flatFilter(formContent, n => n.fieldType === "vaBudget" && !_.isEmpty(JsUtil.findJsonNodeContainingId(n, amountFieldId)))
+    if(_.isEmpty(vaBudgetFields)) {
+      return undefined
     }
-    if (vaBudgetFields.length !== 1) {
+    if(vaBudgetFields.length !== 1) {
       throw new Error(amountFieldId + ' has ' + vaBudgetFields.length + ' budget parents, looks like bug.')
     }
     return this.populateBudgetCalculatedValues(state, vaBudgetFields[0], true)
@@ -51,7 +53,7 @@ export default class VaBudgetCalculator {
 
     const answersObject = state.saveStatus.values
 
-    const summingFieldChildren = JsUtil.flatFilter(vaBudgetField.children, child => { return child.fieldType === "vaSummingBudgetElement" })
+    const summingFieldChildren = JsUtil.flatFilter(vaBudgetField.children, child => child.fieldType === "vaSummingBudgetElement")
     const subTotalsAndErrorsAndFieldIds = _.map(summingFieldChildren, populateSummingFieldTotal(answersObject, state))
 
     const subTotals = _.map(subTotalsAndErrorsAndFieldIds, 'sum')
@@ -61,7 +63,7 @@ export default class VaBudgetCalculator {
     const someFigureHasError = useDetailedCosts && _.some(subTotalsAndErrorsAndFieldIds, x => x.containsErrors)
     const budgetIsPositive = total > 0
     const budgetIsValid = !someFigureHasError && budgetIsPositive
-    const newValidationErrors = budgetIsPositive || !reportTotalError ? [] : [{ "error": "negative-budget" }]
+    const newValidationErrors = budgetIsPositive || !reportTotalError ? [] : [{error: "negative-budget"}]
     state.form.validationErrors = state.form.validationErrors.merge({[vaBudgetField.id]: newValidationErrors})
 
     const summaryField = _.last(vaBudgetField.children)
@@ -69,15 +71,15 @@ export default class VaBudgetCalculator {
     summaryField.budgetIsValid = budgetIsValid
 
     function populateSummingFieldTotal(answersObject, state) {
-      return function(summingBudgetField) {
-        const amountValues = VaBudgetCalculator.getAmountValues(summingBudgetField, answersObject, function(descriptionField) { sumCalculatedCallback(descriptionField, state) })
-        const sum = _.reduce(amountValues, (total, errorsAndValue) => {return total + errorsAndValue.value}, 0)
+      return summingBudgetField => {
+        const amountValues = VaBudgetCalculator.getAmountValues(summingBudgetField, answersObject, descriptionField => sumCalculatedCallback(descriptionField, state))
+        const sum = _.sum(_.map(amountValues, 'value'))
         summingBudgetField.sum = sum
-        const containsErrors = _.some(amountValues, (errorsAndValue) => { return errorsAndValue.containsErrors })
+        const containsErrors = _.some(amountValues, errorsAndValue => errorsAndValue.containsErrors)
         return {
-          "summingFieldId": summingBudgetField.id,
-          "sum": sum,
-          "containsErrors": containsErrors
+          summingFieldId: summingBudgetField.id,
+          sum: sum,
+          containsErrors: containsErrors
         }
       }
     }
