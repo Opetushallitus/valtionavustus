@@ -333,6 +333,14 @@
     "myonnetty-avustus":{
       "fi":"Myönnetty avustus",
       "sv":"SV Myönnetty avustus"
+    },
+    "rahoitus":{
+      "fi":"Hankkeen rahoitus",
+      "sv":"SV Hankkeen rahoitus"
+    },
+    "summa":{
+      "fi":"Summa",
+      "sv":"SV Summa"
     }
   }
 }

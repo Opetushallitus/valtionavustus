@@ -82,8 +82,14 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, lang, transl
        original: findCost(formContent, hakemus.answers, budgetItem),
        overridden: findCost(formContent, hakemus.arvio['overridden-answers'], budgetItem)
      }))
+  const rahoitusItems = FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
+     .filter(budgetItem => !budgetItem.params.incrementsTotal)
+     .map(budgetItem => _.extend(budgetItem, {
+       original: findCost(formContent, hakemus.answers, budgetItem)
+     }))
   const totalOriginalCosts = formatNumber(_.sum(budgetItems.map(i=>Number(i.original))))
   const totalCosts = formatNumber(hakemus.arvio.useDetailedCosts ? _.sum(budgetItems.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted)
+  const totalRahoitus = formatNumber(_.sum(rahoitusItems.map(i=>Number(i.original))))
   const totalGranted = formatNumber(hakemus.arvio['budget-granted'])
   return (
      <section>
@@ -116,11 +122,13 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, lang, transl
        <LiitteetList hakemus={hakemus} avustushaku={avustushaku} lang={lang} translations={translations}/>
        <Kayttosuunnitelma
           budgetItems={budgetItems}
+          rahoitusItems={rahoitusItems}
           avustushaku={avustushaku}
           hakemus={hakemus}
           totalCosts={totalCosts}
           totalOriginalCosts={totalOriginalCosts}
           totalGranted={totalGranted}
+          totalRahoitus={totalRahoitus}
           lang={lang}
           translations={translations}
        />
@@ -170,7 +178,7 @@ class SendDecisionButton extends React.Component {
   }
 }
 
-const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, totalOriginalCosts, totalGranted, lang, translations}) =>
+const Kayttosuunnitelma = ({budgetItems, rahoitusItems, avustushaku, hakemus, totalCosts, totalOriginalCosts, totalRahoitus, totalGranted, lang, translations}) =>
    <div>
      <section className="section">
        <h1><LocalizedString translationKey="kayttosuunnitelma" translations={translations} lang={lang}/></h1>
@@ -207,6 +215,25 @@ const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, total
          </tr>
          </tfoot>
        </table>
+
+       <table>
+         <thead>
+         <tr>
+           <th><LocalizedString translationKey="rahoitus" translations={translations} lang={lang}/></th>
+           <th className="amount"><LocalizedString translationKey="summa" translations={translations} lang={lang}/>
+           </th>
+         </tr>
+         </thead>
+         <tbody>
+         {rahoitusItems.map(budgetItem=><BudgetItemRow2 key={budgetItem.id} item={budgetItem} lang={lang}/>)}
+         </tbody>
+         <tfoot>
+         <tr>
+           <th><LocalizedString translationKey="yhteensa" translations={translations} lang={lang}/></th>
+           <th className="amount">{totalRahoitus}</th>
+         </tr>
+         </tfoot>
+       </table>
      </section>
    </div>
 
@@ -215,6 +242,12 @@ const BudgetItemRow = ({item, lang, useDetailedCosts}) =>
      <td>{item.label[lang]}</td>
      <td className="amount">{formatNumber(item.original)}</td>
      <td className="amount">{useDetailedCosts ? formatNumber(item.overridden) : ''}</td>
+   </tr>
+
+const BudgetItemRow2 = ({item, lang}) =>
+   <tr>
+     <td>{item.label[lang]}</td>
+     <td className="amount">{formatNumber(item.original)}</td>
    </tr>
 
 const RejectedDecision = ({avustushaku, hakemus, role, lang, translations}) =>
