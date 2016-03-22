@@ -226,23 +226,18 @@ const Section = ({title, content, lang, translations, children})=>{
 
 const OptionalSection = ({title,id, avustushaku, lang, translations}) =>{
   const content = _.get(avustushaku, `decision.${id}.${lang}`,"")
-  if(_.isEmpty(content)) return <div></div>
-  return (
-    <Section title={title} lang={lang} translations={translations}>
-      <ContentWithParagraphs content={content}/>
-    </Section>
+  return _.isEmpty(content) ? <div></div> : (
+     <Section title={title} lang={lang} translations={translations}>
+       <ContentWithParagraphs content={content}/>
+     </Section>
   )
 }
 
 const Perustelut = ({hakemus, lang, translations}) =>
-{
-  if(_.isEmpty(hakemus.arvio.perustelut)) return (<div></div>)
-  return(
-    <Section title="paatoksen-perustelut" lang={lang} translations={translations}>
-      <ContentWithParagraphs content={hakemus.arvio.perustelut}/>
-    </Section>
-  )
-}
+   _.isEmpty(hakemus.arvio.perustelut) ? <div></div> :
+      <Section title="paatoksen-perustelut" lang={lang} translations={translations}>
+        <ContentWithParagraphs content={hakemus.arvio.perustelut}/>
+      </Section>
 
 const Lisatietoja = ({avustushaku, role, lang, translations})=>
   <Section title="lisatietoja" lang={lang} translations={translations}>
@@ -252,11 +247,10 @@ const Lisatietoja = ({avustushaku, role, lang, translations})=>
 
 const DecisionContent = ({id,avustushaku,lang}) =>{
   const content = _.get(avustushaku, `decision.${id}.${lang}`,"")
-  if(_.isEmpty(content)) return <div></div>
-  return (
-      <div>
-        <ContentWithParagraphs content={content}/>
-      </div>
+  return _.isEmpty(content) ? <div></div> : (
+     <div>
+       <ContentWithParagraphs content={content}/>
+     </div>
   )
 }
 
@@ -289,23 +283,14 @@ const findLiite = (allAttachments,attachments,groupName) => {
   return _.find(group.attachments,(a)=>a.id==row.id)
 }
 
-const LiiteRow = ({liite,lang}) =>{
-  if(!liite.id) return (<div></div>)
-  const link = `/public/api/liite/${liite.id}/${lang}`
-  return (
-    <div>
-      <a href={link} target="_blank">{liite[lang]}</a>
-    </div>
-  )
-}
+const LiiteRow = ({liite,lang}) => liite.id ?
+   <div>
+     <a href={`/public/api/liite/${liite.id}/${lang}`} target="_blank">{liite[lang]}</a>
+   </div> : <div></div>
+
 
 const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
 
-const ContentWithParagraphs = ({content}) => {
-  const paragraphs = content.split("\n")
-  return (
-    <div>{paragraphs.map((p)=><p key={p}>{p}</p>)}</div>
-  )
-}
+const ContentWithParagraphs = ({content}) => <div>{content.split("\n").map((p)=><p key={p}>{p}</p>)}</div>
 
 const formatNumber = num => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1\u00A0") + '\u00A0€'
