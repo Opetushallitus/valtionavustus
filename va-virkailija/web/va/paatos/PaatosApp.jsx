@@ -83,7 +83,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, lang, transl
        overridden: findCost(formContent, hakemus.arvio['overridden-answers'], budgetItem)
      }))
   const totalOriginalCosts = formatNumber(_.sum(budgetItems.map(i=>Number(i.original))))
-  const totalCosts = formatNumber(_.sum(budgetItems.map(i=>Number(i.overridden))))
+  const totalCosts = formatNumber(hakemus.arvio.useDetailedCosts ? _.sum(budgetItems.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted)
   const totalGranted = formatNumber(hakemus.arvio['budget-granted'])
   return (
      <section>
@@ -192,7 +192,7 @@ const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, total
          </tr>
          </thead>
          <tbody>
-         {budgetItems.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={lang}/>)}
+         {budgetItems.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={lang} useDetailedCosts={hakemus.arvio.useDetailedCosts}/>)}
          </tbody>
          <tfoot>
          <tr>
@@ -210,11 +210,11 @@ const Kayttosuunnitelma = ({budgetItems, avustushaku, hakemus, totalCosts, total
      </section>
    </div>
 
-const BudgetItemRow = ({item,lang}) =>
+const BudgetItemRow = ({item, lang, useDetailedCosts}) =>
    <tr>
      <td>{item.label[lang]}</td>
      <td className="amount">{formatNumber(item.original)}</td>
-     <td className="amount">{formatNumber(item.overridden)}</td>
+     <td className="amount">{useDetailedCosts ? formatNumber(item.overridden) : ''}</td>
    </tr>
 
 const RejectedDecision = ({avustushaku, hakemus, role, lang, translations}) =>
