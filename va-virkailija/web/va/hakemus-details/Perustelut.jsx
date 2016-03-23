@@ -25,14 +25,16 @@ export default class Perustelut extends React.Component {
 
         <div className="value-edit">
           <label htmlFor="perustelut">Perustelut hakijalle <strong>{languageTitle}</strong></label>
-          <div hidden={!rejected} className="radio-container radio-container--perustelut">
-            {rejectedReasons.map((reason)=>
-              <div key={reason} className={`radio-row ${reason==perustelut ? "radio-row--selected" : ""}`}>
-                <div onClick={_.partial(setReason,reason)}>{reason}</div>
+          {
+            rejected &&
+              <div className="radio-container radio-container--perustelut">
+                {rejectedReasons.map((reason)=>
+                  <div key={reason} className={`radio-row ${reason==perustelut ? "radio-row--selected" : ""}`}>
+                    <div onClick={_.partial(setReason,reason)}>{reason}</div>
+                  </div>
+                )}
               </div>
-            )}
-
-          </div>
+          }
           <textarea id="perustelut" rows="5" disabled={!allowEditing} value={perustelut} title={perustelut}
                     onChange={onChange}/>
         </div>
