@@ -45,6 +45,7 @@ export default class PaatosApp extends Component {
     const query = queryString.parse(location.search)
     const lang = query.lang ? query.lang : languageAnswer ? languageAnswer.value : "fi"
     const L = ({translationKey}) => <LocalizedString translationKey={translationKey} translations={translations} lang={lang}/>
+    L.lang = lang
 
     return (
        <section>
@@ -57,19 +58,19 @@ export default class PaatosApp extends Component {
          <Section title="asia" L={L}>
            <L translationKey="asia-title" />
            <br/>
-           {avustushaku.content.name[lang]}
+           {avustushaku.content.name[L.lang]}
          </Section>
-         <OptionalSection title="taustaa" id="taustaa" avustushaku={avustushaku} lang={lang} L={L}/>
+         <OptionalSection title="taustaa" id="taustaa" avustushaku={avustushaku} L={L}/>
          {decisionStatus == 'rejected' ?
-            <RejectedDecision avustushaku={avustushaku} hakemus={hakemus} role={role} lang={lang} L={L}/> :
-            <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} role={role} formContent={formContent} lang={lang} L={L}/>}
+            <RejectedDecision avustushaku={avustushaku} hakemus={hakemus} role={role} L={L}/> :
+            <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} role={role} formContent={formContent} L={L}/>}
          <SendDecisionButton avustushaku={avustushaku} hakemus={hakemus}/>
        </section>
     )
   }
 }
 
-const AcceptedDecision = ({hakemus, avustushaku, role, formContent, lang, L}) => {
+const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
   const answers = hakemus.answers
   const iban = InputValueStorage.readValues(answers, 'iban')[0].value
   const bic = InputValueStorage.readValues(answers, 'bic')[0].value
@@ -105,12 +106,12 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, lang, L}) =>
            <strong>{iban}, {bic}</strong></p>
          <DecisionContent avustushaku={avustushaku} id="maksu"/>
        </Section>
-       <OptionalSection title="avustuksen-kaytto" id="kaytto" avustushaku={avustushaku} lang={lang} L={L}/>
-       <OptionalSection title="kayttooikeudet" id="kayttooikeudet" avustushaku={avustushaku} lang={lang} L={L}/>
-       <OptionalSection title="selvitysvelvollisuus" id="selvitysvelvollisuus" avustushaku={avustushaku} lang={lang} L={L}/>
-       <OptionalSection title="valtionavustuksen-kayttoaika" id="kayttoaika" avustushaku={avustushaku} lang={lang} L={L}/>
-       <Lisatietoja avustushaku={avustushaku} role={role} lang={lang} L={L}/>
-       <LiitteetList hakemus={hakemus} avustushaku={avustushaku} lang={lang} L={L}/>
+       <OptionalSection title="avustuksen-kaytto" id="kaytto" avustushaku={avustushaku} L={L}/>
+       <OptionalSection title="kayttooikeudet" id="kayttooikeudet" avustushaku={avustushaku} L={L}/>
+       <OptionalSection title="selvitysvelvollisuus" id="selvitysvelvollisuus" avustushaku={avustushaku} L={L}/>
+       <OptionalSection title="valtionavustuksen-kayttoaika" id="kayttoaika" avustushaku={avustushaku} L={L}/>
+       <Lisatietoja avustushaku={avustushaku} role={role} L={L}/>
+       <LiitteetList hakemus={hakemus} avustushaku={avustushaku} L={L}/>
        <Kayttosuunnitelma
           budgetItems={budgetItems}
           rahoitusItems={rahoitusItems}
@@ -120,7 +121,6 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, lang, L}) =>
           totalOriginalCosts={totalOriginalCosts}
           totalGranted={totalGranted}
           totalRahoitus={totalRahoitus}
-          lang={lang}
           L={L}
        />
      </section>
@@ -169,12 +169,12 @@ class SendDecisionButton extends React.Component {
   }
 }
 
-const Kayttosuunnitelma = ({budgetItems, rahoitusItems, avustushaku, hakemus, totalCosts, totalOriginalCosts, totalRahoitus, totalGranted, lang, L}) =>
+const Kayttosuunnitelma = ({budgetItems, rahoitusItems, avustushaku, hakemus, totalCosts, totalOriginalCosts, totalRahoitus, totalGranted, L}) =>
    <div>
      <section className="section">
        <h1><L translationKey="kayttosuunnitelma" /></h1>
 
-       <p><strong>{avustushaku.content.name[lang]}</strong></p>
+       <p><strong>{avustushaku.content.name[L.lang]}</strong></p>
        <p><L translationKey="hanke" /> {hakemus['project-name']}
        </p>
        <p><L translationKey="myonnetty-title" /></p>
@@ -191,7 +191,7 @@ const Kayttosuunnitelma = ({budgetItems, rahoitusItems, avustushaku, hakemus, to
          </tr>
          </thead>
          <tbody>
-         {budgetItems.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={lang} useDetailedCosts={hakemus.arvio.useDetailedCosts}/>)}
+         {budgetItems.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={L.lang} useDetailedCosts={hakemus.arvio.useDetailedCosts}/>)}
          </tbody>
          <tfoot>
          <tr>
@@ -216,7 +216,7 @@ const Kayttosuunnitelma = ({budgetItems, rahoitusItems, avustushaku, hakemus, to
          </tr>
          </thead>
          <tbody>
-         {rahoitusItems.map(budgetItem=><IncomeBudgetItemRow key={budgetItem.id} item={budgetItem} lang={lang}/>)}
+         {rahoitusItems.map(budgetItem=><IncomeBudgetItemRow key={budgetItem.id} item={budgetItem} lang={L.lang}/>)}
          </tbody>
          <tfoot>
          <tr>
@@ -241,7 +241,7 @@ const IncomeBudgetItemRow = ({item, lang}) =>
      <td className="amount">{formatNumber(item.original)}</td>
    </tr>
 
-const RejectedDecision = ({avustushaku, hakemus, role, lang, L}) =>
+const RejectedDecision = ({avustushaku, hakemus, role, L}) =>
    <section>
      <Section title="paatos" L={L}>
        <p><L translationKey="hylatty-title" /></p>
@@ -250,8 +250,8 @@ const RejectedDecision = ({avustushaku, hakemus, role, lang, L}) =>
        </p>
      </Section>
      <Perustelut hakemus={hakemus} L={L}/>
-     <Lisatietoja avustushaku={avustushaku} role={role} lang={lang} L={L}/>
-     <LiitteetList hakemus={hakemus} avustushaku={avustushaku} lang={lang} L={L}/>
+     <Lisatietoja avustushaku={avustushaku} role={role} L={L}/>
+     <LiitteetList hakemus={hakemus} avustushaku={avustushaku} L={L}/>
    </section>
 
 const Section = ({title, content, children, L})=> {
@@ -265,8 +265,8 @@ const Section = ({title, content, children, L})=> {
   )
 }
 
-const OptionalSection = ({title,id, avustushaku, lang, L}) => {
-  const content = _.get(avustushaku, `decision.${id}.${lang}`, "")
+const OptionalSection = ({title,id, avustushaku, L}) => {
+  const content = _.get(avustushaku, `decision.${id}.${L.lang}`, "")
   return _.isEmpty(content) ? <div></div> : (
      <Section title={title} L={L}>
        <ContentWithParagraphs content={content}/>
@@ -280,13 +280,13 @@ const Perustelut = ({hakemus, L}) =>
         <ContentWithParagraphs content={hakemus.arvio.perustelut}/>
       </Section>
 
-const Lisatietoja = ({avustushaku, role, lang, L})=>
+const Lisatietoja = ({avustushaku, role, L})=>
    <Section title="lisatietoja" L={L}>
      <p><L translationKey="lisatietoja-antaa" />: {role.name} &lt;{role.email}&gt;</p>
-     <DecisionContent avustushaku={avustushaku} id="lisatiedot" lang={lang}/>
+     <DecisionContent avustushaku={avustushaku} id="lisatiedot" lang={L.lang}/>
    </Section>
 
-const DecisionContent = ({id,avustushaku,lang}) => {
+const DecisionContent = ({id, avustushaku, lang}) => {
   const content = _.get(avustushaku, `decision.${id}.${lang}`, "")
   return _.isEmpty(content) ? <div></div> : (
      <div>
@@ -295,24 +295,24 @@ const DecisionContent = ({id,avustushaku,lang}) => {
   )
 }
 
-const LiitteetList = ({hakemus,avustushaku, lang, L})=> {
+const LiitteetList = ({hakemus,avustushaku, L})=> {
   const liitteet = _.get(avustushaku, "decision.liitteet", [])
   const decisionStatus = hakemus.arvio.status
   const rejected = decisionStatus == 'rejected'
 
-  const ehdot = findLiite(Liitteet, liitteet, "Ehdot", lang)
-  const oikaisuvaatimus = findLiite(Liitteet, liitteet, "Oikaisuvaatimusosoitus", lang)
+  const ehdot = findLiite(Liitteet, liitteet, "Ehdot")
+  const oikaisuvaatimus = findLiite(Liitteet, liitteet, "Oikaisuvaatimusosoitus")
 
   const AcceptedAttachments =
      <div>
        <div><L translationKey="kayttosuunnitelma"/></div>
-       <div><LiiteRow liite={ehdot} lang={lang}/></div>
+       <div><LiiteRow liite={ehdot} lang={L.lang}/></div>
      </div>
   const RejectedAttachments = null
   return (
      <Section title="liitteet" L={L}>
        {rejected ? RejectedAttachments : AcceptedAttachments}
-       <div><LiiteRow liite={oikaisuvaatimus} lang={lang}/></div>
+       <div><LiiteRow liite={oikaisuvaatimus} lang={L.lang}/></div>
      </Section>
   )
 }
@@ -324,7 +324,7 @@ const findLiite = (allAttachments, attachments, groupName) => {
   return _.find(group.attachments, (a)=>a.id == row.id)
 }
 
-const LiiteRow = ({liite,lang}) => liite.id ?
+const LiiteRow = ({liite, lang}) => liite.id ?
    <div>
      <a href={`/public/api/liite/${liite.id}/${lang}`} target="_blank">{liite[lang]}</a>
    </div> : <div></div>
