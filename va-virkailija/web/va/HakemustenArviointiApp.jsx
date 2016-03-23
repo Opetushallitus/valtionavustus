@@ -94,8 +94,6 @@ stateP.onValue((state) => {
   try {
     if (state.hakuData && state.userInfo) {
       ReactDOM.render(<App state={state} controller={controller}/>, document.getElementById('app'))
-    } else {
-      console.log('Not rendering yet, because state.hakuData not yet loaded.')
     }
   } catch (e) {
     console.log('Error from ReactDOM.render with state', state, e)
