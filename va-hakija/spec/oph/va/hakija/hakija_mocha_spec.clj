@@ -2,7 +2,8 @@
   (:use [clojure.tools.trace]
         [clojure.java.shell :only [sh]]
         [clojure.string :only [split join]])
-  (:require [speclj.core :refer :all]
+  (:require [environ.core :refer [env]]
+            [speclj.core :refer :all]
             [oph.common.testing.spec-plumbing :refer :all]
             [oph.va.hakija.server :refer :all]))
 
@@ -36,11 +37,13 @@
 
   (it "are successful"
       ;; mocha --compilers js:babel/register web/test/*Test.js
-      (let [results (sh "./node_modules/mocha/bin/mocha"
+      (let [path    (env :path)
+            results (sh "./node_modules/mocha/bin/mocha"
                         "--require" "web/test/babelhook"
                         "--reporter" "mocha-junit-reporter"
                         "web/test/*Test.js"
-                        :env {"MOCHA_FILE" "target/junit-mocha-js-unit.xml"})]
+                        :env {"MOCHA_FILE" "target/junit-mocha-js-unit.xml"
+                              "PATH" path})]
         (println (:out results))
         (.println System/err (:err results))
         (should= 0 (:exit results)))))

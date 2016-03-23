@@ -30,7 +30,8 @@
 
   :aot [oph.va.jdbc.enums
         oph.va.hakija.db.migrations]
-  :profiles {:uberjar {:aot [oph.va.hakija.main]}}
+  :profiles {:uberjar {:aot [oph.va.hakija.main]}
+             :test    {:dependencies [[environ "1.0.2"]]}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.hakija.db.migrations/migrate" "db.migration"]
             "dbclear" ["run" "-m" "oph.soresu.common.db/clear-db!" "db" "hakija"]
             "buildfront" ^{:doc "Build frontend code with npm"}
