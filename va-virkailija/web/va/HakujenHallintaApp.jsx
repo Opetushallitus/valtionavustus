@@ -51,8 +51,6 @@ stateP.onValue(function(state) {
   try {
     if (state.hakuList) {
       ReactDOM.render(<AdminApp state={state} controller={controller}/>, document.getElementById('app'))
-    } else {
-      console.log('Not rendering yet, because state.hakuList not yet loaded.')
     }
   } catch (e) {
     console.log('Error from ReactDOM.render with state', state, e)
