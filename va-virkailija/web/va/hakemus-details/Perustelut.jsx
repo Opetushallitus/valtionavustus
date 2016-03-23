@@ -27,7 +27,7 @@ export default class Perustelut extends React.Component {
           <label htmlFor="perustelut">Perustelut hakijalle <strong>{languageTitle}</strong></label>
           <div hidden={!rejected} className="radio-container radio-container--perustelut">
             {rejectedReasons.map((reason)=>
-              <div className={`radio-row ${reason==perustelut ? "radio-row--selected" : ""}`}>
+              <div key={reason} className={`radio-row ${reason==perustelut ? "radio-row--selected" : ""}`}>
                 <div onClick={_.partial(setReason,reason)}>{reason}</div>
               </div>
             )}
