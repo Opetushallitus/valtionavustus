@@ -224,7 +224,7 @@ const Kayttosuunnitelma = ({budgetItems, rahoitusItems, avustushaku, hakemus, to
          </tr>
          </thead>
          <tbody>
-         {rahoitusItems.map(budgetItem=><BudgetItemRow2 key={budgetItem.id} item={budgetItem} lang={lang}/>)}
+         {rahoitusItems.map(budgetItem=><IncomeBudgetItemRow key={budgetItem.id} item={budgetItem} lang={lang}/>)}
          </tbody>
          <tfoot>
          <tr>
@@ -243,7 +243,7 @@ const BudgetItemRow = ({item, lang, useDetailedCosts}) =>
      <td className="amount">{useDetailedCosts ? formatNumber(item.overridden) : ''}</td>
    </tr>
 
-const BudgetItemRow2 = ({item, lang}) =>
+const IncomeBudgetItemRow = ({item, lang}) =>
    <tr>
      <td>{item.label[lang]}</td>
      <td className="amount">{formatNumber(item.original)}</td>
