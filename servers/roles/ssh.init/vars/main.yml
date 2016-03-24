@@ -1,4 +1,7 @@
 adminusers:
+  auramo:
+    state: present
+    name: Perttu Auramo
   jhietama:
     state: present
     name: Janne Hietamäki
