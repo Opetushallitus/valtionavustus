@@ -14,9 +14,11 @@
   yum:  pkg=git state=latest
   when: ansible_os_family == 'RedHat'
 
-- name: Disallow jenkins port access in firewall (RedHat)
+- name: Disallow jenkins port access in firewall
   firewalld: immediate=true port={{ jenkins_http_port }}/tcp permanent=true state=disabled
-  when: ansible_os_family == 'RedHat'
+
+- name: Allow port 80 access in firewall
+  firewalld: immediate=true port=80/tcp permanent=true state=enabled
 
 - name: Add script to add users manually
   template: src=add_va_jenkins_user.bash.j2 dest=/usr/local/bin/add_va_jenkins_user.bash owner=root group=root mode=0755
