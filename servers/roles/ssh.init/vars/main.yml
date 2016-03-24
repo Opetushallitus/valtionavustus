@@ -9,7 +9,7 @@ adminusers:
     state: present
     name: Jyri Kytömäki
   hsalokor:
-    state: present
+    state: absent
     name: Harri Salokorpi
   pam:
     state: present
@@ -18,7 +18,7 @@ adminusers:
     state: present
     name: Sami Mensola
   thakkara:
-    state: present
+    state: absent
     name: Tuomas Hakkarainen
   thrantal:
     state: present
