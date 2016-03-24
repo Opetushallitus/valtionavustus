@@ -58,6 +58,7 @@
   - 3rdparty/geerlingguy.nodejs
   - valtionavustus.build
   - 3rdparty/Stouts.jenkins
+  - valtionavustus.deploy
 
 - hosts: va-build
   user: cloud-user
