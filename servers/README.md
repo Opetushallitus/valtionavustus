@@ -12,7 +12,7 @@ Valtionavustusjärjestelmän palvelimien provisiointi
   - `source python-venv/bin/activate`
   - `pip install ansible`
 * roles/3rdparty hakemistoon on asennettu muiden tekemät Ansible-roolit. Nämä Ansible-roolit ovat asennettu Ansible Galaxystä:
-  - `./python-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty --role-file=third_party_roles.yml`
+  - `./python-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty --role-file=third_party_roles.yml  --ignore-errors`
   - roolin päivittäminen onnistuu samalla tavalla, mutta vaatii --force -vivun (ansible-galaxy kertoo kyllä siitä)
 * Kolmannen osapuolen muut kirjastot
   - `./python-venv/bin/ansible-galaxy install gaqzi.ssh-config -p library/`
