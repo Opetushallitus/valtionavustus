@@ -132,11 +132,15 @@ class SendDecisions extends React.Component {
       <div className="send-decisions-panel">
         <h3>Päätösten lähettäminen</h3>
         <p>Päätökset lähetetään kaikille hakemusten jättäjille</p>
-        <div hidden={!this.state.count}>Päätös lähetetty <strong>{this.state.count}:lle</strong> hakijalle</div>
-        <div hidden={this.state.count}>
-          <button hidden={!this.state.preview} onClick={onSend} className="btn btn-selected" disabled={this.state.sending}>Vahvista päätösten lähettäminen</button>
-          <button hidden={this.state.preview} onClick={onPreview} className="btn btn-blue">Aloita päätösten lähettäminen</button>
-        </div>
+        {
+          this.state.count ?
+            <div>Päätös lähetetty <strong>{this.state.count}:lle</strong> hakijalle</div>
+            :
+            <div hidden={this.state.count}>
+              <button hidden={!this.state.preview} onClick={onSend} className="btn btn-selected" disabled={this.state.sending}>Vahvista päätösten lähettäminen</button>
+              <button hidden={this.state.preview} onClick={onPreview} className="btn btn-blue">Aloita päätösten lähettäminen</button>
+            </div>
+        }
       </div>
     )
   }
