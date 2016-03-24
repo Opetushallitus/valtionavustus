@@ -1,5 +1,4 @@
-- hosts: va-build:va-dev:va-loadbalancer-dev
-  user: cloud-user
+- hosts: all
   sudo: yes
   roles:
   - ssh.init
