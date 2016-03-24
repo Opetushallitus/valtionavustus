@@ -62,6 +62,8 @@
 - hosts: va-build
   user: cloud-user
   sudo: yes
+  vars:
+     database_dumps_dir: /mnt/db-dumps
   roles:
   - buildmachine.logical.volumes
   - buildmachine

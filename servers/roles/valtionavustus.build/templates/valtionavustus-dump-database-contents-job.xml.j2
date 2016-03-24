@@ -52,7 +52,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>./ci/dump_db_contents_on_app_server.bash {{ production_application_server_names.msg }}</command>
+      <command>./ci/dump_db_contents_on_app_server.bash {{ production_application_server_names.msg }} {{ database_dumps_dir }}</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
