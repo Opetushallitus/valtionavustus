@@ -15,6 +15,8 @@ loadbalancer_acl:
     condition: hdr(host) -i statsunderstod.oph.fi
   - name: va_virkailija_backend_prod
     condition: hdr(host) -i virkailija.valtionavustukset.oph.fi
+  - name: va_build
+    condition: hdr(host) -i dev.valtionavustukset.oph.fi
   - name: va_ip_test
     condition: hdr(host) -i 86.50.28.144
 
@@ -31,6 +33,8 @@ loadbalancer_acl_mapping:
     condition: if va_backend_prod_sv
   - name: va_virkailija_backend_prod
     condition: if va_virkailija_backend_prod
+  - name: va_build
+    condition: if va_build
   - name: va_ip_test
     condition: if va_ip_test
 
@@ -85,17 +89,17 @@ haproxy_backends:
   options:
     - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ virkailija.valtionavustukset.oph.fi
 
+- name: 'va_build'
+  balance: 'source'
+  server_group:
+    - name: "va_build"
+      port: 80
+
 - name: 'va_ip_test'
   balance: 'source'
   server_group:
-    - name: "va_app_qa"
-      port: 8081
-      params: ['check']
-  errorfile:
-    - code: 503
-      file: /etc/haproxy/va/errors/503.http
-  options:
-    - httpchk GET /api/healthcheck HTTP/1.1\r\nHost:\ virkailija.valtionavustukset.oph.fi
+    - name: "va_build"
+      port: 80
 
 # Global configuration - no need to change
 
