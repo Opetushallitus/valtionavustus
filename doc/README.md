@@ -15,6 +15,7 @@ Technical documentation
     * [Schema migrations](#schema-migrations)
     * [hakija database](#hakija-database)
     * [virkailija database](#virkailija-database)
+  * [Localization](#localization)
 
 ## Technologies
 
@@ -133,3 +134,10 @@ and hakija apps, and are forward-only.
 ### virkailija database
 
 ![virkailija schema](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/virkailija.svg)
+
+## Localization
+
+[Common form elements](../va-common/resources/public/translations.json)
+[Virkailija email templates](../va-virkailija/resources/email-templates/)
+[Hakija email templates](../va-hakija/resources/email-templates/)
+[Rejected reasons](../va-virkailija/web/va/hakemus-details/rejectedReasonsByLanguage.json)
