@@ -232,7 +232,7 @@ const BudgetItemRow = ({item, lang, useDetailedCosts}) =>
    <tr>
      <td>{item.label[lang]}</td>
      <td className="amount">{formatNumber(item.original)}</td>
-     <td className="amount">{useDetailedCosts ? formatNumber(item.overridden) : ''}</td>
+     <td className="amount">{useDetailedCosts && formatNumber(item.overridden)}</td>
    </tr>
 
 const IncomeBudgetItemRow = ({item, lang}) =>

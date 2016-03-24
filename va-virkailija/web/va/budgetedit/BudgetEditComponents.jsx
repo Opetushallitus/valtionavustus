@@ -151,8 +151,8 @@ export class EditBudgetItemElement extends React.Component {
           </td>
           <td className="original-amount-column has-title" title={originalDescription}><span
               className="money sum">{originalValue}</span></td>
-          <td className="amount-column">{allowEditing ? amountComponent : ''}</td>
-          <td className="description-column">{allowEditing ? descriptionComponent : ''}</td>
+          <td className="amount-column">{allowEditing && amountComponent}</td>
+          <td className="description-column">{allowEditing && descriptionComponent}</td>
         </tr>
     )
   }
