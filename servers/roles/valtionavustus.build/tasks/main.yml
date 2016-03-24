@@ -20,6 +20,9 @@
 - name: Add "{{ jenkins_user }}" user to docker group
   user: name="{{ jenkins_user }}" groups=docker
 
+- name: Ensure that docker daemon is started
+  service: name=docker state=started enabled=yes
+
 - name: Install g++ for jest (Debian)
   apt: state=installed pkg=g++
   when: ansible_os_family == 'Debian'
