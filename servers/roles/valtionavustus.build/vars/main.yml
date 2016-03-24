@@ -4,3 +4,19 @@ nodejs_version: "0.10"
 nodejs_forever: false
 # Define a list of global packages to be installed with NPM.
 nodejs_npm_global_packages: []
+
+va_git_repository: https://github.com/Opetushallitus/valtionavustus
+va_compile_and_test_job_name: valtionavustus-compile-test
+va_deploy_to_test_job_name: valtionavustus-deploy-test
+
+jenkins_jobs:
+   - name: "{{ va_compile_and_test_job_name }}"
+     template: roles/valtionavustus.build/templates/valtionavustus-compile-job.xml.j2
+   - name: "{{ va_deploy_to_test_job_name }}"
+     template: roles/valtionavustus.build/templates/valtionavustus-deploy-test-deploy-job.xml.j2
+   - name: valtionavustus-deploy-production
+     template: roles/valtionavustus.build/templates/valtionavustus-deploy-production-job.xml.j2
+   - name: valtionavustus-copy-database-backups
+     template: roles/valtionavustus.build/templates/valtionavustus-copy-database-backups-job.xml.j2
+   - name: valtionavustus-dump-database-contents
+     template: roles/valtionavustus.build/templates/valtionavustus-dump-database-contents-job.xml.j2

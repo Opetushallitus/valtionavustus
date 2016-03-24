@@ -33,22 +33,7 @@ jenkins_apt_packages: []
 
 jenkins_http_host: "{{ ansible_nodename }}"
 
-va_git_repository: https://github.com/Opetushallitus/valtionavustus
-va_compile_and_test_job_name: valtionavustus-compile-test
-va_deploy_to_test_job_name: valtionavustus-deploy-test
-
 jenkins_plugins: [github, git, greenballs]
-jenkins_jobs:
-   - name: "{{ va_compile_and_test_job_name }}"
-     template: roles/buildmachine/templates/valtionavustus-compile-job.xml.j2
-   - name: "{{ va_deploy_to_test_job_name }}"
-     template: roles/buildmachine/templates/valtionavustus-deploy-test-deploy-job.xml.j2
-   - name: valtionavustus-deploy-production
-     template: roles/buildmachine/templates/valtionavustus-deploy-production-job.xml.j2
-   - name: valtionavustus-copy-database-backups
-     template: roles/buildmachine/templates/valtionavustus-copy-database-backups-job.xml.j2
-   - name: valtionavustus-dump-database-contents
-     template: roles/buildmachine/templates/valtionavustus-dump-database-contents-job.xml.j2
 
 # System config
 # =============
