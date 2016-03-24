@@ -9,9 +9,9 @@ nginx_vhosts:
     listen: "80 default_server"
     extra_parameters: |
       location '/' {
-        proxy_pass "localhost:{{ jenkins_http_port }}";
+        proxy_pass "{{ jenkins_url }}";
         proxy_read_timeout 90;
-        auth_basic "{{ ansible_nodename }}";
+        auth_basic "va-dev";
         auth_basic_user_file "{{ nginx_jenkins_http_auth_basic_filename }}";
       }
 
