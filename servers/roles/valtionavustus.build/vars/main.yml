@@ -1,6 +1,6 @@
 # Node configs
 nodejs_version: "0.10"
 # Install forever, which is useful for running Node.js apps.
-nodejs_forever: true
+nodejs_forever: false
 # Define a list of global packages to be installed with NPM.
 nodejs_npm_global_packages: []
