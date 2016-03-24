@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import _ from "lodash"
-
+import rejectedReasonsByLanguage from './rejectedReasonsByLanguage.json'
 export default class Perustelut extends React.Component {
 
   render() {
@@ -14,11 +14,6 @@ export default class Perustelut extends React.Component {
     const language= _.find(hakemus.answers,(a)=>a.key=="language")
     const languageValue = language ? language.value : "fi"
     const languageTitle = languageValue=="fi" ? "suomeksi" : "ruotsiksi"
-    const rejectedReasonsByLanguage = {
-      fi:["Muotovirhe","Ei käy","Ei todellakaan käy","EI EI EI"],
-      sv:["SV Muotovirhe","SV Nej käy","SV Ei todellakaan käy","SV NE NEJ NEJ"]
-    }
-
     const rejectedReasons = rejectedReasonsByLanguage[languageValue]
     return(
       <div>
