@@ -1,5 +1,6 @@
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
+import _ from 'lodash'
 
 export default class BudgetEditFormController {
 
@@ -35,7 +36,15 @@ export default class BudgetEditFormController {
   }
 
   toggleDetailedCostsListener(event) {
-    this.arviointiController.toggleDetailedCosts(this.hakemus, event.target.value === 'true')
+    const answers = this.hakemus.arvio['overridden-answers']
+    const formContent = this.form.content
+    const findCost = budgetItem => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
+    const budgetItemsAmounts = FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
+      .filter(budgetItem => budgetItem.params.incrementsTotal)
+      .map(findCost)
+    const useDetailedCosts = event.target.value === 'true'
+    if(_.sum(budgetItemsAmounts) === 0) this.copyOriginalValues()
+    this.arviointiController.toggleDetailedCosts(this.hakemus, useDetailedCosts)
   }
 
   costsGrantedOnChangeListener(event) {
