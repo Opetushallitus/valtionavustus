@@ -1,2 +1,3 @@
 dependencies:
   - role: java8
+  - role: geerlingguy.nginx

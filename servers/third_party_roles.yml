@@ -2,9 +2,8 @@
   name: info.haproxy
 - src: https://github.com/Stouts/Stouts.jenkins
   name: Stouts.jenkins
-- src: debops.nginx
 - src: geerlingguy.nodejs
-- src: debops.pki
+- src: geerlingguy.nginx
 - src: https://github.com/petemcw/ansible-role-postfix
   name: postfix
 - src: https://github.com/timorantalaiho/ansible-postgresql

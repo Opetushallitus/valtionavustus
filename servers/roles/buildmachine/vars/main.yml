@@ -1,22 +1,19 @@
 # nginx configs:
-# No global http auth block so we can allow access without pw to other virtual hosts
-nginx_http_auth_basic: False
-#nginx_http_auth_basic_realm: va-dev
 nginx_jenkins_http_auth_basic_filename: /etc/nginx/private/va-jenkins-nginx-passwd
 
-nginx_servers: [ "{{ nginx_server_build }}" ]
+nginx_root_dir: /srv/www/sites/va-build/public
 
-nginx_server_build:
-  name: [ "va-build" ]
-  enabled: True
-  listen: [ "{{ hostvars['va-build'].ansible_default_ipv4.address }}:80" ]
-  ssl: False
-  location:
-    '/': |
-      proxy_pass "{{ jenkins_url }}";
-      proxy_read_timeout 90;
-      auth_basic "va-dev";
-      auth_basic_user_file "{{ nginx_jenkins_http_auth_basic_filename }}";
+nginx_vhosts:
+  - server_name: "{{ ansible_nodename }}"
+    root: "{{ nginx_root_dir }}"
+    listen: "80 default_server"
+    extra_parameters: |
+      location '/' {
+        proxy_pass "localhost:{{ jenkins_http_port }}";
+        proxy_read_timeout 90;
+        auth_basic "{{ ansible_nodename }}";
+        auth_basic_user_file "{{ nginx_jenkins_http_auth_basic_filename }}";
+      }
 
 # Jenkins configs:
 jenkins_home: /data/jenkins
@@ -32,6 +29,7 @@ jenkins_apt_repository: deb http://pkg.jenkins-ci.org/debian-stable binary/
 jenkins_apt_packages: []
 
 jenkins_http_host: "{{ ansible_nodename }}"
+jenkins_http_port: 8000
 
 jenkins_plugins: [github, git, greenballs]
 

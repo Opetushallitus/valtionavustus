@@ -14,12 +14,15 @@
   yum:  pkg=git state=latest
   when: ansible_os_family == 'RedHat'
 
-- name: Allow port 8000 access in firewall (RedHat)
-  firewalld: immediate=true port=8000/tcp permanent=true state=enabled
+- name: Disallow jenkins port access in firewall (RedHat)
+  firewalld: immediate=true port={{ jenkins_http_port }}/tcp permanent=true state=disabled
   when: ansible_os_family == 'RedHat'
 
 - name: Add script to add users manually
   template: src=add_va_jenkins_user.bash.j2 dest=/usr/local/bin/add_va_jenkins_user.bash owner=root group=root mode=0755
+
+- name: Ensure nginx root exists
+  file: path={{ nginx_root_dir }} state=directory owner=root group=root mode=0755
 
 - name: Remove previous OPH artifactory IP mapping from /etc/hosts
   lineinfile: dest=/etc/hosts regexp='^[0-9\.]* artifactory.oph.ware.fi$' state=absent owner=root group=root mode=0644
