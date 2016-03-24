@@ -16,7 +16,5 @@ jenkins_jobs:
      template: roles/valtionavustus.build/templates/valtionavustus-deploy-test-deploy-job.xml.j2
    - name: valtionavustus-deploy-production
      template: roles/valtionavustus.build/templates/valtionavustus-deploy-production-job.xml.j2
-   - name: valtionavustus-copy-database-backups
-     template: roles/valtionavustus.build/templates/valtionavustus-copy-database-backups-job.xml.j2
    - name: valtionavustus-dump-database-contents
      template: roles/valtionavustus.build/templates/valtionavustus-dump-database-contents-job.xml.j2
