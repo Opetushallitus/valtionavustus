@@ -55,7 +55,6 @@
   - ssh.init
   - common
   - buildmachine
-  - 3rdparty/geerlingguy.nodejs
   - valtionavustus.build
   - 3rdparty/Stouts.jenkins
   - valtionavustus.deploy
@@ -66,7 +65,6 @@
   roles:
   - buildmachine.logical.volumes
   - buildmachine
-  - 3rdparty/geerlingguy.nodejs
   - valtionavustus.build
   - 3rdparty/Stouts.jenkins
   - valtionavustus.deploy
