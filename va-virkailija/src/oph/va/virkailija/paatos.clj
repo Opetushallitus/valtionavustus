@@ -41,13 +41,13 @@
          :path-params [hakemus-id :- Long]
          :body [email (describe virkailija-schema/PaatosEmail "Emails to send")]
          (log/info "Email: " email)
-         (let [emailWithSpaces (:email email)
-               emailList (str/split emailWithSpaces #" ")]
+         (let [email-with-spaces (:email email)
+               emailList (str/split email-with-spaces #" ")]
            (send-paatos hakemus-id emailList)))
   (POST* "/sendall/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
-         (let [hakuData (hakija-api/get-submitted-hakemukset avustushaku-id)
-               hakemukset (:hakemukset hakuData)
+         (let [haku-data (hakija-api/get-submitted-hakemukset avustushaku-id)
+               hakemukset (:hakemukset haku-data)
                count (count hakemukset)
                ids (vec (map #(get-in % [:id]) hakemukset))]
            (log/info "Send all paatos ids " ids)
