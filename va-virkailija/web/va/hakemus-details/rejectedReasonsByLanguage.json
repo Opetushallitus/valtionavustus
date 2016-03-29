@@ -1,9 +1,16 @@
 {
   "fi": [
-    "Muotovirhe",
-    "Ei käy",
-    "Ei todellakaan käy",
-    "EI EI EI"
+    "Opetushallitus on arvioinut hankkeet, jotka täyttävät hakutiedotteessa määritellyt valtionavustusten myöntämisen välttämättömät edellytykset. Asiantuntija-arvioinnin perusteella ja käytettävissä olevien määrärahojen puitteissa on Opetushallitus asiaa harkittuaan päättänyt olla rahoittamatta hanketta.",
+    "Hakija ei ole hakukelpoinen",
+    "Hakemuksessa ei ole edellytettyjä liitteitä",
+    "Hakija ei ole antanut pyydettyjä selvityksiä aiemmin myönnettyjen valtionavustusten käytöstä",
+    "Kohderyhmäehdot eivät täyty",
+    "Hankkeen sisältö ei vastaa haettua teema-aluetta (painopistettä)",
+    "Hanketta ei toteuteta hakutiedotteessa määriteltynä aikana",
+    "Hankesuunnitelma ei ole taloudellisesti realistinen eikä talousarviota ole laadittu annettuja ohjeita noudattaen.",
+    "Laitekustannusten osuus hankkeen kokonaiskustannuksista on liian suuri.",
+    "Haetun avustuksen käyttötarkoitus ei ole hakutiedotteen mukainen",
+    "Hakemus ei ole saapunut määräajassa"
   ],
   "sv": [
     "SV Muotovirhe",
