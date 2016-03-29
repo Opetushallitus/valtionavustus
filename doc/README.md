@@ -139,5 +139,7 @@ and hakija apps, and are forward-only.
 
 * [Common form elements](../va-common/resources/public/translations.json)
 * [Virkailija email templates](../va-virkailija/resources/email-templates/)
+* [Virkailija titles](../va-virkailija/src/oph/va/virkailija/email.clj)
 * [Hakija email templates](../va-hakija/resources/email-templates/)
+* [Hakija titles](../va-hakija/src/oph/va/hakija/email.clj)
 * [Rejected reasons](../va-virkailija/web/va/hakemus-details/rejectedReasonsByLanguage.json)
