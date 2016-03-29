@@ -7,11 +7,7 @@ import LdapSearchParameters from './LdapSearchParameters'
 
 export default class HakuRoles extends Component {
   render() {
-    const controller = this.props.controller
-    const avustushaku = this.props.avustushaku
-    const userHasEditPrivilege = this.props.userHasEditPrivilege
-    const ldapSearch = this.props.ldapSearch
-    const userInfo = this.props.userInfo
+    const {controller, avustushaku, userHasEditPrivilege, ldapSearch, userInfo} = this.props
     const roles = _.sortBy(avustushaku.roles, 'name')
     const roleRows = roles ? roles.map(role => <RoleRow key={role.id} role={role} avustushaku={avustushaku} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller}/>) : []
 
@@ -54,9 +50,7 @@ export default class HakuRoles extends Component {
 
 class PersonSelectList extends React.Component {
   render() {
-    const ldapSearch = this.props.ldapSearch
-    const avustushaku = this.props.avustushaku
-    const controller = this.props.controller
+    const {ldapSearch, avustushaku, controller} = this.props
     const personRows = _.map(ldapSearch.result.results, r => {
       const firstName = r["first-name"]
       const lastName = r["surname"]
@@ -123,14 +117,9 @@ class RoleRow extends React.Component {
   }
 
   render() {
-    const role = this.props.role
-    const controller = this.props.controller
-    const avustushaku = this.props.avustushaku
-    const userInfo = this.props.userInfo
-    const myPrivileges = avustushaku.privileges
-    const userHasEditPrivilege = this.props.userHasEditPrivilege
+    const {role, controller, avustushaku, userInfo, privileges, userHasEditPrivilege} = this.props
     const thisRowIsMe = role.oid === userInfo["person-oid"]
-    const disableEditing = !userHasEditPrivilege || (thisRowIsMe && myPrivileges && !myPrivileges["edit-my-haku-role"])
+    const disableEditing = !userHasEditPrivilege || (thisRowIsMe && privileges && !privileges["edit-my-haku-role"])
     const removeTitleText = disableEditing && userHasEditPrivilege ? "Et voi poistaa itseltäsi oikeuksia hakuun" : "Poista"
     const onDelete = controller.deleteRole(avustushaku, role)
     const hasOid = role.oid && role.oid.length > 0
