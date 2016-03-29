@@ -62,8 +62,7 @@ class PersonSelectList extends React.Component {
       const displayText = name + " (" + email + ", "
 
       const personIsInRolesAlready = _.some(avustushaku.roles, r => { return r.oid === oid })
-      const titleText = (name + " <" + email + ">" + "(" + accessLevel.description + ", oid " + oid + ")") +
-        (personIsInRolesAlready ? " (Käyttäjä on jo lisätty avustushakuun)" : "")
+      const titleText = `${name}  <${email}>(${accessLevel.description}, oid ${oid})${personIsInRolesAlready ? ' (Käyttäjä on jo lisätty avustushakuun)' : ''}`
       const onClick = e => {
         e.preventDefault()
         if (!personIsInRolesAlready) {
