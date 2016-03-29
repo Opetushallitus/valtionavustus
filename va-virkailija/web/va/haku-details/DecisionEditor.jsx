@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import _ from 'lodash'
 import Liitteet from '../data/Liitteet'
 import Bacon from 'baconjs'
 import HttpUtil from 'va-common/web/HttpUtil.js'
@@ -133,7 +134,7 @@ class SendDecisions extends React.Component {
         <h3>Päätösten lähettäminen</h3>
         <p>Päätökset lähetetään kaikille hakemusten jättäjille</p>
         {
-          this.state.count ?
+          _.isNumber(this.state.count) ?
             <div>Päätös lähetetty <strong>{this.state.count}:lle</strong> hakijalle</div>
             :
             <div hidden={this.state.count}>
