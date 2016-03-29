@@ -13,13 +13,7 @@ export default class HakuRoles extends Component {
     const ldapSearch = this.props.ldapSearch
     const userInfo = this.props.userInfo
     const roles = _.sortBy(avustushaku.roles, 'name')
-    const roleRows = []
-    if(roles) {
-      for (var i=0; i < roles.length; i++) {
-        const role = roles[i]
-        roleRows.push(<RoleRow key={role.id} role={role} avustushaku={avustushaku} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller}/>)
-      }
-    }
+    const roleRows = roles ? roles.map(role => <RoleRow key={role.id} role={role} avustushaku={avustushaku} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller}/>) : []
 
     const startSearch = e => {
       const input = _.trim(e.target.value)
