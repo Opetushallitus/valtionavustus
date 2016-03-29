@@ -57,7 +57,7 @@ class PersonSelectList extends React.Component {
       const email = r["email"]
       const oid = r["person-oid"]
       const name = firstName ? firstName + " "  + lastName : lastName
-      const newRole = { name: name, email: email, role: null, oid: oid }
+      const newRole = { name: firstAndLast(name), email: email, role: null, oid: oid }
       const accessLevel = userDetailsToClassAndFi(r)
       const displayText = name + " (" + email + ", "
 
@@ -96,6 +96,11 @@ class PersonSelectList extends React.Component {
         return { className: "va-user", description: "VA-käyttäjä" }
       }
       return { className: "no-va-access", description: "Ei VA-oikeuksia" }
+    }
+
+    function firstAndLast(fullName) {
+      const splitted = fullName.split(' ')
+      return splitted[0] + ' ' + splitted.pop()
     }
   }
 }
