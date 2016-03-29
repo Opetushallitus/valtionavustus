@@ -117,11 +117,14 @@ class RoleRow extends React.Component {
   constructor(props) {
     super(props)
     this.handleChange = this.handleChange.bind(this)
+    this.debouncedSave = _.debounce(() => {
+      this.props.controller.saveRole(this.props.avustushaku, this.props.role)
+    }, 3000).bind(this)
   }
 
   handleChange(event) {
     this.props.role[event.target.name] = event.target.value
-    this.props.controller.saveRole(this.props.avustushaku, this.props.role)
+    this.debouncedSave()
     this.props.controller.reRender()
   }
 
@@ -148,7 +151,7 @@ class RoleRow extends React.Component {
           </select>
         </td>
         <td className={oidStatusClass}>{oidStatusText}</td>
-        <td>{role.name}</td>
+        <td><input type="text" value={role.name} name="name" onChange={this.handleChange}/></td>
         <td>{role.email}</td>
         <td><button type="button" onClick={onDelete} className="remove" alt="Poista" title={removeTitleText} tabIndex="-1" disabled={disableEditing} /></td>
       </tr>
