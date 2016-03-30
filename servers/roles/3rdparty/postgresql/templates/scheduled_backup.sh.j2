@@ -88,7 +88,7 @@ handler rsync $remote_rsync -rptg --delete --delete-delay --exclude pg_xlog $dat
 # tell postgres we're done
 psql_handler "SELECT pg_stop_backup();"
 
-echo "Elapsed time: $(( `date +%s` - $start )) seconds" | mail -s "$server: Postgres scheduled backup succeeded" $mailto
+# echo "Elapsed time: $(( `date +%s` - $start )) seconds" | mail -s "$server: Postgres scheduled backup succeeded" $mailto
 
 # exit normally
 rm -f $mutex
