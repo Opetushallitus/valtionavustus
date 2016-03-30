@@ -50,6 +50,8 @@ done
 
 echo "archive-WAL $$" > $mutex
 
+mkdir -p $backup_dir
+
 handler rsync $remote_rsync --ignore-existing -ptg $full_file $backup_dir
 
 # create an empty directory for --delete
