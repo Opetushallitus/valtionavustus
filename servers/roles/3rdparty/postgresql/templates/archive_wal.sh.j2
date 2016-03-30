@@ -25,7 +25,7 @@ handler()
     out=`$command 2>&1`
     ret=$?
     if [ $ret -ne 0 ]; then
-        (echo "execuing $command failed with code $ret:" ; echo "$out") | mail -s "$server: WAL archive failed" $mailto
+        (echo "executing $command failed with code $ret:" ; echo "$out") | mail -s "$server: WAL archive failed" $mailto
         rm -f $mutex
         exit 1
     else
