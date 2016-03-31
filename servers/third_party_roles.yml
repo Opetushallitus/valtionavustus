@@ -4,7 +4,5 @@
   name: Stouts.jenkins
 - src: geerlingguy.nodejs
 - src: geerlingguy.nginx
-- src: https://github.com/petemcw/ansible-role-postfix
-  name: postfix
 - src: https://github.com/timorantalaiho/ansible-postgresql
   name: postgresql
