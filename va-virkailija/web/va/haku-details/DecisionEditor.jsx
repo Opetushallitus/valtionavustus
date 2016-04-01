@@ -164,11 +164,9 @@ class SendDecisions extends React.Component {
     }
 
     if (!_.isNumber(this.state.count)) return <img src="/img/ajax-loader.gif"/>
-    return <div>
-      {this.state.sending && <img src="/img/ajax-loader.gif"/>}
-      <button hidden={!this.state.preview} onClick={onSend} className="btn btn-selected" disabled={this.state.sending}>Vahvista päätösten lähettäminen</button>
-      <button hidden={this.state.preview} onClick={onPreview} className="btn btn-blue">Aloita päätösten lähettäminen</button>
-    </div>
+    if (this.state.sending) return <div><img src="/img/ajax-loader.gif"/>&nbsp;Lähetetään...</div>
+    if (this.state.preview) return <button onClick={onSend} className="btn btn-selected">Vahvista päätösten lähettäminen</button>
+    return <button onClick={onPreview} className="btn btn-blue">Aloita päätösten lähettäminen</button>
   }
 }
 
