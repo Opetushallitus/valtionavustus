@@ -19,10 +19,10 @@
   template: src=haproxy_syslog.conf.j2 dest=/etc/rsyslog.d/haproxy.conf owner=root group=root mode=0644
   notify: Restart rsyslog
 
-- name: Allow port 80 access in firewall
+- name: Allow port 80 access in firewall (RedHat)
   firewalld: immediate=true port=80/tcp permanent=true state=enabled
   when: ansible_os_family == 'RedHat'
 
-- name: Allow port 443 access in firewall
+- name: Allow port 443 access in firewall (RedHat)
   firewalld: immediate=true port=443/tcp permanent=true state=enabled
   when: ansible_os_family == 'RedHat'
