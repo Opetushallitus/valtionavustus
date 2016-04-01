@@ -134,6 +134,12 @@
    :user-key (:user_key hakemus)
    :answers (:answer_values hakemus)})
 
+(defn- paatos-sent-emails->json [paatos]
+  {:id (:id paatos)
+   :version (:version paatos)
+   :project-name (:project_name paatos)
+   :sent-emails (:sent_emails paatos)})
+
 (defn- hakemukset->json [hakemukset]
   (map hakemus->json hakemukset))
 
@@ -150,12 +156,14 @@
 (defn get-avustushaku-by-status [avustushaku-id statuses]
   (first (exec :hakija-db hakija-queries/get-avustushaku-by-status {:id avustushaku-id :statuses (map-status-list statuses)})))
 
-(defn get-submitted-hakemukset [avustushaku-id]
-  (let [hakemukset (exec :hakija-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})
-        submittedHakemukset (filter #(= (:status %) "submitted") hakemukset)]
-    {:hakemukset (hakemukset->json submittedHakemukset)}
-    )
-)
+(defn get-paatos-sent-emails [avustushaku-id]
+  (let [paatos-sent-emails (exec :hakija-db hakija-queries/list-hakemus-decision-email-statuses {:avustushaku_id avustushaku-id})]
+    (map paatos-sent-emails->json paatos-sent-emails)))
+
+(defn add-paatos-sent-emails [hakemus emails]
+  (exec :hakija-db hakija-queries/add-hakemus-decision! {:hakemus_id (:id hakemus)
+                                                         :hakemus_version (:version hakemus)
+                                                         :sent_emails {:addresses ["a" "b"]}}))
 
 (defn get-hakudata [avustushaku-id]
   (let [avustushaku (get-avustushaku avustushaku-id)

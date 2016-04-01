@@ -28,12 +28,18 @@
         language (keyword (formutil/find-answer-value answers "language"))]
     (log/info "Sending paatos email for hakemus" hakemus-id " to " emails)
     (email/send-paatos! language emails avustushaku hakemus)
+    (hakija-api/add-paatos-sent-emails hakemus emails)
     (ok {:status "sent" :hakemus hakemus-id :emails emails})))
 
 (defn send-paatos-for-all [hakemus-id]
   (log/info "send-paatos-for-all" hakemus-id)
   (let [emails (paatos-emails hakemus-id)]
     (send-paatos hakemus-id emails)))
+
+(defn get-sent-count [avustushaku-id]
+  (let [sent-email-status (hakija-api/get-paatos-sent-emails avustushaku-id)
+        sent (count (filter #((complement nil?) (:sent-emails %)) sent-email-status))]
+    {:sent sent :count (count sent-email-status)}))
 
 (defroutes* paatos-routes
   "Paatos routes"
@@ -42,17 +48,20 @@
          :body [email (describe virkailija-schema/PaatosEmail "Emails to send")]
          (log/info "Email: " email)
          (let [email-with-spaces (:email email)
-               emailList (str/split email-with-spaces #" ")]
-           (send-paatos hakemus-id emailList)))
+               email-list (str/split email-with-spaces #" ")]
+           (send-paatos hakemus-id email-list)))
   (POST* "/sendall/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
-         (let [haku-data (hakija-api/get-submitted-hakemukset avustushaku-id)
-               hakemukset (:hakemukset haku-data)
+         (let [hakemukset (hakija-api/get-paatos-sent-emails avustushaku-id)
                count (count hakemukset)
-               ids (vec (map #(get-in % [:id]) hakemukset))]
+               ids (map :id hakemukset)]
            (log/info "Send all paatos ids " ids)
            (run! send-paatos-for-all ids)
-           (ok {:status "ok" :count count})))
+           (ok (merge {:status "ok"} (get-sent-count avustushaku-id)))))
+
+  (GET* "/sent/:avustushaku-id" []
+        :path-params [avustushaku-id :- Long]
+        (ok (merge {:status "ok"} (get-sent-count avustushaku-id))))
 
   (GET* "/emails/:hakemus-id" []
         :path-params [hakemus-id :- Long]

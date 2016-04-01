@@ -106,12 +106,48 @@ class SendDecisions extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.avustushaku.id!=this.props.avustushaku.id){
+    if(nextProps.avustushaku.id!=this.props.avustushaku.id) {
       this.setState({preview:false,count:undefined,sending:false})
+      this.fetchEmailState(nextProps.avustushaku.id)
     }
   }
 
+  componentDidMount() {
+    this.fetchEmailState(this.props.avustushaku.id)
+  }
+
   render(){
+    const avustushaku = this.props.avustushaku
+
+    if(avustushaku.status!="resolved"){
+      return null;
+    }
+    return (
+      <div className="send-decisions-panel">
+        <h3>Päätösten lähettäminen</h3>
+        <p>Päätökset lähetetään kaikille hakemusten jättäjille</p>
+        {
+          this.sentOk() ?
+            <div>Päätös lähetetty <strong>{this.state.sent}/{this.state.count}:lle</strong> hakijalle</div>
+            :
+            this.sendControls()
+        }
+      </div>
+    )
+  }
+
+  sentOk() {
+    return _.isNumber(this.state.count) && this.state.count == this.state.sent
+  }
+
+  fetchEmailState(avustushakuId) {
+    const sendS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/sent/${avustushakuId}`,{}))
+    sendS.onValue((res)=>{
+      this.setState({...this.state, count:res.count, sent:res.sent})
+    })
+  }
+
+  sendControls() {
     const avustushaku = this.props.avustushaku
 
     const onPreview = () =>{
@@ -122,28 +158,17 @@ class SendDecisions extends React.Component {
       this.setState({...this.state,sending:true})
       const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/sendall/${avustushaku.id}`,{}))
       sendS.onValue((res)=>{
-        this.setState({count:res.count})
+          this.setState({count:res.count, sent:res.sent})
         }
       )
     }
-    if(avustushaku.status!="resolved"){
-      return null;
-    }
-    return (
-      <div className="send-decisions-panel">
-        <h3>Päätösten lähettäminen</h3>
-        <p>Päätökset lähetetään kaikille hakemusten jättäjille</p>
-        {
-          _.isNumber(this.state.count) ?
-            <div>Päätös lähetetty <strong>{this.state.count}:lle</strong> hakijalle</div>
-            :
-            <div hidden={this.state.count}>
-              <button hidden={!this.state.preview} onClick={onSend} className="btn btn-selected" disabled={this.state.sending}>Vahvista päätösten lähettäminen</button>
-              <button hidden={this.state.preview} onClick={onPreview} className="btn btn-blue">Aloita päätösten lähettäminen</button>
-            </div>
-        }
-      </div>
-    )
+
+    if (!_.isNumber(this.state.count)) return <img src="/img/ajax-loader.gif"/>
+    return <div>
+      {this.state.sending && <img src="/img/ajax-loader.gif"/>}
+      <button hidden={!this.state.preview} onClick={onSend} className="btn btn-selected" disabled={this.state.sending}>Vahvista päätösten lähettäminen</button>
+      <button hidden={this.state.preview} onClick={onPreview} className="btn btn-blue">Aloita päätösten lähettäminen</button>
+    </div>
   }
 }
 

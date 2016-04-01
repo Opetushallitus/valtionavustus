@@ -16,6 +16,7 @@
 (defquery delete-avustushaku-role! "sql/hakija/avustushaku/delete-role.sql")
 (defquery get-avustushaku-roles "sql/hakija/avustushaku/get-roles.sql")
 (defquery list-hakemukset-by-avustushaku "sql/hakija/hakemus/list-by-avustushaku.sql")
+(defquery list-hakemus-decision-email-statuses "sql/hakija/hakemus/list-hakemus-decisions-by-avustushaku.sql")
 (defquery copy-form<! "sql/hakija/form/copy.sql")
 (defquery get-form-by-avustushaku "sql/hakija/form/get-by-avustushaku.sql")
 (defquery archive-form! "sql/hakija/form/archive.sql")
@@ -34,5 +35,7 @@
 (defquery update-hakemus-status<! "sql/common/hakija/hakemus/update-status.sql")
 (defquery lock-hakemus "sql/common/hakija/hakemus/lock.sql")
 (defquery close-existing-hakemus! "sql/common/hakija/hakemus/close-existing.sql")
+
+(defquery add-hakemus-decision! "sql/hakija/hakemus/add-hakemus-decision.sql")
 
 (defquery get-submission "sql/hakija/submission/get-by-id.sql")
