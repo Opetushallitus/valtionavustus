@@ -3,7 +3,8 @@
             [oph.common.email :as email]
             [oph.soresu.common.config :refer [config]]
             [clojure.tools.trace :refer [trace]]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [clostache.parser :refer [render]]))
 
 (def mail-titles
   {:change-request {:fi "Täydennyspyyntö avustushakemukseesi"
@@ -16,8 +17,12 @@
   {:change-request {:fi (email/load-template "email-templates/change-request.plain.fi")
                     :sv (email/load-template "email-templates/change-request.plain.sv")}
    :paatos {:fi (email/load-template "email-templates/paatos.plain.fi")
-           :sv (email/load-template "email-templates/paatos.plain.sv")}
-  })
+           :sv (email/load-template "email-templates/paatos.plain.sv")}})
+
+(defn mail-example [msg-type & [data]]
+  {:content (render (:fi (msg-type mail-templates)) (if data data {}))
+   :subject (:fi (msg-type mail-titles))
+   :sender (-> email/smtp-config :sender)})
 
 (defn start-background-sender []
   (email/start-background-sender mail-templates))

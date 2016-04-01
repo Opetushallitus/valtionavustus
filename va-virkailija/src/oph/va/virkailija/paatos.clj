@@ -60,7 +60,9 @@
 
   (GET* "/sent/:avustushaku-id" []
         :path-params [avustushaku-id :- Long]
-        (ok (merge {:status "ok"} (get-sent-count avustushaku-id))))
+        (println (email/mail-example :paatos))
+        (ok (merge {:status "ok" :mail (email/mail-example :paatos)}
+                   (get-sent-count avustushaku-id))))
 
   (GET* "/emails/:hakemus-id" []
         :path-params [hakemus-id :- Long]

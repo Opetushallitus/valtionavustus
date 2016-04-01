@@ -147,20 +147,18 @@ class DecisionDateAndSend extends React.Component {
   fetchEmailState(avustushakuId) {
     const sendS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/sent/${avustushakuId}`,{}))
     sendS.onValue((res)=>{
-      this.setState({...this.state, count:res.count, sent:res.sent})
+      this.setState({...this.state, count:res.count, sent:res.sent, mail:res.mail})
     })
   }
 
   sendControls() {
-    const avustushaku = this.props.avustushaku
-
-    const onPreview = () =>{
+    const onPreview = () => {
       this.setState({preview:true})
     }
 
     const onSend = () =>{
       this.setState({...this.state,sending:true})
-      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/sendall/${avustushaku.id}`,{}))
+      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/sendall/${this.props.avustushaku.id}`,{}))
       sendS.onValue((res)=>{
           this.setState({count:res.count, sent:res.sent})
         }
@@ -169,8 +167,23 @@ class DecisionDateAndSend extends React.Component {
 
     if (!_.isNumber(this.state.count)) return <img src="/img/ajax-loader.gif"/>
     if (this.state.sending) return <div><img src="/img/ajax-loader.gif"/>&nbsp;Lähetetään...</div>
-    if (this.state.preview) return <button onClick={onSend} className="btn btn-selected">Vahvista päätösten lähettäminen</button>
-    return <button onClick={onPreview} className="btn btn-blue">Aloita {(this.state.count-this.state.sent)}/{this.state.count} päätöksen lähettäminen</button>
+    if (this.state.preview) {
+      return <div>
+        {this.emailPreview()}
+        <button onClick={onSend} className="btn btn-selected">Vahvista päätösten lähettäminen</button>
+      </div>
+    }
+    return <div>
+      {this.emailPreview()}
+      <button onClick={onPreview} className="btn btn-blue">Aloita {(this.state.count-this.state.sent)}/{this.state.count} päätöksen lähettäminen</button>
+    </div>
+  }
+
+  emailPreview() {
+    return <div>
+      <div><span>Aihe:</span><div>{this.state.mail.subject}</div></div>
+      <div><span>Viesti:</span><div>{this.state.mail.content}</div></div>
+    </div>
   }
 }
 
