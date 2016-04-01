@@ -1,6 +1,7 @@
 const outputDir = "./resources/public/"
 
 const webpack = require("webpack")
+require("es6-promise").polyfill()
 const LessPluginNpmImport = require('less-plugin-npm-import')
 const commonsPlugin = new webpack.optimize.CommonsChunkPlugin({
   name: "commons",
