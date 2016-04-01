@@ -26,25 +26,3 @@
 - name: Allow port 443 access in firewall
   firewalld: immediate=true port=443/tcp permanent=true state=enabled
   when: ansible_os_family == 'RedHat'
-
-- name: Mark port 8081 as http (RedHat)
-  command: semanage port -a --type http_port_t --proto tcp 8081
-  register: http_port_8081
-  when: ansible_os_family == 'RedHat'
-  ignore_errors: yes
-
-- name: Ensure port 8081 is http (RedHat)
-  command: semanage port -m --type http_port_t --proto tcp 8081
-  when: http_port_8081|failed
-  ignore_errors: yes
-
-- name: Mark port 6071 as http (RedHat)
-  command: semanage port -a --type http_port_t --proto tcp 6071
-  register: http_port_6071
-  when: ansible_os_family == 'RedHat'
-  ignore_errors: yes
-
-- name: Ensure port 6071 is http (RedHat)
-  command: semanage port -m --type http_port_t --proto tcp 6071
-  when: http_port_6071|failed
-  ignore_errors: yes

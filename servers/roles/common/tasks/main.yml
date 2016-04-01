@@ -81,3 +81,6 @@
           {%- endfor %}
   register: production_application_server_names
   when: "'va_app_prod' in groups"
+
+- name: Disable selinux
+  selinux: state=disabled

@@ -7,16 +7,6 @@
 - name: Allow port 6071 access in firewall
   firewalld: immediate=true port=6071/tcp permanent=true state=enabled
 
-- name: Mark port 8081 as http with semanage
-  command: semanage port -a --type http_port_t --proto tcp 8081
-  register: http_port_8081
-  ignore_errors: yes
-
-- name: Mark port 6071 as http with semanage
-  command: semanage port -a --type http_port_t --proto tcp 6071
-  register: http_port_6071
-  ignore_errors: yes
-
 - name: Create www group
   group: name=www state=present
 
