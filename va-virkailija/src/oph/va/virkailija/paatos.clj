@@ -53,8 +53,7 @@
   (POST* "/sendall/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
          (let [hakemukset (hakija-api/get-paatos-sent-emails avustushaku-id)
-               count (count hakemukset)
-               ids (map :id hakemukset)]
+               ids (map :id (filter #(nil? (:sent-emails %)) hakemukset))]
            (log/info "Send all paatos ids " ids)
            (run! send-paatos-for-all ids)
            (ok (merge {:status "ok"} (get-sent-count avustushaku-id)))))
