@@ -46,9 +46,9 @@ class DecisionDate extends React.Component {
     }
 
     return (
-      <div className="decision-row">
+      <div className="decision-row decision-date">
         <div className="decision-column">
-          <label>Päätöksen päivämäärä</label>
+          <span className="decision-date-label">Ratkaisupäivä</span>
           <input type="text" value={this.state.value} id="decision.date" onChange={onChange}/>
         </div>
       </div>
@@ -99,7 +99,7 @@ class LiitteetList extends React.Component{
   }
 }
 
-class SendDecisions extends React.Component {
+class DecisionDateAndSend extends React.Component {
   constructor(props){
     super(props)
     this.state = {preview:false}
@@ -117,23 +117,27 @@ class SendDecisions extends React.Component {
   }
 
   render(){
-    const avustushaku = this.props.avustushaku
-
-    if(avustushaku.status!="resolved"){
-      return null;
-    }
     return (
       <div className="send-decisions-panel">
-        <h3>Päätösten lähettäminen</h3>
-        <p>Päätökset lähetetään kaikille hakemusten jättäjille</p>
-        {
-          this.sentOk() ?
-            <div>Päätös lähetetty <strong>{this.state.sent}/{this.state.count}:lle</strong> hakijalle</div>
-            :
-            this.sendControls()
-        }
+        <div className="decision-separator"/>
+        <DecisionDate {...this.props}/>
+        {this.props.avustushaku.status === "resolved" && this.sendEmailSection()}
       </div>
     )
+  }
+
+  sendEmailSection() {
+    return <div>
+      <p>Päätösten lähettäminen sähköpostilla</p>
+      <div className="decision-separator"/>
+      <p>Päätökset lähetetään kaikille hakemusten jättäjille</p>
+      {
+        this.sentOk() ?
+        <div>Päätös lähetetty <strong>{this.state.sent}/{this.state.count}:lle</strong> hakijalle</div>
+        :
+        this.sendControls()
+      }
+    </div>
   }
 
   sentOk() {
@@ -185,10 +189,9 @@ export default class DecisionEditor extends React.Component {
     ]
     return (
       <div className="decision-editor">
-        <SendDecisions avustushaku={this.props.avustushaku}/>
-        <DecisionDate {...this.props}/>
         {fields.map((field)=><DecisionFields key={field.id} title={field.title} avustushaku={avustushaku} id={field.id} onChange={onChange}/>)}
         <LiitteetList avustushaku={avustushaku} controller={controller}/>
+        <DecisionDateAndSend avustushaku={this.props.avustushaku}/>
       </div>
     )
   }
