@@ -42,23 +42,17 @@ Technical documentation
 
 ## Architecture
 
-Valtionavustus application is deployed into CSC Pouta OpenStack environment.
+Valtionavustus application is deployed into CSC VMware environment.
 Environment provisioning is done with [Ansible scripts](../servers/README.md).
 
 Software is deployed as jar.
-Jar is built and deployed by [Jenkins CI server](https://dev.valtionavustukset.oph.fi/), which also runs in Pouta environment.
+Jar is built and deployed by [Jenkins CI server](https://dev.valtionavustukset.oph.fi/), which also runs in VMware environment.
 
 Environment specific application configurations are in [va-hakija/config](../va-hakija/config/) and [va-virkailija/config](../va-virkailija/config/)
 
-### Current Server & Network architecture (14.1.2016)
+### Server & Network architecture
 
-Servers used in test and production environment:
-
-![Server architecture (14.1.2016)](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/deployment.svg)
-
-### Desired Server & Network architecture (14.1.2016)
-
-![Desired production setup (14.1.2016)](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/production-with-build.svg)
+![Server architecture](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/deployment.svg)
 
 ### General architecture
 General architecture including integrations and data flows (from originator towards receiver) is described in picture below.
