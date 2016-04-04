@@ -181,8 +181,8 @@ class DecisionDateAndSend extends React.Component {
 
   emailPreview() {
     return <div>
-      <div><span>Aihe:</span><div>{this.state.mail.subject}</div></div>
-      <div><span>Viesti:</span><div>{this.state.mail.content}</div></div>
+      <div className="decision-email-row"><strong className="decision-email-field-label">Aihe:</strong><div className="decision-email-field-value">{this.state.mail.subject}</div></div>
+      <div className="decision-email-row"><strong className="decision-email-field-label">Viesti:</strong><div className="decision-email-field-value decision-email-content">{this.state.mail.content}</div></div>
     </div>
   }
 }
