@@ -183,6 +183,10 @@ class DecisionDateAndSend extends React.Component {
 
     return <div className="decision-email-preview">
       <div className="decision-email-row">
+        <strong className="decision-email-field-label">Vastaanottajat:</strong>
+        <div className="decision-email-field-value">{this.state.count} hakemuksen yhteyshenkilö, organisaation virallinen sähköpostiosoite ja nimenkirjoitusoikeudelliset henkilöt</div>
+      </div>
+      <div className="decision-email-row">
         <strong className="decision-email-field-label">Aihe:</strong>
         <div className="decision-email-field-value">{this.state.mail.subject}</div>
       </div>
