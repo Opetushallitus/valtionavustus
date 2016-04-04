@@ -182,7 +182,7 @@ class DecisionDateAndSend extends React.Component {
     return <div className="decision-send-controls">
       {this.emailPreview()}
       <div className="decision-separator"/>
-      <button onClick={onPreview}>Aloita {this.mailsToSendLabel()} päätöksen lähettäminen</button>
+      <button onClick={onPreview}>Lähetä {this.mailsToSendLabel()} päätöstä</button>
     </div>
   }
 
