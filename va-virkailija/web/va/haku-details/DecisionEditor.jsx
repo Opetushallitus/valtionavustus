@@ -130,18 +130,24 @@ class DecisionDateAndSend extends React.Component {
     return <div>
       <span className="decision-row">Päätösten lähettäminen sähköpostilla</span>
       <div className="decision-separator"/>
-      <p>Päätökset lähetetään kaikille hakemusten jättäjille</p>
       {
         this.sentOk() ?
-        <div>Päätös lähetetty <strong>{this.state.sent}/{this.state.count}:lle</strong> hakijalle</div>
+        <div>Päätös lähetetty <strong>{this.state.sent}:lle</strong> hakijalle</div>
         :
         this.sendControls()
       }
     </div>
   }
 
-  sentOk() {
-    return _.isNumber(this.state.count) && this.state.count == this.state.sent
+  sentOk() { return _.isNumber(this.state.count) && this.state.count == this.state.sent }
+
+  mailsToSend() { return !this.sentOk() }
+
+  mailsToSendLabel() {
+    if (this.sentOk()) return '0'
+    //If, for some reason not all of the mails have been sent
+    if (this.state.sent !== 0 && this.state.count > 0) return `${(this.state.count-this.state.sent)}/${this.state.count}`
+    return this.state.count + ''
   }
 
   fetchEmailState(avustushakuId) {
@@ -170,19 +176,20 @@ class DecisionDateAndSend extends React.Component {
     if (this.state.preview) {
       return <div>
         {this.emailPreview()}
-        <button onClick={onSend} className="btn btn-selected">Vahvista päätösten lähettäminen</button>
+        <button onClick={onSend}>Vahvista lähetys</button>
       </div>
     }
-    return <div>
+    return <div className="decision-send-controls">
       {this.emailPreview()}
-      <button onClick={onPreview} className="btn btn-blue">Aloita {(this.state.count-this.state.sent)}/{this.state.count} päätöksen lähettäminen</button>
+      <div className="decision-separator"/>
+      <button onClick={onPreview}>Aloita {this.mailsToSendLabel()} päätöksen lähettäminen</button>
     </div>
   }
 
   emailPreview() {
     const mailContent = () => this.state.mail.content.replace("URL_PLACEHOLDER", `<a href=${this.state.exampleUrl}>Esimerkkipäätös</a>`)
 
-    return <div>
+    return <div className="decision-email-preview">
       <div className="decision-email-row">
         <strong className="decision-email-field-label">Aihe:</strong>
         <div className="decision-email-field-value">{this.state.mail.subject}</div>
