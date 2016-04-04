@@ -172,17 +172,13 @@ class DecisionDateAndSend extends React.Component {
     }
 
     if (!_.isNumber(this.state.count)) return <img src="/img/ajax-loader.gif"/>
-    if (this.state.sending) return <div><img src="/img/ajax-loader.gif"/>&nbsp;Lähetetään...</div>
-    if (this.state.preview) {
-      return <div>
-        {this.emailPreview()}
-        <button onClick={onSend}>Vahvista lähetys</button>
-      </div>
-    }
+    if (this.state.sending) return <div><img src="/img/ajax-loader.gif"/>&nbsp;Päätöksiä lähetetään...</div>
     return <div className="decision-send-controls">
       {this.emailPreview()}
       <div className="decision-separator"/>
-      <button onClick={onPreview}>Lähetä {this.mailsToSendLabel()} päätöstä</button>
+      <button disabled={this.state.preview} onClick={onPreview}>Lähetä {this.mailsToSendLabel()} päätöstä</button>
+      &nbsp;
+      {this.state.preview && <button onClick={onSend}>Vahvista lähetys</button>}
     </div>
   }
 
