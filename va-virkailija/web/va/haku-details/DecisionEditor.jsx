@@ -46,7 +46,7 @@ class DecisionDate extends React.Component {
     }
 
     return (
-      <div className="decision-row decision-date">
+      <div className="decision-date">
         <div className="decision-column">
           <span className="decision-date-label">Ratkaisupäivä</span>
           <input type="text" value={this.state.value} id="decision.date" onChange={onChange}/>
@@ -128,7 +128,7 @@ class DecisionDateAndSend extends React.Component {
 
   sendEmailSection() {
     return <div>
-      <p>Päätösten lähettäminen sähköpostilla</p>
+      <span className="decision-row">Päätösten lähettäminen sähköpostilla</span>
       <div className="decision-separator"/>
       <p>Päätökset lähetetään kaikille hakemusten jättäjille</p>
       {
