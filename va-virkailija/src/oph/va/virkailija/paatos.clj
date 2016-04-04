@@ -41,6 +41,11 @@
         sent (count (filter #((complement nil?) (:sent-emails %)) sent-email-status))]
     {:sent sent :count (count sent-email-status)}))
 
+(defn get-hakemus-ids [avustushaku-id]
+  (let [hakemukset (hakija-api/get-paatos-sent-emails avustushaku-id)
+        ids (map :id (filter #(nil? (:sent-emails %)) hakemukset))]
+  ids))
+
 (defroutes* paatos-routes
   "Paatos routes"
   (POST* "/send/:hakemus-id" []
@@ -52,8 +57,7 @@
            (send-paatos hakemus-id email-list)))
   (POST* "/sendall/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
-         (let [hakemukset (hakija-api/get-paatos-sent-emails avustushaku-id)
-               ids (map :id (filter #(nil? (:sent-emails %)) hakemukset))]
+         (let [ids (get-hakemus-ids avustushaku-id)]
            (log/info "Send all paatos ids " ids)
            (run! send-paatos-for-all ids)
            (ok (merge {:status "ok"} (get-sent-count avustushaku-id)))))
@@ -61,8 +65,13 @@
   (GET* "/sent/:avustushaku-id" []
         :path-params [avustushaku-id :- Long]
         (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
-              avustushaku-name (-> avustushaku :content :name :fi)]
-          (ok (merge {:status "ok" :mail (email/mail-example :paatos {:avustushaku-name avustushaku-name})}
+              avustushaku-name (-> avustushaku :content :name :fi)
+              first-hakemus-id (first (get-hakemus-ids avustushaku-id))]
+          (ok (merge {:status "ok"
+                      :mail (email/mail-example
+                              :paatos {:avustushaku-name avustushaku-name
+                                       :url "URL_PLACEHOLDER"})
+                      :example-url (email/paatos-url avustushaku-id first-hakemus-id)}
                      (get-sent-count avustushaku-id)))))
 
   (GET* "/emails/:hakemus-id" []

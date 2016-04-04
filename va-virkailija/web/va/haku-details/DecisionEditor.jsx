@@ -147,7 +147,7 @@ class DecisionDateAndSend extends React.Component {
   fetchEmailState(avustushakuId) {
     const sendS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/sent/${avustushakuId}`,{}))
     sendS.onValue((res)=>{
-      this.setState({...this.state, count:res.count, sent:res.sent, mail:res.mail})
+      this.setState({...this.state, count:res.count, sent:res.sent, mail:res.mail, exampleUrl: res['example-url']})
     })
   }
 
@@ -180,9 +180,17 @@ class DecisionDateAndSend extends React.Component {
   }
 
   emailPreview() {
+    const mailContent = () => this.state.mail.content.replace("URL_PLACEHOLDER", `<a href=${this.state.exampleUrl}>Esimerkkipäätös</a>`)
+
     return <div>
-      <div className="decision-email-row"><strong className="decision-email-field-label">Aihe:</strong><div className="decision-email-field-value">{this.state.mail.subject}</div></div>
-      <div className="decision-email-row"><strong className="decision-email-field-label">Viesti:</strong><div className="decision-email-field-value decision-email-content">{this.state.mail.content}</div></div>
+      <div className="decision-email-row">
+        <strong className="decision-email-field-label">Aihe:</strong>
+        <div className="decision-email-field-value">{this.state.mail.subject}</div>
+      </div>
+      <div className="decision-email-row">
+        <strong className="decision-email-field-label">Viesti:</strong>
+        <div className="decision-email-field-value decision-email-content" dangerouslySetInnerHTML={{__html: mailContent()}}></div>
+      </div>
     </div>
   }
 }
