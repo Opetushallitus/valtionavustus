@@ -41,10 +41,13 @@
         sent (count (filter #((complement nil?) (:sent-emails %)) sent-email-status))]
     {:sent sent :count (count sent-email-status)}))
 
-(defn get-hakemus-ids [avustushaku-id]
-  (let [hakemukset (hakija-api/get-paatos-sent-emails avustushaku-id)
-        ids (map :id (filter #(nil? (:sent-emails %)) hakemukset))]
-  ids))
+(defn get-hakemus-ids
+  ([avustushaku-id]
+   (get-hakemus-ids avustushaku-id identity))
+  ([avustushaku-id filter-fn]
+   (let [hakemukset (hakija-api/get-paatos-sent-emails avustushaku-id)
+         ids (map :id (filter filter-fn hakemukset))]
+     ids)))
 
 (defroutes* paatos-routes
   "Paatos routes"
@@ -57,7 +60,7 @@
            (send-paatos hakemus-id email-list)))
   (POST* "/sendall/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
-         (let [ids (get-hakemus-ids avustushaku-id)]
+         (let [ids (get-hakemus-ids avustushaku-id #(nil? (:sent-emails %)))]
            (log/info "Send all paatos ids " ids)
            (run! send-paatos-for-all ids)
            (ok (merge {:status "ok"} (get-sent-count avustushaku-id)))))
