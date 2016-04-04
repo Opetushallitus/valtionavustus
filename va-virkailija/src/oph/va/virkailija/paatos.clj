@@ -69,11 +69,14 @@
         :path-params [avustushaku-id :- Long]
         (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
               avustushaku-name (-> avustushaku :content :name :fi)
-              first-hakemus-id (first (get-hakemus-ids avustushaku-id))]
+              first-hakemus-id (first (get-hakemus-ids avustushaku-id))
+              first-hakemus (hakija-api/get-hakemus first-hakemus-id)]
           (ok (merge {:status "ok"
                       :mail (email/mail-example
                               :paatos {:avustushaku-name avustushaku-name
-                                       :url "URL_PLACEHOLDER"})
+                                       :url "URL_PLACEHOLDER"
+                                       :register-number (:register_number first-hakemus)
+                                       :project-name (:project_name first-hakemus)})
                       :example-url (email/paatos-url avustushaku-id first-hakemus-id)}
                      (get-sent-count avustushaku-id)))))
 

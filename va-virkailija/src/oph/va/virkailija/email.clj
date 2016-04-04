@@ -63,4 +63,6 @@
                            :subject mail-subject
                            :avustushaku-name avustushaku-name
                            :to to
-                           :url url})))
+                           :url url
+                           :register-number (:register_number hakemus)
+                           :project-name (:project_name hakemus)})))
