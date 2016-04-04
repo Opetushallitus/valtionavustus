@@ -130,18 +130,13 @@ class DecisionDateAndSend extends React.Component {
     return <div>
       <span className="decision-row">Päätösten lähettäminen sähköpostilla</span>
       <div className="decision-separator"/>
-      {
-        this.sentOk() ?
-        <div>Päätös lähetetty <strong>{this.state.sent}:lle</strong> hakijalle</div>
-        :
-        this.sendControls()
-      }
+      {this.sendControls()}
     </div>
   }
 
   sentOk() { return _.isNumber(this.state.count) && this.state.count == this.state.sent }
 
-  mailsToSend() { return !this.sentOk() }
+  mailsToSend() { return !this.sentOk() && !this.state.sending }
 
   mailsToSendLabel() {
     if (this.sentOk()) return '0'
@@ -163,22 +158,23 @@ class DecisionDateAndSend extends React.Component {
     }
 
     const onSend = () =>{
-      this.setState({...this.state,sending:true})
+      this.setState({...this.state,sending: true, preview: false})
       const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/sendall/${this.props.avustushaku.id}`,{}))
       sendS.onValue((res)=>{
-          this.setState({count:res.count, sent:res.sent})
+          console.log('sending onvalue')
+          this.setState({...this.state, count:res.count, sent:res.sent, sending: false})
         }
       )
     }
 
     if (!_.isNumber(this.state.count)) return <img src="/img/ajax-loader.gif"/>
-    if (this.state.sending) return <div><img src="/img/ajax-loader.gif"/>&nbsp;Päätöksiä lähetetään...</div>
     return <div className="decision-send-controls">
       {this.emailPreview()}
       <div className="decision-separator"/>
-      <button disabled={this.state.preview} onClick={onPreview}>Lähetä {this.mailsToSendLabel()} päätöstä</button>
-      &nbsp;
+      {this.state.sending && <div><img src="/img/ajax-loader.gif"/>&nbsp;Päätöksiä lähetetään...</div>}
+      {this.mailsToSend() && <span><button disabled={this.state.preview || this.sentOk()} onClick={onPreview}>Lähetä {this.mailsToSendLabel()} päätöstä</button>&nbsp;</span>}
       {this.state.preview && <button onClick={onSend}>Vahvista lähetys</button>}
+      {this.sentOk() && <div><strong>{this.state.sent} päätöstä lähetetty</strong></div>}
     </div>
   }
 
