@@ -212,7 +212,7 @@ export default class DecisionEditor extends React.Component {
       <div className="decision-editor">
         {fields.map((field)=><DecisionFields key={field.id} title={field.title} avustushaku={avustushaku} id={field.id} onChange={onChange}/>)}
         <LiitteetList avustushaku={avustushaku} controller={controller}/>
-        <DecisionDateAndSend avustushaku={this.props.avustushaku}/>
+        <DecisionDateAndSend avustushaku={avustushaku} controller={controller}/>
       </div>
     )
   }
