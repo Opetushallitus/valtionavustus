@@ -10,14 +10,19 @@
    [clojure.tools.logging :as log]
    [clojure.string :as str]))
 
+(defn is-notification-email-field? [field]
+  (or (formutil/has-field-type? :vaEmailNotification field)
+      ;;This array is for old-style email-fields which did not yet have the :vaEmailNotification field-type
+      (some #(= (:key field) %) ["organization-email" "primary-email" "signature-email"])))
+
+(defn- emails-from-answers [answers]
+  (map :value (formutil/filter-values #(is-notification-email-field? %) (answers :value))))
+
 (defn- paatos-emails [hakemus-id]
   (let [hakemus (hakija-api/get-hakemus hakemus-id)
         submission (hakija-api/get-hakemus-submission hakemus)
         answers (:answers submission)
-        primary-email (formutil/find-answer-value answers "primary-email")
-        organization-email (formutil/find-answer-value answers "organization-email")
-        signature-email (formutil/find-answer-value answers "signature-email")
-        emails (vec (remove nil? (distinct [primary-email organization-email signature-email])))]
+        emails (vec (remove nil? (distinct (emails-from-answers answers))))]
     emails))
 
 (defn send-paatos [hakemus-id emails]
