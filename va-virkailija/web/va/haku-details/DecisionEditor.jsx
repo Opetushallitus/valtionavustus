@@ -154,14 +154,14 @@ class DecisionDateAndSend extends React.Component {
 
   sendControls() {
     const onPreview = () => {
-      this.setState({preview:true})
+      this.setState({...this.state, preview:true})
+      setTimeout(() => {this.setState({...this.state, preview: false})}, 5000)
     }
 
     const onSend = () =>{
       this.setState({...this.state,sending: true, preview: false})
       const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/sendall/${this.props.avustushaku.id}`,{}))
       sendS.onValue((res)=>{
-          console.log('sending onvalue')
           this.setState({...this.state, count:res.count, sent:res.sent, sending: false})
         }
       )
