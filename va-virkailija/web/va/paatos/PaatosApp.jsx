@@ -85,10 +85,10 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
      .map(budgetItem => _.extend(budgetItem, {
        original: findCost(formContent, hakemus.answers, budgetItem)
      }))
-  const totalOriginalCosts = formatNumber(_.sum(budgetItems.map(i=>Number(i.original))))
-  const totalCosts = formatNumber(hakemus.arvio.useDetailedCosts ? _.sum(budgetItems.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted)
-  const totalRahoitus = formatNumber(_.sum(rahoitusItems.map(i=>Number(i.original))))
-  const totalGranted = formatNumber(hakemus.arvio['budget-granted'])
+  const totalOriginalCosts = formatPrice(_.sum(budgetItems.map(i=>Number(i.original))))
+  const totalCosts = formatPrice(hakemus.arvio.useDetailedCosts ? _.sum(budgetItems.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted)
+  const totalRahoitus = formatPrice(_.sum(rahoitusItems.map(i=>Number(i.original))))
+  const totalGranted = formatPrice(hakemus.arvio['budget-granted'])
   const koulutusosiot = hakemus.answers.find(item => item.key === 'koulutusosiot')
   return (
      <section>
@@ -133,10 +133,11 @@ const traineeCalcObj = obj => ({
   scope: findByKeyEnd(obj, '.scope'),
   personCount: findByKeyEnd(obj, '.person-count'),
   scopeType: findByKeyEnd(obj, '.scope-type'),
-  total: findByKeyEnd(obj, '.total')
+  total:  findByKeyEnd(obj, '.total'),
+  totalFormatted:  formatNumber(findByKeyEnd(obj, '.total').replace(',0', ''))
 })
 
-const sumTraineeCalculations = list => _.sum(list.map(x=>Number(x.replace(',', '.'))))
+const sumTraineeCalculations = list => formatNumber(_.sum(list.map(x=>Number(x.replace(',', '.')))))
 
 const Koulutusosiot = ({list, answers}) => {
   var rows = list
@@ -177,8 +178,8 @@ const Koulutusosiot = ({list, answers}) => {
           <td className="amount">{row.granted.scope} {row.granted.scopeType}</td>
           <td className="amount">{row.applied.personCount}</td>
           <td className="amount">{row.granted.personCount}</td>
-          <td className="amount">{row.applied.total}</td>
-          <td className="amount">{row.granted.total}</td>
+          <td className="amount">{row.applied.totalFormatted}</td>
+          <td className="amount">{row.granted.totalFormatted}</td>
         </tr>)}
       </tbody>
       <tfoot>
@@ -298,14 +299,14 @@ const Kayttosuunnitelma = ({budgetItems, rahoitusItems, avustushaku, hakemus, to
 const BudgetItemRow = ({item, lang, useDetailedCosts}) =>
    <tr>
      <td>{item.label[lang]}</td>
-     <td className="amount budgetAmount">{formatNumber(item.original)}</td>
-     <td className="amount budgetAmount">{useDetailedCosts && formatNumber(item.overridden)}</td>
+     <td className="amount budgetAmount">{formatPrice(item.original)}</td>
+     <td className="amount budgetAmount">{useDetailedCosts && formatPrice(item.overridden)}</td>
    </tr>
 
 const IncomeBudgetItemRow = ({item, lang}) =>
    <tr>
      <td>{item.label[lang]}</td>
-     <td className="amount budgetAmount">{formatNumber(item.original)}</td>
+     <td className="amount budgetAmount">{formatPrice(item.original)}</td>
    </tr>
 
 const RejectedDecision = ({avustushaku, hakemus, role, L}) =>
@@ -400,4 +401,6 @@ const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.
 
 const ContentWithParagraphs = ({content}) => <div>{content.split("\n").map((p)=><p key={p}>{p}</p>)}</div>
 
-const formatNumber = num => num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1\u00A0") + '\u00A0€'
+const formatNumber = num => num.toString().replace(',0','').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1\u00A0")
+
+const formatPrice = num => formatNumber(num) + '\u00A0€'
