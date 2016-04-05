@@ -63,6 +63,7 @@
          (let [email-with-spaces (:email email)
                email-list (str/split email-with-spaces #" ")]
            (send-paatos hakemus-id email-list)))
+
   (POST* "/sendall/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
          (let [ids (get-hakemus-ids avustushaku-id #(nil? (:sent-emails %)))]
