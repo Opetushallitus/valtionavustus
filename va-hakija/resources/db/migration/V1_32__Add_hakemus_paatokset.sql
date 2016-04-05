@@ -1,4 +1,4 @@
-create table hakemus_decisions (
+create table hakemus_paatokset (
   id             serial primary key,
   hakemus_id       integer NOT NULL,
   hakemus_version  integer NOT NULL,

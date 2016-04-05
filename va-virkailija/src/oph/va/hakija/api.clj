@@ -158,11 +158,11 @@
   (first (exec :hakija-db hakija-queries/get-avustushaku-by-status {:id avustushaku-id :statuses (map-status-list statuses)})))
 
 (defn get-paatos-sent-emails [avustushaku-id]
-  (let [paatos-sent-emails (exec :hakija-db hakija-queries/list-hakemus-decision-email-statuses {:avustushaku_id avustushaku-id})]
+  (let [paatos-sent-emails (exec :hakija-db hakija-queries/list-hakemus-paatos-email-statuses {:avustushaku_id avustushaku-id})]
     (map paatos-sent-emails->json paatos-sent-emails)))
 
 (defn add-paatos-sent-emails [hakemus emails]
-  (exec :hakija-db hakija-queries/add-hakemus-decision! {:hakemus_id (:id hakemus)
+  (exec :hakija-db hakija-queries/add-hakemus-paatos! {:hakemus_id (:id hakemus)
                                                          :hakemus_version (:version hakemus)
                                                          :sent_emails {:addresses emails}}))
 
