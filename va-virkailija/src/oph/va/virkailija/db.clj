@@ -197,3 +197,12 @@
   (->> {:avustushaku_id avustushaku-id :id saved-search-id}
        (exec :db queries/get-search)
        first))
+
+(defn get-finalized-hakemus-ids
+  "Filters hakemus-ids so that only 'accepted' and 'rejected' are included (this status is in arviot)"
+  [hakemus-ids]
+  (if (empty? hakemus-ids)
+    []
+    (->> {:hakemus_ids (vec hakemus-ids)}
+         (exec :db queries/get-accepted-or-rejected-hakemus-ids)
+         (map :hakemus_id))))

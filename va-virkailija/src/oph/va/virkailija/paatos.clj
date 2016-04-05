@@ -7,6 +7,7 @@
    [oph.soresu.form.formutil :as formutil]
    [oph.va.virkailija.email :as email]
    [oph.va.virkailija.schema :as virkailija-schema]
+   [oph.va.virkailija.db :as virkailija-db]
    [clojure.tools.logging :as log]
    [clojure.string :as str]))
 
@@ -41,20 +42,21 @@
   (let [emails (paatos-emails hakemus-id)]
     (send-paatos hakemus-id emails)))
 
-(defn get-hakemus-ids
-  ([avustushaku-id]
-   (get-hakemus-ids avustushaku-id identity))
-  ([avustushaku-id filter-fn]
-   (let [hakemukset (hakija-api/get-paatos-sent-emails avustushaku-id)
-         ids (map :id (filter filter-fn hakemukset))]
-     ids)))
+(defn get-paatos-email-status
+  "Returns only data related to those hakemus ids which are rejected or accepted,
+  other statuses are ignored. This is a safeguard: we can't accidentally send email
+  to those people which have their hakemus in an invalid state"
+  [avustushaku-id]
+  (let [status-from-hakija-api (hakija-api/get-paatos-email-status avustushaku-id)
+        ids-accepted-or-rejected (virkailija-db/get-finalized-hakemus-ids (map :id status-from-hakija-api))]
+    (filter #(contains? (set ids-accepted-or-rejected) (:id %)) status-from-hakija-api)))
 
 (defn get-hakemus-ids-to-send [avustushaku-id]
-  (let [hakemukset-email-status (hakija-api/get-paatos-sent-emails avustushaku-id)]
+  (let [hakemukset-email-status (get-paatos-email-status avustushaku-id)]
     (map :id (filter #(nil? (:sent-emails %)) hakemukset-email-status))))
 
 (defn get-sent-status [avustushaku-id]
-  (let [hakemukset-email-status (hakija-api/get-paatos-sent-emails avustushaku-id)]
+  (let [hakemukset-email-status (get-paatos-email-status avustushaku-id)]
     {:ids (map :id hakemukset-email-status)
      :sent (count (filter #((complement nil?) (:sent-emails %)) hakemukset-email-status))
      :count (count hakemukset-email-status)

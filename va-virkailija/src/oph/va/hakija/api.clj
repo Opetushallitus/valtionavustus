@@ -157,7 +157,7 @@
 (defn get-avustushaku-by-status [avustushaku-id statuses]
   (first (exec :hakija-db hakija-queries/get-avustushaku-by-status {:id avustushaku-id :statuses (map-status-list statuses)})))
 
-(defn get-paatos-sent-emails [avustushaku-id]
+(defn get-paatos-email-status [avustushaku-id]
   (let [paatos-sent-emails (exec :hakija-db hakija-queries/list-hakemus-paatos-email-statuses {:avustushaku_id avustushaku-id})]
     (map paatos-sent-emails->json paatos-sent-emails)))
 
