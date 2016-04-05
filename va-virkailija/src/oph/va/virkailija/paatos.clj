@@ -41,11 +41,6 @@
   (let [emails (paatos-emails hakemus-id)]
     (send-paatos hakemus-id emails)))
 
-(defn get-sent-count [avustushaku-id]
-  (let [sent-email-status (hakija-api/get-paatos-sent-emails avustushaku-id)
-        sent (count (filter #((complement nil?) (:sent-emails %)) sent-email-status))]
-    {:sent sent :count (count sent-email-status)}))
-
 (defn get-hakemus-ids
   ([avustushaku-id]
    (get-hakemus-ids avustushaku-id identity))
@@ -53,6 +48,17 @@
    (let [hakemukset (hakija-api/get-paatos-sent-emails avustushaku-id)
          ids (map :id (filter filter-fn hakemukset))]
      ids)))
+
+(defn get-hakemus-ids-to-send [avustushaku-id]
+  (let [hakemukset-email-status (hakija-api/get-paatos-sent-emails avustushaku-id)]
+    (map :id (filter #(nil? (:sent-emails %)) hakemukset-email-status))))
+
+(defn get-sent-status [avustushaku-id]
+  (let [hakemukset-email-status (hakija-api/get-paatos-sent-emails avustushaku-id)]
+    {:ids (map :id hakemukset-email-status)
+     :sent (count (filter #((complement nil?) (:sent-emails %)) hakemukset-email-status))
+     :count (count hakemukset-email-status)
+     :sent-time (:sent-time (first hakemukset-email-status))}))
 
 (defroutes* paatos-routes
   "Paatos routes"
@@ -66,25 +72,28 @@
 
   (POST* "/sendall/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
-         (let [ids (get-hakemus-ids avustushaku-id #(nil? (:sent-emails %)))]
+         (let [ids (get-hakemus-ids-to-send avustushaku-id)]
            (log/info "Send all paatos ids " ids)
            (run! send-paatos-for-all ids)
-           (ok (merge {:status "ok"} (get-sent-count avustushaku-id)))))
+           (ok (merge {:status "ok"}
+                      (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time])))))
 
   (GET* "/sent/:avustushaku-id" []
         :path-params [avustushaku-id :- Long]
         (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
               avustushaku-name (-> avustushaku :content :name :fi)
-              first-hakemus-id (first (get-hakemus-ids avustushaku-id))
+              sent-status (get-sent-status avustushaku-id)
+              first-hakemus-id (first (:ids sent-status))
               first-hakemus (hakija-api/get-hakemus first-hakemus-id)]
-          (ok (merge {:status "ok"
-                      :mail (email/mail-example
-                              :paatos {:avustushaku-name avustushaku-name
-                                       :url "URL_PLACEHOLDER"
-                                       :register-number (:register_number first-hakemus)
-                                       :project-name (:project_name first-hakemus)})
-                      :example-url (email/paatos-url avustushaku-id first-hakemus-id)}
-                     (get-sent-count avustushaku-id)))))
+          (ok (merge
+                {:status "ok"
+                 :mail (email/mail-example
+                         :paatos {:avustushaku-name avustushaku-name
+                                  :url "URL_PLACEHOLDER"
+                                  :register-number (:register_number first-hakemus)
+                                  :project-name (:project_name first-hakemus)})
+                 :example-url (email/paatos-url avustushaku-id first-hakemus-id)}
+                (select-keys sent-status [:sent :count :sent-time])))))
 
   (GET* "/emails/:hakemus-id" []
         :path-params [hakemus-id :- Long]

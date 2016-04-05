@@ -3,6 +3,7 @@ import _ from 'lodash'
 import Liitteet from '../data/Liitteet'
 import Bacon from 'baconjs'
 import HttpUtil from 'va-common/web/HttpUtil.js'
+import DateUtil from 'soresu-form/web/form/DateUtil'
 
 const DecisionField = ({avustushaku, title, id,language, onChange}) => {
   const fieldId= `decision.${id}.${language}`
@@ -148,7 +149,7 @@ class DecisionDateAndSend extends React.Component {
   fetchEmailState(avustushakuId) {
     const sendS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/sent/${avustushakuId}`,{}))
     sendS.onValue((res)=>{
-      this.setState({...this.state, count:res.count, sent:res.sent, mail:res.mail, exampleUrl: res['example-url']})
+      this.setState({...this.state, count:res.count, sent:res.sent, mail:res.mail, sentTime: res['sent-time'], exampleUrl: res['example-url']})
     })
   }
 
@@ -162,7 +163,7 @@ class DecisionDateAndSend extends React.Component {
       this.setState({...this.state,sending: true, preview: false})
       const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/sendall/${this.props.avustushaku.id}`,{}))
       sendS.onValue((res)=>{
-          this.setState({...this.state, count:res.count, sent:res.sent, sending: false})
+          this.setState({...this.state, count:res.count, sent:res.sent, sentTime: res['sent-time'], sending: false})
         }
       )
     }
@@ -174,8 +175,16 @@ class DecisionDateAndSend extends React.Component {
       {this.state.sending && <div><img src="/img/ajax-loader.gif"/>&nbsp;Päätöksiä lähetetään...</div>}
       {this.mailsToSend() && <span><button disabled={this.state.preview || this.sentOk()} onClick={onPreview}>Lähetä {this.mailsToSendLabel()} päätöstä</button>&nbsp;</span>}
       {this.state.preview && <button onClick={onSend}>Vahvista lähetys</button>}
-      {this.sentOk() && <div><strong>{this.state.sent} päätöstä lähetetty</strong></div>}
+      {this.sentOk() && <div><strong>{this.state.sent} päätöstä lähetetty {this.sentTimeStamp()}</strong></div>}
     </div>
+  }
+
+  sentTimeStamp() {
+    if (this.state.sentTime) {
+      const sentTimeStamp = new Date(this.state.sentTime)
+      return `${DateUtil.asDateString(sentTimeStamp)} klo ${DateUtil.asTimeString(sentTimeStamp)}`
+    }
+    return ''
   }
 
   emailPreview() {

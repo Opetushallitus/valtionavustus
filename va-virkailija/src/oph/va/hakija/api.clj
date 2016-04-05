@@ -138,7 +138,8 @@
   {:id (:id paatos)
    :version (:version paatos)
    :project-name (:project_name paatos)
-   :sent-emails (:sent_emails paatos)})
+   :sent-emails (:sent_emails paatos)
+   :sent-time (:sent_time paatos)})
 
 (defn- hakemukset->json [hakemukset]
   (map hakemus->json hakemukset))
@@ -163,7 +164,7 @@
 (defn add-paatos-sent-emails [hakemus emails]
   (exec :hakija-db hakija-queries/add-hakemus-decision! {:hakemus_id (:id hakemus)
                                                          :hakemus_version (:version hakemus)
-                                                         :sent_emails {:addresses ["a" "b"]}}))
+                                                         :sent_emails {:addresses emails}}))
 
 (defn get-hakudata [avustushaku-id]
   (let [avustushaku (get-avustushaku avustushaku-id)
