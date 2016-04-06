@@ -12,9 +12,10 @@
    [clojure.string :as str]))
 
 (defn is-notification-email-field? [field]
-  (or (formutil/has-field-type? :vaEmailNotification field)
-      ;;This array is for old-style email-fields which did not yet have the :vaEmailNotification field-type
-      (some #(= (:key field) %) ["organization-email" "primary-email" "signature-email"])))
+  (or
+    (formutil/has-field-type? "vaEmailNotification" field)
+    ;;This array is for old-style email-fields which did not yet have the :vaEmailNotification field-type
+    (some #(= (:key field) %) ["organization-email" "primary-email" "signature-email"])))
 
 (defn- emails-from-answers [answers]
   (map :value (formutil/filter-values #(is-notification-email-field? %) (answers :value))))
