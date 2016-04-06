@@ -2,15 +2,15 @@
   (:require [schema.core :as s]
               [oph.soresu.form.schema :refer :all]))
 
-(create-form-schema [:vaBudget
-                     :vaSummingBudgetElement
-                     :vaBudgetItemElement
-                     :vaBudgetSummaryElement
-                     :vaProjectDescription]
-                    [:vaFocusAreas
-                     :vaEmailNotification
-                     :vaTraineeDayCalculator]
-                    [:vaTraineeDayTotalCalculator])
+(create-form-schema ["vaBudget"
+                     "vaSummingBudgetElement"
+                     "vaBudgetItemElement"
+                     "vaBudgetSummaryElement"
+                     "vaProjectDescription"]
+                    ["vaFocusAreas"
+                     "vaEmailNotification"
+                     "vaTraineeDayCalculator"]
+                    ["vaTraineeDayTotalCalculator"])
 
 (s/defschema SystemTime {:system-time s/Inst})
 
