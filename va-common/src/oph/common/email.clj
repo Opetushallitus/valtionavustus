@@ -13,7 +13,7 @@
        slurp))
 
 (def smtp-config (:email config))
-(defonce mail-queue (chan 50))
+(defonce mail-queue (chan (:queue-size smtp-config)))
 (defonce run? (atom true))
 
 (defn- try-send! [time multiplier max-time send-fn]

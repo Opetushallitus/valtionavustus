@@ -26,6 +26,7 @@
  :email {:enabled? false
          :host nil
          :port nil
+         :queue-size 1024
          :from {:fi "no-reply@valtionavustukset.oph.fi"
                 :sv "no-reply@statsunderstod.oph.fi"}
          :sender "no-reply@csc.fi"
