@@ -28,8 +28,6 @@ controller.initializeState(parsedRoute).onValue((state) => {
   try {
     if(state.paatosData) {
       ReactDOM.render(<PaatosApp state={state} controller={controller}/>, document.getElementById('app'))
-    } else {
-      console.log('Not rendering yet, because state.paatosData not yet loaded.')
     }
   } catch (e) {
     console.log('Error from ReactDOM.render with state', state, e)
