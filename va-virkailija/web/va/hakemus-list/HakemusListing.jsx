@@ -156,10 +156,10 @@ export default class HakemusListing extends Component {
     const sorter = this.props.hakemusSorter
     const hakemusList = this.props.hakemusList
     const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter, userInfo, allowHakemusScoring)
-    const ophShareSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus["budget-oph-share"] }, 0))
+    const ophShareSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x["budget-oph-share"])))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
       return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} userInfo={userInfo} allowHakemusScoring={allowHakemusScoring} allowChangeHakemusState={allowChangeHakemusState} controller={controller} state={state}/> })
-    const budgetGrantedSum = HakemusListing.formatNumber(_.reduce(filteredHakemusList, (total, hakemus) => { return total + hakemus.arvio["budget-granted"] }, 0))
+    const budgetGrantedSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x.arvio["budget-granted"])))
 
     const onFilterChange = function(filterId) {
       return function(e) {

@@ -88,9 +88,7 @@ export class EditSummingBudgetElement extends React.Component {
     const classNames = ClassNames({"required": field.required})
     const originalHakemus = customProps.originalHakemus
     const originalAmountValues = VaBudgetCalculator.getAmountValues(field, originalHakemus.answers)
-    const originalSum = _.reduce(originalAmountValues, (total, errorsAndValue) => {
-      return total + errorsAndValue.value
-    }, 0)
+    const originalSum = _.sum(originalAmountValues.map(x => x.value))
     const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
     const costsGranted = _.get(originalHakemus, 'arvio.costsGranted', 0)
     const firstTable = field.params.showColumnTitles

@@ -110,7 +110,7 @@ const RahoitusalueList = ({hakemusList})=>{
 }
 
 
-const SumBy = (list,fieldFunc) => _.reduce(list, (total, item) => total + fieldFunc(item), 0)
+const SumBy = (list,fieldFunc) => _.sum(list.map(fieldFunc))
 const SumByOphShare = _.partialRight(SumBy, (hakemus)=>hakemus["budget-oph-share"]);
 const SumByBudgetGranted = _.partialRight(SumBy, (hakemus)=>hakemus.arvio["budget-granted"]);
 
