@@ -341,6 +341,38 @@
     "summa":{
       "fi":"Summa",
       "sv":"SV Summa"
+    },
+    "koulutusosio-title": {
+      "fi":"Valtionavustusta / määrärahaa voidaan käyttää seuraaviin koulutusosioihin:",
+      "sv":"SV Valtionavustusta / määrärahaa voidaan käyttää seuraaviin koulutusosioihin:"
+    },
+    "koulutusosiot": {
+      "fi":"Koulutusosiot",
+      "sv":"SV Koulutusosiot"
+    },
+    "laajuus": {
+      "fi":"Laajuus",
+      "sv":"SV Laajuus"
+    },
+    "osallistujat": {
+      "fi":"Osallistujat",
+      "sv":"SV Osallistujat"
+    },
+    "koulutettavapaivat": {
+      "fi":"Koulutettavapäivät",
+      "sv":"SV Koulutettavapäivät"
+    },
+    "koulutettavapaivat-yhteensa": {
+      "fi":"Koulutettavapäivät yhteensä",
+      "sv":"SV Koulutettavapäivät yhteensä"
+    },
+    "op": {
+      "fi":"op",
+      "sv":"sp"
+    },
+    "kp": {
+      "fi":"kp",
+      "sv":"ud"
     }
   }
 }

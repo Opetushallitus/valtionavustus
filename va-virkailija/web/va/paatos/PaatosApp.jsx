@@ -125,7 +125,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
           totalRahoitus={totalRahoitus}
           L={L}
        />
-       {koulutusosiot && <Koulutusosiot list={koulutusosiot.value} answers={hakemus.arvio['overridden-answers'].value}/>}
+       {koulutusosiot && <Koulutusosiot list={koulutusosiot.value} answers={hakemus.arvio['overridden-answers'].value} L={L} />}
      </section>
   )
 }

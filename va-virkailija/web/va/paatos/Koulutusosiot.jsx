@@ -2,7 +2,7 @@ import React from 'react'
 import FormUtil from '../../../../soresu-form/web/form/FormUtil'
 import {formatNumber} from './Formatter'
 
-export const Koulutusosiot = ({list, answers}) => {
+export const Koulutusosiot = ({list, answers, L}) => {
   var rows = list
     .map(x => {
       var value = x.value
@@ -15,30 +15,30 @@ export const Koulutusosiot = ({list, answers}) => {
       }
     })
   return <section className="section">
-    <p>Valtionavustusta / määrärahaa voidaan käyttää seuraaviin koulutusosioihin:</p>
+    <p><L translationKey="koulutusosio-title"/></p>
     <table>
       <thead>
       <tr>
-        <th rowSpan="2" >Koulutusosiot</th>
-        <th colSpan="2" className="groupTitle">Laajuus</th>
-        <th colSpan="2" className="groupTitle">Osallistujat</th>
-        <th colSpan="2" className="groupTitle">Koulutettavatpäivät</th>
+        <th rowSpan="2" ><L translationKey="koulutusosiot" /></th>
+        <th colSpan="2" className="groupTitle"><L translationKey="koulutusosiot" /></th>
+        <th colSpan="2" className="groupTitle"><L translationKey="osallistujat" /></th>
+        <th colSpan="2" className="groupTitle"><L translationKey="koulutettavapaivat" /></th>
       </tr>
       <tr>
-        <th className="amount">Haettu</th>
-        <th className="amount">Myönnetty</th>
-        <th className="amount">Haettu</th>
-        <th className="amount">Myönnetty</th>
-        <th className="amount">Haettu</th>
-        <th className="amount">Myönnetty</th>
+        <th className="amount"><L translationKey="haettu" /></th>
+        <th className="amount"><L translationKey="hyvaksytty" /></th>
+        <th className="amount"><L translationKey="haettu" /></th>
+        <th className="amount"><L translationKey="hyvaksytty" /></th>
+        <th className="amount"><L translationKey="haettu" /></th>
+        <th className="amount"><L translationKey="hyvaksytty" /></th>
       </tr>
       </thead>
       <tbody>
       {rows
         .map((row, i) => <tr key={i}>
           <td>{row.name}</td>
-          <td className="amount">{row.applied.scope} {row.applied.scopeType}</td>
-          <td className="amount">{row.granted.scope} {row.granted.scopeType}</td>
+          <td className="amount">{row.applied.scope} <L translationKey={row.applied.scopeType} /></td>
+          <td className="amount">{row.granted.scope} <L translationKey={row.granted.scopeType} /></td>
           <td className="amount">{row.applied.personCount}</td>
           <td className="amount">{row.granted.personCount}</td>
           <td className="amount">{row.applied.totalFormatted}</td>
@@ -47,7 +47,7 @@ export const Koulutusosiot = ({list, answers}) => {
       </tbody>
       <tfoot>
       <tr>
-        <th colSpan="5">Koulutettavatpäivät yhteensä</th>
+        <th colSpan="5"><L translationKey="koulutettavapaivat-yhteensa" /></th>
         <th className="amount">{sumTraineeCalculations(rows.map(x=>x.applied.total))}</th>
         <th className="amount">{sumTraineeCalculations(rows.map(x=>x.granted.total))}</th>
       </tr>
