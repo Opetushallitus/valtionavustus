@@ -109,6 +109,9 @@ haproxy_defaults:
     - abortonclose
     - httplog
     - dontlognull
+  compression:
+    algo: gzip
+    type: text/html text/html;charset=utf-8 text/plain text/css text/javascript application/json application/json;charset=utf-8 application/javascript application/rtf application/pdf application/vnd.oasis.opendocument.text application/msword application/vnd.openxmlformats-officedocument.wordprocessingml.document application/vnd.oasis.opendocument.spreadsheet application/vnd.ms-excel application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
   errorfile:
       - code: 400
         file: /etc/haproxy/errors/400.http
