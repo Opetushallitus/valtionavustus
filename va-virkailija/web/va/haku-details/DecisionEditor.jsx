@@ -188,7 +188,7 @@ class DecisionDateAndSend extends React.Component {
   }
 
   emailPreview() {
-    const mailContent = () => this.state.mail.content.replace("URL_PLACEHOLDER", `<a href=${this.state.exampleUrl}>Esimerkkipäätös</a>`)
+    const mailContent = () => this.state.mail.content.replace("URL_PLACEHOLDER", `<a href=${this.state.exampleUrl}>${this.state.exampleUrl}</a>`)
 
     return <div className="decision-email-preview">
       <div className="decision-email-row">
