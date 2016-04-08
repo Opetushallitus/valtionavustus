@@ -4,8 +4,8 @@ import _ from 'lodash'
 
 const RoleButton = ({role,roleField,controller,hakemusFilter}) => {
   const currentFilter = hakemusFilter[roleField]
-  const onClick = (roleId) =>{
-    const newFilter = currentFilter==roleId ? undefined : roleId
+  const onClick = () => {
+    const newFilter = currentFilter==role.id ? undefined : role.id
     controller.setFilter(roleField,newFilter)
     controller.closeHakemusDetail()
   }
@@ -15,7 +15,7 @@ const RoleButton = ({role,roleField,controller,hakemusFilter}) => {
     'btn-simple': !active
   })
   return (
-    <button className={buttonClass} onClick={onClick.bind(this,role.id)}>{role.name}</button>
+    <button className={buttonClass} onClick={onClick}>{role.name}</button>
   )
 }
 
