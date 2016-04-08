@@ -358,6 +358,9 @@ class StatusFilter extends Component {
 }
 
 class HakemusRow extends Component {
+  shouldComponentUpdate() {
+    return this.props.hakemus === this.props.selectedHakemus
+  }
   render() {
     const state = this.props.state
     const hakemus = this.props.hakemus
