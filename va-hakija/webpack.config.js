@@ -17,6 +17,10 @@ if (process.env.UGLIFY === "true") {
       }
   })
   plugins.push(uglifyJsPlugin)
+  const prodEnvPlugin = new webpack.DefinePlugin({
+      'process.env': {NODE_ENV: '"production"'}
+  })
+  plugins.push(prodEnvPlugin)
 }
 
 module.exports = {
