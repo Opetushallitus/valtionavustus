@@ -1,8 +1,25 @@
 import React from 'react'
+import FormUtil from '../../../../soresu-form/web/form/FormUtil'
 import {formatPrice} from './Formatter'
+import InputValueStorage from '../../../../soresu-form/web/form/InputValueStorage'
 
-export const Kayttosuunnitelma = ({budgetItems, rahoitusItems, avustushaku, hakemus, totalCosts, totalOriginalCosts, totalRahoitus, totalGranted, L}) =>
-  <div>
+const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
+
+export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, totalCosts, totalOriginalCosts, totalGranted, L}) => {
+  const budgetItems = FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
+    .filter(budgetItem => budgetItem.params.incrementsTotal)
+    .map(budgetItem => _.extend(budgetItem, {
+      original: findCost(formContent, hakemus.answers, budgetItem),
+      overridden: findCost(formContent, hakemus.arvio['overridden-answers'], budgetItem)
+    }))
+  const rahoitusItems = FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
+    .filter(budgetItem => !budgetItem.params.incrementsTotal)
+    .map(budgetItem => _.extend(budgetItem, {
+      original: findCost(formContent, hakemus.answers, budgetItem)
+    }))
+  const totalRahoitus = formatPrice(_.sum(rahoitusItems.map(i=>Number(i.original))))
+
+  return <div>
     <section className="section">
       <h1><L translationKey="kayttosuunnitelma" /></h1>
 
@@ -59,6 +76,7 @@ export const Kayttosuunnitelma = ({budgetItems, rahoitusItems, avustushaku, hake
       </table>
     </section>
   </div>
+}
 
 const BudgetItemRow = ({item, lang, useDetailedCosts}) =>
   <tr>

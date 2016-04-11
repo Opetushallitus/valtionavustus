@@ -81,14 +81,8 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
        original: findCost(formContent, hakemus.answers, budgetItem),
        overridden: findCost(formContent, hakemus.arvio['overridden-answers'], budgetItem)
      }))
-  const rahoitusItems = FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
-     .filter(budgetItem => !budgetItem.params.incrementsTotal)
-     .map(budgetItem => _.extend(budgetItem, {
-       original: findCost(formContent, hakemus.answers, budgetItem)
-     }))
   const totalOriginalCosts = formatPrice(_.sum(budgetItems.map(i=>Number(i.original))))
   const totalCosts = formatPrice(hakemus.arvio.useDetailedCosts ? _.sum(budgetItems.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted)
-  const totalRahoitus = formatPrice(_.sum(rahoitusItems.map(i=>Number(i.original))))
   const totalGranted = formatPrice(hakemus.arvio['budget-granted'])
   const koulutusosiot = hakemus.answers.find(item => item.key === 'koulutusosiot')
   return (
@@ -115,14 +109,12 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
        <Lisatietoja avustushaku={avustushaku} role={role} L={L}/>
        <LiitteetList hakemus={hakemus} avustushaku={avustushaku} L={L}/>
        <Kayttosuunnitelma
-          budgetItems={budgetItems}
-          rahoitusItems={rahoitusItems}
+          formContent={formContent}
           avustushaku={avustushaku}
           hakemus={hakemus}
           totalCosts={totalCosts}
           totalOriginalCosts={totalOriginalCosts}
           totalGranted={totalGranted}
-          totalRahoitus={totalRahoitus}
           L={L}
        />
        {koulutusosiot && <Koulutusosiot list={koulutusosiot.value} answers={hakemus.arvio['overridden-answers'].value} L={L} />}
