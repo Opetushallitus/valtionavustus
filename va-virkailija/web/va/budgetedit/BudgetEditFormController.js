@@ -48,7 +48,8 @@ export default class BudgetEditFormController {
   }
 
   costsGrantedOnChangeListener(event) {
-    this.arviointiController.setCostsGrantedValue(this.hakemus, Number(event.target.value))
+    const newValue = Number(event.target.value.replace(/\s+/, ''))
+    if(!isNaN(newValue)) this.arviointiController.setCostsGrantedValue(this.hakemus, newValue)
   }
 
   componentDidMount(field, initialValue) {
