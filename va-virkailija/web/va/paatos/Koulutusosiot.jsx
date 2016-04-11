@@ -25,18 +25,18 @@ export const Koulutusosiot = ({list, answers, L}) => {
         <th colSpan="2" className="groupTitle"><L translationKey="koulutettavapaivat" /></th>
       </tr>
       <tr>
-        <th className="amount"><L translationKey="haettu" /></th>
-        <th className="amount"><L translationKey="hyvaksytty" /></th>
-        <th className="amount"><L translationKey="haettu" /></th>
-        <th className="amount"><L translationKey="hyvaksytty" /></th>
-        <th className="amount"><L translationKey="haettu" /></th>
-        <th className="amount"><L translationKey="hyvaksytty" /></th>
+        <th className="amount trainingColumn"><L translationKey="haettu" /></th>
+        <th className="amount trainingColumn"><L translationKey="hyvaksytty" /></th>
+        <th className="amount trainingColumn"><L translationKey="haettu" /></th>
+        <th className="amount trainingColumn"><L translationKey="hyvaksytty" /></th>
+        <th className="amount trainingColumn"><L translationKey="haettu" /></th>
+        <th className="amount trainingColumn"><L translationKey="hyvaksytty" /></th>
       </tr>
       </thead>
       <tbody>
       {rows
         .map((row, i) => <tr key={i}>
-          <td>{row.name}</td>
+          <td className="trainingName">{row.name}</td>
           <td className="amount">{row.applied.scope} <L translationKey={row.applied.scopeType} /></td>
           <td className="amount">{row.granted.scope} <L translationKey={row.granted.scopeType} /></td>
           <td className="amount">{row.applied.personCount}</td>
