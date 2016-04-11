@@ -161,13 +161,13 @@ class SendDecisionButton extends React.Component {
 
     if(isPublic) return null;
     return (
-       <div>
+       <section className="section sendEmails">
          <div hidden={!this.state.sentEmails}>Päätös lähetetty osoitteisiin: <strong>{this.state.sentEmails}</strong>
          </div>
          <input type="text" value={this.state.emails} onChange={onEmailChanges} size="60" hidden={!this.state.emails}/>
          <button onClick={onFindEmail} hidden={this.state.emails}>Päätös sähköposti</button>
          <button onClick={onSend} hidden={!this.state.emails}>Lähetä</button>
-       </div>
+       </section>
     )
   }
 }
