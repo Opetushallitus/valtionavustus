@@ -12,7 +12,7 @@ export default class Perustelut extends React.Component {
   }
 
   reasonUpdated(newReason) {
-    this.setState({...this.state, perustelut: newReason})
+    this.setState({perustelut: newReason})
     this.reasonBus.push([this.props.hakemus, newReason])
   }
 
