@@ -79,7 +79,7 @@ const Comment = ({comment})=>{
     const toolTipString = firstName + ' ' + lastName + ' ' + dateTimeString + ': ' + comment.comment
     return (
       <div className="single-comment" title={toolTipString}>
-        <div>{nameShort}: {paragraphs.map((p)=><p key={p}>{p}</p>)}</div>
+        <div>{nameShort}: {paragraphs.map((text, index) => <p key={index}>{text}</p>)}</div>
         <div className="comment-datetime">{dateTimeString}</div>
       </div>
     )
