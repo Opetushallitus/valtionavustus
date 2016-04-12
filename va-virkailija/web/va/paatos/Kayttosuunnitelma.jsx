@@ -43,6 +43,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       </tfoot>
     </table>
 
+  const calculatedTotalSum = _.sum(_.flatten(tables.map(t => t.children)).map(budgetItem => budgetItem.params.incrementsTotal ? +budgetItem.overridden : -budgetItem.overridden))
   return <div>
     <section className="section">
       <h1><L translationKey="kayttosuunnitelma"/></h1>
@@ -53,9 +54,8 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <p><L translationKey="myonnetty-title"/></p>
       <p>{hakemus.arvio.perustelut}</p>
 
-      {tables[0] && BudgetTable(tables[0])}
-      {tables[1] && BudgetTable(tables[1])}
-      {tables[2] && BudgetTable(tables[2], _.sum(_.flatten(tables.map(t => t.children)).map(budgetItem => budgetItem.params.incrementsTotal ? +budgetItem.overridden : -budgetItem.overridden)))}
+      {_.initial(tables).map(table => BudgetTable(table))}
+      {BudgetTable(_.last(tables), calculatedTotalSum)}
     </section>
   </div>
 
