@@ -1,3 +1,4 @@
+import Bacon from 'baconjs'
 import React, { Component } from 'react'
 
 import DateUtil from 'soresu-form/web/form/DateUtil'
@@ -125,16 +126,38 @@ class ChangeRequest extends React.Component {
 }
 
 class SummaryComment extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {summaryComment: getSummaryComment(this.props.hakemus)}
+    this.summaryCommentBus = new Bacon.Bus()
+    this.summaryCommentBus.debounce(1000).onValue(([hakemus, newSummaryComment]) => this.props.controller.setHakemusSummaryComment(hakemus, newSummaryComment))
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.hakemus.id !== nextProps.hakemus.id) {
+      this.setState({summaryComment: getSummaryComment(nextProps.hakemus)})
+    }
+  }
+
+  summaryCommentUpdated(newSummaryComment) {
+    this.setState({summaryComment: newSummaryComment})
+    this.summaryCommentBus.push([this.props.hakemus, newSummaryComment])
+  }
+
   render() {
     const hakemus = this.props.hakemus
     const allowEditing = this.props.allowEditing
-    const arvio = hakemus.arvio ? hakemus.arvio : {}
-    const summaryComment = arvio["summary-comment"] ||  ""
     const controller = this.props.controller
     return <div className="value-edit summary-comment">
       <label htmlFor="summary-comment">Huomautus ratkaisuyhteenvetoon</label>
-      <textarea id="summary-comment" rows="1" disabled={!allowEditing} value={summaryComment} title={summaryComment}
-             onChange={e => { controller.setHakemusSummaryComment(hakemus, e.target.value) }} maxLength="128" />
+      <textarea id="summary-comment" rows="1" disabled={!allowEditing} value={this.state.summaryComment}
+             onChange={evt => this.summaryCommentUpdated(evt.target.value) } maxLength="128" />
     </div>
   }
+}
+
+function getSummaryComment(hakemus) {
+  const arvio = hakemus.arvio ? hakemus.arvio : {}
+  const summaryComment = arvio["summary-comment"] ||  ""
+  return summaryComment
 }
