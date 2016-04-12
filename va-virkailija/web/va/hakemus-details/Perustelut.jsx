@@ -6,7 +6,11 @@ export default class Perustelut extends React.Component {
   render() {
     const hakemus = this.props.hakemus
     const allowEditing = this.props.allowEditing
-    const perustelut = _.get(hakemus, "arvio.perustelut","")
+    // _.get default value parameter only works with undefined, we get nulls also here
+    // and that causes the attribute to go missing from the resulting HTML tag
+    // which causes nasty issues with React, unless we explicitly set this to
+    // empty string here
+    const perustelut = _.get(hakemus, "arvio.perustelut") || ""
     const controller = this.props.controller
     const setReason = (reason) => controller.setArvioPerustelut(hakemus, reason)
     const onChange = (event) => setReason(event.target.value)
