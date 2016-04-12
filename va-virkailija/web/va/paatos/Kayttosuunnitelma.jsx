@@ -15,7 +15,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
 
   const tables = FormUtil.findFieldsByFieldType(formContent, 'vaBudget')[0].children
     .filter(table => table.fieldType === 'vaSummingBudgetElement')
-  const BudgetTable = table =>
+  const BudgetTable = (table, totalSum) =>
     <table key={table.id}>
       <thead>
       <tr>
@@ -36,6 +36,10 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
         <th className="amount budgetAmount">{formatPrice(_.sum(table.children.map(i=>Number(i.original))))}</th>
         <th className="amount budgetAmount">{formatPrice(_.sum(table.children.map(i=>Number(i.overridden))))}</th>
       </tr>
+      {totalSum && <tr>
+        <th><L translationKey="rahoitus"/> <L translationKey="yhteensa"/></th>
+        <th colSpan="2" className="amount budgetAmount">{formatPrice(totalSum)}</th>
+      </tr>}
       </tfoot>
     </table>
 
@@ -51,7 +55,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
 
       {tables[0] && BudgetTable(tables[0])}
       {tables[1] && BudgetTable(tables[1])}
-      {tables[2] && BudgetTable(tables[2])}
+      {tables[2] && BudgetTable(tables[2], _.sum(_.flatten(tables.map(t => t.children)).map(budgetItem => budgetItem.params.incrementsTotal ? +budgetItem.overridden : -budgetItem.overridden)))}
     </section>
   </div>
 
