@@ -81,7 +81,6 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
        original: findCost(formContent, hakemus.answers, budgetItem),
        overridden: findCost(formContent, hakemus.arvio['overridden-answers'], budgetItem)
      }))
-  const totalOriginalCosts = formatPrice(_.sum(budgetItems.map(i=>Number(i.original))))
   const totalCosts = formatPrice(hakemus.arvio.useDetailedCosts ? _.sum(budgetItems.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted)
   const totalGranted = formatPrice(hakemus.arvio['budget-granted'])
   const koulutusosiot = hakemus.answers.find(item => item.key === 'koulutusosiot')
@@ -112,9 +111,6 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
           formContent={formContent}
           avustushaku={avustushaku}
           hakemus={hakemus}
-          totalCosts={totalCosts}
-          totalOriginalCosts={totalOriginalCosts}
-          totalGranted={totalGranted}
           L={L}
        />
        {koulutusosiot && <Koulutusosiot list={koulutusosiot.value} answers={hakemus.arvio['overridden-answers'].value} L={L} />}

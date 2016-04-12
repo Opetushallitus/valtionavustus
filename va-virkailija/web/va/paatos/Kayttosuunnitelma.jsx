@@ -2,11 +2,12 @@ import React from 'react'
 import FormUtil from '../../../../soresu-form/web/form/FormUtil'
 import {formatPrice} from './Formatter'
 import InputValueStorage from '../../../../soresu-form/web/form/InputValueStorage'
+import _ from 'lodash'
 
 const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
 
-export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, totalCosts, totalOriginalCosts, totalGranted, L}) => {
-  const budgetItems = FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
+export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
+  FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
     .map(budgetItem => _.extend(budgetItem, {
       original: findCost(formContent, hakemus.answers, budgetItem),
       overridden: findCost(formContent, hakemus.arvio['overridden-answers'], budgetItem)
@@ -14,14 +15,6 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, totalCosts
 
   const tables = FormUtil.findFieldsByFieldType(formContent, 'vaBudget')[0].children
     .filter(table => table.fieldType === 'vaSummingBudgetElement')
-  console.log(tables)
-
-  const rahoitusItems = FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
-    .filter(budgetItem => !budgetItem.params.incrementsTotal)
-    .map(budgetItem => _.extend(budgetItem, {
-      original: findCost(formContent, hakemus.answers, budgetItem)
-    }))
-  const totalRahoitus = formatPrice(_.sum(rahoitusItems.map(i=>Number(i.original))))
   const BudgetTable = table =>
     <table key={table.id}>
       <thead>
@@ -40,8 +33,8 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, totalCosts
       <tfoot>
       <tr>
         <th><L translationKey="yhteensa"/></th>
-        <th className="amount budgetAmount">{totalOriginalCosts}</th>
-        <th className="amount budgetAmount">{totalCosts}</th>
+        <th className="amount budgetAmount">{formatPrice(_.sum(table.children.map(i=>Number(i.original))))}</th>
+        <th className="amount budgetAmount">{formatPrice(_.sum(table.children.map(i=>Number(i.overridden))))}</th>
       </tr>
       </tfoot>
     </table>
@@ -69,10 +62,4 @@ const BudgetItemRow = ({item, lang, useDetailedCosts}) =>
     <td>{item.label[lang]}</td>
     <td className="amount budgetAmount">{formatPrice(item.original)}</td>
     <td className="amount budgetAmount">{useDetailedCosts && formatPrice(item.overridden)}</td>
-  </tr>
-
-const IncomeBudgetItemRow = ({item, lang}) =>
-  <tr>
-    <td>{item.label[lang]}</td>
-    <td className="amount budgetAmount">{formatPrice(item.original)}</td>
   </tr>
