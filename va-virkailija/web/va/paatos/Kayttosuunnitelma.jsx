@@ -18,7 +18,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
 
   const useDetailedCosts = hakemus.arvio.useDetailedCosts
 
-  const BudgetTable = (table, totalSum, useDetailedCosts) => {
+  const BudgetTable = (table, useDetailedCosts) => {
     return <table key={table.id}>
       <thead>
       <tr>
@@ -39,10 +39,6 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
         <th className="amount budgetAmount">{formatPrice(_.sum(table.children.map(i=>Number(i.original))))}</th>
         <th className="amount budgetAmount">{formatPrice(_.sum(table.children.map(i=>Number(i.overridden))))}</th>
       </tr>
-      {totalSum && <tr>
-        <th><L translationKey="myonnetty-avustus"/></th>
-        <th colSpan="2" className="amount budgetAmount">{formatPrice(totalSum)}</th>
-      </tr>}
       </tfoot>
     </table>
   }
@@ -61,8 +57,16 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <p><L translationKey="myonnetty-title"/></p>
       <p>{hakemus.arvio.perustelut}</p>
 
-      {_.initial(tables).map(table => BudgetTable(table, null, useDetailedCosts))}
-      {BudgetTable(_.last(tables), calculatedTotalSum, true)}
+      {_.initial(tables).map(table => BudgetTable(table, useDetailedCosts))}
+      {BudgetTable(_.last(tables), true)}
+      <table>
+        <tbody>
+        <tr>
+          <th><L translationKey="myonnetty-avustus"/></th>
+          <th colSpan="2" className="amount budgetAmount">{formatPrice(calculatedTotalSum)}</th>
+        </tr>
+        </tbody>
+      </table>
     </section>
   </div>
 
