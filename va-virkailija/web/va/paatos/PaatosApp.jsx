@@ -233,17 +233,23 @@ const LiitteetList = ({hakemus,avustushaku, L})=> {
 
   const ehdot = findLiite(Liitteet, liitteet, "Ehdot")
   const oikaisuvaatimus = findLiite(Liitteet, liitteet, "Oikaisuvaatimusosoitus")
+  const yleisohje = {
+    id:"va_yleisohje",
+    fi:"Valtionavustusten yleisohje",
+    sv:"Allmänna anvisningar om statsunderstöd"
+  }
 
   const AcceptedAttachments =
      <div>
        <div><L translationKey="kayttosuunnitelma"/></div>
        <div><LiiteRow liite={ehdot} lang={L.lang}/></div>
+       <div><LiiteRow liite={oikaisuvaatimus} lang={L.lang}/></div>
+       <div><LiiteRow liite={yleisohje} lang={L.lang}/></div>
      </div>
-  const RejectedAttachments = null
+  const RejectedAttachments = <div><LiiteRow liite={oikaisuvaatimus} lang={L.lang}/></div>
   return (
      <Section title="liitteet" L={L}>
        {rejected ? RejectedAttachments : AcceptedAttachments}
-       <div><LiiteRow liite={oikaisuvaatimus} lang={L.lang}/></div>
      </Section>
   )
 }
