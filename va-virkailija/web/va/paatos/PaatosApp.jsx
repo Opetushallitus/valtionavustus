@@ -271,4 +271,4 @@ const LiiteRow = ({liite, lang}) => liite.id ?
 
 const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
 
-const ContentWithParagraphs = ({content}) => <div>{content.split("\n").map((p)=><p key={p}>{p}</p>)}</div>
+const ContentWithParagraphs = ({content}) => <div>{content.split("\n").map((p,index)=><p key={index}>{p}</p>)}</div>
