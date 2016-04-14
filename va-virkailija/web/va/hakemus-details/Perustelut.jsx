@@ -8,7 +8,7 @@ export default class Perustelut extends React.Component {
     super(props)
     this.reasonBus = new Bacon.Bus()
     this.reasonBus.debounce(1000).onValue(([hakemus, newReason]) => { this.props.controller.setArvioPerustelut(hakemus, newReason) })
-    this.state = {perustelut: getPerustelut(props)}
+    this.state = initialState(props)
   }
 
   reasonUpdated(newReason) {
@@ -18,7 +18,7 @@ export default class Perustelut extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.hakemus.id !== nextProps.hakemus.id) {
-      this.setState({perustelut: getPerustelut(nextProps)})
+      this.setState(initialState(nextProps))
     }
   }
 
@@ -31,22 +31,34 @@ export default class Perustelut extends React.Component {
     // empty string here
     const perustelut = _.get(hakemus, "arvio.perustelut") || ""
     const controller = this.props.controller
-    const setReason = (reason) => controller.setArvioPerustelut(hakemus, reason)
+    const addReason = (reason) => {
+      const currentPerustelut = getPerustelut(this.props)
+      const newPerustelut = currentPerustelut.length==0 ? reason : currentPerustelut + " " + reason
+      controller.setArvioPerustelut(hakemus, newPerustelut)
+      this.setState({perustelut: newPerustelut,showReasons:false})
+      setTimeout(function() {
+        document.getElementById("perustelut-container").scrollIntoView({block: "start", behavior: "smooth"})
+        document.getElementById("perustelut").focus()
+      }, 300)
+    }
     const rejected = _.get(hakemus,"arvio.status","")=="rejected"
     const language= _.find(hakemus.answers,(a)=>a.key=="language")
     const languageValue = language ? language.value : "fi"
     const languageTitle = languageValue=="fi" ? "suomeksi" : "ruotsiksi"
     const rejectedReasons = rejectedReasonsByLanguage[languageValue]
+    const toggleReasons = () => this.setState({showReasons:!this.state.showReasons})
+
     return(
       <div>
-        <div className="value-edit">
+        <div className="value-edit" id="perustelut-container">
           <label htmlFor="perustelut">Perustelut hakijalle <strong>{languageTitle}</strong></label>
+          {rejected && <a onClick={toggleReasons}>{this.state.showReasons ? "Piilota perustelut" : "Lisää vakioperustelu"}</a>}
           {
             rejected &&
-              <div className="radio-container radio-container--perustelut">
+              <div className="radio-container radio-container--perustelut" hidden={!this.state.showReasons}>
                 {rejectedReasons.map((reason)=>
-                  <div key={reason} className={`radio-row ${reason==perustelut ? "radio-row--selected" : ""}`}>
-                    <div onClick={_.partial(setReason,reason)}>{reason}</div>
+                  <div key={reason} className="radio-row">
+                    <div onClick={_.partial(addReason,reason)}>{reason}</div>
                   </div>
                 )}
               </div>
@@ -60,6 +72,11 @@ export default class Perustelut extends React.Component {
       </div>
     )
   }
+}
+
+function initialState(props){
+  const perustelut = getPerustelut(props)
+  return {perustelut: perustelut, showReasons:perustelut.length==0}
 }
 
 function getPerustelut(props) {
