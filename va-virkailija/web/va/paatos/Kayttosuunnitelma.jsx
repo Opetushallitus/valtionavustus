@@ -18,7 +18,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
 
   const useDetailedCosts = hakemus.arvio.useDetailedCosts
 
-  const BudgetTable = (table, useDetailedCosts) => {
+  const BudgetTable = (summaryTitle, table, useDetailedCosts, totalGranted) => {
     return <table key={table.id}>
       <thead>
       <tr>
@@ -35,16 +35,15 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       </tbody>
       <tfoot>
       <tr>
-        <th><L translationKey="yhteensa"/></th>
+        <th>{summaryTitle}</th>
         <th className="amount budgetAmount">{formatPrice(_.sum(table.children.map(i=>Number(i.original))))}</th>
-        <th className="amount budgetAmount">{formatPrice(_.sum(table.children.map(i=>Number(i.overridden))))}</th>
+        <th className="amount budgetAmount">{totalGranted}</th>
       </tr>
       </tfoot>
     </table>
   }
 
   const totalGranted = formatPrice(hakemus.arvio['budget-granted'])
-  const totalCosts = formatPrice(hakemus.arvio.useDetailedCosts ? _.sum(budgetItems.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted)
 
   const calculatedTotalSum = _.sum(_.flatten(tables.map(t => t.children)).map(budgetItem => budgetItem.params.incrementsTotal ? +budgetItem.overridden : -budgetItem.overridden))
   return <div>
@@ -57,14 +56,14 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <p><L translationKey="myonnetty-title"/></p>
       <p>{hakemus.arvio.perustelut}</p>
 
-      {tables[0] && BudgetTable(tables[0], useDetailedCosts)}
-      {tables[1] && BudgetTable(tables[1], true)}
-      {tables[2] && BudgetTable(tables[2], true)}
+      {tables[0] && BudgetTable('Hankkeen kokonaismenot yhteensä', tables[0], useDetailedCosts, formatPrice(hakemus.arvio.useDetailedCosts ? _.sum(tables[0].children.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted))}
+      {tables[1] && BudgetTable('Hankkeen nettomenot yhteensä', tables[1], true, formatPrice(123456))}
+      {tables[2] && BudgetTable('Hankkeen rahoitus yhteensä', tables[2], true, formatPrice(_.sum(tables[2].children.map(i=>Number(i.original)))))}
       <table>
         <tbody>
         <tr>
           <th><L translationKey="myonnetty-avustus"/></th>
-          <th colSpan="2" className="amount budgetAmount">{formatPrice(calculatedTotalSum)}</th>
+          <th colSpan="2" className="amount budgetAmount">{formatPrice(totalGranted)}</th>
         </tr>
         </tbody>
       </table>
