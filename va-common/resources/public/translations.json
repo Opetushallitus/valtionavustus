@@ -239,20 +239,20 @@
       "sv":"SV Asia"
     },
     "asia-title":{
-      "fi":"VALTIONAVUSTUKSEN MYÖNTÄMINEN",
-      "sv":"SV VALTIONAVUSTUKSEN MYÖNTÄMINEN"
+      "fi":"VALTIONAVUSTUSHAKEMUSTA KOSKEVA PÄÄTÖS",
+      "sv":"SV VALTIONAVUSTUSHAKEMUSTA KOSKEVA PÄÄTÖS"
     },
     "taustaa":{
       "fi":"Taustaa",
       "sv":"SV Taustaa"
     },
     "hylatty-title":{
-      "fi":"Opetushallitus on päättänyt olla myöntämättä valtionavustusta seuraavasti",
-      "sv":"SV Opetushallitus on päättänyt olla myöntämättä valtionavustusta seuraavasti"
+      "fi":"Opetushallitus on päättänyt olla myöntämättä valtionavustusta hankkeelle",
+      "sv":"SV Opetushallitus on päättänyt olla myöntämättä valtionavustusta hankkeelle"
     },
     "myonnetty-title":{
-      "fi":"Opetushallitus on päättänyt myöntää valtionavustusta seuraavasti",
-      "sv":"SV Opetushallitus on päättänyt myöntää valtionavustusta seuraavasti"
+      "fi":"Opetushallitus on päättänyt myöntää valtionavustusta hankkeelle",
+      "sv":"SV Opetushallitus on päättänyt myöntää valtionavustusta hankkeelle"
     },
     "hakija":{
       "fi":"Hakija",
@@ -287,12 +287,12 @@
       "sv":"SV Avustus maksetaan hakijan ilmoittamalle pankkitilille"
     },
     "avustuksen-kaytto":{
-      "fi":"Avustuksen käyttö",
+      "fi":"Avustuksen käyttötarkoitus",
       "sv":"SV Avustuksen käyttö"
     },
     "kayttooikeudet":{
-      "fi":"Käyttöoikeudet",
-      "sv":"SV Käyttöoikeudet"
+      "fi":"Tekijänoikeudet",
+      "sv":"SV Tekijänoikeudet"
     },
     "selvitysvelvollisuus":{
       "fi":"Selvitysvelvollisuus",
@@ -319,12 +319,20 @@
       "sv":"SV Hyväksytty"
     },
     "paatos-myonnetty-1":{
-      "fi":"Opetushallitus hyväksyy avustuksen saajan valtionavustukseen oikeuttavia kustannuksia",
-      "sv":"SV Opetushallitus hyväksyy avustuksen saajan valtionavustukseen oikeuttavina menoina"
+      "fi":"Opetushallitus myöntää avustusta hankkeelle",
+      "sv":"SV Opetushallitus myöntää avustusta hankkeelle"
     },
     "paatos-myonnetty-2":{
-      "fi":"Valtionavustusta myönnetään",
-      "sv":"SV Valtionavustuksena tästä myönnetään"
+      "fi":"Hankkeelle hyväksytyt kokonaisnettomenot ovat yhteensä",
+      "sv":"SV Hankkeelle hyväksytyt kokonaisnettomenot ovat yhteensä"
+    },
+    "paatos-myonnetty-3":{
+      "fi":"Hankkeen käyttösuunnitelmassa on esitetty hankkeen mahdolliset tulot, omarahoitus ja muu rahoitus.",
+      "sv":"SV Hankkeelle hyväksytyt kokonaisnettomenot ovat yhteensä"
+    },
+    "paatos-myonnetty-4":{
+      "fi":"Päätös perustuu hakijan esittämään hankesuunnitelmaan ja siihen mahdollisesti arviointivaiheessa tehtyihin muutoksiin.",
+      "sv":"SV Päätös perustuu hakijan esittämään hankesuunnitelmaan ja siihen mahdollisesti arviointivaiheessa tehtyihin muutoksiin."
     },
     "yhteensa":{
       "fi":"Yhteensä",
@@ -373,6 +381,14 @@
     "kp": {
       "fi":"kp",
       "sv":"ud"
+    },
+    "tarkastusoikeus-title": {
+      "fi":"Tarkastusoikeus",
+      "sv":"SV Tarkastusoikeus"
+    },
+    "tarkastusoikeus-text": {
+      "fi":"Tarkastusoikeus testi",
+      "sv":"SV Tarkastusoikeus testi"
     }
   }
 }

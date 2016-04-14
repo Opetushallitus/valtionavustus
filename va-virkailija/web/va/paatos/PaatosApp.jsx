@@ -45,14 +45,14 @@ export default class PaatosApp extends Component {
     const languageAnswer = _.find(hakemus.answers, (a)=>a.key == "language")
     const query = queryString.parse(location.search)
     const lang = query.lang ? query.lang : languageAnswer ? languageAnswer.value : "fi"
-    const L = ({translationKey}) => <LocalizedString translationKey={translationKey} translations={translations} lang={lang}/>
+    const L = ({translationKey}) => _.isEmpty(translationKey) ? <span/> : <LocalizedString translationKey={translationKey} translations={translations} lang={lang}/>
     L.lang = lang
 
     return (
        <section>
          <header>
            <div className="logo"><img src="/img/logo.png" width="200"/></div>
-           <div className="title"><L translationKey="paatos" /> {avustushaku.decision.date}</div>
+           <div className="title"><L translationKey="paatos" /> <br/>{avustushaku.decision.date}</div>
            <div className="registerNumber">{hakemus['register-number']}</div>
            <div className="organization">{hakemus['organization-name']}</div>
          </header>
@@ -88,11 +88,17 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
      <section>
        <Section title="paatos" L={L}>
          <p><L translationKey="myonnetty-title" />:</p>
-         <p><L translationKey="hakija" />: {hakemus['organization-name']}<br/>
-           <L translationKey="hanke" />: {hakemus['project-name']}
+         <p>{hakemus['register-number']} {hakemus['project-name']}
          </p>
          <p><L translationKey="paatos-myonnetty-1" /> {totalCosts}&nbsp;.&nbsp;
-           <L translationKey="paatos-myonnetty-2" /> {totalGranted}
+           <L translationKey="paatos-myonnetty-2" /> {totalGranted}.  <L translationKey="paatos-myonnetty-3" />
+         </p>
+         <p>
+         TODO päätöksen lisäteksti
+         </p>
+         <p>
+           <L translationKey="paatos-myonnetty-4" />
+
          </p>
        </Section>
        <Perustelut hakemus={hakemus} L={L}/>
@@ -102,10 +108,17 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
          <DecisionContent avustushaku={avustushaku} id="maksu"/>
        </Section>
        <OptionalSection title="avustuksen-kaytto" id="kaytto" avustushaku={avustushaku} L={L}/>
-       <OptionalSection title="kayttooikeudet" id="kayttooikeudet" avustushaku={avustushaku} L={L}/>
-       <OptionalSection title="selvitysvelvollisuus" id="selvitysvelvollisuus" avustushaku={avustushaku} L={L}/>
        <OptionalSection title="valtionavustuksen-kayttoaika" id="kayttoaika" avustushaku={avustushaku} L={L}/>
+       <OptionalSection title="selvitysvelvollisuus" id="selvitysvelvollisuus" avustushaku={avustushaku} L={L}/>
+       <Section title="tarkastusoikeus-title" L={L}>
+           <L translationKey="tarkastusoikeus-text" />
+       </Section>
+       <OptionalSection title="kayttooikeudet" id="kayttooikeudet" avustushaku={avustushaku} L={L}/>
        <Lisatietoja avustushaku={avustushaku} role={role} L={L}/>
+       <Section title="" L={L}>
+         <p>johtaja NN</p>
+         <p>xx NN</p>
+       </Section>
        <LiitteetList hakemus={hakemus} avustushaku={avustushaku} L={L}/>
        <Kayttosuunnitelma
           formContent={formContent}
@@ -164,12 +177,15 @@ const RejectedDecision = ({avustushaku, hakemus, role, L}) =>
    <section>
      <Section title="paatos" L={L}>
        <p><L translationKey="hylatty-title" /></p>
-       <p><L translationKey="hakija" />: {hakemus['organization-name']}<br/>
-         <L translationKey="hanke" />: {hakemus['project-name']}
+       <p>{hakemus['register-number']} {hakemus['project-name']}
        </p>
      </Section>
      <Perustelut hakemus={hakemus} L={L}/>
      <Lisatietoja avustushaku={avustushaku} role={role} L={L}/>
+     <Section title="" L={L}>
+       <p>johtaja NN</p>
+       <p>xx NN</p>
+     </Section>
      <LiitteetList hakemus={hakemus} avustushaku={avustushaku} L={L}/>
    </section>
 
@@ -201,7 +217,7 @@ const Perustelut = ({hakemus, L}) =>
 
 const Lisatietoja = ({avustushaku, role, L})=>
    <Section title="lisatietoja" L={L}>
-     <p><L translationKey="lisatietoja-antaa" />: {role.name} &lt;{role.email}&gt;</p>
+     <p>{role.name} &lt;{role.email}&gt;</p>
      <DecisionContent avustushaku={avustushaku} id="lisatiedot" lang={L.lang}/>
    </Section>
 

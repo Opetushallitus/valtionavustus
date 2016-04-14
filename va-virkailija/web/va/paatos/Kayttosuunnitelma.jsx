@@ -15,8 +15,11 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
 
   const tables = FormUtil.findFieldsByFieldType(formContent, 'vaBudget')[0].children
     .filter(table => table.fieldType === 'vaSummingBudgetElement')
-  const BudgetTable = (table, totalSum) =>
-    <table key={table.id}>
+
+  const useDetailedCosts = hakemus.arvio.useDetailedCosts
+
+  const BudgetTable = (table, totalSum, useDetailedCosts) => {
+    return <table key={table.id}>
       <thead>
       <tr>
         <th>{table.label[L.lang]}</th>
@@ -28,7 +31,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       </thead>
       <tbody>
       {table.children.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={L.lang}
-                                                     useDetailedCosts={hakemus.arvio.useDetailedCosts}/>)}
+                                                     useDetailedCosts={useDetailedCosts}/>)}
       </tbody>
       <tfoot>
       <tr>
@@ -37,11 +40,15 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
         <th className="amount budgetAmount">{formatPrice(_.sum(table.children.map(i=>Number(i.overridden))))}</th>
       </tr>
       {totalSum && <tr>
-        <th><L translationKey="rahoitus"/> <L translationKey="yhteensa"/></th>
+        <th><L translationKey="myonnetty-avustus"/></th>
         <th colSpan="2" className="amount budgetAmount">{formatPrice(totalSum)}</th>
       </tr>}
       </tfoot>
     </table>
+  }
+
+  const totalGranted = formatPrice(hakemus.arvio['budget-granted'])
+  const totalCosts = formatPrice(hakemus.arvio.useDetailedCosts ? _.sum(budgetItems.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted)
 
   const calculatedTotalSum = _.sum(_.flatten(tables.map(t => t.children)).map(budgetItem => budgetItem.params.incrementsTotal ? +budgetItem.overridden : -budgetItem.overridden))
   return <div>
@@ -54,8 +61,8 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <p><L translationKey="myonnetty-title"/></p>
       <p>{hakemus.arvio.perustelut}</p>
 
-      {_.initial(tables).map(table => BudgetTable(table))}
-      {BudgetTable(_.last(tables), calculatedTotalSum)}
+      {_.initial(tables).map(table => BudgetTable(table, null, useDetailedCosts))}
+      {BudgetTable(_.last(tables), calculatedTotalSum, true)}
     </section>
   </div>
 
