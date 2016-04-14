@@ -50,12 +50,6 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
     <section className="section">
       <h1><L translationKey="kayttosuunnitelma"/></h1>
 
-      <p><strong>{avustushaku.content.name[L.lang]}</strong></p>
-      <p><L translationKey="hanke"/> {hakemus['project-name']}
-      </p>
-      <p><L translationKey="myonnetty-title"/></p>
-      <p>{hakemus.arvio.perustelut}</p>
-
       {tables[0] && BudgetTable('Hankkeen kokonaismenot yhteensä', tables[0], useDetailedCosts, formatPrice(hakemus.arvio.useDetailedCosts ? _.sum(tables[0].children.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted))}
       {tables[1] && BudgetTable('Hankkeen nettomenot yhteensä', tables[1], true, formatPrice(123456))}
       {tables[2] && BudgetTable('Hankkeen rahoitus yhteensä', tables[2], true, formatPrice(_.sum(tables[2].children.map(i=>Number(i.original)))))}
