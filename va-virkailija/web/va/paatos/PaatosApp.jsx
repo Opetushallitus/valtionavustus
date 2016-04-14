@@ -93,9 +93,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
          <p><L translationKey="paatos-myonnetty-1" /> {totalCosts}&nbsp;.&nbsp;
            <L translationKey="paatos-myonnetty-2" /> {totalGranted}.  <L translationKey="paatos-myonnetty-3" />
          </p>
-         <p>
-         TODO päätöksen lisäteksti
-         </p>
+         <DecisionContent avustushaku={avustushaku} id="myonteinenlisateksti" lang={L.lang}/>
          <p>
            <L translationKey="paatos-myonnetty-4" />
 

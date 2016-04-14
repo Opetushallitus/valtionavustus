@@ -63,6 +63,7 @@
    (s/optional-key :selvitysvelvollisuus) LocalizedStringOptional
    (s/optional-key :kayttoaika) LocalizedStringOptional
    (s/optional-key :lisatiedot) LocalizedStringOptional
+   (s/optional-key :myonteinenlisateksti) LocalizedStringOptional
    (s/optional-key :liitteet) [Liite]
   }
 )

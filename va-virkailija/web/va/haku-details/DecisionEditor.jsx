@@ -217,6 +217,7 @@ export default class DecisionEditor extends React.Component {
     const onChange = (e) => controller.onChangeListener(avustushaku, e.target, e.target.value)
     const fields = [
       {id:"taustaa",title:"Taustaa"},
+      {id:"myonteinenlisateksti",title:"Myönteisen päätöksen lisäteksti"},
       {id:"maksu",title:"Avustuksen maksu"},
       {id:"kaytto",title:"Avustuksen käyttö"},
       {id:"kayttooikeudet",title:"Käyttöoikeudet"},
