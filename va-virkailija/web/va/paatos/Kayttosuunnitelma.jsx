@@ -57,8 +57,9 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <p><L translationKey="myonnetty-title"/></p>
       <p>{hakemus.arvio.perustelut}</p>
 
-      {_.initial(tables).map(table => BudgetTable(table, useDetailedCosts))}
-      {BudgetTable(_.last(tables), true)}
+      {tables[0] && BudgetTable(tables[0], useDetailedCosts)}
+      {tables[1] && BudgetTable(tables[1], true)}
+      {tables[2] && BudgetTable(tables[2], true)}
       <table>
         <tbody>
         <tr>
