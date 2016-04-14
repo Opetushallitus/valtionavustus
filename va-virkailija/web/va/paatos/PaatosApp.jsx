@@ -114,10 +114,6 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
        </Section>
        <OptionalSection title="kayttooikeudet" id="kayttooikeudet" avustushaku={avustushaku} L={L}/>
        <Lisatietoja avustushaku={avustushaku} role={role} L={L}/>
-       <Section title="" L={L}>
-         <p>johtaja NN</p>
-         <p>xx NN</p>
-       </Section>
        <LiitteetList hakemus={hakemus} avustushaku={avustushaku} L={L}/>
        <Kayttosuunnitelma
           formContent={formContent}
@@ -216,14 +212,16 @@ const Perustelut = ({hakemus, L}) =>
 
 const Lisatietoja = ({avustushaku, role, L})=>
    <Section title="lisatietoja" L={L}>
-     <p>{role.name} &lt;{role.email}&gt;</p>
+     <p>{role.name}, {role.email}, puhelin 029 533 1000 (keskus)</p>
      <DecisionContent avustushaku={avustushaku} id="lisatiedot" lang={L.lang}/>
+     <DecisionContent avustushaku={avustushaku} id="johtaja" lang={L.lang} className="signature"/>
+     <DecisionContent avustushaku={avustushaku} id="esittelija" lang={L.lang} className="signature"/>
    </Section>
 
-const DecisionContent = ({id, avustushaku, lang}) => {
+const DecisionContent = ({id, avustushaku, lang,className=""}) => {
   const content = _.get(avustushaku, `decision.${id}.${lang}`, "")
   return _.isEmpty(content) ? <div></div> : (
-     <div>
+     <div className={className}>
        <ContentWithParagraphs content={content}/>
      </div>
   )
