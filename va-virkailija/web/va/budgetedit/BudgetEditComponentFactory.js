@@ -25,8 +25,8 @@ export default class BudgetEditComponentFactory extends ComponentFactory {
 class BudgetSummaryEditPropertyMapper {
   static map(props) {
     const overriddenLabels ={labelTranslations: {
-      totalSumRowLabel: {fi:"Hankkeen hyväksyttävä rahoitus yhteensä"},
-      ophFinancingLabel: {fi:"Opetushallituksen myöntämä rahoitus"},
+      totalSumRowLabel: {fi:"Opetushallituksen myöntämä avustus"},
+      ophFinancingLabel: {fi:"Opetushallituksen myöntämä avustus"},
       selfFinancingLabel: {fi:"Omarahoitus"}
     }}
     return _.extend(overriddenLabels, _.omit(props, "labelTranslations"))
