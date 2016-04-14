@@ -100,10 +100,11 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
          </p>
        </Section>
        <Perustelut hakemus={hakemus} L={L}/>
+       <OptionalSection title="sovelletut-saannokset" id="sovelletutsaannokset" avustushaku={avustushaku} L={L}/>
        <Section title="avustuksen-maksu" L={L}>
          <p><L translationKey="avustus-maksetaan" />:
            <strong>{iban}, {bic}</strong></p>
-         <DecisionContent avustushaku={avustushaku} id="maksu"/>
+         <DecisionContent avustushaku={avustushaku} id="maksu" lang={L.lang}/>
        </Section>
        <OptionalSection title="avustuksen-kaytto" id="kaytto" avustushaku={avustushaku} L={L}/>
        <OptionalSection title="valtionavustuksen-kayttoaika" id="kayttoaika" avustushaku={avustushaku} L={L}/>

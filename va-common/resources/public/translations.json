@@ -290,6 +290,10 @@
       "fi":"Avustuksen käyttötarkoitus",
       "sv":"SV Avustuksen käyttö"
     },
+    "sovelletut-saannokset":{
+      "fi":"Sovelletut säännökset",
+      "sv":"SV Sovelletut säännökset"
+    },
     "kayttooikeudet":{
       "fi":"Tekijänoikeudet",
       "sv":"SV Tekijänoikeudet"
