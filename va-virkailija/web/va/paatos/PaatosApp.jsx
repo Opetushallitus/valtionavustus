@@ -177,11 +177,8 @@ const RejectedDecision = ({avustushaku, hakemus, role, L}) =>
        </p>
      </Section>
      <Perustelut hakemus={hakemus} L={L}/>
+     <OptionalSection title="sovelletut-saannokset" id="sovelletutsaannokset" avustushaku={avustushaku} L={L}/>
      <Lisatietoja avustushaku={avustushaku} role={role} L={L}/>
-     <Section title="" L={L}>
-       <p>johtaja NN</p>
-       <p>xx NN</p>
-     </Section>
      <LiitteetList hakemus={hakemus} avustushaku={avustushaku} L={L}/>
    </section>
 
