@@ -223,7 +223,7 @@ export default class DecisionEditor extends React.Component {
       {id:"kaytto",title:"Avustuksen käyttö"},
       {id:"kayttooikeudet",title:"Tekijänoikeudet"},
       {id:"selvitysvelvollisuus",title:"Selvitysvelvollisuus"},
-      {id:"kayttoaika",title:"Valtionavustuksen käyttöaika"},
+      {id:"kayttoaika",title:"Avustuksen käyttöaika"},
       {id:"hyvaksyminen",title:"Päätöksen hyväksyminen"},
       {id:"lisatiedot",title:"Lisätiedot"},
       {id:"johtaja",title:"Johtaja"},
