@@ -338,6 +338,10 @@
       "fi":"Hankkeen käyttösuunnitelmassa on esitetty hankkeen mahdolliset tulot, omarahoitus ja muu rahoitus.",
       "sv":"SV Hankkeelle hyväksytyt kokonaisnettomenot ovat yhteensä"
     },
+    "valtionavustusprosentti-on":{
+      "fi":"Valtionavustusprosentti on",
+      "sv":"SV Valtionavustusprosentti on"
+    },
     "paatos-myonnetty-4":{
       "fi":"Päätös perustuu hakijan esittämään hankesuunnitelmaan ja siihen mahdollisesti arviointivaiheessa tehtyihin muutoksiin.",
       "sv":"SV Päätös perustuu hakijan esittämään hankesuunnitelmaan ja siihen mahdollisesti arviointivaiheessa tehtyihin muutoksiin."
