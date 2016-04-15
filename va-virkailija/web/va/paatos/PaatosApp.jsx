@@ -113,6 +113,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
            <L translationKey="tarkastusoikeus-text" />
        </Section>
        <OptionalSection title="kayttooikeudet" id="kayttooikeudet" avustushaku={avustushaku} L={L}/>
+       <OptionalSection title="hyvaksyminen" id="hyvaksyminen" avustushaku={avustushaku} L={L}/>
        <Lisatietoja avustushaku={avustushaku} role={role} L={L}/>
        <LiitteetList hakemus={hakemus} avustushaku={avustushaku} L={L}/>
        <Kayttosuunnitelma
@@ -212,7 +213,8 @@ const Perustelut = ({hakemus, L}) =>
 
 const Lisatietoja = ({avustushaku, role, L})=>
    <Section title="lisatietoja" L={L}>
-     <p>{role.name}, {role.email}, puhelin 029 533 1000 (keskus)</p>
+     <p>{role.name}, {role.email}</p>
+     <p>puhelin 029 533 1000 (keskus).</p>
      <DecisionContent avustushaku={avustushaku} id="lisatiedot" lang={L.lang}/>
      <DecisionContent avustushaku={avustushaku} id="johtaja" lang={L.lang} className="signature"/>
      <DecisionContent avustushaku={avustushaku} id="esittelija" lang={L.lang} className="signature"/>

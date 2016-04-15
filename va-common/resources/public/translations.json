@@ -298,6 +298,10 @@
       "fi":"Tekijänoikeudet",
       "sv":"SV Tekijänoikeudet"
     },
+    "hyvaksyminen":{
+      "fi":"Päätöksen hyväksyminen",
+      "sv":"SV Päätöksen hyväksyminen"
+    },
     "selvitysvelvollisuus":{
       "fi":"Selvitysvelvollisuus",
       "sv":"SV Selvitysvelvollisuus"
