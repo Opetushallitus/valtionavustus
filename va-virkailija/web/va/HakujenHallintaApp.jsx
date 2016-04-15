@@ -8,6 +8,7 @@ import HakujenHallintaController from './HakujenHallintaController.jsx'
 import HakuListing from './haku-list/HakuListing.jsx'
 import EditorSelector from './haku-details/EditorSelector.jsx'
 import HakuEdit from './haku-details/HakuEdit.jsx'
+import LocalStorage from './LocalStorage'
 
 import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'
@@ -45,7 +46,9 @@ export default class AdminApp extends Component {
 
 const controller = new HakujenHallintaController()
 
-const stateP = controller.initializeState()
+const hakuId = LocalStorage.avustushakuId() || 1
+
+const stateP = controller.initializeState(hakuId)
 
 stateP.onValue(function(state) {
   try {

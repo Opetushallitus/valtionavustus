@@ -6,6 +6,7 @@ import RouteParser from 'route-parser'
 
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'soresu-form/web/Dispatcher'
+import LocalStorage from './LocalStorage'
 
 import LdapSearchParameters from './haku-details/LdapSearchParameters.js'
 
@@ -58,7 +59,7 @@ export default class HakujenHallintaController {
     methods.forEach((method) => this[method] = this[method].bind(this))
   }
 
-  initializeState() {
+  initializeState(hakuId) {
     const subTab = consolidateSubTabSelectionWithUrl()
 
     const initialStateTemplate = {
@@ -66,6 +67,7 @@ export default class HakujenHallintaController {
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")).map(Immutable),
       environment: Bacon.fromPromise(HttpUtil.get("/environment")),
+      hakuId:hakuId,
       selectedHaku: undefined,
       saveStatus: {
         saveInProgress: false,
@@ -152,7 +154,8 @@ export default class HakujenHallintaController {
   onInitialState(emptyState, realInitialState) {
     var hakuList = realInitialState.hakuList;
     if (hakuList && !_.isEmpty(hakuList)) {
-      realInitialState = this.onHakuSelection(realInitialState, hakuList[0])
+      const selectedHaku = _.find(hakuList,(h)=>h.id==realInitialState.hakuId) || hakuList[0]
+      realInitialState = this.onHakuSelection(realInitialState, selectedHaku)
     }
     return realInitialState
   }
@@ -328,6 +331,7 @@ export default class HakujenHallintaController {
     this.loadPrivileges(hakuToSelect)
     this.loadRoles(hakuToSelect)
     this.loadForm(hakuToSelect)
+    LocalStorage.saveAvustushakuId(hakuToSelect.id)
     return state
   }
 
