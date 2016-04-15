@@ -1,1 +1,1 @@
-insert into avustushaut (form, content, register_number) VALUES (:form, :content, :register_number)
+insert into avustushaut (form, content, register_number,decision) VALUES (:form, :content, :register_number, :decision)

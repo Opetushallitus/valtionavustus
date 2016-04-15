@@ -104,6 +104,7 @@
                       :avustushaku)
         {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
         form-id (:form base-haku)
+        decision (:decision base-haku)
         new-haku (hakija-api/create-avustushaku {:name (add-copy-suffixes name)
                                             :duration {:start (clj-time/plus (clj-time/now) (clj-time/months 1))
                                             :end (clj-time/plus (clj-time/now) (clj-time/months 2))
@@ -112,7 +113,7 @@
                                             :selection-criteria selection-criteria
                                             :self-financing-percentage self-financing-percentage
                                             :focus-areas focus-areas}
-                                            form-id)]
+                                            form-id decision)]
     (hakija-api/create-avustushaku-role {:avustushaku (:id new-haku)
                                          :role "presenting_officer"
                                          :name (str (:first-name identity) " " (:surname identity))
