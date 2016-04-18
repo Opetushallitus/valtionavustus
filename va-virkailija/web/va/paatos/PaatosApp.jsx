@@ -242,8 +242,8 @@ const LiitteetList = ({hakemus,avustushaku, L})=> {
   const AcceptedAttachments =
      <div>
        <div><L translationKey="kayttosuunnitelma"/></div>
-       <div><LiiteRow liite={ehdot} lang={L.lang}/></div>
        <div><LiiteRow liite={oikaisuvaatimus} lang={L.lang}/></div>
+       <div><LiiteRow liite={ehdot} lang={L.lang}/></div>
        <div><LiiteRow liite={yleisohje} lang={L.lang}/></div>
      </div>
   const RejectedAttachments = <div><LiiteRow liite={oikaisuvaatimus} lang={L.lang}/></div>
