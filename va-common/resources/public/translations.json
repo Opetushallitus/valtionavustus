@@ -298,9 +298,25 @@
       "fi":"Avustus maksetaan hakijan ilmoittamalle pankkitilille",
       "sv":"SV Avustus maksetaan hakijan ilmoittamalle pankkitilille"
     },
-    "avustuksen-kaytto":{
+    "avustuksen-kayttotarkoitus":{
       "fi":"Avustuksen käyttötarkoitus",
       "sv":"SV Avustuksen käyttö"
+    },
+    "kaytto1":{
+      "fi":"Avustusta/määrärahaa saadaan käyttää liitteessä olevan käyttösuunnitelman mukaisesti hankesuunnitelmassa esitettyyn ja tällä päätöksellä hyväksyttyyn toimintaan.",
+      "sv":"SV Avustusta/määrärahaa saadaan käyttää liitteessä olevan käyttösuunnitelman mukaisesti hankesuunnitelmassa esitettyyn ja tällä päätöksellä hyväksyttyyn toimintaan."
+    },
+    "kaytto2":{
+      "fi":"Avustuksen saajan on noudatettava liitteenä olevia Opetushallituksen yleisohjetta sekä Erityisavustukseen liittyviä ehtoja ja rajoituksia koskevaa asiakirjaa.",
+      "sv":"SV Avustuksen saajan on noudatettava liitteenä olevia Opetushallituksen yleisohjetta sekä Erityisavustukseen liittyviä ehtoja ja rajoituksia koskevaa asiakirjaa."
+    },
+    "kaytto3":{
+      "fi":"Valtionavustuksen käyttöön vaikuttavista muutoksista tulee aina ilmoittaa Opetushallitukselle viipymättä (valtionavustuslaki 14 §).",
+      "sv":"SV Valtionavustuksen käyttöön vaikuttavista muutoksista tulee aina ilmoittaa Opetushallitukselle viipymättä (valtionavustuslaki 14 §)."
+    },
+    "kaytto4":{
+      "fi":"Jos hyväksyttyyn kustannusarvioon, avustuksen käyttötarkoitukseen tai hankkeeseen muutoin tulee olennaisia muutoksia, avustuksen saajan tulee tehdä muutoshakemus.",
+      "sv":"SV Jos hyväksyttyyn kustannusarvioon, avustuksen käyttötarkoitukseen tai hankkeeseen muutoin tulee olennaisia muutoksia, avustuksen saajan tulee tehdä muutoshakemus."
     },
     "sovelletut-saannokset":{
       "fi":"Sovelletut säännökset",
