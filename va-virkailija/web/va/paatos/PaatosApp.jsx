@@ -209,8 +209,8 @@ const Perustelut = ({hakemus, L}) =>
 const Lisatietoja = ({avustushaku, role, L})=>
    <Section title="lisatietoja" L={L}>
      <p>{role.name}, {role.email}</p>
-     <p>puhelin 029 533 1000 (keskus).</p>
-     <DecisionContent avustushaku={avustushaku} id="lisatiedot" lang={L.lang}/>
+     <p><L translationKey="puhelin"/> 029 533 1000 (<L translationKey="keskus"/>).</p>
+     <L translationKey="lisatietoja-sisalto"/>
      <DecisionContent avustushaku={avustushaku} id="johtaja" lang={L.lang} className="signature"/>
      <DecisionContent avustushaku={avustushaku} id="esittelija" lang={L.lang} className="signature"/>
    </Section>

@@ -274,6 +274,18 @@
       "fi":"Lisätietoja antaa",
       "sv":"SV Lisätietoja antaa"
     },
+    "lisatietoja-sisalto":{
+      "fi":"Tähän päätökseen ei saa hakea muutosta valittamalla (valtionavustuslaki 34 §). Päätökseen tyytymätön asianosainen voi hakea oikaisua liitteenä olevan oikaisuvaatimusosoituksen mukaisesti.",
+      "sv":"SV Tähän päätökseen ei saa hakea muutosta valittamalla (valtionavustuslaki 34 §). Päätökseen tyytymätön asianosainen voi hakea oikaisua liitteenä olevan oikaisuvaatimusosoituksen mukaisesti."
+    },
+    "puhelin":{
+      "fi":"puhelin",
+      "sv":"telefon"
+    },
+    "keskus":{
+      "fi":"keskus",
+      "sv":"SV keskus"
+    },
     "liitteet":{
       "fi":"LIITTEET",
       "sv":"SV LIITTEET"
