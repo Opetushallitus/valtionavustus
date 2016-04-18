@@ -58,8 +58,6 @@ export default class PaatosApp extends Component {
          </header>
          <Section title="asia" L={L}>
            <L translationKey="asia-title" />
-           <br/>
-           {avustushaku.content.name[L.lang]}
          </Section>
          <OptionalSection title="taustaa" id="taustaa" avustushaku={avustushaku} L={L}/>
          {decisionStatus == 'rejected' ?
@@ -88,7 +86,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
   return (
      <section>
        <Section title="paatos" L={L}>
-         <p><L translationKey="myonnetty-title" />:</p>
+         <p><L translationKey="myonnetty-title" /></p>
          <p>{hakemus['register-number']} {hakemus['project-name']}
          </p>
          <p><L translationKey="paatos-myonnetty-1" /> {totalCosts}&nbsp;.&nbsp;
