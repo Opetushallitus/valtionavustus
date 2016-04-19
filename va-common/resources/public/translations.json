@@ -294,6 +294,14 @@
       "fi":"Avustuksen maksu",
       "sv":"SV Avustuksen maksu"
     },
+    "maksuerat-ja-ajat":{
+      "fi":"Maksuerät ja -ajat",
+      "sv":"SV Maksuerät ja -ajat"
+    },
+    "ja-loppuera-viimeistaan":{
+      "fi":"ja loppuerä viimeistään",
+      "sv":"SV ja loppuerä viimeistään"
+    },
     "avustus-maksetaan":{
       "fi":"Avustus maksetaan hakijan ilmoittamalle pankkitilille",
       "sv":"SV Avustus maksetaan hakijan ilmoittamalle pankkitilille"

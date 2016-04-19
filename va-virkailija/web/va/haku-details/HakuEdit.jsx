@@ -37,6 +37,7 @@ export default class HakuEdit extends Component {
           </tbody>
         </table>
         <Rahoitusalueet multipleRahoitusalue={avustushaku["multiple-rahoitusalue"]} disabled={!allowAllHakuEdits} onChange={onChange} />
+        <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
         <div className="haku-duration-and-self-financing">
           <div className="haku-duration-edit-container">
             <h3>{avustushaku.content.duration.label.fi}</h3>
@@ -195,6 +196,44 @@ class Rahoitusalueet extends React.Component {
           <h3>Rahoitusalueet</h3>
           {options}
         </div>
+    )
+  }
+}
+
+class Maksuerat extends React.Component {
+  render() {
+    const multipleRahoitusalue = this.props.value === true
+    const onChange = this.props.onChange
+    const isDisabled = this.props.disabled
+    const options = [
+      {label:"Yksi maksuerä",value:false},
+      {label:"2 maksuerää",value:true}
+    ]
+    const optionsHtml = options.map(option=>{
+      const value = option.value
+      const htmlId = "set-maksuera-" + value
+      return (
+      <span key={value}>
+        <input id={htmlId}
+               type="radio"
+               key={htmlId}
+               name="maksuera"
+               value={value}
+               onChange={onChange}
+               checked={value === multipleRahoitusalue}
+               disabled={isDisabled}
+        />
+        <label key={htmlId + "-label"} htmlFor={htmlId}>
+          {option.label}
+        </label>
+      </span>
+    )})
+
+    return (
+      <div id="set-maksuerat">
+        <h3>Maksuerät</h3>
+        {optionsHtml}
+      </div>
     )
   }
 }

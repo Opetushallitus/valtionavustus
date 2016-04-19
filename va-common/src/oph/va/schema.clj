@@ -28,6 +28,7 @@
                                  :duration Duration
                                  :focus-areas LocalizedStringList
                                  :selection-criteria LocalizedStringList
+                                 (s/optional-key :multiplemaksuera) s/Bool
                                  :self-financing-percentage (s/conditional is-percentage? s/Num)})
 
 (s/defschema Environment {:name s/Str
@@ -58,6 +59,7 @@
    (s/optional-key :date) s/Str
    (s/optional-key :taustaa) LocalizedStringOptional
    (s/optional-key :maksu) LocalizedStringOptional
+   (s/optional-key :maksudate) s/Str
    (s/optional-key :kaytto) LocalizedStringOptional
    (s/optional-key :kayttooikeudet) LocalizedStringOptional
    (s/optional-key :selvitysvelvollisuus) LocalizedStringOptional

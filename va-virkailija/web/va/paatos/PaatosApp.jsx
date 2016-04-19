@@ -79,7 +79,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
        original: findCost(formContent, hakemus.answers, budgetItem),
        overridden: findCost(formContent, hakemus.arvio['overridden-answers'], budgetItem)
      }))
-  const totalCosts = formatPrice(hakemus.arvio.useDetailedCosts ? _.sum(budgetItems.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted)
+  const totalCosts = hakemus.arvio.useDetailedCosts ? _.sum(budgetItems.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted
   const totalGranted = formatPrice(hakemus.arvio['budget-granted'])
   const koulutusosiot = hakemus.answers.find(item => item.key === 'koulutusosiot')
   const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
@@ -89,7 +89,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
          <p><L translationKey="myonnetty-title" /></p>
          <p>{hakemus['register-number']} {hakemus['project-name']}
          </p>
-         <p><L translationKey="paatos-myonnetty-1" /> {totalCosts}&nbsp;.&nbsp;
+         <p><L translationKey="paatos-myonnetty-1" /> {formatPrice(totalCosts)}&nbsp;.&nbsp;
            <L translationKey="paatos-myonnetty-2" /> {totalGranted}.  <L translationKey="paatos-myonnetty-3" /> {selfFinancingPercentage>0 ? <span><L translationKey="valtionavustusprosentti-on" /> {100-selfFinancingPercentage}%</span> : null}
          </p>
          <DecisionContent avustushaku={avustushaku} id="myonteinenlisateksti" lang={L.lang}/>
@@ -100,10 +100,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
        </Section>
        <Perustelut hakemus={hakemus} L={L}/>
        <OptionalSection title="sovelletut-saannokset" id="sovelletutsaannokset" avustushaku={avustushaku} L={L}/>
-       <Section title="avustuksen-maksu" L={L}>
-         <p><L translationKey="avustus-maksetaan" />: <strong>{iban}, {bic}</strong></p>
-         <DecisionContent avustushaku={avustushaku} id="maksu" lang={L.lang}/>
-       </Section>
+       <AvustuksenMaksu L={L} iban={iban} bic={bic} avustushaku={avustushaku} totalPaid={totalCosts}/>
        <Section title="avustuksen-kayttotarkoitus" L={L}>
          <p><L translationKey="kaytto1"/></p>
          <p><L translationKey="kaytto2"/></p>
@@ -127,6 +124,20 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
        />
        {koulutusosiot && <Koulutusosiot list={koulutusosiot.value} answers={hakemus.arvio['overridden-answers'].value} L={L} />}
      </section>
+  )
+}
+
+const AvustuksenMaksu  = ({L,avustushaku,bic,iban,totalPaid}) =>{
+  const maksudate = _.get(avustushaku, `decision.maksudate`, "")
+  const maksu = _.get(avustushaku, `decision.maksu.${L.lang}`, "")
+  const multipleMaksuera = avustushaku.content.multiplemaksuera===true && totalPaid > 60000
+  const firstRoundPaid = multipleMaksuera ? Math.round(0.6*totalPaid) : totalPaid
+  const paidFormatted = formatPrice(firstRoundPaid)
+  return (
+    <Section title="avustuksen-maksu" L={L}>
+      <p><L translationKey="avustus-maksetaan" />: <strong>{iban}, {bic}</strong></p>
+      <p><L translationKey="maksuerat-ja-ajat" />: {paidFormatted} {maksu}{!multipleMaksuera && <span>.</span>} {multipleMaksuera && <span><L translationKey="ja-loppuera-viimeistaan" /> {maksudate}.</span>} </p>
+    </Section>
   )
 }
 

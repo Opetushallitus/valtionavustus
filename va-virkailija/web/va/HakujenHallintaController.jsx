@@ -192,6 +192,7 @@ export default class HakujenHallintaController {
     const selectionCriteria = /selection-criteria-(\d+)-(\w+)/.exec(update.field.id)
     const focusArea = /focus-area-(\d+)-(\w+)/.exec(update.field.id)
     const registerNumber = /register-number/.exec(update.field.id)
+    const multiplemaksuera = /set-maksuera-(\w+)/.exec(update.field.id)
     var doSave = true
     if(hakuname) {
       const lang = hakuname[1]
@@ -228,6 +229,9 @@ export default class HakujenHallintaController {
     }
     else if (registerNumber) {
       update.avustushaku["register-number"] = update.newValue
+    }
+    else if (multiplemaksuera) {
+      update.avustushaku.content.multiplemaksuera = update.newValue==="true"
     }
     else if(update.field.id.indexOf("decision.")!=-1){
       const fieldName = update.field.id.substr(9)

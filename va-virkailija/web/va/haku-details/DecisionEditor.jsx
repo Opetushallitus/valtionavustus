@@ -22,20 +22,22 @@ const DecisionFields = ({title,avustushaku,id,onChange}) =>
     {['fi','sv'].map((language)=><DecisionField key={language} title={title} avustushaku={avustushaku} id={id} language={language} onChange={onChange}></DecisionField>)}
   </div>
 
-class DecisionDate extends React.Component {
+
+class DateField extends React.Component {
   constructor(props){
     super(props)
-    this.state = {value: this.value(props)}
+    const field = props.field
+    this.state = {value: this.value(props,field),field:field}
   }
 
-  value(props) {
-    return _.get(props.avustushaku, "decision.date", "")
+  value(props,field) {
+    return _.get(props.avustushaku, `decision.${field}`, "")
   }
 
   componentWillReceiveProps(nextProps) {
     if(nextProps.avustushaku.id!=this.props.avustushaku.id){
       this.setState({
-        value: this.value(nextProps)
+        value: this.value(nextProps,nextProps.field)
       })
     }
   }
@@ -45,17 +47,18 @@ class DecisionDate extends React.Component {
       this.setState({value:event.target.value})
       this.props.controller.onChangeListener(this.props.avustushaku, event.target, event.target.value)
     }
-
+    const field = this.state.field
     return (
       <div className="decision-date">
         <div className="decision-column">
-          <span className="decision-date-label">Ratkaisupäivä</span>
-          <input type="text" value={this.state.value} id="decision.date" onChange={onChange}/>
+          <span className="decision-date-label">{this.props.label}</span>
+          <input type="text" value={this.state.value} id={`decision.${field}`} onChange={onChange}/>
         </div>
       </div>
     )
   }
 }
+
 
 class LiitteetList extends React.Component{
   render(){
@@ -121,7 +124,7 @@ class DecisionDateAndSend extends React.Component {
     return (
       <div className="send-decisions-panel">
         <div className="decision-separator"/>
-        <DecisionDate {...this.props}/>
+        <DateField {...this.props} field="date" label="Ratkaisupäivä"/>
         {this.props.avustushaku.status === "resolved" && this.sendEmailSection()}
       </div>
     )
@@ -219,7 +222,6 @@ export default class DecisionEditor extends React.Component {
       {id:"taustaa",title:"Taustaa"},
       {id:"myonteinenlisateksti",title:"Myönteisen päätöksen lisäteksti"},
       {id:"sovelletutsaannokset",title:"Sovelletut säännökset"},
-      {id:"maksu",title:"Avustuksen maksu"},
       {id:"kayttooikeudet",title:"Tekijänoikeudet"},
       {id:"kayttoaika",title:"Avustuksen käyttöaika"},
       {id:"selvitysvelvollisuus",title:"Selvitysvelvollisuus"},
@@ -230,6 +232,8 @@ export default class DecisionEditor extends React.Component {
     return (
       <div className="decision-editor">
         {fields.map((field)=><DecisionFields key={field.id} title={field.title} avustushaku={avustushaku} id={field.id} onChange={onChange}/>)}
+        <DecisionFields key="maksu" title="Avustuksen maksuaika" avustushaku={avustushaku} id="maksu" onChange={onChange}/>
+        {avustushaku.content.multiplemaksuera===true && <DateField avustushaku={avustushaku} controller={controller} field="maksudate" label="Viimeinen maksuerä"/>}
         <LiitteetList avustushaku={avustushaku} controller={controller}/>
         <DecisionDateAndSend avustushaku={avustushaku} controller={controller}/>
       </div>
