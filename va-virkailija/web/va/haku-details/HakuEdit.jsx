@@ -207,7 +207,7 @@ class Maksuerat extends React.Component {
     const isDisabled = this.props.disabled
     const options = [
       {label:"Yksi maksuerä",value:false},
-      {label:"2 maksuerää",value:true}
+      {label:"Kaksi maksuerää",value:true}
     ]
     const optionsHtml = options.map(option=>{
       const value = option.value
