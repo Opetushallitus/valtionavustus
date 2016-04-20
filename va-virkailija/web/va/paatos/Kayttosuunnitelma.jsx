@@ -24,10 +24,8 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <thead>
       <tr>
         <th>Hankkeen menot</th>
-        <th className="amount budgetAmount"><L translationKey="haettu"/>
-        </th>
-        <th className="amount budgetAmount"><L translationKey="hyvaksytty"/>
-        </th>
+        <th className="amount budgetAmount"><L translationKey="haettu"/></th>
+        <th className="amount budgetAmount"><L translationKey="hyvaksytty"/></th>
       </tr>
       </thead>
       <tbody>
@@ -37,21 +35,20 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <tfoot>
       <tr>
         <th>Hankkeen kokonaismenot yhteensä</th>
-        <th className="amount budgetAmount">{formatPrice(totallOriginalCosts)}</th>
-        <th className="amount budgetAmount">{formatPrice(totalOverriddenCosts)}</th>
+        <AmountCell>{totallOriginalCosts}</AmountCell>
+        <AmountCell>{totalOverriddenCosts}</AmountCell>
       </tr>
       </tfoot>
     </table>
 
   const totalIncomes = _.sum(tables[1].children.map(i=>Number(i.original)))
   const nettomenot = tables[1] &&
-
     <table key={tables[1].id}>
       <thead>
       <tr>
         <th>{tables[1].label[L.lang]}</th>
-        <th className="amount budgetAmount"/>
-        <th className="amount budgetAmount"/>
+        <AmountCell/>
+        <AmountCell/>
       </tr>
       </thead>
       <tbody>
@@ -61,8 +58,8 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <tfoot>
       <tr>
         <th>Hankkeen nettomenot yhteensä</th>
-        <th className="amount budgetAmount">{formatPrice(totallOriginalCosts - totalIncomes)}</th>
-        <th className="amount budgetAmount">{formatPrice(totalOverriddenCosts - totalIncomes)}</th>
+        <AmountCell>{totallOriginalCosts - totalIncomes}</AmountCell>
+        <AmountCell>{totalOverriddenCosts - totalIncomes}</AmountCell>
       </tr>
       </tfoot>
     </table>
@@ -73,8 +70,8 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <thead>
       <tr>
         <th>{tables[2].label[L.lang]}</th>
-        <th className="amount budgetAmount"/>
-        <th className="amount budgetAmount"/>
+        <AmountCell/>
+        <AmountCell/>
       </tr>
       </thead>
       <tbody>
@@ -84,8 +81,8 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <tfoot>
       <tr>
         <th>Hankkeen rahoitus yhteensä</th>
-        <th className="amount budgetAmount">{formatPrice(totalFinancing)}</th>
-        <th className="amount budgetAmount">{formatPrice(totalFinancing)}</th>
+        <AmountCell>{totalFinancing}</AmountCell>
+        <AmountCell>{totalFinancing}</AmountCell>
       </tr>
       </tfoot>
     </table>
@@ -100,15 +97,16 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
         <tbody>
         <tr>
           <th><L translationKey="myonnetty-avustus"/></th>
-          <th className="amount budgetAmount">{formatPrice(totallOriginalCosts - totalIncomes - totalFinancing)}</th>
-          <th className="amount budgetAmount">{formatPrice(totalOverriddenCosts - totalIncomes - totalFinancing)}</th>
+          <AmountCell>{totallOriginalCosts - totalIncomes - totalFinancing}</AmountCell>
+          <AmountCell>{totalOverriddenCosts - totalIncomes - totalFinancing}</AmountCell>
         </tr>
         </tbody>
       </table>
     </section>
   </div>
-
 }
+
+const AmountCell = ({children}) => <th className="amount budgetAmount">{children && formatPrice(children)}</th>
 
 const BudgetItemRow = ({item, lang, useDetailedCosts}) =>
   <tr>
