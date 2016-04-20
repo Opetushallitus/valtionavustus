@@ -50,10 +50,8 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <thead>
       <tr>
         <th>{tables[1].label[L.lang]}</th>
-        <th className="amount budgetAmount"><L translationKey="haettu"/>
-        </th>
-        <th className="amount budgetAmount"><L translationKey="hyvaksytty"/>
-        </th>
+        <th className="amount budgetAmount"/>
+        <th className="amount budgetAmount"/>
       </tr>
       </thead>
       <tbody>
@@ -68,15 +66,14 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       </tr>
       </tfoot>
     </table>
+
   const rahoitus = tables[2] &&
     <table key={tables[2].id}>
       <thead>
       <tr>
         <th>{tables[2].label[L.lang]}</th>
-        <th className="amount budgetAmount"><L translationKey="haettu"/>
-        </th>
-        <th className="amount budgetAmount"><L translationKey="hyvaksytty"/>
-        </th>
+        <th className="amount budgetAmount"/>
+        <th className="amount budgetAmount"/>
       </tr>
       </thead>
       <tbody>
