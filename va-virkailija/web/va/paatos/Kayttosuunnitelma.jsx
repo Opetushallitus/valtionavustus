@@ -24,7 +24,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
     <table key={tables[0].id}>
       <thead>
       <tr>
-        <th>{tables[0].label[L.lang]}</th>
+        <th>Hankkeen menot</th>
         <th className="amount budgetAmount"><L translationKey="haettu"/>
         </th>
         <th className="amount budgetAmount"><L translationKey="hyvaksytty"/>
