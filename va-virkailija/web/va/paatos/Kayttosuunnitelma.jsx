@@ -15,11 +15,10 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
 
   const tables = FormUtil.findFieldsByFieldType(formContent, 'vaBudget')[0].children
     .filter(table => table.fieldType === 'vaSummingBudgetElement')
-
   const useDetailedCosts = hakemus.arvio.useDetailedCosts
-  const totalGranted = formatPrice(hakemus.arvio['budget-granted'])
-
-  const calculatedTotalSum = _.sum(_.flatten(tables.map(t => t.children)).map(budgetItem => budgetItem.params.incrementsTotal ? +budgetItem.overridden : -budgetItem.overridden))
+  //const totalGranted = formatPrice(hakemus.arvio['budget-granted'])
+  const totallOriginalCosts = _.sum(tables[0].children.map(i=>Number(i.original)))
+  const totalOverriddenCosts = hakemus.arvio.useDetailedCosts ? _.sum(tables[0].children.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted
   const menot = tables[0] &&
     <table key={tables[0].id}>
       <thead>
@@ -38,12 +37,13 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <tfoot>
       <tr>
         <th>Hankkeen kokonaismenot yhteensä</th>
-        <th className="amount budgetAmount">{formatPrice(_.sum(tables[0].children.map(i=>Number(i.original))))}</th>
-        <th className="amount budgetAmount">{formatPrice(hakemus.arvio.useDetailedCosts ? _.sum(tables[0].children.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted)}</th>
+        <th className="amount budgetAmount">{formatPrice(totallOriginalCosts)}</th>
+        <th className="amount budgetAmount">{formatPrice(totalOverriddenCosts)}</th>
       </tr>
       </tfoot>
     </table>
 
+  const totalIncomes = _.sum(tables[1].children.map(i=>Number(i.original)))
   const nettomenot = tables[1] &&
 
     <table key={tables[1].id}>
@@ -61,12 +61,13 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <tfoot>
       <tr>
         <th>Hankkeen nettomenot yhteensä</th>
-        <th className="amount budgetAmount">{formatPrice(_.sum(tables[1].children.map(i=>Number(i.original))))}</th>
-        <th className="amount budgetAmount">{formatPrice(123456)}</th>
+        <th className="amount budgetAmount">{formatPrice(totallOriginalCosts - totalIncomes)}</th>
+        <th className="amount budgetAmount">{formatPrice(totalOverriddenCosts - totalIncomes)}</th>
       </tr>
       </tfoot>
     </table>
 
+  const totalFinancing = tables[2] ? _.sum(tables[2].children.map(i=>Number(i.original))) : 0
   const rahoitus = tables[2] &&
     <table key={tables[2].id}>
       <thead>
@@ -83,8 +84,8 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <tfoot>
       <tr>
         <th>Hankkeen rahoitus yhteensä</th>
-        <th className="amount budgetAmount">{formatPrice(_.sum(tables[2].children.map(i=>Number(i.original))))}</th>
-        <th className="amount budgetAmount">{formatPrice(_.sum(tables[2].children.map(i=>Number(i.overridden))))}</th>
+        <th className="amount budgetAmount">{formatPrice(totalFinancing)}</th>
+        <th className="amount budgetAmount">{formatPrice(totalFinancing)}</th>
       </tr>
       </tfoot>
     </table>
@@ -99,7 +100,8 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
         <tbody>
         <tr>
           <th><L translationKey="myonnetty-avustus"/></th>
-          <th colSpan="2" className="amount budgetAmount">{formatPrice(totalGranted)}</th>
+          <th className="amount budgetAmount">{formatPrice(totallOriginalCosts - totalIncomes - totalFinancing)}</th>
+          <th className="amount budgetAmount">{formatPrice(totalOverriddenCosts - totalIncomes - totalFinancing)}</th>
         </tr>
         </tbody>
       </table>
