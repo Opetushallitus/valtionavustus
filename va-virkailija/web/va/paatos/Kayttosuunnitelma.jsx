@@ -37,7 +37,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <table key={tables[0].id}>
         <thead>
         <tr>
-          <th>Hankkeen menot</th>
+          <th><L translationKey="hankkeen-menot"/></th>
           <th className="amount budgetAmount"><L translationKey="haettu"/></th>
           <th className="amount budgetAmount"><L translationKey="hyvaksytty"/></th>
         </tr>
@@ -45,7 +45,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
         <TBody table={tables[0]} useDetailedCosts={useDetailedCosts}/>
         <tfoot>
         <tr>
-          <th>Hankkeen kokonaismenot yhteensä</th>
+          <th><L translationKey="kokonaismenot-yhteensa"/></th>
           <AmountCell>{totallOriginalCosts}</AmountCell>
           <AmountCell>{totalOverriddenCosts}</AmountCell>
         </tr>
@@ -64,7 +64,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
         <TBody table={tables[1]} useDetailedCosts={true}/>
         <tfoot>
         <tr>
-          <th>Hankkeen nettomenot yhteensä</th>
+          <th><L translationKey="nettomenot-yhteensa"/></th>
           <AmountCell>{totallOriginalCosts - totalIncomes}</AmountCell>
           <AmountCell>{totalOverriddenCosts - totalIncomes}</AmountCell>
         </tr>
@@ -83,7 +83,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
         <TBody table={tables[2]} useDetailedCosts={true}/>
         <tfoot>
         <tr>
-          <th>Hankkeen rahoitus yhteensä</th>
+          <th><L translationKey="rahoitus-yhteensa"/></th>
           <AmountCell>{totalFinancing}</AmountCell>
           <AmountCell>{totalFinancing}</AmountCell>
         </tr>
@@ -93,7 +93,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <table>
         <tbody>
         <tr>
-          <th><L translationKey="myonnetty-avustus"/></th>
+          <th className="footerTitle"><L translationKey="myonnetty-avustus"/></th>
           <AmountCell>{totallOriginalCosts - totalIncomes - totalFinancing}</AmountCell>
           <AmountCell>{totalOverriddenCosts - totalIncomes - totalFinancing}</AmountCell>
         </tr>

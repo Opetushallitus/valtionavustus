@@ -437,6 +437,22 @@
     "tarkastusoikeus-text": {
       "fi":"Opetushallituksella on oikeus suorittaa avustuksen käytön valvonnassa tarpeellisia avustuksen saajan talouteen ja toimintaan kohdistuvia tarkastuskäyntejä. Opetushallituksen tarkastusoikeus ulottuu myös mahdollisten yhteiskumppanien toimintaan ja kirjanpitoon.",
       "sv":"SV TODO"
+    },
+    "kokonaismenot-yhteensa": {
+      "fi":"Hankkeen kokonaismenot yhteensä",
+      "sv":"SV Hankkeen kokonaismenot yhteensä"
+    },
+    "nettomenot-yhteensa": {
+      "fi":"Hankkeen nettomenot yhteensä",
+      "sv":"SV Hankkeen nettomenot yhteensä"
+    },
+    "rahoitus-yhteensa": {
+      "fi":"Hankkeen rahoitus yhteensä",
+      "sv":"SV Hankkeen rahoitus yhteensä"
+    },
+    "hankkeen-menot": {
+      "fi":"Hankkeen menot",
+      "sv":"SV Hankkeen menot"
     }
   }
 }
