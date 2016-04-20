@@ -56,9 +56,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <table key={tables[1].id}>
         <thead>
         <tr>
-          <th>{tables[1].label[L.lang]}</th>
-          <AmountCell/>
-          <AmountCell/>
+          <th colSpan="3">{tables[1].label[L.lang]}</th>
         </tr>
         </thead>
         <TBody table={tables[1]} useDetailedCosts={true}/>
@@ -75,9 +73,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <table key={tables[2].id}>
         <thead>
         <tr>
-          <th>{tables[2].label[L.lang]}</th>
-          <AmountCell/>
-          <AmountCell/>
+          <th colSpan="3">{tables[2].label[L.lang]}</th>
         </tr>
         </thead>
         <TBody table={tables[2]} useDetailedCosts={true}/>
