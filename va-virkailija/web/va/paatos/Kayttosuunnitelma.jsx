@@ -22,72 +22,68 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
   const TBody = ({table, useDetailedCosts}) => <tbody>{table.children
     .map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={L.lang} useDetailedCosts={useDetailedCosts}/>)}</tbody>
 
-  const menot = tables[0] &&
-    <table key={tables[0].id}>
-      <thead>
-      <tr>
-        <th>Hankkeen menot</th>
-        <th className="amount budgetAmount"><L translationKey="haettu"/></th>
-        <th className="amount budgetAmount"><L translationKey="hyvaksytty"/></th>
-      </tr>
-      </thead>
-      <TBody table={tables[0]} useDetailedCosts={useDetailedCosts}/>
-      <tfoot>
-      <tr>
-        <th>Hankkeen kokonaismenot yhteensä</th>
-        <AmountCell>{totallOriginalCosts}</AmountCell>
-        <AmountCell>{totalOverriddenCosts}</AmountCell>
-      </tr>
-      </tfoot>
-    </table>
-
   const totalIncomes = _.sum(tables[1].children.map(i=>Number(i.original)))
-  const nettomenot = tables[1] &&
-    <table key={tables[1].id}>
-      <thead>
-      <tr>
-        <th>{tables[1].label[L.lang]}</th>
-        <AmountCell/>
-        <AmountCell/>
-      </tr>
-      </thead>
-      <TBody table={tables[1]} useDetailedCosts={true}/>
-      <tfoot>
-      <tr>
-        <th>Hankkeen nettomenot yhteensä</th>
-        <AmountCell>{totallOriginalCosts - totalIncomes}</AmountCell>
-        <AmountCell>{totalOverriddenCosts - totalIncomes}</AmountCell>
-      </tr>
-      </tfoot>
-    </table>
-
   const totalFinancing = tables[2] ? _.sum(tables[2].children.map(i=>Number(i.original))) : 0
-  const rahoitus = tables[2] &&
-    <table key={tables[2].id}>
-      <thead>
-      <tr>
-        <th>{tables[2].label[L.lang]}</th>
-        <AmountCell/>
-        <AmountCell/>
-      </tr>
-      </thead>
-      <TBody table={tables[2]} useDetailedCosts={true}/>
-      <tfoot>
-      <tr>
-        <th>Hankkeen rahoitus yhteensä</th>
-        <AmountCell>{totalFinancing}</AmountCell>
-        <AmountCell>{totalFinancing}</AmountCell>
-      </tr>
-      </tfoot>
-    </table>
-
-
   return <div>
     <section className="section">
       <h1><L translationKey="kayttosuunnitelma"/></h1>
-      {menot}
-      {nettomenot}
-      {rahoitus}
+      {tables[0] &&
+      <table key={tables[0].id}>
+        <thead>
+        <tr>
+          <th>Hankkeen menot</th>
+          <th className="amount budgetAmount"><L translationKey="haettu"/></th>
+          <th className="amount budgetAmount"><L translationKey="hyvaksytty"/></th>
+        </tr>
+        </thead>
+        <TBody table={tables[0]} useDetailedCosts={useDetailedCosts}/>
+        <tfoot>
+        <tr>
+          <th>Hankkeen kokonaismenot yhteensä</th>
+          <AmountCell>{totallOriginalCosts}</AmountCell>
+          <AmountCell>{totalOverriddenCosts}</AmountCell>
+        </tr>
+        </tfoot>
+      </table>
+      }
+      {tables[1] &&
+      <table key={tables[1].id}>
+        <thead>
+        <tr>
+          <th>{tables[1].label[L.lang]}</th>
+          <AmountCell/>
+          <AmountCell/>
+        </tr>
+        </thead>
+        <TBody table={tables[1]} useDetailedCosts={true}/>
+        <tfoot>
+        <tr>
+          <th>Hankkeen nettomenot yhteensä</th>
+          <AmountCell>{totallOriginalCosts - totalIncomes}</AmountCell>
+          <AmountCell>{totalOverriddenCosts - totalIncomes}</AmountCell>
+        </tr>
+        </tfoot>
+      </table>
+      }
+      {tables[2] &&
+      <table key={tables[2].id}>
+        <thead>
+        <tr>
+          <th>{tables[2].label[L.lang]}</th>
+          <AmountCell/>
+          <AmountCell/>
+        </tr>
+        </thead>
+        <TBody table={tables[2]} useDetailedCosts={true}/>
+        <tfoot>
+        <tr>
+          <th>Hankkeen rahoitus yhteensä</th>
+          <AmountCell>{totalFinancing}</AmountCell>
+          <AmountCell>{totalFinancing}</AmountCell>
+        </tr>
+        </tfoot>
+      </table>
+      }
       <table>
         <tbody>
         <tr>
