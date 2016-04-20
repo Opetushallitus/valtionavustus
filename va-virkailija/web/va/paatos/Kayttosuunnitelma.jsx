@@ -19,8 +19,8 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
   //const totalGranted = formatPrice(hakemus.arvio['budget-granted'])
   const totallOriginalCosts = _.sum(tables[0].children.map(i=>Number(i.original)))
   const totalOverriddenCosts = hakemus.arvio.useDetailedCosts ? _.sum(tables[0].children.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted
-  const listRows = (table, useDetailedCosts) => table.children
-    .map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={L.lang} useDetailedCosts={useDetailedCosts}/>)
+  const TBody = ({table, useDetailedCosts}) => <tbody>{table.children
+    .map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={L.lang} useDetailedCosts={useDetailedCosts}/>)}</tbody>
 
   const menot = tables[0] &&
     <table key={tables[0].id}>
@@ -31,9 +31,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
         <th className="amount budgetAmount"><L translationKey="hyvaksytty"/></th>
       </tr>
       </thead>
-      <tbody>
-      {listRows(tables[0], useDetailedCosts)}
-      </tbody>
+      <TBody table={tables[0]} useDetailedCosts={useDetailedCosts}/>
       <tfoot>
       <tr>
         <th>Hankkeen kokonaismenot yhteensä</th>
@@ -53,9 +51,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
         <AmountCell/>
       </tr>
       </thead>
-      <tbody>
-      {listRows(tables[1], true)}
-      </tbody>
+      <TBody table={tables[1]} useDetailedCosts={true}/>
       <tfoot>
       <tr>
         <th>Hankkeen nettomenot yhteensä</th>
@@ -75,9 +71,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
         <AmountCell/>
       </tr>
       </thead>
-      <tbody>
-      {listRows(tables[2], true)}
-      </tbody>
+      <TBody table={tables[2]} useDetailedCosts={true}/>
       <tfoot>
       <tr>
         <th>Hankkeen rahoitus yhteensä</th>
