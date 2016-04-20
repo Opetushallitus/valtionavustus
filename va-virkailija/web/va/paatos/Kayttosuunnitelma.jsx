@@ -20,7 +20,13 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
   const totallOriginalCosts = _.sum(tables[0].children.map(i=>Number(i.original)))
   const totalOverriddenCosts = hakemus.arvio.useDetailedCosts ? _.sum(tables[0].children.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted
   const TBody = ({table, useDetailedCosts}) => <tbody>{table.children
-    .map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={L.lang} useDetailedCosts={useDetailedCosts}/>)}</tbody>
+    .map(item =>
+      <tr key={item.id}>
+        <td>{item.label[L.lang]}</td>
+        <td className="amount budgetAmount">{formatPrice(item.original)}</td>
+        <td className="amount budgetAmount">{useDetailedCosts && formatPrice(item.overridden)}</td>
+      </tr>
+    )}</tbody>
 
   const totalIncomes = _.sum(tables[1].children.map(i=>Number(i.original)))
   const totalFinancing = tables[2] ? _.sum(tables[2].children.map(i=>Number(i.original))) : 0
@@ -99,9 +105,5 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
 
 const AmountCell = ({children}) => <th className="amount budgetAmount">{children && formatPrice(children)}</th>
 
-const BudgetItemRow = ({item, lang, useDetailedCosts}) =>
-  <tr>
-    <td>{item.label[lang]}</td>
-    <td className="amount budgetAmount">{formatPrice(item.original)}</td>
-    <td className="amount budgetAmount">{useDetailedCosts && formatPrice(item.overridden)}</td>
-  </tr>
+
+
