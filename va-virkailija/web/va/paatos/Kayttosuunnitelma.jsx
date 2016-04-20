@@ -19,6 +19,9 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
   //const totalGranted = formatPrice(hakemus.arvio['budget-granted'])
   const totallOriginalCosts = _.sum(tables[0].children.map(i=>Number(i.original)))
   const totalOverriddenCosts = hakemus.arvio.useDetailedCosts ? _.sum(tables[0].children.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted
+  const listRows = (table, useDetailedCosts) => table.children
+    .map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={L.lang} useDetailedCosts={useDetailedCosts}/>)
+
   const menot = tables[0] &&
     <table key={tables[0].id}>
       <thead>
@@ -29,8 +32,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       </tr>
       </thead>
       <tbody>
-      {tables[0].children.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={L.lang}
-                                                     useDetailedCosts={useDetailedCosts}/>)}
+      {listRows(tables[0], useDetailedCosts)}
       </tbody>
       <tfoot>
       <tr>
@@ -52,8 +54,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       </tr>
       </thead>
       <tbody>
-      {tables[1].children.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={L.lang}
-                                                         useDetailedCosts={true}/>)}
+      {listRows(tables[1], true)}
       </tbody>
       <tfoot>
       <tr>
@@ -75,8 +76,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       </tr>
       </thead>
       <tbody>
-      {tables[2].children.map(budgetItem=><BudgetItemRow key={budgetItem.id} item={budgetItem} lang={L.lang}
-                                                         useDetailedCosts={true}/>)}
+      {listRows(tables[2], true)}
       </tbody>
       <tfoot>
       <tr>
@@ -86,6 +86,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       </tr>
       </tfoot>
     </table>
+
 
   return <div>
     <section className="section">
