@@ -32,7 +32,7 @@ controller.initializeState(parsedRoute).onValue((state) => {
 
 export default class PaatosApp extends Component {
   render() {
-    const {hakemus, avustushaku, roles, form} = this.props.state.paatosData
+    const {hakemus, avustushaku, roles, form, ispublic} = this.props.state.paatosData
     const decisionStatus = hakemus.arvio.status
     const selectedRoleId = hakemus.arvio['presenter-role-id']
     const role = selectedRoleId ? roles.find(role => role.id === selectedRoleId) : roles[0]
@@ -59,7 +59,7 @@ export default class PaatosApp extends Component {
          {decisionStatus == 'rejected' ?
             <RejectedDecision avustushaku={avustushaku} hakemus={hakemus} role={role} L={L}/> :
             <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} role={role} formContent={formContent} L={L}/>}
-         <SendDecisionButton avustushaku={avustushaku} hakemus={hakemus}/>
+         <SendDecisionButton avustushaku={avustushaku} hakemus={hakemus} isPublic={ispublic}/>
        </section>
     )
   }
@@ -165,8 +165,7 @@ class SendDecisionButton extends React.Component {
     const onEmailChanges = (event) => {
       this.setState({emails: event.target.value})
     }
-    //TODO isPublic needs to be determined from ajax response
-    if(true) return null;
+    if(this.props.isPublic) return null;
     return (
        <section className="section sendEmails">
          <div hidden={!this.state.sentEmails}>Päätös lähetetty osoitteisiin: <strong>{this.state.sentEmails}</strong>

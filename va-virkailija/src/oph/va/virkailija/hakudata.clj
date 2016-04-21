@@ -88,7 +88,10 @@
 (defn get-final-combined-paatos-data [hakemus-id]
   (let [combined (get-combined-paatos-data hakemus-id)
         status (-> combined :avustushaku :status)]
-    (when (= status "resolved") combined)))
+    (when (= status "resolved") (->
+                                  combined
+                                  (assoc :ispublic true)
+                                  ))))
 
 (defn get-combined-avustushaku-data-with-privileges [avustushaku-id identity]
   (->> (get-combined-avustushaku-data avustushaku-id)

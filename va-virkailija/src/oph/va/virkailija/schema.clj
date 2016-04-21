@@ -140,6 +140,7 @@
    :form {:content s/Any
           :rules s/Any}
    :roles [Role]
+   (s/optional-key :ispublic) (s/maybe s/Bool)
    :hakemus Hakemus})
 
 (s/defschema SavedSearch
