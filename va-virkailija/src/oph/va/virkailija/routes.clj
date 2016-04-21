@@ -347,7 +347,8 @@
         :return virkailija-schema/PaatosData
         :summary "Return relevant information for decision"
         (if-let [response (hakudata/get-final-combined-paatos-data hakemus-id)]
-          (ok response)
+          (-> (ok response)
+              (assoc-in [:headers "Access-Control-Allow-Origin"] "*"))
           (not-found)))
 
   (GET* "/liite/:liite-id/:lang" []
