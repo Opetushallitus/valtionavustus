@@ -79,8 +79,8 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
        original: findCost(formContent, hakemus.answers, budgetItem),
        overridden: findCost(formContent, hakemus.arvio['overridden-answers'], budgetItem)
      }))
-  const totalCosts = hakemus.arvio.useDetailedCosts ? _.sum(budgetItems.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted
-  const totalGranted = formatPrice(hakemus.arvio['budget-granted'])
+  const totalCosts = formatPrice(hakemus.arvio.useDetailedCosts ? _.sum(budgetItems.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted)
+  const totalGranted = hakemus.arvio['budget-granted']
   const koulutusosiot = hakemus.answers.find(item => item.key === 'koulutusosiot')
   const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
   return (
@@ -89,8 +89,8 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
          <p><L translationKey="myonnetty-title" /></p>
          <p>{hakemus['register-number']} {hakemus['project-name']}
          </p>
-         <p><L translationKey="paatos-myonnetty-1" /> {formatPrice(totalCosts)}&nbsp;.&nbsp;
-           <L translationKey="paatos-myonnetty-2" /> {totalGranted}.  <L translationKey="paatos-myonnetty-3" /> {selfFinancingPercentage>0 ? <span><L translationKey="valtionavustusprosentti-on" /> {100-selfFinancingPercentage}%</span> : null}
+         <p><L translationKey="paatos-myonnetty-1" /> {formatPrice(totalGranted)}&nbsp;.&nbsp;
+           <L translationKey="paatos-myonnetty-2" /> {totalCosts}.  <L translationKey="paatos-myonnetty-3" /> {selfFinancingPercentage>0 ? <span><L translationKey="valtionavustusprosentti-on" /> {100-selfFinancingPercentage}%</span> : null}
          </p>
          <DecisionContent avustushaku={avustushaku} id="myonteinenlisateksti" lang={L.lang}/>
          <p>
@@ -100,7 +100,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
        </Section>
        <Perustelut hakemus={hakemus} L={L}/>
        <OptionalSection title="sovelletut-saannokset" id="sovelletutsaannokset" avustushaku={avustushaku} L={L}/>
-       <AvustuksenMaksu L={L} iban={iban} bic={bic} avustushaku={avustushaku} totalPaid={totalCosts}/>
+       <AvustuksenMaksu L={L} iban={iban} bic={bic} avustushaku={avustushaku} totalPaid={totalGranted}/>
        <Section title="avustuksen-kayttotarkoitus" L={L}>
          <p><L translationKey="kaytto1"/></p>
          <p><L translationKey="kaytto2"/></p>
