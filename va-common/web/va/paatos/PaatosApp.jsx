@@ -17,11 +17,7 @@ import {Kayttosuunnitelma} from './Kayttosuunnitelma.jsx'
 import {formatPrice} from './Formatter'
 import {Koulutusosiot} from './Koulutusosiot.jsx'
 
-const privatePath = '/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id'
-const publicPath = '/public/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id'
-const isPublic = location.pathname.indexOf('public') >= 0
-const parsedRoute = new RouteParser(isPublic ? publicPath : privatePath).match(location.pathname)
-parsedRoute.isPublic = isPublic
+const parsedRoute = new RouteParser('/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id').match(location.pathname)
 const controller = new PaatosController()
 
 controller.initializeState(parsedRoute).onValue((state) => {
@@ -169,8 +165,8 @@ class SendDecisionButton extends React.Component {
     const onEmailChanges = (event) => {
       this.setState({emails: event.target.value})
     }
-
-    if(isPublic) return null;
+    //TODO isPublic needs to be determined from ajax response
+    if(true) return null;
     return (
        <section className="section sendEmails">
          <div hidden={!this.state.sentEmails}>Päätös lähetetty osoitteisiin: <strong>{this.state.sentEmails}</strong>

@@ -15,7 +15,8 @@
             [oph.va.hakija.db :as va-db]
             [oph.va.hakija.notification-formatter :as va-submit-notification]
             [oph.va.hakija.attachment-validator :as attachment-validator]
-            [oph.va.hakija.email :as va-email]))
+            [oph.va.hakija.email :as va-email]
+            [ring.util.response :as resp]))
 
 (defn- hakemus-conflict-response [hakemus]
   (conflict! {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
@@ -72,6 +73,12 @@
             (hakemus-ok-response (:hakemus new-hakemus) (without-id (:submission new-hakemus)) validation))
         (internal-server-error!))
       (bad-request! security-validation))))
+
+(defn on-get-paatos [hakemus-id]
+  (let [virkailija-app-url (-> config :server :virkailija-url)
+        paatos-url (str virkailija-app-url "/public/api/avustushaku/paatos/" hakemus-id )]
+    (resp/redirect paatos-url)))
+
 
 (defn on-get-current-answers [haku-id hakemus-id]
   (let [form-id (:form (va-db/get-avustushaku haku-id))

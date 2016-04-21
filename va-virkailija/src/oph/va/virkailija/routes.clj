@@ -51,6 +51,11 @@
         preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key "&preview=true")]
     (resp/redirect preview-url)))
 
+(defn- on-paatos-preview [avustushaku-id hakemus-id]
+  (let [hakija-app-url (-> config :server :url :fi)
+        preview-url (str hakija-app-url "paatos/avustushaku/" avustushaku-id "/hakemus/" hakemus-id )]
+    (resp/redirect preview-url)))
+
 (defn- get-hakemus-and-published-avustushaku [avustushaku-id hakemus-id]
   (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
         hakemus (hakija-api/get-hakemus hakemus-id)]
@@ -71,10 +76,12 @@
   (GET "/admin/*" [] (return-html "admin.html"))
   (GET "/yhteenveto/*" [] (return-html "summary.html"))
   (GET "/paatos/*" [] (return-html "paatos.html"))
-  (GET "/public/paatos/*" [] (return-html "paatos.html"))
   (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
         :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
         (on-hakemus-preview avustushaku-id hakemus-user-key))
+  (GET* "/public/paatos/avustushaku/:avustushaku-id/hakemus/:hakemus-id" []
+          :path-params [avustushaku-id :- Long, hakemus-id :- s/Str]
+          (on-paatos-preview avustushaku-id hakemus-id))
   (GET "/translations.json" [] (get-translations))
   (GET "/avustushaku/:id/*" [id] (return-html "index.html"))
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
