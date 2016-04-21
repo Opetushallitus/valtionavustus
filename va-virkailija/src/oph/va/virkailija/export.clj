@@ -119,7 +119,7 @@
 (defn- avustushaku->formlabels [avustushaku growing-fieldset-lut]
   (let [form (->> avustushaku
                   :form
-                  (formhandler/add-koodisto-values :hakija-db)
+                  (formhandler/add-koodisto-values :form-db)
                   :content)
         fields (formutil/find-fields form)
         wrappers (formutil/find-wrapper-elements form)]

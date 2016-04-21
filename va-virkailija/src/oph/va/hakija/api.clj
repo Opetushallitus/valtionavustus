@@ -29,23 +29,23 @@
 
 (defn health-check []
   (->> {}
-       (exec :hakija-db hakija-queries/health-check)
+       (exec :form-db hakija-queries/health-check)
        first
        :?column?
        (= 1)))
 
 (defn create-avustushaku [avustushaku-content template-form-id decision]
-  (let [form-id (:id (exec :hakija-db
+  (let [form-id (:id (exec :form-db
                            hakija-queries/copy-form<!
                            {:id template-form-id}))
-        avustushaku-id (exec :hakija-db
+        avustushaku-id (exec :form-db
                               hakija-queries/create-avustushaku<!
                               {:form form-id
                                :content avustushaku-content
                                :decision decision
                                :register_number nil})]
     (->> avustushaku-id
-         (exec :hakija-db hakija-queries/get-avustushaku)
+         (exec :form-db hakija-queries/get-avustushaku)
          (map avustushaku-response-content)
          first)))
 
@@ -56,26 +56,26 @@
         avustushaku-to-save (-> (assoc avustushaku :status haku-status)
                                 (assoc :register_number (:register-number avustushaku))
                                 (assoc :multiple_rahoitusalue (:multiple-rahoitusalue avustushaku)))]
-    (exec-all :hakija-db
+    (exec-all :form-db
               [hakija-queries/archive-avustushaku! avustushaku-to-save
                hakija-queries/update-avustushaku! avustushaku-to-save])
     (->> avustushaku-to-save
-         (exec :hakija-db hakija-queries/get-avustushaku)
+         (exec :form-db hakija-queries/get-avustushaku)
          (map avustushaku-response-content)
          first)))
 
 (defn get-avustushaku [id]
-  (first (exec :hakija-db hakija-queries/get-avustushaku {:id id})))
+  (first (exec :form-db hakija-queries/get-avustushaku {:id id})))
 
 (defn list-avustushaut []
-  (map avustushaku-response-content (exec :hakija-db hakija-queries/list-avustushaut {})))
+  (map avustushaku-response-content (exec :form-db hakija-queries/list-avustushaut {})))
 
 (defn- map-status-list [statuses]
   (map (fn [status] (new HakuStatus status)) statuses))
 
 (defn list-avustushaut-by-status [statuses]
   (if statuses
-    (map avustushaku-response-content (exec :hakija-db hakija-queries/list-avustushaut-by-status {:statuses (map-status-list statuses)}))
+    (map avustushaku-response-content (exec :form-db hakija-queries/list-avustushaut-by-status {:statuses (map-status-list statuses)}))
     (list-avustushaut)))
 
 (defn- role->json [role]
@@ -92,30 +92,30 @@
 (defn create-avustushaku-role [role]
   (let [role-enum (new HakuRole (:role role))
         role-to-save (assoc role :role role-enum)
-        role-id (exec :hakija-db hakija-queries/create-avustushaku-role<! role-to-save)]
+        role-id (exec :form-db hakija-queries/create-avustushaku-role<! role-to-save)]
     (->> role-id
-         (exec :hakija-db hakija-queries/get-avustushaku-role)
+         (exec :form-db hakija-queries/get-avustushaku-role)
          (map role->json)
          first)))
 
 (defn delete-avustushaku-role [avustushaku-id role-id]
- (exec :hakija-db hakija-queries/delete-avustushaku-role! {:avustushaku avustushaku-id
+ (exec :form-db hakija-queries/delete-avustushaku-role! {:avustushaku avustushaku-id
                                                            :id role-id}))
 
 (defn update-avustushaku-role [avustushaku-id role]
   (let [role-enum (new HakuRole (:role role))
         role-to-save (assoc (assoc role :role role-enum) :avustushaku avustushaku-id)]
-    (exec :hakija-db hakija-queries/update-avustushaku-role! role-to-save)
+    (exec :form-db hakija-queries/update-avustushaku-role! role-to-save)
     (->> role-to-save
-       (exec :hakija-db hakija-queries/get-avustushaku-role)
+       (exec :form-db hakija-queries/get-avustushaku-role)
          (map role->json)
          first)))
 
 (defn get-avustushaku-roles [avustushaku-id]
-  (roles->json (exec :hakija-db hakija-queries/get-avustushaku-roles {:avustushaku_id avustushaku-id})))
+  (roles->json (exec :form-db hakija-queries/get-avustushaku-roles {:avustushaku_id avustushaku-id})))
 
 (defn- form->json [form]
-  (let [form-for-rendering (formhandler/add-koodisto-values :hakija-db form)]
+  (let [form-for-rendering (formhandler/add-koodisto-values :form-db form)]
     {:content (:content form-for-rendering)
        :rules (:rules form-for-rendering)}))
 
@@ -150,20 +150,20 @@
     [id (attachments->map group)]))
 
 (defn get-form-by-avustushaku [avustushaku-id]
-  (first (exec :hakija-db hakija-queries/get-form-by-avustushaku {:avustushaku_id avustushaku-id})))
+  (first (exec :form-db hakija-queries/get-form-by-avustushaku {:avustushaku_id avustushaku-id})))
 
 (defn get-avustushaku [avustushaku-id]
-  (first (exec :hakija-db hakija-queries/get-avustushaku {:id avustushaku-id})))
+  (first (exec :form-db hakija-queries/get-avustushaku {:id avustushaku-id})))
 
 (defn get-avustushaku-by-status [avustushaku-id statuses]
-  (first (exec :hakija-db hakija-queries/get-avustushaku-by-status {:id avustushaku-id :statuses (map-status-list statuses)})))
+  (first (exec :form-db hakija-queries/get-avustushaku-by-status {:id avustushaku-id :statuses (map-status-list statuses)})))
 
 (defn get-paatos-email-status [avustushaku-id]
-  (let [paatos-sent-emails (exec :hakija-db hakija-queries/list-hakemus-paatos-email-statuses {:avustushaku_id avustushaku-id})]
+  (let [paatos-sent-emails (exec :form-db hakija-queries/list-hakemus-paatos-email-statuses {:avustushaku_id avustushaku-id})]
     (map paatos-sent-emails->json paatos-sent-emails)))
 
 (defn add-paatos-sent-emails [hakemus emails]
-  (exec :hakija-db hakija-queries/add-hakemus-paatos! {:hakemus_id (:id hakemus)
+  (exec :form-db hakija-queries/add-hakemus-paatos! {:hakemus_id (:id hakemus)
                                                          :hakemus_version (:version hakemus)
                                                          :sent_emails {:addresses emails}}))
 
@@ -171,8 +171,8 @@
   (let [avustushaku (get-avustushaku avustushaku-id)
         form (get-form-by-avustushaku avustushaku-id)
         roles (get-avustushaku-roles avustushaku-id)
-        hakemukset (exec :hakija-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})
-        attachments (exec :hakija-db hakija-queries/list-attachments-by-avustushaku {:avustushaku_id avustushaku-id})]
+        hakemukset (exec :form-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})
+        attachments (exec :form-db hakija-queries/list-attachments-by-avustushaku {:avustushaku_id avustushaku-id})]
     {:avustushaku (avustushaku-response-content avustushaku)
      :environment (environment-content)
      :roles roles
@@ -186,7 +186,7 @@
      :budget-oph-share-sum (reduce + (map :budget_oph_share hakemukset))}))
 
 (defn get-hakemusdata [hakemus-id]
-  (let [hakemus (first (exec :hakija-db hakija-queries/get-hakemus-with-answers {:id hakemus-id}))
+  (let [hakemus (first (exec :form-db hakija-queries/get-hakemus-with-answers {:id hakemus-id}))
         avustushaku-id (:avustushaku hakemus)
         avustushaku (get-avustushaku avustushaku-id)
         form (get-form-by-avustushaku avustushaku-id)
@@ -198,24 +198,24 @@
 
 (defn list-attachments [hakemus-id]
   (->> {:hakemus_id hakemus-id}
-       (exec :hakija-db hakija-queries/list-attachments)))
+       (exec :form-db hakija-queries/list-attachments)))
 
 (defn list-attachment-versions [hakemus-id]
   (->> {:hakemus_id hakemus-id}
-       (exec :hakija-db hakija-queries/list-attachment-versions)))
+       (exec :form-db hakija-queries/list-attachment-versions)))
 
 (defn attachment-exists? [hakemus-id field-id]
   (->> {:hakemus_id hakemus-id
         :field_id field-id}
-       (exec :hakija-db hakija-queries/attachment-exists?)
+       (exec :form-db hakija-queries/attachment-exists?)
        first))
 
 (defn- query-attachment [hakemus-id field-id attachment-version]
   (let [params {:hakemus_id hakemus-id :field_id field-id}]
     (if attachment-version
       (->> (assoc params :version attachment-version)
-           (exec :hakija-db hakija-queries/download-attachment-version))
-      (exec :hakija-db hakija-queries/download-attachment params))))
+           (exec :form-db hakija-queries/download-attachment-version))
+      (exec :form-db hakija-queries/download-attachment params))))
 
 (defn download-attachment [hakemus-id field-id attachment-version]
   (let [result (->> (query-attachment hakemus-id field-id attachment-version)
@@ -229,7 +229,7 @@
   ;; NOTE: looks like yesql unwraps sequence parameters, thats way we wrap them one extra time here
   ;; TODO: Consolidate with oph.soresu.form.db currently in soresu-form
   (let [params {:form_id form-id :content (list (:content form-content)) :rules (list (:rules form-content))}]
-    (exec-all :hakija-db [hakija-queries/archive-form! { :form_id form-id }
+    (exec-all :form-db [hakija-queries/archive-form! { :form_id form-id }
                           hakija-queries/update-form! params])))
 
 (defn update-form-by-avustushaku [avustushaku-id form]
@@ -242,10 +242,10 @@
     (get-form-by-avustushaku avustushaku-id)))
 
 (defn get-hakemus [hakemus-id]
-  (first (exec :hakija-db hakija-queries/get-hakemus {:id hakemus-id})))
+  (first (exec :form-db hakija-queries/get-hakemus {:id hakemus-id})))
 
 (defn get-hakemus-submission [hakemus]
-  (first (exec :hakija-db hakija-queries/get-submission {:id (:form_submission_id hakemus)
+  (first (exec :form-db hakija-queries/get-submission {:id (:form_submission_id hakemus)
                                                          :version (:form_submission_version hakemus)})))
 
 (defn update-hakemus-status [hakemus status status-comment identity]
@@ -256,9 +256,9 @@
                                         :user_last_name (:surname identity)
                                         :user_email (:email identity)
                                         :avustushaku_id (:avustushaku hakemus)})]
-    (exec-all :hakija-db [hakija-queries/lock-hakemus hakemus
+    (exec-all :form-db [hakija-queries/lock-hakemus hakemus
                           hakija-queries/close-existing-hakemus! hakemus
                           hakija-queries/update-hakemus-status<! updated-hakemus])))
 
 (defn list-hakemus-change-requests [hakemus-id]
-  (hakemukset->json (exec :hakija-db hakija-queries/list-hakemus-change-requests {:id hakemus-id})))
+  (hakemukset->json (exec :form-db hakija-queries/list-hakemus-change-requests {:id hakemus-id})))

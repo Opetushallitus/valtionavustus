@@ -144,7 +144,7 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
-    (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
+    (with-test-server! :form-db #(start-server "localhost" test-server-port false) (_)))
 
   ;; Set time
   (around-all [_]
@@ -361,7 +361,7 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
-    (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
+    (with-test-server! :form-db #(start-server "localhost" test-server-port false) (_)))
 
   ;; Set time
   (around-all [_]
@@ -392,7 +392,7 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
-    (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
+    (with-test-server! :form-db #(start-server "localhost" test-server-port false) (_)))
 
   ;; Set time
   (around-all [_]

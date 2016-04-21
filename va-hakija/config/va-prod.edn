@@ -6,7 +6,7 @@
                 :sv "https://statsunderstod.oph.fi/"}
           :virkailija-url "https://virkailija.valtionavustukset.oph.fi"}
  :ui {:show-environment? false}
- :db {:database-name "va-prod"}
+ :form-db {:database-name "va-prod"}
  :email {:enabled? true
          :host "smtp.sdn.csc.fi"
          :port 25

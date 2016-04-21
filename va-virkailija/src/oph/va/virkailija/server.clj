@@ -21,14 +21,14 @@
 (defn- startup [config]
   (log/info "Using configuration: " config)
   (log/info "Running db migrations")
-  (dbmigrations/migrate :db "db.migration")
+  (dbmigrations/migrate :virkailija-db "db.migration")
   (log/info "Starting e-mail sender")
   (email/start-background-sender))
 
 (defn- shutdown []
   (log/info "Shutting down all services")
   (email/stop-background-sender)
-  (db/close-datasource! :db))
+  (db/close-datasource! :virkailija-db))
 
 (defn- with-log-wrapping [site]
   (if (-> config :server :enable-access-log?)

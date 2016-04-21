@@ -17,20 +17,20 @@
 
 (defn health-check []
   (->> {}
-       (exec :db queries/health-check)
+       (exec :form-db queries/health-check)
        first
        :?column?
        (= 1)))
 
 (defn get-avustushaku [id]
-  (->> (exec :db queries/get-avustushaku {:id id})
+  (->> (exec :form-db queries/get-avustushaku {:id id})
        first))
 
 (defn list-avustushaut []
-  (exec :db queries/list-avustushaut {}))
+  (exec :form-db queries/list-avustushaut {}))
 
 (defn update-avustushaku [avustushaku]
-  (exec-all :db  [queries/archive-avustushaku! avustushaku
+  (exec-all :form-db  [queries/archive-avustushaku! avustushaku
                   queries/update-avustushaku! avustushaku]))
 
 (defn- calculate-budget-summary [avustushaku-id answers]
@@ -59,15 +59,15 @@
 
 (defn get-hakemus [hakemus-id]
   (->> {:user_key hakemus-id}
-       (exec :db queries/get-hakemus-by-user-id)
+       (exec :form-db queries/get-hakemus-by-user-id)
        first))
 
 (defn list-hakemus-change-requests [hakemus-id]
   (->> {:user_key hakemus-id}
-       (exec :db queries/list-hakemus-change-requests-by-user-id)))
+       (exec :form-db queries/list-hakemus-change-requests-by-user-id)))
 
 (defn- register-number-sequence-exists? [register-number]
-  (->> (exec :db queries/register-number-sequence-exists? {:suffix register-number})
+  (->> (exec :form-db queries/register-number-sequence-exists? {:suffix register-number})
        first
        nil?
        not))
@@ -78,8 +78,8 @@
       (let [hakemus (get-hakemus user-key)
             params {:suffix avustushaku-register-number}
             {:keys [suffix seq_number]} (if (register-number-sequence-exists? avustushaku-register-number)
-                                          (exec :db queries/update-register-number-sequence<! params)
-                                          (exec :db queries/create-register-number-sequence<! params))]
+                                          (exec :form-db queries/update-register-number-sequence<! params)
+                                          (exec :form-db queries/create-register-number-sequence<! params))]
         (format "%d/%s" seq_number avustushaku-register-number)))))
 
 (defn create-hakemus! [avustushaku-id form-id answers]
@@ -90,7 +90,7 @@
                     :form_submission (:id submission)
                     :register_number (generate-register-number avustushaku-id user-key)}
                    (merge-calculated-params avustushaku-id answers))
-        hakemus (exec :db queries/create-hakemus<! params)]
+        hakemus (exec :form-db queries/create-hakemus<! params)]
     {:hakemus hakemus :submission submission}))
 
 (defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers]
@@ -106,7 +106,7 @@
                     :form_submission_id submission-id
                     :form_submission_version submission-version}
                    (merge-calculated-params avustushaku-id answers))]
-    (exec-all :db [queries/lock-hakemus params
+    (exec-all :form-db [queries/lock-hakemus params
                    queries/close-existing-hakemus! params
                    queries/update-hakemus-submission<! params])))
 
@@ -123,7 +123,7 @@
                     :status status
                     :status_change_comment status-change-comment}
                    (merge-calculated-params avustushaku-id answers))]
-    (exec-all :db [queries/lock-hakemus params
+    (exec-all :form-db [queries/lock-hakemus params
                    queries/close-existing-hakemus! params
                    queries/update-hakemus-status<! params])))
 
@@ -139,7 +139,7 @@
 (defn attachment-exists? [hakemus-id field-id]
   (->> {:hakemus_id hakemus-id
         :field_id field-id}
-       (exec :db queries/attachment-exists?)
+       (exec :form-db queries/attachment-exists?)
        first))
 
 (defn convert-attachment [hakemus-id attachment]
@@ -163,18 +163,18 @@
                     :file_size size
                     :file_data blob})]
     (if (attachment-exists? hakemus-id field-id)
-      (exec-all :db [queries/close-existing-attachment! params
+      (exec-all :form-db [queries/close-existing-attachment! params
                      queries/update-attachment<! params])
-      (exec :db queries/create-attachment<! params))))
+      (exec :form-db queries/create-attachment<! params))))
 
 (defn close-existing-attachment! [hakemus-id field-id]
   (->> {:hakemus_id hakemus-id
         :field_id field-id}
-       (exec :db queries/close-existing-attachment!)))
+       (exec :form-db queries/close-existing-attachment!)))
 
 (defn list-attachments [hakemus-id]
   (->> {:hakemus_id hakemus-id}
-       (exec :db queries/list-attachments)))
+       (exec :form-db queries/list-attachments)))
 
 (defn get-attachments [external-hakemus-id hakemus-id]
   (->> (list-attachments hakemus-id)
@@ -185,7 +185,7 @@
 (defn download-attachment [hakemus-id field-id]
   (let [result (->> {:hakemus_id hakemus-id
                      :field_id field-id}
-                    (exec :db queries/download-attachment)
+                    (exec :form-db queries/download-attachment)
                     first)]
     {:data (io/input-stream (:file_data result))
      :content-type (:content_type result)

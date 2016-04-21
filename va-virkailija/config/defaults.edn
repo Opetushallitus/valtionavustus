@@ -12,13 +12,13 @@
                :cas-logout "/cas/logout?service="
                :permission-request "/authentication-henkiloui/html/#/omattiedot2"}
  :ui {:show-environment? true}
- :db {:pool-name "virkailija-pool"
+ :virkailija-db {:pool-name "virkailija-pool"
       :username "va_virkailija"
       :password "va"
       :server-name "localhost"
       :port-number 5432
       :schema "virkailija"}
- :hakija-db {:pool-name "hakija-pool"
+ :form-db {:pool-name "hakija-pool"
              :username "va_hakija"
              :password "va"
              :server-name "localhost"

@@ -389,7 +389,7 @@
         :return s/Any
         :summary "List contents of certain version of certain koodisto"
         :description "Choice values and labels for each value"
-        (let [koodi-options (koodisto/get-cached-koodi-options :hakija-db koodisto-uri version)]
+        (let [koodi-options (koodisto/get-cached-koodi-options :form-db koodisto-uri version)]
           (ok (:content koodi-options)))))
 
 (defn- query-string-for-login [original-query-params params-to-add keys-to-remove]

@@ -17,7 +17,7 @@
           :virkailija-url "http://localhost:8081"}
  :ui {:show-environment? true}
  :api {:restricted-routes? true}
- :db {:pool-name "hakija-pool"
+ :form-db {:pool-name "hakija-pool"
       :username "va_hakija"
       :password "va"
       :server-name "localhost"

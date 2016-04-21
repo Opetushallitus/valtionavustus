@@ -11,11 +11,11 @@
 (defn get-arviot [hakemus-ids]
   (if (empty? hakemus-ids)
     []
-    (exec :db queries/get-arviot {:hakemus_ids hakemus-ids})))
+    (exec :virkailija-db queries/get-arviot {:hakemus_ids hakemus-ids})))
 
 (defn get-arvio [hakemus-id]
   (->> {:hakemus_id hakemus-id}
-       (exec :db queries/get-arvio)
+       (exec :virkailija-db queries/get-arvio)
        first))
 
 (defn- ->changelog-entry [identity type timestamp data]
@@ -118,12 +118,12 @@
         changelog (update-changelog identity existing arvio-to-save)
         arvio-with-changelog (assoc arvio-to-save :changelog [changelog])]
     (if existing
-      (exec :db queries/update-arvio<! arvio-with-changelog)
-      (exec :db queries/create-arvio<! arvio-with-changelog))))
+      (exec :virkailija-db queries/update-arvio<! arvio-with-changelog)
+      (exec :virkailija-db queries/create-arvio<! arvio-with-changelog))))
 
 (defn health-check []
   (->> {}
-       (exec :db queries/health-check)
+       (exec :virkailija-db queries/health-check)
        first
        :?column?
        (= 1)))
@@ -131,11 +131,11 @@
 (defn get-or-create-arvio [hakemus-id]
   (if-let [arvio (get-arvio hakemus-id)]
     arvio
-    (exec :db queries/create-empty-arvio<! {:hakemus_id hakemus-id})))
+    (exec :virkailija-db queries/create-empty-arvio<! {:hakemus_id hakemus-id})))
 
 (defn list-comments [hakemus-id]
   (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
-    (exec :db queries/list-comments {:arvio_id arvio-id})))
+    (exec :virkailija-db queries/list-comments {:arvio_id arvio-id})))
 
 (defn add-comment [hakemus-id first-name last-name email comment]
   (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
@@ -144,7 +144,7 @@
                         :last_name last-name
                         :email email
                         :comment comment}
-                       (exec :db queries/create-comment<!))]
+                       (exec :virkailija-db queries/create-comment<!))]
       (list-comments hakemus-id))))
 
 (defn score->map [score]
@@ -159,11 +159,11 @@
    :modified-at (:modified_at score)})
 
 (defn list-scores [arvio-id]
-  (->> (exec :db queries/list-scores {:arvio_id arvio-id})
+  (->> (exec :virkailija-db queries/list-scores {:arvio_id arvio-id})
        (map score->map)))
 
 (defn list-avustushaku-scores [avustushaku-id]
-  (->> (exec :db queries/list-avustushaku-scores {:avustushaku_id avustushaku-id})
+  (->> (exec :virkailija-db queries/list-avustushaku-scores {:avustushaku_id avustushaku-id})
        (map score->map)))
 
 (defn- update-or-create-score [avustushaku-id arvio-id identity selection-criteria-index score]
@@ -175,27 +175,27 @@
                 :email                    (:email identity)
                 :selection_criteria_index selection-criteria-index
                 :score                    score}]
-    (if-let [updated (exec :db queries/update-score<! params)]
+    (if-let [updated (exec :virkailija-db queries/update-score<! params)]
         updated
-        (exec :db queries/create-score<! params))))
+        (exec :virkailija-db queries/create-score<! params))))
 
 (defn add-score [avustushaku-id arvio-id identity selection-criteria-index score]
   (update-or-create-score avustushaku-id arvio-id identity selection-criteria-index score))
 
 (defn find-search [avustushaku-id query]
   (->> {:avustushaku_id avustushaku-id :query query}
-       (exec :db queries/find-search)
+       (exec :virkailija-db queries/find-search)
        first))
 
 (defn create-search! [avustushaku-id query name person-oid]
-  (exec :db queries/create-search<! {:avustushaku_id avustushaku-id
+  (exec :virkailija-db queries/create-search<! {:avustushaku_id avustushaku-id
                                      :query query
                                      :name name
                                      :oid person-oid}))
 
 (defn get-search [avustushaku-id saved-search-id]
   (->> {:avustushaku_id avustushaku-id :id saved-search-id}
-       (exec :db queries/get-search)
+       (exec :virkailija-db queries/get-search)
        first))
 
 (defn get-finalized-hakemus-ids
@@ -204,5 +204,5 @@
   (if (empty? hakemus-ids)
     []
     (->> {:hakemus_ids (vec hakemus-ids)}
-         (exec :db queries/get-accepted-or-rejected-hakemus-ids)
+         (exec :virkailija-db queries/get-accepted-or-rejected-hakemus-ids)
          (map :hakemus_id))))

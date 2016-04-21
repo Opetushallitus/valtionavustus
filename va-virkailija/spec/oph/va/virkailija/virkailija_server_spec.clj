@@ -24,7 +24,7 @@
   (tags :server)
 
   ;; Start HTTP server for running tests
-  (around-all [_] (with-test-server! :db #(start-server "localhost" test-server-port false) (_)))
+  (around-all [_] (with-test-server! :virkailija-db #(start-server "localhost" test-server-port false) (_)))
 
   (it "GET to / without authentication should redirect to login page"
       (let [{:keys [status body]} (get! "/")]

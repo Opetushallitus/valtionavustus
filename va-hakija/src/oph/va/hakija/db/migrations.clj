@@ -60,7 +60,7 @@
 
 (migrations/defmigration migrate-add-fieldtype-to-submissions "1.18"
   "Add fieldType to each form_submissions value"
- (let [all-submission-versions (common-db/exec :db list-all-submission-versions {})
+ (let [all-submission-versions (common-db/exec :form-db list-all-submission-versions {})
        all-forms (db/list-forms)
        id-regexp-type-map {#"language" "radioButton"
                            #"project-description" "growingFieldset"
@@ -100,7 +100,7 @@
         (doseq [submission all-submission-versions]
           (let [my-form-content (->> all-forms (filter #(= (:id %) (:form submission))) first :content formutil/find-fields)
                 updated-submission (formutil/transform-tree submission :answers (partial add-field-type my-form-content))]
-            (common-db/exec :db update-submission-directly! {:answers (updated-submission :answers)
+            (common-db/exec :form-db update-submission-directly! {:answers (updated-submission :answers)
                                                              :submission_id (:id submission)
                                                              :version (:version submission)
                                                              :form_id (:form submission)}))))))
