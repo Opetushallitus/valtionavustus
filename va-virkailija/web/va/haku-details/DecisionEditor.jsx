@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
-import Liitteet from '../data/Liitteet'
+import Liitteet from 'va-common/web/va/data/Liitteet'
 import Bacon from 'baconjs'
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import DateUtil from 'soresu-form/web/form/DateUtil'

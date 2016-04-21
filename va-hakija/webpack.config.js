@@ -26,7 +26,8 @@ if (process.env.UGLIFY === "true") {
 module.exports = {
   entry: {
     app: "./web/va/VaApp.jsx",
-    login: "./web/va/VaLogin.jsx"
+    login: "./web/va/VaLogin.jsx",
+    paatosApp: "../va-common/web/va/paatos/PaatosApp.jsx"
   },
   output: {
     path: outputDir,

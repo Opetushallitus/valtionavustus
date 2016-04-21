@@ -141,6 +141,7 @@
   ;; Finnish subcontext
   (GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
   (GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
+  (GET "/paatos/*" [] (return-html "paatos.html"))
   (route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
 
   ;; Swedish subcontext
