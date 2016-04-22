@@ -45,13 +45,13 @@
                            :url url
                            :change-request change-request})))
 
-(defn paatos-url [avustushaku-id hakemus-id]
-  (let [virkailija-url (-> config :server :virkailija-url)]
-  (str virkailija-url "/public/paatos/avustushaku/" avustushaku-id "/hakemus/" hakemus-id)))
+(defn paatos-url [avustushaku-id hakemus-id lang]
+  (let [va-url (-> config :server :url lang)]
+  (str va-url "paatos/avustushaku/" avustushaku-id "/hakemus/" hakemus-id)))
 
 (defn send-paatos! [lang to avustushaku hakemus]
   (let [lang-str (or (clojure.core/name lang) "fi")
-        url (paatos-url (:id avustushaku) (:id hakemus))
+        url (paatos-url (:id avustushaku) (:id hakemus) (keyword lang-str))
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])]
     (log/info "Url would be: " url)
