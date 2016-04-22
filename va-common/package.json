@@ -19,6 +19,7 @@
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
     "lodash": "^3.9.3",
+    "query-string": "2.2.0",
     "moment-timezone": "0.4.0",
     "json-loader": "^0.5.2",
     "react-addons-css-transition-group": "0.14.3",
