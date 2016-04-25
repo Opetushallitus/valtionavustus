@@ -15,13 +15,13 @@ export default class EditsDisplayingFormView extends React.Component {
       const oldAnswer = _.find(state.answersDelta.changedAnswers, a => { return a.key === field.id })
       if (oldAnswer) {
         return <DiffDisplayingField key={"diff-display-" + field.id} field={field} oldAnswer={oldAnswer}
-                                    state={state} infoElementValues={infoElementValues} controller={controller} />
+                                    state={state} infoElementValues={infoElementValues} controller={controller} translations={translations}/>
       }
       const previouslyInExistentAnswer = _.find(state.answersDelta.newAnswers, a => { return a.key === field.id })
       if (previouslyInExistentAnswer) {
         const dummyOldAnswer = { value: " " }
         return <DiffDisplayingField key={"diff-display-" + field.id} field={field} oldAnswer={dummyOldAnswer}
-                                    state={state} infoElementValues={infoElementValues} controller={controller} />
+                                    state={state} infoElementValues={infoElementValues} controller={controller} translations={translations}/>
       }
       return FormPreview.createFormPreviewComponent(controller, state, field, fieldProperties)
     } else if (field.fieldClass == "infoElement") {
@@ -126,6 +126,7 @@ class DiffDisplayingField extends React.Component {
     const oldAnswer = this.props.oldAnswer
     const state = this.props.state
     const controller = this.props.controller
+    const translations = this.props.translations
     const infoElementValues = this.props.infoElementValues
     const oldValueDisplay = renderFieldWithOldValue()
     return <div>
@@ -139,16 +140,16 @@ class DiffDisplayingField extends React.Component {
 
     function renderFieldWithOldValue() {
       if (field.fieldType === "namedAttachment") {
-        return createOldAttachmentVersionDisplay()
+        return createOldAttachmentVersionDisplay(controller,translations)
       }
       return FormPreview.renderField(controller, null, state, infoElementValues, field, { overridingInputValue: oldAnswer.value })
     }
 
-    function createOldAttachmentVersionDisplay() {
+    function createOldAttachmentVersionDisplay(controller,translations) {
       const attachmentVersion = findOriginalAttachmentVersion()
       const fields = state.form.content
       const htmlId = controller.constructHtmlId(fields, field.id)
-      const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field }
+      const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field,controller:controller,translations:translations }
       const renderingParameters = { overridingInputValue: oldAnswer.value };
       const downloadUrl = attachmentVersion ? controller.createAttachmentVersionDownloadUrl(field, attachmentVersion.version) : null
       return FormPreview._createFormPreviewComponent(controller, state, field, fieldProperties, renderingParameters, attachmentVersion, downloadUrl)
