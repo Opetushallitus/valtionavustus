@@ -95,7 +95,7 @@
                                   :url "URL_PLACEHOLDER"
                                   :register-number (:register_number first-hakemus)
                                   :project-name (:project_name first-hakemus)})
-                 :example-url (email/paatos-url avustushaku-id first-hakemus-id)}
+                 :example-url (email/paatos-url avustushaku-id first-hakemus-id :fi)}
                 (select-keys sent-status [:sent :count :sent-time])))))
 
   (GET* "/emails/:hakemus-id" []
