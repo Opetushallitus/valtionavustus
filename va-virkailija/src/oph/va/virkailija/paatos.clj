@@ -7,6 +7,7 @@
    [oph.soresu.form.formutil :as formutil]
    [oph.va.virkailija.email :as email]
    [oph.va.virkailija.schema :as virkailija-schema]
+   [oph.va.virkailija.hakudata :as hakudata]
    [oph.va.virkailija.db :as virkailija-db]
    [clojure.tools.logging :as log]
    [clojure.string :as str]))
@@ -30,11 +31,13 @@
 (defn send-paatos [hakemus-id emails]
   (let [hakemus (hakija-api/get-hakemus hakemus-id)
         submission (hakija-api/get-hakemus-submission hakemus)
+        avustushaku-id (:avustushaku hakemus)
         answers (:answers submission)
-        avustushaku (hakija-api/get-avustushaku (:avustushaku hakemus))
+        avustushaku (hakija-api/get-avustushaku avustushaku-id)
+        presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
         language (keyword (formutil/find-answer-value answers "language"))]
     (log/info "Sending paatos email for hakemus" hakemus-id " to " emails)
-    (email/send-paatos! language emails avustushaku hakemus)
+    (email/send-paatos! language emails avustushaku hakemus presenting-officer-email)
     (hakija-api/add-paatos-sent-emails hakemus emails)
     (ok {:status "sent" :hakemus hakemus-id :emails emails})))
 

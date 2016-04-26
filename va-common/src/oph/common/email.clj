@@ -34,6 +34,7 @@
   (let [from (:from msg)
         sender (:sender msg)
         to (:to msg)
+        reply-to (:reply-to msg)
         subject (:subject msg)]
     (log/info (format "Sending %s message from %s (with sender %s) to %s (lang: %s) with subject '%s'"
                       (name (:type msg))
@@ -54,6 +55,8 @@
                           (.setBounceAddress (:bounce-address smtp-config))
                           (.setSubject subject)
                           (.setMsg email))
+                        (when reply-to
+                          (.addReplyTo msg reply-to))
                         (doseq [address to]
                           (.addTo msg address))
                         (.send msg)))

@@ -101,6 +101,12 @@
   { :fi (str (:fi nameField) " (kopio)" )
     :sv (str (:sv nameField) " (kopia)")})
 
+(defn presenting-officer-email [avustushaku-id]
+  (let [roles (hakija-api/get-avustushaku-roles avustushaku-id)
+        presenting-officers (filter (fn [x] (= (:role x) "presenting_officer")) roles)
+        presenting-officer-emails (map :email presenting-officers)
+        first-email (first presenting-officer-emails)] first-email))
+
 (defn create-new-avustushaku [base-haku-id identity]
   (let [base-haku (-> base-haku-id
                       (hakija-api/get-hakudata)

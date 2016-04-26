@@ -317,8 +317,9 @@
                    language (keyword (formutil/find-answer-value answers "language"))
                    avustushaku-name (-> avustushaku :content :name language)
                    email (formutil/find-answer-value answers "primary-email")
-                   user-key (:user_key updated-hakemus)]
-               (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment)))
+                   user-key (:user_key updated-hakemus)
+                   presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)]
+               (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment presenting-officer-email)))
            (ok {:hakemus-id hakemus-id
                 :status new-status})))
 

@@ -30,7 +30,7 @@
 (defn stop-background-sender []
   (email/stop-background-sender))
 
-(defn send-change-request-message! [lang to avustushaku-id avustushaku-name user-key change-request]
+(defn send-change-request-message! [lang to avustushaku-id avustushaku-name user-key change-request reply-to]
   (let [lang-str (or (clojure.core/name lang) "fi")
         url (email/generate-url avustushaku-id lang lang-str user-key false)]
     (log/info "Url would be: " url)
@@ -38,6 +38,7 @@
                            :type :change-request
                            :lang lang
                            :from (-> email/smtp-config :from lang)
+                           :reply-to reply-to
                            :sender (-> email/smtp-config :sender)
                            :subject (get-in mail-titles [:change-request lang])
                            :to [to]
@@ -49,7 +50,7 @@
   (let [va-url (-> config :server :url lang)]
   (str va-url "paatos/avustushaku/" avustushaku-id "/hakemus/" hakemus-id)))
 
-(defn send-paatos! [lang to avustushaku hakemus]
+(defn send-paatos! [lang to avustushaku hakemus reply-to]
   (let [lang-str (or (clojure.core/name lang) "fi")
         url (paatos-url (:id avustushaku) (:id hakemus) (keyword lang-str))
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
@@ -59,6 +60,7 @@
                            :type :paatos
                            :lang lang
                            :from (-> email/smtp-config :from lang)
+                           :reply-to reply-to
                            :sender (-> email/smtp-config :sender)
                            :subject mail-subject
                            :avustushaku-name avustushaku-name
