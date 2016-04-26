@@ -30,7 +30,7 @@
 (defn stop-background-sender []
   (email/stop-background-sender))
 
-(defn send-change-request-message! [lang to avustushaku-id avustushaku-name user-key change-request reply-to]
+(defn send-change-request-message! [lang to avustushaku-id avustushaku-name user-key change-request presenting-officer-email]
   (let [lang-str (or (clojure.core/name lang) "fi")
         url (email/generate-url avustushaku-id lang lang-str user-key false)]
     (log/info "Url would be: " url)
@@ -38,7 +38,8 @@
                            :type :change-request
                            :lang lang
                            :from (-> email/smtp-config :from lang)
-                           :reply-to reply-to
+                           :reply-to presenting-officer-email
+                           :bcc presenting-officer-email
                            :sender (-> email/smtp-config :sender)
                            :subject (get-in mail-titles [:change-request lang])
                            :to [to]
