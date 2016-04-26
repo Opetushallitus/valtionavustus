@@ -72,7 +72,8 @@ const FilterList  = ({hakemusFilter,hakuData,controller}) => {
   const multipleRahoitusalue = hakuData.avustushaku["multiple-rahoitusalue"]
   const radioQuestions = FormUtil.findFieldsByFieldType(form.content, "radioButton")
   const checkboxQuestions = FormUtil.findFieldsByFieldType(form.content, "checkboxButton")
-  const questions = radioQuestions.concat(checkboxQuestions)
+  const dropdownQuestions = FormUtil.findFieldsByFieldType(form.content, "dropdown")
+  const questions = radioQuestions.concat(checkboxQuestions).concat(dropdownQuestions)
   const answers = hakemusFilter.answers
 
   const buildQuestions = () => {
