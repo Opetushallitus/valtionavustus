@@ -330,13 +330,9 @@
       "fi":"Sovelletut säännökset",
       "sv":"SV Sovelletut säännökset"
     },
-    "tekijanoikeudet":{
+    "kayttooikeudet":{
       "fi":"Tekijänoikeudet",
       "sv":"SV Tekijänoikeudet"
-    },
-    "tekijanoikeudet-sisalto":{
-      "fi":"Valtionavustuksen saajan tulee luovuttaa Opetushallitukselle vastikkeetta rinnakkaiset käyttöoikeudet valtionavustushankkeen yhteydessä syntyviin aineistoihin sekä niiden sisällön ja ulkoasun muutoksiin. Opetushallituksella on myös oikeus levittää aineistoa kaikissa levitysmuodoissa ja valmistaa siitä kopioita. Valtionavustuksen saaja vastaa siitä, että sillä on oikeus luovuttaa oikeudet Opetushallitukselle.",
-      "sv":"SV Valtionavustuksen saajan tulee luovuttaa Opetushallitukselle vastikkeetta rinnakkaiset käyttöoikeudet valtionavustushankkeen yhteydessä syntyviin aineistoihin sekä niiden sisällön ja ulkoasun muutoksiin. Opetushallituksella on myös oikeus levittää aineistoa kaikissa levitysmuodoissa ja valmistaa siitä kopioita. Valtionavustuksen saaja vastaa siitä, että sillä on oikeus luovuttaa oikeudet Opetushallitukselle."
     },
     "hyvaksyminen":{
       "fi":"Päätöksen hyväksyminen",
