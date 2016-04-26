@@ -222,7 +222,6 @@ export default class DecisionEditor extends React.Component {
       {id:"taustaa",title:"Taustaa"},
       {id:"myonteinenlisateksti",title:"Myönteisen päätöksen lisäteksti"},
       {id:"sovelletutsaannokset",title:"Sovelletut säännökset"},
-      {id:"kayttooikeudet",title:"Tekijänoikeudet"},
       {id:"kayttoaika",title:"Avustuksen käyttöaika"},
       {id:"selvitysvelvollisuus",title:"Selvitysvelvollisuus"},
       {id:"hyvaksyminen",title:"Päätöksen hyväksyminen"},

@@ -108,6 +108,9 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
        <Section title="tarkastusoikeus-title" L={L}>
            <L translationKey="tarkastusoikeus-text" />
        </Section>
+       <Section title="tekijanoikeudet" L={L}>
+         <L translationKey="tekijanoikeudet-sisalto" />
+       </Section>
        <OptionalSection title="kayttooikeudet" id="kayttooikeudet" avustushaku={avustushaku} L={L}/>
        <OptionalSection title="hyvaksyminen" id="hyvaksyminen" avustushaku={avustushaku} L={L}/>
        <Lisatietoja avustushaku={avustushaku} role={role} L={L}/>
