@@ -28,7 +28,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       </tr>
     )}</tbody>
 
-  const totalIncomes = _.sum(tables[1].children.map(i=>Number(i.original)))
+  const totalIncomes = tables[1] ? _.sum(tables[1].children.map(i=>Number(i.original))) : 0
   const totalFinancing = tables[2] ? _.sum(tables[2].children.map(i=>Number(i.original))) : 0
   return <div>
     <section className="section">
