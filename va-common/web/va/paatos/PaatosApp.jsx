@@ -86,8 +86,9 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
          <p>{hakemus['register-number']} {hakemus['project-name']}
          </p>
          <p><L translationKey="paatos-myonnetty-1" /> {formatPrice(totalGranted)}&nbsp;.&nbsp;
-           <L translationKey="paatos-myonnetty-2" /> {totalCosts}.  <L translationKey="paatos-myonnetty-3" /> {selfFinancingPercentage>0 ? <span><L translationKey="valtionavustusprosentti-on" /> {100-selfFinancingPercentage}%</span> : null}
+           <L translationKey="paatos-myonnetty-2" /> {totalCosts}.
          </p>
+         <p><L translationKey="paatos-myonnetty-3" /> {selfFinancingPercentage>0 ? <span><L translationKey="valtionavustusprosentti-on" /> {100-selfFinancingPercentage}%</span> : null}</p>
          <DecisionContent avustushaku={avustushaku} id="myonteinenlisateksti" lang={L.lang}/>
          <p>
            <L translationKey="paatos-myonnetty-4" />
