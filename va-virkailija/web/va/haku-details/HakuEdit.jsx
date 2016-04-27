@@ -36,8 +36,7 @@ export default class HakuEdit extends Component {
             </tr>
           </tbody>
         </table>
-        <Rahoitusalueet multipleRahoitusalue={avustushaku["multiple-rahoitusalue"]} disabled={!allowAllHakuEdits} onChange={onChange} />
-        <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
+        <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} />
         <div className="haku-duration-and-self-financing">
           <div className="haku-duration-edit-container">
             <h3>{avustushaku.content.duration.label.fi}</h3>
@@ -51,8 +50,9 @@ export default class HakuEdit extends Component {
                    onChange={onChange} disabled={!allowAllHakuEdits} value={avustushaku.content["self-financing-percentage"]} /><span>%</span>
           </div>
         </div>
+        <Rahoitusalueet multipleRahoitusalue={avustushaku["multiple-rahoitusalue"]} disabled={!allowAllHakuEdits} onChange={onChange} />
+        <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
         <HakuRoles avustushaku={avustushaku} ldapSearch={ldapSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller} />
-        <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
         <FocusArea controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
       </div>
