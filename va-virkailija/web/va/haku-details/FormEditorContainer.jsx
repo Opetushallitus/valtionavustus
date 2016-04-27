@@ -16,8 +16,16 @@ export default class FormEditorContainer extends Component {
     const hakuUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/?lang=sv"
     const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/nayta?lang=fi"
     const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/nayta?lang=sv"
+
+    const scrollToEditor = () =>
+    {
+        const textArea = document.querySelector("#form-json-editor textarea")
+        textArea.scrollIntoView({block: "start", behavior: "smooth"})
+        textArea.focus()
+    }
     return (
       <section>
+        <div style={{float:'right'}}><button className="btn btn-blue btn-sm" onClick={scrollToEditor}>JSON editoriin</button></div>
         <div className="link-list">
           <div className="link-list-item">
             <h3>Linkki hakuun</h3>
