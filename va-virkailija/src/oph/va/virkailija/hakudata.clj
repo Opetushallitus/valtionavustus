@@ -18,6 +18,7 @@
    :presenter-role-id (:presenter_role_id arvio)
    :rahoitusalue (:rahoitusalue arvio)
    :perustelut (:perustelut arvio)
+   :changelog (:changelog arvio)
    })
 
 
