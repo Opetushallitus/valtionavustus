@@ -30,6 +30,7 @@
 (defquery download-attachment-version "sql/hakija/attachment/download-version.sql")
 
 (defquery get-hakemus "sql/hakija/hakemus/get-by-id.sql")
+(defquery get-hakemus-by-user-key "sql/hakija/hakemus/get-by-user-key.sql")
 (defquery get-hakemus-with-answers "sql/hakija/hakemus/get-by-id-with-answers.sql")
 (defquery list-hakemus-change-requests "sql/hakija/hakemus/list-change-requests-by-id.sql")
 (defquery update-hakemus-status<! "sql/common/hakija/hakemus/update-status.sql")

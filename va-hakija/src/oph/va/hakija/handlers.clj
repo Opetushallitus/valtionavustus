@@ -74,9 +74,9 @@
         (internal-server-error!))
       (bad-request! security-validation))))
 
-(defn on-get-paatos [hakemus-id]
+(defn on-get-paatos [user-key]
   (let [virkailija-app-url (-> config :server :virkailija-url)
-        paatos-url (str virkailija-app-url "/public/api/avustushaku/paatos/" hakemus-id )]
+        paatos-url (str virkailija-app-url "/public/api/avustushaku/paatos/" user-key )]
     (resp/redirect paatos-url)))
 
 

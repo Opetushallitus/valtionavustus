@@ -244,6 +244,10 @@
 (defn get-hakemus [hakemus-id]
   (first (exec :form-db hakija-queries/get-hakemus {:id hakemus-id})))
 
+
+(defn get-hakemus-by-user-key [user-key]
+  (first (exec :form-db hakija-queries/get-hakemus-by-user-key {:user_key user-key})))
+
 (defn get-hakemus-submission [hakemus]
   (first (exec :form-db hakija-queries/get-submission {:id (:form_submission_id hakemus)
                                                          :version (:form_submission_version hakemus)})))

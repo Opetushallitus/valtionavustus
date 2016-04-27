@@ -5,8 +5,9 @@ export default class HakemusDecisionLink extends Component {
     const hakemus = this.props.hakemus
     const avustushaku = this.props.avustushaku
     const avustushakuId = avustushaku.id
+    const userKey = hakemus["user-key"]
     const previewUrl = hakemus ? "/paatos/avustushaku/" + avustushakuId + "/hakemus/" + hakemus.id : undefined
-    const publicUrl = hakemus ? "/public/paatos/avustushaku/" + avustushakuId + "/hakemus/" + hakemus.id : undefined
+    const publicUrl = hakemus ? "/public/paatos/avustushaku/" + avustushakuId + "/hakemus/" + userKey : undefined
 
     return hakemus && hakemus["user-key"] ?
       <span className="decision"><span className="decision">Päätös:</span>

@@ -90,7 +90,8 @@
               avustushaku-name (-> avustushaku :content :name :fi)
               sent-status (get-sent-status avustushaku-id)
               first-hakemus-id (first (:ids sent-status))
-              first-hakemus (hakija-api/get-hakemus first-hakemus-id)]
+              first-hakemus (hakija-api/get-hakemus first-hakemus-id)
+              first-hakemus-user-key (:user_key first-hakemus)]
           (ok (merge
                 {:status "ok"
                  :mail (email/mail-example
@@ -98,7 +99,7 @@
                                   :url "URL_PLACEHOLDER"
                                   :register-number (:register_number first-hakemus)
                                   :project-name (:project_name first-hakemus)})
-                 :example-url (email/paatos-url avustushaku-id first-hakemus-id :fi)}
+                 :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)}
                 (select-keys sent-status [:sent :count :sent-time])))))
 
   (GET* "/emails/:hakemus-id" []

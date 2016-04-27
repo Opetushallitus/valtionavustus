@@ -51,9 +51,9 @@
         preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key "&preview=true")]
     (resp/redirect preview-url)))
 
-(defn- on-paatos-preview [avustushaku-id hakemus-id]
+(defn- on-paatos-preview [avustushaku-id user-key]
   (let [hakija-app-url (-> config :server :url :fi)
-        preview-url (str hakija-app-url "paatos/avustushaku/" avustushaku-id "/hakemus/" hakemus-id )]
+        preview-url (str hakija-app-url "paatos/avustushaku/" avustushaku-id "/hakemus/" user-key )]
     (resp/redirect preview-url)))
 
 (defn- get-hakemus-and-published-avustushaku [avustushaku-id hakemus-id]
@@ -79,9 +79,9 @@
   (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
         :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
         (on-hakemus-preview avustushaku-id hakemus-user-key))
-  (GET* "/public/paatos/avustushaku/:avustushaku-id/hakemus/:hakemus-id" []
-          :path-params [avustushaku-id :- Long, hakemus-id :- s/Str]
-          (on-paatos-preview avustushaku-id hakemus-id))
+  (GET* "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
+          :path-params [avustushaku-id :- Long, user-key :- s/Str]
+          (on-paatos-preview avustushaku-id user-key))
   (GET "/translations.json" [] (get-translations))
   (GET "/avustushaku/:id/*" [id] (return-html "index.html"))
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
@@ -350,14 +350,16 @@
 (defroutes* public-routes
   "Public API"
 
-  (GET* "/avustushaku/paatos/:hakemus-id" [hakemus-id :as request]
-        :path-params [hakemus-id :- Long]
+  (GET* "/avustushaku/paatos/:user-key" [user-key :as request]
+        :path-params [user-key :- String]
         :return virkailija-schema/PaatosData
         :summary "Return relevant information for decision"
+        (let [hakemus (hakija-api/get-hakemus-by-user-key user-key)
+              hakemus-id (:id hakemus)]
         (if-let [response (hakudata/get-final-combined-paatos-data hakemus-id)]
           (-> (ok response)
               (assoc-in [:headers "Access-Control-Allow-Origin"] "*"))
-          (not-found)))
+          (not-found))))
 
   (GET* "/liite/:liite-id/:lang" []
         :path-params [liite-id :- s/Str,lang :- s/Str]
