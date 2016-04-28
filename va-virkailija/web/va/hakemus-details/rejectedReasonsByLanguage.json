@@ -15,9 +15,18 @@
     "Ostopalveluiden osuus ylittää hakutiedotteessa asetetun enimmäismäärän."
   ],
   "sv": [
-    "SV Muotovirhe",
-    "SV Nej käy",
-    "SV Ei todellakaan käy",
-    "SV NE NEJ NEJ"
+    "Utbildningsstyrelsen har bedömt de projekt som uppfyller de nödvändiga villkor för statsunderstödet som angetts i ansökningsmeddelandet. Utbildningsstyrelsen har utifrån en expertbedömning och inom ramen för tillgängliga anslag beslutat att inte finansiera projektet.",
+    "Sökanden är inte behörig att söka.",
+    "Sökanden har trots begäran inte lämnat in de bilagor som krävts.",
+    "Sökanden har inte lämnat in de begärda utredningarna om hur tidigare beviljade statsunderstöd använts.",
+    "Villkoren i fråga om målgrupp uppfylls inte.",
+    "Projektets innehåll motsvarar inte det temaområde (den tyngdpunkt) som ansökan gäller.",
+    "Projektet genomförs inte under den tid som anges i ansökningsmeddelandet.",
+    "Projektplanen är inte ekonomiskt realistisk.",
+    "Budgeten har inte upprättats enligt anvisningarna.",
+    "Användningsändamålet i ansökan överensstämmer inte med det som anges i ansökningsmeddelandet.",
+    "Ansökan lämnades inte in inom utsatt tid.",
+    "Utrustningskostnadernas andel överskrider den maximala andel som anges i ansökningsmeddelandet.",
+    "De köpta tjänsternas andel överskrider den maximala andel som anges i ansökningsmeddelandet."
   ]
 }
