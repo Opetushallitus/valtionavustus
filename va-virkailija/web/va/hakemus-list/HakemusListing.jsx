@@ -145,17 +145,11 @@ export default class HakemusListing extends Component {
   }
 
   render() {
-    const controller = this.props.controller
-    const userInfo = this.props.userInfo
-    const state = this.props.state
-    const allowHakemusScoring = this.props.privileges["score-hakemus"]
-    const allowChangeHakemusState = this.props.privileges["change-hakemus-state"]
-    const hasSelected = this.props.hasSelected
-    const selectedHakemus = this.props.selectedHakemus
-    const previouslySelectedHakemus = this.props.previouslySelectedHakemus
+    const {controller, userInfo, state, hasSelected, selectedHakemus, previouslySelectedHakemus, hakemusList, privileges} = this.props
     const filter = this.props.hakemusFilter
     const sorter = this.props.hakemusSorter
-    const hakemusList = this.props.hakemusList
+    const allowHakemusScoring = privileges["score-hakemus"]
+    const allowChangeHakemusState = privileges["change-hakemus-state"]
     const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter, userInfo, allowHakemusScoring)
     const ophShareSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x["budget-oph-share"])))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
@@ -220,9 +214,7 @@ export default class HakemusListing extends Component {
 
 class ApplicationSummaryLink extends Component {
   render() {
-    const filteredHakemusList = this.props.filteredHakemusList
-    const hakemusList = this.props.hakemusList
-    const controller = this.props.controller
+    const {filteredHakemusList, hakemusList, controller} = this.props
     const disabled = _.isEmpty(filteredHakemusList)
     const linkText = filteredHakemusList.length + "/" + hakemusList.length + " hakemusta"
     return disabled ? <span>{linkText}</span> : <a className="summary-link" href="/yhteenveto/" target="_blank" onClick={onClick}>{linkText}</a>
@@ -372,13 +364,9 @@ class HakemusRow extends Component {
     return this.props.hakemus === this.props.selectedHakemus || this.props.hakemus === this.props.previouslySelectedHakemus
   }
   render() {
-    const state = this.props.state
-    const hakemus = this.props.hakemus
-    const userInfo = this.props.userInfo
-    const allowHakemusScoring = this.props.allowHakemusScoring
-    const allowChangeHakemusState = this.props.allowChangeHakemusState
+    const {state, hakemus, userInfo, allowHakemusScoring, allowChangeHakemusState, selectedHakemus, previouslySelectedHakemus} = this.props
     const htmlId = "hakemus-" + hakemus.id
-    const thisIsSelected = hakemus === this.props.selectedHakemus || hakemus === this.props.previouslySelectedHakemus
+    const thisIsSelected = hakemus === selectedHakemus || hakemus === previouslySelectedHakemus
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
     const controller = this.props.controller
     const statusFI = HakemusArviointiStatuses.statusToFI(hakemus.arvio.status)
@@ -407,9 +395,7 @@ class HakemusRow extends Component {
 
 class Scoring extends Component {
   render() {
-    const userInfo = this.props.userInfo
-    const allowHakemusScoring = this.props.allowHakemusScoring
-    const scoring = this.props.scoring
+    const { userInfo, allowHakemusScoring, scoring } = this.props
     const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo, allowHakemusScoring)
     const normalizedMeanScore = meanScore + 1
     const starElements = _.map(_.range(4), indexOfStar => {
