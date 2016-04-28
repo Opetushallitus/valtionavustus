@@ -152,13 +152,23 @@ export default class HakemusListing extends Component {
     const allowChangeHakemusState = this.props.privileges["change-hakemus-state"]
     const hasSelected = this.props.hasSelected
     const selectedHakemus = this.props.selectedHakemus
+    const previouslySelectedHakemus = this.props.previouslySelectedHakemus
     const filter = this.props.hakemusFilter
     const sorter = this.props.hakemusSorter
     const hakemusList = this.props.hakemusList
     const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter, userInfo, allowHakemusScoring)
     const ophShareSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x["budget-oph-share"])))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
-      return <HakemusRow key={hakemus.id} hakemus={hakemus} selectedHakemus={selectedHakemus} userInfo={userInfo} allowHakemusScoring={allowHakemusScoring} allowChangeHakemusState={allowChangeHakemusState} controller={controller} state={state}/> })
+      return <HakemusRow
+        key={hakemus.id}
+        hakemus={hakemus}
+        selectedHakemus={selectedHakemus}
+        previouslySelectedHakemus={previouslySelectedHakemus}
+        userInfo={userInfo}
+        allowHakemusScoring={allowHakemusScoring}
+        allowChangeHakemusState={allowChangeHakemusState}
+        controller={controller}
+        state={state}/> })
     const budgetGrantedSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x.arvio["budget-granted"])))
 
     const onFilterChange = function(filterId) {
@@ -359,7 +369,7 @@ class StatusFilter extends Component {
 
 class HakemusRow extends Component {
   shouldComponentUpdate() {
-    return this.props.hakemus === this.props.selectedHakemus
+    return this.props.hakemus === this.props.selectedHakemus || this.props.hakemus === this.props.previouslySelectedHakemus
   }
   render() {
     const state = this.props.state
@@ -368,7 +378,7 @@ class HakemusRow extends Component {
     const allowHakemusScoring = this.props.allowHakemusScoring
     const allowChangeHakemusState = this.props.allowChangeHakemusState
     const htmlId = "hakemus-" + hakemus.id
-    const thisIsSelected = hakemus === this.props.selectedHakemus
+    const thisIsSelected = hakemus === this.props.selectedHakemus || hakemus === this.props.previouslySelectedHakemus
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
     const controller = this.props.controller
     const statusFI = HakemusArviointiStatuses.statusToFI(hakemus.arvio.status)

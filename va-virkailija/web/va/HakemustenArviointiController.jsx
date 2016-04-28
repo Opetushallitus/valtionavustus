@@ -192,6 +192,7 @@ export default class HakemustenArviointiController {
   }
 
   onCloseHakemus(state) {
+    state.previouslySelectedHakemus = state.selectedHakemus
     state.selectedHakemus = undefined
     return state
   }

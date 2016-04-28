@@ -31,6 +31,7 @@ export default class App extends Component {
     const hakemusList = hakuData.hakemukset
     const hasSelected = typeof state.selectedHakemus === 'object'
     const selectedHakemus = hasSelected ? state.selectedHakemus : {}
+    const previouslySelectedHakemus = state.previouslySelectedHakemus
     const translations = state.translations
     const loadingComments = state.loadingComments
     const avustushakuList = state.avustushakuList
@@ -53,6 +54,7 @@ export default class App extends Component {
                             hakemusList={hakemusList}
                             hasSelected={hasSelected}
                             selectedHakemus={selectedHakemus}
+                            previouslySelectedHakemus={previouslySelectedHakemus}
                             userInfo={state.userInfo}
                             privileges={hakuData.privileges}
                             controller={controller}
