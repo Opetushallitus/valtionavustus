@@ -19,11 +19,19 @@ export default class HakemusDetails extends Component {
       controller.closeHakemusDetail()
     }
 
+    const onToggle = (e) => {
+      document.body.classList.toggle('split-view')
+      e.preventDefault()
+      return false
+    }
+
     const CloseButton = () => <button className="close" onClick={onClose} style={{position:"fixed",zIndex:"20000",marginTop:"-5",marginLeft:"-40"}}>x</button>
+    const ToggleButton = () => <button className="close" onClick={onToggle} style={{position:"fixed",zIndex:"20000",marginTop:"30",marginLeft:"-40"}}>↕</button>
 
     return (
       <div hidden={hidden} id="hakemus-details">
         <CloseButton/>
+        <ToggleButton/>
         <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
         <HakemusArviointi hakemus={hakemus}
                           avustushaku={avustushaku}

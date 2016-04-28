@@ -174,6 +174,7 @@ export default class HakemustenArviointiController {
   onHakemusSelection(state, hakemusToSelect) {
     state = this.onSaveHakemusArvio(state, state.selectedHakemus)
     state.selectedHakemus = hakemusToSelect
+    state.previouslySelectedHakemus = undefined
     const hakemusId = hakemusToSelect.id
     const pathname = location.pathname
     const parsedUrl = new RouteParser('/avustushaku/:avustushaku_id/(hakemus/:hakemus_id/)*ignore').match(pathname)
