@@ -53,7 +53,7 @@
 
 (defn- on-paatos-preview [avustushaku-id user-key]
   (let [hakija-app-url (-> config :server :url :fi)
-        preview-url (str hakija-app-url "paatos/avustushaku/" avustushaku-id "/hakemus/" user-key )]
+        preview-url (str hakija-app-url "paatos/avustushaku/" avustushaku-id "/hakemus/" user-key "?nolog=true")]
     (resp/redirect preview-url)))
 
 (defn- get-hakemus-and-published-avustushaku [avustushaku-id hakemus-id]

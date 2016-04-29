@@ -64,6 +64,7 @@
     {:ids (map :id hakemukset-email-status)
      :sent (count (filter #((complement nil?) (:sent-emails %)) hakemukset-email-status))
      :count (count hakemukset-email-status)
+     :paatokset hakemukset-email-status
      :sent-time (:sent-time (first hakemukset-email-status))}))
 
 (defroutes* paatos-routes
@@ -82,7 +83,7 @@
            (log/info "Send all paatos ids " ids)
            (run! send-paatos-for-all ids)
            (ok (merge {:status "ok"}
-                      (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time])))))
+                      (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
 
   (GET* "/sent/:avustushaku-id" []
         :path-params [avustushaku-id :- Long]
@@ -100,7 +101,11 @@
                                   :register-number (:register_number first-hakemus)
                                   :project-name (:project_name first-hakemus)})
                  :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)}
-                (select-keys sent-status [:sent :count :sent-time])))))
+                (select-keys sent-status [:sent :count :sent-time :paatokset])))))
+
+  (GET* "/views/:hakemus-id" []
+        :path-params [hakemus-id :- Long]
+        (ok {:views (hakija-api/find-paatos-views hakemus-id)}))
 
   (GET* "/emails/:hakemus-id" []
         :path-params [hakemus-id :- Long]

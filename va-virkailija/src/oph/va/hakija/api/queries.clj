@@ -40,3 +40,4 @@
 (defquery add-hakemus-paatos! "sql/hakija/hakemus/add-hakemus-paatos.sql")
 
 (defquery get-submission "sql/hakija/submission/get-by-id.sql")
+(defquery find-paatos-views "sql/hakija/hakemus-paatokset/find.sql")

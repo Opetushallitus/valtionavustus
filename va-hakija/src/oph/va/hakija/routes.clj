@@ -138,6 +138,12 @@
         :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
         (on-attachment-get haku-id hakemus-id field-id)))
 
+(defn log-paatos-display [avustushaku-id user-key headers remote-addr]
+  (let [hakemus (hakija-db/get-hakemus user-key)
+        hakemus-id (:id hakemus)]
+    (hakija-db/add-paatos-view hakemus-id headers remote-addr))
+  )
+
 (defroutes resource-routes
   (GET "/" []
        (resp/redirect "/avustushaku/1/"))
@@ -145,7 +151,12 @@
   ;; Finnish subcontext
   (GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
   (GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
-  (GET "/paatos/*" [] (return-html "paatos.html"))
+  (GET* "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
+    :path-params [avustushaku-id :- Long user-key :- s/Str]
+    :query-params [{nolog :- s/Str nil}]
+    (if (nil? nolog) (log-paatos-display avustushaku-id user-key (:headers request) (:remote-addr request)))
+    (return-html "paatos.html"))
+
   (route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
 
   ;; Swedish subcontext

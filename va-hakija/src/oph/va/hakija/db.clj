@@ -29,6 +29,10 @@
 (defn list-avustushaut []
   (exec :form-db queries/list-avustushaut {}))
 
+
+(defn add-paatos-view[hakemus-id headers remote-addr]
+  (exec :form-db queries/create-paatos-view! {:hakemus_id hakemus-id :headers headers :remote_addr remote-addr}))
+
 (defn update-avustushaku [avustushaku]
   (exec-all :form-db  [queries/archive-avustushaku! avustushaku
                   queries/update-avustushaku! avustushaku]))

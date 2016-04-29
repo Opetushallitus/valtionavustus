@@ -139,7 +139,10 @@
   {:id (:id paatos)
    :version (:version paatos)
    :project-name (:project_name paatos)
+   :organization-name (:organization_name paatos)
    :sent-emails (:sent_emails paatos)
+   :view_count (:view_count paatos)
+   :user_key (:user_key paatos)
    :sent-time (:sent_time paatos)})
 
 (defn- hakemukset->json [hakemukset]
@@ -161,6 +164,9 @@
 (defn get-paatos-email-status [avustushaku-id]
   (let [paatos-sent-emails (exec :form-db hakija-queries/list-hakemus-paatos-email-statuses {:avustushaku_id avustushaku-id})]
     (map paatos-sent-emails->json paatos-sent-emails)))
+
+(defn find-paatos-views [hakemus-id]
+  (exec :form-db hakija-queries/find-paatos-views {:hakemus_id hakemus-id}))
 
 (defn add-paatos-sent-emails [hakemus emails]
   (exec :form-db hakija-queries/add-hakemus-paatos! {:hakemus_id (:id hakemus)

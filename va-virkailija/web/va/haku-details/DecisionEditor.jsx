@@ -4,6 +4,7 @@ import Liitteet from 'va-common/web/va/data/Liitteet'
 import Bacon from 'baconjs'
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import DateUtil from 'soresu-form/web/form/DateUtil'
+import PaatosUrl from '../hakemus-details/PaatosUrl.js'
 
 const DecisionField = ({avustushaku, title, id,language, onChange}) => {
   const fieldId= `decision.${id}.${language}`
@@ -152,7 +153,7 @@ class DecisionDateAndSend extends React.Component {
   fetchEmailState(avustushakuId) {
     const sendS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/sent/${avustushakuId}`,{}))
     sendS.onValue((res)=>{
-      this.setState({...this.state, count:res.count, sent:res.sent, mail:res.mail, sentTime: res['sent-time'], exampleUrl: res['example-url']})
+      this.setState({...this.state, count:res.count, sent:res.sent, mail:res.mail, sentTime: res['sent-time'], exampleUrl: res['example-url'],paatokset:res.paatokset})
     })
   }
 
@@ -166,19 +167,83 @@ class DecisionDateAndSend extends React.Component {
       this.setState({...this.state,sending: true, preview: false})
       const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/sendall/${this.props.avustushaku.id}`,{}))
       sendS.onValue((res)=>{
-          this.setState({...this.state, count:res.count, sent:res.sent, sentTime: res['sent-time'], sending: false})
+          this.setState({...this.state, count:res.count, sent:res.sent, sentTime: res['sent-time'],paatokset:res.paatokset, sending: false})
         }
       )
     }
 
     if (!_.isNumber(this.state.count)) return <img src="/img/ajax-loader.gif"/>
+
+    const onShowViews = (paatos) =>{
+      const sendS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/views/${paatos.id}`,{}))
+      sendS.onValue((res)=>{
+        const paatosViews = res.views.map((v)=>{
+          const dateTime = `${DateUtil.asDateString(v.view_time)} ${DateUtil.asTimeString(v.view_time)}`
+          return ({...v,timeFormatted:dateTime})
+        })
+        this.setState({paatosDetail:paatos.id,paatosViews:paatosViews})
+      })
+    }
+
+    const onCloseViews = () => this.setState({paatosDetail:undefined})
+
     return <div className="decision-send-controls">
       {this.emailPreview()}
       <div className="decision-separator"/>
       {this.state.sending && <div><img src="/img/ajax-loader.gif"/>&nbsp;<strong>Päätöksiä lähetetään...</strong></div>}
       {this.mailsToSend() && <span><button disabled={this.state.preview || this.sentOk()} onClick={onPreview}>Lähetä {this.mailsToSendLabel()} päätöstä</button>&nbsp;</span>}
       {this.state.preview && <button onClick={onSend}>Vahvista lähetys</button>}
-      {this.sentOk() && <div><strong>{this.state.sent} päätöstä lähetetty {this.sentTimeStamp()}</strong></div>}
+      {this.sentOk() &&
+        <div>
+          <strong>{this.state.sent} päätöstä lähetetty {this.sentTimeStamp()}</strong>
+          <table className="table table--sm table--views">
+            <colgroup>
+              <col width="60%"/>
+              <col width="35%"/>
+              <col width="5%"/>
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Hakemus</th>
+                <th>Osoitteet</th>
+                <th>Näytöt</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.paatokset.map((paatos,index)=>
+                <tr key={index}>
+                  <td>{paatos.id} {paatos["organization-name"]} - <a target="_blank" href={PaatosUrl.publicLink(this.props.avustushaku.id,paatos.user_key)}>{paatos["project-name"]}</a></td>
+                  <td>{paatos["sent-emails"].addresses.join(" ")}</td>
+                  <td style={{position:'relative'}}>
+                    {paatos.view_count==0 && <span>{paatos.view_count}</span>}
+                    {paatos.view_count>0 && <a onClick={onShowViews.bind(this, paatos)}>{paatos.view_count}</a>}
+                    {this.state.paatosDetail==paatos.id &&
+                      <div className="panel person-panel person-panel--sm person-panel--view-details">
+                        <button className="close" onClick={onCloseViews}>x</button>
+                        <table classNam="table">
+                          <colgroup>
+                            <col width="20%"/>
+                            <col width="20%"/>
+                            <col width="60%"/>
+                          </colgroup>
+                          <tbody>
+                            {this.state.paatosViews.map((view,index)=>
+                              <tr key={index}>
+                                <td>{view.timeFormatted}</td>
+                                <td>{view.remote_addr}</td>
+                                <td>{view.headers["user-agent"]}</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    }
+                  </td>
+              </tr>)}
+            </tbody>
+          </table>
+        </div>
+      }
     </div>
   }
 
