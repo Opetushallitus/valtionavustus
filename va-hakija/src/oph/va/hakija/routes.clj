@@ -145,8 +145,11 @@
   )
 
 (defroutes resource-routes
-  (GET "/" []
-       (resp/redirect "/avustushaku/1/"))
+  (GET "/" request
+    (if (= (:name (environment-content)) "dev") (resp/redirect "/avustushaku/1/")
+    (if (= (:server-name request) "statsunderstod.oph.fi")
+      (resp/redirect "http://www.oph.fi/finansiering/statsunderstod")
+      (resp/redirect "http://oph.fi/rahoitus/valtionavustukset"))))
 
   ;; Finnish subcontext
   (GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
