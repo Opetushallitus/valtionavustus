@@ -1,4 +1,5 @@
 import Bacon from 'baconjs'
+import HttpUtil from 'va-common/web/HttpUtil.js'
 import React, { Component } from 'react'
 import _ from 'lodash'
 import DateUtil from 'soresu-form/web/form/DateUtil'
@@ -38,7 +39,7 @@ export default class HakemusArviointi extends Component {
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments} allowHakemusCommenting={allowHakemusCommenting}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
-       <ChangeRequest controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
@@ -155,8 +156,20 @@ class SetArviointiStatus extends React.Component {
 
 class ChangeRequest extends React.Component {
 
+  constructor(props){
+    super(props)
+    this.state = {preview:false}
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.hakemus.id !== nextProps.hakemus.id) {
+      this.state = {preview:false}
+    }
+  }
+
   render() {
     const hakemus = this.props.hakemus
+    const avustushaku = this.props.avustushaku
     const status = hakemus.status
     const hasChangeRequired = status === 'pending_change_request'
     const allowEditing = this.props.allowEditing
@@ -171,6 +184,16 @@ class ChangeRequest extends React.Component {
     }
     const sendChangeRequest = allowEditing ? controller.setHakemusStatus(hakemus, "pending_change_request", _ => hakemus.changeRequest) : null
     const newChangeRequest = typeof hakemus.changeRequest !== 'undefined' && !hasChangeRequired
+
+    const onPreview = () =>{
+      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/avustushaku/${avustushaku.id}/change-request-email`,{text:hakemus.changeRequest}))
+      sendS.onValue((res)=>{
+        this.setState({preview:true,mail:res.mail})
+      })
+    }
+
+    const closePreview = () => this.setState({preview:false})
+    const mail = this.state.mail
     return (
       <div className="value-edit">
         <button type="button"
@@ -182,6 +205,15 @@ class ChangeRequest extends React.Component {
           <span onClick={closeEdit} className="close"></span>
           <textarea placeholder="Täydennyspyyntö hakijalle" onChange={onTextChange} rows="4" disabled={!allowEditing} value={hakemus.changeRequest}/>
           <button type="button" disabled={_.isEmpty(hakemus.changeRequest)} onClick={sendChangeRequest}>Lähetä</button>
+          <a onClick={onPreview} style={{position:'relative'}}>Esikatsele</a>
+          {this.state.preview && <div className="panel email-preview-panel">
+            <span className="close" onClick={closePreview}></span>
+            <strong>Otsikko:</strong> {mail.subject}<br/>
+            <strong>Lähettäjä:</strong> {mail.sender}<br/><br/>
+            <div style={{whiteSpace:'pre-line'}}>
+            {mail.content}
+            </div>
+          </div>}
         </div>
         <div hidden={!hasChangeRequired}>
           <div className="change-request-title">* Täydennyspyyntö lähetetty {lastChangeRequestTime}</div>

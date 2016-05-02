@@ -46,6 +46,10 @@
   "New comment to be added"
   {:comment s/Str})
 
+(s/defschema ChangeRequestEmail
+  "Change request email"
+  {:text s/Str})
+
 (s/defschema Comment
   "Contains comment about hakemus"
   {:id Long

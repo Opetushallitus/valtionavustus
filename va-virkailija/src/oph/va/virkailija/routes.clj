@@ -126,12 +126,31 @@
             (not-found))))
 )
 
+(defn- post-change-request-email []
+
+  (POST* "/:avustushaku-id/change-request-email" []
+         :path-params [avustushaku-id :- Long]
+         :body [change-request (describe virkailija-schema/ChangeRequestEmail "Change request")]
+         (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+               avustushaku-name (-> avustushaku :content :name :fi)
+               change-request (:text change-request)]
+           (ok
+             {
+              :mail (email/mail-example
+                      :change-request {
+                                       :avustushaku avustushaku-name
+                                       :change-request change-request
+                                       :url "[linkki hakemukseen]"}
+                      )})))
+  )
+
 (defroutes* avustushaku-routes
   "Hakemus listing and filtering"
   (get-avustushaku-status)
   (put-avustushaku)
   (post-avustushaku)
   (get-avustushaku)
+  (post-change-request-email)
 
   (GET* "/paatos/:hakemus-id" [hakemus-id :as request]
         :path-params [hakemus-id :- Long]
