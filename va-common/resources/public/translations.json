@@ -236,47 +236,48 @@
     },
     "asia":{
       "fi":"Asia",
-      "sv":"SV Asia"
+      "sv":"Ärende"
     },
     "asia-title":{
       "fi":"VALTIONAVUSTUSHAKEMUSTA KOSKEVA PÄÄTÖS",
-      "sv":"SV VALTIONAVUSTUSHAKEMUSTA KOSKEVA PÄÄTÖS"
+      "sv":"BESLUT OM ANSÖKAN OM STATSUNDERSTÖD"
     },
     "taustaa":{
       "fi":"Taustaa",
-      "sv":"SV Taustaa"
+      "sv":"Bakgrund"
     },
     "hylatty-title":{
       "fi":"Opetushallitus on päättänyt olla myöntämättä valtionavustusta hankkeelle",
-      "sv":"SV Opetushallitus on päättänyt olla myöntämättä valtionavustusta hankkeelle"
+      "sv":"Utbildningsstyrelsen har beslutat att inte bevilja statsunderstöd till projektet"
     },
     "myonnetty-title":{
       "fi":"Opetushallitus on päättänyt myöntää valtionavustusta hankkeelle",
-      "sv":"SV Opetushallitus on päättänyt myöntää valtionavustusta hankkeelle"
+      "sv":"Utbildningsstyrelsen har beslutat att bevilja statsunderstöd till projektet"
     },
     "hakija":{
       "fi":"Hakija",
-      "sv":"SV Hakija"
+      "sv":"Sökande"
     },
     "hanke":{
       "fi":"Hanke",
-      "sv":"SV Hanke"
+      "sv":"Projekt"
     },
     "paatoksen-perustelut":{
       "fi":"Päätöksen perustelut",
-      "sv":"SV Päätöksen perustelut"
+      "sv":"Motiveringar för beslutet"
     },
     "lisatietoja":{
       "fi":"Lisätietoja",
-      "sv":"SV Lisätietoja"
+      "sv":"Mer information"
     },
     "lisatietoja-antaa":{
       "fi":"Lisätietoja antaa",
-      "sv":"SV Lisätietoja antaa"
+      "sv":"Mer information ger"
     },
     "lisatietoja-sisalto":{
       "fi":"Tähän päätökseen ei saa hakea muutosta valittamalla (valtionavustuslaki 34 §). Päätökseen tyytymätön asianosainen voi hakea oikaisua liitteenä olevan oikaisuvaatimusosoituksen mukaisesti.",
-      "sv":"SV Tähän päätökseen ei saa hakea muutosta valittamalla (valtionavustuslaki 34 §). Päätökseen tyytymätön asianosainen voi hakea oikaisua liitteenä olevan oikaisuvaatimusosoituksen mukaisesti."
+      "sv":"Ändring i detta beslut får inte sökas genom besvär (statsunderstödslagen 34 §). En part som är missnöjd med beslutet kan söka rättelse i det i enlighet med bifogade anvisning om rättelseyrkande.¨
+      ."
     },
     "puhelin":{
       "fi":"puhelin",
@@ -284,139 +285,139 @@
     },
     "keskus":{
       "fi":"keskus",
-      "sv":"SV keskus"
+      "sv":"växel"
     },
     "liitteet":{
       "fi":"LIITTEET",
-      "sv":"SV LIITTEET"
+      "sv":"BILAGOR"
     },
     "avustuksen-maksu":{
       "fi":"Avustuksen maksu",
-      "sv":"SV Avustuksen maksu"
+      "sv":"Utbetalning av understödet"
     },
     "maksuerat-ja-ajat":{
       "fi":"Maksuerät ja -ajat",
-      "sv":"SV Maksuerät ja -ajat"
+      "sv":"Betalningsrater och tidpunkter för utbetalning"
     },
     "ja-loppuera-viimeistaan":{
       "fi":"ja loppuerä viimeistään",
-      "sv":"SV ja loppuerä viimeistään"
+      "sv":"och slutraten senast"
     },
     "avustus-maksetaan":{
       "fi":"Avustus maksetaan hakijan ilmoittamalle pankkitilille",
-      "sv":"SV Avustus maksetaan hakijan ilmoittamalle pankkitilille"
+      "sv":"Understödet betalas ut till det bankkonto som den sökande uppgett"
     },
     "avustuksen-kayttotarkoitus":{
       "fi":"Avustuksen käyttötarkoitus",
-      "sv":"SV Avustuksen käyttö"
+      "sv":"Användning av understödet"
     },
     "kaytto1":{
       "fi":"Avustusta/määrärahaa saadaan käyttää liitteessä olevan käyttösuunnitelman mukaisesti hankesuunnitelmassa esitettyyn ja tällä päätöksellä hyväksyttyyn toimintaan.",
-      "sv":"SV Avustusta/määrärahaa saadaan käyttää liitteessä olevan käyttösuunnitelman mukaisesti hankesuunnitelmassa esitettyyn ja tällä päätöksellä hyväksyttyyn toimintaan."
+      "sv":"Undertsödet/anslaget får användas enligt användningsplanen i bilagan för verksamhet som lagts fram i projektplanen och som godkänts genom detta beslut."
     },
     "kaytto2":{
       "fi":"Avustuksen saajan on noudatettava liitteenä olevia Opetushallituksen yleisohjetta sekä Erityisavustukseen liittyviä ehtoja ja rajoituksia koskevaa asiakirjaa.",
-      "sv":"SV Avustuksen saajan on noudatettava liitteenä olevia Opetushallituksen yleisohjetta sekä Erityisavustukseen liittyviä ehtoja ja rajoituksia koskevaa asiakirjaa."
+      "sv":"Mottagaren av statsunderstöd ska följa Utbildningsstyrelsens allmänna anvisningar samt dokumentet om villkor och begränsningar för specialunderstöd som finns i bilagan."
     },
     "kaytto3":{
       "fi":"Valtionavustuksen käyttöön vaikuttavista muutoksista tulee aina ilmoittaa Opetushallitukselle viipymättä (valtionavustuslaki 14 §).",
-      "sv":"SV Valtionavustuksen käyttöön vaikuttavista muutoksista tulee aina ilmoittaa Opetushallitukselle viipymättä (valtionavustuslaki 14 §)."
+      "sv":"Om det uppstår förändringar som inverkar på användningen av statsunderstödet ska man genast meddela om detta till Utbildningsstyrelsen (statsunderstödslagen 14 §)."
     },
     "kaytto4":{
       "fi":"Jos hyväksyttyyn kustannusarvioon, avustuksen käyttötarkoitukseen tai hankkeeseen muutoin tulee olennaisia muutoksia, avustuksen saajan tulee tehdä muutoshakemus.",
-      "sv":"SV Jos hyväksyttyyn kustannusarvioon, avustuksen käyttötarkoitukseen tai hankkeeseen muutoin tulee olennaisia muutoksia, avustuksen saajan tulee tehdä muutoshakemus."
+      "sv":"Om det uppstår betydande förändringar i den godkända budgeten, syftet för understödet eller i projektet i övrigt ska mottagaren av statsunderstödet göra en förändringsansökan."
     },
     "sovelletut-saannokset":{
       "fi":"Sovelletut säännökset",
-      "sv":"SV Sovelletut säännökset"
+      "sv":"Tillämpade bestämmelser"
     },
     "kayttooikeudet":{
       "fi":"Tekijänoikeudet",
-      "sv":"SV Tekijänoikeudet"
+      "sv":"Användarrättigheter"
     },
     "hyvaksyminen":{
       "fi":"Päätöksen hyväksyminen",
-      "sv":"SV Päätöksen hyväksyminen"
+      "sv":"Godkännande av beslutet"
     },
     "selvitysvelvollisuus":{
       "fi":"Selvitysvelvollisuus",
-      "sv":"SV Selvitysvelvollisuus"
+      "sv":"Redovisningsskyldighet"
     },
     "valtionavustuksen-kayttoaika":{
       "fi":"Avustuksen käyttöaika",
-      "sv":"SV Avustuksen käyttöaika"
+      "sv":"Understödets användningstid"
     },
     "kayttosuunnitelma":{
       "fi":"Käyttösuunnitelma",
-      "sv":"SV Käyttösuunnitelma"
+      "sv":"Användningsplan"
     },
     "menot":{
       "fi":"Menot",
-      "sv":"SV Menot"
+      "sv":"Utgifter"
     },
     "haettu":{
       "fi":"Haettu",
-      "sv":"SV Haettu"
+      "sv":"Ansökt"
     },
     "hyvaksytty":{
       "fi":"Hyväksytty",
-      "sv":"SV Hyväksytty"
+      "sv":"Godkänd"
     },
     "paatos-myonnetty-1":{
       "fi":"Opetushallitus myöntää avustusta hankkeelle",
-      "sv":"SV Opetushallitus myöntää avustusta hankkeelle"
+      "sv":"Utbildningsstyrelsen beviljar understöd till projektet"
     },
     "paatos-myonnetty-2":{
       "fi":"Hankkeelle hyväksytyt kokonaisnettomenot ovat yhteensä",
-      "sv":"SV Hankkeelle hyväksytyt kokonaisnettomenot ovat yhteensä"
+      "sv":"De godkända totala nettoutgifterna är sammanlagt"
     },
     "paatos-myonnetty-3":{
       "fi":"Hankkeen käyttösuunnitelmassa on esitetty hankkeen mahdolliset tulot, omarahoitus ja muu rahoitus.",
-      "sv":"SV Hankkeelle hyväksytyt kokonaisnettomenot ovat yhteensä"
+      "sv":"I projektets användningsplan har man lagt fram projektets eventuella inkomster, egen finansiering och övrig finansiering. "
     },
     "valtionavustusprosentti-on":{
       "fi":"Valtionavustusprosentti on",
-      "sv":"SV Valtionavustusprosentti on"
+      "sv":"Statsunderstödsprocenten är"
     },
     "paatos-myonnetty-4":{
       "fi":"Päätös perustuu hakijan esittämään hankesuunnitelmaan ja siihen mahdollisesti arviointivaiheessa tehtyihin muutoksiin.",
-      "sv":"SV Päätös perustuu hakijan esittämään hankesuunnitelmaan ja siihen mahdollisesti arviointivaiheessa tehtyihin muutoksiin."
+      "sv":"Beslutet baserar sig på den projektplan som den sökande lagt fram och på de eventuella förändringar som gjorts i den i bedömningsskedet. "
     },
     "yhteensa":{
       "fi":"Yhteensä",
-      "sv":"SV Yhteensä"
+      "sv":"Sammanlagt"
     },
     "myonnetty-avustus":{
       "fi":"Avustus opetushallitukselta",
-      "sv":"SV Avustus opetushallitukselta"
+      "sv":"Understöd från Utbildningsstyrelsen"
     },
     "rahoitus":{
       "fi":"Hankkeen rahoitus",
-      "sv":"SV Hankkeen rahoitus"
+      "sv":"Projektets finansiering"
     },
     "summa":{
       "fi":"Summa",
-      "sv":"SV Summa"
+      "sv":"Summa"
     },
     "koulutusosio-title": {
       "fi":"Valtionavustusta / määrärahaa voidaan käyttää seuraaviin koulutusosioihin:",
-      "sv":"SV Valtionavustusta / määrärahaa voidaan käyttää seuraaviin koulutusosioihin:"
+      "sv":"Statsunderstödet / anslaget kan användas för följande utbildningsmoduler:"
     },
     "koulutusosiot": {
       "fi":"Koulutusosiot",
-      "sv":"SV Koulutusosiot"
+      "sv":"Utbildningsmoduler"
     },
     "laajuus": {
       "fi":"Laajuus",
-      "sv":"SV Laajuus"
+      "sv":"Omfattning"
     },
     "osallistujat": {
       "fi":"Osallistujat",
-      "sv":"SV Osallistujat"
+      "sv":"Deltagare"
     },
     "koulutettavapaivat": {
       "fi":"Koulutettavapäivät",
-      "sv":"SV Koulutettavapäivät"
+      "sv":"Kursdeltagardagar"
     },
     "koulutettavapaivat-yhteensa": {
       "fi":"Koulutettavapäivät yhteensä",
@@ -432,27 +433,27 @@
     },
     "tarkastusoikeus-title": {
       "fi":"Tarkastusoikeus",
-      "sv":"SV Tarkastusoikeus"
+      "sv":"Granskningsrätt"
     },
     "tarkastusoikeus-text": {
       "fi":"Opetushallituksella on oikeus suorittaa avustuksen käytön valvonnassa tarpeellisia avustuksen saajan talouteen ja toimintaan kohdistuvia tarkastuskäyntejä. Opetushallituksen tarkastusoikeus ulottuu myös mahdollisten yhteiskumppanien toimintaan ja kirjanpitoon.",
-      "sv":"SV TODO"
+      "sv":"Utbildningsstyrelsen har rätt att inom ramen för övervakningen av användningen av stastunderstöd utföra nödvändiga granskningar gällande ekonomin och verksamheten hos mottagaren av statsunderstöd. Utbildningsstyrelsens granskningsrätt omfattar också eventuella samarbetspartners verksamhet och bokföring."
     },
     "kokonaismenot-yhteensa": {
       "fi":"Hankkeen kokonaismenot yhteensä",
-      "sv":"SV Hankkeen kokonaismenot yhteensä"
+      "sv":"Projektets totala utgifter sammanlagt"
     },
     "nettomenot-yhteensa": {
       "fi":"Hankkeen nettomenot yhteensä",
-      "sv":"SV Hankkeen nettomenot yhteensä"
+      "sv":"Projektets nettoutgifter sammanlagt"
     },
     "rahoitus-yhteensa": {
       "fi":"Hankkeen rahoitus yhteensä",
-      "sv":"SV Hankkeen rahoitus yhteensä"
+      "sv":"Projektets finansiering sammanlagt"
     },
     "hankkeen-menot": {
       "fi":"Hankkeen menot",
-      "sv":"SV Hankkeen menot"
+      "sv":"Projektets utgifter"
     }
   }
 }
