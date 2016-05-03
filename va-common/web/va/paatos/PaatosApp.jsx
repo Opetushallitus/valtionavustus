@@ -1,5 +1,6 @@
 import PolyfillBind from '../../polyfill-bind'
 import ConsolePolyfill from 'console-polyfill'
+import ArrayFindPolyfill from 'array-find-polyfill'
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import _ from 'lodash'
