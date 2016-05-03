@@ -25,7 +25,7 @@ export default class HakemusDetails extends Component {
       return false
     }
 
-    const CloseButton = () => <button className="close" onClick={onClose} style={{position:"fixed",zIndex:"20000",marginTop:"-5",marginLeft:"-40"}}>x</button>
+    const CloseButton = () => <button className="close" onClick={onClose} style={{position:"fixed",zIndex:"20000",marginTop:"-5",marginLeft:"-40"}}>&times;</button>
     const ToggleButton = () => <button className="close" onClick={onToggle} style={{position:"fixed",zIndex:"20000",marginTop:"30",marginLeft:"-40"}}>↕</button>
 
     return (
