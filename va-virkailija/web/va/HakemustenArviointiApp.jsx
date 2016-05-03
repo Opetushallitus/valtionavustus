@@ -93,11 +93,7 @@ const controller = new HakemustenArviointiController()
 const stateP = controller.initializeState(avustushakuId,evaluator)
 
 stateP.onValue((state) => {
-  try {
-    if (state.hakuData && state.userInfo) {
-      ReactDOM.render(<App state={state} controller={controller}/>, document.getElementById('app'))
-    }
-  } catch (e) {
-    console.log('Error from ReactDOM.render with state', state, e)
+  if (state.hakuData && state.userInfo) {
+    ReactDOM.render(<App state={state} controller={controller}/>, document.getElementById('app'))
   }
 })

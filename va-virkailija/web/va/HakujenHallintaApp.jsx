@@ -51,11 +51,7 @@ const hakuId = LocalStorage.avustushakuId() || 1
 const stateP = controller.initializeState(hakuId)
 
 stateP.onValue(function(state) {
-  try {
-    if (state.hakuList) {
-      ReactDOM.render(<AdminApp state={state} controller={controller}/>, document.getElementById('app'))
-    }
-  } catch (e) {
-    console.log('Error from ReactDOM.render with state', state, e)
+  if (state.hakuList) {
+    ReactDOM.render(<AdminApp state={state} controller={controller}/>, document.getElementById('app'))
   }
 })

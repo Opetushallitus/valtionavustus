@@ -123,9 +123,5 @@ app.stateProperty.onValue((state) => {
   if (develMode) {
     console.log("Updating UI with state:", state)
   }
-  try {
-    ReactDOM.render(app.getReactComponent(state), document.getElementById('app'))
-  } catch (e) {
-    console.log('Error from ReactDOM.render with state', state, e)
-  }
+  ReactDOM.render(app.getReactComponent(state), document.getElementById('app'))
 })

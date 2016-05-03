@@ -237,13 +237,7 @@ const controller = new YhteenvetoController()
 const stateP = controller.initializeState(parsedRoute)
 
 stateP.onValue((state) => {
-  try {
-    if (state.hakuData && state.userInfo) {
-      ReactDOM.render(<SummaryApp state={state} controller={controller}/>, document.getElementById('app'))
-    } else {
-      console.log('Not rendering yet, because state.hakuData not yet loaded.')
-    }
-  } catch (e) {
-    console.log('Error from ReactDOM.render with state', state, e)
+  if (state.hakuData && state.userInfo) {
+    ReactDOM.render(<SummaryApp state={state} controller={controller}/>, document.getElementById('app'))
   }
 })

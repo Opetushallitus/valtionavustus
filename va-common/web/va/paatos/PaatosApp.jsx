@@ -21,12 +21,8 @@ const parsedRoute = new RouteParser('/paatos/avustushaku/:avustushaku_id/hakemus
 const controller = new PaatosController()
 
 controller.initializeState(parsedRoute).onValue((state) => {
-  try {
-    if(state.paatosData) {
-      ReactDOM.render(<PaatosApp state={state} controller={controller}/>, document.getElementById('app'))
-    }
-  } catch (e) {
-    console.log('Error from ReactDOM.render with state', state, e)
+  if(state.paatosData) {
+    ReactDOM.render(<PaatosApp state={state} controller={controller}/>, document.getElementById('app'))
   }
 })
 
