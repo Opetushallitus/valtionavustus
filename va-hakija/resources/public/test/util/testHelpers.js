@@ -68,8 +68,7 @@ mockAjax = {
       xhr.useFilters = true
       xhr.addFilter(function(method, url) {
         var requestedFakeUrl = url.indexOf(_fakeAjaxParams.url) === 0
-        var notToFake = !requestedFakeUrl || method != _fakeAjaxParams.method
-        return notToFake
+        return !requestedFakeUrl || method != _fakeAjaxParams.method
       })
       xhr.onCreate = function (request) {
         window.setTimeout(function() {

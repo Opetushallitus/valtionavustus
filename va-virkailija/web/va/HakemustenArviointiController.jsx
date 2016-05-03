@@ -567,8 +567,7 @@ export default class HakemustenArviointiController {
     }
     else{
       const currentRoles = hakemus.arvio.roles[roleField]
-      const newRoles = _.includes(currentRoles, roleId) ? _.without(currentRoles,roleId) : currentRoles.concat(roleId)
-      hakemus.arvio.roles[roleField] = newRoles
+      hakemus.arvio.roles[roleField] = _.includes(currentRoles, roleId) ? _.without(currentRoles,roleId) : currentRoles.concat(roleId)
     }
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }

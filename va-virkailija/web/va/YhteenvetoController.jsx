@@ -66,11 +66,9 @@ export default class YhteenvetoController {
       console.log('Error: cannot process saved search query', savedSearchQuery)
       throw new Error("Cannot process saved search query", savedSearchQuery)
     }
-    const hakemusListFromSavedSearch = _.map(savedSearchQuery["hakemus-ids"], id => {
+    realInitialState.hakuData.hakemukset = _.map(savedSearchQuery["hakemus-ids"], id => {
       return _.find(realInitialState.hakuData.hakemukset, h => { return h.id === id})
     })
-
-    realInitialState.hakuData.hakemukset = hakemusListFromSavedSearch
     return realInitialState
   }
 

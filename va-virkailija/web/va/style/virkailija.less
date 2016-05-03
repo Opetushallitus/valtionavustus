@@ -105,8 +105,7 @@ h3 {
 }
 
 .btn-selected--border{
-  border-color: @blue;
-  border-width: 2px;
+  border: 2px @blue;
 }
 
 
@@ -178,7 +177,7 @@ button[disabled] {
 
 button.remove {
   background: transparent url('../img/remove_line_enabled.png') no-repeat left top;
-  border-width: 0px;
+  border-width: 0;
   width: 20px;
   height: 22px;
 }
@@ -209,8 +208,7 @@ textarea, input[type=text] {
     font-style: italic;
   });
   &:enabled {
-    border: 1px solid;
-    border-color: @dark-gray;
+    border: 1px solid @dark-gray;
   }
 }
 

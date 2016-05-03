@@ -257,6 +257,5 @@ class SummaryComment extends React.Component {
 
 function getSummaryComment(hakemus) {
   const arvio = hakemus.arvio ? hakemus.arvio : {}
-  const summaryComment = arvio["summary-comment"] ||  ""
-  return summaryComment
+  return arvio["summary-comment"] ||  ""
 }

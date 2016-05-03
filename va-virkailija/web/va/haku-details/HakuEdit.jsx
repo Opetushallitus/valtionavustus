@@ -167,7 +167,7 @@ class FocusArea extends React.Component {
 
 class Rahoitusalueet extends React.Component {
   render() {
-    const multipleRahoitusalue = this.props.multipleRahoitusalue === true ? true : false
+    const multipleRahoitusalue = this.props.multipleRahoitusalue === true
     const onChange = this.props.onChange
     const isDisabled = this.props.disabled
     const options = []

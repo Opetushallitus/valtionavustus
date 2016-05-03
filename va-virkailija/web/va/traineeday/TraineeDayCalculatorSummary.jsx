@@ -10,11 +10,10 @@ export default class TraineeDayCalculatorSummary extends React.Component {
 
     const countSum = (answers) => {
       const traineeAnswers = InputValueStorage.readValues(answers, "vaTraineeDayCalculator")
-      const scopeTotal = _.reduce(traineeAnswers, (acc, answer) => {
+      return _.reduce(traineeAnswers, (acc, answer) => {
         const subTotal = VaTraineeDayCalculator.readTotalAsFloat(answer.key, answer)
         return (subTotal ? subTotal: 0) + acc }, 0
       )
-      return scopeTotal
     }
     const grantedSum = countSum(hakemus.arvio["overridden-answers"])
     const originalSum = countSum(hakemus.answers)
