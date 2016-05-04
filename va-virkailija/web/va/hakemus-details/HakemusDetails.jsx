@@ -16,11 +16,17 @@ export default class HakemusDetails extends Component {
     const translations = this.props.translations
 
     const onClose = (e) => {
+      document.body.classList.remove('split-view')
       controller.closeHakemusDetail()
     }
 
     const onToggle = (e) => {
       document.body.classList.toggle('split-view')
+      if(document.body.classList.contains('split-view')) {
+        const container = document.querySelector('.hakemus-list tbody.has-selected')
+        const selected = document.querySelector('#list-container tbody.has-selected .overview-row.selected')
+        container.scrollTop = selected.offsetTop - 100
+      }
       e.preventDefault()
       return false
     }
