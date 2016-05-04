@@ -91,7 +91,7 @@ class ChangeLogRow extends React.Component{
       "budget-change": "Budjetti päivitetty",
       "summary-comment": "Perustelut hakijalle",
       "overridden-answers-change": "Sisältöä päivitetty",
-      "presenter-comment": "Esittelijän kommentti päivitetty",
+      "presenter-comment": "Esittelijän huomiot päivitetty",
       "status-change": "Tila päivitetty"
     }
     const typeTranslated = types[changelog.type] || changelog.type
