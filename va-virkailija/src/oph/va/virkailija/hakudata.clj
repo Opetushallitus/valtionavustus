@@ -14,6 +14,7 @@
    :costsGranted (:costs_granted arvio)
    :useDetailedCosts (:use_overridden_detailed_costs arvio)
    :summary-comment (:summary_comment arvio)
+   :presentercomment (:presentercomment arvio)
    :roles (:roles arvio)
    :presenter-role-id (:presenter_role_id arvio)
    :rahoitusalue (:rahoitusalue arvio)

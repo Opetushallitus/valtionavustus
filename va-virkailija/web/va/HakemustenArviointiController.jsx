@@ -531,6 +531,11 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
+  setPresenterComment(hakemus, value) {
+    hakemus.arvio.presentercomment = value
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }
+
   loadComments() {
     dispatcher.push(events.loadComments)
   }

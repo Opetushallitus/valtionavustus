@@ -42,6 +42,18 @@
                                                       :new new-comment}))
       changelog)))
 
+(defn- compare-presenter-comment [changelog identity timestamp existing new]
+  (let [old-comment (:presentercomment existing)
+        new-comment (:presentercomment new)]
+    (if (not (= old-comment new-comment))
+      (append-changelog changelog (->changelog-entry identity
+                                                     "presenter-comment"
+                                                     timestamp
+                                                     {:old old-comment
+                                                      :new new-comment}))
+      changelog)))
+
+
 (defn- compare-budget-granted [changelog identity timestamp existing new]
   (let [new-budget (:budget_granted new)
         existing-budget (:budget_granted existing)]
@@ -84,6 +96,7 @@
         (compare-status identity timestamp existing new)
         (compare-budget-granted identity timestamp existing new)
         (compare-summary-comment identity timestamp existing new)
+        (compare-presenter-comment identity timestamp existing new)
         (compare-overridden-answers identity timestamp existing new)
       )
       changelog)))
@@ -109,6 +122,7 @@
                         :costs_granted costs-granted
                         :use_overridden_detailed_costs use-detailed-costs
                         :summary_comment (:summary-comment arvio)
+                        :presentercomment (:presentercomment arvio)
                         :roles (:roles arvio)
                         :presenter_role_id (:presenter-role-id arvio)
                         :rahoitusalue (:rahoitusalue arvio)

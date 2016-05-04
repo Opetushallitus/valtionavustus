@@ -14,6 +14,8 @@ import HakemusStatuses from './HakemusStatuses.js'
 import TraineeDayEditing from '../traineeday/TraineeDayEditing.jsx'
 import ChooseRahoitusalue from './ChooseRahoitusalue.jsx'
 import Perustelut from './Perustelut.jsx'
+import PresenterComment from './PresenterComment.jsx'
+
 
 export default class HakemusArviointi extends Component {
   render() {
@@ -33,6 +35,7 @@ export default class HakemusArviointi extends Component {
     const showOthersScores = this.props.showOthersScores
     return (
      <div id="hakemus-arviointi">
+       <PresenterComment controller={controller} hakemus={hakemus}/>
        <ChooseRahoitusalue controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
        <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku}
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
@@ -88,6 +91,7 @@ class ChangeLogRow extends React.Component{
       "budget-change": "Budjetti päivitetty",
       "summary-comment": "Perustelut hakijalle",
       "overridden-answers-change": "Sisältöä päivitetty",
+      "presenter-comment": "Esittelijän kommentti päivitetty",
       "status-change": "Tila päivitetty"
     }
     const typeTranslated = types[changelog.type] || changelog.type
