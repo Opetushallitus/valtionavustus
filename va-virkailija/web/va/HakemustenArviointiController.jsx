@@ -128,8 +128,8 @@ export default class HakemustenArviointiController {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + state.selectedHakemus.id + "/comments"
   }
 
-  static scoresUrl(state, hakemus) {
-    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemus.id + "/scores"
+  static scoresUrl(state, hakemusId) {
+    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + hakemusId + "/scores"
   }
 
   static changeRequestsUrl(state, hakemusId) {
@@ -153,11 +153,7 @@ export default class HakemustenArviointiController {
     }
     const parsedHakemusIdObject = new RouteParser('/*ignore/hakemus/:hakemus_id/*ignore').match(location.pathname)
     if (parsedHakemusIdObject && parsedHakemusIdObject["hakemus_id"]) {
-      const hakemusIdFromUrl = parsedHakemusIdObject["hakemus_id"]
-      const initialHakemus = _.find(realInitialState.hakuData.hakemukset, h => { return h.id.toString() === hakemusIdFromUrl })
-      if (initialHakemus) {
-        this.onHakemusSelection(realInitialState, initialHakemus)
-      }
+      this.onHakemusSelection(realInitialState, Number(parsedHakemusIdObject["hakemus_id"]))
     }
     realInitialState.hakuData.form = Immutable(realInitialState.hakuData.form)
     return realInitialState
@@ -171,23 +167,22 @@ export default class HakemustenArviointiController {
     return this.onSaveHakemusArvio(state, state.selectedHakemus)
   }
 
-  onHakemusSelection(state, hakemusToSelect) {
+  onHakemusSelection(state, hakemusIdToSelect) {
     state = this.onSaveHakemusArvio(state, state.selectedHakemus)
-    state.selectedHakemus = hakemusToSelect
+    state.selectedHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdToSelect)
     state.previouslySelectedHakemus = undefined
-    const hakemusId = hakemusToSelect.id
     const pathname = location.pathname
     const parsedUrl = new RouteParser('/avustushaku/:avustushaku_id/(hakemus/:hakemus_id/)*ignore').match(pathname)
-    if (!_.isUndefined(history.pushState) && parsedUrl["hakemus_id"] != hakemusId.toString()) {
-      const newUrl = "/avustushaku/" + parsedUrl["avustushaku_id"] + "/hakemus/" + hakemusId + "/" + location.search
+    if (!_.isUndefined(history.pushState) && parsedUrl["hakemus_id"] != hakemusIdToSelect.toString()) {
+      const newUrl = "/avustushaku/" + parsedUrl["avustushaku_id"] + "/hakemus/" + hakemusIdToSelect + "/" + location.search
       history.pushState({}, window.title, newUrl)
     }
-    this.loadScores(state, hakemusToSelect)
+    this.loadScores(state, hakemusIdToSelect)
     this.loadComments()
-    this.loadChangeRequests(state, hakemusId)
-    this.loadAttachmentVersions(state, hakemusId)
+    this.loadChangeRequests(state, hakemusIdToSelect)
+    this.loadAttachmentVersions(state, hakemusIdToSelect)
     if(state.personSelectHakemusId!=null){
-      state.personSelectHakemusId=hakemusId
+      state.personSelectHakemusId=hakemusIdToSelect
     }
     return state
   }
@@ -345,9 +340,9 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  loadScores(state, hakemus) {
-    HttpUtil.get(HakemustenArviointiController.scoresUrl(state, hakemus)).then(response => {
-      dispatcher.push(events.scoresLoaded, {hakemusId: hakemus.id,
+  loadScores(state, hakemusId) {
+    HttpUtil.get(HakemustenArviointiController.scoresUrl(state, hakemusId)).then(response => {
+      dispatcher.push(events.scoresLoaded, {hakemusId: hakemusId,
                                             scoring: response.scoring,
                                             scores: response.scores})
     })
@@ -410,7 +405,7 @@ export default class HakemustenArviointiController {
   onSetScore(state, indexAndScore) {
     const { selectionCriteriaIndex, newScore } = indexAndScore
     const hakemus = state.selectedHakemus;
-    const updateUrl = HakemustenArviointiController.scoresUrl(state, hakemus)
+    const updateUrl = HakemustenArviointiController.scoresUrl(state, hakemus.id)
     state.saveStatus.saveInProgress = true
     HttpUtil.post(updateUrl, { "selection-criteria-index": selectionCriteriaIndex, "score": newScore })
       .then(function(response) {
@@ -449,13 +444,12 @@ export default class HakemustenArviointiController {
   }
 
   // Public API
-  selectHakemus(hakemus) {
-    return function() {
-      dispatcher.push(events.selectHakemus, hakemus)
-    }
+  selectHakemus(event) {
+    const hakemusId = Number(event.currentTarget.id.split('-')[1])
+    dispatcher.push(events.selectHakemus, hakemusId)
   }
 
-  closeHakemusDetail(){
+  closeHakemusDetail() {
     dispatcher.push(events.closeHakemus, {})
   }
 

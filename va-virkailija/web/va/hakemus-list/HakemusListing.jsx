@@ -379,7 +379,7 @@ class HakemusRow extends Component {
     } else {
       hakemusName = hakemus["project-name"] + " (" + hakemus["register-number"] + ")"
     }
-    return <tr id={htmlId} className={rowClass} onClick={controller.selectHakemus(hakemus)}>
+    return <tr id={htmlId} className={rowClass} onClick={controller.selectHakemus}>
       <td className="organization-column" title={hakemus["organization-name"]}>{hakemus["organization-name"]}</td>
       <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
       <td className="score-column"><Scoring scoring={hakemus.arvio.scoring} userInfo={userInfo} allowHakemusScoring={allowHakemusScoring}/></td>
