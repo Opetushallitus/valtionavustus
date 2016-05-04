@@ -14,6 +14,7 @@ import VaChangeRequest from 'va-common/web/va/VaChangeRequest.jsx'
 import EditsDisplayingFormView from './EditsDisplayingFormView.jsx'
 import FakeFormController from '../form/FakeFormController.js'
 import FakeFormState from '../form/FakeFormState.js'
+import DateUtil from 'soresu-form/web/form/DateUtil'
 
 import style from '../style/formpreview.less'
 
@@ -33,13 +34,16 @@ export default class HakemusPreview extends Component {
                                               changeRequests={hakemus.changeRequests}
                                               translations={formState.configuration.translations}
                                               lang={formState.configuration.lang}/>
+    const versionDate = hakemus['version-date']
+
+    const formattedVersionDate = `${DateUtil.asDateString(versionDate)} klo ${DateUtil.asTimeString(versionDate)}`
     const formElementProps = {
       state: formState,
       formContainerClass: EditsDisplayingFormView,
       infoElementValues: avustushaku,
       controller: new FakeFormController(new VaComponentFactory(), new VaPreviewComponentFactory(), avustushaku, hakemus),
       containerId: "preview-container",
-      headerElements: [registerNumberDisplay, changeRequests]
+      headerElements: [registerNumberDisplay, changeRequests, <small key="version-date">Päivitetty {formattedVersionDate}</small>]
     }
     return <FormContainer {...formElementProps} />
 
