@@ -190,6 +190,10 @@ export default class HakemustenArviointiController {
   onCloseHakemus(state) {
     state.previouslySelectedHakemus = state.selectedHakemus
     state.selectedHakemus = undefined
+    setTimeout(() => {
+    const selected = document.getElementById(`hakemus-${state.previouslySelectedHakemus.id}`)
+      window.scrollTo(0, selected.offsetTop)
+    }, 300)
     return state
   }
 
