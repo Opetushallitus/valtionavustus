@@ -193,6 +193,8 @@ export default class HakujenHallintaController {
     const focusArea = /focus-area-(\d+)-(\w+)/.exec(update.field.id)
     const registerNumber = /register-number/.exec(update.field.id)
     const multiplemaksuera = /set-maksuera-(\w+)/.exec(update.field.id)
+    const loppuselvitysdate = update.field.id=="loppuselvitysdate"
+    const valiselvitysdate = update.field.id=="valiselvitysdate"
     var doSave = true
     if(hakuname) {
       const lang = hakuname[1]
@@ -236,6 +238,12 @@ export default class HakujenHallintaController {
     else if(update.field.id.indexOf("decision.")!=-1){
       const fieldName = update.field.id.substr(9)
       _.set(update.avustushaku.decision, fieldName, update.newValue)
+    }
+    else if(loppuselvitysdate){
+      update.avustushaku.loppuselvitysdate = update.newValue
+    }
+    else if(valiselvitysdate){
+      update.avustushaku.valiselvitysdate = update.newValue
     }
     else {
       console.error("Unsupported update to field ", update.field.id, ":", update)

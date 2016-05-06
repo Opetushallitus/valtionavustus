@@ -79,6 +79,8 @@
                           :multiple-rahoitusalue s/Bool
                           :register-number (s/maybe s/Str)
                           :content AvustusHakuContent
+                          (s/optional-key :loppuselvitysdate) (s/maybe s/Str)
+                          (s/optional-key :valiselvitysdate) (s/maybe s/Str)
                           (s/optional-key :decision) Decision
                           :form Long})
 

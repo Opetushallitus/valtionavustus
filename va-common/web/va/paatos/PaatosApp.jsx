@@ -120,6 +120,17 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
      </section>
   )
 }
+//<SelvitysVelvollisuus L={L} avustushaku={avustushaku}/>
+const SelvitysVelvollisuus = ({L,avustushaku}) =>
+  <Section title="selvitysvelvollisuus" L={L}>
+    {avustushaku.valiselvitysdate &&
+    <div>
+      Väliselvitys avautuu täytettäväksi {avustushaku.valiselvitysdate} ja löydätte selvityksen kysymyksineen osoitteesta <a>linkki</a>
+    </div>
+    }
+    Loppuselvitys tulee palauttaa 2kk hankkeen päättymisestä tai viimeistään {avustushaku.loppuselvitysdate}.
+    Loppuselvitykseen pääsette tästä linkistä.
+  </Section>
 
 const AvustuksenMaksu  = ({L,avustushaku,bic,iban,totalPaid}) =>{
   const maksudate = _.get(avustushaku, `decision.maksudate`, "")
