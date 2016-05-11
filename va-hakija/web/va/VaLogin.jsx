@@ -57,7 +57,6 @@ export default class VaLogin extends React.Component {
           sent: email,
           error: ""
         })
-        console.log("Hakemus created. Response=", JSON.stringify(response))
         const hakemusId = response.id
         if(hakemusId) {
           window.location = urlCreator.existingSubmissionEditUrl(model.avustushaku.id, hakemusId, model.lang, model.devel)

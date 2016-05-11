@@ -163,7 +163,6 @@ export default class HakujenHallintaController {
   onHakuCreation(state, baseHaku) {
     HttpUtil.put("/api/avustushaku", { baseHakuId: baseHaku.id })
       .then(function(response) {
-        console.log("Created new haku. Response=", JSON.stringify(response))
         dispatcher.push(events.hakuCreated, response)
       })
       .catch(function(response) {
@@ -302,7 +301,6 @@ export default class HakujenHallintaController {
   onHakuSave(state) {
     HttpUtil.post("/api/avustushaku/" + state.selectedHaku.id, _.omit(state.selectedHaku, ["roles", "formContent", "privileges"]))
         .then(function(response) {
-          console.log("Saved haku. Response=", JSON.stringify(response))
           dispatcher.push(events.saveCompleted, response)
         })
         .catch(function(response) {
@@ -483,7 +481,6 @@ export default class HakujenHallintaController {
 
     HttpUtil.post("/api/avustushaku/" + avustushaku.id + "/form", editedForm)
         .then(function(response) {
-          console.log("Saved form. Response=", response)
           dispatcher.push(events.formSaveCompleted, { avustusHakuId: avustushaku.id, fromFromServer: response })
         })
         .catch(function(response) {
