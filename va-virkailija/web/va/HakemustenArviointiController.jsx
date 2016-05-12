@@ -172,9 +172,11 @@ export default class HakemustenArviointiController {
     state.selectedHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdToSelect)
     state.previouslySelectedHakemus = undefined
     const pathname = location.pathname
-    const parsedUrl = new RouteParser('/avustushaku/:avustushaku_id/(hakemus/:hakemus_id/)*ignore').match(pathname)
-    if (!_.isUndefined(history.pushState) && parsedUrl["hakemus_id"] != hakemusIdToSelect.toString()) {
-      const newUrl = "/avustushaku/" + parsedUrl["avustushaku_id"] + "/hakemus/" + hakemusIdToSelect + "/" + location.search
+    const parsedUrl = new RouteParser('/avustushaku/:avustushaku_id/(hakemus/:hakemus_id/:subTab/)*ignore').match(pathname)
+    const subTab = parsedUrl.subTab || 'arviointi'
+    state.subTab = subTab
+    if (!_.isUndefined(history.pushState) && parsedUrl.hakemus_id != hakemusIdToSelect.toString()) {
+      const newUrl = "/avustushaku/" + parsedUrl.avustushaku_id + "/hakemus/" + hakemusIdToSelect + "/" + subTab + "/" + location.search
       history.pushState({}, window.title, newUrl)
     }
     this.loadScores(state, hakemusIdToSelect)

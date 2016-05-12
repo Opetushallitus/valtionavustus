@@ -35,6 +35,8 @@ export default class App extends Component {
     const translations = state.translations
     const loadingComments = state.loadingComments
     const avustushakuList = state.avustushakuList
+    const subTab = state.subTab
+    
     return (
       <section>
         <TopBar activeTab="arviointi" environment={hakuData.environment} state={state}/>
@@ -68,6 +70,7 @@ export default class App extends Component {
                           userInfo={state.userInfo}
                           loadingComments={loadingComments}
                           showOthersScores={state.showOthersScores}
+                          subTab={subTab}
                           controller={controller}/>
           <div hidden={!hasSelected} id="footer">
             <HakemusHakijaSidePreviewLink hakemus={selectedHakemus} avustushaku={avustushaku} />

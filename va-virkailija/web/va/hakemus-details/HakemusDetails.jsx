@@ -14,6 +14,7 @@ export default class HakemusDetails extends Component {
     const loadingComments = this.props.loadingComments
     const showOthersScores = this.props.showOthersScores
     const translations = this.props.translations
+    const subTab = this.props.subTab
 
     const onClose = (e) => {
       document.body.classList.remove('split-view')
@@ -47,6 +48,7 @@ export default class HakemusDetails extends Component {
                           userInfo={userInfo}
                           loadingComments={loadingComments}
                           showOthersScores={showOthersScores}
+                          subTab={subTab}
                           controller={controller}/>
       </div>
     )

@@ -34,12 +34,15 @@ export default class HakemusArviointi extends Component {
     const comments = hakemus.comments
     const loadingComments = this.props.loadingComments
     const showOthersScores = this.props.showOthersScores
+    const subTab = this.props.subTab
+    const tab = (name, label) => <span className={subTab === name ? 'selected' : ''} >{label}</span>
+
     return (
      <div id="hakemus-arviointi">
        <div id="editor-subtab-selector" className="section-container">
-         <span className="selected" >Arviointi</span>
-         <span>Väliselvitys</span>
-         <span>Loppuselvitys</span>
+         {tab('arviointi', 'Arviointi')}
+         {tab('valiselvitys', 'Väliselvitys')}
+         {tab('loppuselvitys', 'Loppuselvitys')}
        </div>
        <div id="arviointi-tab">
          <PresenterComment controller={controller} hakemus={hakemus}/>
