@@ -7,6 +7,7 @@ import _ from 'lodash'
 const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
 
 export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
+  const ophFinancingPercentage = (100-avustushaku.content["self-financing-percentage"])
   FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
     .map(budgetItem => _.extend(budgetItem, {
       original: findCost(formContent, hakemus.answers, budgetItem),
@@ -16,7 +17,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
   const tables = FormUtil.findFieldsByFieldType(formContent, 'vaBudget')[0].children
     .filter(table => table.fieldType === 'vaSummingBudgetElement')
   const useDetailedCosts = hakemus.arvio.useDetailedCosts
-  //const totalGranted = formatPrice(hakemus.arvio['budget-granted'])
+  const totalGranted = hakemus.arvio['budget-granted']
   const totallOriginalCosts = _.sum(tables[0].children.map(i=>Number(i.original)))
   const totalOverriddenCosts = hakemus.arvio.useDetailedCosts ? _.sum(tables[0].children.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted
   const TBody = ({table, useDetailedCosts}) => <tbody>{table.children
@@ -90,8 +91,8 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
         <tbody>
         <tr>
           <th className="footerTitle"><L translationKey="myonnetty-avustus"/></th>
-          <AmountCell>{totallOriginalCosts - totalIncomes - totalFinancing}</AmountCell>
-          <AmountCell>{totalOverriddenCosts - totalIncomes - totalFinancing}</AmountCell>
+          <AmountCell>{Math.floor(((totallOriginalCosts - totalIncomes - totalFinancing)*ophFinancingPercentage)/100)}</AmountCell>
+          <AmountCell>{totalGranted}</AmountCell>
         </tr>
         </tbody>
       </table>
