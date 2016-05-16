@@ -55,6 +55,11 @@
 (defn- avustushaku-ok-response [avustushaku]
   (ok (avustushaku-response-content avustushaku)))
 
+(defn- selvitys-form-keyword [selvitys-type]
+  (let [key (str "form_" selvitys-type)]
+    (keyword key))
+)
+
 (defroutes* avustushaku-routes
   "Avustushaku routes"
 
@@ -67,10 +72,36 @@
           (not-found)))
 
   (GET* "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
-        :path-params [haku-id :- Long, hakemus-id :- s/Str]
+        :path-params [haku-id :- Long hakemus-id :- s/Str]
         :return  Hakemus
         :summary "Get current answers"
-        (on-get-current-answers haku-id hakemus-id))
+        (on-get-current-answers haku-id hakemus-id :form))
+
+  (GET* "/:haku-id/:selvitys-type/:hakemus-id" [haku-id hakemus-id selvitys-type]
+        :path-params [haku-id :- Long, hakemus-id :- s/Str selvitys-type :- s/Str]
+        :return  Hakemus
+        :summary "Get current answers"
+        (on-get-current-answers haku-id hakemus-id (selvitys-form-keyword selvitys-type)))
+
+  (GET* "/:haku-id/:selvitys-type/init/:hakemus-id" [haku-id selvitys-type hakemus-id]
+        :path-params [haku-id :- Long, hakemus-id :- s/Str selvitys-type :- s/Str]
+        :return HakemusId
+        :summary "Get or create selvitys for hakemus"
+        (on-selvitys-init haku-id hakemus-id selvitys-type))
+
+  (POST* "/:haku-id/:selvitys-type/:hakemus-id/:base-version" [haku-id hakemus-id base-version selvitys-type :as request]
+         :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
+         :body [answers (describe Answers "New answers")]
+         :return Hakemus
+         :summary "Update hakemus values"
+         (on-selvitys-update haku-id hakemus-id base-version answers (selvitys-form-keyword selvitys-type)))
+
+  (POST* "/:haku-id/:selvitys-type/:hakemus-id/:base-version/submit" [haku-id selvitys-type hakemus-id base-version :as request]
+         :path-params [haku-id :- Long, selvitys-type :- s/Str, hakemus-id :- s/Str, base-version :- Long]
+         :body [answers (describe Answers "New answers")]
+         :return Hakemus
+         :summary "Submit hakemus"
+         (on-selvitys-submit haku-id hakemus-id base-version answers (selvitys-form-keyword selvitys-type)))
 
   (PUT* "/:haku-id/hakemus" [haku-id :as request]
       :path-params [haku-id :- Long]
@@ -156,6 +187,8 @@
 
   ;; Finnish subcontext
   (GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
+  (GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "selvitys.html"))
+  (GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))
   (GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
   (GET* "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
     :path-params [avustushaku-id :- Long user-key :- s/Str]

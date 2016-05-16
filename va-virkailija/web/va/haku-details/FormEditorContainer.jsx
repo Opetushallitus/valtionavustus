@@ -17,6 +17,11 @@ export default class FormEditorContainer extends Component {
     const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/nayta?lang=fi"
     const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/nayta?lang=sv"
 
+
+    const onFormChange = (avustushaku, newDraftJson) =>{
+      controller.formOnChangeListener(avustushaku, newDraftJson)
+    }
+
     const scrollToEditor = () =>
     {
         const textArea = document.querySelector("#form-json-editor textarea")
@@ -36,7 +41,7 @@ export default class FormEditorContainer extends Component {
             <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a><span className="link-divider"/><a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
           </div>
         </div>
-        <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} />
+        <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange}/>
         <FormJsonEditor controller={controller} avustushaku={avustushaku} formDraft={formDraft} />
       </section>
     )

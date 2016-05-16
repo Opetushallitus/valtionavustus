@@ -70,6 +70,10 @@
   (->> {:user_key hakemus-id}
        (exec :form-db queries/list-hakemus-change-requests-by-user-id)))
 
+(defn find-hakemus-by-parent-id-and-type [parent-id hakemus-type]
+  (->> {:parent_id parent-id :hakemus_type hakemus-type}
+       (exec :form-db queries/find-by-parent-id-and-hakemus-type) first))
+
 (defn- register-number-sequence-exists? [register-number]
   (->> (exec :form-db queries/register-number-sequence-exists? {:suffix register-number})
        first
@@ -86,16 +90,20 @@
                                           (exec :form-db queries/create-register-number-sequence<! params))]
         (format "%d/%s" seq_number avustushaku-register-number)))))
 
-(defn create-hakemus! [avustushaku-id form-id answers]
+(defn create-hakemus! [avustushaku-id form-id answers hakemus-type]
   (let [submission (form-db/create-submission! form-id answers)
         user-key (generate-hash-id)
         params (-> {:avustushaku_id avustushaku-id
                     :user_key user-key
                     :form_submission (:id submission)
-                    :register_number (generate-register-number avustushaku-id user-key)}
+                    :register_number (generate-register-number avustushaku-id user-key)
+                    :hakemus_type hakemus-type}
                    (merge-calculated-params avustushaku-id answers))
         hakemus (exec :form-db queries/create-hakemus<! params)]
     {:hakemus hakemus :submission submission}))
+
+(defn update-hakemus-parent-id [hakemus-id parent-id]
+  (exec :form-db queries/update-hakemus-parent-id! {:id hakemus-id :parent_id parent-id}))
 
 (defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers]
   (let [register-number (or register-number

@@ -84,7 +84,9 @@
                           (s/optional-key :loppuselvitysdate) (s/maybe s/Str)
                           (s/optional-key :valiselvitysdate) (s/maybe s/Str)
                           (s/optional-key :decision) Decision
-                          :form Long})
+                          :form Long
+                          (s/optional-key :form_loppuselvitys) (s/maybe Long)
+                          (s/optional-key :form_valiselvitys) (s/maybe Long)})
 
 (s/defschema HakemusStatus
   "Status from the applicant point of view"

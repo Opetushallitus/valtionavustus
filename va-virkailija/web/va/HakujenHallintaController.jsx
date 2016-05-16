@@ -9,7 +9,8 @@ import Dispatcher from 'soresu-form/web/Dispatcher'
 import LocalStorage from './LocalStorage'
 
 import LdapSearchParameters from './haku-details/LdapSearchParameters.js'
-
+import LoppuselvitysForm from './data/LoppuselvitysForm.json'
+import ValiselvitysForm from './data/ValiselvitysForm.json'
 const dispatcher = new Dispatcher()
 
 const events = {
@@ -25,6 +26,10 @@ const events = {
   roleDeleted: 'roleDeleted',
   privilegesLoaded: 'privilegesLoaded',
   formLoaded: 'formLoaded',
+  selvitysFormLoaded: 'selvitysFormLoaded',
+  updateSelvitysForm: 'updateSelvitysForm',
+  saveSelvitysForm: 'saveSelvitysForm',
+  selvitysFormSaveCompleted: 'selvitysFormSaveCompleted',
   updateForm: 'updateForm',
   saveForm: 'saveForm',
   formSaveCompleted: 'formSaveCompleted',
@@ -55,6 +60,10 @@ export default class HakujenHallintaController {
     return "/api/avustushaku/" + avustushaku.id + "/form"
   }
 
+  static initSelvitysFormUrl(avustushaku, selvitysType) {
+    return "/api/avustushaku/" + avustushaku.id + "/init-selvitysform/" + selvitysType
+  }
+
   _bind(...methods) {
     methods.forEach((method) => this[method] = this[method].bind(this))
   }
@@ -75,6 +84,8 @@ export default class HakujenHallintaController {
         serverError: ""
       },
       formDrafts: {},
+      loppuselvitysFormDrafts: {},
+      valiselvitysFormDrafts: {},
       subTab: subTab,
       ldapSearch: {
         input: "",
@@ -120,6 +131,10 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.roleDeleted)], this.onRoleDeleted,
       [dispatcher.stream(events.privilegesLoaded)], this.onPrivilegesLoaded,
       [dispatcher.stream(events.formLoaded)], this.onFormLoaded,
+      [dispatcher.stream(events.selvitysFormLoaded)], this.onSelvitysFormLoaded,
+      [dispatcher.stream(events.updateSelvitysForm)], this.onUpdateSelvitysForm,
+      [dispatcher.stream(events.saveSelvitysForm)], this.onSaveSelvitysForm,
+      [dispatcher.stream(events.selvitysFormSaveCompleted)], this.onSelvitysFormSaveCompleted,
       [dispatcher.stream(events.updateForm)], this.onFormUpdated,
       [dispatcher.stream(events.saveForm)], this.onFormSaved,
       [dispatcher.stream(events.formSaveCompleted)], this.onFormSaveCompleted,
@@ -299,7 +314,7 @@ export default class HakujenHallintaController {
   }
 
   onHakuSave(state) {
-    HttpUtil.post("/api/avustushaku/" + state.selectedHaku.id, _.omit(state.selectedHaku, ["roles", "formContent", "privileges"]))
+    HttpUtil.post("/api/avustushaku/" + state.selectedHaku.id, _.omit(state.selectedHaku, ["roles", "formContent", "privileges", "valiselvitysForm", "loppuselvitysForm"]))
         .then(function(response) {
           dispatcher.push(events.saveCompleted, response)
         })
@@ -341,6 +356,8 @@ export default class HakujenHallintaController {
     this.loadPrivileges(hakuToSelect)
     this.loadRoles(hakuToSelect)
     this.loadForm(hakuToSelect)
+    this.loadSelvitysForm(hakuToSelect,"loppuselvitys")
+    this.loadSelvitysForm(hakuToSelect,"valiselvitys")
     LocalStorage.saveAvustushakuId(hakuToSelect.id)
     return state
   }
@@ -404,6 +421,70 @@ export default class HakujenHallintaController {
 
   saveForm(avustushaku, form) {
     dispatcher.push(events.saveForm, {haku: avustushaku, form: JSON.parse(form)})
+  }
+
+  loadSelvitysForm(selectedHaku,selvitysType) {
+    const form = selvitysType=="valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
+    const url = HakujenHallintaController.initSelvitysFormUrl(selectedHaku,selvitysType)
+    HttpUtil.post(url, form).then(form => {
+        dispatcher.push(events.selvitysFormLoaded, {haku: selectedHaku, form: form, selvitysType:selvitysType})
+      }
+    ).catch((response) => {
+      console.error("Failed to load selvitys form " + selvitysType,response)
+    })
+  }
+
+  onSelvitysFormLoaded(state, loadFormResult) {
+    const haku = loadFormResult.haku
+    const selvitysType = loadFormResult.selvitysType
+    state[selvitysType + "FormDrafts"][haku.id] = JSON.stringify(loadFormResult.form, null, 2)
+    loadFormResult.haku[loadFormResult.selvitysType + "Form"] = loadFormResult.form
+    return state
+  }
+
+  saveSelvitysForm(avustushaku, form, selvitysType) {
+    dispatcher.push(events.saveSelvitysForm, {haku: avustushaku, form: JSON.parse(form), selvitysType:selvitysType})
+  }
+
+  onSaveSelvitysForm(state,formSaveObject) {
+    const avustushaku = formSaveObject.haku
+    const editedForm = formSaveObject.form
+    const selvitysType = formSaveObject.selvitysType
+    HttpUtil.post(`/api/avustushaku/${avustushaku.id}/selvitysform/${selvitysType}`, editedForm)
+      .then(function(response) {
+        dispatcher.push(events.selvitysFormSaveCompleted, { avustusHakuId: avustushaku.id, fromFromServer: response,selvitysType:selvitysType })
+      })
+      .catch(function(response) {
+        if(response.status === 400) {
+          console.error('Validation error:', response.statusText)
+          dispatcher.push(events.saveCompleted, {error: "validation-error"})
+        }
+        else {
+          console.error('Unexpected save error:', response.statusText)
+          dispatcher.push(events.saveCompleted, {error: "unexpected-save-error"})
+        }
+      })
+    return state
+  }
+
+  onSelvitysFormSaveCompleted(state, hakuIdAndForm) {
+    const avustusHakuId = hakuIdAndForm.avustusHakuId
+    const formFromServer = hakuIdAndForm.fromFromServer
+    const selvitysType = hakuIdAndForm.selvitysType
+    const haku = _.find(state.hakuList, haku => haku.id === avustusHakuId)
+    haku[selvitysType + "Form"] = formFromServer
+    return state
+  }
+
+  selvitysFormOnChangeListener(avustushaku, newFormJson, selvitysType) {
+    dispatcher.push(events.updateSelvitysForm, {avustushaku: avustushaku, newFormJson: newFormJson,selvitysType:selvitysType})
+  }
+
+  onUpdateSelvitysForm(state, formContentUpdateObject) {
+    const selvitysType = formContentUpdateObject.selvitysType
+    const avustushaku = formContentUpdateObject.avustushaku
+    state[selvitysType + "FormDrafts"][avustushaku.id] = formContentUpdateObject.newFormJson
+    return state
   }
 
   onStartLdapSearch(state, searchInput) {

@@ -5,19 +5,11 @@ import ClassNames from 'classnames'
 import HakuEdit from './HakuEdit.jsx'
 import FormEditorContainer from './FormEditorContainer.jsx'
 import DecisionEditor from './DecisionEditor.jsx'
+import SelvitysFormEditor from './SelvitysFormEditor.jsx'
 
 export default class EditorSelector extends React.Component {
   render() {
-    const subTab = this.props.subTab
-    const controller = this.props.controller
-    const avustushaku = this.props.avustushaku
-    const formDraft = this.props.formDraft
-    const ldapSearch = this.props.ldapSearch
-    const koodistos = this.props.koodistos
-    const userInfo = this.props.userInfo
-    const environment = this.props.environment
-    const translations = this.props.translations
-
+    const {subTab, controller, avustushaku, formDraft, ldapSearch, koodistos, userInfo, environment, translations, valiselvitysFormDraft, loppuselvitysFormDraft} = this.props
     var subTabContent
     switch (subTab) {
       case "haku-editor":
@@ -36,7 +28,36 @@ export default class EditorSelector extends React.Component {
         break
       case "decision":
         subTabContent = <DecisionEditor avustushaku={avustushaku}
-                                             controller={controller} />
+                                        controller={controller}
+                                        translations={translations}
+
+        />
+        break
+      case "valiselvitys":
+        subTabContent = <SelvitysFormEditor selvitysType="valiselvitys"
+                                        environment={environment}
+                                        avustushaku={avustushaku}
+                                        controller={controller}
+                                        koodistos={koodistos}
+                                        translations={translations}
+                                        valiselvitysFormDraft={valiselvitysFormDraft}
+                                        loppuselvitysFormDraft={loppuselvitysFormDraft}
+                                        translations={translations}
+
+        />
+        break
+      case "loppuselvitys":
+        subTabContent = <SelvitysFormEditor selvitysType="loppuselvitys"
+                                            environment={environment}
+                                            avustushaku={avustushaku}
+                                            controller={controller}
+                                            koodistos={koodistos}
+                                            translations={translations}
+                                            valiselvitysFormDraft={valiselvitysFormDraft}
+                                            loppuselvitysFormDraft={loppuselvitysFormDraft}
+                                            translations={translations}
+
+        />
         break
       default:
         throw new Error("Bad subTab selection '" + subTab + "'")
@@ -57,6 +78,10 @@ export default class EditorSelector extends React.Component {
                      className={ClassNames({"selected": subTab === "form-editor"})}>Hakulomake</span>
                <span onClick={createSubTabSelector("decision")}
                      className={ClassNames({"selected": subTab === "decision"})}>Päätös</span>
+               <span onClick={createSubTabSelector("valiselvitys")}
+                     className={ClassNames({"selected": subTab === "valiselvitys"})}>Väliselvityslomake</span>
+               <span onClick={createSubTabSelector("loppuselvitys")}
+                     className={ClassNames({"selected": subTab === "loppuselvitys"})}>Loppuselvityslomake</span>
              </div>
              <div className="section-container">{subTabContent}</div>
            </section>

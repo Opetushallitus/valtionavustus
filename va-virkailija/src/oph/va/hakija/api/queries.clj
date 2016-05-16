@@ -5,6 +5,8 @@
 
 (defquery create-avustushaku<! "sql/hakija/avustushaku/create.sql")
 (defquery update-avustushaku! "sql/hakija/avustushaku/update.sql")
+(defquery update-form-loppuselvitys! "sql/hakija/avustushaku/update-form-loppuselvitys.sql")
+(defquery update-form-valiselvitys! "sql/hakija/avustushaku/update-form-valiselvitys.sql")
 (defquery archive-avustushaku! "sql/hakija/avustushaku/archive.sql")
 (defquery list-avustushaut "sql/hakija/avustushaku/list.sql")
 (defquery list-avustushaut-by-status "sql/hakija/avustushaku/list-by-status.sql")
@@ -19,8 +21,10 @@
 (defquery list-hakemus-paatos-email-statuses "sql/hakija/hakemus/list-hakemus-paatokset-by-avustushaku.sql")
 (defquery copy-form<! "sql/hakija/form/copy.sql")
 (defquery get-form-by-avustushaku "sql/hakija/form/get-by-avustushaku.sql")
+(defquery get-form-by-id "sql/hakija/form/get.sql")
 (defquery archive-form! "sql/hakija/form/archive.sql")
 (defquery update-form! "sql/hakija/form/update.sql")
+(defquery create-form<! "sql/hakija/form/create.sql")
 
 (defquery list-attachments "sql/hakija/attachment/list.sql")
 (defquery list-attachment-versions "sql/hakija/attachment/list-versions.sql")

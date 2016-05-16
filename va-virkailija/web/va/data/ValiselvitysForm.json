@@ -1,0 +1,199 @@
+{
+  "content": [
+    {
+      "id": "name",
+      "fieldType": "h1",
+      "fieldClass": "infoElement"
+    },
+    {
+      "id": "applicant-info",
+      "label": {
+        "fi": "Väliselvitys",
+        "sv": "Uppgifter om sökanden"
+      },
+      "children": [
+        {
+          "id": "textArea-0",
+          "label": {
+            "fi": "Hankkeen aikaansaannokset pähkinäkuoressa",
+            "sv": "På svenska"
+          },
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "helpText": {
+            "fi": "Ohje ekaan",
+            "sv": "Ohje på svenska"
+          },
+          "required": true,
+          "fieldType": "textArea",
+          "fieldClass": "formField"
+        },
+        {
+          "id": "textArea-1",
+          "label": {
+            "fi": "Hankkeen tavoitteet ja miten ne ovat toteutuneet",
+            "sv": "På svenska"
+          },
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "helpText": {
+            "fi": "Ohje ekaan",
+            "sv": "Ohje på svenska"
+          },
+          "required": true,
+          "fieldType": "textArea",
+          "fieldClass": "formField"
+        },
+        {
+          "id": "textArea-2",
+          "label": {
+            "fi": "Miten hanke toteutettiin?",
+            "sv": "På svenska"
+          },
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "helpText": {
+            "fi": "Ohje ekaan",
+            "sv": "Ohje på svenska"
+          },
+          "required": true,
+          "fieldType": "textArea",
+          "fieldClass": "formField"
+        },
+        {
+          "id": "textArea-3",
+          "label": {
+            "fi": "Hankkeen tuotokset ja tulokset",
+            "sv": "På svenska"
+          },
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "helpText": {
+            "fi": "Ohje ekaan",
+            "sv": "Ohje på svenska"
+          },
+          "required": true,
+          "fieldType": "textArea",
+          "fieldClass": "formField"
+        },
+        {
+          "id": "textArea-4",
+          "label": {
+            "fi": "Hankeen www-osoite",
+            "sv": "På svenska"
+          },
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "helpText": {
+            "fi": "Ohje ekaan",
+            "sv": "Ohje på svenska"
+          },
+          "required": true,
+          "fieldType": "textArea",
+          "fieldClass": "formField"
+        },
+        {
+          "id": "textArea-5",
+          "label": {
+            "fi": "Hankeeen tuotoksista on tehty ehdotus OPH:n hyvien käytäntöjen palveluun",
+            "sv": "På svenska"
+          },
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "helpText": {
+            "fi": "Ohje ekaan",
+            "sv": "Ohje på svenska"
+          },
+          "required": true,
+          "fieldType": "textArea",
+          "fieldClass": "formField"
+        },
+        {
+          "id": "textArea-6",
+          "label": {
+            "fi": "Mikäli kyllä, ehdotuksen tai hyväksytyn käytännön tunnus",
+            "sv": "På svenska"
+          },
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "helpText": {
+            "fi": "Ohje ekaan",
+            "sv": "Ohje på svenska"
+          },
+          "required": true,
+          "fieldType": "textArea",
+          "fieldClass": "formField"
+        }
+      ],
+      "fieldType": "theme",
+      "fieldClass": "wrapperElement"
+    },
+    {
+      "id": "namedAttachment-0",
+      "label": {
+        "fi": "Valtionavustus pääkirja",
+        "sv": "Liitesv"
+      },
+      "params": {},
+      "helpText": {
+        "fi": "fdfa",
+        "sv": "fdsafdsa"
+      },
+      "required": true,
+      "fieldType": "namedAttachment",
+      "fieldClass": "formField"
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "repeating-attachment-other",
+      "fieldType": "growingFieldset",
+      "children": [
+        {
+          "fieldClass": "wrapperElement",
+          "id": "repeating-attachment-otherliite",
+          "fieldType": "growingFieldsetChild",
+          "children": [
+            {
+              "params": {},
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "label": {
+                "fi": "Muu liite",
+                "sv": "Annan bilaga"
+              },
+              "id": "repeating-attachment-otherliite.repeating-attachment-1.attachment",
+              "required": false,
+              "fieldType": "namedAttachment"
+            }
+          ]
+        }
+      ],
+      "params": {
+        "showOnlyFirstLabels": true
+      },
+      "label": {
+        "fi": "",
+        "sv": ""
+      }
+    }
+  ],
+  "rules":[],
+  "created_at": "2016-01-01T00:00:00Z"
+}

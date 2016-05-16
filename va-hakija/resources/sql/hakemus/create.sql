@@ -1,5 +1,5 @@
 INSERT INTO hakemukset (id, avustushaku, version, user_key, form_submission_id, form_submission_version,
-                        budget_total, budget_oph_share, organization_name, project_name, register_number, last_status_change_at)
+                        budget_total, budget_oph_share, organization_name, project_name, register_number, last_status_change_at,hakemus_type)
 SELECT nextval('hakemukset_id_seq'),
        :avustushaku_id,
        0,
@@ -11,6 +11,7 @@ SELECT nextval('hakemukset_id_seq'),
        :organization_name,
        :project_name,
        :register_number,
-       now()
+       now(),
+       :hakemus_type
 FROM form_submissions submissions
 WHERE id = :form_submission AND version_closed IS NULL

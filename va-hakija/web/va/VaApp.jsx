@@ -114,7 +114,7 @@ function initVaFormController() {
   const initialValues = {"language": urlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function(state) {
-    return <VaForm controller={controller} state={state}/>
+    return <VaForm controller={controller} state={state} hakemusType="hakemus"/>
   }}
 }
 

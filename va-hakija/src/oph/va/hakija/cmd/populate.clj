@@ -156,7 +156,7 @@
     (trace "Processing avustushaku" (-> avustushaku :content :name :fi))
     (doseq [x (range 0 amount)]
       (trace "Generating hakemus" x)
-      (let [hakemus (->> (create-hakemus! avustushaku-id form-id {})
+      (let [hakemus (->> (create-hakemus! avustushaku-id form-id {} "hakemus")
                          :hakemus)
             submission-id (:form_submission_id hakemus)
             answers (form-util/generate-answers form

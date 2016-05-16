@@ -6,4 +6,5 @@ where h.avustushaku = :avustushaku_id
       and h.status != 'cancelled'
       and h.status != 'new'
       and h.version_closed is null
+      and h.hakemus_type='hakemus'
 order by upper(h.organization_name), upper(h.project_name)

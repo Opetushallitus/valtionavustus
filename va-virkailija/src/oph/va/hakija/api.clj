@@ -155,6 +155,9 @@
 (defn get-form-by-avustushaku [avustushaku-id]
   (first (exec :form-db hakija-queries/get-form-by-avustushaku {:avustushaku_id avustushaku-id})))
 
+(defn get-form-by-id [id]
+  (first (exec :form-db hakija-queries/get-form-by-id {:id id})))
+
 (defn get-avustushaku [avustushaku-id]
   (first (exec :form-db hakija-queries/get-avustushaku {:id avustushaku-id})))
 
@@ -231,6 +234,13 @@
      :filename (:filename result)
      :size (:file_size result)}))
 
+(defn create-form! [form-content]
+  ;; NOTE: looks like yesql unwraps sequence parameters, thats way we wrap them one extra time here
+  ;; TODO: Consolidate with oph.soresu.form.db currently in soresu-form
+  (let [params {:content (list (:content form-content)) :rules (list (:rules form-content))}]
+    (exec :form-db hakija-queries/create-form<! params)))
+
+
 (defn- update-form! [form-id form-content]
   ;; NOTE: looks like yesql unwraps sequence parameters, thats way we wrap them one extra time here
   ;; TODO: Consolidate with oph.soresu.form.db currently in soresu-form
@@ -246,6 +256,23 @@
     (try (update-form! form-id form-to-save)
          (catch Exception e (throw (get-next-exception-or-original e))))
     (get-form-by-avustushaku avustushaku-id)))
+
+(defn update-avustushaku-form-loppuselvitys [avustushaku-id form-id]
+  (exec :form-db hakija-queries/update-form-loppuselvitys! {:id avustushaku-id :form_loppuselvitys form-id}))
+
+(defn update-avustushaku-form-valiselvitys [avustushaku-id form-id]
+  (exec :form-db hakija-queries/update-form-valiselvitys! {:id avustushaku-id :form_valiselvitys form-id}))
+
+(defn create-form [form-content]
+  (let [form (create-form! form-content)
+        form-id (:id form)]
+    (get-form-by-id form-id)))
+
+(defn update-form  [form-id form]
+  (let [form-to-save (assoc form :form_id form-id)]
+    (try (update-form! form-id form-to-save)
+         (catch Exception e (throw (get-next-exception-or-original e))))
+    (get-form-by-id form-id)))
 
 (defn get-hakemus [hakemus-id]
   (first (exec :form-db hakija-queries/get-hakemus {:id hakemus-id})))

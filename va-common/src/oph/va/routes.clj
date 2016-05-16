@@ -49,4 +49,6 @@
    :decision    (:decision avustushaku)
    :valiselvitysdate (:valiselvitysdate avustushaku)
    :loppuselvitysdate (:loppuselvitysdate avustushaku)
-   :form        (:form avustushaku)})
+   :form        (:form avustushaku)
+   :form_loppuselvitys        (:form_loppuselvitys avustushaku)
+   :form_valiselvitys         (:form_valiselvitys avustushaku)})

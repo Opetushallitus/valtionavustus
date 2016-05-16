@@ -14,8 +14,7 @@ import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
 
 export default class VaFormTopbar extends React.Component {
   render() {
-    const controller = this.props.controller
-    const state = this.props.state
+    const {controller, state, hakemusType} = this.props
     const saveStatus = state.saveStatus
     const configuration = state.configuration
     const avustushaku = state.avustushaku
@@ -44,14 +43,16 @@ export default class VaFormTopbar extends React.Component {
       return !(formIsValidOnClientSide && formIsValidOnServerSide && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state) || isSubmitted()
     }
     const submitTextKey = isSubmitted() ? "submitted" : "submit"
-    const helpText = formTranslator.translate("savehelp", lang)
+    const helpText = formTranslator.translate(`savehelp-${hakemusType}`, lang)
     const hasEnded = avustushaku.phase === "ended"
+    const topicKey = `heading-${hakemusType}`
+    const isHakemus = hakemusType=="hakemus"
 
     return(
       <section id="topbar">
         <div id="top-container">
           <img id="logo" src="img/logo.png"/>
-          <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
+          <h1 id="topic"><LocalizedString translations={translations.form} translationKey={topicKey} lang={lang}/></h1>
           <div id="form-controls" hidden={preview}>
             <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang}/>
             <span hidden={!isNormalEdit()} className="soresu-tooltip soresu-tooltip-down">
@@ -71,7 +72,7 @@ export default class VaFormTopbar extends React.Component {
               <TextButton htmlId="preview-button" onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)} translations={translations.form} translationKey="preview" lang={lang} />
             </span>
             <FormErrorSummary formContent={form.content} controller={controller} validationErrors={validationErrors} translations={translations.errors} lang={lang} />
-            <a className="preview-link" href={previewUrl} target="_blank">Tulostusversio</a>
+            {isHakemus && <a className="preview-link" href={previewUrl} target="_blank">Tulostusversio</a>}
           </div>
           <div id="server-info">
             <EnvironmentInfo environment={configuration.environment}/>

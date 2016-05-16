@@ -13,3 +13,7 @@
    :register-number (s/maybe s/Str)
    :submission VaSubmission
    :validation-errors SubmissionValidationErrors})
+
+(s/defschema HakemusId
+  "Hakemus with user key"
+  {:id s/Str})

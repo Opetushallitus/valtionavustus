@@ -56,6 +56,11 @@
         preview-url (str hakija-app-url "paatos/avustushaku/" avustushaku-id "/hakemus/" user-key "?nolog=true")]
     (resp/redirect preview-url)))
 
+(defn- on-selvitys [avustushaku-id hakemus-user-key selvitys-type]
+  (let [hakija-app-url (-> config :server :url :fi)
+        preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" hakemus-user-key)]
+    (resp/redirect preview-url)))
+
 (defn- get-hakemus-and-published-avustushaku [avustushaku-id hakemus-id]
   (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
         hakemus (hakija-api/get-hakemus hakemus-id)]
@@ -82,6 +87,10 @@
   (GET* "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
           :path-params [avustushaku-id :- Long, user-key :- s/Str]
           (on-paatos-preview avustushaku-id user-key))
+  (GET* "/selvitys/avustushaku/:avustushaku-id/:selvitys-type" []
+         :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
+         :query-params [{hakemus :- s/Str nil}]
+         (on-selvitys avustushaku-id hakemus selvitys-type))
   (GET "/translations.json" [] (get-translations))
   (GET "/avustushaku/:id/*" [id] (return-html "index.html"))
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
@@ -231,6 +240,38 @@
              (ok (without-id response))
              (not-found))
            (method-not-allowed!)))
+
+  (POST* "/:avustushaku-id/init-selvitysform/:selvitys-type" [avustushaku-id selvitys-type]
+         :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
+         :body [form (describe form-schema/Form "Form to create")]
+         :return form-schema/Form
+         :summary "Create of finds selvitys form for given avustushaku"
+         (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+               form-keyword (keyword (str "form_" selvitys-type))
+               form-keyword-value (form-keyword avustushaku)
+               ]
+            (if (nil? form-keyword-value)
+               (let [
+                     created-form (hakija-api/create-form form)
+                     form-id (:id created-form)
+                     loppuselvitys (= selvitys-type "loppuselvitys")]
+                 (if loppuselvitys
+                   (hakija-api/update-avustushaku-form-loppuselvitys avustushaku-id form-id)
+                   (hakija-api/update-avustushaku-form-valiselvitys avustushaku-id form-id))
+                 (ok (without-id created-form)))
+              (let [found-form (hakija-api/get-form-by-id form-keyword-value)]
+                (ok (without-id found-form))))))
+
+  (POST* "/:avustushaku-id/selvitysform/:selvitys-type" [avustushaku-id selvitys-type]
+         :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
+         :body [updated-form (describe form-schema/Form "Updated form")]
+         :return form-schema/Form
+         :summary "Update selvitys form"
+         (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+                form-keyword (keyword (str "form_" selvitys-type))
+                form-id (form-keyword avustushaku)
+                response (hakija-api/update-form form-id updated-form)]
+           (ok (without-id response))))
 
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id :as request]
          :path-params [avustushaku-id :- Long hakemus-id :- Long]

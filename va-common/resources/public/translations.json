@@ -4,9 +4,17 @@
     "sv": "På svenska"
   },
   "form": {
-    "heading": {
+    "heading-hakemus": {
       "fi": "Hakemus",
       "sv": "Ansökan"
+    },
+    "heading-loppuselvitys": {
+      "fi": "Loppuselvitys",
+      "sv": "Slutredovisning"
+    },
+    "heading-valiselvitys": {
+      "fi": "Väliselvitys",
+      "sv": "Mellanredovisning"
     },
     "saving": {
       "fi": "Tallennetaan...",
@@ -32,9 +40,17 @@
       "fi": "merkkiä jäljellä",
       "sv": "tecken kvar"
     },
-    "savehelp": {
+    "savehelp-hakemus": {
       "fi": "Kun hakemus on valmis, se lähetetään Opetushallitukseen käsiteltäväksi ennen hakuajan umpeutumista. Hakemusta voidaan muokata lähettämisen jälkeenkin aina hakuajan umpeutumiseen saakka. Järjestelmä lähettää käsittelyyn jätetystä hakemuksesta vahvistusviestin myös hakijaorganisaation viralliseen sähköpostiosoitteeseen ja allekirjoitusoikeuden omaavalle henkilölle. Valmista hakemusta voi katsella vahvistusviestissä olevan linkin kautta.",
       "sv": "Ansökan kan ändras också efter att den har skickats, ända till ansökningstidens slut. Systemet skickar ett bekräftelsemeddelande om att ansökan har kommit fram också till sökandeorganisationens officiella postadress och till den person som har namnteckningsrätt. Man kan titta på den färdiga ansökan genom en länk i bekräftelsemeddelandet."
+    },
+    "savehelp-loppuselvitys": {
+      "fi": "Kun loppuselvitys on valmis, se lähetetään Opetushallitukseen käsiteltäväksi. Loppuselvitystä voidaan muokata lähettämisen jälkeenkin aina loppuselvityksen umpeutumiseen saakka.",
+      "sv": "TODO Ansökan kan ändras också efter att den har skickats, ända till ansökningstidens slut. Systemet skickar ett bekräftelsemeddelande om att ansökan har kommit fram också till sökandeorganisationens officiella postadress och till den person som har namnteckningsrätt. Man kan titta på den färdiga ansökan genom en länk i bekräftelsemeddelandet."
+    },
+    "savehelp-valiselvitys": {
+      "fi": "Kun väliselvitys on valmis, se lähetetään Opetushallitukseen käsiteltäväksi ennen hakuajan umpeutumista.",
+      "sv": "TODO Ansökan kan ändras också efter att den har skickats, ända till ansökningstidens slut. Systemet skickar ett bekräftelsemeddelande om att ansökan har kommit fram också till sökandeorganisationens officiella postadress och till den person som har namnteckningsrätt. Man kan titta på den färdiga ansökan genom en länk i bekräftelsemeddelandet."
     },
     "change-request-response": {
       "fi": "Lähetä täydennys käsiteltäväksi",

@@ -15,8 +15,7 @@ import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'
 
 export default class VaForm extends React.Component {
   render() {
-    const controller = this.props.controller
-    const state = this.props.state
+    const {controller, state, hakemusType} = this.props
     const registerNumber = _.get(state.saveStatus.savedObject, "register-number", undefined)
     const registerNumberDisplay = <VaHakemusRegisterNumber key="register-number"
                                                            registerNumber={registerNumber}
@@ -37,6 +36,7 @@ export default class VaForm extends React.Component {
         />
         <VaFormTopbar controller={controller}
                       state={state}
+                      hakemusType={hakemusType}
         />
         <FormContainer controller={controller}
                        state={state}

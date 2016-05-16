@@ -13,17 +13,15 @@ import FakeFormState from '../form/FakeFormState.js'
 
 export default class FormEditor extends Component {
   render() {
-    const avustushaku = this.props.avustushaku
-    const translations = this.props.translations
-    const koodistos = this.props.koodistos
+    const {avustushaku, translations, koodistos, formDraft, onFormChange} = this.props
     const hakuAdminController = this.props.controller
     const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
-    const formDraftJson = this.parseJson(this.props.formDraft)
+    const formDraftJson = this.parseJson(formDraft)
     const formEditedCallback = (newDraftJson, operationResult) => {
       if (operationResult && operationResult.fieldType === "koodistoField") {
         hakuAdminController.ensureKoodistosLoaded()
       }
-      hakuAdminController.formOnChangeListener(avustushaku, newDraftJson)
+      onFormChange(avustushaku, newDraftJson)
     }
     const formEditorController = new FormEditorController({
       formDraftJson: formDraftJson,

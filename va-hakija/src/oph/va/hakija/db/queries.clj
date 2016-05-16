@@ -4,6 +4,8 @@
 (defquery health-check "sql/healthcheck.sql")
 
 (defquery create-hakemus<! "sql/hakemus/create.sql")
+(defquery update-hakemus-parent-id! "sql/hakemus/update-parent-id.sql")
+(defquery find-by-parent-id-and-hakemus-type "sql/hakemus/find-by-parent-id-and-hakemus-type.sql")
 (defquery get-hakemus-by-user-id "sql/hakemus/get_by_user_id.sql")
 (defquery list-hakemus-change-requests-by-user-id "sql/hakemus/list-change-requests-by-user-id.sql")
 (defquery update-hakemus-submission<! "sql/hakemus/update-submission.sql")

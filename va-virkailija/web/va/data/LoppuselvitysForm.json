@@ -1,0 +1,427 @@
+{
+  "content": [
+    {
+      "fieldClass": "infoElement",
+      "id": "name",
+      "fieldType": "h1"
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "applicant-info",
+      "fieldType": "theme",
+      "children": [
+        {
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Kirjoita lyhyesti yhteenveto hankkeen toiminnasta, tavoitteista ja tuloksista.",
+            "sv": "Ohje på svenska"
+          },
+          "label": {
+            "fi": "Lyhyt yhteenveto hankkeesta",
+            "sv": "På svenska"
+          },
+          "id": "textArea-0",
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "params": {
+            "size": "small",
+            "maxlength": 2000
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Ohje ekaan",
+            "sv": "Ohje på svenska"
+          },
+          "label": {
+            "fi": "Miten hanke on käytännössä toteutettu? Työnjako ja aikataulu",
+            "sv": "På svenska"
+          },
+          "id": "textArea-2",
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "h3-1",
+          "fieldType": "h3",
+          "params": {},
+          "text": {
+            "fi": "TAVOITTEET, TOIMINTA JA TULOKSET",
+            "sv": ""
+          }
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "project-description",
+          "fieldType": "growingFieldset",
+          "children": [
+            {
+              "fieldClass": "wrapperElement",
+              "id": "project-description-1",
+              "fieldType": "growingFieldsetChild",
+              "children": [
+                {
+                  "params": {
+                    "size": "extra-small",
+                    "maxlength": 1000
+                  },
+                  "fieldClass": "formField",
+                  "helpText": {
+                    "fi": "Hankkeen tavoitteet kuvataan kokonaisuuksina, joissa kunkin tavoitteen kuvaukseen liitetään kuvaus siihen liittyvästä toiminnasta hankkeessa sekä tämän seurauksena saavutetu tulokset. Tavoitteita voidaan lisätä tarpeen mukaan.",
+                    "sv": "Projektets mål beskrivs som helheter. För varje mål görs en beskrivning över verksamheten och vad man önskar uppnå för resultat. Man kan lägga till mål efter behov"
+                  },
+                  "label": {
+                    "fi": "Hankkeen/toiminnan tavoite",
+                    "sv": "Mål"
+                  },
+                  "id": "project-description.project-description-1.goal",
+                  "required": true,
+                  "fieldType": "textArea"
+                },
+                {
+                  "params": {
+                    "size": "extra-small",
+                    "maxlength": 1000
+                  },
+                  "fieldClass": "formField",
+                  "helpText": {
+                    "fi": "",
+                    "sv": ""
+                  },
+                  "label": {
+                    "fi": "Toiminta, jolla tavoitteeseen on pyritty",
+                    "sv": "SV-Verksamhet"
+                  },
+                  "id": "project-description.project-description-1.activity",
+                  "required": true,
+                  "fieldType": "textArea"
+                },
+                {
+                  "params": {
+                    "size": "extra-small",
+                    "maxlength": 1000
+                  },
+                  "fieldClass": "formField",
+                  "helpText": {
+                    "fi": "",
+                    "sv": ""
+                  },
+                  "label": {
+                    "fi": "Konkreettiset tulokset, jotka tavoitteen osalta saavutettiin",
+                    "sv": "SV-Konkreta resultat, som man vill uppnå i projektet"
+                  },
+                  "id": "project-description.project-description-1.result",
+                  "required": true,
+                  "fieldType": "textArea"
+                }
+              ]
+            }
+          ],
+          "params": {
+            "showOnlyFirstLabels": false
+          },
+          "label": {
+            "fi": "",
+            "sv": ""
+          }
+        },
+        {
+          "params": {
+            "size": "small",
+            "maxlength": 1500
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "label": {
+            "fi": "Miten hankeen toimintaa, tuloksia ja vaikutuksia on arvioitu?",
+            "sv": ""
+          },
+          "id": "textArea-1",
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "label": {
+            "fi": "Miten hankkeesta/toiminnasta on tiedotettu?",
+            "sv": ""
+          },
+          "id": "textArea-3",
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "h3-0",
+          "fieldType": "h3",
+          "params": {},
+          "text": {
+            "fi": "TUOTOKSET",
+            "sv": ""
+          }
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "project-outcomes",
+          "fieldType": "growingFieldset",
+          "children": [
+            {
+              "fieldClass": "wrapperElement",
+              "id": "project-outcomes-1",
+              "fieldType": "growingFieldsetChild",
+              "children": [
+                {
+                  "params": {},
+                  "fieldClass": "formField",
+                  "helpText": {
+                    "fi": "",
+                    "sv": ""
+                  },
+                  "label": {
+                    "fi": "Tuotokset",
+                    "sv": ""
+                  },
+                  "id": "project-outcomes.project-outcomes-1.outcome-type",
+                  "options": [
+                    {
+                      "value": "toimintamalli",
+                      "label": {
+                        "fi": "Toimintamalli",
+                        "sv": ""
+                      }
+                    },
+                    {
+                      "value": "raportti",
+                      "label": {
+                        "fi": "Raportti",
+                        "sv": ""
+                      }
+                    },
+                    {
+                      "value": "julkaisut-www-sivu-yms",
+                      "label": {
+                        "fi": "Julkaisut, www-sivu, yms.",
+                        "sv": ""
+                      }
+                    },
+                    {
+                      "value": "muu-tuotos",
+                      "label": {
+                        "fi": "Muu tuotos",
+                        "sv": ""
+                      }
+                    }
+                  ],
+                  "required": true,
+                  "fieldType": "dropdown"
+                },
+                {
+                  "params": {
+                    "size": "extra-small",
+                    "maxlength": 1000
+                  },
+                  "fieldClass": "formField",
+                  "helpText": {
+                    "fi": "Hankkeen tavoitteet kuvataan kokonaisuuksina, joissa kunkin tavoitteen kuvaukseen liitetään kuvaus siihen liittyvästä toiminnasta hankkeessa sekä tämän seurauksena tavoiteltu tulos. Tavoitteita voidaan lisätä tarpeen mukaan.",
+                    "sv": "Projektets mål beskrivs som helheter. För varje mål görs en beskrivning över verksamheten och vad man önskar uppnå för resultat. Man kan lägga till mål efter behov"
+                  },
+                  "label": {
+                    "fi": "Kuvaus",
+                    "sv": "SV-Kuvaus"
+                  },
+                  "id": "project-outcomes.project-outcomes-1.description",
+                  "required": true,
+                  "fieldType": "textArea"
+                },
+                {
+                  "params": {
+                    "size": "extra-small",
+                    "maxlength": 1000
+                  },
+                  "fieldClass": "formField",
+                  "helpText": {
+                    "fi": "",
+                    "sv": ""
+                  },
+                  "label": {
+                    "fi": "Saatavuustiedot, www-osoite tms.",
+                    "sv": "SV-Verksamhet"
+                  },
+                  "id": "project-outcomes.project-outcomes-1.address",
+                  "required": true,
+                  "fieldType": "textArea"
+                },
+                {
+                  "params": {
+                    "size": "extra-small",
+                    "maxlength": 1000
+                  },
+                  "fieldClass": "formField",
+                  "helpText": {
+                    "fi": "",
+                    "sv": ""
+                  },
+                  "label": {
+                    "fi": "LIsätietoja",
+                    "sv": "SV-Konkreta resultat, som man vill uppnå i projektet"
+                  },
+                  "id": "project-outcomes.project-outcomes-1.something",
+                  "required": true,
+                  "fieldType": "textArea"
+                }
+              ]
+            }
+          ],
+          "params": {
+            "showOnlyFirstLabels": false
+          },
+          "label": {
+            "fi": "",
+            "sv": ""
+          }
+        },
+        {
+          "params": {},
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "label": {
+            "fi": "Hankkeesta/toiminnasta on esitetty ehdotuksia OPH:n hyvien käytäntöjen portaaliin.",
+            "sv": ""
+          },
+          "id": "radioButton-0",
+          "options": [
+            {
+              "value": "kyllae",
+              "label": {
+                "fi": "Kyllä",
+                "sv": ""
+              }
+            },
+            {
+              "value": "ei",
+              "label": {
+                "fi": "Ei",
+                "sv": ""
+              }
+            }
+          ],
+          "required": true,
+          "fieldType": "radioButton"
+        },
+        {
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Ohje ekaan",
+            "sv": "Ohje på svenska"
+          },
+          "label": {
+            "fi": "Mikäli kyllä, ehdotuksen tai hyväksytyn käytännön tunnus",
+            "sv": "På svenska"
+          },
+          "id": "textArea-6",
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "label": {
+            "fi": "Lisätietoja",
+            "sv": "Tillägsinformation"
+          },
+          "id": "textArea-4",
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "params": {},
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "label": {
+            "fi": "Kirjanpidon pääkirjaote",
+            "sv": "Kirjanpidon pääkirjaote"
+          },
+          "id": "namedAttachment-0",
+          "required": true,
+          "fieldType": "namedAttachment"
+        }
+      ],
+      "label": {
+        "fi": "Loppuselvitys",
+        "sv": "Loppuselvitys"
+      }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "repeating-attachment-other",
+      "fieldType": "growingFieldset",
+      "children": [
+        {
+          "fieldClass": "wrapperElement",
+          "id": "repeating-attachment-otherliite-1",
+          "fieldType": "growingFieldsetChild",
+          "children": [
+            {
+              "params": {},
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "label": {
+                "fi": "Muu liite",
+                "sv": "Annan bilaga"
+              },
+              "id": "repeating-attachment-other.repeating-attachment-otherliite-1.attachment",
+              "required": false,
+              "fieldType": "namedAttachment"
+            }
+          ]
+        }
+      ],
+      "params": {
+        "showOnlyFirstLabels": false
+      },
+      "label": {
+        "fi": "",
+        "sv": ""
+      }
+    }
+  ],
+  "rules": [],
+  "created_at": "2016-05-12T05:24:23Z"
+}
