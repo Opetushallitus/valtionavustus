@@ -66,7 +66,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
   const answers = hakemus.answers
   const iban = _.get(InputValueStorage.readValues(answers, 'iban'), '[0].value', '')
   const bic = _.get(InputValueStorage.readValues(answers, 'bic') , '[0].value', '')
-  const budgetItems = FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
+  FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
      .filter(budgetItem => budgetItem.params.incrementsTotal)
      .map(budgetItem => _.extend(budgetItem, {
        original: findCost(formContent, hakemus.answers, budgetItem),
