@@ -135,6 +135,18 @@
             (not-found))))
 )
 
+
+(defn- get-selvitys []
+  (GET* "/:avustushaku-id/hakemus/:hakemus-id/selvitys" [hakemus-id avustushaku-id :as request]
+        :path-params [hakemus-id :- Long avustushaku-id :- Long]
+        :return s/Any
+        :summary "Return all relevant selvitys data including answers, form and attachments"
+        (let [identity (authentication/get-identity request)]
+          (if-let [response (hakija-api/get-selvitysdata avustushaku-id hakemus-id)]
+            (ok response)
+            (not-found))))
+)
+
 (defn- post-change-request-email []
 
   (POST* "/:avustushaku-id/change-request-email" []
@@ -159,6 +171,7 @@
   (put-avustushaku)
   (post-avustushaku)
   (get-avustushaku)
+  (get-selvitys)
   (post-change-request-email)
 
   (GET* "/paatos/:hakemus-id" [hakemus-id :as request]

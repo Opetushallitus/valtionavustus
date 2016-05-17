@@ -34,7 +34,7 @@ export default class HakemusArviointi extends Component {
     const comments = hakemus.comments
     const loadingComments = this.props.loadingComments
     const showOthersScores = this.props.showOthersScores
-    
+
     return (
      <div id="arviointi-tab">
        <PresenterComment controller={controller} hakemus={hakemus}/>

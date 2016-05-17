@@ -14,7 +14,6 @@ import HakemusListing from './hakemus-list/HakemusListing.jsx'
 import HakemusDetails from './hakemus-details/HakemusDetails.jsx'
 import HakemusHakijaSidePreviewLink from './hakemus-details/HakemusHakijaSidePreviewLink.jsx'
 import HakemusDecisionLink from './hakemus-details/HakemusDecisionLink.jsx'
-import SelvitysLink from './hakemus-details/SelvitysLink.jsx'
 import AvustushakuDropdown from './avustushaku/AvustushakuDropdown.jsx'
 import ExcelExportLink from './avustushaku/ExcelExportLink.jsx'
 import HakemusFilter from './hakemus-filter/HakemusFilter.jsx'
@@ -76,8 +75,6 @@ export default class App extends Component {
           <div hidden={!hasSelected} id="footer">
             <HakemusHakijaSidePreviewLink hakemus={selectedHakemus} avustushaku={avustushaku} />
             <HakemusDecisionLink hakemus={selectedHakemus} avustushaku={avustushaku} />
-            <SelvitysLink avustushaku={avustushaku} hakemus={selectedHakemus} selvitysType="loppuselvitys" label="Loppuselvitys"/>
-            <SelvitysLink avustushaku={avustushaku} hakemus={selectedHakemus} selvitysType="valiselvitys" label="Väliselvitys"/>
           </div>
         </section>
       </section>

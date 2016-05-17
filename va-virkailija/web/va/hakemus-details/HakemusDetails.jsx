@@ -2,18 +2,9 @@ import React, {Component} from 'react'
 
 import HakemusPreview from './HakemusPreview.jsx'
 import HakemusArviointi from './HakemusArviointi.jsx'
+import Loppuselvitys from './Loppuselvitys.jsx'
+import Valiselvitys from './Valiselvitys.jsx'
 
-class HakemusValiselvitys extends Component {
-  render() {
-    return <div>Väliselvitys</div>
-  }
-}
-
-class HakemusLoppuselvitys extends Component {
-  render() {
-    return <div>Loppuselvitys</div>
-  }
-}
 
 export default class HakemusDetails extends Component {
   render() {
@@ -62,9 +53,9 @@ export default class HakemusDetails extends Component {
                                    controller={controller}/>
 
         case 'valiselvitys':
-          return <HakemusValiselvitys/>
+          return <Valiselvitys hakemus={hakemus} avustushaku={avustushaku} translations={translations}/>
         case 'loppuselvitys':
-          return <HakemusLoppuselvitys/>
+          return <Loppuselvitys hakemus={hakemus} avustushaku={avustushaku} translations={translations}/>
         default:
           throw new Error("Bad subTab selection '" + tabName + "'")
       }

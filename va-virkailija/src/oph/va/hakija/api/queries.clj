@@ -18,6 +18,7 @@
 (defquery delete-avustushaku-role! "sql/hakija/avustushaku/delete-role.sql")
 (defquery get-avustushaku-roles "sql/hakija/avustushaku/get-roles.sql")
 (defquery list-hakemukset-by-avustushaku "sql/hakija/hakemus/list-by-avustushaku.sql")
+(defquery get-by-type-and-parent-id "sql/hakija/hakemus/get-by-type-and-parent-id.sql")
 (defquery list-hakemus-paatos-email-statuses "sql/hakija/hakemus/list-hakemus-paatokset-by-avustushaku.sql")
 (defquery copy-form<! "sql/hakija/form/copy.sql")
 (defquery get-form-by-avustushaku "sql/hakija/form/get-by-avustushaku.sql")

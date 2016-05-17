@@ -31,6 +31,8 @@ const events = {
   saveCompleted: 'saveCompleted',
   loadComments: 'loadcomments',
   commentsLoaded: 'commentsLoaded',
+  loadSelvitys: 'loadSelvitys',
+  selvitysLoaded: 'selvitysLoaded',
   addComment: 'addComment',
   scoresLoaded: 'scoresLoaded',
   setOverriddenAnswerValue: 'setOverriddenAnswerValue',
@@ -106,6 +108,8 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted,
       [dispatcher.stream(events.loadComments)], this.onLoadComments,
       [dispatcher.stream(events.commentsLoaded)], this.onCommentsLoaded,
+      [dispatcher.stream(events.loadSelvitys)], this.onLoadSelvitys,
+      [dispatcher.stream(events.selvitysLoaded)], this.onSelvitysLoaded,
       [dispatcher.stream(events.addComment)], this.onAddComment,
       [dispatcher.stream(events.scoresLoaded)], this.onScoresLoaded,
       [dispatcher.stream(events.setOverriddenAnswerValue)], this.onSetOverriddenAnswerValue,
@@ -119,7 +123,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.gotoSavedSearch)], this.onGotoSavedSearch,
       [dispatcher.stream(events.toggleHakemusFilter)], this.onToggleHakemusFilter,
       [dispatcher.stream(events.clearFilters)], this.onClearFilters,
-      [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab,
+      [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab
     )
   }
 
@@ -129,6 +133,10 @@ export default class HakemustenArviointiController {
 
   static commentsUrl(state) {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + state.selectedHakemus.id + "/comments"
+  }
+
+  static selvitysUrl(state) {
+    return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/hakemus/" + state.selectedHakemus.id + "/selvitys"
   }
 
   static scoresUrl(state, hakemusId) {
@@ -185,6 +193,7 @@ export default class HakemustenArviointiController {
     }
     this.loadScores(state, hakemusIdToSelect)
     this.loadComments()
+    this.loadSelvitys()
     this.loadChangeRequests(state, hakemusIdToSelect)
     this.loadAttachmentVersions(state, hakemusIdToSelect)
     if(state.personSelectHakemusId!=null){
@@ -297,6 +306,27 @@ export default class HakemustenArviointiController {
       state.selectedHakemus.comments = comments
     }
     state.loadingComments = false
+    return state
+  }
+
+
+  onLoadSelvitys(state) {
+    if (!state.loadingSelvitys && state.selectedHakemus) {
+      state.loadingSelvitys = true
+      HttpUtil.get(HakemustenArviointiController.selvitysUrl(state)).then(selvitys => {
+        dispatcher.push(events.selvitysLoaded, selvitys)
+      })
+    }
+    return state
+  }
+
+  onSelvitysLoaded(state, selvitys) {
+    if (state.selectedHakemus) {
+      state.selectedHakemus.selvitys = selvitys
+      state.selectedHakemus.selvitys.loppuselvitysForm = Immutable(state.selectedHakemus.selvitys.loppuselvitysForm)
+      state.selectedHakemus.selvitys.valiselvitysForm = Immutable(state.selectedHakemus.selvitys.valiselvitysForm)
+    }
+    state.loadingSelvitys = false
     return state
   }
 
@@ -548,6 +578,10 @@ export default class HakemustenArviointiController {
 
   loadComments() {
     dispatcher.push(events.loadComments)
+  }
+
+  loadSelvitys() {
+    dispatcher.push(events.loadSelvitys)
   }
 
   addComment(newComment) {

@@ -194,6 +194,27 @@
      :budget-total-sum (reduce + (map :budget_total hakemukset))
      :budget-oph-share-sum (reduce + (map :budget_oph_share hakemukset))}))
 
+
+(defn get-selvitysdata [avustushaku-id hakemus-id]
+  (let [avustushaku (get-avustushaku avustushaku-id)
+        loppuselvitys-form-id (:form_loppuselvitys avustushaku)
+        loppuselvitys-form (get-form-by-id loppuselvitys-form-id)
+        loppuselvitys (first (exec :form-db hakija-queries/get-by-type-and-parent-id {:parent_id hakemus-id :hakemus_type "loppuselvitys"}))
+        valiselvitys-form-id (:form_valiselvitys avustushaku)
+        valiselvitys-form (get-form-by-id valiselvitys-form-id)
+        valiselvitys (first (exec :form-db hakija-queries/get-by-type-and-parent-id {:parent_id hakemus-id :hakemus_type "valiselvitys"}))
+        attachments (exec :form-db hakija-queries/list-attachments-by-avustushaku {:avustushaku_id avustushaku-id})]
+    {
+     :loppuselvitysForm (form->json loppuselvitys-form)
+     :valiselvitysForm (form->json valiselvitys-form)
+     :loppuselvitys (hakemus->json loppuselvitys)
+     :valiselvitys (hakemus->json valiselvitys)
+     :attachments (->> attachments
+                       (partition-by (fn [attachment] (:hakemus_id attachment)))
+                       (mapv convert-attachment-group)
+                       (into {}))
+     }))
+
 (defn get-hakemusdata [hakemus-id]
   (let [hakemus (first (exec :form-db hakija-queries/get-hakemus-with-answers {:id hakemus-id}))
         avustushaku-id (:avustushaku hakemus)
