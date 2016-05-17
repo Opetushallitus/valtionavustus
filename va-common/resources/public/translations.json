@@ -447,8 +447,8 @@
       "sv":"Projektets nettoutgifter sammanlagt"
     },
     "rahoitus-yhteensa": {
-      "fi":"Hankkeen rahoitus yhteensä",
-      "sv":"Projektets finansiering sammanlagt"
+      "fi":"Hankkeen muu rahoitus yhteensä",
+      "sv":"Projektets övrig finansiering sammanlagt"
     },
     "hankkeen-menot": {
       "fi":"Hankkeen menot",
