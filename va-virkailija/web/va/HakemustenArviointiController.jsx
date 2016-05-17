@@ -83,7 +83,8 @@ export default class HakemustenArviointiController {
         serverError: ""
       },
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")).map(Immutable),
-      userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo"))
+      userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
+      subTab: 'arviointi'
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
