@@ -41,7 +41,8 @@ const events = {
   gotoSavedSearch: 'gotoSavedSearch',
   toggleHakemusFilter:'toggleHakemusFilter',
   togglePersonSelect:'togglePersonSelect',
-  clearFilters:'clearFilters'
+  clearFilters:'clearFilters',
+  selectEditorSubTab: 'selectEditorSubTab'
 }
 
 export default class HakemustenArviointiController {
@@ -116,7 +117,8 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.setSorter)], this.onSorterSet,
       [dispatcher.stream(events.gotoSavedSearch)], this.onGotoSavedSearch,
       [dispatcher.stream(events.toggleHakemusFilter)], this.onToggleHakemusFilter,
-      [dispatcher.stream(events.clearFilters)], this.onClearFilters
+      [dispatcher.stream(events.clearFilters)], this.onClearFilters,
+      [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab,
     )
   }
 
@@ -197,6 +199,10 @@ export default class HakemustenArviointiController {
       window.scrollTo(0, selected.offsetTop)
     }, 300)
     return state
+  }
+
+  selectEditorSubtab(subTabToSelect) {
+    dispatcher.push(events.selectEditorSubTab, subTabToSelect)
   }
 
   onToggleHakemusFilter(state){
@@ -581,4 +587,14 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.clearFilters)
   }
 
+  onSelectEditorSubTab(state, subTabToSelect) {
+    state.subTab = subTabToSelect
+    if (!_.isUndefined(history.pushState)) {
+      const haku = state.hakuData.avustushaku.id
+      const hakemusId = state.selectedHakemus.id
+      const newUrl = `/avustushaku/${haku}/hakemus/${hakemusId}/${subTabToSelect}/${location.search}`
+      history.pushState({}, window.title, newUrl)
+    }
+    return state
+  }
 }

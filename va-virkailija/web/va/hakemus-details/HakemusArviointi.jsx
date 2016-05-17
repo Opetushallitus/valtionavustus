@@ -35,7 +35,14 @@ export default class HakemusArviointi extends Component {
     const loadingComments = this.props.loadingComments
     const showOthersScores = this.props.showOthersScores
     const subTab = this.props.subTab
-    const tab = (name, label) => <span className={subTab === name ? 'selected' : ''} >{label}</span>
+    const tab = (name, label) => <span className={subTab === name ? 'selected' : ''} onClick={createSubTabSelector(name)}>{label}</span>
+
+    function createSubTabSelector(subTabToSelect) {
+      return e => {
+        e.preventDefault()
+        controller.selectEditorSubtab(subTabToSelect)
+      }
+    }
 
     return (
      <div id="hakemus-arviointi">
