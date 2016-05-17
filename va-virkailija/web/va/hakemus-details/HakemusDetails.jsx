@@ -1,7 +1,19 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 
 import HakemusPreview from './HakemusPreview.jsx'
 import HakemusArviointi from './HakemusArviointi.jsx'
+
+class HakemusValiselvitys extends Component {
+  render() {
+    return <div>Väliselvitys</div>
+  }
+}
+
+class HakemusLoppuselvitys extends Component {
+  render() {
+    return <div>Loppuselvitys</div>
+  }
+}
 
 export default class HakemusDetails extends Component {
   render() {
@@ -33,23 +45,52 @@ export default class HakemusDetails extends Component {
     }
 
     const CloseButton = () => <button className="close" onClick={onClose} style={{position:"fixed",zIndex:"20000",marginTop:"-5",marginLeft:"-40"}}>&times;</button>
-    const ToggleButton = () => <button className="close" onClick={onToggle} style={{position:"fixed",zIndex:"20000",marginTop:"30",marginLeft:"-40"}}>↕</button>
+    const ToggleButton = () => <button className="close" onClick={onToggle} style={{position:"fixed",zIndex:"20000",marginTop:"30",marginLeft:"-40"}}> ↕</button>
+
+    const getSubTab = tabName => {
+      switch (tabName) {
+        case 'arviointi':
+          return <HakemusArviointi hakemus={hakemus}
+                                   avustushaku={avustushaku}
+                                   hakuData={hakuData}
+                                   translations={translations}
+                                   privileges={hakuData.privileges}
+                                   userInfo={userInfo}
+                                   loadingComments={loadingComments}
+                                   showOthersScores={showOthersScores}
+                                   subTab={subTab}
+                                   controller={controller}/>
+
+        case 'valiselvitys':
+          return <HakemusValiselvitys/>
+        case 'loppuselvitys':
+          return <HakemusLoppuselvitys/>
+        default:
+          throw new Error("Bad subTab selection '" + tabName + "'")
+      }
+    }
+    const tab = (name, label) => <span className={subTab === name ? 'selected' : ''} onClick={createSubTabSelector(name)}>{label}</span>
+
+    function createSubTabSelector(subTabToSelect) {
+      return e => {
+        e.preventDefault()
+        controller.selectEditorSubtab(subTabToSelect)
+      }
+    }
 
     return (
       <div hidden={hidden} id="hakemus-details">
         <CloseButton/>
         <ToggleButton/>
         <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
-        <HakemusArviointi hakemus={hakemus}
-                          avustushaku={avustushaku}
-                          hakuData={hakuData}
-                          translations={translations}
-                          privileges={hakuData.privileges}
-                          userInfo={userInfo}
-                          loadingComments={loadingComments}
-                          showOthersScores={showOthersScores}
-                          subTab={subTab}
-                          controller={controller}/>
+        <div id="hakemus-arviointi">
+          <div id="editor-subtab-selector" className="section-container">
+            {tab('arviointi', 'Arviointi')}
+            {tab('valiselvitys', 'Väliselvitys')}
+            {tab('loppuselvitys', 'Loppuselvitys')}
+          </div>
+          <div id="tab-conent">{getSubTab(subTab)}</div>
+        </div>
       </div>
     )
   }

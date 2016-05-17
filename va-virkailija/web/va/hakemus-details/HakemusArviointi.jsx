@@ -34,37 +34,21 @@ export default class HakemusArviointi extends Component {
     const comments = hakemus.comments
     const loadingComments = this.props.loadingComments
     const showOthersScores = this.props.showOthersScores
-    const subTab = this.props.subTab
-    const tab = (name, label) => <span className={subTab === name ? 'selected' : ''} onClick={createSubTabSelector(name)}>{label}</span>
-
-    function createSubTabSelector(subTabToSelect) {
-      return e => {
-        e.preventDefault()
-        controller.selectEditorSubtab(subTabToSelect)
-      }
-    }
-
+    
     return (
-     <div id="hakemus-arviointi">
-       <div id="editor-subtab-selector" className="section-container">
-         {tab('arviointi', 'Arviointi')}
-         {tab('valiselvitys', 'Väliselvitys')}
-         {tab('loppuselvitys', 'Loppuselvitys')}
-       </div>
-       <div id="arviointi-tab">
-         <PresenterComment controller={controller} hakemus={hakemus}/>
-         <ChooseRahoitusalue controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
-         <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku}
-                         allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
-         <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments} allowHakemusCommenting={allowHakemusCommenting}/>
-         <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
-         <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
-         <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} />
-         <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
-         <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
-         <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
-         <ChangeLog hakemus={hakemus}/>
-       </div>
+     <div id="arviointi-tab">
+       <PresenterComment controller={controller} hakemus={hakemus}/>
+       <ChooseRahoitusalue controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
+       <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku}
+                       allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
+       <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments} allowHakemusCommenting={allowHakemusCommenting}/>
+       <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} />
+       <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
+       <ChangeLog hakemus={hakemus}/>
      </div>
     )
   }
