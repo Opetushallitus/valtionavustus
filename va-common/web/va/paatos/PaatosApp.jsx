@@ -72,10 +72,10 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
        original: findCost(formContent, hakemus.answers, budgetItem),
        overridden: findCost(formContent, hakemus.arvio['overridden-answers'], budgetItem)
      }))
-  const totalCosts = formatPrice(hakemus.arvio.useDetailedCosts ? _.sum(budgetItems.map(i=>Number(i.overridden))) : hakemus.arvio.costsGranted)
   const totalGranted = hakemus.arvio['budget-granted']
   const koulutusosiot = hakemus.answers.find(item => item.key === 'koulutusosiot')
   const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
+  const ophFinancingPercentage = 100-selfFinancingPercentage
   return (
      <section>
        <Section title="paatos" L={L}>
@@ -83,9 +83,9 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
          <p>{hakemus['register-number']} {hakemus['project-name']}
          </p>
          <p><L translationKey="paatos-myonnetty-1" /> {formatPrice(totalGranted)}&nbsp;.&nbsp;
-           <L translationKey="paatos-myonnetty-2" /> {totalCosts}.
+           <L translationKey="paatos-myonnetty-2" /> {formatPrice(Math.ceil(totalGranted/ophFinancingPercentage*100))}.
          </p>
-         <p><L translationKey="paatos-myonnetty-3" /> {selfFinancingPercentage>0 ? <span><L translationKey="valtionavustusprosentti-on" /> {100-selfFinancingPercentage}%</span> : null}</p>
+         <p><L translationKey="paatos-myonnetty-3" /> {selfFinancingPercentage>0 ? <span><L translationKey="valtionavustusprosentti-on" /> {ophFinancingPercentage}%</span> : null}</p>
          <DecisionContent avustushaku={avustushaku} id="myonteinenlisateksti" lang={L.lang}/>
          <p>
            <L translationKey="paatos-myonnetty-4" />
