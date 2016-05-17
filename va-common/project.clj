@@ -78,6 +78,9 @@
   :uberjar-exclusions [#".*"]                               ;; Kludge to make top-level "lein sub uberjar" faster
   :auto-clean false
 
+  :auto {:default {:paths ["src", "resources", "spec"]
+                   :file-pattern #"\.(clj|sql|json)$"}}
+
   :aliases {"dbmigrate" ["run" "-m" "oph.va.db.migrations/migrate"]
             "dbclear" ["run" "-m" "oph.soresu.common.db/clear-db!"]
             "buildfront" ^{:doc "Build frontend code with npm"} ["shell" "npm" "install"]})
