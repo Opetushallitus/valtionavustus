@@ -51,6 +51,14 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     return VaTraineeDayCalculator.formatFloat(floatValue)
   }
 
+  static formatIntString(stringValue) {
+    if(stringValue === "") {
+      return stringValue
+    }
+    const intValue = parseInt(stringValue)
+    return intValue ? intValue.toString(intValue) : "0"
+  }
+
   static readSubValue(value, fieldId, type) {
     return InputValueStorage.readValue({}, value, fieldId + "." + type)
   }
@@ -80,7 +88,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         scopeValue = value
       }
       if(event.target.id.endsWith("person-count")) {
-        value = parseInt(value) ? parseInt(value).toString() : ""
+        value = VaTraineeDayCalculator.formatIntString(value)
         personCountValue = value
       }
       const fieldUpdate = {

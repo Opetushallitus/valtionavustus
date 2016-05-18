@@ -46,7 +46,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
                               onChange={onChange(VaTraineeDayCalculator.subField(field, "scope"))}
                               value={VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope") }
                               translations={{}}
-                              hasError={props.hasError && !(parseFloat(VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope").replace(",", ".")) > 0)}
+                              hasError={props.hasError && !(parseFloat(VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope").replace(",", ".")) >= 0)}
                               size="extra-extra-small"
                               lang={this.props.lang} />
             </td>
@@ -59,7 +59,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
                               onChange={onChange(VaTraineeDayCalculator.subField(field, "person-count"))}
                               value={VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count") }
                               translations={{}}
-                              hasError={props.hasError && !(parseInt(VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count")) > 0)}
+                              hasError={props.hasError && !(parseInt(VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count")) >= 0)}
                               size="extra-extra-small"
                               lang={this.props.lang} />
             </td>
