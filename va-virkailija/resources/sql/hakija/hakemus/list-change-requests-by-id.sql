@@ -4,5 +4,5 @@ select h.id, h.version, h.created_at,
        s.answers->'value' as answer_values, h.user_key, h.register_number
 from hakija.hakemukset h
   join hakija.form_submissions s on (h.form_submission_id = s.id and h.form_submission_version = s.version)
-where h.id = :id and h.status = 'pending_change_request' and h.last_status_change_at = h.created_at
+where h.id = :id and h.status in ('pending_change_request', 'officer_edit') and h.last_status_change_at = h.created_at
 order by h.version

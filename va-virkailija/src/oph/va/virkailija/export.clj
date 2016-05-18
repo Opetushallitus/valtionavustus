@@ -45,7 +45,8 @@
 
 (defn- valid-hakemus? [hakemus]
   (or (= (:status hakemus) "submitted")
-      (= (:status hakemus) "pending_change_request")))
+      (= (:status hakemus) "pending_change_request")
+      (= (:status hakemus) "officer_edit")))
 
 (defn- field->type [field]
   (let [add-options (fn [type-map]

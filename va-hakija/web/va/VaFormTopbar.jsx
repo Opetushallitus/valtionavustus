@@ -36,12 +36,10 @@ export default class VaFormTopbar extends React.Component {
     const openPreview = function() {
       window.open(previewUrl, "preview")
     }
-    const isChangeRequestResponse = function() {
-      return saveStatus.savedObject && saveStatus.savedObject.status === "pending_change_request"
-    }
-    const isSubmitted = function() {
-      return saveStatus.savedObject && saveStatus.savedObject.status === "submitted"
-    }
+    const isNormalEdit = () => ["new", "draft"].includes(_.get(saveStatus.savedObject, "status"))
+    const isChangeRequestResponse = () => ["pending_change_request"].includes(_.get(saveStatus.savedObject, "status"))
+    const isInVirkailijaEditMode = () => ["officer_edit"].includes(_.get(saveStatus.savedObject, "status"))
+    const isSubmitted = () => ["submitted"].includes(_.get(saveStatus.savedObject, "status"))
     const isSubmitDisabled = function() {
       return !(formIsValidOnClientSide && formIsValidOnServerSide && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state) || isSubmitted()
     }
@@ -56,13 +54,17 @@ export default class VaFormTopbar extends React.Component {
           <h1 id="topic"><LocalizedString translations={translations.form} translationKey="heading" lang={lang}/></h1>
           <div id="form-controls" hidden={preview}>
             <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang}/>
-            <span hidden={isChangeRequestResponse()} className="soresu-tooltip soresu-tooltip-down">
+            <span hidden={!isNormalEdit()} className="soresu-tooltip soresu-tooltip-down">
               <TextButton htmlId="submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey={submitTextKey} lang={lang} />
               <span>{helpText}</span>
             </span>
             <span hidden={!isChangeRequestResponse()} className="soresu-tooltip soresu-tooltip-down">
               <TextButton htmlId="change-request-response" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="change-request-response" lang={lang} />
               <span>{formTranslator.translate("change-request-response-help", lang)}</span>
+            </span>
+            <span hidden={!isInVirkailijaEditMode()} className="soresu-tooltip soresu-tooltip-down">
+              <TextButton htmlId="virkailija-edit-submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="virkailija-edit-submit" lang={lang} />
+              <span>{formTranslator.translate("virkailija-edit-submit-help", lang)}</span>
             </span>
             <span id="form-controls-devel" hidden={!configuration.develMode}>
               <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>

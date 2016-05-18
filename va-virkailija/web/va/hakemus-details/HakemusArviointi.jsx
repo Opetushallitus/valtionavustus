@@ -177,7 +177,8 @@ class ChangeRequest extends React.Component {
     const hakemus = this.props.hakemus
     const avustushaku = this.props.avustushaku
     const status = hakemus.status
-    const hasChangeRequired = status === 'pending_change_request'
+    const hasChangeRequired = status === 'pending_change_request' || status === 'officer_edit'
+    const changeRequestTitle = status === 'pending_change_request' ? "Täydennyspyyntö lähetetty" : "Virkailijan muokkaus avattu"
     const allowEditing = this.props.allowEditing
     const lastChangeRequest = _.last(hakemus.changeRequests)
     const lastChangeRequestText = lastChangeRequest ? lastChangeRequest["status-comment"] : ""
@@ -222,7 +223,7 @@ class ChangeRequest extends React.Component {
           </div>}
         </div>
         <div hidden={!hasChangeRequired}>
-          <div className="change-request-title">* Täydennyspyyntö lähetetty {lastChangeRequestTime}</div>
+          <div className="change-request-title">* {changeRequestTitle} {lastChangeRequestTime}</div>
           <pre className="change-request-text">{lastChangeRequestText}</pre>
         </div>
       </div>

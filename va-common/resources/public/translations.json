@@ -44,6 +44,14 @@
       "fi": "Muokkaa vain pyydettyjä kohtia. Lähettämisen jälkeen hakemus ei ole enää muokattavissa. Järjestelmä lähettää täydennetystä hakemuksesta vahvistusviestin myös hakijaorganisaation viralliseen sähköpostiosoitteeseen ja allekirjoitusoikeuden omaavalle henkilölle. Täydennettyä hakemusta voi katsella vahvistusviestissä olevan linkin kautta.",
       "sv": "Ändra bara begärda delar. När ansökan har sänts kan den inte längre ändras. Systemet skickar ett bekräftelsemeddelande om att ansökan har kompletterats också till sökandeorganisationens officiella postadress och till den person som har namnteckningsrätt. Du kan titta på den kompletterade ansökan genom en länk i bekräftelsemeddelandet."
     },
+    "virkailija-edit-submit": {
+      "fi": "Tallenna muutos",
+      "sv": "TODO SV Skicka kompletteringen"
+    },
+    "virkailija-edit-submit-help": {
+      "fi": "Vain virkailija saa tehdä muutoksia. Lähettämisen jälkeen hakemus ei ole enää muokattavissa. Järjestelmä ei lähetä täydennetystä hakemuksesta vahvistusviestejä.",
+      "sv": "TODO SV Ändra bara begärda delar. När ansökan har sänts kan den inte längre ändras. Systemet inte skickar några bekräftelsemeddelande."
+    },
     "has-ended": {
       "fi": "Hakuaika on päättynyt",
       "sv": "Ansökningstiden har slutats"
@@ -110,9 +118,13 @@
       "fi": "Diaarinumero",
       "sv": "Diarnummer"
     },
-    "change-request": {
+    "pending_change_request": {
       "fi": "Täydennyspyyntö",
       "sv": "Begäran om komplettering"
+    },
+    "officer_edit": {
+      "fi": "Virkailijan muokkaus",
+      "sv": "TODO SV Begäran om komplettering"
     }
   },
   "errors": {

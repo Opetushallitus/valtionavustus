@@ -86,7 +86,7 @@
 
 (s/defschema HakemusStatus
   "Status from the applicant point of view"
-  (s/enum "new" "draft" "submitted" "pending_change_request" "cancelled"))
+  (s/enum "new" "draft" "submitted" "pending_change_request" "officer_edit" "cancelled"))
 
 (s/defschema Attachment
   "Attachment metadata"
