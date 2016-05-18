@@ -46,11 +46,11 @@
     },
     "virkailija-edit-submit": {
       "fi": "Tallenna muutos",
-      "sv": "TODO SV Skicka kompletteringen"
+      "sv": "Spara ändringen"
     },
     "virkailija-edit-submit-help": {
       "fi": "Vain virkailija saa tehdä muutoksia. Lähettämisen jälkeen hakemus ei ole enää muokattavissa. Järjestelmä ei lähetä täydennetystä hakemuksesta vahvistusviestejä.",
-      "sv": "TODO SV Ändra bara begärda delar. När ansökan har sänts kan den inte längre ändras. Systemet inte skickar några bekräftelsemeddelande."
+      "sv": "Ändringar får bara göras av en tjänsteman. En sänd ansökan kan inte längre redigeras. Systemet sänder inte en bekräftelse över kompletterad ansökan."
     },
     "has-ended": {
       "fi": "Hakuaika on päättynyt",
