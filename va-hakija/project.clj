@@ -34,6 +34,5 @@
              :test    {:dependencies [[environ "1.0.2"]]}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.hakija.db.migrations/migrate" "db.migration"]
             "dbclear" ["run" "-m" "oph.soresu.common.db/clear-db!" "form-db" "hakija"]
-            "buildfront" ^{:doc "Build frontend code with npm"}
-            ["do" ["shell" "npm" "install"] ["shell" "npm" "run" "build"]]
+            "buildfront" ^{:doc "Build frontend code with npm"} ["do" ["shell" "npm" "install"] ["shell" "npm" "run" "build"]]
             "populate" ^{:doc "Generate applications"} ["run" "-m" "oph.va.hakija.cmd.populate"]})

@@ -3,6 +3,5 @@
              :configsecrets "../../valtionavustus-secret/config/secret-dev.edn"}}
  :test {:env {:config "config/test.edn"}}
  :prod {:env {:config "config/va-prod.edn"}}
- :ci {:env {:config "config/test.edn"}
-      :prep-tasks ["buildfront"]}
+ :ci {:env {:config "config/test.edn"}}
 }

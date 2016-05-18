@@ -40,9 +40,13 @@ function install_module() {
   cd ..
 }
 
-function uberjar() {
+function buildfront() {
   install_module soresu-form
   install_module va-common
+  time $LEIN with-profile ci do modules buildfront
+}
+
+function uberjar() {
   for m in va-hakija va-virkailija; do
     cd $m
     git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
@@ -66,8 +70,6 @@ function run_tests() {
     start_postgresql_in_docker
   fi
 
-  install_module soresu-form
-  install_module va-common
   lein_modules_spec_exit_code=0
   time $LEIN with-profile ci modules spec -f junit || lein_modules_spec_exit_code=$?
 
@@ -199,6 +201,9 @@ while [[ $# > 0 ]]; do
   case $key in
       clean)
       commands+=('clean')
+      ;;
+      buildfront)
+      commands+=('buildfront')
       ;;
       uberjar)
       commands+=('uberjar')
