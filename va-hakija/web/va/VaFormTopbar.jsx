@@ -36,19 +36,10 @@ export default class VaFormTopbar extends React.Component {
     const openPreview = function() {
       window.open(previewUrl, "preview")
     }
-    const isNormalEdit = function() {
-      return saveStatus.savedObject && (saveStatus.savedObject.status === "new" || saveStatus.savedObject.status === "draft")
-    }
-    const isChangeRequestResponse = function() {
-      return saveStatus.savedObject && saveStatus.savedObject.status === "pending_change_request"
-    }
-    const isInVirkailijaEditMode = function() {
-      return saveStatus.savedObject && saveStatus.savedObject.status === "officer_edit"
-    }
-    const isSubmitted = function() {
-      return saveStatus.savedObject && saveStatus.savedObject.status === "submitted"
-    }
-
+    const isNormalEdit = () => _.includes(["new", "draft"], _.get(saveStatus.savedObject, "status"))
+    const isChangeRequestResponse = () => "pending_change_request" === _.get(saveStatus.savedObject, "status")
+    const isInVirkailijaEditMode = () => "officer_edit" === _.get(saveStatus.savedObject, "status")
+    const isSubmitted = () => "submitted" === _.get(saveStatus.savedObject, "status")
     const isSubmitDisabled = function() {
       return !(formIsValidOnClientSide && formIsValidOnServerSide && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state) || isSubmitted()
     }
