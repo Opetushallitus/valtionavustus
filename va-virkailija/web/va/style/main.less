@@ -147,7 +147,6 @@ table.hakemus-list {
 }
 
 #hakemus-details {
-
   #preview-container {
     position: absolute;
     background-color: @off-white;
@@ -156,7 +155,10 @@ table.hakemus-list {
     top: @topbar-height;
     bottom: 20px;
     width: @preview-width;
-
+    
+    .medium, .small, .extra-large, div.soresu-attachment-block {
+      width: auto;
+    }
     .va-register-number {
       span {
         display: none;
@@ -165,10 +167,6 @@ table.hakemus-list {
           display: inline;
         }
       }
-    }
-
-    div.soresu-attachment-block {
-      width: @preview-width;
     }
 
     .answer-old-value {
