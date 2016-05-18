@@ -27,7 +27,7 @@
 (defn- get-open-avustushaku [haku-id hakemus]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         phase (avustushaku-phase avustushaku)]
-    (if (or (= phase "current") (= (:status hakemus) "pending_change_request"))
+    (if (or (= phase "current") (= (:status hakemus) "pending_change_request") (= (:status hakemus) "officer_edit"))
       avustushaku
       (method-not-allowed! {:phase phase}))))
 
@@ -167,6 +167,28 @@
             (va-email/send-change-request-responded-message-to-virkailija! [email-of-virkailija] (:id avustushaku) (-> avustushaku :content :name :fi) (:id submitted-hakemus)))
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! true answers submitted-hakemus avustushaku)
           (method-not-allowed! {:change-request-response "saved"}))
+        (hakemus-conflict-response hakemus))
+      (bad-request! validation))))
+
+(defn on-hakemus-officer-edit-submit [haku-id hakemus-id base-version answers]
+  (let [hakemus (va-db/get-hakemus hakemus-id)
+        avustushaku (get-open-avustushaku haku-id hakemus)
+        form-id (:form avustushaku)
+        form (form-db/get-form form-id)
+        attachments (va-db/get-attachments hakemus-id (:id hakemus))
+        validation (validation/validate-form form answers attachments)]
+    (if (every? empty? (vals validation))
+      (if (= base-version (:version hakemus))
+        (let [submission-id (:form_submission_id hakemus)
+              saved-submission (:body (update-form-submission form-id submission-id answers))
+              submission-version (:version saved-submission)
+              submitted-hakemus (va-db/submit-hakemus haku-id
+                                                      hakemus-id
+                                                      submission-id
+                                                      submission-version
+                                                      (:register_number hakemus)
+                                                      answers)]
+          (method-not-allowed! {:officer-edit "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 

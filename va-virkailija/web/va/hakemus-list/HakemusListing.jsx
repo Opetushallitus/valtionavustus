@@ -17,7 +17,15 @@ export default class HakemusListing extends Component {
       case "status":
         return hakemus => hakemus.arvio.status
       case "change-request":
-        return hakemus => hakemus.status === "pending_change_request"
+        return hakemus => {
+          if(hakemus.status === "pending_change_request") {
+            return "H"
+          }
+          if(hakemus.status === "officer_edit") {
+            return "V"
+          }
+          return ""
+        }
       case "applied-sum":
         return hakemus => hakemus["budget-oph-share"]
       case "granted-sum":
@@ -287,8 +295,10 @@ class ChangeRequestHeader extends HakemusSorter {
   render(){
     const hakemusList = this.props.hakemusList
     const kplChangeRequest = _.filter(hakemusList, HakemusListing._filterWithArrayPredicate(hakemus => hakemus.status, ["pending_change_request"])).length
-    const value = kplChangeRequest > 0 ? "(" + kplChangeRequest + ")" : ""
-    const title = kplChangeRequest > 0 ? kplChangeRequest + " hakemusta odottaa hakijan täydennystä" : "Ei avoimia täydennyspyyntöjä"
+    const kplOfficerEdit = _.filter(hakemusList, HakemusListing._filterWithArrayPredicate(hakemus => hakemus.status, ["officer_edit"])).length
+    const total = kplChangeRequest + kplOfficerEdit
+    const value = total > 0 ? `(${total})` : ""
+    const title = total > 0 ? `${total} odottaa täydennystä (hakijalta:${kplChangeRequest}, virkailijalta:${kplOfficerEdit})` : "Ei avoimia täydennyspyyntöjä"
     return (
       <th className="change-request-column" onClick={this.onSorterClick} title={title} >{value}</th>
     )
@@ -370,9 +380,9 @@ class HakemusRow extends Component {
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
     const controller = this.props.controller
     const statusFI = HakemusArviointiStatuses.statusToFI(hakemus.arvio.status)
-    const changeRequest = HakemusListing._fieldGetter("change-request")(hakemus) ? "*" : ""
+    const changeRequest = HakemusListing._fieldGetter("change-request")(hakemus)
     const statusComment = hakemus["status-comment"] ? ":\n" + hakemus["status-comment"] : ""
-    const changeRequestTitle = changeRequest ? "Odottaa hakijan täydennystä" + statusComment : ""
+    const changeRequestTitle = changeRequest ? "Odottaa täydennystä" + statusComment : ""
     var hakemusName = ""
     if (_.isEmpty(hakemus["project-name"])) {
       hakemusName = hakemus["register-number"]
