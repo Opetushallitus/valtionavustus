@@ -94,6 +94,11 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
           <AmountCell>{Math.floor(((totallOriginalCosts - totalIncomes - totalFinancing)*ophFinancingPercentage)/100)}</AmountCell>
           <AmountCell>{totalGranted}</AmountCell>
         </tr>
+        {ophFinancingPercentage!==100 ? <tr>
+          <th className="footerTitle"><L translationKey="oma-rahoitus"/> {ophFinancingPercentage!==100 ? (100-ophFinancingPercentage) + '%' :''}</th>
+          <AmountCell>{Math.ceil(((totallOriginalCosts - totalIncomes - totalFinancing)*(100-ophFinancingPercentage))/100)}</AmountCell>
+          <AmountCell>{Math.ceil(((totalOverriddenCosts - totalIncomes - totalFinancing)*(100-ophFinancingPercentage))/100)}</AmountCell>
+        </tr>:''}
         </tbody>
       </table>
     </section>

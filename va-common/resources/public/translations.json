@@ -390,6 +390,10 @@
       "fi":"Avustus opetushallitukselta",
       "sv":"Understöd från Utbildningsstyrelsen"
     },
+    "oma-rahoitus":{
+      "fi":"Hakijan omarahoitusosuus",
+      "sv":"SV Hakijan omarahoitusosuus"
+    },
     "rahoitus":{
       "fi":"Hankkeen rahoitus",
       "sv":"Projektets finansiering"
