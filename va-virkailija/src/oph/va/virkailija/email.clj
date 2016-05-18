@@ -10,7 +10,7 @@
   {:change-request {:fi "Täydennyspyyntö avustushakemukseesi"
                     :sv "Begäran om komplettering av ansökan"}
    :paatos {:fi "Automaattinen viesti: organisaationne avustushakemus on käsitelty - Linkki päätösasiakirjaan"
-            :sv "SV Automaattinen viesti: organisaationne avustushakemus on käsitelty - Linkki päätösasiakirjaan"}
+            :sv "Automatiskt meddelande: Er ansökan om understöd har behandlats – Länk till beslutet"}
   })
 
 (def mail-templates
