@@ -90,7 +90,7 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
       <table>
         <tbody>
         <tr>
-          <th className="footerTitle"><L translationKey="myonnetty-avustus"/></th>
+          <th className="footerTitle"><L translationKey="myonnetty-avustus"/> {ophFinancingPercentage!==100 ? ophFinancingPercentage + '%' :''}</th>
           <AmountCell>{Math.floor(((totallOriginalCosts - totalIncomes - totalFinancing)*ophFinancingPercentage)/100)}</AmountCell>
           <AmountCell>{totalGranted}</AmountCell>
         </tr>
