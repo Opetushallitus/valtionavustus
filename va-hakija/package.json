@@ -60,6 +60,7 @@
     "watch-common-web": "watch-spawn -k -p '../va-common/web/**/*' -p '../va-common/package.json' npm run update-common-web",
     "update-soresu-form-web": "rm -rf node_modules/soresu-form && npm install soresu-form",
     "watch-soresu-form-web": "watch-spawn -k -p '../soresu-form/web/**/*' -p '../soresu-form/package.json' npm run update-soresu-form-web",
-    "watch": "npm run update-common-web && npm run update-soresu-form-web && (npm run watch-common-web & npm run watch-web & npm run watch-soresu-form-web)"
+    "watch": "npm run update-common-web && npm run update-soresu-form-web && (npm run watch-common-web & npm run watch-soresu-form-web & npm run watch-webpack)",
+    "watch-and-rebuild": "npm run update-common-web && npm run update-soresu-form-web && (npm run watch-common-web & npm run watch-soresu-form-web & npm run watch-web)"
   }
 }
