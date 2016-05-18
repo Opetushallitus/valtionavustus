@@ -7,7 +7,8 @@
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.routes :refer :all]
             [clojure.tools.logging :as log]
-            [oph.soresu.form.formutil :as formutil])
+            [oph.soresu.form.formutil :as formutil]
+            [oph.va.virkailija.email :as email])
   (:import (oph.va.jdbc.enums HakuStatus HakuRole)))
 
 (defn convert-attachment [attachment]
@@ -207,13 +208,19 @@
     {
      :loppuselvitysForm (form->json loppuselvitys-form)
      :valiselvitysForm (form->json valiselvitys-form)
-     :loppuselvitys (hakemus->json loppuselvitys)
-     :valiselvitys (hakemus->json valiselvitys)
+     :loppuselvitys (if loppuselvitys (hakemus->json loppuselvitys) {})
+     :valiselvitys (if valiselvitys (hakemus->json valiselvitys) {})
      :attachments (->> attachments
                        (partition-by (fn [attachment] (:hakemus_id attachment)))
                        (mapv convert-attachment-group)
                        (into {}))
      }))
+
+(defn send-selvitys [selvitys-email]
+  (let [message (:message selvitys-email)]
+    (email/send-selvitys! "sami.mensola@reaktor.fi" message)
+    )
+)
 
 (defn get-hakemusdata [hakemus-id]
   (let [hakemus (first (exec :form-db hakija-queries/get-hakemus-with-answers {:id hakemus-id}))

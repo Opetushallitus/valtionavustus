@@ -51,6 +51,11 @@
   "Change request email"
   {:text s/Str})
 
+(s/defschema SelvitysEmail
+  "Loppu/Valiselvitys email"
+  {:message s/Str
+   :selvitysHakemusId Long})
+
 (s/defschema Comment
   "Contains comment about hakemus"
   {:id Long

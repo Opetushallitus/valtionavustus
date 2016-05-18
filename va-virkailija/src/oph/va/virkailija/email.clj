@@ -11,13 +11,19 @@
                     :sv "Begäran om komplettering av ansökan"}
    :paatos {:fi "Automaattinen viesti: organisaationne avustushakemus on käsitelty - Linkki päätösasiakirjaan"
             :sv "Automatiskt meddelande: Er ansökan om understöd har behandlats – Länk till beslutet"}
+   :selvitys {:fi "Väliselvitys hyväksytty"
+              :sv "Mellanredovisning godkänt"}
   })
 
 (def mail-templates
   {:change-request {:fi (email/load-template "email-templates/change-request.plain.fi")
                     :sv (email/load-template "email-templates/change-request.plain.sv")}
    :paatos {:fi (email/load-template "email-templates/paatos.plain.fi")
-           :sv (email/load-template "email-templates/paatos.plain.sv")}})
+           :sv (email/load-template "email-templates/paatos.plain.sv")}
+   :selvitys {:fi (email/load-template "email-templates/selvitys.plain.fi")
+            :sv (email/load-template "email-templates/selvitys.plain.sv")}
+
+   })
 
 (defn mail-example [msg-type & [data]]
   {:content (render (:fi (msg-type mail-templates)) (if data data {}))
@@ -69,3 +75,17 @@
                            :url url
                            :register-number (:register_number hakemus)
                            :project-name (:project_name hakemus)})))
+
+
+(defn send-selvitys! [to message]
+  (let [lang :fi
+        mail-subject (get-in mail-titles [:paatos lang])]
+    (>!! email/mail-queue {:operation :send
+                           :type :selvitys
+                           :lang lang
+                           :from (-> email/smtp-config :from lang)
+                           :sender (-> email/smtp-config :sender)
+                           :subject mail-subject
+                           :to to
+                           :body message
+                           })))

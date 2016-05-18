@@ -20,33 +20,12 @@ import DateUtil from 'soresu-form/web/form/DateUtil'
 
 import style from '../style/formpreview.less'
 
-const SelvitysNotFilled = ({selvitysType, avustushaku}) =>{
-  const title = selvitysType == "valiselvitys" ? "Väliselvitys" : "Loppuselvitys"
-  const date = avustushaku[selvitysType + "date"]
-  return <div>
-    <p>{title} ei ole vielä saapunut.</p>
-    <p>Selvityksen viimeinen toimituspäivämäärä on {date} tai 2 kuukautta hankkeen päättymisen jälkeen.</p>
-
-    <p>Yhteyshenkilöä muistutetaan automaattisesti sähköpostitse selvityksen täyttämisestä.</p>
-
-  </div>
-}
-
 export default class SelvitysPreview extends Component {
 
   render() {
-    const {hakemus, selvitysType, avustushaku, translations} = this.props
+    const {hakemus, selvitysType, avustushaku, translations, selvitysHakemus,form} = this.props
     const selvitys = hakemus.selvitys
-    if(!selvitys)
-      return <SelvitysNotFilled selvitysType={selvitysType} avustushaku={avustushaku}/>
-    const selvitysHakemus = selvitys[selvitysType]
-    if(selvitysHakemus.answers==null){
-      return <SelvitysNotFilled selvitysType={selvitysType} avustushaku={avustushaku}/>
-    }
-
-    const form = selvitys[selvitysType + "Form"]
     const hakuData = {form:form,attachments:selvitys.attachments}
-
     const formState = createPreviewHakemusFormState()
     const formElementProps = {
       state: formState,

@@ -147,6 +147,17 @@
             (not-found))))
 )
 
+(defn- send-selvitys []
+  (POST* "/:avustushaku-id/selvitys/send" []
+         :path-params [avustushaku-id :- Long]
+         :body  [selvitys-email (describe virkailija-schema/SelvitysEmail "Selvtys email")]
+         :return s/Any
+         :summary "Send selvitys and update state to sent"
+         (hakija-api/send-selvitys selvitys-email)
+         ; Update status to sent
+         (ok {:status "ok"})
+  ))
+
 (defn- post-change-request-email []
 
   (POST* "/:avustushaku-id/change-request-email" []
@@ -172,6 +183,7 @@
   (post-avustushaku)
   (get-avustushaku)
   (get-selvitys)
+  (send-selvitys)
   (post-change-request-email)
 
   (GET* "/paatos/:hakemus-id" [hakemus-id :as request]
