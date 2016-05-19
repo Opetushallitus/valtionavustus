@@ -1,0 +1,1 @@
+alter table hakija.hakemukset add column selvitys_email JSONB;

@@ -8,7 +8,8 @@
             [oph.va.routes :refer :all]
             [clojure.tools.logging :as log]
             [oph.soresu.form.formutil :as formutil]
-            [oph.va.virkailija.email :as email])
+            [oph.va.virkailija.email :as email]
+            [oph.common.datetime :as datetime])
   (:import (oph.va.jdbc.enums HakuStatus HakuRole)))
 
 (defn convert-attachment [attachment]
@@ -134,6 +135,7 @@
    :user-last-name (:user_last_name hakemus)
    :register-number (:register_number hakemus)
    :user-key (:user_key hakemus)
+   :selvitys-email (:selvitys_email hakemus)
    :answers (:answer_values hakemus)})
 
 (defn- paatos-sent-emails->json [paatos]
@@ -221,6 +223,22 @@
     (email/send-selvitys! "sami.mensola@reaktor.fi" message)
     )
 )
+
+(defn update-selvitys-message [selvitys-email]
+  (let [
+        hakemus-id (:selvitys-hakemus-id selvitys-email)
+        message (:message selvitys-email)
+        to (:to selvitys-email)
+        subject (:subject selvitys-email)
+        today-date (datetime/date-string (datetime/now))
+        email {:message message
+               :subject subject
+               :send today-date
+               :to to
+               }
+        ]
+    (exec :form-db hakija-queries/update-hakemus-selvitys-email! {:selvitys_email email :id hakemus-id})))
+
 
 (defn get-hakemusdata [hakemus-id]
   (let [hakemus (first (exec :form-db hakija-queries/get-hakemus-with-answers {:id hakemus-id}))

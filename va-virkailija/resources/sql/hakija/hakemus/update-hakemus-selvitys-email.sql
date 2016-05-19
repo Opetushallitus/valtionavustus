@@ -1,0 +1,1 @@
+update hakija.hakemukset set selvitys_email=:selvitys_email where id=:id and status='submitted'

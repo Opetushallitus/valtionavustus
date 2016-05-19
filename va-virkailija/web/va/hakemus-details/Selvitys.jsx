@@ -7,7 +7,7 @@ import SelvitysEmail from './SelvitysEmail.jsx'
 
 export default class Selvitys extends Component {
   render() {
-    const {hakemus, avustushaku, hakuData, translations,selvitysType} = this.props
+    const {controller, hakemus, avustushaku, hakuData, translations,selvitysType} = this.props
     const hasSelvitys = _.has(hakemus,`selvitys.${selvitysType}.answers`)
     const selvitysHakemus = _.get(hakemus,`selvitys.${selvitysType}`)
     const form = _.get(hakemus,`selvitys.${selvitysType}Form`)
@@ -23,7 +23,7 @@ export default class Selvitys extends Component {
 
         />}
         <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} label="Linkki lomakkeelle"/>
-        {hasSelvitys && <SelvitysEmail avustushaku={avustushaku} selvitysHakemus={selvitysHakemus} hakuData={hakuData}/>}
+        {hasSelvitys && <SelvitysEmail controller={controller} selvitysType={selvitysType} hakemus={hakemus} avustushaku={avustushaku} selvitysHakemus={selvitysHakemus} hakuData={hakuData}/>}
       </div>
     )
   }

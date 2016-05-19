@@ -54,7 +54,9 @@
 (s/defschema SelvitysEmail
   "Loppu/Valiselvitys email"
   {:message s/Str
-   :selvitysHakemusId Long})
+   :to s/Str
+   :subject s/Str
+   :selvitys-hakemus-id Long})
 
 (s/defschema Comment
   "Contains comment about hakemus"
@@ -106,6 +108,7 @@
                       :budget-oph-share s/Int
                       :register-number (s/maybe s/Str)
                       :user-key s/Str
+                      :selvitys-email (s/maybe s/Str)
                       :answers [Answer]})
 
 (s/defschema RoleType

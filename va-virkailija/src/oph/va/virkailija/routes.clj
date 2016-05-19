@@ -154,7 +154,7 @@
          :return s/Any
          :summary "Send selvitys and update state to sent"
          (hakija-api/send-selvitys selvitys-email)
-         ; Update status to sent
+         (hakija-api/update-selvitys-message selvitys-email)
          (ok {:status "ok"})
   ))
 

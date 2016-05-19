@@ -309,6 +309,9 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  loadSelvitys(){
+    dispatcher.push(events.loadSelvitys)
+  }
 
   onLoadSelvitys(state) {
     if (!state.loadingSelvitys && state.selectedHakemus) {
