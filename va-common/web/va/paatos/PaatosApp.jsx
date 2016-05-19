@@ -281,7 +281,7 @@ const findLiite = (allAttachments, attachments, groupName) => {
 
 const LiiteRow = ({liite, lang}) => liite.id ?
    <div>
-     <a href={`/public/api/liite/${liite.id}/${lang}`} target="_blank">{liite[lang]}</a>
+     <a href={`/liitteet/${liite.id}_${lang}.pdf`} target="_blank">{liite[lang]}</a>
    </div> : <div></div>
 
 const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
