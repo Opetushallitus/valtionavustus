@@ -11,7 +11,8 @@
                :cas-login "/cas/login?service="
                :cas-logout "/cas/logout?service="
                :permission-request "/authentication-henkiloui/html/#/omattiedot2"}
- :ui {:show-environment? true}
+ :ui {:show-environment? true
+      :paatos-path "/api/avustushaku/paatos/"}
  :virkailija-db {:pool-name "virkailija-pool"
       :username "va_virkailija"
       :password "va"

@@ -15,7 +15,8 @@
                                   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]
           :threads 16
           :virkailija-url "http://localhost:8081"}
- :ui {:show-environment? true}
+ :ui {:show-environment? true
+      :paatos-path "/public/api/avustushaku/paatos/"}
  :api {:restricted-routes? true}
  :form-db {:pool-name "hakija-pool"
       :username "va_hakija"

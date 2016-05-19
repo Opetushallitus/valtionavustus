@@ -11,7 +11,9 @@
 (defn environment-content []
   (let [common-environment {:name      (config-simple-name)
                             :show-name (:show-environment? (:ui config))
-                            :hakija-server {:url (:url (:server config))}}
+                            :hakija-server {:url (:url (:server config))}
+                            :virkailija-server {:url (:virkailija-url (:server config))}
+                            :paatos-path (:paatos-path (:ui config))}
         opintopolku (:opintopolku config)]
     (if opintopolku
       (assoc common-environment :opintopolku {:url (:url opintopolku)

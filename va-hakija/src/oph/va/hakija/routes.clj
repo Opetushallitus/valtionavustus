@@ -58,10 +58,6 @@
 (defroutes* avustushaku-routes
   "Avustushaku routes"
 
-  (GET* "/paatos/:user-key" []
-        :path-params [user-key :- s/Str]
-        (on-get-paatos user-key))
-
   (GET* "/:id" [id]
         :path-params [id :- Long]
         :return AvustusHaku

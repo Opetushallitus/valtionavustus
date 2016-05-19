@@ -18,8 +18,10 @@ export default class PaatosController {
   initializeState(parsedRoute) {
     const hakemusId = parsedRoute["hakemus_id"]
     this._bind('onInitialState')
+    const environmentP =  Bacon.fromPromise(HttpUtil.get(`/environment`))
+    var paatosDataP =  environmentP.flatMap(function(environment) {return Bacon.fromPromise(HttpUtil.get(environment["virkailija-server"].url + environment["paatos-path"] +`${hakemusId}`))})
     const initialStateTemplate = {
-      paatosData: Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/paatos/${hakemusId}`)),
+      paatosData: paatosDataP,
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")).map(Immutable)
     }
 
