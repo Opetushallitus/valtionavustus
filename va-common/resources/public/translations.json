@@ -403,8 +403,8 @@
       "sv":"Understöd från Utbildningsstyrelsen"
     },
     "oma-rahoitus":{
-      "fi":"Hakijan omarahoitusosuus",
-      "sv":"Sökandens egenfinansieringsandel"
+      "fi":"Hakijan omarahoitusosuus vähintään",
+      "sv":"Sökandens egenfinansieringsandel minst"
     },
     "rahoitus":{
       "fi":"Hankkeen rahoitus",
