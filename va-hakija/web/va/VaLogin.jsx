@@ -101,6 +101,7 @@ export default class VaLogin extends React.Component {
         <p><LocalizedString translations={translations.login} translationKey="preview" lang={lang} /> <a target="preview" href={hakemusPreviewUrl}><LocalizedString translations={translations.login} translationKey="preview-link" lang={lang} /></a></p>
         <h2><LocalizedString translations={translations.login} translationKey="heading" lang={lang} /><HelpTooltip content={translations.login.help} lang={lang}/></h2>
         <form onSubmit={this.submit.bind(this)}>
+          <input type="hidden" name="language" value={lang}/>
           <EmailTextField htmlId="primary-email" hasError={emailIsInvalid()} onChange={this.handleEmailChange.bind(this)} translations={translations.login} value={email} translationKey="contact-email" lang={lang} required="true" disabled={!isOpen} size="small" maxLength="80" />
           <TextButton htmlId="submit" disabled={canSend()} onClick={this.submit.bind(this)} translations={translations.login} translationKey="submit" lang={lang} />
           <div className="message-container">
