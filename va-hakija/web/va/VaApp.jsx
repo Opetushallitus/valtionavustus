@@ -77,12 +77,12 @@ function initialStateTemplateTransformation(template) {
   template.saveStatus.hakemusId = query.hakemus
 }
 
-function isReopenedHakemus(savedObject) {
-  return savedObject && (savedObject.status === 'pending_change_request' || savedObject.status === 'officer_edit')
+function isEmptyOrReopenedHakemus(savedObject) {
+  return !savedObject || (savedObject.status === 'pending_change_request' || savedObject.status === 'officer_edit')
 }
 
 function onInitialStateLoaded(initialState) {
-  if(initialState.avustushaku.phase !== "current" && !initialState.configuration.preview && !isReopenedHakemus(initialState.saveStatus.savedObject)) {
+  if(initialState.avustushaku.phase !== "current" && !initialState.configuration.preview && !isEmptyOrReopenedHakemus(initialState.saveStatus.savedObject)) {
     window.location = urlCreator.existingSubmissionPreviewUrl(initialState)
     return
   }
