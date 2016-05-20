@@ -176,24 +176,16 @@
                       )})))
   )
 
-(defroutes* avustushaku-routes
-  "Hakemus listing and filtering"
-  (get-avustushaku-status)
-  (put-avustushaku)
-  (post-avustushaku)
-  (get-avustushaku)
-  (get-selvitys)
-  (send-selvitys)
-  (post-change-request-email)
-
+(defn- get-hakemus []
   (GET* "/paatos/:hakemus-id" [hakemus-id :as request]
         :path-params [hakemus-id :- Long]
         :return virkailija-schema/PaatosData
         :summary "Return relevant information for decision"
         (if-let [response (hakudata/get-combined-paatos-data hakemus-id)]
           (ok response)
-          (not-found)))
+          (not-found))))
 
+(defn- get-haku-export []
   (GET* "/:haku-id/export.xslx" [haku-id :as request]
         :path-params [haku-id :- Long]
         :summary "Export Excel XLSX document for given avustushaku"
@@ -201,16 +193,18 @@
               document (export/export-avustushaku haku-id)]
           (-> (ok document)
               (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
-              (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"avustushaku-" haku-id ".xlsx\"")))))
+              (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"avustushaku-" haku-id ".xlsx\""))))))
 
+(defn- get-avustushaku-role []
   (GET* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
         :return [virkailija-schema/Role]
         :summary "List roles for given avustushaku"
         (if-let [response (hakija-api/get-avustushaku-roles avustushaku-id)]
           (ok response)
-          (not-found)))
+          (not-found))))
 
+(defn- put-avustushaku-role []
   (PUT* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
         :body  [new-role (describe virkailija-schema/NewRole "New role to add to avustushaku")]
@@ -220,22 +214,25 @@
                                                  :role (or (:role new-role) "presenting_officer")
                                                  :name (:name new-role)
                                                  :email (:email new-role)
-                                                 :oid (:oid new-role)})))
+                                                 :oid (:oid new-role)}))))
 
+(defn- post-avustushaku-role []
   (POST* "/:avustushaku-id/role/:role-id" [avustushaku-id role-id]
          :path-params [avustushaku-id :- Long role-id :- Long]
          :body    [role (describe virkailija-schema/Role "Changed role")]
          :return virkailija-schema/Role
          :summary "Update avustushaku role"
-         (ok (hakija-api/update-avustushaku-role avustushaku-id role)))
+         (ok (hakija-api/update-avustushaku-role avustushaku-id role))))
 
+(defn- del-avustushaku-role []
   (DELETE* "/:avustushaku-id/role/:role-id" [avustushaku-id role-id]
            :path-params [avustushaku-id :- Long role-id :- Long]
            :return {:id Long}
            :summary "Delete avustushaku role"
            (hakija-api/delete-avustushaku-role avustushaku-id role-id)
-           (ok {:id role-id}))
+           (ok {:id role-id})))
 
+(defn- get-avustushaku-privileges []
   (GET* "/:avustushaku-id/privileges" [avustushaku-id :as request]
         :path-params [avustushaku-id :- Long]
         :return virkailija-schema/HakuPrivileges
@@ -245,16 +242,18 @@
               privileges (authorization/resolve-privileges identity avustushaku-id haku-roles)]
           (if privileges
             (ok privileges)
-            (not-found))))
+            (not-found)))))
 
+(defn- get-avustushaku-form []
   (GET* "/:avustushaku-id/form" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
         :return form-schema/Form
         :summary "Get form description that is linked to avustushaku"
         (if-let [found-form (hakija-api/get-form-by-avustushaku avustushaku-id)]
           (ok (without-id found-form))
-          (not-found)))
+          (not-found))))
 
+(defn- post-avustushaku-form []
   (POST* "/:avustushaku-id/form" [avustushaku-id]
          :path-params [avustushaku-id :- Long ]
          :body  [updated-form (describe form-schema/Form "Updated form")]
@@ -264,7 +263,93 @@
            (if-let [response (hakija-api/update-form-by-avustushaku avustushaku-id updated-form)]
              (ok (without-id response))
              (not-found))
-           (method-not-allowed!)))
+           (method-not-allowed!))))
+
+(defn- post-hakemus-arvio []
+  (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id :as request]
+         :path-params [avustushaku-id :- Long hakemus-id :- Long]
+         :body    [arvio (describe virkailija-schema/Arvio "New arvio")]
+         :return virkailija-schema/Arvio
+         :summary "Update arvio for given hakemus. Creates arvio if missing."
+         (let [identity (authentication/get-identity request)
+               {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
+           (ok (-> (virkailija-db/update-or-create-hakemus-arvio avustushaku hakemus-id arvio identity)
+                   hakudata/arvio-json)))))
+
+(defn- get-hakemus-comments []
+  (GET* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id]
+        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+        :return virkailija-schema/Comments
+        :summary "Get current comments for hakemus"
+        (ok (virkailija-db/list-comments hakemus-id))))
+
+(defn- post-hakemus-comments []
+  (POST* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id :as request]
+         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+         :body [comment (describe virkailija-schema/NewComment "New comment")]
+         :return virkailija-schema/Comments
+         :summary "Add a comment for hakemus. As response, return all comments"
+         (let [identity (authentication/get-identity request)
+               {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
+           (ok (virkailija-db/add-comment hakemus-id
+                                          (:first-name identity)
+                                          (:surname identity)
+                                          (:email identity)
+                                          (:comment comment))))))
+(defn- get-hakemus-attachments []
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id]
+        :path-params [haku-id :- Long, hakemus-id :- Long]
+        :return s/Any
+        :summary "List current attachments"
+        :description "Listing does not return actual attachment data. Use per-field download for getting it."
+        (ok (-> (hakija-api/list-attachments hakemus-id)
+                (hakija-api/attachments->map)))))
+
+(defn- get-hakemus-attachments-versions []
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments/versions" [haku-id hakemus-id]
+        :path-params [haku-id :- Long, hakemus-id :- Long]
+        :return [va-schema/Attachment]
+        :summary "List all versions of attachments of given hakemus"
+        :description "Listing does not return actual attachment data. Use per-field versioned download URL for getting it."
+        (ok (->> (hakija-api/list-attachment-versions hakemus-id)
+                 (map hakija-api/convert-attachment)))))
+
+(defn- get-hakemus-attachment []
+  (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
+        :path-params [haku-id :- Long, hakemus-id :- Long, field-id :- s/Str]
+        :query-params [{attachment-version :- Long nil}]
+        :summary "Download attachment attached to given field"
+        (if (hakija-api/attachment-exists? hakemus-id field-id)
+          (let [{:keys [data size filename content-type]} (hakija-api/download-attachment hakemus-id field-id attachment-version)]
+            (-> (ok data)
+                (assoc-in [:headers "Content-Type"] content-type)
+                (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
+          (not-found))))
+
+(defroutes* avustushaku-routes
+  "Hakemus listing and filtering"
+  (get-avustushaku-status)
+  (put-avustushaku)
+  (post-avustushaku)
+  (get-avustushaku)
+  (get-selvitys)
+  (send-selvitys)
+  (post-change-request-email)
+  (get-hakemus)
+  (get-haku-export)
+  (get-avustushaku-role)
+  (put-avustushaku-role)
+  (post-avustushaku-role)
+  (del-avustushaku-role)
+  (get-avustushaku-privileges)
+  (get-avustushaku-form)
+  (post-avustushaku-form)
+  (post-hakemus-arvio)
+  (get-hakemus-comments)
+  (post-hakemus-comments)
+  (get-hakemus-attachments)
+  (get-hakemus-attachments-versions)
+  (get-hakemus-attachment)
 
   (POST* "/:avustushaku-id/init-selvitysform/:selvitys-type" [avustushaku-id selvitys-type]
          :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
@@ -297,62 +382,6 @@
                 form-id (form-keyword avustushaku)
                 response (hakija-api/update-form form-id updated-form)]
            (ok (without-id response))))
-
-  (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id :as request]
-         :path-params [avustushaku-id :- Long hakemus-id :- Long]
-         :body    [arvio (describe virkailija-schema/Arvio "New arvio")]
-         :return virkailija-schema/Arvio
-         :summary "Update arvio for given hakemus. Creates arvio if missing."
-         (let [identity (authentication/get-identity request)
-               {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
-           (ok (-> (virkailija-db/update-or-create-hakemus-arvio avustushaku hakemus-id arvio identity)
-                   hakudata/arvio-json))))
-
-  (GET* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id]
-        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-        :return virkailija-schema/Comments
-        :summary "Get current comments for hakemus"
-        (ok (virkailija-db/list-comments hakemus-id)))
-
-  (POST* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id :as request]
-         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-         :body [comment (describe virkailija-schema/NewComment "New comment")]
-         :return virkailija-schema/Comments
-         :summary "Add a comment for hakemus. As response, return all comments"
-         (let [identity (authentication/get-identity request)
-               {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
-           (ok (virkailija-db/add-comment hakemus-id
-                                          (:first-name identity)
-                                          (:surname identity)
-                                          (:email identity)
-                                          (:comment comment)))))
-
-  (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id]
-        :path-params [haku-id :- Long, hakemus-id :- Long]
-        :return s/Any
-        :summary "List current attachments"
-        :description "Listing does not return actual attachment data. Use per-field download for getting it."
-        (ok (-> (hakija-api/list-attachments hakemus-id)
-                (hakija-api/attachments->map))))
-
-  (GET* "/:haku-id/hakemus/:hakemus-id/attachments/versions" [haku-id hakemus-id]
-        :path-params [haku-id :- Long, hakemus-id :- Long]
-        :return [va-schema/Attachment]
-        :summary "List all versions of attachments of given hakemus"
-        :description "Listing does not return actual attachment data. Use per-field versioned download URL for getting it."
-        (ok (->> (hakija-api/list-attachment-versions hakemus-id)
-                 (map hakija-api/convert-attachment))))
-
-  (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
-        :path-params [haku-id :- Long, hakemus-id :- Long, field-id :- s/Str]
-        :query-params [{attachment-version :- Long nil}]
-        :summary "Download attachment attached to given field"
-        (if (hakija-api/attachment-exists? hakemus-id field-id)
-          (let [{:keys [data size filename content-type]} (hakija-api/download-attachment hakemus-id field-id attachment-version)]
-            (-> (ok data)
-                (assoc-in [:headers "Content-Type"] content-type)
-                (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
-          (not-found)))
 
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/change-requests" [avustushaku-id hakemus-id :as request]
         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
