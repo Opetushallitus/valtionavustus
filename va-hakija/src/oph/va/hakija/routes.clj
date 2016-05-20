@@ -60,98 +60,109 @@
     (keyword key))
 )
 
-(defroutes* avustushaku-routes
-  "Avustushaku routes"
-
+(defn- get-id []
   (GET* "/:id" [id]
         :path-params [id :- Long]
         :return AvustusHaku
         :summary "Get avustushaku description"
         (if-let [avustushaku (hakija-db/get-avustushaku id)]
           (avustushaku-ok-response avustushaku)
-          (not-found)))
+          (not-found))))
 
+(defn- get-hakemus []
   (GET* "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
         :path-params [haku-id :- Long hakemus-id :- s/Str]
         :return  Hakemus
         :summary "Get current answers"
-        (on-get-current-answers haku-id hakemus-id :form))
+        (on-get-current-answers haku-id hakemus-id :form)))
 
+(defn- get-selvitys []
   (GET* "/:haku-id/selvitys/:selvitys-type/:hakemus-id" [haku-id hakemus-id selvitys-type]
         :path-params [haku-id :- Long, hakemus-id :- s/Str selvitys-type :- s/Str]
         :return  Hakemus
         :summary "Get current answers"
-        (on-get-current-answers haku-id hakemus-id (selvitys-form-keyword selvitys-type)))
+        (on-get-current-answers haku-id hakemus-id (selvitys-form-keyword selvitys-type))))
 
+(defn- get-selvitys-init []
   (GET* "/:haku-id/selvitys/:selvitys-type/init/:hakemus-id" [haku-id selvitys-type hakemus-id]
         :path-params [haku-id :- Long, hakemus-id :- s/Str selvitys-type :- s/Str]
         :return HakemusId
         :summary "Get or create selvitys for hakemus"
-        (on-selvitys-init haku-id hakemus-id selvitys-type))
+        (on-selvitys-init haku-id hakemus-id selvitys-type)))
 
+(defn- post-selvitys []
   (POST* "/:haku-id/selvitys/:selvitys-type/:hakemus-id/:base-version" [haku-id hakemus-id base-version selvitys-type :as request]
          :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
          :body [answers (describe Answers "New answers")]
          :return Hakemus
          :summary "Update hakemus values"
-         (on-selvitys-update haku-id hakemus-id base-version answers (selvitys-form-keyword selvitys-type)))
+         (on-selvitys-update haku-id hakemus-id base-version answers (selvitys-form-keyword selvitys-type))))
 
+(defn- post-selvitys-submit []
   (POST* "/:haku-id/selvitys/:selvitys-type/:hakemus-id/:base-version/submit" [haku-id selvitys-type hakemus-id base-version :as request]
          :path-params [haku-id :- Long, selvitys-type :- s/Str, hakemus-id :- s/Str, base-version :- Long]
          :body [answers (describe Answers "New answers")]
          :return Hakemus
          :summary "Submit hakemus"
-         (on-selvitys-submit haku-id hakemus-id base-version answers (selvitys-form-keyword selvitys-type)))
+         (on-selvitys-submit haku-id hakemus-id base-version answers (selvitys-form-keyword selvitys-type))))
 
+(defn- put-hakemus []
   (PUT* "/:haku-id/hakemus" [haku-id :as request]
-      :path-params [haku-id :- Long]
-      :body    [answers (describe Answers "New answers")]
-      :return  Hakemus
-      :summary "Create initial hakemus"
-      (on-hakemus-create haku-id answers))
+        :path-params [haku-id :- Long]
+        :body    [answers (describe Answers "New answers")]
+        :return  Hakemus
+        :summary "Create initial hakemus"
+        (on-hakemus-create haku-id answers)))
 
+(defn- post-hakemus []
   (POST* "/:haku-id/hakemus/:hakemus-id/:base-version" [haku-id hakemus-id base-version :as request]
-       :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
-       :body    [answers (describe Answers "New answers")]
-       :return  Hakemus
-       :summary "Update hakemus values"
-       (on-hakemus-update haku-id hakemus-id base-version answers))
+         :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
+         :body    [answers (describe Answers "New answers")]
+         :return  Hakemus
+         :summary "Update hakemus values"
+         (on-hakemus-update haku-id hakemus-id base-version answers)))
 
+(defn- post-hakemus-submit []
   (POST* "/:haku-id/hakemus/:hakemus-id/:base-version/submit" [haku-id hakemus-id base-version :as request]
-       :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
-       :body    [answers (describe Answers "New answers")]
-       :return  Hakemus
-       :summary "Submit hakemus"
-       (on-hakemus-submit haku-id hakemus-id base-version answers))
+         :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
+         :body    [answers (describe Answers "New answers")]
+         :return  Hakemus
+         :summary "Submit hakemus"
+         (on-hakemus-submit haku-id hakemus-id base-version answers)))
 
+(defn- post-change-request-response []
   (POST* "/:haku-id/hakemus/:hakemus-id/:base-version/change-request-response" [haku-id hakemus-id base-version :as request]
          :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
          :body    [answers (describe Answers "New answers")]
          :return  nil
          :summary "Submit response for hakemus change request"
-         (on-hakemus-change-request-response haku-id hakemus-id base-version answers))
+         (on-hakemus-change-request-response haku-id hakemus-id base-version answers)))
 
+(defn- officer-edit-submit []
   (POST* "/:haku-id/hakemus/:hakemus-id/:base-version/officer-edit-submit" [haku-id hakemus-id base-version :as request]
          :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
          :body    [answers (describe Answers "New answers")]
          :return  nil
          :summary "Submit officer edit changes"
-         (on-hakemus-officer-edit-submit haku-id hakemus-id base-version answers))
+         (on-hakemus-officer-edit-submit haku-id hakemus-id base-version answers)))
 
+(defn- get-attachments []
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
         :path-params [haku-id :- Long, hakemus-id :- s/Str]
         :return s/Any
         :summary "List current attachments"
-        (ok (on-attachment-list haku-id hakemus-id)))
+        (ok (on-attachment-list haku-id hakemus-id))))
 
+(defn- del-attachment []
   (DELETE* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id"
            [haku-id hakemus-id field-id]
            :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
            :summary "Delete attachment (marks attachment as closed)"
            (on-attachment-delete haku-id
                                  hakemus-id
-                                 field-id))
+                                 field-id)))
 
+(defn- put-attachment []
   (PUT* "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id"
         [haku-id hakemus-id hakemus-base-version field-id]
         :path-params [haku-id :- Long, hakemus-id :- s/Str, hakemus-base-version :- Long, field-id :- s/Str]
@@ -166,11 +177,30 @@
                                 filename
                                 content-type
                                 size
-                                tempfile)))
+                                tempfile))))
 
+(defn- get-attachment []
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
         :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
         (on-attachment-get haku-id hakemus-id field-id)))
+
+(defroutes* avustushaku-routes
+  "Avustushaku routes"
+            (get-id)
+            (get-hakemus)
+            (get-selvitys)
+            (get-selvitys-init)
+            (post-selvitys)
+            (post-selvitys-submit)
+            (put-hakemus)
+            (post-hakemus)
+            (post-hakemus-submit)
+            (post-change-request-response)
+            (officer-edit-submit)
+            (get-attachments)
+            (del-attachment)
+            (put-attachment)
+            (get-attachment))
 
 (defn log-paatos-display [avustushaku-id user-key headers remote-addr]
   (let [hakemus (hakija-db/get-hakemus user-key)
