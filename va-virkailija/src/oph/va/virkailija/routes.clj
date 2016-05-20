@@ -325,6 +325,118 @@
                 (assoc-in [:headers "Content-Type"] content-type)
                 (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
           (not-found))))
+(defn- post-init-selvitysform []
+  (POST* "/:avustushaku-id/init-selvitysform/:selvitys-type" [avustushaku-id selvitys-type]
+         :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
+         :body [form (describe form-schema/Form "Form to create")]
+         :return form-schema/Form
+         :summary "Create of finds selvitys form for given avustushaku"
+         (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+               form-keyword (keyword (str "form_" selvitys-type))
+               form-keyword-value (form-keyword avustushaku)
+               ]
+           (if (nil? form-keyword-value)
+             (let [
+                   created-form (hakija-api/create-form form)
+                   form-id (:id created-form)
+                   loppuselvitys (= selvitys-type "loppuselvitys")]
+               (if loppuselvitys
+                 (hakija-api/update-avustushaku-form-loppuselvitys avustushaku-id form-id)
+                 (hakija-api/update-avustushaku-form-valiselvitys avustushaku-id form-id))
+               (ok (without-id created-form)))
+             (let [found-form (hakija-api/get-form-by-id form-keyword-value)]
+               (ok (without-id found-form)))))))
+
+(defn- post-selvitysform []
+  (POST* "/:avustushaku-id/selvitysform/:selvitys-type" [avustushaku-id selvitys-type]
+         :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
+         :body [updated-form (describe form-schema/Form "Updated form")]
+         :return form-schema/Form
+         :summary "Update selvitys form"
+         (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+               form-keyword (keyword (str "form_" selvitys-type))
+               form-id (form-keyword avustushaku)
+               response (hakija-api/update-form form-id updated-form)]
+           (ok (without-id response)))))
+
+(defn- get-change-requests []
+  (GET* "/:avustushaku-id/hakemus/:hakemus-id/change-requests" [avustushaku-id hakemus-id :as request]
+        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+        :return [virkailija-schema/Hakemus]
+        :summary "List change requests of given hakemus"
+        (hakija-api/list-hakemus-change-requests hakemus-id)))
+
+(defn- get-scores []
+  (GET* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
+        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+        :return virkailija-schema/ScoringOfArvio
+        :summary "Get scorings for given hakemus"
+        :description "Scorings are linked to avustushaku focus areas"
+        (if-let [arvio (virkailija-db/get-arvio hakemus-id)]
+          (ok (scoring/get-arvio-scores avustushaku-id (:id arvio)))
+          (ok {:scoring nil
+               :scores []}))))
+
+(defn- post-scores []
+  (POST* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
+         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+         :body [score (describe virkailija-schema/NewScore "Stored or updated score")]
+         :return virkailija-schema/ScoringOfArvio
+         :summary "Submit scorings for given arvio."
+         :description "Scorings are automatically assigned to logged in user."
+         (let [identity (authentication/get-identity request)
+               {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
+           (ok (scoring/add-score avustushaku-id
+                                  hakemus-id
+                                  identity
+                                  (:selection-criteria-index score)
+                                  (:score score))))))
+
+(defn- post-status []
+  (POST* "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id :as request]
+         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+         :body [body {:status va-schema/HakemusStatus
+                      :comment s/Str}]
+         :return {:hakemus-id Long
+                  :status va-schema/HakemusStatus}
+         :summary "Update status of hakemus"
+         (let [{:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)
+               identity (authentication/get-identity request)
+               new-status (:status body)
+               status-comment (:comment body)
+               updated-hakemus (hakija-api/update-hakemus-status hakemus new-status status-comment identity)]
+           (if (= new-status "pending_change_request")
+             (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
+                   answers (:answers submission)
+                   language (keyword (formutil/find-answer-value answers "language"))
+                   avustushaku-name (-> avustushaku :content :name language)
+                   email (formutil/find-answer-value answers "primary-email")
+                   user-key (:user_key updated-hakemus)
+                   presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)]
+               (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment presenting-officer-email)))
+           (ok {:hakemus-id hakemus-id
+                :status new-status}))))
+
+(defn- put-searches []
+  (PUT* "/:avustushaku-id/searches" [avustushaku-id :as request]
+        :path-params [avustushaku-id :- Long]
+        :body [body (describe virkailija-schema/SavedSearch "New stored search")]
+        :return {:search-url s/Str}
+        :summary "Create new stored search"
+        :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
+        (let [identity (authentication/get-identity request)
+              search-id (create-or-get-search avustushaku-id body identity)
+              search-url (str "/yhteenveto/avustushaku/" avustushaku-id "/listaus/" search-id "/")]
+          (ok {:search-url search-url}))))
+
+(defn- get-search []
+  (GET* "/:avustushaku-id/searches/:saved-search-id" [avustushaku-id saved-search-id]
+        :path-params [avustushaku-id :- Long, saved-search-id :- Long]
+        :return virkailija-schema/SavedSearch
+        :summary "Get stored search"
+        :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
+        (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
+          (ok (:query saved-search)))))
 
 (defroutes* avustushaku-routes
   "Hakemus listing and filtering"
@@ -350,111 +462,14 @@
   (get-hakemus-attachments)
   (get-hakemus-attachments-versions)
   (get-hakemus-attachment)
-
-  (POST* "/:avustushaku-id/init-selvitysform/:selvitys-type" [avustushaku-id selvitys-type]
-         :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
-         :body [form (describe form-schema/Form "Form to create")]
-         :return form-schema/Form
-         :summary "Create of finds selvitys form for given avustushaku"
-         (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
-               form-keyword (keyword (str "form_" selvitys-type))
-               form-keyword-value (form-keyword avustushaku)
-               ]
-            (if (nil? form-keyword-value)
-               (let [
-                     created-form (hakija-api/create-form form)
-                     form-id (:id created-form)
-                     loppuselvitys (= selvitys-type "loppuselvitys")]
-                 (if loppuselvitys
-                   (hakija-api/update-avustushaku-form-loppuselvitys avustushaku-id form-id)
-                   (hakija-api/update-avustushaku-form-valiselvitys avustushaku-id form-id))
-                 (ok (without-id created-form)))
-              (let [found-form (hakija-api/get-form-by-id form-keyword-value)]
-                (ok (without-id found-form))))))
-
-  (POST* "/:avustushaku-id/selvitysform/:selvitys-type" [avustushaku-id selvitys-type]
-         :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
-         :body [updated-form (describe form-schema/Form "Updated form")]
-         :return form-schema/Form
-         :summary "Update selvitys form"
-         (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
-                form-keyword (keyword (str "form_" selvitys-type))
-                form-id (form-keyword avustushaku)
-                response (hakija-api/update-form form-id updated-form)]
-           (ok (without-id response))))
-
-  (GET* "/:avustushaku-id/hakemus/:hakemus-id/change-requests" [avustushaku-id hakemus-id :as request]
-        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-        :return [virkailija-schema/Hakemus]
-        :summary "List change requests of given hakemus"
-        (hakija-api/list-hakemus-change-requests hakemus-id))
-
-  (GET* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
-        :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-        :return virkailija-schema/ScoringOfArvio
-        :summary "Get scorings for given hakemus"
-        :description "Scorings are linked to avustushaku focus areas"
-        (if-let [arvio (virkailija-db/get-arvio hakemus-id)]
-          (ok (scoring/get-arvio-scores avustushaku-id (:id arvio)))
-          (ok {:scoring nil
-               :scores []})))
-
-  (POST* "/:avustushaku-id/hakemus/:hakemus-id/scores" [avustushaku-id hakemus-id :as request]
-         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-         :body [score (describe virkailija-schema/NewScore "Stored or updated score")]
-         :return virkailija-schema/ScoringOfArvio
-         :summary "Submit scorings for given arvio."
-         :description "Scorings are automatically assigned to logged in user."
-         (let [identity (authentication/get-identity request)
-               {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
-           (ok (scoring/add-score avustushaku-id
-                                  hakemus-id
-                                  identity
-                                  (:selection-criteria-index score)
-                                  (:score score)))))
-
-  (POST* "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id :as request]
-         :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-         :body [body {:status va-schema/HakemusStatus
-                      :comment s/Str}]
-         :return {:hakemus-id Long
-                  :status va-schema/HakemusStatus}
-         :summary "Update status of hakemus"
-         (let [{:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)
-               identity (authentication/get-identity request)
-               new-status (:status body)
-               status-comment (:comment body)
-               updated-hakemus (hakija-api/update-hakemus-status hakemus new-status status-comment identity)]
-           (if (= new-status "pending_change_request")
-             (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
-                   answers (:answers submission)
-                   language (keyword (formutil/find-answer-value answers "language"))
-                   avustushaku-name (-> avustushaku :content :name language)
-                   email (formutil/find-answer-value answers "primary-email")
-                   user-key (:user_key updated-hakemus)
-                   presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)]
-               (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment presenting-officer-email)))
-           (ok {:hakemus-id hakemus-id
-                :status new-status})))
-
-  (PUT* "/:avustushaku-id/searches" [avustushaku-id :as request]
-        :path-params [avustushaku-id :- Long]
-        :body [body (describe virkailija-schema/SavedSearch "New stored search")]
-        :return {:search-url s/Str}
-        :summary "Create new stored search"
-        :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
-        (let [identity (authentication/get-identity request)
-              search-id (create-or-get-search avustushaku-id body identity)
-              search-url (str "/yhteenveto/avustushaku/" avustushaku-id "/listaus/" search-id "/")]
-          (ok {:search-url search-url})))
-
-  (GET* "/:avustushaku-id/searches/:saved-search-id" [avustushaku-id saved-search-id]
-        :path-params [avustushaku-id :- Long, saved-search-id :- Long]
-        :return virkailija-schema/SavedSearch
-        :summary "Get stored search"
-        :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
-        (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
-          (ok (:query saved-search)))))
+  (post-init-selvitysform)
+  (post-selvitysform)
+  (get-change-requests)
+  (get-scores)
+  (post-scores)
+  (post-status)
+  (put-searches)
+  (get-search))
 
 (defn- on-liite [id lang]
   (let [hakija-app-url (-> config :server :url :fi)
