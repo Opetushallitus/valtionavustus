@@ -42,7 +42,7 @@ const responseParser = new ResponseParser({
 class SelvitysUrlCreator extends UrlCreator{
   constructor() {
     function entityApiUrl(avustusHakuId, hakemusId, hakemusBaseVersion) {
-      return "/api/avustushaku/" + avustusHakuId + `/${selvitysType}/` + hakemusId + (typeof hakemusBaseVersion == "number" ? "/" + hakemusBaseVersion : "")
+      return "/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/` + hakemusId + (typeof hakemusBaseVersion == "number" ? "/" + hakemusBaseVersion : "")
     }
     const attachmentDirectAccessUrl = function(state, field) {
       const avustusHakuId = state.avustushaku.id
@@ -197,7 +197,7 @@ function initFormController() {
 }
 
 function initSelvitys(avustusHakuId, hakemusId, selvitysType){
-  HttpUtil.get("/api/avustushaku/" + avustusHakuId + `/${selvitysType}/init/` + hakemusId).then(response => {
+  HttpUtil.get("/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/init/` + hakemusId).then(response => {
     console.log(response)
     const hakemusId = response.id
     window.location = `/avustushaku/${avustusHakuId}/${selvitysType}?${selvitysType}=${hakemusId}`
