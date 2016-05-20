@@ -28,7 +28,6 @@ va_hakija_default_source_path="va-hakija/target/uberjar/hakija-*-standalone.jar"
 va_virkailija_default_source_path="va-virkailija/target/uberjar/virkailija-*-standalone.jar"
 
 function clean() {
-  echo "Running lein clean and emptying all subdirectories with name 'node_modules', (BUILD_NUMBER=$BUILD_NUMBER)"
   time $LEIN modules clean
   if [[ "$BUILD_NUMBER" == *0 ]] ;
   then
