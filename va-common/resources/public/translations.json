@@ -4,6 +4,10 @@
     "sv": "På svenska"
   },
   "form": {
+    "heading": {
+      "fi": "Hakemus",
+      "sv": "Ansökan"
+    },
     "heading-hakemus": {
       "fi": "Hakemus",
       "sv": "Ansökan"
