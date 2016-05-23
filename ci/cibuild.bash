@@ -29,13 +29,8 @@ va_virkailija_default_source_path="va-virkailija/target/uberjar/virkailija-*-sta
 
 function clean() {
   time $LEIN modules clean
-  if [[ "$BUILD_NUMBER" == *0 ]] ;
-  then
-    echo "Emptying all subdirectories with name 'node_modules', (BUILD_NUMBER=$BUILD_NUMBER)"
-    time find $PROJECTROOTPATH -depth -type d -name 'node_modules' -exec rm -rf {} \;
-  else
-    echo "Skipping emptying all subdirectories with name 'node_modules', (BUILD_NUMBER=$BUILD_NUMBER)"
-  fi
+  echo "Emptying all subdirectories with name 'node_modules', (BUILD_NUMBER=$BUILD_NUMBER)"
+  time find $PROJECTROOTPATH -depth -type d -name 'node_modules' -exec rm -rf {} \;
 }
 
 function install_module() {
