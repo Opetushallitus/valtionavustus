@@ -62,15 +62,19 @@ export default class SelvitysEmail extends Component {
     return(
       <div>
         {selvitysEmailSent && <div>
-          <div>Lähetetty {selvitysEmail.send}</div>
-          <div>To: {selvitysEmail.to}</div>
-          <div>Subject: {selvitysEmail.subject}</div>
-          <div style={{whiteSpace:'pre-line',marginTop:10}}>{selvitysEmail.message}</div>
+          <div className="selvitys-email-header">
+            <div>Lähetetty {selvitysEmail.send}</div>
+            <div>To: {selvitysEmail.to}</div>
+            <div>Subject: {selvitysEmail.subject}</div>
+          </div>
+          <div className="selvitys-email-send">{selvitysEmail.message}</div>
         </div>}
         {!selvitysEmailSent && <div>
-          <div>From: no-reply@oph.fi</div>
-          <div>To: <a href={'mailto:' + email}>{email}</a></div>
-          <div>Subject: {subject}</div>
+          <div className="selvitys-email-header">
+            <div>From: no-reply@oph.fi</div>
+            <div>To: <a href={'mailto:' + email}>{email}</a></div>
+            <div>Subject: {subject}</div>
+          </div>
           <textarea className="textarea-email" value={message} onChange={onChange}/>
           <button onClick={onSendMessage}>Hyväksy ja lähetä viesti</button>
         </div>}
