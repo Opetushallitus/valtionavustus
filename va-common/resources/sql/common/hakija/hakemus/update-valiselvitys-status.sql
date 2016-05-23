@@ -1,0 +1,1 @@
+update hakemukset set status_valiselvitys=:status where id=:id and version_closed is null

@@ -1,0 +1,2 @@
+alter table hakija.hakemukset add column status_valiselvitys VARCHAR(20) NOT NULL default 'missing';
+alter table hakija.hakemukset add column status_loppuselvitys VARCHAR(20) NOT NULL default 'missing';

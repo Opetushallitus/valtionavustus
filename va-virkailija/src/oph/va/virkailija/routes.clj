@@ -148,14 +148,21 @@
 )
 
 (defn- send-selvitys []
-  (POST* "/:avustushaku-id/selvitys/send" []
-         :path-params [avustushaku-id :- Long]
-         :body  [selvitys-email (describe virkailija-schema/SelvitysEmail "Selvtys email")]
+  (POST* "/:avustushaku-id/selvitys/:selvitys-type/send" []
+         :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
+         :body  [selvitys-email (describe virkailija-schema/SelvitysEmail "Selvitys email")]
          :return s/Any
          :summary "Send selvitys and update state to sent"
-         (hakija-api/send-selvitys selvitys-email)
-         (hakija-api/update-selvitys-message selvitys-email)
-         (ok {:status "ok"})
+         (let [selvitys-hakemus-id (:selvitys-hakemus-id selvitys-email)
+               hakemus (hakija-api/get-hakemus selvitys-hakemus-id)
+               parent_id (:parent_id hakemus)
+               is-loppuselvitys (= selvitys-type "loppuselvitys")]
+           (hakija-api/send-selvitys selvitys-email)
+           (hakija-api/update-selvitys-message selvitys-email)
+           (if is-loppuselvitys (hakija-api/update-loppuselvitys-status parent_id "accepted") (hakija-api/update-valiselvitys-status parent_id "accepted"))
+           (ok {:status "ok"})
+           )
+
   ))
 
 (defn- post-change-request-email []

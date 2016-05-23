@@ -14,6 +14,7 @@ import HttpUtil from 'va-common/web/HttpUtil'
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
+import HakemusSelvitysStatuses from './hakemus-details/HakemusSelvitysStatuses.js'
 
 const dispatcher = new Dispatcher()
 
@@ -68,6 +69,8 @@ export default class HakemustenArviointiController {
         name: "",
         openQuestions:[],
         status: HakemusArviointiStatuses.allStatuses(),
+        status_valiselvitys: HakemusSelvitysStatuses.allStatuses(),
+        status_loppuselvitys: HakemusSelvitysStatuses.allStatuses(),
         organization: "",
         roleIsOpen:false,
         evaluator:evaluator,

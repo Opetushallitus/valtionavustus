@@ -136,6 +136,8 @@
    :register-number (:register_number hakemus)
    :user-key (:user_key hakemus)
    :selvitys-email (:selvitys_email hakemus)
+   :status-loppuselvitys (:status_loppuselvitys hakemus)
+   :status-valiselvitys (:status_valiselvitys hakemus)
    :answers (:answer_values hakemus)})
 
 (defn- paatos-sent-emails->json [paatos]
@@ -239,6 +241,14 @@
         ]
     (exec :form-db hakija-queries/update-hakemus-selvitys-email! {:selvitys_email email :id hakemus-id})))
 
+
+(defn update-loppuselvitys-status [hakemus-id status]
+  (->> {:id hakemus-id :status status}
+       (exec :form-db hakija-queries/update-loppuselvitys-status<! )))
+
+(defn update-valiselvitys-status [hakemus-id status]
+  (->> {:id hakemus-id :status status}
+       (exec :form-db hakija-queries/update-valiselvitys-status<! )))
 
 (defn get-hakemusdata [hakemus-id]
   (let [hakemus (first (exec :form-db hakija-queries/get-hakemus-with-answers {:id hakemus-id}))

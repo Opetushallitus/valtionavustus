@@ -104,7 +104,7 @@
          :body [answers (describe Answers "New answers")]
          :return Hakemus
          :summary "Submit hakemus"
-         (on-selvitys-submit haku-id hakemus-id base-version answers (selvitys-form-keyword selvitys-type))))
+         (on-selvitys-submit haku-id hakemus-id base-version answers (selvitys-form-keyword selvitys-type) selvitys-type))
 
 (defn- put-hakemus []
   (PUT* "/:haku-id/hakemus" [haku-id :as request]

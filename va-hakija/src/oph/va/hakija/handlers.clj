@@ -185,7 +185,7 @@
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 
-(defn on-selvitys-submit [haku-id hakemus-id base-version answers selvitys-field-keyword]
+(defn on-selvitys-submit [haku-id hakemus-id base-version answers selvitys-field-keyword selvitys-type]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         form-id (selvitys-field-keyword avustushaku)
         form (form-db/get-form form-id)
@@ -197,12 +197,15 @@
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
+              parent_id (:parent_id hakemus)
               submitted-hakemus (va-db/submit-hakemus haku-id
                                                       hakemus-id
                                                       submission-id
                                                       submission-version
                                                       (:register_number hakemus)
-                                                      answers)]
+                                                      answers)
+              is-loppuselvitys (= selvitys-type "loppuselvitys")
+              updated-selvitys-status (if is-loppuselvitys (va-db/update-loppuselvitys-status parent_id "submitted") (va-db/update-valiselvitys-status parent_id "submitted"))]
           (hakemus-ok-response submitted-hakemus saved-submission validation))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))

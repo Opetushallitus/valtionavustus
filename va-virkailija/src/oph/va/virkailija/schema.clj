@@ -108,6 +108,8 @@
                       :budget-oph-share s/Int
                       :register-number (s/maybe s/Str)
                       :user-key s/Str
+                      :status-loppuselvitys (s/maybe s/Str)
+                      :status-valiselvitys (s/maybe s/Str)
                       :selvitys-email (s/maybe s/Str)
                       :answers [Answer]})
 

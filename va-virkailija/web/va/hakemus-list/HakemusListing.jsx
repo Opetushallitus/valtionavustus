@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { Component } from 'react'
 
 import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses.js'
+import HakemusSelvitysStatuses from '../hakemus-details/HakemusSelvitysStatuses.js'
 import ScoreResolver from '../ScoreResolver.js'
 import PersonFilterButton from './PersonFilterButton.jsx'
 import PersonSelectButton from './PersonSelectButton.jsx'
@@ -16,6 +17,10 @@ export default class HakemusListing extends Component {
         return hakemus => hakemus["organization-name"]
       case "status":
         return hakemus => hakemus.arvio.status
+      case "status_loppuselvitys":
+        return hakemus => hakemus["status-loppuselvitys"]
+      case "status_valiselvitys":
+        return hakemus => hakemus["status-valiselvitys"]
       case "change-request":
         return hakemus => {
           if(hakemus.status === "pending_change_request") {
@@ -124,6 +129,8 @@ export default class HakemusListing extends Component {
     return _.filter(list, HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("name"), filter.name))
             .filter(HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("organization"), filter.organization))
             .filter(HakemusListing._filterWithArrayPredicate(HakemusListing._fieldGetter("status"), filter.status))
+            .filter(HakemusListing._filterWithArrayPredicate(HakemusListing._fieldGetter("status_loppuselvitys"), filter.status_loppuselvitys))
+            .filter(HakemusListing._filterWithArrayPredicate(HakemusListing._fieldGetter("status_valiselvitys"), filter.status_valiselvitys))
             .filter(HakemusListing._filterAnswers(HakemusListing._fieldGetter("answers"), filter.answers))
             .filter(HakemusListing._filterWithArrayFilterPredicate(HakemusListing._fieldGetter("evaluators"), filter.evaluator))
             .filter(HakemusListing._filterWithNumberPredicate(HakemusListing._fieldGetter("presenter"), filter.presenter))
@@ -153,7 +160,9 @@ export default class HakemusListing extends Component {
   }
 
   render() {
-    const {controller, userInfo, state, hasSelected, selectedHakemus, previouslySelectedHakemus, hakemusList, privileges} = this.props
+    const {controller, userInfo, state, hasSelected, selectedHakemus, previouslySelectedHakemus, hakemusList, privileges,avustushaku} = this.props
+    const avustushakuStatus = avustushaku.status
+    const isResolved = avustushakuStatus=="resolved"
     const filter = this.props.hakemusFilter
     const sorter = this.props.hakemusSorter
     const allowHakemusScoring = privileges["score-hakemus"]
@@ -170,6 +179,7 @@ export default class HakemusListing extends Component {
         allowHakemusScoring={allowHakemusScoring}
         allowChangeHakemusState={allowChangeHakemusState}
         controller={controller}
+        isResolved={isResolved}
         state={state}/> })
     const budgetGrantedSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x.arvio["budget-granted"])))
 
@@ -190,13 +200,37 @@ export default class HakemusListing extends Component {
             <input className="text-filter" placeholder="Hanke tai diaarinumero" onChange={onFilterChange("name")} value={filter.name}></input>
             <HakemusSorter field="name" sorter={sorter} controller={controller}/>
           </th>
-          <th className="score-column">Arvio <HakemusSorter field="score" sorter={sorter} controller={controller}/></th>
+          {!isResolved && <th className="score-column">Arvio <HakemusSorter field="score" sorter={sorter} controller={controller}/></th>}
           <th className="status-column">
-            <StatusFilter controller={controller} hakemusList={hakemusList} filter={filter}/>
+            <StatusFilter controller={controller}
+                          hakemusList={hakemusList}
+                          filter={filter}
+                          label="Tila"
+                          statusValues={HakemusArviointiStatuses.allStatuses()}
+                          statusToFi={HakemusArviointiStatuses.statusToFI}
+                          filterField="status"/>
             <HakemusSorter field="status" sorter={sorter} controller={controller}/>
           </th>
-          <ChangeRequestHeader field="change-request" sorter={sorter} controller={controller} hakemusList={filteredHakemusList} />
-          <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>
+          {!isResolved && <ChangeRequestHeader field="change-request" sorter={sorter} controller={controller} hakemusList={filteredHakemusList} />}
+          {!isResolved && <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>}
+          {isResolved && <th className="status-column">
+            <StatusFilter controller={controller}
+                          hakemusList={hakemusList}
+                          filter={filter}
+                          label="Välis."
+                          statusValues={HakemusSelvitysStatuses.allStatuses()}
+                          statusToFi={HakemusSelvitysStatuses.statusToFI}
+                          filterField="status_valiselvitys"/>
+          </th>}
+          {isResolved && <th className="status-column">
+            <StatusFilter controller={controller}
+                          hakemusList={hakemusList}
+                          filter={filter}
+                          label="Loppus."
+                          statusValues={HakemusSelvitysStatuses.allStatuses()}
+                          statusToFi={HakemusSelvitysStatuses.statusToFI}
+                          filterField="status_loppuselvitys"/>
+          </th>}
           <th className="granted-sum-column">Myönnetty <HakemusSorter field="granted-sum" sorter={sorter} controller={controller}/></th>
           <th className="person-filter-column"><PersonFilterButton controller={controller} state={state}/></th>
         </tr></thead>
@@ -320,28 +354,26 @@ class StatusFilter extends Component {
   }
 
   render() {
-    const controller = this.props.controller
-    const statusFilter = this.props.filter.status
+    const {controller, hakemusList, label,statusValues,statusToFi,filterField} = this.props
+    const statusFilter = this.props.filter[filterField]
     const statuses = []
-    const hakemusList = this.props.hakemusList
     const onCheckboxChange = function(status) {
       return function(e) {
         if(_.contains(statusFilter, status)) {
-          controller.setFilter("status",  _.without(statusFilter, status))
+          controller.setFilter(filterField,  _.without(statusFilter, status))
         }
         else {
-          controller.setFilter("status", _.union(statusFilter, [status]))
+          controller.setFilter(filterField, _.union(statusFilter, [status]))
         }
       }
     }
 
-    const statusValues = HakemusArviointiStatuses.allStatuses()
     const self = this
     const onDelete = function(e) {
       self.setState({
         open: false
       })
-      controller.setFilter("status", statusValues)
+      controller.setFilter(filterField, statusValues)
     }
     const hasFilters = statusFilter.length !== statusValues.length
 
@@ -349,17 +381,17 @@ class StatusFilter extends Component {
       const status = statusValues[i]
       const checked = _.contains(statusFilter, status)
       const htmlId = "filter-by-status-" + status
-      const kpl = _.filter(hakemusList, HakemusListing._filterWithArrayPredicate(hakemus => hakemus.arvio.status, [status])).length
+      const kpl = _.filter(hakemusList, HakemusListing._filterWithArrayPredicate(HakemusListing._fieldGetter(filterField), [status])).length
       statuses.push(
         <div key={status}>
           <input id={htmlId} type="checkbox" checked={checked} onChange={onCheckboxChange(status)} value={statusValues[status]}/>
-          <label htmlFor={htmlId}>{HakemusArviointiStatuses.statusToFI(status)} ({kpl})</label>
+          <label htmlFor={htmlId}>{statusToFi(status)} ({kpl})</label>
         </div>
       )
     }
     return (
       <div className="status-filter">
-        <a onClick={this.handleClick}>Tila</a>
+        <a onClick={this.handleClick}>{label}</a>
         <button type="button" hidden={!hasFilters} onClick={onDelete} className="filter-remove" alt="Poista tila rajaukset" title="Poista tila rajaukset" tabIndex="-1" />
         <div className="status-filter-popup popup-box-shadow" hidden={!this.state.open}>
           {statuses}
@@ -374,12 +406,14 @@ class HakemusRow extends Component {
     return this.props.hakemus === this.props.selectedHakemus || this.props.hakemus === this.props.previouslySelectedHakemus
   }
   render() {
-    const {state, hakemus, userInfo, allowHakemusScoring, allowChangeHakemusState, selectedHakemus, previouslySelectedHakemus} = this.props
+    const {state, hakemus, userInfo, allowHakemusScoring, allowChangeHakemusState, selectedHakemus, previouslySelectedHakemus, isResolved} = this.props
     const htmlId = "hakemus-" + hakemus.id
     const thisIsSelected = hakemus === selectedHakemus || hakemus === previouslySelectedHakemus
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
     const controller = this.props.controller
     const statusFI = HakemusArviointiStatuses.statusToFI(hakemus.arvio.status)
+    const statusLoppuselvitys = HakemusSelvitysStatuses.statusToFI(hakemus["status-loppuselvitys"])
+    const statusValiselvitys = HakemusSelvitysStatuses.statusToFI(hakemus["status-valiselvitys"])
     const changeRequest = HakemusListing._fieldGetter("change-request")(hakemus)
     const statusComment = hakemus["status-comment"] ? ":\n" + hakemus["status-comment"] : ""
     const changeRequestTitle = changeRequest ? "Odottaa täydennystä" + statusComment : ""
@@ -392,10 +426,12 @@ class HakemusRow extends Component {
     return <tr id={htmlId} className={rowClass} onClick={controller.selectHakemus}>
       <td className="organization-column" title={hakemus["organization-name"]}>{hakemus["organization-name"]}</td>
       <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
-      <td className="score-column"><Scoring scoring={hakemus.arvio.scoring} userInfo={userInfo} allowHakemusScoring={allowHakemusScoring}/></td>
+      {!isResolved && <td className="score-column"><Scoring scoring={hakemus.arvio.scoring} userInfo={userInfo} allowHakemusScoring={allowHakemusScoring}/></td>}
       <td className="status-column">{statusFI}</td>
-      <td className="change-request-column" title={changeRequestTitle}>{changeRequest}</td>
-      <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>
+      {!isResolved && <td className="change-request-column" title={changeRequestTitle}>{changeRequest}</td>}
+      {!isResolved && <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>}
+      {isResolved && <td className="selvitys-column">{statusValiselvitys}</td>}
+      {isResolved && <td className="selvitys-column">{statusLoppuselvitys}</td>}
       <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>
       <td className="person-filter-column"><PersonSelectButton show={allowChangeHakemusState} controller={controller} hakemus={hakemus} state={state}/></td>
     </tr>
