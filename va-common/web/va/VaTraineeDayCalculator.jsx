@@ -75,7 +75,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
       }
     })
     const total =  VaTraineeDayCalculator.readTotalAsFloat(field.id, value)
-    return total > 0 ? undefined : { "error": "negative-trayneeday-total" }
+      return total > 0 ? undefined : { "error": "negative-trayneeday-total" }
   }
 
   static onChange(subField,props,valueHolder,field) {

@@ -6,7 +6,7 @@ import _ from 'lodash'
 
 const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
 
-export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
+export const Kayttosuunnitelma = (formContent, avustushaku, hakemus, L) => {
   const ophFinancingPercentage = (100-avustushaku.content["self-financing-percentage"])
   FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
     .map(budgetItem => _.extend(budgetItem, {
@@ -31,7 +31,8 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
 
   const totalIncomes = tables[1] ? _.sum(tables[1].children.map(i=>Number(i.original))) : 0
   const totalFinancing = tables[2] ? _.sum(tables[2].children.map(i=>Number(i.original))) : 0
-  return <div>
+  return {
+    markup: <div>
     <section className="section">
       <h1><L translationKey="kayttosuunnitelma"/></h1>
       {tables[0] &&
@@ -102,7 +103,11 @@ export const Kayttosuunnitelma = ({formContent, avustushaku, hakemus, L}) => {
         </tbody>
       </table>
     </section>
-  </div>
+  </div>,
+    data: {
+      nettomenotYhteensa: formatPrice(totalOverriddenCosts - totalIncomes)
+    }
+  }
 }
 
 const AmountCell = ({children}) => <th className="amount budgetAmount">{children && formatPrice(children)}</th>

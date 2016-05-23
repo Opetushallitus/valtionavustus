@@ -76,6 +76,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
   const koulutusosiot = hakemus.answers.find(item => item.key === 'koulutusosiot')
   const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
   const ophFinancingPercentage = 100-selfFinancingPercentage
+  const kayttosuunnitelma = Kayttosuunnitelma(formContent, avustushaku,hakemus, L)
   return (
      <section>
        <Section title="paatos" L={L}>
@@ -83,7 +84,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
          <p>{hakemus['register-number']} {hakemus['project-name']}
          </p>
          <p><L translationKey="paatos-myonnetty-1" /> {formatPrice(totalGranted)}&nbsp;.&nbsp;
-           <L translationKey="paatos-myonnetty-2" /> {formatPrice(Math.ceil(totalGranted/ophFinancingPercentage*100))}.
+           <L translationKey="paatos-myonnetty-2" /> {kayttosuunnitelma.data.nettomenotYhteensa}.
          </p>
          <p><L translationKey="paatos-myonnetty-3" /> {selfFinancingPercentage>0 ? <span><L translationKey="valtionavustusprosentti-on" /> {ophFinancingPercentage}%</span> : null}</p>
          <DecisionContent avustushaku={avustushaku} id="myonteinenlisateksti" lang={L.lang}/>
@@ -110,12 +111,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
        <OptionalSection title="hyvaksyminen" id="hyvaksyminen" avustushaku={avustushaku} L={L}/>
        <Lisatietoja avustushaku={avustushaku} role={role} L={L}/>
        <LiitteetList hakemus={hakemus} avustushaku={avustushaku} L={L}/>
-       <Kayttosuunnitelma
-          formContent={formContent}
-          avustushaku={avustushaku}
-          hakemus={hakemus}
-          L={L}
-       />
+       {kayttosuunnitelma.markup}
        {koulutusosiot && <Koulutusosiot list={koulutusosiot.value} answers={hakemus.arvio['overridden-answers'].value} L={L} />}
      </section>
   )
