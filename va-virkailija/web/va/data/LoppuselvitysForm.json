@@ -196,7 +196,7 @@
                   },
                   "label": {
                     "fi": "Tuotokset",
-                    "sv": ""
+                    "sv": "SV-TUotokset"
                   },
                   "id": "project-outcomes.project-outcomes-1.outcome-type",
                   "options": [
@@ -230,7 +230,17 @@
                     }
                   ],
                   "required": true,
-                  "fieldType": "dropdown"
+                  "fieldType": "radioButton"
+                },
+                {
+                  "fieldClass": "infoElement",
+                  "id": "project-outcomes.project-outcomes-1.empty-space-between",
+                  "fieldType": "h3",
+                  "params": {},
+                  "text": {
+                    "fi": "   ",
+                    "sv": "   "
+                  }
                 },
                 {
                   "params": {
@@ -283,7 +293,7 @@
                     "sv": "SV-Konkreta resultat, som man vill uppnå i projektet"
                   },
                   "id": "project-outcomes.project-outcomes-1.something",
-                  "required": true,
+                  "required": false,
                   "fieldType": "textArea"
                 }
               ]
@@ -308,7 +318,7 @@
             "fi": "Hankkeesta/toiminnasta on esitetty ehdotuksia OPH:n hyvien käytäntöjen portaaliin.",
             "sv": ""
           },
-          "id": "radioButton-0",
+          "id": "radioButton-good-practices",
           "options": [
             {
               "value": "kyllae",
@@ -329,22 +339,29 @@
           "fieldType": "radioButton"
         },
         {
-          "params": {
-            "size": "small",
-            "maxlength": 1000
-          },
-          "fieldClass": "formField",
-          "helpText": {
-            "fi": "Ohje ekaan",
-            "sv": "Ohje på svenska"
-          },
-          "label": {
-            "fi": "Mikäli kyllä, ehdotuksen tai hyväksytyn käytännön tunnus",
-            "sv": "På svenska"
-          },
-          "id": "textArea-6",
-          "required": true,
-          "fieldType": "textArea"
+          "fieldClass": "wrapperElement",
+          "id": "gp-wrap",
+          "fieldType": "fieldset",
+          "children": [
+            {
+              "params": {
+                "size": "small",
+                "maxlength": 1000
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "Ohje ekaan",
+                "sv": "Ohje på svenska"
+              },
+              "label": {
+                "fi": "Mikäli kyllä, ehdotuksen tai hyväksytyn käytännön tunnus",
+                "sv": "På svenska"
+              },
+              "id": "textArea-answer-gp",
+              "required": true,
+              "fieldType": "textArea"
+            }
+          ]
         },
         {
           "params": {
@@ -378,50 +395,61 @@
           "id": "namedAttachment-0",
           "required": true,
           "fieldType": "namedAttachment"
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "repeating-attachment-other",
+          "fieldType": "growingFieldset",
+          "children": [
+            {
+              "fieldClass": "wrapperElement",
+              "id": "repeating-attachment-otherliite-1",
+              "fieldType": "growingFieldsetChild",
+              "children": [
+                {
+                  "params": {},
+                  "fieldClass": "formField",
+                  "helpText": {
+                    "fi": "",
+                    "sv": ""
+                  },
+                  "label": {
+                    "fi": "Muu liite",
+                    "sv": "Annan bilaga"
+                  },
+                  "id": "repeating-attachment-other.repeating-attachment-otherliite-1.attachment",
+                  "required": false,
+                  "fieldType": "namedAttachment"
+                }
+              ]
+            }
+          ],
+          "params": {
+            "showOnlyFirstLabels": true
+          },
+          "label": {
+            "fi": "",
+            "sv": ""
+          }
         }
       ],
       "label": {
         "fi": "Loppuselvitys",
         "sv": "Loppuselvitys"
       }
-    },
+    }
+  ],
+  "rules": [
     {
-      "fieldClass": "wrapperElement",
-      "id": "repeating-attachment-other",
-      "fieldType": "growingFieldset",
-      "children": [
-        {
-          "fieldClass": "wrapperElement",
-          "id": "repeating-attachment-otherliite-1",
-          "fieldType": "growingFieldsetChild",
-          "children": [
-            {
-              "params": {},
-              "fieldClass": "formField",
-              "helpText": {
-                "fi": "",
-                "sv": ""
-              },
-              "label": {
-                "fi": "Muu liite",
-                "sv": "Annan bilaga"
-              },
-              "id": "repeating-attachment-other.repeating-attachment-otherliite-1.attachment",
-              "required": false,
-              "fieldType": "namedAttachment"
-            }
-          ]
-        }
+      "type": "includeIf",
+      "triggerId": "radioButton-good-practices",
+      "targetIds": [
+        "gp-wrap"
       ],
       "params": {
-        "showOnlyFirstLabels": false
-      },
-      "label": {
-        "fi": "",
-        "sv": ""
+        "triggerValue": "kyllae"
       }
     }
   ],
-  "rules": [],
   "created_at": "2016-05-12T05:24:23Z"
 }
