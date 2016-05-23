@@ -56,7 +56,6 @@ export default class PaatosApp extends Component {
          {decisionStatus == 'rejected' ?
             <RejectedDecision avustushaku={avustushaku} hakemus={hakemus} role={role} L={L}/> :
             <AcceptedDecision hakemus={hakemus} avustushaku={avustushaku} role={role} formContent={formContent} L={L}/>}
-         <SendDecisionButton avustushaku={avustushaku} hakemus={hakemus} isPublic={ispublic}/>
        </section>
     )
   }
@@ -140,47 +139,6 @@ const AvustuksenMaksu  = ({L,avustushaku,bic,iban,totalPaid}) =>{
       <p><L translationKey="maksuerat-ja-ajat" />: {paidFormatted} {maksu}{!multipleMaksuera && <span>.</span>} {multipleMaksuera && <span><L translationKey="ja-loppuera-viimeistaan" /> {maksudate}.</span>} </p>
     </Section>
   )
-}
-
-class SendDecisionButton extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {sent: false}
-  }
-
-  render() {
-    const onFindEmail = () => {
-      const hakemus = this.props.hakemus
-      const emailsS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/emails/${hakemus.id}`))
-      emailsS.onValue((res)=> {
-           this.setState({...this.state, emails: res.emails.join(" ")})
-         }
-      )
-    }
-
-    const onSend = () => {
-      const hakemus = this.props.hakemus
-      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/send/${hakemus.id}`, {email: this.state.emails}))
-      sendS.onValue((res)=> {
-           this.setState({...this.state, sentEmails: res.emails.join(" ")})
-         }
-      )
-    }
-
-    const onEmailChanges = (event) => {
-      this.setState({emails: event.target.value})
-    }
-    if(this.props.isPublic) return null;
-    return (
-       <section className="section sendEmails">
-         <div hidden={!this.state.sentEmails}>Päätös lähetetty osoitteisiin: <strong>{this.state.sentEmails}</strong>
-         </div>
-         <input type="text" value={this.state.emails} onChange={onEmailChanges} size="60" hidden={!this.state.emails}/>
-         <button onClick={onFindEmail} hidden={this.state.emails}>Päätös sähköposti</button>
-         <button onClick={onSend} hidden={!this.state.emails}>Lähetä</button>
-       </section>
-    )
-  }
 }
 
 const RejectedDecision = ({avustushaku, hakemus, role, L}) =>

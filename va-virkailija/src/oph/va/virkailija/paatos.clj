@@ -69,13 +69,6 @@
 
 (defroutes* paatos-routes
   "Paatos routes"
-  (POST* "/send/:hakemus-id" []
-         :path-params [hakemus-id :- Long]
-         :body [email (describe virkailija-schema/PaatosEmail "Emails to send")]
-         (log/info "Email: " email)
-         (let [email-with-spaces (:email email)
-               email-list (str/split email-with-spaces #" ")]
-           (send-paatos hakemus-id email-list)))
 
   (POST* "/sendall/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
