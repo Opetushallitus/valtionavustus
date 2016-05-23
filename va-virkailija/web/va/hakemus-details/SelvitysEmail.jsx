@@ -2,19 +2,22 @@ import React, {Component} from 'react'
 import Bacon from 'baconjs'
 import HttpUtil from 'va-common/web/HttpUtil.js'
 
-const defaultMessage = (avustushakuName,selvitysName)=>{
+const defaultMessage = (avustushakuName, selvitysName, name, email)=>{
   return `Hei,
 Hankkeen "${avustushakuName}" ${selvitysName} on nyt käsitelty ja hyväksytty.
 
 Terveisin,
-TODO Kimmo Koskinen
-TODO 050 923 9432
+${name}
+${email}
 `
 }
 
-const initState = (props) => {
-  const selvitysName = props.selvitysType=='valiselvitys' ? 'väliselvitys' : 'loppuselvitys'
-  return {message:defaultMessage(props.avustushaku.content.name.fi,selvitysName)}
+const initState = ({selvitysType, hakuData, avustushaku}) => {
+  const selvitysName = selvitysType=='valiselvitys' ? 'väliselvitys' : 'loppuselvitys'
+  const roles = hakuData.roles
+  const presentingOfficer = _.find(roles,(role)=>role.role=="presenting_officer")
+  const {name,email} = presentingOfficer
+  return {message:defaultMessage(avustushaku.content.name.fi,selvitysName, name, email)}
 }
 
 export default class SelvitysEmail extends Component {
