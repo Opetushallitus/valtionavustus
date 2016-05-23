@@ -56,7 +56,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
       return stringValue
     }
     const intValue = parseInt(stringValue)
-    return intValue ? intValue.toString(intValue) : "0"
+    return intValue ? intValue.toString() : "0"
   }
 
   static readSubValue(value, fieldId, type) {
