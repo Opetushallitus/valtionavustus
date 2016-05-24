@@ -3,7 +3,7 @@ import React, {Component} from 'react'
 import HakemusPreview from './HakemusPreview.jsx'
 import HakemusArviointi from './HakemusArviointi.jsx'
 import Selvitys from './Selvitys.jsx'
-
+import styles from './hakemusDetails.less'
 
 export default class HakemusDetails extends Component {
   render() {
