@@ -279,7 +279,7 @@
          :return virkailija-schema/Arvio
          :summary "Update arvio for given hakemus. Creates arvio if missing."
          (let [identity (authentication/get-identity request)
-               {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
+               avustushaku (hakija-api/get-avustushaku avustushaku-id)]
            (ok (-> (virkailija-db/update-or-create-hakemus-arvio avustushaku hakemus-id arvio identity)
                    hakudata/arvio-json)))))
 
