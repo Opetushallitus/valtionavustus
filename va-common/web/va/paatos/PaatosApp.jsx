@@ -82,15 +82,16 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
          <p><L translationKey="myonnetty-title" /></p>
          <p>{hakemus['register-number']} {hakemus['project-name']}
          </p>
-         <p><L translationKey="paatos-myonnetty-1" /> {formatPrice(totalGranted)}&nbsp;.&nbsp;
+         {kayttosuunnitelma.data ? <div><p><L translationKey="paatos-myonnetty-1" /> {formatPrice(totalGranted)}&nbsp;.&nbsp;
            <L translationKey="paatos-myonnetty-2" /> {kayttosuunnitelma.data.nettomenotYhteensa}.
          </p>
          <p><L translationKey="paatos-myonnetty-3" /> {selfFinancingPercentage>0 ? <span><L translationKey="valtionavustusprosentti-on" /> {ophFinancingPercentage}%</span> : null}</p>
-         <DecisionContent avustushaku={avustushaku} id="myonteinenlisateksti" lang={L.lang}/>
-         <p>
+           <DecisionContent avustushaku={avustushaku} id="myonteinenlisateksti" lang={L.lang}/>
+           <p>
            <L translationKey="paatos-myonnetty-4" />
+           </p></div>
+         : null}
 
-         </p>
        </Section>
        <Perustelut hakemus={hakemus} L={L}/>
        <OptionalSection title="sovelletut-saannokset" id="sovelletutsaannokset" avustushaku={avustushaku} L={L}/>
@@ -109,7 +110,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
        <OptionalSection title="kayttooikeudet" id="kayttooikeudet" avustushaku={avustushaku} L={L}/>
        <OptionalSection title="hyvaksyminen" id="hyvaksyminen" avustushaku={avustushaku} L={L}/>
        <Lisatietoja avustushaku={avustushaku} role={role} L={L}/>
-       <LiitteetList hakemus={hakemus} avustushaku={avustushaku} L={L}/>
+       <LiitteetList hakemus={hakemus} avustushaku={avustushaku} L={L} hasBudget={kayttosuunnitelma.data}/>
        {kayttosuunnitelma.markup}
        {koulutusosiot && <Koulutusosiot list={koulutusosiot.value} answers={hakemus.arvio['overridden-answers'].value} L={L} />}
      </section>
@@ -151,7 +152,7 @@ const RejectedDecision = ({avustushaku, hakemus, role, L}) =>
      <Perustelut hakemus={hakemus} L={L}/>
      <OptionalSection title="sovelletut-saannokset" id="sovelletutsaannokset" avustushaku={avustushaku} L={L}/>
      <Lisatietoja avustushaku={avustushaku} role={role} L={L}/>
-     <LiitteetList hakemus={hakemus} avustushaku={avustushaku} L={L}/>
+     <LiitteetList hakemus={hakemus} avustushaku={avustushaku} L={L} hasBudget={false}/>
    </section>
 
 const Section = ({title, content, children, L})=> {
@@ -198,7 +199,7 @@ const DecisionContent = ({id, avustushaku, lang,className=""}) => {
   )
 }
 
-const LiitteetList = ({hakemus,avustushaku, L})=> {
+const LiitteetList = ({hakemus,avustushaku, L, hasBudget})=> {
   const liitteet = _.get(avustushaku, "decision.liitteet", [])
   const decisionStatus = hakemus.arvio.status
   const rejected = decisionStatus == 'rejected'
@@ -213,7 +214,7 @@ const LiitteetList = ({hakemus,avustushaku, L})=> {
 
   const AcceptedAttachments =
      <div>
-       <div><L translationKey="kayttosuunnitelma"/></div>
+       {hasBudget ? <div><L translationKey="kayttosuunnitelma"/></div>: null}
        <div><LiiteRow liite={oikaisuvaatimus} lang={L.lang}/></div>
        <div><LiiteRow liite={ehdot} lang={L.lang}/></div>
        <div><LiiteRow liite={yleisohje} lang={L.lang}/></div>

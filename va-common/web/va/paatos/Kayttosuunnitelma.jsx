@@ -7,15 +7,21 @@ import _ from 'lodash'
 const findCost = (formContent, answers, budgetItem) => Number(InputValueStorage.readValue(formContent, answers, budgetItem.children[1].id))
 
 export const Kayttosuunnitelma = (formContent, avustushaku, hakemus, L) => {
-  const ophFinancingPercentage = (100-avustushaku.content["self-financing-percentage"])
+  const tables = _.get(FormUtil.findFieldsByFieldType(formContent, 'vaBudget'), '[0].children', [])
+    .filter(table => table.fieldType === 'vaSummingBudgetElement')
+
   FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
     .map(budgetItem => _.extend(budgetItem, {
       original: findCost(formContent, hakemus.answers, budgetItem),
       overridden: findCost(formContent, hakemus.arvio['overridden-answers'], budgetItem)
     }))
 
-  const tables = FormUtil.findFieldsByFieldType(formContent, 'vaBudget')[0].children
-    .filter(table => table.fieldType === 'vaSummingBudgetElement')
+  if(tables.length === 0) return {
+    markup:<span></span>,
+    data: null  
+  }
+
+  const ophFinancingPercentage = (100-avustushaku.content["self-financing-percentage"])
   const useDetailedCosts = hakemus.arvio.useDetailedCosts
   const totalGranted = hakemus.arvio['budget-granted']
   const totallOriginalCosts = _.sum(tables[0].children.map(i=>Number(i.original)))
