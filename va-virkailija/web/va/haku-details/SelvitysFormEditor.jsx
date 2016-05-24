@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import FormEditor from './FormEditor.jsx'
 import FormJsonEditor from './FormJsonEditor.jsx'
+import LoppuselvitysForm from '../data/LoppuselvitysForm.json'
+import ValiselvitysForm from '../data/ValiselvitysForm.json'
 
 export default class SelvitysFormEditor extends React.Component{
   render(){
@@ -38,15 +40,21 @@ export default class SelvitysFormEditor extends React.Component{
 
     const disableSave = !formHasBeenEdited()
 
+    const recreateForm = () => {
+      const form = selvitysType=="valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
+      controller.selvitysFormOnChangeListener(avustushaku, JSON.stringify(form), selvitysType)
+    }
+
     return (
-      <div >
+      <div>
+        <button style={{float:'right'}} onClick={recreateForm}>Palauta alkuperäiset kysymykset</button>
         <div className="link-list">
           <div className="link-list-item">
             <h3>Lomakkeen esikatselu</h3>
-            <a target="haku-preview-fi" href={previewUrlFi}>Suomeksi</a><span className="link-divider"/><a target="haku-preview-sv" href={previewUrlSv}>Ruotsiksi</a>
+            <a target="_blank" href={previewUrlFi}>Suomeksi</a><span className="link-divider"/>
+            <a target="_blank" href={previewUrlSv}>Ruotsiksi</a>
           </div>
         </div>
-
         <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} />
         <div className="form-json-editor">
           <h3>Hakulomakkeen sisältö</h3>
