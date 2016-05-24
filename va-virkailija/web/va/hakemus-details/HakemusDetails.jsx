@@ -79,7 +79,7 @@ export default class HakemusDetails extends Component {
             {tab('valiselvitys', 'Väliselvitys')}
             {tab('loppuselvitys', 'Loppuselvitys')}
           </div>
-          <div id="tab-conent">{getSubTab(subTab)}</div>
+          <div id="tab-content">{getSubTab(subTab)}</div>
         </div>
       </div>
     )
