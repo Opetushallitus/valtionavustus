@@ -18,6 +18,8 @@ import AvustushakuDropdown from './avustushaku/AvustushakuDropdown.jsx'
 import ExcelExportLink from './avustushaku/ExcelExportLink.jsx'
 import HakemusFilter from './hakemus-filter/HakemusFilter.jsx'
 import LocalStorage from './LocalStorage'
+import {initErrorLogger} from 'va-common/web/va/util/ErrorLogger'
+initErrorLogger()
 
 import topbar from './style/topbar.less'
 import style from './style/main.less'

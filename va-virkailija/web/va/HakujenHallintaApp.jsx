@@ -9,6 +9,8 @@ import HakuListing from './haku-list/HakuListing.jsx'
 import EditorSelector from './haku-details/EditorSelector.jsx'
 import HakuEdit from './haku-details/HakuEdit.jsx'
 import LocalStorage from './LocalStorage'
+import {initErrorLogger} from 'va-common/web/va/util/ErrorLogger'
+initErrorLogger()
 
 import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'

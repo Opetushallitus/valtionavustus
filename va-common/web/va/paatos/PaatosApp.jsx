@@ -17,6 +17,8 @@ import HttpUtil from '../../HttpUtil.js'
 import {Kayttosuunnitelma} from './Kayttosuunnitelma.jsx'
 import {formatPrice} from './Formatter'
 import {Koulutusosiot} from './Koulutusosiot.jsx'
+import {initErrorLogger} from '../util/ErrorLogger'
+initErrorLogger()
 
 const parsedRoute = new RouteParser('/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id').match(location.pathname)
 const controller = new PaatosController()

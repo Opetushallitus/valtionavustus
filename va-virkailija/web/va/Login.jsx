@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom'
 import Bacon from 'baconjs'
 
 import HttpUtil from 'va-common/web/HttpUtil'
+import {initErrorLogger} from 'va-common/web/va/util/ErrorLogger'
+initErrorLogger()
 
 import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'

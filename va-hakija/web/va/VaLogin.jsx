@@ -21,6 +21,8 @@ import VaUrlCreator from './VaUrlCreator.js'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator.js'
 import TextButton from 'soresu-form/web/form/component/TextButton.jsx'
 import EmailTextField from 'soresu-form/web/form/component/EmailTextField.jsx'
+import {initErrorLogger} from 'va-common/web/va/util/ErrorLogger'
+initErrorLogger()
 
 export default class VaLogin extends React.Component {
   constructor(props) {

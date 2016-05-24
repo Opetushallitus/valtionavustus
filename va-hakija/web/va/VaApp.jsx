@@ -21,6 +21,8 @@ import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import {BudgetItemElement} from 'va-common/web/va/VaBudgetComponents.jsx'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
+import {initErrorLogger} from 'va-common/web/va/util/ErrorLogger'
+initErrorLogger()
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 

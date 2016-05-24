@@ -9,6 +9,8 @@ import YhteenvetoController from './YhteenvetoController.jsx'
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
 import DateUtil from 'soresu-form/web/form/DateUtil'
 import RahoitusAlueet from './data/Rahoitusalueet'
+import {initErrorLogger} from 'va-common/web/va/util/ErrorLogger'
+initErrorLogger()
 
 import style from './style/main.less'
 import summaryStyle from './style/summary.less'

@@ -22,6 +22,8 @@ import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactor
 import {BudgetItemElement} from 'va-common/web/va/VaBudgetComponents.jsx'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 import UrlCreator from 'soresu-form/web/form/UrlCreator'
+import {initErrorLogger} from 'va-common/web/va/util/ErrorLogger'
+initErrorLogger()
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 const selvitysType = location.pathname.indexOf("loppuselvitys")!=-1 ? "loppuselvitys" : "valiselvitys"
