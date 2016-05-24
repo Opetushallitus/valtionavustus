@@ -6,7 +6,9 @@
             [compojure.api.sweet :refer :all]
             [clj-time.core :as t]
             [oph.common.datetime :as datetime]
-            [oph.va.schema :refer :all]))
+            [oph.va.schema :refer :all]
+            [schema.core :as s]
+            [clojure.tools.logging :as log]))
 
 (defn environment-content []
   (let [common-environment {:name      (config-simple-name)
@@ -24,10 +26,16 @@
   (return-from-classpath "translations.json" "application/json; charset=utf-8"))
 
 (defroutes config-routes
-   (GET* "/environment" []
+           (GET* "/environment" []
          :return Environment
          (ok (environment-content)))
-   (GET "/translations.json" [] (get-translations)))
+           (GET "/translations.json" [] (get-translations))
+           (POST* "/errorlogger" []
+             :body [stacktrace (describe s/Any "JavaScript stack trace")]
+             :return nil
+             :summary "Sends client errors to serverside"
+             (log/warn stacktrace)
+             (ok)))
 
 (defmulti avustushaku-phase (fn [avustushaku] [(:status avustushaku)
                                                (t/after? (datetime/now) (datetime/parse (:start (:duration (:content avustushaku)))))

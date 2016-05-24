@@ -61,6 +61,8 @@
              :handler any-access}
             {:pattern #"^/environment"
              :handler any-access}
+            {:pattern #"^/errorlogger"
+             :handler any-access}
             {:pattern #"^/js/.*"
              :handler any-access}
             {:pattern #"^/img/.*"
