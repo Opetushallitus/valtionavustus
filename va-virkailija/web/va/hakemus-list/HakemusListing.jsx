@@ -213,7 +213,7 @@ export default class HakemusListing extends Component {
           </th>
           {!isResolved && <ChangeRequestHeader field="change-request" sorter={sorter} controller={controller} hakemusList={filteredHakemusList} />}
           {!isResolved && <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>}
-          {isResolved && <th className="status-column">
+          {isResolved && <th className="selvitys-column">
             <StatusFilter controller={controller}
                           hakemusList={hakemusList}
                           filter={filter}
@@ -221,8 +221,9 @@ export default class HakemusListing extends Component {
                           statusValues={HakemusSelvitysStatuses.allStatuses()}
                           statusToFi={HakemusSelvitysStatuses.statusToFI}
                           filterField="status_valiselvitys"/>
+            <HakemusSorter field="status_valiselvitys" sorter={sorter} controller={controller}/>
           </th>}
-          {isResolved && <th className="status-column">
+          {isResolved && <th className="selvitys-column">
             <StatusFilter controller={controller}
                           hakemusList={hakemusList}
                           filter={filter}
@@ -230,9 +231,10 @@ export default class HakemusListing extends Component {
                           statusValues={HakemusSelvitysStatuses.allStatuses()}
                           statusToFi={HakemusSelvitysStatuses.statusToFI}
                           filterField="status_loppuselvitys"/>
+            <HakemusSorter field="status_loppuselvitys" sorter={sorter} controller={controller}/>
           </th>}
           <th className="granted-sum-column">Myönnetty <HakemusSorter field="granted-sum" sorter={sorter} controller={controller}/></th>
-          <th className="person-filter-column"><PersonFilterButton controller={controller} state={state}/></th>
+          {!isResolved && <th className="person-filter-column"><PersonFilterButton controller={controller} state={state}/></th>}
         </tr></thead>
         <tbody className={hasSelected ? "has-selected" : ""}>
           {hakemusElements}
@@ -241,9 +243,9 @@ export default class HakemusListing extends Component {
           <td className="total-applications-column">
             <ApplicationSummaryLink filteredHakemusList={filteredHakemusList} hakemusList={hakemusList} controller={controller} />
           </td>
-          <td className="applied-sum-column"><span className="money sum">{ophShareSum}</span></td>
+          <td className="applied-sum-column">{!isResolved && <span className="money sum">{ophShareSum}</span>}</td>
           <td className="granted-sum-column"><span className="money sum">{budgetGrantedSum}</span></td>
-          <td className="person-filter-column"></td>
+          {!isResolved && <td className="person-filter-column"></td>}
         </tr></tfoot>
       </table>
     )
@@ -433,7 +435,7 @@ class HakemusRow extends Component {
       {isResolved && <td className="selvitys-column">{statusValiselvitys}</td>}
       {isResolved && <td className="selvitys-column">{statusLoppuselvitys}</td>}
       <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>
-      <td className="person-filter-column"><PersonSelectButton show={allowChangeHakemusState} controller={controller} hakemus={hakemus} state={state}/></td>
+      {!isResolved && <td className="person-filter-column"><PersonSelectButton show={allowChangeHakemusState} controller={controller} hakemus={hakemus} state={state}/></td>}
     </tr>
   }
 }
