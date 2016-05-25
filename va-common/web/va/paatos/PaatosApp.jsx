@@ -62,7 +62,7 @@ export default class PaatosApp extends Component {
 }
 
 
-const MyoteinenLisateksti = ({avustushaku,hakemus, lang}) =>{
+const MyonteinenLisateksti = ({avustushaku,hakemus, lang}) =>{
   const multipleRahoitusalue = avustushaku["multiple-rahoitusalue"]
   const rahoitusAlue = hakemus.arvio.rahoitusalue
   const contentRahoitusalue = _.get(avustushaku, `decision.myonteinenlisateksti-${rahoitusAlue}.${lang}`, "")
@@ -104,7 +104,7 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
            <p><L translationKey="paatos-myonnetty-3" /> {selfFinancingPercentage>0 ? <span><L translationKey="valtionavustusprosentti-on" /> {ophFinancingPercentage}%</span> : null}</p>
           </div>
          : null}
-         <MyoteinenLisateksti avustushaku={avustushaku} hakemus={hakemus} lang={L.lang}/>
+         <MyonteinenLisateksti avustushaku={avustushaku} hakemus={hakemus} lang={L.lang}/>
          <p>
            <L translationKey="paatos-myonnetty-4" />
          </p>
