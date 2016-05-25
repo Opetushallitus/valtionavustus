@@ -419,7 +419,7 @@
                    avustushaku-name (-> avustushaku :content :name language)
                    email (formutil/find-answer-value answers "primary-email")
                    user-key (:user_key updated-hakemus)
-                   presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)]
+                   presenting-officer-email (:email identity)]
                (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment presenting-officer-email)))
            (ok {:hakemus-id hakemus-id
                 :status new-status}))))
