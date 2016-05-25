@@ -71,30 +71,30 @@
       :else {:avustushaku avustushaku :hakemus hakemus})))
 
 (defroutes* healthcheck-routes
-  "Healthcheck routes"
+            "Healthcheck routes"
 
-  (GET* "/" [] (on-healthcheck))
-  (HEAD* "/" [] (on-healthcheck)))
+            (GET* "/" [] (on-healthcheck))
+            (HEAD* "/" [] (on-healthcheck)))
 
 (defroutes resource-routes
-  (GET "/" [] (return-html "index.html"))
-  (GET "/admin/*" [] (return-html "admin.html"))
-  (GET "/yhteenveto/*" [] (return-html "summary.html"))
-  (GET "/paatos/*" [] (return-html "paatos.html"))
-  (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
-        :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
-        (on-hakemus-preview avustushaku-id hakemus-user-key))
-  (GET* "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
-          :path-params [avustushaku-id :- Long, user-key :- s/Str]
-          (on-paatos-preview avustushaku-id user-key))
-  (GET* "/selvitys/avustushaku/:avustushaku-id/:selvitys-type" []
-         :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
-         :query-params [{hakemus :- s/Str nil}]
-         (on-selvitys avustushaku-id hakemus selvitys-type))
-  (GET "/translations.json" [] (get-translations))
-  (GET "/avustushaku/:id/*" [id] (return-html "index.html"))
-  (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
-  (route/not-found "<p>Page not found.</p>"))
+           (GET "/" [] (return-html "index.html"))
+           (GET "/admin/*" [] (return-html "admin.html"))
+           (GET "/yhteenveto/*" [] (return-html "summary.html"))
+           (GET "/paatos/*" [] (return-html "paatos.html"))
+           (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
+                 :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
+                 (on-hakemus-preview avustushaku-id hakemus-user-key))
+           (GET* "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
+                 :path-params [avustushaku-id :- Long, user-key :- s/Str]
+                 (on-paatos-preview avustushaku-id user-key))
+           (GET* "/selvitys/avustushaku/:avustushaku-id/:selvitys-type" []
+                 :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
+                 :query-params [{hakemus :- s/Str nil}]
+                 (on-selvitys avustushaku-id hakemus selvitys-type))
+           (GET "/translations.json" [] (get-translations))
+           (GET "/avustushaku/:id/*" [id] (return-html "index.html"))
+           (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
+           (route/not-found "<p>Page not found.</p>"))
 
 (defn- get-avustushaku-status []
   (GET* "/" [status]
@@ -115,7 +115,7 @@
 (defn- post-avustushaku []
   (POST* "/:avustushaku-id" []
          :path-params [avustushaku-id :- Long]
-         :body  [avustushaku (describe va-schema/AvustusHaku "Updated avustushaku")]
+         :body [avustushaku (describe va-schema/AvustusHaku "Updated avustushaku")]
          :return va-schema/AvustusHaku
          :summary "Update avustushaku description"
          (if-let [response (hakija-api/update-avustushaku avustushaku)]
@@ -145,7 +145,7 @@
 (defn- send-selvitys []
   (POST* "/:avustushaku-id/selvitys/:selvitys-type/send" []
          :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
-         :body  [selvitys-email (describe virkailija-schema/SelvitysEmail "Selvitys email")]
+         :body [selvitys-email (describe virkailija-schema/SelvitysEmail "Selvitys email")]
          :return s/Any
          :summary "Send selvitys and update state to sent"
          (let [selvitys-hakemus-id (:selvitys-hakemus-id selvitys-email)
@@ -203,7 +203,7 @@
 (defn- put-avustushaku-role []
   (PUT* "/:avustushaku-id/role" [avustushaku-id]
         :path-params [avustushaku-id :- Long]
-        :body  [new-role (describe virkailija-schema/NewRole "New role to add to avustushaku")]
+        :body [new-role (describe virkailija-schema/NewRole "New role to add to avustushaku")]
         :return virkailija-schema/Role
         :summary "Create new role for avustushaku"
         (ok (hakija-api/create-avustushaku-role {:avustushaku avustushaku-id
@@ -215,7 +215,7 @@
 (defn- post-avustushaku-role []
   (POST* "/:avustushaku-id/role/:role-id" [avustushaku-id role-id]
          :path-params [avustushaku-id :- Long role-id :- Long]
-         :body    [role (describe virkailija-schema/Role "Changed role")]
+         :body [role (describe virkailija-schema/Role "Changed role")]
          :return virkailija-schema/Role
          :summary "Update avustushaku role"
          (ok (hakija-api/update-avustushaku-role avustushaku-id role))))
@@ -251,8 +251,8 @@
 
 (defn- post-avustushaku-form []
   (POST* "/:avustushaku-id/form" [avustushaku-id]
-         :path-params [avustushaku-id :- Long ]
-         :body  [updated-form (describe form-schema/Form "Updated form")]
+         :path-params [avustushaku-id :- Long]
+         :body [updated-form (describe form-schema/Form "Updated form")]
          :return form-schema/Form
          :summary "Update form description that is linked to avustushaku"
          (if-let [avustushaku (hakija-api/get-avustushaku-by-status avustushaku-id ["new" "draft"])]
@@ -264,7 +264,7 @@
 (defn- post-hakemus-arvio []
   (POST* "/:avustushaku-id/hakemus/:hakemus-id/arvio" [avustushaku-id :as request]
          :path-params [avustushaku-id :- Long hakemus-id :- Long]
-         :body    [arvio (describe virkailija-schema/Arvio "New arvio")]
+         :body [arvio (describe virkailija-schema/Arvio "New arvio")]
          :return virkailija-schema/Arvio
          :summary "Update arvio for given hakemus. Creates arvio if missing."
          (let [identity (authentication/get-identity request)
@@ -435,37 +435,37 @@
           (ok (:query saved-search)))))
 
 (defroutes* avustushaku-routes
-  "Hakemus listing and filtering"
-  (get-avustushaku-status)
-  (put-avustushaku)
-  (post-avustushaku)
-  (get-avustushaku)
-  (get-selvitys)
-  (send-selvitys)
-  (post-change-request-email)
-  (get-hakemus)
-  (get-haku-export)
-  (get-avustushaku-role)
-  (put-avustushaku-role)
-  (post-avustushaku-role)
-  (del-avustushaku-role)
-  (get-avustushaku-privileges)
-  (get-avustushaku-form)
-  (post-avustushaku-form)
-  (post-hakemus-arvio)
-  (get-hakemus-comments)
-  (post-hakemus-comments)
-  (get-hakemus-attachments)
-  (get-hakemus-attachments-versions)
-  (get-hakemus-attachment)
-  (post-init-selvitysform)
-  (post-selvitysform)
-  (get-change-requests)
-  (get-scores)
-  (post-scores)
-  (post-status)
-  (put-searches)
-  (get-search))
+            "Hakemus listing and filtering"
+            (get-avustushaku-status)
+            (put-avustushaku)
+            (post-avustushaku)
+            (get-avustushaku)
+            (get-selvitys)
+            (send-selvitys)
+            (post-change-request-email)
+            (get-hakemus)
+            (get-haku-export)
+            (get-avustushaku-role)
+            (put-avustushaku-role)
+            (post-avustushaku-role)
+            (del-avustushaku-role)
+            (get-avustushaku-privileges)
+            (get-avustushaku-form)
+            (post-avustushaku-form)
+            (post-hakemus-arvio)
+            (get-hakemus-comments)
+            (post-hakemus-comments)
+            (get-hakemus-attachments)
+            (get-hakemus-attachments-versions)
+            (get-hakemus-attachment)
+            (post-init-selvitysform)
+            (post-selvitysform)
+            (get-change-requests)
+            (get-scores)
+            (post-scores)
+            (post-status)
+            (put-searches)
+            (get-search))
 
 (defn- on-liite [id lang]
   (let [hakija-app-url (-> config :server :url :fi)
@@ -473,60 +473,60 @@
     (resp/redirect liite-url)))
 
 (defroutes* public-routes
-  "Public API"
+            "Public API"
 
-  (GET* "/avustushaku/paatos/:user-key" [user-key :as request]
-        :path-params [user-key :- String]
-        :return virkailija-schema/PaatosData
-        :summary "Return relevant information for decision"
-        (let [hakemus (hakija-api/get-hakemus-by-user-key user-key)
-              hakemus-id (:id hakemus)]
-        (if-let [response (hakudata/get-final-combined-paatos-data hakemus-id)]
-          (-> (ok response)
-              (assoc-in [:headers "Access-Control-Allow-Origin"] "*"))
-          (not-found))))
+            (GET* "/avustushaku/paatos/:user-key" [user-key :as request]
+                  :path-params [user-key :- String]
+                  :return virkailija-schema/PaatosData
+                  :summary "Return relevant information for decision"
+                  (let [hakemus (hakija-api/get-hakemus-by-user-key user-key)
+                        hakemus-id (:id hakemus)]
+                    (if-let [response (hakudata/get-final-combined-paatos-data hakemus-id)]
+                      (-> (ok response)
+                          (assoc-in [:headers "Access-Control-Allow-Origin"] "*"))
+                      (not-found))))
 
-  (GET* "/liite/:liite-id/:lang" []
-        :path-params [liite-id :- s/Str,lang :- s/Str]
-        (on-liite liite-id lang)))
+            (GET* "/liite/:liite-id/:lang" []
+                  :path-params [liite-id :- s/Str, lang :- s/Str]
+                  (on-liite liite-id lang)))
 
 (defroutes* userinfo-routes
-  "User information"
+            "User information"
 
-  (GET "/" [:as request]
-       (ok (authentication/get-identity request))))
+            (GET "/" [:as request]
+              (ok (authentication/get-identity request))))
 
 (defroutes* ldap-routes
-  "LDAP search"
+            "LDAP search"
 
-  (POST* "/search" [:as request]
-         :body [body (describe {:searchInput s/Str} "User input of LDAP search box")]
-         :return virkailija-schema/LdapSearchResults
-         :summary "Search users from OPH LDAP."
-         :description "Each search term must be found as part of user name or email. Case does not matter."
-         (let [search-input (:searchInput body)
-               search-results (oph.va.virkailija.ldap/search-users search-input)]
-           (ok {:results search-results
-                :error false
-                :truncated false}))))
+            (POST* "/search" [:as request]
+                   :body [body (describe {:searchInput s/Str} "User input of LDAP search box")]
+                   :return virkailija-schema/LdapSearchResults
+                   :summary "Search users from OPH LDAP."
+                   :description "Each search term must be found as part of user name or email. Case does not matter."
+                   (let [search-input (:searchInput body)
+                         search-results (oph.va.virkailija.ldap/search-users search-input)]
+                     (ok {:results search-results
+                          :error false
+                          :truncated false}))))
 
 (defroutes* koodisto-routes
-  "Koodisto-service access"
+            "Koodisto-service access"
 
-  (GET* "/" []
-        :return s/Any
-        :summary "List the available koodisto items"
-        :description "One of these can be selected for a Koodisto based input form field."
-        (let [koodisto-list (koodisto/list-koodistos)]
-          (ok koodisto-list)))
+            (GET* "/" []
+                  :return s/Any
+                  :summary "List the available koodisto items"
+                  :description "One of these can be selected for a Koodisto based input form field."
+                  (let [koodisto-list (koodisto/list-koodistos)]
+                    (ok koodisto-list)))
 
-  (GET* "/:koodisto-uri/:version" [koodisto-uri version]
-        :path-params [koodisto-uri :- s/Str version :- Long]
-        :return s/Any
-        :summary "List contents of certain version of certain koodisto"
-        :description "Choice values and labels for each value"
-        (let [koodi-options (koodisto/get-cached-koodi-options :form-db koodisto-uri version)]
-          (ok (:content koodi-options)))))
+            (GET* "/:koodisto-uri/:version" [koodisto-uri version]
+                  :path-params [koodisto-uri :- s/Str version :- Long]
+                  :return s/Any
+                  :summary "List contents of certain version of certain koodisto"
+                  :description "Choice values and labels for each value"
+                  (let [koodi-options (koodisto/get-cached-koodi-options :form-db koodisto-uri version)]
+                    (ok (:content koodi-options)))))
 
 (defn- query-string-for-login [original-query-params params-to-add keys-to-remove]
   (let [payload-params (apply dissoc original-query-params keys-to-remove)
@@ -542,39 +542,39 @@
   (resp/redirect (str "/login/logged-out" (query-string-for-login (:query-params request) extra-query-params []))))
 
 (defroutes* login-routes
-  "Authentication"
+            "Authentication"
 
-  (GET "/logged-out" [] (return-html "login.html"))
+            (GET "/logged-out" [] (return-html "login.html"))
 
-  (GET* "/cas" [ticket :as request]
-        :query-params [{ticket :- s/Str nil}]
-        :return s/Any
-        :summary "Handle login ticket and logout callback from cas"
-        (try
-          (if ticket
-            (if-let [identity (authentication/authenticate ticket virkailija-login-url)]
-              (-> (resp/redirect (url-after-login request))
-                  (assoc :session {:identity identity}))
-              (redirect-to-loggged-out-page request {"not-permitted" "true"}))
-            (redirect-to-loggged-out-page request {}))
-          (catch Exception e
-            (log/error "Error in login ticket handling" e)
-            (redirect-to-loggged-out-page request {"error" "true"}))))
+            (GET* "/cas" [ticket :as request]
+                  :query-params [{ticket :- s/Str nil}]
+                  :return s/Any
+                  :summary "Handle login ticket and logout callback from cas"
+                  (try
+                    (if ticket
+                      (if-let [identity (authentication/authenticate ticket virkailija-login-url)]
+                        (-> (resp/redirect (url-after-login request))
+                            (assoc :session {:identity identity}))
+                        (redirect-to-loggged-out-page request {"not-permitted" "true"}))
+                      (redirect-to-loggged-out-page request {}))
+                    (catch Exception e
+                      (log/error "Error in login ticket handling" e)
+                      (redirect-to-loggged-out-page request {"error" "true"}))))
 
-  (POST* "/cas" [logoutRequest :as request]
-         :form-params [logoutRequest :- s/Str]
-         :return s/Any
-         :summary "Handle logout request from cas"
-         (authentication/cas-initiated-logout logoutRequest))
+            (POST* "/cas" [logoutRequest :as request]
+                   :form-params [logoutRequest :- s/Str]
+                   :return s/Any
+                   :summary "Handle logout request from cas"
+                   (authentication/cas-initiated-logout logoutRequest))
 
-  (GET "/logout" [:as request]
-       (authentication/logout (-> request :session :identity))
-       (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
-           (assoc :session nil))))
+            (GET "/logout" [:as request]
+              (authentication/logout (-> request :session :identity))
+              (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
+                  (assoc :session nil))))
 
 (defroutes* doc-routes
-  "API documentation browser"
-  (swagger-ui))
+            "API documentation browser"
+            (swagger-ui))
 
 (defn- create-swagger-docs []
   (swagger-docs {:info {:title "Valtionavustus API"}
