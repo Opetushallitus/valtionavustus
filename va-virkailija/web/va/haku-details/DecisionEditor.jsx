@@ -6,6 +6,7 @@ import HttpUtil from 'va-common/web/HttpUtil.js'
 import DateUtil from 'soresu-form/web/form/DateUtil'
 import PaatosUrl from '../hakemus-details/PaatosUrl.js'
 import Selvitys from './Selvitys.jsx'
+import {RahoitusAlueet,Momentti} from '../data/Rahoitusalueet'
 
 const DecisionField = ({avustushaku, title, id,language, onChange}) => {
   const fieldId= `decision.${id}.${language}`
@@ -285,8 +286,6 @@ export default class DecisionEditor extends React.Component {
     const {avustushaku,controller} = this.props
     const onChange = (e) => controller.onChangeListener(avustushaku, e.target, e.target.value)
     const fields = [
-      {id:"taustaa",title:"Taustaa"},
-      {id:"myonteinenlisateksti",title:"Myönteisen päätöksen lisäteksti"},
       {id:"sovelletutsaannokset",title:"Sovelletut säännökset"},
       {id:"kayttooikeudet",title:"Tekijänoikeudet"},
       {id:"kayttoaika",title:"Avustuksen käyttöaika"},
@@ -295,8 +294,16 @@ export default class DecisionEditor extends React.Component {
       {id:"johtaja",title:"Johtaja"},
       {id:"esittelija",title:"Esittelijä"}
     ]
+    const multipleRahoitusalue = avustushaku["multiple-rahoitusalue"]
     return (
       <div className="decision-editor">
+        <DecisionFields key="taustaa" title="Taustaa" avustushaku={avustushaku} id="taustaa" onChange={onChange}/>
+        <DecisionFields key="myonteinenlisateksti" title="Myönteisen päätöksen lisäteksti" avustushaku={avustushaku} id="myonteinenlisateksti" onChange={onChange}/>
+        {multipleRahoitusalue  &&
+        <div className="decision-subfields">
+            {Momentti.map((field)=><DecisionFields key={field} title={"Myönteisen päätöksen lisäteksti - " + field} avustushaku={avustushaku} id={"myonteinenlisateksti-" + field} onChange={onChange}/>)}
+          </div>
+        }
         {fields.map((field)=><DecisionFields key={field.id} title={field.title} avustushaku={avustushaku} id={field.id} onChange={onChange}/>)}
         <DecisionFields key="maksu" title="Avustuksen maksuaika" avustushaku={avustushaku} id="maksu" onChange={onChange}/>
         <Selvitys {...this.props}/>

@@ -60,6 +60,11 @@
   {
    (s/optional-key :date) s/Str
    (s/optional-key :taustaa) LocalizedStringOptional
+   (s/optional-key :myonteinenlisateksti-Kansalaisopisto) LocalizedStringOptional
+   (s/optional-key :myonteinenlisateksti-Kansanopisto) LocalizedStringOptional
+   (s/optional-key :myonteinenlisateksti-Opintokeskus) LocalizedStringOptional
+   (s/optional-key :myonteinenlisateksti-Kesäyliopisto) LocalizedStringOptional
+   (s/optional-key :myonteinenlisateksti-Poikkeus) LocalizedStringOptional
    (s/optional-key :maksu) LocalizedStringOptional
    (s/optional-key :maksudate) s/Str
    (s/optional-key :kaytto) LocalizedStringOptional

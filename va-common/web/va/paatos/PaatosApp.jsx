@@ -61,6 +61,19 @@ export default class PaatosApp extends Component {
   }
 }
 
+
+const MyoteinenLisateksti = ({avustushaku,hakemus, lang}) =>{
+  const multipleRahoitusalue = avustushaku["multiple-rahoitusalue"]
+  const rahoitusAlue = hakemus.arvio.rahoitusalue
+  const contentRahoitusalue = _.get(avustushaku, `decision.myonteinenlisateksti-${rahoitusAlue}.${lang}`, "")
+  const contentDefault = _.get(avustushaku, `decision.myonteinenlisateksti.${lang}`, "")
+  const content  = multipleRahoitusalue && !_.isEmpty(contentRahoitusalue) ? contentRahoitusalue : contentDefault
+  return _.isEmpty(content) ? <div></div> : (
+      <ContentWithParagraphs content={content}/>
+  )
+
+}
+
 const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
   const answers = hakemus.answers
   const iban = _.get(InputValueStorage.readValues(answers, 'iban'), '[0].value', '')
@@ -82,14 +95,16 @@ const AcceptedDecision = ({hakemus, avustushaku, role, formContent, L}) => {
          <p><L translationKey="myonnetty-title" /></p>
          <p>{hakemus['register-number']} {hakemus['project-name']}
          </p>
-         {kayttosuunnitelma.data ? <div>
-           <p><L translationKey="paatos-myonnetty-1" /> {formatPrice(totalGranted)}&nbsp;.&nbsp;
-           <L translationKey="paatos-myonnetty-2" /> {kayttosuunnitelma.data.nettomenotYhteensa}.
-         </p>
-         <p><L translationKey="paatos-myonnetty-3" /> {selfFinancingPercentage>0 ? <span><L translationKey="valtionavustusprosentti-on" /> {ophFinancingPercentage}%</span> : null}</p>
-         </div>
+         {kayttosuunnitelma.data ?
+           <div>
+             <p>
+               <L translationKey="paatos-myonnetty-1" /> {formatPrice(totalGranted)}&nbsp;.&nbsp;
+               <L translationKey="paatos-myonnetty-2" /> {kayttosuunnitelma.data.nettomenotYhteensa}.
+             </p>
+           <p><L translationKey="paatos-myonnetty-3" /> {selfFinancingPercentage>0 ? <span><L translationKey="valtionavustusprosentti-on" /> {ophFinancingPercentage}%</span> : null}</p>
+          </div>
          : null}
-         <DecisionContent avustushaku={avustushaku} id="myonteinenlisateksti" lang={L.lang}/>
+         <MyoteinenLisateksti avustushaku={avustushaku} hakemus={hakemus} lang={L.lang}/>
          <p>
            <L translationKey="paatos-myonnetty-4" />
          </p>
