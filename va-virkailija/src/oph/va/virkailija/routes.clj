@@ -110,8 +110,7 @@
         :body [base-haku-id-wrapper (describe {:baseHakuId Long} "id of avustushaku to use as base")]
         :return va-schema/AvustusHaku
         :summary "Copy existing avustushaku as new one by id of the existing avustushaku"
-        (ok (hakudata/create-new-avustushaku (:baseHakuId base-haku-id-wrapper) (authentication/get-identity request))))
-)
+        (ok (hakudata/create-new-avustushaku (:baseHakuId base-haku-id-wrapper) (authentication/get-identity request)))))
 
 (defn- post-avustushaku []
   (POST* "/:avustushaku-id" []
@@ -121,8 +120,7 @@
          :summary "Update avustushaku description"
          (if-let [response (hakija-api/update-avustushaku avustushaku)]
            (ok response)
-           (not-found)))
-)
+           (not-found))))
 
 (defn- get-avustushaku []
   (GET* "/:avustushaku-id" [avustushaku-id :as request]
@@ -132,9 +130,7 @@
         (let [identity (authentication/get-identity request)]
           (if-let [response (hakudata/get-combined-avustushaku-data-with-privileges avustushaku-id identity)]
             (ok response)
-            (not-found))))
-)
-
+            (not-found)))))
 
 (defn- get-selvitys []
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/selvitys" [hakemus-id avustushaku-id :as request]
@@ -144,8 +140,7 @@
         (let [identity (authentication/get-identity request)]
           (if-let [response (hakija-api/get-selvitysdata avustushaku-id hakemus-id)]
             (ok response)
-            (not-found))))
-)
+            (not-found)))))
 
 (defn- send-selvitys []
   (POST* "/:avustushaku-id/selvitys/:selvitys-type/send" []
@@ -160,13 +155,9 @@
            (hakija-api/send-selvitys selvitys-email)
            (hakija-api/update-selvitys-message selvitys-email)
            (if is-loppuselvitys (hakija-api/update-loppuselvitys-status parent_id "accepted") (hakija-api/update-valiselvitys-status parent_id "accepted"))
-           (ok {:status "ok"})
-           )
-
-  ))
+           (ok {:status "ok"}))))
 
 (defn- post-change-request-email []
-
   (POST* "/:avustushaku-id/change-request-email" []
          :path-params [avustushaku-id :- Long]
          :body [change-request (describe virkailija-schema/ChangeRequestEmail "Change request")]
@@ -179,9 +170,7 @@
                       :change-request {
                                        :avustushaku avustushaku-name
                                        :change-request change-request
-                                       :url "[linkki hakemukseen]"}
-                      )})))
-  )
+                                       :url "[linkki hakemukseen]"})}))))
 
 (defn- get-hakemus []
   (GET* "/paatos/:hakemus-id" [hakemus-id :as request]
