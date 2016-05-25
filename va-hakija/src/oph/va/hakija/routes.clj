@@ -202,11 +202,10 @@
             (put-attachment)
             (get-attachment))
 
-(defn log-paatos-display [avustushaku-id user-key headers remote-addr]
-  (let [hakemus (hakija-db/get-hakemus user-key)
-        hakemus-id (:id hakemus)]
-    (hakija-db/add-paatos-view hakemus-id headers remote-addr))
-  )
+(defn log-paatos-display [user-key headers remote-addr]
+  (let [hakemus (hakija-db/get-hakemus user-key)]
+    (if-let [hakemus-id (:id hakemus)]
+      (hakija-db/add-paatos-view hakemus-id headers remote-addr))))
 
 (defroutes resource-routes
   (GET "/" request
@@ -223,7 +222,7 @@
   (GET* "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
     :path-params [avustushaku-id :- Long user-key :- s/Str]
     :query-params [{nolog :- s/Str nil}]
-    (if (nil? nolog) (log-paatos-display avustushaku-id user-key (:headers request) (:remote-addr request)))
+    (if (nil? nolog) (log-paatos-display user-key (:headers request) (:remote-addr request)))
     (return-html "paatos.html"))
 
   (route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
