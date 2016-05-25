@@ -265,6 +265,10 @@
   (->> {:hakemus_id hakemus-id}
        (exec :form-db hakija-queries/list-attachments)))
 
+(defn list-selvitys-hakemus-ids [avustushaku_id]
+  (->> {:avustushaku_id avustushaku_id}
+       (exec :form-db hakija-queries/list-selvitys-hakemus-ids)))
+
 (defn list-attachment-versions [hakemus-id]
   (->> {:hakemus_id hakemus-id}
        (exec :form-db hakija-queries/list-attachment-versions)))

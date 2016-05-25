@@ -13,6 +13,8 @@
             :sv "Automatiskt meddelande: Er ansökan om understöd har behandlats – Länk till beslutet"}
    :selvitys {:fi "Väliselvitys hyväksytty"
               :sv "Mellanredovisning godkänt"}
+   :selvitys-notification {:fi "Selvitys täytettävissä"
+              :sv "TODO Selvitys täytettävissä"}
   })
 
 (def mail-templates
@@ -22,6 +24,8 @@
            :sv (email/load-template "email-templates/paatos.plain.sv")}
    :selvitys {:fi (email/load-template "email-templates/selvitys.plain.fi")
             :sv (email/load-template "email-templates/selvitys.plain.sv")}
+   :selvitys-notification {:fi (email/load-template "email-templates/selvitys-notification.plain.fi")
+            :sv (email/load-template "email-templates/selvitys-notification.plain.sv")}
 
    })
 
@@ -57,6 +61,10 @@
   (let [va-url (-> config :server :url lang)]
   (str va-url "paatos/avustushaku/" avustushaku-id "/hakemus/" user-key)))
 
+(defn selvitys-url [avustushaku-id user-key lang selvitys-type]
+  (let [va-url (-> config :server :url lang)]
+  (str va-url "selvitys/avustushaku/" avustushaku-id "/" selvitys-type "/?hakemus=" user-key)))
+
 (defn send-paatos! [lang to avustushaku hakemus reply-to]
   (let [lang-str (or (clojure.core/name lang) "fi")
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
@@ -89,3 +97,21 @@
                            :to to
                            :body message
                            })))
+
+(defn send-selvitys-notification! [lang to avustushaku hakemus selvitys-type]
+  (let [lang-str (or (clojure.core/name lang) "fi")
+        url (selvitys-url (:id avustushaku) (:user_key hakemus) (keyword lang-str) selvitys-type)
+        avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
+        mail-subject (get-in mail-titles [:selvitys-notification lang])]
+    (log/info "Url would be: " url)
+    (>!! email/mail-queue {:operation :send
+                           :type :selvitys-notification
+                           :lang lang
+                           :from (-> email/smtp-config :from lang)
+                           :sender (-> email/smtp-config :sender)
+                           :subject mail-subject
+                           :avustushaku-name avustushaku-name
+                           :to to
+                           :url url
+                           :register-number (:register_number hakemus)
+                           :project-name (:project_name hakemus)})))

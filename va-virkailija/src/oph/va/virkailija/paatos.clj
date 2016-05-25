@@ -46,6 +46,16 @@
   (let [emails (paatos-emails hakemus-id)]
     (send-paatos hakemus-id emails)))
 
+(defn send-selvitys-for-all [avustushaku-id selvitys-type hakemus-id]
+  (log/info "send-loppuselvitys-for-all" hakemus-id)
+  (let [hakemus (hakija-api/get-hakemus hakemus-id)
+        submission (hakija-api/get-hakemus-submission hakemus)
+        avustushaku (hakija-api/get-avustushaku avustushaku-id)
+        answers (:answers submission)
+        emails (vec (remove nil? (distinct (emails-from-answers answers))))
+        language (keyword (formutil/find-answer-value answers "language"))]
+    (email/send-selvitys-notification! language emails avustushaku hakemus selvitys-type)))
+
 (defn get-paatos-email-status
   "Returns only data related to those hakemus ids which are rejected or accepted,
   other statuses are ignored. This is a safeguard: we can't accidentally send email
@@ -66,6 +76,13 @@
      :count (count hakemukset-email-status)
      :paatokset hakemukset-email-status
      :sent-time (:sent-time (first hakemukset-email-status))}))
+
+(defn send-selvitys-emails [avustushaku-id selvitys-type]
+  (let [json-ids (hakija-api/list-selvitys-hakemus-ids avustushaku-id)
+        ids (map :id json-ids)]
+    (log/info "Send all paatos ids " ids)
+    (run! (partial send-selvitys-for-all avustushaku-id selvitys-type) ids)
+    (ok {:status "ok"})))
 
 (defroutes* paatos-routes
   "Paatos routes"

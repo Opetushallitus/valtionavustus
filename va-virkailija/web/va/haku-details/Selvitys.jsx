@@ -3,6 +3,9 @@ import moment from 'moment'
 
 export default class Selvitys extends React.Component{
   render(){
+    const {controller, avustushaku} = this.props
+    const onSendLoppuselvitys = () => controller.sendSelvitysEmails(avustushaku, 'loppuselvitys')
+    const onSendValiselvitys = () => controller.sendSelvitysEmails(avustushaku, 'valiselvitys')
     return (
       <div>
         <h4>Väliselvitys</h4>
@@ -10,6 +13,7 @@ export default class Selvitys extends React.Component{
           Väliselvitys toimitettava viimeistään
           <DateField {...this.props} field="valiselvitysdate"/>
           <div>Väliselvitys avautuu täytettäväksi 2kk ennen eräpäivää</div>
+          <div><button onClick={onSendValiselvitys}>Lähetä väliselvityslinkit</button></div>
         </div>
         <h4>Loppuselvitys</h4>
         <div>
@@ -17,6 +21,7 @@ export default class Selvitys extends React.Component{
 
           <DateField {...this.props} field="loppuselvitysdate"/>
           <div>Loppuselvityslomake on koko ajan täytettävissä.</div>
+          <div><button onClick={onSendLoppuselvitys}>Lähetä loppuselvityslinkit</button></div>
         </div>
       </div>
     )

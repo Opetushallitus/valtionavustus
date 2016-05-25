@@ -29,7 +29,8 @@
             [oph.va.virkailija.export :as export]
             [oph.va.virkailija.email :as email]
             [oph.va.virkailija.paatos :as paatos]
-            [oph.soresu.common.koodisto :as koodisto]))
+            [oph.soresu.common.koodisto :as koodisto]
+            [clojure.tools.logging :as log]))
 
 (defonce opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
 
@@ -156,6 +157,14 @@
            (hakija-api/update-selvitys-message selvitys-email)
            (if is-loppuselvitys (hakija-api/update-loppuselvitys-status parent_id "accepted") (hakija-api/update-valiselvitys-status parent_id "accepted"))
            (ok {:status "ok"}))))
+
+(defn- send-selvitys-email []
+  (POST* "/:avustushaku-id/selvitys/:selvitys-type/send-notification" []
+         :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
+         :return s/Any
+         :summary "Sends loppuselvitys emails"
+         (log/info  (str "Send emails for avustushaku " avustushaku-id))
+         (paatos/send-selvitys-emails avustushaku-id selvitys-type)))
 
 (defn- post-change-request-email []
   (POST* "/:avustushaku-id/change-request-email" []
@@ -442,6 +451,7 @@
             (get-avustushaku)
             (get-selvitys)
             (send-selvitys)
+            (send-selvitys-email)
             (post-change-request-email)
             (get-hakemus)
             (get-haku-export)
