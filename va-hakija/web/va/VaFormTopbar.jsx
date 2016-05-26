@@ -35,14 +35,14 @@ export default class VaFormTopbar extends React.Component {
     const openPreview = function() {
       window.open(previewUrl, "preview")
     }
-    const isNormalEdit = () => _.includes(["new", "draft"], _.get(saveStatus.savedObject, "status"))
+    const isNormalEdit = () => _.includes(["new", "draft","submitted"], _.get(saveStatus.savedObject, "status"))
     const isChangeRequestResponse = () => "pending_change_request" === _.get(saveStatus.savedObject, "status")
     const isInVirkailijaEditMode = () => "officer_edit" === _.get(saveStatus.savedObject, "status")
     const isSubmitted = () => "submitted" === _.get(saveStatus.savedObject, "status")
     const isSubmitDisabled = function() {
       return !(formIsValidOnClientSide && formIsValidOnServerSide && controller.isSaveDraftAllowed(state)) || controller.hasPendingChanges(state) || isSubmitted()
     }
-    const submitTextKey = isSubmitted() ? "submitted" : "submit"
+    const submitTextKey = isSubmitted() ? `submitted-${hakemusType}`: "submit"
     const helpText = formTranslator.translate(`savehelp-${hakemusType}`, lang)
     const hasEnded = avustushaku.phase === "ended"
     const topicKey = `heading-${hakemusType}`

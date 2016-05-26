@@ -36,6 +36,18 @@
       "fi": "Hakemus lähetetty",
       "sv": "Ansökan sänd"
     },
+    "submitted-hakemus": {
+      "fi": "Hakemus lähetetty",
+      "sv": "Ansökan sänd"
+    },
+    "submitted-loppuselvitys": {
+      "fi": "Loppuselvitys lähetetty",
+      "sv": "Slutredovisning sänd"
+    },
+    "submitted-valiselvitys": {
+      "fi": "Väliselvitys lähetetty",
+      "sv": "Mellanredovisning sänd"
+    },
     "preview": {
       "fi": "Esikatselu",
       "sv": "Förhandsgranska"
