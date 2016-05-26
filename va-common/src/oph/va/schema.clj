@@ -84,6 +84,7 @@
                           :status HakuStatus
                           :phase HakuPhase
                           :multiple-rahoitusalue s/Bool
+                          :is_academysize s/Bool
                           :register-number (s/maybe s/Str)
                           :content AvustusHakuContent
                           (s/optional-key :loppuselvitysdate) (s/maybe s/Str)

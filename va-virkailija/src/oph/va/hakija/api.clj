@@ -57,6 +57,7 @@
                       (new HakuStatus (:status avustushaku)))
         avustushaku-to-save (-> (assoc avustushaku :status haku-status)
                                 (assoc :register_number (:register-number avustushaku))
+                                (assoc :is_academysize (:is_academysize avustushaku))
                                 (assoc :multiple_rahoitusalue (:multiple-rahoitusalue avustushaku)))]
     (exec-all :form-db
               [hakija-queries/archive-avustushaku! avustushaku-to-save

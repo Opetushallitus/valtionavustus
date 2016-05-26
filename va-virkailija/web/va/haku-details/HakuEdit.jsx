@@ -52,6 +52,7 @@ export default class HakuEdit extends Component {
         </div>
         <Rahoitusalueet multipleRahoitusalue={avustushaku["multiple-rahoitusalue"]} disabled={!allowAllHakuEdits} onChange={onChange} />
         <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
+        <AcademySize value={avustushaku.is_academysize} disabled={!allowAllHakuEdits} onChange={onChange} />
         <HakuRoles avustushaku={avustushaku} ldapSearch={ldapSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
         <FocusArea controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
@@ -199,6 +200,41 @@ class Rahoitusalueet extends React.Component {
     )
   }
 }
+
+class AcademySize extends React.Component {
+  render() {
+    const initialValue = this.props.value === true
+    const onChange = this.props.onChange
+    const isDisabled = this.props.disabled
+    const options = []
+    const values = [false, true];
+    for (var i=0; i < values.length; i++) {
+      const value = values[i]
+      const htmlId = "set-is_academysize-" + value
+      options.push(
+        <input id={htmlId}
+               type="radio"
+               key={htmlId}
+               name="is_academysize"
+               value={value}
+               onChange={onChange}
+               checked={value === initialValue}
+               disabled={isDisabled}
+        />
+      )
+      options.push(
+        <label key={htmlId + "-label"} htmlFor={htmlId}>{value ? "Esittelijä lisää oppilaitoksen koon" : "Ei käytössä"}</label>
+      )
+    }
+    return (
+      <div id="set-academysize">
+        <h3>Oppilaitoksen koko</h3>
+        {options}
+      </div>
+    )
+  }
+}
+
 
 class Maksuerat extends React.Component {
   render() {
