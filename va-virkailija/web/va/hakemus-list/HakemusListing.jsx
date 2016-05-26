@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import ClassNames from 'classnames'
 import React, { Component } from 'react'
 
 import HakemusArviointiStatuses from '../hakemus-details/HakemusArviointiStatuses.js'
@@ -35,6 +36,8 @@ export default class HakemusListing extends Component {
         return hakemus => hakemus["budget-oph-share"]
       case "granted-sum":
         return hakemus => hakemus.arvio["budget-granted"]
+      case "academysize":
+        return hakemus => hakemus.arvio.academysize
       case "answers":
         return hakemus => hakemus.answers
       case "rahoitusalue":
@@ -163,6 +166,7 @@ export default class HakemusListing extends Component {
     const {controller, userInfo, state, hasSelected, selectedHakemus, previouslySelectedHakemus, hakemusList, privileges,avustushaku} = this.props
     const avustushakuStatus = avustushaku.status
     const isResolved = avustushakuStatus=="resolved"
+    const isAcademysize = avustushaku.is_academysize
     const filter = this.props.hakemusFilter
     const sorter = this.props.hakemusSorter
     const allowHakemusScoring = privileges["score-hakemus"]
@@ -180,6 +184,7 @@ export default class HakemusListing extends Component {
         allowChangeHakemusState={allowChangeHakemusState}
         controller={controller}
         isResolved={isResolved}
+        isAcademysize={isAcademysize}
         state={state}/> })
     const budgetGrantedSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x.arvio["budget-granted"])))
 
@@ -189,8 +194,12 @@ export default class HakemusListing extends Component {
       }
     }
 
+    const hakemusListingClass = ClassNames('hakemus-list overview-list',{
+      'hakemus-list--academysize': !isResolved && isAcademysize
+    })
+
     return (
-      <table key="hakemusListing" className="hakemus-list overview-list">
+      <table key="hakemusListing" className={hakemusListingClass}>
         <thead><tr>
           <th className="organization-column">
             <input className="text-filter" placeholder="Hakijaorganisaatio" onChange={onFilterChange("organization")} value={filter.organization}></input>
@@ -212,6 +221,7 @@ export default class HakemusListing extends Component {
             <HakemusSorter field="status" sorter={sorter} controller={controller}/>
           </th>
           {!isResolved && <ChangeRequestHeader field="change-request" sorter={sorter} controller={controller} hakemusList={filteredHakemusList} />}
+          {!isResolved && isAcademysize && <th className="academysize-column">Koko<HakemusSorter field="academysize" sorter={sorter} controller={controller}/></th>}
           {!isResolved && <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>}
           {isResolved && <th className="selvitys-column">
             <StatusFilter controller={controller}
@@ -408,7 +418,7 @@ class HakemusRow extends Component {
     return this.props.hakemus === this.props.selectedHakemus || this.props.hakemus === this.props.previouslySelectedHakemus
   }
   render() {
-    const {state, hakemus, userInfo, allowHakemusScoring, allowChangeHakemusState, selectedHakemus, previouslySelectedHakemus, isResolved} = this.props
+    const {state, hakemus, userInfo, allowHakemusScoring, allowChangeHakemusState, selectedHakemus, previouslySelectedHakemus, isResolved, isAcademysize} = this.props
     const htmlId = "hakemus-" + hakemus.id
     const thisIsSelected = hakemus === selectedHakemus || hakemus === previouslySelectedHakemus
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
@@ -431,6 +441,7 @@ class HakemusRow extends Component {
       {!isResolved && <td className="score-column"><Scoring scoring={hakemus.arvio.scoring} userInfo={userInfo} allowHakemusScoring={allowHakemusScoring}/></td>}
       <td className="status-column">{statusFI}</td>
       {!isResolved && <td className="change-request-column" title={changeRequestTitle}>{changeRequest}</td>}
+      {!isResolved && isAcademysize && <td className="academysize-column">{hakemus.arvio.academysize}</td>}
       {!isResolved && <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>}
       {isResolved && <td className="selvitys-column">{statusValiselvitys}</td>}
       {isResolved && <td className="selvitys-column">{statusLoppuselvitys}</td>}

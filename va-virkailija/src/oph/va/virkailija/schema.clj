@@ -38,6 +38,7 @@
    (s/optional-key :scoring) (s/maybe Scoring)
    (s/optional-key :summary-comment) (s/maybe s/Str)
    (s/optional-key :rahoitusalue) (s/maybe s/Str)
+   (s/optional-key :academysize) (s/maybe s/Int)
    (s/optional-key :perustelut) (s/maybe s/Str)
    (s/optional-key :presentercomment) (s/maybe s/Str)
    (s/optional-key :changelog) (s/maybe s/Any)

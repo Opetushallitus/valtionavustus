@@ -126,6 +126,7 @@
                         :roles (:roles arvio)
                         :presenter_role_id (:presenter-role-id arvio)
                         :rahoitusalue (:rahoitusalue arvio)
+                        :academysize (:academysize arvio)
                         :perustelut (:perustelut arvio)
                         }
         existing (get-arvio hakemus-id)

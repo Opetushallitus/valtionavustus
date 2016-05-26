@@ -76,6 +76,19 @@ table.hakemus-list {
       content: " €"
     }
   }
+  &.hakemus-list--academysize{
+    .academysize-column {
+      width: 70px;
+      text-align: right;
+    }
+    .organization-column, .project-name-column {
+      width: 315px;
+      max-width: 315px;
+      input.text-filter {
+        width: 280px;
+      }
+    }
+  }
   .person-filter-column {
     width: 50px;
     text-align: center;
@@ -232,6 +245,12 @@ table.hakemus-list {
         color:#333;
       }
     }
+
+    .input-number-sm{
+      width: 60px;
+      padding: 3px;
+    }
+
 
     .value-edit {
       margin-bottom: 10px;

@@ -562,6 +562,11 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
+  setHakemusAcademysize(hakemus, size) {
+    hakemus.arvio.academysize = size
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }
+
   setHakemusArvioBudgetGranted(hakemus, newBudgetGranted) {
     hakemus.arvio["budget-granted"] = newBudgetGranted
     dispatcher.push(events.updateHakemusArvio, hakemus)

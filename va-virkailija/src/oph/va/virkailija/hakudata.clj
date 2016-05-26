@@ -18,6 +18,7 @@
    :roles (:roles arvio)
    :presenter-role-id (:presenter_role_id arvio)
    :rahoitusalue (:rahoitusalue arvio)
+   :academysize (:academysize arvio)
    :perustelut (:perustelut arvio)
    :changelog (:changelog arvio)
    })
@@ -31,6 +32,7 @@
                            :overridden-answers {:value []}
                            :budget-granted     0
                            :costsGranted       0
+                           :academysize 0
                            :useDetailedCosts   false
                            :roles              {:evaluators []}
                            })))

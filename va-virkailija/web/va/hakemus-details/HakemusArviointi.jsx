@@ -13,6 +13,7 @@ import HakemusArviointiStatuses from "./HakemusArviointiStatuses.js"
 import HakemusStatuses from './HakemusStatuses.js'
 import TraineeDayEditing from '../traineeday/TraineeDayEditing.jsx'
 import ChooseRahoitusalue from './ChooseRahoitusalue.jsx'
+import AcademySize from './AcademySize.jsx'
 import Perustelut from './Perustelut.jsx'
 import PresenterComment from './PresenterComment.jsx'
 import admin from '../style/admin.less'
@@ -39,6 +40,7 @@ export default class HakemusArviointi extends Component {
      <div id="arviointi-tab">
        <PresenterComment controller={controller} hakemus={hakemus}/>
        <ChooseRahoitusalue controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
+       <AcademySize controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges}/>
        <HakemusScoring controller={controller} hakemus={hakemus} avustushaku={avustushaku}
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments} allowHakemusCommenting={allowHakemusCommenting}/>
