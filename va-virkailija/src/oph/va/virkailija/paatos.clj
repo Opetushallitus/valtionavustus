@@ -78,7 +78,9 @@
      :sent-time (:sent-time (first hakemukset-email-status))}))
 
 (defn send-selvitys-emails [avustushaku-id selvitys-type]
-  (let [json-ids (hakija-api/list-selvitys-hakemus-ids avustushaku-id)
+  (let [is-loppuselvitys (= selvitys-type "loppuselvitys")
+        list-selvitys (if is-loppuselvitys hakija-api/list-loppuselvitys-hakemus-ids hakija-api/list-valiselvitys-hakemus-ids)
+        json-ids (list-selvitys avustushaku-id)
         ids (map :id json-ids)]
     (log/info "Send all paatos ids " ids)
     (run! (partial send-selvitys-for-all avustushaku-id selvitys-type) ids)
