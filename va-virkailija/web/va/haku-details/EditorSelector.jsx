@@ -79,9 +79,9 @@ export default class EditorSelector extends React.Component {
                <span onClick={createSubTabSelector("decision")}
                      className={ClassNames({"selected": subTab === "decision"})}>Päätös</span>
                <span onClick={createSubTabSelector("valiselvitys")}
-                     className={ClassNames({"selected": subTab === "valiselvitys"})}>Väliselvityslomake</span>
+                     className={ClassNames({"selected": subTab === "valiselvitys"})}>Väliselvitys</span>
                <span onClick={createSubTabSelector("loppuselvitys")}
-                     className={ClassNames({"selected": subTab === "loppuselvitys"})}>Loppuselvityslomake</span>
+                     className={ClassNames({"selected": subTab === "loppuselvitys"})}>Loppuselvitys</span>
              </div>
              <div className="section-container">{subTabContent}</div>
            </section>

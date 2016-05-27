@@ -45,8 +45,30 @@ export default class SelvitysFormEditor extends React.Component{
       controller.selvitysFormOnChangeListener(avustushaku, JSON.stringify(form), selvitysType)
     }
 
+    const onSendSelvitys = () => controller.sendSelvitysEmails(avustushaku, selvitysType)
+    const valiselvitysSection = <div>
+      <h4>Väliselvitysten lähettäminen</h4>
+      <p>Väliselvitys tulee toimittaa viimeistään <strong>{this.props.avustushaku[selvitysType + 'date']}</strong> ja se avautuu täytettäväksi 2 kuukautta aikaisemmin.</p>
+      <p>Väliselvityspyynnöt lähetetään vain niille hakijoille, jotka eivät ole vielä toimittaneet selvitystä.</p>
+      <p>
+        <button onClick={onSendSelvitys}>Lähetä väliselvityspyynnöt</button>
+      </p>
+      <h1>Väliselvityslomake</h1>
+    </div>
+
+    const loppuSelvitysSection = <div>
+      <h4>Loppuselvityksen lähettäminen</h4>
+      <p>Loppuselvitys on koko ajan täytettävissä ja se tulee toimittaa viimeistään <strong>{this.props.avustushaku[selvitysType + 'date']}.</strong></p>
+      <p>Loppuselvityspyynnöt lähetetään vain niille hakijoille, jotka eivät ole vielä toimittaneet selvitystä.</p>
+      <p>
+        <button onClick={onSendSelvitys}>Lähetä loppuselvityspyynnöt</button>
+      </p>
+      <h1>Loppuselvityslomake</h1>
+    </div>
+
     return (
       <div>
+        {selvitysType === 'valiselvitys' ? valiselvitysSection : loppuSelvitysSection}
         <button style={{float:'right'}} onClick={recreateForm}>Palauta alkuperäiset kysymykset</button>
         <div className="link-list">
           <div className="link-list-item">
