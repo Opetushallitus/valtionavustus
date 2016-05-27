@@ -115,6 +115,7 @@
                            :sender (-> email/smtp-config :sender)
                            :subject mail-subject
                            :selvitysdate ((if (= selvitys-type "valiselvitys") :valiselvitysdate :loppuselvitysdate) avustushaku)
+                           :presenter-name "Eevi Esittelijä"
                            :avustushaku-name avustushaku-name
                            :to to
                            :url url

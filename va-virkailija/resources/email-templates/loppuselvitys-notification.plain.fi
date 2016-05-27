@@ -6,7 +6,7 @@ Loppuselvityslomake löytyy osoitteesta {{& url }}, ja se tulee palauttaa {{ sel
 
 Ystävällisin terveisin
 
-Eevi Esittelijä
+{{ presenter-name }}
 Opetushallitus
 
 puhelin 029 533 1000
