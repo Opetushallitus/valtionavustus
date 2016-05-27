@@ -75,7 +75,7 @@ class DateField extends React.Component {
     const field = this.state.field
     return (
       <span className="decision-date" style={{marginLeft:10,marginRight:10}}>
-        <input type="text" className={this.state.invalid ? 'error' : ''} value={this.state.value} id={field} onChange={onChange} onBlur={onBlur}/>
+        <input type="text" placeholder="p.k.vvvv" className={this.state.invalid ? 'error' : ''} value={this.state.value} id={field} onChange={onChange} onBlur={onBlur}/>
       </span>
     )
   }
