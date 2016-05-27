@@ -13,9 +13,9 @@
             :sv "Automatiskt meddelande: Er ansökan om understöd har behandlats – Länk till beslutet"}
    :selvitys {:fi "Väliselvitys hyväksytty"
               :sv "Mellanredovisning godkänt"}
-   :valiselvitys-notification {:fi "Väliselvitys täytettävissä"
+   :valiselvitys-notification {:fi "Väliselvitys täytettävissä haulle"
                                :sv "TODO Väliselvitys täytettävissä"}
-   :loppuselvitys-notification {:fi "Loppuselvitys täytettävissä"
+   :loppuselvitys-notification {:fi "Loppuselvitys täytettävissä haulle"
                                 :sv "TODO Loppuselvitys täytettävissä"}
    })
 
@@ -106,7 +106,7 @@
   (let [lang-str (or (clojure.core/name lang) "fi")
         url (selvitys-url (:id avustushaku) (:user_key hakemus) (keyword lang-str) selvitys-type)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
-        mail-subject (get-in mail-titles [(keyword (str selvitys-type "-notification")) lang])]
+        mail-subject (str (get-in mail-titles [(keyword (str selvitys-type "-notification")) lang]) " " avustushaku-name)]
     (log/info "Url would be: " url)
     (>!! email/mail-queue {:operation :send
                            :type (keyword (str selvitys-type "-notification"))
