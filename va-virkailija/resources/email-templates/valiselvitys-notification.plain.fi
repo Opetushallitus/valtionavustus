@@ -1,14 +1,12 @@
-{{ register-number }} - {{ project-name }}
+Hyvä vastaanottaja,
 
-{{ avustushaku-name }}
+hankkeen {{ register-number }} "{{ project-name }}" väliselvityslomake on nyt täytettävissä.
 
-Väliselvityksen voitte täyttää tästä linkistä: {{& url }}
+Väliselvityslomake löytyy osoitteesta {{& url }}, ja se tulee palauttaa {{ valiselvitysdate }} mennessä.
 
-Lisätietoja voitte kysyä sähköpostitse osoitteesta valtionavustukset@oph.fi
+Ystävällisin terveisin
 
+Eevi Esittelijä
 Opetushallitus
-Hakaniemenranta 6
-PL 380, 00531 Helsinki
 
 puhelin 029 533 1000
-etunimi.sukunimi@oph.fi

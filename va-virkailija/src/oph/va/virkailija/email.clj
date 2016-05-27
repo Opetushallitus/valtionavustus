@@ -114,6 +114,7 @@
                            :from (-> email/smtp-config :from lang)
                            :sender (-> email/smtp-config :sender)
                            :subject mail-subject
+                           :valiselvitysdate (:valiselvitysdate avustushaku)
                            :avustushaku-name avustushaku-name
                            :to to
                            :url url
