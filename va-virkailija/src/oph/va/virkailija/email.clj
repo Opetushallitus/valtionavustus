@@ -13,19 +13,23 @@
             :sv "Automatiskt meddelande: Er ansökan om understöd har behandlats – Länk till beslutet"}
    :selvitys {:fi "Väliselvitys hyväksytty"
               :sv "Mellanredovisning godkänt"}
-   :selvitys-notification {:fi "Selvitys täytettävissä"
-              :sv "TODO Selvitys täytettävissä"}
-  })
+   :valiselvitys-notification {:fi "Väliselvitys täytettävissä"
+                               :sv "TODO Väliselvitys täytettävissä"}
+   :loppuselvitys-notification {:fi "Loppuselvitys täytettävissä"
+                                :sv "TODO Loppuselvitys täytettävissä"}
+   })
 
 (def mail-templates
   {:change-request {:fi (email/load-template "email-templates/change-request.plain.fi")
                     :sv (email/load-template "email-templates/change-request.plain.sv")}
    :paatos {:fi (email/load-template "email-templates/paatos.plain.fi")
-           :sv (email/load-template "email-templates/paatos.plain.sv")}
+            :sv (email/load-template "email-templates/paatos.plain.sv")}
    :selvitys {:fi (email/load-template "email-templates/selvitys.plain.fi")
-            :sv (email/load-template "email-templates/selvitys.plain.sv")}
-   :selvitys-notification {:fi (email/load-template "email-templates/selvitys-notification.plain.fi")
-            :sv (email/load-template "email-templates/selvitys-notification.plain.sv")}
+              :sv (email/load-template "email-templates/selvitys.plain.sv")}
+   :valiselvitys-notification {:fi (email/load-template "email-templates/valiselvitys-notification.plain.fi")
+                               :sv (email/load-template "email-templates/valiselvitys-notification.plain.sv")}
+   :loppuselvitys-notification {:fi (email/load-template "email-templates/loppuselvitys-notification.plain.fi")
+                                :sv (email/load-template "email-templates/loppuselvitys-notification.plain.sv")}
 
    })
 
@@ -102,10 +106,10 @@
   (let [lang-str (or (clojure.core/name lang) "fi")
         url (selvitys-url (:id avustushaku) (:user_key hakemus) (keyword lang-str) selvitys-type)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
-        mail-subject (get-in mail-titles [:selvitys-notification lang])]
+        mail-subject (get-in mail-titles [(keyword (str selvitys-type "-notification")) lang])]
     (log/info "Url would be: " url)
     (>!! email/mail-queue {:operation :send
-                           :type :selvitys-notification
+                           :type (keyword (str selvitys-type "-notification"))
                            :lang lang
                            :from (-> email/smtp-config :from lang)
                            :sender (-> email/smtp-config :sender)
