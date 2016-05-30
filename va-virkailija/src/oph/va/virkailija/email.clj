@@ -102,12 +102,17 @@
                            :body message
                            })))
 
-(defn send-selvitys-notification! [lang to avustushaku hakemus selvitys-type]
+(defn send-selvitys-notification! [lang to avustushaku hakemus selvitys-type arvio roles]
   (let [lang-str (or (clojure.core/name lang) "fi")
+        presenter-role-id (:presenter_role_id arvio)
         url (selvitys-url (:id avustushaku) (:user_key hakemus) (keyword lang-str) selvitys-type)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
-        mail-subject (str (get-in mail-titles [(keyword (str selvitys-type "-notification")) lang]) " " avustushaku-name)]
+        mail-subject (str (get-in mail-titles [(keyword (str selvitys-type "-notification")) lang]) " " avustushaku-name)
+        selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
+        presenter (if (nil? selected-presenter) (first roles) selected-presenter)]
     (log/info "Url would be: " url)
+    (println presenter-role-id)
+    (println roles)
     (>!! email/mail-queue {:operation :send
                            :type (keyword (str selvitys-type "-notification"))
                            :lang lang
@@ -115,7 +120,7 @@
                            :sender (-> email/smtp-config :sender)
                            :subject mail-subject
                            :selvitysdate ((keyword (str selvitys-type "date")) avustushaku)
-                           :presenter-name "Eevi Esittelijä"
+                           :presenter-name (:name presenter)
                            :avustushaku-name avustushaku-name
                            :to to
                            :url url

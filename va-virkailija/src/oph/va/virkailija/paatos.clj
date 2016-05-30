@@ -51,10 +51,12 @@
   (let [hakemus (hakija-api/get-hakemus hakemus-id)
         submission (hakija-api/get-hakemus-submission hakemus)
         avustushaku (hakija-api/get-avustushaku avustushaku-id)
+        roles (hakija-api/get-avustushaku-roles avustushaku-id)
+        arvio (virkailija-db/get-arvio hakemus-id)
         answers (:answers submission)
         emails (vec (remove nil? (distinct (emails-from-answers answers))))
         language (keyword (formutil/find-answer-value answers "language"))]
-    (email/send-selvitys-notification! language emails avustushaku hakemus selvitys-type)))
+    (email/send-selvitys-notification! language emails avustushaku hakemus selvitys-type arvio roles)))
 
 (defn get-paatos-email-status
   "Returns only data related to those hakemus ids which are rejected or accepted,
