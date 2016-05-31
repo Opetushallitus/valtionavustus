@@ -8,6 +8,7 @@
                  [buddy/buddy-auth "0.6.1"]
                  [com.cemerick/url "0.1.1"]
                  [oph/clj-util "0.1.0"]
+                 [org.clojure/data.json "0.2.6"]
                  [dk.ative/docjure "1.9.0"]]
 
   :main oph.va.virkailija.main

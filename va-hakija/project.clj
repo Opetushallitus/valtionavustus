@@ -4,7 +4,7 @@
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
   :dependencies [[oph-va/common "0.1.0-SNAPSHOT"]
-
+                 [clj-http "2.1.0"]
                  ;; MIME type checking
                  [com.novemberain/pantomime "2.7.0"]]
 

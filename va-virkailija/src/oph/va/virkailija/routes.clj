@@ -29,6 +29,7 @@
             [oph.va.virkailija.export :as export]
             [oph.va.virkailija.email :as email]
             [oph.va.virkailija.paatos :as paatos]
+            [oph.va.virkailija.decision :as decision]
             [oph.soresu.common.koodisto :as koodisto]
             [clojure.tools.logging :as log]))
 
@@ -615,6 +616,7 @@
   (context* "/api/koodisto" [] :tags ["koodisto"] koodisto-routes)
   (context* "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
   (context* "/api/paatos" [] :tags ["paatos"] paatos/paatos-routes)
+  (context* "/public/paatos2" [] :tags ["paatos"] decision/decision-routes)
 
   ;; Documentation
   (context* "/doc" [] doc-routes)

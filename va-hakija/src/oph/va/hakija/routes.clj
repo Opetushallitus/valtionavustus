@@ -9,6 +9,7 @@
             [compojure.api.exception :as compojure-ex]
             [compojure.api.upload :as upload]
             [schema.core :as s]
+            [clj-http.client :as http-client]
             [oph.common.datetime :as datetime]
             [oph.soresu.common.config :refer [config config-simple-name]]
             [oph.soresu.common.routes :refer :all]
@@ -224,6 +225,24 @@
     :query-params [{nolog :- s/Str nil}]
     (if (nil? nolog) (log-paatos-display user-key (:headers request) (:remote-addr request)))
     (return-html "paatos.html"))
+
+ (GET* "/paatos2/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
+       :path-params [avustushaku-id :- Long user-key :- s/Str]
+       :query-params [{nolog :- s/Str nil}]
+       (if (nil? nolog) (log-paatos-display user-key (:headers request) (:remote-addr request)))
+
+       (let [env (environment-content)
+             virkailija-server (-> env :virkailija-server :url)
+             hakemus (hakija-db/get-hakemus user-key)
+             hakemus-id (:id hakemus)
+             url (str virkailija-server "/public/paatos2/avustushaku/" avustushaku-id "/hakemus/" hakemus-id)
+             res (http-client/get url)
+             ]
+         {:status 200
+          :headers {"Content-Type" "text/html"}
+          :body (:body res)}
+         )
+       )
 
   (route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
 
