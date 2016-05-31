@@ -114,6 +114,7 @@
         costs-granted (:costsGranted arvio)
         use-detailed-costs (:useDetailedCosts arvio)
         budget-granted (or (calculate-total-oph-budget avustushaku status arvio) 0)
+        academysize (or (:academysize arvio) 0)
         overridden-answers (:overridden-answers arvio)
         arvio-to-save  {:hakemus_id hakemus-id
                         :status status
@@ -126,7 +127,7 @@
                         :roles (:roles arvio)
                         :presenter_role_id (:presenter-role-id arvio)
                         :rahoitusalue (:rahoitusalue arvio)
-                        :academysize (:academysize arvio)
+                        :academysize academysize
                         :perustelut (:perustelut arvio)
                         }
         existing (get-arvio hakemus-id)
