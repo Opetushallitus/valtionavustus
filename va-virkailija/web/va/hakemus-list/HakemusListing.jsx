@@ -448,7 +448,7 @@ class HakemusRow extends Component {
       {isResolved && <td className="selvitys-column">{statusLoppuselvitys}</td>}
       <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>
       <td className="person-filter-column">
-        {!isResolved && <PersonSelectButton show={allowChangeHakemusState} controller={controller} hakemus={hakemus} state={state}/>}
+        <PersonSelectButton show={allowChangeHakemusState} controller={controller} hakemus={hakemus} state={state}/>
       </td>
     </tr>
   }
