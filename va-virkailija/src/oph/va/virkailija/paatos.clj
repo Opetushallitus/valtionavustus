@@ -1,16 +1,17 @@
 (ns oph.va.virkailija.paatos
   (:require
-   [ring.util.http-response :refer :all]
-   [compojure.core :refer [defroutes GET POST]]
-   [compojure.api.sweet :refer :all]
-   [oph.va.hakija.api :as hakija-api]
-   [oph.soresu.form.formutil :as formutil]
-   [oph.va.virkailija.email :as email]
-   [oph.va.virkailija.schema :as virkailija-schema]
-   [oph.va.virkailija.hakudata :as hakudata]
-   [oph.va.virkailija.db :as virkailija-db]
-   [clojure.tools.logging :as log]
-   [clojure.string :as str]))
+    [ring.util.http-response :refer :all]
+    [compojure.core :refer [defroutes GET POST]]
+    [compojure.api.sweet :refer :all]
+    [oph.va.hakija.api :as hakija-api]
+    [oph.soresu.form.formutil :as formutil]
+    [oph.va.virkailija.email :as email]
+    [oph.va.virkailija.schema :as virkailija-schema]
+    [oph.va.virkailija.hakudata :as hakudata]
+    [oph.va.virkailija.db :as virkailija-db]
+    [clojure.tools.logging :as log]
+    [clojure.string :as str]
+    [oph.va.virkailija.decision :as decision]))
 
 (defn is-notification-email-field? [field]
   (or
@@ -35,10 +36,11 @@
         answers (:answers submission)
         avustushaku (hakija-api/get-avustushaku avustushaku-id)
         presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
-        language (keyword (formutil/find-answer-value answers "language"))]
+        language (keyword (formutil/find-answer-value answers "language"))
+        decision (decision/paatos-html hakemus-id language)]
     (log/info "Sending paatos email for hakemus" hakemus-id " to " emails)
     (email/send-paatos! language emails avustushaku hakemus presenting-officer-email)
-    (hakija-api/add-paatos-sent-emails hakemus emails)
+    (hakija-api/add-paatos-sent-emails hakemus emails decision)
     (ok {:status "sent" :hakemus hakemus-id :emails emails})))
 
 (defn send-paatos-for-all [hakemus-id]

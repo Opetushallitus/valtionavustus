@@ -162,67 +162,73 @@
                     (str row-oikaisuvaatimus row-ehdot row-yleisohje)))]
       (section :liitteet content translate)))
 
+(defn paatos-html [hakemus-id lang]
+  (let [haku-data (hakudata/get-combined-paatos-data hakemus-id)
+        avustushaku (:avustushaku haku-data)
+        decision (:decision avustushaku)
+        hakemus (:hakemus haku-data)
+        answers-field (:answers hakemus)
+        answers {:value answers-field}
+        roles (:roles haku-data)
+        arvio (:arvio hakemus)
+        decision-status (:status arvio)
+        accepted (= decision-status "accepted")
+        arvio-role-id (:presenter-role-id arvio)
+        arvio-role (first (filter #(= (:id %) arvio-role-id) roles))
+        role (if (nil? arvio-role) (first roles) arvio-role)
+        language-answer (formutil/find-answer-value answers "language")
+        language (if lang
+                   (keyword lang)
+                   (if  (nil? language-answer) :fi
+                                               (keyword language-answer)))
+        iban (formutil/find-answer-value answers "bank-iban")
+        bic (formutil/find-answer-value answers "bank-bic")
+        total-granted (:budget-granted arvio)
+        template (email/load-template "templates/paatos.html")
+        translations-str (email/load-template "public/translations.json")
+        translations (json/read-str translations-str :key-fn keyword)
+        translate (partial decision-translation translations language)
+        johtaja (decision-field decision :johtaja language)
+        esittelija (decision-field decision :esittelija language)
+        avustuksen-maksu (avustuksen-maksu avustushaku bic iban total-granted language translate)
+        myonteinen-lisateksti (myonteinen-lisateksti avustushaku hakemus language)
+        liitteet-list (liitteet-list avustushaku hakemus translate language true)
+
+        params {
+                :avustushaku avustushaku
+                :hakemus hakemus
+                :section-asia  (section-translated :asia :asia-title translate)
+                :section-taustaa (optional-section decision :taustaa :taustaa translate language)
+                :section-sovelletut-saannokset (optional-section decision :sovelletut-saannokset :sovelletutsaannokset translate language)
+                :section-kayttoaika (optional-section decision :valtionavustuksen-kayttoaika :kayttoaika translate language)
+                :section-selvitysvelvollisuus (optional-section decision :selvitysvelvollisuus :selvitysvelvollisuus translate language)
+                :section-kayttooikeudet (optional-section decision :kayttooikeudet :kayttooikeudet translate language)
+                :section-hyvaksyminen (optional-section decision :hyvaksyminen :hyvaksyminen translate language)
+                :section-perustelut (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate)
+                :section-kayttotarkoitus (kayttotarkoitus translate)
+                :section-tarkastusoikeus (section-translated :tarkastusoikeus-title :tarkastusoikeus-text translate)
+                :role role
+                :t translate
+                :johtaja johtaja
+                :esittelija esittelija
+                :section-avustuksen-maksu avustuksen-maksu
+                :myonteinen-lisateksti myonteinen-lisateksti
+                :liitteet liitteet-list
+                :accepted accepted
+                :rejected (not accepted)
+                }
+        body (render template params)]
+    body
+    )
+  )
+
 (defroutes* decision-routes
             "Public API"
 
             (GET* "/avustushaku/:avustushaku-id/hakemus/:hakemus-id" []
                   :path-params [avustushaku-id :- Long hakemus-id :- Long]
                   :query-params [{lang :- s/Str nil}]
-                  (let [haku-data (hakudata/get-combined-paatos-data hakemus-id)
-                        avustushaku (:avustushaku haku-data)
-                        decision (:decision avustushaku)
-                        hakemus (:hakemus haku-data)
-                        answers-field (:answers hakemus)
-                        answers {:value answers-field}
-                        roles (:roles haku-data)
-                        arvio (:arvio hakemus)
-                        decision-status (:status arvio)
-                        accepted (= decision-status "accepted")
-                        arvio-role-id (:presenter-role-id arvio)
-                        arvio-role (first (filter #(= (:id %) arvio-role-id) roles))
-                        role (if (nil? arvio-role) (first roles) arvio-role)
-                        language-answer (formutil/find-answer-value answers "language")
-                        language (if lang
-                               (keyword lang)
-                               (if  (nil? language-answer) :fi
-                                (keyword language-answer)))
-                        iban (formutil/find-answer-value answers "bank-iban")
-                        bic (formutil/find-answer-value answers "bank-bic")
-                        total-granted (:budget-granted arvio)
-                        template (email/load-template "templates/paatos.html")
-                        translations-str (email/load-template "public/translations.json")
-                        translations (json/read-str translations-str :key-fn keyword)
-                        translate (partial decision-translation translations language)
-                        johtaja (decision-field decision :johtaja language)
-                        esittelija (decision-field decision :esittelija language)
-                        avustuksen-maksu (avustuksen-maksu avustushaku bic iban total-granted language translate)
-                        myonteinen-lisateksti (myonteinen-lisateksti avustushaku hakemus language)
-                        liitteet-list (liitteet-list avustushaku hakemus translate language true)
-
-                        params {
-                                :avustushaku avustushaku
-                                :hakemus hakemus
-                                :section-asia  (section-translated :asia :asia-title translate)
-                                :section-taustaa (optional-section decision :taustaa :taustaa translate language)
-                                :section-sovelletut-saannokset (optional-section decision :sovelletut-saannokset :sovelletutsaannokset translate language)
-                                :section-kayttoaika (optional-section decision :valtionavustuksen-kayttoaika :kayttoaika translate language)
-                                :section-selvitysvelvollisuus (optional-section decision :selvitysvelvollisuus :selvitysvelvollisuus translate language)
-                                :section-kayttooikeudet (optional-section decision :kayttooikeudet :kayttooikeudet translate language)
-                                :section-hyvaksyminen (optional-section decision :hyvaksyminen :hyvaksyminen translate language)
-                                :section-perustelut (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate)
-                                :section-kayttotarkoitus (kayttotarkoitus translate)
-                                :section-tarkastusoikeus (section-translated :tarkastusoikeus-title :tarkastusoikeus-text translate)
-                                :role role
-                                :t translate
-                                :johtaja johtaja
-                                :esittelija esittelija
-                                :section-avustuksen-maksu avustuksen-maksu
-                                :myonteinen-lisateksti myonteinen-lisateksti
-                                :liitteet liitteet-list
-                                :accepted accepted
-                                :rejected (not accepted)
-                                }
-                        body (render template params)]
+                  (let [body (paatos-html hakemus-id lang)]
                     {:status 200
                      :headers {"Content-Type" "text/html"}
                      :body body}

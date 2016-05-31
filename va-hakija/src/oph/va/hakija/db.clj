@@ -66,6 +66,11 @@
        (exec :form-db queries/get-hakemus-by-user-id)
        first))
 
+(defn get-hakemus-paatos [hakemus-id]
+  (->> {:hakemus_id hakemus-id}
+       (exec :form-db queries/get-hakemus-paatokset)
+       first))
+
 (defn list-hakemus-change-requests [hakemus-id]
   (->> {:user_key hakemus-id}
        (exec :form-db queries/list-hakemus-change-requests-by-user-id)))

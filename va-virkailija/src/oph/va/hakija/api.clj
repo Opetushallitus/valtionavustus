@@ -177,9 +177,10 @@
 (defn find-paatos-views [hakemus-id]
   (exec :form-db hakija-queries/find-paatos-views {:hakemus_id hakemus-id}))
 
-(defn add-paatos-sent-emails [hakemus emails]
+(defn add-paatos-sent-emails [hakemus emails decision]
   (exec :form-db hakija-queries/add-hakemus-paatos! {:hakemus_id (:id hakemus)
                                                          :hakemus_version (:version hakemus)
+                                                         :decision decision
                                                          :sent_emails {:addresses emails}}))
 
 (defn get-hakudata [avustushaku-id]
