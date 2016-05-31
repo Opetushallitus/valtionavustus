@@ -1,3 +1,5 @@
+import PolyfillEndsWith from '../polyfill-endsWith'
+
 import React from 'react'
 import ClassNames from 'classnames'
 import _ from 'lodash'

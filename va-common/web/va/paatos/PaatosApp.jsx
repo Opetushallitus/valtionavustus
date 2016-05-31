@@ -1,4 +1,5 @@
 import PolyfillBind from '../../polyfill-bind'
+import PolyfillEndsWith from '../../polyfill-endsWith'
 import ConsolePolyfill from 'console-polyfill'
 import ArrayFindPolyfill from 'array-find-polyfill'
 import React, { Component } from 'react'
