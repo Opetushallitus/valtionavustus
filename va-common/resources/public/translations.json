@@ -88,6 +88,10 @@
       "fi": "Hakuaika on päättynyt",
       "sv": "Ansökningstiden har slutats"
     },
+    "print-version":{
+      "fi": "Tulostusversio",
+      "sv": "Utskriftsversion"
+    },
     "trainee-day-calculator": {
       "scope-type": {
         "fi": "Laajuus ilmoitettu",

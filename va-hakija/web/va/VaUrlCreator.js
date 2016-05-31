@@ -39,10 +39,10 @@ export default class VaUrlCreator extends UrlCreator {
       existingSubmissionEditUrl: function (avustusHakuId, hakemusId, lang, devel) {
         return "/avustushaku/" + avustusHakuId + "/nayta?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId + "&lang=" + lang + (devel ? "&devel=true" : "")
       },
-      existingSubmissionPreviewUrl: function (state) {
+      existingSubmissionPreviewUrl: function (state,lang) {
         const avustusHakuId = state.avustushaku.id
         const hakemusId = state.saveStatus.hakemusId
-        return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId
+        return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId + "&lang=" + lang
       },
       loadAttachmentsApiUrl: function (urlContent) {
         const query = urlContent.parsedQuery
