@@ -195,7 +195,8 @@ export default class HakemusListing extends Component {
     }
 
     const hakemusListingClass = ClassNames('hakemus-list overview-list',{
-      'hakemus-list--academysize': !isResolved && isAcademysize
+      'hakemus-list--academysize': !isResolved && isAcademysize,
+      'hakemus-list--resolved': isResolved
     })
 
     return (
@@ -244,7 +245,7 @@ export default class HakemusListing extends Component {
             <HakemusSorter field="status_loppuselvitys" sorter={sorter} controller={controller}/>
           </th>}
           <th className="granted-sum-column">Myönnetty <HakemusSorter field="granted-sum" sorter={sorter} controller={controller}/></th>
-          {!isResolved && <th className="person-filter-column"><PersonFilterButton controller={controller} state={state}/></th>}
+          <th className="person-filter-column"><PersonFilterButton controller={controller} state={state}/></th>
         </tr></thead>
         <tbody className={hasSelected ? "has-selected" : ""}>
           {hakemusElements}
@@ -255,7 +256,7 @@ export default class HakemusListing extends Component {
           </td>
           <td className="applied-sum-column">{!isResolved && <span className="money sum">{ophShareSum}</span>}</td>
           <td className="granted-sum-column"><span className="money sum">{budgetGrantedSum}</span></td>
-          {!isResolved && <td className="person-filter-column"></td>}
+          <td className="person-filter-column"></td>
         </tr></tfoot>
       </table>
     )
@@ -446,7 +447,9 @@ class HakemusRow extends Component {
       {isResolved && <td className="selvitys-column">{statusValiselvitys}</td>}
       {isResolved && <td className="selvitys-column">{statusLoppuselvitys}</td>}
       <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>
-      {!isResolved && <td className="person-filter-column"><PersonSelectButton show={allowChangeHakemusState} controller={controller} hakemus={hakemus} state={state}/></td>}
+      <td className="person-filter-column">
+        {!isResolved && <PersonSelectButton show={allowChangeHakemusState} controller={controller} hakemus={hakemus} state={state}/>}
+      </td>
     </tr>
   }
 }
