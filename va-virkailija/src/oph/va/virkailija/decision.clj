@@ -207,6 +207,7 @@
                 :section-perustelut (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate)
                 :section-kayttotarkoitus (kayttotarkoitus translate)
                 :section-tarkastusoikeus (section-translated :tarkastusoikeus-title :tarkastusoikeus-text translate)
+                :total-granted (format-number total-granted)
                 :role role
                 :t translate
                 :johtaja johtaja
