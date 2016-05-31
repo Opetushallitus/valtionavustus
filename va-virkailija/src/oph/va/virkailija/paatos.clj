@@ -88,7 +88,7 @@
         ids (map :id json-ids)]
     (log/info "Send all paatos ids " ids)
     (run! (partial send-selvitys-for-all avustushaku-id selvitys-type) ids)
-    (ok {:status "ok"})))
+    (ok {:count (count ids)})))
 
 (defroutes* paatos-routes
   "Paatos routes"

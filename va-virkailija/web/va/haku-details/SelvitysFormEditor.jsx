@@ -3,8 +3,16 @@ import FormEditor from './FormEditor.jsx'
 import FormJsonEditor from './FormJsonEditor.jsx'
 import LoppuselvitysForm from '../data/LoppuselvitysForm.json'
 import ValiselvitysForm from '../data/ValiselvitysForm.json'
+import HttpUtil from "../../../../va-common/web/HttpUtil";
 
 export default class SelvitysFormEditor extends React.Component{
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.avustushaku.id !== nextProps.avustushaku.id) {
+      this.setState({count:undefined, sending:false})
+    }
+  }
+
   render(){
     const {avustushaku, controller, translations, koodistos, selvitysType,environment} = this.props
     const formDraft = this.props[selvitysType + "FormDraft"]
@@ -12,7 +20,8 @@ export default class SelvitysFormEditor extends React.Component{
 
     const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/" + selvitysType
     const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/" + selvitysType + "?lang=sv"
-
+    const count = _.get(this.state, 'count')
+    const sending = _.get(this.state, 'sending')
     const onFormChange = (avustushaku, newDraftJson) =>{
       controller.selvitysFormOnChangeListener(avustushaku, newDraftJson, selvitysType)
     }
@@ -45,13 +54,22 @@ export default class SelvitysFormEditor extends React.Component{
       controller.selvitysFormOnChangeListener(avustushaku, JSON.stringify(form), selvitysType)
     }
 
-    const onSendSelvitys = () => controller.sendSelvitysEmails(avustushaku, selvitysType)
+    const onSendSelvitys = () => {
+      this.setState({sending: true})
+      HttpUtil.post(`/api/avustushaku/${avustushaku.id}/selvitys/${selvitysType}/send-notification`)
+        .then(response => {
+          this.setState({count: response.count, sending: false})
+        })
+
+    }
+    
     const valiselvitysSection = <div>
       <h4>Väliselvitysten lähettäminen</h4>
       <p>Väliselvitys tulee toimittaa viimeistään <strong>{this.props.avustushaku[selvitysType + 'date']}</strong> ja se avautuu täytettäväksi 2 kuukautta aikaisemmin.</p>
       <p>Väliselvityspyynnöt lähetetään vain niille hakijoille, jotka eivät ole vielä toimittaneet selvitystä.</p>
       <p>
-        <button onClick={onSendSelvitys}>Lähetä väliselvityspyynnöt</button>
+        <button disabled={sending} onClick={onSendSelvitys}>Lähetä väliselvityspyynnöt</button>
+        {!isNaN(count) && <span> Lähetetty {count} viestiä</span>}
       </p>
       <h1>Väliselvityslomake</h1>
     </div>

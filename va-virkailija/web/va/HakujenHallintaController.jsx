@@ -43,18 +43,13 @@ const events = {
   ldapSearchStarted: 'ldapSearchStarted',
   ldapSearchFinished: 'ldapSearchFinished',
   ensureKoodistosLoaded: 'ensureKoodistosLoaded',
-  koodistosLoaded: 'koodistosLoaded',
-  sendSelvitysEmails: 'sendSelvitysEmails'
+  koodistosLoaded: 'koodistosLoaded'
 }
 
 export default class HakujenHallintaController {
 
   static roleUrl(avustushaku) {
     return "/api/avustushaku/" + avustushaku.id + "/role"
-  }
-
-  static sendSelvitysEmailUrl(avustushakuId, selvitysType) {
-    return `/api/avustushaku/${avustushakuId}/selvitys/${selvitysType}/send-notification`
   }
 
   static privilegesUrl(avustushaku) {
@@ -153,7 +148,6 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.ldapSearchStarted)], this.onStartLdapSearch,
       [dispatcher.stream(events.ldapSearchFinished)], this.onLdapSearchFinished,
       [dispatcher.stream(events.ensureKoodistosLoaded)], this.onEnsureKoodistoLoaded,
-      [dispatcher.stream(events.sendSelvitysEmails)], this.onSendSelvitysEmails,
       [dispatcher.stream(events.koodistosLoaded)], this.onKoodistosLoaded
     )
 
@@ -656,18 +650,5 @@ export default class HakujenHallintaController {
 
   selectEditorSubtab(subTabToSelect) {
     dispatcher.push(events.selectEditorSubTab, subTabToSelect)
-  }
-
-  sendSelvitysEmails(avustushaku, selvitysType) {
-    dispatcher.push(events.sendSelvitysEmails, {id: avustushaku.id, selvitysType: selvitysType})
-  }
-  
-  onSendSelvitysEmails(state, idAndType) {
-    HttpUtil.post(HakujenHallintaController.sendSelvitysEmailUrl(idAndType.id, idAndType.selvitysType))
-      .then(response => { 
-        console.log('emails sent') 
-      })
-
-    return state
   }
 }
