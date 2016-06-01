@@ -6,7 +6,7 @@
 (declare do-calculate-totals)
 (declare read-amount)
 
-(defn- is-budget-field? [element]
+(defn is-budget-field? [element]
   (formutil/has-field-type? "vaBudget" element))
 
 (defn calculate-totals-virkailija [answers avustushaku form use-detailed-costs costs-granted]
@@ -20,7 +20,7 @@
 (defn calculate-totals [answers avustushaku form]
   (calculate-totals-virkailija answers avustushaku form true 0))
 
-(defn- find-summing-fields [children]
+(defn find-summing-fields [children]
   (-> (partial formutil/has-field-type? "vaSummingBudgetElement")
       (filter children)))
 
@@ -50,7 +50,7 @@
     {:total-needed total-sum
      :oph-share oph-share}))
 
-(defn- amount-field-of [budget-item]
+(defn amount-field-of [budget-item]
   (nth (:children budget-item) 1))
 
 (defn- sanitise [raw-answer-value]
@@ -59,7 +59,7 @@
     (catch Exception e
       0)))
 
-(defn- read-amount [budget-item answers only-incomes]
+(defn read-amount [budget-item answers only-incomes]
   (let [raw-answer-value (formutil/find-answer-value answers (:id (amount-field-of budget-item)))
         numeric-value (sanitise raw-answer-value)
         increments-total (-> budget-item :params :incrementsTotal)

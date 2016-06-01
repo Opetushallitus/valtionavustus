@@ -7,6 +7,7 @@
             [oph.common.email :as email]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.soresu.form.formutil :as formutil]
+            [oph.va.virkailija.kayttosuunnitelma :as kayttosuunnitelma]
             [schema.core :as s]))
 
 (def Liitteet [
@@ -48,7 +49,7 @@
                ])
 
 
-(defn decision-translation  [translations lang keyword-or-key]
+(defn decision-translation [translations lang keyword-or-key]
   (let [key (if (keyword? keyword-or-key) keyword-or-key (keyword keyword-or-key))]
     (-> translations :paatos key lang)))
 
@@ -96,23 +97,23 @@
         maksu (decision-field decision :maksu lang)
         has-multiple-maksuera (-> avustushaku :content :multiplemaksuera)
         multiple-maksuera (and has-multiple-maksuera (> total-paid 60000))
-        first-round-paid (if multiple-maksuera  (Math/round (* 0.6 total-paid)) total-paid)
+        first-round-paid (if multiple-maksuera (Math/round (* 0.6 total-paid)) total-paid)
         paid-formatted (format-number first-round-paid)
         extra-no-multiple "<span>.</span>"
         extra-multiple (str "<span>" (translate :ja-loppuera-viimeistaan) maksu-date "</span>")
         extra (if multiple-maksuera extra-multiple extra-no-multiple)
         content1 (str "<p>" (translate "avustus-maksetaan") " <strong>" iban ", " bic "</strong>" "</p>")
-        content2 (str "<p>" (translate "maksuerat-ja-ajat") ": " paid-formatted " " maksu  extra "</p>")
+        content2 (str "<p>" (translate "maksuerat-ja-ajat") ": " paid-formatted " " maksu extra "</p>")
         content (str content1 content2)]
-      (section :avustuksen-maksu content translate)
-      )
+    (section :avustuksen-maksu content translate)
+    )
   )
 
 (defn myonteinen-lisateksti [avustushaku hakemus lang]
   (let [multiple-rahoitusalue (:multiple-rahoitusalue avustushaku)
         rahoitusalue (-> hakemus :arvio :rahoitusalue)
         decision (:decision avustushaku)
-        rahoitusalue-key (keyword (str "myonteinenlisateksti-" rahoitusalue ))
+        rahoitusalue-key (keyword (str "myonteinenlisateksti-" rahoitusalue))
         content-rahoitusalue (-> decision rahoitusalue-key lang)
         content-default (decision-field decision :myonteinenlisateksti lang)
         content (if (and multiple-rahoitusalue content-rahoitusalue) content-rahoitusalue content-default)
@@ -131,7 +132,7 @@
         group-attachments (:attachments group)
         attachment (first (filter #(= (:id %) row-id) group-attachments))
         ]
-      attachment))
+    attachment))
 
 (defn liite-row [liite lang]
   (let [liite-id (:id liite)
@@ -179,8 +180,8 @@
         language-answer (formutil/find-answer-value answers "language")
         language (if lang
                    (keyword lang)
-                   (if  (nil? language-answer) :fi
-                                               (keyword language-answer)))
+                   (if (nil? language-answer) :fi
+                                              (keyword language-answer)))
         iban (formutil/find-answer-value answers "bank-iban")
         bic (formutil/find-answer-value answers "bank-bic")
         total-granted (:budget-granted arvio)
@@ -193,30 +194,32 @@
         avustuksen-maksu (avustuksen-maksu avustushaku bic iban total-granted language translate)
         myonteinen-lisateksti (myonteinen-lisateksti avustushaku hakemus language)
         liitteet-list (liitteet-list avustushaku hakemus translate language true)
-
+        form-content (-> haku-data :form :content)
+        kayttosuunnitelma (kayttosuunnitelma/kayttosuunnitelma avustushaku hakemus form-content answers translate language)
         params {
-                :avustushaku avustushaku
-                :hakemus hakemus
-                :section-asia  (section-translated :asia :asia-title translate)
-                :section-taustaa (optional-section decision :taustaa :taustaa translate language)
+                :avustushaku                   avustushaku
+                :hakemus                       hakemus
+                :section-asia                  (section-translated :asia :asia-title translate)
+                :section-taustaa               (optional-section decision :taustaa :taustaa translate language)
                 :section-sovelletut-saannokset (optional-section decision :sovelletut-saannokset :sovelletutsaannokset translate language)
-                :section-kayttoaika (optional-section decision :valtionavustuksen-kayttoaika :kayttoaika translate language)
-                :section-selvitysvelvollisuus (optional-section decision :selvitysvelvollisuus :selvitysvelvollisuus translate language)
-                :section-kayttooikeudet (optional-section decision :kayttooikeudet :kayttooikeudet translate language)
-                :section-hyvaksyminen (optional-section decision :hyvaksyminen :hyvaksyminen translate language)
-                :section-perustelut (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate)
-                :section-kayttotarkoitus (kayttotarkoitus translate)
-                :section-tarkastusoikeus (section-translated :tarkastusoikeus-title :tarkastusoikeus-text translate)
-                :total-granted (format-number total-granted)
-                :role role
-                :t translate
-                :johtaja johtaja
-                :esittelija esittelija
-                :section-avustuksen-maksu avustuksen-maksu
-                :myonteinen-lisateksti myonteinen-lisateksti
-                :liitteet liitteet-list
-                :accepted accepted
-                :rejected (not accepted)
+                :section-kayttoaika            (optional-section decision :valtionavustuksen-kayttoaika :kayttoaika translate language)
+                :section-selvitysvelvollisuus  (optional-section decision :selvitysvelvollisuus :selvitysvelvollisuus translate language)
+                :section-kayttooikeudet        (optional-section decision :kayttooikeudet :kayttooikeudet translate language)
+                :section-hyvaksyminen          (optional-section decision :hyvaksyminen :hyvaksyminen translate language)
+                :section-perustelut            (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate)
+                :section-kayttotarkoitus       (kayttotarkoitus translate)
+                :section-tarkastusoikeus       (section-translated :tarkastusoikeus-title :tarkastusoikeus-text translate)
+                :total-granted                 (format-number total-granted)
+                :role                          role
+                :t                             translate
+                :johtaja                       johtaja
+                :esittelija                    esittelija
+                :section-avustuksen-maksu      avustuksen-maksu
+                :myonteinen-lisateksti         myonteinen-lisateksti
+                :liitteet                      liitteet-list
+                :accepted                      accepted
+                :rejected                      (not accepted)
+                :kayttosuunnitelma             kayttosuunnitelma
                 }
         body (render template params)]
     body
@@ -230,7 +233,7 @@
                   :path-params [avustushaku-id :- Long hakemus-id :- Long]
                   :query-params [{lang :- s/Str nil}]
                   (let [body (paatos-html hakemus-id lang)]
-                    {:status 200
+                    {:status  200
                      :headers {"Content-Type" "text/html"}
-                     :body body}
+                     :body    body}
                     )))
