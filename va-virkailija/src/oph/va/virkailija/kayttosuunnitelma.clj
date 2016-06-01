@@ -29,7 +29,7 @@
     (str "<tbody>" rows-s "</tbody>")))
 
 (defn find-table [children index answers overridden-answers]
-  (let [table (nth children index)
+  (let [table (nth children index {})
         map-children (fn [x] (assoc x :original (va-budget/read-amount x answers) :overridden (va-budget/read-amount x overridden-answers)))
         new-children (map map-children (:children table))
         new-table (assoc table :children new-children)
