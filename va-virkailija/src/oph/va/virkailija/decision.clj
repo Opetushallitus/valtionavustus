@@ -8,6 +8,7 @@
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.kayttosuunnitelma :as kayttosuunnitelma]
+            [oph.va.virkailija.koulutusosio :as koulutusosio]
             [schema.core :as s]))
 
 (def Liitteet [
@@ -197,7 +198,7 @@
         kayttosuunnitelma (kayttosuunnitelma/kayttosuunnitelma avustushaku hakemus form-content answers translate language)
         has-kayttosuunnitelma (:has-kayttosuunnitelma kayttosuunnitelma)
         liitteet-list (liitteet-list avustushaku hakemus translate language has-kayttosuunnitelma)
-
+        koulutusosio (koulutusosio/koulutusosio hakemus answers translate language)
 
         params {
                 :avustushaku                   avustushaku
@@ -225,6 +226,7 @@
                 :rejected                      (not accepted)
                 :has-kayttosuunnitelma         has-kayttosuunnitelma
                 :kayttosuunnitelma             (:body kayttosuunnitelma)
+                :koulutusosio                  koulutusosio
                 }
         body (render template params)]
     body
