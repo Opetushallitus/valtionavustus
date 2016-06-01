@@ -64,13 +64,15 @@
         <p>{{#t}}myonnetty-title{{/t}}</p>
         <p>{{hakemus.register-number}} {{hakemus.project-name}}</p>
         <div>
-          <p>
-            {{#t}}paatos-myonnetty-1{{/t}} {{total-granted}}&nbsp;.&nbsp;
-            {{#t}}paatos-myonnetty-2{{/t}} {{total-nettomenot}}
-          </p>
-          <p>
-            {{#t}}paatos-myonnetty-3{{/t}}
-          </p>
+          {{#has-kayttosuunniltelma}}
+            <p>
+              {{#t}}paatos-myonnetty-1{{/t}} {{total-granted}}&nbsp;.&nbsp;
+              {{#t}}paatos-myonnetty-2{{/t}} {{total-nettomenot}}
+            </p>
+            <p>
+              {{#t}}paatos-myonnetty-3{{/t}}
+            </p>
+          {{/has-kayttosuunniltelma}}
           {{{myonteinen-lisateksti}}}
           <p>{{#t}}paatos-myonnetty-4{{/t}}</p>
         </div>
@@ -110,7 +112,10 @@
     </div>
   </section>
   {{{liitteet}}}
-  {{{kayttosuunnitelma}}}
+
+  {{#has-kayttosuunnitelma}}
+    {{{kayttosuunnitelma}}}
+  {{/has-kayttosuunnitelma}}
 
 </div>
 

@@ -44,6 +44,7 @@
         use-detailed-costs (:useDetailedCosts arvio)
         budget-elements (->> form-content formutil/flatten-elements (filter va-budget/is-budget-field?))
         children (:children (first budget-elements))
+        has-kayttosuunnitelma (not= nil children)
         table0 (find-table children 0 answers overridden-answers)
         tbody0 (tbody table0 language use-detailed-costs)
         table1 (find-table children 1 answers overridden-answers)
@@ -55,14 +56,13 @@
         cost-granted (:costsGranted arvio)
         self-financing-percentage (-> avustushaku :content :self-financing-percentage)
         oph-financing-percentage (- 100 self-financing-percentage)
-
         total-granted (:budget-granted arvio)
         sum-by-field (fn [table field] (reduce + (map field (:children table))))
         total-original-costs (sum-by-field table0 :original)
         total-overridden-costs (if use-detailed-costs
                                  (sum-by-field table0 :overridden)
                                  cost-granted)
-        total-incomes (sum-by-field table1 :original)       ; todo const totalIncomes = tables[1] ? _.sum(tables[1].children.map(i=>Number(i.original))) : 0
+        total-incomes (sum-by-field table1 :original)
         total-financing (sum-by-field table2 :original)
         netto-total-1 (- total-original-costs total-incomes)
         netto-total-2 (- total-overridden-costs total-incomes)
@@ -110,6 +110,7 @@
     {
      :body body
      :nettomenot-yhteensa (- total-overridden-costs total-incomes)
+     :has-kayttosuunnitelma has-kayttosuunnitelma
      }
     )
   )

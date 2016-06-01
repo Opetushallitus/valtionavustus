@@ -193,9 +193,12 @@
         esittelija (decision-field decision :esittelija language)
         avustuksen-maksu (avustuksen-maksu avustushaku bic iban total-granted language translate)
         myonteinen-lisateksti (myonteinen-lisateksti avustushaku hakemus language)
-        liitteet-list (liitteet-list avustushaku hakemus translate language true)
         form-content (-> haku-data :form :content)
         kayttosuunnitelma (kayttosuunnitelma/kayttosuunnitelma avustushaku hakemus form-content answers translate language)
+        has-kayttosuunnitelma (:has-kayttosuunnitelma kayttosuunnitelma)
+        liitteet-list (liitteet-list avustushaku hakemus translate language has-kayttosuunnitelma)
+
+
         params {
                 :avustushaku                   avustushaku
                 :hakemus                       hakemus
@@ -220,6 +223,7 @@
                 :liitteet                      liitteet-list
                 :accepted                      accepted
                 :rejected                      (not accepted)
+                :has-kayttosuunnitelma         has-kayttosuunnitelma
                 :kayttosuunnitelma             (:body kayttosuunnitelma)
                 }
         body (render template params)]
