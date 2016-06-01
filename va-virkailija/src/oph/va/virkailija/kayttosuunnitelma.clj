@@ -3,8 +3,7 @@
             [clostache.parser :refer [render]]
             [oph.common.email :as email]
             [oph.soresu.form.formutil :as formutil]
-            [oph.va.budget :as va-budget]
-            [schema.core :as s]))
+            [oph.va.budget :as va-budget]))
 
 
 (defn amount-cell [children]
@@ -27,13 +26,11 @@
         rows (mapv (partial budget-row language use-detailed-costs)  children)
         rows-s (str/join " " rows)
         ]
-    (str "<tbody>" rows-s "</tbody>")
-    )
-  )
+    (str "<tbody>" rows-s "</tbody>")))
 
 (defn find-table [children index answers overridden-answers]
   (let [table (nth children index)
-        map-children (fn [x] (assoc x :original (va-budget/read-amount x answers false) :overridden (va-budget/read-amount x overridden-answers false)))
+        map-children (fn [x] (assoc x :original (va-budget/read-amount x answers) :overridden (va-budget/read-amount x overridden-answers)))
         new-children (map map-children (:children table))
         new-table (assoc table :children new-children)
         ]
@@ -51,10 +48,10 @@
         tbody0 (tbody table0 language use-detailed-costs)
         table1 (find-table children 1 answers overridden-answers)
         table1-label (-> table1 :label language)
-        tbody1 (tbody table1 language use-detailed-costs)
+        tbody1 (tbody table1 language true)
         table2 (find-table children 2 answers overridden-answers)
         table2-label (-> table2 :label language)
-        tbody2 (tbody table2 language use-detailed-costs)
+        tbody2 (tbody table2 language true)
         cost-granted (:costsGranted arvio)
         self-financing-percentage (-> avustushaku :content :self-financing-percentage)
         oph-financing-percentage (- 100 self-financing-percentage)
@@ -69,9 +66,25 @@
         total-financing (sum-by-field table2 :original)
         netto-total-1 (- total-original-costs total-incomes)
         netto-total-2 (- total-overridden-costs total-incomes)
+        total+original (- total-original-costs total-incomes total-financing)
+        total+overridden (- total-overridden-costs total-incomes total-financing)
+        total-avustus  (-> total+original
+                        (* oph-financing-percentage)
+                        (/ 100)
+                        Math/floor)
+        total-haettu-omarahoitus  (-> total+original
+                           (* (- 100 oph-financing-percentage))
+                           (/ 100)
+                           Math/ceil)
 
-        total-avustus (Math/floor (/ (* (- total-original-costs total-incomes total-financing) oph-financing-percentage) 100))
-        oph-financing-note (if (= 100 oph-financing-percentage) ''(str oph-financing-percentage "%"))
+        total-myonnetty-omarahoitus (-> total+overridden
+                                        (* (- 100 oph-financing-percentage))
+                                        (/ 100)
+                                        Math/ceil)
+
+
+        oph-financing-note (if (= 100 oph-financing-percentage) "" (str oph-financing-percentage "%"))
+        show-financing-note (not= self-financing-percentage 0)
         params {:t                      translate
                 :total-original-costs   total-original-costs
                 :total-overridden-costs total-overridden-costs
@@ -81,8 +94,11 @@
                 :netto-total-2          netto-total-2
                 :total-financing        total-financing
                 :oph-financing-note     oph-financing-note
+                :show-financing-note    show-financing-note
                 :total-granted          total-granted
                 :total-avustus          total-avustus
+                :total-haettu-omarahoitus      total-haettu-omarahoitus
+                :total-myonnetty-omarahoitus      total-myonnetty-omarahoitus
                 :tbody0 tbody0
                 :tbody1 tbody1
                 :table1-label table1-label

@@ -4,7 +4,7 @@
             [clojure.core.reducers :as r]))
 
 (declare do-calculate-totals)
-(declare read-amount)
+(declare read-amount-income)
 
 (defn is-budget-field? [element]
   (formutil/has-field-type? "vaBudget" element))
@@ -30,7 +30,7 @@
       flatten))
 
 (defn- sum-budget-items [answers only-incomes children]
-  (-> (fn [item] (read-amount item answers only-incomes))
+  (-> (fn [item] (read-amount-income item answers only-incomes))
       (map children)))
 
 (defn- do-calculate-totals [answers self-financing-percentage use-detailed-costs costs-granted budget-field ]
@@ -59,9 +59,15 @@
     (catch Exception e
       0)))
 
-(defn read-amount [budget-item answers only-incomes]
+(defn read-amount [budget-item answers]
   (let [raw-answer-value (formutil/find-answer-value answers (:id (amount-field-of budget-item)))
-        numeric-value (sanitise raw-answer-value)
+        numeric-value (sanitise raw-answer-value)]
+    numeric-value))
+
+(defn read-amount-income [budget-item answers only-incomes]
+  (let [numeric-value (read-amount budget-item answers)
         increments-total (-> budget-item :params :incrementsTotal)
         coefficient (if increments-total (if only-incomes 0 1) -1)]
     (* coefficient numeric-value)))
+
+
