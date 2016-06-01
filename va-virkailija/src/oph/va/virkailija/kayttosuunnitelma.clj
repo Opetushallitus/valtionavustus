@@ -107,6 +107,9 @@
                 }
         body (render template params)
         ]
-    body
+    {
+     :body body
+     :nettomenot-yhteensa (- total-overridden-costs total-incomes)
+     }
     )
   )

@@ -210,6 +210,7 @@
                 :section-kayttotarkoitus       (kayttotarkoitus translate)
                 :section-tarkastusoikeus       (section-translated :tarkastusoikeus-title :tarkastusoikeus-text translate)
                 :total-granted                 (format-number total-granted)
+                :total-nettomenot              (format-number (:nettomenot-yhteensa kayttosuunnitelma))
                 :role                          role
                 :t                             translate
                 :johtaja                       johtaja
@@ -219,7 +220,7 @@
                 :liitteet                      liitteet-list
                 :accepted                      accepted
                 :rejected                      (not accepted)
-                :kayttosuunnitelma             kayttosuunnitelma
+                :kayttosuunnitelma             (:body kayttosuunnitelma)
                 }
         body (render template params)]
     body
