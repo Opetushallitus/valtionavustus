@@ -24,7 +24,7 @@ export default class FormEditorContainer extends Component {
 
     const scrollToEditor = () =>
     {
-        const textArea = document.querySelector("#form-json-editor textarea")
+        const textArea = document.querySelector(".form-json-editor textarea")
         textArea.scrollIntoView({block: "start", behavior: "smooth"})
         textArea.focus()
     }
