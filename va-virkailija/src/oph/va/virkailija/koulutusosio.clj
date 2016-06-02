@@ -5,7 +5,7 @@
             [oph.soresu.form.formutil :as formutil]
             [schema.core :as s]))
 
-(defn findByKeyEnd [list keyEnd]
+(defn find-by-key-end [list keyEnd]
   (:value (first (filter #(.endsWith (:key %) keyEnd) list))))
 
 
@@ -15,11 +15,11 @@
     (str/replace grouped #"[,.]0" "")))
 
 (defn traineeCalcObj [obj]
-  {:scope (findByKeyEnd obj ".scope")
-   :personCount (findByKeyEnd obj ".person-count")
-   :scopeType (findByKeyEnd obj ".scope-type")
-   :total (findByKeyEnd obj ".total")
-   :totalFormatted (format-number (findByKeyEnd obj ".total"))})
+  {:scope (find-by-key-end obj ".scope")
+   :person-count (find-by-key-end obj ".person-count")
+   :scope-type (find-by-key-end obj ".scope-type")
+   :total (find-by-key-end obj ".total")
+   :total-formatted (format-number (find-by-key-end obj ".total"))})
 
 (defn map-tr [translate koulutusosio-data]
   (let [nameField (:name koulutusosio-data)
@@ -27,12 +27,12 @@
         granted (:granted koulutusosio-data)]
     (str "<tr>"
          "<td class='trainingName'>" nameField "</td>"
-         "<td class='amount'>" (:scope applied) " " (translate (:scopeType applied)) "</td>"
-         "<td class='amount'>" (:scope granted) " " (translate (:scopeType granted)) "</td>"
-         "<td class='amount'>" (:personCount applied) "</td>"
-         "<td class='amount'>" (:personCount granted) "</td>"
-         "<td class='amount'>" (:totalFormatted applied) "</td>"
-         "<td class='amount'>" (:totalFormatted granted) "</td>"
+         "<td class='amount'>" (:scope applied) " " (translate (:scope-type applied)) "</td>"
+         "<td class='amount'>" (:scope granted) " " (translate (:scope-type granted)) "</td>"
+         "<td class='amount'>" (:person-count applied) "</td>"
+         "<td class='amount'>" (:person-count granted) "</td>"
+         "<td class='amount'>" (:total-formatted applied) "</td>"
+         "<td class='amount'>" (:total-formatted granted) "</td>"
          "</tr>")))
 
 (defn map-row-data [answers koulutusosio]
