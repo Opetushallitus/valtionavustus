@@ -193,7 +193,7 @@
         kayttosuunnitelma (kayttosuunnitelma/kayttosuunnitelma avustushaku hakemus form-content answers translate language)
         has-kayttosuunnitelma (:has-kayttosuunnitelma kayttosuunnitelma)
         liitteet-list (liitteet-list avustushaku hakemus translate language has-kayttosuunnitelma)
-        koulutusosio (koulutusosio/koulutusosio hakemus answers translate language)
+        koulutusosio (koulutusosio/koulutusosio hakemus answers translate)
 
         params {
                 :avustushaku                   avustushaku

@@ -2,12 +2,13 @@
   (:require [clojure.string :as str]
             [clostache.parser :refer [render]]
             [oph.common.email :as email]
-            [oph.soresu.form.formutil :as formutil]
-            [schema.core :as s]))
+            [oph.soresu.form.formutil :as formutil]))
+
+(defn find-value [predicate list]
+  (:value (first (filter predicate list))))
 
 (defn find-by-key-end [list keyEnd]
-  (:value (first (filter #(.endsWith (:key %) keyEnd) list))))
-
+  (find-value #(.endsWith (:key %) keyEnd) list))
 
 (defn format-number [number]
   (let [s (str number)
@@ -36,29 +37,25 @@
          "</tr>")))
 
 (defn map-row-data [answers koulutusosio]
-  (let [nameField (:value (first (filter #(= (:fieldType %) "nameField") koulutusosio)))
+  (let [nameField (find-value #(= (:fieldType %) "nameField") koulutusosio)
         applied-obj (first (filter #(= (:fieldType %) "vaTraineeDayCalculator") koulutusosio))
-        applied (koulutusosio-row-part (:value applied-obj))
-        applied-key (:key applied-obj)
-        granted (koulutusosio-row-part (:value (first (filter #(= (:key %) applied-key) answers))))]
+        applied-key (:key applied-obj)]
     {:name nameField
-     :applied applied
-     :granted granted}))
+     :applied (koulutusosio-row-part (:value applied-obj))
+     :granted (koulutusosio-row-part (find-value #(= (:key %) applied-key) answers))}))
 
 (defn calculate-total [key list]
   (format-number (reduce + (map (comp bigdec #(str/replace % "," ".") :total key) list))))
 
-(defn koulutusosio [hakemus answers translate language]
+(defn koulutusosio [hakemus answers translate]
   (let [template (email/load-template "templates/koulutusosio.html")
         koulutusosiot (map :value (formutil/find-answer-value answers "koulutusosiot"))
         overridden-answers (-> hakemus :arvio :overridden-answers :value)
         koulutusosiot-data (map (partial map-row-data overridden-answers) koulutusosiot)
-        total-applied (calculate-total :applied koulutusosiot-data)
-        total-granted (calculate-total :granted koulutusosiot-data)
         tbody (str/join " " (map (partial map-tr translate) koulutusosiot-data))
         params {:t translate
                 :tbody tbody
-                :total-applied total-applied
-                :total-granted total-granted}
+                :total-applied (calculate-total :applied koulutusosiot-data)
+                :total-granted (calculate-total :granted koulutusosiot-data)}
         body (render template params)]
     body))
