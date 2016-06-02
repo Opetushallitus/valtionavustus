@@ -106,6 +106,42 @@ class LiitteetList extends React.Component{
   }
 }
 
+class RegenerateDecisions extends React.Component {
+  constructor(props){
+    super(props)
+    this.state = {completed:false,confirm:false}
+  }
+
+  render(){
+    const avustushaku = this.props.avustushaku
+
+    const onConfirm = () =>{
+      this.setState({confirm:true})
+    }
+
+    const onRegenerate = () =>{
+      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/regenerate/${avustushaku.id}`,{}))
+      sendS.onValue((res)=>{
+        this.setState({completed:true})
+      })
+    }
+
+    return (
+      <div>
+        {this.state.completed && <div style={{fontWeight:'bold',marginBottom:10,marginTop:10}}>Päätökset luotu uudelleen</div>
+        }
+        {!this.state.completed &&
+          <div>
+            {this.state.confirm && <button onClick={onRegenerate}>Vahvista päätösten luominen</button>}
+            {!this.state.confirm && <button onClick={onConfirm}>Luo päätökset uudelleen</button>}
+          </div>
+        }
+
+      </div>
+    )
+  }
+}
+
 class DecisionDateAndSend extends React.Component {
   constructor(props){
     super(props)
@@ -194,6 +230,7 @@ class DecisionDateAndSend extends React.Component {
       <div className="decision-separator"/>
       {this.state.sending && <div><img src="/img/ajax-loader.gif"/>&nbsp;<strong>Päätöksiä lähetetään...</strong></div>}
       {this.mailsToSend() && <span><button disabled={this.state.preview || this.sentOk()} onClick={onPreview}>Lähetä {this.mailsToSendLabel()} päätöstä</button>&nbsp;</span>}
+      {!this.mailsToSend() && <RegenerateDecisions avustushaku={this.props.avustushaku}/>}
       {this.state.preview && <button onClick={onSend}>Vahvista lähetys</button>}
       {this.sentOk() &&
         <div>

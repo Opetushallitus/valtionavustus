@@ -43,6 +43,16 @@
     (hakija-api/add-paatos-sent-emails hakemus emails decision)
     (ok {:status "sent" :hakemus hakemus-id :emails emails})))
 
+(defn regenerate-paatos [hakemus-id]
+  (let [hakemus (hakija-api/get-hakemus hakemus-id)
+        submission (hakija-api/get-hakemus-submission hakemus)
+        answers (:answers submission)
+        language (keyword (formutil/find-answer-value answers "language"))
+        decision (decision/paatos-html hakemus-id language)]
+    (hakija-api/update-paatos-decision hakemus-id decision)
+    (ok {:status "regenerated" })))
+
+
 (defn send-paatos-for-all [hakemus-id]
   (log/info "send-paatos-for-all" hakemus-id)
   (let [emails (paatos-emails hakemus-id)]
@@ -100,6 +110,15 @@
            (run! send-paatos-for-all ids)
            (ok (merge {:status "ok"}
                       (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
+
+  (POST* "/regenerate/:avustushaku-id" []
+         :path-params [avustushaku-id :- Long]
+         (let [ids-result (hakija-api/find-regenerate-hakemus-paatos-ids avustushaku-id)
+               ids (map :hakemus_id ids-result)]
+           (log/info "Regenereate " ids)
+           (run! regenerate-paatos ids)
+           (ok {:status "ok"})))
+
 
   (GET* "/sent/:avustushaku-id" []
         :path-params [avustushaku-id :- Long]
