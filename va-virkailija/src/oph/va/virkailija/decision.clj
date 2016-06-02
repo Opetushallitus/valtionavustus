@@ -167,7 +167,7 @@
         roles (:roles haku-data)
         arvio (:arvio hakemus)
         decision-status (:status arvio)
-        accepted (= decision-status "accepted")
+        accepted (not= decision-status "rejected")
         arvio-role-id (:presenter-role-id arvio)
         arvio-role (first (filter #(= (:id %) arvio-role-id) roles))
         self-financing-percentage (-> avustushaku :content :self-financing-percentage)
