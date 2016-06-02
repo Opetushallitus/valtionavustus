@@ -8,14 +8,18 @@
 (defn findByKeyEnd [list keyEnd]
   (:value (first (filter #(.endsWith (:key %) keyEnd) list))))
 
-(defn formatNumber [num] num)
+
+(defn format-number [number]
+  (let [s (str number)
+        grouped  (clojure.string/replace s #"(\d)(?=(\d{3})+(?!\d))" "$1\u00A0")]
+    (str/replace grouped #"[,.]0" "")))
 
 (defn traineeCalcObj [obj]
   {:scope (findByKeyEnd obj ".scope")
    :personCount (findByKeyEnd obj ".person-count")
    :scopeType (findByKeyEnd obj ".scope-type")
    :total (findByKeyEnd obj ".total")
-   :totalFormatted (formatNumber (findByKeyEnd obj ".total"))})
+   :totalFormatted (format-number (findByKeyEnd obj ".total"))})
 
 (defn map-tr [translate koulutusosio-data]
   (let [nameField (:name koulutusosio-data)
@@ -42,7 +46,7 @@
      :granted granted}))
 
 (defn calculate-total [key list]
-  (reduce + (map (comp bigdec #(str/replace % "," ".") :total key) list)))
+  (format-number (reduce + (map (comp bigdec #(str/replace % "," ".") :total key) list))))
 
 (defn koulutusosio [hakemus answers translate language]
   (let [template (email/load-template "templates/koulutusosio.html")
