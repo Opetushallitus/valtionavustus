@@ -11,7 +11,7 @@
 
 (defn format-number [number]
   (let [s (str number)
-        grouped  (clojure.string/replace s #"(\d)(?=(\d{3})+(?!\d))" "$1\u00A0")]
+        grouped (clojure.string/replace s #"(\d)(?=(\d{3})+(?!\d))" "$1\u00A0")]
     (str/replace grouped #"[,.]0" "")))
 
 (defn koulutusosio-row-part [obj]
@@ -59,7 +59,6 @@
         params {:t translate
                 :tbody tbody
                 :total-applied total-applied
-                :total-granted total-granted
-                }
+                :total-granted total-granted}
         body (render template params)]
     body))
