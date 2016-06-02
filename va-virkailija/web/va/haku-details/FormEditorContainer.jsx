@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-
+import _ from 'lodash'
 import FormEditor from './FormEditor.jsx'
 import FormJsonEditor from './FormJsonEditor.jsx'
+import DateUtil from 'soresu-form/web/form/DateUtil'
 
 export default class FormEditorContainer extends Component {
   render() {
@@ -10,13 +11,14 @@ export default class FormEditorContainer extends Component {
     const koodistos = this.props.koodistos
     const formDraft = this.props.formDraft
     const controller = this.props.controller
+    const updatedAt = _.get(avustushaku, "formContent.updated_at")
 
     const environment = this.props.environment
     const hakuUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/?lang=fi"
     const hakuUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/?lang=sv"
     const previewUrlFi = environment["hakija-server"].url.fi + "avustushaku/" + avustushaku.id + "/nayta?lang=fi"
     const previewUrlSv = environment["hakija-server"].url.sv + "avustushaku/" + avustushaku.id + "/nayta?lang=sv"
-
+    const formattedUpdatedDate = `${DateUtil.asDateString(updatedAt)} klo ${DateUtil.asTimeString(updatedAt)}`
 
     const onFormChange = (avustushaku, newDraftJson) =>{
       controller.formOnChangeListener(avustushaku, newDraftJson)
@@ -31,6 +33,7 @@ export default class FormEditorContainer extends Component {
     return (
       <section>
         <div style={{float:'right'}}><button className="btn btn-blue btn-sm" onClick={scrollToEditor}>JSON editoriin</button></div>
+        {updatedAt && <div style={{float:'right',marginRight:20}}>Päivitetty: {formattedUpdatedDate}</div>}
         <div className="link-list">
           <div className="link-list-item">
             <h3>Linkki hakuun</h3>

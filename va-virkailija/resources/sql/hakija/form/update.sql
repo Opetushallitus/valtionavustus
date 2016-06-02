@@ -1,1 +1,1 @@
-update forms set content = :content, rules = :rules where id = :form_id
+update forms set content = :content, rules = :rules, updated_at=now() where id = :form_id
