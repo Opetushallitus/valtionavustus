@@ -64,29 +64,29 @@
 (defn decision-field [decision key lang]
   (-> decision key lang))
 
-(defn section [title-key content translate]
-  (let [content-p (content-with-paragraphs content)
+(defn section [title-key content translate create-paragraph]
+  (let [content-p  (if create-paragraph (content-with-paragraphs content) content)
         title (translate title-key)]
     (str "<section class='section'><h2>" title "</h2><div class='content'>" content-p "</div></section>")))
 
 (defn optional-section-content [title content translate]
   (let [content-length (count content)]
     (if (> content-length 0)
-      (section title content translate)
+      (section title content translate true)
       "")))
 
 (defn optional-section [decision title key translate lang]
   (let [decision-content (decision-field decision key lang)]
     (optional-section-content title decision-content translate)))
 
-(defn section-translated [title-key content-key translate]
-  (section title-key (translate content-key) translate))
+(defn section-translated [title-key content-key translate create-paragraph]
+  (section title-key (translate content-key) translate create-paragraph))
 
 (defn kayttotarkoitus [translate]
   (let [keys [:kaytto1 :kaytto2 :kaytto3 :kaytto4]
         rows-list (mapv (fn [row] (str "<p>" (translate row) "</p>")) keys)
         content (str/join " " rows-list)]
-    (section :avustuksen-kayttotarkoitus content translate)))
+    (section :avustuksen-kayttotarkoitus content translate false)))
 
 
 
@@ -101,10 +101,10 @@
         extra-no-multiple "<span>.</span>"
         extra-multiple (str "<span>" (translate :ja-loppuera-viimeistaan) maksu-date "</span>")
         extra (if multiple-maksuera extra-multiple extra-no-multiple)
-        content1 (str "<p>" (translate "avustus-maksetaan") " <strong>" iban ", " bic "</strong>" "</p>")
+        content1 (str "<p>" (translate "avustus-maksetaan") ": <strong>" iban ", " bic "</strong>" "</p>")
         content2 (str "<p>" (translate "maksuerat-ja-ajat") ": " paid-formatted " " maksu extra "</p>")
         content (str content1 content2)]
-    (section :avustuksen-maksu content translate)
+    (section :avustuksen-maksu content translate false)
     )
   )
 
@@ -160,7 +160,7 @@
                   (if has-budget
                     (str row-kayttosuunnitelma row-oikaisuvaatimus row-ehdot row-yleisohje)
                     (str row-oikaisuvaatimus row-ehdot row-yleisohje)))]
-      (section :liitteet content translate)))
+      (section :liitteet content translate false)))
 
 (defn paatos-html [hakemus-id lang]
   (let [haku-data (hakudata/get-combined-paatos-data hakemus-id)
@@ -203,7 +203,7 @@
         params {
                 :avustushaku                   avustushaku
                 :hakemus                       hakemus
-                :section-asia                  (section-translated :asia :asia-title translate)
+                :section-asia                  (section-translated :asia :asia-title translate false)
                 :section-taustaa               (optional-section decision :taustaa :taustaa translate language)
                 :section-sovelletut-saannokset (optional-section decision :sovelletut-saannokset :sovelletutsaannokset translate language)
                 :section-kayttoaika            (optional-section decision :valtionavustuksen-kayttoaika :kayttoaika translate language)
@@ -212,14 +212,14 @@
                 :section-hyvaksyminen          (optional-section decision :hyvaksyminen :hyvaksyminen translate language)
                 :section-perustelut            (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate)
                 :section-kayttotarkoitus       (kayttotarkoitus translate)
-                :section-tarkastusoikeus       (section-translated :tarkastusoikeus-title :tarkastusoikeus-text translate)
+                :section-tarkastusoikeus       (section-translated :tarkastusoikeus-title :tarkastusoikeus-text translate false)
+                :section-avustuksen-maksu      avustuksen-maksu
                 :total-granted                 (kayttosuunnitelma/format-number total-granted)
                 :total-nettomenot              (kayttosuunnitelma/format-number (:nettomenot-yhteensa kayttosuunnitelma))
                 :role                          role
                 :t                             translate
                 :johtaja                       johtaja
                 :esittelija                    esittelija
-                :section-avustuksen-maksu      avustuksen-maksu
                 :myonteinen-lisateksti         myonteinen-lisateksti
                 :liitteet                      liitteet-list
                 :accepted                      accepted
