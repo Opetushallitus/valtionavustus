@@ -9,9 +9,8 @@
 (defn format-number [number]
   (let [s (str number)
         grouped  (clojure.string/replace s #"(\d)(?=(\d{3})+(?!\d))" "$1\u00A0")]
-    (str grouped  "\u00A0€")
-    )
-  )
+    (str grouped  "\u00A0€")))
+
 (defn amount-cell [children]
   (str "<th class='amount budgetAmount'>" (format-number children)  "</th>"))
 
@@ -25,9 +24,7 @@
              "<td class='amount budgetAmount'>" overridden-item "</td>"
              "</tr>")
         ]
-    rows
-    )
-  )
+    rows))
 
 (defn tbody [table language use-detailed-costs]
   (let [children (:children table)
@@ -123,6 +120,4 @@
      :body body
      :nettomenot-yhteensa (- total-overridden-costs total-incomes)
      :has-kayttosuunnitelma has-kayttosuunnitelma
-     }
-    )
-  )
+     }))

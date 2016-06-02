@@ -104,9 +104,7 @@
         content1 (str "<p>" (translate "avustus-maksetaan") ": <strong>" iban ", " bic "</strong>" "</p>")
         content2 (str "<p>" (translate "maksuerat-ja-ajat") ": " paid-formatted " " maksu extra "</p>")
         content (str content1 content2)]
-    (section :avustuksen-maksu content translate false)
-    )
-  )
+    (section :avustuksen-maksu content translate false)))
 
 (defn myonteinen-lisateksti [avustushaku hakemus lang]
   (let [multiple-rahoitusalue (:multiple-rahoitusalue avustushaku)
@@ -119,9 +117,7 @@
         ]
     (if content
       (content-with-paragraphs content)
-      "")
-    )
-  )
+      "")))
 
 
 (defn find-liite [all-attachements attachements group-name]
@@ -139,7 +135,6 @@
         link (str "/liitteet/" liite-id "_" lang-str ".pdf")
         liite-name (lang liite)]
     (str "<div><a href='" link "'>" liite-name "</a></div>")))
-
 
 (defn liitteet-list [avustushaku hakemus translate lang has-budget]
   (let [all-liitteet Liitteet
@@ -231,9 +226,7 @@
                 :koulutusosio                  koulutusosio
                 }
         body (render template params)]
-    body
-    )
-  )
+    body))
 
 (defroutes* decision-routes
             "Public API"
@@ -244,5 +237,4 @@
                   (let [body (paatos-html hakemus-id lang)]
                     {:status  200
                      :headers {"Content-Type" "text/html"}
-                     :body    body}
-                    )))
+                     :body    body})))
