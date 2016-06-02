@@ -10,7 +10,6 @@ import InputValueStorage from '../../../../soresu-form/web/form/InputValueStorag
 import FormUtil from '../../../../soresu-form/web/form/FormUtil'
 import LocalizedString from '../../../../soresu-form/web/form/component/LocalizedString.jsx'
 import PaatosController from './PaatosController.jsx'
-//import style from './paatos.less'
 import queryString from 'query-string'
 import Liitteet from '../data/Liitteet'
 import Bacon from 'baconjs'
