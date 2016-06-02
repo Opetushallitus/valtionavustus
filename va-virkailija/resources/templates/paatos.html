@@ -89,6 +89,10 @@
     {{{section-tarkastusoikeus}}}
     {{{section-kayttooikeudet}}}
     {{{section-hyvaksyminen}}}
+    {{#has-kayttosuunnitelma}}
+      {{{kayttosuunnitelma}}}
+    {{/has-kayttosuunnitelma}}
+    {{{koulutusosio}}}
   {{/accepted}}
 
   {{#rejected}}
@@ -114,12 +118,6 @@
     </div>
   </section>
   {{{liitteet}}}
-
-  {{#has-kayttosuunnitelma}}
-    {{{kayttosuunnitelma}}}
-  {{/has-kayttosuunnitelma}}
-  {{{koulutusosio}}}
-
 </div>
 
 </body>
