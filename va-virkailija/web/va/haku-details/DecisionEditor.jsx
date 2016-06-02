@@ -120,19 +120,21 @@ class RegenerateDecisions extends React.Component {
     }
 
     const onRegenerate = () =>{
+      this.setState({regenerating:true})
       const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/regenerate/${avustushaku.id}`,{}))
       sendS.onValue((res)=>{
         this.setState({completed:true})
       })
     }
 
+    const regenerating = this.state.regenerating
     return (
       <div>
         {this.state.completed && <div style={{fontWeight:'bold',marginBottom:10,marginTop:10}}>Päätökset luotu uudelleen</div>
         }
         {!this.state.completed &&
           <div>
-            {this.state.confirm && <button onClick={onRegenerate}>Vahvista päätösten luominen</button>}
+            {this.state.confirm && <button onClick={onRegenerate} disabled={regenerating}>{regenerating ? "Vahvistetaan" :  "Vahvista päätösten luominen"}</button>}
             {!this.state.confirm && <button onClick={onConfirm}>Luo päätökset uudelleen</button>}
           </div>
         }
