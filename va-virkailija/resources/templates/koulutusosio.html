@@ -4,21 +4,28 @@
         <thead>
         <tr>
             <th rowSpan="2">{{#t}}koulutusosiot{{/t}}</th>
-            <th colSpan="2" className="groupTitle">{{#t}}koulutusosiot{{/t}}</th>
-            <th colSpan="2" className="groupTitle">{{#t}}osallistujat{{/t}}</th>
-            <th colSpan="2" className="groupTitle">{{#t}}koulutettavapaivat{{/t}}</th>
+            <th colSpan="2" class="groupTitle">{{#t}}koulutusosiot{{/t}}</th>
+            <th colSpan="2" class="groupTitle">{{#t}}osallistujat{{/t}}</th>
+            <th colSpan="2" class="groupTitle">{{#t}}koulutettavapaivat{{/t}}</th>
         </tr>
         <tr>
-            <th className="amount trainingColumn">{{#t}}haettu{{/t}}</th>
-            <th className="amount trainingColumn">{{#t}}hyvaksytty{{/t}}</th>
-            <th className="amount trainingColumn">{{#t}}haettu{{/t}}</th>
-            <th className="amount trainingColumn">{{#t}}hyvaksytty{{/t}}</th>
-            <th className="amount trainingColumn">{{#t}}haettu{{/t}}</th>
-            <th className="amount trainingColumn">{{#t}}hyvaksytty{{/t}}</th>
+            <th class="amount trainingColumn">{{#t}}haettu{{/t}}</th>
+            <th class="amount trainingColumn">{{#t}}hyvaksytty{{/t}}</th>
+            <th class="amount trainingColumn">{{#t}}haettu{{/t}}</th>
+            <th class="amount trainingColumn">{{#t}}hyvaksytty{{/t}}</th>
+            <th class="amount trainingColumn">{{#t}}haettu{{/t}}</th>
+            <th class="amount trainingColumn">{{#t}}hyvaksytty{{/t}}</th>
         </tr>
         </thead>
         <tbody>
         {{{tbody}}}
         </tbody>
+        <tfoot>
+        <tr>
+            <th colSpan="5">{{#t}}koulutettavapaivat-yhteensa{{/t}}</th>
+            <th class="amount">{{total-applied}}</th>
+            <th class="amount">{{total-granted}}</th>
+        </tr>
+        </tfoot>
     </table>
 </section>
