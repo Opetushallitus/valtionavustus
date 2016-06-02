@@ -14,7 +14,7 @@
         grouped  (clojure.string/replace s #"(\d)(?=(\d{3})+(?!\d))" "$1\u00A0")]
     (str/replace grouped #"[,.]0" "")))
 
-(defn traineeCalcObj [obj]
+(defn koulutusosio-row-part [obj]
   {:scope (find-by-key-end obj ".scope")
    :person-count (find-by-key-end obj ".person-count")
    :scope-type (find-by-key-end obj ".scope-type")
@@ -38,9 +38,9 @@
 (defn map-row-data [answers koulutusosio]
   (let [nameField (:value (first (filter #(= (:fieldType %) "nameField") koulutusosio)))
         applied-obj (first (filter #(= (:fieldType %) "vaTraineeDayCalculator") koulutusosio))
-        applied (traineeCalcObj (:value applied-obj))
+        applied (koulutusosio-row-part (:value applied-obj))
         applied-key (:key applied-obj)
-        granted (traineeCalcObj (:value (first (filter #(= (:key %) applied-key) answers))))]
+        granted (koulutusosio-row-part (:value (first (filter #(= (:key %) applied-key) answers))))]
     {:name nameField
      :applied applied
      :granted granted}))
