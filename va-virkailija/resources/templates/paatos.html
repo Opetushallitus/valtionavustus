@@ -64,15 +64,18 @@
         <p>{{#t}}myonnetty-title{{/t}}</p>
         <p>{{hakemus.register-number}} {{hakemus.project-name}}</p>
         <div>
-          {{#has-kayttosuunniltelma}}
+          {{#has-kayttosuunnitelma}}
             <p>
               {{#t}}paatos-myonnetty-1{{/t}} {{total-granted}}&nbsp;.&nbsp;
               {{#t}}paatos-myonnetty-2{{/t}} {{total-nettomenot}}
             </p>
             <p>
               {{#t}}paatos-myonnetty-3{{/t}}
+              {{#show-financing-percentage}}
+                <span>{{#t}}valtionavustusprosentti-on{{/t}} {{oph-financing-percentage}}%</span>
+              {{/show-financing-percentage}}
             </p>
-          {{/has-kayttosuunniltelma}}
+          {{/has-kayttosuunnitelma}}
           {{{myonteinen-lisateksti}}}
           <p>{{#t}}paatos-myonnetty-4{{/t}}</p>
         </div>

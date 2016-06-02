@@ -89,8 +89,6 @@
     (section :avustuksen-kayttotarkoitus content translate)))
 
 
-(defn format-number [number]
-  (str number "\u00A0€"))
 
 (defn avustuksen-maksu [avustushaku bic iban total-paid lang translate]
   (let [decision (:decision avustushaku)
@@ -99,7 +97,7 @@
         has-multiple-maksuera (-> avustushaku :content :multiplemaksuera)
         multiple-maksuera (and has-multiple-maksuera (> total-paid 60000))
         first-round-paid (if multiple-maksuera (Math/round (* 0.6 total-paid)) total-paid)
-        paid-formatted (format-number first-round-paid)
+        paid-formatted (kayttosuunnitelma/format-number first-round-paid)
         extra-no-multiple "<span>.</span>"
         extra-multiple (str "<span>" (translate :ja-loppuera-viimeistaan) maksu-date "</span>")
         extra (if multiple-maksuera extra-multiple extra-no-multiple)
@@ -177,6 +175,8 @@
         accepted (= decision-status "accepted")
         arvio-role-id (:presenter-role-id arvio)
         arvio-role (first (filter #(= (:id %) arvio-role-id) roles))
+        self-financing-percentage (-> avustushaku :content :self-financing-percentage)
+        oph-financing-percentage (- 100 self-financing-percentage)
         role (if (nil? arvio-role) (first roles) arvio-role)
         language-answer (formutil/find-answer-value answers "language")
         language (if lang
@@ -213,8 +213,8 @@
                 :section-perustelut            (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate)
                 :section-kayttotarkoitus       (kayttotarkoitus translate)
                 :section-tarkastusoikeus       (section-translated :tarkastusoikeus-title :tarkastusoikeus-text translate)
-                :total-granted                 (format-number total-granted)
-                :total-nettomenot              (format-number (:nettomenot-yhteensa kayttosuunnitelma))
+                :total-granted                 (kayttosuunnitelma/format-number total-granted)
+                :total-nettomenot              (kayttosuunnitelma/format-number (:nettomenot-yhteensa kayttosuunnitelma))
                 :role                          role
                 :t                             translate
                 :johtaja                       johtaja
@@ -224,6 +224,8 @@
                 :liitteet                      liitteet-list
                 :accepted                      accepted
                 :rejected                      (not accepted)
+                :oph-financing-percentage      oph-financing-percentage
+                :show-financing-percentage     (> self-financing-percentage 0)
                 :has-kayttosuunnitelma         has-kayttosuunnitelma
                 :kayttosuunnitelma             (:body kayttosuunnitelma)
                 :koulutusosio                  koulutusosio

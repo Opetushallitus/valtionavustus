@@ -8,12 +8,12 @@
         <th class="amount budgetAmount">{{#t}}hyvaksytty{{/t}}</th>
       </tr>
     </thead>
-    {{{tbody0}}}
+    {{{tbody-menot}}}
     <tfoot>
       <tr>
         <th>{{#t}}kokonaismenot-yhteensa{{/t}}</th>
-        {{#amount-cell}}{{total-original-costs}}{{/amount-cell}}
-        {{#amount-cell}}{{total-overridden-costs}}{{/amount-cell}}
+        {{{total-original-costs}}}
+        {{{total-overridden-costs}}}
       </tr>
     </tfoot>
   </table>
@@ -22,15 +22,15 @@
   <table>
     <thead>
       <tr>
-        <th colSpan="3">{{table1-label}}</th>
+        <th colSpan="3">{{table-tulot-label}}</th>
       </tr>
     </thead>
-    {{{tbody1}}}
+    {{{tbody-tulot}}}
     <tfoot>
       <tr>
         <th>{{#t}}nettomenot-yhteensa{{/t}}</th>
-        {{#amount-cell}}{{netto-total-1}}{{/amount-cell}}
-        {{#amount-cell}}{{netto-total-2}}{{/amount-cell}}
+        {{{netto-total-haettu}}}
+        {{{netto-total-myonnetty}}}
       </tr>
     </tfoot>
   </table>
@@ -39,15 +39,15 @@
   <table>
     <thead>
       <tr>
-        <th colSpan="3">{{table2-label}}</th>
+        <th colSpan="3">{{table-muu-label}}</th>
       </tr>
     </thead>
-    {{{tbody2}}}
+    {{{tbody-muu}}}
     <tfoot>
       <tr>
         <th>{{#t}}rahoitus-yhteensa{{/t}}</th>
-        {{#amount-cell}}{{total-financing}}{{/amount-cell}}
-        {{#amount-cell}}{{total-financing}}{{/amount-cell}}
+        {{{total-financing}}}
+        {{{total-financing}}}
       </tr>
     </tfoot>
   </table>
@@ -56,14 +56,14 @@
     <tbody>
     <tr>
       <th class="footerTitle">{{#t}}myonnetty-avustus{{/t}} {{oph-financing-note}}</th>
-      {{#amount-cell}}{{total-avustus}}{{/amount-cell}}
-      {{#amount-cell}}{{total-granted}}{{/amount-cell}}
+      {{{total-avustus}}}
+      {{{total-granted}}}
     </tr>
     {{#show-financing-note}}
       <tr>
-        <th class="footerTitle">{{#t}}oma-rahoitus{{/t}} {{oph-financing-note}}</th>
-        {{#amount-cell}}{{total-haettu-omarahoitus}}{{/amount-cell}}
-        {{#amount-cell}}{{total-myonnetty-omarahoitus}}{{/amount-cell}}
+        <th class="footerTitle">{{#t}}oma-rahoitus{{/t}} {{hakija-financing-note}}</th>
+        {{{total-haettu-omarahoitus}}}
+        {{{total-myonnetty-omarahoitus}}}
       </tr>
     {{/show-financing-note}}
     </tbody>
