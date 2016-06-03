@@ -194,6 +194,7 @@
         has-kayttosuunnitelma (:has-kayttosuunnitelma kayttosuunnitelma)
         liitteet-list (liitteet-list avustushaku hakemus translate language has-kayttosuunnitelma)
         koulutusosio (koulutusosio/koulutusosio hakemus answers translate)
+        has-koulutusosio (:has-koulutusosio koulutusosio)
 
         params {
                 :avustushaku                   avustushaku
@@ -223,7 +224,8 @@
                 :show-financing-percentage     (> self-financing-percentage 0)
                 :has-kayttosuunnitelma         has-kayttosuunnitelma
                 :kayttosuunnitelma             (:body kayttosuunnitelma)
-                :koulutusosio                  koulutusosio
+                :koulutusosio                  (:body koulutusosio)
+                :has-koulutusosio              has-koulutusosio
                 }
         body (render template params)]
     body))

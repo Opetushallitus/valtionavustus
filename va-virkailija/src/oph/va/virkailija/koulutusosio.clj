@@ -49,13 +49,16 @@
 
 (defn koulutusosio [hakemus answers translate]
   (let [template (email/load-template "templates/koulutusosio.html")
-        koulutusosiot (map :value (formutil/find-answer-value answers "koulutusosiot"))
+        koulutusosiot-obj (formutil/find-answer-value answers "koulutusosiot")
+        koulutusosiot (map :value koulutusosiot-obj)
         overridden-answers (-> hakemus :arvio :overridden-answers :value)
         koulutusosiot-data (map (partial map-row-data overridden-answers) koulutusosiot)
+        has-koulutusosio (not= nil koulutusosiot-obj)
         tbody (str/join " " (map (partial map-tr translate) koulutusosiot-data))
         params {:t translate
                 :tbody tbody
                 :total-applied (calculate-total :applied koulutusosiot-data)
                 :total-granted (calculate-total :granted koulutusosiot-data)}
         body (render template params)]
-    body))
+    {:body body
+     :has-koulutusosio has-koulutusosio}))
