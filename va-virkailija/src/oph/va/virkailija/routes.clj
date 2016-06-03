@@ -474,9 +474,35 @@
             (get-change-requests)
             (get-scores)
             (post-scores)
-            (post-status)
             (put-searches)
-            (get-search))
+            (get-search)
+
+
+            (POST* "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id :as request]
+                   :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+                   :body [body {:status va-schema/HakemusStatus
+                                :comment s/Str}]
+                   :return {:hakemus-id Long
+                            :status va-schema/HakemusStatus}
+                   :summary "Update status of hakemus"
+                   (let [{:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)
+                         identity (authentication/get-identity request)
+                         new-status (:status body)
+                         status-comment (:comment body)
+                         updated-hakemus (hakija-api/update-hakemus-status hakemus new-status status-comment identity)]
+                     (if (= new-status "pending_change_request")
+                       (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
+                             answers (:answers submission)
+                             language (keyword (formutil/find-answer-value answers "language"))
+                             avustushaku-name (-> avustushaku :content :name language)
+                             email (formutil/find-answer-value answers "primary-email")
+                             user-key (:user_key updated-hakemus)
+                             presenting-officer-email (:email identity)]
+                         (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment presenting-officer-email)))
+                     (ok {:hakemus-id hakemus-id
+                          :status new-status})))
+
+            )
 
 (defn- on-liite [id lang]
   (let [hakija-app-url (-> config :server :url :fi)
