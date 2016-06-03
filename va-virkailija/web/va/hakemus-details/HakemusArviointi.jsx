@@ -16,6 +16,7 @@ import ChooseRahoitusalue from './ChooseRahoitusalue.jsx'
 import AcademySize from './AcademySize.jsx'
 import Perustelut from './Perustelut.jsx'
 import PresenterComment from './PresenterComment.jsx'
+import EditStatus from './EditStatus.jsx'
 import admin from '../style/admin.less'
 
 
@@ -31,6 +32,7 @@ export default class HakemusArviointi extends Component {
     const allowHakemusCommenting = hakuIsPublishedAndEnded
     const allowHakemusStateChanges = privileges["change-hakemus-state"] && hakuIsPublishedAndEnded
     const allowHakemusScoring = privileges["score-hakemus"] && hakuIsPublishedAndEnded
+    const allowEditStateChanges = privileges["change-hakemus-state"]
     const userInfo = this.props.userInfo
     const comments = hakemus.comments
     const loadingComments = this.props.loadingComments
@@ -50,6 +52,8 @@ export default class HakemusArviointi extends Component {
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
+       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowEditStateChanges} status="officer_edit"/>
+       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowEditStateChanges && avustushaku.status !== "resolved"} status="cancelled"/>
        <ChangeLog hakemus={hakemus}/>
      </div>
     )

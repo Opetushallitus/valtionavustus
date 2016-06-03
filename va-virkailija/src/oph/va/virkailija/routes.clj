@@ -53,6 +53,11 @@
         preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key "&preview=true")]
     (resp/redirect preview-url)))
 
+(defn- on-hakemus-edit [avustushaku-id hakemus-user-key]
+  (let [hakija-app-url (-> config :server :url :fi)
+        preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key)]
+    (resp/redirect preview-url)))
+
 (defn- on-paatos-preview [avustushaku-id user-key]
   (let [hakija-app-url (-> config :server :url :fi)
         preview-url (str hakija-app-url "paatos/avustushaku/" avustushaku-id "/hakemus/" user-key "?nolog=true")]
@@ -72,6 +77,15 @@
       (not (= "published" (:status avustushaku))) (method-not-allowed!)
       :else {:avustushaku avustushaku :hakemus hakemus})))
 
+(defn- get-hakemus-and-avustushaku [avustushaku-id hakemus-id]
+  (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+        hakemus (hakija-api/get-hakemus hakemus-id)]
+    (cond
+      (not hakemus) (not-found!)
+      (not (= (:id avustushaku) (:avustushaku hakemus))) (bad-request!)
+      :else {:avustushaku avustushaku :hakemus hakemus})))
+
+
 (defroutes* healthcheck-routes
             "Healthcheck routes"
 
@@ -86,6 +100,9 @@
            (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
                  :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
                  (on-hakemus-preview avustushaku-id hakemus-user-key))
+           (GET* "/hakemus-edit/:avustushaku-id/:hakemus-user-key" []
+                 :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
+                 (on-hakemus-edit avustushaku-id hakemus-user-key))
            (GET* "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
                  :path-params [avustushaku-id :- Long, user-key :- s/Str]
                  (on-paatos-preview avustushaku-id user-key))
@@ -485,7 +502,7 @@
                    :return {:hakemus-id Long
                             :status va-schema/HakemusStatus}
                    :summary "Update status of hakemus"
-                   (let [{:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)
+                   (let [{:keys [avustushaku hakemus]} (get-hakemus-and-avustushaku avustushaku-id hakemus-id)
                          identity (authentication/get-identity request)
                          new-status (:status body)
                          status-comment (:comment body)
