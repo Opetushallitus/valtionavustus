@@ -231,7 +231,7 @@
     body))
 
 (defroutes* decision-routes
-            "Public API"
+            "Decision"
 
             (GET* "/avustushaku/:avustushaku-id/hakemus/:hakemus-id" []
                   :path-params [avustushaku-id :- Long hakemus-id :- Long]

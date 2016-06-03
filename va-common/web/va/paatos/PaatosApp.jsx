@@ -18,7 +18,7 @@ import {Kayttosuunnitelma} from './Kayttosuunnitelma.jsx'
 import {formatPrice} from './Formatter'
 import {Koulutusosiot} from './Koulutusosiot.jsx'
 
-const parsedRoute = new RouteParser('/paatos/avustushaku/:avustushaku_id/hakemus/:hakemus_id').match(location.pathname)
+const parsedRoute = new RouteParser('/paatosold/avustushaku/:avustushaku_id/hakemus/:hakemus_id').match(location.pathname)
 const controller = new PaatosController()
 
 controller.initializeState(parsedRoute).onValue((state) => {
