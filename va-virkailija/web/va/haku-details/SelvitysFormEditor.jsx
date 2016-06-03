@@ -50,8 +50,7 @@ export default class SelvitysFormEditor extends React.Component{
     const disableSave = !formHasBeenEdited()
 
     const recreateForm = () => {
-      const form = selvitysType=="valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
-      controller.selvitysFormOnChangeListener(avustushaku, JSON.stringify(form), selvitysType)
+      controller.selvitysFormOnRecreate(avustushaku, selvitysType)
     }
 
     const onSendSelvitys = () => {

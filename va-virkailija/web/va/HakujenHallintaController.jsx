@@ -11,6 +11,7 @@ import LocalStorage from './LocalStorage'
 import LdapSearchParameters from './haku-details/LdapSearchParameters.js'
 import LoppuselvitysForm from './data/LoppuselvitysForm.json'
 import ValiselvitysForm from './data/ValiselvitysForm.json'
+import FormUtil from "../../../soresu-form/web/form/FormUtil";
 const dispatcher = new Dispatcher()
 
 const events = {
@@ -482,6 +483,36 @@ export default class HakujenHallintaController {
 
   selvitysFormOnChangeListener(avustushaku, newFormJson, selvitysType) {
     dispatcher.push(events.updateSelvitysForm, {avustushaku: avustushaku, newFormJson: newFormJson,selvitysType:selvitysType})
+  }
+
+  selvitysFormOnRecreate(avustushaku, selvitysType) {
+    const form = selvitysType=="valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
+    const originalVaBudget = FormUtil.findFieldsByFieldType(avustushaku.formContent.content, "vaBudget")[0]
+    const selvitysVaBudget = FormUtil.findFieldsByFieldType(form.content, "vaBudget")[0]
+    if(originalVaBudget) {
+      if(selvitysVaBudget) {
+        selvitysVaBudget.children = originalVaBudget.children
+      } else {
+        form.content.push({
+            "fieldClass": "wrapperElement",
+            "id": "financing-plan",
+            "fieldType": "theme",
+            "children": [
+              {
+                "fieldClass": "wrapperElement",
+                "id": "budget",
+                "fieldType": "vaBudget",
+                "children": originalVaBudget.children}
+            ],
+            "label": {
+              "fi": "Talousarvio",
+              "sv": "Projektets budget"
+            }
+          }
+        )
+      }
+    }
+    dispatcher.push(events.updateSelvitysForm, {avustushaku: avustushaku, newFormJson: JSON.stringify(form),selvitysType:selvitysType})
   }
 
   onUpdateSelvitysForm(state, formContentUpdateObject) {
