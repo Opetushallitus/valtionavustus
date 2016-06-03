@@ -428,17 +428,6 @@ export default class HakujenHallintaController {
     dispatcher.push(events.saveForm, {haku: avustushaku, form: JSON.parse(form)})
   }
 
-  loadSelvitysForm(selectedHaku,selvitysType) {
-    const form = selvitysType=="valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
-    const url = HakujenHallintaController.initSelvitysFormUrl(selectedHaku,selvitysType)
-    HttpUtil.post(url, form).then(form => {
-        dispatcher.push(events.selvitysFormLoaded, {haku: selectedHaku, form: form, selvitysType:selvitysType})
-      }
-    ).catch((response) => {
-      console.error("Failed to load selvitys form " + selvitysType,response)
-    })
-  }
-
   onSelvitysFormLoaded(state, loadFormResult) {
     const haku = loadFormResult.haku
     const selvitysType = loadFormResult.selvitysType
@@ -483,6 +472,17 @@ export default class HakujenHallintaController {
 
   selvitysFormOnChangeListener(avustushaku, newFormJson, selvitysType) {
     dispatcher.push(events.updateSelvitysForm, {avustushaku: avustushaku, newFormJson: newFormJson,selvitysType:selvitysType})
+  }
+
+  loadSelvitysForm(selectedHaku,selvitysType) {
+    const form = selvitysType=="valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
+    const url = HakujenHallintaController.initSelvitysFormUrl(selectedHaku,selvitysType)
+    HttpUtil.post(url, form).then(form => {
+        dispatcher.push(events.selvitysFormLoaded, {haku: selectedHaku, form: form, selvitysType:selvitysType})
+      }
+    ).catch((response) => {
+      console.error("Failed to load selvitys form " + selvitysType,response)
+    })
   }
 
   selvitysFormOnRecreate(avustushaku, selvitysType) {
