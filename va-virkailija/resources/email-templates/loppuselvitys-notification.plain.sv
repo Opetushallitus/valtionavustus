@@ -1,12 +1,12 @@
-Hyvä vastaanottaja,
+Bästa mottagare,
 
-hankkeen {{ register-number }} "{{ project-name }}" loppuselvityslomake on nyt täytettävissä.
+Ni kan nu fylla i blanketten för slutredovisning för projektet {{ register-number }} "{{ project-name }}".
 
-Loppuselvityslomake löytyy osoitteesta {{& url }}, ja se tulee palauttaa {{ selvitysdate }} mennessä.
+Blanketten för slutredovisning finns på adressen {{& url }} och den ska lämnas in senast {{ selvitysdate }}.
 
-Ystävällisin terveisin
+Med vänlig hälsning
 
 {{ presenter-name }}
-Opetushallitus
+Utbildningsstyrelsen
 
-puhelin 029 533 1000
+telefon 029 533 1000 (växel)
