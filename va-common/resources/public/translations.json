@@ -77,7 +77,7 @@
       "sv": "Ändra bara begärda delar. När ansökan har sänts kan den inte längre ändras. Systemet skickar ett bekräftelsemeddelande om att ansökan har kompletterats också till sökandeorganisationens officiella postadress och till den person som har namnteckningsrätt. Du kan titta på den kompletterade ansökan genom en länk i bekräftelsemeddelandet."
     },
     "virkailija-edit-submit": {
-      "fi": "Tallenna muutos",
+      "fi": "Tallenna muutos ja lopeta muokkaus",
       "sv": "Spara ändringen"
     },
     "virkailija-edit-submit-help": {
