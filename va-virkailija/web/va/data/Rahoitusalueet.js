@@ -7,7 +7,10 @@ const List = [
   {title: "Kansanopisto", type: "momentti"},
   {title: "Opintokeskus", type: "momentti"},
   {title: "Kesäyliopisto", type: "momentti"},
-  {title: "Poikkeus", type: "momentti"}
+  {title: "Poikkeus", type: "momentti"},
+  {title: "Tiedeolympialaistoiminta", type: "jarjesto"},
+  {title: "Suomi-koulut ja kotiperuskoulut", type: "jarjesto"},
+  {title: "Muut järjestöt", type: "jarjesto"}
 ]
 
 const mapTitle = (r)=>r.title
