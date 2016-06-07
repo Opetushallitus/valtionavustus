@@ -10,7 +10,8 @@ const List = [
   {title: "Poikkeus", type: "momentti"},
   {title: "Tiedeolympialaistoiminta", type: "jarjesto"},
   {title: "Suomi-koulut ja kotiperuskoulut", type: "jarjesto"},
-  {title: "Muut järjestöt", type: "jarjesto"}
+  {title: "Muut järjestöt", type: "jarjesto"},
+  {title: "Kristillisten koulujen kerhotoiminta", type: "jarjesto"}
 ]
 
 const mapTitle = (r)=>r.title
