@@ -83,13 +83,6 @@
         :summary "Get current answers"
         (on-get-current-answers haku-id hakemus-id (selvitys-form-keyword selvitys-type))))
 
-(defn- get-overridden-answers []
-  (GET* "/:haku-id/overridden-answers/:hakemus-id" [haku-id hakemus-id]
-        :path-params [haku-id :- Long, hakemus-id :- s/Str]
-        :return  s/Any
-        :summary "Get overridden answers"
-        (on-get-overridden-answers haku-id hakemus-id)))
-
 (defn- get-selvitys-init []
   (GET* "/:haku-id/selvitys/:selvitys-type/init/:hakemus-id" [haku-id selvitys-type hakemus-id]
         :path-params [haku-id :- Long, hakemus-id :- s/Str selvitys-type :- s/Str]
@@ -196,7 +189,6 @@
             (get-id)
             (get-hakemus)
             (get-selvitys)
-            (get-overridden-answers)
             (get-selvitys-init)
             (post-selvitys)
             (post-selvitys-submit)

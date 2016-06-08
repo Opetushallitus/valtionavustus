@@ -6,8 +6,6 @@
             [ring.swagger.json-schema-dirty]
             [oph.soresu.common.config :refer [config config-simple-name]]
             [oph.common.datetime :as datetime]
-            [clj-http.client :as http-client]
-            [clojure.data.json :as json]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.validation :as validation]
             [oph.soresu.form.routes :refer :all]
@@ -123,20 +121,6 @@
                                                    answers)]
         (hakemus-ok-response verified-hakemus submission validation))
       (hakemus-ok-response hakemus submission validation))))
-
-
-(defn on-get-overridden-answers [haku-id selvitys-hakemus-id]
-  (if-let [hakemus (va-db/get-hakemus selvitys-hakemus-id)]
-    (let [parent-id (:parent_id hakemus)
-            env (environment-content)
-            virkailija-server (-> env :virkailija-server :url)
-            url (str virkailija-server "/public/api/avustushaku/" haku-id "/hakemus/" parent-id "/overridden-answers")
-            res (http-client/get url)
-            overridden-answers-str (:body res)
-            overridden-answers (json/read-str overridden-answers-str :key-fn keyword)
-            ]
-      (ok overridden-answers))
-    (ok [])))
 
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
   (let [hakemus (va-db/get-hakemus hakemus-id)
