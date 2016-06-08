@@ -11,7 +11,7 @@ import BasicValue from 'soresu-form/web/form/preview/BasicValue.jsx'
 import MultipleOptionValue from 'soresu-form/web/form/preview/MultipleOptionValue.jsx'
 import {FieldOnChangePropertyMapper} from 'soresu-form/web/form/component/PropertyMapper'
 
-import VaBudgetElement, {SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
+import VaBudgetElement, {SummingBudgetElement, BudgetItemElement, BudgetSummaryElement, BudgetGrantedElement, hasGrantedColumn} from './VaBudgetComponents.jsx'
 import {VaFocusAreasPropertyMapper} from 'va-common/web/va/VaPropertyMapper'
 import VaTraineeDayCalculator from './VaTraineeDayCalculator.jsx'
 
@@ -25,7 +25,8 @@ export default class VaPreviewComponentFactory extends ComponentFactory {
       "vaProjectDescription": VaProjectDescriptionPreview,
       "vaFocusAreas": MultipleOptionValue,
       "vaEmailNotification": BasicValue,
-      "vaTraineeDayCalculator": VaPreviewTraineeDayCalculator
+      "vaTraineeDayCalculator": VaPreviewTraineeDayCalculator,
+      "vaBudgetGrantedElement": BudgetGrantedElement
     }
     super({ fieldTypeMapping,
             fieldPropertyMapperMapping: {
@@ -47,6 +48,7 @@ class VaPreviewBudgetItemElement extends React.Component {
           <LocalizedString translations={field} translationKey="label" lang={this.props.lang} />
         </td>
         <td>{descriptionComponent}</td>
+        {hasGrantedColumn(this.props) && <td className="granted-column">{children[2]}</td>}
         <td className="amount-column">{amountComponent}</td>
       </tr>
     )

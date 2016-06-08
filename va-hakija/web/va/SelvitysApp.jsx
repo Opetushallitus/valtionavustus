@@ -25,6 +25,8 @@ import UrlCreator from 'soresu-form/web/form/UrlCreator'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 const selvitysType = location.pathname.indexOf("loppuselvitys")!=-1 ? "loppuselvitys" : "valiselvitys"
+const query = queryString.parse(location.search)
+var selvitysId = query[selvitysType]
 
 function containsExistingEntityId(urlContent) {
   const query = urlContent.parsedQuery
@@ -150,17 +152,18 @@ function printEntityId(state) {
   return state.saveStatus.hakemusId
 }
 
-const query = queryString.parse(location.search)
 const urlContent = { parsedQuery: query, location: location }
 const develMode =  query.devel === 'true'
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(avustusHakuId)))
 const environmentP = Bacon.fromPromise(HttpUtil.get(urlCreator.environmentConfigUrl()))
+const overriddenAnswersP = Bacon.fromPromise(HttpUtil.get(`/api/avustushaku/${avustusHakuId}/overridden-answers/${selvitysId}`))
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
   template.configuration.environment = environmentP
   template.saveStatus.hakemusId = query[selvitysType]
+  template.overriddenAnswers = overriddenAnswersP
 }
 
 function onInitialStateLoaded(initialState) {
@@ -204,7 +207,7 @@ function initSelvitys(avustusHakuId, hakemusId, selvitysType){
   })
 }
 
-var selvitysId = query[selvitysType]
+
 if(!selvitysId && query.hakemus) {
   initSelvitys(avustusHakuId,query.hakemus, selvitysType)
 }

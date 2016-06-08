@@ -490,6 +490,11 @@
                       "id": "personnel-costs-row.amount",
                       "required": true,
                       "fieldType": "moneyField"
+                    },
+                    {
+                      "fieldClass": "infoElement",
+                      "id": "personnel-costs-row.granted",
+                      "fieldType": "vaBudgetGrantedElement"
                     }
                   ],
                   "params": {
@@ -541,6 +546,11 @@
                       "id": "material-costs-row.amount",
                       "required": true,
                       "fieldType": "moneyField"
+                    },
+                    {
+                      "fieldClass": "infoElement",
+                      "id": "material-costs-row.granted",
+                      "fieldType": "vaBudgetGrantedElement"
                     }
                   ],
                   "params": {
@@ -592,6 +602,11 @@
                       "id": "rent-costs-row.amount",
                       "required": true,
                       "fieldType": "moneyField"
+                    },
+                    {
+                      "fieldClass": "infoElement",
+                      "id": "rent-costs-row.granted",
+                      "fieldType": "vaBudgetGrantedElement"
                     }
                   ],
                   "params": {
@@ -643,6 +658,11 @@
                       "id": "service-purchase-costs-row.amount",
                       "required": true,
                       "fieldType": "moneyField"
+                    },
+                    {
+                      "fieldClass": "infoElement",
+                      "id": "service-purchase-costs-row.granted",
+                      "fieldType": "vaBudgetGrantedElement"
                     }
                   ],
                   "params": {
@@ -694,6 +714,11 @@
                       "id": "steamship-costs-row.amount",
                       "required": true,
                       "fieldType": "moneyField"
+                    },
+                    {
+                      "fieldClass": "infoElement",
+                      "id": "steamship-costs-row.granted",
+                      "fieldType": "vaBudgetGrantedElement"
                     }
                   ],
                   "params": {
@@ -745,6 +770,11 @@
                       "id": "other-costs-row.amount",
                       "required": true,
                       "fieldType": "moneyField"
+                    },
+                    {
+                      "fieldClass": "infoElement",
+                      "id": "other-costs-row.granted",
+                      "fieldType": "vaBudgetGrantedElement"
                     }
                   ],
                   "params": {
@@ -773,6 +803,10 @@
                   "amount": {
                     "fi": "Toteutunut",
                     "sv": "Totalt"
+                  },
+                  "granted": {
+                    "fi": "Myönnetty",
+                    "sv": "Beviljas"
                   },
                   "description": {
                     "fi": "Selite, lyhyt kuvaus",
@@ -828,6 +862,11 @@
                       "id": "project-incomes-row.amount",
                       "required": true,
                       "fieldType": "moneyField"
+                    },
+                    {
+                      "fieldClass": "infoElement",
+                      "id": "project-incomes-row.granted",
+                      "fieldType": "vaBudgetGrantedElement"
                     }
                   ],
                   "params": {
@@ -893,6 +932,11 @@
                       "id": "own-income-row.amount",
                       "required": true,
                       "fieldType": "moneyField"
+                    },
+                    {
+                      "fieldClass": "infoElement",
+                      "id": "own-income-row.granted",
+                      "fieldType": "vaBudgetGrantedElement"
                     }
                   ],
                   "params": {
@@ -936,6 +980,11 @@
                       "id": "eu-programs-income-row.amount",
                       "required": true,
                       "fieldType": "moneyField"
+                    },
+                    {
+                      "fieldClass": "infoElement",
+                      "id": "eu-programs-income-row.granted",
+                      "fieldType": "vaBudgetGrantedElement"
                     }
                   ],
                   "params": {
@@ -979,6 +1028,11 @@
                       "id": "other-public-financing-income-row.amount",
                       "required": true,
                       "fieldType": "moneyField"
+                    },
+                    {
+                      "fieldClass": "infoElement",
+                      "id": "other-public-financing-income-row.granted",
+                      "fieldType": "vaBudgetGrantedElement"
                     }
                   ],
                   "params": {
@@ -1022,6 +1076,11 @@
                       "id": "private-financing-income-row.amount",
                       "required": true,
                       "fieldType": "moneyField"
+                    },
+                    {
+                      "fieldClass": "infoElement",
+                      "id": "private-financing-income-row.granted",
+                      "fieldType": "vaBudgetGrantedElement"
                     }
                   ],
                   "params": {
@@ -1049,7 +1108,7 @@
         }
       ],
       "label": {
-        "fi": "Talousarvio",
+        "fi": "Talousarvion toteuma",
         "sv": "Projektets budget"
       }
     }

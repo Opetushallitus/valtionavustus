@@ -5,7 +5,7 @@ import CheckboxButton from 'soresu-form/web/form/component/CheckboxButton.jsx'
 import EmailTextField from 'soresu-form/web/form/component/EmailTextField.jsx'
 import {TrimmingTextFieldPropertyMapper, FieldOnChangePropertyMapper} from 'soresu-form/web/form/component/PropertyMapper'
 
-import VaBudgetElement, {SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
+import VaBudgetElement, {SummingBudgetElement, BudgetItemElement, BudgetSummaryElement,BudgetGrantedElement} from './VaBudgetComponents.jsx'
 import {VaFocusAreasPropertyMapper} from './VaPropertyMapper.js'
 import VaProjectDescription from './VaProjectDescription.jsx'
 import VaTraineeDayCalculator, {VaTraineeDayTotalCalculator} from './VaTraineeDayCalculator.jsx'
@@ -21,7 +21,8 @@ export default class VaComponentFactory extends ComponentFactory {
       "vaFocusAreas": CheckboxButton,
       "vaEmailNotification": EmailTextField,
       "vaTraineeDayCalculator": VaTraineeDayCalculator,
-      "vaTraineeDayTotalCalculator": VaTraineeDayTotalCalculator
+      "vaTraineeDayTotalCalculator": VaTraineeDayTotalCalculator,
+      "vaBudgetGrantedElement": BudgetGrantedElement
     }
     super({fieldTypeMapping: fieldTypeMapping,
            fieldPropertyMapperMapping: {
@@ -31,6 +32,6 @@ export default class VaComponentFactory extends ComponentFactory {
   }
 
   getCustomComponentProperties(state) {
-    return { "avustushaku": state.avustushaku }
+    return { "avustushaku": state.avustushaku, "overriddenAnswers": state.overriddenAnswers}
   }
 }

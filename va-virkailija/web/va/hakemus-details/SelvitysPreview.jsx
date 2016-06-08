@@ -26,7 +26,8 @@ export default class SelvitysPreview extends Component {
     const {hakemus, selvitysType, avustushaku, translations, selvitysHakemus,form} = this.props
     const selvitys = hakemus.selvitys
     const hakuData = {form:form,attachments:selvitys.attachments}
-    const formState = createPreviewHakemusFormState()
+    const overriddenAnswers = hakemus.arvio["overridden-answers"].value
+    const formState = createPreviewHakemusFormState(overriddenAnswers)
     const formElementProps = {
       state: formState,
       formContainerClass: EditsDisplayingFormView,
@@ -37,8 +38,8 @@ export default class SelvitysPreview extends Component {
     }
     return <FormContainer {...formElementProps} />
 
-    function createPreviewHakemusFormState() {
-      const hakemusFormState = FakeFormState.createHakemusFormState(translations, hakuData, selvitysHakemus)
+    function createPreviewHakemusFormState(overriddenAnswers) {
+      const hakemusFormState = FakeFormState.createHakemusFormState(translations, hakuData, selvitysHakemus,{},{},{"overriddenAnswers":overriddenAnswers})
 
       const effectiveForm = hakemusFormState.form
       effectiveForm.content = _.filter(effectiveForm.content, field => field.fieldClass !== "infoElement")

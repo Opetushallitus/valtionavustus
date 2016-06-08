@@ -10,7 +10,7 @@
                     ["vaFocusAreas"
                      "vaEmailNotification"
                      "vaTraineeDayCalculator"]
-                    ["vaTraineeDayTotalCalculator"])
+                    ["vaTraineeDayTotalCalculator" "vaBudgetGrantedElement"])
 
 (s/defschema SystemTime {:system-time s/Inst})
 

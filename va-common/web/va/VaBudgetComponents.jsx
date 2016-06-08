@@ -10,6 +10,10 @@ import InputValueStorage from 'soresu-form/web/form/InputValueStorage.js'
 import FormUtil from 'soresu-form/web/form/FormUtil.js'
 import JsUtil from 'soresu-form/web/form/JsUtil.js'
 
+export function hasGrantedColumn({customProperties}){
+  return customProperties && typeof customProperties.overriddenAnswers !== "undefined"
+}
+
 export default class VaBudgetElement extends React.Component {
   constructor(props) {
     super(props)
@@ -32,12 +36,13 @@ export default class VaBudgetElement extends React.Component {
 }
 
 export class SummingBudgetElement extends React.Component {
-  columnTitles(field) {
+  columnTitles(field,grantedColumn) {
     if (field.params.showColumnTitles) {
       return (
         <thead><tr>
           <th className="label-column"><LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang} /></th>
           <th><LocalizedString translations={field.params.columnTitles} translationKey="description" lang={this.props.lang} /></th>
+          {grantedColumn && <th className="granted-column"><LocalizedString translations={field.params.columnTitles} translationKey="granted" lang={this.props.lang} /></th>}
           <th className="amount-column"><LocalizedString className="money required" translations={field.params.columnTitles} translationKey="amount" lang={this.props.lang} /></th>
         </tr></thead>
       )
@@ -46,10 +51,10 @@ export class SummingBudgetElement extends React.Component {
   }
 
   render() {
-    const field = this.props.field
-    const children = this.props.children
+    const {field,children,htmlId} = this.props
+    const grantedColumn = hasGrantedColumn(this.props)
     const sum = field.sum
-    const htmlId = this.props.htmlId
+    const sumGranted = field.sumGranted
     const classNames = ClassNames({"required": field.required })
     return (
       <table id={htmlId} className="summing-table">
@@ -57,14 +62,16 @@ export class SummingBudgetElement extends React.Component {
         <colgroup>
           <col className="label-column" />
           <col className="description-column" />
+          {grantedColumn && <col className="granted-column" />}
           <col className="amount-column" />
         </colgroup>
-        {this.columnTitles(field)}
+        {this.columnTitles(field,grantedColumn)}
         <tbody>
         {children}
         </tbody>
         <tfoot><tr>
           <td className="label-column" colSpan="2"><LocalizedString translations={field.params} translationKey="sumRowLabel" lang={this.props.lang} /></td>
+          {grantedColumn && <td className="granted-column"><span className="money sum">{sumGranted}</span></td>}
           <td className="amount-column"><span className="money sum">{sum}</span></td>
         </tr></tfoot>
       </table>
@@ -90,9 +97,8 @@ export class BudgetItemElement extends React.Component {
   }
 
   render() {
-    const field = this.props.field
-    const children = this.props.children
-    const htmlId = this.props.htmlId
+    const {field,children,htmlId} = this.props
+    const grantedColumn = hasGrantedColumn(this.props)
     const descriptionComponent = children[0]
     const amountComponent = children[1]
     const labelClassName = ClassNames("label-column", { disabled: this.props.disabled })
@@ -103,8 +109,22 @@ export class BudgetItemElement extends React.Component {
           {this.helpText()}
         </td>
         <td>{descriptionComponent}</td>
+        {grantedColumn && <td className="granted-column">{children[2]}</td>}
         <td className="amount-column">{amountComponent}</td>
       </tr>
+    )
+  }
+}
+
+export class BudgetGrantedElement extends React.Component {
+  render(){
+    const {field, customProperties} = this.props
+    const grantedAnswers = customProperties.overriddenAnswers
+    const id = field.id
+    const prefix = id.substr(0, id.indexOf('.'));
+    const value = InputValueStorage.readValue(null, grantedAnswers, prefix + ".amount")
+    return (
+      <span>{value} &euro;</span>
     )
   }
 }

@@ -529,6 +529,15 @@
 (defroutes* public-routes
             "Public API"
 
+            (GET* "/avustushaku/:avustushaku-id/hakemus/:hakemus-id/overridden-answers" [avustushaku-id hakemus-id :as request]
+                  :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+                  :return s/Any
+                  :summary "Get Arvio"
+                  :description "Get arvio for selvitys"
+                  (if-let [arvio (virkailija-db/get-arvio hakemus-id)]
+                    (ok (-> arvio :overridden_answers :value))
+                    (ok [])))
+
             (GET* "/avustushaku/paatos/:user-key" [user-key :as request]
                   :path-params [user-key :- String]
                   :return virkailija-schema/PaatosData

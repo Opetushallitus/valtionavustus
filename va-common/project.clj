@@ -4,6 +4,7 @@
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
   :dependencies [[org.clojure/clojure "1.7.0"]
+                 [org.clojure/data.json "0.2.6"]
                  [oph/soresu "0.1.0-SNAPSHOT"]
 
                  ;; HTTP server
