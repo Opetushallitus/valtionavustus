@@ -3,6 +3,7 @@ import React, {Component} from 'react'
 import HakemusPreview from './HakemusPreview.jsx'
 import HakemusArviointi from './HakemusArviointi.jsx'
 import Selvitys from './Selvitys.jsx'
+import Seuranta from './Seuranta.jsx'
 import styles from './hakemusDetails.less'
 
 export default class HakemusDetails extends Component {
@@ -55,6 +56,8 @@ export default class HakemusDetails extends Component {
           return <Selvitys controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selvitysType="valiselvitys"/>
         case 'loppuselvitys':
           return <Selvitys controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selvitysType="loppuselvitys"/>
+        case 'seuranta':
+          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData}/>
         default:
           throw new Error("Bad subTab selection '" + tabName + "'")
       }
@@ -78,6 +81,7 @@ export default class HakemusDetails extends Component {
             {tab('arviointi', 'Arviointi')}
             {tab('valiselvitys', 'Väliselvitys')}
             {tab('loppuselvitys', 'Loppuselvitys')}
+            {tab('seuranta', 'Seuranta')}
           </div>
           <div id="tab-content">{getSubTab(subTab)}</div>
         </div>
