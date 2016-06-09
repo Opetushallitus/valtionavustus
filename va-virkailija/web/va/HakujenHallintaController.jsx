@@ -474,11 +474,11 @@ export default class HakujenHallintaController {
     dispatcher.push(events.updateSelvitysForm, {avustushaku: avustushaku, newFormJson: newFormJson,selvitysType:selvitysType})
   }
 
-  loadSelvitysForm(selectedHaku,selvitysType) {
+  loadSelvitysForm(avustushaku, selvitysType) {
     const form = selvitysType=="valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
-    const url = HakujenHallintaController.initSelvitysFormUrl(selectedHaku,selvitysType)
+    const url = HakujenHallintaController.initSelvitysFormUrl(avustushaku,selvitysType)
     HttpUtil.post(url, form).then(form => {
-        dispatcher.push(events.selvitysFormLoaded, {haku: selectedHaku, form: form, selvitysType:selvitysType})
+        dispatcher.push(events.selvitysFormLoaded, {haku: avustushaku, form: form, selvitysType:selvitysType})
       }
     ).catch((response) => {
       console.error("Failed to load selvitys form " + selvitysType,response)
