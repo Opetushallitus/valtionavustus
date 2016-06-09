@@ -1,0 +1,1 @@
+alter table arviot add seuranta_answers jsonb not null default '{"value": []}'

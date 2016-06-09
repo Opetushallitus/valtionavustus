@@ -30,6 +30,7 @@
   {:id s/Int
    :status ArvioStatus
    :overridden-answers Answers
+   :seuranta-answers Answers
    :budget-granted s/Int
    :costsGranted s/Int
    :useDetailedCosts s/Bool

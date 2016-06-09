@@ -57,7 +57,7 @@ export default class HakemusDetails extends Component {
         case 'loppuselvitys':
           return <Selvitys controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selvitysType="loppuselvitys"/>
         case 'seuranta':
-          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData}/>
+          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
         default:
           throw new Error("Bad subTab selection '" + tabName + "'")
       }

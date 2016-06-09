@@ -37,6 +37,7 @@ const events = {
   addComment: 'addComment',
   scoresLoaded: 'scoresLoaded',
   setOverriddenAnswerValue: 'setOverriddenAnswerValue',
+  setSeurantaAnswerValue: 'setSeurantaAnswerValue',
   changeRequestsLoaded: 'changeRequestsLoaded',
   attachmentVersionsLoaded: 'attachmentVersionsLoaded',
   setScore: 'setScore',
@@ -116,6 +117,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.addComment)], this.onAddComment,
       [dispatcher.stream(events.scoresLoaded)], this.onScoresLoaded,
       [dispatcher.stream(events.setOverriddenAnswerValue)], this.onSetOverriddenAnswerValue,
+      [dispatcher.stream(events.setSeurantaAnswerValue)], this.onSetSeurantaAnswerValue,
       [dispatcher.stream(events.changeRequestsLoaded)], this.onChangeRequestsLoaded,
       [dispatcher.stream(events.attachmentVersionsLoaded)], this.onAttachmentVersionsLoaded,
       [dispatcher.stream(events.setScore)], this.onSetScore,
@@ -427,14 +429,24 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onSetOverriddenAnswerValue(state, setOverriddenAnswerValue) {
-    const relevantHakemus = HakemustenArviointiController.findHakemus(state, setOverriddenAnswerValue.hakemusId)
+  static doOnAnswerValue(state,value,field){
+    const relevantHakemus = HakemustenArviointiController.findHakemus(state, value.hakemusId)
     if (relevantHakemus) {
-      InputValueStorage.writeValue([setOverriddenAnswerValue.field], relevantHakemus.arvio["overridden-answers"], FieldUpdateHandler.createFieldUpdate(setOverriddenAnswerValue.field, setOverriddenAnswerValue.newValue, VaSyntaxValidator))
+      InputValueStorage.writeValue([value.field], relevantHakemus.arvio[field], FieldUpdateHandler.createFieldUpdate(value.field, value.newValue, VaSyntaxValidator))
       dispatcher.push(events.updateHakemusArvio, relevantHakemus)
     }
     return state
   }
+
+  onSetOverriddenAnswerValue(state, value) {
+    return HakemustenArviointiController.doOnAnswerValue(state, value, "overridden-answers" )
+  }
+
+  onSetSeurantaAnswerValue(state, value) {
+    return HakemustenArviointiController.doOnAnswerValue(state, value, "seuranta-answers" )
+  }
+
+
 
   onChangeRequestsLoaded(state, hakemusIdWithChangeRequests) {
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithChangeRequests.hakemusId)
@@ -529,14 +541,24 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  setHakemusOverriddenAnswerValue(hakemusId, field, newValue) {
+  static setAnswerValue(hakemusId, field, newValue, event){
     const setOverriddenAnswerValue = {
       hakemusId: hakemusId,
       field: field,
       newValue: newValue
     }
-    dispatcher.push(events.setOverriddenAnswerValue, setOverriddenAnswerValue)
+    dispatcher.push(event, setOverriddenAnswerValue)
   }
+
+  setHakemusOverriddenAnswerValue(hakemusId, field, newValue) {
+    HakemustenArviointiController.setAnswerValue(hakemusId, field, newValue, events.setOverriddenAnswerValue)
+  }
+
+  setHakemusSeurantaAnswerValue(hakemusId, field, newValue) {
+    HakemustenArviointiController.setAnswerValue(hakemusId, field, newValue, events.setSeurantaAnswerValue)
+  }
+
+
 
   setChangeRequestText(hakemus, text) {
     return function() {

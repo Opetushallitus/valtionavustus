@@ -119,6 +119,7 @@
         arvio-to-save  {:hakemus_id hakemus-id
                         :status status
                         :overridden_answers overridden-answers
+                        :seuranta_answers (:seuranta-answers arvio)
                         :budget_granted budget-granted
                         :costs_granted costs-granted
                         :use_overridden_detailed_costs use-detailed-costs

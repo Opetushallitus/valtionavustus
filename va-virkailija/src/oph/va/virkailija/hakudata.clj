@@ -10,6 +10,7 @@
   {:id (:id arvio)
    :status (:status arvio)
    :overridden-answers (:overridden_answers arvio)
+   :seuranta-answers (:seuranta_answers arvio)
    :budget-granted (:budget_granted arvio)
    :costsGranted (:costs_granted arvio)
    :useDetailedCosts (:use_overridden_detailed_costs arvio)
@@ -30,6 +31,7 @@
     (assoc hakemus :arvio {:id                 -1
                            :status             "unhandled"
                            :overridden-answers {:value []}
+                           :seuranta-answers {:value []}
                            :budget-granted     0
                            :costsGranted       0
                            :academysize 0
