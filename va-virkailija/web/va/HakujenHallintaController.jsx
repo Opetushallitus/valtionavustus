@@ -47,6 +47,36 @@ const events = {
   koodistosLoaded: 'koodistosLoaded'
 }
 
+function appendBudgetComponent(selvitysType, avustushaku) {
+  const form = selvitysType == "valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
+  const originalVaBudget = FormUtil.findFieldsByFieldType(avustushaku.formContent.content, "vaBudget")[0]
+  const selvitysVaBudget = FormUtil.findFieldsByFieldType(form.content, "vaBudget")[0]
+  if(originalVaBudget) {
+    if(selvitysVaBudget) {
+      selvitysVaBudget.children = originalVaBudget.children
+    } else {
+      form.content.push({
+          "fieldClass": "wrapperElement",
+          "id": "financing-plan",
+          "fieldType": "theme",
+          "children": [
+            {
+              "fieldClass": "wrapperElement",
+              "id": "budget",
+              "fieldType": "vaBudget",
+              "children": originalVaBudget.children
+            }
+          ],
+          "label": {
+            "fi": "Talousarvio",
+            "sv": "Projektets budget"
+          }
+        }
+      )
+    }
+  }
+  return form
+}
 export default class HakujenHallintaController {
 
   static roleUrl(avustushaku) {
@@ -475,7 +505,7 @@ export default class HakujenHallintaController {
   }
 
   loadSelvitysForm(avustushaku, selvitysType) {
-    const form = selvitysType=="valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
+    const form = appendBudgetComponent(selvitysType, avustushaku)
     const url = HakujenHallintaController.initSelvitysFormUrl(avustushaku,selvitysType)
     HttpUtil.post(url, form).then(form => {
         dispatcher.push(events.selvitysFormLoaded, {haku: avustushaku, form: form, selvitysType:selvitysType})
@@ -486,32 +516,7 @@ export default class HakujenHallintaController {
   }
 
   selvitysFormOnRecreate(avustushaku, selvitysType) {
-    const form = selvitysType=="valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
-    const originalVaBudget = FormUtil.findFieldsByFieldType(avustushaku.formContent.content, "vaBudget")[0]
-    const selvitysVaBudget = FormUtil.findFieldsByFieldType(form.content, "vaBudget")[0]
-    if(originalVaBudget) {
-      if(selvitysVaBudget) {
-        selvitysVaBudget.children = originalVaBudget.children
-      } else {
-        form.content.push({
-            "fieldClass": "wrapperElement",
-            "id": "financing-plan",
-            "fieldType": "theme",
-            "children": [
-              {
-                "fieldClass": "wrapperElement",
-                "id": "budget",
-                "fieldType": "vaBudget",
-                "children": originalVaBudget.children}
-            ],
-            "label": {
-              "fi": "Talousarvio",
-              "sv": "Projektets budget"
-            }
-          }
-        )
-      }
-    }
+    const form = appendBudgetComponent(selvitysType, avustushaku)
     dispatcher.push(events.updateSelvitysForm, {avustushaku: avustushaku, newFormJson: JSON.stringify(form),selvitysType:selvitysType})
   }
 
