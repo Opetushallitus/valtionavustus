@@ -26,6 +26,16 @@ export default class SeurantaBudgetEditing extends Component {
     return initialValues
   }
 
+  static validateFields(form, answers) {
+    const budgetItems = FormUtil.findFieldsByFieldType(form.content, 'vaBudgetItemElement')
+    budgetItems.map(budgetItem => {
+      const amountField = budgetItem.children[1]
+      const overriddenValue = InputValueStorage.readValue(form.content, answers, amountField.id)
+      const validationErrors = SyntaxValidator.validateSyntax(amountField, overriddenValue)
+      form.validationErrors = form.validationErrors.merge({[amountField.id]: validationErrors})
+    })
+  }
+
   render() {
     const {controller, hakemus, hakuData, avustushaku, translations} = this.props
     const vaBudget = FormUtil.findFieldsByFieldType(hakuData.form.content, "vaBudget")
@@ -44,7 +54,7 @@ export default class SeurantaBudgetEditing extends Component {
     }
     const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: vaBudget}}, fakeHakemus, formOperations, hakemus)
     FormStateLoop.initDefaultValues(fakeHakemus.answers, SeurantaBudgetEditing.initialValues(budgetEditFormState.form.content, hakemus), budgetEditFormState.form.content, budgetEditFormState.configuration.lang)
-    HakemusBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus)
+    SeurantaBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers)
     const formElementProps = {
       state: budgetEditFormState,
       formContainerClass: Form,
