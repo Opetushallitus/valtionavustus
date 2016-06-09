@@ -18,6 +18,7 @@ export default class HakemusDetails extends Component {
     const showOthersScores = this.props.showOthersScores
     const translations = this.props.translations
     const subTab = this.props.subTab
+    if(hidden) return null;
 
     const onClose = (e) => {
       document.body.classList.remove('split-view')
@@ -72,7 +73,7 @@ export default class HakemusDetails extends Component {
     }
 
     return (
-      <div hidden={hidden} id="hakemus-details">
+      <div id="hakemus-details">
         <CloseButton/>
         <ToggleButton/>
         <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
