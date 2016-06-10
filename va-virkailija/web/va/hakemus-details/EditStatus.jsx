@@ -38,7 +38,7 @@ export default class EditStatus extends Component {
       HttpUtil.post(url, request).then((res)=> {
         this.setState({submitting: false, submitted: true})
         if(!cancelled){
-          window.location.href = editUrl
+          window.open(editUrl,'_blank')
         }
         }
       )
