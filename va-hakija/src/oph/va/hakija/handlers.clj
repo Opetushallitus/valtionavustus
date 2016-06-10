@@ -263,7 +263,7 @@
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
     (va-db/get-attachments hakemus-id (:id hakemus))))
 
-(defn on-attachment-create [haku-id hakemus-id hakemus-base-version field-id filename content-type size tempfile]
+(defn on-attachment-create [haku-id hakemus-id hakemus-base-version field-id filename content-type size tempfile allow-origin]
   (let [real-content-type (attachment-validator/validate-file-content-type tempfile filename content-type)
         hakemus (va-db/get-hakemus hakemus-id)]
     (if hakemus
@@ -274,15 +274,15 @@
                                                    real-content-type
                                                    size
                                                    tempfile)]
-        (ok (va-db/convert-attachment (:id hakemus) attachment))
+        (-> (ok (va-db/convert-attachment (:id hakemus) attachment)) (assoc-in [:headers "Access-Control-Allow-Origin"] allow-origin))
         (bad-request {:error true}))
       (bad-request! {:error true}))))
 
-(defn on-attachment-delete [haku-id hakemus-id field-id]
+(defn on-attachment-delete [haku-id hakemus-id field-id allow-origin]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
     (if (va-db/attachment-exists? (:id hakemus) field-id)
       (do (va-db/close-existing-attachment! (:id hakemus) field-id)
-          (ok))
+          (-> (ok) (assoc-in [:headers "Access-Control-Allow-Origin"] allow-origin)))
       (not-found))))
 
 (defn on-attachment-get [haku-id hakemus-id field-id]

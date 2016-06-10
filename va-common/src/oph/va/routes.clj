@@ -22,6 +22,9 @@
                                               :permission-request (:permission-request opintopolku)})
       common-environment)))
 
+(defn virkailija-url []
+  (-> (environment-content) :virkailija-server :url))
+
 (defn get-translations []
   (return-from-classpath "translations.json" "application/json; charset=utf-8"))
 

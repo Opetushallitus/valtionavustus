@@ -153,6 +153,13 @@
         :summary "List current attachments"
         (ok (on-attachment-list haku-id hakemus-id))))
 
+
+(defn- options-del-attachment []
+  (OPTIONS* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id"
+            [haku-id hakemus-id field-id]
+            :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
+            (-> (ok {:status "ok"} ) (assoc-in [:headers "Access-Control-Allow-Origin"] (virkailija-url)) (assoc-in [:headers "Access-Control-Allow-Methods"] "DELETE"))))
+
 (defn- del-attachment []
   (DELETE* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id"
            [haku-id hakemus-id field-id]
@@ -160,7 +167,7 @@
            :summary "Delete attachment (marks attachment as closed)"
            (on-attachment-delete haku-id
                                  hakemus-id
-                                 field-id)))
+                                 field-id (virkailija-url))))
 
 (defn- put-attachment []
   (PUT* "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id"
@@ -177,7 +184,16 @@
                                 filename
                                 content-type
                                 size
-                                tempfile))))
+                                tempfile
+                                (virkailija-url)))))
+
+(defn- options-attachment []
+  (OPTIONS* "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id"
+         [haku-id hakemus-id hakemus-base-version field-id]
+         :path-params [haku-id :- Long, hakemus-id :- s/Str, hakemus-base-version :- Long, field-id :- s/Str]
+            (println (virkailija-url))
+           (-> (ok {:status "ok"} ) (assoc-in [:headers "Access-Control-Allow-Origin"] (virkailija-url)) (assoc-in [:headers "Access-Control-Allow-Methods"] "PUT"))))
+
 
 (defn- get-attachment []
   (GET* "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
@@ -198,8 +214,10 @@
             (post-change-request-response)
             (officer-edit-submit)
             (get-attachments)
+            (options-del-attachment)
             (del-attachment)
             (put-attachment)
+            (options-attachment)
             (get-attachment))
 
 (defn log-paatos-display [user-key headers remote-addr]

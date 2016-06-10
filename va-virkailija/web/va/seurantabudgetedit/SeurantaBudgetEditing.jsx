@@ -65,6 +65,7 @@ export default class SeurantaBudgetEditing extends Component {
     }
     return (
       <div className="budget-edit">
+        <h2 className="heading">Budjetti</h2>
         <FormContainer {...formElementProps} />
       </div>
     )

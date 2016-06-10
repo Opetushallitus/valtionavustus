@@ -22,6 +22,7 @@ const events = {
   beforeUnload: 'beforeUnload',
   initialState: 'initialState',
   reRender: 'reRender',
+  refreshAttachments: 'refreshAttachments',
   setFilter: 'setFilter',
   setSorter: 'setSorter',
   selectHakemus: 'selectHakemus',
@@ -104,6 +105,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload,
       [dispatcher.stream(events.initialState)], this.onInitialState,
       [dispatcher.stream(events.reRender)], this.onReRender,
+      [dispatcher.stream(events.refreshAttachments)], this.onRefreshAttachments,
       [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
       [dispatcher.stream(events.closeHakemus)], this.onCloseHakemus,
       [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio,
@@ -357,6 +359,10 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  saveError(){
+    dispatcher.push(events.saveCompleted, "unexpected-save-error")
+  }
+
   onSetFilter(state, newFilter) {
     state.hakemusFilter[newFilter.filterId] = newFilter.filter
     if(newFilter.filterId=="evaluator"){
@@ -565,6 +571,19 @@ export default class HakemustenArviointiController {
       hakemus.changeRequest = text
       dispatcher.push(events.reRender)
     }
+  }
+
+  refreshAttachments(avustushakuId){
+    const s = Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId))
+    s.onValue((hakuData)=>
+      dispatcher.push(events.refreshAttachments,hakuData)
+    )
+  }
+
+  onRefreshAttachments(state,hakuData){
+    state.hakuData.attachments = hakuData.attachments
+    return state
+
   }
 
   setHakemusStatus(hakemus, newStatus, commentGetter) {
