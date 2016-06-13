@@ -53,6 +53,17 @@ function appendBudgetComponent(selvitysType, avustushaku) {
   const originalVaBudget = avustushakuFormContent && FormUtil.findFieldsByFieldType(avustushakuFormContent, "vaBudget")[0]
   const selvitysVaBudget = FormUtil.findFieldsByFieldType(form.content, "vaBudget")[0]
   if(originalVaBudget) {
+    const vaBudgetItemElements = FormUtil.findFieldsByFieldType(originalVaBudget, "vaBudgetItemElement")
+    const firstVaSummingBudgetElement = FormUtil.findFieldsByFieldType(originalVaBudget, "vaSummingBudgetElement")[0]
+    firstVaSummingBudgetElement.params.columnTitles.granted = {
+      "fi": "Myönnetty",
+      "sv": "Beviljas"
+    }
+    vaBudgetItemElements.forEach(elem => elem.children.push({
+      "fieldClass": "infoElement",
+      "id": "private-financing-income-row.granted",
+      "fieldType": "vaBudgetGrantedElement"
+    }))
     if(selvitysVaBudget) {
       selvitysVaBudget.children = originalVaBudget.children
     } else {
