@@ -40,7 +40,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
             <td className="text-grey original-value">
               {VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope") }{VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope-type")}
             </td>
-            <td>
+            <td style={{whiteSpace:'nowrap'}}>
               <BasicTextField htmlId={htmlId + ".scope"}
                               disabled={!allowEditing}
                               onChange={onChange(VaTraineeDayCalculator.subField(field, "scope"))}
@@ -49,6 +49,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
                               hasError={props.hasError && !(parseFloat(VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope").replace(",", ".")) >= 0)}
                               size="extra-extra-small"
                               lang={this.props.lang} />
+              {VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type")}
             </td>
             <td className="text-grey original-value">
               {VaTraineeDayCalculator.readSubValue(originalValues, field.id, "person-count")}
