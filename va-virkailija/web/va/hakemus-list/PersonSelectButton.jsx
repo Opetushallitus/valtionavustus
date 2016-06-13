@@ -45,6 +45,7 @@ const PersonSelectButton = ({controller,hakemus,state,show}) => {
   if (!show) return <span/>
   const onClick = () => {
     controller.togglePersonSelect(hakemus.id)
+    document.body.classList.add('split-view')
   }
   const roles = _.pluck(state.hakuData.roles,'id')
   const presenterRoleId = hakemus.arvio["presenter-role-id"];
