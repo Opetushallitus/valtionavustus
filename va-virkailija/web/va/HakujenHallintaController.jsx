@@ -91,19 +91,19 @@ function appendBudgetComponent(selvitysType, avustushaku) {
 export default class HakujenHallintaController {
 
   static roleUrl(avustushaku) {
-    return "/api/avustushaku/" + avustushaku.id + "/role"
+    return `/api/avustushaku/${avustushaku.id}/role`
   }
 
   static privilegesUrl(avustushaku) {
-    return "/api/avustushaku/" + avustushaku.id + "/privileges"
+    return `/api/avustushaku/${avustushaku.id}/privileges`
   }
 
   static formUrl(avustushaku) {
-    return "/api/avustushaku/" + avustushaku.id + "/form"
+    return `/api/avustushaku/${avustushaku.id}/form`
   }
 
   static initSelvitysFormUrl(avustushaku, selvitysType) {
-    return "/api/avustushaku/" + avustushaku.id + "/init-selvitysform/" + selvitysType
+    return `/api/avustushaku/${avustushaku.id}/init-selvitysform/${selvitysType}`
   }
 
   _bind(...methods) {
