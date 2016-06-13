@@ -392,8 +392,6 @@ export default class HakujenHallintaController {
     this.loadPrivileges(hakuToSelect)
     this.loadRoles(hakuToSelect)
     this.loadForm(hakuToSelect)
-    this.loadSelvitysForm(hakuToSelect,"loppuselvitys")
-    this.loadSelvitysForm(hakuToSelect,"valiselvitys")
     LocalStorage.saveAvustushakuId(hakuToSelect.id)
     return state
   }
@@ -448,6 +446,8 @@ export default class HakujenHallintaController {
     const haku = loadFormResult.haku
     state.formDrafts[haku.id] = JSON.stringify(loadFormResult.form, null, 2)
     loadFormResult.haku.formContent = loadFormResult.form
+    HakujenHallintaController.loadSelvitysForm(state.selectedHaku,"loppuselvitys")
+    HakujenHallintaController.loadSelvitysForm(state.selectedHaku,"valiselvitys")
     return state
   }
 
@@ -505,7 +505,7 @@ export default class HakujenHallintaController {
     dispatcher.push(events.updateSelvitysForm, {avustushaku: avustushaku, newFormJson: newFormJson,selvitysType:selvitysType})
   }
 
-  loadSelvitysForm(avustushaku, selvitysType) {
+  static loadSelvitysForm(avustushaku, selvitysType) {
     const form = appendBudgetComponent(selvitysType, avustushaku)
     const url = HakujenHallintaController.initSelvitysFormUrl(avustushaku,selvitysType)
     HttpUtil.post(url, form).then(form => {
