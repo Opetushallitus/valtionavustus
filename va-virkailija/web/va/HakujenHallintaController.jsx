@@ -56,32 +56,32 @@ function appendBudgetComponent(selvitysType, avustushaku) {
     const vaBudgetItemElements = FormUtil.findFieldsByFieldType(originalVaBudget, "vaBudgetItemElement")
     const firstVaSummingBudgetElement = FormUtil.findFieldsByFieldType(originalVaBudget, "vaSummingBudgetElement")[0]
     firstVaSummingBudgetElement.params.columnTitles.granted = {
-      "fi": "Myönnetty",
-      "sv": "Beviljas"
+      fi: "Myönnetty",
+      sv: "Beviljas"
     }
     vaBudgetItemElements.forEach(elem => elem.children.push({
-      "fieldClass": "infoElement",
-      "id": "private-financing-income-row.granted",
-      "fieldType": "vaBudgetGrantedElement"
+      fieldClass: "infoElement",
+      id: "private-financing-income-row.granted",
+      fieldType: "vaBudgetGrantedElement"
     }))
     if(selvitysVaBudget) {
       selvitysVaBudget.children = originalVaBudget.children
     } else {
       form.content.push({
-          "fieldClass": "wrapperElement",
-          "id": "financing-plan",
-          "fieldType": "theme",
-          "children": [
+          fieldClass: "wrapperElement",
+          id: "financing-plan",
+          fieldType: "theme",
+          children: [
             {
-              "fieldClass": "wrapperElement",
-              "id": "budget",
-              "fieldType": "vaBudget",
-              "children": originalVaBudget.children
+              fieldClass: "wrapperElement",
+              id: "budget",
+              fieldType: "vaBudget",
+              children: originalVaBudget.children
             }
           ],
-          "label": {
-            "fi": "Talousarvio",
-            "sv": "Projektets budget"
+          label: {
+            fi: "Talousarvio",
+            sv: "Projektets budget"
           }
         }
       )
@@ -119,7 +119,7 @@ export default class HakujenHallintaController {
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")).map(Immutable),
       environment: Bacon.fromPromise(HttpUtil.get("/environment")),
-      hakuId:hakuId,
+      hakuId: hakuId,
       selectedHaku: undefined,
       saveStatus: {
         saveInProgress: false,
@@ -133,7 +133,7 @@ export default class HakujenHallintaController {
       ldapSearch: {
         input: "",
         loading: false,
-        result: { error: false, results: [], truncated: false }
+        result: {error: false, results: [], truncated: false}
       },
       koodistos: {
         content: null,
@@ -146,15 +146,17 @@ export default class HakujenHallintaController {
     initialState.onValue(state => {
       dispatcher.push(events.initialState, state)
     })
-    this.autoSave = _.debounce(function(){ dispatcher.push(events.saveHaku) }, 3000)
+    this.autoSave = _.debounce(function () {
+      dispatcher.push(events.saveHaku)
+    }, 3000)
     this.startLdapSearch = _.debounce((searchInput) => {
       dispatcher.push(events.ldapSearchStarted, searchInput)
     }, LdapSearchParameters.ldapSearchDebounceMillis())
-    this._bind('onInitialState','onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
-               'onHakuSave', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
-               'onBeforeUnload', 'onRolesLoaded', 'onRoleCreated', 'onRoleDeleted', 'saveRole')
+    this._bind('onInitialState', 'onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
+      'onHakuSave', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
+      'onBeforeUnload', 'onRolesLoaded', 'onRoleCreated', 'onRoleDeleted', 'saveRole')
 
-    Bacon.fromEvent(window, "beforeunload").onValue(function(event) {
+    Bacon.fromEvent(window, "beforeunload").onValue(function (event) {
       // For some odd reason Safari always displays a dialog here
       // But it's probably safer to always save the document anyway
       dispatcher.push(events.beforeUnload)
@@ -197,8 +199,8 @@ export default class HakujenHallintaController {
     function consolidateSubTabSelectionWithUrl() {
       var subTab = "haku-editor"
       const parsedUrl = new RouteParser('/admin/:subTab/*ignore').match(location.pathname)
-      if (!_.isUndefined(history.pushState)) {
-        if (parsedUrl["subTab"]) {
+      if(!_.isUndefined(history.pushState)) {
+        if(parsedUrl["subTab"]) {
           subTab = parsedUrl["subTab"]
         } else {
           const newUrl = "/admin/" + subTab + "/" + location.search
@@ -211,19 +213,19 @@ export default class HakujenHallintaController {
 
   onInitialState(emptyState, realInitialState) {
     var hakuList = realInitialState.hakuList;
-    if (hakuList && !_.isEmpty(hakuList)) {
-      const selectedHaku = _.find(hakuList,(h)=>h.id==realInitialState.hakuId) || hakuList[0]
+    if(hakuList && !_.isEmpty(hakuList)) {
+      const selectedHaku = _.find(hakuList, (h)=>h.id == realInitialState.hakuId) || hakuList[0]
       realInitialState = this.onHakuSelection(realInitialState, selectedHaku)
     }
     return realInitialState
   }
 
   onHakuCreation(state, baseHaku) {
-    HttpUtil.put("/api/avustushaku", { baseHakuId: baseHaku.id })
-      .then(function(response) {
+    HttpUtil.put("/api/avustushaku", {baseHakuId: baseHaku.id})
+      .then(function (response) {
         dispatcher.push(events.hakuCreated, response)
       })
-      .catch(function(response) {
+      .catch(function (response) {
         console.error('Unexpected create error:', response.statusText)
         dispatcher.push(events.saveCompleted, {error: "unexpected-create-error"})
       })
@@ -233,7 +235,7 @@ export default class HakujenHallintaController {
   onHakuCreated(state, newHaku) {
     state.hakuList.unshift(newHaku)
     state = this.onHakuSelection(state, newHaku)
-    setTimeout(function() {
+    setTimeout(function () {
       document.getElementById("haku-" + newHaku.id).scrollIntoView({block: "start", behavior: "smooth"})
       document.getElementById("haku-name-fi").focus()
     }, 300)
@@ -251,8 +253,8 @@ export default class HakujenHallintaController {
     const focusArea = /focus-area-(\d+)-(\w+)/.exec(update.field.id)
     const registerNumber = /register-number/.exec(update.field.id)
     const multiplemaksuera = /set-maksuera-(\w+)/.exec(update.field.id)
-    const loppuselvitysdate = update.field.id=="loppuselvitysdate"
-    const valiselvitysdate = update.field.id=="valiselvitysdate"
+    const loppuselvitysdate = update.field.id == "loppuselvitysdate"
+    const valiselvitysdate = update.field.id == "valiselvitysdate"
     var doSave = true
     if(hakuname) {
       const lang = hakuname[1]
@@ -285,25 +287,25 @@ export default class HakujenHallintaController {
       const lang = selectionCriteria[2]
       update.avustushaku.content['selection-criteria'].items[index][lang] = update.newValue
     }
-    else if (focusArea) {
+    else if(focusArea) {
       const index = focusArea[1]
       const lang = focusArea[2]
       update.avustushaku.content['focus-areas'].items[index][lang] = update.newValue
     }
-    else if (registerNumber) {
+    else if(registerNumber) {
       update.avustushaku["register-number"] = update.newValue
     }
-    else if (multiplemaksuera) {
-      update.avustushaku.content.multiplemaksuera = update.newValue==="true"
+    else if(multiplemaksuera) {
+      update.avustushaku.content.multiplemaksuera = update.newValue === "true"
     }
-    else if(update.field.id.indexOf("decision.")!=-1){
+    else if(update.field.id.indexOf("decision.") != -1) {
       const fieldName = update.field.id.substr(9)
       _.set(update.avustushaku.decision, fieldName, update.newValue)
     }
-    else if(loppuselvitysdate){
+    else if(loppuselvitysdate) {
       update.avustushaku.loppuselvitysdate = update.newValue
     }
-    else if(valiselvitysdate){
+    else if(valiselvitysdate) {
       update.avustushaku.valiselvitysdate = update.newValue
     }
     else {
@@ -317,9 +319,9 @@ export default class HakujenHallintaController {
   }
 
   onAddSelectionCriteria(state, avustushaku) {
-    avustushaku.content['selection-criteria'].items.push({fi:"", sv:""})
-    setTimeout(function() {
-      document.getElementById("selection-criteria-" + (avustushaku.content['selection-criteria'].items.length -1) + "-fi").focus()
+    avustushaku.content['selection-criteria'].items.push({fi: "", sv: ""})
+    setTimeout(function () {
+      document.getElementById("selection-criteria-" + (avustushaku.content['selection-criteria'].items.length - 1) + "-fi").focus()
     }, 300)
     state = this.startAutoSave(state, avustushaku)
     return state
@@ -332,9 +334,9 @@ export default class HakujenHallintaController {
   }
 
   onAddFocusArea(state, avustushaku) {
-    avustushaku.content['focus-areas'].items.push({fi:"", sv:""})
-    setTimeout(function() {
-      document.getElementById("focus-area-" + (avustushaku.content['focus-areas'].items.length -1) + "-fi").focus()
+    avustushaku.content['focus-areas'].items.push({fi: "", sv: ""})
+    setTimeout(function () {
+      document.getElementById("focus-area-" + (avustushaku.content['focus-areas'].items.length - 1) + "-fi").focus()
     }, 300)
     state = this.startAutoSave(state, avustushaku)
     return state
@@ -353,7 +355,7 @@ export default class HakujenHallintaController {
   }
 
   onBeforeUnload(state) {
-    if (state.saveStatus.saveInProgress) {
+    if(state.saveStatus.saveInProgress) {
       this.autoSave.cancel()
       return this.onHakuSave(state)
     }
@@ -362,18 +364,18 @@ export default class HakujenHallintaController {
 
   onHakuSave(state) {
     HttpUtil.post("/api/avustushaku/" + state.selectedHaku.id, _.omit(state.selectedHaku, ["roles", "formContent", "privileges", "valiselvitysForm", "loppuselvitysForm"]))
-        .then(function(response) {
-          dispatcher.push(events.saveCompleted, response)
-        })
-        .catch(function(response) {
-          if(response.status === 400) {
-            dispatcher.push(events.saveCompleted, {error: "validation-error"})
-          }
-          else {
-            console.error('Unexpected save error:', response.statusText)
-            dispatcher.push(events.saveCompleted, {error: "unexpected-save-error"})
-          }
-        })
+      .then(function (response) {
+        dispatcher.push(events.saveCompleted, response)
+      })
+      .catch(function (response) {
+        if(response.status === 400) {
+          dispatcher.push(events.saveCompleted, {error: "validation-error"})
+        }
+        else {
+          console.error('Unexpected save error:', response.statusText)
+          dispatcher.push(events.saveCompleted, {error: "unexpected-save-error"})
+        }
+      })
     return state
   }
 
@@ -383,8 +385,8 @@ export default class HakujenHallintaController {
       state.saveStatus.serverError = response.error
     }
     else {
-      const oldHaku = _.find(state.hakuList, haku => haku.id ===  response.id)
-      if(oldHaku) { 
+      const oldHaku = _.find(state.hakuList, haku => haku.id === response.id)
+      if(oldHaku) {
         oldHaku.status = response.status
         oldHaku.phase = response.phase
       }
@@ -408,7 +410,7 @@ export default class HakujenHallintaController {
   }
 
   loadRoles(selectedHaku) {
-    if (!_.isArray(selectedHaku.roles)) {
+    if(!_.isArray(selectedHaku.roles)) {
       HttpUtil.get(HakujenHallintaController.roleUrl(selectedHaku)).then(roles => {
         dispatcher.push(events.rolesLoaded, {haku: selectedHaku, roles: roles})
       })
@@ -446,7 +448,7 @@ export default class HakujenHallintaController {
   }
 
   loadForm(selectedHaku) {
-    if (!_.isObject(selectedHaku.form) || !selectedHaku.form.id) {
+    if(!_.isObject(selectedHaku.form) || !selectedHaku.form.id) {
       HttpUtil.get(HakujenHallintaController.formUrl(selectedHaku)).then(form => {
         dispatcher.push(events.formLoaded, {haku: selectedHaku, form: form})
       })
@@ -457,8 +459,8 @@ export default class HakujenHallintaController {
     const haku = loadFormResult.haku
     state.formDrafts[haku.id] = JSON.stringify(loadFormResult.form, null, 2)
     loadFormResult.haku.formContent = loadFormResult.form
-    HakujenHallintaController.loadSelvitysForm(state.selectedHaku,"loppuselvitys")
-    HakujenHallintaController.loadSelvitysForm(state.selectedHaku,"valiselvitys")
+    HakujenHallintaController.loadSelvitysForm(state.selectedHaku, "loppuselvitys")
+    HakujenHallintaController.loadSelvitysForm(state.selectedHaku, "valiselvitys")
     return state
   }
 
@@ -479,18 +481,22 @@ export default class HakujenHallintaController {
   }
 
   saveSelvitysForm(avustushaku, form, selvitysType) {
-    dispatcher.push(events.saveSelvitysForm, {haku: avustushaku, form: JSON.parse(form), selvitysType:selvitysType})
+    dispatcher.push(events.saveSelvitysForm, {haku: avustushaku, form: JSON.parse(form), selvitysType: selvitysType})
   }
 
-  onSaveSelvitysForm(state,formSaveObject) {
+  onSaveSelvitysForm(state, formSaveObject) {
     const avustushaku = formSaveObject.haku
     const editedForm = formSaveObject.form
     const selvitysType = formSaveObject.selvitysType
     HttpUtil.post(`/api/avustushaku/${avustushaku.id}/selvitysform/${selvitysType}`, editedForm)
-      .then(function(response) {
-        dispatcher.push(events.selvitysFormSaveCompleted, { avustusHakuId: avustushaku.id, fromFromServer: response,selvitysType:selvitysType })
+      .then(function (response) {
+        dispatcher.push(events.selvitysFormSaveCompleted, {
+          avustusHakuId: avustushaku.id,
+          fromFromServer: response,
+          selvitysType: selvitysType
+        })
       })
-      .catch(function(response) {
+      .catch(function (response) {
         if(response.status === 400) {
           console.error('Validation error:', response.statusText)
           dispatcher.push(events.saveCompleted, {error: "validation-error"})
@@ -513,23 +519,31 @@ export default class HakujenHallintaController {
   }
 
   selvitysFormOnChangeListener(avustushaku, newFormJson, selvitysType) {
-    dispatcher.push(events.updateSelvitysForm, {avustushaku: avustushaku, newFormJson: newFormJson,selvitysType:selvitysType})
+    dispatcher.push(events.updateSelvitysForm, {
+      avustushaku: avustushaku,
+      newFormJson: newFormJson,
+      selvitysType: selvitysType
+    })
   }
 
   static loadSelvitysForm(avustushaku, selvitysType) {
     const form = appendBudgetComponent(selvitysType, avustushaku)
-    const url = HakujenHallintaController.initSelvitysFormUrl(avustushaku,selvitysType)
+    const url = HakujenHallintaController.initSelvitysFormUrl(avustushaku, selvitysType)
     HttpUtil.post(url, form).then(form => {
-        dispatcher.push(events.selvitysFormLoaded, {haku: avustushaku, form: form, selvitysType:selvitysType})
+        dispatcher.push(events.selvitysFormLoaded, {haku: avustushaku, form: form, selvitysType: selvitysType})
       }
     ).catch((response) => {
-      console.error("Failed to load selvitys form " + selvitysType,response)
+      console.error("Failed to load selvitys form " + selvitysType, response)
     })
   }
 
   selvitysFormOnRecreate(avustushaku, selvitysType) {
     const form = appendBudgetComponent(selvitysType, avustushaku)
-    dispatcher.push(events.updateSelvitysForm, {avustushaku: avustushaku, newFormJson: JSON.stringify(form),selvitysType:selvitysType})
+    dispatcher.push(events.updateSelvitysForm, {
+      avustushaku: avustushaku,
+      newFormJson: JSON.stringify(form),
+      selvitysType: selvitysType
+    })
   }
 
   onUpdateSelvitysForm(state, formContentUpdateObject) {
@@ -541,14 +555,16 @@ export default class HakujenHallintaController {
 
   onStartLdapSearch(state, searchInput) {
     state.ldapSearch.input = searchInput
-    if (searchInput.length >= LdapSearchParameters.minimumSearchInputLength()) {
+    if(searchInput.length >= LdapSearchParameters.minimumSearchInputLength()) {
       state.ldapSearch.loading = true
-      HttpUtil.post("/api/ldap/search", { searchInput: searchInput })
-              .then(r => { dispatcher.push(events.ldapSearchFinished, r) })
-              .catch(r => {
-                console.error('Got bad response from LDAP search', r)
-                dispatcher.push(events.ldapSearchFinished, { error: true, results: [], truncated: false })
-              })
+      HttpUtil.post("/api/ldap/search", {searchInput: searchInput})
+        .then(r => {
+          dispatcher.push(events.ldapSearchFinished, r)
+        })
+        .catch(r => {
+          console.error('Got bad response from LDAP search', r)
+          dispatcher.push(events.ldapSearchFinished, {error: true, results: [], truncated: false})
+        })
     }
     return state
   }
@@ -561,7 +577,7 @@ export default class HakujenHallintaController {
 
   // Public API
   selectHaku(hakemus) {
-    return function() {
+    return function () {
       dispatcher.push(events.selectHaku, hakemus)
     }
   }
@@ -583,12 +599,14 @@ export default class HakujenHallintaController {
   }
 
   onEnsureKoodistoLoaded(state) {
-    if (state.koodistos.content || state.koodistos.loading) {
+    if(state.koodistos.content || state.koodistos.loading) {
       return state
     }
     state.koodistos.loading = true
     HttpUtil.get("/api/koodisto/")
-      .then(r => { dispatcher.push(events.koodistosLoaded, r) })
+      .then(r => {
+        dispatcher.push(events.koodistosLoaded, r)
+      })
       .catch(r => {
         console.error('Got bad response when loading koodistos from server', r)
         dispatcher.push(events.koodistosLoaded, null)
@@ -613,18 +631,18 @@ export default class HakujenHallintaController {
     const editedForm = formSaveObject.form
 
     HttpUtil.post("/api/avustushaku/" + avustushaku.id + "/form", editedForm)
-        .then(function(response) {
-          dispatcher.push(events.formSaveCompleted, { avustusHakuId: avustushaku.id, fromFromServer: response })
-        })
-        .catch(function(response) {
-          if(response.status === 400) {
-            dispatcher.push(events.saveCompleted, {error: "validation-error"})
-          }
-          else {
-            console.error('Unexpected save error:', response.statusText)
-            dispatcher.push(events.saveCompleted, {error: "unexpected-save-error"})
-          }
-        })
+      .then(function (response) {
+        dispatcher.push(events.formSaveCompleted, {avustusHakuId: avustushaku.id, fromFromServer: response})
+      })
+      .catch(function (response) {
+        if(response.status === 400) {
+          dispatcher.push(events.saveCompleted, {error: "validation-error"})
+        }
+        else {
+          console.error('Unexpected save error:', response.statusText)
+          dispatcher.push(events.saveCompleted, {error: "unexpected-save-error"})
+        }
+      })
     return state
   }
 
@@ -638,7 +656,7 @@ export default class HakujenHallintaController {
 
   onSelectEditorSubTab(state, subTabToSelect) {
     state.subTab = subTabToSelect
-    if (!_.isUndefined(history.pushState)) {
+    if(!_.isUndefined(history.pushState)) {
       const newUrl = "/admin/" + subTabToSelect + "/" + location.search
       history.pushState({}, window.title, newUrl)
     }
@@ -646,42 +664,42 @@ export default class HakujenHallintaController {
   }
 
   addSelectionCriteria(avustushaku) {
-    return function() {
+    return function () {
       dispatcher.push(events.addSelectionCriteria, avustushaku)
     }
   }
 
   deleteSelectionCriteria(avustushaku, index) {
-    return function() {
+    return function () {
       dispatcher.push(events.deleteSelectionCriteria, {avustushaku: avustushaku, index: index})
     }
   }
 
   addFocusArea(avustushaku) {
-    return function() {
+    return function () {
       dispatcher.push(events.addFocusArea, avustushaku)
     }
   }
 
   deleteFocusArea(avustushaku, index) {
-    return function() {
+    return function () {
       dispatcher.push(events.deleteFocusArea, {avustushaku: avustushaku, index: index})
     }
   }
 
   createRole(avustushaku, newRole) {
-    return function() {
+    return function () {
       HttpUtil.put(HakujenHallintaController.roleUrl(avustushaku), newRole)
-        .then(function(response) {
+        .then(function (response) {
           dispatcher.push(events.roleCreated, {haku: avustushaku, role: response})
         })
     }
   }
 
   deleteRole(avustushaku, role) {
-    return function() {
+    return function () {
       HttpUtil.delete(HakujenHallintaController.roleUrl(avustushaku) + "/" + role.id)
-        .then(function(response) {
+        .then(function (response) {
           dispatcher.push(events.roleDeleted, {haku: avustushaku, role: role})
         })
     }
@@ -693,7 +711,9 @@ export default class HakujenHallintaController {
 
   saveRole(avustushaku, role) {
     HttpUtil.post(HakujenHallintaController.roleUrl(avustushaku) + "/" + role.id, role)
-      .then(response => { this.loadPrivileges(avustushaku) })
+      .then(response => {
+        this.loadPrivileges(avustushaku)
+      })
   }
 
   selectEditorSubtab(subTabToSelect) {
