@@ -130,6 +130,7 @@
                         :rahoitusalue (:rahoitusalue arvio)
                         :academysize academysize
                         :perustelut (:perustelut arvio)
+                        :tags (:tags arvio)
                         }
         existing (get-arvio hakemus-id)
         changelog (update-changelog identity existing arvio-to-save)

@@ -4,5 +4,6 @@ set status        = :status, overridden_answers = :overridden_answers, budget_gr
   rahoitusalue    = :rahoitusalue, perustelut = :perustelut, costs_granted = :costs_granted, use_overridden_detailed_costs = :use_overridden_detailed_costs,
   presentercomment = :presentercomment,
   academysize = :academysize,
-  seuranta_answers = :seuranta_answers
+  seuranta_answers = :seuranta_answers,
+  tags = :tags
 where hakemus_id = :hakemus_id

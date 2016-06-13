@@ -46,6 +46,8 @@ export default class HakemusListing extends Component {
         return hakemus => hakemus.arvio.roles.evaluators
       case "presenter":
         return hakemus => hakemus.arvio["presenter-role-id"]
+      case "tags":
+        return hakemus => hakemus.arvio.tags.value
       case "score":
         return hakemus => {
           const score = ScoreResolver.effectiveAverage(hakemus.arvio.scoring, userInfo, allowHakemusScoring)
@@ -81,7 +83,7 @@ export default class HakemusListing extends Component {
       if(_.isEmpty(answers)) {
         return false
       }
-      const filtersWithoutExcluded = filters.filter((answer)=>answer.id!="rahoitusalue")
+      const filtersWithoutExcluded = filters.filter((answer)=>answer.id!="rahoitusalue" && answer.id!="tags")
       const answerMatchPredicate = (filter) => _.find(answers, (a)=> a.key == filter.id && a.value == filter.answer);
       const groupedByQuestion = _.groupBy(filtersWithoutExcluded, 'id');
       const filterValuesByQuestion = _.values(groupedByQuestion)
@@ -128,6 +130,18 @@ export default class HakemusListing extends Component {
     }
   }
 
+  static _filterTagsPredicate(fieldGetter, filters) {
+    const tagsFilter = filters.filter((i)=>i.id=="tags")
+    if(_.isEmpty(tagsFilter)) {
+      return function() {return true}
+    }
+    return function(hakemus) {
+      const fieldValue = fieldGetter(hakemus);
+      const answers = tagsFilter.map((i)=>i.answer)
+      return _.some(fieldValue,(i) => _.contains(answers,i))
+    }
+  }
+
   static _filter(list, filter) {
     return _.filter(list, HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("name"), filter.name))
             .filter(HakemusListing._filterWithStrPredicate(HakemusListing._fieldGetter("organization"), filter.organization))
@@ -138,6 +152,7 @@ export default class HakemusListing extends Component {
             .filter(HakemusListing._filterWithArrayFilterPredicate(HakemusListing._fieldGetter("evaluators"), filter.evaluator))
             .filter(HakemusListing._filterWithNumberPredicate(HakemusListing._fieldGetter("presenter"), filter.presenter))
             .filter(HakemusListing._filterRahoitusaluePredicate(HakemusListing._fieldGetter("rahoitusalue"), filter.answers))
+            .filter(HakemusListing._filterTagsPredicate(HakemusListing._fieldGetter("tags"), filter.answers))
   }
 
   static _sortByArray(fieldGetter, array, order, userInfo, allowHakemusScoring) {

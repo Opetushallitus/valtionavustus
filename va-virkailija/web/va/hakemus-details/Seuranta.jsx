@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import PresenterComment from './PresenterComment.jsx'
 import SeurantaLiitteet from './SeurantaLiitteet.jsx'
+import SeurantaTags from './SeurantaTags.jsx'
 import SeurantaBudgetEditing from '../seurantabudgetedit/SeurantaBudgetEditing.jsx'
 
 export default class Seuranta extends Component {
@@ -15,6 +16,9 @@ export default class Seuranta extends Component {
         </div>
         <div className="seuranta-section">
           <SeurantaLiitteet avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}/>
+        </div>
+        <div className="seuranta-section">
+          <SeurantaTags controller={controller} hakemus={hakemus} hakuData={hakuData}/>
         </div>
       </div>
     )

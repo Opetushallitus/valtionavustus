@@ -106,6 +106,20 @@ const FilterList  = ({hakemusFilter,hakuData,controller}) => {
         open: _.contains(openQuestions, "rahoitusalue")
       })
     }
+
+    const tags = _.uniq(_.flatten(hakuData.hakemukset.map((i)=>_.get(i, 'arvio.tags.value'))))
+    if(tags.length>0){
+      filterQuestions.push({
+        id: "tags",
+        label: "Tagit",
+        options: tags.map((tag)=>({
+          label: tag,
+          value: tag,
+          selected: selectedPredicate("tags", tag)
+        })),
+        open: _.contains(openQuestions, "tags")
+      })
+    }
     return filterQuestions
   }
 

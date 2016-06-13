@@ -608,6 +608,11 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
+  setTags(hakemus, tags) {
+    hakemus.arvio.tags = {value:tags}
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }
+
   setHakemusArvioBudgetGranted(hakemus, newBudgetGranted) {
     hakemus.arvio["budget-granted"] = newBudgetGranted
     dispatcher.push(events.updateHakemusArvio, hakemus)

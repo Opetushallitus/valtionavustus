@@ -21,6 +21,7 @@
    :rahoitusalue (:rahoitusalue arvio)
    :academysize (:academysize arvio)
    :perustelut (:perustelut arvio)
+   :tags (:tags arvio)
    :changelog (:changelog arvio)
    })
 
@@ -31,12 +32,13 @@
     (assoc hakemus :arvio {:id                 -1
                            :status             "unhandled"
                            :overridden-answers {:value []}
-                           :seuranta-answers {:value []}
+                           :seuranta-answers   {:value []}
                            :budget-granted     0
                            :costsGranted       0
                            :academysize 0
                            :useDetailedCosts   false
                            :roles              {:evaluators []}
+                           :tags               {:value []}
                            })))
 
 (defn- find-and-add-arvio [arviot hakemus]

@@ -25,6 +25,10 @@
              "Role for arvio"
              {:evaluators [Long]})
 
+(s/defschema Tag
+  "Tags for arvio"
+  {:value [s/Str]})
+
 (s/defschema Arvio
   "Arvio contains evaluation of hakemus"
   {:id s/Int
@@ -35,6 +39,7 @@
    :costsGranted s/Int
    :useDetailedCosts s/Bool
    :roles ArvioRole
+   :tags Tag
    (s/optional-key :presenter-role-id) (s/maybe Long)
    (s/optional-key :scoring) (s/maybe Scoring)
    (s/optional-key :summary-comment) (s/maybe s/Str)
