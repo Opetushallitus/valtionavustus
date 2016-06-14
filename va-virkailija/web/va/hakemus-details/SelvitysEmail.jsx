@@ -56,6 +56,7 @@ export default class SelvitysEmail extends Component {
       const sendS = Bacon.fromPromise(HttpUtil.post(`/api/avustushaku/${avustushakuId}/selvitys/${selvitysType}/send`,request))
       sendS.onValue((res)=>{
         controller.loadSelvitys()
+        controller.refreshHakemukset(avustushakuId)
       })
     }
 

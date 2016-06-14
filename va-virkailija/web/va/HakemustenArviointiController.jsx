@@ -23,6 +23,7 @@ const events = {
   initialState: 'initialState',
   reRender: 'reRender',
   refreshAttachments: 'refreshAttachments',
+  refreshHakemukset: 'refreshHakemukset',
   setFilter: 'setFilter',
   setSorter: 'setSorter',
   selectHakemus: 'selectHakemus',
@@ -53,7 +54,7 @@ const events = {
 export default class HakemustenArviointiController {
 
   initializeState(avustushakuId,evaluator) {
-    this._bind('onInitialState', 'onHakemusSelection', 'onUpdateHakemusStatus', 'onUpdateHakemusArvio', 'onSaveHakemusArvio', 'onBeforeUnload')
+    this._bind('onInitialState', 'onHakemusSelection', 'onUpdateHakemusStatus', 'onUpdateHakemusArvio', 'onSaveHakemusArvio', 'onBeforeUnload','onRefreshHakemukset')
     this.autoSaveHakemusArvio = _.debounce(function(updatedHakemus){ dispatcher.push(events.saveHakemusArvio, updatedHakemus) }, 3000)
 
     Bacon.fromEvent(window, "beforeunload").onValue(function(event) {
@@ -106,6 +107,7 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.initialState)], this.onInitialState,
       [dispatcher.stream(events.reRender)], this.onReRender,
       [dispatcher.stream(events.refreshAttachments)], this.onRefreshAttachments,
+      [dispatcher.stream(events.refreshHakemukset)], this.onRefreshHakemukset,
       [dispatcher.stream(events.selectHakemus)], this.onHakemusSelection,
       [dispatcher.stream(events.closeHakemus)], this.onCloseHakemus,
       [dispatcher.stream(events.updateHakemusArvio)], this.onUpdateHakemusArvio,
@@ -162,13 +164,17 @@ export default class HakemustenArviointiController {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/searches"
   }
 
+  static filterHakemukset(hakemukset){
+    return _.filter(hakemukset, (hakemus) => {
+      const status = hakemus.status
+      return status === "submitted" || status === "pending_change_request" || status === "officer_edit"
+    })
+  }
+
   onInitialState(emptyState, realInitialState) {
     const query = queryString.parse(location.search)
     if (query.showAll != "true") {
-      realInitialState.hakuData.hakemukset = _.filter(realInitialState.hakuData.hakemukset, (hakemus) => {
-        const status = hakemus.status
-        return status === "submitted" || status === "pending_change_request" || status === "officer_edit"
-      })
+      realInitialState.hakuData.hakemukset = HakemustenArviointiController.filterHakemukset(realInitialState.hakuData.hakemukset)
     }
     const parsedHakemusIdObject = new RouteParser('/*ignore/hakemus/:hakemus_id/*ignore').match(location.pathname)
     if (parsedHakemusIdObject && parsedHakemusIdObject["hakemus_id"]) {
@@ -580,8 +586,24 @@ export default class HakemustenArviointiController {
     )
   }
 
+  refreshHakemukset(avustushakuId){
+    const s = Bacon.fromPromise(HttpUtil.get("/api/avustushaku/" + avustushakuId))
+    s.onValue((hakuData)=>
+      dispatcher.push(events.refreshHakemukset,hakuData)
+    )
+  }
+
   onRefreshAttachments(state,hakuData){
     state.hakuData.attachments = hakuData.attachments
+    return state
+
+  }
+
+  onRefreshHakemukset(state,hakuData){
+    state.hakuData.hakemukset = HakemustenArviointiController.filterHakemukset(hakuData.hakemukset)
+    if(state.selectedHakemus){
+      this.onHakemusSelection(state,state.selectedHakemus.id)
+    }
     return state
 
   }
