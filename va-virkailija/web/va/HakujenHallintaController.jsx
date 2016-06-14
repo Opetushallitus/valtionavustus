@@ -58,11 +58,17 @@ function appendBudgetComponent(selvitysType, avustushaku) {
       fi: "Myönnetty",
       sv: "Beviljas"
     }
-    vaBudgetItemElements.forEach(elem => elem.children.push({
-      fieldClass: "infoElement",
-      id: "private-financing-income-row.granted",
-      fieldType: "vaBudgetGrantedElement"
-    }))
+    vaBudgetItemElements.forEach(elem => {
+      const id = elem.id
+      if(!_.some(elem.children,(child)=>child.id.indexOf(".granted")!=-1)){
+        elem.children.push({
+          fieldClass: "infoElement",
+          id: id + ".granted",
+          fieldType: "vaBudgetGrantedElement"
+        })
+      }
+
+    })
     if(selvitysVaBudget) {
       selvitysVaBudget.children = originalVaBudget.children
     } else {
