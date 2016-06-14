@@ -10,11 +10,11 @@ export default class Selvitys extends React.Component{
         <div>
           Väliselvitys toimitettava viimeistään
           <DateField {...this.props} field="valiselvitysdate"/>
-          <div>Väliselvitys avautuu täytettäväksi 2kk ennen eräpäivää</div>
+          <div>Väliselvitys avautuu täytettäväksi kun väliselvityspyyntö on lähetetty</div>
         </div>
         <h4>Loppuselvitys</h4>
         <div>
-          Loppuselvitys toimitettava 2kk sisällä hankkeen päättymisestä tai viimeistään
+          Loppuselvitys toimitettava viimeistään
 
           <DateField {...this.props} field="loppuselvitysdate"/>
           <div>Loppuselvityslomake on koko ajan täytettävissä.</div>

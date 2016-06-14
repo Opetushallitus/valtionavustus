@@ -39,7 +39,6 @@ export default class EditorSelector extends React.Component {
                                         avustushaku={avustushaku}
                                         controller={controller}
                                         koodistos={koodistos}
-                                        translations={translations}
                                         valiselvitysFormDraft={valiselvitysFormDraft}
                                         loppuselvitysFormDraft={loppuselvitysFormDraft}
                                         translations={translations}
@@ -52,7 +51,6 @@ export default class EditorSelector extends React.Component {
                                             avustushaku={avustushaku}
                                             controller={controller}
                                             koodistos={koodistos}
-                                            translations={translations}
                                             valiselvitysFormDraft={valiselvitysFormDraft}
                                             loppuselvitysFormDraft={loppuselvitysFormDraft}
                                             translations={translations}

@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
 import FormEditor from './FormEditor.jsx'
-import FormJsonEditor from './FormJsonEditor.jsx'
-import LoppuselvitysForm from '../data/LoppuselvitysForm.json'
-import ValiselvitysForm from '../data/ValiselvitysForm.json'
 import HttpUtil from "../../../../va-common/web/HttpUtil";
 
 export default class SelvitysFormEditor extends React.Component{
@@ -64,7 +61,7 @@ export default class SelvitysFormEditor extends React.Component{
     
     const valiselvitysSection = <div>
       <h4>Väliselvitysten lähettäminen</h4>
-      <p>Väliselvitys tulee toimittaa viimeistään <strong>{this.props.avustushaku[selvitysType + 'date']}</strong> ja se avautuu täytettäväksi 2 kuukautta aikaisemmin.</p>
+      <p>Väliselvitys tulee toimittaa viimeistään <strong>{this.props.avustushaku[selvitysType + 'date']}</strong>.</p>
       <p>Väliselvityspyynnöt lähetetään vain niille hakijoille, jotka eivät ole vielä toimittaneet selvitystä.</p>
       <p>
         <button disabled={sending} onClick={onSendSelvitys}>Lähetä väliselvityspyynnöt</button>
