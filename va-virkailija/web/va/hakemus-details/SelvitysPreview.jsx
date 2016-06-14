@@ -1,24 +1,13 @@
-import Bacon from 'baconjs'
-import HttpUtil from 'va-common/web/HttpUtil'
-import React, { Component } from 'react'
-import _ from 'lodash'
-import Immutable from 'seamless-immutable'
-
-import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
-import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
-import FormRules from 'soresu-form/web/form/FormRules'
-import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
-import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
-import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
-import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber.jsx'
-import VaChangeRequest from 'va-common/web/va/VaChangeRequest.jsx'
-
-import EditsDisplayingFormView from './EditsDisplayingFormView.jsx'
-import FakeFormController from '../form/FakeFormController.js'
-import FakeFormState from '../form/FakeFormState.js'
-import DateUtil from 'soresu-form/web/form/DateUtil'
-
-import style from '../style/formpreview.less'
+import React, {Component} from "react";
+import _ from "lodash";
+import FormContainer from "soresu-form/web/form/FormContainer.jsx";
+import FormRules from "soresu-form/web/form/FormRules";
+import FormBranchGrower from "soresu-form/web/form/FormBranchGrower";
+import VaComponentFactory from "va-common/web/va/VaComponentFactory";
+import VaPreviewComponentFactory from "va-common/web/va/VaPreviewComponentFactory";
+import EditsDisplayingFormView from "./EditsDisplayingFormView.jsx";
+import FakeFormController from "../form/FakeFormController.js";
+import FakeFormState from "../form/FakeFormState.js";
 
 export default class SelvitysPreview extends Component {
 
