@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 
 import DateUtil from 'soresu-form/web/form/DateUtil'
+import moment from 'moment'
 
 import HakuStatus from '../avustushaku/HakuStatus.jsx'
 import HakuPhase from '../avustushaku/HakuPhase.jsx'
@@ -19,9 +20,25 @@ export default class HakuListing extends Component {
         return haku => haku.status
       case "avustushaku":
         return haku => haku.content.name.fi
+      case "startdate":
+        return haku => haku.content.duration.start
+      case "enddate":
+        return haku => haku.content.duration.end
 
     }
     throw Error("No field getter for " + fieldName)
+  }
+
+  static _filterWithDatePredicate(fieldGetter, filterStart, filterEnd) {
+    if(_.isEmpty(filterStart) && _.isEmpty(filterEnd)) {
+      return () => true
+    }
+    return function(hakemus) {
+      const value = fieldGetter(hakemus)
+      const filterStartDate = _.isEmpty(filterStart) ? "" : moment(filterStart, "DD.MM.YYYY")
+      const filterEndDate = _.isEmpty(filterEnd) ? "" : moment(filterEnd, "DD.MM.YYYY")
+      return moment(value).startOf('day').isBetween(filterStartDate, filterEndDate, null, '[]');
+    }
   }
 
   render() {
@@ -37,6 +54,8 @@ export default class HakuListing extends Component {
       .filter(hakuList, HakemusListing._filterWithArrayPredicate(HakuListing._fieldGetter("status"), filter.status))
       .filter(HakemusListing._filterWithArrayPredicate(HakuListing._fieldGetter("phase"), filter.phase))
       .filter(HakemusListing._filterWithStrPredicate(HakuListing._fieldGetter("avustushaku"), filter.avustushaku))
+      .filter(HakuListing._filterWithDatePredicate(HakuListing._fieldGetter("startdate"), filter.startdatestart,filter.startdateend))
+      .filter(HakuListing._filterWithDatePredicate(HakuListing._fieldGetter("enddate"), filter.enddatestart,filter.enddateend))
 
     const hakuElements = _.map(filteredHakuList, haku => {
       return <HakuRow haku={haku} key={haku.id} selectedHaku={selectedHaku} controller={controller}/> })
@@ -66,8 +85,21 @@ export default class HakuListing extends Component {
                             filterField="phase"/>
 
             </th>
-            <th className="start-column">Haku alkaa</th>
-            <th className="end-column">Haku päättyy</th>
+            <th className="start-column">
+              <DateFilter controller={controller}
+                            filter={filter}
+                            label="Haku alkaa"
+                            filterField="startdate"/>
+
+
+
+            </th>
+            <th className="end-column">
+              <DateFilter controller={controller}
+                          filter={filter}
+                          label="Haku päättyy"
+                          filterField="enddate"/>
+            </th>
           </tr></thead>
           <tbody className="has-selected">
             {hakuElements}
@@ -158,6 +190,51 @@ class StatusFilter extends Component {
         <button type="button" hidden={!hasFilters} onClick={onDelete} className="filter-remove" alt="Poista tila rajaukset" title="Poista tila rajaukset" tabIndex="-1" />
         <div className="status-filter-popup popup-box-shadow" hidden={!this.state.open}>
              {statuses}
+        </div>
+      </div>
+    )
+  }
+}
+
+class DateFilter extends Component {
+  constructor(props) {
+    super(props)
+    this.handleClick = this.handleClick.bind(this)
+    this.render = this.render.bind(this)
+    this.state = { open: false,invalidstart:false,invalidend:false }
+  }
+
+  handleClick() {
+    this.setState({
+      open: !this.state.open
+    })
+  }
+
+  render() {
+    const {controller, filter, label, filterField} = this.props
+
+    const updateFilter = (type,event) => {
+      const value = event.target.value
+      const isValid = moment(value, ["D.M.YYYY"],true).isValid() || value==""
+      const stateChanges = {}
+      if(isValid){
+        controller.setFilter(filterField + type, value)
+      }
+      stateChanges[`invalid${type}`] = !isValid
+      this.setState(stateChanges)
+    }
+
+    const startValue = filter[filterField + "start"]
+    const endValue = filter[filterField + "end"]
+
+    return (
+      <div className="status-filter">
+        <a onClick={this.handleClick}>{label}</a>
+        <div className="status-filter-popup popup-box-shadow" hidden={!this.state.open}>
+             <label>Alkaen</label>
+             <input type="text" onBlur={_.partial(updateFilter,'start')} className={this.state.invalidstart ? 'error' : ''} placeholder="p.k.vvvv" defaultValue={startValue}/>
+             <label>Loppuu</label>
+          <input type="text" onBlur={_.partial(updateFilter,'end')} className={this.state.invalidend ? 'error' : ''}  placeholder="p.k.vvvv" defaultValue={endValue}/>
         </div>
       </div>
     )

@@ -151,7 +151,11 @@ export default class HakujenHallintaController {
       filter:{
         status:HakuStatuses.allStatuses(),
         phase:HakuPhases.allStatuses(),
-        avustushaku: ""
+        avustushaku: "",
+        startdatestart:"",
+        startdateend:"",
+        enddatestart:moment().subtract(2, 'year').format('D.M.YYYY'),
+        enddateend:""
       }
     }
 
