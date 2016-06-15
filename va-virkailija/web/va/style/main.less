@@ -4,26 +4,7 @@
 #editor-subtab-selector {
   margin: 10px 0;
 }
-.status-filter {
-  position: relative;
-  display: inline-block;
-  .status-filter-popup {
-    color: @selected-blue;
-    position: absolute;
-    padding: 10px;
-    width: 160px;
-    background-color: @off-white;
-    font-size: 12px;
-    line-height: 1.7em;
-    top: 37px;
-    left: -20px;
-    input[type=checkbox] {
-      margin-right: 5px;
-    }
-    .box-triangle(22px);
-    .box-triangle-up(@off-white, @off-white);
-  }
-}
+
 
 table.hakemus-list {
   .organization-column, .project-name-column {
@@ -107,17 +88,6 @@ table.hakemus-list {
     text-align: center;
   }
   th {
-    button.filter-remove {
-      background: transparent url('../img/remove_line_enabled.png') no-repeat center;
-      background-size: 14px 14px;
-      border-width: 0;
-      margin: 0;
-      height: 22px;
-      float: right;
-    }
-    button.filter-remove:focus {
-      outline: none;
-    }
     input.text-filter {
       padding-left: 4px;
       .input-placeholder({

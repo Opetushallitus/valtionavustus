@@ -16,8 +16,7 @@ import admin from './style/admin.less'
 
 export default class AdminApp extends Component {
   render() {
-    const state = this.props.state
-    const controller = this.props.controller
+    const {state, controller} = this.props
     const environment =  state.environment
     const selectedHaku = state.selectedHaku ? state.selectedHaku : {}
     const translations = state.translations
@@ -27,6 +26,7 @@ export default class AdminApp extends Component {
         <section id="container">
           <HakuListing hakuList={state.hakuList}
                        selectedHaku={state.selectedHaku}
+                       filter={state.filter}
                        controller={controller}
           />
           <EditorSelector subTab={state.subTab}

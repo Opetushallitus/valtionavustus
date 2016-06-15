@@ -11,7 +11,9 @@ import LocalStorage from './LocalStorage'
 import LdapSearchParameters from './haku-details/LdapSearchParameters.js'
 import LoppuselvitysForm from './data/LoppuselvitysForm.json'
 import ValiselvitysForm from './data/ValiselvitysForm.json'
-import FormUtil from "../../../soresu-form/web/form/FormUtil";
+import FormUtil from "../../../soresu-form/web/form/FormUtil"
+import HakuStatuses from './haku-details/HakuStatuses'
+import HakuPhases from './haku-details/HakuPhases'
 const dispatcher = new Dispatcher()
 
 const events = {
@@ -41,6 +43,7 @@ const events = {
   deleteFocusArea: 'deleteFocusArea',
   beforeUnload: 'beforeUnload',
   selectEditorSubTab: 'selectEditorSubTab',
+  setFilter: 'onSetFilter',
   ldapSearchStarted: 'ldapSearchStarted',
   ldapSearchFinished: 'ldapSearchFinished',
   ensureKoodistosLoaded: 'ensureKoodistosLoaded',
@@ -144,6 +147,11 @@ export default class HakujenHallintaController {
         content: null,
         loading: false
       }
+      ,
+      filter:{
+        status:HakuStatuses.allStatuses(),
+        phase:HakuPhases.allStatuses()
+      }
     }
 
     const initialState = Bacon.combineTemplate(initialStateTemplate)
@@ -198,6 +206,7 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.ldapSearchStarted)], this.onStartLdapSearch,
       [dispatcher.stream(events.ldapSearchFinished)], this.onLdapSearchFinished,
       [dispatcher.stream(events.ensureKoodistosLoaded)], this.onEnsureKoodistoLoaded,
+      [dispatcher.stream(events.setFilter)], this.onSetFilter,
       [dispatcher.stream(events.koodistosLoaded)], this.onKoodistosLoaded
     )
 
@@ -724,4 +733,15 @@ export default class HakujenHallintaController {
   selectEditorSubtab(subTabToSelect) {
     dispatcher.push(events.selectEditorSubTab, subTabToSelect)
   }
+
+  setFilter(filterId, newFilter) {
+    dispatcher.push(events.setFilter, {filterId: filterId, filter: newFilter})
+  }
+
+  onSetFilter(state, newFilter) {
+    state.filter[newFilter.filterId] = newFilter.filter
+    return state
+  }
+
+
 }
