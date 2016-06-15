@@ -73,6 +73,7 @@ export default class HakuListing extends Component {
             {hakuElements}
           </tbody>
         </table>
+        <p style={{fontSize:13}}>{filteredHakuList.length}/{hakuList.length} {} hakua</p>
       </div>
     )
   }
