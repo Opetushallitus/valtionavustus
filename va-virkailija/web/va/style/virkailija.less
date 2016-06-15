@@ -629,3 +629,16 @@ button.filter-remove {
     outline: none;
   }
 }
+
+input.text-filter {
+  padding-left: 4px;
+  .input-placeholder({
+    color: @form-label-black;
+  });
+  &:focus{
+    outline: none;
+    .input-placeholder({
+      color: @light-gray;
+    })
+  }
+}

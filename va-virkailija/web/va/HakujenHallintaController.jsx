@@ -150,7 +150,8 @@ export default class HakujenHallintaController {
       ,
       filter:{
         status:HakuStatuses.allStatuses(),
-        phase:HakuPhases.allStatuses()
+        phase:HakuPhases.allStatuses(),
+        avustushaku: ""
       }
     }
 

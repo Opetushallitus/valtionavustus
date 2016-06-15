@@ -17,6 +17,8 @@ export default class HakuListing extends Component {
         return haku => haku.phase
       case "status":
         return haku => haku.status
+      case "avustushaku":
+        return haku => haku.content.name.fi
 
     }
     throw Error("No field getter for " + fieldName)
@@ -25,9 +27,16 @@ export default class HakuListing extends Component {
   render() {
     const {hakuList, selectedHaku, controller, filter} = this.props
 
-    const filteredHakuList = _.
-      filter(hakuList, HakemusListing._filterWithArrayPredicate(HakuListing._fieldGetter("status"), filter.status)).
-      filter(HakemusListing._filterWithArrayPredicate(HakuListing._fieldGetter("phase"), filter.phase))
+    const onFilterChange = function(filterId) {
+      return (e) => {
+        controller.setFilter(filterId, e.target.value)
+      }
+    }
+
+    const filteredHakuList = _
+      .filter(hakuList, HakemusListing._filterWithArrayPredicate(HakuListing._fieldGetter("status"), filter.status))
+      .filter(HakemusListing._filterWithArrayPredicate(HakuListing._fieldGetter("phase"), filter.phase))
+      .filter(HakemusListing._filterWithStrPredicate(HakuListing._fieldGetter("avustushaku"), filter.avustushaku))
 
     const hakuElements = _.map(filteredHakuList, haku => {
       return <HakuRow haku={haku} key={haku.id} selectedHaku={selectedHaku} controller={controller}/> })
@@ -35,7 +44,9 @@ export default class HakuListing extends Component {
       <div className="section-container">
         <table key="hakuListing" className="haku-list overview-list">
           <thead><tr>
-            <th className="name-column">Avustushaku</th>
+            <th className="name-column">
+              <input className="text-filter" style={{width:300}} placeholder="Avustushaku" onChange={onFilterChange("avustushaku")} value={filter.avustushaku}></input>
+            </th>
             <th className="status-column">
               <StatusFilter controller={controller}
                             hakuList={hakuList}
