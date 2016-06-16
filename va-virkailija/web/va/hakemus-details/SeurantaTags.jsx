@@ -18,7 +18,7 @@ export default class SeurantaTags extends Component {
       controller.setTags(hakemus,newTags)
     }
 
-    const predefinedTags = ["budjetti lisäaika", "tarkista"]
+    const predefinedTags = ["budjettimuutos", "sisällön muutos", "lisäaika"]
     const hakuUsedTags = _.uniq(_.flatten(hakuData.hakemukset.map((i)=>_.get(i, 'arvio.tags.value'))))
     var allTags = _.sortBy(_.uniq(hakuUsedTags.concat(predefinedTags)))
 
