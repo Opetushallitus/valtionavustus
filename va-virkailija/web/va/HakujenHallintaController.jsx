@@ -47,7 +47,8 @@ const events = {
   ldapSearchStarted: 'ldapSearchStarted',
   ldapSearchFinished: 'ldapSearchFinished',
   ensureKoodistosLoaded: 'ensureKoodistosLoaded',
-  koodistosLoaded: 'koodistosLoaded'
+  koodistosLoaded: 'koodistosLoaded',
+  clearFilters: 'clearFilters'
 }
 
 function appendBudgetComponent(selvitysType, avustushaku) {
@@ -212,7 +213,8 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.ldapSearchFinished)], this.onLdapSearchFinished,
       [dispatcher.stream(events.ensureKoodistosLoaded)], this.onEnsureKoodistoLoaded,
       [dispatcher.stream(events.setFilter)], this.onSetFilter,
-      [dispatcher.stream(events.koodistosLoaded)], this.onKoodistosLoaded
+      [dispatcher.stream(events.koodistosLoaded)], this.onKoodistosLoaded,
+      [dispatcher.stream(events.clearFilters)], this.onClearFilters
     )
 
     function consolidateSubTabSelectionWithUrl() {
@@ -745,6 +747,23 @@ export default class HakujenHallintaController {
 
   onSetFilter(state, newFilter) {
     state.filter[newFilter.filterId] = newFilter.filter
+    return state
+  }
+
+  clearFilters(){
+    dispatcher.push(events.clearFilters)
+  }
+
+  onClearFilters(state){
+    state.filter = {
+      status:HakuStatuses.allStatuses(),
+      phase:HakuPhases.allStatuses(),
+      avustushaku: "",
+      startdatestart:"",
+      startdateend:"",
+      enddatestart:"",
+      enddateend:""
+    }
     return state
   }
 

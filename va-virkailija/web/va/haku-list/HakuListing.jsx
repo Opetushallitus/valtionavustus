@@ -57,6 +57,20 @@ export default class HakuListing extends Component {
       .filter(HakuListing._filterWithDatePredicate(HakuListing._fieldGetter("startdate"), filter.startdatestart,filter.startdateend))
       .filter(HakuListing._filterWithDatePredicate(HakuListing._fieldGetter("enddate"), filter.enddatestart,filter.enddateend))
 
+    const onRemoveFilters = () => {
+      controller.clearFilters()
+    }
+
+    const hasFilters =
+      filter.status.length!=HakuStatuses.allStatuses().length ||
+      filter.phase.length!=HakuPhases.allStatuses().length ||
+      filter.avustushaku.length>0 ||
+      filter.startdatestart.length>0 ||
+      filter.startdateend.length>0 ||
+      filter.enddatestart.length>0 ||
+      filter.enddateend.length>0
+
+
     const hakuElements = _.map(filteredHakuList, haku => {
       return <HakuRow haku={haku} key={haku.id} selectedHaku={selectedHaku} controller={controller}/> })
     return (
@@ -65,6 +79,7 @@ export default class HakuListing extends Component {
           <thead><tr>
             <th className="name-column">
               <input className="text-filter" style={{width:300}} placeholder="Avustushaku" onChange={onFilterChange("avustushaku")} value={filter.avustushaku}></input>
+              {hasFilters && <a className="haku-filter-remove" onClick={onRemoveFilters}>Poista rajaimet</a>}
             </th>
             <th className="status-column">
               <StatusFilter controller={controller}
@@ -216,25 +231,31 @@ class DateFilter extends Component {
     const updateFilter = (type,event) => {
       const value = event.target.value
       const isValid = moment(value, ["D.M.YYYY"],true).isValid() || value==""
-      const stateChanges = {}
       if(isValid){
         controller.setFilter(filterField + type, value)
       }
+      const stateChanges = {start:undefined,end:undefined}
       stateChanges[`invalid${type}`] = !isValid
       this.setState(stateChanges)
     }
 
-    const startValue = filter[filterField + "start"]
-    const endValue = filter[filterField + "end"]
+    const startValue = this.state["start"] || filter[filterField + "start"]
+    const endValue = this.state["end"] || filter[filterField + "end"]
+
+    const onChange = (type,event) => {
+      const newState = {}
+      newState[type] = event.target.value
+      this.setState(newState)
+    }
 
     return (
       <div className="status-filter">
         <a onClick={this.handleClick}>{label}</a>
         <div className="status-filter-popup popup-box-shadow" hidden={!this.state.open}>
              <label>Alkaen</label>
-             <input type="text" onBlur={_.partial(updateFilter,'start')} className={this.state.invalidstart ? 'error' : ''} placeholder="p.k.vvvv" defaultValue={startValue}/>
+             <input type="text" onBlur={_.partial(updateFilter,'start')} onChange={_.partial(onChange,'start')} className={this.state.invalidstart ? 'error' : ''} placeholder="p.k.vvvv" value={startValue}/>
              <label>Loppuu</label>
-          <input type="text" onBlur={_.partial(updateFilter,'end')} className={this.state.invalidend ? 'error' : ''}  placeholder="p.k.vvvv" defaultValue={endValue}/>
+          <input type="text" onBlur={_.partial(updateFilter,'end')} onChange={_.partial(onChange,'end')} className={this.state.invalidend ? 'error' : ''}  placeholder="p.k.vvvv" value={endValue}/>
         </div>
       </div>
     )
