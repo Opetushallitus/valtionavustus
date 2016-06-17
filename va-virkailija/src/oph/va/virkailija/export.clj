@@ -28,6 +28,8 @@
    ["fixed-budget-granted" "Myönnetty avustus" (comp :budget-granted :arvio) {:fieldType "numberField"}]
    ["fixed-score-total-average" "Arviokeskiarvo" (comp :score-total-average :scoring :arvio) {:fieldType "numberField"}]])
 
+(def maksu-sheet-name "Tiliöinti")
+
 (defn third [list] (nth list 2))
 (defn fourth [list] (nth list 3))
 
@@ -239,15 +241,109 @@
         (comp :budget-granted :arvio)
         (comp :score-total-average :scoring :arvio)))
 
+
+(def maksu-columns ["Maksuerä"
+                    "Toimittaja-numero"
+                    "Toimittajan nimi"
+                    "Pankkitili"
+                    "Maksuliike-menotili"
+                    "Eräpvm"
+                    "EUR"
+                    "Maksu ehto"
+                    "Val"
+                    "Pitkä viite"
+                    "Laskun päivämäärä"
+                    "Tositelaji"
+                    "Tosite-päivä"
+                    "LKP-TILI"
+                    "ALV-koodi"
+                    "Tiliöinti-summa"
+                    "Toiminta-yksikkö"
+                    "TaKp-tili"
+                    "Valtuus-numero"
+                    "Projekti"
+                    "Toiminto"
+                    "Suorite"
+                    "Alue / Kunta"
+                    "Kumppani"
+                    "Seuranta kohde 1"
+                    "Seuranta kohde 2"
+                    "Varalla 1"
+                    "Varalla 1"
+                    "KOM-yksikkö"
+                    "Selite (Tiliöinti)"
+                    "Asiatarkastajan sähiköpostiosoite"
+                    "Hyväksyjän sähiköpostiosoite"
+                    "OPH:n avustuksen osuus"])
+
+
+
+
+(def hakemus->maksu-rows
+  (juxt (constantly 1)
+        (constantly "")
+        :organization-name
+        :iban
+        (constantly "FI1950000121501406")
+        (constantly "30112015")
+        (comp :budget-granted :arvio)
+        (constantly "EUR")
+        (constantly "Z001")
+        :register-number
+        :paatos-date
+        (constantly "XA")
+        :paatos-date
+        :lkp
+        (constantly "")
+        (comp :budget-granted :arvio)
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        :budget-oph-share
+        ))
+
 (defn- fit-columns [columns sheet]
   ;; Make columns fit the data
   (doseq [index (range 0 (count columns))]
     (.autoSizeColumn sheet index)))
 
+(def lkp-map {:kunta-kuntayhtymae 8200
+             :julkisoikeudellinen-yhteisoe 8250
+             :yliopisto 8293
+             :yksityinen-yhteisoe 8230
+             :valtio 8295
+             })
+
+(defn add-paatos-data [paatos-date hakemus]
+  (let [answers (:answers hakemus)
+        answers-values {:value answers}
+        iban (formutil/find-answer-value answers-values "bank-iban")
+        lkp-answer (formutil/find-answer-value answers-values "radioButton-0")
+        lkp (get lkp-map lkp-answer)]
+    (assoc hakemus :paatos-date paatos-date :iban iban :lkp lkp)))
+
 (defn export-avustushaku [avustushaku-id]
-  (let [avustushaku (hakudata/get-combined-avustushaku-data avustushaku-id)
-        hakemus-list (->> (avustushaku->hakemukset avustushaku)
+  (let [avustushaku-combined (hakudata/get-combined-avustushaku-data avustushaku-id)
+        avustushaku (:avustushaku avustushaku-combined)
+        paatos-date (-> avustushaku :decision :date)
+        hakemus-list (->> (avustushaku->hakemukset avustushaku-combined)
                           (sort-by first))
+        map-paatos-data (partial add-paatos-data paatos-date)
+        accepted-list (filter #(= "accepted" (-> % :arvio :status)) hakemus-list)
+        accepted-list-paatos (mapv map-paatos-data accepted-list)
 
         output (ByteArrayOutputStream.)
 
@@ -258,9 +354,9 @@
         main-sheet (spreadsheet/select-sheet main-sheet-name wb)
         main-header-row (first (spreadsheet/row-seq main-sheet))
 
-        growing-fieldset-lut (generate-growing-fieldset-lut avustushaku)
+        growing-fieldset-lut (generate-growing-fieldset-lut avustushaku-combined)
 
-        answer-key-label-type-triples (avustushaku->formlabels avustushaku growing-fieldset-lut)
+        answer-key-label-type-triples (avustushaku->formlabels avustushaku-combined growing-fieldset-lut)
 
         answer-keys (apply conj
                            (mapv first answers-fixed-fields)
@@ -272,21 +368,31 @@
                             (mapv fourth answers-fixed-fields)
                             (mapv third answer-key-label-type-triples))
 
-        answer-flatdata (flatten-answers avustushaku answer-keys answer-labels answer-types)
+        answer-flatdata (flatten-answers avustushaku-combined answer-keys answer-labels answer-types)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
                         (spreadsheet/add-rows! sheet answer-flatdata)
                         sheet)
         answers-header-row (first (spreadsheet/row-seq answers-sheet))
 
+        maksu-rows (mapv hakemus->maksu-rows accepted-list-paatos)
+        maksu-sheet (let [sheet (spreadsheet/add-sheet! wb maksu-sheet-name)
+                          rows (apply conj [maksu-columns] maksu-rows)]
+                      (spreadsheet/add-rows! sheet rows)
+                      sheet)
+        maksu-header-row (first (spreadsheet/row-seq maksu-sheet))
+
+
         header-style (spreadsheet/create-cell-style! wb {:background :yellow
-                                                         :font {:bold true}})]
+                                                         :font       {:bold true}})]
 
     (fit-columns main-sheet-columns main-sheet)
     (fit-columns answer-keys answers-sheet)
+    (fit-columns maksu-columns maksu-sheet)
 
     ;; Style first row
     (spreadsheet/set-row-style! main-header-row header-style)
     (spreadsheet/set-row-style! answers-header-row header-style)
+    (spreadsheet/set-row-style! maksu-header-row header-style)
 
     (.write wb output)
     (ByteArrayInputStream. (.toByteArray output))))
