@@ -273,8 +273,7 @@
                     "KOM-yksikkö"
                     "Selite (Tiliöinti)"
                     "Asiatarkastajan sähiköpostiosoite"
-                    "Hyväksyjän sähiköpostiosoite"
-                    "OPH:n avustuksen osuus"])
+                    "Hyväksyjän sähiköpostiosoite"])
 
 
 
@@ -312,7 +311,6 @@
         (constantly "")
         (constantly "")
         (constantly "")
-        :budget-oph-share
         ))
 
 (defn- fit-columns [columns sheet]
