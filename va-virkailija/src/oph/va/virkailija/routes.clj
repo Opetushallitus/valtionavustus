@@ -521,10 +521,6 @@
 
             )
 
-(defn- on-liite [id lang]
-  (let [hakija-app-url (-> config :server :url :fi)
-        liite-url (str hakija-app-url "liitteet/" id "_" lang ".pdf")]
-    (resp/redirect liite-url)))
 
 (defroutes* public-routes
             "Public API"
@@ -548,11 +544,7 @@
                     (if-let [response (hakudata/get-final-combined-paatos-data hakemus-id)]
                       (-> (ok response)
                           (assoc-in [:headers "Access-Control-Allow-Origin"] "*"))
-                      (not-found))))
-
-            (GET* "/liite/:liite-id/:lang" []
-                  :path-params [liite-id :- s/Str, lang :- s/Str]
-                  (on-liite liite-id lang)))
+                      (not-found)))))
 
 (defroutes* userinfo-routes
             "User information"
