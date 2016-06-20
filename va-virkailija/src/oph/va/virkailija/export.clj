@@ -285,13 +285,13 @@
     formatted))
 
 (def hakemus->maksu-rows
-  (juxt (constantly 1)
+  (juxt :era
         (constantly "")
         :organization-name
         :iban
         (constantly "FI1950000121501406")
         (constantly "")
-        (comp :budget-granted :arvio)
+        :payment
         (constantly "EUR")
         (constantly "Z001")
         :register-number
@@ -300,7 +300,7 @@
         :paatos-date
         :lkp
         (constantly "")
-        (comp :budget-granted :arvio)
+        :payment
         (constantly "")
         (constantly "")
         (constantly "")
@@ -341,6 +341,22 @@
         ]
     (assoc hakemus :paatos-date formatted-paatos-date :iban iban :lkp lkp)))
 
+(defn split-multiple-maksuera-if-needed [has-multiple-maksuera hakemus]
+  (let [arvio (:arvio hakemus)
+        total-paid (:budget-granted arvio)
+        multiple-maksuera (and has-multiple-maksuera (> total-paid 60000))
+        first-round-paid (if multiple-maksuera (Math/round (* 0.6 total-paid)) total-paid)
+        second-round-paid (Math/round (* 0.4 total-paid))
+        hakemus1 (assoc hakemus :era 1 :payment first-round-paid)
+        hakemus2 (assoc hakemus :era 2 :payment second-round-paid)
+        ]
+    (if multiple-maksuera
+      [hakemus1 hakemus2]
+      [hakemus1]
+      )
+    ))
+
+
 (defn export-avustushaku [avustushaku-id]
   (let [avustushaku-combined (hakudata/get-combined-avustushaku-data avustushaku-id)
         avustushaku (:avustushaku avustushaku-combined)
@@ -348,8 +364,12 @@
         hakemus-list (->> (avustushaku->hakemukset avustushaku-combined)
                           (sort-by first))
         map-paatos-data (partial add-paatos-data paatos-date)
+        has-multiple-maksuera (-> avustushaku :content :multiplemaksuera)
         accepted-list (filter #(= "accepted" (-> % :arvio :status)) hakemus-list)
-        accepted-list-paatos (mapv map-paatos-data accepted-list)
+        map-split-multiple (partial split-multiple-maksuera-if-needed has-multiple-maksuera)
+        accepted-list-multiple-maksuera-1 (mapv map-split-multiple accepted-list)
+        accepted-list-multiple-maksuera-2 (flatten accepted-list-multiple-maksuera-1)
+        accepted-list-paatos (mapv map-paatos-data accepted-list-multiple-maksuera-2)
 
         output (ByteArrayOutputStream.)
 
