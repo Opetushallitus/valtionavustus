@@ -525,6 +525,13 @@
 (defroutes* public-routes
             "Public API"
 
+            (GET* "/avustushaku/:avustushaku-id/paatokset" [avustushaku-id :as request]
+                  :path-params [avustushaku-id :- Long]
+                  :return s/Any
+                  :summary "Get paatokset"
+                  :description "Get paatokset public info"
+                    (ok (hakudata/get-avustushaku-and-paatokset avustushaku-id)))
+
             (GET* "/avustushaku/:avustushaku-id/selvitys/:user-key/overridden-answers" [avustushaku-id user-key :as request]
                   :path-params [avustushaku-id :- Long, user-key :- s/Str]
                   :return s/Any

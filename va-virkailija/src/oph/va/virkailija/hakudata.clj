@@ -2,6 +2,7 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.scoring :as scoring]
+            [oph.soresu.form.formutil :as formutil]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.authorization :as authorization]
             [clj-time.core :as clj-time]))
@@ -88,6 +89,38 @@
       (->> avustushaku
            add-arviot
            (add-scores scores)))))
+
+(defn- hakemus->hakemus-simple [hakemus]
+  (let [answers {:value (:answers hakemus)}
+        paatos-status (-> hakemus :arvio :status)
+        arvio-statuses {:unhandled "Käsittelemättä"
+                        :processing "Käsittelyssä"
+                        :plausible "Mahdollinen"
+                        :rejected "Hylätty"
+                        :accepted "Hyväksytty"}
+        paatos-clear (get arvio-statuses (keyword paatos-status))]
+    {:projektin_nimi (:project-name hakemus)
+     :tavoitteet (formutil/find-answer-value answers "project-goals")
+     :organisaation_nimi (:organization-name hakemus)
+     :budjetti_myonnetty (:budget-total hakemus)
+     :diaarinumero (:register-number hakemus)
+     :paatos paatos-clear
+     :perustelut (-> hakemus :arvio :perustelut)}))
+
+
+(defn get-avustushaku-and-paatokset
+  [avustushaku-id]
+  (let [avustushaku-combined (get-combined-avustushaku-data avustushaku-id)
+        avustushaku (:avustushaku avustushaku-combined)
+        avustushaku-simple {:nimi (-> avustushaku :content :name :fi)
+                            :nimi_sv (-> avustushaku :content :name :sv)
+                            :alkoi (-> avustushaku :content :duration :start)
+                            :loppui (-> avustushaku :content :duration :end)
+                            }
+        hakemukset (:hakemukset avustushaku-combined)
+        hakemukset-submitted (filter #(= "submitted" (:status %)) hakemukset)
+        hakemukset-simple (mapv hakemus->hakemus-simple hakemukset-submitted)]
+    {:avustushaku avustushaku-simple :hakemukset hakemukset-simple}))
 
 (defn get-combined-paatos-data [hakemus-id]
     (when-let [paatosdata (hakija-api/get-hakemusdata hakemus-id)]
