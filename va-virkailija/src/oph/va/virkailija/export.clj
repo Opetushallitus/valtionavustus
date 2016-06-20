@@ -2,11 +2,14 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.java.io :as io]
             [clojure.set :refer :all]
+            [clj-time.core :as clj-time]
+            [clj-time.format :as clj-time-format]
             [dk.ative.docjure.spreadsheet :as spreadsheet]
             [oph.soresu.form.formutil :as formutil]
             [oph.soresu.form.formhandler :as formhandler]
             [oph.va.virkailija.hakudata :as hakudata])
-  (:import [java.io ByteArrayOutputStream ByteArrayInputStream]))
+  (:import [java.io ByteArrayOutputStream ByteArrayInputStream] (org.joda.time DateTime))
+  )
 
 (def main-sheet-name "Hakemukset")
 (def main-sheet-columns ["Diaarinumero"
@@ -276,7 +279,10 @@
                     "Hyväksyjän sähiköpostiosoite"])
 
 
-
+(defn format-date [date-string]
+  (let [date (clj-time-format/parse (clj-time-format/formatter "dd.MM.YYYY") date-string)
+        formatted (.print (clj-time-format/formatter "yyyy-dd-MM") date)]
+    formatted))
 
 (def hakemus->maksu-rows
   (juxt (constantly 1)
@@ -284,7 +290,7 @@
         :organization-name
         :iban
         (constantly "FI1950000121501406")
-        (constantly "30112015")
+        (constantly "")
         (comp :budget-granted :arvio)
         (constantly "EUR")
         (constantly "Z001")
@@ -330,8 +336,10 @@
         answers-values {:value answers}
         iban (formutil/find-answer-value answers-values "bank-iban")
         lkp-answer (formutil/find-answer-value answers-values "radioButton-0")
-        lkp (get lkp-map lkp-answer)]
-    (assoc hakemus :paatos-date paatos-date :iban iban :lkp lkp)))
+        lkp (get lkp-map lkp-answer)
+        formatted-paatos-date (format-date paatos-date)
+        ]
+    (assoc hakemus :paatos-date formatted-paatos-date :iban iban :lkp lkp)))
 
 (defn export-avustushaku [avustushaku-id]
   (let [avustushaku-combined (hakudata/get-combined-avustushaku-data avustushaku-id)
