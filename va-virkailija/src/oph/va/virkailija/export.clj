@@ -281,7 +281,7 @@
 
 (defn format-date [date-string]
   (let [date (clj-time-format/parse (clj-time-format/formatter "dd.MM.YYYY") date-string)
-        formatted (.print (clj-time-format/formatter "yyyy-dd-MM") date)]
+        formatted (.print (clj-time-format/formatter "ddMMyyyy") date)]
     formatted))
 
 (def hakemus->maksu-rows
