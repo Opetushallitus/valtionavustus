@@ -336,10 +336,11 @@
         answers-values {:value answers}
         iban (formutil/find-answer-value answers-values "bank-iban")
         lkp-answer (formutil/find-answer-value answers-values "radioButton-0")
-        lkp (get lkp-map lkp-answer)
+        lkp (get lkp-map (keyword lkp-answer))
+        lkp-padded (if lkp (str lkp " 0000") lkp)
         formatted-paatos-date (format-date paatos-date)
         ]
-    (assoc hakemus :paatos-date formatted-paatos-date :iban iban :lkp lkp)))
+    (assoc hakemus :paatos-date formatted-paatos-date :iban iban :lkp lkp-padded)))
 
 (defn split-multiple-maksuera-if-needed [has-multiple-maksuera hakemus]
   (let [arvio (:arvio hakemus)
