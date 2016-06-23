@@ -326,6 +326,7 @@
 
 (def lkp-map {:kunta-kuntayhtymae 8200
              :julkisoikeudellinen-yhteisoe 8250
+             :rekisteroeity-yhteisoe-tai-saeaetioe 8250
              :yliopisto 8293
              :yksityinen-yhteisoe 8230
              :valtio 8295
