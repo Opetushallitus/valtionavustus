@@ -165,6 +165,7 @@
         answers-field (:answers hakemus)
         answers {:value answers-field}
         roles (:roles haku-data)
+        presenting-officers (filter #(= (:role %) "presenting_officer") roles)
         arvio (:arvio hakemus)
         decision-status (:status arvio)
         accepted (not= decision-status "rejected")
@@ -172,7 +173,7 @@
         arvio-role (first (filter #(= (:id %) arvio-role-id) roles))
         self-financing-percentage (-> avustushaku :content :self-financing-percentage)
         oph-financing-percentage (- 100 self-financing-percentage)
-        role (if (nil? arvio-role) (first roles) arvio-role)
+        role (if (nil? arvio-role) (first presenting-officers) arvio-role)
         language-answer (formutil/find-answer-value answers "language")
         language (if lang
                    (keyword lang)
