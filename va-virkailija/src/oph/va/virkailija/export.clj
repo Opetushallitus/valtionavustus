@@ -304,7 +304,7 @@
         (constantly "")
         (constantly "")
         (constantly "")
-        (constantly "")
+        :project-name
         (constantly "")
         (constantly "")
         (constantly "")
@@ -340,8 +340,12 @@
         lkp (get lkp-map (keyword lkp-answer))
         lkp-padded (if lkp (str lkp " 0000") lkp)
         formatted-paatos-date (format-date paatos-date)
+        project-name (:project-name hakemus)
         ]
-    (assoc hakemus :paatos-date formatted-paatos-date :iban iban :lkp lkp-padded)))
+    (assoc hakemus  :paatos-date formatted-paatos-date
+                    :iban iban
+                    :lkp lkp-padded
+                    :project-name project-name)))
 
 (defn split-multiple-maksuera-if-needed [has-multiple-maksuera hakemus]
   (let [arvio (:arvio hakemus)
