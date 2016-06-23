@@ -101,6 +101,7 @@
         paatos-clear (get arvio-statuses (keyword paatos-status))]
     {:projektin_nimi (:project-name hakemus)
      :tavoitteet (formutil/find-answer-value answers "project-goals")
+     :www_osoite (formutil/find-answer-value answers "project-www")
      :organisaation_nimi (:organization-name hakemus)
      :budjetti_myonnetty (:budget-total hakemus)
      :diaarinumero (:register-number hakemus)
