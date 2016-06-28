@@ -322,6 +322,10 @@
       "fi":"Lisätietoja antaa",
       "sv":"Mer information ger"
     },
+    "muutoksenhaku":{
+      "fi":"Muutoksenhaku",
+      "sv":"Överklagande"
+    },
     "lisatietoja-sisalto":{
       "fi":"Tähän päätökseen ei saa hakea muutosta valittamalla (valtionavustuslaki 34 §). Päätökseen tyytymätön asianosainen voi hakea oikaisua liitteenä olevan oikaisuvaatimusosoituksen mukaisesti.",
       "sv":"Ändring i detta beslut får inte sökas genom besvär (statsunderstödslagen 34 §). En part som är missnöjd med beslutet kan söka rättelse i det i enlighet med bifogade anvisning om rättelseyrkande."
