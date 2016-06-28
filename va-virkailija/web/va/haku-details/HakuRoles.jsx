@@ -139,7 +139,7 @@ class RoleRow extends React.Component {
         </td>
         <td className={oidStatusClass}>{oidStatusText}</td>
         <td><input type="text" value={role.name} name="name" onChange={this.handleChange}/></td>
-        <td>{role.email}</td>
+        <td><input type="text" value={role.email} name="email" onChange={this.handleChange}/></td>
         <td><button type="button" onClick={onDelete} className="remove" alt="Poista" title={removeTitleText} tabIndex="-1" disabled={disableEditing} /></td>
       </tr>
     )
