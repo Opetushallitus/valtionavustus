@@ -164,11 +164,12 @@ const SummaryTableRow = ({label,count,applied,granted}) =>(
 export default class SummaryListing extends Component {
   render() {
     const hakemusList = this.props.hakemusList
-    const hakemusCount = hakemusList.length
+    const hakemusListSorted = _.sortBy(hakemusList,'organization-name')
+    const hakemusCount = hakemusListSorted.length
     const heading = SummaryListing.arvioStatusFiForSummary(this.props.arvioStatus) + " (" + hakemusCount + ")"
-    const ophShareSum = SumByOphShare(hakemusList)
-    const hakemusElements = hakemusList.map(hakemus => <HakemusRow key={hakemus.id} hakemus={hakemus} />)
-    const budgetGrantedSum = SumByBudgetGranted(hakemusList)
+    const ophShareSum = SumByOphShare(hakemusListSorted)
+    const hakemusElements = hakemusListSorted.map(hakemus => <HakemusRow key={hakemus.id} hakemus={hakemus} />)
+    const budgetGrantedSum = SumByBudgetGranted(hakemusListSorted)
 
     return (
       <table key="hakemusListing" className="hakemus-list overview-list">
