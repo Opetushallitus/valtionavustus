@@ -302,7 +302,7 @@
         (constantly "")
         :payment
         (constantly "")
-        (constantly "")
+        :rahoitusalue
         (constantly "")
         (constantly "")
         (constantly "6600151502")
@@ -335,16 +335,18 @@
 (defn add-paatos-data [paatos-date hakemus]
   (let [answers (:answers hakemus)
         answers-values {:value answers}
+        arvio (:arvio hakemus)
+        rahoitusalue (:rahoitusalue arvio)
         iban (formutil/find-answer-value answers-values "bank-iban")
         iban-formatted (remove-white-spaces iban)
         lkp-answer (formutil/find-answer-value answers-values "radioButton-0")
         lkp (get lkp-map (keyword lkp-answer))
         lkp-padded (if lkp (str lkp " 0000") lkp)
-        formatted-paatos-date (format-date paatos-date)
-        ]
+        formatted-paatos-date (format-date paatos-date)]
     (assoc hakemus  :paatos-date formatted-paatos-date
                     :iban iban-formatted
-                    :lkp lkp-padded)))
+                    :lkp lkp-padded
+                    :rahoitusalue rahoitusalue)))
 
 (defn split-multiple-maksuera-if-needed [has-multiple-maksuera hakemus]
   (let [arvio (:arvio hakemus)
