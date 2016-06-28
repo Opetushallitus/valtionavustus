@@ -376,7 +376,8 @@
         map-split-multiple (partial split-multiple-maksuera-if-needed has-multiple-maksuera)
         accepted-list-multiple-maksuera-1 (mapv map-split-multiple accepted-list)
         accepted-list-multiple-maksuera-2 (flatten accepted-list-multiple-maksuera-1)
-        accepted-list-paatos (mapv map-paatos-data accepted-list-multiple-maksuera-2)
+        accepted-list-sorted (sort-by :organization-name accepted-list-multiple-maksuera-2)
+        accepted-list-paatos (mapv map-paatos-data accepted-list-sorted)
 
         output (ByteArrayOutputStream.)
 
