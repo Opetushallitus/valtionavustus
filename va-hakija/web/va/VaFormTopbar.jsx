@@ -76,7 +76,7 @@ export default class VaFormTopbar extends React.Component {
           </div>
           <div id="server-info">
             <EnvironmentInfo environment={configuration.environment}/>
-            <LocalizedString translations={translations.form} translationKey="has-ended" lang={lang} hidden={!hasEnded} />
+            <LocalizedString translations={translations.form} translationKey="has-ended" lang={lang} hidden={!hasEnded || !isHakemus} />
             <ServerError serverError={saveStatus.serverError} translations={translations.errors} lang={lang}/>
           </div>
         </div>
