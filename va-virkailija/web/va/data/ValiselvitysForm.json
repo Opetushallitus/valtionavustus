@@ -12,39 +12,39 @@
       "children": [
         {
           "params": {
-            "size": "small",
-            "maxlength": 1000
+            "size": "large",
+            "maxlength": 80
           },
           "fieldClass": "formField",
           "helpText": {
-            "fi": "Kirjoita lyhyesti yhteenveto hankkeen toiminnasta, tavoitteista ja tuloksista.",
-            "sv": "Ohje på svenska"
+            "fi": "Ilmoita avustusta saaneen organisaation nimi.",
+            "sv": "Meddela sökandeorganisationens namn."
           },
           "label": {
-            "fi": "Lyhyt yhteenveto hankkeesta",
-            "sv": "På svenska"
+            "fi": "Avustuksen saajan nimi",
+            "sv": "Sökandeorganisation"
           },
-          "id": "textArea-0",
+          "id": "organization",
           "required": true,
-          "fieldType": "textArea"
+          "fieldType": "textField"
         },
         {
           "params": {
-            "size": "small",
-            "maxlength": 2000
+            "size": "large",
+            "maxlength": 200
           },
           "fieldClass": "formField",
           "helpText": {
-            "fi": "Ohje ekaan",
-            "sv": "Ohje på svenska"
+            "fi": "",
+            "sv": ""
           },
           "label": {
-            "fi": "Miten hanke on käytännössä toteutettu? Työnjako ja aikataulu",
-            "sv": "På svenska"
+            "fi": "Hankkeen nimi",
+            "sv": "Projektets namn"
           },
-          "id": "textArea-2",
+          "id": "project-name",
           "required": true,
-          "fieldType": "textArea"
+          "fieldType": "textField"
         },
         {
           "fieldClass": "infoElement",
@@ -52,7 +52,7 @@
           "fieldType": "h3",
           "params": {},
           "text": {
-            "fi": "TAVOITTEET, TOIMINTA JA TULOKSET",
+            "fi": "HANKKEEN TOIMINTA JA SAAVUTETUT TULOKSET",
             "sv": ""
           }
         },
@@ -428,14 +428,14 @@
             "showOnlyFirstLabels": true
       },
       "label": {
-        "fi": "",
-        "sv": ""
+        "fi": "Talousarvio",
+        "sv": "Projektets budget"
       }
     }
   ],
       "label": {
         "fi": "Väliselvitys",
-        "sv": "SV Väliselvitys"
+        "sv": "Mellanredovisning"
       }
     }
   ],
