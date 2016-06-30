@@ -73,8 +73,9 @@ function appendBudgetComponent(selvitysType, avustushaku) {
       }
 
     })
+    const childrenWithoutBudgetSummary = originalVaBudget.children.filter((i)=>i.id!='budget-summary')
     if(selvitysVaBudget) {
-      selvitysVaBudget.children = originalVaBudget.children
+      selvitysVaBudget.children = childrenWithoutBudgetSummary
     } else {
       form.content.push({
           fieldClass: "wrapperElement",
@@ -85,7 +86,7 @@ function appendBudgetComponent(selvitysType, avustushaku) {
               fieldClass: "wrapperElement",
               id: "budget",
               fieldType: "vaBudget",
-              children: originalVaBudget.children
+              children: childrenWithoutBudgetSummary
             }
           ],
           label: {
