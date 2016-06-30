@@ -95,13 +95,13 @@
                                           (exec :form-db queries/create-register-number-sequence<! params))]
         (format "%d/%s" seq_number avustushaku-register-number)))))
 
-(defn create-hakemus! [avustushaku-id form-id answers hakemus-type]
+(defn create-hakemus! [avustushaku-id form-id answers hakemus-type register-number]
   (let [submission (form-db/create-submission! form-id answers)
         user-key (generate-hash-id)
         params (-> {:avustushaku_id avustushaku-id
                     :user_key user-key
                     :form_submission (:id submission)
-                    :register_number (generate-register-number avustushaku-id user-key)
+                    :register_number (if (nil? register-number) (generate-register-number avustushaku-id user-key) register-number)
                     :hakemus_type hakemus-type}
                    (merge-calculated-params avustushaku-id answers))
         hakemus (exec :form-db queries/create-hakemus<! params)]

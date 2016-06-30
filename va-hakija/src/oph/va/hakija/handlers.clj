@@ -48,7 +48,7 @@
         form (form-db/get-form form-id)
         security-validation (validation/validate-form-security form answers)]
     (if (every? empty? (vals security-validation))
-      (if-let [new-hakemus (va-db/create-hakemus! haku-id form-id answers "hakemus")]
+      (if-let [new-hakemus (va-db/create-hakemus! haku-id form-id answers "hakemus"  nil)]
         ;; TODO: extract
         (let [validation (validation/validate-form form answers {})
               language (keyword (find-answer-value answers "language"))
@@ -85,10 +85,10 @@
         hakemus (va-db/get-hakemus hakemus-key)
         hakemus-id (:id hakemus)
         existing-selvitys (va-db/find-hakemus-by-parent-id-and-type hakemus-id selvitys-type)
-        ]
+        register-number (:register_number hakemus)]
     (if (nil? existing-selvitys)
       (let [
-            new-hakemus-with-submission (va-db/create-hakemus! haku-id form-id {:value []} selvitys-type)
+            new-hakemus-with-submission (va-db/create-hakemus! haku-id form-id {:value []} selvitys-type register-number)
             new-hakemus (:hakemus new-hakemus-with-submission)
             new-hakemus-id (:id new-hakemus)
             updated (va-db/update-hakemus-parent-id new-hakemus-id hakemus-id)]
