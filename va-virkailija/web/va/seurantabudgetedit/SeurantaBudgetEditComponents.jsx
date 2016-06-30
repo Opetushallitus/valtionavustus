@@ -22,7 +22,7 @@ export class EditSummingBudgetElement extends React.Component {
             <LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang}/>
           </th>
           <th className="original-amount-column">Myönnetty</th>
-          <th className="amount-column money required">Toteutunut</th>
+          <th className="amount-column money required" style={{textAlign:'center'}}>OPH:n hyväksymä</th>
           <th className="description-column">Kommentti</th>
         </tr>
         </thead>
