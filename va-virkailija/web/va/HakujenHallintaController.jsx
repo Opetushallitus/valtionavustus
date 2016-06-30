@@ -56,23 +56,6 @@ function appendBudgetComponent(selvitysType, avustushaku) {
   const originalVaBudget = FormUtil.findFieldsByFieldType(avustushaku.formContent.content, "vaBudget")[0]
   const selvitysVaBudget = FormUtil.findFieldsByFieldType(form.content, "vaBudget")[0]
   if(originalVaBudget) {
-    const vaBudgetItemElements = FormUtil.findFieldsByFieldType(originalVaBudget, "vaBudgetItemElement")
-    const firstVaSummingBudgetElement = FormUtil.findFieldsByFieldType(originalVaBudget, "vaSummingBudgetElement")[0]
-    firstVaSummingBudgetElement.params.columnTitles.granted = {
-      fi: "Myönnetty",
-      sv: "Beviljas"
-    }
-    vaBudgetItemElements.forEach(elem => {
-      const id = elem.id
-      if(!_.some(elem.children,(child)=>child.id.indexOf(".granted")!=-1)){
-        elem.children.push({
-          fieldClass: "infoElement",
-          id: id + ".granted",
-          fieldType: "vaBudgetGrantedElement"
-        })
-      }
-
-    })
     const childrenWithoutBudgetSummary = originalVaBudget.children.filter((i)=>i.id!='budget-summary')
     if(selvitysVaBudget) {
       selvitysVaBudget.children = childrenWithoutBudgetSummary

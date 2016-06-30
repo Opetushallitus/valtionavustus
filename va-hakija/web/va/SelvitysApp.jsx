@@ -157,13 +157,11 @@ const develMode =  query.devel === 'true'
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(avustusHakuId)))
 const environmentP = Bacon.fromPromise(HttpUtil.get(urlCreator.environmentConfigUrl()))
-var overriddenAnswersP =  environmentP.flatMap(environment => Bacon.fromPromise(HttpUtil.get(environment["virkailija-server"].url + `/public/api/avustushaku/${avustusHakuId}/selvitys/${selvitysId}/overridden-answers`)))
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
   template.configuration.environment = environmentP
   template.saveStatus.hakemusId = query[selvitysType]
-  template.overriddenAnswers = overriddenAnswersP
 }
 
 function onInitialStateLoaded(initialState) {

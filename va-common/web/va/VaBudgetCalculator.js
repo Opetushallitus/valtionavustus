@@ -54,11 +54,8 @@ export default class VaBudgetCalculator {
     const answersObject = state.saveStatus.values
 
     const summingFieldChildren = JsUtil.flatFilter(vaBudgetField.children, child => child.fieldType === "vaSummingBudgetElement")
-    if(state.overriddenAnswers){
-      const overriddenValues = state.overriddenAnswers
-      const subTotalsAndErrorsAndFieldIdsGranted = _.map(summingFieldChildren, populateSummingFieldTotal(overriddenValues, state, "sumGranted"))
-    }
-    const subTotalsAndErrorsAndFieldIds = _.map(summingFieldChildren, populateSummingFieldTotal(answersObject, state,"sum"))
+    const subTotalsAndErrorsAndFieldIds = _.map(summingFieldChildren, populateSummingFieldTotal(answersObject, state))
+
     const subTotals = _.map(subTotalsAndErrorsAndFieldIds, 'sum')
     const useDetailedCosts = _.get(state, 'saveStatus.savedObject.arvio.useDetailedCosts', true)
     const costsGranted = _.get(state, 'saveStatus.savedObject.arvio.costsGranted', 0)
@@ -73,11 +70,11 @@ export default class VaBudgetCalculator {
     summaryField.totalNeeded = total
     summaryField.budgetIsValid = budgetIsValid
 
-    function populateSummingFieldTotal(answersObject, state,sumField) {
+    function populateSummingFieldTotal(answersObject, state) {
       return summingBudgetField => {
         const amountValues = VaBudgetCalculator.getAmountValues(summingBudgetField, answersObject, descriptionField => sumCalculatedCallback(descriptionField, state))
         const sum = _.sum(_.map(amountValues, 'value'))
-        summingBudgetField[sumField] = sum
+        summingBudgetField.sum = sum
         const containsErrors = _.some(amountValues, errorsAndValue => errorsAndValue.containsErrors)
         return {
           summingFieldId: summingBudgetField.id,

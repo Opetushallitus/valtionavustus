@@ -22,14 +22,14 @@ export default class FakeFormState {
     return FakeFormState.createHakemusFormState(translations, hakuData, {}, formOperations)
   }
 
-  static createHakemusFormState(translations, hakuData, hakemus, formOperations, savedHakemus,extensions={}) {
+  static createHakemusFormState(translations, hakuData, hakemus, formOperations, savedHakemus) {
     const attachments = FakeFormState.resolveAttachmentsProperty(hakuData, hakemus)
     const answers = hakemus.answers
     const formSpecification = hakuData.form
     const effectiveForm = _.cloneDeep(formSpecification)
     effectiveForm.validationErrors = Immutable({})
 
-    const formStateTemplate = {
+    const formState = {
       configuration: {
         translations: translations,
         lang: "fi",
@@ -48,7 +48,6 @@ export default class FakeFormState {
         customFieldSyntaxValidator: VaSyntaxValidator
       }
     }
-    const formState = Object.assign(formStateTemplate, extensions)
 
     const budgetCalculator = new VaBudgetCalculator()
     budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(formState, true)

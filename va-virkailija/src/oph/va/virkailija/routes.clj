@@ -532,18 +532,6 @@
                   :description "Get paatokset public info"
                     (ok (hakudata/get-avustushaku-and-paatokset avustushaku-id)))
 
-            (GET* "/avustushaku/:avustushaku-id/selvitys/:user-key/overridden-answers" [avustushaku-id user-key :as request]
-                  :path-params [avustushaku-id :- Long, user-key :- s/Str]
-                  :return s/Any
-                  :summary "Get Arvio"
-                  :description "Get arvio for selvitys"
-                  (let [selvitys (hakija-api/get-hakemus-by-user-key user-key)
-                        hakemus-id (:parent_id selvitys)
-                        arvio (virkailija-db/get-arvio hakemus-id)
-                        answers (-> arvio :overridden_answers :value)
-                        use_overridden_detailed_costs (:use_overridden_detailed_costs arvio)]
-                    (-> (ok {:answers answers :use_overridden_detailed_costs use_overridden_detailed_costs}) (assoc-in [:headers "Access-Control-Allow-Origin"] "*"))))
-
             (GET* "/avustushaku/paatos/:user-key" [user-key :as request]
                   :path-params [user-key :- String]
                   :return virkailija-schema/PaatosData

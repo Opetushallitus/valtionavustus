@@ -10,9 +10,7 @@ export default class EditsDisplayingFormView extends React.Component {
     const fields = state.form.content
     const translations = state.configuration.translations
     const htmlId = controller.constructHtmlId(fields, field.id)
-    const fieldPropertiesTemplate = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field, controller: controller, translations: translations }
-    const extensions = state.overriddenAnswers ? {customProperties:{overriddenAnswers:state.overriddenAnswers}} : {}
-    const fieldProperties = Object.assign(fieldPropertiesTemplate,extensions)
+    const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field, controller: controller, translations: translations }
     if (field.fieldClass == "formField") {
       const oldAnswer = _.find(state.answersDelta.changedAnswers, a => { return a.key === field.id })
       if (oldAnswer) {
