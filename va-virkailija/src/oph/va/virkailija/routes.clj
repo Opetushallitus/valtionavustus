@@ -539,8 +539,10 @@
                   :description "Get arvio for selvitys"
                   (let [selvitys (hakija-api/get-hakemus-by-user-key user-key)
                         hakemus-id (:parent_id selvitys)
-                        arvio (virkailija-db/get-arvio hakemus-id)]
-                    (-> (ok (-> arvio :overridden_answers :value)) (assoc-in [:headers "Access-Control-Allow-Origin"] "*"))))
+                        arvio (virkailija-db/get-arvio hakemus-id)
+                        answers (-> arvio :overridden_answers :value)
+                        use_overridden_detailed_costs (:use_overridden_detailed_costs arvio)]
+                    (-> (ok {:answers answers :use_overridden_detailed_costs use_overridden_detailed_costs}) (assoc-in [:headers "Access-Control-Allow-Origin"] "*"))))
 
             (GET* "/avustushaku/paatos/:user-key" [user-key :as request]
                   :path-params [user-key :- String]

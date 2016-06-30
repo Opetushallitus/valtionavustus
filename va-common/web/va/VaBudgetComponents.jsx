@@ -11,7 +11,7 @@ import FormUtil from 'soresu-form/web/form/FormUtil.js'
 import JsUtil from 'soresu-form/web/form/JsUtil.js'
 
 export function hasGrantedColumn({customProperties}){
-  return customProperties && typeof customProperties.overriddenAnswers !== "undefined"
+  return customProperties && typeof customProperties.overriddenAnswers !== "undefined" && customProperties.overriddenAnswers.use_overridden_detailed_costs==true
 }
 
 export default class VaBudgetElement extends React.Component {
