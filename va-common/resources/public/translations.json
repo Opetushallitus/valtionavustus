@@ -61,12 +61,12 @@
       "sv": "Ansökan kan ändras också efter att den har skickats, ända till ansökningstidens slut. Systemet skickar ett bekräftelsemeddelande om att ansökan har kommit fram också till sökandeorganisationens officiella postadress och till den person som har namnteckningsrätt. Man kan titta på den färdiga ansökan genom en länk i bekräftelsemeddelandet."
     },
     "savehelp-loppuselvitys": {
-      "fi": "Kun loppuselvitys on valmis, se lähetetään Opetushallitukseen käsiteltäväksi. Loppuselvitystä voidaan muokata lähettämisen jälkeenkin aina loppuselvityksen umpeutumiseen saakka.",
-      "sv": "TODO Ansökan kan ändras också efter att den har skickats, ända till ansökningstidens slut. Systemet skickar ett bekräftelsemeddelande om att ansökan har kommit fram också till sökandeorganisationens officiella postadress och till den person som har namnteckningsrätt. Man kan titta på den färdiga ansökan genom en länk i bekräftelsemeddelandet."
+      "fi": "Kun loppuselvitys on valmis, se lähetetään Opetushallitukseen käsiteltäväksi. Loppuselvitystä voidaan muokata lähettämisen jälkeenkin aina määräajan umpeutumiseen saakka.",
+      "sv": "När slutredovisningen är fylld skickas den till Utbildingsstyrelsen för behandling. Slutredovisningen kan ändras också efter att den har skickats, ända till tidsfristens slut."
     },
     "savehelp-valiselvitys": {
       "fi": "Kun väliselvitys on valmis, se lähetetään Opetushallitukseen käsiteltäväksi ennen hakuajan umpeutumista.",
-      "sv": "TODO Ansökan kan ändras också efter att den har skickats, ända till ansökningstidens slut. Systemet skickar ett bekräftelsemeddelande om att ansökan har kommit fram också till sökandeorganisationens officiella postadress och till den person som har namnteckningsrätt. Man kan titta på den färdiga ansökan genom en länk i bekräftelsemeddelandet."
+      "sv": "När mellanredovisningen är fylld skickas den till Utbildingsstyrelsen för behandling. Mellanredovisningen kan ändras också efter att den har skickats, ända till tidsfristens slut."
     },
     "change-request-response": {
       "fi": "Lähetä täydennys käsiteltäväksi",
