@@ -62,11 +62,11 @@
     },
     "savehelp-loppuselvitys": {
       "fi": "Kun loppuselvitys on valmis, se lähetetään Opetushallitukseen käsiteltäväksi. Loppuselvitystä voidaan muokata lähettämisen jälkeenkin aina määräajan umpeutumiseen saakka.",
-      "sv": "När slutredovisningen är fylld skickas den till Utbildingsstyrelsen för behandling. Slutredovisningen kan ändras också efter att den har skickats, ända till tidsfristens slut."
+      "sv": "När slutredovisningen är klar skickas den till Utbildningsstyrelsen för behandling. Slutredovisningen kan redigeras också efter att den har skickats in, ända tills tidsfristen går ut."
     },
     "savehelp-valiselvitys": {
       "fi": "Kun väliselvitys on valmis, se lähetetään Opetushallitukseen käsiteltäväksi ennen hakuajan umpeutumista.",
-      "sv": "När mellanredovisningen är fylld skickas den till Utbildingsstyrelsen för behandling. Mellanredovisningen kan ändras också efter att den har skickats, ända till tidsfristens slut."
+      "sv": "När mellanredovisningen är klar skickas den till Utbildningsstyrelsen för behandling. Mellanredovisningen kan redigeras också efter att den har skickats in, ända tills tidsfristen går ut."
     },
     "change-request-response": {
       "fi": "Lähetä täydennys käsiteltäväksi",
