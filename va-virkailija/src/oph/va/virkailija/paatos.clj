@@ -95,10 +95,11 @@
   (let [is-loppuselvitys (= selvitys-type "loppuselvitys")
         list-selvitys (if is-loppuselvitys hakija-api/list-loppuselvitys-hakemus-ids hakija-api/list-valiselvitys-hakemus-ids)
         json-ids (list-selvitys avustushaku-id)
-        ids (map :id json-ids)]
-    (log/info "Send all paatos ids " ids)
-    (run! (partial send-selvitys-for-all avustushaku-id selvitys-type) ids)
-    (ok {:count (count ids)})))
+        ids (map :id json-ids)
+        accepted-ids (virkailija-db/get-accepted-hakemus-ids ids)]
+    (log/info "Send all paatos ids " accepted-ids)
+    (run! (partial send-selvitys-for-all avustushaku-id selvitys-type) accepted-ids)
+    (ok {:count (count accepted-ids)})))
 
 (defroutes* paatos-routes
   "Paatos routes"

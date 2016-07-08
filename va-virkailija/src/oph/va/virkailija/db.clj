@@ -224,3 +224,11 @@
     (->> {:hakemus_ids (vec hakemus-ids)}
          (exec :virkailija-db queries/get-accepted-or-rejected-hakemus-ids)
          (map :hakemus_id))))
+
+
+(defn get-accepted-hakemus-ids [hakemus-ids]
+  (if (empty? hakemus-ids)
+    []
+    (->> {:hakemus_ids (vec hakemus-ids)}
+      (exec :virkailija-db queries/get-accepted-hakemus-ids)
+      (map :hakemus_id))))

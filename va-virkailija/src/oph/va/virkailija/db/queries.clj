@@ -8,6 +8,7 @@
 (defquery update-arvio<! "sql/virkailija/arvio/update.sql")
 (defquery get-arviot "sql/virkailija/arvio/get-by-ids.sql")
 (defquery get-accepted-or-rejected-hakemus-ids "sql/virkailija/arvio/accepted-or-rejected-hakemus-ids-by-ids.sql")
+(defquery get-accepted-hakemus-ids "sql/virkailija/arvio/get-accepted-hakemus-ids.sql")
 (defquery get-arvio "sql/virkailija/arvio/get.sql")
 
 (defquery create-comment<! "sql/virkailija/comment/create.sql")
