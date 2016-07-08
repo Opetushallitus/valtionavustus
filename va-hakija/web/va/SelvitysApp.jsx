@@ -27,6 +27,7 @@ const sessionIdentifierForLocalStorageId = new Date().getTime()
 const selvitysType = location.pathname.indexOf("loppuselvitys")!=-1 ? "loppuselvitys" : "valiselvitys"
 const query = queryString.parse(location.search)
 var selvitysId = query[selvitysType]
+const lang = query.lang
 
 function containsExistingEntityId(urlContent) {
   const query = urlContent.parsedQuery
@@ -199,9 +200,8 @@ function initFormController() {
 
 function initSelvitys(avustusHakuId, hakemusId, selvitysType){
   HttpUtil.get("/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/init/` + hakemusId).then(response => {
-    console.log(response)
     const hakemusId = response.id
-    window.location = `/avustushaku/${avustusHakuId}/${selvitysType}?${selvitysType}=${hakemusId}`
+    window.location = `/avustushaku/${avustusHakuId}/${selvitysType}?${selvitysType}=${hakemusId}&lang=${lang}`
   })
 }
 
