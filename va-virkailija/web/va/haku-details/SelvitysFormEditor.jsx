@@ -75,7 +75,8 @@ export default class SelvitysFormEditor extends React.Component{
       <p>Loppuselvitys on koko ajan täytettävissä ja se tulee toimittaa viimeistään <strong>{this.props.avustushaku[selvitysType + 'date']}.</strong></p>
       <p>Loppuselvityspyynnöt lähetetään vain niille hakijoille, jotka eivät ole vielä toimittaneet selvitystä.</p>
       <p>
-        <button onClick={onSendSelvitys}>Lähetä loppuselvityspyynnöt</button>
+        <button disabled={sending} onClick={onSendSelvitys}>Lähetä loppuselvityspyynnöt</button>
+        {!isNaN(count) && <span> Lähetetty {count} viestiä</span>}
       </p>
       <h1>Loppuselvityslomake</h1>
     </div>
