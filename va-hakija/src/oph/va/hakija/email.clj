@@ -20,7 +20,7 @@
   {:new-hakemus {:fi (email/load-template "email-templates/new-hakemus.plain.fi")
                  :sv (email/load-template "email-templates/new-hakemus.plain.sv")}
    :hakemus-submitted {:fi (email/load-template "email-templates/hakemus-submitted.plain.fi")
-                       :sv (email/load-template "email-templates/hakemus-submitted.plain.fi")}
+                       :sv (email/load-template "email-templates/hakemus-submitted.plain.sv")}
    :hakemus-change-request-responded {:fi (email/load-template "email-templates/hakemus-change-request-responded.plain.fi")}})
 
 (defn start-background-sender []
