@@ -14,9 +14,9 @@
    :selvitys {:fi "Väliselvitys hyväksytty"
               :sv "Mellanredovisning godkänt"}
    :valiselvitys-notification {:fi "Väliselvitys täytettävissä haulle"
-                               :sv "TODO Väliselvitys täytettävissä"}
+                               :sv "Mellanredovisningnen redo att fyllas"}
    :loppuselvitys-notification {:fi "Loppuselvitys täytettävissä haulle"
-                                :sv "TODO Loppuselvitys täytettävissä"}
+                                :sv "Slutredovisningen redo att fyllasSELV"}
    })
 
 (def mail-templates
