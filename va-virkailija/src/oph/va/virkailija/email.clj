@@ -67,7 +67,7 @@
 
 (defn selvitys-url [avustushaku-id user-key lang selvitys-type]
   (let [va-url (-> config :server :url lang)]
-  (str va-url "selvitys/avustushaku/" avustushaku-id "/" selvitys-type "/?hakemus=" user-key)))
+  (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" user-key)))
 
 (defn send-paatos! [lang to avustushaku hakemus reply-to]
   (let [lang-str (or (clojure.core/name lang) "fi")
