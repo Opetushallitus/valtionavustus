@@ -102,6 +102,7 @@
     {:projektin_nimi (:project-name hakemus)
      :tavoitteet (formutil/find-answer-value answers "project-goals")
      :www_osoite (formutil/find-answer-value answers "project-www")
+     :projekti_pahkinakuoressa (formutil/find-answer-value answers "project-nutshell")
      :organisaation_nimi (:organization-name hakemus)
      :budjetti_myonnetty (:budget-total hakemus)
      :diaarinumero (:register-number hakemus)
