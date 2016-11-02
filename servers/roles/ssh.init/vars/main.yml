@@ -1,6 +1,6 @@
 adminusers:
   auramo:
-    state: present
+    state: absent
     name: Perttu Auramo
   jhietama:
     state: present
