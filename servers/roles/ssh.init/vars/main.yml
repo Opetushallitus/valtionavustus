@@ -23,6 +23,9 @@ adminusers:
   thrantal:
     state: present
     name: Timo Rantalaiho
+  tkareine:
+    state: present
+    name: Tuomas Kareinen
   wallops:
     state: present
     name: Wall Ops
