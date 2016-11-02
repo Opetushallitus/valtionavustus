@@ -17,9 +17,6 @@ adminusers:
   smensola:
     state: present
     name: Sami Mensola
-  thakkara:
-    state: absent
-    name: Tuomas Hakkarainen
   thrantal:
     state: present
     name: Timo Rantalaiho
