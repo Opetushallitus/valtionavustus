@@ -22,12 +22,11 @@
 - name: Create / delete users
   user: name={{ item.key }} comment="{{ item.value.name }}" state={{ item.value.state }} remove=yes
   with_dict: adminusers
-  when: ansible_ssh_user != "cloud-user"
 
 - name: Set authorized keys for individual users
   authorized_key: user={{ item.key }} key="{{ lookup('file', '../files/public_keys/' + item.key + '.pub') }}" state={{ item.value.state }} exclusive=yes
   with_dict: adminusers
-  when: ansible_ssh_user != "cloud-user" and item.value.state == 'present'
+  when: item.value.state == 'present'
 
 - name: Add configured user accounts to passwordless sudoers
   lineinfile:
@@ -37,14 +36,6 @@
     state: '{{ item.value.state }}'
     validate: 'visudo -cf %s'
   with_dict: adminusers
-  when: ansible_ssh_user != "cloud-user"
-
-- name: Add all our authorized keys for cloud user
-  authorized_key: user="{{ ansible_ssh_user }}"
-                  key="{{ lookup('file', item) }}"
-  with_fileglob:
-    - public_keys/*
-  when: ansible_ssh_user == "cloud-user"
 
 - name: Remove previous gw machine IP mappings from /etc/hosts
   lineinfile: dest=/etc/hosts regexp='^[0-9\.]* {{ item }}$' state=absent owner=root group=root mode=0644

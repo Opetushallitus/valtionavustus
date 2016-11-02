@@ -1,6 +1,0 @@
-persistent_volume_devices: /dev/vdc
-logical_volumes:
-  data:
-    filesystem: xfs
-    size: 50g
-    mount_point: /data

@@ -17,53 +17,22 @@ Valtionavustusjärjestelmän palvelimien provisiointi
 * Kolmannen osapuolen muut kirjastot
   - `./python-venv/bin/ansible-galaxy install gaqzi.ssh-config -p library/`
 
-## CSC Pouta ympäristö
-
-* hanki pouta-tunnukset
-* [asenna Nova-työkalut](https://research.csc.fi/pouta-install-client)
-  - `source python-venv/bin/activate`
-  - `pip install python-novaclient`
-* ja [alusta todennus](https://research.csc.fi/pouta-credentials)
-  - tallenna `tlp*-openrc.sh` tähän hakemistoonn
-* kun olet ajanut `source tlp*-openrc.sh`, sinun pitäisi saada listattua tarjolla olevat käyttöjärjestelmä-imaget komennolla `./python-venv/bin/nova image-list`
-* lisää poutaan henkilökohtainen avaimesi skriptillä `add_personal_key.bash`
-* luo palvelimet komennolla `./python-venv/bin/ansible-playbook -i openstack_inventory.py create_machines.yml`
-  - jos jonkin palvelimen luominen keskeytyy virheeseen, saattaa olla parasta tuhota palvelin ja yrittää uudelleen.
-  - virhetilanteissa komennon uudelleen ajaminen _ei_ korjaa tilannetta (komento ei ole atominen).
-* alusta uuden koneen ssh (huom. pitää siis antaa luojan pouta pem, koska muut eivät ole vielä luetettuja)
-  - `./python-venv/bin/ansible-playbook -i openstack_inventory.py init_ssh.yml --private-key ~/.ssh/pouta-$USER.pem -l va-dev`
-* testaa pääsetkö koneelle ssh komennolla:
-  - `./open-ssh va-dev` tai
-  - `./open-ssh va-build`
-* tarkista, että uusi palvelin myös vastaa ansiblen pingiin (esim. va-dev tai kaikki `all`):
-  - `./python-venv/bin/ansible va-dev -i openstack_inventory.py -m ping -u cloud-user`
-* alusta yksittäinen palvelin
-  - `./python-venv/bin/ansible-playbook -i openstack_inventory.py site.yml -l va-dev`
-  - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
-* tai alusta kaikki palvelimet
-  - `./python-venv/bin/ansible-playbook -i openstack_inventory.py site.yml`
-
 ### Uuden käyttäjän lisääminen buildikoneelle kirjautumista varten
-`./open-ssh va-build add_va_jenkins_user.bash <käyttäjätunnus>`
+`./ssh_to_va-build.bash add_va_jenkins_user.bash <käyttäjätunnus>`
 ### Buildikoneen päivittämisen jälkeen lisää jobeihin Slack-notifikaatiot päälle käsin: jobin Configure ->
   Add post-build action -> Slack Notifications
 ### Ja jos buildikoneen jenkins-käyttäjän SSH-avain on muuttunut, se tulee lisätä soresu-form -repon deployment-avaimiin.
-
-### Vinkkejä virhetilanteisiin
-
-* Jos levyjärjestelmään tulee häiriö, joka saa aikaan levyjärjestelmän rikkoutumisen niin että se herjaa eri
-  operaatioille "Input/output error", sen saattaa saada korjattua xfs_repair \-komennolla. Ks.
-  [tarkemmat ohjeet](disk_io_error_repair.md).
 
 ## CSC vmware ympäristö
 
 * palvelinten inventory meta tiedot on listattu staattisesti tiedostossa: `vmware_inventory.json`
   - käytetään `vmware_inventory.py` avulla
-  - myös poudan va-build kone on mukana, jotta saadaan sille tarvittavat oikeudet ja yhteydet vmware koneisiin
 * tarkista, että palvelimet vastaavat ansiblen pingiin (esim. oph-va-app-test01` tai kaikki `all`):
   - `./python-venv/bin/ansible all -i vmware_inventory.py -m ping`
 * asenna netaddr -python-paketti, esim
   - `pip install netaddr`
+* alusta palvelinten ssh tunnukset ja niiden oikeudet
+  - `./python-venv/bin/ansible-playbook -i vmware_inventory.py init_ssh.yml`
 * alusta kaikki palvelimet
   - `./python-venv/bin/ansible-playbook -i vmware_inventory.py site.yml`
   - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee

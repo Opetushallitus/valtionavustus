@@ -1,13 +1,3 @@
-- hosts: va-dev
-  user: cloud-user
-  sudo: yes
-  vars:
-    app_profile: va-dev
-    dbname: va-dev
-  roles:
-  - valtionavustus.app.logical.volumes
-  - valtionavustus.app
-
 - hosts: oph-va-app-test01.csc.fi
   sudo: yes
   vars:
@@ -28,17 +18,6 @@
   - common
   - valtionavustus.app
 
-- hosts: va-loadbalancer-dev
-  user: cloud-user
-  sudo: yes
-  vars_files: ['loadbalancer-dev.yml']
-  roles:
-  - {role: ssh.init}
-  - {role: common}
-  - {role: 3rdparty/info.haproxy, tags: ['update']}
-  - {role: ssl-cert, tags: ['install', 'certs']}
-  - {role: va-haproxy, tags: ['update']}
-
 - hosts: oph-va-lb-prod01.csc.fi
   sudo: yes
   vars_files: ['loadbalancer-prod.yml']
@@ -54,18 +33,6 @@
   roles:
   - ssh.init
   - common
-  - buildmachine
-  - valtionavustus.build
-  - 3rdparty/Stouts.jenkins
-  - valtionavustus.deploy
-
-- hosts: va-build
-  user: cloud-user
-  sudo: yes
-  vars:
-     database_dumps_dir: /mnt/db-dumps
-  roles:
-  - buildmachine.logical.volumes
   - buildmachine
   - valtionavustus.build
   - 3rdparty/Stouts.jenkins
