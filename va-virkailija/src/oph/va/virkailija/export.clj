@@ -340,7 +340,7 @@
         arvio (:arvio hakemus)
         rahoitusalue (:rahoitusalue arvio)
         iban (formutil/find-answer-value answers-values "bank-iban")
-        iban-formatted (remove-white-spaces iban)
+        iban-formatted (if iban (remove-white-spaces iban) iban)
         lkp-answer (formutil/find-answer-value answers-values "radioButton-0")
         lkp (get lkp-map (keyword lkp-answer))
         lkp-padded (if lkp (str lkp " 0000") lkp)
