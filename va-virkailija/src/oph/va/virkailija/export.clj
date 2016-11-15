@@ -326,12 +326,12 @@
   (doseq [index (range 0 (count columns))]
     (.autoSizeColumn sheet index)))
 
-(def lkp-map {:kunta-kuntayhtymae 8200
-             :julkisoikeudellinen-yhteisoe 8250
-             :rekisteroeity-yhteisoe-tai-saeaetioe 8250
-             :yliopisto 8293
-             :yksityinen-yhteisoe 8230
-             :valtio 8295
+(def lkp-map {:kunta-kuntayhtymae 82000000
+             :julkisoikeudellinen-yhteisoe 82500000
+             :rekisteroeity-yhteisoe-tai-saeaetioe 82500000
+             :yliopisto 82930000
+             :yksityinen-yhteisoe 82300000
+             :valtio 82950000
              })
 
 (defn add-paatos-data [paatos-date hakemus]
@@ -343,11 +343,10 @@
         iban-formatted (if iban (remove-white-spaces iban) iban)
         lkp-answer (formutil/find-answer-value answers-values "radioButton-0")
         lkp (get lkp-map (keyword lkp-answer))
-        lkp-padded (if lkp (str lkp " 0000") lkp)
         formatted-paatos-date (format-date paatos-date)]
     (assoc hakemus  :paatos-date formatted-paatos-date
                     :iban iban-formatted
-                    :lkp lkp-padded
+                    :lkp lkp
                     :rahoitusalue rahoitusalue)))
 
 (defn split-multiple-maksuera-if-needed [has-multiple-maksuera hakemus]
