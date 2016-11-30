@@ -378,6 +378,10 @@
       "fi":"Jos hyväksyttyyn kustannusarvioon, avustuksen käyttötarkoitukseen tai hankkeeseen muutoin tulee olennaisia muutoksia, avustuksen saajan tulee tehdä muutoshakemus.",
       "sv":"Om det uppstår betydande förändringar i den godkända budgeten, syftet för understödet eller i projektet i övrigt ska mottagaren av statsunderstödet göra en förändringsansökan."
     },
+    "kaytto5":{
+      "fi":"Tähän päätökseen voidaan hakijan esityksestä tehdä vähäisiä muutoksia käyttösuunnitelman, hankkeen sisällön, avustuksen saajan omistussuhteiden tai muun vastaavan seikan osalta ilman uuden päätöksen antamista. Olennainen muutos tai hankkeelle myönnetyn avustuksen määrän muutos edellyttää aina uuden päätöksen antamista.",
+      "sv":""
+    },
     "sovelletut-saannokset":{
       "fi":"Sovelletut säännökset",
       "sv":"Tillämpade bestämmelser"

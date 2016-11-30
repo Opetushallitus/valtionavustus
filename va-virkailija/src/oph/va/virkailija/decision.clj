@@ -83,12 +83,10 @@
   (section title-key (translate content-key) translate create-paragraph))
 
 (defn kayttotarkoitus [translate]
-  (let [keys [:kaytto1 :kaytto2 :kaytto3 :kaytto4]
+  (let [keys [:kaytto1 :kaytto2 :kaytto3 :kaytto4 :kaytto5]
         rows-list (mapv (fn [row] (str "<p>" (translate row) "</p>")) keys)
         content (str/join " " rows-list)]
     (section :avustuksen-kayttotarkoitus content translate false)))
-
-
 
 (defn avustuksen-maksu [avustushaku bic iban total-paid lang translate]
   (let [decision (:decision avustushaku)
