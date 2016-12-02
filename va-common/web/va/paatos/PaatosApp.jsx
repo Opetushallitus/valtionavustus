@@ -204,7 +204,7 @@ const Lisatietoja = ({avustushaku, role, L})=>
      <p><L translationKey="puhelin"/> 029 533 1000 (<L translationKey="keskus"/>).</p>
      <L translationKey="lisatietoja-sisalto"/>
      <DecisionContent avustushaku={avustushaku} id="johtaja" lang={L.lang} className="signature"/>
-     <DecisionContent avustushaku={avustushaku} id="esittelija" lang={L.lang} className="signature"/>
+     <DecisionContent avustushaku={avustushaku} id="valmistelija" lang={L.lang} className="signature"/>
    </Section>
 
 const DecisionContent = ({id, avustushaku, lang,className=""}) => {

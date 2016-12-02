@@ -75,7 +75,7 @@
    (s/optional-key :myonteinenlisateksti) LocalizedStringOptional
    (s/optional-key :sovelletutsaannokset) LocalizedStringOptional
    (s/optional-key :johtaja) LocalizedStringOptional
-   (s/optional-key :esittelija) LocalizedStringOptional
+   (s/optional-key :valmistelija) LocalizedStringOptional
    (s/optional-key :hyvaksyminen) LocalizedStringOptional
    (s/optional-key :liitteet) [Liite]
   }

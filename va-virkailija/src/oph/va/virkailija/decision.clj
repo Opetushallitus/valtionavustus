@@ -185,7 +185,7 @@
         translations (json/read-str translations-str :key-fn keyword)
         translate (partial decision-translation translations language)
         johtaja (decision-field decision :johtaja language)
-        esittelija (decision-field decision :esittelija language)
+        valmistelija (decision-field decision :valmistelija language)
         avustuksen-maksu (avustuksen-maksu avustushaku bic iban total-granted language translate)
         myonteinen-lisateksti (myonteinen-lisateksti avustushaku hakemus language)
         form-content (-> haku-data :form :content)
@@ -214,7 +214,7 @@
                 :role                          role
                 :t                             translate
                 :johtaja                       johtaja
-                :esittelija                    esittelija
+                :valmistelija                  valmistelija
                 :myonteinen-lisateksti         myonteinen-lisateksti
                 :liitteet                      liitteet-list
                 :accepted                      accepted
