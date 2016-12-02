@@ -34,7 +34,7 @@ const PersonSelectPanel = ({hakemus,state,controller}) => {
   return (
     <div className="panel person-panel person-panel--top">
       <button className="close" onClick={onCloseClick}>x</button>
-      <RoleContainer roleName="Esittelijä" roleField="presenter" roles={presenters} controller={controller} hakemus={hakemus}/>
+      <RoleContainer roleName="Valmistelija" roleField="presenter" roles={presenters} controller={controller} hakemus={hakemus}/>
       <RoleContainer roleName="Arvioijat" roleField="evaluators" roles={evaluators} controller={controller} hakemus={hakemus}/>
     </div>
   )

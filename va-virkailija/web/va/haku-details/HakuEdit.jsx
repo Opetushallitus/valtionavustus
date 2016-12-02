@@ -223,7 +223,7 @@ class AcademySize extends React.Component {
         />
       )
       options.push(
-        <label key={htmlId + "-label"} htmlFor={htmlId}>{value ? "Esittelijä lisää oppilaitoksen koon" : "Ei käytössä"}</label>
+        <label key={htmlId + "-label"} htmlFor={htmlId}>{value ? "Valmistelija lisää oppilaitoksen koon" : "Ei käytössä"}</label>
       )
     }
     return (

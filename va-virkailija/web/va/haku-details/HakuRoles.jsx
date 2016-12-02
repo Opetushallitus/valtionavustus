@@ -133,7 +133,7 @@ class RoleRow extends React.Component {
       <tr>
         <td>
           <select onChange={this.handleChange} name="role" value={role.role} disabled={disableEditing}>
-            <option value="presenting_officer">Esittelijä</option>
+            <option value="presenting_officer">Valmistelija</option>
             <option value="evaluator">Arvioija</option>
           </select>
         </td>

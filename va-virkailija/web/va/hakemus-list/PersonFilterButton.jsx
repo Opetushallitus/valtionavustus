@@ -41,7 +41,7 @@ const PersonSelectPanel = ({state,controller,hakemusFilter}) =>{
   return (
     <div hidden={!show} className="panel person-panel">
       <button className="close" onClick={onCloseClick}>x</button>
-      <RoleContainer roleName="Esittelijä" roleField="presenter" roles={presenters} controller={controller} hakemusFilter={hakemusFilter}/>
+      <RoleContainer roleName="Valmistelija" roleField="presenter" roles={presenters} controller={controller} hakemusFilter={hakemusFilter}/>
       <RoleContainer roleName="Arvioija" roleField="evaluator" roles={evaluators} controller={controller} hakemusFilter={hakemusFilter}/>
     </div>
   )

@@ -24,7 +24,7 @@ export default class PresenterComment extends React.Component {
     }
     return (
       <div className="value-edit">
-        <label>Esittelijän huomiot</label>
+        <label>Valmistelijan huomiot</label>
         <textarea rows="5" value={this.state.value} onChange={onChange}></textarea>
       </div>
     )
