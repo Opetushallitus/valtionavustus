@@ -10,7 +10,7 @@ Valtionavustusjärjestelmän palvelimien provisiointi
       `brew install python`
       `virtualenv -p /usr/local/bin/python2.7 python-venv`
   - `source python-venv/bin/activate`
-  - `pip install ansible`
+  - `pip install -r requirements.txt`
 * roles/3rdparty hakemistoon on asennettu muiden tekemät Ansible-roolit. Nämä Ansible-roolit ovat asennettu Ansible Galaxystä:
   - `./python-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty --role-file=third_party_roles.yml  --ignore-errors`
   - roolin päivittäminen onnistuu samalla tavalla, mutta vaatii --force -vivun (ansible-galaxy kertoo kyllä siitä)
@@ -29,8 +29,6 @@ Valtionavustusjärjestelmän palvelimien provisiointi
   - käytetään `vmware_inventory.py` avulla
 * tarkista, että palvelimet vastaavat ansiblen pingiin (esim. oph-va-app-test01` tai kaikki `all`):
   - `./python-venv/bin/ansible all -i vmware_inventory.py -m ping`
-* asenna netaddr -python-paketti, esim
-  - `pip install netaddr`
 * alusta palvelinten ssh tunnukset ja niiden oikeudet
   - `./python-venv/bin/ansible-playbook -i vmware_inventory.py init_ssh.yml`
 * alusta kaikki palvelimet
