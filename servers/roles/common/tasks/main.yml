@@ -56,10 +56,6 @@
   register: rngd_service_changed
   when: ansible_os_family == 'RedHat'
 
-- name: Enable firewall daemon (RedHat)
-  service: name=firewalld state=started enabled=yes
-  when: ansible_os_family == 'RedHat'
-
 - name: reload systemd if rng daemon was changed
   command: systemctl daemon-reload
   when: rngd_service_changed.changed

@@ -12,3 +12,5 @@ centos_common_required_packages:
   - xfsprogs
   - lvm2*
   - supervisor
+
+iptables_script: /etc/rc.d/rc.firewall.local

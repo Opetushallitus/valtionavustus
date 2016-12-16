@@ -20,9 +20,23 @@
   notify: Restart rsyslog
 
 - name: Allow port 80 access in firewall (RedHat)
-  firewalld: immediate=true port=80/tcp permanent=true state=enabled
+  lineinfile:
+    dest: '{{ iptables_script }}'
+    regexp: '^iptables .* --comment "http://valtionavustukset\.oph\.fi"$'
+    line: 'iptables -I INPUT -m tcp -p tcp --dport 80 -j ACCEPT -m comment --comment "http://valtionavustukset.oph.fi"'
+    state: present
+  notify: Reload iptables
   when: ansible_os_family == 'RedHat'
+  tags:
+    - firewall
 
 - name: Allow port 443 access in firewall (RedHat)
-  firewalld: immediate=true port=443/tcp permanent=true state=enabled
+  lineinfile:
+    dest: '{{ iptables_script }}'
+    regexp: '^iptables .* --comment "https://valtionavustukset\.oph\.fi"$'
+    line: 'iptables -I INPUT -m tcp -p tcp --dport 443 -j ACCEPT -m comment --comment "https://valtionavustukset.oph.fi"'
+    state: present
+  notify: Reload iptables
   when: ansible_os_family == 'RedHat'
+  tags:
+    - firewall

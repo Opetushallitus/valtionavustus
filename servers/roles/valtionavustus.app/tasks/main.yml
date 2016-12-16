@@ -1,11 +1,24 @@
-- name: Allow SSH access in firewall access
-  firewalld: service=ssh permanent=true state=enabled
+- name: Allow port 8081 access in firewall (RedHat)
+  lineinfile:
+    dest: '{{ iptables_script }}'
+    regexp: '^iptables .* --comment "va-hakija webapp traffic from load balancer"$'
+    line: 'iptables -I INPUT -m tcp -p tcp -s oph-va-lb-prod01.csc.fi --dport 8081 -j ACCEPT -m comment --comment "va-hakija webapp traffic from load balancer"'
+    state: present
+  notify: Reload iptables
+  when: ansible_os_family == 'RedHat'
+  tags:
+    - firewall
 
-- name: Allow port 8081 access in firewall
-  firewalld: immediate=true port=8081/tcp permanent=true state=enabled
-
-- name: Allow port 6071 access in firewall
-  firewalld: immediate=true port=6071/tcp permanent=true state=enabled
+- name: Allow port 6071 access in firewall (RedHat)
+  lineinfile:
+    dest: '{{ iptables_script }}'
+    regexp: '^iptables .* --comment "va-virkailija webapp traffic from load balancer"$'
+    line: 'iptables -I INPUT -m tcp -p tcp -s oph-va-lb-prod01.csc.fi --dport 6071 -j ACCEPT -m comment --comment "va-virkailija webapp traffic from load balancer"'
+    state: present
+  notify: Reload iptables
+  when: ansible_os_family == 'RedHat'
+  tags:
+    - firewall
 
 - name: Create www group
   group: name=www state=present
