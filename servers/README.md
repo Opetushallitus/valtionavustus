@@ -1,43 +1,130 @@
-Valtionavustusjärjestelmän palvelimien provisiointi
-===================================================
+# Valtionavustusjärjestelmän palvelimien provisiointi
 
-* provisiointi tehdään Ansiblella
-* käytä ansiblea [virtualenvissä](http://docs.python-guide.org/en/latest/dev/virtualenvs/):
-  - `pip install virtualenv`
-  - `virtualenv python-venv`
-    * huom. jos käytössä OsX, niin tarvitaan uudempi OpenSSL (jossa TLS1.2 tuki) ja python joka on käännetty sitä vasten:
-      `brew install openssl`
-      `brew install python`
-      `virtualenv -p /usr/local/bin/python2.7 python-venv`
-  - `source python-venv/bin/activate`
-  - `pip install -r requirements.txt`
-* roles/3rdparty hakemistoon on asennettu muiden tekemät Ansible-roolit. Nämä Ansible-roolit ovat asennettu Ansible Galaxystä:
-  - `./python-venv/bin/ansible-galaxy install --roles-path=roles/3rdparty --role-file=third_party_roles.yml  --ignore-errors`
-  - roolin päivittäminen onnistuu samalla tavalla, mutta vaatii --force -vivun (ansible-galaxy kertoo kyllä siitä)
-* Kolmannen osapuolen muut kirjastot
-  - `./python-venv/bin/ansible-galaxy install gaqzi.ssh-config -p library/`
+Kaikki tässä kuvatut komennot tulee ajaa samassa hakemistossa, jossa
+tämä README on.
+
+## Ansiblen asennus
+
+Provisiointi tehdään Ansiblella, joka on Python-sovellus. Käytä
+Pythonin 2.7-versiota. Ansiblea kannattaa ajaa
+[Virtualenvissä](http://docs.python-guide.org/en/latest/dev/virtualenvs/),
+jotta dependencyt ovat oikein.
+
+Jos käytät macOS:ää, tarvitset OpenSSL:n, jossa on TLS1.2 tuki, ja
+Pythonin, joka on käännetty sitä vasten. Voit asentaa ne Homebrewillä:
+
+``` bash
+brew install openssl
+brew install python
+```
+
+Asennus, jos Python-binääri on polussa `/usr/local/bin/python2.7`:
+
+``` bash
+make install
+```
+
+Muulloin määritä asennukselle Python-binäärin polku:
+
+``` bash
+PYTHON_BIN=/opt/bin/python2.7 make install
+```
+
+Asennuksen jälkeen ota Virtualenv käyttöön:
+
+``` bash
+source python-venv/bin/activate
+```
+
+Hakemistossa `roles/3rdparty` on asennettu muiden tekemät
+Ansible-roolit. Nämä on asennettu Ansible Galaxystä:
+
+``` bash
+ansible-galaxy install --roles-path=roles/3rdparty --role-file=third_party_roles.yml  --ignore-errors
+```
+
+Roolin päivittäminen onnistuu vivulla `--force` (ansible-galaxy kertoo siitä).
+
+``` bash
+ansible-galaxy install gaqzi.ssh-config -p library/
+```
+
+## Yhteyden testaaminen palvelimille
+
+Palveliment ovat CSC:n VMware-ympäristöss'. Palvelinten Ansible
+Inventoryn meta-tiedot on listattu staattisesti tiedostossa
+`vmware_inventory.json`. Käyttö:
+
+``` bash
+./vmware_inventory.py
+```
+
+Tarkista, että palvelimet vastaavat Ansiblen pingiin:
+
+``` bash
+# kaikki palvelimet
+ansible all -i vmware_inventory.py -m ping
+
+# tietty palvelin
+ansible oph-va-app-test01 -i vmware_inventory.py -m ping
+```
+
+## Tehtäviä
 
 ### Uuden käyttäjän lisääminen buildikoneelle kirjautumista varten
-`./ssh_to_va-build.bash add_va_jenkins_user.bash <käyttäjätunnus>`
-### Buildikoneen päivittämisen jälkeen lisää jobeihin Slack-notifikaatiot päälle käsin: jobin Configure ->
-  Add post-build action -> Slack Notifications
-### Ja jos buildikoneen jenkins-käyttäjän SSH-avain on muuttunut, se tulee lisätä soresu-form -repon deployment-avaimiin.
 
-## CSC vmware ympäristö
+``` bash
+./ssh_to_va-build.bash add_va_jenkins_user.bash $username
+```
 
-* palvelinten inventory meta tiedot on listattu staattisesti tiedostossa: `vmware_inventory.json`
-  - käytetään `vmware_inventory.py` avulla
-* tarkista, että palvelimet vastaavat ansiblen pingiin (esim. oph-va-app-test01` tai kaikki `all`):
-  - `./python-venv/bin/ansible all -i vmware_inventory.py -m ping`
-* alusta palvelinten ssh tunnukset ja niiden oikeudet
-  - `./python-venv/bin/ansible-playbook -i vmware_inventory.py init_ssh.yml`
-* alusta kaikki palvelimet
-  - `./python-venv/bin/ansible-playbook -i vmware_inventory.py site.yml`
-  - perään voi laittaa -vvvv jos haluaa nähdä tarkemmin, mitä se tekee
-  - huom. jos on täysin uusi CentOs kone täytyy käydä koneella kommentoimassa käsin `/etc/sudoers`:sta tämä rivi:
-    * `Defaults    requiretty`
-    * muuten ei Ansible saa sudotettua itseään
-* alusta yksittäinen palvelin
-  - `./python-venv/bin/ansible-playbook -i vmware_inventory.py site.yml -l oph-va-app-test01.csc.fi`
-* jos haluat ajaa vain tietyt taskit niin onnistuu steppaamalla halutusta kohdasta alkaen.
-    * esim. `./python-venv/bin/ansible-playbook -i vmware_inventory.py site.yml -l oph-va-app-test01.csc.fi --step --start-at-task="Add supervisor conf to start and stop the applications"`
+### Buildikoneen päivitys
+
+Jenkinsin päivityksen jälkeen lisää jobeihin Slack-notifikaatiot
+päälle käsin: Jenkinsin jobin Configure -> Add post-build action ->
+Slack Notifications.
+
+Jos buildikoneen jenkins-käyttäjän SSH-avain on muuttunut, se tulee
+lisätä soresu-form -repon deployment-avaimiin.
+
+### Provisioi palvelin
+
+Jos palvelin on uusi CentOS-kone, täytyy palvelimella käydä käsin
+poistamassa tiedostosta `/etc/sudoers` seuraava rivi:
+
+```
+Defaults    requiretty
+```
+
+Muulloin Ansiblen suorittama komento ei voi saada sudo-oikeuksia.
+
+Provisioi yksittäinen palvelin:
+
+``` bash
+ansible-playbook -i vmware_inventory.py site.yml -l oph-va-app-test01.csc.fi
+```
+
+Jos haluat ajaa provisioinnin tietystä Ansiblen taskita lähtien:
+
+``` bash
+ansible-playbook -i vmware_inventory.py site.yml -l oph-va-app-test01.csc.fi --step --start-at-task="Add supervisor conf to start and stop the applications"
+```
+
+Provisioi kaikki palvelimet:
+
+``` bash
+ansible-playbook -i vmware_inventory.py site.yml
+```
+
+Voit käyttää vipua `-vvvv` nähdäksesi tarkemmin mitä komento tekee.
+
+### Provisioi palvelinten ssh-tunnukset
+
+``` bash
+ansible-playbook -i vmware_inventory.py init_ssh.yml
+```
+
+### Provisioi palvelinten palomuurit
+
+``` bash
+ansible-playbook -i vmware_inventory.py site.yml -t firewall
+```
