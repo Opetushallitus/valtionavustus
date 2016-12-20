@@ -33,7 +33,7 @@ PYTHON_BIN=/opt/bin/python2.7 make install
 Asennuksen jälkeen ota Virtualenv käyttöön:
 
 ``` bash
-source python-venv/bin/activate
+eval `make venv`
 ```
 
 Hakemistossa `roles/3rdparty` on asennettu muiden tekemät
