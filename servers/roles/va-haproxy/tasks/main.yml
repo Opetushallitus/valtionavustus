@@ -19,6 +19,12 @@
   template: src=haproxy_syslog.conf.j2 dest=/etc/rsyslog.d/haproxy.conf owner=root group=root mode=0644
   notify: Restart rsyslog
 
+- name: Add systemd override directory for haproxy
+  file: path=/etc/systemd/system/haproxy.service.d state=directory owner=root mode=0755
+
+- name: Add systemd override for haproxy to start only after network is online
+  copy: src=haproxy-systemd-override.conf dest=/etc/systemd/system/haproxy.service.d/override.conf owner=root mode=0644
+
 - name: Allow port 80 access in firewall (RedHat)
   lineinfile:
     dest: '{{ iptables_script }}'
