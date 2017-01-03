@@ -201,7 +201,7 @@ function initFormController() {
 function initSelvitys(avustusHakuId, hakemusId, selvitysType){
   HttpUtil.get("/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/init/` + hakemusId).then(response => {
     const hakemusId = response.id
-    window.location = `/avustushaku/${avustusHakuId}/${selvitysType}?${selvitysType}=${hakemusId}&lang=${lang}`
+    window.location = `/avustushaku/${avustusHakuId}/${selvitysType}?${selvitysType}=${hakemusId}&lang=${lang}` + (selvitysType == 'valiselvitys' ? '&preview=true' : '')
   })
 }
 
