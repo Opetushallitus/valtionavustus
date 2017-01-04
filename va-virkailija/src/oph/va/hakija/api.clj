@@ -71,7 +71,7 @@
   (first (exec :form-db hakija-queries/get-avustushaku {:id id})))
 
 (defn list-avustushaut []
-  (map avustushaku-response-content (exec :form-db hakija-queries/list-avustushaut {})))
+  (map avustushaku-response-content (exec :form-db hakija-queries/list-avustushaut-not-deleted {})))
 
 (defn- map-status-list [statuses]
   (map (fn [status] (new HakuStatus status)) statuses))
