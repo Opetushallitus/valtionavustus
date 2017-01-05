@@ -1,11 +1,10 @@
 ansible==1.9.4
-boto==2.38.0
 cffi==1.9.1
 cryptography==1.7.1
 enum34==1.1.6
-idna==2.1
+idna==2.2
 ipaddress==1.0.17
-Jinja2==2.8
+Jinja2==2.8.1
 MarkupSafe==0.23
 netaddr==0.7.18
 paramiko==2.1.1
