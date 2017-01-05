@@ -66,7 +66,7 @@ Tarkista, että palvelimet vastaavat Ansiblen pingiin:
 ansible all -i vmware_inventory.py -m ping
 
 # tietty palvelin
-ansible oph-va-app-test01 -i vmware_inventory.py -m ping
+ansible oph-va-app-test01.csc.fi -i vmware_inventory.py -m ping
 ```
 
 ## Tehtäviä
