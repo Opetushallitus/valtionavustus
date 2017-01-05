@@ -22,7 +22,7 @@ $(PYTHON_VENV_DIR): $(PYTHON_REQUIREMENTS)
 	mkdir -p "$(PYTHON_VENV_DIR)"
 	pip install virtualenv
 	virtualenv -p "$(PYTHON_BIN)" "$(PYTHON_VENV_DIR)"
-	pip install -r "$(PYTHON_REQUIREMENTS)"
+	$(PYTHON_VENV_DIR)/bin/pip install -r "$(PYTHON_REQUIREMENTS)"
 
 uninstall:
 	rm -rf "$(PYTHON_VENV_DIR)"
