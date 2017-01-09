@@ -4,6 +4,7 @@
             [oph.soresu.form.db :as db]
             [oph.va.hakija.db :as va-db]
             [oph.soresu.form.formutil :as formutil]
+            [clojure.set :as set]
             [clojure.tools.trace :refer [trace]]
             [yesql.core :refer [defquery]])
   (:gen-class))
@@ -127,3 +128,12 @@
              (dissoc node :helpText)
              node))]
    (update-forms! (db/list-forms) remove-helptext)))
+
+(defquery update-avustushaku-decision! "db/migration/queries/m1_42-update-avustushaku-decision.sql")
+
+(migrations/defmigration migrate-rename-avustushaku-decision-json-key-from-esittelija-to-valmistelija "1.42"
+  "Rename avustushaku decision json key from \"esittelija\" to \"valmistelija\""
+  (doseq [avustushaku (va-db/list-avustushaut)]
+    (let [new-decision (set/rename-keys (:decision avustushaku) {:esittelija :valmistelija})
+          changed-avustushaku (assoc avustushaku :decision new-decision)]
+      (common-db/exec :form-db update-avustushaku-decision! changed-avustushaku))))

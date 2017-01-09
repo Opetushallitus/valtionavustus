@@ -21,7 +21,10 @@
 (defn- startup [config]
   (log/info "Using configuration: " config)
   (log/info "Running db migrations")
-  (dbmigrations/migrate :virkailija-db "db.migration" "oph.va.virkailija.db.migrations")
+  (dbmigrations/migrate :virkailija-db
+                        "db.migration"
+                        ;"oph.va.virkailija.db.migrations"
+                        )
   (log/info "Starting e-mail sender")
   (email/start-background-sender))
 
