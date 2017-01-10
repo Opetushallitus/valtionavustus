@@ -13,6 +13,11 @@
     []
     (exec :virkailija-db queries/get-arviot {:hakemus_ids hakemus-ids})))
 
+(defn list-arvio-status-and-budget-granted-by-hakemus-ids [hakemus-ids]
+  (if (empty? hakemus-ids)
+    []
+    (exec :virkailija-db queries/list-arvio-status-and-budget-granted-by-hakemus-ids {:hakemus_ids hakemus-ids})))
+
 (defn get-arvio [hakemus-id]
   (->> {:hakemus_id hakemus-id}
        (exec :virkailija-db queries/get-arvio)

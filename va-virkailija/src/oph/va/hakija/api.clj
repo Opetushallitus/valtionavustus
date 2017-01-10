@@ -354,7 +354,6 @@
 (defn get-hakemus [hakemus-id]
   (first (exec :form-db hakija-queries/get-hakemus {:id hakemus-id})))
 
-
 (defn get-hakemus-by-user-key [user-key]
   (first (exec :form-db hakija-queries/get-hakemus-by-user-key {:user_key user-key})))
 
@@ -376,3 +375,12 @@
 
 (defn list-hakemus-change-requests [hakemus-id]
   (hakemukset->json (exec :form-db hakija-queries/list-hakemus-change-requests {:id hakemus-id})))
+
+(defn find-matching-hakemukset-by-organization-name [organization-name]
+  (let [org-pattern (str "%" (escape-like-pattern organization-name) "%")]
+    (exec :form-db
+          hakija-queries/find-matching-hakemukset-by-organization-name
+          {:organization_name org-pattern})))
+
+(defn list-matching-avustushaut-by-ids [ids]
+  (exec :form-db hakija-queries/list-matching-avustushaut-by-ids {:ids ids}))

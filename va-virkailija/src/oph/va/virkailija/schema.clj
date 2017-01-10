@@ -186,3 +186,7 @@
   {:results [LdapSearchResult]
    :error s/Bool
    :truncated s/Bool})
+
+(s/defschema AvustushakuOrganizationNameQuery
+  "Find avustushaut by organization name (minimum string length: 3)"
+  (s/conditional (fn [s] (> (count s) 2)) s/Str))

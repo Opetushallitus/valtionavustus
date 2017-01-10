@@ -30,6 +30,7 @@
             [oph.va.virkailija.email :as email]
             [oph.va.virkailija.paatos :as paatos]
             [oph.va.virkailija.decision :as decision]
+            [oph.va.virkailija.hakemus-search :as hakemus-search]
             [oph.soresu.common.koodisto :as koodisto]
             [clojure.tools.logging :as log]))
 
@@ -463,6 +464,13 @@
 
 (defroutes* avustushaku-routes
             "Hakemus listing and filtering"
+
+            (GET* "/search" [organization-name]
+                  :query-params [organization-name :- virkailija-schema/AvustushakuOrganizationNameQuery]
+                  :return s/Any
+                  :summary "Search hakemukset by organization name. Organization-name must have length of at least 3."
+                  (ok (hakemus-search/find-hakemukset-by-organization-name organization-name)))
+
             (get-avustushaku-status)
             (put-avustushaku)
             (post-avustushaku)
@@ -494,7 +502,6 @@
             (put-searches)
             (get-search)
 
-
             (POST* "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id :as request]
                    :path-params [avustushaku-id :- Long, hakemus-id :- Long]
                    :body [body {:status va-schema/HakemusStatus
@@ -518,9 +525,7 @@
                          (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment presenting-officer-email)))
                      (ok {:hakemus-id hakemus-id
                           :status new-status})))
-
             )
-
 
 (defroutes* public-routes
             "Public API"
