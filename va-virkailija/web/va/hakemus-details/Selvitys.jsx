@@ -10,6 +10,7 @@ export default class Selvitys extends Component {
   render() {
     const {controller, hakemus, avustushaku, hakuData, translations,selvitysType} = this.props
     const hasSelvitys = _.has(hakemus,`selvitys.${selvitysType}.answers`)
+    const preview = _.eq(selvitysType, 'valiselvitys')
     const selvitysHakemus = _.get(hakemus,`selvitys.${selvitysType}`)
     const form = _.get(hakemus,`selvitys.${selvitysType}Form`)
     return(
@@ -24,7 +25,7 @@ export default class Selvitys extends Component {
                                          form={form}
 
         />}
-        <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} label="Linkki lomakkeelle"/>
+        <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} preview={preview} label="Linkki lomakkeelle"/>
         {hasSelvitys && <SelvitysEmail controller={controller} selvitysType={selvitysType} hakemus={hakemus} avustushaku={avustushaku} selvitysHakemus={selvitysHakemus} hakuData={hakuData}/>}
       </div>
     )

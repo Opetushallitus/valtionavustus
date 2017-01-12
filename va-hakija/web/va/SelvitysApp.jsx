@@ -27,6 +27,7 @@ const sessionIdentifierForLocalStorageId = new Date().getTime()
 const selvitysType = location.pathname.indexOf("loppuselvitys")!=-1 ? "loppuselvitys" : "valiselvitys"
 const query = queryString.parse(location.search)
 var selvitysId = query[selvitysType]
+var showPreview = query.preview
 const lang = query.lang
 
 function containsExistingEntityId(urlContent) {
@@ -198,16 +199,16 @@ function initFormController() {
   }}
 }
 
-function initSelvitys(avustusHakuId, hakemusId, selvitysType){
+function initSelvitys(avustusHakuId, hakemusId, selvitysType, showPreview){
   HttpUtil.get("/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/init/` + hakemusId).then(response => {
     const hakemusId = response.id
-    window.location = `/avustushaku/${avustusHakuId}/${selvitysType}?${selvitysType}=${hakemusId}&lang=${lang}` + (selvitysType == 'valiselvitys' ? '&preview=true' : '')
+    window.location = `/avustushaku/${avustusHakuId}/${selvitysType}?${selvitysType}=${hakemusId}&lang=${lang}` + (showPreview == 'true' ? '&preview=true' : '')
   })
 }
 
 
 if(!selvitysId && query.hakemus) {
-  initSelvitys(avustusHakuId,query.hakemus, selvitysType)
+  initSelvitys(avustusHakuId,query.hakemus, selvitysType, showPreview)
 }
 else{
   const app = initFormController()

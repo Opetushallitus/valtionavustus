@@ -3,9 +3,9 @@ import PaatosUrl from './PaatosUrl'
 
 export default class SelvitysLink extends Component {
   render() {
-    const {hakemus, avustushaku, selvitysType, label} = this.props
+    const {hakemus, avustushaku, selvitysType, preview, label} = this.props
     const userKey = hakemus["user-key"]
-    const publicUrl = hakemus ? SelvitysUrl.selvitys(avustushaku.id, userKey, selvitysType) : undefined
+    const publicUrl = hakemus ? SelvitysUrl.selvitys(avustushaku.id, userKey, selvitysType, preview) : undefined
 
     return hakemus && hakemus["user-key"] ?
       <span className="decision">
@@ -25,7 +25,7 @@ class SelvitysUrl {
     return selvitys(avustushakuId, userKey, "valiselvitys")
   }
 
-  static selvitys(avustushakuId, hakemusKey, selvitysType) {
-    return `/selvitys/avustushaku/${avustushakuId}/${selvitysType}?hakemus=${hakemusKey}`
+  static selvitys(avustushakuId, hakemusKey, selvitysType, showPreview) {
+    return `/selvitys/avustushaku/${avustushakuId}/${selvitysType}?hakemus=${hakemusKey}` + (selvitysType == 'valiselvitys' ? `&preview=${showPreview}`: '')
   }
 }

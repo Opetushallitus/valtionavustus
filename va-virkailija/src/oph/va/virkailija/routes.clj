@@ -63,9 +63,9 @@
         preview-url (str hakija-app-url "paatos/avustushaku/" avustushaku-id "/hakemus/" user-key "?nolog=true")]
     (resp/redirect preview-url)))
 
-(defn- on-selvitys [avustushaku-id hakemus-user-key selvitys-type]
+(defn- on-selvitys [avustushaku-id hakemus-user-key selvitys-type showPreview]
   (let [hakija-app-url (-> config :server :url :fi)
-        preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" hakemus-user-key)]
+        preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" hakemus-user-key "&preview=" showPreview)]
     (resp/redirect preview-url)))
 
 (defn- get-hakemus-and-published-avustushaku [avustushaku-id hakemus-id]
@@ -108,8 +108,8 @@
                  (on-paatos-preview avustushaku-id user-key))
            (GET* "/selvitys/avustushaku/:avustushaku-id/:selvitys-type" []
                  :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
-                 :query-params [{hakemus :- s/Str nil}]
-                 (on-selvitys avustushaku-id hakemus selvitys-type))
+                 :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
+                 (on-selvitys avustushaku-id hakemus selvitys-type preview))
            (GET "/translations.json" [] (get-translations))
            (GET "/avustushaku/:id/*" [id] (return-html "index.html"))
            (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
