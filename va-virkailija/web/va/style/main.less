@@ -1,18 +1,16 @@
 @import "npm://soresu-form/web/form/style/common.less";
+@import "mixins.less";
 @import "virkailija.less";
 
 #editor-subtab-selector {
   margin: 10px 0;
 }
 
-
 table.hakemus-list {
   .organization-column, .project-name-column {
-    width: 350px;
-    max-width: 350px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    width: 478px;
+    max-width: 478px;
+    #va-virkailija > .overflow-ellipsis();
     input.text-filter {
       width: 300px;
     }
@@ -63,23 +61,20 @@ table.hakemus-list {
       text-align: right;
     }
     .organization-column, .project-name-column {
-      width: 315px;
-      max-width: 315px;
+      width: 483px;
+      max-width: 483px;
       input.text-filter {
-        width: 280px;
+        width: 300px;
       }
     }
   }
   &.hakemus-list--resolved{
     .organization-column, .project-name-column {
-      width: 315px;
-      max-width: 315px;
+      width: 483px;
+      max-width: 483px;
       input.text-filter {
-        width: 280px;
+        width: 300px;
       }
-    }
-    .applied-sum-column{
-      width: 80px;
     }
   }
 
@@ -98,7 +93,7 @@ table.hakemus-list {
   }
   tfoot {
     .total-applications-column {
-      width: 900px;
+      width: 1196px;
       font-size: 13px;
       font-weight: normal;
     }
@@ -135,7 +130,7 @@ table.hakemus-list {
   #preview-container {
     position: absolute;
     background-color: @off-white;
-    padding: 10px 15px 10px 10px;
+    padding: 20px;
     overflow-y: scroll;
     top: @topbar-height;
     bottom: 20px;
@@ -185,15 +180,15 @@ table.hakemus-list {
 
   #hakemus-arviointi {
     position: absolute;
-    font-size: 12px;
+    font-size: 15px;
     background-color: @off-white;
-    padding: 10px 15px 10px 10px;
+    padding: 20px;
     overflow-y: auto;
     display: inline-block;
-    margin-left: @preview-width + 28px;
+    margin-left: @preview-width + 50px;
     top: @topbar-height;
     bottom: 20px;
-    width: @content-width - @preview-width - 43px;
+    width: @content-width - @preview-width - 90px;
 
     .hakemus-arviointi-section{
       margin-bottom: 20px;
@@ -235,7 +230,9 @@ table.hakemus-list {
         font-size: 14px;
       }
       textarea {
-        width: @content-width - @preview-width - 80px;
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
         padding: 10px;
       }
       .close {
@@ -271,10 +268,9 @@ table.hakemus-list {
 
     #hakemus-scoring-container {
       .single-valintaperuste {
-        margin-bottom: 6px;
-        line-height: 14px;
+        margin: 20px 0;
         .valintaperuste-text {
-          width: 290px;
+          width: 450px;
           display: inline-block;
           color: @dark-gray;
         }
@@ -290,6 +286,7 @@ table.hakemus-list {
           }
           .score-text {
             color: @dark-gray;
+            font-size: 13px;
           }
         }
       }
@@ -325,7 +322,10 @@ table.hakemus-list {
     }
 
     .comment-input {
-      width: @content-width - @preview-width - 80px;
+      display: block;
+      box-sizing: border-box;
+      width: 100%;
+      padding: 10px;
     }
 
     input[type=radio] + label {

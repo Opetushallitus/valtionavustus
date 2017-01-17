@@ -6,7 +6,7 @@
       display: none;
     }
     .summing-table, .budget-summary {
-      width: @content-width - @preview-width - 48px;
+      width: 100%;
     }
     .summing-table {
       caption {
@@ -18,41 +18,41 @@
         font-size: inherit;
         margin: 0;
       }
+      td {
+        line-height: 2;  // align text by baseline inside <span> and <input>
+      }
+      th {
+        vertical-align: bottom;
+      }
       .label-column {
-        width: 160px;
+        width: 200px;
       }
       .has-title {
         cursor: help;
       }
       .original-amount-column {
-        min-width: 45px;
         text-align: right;
       }
       .amount-column {
         padding-left: 5px;
       }
       .description-column {
-        padding-left: 5px;
-      }
-      tfoot .money.sum {
-        padding-top: 10px;
+        padding-left: 10px;
       }
       span.money, span.soresu-money {
-        margin-right: 0;
         display: inline-block;
         min-height: 30px;
+        margin: 0;
       }
       .soresu-text-field input[type=text], .soresu-money-field input[type=text], .soresu-preview-element, .soresu-value {
         font-size: inherit;
         &.small, &.medium, &.large, &.extra-large {
           width: auto;
         }
-        &.extra-extra-small {
-          width: 60px;
-        }
       }
       .soresu-text-field input[type=text], .soresu-money-field input[type=text] {
         padding: 4px;
+        margin: 0;
       }
     }
   }

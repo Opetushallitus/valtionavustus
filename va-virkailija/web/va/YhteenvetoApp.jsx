@@ -32,9 +32,7 @@ export default class SummaryApp extends Component {
     return (
       <section id="container" className="section-container">
         <SummaryHeading avustushaku={avustushaku} hakemusList={hakemusList} />
-        <div id="list-container">
-          {summaryListings}
-        </div>
+        {summaryListings}
         <div id="summary-link">
           <a href={mailToLink}>Lähetä linkki sähköpostilla</a>
         </div>
@@ -131,35 +129,47 @@ class SummaryHeading extends Component {
         statusSummaryRows.push(<SummaryTableRow key={s} label={SummaryListing.arvioStatusFiForSummary(s)} count={applications.length} applied={appliedOphShareSum} granted={grantedSum} />)
       }
     })
-    statusSummaryRows.push(<SummaryTableRow key="total-summary-row" label="Yhteensä" count={hakemusList.length} applied={ophShareSum} granted={budgetGrantedSum} />)
 
-    return <div>
-             <h1>{titleString}</h1>
-             <h2 style={{textTransform:'uppercase'}}>Ratkaisuyhteenveto</h2>
-               <table className="summary-heading-table">
-                 <thead>
-                   <tr>
-                     <th className="arvio-status-column">&nbsp;</th>
-                     <th className="count-column">Kpl</th>
-                     <th className="applied-column">Haettu</th>
-                     <th className="granted-column">Myönnetty</th></tr>
-                 </thead>
-                 <tbody>
-                   {statusSummaryRows}
-                 </tbody>
-               </table>
-           </div>
+    return (
+      <div>
+        <h1>{titleString}</h1>
+        <h2 style={{textTransform:'uppercase'}}>Ratkaisuyhteenveto</h2>
+        <table className="summary-heading-table">
+          <thead>
+            <tr>
+              <th className="arvio-status-column">&nbsp;</th>
+              <th className="count-column">Kpl</th>
+              <th className="applied-money-column">Haettu</th>
+              <th className="granted-money-column">Myönnetty</th>
+            </tr>
+          </thead>
+          <tbody>
+            {statusSummaryRows}
+          </tbody>
+          <tfoot>
+            <SummaryTableRow key="total-summary-row" label="Yhteensä" count={hakemusList.length} applied={ophShareSum} granted={budgetGrantedSum} isTotalSummary={true} />
+          </tfoot>
+        </table>
+      </div>
+    )
   }
 }
 
-const SummaryTableRow = ({label,count,applied,granted}) =>(
-  <tr className="summary-heading-table-row">
-    <td className="arvio-status-column">{label}</td>
-    <td className="count-column">{count}</td>
-    <td className="applied-column"><span className="money">{applied}</span></td>
-    <td className="granted-column"><span className="money">{granted}</span></td>
-  </tr>
-)
+const SummaryTableRow = ({label, count, applied, granted, isTotalSummary = false}) => {
+  const moneyClasses = isTotalSummary ? "money sum" : "money"
+  return (
+    <tr className="summary-heading-table-row">
+      <td className="arvio-status-column">{label}</td>
+      <td className="count-column">{count}</td>
+      <td className="applied-money-column">
+        <span className={moneyClasses}>{applied}</span>
+      </td>
+      <td className="granted-money-column">
+        <span className={moneyClasses}>{granted}</span>
+      </td>
+    </tr>
+  )
+}
 
 export default class SummaryListing extends Component {
   render() {
@@ -172,14 +182,14 @@ export default class SummaryListing extends Component {
     const budgetGrantedSum = SumByBudgetGranted(hakemusListSorted)
 
     return (
-      <table key="hakemusListing" className="hakemus-list overview-list">
+      <table key="hakemusListing" className="summary-hakemus-table">
         <thead>
-        <tr><th colSpan="4" className="status-heading-column">{heading}</th></tr>
+        <tr><th colSpan="5" className="status-heading-column">{heading}</th></tr>
         <tr>
           <th className="organization-column">Hakija</th>
           <th className="project-name-column">Hanke</th>
-          <th className="applied-sum-column">Haettu</th>
-          <th className="granted-sum-column">Myönnetty</th>
+          <th className="applied-money-column">Haettu</th>
+          <th className="granted-money-column">Myönnetty</th>
           <th className="comment-column">Huom</th>
         </tr></thead>
         <tbody>
@@ -189,8 +199,8 @@ export default class SummaryListing extends Component {
           <td colSpan="2" className="total-applications-column">
             &nbsp;
           </td>
-          <td className="applied-sum-column"><span className="money sum">{ophShareSum}</span></td>
-          <td className="granted-sum-column"><span className="money sum">{budgetGrantedSum}</span></td>
+          <td className="applied-money-column"><span className="money sum">{ophShareSum}</span></td>
+          <td className="granted-money-column"><span className="money sum">{budgetGrantedSum}</span></td>
           <td className="comment-column">&nbsp;</td>
         </tr></tfoot>
       </table>
@@ -215,8 +225,8 @@ const HakemusRow = ({hakemus}) => {
       <tr id={htmlId} className="overview-row">
         <td className="organization-column" title={hakemus["organization-name"]}>{hakemus["organization-name"]}</td>
         <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
-        <td className="applied-sum-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
-        <td className="granted-sum-column"><span className="money">{hakemus.arvio["budget-granted"]}</span></td>
+        <td className="applied-money-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
+        <td className="granted-money-column"><span className="money">{hakemus.arvio["budget-granted"]}</span></td>
         <td className="comment-column" title={hakemus.arvio["summary-comment"]}>{hakemus.arvio["summary-comment"]}</td>
     </tr>
     )

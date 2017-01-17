@@ -1,155 +1,136 @@
 @import "npm://soresu-form/web/form/style/variables.less";
+@import "mixins.less";
 
-@score-column-width: 90px;
-@status-column-width: 110px;
-@comment-column-width: 200px;
-@summary-content-width: @content-width - @score-column-width - @status-column-width + @comment-column-width;
-@summary-total-applications-column-width: @summary-content-width - @score-column-width - @status-column-width;
+@money-column-width: 120px;
 
 body {
   background-color: #fff;
 }
 
 #container {
-  margin: 10px auto 0 auto;
+  min-width: 1180px;
+  max-width: @content-width;
+  margin: 0 auto;
+  padding: 10px;
+
   h1, h2 {
     margin: 0;
   }
+
   h2 {
     color: @form-label-black;
     font-weight: 300;
     font-size: 20px;
   }
+
   ul {
     padding: 0;
     list-style: none;
   }
 
-  .rahoitusalue-heading{
+  td, th {
+    text-align: left;
+  }
+
+  td {
+    padding: 5px 7px 5px 0;
+    vertical-align: top;
+  }
+
+  th {
+    padding: 0 7px 5px 0;
+    color: @form-label-black;
+    font-weight: normal;
+    vertical-align: bottom;
+  }
+
+  thead tr:last-child {
+    border-bottom: 1px solid @light-gray;
+  }
+
+  tfoot tr:first-child {
+    border-top: 1px solid @light-gray;
+  }
+
+  .money {
+    &:after {
+      content: "\00A0€";
+    }
+
+    &.sum {
+      font-weight: bold;
+    }
+  }
+
+  .rahoitusalue-heading {
     margin-top: 10px;
     margin-bottom: 10px;
+  }
+
+  .applied-money-column,
+  .granted-money-column {
+    text-align: right;
+  }
+
+  .applied-money-column,
+  .granted-money-column {
+    width: @money-column-width;
+  }
+
+  .status-heading-column {
+    padding-top: 15px;
+    padding-bottom: 10px;
+    text-transform: uppercase;
   }
 
   .summary-heading-table {
     margin-top: 10px;
     margin-bottom: 20px;
     white-space: nowrap;
-    text-align: right;
     font-size: 15px;
-    thead {
-      th {
-        padding-left: 10px;
-      }
-    }
-    .arvio-status-column {
-      width: 100px;
-      text-align: left;
-    }
+
     .count-column {
-      width: 100px;
-    }
-    .applied-column {
       text-align: right;
-      width: 150px;
+      width: 80px;
     }
-    .granted-column {
-      text-align: right;
-      width: 150px;
-    }
-    td {
-      padding: 2px 0;
-      .money:after {
-        content: "\00A0€";
-      }
-    }
-    tbody {
-      tr:first-child {
-        border-top: 1px solid @light-gray;
-      }
-      tr:last-child {
-        border-top: 1px solid @light-gray;
-      }
-    }
-    tfoot {
-      border-top: 1px solid @light-gray;
-    }
-  }
-}
 
-#list-container {
-  .score-column {
-    display: none;
+    .granted-money-column {
+      padding-left: 7px;
+      padding-right: 0;
+    }
   }
-  width: @summary-content-width;
-  table.overview-list {
-    width: @summary-content-width - 50px;
-    .organization-column, .project-name-column {
-      width: 350px;
-      max-width: 350px;
+
+  .summary-hakemus-table {
+    width: 100%;
+
+    .organization-column,
+    .project-name-column {
+      min-width: 425px;
+      max-width: 425px;
     }
-    .applied-sum-column {
-      width: 120px;
+
+    td.organization-column,
+    td.project-name-column {
+      #va-virkailija > .overflow-ellipsis();
     }
-    .granted-sum-column {
-      width: 120px;
-    }
+
     .comment-column {
-      width: @comment-column-width;
-      padding: 5px 0 0 7px;
-      max-width: @comment-column-width;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      padding-left: 7px;
+      padding-right: 0;
     }
-    tr.overview-row {
-      cursor: default;
-      &.unselected:hover {
-        background-color: @lighterer-gray;
-      }
-    }
-    td {
-      vertical-align: top;
-    }
-    tbody {
-      td.comment-column {
-        padding-top: 7px;
-        font-style: italic;
-        font-size: 15px;
-        line-height: 100%;
-      }
-      tr.overview-row td.organization-column:first-child {
-        padding-left: 0;
-        padding-right: 7px;
-      }
-    }
-  }
 
-  table.overview-list thead {
-    .organization-column, .project-name-column, .status-heading-column, .comment-column {
-      text-align: left;
-    }
-    .status-heading-column {
-      text-transform: uppercase;
-    }
-    .comment-column {
-      padding-bottom: 11px;
-    }
-  }
-
-  table.hakemus-list tfoot {
-    .total-applications-column {
-      width: @summary-total-applications-column-width;
-    }
-    .applied-sum-column {
-      width: 120px;
-    }
-    .granted-sum-column {
-      width: 120px;
+    td.comment-column {
+      padding-top: 7px;
+      font-style: italic;
+      font-size: 15px;
+      line-height: 100%;
     }
   }
 }
 
 #summary-link {
-  margin-bottom: 40px;
+  margin: 40px 0;
+
   a {
     color: #fff;
     background-color: @light-green;
@@ -167,23 +148,23 @@ body {
     color: black;
   }
 
-  h2, a, table.overview-list thead tr th {
+  h2, a, th {
     color: black;
   }
 
   #container {
+    min-width: auto;
+    max-width: auto;
     margin: 0;
-  }
+    padding: 0;
 
-  input {
-    margin-left: -5px;
-    background-color: white;
-    border: none;
-    color: black;
-  }
-
-  .sorter {
-    display: none;
+    .summary-hakemus-table {
+      .organization-column,
+      .project-name-column {
+        min-width: 350px;
+        max-width: 350px;
+      }
+    }
   }
 
   #summary-link {

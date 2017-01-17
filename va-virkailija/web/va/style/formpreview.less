@@ -2,6 +2,7 @@
 
 .soresu-preview {
   text-align: justify;
+
   h2 {
     padding: 0;
     margin: 30px 0 8px 0;
@@ -9,16 +10,15 @@
 
   section.soresu-theme {
     padding-top: 0;
-    margin: 5px 0 0 5px;
     border: none;
 
     h2 {
       float: none;
-      margin: 5px 0 0 5px;
+      margin: 5px 0 0 0;
     }
 
-    &> div {
-      margin-left: 5px;
+    & > div {
+      margin-left: 0;
     }
   }
 
@@ -56,11 +56,11 @@
         width: 98%; // original width from preview.less
       }
       .soresu-value {
-        font-size: 16px;
+        font-size: 15px;
       }
       .soresu-key {
         padding: 12px 0 6px 0;
-        font-size: 16px;
+        font-size: 15px;
         color: @dark-gray;
       }
       &.soresu-text-area {
