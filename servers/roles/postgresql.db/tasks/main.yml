@@ -34,3 +34,20 @@
   sudo_user: postgres
   postgresql_user: name={{item.dbuser}} role_attr_flags=SUPERUSER,NOCREATEDB  # Note: we might want to have NOSUPERUSER
   with_items: db_accounts
+
+- name: Install script to remove old PostgreSQL backups
+  template:
+    src: remove_old_backups.sh.j2
+    dest: "{{ postgresql_backup_local_dir}}/bin/remove_old_backups.sh"
+    owner: postgres
+    group: postgres
+    mode: 0750
+
+- name: Schedule removing old PostgreSQL backups
+  cron:
+    name: Remove old PostgreSQL backups
+    cron_file: ansible_remove_old_postgresql_backups
+    user: postgres
+    hour: 0
+    minute: 30
+    job: "{{ postgresql_backup_local_dir }}/bin/remove_old_backups.sh"

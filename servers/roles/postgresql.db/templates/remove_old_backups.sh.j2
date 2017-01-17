@@ -1,0 +1,11 @@
+#!/bin/bash
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+find "{{ postgresql_backup_dir }}/" \
+     -mindepth 1 \
+     -maxdepth 1 \
+     -mtime +14 \
+     -exec echo Removing '{}' \; \
+     -exec rm -fr -- '{}' \;
