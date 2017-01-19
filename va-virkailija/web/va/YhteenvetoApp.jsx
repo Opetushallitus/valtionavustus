@@ -155,7 +155,7 @@ class SummaryHeading extends Component {
 const SummaryTableRow = ({label,count,applied,granted}) =>(
   <tr className="summary-heading-table-row">
     <td className="arvio-status-column">{label}</td>
-    <td>{count}</td>
+    <td className="count-column">{count}</td>
     <td className="applied-column"><span className="money">{applied}</span></td>
     <td className="granted-column"><span className="money">{granted}</span></td>
   </tr>
