@@ -181,3 +181,9 @@ Hakemusten generointi
   - pilotissa:
    * va-hakija: "localhost:20876"
    * va-virkailija: "localhost:21322"
+
+# Tuetut selaimet
+
+Hakijan käyttöliittymä: viimeisin stabiili Google Chrome ja Mozilla Firefox, IE11.
+
+Virkailijan käyttöliittymä: viimeisin stabiili Google Chrome ja Mozilla Firefox.
