@@ -68,14 +68,13 @@ class ChangeLog extends React.Component{
     return (
       <div>
         <h4>Muutoshistoria</h4>
-        {changelogs.length==0 && <div>Ei muutoksia</div>}
-        <table style={{width:'100%'}}>
-          <colgroup>
-            <col width="100"/>
-            <col width="150"/>
-          </colgroup>
-          {changelogs.map((changelog, index)=><ChangeLogRow key={index} changelog={changelog} hakemus={hakemus}/>)}
-        </table>
+        {changelogs.length ? (
+          <table className="changelog">
+            {changelogs.map((changelog, index) => <ChangeLogRow key={index} changelog={changelog} hakemus={hakemus}/>)}
+          </table>
+        ) : (
+          <div>Ei muutoksia</div>
+        )}
       </div>
     )
   }
@@ -108,19 +107,20 @@ class ChangeLogRow extends React.Component{
     const toggleOpen = ()=> {
       this.setState({open:!this.state.open})
     }
+
     return (
       <tbody>
-        <tr>
-          <td>{dateStr}</td>
-          <td>{changelog["first-name"]} {changelog["last-name"]}</td>
-          <td><a onClick={toggleOpen}>{typeTranslated}</a></td>
+        <tr className="changelog__row">
+          <td className="changelog__date">{dateStr}</td>
+          <td className="changelog__name">{changelog["first-name"]} {changelog["last-name"]}</td>
+          <td className="changelog__type"><a onClick={toggleOpen}>{typeTranslated}</a></td>
         </tr>
         <tr>
-          {this.state.open &&
-            <td colSpan="3">
-              <pre style={{whiteSpace:'pre-wrap',backgroundColor:'#dfdfdf',padding:5}}>{JSON.stringify(changelog.data)}</pre>
-            </td>
-          }
+          {this.state.open && (
+           <td colSpan="3">
+             <pre className="changelog__data">{JSON.stringify(changelog.data)}</pre>
+           </td>
+          )}
         </tr>
       </tbody>
     )
