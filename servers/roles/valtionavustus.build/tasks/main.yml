@@ -30,7 +30,7 @@
   service: name=docker state=started enabled=yes
 
 - name: Add directory for database db dumps storage
-  file: path={{ database_dumps_dir }} owner={{ jenkins_user }} state=directory mode=0700
+  file: path={{ database_dumps_dir }} owner={{ jenkins_user }} state=directory mode=0700
 
 - name: Install g++ for jest (Debian)
   apt: state=installed pkg=g++
