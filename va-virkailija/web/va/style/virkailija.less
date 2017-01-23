@@ -4,7 +4,6 @@
 @haku-selector-combobox-height: 22px;
 @overview-list-height: 270px;
 @overview-and-top-total-height: @topbar-height + @haku-selector-combobox-height + @overview-list-height;
-@blue: #149ECB;
 
 .noselect() {
   -webkit-touch-callout: none;
@@ -53,8 +52,8 @@ h1 {
 }
 
 h2 {
-  color: @darker-gray;
-  font-weight: 300;
+  color: @dark-blue;
+  font-weight: bold;
   font-size: 18px;
 }
 
@@ -97,26 +96,26 @@ h3 {
 }
 
 .btn-blue{
-  color: @blue;
-  border: solid 1px @blue;
+  color: @light-blue;
+  border: 1px solid @light-blue;
   background-color: transparent;
 }
 
 .btn-danger{
   color: #fff;
-  border: solid 1px @bright-red;
+  border: 1px solid @bright-red;
   background-color: @bright-red;
 }
 
 .btn-selected{
-  background-color: @blue;
+  background-color: @light-blue;
   color: #fff;
-  border-color: @blue;
+  border-color: @light-blue;
 }
 
 .btn-selected--border{
   border-width: 2px;
-  border-color: @blue;
+  border-color: @light-blue;
 }
 
 .btn-tag{
@@ -146,7 +145,7 @@ h3 {
 }
 
 a {
-  color: @blue;
+  color: @light-blue;
   cursor: pointer;
   text-decoration: none;
 }
@@ -183,7 +182,7 @@ a {
 
 button {
   color: #fff;
-  background-color: @light-green;
+  background-color: @light-blue;
   border-width: 0;
   margin: 4px 0;
   padding: 8px 15px;
@@ -231,6 +230,10 @@ textarea, input[type=text] {
   &:enabled {
     border: 1px solid @dark-gray;
   }
+}
+
+table caption {
+  color: @dark-blue;
 }
 
 #list-container {
@@ -303,7 +306,7 @@ input[type=radio]:disabled + label {
 input[type=radio]:checked + label {
   margin: 0;
   color: @text-black;
-  border: solid 4px @light-green;
+  border: 4px solid @light-blue;
 }
 
 table.overview-list {
@@ -352,10 +355,10 @@ table.overview-list {
       }
 
       &.unselected:hover {
-        background-color: lighten(@selected-blue, 42%);
+        background-color: @lighter-blue;
       }
       &.selected {
-        background-color: @blue;
+        background-color: @light-blue;
         color: white;
         .btn-role{
           border-color: #fff;
@@ -392,7 +395,7 @@ table.overview-list {
   margin-right: 20px;
   float: left;
   .hakemus-filter-remove{
-    color: @blue;
+    color: @light-blue;
     margin-left: 10px;
     cursor: pointer;
     font-size: 11px;
@@ -470,7 +473,7 @@ table.overview-list {
 }
 
 .hakemus-filter-question{
-  color: @blue;
+  color: @light-blue;
   cursor: pointer;
   margin-bottom: 10px;
   position: relative;
@@ -546,7 +549,7 @@ table.overview-list {
 
 .radio-row{
   box-sizing: border-box;
-  color:@blue;
+  color: @light-blue;
   width: 100%;
   padding: 5px 10px;
   line-height: 1.15;
@@ -555,7 +558,7 @@ table.overview-list {
     background-color: #e0edf4;
   }
   &--selected{
-    background-color: @blue;
+    background-color: @light-blue;
     color: #fff;
   }
   label{
@@ -577,8 +580,8 @@ h2.heading{
   margin-top: 0;
 }
 
-.seuranta{
-  .va-budget table.summing-table caption, .va-budget table.budget-summary caption{
+.seuranta {
+  .va-budget table.summing-table caption, .va-budget table.budget-summary caption {
     font-size: 14px;
   }
 }
@@ -598,11 +601,15 @@ h2.heading{
   }
 }
 
+.soresu-file-upload .soresu-upload-button {
+  background-color: @light-blue;
+}
+
 .status-filter {
   position: relative;
   display: inline-block;
   .status-filter-popup {
-    color: @selected-blue;
+    color: @light-blue;
     position: absolute;
     padding: 10px;
     width: 160px;

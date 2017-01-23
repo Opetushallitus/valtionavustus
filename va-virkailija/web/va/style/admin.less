@@ -56,8 +56,8 @@ table.translation, #haku-roles table {
     color: @dark-gray;
     cursor: pointer;
     &.selected {
-      color: @light-green;
-      border-bottom: 2px solid @light-green;
+      color: @light-blue;
+      border-bottom: 2px solid @light-blue;
       cursor: default;
     }
   }
@@ -103,7 +103,7 @@ table.translation, #haku-roles table {
 
   input[type=radio]:checked + label {
     margin: 0;
-    border: solid 4px @light-green;
+    border: 4px solid @light-blue;
   }
 
   input.percentage {
@@ -216,7 +216,7 @@ table.translation, #haku-roles table {
             }
           }
           &:hover:not(.disabled) {
-            background-color: lighten(@selected-blue, 42%);
+            background-color: @lighter-blue;
           }
           &.no-results-row {
             padding-left: 30px;
