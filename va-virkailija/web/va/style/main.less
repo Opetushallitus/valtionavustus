@@ -7,9 +7,15 @@
 }
 
 table.hakemus-list {
+  .organization-column {
+    width: 350px;
+    max-width: 350px;
+  }
+  .project-name-column {
+    width: 606px;
+    max-width: 606px;
+  }
   .organization-column, .project-name-column {
-    width: 478px;
-    max-width: 478px;
     #va-virkailija > .overflow-ellipsis();
     input.text-filter {
       width: 300px;
@@ -55,29 +61,16 @@ table.hakemus-list {
       content: " €"
     }
   }
-  &.hakemus-list--academysize{
-    .academysize-column {
-      width: 70px;
-      text-align: right;
-    }
-    .organization-column, .project-name-column {
-      width: 483px;
-      max-width: 483px;
-      input.text-filter {
-        width: 300px;
-      }
+  &.hakemus-list--academysize, &.hakemus-list--resolved {
+    .project-name-column {
+      width: 616px;
+      max-width: 616px;
     }
   }
-  &.hakemus-list--resolved{
-    .organization-column, .project-name-column {
-      width: 483px;
-      max-width: 483px;
-      input.text-filter {
-        width: 300px;
-      }
-    }
+  &.hakemus-list--academysize .academysize-column {
+    width: 70px;
+    text-align: right;
   }
-
   .person-filter-column {
     width: 50px;
     text-align: center;
