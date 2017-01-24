@@ -195,7 +195,6 @@ export default class HakemustenArviointiController {
   onHakemusSelection(state, hakemusIdToSelect) {
     state = this.onSaveHakemusArvio(state, state.selectedHakemus)
     state.selectedHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdToSelect)
-    state.previouslySelectedHakemus = undefined
     const pathname = location.pathname
     const parsedUrl = new RouteParser('/avustushaku/:avustushaku_id/(hakemus/:hakemus_id/:subTab/)*ignore').match(pathname)
     const subTab = parsedUrl.subTab || 'arviointi'
@@ -216,12 +215,16 @@ export default class HakemustenArviointiController {
   }
 
   onCloseHakemus(state) {
-    state.previouslySelectedHakemus = state.selectedHakemus
+    if (state.selectedHakemus) {
+      const previouslySelectedHakemusId = state.selectedHakemus.id
+      setTimeout(() => {
+        const selected = document.getElementById(`hakemus-${previouslySelectedHakemusId}`)
+        if (selected) {
+          window.scrollTo(0, selected.offsetTop)
+        }
+      }, 300)
+    }
     state.selectedHakemus = undefined
-    setTimeout(() => {
-      const selected = document.getElementById(`hakemus-${state.previouslySelectedHakemus.id}`)
-      window.scrollTo(0, selected.offsetTop)
-    }, 300)
     return state
   }
 
