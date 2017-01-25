@@ -23,38 +23,59 @@
   }
 
   .soresu-theme {
-    .soresu-preview-fieldset {
+    .soresu-preview-fieldset,
+    .soresu-preview-growing-fieldset {
       .soresu-preview-element {
-        &.large {
-          width: ceil(@preview-width / 1.7); // original width from preview.less
+        text-align: left;
+        width: 100%;
+
+        &:not(.soresu-text-area).small,
+        &:not(.soresu-text-area).medium,
+        &:not(.soresu-text-area).large {
+          &:nth-child(odd) {
+            margin-right: 10px;
+          }
         }
       }
     }
+    .soresu-preview-fieldset .soresu-preview-element {
+      &:not(.soresu-text-area).small,
+      &:not(.soresu-text-area).medium,
+      &:not(.soresu-text-area).large {
+        width: 290px;
+      }
+    }
     .soresu-preview-growing-fieldset {
-      .soresu-preview-growing-fieldset-child {
-        margin-left: 20px;
-        padding-bottom: 20px;
+      ol {
+        margin: 20px 0;
+        padding: 0;
+        li {
+          & > * {
+            margin-left: 20px;
+          }
+          &:before {
+            padding-top: 12px;
+            color: @dark-gray;
+            width: 20px;
+          }
+        }
         .soresu-preview-element {
-          &.large {
-            width: ceil(@preview-width / 1.7); // original width from preview.less
+          &:not(.soresu-text-area).small,
+          &:not(.soresu-text-area).medium,
+          &:not(.soresu-text-area).large {
+            width: 270px;
           }
         }
       }
       .va-big-fieldset {
-        margin-left: 15px;
+        margin-left: 0;
       }
-      .fieldset-elements {
-        .soresu-preview-element {
-          &.extra-large {
-            width: 98%; // original width from preview.less
-          }
-        }
+      &.show-only-first-label ol li:first-child:before {
+        margin-top: 0;
       }
     }
     .soresu-preview-element {
-      &.large {
-        width: 98%; // original width from preview.less
-      }
+      width: auto;
       .soresu-value {
         font-size: 15px;
       }
@@ -66,6 +87,9 @@
       &.soresu-text-area {
         width: auto;
       }
+    }
+    .soresu-attachment-block {
+      width: auto;
     }
     .va-budget {
       .summing-table, .budget-summary {
