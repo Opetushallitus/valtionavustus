@@ -67,7 +67,7 @@ class ChangeLog extends React.Component{
     if (!changelogs) return null
     return (
       <div>
-        <h4>Muutoshistoria</h4>
+        <h2>Muutoshistoria</h2>
         {changelogs.length ? (
           <table className="changelog">
             {changelogs.map((changelog, index) => <ChangeLogRow key={index} changelog={changelog} hakemus={hakemus}/>)}

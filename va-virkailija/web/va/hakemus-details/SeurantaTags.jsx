@@ -43,7 +43,7 @@ export default class SeurantaTags extends Component {
 
     return (
       <div>
-        <h2 className="heading" style={{marginBottom:10}}>Tagit
+        <h2>Tagit
           <button className="btn btn-selected btn-sm btn-tag-example" style={{marginLeft:10,marginRight:10}}>Valittu tagi</button>
           <button className="btn btn-simple btn-sm btn-tag-example">Ei käytössä</button>
         </h2>

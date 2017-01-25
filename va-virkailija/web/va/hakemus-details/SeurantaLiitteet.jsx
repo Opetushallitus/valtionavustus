@@ -69,24 +69,22 @@ export default class SeurantaLiitteet extends Component {
 
     return (
       <div className="seuranta-liitteet">
-        <h2 className="heading">Liitteet</h2>
-            {fields.map(field=>{
-                return <AttachmentField field={field}
-                                        key={field.id}
-                                 translations={translations}
-                                 lang="fi"
-                                 disabled={false}
-                                 allAttachments={attachments}
-                                 onDrop={_.partial(onDrop,field)}
-                                 onRemove={_.partial(onRemove,field)}
-                                 htmlId={field.id}
-                                 controller={formController}
-                                 downloadUrl={downloadUrl}
-
+        <h2>Liitteet</h2>
+        {fields.map(field => {
+          return <AttachmentField
+                     field={field}
+                     key={field.id}
+                     translations={translations}
+                     lang="fi"
+                     disabled={false}
+                     allAttachments={attachments}
+                     onDrop={_.partial(onDrop,field)}
+                     onRemove={_.partial(onRemove,field)}
+                     htmlId={field.id}
+                     controller={formController}
+                     downloadUrl={downloadUrl}
                 />
-            }
-            )}
-
+        })}
       </div>
     )
   }
