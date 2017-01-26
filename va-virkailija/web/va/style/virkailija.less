@@ -1,5 +1,6 @@
 @import "npm://soresu-form/web/form/style/variables.less";
 @import "npm://soresu-form/web/form/style/common.less";
+@import "mixins.less";
 
 @haku-selector-combobox-height: 22px;
 @overview-list-height: 270px;
@@ -181,38 +182,57 @@ a {
   }
 }
 
-button {
+button,
+.soresu-file-upload .soresu-upload-button {
+  font-size: 15px;
   color: #fff;
   background-color: @light-blue;
-  border-width: 0;
+  border: 2px solid @light-blue;
+  border-radius: 2px;
   margin: 4px 0;
-  padding: 8px 15px;
-  font-size: 18px;
-  font-weight: 300;
+  padding: 8px 14px;
+
+  &:not(:disabled):hover {
+    background-color: @bright-blue;
+    border-color: @bright-blue;
+  }
 }
 
-button[disabled] {
+button:disabled {
   background-color: @light-gray;
-  border: 1px solid @light-gray;
+  border-color: @light-gray;
 }
 
-button.remove {
+button.remove,
+button.soresu-remove {
   background: transparent url('../img/remove_line_enabled.png') no-repeat left top;
-  border-width: 0;
+  border: none;
   width: 20px;
   height: 22px;
+
+  &:not(:disabled):hover {
+    background-color: transparent;
+  }
 }
-button[disabled].remove {
+
+button:disabled.remove,
+button:disabled.soresu-remove {
   background: transparent url('../img/remove_line_disabled.png') no-repeat left top;
 }
 
-button.close{
+button.close {
   font-size: 21px;
   font-weight: normal;
   line-height: 1;
   color: #999290;
   background-color: transparent;
+  border: none;
   cursor: pointer;
+
+  &:not(:disabled):hover {
+    color: @bright-blue;
+    background-color: transparent;
+  }
 }
 
 textarea {
@@ -287,27 +307,107 @@ input[type=radio] {
   display: none;
 }
 
-input[type=radio] + label {
-  text-transform: uppercase;
+.soresu-radiobutton-group {
   display: inline-block;
-  color: @dark-gray;
-  margin: 4px 3px;
-  padding: 12px;
-  background-color: #fff;
-  border: solid 1px @dark-gray;
-  cursor: pointer;
+  border: 2px solid @light-blue;
+  border-radius: 2px;
+  padding: 4px;
+  background-color: white;
+  margin: 4px 0;
+
+  input[type=radio] + label {
+    display: inline-block;
+    font-size: 15px;
+    color: @light-blue;
+    background-color: white;
+    border: 2px solid transparent;
+    border-radius: 2px;
+    margin: 0;
+    padding: 4px 8px;
+  }
+
+  &--vertical {
+    input[type=radio] + label {
+      display: block;
+    }
+  }
+
+  input[type=radio]:disabled + label {
+    color: @light-gray;
+  }
+
+  input[type=radio]:checked + label {
+    color: white;
+    background-color: @light-blue;
+    border-color: @light-blue;
+  }
+
+  input[type=radio]:not(:disabled):not(:checked) + label:hover {
+    color: white;
+    background-color: @bright-blue;
+    border-color: @bright-blue;
+    cursor: pointer;
+  }
 }
 
-input[type=radio]:disabled + label {
-  color: @light-gray;
-  cursor: default;
-  border: solid 1px @light-gray;
+div.soresu-field-edit .soresu-edit-properties-line .soresu-edit-property .soresu-radiobutton-group--vertical label.soresu-input-type-selection {
+  min-width: auto;  // override, just horrible
 }
 
-input[type=radio]:checked + label {
-  margin: 0;
-  color: @text-black;
-  border: 4px solid @light-blue;
+.soresu-sizebutton-group {
+  display: inline-block;
+  border: none;
+  margin: 4px 0;
+  padding: 0;
+
+  label.soresu-size-selection {
+    display: inline-block;
+    font-size: 15px;
+    color: @form-label-black;
+    background-color: #def2ff;
+    width: 50px;
+    padding: 4px;
+
+    &:first-of-type {
+      border-radius: 2px 0 0 2px;
+    }
+
+    &:last-of-type {
+      border-radius: 0 2px 2px 0;
+    }
+  }
+
+  input[type=radio]:checked + label.soresu-size-selection {
+    color: white;
+    background-color: #06526b;
+
+    &:before {
+      content: "✔";
+      color: @light-blue;
+      margin-right: 6px;
+    }
+  }
+
+  input[type=radio]:not(:disabled):not(:checked) + label.soresu-size-selection:hover {
+    background-color: @bright-blue;
+    cursor: pointer;
+  }
+}
+
+.soresu-edit-property input[type=checkbox] {
+  border: 2px solid @light-blue;
+  border-radius: 2px;
+  position: relative;
+
+  &:checked {
+    background: none;
+
+    &:after {
+      content: "✔";
+      color: @light-blue;
+      #va-virkailija > .center-horizontal-vertical();
+    }
+  }
 }
 
 table.overview-list {
@@ -585,10 +685,6 @@ table.overview-list {
   div.soresu-attachment-input-field button.soresu-remove{
     top:0;
   }
-}
-
-.soresu-file-upload .soresu-upload-button {
-  background-color: @light-blue;
 }
 
 .status-filter {

@@ -195,7 +195,9 @@ class Rahoitusalueet extends React.Component {
     return (
         <div id="set-multiple-rahoitusalue">
           <h3>Rahoitusalueet</h3>
-          {options}
+          <fieldset className="soresu-radiobutton-group">
+            {options}
+          </fieldset>
         </div>
     )
   }
@@ -229,7 +231,9 @@ class AcademySize extends React.Component {
     return (
       <div id="set-academysize">
         <h3>Oppilaitoksen koko</h3>
-        {options}
+        <fieldset className="soresu-radiobutton-group">
+          {options}
+        </fieldset>
       </div>
     )
   }
@@ -268,7 +272,9 @@ class Maksuerat extends React.Component {
     return (
       <div id="set-maksuerat">
         <h3>Maksuerät</h3>
-        {optionsHtml}
+        <fieldset className="soresu-radiobutton-group">
+          {optionsHtml}
+        </fieldset>
       </div>
     )
   }
@@ -325,7 +331,9 @@ class SetStatus extends React.Component {
     return (
       <div>
         <h3>Tila</h3>
-        {statuses}
+        <fieldset className="soresu-radiobutton-group">
+          {statuses}
+        </fieldset>
       </div>
     )
   }

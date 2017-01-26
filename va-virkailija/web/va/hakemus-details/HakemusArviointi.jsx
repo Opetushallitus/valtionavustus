@@ -157,9 +157,9 @@ class SetArviointiStatus extends React.Component {
     }
 
     return (
-      <div className="value-edit">
+      <fieldset className="soresu-radiobutton-group">
         {statuses}
-      </div>
+      </fieldset>
     )
   }
 }
