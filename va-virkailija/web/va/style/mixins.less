@@ -1,4 +1,28 @@
 #va-virkailija {
+  .no-select() {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .input-placeholder(@styles) {
+    &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+      @styles();
+    }
+    &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+      @styles();
+    }
+    &::-moz-placeholder { /* Mozilla Firefox 19+ */
+      @styles();
+    }
+    &:-ms-input-placeholder { /* Internet Explorer 10-11 */
+      @styles();
+    }
+  }
+
   .overflow-ellipsis() {
     overflow: hidden;
     white-space: nowrap;
