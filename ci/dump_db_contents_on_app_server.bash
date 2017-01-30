@@ -1,22 +1,34 @@
 #!/bin/bash
 set -euo pipefail
 
-if [ -z ${2+x} ]; then
-  echo "Usage: $0 <comma-separated list of database servers> <path where dump will be stored>"
-  exit 3
+if [[ $# -lt 2 ]]; then
+    echo "Usage: $0 <comma-separated_list_of_database_servers> <dumps_dir>"
+    exit 3
 fi
 
-comma_separated_server_list=$1
-dumps_directory=$2
+COMMA_SEPARATED_SERVER_LIST=$1
+DUMPS_DIR=$2
 
 SSH_KEY=~/.ssh/id_deploy
 SSH_USER=postgres
 
-for server in ${comma_separated_server_list//,/ }
-do
-  dump_target="${dumps_directory}/${server}-`date +'%Y%m%d%H%M%S'`.sql"
-  dump_command="/usr/bin/ssh -i ${SSH_KEY} ${SSH_USER}@${server} /usr/local/bin/dump_database_to_sql.bash > ${dump_target}"
-  echo "Running $dump_command"
-  time eval ${dump_command}
-  echo "Got: `du -hsx ${dump_target}`"
+make_dump() {
+    local server=$1
+    local dump_file="${DUMPS_DIR}/${server}-`date +'%Y%m%d%H%M%S'`.customdump"
+    local dump_cmd="/usr/bin/ssh -i \"$SSH_KEY\" \"$SSH_USER@$server\" /usr/local/bin/dump_database_to_sql.bash > $dump_file"
+
+    echo "Running on $server: $dump_cmd"
+    time eval "$dump_cmd"
+    echo "Dump complete."
+}
+
+find "$DUMPS_DIR" \
+     -mindepth 1 \
+     -maxdepth 1 \
+     -mtime +10 \
+     -exec echo 'Removing old dump: {}' \; \
+     -exec rm -f -- '{}' \;
+
+for server in ${COMMA_SEPARATED_SERVER_LIST//,/ }; do
+    make_dump "$server"
 done
