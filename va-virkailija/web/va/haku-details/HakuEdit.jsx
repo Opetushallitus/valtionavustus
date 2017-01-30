@@ -50,6 +50,7 @@ export default class HakuEdit extends Component {
                    onChange={onChange} disabled={!allowAllHakuEdits} value={avustushaku.content["self-financing-percentage"]} /><span>%</span>
           </div>
         </div>
+        <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange}/>
         <Rahoitusalueet multipleRahoitusalue={avustushaku["multiple-rahoitusalue"]} disabled={!allowAllHakuEdits} onChange={onChange} />
         <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
         <AcademySize value={avustushaku.is_academysize} disabled={!allowAllHakuEdits} onChange={onChange} />
@@ -162,6 +163,39 @@ class FocusArea extends React.Component {
         </tbody>
         <tfoot><tr><td><button type="button" disabled={!allowAllHakuEdits} onClick={controller.addFocusArea(avustushaku)}>Lisää uusi painopistealue</button></td></tr></tfoot>
       </table>
+    )
+  }
+}
+
+class HakuType extends React.Component {
+  render() {
+    const selectedHakuType = this.props.hakuType
+    const isDisabled = this.props.disabled
+    const onChange = this.props.onChange
+    const options = _.flatten([
+      {htmlId: "set-haku-type-yleisavustus", value: "yleisavustus", label: "Yleisavustus"},
+      {htmlId: "set-haku-type-eritysavustus", value: "erityisavustus", label: "Erityisavustus"}
+    ].map(spec =>
+      [
+        <input id={spec.htmlId}
+               key={spec.htmlId}
+               type="radio"
+               name="haku-type"
+               value={spec.value}
+               onChange={onChange}
+               checked={spec.value === selectedHakuType}
+               disabled={isDisabled} />,
+        <label key={spec.htmlId + "-label"}
+               htmlFor={spec.htmlId}>{spec.label}</label>
+      ]
+    ))
+    return (
+      <div id="set-haku-type">
+        <h3>Hakutyyppi</h3>
+        <fieldset className="soresu-radiobutton-group">
+          {options}
+        </fieldset>
+      </div>
     )
   }
 }

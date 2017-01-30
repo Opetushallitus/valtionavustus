@@ -10,7 +10,7 @@
             [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.email :as email]
             [oph.common.datetime :as datetime])
-  (:import (oph.va.jdbc.enums HakuStatus HakuRole)))
+  (:import (oph.va.jdbc.enums HakuStatus HakuRole HakuType)))
 
 (defn convert-attachment [attachment]
   {:id (:id attachment)
@@ -55,10 +55,12 @@
   (let [haku-status (if (= (:status avustushaku) "new")
                       (new HakuStatus "draft")
                       (new HakuStatus (:status avustushaku)))
-        avustushaku-to-save (-> (assoc avustushaku :status haku-status)
-                                (assoc :register_number (:register-number avustushaku))
-                                (assoc :is_academysize (:is_academysize avustushaku))
-                                (assoc :multiple_rahoitusalue (:multiple-rahoitusalue avustushaku)))]
+        avustushaku-to-save (assoc avustushaku
+                                   :status haku-status
+                                   :register_number (:register-number avustushaku)
+                                   :is_academysize (:is_academysize avustushaku)
+                                   :haku_type (new HakuType (:haku-type avustushaku))
+                                   :multiple_rahoitusalue (:multiple-rahoitusalue avustushaku))]
     (exec-all :form-db
               [hakija-queries/archive-avustushaku! avustushaku-to-save
                hakija-queries/update-avustushaku! avustushaku-to-save])

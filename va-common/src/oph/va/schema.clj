@@ -39,6 +39,9 @@
                           (s/optional-key :opintopolku) {:url s/Str
                                                          :permission-request s/Str}})
 
+(s/defschema HakuType
+  (s/enum "yleisavustus" "erityisavustus"))
+
 (s/defschema HakuStatus
   (s/enum "new" "draft" "published" "resolved" "deleted"))
 
@@ -83,6 +86,7 @@
 (s/defschema AvustusHaku {:id Long
                           :status HakuStatus
                           :phase HakuPhase
+                          :haku-type HakuType
                           :multiple-rahoitusalue s/Bool
                           :is_academysize s/Bool
                           :register-number (s/maybe s/Str)

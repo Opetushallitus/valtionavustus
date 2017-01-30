@@ -54,6 +54,7 @@
   {:id          (:id avustushaku)
    :status      (:status avustushaku)
    :register-number (:register_number avustushaku)
+   :haku-type   (:haku_type avustushaku)
    :multiple-rahoitusalue (:multiple_rahoitusalue avustushaku)
    :is_academysize (:is_academysize avustushaku)
    :phase       (avustushaku-phase avustushaku)

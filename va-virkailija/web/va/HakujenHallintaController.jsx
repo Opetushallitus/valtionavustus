@@ -250,6 +250,7 @@ export default class HakujenHallintaController {
   onUpdateField(state, update) {
     const hakuname = /haku-name-(\w+)/.exec(update.field.id)
     const hakuaika = /hakuaika-(\w+)/.exec(update.field.id)
+    const hakuType = /set-haku-type-(\w+)/.exec(update.field.id)
     const multipleRahoitusalue = /set-multiple-rahoitusalue-(\w+)/.exec(update.field.id)
     const isAcademySize = /set-is_academysize-(\w+)/.exec(update.field.id)
     const status = /set-status-(\w+)/.exec(update.field.id)
@@ -277,6 +278,9 @@ export default class HakujenHallintaController {
     }
     else if(financingProcentage) {
       update.avustushaku.content["self-financing-percentage"] = parseInt(update.newValue)
+    }
+    else if(hakuType) {
+      update.avustushaku["haku-type"] = update.newValue
     }
     else if(multipleRahoitusalue) {
       update.avustushaku["multiple-rahoitusalue"] = update.newValue === 'true'
