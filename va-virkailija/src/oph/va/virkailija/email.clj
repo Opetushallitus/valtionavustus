@@ -11,8 +11,8 @@
                     :sv "Begäran om komplettering av ansökan"}
    :paatos {:fi "Automaattinen viesti: organisaationne avustushakemus on käsitelty - Linkki päätösasiakirjaan"
             :sv "Automatiskt meddelande: Er ansökan om understöd har behandlats – Länk till beslutet"}
-   :selvitys {:fi "Väliselvitys hyväksytty"
-              :sv "Mellanredovisning godkänt"}
+   :selvitys {:fi "Väliselvitys käsitelty"
+              :sv "Mellanredovisning behandlat"}
    :valiselvitys-notification {:fi "Väliselvitys täytettävissä haulle"
                                :sv "Mellanredovisningnen redo att fyllas"}
    :loppuselvitys-notification {:fi "Loppuselvitys täytettävissä haulle"
