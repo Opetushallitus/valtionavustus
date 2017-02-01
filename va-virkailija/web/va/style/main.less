@@ -8,17 +8,17 @@
 
 table.hakemus-list {
   .organization-column {
-    width: 350px;
-    max-width: 350px;
+    width: 300px;
+    max-width: 300px;
   }
   .project-name-column {
-    width: 606px;
-    max-width: 606px;
+    width: 456px;
+    max-width: 456px;
   }
   .organization-column, .project-name-column {
     #va-virkailija .overflow-ellipsis();
     input.text-filter {
-      width: 300px;
+      width: 240px;
     }
   }
   .score-column {
@@ -58,15 +58,19 @@ table.hakemus-list {
       content: " €"
     }
   }
-  &.hakemus-list--academysize, &.hakemus-list--resolved {
-    .project-name-column {
-      width: 616px;
-      max-width: 616px;
-    }
+  &.hakemus-list--resolved .project-name-column {
+    width: 466px;
+    max-width: 466px;
   }
-  &.hakemus-list--academysize .academysize-column {
-    width: 70px;
-    text-align: right;
+  &.hakemus-list--academysize {
+    .project-name-column {
+      width: 386px;
+      max-width: 386px;
+    }
+    .academysize-column {
+      width: 70px;
+      text-align: right;
+    }
   }
   .person-filter-column {
     width: 50px;
@@ -83,7 +87,7 @@ table.hakemus-list {
   }
   tfoot {
     .total-applications-column {
-      width: 1196px;
+      width: 996px;
       font-size: 13px;
       font-weight: normal;
     }
@@ -110,9 +114,23 @@ table.hakemus-list {
 
   .right-side {
     position: absolute;
-    right: 18px;
+    right: 0;
     top: 13px;
     font-size: 14px;
+  }
+
+  .hakemus-filter-container{
+    position: relative;
+    display: block;
+    width: 275px;
+    margin-right: 20px;
+    float: left;
+    .hakemus-filter-remove{
+      color: @light-blue;
+      margin-left: 10px;
+      cursor: pointer;
+      font-size: 11px;
+    }
   }
 }
 
@@ -253,16 +271,18 @@ table.hakemus-list {
       .single-valintaperuste {
         margin: 20px 0;
         .valintaperuste-text {
-          width: 450px;
+          width: 548px;
           display: inline-block;
           color: @dark-gray;
         }
         .score-row {
-          margin-left: 10px;
+          margin-left: 20px;
           vertical-align: top;
           display: inline-block;
           .single-score {
-            padding: 0 14px 0 0;
+            &:not(:first-child) {
+              padding-left: 14px;
+            }
             &.editable {
               cursor: pointer;
             }
