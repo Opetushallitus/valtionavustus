@@ -298,9 +298,13 @@
       "fi":"Opetushallitus on päättänyt olla myöntämättä valtionavustusta hankkeelle",
       "sv":"Utbildningsstyrelsen har beslutat att inte bevilja statsunderstöd till projektet"
     },
-    "myonnetty-title":{
+    "erityisavustus-myonnetty-title":{
       "fi":"Opetushallitus on päättänyt myöntää valtionavustusta hankkeelle",
       "sv":"Utbildningsstyrelsen har beslutat att bevilja statsunderstöd till projektet"
+    },
+    "yleisavustus-myonnetty-title":{
+      "fi":"Opetushallitus on päättänyt myöntää valtionavustusta seuraavasti",
+      "sv":"TODO SV Utbildningsstyrelsen har beslutat att bevilja statsunderstöd till projektet"
     },
     "hakija":{
       "fi":"Hakija",
@@ -418,15 +422,23 @@
       "fi":"Hyväksytty",
       "sv":"Godkänd"
     },
-    "paatos-myonnetty-1":{
+    "paatos-yleisavustus-saaja":{
+      "fi":"Avustuksen saaja",
+      "sv":"TODO SV Avustuksen saaja"
+    },
+    "paatos-yleisavustus-myonnetty":{
+      "fi":"Myönnetty valtionavustus",
+      "sv":"TODO SV Utbildningsstyrelsen beviljar understöd till projektet"
+    },
+    "paatos-erityisavustus-myonnetty-1":{
       "fi":"Opetushallitus myöntää avustusta hankkeelle",
       "sv":"Utbildningsstyrelsen beviljar understöd till projektet"
     },
-    "paatos-myonnetty-2":{
+    "paatos-erityisavustus-myonnetty-2":{
       "fi":"Hankkeelle hyväksytyt kokonaisnettomenot ovat yhteensä",
       "sv":"De godkända totala nettoutgifterna är sammanlagt"
     },
-    "paatos-myonnetty-3":{
+    "paatos-erityisavustus-myonnetty-3":{
       "fi":"Hankkeen käyttösuunnitelmassa on esitetty hankkeen mahdolliset tulot, omarahoitus ja muu rahoitus.",
       "sv":"I projektets användningsplan har man lagt fram projektets eventuella inkomster, egen finansiering och övrig finansiering. "
     },
@@ -434,7 +446,7 @@
       "fi":"Valtionavustusprosentti on",
       "sv":"Statsunderstödsprocenten är"
     },
-    "paatos-myonnetty-4":{
+    "paatos-erityisavustus-myonnetty-4":{
       "fi":"Päätös perustuu hakijan esittämään hankesuunnitelmaan ja siihen mahdollisesti arviointivaiheessa tehtyihin muutoksiin.",
       "sv":"Beslutet baserar sig på den projektplan som den sökande lagt fram och på de eventuella förändringar som gjorts i den i bedömningsskedet. "
     },

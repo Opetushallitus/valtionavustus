@@ -180,7 +180,7 @@
         iban (formutil/find-answer-value answers "bank-iban")
         bic (formutil/find-answer-value answers "bank-bic")
         total-granted (:budget-granted arvio)
-        template (email/load-template "templates/paatos.html")
+        template (email/load-template (str "templates/paatos-" (:haku-type avustushaku) ".html"))
         translations-str (email/load-template "public/translations.json")
         translations (json/read-str translations-str :key-fn keyword)
         translate (partial decision-translation translations language)
