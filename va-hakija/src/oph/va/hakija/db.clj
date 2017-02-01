@@ -33,10 +33,6 @@
 (defn add-paatos-view[hakemus-id headers remote-addr]
   (exec :form-db queries/create-paatos-view! {:hakemus_id hakemus-id :headers headers :remote_addr remote-addr}))
 
-(defn update-avustushaku [avustushaku]
-  (exec-all :form-db  [queries/archive-avustushaku! avustushaku
-                  queries/update-avustushaku! avustushaku]))
-
 (defn- calculate-budget-summary [avustushaku-id answers]
   (let [avustushaku (get-avustushaku avustushaku-id)
         form-id (:form avustushaku)

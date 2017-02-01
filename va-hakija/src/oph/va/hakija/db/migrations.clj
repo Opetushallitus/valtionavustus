@@ -35,6 +35,8 @@
                                                           node)))]
     (db/update-form! changed-form)))
 
+(defquery update-avustushaku-content! "db/migration/queries/m1_15-update-avustushaku-content.sql")
+
 (migrations/defmigration migrate-add-painopistealueet-for-avustushaut "1.15"
   "Add empty painopistealueet to all avustushaut"
  (let [painopiste-alueet {:items []
@@ -44,7 +46,7 @@
     (doseq [avustushaku (va-db/list-avustushaut)]
       (let [new-content (assoc (:content avustushaku) :focus-areas painopiste-alueet)
             changed-avustushaku (assoc avustushaku :content new-content)]
-        (va-db/update-avustushaku changed-avustushaku)))))
+        (common-db/exec :form-db update-avustushaku-content! changed-avustushaku)))))
 
 (migrations/defmigration migrate-field-type-and-fieldType-terms "1.16"
   "Change type to fieldClass and displayAs to fieldType"
