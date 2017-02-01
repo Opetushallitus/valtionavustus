@@ -237,13 +237,8 @@
   (GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "selvitys.html"))
   (GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))
   (GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
-  (GET* "/paatosold/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
-    :path-params [avustushaku-id :- Long user-key :- s/Str]
-    :query-params [{nolog :- s/Str nil}]
-    (if (nil? nolog) (log-paatos-display user-key (:headers request) (:remote-addr request)))
-    (return-html "paatos.html"))
 
- (GET* "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
+  (GET* "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
        :path-params [avustushaku-id :- Long user-key :- s/Str]
        :query-params [{nolog :- s/Str nil}]
        (if (nil? nolog) (log-paatos-display user-key (:headers request) (:remote-addr request)))

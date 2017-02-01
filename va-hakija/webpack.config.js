@@ -28,7 +28,6 @@ module.exports = {
     app: "./web/va/VaApp.jsx",
     selvitysApp: "./web/va/SelvitysApp.jsx",
     login: "./web/va/VaLogin.jsx",
-    paatosApp: "../va-common/web/va/paatos/PaatosApp.jsx"
   },
   output: {
     path: outputDir,

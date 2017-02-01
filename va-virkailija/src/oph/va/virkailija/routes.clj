@@ -97,7 +97,6 @@
            (GET "/" [] (return-html "index.html"))
            (GET "/admin/*" [] (return-html "admin.html"))
            (GET "/yhteenveto/*" [] (return-html "summary.html"))
-           (GET "/paatosold/*" [] (return-html "paatos.html"))
            (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
                  :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
                  (on-hakemus-preview avustushaku-id hakemus-user-key))
