@@ -1,6 +1,7 @@
 (ns oph.va.jdbc.extensions
   (:require [clojure.java.jdbc :as jdbc]
-            [oph.soresu.common.jdbc.extensions :refer :all])
+            [oph.soresu.common.jdbc.extensions :refer :all]
+            [oph.va.jdbc.enums])
   (:import (org.postgresql.util PGobject)
            (oph.va.jdbc.enums HakuStatus HakuRole HakuType)))
 

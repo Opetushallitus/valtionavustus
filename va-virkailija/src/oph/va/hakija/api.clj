@@ -4,6 +4,7 @@
   (:require [clojure.java.io :as io]
             [oph.soresu.common.db :refer :all]
             [oph.soresu.form.formhandler :as formhandler]
+            [oph.va.jdbc.enums]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.routes :refer :all]
             [clojure.tools.logging :as log]
