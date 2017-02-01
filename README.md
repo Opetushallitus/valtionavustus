@@ -164,7 +164,7 @@ ja
 Hakemusten generointi
 
     cd va-hakija
-    lein populate 400
+    ../lein populate 400
 
 # JConsole yhteys palvelimelle
 
