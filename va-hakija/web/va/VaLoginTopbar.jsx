@@ -4,7 +4,7 @@ import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 
 import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
 
-export default class VaLogin extends React.Component {
+export default class VaLoginTopbar extends React.Component {
   constructor(props) {
     super(props)
   }
