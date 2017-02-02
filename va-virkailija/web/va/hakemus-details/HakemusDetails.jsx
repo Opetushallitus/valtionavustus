@@ -36,8 +36,8 @@ export default class HakemusDetails extends Component {
       return false
     }
 
-    const CloseButton = () => <button className="close" onClick={onClose} style={{position:"fixed",zIndex:"20000",marginTop:"-5",marginLeft:"-40"}}>&times;</button>
-    const ToggleButton = () => <button className="close" onClick={onToggle} style={{position:"fixed",zIndex:"20000",marginTop:"30",marginLeft:"-40"}}> ↕</button>
+    const CloseButton = () => <button id="close-hakemus-button" onClick={onClose}>&times;</button>
+    const ToggleButton = () => <button id="toggle-hakemus-list-button" onClick={onToggle}>↕</button>
 
     const getSubTab = tabName => {
       switch (tabName) {

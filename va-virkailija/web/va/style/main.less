@@ -366,13 +366,51 @@ table.hakemus-list {
   }
 }
 
+#close-hakemus-button,
+#toggle-hakemus-list-button {
+  position: absolute;
+  z-index: 20000;
+  margin: 0;
+  padding: 8px;
+  left: 4px;
+  font-size: 22px;
+  font-weight: normal;
+  line-height: 1;
+  color: #999290;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+
+  &:not(:disabled):hover {
+    color: @bright-blue;
+    background-color: transparent;
+  }
+}
+
+#close-hakemus-button {
+  top: @topbar-height + 12px;
+}
+
+#toggle-hakemus-list-button {
+  top: @topbar-height + 50px;
+}
+
 .split-view #hakemus-details {
   margin-top: @overview-and-top-total-height;
 
   #preview-container {
     top: @overview-and-top-total-height;
   }
+
   #hakemus-arviointi {
     top: @overview-and-top-total-height;
+  }
+
+  #close-hakemus-button {
+    top: @overview-and-top-total-height + 12px;
+  }
+
+  #toggle-hakemus-list-button {
+    top: @overview-and-top-total-height + 50px;
   }
 }
