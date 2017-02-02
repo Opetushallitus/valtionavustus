@@ -82,6 +82,11 @@
 (defn section-translated [title-key content-key translate create-paragraph]
   (section title-key (translate content-key) translate create-paragraph))
 
+(defn asia-section [avustushaku-name translate]
+  (let [content (str "<p>" (translate :asia-title) "</p>\n"
+                     "<p>" avustushaku-name "</p>\n")]
+    (section :asia content translate false)))
+
 (defn kayttotarkoitus [translate]
   (let [keys [:kaytto1 :kaytto2 :kaytto3 :kaytto4 :kaytto5]
         rows-list (mapv (fn [row] (str "<p>" (translate row) "</p>")) keys)
@@ -178,6 +183,7 @@
                    (keyword lang)
                    (if (nil? language-answer) :fi
                                               (keyword language-answer)))
+        avustushaku-name (get-in avustushaku [:content :name language])
         iban (formutil/find-answer-value answers "bank-iban")
         bic (formutil/find-answer-value answers "bank-bic")
         total-granted (:budget-granted arvio)
@@ -199,7 +205,7 @@
         params {
                 :avustushaku                   avustushaku
                 :hakemus                       hakemus
-                :section-asia                  (section-translated :asia :asia-title translate false)
+                :section-asia                  (asia-section avustushaku-name translate)
                 :section-taustaa               (optional-section decision :taustaa :taustaa translate language)
                 :section-sovelletut-saannokset (optional-section decision :sovelletut-saannokset :sovelletutsaannokset translate language)
                 :section-kayttoaika            (optional-section decision :valtionavustuksen-kayttoaika :kayttoaika translate language)
