@@ -117,7 +117,7 @@ export class EditSummingBudgetElement extends React.Component {
               {useDetailedCosts || !firstTable ?
                   <span className="money sum">{sum}</span> :
                   <div className="soresu-money-field extra-extra-small">
-                    <input type="text" className="extra-extra-small" value={costsGranted}
+                    <input type="text" className="extra-extra-small" value={costsGranted} disabled={disabled}
                            onChange={controller.costsGrantedOnChangeListener}/>
                   </div>}
             </td>
