@@ -294,9 +294,13 @@
       "fi":"Taustaa",
       "sv":"Bakgrund"
     },
-    "hylatty-title":{
+    "erityisavustus-hylatty-title":{
       "fi":"Opetushallitus on päättänyt olla myöntämättä valtionavustusta hankkeelle",
       "sv":"Utbildningsstyrelsen har beslutat att inte bevilja statsunderstöd till projektet"
+    },
+    "yleisavustus-hylatty-title":{
+      "fi":"Opetushallitus on päättänyt olla myöntämättä valtionavustusta",
+      "sv":"TOD SV Utbildningsstyrelsen har beslutat att inte bevilja statsunderstöd till projektet"
     },
     "erityisavustus-myonnetty-title":{
       "fi":"Opetushallitus on päättänyt myöntää valtionavustusta hankkeelle",
