@@ -104,7 +104,7 @@
         extra-no-multiple "<span>.</span>"
         extra-multiple (str "<span> " (translate :ja-loppuera-viimeistaan) " " maksu-date ".</span>")
         extra (if multiple-maksuera extra-multiple extra-no-multiple)
-        content1 (str "<p>" (translate "avustus-maksetaan") ": <strong>" iban ", " bic "</strong>" "</p>")
+        content1 (str "<p>" (translate "avustus-maksetaan") ":</p><p><strong>" iban ", " bic "</strong>" "</p>")
         content2 (str "<p>" (translate "maksuerat-ja-ajat") ": " paid-formatted " " maksu extra "</p>")
         content (str content1 content2)]
     (section :avustuksen-maksu content translate false)))
