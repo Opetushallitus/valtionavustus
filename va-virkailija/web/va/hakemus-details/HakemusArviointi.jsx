@@ -98,6 +98,7 @@ class ChangeLogRow extends React.Component{
     const changelog = this.props.changelog
     const types = {
       "budget-change": "Budjetti päivitetty",
+      "oppilaitokset-change": "Oppilaitokset päivitetty",
       "summary-comment": "Perustelut hakijalle",
       "overridden-answers-change": "Sisältöä päivitetty",
       "presenter-comment": "Valmistelijan huomiot päivitetty",

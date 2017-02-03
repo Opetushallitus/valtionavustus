@@ -59,6 +59,17 @@
       changelog)))
 
 
+(defn- compare-oppilaitokset [changelog identity timestamp existing new]
+  (let [new-oppilaitokset (:oppilaitokset new)
+        existing-oppilaitokset (:oppilaitokset existing)]
+    (if (not (= new-oppilaitokset existing-oppilaitokset))
+      (append-changelog changelog (->changelog-entry identity
+                                                     "oppilaitokset-change"
+                                                     timestamp
+                                                     {:old existing-oppilaitokset
+                                                      :new new-oppilaitokset}))
+      changelog)))
+
 (defn- compare-budget-granted [changelog identity timestamp existing new]
   (let [new-budget (:budget_granted new)
         existing-budget (:budget_granted existing)]
@@ -99,6 +110,7 @@
     (if identity
       (-> (if changelog changelog [])
         (compare-status identity timestamp existing new)
+        (compare-oppilaitokset identity timestamp existing new)
         (compare-budget-granted identity timestamp existing new)
         (compare-summary-comment identity timestamp existing new)
         (compare-presenter-comment identity timestamp existing new)
