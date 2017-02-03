@@ -74,6 +74,9 @@
 (defn get-avustushaku [id]
   (first (exec :form-db hakija-queries/get-avustushaku {:id id})))
 
+(defn get-avustushaku-by-status [avustushaku-id statuses]
+  (first (exec :form-db hakija-queries/get-avustushaku-by-status {:id avustushaku-id :statuses (map-status-list statuses)})))
+
 (defn list-avustushaut []
   (map avustushaku-response-content (exec :form-db hakija-queries/list-avustushaut-not-deleted {})))
 
@@ -167,12 +170,6 @@
 
 (defn get-form-by-id [id]
   (first (exec :form-db hakija-queries/get-form-by-id {:id id})))
-
-(defn get-avustushaku [avustushaku-id]
-  (first (exec :form-db hakija-queries/get-avustushaku {:id avustushaku-id})))
-
-(defn get-avustushaku-by-status [avustushaku-id statuses]
-  (first (exec :form-db hakija-queries/get-avustushaku-by-status {:id avustushaku-id :statuses (map-status-list statuses)})))
 
 (defn get-paatos-email-status [avustushaku-id]
   (let [paatos-sent-emails (exec :form-db hakija-queries/list-hakemus-paatos-email-statuses {:avustushaku_id avustushaku-id})]
