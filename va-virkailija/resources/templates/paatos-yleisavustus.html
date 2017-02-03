@@ -64,6 +64,9 @@
     <div class="content">
       <p>{{#t}}yleisavustus-myonnetty-title{{/t}}:</p>
       <p>{{#t}}paatos-yleisavustus-saaja{{/t}}: {{hakemus.organization-name}}</p>
+      {{#oppilaitokset}}
+      <p>{{#t}}oppilaitos{{/t}}: {{.}}</p>
+      {{/oppilaitokset}}
       {{{myonteinen-lisateksti}}}
       <p>{{#t}}paatos-yleisavustus-myonnetty{{/t}}: {{total-granted}}</p>
     </div>

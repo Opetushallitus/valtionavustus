@@ -172,6 +172,7 @@
         presenting-officers (filter #(= (:role %) "presenting_officer") roles)
         arvio (:arvio hakemus)
         decision-status (:status arvio)
+        oppilaitokset (:names (:oppilaitokset arvio))
         accepted (not= decision-status "rejected")
         arvio-role-id (:presenter-role-id arvio)
         arvio-role (first (filter #(= (:id %) arvio-role-id) roles))
@@ -232,6 +233,7 @@
                 :kayttosuunnitelma             (:body kayttosuunnitelma)
                 :koulutusosio                  (:body koulutusosio)
                 :has-koulutusosio              has-koulutusosio
+                :oppilaitokset                 oppilaitokset
                 }
         body (render template params)]
     body))
