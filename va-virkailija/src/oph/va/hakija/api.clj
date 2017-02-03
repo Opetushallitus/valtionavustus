@@ -37,7 +37,7 @@
        :?column?
        (= 1)))
 
-(defn create-avustushaku [avustushaku-content template-form-id decision]
+(defn create-avustushaku [avustushaku-content template-form-id decision haku-type]
   (let [form-id (:id (exec :form-db
                            hakija-queries/copy-form<!
                            {:id template-form-id}))
@@ -45,8 +45,9 @@
                               hakija-queries/create-avustushaku<!
                               {:form form-id
                                :content avustushaku-content
-                               :decision decision
-                               :register_number nil})]
+                               :haku_type (new HakuType haku-type)
+                               :register_number nil
+                               :decision decision})]
     (->> avustushaku-id
          (exec :form-db hakija-queries/get-avustushaku)
          (map avustushaku-response-content)
