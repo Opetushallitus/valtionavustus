@@ -318,6 +318,10 @@
       "fi":"Hanke",
       "sv":"Projekt"
     },
+    "oppilaitos":{
+      "fi":"Oppilaitos / toimipiste",
+      "sv":"TODO SV Oppilaitos / toimipiste"
+    },
     "paatoksen-perustelut":{
       "fi":"Päätöksen perustelut",
       "sv":"Motiveringar för beslutet"

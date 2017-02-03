@@ -104,7 +104,7 @@
         extra-no-multiple "<span>.</span>"
         extra-multiple (str "<span> " (translate :ja-loppuera-viimeistaan) " " maksu-date ".</span>")
         extra (if multiple-maksuera extra-multiple extra-no-multiple)
-        content1 (str "<p>" (translate "avustus-maksetaan") ": <strong>" iban ", " bic "</strong>" "</p>")
+        content1 (str "<p>" (translate "avustus-maksetaan") ":</p><p><strong>" iban ", " bic "</strong>" "</p>")
         content2 (str "<p>" (translate "maksuerat-ja-ajat") ": " paid-formatted " " maksu extra "</p>")
         content (str content1 content2)]
     (section :avustuksen-maksu content translate false)))
@@ -172,6 +172,7 @@
         presenting-officers (filter #(= (:role %) "presenting_officer") roles)
         arvio (:arvio hakemus)
         decision-status (:status arvio)
+        oppilaitokset (:names (:oppilaitokset arvio))
         accepted (not= decision-status "rejected")
         arvio-role-id (:presenter-role-id arvio)
         arvio-role (first (filter #(= (:id %) arvio-role-id) roles))
@@ -232,6 +233,7 @@
                 :kayttosuunnitelma             (:body kayttosuunnitelma)
                 :koulutusosio                  (:body koulutusosio)
                 :has-koulutusosio              has-koulutusosio
+                :oppilaitokset                 oppilaitokset
                 }
         body (render template params)]
     body))

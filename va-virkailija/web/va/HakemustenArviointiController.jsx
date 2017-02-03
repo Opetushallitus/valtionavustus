@@ -628,6 +628,25 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
+  setOppilaitos(hakemus, index, oppilaitos) {
+    if(!hakemus.arvio["oppilaitokset"]) {
+      hakemus.arvio["oppilaitokset"] = {names: []}
+    }
+    if(index + 1 > hakemus.arvio["oppilaitokset"].names.length) {
+      hakemus.arvio["oppilaitokset"].names.push(oppilaitos)
+    } else {
+      hakemus.arvio["oppilaitokset"].names[index] = oppilaitos
+    }
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }
+
+  removeOppilaitos(hakemus, index) {
+    if(hakemus.arvio["oppilaitokset"] && index >= 0 && index < hakemus.arvio["oppilaitokset"].names.length) {
+      hakemus.arvio["oppilaitokset"].names.splice(index, 1);
+      dispatcher.push(events.updateHakemusArvio, hakemus)
+    }
+  }
+
   setHakemusAcademysize(hakemus, size) {
     hakemus.arvio.academysize = size
     dispatcher.push(events.updateHakemusArvio, hakemus)

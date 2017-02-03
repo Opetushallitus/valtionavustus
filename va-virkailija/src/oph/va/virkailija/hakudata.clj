@@ -23,6 +23,7 @@
    :academysize (:academysize arvio)
    :perustelut (:perustelut arvio)
    :tags (:tags arvio)
+   :oppilaitokset (:oppilaitokset arvio)
    :changelog (:changelog arvio)
    })
 
@@ -40,6 +41,7 @@
                            :useDetailedCosts   false
                            :roles              {:evaluators []}
                            :tags               {:value []}
+                           :oppilaitokset      {:names []}
                            })))
 
 (defn- find-and-add-arvio [arviot hakemus]

@@ -59,6 +59,17 @@
       changelog)))
 
 
+(defn- compare-oppilaitokset [changelog identity timestamp existing new]
+  (let [new-oppilaitokset (:oppilaitokset new)
+        existing-oppilaitokset (:oppilaitokset existing)]
+    (if (not (= new-oppilaitokset existing-oppilaitokset))
+      (append-changelog changelog (->changelog-entry identity
+                                                     "oppilaitokset-change"
+                                                     timestamp
+                                                     {:old existing-oppilaitokset
+                                                      :new new-oppilaitokset}))
+      changelog)))
+
 (defn- compare-budget-granted [changelog identity timestamp existing new]
   (let [new-budget (:budget_granted new)
         existing-budget (:budget_granted existing)]
@@ -99,6 +110,7 @@
     (if identity
       (-> (if changelog changelog [])
         (compare-status identity timestamp existing new)
+        (compare-oppilaitokset identity timestamp existing new)
         (compare-budget-granted identity timestamp existing new)
         (compare-summary-comment identity timestamp existing new)
         (compare-presenter-comment identity timestamp existing new)
@@ -121,6 +133,7 @@
         budget-granted (or (calculate-total-oph-budget avustushaku status arvio) 0)
         academysize (or (:academysize arvio) 0)
         overridden-answers (:overridden-answers arvio)
+        oppilaitokset-names (filter not-empty (:names (:oppilaitokset arvio)))
         arvio-to-save  {:hakemus_id hakemus-id
                         :status status
                         :overridden_answers overridden-answers
@@ -136,6 +149,7 @@
                         :academysize academysize
                         :perustelut (:perustelut arvio)
                         :tags (:tags arvio)
+                        :oppilaitokset {:names oppilaitokset-names}
                         }
         existing (get-arvio hakemus-id)
         changelog (update-changelog identity existing arvio-to-save)
