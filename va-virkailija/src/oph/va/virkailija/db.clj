@@ -121,6 +121,7 @@
         budget-granted (or (calculate-total-oph-budget avustushaku status arvio) 0)
         academysize (or (:academysize arvio) 0)
         overridden-answers (:overridden-answers arvio)
+        oppilaitokset-names (filter not-empty (:names (:oppilaitokset arvio)))
         arvio-to-save  {:hakemus_id hakemus-id
                         :status status
                         :overridden_answers overridden-answers
@@ -136,6 +137,7 @@
                         :academysize academysize
                         :perustelut (:perustelut arvio)
                         :tags (:tags arvio)
+                        :oppilaitokset {:names oppilaitokset-names}
                         }
         existing (get-arvio hakemus-id)
         changelog (update-changelog identity existing arvio-to-save)

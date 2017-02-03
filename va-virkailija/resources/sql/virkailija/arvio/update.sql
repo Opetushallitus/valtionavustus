@@ -5,5 +5,6 @@ set status        = :status, overridden_answers = :overridden_answers, budget_gr
   presentercomment = :presentercomment,
   academysize = :academysize,
   seuranta_answers = :seuranta_answers,
-  tags = :tags
+  tags = :tags,
+  oppilaitokset = :oppilaitokset
 where hakemus_id = :hakemus_id

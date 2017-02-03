@@ -21,6 +21,10 @@
    :score-total-average s/Num
    :score-averages-by-user [PersonScoreAverage]})
 
+(s/defschema Oppilaitokset
+  "Names of oppilaitokset"
+  {:names [s/Str]})
+
 (s/defschema ArvioRole
              "Role for arvio"
              {:evaluators [Long]})
@@ -40,6 +44,7 @@
    :useDetailedCosts s/Bool
    :roles ArvioRole
    :tags Tag
+   :oppilaitokset Oppilaitokset
    (s/optional-key :presenter-role-id) (s/maybe Long)
    (s/optional-key :scoring) (s/maybe Scoring)
    (s/optional-key :summary-comment) (s/maybe s/Str)
