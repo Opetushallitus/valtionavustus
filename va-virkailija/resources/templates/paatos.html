@@ -62,23 +62,34 @@
     <section class='section'>
       <h2>{{#t}}paatos{{/t}}</h2>
       <div class="content">
-        <p>{{#t}}erityisavustus-myonnetty-title{{/t}}</p>
-        <p>{{hakemus.register-number}} {{hakemus.project-name}}</p>
-        <div>
-          {{#has-kayttosuunnitelma}}
-            <p>
-              {{#t}}paatos-erityisavustus-myonnetty-1{{/t}} {{total-granted}}.&nbsp;{{#t}}paatos-erityisavustus-myonnetty-2{{/t}} {{total-nettomenot}}.
-            </p>
-            <p>
-              {{#t}}paatos-erityisavustus-myonnetty-3{{/t}}
-              {{#show-financing-percentage}}
-                <span>{{#t}}valtionavustusprosentti-on{{/t}} {{oph-financing-percentage}}%.</span>
-              {{/show-financing-percentage}}
-            </p>
-          {{/has-kayttosuunnitelma}}
+        {{#is-erityisavustus}}
+          <p>{{#t}}erityisavustus-myonnetty-title{{/t}}</p>
+          <p>{{hakemus.register-number}} {{hakemus.project-name}}</p>
+          <div>
+            {{#has-kayttosuunnitelma}}
+              <p>
+                {{#t}}paatos-erityisavustus-myonnetty-1{{/t}} {{total-granted}}.&nbsp;{{#t}}paatos-erityisavustus-myonnetty-2{{/t}} {{total-nettomenot}}.
+              </p>
+              <p>
+                {{#t}}paatos-erityisavustus-myonnetty-3{{/t}}
+                {{#show-financing-percentage}}
+                  <span>{{#t}}valtionavustusprosentti-on{{/t}} {{oph-financing-percentage}}%.</span>
+                {{/show-financing-percentage}}
+              </p>
+            {{/has-kayttosuunnitelma}}
+            {{{myonteinen-lisateksti}}}
+            <p>{{#t}}paatos-erityisavustus-myonnetty-4{{/t}}</p>
+          </div>
+        {{/#is-erityisavustus}}
+        {{#is-yleisavustus}}
+          <p>{{#t}}yleisavustus-myonnetty-title{{/t}}:</p>
+          <p>{{#t}}paatos-yleisavustus-saaja{{/t}}: {{hakemus.organization-name}}</p>
+          {{#oppilaitokset}}
+          <p>{{#t}}oppilaitos{{/t}}: {{.}}</p>
+          {{/oppilaitokset}}
           {{{myonteinen-lisateksti}}}
-          <p>{{#t}}paatos-erityisavustus-myonnetty-4{{/t}}</p>
-        </div>
+          <p>{{#t}}paatos-yleisavustus-myonnetty{{/t}}: {{total-granted}}</p>
+        {{/#is-yleisavustus}}
       </div>
     </section>
     {{{section-perustelut}}}
@@ -96,8 +107,14 @@
     <section class='section'>
       <h2>{{#t}}paatos{{/t}}</h2>
       <div class='content'>
-        <p>{{#t}}erityisavustus-hylatty-title{{/t}}</p>
-        <p>{{hakemus.register-number}} {{hakemus.project-name}}</p>
+        {{#is-erityisavustus}}
+          <p>{{#t}}erityisavustus-hylatty-title{{/t}}</p>
+          <p>{{hakemus.register-number}} {{hakemus.project-name}}</p>
+        {{/#is-erityisavustus}}
+        {{#is-yleisavustus}}
+          <p>{{#t}}yleisavustus-hylatty-title{{/t}}</p>
+          <p>{{#t}}hakija{{/t}}: {{hakemus.organization-name}}</p>
+        {{/#is-yleisavustus}}
       </div>
     </section>
     {{{section-perustelut}}}

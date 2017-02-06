@@ -177,6 +177,8 @@
   (let [haku-data (hakudata/get-combined-paatos-data hakemus-id)
         avustushaku (:avustushaku haku-data)
         avustushaku-type (:haku-type avustushaku)
+        is-yleisavustus (= avustushaku-type "yleisavustus")
+        is-erityisavustus (= avustushaku-type "erityisavustus")
         decision (:decision avustushaku)
         hakemus (:hakemus haku-data)
         answers-field (:answers hakemus)
@@ -201,7 +203,7 @@
         iban (formutil/find-answer-value answers "bank-iban")
         bic (formutil/find-answer-value answers "bank-bic")
         total-granted (:budget-granted arvio)
-        template (email/load-template (str "templates/paatos-" avustushaku-type ".html"))
+        template (email/load-template (str "templates/paatos.html"))
         translations-str (email/load-template "public/translations.json")
         translations (json/read-str translations-str :key-fn keyword)
         translate (partial decision-translation translations language)
@@ -211,13 +213,15 @@
         myonteinen-lisateksti (myonteinen-lisateksti avustushaku hakemus language)
         form-content (-> haku-data :form :content)
         kayttosuunnitelma (kayttosuunnitelma/kayttosuunnitelma avustushaku hakemus form-content answers translate language)
-        has-kayttosuunnitelma (and (:has-kayttosuunnitelma kayttosuunnitelma) (not (= avustushaku-type "yleisavustus")))
+        has-kayttosuunnitelma (and (:has-kayttosuunnitelma kayttosuunnitelma) is-erityisavustus)
         liitteet-list (liitteet-list avustushaku hakemus translate language has-kayttosuunnitelma)
         koulutusosio (koulutusosio/koulutusosio hakemus answers translate)
         has-koulutusosio (:has-koulutusosio koulutusosio)
 
         params {
                 :avustushaku                   avustushaku
+                :is-yleisavustus               is-yleisavustus
+                :is-erityisavustus             is-erityisavustus
                 :hakemus                       hakemus
                 :section-asia                  (asia-section avustushaku-name translate)
                 :section-taustaa               (optional-section decision :taustaa :taustaa translate language)
