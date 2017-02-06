@@ -8,11 +8,10 @@
   <style>
     body {  font: 16px 'Open Sans', sans-serif;max-width: 1000px; margin: 0 auto 2em; }
     header { position:relative;font-size: 18px; text-transform: uppercase;  padding: 10px 10px 30px; height:150px; border-bottom: 1px solid #D9D9D9; text-align: center}
-    header img { position: relative; top: 10px; }
+    #logo { position: absolute; left: 0; top: 35px; }
     .title { display: inline-block; position: relative; top:25px;}
     .organization{text-align: left;top:70px;position: relative;text-transform: none;}
     .registerNumber {position: absolute;right:0;}
-    .logo {position: absolute;left:0;}
     .section { overflow: hidden; padding: 0 10px; margin: 0 auto; max-width: 1000px;border-bottom: 1px solid #D9D9D9; page-break-inside: avoid;}
     .section-no-border { border:none;}
     .section:last-of-type {border:none;}
@@ -47,7 +46,7 @@
 <div id="app">
   <section>
     <header>
-      <div class="logo"><img src="/img/logo.png" width="200"/></div>
+      <img id="logo" src="/img/logo.png" height="50" alt="Opetushallitus / Utbildningsstyrelsen" />
       <div class="title">
         {{#t}}paatos{{/t}}
         <br/>{{avustushaku.decision.date}}

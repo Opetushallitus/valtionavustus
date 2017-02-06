@@ -51,7 +51,7 @@ export default class VaFormTopbar extends React.Component {
     return(
       <section id="topbar">
         <div id="top-container">
-          <img id="logo" src="img/logo.png"/>
+          <img id="logo" src="img/logo-240x68@2x.png" width="240" height="68" alt="Opetushallitus / Utbildningsstyrelsen" />
           <h1 id="topic"><LocalizedString translations={translations.form} translationKey={topicKey} lang={lang}/></h1>
           <div id="form-controls" hidden={preview}>
             <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang}/>

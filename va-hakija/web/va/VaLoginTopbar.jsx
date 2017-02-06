@@ -12,7 +12,7 @@ export default class VaLoginTopbar extends React.Component {
   render() {
     return <section id="topbar">
       <div id="top-container">
-        <img id="logo" src="img/logo.png"/>
+        <img id="logo" src="img/logo-240x68@2x.png" width="240" height="68" alt="Opetushallitus / Utbildningsstyrelsen" />
         <h1 id="topic"><LocalizedString translations={this.props.translations.form} translationKey="heading" lang={this.props.lang}/></h1>
         <div id="server-info"><EnvironmentInfo environment={this.props.environment}/></div>
       </div>

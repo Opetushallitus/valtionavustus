@@ -259,6 +259,8 @@
   (GET "/statsunderstod/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
   (route/resources "/statsunderstod/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
 
+  (GET "/img/logo.png" [] (found "/img/logo-176x50@2x.png"))
+
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
