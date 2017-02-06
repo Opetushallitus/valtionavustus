@@ -36,7 +36,7 @@
         answers (:answers submission)
         avustushaku (hakija-api/get-avustushaku avustushaku-id)
         presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
-        language (keyword (formutil/find-answer-value answers "language"))
+        language (keyword (or (formutil/find-answer-value answers "language") "fi"))
         decision (decision/paatos-html hakemus-id language)]
     (log/info "Sending paatos email for hakemus" hakemus-id " to " emails)
     (email/send-paatos! language emails avustushaku hakemus presenting-officer-email)
@@ -47,7 +47,7 @@
   (let [hakemus (hakija-api/get-hakemus hakemus-id)
         submission (hakija-api/get-hakemus-submission hakemus)
         answers (:answers submission)
-        language (keyword (formutil/find-answer-value answers "language"))
+        language (keyword (or (formutil/find-answer-value answers "language") "fi"))
         decision (decision/paatos-html hakemus-id language)]
     (hakija-api/update-paatos-decision hakemus-id decision)
     (ok {:status "regenerated" })))
@@ -67,7 +67,7 @@
         arvio (virkailija-db/get-arvio hakemus-id)
         answers (:answers submission)
         emails (vec (remove nil? (distinct (emails-from-answers answers))))
-        language (keyword (formutil/find-answer-value answers "language"))]
+        language (keyword (or (formutil/find-answer-value answers "language") "fi"))]
     (email/send-selvitys-notification! language emails avustushaku hakemus selvitys-type arvio roles)))
 
 (defn get-paatos-email-status

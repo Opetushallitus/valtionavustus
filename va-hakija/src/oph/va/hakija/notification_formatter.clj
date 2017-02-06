@@ -25,7 +25,7 @@
 (defn send-submit-notifications! [send! is-change-request-response? answers submitted-hakemus avustushaku]
   (let [haku-id (:id avustushaku)
         avustushaku-content (:content avustushaku)
-        language (keyword (find-answer-value answers "language"))
+        language (keyword (or (find-answer-value answers "language") "fi"))
         avustushaku-title (-> avustushaku-content :name language)
         avustushaku-duration (->> avustushaku-content
                                   :duration)
