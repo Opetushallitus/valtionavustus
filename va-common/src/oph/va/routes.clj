@@ -28,6 +28,14 @@
 (defn get-translations []
   (return-from-classpath "translations.json" "application/json; charset=utf-8"))
 
+(defn make-permanent-logo-route []
+  "Permanent url for logo. The url allows changing the logo later. The
+   image height must be an integer multiple of 50px so that the result
+   of image downscaling made by the browser is crisp."
+  (GET "/img/logo.png" []
+       (-> (resource-response "public/img/logo-176x50@2x.png")
+           (content-type "image/png"))))
+
 (defroutes config-routes
            (GET* "/environment" []
          :return Environment

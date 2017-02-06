@@ -112,7 +112,7 @@
         (on-selvitys avustushaku-id hakemus selvitys-type preview))
   (GET "/translations.json" [] (get-translations))
   (GET "/avustushaku/:id/*" [id] (return-html "index.html"))
-  (GET "/img/logo.png" [] (found "/img/logo-176x50@2x.png"))
+  (make-permanent-logo-route)
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
