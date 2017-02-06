@@ -95,13 +95,6 @@
         (ok-id new-hakemus))
       (ok-id existing-selvitys))))
 
-
-(defn on-get-paatos [user-key]
-  (let [virkailija-app-url (-> config :server :virkailija-url)
-        paatos-url (str virkailija-app-url "/public/api/avustushaku/paatos/" user-key )]
-    (resp/redirect paatos-url)))
-
-
 (defn on-get-current-answers [haku-id hakemus-id form-key]
   (let [form-id (form-key (va-db/get-avustushaku haku-id))
         form (form-db/get-form form-id)

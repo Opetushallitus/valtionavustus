@@ -199,15 +199,6 @@
                                        :change-request change-request
                                        :url "[linkki hakemukseen]"})}))))
 
-(defn- get-hakemus []
-  (GET* "/paatos/:hakemus-id" [hakemus-id :as request]
-        :path-params [hakemus-id :- Long]
-        :return virkailija-schema/PaatosData
-        :summary "Return relevant information for decision"
-        (if-let [response (hakudata/get-combined-paatos-data hakemus-id)]
-          (ok response)
-          (not-found))))
-
 (defn- get-haku-export []
   (GET* "/:haku-id/export.xslx" [haku-id :as request]
         :path-params [haku-id :- Long]
@@ -478,7 +469,6 @@
             (send-selvitys)
             (send-selvitys-email)
             (post-change-request-email)
-            (get-hakemus)
             (get-haku-export)
             (get-avustushaku-role)
             (put-avustushaku-role)
