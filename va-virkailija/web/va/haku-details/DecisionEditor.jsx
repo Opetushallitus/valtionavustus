@@ -339,7 +339,7 @@ export default class DecisionEditor extends React.Component {
       {id:"selvitysvelvollisuus",title:"Selvitysvelvollisuus"},
       {id:"hyvaksyminen",title:"Päätöksen hyväksyminen"},
       {id:"johtaja",title:"Johtaja"},
-      {id:"valmistelija",title:"Valmistelija"}
+      {id:"valmistelija",title:"Esittelijä"}
     ]
     const multipleRahoitusalue = avustushaku["multiple-rahoitusalue"]
     return (
