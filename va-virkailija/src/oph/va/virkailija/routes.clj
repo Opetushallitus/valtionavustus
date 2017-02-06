@@ -94,26 +94,26 @@
             (HEAD* "/" [] (on-healthcheck)))
 
 (defroutes resource-routes
-           (GET "/" [] (return-html "index.html"))
-           (GET "/admin/*" [] (return-html "admin.html"))
-           (GET "/yhteenveto/*" [] (return-html "summary.html"))
-           (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
-                 :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
-                 (on-hakemus-preview avustushaku-id hakemus-user-key))
-           (GET* "/hakemus-edit/:avustushaku-id/:hakemus-user-key" []
-                 :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
-                 (on-hakemus-edit avustushaku-id hakemus-user-key))
-           (GET* "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
-                 :path-params [avustushaku-id :- Long, user-key :- s/Str]
-                 (on-paatos-preview avustushaku-id user-key))
-           (GET* "/selvitys/avustushaku/:avustushaku-id/:selvitys-type" []
-                 :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
-                 :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
-                 (on-selvitys avustushaku-id hakemus selvitys-type preview))
-           (GET "/translations.json" [] (get-translations))
-           (GET "/avustushaku/:id/*" [id] (return-html "index.html"))
-           (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
-           (route/not-found "<p>Page not found.</p>"))
+  (GET "/" [] (return-html "index.html"))
+  (GET "/admin/*" [] (return-html "admin.html"))
+  (GET "/yhteenveto/*" [] (return-html "summary.html"))
+  (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
+        :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
+        (on-hakemus-preview avustushaku-id hakemus-user-key))
+  (GET* "/hakemus-edit/:avustushaku-id/:hakemus-user-key" []
+        :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
+        (on-hakemus-edit avustushaku-id hakemus-user-key))
+  (GET* "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
+        :path-params [avustushaku-id :- Long, user-key :- s/Str]
+        (on-paatos-preview avustushaku-id user-key))
+  (GET* "/selvitys/avustushaku/:avustushaku-id/:selvitys-type" []
+        :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
+        :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
+        (on-selvitys avustushaku-id hakemus selvitys-type preview))
+  (GET "/translations.json" [] (get-translations))
+  (GET "/avustushaku/:id/*" [id] (return-html "index.html"))
+  (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
+  (route/not-found "<p>Page not found.</p>"))
 
 (defn- get-avustushaku-status []
   (GET* "/" [status]
