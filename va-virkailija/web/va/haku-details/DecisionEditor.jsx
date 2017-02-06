@@ -67,6 +67,9 @@ class LiitteetList extends React.Component{
   render(){
     const avustushaku = this.props.avustushaku
     const controller = this.props.controller
+    const environment = this.props.environment
+    const hakijaUrlFi = environment["hakija-server"].url.fi
+    const hakijaUrlSv = environment["hakija-server"].url.sv
     const liitteet = _.get(avustushaku,"decision.liitteet",[])
     const Liite = (group, liiteTotalCount, liite) =>{
       const checked =  _.any(liitteet,(currentLiite) => currentLiite.group==group && currentLiite.id==liite.id)
@@ -81,11 +84,12 @@ class LiitteetList extends React.Component{
         }
         controller.onChangeListener(avustushaku, {id:"decision.liitteet"}, newLiitteet)
       }
-      const link = `/public/api/liite/${liite.id}`
+      const link_fi = `${hakijaUrlFi}liitteet/${liite.id}_fi.pdf`
+      const link_sv = `${hakijaUrlSv}liitteet/${liite.id}_sv.pdf`
       return(
         <div key={liite.id}>
           <label>
-            <input type={liiteTotalCount > 1 ? "radio" : "checkbox"} name={group} onChange={liiteChanged} value={liite.id} checked={checked}/> {liite.fi} - {liite.id} <a href={`${link}/fi`} target="_blank">fi</a> <a href={`${link}/sv`} target="_blank">sv</a>
+            <input type={liiteTotalCount > 1 ? "radio" : "checkbox"} name={group} onChange={liiteChanged} value={liite.id} checked={checked}/> {liite.fi} - {liite.id} <a href={`${link_fi}`} target="_blank">fi</a> <a href={`${link_sv}`} target="_blank">sv</a>
           </label>
         </div>
         )
@@ -325,7 +329,7 @@ class DecisionDateAndSend extends React.Component {
 
 export default class DecisionEditor extends React.Component {
   render() {
-    const {avustushaku,controller} = this.props
+    const {avustushaku,environment,controller} = this.props
     const onChange = (e) => controller.onChangeListener(avustushaku, e.target, e.target.value)
     const fields = [
       {id:"sovelletutsaannokset",title:"Sovelletut säännökset"},
@@ -350,7 +354,7 @@ export default class DecisionEditor extends React.Component {
         <DecisionFields key="maksu" title="Avustuksen maksuaika" avustushaku={avustushaku} id="maksu" onChange={onChange}/>
         <Selvitys {...this.props}/>
         {avustushaku.content.multiplemaksuera===true && <DateField avustushaku={avustushaku} controller={controller} field="maksudate" label="Viimeinen maksuerä"/>}
-        <LiitteetList avustushaku={avustushaku} controller={controller}/>
+        <LiitteetList environment={environment} avustushaku={avustushaku} controller={controller}/>
         <DecisionDateAndSend avustushaku={avustushaku} controller={controller}/>
       </div>
     )

@@ -28,6 +28,7 @@ export default class EditorSelector extends React.Component {
         break
       case "decision":
         subTabContent = <DecisionEditor avustushaku={avustushaku}
+                                        environment={environment}
                                         controller={controller}
                                         translations={translations}
 
