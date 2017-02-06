@@ -68,21 +68,24 @@ class LiitteetList extends React.Component{
     const avustushaku = this.props.avustushaku
     const controller = this.props.controller
     const liitteet = _.get(avustushaku,"decision.liitteet",[])
-    const Liite = (group,liite) =>{
+    const Liite = (group, liiteTotalCount, liite) =>{
+      const checked =  _.any(liitteet,(currentLiite) => currentLiite.group==group && currentLiite.id==liite.id)
       const liiteChanged = (event) => {
         const newValue = {
           group:group,
-          id:event.target.value
+          id: event.target.value
         }
-        const newLiitteet = _.reject(liitteet,(l)=>l.group==newValue.group).concat([newValue])
+        var newLiitteet = _.reject(liitteet,(l)=>l.group==newValue.group)
+        if (!checked) {
+          newLiitteet = newLiitteet.concat([newValue])
+        }
         controller.onChangeListener(avustushaku, {id:"decision.liitteet"}, newLiitteet)
       }
-      const checked= _.any(liitteet,(currentLiite) => currentLiite.group==group && currentLiite.id==liite.id)
       const link = `/public/api/liite/${liite.id}`
       return(
         <div key={liite.id}>
           <label>
-            <input type="radio" name={group} onChange={liiteChanged} value={liite.id} checked={checked}/> {liite.fi} - {liite.id} <a href={`${link}/fi`} target="_blank">fi</a> <a href={`${link}/sv`} target="_blank">sv</a>
+            <input type={liiteTotalCount > 1 ? "radio" : "checkbox"} name={group} onChange={liiteChanged} value={liite.id} checked={checked}/> {liite.fi} - {liite.id} <a href={`${link}/fi`} target="_blank">fi</a> <a href={`${link}/sv`} target="_blank">sv</a>
           </label>
         </div>
         )
@@ -94,7 +97,7 @@ class LiitteetList extends React.Component{
           {Liitteet.map((group)=>{return (
             <div key={group.group}>
               <h5>{group.group}</h5>
-              {group.attachments.map(_.partial(Liite,group.group))}
+              {group.attachments.map(_.partial(Liite, group.group, group.attachments.length))}
             </div>
             )
             }

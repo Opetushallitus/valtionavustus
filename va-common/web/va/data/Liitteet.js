@@ -33,5 +33,15 @@ export default [
         sv:"Rättelseyrkande"
       }
     ]
+  },
+  {
+    group:"Valtionavustusten yleisohje",
+    attachments:[
+      {
+        id:"va_yleisohje",
+        fi:"Valtionavustusten yleisohje",
+        sv:"Allmänna anvisningar om statsunderstöd"
+      }
+    ]
   }
 ]

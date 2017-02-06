@@ -47,6 +47,16 @@
                                }
                               ]
                  }
+                {
+                 :group "Valtionavustusten yleisohje"
+                 :attachments [
+                              {
+                               :id "va_yleisohje"
+                               :fi "Valtionavustusten yleisohje"
+                               :sv "Allmänna anvisningar om statsunderstöd"
+                               }
+                              ]
+                }
                ])
 
 
@@ -137,7 +147,9 @@
         lang-str (name lang)
         link (str "/liitteet/" liite-id "_" lang-str ".pdf")
         liite-name (lang liite)]
-    (str "<div><a href='" link "'>" liite-name "</a></div>")))
+    (if (not-empty liite-id)
+      (str "<div><a href='" link "'>" liite-name "</a></div>")
+      "")))
 
 (defn liitteet-list [avustushaku hakemus translate lang has-budget]
   (let [all-liitteet Liitteet
@@ -146,9 +158,7 @@
         rejected (= decision-status "rejected")
         ehdot (find-liite all-liitteet liitteet "Ehdot")
         oikaisuvaatimus (find-liite all-liitteet liitteet "Oikaisuvaatimusosoitus")
-        yleisohje {:id "va_yleisohje"
-                   :fi "Valtionavustusten yleisohje"
-                   :sv "Allmänna anvisningar om statsunderstöd"}
+        yleisohje (find-liite all-liitteet liitteet "Valtionavustusten yleisohje")
         row-kayttosuunnitelma (str "<div>" (translate :kayttosuunnitelma) "</div>")
         row-oikaisuvaatimus (liite-row oikaisuvaatimus lang)
         row-ehdot (liite-row ehdot lang)
@@ -157,8 +167,11 @@
                   row-oikaisuvaatimus
                   (if has-budget
                     (str row-kayttosuunnitelma row-oikaisuvaatimus row-ehdot row-yleisohje)
-                    (str row-oikaisuvaatimus row-ehdot row-yleisohje)))]
-      (section :liitteet content translate false)))
+                    (str row-oikaisuvaatimus row-ehdot row-yleisohje)))
+        content-length (count content)]
+        (if (> content-length 0)
+          (section :liitteet content translate false)
+          "")))
 
 (defn paatos-html [hakemus-id lang]
   (let [haku-data (hakudata/get-combined-paatos-data hakemus-id)
