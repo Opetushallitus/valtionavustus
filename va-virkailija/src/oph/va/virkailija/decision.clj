@@ -97,12 +97,6 @@
                      "<p>" avustushaku-name "</p>\n")]
     (section :asia content translate false)))
 
-(defn kayttotarkoitus [translate]
-  (let [keys [:kaytto1 :kaytto2 :kaytto3 :kaytto4 :kaytto5]
-        rows-list (mapv (fn [row] (str "<p>" (translate row) "</p>")) keys)
-        content (str/join " " rows-list)]
-    (section :avustuksen-kayttotarkoitus content translate false)))
-
 (defn avustuksen-maksu [avustushaku bic iban total-paid lang translate]
   (let [decision (:decision avustushaku)
         maksu-date (:maksudate decision)
@@ -227,11 +221,11 @@
                 :section-taustaa               (optional-section decision :taustaa :taustaa translate language)
                 :section-sovelletut-saannokset (optional-section decision :sovelletut-saannokset :sovelletutsaannokset translate language)
                 :section-kayttoaika            (optional-section decision :valtionavustuksen-kayttoaika :kayttoaika translate language)
+                :section-kayttotarkoitus       (optional-section decision :avustuksen-kayttotarkoitus :kayttotarkoitus translate language)
                 :section-selvitysvelvollisuus  (optional-section decision :selvitysvelvollisuus :selvitysvelvollisuus translate language)
                 :section-kayttooikeudet        (optional-section decision :kayttooikeudet :kayttooikeudet translate language)
                 :section-hyvaksyminen          (optional-section decision :hyvaksyminen :hyvaksyminen translate language)
                 :section-perustelut            (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate)
-                :section-kayttotarkoitus       (kayttotarkoitus translate)
                 :section-tarkastusoikeus       (section-translated :tarkastusoikeus-title :tarkastusoikeus-text translate false)
                 :section-avustuksen-maksu      avustuksen-maksu
                 :total-granted                 (kayttosuunnitelma/format-number total-granted)

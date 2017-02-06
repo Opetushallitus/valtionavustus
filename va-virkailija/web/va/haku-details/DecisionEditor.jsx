@@ -334,6 +334,7 @@ export default class DecisionEditor extends React.Component {
     const fields = [
       {id:"sovelletutsaannokset",title:"Sovelletut säännökset"},
       {id:"kayttooikeudet",title:"Tekijänoikeudet"},
+      {id:"kayttotarkoitus",title:"Avustuksen käyttötarkoitus"},
       {id:"kayttoaika",title:"Avustuksen käyttöaika"},
       {id:"selvitysvelvollisuus",title:"Selvitysvelvollisuus"},
       {id:"hyvaksyminen",title:"Päätöksen hyväksyminen"},

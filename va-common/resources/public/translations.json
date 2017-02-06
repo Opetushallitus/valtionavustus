@@ -374,26 +374,6 @@
       "fi":"Avustuksen käyttötarkoitus",
       "sv":"Användning av understödet"
     },
-    "kaytto1":{
-      "fi":"Avustusta/määrärahaa saadaan käyttää liitteessä olevan käyttösuunnitelman mukaisesti hankesuunnitelmassa esitettyyn ja tällä päätöksellä hyväksyttyyn toimintaan.",
-      "sv":"Understödet/anslaget får användas enligt användningsplanen i bilagan för verksamhet som lagts fram i projektplanen och som godkänts genom detta beslut."
-    },
-    "kaytto2":{
-      "fi":"Avustuksen saajan on noudatettava liitteenä olevia Opetushallituksen yleisohjetta sekä avustukseen liittyviä ehtoja ja rajoituksia koskevaa asiakirjaa.",
-      "sv":"Den som erhållit understöd ska iaktta bifogade, av Utbildningsstyrelsen utfärdade, allmänna anvisningar och det dokument som gäller villkor och begränsningar för understödet."
-    },
-    "kaytto3":{
-      "fi":"Valtionavustuksen käyttöön vaikuttavista muutoksista tulee aina ilmoittaa Opetushallitukselle viipymättä (valtionavustuslaki 14 §).",
-      "sv":"Om det uppstår förändringar som inverkar på användningen av statsunderstödet ska man genast meddela om detta till Utbildningsstyrelsen (statsunderstödslagen 14 §)."
-    },
-    "kaytto4":{
-      "fi":"Jos hyväksyttyyn kustannusarvioon, avustuksen käyttötarkoitukseen tai hankkeeseen muutoin tulee olennaisia muutoksia, avustuksen saajan tulee tehdä muutoshakemus.",
-      "sv":"Om det uppstår betydande förändringar i den godkända budgeten, syftet för understödet eller i projektet i övrigt ska mottagaren av statsunderstödet göra en förändringsansökan."
-    },
-    "kaytto5":{
-      "fi":"Tähän päätökseen voidaan hakijan esityksestä tehdä vähäisiä muutoksia käyttösuunnitelman, hankkeen sisällön, avustuksen saajan omistussuhteiden tai muun vastaavan seikan osalta ilman uuden päätöksen antamista. Olennainen muutos tai hankkeelle myönnetyn avustuksen määrän muutos edellyttää aina uuden päätöksen antamista.",
-      "sv":"I detta beslut kan Utbildningsstyrelsen på framställning av sökanden göra mindre ändringar i användningsplanen, projektets innehåll, stödtagarens ägandeförhållanden eller någon annan motsvarande omständighet utan att ett nytt beslut fattas. En väsentlig ändring eller ändring av det understödsbelopp som har beviljats för projektet förutsätter alltid ett nytt beslut."
-    },
     "sovelletut-saannokset":{
       "fi":"Sovelletut säännökset",
       "sv":"Tillämpade bestämmelser"

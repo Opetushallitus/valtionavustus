@@ -71,6 +71,7 @@
    (s/optional-key :maksu) LocalizedStringOptional
    (s/optional-key :maksudate) s/Str
    (s/optional-key :kaytto) LocalizedStringOptional
+   (s/optional-key :kayttotarkoitus) LocalizedStringOptional
    (s/optional-key :kayttooikeudet) LocalizedStringOptional
    (s/optional-key :selvitysvelvollisuus) LocalizedStringOptional
    (s/optional-key :kayttoaika) LocalizedStringOptional
