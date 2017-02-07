@@ -1,6 +1,7 @@
 (ns oph.common.server
   (:use [org.httpkit.server :only [run-server]])
   (:require [clojure.tools.logging :as log]
+            [ring.util.response :refer [get-header header]]
             [oph.va.jdbc.extensions])
   (:import (java.net Socket)
            (java.io IOException)))
@@ -27,10 +28,14 @@
       (stop)
       (on-shutdown))))
 
-(defn wrap-nocache [handler]
+(defn wrap-cache-control [handler]
   (fn [request]
-     (let [response (handler request)]
-       (-> response
-           (assoc-in [:headers "Pragma"] "no-cache")
-           (assoc-in [:headers "Cache-Control"]  "no-cache, no-store, must-revalidate")
-           (assoc-in [:headers "Expires"]  0)))))
+    (let [response (handler request)
+          response-cache-validated? (or (get-header response "Last-Modified")
+                                        (get-header response "ETag"))]
+      (-> response
+        (header "Expires" 0)
+        (header "Pragma" "no-cache")
+        (header "Cache-Control" (if response-cache-validated?
+                                  "no-cache, public, max-age=0"
+                                  "no-store, max-age=0"))))))

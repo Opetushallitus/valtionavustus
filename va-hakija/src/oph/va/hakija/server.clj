@@ -1,8 +1,9 @@
 (ns oph.va.hakija.server
   (:use [oph.va.hakija.routes :only [all-routes restricted-routes]])
-  (:require [ring.middleware.reload :as reload]
+  (:require [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.logger :as logger]
             [ring.middleware.conditional :refer [if-url-doesnt-match]]
+            [ring.middleware.not-modified :refer [wrap-not-modified]]
             [ring.middleware.defaults :refer :all]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
@@ -44,17 +45,19 @@
     site))
 
 (defn start-server [host port auto-reload?]
-  (let [logged (with-log-wrapping (create-site))
-        handler (if auto-reload?
-                  (reload/wrap-reload logged)
-                  logged)
-        non-caching-handler (server/wrap-nocache handler)
+  (let [handler (as-> (create-site) h
+                  (with-log-wrapping h)
+                  (server/wrap-cache-control h)
+                  (wrap-not-modified h)
+                  (if auto-reload?
+                    (wrap-reload h)
+                    h))
         threads (or (-> config :server :threads) 16)
         attachment-max-size (or (-> config :server :attachment-max-size) 50)]
     (server/start-server {:host host
                           :port port
                           :auto-reload? auto-reload?
-                          :routes non-caching-handler
+                          :routes handler
                           :on-startup (partial startup config)
                           :on-shutdown shutdown
                           :threads threads

@@ -1,10 +1,11 @@
 (ns oph.va.virkailija.server
   (:use [clojure.tools.trace :only [trace]]
         [oph.va.virkailija.routes :only [all-routes opintopolku-login-url virkailija-login-url]])
-  (:require [ring.middleware.reload :as reload]
+  (:require [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.logger :as logger]
             [ring.middleware.session.cookie :refer [cookie-store]]
             [ring.middleware.conditional :refer [if-url-doesnt-match]]
+            [ring.middleware.not-modified :refer [wrap-not-modified]]
             [ring.middleware.defaults :refer :all]
             [buddy.auth :refer [authenticated?]]
             [buddy.auth.middleware :refer [wrap-authentication]]
@@ -99,14 +100,15 @@
                      (assoc :session {:store cookie-store
                                       :cookie-name "identity"
                                       :cookie-attrs cookie-attrs}))
-        routes (-> #'all-routes
-                   (with-authentication)
-                   (wrap-defaults defaults)
-                   (with-log-wrapping)
-                   (server/wrap-nocache))
-        handler (if auto-reload?
-                  (reload/wrap-reload routes)
-                  routes)
+        handler (as-> #'all-routes h
+                  (with-authentication h)
+                  (wrap-defaults h defaults)
+                  (with-log-wrapping h)
+                  (server/wrap-cache-control h)
+                  (wrap-not-modified h)
+                  (if auto-reload?
+                    (wrap-reload h)
+                    h))
         threads (or (-> config :server :threads) 16)
         attachment-max-size (or (-> config :server :attachment-max-size) 50)]
     (server/start-server {:host host
