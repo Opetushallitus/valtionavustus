@@ -1,8 +1,6 @@
 (ns oph.va.hakija.server
   (:use [oph.va.hakija.routes :only [all-routes restricted-routes]])
   (:require [ring.middleware.reload :refer [wrap-reload]]
-            [ring.middleware.logger :as logger]
-            [ring.middleware.conditional :refer [if-url-doesnt-match]]
             [ring.middleware.not-modified :refer [wrap-not-modified]]
             [ring.middleware.defaults :refer :all]
             [clojure.tools.logging :as log]
@@ -39,14 +37,9 @@
       (wrap-defaults (-> site-defaults
                          (assoc-in [:security :anti-forgery] false)))))
 
-(defn- with-log-wrapping [site]
-  (if (-> config :server :enable-access-log?)
-    (if-url-doesnt-match site #"/api/healthcheck" logger/wrap-with-logger)
-    site))
-
 (defn start-server [host port auto-reload?]
   (let [handler (as-> (create-site) h
-                  (with-log-wrapping h)
+                  (server/wrap-logger h)
                   (server/wrap-cache-control h)
                   (wrap-not-modified h)
                   (if auto-reload?

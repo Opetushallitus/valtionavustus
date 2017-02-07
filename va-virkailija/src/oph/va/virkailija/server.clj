@@ -2,9 +2,7 @@
   (:use [clojure.tools.trace :only [trace]]
         [oph.va.virkailija.routes :only [all-routes opintopolku-login-url virkailija-login-url]])
   (:require [ring.middleware.reload :refer [wrap-reload]]
-            [ring.middleware.logger :as logger]
             [ring.middleware.session.cookie :refer [cookie-store]]
-            [ring.middleware.conditional :refer [if-url-doesnt-match]]
             [ring.middleware.not-modified :refer [wrap-not-modified]]
             [ring.middleware.defaults :refer :all]
             [buddy.auth :refer [authenticated?]]
@@ -33,11 +31,6 @@
   (log/info "Shutting down all services")
   (email/stop-background-sender)
   (db/close-datasource! :virkailija-db))
-
-(defn- with-log-wrapping [site]
-  (if (-> config :server :enable-access-log?)
-    (if-url-doesnt-match site #"/api/healthcheck" logger/wrap-with-logger)
-    site))
 
 (def backend (session-backend))
 
@@ -103,7 +96,7 @@
         handler (as-> #'all-routes h
                   (with-authentication h)
                   (wrap-defaults h defaults)
-                  (with-log-wrapping h)
+                  (server/wrap-logger h)
                   (server/wrap-cache-control h)
                   (wrap-not-modified h)
                   (if auto-reload?

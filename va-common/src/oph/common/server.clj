@@ -1,7 +1,10 @@
 (ns oph.common.server
   (:use [org.httpkit.server :only [run-server]])
   (:require [clojure.tools.logging :as log]
+            [ring.middleware.conditional :refer [if-url-doesnt-match]]
+            [ring.middleware.logger :refer [wrap-with-logger]]
             [ring.util.response :refer [get-header header]]
+            [oph.soresu.common.config :refer [config]]
             [oph.va.jdbc.extensions])
   (:import (java.net Socket)
            (java.io IOException)))
@@ -27,6 +30,11 @@
     (fn []
       (stop)
       (on-shutdown))))
+
+(defn wrap-logger [handler]
+  (if (-> config :server :enable-access-log?)
+    (if-url-doesnt-match handler #"/api/healthcheck" wrap-with-logger)
+    handler))
 
 (defn wrap-cache-control [handler]
   (fn [request]
