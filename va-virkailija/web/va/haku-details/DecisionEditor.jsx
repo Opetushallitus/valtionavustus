@@ -260,7 +260,7 @@ class DecisionDateAndSend extends React.Component {
             <tbody>
               {this.state.paatokset.map((paatos,index)=>
                 <tr key={index}>
-                  <td>{paatos.id} {paatos["organization-name"]} - <a target="_blank" href={PaatosUrl.publicLink(this.props.avustushaku.id,paatos.user_key)}>{paatos["project-name"]}</a></td>
+                  <td><a target="_blank" href={PaatosUrl.publicLink(this.props.avustushaku.id,paatos.user_key)}>{paatos.id} {paatos["organization-name"]} - {paatos["project-name"]}</a></td>
                   <td>{paatos["sent-emails"].addresses.join(" ")}</td>
                   <td style={{position:'relative'}}>
                     {paatos.view_count==0 && <span>{paatos.view_count}</span>}
