@@ -134,6 +134,7 @@
    :version (:version hakemus)
    :version-date (:created_at hakemus)
    :project-name (:project_name hakemus)
+   :language (:language hakemus)
    :organization-name (:organization_name hakemus)
    :budget-oph-share (:budget_oph_share hakemus)
    :budget-total (:budget_total hakemus)
