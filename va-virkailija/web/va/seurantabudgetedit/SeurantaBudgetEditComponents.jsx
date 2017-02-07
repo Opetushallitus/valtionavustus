@@ -14,28 +14,19 @@ import JsUtil from 'soresu-form/web/form/JsUtil'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 
 export class EditSummingBudgetElement extends React.Component {
-  columnTitles(field) {
-    return field.params.showColumnTitles ? (
-        <thead>
-        <tr>
-          <th className="label-column">
-            <LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang}/>
-          </th>
-          <th className="original-amount-column">Myönnetty</th>
-          <th className="amount-column money required" style={{textAlign:'center'}}>OPH:n hyväksymä</th>
-          <th className="description-column">Kommentti</th>
-        </tr>
-        </thead>
-    ) : undefined
-  }
-
   render() {
     const {field, children, htmlId, lang, customProps} = this.props
     const sum = field.sum
     const classNames = ClassNames({"required": field.required})
-    const originalHakemus = customProps.originalHakemus
-    const originalAmountValues = VaBudgetCalculator.getAmountValues(field, originalHakemus.arvio["overridden-answers"])
-    const originalSum = _.sum(originalAmountValues.map(x => x.value))
+    const grantedSum = EditSummingBudgetElement.sumOf(field, customProps.originalHakemus.arvio["overridden-answers"])
+    const valiselvitysSum = EditSummingBudgetElement.sumOf(field, _.get(customProps.originalHakemus, "selvitys.valiselvitys", []))
+    const loppuselvitysSum = EditSummingBudgetElement.sumOf(field, _.get(customProps.originalHakemus, "selvitys.loppuselvitys", []))
+    const visibleColumns = {
+      grantedSum: grantedSum.isVisible,
+      valiselvitysSum: valiselvitysSum.isVisible,
+      loppuselvitysSum: loppuselvitysSum.isVisible
+    }
+
     return (
         <table id={htmlId} className="summing-table">
           <caption className={!_.isEmpty(classNames) ? classNames : undefined}>
@@ -43,11 +34,13 @@ export class EditSummingBudgetElement extends React.Component {
           </caption>
           <colgroup>
             <col className="label-column"/>
-            <col className="original-amount-column"/>
+            {grantedSum.isVisible && (<col className="granted-amount-column"/>)}
+            {valiselvitysSum.isVisible && (<col className="valiselvitys-amount-column"/>)}
+            {loppuselvitysSum.isVisible && (<col className="loppuselvitys-amount-column"/>)}
             <col className="amount-column"/>
             <col className="description-column"/>
           </colgroup>
-          {this.columnTitles(field)}
+          {EditSummingBudgetElement.columnTitles(field, lang, visibleColumns)}
           <tbody>
           {children}
           </tbody>
@@ -56,7 +49,9 @@ export class EditSummingBudgetElement extends React.Component {
             <td className="label-column">
               <LocalizedString translations={field.params} translationKey="sumRowLabel" lang={lang}/>
             </td>
-            <td className="original-amount-column"><span className="money sum">{originalSum}</span></td>
+            {grantedSum.isVisible && (<td className="granted-amount-column"><span className="money sum">{grantedSum.value}</span></td>)}
+            {valiselvitysSum.isVisible && (<td className="valiselvitys-amount-column"><span className="money sum">{valiselvitysSum.value}</span></td>)}
+            {loppuselvitysSum.isVisible && (<td className="loppuselvitys-amount-column"><span className="money sum">{loppuselvitysSum.value}</span></td>)}
             <td className="amount-column">
               <span className="money sum">{sum}</span>
             </td>
@@ -65,31 +60,85 @@ export class EditSummingBudgetElement extends React.Component {
         </table>
     )
   }
+
+  static columnTitles(field, lang, visibleColumns) {
+    return field.params.showColumnTitles ? (
+        <thead>
+        <tr>
+          <th className="label-column">
+            <LocalizedString translations={field.params.columnTitles} translationKey="label" lang={lang}/>
+          </th>
+          {visibleColumns.grantedSum && (<th className="granted-amount-column">Myönnetty</th>)}
+          {visibleColumns.valiselvitysSum && (<th className="valiselvitys-amount-column money">Väli- selvitys</th>)}
+          {visibleColumns.loppuselvitysSum && (<th className="loppuselvitys-amount-column money">Loppu- selvitys</th>)}
+          <th className="amount-column money required" style={{textAlign:'center'}}>OPH:n hyväksymä</th>
+          <th className="description-column">Kommentti</th>
+        </tr>
+        </thead>
+    ) : undefined
+  }
+
+  static sumOf(field, answers) {
+    return _.isEmpty(answers)
+      ? {isVisible: false}
+      : {
+          isVisible: true,
+          value: _.sum(VaBudgetCalculator.getAmountValues(field, answers).map(x => x.value))
+        }
+  }
 }
 
 export class EditBudgetItemElement extends React.Component {
   render() {
-    const {field, children,htmlId, disabled, lang, customProps} = this.props
+    const {field, children, htmlId, disabled, lang, customProps} = this.props
     const descriptionComponent = children[0]
-    const amountComponent = children[1]
-    const originalHakemus = customProps.originalHakemus
-    const valueId = amountComponent.props.field.id
-    const answers = originalHakemus.arvio["overridden-answers"]
-    const originalValue = originalHakemus ? InputValueStorage.readValue(children, answers, valueId) : ""
     const descriptionId = descriptionComponent.props.field.id
-    const originalDescription = originalHakemus ? InputValueStorage.readValue(children, answers, descriptionId) : ""
+    const valueComponent = children[1]
+    const valueId = valueComponent.props.field.id
+
     const labelClassName = ClassNames("label-column", {disabled: disabled})
+
+    const grantedAmount = EditBudgetItemElement.amountOf(customProps.originalHakemus.arvio["overridden-answers"], valueId, descriptionId)
+
+    const valiselvitysAmount = EditBudgetItemElement.amountOf(_.get(customProps.originalHakemus, "selvitys.valiselvitys", []), valueId, descriptionId)
+    const valiselvitysClassNames = ClassNames("money sum", {'error error-message': !valiselvitysAmount.value})
+
+    const loppuselvitysAmount = EditBudgetItemElement.amountOf(_.get(customProps.originalHakemus, "selvitys.loppuselvitys", []), valueId, descriptionId)
+    const loppuselvitysClassNames = ClassNames("money sum", {'error error-message': !loppuselvitysAmount.value})
 
     return (
         <tr id={htmlId} className="budget-item">
           <td className={labelClassName}>
             <LocalizedString translations={field} translationKey="label" lang={lang}/>
           </td>
-          <td className="original-amount-column has-title" title={originalDescription}><span
-              className="money sum">{originalValue}</span></td>
-          <td className="amount-column">{amountComponent}</td>
+          {grantedAmount.isVisible && (
+            <td className="granted-amount-column has-title" title={grantedAmount.description}>
+              <span className="money sum">{grantedAmount.value}</span>
+            </td>
+          )}
+          {valiselvitysAmount.isVisible && (
+            <td className="valiselvitys-amount-column has-title" title={valiselvitysAmount.description}>
+              <span className={valiselvitysClassNames}>{valiselvitysAmount.value ? valiselvitysAmount.value : '–'}</span>
+            </td>
+          )}
+          {loppuselvitysAmount.isVisible && (
+            <td className="loppuselvitys-amount-column has-title" title={loppuselvitysAmount.description}>
+              <span className={loppuselvitysClassNames}>{loppuselvitysAmount.value ? loppuselvitysAmount.value : '–'}</span>
+            </td>
+          )}
+          <td className="amount-column">{valueComponent}</td>
           <td className="description-column">{descriptionComponent}</td>
         </tr>
     )
+  }
+
+  static amountOf(answers, valueId, descriptionId) {
+    return _.isEmpty(answers)
+      ? {isVisible: false}
+      : {
+          isVisible: true,
+          value: InputValueStorage.readValue(null, answers, valueId),
+          description: InputValueStorage.readValue(null, answers, descriptionId)
+        }
   }
 }
