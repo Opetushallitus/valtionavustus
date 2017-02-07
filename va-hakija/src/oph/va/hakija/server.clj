@@ -32,13 +32,10 @@
       (log/warn "Enabling all routes. This setting should be used only in development!")
       (create-all-routes))))
 
-(defn- create-site []
-  (-> (create-routes)
-      (wrap-defaults (-> site-defaults
-                         (assoc-in [:security :anti-forgery] false)))))
-
 (defn start-server [host port auto-reload?]
-  (let [handler (as-> (create-site) h
+  (let [defaults (assoc-in site-defaults [:security :anti-forgery] false)
+        handler (as-> (create-routes) h
+                  (wrap-defaults h defaults)
                   (server/wrap-logger h)
                   (server/wrap-cache-control h)
                   (wrap-not-modified h)
