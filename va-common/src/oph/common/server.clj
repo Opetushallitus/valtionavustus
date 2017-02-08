@@ -43,7 +43,6 @@
                                         (get-header response "ETag"))]
       (-> response
         (header "Expires" 0)
-        (header "Pragma" "no-cache")
         (header "Cache-Control" (if response-cache-validated?
                                   "no-cache, must-revalidate, max-age=0"
                                   "no-store, max-age=0"))))))
