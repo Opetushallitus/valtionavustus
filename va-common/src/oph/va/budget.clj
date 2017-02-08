@@ -46,7 +46,6 @@
                                  Math/ceil
                                  int)
         oph-share (max (- total-sum self-financing-share) 0)]
-    (print use-detailed-costs costs-granted total-row-sum only-incomes total-sum)
     {:total-needed total-sum
      :oph-share oph-share}))
 

@@ -112,8 +112,6 @@
         selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)]
     (log/info "Url would be: " url)
-    (println presenter-role-id)
-    (println roles)
     (>!! email/mail-queue {:operation :send
                            :type (keyword (str selvitys-type "-notification"))
                            :lang lang

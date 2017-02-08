@@ -191,7 +191,6 @@
   (OPTIONS* "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id"
          [haku-id hakemus-id hakemus-base-version field-id]
          :path-params [haku-id :- Long, hakemus-id :- s/Str, hakemus-base-version :- Long, field-id :- s/Str]
-            (println (virkailija-url))
            (-> (ok {:status "ok"} ) (assoc-in [:headers "Access-Control-Allow-Origin"] (virkailija-url)) (assoc-in [:headers "Access-Control-Allow-Methods"] "PUT"))))
 
 
