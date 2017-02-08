@@ -167,7 +167,7 @@
           (section :liitteet content translate false)
           "")))
 
-(defn paatos-html [hakemus-id lang]
+(defn paatos-html [hakemus-id]
   (let [haku-data (hakudata/get-combined-paatos-data hakemus-id)
         avustushaku (:avustushaku haku-data)
         avustushaku-type (:haku-type avustushaku)
@@ -188,11 +188,7 @@
         self-financing-percentage (-> avustushaku :content :self-financing-percentage)
         oph-financing-percentage (- 100 self-financing-percentage)
         role (if (nil? arvio-role) (first presenting-officers) arvio-role)
-        language-answer (formutil/find-answer-value answers "language")
-        language (if lang
-                   (keyword lang)
-                   (if (nil? language-answer) :fi
-                                              (keyword language-answer)))
+        language (keyword (:language hakemus))
         avustushaku-name (get-in avustushaku [:content :name language])
         iban (formutil/find-answer-value answers "bank-iban")
         bic (formutil/find-answer-value answers "bank-bic")
@@ -254,8 +250,7 @@
 
             (GET* "/avustushaku/:avustushaku-id/hakemus/:hakemus-id" []
                   :path-params [avustushaku-id :- Long hakemus-id :- Long]
-                  :query-params [{lang :- s/Str nil}]
-                  (let [body (paatos-html hakemus-id lang)]
+                  (let [body (paatos-html hakemus-id)]
                     {:status  200
                      :headers {"Content-Type" "text/html"}
                      :body    body})))

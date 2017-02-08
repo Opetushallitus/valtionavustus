@@ -51,7 +51,7 @@
       (if-let [new-hakemus (va-db/create-hakemus! haku-id form-id answers "hakemus"  nil)]
         ;; TODO: extract
         (let [validation (validation/validate-form form answers {})
-              language (keyword (or (find-answer-value answers "language") "fi"))
+              language (keyword (-> new-hakemus :hakemus :language))
               avustushaku-title (-> avustushaku-content :name language)
               avustushaku-duration (->> avustushaku-content
                                         :duration)

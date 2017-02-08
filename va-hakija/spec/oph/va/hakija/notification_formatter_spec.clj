@@ -90,7 +90,8 @@
 
 (def submitted-hakemus
   {:user_key hakemus-key
-   :organization_name "Our test organization"})
+   :organization_name "Our test organization"
+   :language "fi"})
 
 (def haku-id 10)
 

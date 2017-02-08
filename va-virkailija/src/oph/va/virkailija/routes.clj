@@ -423,7 +423,7 @@
            (if (= new-status "pending_change_request")
              (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
                    answers (:answers submission)
-                   language (keyword (or (formutil/find-answer-value answers "language") "fi"))
+                   language (keyword (:language updated-hakemus))
                    avustushaku-name (-> avustushaku :content :name language)
                    email (formutil/find-answer-value answers "primary-email")
                    user-key (:user_key updated-hakemus)
