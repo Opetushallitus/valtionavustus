@@ -86,7 +86,7 @@
 (defn- get-selvitys-init []
   (GET* "/:haku-id/selvitys/:selvitys-type/init/:hakemus-id" [haku-id selvitys-type hakemus-id]
         :path-params [haku-id :- Long, hakemus-id :- s/Str selvitys-type :- s/Str]
-        :return HakemusId
+        :return HakemusInfo
         :summary "Get or create selvitys for hakemus"
         (on-selvitys-init haku-id hakemus-id selvitys-type)))
 

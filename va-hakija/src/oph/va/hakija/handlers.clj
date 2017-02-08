@@ -75,7 +75,8 @@
       (bad-request! security-validation))))
 
 (defn- ok-id [hakemus]
-  (ok {:id (:user_key hakemus)})
+  (ok {:id (:user_key hakemus)
+       :language (:language hakemus)})
 )
 
 (defn on-selvitys-init [haku-id hakemus-key selvitys-type]

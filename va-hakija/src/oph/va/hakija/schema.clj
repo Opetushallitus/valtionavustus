@@ -14,6 +14,7 @@
    :submission VaSubmission
    :validation-errors SubmissionValidationErrors})
 
-(s/defschema HakemusId
-  "Hakemus with user key"
-  {:id s/Str})
+(s/defschema HakemusInfo
+  "Hakemus with user key and language"
+  {:id s/Str
+   :language s/Str})
