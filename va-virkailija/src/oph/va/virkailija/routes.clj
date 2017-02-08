@@ -606,7 +606,9 @@
                         (redirect-to-loggged-out-page request {"not-permitted" "true"}))
                       (redirect-to-loggged-out-page request {}))
                     (catch Exception e
-                      (log/error "Error in login ticket handling" e)
+                      (if (and (.getMessage e) (.contains (.getMessage e) "INVALID_TICKET"))
+                        (log/warn "Invalid ticket: " (.toString e))
+                        (log/error "Error in login ticket handling" e))
                       (redirect-to-loggged-out-page request {"error" "true"}))))
 
             (POST* "/cas" [logoutRequest :as request]
