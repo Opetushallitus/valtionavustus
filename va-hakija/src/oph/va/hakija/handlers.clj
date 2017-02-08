@@ -88,7 +88,7 @@
         register-number (:register_number hakemus)]
     (if (nil? existing-selvitys)
       (let [
-            new-hakemus-with-submission (va-db/create-hakemus! haku-id form-id {:value []} selvitys-type register-number)
+            new-hakemus-with-submission (va-db/create-hakemus! haku-id form-id {:value [{:key "language", :value (:language hakemus), :fieldType "radioButton"}]} selvitys-type register-number)
             new-hakemus (:hakemus new-hakemus-with-submission)
             new-hakemus-id (:id new-hakemus)
             updated (va-db/update-hakemus-parent-id new-hakemus-id hakemus-id)]
