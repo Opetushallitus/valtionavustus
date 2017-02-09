@@ -192,9 +192,6 @@
   (exec :form-db hakija-queries/update-hakemus-paatos-decision! {:hakemus_id hakemus-id
                                                      :decision decision}))
 
-(defn get-hakemukset [avustushaku-id]
-  (exec :form-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id}))
-
 (defn get-hakudata [avustushaku-id]
   (let [avustushaku (get-avustushaku avustushaku-id)
         form (get-form-by-avustushaku avustushaku-id)
