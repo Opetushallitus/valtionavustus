@@ -84,8 +84,7 @@
 (defn generate-register-number [avustushaku-id user-key]
   (if-let [avustushaku-register-number (-> (get-avustushaku avustushaku-id) :register_number)]
     (when (re-matches #"\d+/\d+" avustushaku-register-number)
-      (let [hakemus (get-hakemus user-key)
-            params {:suffix avustushaku-register-number}
+      (let [params {:suffix avustushaku-register-number}
             {:keys [suffix seq_number]} (if (register-number-sequence-exists? avustushaku-register-number)
                                           (exec :form-db queries/update-register-number-sequence<! params)
                                           (exec :form-db queries/create-register-number-sequence<! params))]
