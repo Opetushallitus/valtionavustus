@@ -305,7 +305,7 @@
          :return virkailija-schema/Comments
          :summary "Add a comment for hakemus. As response, return all comments"
          (let [identity (authentication/get-identity request)
-               {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
+               _avustushaku_and_hakemus_exists? (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
            (ok (virkailija-db/add-comment hakemus-id
                                           (:first-name identity)
                                           (:surname identity)
@@ -400,7 +400,7 @@
          :summary "Submit scorings for given arvio."
          :description "Scorings are automatically assigned to logged in user."
          (let [identity (authentication/get-identity request)
-               {:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
+               _avustushaku_and_hakemus_exists? (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
            (ok (scoring/add-score avustushaku-id
                                   hakemus-id
                                   identity
