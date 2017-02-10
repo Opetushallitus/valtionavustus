@@ -54,9 +54,9 @@ export default class HakemusDetails extends Component {
                                    controller={controller}/>
 
         case 'valiselvitys':
-          return <Selvitys controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selvitysType="valiselvitys"/>
+          return <Selvitys controller={controller} hakemus={hakemus} avustushaku={avustushaku} userInfo={userInfo} translations={translations} selvitysType="valiselvitys"/>
         case 'loppuselvitys':
-          return <Selvitys controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selvitysType="loppuselvitys"/>
+          return <Selvitys controller={controller} hakemus={hakemus} avustushaku={avustushaku} userInfo={userInfo} translations={translations} selvitysType="loppuselvitys"/>
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
         default:

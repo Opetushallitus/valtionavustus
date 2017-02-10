@@ -111,6 +111,7 @@
                       :version-date s/Inst
                       :project-name s/Str
                       :organization-name s/Str
+                      :language s/Str
                       :status HakemusStatus
                       :status-comment (s/maybe s/Str)
                       :user-first-name (s/maybe s/Str)

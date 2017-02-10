@@ -8,7 +8,7 @@ import PresenterComment from './PresenterComment.jsx'
 
 export default class Selvitys extends Component {
   render() {
-    const {controller, hakemus, avustushaku, hakuData, translations,selvitysType} = this.props
+    const {controller, hakemus, avustushaku, translations, selvitysType, userInfo} = this.props
     const hasSelvitys = _.has(hakemus,`selvitys.${selvitysType}.answers`)
     const preview = _.eq(selvitysType, 'valiselvitys')
     const selvitysHakemus = _.get(hakemus,`selvitys.${selvitysType}`)
@@ -26,7 +26,7 @@ export default class Selvitys extends Component {
 
         />}
         <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} preview={preview} label="Linkki lomakkeelle"/>
-        {hasSelvitys && <SelvitysEmail controller={controller} selvitysType={selvitysType} hakemus={hakemus} avustushaku={avustushaku} selvitysHakemus={selvitysHakemus} hakuData={hakuData}/>}
+        {hasSelvitys && <SelvitysEmail controller={controller} selvitysType={selvitysType} hakemus={hakemus} avustushaku={avustushaku} selvitysHakemus={selvitysHakemus} userInfo={userInfo}/>}
       </div>
     )
   }

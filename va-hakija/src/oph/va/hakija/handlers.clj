@@ -51,7 +51,7 @@
       (if-let [new-hakemus (va-db/create-hakemus! haku-id form-id answers "hakemus"  nil)]
         ;; TODO: extract
         (let [validation (validation/validate-form form answers {})
-              language (keyword (or (find-answer-value answers "language") "fi"))
+              language (keyword (-> new-hakemus :hakemus :language))
               avustushaku-title (-> avustushaku-content :name language)
               avustushaku-duration (->> avustushaku-content
                                         :duration)
@@ -75,7 +75,8 @@
       (bad-request! security-validation))))
 
 (defn- ok-id [hakemus]
-  (ok {:id (:user_key hakemus)})
+  (ok {:id (:user_key hakemus)
+       :language (:language hakemus)})
 )
 
 (defn on-selvitys-init [haku-id hakemus-key selvitys-type]
@@ -88,7 +89,7 @@
         register-number (:register_number hakemus)]
     (if (nil? existing-selvitys)
       (let [
-            new-hakemus-with-submission (va-db/create-hakemus! haku-id form-id {:value []} selvitys-type register-number)
+            new-hakemus-with-submission (va-db/create-hakemus! haku-id form-id {:value [{:key "language", :value (:language hakemus), :fieldType "radioButton"}]} selvitys-type register-number)
             new-hakemus (:hakemus new-hakemus-with-submission)
             new-hakemus-id (:id new-hakemus)
             updated (va-db/update-hakemus-parent-id new-hakemus-id hakemus-id)]

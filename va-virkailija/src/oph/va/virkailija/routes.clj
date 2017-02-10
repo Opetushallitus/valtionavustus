@@ -172,7 +172,7 @@
                hakemus (hakija-api/get-hakemus selvitys-hakemus-id)
                parent_id (:parent_id hakemus)
                is-loppuselvitys (= selvitys-type "loppuselvitys")]
-           (hakija-api/send-selvitys selvitys-email)
+           (hakija-api/send-selvitys hakemus selvitys-email)
            (hakija-api/update-selvitys-message selvitys-email)
            (if is-loppuselvitys (hakija-api/update-loppuselvitys-status parent_id "accepted") (hakija-api/update-valiselvitys-status parent_id "accepted"))
            (ok {:status "ok"}))))
@@ -423,7 +423,7 @@
            (if (= new-status "pending_change_request")
              (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
                    answers (:answers submission)
-                   language (keyword (or (formutil/find-answer-value answers "language") "fi"))
+                   language (keyword (:language updated-hakemus))
                    avustushaku-name (-> avustushaku :content :name language)
                    email (formutil/find-answer-value answers "primary-email")
                    user-key (:user_key updated-hakemus)

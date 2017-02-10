@@ -15,6 +15,7 @@
 (def main-sheet-columns ["Diaarinumero"
                          "Hakijaorganisaatio"
                          "Hankkeen nimi"
+                         "Asiointikieli"
                          "Ehdotettu budjetti"
                          "OPH:n avustuksen osuus"
                          "Myönnetty avustus"
@@ -26,6 +27,7 @@
   [["fixed-register-number" "Diaarinumero" :register-number {:fieldType "textField"}]
    ["fixed-organization-name" "Hakijaorganisaatio" :organization-name {:fieldType "textField"}]
    ["fixed-project-name" "Projektin nimi" :project-name {:fieldType "textField"}]
+   ["fixed-language" "Asiointikieli" :language {:fieldType "textField"}]
    ["fixed-budget-total" "Ehdotettu budjetti" :budget-total {:fieldType "numberField"}]
    ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share {:fieldType "numberField"}]
    ["fixed-budget-granted" "Myönnetty avustus" (comp :budget-granted :arvio) {:fieldType "numberField"}]
@@ -239,6 +241,7 @@
   (juxt :register-number
         :organization-name
         :project-name
+        :language
         :budget-total
         :budget-oph-share
         (comp :budget-granted :arvio)

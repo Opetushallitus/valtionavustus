@@ -29,10 +29,10 @@
                  [cheshire "5.5.0"]
 
                  ;; SQL + migrations
-                 [yesql "0.5.1"]
-                 [org.postgresql/postgresql "9.4-1201-jdbc41"]
-                 [hikari-cp "1.3.1" :exclusions [prismatic/schema]]
-                 [org.flywaydb/flyway-core "3.2.1"]
+                 [yesql "0.5.3"]
+                 [org.postgresql/postgresql "9.4.1212"]
+                 [hikari-cp "1.7.5" :exclusions [prismatic/schema]]
+                 [org.flywaydb/flyway-core "4.0.3"]
 
                  ;; E-mail
                  [org.apache.commons/commons-email "1.4"]

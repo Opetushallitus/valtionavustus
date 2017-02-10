@@ -70,8 +70,9 @@
         lang-str (or (clojure.core/name lang) "fi")]
   (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" user-key "&lang=" lang-str)))
 
-(defn send-paatos! [lang to avustushaku hakemus reply-to]
-  (let [lang-str (or (clojure.core/name lang) "fi")
+(defn send-paatos! [to avustushaku hakemus reply-to]
+  (let [lang-str (:language hakemus)
+        lang (keyword lang-str)
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])]
@@ -90,9 +91,8 @@
                            :project-name (:project_name hakemus)})))
 
 
-(defn send-selvitys! [to message]
-  (let [lang :fi
-        mail-subject (get-in mail-titles [:paatos lang])]
+(defn send-selvitys! [to hakemus mail-subject mail-message]
+  (let [lang (keyword (:language hakemus))]
     (>!! email/mail-queue {:operation :send
                            :type :selvitys
                            :lang lang
@@ -100,14 +100,15 @@
                            :sender (-> email/smtp-config :sender)
                            :subject mail-subject
                            :to to
-                           :body message
+                           :body mail-message
                            })))
 
-(defn send-selvitys-notification! [lang to avustushaku hakemus selvitys-type arvio roles]
-  (let [lang-str (or (clojure.core/name lang) "fi")
+(defn send-selvitys-notification! [to avustushaku hakemus selvitys-type arvio roles]
+  (let [lang-str (:language hakemus)
+        lang (keyword lang-str)
         presenter-role-id (:presenter_role_id arvio)
-        url (selvitys-url (:id avustushaku) (:user_key hakemus) (keyword lang-str) selvitys-type)
-        avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
+        url (selvitys-url (:id avustushaku) (:user_key hakemus) lang selvitys-type)
+        avustushaku-name (get-in avustushaku [:content :name lang])
         mail-subject (str (get-in mail-titles [(keyword (str selvitys-type "-notification")) lang]) " " avustushaku-name)
         selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)]

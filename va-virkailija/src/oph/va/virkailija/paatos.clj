@@ -31,15 +31,12 @@
 
 (defn send-paatos [hakemus-id emails]
   (let [hakemus (hakija-api/get-hakemus hakemus-id)
-        submission (hakija-api/get-hakemus-submission hakemus)
         avustushaku-id (:avustushaku hakemus)
-        answers (:answers submission)
         avustushaku (hakija-api/get-avustushaku avustushaku-id)
         presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
-        language (keyword (or (formutil/find-answer-value answers "language") "fi"))
-        decision (decision/paatos-html hakemus-id language)]
+        decision (decision/paatos-html hakemus-id)]
     (log/info "Sending paatos email for hakemus" hakemus-id " to " emails)
-    (email/send-paatos! language emails avustushaku hakemus presenting-officer-email)
+    (email/send-paatos! emails avustushaku hakemus presenting-officer-email)
     (hakija-api/add-paatos-sent-emails hakemus emails decision)
     (ok {:status "sent" :hakemus hakemus-id :emails emails})))
 
@@ -47,8 +44,7 @@
   (let [hakemus (hakija-api/get-hakemus hakemus-id)
         submission (hakija-api/get-hakemus-submission hakemus)
         answers (:answers submission)
-        language (keyword (or (formutil/find-answer-value answers "language") "fi"))
-        decision (decision/paatos-html hakemus-id language)]
+        decision (decision/paatos-html hakemus-id)]
     (hakija-api/update-paatos-decision hakemus-id decision)
     (ok {:status "regenerated" })))
 
@@ -66,9 +62,8 @@
         roles (hakija-api/get-avustushaku-roles avustushaku-id)
         arvio (virkailija-db/get-arvio hakemus-id)
         answers (:answers submission)
-        emails (vec (remove nil? (distinct (emails-from-answers answers))))
-        language (keyword (or (formutil/find-answer-value answers "language") "fi"))]
-    (email/send-selvitys-notification! language emails avustushaku hakemus selvitys-type arvio roles)))
+        emails (vec (remove nil? (distinct (emails-from-answers answers))))]
+    (email/send-selvitys-notification! emails avustushaku hakemus selvitys-type arvio roles)))
 
 (defn get-paatos-email-status
   "Returns only data related to those hakemus ids which are rejected or accepted,

@@ -42,7 +42,7 @@ export default class Perustelut extends React.Component {
       }, 300)
     }
     const rejected = _.get(hakemus,"arvio.status","")=="rejected"
-    const language= _.find(hakemus.answers,(a)=>a.key=="language")
+    const language = hakemus.language
     const languageValue = language ? language.value : "fi"
     const languageTitle = languageValue=="fi" ? "suomeksi" : "ruotsiksi"
     const rejectedReasons = rejectedReasonsByLanguage[languageValue]
