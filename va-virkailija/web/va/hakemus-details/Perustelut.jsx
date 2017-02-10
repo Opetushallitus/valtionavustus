@@ -42,10 +42,8 @@ export default class Perustelut extends React.Component {
       }, 300)
     }
     const rejected = _.get(hakemus,"arvio.status","")=="rejected"
-    const language = hakemus.language
-    const languageValue = language ? language.value : "fi"
-    const languageTitle = languageValue=="fi" ? "suomeksi" : "ruotsiksi"
-    const rejectedReasons = rejectedReasonsByLanguage[languageValue]
+    const languageTitle = hakemus.language=="fi" ? "suomeksi" : "ruotsiksi"
+    const rejectedReasons = rejectedReasonsByLanguage[hakemus.language]
     const toggleReasons = () => this.setState({showReasons:!this.state.showReasons})
 
     return(
