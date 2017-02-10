@@ -91,9 +91,8 @@
                            :project-name (:project_name hakemus)})))
 
 
-(defn send-selvitys! [to message]
-  (let [lang :fi
-        mail-subject (get-in mail-titles [:paatos lang])]
+(defn send-selvitys! [to hakemus mail-subject mail-message]
+  (let [lang (keyword (:language hakemus))]
     (>!! email/mail-queue {:operation :send
                            :type :selvitys
                            :lang lang
@@ -101,7 +100,7 @@
                            :sender (-> email/smtp-config :sender)
                            :subject mail-subject
                            :to to
-                           :body message
+                           :body mail-message
                            })))
 
 (defn send-selvitys-notification! [to avustushaku hakemus selvitys-type arvio roles]

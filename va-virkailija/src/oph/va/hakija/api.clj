@@ -232,11 +232,8 @@
                        (into {}))
      }))
 
-(defn send-selvitys [selvitys-email]
-  (let [message (:message selvitys-email)]
-    (email/send-selvitys! "sami.mensola@reaktor.fi" message)
-    )
-)
+(defn send-selvitys [hakemus selvitys-email]
+  (email/send-selvitys! [(:to selvitys-email)] hakemus (:subject selvitys-email) (:message selvitys-email)))
 
 (defn update-selvitys-message [selvitys-email]
   (let [
