@@ -5,7 +5,7 @@ import NameFormatter from 'va-common/web/va/util/NameFormatter.js'
 
 const defaultMessage = (avustushakuName, selvitysName, name, email)=>{
   return `Hei,
-Hankkeen "${avustushakuName}" ${selvitysName} on nyt käsitelty ja hyväksytty.
+Hankkeen '${avustushakuName}' ${selvitysName} on nyt käsitelty ja hyväksytty.
 
 Terveisin,
 ${name}
