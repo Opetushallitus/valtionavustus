@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import Bacon from 'baconjs'
 import HttpUtil from 'va-common/web/HttpUtil.js'
+import NameFormatter from 'va-common/web/va/util/NameFormatter.js'
 
 const defaultMessage = (avustushakuName, selvitysName, name, email)=>{
   return `Hei,
@@ -16,11 +17,10 @@ const defaultSubject = (selvitysType) => {
   return selvitysType=='valiselvitys' ? 'Väliselvitys käsitelty' : 'Loppuselvitys käsitelty'
 }
 
-const initState = ({selvitysType, hakuData, avustushaku}) => {
+const initState = ({selvitysType, avustushaku, userInfo}) => {
   const selvitysName = selvitysType=='valiselvitys' ? 'väliselvitys' : 'loppuselvitys'
-  const roles = hakuData.roles
-  const presentingOfficer = _.find(roles,(role)=>role.role=="presenting_officer")
-  const {name,email} = presentingOfficer
+  const name = NameFormatter.onlyFirstForename(userInfo["first-name"]) + " " + userInfo["surname"]
+  const email = userInfo.email
   return {message:defaultMessage(avustushaku.content.name.fi,selvitysName, name, email), subject: defaultSubject(selvitysType)}
 }
 
