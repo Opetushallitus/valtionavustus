@@ -308,7 +308,7 @@
     },
     "yleisavustus-myonnetty-title":{
       "fi":"Opetushallitus on päättänyt myöntää valtionavustusta seuraavasti",
-      "sv":"TODO SV Utbildningsstyrelsen har beslutat att bevilja statsunderstöd till projektet"
+      "sv":"Utbildningsstyrelsen har beslutat att bevilja statsunderstöd enligt följande"
     },
     "hakija":{
       "fi":"Hakija",
@@ -319,8 +319,8 @@
       "sv":"Projekt"
     },
     "oppilaitos":{
-      "fi":"Oppilaitos / toimipiste",
-      "sv":"TODO SV Oppilaitos / toimipiste"
+      "fi":"Oppilaitos/toimipiste",
+      "sv":"Läroanstalt/enhet"
     },
     "paatoksen-perustelut":{
       "fi":"Päätöksen perustelut",
@@ -412,11 +412,11 @@
     },
     "paatos-yleisavustus-saaja":{
       "fi":"Avustuksen saaja",
-      "sv":"TODO SV Avustuksen saaja"
+      "sv":"Mottagare av understöd"
     },
     "paatos-yleisavustus-myonnetty":{
       "fi":"Myönnetty valtionavustus",
-      "sv":"TODO SV Utbildningsstyrelsen beviljar understöd till projektet"
+      "sv":"Mottagaren av understöd"
     },
     "paatos-erityisavustus-myonnetty-1":{
       "fi":"Opetushallitus myöntää avustusta hankkeelle",
