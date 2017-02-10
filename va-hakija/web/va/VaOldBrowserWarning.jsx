@@ -13,7 +13,7 @@ export default class VaOldBrowserWarning extends React.Component {
 
   static isBrowserOutdated(devel) {
     const browser = Bowser.browser
-    return (browser.msie && browser.version <= 9) || devel
+    return (browser.msie && browser.version <= 10) || devel
 
   }
 
