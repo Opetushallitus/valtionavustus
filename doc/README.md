@@ -40,6 +40,7 @@ Technical documentation
 * [Grip](https://github.com/joeyespo/grip) GitHub Readme Instant Preview for previewing markdown documents
 * [gh-md-toc](https://github.com/ekalinin/github-markdown-toc) For creating table of contents of this document
 * [yEd](https://www.yworks.com/products/yed) for editing graphs
+* [IntelliJ IDEA](https://www.jetbrains.com/idea/) for creating database diagrams
 
 ## Architecture
 
