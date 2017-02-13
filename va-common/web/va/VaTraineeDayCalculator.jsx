@@ -1,7 +1,6 @@
 import PolyfillEndsWith from '../polyfill-endsWith'
 
 import React from 'react'
-import ClassNames from 'classnames'
 import _ from 'lodash'
 
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent.jsx'
@@ -33,11 +32,6 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
   constructor(props) {
     super(props)
     this.translator = new Translator(props.translations.form["trainee-day-calculator"])
-  }
-
-  resolveClassName(className) {
-    const classNames = ClassNames(className, { error: this.props.hasError })
-    return !_.isEmpty(classNames) ? classNames : undefined
   }
 
   static formatFloat(floatValue) {
