@@ -340,6 +340,7 @@
                 (assoc-in [:headers "Content-Type"] content-type)
                 (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
           (not-found))))
+
 (defn- post-init-selvitysform []
   (POST* "/:avustushaku-id/init-selvitysform/:selvitys-type" [avustushaku-id selvitys-type]
          :path-params [avustushaku-id :- Long selvitys-type :- s/Str]

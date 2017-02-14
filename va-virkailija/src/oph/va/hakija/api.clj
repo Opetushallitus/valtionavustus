@@ -194,23 +194,22 @@
                                                      :decision decision}))
 
 (defn get-hakudata [avustushaku-id]
-  (let [avustushaku (get-avustushaku avustushaku-id)
-        form (get-form-by-avustushaku avustushaku-id)
-        roles (get-avustushaku-roles avustushaku-id)
-        hakemukset (exec :form-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})
-        attachments (exec :form-db hakija-queries/list-attachments-by-avustushaku {:avustushaku_id avustushaku-id})]
-    {:avustushaku (avustushaku-response-content avustushaku)
-     :environment (environment-content)
-     :roles roles
-     :form (form->json form)
-     :hakemukset (hakemukset->json hakemukset)
-     :attachments (->> attachments
-                       (partition-by (fn [attachment] (:hakemus_id attachment)))
-                       (mapv convert-attachment-group)
-                       (into {}))
-     :budget-total-sum (reduce + (map :budget_total hakemukset))
-     :budget-oph-share-sum (reduce + (map :budget_oph_share hakemukset))}))
-
+  (when-let [avustushaku (get-avustushaku avustushaku-id)]
+    (let [form (get-form-by-avustushaku avustushaku-id)
+          roles (get-avustushaku-roles avustushaku-id)
+          hakemukset (exec :form-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})
+          attachments (exec :form-db hakija-queries/list-attachments-by-avustushaku {:avustushaku_id avustushaku-id})]
+      {:avustushaku (avustushaku-response-content avustushaku)
+       :environment (environment-content)
+       :roles roles
+       :form (form->json form)
+       :hakemukset (hakemukset->json hakemukset)
+       :attachments (->> attachments
+                         (partition-by (fn [attachment] (:hakemus_id attachment)))
+                         (mapv convert-attachment-group)
+                         (into {}))
+       :budget-total-sum (reduce + (map :budget_total hakemukset))
+       :budget-oph-share-sum (reduce + (map :budget_oph_share hakemukset))})))
 
 (defn get-selvitysdata [avustushaku-id hakemus-id]
   (let [avustushaku (get-avustushaku avustushaku-id)
