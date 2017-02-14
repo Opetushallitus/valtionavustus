@@ -195,8 +195,12 @@ table.hakemus-list {
     bottom: 20px;
     width: @content-width - @preview-width - 90px;
 
+    h2 {
+      margin: 20px 0 0 0;
+    }
+
     .hakemus-arviointi-section{
-      margin-bottom: 20px;
+      margin-top: 20px;
       color: @dark-gray;
       a[disabled]{
         color:@dark-gray;
@@ -210,7 +214,7 @@ table.hakemus-list {
         color:#333;
       }
       input{
-        margin-right: 4px;
+        margin: 4px 4px 4px 0;
         padding: 5px;
       }
     }
@@ -221,7 +225,7 @@ table.hakemus-list {
     }
 
     .value-edit {
-      margin-bottom: 10px;
+      margin-top: 20px;
       label {
         color: @darker-gray;
       }
@@ -330,11 +334,18 @@ table.hakemus-list {
       padding: 10px;
     }
 
+    .arvio-status-group {
+      margin-top: 40px;
+    }
+
     .changelog {
-      width: 100%;
+
+      &__table {
+        width: 100%;
+      }
 
       &__row {
-        border-top: 10px solid transparent;
+        border-top: 5px solid transparent;
       }
 
       &__date {

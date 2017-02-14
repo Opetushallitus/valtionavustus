@@ -68,10 +68,10 @@ class ChangeLog extends React.Component{
     const changelogs = _.get(this.props.hakemus, "arvio.changelog")
     if (!changelogs) return null
     return (
-      <div>
-        <h2>Muutoshistoria</h2>
+      <div className="changelog">
+        <h2 className="changelog__heading">Muutoshistoria</h2>
         {changelogs.length ? (
-          <table className="changelog">
+          <table className="changelog__table">
             {changelogs.map((changelog, index) => <ChangeLogRow key={index} changelog={changelog} hakemus={hakemus}/>)}
           </table>
         ) : (
@@ -160,7 +160,7 @@ class SetArviointiStatus extends React.Component {
     }
 
     return (
-      <fieldset className="soresu-radiobutton-group">
+      <fieldset className="soresu-radiobutton-group arvio-status-group">
         {statuses}
       </fieldset>
     )

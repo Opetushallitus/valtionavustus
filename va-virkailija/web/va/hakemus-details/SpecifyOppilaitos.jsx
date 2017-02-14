@@ -3,7 +3,7 @@ import React from 'react'
 const OppilaitosRow = ({value, allowEditing, onChange, onDelete}) =>{
   const deleteButton = onDelete ? <button type="button" onClick={onDelete}>Poista</button> : null
   return (
-    <div className="value-edit">
+    <div>
       <input
              type="text"
              name="oppilaitos"

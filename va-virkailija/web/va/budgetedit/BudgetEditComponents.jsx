@@ -53,7 +53,7 @@ class ToggleKonttaSumma extends React.Component {
       ]
     }))
     return (
-        <div className="value-edit">
+        <div>
           {statuses}
         </div>
     )
