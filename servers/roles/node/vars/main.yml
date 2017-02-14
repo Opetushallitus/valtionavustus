@@ -1,0 +1,8 @@
+# Node configs
+nodejs_version: "6.x"
+# Install forever, which is useful for running Node.js apps.
+nodejs_forever: false
+nodejs_install_npm_user: root
+# Define a list of global packages to be installed with NPM.
+nodejs_npm_global_packages:
+  - name: npm
