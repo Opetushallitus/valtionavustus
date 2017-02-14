@@ -83,13 +83,13 @@ class ValintaPerusteRow extends Component {
     const textInSwedish = valintaperuste.sv
 
     return (
-      <div className="single-valintaperuste">
-        <div className="valintaperuste-text" title={textInFinnish + " / " + textInSwedish}>{textInFinnish}</div>
-        <div className="score-row">
+      <tr className="single-valintaperuste">
+        <td className="valintaperuste-text" title={textInFinnish + " / " + textInSwedish}>{textInFinnish}</td>
+        <td className="score-row">
           {starElements}
           <div className="score-text">{scoreOfUserFi}</div>
-        </div>
-      </div>
+        </td>
+      </tr>
     )
   }
 }
