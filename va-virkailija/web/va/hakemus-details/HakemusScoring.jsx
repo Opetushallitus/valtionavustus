@@ -21,17 +21,17 @@ export default class HakemusScoring extends Component {
       valintaperusteet, myUserInfo["person-oid"], allowHakemusScoring, controller)
     const othersScoreDisplays = showOthersScores ?
       HakemusScoring.createOthersScoreDisplays(allScoresOfHakemus, scoringOfHakemus, valintaperusteet, myUserInfo) : undefined
-    return <div key="hakemus-scoring-container" id="hakemus-scoring-container">
-             <div className="valintaperuste-list">
+    return valintaperusteet && valintaperusteet.length > 0  ? <div key="hakemus-scoring-container" id="hakemus-scoring-container">
+             <table className="valintaperuste-list">
                {myOwnValintaPerusteRows}
-             </div>
+             </table>
              <SeeOthersScores showOthersScores={showOthersScores}
                               scoring={scoringOfHakemus}
                               userInfo={myUserInfo}
                               allowSeeingOthersScores={allowSeeingOthersScores}
                               controller={controller} />
              {othersScoreDisplays}
-           </div>
+           </div> : null
   }
 
   static createValintaPerusteRows(allScoresOfHakemus, valintaperusteet, personOid, allowHakemusScoring, controller) {
