@@ -14,7 +14,7 @@
       <token></token>
       <room></room>
       <startNotification>false</startNotification>
-      <notifySuccess>false</notifySuccess>
+      <notifySuccess>true</notifySuccess>
       <notifyAborted>false</notifyAborted>
       <notifyNotBuilt>false</notifyNotBuilt>
       <notifyUnstable>true</notifyUnstable>
@@ -113,6 +113,8 @@
       <fingerprint>false</fingerprint>
       <defaultExcludes>true</defaultExcludes>
     </hudson.tasks.ArtifactArchiver>
+    <jenkins.plugins.slack.SlackNotifier plugin="slack@1.8">
+    </jenkins.plugins.slack.SlackNotifier>
   </publishers>
   <buildWrappers/>
 </project>
