@@ -53,9 +53,9 @@ class ToggleKonttaSumma extends React.Component {
       ]
     }))
     return (
-        <div>
+        <fieldset className="soresu-radiobutton-group">
           {statuses}
-        </div>
+        </fieldset>
     )
   }
 }
