@@ -9,12 +9,12 @@
     .summing-table, .budget-summary {
       font-size: 14px;
       width: 100%;
-    }
-    .summing-table {
       margin-top: 20px;
       &:first-child {
         margin-top: 0;
       }
+    }
+    .summing-table {
       caption {
         margin: 0;
         padding-bottom: 10px;
@@ -30,41 +30,59 @@
       th {
         vertical-align: bottom;
       }
-      .label-column {
-        width: 200px;
-      }
       .has-title {
         cursor: help;
+      }
+      .label-column {
+        min-width: 25%;
       }
       .original-amount-column,
       .granted-amount-column,
       .valiselvitys-amount-column,
       .loppuselvitys-amount-column {
-        width: 80px;
         text-align: right;
-        padding-left: 10px;
+        padding-left: 15px;
+        width: 13%;
       }
       .amount-column {
-        padding-left: 10px;
+        align: right;
+        width: 15%;
+        padding-left: 15px;
       }
       .description-column {
-        padding-left: 10px;
-        width: auto;
+        width: 25%;
+        padding-left: 15px;
+        padding-right: 5px;
       }
       span.money, span.soresu-money {
         display: inline-block;
         min-height: 30px;
         margin: 0;
       }
+      .extra-small, .small, .medium, .large, .extra-large {
+        width: auto;
+      }
+      div.extra-extra-small {
+        width: auto;
+      }
       .soresu-text-field input[type=text], .soresu-money-field input[type=text], .soresu-preview-element, .soresu-value {
         font-size: inherit;
-        &.small, &.medium, &.large, &.extra-large {
-          width: auto;
-        }
       }
       .soresu-text-field input[type=text], .soresu-money-field input[type=text], .soresu-text-area textarea {
         padding: 4px;
         margin: 0;
+      }
+    }
+    .budget-summary {
+      .label-column {
+        width: 60%;
+      }
+      .amount-column {
+        width: 40%;
+        padding-right: 25%;
+      }
+      span.money {
+        margin-right: 0;
       }
     }
   }

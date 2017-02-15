@@ -74,7 +74,7 @@ export class EditSummingBudgetElement extends React.Component {
             <LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang}/>
           </th>
           <th className="original-amount-column">Haettu</th>
-          <th className="granted-amount-column money required">Hyväksytty</th>
+          <th className="amount-column money required">Hyväksytty</th>
           <th className="description-column">Kommentti</th>
         </tr>
         </thead>
@@ -100,7 +100,7 @@ export class EditSummingBudgetElement extends React.Component {
           <colgroup>
             <col className="label-column"/>
             <col className="original-amount-column"/>
-            <col className="granted-amount-column"/>
+            <col className="amount-column"/>
             <col className="description-column"/>
           </colgroup>
           {this.columnTitles(field, controller, disabled, useDetailedCosts)}
@@ -113,7 +113,7 @@ export class EditSummingBudgetElement extends React.Component {
               <LocalizedString translations={field.params} translationKey="sumRowLabel" lang={lang}/>
             </td>
             <td className="original-amount-column"><span className="money sum">{originalSum}</span></td>
-            <td className="granted-amount-column">
+            <td className="amount-column">
               {useDetailedCosts || !firstTable ?
                   <span className="money sum">{sum}</span> :
                   <div className="soresu-money-field extra-extra-small">
@@ -149,7 +149,7 @@ export class EditBudgetItemElement extends React.Component {
           </td>
           <td className="original-amount-column has-title" title={originalDescription}><span
               className="money sum">{originalValue}</span></td>
-          <td className="granted-amount-column">{allowEditing && amountComponent}</td>
+          <td className="amount-column">{allowEditing && amountComponent}</td>
           <td className="description-column">{allowEditing && descriptionComponent}</td>
         </tr>
     )
