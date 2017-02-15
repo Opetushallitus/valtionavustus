@@ -138,6 +138,7 @@ export class EditBudgetItemElement extends React.Component {
     const originalValue = originalHakemus ? InputValueStorage.readValue(children, originalHakemus, valueId) : ""
     const descriptionId = descriptionComponent.props.field.id
     const originalDescription = originalHakemus ? InputValueStorage.readValue(children, originalHakemus, descriptionId) : ""
+    const originalCellClassNames = ClassNames("original-amount-column", {'has-title': !_.isEmpty(originalDescription)})
     const labelClassName = ClassNames("label-column", {disabled: disabled})
     const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
     const firstTable = field.params.incrementsTotal
@@ -147,8 +148,9 @@ export class EditBudgetItemElement extends React.Component {
           <td className={labelClassName}>
             <LocalizedString translations={field} translationKey="label" lang={lang}/>
           </td>
-          <td className="original-amount-column has-title" title={originalDescription}><span
-              className="money sum">{originalValue}</span></td>
+          <td className={originalCellClassNames} title={originalDescription}>
+            <span className="money sum">{originalValue}</span>
+          </td>
           <td className="amount-column">{allowEditing && amountComponent}</td>
           <td className="description-column">{allowEditing && descriptionComponent}</td>
         </tr>

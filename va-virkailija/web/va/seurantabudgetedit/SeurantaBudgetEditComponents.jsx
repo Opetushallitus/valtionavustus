@@ -99,12 +99,15 @@ export class EditBudgetItemElement extends React.Component {
     const labelClassName = ClassNames("label-column", {disabled: disabled})
 
     const grantedAmount = EditBudgetItemElement.amountOf(customProps.originalHakemus.arvio["overridden-answers"], valueId, descriptionId)
+    const grantedCellClassNames = ClassNames("granted-amount-column", {'has-title': grantedAmount.hasDescription})
 
     const valiselvitysAmount = EditBudgetItemElement.amountOf(_.get(customProps.originalHakemus, "selvitys.valiselvitys", []), valueId, descriptionId)
-    const valiselvitysClassNames = ClassNames("money sum", {'error error-message': !valiselvitysAmount.value})
+    const valiselvitysCellClassNames = ClassNames("valiselvitys-amount-column", {'has-title': valiselvitysAmount.hasDescription})
+    const valiselvitysMoneyClassNames = ClassNames("money sum", {'error error-message': !valiselvitysAmount.hasValidValue})
 
     const loppuselvitysAmount = EditBudgetItemElement.amountOf(_.get(customProps.originalHakemus, "selvitys.loppuselvitys", []), valueId, descriptionId)
-    const loppuselvitysClassNames = ClassNames("money sum", {'error error-message': !loppuselvitysAmount.value})
+    const loppuselvitysCellClassNames = ClassNames("loppuselvitys-amount-column", {'has-title': loppuselvitysAmount.hasDescription})
+    const loppuselvitysMoneyClassNames = ClassNames("money sum", {'error error-message': !loppuselvitysAmount.hasValidValue})
 
     return (
         <tr id={htmlId} className="budget-item">
@@ -112,18 +115,18 @@ export class EditBudgetItemElement extends React.Component {
             <LocalizedString translations={field} translationKey="label" lang={lang}/>
           </td>
           {grantedAmount.isVisible && (
-            <td className="granted-amount-column has-title" title={grantedAmount.description}>
-              <span className="money sum">{grantedAmount.value}</span>
+            <td className={grantedCellClassNames} title={grantedAmount.description}>
+              <span className="money sum">{grantedAmount.valueFormatted}</span>
             </td>
           )}
           {valiselvitysAmount.isVisible && (
-            <td className="valiselvitys-amount-column has-title" title={valiselvitysAmount.description}>
-              <span className={valiselvitysClassNames}>{valiselvitysAmount.value ? valiselvitysAmount.value : '–'}</span>
+            <td className={valiselvitysCellClassNames} title={valiselvitysAmount.description}>
+              <span className={valiselvitysMoneyClassNames}>{valiselvitysAmount.valueFormatted}</span>
             </td>
           )}
           {loppuselvitysAmount.isVisible && (
-            <td className="loppuselvitys-amount-column has-title" title={loppuselvitysAmount.description}>
-              <span className={loppuselvitysClassNames}>{loppuselvitysAmount.value ? loppuselvitysAmount.value : '–'}</span>
+            <td className={loppuselvitysCellClassNames} title={loppuselvitysAmount.description}>
+              <span className={loppuselvitysMoneyClassNames}>{loppuselvitysAmount.valueFormatted}</span>
             </td>
           )}
           <td className="amount-column">{valueComponent}</td>
@@ -133,12 +136,22 @@ export class EditBudgetItemElement extends React.Component {
   }
 
   static amountOf(answers, valueId, descriptionId) {
-    return _.isEmpty(answers)
-      ? {isVisible: false}
-      : {
-          isVisible: true,
-          value: InputValueStorage.readValue(null, answers, valueId),
-          description: InputValueStorage.readValue(null, answers, descriptionId)
-        }
+    if (_.isEmpty(answers)) {
+      return {isVisible: false}
+    }
+
+    const value = InputValueStorage.readValue(null, answers, valueId)
+    const hasValidValue = !!value
+    const description = hasValidValue
+          ? InputValueStorage.readValue(null, answers, descriptionId)
+          : 'Budgettirivin arvoa ei löytynyt.'
+
+    return {
+      isVisible: true,
+      hasValidValue: hasValidValue,
+      valueFormatted: hasValidValue ? value : '–',
+      hasDescription: !_.isEmpty(description),
+      description: description
+    }
   }
 }
