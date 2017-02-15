@@ -50,22 +50,30 @@
   (dissoc x :id))
 
 (defn- on-hakemus-preview [avustushaku-id hakemus-user-key]
-  (let [hakija-app-url (-> config :server :url :fi)
+  (let [hakemus (hakija-api/get-hakemus-by-user-key hakemus-user-key)
+        language (keyword (:language hakemus))
+        hakija-app-url (-> config :server :url language)
         preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key "&preview=true")]
     (resp/redirect preview-url)))
 
 (defn- on-hakemus-edit [avustushaku-id hakemus-user-key]
-  (let [hakija-app-url (-> config :server :url :fi)
+  (let [hakemus (hakija-api/get-hakemus-by-user-key hakemus-user-key)
+        language (keyword (:language hakemus))
+        hakija-app-url (-> config :server :url language)
         preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/nayta?hakemus=" hakemus-user-key)]
     (resp/redirect preview-url)))
 
 (defn- on-paatos-preview [avustushaku-id user-key]
-  (let [hakija-app-url (-> config :server :url :fi)
+  (let [hakemus (hakija-api/get-hakemus-by-user-key user-key)
+        language (keyword (:language hakemus))
+        hakija-app-url (-> config :server :url language)
         preview-url (str hakija-app-url "paatos/avustushaku/" avustushaku-id "/hakemus/" user-key "?nolog=true")]
     (resp/redirect preview-url)))
 
 (defn- on-selvitys [avustushaku-id hakemus-user-key selvitys-type showPreview]
-  (let [hakija-app-url (-> config :server :url :fi)
+  (let [hakemus (hakija-api/get-hakemus-by-user-key hakemus-user-key)
+        language (keyword (:language hakemus))
+        hakija-app-url (-> config :server :url language)
         preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" hakemus-user-key "&preview=" showPreview)]
     (resp/redirect preview-url)))
 
