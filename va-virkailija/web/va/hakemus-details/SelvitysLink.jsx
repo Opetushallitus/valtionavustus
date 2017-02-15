@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import PaatosUrl from './PaatosUrl'
 
 export default class SelvitysLink extends Component {
   render() {
