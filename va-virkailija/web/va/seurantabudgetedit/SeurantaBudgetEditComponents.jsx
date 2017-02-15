@@ -68,7 +68,7 @@ export class EditSummingBudgetElement extends React.Component {
           <th className="label-column">
             <LocalizedString translations={field.params.columnTitles} translationKey="label" lang={lang}/>
           </th>
-          {visibleColumns.grantedSum && (<th className="granted-amount-column">Myönnetty</th>)}
+          {visibleColumns.grantedSum && (<th className="granted-amount-column">Myön&shy;netty</th>)}
           {visibleColumns.valiselvitysSum && (<th className="valiselvitys-amount-column money">Väli&shy;selvitys</th>)}
           {visibleColumns.loppuselvitysSum && (<th className="loppuselvitys-amount-column money">Loppu&shy;selvitys</th>)}
           <th className="amount-column money required" style={{textAlign:'center'}}>OPH:n hyväksymä</th>
