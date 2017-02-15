@@ -1,5 +1,10 @@
 @import "npm://va-common/web/va/style/soresu-va.less";
 
+.seuranta #budget-edit-container .va-budget .summing-table .label-column {
+  min-width: 24%;
+  width: auto;
+}
+
 #budget-edit-container {
   margin-top: 20px;
   .va-budget {
@@ -33,7 +38,7 @@
         cursor: help;
       }
       .label-column {
-        min-width: 25%;
+        width: 47%;
       }
       .original-amount-column,
       .granted-amount-column,
@@ -44,7 +49,7 @@
         width: 13%;
       }
       .amount-column {
-        width: 15%;
+        width: 12%;
         padding-left: 15px;
       }
       .description-column {
@@ -69,6 +74,7 @@
       .soresu-text-field input[type=text], .soresu-money-field input[type=text], .soresu-text-area textarea {
         padding: 4px;
         margin: 0;
+        width: 90%;
       }
     }
     .budget-summary {
