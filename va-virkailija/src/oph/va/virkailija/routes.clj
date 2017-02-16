@@ -294,10 +294,11 @@
          :body [arvio (describe virkailija-schema/Arvio "New arvio")]
          :return virkailija-schema/Arvio
          :summary "Update arvio for given hakemus. Creates arvio if missing."
-         (let [identity (authentication/get-identity request)
-               avustushaku (hakija-api/get-avustushaku avustushaku-id)]
-           (ok (-> (virkailija-db/update-or-create-hakemus-arvio avustushaku hakemus-id arvio identity)
-                   hakudata/arvio-json)))))
+         (if-let [avustushaku (hakija-api/get-avustushaku avustushaku-id)]
+           (let [identity (authentication/get-identity request)]
+             (ok (-> (virkailija-db/update-or-create-hakemus-arvio avustushaku hakemus-id arvio identity)
+                     hakudata/arvio-json)))
+           (not-found))))
 
 (defn- get-hakemus-comments []
   (GET* "/:avustushaku-id/hakemus/:hakemus-id/comments" [avustushaku-id hakemus-id]
