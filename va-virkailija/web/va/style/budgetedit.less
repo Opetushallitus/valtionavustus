@@ -1,8 +1,13 @@
 @import "npm://va-common/web/va/style/soresu-va.less";
 
-.seuranta #budget-edit-container .va-budget .summing-table .label-column {
-  min-width: 26%;
-  width: auto;
+.seuranta #budget-edit-container .va-budget .summing-table {
+  .label-column {
+    min-width: 26%;
+    width: auto;
+  }
+  .description-column {
+    width: 25%;
+  }
 }
 
 #budget-edit-container {
@@ -38,7 +43,7 @@
         cursor: help;
       }
       .label-column {
-        width: 48%;
+        width: 38%;
       }
       .original-amount-column,
       .granted-amount-column,
@@ -53,7 +58,7 @@
         padding-left: 15px;
       }
       .description-column {
-        width: 25%;
+        width: 35%;
         padding-left: 15px;
         padding-right: 5px;
       }
@@ -79,11 +84,11 @@
     }
     .budget-summary {
       .label-column {
-        width: 60%;
+        width: 50%;
       }
       .amount-column {
-        width: 40%;
-        padding-right: 25%;
+        width: 50%;
+        padding-right: 35%;
       }
       span.money {
         margin-right: 0;
