@@ -23,10 +23,9 @@ export default class HakuEdit extends Component {
     return (
       <div id="haku-edit">
         <div id="haku-edit-header">
-          <h2>Muokkaa avustushakua</h2>
+          <RegisterNumber controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} onChange={onChange} />
           <CreateHaku controller={controller} avustushaku={avustushaku}/>
         </div>
-        <RegisterNumber controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} onChange={onChange} />
         <table id="name" className="translation">
           <thead><tr><th>Haun nimi</th><th>Haun nimi ruotsiksi</th></tr></thead>
           <tbody>
@@ -396,7 +395,7 @@ class RegisterNumber extends React.Component {
                       Diaarinumero ei ole oikean muotoinen (esim. 340/2015)
                     </span>
     }
-    return <div>
+    return <div className="haku-edit-registernumber">
              <h3 className="required">Diaarinumero</h3>
              <input type="text" disabled={!allowAllHakuEdits} onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
              {errorString}
