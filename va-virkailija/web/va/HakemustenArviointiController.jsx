@@ -681,10 +681,6 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.loadComments)
   }
 
-  loadSelvitys() {
-    dispatcher.push(events.loadSelvitys)
-  }
-
   addComment(newComment) {
     dispatcher.push(events.addComment, newComment)
   }
