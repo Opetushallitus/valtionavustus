@@ -2,17 +2,10 @@ import React from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
-import ComponentFactory from 'soresu-form/web/form/ComponentFactory.js'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
 import Translator from 'soresu-form/web/form/Translator.js'
-import InputValueStorage from 'soresu-form/web/form/InputValueStorage.js'
 import FormUtil from 'soresu-form/web/form/FormUtil.js'
-import JsUtil from 'soresu-form/web/form/JsUtil.js'
-
-export function hasGrantedColumn({customProperties}){
-  return customProperties && typeof customProperties.overriddenAnswers !== "undefined" && customProperties.overriddenAnswers.use_overridden_detailed_costs==true
-}
 
 export default class VaBudgetElement extends React.Component {
   constructor(props) {
