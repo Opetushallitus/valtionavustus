@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import _ from 'lodash'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
@@ -38,7 +39,12 @@ export default class SeurantaBudgetEditing extends Component {
 
   render() {
     const {controller, hakemus, hakuData, avustushaku, translations} = this.props
-    const vaBudget = FormUtil.findFieldsByFieldType(hakuData.form.content, "vaBudget")
+
+    const budgetSpec = FormUtil.mergeDeepFieldTrees(
+      FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget") || {},
+      FormUtil.findFieldByFieldType(_.get(hakemus, "selvitys.valiselvitysForm.content", []), "vaBudget") || {},
+      FormUtil.findFieldByFieldType(_.get(hakemus, "selvitys.loppuselvitysForm.content", []), "vaBudget") || {})
+
     const fakeHakemus = {answers: _.get(hakemus, "arvio.seuranta-answers", {value: []})}
     const formOperations = {
       chooseInitialLanguage: () => "fi",
@@ -52,7 +58,7 @@ export default class SeurantaBudgetEditing extends Component {
       responseParser: undefined,
       printEntityId: undefined
     }
-    const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: vaBudget}}, fakeHakemus, formOperations, hakemus)
+    const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: [budgetSpec]}}, fakeHakemus, formOperations, hakemus)
     FormStateLoop.initDefaultValues(fakeHakemus.answers, SeurantaBudgetEditing.initialValues(budgetEditFormState.form.content, hakemus), budgetEditFormState.form.content, budgetEditFormState.configuration.lang)
     SeurantaBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers)
     const formElementProps = {

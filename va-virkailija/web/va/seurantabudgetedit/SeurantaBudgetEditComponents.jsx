@@ -100,6 +100,7 @@ export class EditBudgetItemElement extends React.Component {
 
     const grantedAmount = EditBudgetItemElement.amountOf(customProps.originalHakemus.arvio["overridden-answers"], valueId, descriptionId)
     const grantedCellClassNames = ClassNames("granted-amount-column", {'has-title': grantedAmount.hasDescription})
+    const grantedMoneyClassNames = ClassNames("money sum", {'error error-message': !grantedAmount.hasValidValue})
 
     const valiselvitysAmount = EditBudgetItemElement.amountOf(_.get(customProps.originalHakemus, "selvitys.valiselvitys", []), valueId, descriptionId)
     const valiselvitysCellClassNames = ClassNames("valiselvitys-amount-column", {'has-title': valiselvitysAmount.hasDescription})
@@ -116,7 +117,7 @@ export class EditBudgetItemElement extends React.Component {
           </td>
           {grantedAmount.isVisible && (
             <td className={grantedCellClassNames} title={grantedAmount.description}>
-              <span className="money sum">{grantedAmount.valueFormatted}</span>
+              <span className={grantedMoneyClassNames}>{grantedAmount.valueFormatted}</span>
             </td>
           )}
           {valiselvitysAmount.isVisible && (
