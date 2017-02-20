@@ -135,6 +135,24 @@
         "fi": "Liite puuttuu",
         "sv": "Bilaga saknas"
       }
+    },
+    "budget": {
+      "financingNeeded": {
+        "fi": "Rahoituksen tarve",
+        "sv": "TODO SV Rahoituksen tarve"
+      },
+      "financingSection": {
+        "fi": "Osio",
+        "sv": "TODO SV Osio"
+      },
+      "total": {
+        "fi": "Yhteensä",
+        "sv": "Totalt"
+      },
+      "financingNeededTotal": {
+        "fi": "Rahoituksen tarve yhteensä",
+        "sv": "TODO SV Rahoituksen tarve totalt"
+      }
     }
   },
   "misc": {

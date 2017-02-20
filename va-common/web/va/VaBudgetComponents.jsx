@@ -116,17 +116,48 @@ export class BudgetSummaryElement extends React.Component {
     const avustushaku = vaSpecificProperties.avustushaku
     const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
 
+    const staticTranslations = this.props.translations
     const labelTranslations = this.props.labelTranslations || field.params
 
     const totalNeeded = field.totalNeeded
+    const subTotalsAndErrorsAndSummingFields = field.subTotalsAndErrorsAndSummingFields
     const errorMessage = this.miscTranslator.translate("check-numbers", this.props.lang, "VIRHE")
+
+    const subTotalRows = subTotalsAndErrorsAndSummingFields ? _.map(subTotalsAndErrorsAndSummingFields, row => {
+      const sumTotalClassNames = ClassNames("money sum", {'error error-message': row.containsErrors })
+      return <tr className="budget-item" key={"total-summary-row-" + row.summingBudgetFieldId}>
+        <td className="label-column" colSpan="2">
+          <LocalizedString translations={row} translationKey="label" lang={this.props.lang} />
+        </td>
+        <td className="amount-column"><span className={sumTotalClassNames}>{row.sum}</span></td>
+      </tr>
+    }) : null
 
     const selfFinancingShare = field.budgetIsValid ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : errorMessage
     const ophShare = field.budgetIsValid ? (totalNeeded - selfFinancingShare) : errorMessage
     const sumClassNames = ClassNames("money sum", { error: !field.budgetIsValid, 'error-message': !FormUtil.isNumeric(totalNeeded) })
-    const sumPartClassNames = ClassNames("money sum", { 'error error-message': !field.budgetIsValid  })
+    const sumPartClassNames = ClassNames("money", { 'error error-message': !field.budgetIsValid  })
     return (
-      <table id={htmlId} className="budget-summary">
+      <div id={htmlId}>
+      <table className="summing-table">
+        <caption><LocalizedString translations={staticTranslations.form.budget} translationKey="financingNeeded" lang={this.props.lang} /></caption>
+        <colgroup>
+          <col className="label-column" colSpan="2"/>
+          <col className="amount-column" />
+        </colgroup>
+        <thead><tr>
+          <th className="label-column" colSpan="2"><LocalizedString translations={staticTranslations.form.budget} translationKey="financingSection" lang={this.props.lang} /></th>
+          <th className="amount-column"><LocalizedString translations={staticTranslations.form.budget} translationKey="total" lang={this.props.lang} /></th>
+        </tr></thead>
+        <tbody>
+          {subTotalRows}
+        </tbody>
+        <tfoot><tr>
+          <td className="label-column" colSpan="2"><LocalizedString translations={staticTranslations.form.budget} translationKey="financingNeededTotal" lang={this.props.lang} /></td>
+          <td className="amount-column"><span className={sumClassNames}>{totalNeeded}</span></td>
+        </tr></tfoot>
+      </table>
+      <table className="budget-summary">
         <colgroup>
           <col className="label-column" />
           <col className="amount-column" />
@@ -146,6 +177,7 @@ export class BudgetSummaryElement extends React.Component {
         </tr>
         </tbody>
       </table>
+      </div>
     )
   }
 }

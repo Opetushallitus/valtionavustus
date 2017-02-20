@@ -54,13 +54,13 @@ export default class VaBudgetCalculator {
     const answersObject = state.saveStatus.values
 
     const summingFieldChildren = JsUtil.flatFilter(vaBudgetField.children, child => child.fieldType === "vaSummingBudgetElement")
-    const subTotalsAndErrorsAndFieldIds = _.map(summingFieldChildren, populateSummingFieldTotal(answersObject, state))
+    const subTotalsAndErrorsAndSummingFields = _.map(summingFieldChildren, populateSummingFieldTotal(answersObject, state))
 
-    const subTotals = _.map(subTotalsAndErrorsAndFieldIds, 'sum')
+    const subTotals = _.map(subTotalsAndErrorsAndSummingFields, 'sum')
     const useDetailedCosts = _.get(state, 'saveStatus.savedObject.arvio.useDetailedCosts', true)
     const costsGranted = _.get(state, 'saveStatus.savedObject.arvio.costsGranted', 0)
     const total = useDetailedCosts ? _.sum(subTotals) : _.sum(_.rest(subTotals)) + costsGranted
-    const someFigureHasError = useDetailedCosts && _.some(subTotalsAndErrorsAndFieldIds, x => x.containsErrors)
+    const someFigureHasError = useDetailedCosts && _.some(subTotalsAndErrorsAndSummingFields, x => x.containsErrors)
     const budgetIsPositive = total > 0
     const budgetIsValid = !someFigureHasError && budgetIsPositive
     const newValidationErrors = budgetIsPositive || !reportTotalError ? [] : [{error: "negative-budget"}]
@@ -69,6 +69,7 @@ export default class VaBudgetCalculator {
     const summaryField = _.last(vaBudgetField.children)
     summaryField.totalNeeded = total
     summaryField.budgetIsValid = budgetIsValid
+    summaryField.subTotalsAndErrorsAndSummingFields = subTotalsAndErrorsAndSummingFields
 
     function populateSummingFieldTotal(answersObject, state) {
       return summingBudgetField => {
@@ -77,7 +78,8 @@ export default class VaBudgetCalculator {
         summingBudgetField.sum = sum
         const containsErrors = _.some(amountValues, errorsAndValue => errorsAndValue.containsErrors)
         return {
-          summingFieldId: summingBudgetField.id,
+          summingBudgetFieldId: summingBudgetField.id,
+          label: summingBudgetField.label,
           sum: sum,
           containsErrors: containsErrors
         }
