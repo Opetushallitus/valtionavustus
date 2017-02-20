@@ -53,8 +53,8 @@ const events = {
 
 function appendBudgetComponent(selvitysType, avustushaku) {
   const form = selvitysType == "valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
-  const originalVaBudget = FormUtil.findFieldsByFieldType(avustushaku.formContent.content, "vaBudget")[0]
-  const selvitysVaBudget = FormUtil.findFieldsByFieldType(form.content, "vaBudget")[0]
+  const originalVaBudget = FormUtil.findFieldByFieldType(avustushaku.formContent.content, "vaBudget")
+  const selvitysVaBudget = FormUtil.findFieldByFieldType(form.content, "vaBudget")
   if(originalVaBudget) {
     const childrenWithoutBudgetSummary = originalVaBudget.children.filter((i)=>i.id!='budget-summary')
     if(selvitysVaBudget) {
