@@ -15,12 +15,15 @@ import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 
 export class EditSummingBudgetElement extends React.Component {
   render() {
-    const {field, children, htmlId, lang, customProps} = this.props
+    const {field, children, htmlId, lang, controller, customProps} = this.props
     const sum = field.sum
     const classNames = ClassNames({"required": field.required})
-    const grantedSum = EditSummingBudgetElement.sumOf(field, customProps.originalHakemus.arvio["overridden-answers"])
-    const valiselvitysSum = EditSummingBudgetElement.sumOf(field, _.get(customProps.originalHakemus, "selvitys.valiselvitys", []))
-    const loppuselvitysSum = EditSummingBudgetElement.sumOf(field, _.get(customProps.originalHakemus, "selvitys.loppuselvitys", []))
+    const grantedSum = EditSummingBudgetElement.getGrantedSum(
+      field,
+      customProps.originalHakemus.arvio,
+      controller.showDetailedCostsForBudgetField(field.id, field.fieldType))
+    const valiselvitysSum = EditSummingBudgetElement.getSelvitysSum(field, _.get(customProps.originalHakemus, "selvitys.valiselvitys", []))
+    const loppuselvitysSum = EditSummingBudgetElement.getSelvitysSum(field, _.get(customProps.originalHakemus, "selvitys.loppuselvitys", []))
     const visibleColumns = {
       grantedSum: grantedSum.isVisible,
       valiselvitysSum: valiselvitysSum.isVisible,
@@ -28,36 +31,36 @@ export class EditSummingBudgetElement extends React.Component {
     }
 
     return (
-        <table id={htmlId} className="summing-table">
-          <caption className={!_.isEmpty(classNames) ? classNames : undefined}>
-            <LocalizedString translations={field} translationKey="label" lang={lang}/>
-          </caption>
-          <colgroup>
-            <col className="label-column"/>
-            {grantedSum.isVisible && (<col className="granted-amount-column"/>)}
-            {valiselvitysSum.isVisible && (<col className="valiselvitys-amount-column"/>)}
-            {loppuselvitysSum.isVisible && (<col className="loppuselvitys-amount-column"/>)}
-            <col className="amount-column"/>
-            <col className="description-column"/>
-          </colgroup>
-          {EditSummingBudgetElement.columnTitles(field, lang, visibleColumns)}
-          <tbody>
-          {children}
-          </tbody>
-          <tfoot>
-          <tr>
-            <td className="label-column">
-              <LocalizedString translations={field.params} translationKey="sumRowLabel" lang={lang}/>
-            </td>
-            {grantedSum.isVisible && (<td className="granted-amount-column"><span className="money sum">{grantedSum.value}</span></td>)}
-            {valiselvitysSum.isVisible && (<td className="valiselvitys-amount-column"><span className="money sum">{valiselvitysSum.value}</span></td>)}
-            {loppuselvitysSum.isVisible && (<td className="loppuselvitys-amount-column"><span className="money sum">{loppuselvitysSum.value}</span></td>)}
-            <td className="amount-column">
-              <span className="money sum">{sum}</span>
-            </td>
-          </tr>
-          </tfoot>
-        </table>
+      <table id={htmlId} className="summing-table">
+        <caption className={!_.isEmpty(classNames) ? classNames : undefined}>
+          <LocalizedString translations={field} translationKey="label" lang={lang}/>
+        </caption>
+        <colgroup>
+          <col className="label-column"/>
+          {visibleColumns.grantedSum       && <col className="granted-amount-column"/>}
+          {visibleColumns.valiselvitysSum  && <col className="valiselvitys-amount-column"/>}
+          {visibleColumns.loppuselvitysSum && <col className="loppuselvitys-amount-column"/>}
+          <col className="amount-column"/>
+          <col className="description-column"/>
+        </colgroup>
+        {EditSummingBudgetElement.columnTitles(field, lang, visibleColumns)}
+        <tbody>
+        {children}
+        </tbody>
+        <tfoot>
+        <tr>
+          <td className="label-column">
+            <LocalizedString translations={field.params} translationKey="sumRowLabel" lang={lang}/>
+          </td>
+          {visibleColumns.grantedSum       && <td className="granted-amount-column"><span className="money sum">{grantedSum.sum}</span></td>}
+          {visibleColumns.valiselvitysSum  && <td className="valiselvitys-amount-column"><span className="money sum">{valiselvitysSum.sum}</span></td>}
+          {visibleColumns.loppuselvitysSum && <td className="loppuselvitys-amount-column"><span className="money sum">{loppuselvitysSum.sum}</span></td>}
+          <td className="amount-column">
+            <span className="money sum">{sum}</span>
+          </td>
+        </tr>
+        </tfoot>
+      </table>
     )
   }
 
@@ -68,9 +71,9 @@ export class EditSummingBudgetElement extends React.Component {
           <th className="label-column">
             <LocalizedString translations={field.params.columnTitles} translationKey="label" lang={lang}/>
           </th>
-          {visibleColumns.grantedSum && (<th className="granted-amount-column">Myön&shy;netty</th>)}
-          {visibleColumns.valiselvitysSum && (<th className="valiselvitys-amount-column money">Väli&shy;selvitys</th>)}
-          {visibleColumns.loppuselvitysSum && (<th className="loppuselvitys-amount-column money">Loppu&shy;selvitys</th>)}
+          {visibleColumns.grantedSum       && <th className="granted-amount-column">Myön&shy;netty</th>}
+          {visibleColumns.valiselvitysSum  && <th className="valiselvitys-amount-column money">Väli&shy;selvitys</th>}
+          {visibleColumns.loppuselvitysSum && <th className="loppuselvitys-amount-column money">Loppu&shy;selvitys</th>}
           <th className="amount-column money required" style={{textAlign:'center'}}>OPH:n hyväksymä</th>
           <th className="description-column">Kommentti</th>
         </tr>
@@ -78,19 +81,45 @@ export class EditSummingBudgetElement extends React.Component {
     ) : undefined
   }
 
+  static getGrantedSum(field, arvio, showDetailedCosts) {
+    if (!showDetailedCosts) {
+      return {
+        isVisible: true,
+        sum: arvio.costsGranted
+      }
+    }
+
+    const answers = arvio["overridden-answers"]
+
+    if (_.isEmpty(answers)) {
+      return {isVisible: false}
+    }
+
+    return {
+      isVisible: true,
+      sum: EditSummingBudgetElement.sumOf(field, answers)
+    }
+  }
+
+  static getSelvitysSum(field, answers) {
+    if (_.isEmpty(answers)) {
+      return {isVisible: false}
+    }
+
+    return {
+      isVisible: true,
+      sum: EditSummingBudgetElement.sumOf(field, answers)
+    }
+  }
+
   static sumOf(field, answers) {
-    return _.isEmpty(answers)
-      ? {isVisible: false}
-      : {
-          isVisible: true,
-          value: _.sum(VaBudgetCalculator.getAmountValues(field, answers).map(x => x.value))
-        }
+    return _.sum(VaBudgetCalculator.getAmountValues(field, answers).map(x => x.value))
   }
 }
 
 export class EditBudgetItemElement extends React.Component {
   render() {
-    const {field, children, htmlId, disabled, lang, customProps} = this.props
+    const {field, children, htmlId, disabled, lang, controller, customProps} = this.props
     const descriptionComponent = children[0]
     const descriptionId = descriptionComponent.props.field.id
     const valueComponent = children[1]
@@ -98,61 +127,77 @@ export class EditBudgetItemElement extends React.Component {
 
     const labelClassName = ClassNames("label-column", {disabled: disabled})
 
-    const grantedAmount = EditBudgetItemElement.amountOf(customProps.originalHakemus.arvio["overridden-answers"], valueId, descriptionId)
-    const grantedCellClassNames = ClassNames("granted-amount-column", {'has-title': grantedAmount.hasDescription})
-    const grantedMoneyClassNames = ClassNames("money sum", {'error error-message': !grantedAmount.hasValidValue})
+    const showDetailedCosts = controller.showDetailedCostsForBudgetField(field.id, field.fieldType)
 
-    const valiselvitysAmount = EditBudgetItemElement.amountOf(_.get(customProps.originalHakemus, "selvitys.valiselvitys", []), valueId, descriptionId)
-    const valiselvitysCellClassNames = ClassNames("valiselvitys-amount-column", {'has-title': valiselvitysAmount.hasDescription})
-    const valiselvitysMoneyClassNames = ClassNames("money sum", {'error error-message': !valiselvitysAmount.hasValidValue})
-
-    const loppuselvitysAmount = EditBudgetItemElement.amountOf(_.get(customProps.originalHakemus, "selvitys.loppuselvitys", []), valueId, descriptionId)
-    const loppuselvitysCellClassNames = ClassNames("loppuselvitys-amount-column", {'has-title': loppuselvitysAmount.hasDescription})
-    const loppuselvitysMoneyClassNames = ClassNames("money sum", {'error error-message': !loppuselvitysAmount.hasValidValue})
+    const grantedAnswers = customProps.originalHakemus.arvio["overridden-answers"]
+    const valiselvitysAnswers = _.get(customProps.originalHakemus, "selvitys.valiselvitys", [])
+    const loppuselvitysAnswers = _.get(customProps.originalHakemus, "selvitys.loppuselvitys", [])
 
     return (
-        <tr id={htmlId} className="budget-item">
-          <td className={labelClassName}>
-            <LocalizedString translations={field} translationKey="label" lang={lang}/>
-          </td>
-          {grantedAmount.isVisible && (
-            <td className={grantedCellClassNames} title={grantedAmount.description}>
-              <span className={grantedMoneyClassNames}>{grantedAmount.valueFormatted}</span>
-            </td>
-          )}
-          {valiselvitysAmount.isVisible && (
-            <td className={valiselvitysCellClassNames} title={valiselvitysAmount.description}>
-              <span className={valiselvitysMoneyClassNames}>{valiselvitysAmount.valueFormatted}</span>
-            </td>
-          )}
-          {loppuselvitysAmount.isVisible && (
-            <td className={loppuselvitysCellClassNames} title={loppuselvitysAmount.description}>
-              <span className={loppuselvitysMoneyClassNames}>{loppuselvitysAmount.valueFormatted}</span>
-            </td>
-          )}
-          <td className="amount-column">{valueComponent}</td>
-          <td className="description-column">{descriptionComponent}</td>
-        </tr>
+      <tr id={htmlId} className="budget-item">
+        <td className={labelClassName}>
+          <LocalizedString translations={field} translationKey="label" lang={lang}/>
+        </td>
+        {(!showDetailedCosts || !_.isEmpty(grantedAnswers)) && <GrantedAmountCell answers={grantedAnswers} valueId={valueId} descriptionId={descriptionId} showContents={showDetailedCosts}/>}
+        {!_.isEmpty(valiselvitysAnswers)                    && <SelvitysAmountCell answers={valiselvitysAnswers} valueId={valueId} descriptionId={descriptionId} cellClassName="valiselvitys-amount-column"/>}
+        {!_.isEmpty(loppuselvitysAnswers)                   && <SelvitysAmountCell answers={loppuselvitysAnswers} valueId={valueId} descriptionId={descriptionId} cellClassName="loppuselvitys-amount-column"/>}
+        <td className="amount-column">{valueComponent}</td>
+        <td className="description-column">{descriptionComponent}</td>
+      </tr>
     )
   }
+}
 
-  static amountOf(answers, valueId, descriptionId) {
-    if (_.isEmpty(answers)) {
-      return {isVisible: false}
-    }
-
+class EditBudgetItemCell extends React.Component {
+  amountOf(answers, valueId, descriptionId) {
     const value = InputValueStorage.readValue(null, answers, valueId)
     const hasValidValue = !!value
     const description = hasValidValue
-          ? InputValueStorage.readValue(null, answers, descriptionId)
-          : 'Budgettirivin arvoa ei löytynyt.'
+      ? InputValueStorage.readValue(null, answers, descriptionId)
+      : 'Budgettirivin arvoa ei löytynyt.'
 
     return {
-      isVisible: true,
       hasValidValue: hasValidValue,
       valueFormatted: hasValidValue ? value : '–',
       hasDescription: !_.isEmpty(description),
       description: description
     }
+  }
+}
+
+class GrantedAmountCell extends EditBudgetItemCell {
+  render() {
+    const {answers, valueId, descriptionId, showContents} = this.props
+
+    const amount = showContents
+      ? this.amountOf(answers, valueId, descriptionId)
+      : {description: ""}
+
+    const cellClassNames = ClassNames("granted-amount-column", {'has-title': amount.hasDescription})
+
+    let contents = null
+
+    if (showContents) {
+      const moneyClassNames = ClassNames("money sum", {'error error-message': !amount.hasValidValue})
+      contents = <span className={moneyClassNames}>{amount.valueFormatted}</span>
+    }
+
+    return <td className={cellClassNames} title={amount.description}>{contents}</td>
+  }
+}
+
+class SelvitysAmountCell extends EditBudgetItemCell {
+  render() {
+    const {answers, valueId, descriptionId, cellClassName} = this.props
+
+    const amount = this.amountOf(answers, valueId, descriptionId)
+    const cellClassNames = ClassNames(cellClassName, {'has-title': amount.hasDescription})
+    const moneyClassNames = ClassNames("money sum", {'error error-message': !amount.hasValidValue})
+
+    return (
+      <td className={cellClassNames} title={amount.description}>
+        <span className={moneyClassNames}>{amount.valueFormatted}</span>
+      </td>
+    )
   }
 }

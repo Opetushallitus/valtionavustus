@@ -10,6 +10,7 @@ export default class SeurantaBudgetEditFormController {
     this.customPreviewComponentFactory = customPreviewComponentFactory
     this.avustushaku = avustushaku
     this.form = form
+    this.projectBudgetFieldId = form.content[0].children[0].id
     this.hakemus = hakemus
     this.componentOnChangeListener = this.componentOnChangeListener.bind(this)
   }
@@ -62,5 +63,20 @@ export default class SeurantaBudgetEditFormController {
 
   createAttachmentVersionDownloadUrl(field, attachmentVersion) {
     return `/api/avustushaku/${this.avustushaku.id}/hakemus/${this.hakemus.id}/attachments/${field.id}?attachment-version=${attachmentVersion}`
+  }
+
+  // Public API
+
+  showDetailedCostsForBudgetField(fieldId, fieldType) {
+    if (this.hakemus.arvio.useDetailedCosts) {
+      return true
+    }
+
+    if (fieldType === "vaSummingBudgetElement") {
+      return fieldId !== this.projectBudgetFieldId
+    }
+
+    const parentField = FormUtil.findFieldWithDirectChild(this.form, fieldId)
+    return !(parentField.fieldType === "vaSummingBudgetElement" && parentField.id === this.projectBudgetFieldId)
   }
 }
