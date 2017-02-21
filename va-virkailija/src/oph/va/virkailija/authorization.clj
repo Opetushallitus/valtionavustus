@@ -25,7 +25,7 @@
                              ldap/details->map-with-roles)]
     (if (:person-oid user-with-roles)
         (resolve-privileges-for-user user-with-roles haku-roles)
-        (do (log/error (str "Could not find user details for " identity " to access avustushaku " avustushaku-id))
+        (do (log/warn (str "Could not find user details for " identity " to access avustushaku " avustushaku-id))
             {:edit-haku false
              :edit-my-haku-role false
              :score-hakemus false
