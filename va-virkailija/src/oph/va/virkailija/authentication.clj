@@ -31,7 +31,7 @@
     (do
       (log/info ticket "logged out")
       (swap! tokens dissoc ticket))
-    (log/warn "trying to logout CAS ticket without active session" ticket)))
+    (log/info "trying to logout CAS ticket without active session" ticket)))
 
 (defn cas-initiated-logout [logout-request]
   (let [ticket (CasLogout/parseTicketFromLogoutRequest logout-request)]
