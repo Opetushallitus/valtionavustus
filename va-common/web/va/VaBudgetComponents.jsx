@@ -132,6 +132,24 @@ export class BudgetSummaryElement extends React.Component {
         <td className="amount-column"><span className={sumTotalClassNames}>{row.sum}</span></td>
       </tr>
     }) : null
+    const subTotalsTable = subTotalsAndErrorsAndSummingFields && subTotalsAndErrorsAndSummingFields.length > 1 ?<table className="summing-table">
+      <caption><LocalizedString translations={staticTranslations.form.budget} translationKey="financingNeeded" lang={this.props.lang} /></caption>
+      <colgroup>
+        <col className="label-column" colSpan="2"/>
+        <col className="amount-column" />
+      </colgroup>
+      <thead><tr>
+        <th className="label-column" colSpan="2"><LocalizedString translations={staticTranslations.form.budget} translationKey="financingSection" lang={this.props.lang} /></th>
+        <th className="amount-column"><LocalizedString translations={staticTranslations.form.budget} translationKey="total" lang={this.props.lang} /></th>
+      </tr></thead>
+      <tbody>
+      {subTotalRows}
+      </tbody>
+      <tfoot><tr>
+        <td className="label-column" colSpan="2"><LocalizedString translations={staticTranslations.form.budget} translationKey="financingNeededTotal" lang={this.props.lang} /></td>
+        <td className="amount-column"><span className={sumClassNames}>{totalNeeded}</span></td>
+      </tr></tfoot>
+    </table> : null
 
     const selfFinancingShare = field.budgetIsValid ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : errorMessage
     const ophShare = field.budgetIsValid ? (totalNeeded - selfFinancingShare) : errorMessage
@@ -139,24 +157,7 @@ export class BudgetSummaryElement extends React.Component {
     const sumPartClassNames = ClassNames("money", { 'error error-message': !field.budgetIsValid  })
     return (
       <div id={htmlId}>
-      <table className="summing-table">
-        <caption><LocalizedString translations={staticTranslations.form.budget} translationKey="financingNeeded" lang={this.props.lang} /></caption>
-        <colgroup>
-          <col className="label-column" colSpan="2"/>
-          <col className="amount-column" />
-        </colgroup>
-        <thead><tr>
-          <th className="label-column" colSpan="2"><LocalizedString translations={staticTranslations.form.budget} translationKey="financingSection" lang={this.props.lang} /></th>
-          <th className="amount-column"><LocalizedString translations={staticTranslations.form.budget} translationKey="total" lang={this.props.lang} /></th>
-        </tr></thead>
-        <tbody>
-          {subTotalRows}
-        </tbody>
-        <tfoot><tr>
-          <td className="label-column" colSpan="2"><LocalizedString translations={staticTranslations.form.budget} translationKey="financingNeededTotal" lang={this.props.lang} /></td>
-          <td className="amount-column"><span className={sumClassNames}>{totalNeeded}</span></td>
-        </tr></tfoot>
-      </table>
+      {subTotalsTable}
       <table className="budget-summary">
         <colgroup>
           <col className="label-column" />
