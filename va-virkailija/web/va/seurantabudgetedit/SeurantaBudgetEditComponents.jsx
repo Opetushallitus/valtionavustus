@@ -154,7 +154,7 @@ class EditBudgetItemCell extends React.Component {
     const hasValidValue = !!value
     const description = hasValidValue
       ? InputValueStorage.readValue(null, answers, descriptionId)
-      : 'Budgettirivin arvoa ei löytynyt.'
+      : 'Budjettirivin arvoa ei löytynyt.'
 
     return {
       hasValidValue: hasValidValue,
