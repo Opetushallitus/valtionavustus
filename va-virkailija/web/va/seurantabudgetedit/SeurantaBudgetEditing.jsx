@@ -1,22 +1,20 @@
-import React, { Component } from 'react'
+import React from 'react'
 import _ from 'lodash'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
-import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 
-import HakemusBudgetEditing from '../budgetedit/HakemusBudgetEditing.jsx'
 import SeurantaBudgetEditFormController from './SeurantaBudgetEditFormController.js'
 import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFactory.js'
 import FakeFormState from '../form/FakeFormState.js'
 
 import style from '../style/budgetedit.less'
 
-export default class SeurantaBudgetEditing extends Component {
+export default class SeurantaBudgetEditing extends React.Component {
 
   static initialValues(formContent, originalHakemus) {
     const budgetItems =  FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')

@@ -1,9 +1,6 @@
 import FormUtil from 'soresu-form/web/form/FormUtil'
-import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
-import _ from 'lodash'
 
 export default class SeurantaBudgetEditFormController {
-
   constructor(arviointiController, customComponentFactory, customPreviewComponentFactory, avustushaku, form,  hakemus) {
     this.arviointiController = arviointiController
     this.customComponentFactory = customComponentFactory
