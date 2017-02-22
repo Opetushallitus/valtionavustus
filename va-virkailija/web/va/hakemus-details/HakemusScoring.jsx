@@ -60,10 +60,10 @@ export default class HakemusScoring extends Component {
     return _.map(othersPersonOids, oid => {
       const userScoring = ScoreResolver.scoringByOid(scoringOfHakemus, oid)
       const userLabel = userScoring["first-name"] + " " + userScoring["last-name"]
-      return <div key={"peruste-list-of" + oid} className="valintaperuste-list">
-               <h2>{userLabel}</h2>
+      return <table key={"peruste-list-of" + oid} className="valintaperuste-list">
+               <thead><tr><th className="valintaperuste-scoring-user">{userLabel}</th></tr></thead>
                {HakemusScoring.createValintaPerusteRows(allScoresOfHakemus, valintaperusteet, oid, false, null)}
-             </div>
+             </table>
     })
   }
 }
