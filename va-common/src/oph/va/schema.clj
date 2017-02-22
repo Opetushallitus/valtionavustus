@@ -24,10 +24,14 @@
 (defn- is-percentage? [number]
   (and (number? number) (>= number 0) (<= number 100)))
 
+(s/defschema Rahoitusalue {:rahoitusalue s/Str
+                           :talousarviotilit [s/Str]})
+
 (s/defschema AvustusHakuContent {:name LocalizedString
                                  :duration Duration
                                  :focus-areas LocalizedStringList
                                  :selection-criteria LocalizedStringList
+                                 (s/optional-key :rahoitusalueet) [Rahoitusalue]
                                  (s/optional-key :multiplemaksuera) s/Bool
                                  :self-financing-percentage (s/conditional is-percentage? s/Num)})
 

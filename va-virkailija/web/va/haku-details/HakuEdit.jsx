@@ -5,6 +5,7 @@ import DateUtil from 'soresu-form/web/form/DateUtil'
 import HakuStatus from "../avustushaku/HakuStatus.jsx"
 
 import HakuRoles from "./HakuRoles.jsx"
+import ChooseRahoitusalueet from "./ChooseRahoitusalueet.jsx"
 
 export default class HakuEdit extends Component {
   render() {
@@ -51,6 +52,7 @@ export default class HakuEdit extends Component {
         </div>
         <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange}/>
         <Rahoitusalueet multipleRahoitusalue={avustushaku["multiple-rahoitusalue"]} disabled={!allowAllHakuEdits} onChange={onChange} />
+        <ChooseRahoitusalueet avustushaku={avustushaku} allowEditing={allowNondisruptiveHakuEdits} onChange={onChange} controller={controller} />
         <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
         <AcademySize value={avustushaku.is_academysize} disabled={!allowAllHakuEdits} onChange={onChange} />
         <HakuRoles avustushaku={avustushaku} ldapSearch={ldapSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller} />
@@ -227,7 +229,7 @@ class Rahoitusalueet extends React.Component {
 
     return (
         <div id="set-multiple-rahoitusalue">
-          <h3>Rahoitusalueet</h3>
+          <h3>Rahoitusalueet (lisää momentti ottaaksesi käyttöön)</h3>
           <fieldset className="soresu-radiobutton-group">
             {options}
           </fieldset>
