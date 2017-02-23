@@ -340,14 +340,9 @@ export default class DecisionEditor extends React.Component {
       {id:"johtaja",title:"Johtaja"},
       {id:"valmistelija",title:"Esittelijä"}
     ]
-    const rahoitusAlueDecisionSubfields = []
-    if (!_.isEmpty(hakuData.avustushaku.content.rahoitusalueet)) {
-      avustushaku.content["rahoitusalueet"].forEach(function(row) {
-        rahoitusAlueDecisionSubfields.push(
-          <DecisionFields key={row.rahoitusalue} title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue} avustushaku={avustushaku} id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s\.]/g, "_")} onChange={onChange}/>
-        )
-      })
-    }
+    const rahoitusAlueDecisionSubfields = _.isEmpty(avustushaku.content.rahoitusalueet)
+      ? []
+      : avustushaku.content.rahoitusalueet.map(row => <DecisionFields key={row.rahoitusalue} title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue} avustushaku={avustushaku} id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s\.]/g, "_")} onChange={onChange}/>)
     return (
       <div className="decision-editor">
         <DecisionFields key="taustaa" title="Taustaa" avustushaku={avustushaku} id="taustaa" onChange={onChange}/>

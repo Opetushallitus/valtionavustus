@@ -47,14 +47,11 @@ export default class ChooseRahoitusalueet extends React.Component {
     const avustushaku = this.props.avustushaku
     const currentRahoitusalueet = avustushaku.content["rahoitusalueet"] ? avustushaku.content["rahoitusalueet"] : []
     const onChange = this.props.onChange
-    const rahoitusalueItems = []
     const controller = this.props.controller
-    for (var index=0; index < RahoitusAlueet.length; index++) {
+    const rahoitusalueItems = _.times(RahoitusAlueet.length, index => {
       const htmlId = "rahoitusalue-" + index + "-tili-"
-      rahoitusalueItems.push(
-        <RahoitusalueRow key={htmlId} idPrefix={htmlId} controller={controller} onChange={onChange} avustushaku={avustushaku} rahoitusalue={RahoitusAlueet[index]} currentRahoitusalueet={currentRahoitusalueet} allowEditing={allowEditing}/>
-      )
-    }
+      return <RahoitusalueRow key={htmlId} idPrefix={htmlId} controller={controller} onChange={onChange} avustushaku={avustushaku} rahoitusalue={RahoitusAlueet[index]} currentRahoitusalueet={currentRahoitusalueet} allowEditing={allowEditing}/>
+    })
 
     return (
       <div>
