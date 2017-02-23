@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import ClassNames from 'classnames'
+import _ from 'lodash'
 
 const RadioRow = ({value,currentValue,allowEditing, onChange}) =>{
   const checked = value === currentValue
@@ -37,7 +38,7 @@ export default class ChooseRahoitusalue extends React.Component {
 
   render() {
     const avustushaku = this.props.avustushaku
-    if(!avustushaku.content["rahoitusalueet"] || avustushaku.content["rahoitusalueet"].length == 0) {
+    if(_.isEmpty(avustushaku.content.rahoitusalueet)) {
       return null
     }
     const hakemus = this.props.hakemus

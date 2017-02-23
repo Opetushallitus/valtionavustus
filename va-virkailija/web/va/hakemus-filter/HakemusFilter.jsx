@@ -92,7 +92,7 @@ const FilterList  = ({hakemusFilter,hakuData,controller}) => {
         open: _.contains(openQuestions, r.id)
       }
     })
-    if (hakuData.avustushaku.content["rahoitusalueet"] && hakuData.avustushaku.content["rahoitusalueet"].length > 0) {
+    if (!_.isEmpty(hakuData.avustushaku.content.rahoitusalueet)) {
       filterQuestions.unshift({
         id: "rahoitusalue",
         label: "Rahoitusalue",

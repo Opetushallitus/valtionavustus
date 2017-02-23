@@ -341,7 +341,7 @@ export default class DecisionEditor extends React.Component {
       {id:"valmistelija",title:"Esittelijä"}
     ]
     const rahoitusAlueDecisionSubfields = []
-    if (avustushaku.content["rahoitusalueet"] && avustushaku.content["rahoitusalueet"].length > 0) {
+    if (!_.isEmpty(hakuData.avustushaku.content.rahoitusalueet)) {
       avustushaku.content["rahoitusalueet"].forEach(function(row) {
         rahoitusAlueDecisionSubfields.push(
           <DecisionFields key={row.rahoitusalue} title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue} avustushaku={avustushaku} id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s\.]/g, "_")} onChange={onChange}/>
