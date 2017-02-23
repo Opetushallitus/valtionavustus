@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
-import RahoitusAlueet from '../data/Rahoitusalueet'
 import ClassNames from 'classnames'
-
 
 const RadioRow = ({value,currentValue,allowEditing, onChange}) =>{
   const checked = value === currentValue
@@ -39,7 +37,7 @@ export default class ChooseRahoitusalue extends React.Component {
 
   render() {
     const avustushaku = this.props.avustushaku
-    if(!avustushaku["multiple-rahoitusalue"]) {
+    if(!avustushaku.content["rahoitusalueet"] || avustushaku.content["rahoitusalueet"].length == 0) {
       return null
     }
     const hakemus = this.props.hakemus
@@ -58,7 +56,7 @@ export default class ChooseRahoitusalue extends React.Component {
         <label>Rahoitusalue:</label>
         <a onClick={toggleList} disabled={!allowEditing}>{title}</a>
         <div className="radio-container radio-container--rahoitusalue" hidden={!open}>
-          {RahoitusAlueet.map((row)=><RadioRow key={row} value={row} currentValue={currentRahoitusalue} onChange={onRahoitusalueChange} allowEditing={allowEditing}/>)}
+          {avustushaku.content["rahoitusalueet"].map((row)=><RadioRow key={row.rahoitusalue} value={row.rahoitusalue} currentValue={currentRahoitusalue} onChange={onRahoitusalueChange} allowEditing={allowEditing}/>)}
         </div>
       </div>
     )
