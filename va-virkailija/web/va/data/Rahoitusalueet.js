@@ -17,5 +17,3 @@ const List = [
 const mapTitle = (r)=>r.title
 
 export default List.map(mapTitle)
-
-export const Momentti = List.filter((r)=>r.type=="momentti").map(mapTitle)

@@ -62,16 +62,27 @@
                     }
 )
 
+(defn myonteinen-lisateksti-schema-key [rahoitusalue]
+  (s/optional-key (keyword (str "myonteinenlisateksti-" rahoitusalue))))
+
 (s/defschema Decision
   "Decision fields"
   {
    (s/optional-key :date) s/Str
    (s/optional-key :taustaa) LocalizedStringOptional
-   (s/optional-key :myonteinenlisateksti-Kansalaisopisto) LocalizedStringOptional
-   (s/optional-key :myonteinenlisateksti-Kansanopisto) LocalizedStringOptional
-   (s/optional-key :myonteinenlisateksti-Opintokeskus) LocalizedStringOptional
-   (s/optional-key :myonteinenlisateksti-Kesäyliopisto) LocalizedStringOptional
-   (s/optional-key :myonteinenlisateksti-Poikkeus) LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Yleissivistävä_koulutus,_ml__varhaiskasvatus") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Ammatillinen_koulutus") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Aikuiskoulutus_ja_vapaa_sivistystyö") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Koko_opetustoimi") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Kansalaisopisto") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Kansanopisto") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Opintokeskus") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Kesäyliopisto") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Poikkeus") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Tiedeolympialaistoiminta") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Suomi-koulut_ja_kotiperuskoulut") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Muut_järjestöt") LocalizedStringOptional
+   (myonteinen-lisateksti-schema-key "Kristillisten_koulujen_kerhotoiminta") LocalizedStringOptional
    (s/optional-key :maksu) LocalizedStringOptional
    (s/optional-key :maksudate) s/Str
    (s/optional-key :kaytto) LocalizedStringOptional
