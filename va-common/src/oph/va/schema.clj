@@ -103,7 +103,6 @@
                           :status HakuStatus
                           :phase HakuPhase
                           :haku-type HakuType
-                          :multiple-rahoitusalue s/Bool
                           :is_academysize s/Bool
                           :register-number (s/maybe s/Str)
                           :content AvustusHakuContent

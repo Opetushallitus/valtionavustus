@@ -40,7 +40,7 @@ const RahoitusalueRow = ({idPrefix, avustushaku, rahoitusalue, allowEditing, onC
   )
 }
 
-export default class Rahoitusalueet extends React.Component {
+export default class ChooseRahoitusalueet extends React.Component {
 
   render() {
     const allowEditing = this.props.allowEditing
@@ -57,9 +57,12 @@ export default class Rahoitusalueet extends React.Component {
     }
 
     return (
-      <table id="rahoitusalueet">
-        {rahoitusalueItems}
-      </table>
+      <div>
+        <h3>Rahoitusalueet (lisää momentti ottaaksesi käyttöön)</h3>
+        <table id="rahoitusalueet">
+          {rahoitusalueItems}
+        </table>
+      </div>
     )
   }
 }

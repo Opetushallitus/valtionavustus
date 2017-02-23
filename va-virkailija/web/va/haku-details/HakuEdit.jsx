@@ -51,7 +51,6 @@ export default class HakuEdit extends Component {
           </div>
         </div>
         <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange}/>
-        <Rahoitusalueet multipleRahoitusalue={avustushaku["multiple-rahoitusalue"]} disabled={!allowAllHakuEdits} onChange={onChange} />
         <ChooseRahoitusalueet avustushaku={avustushaku} allowEditing={allowNondisruptiveHakuEdits} onChange={onChange} controller={controller} />
         <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
         <AcademySize value={avustushaku.is_academysize} disabled={!allowAllHakuEdits} onChange={onChange} />
@@ -197,43 +196,6 @@ class HakuType extends React.Component {
           {options}
         </fieldset>
       </div>
-    )
-  }
-}
-
-class Rahoitusalueet extends React.Component {
-  render() {
-    const multipleRahoitusalue = this.props.multipleRahoitusalue === true
-    const onChange = this.props.onChange
-    const isDisabled = this.props.disabled
-    const options = []
-    const values = [false, true];
-    for (var i=0; i < values.length; i++) {
-      const value = values[i]
-      const htmlId = "set-multiple-rahoitusalue-" + value
-      options.push(
-          <input id={htmlId}
-                 type="radio"
-                 key={htmlId}
-                 name="multiple-rahoitusalue"
-                 value={value}
-                 onChange={onChange}
-                 checked={value === multipleRahoitusalue}
-                 disabled={isDisabled}
-          />
-      )
-      options.push(
-          <label key={htmlId + "-label"} htmlFor={htmlId}>{value ? "Useita rahoitusalueita" : "Yksi rahoitusalue"}</label>
-      )
-    }
-
-    return (
-        <div id="set-multiple-rahoitusalue">
-          <h3>Rahoitusalueet (lisää momentti ottaaksesi käyttöön)</h3>
-          <fieldset className="soresu-radiobutton-group">
-            {options}
-          </fieldset>
-        </div>
     )
   }
 }
