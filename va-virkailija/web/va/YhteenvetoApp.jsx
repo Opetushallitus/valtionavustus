@@ -19,7 +19,7 @@ export default class SummaryApp extends Component {
     const hakuData = state.hakuData
     const hakemusList = hakuData.hakemukset
     const avustushaku = hakuData.avustushaku
-    const multipleRahoitusalue = avustushaku["multiple-rahoitusalue"]
+    const multipleRahoitusalue = avustushaku.content.rahoitusalueet && avustushaku.content.rahoitusalueet.length > 0
     const applicationsByStatus = _.groupBy(hakemusList, h => h.arvio.status)
     const summaryListings = multipleRahoitusalue ?
       <RahoitusalueList hakemusList={hakemusList}/> :
