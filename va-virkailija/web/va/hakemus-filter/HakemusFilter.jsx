@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import _ from 'lodash'
 import ClassNames from 'classnames'
-import RahoitusAlueet from '../data/Rahoitusalueet'
 
 const ToggleFilterButton  = ({controller,hakemusFilter}) => {
   const activeFilterCount = hakemusFilter.answers.length
@@ -69,7 +68,6 @@ const RemoveFilter = ({controller,hakemusFilter}) => {
 const FilterList  = ({hakemusFilter,hakuData,controller}) => {
   const open = hakemusFilter.isOpen
   const form = hakuData.form
-  const multipleRahoitusalue = hakuData.avustushaku["multiple-rahoitusalue"]
   const radioQuestions = FormUtil.findFieldsByFieldType(form.content, "radioButton")
   const checkboxQuestions = FormUtil.findFieldsByFieldType(form.content, "checkboxButton")
   const dropdownQuestions = FormUtil.findFieldsByFieldType(form.content, "dropdown")
@@ -94,14 +92,14 @@ const FilterList  = ({hakemusFilter,hakuData,controller}) => {
         open: _.contains(openQuestions, r.id)
       }
     })
-    if (multipleRahoitusalue) {
+    if (hakuData.avustushaku.content["rahoitusalueet"] && hakuData.avustushaku.content["rahoitusalueet"].length > 0) {
       filterQuestions.unshift({
         id: "rahoitusalue",
         label: "Rahoitusalue",
-        options: RahoitusAlueet.concat(["Ei rahoitusaluetta"]).map((rahoitusalue)=>({
-          label: rahoitusalue,
-          value: rahoitusalue,
-          selected: selectedPredicate("rahoitusalue", rahoitusalue)
+        options: hakuData.avustushaku.content["rahoitusalueet"].concat([{rahoitusalue: "Ei rahoitusaluetta"}]).map((row)=>({
+          label: row.rahoitusalue,
+          value: row.rahoitusalue,
+          selected: selectedPredicate("rahoitusalue", row.rahoitusalue)
         })),
         open: _.contains(openQuestions, "rahoitusalue")
       })
