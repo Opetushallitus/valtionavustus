@@ -24,6 +24,7 @@
       :server-name "localhost"
       :port-number 5432
       :schema "hakija"}
+ :grant-select-for-other-db-user "va_virkailija"
  :email {:enabled? false
          :host nil
          :port nil

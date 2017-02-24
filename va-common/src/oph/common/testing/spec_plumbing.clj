@@ -8,7 +8,7 @@
 
 (defmacro with-test-server! [ds-key server-starter & form]
   `(do
-     (wrap-exception (db/clear-db! ~ds-key (-> config ~ds-key :schema)))
+     (wrap-exception (db/clear-db-and-grant! ~ds-key (-> config ~ds-key :schema) (-> config :grant-select-for-other-db-user)))
      (let [stop-server# (wrap-exception (~server-starter))]
        (try
          ~@form
