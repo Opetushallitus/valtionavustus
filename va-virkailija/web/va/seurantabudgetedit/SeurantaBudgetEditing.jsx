@@ -8,23 +8,14 @@ import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 
+import BudgetEditSupport from '../budgetedit/BudgetEditSupport.js'
+import FakeFormState from '../form/FakeFormState.js'
 import SeurantaBudgetEditFormController from './SeurantaBudgetEditFormController.js'
 import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFactory.js'
-import FakeFormState from '../form/FakeFormState.js'
 
 import style from '../style/budgetedit.less'
 
 export default class SeurantaBudgetEditing extends React.Component {
-
-  static initialValues(formContent, originalHakemus) {
-    const budgetItems =  FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
-    const initialValues = {}
-    budgetItems.map(budgetItem => initialValues[budgetItem.children[0].id] = "")
-    budgetItems.filter(budgetItem => budgetItem.params.incrementsTotal === false)
-        .map(budgetItem => initialValues[budgetItem.children[1].id] = InputValueStorage.readValue(formContent, originalHakemus.answers, budgetItem.children[1].id))
-    return initialValues
-  }
-
   static validateFields(form, answers) {
     const budgetItems = FormUtil.findFieldsByFieldType(form.content, 'vaBudgetItemElement')
     budgetItems.map(budgetItem => {
@@ -57,7 +48,11 @@ export default class SeurantaBudgetEditing extends React.Component {
       printEntityId: undefined
     }
     const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: [budgetSpec]}}, fakeHakemus, formOperations, hakemus)
-    FormStateLoop.initDefaultValues(fakeHakemus.answers, SeurantaBudgetEditing.initialValues(budgetEditFormState.form.content, hakemus), budgetEditFormState.form.content, budgetEditFormState.configuration.lang)
+    FormStateLoop.initDefaultValues(
+      fakeHakemus.answers,
+      BudgetEditSupport.getInitialValuesByFieldId(budgetEditFormState.form.content, hakemus.answers),
+      budgetEditFormState.form.content,
+      budgetEditFormState.configuration.lang)
     SeurantaBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers)
     const formElementProps = {
       state: budgetEditFormState,
