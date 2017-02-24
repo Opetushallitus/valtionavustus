@@ -61,37 +61,17 @@ class ToggleKonttaSumma extends React.Component {
 }
 
 export class EditSummingBudgetElement extends React.Component {
-  columnTitles(field, controller, disabled, useDetailedCosts) {
-    return field.params.showColumnTitles ? (
-        <thead>
-        <tr hidden={disabled}>
-          <th colSpan="4">
-            <ToggleKonttaSumma controller={controller} disabled={disabled} useDetailedCosts={useDetailedCosts}/>
-          </th>
-        </tr>
-        <tr>
-          <th className="label-column">
-            <LocalizedString translations={field.params.columnTitles} translationKey="label" lang={this.props.lang}/>
-          </th>
-          <th className="original-amount-column">Haettu</th>
-          <th className="amount-column money required">Hyväksytty</th>
-          <th className="description-column">Kommentti</th>
-        </tr>
-        </thead>
-    ) : undefined
-  }
-
   render() {
     const {field, children, htmlId, controller, lang, customProps} = this.props
-    const sum = field.sum
     const disabled = this.props.disabled || typeof this.props.disabled === 'undefined'
     const classNames = ClassNames({"required": field.required})
     const originalHakemus = customProps.originalHakemus
-    const originalAmountValues = VaBudgetCalculator.getAmountValues(field, originalHakemus.answers)
-    const originalSum = _.sum(originalAmountValues.map(x => x.value))
+    const originalSum = _.sum(VaBudgetCalculator.getAmountValues(field, originalHakemus.answers).map(x => x.value))
     const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
-    const costsGranted = _.get(originalHakemus, 'arvio.costsGranted', 0)
-    const firstTable = field.params.showColumnTitles
+    const showDetailedCosts = controller.budgetBusinessRules.showDetailedCostsForBudgetField(field)
+    const totalCosts = showDetailedCosts
+          ? field.sum
+          : _.get(originalHakemus, 'arvio.costsGranted', 0)
     return (
         <table id={htmlId} className="summing-table">
           <caption className={!_.isEmpty(classNames) ? classNames : undefined}>
@@ -103,7 +83,7 @@ export class EditSummingBudgetElement extends React.Component {
             <col className="amount-column"/>
             <col className="description-column"/>
           </colgroup>
-          {this.columnTitles(field, controller, disabled, useDetailedCosts)}
+          {EditSummingBudgetElement.columnTitles({field, controller, disabled, lang, useDetailedCosts})}
           <tbody>
           {children}
           </tbody>
@@ -114,23 +94,59 @@ export class EditSummingBudgetElement extends React.Component {
             </td>
             <td className="original-amount-column"><span className="money sum">{originalSum}</span></td>
             <td className="amount-column">
-              {useDetailedCosts || !firstTable ?
-                  <span className="money sum">{sum}</span> :
+              {showDetailedCosts
+                ? <span className="money sum">{totalCosts}</span>
+                : (
                   <div className="soresu-money-field extra-extra-small">
-                    <input type="text" className="extra-extra-small" value={costsGranted} disabled={disabled}
+                    <input type="text"
+                           className="extra-extra-small"
+                           value={totalCosts}
+                           disabled={disabled}
                            onChange={controller.costsGrantedOnChangeListener}/>
-                  </div>}
+                  </div>
+                )}
             </td>
           </tr>
           </tfoot>
         </table>
     )
   }
+
+  static columnTitles({field, controller, disabled, lang, useDetailedCosts}) {
+    const fieldParams = field.params
+    const isProjectBudget = controller.budgetBusinessRules.isSummingBudgetElementForProject(field)
+    const showColumnTitles = fieldParams.showColumnTitles
+    return (isProjectBudget || showColumnTitles) && (
+      <thead>
+        {isProjectBudget && (
+          <tr hidden={disabled}>
+            <th colSpan="4">
+              <ToggleKonttaSumma controller={controller}
+                                 disabled={disabled}
+                                 useDetailedCosts={useDetailedCosts}/>
+            </th>
+          </tr>
+        )}
+        {showColumnTitles && (
+          <tr>
+            <th className="label-column">
+              <LocalizedString translations={fieldParams.columnTitles}
+                               translationKey="label"
+                               lang={lang}/>
+            </th>
+            <th className="original-amount-column">Haettu</th>
+            <th className="amount-column money required">Hyväksytty</th>
+            <th className="description-column">Kommentti</th>
+          </tr>
+        )}
+      </thead>
+    )
+  }
 }
 
 export class EditBudgetItemElement extends React.Component {
   render() {
-    const {field, children,htmlId, disabled, lang, customProps} = this.props
+    const {field, children, htmlId, disabled, lang, controller, customProps} = this.props
     const descriptionComponent = children[0]
     const amountComponent = children[1]
     const originalHakemus = customProps.originalHakemus
@@ -140,9 +156,7 @@ export class EditBudgetItemElement extends React.Component {
     const originalDescription = originalHakemus ? InputValueStorage.readValue(children, originalHakemus, descriptionId) : ""
     const originalCellClassNames = ClassNames("original-amount-column", {'has-title': !_.isEmpty(originalDescription)})
     const labelClassName = ClassNames("label-column", {disabled: disabled})
-    const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
-    const firstTable = field.params.incrementsTotal
-    const allowEditing = useDetailedCosts || !firstTable
+    const allowEditing = controller.budgetBusinessRules.showDetailedCostsForBudgetField(field)
     return (
         <tr id={htmlId} className="budget-item">
           <td className={labelClassName}>

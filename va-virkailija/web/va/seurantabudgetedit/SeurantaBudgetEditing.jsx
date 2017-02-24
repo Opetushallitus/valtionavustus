@@ -8,10 +8,10 @@ import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 
-import BudgetEditSupport from '../budgetedit/BudgetEditSupport.js'
-import FakeFormState from '../form/FakeFormState.js'
-import SeurantaBudgetEditFormController from './SeurantaBudgetEditFormController.js'
-import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFactory.js'
+import FakeFormState from '../form/FakeFormState'
+import BudgetBusinessRules from '../budgetedit/BudgetBusinessRules'
+import SeurantaBudgetEditFormController from './SeurantaBudgetEditFormController'
+import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFactory'
 
 import style from '../style/budgetedit.less'
 
@@ -50,7 +50,7 @@ export default class SeurantaBudgetEditing extends React.Component {
     const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: [budgetSpec]}}, fakeHakemus, formOperations, hakemus)
     FormStateLoop.initDefaultValues(
       fakeHakemus.answers,
-      BudgetEditSupport.getInitialValuesByFieldId(budgetEditFormState.form.content, hakemus.answers),
+      BudgetBusinessRules.getInitialValuesByFieldId(budgetEditFormState.form.content, hakemus.answers),
       budgetEditFormState.form.content,
       budgetEditFormState.configuration.lang)
     SeurantaBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers)

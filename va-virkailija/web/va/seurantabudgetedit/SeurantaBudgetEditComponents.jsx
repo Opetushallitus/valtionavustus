@@ -15,7 +15,7 @@ export class EditSummingBudgetElement extends React.Component {
     const grantedSum = EditSummingBudgetElement.getGrantedSum(
       field,
       customProps.originalHakemus.arvio,
-      controller.showDetailedCostsForBudgetField(field.id, field.fieldType))
+      controller.budgetBusinessRules.showDetailedCostsForBudgetField(field))
     const valiselvitysSum = EditSummingBudgetElement.getSelvitysSum(field, _.get(customProps.originalHakemus, "selvitys.valiselvitys", []))
     const loppuselvitysSum = EditSummingBudgetElement.getSelvitysSum(field, _.get(customProps.originalHakemus, "selvitys.loppuselvitys", []))
     const visibleColumns = {
@@ -59,20 +59,20 @@ export class EditSummingBudgetElement extends React.Component {
   }
 
   static columnTitles(field, lang, visibleColumns) {
-    return field.params.showColumnTitles ? (
-        <thead>
-        <tr>
-          <th className="label-column">
-            <LocalizedString translations={field.params.columnTitles} translationKey="label" lang={lang}/>
-          </th>
-          {visibleColumns.grantedSum       && <th className="granted-amount-column">Myön&shy;netty</th>}
-          {visibleColumns.valiselvitysSum  && <th className="valiselvitys-amount-column money">Väli&shy;selvitys</th>}
-          {visibleColumns.loppuselvitysSum && <th className="loppuselvitys-amount-column money">Loppu&shy;selvitys</th>}
-          <th className="amount-column money required" style={{textAlign:'center'}}>OPH:n hyväksymä</th>
-          <th className="description-column">Kommentti</th>
-        </tr>
-        </thead>
-    ) : undefined
+    return field.params.showColumnTitles && (
+      <thead>
+      <tr>
+        <th className="label-column">
+          <LocalizedString translations={field.params.columnTitles} translationKey="label" lang={lang}/>
+        </th>
+        {visibleColumns.grantedSum       && <th className="granted-amount-column">Myön&shy;netty</th>}
+        {visibleColumns.valiselvitysSum  && <th className="valiselvitys-amount-column money">Väli&shy;selvitys</th>}
+        {visibleColumns.loppuselvitysSum && <th className="loppuselvitys-amount-column money">Loppu&shy;selvitys</th>}
+        <th className="amount-column money required" style={{textAlign:'center'}}>OPH:n hyväksymä</th>
+        <th className="description-column">Kommentti</th>
+      </tr>
+      </thead>
+    )
   }
 
   static getGrantedSum(field, arvio, showDetailedCosts) {
@@ -121,7 +121,7 @@ export class EditBudgetItemElement extends React.Component {
 
     const labelClassName = ClassNames("label-column", {disabled: disabled})
 
-    const showDetailedCosts = controller.showDetailedCostsForBudgetField(field.id, field.fieldType)
+    const showDetailedCosts = controller.budgetBusinessRules.showDetailedCostsForBudgetField(field)
 
     const grantedAnswers = customProps.originalHakemus.arvio["overridden-answers"]
     const valiselvitysAnswers = _.get(customProps.originalHakemus, "selvitys.valiselvitys", [])

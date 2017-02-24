@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React from 'react'
+import _ from 'lodash'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
@@ -8,15 +9,15 @@ import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 
-import BudgetEditSupport from './BudgetEditSupport.js'
-import BudgetEditFormController from './BudgetEditFormController.js'
-import BudgetEditComponentFactory from './BudgetEditComponentFactory.js'
+import BudgetBusinessRules from './BudgetBusinessRules'
+import BudgetEditFormController from './BudgetEditFormController'
+import BudgetEditComponentFactory from './BudgetEditComponentFactory'
 import BudgetEditPreviewComponentFactory from './BudgetEditPreviewComponentFactory'
-import FakeFormState from '../form/FakeFormState.js'
+import FakeFormState from '../form/FakeFormState'
 
 import style from '../style/budgetedit.less'
 
-export default class HakemusBudgetEditing extends Component {
+export default class HakemusBudgetEditing extends React.Component {
   static isEditingAllowed(allowEditingArvio, formContent, fieldId) {
     if(!allowEditingArvio) {
       return false
@@ -61,7 +62,7 @@ export default class HakemusBudgetEditing extends Component {
     const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: [vaBudget]}}, fakeHakemus, formOperations, hakemus)
     FormStateLoop.initDefaultValues(
       fakeHakemus.answers,
-      BudgetEditSupport.getInitialValuesByFieldId(budgetEditFormState.form.content, hakemus.answers),
+      BudgetBusinessRules.getInitialValuesByFieldId(budgetEditFormState.form.content, hakemus.answers),
       budgetEditFormState.form.content,
       budgetEditFormState.configuration.lang)
     HakemusBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus)
@@ -80,4 +81,3 @@ export default class HakemusBudgetEditing extends Component {
     )
   }
 }
-
