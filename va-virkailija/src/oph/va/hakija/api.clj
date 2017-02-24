@@ -61,8 +61,7 @@
                                    :status haku-status
                                    :register_number (:register-number avustushaku)
                                    :is_academysize (:is_academysize avustushaku)
-                                   :haku_type (new HakuType (:haku-type avustushaku))
-                                   :multiple_rahoitusalue (:multiple-rahoitusalue avustushaku))]
+                                   :haku_type (new HakuType (:haku-type avustushaku)))]
     (exec-all :form-db
               [hakija-queries/archive-avustushaku! avustushaku-to-save
                hakija-queries/update-avustushaku! avustushaku-to-save])

@@ -114,13 +114,13 @@
     (section :avustuksen-maksu content translate false)))
 
 (defn myonteinen-lisateksti [avustushaku hakemus lang]
-  (let [multiple-rahoitusalue (:multiple-rahoitusalue avustushaku)
+  (let [rahoitusalueet (-> avustushaku :content :rahoitusalueet)
         rahoitusalue (-> hakemus :arvio :rahoitusalue)
         decision (:decision avustushaku)
-        rahoitusalue-key (keyword (str "myonteinenlisateksti-" rahoitusalue))
+        rahoitusalue-key (keyword (str "myonteinenlisateksti-" (if rahoitusalue (str/replace rahoitusalue #"[\s\.]" "_") "")))
         content-rahoitusalue (-> decision rahoitusalue-key lang)
         content-default (decision-field decision :myonteinenlisateksti lang)
-        content (if (and multiple-rahoitusalue content-rahoitusalue) content-rahoitusalue content-default)
+        content (if (and (some some? rahoitusalueet) content-rahoitusalue) content-rahoitusalue content-default)
         ]
     (if content
       (content-with-paragraphs content)

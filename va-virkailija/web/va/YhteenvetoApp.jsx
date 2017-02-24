@@ -19,11 +19,10 @@ export default class SummaryApp extends Component {
     const hakuData = state.hakuData
     const hakemusList = hakuData.hakemukset
     const avustushaku = hakuData.avustushaku
-    const multipleRahoitusalue = avustushaku["multiple-rahoitusalue"]
     const applicationsByStatus = _.groupBy(hakemusList, h => h.arvio.status)
-    const summaryListings = multipleRahoitusalue ?
-      <RahoitusalueList hakemusList={hakemusList}/> :
-      BuildSummaryList(SummaryApp.statusesInOrder(),applicationsByStatus)
+    const summaryListings = _.isEmpty(avustushaku.content.rahoitusalueet) ?
+      BuildSummaryList(SummaryApp.statusesInOrder(),applicationsByStatus) :
+      <RahoitusalueList hakemusList={hakemusList}/>
 
     const titleString = SummaryApp.titleString(avustushaku)
     const mailToBody = encodeURIComponent(titleString + "\n\nLinkki ratkaisuyhteenvetoon:\n\n" + location.href)

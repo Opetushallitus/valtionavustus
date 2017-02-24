@@ -11,6 +11,7 @@ import LocalStorage from './LocalStorage'
 import LdapSearchParameters from './haku-details/LdapSearchParameters.js'
 import LoppuselvitysForm from './data/LoppuselvitysForm.json'
 import ValiselvitysForm from './data/ValiselvitysForm.json'
+import RahoitusAlueet from './data/Rahoitusalueet'
 import FormUtil from "../../../soresu-form/web/form/FormUtil"
 import HakuStatuses from './haku-details/HakuStatuses'
 import HakuPhases from './haku-details/HakuPhases'
@@ -37,6 +38,8 @@ const events = {
   saveForm: 'saveForm',
   formSaveCompleted: 'formSaveCompleted',
   reRender: 'reRender',
+  addTalousarviotili: 'addTalousarviotili',
+  deleteTalousarviotili: 'deleteTalousarviotili',
   addSelectionCriteria: 'addSelectionCriteria',
   deleteSelectionCriteria: 'deleteSelectionCriteria',
   addFocusArea: 'addFocusArea',
@@ -156,7 +159,7 @@ export default class HakujenHallintaController {
       dispatcher.push(events.ldapSearchStarted, searchInput)
     }, LdapSearchParameters.ldapSearchDebounceMillis())
     this._bind('onInitialState', 'onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
-      'onHakuSave', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
+      'onHakuSave', 'onAddTalousarviotili', 'onDeleteTalousarviotili', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
       'onBeforeUnload', 'onRolesLoaded', 'onRoleCreated', 'onRoleDeleted', 'saveRole')
 
     Bacon.fromEvent(window, "beforeunload").onValue(function (event) {
@@ -187,6 +190,8 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.saveForm)], this.onFormSaved,
       [dispatcher.stream(events.formSaveCompleted)], this.onFormSaveCompleted,
       [dispatcher.stream(events.reRender)], this.onReRender,
+      [dispatcher.stream(events.addTalousarviotili)], this.onAddTalousarviotili,
+      [dispatcher.stream(events.deleteTalousarviotili)], this.onDeleteTalousarviotili,
       [dispatcher.stream(events.addSelectionCriteria)], this.onAddSelectionCriteria,
       [dispatcher.stream(events.deleteSelectionCriteria)], this.onDeleteSelectionCriteria,
       [dispatcher.stream(events.addFocusArea)], this.onAddFocusArea,
@@ -251,10 +256,10 @@ export default class HakujenHallintaController {
     const hakuname = /haku-name-(\w+)/.exec(update.field.id)
     const hakuaika = /hakuaika-(\w+)/.exec(update.field.id)
     const hakuType = /set-haku-type-(\w+)/.exec(update.field.id)
-    const multipleRahoitusalue = /set-multiple-rahoitusalue-(\w+)/.exec(update.field.id)
     const isAcademySize = /set-is_academysize-(\w+)/.exec(update.field.id)
     const status = /set-status-(\w+)/.exec(update.field.id)
     const financingProcentage = /haku-self-financing-percentage/.exec(update.field.id)
+    const rahoitusalue = /rahoitusalue-(\d+)-tili-(\d+)/.exec(update.field.id)
     const selectionCriteria = /selection-criteria-(\d+)-(\w+)/.exec(update.field.id)
     const focusArea = /focus-area-(\d+)-(\w+)/.exec(update.field.id)
     const registerNumber = /register-number/.exec(update.field.id)
@@ -282,14 +287,34 @@ export default class HakujenHallintaController {
     else if(hakuType) {
       update.avustushaku["haku-type"] = update.newValue
     }
-    else if(multipleRahoitusalue) {
-      update.avustushaku["multiple-rahoitusalue"] = update.newValue === 'true'
-    }
     else if(isAcademySize) {
       update.avustushaku.is_academysize = update.newValue === 'true'
     }
     else if(status) {
       update.avustushaku.status = update.newValue
+    }
+    else if(rahoitusalue) {
+      const rahoitususalueIndex = rahoitusalue[1]
+      const selectedRahoitusalue = RahoitusAlueet[rahoitususalueIndex]
+      const currentRahoitusalueet = this.getOrCreateRahoitusalueet(update.avustushaku);
+      const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, selectedRahoitusalue);
+
+      const talousarviotiliIndex = rahoitusalue[2]
+      const newTalousarviotili = update.newValue
+      if (newTalousarviotili) {
+        if(talousarviotiliIndex >= rahoitusalueValue.talousarviotilit.length) {
+          rahoitusalueValue.talousarviotilit.push(newTalousarviotili)
+        } else {
+          rahoitusalueValue.talousarviotilit[talousarviotiliIndex] = newTalousarviotili
+        }
+      } else {
+        if(talousarviotiliIndex < rahoitusalueValue.talousarviotilit.length) {
+          rahoitusalueValue.talousarviotilit.splice(talousarviotiliIndex)
+        }
+      }
+      if (rahoitusalueValue.talousarviotilit.length === 0) {
+        currentRahoitusalueet.splice(this.getRahoitusalueIndex(currentRahoitusalueet, selectedRahoitusalue), 1)
+      }
     }
     else if(selectionCriteria) {
       const index = selectionCriteria[1]
@@ -324,6 +349,53 @@ export default class HakujenHallintaController {
     if(doSave) {
       state = this.startAutoSave(state, update.avustushaku)
     }
+    return state
+  }
+
+  getOrCreateRahoitusalue(currentRahoitusalueet, selectedRahoitusalue) {
+    var currentValueIndex = this.getRahoitusalueIndex(currentRahoitusalueet, selectedRahoitusalue)
+    if (currentValueIndex < 0) {
+      currentRahoitusalueet.push({"rahoitusalue": selectedRahoitusalue, "talousarviotilit": []})
+      currentValueIndex = currentRahoitusalueet.length - 1
+    }
+    return currentRahoitusalueet[currentValueIndex]
+  }
+
+  getRahoitusalueIndex(currentRahoitusalueet, rahoitusalue) {
+    return _.findIndex(currentRahoitusalueet, function (o) {
+      return o.rahoitusalue === rahoitusalue;
+    });
+  }
+
+  getOrCreateRahoitusalueet(avustushaku) {
+    if (!avustushaku.content['rahoitusalueet']) {
+      avustushaku.content['rahoitusalueet'] = []
+    }
+    return avustushaku.content['rahoitusalueet']
+  }
+
+  onAddTalousarviotili(state, addition) {
+    const currentRahoitusalueet = this.getOrCreateRahoitusalueet(addition.avustushaku);
+    const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, addition.rahoitusalue);
+    rahoitusalueValue.talousarviotilit.push("")
+    const rahoitusalueIndex = this.getRahoitusalueIndex(currentRahoitusalueet, addition.rahoitusalue)
+    setTimeout(function () {
+      document.getElementById("rahoitusalue-" + rahoitusalueIndex + "-tili-" + (rahoitusalueValue.talousarviotilit.length - 1)).focus()
+    }, 300)
+    state = this.startAutoSave(state, addition.avustushaku)
+    return state
+  }
+
+  onDeleteTalousarviotili(state, deletion) {
+    const currentRahoitusalueet = this.getOrCreateRahoitusalueet(deletion.avustushaku);
+    const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, deletion.rahoitusalue);
+    if (deletion.index < rahoitusalueValue.talousarviotilit.length) {
+      rahoitusalueValue.talousarviotilit.splice(deletion.index, 1)
+      if (rahoitusalueValue.talousarviotilit.length === 0) {
+        currentRahoitusalueet.splice(this.getRahoitusalueIndex(currentRahoitusalueet, deletion.rahoitusalue), 1)
+      }
+    }
+    state = this.startAutoSave(state, deletion.avustushaku)
     return state
   }
 
@@ -670,6 +742,18 @@ export default class HakujenHallintaController {
       history.pushState({}, window.title, newUrl)
     }
     return state
+  }
+
+  addTalousarviotili(avustushaku, rahoitusalue) {
+    return function () {
+      dispatcher.push(events.addTalousarviotili, {avustushaku: avustushaku, rahoitusalue: rahoitusalue})
+    }
+  }
+
+  deleteTalousarviotili(avustushaku, rahoitusalue, index) {
+    return function () {
+      dispatcher.push(events.deleteTalousarviotili, {avustushaku: avustushaku, rahoitusalue: rahoitusalue, index: index})
+    }
   }
 
   addSelectionCriteria(avustushaku) {

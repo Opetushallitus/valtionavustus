@@ -5,7 +5,6 @@ insert into archived_avustushaut (
     status,
     haku_type,
     register_number,
-    multiple_rahoitusalue,
     is_academysize,
     content,
     decision)
@@ -16,7 +15,6 @@ insert into archived_avustushaut (
     status,
     haku_type,
     register_number,
-    multiple_rahoitusalue,
     is_academysize,
     content,
     decision
