@@ -12,7 +12,7 @@ const RahoitusalueRow = ({idPrefix, avustushaku, rahoitusalue, allowEditing, onC
 
     const showAddButton = allowEditing && index === talousarviotilit.length - 1 && talousarviotilit[index]
 
-    const addedRowId = idPrefix + (index + 1)
+    const addedRowId = showAddButton && idPrefix + (index + 1)
 
     const onAdd = showAddButton
       ? () => {
