@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import RahoitusAlueet from '../data/Rahoitusalueet'
+import Rahoitusalueet from '../data/Rahoitusalueet'
 
 const RahoitusalueRow = ({idPrefix, avustushaku, rahoitusalue, allowEditing, onChange, controller, currentRahoitusalueet}) =>{
   const currentValueIndex = currentRahoitusalueet ? _.findIndex(currentRahoitusalueet, function(o) { return o.rahoitusalue == rahoitusalue; }) : -1
@@ -48,9 +48,9 @@ export default class ChooseRahoitusalueet extends React.Component {
     const currentRahoitusalueet = avustushaku.content["rahoitusalueet"] ? avustushaku.content["rahoitusalueet"] : []
     const onChange = this.props.onChange
     const controller = this.props.controller
-    const rahoitusalueItems = _.times(RahoitusAlueet.length, index => {
+    const rahoitusalueItems = _.times(Rahoitusalueet.length, index => {
       const htmlId = "rahoitusalue-" + index + "-tili-"
-      return <RahoitusalueRow key={htmlId} idPrefix={htmlId} controller={controller} onChange={onChange} avustushaku={avustushaku} rahoitusalue={RahoitusAlueet[index]} currentRahoitusalueet={currentRahoitusalueet} allowEditing={allowEditing}/>
+      return <RahoitusalueRow key={htmlId} idPrefix={htmlId} controller={controller} onChange={onChange} avustushaku={avustushaku} rahoitusalue={Rahoitusalueet[index]} currentRahoitusalueet={currentRahoitusalueet} allowEditing={allowEditing}/>
     })
 
     return (

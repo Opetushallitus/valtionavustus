@@ -8,7 +8,7 @@ import RouteParser from 'route-parser'
 import YhteenvetoController from './YhteenvetoController.jsx'
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
 import DateUtil from 'soresu-form/web/form/DateUtil'
-import RahoitusAlueet from './data/Rahoitusalueet'
+import Rahoitusalueet from './data/Rahoitusalueet'
 
 import style from './style/main.less'
 import summaryStyle from './style/summary.less'
@@ -83,7 +83,7 @@ const RahoitusalueList = ({hakemusList})=>{
   const rahoitusAlueetNameValues = _.chain(applicationsByRahoitusalue).
     omit([nullValue,undefinedValue]).
     keys().
-    sortBy((x)=> x==withoutLabel ? 9999: RahoitusAlueet.indexOf(x)).
+    sortBy((x)=> x==withoutLabel ? 9999: Rahoitusalueet.indexOf(x)).
     map((x)=>{return {
       name:x,
       values:applicationsByRahoitusalue[x]
