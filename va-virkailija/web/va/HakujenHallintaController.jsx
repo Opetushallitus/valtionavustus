@@ -362,9 +362,7 @@ export default class HakujenHallintaController {
   }
 
   getRahoitusalueIndex(currentRahoitusalueet, rahoitusalue) {
-    return _.findIndex(currentRahoitusalueet, function (o) {
-      return o.rahoitusalue === rahoitusalue;
-    });
+    return _.findIndex(currentRahoitusalueet, o => o.rahoitusalue === rahoitusalue)
   }
 
   getOrCreateRahoitusalueet(avustushaku) {
