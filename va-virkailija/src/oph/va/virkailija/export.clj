@@ -157,6 +157,9 @@
 (defn comma-to-dot [str]
   (string/replace str "," "."))
 
+(defn remove-dots [str]
+  (string/replace str "." ""))
+
 (defn- str->float [str]
   (when (not (empty? str))
     (Float/parseFloat (comma-to-dot (remove-white-spaces str)))))
@@ -306,7 +309,7 @@
         (constantly "")
         :payment
         (constantly "")
-        :rahoitusalue
+        :takp
         (constantly "")
         (constantly "")
         (constantly "6600151502")
@@ -340,16 +343,19 @@
   (let [answers (:answers hakemus)
         answers-values {:value answers}
         arvio (:arvio hakemus)
-        rahoitusalue (:rahoitusalue arvio)
+        takp (-> (:talousarviotili arvio)
+                 str
+                 remove-white-spaces
+                 remove-dots)
         iban (formutil/find-answer-value answers-values "bank-iban")
         iban-formatted (if iban (remove-white-spaces iban) iban)
         lkp-answer (formutil/find-answer-value answers-values "radioButton-0")
         lkp (get lkp-map (keyword lkp-answer))
         formatted-paatos-date (format-date paatos-date)]
-    (assoc hakemus  :paatos-date formatted-paatos-date
-                    :iban iban-formatted
-                    :lkp lkp
-                    :rahoitusalue rahoitusalue)))
+    (assoc hakemus :paatos-date formatted-paatos-date
+                   :iban iban-formatted
+                   :lkp lkp
+                   :takp takp)))
 
 (defn split-multiple-maksuera-if-needed [has-multiple-maksuera hakemus]
   (let [arvio (:arvio hakemus)
