@@ -12,7 +12,7 @@ import HakemusComments from './HakemusComments.jsx'
 import HakemusArviointiStatuses from "./HakemusArviointiStatuses.js"
 import HakemusStatuses from './HakemusStatuses.js'
 import TraineeDayEditing from '../traineeday/TraineeDayEditing.jsx'
-import ChooseRahoitusalueAndTalousarviotili from './ChooseRahoitusAlueAndTalousarviotili.jsx'
+import ChooseRahoitusalueAndTalousarviotili from './ChooseRahoitusalueAndTalousarviotili.jsx'
 import SpecifyOppilaitos from './SpecifyOppilaitos.jsx'
 import AcademySize from './AcademySize.jsx'
 import Perustelut from './Perustelut.jsx'
