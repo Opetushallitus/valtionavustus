@@ -248,7 +248,6 @@
         (comp :budget-granted :arvio)
         (comp :score-total-average :scoring :arvio)))
 
-
 (def maksu-columns ["Maksuerä"
                     "Toimittaja-numero"
                     "Toimittajan nimi"
@@ -281,7 +280,6 @@
                     "Selite (Tiliöinti)"
                     "Asiatarkastajan sähiköpostiosoite"
                     "Hyväksyjän sähiköpostiosoite"])
-
 
 (defn format-date [date-string]
   (try
@@ -367,7 +365,6 @@
       [hakemus1]
       )
     ))
-
 
 (defn export-avustushaku [avustushaku-id]
   (let [avustushaku-combined (hakudata/get-combined-avustushaku-data avustushaku-id)
