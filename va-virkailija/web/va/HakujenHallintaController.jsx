@@ -376,10 +376,6 @@ export default class HakujenHallintaController {
     const currentRahoitusalueet = this.getOrCreateRahoitusalueet(addition.avustushaku);
     const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, addition.rahoitusalue);
     rahoitusalueValue.talousarviotilit.push("")
-    const rahoitusalueIndex = this.getRahoitusalueIndex(currentRahoitusalueet, addition.rahoitusalue)
-    setTimeout(function () {
-      document.getElementById("rahoitusalue-" + rahoitusalueIndex + "-tili-" + (rahoitusalueValue.talousarviotilit.length - 1)).focus()
-    }, 300)
     state = this.startAutoSave(state, addition.avustushaku)
     return state
   }
@@ -743,9 +739,7 @@ export default class HakujenHallintaController {
   }
 
   addTalousarviotili(avustushaku, rahoitusalue) {
-    return function () {
-      dispatcher.push(events.addTalousarviotili, {avustushaku: avustushaku, rahoitusalue: rahoitusalue})
-    }
+    dispatcher.push(events.addTalousarviotili, {avustushaku: avustushaku, rahoitusalue: rahoitusalue})
   }
 
   deleteTalousarviotili(avustushaku, rahoitusalue, index) {

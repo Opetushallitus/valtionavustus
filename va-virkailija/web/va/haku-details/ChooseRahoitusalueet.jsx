@@ -9,10 +9,33 @@ const RahoitusalueRow = ({idPrefix, avustushaku, rahoitusalue, allowEditing, onC
   for (var index=0; index < talousarviotilit.length; index++) {
     const htmlId = idPrefix + index
     const label = index === 0 ? <label>{rahoitusalue}</label> : null
-    const addButton = allowEditing && index === talousarviotilit.length -1 && talousarviotilit[index] ?
-        <button className="add" tabIndex="-1" onClick={controller.addTalousarviotili(avustushaku, rahoitusalue)}/> : null
-    const removeButton = allowEditing && (talousarviotilit[index] || talousarviotilit.length > 1) ?
-        <button className="remove" tabIndex="-1" onClick={controller.deleteTalousarviotili(avustushaku, rahoitusalue, index)}/> : null
+
+    const showAddButton = allowEditing && index === talousarviotilit.length - 1 && talousarviotilit[index]
+
+    const addedRowId = idPrefix + (index + 1)
+
+    const onAdd = showAddButton
+      ? () => {
+          controller.addTalousarviotili(avustushaku, rahoitusalue)
+          setTimeout(() => {
+            const foundElement = document.getElementById(addedRowId)
+            if (foundElement) {
+              foundElement.focus()
+            }
+          }, 300)
+        }
+      : null
+
+    const addButton = showAddButton
+      ? <button className="add" tabIndex="-1" onClick={onAdd}/>
+      : null
+
+    const showRemoveButton = allowEditing && (talousarviotilit[index] || talousarviotilit.length > 1)
+
+    const removeButton = showRemoveButton
+      ? <button className="remove" tabIndex="-1" onClick={controller.deleteTalousarviotili(avustushaku, rahoitusalue, index)}/>
+      : null
+
     talousarvioTiliRows.push(
       <tr key={htmlId}>
         <td>{label}</td>
