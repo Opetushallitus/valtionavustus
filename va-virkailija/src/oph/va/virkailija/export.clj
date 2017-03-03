@@ -2,6 +2,7 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.java.io :as io]
             [clojure.set :refer :all]
+            [clojure.string :as string]
             [clj-time.core :as clj-time]
             [clj-time.format :as clj-time-format]
             [dk.ative.docjure.spreadsheet :as spreadsheet]
@@ -96,7 +97,7 @@
 
 (defn- process-growing-field [avustushaku fields wrappers id]
   (let [seq-number (last (re-find #"([0-9]+)[^0-9]*$" id))
-        mangled-id (clojure.string/replace id #"[0-9]+([^0-9]*)$" "1$1")
+        mangled-id (string/replace id #"[0-9]+([^0-9]*)$" "1$1")
         field (->> fields
                    (filter (fn [f] (= (:id f) mangled-id)))
                    first)
@@ -151,10 +152,10 @@
             answers-fixed-fields)))
 
 (defn remove-white-spaces [str]
-  (clojure.string/replace str #"\s" ""))
+  (string/replace str #"\s" ""))
 
 (defn comma-to-dot [str]
-  (clojure.string/replace str "," "."))
+  (string/replace str "," "."))
 
 (defn- str->float [str]
   (when (not (empty? str))
@@ -187,7 +188,7 @@
                        (->> options
                             (filter (fn [val] (formutil/in? value (:value val))))
                             (map (fn [val] (->> val :label :fi)))
-                            (clojure.string/join "; ")))
+                            (string/join "; ")))
     "vaFocusAreas" (let [value (get answer-set id)
                          focus-areas (->> avustushaku
                                           :avustushaku
@@ -201,7 +202,7 @@
                                               (Long/parseLong))))
                           (map (fn [index] (->> (nth focus-areas index)
                                                 :fi)))
-                          (clojure.string/join "; ")))
+                          (string/join "; ")))
     "moneyField" (str->int (get answer-set id))
     "vaTraineeDayCalculator" (str->float (get answer-set (str id ".total")))
     (get answer-set id)))
