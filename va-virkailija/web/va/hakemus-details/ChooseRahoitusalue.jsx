@@ -1,63 +1,45 @@
-import React, { Component } from 'react'
-import ClassNames from 'classnames'
+import React from 'react'
 import _ from 'lodash'
 
-const RadioRow = ({value,currentValue,allowEditing, onChange}) =>{
-  const checked = value === currentValue
-  const rowClass = ClassNames('radio-row',{
-    'radio-row--selected': checked,
-    'radio-row--unselected': !checked
-  })
-
-  return (
-    <div className={rowClass}>
-      <label>{value}
-        <input type="radio"
-               name="rahoitusalue"
-               value={value}
-               disabled={!allowEditing}
-               checked={checked}
-               onChange={onChange}
-
-        />
-      </label>
-    </div>
-  )
-}
+import RadioRow from './RadioRow.jsx'
 
 export default class ChooseRahoitusalue extends React.Component {
-
   constructor(props) {
     super(props)
-    this.state = {open: false}
+    this.state = {isOpen: false}
   }
 
-  toggleOpen(){
-    this.setState({open: !this.state.open})
+  toggleOpen() {
+    this.setState({isOpen: !this.state.isOpen})
   }
 
   render() {
-    const avustushaku = this.props.avustushaku
-    if(_.isEmpty(avustushaku.content.rahoitusalueet)) {
-      return null
-    }
-    const hakemus = this.props.hakemus
+    const selectedRahoitusalue = this.props.selectedRahoitusalue
+    const availableRahoitusalueet = this.props.availableRahoitusalueet
     const allowEditing = this.props.allowEditing
-    const currentRahoitusalue = hakemus.arvio ? hakemus.arvio.rahoitusalue : undefined
-    const controller = this.props.controller
-    const onRahoitusalueChange = allowEditing ? (event) => {
-      controller.setHakemusRahoitusalue(hakemus, event.target.value)
-      this.setState({open: false})
-    } : null
-    const toggleList = allowEditing ?  () => this.toggleOpen() : null
-    const title = currentRahoitusalue || "Ei valittu"
-    const open = this.state.open || (!currentRahoitusalue && allowEditing)
+
+    const title = selectedRahoitusalue || "Ei valittu"
+
+    const isOpen = allowEditing && (this.state.isOpen || !selectedRahoitusalue)
+
+    const onToggleList = allowEditing ? () => this.toggleOpen() : null
+
+    const onSelection = allowEditing
+      ? event => {
+          this.props.onSelection(event.target.value)
+          this.setState({isOpen: false})
+        }
+      : null
+
     return (
       <div className="hakemus-arviointi-section">
         <label>Rahoitusalue:</label>
-        <a onClick={toggleList} disabled={!allowEditing}>{title}</a>
-        <div className="radio-container radio-container--rahoitusalue" hidden={!open}>
-          {avustushaku.content["rahoitusalueet"].map((row)=><RadioRow key={row.rahoitusalue} value={row.rahoitusalue} currentValue={currentRahoitusalue} onChange={onRahoitusalueChange} allowEditing={allowEditing}/>)}
+        <a onClick={onToggleList} disabled={!allowEditing}>{title}</a>
+        <div className="radio-container radio-container--rahoitusalue" hidden={!isOpen}>
+          {availableRahoitusalueet.map(ra => {
+            const isSelected = ra.rahoitusalue === selectedRahoitusalue
+            return <RadioRow key={ra.rahoitusalue} name="rahoitusalue" value={ra.rahoitusalue} isSelected={isSelected} allowEditing={allowEditing} onChange={onSelection}/>
+          })}
         </div>
       </div>
     )

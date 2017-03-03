@@ -592,13 +592,22 @@ table.overview-list {
   margin-top: 6px;
   margin-bottom: 10px;
   position: relative;
-  &--rahoitusalue{
-    .box-triangle(100px);
-    .box-triangle-up(@light-gray, @off-white);
+
+  &--perustelut {
+    .box-triangle(150px);
   }
 
-  &--perustelut{
-    .box-triangle(150px);
+  &--rahoitusalue {
+    .box-triangle(100px);
+  }
+
+  &--talousarviotili {
+    .box-triangle(190px);
+  }
+
+  &--rahoitusalue,
+  &--talousarviotili,
+  &--perustelut {
     .box-triangle-up(@light-gray, @off-white);
   }
 }
