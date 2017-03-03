@@ -11,7 +11,7 @@ import LocalStorage from './LocalStorage'
 import LdapSearchParameters from './haku-details/LdapSearchParameters.js'
 import LoppuselvitysForm from './data/LoppuselvitysForm.json'
 import ValiselvitysForm from './data/ValiselvitysForm.json'
-import RahoitusAlueet from './data/Rahoitusalueet'
+import Rahoitusalueet from './data/Rahoitusalueet'
 import FormUtil from "../../../soresu-form/web/form/FormUtil"
 import HakuStatuses from './haku-details/HakuStatuses'
 import HakuPhases from './haku-details/HakuPhases'
@@ -295,7 +295,7 @@ export default class HakujenHallintaController {
     }
     else if(rahoitusalue) {
       const rahoitususalueIndex = rahoitusalue[1]
-      const selectedRahoitusalue = RahoitusAlueet[rahoitususalueIndex]
+      const selectedRahoitusalue = Rahoitusalueet[rahoitususalueIndex]
       const currentRahoitusalueet = this.getOrCreateRahoitusalueet(update.avustushaku);
       const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, selectedRahoitusalue);
 

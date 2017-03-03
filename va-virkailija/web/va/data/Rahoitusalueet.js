@@ -14,6 +14,6 @@ const List = [
   {title: "Kristillisten koulujen kerhotoiminta", type: "jarjesto"}
 ]
 
-const mapTitle = (r)=>r.title
+const Rahoitusalueet = List.map(r => r.title)
 
-export default List.map(mapTitle)
+export default Rahoitusalueet
