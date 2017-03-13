@@ -300,22 +300,12 @@ export default class HakujenHallintaController {
       const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, selectedRahoitusalue);
 
       const talousarviotiliIndex = rahoitusalue[2]
-      const newTalousarviotili = update.newValue
+      const talousarviotiliValue = update.newValue
 
-      if (newTalousarviotili) {
-        if (talousarviotiliIndex >= rahoitusalueValue.talousarviotilit.length) {
-          rahoitusalueValue.talousarviotilit.push(newTalousarviotili)
-        } else {
-          rahoitusalueValue.talousarviotilit[talousarviotiliIndex] = newTalousarviotili
-        }
+      if (talousarviotiliIndex >= rahoitusalueValue.talousarviotilit.length) {
+        rahoitusalueValue.talousarviotilit.push(talousarviotiliValue)
       } else {
-        if (talousarviotiliIndex < rahoitusalueValue.talousarviotilit.length) {
-          rahoitusalueValue.talousarviotilit.splice(talousarviotiliIndex, 1)
-        }
-      }
-
-      if (rahoitusalueValue.talousarviotilit.length === 0) {
-        currentRahoitusalueet.splice(this.getRahoitusalueIndex(currentRahoitusalueet, selectedRahoitusalue), 1)
+        rahoitusalueValue.talousarviotilit[talousarviotiliIndex] = talousarviotiliValue
       }
     }
     else if(selectionCriteria) {

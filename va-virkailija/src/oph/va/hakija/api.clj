@@ -6,6 +6,7 @@
             [oph.soresu.form.formhandler :as formhandler]
             [oph.va.jdbc.enums]
             [oph.va.hakija.api.queries :as hakija-queries]
+            [oph.va.hakija.domain :as hakija-domain]
             [oph.va.routes :refer :all]
             [clojure.tools.logging :as log]
             [oph.soresu.form.formutil :as formutil]
@@ -57,8 +58,10 @@
   (let [haku-status (if (= (:status avustushaku) "new")
                       (new HakuStatus "draft")
                       (new HakuStatus (:status avustushaku)))
+        content (hakija-domain/cleanup-avustushaku-content (:content avustushaku))
         avustushaku-to-save (assoc avustushaku
                                    :status haku-status
+                                   :content content
                                    :register_number (:register-number avustushaku)
                                    :is_academysize (:is_academysize avustushaku)
                                    :haku_type (new HakuType (:haku-type avustushaku)))]
