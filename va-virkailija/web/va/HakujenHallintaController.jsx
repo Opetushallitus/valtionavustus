@@ -294,24 +294,26 @@ export default class HakujenHallintaController {
       update.avustushaku.status = update.newValue
     }
     else if(rahoitusalue) {
-      const rahoitususalueIndex = rahoitusalue[1]
-      const selectedRahoitusalue = Rahoitusalueet[rahoitususalueIndex]
+      const rahoitussalueIndex = rahoitusalue[1]
+      const selectedRahoitusalue = Rahoitusalueet[rahoitussalueIndex]
       const currentRahoitusalueet = this.getOrCreateRahoitusalueet(update.avustushaku);
       const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, selectedRahoitusalue);
 
       const talousarviotiliIndex = rahoitusalue[2]
       const newTalousarviotili = update.newValue
+
       if (newTalousarviotili) {
-        if(talousarviotiliIndex >= rahoitusalueValue.talousarviotilit.length) {
+        if (talousarviotiliIndex >= rahoitusalueValue.talousarviotilit.length) {
           rahoitusalueValue.talousarviotilit.push(newTalousarviotili)
         } else {
           rahoitusalueValue.talousarviotilit[talousarviotiliIndex] = newTalousarviotili
         }
       } else {
-        if(talousarviotiliIndex < rahoitusalueValue.talousarviotilit.length) {
+        if (talousarviotiliIndex < rahoitusalueValue.talousarviotilit.length) {
           rahoitusalueValue.talousarviotilit.splice(talousarviotiliIndex)
         }
       }
+
       if (rahoitusalueValue.talousarviotilit.length === 0) {
         currentRahoitusalueet.splice(this.getRahoitusalueIndex(currentRahoitusalueet, selectedRahoitusalue), 1)
       }
