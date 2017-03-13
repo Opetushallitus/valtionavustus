@@ -368,7 +368,6 @@ export default class HakujenHallintaController {
     const currentRahoitusalueet = this.getOrCreateRahoitusalueet(addition.avustushaku);
     const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, addition.rahoitusalue);
     rahoitusalueValue.talousarviotilit.push("")
-    state = this.startAutoSave(state, addition.avustushaku)
     return state
   }
 
