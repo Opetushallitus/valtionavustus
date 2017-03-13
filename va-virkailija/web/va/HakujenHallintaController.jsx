@@ -310,7 +310,7 @@ export default class HakujenHallintaController {
         }
       } else {
         if (talousarviotiliIndex < rahoitusalueValue.talousarviotilit.length) {
-          rahoitusalueValue.talousarviotilit.splice(talousarviotiliIndex)
+          rahoitusalueValue.talousarviotilit.splice(talousarviotiliIndex, 1)
         }
       }
 
