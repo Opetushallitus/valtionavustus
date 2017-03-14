@@ -177,6 +177,17 @@ button:disabled {
   border-color: @light-gray;
 }
 
+button.add {
+  background: transparent url('../img/add_line_enabled.png') no-repeat left top;
+  border: none;
+  width: 22px;
+  height: 22px;
+
+  &:not(:disabled):hover {
+    background-color: transparent;
+  }
+}
+
 button.remove,
 button.soresu-remove {
   background: transparent url('../img/remove_line_enabled.png') no-repeat left top;
@@ -581,13 +592,22 @@ table.overview-list {
   margin-top: 6px;
   margin-bottom: 10px;
   position: relative;
-  &--rahoitusalue{
-    .box-triangle(100px);
-    .box-triangle-up(@light-gray, @off-white);
+
+  &--perustelut {
+    .box-triangle(150px);
   }
 
-  &--perustelut{
-    .box-triangle(150px);
+  &--rahoitusalue {
+    .box-triangle(100px);
+  }
+
+  &--talousarviotili {
+    .box-triangle(190px);
+  }
+
+  &--rahoitusalue,
+  &--talousarviotili,
+  &--perustelut {
     .box-triangle-up(@light-gray, @off-white);
   }
 }

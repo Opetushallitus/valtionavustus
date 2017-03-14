@@ -1,15 +1,19 @@
 import FormUtil from 'soresu-form/web/form/FormUtil'
-import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
-import _ from 'lodash'
+
+import BudgetBusinessRules from '../budgetedit/BudgetBusinessRules.js'
 
 export default class SeurantaBudgetEditFormController {
-
-  constructor(arviointiController, customComponentFactory, customPreviewComponentFactory, avustushaku, form,  hakemus) {
+  constructor(arviointiController,
+              customComponentFactory,
+              customPreviewComponentFactory,
+              avustushaku,
+              form,
+              hakemus) {
     this.arviointiController = arviointiController
     this.customComponentFactory = customComponentFactory
     this.customPreviewComponentFactory = customPreviewComponentFactory
     this.avustushaku = avustushaku
-    this.form = form
+    this.budgetBusinessRules = new BudgetBusinessRules(form.content[0], hakemus.arvio)
     this.hakemus = hakemus
     this.componentOnChangeListener = this.componentOnChangeListener.bind(this)
   }

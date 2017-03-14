@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React from 'react'
+import _ from 'lodash'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
@@ -8,24 +9,15 @@ import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 
-import BudgetEditFormController from './BudgetEditFormController.js'
-import BudgetEditComponentFactory from './BudgetEditComponentFactory.js'
+import BudgetBusinessRules from './BudgetBusinessRules'
+import BudgetEditFormController from './BudgetEditFormController'
+import BudgetEditComponentFactory from './BudgetEditComponentFactory'
 import BudgetEditPreviewComponentFactory from './BudgetEditPreviewComponentFactory'
-import FakeFormState from '../form/FakeFormState.js'
+import FakeFormState from '../form/FakeFormState'
 
 import style from '../style/budgetedit.less'
 
-export default class HakemusBudgetEditing extends Component {
-
-  static initialValues(formContent, originalHakemus) {
-    const budgetItems =  FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
-    const initialValues = {}
-    budgetItems.map(budgetItem => initialValues[budgetItem.children[0].id] = "")
-    budgetItems.filter(budgetItem => budgetItem.params.incrementsTotal === false)
-        .map(budgetItem => initialValues[budgetItem.children[1].id] = InputValueStorage.readValue(formContent, originalHakemus.answers, budgetItem.children[1].id))
-    return initialValues
-  }
-
+export default class HakemusBudgetEditing extends React.Component {
   static isEditingAllowed(allowEditingArvio, formContent, fieldId) {
     if(!allowEditingArvio) {
       return false
@@ -68,7 +60,11 @@ export default class HakemusBudgetEditing extends Component {
       printEntityId: undefined
     }
     const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: [vaBudget]}}, fakeHakemus, formOperations, hakemus)
-    FormStateLoop.initDefaultValues(fakeHakemus.answers, HakemusBudgetEditing.initialValues(budgetEditFormState.form.content, hakemus), budgetEditFormState.form.content, budgetEditFormState.configuration.lang)
+    FormStateLoop.initDefaultValues(
+      fakeHakemus.answers,
+      BudgetBusinessRules.getInitialValuesByFieldId(budgetEditFormState.form.content, hakemus.answers),
+      budgetEditFormState.form.content,
+      budgetEditFormState.configuration.lang)
     HakemusBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus)
     const formElementProps = {
       state: budgetEditFormState,
@@ -85,4 +81,3 @@ export default class HakemusBudgetEditing extends Component {
     )
   }
 }
-

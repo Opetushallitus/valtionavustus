@@ -8,7 +8,7 @@ import RouteParser from 'route-parser'
 import YhteenvetoController from './YhteenvetoController.jsx'
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
 import DateUtil from 'soresu-form/web/form/DateUtil'
-import RahoitusAlueet from './data/Rahoitusalueet'
+import Rahoitusalueet from './data/Rahoitusalueet'
 
 import style from './style/main.less'
 import summaryStyle from './style/summary.less'
@@ -19,11 +19,10 @@ export default class SummaryApp extends Component {
     const hakuData = state.hakuData
     const hakemusList = hakuData.hakemukset
     const avustushaku = hakuData.avustushaku
-    const multipleRahoitusalue = avustushaku["multiple-rahoitusalue"]
     const applicationsByStatus = _.groupBy(hakemusList, h => h.arvio.status)
-    const summaryListings = multipleRahoitusalue ?
-      <RahoitusalueList hakemusList={hakemusList}/> :
-      BuildSummaryList(SummaryApp.statusesInOrder(),applicationsByStatus)
+    const summaryListings = _.isEmpty(avustushaku.content.rahoitusalueet) ?
+      BuildSummaryList(SummaryApp.statusesInOrder(),applicationsByStatus) :
+      <RahoitusalueList hakemusList={hakemusList}/>
 
     const titleString = SummaryApp.titleString(avustushaku)
     const mailToBody = encodeURIComponent(titleString + "\n\nLinkki ratkaisuyhteenvetoon:\n\n" + location.href)
@@ -84,7 +83,7 @@ const RahoitusalueList = ({hakemusList})=>{
   const rahoitusAlueetNameValues = _.chain(applicationsByRahoitusalue).
     omit([nullValue,undefinedValue]).
     keys().
-    sortBy((x)=> x==withoutLabel ? 9999: RahoitusAlueet.indexOf(x)).
+    sortBy((x)=> x==withoutLabel ? 9999: Rahoitusalueet.indexOf(x)).
     map((x)=>{return {
       name:x,
       values:applicationsByRahoitusalue[x]

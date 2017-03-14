@@ -20,6 +20,7 @@
    :roles (:roles arvio)
    :presenter-role-id (:presenter_role_id arvio)
    :rahoitusalue (:rahoitusalue arvio)
+   :talousarviotili (:talousarviotili arvio)
    :academysize (:academysize arvio)
    :perustelut (:perustelut arvio)
    :tags (:tags arvio)

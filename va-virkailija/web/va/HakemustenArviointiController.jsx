@@ -13,8 +13,9 @@ import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
 import HttpUtil from 'va-common/web/HttpUtil'
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 
-import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
-import HakemusSelvitysStatuses from './hakemus-details/HakemusSelvitysStatuses.js'
+import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses'
+import HakemusSelvitysStatuses from './hakemus-details/HakemusSelvitysStatuses'
+import RahoitusalueSelections from './hakemus-details/RahoitusalueSelections'
 
 const dispatcher = new Dispatcher()
 
@@ -203,6 +204,7 @@ export default class HakemustenArviointiController {
       const newUrl = "/avustushaku/" + parsedUrl.avustushaku_id + "/hakemus/" + hakemusIdToSelect + "/" + subTab + "/" + location.search
       history.pushState({}, window.title, newUrl)
     }
+    this.validateHakemusRahoitusalueAndTalousarviotiliSelection(state)
     this.loadScores(state, hakemusIdToSelect)
     this.loadComments()
     this.loadSelvitys()
@@ -520,6 +522,39 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  validateHakemusRahoitusalueAndTalousarviotiliSelection(state) {
+    const avustushaku = state.hakuData.avustushaku
+
+    const allowEditing = avustushaku.status === "published"
+        && avustushaku.phase === "ended"
+        && state.hakuData.privileges["change-hakemus-state"]
+
+    if (!allowEditing) {
+      return
+    }
+
+    const availableRahoitusalueet = avustushaku.content.rahoitusalueet
+    const hakemusArvio = state.selectedHakemus.arvio
+
+    const selectedRahoitusalue = RahoitusalueSelections.validateRahoitusalueSelection(
+      hakemusArvio.rahoitusalue,
+      availableRahoitusalueet)
+
+    const selectedTalousarviotili = RahoitusalueSelections.validateTalousarviotiliSelection({
+      selectedTalousarviotili: hakemusArvio.talousarviotili,
+      selectedRahoitusalue,
+      availableRahoitusalueet
+    })
+
+    if (hakemusArvio.rahoitusalue !== selectedRahoitusalue || hakemusArvio.talousarviotili !== selectedTalousarviotili) {
+      this.setHakemusRahoitusalueAndTalousarviotili({
+        hakemus:         state.selectedHakemus,
+        rahoitusalue:    selectedRahoitusalue,
+        talousarviotili: selectedTalousarviotili
+      })
+    }
+  }
+
   // Public API
   selectHakemus(event) {
     const hakemusId = Number(event.currentTarget.id.split('-')[1])
@@ -623,8 +658,9 @@ export default class HakemustenArviointiController {
     }
   }
 
-  setHakemusRahoitusalue(hakemus, newRahoitusalue) {
-    hakemus.arvio["rahoitusalue"] = newRahoitusalue
+  setHakemusRahoitusalueAndTalousarviotili({hakemus, rahoitusalue, talousarviotili}) {
+    hakemus.arvio.rahoitusalue = rahoitusalue
+    hakemus.arvio.talousarviotili = talousarviotili
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 

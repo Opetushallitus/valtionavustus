@@ -16,8 +16,8 @@
 
   :modules {:dirs ["soresu-form"
                    "va-common"
-                   "va-virkailija"
-                   "va-hakija"]
+                   "va-hakija"
+                   "va-virkailija"]
             :inherited {:repositories [["releases" {:url "https://artifactory.oph.ware.fi/artifactory/oph-sade-release-local"
                                                     :sign-releases false
                                                     :snapshots false}]

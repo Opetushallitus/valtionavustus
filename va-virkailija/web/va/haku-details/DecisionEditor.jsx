@@ -6,7 +6,6 @@ import HttpUtil from 'va-common/web/HttpUtil.js'
 import DateUtil from 'soresu-form/web/form/DateUtil'
 import PaatosUrl from '../hakemus-details/PaatosUrl.js'
 import Selvitys from './Selvitys.jsx'
-import {RahoitusAlueet,Momentti} from '../data/Rahoitusalueet'
 
 const DecisionField = ({avustushaku, title, id,language, onChange}) => {
   const fieldId= `decision.${id}.${language}`
@@ -341,15 +340,17 @@ export default class DecisionEditor extends React.Component {
       {id:"johtaja",title:"Johtaja"},
       {id:"valmistelija",title:"Esittelijä"}
     ]
-    const multipleRahoitusalue = avustushaku["multiple-rahoitusalue"]
+    const rahoitusAlueDecisionSubfields = _.isEmpty(avustushaku.content.rahoitusalueet)
+      ? []
+      : avustushaku.content.rahoitusalueet.map(row => <DecisionFields key={row.rahoitusalue} title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue} avustushaku={avustushaku} id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s\.]/g, "_")} onChange={onChange}/>)
     return (
       <div className="decision-editor">
         <DecisionFields key="taustaa" title="Taustaa" avustushaku={avustushaku} id="taustaa" onChange={onChange}/>
         <DecisionFields key="myonteinenlisateksti" title="Myönteisen päätöksen lisäteksti" avustushaku={avustushaku} id="myonteinenlisateksti" onChange={onChange}/>
-        {multipleRahoitusalue  &&
+        {rahoitusAlueDecisionSubfields.length > 0  &&
         <div className="decision-subfields">
-            {Momentti.map((field)=><DecisionFields key={field} title={"Myönteisen päätöksen lisäteksti - " + field} avustushaku={avustushaku} id={"myonteinenlisateksti-" + field} onChange={onChange}/>)}
-          </div>
+          {rahoitusAlueDecisionSubfields}
+        </div>
         }
         {fields.map((field)=><DecisionFields key={field.id} title={field.title} avustushaku={avustushaku} id={field.id} onChange={onChange}/>)}
         <DecisionFields key="maksu" title="Avustuksen maksuaika" avustushaku={avustushaku} id="maksu" onChange={onChange}/>

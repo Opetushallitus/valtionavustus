@@ -1,11 +1,10 @@
-import React, {Component} from 'react'
+import React from 'react'
 import PresenterComment from './PresenterComment.jsx'
 import SeurantaLiitteet from './SeurantaLiitteet.jsx'
 import SeurantaTags from './SeurantaTags.jsx'
 import SeurantaBudgetEditing from '../seurantabudgetedit/SeurantaBudgetEditing.jsx'
 
-export default class Seuranta extends Component {
-
+export default class Seuranta extends React.Component {
   render() {
     const {controller, hakemus, avustushaku, translations, hakuData} = this.props
     return (
