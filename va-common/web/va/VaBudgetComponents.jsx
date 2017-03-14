@@ -112,107 +112,126 @@ export class BudgetSummaryElement extends React.Component {
     const htmlId = this.props.htmlId
     const field = this.props.field
 
-    const vaSpecificProperties = this.props.customProps
-    const avustushaku = vaSpecificProperties.avustushaku
-    const selfFinancingPercentage = avustushaku.content["self-financing-percentage"]
-
-    const staticTranslations = this.props.translations
-    const labelTranslations = this.props.labelTranslations || field.params
-
-    const totalNeeded = field.totalNeeded
     const subTotalsAndErrorsAndSummingFields = field.subTotalsAndErrorsAndSummingFields
     const renderSubTotals = subTotalsAndErrorsAndSummingFields && subTotalsAndErrorsAndSummingFields.length > 1
 
-    const lang = this.props.lang
-
-    const errorMessage = this.miscTranslator.translate("check-numbers", lang, "VIRHE")
-    const selfFinancingShare = field.budgetIsValid ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : errorMessage
-    const ophShare = field.budgetIsValid ? (totalNeeded - selfFinancingShare) : errorMessage
+    const totalNeeded = this.props.field.totalNeeded
 
     const sumClassNames = ClassNames("money sum", { error: !field.budgetIsValid, 'error-message': !FormUtil.isNumeric(totalNeeded) })
-    const sumPartClassNames = ClassNames("money", { 'error error-message': !field.budgetIsValid  })
 
     return (
       <div id={htmlId}>
-        {renderSubTotals && BudgetSummaryElement.makeSubTotalsTable({
+        {renderSubTotals && BudgetSubtotalSummaryElement({
           subTotalFields: subTotalsAndErrorsAndSummingFields,
-          translations:   staticTranslations.form.budget,
-          sumClassNames:  sumClassNames,
-          totalNeeded:    totalNeeded,
-          lang:           lang
+          totalNeeded,
+          sumClassNames,
+          translations: this.props.translations.form.budget,
+          lang: this.props.lang
         })}
-        <table className="budget-summary">
-          <colgroup>
-            <col className="label-column" />
-            <col className="amount-column" />
-          </colgroup>
-          <tbody>
-          <tr className="grand-total">
-            <td className="label-column"><LocalizedString translations={labelTranslations} translationKey="totalSumRowLabel" lang={lang} /></td>
-            <td className="amount-column"><span className={sumClassNames}>{totalNeeded}</span></td>
-          </tr>
-          <tr hidden={selfFinancingPercentage === 0}>
-            <td className="label-column"><LocalizedString translations={labelTranslations} translationKey="ophFinancingLabel" lang={lang} /> {100 - selfFinancingPercentage} %</td>
-            <td className="amount-column"><span className={sumPartClassNames}>{ophShare}</span></td>
-          </tr>
-          <tr hidden={selfFinancingPercentage === 0}>
-            <td className="label-column"><LocalizedString translations={labelTranslations} translationKey="selfFinancingLabel" lang={lang} /> {selfFinancingPercentage} %</td>
-            <td className="amount-column"><span className={sumPartClassNames}>{selfFinancingShare}</span></td>
-          </tr>
-          </tbody>
-        </table>
+        {BudgetFinancingSummaryElement({
+          budgetIsValid: this.props.field.budgetIsValid,
+          selfFinancingPercentage: this.props.customProps.avustushaku.content["self-financing-percentage"],
+          totalNeeded,
+          sumClassNames,
+          invalidBudgetErrorMessage: this.miscTranslator.translate("check-numbers", this.props.lang, "VIRHE"),
+          translations: this.props.labelTranslations || this.props.field.params,
+          lang: this.props.lang
+        })}
       </div>
     )
   }
+}
 
-  static makeSubTotalsTable({subTotalFields, translations, sumClassNames, totalNeeded, lang}) {
-    const subTotalRows = _.map(subTotalFields, row => {
-      const sumTotalClassNames = ClassNames("money sum", {'error error-message': row.containsErrors})
-      return (
-        <tr className="budget-item" key={"total-summary-row-" + row.summingBudgetFieldId}>
+const BudgetSubtotalSummaryElement = ({
+  subTotalFields,
+  totalNeeded,
+  sumClassNames,
+  translations,
+  lang
+}) => {
+  const subTotalRows = _.map(subTotalFields, row => {
+    const sumTotalClassNames = ClassNames("money sum", {'error error-message': row.containsErrors})
+    return (
+      <tr className="budget-item" key={"total-summary-row-" + row.summingBudgetFieldId}>
+        <td className="label-column" colSpan="2">
+          <LocalizedString translations={row} translationKey="label" lang={lang} />
+        </td>
+        <td className="amount-column">
+          <span className={sumTotalClassNames}>{row.sum}</span>
+        </td>
+      </tr>
+    )
+  })
+
+  return (
+    <table className="summing-table">
+      <caption>
+        <LocalizedString translations={translations} translationKey="financingNeeded" lang={lang} />
+      </caption>
+      <colgroup>
+        <col className="label-column" colSpan="2"/>
+        <col className="amount-column" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th className="label-column" colSpan="2">
+            <LocalizedString translations={translations} translationKey="financingSection" lang={lang} />
+          </th>
+          <th className="amount-column">
+            <LocalizedString translations={translations} translationKey="total" lang={lang} />
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {subTotalRows}
+      </tbody>
+      <tfoot>
+        <tr>
           <td className="label-column" colSpan="2">
-            <LocalizedString translations={row} translationKey="label" lang={lang} />
+            <LocalizedString translations={translations} translationKey="financingNeededTotal" lang={lang} />
           </td>
           <td className="amount-column">
-            <span className={sumTotalClassNames}>{row.sum}</span>
+            <span className={sumClassNames}>{totalNeeded}</span>
           </td>
         </tr>
-      )
-    })
+      </tfoot>
+    </table>
+  )
+}
 
-    return (
-      <table className="summing-table">
-        <caption>
-          <LocalizedString translations={translations} translationKey="financingNeeded" lang={lang} />
-        </caption>
-        <colgroup>
-          <col className="label-column" colSpan="2"/>
-          <col className="amount-column" />
-        </colgroup>
-        <thead>
-          <tr>
-            <th className="label-column" colSpan="2">
-              <LocalizedString translations={translations} translationKey="financingSection" lang={lang} />
-            </th>
-            <th className="amount-column">
-              <LocalizedString translations={translations} translationKey="total" lang={lang} />
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {subTotalRows}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td className="label-column" colSpan="2">
-              <LocalizedString translations={translations} translationKey="financingNeededTotal" lang={lang} />
-            </td>
-            <td className="amount-column">
-              <span className={sumClassNames}>{totalNeeded}</span>
-            </td>
-          </tr>
-        </tfoot>
-      </table>
-    )
-  }
+const BudgetFinancingSummaryElement = ({
+  budgetIsValid,
+  selfFinancingPercentage,
+  totalNeeded,
+  sumClassNames,
+  invalidBudgetErrorMessage,
+  translations,
+  lang
+}) => {
+  const selfFinancingShare = budgetIsValid ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : invalidBudgetErrorMessage
+  const ophFinancingShare = budgetIsValid ? (totalNeeded - selfFinancingShare) : invalidBudgetErrorMessage
+  const sumPartClassNames = ClassNames("money", {'error error-message': !budgetIsValid})
+
+  return (
+    <table className="budget-summary">
+      <colgroup>
+        <col className="label-column" />
+        <col className="amount-column" />
+      </colgroup>
+      <tbody>
+      <tr className="grand-total">
+        <td className="label-column"><LocalizedString translations={translations} translationKey="totalSumRowLabel" lang={lang} /></td>
+        <td className="amount-column"><span className={sumClassNames}>{totalNeeded}</span></td>
+      </tr>
+      <tr hidden={selfFinancingPercentage === 0}>
+        <td className="label-column"><LocalizedString translations={translations} translationKey="ophFinancingLabel" lang={lang} /> {100 - selfFinancingPercentage} %</td>
+        <td className="amount-column"><span className={sumPartClassNames}>{ophFinancingShare}</span></td>
+      </tr>
+      <tr hidden={selfFinancingPercentage === 0}>
+        <td className="label-column"><LocalizedString translations={translations} translationKey="selfFinancingLabel" lang={lang} /> {selfFinancingPercentage} %</td>
+        <td className="amount-column"><span className={sumPartClassNames}>{selfFinancingShare}</span></td>
+      </tr>
+      </tbody>
+    </table>
+  )
 }
