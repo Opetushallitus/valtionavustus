@@ -210,7 +210,7 @@ const BudgetFinancingSummaryElement = ({
 }) => {
   const selfFinancingShare = budgetIsValid ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : invalidBudgetErrorMessage
   const ophFinancingShare = budgetIsValid ? (totalNeeded - selfFinancingShare) : invalidBudgetErrorMessage
-  const sumPartClassNames = ClassNames("money", {'error error-message': !budgetIsValid})
+  const sumPartClassNames = ClassNames("money sum", {'error error-message': !budgetIsValid})
 
   return (
     <table className="budget-summary">
