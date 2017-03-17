@@ -224,6 +224,45 @@ cd va-hakija
 ../lein populate 400
 ```
 
+# Interaktiivinen kehitys
+
+Luo `checkouts`-hakemistot hakijan ja virkailijan
+sovellusmoduuleihin. Projektin juurihakemistossa:
+
+``` shell
+for dir in va-hakija va-virkailija; do
+    mkdir -p "$dir/checkouts" && \
+    pushd "$dir/checkouts" && \
+    ln -s ../../soresu-form soresu && \
+    ln -s ../../va-common common && \
+    popd
+done
+```
+
+Leiningen tunnistaa nyt `soresu` ja `common` -kirjastot ns.
+[checkout dependencyinä](https://github.com/technomancy/leiningen/blob/master/doc/TUTORIAL.md#checkout-dependencies),
+jolloin muutokset lähdekoodissa ja muutoksen evaluointi voidaan saada
+näkyviin hakijan ja virkailijan sovelluksissa ajonaikaisesti.
+
+Esimerkiksi Emacsin
+[CIDER](https://cider.readthedocs.io/)-kehitysympäristöä käyttäessä:
+
+1. Käynnistä REPL hakijan tai virkailijan moduulissa: avaa moduulissa
+   oleva clj-lähdekoodi puskuriin (esim. tiedosto
+   `va-virkailija/src/oph/va/virkailija/routes.clj`) ja suorita
+   Emacs-komento `cider-jack-in`
+
+2. Kun REPL on käynnistynyt, käynnistä sovelluspalvelin REPL:ssä:
+
+   ```
+   oph.va.hakija.main> (def main (-main))
+   ```
+
+3. Muokkaa `soresu` tai `common` -kirjastossa olevaa clj-lähdekoodia,
+   evaluoi muutos (esim. Emacs-komento `cider-eval-defun-at-point`)
+
+4. Muutoksen vaikutuksen pitäisi näkyä sovelluksessa.
+
 # JConsole-yhteys palvelimelle
 
 1. Mene palvelimelle, esim: `./servers/ssh_to_va-test.bash`
