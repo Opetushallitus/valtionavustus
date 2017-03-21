@@ -145,6 +145,26 @@
         "fi": "Osio",
         "sv": "TODO SV Osio"
       },
+      "minSelfFinancingNeeded": {
+        "fi": "Omarahoitusta oltava vähintään {{min-self-financing-percentage}} % haettavasta kokonaissummasta",
+        "sv": "TODO SV Omarahoitusta oltava vähintään {{min-self-financing-percentage}} % haettavasta kokonaissummasta"
+      },
+      "ophFinancingAmount": {
+        "fi": "OPH:lta haettava rahoitus",
+        "sv": "TODO SV OPH:lta haettava rahoitus"
+      },
+      "ophFinancingPercentage": {
+        "fi": "OPH:n rahoitus-%",
+        "sv": "TODO SV OPH:n rahoitus-%"
+      },
+      "selfFinancingAmount": {
+        "fi": "Omarahoitus",
+        "sv": "Egen finansiering"
+      },
+      "selfFinancingPercentage": {
+        "fi": "Omarahoitus-%",
+        "sv": "Egen finansiering-%"
+      },
       "total": {
         "fi": "Yhteensä",
         "sv": "Totalt"
