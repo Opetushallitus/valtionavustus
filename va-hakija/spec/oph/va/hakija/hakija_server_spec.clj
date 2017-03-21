@@ -25,11 +25,12 @@
 (defn find-by-id [json id] (first (filter (fn [e] (.equals ( :id e) id)) (-> (formutil/flatten-elements (json :content))))))
 
 (defn update-answers [answers key value]
-  (let [update-fn (fn [key new-value] (fn [answer-node]
-                                        (if (= (:key answer-node) key)
-                                          {:key key :value new-value :fieldType (:fieldType answer-node)}
-                                          answer-node)))]
-    {:value (map (update-fn key value) (:value answers))}))
+  (letfn [(update-fn [answer] (if (= (:key answer) key)
+                                {:key       key
+                                 :value     value
+                                 :fieldType (:fieldType answer)}
+                                answer))]
+    {:value (map update-fn (:value answers))}))
 
 (def valid-answers
   {:value [{:key "organization" :value "Testi Organisaatio" :fieldType "textField"}
