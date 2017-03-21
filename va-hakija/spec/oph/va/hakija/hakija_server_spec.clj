@@ -6,6 +6,7 @@
             [cheshire.core :refer :all]
             [clj-time.format :as f]
             [clj-time.local :as l]
+            [oph.soresu.form.db :as form-db]
             [oph.va.hakija.db :as va-db]
             [oph.soresu.form.formutil :as formutil]
             [oph.common.testing.spec-plumbing :refer :all]
@@ -31,6 +32,9 @@
                                  :fieldType (:fieldType answer)}
                                 answer))]
     {:value (map update-fn (:value answers))}))
+
+(defn conj-answers [answers answer]
+  (update answers :value #(conj % answer)))
 
 (def valid-answers
   {:value [{:key "organization" :value "Testi Organisaatio" :fieldType "textField"}
@@ -139,6 +143,10 @@
     (try ~@form
         (finally (delete! "/api/test/system-time")))))
 
+(def hakemus-start-timestamp "2015-08-19T07:59:59.999+03")
+(def hakemus-open-timestamp "2015-09-30T16:14:59.999+03")
+(def hakemus-end-timestamp "2015-09-30T16:15:00.000+03")
+
 (describe "HTTP server when haku is open"
 
   (tags :server :server-with-open-haku)
@@ -149,7 +157,7 @@
 
   ;; Set time
   (around-all [_]
-    (set-time "2015-09-30T16:14:59.999+03" (_)))
+    (set-time hakemus-open-timestamp (_)))
 
   (it "GET should return valid form JSON from route /api/form/1"
       (let [{:keys [status headers body error] :as resp} (get! "/api/form/1")
@@ -325,7 +333,6 @@
           (should= 2030 (:budget_total posted-hakemus))
           (should= 1522 (:budget_oph_share posted-hakemus))))
 
-
   (it "Stores organization and project names to database on put (creation)"
       (let [{:keys [hakemus-id status]} (put-hakemus valid-answers)
             created-hakemus (va-db/get-hakemus hakemus-id)]
@@ -366,7 +373,7 @@
 
   ;; Set time
   (around-all [_]
-    (set-time "2015-09-30T16:15:00.000+03" (_)))
+    (set-time hakemus-end-timestamp (_)))
 
   (it "PUT /api/avustushaku/1/hakemus/ should fail"
     (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" valid-answers)
@@ -397,7 +404,7 @@
 
   ;; Set time
   (around-all [_]
-    (set-time "2015-08-19T07:59:59.999+03" (_)))
+    (set-time hakemus-start-timestamp (_)))
 
   (it "PUT /api/avustushaku/1/hakemus/ should fail"
     (let [{:keys [status headers body error] :as resp} (put! "/api/avustushaku/1/hakemus" valid-answers)
@@ -405,5 +412,77 @@
       (should= 405 status)
       (should= "upcoming" (:phase json))))
 )
+
+(describe "HTTP server with haku requiring explicit self-financing amount"
+
+  (tags :server)
+
+  (around-all [_]
+    (with-test-server! :form-db #(start-server "localhost" test-server-port false) (_)))
+
+  (around-all [_]
+    ;; Add self-financing-amount field to the budget in avustushaku form
+    (letfn [(update-if-budget-summary-element [field]
+              (if (= (:fieldType field) "vaBudgetSummaryElement")
+                (assoc field :children [{:id         "self-financing-amount"
+                                         :fieldClass "formField"
+                                         :fieldType  "vaSelfFinancingField"
+                                         :required   true}])
+                field))
+
+            (update-if-budget [field]
+              (if (= (:fieldType field) "vaBudget")
+                (update field :children (partial map update-if-budget-summary-element))
+                field))
+
+            (update-if-financing-plan [field]
+              (if (= (:id field) "financing-plan")
+                (update field :children (partial map update-if-budget))
+                field))]
+      (let [old-form (form-db/get-form 1)
+            new-form (update old-form :content (partial map update-if-financing-plan))]
+        (form-db/update-form! new-form)
+        (_))))
+
+  (around-all [_]
+    (set-time hakemus-open-timestamp (_)))
+
+  (it "Stores budget totals to database according to minimum self-financing percentage on put (creation) for hakemus without self-financing amount"
+      (let [{:keys [hakemus-id status json]} (put-hakemus valid-answers)
+            created-hakemus (va-db/get-hakemus hakemus-id)]
+        (should= 200 status)
+        (should= [{:error "required"}] (-> json :validation-errors :self-financing-amount))
+        (should= 40 (:budget_total created-hakemus))
+        (should= 30 (:budget_oph_share created-hakemus))))
+
+  (it "Stores budget totals to database according to given self-financing amount on put (creation) for hakemus with self-financing amount"
+      (let [{:keys [hakemus-id status json]} (put-hakemus (conj-answers valid-answers {:key "self-financing-amount" :value "26" :fieldType "moneyField"}))
+            created-hakemus (va-db/get-hakemus hakemus-id)]
+        (should= 200 status)
+        (should-be empty? (-> json :validation-errors :self-financing-amount))
+        (should= 40 (:budget_total created-hakemus))
+        (should= 14 (:budget_oph_share created-hakemus))))
+
+  (it "Stores budget totals to database on post (update) when changing self-financing amount"
+      (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+            updated-answers (conj-answers valid-answers {:key "self-financing-amount"
+                                                         :value "26"
+                                                         :fieldType "moneyField"})
+            {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version) updated-answers)
+            posted-hakemus (va-db/get-hakemus hakemus-id)]
+        (should= 200 status)
+        (should= 40 (:budget_total posted-hakemus))
+        (should= 14 (:budget_oph_share posted-hakemus))))
+
+  (it "Stores budget totals to database on submit"
+      (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+            updated-answers (conj-answers valid-answers {:key "self-financing-amount"
+                                                         :value "26"
+                                                         :fieldType "moneyField"})
+            {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version "/submit") updated-answers)
+            posted-hakemus (va-db/get-hakemus hakemus-id)]
+        (should= 200 status)
+        (should= 40 (:budget_total posted-hakemus))
+        (should= 14 (:budget_oph_share posted-hakemus)))))
 
 (run-specs)

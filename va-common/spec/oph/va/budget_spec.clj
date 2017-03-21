@@ -1,9 +1,9 @@
 (ns oph.va.budget_spec
-  (:require
-    [speclj.core :refer :all]
-    [oph.va.budget :refer :all]))
+  (:require [speclj.core :refer :all]
+            [oph.soresu.form.formutil :refer [transform-form-content]]
+            [oph.va.budget :refer :all]))
 
-(def form-with-budget-field
+(def budget-form
   {:id 1
    :content [{
      :id "financing-plan"
@@ -71,6 +71,22 @@
          :fieldType "vaBudget"}]
      :fieldType "theme"}] })
 
+(def budget-form-with-self-financing-amount
+  (let [budget-summary {:id         "budget-summary",
+                        :fieldClass "wrapperElement",
+                        :fieldType  "vaBudgetSummaryElement",
+                        :children [{:id        "self-financing-amount",
+                                   :fieldClass "formField",
+                                   :fieldType  "vaSelfFinancingField"}]}]
+    (transform-form-content budget-form
+                            (fn [field]
+                              (if (= "vaBudget" (:fieldType field))
+                                (update field
+                                        :children
+                                        (fn [children]
+                                          (conj children budget-summary)))
+                                field)))))
+
 (def complete-valid-answers
   {:value [
     {:key "continuation-project" :value "yes"}
@@ -87,6 +103,9 @@
 
 (def avustushaku {:content { :self-financing-percentage 10 } })
 
+(defn conj-answers [answers answer]
+  (update answers :value #(conj % answer)))
+
 (describe "Budget calculation"
 
           (tags :server)
@@ -94,7 +113,7 @@
           (it "Calculates trivial case correctly"
               (let [totals (oph.va.budget/calculate-totals complete-valid-answers
                                                            avustushaku
-                                                           form-with-budget-field)]
+                                                           budget-form)]
                 (should= 12000 (:total-needed totals))
                 (should= 10800 (:oph-share totals))))
 
@@ -104,7 +123,7 @@
                   {:key "personnel-costs-row.amount" :value ""}
                   {:key "project-incomes-row.amount" :value "1500"}
                   {:key "eu-programs-income-row.amount" :value "500"}]}
-                    totals (oph.va.budget/calculate-totals answers-with-empty-field avustushaku form-with-budget-field)]
+                    totals (oph.va.budget/calculate-totals answers-with-empty-field avustushaku budget-form)]
                 (should= 2000 (:total-needed totals))
                 (should= 1800 (:oph-share totals))))
 
@@ -119,16 +138,50 @@
                                                        :value "500"}]}
                     totals (oph.va.budget/calculate-totals answers-with-empty-field
                                                            avustushaku
-                                                           form-with-budget-field)]
+                                                           budget-form)]
                 (should= 2000 (:total-needed totals))
                 (should= 1800 (:oph-share totals))))
 
           (it "Calculates corner cases correctly"
-                                  (let [answers-with-empty-field {:value [
-                                      {:key "coordination-costs-row.amount" :value "10"}
-                                      {:key "eu-programs-income-row.amount" :value "1"}]}
-                                        totals (oph.va.budget/calculate-totals answers-with-empty-field avustushaku form-with-budget-field)]
-                                    (should= 9 (:total-needed totals))
-                                    (should= 8 (:oph-share totals)))))
+              (let [answers-with-empty-field {:value [{:key "coordination-costs-row.amount" :value "10"}
+                                                      {:key "eu-programs-income-row.amount" :value "1"}]}
+                    totals (oph.va.budget/calculate-totals answers-with-empty-field avustushaku budget-form)]
+                (should= 9 (:total-needed totals))
+                (should= 8 (:oph-share totals))))
+
+          (it "Calculates budget with floating self-financing amount"
+              (let [totals (oph.va.budget/calculate-totals (conj-answers complete-valid-answers
+                                                                         {:key "self-financing-amount"
+                                                                          :value "2300"})
+                                                           avustushaku
+                                                           budget-form-with-self-financing-amount)]
+                (should= 12000 (:total-needed totals))
+                (should= 9700 (:oph-share totals))))
+
+          (it "Fallbacks to minimum self-financing amount if self-financing amount answer is too small"
+              (let [totals (oph.va.budget/calculate-totals (conj-answers complete-valid-answers
+                                                                         {:key "self-financing-amount"
+                                                                          :value "900"})
+                                                           avustushaku
+                                                           budget-form-with-self-financing-amount)]
+                (should= 12000 (:total-needed totals))
+                (should= 10800 (:oph-share totals))))
+
+          (it "Fallbacks to minimum self-financing amount if self-financing amount answer is invalid"
+              (let [totals (oph.va.budget/calculate-totals (conj-answers complete-valid-answers
+                                                                         {:key "self-financing-amount"
+                                                                          :value "garbage"})
+                                                           avustushaku
+                                                           budget-form-with-self-financing-amount)]
+                (should= 12000 (:total-needed totals))
+                (should= 10800 (:oph-share totals))))
+
+          (it "Fallbacks to minimum self-financing amount if there's no self-financing amount answer"
+              (let [totals (oph.va.budget/calculate-totals complete-valid-answers
+                                                           avustushaku
+                                                           budget-form-with-self-financing-amount)]
+                (should= 12000 (:total-needed totals))
+                (should= 10800 (:oph-share totals))))
+)
 
 (run-specs)
