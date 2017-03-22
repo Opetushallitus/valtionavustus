@@ -2,9 +2,7 @@
   (:require [clojure.string :as str]
             [clostache.parser :refer [render]]
             [oph.common.email :as email]
-            [oph.soresu.form.formutil :as formutil]
             [oph.va.budget :as va-budget]))
-
 
 (defn format-number [number]
   (let [s (str number)
@@ -47,7 +45,7 @@
         overridden-answers (-> hakemus :arvio  :overridden-answers)
         arvio (:arvio hakemus)
         use-detailed-costs (:useDetailedCosts arvio)
-        budget-elements (->> form-content formutil/flatten-elements (filter va-budget/is-budget-field?))
+        budget-elements (va-budget/find-budget-fields form-content)
         children (:children (first budget-elements))
         has-kayttosuunnitelma (not= nil children)
         table-menot (find-table children 0 answers overridden-answers)

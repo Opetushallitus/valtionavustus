@@ -23,8 +23,10 @@
         coefficient (if increments-total (if only-incomes 0 1) -1)]
     (* coefficient numeric-value)))
 
-(defn is-budget-field? [element]
-  (formutil/has-field-type? "vaBudget" element))
+(defn find-budget-fields [children]
+  (->> children
+       formutil/flatten-elements
+       (filter (partial formutil/has-field-type? "vaBudget"))))
 
 (defn find-summing-fields [children]
   (-> (partial formutil/has-field-type? "vaSummingBudgetElement")
@@ -73,8 +75,7 @@
 (defn calculate-totals-virkailija [answers avustushaku form use-detailed-costs costs-granted]
   (let [self-financing-percentage (-> avustushaku :content :self-financing-percentage)
         all-budget-summaries (->> (:content form)
-                                  formutil/flatten-elements
-                                  (filter is-budget-field?)
+                                  (find-budget-fields)
                                   (map (partial do-calculate-totals answers self-financing-percentage use-detailed-costs costs-granted )))]
     (first all-budget-summaries)))
 
