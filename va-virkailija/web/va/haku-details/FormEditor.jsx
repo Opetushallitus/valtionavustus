@@ -28,7 +28,9 @@ export default class FormEditor extends Component {
       onFormEdited: formEditedCallback,
       allowEditing: userHasEditPrivilege,
       readOnlyNotificationText: "Käyttäjätunnuksellasi ei ole oikeuksia muokata tätä hakua. Haun valmistelija voi lisätä sinulle oikeudet."})
-    const formState = formDraftJson ? FakeFormState.createEditFormState(translations, formDraftJson) : undefined
+    const formState = formDraftJson
+      ? FakeFormState.createEditFormState(avustushaku, translations, formDraftJson)
+      : undefined
     if (formState) {
       formState.koodistos = koodistos
       formState.koodistosLoader = hakuAdminController.ensureKoodistosLoaded

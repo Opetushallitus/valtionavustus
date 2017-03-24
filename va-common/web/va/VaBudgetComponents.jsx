@@ -4,8 +4,10 @@ import ClassNames from 'classnames'
 
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
-import Translator from 'soresu-form/web/form/Translator.js'
-import FormUtil from 'soresu-form/web/form/FormUtil.js'
+import MoneyTextField from 'soresu-form/web/form/component/MoneyTextField.jsx'
+import Translator from 'soresu-form/web/form/Translator'
+import FormUtil from 'soresu-form/web/form/FormUtil'
+import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 
 export default class VaBudgetElement extends React.Component {
   constructor(props) {
@@ -121,33 +123,20 @@ export class BudgetSummaryElement extends React.Component {
 
     const totalNeeded = this.props.field.totalNeeded
 
-    const sumClassNames = ClassNames("money sum", { error: !field.budgetIsValid, 'error-message': !FormUtil.isNumeric(totalNeeded) })
-
     return (
       <div id={htmlId}>
         {renderSubTotals && BudgetSubtotalSummaryElement({
           subTotalFields: subTotalsAndErrorsAndSummingFields,
           totalNeeded,
-          sumClassNames,
-          translations: this.props.translations.form.budget,
-          lang: this.props.lang
-        })}
-        {BudgetFloatingFinancingSummaryElement({
-          budgetIsValid: this.props.field.budgetIsValid,
-          selfFinancingAmountField,
-          totalNeeded,
-          minSelfFinancingPercentage: this.props.customProps.avustushaku.content["self-financing-percentage"],
-          invalidBudgetErrorMessage: this.miscTranslator.translate("check-numbers", this.props.lang, "VIRHE"),
           translations: this.props.translations.form.budget,
           lang: this.props.lang
         })}
         {BudgetFinancingSummaryElement({
-          budgetIsValid: this.props.field.budgetIsValid,
-          selfFinancingPercentage: this.props.customProps.avustushaku.content["self-financing-percentage"],
+          selfFinancingAmountField,
           totalNeeded,
-          sumClassNames,
-          invalidBudgetErrorMessage: this.miscTranslator.translate("check-numbers", this.props.lang, "VIRHE"),
-          translations: this.props.labelTranslations || this.props.field.params,
+          financing: this.props.field.financing,
+          checkNumbersMessage: this.miscTranslator.translate("check-numbers", this.props.lang, "VIRHE"),
+          translations: this.props.translations.form.budget,
           lang: this.props.lang
         })}
       </div>
@@ -158,23 +147,25 @@ export class BudgetSummaryElement extends React.Component {
 const BudgetSubtotalSummaryElement = ({
   subTotalFields,
   totalNeeded,
-  sumClassNames,
   translations,
   lang
 }) => {
   const subTotalRows = _.map(subTotalFields, row => {
-    const sumTotalClassNames = ClassNames("money sum", {'error error-message': row.containsErrors})
+    const classNames = ClassNames("money", {error: row.containsErrors})
+
     return (
       <tr className="budget-item" key={"total-summary-row-" + row.summingBudgetFieldId}>
         <td className="label-column" colSpan="2">
           <LocalizedString translations={row} translationKey="label" lang={lang} />
         </td>
         <td className="amount-column">
-          <span className={sumTotalClassNames}>{row.sum}</span>
+          <span className={classNames}>{row.sum}</span>
         </td>
       </tr>
     )
   })
+
+  const totalClassNames = ClassNames("money", {error: !totalNeeded.isValid})
 
   return (
     <table className="summing-table">
@@ -204,7 +195,7 @@ const BudgetSubtotalSummaryElement = ({
             <LocalizedString translations={translations} translationKey="financingNeededTotal" lang={lang} />
           </td>
           <td className="amount-column">
-            <span className={sumClassNames}>{totalNeeded}</span>
+            <span className={totalClassNames}>{totalNeeded.value}</span>
           </td>
         </tr>
       </tfoot>
@@ -213,116 +204,93 @@ const BudgetSubtotalSummaryElement = ({
 }
 
 const BudgetFinancingSummaryElement = ({
-  budgetIsValid,
-  selfFinancingPercentage,
-  totalNeeded,
-  sumClassNames,
-  invalidBudgetErrorMessage,
-  translations,
-  lang
-}) => {
-  const selfFinancingShare = budgetIsValid ? Math.ceil((selfFinancingPercentage / 100) * totalNeeded) : invalidBudgetErrorMessage
-  const ophFinancingShare = budgetIsValid ? (totalNeeded - selfFinancingShare) : invalidBudgetErrorMessage
-  const sumPartClassNames = ClassNames("money sum", {'error error-message': !budgetIsValid})
-
-  return (
-    <table className="budget-summary">
-      <colgroup>
-        <col className="label-column" />
-        <col className="amount-column" />
-      </colgroup>
-      <tbody>
-      <tr className="grand-total">
-        <td className="label-column"><LocalizedString translations={translations} translationKey="totalSumRowLabel" lang={lang} /></td>
-        <td className="amount-column"><span className={sumClassNames}>{totalNeeded}</span></td>
-      </tr>
-      <tr hidden={selfFinancingPercentage === 0}>
-        <td className="label-column"><LocalizedString translations={translations} translationKey="ophFinancingLabel" lang={lang} /> {100 - selfFinancingPercentage} %</td>
-        <td className="amount-column"><span className={sumPartClassNames}>{ophFinancingShare}</span></td>
-      </tr>
-      <tr hidden={selfFinancingPercentage === 0}>
-        <td className="label-column"><LocalizedString translations={translations} translationKey="selfFinancingLabel" lang={lang} /> {selfFinancingPercentage} %</td>
-        <td className="amount-column"><span className={sumPartClassNames}>{selfFinancingShare}</span></td>
-      </tr>
-      </tbody>
-    </table>
-  )
-}
-
-const BudgetFloatingFinancingSummaryElement = ({
-  budgetIsValid,
   selfFinancingAmountField,
   totalNeeded,
-  minSelfFinancingPercentage,
-  invalidBudgetErrorMessage,
+  financing,
+  checkNumbersMessage,
   translations,
   lang
 }) => {
-  const minSelfFinancingAmount = Math.ceil((minSelfFinancingPercentage / 100) * totalNeeded)
+  const isFinancingResultANumber = totalNeeded.isValid && financing.isSelfValueANumber
+  const isFinancingResultValid = totalNeeded.isValid && financing.isValid
 
-  const selfFinancingAmount = selfFinancingAmountField
-    ? Math.round(Number(selfFinancingAmountField.props.value))
-    : totalNeeded - minSelfFinancingAmount
+  const selfFinancingPercentage = VaBudgetCalculator.percentageOf(financing.selfValue, totalNeeded.value)
+  const selfFinancingPercentageFormatted = FormUtil.formatDecimal(FormUtil.roundDecimal(
+    selfFinancingPercentage, 1, "floor"))
+  const ophFinancingPercentageFormatted = FormUtil.formatDecimal(FormUtil.roundDecimal(
+    100 - selfFinancingPercentage, 1, "ceil"))
 
-  const ophFinancingAmount = totalNeeded - selfFinancingAmount
-
-  const selfFinancingPercentage = selfFinancingAmountField
-    ? selfFinancingAmount / totalNeeded * 100
-    : minSelfFinancingPercentage
-
-  const selfFinancingPercentageRounded = Math.round(selfFinancingPercentage * 10) / 10
-
-  const ophFinancingPercentage = 100 - selfFinancingPercentageRounded
-
-  const amountClassNames = ClassNames("money sum", {'error error-message': !budgetIsValid})
-  const percentageClassNames = ClassNames({'error error-message': !budgetIsValid})
+  const minSelfFinancingClassNames = ClassNames({error: totalNeeded.isValid && !financing.isValid})
+  const amountClassNames = ClassNames({
+    money: isFinancingResultANumber,
+    error: !isFinancingResultValid
+  })
+  const percentageClassNames = ClassNames({
+    percentage: isFinancingResultANumber,
+    error:      !isFinancingResultValid
+  })
 
   return (
-    <table className="budget-summary">
-      <caption>
-        <LocalizedString translations={translations}
-                         translationKey="minSelfFinancingNeeded"
-                         keyValues={{'min-self-financing-percentage': minSelfFinancingPercentage}}
-                         lang={lang} />
-      </caption>
-      <colgroup>
-        <col className="label-column" />
-        <col className="amount-column" />
-      </colgroup>
-      <tbody>
-        <tr>
-          <td className="label-column">
-            <LocalizedString translations={translations} translationKey="selfFinancingAmount" lang={lang} />
-          </td>
-          <td className="amount-column">
-            {selfFinancingAmountField || <span className={amountClassNames}>{budgetIsValid ? selfFinancingAmount : invalidBudgetErrorMessage}</span>}
-          </td>
-        </tr>
-        <tr>
-          <td className="label-column">
-            <LocalizedString translations={translations} translationKey="selfFinancingPercentage" lang={lang} />
-          </td>
-          <td className="amount-column">
-            <span className={percentageClassNames}>{budgetIsValid ? selfFinancingPercentageRounded + " %" : invalidBudgetErrorMessage}</span>
-          </td>
-        </tr>
-        <tr>
-          <td className="label-column">
-            <LocalizedString translations={translations} translationKey="ophFinancingAmount" lang={lang} />
-          </td>
-          <td className="amount-column">
-            <span className={amountClassNames}>{budgetIsValid ? ophFinancingAmount : invalidBudgetErrorMessage}</span>
-          </td>
-        </tr>
-        <tr>
-          <td className="label-column">
-            <LocalizedString translations={translations} translationKey="ophFinancingPercentage" lang={lang} />
-          </td>
-          <td className="amount-column">
-            <span className={percentageClassNames}>{budgetIsValid ? ophFinancingPercentage + " %" : invalidBudgetErrorMessage}</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <section className="budget-summary">
+      {selfFinancingAmountField && (
+        <h4 className={minSelfFinancingClassNames}>
+          <LocalizedString translations={translations}
+                           translationKey="minSelfFinancingNeeded"
+                           keyValues={{'min-self-financing-percentage': financing.minSelfPercentage}}
+                           lang={lang} />
+          {totalNeeded.isValid && (
+            <span> (<span className="money">{financing.minSelfValue}</span>)</span>
+          )}
+        </h4>
+      )}
+      <table className="amounts">
+        <colgroup>
+          <col className="amount-label-column" />
+          <col className="amount-value-column" />
+        </colgroup>
+        <tbody>
+          <tr>
+            <td className="amount-label-column">
+              <LocalizedString translations={translations} translationKey="selfFinancingAmount" lang={lang} />
+            </td>
+            <td className="amount-value-column">
+              {selfFinancingAmountField || <span className={amountClassNames}>{isFinancingResultANumber ? financing.selfValue : checkNumbersMessage}</span>}
+            </td>
+          </tr>
+          <tr>
+            <td className="amount-label-column">
+              <LocalizedString translations={translations} translationKey="ophFinancingAmount" lang={lang} />
+            </td>
+            <td className="amount-value-column">
+              <span className={amountClassNames}>{isFinancingResultANumber ? financing.ophValue : checkNumbersMessage}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table className="percentages">
+        <colgroup>
+          <col className="percentage-label-column" />
+          <col className="percentage-value-column" />
+        </colgroup>
+        <tbody>
+          <tr>
+            <td className="percentage-label-column">
+              <LocalizedString translations={translations} translationKey="selfFinancingPercentage" lang={lang} />
+            </td>
+            <td className="percentage-value-column">
+              <span className={percentageClassNames}>{isFinancingResultANumber ? selfFinancingPercentageFormatted : checkNumbersMessage}</span>
+            </td>
+          </tr>
+          <tr>
+            <td className="percentage-label-column">
+              <LocalizedString translations={translations} translationKey="ophFinancingPercentage" lang={lang} />
+            </td>
+            <td className="percentage-value-column">
+              <span className={percentageClassNames}>{isFinancingResultANumber ? ophFinancingPercentageFormatted : checkNumbersMessage}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
   )
 }

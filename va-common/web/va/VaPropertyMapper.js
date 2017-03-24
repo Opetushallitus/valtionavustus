@@ -1,7 +1,11 @@
 import React from 'react'
 import _ from 'lodash'
 
-import { DefaultPropertyMapper, MultipleOptionFieldOnChangePropertyMapper } from 'soresu-form/web/form/component/PropertyMapper.js'
+import {
+  DefaultPropertyMapper,
+  MultipleOptionFieldOnChangePropertyMapper,
+  TextFieldPropertyMapper
+} from 'soresu-form/web/form/component/PropertyMapper.js'
 
 export class VaFocusAreasPropertyMapper extends DefaultPropertyMapper {
   static map(props) {
@@ -20,5 +24,13 @@ export class VaFocusAreasPropertyMapper extends DefaultPropertyMapper {
       extendedProps.field.label = focusAreas.label
     }
     return extendedProps
+  }
+}
+
+export class SelfFinancingPropertyMapper extends TextFieldPropertyMapper {
+  static map(props) {
+    const mapped = TextFieldPropertyMapper.map(props)
+    mapped.renderingParameters = _.assign({}, mapped.renderingParameters, {hideLabels: true})
+    return mapped
   }
 }

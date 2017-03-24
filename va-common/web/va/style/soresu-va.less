@@ -32,12 +32,43 @@
 }
 
 .va-budget {
-  table.summing-table {
+  .summing-table, .budget-summary {
+    width: @section-width - 18px;
+    text-align: left;
+    tbody tr:last-child td {
+      padding-bottom: 10px;
+    }
+    .soresu-money-field input[type=text] {
+      margin: 0 6px 4px 0;
+    }
+    .soresu-text-field input[type=text] {
+      margin: 0 4px 4px 0;
+    }
+    .soresu-text-area {
+      textarea {
+        margin: 0;
+        width: ceil(@section-width / 2) - 19px;
+        height: 24px;
+      }
+      .length-left {
+        display: none;
+      }
+    }
+    .money:after {
+      content: "\00A0€";
+    }
+    .error {
+      color: @bright-red;
+    }
+  }
+
+  .summing-table {
     margin-top: 13px;
     caption {
+      margin: 8px 0 16px 0;
+      font-size: 18px;
       text-align: left;
       text-transform: uppercase;
-      margin: 8px 0 8px 0;
     }
     thead {
       tr {
@@ -63,6 +94,15 @@
         width: 100px;
       }
     }
+    .label-column {
+      color: @form-label-black;
+      &.disabled {
+        color: @darker-gray
+      }
+    }
+    .amount-column {
+      text-align: right;
+    }
     tfoot {
       border-top: 1px solid @light-gray;
       font-weight: bold;
@@ -72,79 +112,54 @@
     }
   }
 
-  table.budget-summary {
+  .budget-summary {
     margin-top: 26px;
+    position: relative;
 
-    colgroup {
-      .label-column {
-        width: 682px;
-      }
-      .amount-column {
-        width: 100px;
-      }
+    h4 {
+      font-weight: bold;
     }
 
-    tr.grand-total {
-      border-bottom: 1px solid @light-gray;
-      font-weight: bold;
-      height: 40px;
-      td {
-        padding-top: 5px;
-      }
+    .amounts {
+      display: inline-block;
+    }
+
+    .percentages {
+      display: inline-block;
+      position: absolute;
+      right: 0;
+    }
+
+    .amount-label-column, .percentage-label-column {
+      padding-right: 20px;
+    }
+
+    .amount-value-column, .percentage-value-column {
+      min-width: 120px;
+      text-align: right;
     }
 
     tr {
       height: 50px;
     }
-  }
 
-  table.summing-table, table.budget-summary {
-    width: @section-width - 18px;
-    text-align: left;
-    caption {
-      font-size: 18px;
-    }
-    tbody tr:last-child {
-      td {
-        padding-bottom: 10px;
-      }
-    }
-    .label-column {
-      color: @form-label-black;
-      &.disabled {
-        color: @darker-gray
-      }
-    }
     .soresu-money-field {
+      margin: 0;
       input[type=text] {
-        margin: 0 6px 4px 0;
-      }
-    }
-    .soresu-text-field {
-      input[type=text] {
-        margin: 0 4px 4px 0;
-      }
-    }
-    .soresu-text-area {
-      textarea {
         margin: 0;
-        width: ceil(@section-width / 2) - 19px;
-        height: 24px;
       }
-      .length-left {
-          display: none;
-      }
-    }
-    .amount-column {
-      text-align: right;
-    }
-    .money {
-      &:not(.error-message).sum:after {
+      &:after {
         content: "\00A0€";
+        margin-left: 4px;
       }
-      &.error.sum {
-        color: @bright-red;
-      }
+    }
+
+    .percentage:after {
+      content: "\00A0%";
+    }
+
+    .amount-value-column .money:not(.error):after {
+      margin-left: 12px;
     }
   }
 }
@@ -196,10 +211,14 @@
     .soresu-value {
       font-size: 16px;
     }
-    .soresu-text-area {
+    .soresu-text-area,
+    .budget-summary .soresu-preview-element {
       &.extra-extra-small, &.extra-small, &.small, &.medium, &.large, &.extra-large {
         width: auto;
       }
+    }
+    .budget-summary .amount-value-column .money:not(.error):after {
+      margin-left: 0;
     }
   }
 }

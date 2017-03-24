@@ -4,6 +4,8 @@ import Immutable from 'seamless-immutable'
 import FormRules from 'soresu-form/web/form/FormRules'
 import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
 
+import _ from 'lodash'
+
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 
@@ -17,9 +19,13 @@ export default class FakeFormState {
     return attachments ? attachments : {}
   }
 
-  static createEditFormState(translations, formDraftJson, formOperations) {
-    const hakuData = Immutable({form: formDraftJson})
-    return FakeFormState.createHakemusFormState(translations, hakuData, {}, formOperations)
+  static createEditFormState(avustushaku, translations, formDraftJson) {
+    const hakuData = Immutable({
+      "self-financing-percentage": avustushaku.content["self-financing-percentage"],
+      form: formDraftJson
+    })
+    const hakemus = {answers: {value: []}}
+    return FakeFormState.createHakemusFormState(translations, hakuData, hakemus)
   }
 
   static createHakemusFormState(translations, hakuData, hakemus, formOperations, savedHakemus) {
@@ -30,6 +36,11 @@ export default class FakeFormState {
     effectiveForm.validationErrors = Immutable({})
 
     const formState = {
+      avustushaku: {
+        content: {
+          "self-financing-percentage": hakuData["self-financing-percentage"]
+        }
+      },
       configuration: {
         translations: translations,
         lang: "fi",

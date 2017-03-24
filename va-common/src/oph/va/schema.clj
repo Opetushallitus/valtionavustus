@@ -9,6 +9,7 @@
                      "vaProjectDescription"]
                     ["vaFocusAreas"
                      "vaEmailNotification"
+                     "vaSelfFinancingField"
                      "vaTraineeDayCalculator"]
                     ["vaTraineeDayTotalCalculator" "vaBudgetGrantedElement"])
 

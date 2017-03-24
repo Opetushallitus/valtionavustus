@@ -146,8 +146,8 @@
         "sv": "TODO SV Osio"
       },
       "minSelfFinancingNeeded": {
-        "fi": "Omarahoitusta oltava vähintään {{min-self-financing-percentage}} % haettavasta kokonaissummasta",
-        "sv": "TODO SV Omarahoitusta oltava vähintään {{min-self-financing-percentage}} % haettavasta kokonaissummasta"
+        "fi": "Omarahoitusprosentti oltava vähintään {{min-self-financing-percentage}} %",
+        "sv": "TODO SV Omarahoitusprosentti oltava vähintään {{min-self-financing-percentage}} %"
       },
       "ophFinancingAmount": {
         "fi": "OPH:lta haettava rahoitus",
@@ -225,6 +225,10 @@
     "bic": {
       "fi": "Tarkista pankin BIC-koodi",
       "sv": "Kontrollera bankens BIC-kod"
+    },
+    "insufficient-self-financing": {
+      "fi": "Omarahoitus ei ole riittävä",
+      "sv": "TODO: SV Omarahoitus ei ole riittävä"
     },
     "negative-budget": {
       "fi": "Haettavan rahoituksen tulee olla positiivinen",

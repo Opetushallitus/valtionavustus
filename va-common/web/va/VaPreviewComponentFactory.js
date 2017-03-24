@@ -8,11 +8,21 @@ import ComponentFactory from 'soresu-form/web/form/ComponentFactory.js'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent.jsx'
 import BasicValue from 'soresu-form/web/form/preview/BasicValue.jsx'
+import MoneyValue from 'soresu-form/web/form/preview/MoneyValue.jsx'
 import MultipleOptionValue from 'soresu-form/web/form/preview/MultipleOptionValue.jsx'
 import {FieldOnChangePropertyMapper} from 'soresu-form/web/form/component/PropertyMapper'
 
-import VaBudgetElement, {SummingBudgetElement, BudgetItemElement, BudgetSummaryElement} from './VaBudgetComponents.jsx'
-import {VaFocusAreasPropertyMapper} from 'va-common/web/va/VaPropertyMapper'
+import VaBudgetElement, {
+  SummingBudgetElement,
+  BudgetItemElement,
+  BudgetSummaryElement
+} from './VaBudgetComponents.jsx'
+
+import {
+  VaFocusAreasPropertyMapper,
+  SelfFinancingPropertyMapper
+} from 'va-common/web/va/VaPropertyMapper'
+
 import VaTraineeDayCalculator from './VaTraineeDayCalculator.jsx'
 
 export default class VaPreviewComponentFactory extends ComponentFactory {
@@ -23,14 +33,19 @@ export default class VaPreviewComponentFactory extends ComponentFactory {
       "vaBudgetItemElement": VaPreviewBudgetItemElement,
       "vaBudgetSummaryElement": BudgetSummaryElement,
       "vaProjectDescription": VaProjectDescriptionPreview,
+      "vaSelfFinancingField": MoneyValue,
       "vaFocusAreas": MultipleOptionValue,
       "vaEmailNotification": BasicValue,
       "vaTraineeDayCalculator": VaPreviewTraineeDayCalculator
     }
-    super({ fieldTypeMapping,
-            fieldPropertyMapperMapping: {
-              "vaFocusAreas": VaFocusAreasPropertyMapper,
-              "vaTraineeDayCalculator": FieldOnChangePropertyMapper}})
+    super({
+      fieldTypeMapping,
+      fieldPropertyMapperMapping: {
+        "vaFocusAreas": VaFocusAreasPropertyMapper,
+        "vaSelfFinancingField": SelfFinancingPropertyMapper,
+        "vaTraineeDayCalculator": FieldOnChangePropertyMapper
+      }
+    })
   }
 }
 
@@ -52,7 +67,6 @@ class VaPreviewBudgetItemElement extends React.Component {
     )
   }
 }
-
 
 class VaPreviewBudgetElement extends VaBudgetElement {
   html(htmlId, children) {

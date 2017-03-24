@@ -1,7 +1,8 @@
 import _ from 'lodash'
 
-import JsUtil from 'soresu-form/web/form/JsUtil.js'
-import InputValueStorage from 'soresu-form/web/form/InputValueStorage.js'
+import FormUtil from 'soresu-form/web/form/FormUtil'
+import JsUtil from 'soresu-form/web/form/JsUtil'
+import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import MoneyValidator from 'soresu-form/web/form/MoneyValidator'
 
 export default class VaBudgetCalculator {
@@ -9,10 +10,10 @@ export default class VaBudgetCalculator {
     this.onSumCalculatedCallback = _.isFunction(onSumCalculatedCallback) ? onSumCalculatedCallback : _.noop
   }
 
-  populateBudgetCalculatedValuesForAllBudgetFields(initialState, reportTotalError) {
+  populateBudgetCalculatedValuesForAllBudgetFields(initialState, reportErrors) {
     const budgetFields = JsUtil.flatFilter(initialState.form.content, n => n.fieldType === "vaBudget")
     _.forEach(budgetFields, budgetField => {
-      this.populateBudgetCalculatedValues(initialState, budgetField, reportTotalError)
+      this.populateBudgetCalculatedValues(initialState, budgetField, reportErrors)
     })
   }
 
@@ -48,42 +49,130 @@ export default class VaBudgetCalculator {
     }
   }
 
-  populateBudgetCalculatedValues(state, vaBudgetField, reportTotalError) {
+  populateBudgetCalculatedValues(state, vaBudgetField, reportErrors) {
     const sumCalculatedCallback = this.onSumCalculatedCallback
 
-    const answersObject = state.saveStatus.values
+    const populateSummingFieldTotals = () => {
+      const summingFields = JsUtil.flatFilter(
+        vaBudgetField.children,
+        child => child.fieldType === "vaSummingBudgetElement"
+      )
 
-    const summingFieldChildren = JsUtil.flatFilter(vaBudgetField.children, child => child.fieldType === "vaSummingBudgetElement")
-    const subTotalsAndErrorsAndSummingFields = _.map(summingFieldChildren, populateSummingFieldTotal(answersObject, state))
+      const answersObject = state.saveStatus.values
 
-    const subTotals = _.map(subTotalsAndErrorsAndSummingFields, 'sum')
-    const useDetailedCosts = _.get(state, 'saveStatus.savedObject.arvio.useDetailedCosts', true)
-    const costsGranted = _.get(state, 'saveStatus.savedObject.arvio.costsGranted', 0)
-    const total = useDetailedCosts ? _.sum(subTotals) : _.sum(_.rest(subTotals)) + costsGranted
-    const someFigureHasError = useDetailedCosts && _.some(subTotalsAndErrorsAndSummingFields, x => x.containsErrors)
-    const budgetIsPositive = total > 0
-    const budgetIsValid = !someFigureHasError && budgetIsPositive
-    const newValidationErrors = budgetIsPositive || !reportTotalError ? [] : [{error: "negative-budget"}]
-    state.form.validationErrors = state.form.validationErrors.merge({[vaBudgetField.id]: newValidationErrors})
-
-    const summaryField = _.last(vaBudgetField.children)
-    summaryField.totalNeeded = total
-    summaryField.budgetIsValid = budgetIsValid
-    summaryField.subTotalsAndErrorsAndSummingFields = subTotalsAndErrorsAndSummingFields
-
-    function populateSummingFieldTotal(answersObject, state) {
-      return summingBudgetField => {
-        const amountValues = VaBudgetCalculator.getAmountValues(summingBudgetField, answersObject, descriptionField => sumCalculatedCallback(descriptionField, state))
+      return _.map(summingFields, summingField => {
+        const amountValues = VaBudgetCalculator.getAmountValues(summingField, answersObject, descriptionField => sumCalculatedCallback(descriptionField, state))
         const sum = _.sum(_.map(amountValues, 'value'))
-        summingBudgetField.sum = sum
-        const containsErrors = _.some(amountValues, errorsAndValue => errorsAndValue.containsErrors)
+
+        summingField.sum = sum
+
         return {
-          summingBudgetFieldId: summingBudgetField.id,
-          label: summingBudgetField.label,
+          summingBudgetFieldId: summingField.id,
+          label: summingField.label,
           sum: sum,
-          containsErrors: containsErrors
+          containsErrors: _.some(amountValues, errorsAndValue => errorsAndValue.containsErrors)
         }
+      })
+    }
+
+    const validateTotalNeeded = (subTotalsAndErrorsAndSummingFields) => {
+      const useDetailedCosts = _.get(state, 'saveStatus.savedObject.arvio.useDetailedCosts', true)
+      const costsGranted = _.get(state, 'saveStatus.savedObject.arvio.costsGranted', 0)
+      const subTotals = _.map(subTotalsAndErrorsAndSummingFields, 'sum')
+      const totalNeeded = useDetailedCosts
+        ? _.sum(subTotals)
+        : _.sum(_.rest(subTotals)) + costsGranted
+      const isBudgetPositive = totalNeeded > 0
+      const someSubTotalHasError = useDetailedCosts && _.some(subTotalsAndErrorsAndSummingFields, x => x.containsErrors)
+      return {
+        value: totalNeeded,
+        isBudgetPositive: isBudgetPositive,
+        isValid: !someSubTotalHasError && isBudgetPositive
       }
     }
+
+    const validateFinancing = (summaryField, minSelfFinancingPercentage, totalNeeded) => {
+      const minSelfFinancingValue = VaBudgetCalculator.shareOf(minSelfFinancingPercentage, totalNeeded)
+      const result = {
+        minSelfValue: minSelfFinancingValue,
+        minSelfPercentage: minSelfFinancingPercentage
+      }
+
+      const selfFinancingSpecField = FormUtil.findField(summaryField, "self-financing-amount")
+
+      if (!selfFinancingSpecField) {
+        return _.assign(result, {
+          selfValue: minSelfFinancingValue,
+          ophValue: totalNeeded - minSelfFinancingValue,
+          isSelfValueANumber: true,
+          isValid: true
+        })
+      }
+
+      const selfFinancingAnswer = JsUtil.findFirst(state.saveStatus.values, answer => answer.key === "self-financing-amount")
+
+      if (!selfFinancingAnswer) {
+        return _.assign(result, {
+          selfValue: null,
+          isSelfValueANumber: false,
+          isValid: false
+        })
+      }
+
+      if (MoneyValidator.validateMoney(selfFinancingAnswer.value || "")) {
+        return _.assign(result, {
+          selfValue: null,
+          isSelfValueANumber: false,
+          isValid: false
+        })
+      }
+
+      const selfFinancingValue = Number(selfFinancingAnswer.value)
+      const isSelfFinancingSufficient = selfFinancingValue >= minSelfFinancingValue && selfFinancingValue <= totalNeeded
+      return _.assign(result, {
+        selfValue: selfFinancingValue,
+        ophValue: totalNeeded - selfFinancingValue,
+        isSelfValueANumber: true,
+        isValid: isSelfFinancingSufficient
+      })
+    }
+
+    const makeValidationErrors = (isBudgetPositive, isSelfFinancingValid) => {
+      if (!reportErrors) {
+        return []
+      }
+
+      if (!isBudgetPositive) {
+        return [{error: "negative-budget"}]
+      }
+
+      if (!isSelfFinancingValid) {
+        return [{error: "insufficient-self-financing"}]
+      }
+
+      return []
+    }
+
+    const vaBudgetSummaryField = _.last(vaBudgetField.children)
+
+    const subTotalsAndErrorsAndSummingFields = populateSummingFieldTotals()
+    const totalNeeded = validateTotalNeeded(subTotalsAndErrorsAndSummingFields)
+    const financing = validateFinancing(vaBudgetSummaryField, state.avustushaku.content["self-financing-percentage"], totalNeeded.value)
+
+    state.form.validationErrors = state.form.validationErrors.merge({
+      [vaBudgetField.id]: makeValidationErrors(totalNeeded.isBudgetPositive, financing.isValid)
+    })
+
+    vaBudgetSummaryField.totalNeeded = totalNeeded
+    vaBudgetSummaryField.financing = financing
+    vaBudgetSummaryField.subTotalsAndErrorsAndSummingFields = subTotalsAndErrorsAndSummingFields
+  }
+
+  static shareOf(percentage, total) {
+    return Math.ceil((percentage / 100) * total)
+  }
+
+  static percentageOf(part, total) {
+    return (part / total) * 100
   }
 }

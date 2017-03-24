@@ -1,17 +1,18 @@
 import _ from 'lodash'
 
+import MoneyValidator from 'soresu-form/web/form/MoneyValidator'
+
 import VaTraineeDayCalculator from './VaTraineeDayCalculator.jsx'
 
 export default class VaSyntaxValidator {
   static validateSyntax(field, value) {
-    var validationErrors = undefined
-
     switch (field.fieldType) {
+      case 'vaSelfFinancingField':
+        return MoneyValidator.validateMoney(value);
       case 'vaTraineeDayCalculator':
         return VaTraineeDayCalculator.validateTotal(field, value)
-        break;
+      default:
+        return undefined;
     }
-
-    return validationErrors
   }
 }
