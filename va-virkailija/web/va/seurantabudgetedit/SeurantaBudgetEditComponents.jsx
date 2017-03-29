@@ -46,9 +46,9 @@ export class EditSummingBudgetElement extends React.Component {
           <td className="label-column">
             <LocalizedString translations={field.params} translationKey="sumRowLabel" lang={lang}/>
           </td>
-          {visibleColumns.grantedSum       && <td className="granted-amount-column"><span className="money sum">{grantedSum.sum}</span></td>}
-          {visibleColumns.valiselvitysSum  && <td className="valiselvitys-amount-column"><span className="money sum">{valiselvitysSum.sum}</span></td>}
-          {visibleColumns.loppuselvitysSum && <td className="loppuselvitys-amount-column"><span className="money sum">{loppuselvitysSum.sum}</span></td>}
+          {visibleColumns.grantedSum       && <td className="granted-amount-column"><span className="money">{grantedSum.sum}</span></td>}
+          {visibleColumns.valiselvitysSum  && <td className="valiselvitys-amount-column"><span className="money">{valiselvitysSum.sum}</span></td>}
+          {visibleColumns.loppuselvitysSum && <td className="loppuselvitys-amount-column"><span className="money">{loppuselvitysSum.sum}</span></td>}
           <td className="amount-column">
             <span className="money sum">{sum}</span>
           </td>
@@ -172,7 +172,7 @@ class GrantedAmountCell extends EditBudgetItemCell {
     let contents = null
 
     if (showContents) {
-      const moneyClassNames = ClassNames("money sum", {'error error-message': !amount.hasValidValue})
+      const moneyClassNames = ClassNames("money sum", {error: !amount.hasValidValue})
       contents = <span className={moneyClassNames}>{amount.valueFormatted}</span>
     }
 
@@ -186,7 +186,7 @@ class SelvitysAmountCell extends EditBudgetItemCell {
 
     const amount = this.amountOf(answers, valueId, descriptionId)
     const cellClassNames = ClassNames(cellClassName, {'has-title': amount.hasDescription})
-    const moneyClassNames = ClassNames("money sum", {'error error-message': !amount.hasValidValue})
+    const moneyClassNames = ClassNames("money", {'error error-message': !amount.hasValidValue})
 
     return (
       <td className={cellClassNames} title={amount.description}>

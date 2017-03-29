@@ -163,7 +163,7 @@ export class EditBudgetItemElement extends React.Component {
             <LocalizedString translations={field} translationKey="label" lang={lang}/>
           </td>
           <td className={originalCellClassNames} title={originalDescription}>
-            <span className="money sum">{originalValue}</span>
+            <span className="money">{originalValue}</span>
           </td>
           <td className="amount-column">{allowEditing && amountComponent}</td>
           <td className="description-column">{allowEditing && descriptionComponent}</td>

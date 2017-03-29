@@ -269,8 +269,8 @@ export default class HakemusListing extends Component {
           <td className="total-applications-column">
             <ApplicationSummaryLink filteredHakemusList={filteredHakemusList} hakemusList={hakemusList} controller={controller} />
           </td>
-          <td className="applied-sum-column">{!isResolved && <span className="money sum">{ophShareSum}</span>}</td>
-          <td className="granted-sum-column"><span className="money sum">{budgetGrantedSum}</span></td>
+          <td className="applied-sum-column">{!isResolved && <span className="money">{ophShareSum}</span>}</td>
+          <td className="granted-sum-column"><span className="money">{budgetGrantedSum}</span></td>
           <td className="person-filter-column"></td>
         </tr></tfoot>
       </table>
