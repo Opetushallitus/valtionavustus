@@ -12,9 +12,8 @@ import FakeFormState from "../form/FakeFormState.js";
 export default class SelvitysPreview extends Component {
 
   render() {
-    const {hakemus, selvitysType, avustushaku, translations, selvitysHakemus,form} = this.props
+    const {hakemus, selvitysType, avustushaku, translations, selvitysHakemus, form} = this.props
     const selvitys = hakemus.selvitys
-    const hakuData = {form:form,attachments:selvitys.attachments}
     const formState = createPreviewHakemusFormState()
     const formElementProps = {
       state: formState,
@@ -27,7 +26,13 @@ export default class SelvitysPreview extends Component {
     return <FormContainer {...formElementProps} />
 
     function createPreviewHakemusFormState() {
-      const hakemusFormState = FakeFormState.createHakemusFormState(translations, hakuData, selvitysHakemus)
+      const hakemusFormState = FakeFormState.createHakemusFormState({
+        translations,
+        avustushaku,
+        formContent: form.content,
+        hakemus: selvitysHakemus,
+        attachments: selvitys.attachments
+      })
 
       const effectiveForm = hakemusFormState.form
       effectiveForm.content = _.filter(effectiveForm.content, field => field.fieldClass !== "infoElement")

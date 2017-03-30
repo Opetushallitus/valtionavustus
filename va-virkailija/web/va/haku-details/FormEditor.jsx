@@ -29,7 +29,7 @@ export default class FormEditor extends Component {
       allowEditing: userHasEditPrivilege,
       readOnlyNotificationText: "Käyttäjätunnuksellasi ei ole oikeuksia muokata tätä hakua. Haun valmistelija voi lisätä sinulle oikeudet."})
     const formState = formDraftJson
-      ? FakeFormState.createEditFormState(avustushaku, translations, formDraftJson)
+      ? FakeFormState.createEditFormState(avustushaku, translations, formDraftJson.content)
       : undefined
     if (formState) {
       formState.koodistos = koodistos

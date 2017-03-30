@@ -47,10 +47,17 @@ export default class SeurantaBudgetEditing extends React.Component {
       responseParser: undefined,
       printEntityId: undefined
     }
-    const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: [budgetSpec]}}, fakeHakemus, formOperations, hakemus)
+    const budgetEditFormState = FakeFormState.createHakemusFormState({
+      translations,
+      avustushaku,
+      formContent: [budgetSpec],
+      formOperations,
+      hakemus: fakeHakemus,
+      savedHakemus: hakemus
+    })
     FormStateLoop.initDefaultValues(
       fakeHakemus.answers,
-      BudgetBusinessRules.getInitialValuesByFieldId(budgetEditFormState.form.content, hakemus.answers),
+      BudgetBusinessRules.collectHakemusBudgetAnswers(budgetEditFormState.form.content, hakemus.answers),
       budgetEditFormState.form.content,
       budgetEditFormState.configuration.lang)
     SeurantaBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers)

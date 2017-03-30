@@ -11,34 +11,36 @@ import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 
 export default class FakeFormState {
 
-  static resolveAttachmentsProperty(hakuData, hakemus) {
-    if (!hakuData.attachments || !hakemus.id ) {
+  static resolveAttachmentsProperty(allAttachments, hakemus) {
+    if (!allAttachments || !hakemus.id ) {
       return {}
     }
-    const attachments = hakuData.attachments[hakemus.id.toString()]
-    return attachments ? attachments : {}
+    const attachmentsForId = allAttachments[hakemus.id.toString()]
+    return attachmentsForId ? attachmentsForId : {}
   }
 
-  static createEditFormState(avustushaku, translations, formDraftJson) {
-    const hakuData = Immutable({
-      "self-financing-percentage": avustushaku.content["self-financing-percentage"],
-      form: formDraftJson
+  static createEditFormState(avustushaku, translations, formContent) {
+    return FakeFormState.createHakemusFormState({
+      translations,
+      avustushaku,
+      formContent,
+      hakemus: {answers: {value: []}}
     })
-    const hakemus = {answers: {value: []}}
-    return FakeFormState.createHakemusFormState(translations, hakuData, hakemus)
   }
 
-  static createHakemusFormState(translations, hakuData, hakemus, formOperations, savedHakemus) {
-    const attachments = FakeFormState.resolveAttachmentsProperty(hakuData, hakemus)
-    const answers = hakemus.answers
-    const formSpecification = hakuData.form
-    const effectiveForm = _.cloneDeep(formSpecification)
-    effectiveForm.validationErrors = Immutable({})
-
+  static createHakemusFormState({
+    translations,
+    avustushaku,
+    formContent,
+    formOperations,
+    hakemus,
+    attachments,
+    savedHakemus
+  }) {
     const formState = {
       avustushaku: {
         content: {
-          "self-financing-percentage": hakuData["self-financing-percentage"]
+          "self-financing-percentage": avustushaku.content["self-financing-percentage"]
         }
       },
       configuration: {
@@ -46,10 +48,13 @@ export default class FakeFormState {
         lang: "fi",
         preview: true
       },
-      form: effectiveForm,
+      form: {
+        content: _.cloneDeep(formContent),
+        validationErrors: Immutable({})
+      },
       saveStatus: {
-        values: answers,
-        attachments: attachments,
+        values: hakemus.answers,
+        attachments: FakeFormState.resolveAttachmentsProperty(attachments, hakemus),
         savedObject: savedHakemus
       },
       changeRequests: hakemus.changeRequests,
@@ -62,6 +67,7 @@ export default class FakeFormState {
 
     const budgetCalculator = new VaBudgetCalculator()
     budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(formState, true)
+
     return formState
   }
 }

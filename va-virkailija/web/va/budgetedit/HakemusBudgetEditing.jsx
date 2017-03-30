@@ -58,7 +58,14 @@ export default class HakemusBudgetEditing extends React.Component {
       responseParser: undefined,
       printEntityId: undefined
     }
-    const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: [vaBudget]}}, fakeHakemus, formOperations, hakemus)
+    const budgetEditFormState = FakeFormState.createHakemusFormState({
+      translations,
+      avustushaku,
+      formContent: [vaBudget],
+      formOperations,
+      hakemus: fakeHakemus,
+      savedHakemus: hakemus
+    })
     HakemusBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus)
     const formElementProps = {
       state: budgetEditFormState,

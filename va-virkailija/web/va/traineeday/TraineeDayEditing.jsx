@@ -69,7 +69,14 @@ export default class TraineeDayEditing extends Component {
         ]
       }
     }
-    const traineeDayEditFormState = FakeFormState.createHakemusFormState(translations, form, fakeHakemus, formOperations, hakemus)
+    const traineeDayEditFormState = FakeFormState.createHakemusFormState({
+      translations,
+      avustushaku,
+      formContent: form.content,
+      formOperations,
+      hakemus: fakeHakemus,
+      savedHakemus: hakemus
+    })
     const initialValues = TraineeDayEditing.initialValues(traineeDayEditFormState.form.content, hakemus)
     FormStateLoop.initDefaultValues(fakeHakemus.answers, initialValues, traineeDayEditFormState.form.content, traineeDayEditFormState.configuration.lang)
     const formElementProps = {

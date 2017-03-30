@@ -48,7 +48,13 @@ export default class HakemusPreview extends Component {
     return <FormContainer {...formElementProps} />
 
     function createPreviewHakemusFormState() {
-      const hakemusFormState = FakeFormState.createHakemusFormState(translations, hakuData, hakemus)
+      const hakemusFormState = FakeFormState.createHakemusFormState({
+        translations,
+        avustushaku,
+        formContent: hakuData.form.content,
+        attachments: hakuData.attachments,
+        hakemus
+      })
       const effectiveForm = hakemusFormState.form
       effectiveForm.content = _.filter(effectiveForm.content, field => field.fieldClass !== "infoElement")
       const formSpecification = hakuData.form
