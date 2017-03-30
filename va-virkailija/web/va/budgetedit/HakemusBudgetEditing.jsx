@@ -5,7 +5,6 @@ import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
 import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
-import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 
@@ -46,7 +45,7 @@ export default class HakemusBudgetEditing extends React.Component {
   render() {
     const {controller, hakemus, hakuData, avustushaku, translations, allowEditing} = this.props
     const vaBudget = FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget")
-    const fakeHakemus = {answers: _.get(hakemus, "arvio.overridden-answers", {value: []})}
+    const fakeHakemus = {answers: hakemus.arvio["overridden-answers"]}
     const formOperations = {
       chooseInitialLanguage: () => "fi",
       containsExistingEntityId: undefined,
@@ -60,11 +59,6 @@ export default class HakemusBudgetEditing extends React.Component {
       printEntityId: undefined
     }
     const budgetEditFormState = FakeFormState.createHakemusFormState(translations, {form: {content: [vaBudget]}}, fakeHakemus, formOperations, hakemus)
-    FormStateLoop.initDefaultValues(
-      fakeHakemus.answers,
-      BudgetBusinessRules.getInitialValuesByFieldId(budgetEditFormState.form.content, hakemus.answers),
-      budgetEditFormState.form.content,
-      budgetEditFormState.configuration.lang)
     HakemusBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus)
     const formElementProps = {
       state: budgetEditFormState,

@@ -27,15 +27,16 @@ export default class BudgetBusinessRules {
     return !(this.isSummingBudgetElementForProject(field) || this.isBudgetItemElementForProject(field))
   }
 
-  static getInitialValuesByFieldId(formContent, answers) {
-    const budgetItems =  FormUtil.findFieldsByFieldType(formContent, 'vaBudgetItemElement')
-    return _.reduce(budgetItems, (acc, budgetItem) => {
-      const descriptionField = budgetItem.children[0]
-      const valueField = budgetItem.children[1]
-      acc[descriptionField.id] = ''
-      if (!budgetItem.params.incrementsTotal) {
-        acc[valueField.id] = InputValueStorage.readValue(formContent, answers, valueField.id)
-      }
+  static collectHakemusBudgetAnswers(formContent, answers) {
+    return _.reduce(FormUtil.findFieldsByFieldType(formContent, "vaBudget"), (acc, vaBudget) => {
+      _.forEach(FormUtil.findFieldsByFieldType(vaBudget, "vaBudgetItemElement"), budgetItem => {
+        const descriptionField = budgetItem.children[0]
+        const valueField = budgetItem.children[1]
+        acc[descriptionField.id] = ''
+        if (!budgetItem.params.incrementsTotal) {
+          acc[valueField.id] = InputValueStorage.readValue(null, answers, valueField.id)
+        }
+      })
       return acc
     }, {})
   }

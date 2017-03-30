@@ -7,11 +7,15 @@ import RouteParser from 'route-parser'
 
 import Dispatcher from 'soresu-form/web/Dispatcher'
 import DateUtil from 'soresu-form/web/form/DateUtil'
+import FormUtil from 'soresu-form/web/form/FormUtil'
+import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
 
 import HttpUtil from 'va-common/web/HttpUtil'
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
+
+import BudgetBusinessRules from './budgetedit/BudgetBusinessRules'
 
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses'
 import HakemusSelvitysStatuses from './hakemus-details/HakemusSelvitysStatuses'
@@ -204,6 +208,7 @@ export default class HakemustenArviointiController {
       const newUrl = "/avustushaku/" + parsedUrl.avustushaku_id + "/hakemus/" + hakemusIdToSelect + "/" + subTab + "/" + location.search
       history.pushState({}, window.title, newUrl)
     }
+    this.setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state)
     this.validateHakemusRahoitusalueAndTalousarviotiliSelection(state)
     this.loadScores(state, hakemusIdToSelect)
     this.loadComments()
@@ -520,6 +525,18 @@ export default class HakemustenArviointiController {
     state.hakemusFilter.evaluator = undefined
     state.hakemusFilter.presenter = undefined
     return state
+  }
+
+  setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state) {
+    const selectedHakemus = state.selectedHakemus
+    const budgetElement = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
+
+    FormStateLoop.initDefaultValues(
+      selectedHakemus.arvio["overridden-answers"],
+      BudgetBusinessRules.collectHakemusBudgetAnswers(budgetElement, selectedHakemus.answers),
+      budgetElement,
+      null
+    )
   }
 
   validateHakemusRahoitusalueAndTalousarviotiliSelection(state) {
