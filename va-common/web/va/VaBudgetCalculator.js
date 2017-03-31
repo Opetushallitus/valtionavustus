@@ -10,34 +10,33 @@ export default class VaBudgetCalculator {
     this.onSumCalculatedCallback = _.isFunction(onSumCalculatedCallback) ? onSumCalculatedCallback : _.noop
   }
 
-  populateBudgetCalculatedValuesForAllBudgetFields(initialState, reportErrors) {
-    const budgetFields = JsUtil.flatFilter(initialState.form.content, n => n.fieldType === "vaBudget")
-    _.forEach(budgetFields, budgetField => {
-      this.populateBudgetCalculatedValues(initialState, budgetField, reportErrors)
+  deriveValuesForAllBudgetElementsByMutation(state, spec) {
+    const vaBudgetElementsToMutate = JsUtil.flatFilter(state.form.content, n => n.fieldType === "vaBudget")
+    _.forEach(vaBudgetElementsToMutate, element => {
+      this.deriveValuesForBudgetFieldsByMutation(element, state, spec)
     })
   }
 
   handleBudgetAmountUpdate(state, amountFieldId) {
-    const formContent = state.form.content
-    const vaBudgetFields = JsUtil.flatFilter(formContent, n => n.fieldType === "vaBudget" && !_.isEmpty(JsUtil.findJsonNodeContainingId(n, amountFieldId)))
-    if(_.isEmpty(vaBudgetFields)) {
+    const vaBudgetElements = JsUtil.flatFilter(state.form.content, n => n.fieldType === "vaBudget" && !_.isEmpty(JsUtil.findJsonNodeContainingId(n, amountFieldId)))
+    if(_.isEmpty(vaBudgetElements)) {
       return undefined
     }
-    if(vaBudgetFields.length !== 1) {
-      throw new Error(amountFieldId + ' has ' + vaBudgetFields.length + ' budget parents, looks like bug.')
+    if(vaBudgetElements.length !== 1) {
+      throw new Error(amountFieldId + ' has ' + vaBudgetElements.length + ' budget parents, looks like bug.')
     }
-    return this.populateBudgetCalculatedValues(state, vaBudgetFields[0], true)
+    return this.deriveValuesForBudgetFieldsByMutation(vaBudgetElements[0], state, {reportValidationErrors: true})
   }
 
-  static getAmountValues(summingBudgetField, answersObject, sumCalculatedCallback) {
-    return _.map(summingBudgetField.children, itemField => {
+  static getAmountValuesAndSetRequiredFieldsByMutation(summingBudgetElement, answersObject, sumCalculatedCallback) {
+    return _.map(summingBudgetElement.children, itemField => {
       const amountCoefficient = itemField.params.incrementsTotal ? 1 : -1
       const descriptionField = itemField.children[0]
       const amountField = itemField.children[1]
       const amountValue = InputValueStorage.readValue(null, answersObject, amountField.id)
       const isAmountValid = isNotEmpty(amountValue) && !MoneyValidator.validateMoney(amountValue)
       const valueToUse = isAmountValid ? amountValue : 0
-      descriptionField.required = isAmountValid && valueToUse > 0
+      descriptionField.required = isAmountValid && valueToUse > 0  // mutation!
       if(sumCalculatedCallback) {
         sumCalculatedCallback(descriptionField)
       }
@@ -49,45 +48,50 @@ export default class VaBudgetCalculator {
     }
   }
 
-  populateBudgetCalculatedValues(state, vaBudgetField, reportErrors) {
+  deriveValuesForBudgetFieldsByMutation(vaBudgetElement, state, {reportValidationErrors}) {
     const sumCalculatedCallback = this.onSumCalculatedCallback
 
-    const populateSummingFieldTotals = () => {
-      const summingFields = JsUtil.flatFilter(
-        vaBudgetField.children,
+    const deriveSubtotalsAndSetSumAndRequiredFieldsByMutation = () => {
+      const summingElements = JsUtil.flatFilter(
+        vaBudgetElement.children,
         child => child.fieldType === "vaSummingBudgetElement"
       )
 
       const answersObject = state.saveStatus.values
 
-      return _.map(summingFields, summingField => {
-        const amountValues = VaBudgetCalculator.getAmountValues(summingField, answersObject, descriptionField => sumCalculatedCallback(descriptionField, state))
+      return _.map(summingElements, element => {
+        const amountValues = VaBudgetCalculator.getAmountValuesAndSetRequiredFieldsByMutation(
+          element,
+          answersObject,
+          descriptionField => sumCalculatedCallback(descriptionField, state)
+        )
+
         const sum = _.sum(_.map(amountValues, 'value'))
 
-        summingField.sum = sum
+        element.sum = sum  // mutation!
 
         return {
-          summingBudgetFieldId: summingField.id,
-          label: summingField.label,
+          summingBudgetFieldId: element.id,
+          label: element.label,
           sum: sum,
           containsErrors: _.some(amountValues, errorsAndValue => errorsAndValue.containsErrors)
         }
       })
     }
 
-    const validateTotalNeeded = (subTotalsAndErrorsAndSummingFields) => {
+    const validateTotalNeeded = subtotals => {
       const useDetailedCosts = _.get(state, 'saveStatus.savedObject.arvio.useDetailedCosts', true)
       const costsGranted = _.get(state, 'saveStatus.savedObject.arvio.costsGranted', 0)
-      const subTotals = _.map(subTotalsAndErrorsAndSummingFields, 'sum')
+      const subtotalSums = _.map(subtotals, 'sum')
       const totalNeeded = useDetailedCosts
-        ? _.sum(subTotals)
-        : _.sum(_.rest(subTotals)) + costsGranted
+        ? _.sum(subtotalSums)
+        : _.sum(_.rest(subtotalSums)) + costsGranted
       const isBudgetPositive = totalNeeded > 0
-      const someSubTotalHasError = useDetailedCosts && _.some(subTotalsAndErrorsAndSummingFields, x => x.containsErrors)
+      const someSubtotalHasError = useDetailedCosts && _.some(subtotals, x => x.containsErrors)
       return {
         value: totalNeeded,
         isBudgetPositive: isBudgetPositive,
-        isValid: !someSubTotalHasError && isBudgetPositive
+        isValid: !someSubtotalHasError && isBudgetPositive
       }
     }
 
@@ -138,10 +142,6 @@ export default class VaBudgetCalculator {
     }
 
     const makeValidationErrors = (isBudgetPositive, isSelfFinancingValid) => {
-      if (!reportErrors) {
-        return []
-      }
-
       if (!isBudgetPositive) {
         return [{error: "negative-budget"}]
       }
@@ -153,19 +153,21 @@ export default class VaBudgetCalculator {
       return []
     }
 
-    const vaBudgetSummaryField = _.last(vaBudgetField.children)
+    const vaBudgetSummaryElement = _.last(vaBudgetElement.children)
 
-    const subTotalsAndErrorsAndSummingFields = populateSummingFieldTotals()
-    const totalNeeded = validateTotalNeeded(subTotalsAndErrorsAndSummingFields)
-    const financing = validateFinancing(vaBudgetSummaryField, state.avustushaku.content["self-financing-percentage"], totalNeeded.value)
+    const subtotals = deriveSubtotalsAndSetSumAndRequiredFieldsByMutation()
+    const totalNeeded = validateTotalNeeded(subtotals)
+    const financing = validateFinancing(vaBudgetSummaryElement, state.avustushaku.content["self-financing-percentage"], totalNeeded.value)
 
     state.form.validationErrors = state.form.validationErrors.merge({
-      [vaBudgetField.id]: makeValidationErrors(totalNeeded.isBudgetPositive, financing.isValid)
+      [vaBudgetElement.id]: reportValidationErrors
+        ? makeValidationErrors(totalNeeded.isBudgetPositive, financing.isValid)
+        : []
     })
 
-    vaBudgetSummaryField.totalNeeded = totalNeeded
-    vaBudgetSummaryField.financing = financing
-    vaBudgetSummaryField.subTotalsAndErrorsAndSummingFields = subTotalsAndErrorsAndSummingFields
+    vaBudgetSummaryElement.totalNeeded = totalNeeded
+    vaBudgetSummaryElement.financing = financing
+    vaBudgetSummaryElement.subtotals = subtotals
   }
 
   static shareOf(percentage, total) {

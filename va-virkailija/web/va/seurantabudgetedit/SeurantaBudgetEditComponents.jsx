@@ -107,7 +107,7 @@ export class EditSummingBudgetElement extends React.Component {
   }
 
   static sumOf(field, answers) {
-    return _.sum(VaBudgetCalculator.getAmountValues(field, answers).map(x => x.value))
+    return _.sum(VaBudgetCalculator.getAmountValuesAndSetRequiredFieldsByMutation(field, answers).map(x => x.value))
   }
 }
 

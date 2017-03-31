@@ -167,7 +167,9 @@ function initialStateTemplateTransformation(template) {
 }
 
 function onInitialStateLoaded(initialState) {
-  budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(initialState, isNotFirstEdit(initialState))
+  budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
+    reportValidationErrors: isNotFirstEdit(initialState)
+  })
 }
 
 function initFormController() {

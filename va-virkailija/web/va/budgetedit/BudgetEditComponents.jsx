@@ -66,7 +66,7 @@ export class EditSummingBudgetElement extends React.Component {
     const disabled = this.props.disabled || typeof this.props.disabled === 'undefined'
     const classNames = ClassNames({"required": field.required})
     const originalHakemus = customProps.originalHakemus
-    const originalSum = _.sum(VaBudgetCalculator.getAmountValues(field, originalHakemus.answers).map(x => x.value))
+    const originalSum = _.sum(VaBudgetCalculator.getAmountValuesAndSetRequiredFieldsByMutation(field, originalHakemus.answers).map(x => x.value))
     const useDetailedCosts = _.get(originalHakemus, 'arvio.useDetailedCosts', false)
     const showDetailedCosts = controller.budgetBusinessRules.showDetailedCostsForBudgetField(field)
     const totalCosts = showDetailedCosts

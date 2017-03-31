@@ -114,8 +114,8 @@ export class BudgetSummaryElement extends React.Component {
     const htmlId = this.props.htmlId
     const field = this.props.field
 
-    const subTotalsAndErrorsAndSummingFields = field.subTotalsAndErrorsAndSummingFields
-    const renderSubTotals = subTotalsAndErrorsAndSummingFields && subTotalsAndErrorsAndSummingFields.length > 1
+    const subtotals = field.subtotals
+    const renderSubtotals = subtotals && subtotals.length > 1
 
     const selfFinancingAmountField = !_.isEmpty(this.props.children) && this.props.children[0].props.field.id === "self-financing-amount"
       ? this.props.children[0]
@@ -125,8 +125,8 @@ export class BudgetSummaryElement extends React.Component {
 
     return (
       <div id={htmlId}>
-        {renderSubTotals && BudgetSubtotalSummaryElement({
-          subTotalFields: subTotalsAndErrorsAndSummingFields,
+        {renderSubtotals && BudgetSubtotalSummaryElement({
+          subtotals,
           totalNeeded,
           translations: this.props.translations.form.budget,
           lang: this.props.lang
@@ -145,21 +145,21 @@ export class BudgetSummaryElement extends React.Component {
 }
 
 const BudgetSubtotalSummaryElement = ({
-  subTotalFields,
+  subtotals,
   totalNeeded,
   translations,
   lang
 }) => {
-  const subTotalRows = _.map(subTotalFields, row => {
-    const classNames = ClassNames("money", {error: row.containsErrors})
+  const subtotalRows = _.map(subtotals, st => {
+    const classNames = ClassNames("money", {error: st.containsErrors})
 
     return (
-      <tr className="budget-item" key={"total-summary-row-" + row.summingBudgetFieldId}>
+      <tr className="budget-item" key={"total-summary-row-" + st.summingBudgetFieldId}>
         <td className="label-column" colSpan="2">
-          <LocalizedString translations={row} translationKey="label" lang={lang} />
+          <LocalizedString translations={st} translationKey="label" lang={lang} />
         </td>
         <td className="amount-column">
-          <span className={classNames}>{row.sum}</span>
+          <span className={classNames}>{st.sum}</span>
         </td>
       </tr>
     )
@@ -187,7 +187,7 @@ const BudgetSubtotalSummaryElement = ({
         </tr>
       </thead>
       <tbody>
-        {subTotalRows}
+        {subtotalRows}
       </tbody>
       <tfoot>
         <tr>

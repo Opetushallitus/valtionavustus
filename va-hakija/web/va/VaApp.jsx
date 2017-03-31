@@ -86,7 +86,9 @@ function onInitialStateLoaded(initialState) {
     window.location = urlCreator.existingSubmissionPreviewUrl(initialState)
     return
   }
-  budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(initialState, isNotFirstEdit(initialState))
+  budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
+    reportValidationErrors: isNotFirstEdit(initialState)
+  })
 }
 
 function initVaFormController() {

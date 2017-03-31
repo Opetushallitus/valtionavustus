@@ -66,7 +66,7 @@ export default class FakeFormState {
     }
 
     const budgetCalculator = new VaBudgetCalculator()
-    budgetCalculator.populateBudgetCalculatedValuesForAllBudgetFields(formState, true)
+    budgetCalculator.deriveValuesForAllBudgetElementsByMutation(formState, {reportValidationErrors: true})
 
     return formState
   }
