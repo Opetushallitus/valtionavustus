@@ -48,7 +48,11 @@ export default class VaBudgetCalculator {
     }
   }
 
-  deriveValuesForBudgetFieldsByMutation(vaBudgetElement, state, {reportValidationErrors}) {
+  deriveValuesForBudgetFieldsByMutation(
+    vaBudgetElement,
+    state,
+    {reportValidationErrors, fixedSelfFinancingPercentage}
+  ) {
     const sumCalculatedCallback = this.onSumCalculatedCallback
 
     const deriveSubtotalsAndSetSumAndRequiredFieldsByMutation = () => {
@@ -95,14 +99,15 @@ export default class VaBudgetCalculator {
       }
     }
 
-    const validateFinancing = (summaryField, minSelfFinancingPercentage, totalNeeded) => {
+    const validateFinancing = (summaryElement, minSelfFinancingPercentage, totalNeeded) => {
       const minSelfFinancingValue = VaBudgetCalculator.shareOf(minSelfFinancingPercentage, totalNeeded)
+
       const result = {
         minSelfValue: minSelfFinancingValue,
         minSelfPercentage: minSelfFinancingPercentage
       }
 
-      const selfFinancingSpecField = FormUtil.findField(summaryField, "self-financing-amount")
+      const selfFinancingSpecField = FormUtil.findFieldByFieldType(summaryElement, "vaSelfFinancingField")
 
       if (!selfFinancingSpecField) {
         return _.assign(result, {
@@ -113,26 +118,35 @@ export default class VaBudgetCalculator {
         })
       }
 
-      const selfFinancingAnswer = JsUtil.findFirst(state.saveStatus.values, answer => answer.key === "self-financing-amount")
+      if (fixedSelfFinancingPercentage) {
+        const selfFinancingValue = VaBudgetCalculator.shareOf(fixedSelfFinancingPercentage, totalNeeded)
 
-      if (!selfFinancingAnswer) {
         return _.assign(result, {
-          selfValue: null,
-          isSelfValueANumber: false,
-          isValid: false
+          selfValue: selfFinancingValue,
+          ophValue: totalNeeded - selfFinancingValue,
+          isSelfValueANumber: true,
+          isValid: true
         })
       }
 
-      if (MoneyValidator.validateMoney(selfFinancingAnswer.value || "")) {
+      const selfFinancingAnswer = JsUtil.findFirst(
+        state.saveStatus.values,
+        answer => answer.key === selfFinancingSpecField.id
+      )
+
+      if (!selfFinancingAnswer || MoneyValidator.validateMoney(selfFinancingAnswer.value || "")) {
         return _.assign(result, {
           selfValue: null,
+          ophValue: null,
           isSelfValueANumber: false,
           isValid: false
         })
       }
 
       const selfFinancingValue = Number(selfFinancingAnswer.value)
+
       const isSelfFinancingSufficient = selfFinancingValue >= minSelfFinancingValue && selfFinancingValue <= totalNeeded
+
       return _.assign(result, {
         selfValue: selfFinancingValue,
         ophValue: totalNeeded - selfFinancingValue,
@@ -156,8 +170,13 @@ export default class VaBudgetCalculator {
     const vaBudgetSummaryElement = _.last(vaBudgetElement.children)
 
     const subtotals = deriveSubtotalsAndSetSumAndRequiredFieldsByMutation()
+
     const totalNeeded = validateTotalNeeded(subtotals)
-    const financing = validateFinancing(vaBudgetSummaryElement, state.avustushaku.content["self-financing-percentage"], totalNeeded.value)
+
+    const financing = validateFinancing(
+      vaBudgetSummaryElement,
+      state.avustushaku.content["self-financing-percentage"],
+      totalNeeded.value)
 
     state.form.validationErrors = state.form.validationErrors.merge({
       [vaBudgetElement.id]: reportValidationErrors

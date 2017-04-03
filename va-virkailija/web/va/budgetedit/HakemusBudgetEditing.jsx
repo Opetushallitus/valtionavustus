@@ -1,6 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
+import JsUtil from 'soresu-form/web/form/JsUtil'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
@@ -42,10 +43,33 @@ export default class HakemusBudgetEditing extends React.Component {
     })
   }
 
+  // Inject answer for self-financing amount for preview
+  static addSelfFinancingAnswersByMutationIfExplicitSelfFinancing(formState) {
+    const saveStatus = formState.saveStatus
+    const vaBudgetElements = JsUtil.flatFilter(formState.form.content, n => n.fieldType === "vaBudget")
+    _.forEach(vaBudgetElements, vaBudgetElement => {
+      const vaBudgetSummaryElement = _.last(vaBudgetElement.children)
+      const selfFinancingSpecField = FormUtil.findFieldByFieldType(vaBudgetSummaryElement, "vaSelfFinancingField")
+      if (selfFinancingSpecField) {
+        saveStatus.values = _.assign({}, saveStatus.values, {
+          value: saveStatus.values.value.concat({
+            key: selfFinancingSpecField.id,
+            value: "" + vaBudgetSummaryElement.financing.selfValue,
+            fieldType: "vaSelfFinancingField"
+          })
+        })
+      }
+    })
+  }
+
   render() {
     const {controller, hakemus, hakuData, avustushaku, translations, allowEditing} = this.props
     const vaBudget = FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget")
-    const fakeHakemus = {answers: hakemus.arvio["overridden-answers"]}
+    const fakeHakemus = {
+      "answers": hakemus.arvio["overridden-answers"],
+      "budget-oph-share": hakemus["budget-oph-share"],
+      "budget-total": hakemus["budget-total"]
+    }
     const formOperations = {
       chooseInitialLanguage: () => "fi",
       containsExistingEntityId: undefined,
@@ -66,6 +90,7 @@ export default class HakemusBudgetEditing extends React.Component {
       hakemus: fakeHakemus,
       savedHakemus: hakemus
     })
+    HakemusBudgetEditing.addSelfFinancingAnswersByMutationIfExplicitSelfFinancing(budgetEditFormState)
     HakemusBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus)
     const formElementProps = {
       state: budgetEditFormState,

@@ -3,6 +3,7 @@ import Immutable from 'seamless-immutable'
 
 import FormRules from 'soresu-form/web/form/FormRules'
 import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
+import FormUtil from 'soresu-form/web/form/FormUtil'
 
 import _ from 'lodash'
 
@@ -37,6 +38,14 @@ export default class FakeFormState {
     attachments,
     savedHakemus
   }) {
+    const getFixedSelfFinancingPercentageOrNull = () => {
+      const ophShareFromHakemus = hakemus["budget-oph-share"]
+      const totalFromHakemus = hakemus["budget-total"]
+      return ophShareFromHakemus && totalFromHakemus
+        ? VaBudgetCalculator.percentageOf(totalFromHakemus - ophShareFromHakemus, totalFromHakemus)
+        : null
+    }
+
     const formState = {
       avustushaku: {
         content: {
@@ -65,8 +74,13 @@ export default class FakeFormState {
       }
     }
 
+    const fixedSelfFinancingPercentage = getFixedSelfFinancingPercentageOrNull()
+
     const budgetCalculator = new VaBudgetCalculator()
-    budgetCalculator.deriveValuesForAllBudgetElementsByMutation(formState, {reportValidationErrors: true})
+    budgetCalculator.deriveValuesForAllBudgetElementsByMutation(formState, {
+      reportValidationErrors: true,
+      fixedSelfFinancingPercentage: fixedSelfFinancingPercentage
+    })
 
     return formState
   }

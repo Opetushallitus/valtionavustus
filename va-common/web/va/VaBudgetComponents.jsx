@@ -117,7 +117,7 @@ export class BudgetSummaryElement extends React.Component {
     const subtotals = field.subtotals
     const renderSubtotals = subtotals && subtotals.length > 1
 
-    const selfFinancingAmountField = !_.isEmpty(this.props.children) && this.props.children[0].props.field.id === "self-financing-amount"
+    const selfFinancingField = !_.isEmpty(this.props.children) && this.props.children[0].props.field.fieldType === "vaSelfFinancingField"
       ? this.props.children[0]
       : null
 
@@ -132,7 +132,7 @@ export class BudgetSummaryElement extends React.Component {
           lang: this.props.lang
         })}
         {BudgetFinancingSummaryElement({
-          selfFinancingAmountField,
+          selfFinancingField,
           totalNeeded,
           financing: this.props.field.financing,
           checkNumbersMessage: this.miscTranslator.translate("check-numbers", this.props.lang, "VIRHE"),
@@ -204,7 +204,7 @@ const BudgetSubtotalSummaryElement = ({
 }
 
 const BudgetFinancingSummaryElement = ({
-  selfFinancingAmountField,
+  selfFinancingField,
   totalNeeded,
   financing,
   checkNumbersMessage,
@@ -232,7 +232,7 @@ const BudgetFinancingSummaryElement = ({
 
   return (
     <section className="budget-summary">
-      {selfFinancingAmountField && (
+      {selfFinancingField && (
         <h4 className={minSelfFinancingClassNames}>
           <LocalizedString translations={translations}
                            translationKey="minSelfFinancingNeeded"
@@ -254,7 +254,7 @@ const BudgetFinancingSummaryElement = ({
               <LocalizedString translations={translations} translationKey="selfFinancingAmount" lang={lang} />
             </td>
             <td className="amount-value-column">
-              {selfFinancingAmountField || <span className={amountClassNames}>{isFinancingResultANumber ? financing.selfValue : checkNumbersMessage}</span>}
+              {selfFinancingField || <span className={amountClassNames}>{isFinancingResultANumber ? financing.selfValue : checkNumbersMessage}</span>}
             </td>
           </tr>
           <tr>
