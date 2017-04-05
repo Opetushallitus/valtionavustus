@@ -118,19 +118,25 @@
       )
       changelog)))
 
-(defn- calculate-total-oph-budget [avustushaku status arvio]
+(defn- calculate-total-oph-budget [avustushaku hakemus-id status arvio]
   (cond
     (= status :rejected) 0
     (not (:overridden-answers arvio)) (:budget-granted arvio)
     :else (let [form (hakija-api/get-form-by-avustushaku (:id avustushaku))
-                calculated-budget (va-budget/calculate-totals-virkailija (:overridden-answers arvio) avustushaku form (:useDetailedCosts arvio) (:costsGranted arvio))]
+                hakemus (hakija-api/get-hakemus hakemus-id)
+                calculated-budget (va-budget/calculate-totals-virkailija (:overridden-answers arvio)
+                                                                         avustushaku
+                                                                         form
+                                                                         hakemus
+                                                                         (:useDetailedCosts arvio)
+                                                                         (:costsGranted arvio))]
                     (:oph-share calculated-budget))))
 
 (defn update-or-create-hakemus-arvio [avustushaku hakemus-id arvio identity]
   (let [status (keyword (:status arvio))
         costs-granted (:costsGranted arvio)
         use-detailed-costs (:useDetailedCosts arvio)
-        budget-granted (or (calculate-total-oph-budget avustushaku status arvio) 0)
+        budget-granted (or (calculate-total-oph-budget avustushaku hakemus-id status arvio) 0)
         academysize (or (:academysize arvio) 0)
         overridden-answers (:overridden-answers arvio)
         oppilaitokset-names (filter not-empty (:names (:oppilaitokset arvio)))

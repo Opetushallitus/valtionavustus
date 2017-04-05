@@ -41,21 +41,41 @@
   (-> (fn [item] (read-amount-income item answers only-incomes))
       (map children)))
 
-(defn- select-self-financing-amount [answers budget-summary-field self-financing-percentage total-sum]
-  (let [min-self-financing-amount (-> (/ self-financing-percentage 100)
-                                      (* total-sum)
-                                      Math/ceil
-                                      int)]
-    (if-let [self-financing-field-id (some-> budget-summary-field
-                                             list
-                                             (formutil/find-fields* #(= "vaSelfFinancingField" (:fieldType %)))
-                                             first
-                                             :id)]
+(defn- fraction-share-of [fraction total]
+  (-> fraction
+      (* total)
+      Math/ceil
+      int))
+
+(defn- percentage-share-of [percentage total]
+  (fraction-share-of (/ percentage 100) total))
+
+(defn- find-self-financing-field [budget-summary-field]
+  (some-> budget-summary-field
+          list
+          (formutil/find-fields* #(= "vaSelfFinancingField" (:fieldType %)))
+          first))
+
+(defn- select-self-financing-amount-virkailija [hakemus self-financing-percentage total-sum budget-summary-field _]
+  (if (:id (find-self-financing-field budget-summary-field))
+    (let [hakemus-oph-share (:budget_oph_share hakemus)
+          hakemus-total (:budget_total hakemus)
+          user-self-financing-fraction (/ (- hakemus-total hakemus-oph-share) hakemus-total)]
+        (fraction-share-of user-self-financing-fraction total-sum))
+    (percentage-share-of self-financing-percentage total-sum)))
+
+(defn- select-self-financing-amount-hakija [self-financing-percentage total-sum budget-summary-field answers]
+  (let [min-self-financing-amount (percentage-share-of self-financing-percentage total-sum)]
+    (if-let [self-financing-field-id (:id (find-self-financing-field budget-summary-field))]
       (let [self-financing-amount (sanitise (formutil/find-answer-value answers self-financing-field-id))]
         (max self-financing-amount min-self-financing-amount))
       min-self-financing-amount)))
 
-(defn- do-calculate-totals [answers self-financing-percentage use-detailed-costs costs-granted budget-field]
+(defn- do-calculate-totals [answers
+                            use-detailed-costs
+                            costs-granted
+                            select-self-financing-fn
+                            budget-field]
   (let [only-incomes (not use-detailed-costs)
         budget-field-children (:children budget-field)
         total-row-sum (->> budget-field-children
@@ -64,20 +84,36 @@
                            (sum-budget-items answers only-incomes)
                            (r/fold +))
         total-sum (if use-detailed-costs total-row-sum (+ total-row-sum costs-granted))
-        self-financing-amount (select-self-financing-amount answers
-                                                            (last budget-field-children)
-                                                            self-financing-percentage
-                                                            total-sum)
+        self-financing-amount (select-self-financing-fn total-sum
+                                                        (last budget-field-children)
+                                                        answers)
         oph-share (max (- total-sum self-financing-amount) 0)]
     {:total-needed total-sum
      :oph-share oph-share}))
 
-(defn calculate-totals-virkailija [answers avustushaku form use-detailed-costs costs-granted]
+(defn- calculate-totals [answers avustushaku form use-detailed-costs costs-granted select-self-financing-fn]
   (let [self-financing-percentage (-> avustushaku :content :self-financing-percentage)
         all-budget-summaries (->> (:content form)
                                   (find-budget-fields)
-                                  (map (partial do-calculate-totals answers self-financing-percentage use-detailed-costs costs-granted )))]
+                                  (map (partial do-calculate-totals
+                                                answers
+                                                use-detailed-costs
+                                                costs-granted
+                                                (partial select-self-financing-fn self-financing-percentage))))]
     (first all-budget-summaries)))
 
-(defn calculate-totals [answers avustushaku form]
-  (calculate-totals-virkailija answers avustushaku form true 0))
+(defn calculate-totals-virkailija [answers avustushaku form hakemus use-detailed-costs costs-granted]
+  (calculate-totals answers
+                    avustushaku
+                    form
+                    use-detailed-costs
+                    costs-granted
+                    (partial select-self-financing-amount-virkailija hakemus)))
+
+(defn calculate-totals-hakija [answers avustushaku form]
+  (calculate-totals answers
+                    avustushaku
+                    form
+                    true
+                    0
+                    select-self-financing-amount-hakija))

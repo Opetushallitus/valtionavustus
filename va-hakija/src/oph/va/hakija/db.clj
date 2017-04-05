@@ -37,7 +37,7 @@
   (let [avustushaku (get-avustushaku avustushaku-id)
         form-id (:form avustushaku)
         form (form-db/get-form form-id)]
-    (va-budget/calculate-totals answers avustushaku form)))
+    (va-budget/calculate-totals-hakija answers avustushaku form)))
 
 (defn- get-budget-params [avustushaku-id answers]
   (let [budget-summary (calculate-budget-summary avustushaku-id answers)]
