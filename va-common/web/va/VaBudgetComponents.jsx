@@ -150,7 +150,11 @@ const BudgetSubtotalSummaryElement = ({
   translations,
   lang
 }) => {
-  const subtotalRows = _.map(subtotals, st => {
+  const subtotalsToShow = totalNeeded.useDetailedCosts
+    ? subtotals
+    : [_.assign({}, _.first(subtotals), {sum: totalNeeded.costsGranted, containsErrors: false})].concat(_.rest(subtotals))
+
+  const subtotalRows = _.map(subtotalsToShow, st => {
     const classNames = ClassNames("money", {error: st.containsErrors})
 
     return (

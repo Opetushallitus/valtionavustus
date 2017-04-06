@@ -95,7 +95,9 @@ export default class VaBudgetCalculator {
       return {
         value: totalNeeded,
         isBudgetPositive: isBudgetPositive,
-        isValid: !someSubtotalHasError && isBudgetPositive
+        isValid: !someSubtotalHasError && isBudgetPositive,
+        useDetailedCosts,
+        costsGranted
       }
     }
 
