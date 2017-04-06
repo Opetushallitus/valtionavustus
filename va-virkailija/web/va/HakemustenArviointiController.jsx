@@ -209,6 +209,7 @@ export default class HakemustenArviointiController {
       history.pushState({}, window.title, newUrl)
     }
     this.setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state)
+    this.setDefaultBudgetValuesForSelectedHakemusSeurantaAnswers(state)
     this.validateHakemusRahoitusalueAndTalousarviotiliSelection(state)
     this.loadScores(state, hakemusIdToSelect)
     this.loadComments()
@@ -527,16 +528,24 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state) {
+  static setDefaultBudgetValuesForSelectedHakemusAnswers(answersField, state) {
     const selectedHakemus = state.selectedHakemus
     const budgetElement = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
 
     FormStateLoop.initDefaultValues(
-      selectedHakemus.arvio["overridden-answers"],
+      selectedHakemus.arvio[answersField],
       BudgetBusinessRules.collectHakemusBudgetAnswers(budgetElement, selectedHakemus.answers),
       budgetElement,
       null
     )
+  }
+
+  setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state) {
+    HakemustenArviointiController.setDefaultBudgetValuesForSelectedHakemusAnswers("overridden-answers", state)
+  }
+
+  setDefaultBudgetValuesForSelectedHakemusSeurantaAnswers(state) {
+    HakemustenArviointiController.setDefaultBudgetValuesForSelectedHakemusAnswers("seuranta-answers", state)
   }
 
   validateHakemusRahoitusalueAndTalousarviotiliSelection(state) {

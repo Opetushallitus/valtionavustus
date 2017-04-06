@@ -33,8 +33,7 @@ export default class SeurantaBudgetEditing extends React.Component {
       FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget") || {},
       FormUtil.findFieldByFieldType(_.get(hakemus, "selvitys.valiselvitysForm.content", []), "vaBudget") || {},
       FormUtil.findFieldByFieldType(_.get(hakemus, "selvitys.loppuselvitysForm.content", []), "vaBudget") || {})
-
-    const fakeHakemus = {answers: _.get(hakemus, "arvio.seuranta-answers", {value: []})}
+    const fakeHakemus = {answers: hakemus.arvio["seuranta-answers"]}
     const formOperations = {
       chooseInitialLanguage: () => "fi",
       containsExistingEntityId: undefined,
@@ -55,11 +54,6 @@ export default class SeurantaBudgetEditing extends React.Component {
       hakemus: fakeHakemus,
       savedHakemus: hakemus
     })
-    FormStateLoop.initDefaultValues(
-      fakeHakemus.answers,
-      BudgetBusinessRules.collectHakemusBudgetAnswers(budgetEditFormState.form.content, hakemus.answers),
-      budgetEditFormState.form.content,
-      budgetEditFormState.configuration.lang)
     SeurantaBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers)
     const formElementProps = {
       state: budgetEditFormState,
