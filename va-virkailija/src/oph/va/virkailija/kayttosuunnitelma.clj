@@ -46,7 +46,10 @@
         arvio (:arvio hakemus)
         use-detailed-costs (:useDetailedCosts arvio)
         budget-elements (va-budget/find-budget-fields form-content)
-        children (:children (first budget-elements))
+        children (-> budget-elements
+                     first
+                     :children
+                     va-budget/find-summing-fields)
         has-kayttosuunnitelma (not= nil children)
         table-menot (find-table children 0 answers overridden-answers)
         tbody-menot (tbody table-menot language use-detailed-costs)
