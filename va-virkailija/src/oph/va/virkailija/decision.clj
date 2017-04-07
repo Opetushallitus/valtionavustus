@@ -7,7 +7,7 @@
             [oph.common.email :as email]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.soresu.form.formutil :as formutil]
-            [oph.va.virkailija.kayttosuunnitelma :as kayttosuunnitelma]
+            [oph.va.virkailija.kayttosuunnitelma :as ks]
             [oph.va.virkailija.koulutusosio :as koulutusosio]
             [schema.core :as s]))
 
@@ -104,7 +104,7 @@
         has-multiple-maksuera (-> avustushaku :content :multiplemaksuera)
         multiple-maksuera (and has-multiple-maksuera (> total-paid 60000))
         first-round-paid (if multiple-maksuera (Math/round (* 0.6 total-paid)) total-paid)
-        paid-formatted (kayttosuunnitelma/format-number first-round-paid)
+        paid-formatted (ks/format-number first-round-paid)
         extra-no-multiple "<span>.</span>"
         extra-multiple (str "<span> " (translate :ja-loppuera-viimeistaan) " " maksu-date ".</span>")
         extra (if multiple-maksuera extra-multiple extra-no-multiple)
@@ -185,8 +185,6 @@
         accepted (not= decision-status "rejected")
         arvio-role-id (:presenter-role-id arvio)
         arvio-role (first (filter #(= (:id %) arvio-role-id) roles))
-        self-financing-percentage (-> avustushaku :content :self-financing-percentage)
-        oph-financing-percentage (- 100 self-financing-percentage)
         role (if (nil? arvio-role) (first presenting-officers) arvio-role)
         language (keyword (:language hakemus))
         avustushaku-name (get-in avustushaku [:content :name language])
@@ -202,8 +200,10 @@
         avustuksen-maksu (avustuksen-maksu avustushaku bic iban total-granted language translate)
         myonteinen-lisateksti (myonteinen-lisateksti avustushaku hakemus language)
         form-content (-> haku-data :form :content)
-        kayttosuunnitelma (kayttosuunnitelma/kayttosuunnitelma avustushaku hakemus form-content answers translate language)
+        kayttosuunnitelma (ks/kayttosuunnitelma avustushaku hakemus form-content answers translate language)
         has-kayttosuunnitelma (and (:has-kayttosuunnitelma kayttosuunnitelma) is-erityisavustus)
+        show-oph-financing-percentage (> (:self-financing-percentage kayttosuunnitelma) 0)
+        oph-financing-percentage (:oph-financing-percentage kayttosuunnitelma)
         liitteet-list (liitteet-list avustushaku hakemus translate language has-kayttosuunnitelma)
         koulutusosio (koulutusosio/koulutusosio hakemus answers translate)
         has-koulutusosio (:has-koulutusosio koulutusosio)
@@ -224,8 +224,8 @@
                 :section-perustelut            (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate)
                 :section-tarkastusoikeus       (section-translated :tarkastusoikeus-title :tarkastusoikeus-text translate false)
                 :section-avustuksen-maksu      avustuksen-maksu
-                :total-granted                 (kayttosuunnitelma/format-number total-granted)
-                :total-nettomenot              (kayttosuunnitelma/format-number (:nettomenot-yhteensa kayttosuunnitelma))
+                :total-granted                 (ks/format-number total-granted)
+                :total-nettomenot              (ks/format-number (:nettomenot-yhteensa kayttosuunnitelma))
                 :role                          role
                 :t                             translate
                 :johtaja                       johtaja
@@ -234,8 +234,8 @@
                 :liitteet                      liitteet-list
                 :accepted                      accepted
                 :rejected                      (not accepted)
-                :oph-financing-percentage      oph-financing-percentage
-                :show-financing-percentage     (> self-financing-percentage 0)
+                :show-oph-financing-percentage show-oph-financing-percentage
+                :oph-financing-percentage      (ks/format-decimal oph-financing-percentage)
                 :has-kayttosuunnitelma         has-kayttosuunnitelma
                 :kayttosuunnitelma             (:body kayttosuunnitelma)
                 :koulutusosio                  (:body koulutusosio)

@@ -50,7 +50,7 @@
 (defn- percentage-share-of [percentage total]
   (fraction-share-of (/ percentage 100) total))
 
-(defn- find-self-financing-field [budget-summary-field]
+(defn find-self-financing-field [budget-summary-field]
   (some-> budget-summary-field
           list
           (formutil/find-fields* #(= "vaSelfFinancingField" (:fieldType %)))

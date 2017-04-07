@@ -2,7 +2,23 @@
   (:require [clojure.string :as str]
             [clostache.parser :refer [render]]
             [oph.common.email :as email]
-            [oph.va.budget :as va-budget]))
+            [oph.va.budget :as va-budget])
+  (:import [java.math RoundingMode]))
+
+(defn round-decimal
+  ([number scale]
+   (round-decimal number scale RoundingMode/HALF_UP))
+  ([number scale rounding-mode]
+   (-> number
+       double
+       bigdec
+       (.setScale scale rounding-mode)
+       .doubleValue)))
+
+(defn format-decimal [decimal]
+  (-> decimal
+      (str/replace-first #"\.0+$" "")
+      (str/replace-first #"\." ",")))
 
 (defn format-number [number]
   (let [s (str number)
@@ -39,86 +55,94 @@
         ]
     new-table))
 
+(defn- sum-by-field [table field]
+  (reduce + (map field (:children table))))
+
+(defn- calculate-floating-self-financing-fraction [hakemus]
+  (let [hakemus-oph-share (:budget-oph-share hakemus)
+        hakemus-total (:budget-total hakemus)]
+    (/ (- hakemus-total hakemus-oph-share) hakemus-total)))
 
 (defn kayttosuunnitelma [avustushaku hakemus form-content answers translate language]
   (let [template (email/load-template "templates/kayttosuunnitelma.html")
-        overridden-answers (-> hakemus :arvio  :overridden-answers)
+
+        overridden-answers (-> hakemus :arvio :overridden-answers)
         arvio (:arvio hakemus)
         use-detailed-costs (:useDetailedCosts arvio)
-        budget-elements (va-budget/find-budget-fields form-content)
-        children (-> budget-elements
-                     first
-                     :children
-                     va-budget/find-summing-fields)
-        has-kayttosuunnitelma (not= nil children)
-        table-menot (find-table children 0 answers overridden-answers)
+        cost-granted (:costsGranted arvio)
+        budget-children (-> form-content
+                          va-budget/find-budget-fields
+                          first
+                          :children)
+        summing-fields (va-budget/find-summing-fields budget-children)
+        uses-floating-self-financing (-> budget-children
+                                         last
+                                         va-budget/find-self-financing-field
+                                         :id
+                                         some?)
+        self-financing-percentage (if uses-floating-self-financing
+                                    (-> hakemus
+                                        calculate-floating-self-financing-fraction
+                                        (* 100)
+                                        (round-decimal 1 RoundingMode/FLOOR))
+                                    (-> avustushaku
+                                        :content
+                                        :self-financing-percentage))
+        is-oph-full-finance (and (not uses-floating-self-financing) (= 0 self-financing-percentage))
+        show-omarahoitus (not is-oph-full-finance)
+        oph-financing-percentage (round-decimal (- 100 self-financing-percentage) 1 RoundingMode/CEILING)
+        has-kayttosuunnitelma (not= nil summing-fields)
+
+        table-menot (find-table summing-fields 0 answers overridden-answers)
         tbody-menot (tbody table-menot language use-detailed-costs)
-        table-tulot (find-table children 1 answers overridden-answers)
+        table-tulot (find-table summing-fields 1 answers overridden-answers)
         table-tulot-label (-> table-tulot :label language)
         tbody-tulot (tbody table-tulot language true)
-        table-muu (find-table children 2 answers overridden-answers)
+        table-muu (find-table summing-fields 2 answers overridden-answers)
         table-muu-label (-> table-muu :label language)
         tbody-muu (tbody table-muu language true)
-        cost-granted (:costsGranted arvio)
-        self-financing-percentage (-> avustushaku :content :self-financing-percentage)
-        oph-financing-percentage (- 100 self-financing-percentage)
-        total-granted (:budget-granted arvio)
-        sum-by-field (fn [table field] (reduce + (map field (:children table))))
+
         total-original-costs (sum-by-field table-menot :original)
         total-overridden-costs (if use-detailed-costs
                                  (sum-by-field table-menot :overridden)
                                  cost-granted)
+
         total-incomes (sum-by-field table-tulot :original)
         total-financing (sum-by-field table-muu :original)
         netto-total-haettu (- total-original-costs total-incomes)
         netto-total-myonnetty (- total-overridden-costs total-incomes)
-        total+original (- total-original-costs total-incomes total-financing)
-        total+overridden (- total-overridden-costs total-incomes total-financing)
-        total-avustus  (-> total+original
-                        (* oph-financing-percentage)
-                        (/ 100)
-                        Math/floor
-                        int)
-        total-haettu-omarahoitus  (-> total+original
-                           (* (- 100 oph-financing-percentage))
-                           (/ 100)
-                           Math/ceil
-                           int)
 
-        total-myonnetty-omarahoitus (-> total+overridden
-                                        (* (- 100 oph-financing-percentage))
-                                        (/ 100)
-                                        Math/ceil
-                                        int)
+        total-oph-haettu (:budget-oph-share hakemus)
+        total-oph-myonnetty (:budget-granted arvio)
+        total-omarahoitus-haettu (- (:budget-total hakemus) total-oph-haettu)
+        total-omarahoitus-myonnetty (- netto-total-myonnetty total-financing total-oph-myonnetty)
 
-        oph-full-finance (= 100 oph-financing-percentage)
-        oph-financing-note (if oph-full-finance "" (str oph-financing-percentage "%"))
-        hakija-financing-note (if oph-full-finance "" (str self-financing-percentage "%"))
-        show-financing-note (not= self-financing-percentage 0)
-        params {:t                      translate
-                :total-original-costs   (amount-cell total-original-costs)
-                :total-overridden-costs (amount-cell total-overridden-costs)
-                :total-incomes          (amount-cell total-incomes)
-                :netto-total-haettu     (amount-cell netto-total-haettu)
-                :netto-total-myonnetty  (amount-cell netto-total-myonnetty)
-                :total-financing        (amount-cell total-financing)
-                :oph-financing-note     oph-financing-note
-                :hakija-financing-note  hakija-financing-note
-                :show-financing-note    show-financing-note
-                :total-granted          (amount-cell total-granted)
-                :total-avustus          (amount-cell total-avustus)
-                :total-haettu-omarahoitus      (amount-cell total-haettu-omarahoitus)
-                :total-myonnetty-omarahoitus      (amount-cell total-myonnetty-omarahoitus)
-                :tbody-menot tbody-menot
-                :tbody-tulot tbody-tulot
-                :table-tulot-label table-tulot-label
-                :tbody-muu tbody-muu
-                :table-muu-label table-muu-label
-                }
-        body (render template params)
-        ]
-    {
-     :body body
-     :nettomenot-yhteensa (- total-overridden-costs total-incomes)
-     :has-kayttosuunnitelma has-kayttosuunnitelma
-     }))
+        oph-financing-note (if is-oph-full-finance "" (str (format-decimal oph-financing-percentage) "%"))
+        hakija-financing-note (if is-oph-full-finance "" (str (format-decimal self-financing-percentage) "%"))
+
+        params {:t                           translate
+                :total-original-costs        (amount-cell total-original-costs)
+                :total-overridden-costs      (amount-cell total-overridden-costs)
+                :total-incomes               (amount-cell total-incomes)
+                :netto-total-haettu          (amount-cell netto-total-haettu)
+                :netto-total-myonnetty       (amount-cell netto-total-myonnetty)
+                :total-financing             (amount-cell total-financing)
+                :oph-financing-note          oph-financing-note
+                :hakija-financing-note       hakija-financing-note
+                :show-omarahoitus            show-omarahoitus
+                :total-oph-haettu            (amount-cell total-oph-haettu)
+                :total-oph-myonnetty         (amount-cell total-oph-myonnetty)
+                :total-omarahoitus-haettu    (amount-cell total-omarahoitus-haettu)
+                :total-omarahoitus-myonnetty (amount-cell total-omarahoitus-myonnetty)
+                :tbody-menot                 tbody-menot
+                :tbody-tulot                 tbody-tulot
+                :table-tulot-label           table-tulot-label
+                :tbody-muu                   tbody-muu
+                :table-muu-label             table-muu-label}
+
+        body (render template params)]
+    {:body                      body
+     :nettomenot-yhteensa       (- total-overridden-costs total-incomes)
+     :self-financing-percentage self-financing-percentage
+     :oph-financing-percentage  oph-financing-percentage
+     :has-kayttosuunnitelma     has-kayttosuunnitelma}))
