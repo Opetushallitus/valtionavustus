@@ -267,10 +267,10 @@ Esimerkiksi Emacsin
 
 1. Mene palvelimelle, esim: `./servers/ssh_to_va-test.bash`
 2. Etsi Java-sovelluksen prosessi-id: `ps -fe | grep java`
-3. Etsi mitä portteja prosessi kuuntelee, esim: `sudo netstat -apn |
-   grep 32762 | grep LISTEN`
-   * Katso mikä on prosessin vaihtuva RMI-portti (se on siis se, joka ei
-     ole palvelun oletus-http-portti eikä oletus-JMX-portti)
+3. Etsi mitä portteja prosessi kuuntelee, esim: `sudo lsof -a -iTCP
+   -sTCP:LISTEN -n -P | grep $PID`
+   * Katso mikä on prosessin vaihtuva RMI-portti (se, joka ei ole
+     palvelun oletus-http-portti eikä oletus-JMX-portti)
    * Oletetaan, että JMX-portit ovat: va-hakija=10876, va.virkailija=11322
 4. Avaa uusi ssh-yhteys koneelle ja putkita RMI-portti (JMX-portti
    putkitetaan valmiiksi ssh-skriptissä), esim:

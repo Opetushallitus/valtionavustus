@@ -29,8 +29,14 @@ export default class SeurantaBudgetEditing extends React.Component {
   render() {
     const {controller, hakemus, hakuData, avustushaku, translations} = this.props
 
+    const vaBudget = FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget")
+
+    if (!vaBudget) {
+      return null
+    }
+
     const budgetSpec = FormUtil.mergeDeepFieldTrees(
-      FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget") || {},
+      vaBudget,
       FormUtil.findFieldByFieldType(_.get(hakemus, "selvitys.valiselvitysForm.content", []), "vaBudget") || {},
       FormUtil.findFieldByFieldType(_.get(hakemus, "selvitys.loppuselvitysForm.content", []), "vaBudget") || {})
     const fakeHakemus = {answers: hakemus.arvio["seuranta-answers"]}

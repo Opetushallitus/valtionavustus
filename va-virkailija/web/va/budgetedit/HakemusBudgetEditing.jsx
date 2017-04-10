@@ -65,6 +65,11 @@ export default class HakemusBudgetEditing extends React.Component {
   render() {
     const {controller, hakemus, hakuData, avustushaku, translations, allowEditing} = this.props
     const vaBudget = FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget")
+
+    if (!vaBudget) {
+      return null
+    }
+
     const fakeHakemus = {
       "answers": hakemus.arvio["overridden-answers"],
       "budget-oph-share": hakemus["budget-oph-share"],
