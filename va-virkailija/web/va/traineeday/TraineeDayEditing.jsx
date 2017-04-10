@@ -46,7 +46,6 @@ export default class TraineeDayEditing extends Component {
     if(traineeDayCalculators.length==0){
       return null
     }
-    const fakeHakemus = {answers: _.get(hakemus, "arvio.overridden-answers", {value: []})}
     const formOperations = {
       chooseInitialLanguage: function() {return "fi"},
       containsExistingEntityId: undefined,
@@ -59,26 +58,20 @@ export default class TraineeDayEditing extends Component {
       responseParser: undefined,
       printEntityId: undefined
     }
-    const form = {
-      form:{
-        "content": [{
-          "fieldType": "vaTraineeDayCalculatorSummary",
-          "fieldClass": "wrapperElement",
-          "id":"trainee-day-summary",
-          "children":traineeDayCalculators}
-        ]
-      }
-    }
+    const fakeHakemus = {answers: hakemus.arvio["overridden-answers"]}
     const traineeDayEditFormState = FakeFormState.createHakemusFormState({
       translations,
       avustushaku,
-      formContent: form.content,
+      formContent: [{
+        fieldType:  "vaTraineeDayCalculatorSummary",
+        fieldClass: "wrapperElement",
+        id:         "trainee-day-summary",
+        children:   traineeDayCalculators
+      }],
       formOperations,
       hakemus: fakeHakemus,
       savedHakemus: hakemus
     })
-    const initialValues = TraineeDayEditing.initialValues(traineeDayEditFormState.form.content, hakemus)
-    FormStateLoop.initDefaultValues(fakeHakemus.answers, initialValues, traineeDayEditFormState.form.content, traineeDayEditFormState.configuration.lang)
     const formElementProps = {
       state: traineeDayEditFormState,
       formContainerClass: allowEditing ? Form : FormPreview,
