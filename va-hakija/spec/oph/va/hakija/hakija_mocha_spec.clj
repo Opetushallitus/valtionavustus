@@ -1,4 +1,4 @@
-(ns oph.va.hakija.hakija_mocha-spec
+(ns oph.va.hakija.hakija-mocha-spec
   (:use [clojure.tools.trace]
         [clojure.java.shell :only [sh]]
         [clojure.string :only [split join]])

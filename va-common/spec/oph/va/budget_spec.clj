@@ -1,4 +1,4 @@
-(ns oph.va.budget_spec
+(ns oph.va.budget-spec
   (:require [speclj.core :refer :all]
             [oph.soresu.form.formutil :refer [transform-form-content]]
             [oph.va.budget :refer :all]))
