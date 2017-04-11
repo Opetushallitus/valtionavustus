@@ -172,7 +172,10 @@ class GrantedAmountCell extends EditBudgetItemCell {
     let contents = null
 
     if (showContents) {
-      const moneyClassNames = ClassNames("money sum", {error: !amount.hasValidValue})
+      const moneyClassNames = ClassNames({
+        'error error-message': !amount.hasValidValue,
+        money: amount.hasValidValue
+      })
       contents = <span className={moneyClassNames}>{amount.valueFormatted}</span>
     }
 
@@ -186,7 +189,10 @@ class SelvitysAmountCell extends EditBudgetItemCell {
 
     const amount = this.amountOf(answers, valueId, descriptionId)
     const cellClassNames = ClassNames(cellClassName, {'has-title': amount.hasDescription})
-    const moneyClassNames = ClassNames("money", {'error error-message': !amount.hasValidValue})
+    const moneyClassNames = ClassNames({
+      'error error-message': !amount.hasValidValue,
+      money: amount.hasValidValue
+    })
 
     return (
       <td className={cellClassNames} title={amount.description}>
