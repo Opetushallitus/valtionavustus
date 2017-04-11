@@ -48,7 +48,7 @@ export default class HakemusBudgetEditing extends React.Component {
     const saveStatus = formState.saveStatus
     const vaBudgetElements = JsUtil.flatFilter(formState.form.content, n => n.fieldType === "vaBudget")
     _.forEach(vaBudgetElements, vaBudgetElement => {
-      const vaBudgetSummaryElement = _.last(vaBudgetElement.children)
+      const vaBudgetSummaryElement = _.find(vaBudgetElement.children, n => n.fieldType === "vaBudgetSummaryElement")
       const selfFinancingSpecField = FormUtil.findFieldByFieldType(vaBudgetSummaryElement, "vaSelfFinancingField")
       if (selfFinancingSpecField) {
         saveStatus.values = _.assign({}, saveStatus.values, {

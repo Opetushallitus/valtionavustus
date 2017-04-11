@@ -169,7 +169,7 @@ export default class VaBudgetCalculator {
       return []
     }
 
-    const vaBudgetSummaryElement = _.last(vaBudgetElement.children)
+    const vaBudgetSummaryElement = _.find(vaBudgetElement.children, n => n.fieldType === "vaBudgetSummaryElement")
 
     const subtotals = deriveSubtotalsAndSetSumAndRequiredFieldsByMutation()
 
