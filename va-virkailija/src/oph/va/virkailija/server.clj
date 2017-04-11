@@ -22,8 +22,7 @@
   (log/info "Running db migrations")
   (dbmigrations/migrate :virkailija-db
                         "db.migration"
-                        "oph.va.virkailija.db.migrations"
-                        )
+                        "oph.va.virkailija.db.migrations")
   (log/info "Starting e-mail sender")
   (email/start-background-sender))
 

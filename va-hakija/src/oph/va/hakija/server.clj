@@ -13,7 +13,9 @@
 (defn- startup [config]
   (log/info "Using configuration: " config)
   (log/info "Running db migrations")
-  (dbmigrations/migrate :form-db "db.migration" "oph.va.hakija.db.migrations")
+  (dbmigrations/migrate :form-db
+                        "db.migration"
+                        "oph.va.hakija.db.migrations")
   (log/info "Starting e-mail sender")
   (email/start-background-sender))
 
