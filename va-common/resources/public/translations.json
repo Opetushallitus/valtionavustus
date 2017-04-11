@@ -138,7 +138,7 @@
     },
     "budget": {
       "financingNeeded": {
-        "fi": "Rahoituksen tarve",
+        "fi": "Rahoituslaskelma",
         "sv": "TODO SV Rahoituksen tarve"
       },
       "financingSection": {
@@ -170,7 +170,7 @@
         "sv": "Totalt"
       },
       "financingNeededTotal": {
-        "fi": "Rahoituksen tarve yhteensä",
+        "fi": "Rahoitettavaa jää yhteensä",
         "sv": "TODO SV Rahoituksen tarve totalt"
       }
     }
