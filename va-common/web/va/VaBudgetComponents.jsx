@@ -169,7 +169,7 @@ const BudgetSubtotalSummaryElement = ({
     )
   })
 
-  const totalClassNames = ClassNames("money", {error: !totalNeeded.isValid})
+  const totalClassNames = ClassNames("money sum", {error: !totalNeeded.isValid})
 
   return (
     <table className="summing-table">
@@ -198,7 +198,7 @@ const BudgetSubtotalSummaryElement = ({
           <td className="label-column" colSpan="2">
             <LocalizedString translations={translations} translationKey="financingNeededTotal" lang={lang} />
           </td>
-          <td className="amount-column">
+          <td className="amount-column total-financing-amount">
             <span className={totalClassNames}>{totalNeeded.value}</span>
           </td>
         </tr>
@@ -257,7 +257,7 @@ const BudgetFinancingSummaryElement = ({
             <td className="amount-label-column">
               <LocalizedString translations={translations} translationKey="selfFinancingAmount" lang={lang} />
             </td>
-            <td className="amount-value-column">
+            <td className="amount-value-column self-financing-amount">
               {selfFinancingField || <span className={amountClassNames}>{isFinancingResultANumber ? financing.selfValue : checkNumbersMessage}</span>}
             </td>
           </tr>
@@ -265,7 +265,7 @@ const BudgetFinancingSummaryElement = ({
             <td className="amount-label-column">
               <LocalizedString translations={translations} translationKey="ophFinancingAmount" lang={lang} />
             </td>
-            <td className="amount-value-column">
+            <td className="amount-value-column oph-financing-amount">
               <span className={amountClassNames}>{isFinancingResultANumber ? financing.ophValue : checkNumbersMessage}</span>
             </td>
           </tr>
@@ -281,7 +281,7 @@ const BudgetFinancingSummaryElement = ({
             <td className="percentage-label-column">
               <LocalizedString translations={translations} translationKey="selfFinancingPercentage" lang={lang} />
             </td>
-            <td className="percentage-value-column">
+            <td className="percentage-value-column self-financing-percentage">
               <span className={percentageClassNames}>{isFinancingResultANumber ? selfFinancingPercentageFormatted : checkNumbersMessage}</span>
             </td>
           </tr>
@@ -289,7 +289,7 @@ const BudgetFinancingSummaryElement = ({
             <td className="percentage-label-column">
               <LocalizedString translations={translations} translationKey="ophFinancingPercentage" lang={lang} />
             </td>
-            <td className="percentage-value-column">
+            <td className="percentage-value-column oph-financing-percentage">
               <span className={percentageClassNames}>{isFinancingResultANumber ? ophFinancingPercentageFormatted : checkNumbersMessage}</span>
             </td>
           </tr>

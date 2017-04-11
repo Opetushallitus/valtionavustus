@@ -36,9 +36,18 @@
         expect(applicationPage.submitButton().isEnabled()).to.equal(true)
       })
 
-      it('näyttää summia', function() {
-        expect(applicationPage.elementTextBySelector('#project-budget span.sum')).to.equal('10')
-        expect(applicationPage.elementTextBySelector('.grand-total span.sum')).to.equal('10')
+      it('näyttää rahoituksen tarpeen', function() {
+        expect(applicationPage.elementTextBySelector('#budget-summary .total-financing-amount .money.sum')).to.equal('10')
+      })
+
+      it('näyttää omarahoituksen', function() {
+        expect(applicationPage.elementTextBySelector('#budget-summary .self-financing-amount .money')).to.equal('3')
+        expect(applicationPage.elementTextBySelector('#budget-summary .self-financing-percentage .percentage')).to.equal('30')
+      })
+
+      it('näyttää OPH:n rahoituksen', function() {
+        expect(applicationPage.elementTextBySelector('#budget-summary .oph-financing-amount .money')).to.equal('7')
+        expect(applicationPage.elementTextBySelector('#budget-summary .oph-financing-percentage .percentage')).to.equal('70')
       })
     })
 
@@ -79,14 +88,24 @@
       )
 
       it('ilmoittaa että hankkeella on jo liikaa rahoitusta', function() {
-        expect(applicationPage.elementTextBySelector('#project-budget span.sum')).to.equal('1010')
-        expect(applicationPage.elementTextBySelector('#third-party-income span.sum')).to.equal('-10000')
-        expect(applicationPage.elementTextBySelector('.grand-total span.sum')).to.equal('-8990')
+        expect(applicationPage.elementTextBySelector('#project-budget .money.sum')).to.equal('1010')
+        expect(applicationPage.elementTextBySelector('#third-party-income .money.sum')).to.equal('-10000')
+        expect(applicationPage.elementTextBySelector('#budget-summary .total-financing-amount .money.sum')).to.equal('-8990')
 
         expect(applicationPage.validationErrorsSummary()).to.equal('1 vastauksessa puutteita')
         expect(applicationPage.submitButton().isEnabled()).to.equal(false)
         expect(applicationPage.detailedValidationErrors()).to.include('Rahoitussuunnitelma: Haettavan rahoituksen tulee olla positiivinen')
         expect(applicationPage.detailedValidationErrors()).to.have.length(1)
+      })
+
+      it('näyttää virheen omarahoituksessa', function() {
+        expect(applicationPage.elementTextBySelector('#budget-summary .self-financing-amount .error')).to.equal('Tarkista luvut')
+        expect(applicationPage.elementTextBySelector('#budget-summary .self-financing-percentage .error')).to.equal('Tarkista luvut')
+      })
+
+      it('näyttää virheen OPH:n rahoituksessa', function() {
+        expect(applicationPage.elementTextBySelector('#budget-summary .oph-financing-amount .error')).to.equal('Tarkista luvut')
+        expect(applicationPage.elementTextBySelector('#budget-summary .oph-financing-percentage .error')).to.equal('Tarkista luvut')
       })
     })
 
@@ -111,7 +130,17 @@
       })
 
       it('näyttää numeerisista luvuista lasketun kokonaissumman', function() {
-        expect(applicationPage.elementTextBySelector('.grand-total span.sum')).to.equal('10')
+        expect(applicationPage.elementTextBySelector('#budget-summary .total-financing-amount .money.sum')).to.equal('10')
+      })
+
+      it('näyttää virheen omarahoituksessa', function() {
+        expect(applicationPage.elementTextBySelector('#budget-summary .self-financing-amount .error')).to.equal('Tarkista luvut')
+        expect(applicationPage.elementTextBySelector('#budget-summary .self-financing-percentage .error')).to.equal('Tarkista luvut')
+      })
+
+      it('näyttää virheen OPH:n rahoituksessa', function() {
+        expect(applicationPage.elementTextBySelector('#budget-summary .oph-financing-amount .error')).to.equal('Tarkista luvut')
+        expect(applicationPage.elementTextBySelector('#budget-summary .oph-financing-percentage .error')).to.equal('Tarkista luvut')
       })
     })
   })
