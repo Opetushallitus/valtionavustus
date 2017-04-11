@@ -142,16 +142,16 @@
         "sv": "TODO SV Rahoituksen tarve"
       },
       "financingSection": {
-        "fi": "Osio",
-        "sv": "TODO SV Osio"
+        "fi": "Menot",
+        "sv": "TODO SV Menot"
       },
       "minSelfFinancingNeeded": {
         "fi": "Omarahoitusprosentti oltava vähintään {{min-self-financing-percentage}} %",
         "sv": "TODO SV Omarahoitusprosentti oltava vähintään {{min-self-financing-percentage}} %"
       },
       "ophFinancingAmount": {
-        "fi": "OPH:lta haettava rahoitus",
-        "sv": "TODO SV OPH:lta haettava rahoitus"
+        "fi": "OPH:lta haettava avustus",
+        "sv": "TODO SV OPH:lta haettava avustus"
       },
       "ophFinancingPercentage": {
         "fi": "OPH:n rahoitus-%",
