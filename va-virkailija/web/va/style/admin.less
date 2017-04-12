@@ -98,11 +98,6 @@ table.translation, #haku-roles table {
     }
   }
 
-  input:disabled, textarea:disabled {
-    color: @dark-gray;
-    border: dotted 1px @light-gray;
-  }
-
   #set-maksuerat,#set-academysize {
     input[type=radio] + label {
       text-transform: none;
@@ -285,6 +280,12 @@ table.translation, #haku-roles table {
 
   #focus-areas textarea {
     height: 66px;
+  }
+
+  input:disabled, textarea:disabled {
+    color: @dark-gray;
+    border-width: 1px;
+    border-style: dotted;
   }
 }
 

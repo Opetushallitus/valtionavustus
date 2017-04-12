@@ -210,9 +210,6 @@ table.hakemus-list {
         margin: 4px 4px 4px 0;
         padding: 4px 8px;
       }
-      textarea,input{
-        color:#333;
-      }
       input{
         margin: 4px 4px 4px 0;
         padding: 5px;
@@ -384,6 +381,16 @@ table.hakemus-list {
         vertical-align: top;
       }
     }
+
+    textarea, input {
+      color: @text-black;
+      border: 1px solid @middle-gray;
+
+      &:disabled {
+        color: @dark-gray;
+        border-style: dotted;
+      }
+    }
   }
 }
 
@@ -396,7 +403,7 @@ table.hakemus-list {
   font-size: 22px;
   font-weight: normal;
   line-height: 1;
-  color: #999290;
+  color: @dark-gray;
   background-color: transparent;
   border: none;
   cursor: pointer;
