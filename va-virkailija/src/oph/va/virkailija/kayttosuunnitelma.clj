@@ -98,6 +98,7 @@
         table-tulot-label (-> table-tulot :label language)
         tbody-tulot (tbody table-tulot language true)
         table-muu (find-table summing-fields 2 answers overridden-answers)
+        show-table-muu (-> table-muu :children seq some?)
         table-muu-label (-> table-muu :label language)
         tbody-muu (tbody table-muu language true)
 
@@ -137,7 +138,8 @@
                 :tbody-tulot                 tbody-tulot
                 :table-tulot-label           table-tulot-label
                 :tbody-muu                   tbody-muu
-                :table-muu-label             table-muu-label}
+                :table-muu-label             table-muu-label
+                :show-table-muu              show-table-muu}
 
         body (render template params)]
     {:body                      body
