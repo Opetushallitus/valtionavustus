@@ -17,7 +17,7 @@ const RoleButton = ({role,roleField,controller,hakemus}) => {
 const RoleContainer = ({roleName,roleField,roles,controller,hakemus}) => {
   return(
     <div className="role-container">
-      <div className="text-grey role-title">{roleName}</div>
+      <div className="role-title">{roleName}</div>
       {roles.map((role)=>(<RoleButton key={role.id} role={role} roleField={roleField} controller={controller} hakemus={hakemus}/>))}
     </div>
   )

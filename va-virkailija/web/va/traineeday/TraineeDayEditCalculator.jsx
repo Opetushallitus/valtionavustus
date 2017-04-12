@@ -37,7 +37,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
     return (
           <tr>
             <td>{name}</td>
-            <td className="text-grey original-value">
+            <td className="text-gray original-value">
               {VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope") }{VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope-type")}
             </td>
             <td style={{whiteSpace:'nowrap'}}>
@@ -51,7 +51,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
                               lang={this.props.lang} />
               {VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type")}
             </td>
-            <td className="text-grey original-value">
+            <td className="text-gray original-value">
               {VaTraineeDayCalculator.readSubValue(originalValues, field.id, "person-count")}
             </td>
             <td>
@@ -64,7 +64,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
                               size="extra-extra-small"
                               lang={this.props.lang} />
             </td>
-            <td className="text-grey">
+            <td className="text-gray">
               {InputValueStorage.readValue({}, originalValues, field.id + ".total")}
             </td>
             <td>

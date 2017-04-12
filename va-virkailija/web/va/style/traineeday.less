@@ -1,26 +1,29 @@
+@import "npm://soresu-form/web/form/style/variables.less";
+
 .trainee-day-edit {
   font-size: 12px;
   margin-top: 30px;
   margin-bottom: 20px;
   line-height: 1.1;
 
-  table{
+  table {
     width: 100%;
   }
 
-  tr{
+  tr {
     border-bottom: 1px solid #d9d9d9;
   }
 
-  td{
+  td {
     padding: 5px;
-    &.original-value{
-      padding-right:0;
-      text-align:right;
+
+    &.original-value {
+      padding-right: 0;
+      text-align: right;
     }
   }
 
-  tfoot tr{
+  tfoot tr {
     background-color: #f6f6f6;
     border-bottom: none;
     td{
@@ -33,6 +36,14 @@
     &:last-child td{
       padding-top: 0;
     }
+  }
+
+  .text-gray {
+    color: @dark-gray;
+  }
+
+  .text-center {
+    text-align: center;
   }
 
   .soresu-preview{
@@ -51,5 +62,4 @@
     margin-right: 5px;
     text-align: center;
   }
-
 }

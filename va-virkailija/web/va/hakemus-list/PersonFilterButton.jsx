@@ -22,7 +22,7 @@ const RoleButton = ({role,roleField,controller,hakemusFilter}) => {
 const RoleContainer = ({roleName,roleField,roles,controller,hakemusFilter}) => {
   return(
     <div className="role-container">
-      <div className="text-grey role-title">{roleName}</div>
+      <div className="role-title">{roleName}</div>
       {roles.map((role)=>(<RoleButton key={role.id} role={role} roleField={roleField} controller={controller} hakemusFilter={hakemusFilter}/>))}
     </div>
   )

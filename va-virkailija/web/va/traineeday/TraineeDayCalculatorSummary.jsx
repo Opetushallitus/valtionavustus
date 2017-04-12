@@ -37,10 +37,10 @@ export default class TraineeDayCalculatorSummary extends React.Component {
           <thead>
             <tr>
               <td><strong>Koulutusosiot</strong></td>
-              <td colSpan="2" className="text-grey text-center">Laajuus</td>
-              <td colSpan="2" className="text-grey text-center">Osallist.</td>
-              <td className="text-grey">Haett.</td>
-              <td className="text-grey">Myönn.</td>
+              <td colSpan="2" className="text-gray text-center">Laajuus</td>
+              <td colSpan="2" className="text-gray text-center">Osallist.</td>
+              <td className="text-gray">Haett.</td>
+              <td className="text-gray">Myönn.</td>
             </tr>
           </thead>
           <tbody>
@@ -49,12 +49,12 @@ export default class TraineeDayCalculatorSummary extends React.Component {
           <tfoot>
           <tr>
             <td colSpan="5"><strong>Koulutettavapäivät yhteensä:</strong></td>
-            <td className="text-grey">{VaTraineeDayCalculator.formatFloat(originalSum)}</td>
+            <td className="text-gray">{VaTraineeDayCalculator.formatFloat(originalSum)}</td>
             <td><strong>{VaTraineeDayCalculator.formatFloat(grantedSum)}</strong></td>
           </tr>
           <tr>
             <td colSpan="5"><strong>Kustannukset per koulutettavapäivä:</strong></td>
-            <td className="text-grey">{VaTraineeDayCalculator.formatFloat(costPerTraineeDay)} €</td>
+            <td className="text-gray">{VaTraineeDayCalculator.formatFloat(costPerTraineeDay)} €</td>
             <td><strong>{VaTraineeDayCalculator.formatFloat(costPerTraineeDayGranted)} €</strong></td>
           </tr>
           </tfoot>
