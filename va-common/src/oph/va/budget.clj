@@ -50,23 +50,23 @@
 (defn- percentage-share-of [percentage total]
   (fraction-share-of (/ percentage 100) total))
 
-(defn find-self-financing-field [budget-summary-field]
-  (some-> budget-summary-field
-          list
-          (formutil/find-fields* #(= "vaSelfFinancingField" (:fieldType %)))
-          first))
+(defn find-self-financing-field [budget-field-children]
+  (some->> budget-field-children
+           (filter #(= "vaBudgetSummaryElement" (:fieldType %)))
+           (formutil/find-fields* #(= "vaSelfFinancingField" (:fieldType %)))
+           first))
 
-(defn- select-self-financing-amount-virkailija [hakemus self-financing-percentage total-sum budget-summary-field _]
-  (if (:id (find-self-financing-field budget-summary-field))
+(defn- select-self-financing-amount-virkailija [hakemus self-financing-percentage total-sum budget-field-children _]
+  (if (:id (find-self-financing-field budget-field-children))
     (let [hakemus-oph-share (:budget_oph_share hakemus)
           hakemus-total (:budget_total hakemus)
           user-self-financing-fraction (/ (- hakemus-total hakemus-oph-share) hakemus-total)]
         (fraction-share-of user-self-financing-fraction total-sum))
     (percentage-share-of self-financing-percentage total-sum)))
 
-(defn- select-self-financing-amount-hakija [self-financing-percentage total-sum budget-summary-field answers]
+(defn- select-self-financing-amount-hakija [self-financing-percentage total-sum budget-field-children answers]
   (let [min-self-financing-amount (percentage-share-of self-financing-percentage total-sum)]
-    (if-let [self-financing-field-id (:id (find-self-financing-field budget-summary-field))]
+    (if-let [self-financing-field-id (:id (find-self-financing-field budget-field-children))]
       (let [self-financing-amount (sanitise (formutil/find-answer-value answers self-financing-field-id))]
         (max self-financing-amount min-self-financing-amount))
       min-self-financing-amount)))
@@ -85,7 +85,7 @@
                            (r/fold +))
         total-sum (if use-detailed-costs total-row-sum (+ total-row-sum costs-granted))
         self-financing-amount (select-self-financing-fn total-sum
-                                                        (last budget-field-children)
+                                                        budget-field-children
                                                         answers)
         oph-share (max (- total-sum self-financing-amount) 0)]
     {:total-needed total-sum

@@ -76,7 +76,6 @@
                           :children)
         summing-fields (va-budget/find-summing-fields budget-children)
         uses-floating-self-financing (-> budget-children
-                                         last
                                          va-budget/find-self-financing-field
                                          :id
                                          some?)

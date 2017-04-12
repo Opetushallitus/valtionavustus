@@ -87,6 +87,22 @@
                                           (conj children budget-summary)))
                                 field)))))
 
+(def budget-form-with-summary-not-last
+  (let [others {:id         "others",
+                :fieldClass "wrapperElement",
+                :fieldType  "fieldset",
+                :children   [{:id         "other",
+                              :fieldClass "formField",
+                              :fieldType  "textField"}]}]
+    (transform-form-content budget-form-with-self-financing-amount
+                            (fn [field]
+                              (if (= "vaBudget" (:fieldType field))
+                                (update field
+                                        :children
+                                        (fn [children]
+                                          (conj children others)))
+                                field)))))
+
 (def complete-valid-answers
   {:value [
     {:key "continuation-project" :value "yes"}
@@ -185,6 +201,15 @@
                                                                   budget-form-with-self-financing-amount)]
                 (should= 12000 (:total-needed totals))
                 (should= 10800 (:oph-share totals))))
+
+          (it "Finds self-financing amount field if budget summary is not last field inside budget field"
+              (let [totals (oph.va.budget/calculate-totals-hakija (conj-answers complete-valid-answers
+                                                                                {:key "self-financing-amount"
+                                                                                 :value "2300"})
+                                                                  avustushaku
+                                                                  budget-form-with-summary-not-last)]
+                (should= 12000 (:total-needed totals))
+                (should= 9700 (:oph-share totals))))
 )
 
 (describe "Budget calculation for virkailija"
