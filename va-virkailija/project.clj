@@ -32,7 +32,8 @@
   :auto-clean false
 
   :aot [oph.va.jdbc.enums
-        oph.va.virkailija.db.migrations]
+        oph.va.virkailija.db.migrations
+        clj-time.core]
   :profiles {:uberjar {:aot [oph.va.virkailija.main]}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.virkailija.db.migrations/migrate" "virkailija-db" "db.migration" "oph.va.virkailija.db.migrations"]
             "dbclear" ["run" "-m" "oph.soresu.common.db/clear-db!" "virkailija-db" "virkailija"]
