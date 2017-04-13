@@ -28,7 +28,8 @@
   :auto-clean false
 
   :aot [oph.va.jdbc.enums
-        oph.va.hakija.db.migrations]
+        oph.va.hakija.db.migrations
+        clj-time.core]
   :profiles {:uberjar {:aot [oph.va.hakija.main]}
              :test    {:dependencies [[environ "1.0.2"]]}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.hakija.db.migrations/migrate" "form-db" "db.migration" "oph.va.hakija.db.migrations"]
