@@ -187,7 +187,7 @@ export default class VaBudgetCalculator {
   }
 
   static shareOf(percentage, total) {
-    return Math.ceil((percentage / 100) * total)
+    return Math.ceil(percentage * total / 100)
   }
 
   static percentageOf(part, total) {
