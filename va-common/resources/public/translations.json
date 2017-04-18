@@ -525,8 +525,10 @@
       "sv":"Granskningsrätt"
     },
     "tarkastusoikeus-text": {
-      "fi":"Opetushallituksella on oikeus suorittaa avustuksen käytön valvonnassa tarpeellisia avustuksen saajan talouteen ja toimintaan kohdistuvia tarkastuskäyntejä. Opetushallituksen tarkastusoikeus ulottuu myös mahdollisten yhteiskumppanien toimintaan ja kirjanpitoon.",
-      "sv":"Utbildningsstyrelsen har rätt att inom ramen för övervakningen av användningen av stastunderstöd utföra nödvändiga granskningar gällande ekonomin och verksamheten hos mottagaren av statsunderstöd. Utbildningsstyrelsens granskningsrätt omfattar också eventuella samarbetspartners verksamhet och bokföring."
+      "fi":"Opetushallituksella on oikeus suorittaa avustuksen käytön valvonnassa tarpeellisia avustuksen saajan toimintaan kohdistuvia tarkastuskäyntejä. Valtionavustuksen takaisin perintään noudatetaan, mitä siitä on valtionavustuslaissa (688/2001) säädetty.
+",
+      "sv":"Utbildningsstyrelsen har rätt att inom ramen för övervakningen av användningen av statsunderstödet utföra nödvändiga granskningsbesök gällande verksamheten hos mottagaren av statsunderstöd. Vid återkrav av statsunderstöd följs det som är fastslaget i statsunderstödslagen (688/2011).
+"
     },
     "kokonaismenot-yhteensa": {
       "fi":"Hankkeen kokonaismenot yhteensä",
