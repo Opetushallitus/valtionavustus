@@ -7,6 +7,7 @@ import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
 import MoneyTextField from 'soresu-form/web/form/component/MoneyTextField.jsx'
 import Translator from 'soresu-form/web/form/Translator'
 import FormUtil from 'soresu-form/web/form/FormUtil'
+import MathUtil from 'va-common/web/va/util/MathUtil'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 
 export default class VaBudgetElement extends React.Component {
@@ -124,7 +125,7 @@ export class BudgetSummaryElement extends React.Component {
     const isFinancingResultANumber = totalNeeded.isValid && financing.isSelfValueANumber
     const isFinancingResultValid = totalNeeded.isValid && financing.isValid
 
-    const selfFinancingPercentage = VaBudgetCalculator.percentageOf(financing.selfValue, totalNeeded.value)
+    const selfFinancingPercentage = MathUtil.percentageOf(financing.selfValue, totalNeeded.value)
     const selfFinancingPercentageFormatted = FormUtil.formatDecimal(FormUtil.roundDecimal(
       selfFinancingPercentage, 1, "floor"))
     const ophFinancingPercentageFormatted = FormUtil.formatDecimal(FormUtil.roundDecimal(

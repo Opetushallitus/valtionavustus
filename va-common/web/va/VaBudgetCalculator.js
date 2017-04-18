@@ -5,6 +5,8 @@ import JsUtil from 'soresu-form/web/form/JsUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import MoneyValidator from 'soresu-form/web/form/MoneyValidator'
 
+import MathUtil from './util/MathUtil'
+
 export default class VaBudgetCalculator {
   constructor(onSumCalculatedCallback) {
     this.onSumCalculatedCallback = _.isFunction(onSumCalculatedCallback) ? onSumCalculatedCallback : _.noop
@@ -51,7 +53,7 @@ export default class VaBudgetCalculator {
   deriveValuesForBudgetFieldsByMutation(
     vaBudgetElement,
     state,
-    {reportValidationErrors, fixedSelfFinancingPercentage}
+    {reportValidationErrors, fixedSelfFinancingRatio}
   ) {
     const sumCalculatedCallback = this.onSumCalculatedCallback
 
@@ -100,7 +102,7 @@ export default class VaBudgetCalculator {
     }
 
     const validateFinancing = (summaryElement, minSelfFinancingPercentage, totalNeeded) => {
-      const minSelfFinancingValue = VaBudgetCalculator.shareOf(minSelfFinancingPercentage, totalNeeded)
+      const minSelfFinancingValue = MathUtil.percentageShareRoundedUpOf(minSelfFinancingPercentage, totalNeeded)
 
       const result = {
         minSelfValue: minSelfFinancingValue,
@@ -118,8 +120,8 @@ export default class VaBudgetCalculator {
         })
       }
 
-      if (fixedSelfFinancingPercentage) {
-        const selfFinancingValue = VaBudgetCalculator.shareOf(fixedSelfFinancingPercentage, totalNeeded)
+      if (fixedSelfFinancingRatio) {
+        const selfFinancingValue = MathUtil.ratioShareRoundedUpOf(fixedSelfFinancingRatio, totalNeeded)
 
         return _.assign(result, {
           selfValue: selfFinancingValue,
@@ -184,13 +186,5 @@ export default class VaBudgetCalculator {
 
     vaBudgetSummaryElement.totalNeeded = totalNeeded
     vaBudgetSummaryElement.financing = financing
-  }
-
-  static shareOf(percentage, total) {
-    return Math.ceil(percentage * total / 100)
-  }
-
-  static percentageOf(part, total) {
-    return (part / total) * 100
   }
 }

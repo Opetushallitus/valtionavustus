@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import Immutable from 'seamless-immutable'
+import _ from 'lodash'
 
 import FormRules from 'soresu-form/web/form/FormRules'
 import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 
-import _ from 'lodash'
-
+import MathUtil from 'va-common/web/va/util/MathUtil'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 
@@ -38,11 +38,11 @@ export default class FakeFormState {
     attachments,
     savedHakemus
   }) {
-    const getFixedSelfFinancingPercentageOrNull = () => {
+    const getFixedSelfFinancingRatioOrNull = () => {
       const ophShareFromHakemus = hakemus["budget-oph-share"]
       const totalFromHakemus = hakemus["budget-total"]
       return ophShareFromHakemus && totalFromHakemus
-        ? VaBudgetCalculator.percentageOf(totalFromHakemus - ophShareFromHakemus, totalFromHakemus)
+        ? {nominator: totalFromHakemus - ophShareFromHakemus, denominator: totalFromHakemus}
         : null
     }
 
@@ -74,12 +74,10 @@ export default class FakeFormState {
       }
     }
 
-    const fixedSelfFinancingPercentage = getFixedSelfFinancingPercentageOrNull()
-
     const budgetCalculator = new VaBudgetCalculator()
     budgetCalculator.deriveValuesForAllBudgetElementsByMutation(formState, {
       reportValidationErrors: true,
-      fixedSelfFinancingPercentage: fixedSelfFinancingPercentage
+      fixedSelfFinancingRatio: getFixedSelfFinancingRatioOrNull()
     })
 
     return formState
