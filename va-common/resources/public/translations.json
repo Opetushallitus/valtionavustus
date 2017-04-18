@@ -137,17 +137,9 @@
       }
     },
     "budget": {
-      "financingNeeded": {
-        "fi": "Rahoituslaskelma",
-        "sv": "TODO SV Rahoituksen tarve"
-      },
-      "financingSection": {
-        "fi": "Menot",
-        "sv": "TODO SV Menot"
-      },
       "minSelfFinancingNeeded": {
-        "fi": "Omarahoitusprosentti oltava vähintään {{min-self-financing-percentage}} %",
-        "sv": "TODO SV Omarahoitusprosentti oltava vähintään {{min-self-financing-percentage}} %"
+        "fi": "Omarahoitusprosentti oltava vähintään",
+        "sv": "TODO SV Omarahoitusprosentti oltava vähintään"
       },
       "ophFinancingAmount": {
         "fi": "OPH:lta haettava avustus",
@@ -164,10 +156,6 @@
       "selfFinancingPercentage": {
         "fi": "Omarahoitus-%",
         "sv": "Egen finansiering-%"
-      },
-      "total": {
-        "fi": "Yhteensä",
-        "sv": "Totalt"
       },
       "financingNeededTotal": {
         "fi": "Rahoitettavaa jää yhteensä",

@@ -75,8 +75,6 @@ export default class VaBudgetCalculator {
         element.sum = sum  // mutation!
 
         return {
-          summingBudgetFieldId: element.id,
-          label: element.label,
           sum: sum,
           containsErrors: _.some(amountValues, errorsAndValue => errorsAndValue.containsErrors)
         }
@@ -171,9 +169,7 @@ export default class VaBudgetCalculator {
 
     const vaBudgetSummaryElement = _.find(vaBudgetElement.children, n => n.fieldType === "vaBudgetSummaryElement")
 
-    const subtotals = deriveSubtotalsAndSetSumAndRequiredFieldsByMutation()
-
-    const totalNeeded = validateTotalNeeded(subtotals)
+    const totalNeeded = validateTotalNeeded(deriveSubtotalsAndSetSumAndRequiredFieldsByMutation())
 
     const financing = validateFinancing(
       vaBudgetSummaryElement,
@@ -188,7 +184,6 @@ export default class VaBudgetCalculator {
 
     vaBudgetSummaryElement.totalNeeded = totalNeeded
     vaBudgetSummaryElement.financing = financing
-    vaBudgetSummaryElement.subtotals = subtotals
   }
 
   static shareOf(percentage, total) {
