@@ -32,6 +32,8 @@
 }
 
 .va-budget {
+  color: @form-label-black;
+
   .summing-table, .budget-summary {
     width: @section-width - 18px;
     text-align: left;
@@ -94,11 +96,8 @@
         width: 100px;
       }
     }
-    .label-column {
-      color: @form-label-black;
-      &.disabled {
-        color: @darker-gray
-      }
+    .label-column.disabled {
+      color: @darker-gray
     }
     .amount-column {
       text-align: right;
@@ -118,6 +117,7 @@
 
     h4 {
       font-weight: bold;
+      margin: 14px 0;
     }
 
     .amounts {
