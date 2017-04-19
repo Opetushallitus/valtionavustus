@@ -43,7 +43,8 @@
     "phantomjs": "1.9.17",
     "react-tools": "^0.13.3",
     "style-loader": "^0.12.3",
-    "watch-spawn": "^1.0.5"
+    "watch-spawn": "^1.0.5",
+    "webpack": "^1.10.5"
   },
   "private": true
 }
