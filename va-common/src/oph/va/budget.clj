@@ -41,14 +41,14 @@
   (-> (fn [item] (read-amount-income item answers only-incomes))
       (map children)))
 
-(defn- fraction-share-of [fraction total]
-  (-> fraction
+(defn- share-rounded-up-of [ratio total]
+  (-> ratio
       (* total)
       Math/ceil
       int))
 
-(defn- percentage-share-of [percentage total]
-  (fraction-share-of (/ percentage 100) total))
+(defn- percentage-share-rounded-up-of [percentage total]
+  (share-rounded-up-of (/ percentage 100) total))
 
 (defn find-self-financing-field [budget-field-children]
   (some->> budget-field-children
@@ -60,12 +60,12 @@
   (if (:id (find-self-financing-field budget-field-children))
     (let [hakemus-oph-share (:budget_oph_share hakemus)
           hakemus-total (:budget_total hakemus)
-          user-self-financing-fraction (/ (- hakemus-total hakemus-oph-share) hakemus-total)]
-        (fraction-share-of user-self-financing-fraction total-sum))
-    (percentage-share-of self-financing-percentage total-sum)))
+          user-self-financing-ratio (/ (- hakemus-total hakemus-oph-share) hakemus-total)]
+        (share-rounded-up-of user-self-financing-ratio total-sum))
+    (percentage-share-rounded-up-of self-financing-percentage total-sum)))
 
 (defn- select-self-financing-amount-hakija [self-financing-percentage total-sum budget-field-children answers]
-  (let [min-self-financing-amount (percentage-share-of self-financing-percentage total-sum)]
+  (let [min-self-financing-amount (percentage-share-rounded-up-of self-financing-percentage total-sum)]
     (if-let [self-financing-field-id (:id (find-self-financing-field budget-field-children))]
       (let [self-financing-amount (sanitise (formutil/find-answer-value answers self-financing-field-id))]
         (max self-financing-amount min-self-financing-amount))
