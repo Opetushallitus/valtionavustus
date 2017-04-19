@@ -51,8 +51,6 @@
   },
   "private": false,
   "scripts": {
-    "unittest": "mocha --compilers js:babel/register web/test/*Test.js",
-    "watch-unittest": "mocha --watch --compilers js:babel/register web/test/*Test.js",
     "build": "UGLIFY=true webpack -p",
     "watch-webpack": "webpack -d --progress --colors --watch",
     "dev-build": "webpack -d --progress --colors",
