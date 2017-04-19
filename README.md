@@ -144,7 +144,7 @@ Eri ympäristön voi ottaa käyttöön seuraavasti (ympäristöjen konffit ovat
 
 # Testien ajo
 
-Testien ajo (ajaa myös mocha testit):
+Kaikkien testien ajo (ajaa myös frontendin testit):
 
 ``` shell
 ./lein with-profile test do modules clean, modules spec -f d
@@ -192,9 +192,17 @@ Kaikkien moduulien install ja testien ajo projektin juuressa:
 ./lein with-profile test do modules install, modules spec -f d
 ```
 
-## Mocha testit
+## Frontendin yksikkötestit
 
-Voit ajaa selaimella osoitteessa: http://localhost:8080/test/runner.html
+``` shell
+cd soresu-form  # tai va-common, va-hakija
+npm run test
+npm run watch-test
+```
+
+## Frontendin UI-testit
+
+Voit ajaa [selaimella](http://localhost:8081/test/runner.html).
 
 # Konfiguraatiot
 

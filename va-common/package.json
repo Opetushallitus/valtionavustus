@@ -50,7 +50,7 @@
   "private": true,
   "scripts": {
     "test": "mocha --require web/test/babelhook -R spec ./web/test/*.js",
-    "test-junit": "export MOCHA_FILE=target/junit-mocha-js-unit.xml && mocha --require web/test/babelhook -R spec ./web/test/*.js --reporter mocha-junit-reporter",
-    "watch-unittest": "mocha --watch --require web/test/babelhook web/test/*Test.js"
+    "test-junit": "export MOCHA_FILE=target/junit-mocha-js-unit.xml && mocha --require web/test/babelhook -R spec  --reporter mocha-junit-reporter ./web/test/*.js",
+    "watch-test": "mocha --watch --require web/test/babelhook web/test/*Test.js"
   }
 }

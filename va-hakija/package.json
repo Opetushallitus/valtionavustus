@@ -52,6 +52,7 @@
   "scripts": {
     "build": "UGLIFY=true webpack -p",
     "dev-build": "webpack -d --progress --colors",
+    "test": "mocha --require web/test/babelhook -R spec ./web/test/*.js",
     "watch-webpack": "webpack -d --progress --colors --watch",
     "watch-web": "watch-spawn -k -i -p 'node_modules/va-common/package.json' -p 'node_modules/soresu-form/package.json' -p 'web/**/*' -p 'package.json' npm run dev-build",
     "update-common-web": "rm -rf node_modules/va-common && npm install va-common",
@@ -59,6 +60,7 @@
     "update-soresu-form-web": "rm -rf node_modules/soresu-form && npm install soresu-form",
     "watch-soresu-form-web": "watch-spawn -k -p '../soresu-form/web/**/*' -p '../soresu-form/package.json' npm run update-soresu-form-web",
     "watch": "npm run update-common-web && npm run update-soresu-form-web && (npm run watch-common-web & npm run watch-soresu-form-web & npm run watch-webpack)",
-    "watch-and-rebuild": "npm run update-common-web && npm run update-soresu-form-web && (npm run watch-common-web & npm run watch-soresu-form-web & npm run watch-web)"
+    "watch-and-rebuild": "npm run update-common-web && npm run update-soresu-form-web && (npm run watch-common-web & npm run watch-soresu-form-web & npm run watch-web)",
+    "watch-test": "mocha --watch --require web/test/babelhook web/test/*Test.js"
   }
 }
