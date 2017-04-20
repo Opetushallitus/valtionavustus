@@ -195,7 +195,7 @@ Kaikkien moduulien install ja testien ajo projektin juuressa:
 ## Frontendin yksikkötestit
 
 ``` shell
-cd soresu-form  # tai va-common, va-hakija
+cd soresu-form  # tai va-hakija
 npm run test
 npm run watch-test
 ```

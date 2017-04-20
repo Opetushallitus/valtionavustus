@@ -4,10 +4,9 @@ import ClassNames from 'classnames'
 
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
+import MathUtil from 'soresu-form/web/form/MathUtil'
 import MoneyTextField from 'soresu-form/web/form/component/MoneyTextField.jsx'
 import Translator from 'soresu-form/web/form/Translator'
-import FormUtil from 'soresu-form/web/form/FormUtil'
-import MathUtil from 'va-common/web/va/util/MathUtil'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 
 export default class VaBudgetElement extends React.Component {
@@ -126,9 +125,9 @@ export class BudgetSummaryElement extends React.Component {
     const isFinancingResultValid = totalNeeded.isValid && financing.isValid
 
     const selfFinancingPercentage = MathUtil.percentageOf(financing.selfValue, totalNeeded.value)
-    const selfFinancingPercentageFormatted = FormUtil.formatDecimal(FormUtil.roundDecimal(
+    const selfFinancingPercentageFormatted = MathUtil.formatDecimal(MathUtil.roundDecimal(
       selfFinancingPercentage, 1, "floor"))
-    const ophFinancingPercentageFormatted = FormUtil.formatDecimal(FormUtil.roundDecimal(
+    const ophFinancingPercentageFormatted = MathUtil.formatDecimal(MathUtil.roundDecimal(
       100 - selfFinancingPercentage, 1, "ceil"))
 
     const financingNeededClassNames = ClassNames("total-financing-amount", {error: !totalNeeded.isValid})

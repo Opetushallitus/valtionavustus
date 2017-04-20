@@ -2,10 +2,9 @@ import _ from 'lodash'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import JsUtil from 'soresu-form/web/form/JsUtil'
+import MathUtil from 'soresu-form/web/form/MathUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import MoneyValidator from 'soresu-form/web/form/MoneyValidator'
-
-import MathUtil from './util/MathUtil'
 
 export default class VaBudgetCalculator {
   constructor(onSumCalculatedCallback) {

@@ -14,7 +14,6 @@
     "array-find-polyfill": "^0.1.0",
     "axios": "^0.5.4",
     "baconjs": "^0.7.59",
-    "big.js": "^3.1.3",
     "bluebird": "2.9.34",
     "classnames": "^2.1.3",
     "console-polyfill": "^0.2.1",
@@ -47,10 +46,5 @@
     "watch-spawn": "^1.0.5",
     "webpack": "^1.10.5"
   },
-  "private": true,
-  "scripts": {
-    "test": "mocha --require web/test/babelhook -R spec ./web/test/*.js",
-    "test-junit": "export MOCHA_FILE=target/junit-mocha-js-unit.xml && mocha --require web/test/babelhook -R spec  --reporter mocha-junit-reporter ./web/test/*.js",
-    "watch-test": "mocha --watch --require web/test/babelhook web/test/*Test.js"
-  }
+  "private": true
 }
