@@ -15,8 +15,6 @@ import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
 import HttpUtil from 'va-common/web/HttpUtil'
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 
-import BudgetBusinessRules from './budgetedit/BudgetBusinessRules'
-
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses'
 import HakemusSelvitysStatuses from './hakemus-details/HakemusSelvitysStatuses'
 import RahoitusalueSelections from './hakemus-details/RahoitusalueSelections'
@@ -528,24 +526,81 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  static setDefaultBudgetValuesForSelectedHakemusAnswers(answersField, state) {
+  setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state) {
     const selectedHakemus = state.selectedHakemus
     const budgetElement = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
+    const hakemusAnswers = selectedHakemus.answers
+    const overriddenAnswers = selectedHakemus.arvio["overridden-answers"]
+
+    const writeChangedFieldValues = fields => {
+      let didWrite = false
+
+      _.forEach(fields, field => {
+        const oldValue = InputValueStorage.readValue(null, overriddenAnswers, field.id)
+        const newValue = InputValueStorage.readValue(null, hakemusAnswers, field.id)
+
+        if (newValue !== oldValue) {
+          InputValueStorage.writeValue(
+            budgetElement,
+            overriddenAnswers,
+            {
+              id: field.id,
+              field: field,
+              value: newValue
+            })
+
+          didWrite = true
+        }
+      })
+
+      return didWrite
+    }
+
+    // gather empty values for descriptions and answer fields for cost budget items
+    const {emptyDescriptions, costFieldsToCopy} = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc, budgetItem) => {
+      const descriptionField = budgetItem.children[0]
+      acc.emptyDescriptions[descriptionField.id] = ''
+      if (!budgetItem.params.incrementsTotal) {
+        const valueField = budgetItem.children[1]
+        acc.costFieldsToCopy.push(valueField)
+      }
+      return acc
+    }, {emptyDescriptions: {}, costFieldsToCopy: []})
 
     FormStateLoop.initDefaultValues(
-      selectedHakemus.arvio[answersField],
-      BudgetBusinessRules.collectHakemusBudgetAnswers(budgetElement, selectedHakemus.answers),
+      overriddenAnswers,
+      emptyDescriptions,
       budgetElement,
       null
     )
-  }
 
-  setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state) {
-    HakemustenArviointiController.setDefaultBudgetValuesForSelectedHakemusAnswers("overridden-answers", state)
+    const didUpdateCostFields = writeChangedFieldValues(costFieldsToCopy)
+
+    if (didUpdateCostFields) {
+      dispatcher.push(events.updateHakemusArvio, selectedHakemus)
+    }
   }
 
   setDefaultBudgetValuesForSelectedHakemusSeurantaAnswers(state) {
-    HakemustenArviointiController.setDefaultBudgetValuesForSelectedHakemusAnswers("seuranta-answers", state)
+    const selectedHakemus = state.selectedHakemus
+    const budgetElement = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
+    const hakemusAnswers = selectedHakemus.answers
+    const defaultValues = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc, budgetItem) => {
+      const descriptionField = budgetItem.children[0]
+      acc[descriptionField.id] = ''
+      if (!budgetItem.params.incrementsTotal) {
+        const valueField = budgetItem.children[1]
+        acc[valueField.id] = InputValueStorage.readValue(null, hakemusAnswers, valueField.id)
+      }
+      return acc
+    }, {})
+
+    FormStateLoop.initDefaultValues(
+      selectedHakemus.arvio["seuranta-answers"],
+      defaultValues,
+      budgetElement,
+      null
+    )
   }
 
   validateHakemusRahoitusalueAndTalousarviotiliSelection(state) {
