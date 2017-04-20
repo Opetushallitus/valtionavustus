@@ -169,22 +169,26 @@ export default class VaBudgetCalculator {
       return []
     }
 
+    const subtotals = deriveSubtotalsAndSetSumAndRequiredFieldsByMutation()  // needed for side-effects!
+
     const vaBudgetSummaryElement = _.find(vaBudgetElement.children, n => n.fieldType === "vaBudgetSummaryElement")
 
-    const totalNeeded = validateTotalNeeded(deriveSubtotalsAndSetSumAndRequiredFieldsByMutation())
+    if (vaBudgetSummaryElement) {
+      const totalNeeded = validateTotalNeeded(subtotals)
 
-    const financing = validateFinancing(
-      vaBudgetSummaryElement,
-      state.avustushaku.content["self-financing-percentage"],
-      totalNeeded.value)
+      const financing = validateFinancing(
+        vaBudgetSummaryElement,
+        state.avustushaku.content["self-financing-percentage"],
+        totalNeeded.value)
 
-    state.form.validationErrors = state.form.validationErrors.merge({
-      [vaBudgetElement.id]: reportValidationErrors
-        ? makeValidationErrors(totalNeeded.isBudgetPositive, financing.isValid)
-        : []
-    })
+      state.form.validationErrors = state.form.validationErrors.merge({
+        [vaBudgetElement.id]: reportValidationErrors
+          ? makeValidationErrors(totalNeeded.isBudgetPositive, financing.isValid)
+          : []
+      })
 
-    vaBudgetSummaryElement.totalNeeded = totalNeeded
-    vaBudgetSummaryElement.financing = financing
+      vaBudgetSummaryElement.totalNeeded = totalNeeded
+      vaBudgetSummaryElement.financing = financing
+    }
   }
 }
