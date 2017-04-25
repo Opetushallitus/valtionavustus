@@ -9,14 +9,13 @@ const Empty = () => <div></div>
 
 export default class SeurantaBudgetEditComponentFactory extends ComponentFactory {
   constructor() {
-    const fieldTypeMapping = {
-      "vaBudget": BudgetEditElement,
-      "vaSummingBudgetElement": EditSummingBudgetElement,
-      "vaBudgetItemElement": EditBudgetItemElement,
-      "vaBudgetSummaryElement": Empty
-    }
     super({
-      fieldTypeMapping: fieldTypeMapping,
+      fieldTypeMapping: {
+        vaBudget: BudgetEditElement,
+        vaSummingBudgetElement: EditSummingBudgetElement,
+        vaBudgetItemElement: EditBudgetItemElement,
+        vaBudgetSummaryElement: Empty
+      },
       fieldPropertyMapperMapping: {}
     })
   }

@@ -12,15 +12,14 @@ import BudgetEditElement, {EditSummingBudgetElement, EditBudgetItemElement} from
 
 export default class BudgetEditComponentFactory extends ComponentFactory {
   constructor() {
-    const fieldTypeMapping = {
-      "vaBudget": BudgetEditElement,
-      "vaSummingBudgetElement": EditSummingBudgetElement,
-      "vaBudgetItemElement": EditBudgetItemElement,
-      "vaBudgetSummaryElement": BudgetSummaryElement,
-      "vaSelfFinancingField": MoneyValue
-    }
     super({
-      fieldTypeMapping: fieldTypeMapping,
+      fieldTypeMapping: {
+        vaBudget: BudgetEditElement,
+        vaSummingBudgetElement: EditSummingBudgetElement,
+        vaBudgetItemElement: EditBudgetItemElement,
+        vaBudgetSummaryElement: BudgetSummaryElement,
+        vaSelfFinancingField: MoneyValue
+      },
       fieldPropertyMapperMapping: {
         vaBudgetSummaryElement: BudgetSummaryEditPropertyMapper,
         vaSelfFinancingField: SelfFinancingPropertyMapper

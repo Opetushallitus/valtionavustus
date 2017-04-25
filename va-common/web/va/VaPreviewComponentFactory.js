@@ -27,23 +27,22 @@ import VaTraineeDayCalculator from './VaTraineeDayCalculator.jsx'
 
 export default class VaPreviewComponentFactory extends ComponentFactory {
   constructor() {
-    const fieldTypeMapping = {
-      "vaBudget": VaPreviewBudgetElement,
-      "vaSummingBudgetElement": SummingBudgetElement,
-      "vaBudgetItemElement": VaPreviewBudgetItemElement,
-      "vaBudgetSummaryElement": BudgetSummaryElement,
-      "vaProjectDescription": VaProjectDescriptionPreview,
-      "vaSelfFinancingField": MoneyValue,
-      "vaFocusAreas": MultipleOptionValue,
-      "vaEmailNotification": BasicValue,
-      "vaTraineeDayCalculator": VaPreviewTraineeDayCalculator
-    }
     super({
-      fieldTypeMapping,
+      fieldTypeMapping: {
+        vaBudget: VaPreviewBudgetElement,
+        vaSummingBudgetElement: SummingBudgetElement,
+        vaBudgetItemElement: VaPreviewBudgetItemElement,
+        vaBudgetSummaryElement: BudgetSummaryElement,
+        vaProjectDescription: VaProjectDescriptionPreview,
+        vaSelfFinancingField: MoneyValue,
+        vaFocusAreas: MultipleOptionValue,
+        vaEmailNotification: BasicValue,
+        vaTraineeDayCalculator: VaPreviewTraineeDayCalculator
+      },
       fieldPropertyMapperMapping: {
-        "vaFocusAreas": VaFocusAreasPropertyMapper,
-        "vaSelfFinancingField": SelfFinancingPropertyMapper,
-        "vaTraineeDayCalculator": FieldOnChangePropertyMapper
+        vaFocusAreas: VaFocusAreasPropertyMapper,
+        vaSelfFinancingField: SelfFinancingPropertyMapper,
+        vaTraineeDayCalculator: FieldOnChangePropertyMapper
       }
     })
   }

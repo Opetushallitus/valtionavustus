@@ -20,25 +20,24 @@ import VaTraineeDayCalculator, {VaTraineeDayTotalCalculator} from './VaTraineeDa
 
 export default class VaComponentFactory extends ComponentFactory {
   constructor() {
-    const fieldTypeMapping = {
-      "vaBudget": VaBudgetElement,
-      "vaSummingBudgetElement": SummingBudgetElement,
-      "vaBudgetItemElement": BudgetItemElement,
-      "vaBudgetSummaryElement": BudgetSummaryElement,
-      "vaProjectDescription": VaProjectDescription,
-      "vaSelfFinancingField": MoneyTextField,
-      "vaFocusAreas": CheckboxButton,
-      "vaEmailNotification": EmailTextField,
-      "vaTraineeDayCalculator": VaTraineeDayCalculator,
-      "vaTraineeDayTotalCalculator": VaTraineeDayTotalCalculator
-    }
     super({
-      fieldTypeMapping: fieldTypeMapping,
+      fieldTypeMapping: {
+        vaBudget: VaBudgetElement,
+        vaSummingBudgetElement: SummingBudgetElement,
+        vaBudgetItemElement: BudgetItemElement,
+        vaBudgetSummaryElement: BudgetSummaryElement,
+        vaProjectDescription: VaProjectDescription,
+        vaSelfFinancingField: MoneyTextField,
+        vaFocusAreas: CheckboxButton,
+        vaEmailNotification: EmailTextField,
+        vaTraineeDayCalculator: VaTraineeDayCalculator,
+        vaTraineeDayTotalCalculator: VaTraineeDayTotalCalculator
+      },
       fieldPropertyMapperMapping: {
-        "vaEmailNotification": TrimmingTextFieldPropertyMapper,
-        "vaFocusAreas": VaFocusAreasPropertyMapper,
-        "vaSelfFinancingField": SelfFinancingPropertyMapper,
-        "vaTraineeDayCalculator": FieldOnChangePropertyMapper
+        vaEmailNotification: TrimmingTextFieldPropertyMapper,
+        vaFocusAreas: VaFocusAreasPropertyMapper,
+        vaSelfFinancingField: SelfFinancingPropertyMapper,
+        vaTraineeDayCalculator: FieldOnChangePropertyMapper
       }
     })
   }
