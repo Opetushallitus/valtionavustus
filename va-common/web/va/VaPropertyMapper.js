@@ -7,7 +7,7 @@ import {
   TextFieldPropertyMapper
 } from 'soresu-form/web/form/component/PropertyMapper.js'
 
-export class VaFocusAreasPropertyMapper extends DefaultPropertyMapper {
+export class VaFocusAreasPropertyMapper {
   static map(props) {
     const avustushaku = props.customProps.avustushaku
     const focusAreas = avustushaku.content['focus-areas']
@@ -27,7 +27,7 @@ export class VaFocusAreasPropertyMapper extends DefaultPropertyMapper {
   }
 }
 
-export class SelfFinancingPropertyMapper extends TextFieldPropertyMapper {
+export class SelfFinancingPropertyMapper {
   static map(props) {
     const mapped = TextFieldPropertyMapper.map(props)
     mapped.renderingParameters = _.assign({}, mapped.renderingParameters, {hideLabels: true})
