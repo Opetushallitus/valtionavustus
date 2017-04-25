@@ -5,14 +5,12 @@ import JsUtil from 'soresu-form/web/form/JsUtil'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
-import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 
 import BudgetBusinessRules from './BudgetBusinessRules'
 import BudgetEditFormController from './BudgetEditFormController'
 import BudgetEditComponentFactory from './BudgetEditComponentFactory'
-import BudgetEditPreviewComponentFactory from './BudgetEditPreviewComponentFactory'
 import FakeFormState from '../form/FakeFormState'
 
 import style from '../style/budgetedit.less'
@@ -99,9 +97,9 @@ export default class HakemusBudgetEditing extends React.Component {
     HakemusBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus)
     const formElementProps = {
       state: budgetEditFormState,
-      formContainerClass: allowEditing ? Form : FormPreview,
+      formContainerClass: Form,
       infoElementValues: avustushaku,
-      controller: new BudgetEditFormController(controller, new BudgetEditComponentFactory(), new BudgetEditPreviewComponentFactory(), avustushaku, budgetEditFormState.form, hakemus),
+      controller: new BudgetEditFormController(controller, new BudgetEditComponentFactory(), avustushaku, budgetEditFormState.form, hakemus),
       containerId: "budget-edit-container",
       headerElements: []
     }

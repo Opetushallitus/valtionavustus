@@ -1,14 +1,12 @@
-import FormUtil from 'soresu-form/web/form/FormUtil'
-import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
-import _ from 'lodash'
-
 export default class TraineeDayEditFormController {
-
-  constructor(arviointiController, customComponentFactory, customPreviewComponentFactory, avustushaku, form,  hakemus,
+  constructor(arviointiController,
+              customComponentFactory,
+              avustushaku,
+              form,
+              hakemus,
               allowEditing) {
     this.arviointiController = arviointiController
     this.customComponentFactory = customComponentFactory
-    this.customPreviewComponentFactory = customPreviewComponentFactory
     this.avustushaku = avustushaku
     this.form = form
     this.hakemus = hakemus
@@ -51,14 +49,6 @@ export default class TraineeDayEditFormController {
       throw new Error("To create a custom field, supply customComponentFactory to FormController")
     }
     return this.customComponentFactory.createComponent(componentProps)
-  }
-
-  getCustomPreviewComponentTypeMapping() {
-    return this.customPreviewComponentFactory.fieldTypeMapping
-  }
-
-  createCustomPreviewComponent(componentProps) {
-    return this.customPreviewComponentFactory.createComponent(componentProps)
   }
 
   createAttachmentDownloadUrl(state, field) {

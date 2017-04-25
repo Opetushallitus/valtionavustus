@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
-import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
@@ -74,10 +73,9 @@ export default class TraineeDayEditing extends Component {
     })
     const formElementProps = {
       state: traineeDayEditFormState,
-      formContainerClass: allowEditing ? Form : FormPreview,
+      formContainerClass: Form,
       infoElementValues: avustushaku,
-      controller: new TraineeDayEditFormController(controller, new TraineeDayEditComponentFactory(),
-        new TraineeDayEditComponentFactory(), avustushaku, traineeDayEditFormState.form, hakemus, allowEditing),
+      controller: new TraineeDayEditFormController(controller, new TraineeDayEditComponentFactory(), avustushaku, traineeDayEditFormState.form, hakemus, allowEditing),
       containerId: "trainee-day-edit-container",
       headerElements: []
     }

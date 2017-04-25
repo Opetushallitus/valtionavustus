@@ -1,5 +1,4 @@
 import React from 'react'
-import _ from 'lodash'
 import ClassNames from 'classnames'
 
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'

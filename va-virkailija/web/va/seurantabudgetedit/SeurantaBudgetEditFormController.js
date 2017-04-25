@@ -1,17 +1,15 @@
 import FormUtil from 'soresu-form/web/form/FormUtil'
 
-import BudgetBusinessRules from '../budgetedit/BudgetBusinessRules.js'
+import BudgetBusinessRules from '../budgetedit/BudgetBusinessRules'
 
 export default class SeurantaBudgetEditFormController {
   constructor(arviointiController,
               customComponentFactory,
-              customPreviewComponentFactory,
               avustushaku,
               form,
               hakemus) {
     this.arviointiController = arviointiController
     this.customComponentFactory = customComponentFactory
-    this.customPreviewComponentFactory = customPreviewComponentFactory
     this.avustushaku = avustushaku
     this.budgetBusinessRules = new BudgetBusinessRules(form.content[0], hakemus.arvio)
     this.hakemus = hakemus
@@ -50,14 +48,6 @@ export default class SeurantaBudgetEditFormController {
       throw new Error("To create a custom field, supply customComponentFactory to FormController")
     }
     return this.customComponentFactory.createComponent(componentProps)
-  }
-
-  getCustomPreviewComponentTypeMapping() {
-    return this.customPreviewComponentFactory.fieldTypeMapping
-  }
-
-  createCustomPreviewComponent(componentProps) {
-    return this.customPreviewComponentFactory.createComponent(componentProps)
   }
 
   createAttachmentDownloadUrl(state, field) {

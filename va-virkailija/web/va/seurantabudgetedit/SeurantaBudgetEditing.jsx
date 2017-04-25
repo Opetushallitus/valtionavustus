@@ -65,7 +65,7 @@ export default class SeurantaBudgetEditing extends React.Component {
       state: budgetEditFormState,
       formContainerClass: Form,
       infoElementValues: avustushaku,
-      controller: new SeurantaBudgetEditFormController(controller, new SeurantaBudgetEditComponentFactory(), new SeurantaBudgetEditComponentFactory(), avustushaku, budgetEditFormState.form, hakemus),
+      controller: new SeurantaBudgetEditFormController(controller, new SeurantaBudgetEditComponentFactory(), avustushaku, budgetEditFormState.form, hakemus),
       containerId: "budget-edit-container",
       headerElements: []
     }

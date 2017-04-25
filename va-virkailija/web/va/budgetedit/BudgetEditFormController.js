@@ -3,18 +3,16 @@ import _ from 'lodash'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 
-import BudgetBusinessRules from '../budgetedit/BudgetBusinessRules.js'
+import BudgetBusinessRules from '../budgetedit/BudgetBusinessRules'
 
 export default class BudgetEditFormController {
   constructor(arviointiController,
               customComponentFactory,
-              customPreviewComponentFactory,
               avustushaku,
               form,
               hakemus) {
     this.arviointiController = arviointiController
     this.customComponentFactory = customComponentFactory
-    this.customPreviewComponentFactory = customPreviewComponentFactory
     this.avustushaku = avustushaku
     this.form = form
     this.hakemus = hakemus
@@ -79,14 +77,6 @@ export default class BudgetEditFormController {
       throw new Error("To create a custom field, supply customComponentFactory to FormController")
     }
     return this.customComponentFactory.createComponent(componentProps)
-  }
-
-  getCustomPreviewComponentTypeMapping() {
-    return this.customPreviewComponentFactory.fieldTypeMapping
-  }
-
-  createCustomPreviewComponent(componentProps) {
-    return this.customPreviewComponentFactory.createComponent(componentProps)
   }
 
   createAttachmentDownloadUrl(state, field) {

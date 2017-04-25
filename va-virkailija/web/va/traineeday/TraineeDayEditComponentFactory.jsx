@@ -1,7 +1,3 @@
-import React from 'react'
-
-import _ from 'lodash'
-
 import ComponentFactory from 'soresu-form/web/form/ComponentFactory'
 import VaTraineeDayCalculator from './TraineeDayEditCalculator.jsx'
 import {FieldOnChangePropertyMapper} from 'soresu-form/web/form/component/PropertyMapper.js'
