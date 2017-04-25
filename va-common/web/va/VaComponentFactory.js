@@ -11,11 +11,15 @@ import VaBudgetElement, {
   BudgetItemElement,
   BudgetSummaryElement,
 } from './VaBudgetComponents.jsx'
+
 import {
   VaFocusAreasPropertyMapper,
+  BudgetSummaryPropertyMapper,
   SelfFinancingPropertyMapper
-} from './VaPropertyMapper.js'
+} from './VaPropertyMapper'
+
 import VaProjectDescription from './VaProjectDescription.jsx'
+
 import VaTraineeDayCalculator, {VaTraineeDayTotalCalculator} from './VaTraineeDayCalculator.jsx'
 
 export default class VaComponentFactory extends ComponentFactory {
@@ -36,6 +40,7 @@ export default class VaComponentFactory extends ComponentFactory {
       fieldPropertyMapperMapping: {
         vaEmailNotification: TrimmingTextFieldPropertyMapper,
         vaFocusAreas: VaFocusAreasPropertyMapper,
+        vaBudgetSummaryElement: BudgetSummaryPropertyMapper,
         vaSelfFinancingField: SelfFinancingPropertyMapper,
         vaTraineeDayCalculator: FieldOnChangePropertyMapper
       }

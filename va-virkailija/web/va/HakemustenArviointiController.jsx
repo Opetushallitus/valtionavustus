@@ -543,12 +543,21 @@ export default class HakemustenArviointiController {
   }
 
   setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state) {
+    if (!state.selectedHakemusAccessControl.allowHakemusStateChanges) {
+      return
+    }
+
     const selectedHakemus = state.selectedHakemus
     const budgetElement = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
     const hakemusAnswers = selectedHakemus.answers
     const overriddenAnswers = selectedHakemus.arvio["overridden-answers"]
 
-    const writeChangedFieldValues = fields => {
+    const findSelfFinancingSpecField = () => {
+      const budgetSummaryElement = _.find(budgetElement.children, n => n.fieldType === "vaBudgetSummaryElement")
+      return FormUtil.findFieldByFieldType(budgetSummaryElement, "vaSelfFinancingField")
+    }
+
+    const writeChangedAnswerFieldValues = fields => {
       let didWrite = false
 
       _.forEach(fields, field => {
@@ -573,15 +582,15 @@ export default class HakemustenArviointiController {
     }
 
     // gather empty values for descriptions and answer fields for cost budget items
-    const {emptyDescriptions, costFieldsToCopy} = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc, budgetItem) => {
+    const {emptyDescriptions, answerCostFieldsToCopy} = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc, budgetItem) => {
       const descriptionField = budgetItem.children[0]
       acc.emptyDescriptions[descriptionField.id] = ''
       if (!budgetItem.params.incrementsTotal) {
         const valueField = budgetItem.children[1]
-        acc.costFieldsToCopy.push(valueField)
+        acc.answerCostFieldsToCopy.push(valueField)
       }
       return acc
-    }, {emptyDescriptions: {}, costFieldsToCopy: []})
+    }, {emptyDescriptions: {}, answerCostFieldsToCopy: []})
 
     FormStateLoop.initDefaultValues(
       overriddenAnswers,
@@ -590,9 +599,13 @@ export default class HakemustenArviointiController {
       null
     )
 
-    const didUpdateCostFields = writeChangedFieldValues(costFieldsToCopy)
+    const selfFinancingFieldToCopy = findSelfFinancingSpecField()
 
-    if (didUpdateCostFields) {
+    const answerFieldsToCopy = selfFinancingFieldToCopy ? answerCostFieldsToCopy.concat(selfFinancingFieldToCopy) : answerCostFieldsToCopy
+
+    const didUpdateAnswerFields = writeChangedAnswerFieldValues(answerFieldsToCopy)
+
+    if (didUpdateAnswerFields) {
       dispatcher.push(events.updateHakemusArvio, selectedHakemus)
     }
   }

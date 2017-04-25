@@ -19,8 +19,9 @@ import VaBudgetElement, {
 
 import {
   VaFocusAreasPropertyMapper,
+  BudgetSummaryPropertyMapper,
   SelfFinancingPropertyMapper
-} from 'va-common/web/va/VaPropertyMapper'
+} from './VaPropertyMapper'
 
 import VaTraineeDayCalculator from './VaTraineeDayCalculator.jsx'
 
@@ -40,6 +41,7 @@ export default class VaPreviewComponentFactory extends ComponentFactory {
       },
       fieldPropertyMapperMapping: {
         vaFocusAreas: VaFocusAreasPropertyMapper,
+        vaBudgetSummaryElement: BudgetSummaryPropertyMapper,
         vaSelfFinancingField: SelfFinancingPropertyMapper,
         vaTraineeDayCalculator: FieldOnChangePropertyMapper
       }

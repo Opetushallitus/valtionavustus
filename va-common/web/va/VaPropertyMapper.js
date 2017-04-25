@@ -27,6 +27,12 @@ export class VaFocusAreasPropertyMapper {
   }
 }
 
+export class BudgetSummaryPropertyMapper {
+  static map(props) {
+    return _.assign({}, props, {showSelfFinancingField: true})
+  }
+}
+
 export class SelfFinancingPropertyMapper {
   static map(props) {
     const mapped = TextFieldPropertyMapper.map(props)

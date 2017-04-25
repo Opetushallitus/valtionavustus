@@ -41,25 +41,6 @@ export default class HakemusBudgetEditing extends React.Component {
     })
   }
 
-  // Inject answer for self-financing amount for preview
-  static addSelfFinancingAnswersByMutationIfExplicitSelfFinancing(formState) {
-    const saveStatus = formState.saveStatus
-    const vaBudgetElements = JsUtil.flatFilter(formState.form.content, n => n.fieldType === "vaBudget")
-    _.forEach(vaBudgetElements, vaBudgetElement => {
-      const vaBudgetSummaryElement = _.find(vaBudgetElement.children, n => n.fieldType === "vaBudgetSummaryElement")
-      const selfFinancingSpecField = FormUtil.findFieldByFieldType(vaBudgetSummaryElement, "vaSelfFinancingField")
-      if (selfFinancingSpecField) {
-        saveStatus.values = _.assign({}, saveStatus.values, {
-          value: saveStatus.values.value.concat({
-            key: selfFinancingSpecField.id,
-            value: "" + vaBudgetSummaryElement.financing.selfValue,
-            fieldType: "vaSelfFinancingField"
-          })
-        })
-      }
-    })
-  }
-
   render() {
     const {controller, hakemus, hakuData, avustushaku, translations, allowEditing} = this.props
     const vaBudget = FormUtil.findFieldByFieldType(hakuData.form.content, "vaBudget")
@@ -93,7 +74,6 @@ export default class HakemusBudgetEditing extends React.Component {
       hakemus: fakeHakemus,
       savedHakemus: hakemus
     })
-    HakemusBudgetEditing.addSelfFinancingAnswersByMutationIfExplicitSelfFinancing(budgetEditFormState)
     HakemusBudgetEditing.validateFields(budgetEditFormState.form, fakeHakemus.answers, hakemus)
     const formElementProps = {
       state: budgetEditFormState,

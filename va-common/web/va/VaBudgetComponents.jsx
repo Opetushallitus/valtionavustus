@@ -108,6 +108,7 @@ export class BudgetSummaryElement extends React.Component {
   constructor(props) {
     super(props)
     this.miscTranslator = new Translator(props.translations["misc"])
+    this.showSelfFinancingField = props.showSelfFinancingField
   }
 
   render() {
@@ -169,7 +170,7 @@ export class BudgetSummaryElement extends React.Component {
                 <LocalizedString translations={translations} translationKey="selfFinancingAmount" lang={lang} />
               </td>
               <td className="amount-value-column self-financing-amount">
-                {selfFinancingField || <span className={amountClassNames}>{isFinancingResultANumber ? financing.selfValue : checkNumbersMessage}</span>}
+                {(this.showSelfFinancingField && selfFinancingField) || <span className={amountClassNames}>{isFinancingResultANumber ? financing.selfValue : checkNumbersMessage}</span>}
               </td>
             </tr>
             <tr>
