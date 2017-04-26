@@ -20,7 +20,6 @@ import PresenterComment from './PresenterComment.jsx'
 import EditStatus from './EditStatus.jsx'
 import admin from '../style/admin.less'
 
-
 export default class HakemusArviointi extends Component {
   render() {
     const controller = this.props.controller
@@ -28,12 +27,12 @@ export default class HakemusArviointi extends Component {
     const avustushaku = this.props.avustushaku
     const hakuData = this.props.hakuData
     const translations = this.props.translations
-    const privileges = this.props.privileges
-    const hakuIsPublishedAndEnded = avustushaku.status === "published" && avustushaku.phase === "ended"
-    const allowHakemusCommenting = hakuIsPublishedAndEnded
-    const allowHakemusStateChanges = privileges["change-hakemus-state"] && hakuIsPublishedAndEnded
-    const allowHakemusScoring = privileges["score-hakemus"] && hakuIsPublishedAndEnded
-    const allowEditStateChanges = privileges["change-hakemus-state"]
+    const {
+      allowHakemusCommenting,
+      allowHakemusStateChanges,
+      allowHakemusScoring,
+      allowEditStateChanges
+    } = this.props.selectedHakemusAccessControl
     const userInfo = this.props.userInfo
     const comments = hakemus.comments
     const loadingComments = this.props.loadingComments

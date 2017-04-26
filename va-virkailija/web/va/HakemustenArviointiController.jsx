@@ -87,6 +87,7 @@ export default class HakemustenArviointiController {
       ],
       personSelectHakemusId:undefined,
       selectedHakemus: undefined,
+      selectedHakemusAccessControl: {},
       showOthersScores: false,
       saveStatus: {
         saveInProgress: false,
@@ -206,6 +207,7 @@ export default class HakemustenArviointiController {
       const newUrl = "/avustushaku/" + parsedUrl.avustushaku_id + "/hakemus/" + hakemusIdToSelect + "/" + subTab + "/" + location.search
       history.pushState({}, window.title, newUrl)
     }
+    this.setSelectedHakemusAccessControl(state)
     this.setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state)
     this.setDefaultBudgetValuesForSelectedHakemusSeurantaAnswers(state)
     this.validateHakemusRahoitusalueAndTalousarviotiliSelection(state)
@@ -218,6 +220,20 @@ export default class HakemustenArviointiController {
       state.personSelectHakemusId=hakemusIdToSelect
     }
     return state
+  }
+
+  setSelectedHakemusAccessControl(state) {
+    const avustushaku = state.hakuData.avustushaku
+    const privileges = state.hakuData.privileges
+
+    const hakuIsPublishedAndEnded = avustushaku.status === "published" && avustushaku.phase === "ended"
+
+    state.selectedHakemusAccessControl = {
+      allowHakemusCommenting:   hakuIsPublishedAndEnded,
+      allowHakemusStateChanges: hakuIsPublishedAndEnded && privileges["change-hakemus-state"],
+      allowHakemusScoring:      hakuIsPublishedAndEnded && privileges["score-hakemus"],
+      allowEditStateChanges:    privileges["change-hakemus-state"]
+    }
   }
 
   onCloseHakemus(state) {
@@ -604,16 +620,11 @@ export default class HakemustenArviointiController {
   }
 
   validateHakemusRahoitusalueAndTalousarviotiliSelection(state) {
-    const avustushaku = state.hakuData.avustushaku
-
-    const allowEditing = avustushaku.status === "published"
-        && avustushaku.phase === "ended"
-        && state.hakuData.privileges["change-hakemus-state"]
-
-    if (!allowEditing) {
+    if (!state.selectedHakemusAccessControl.allowHakemusStateChanges) {
       return
     }
 
+    const avustushaku = state.hakuData.avustushaku
     const availableRahoitusalueet = avustushaku.content.rahoitusalueet
     const hakemusArvio = state.selectedHakemus.arvio
 

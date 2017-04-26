@@ -33,10 +33,11 @@ export default class App extends Component {
     const selectedHakemus = hasSelected ? state.selectedHakemus : {}
     const previouslySelectedHakemus = state.previouslySelectedHakemus
     const translations = state.translations
+    const selectedHakemusAccessControl = state.selectedHakemusAccessControl
     const loadingComments = state.loadingComments
     const avustushakuList = state.avustushakuList
     const subTab = state.subTab
-    
+
     return (
       <section>
         <TopBar activeTab="arviointi" environment={hakuData.environment} state={state}/>
@@ -68,6 +69,7 @@ export default class App extends Component {
                           avustushaku={avustushaku}
                           hakemus={selectedHakemus}
                           translations={translations}
+                          selectedHakemusAccessControl={selectedHakemusAccessControl}
                           userInfo={state.userInfo}
                           loadingComments={loadingComments}
                           showOthersScores={state.showOthersScores}

@@ -17,6 +17,7 @@ export default class HakemusDetails extends Component {
     const loadingComments = this.props.loadingComments
     const showOthersScores = this.props.showOthersScores
     const translations = this.props.translations
+    const selectedHakemusAccessControl = this.props.selectedHakemusAccessControl
     const subTab = this.props.subTab
     if(hidden) return null;
 
@@ -46,7 +47,7 @@ export default class HakemusDetails extends Component {
                                    avustushaku={avustushaku}
                                    hakuData={hakuData}
                                    translations={translations}
-                                   privileges={hakuData.privileges}
+                                   selectedHakemusAccessControl={selectedHakemusAccessControl}
                                    userInfo={userInfo}
                                    loadingComments={loadingComments}
                                    showOthersScores={showOthersScores}
