@@ -547,8 +547,13 @@ export default class HakemustenArviointiController {
       return
     }
 
-    const selectedHakemus = state.selectedHakemus
     const budgetElement = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
+
+    if (!budgetElement) {
+      return
+    }
+
+    const selectedHakemus = state.selectedHakemus
     const hakemusAnswers = selectedHakemus.answers
     const overriddenAnswers = selectedHakemus.arvio["overridden-answers"]
 
@@ -611,8 +616,13 @@ export default class HakemustenArviointiController {
   }
 
   setDefaultBudgetValuesForSelectedHakemusSeurantaAnswers(state) {
-    const selectedHakemus = state.selectedHakemus
     const budgetElement = FormUtil.findFieldByFieldType(state.hakuData.form.content, "vaBudget")
+
+    if (!budgetElement) {
+      return
+    }
+
+    const selectedHakemus = state.selectedHakemus
     const hakemusAnswers = selectedHakemus.answers
     const defaultValues = _.reduce(FormUtil.findFieldsByFieldType(budgetElement, "vaBudgetItemElement"), (acc, budgetItem) => {
       const descriptionField = budgetItem.children[0]
