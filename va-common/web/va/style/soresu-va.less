@@ -113,34 +113,55 @@
 
   .budget-summary {
     margin-top: 26px;
-    position: relative;
+
+    &-financing {
+      overflow: hidden;  // clearfix
+    }
 
     h4 {
       font-weight: bold;
       margin: 14px 0;
     }
 
+    &-financing-left {
+      float: left;
+      max-width: 50%;
+    }
+
+    &-financing-right {
+      float: right;
+      max-width: 50%;
+    }
+
     .amounts {
-      display: inline-block;
+      margin-right: 20px;
     }
 
     .percentages {
-      display: inline-block;
-      position: absolute;
-      right: 0;
+      margin-left: 20px;
     }
 
-    .amount-label-column, .percentage-label-column {
+    .amounts, .percentages {
+      tbody {
+        tr:first-child td {
+          height: 50px;
+        }
+        tr:last-child td {
+          padding-top: 10px;
+          padding-bottom: 0;
+        }
+      }
+    }
+
+    .amount-label-column,
+    .percentage-label-column {
       padding-right: 20px;
     }
 
-    .amount-value-column, .percentage-value-column {
+    .amount-value-column,
+    .percentage-value-column {
       min-width: 120px;
       text-align: right;
-    }
-
-    tr {
-      height: 50px;
     }
 
     .soresu-money-field {

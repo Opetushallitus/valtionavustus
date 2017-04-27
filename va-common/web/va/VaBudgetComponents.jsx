@@ -159,54 +159,60 @@ export class BudgetSummaryElement extends React.Component {
             )}
           </h4>
         )}
-        <table className="amounts">
-          <colgroup>
-            <col className="amount-label-column" />
-            <col className="amount-value-column" />
-          </colgroup>
-          <tbody>
-            <tr>
-              <td className="amount-label-column">
-                <LocalizedString translations={translations} translationKey="selfFinancingAmount" lang={lang} />
-              </td>
-              <td className="amount-value-column self-financing-amount">
-                {(this.showSelfFinancingField && selfFinancingField) || <span className={amountClassNames}>{isFinancingResultANumber ? financing.selfValue : checkNumbersMessage}</span>}
-              </td>
-            </tr>
-            <tr>
-              <td className="amount-label-column">
-                <LocalizedString translations={translations} translationKey="ophFinancingAmount" lang={lang} />
-              </td>
-              <td className="amount-value-column oph-financing-amount">
-                <span className={amountClassNames}>{isFinancingResultANumber ? financing.ophValue : checkNumbersMessage}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <table className="percentages">
-          <colgroup>
-            <col className="percentage-label-column" />
-            <col className="percentage-value-column" />
-          </colgroup>
-          <tbody>
-            <tr>
-              <td className="percentage-label-column">
-                <LocalizedString translations={translations} translationKey="selfFinancingPercentage" lang={lang} />
-              </td>
-              <td className="percentage-value-column self-financing-percentage">
-                <span className={percentageClassNames}>{isFinancingResultANumber ? selfFinancingPercentageFormatted : checkNumbersMessage}</span>
-              </td>
-            </tr>
-            <tr>
-              <td className="percentage-label-column">
-                <LocalizedString translations={translations} translationKey="ophFinancingPercentage" lang={lang} />
-              </td>
-              <td className="percentage-value-column oph-financing-percentage">
-                <span className={percentageClassNames}>{isFinancingResultANumber ? ophFinancingPercentageFormatted : checkNumbersMessage}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="budget-summary-financing">
+          <div className="budget-summary-financing-left">
+            <table className="amounts">
+              <colgroup>
+                <col className="amount-label-column" />
+                <col className="amount-value-column" />
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td className="amount-label-column">
+                    <LocalizedString translations={translations} translationKey="selfFinancingAmount" lang={lang} />
+                  </td>
+                  <td className="amount-value-column self-financing-amount">
+                    {(this.showSelfFinancingField && selfFinancingField) || <span className={amountClassNames}>{isFinancingResultANumber ? financing.selfValue : checkNumbersMessage}</span>}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="amount-label-column">
+                    <LocalizedString translations={translations} translationKey="ophFinancingAmount" lang={lang} />
+                  </td>
+                  <td className="amount-value-column oph-financing-amount">
+                    <span className={amountClassNames}>{isFinancingResultANumber ? financing.ophValue : checkNumbersMessage}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="budget-summary-financing-right">
+            <table className="percentages">
+              <colgroup>
+                <col className="percentage-label-column" />
+                <col className="percentage-value-column" />
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td className="percentage-label-column">
+                    <LocalizedString translations={translations} translationKey="selfFinancingPercentage" lang={lang} />
+                  </td>
+                  <td className="percentage-value-column self-financing-percentage">
+                    <span className={percentageClassNames}>{isFinancingResultANumber ? selfFinancingPercentageFormatted : checkNumbersMessage}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="percentage-label-column">
+                    <LocalizedString translations={translations} translationKey="ophFinancingPercentage" lang={lang} />
+                  </td>
+                  <td className="percentage-value-column oph-financing-percentage">
+                    <span className={percentageClassNames}>{isFinancingResultANumber ? ophFinancingPercentageFormatted : checkNumbersMessage}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
     )
   }

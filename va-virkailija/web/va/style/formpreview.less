@@ -101,13 +101,18 @@
       .budget-summary {
         width: 100%;
         font-size: 14px;
-        td {
-          padding-bottom: 10px;
-        }
         .amount-value-column,
         .percentage-value-column {
           min-width: auto;
         }
+        .amounts, .percentages {
+          tbody tr:first-child td {
+            height: auto;
+          }
+        }
+      }
+      .summing-table td {
+        padding-bottom: 10px;
       }
     }
     .va-trainee-day-calculator {
