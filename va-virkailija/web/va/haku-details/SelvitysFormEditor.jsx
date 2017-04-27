@@ -72,7 +72,7 @@ export default class SelvitysFormEditor extends React.Component{
 
     const loppuSelvitysSection = <div>
       <h4>Loppuselvityksen lähettäminen</h4>
-      <p>Loppuselvitys on koko ajan täytettävissä ja se tulee toimittaa viimeistään <strong>{this.props.avustushaku[selvitysType + 'date']}.</strong></p>
+      <p>Loppuselvitys on koko ajan täytettävissä ja se tulee toimittaa viimeistään <strong>{this.props.avustushaku[selvitysType + 'date']}</strong>.</p>
       <p>Loppuselvityspyynnöt lähetetään niille hakijoille, joiden hakemukset on hyväksytty ja jotka eivät ole vielä toimittaneet loppuselvitystä.</p>
       <p>
         <button disabled={sending} onClick={onSendSelvitys}>Lähetä loppuselvityspyynnöt</button>
