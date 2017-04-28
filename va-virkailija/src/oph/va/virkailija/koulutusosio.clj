@@ -22,14 +22,26 @@
    :total (find-by-key-end obj ".total")
    :total-formatted (format-number (find-by-key-end obj ".total"))})
 
+(defn- translated-or-empty [translate key map]
+  (if-let [val (key map)]
+    (translate val)
+    ""))
+
 (defn map-tr [translate koulutusosio-data]
-  (let [nameField (:name koulutusosio-data)
-        applied (:applied koulutusosio-data)
-        granted (:granted koulutusosio-data)]
+  (let [applied (:applied koulutusosio-data)
+        granted (:granted koulutusosio-data)
+        scope-type-applied (translated-or-empty translate :scope-type applied)
+        scope-applied (if (empty? scope-type-applied)
+                        ""
+                        (str (:scope applied) " " scope-type-applied))
+        scope-type-granted (translated-or-empty translate :scope-type granted)
+        scope-granted (if (empty? scope-type-granted)
+                        ""
+                        (str (:scope granted) " " scope-type-granted))]
     (str "<tr>"
-         "<td class='trainingName'>" nameField "</td>"
-         "<td class='amount'>" (:scope applied) " " (translate (:scope-type applied)) "</td>"
-         "<td class='amount'>" (:scope granted) " " (translate (:scope-type granted)) "</td>"
+         "<td class='trainingName'>" (:name koulutusosio-data) "</td>"
+         "<td class='amount'>" scope-applied "</td>"
+         "<td class='amount'>" scope-granted "</td>"
          "<td class='amount'>" (:person-count applied) "</td>"
          "<td class='amount'>" (:person-count granted) "</td>"
          "<td class='amount'>" (:total-formatted applied) "</td>"
@@ -45,7 +57,13 @@
      :granted (koulutusosio-row-part (find-value #(= (:key %) applied-key) answers))}))
 
 (defn calculate-total [key list]
-  (format-number (reduce + (map (comp bigdec #(str/replace % "," ".") :total key) list))))
+  (format-number (reduce +
+                         (map (comp bigdec
+                                    #(str/replace % "," ".")
+                                    #(or % "0")
+                                    :total
+                                    key)
+                              list))))
 
 (defn koulutusosio [hakemus answers translate]
   (let [template (email/load-template "templates/koulutusosio.html")
