@@ -14,6 +14,7 @@ import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
 
 import HttpUtil from 'va-common/web/HttpUtil'
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
+import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
 
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses'
 import HakemusSelvitysStatuses from './hakemus-details/HakemusSelvitysStatuses'
@@ -210,6 +211,7 @@ export default class HakemustenArviointiController {
     this.setSelectedHakemusAccessControl(state)
     this.setDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(state)
     this.setDefaultBudgetValuesForSelectedHakemusSeurantaAnswers(state)
+    this.setDefaultTraineeDayValuesForSelectedHakemusOverriddenAnswers(state)
     this.validateHakemusRahoitusalueAndTalousarviotiliSelection(state)
     this.loadScores(state, hakemusIdToSelect)
     this.loadComments()
@@ -640,6 +642,109 @@ export default class HakemustenArviointiController {
       budgetElement,
       null
     )
+  }
+
+  setDefaultTraineeDayValuesForSelectedHakemusOverriddenAnswers(state) {
+    if (!state.selectedHakemusAccessControl.allowHakemusStateChanges) {
+      return
+    }
+
+    const selectedHakemus = state.selectedHakemus
+    const hakemusAnswers = selectedHakemus.answers
+    const overriddenAnswers = selectedHakemus.arvio["overridden-answers"]
+
+    const defaultFields = _.reduce(
+      VaTraineeDayUtil.collectCalculatorSpecifications(state.hakuData.form.content, hakemusAnswers),
+      (acc, field) => {
+        acc[field.id] = _.assign(
+          {},
+          field,
+          {value: _.cloneDeep(InputValueStorage.readValue(null, hakemusAnswers, field.id))}
+        )
+        return acc
+      },
+      {})
+
+    const addNewAndUpdateOutdatedOverriddenAnswers = () => {
+      let didUpdate = false
+
+      _.forEach(defaultFields, (defaultField, id) => {
+        const oldValue = InputValueStorage.readValue(null, overriddenAnswers, id)
+
+        if (oldValue === "") {
+          // overridden answer does not exist, copy it as is from hakemus answers
+          InputValueStorage.writeValue({}, overriddenAnswers, {
+            id: id,
+            field: defaultField,
+            value: defaultField.value
+          })
+          didUpdate = true
+        } else {
+          // overridden answer exists
+          const oldScopeTypeSubfield = VaTraineeDayUtil.findSubfieldById(oldValue, id, "scope-type")
+          const newScopeTypeSubfield = VaTraineeDayUtil.findSubfieldById(defaultField.value, id, "scope-type")
+
+          if (oldScopeTypeSubfield && newScopeTypeSubfield && oldScopeTypeSubfield.value !== newScopeTypeSubfield.value) {
+            // scope type for the overridden answer has changed compared to hakemus answer, update scope type and total accordingly
+            const oldScopeSubfield = VaTraineeDayUtil.findSubfieldById(oldValue, id, "scope")
+            const oldPersonCountSubfield = VaTraineeDayUtil.findSubfieldById(oldValue, id, "person-count")
+            const oldTotalSubfield = VaTraineeDayUtil.findSubfieldById(oldValue, id, "total")
+
+            const newTotal = VaTraineeDayUtil.composeTotal(oldScopeSubfield.value, oldPersonCountSubfield.value, newScopeTypeSubfield.value)
+
+            const newValue = [
+              _.assign({}, oldPersonCountSubfield),
+              _.assign({}, oldScopeSubfield),
+              _.assign({}, oldScopeTypeSubfield, {value: newScopeTypeSubfield.value}),
+              _.assign({}, oldTotalSubfield, {value: newTotal})
+            ]
+
+            InputValueStorage.writeValue({}, overriddenAnswers, {
+              id: id,
+              field: defaultField,
+              value: newValue
+            })
+
+            didUpdate = true
+          }
+        }
+      })
+
+      return didUpdate
+    }
+
+    const deleteStaleOverriddenAnswers = () => {
+      const overriddenAnswerIds = _.chain(overriddenAnswers.value)
+        .filter(ans => ans.fieldType === "vaTraineeDayCalculator")
+        .pluck('key')
+        .value()
+
+      const answerIdsToPreserve = _.keys(defaultFields)
+
+      const overriddenAnswerIdsToDelete = _.difference(overriddenAnswerIds, answerIdsToPreserve)
+
+      if (_.isEmpty(overriddenAnswerIdsToDelete)) {
+        return false
+      }
+
+      overriddenAnswers.value = _.filter(overriddenAnswers.value, ans => !_.includes(overriddenAnswerIdsToDelete, ans.key))
+
+      return true
+    }
+
+    let didUpdateOverriddenAnswers = false
+
+    if (addNewAndUpdateOutdatedOverriddenAnswers()) {
+      didUpdateOverriddenAnswers = true
+    }
+
+    if (deleteStaleOverriddenAnswers()) {
+      didUpdateOverriddenAnswers = true
+    }
+
+    if (didUpdateOverriddenAnswers) {
+      dispatcher.push(events.updateHakemusArvio, selectedHakemus)
+    }
   }
 
   validateHakemusRahoitusalueAndTalousarviotiliSelection(state) {

@@ -28,4 +28,21 @@ export default class VaTraineeDayUtil {
 
     return VaTraineeDayUtil.formatFloat(total)
   }
+
+  static findSubfieldById(subfields, fieldId, subfieldType) {
+    const subfieldId = fieldId + "." + subfieldType
+    return _.find(subfields, subfield => subfield.key === subfieldId)
+  }
+
+  static collectCalculatorSpecifications(formSpecificationContent, answers) {
+    const calcAnswers = InputValueStorage.readValues(answers, "vaTraineeDayCalculator")
+
+    return _.flatten(_.map(FormUtil.findFieldsByFieldType(formSpecificationContent, "vaTraineeDayCalculator"), calcSpec => {
+      const idPrefix = calcSpec.id.split(".").slice(0, -1).join(".").replace(/-\d+$/, "-")
+      return _.chain(calcAnswers)
+        .filter(ans => _.startsWith(ans.key, idPrefix))
+        .map(ans => _.assign({}, calcSpec, {id: ans.key}))
+        .value()
+    }))
+  }
 }

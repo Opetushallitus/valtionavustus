@@ -5,6 +5,7 @@ import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import FakeFormState from '../form/FakeFormState.js'
+import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
 import TraineeDayEditFormController from './TraineeDayEditFormController.jsx'
 import TraineeDayEditComponentFactory from './TraineeDayEditComponentFactory.jsx'
 import Koulutusosiot from './Koulutusosiot'
@@ -19,18 +20,12 @@ export default class TraineeDayEditing extends Component {
     const hakemus = this.props.hakemus
     const translations = this.props.translations
     const allowEditing = this.props.allowEditing
-    const traineeDayCalculatorsAll = FormUtil.findFieldsByFieldType(hakuData.form.content, "vaTraineeDayCalculator")
-    const traineeDayCalculatorAnswers = InputValueStorage.readValues(hakemus.answers, "vaTraineeDayCalculator")
-    const keys = _.pluck(traineeDayCalculatorAnswers,'key')
-    const traineeDayCalculators = keys.map(key =>{
-        var calculator = _.clone(traineeDayCalculatorsAll[0])
-        calculator.id = key
-        return calculator
-      }
-    )
-    if(traineeDayCalculators.length==0){
+    const traineeDayCalcs = VaTraineeDayUtil.collectCalculatorSpecifications(hakuData.form.content, hakemus.answers)
+
+    if (_.isEmpty(traineeDayCalcs)) {
       return null
     }
+
     const formOperations = {
       chooseInitialLanguage: function() {return "fi"},
       containsExistingEntityId: undefined,
@@ -51,7 +46,7 @@ export default class TraineeDayEditing extends Component {
         fieldType:  "vaTraineeDayCalculatorSummary",
         fieldClass: "wrapperElement",
         id:         "trainee-day-summary",
-        children:   traineeDayCalculators
+        children:   traineeDayCalcs
       }],
       formOperations,
       hakemus: fakeHakemus,
