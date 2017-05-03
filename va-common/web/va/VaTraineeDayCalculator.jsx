@@ -9,6 +9,8 @@ import BasicTextField from 'soresu-form/web/form/component/BasicTextField.jsx'
 import Translator from 'soresu-form/web/form/Translator'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 
+import VaTraineeDayUtil from './VaTraineeDayUtil'
+
 // Koulutettavapäivälaskuri in finnish
 export default class VaTraineeDayCalculator extends BasicFieldComponent {
 
@@ -34,17 +36,13 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     this.translator = new Translator(props.translations.form["trainee-day-calculator"])
   }
 
-  static formatFloat(floatValue) {
-    return floatValue ? floatValue.toFixed(1).replace(".", ",") : "0"
-  }
-
   static formatFloatString(stringValue) {
     const sanitizedString = stringValue.replace(".", ",").replace(/[^\d,]/g, "")
     if(sanitizedString.indexOf(",") < 0 || sanitizedString.endsWith(",")) {
       return sanitizedString
     }
     const floatValue = parseFloat(sanitizedString.replace(",", "."))
-    return VaTraineeDayCalculator.formatFloat(floatValue)
+    return VaTraineeDayUtil.formatFloat(floatValue)
   }
 
   static formatIntString(stringValue) {
@@ -93,13 +91,15 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         value: value
       }
       InputValueStorage.writeValue({}, valueHolder, fieldUpdate)
-      const scopeMultiplier = VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type") === "op" ? 4.5 : 1
-      const scope = parseFloat(scopeValue.replace(",", ".")) ? parseFloat(scopeValue.replace(",", ".")) : 0
-      const personCount = parseInt(personCountValue) ? parseInt(personCountValue) : 0
+      const totalFormatted = VaTraineeDayUtil.composeTotal(
+        scopeValue,
+        personCountValue,
+        VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type")
+      )
       const totalUpdate = {
-        id: field.id + "." +"total",
+        id: field.id + "." + "total",
         field: VaTraineeDayCalculator.subField(field, "total"),
-        value: VaTraineeDayCalculator.formatFloat(scopeMultiplier * scope * personCount)
+        value: totalFormatted
       }
       InputValueStorage.writeValue({}, valueHolder, totalUpdate)
       props.onChange({"target": {"value": valueHolder.value}})
@@ -201,7 +201,7 @@ export class VaTraineeDayTotalCalculator extends React.Component {
     return (
       <div id={htmlId} className="va-trainee-day-calculator-total">
         <p><label className="total">{this.translator.translate("person-count-total", this.props.lang)}:</label> {personCountTotal}</p>
-        <p><label className="total">{this.translator.translate("scope-total", this.props.lang)}:</label> {VaTraineeDayCalculator.formatFloat(scopeTotal)}</p>
+        <p><label className="total">{this.translator.translate("scope-total", this.props.lang)}:</label> {VaTraineeDayUtil.formatFloat(scopeTotal)}</p>
       </div>
     )
   }

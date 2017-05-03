@@ -1,5 +1,6 @@
 import React from 'react'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
+import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
 import VaTraineeDayCalculator from 'va-common/web/va/VaTraineeDayCalculator.jsx'
 
 export default class TraineeDayCalculatorSummary extends React.Component {
@@ -49,13 +50,13 @@ export default class TraineeDayCalculatorSummary extends React.Component {
           <tfoot>
           <tr>
             <td colSpan="5"><strong>Koulutettavapäivät yhteensä:</strong></td>
-            <td className="text-gray">{VaTraineeDayCalculator.formatFloat(originalSum)}</td>
-            <td><strong>{VaTraineeDayCalculator.formatFloat(grantedSum)}</strong></td>
+            <td className="text-gray">{VaTraineeDayUtil.formatFloat(originalSum)}</td>
+            <td><strong>{VaTraineeDayUtil.formatFloat(grantedSum)}</strong></td>
           </tr>
           <tr>
             <td colSpan="5"><strong>Kustannukset per koulutettavapäivä:</strong></td>
-            <td className="text-gray">{VaTraineeDayCalculator.formatFloat(costPerTraineeDay)} €</td>
-            <td><strong>{VaTraineeDayCalculator.formatFloat(costPerTraineeDayGranted)} €</strong></td>
+            <td className="text-gray">{VaTraineeDayUtil.formatFloat(costPerTraineeDay)} €</td>
+            <td><strong>{VaTraineeDayUtil.formatFloat(costPerTraineeDayGranted)} €</strong></td>
           </tr>
           </tfoot>
         </table>
