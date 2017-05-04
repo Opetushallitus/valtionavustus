@@ -38,7 +38,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
           <tr>
             <td>{name}</td>
             <td className="text-gray original-value">
-              {VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope") }{VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope-type")}
+              {VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope")}&nbsp;{VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope-type")}
             </td>
             <td style={{whiteSpace:'nowrap'}}>
               <BasicTextField htmlId={htmlId + ".scope"}
