@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react'
 import ClassNames from 'classnames'
 
@@ -106,7 +107,13 @@ class VaPreviewTraineeDayCalculator extends BasicFieldComponent {
     const htmlId = props.htmlId
     const field = props.field
     const lang = props.lang
-    const valueHolder = {value: this.props.value ? this.props.value : VaTraineeDayCalculator.emptyValue(field)}
+
+    if (!_.isArray(props.value)) {
+      return null
+    }
+
+    const valueHolder = {value: props.value}
+
     return (
         <div id={htmlId} className="va-trainee-day-calculator">
           <table>
