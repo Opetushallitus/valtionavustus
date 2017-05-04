@@ -12,20 +12,6 @@ import _ from 'lodash'
 import style from '../style/traineeday.less'
 
 export default class TraineeDayEditing extends Component {
-
-  static initialValues(formContent, originalHakemus) {
-    const traineeItems =  FormUtil.findFieldsByFieldType(formContent, 'vaTraineeDayCalculator')
-    const initialValues = {}
-    traineeItems.map(item => initialValues[item.id] = "")
-    traineeItems
-      .map(item => {
-        const koulutusosio = Koulutusosiot.values(originalHakemus.answers,item.id)
-        return initialValues[item.id] = _.cloneDeep(Koulutusosiot.traineeDayCalculator(koulutusosio))
-        }
-      )
-    return initialValues
-  }
-
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
