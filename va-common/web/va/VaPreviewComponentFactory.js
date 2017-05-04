@@ -105,17 +105,18 @@ class VaPreviewTraineeDayCalculator extends BasicFieldComponent {
     const props = this.props
     const htmlId = props.htmlId
     const field = props.field
+    const lang = props.lang
     const valueHolder = {value: this.props.value ? this.props.value : VaTraineeDayCalculator.emptyValue(field)}
     return (
         <div id={htmlId} className="va-trainee-day-calculator">
           <table>
             <thead><tr>
-              <th>{this.translator.translate("scope-type", this.props.lang)}</th>
-              <th>{this.translator.translate("scope", this.props.lang)}</th>
-              <th>{this.translator.translate("person-count", this.props.lang)}</th>
+              <th>{this.translator.translate("scope-type", lang)}</th>
+              <th>{this.translator.translate("scope", lang)}</th>
+              <th>{this.translator.translate("person-count", lang)}</th>
             </tr></thead>
             <tbody><tr>
-              <td>{this.translator.translate(VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type"), "fi")}</td>
+              <td>{this.translator.translate(VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type"), lang)}</td>
               <td>{VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope")}</td>
               <td>{VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count")}</td>
             </tr></tbody>
