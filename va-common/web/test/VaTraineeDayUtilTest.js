@@ -3,6 +3,20 @@ import { expect } from 'chai'
 import VaTraineeDayUtil from '../va/VaTraineeDayUtil'
 
 describe('VA trainee day utilities', function() {
+  describe('composing total values', function() {
+    it('returns total for koulutettavapäivä scope type', function() {
+      expect(VaTraineeDayUtil.composeTotal("1,5", "3", "kp")).to.equal("4,5")
+    })
+
+    it('returns total for opintopiste scope type', function() {
+      expect(VaTraineeDayUtil.composeTotal("1,5", "3", "op")).to.equal("20,3")
+    })
+
+    it('returns zero when scope is invalid', function() {
+      expect(VaTraineeDayUtil.composeTotal("", "2", "op")).to.equal("0")
+    })
+  })
+
   it('finds subfield by id', function() {
     const subfield = {
       key: "koulutusosiot.koulutusosio-2.koulutettavapaivat.scope-type",
@@ -133,5 +147,109 @@ describe('VA trainee day utilities', function() {
         }
       ])
     })
+
+    it('collects calculator specifications from different growing fieldsets', function() {
+      const formSpec = makeFormSpec([
+        {
+          growingFieldsetId: "alphakoulutusosiot",
+          growingFieldsetChildId: "alphakoulutusosio-1",
+          calcFieldId: "alphakoulutusosiot.alphakoulutusosio-1.koulutettavapaivat",
+          fiLabel: "Koulutusosio Alpha"
+        },
+        {
+          growingFieldsetId: "betakoulutusosiot",
+          growingFieldsetChildId: "betakoulutusosio-1",
+          calcFieldId: "betakoulutusosiot.betakoulutusosio-1.koulutettavapaivat",
+          fiLabel: "Koulutusosio Beta"
+        }
+      ])
+
+      const answers = makeAnswers([
+        "alphakoulutusosiot.alphakoulutusosio-1.koulutettavapaivat",
+        "betakoulutusosiot.betakoulutusosio-1.koulutettavapaivat",
+        "betakoulutusosiot.betakoulutusosio-2.koulutettavapaivat"
+      ])
+
+      const specs = VaTraineeDayUtil.collectCalculatorSpecifications(formSpec, answers)
+
+      expect(specs).to.deep.equal([
+        {
+          id: "alphakoulutusosiot.alphakoulutusosio-1.koulutettavapaivat",
+          label: {
+            fi: "Koulutusosio Alpha"
+          },
+          fieldType: "vaTraineeDayCalculator",
+          fieldClass: "formField"
+        },
+        {
+          id: "betakoulutusosiot.betakoulutusosio-1.koulutettavapaivat",
+          label: {
+            fi: "Koulutusosio Beta"
+          },
+          fieldType: "vaTraineeDayCalculator",
+          fieldClass: "formField"
+        },
+        {
+          id: "betakoulutusosiot.betakoulutusosio-2.koulutettavapaivat",
+          label: {
+            fi: "Koulutusosio Beta"
+          },
+          fieldType: "vaTraineeDayCalculator",
+          fieldClass: "formField"
+        }
+      ])
+    })
+  })
+
+  it('finds growing fieldset child by nested calculator id', function() {
+    const growingFieldsetChild = {
+      key: "alphakoulutusosio-1",
+      value: [
+        {
+          key: "alphakoulutusosiot.alphakoulutusosio-1.koulutettavapaivat",
+          value: [
+            {
+              key: "alphakoulutusosiot.alphakoulutusosio-1.koulutettavapaivat.person-count",
+              value: "51",
+              fieldType: "textField"
+            },
+            {
+              key: "alphakoulutusosiot.alphakoulutusosio-1.koulutettavapaivat.scope",
+              value: "11",
+              fieldType: "textField"
+            },
+            {
+              key: "alphakoulutusosiot.alphakoulutusosio-1.koulutettavapaivat.scope-type",
+              value: "kp",
+              fieldType: "radioButton"
+            },
+            {
+              key: "alphakoulutusosiot.alphakoulutusosio-1.koulutettavapaivat.total",
+              value: "561,0",
+              fieldType: "textField"
+            }
+          ],
+          fieldType: "vaTraineeDayCalculator"
+        }
+      ],
+      fieldType: "growingFieldsetChild"
+    }
+
+    const answers = [
+      {
+        key: "type-of-organization",
+        value: "kansanopisto",
+        fieldType: "radioButton"
+      },
+      {
+        key: "alphakoulutusosiot",
+        value: [growingFieldsetChild],
+        "fieldType": "growingFieldset"
+      }
+    ]
+
+    const found = VaTraineeDayUtil.findGrowingFieldsetChildByCalculatorId(answers, "alphakoulutusosiot.alphakoulutusosio-1.koulutettavapaivat")
+
+    expect(found).to.equal(growingFieldsetChild)
   })
 })

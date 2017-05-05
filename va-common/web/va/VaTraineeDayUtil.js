@@ -2,8 +2,13 @@ import _ from 'lodash'
 
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import FormUtil from 'soresu-form/web/form/FormUtil'
+import JsUtil from 'soresu-form/web/form/JsUtil'
 
 export default class VaTraineeDayUtil {
+  static parseFloat(str) {
+    return parseFloat((str || "").replace(",", "."))
+  }
+
   static formatFloat(floatValue) {
     return floatValue ? floatValue.toFixed(1).replace(".", ",") : "0"
   }
@@ -15,7 +20,7 @@ export default class VaTraineeDayUtil {
 
   static composeTotal(scopeValue, personCountValue, scopeType) {
     const parseScope = () => {
-      const value = parseFloat(scopeValue.replace(",", "."))
+      const value = VaTraineeDayUtil.parseFloat(scopeValue)
       return value ? value : 0
     }
 
@@ -34,6 +39,11 @@ export default class VaTraineeDayUtil {
     return _.find(subfields, subfield => subfield.key === subfieldId)
   }
 
+  static readSubfieldValue(subfields, fieldId, subfieldType) {
+    const subfield = VaTraineeDayUtil.findSubfieldById(subfields, fieldId, subfieldType)
+    return subfield ? subfield.value : ""
+  }
+
   static collectCalculatorSpecifications(formSpecificationContent, answers) {
     const calcAnswers = InputValueStorage.readValues(answers, "vaTraineeDayCalculator")
 
@@ -44,5 +54,10 @@ export default class VaTraineeDayUtil {
         .map(ans => _.assign({}, calcSpec, {id: ans.key}))
         .value()
     }))
+  }
+
+  static findGrowingFieldsetChildByCalculatorId(answers, calcId) {
+    const growingFieldsetChildren = JsUtil.flatFilter(answers, n => { return n.fieldType === "growingFieldsetChild" })
+    return _.find(growingFieldsetChildren, gfc => _.find(gfc.value, ans => ans.key === calcId))
   }
 }

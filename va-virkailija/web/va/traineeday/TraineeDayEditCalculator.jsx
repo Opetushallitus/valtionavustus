@@ -1,19 +1,14 @@
-import React from 'react'
-import ClassNames from 'classnames'
 import _ from 'lodash'
+import React from 'react'
 
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent.jsx'
-import RadioButton from 'soresu-form/web/form/component/RadioButton.jsx'
 import BasicTextField from 'soresu-form/web/form/component/BasicTextField.jsx'
 import Translator from 'soresu-form/web/form/Translator'
-import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
-import FormUtil from 'soresu-form/web/form/FormUtil'
-import Koulutusosiot from './Koulutusosiot'
 
+import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
 import VaTraineeDayCalculator from 'va-common/web/va/VaTraineeDayCalculator.jsx'
 
 export default class TraineeDayEditCalculator extends BasicFieldComponent {
-
   constructor(props) {
     super(props)
     this.translator = new Translator(props.translations.form["trainee-day-calculator"])
@@ -23,54 +18,67 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
     const props = this.props
     const htmlId = props.htmlId
     const field = props.field
+    const fieldId = field.id
     const answers = props.controller.hakemus.answers
-    const currentKoulutusOsioValues = Koulutusosiot.values(answers,field.id)
-    const name = Koulutusosiot.nameField(currentKoulutusOsioValues)
-    const originalValues = Koulutusosiot.traineeDayCalculator(currentKoulutusOsioValues)
-    const valueHolder = {value: this.props.value ? this.props.value : VaTraineeDayCalculator.emptyValue(field)}
+    const currentTraineeDayGrowingFieldsetChild = VaTraineeDayUtil.findGrowingFieldsetChildByCalculatorId(answers, fieldId)
+    const originalCalcAnswer = _.find(currentTraineeDayGrowingFieldsetChild.value, ans => ans.key === fieldId)
+    const grantedCalcAnswer = {value: this.props.value ? this.props.value : VaTraineeDayCalculator.emptyValue(field.id)}
+
     const allowEditing = props.controller.allowEditing
+    const hasError = props.hasError
 
     const onChange = (subField) => {
-      return VaTraineeDayCalculator.onChange(subField, props, valueHolder, field)
+      return VaTraineeDayCalculator.onChange(subField, props, grantedCalcAnswer, field)
     }
 
+    const nameStr = TraineeDayEditCalculator.renderNameAnswer(currentTraineeDayGrowingFieldsetChild.value)
+
+    const orgScopeStr = VaTraineeDayUtil.readSubfieldValue(originalCalcAnswer.value, fieldId, "scope")
+    const orgScopeTypeStr = VaTraineeDayUtil.readSubfieldValue(originalCalcAnswer.value, fieldId, "scope-type")
+    const orgPersonCountStr = VaTraineeDayUtil.readSubfieldValue(originalCalcAnswer.value, fieldId, "person-count")
+    const orgTotalStr = VaTraineeDayUtil.readSubfieldValue(originalCalcAnswer.value, fieldId, "total")
+
+    const grtScopeStr = VaTraineeDayUtil.readSubfieldValue(grantedCalcAnswer.value, fieldId, "scope")
+    const grtScopeIsValid = VaTraineeDayUtil.parseFloat(grtScopeStr) >= 0
+    const grtScopeTypeStr = VaTraineeDayUtil.readSubfieldValue(grantedCalcAnswer.value, fieldId, "scope-type")
+    const grtPersonCountStr = VaTraineeDayUtil.readSubfieldValue(grantedCalcAnswer.value, fieldId, "person-count")
+    const grtPersonCountIsValid = parseInt(grtPersonCountStr, 10) >= 0
+    const grtTotalStr = VaTraineeDayUtil.readSubfieldValue(grantedCalcAnswer.value, fieldId, "total")
+
     return (
-          <tr>
-            <td>{name}</td>
-            <td className="text-gray original-value">
-              {VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope")}&nbsp;{VaTraineeDayCalculator.readSubValue(originalValues, field.id, "scope-type")}
-            </td>
-            <td style={{whiteSpace:'nowrap'}}>
-              <BasicTextField htmlId={htmlId + ".scope"}
-                              disabled={!allowEditing}
-                              onChange={onChange(VaTraineeDayCalculator.subField(field, "scope"))}
-                              value={VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope") }
-                              translations={{}}
-                              hasError={props.hasError && !(parseFloat(VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope").replace(",", ".")) >= 0)}
-                              size="extra-extra-small"
-                              lang={this.props.lang} />
-              {VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type")}
-            </td>
-            <td className="text-gray original-value">
-              {VaTraineeDayCalculator.readSubValue(originalValues, field.id, "person-count")}
-            </td>
-            <td>
-              <BasicTextField htmlId={htmlId + ".person-count"}
-                              disabled={!allowEditing}
-                              onChange={onChange(VaTraineeDayCalculator.subField(field, "person-count"))}
-                              value={VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count") }
-                              translations={{}}
-                              hasError={props.hasError && !(parseInt(VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count")) >= 0)}
-                              size="extra-extra-small"
-                              lang={this.props.lang} />
-            </td>
-            <td className="text-gray">
-              {InputValueStorage.readValue({}, originalValues, field.id + ".total")}
-            </td>
-            <td>
-              <strong>{InputValueStorage.readValue({}, valueHolder, field.id + ".total")}</strong>
-            </td>
-          </tr>
+      <tr>
+        <td>{nameStr}</td>
+        <td className="text-gray original-value">{orgScopeStr}&nbsp;{orgScopeTypeStr}</td>
+        <td style={{whiteSpace:'nowrap'}}>
+          <BasicTextField htmlId={htmlId + ".scope"}
+                          disabled={!allowEditing}
+                          onChange={onChange(VaTraineeDayCalculator.subField(field, "scope"))}
+                          value={grtScopeStr}
+                          translations={{}}
+                          hasError={hasError && !grtScopeIsValid}
+                          size="extra-extra-small"
+                          lang={this.props.lang} />
+          {grtScopeTypeStr}
+        </td>
+        <td className="text-gray original-value">{orgPersonCountStr}</td>
+        <td>
+          <BasicTextField htmlId={htmlId + ".person-count"}
+                          disabled={!allowEditing}
+                          onChange={onChange(VaTraineeDayCalculator.subField(field, "person-count"))}
+                          value={grtPersonCountStr}
+                          translations={{}}
+                          hasError={hasError && !grtPersonCountIsValid}
+                          size="extra-extra-small"
+                          lang={this.props.lang} />
+        </td>
+        <td className="text-gray">{orgTotalStr}</td>
+        <td><strong>{grtTotalStr}</strong></td>
+      </tr>
     )
+  }
+
+  static renderNameAnswer(subfields) {
+    const subfield = _.find(subfields, ans => ans.fieldType === "nameField")
+    return subfield ? subfield.value : ""
   }
 }
