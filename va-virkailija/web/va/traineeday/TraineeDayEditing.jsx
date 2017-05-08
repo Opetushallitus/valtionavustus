@@ -1,15 +1,15 @@
+import _ from 'lodash'
 import React, { Component } from 'react'
+
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
-import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
-import FormUtil from 'soresu-form/web/form/FormUtil'
-import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
-import FakeFormState from '../form/FakeFormState.js'
+
 import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
+
+import FakeFormState from '../form/FakeFormState.js'
 import TraineeDayEditFormController from './TraineeDayEditFormController.jsx'
 import TraineeDayEditComponentFactory from './TraineeDayEditComponentFactory.jsx'
-import Koulutusosiot from './Koulutusosiot'
-import _ from 'lodash'
+
 import style from '../style/traineeday.less'
 
 export default class TraineeDayEditing extends Component {
