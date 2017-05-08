@@ -22,13 +22,13 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
     const answers = props.controller.hakemus.answers
     const currentTraineeDayGrowingFieldsetChild = VaTraineeDayUtil.findGrowingFieldsetChildByCalculatorId(answers, fieldId)
     const originalCalcAnswer = _.find(currentTraineeDayGrowingFieldsetChild.value, ans => ans.key === fieldId)
-    const grantedCalcAnswer = {value: this.props.value ? this.props.value : VaTraineeDayCalculator.emptyValue(field.id)}
+    const grantedCalcAnswer = {value: this.props.value ? this.props.value : VaTraineeDayCalculator.emptySubfieldsFor(field.id)}
 
     const allowEditing = props.controller.allowEditing
     const hasError = props.hasError
 
-    const onChange = (subField) => {
-      return VaTraineeDayCalculator.onChange(subField, props, grantedCalcAnswer, field)
+    const onChange = subfield => {
+      return VaTraineeDayCalculator.onChange(subfield, props, grantedCalcAnswer, field)
     }
 
     const nameStr = TraineeDayEditCalculator.renderNameAnswer(currentTraineeDayGrowingFieldsetChild.value)
@@ -52,7 +52,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
         <td style={{whiteSpace:'nowrap'}}>
           <BasicTextField htmlId={htmlId + ".scope"}
                           disabled={!allowEditing}
-                          onChange={onChange(VaTraineeDayCalculator.subField(field, "scope"))}
+                          onChange={onChange(VaTraineeDayCalculator.subfieldSpecFor(field.id, "scope"))}
                           value={grtScopeStr}
                           translations={{}}
                           hasError={hasError && !grtScopeIsValid}
@@ -64,7 +64,7 @@ export default class TraineeDayEditCalculator extends BasicFieldComponent {
         <td>
           <BasicTextField htmlId={htmlId + ".person-count"}
                           disabled={!allowEditing}
-                          onChange={onChange(VaTraineeDayCalculator.subField(field, "person-count"))}
+                          onChange={onChange(VaTraineeDayCalculator.subfieldSpecFor(field.id, "person-count"))}
                           value={grtPersonCountStr}
                           translations={{}}
                           hasError={hasError && !grtPersonCountIsValid}

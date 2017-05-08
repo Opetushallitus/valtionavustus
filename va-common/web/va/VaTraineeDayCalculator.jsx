@@ -30,22 +30,28 @@ const formatIntString = stringValue => {
 
 // Koulutettavapäivälaskuri in finnish
 export default class VaTraineeDayCalculator extends BasicFieldComponent {
-
-  static subField(field, type) {
-    const subFields = {
-      "scope-type": {id: field.id + ".scope-type", fieldType: "radioButton"},
-      "scope": {id: field.id + ".scope", fieldType: "textField"},
-      "person-count": {id: field.id + ".person-count", fieldType: "textField"},
-      "total": {id: field.id + ".total", fieldType: "textField"}
+  static subfieldSpecFor(fieldId, type) {
+    switch (type) {
+    case "scope-type":
+      return {id: fieldId + ".scope-type", fieldType: "radioButton"}
+    case "scope":
+      return {id: fieldId + ".scope", fieldType: "textField"}
+    case "person-count":
+      return {id: fieldId + ".person-count", fieldType: "textField"}
+    case "total":
+      return {id: fieldId + ".total", fieldType: "textField"}
+    default:
+      throw new Error("unknown type: " + type)
     }
-    return subFields[type]
   }
 
-  static emptyValue(field) {
-    return [{key: field.id + ".scope-type", value: "op", fieldType: "radioButton"},
-            {key: field.id + ".scope", value: "0", fieldType: "textField"},
-            {key: field.id + ".person-count", value: "0", fieldType: "textField"},
-            {key: field.id + ".total", value: "0", fieldType: "textField"}]
+  static emptySubfieldsFor(fieldId) {
+    return [
+      {key: fieldId + ".scope-type", value: "op", fieldType: "radioButton"},
+      {key: fieldId + ".scope", value: "0", fieldType: "textField"},
+      {key: fieldId + ".person-count", value: "0", fieldType: "textField"},
+      {key: fieldId + ".total", value: "0", fieldType: "textField"}
+    ]
   }
 
   constructor(props) {
@@ -64,7 +70,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     return total > 0 ? undefined : { "error": "negative-trayneeday-total" }
   }
 
-  static onChange(subField,props,valueHolder,field) {
+  static onChange(subfield, props, valueHolder, field) {
     return (event) => {
       var value = event.target.value
       var scopeValue = VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "scope")
@@ -78,8 +84,8 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         personCountValue = value
       }
       const fieldUpdate = {
-        id: subField.id,
-        field: subField,
+        id: subfield.id,
+        field: subfield,
         value: value
       }
       InputValueStorage.writeValue({}, valueHolder, fieldUpdate)
@@ -90,11 +96,11 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
       )
       const totalUpdate = {
         id: field.id + "." + "total",
-        field: VaTraineeDayCalculator.subField(field, "total"),
+        field: VaTraineeDayCalculator.subfieldSpecFor(field.id, "total"),
         value: totalFormatted
       }
       InputValueStorage.writeValue({}, valueHolder, totalUpdate)
-      props.onChange({"target": {"value": valueHolder.value}})
+      props.onChange({target: {value: valueHolder.value}})
     }
   }
 
@@ -102,7 +108,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     const props = this.props
     const htmlId = props.htmlId
     const field = props.field
-    const valueHolder = {value: this.props.value ? this.props.value : VaTraineeDayCalculator.emptyValue(field)}
+    const valueHolder = {value: this.props.value ? this.props.value : VaTraineeDayCalculator.emptySubfieldsFor(field.id)}
     const scopeTypeOptions = [
       {
         "value": "op",
@@ -119,8 +125,9 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         }
       }
     ]
-    const onChange = (subField) => {
-      return VaTraineeDayCalculator.onChange(subField,props,valueHolder,field)
+
+    const onChange = subfield => {
+      return VaTraineeDayCalculator.onChange(subfield, props, valueHolder, field)
     }
 
     const totalClassStr = this.resolveClassName("total")
@@ -143,7 +150,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
             <RadioButton htmlId={htmlId + ".scope-type"}
                          options={scopeTypeOptions}
                          disabled={props.disabled}
-                         onChange={onChange(VaTraineeDayCalculator.subField(field, "scope-type"))}
+                         onChange={onChange(VaTraineeDayCalculator.subfieldSpecFor(field.id, "scope-type"))}
                          value={VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "scope-type")}
                          translations={{}}
                          lang={this.props.lang} />
@@ -151,7 +158,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
           <td>
             <BasicTextField htmlId={htmlId + ".scope"}
                             disabled={props.disabled}
-                            onChange={onChange(VaTraineeDayCalculator.subField(field, "scope"))}
+                            onChange={onChange(VaTraineeDayCalculator.subfieldSpecFor(field.id, "scope"))}
                             value={scopeStr}
                             translations={{}}
                             hasError={props.hasError && !scopeIsValid}
@@ -161,7 +168,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
           <td>
             <BasicTextField htmlId={htmlId + ".person-count"}
                             disabled={props.disabled}
-                            onChange={onChange(VaTraineeDayCalculator.subField(field, "person-count"))}
+                            onChange={onChange(VaTraineeDayCalculator.subfieldSpecFor(field.id, "person-count"))}
                             value={personCountStr}
                             translations={{}}
                             hasError={props.hasError && !personCountIsValid}
