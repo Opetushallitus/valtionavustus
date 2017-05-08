@@ -1,27 +1,20 @@
 import React from 'react'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
-import VaTraineeDayCalculator from 'va-common/web/va/VaTraineeDayCalculator.jsx'
 
 export default class TraineeDayCalculatorSummary extends React.Component {
   render() {
     const children = this.props.children
     const htmlId = this.props.htmlId
     const hakemus = this.props.customProps.originalHakemus
-
-    const countSum = (answers) => {
-      const traineeAnswers = InputValueStorage.readValues(answers, "vaTraineeDayCalculator")
-      return _.reduce(traineeAnswers, (acc, answer) => {
-        const subTotal = VaTraineeDayCalculator.readTotalAsFloat(answer.key, answer)
-        return (subTotal ? subTotal: 0) + acc }, 0
-      )
-    }
-    const grantedSum = countSum(hakemus.arvio["overridden-answers"])
-    const originalSum = countSum(hakemus.answers)
-    const budgetTotal = hakemus["budget-total"]
-    const budgetGranted = hakemus.arvio["budget-granted"]
-    const costPerTraineeDay = budgetTotal/originalSum
-    const costPerTraineeDayGranted = budgetGranted/grantedSum
+    const originalSum = VaTraineeDayUtil.sumSubfieldValues(
+      InputValueStorage.readValues(hakemus.answers, "vaTraineeDayCalculator"),
+      "total")
+    const grantedSum = VaTraineeDayUtil.sumSubfieldValues(
+      InputValueStorage.readValues(hakemus.arvio["overridden-answers"], "vaTraineeDayCalculator"),
+      "total")
+    const originalCostsPerTraineeDay = hakemus["budget-total"]/originalSum
+    const grantedCostsPerTraineeDay = hakemus.arvio["budget-granted"]/grantedSum
 
     return (
       <div>
@@ -55,8 +48,8 @@ export default class TraineeDayCalculatorSummary extends React.Component {
           </tr>
           <tr>
             <td colSpan="5"><strong>Kustannukset per koulutettavapäivä:</strong></td>
-            <td className="text-gray">{VaTraineeDayUtil.formatFloat(costPerTraineeDay)} €</td>
-            <td><strong>{VaTraineeDayUtil.formatFloat(costPerTraineeDayGranted)} €</strong></td>
+            <td className="text-gray">{VaTraineeDayUtil.formatFloat(originalCostsPerTraineeDay)} €</td>
+            <td><strong>{VaTraineeDayUtil.formatFloat(grantedCostsPerTraineeDay)} €</strong></td>
           </tr>
           </tfoot>
         </table>

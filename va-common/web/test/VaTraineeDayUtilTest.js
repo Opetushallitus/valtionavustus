@@ -52,6 +52,72 @@ describe('VA trainee day utilities', function() {
     expect(found).to.equal(subfield)
   })
 
+  describe('summing subfield values', function() {
+    const answers = [
+      {
+        key: "koulutusosiot.koulutusosio-1.koulutettavapaivat",
+        value: [
+          {
+            key: "koulutusosiot.koulutusosio-1.koulutettavapaivat.person-count",
+            value: "36",
+            fieldType: "textField"
+          },
+          {
+            key: "koulutusosiot.koulutusosio-1.koulutettavapaivat.scope",
+            value: "4",
+            fieldType: "textField"
+          },
+          {
+            key: "koulutusosiot.koulutusosio-1.koulutettavapaivat.scope-type",
+            value: "kp",
+            fieldType: "radioButton"
+          },
+          {
+            key: "koulutusosiot.koulutusosio-1.koulutettavapaivat.total",
+            value: "144,0",
+            fieldType: "textField"
+          }
+        ],
+        fieldType: "vaTraineeDayCalculator"
+      },
+      {
+        key: "koulutusosiot.koulutusosio-4.koulutettavapaivat",
+        value: [
+          {
+            key: "koulutusosiot.koulutusosio-4.koulutettavapaivat.person-count",
+            value: "37",
+            fieldType: "textField"
+          },
+          {
+            key: "koulutusosiot.koulutusosio-4.koulutettavapaivat.scope",
+            value: "3",
+            fieldType: "textField"
+          },
+          {
+            key: "koulutusosiot.koulutusosio-4.koulutettavapaivat.scope-type",
+            value: "op",
+            fieldType: "radioButton"
+          },
+          {
+            key: "koulutusosiot.koulutusosio-4.koulutettavapaivat.total",
+            value: "499,5",
+            fieldType: "textField"
+          }
+        ],
+        "fieldType": "vaTraineeDayCalculator"
+      }
+    ]
+
+    it('sums subfields by subfield type', function() {
+      expect(VaTraineeDayUtil.sumSubfieldValues(answers, "person-count")).to.equal(73)
+      expect(VaTraineeDayUtil.sumSubfieldValues(answers, "total")).to.equal(643.5)
+    })
+
+    it('treats non-number as zero', function() {
+      expect(VaTraineeDayUtil.sumSubfieldValues(answers, "scope-type")).to.equal(0)
+    })
+  })
+
   describe('collecting calculator specifications', function() {
     const makeFormSpec = calcSpecs => calcSpecs.map(({
       growingFieldsetId,

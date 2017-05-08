@@ -24,7 +24,7 @@ import {
   SelfFinancingPropertyMapper
 } from './VaPropertyMapper'
 
-import VaTraineeDayCalculator from './VaTraineeDayCalculator.jsx'
+import VaTraineeDayUtil from './VaTraineeDayUtil'
 
 export default class VaPreviewComponentFactory extends ComponentFactory {
   constructor() {
@@ -107,12 +107,11 @@ class VaPreviewTraineeDayCalculator extends BasicFieldComponent {
     const htmlId = props.htmlId
     const field = props.field
     const lang = props.lang
+    const subfields = props.value
 
-    if (!_.isArray(props.value)) {
+    if (!_.isArray(subfields)) {
       return null
     }
-
-    const valueHolder = {value: props.value}
 
     return (
         <div id={htmlId} className="va-trainee-day-calculator">
@@ -123,12 +122,12 @@ class VaPreviewTraineeDayCalculator extends BasicFieldComponent {
               <th>{this.translator.translate("person-count", lang)}</th>
             </tr></thead>
             <tbody><tr>
-              <td>{this.translator.translate(VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type"), lang)}</td>
-              <td>{VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope")}</td>
-              <td>{VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count")}</td>
+              <td>{this.translator.translate(VaTraineeDayUtil.readSubfieldValue(subfields, field.id, "scope-type"), lang)}</td>
+              <td>{VaTraineeDayUtil.readSubfieldValue(subfields, field.id, "scope")}</td>
+              <td>{VaTraineeDayUtil.readSubfieldValue(subfields, field.id, "person-count")}</td>
             </tr></tbody>
             <tfoot>
-            <tr><td colSpan="3">{this.label("total")}: {VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "total")}</td></tr>
+            <tr><td colSpan="3">{this.label("total")}: {VaTraineeDayUtil.readSubfieldValue(subfields, field.id, "total")}</td></tr>
             </tfoot>
           </table>
         </div>

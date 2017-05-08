@@ -34,6 +34,16 @@ export default class VaTraineeDayUtil {
     return VaTraineeDayUtil.formatFloat(total)
   }
 
+  static sumSubfieldValues(calculatorAnswers, subfieldType) {
+    return _.reduce(
+      calculatorAnswers,
+      (sum, ans) => {
+        const val = VaTraineeDayUtil.parseFloat(VaTraineeDayUtil.readSubfieldValue(ans.value, ans.key, subfieldType))
+        return (val ? val : 0) + sum
+      },
+      0)
+  }
+
   static findSubfieldById(subfields, fieldId, subfieldType) {
     const subfieldId = fieldId + "." + subfieldType
     return _.find(subfields, subfield => subfield.key === subfieldId)

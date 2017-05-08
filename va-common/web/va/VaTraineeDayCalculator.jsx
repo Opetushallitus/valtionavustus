@@ -11,6 +11,23 @@ import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 
 import VaTraineeDayUtil from './VaTraineeDayUtil'
 
+const formatFloatString = stringValue => {
+  const sanitizedString = stringValue.replace(".", ",").replace(/[^\d,]/g, "")
+  if(sanitizedString.indexOf(",") < 0 || sanitizedString.endsWith(",")) {
+    return sanitizedString
+  }
+  const floatValue = parseFloat(sanitizedString.replace(",", "."))
+  return VaTraineeDayUtil.formatFloat(floatValue)
+}
+
+const formatIntString = stringValue => {
+  if(stringValue === "") {
+    return stringValue
+  }
+  const intValue = parseInt(stringValue, 10)
+  return intValue ? intValue.toString() : "0"
+}
+
 // Koulutettavapäivälaskuri in finnish
 export default class VaTraineeDayCalculator extends BasicFieldComponent {
 
@@ -36,31 +53,6 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     this.translator = new Translator(props.translations.form["trainee-day-calculator"])
   }
 
-  static formatFloatString(stringValue) {
-    const sanitizedString = stringValue.replace(".", ",").replace(/[^\d,]/g, "")
-    if(sanitizedString.indexOf(",") < 0 || sanitizedString.endsWith(",")) {
-      return sanitizedString
-    }
-    const floatValue = parseFloat(sanitizedString.replace(",", "."))
-    return VaTraineeDayUtil.formatFloat(floatValue)
-  }
-
-  static formatIntString(stringValue) {
-    if(stringValue === "") {
-      return stringValue
-    }
-    const intValue = parseInt(stringValue)
-    return intValue ? intValue.toString() : "0"
-  }
-
-  static readSubValue(value, fieldId, type) {
-    return InputValueStorage.readValue({}, value, fieldId + "." + type)
-  }
-
-  static readTotalAsFloat(fieldId, value) {
-    return parseFloat(VaTraineeDayCalculator.readSubValue(value, fieldId, "total").replace(",", "."))
-  }
-
   static validateTotal(field, value) {
     _.forEach(value, answer => {
       if(answer.key && !_.startsWith(answer.key, field.id)) {
@@ -68,21 +60,21 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         answer.key = field.id + "." + subType
       }
     })
-    const total =  VaTraineeDayCalculator.readTotalAsFloat(field.id, value)
-      return total > 0 ? undefined : { "error": "negative-trayneeday-total" }
+    const total = VaTraineeDayUtil.parseFloat(VaTraineeDayUtil.readSubfieldValue(value, field.id, "total"))
+    return total > 0 ? undefined : { "error": "negative-trayneeday-total" }
   }
 
   static onChange(subField,props,valueHolder,field) {
     return (event) => {
       var value = event.target.value
-      var scopeValue = VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope")
-      var personCountValue = VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count")
+      var scopeValue = VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "scope")
+      var personCountValue = VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "person-count")
       if(event.target.id.endsWith("scope")) {
-        value =  VaTraineeDayCalculator.formatFloatString(value)
+        value = formatFloatString(value)
         scopeValue = value
       }
       if(event.target.id.endsWith("person-count")) {
-        value = VaTraineeDayCalculator.formatIntString(value)
+        value = formatIntString(value)
         personCountValue = value
       }
       const fieldUpdate = {
@@ -94,7 +86,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
       const totalFormatted = VaTraineeDayUtil.composeTotal(
         scopeValue,
         personCountValue,
-        VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type")
+        VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "scope-type")
       )
       const totalUpdate = {
         id: field.id + "." + "total",
@@ -130,7 +122,14 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
     const onChange = (subField) => {
       return VaTraineeDayCalculator.onChange(subField,props,valueHolder,field)
     }
+
     const totalClassStr = this.resolveClassName("total")
+    const scopeStr = VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "scope")
+    const scopeIsValid = VaTraineeDayUtil.parseFloat(scopeStr) > 0
+    const personCountStr = VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "person-count")
+    const personCountIsValid = parseInt(personCountStr, 10) > 0
+    const totalStr = VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "total")
+
     return (
       <div id={htmlId} className="va-trainee-day-calculator">
         <table>
@@ -145,7 +144,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
                          options={scopeTypeOptions}
                          disabled={props.disabled}
                          onChange={onChange(VaTraineeDayCalculator.subField(field, "scope-type"))}
-                         value={VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope-type") }
+                         value={VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "scope-type")}
                          translations={{}}
                          lang={this.props.lang} />
           </td>
@@ -153,9 +152,9 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
             <BasicTextField htmlId={htmlId + ".scope"}
                             disabled={props.disabled}
                             onChange={onChange(VaTraineeDayCalculator.subField(field, "scope"))}
-                            value={VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope") }
+                            value={scopeStr}
                             translations={{}}
-                            hasError={props.hasError && !(parseFloat(VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "scope").replace(",", ".")) > 0)}
+                            hasError={props.hasError && !scopeIsValid}
                             size="extra-extra-small"
                             lang={this.props.lang} />
           </td>
@@ -163,15 +162,15 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
             <BasicTextField htmlId={htmlId + ".person-count"}
                             disabled={props.disabled}
                             onChange={onChange(VaTraineeDayCalculator.subField(field, "person-count"))}
-                            value={VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count") }
+                            value={personCountStr}
                             translations={{}}
-                            hasError={props.hasError && !(parseInt(VaTraineeDayCalculator.readSubValue(valueHolder, field.id, "person-count")) > 0)}
+                            hasError={props.hasError && !personCountIsValid}
                             size="extra-extra-small"
                             lang={this.props.lang} />
-            </td>
+          </td>
         </tr></tbody>
         <tfoot>
-        <tr><td colSpan="3">{this.label(totalClassStr)}: {InputValueStorage.readValue({}, valueHolder, field.id + ".total")}</td></tr>
+        <tr><td colSpan="3">{this.label(totalClassStr)}: {totalStr}</td></tr>
         </tfoot>
       </table>
       </div>
@@ -180,28 +179,20 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
 }
 
 export class VaTraineeDayTotalCalculator extends React.Component {
-
   constructor(props) {
     super(props)
     this.translator = new Translator(props.translations.form["trainee-day-calculator"])
   }
 
   render() {
-    const answers = this.props.answersObject
     const htmlId = this.props.htmlId
-    const vaTraineeDayCalculatorAnswers = InputValueStorage.readValues(answers, "vaTraineeDayCalculator")
-    const scopeTotal = _.reduce(vaTraineeDayCalculatorAnswers, (acc, answer) => {
-      const subTotal = VaTraineeDayCalculator.readTotalAsFloat(answer.key, answer)
-      return (subTotal ? subTotal: 0) + acc }, 0
-    )
-    const personCountTotal = _.reduce(vaTraineeDayCalculatorAnswers, (acc, answer) => {
-      const subTotal = parseInt(VaTraineeDayCalculator.readSubValue(answer, answer.key, "person-count"))
-      return (subTotal ? subTotal: 0) + acc }, 0
-    )
+    const calcAnswers = InputValueStorage.readValues(this.props.answersObject, "vaTraineeDayCalculator")
+    const sumPersonCount = VaTraineeDayUtil.sumSubfieldValues(calcAnswers, "person-count")
+    const sumTotalFormatted = VaTraineeDayUtil.formatFloat(VaTraineeDayUtil.sumSubfieldValues(calcAnswers, "total"))
     return (
       <div id={htmlId} className="va-trainee-day-calculator-total">
-        <p><label className="total">{this.translator.translate("person-count-total", this.props.lang)}:</label> {personCountTotal}</p>
-        <p><label className="total">{this.translator.translate("scope-total", this.props.lang)}:</label> {VaTraineeDayUtil.formatFloat(scopeTotal)}</p>
+        <p><label className="total">{this.translator.translate("person-count-total", this.props.lang)}:</label> {sumPersonCount}</p>
+        <p><label className="total">{this.translator.translate("scope-total", this.props.lang)}:</label> {sumTotalFormatted}</p>
       </div>
     )
   }
