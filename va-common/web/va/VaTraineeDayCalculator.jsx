@@ -6,6 +6,7 @@ import _ from 'lodash'
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent.jsx'
 import RadioButton from 'soresu-form/web/form/component/RadioButton.jsx'
 import BasicTextField from 'soresu-form/web/form/component/BasicTextField.jsx'
+import MathUtil from 'soresu-form/web/form/MathUtil'
 import Translator from 'soresu-form/web/form/Translator'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 
@@ -16,7 +17,7 @@ const formatFloatString = stringValue => {
   if(sanitizedString.indexOf(",") < 0 || sanitizedString.endsWith(",")) {
     return sanitizedString
   }
-  const floatValue = parseFloat(sanitizedString.replace(",", "."))
+  const floatValue = MathUtil.parseDecimal(sanitizedString)
   return VaTraineeDayUtil.formatFloat(floatValue)
 }
 
@@ -66,7 +67,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
         answer.key = field.id + "." + subType
       }
     })
-    const total = VaTraineeDayUtil.parseFloat(VaTraineeDayUtil.readSubfieldValue(value, field.id, "total"))
+    const total = MathUtil.parseDecimal(VaTraineeDayUtil.readSubfieldValue(value, field.id, "total"))
     return total > 0 ? undefined : { "error": "negative-trayneeday-total" }
   }
 
@@ -132,7 +133,7 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
 
     const totalClassStr = this.resolveClassName("total")
     const scopeStr = VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "scope")
-    const scopeIsValid = VaTraineeDayUtil.parseFloat(scopeStr) > 0
+    const scopeIsValid = MathUtil.parseDecimal(scopeStr) > 0
     const personCountStr = VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "person-count")
     const personCountIsValid = parseInt(personCountStr, 10) > 0
     const totalStr = VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "total")
