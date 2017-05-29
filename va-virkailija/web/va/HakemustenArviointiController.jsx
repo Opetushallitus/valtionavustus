@@ -571,7 +571,7 @@ export default class HakemustenArviointiController {
         const oldValue = InputValueStorage.readValue(null, overriddenAnswers, field.id)
         const newValue = InputValueStorage.readValue(null, hakemusAnswers, field.id)
 
-        if (newValue !== oldValue) {
+        if (newValue !== oldValue && newValue !== "") {
           InputValueStorage.writeValue(
             budgetElement,
             overriddenAnswers,
