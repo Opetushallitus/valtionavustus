@@ -92,6 +92,12 @@
       "fi": "Tulostusversio",
       "sv": "Utskriftsversion"
     },
+    "table-field": {
+      "sum-title": {
+        "fi": "Yht.",
+        "sv": "Total"
+      }
+    },
     "trainee-day-calculator": {
       "scope-type": {
         "fi": "Laajuus ilmoitettu",
