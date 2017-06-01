@@ -19,29 +19,32 @@
       (cons answers acc))))
 
 (defn- find-emails-to-notify [answers]
-  (let [notification-fields (filter is-notification-email-field (flatten-answers answers []))]
-    (mapv :value notification-fields)))
+  (->> (flatten-answers answers [])
+       (filter is-notification-email-field)
+       (map :value)
+       (filterv (comp not empty?))))
 
 (defn send-submit-notifications! [send! is-change-request-response? answers submitted-hakemus avustushaku]
-  (let [haku-id (:id avustushaku)
-        avustushaku-content (:content avustushaku)
-        language (keyword (:language submitted-hakemus))
-        avustushaku-title (-> avustushaku-content :name language)
-        avustushaku-duration (->> avustushaku-content
-                                  :duration)
+  (let [haku-id                (:id avustushaku)
+        avustushaku-content    (:content avustushaku)
+        language               (keyword (:language submitted-hakemus))
+        avustushaku-title      (-> avustushaku-content :name language)
+        avustushaku-duration   (->> avustushaku-content
+                                    :duration)
         avustushaku-start-date (->> avustushaku-duration
                                     :start
                                     (datetime/parse))
-        avustushaku-end-date (->> avustushaku-duration
-                                  :end
-                                  (datetime/parse))
-        destination-emails (find-emails-to-notify answers)
-        user-key (-> submitted-hakemus :user_key)]
-    (send! is-change-request-response?
-           language
-           destination-emails
-           haku-id
-           avustushaku-title
-           user-key
-           avustushaku-start-date
-           avustushaku-end-date)))
+        avustushaku-end-date   (->> avustushaku-duration
+                                    :end
+                                    (datetime/parse))
+        destination-emails     (find-emails-to-notify answers)
+        user-key               (-> submitted-hakemus :user_key)]
+    (when (not-empty destination-emails)
+      (send! is-change-request-response?
+             language
+             destination-emails
+             haku-id
+             avustushaku-title
+             user-key
+             avustushaku-start-date
+             avustushaku-end-date))))

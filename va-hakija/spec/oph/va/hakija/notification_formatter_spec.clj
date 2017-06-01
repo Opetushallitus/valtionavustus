@@ -149,4 +149,18 @@
         (should= hakemus-key (:user-key sent-data))
         (should= haku-id (:haku-id sent-data)))))
 
+(describe "Answers with empty email fields"
+  (it "Sends notification email to non-empty emails"
+      (let [answers   {:value
+                       [{:key "primary-email" :value "" :fieldType "emailField"}
+                        {:key "organization-email" :value nil :fieldType "emailField"}
+                        {:key "signature-email" :value "user@example.com" :fieldType "emailField"}]}
+            sent-data (send-submit-notifications! fake-sender false answers submitted-hakemus avustushaku)]
+        (should= ["user@example.com"] (:to sent-data))))
+
+  (it "Does not send notification email if no emails found"
+      (let [answers   {:value []}
+            sent-data (send-submit-notifications! fake-sender false answers submitted-hakemus avustushaku)]
+        (should-be-nil sent-data))))
+
 (run-specs)
