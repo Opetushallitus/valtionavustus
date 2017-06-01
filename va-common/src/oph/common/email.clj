@@ -4,7 +4,8 @@
             [clojure.tools.logging :as log]
             [clojure.java.io :as io]
             [clostache.parser :refer [render]]
-            [oph.soresu.common.config :refer [config]])
+            [oph.soresu.common.config :refer [config]]
+            [oph.common.string :as common-string])
   (:import [org.apache.commons.mail SimpleEmail]))
 
 (defn load-template [path]
@@ -30,13 +31,17 @@
         (Thread/sleep time)
         (try-send! (* time multiplier) multiplier max-time send-fn)))))
 
+(defn- trim-ws-or-nil [str]
+  (when str
+    (common-string/trim-ws str)))
+
 (defn- send-msg! [msg format-plaintext-message]
-  (let [from (:from msg)
-        sender (:sender msg)
-        to (:to msg)
-        bcc (:bcc msg)
-        reply-to (:reply-to msg)
-        subject (:subject msg)]
+  (let [from     (common-string/trim-ws (:from msg))
+        sender   (common-string/trim-ws (:sender msg))
+        to       (mapv common-string/trim-ws (:to msg))
+        bcc      (trim-ws-or-nil (:bcc msg))
+        reply-to (trim-ws-or-nil (:reply-to msg))
+        subject  (common-string/trim-ws (:subject msg))]
     (log/info (format "Sending %s message from %s (with sender %s) to %s (lang: %s) with subject '%s'"
                       (name (:type msg))
                       from
