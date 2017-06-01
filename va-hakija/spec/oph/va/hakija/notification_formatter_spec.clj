@@ -125,30 +125,28 @@
    :haku-start-date haku-start-date
    :haku-end-date haku-end-date})
 
-(describe "Form with fields with legacy email fields"
+(describe "Answers with legacy email fields"
+  (tags :server)
 
-          (tags :server)
+  (it "Sends notification email to all given emails"
+      (let [sent-data (send-submit-notifications! fake-sender false answers-with-old-fields submitted-hakemus avustushaku )]
+        (should= :fi (:language sent-data))
+        (should= [primary-email organization-email signature-email] (:to sent-data))
+        (should= hakemus-key (:user-key sent-data))
+        (should= haku-id (:haku-id sent-data)))))
 
-          (it "Sends notification email to all legacy fields"
-            (let [sent-data (send-submit-notifications! fake-sender false answers-with-old-fields submitted-hakemus avustushaku )]
-              (should= :fi (:language sent-data))
-              (should= [primary-email organization-email signature-email] (:to sent-data))
-              (should= hakemus-key (:user-key sent-data))
-              (should= haku-id (:haku-id sent-data)))))
+(describe "Answers with vaEmailNotification fields"
+  (tags :server)
 
-(describe "Form with fields with vaEmailNotification type"
-
-          (tags :server)
-
-          (it "Sends notification email to all vaEmailNotificationFields"
-            (let [sent-data (send-submit-notifications! fake-sender false answers-with-email-notification-fields submitted-hakemus avustushaku )]
-              (should= :fi (:language sent-data))
-              (should= [primary-email
-                        organization-email
-                        signature-email
-                        first-repeat-signatory-email
-                        second-repeat-signatory-email] (:to sent-data))
-              (should= hakemus-key (:user-key sent-data))
-              (should= haku-id (:haku-id sent-data)))))
+  (it "Sends notification email to all given emails"
+      (let [sent-data (send-submit-notifications! fake-sender false answers-with-email-notification-fields submitted-hakemus avustushaku )]
+        (should= :fi (:language sent-data))
+        (should= [primary-email
+                  organization-email
+                  signature-email
+                  first-repeat-signatory-email
+                  second-repeat-signatory-email] (:to sent-data))
+        (should= hakemus-key (:user-key sent-data))
+        (should= haku-id (:haku-id sent-data)))))
 
 (run-specs)
