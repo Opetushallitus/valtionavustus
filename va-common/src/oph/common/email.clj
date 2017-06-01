@@ -20,14 +20,18 @@
 (defn- try-send! [time multiplier max-time send-fn]
   (if (>= time max-time)
     (do
-      (log/error "Failed to send message after retrying, aborting")
+      (log/warn (format "Aborting sending message after too many failures (%d of %d ms)"
+                        time
+                        max-time))
       false)
     (try
       (send-fn)
-      (log/info "Message sent successfully")
       true
       (catch Exception e
-        (log/warn e (format "Error: %s" (.getMessage e)))
+        (log/warn e (format "Error in sending, trying again (%d of %d ms): %s"
+                            time
+                            max-time
+                            (.getMessage e)))
         (Thread/sleep time)
         (try-send! (* time multiplier) multiplier max-time send-fn)))))
 
@@ -36,19 +40,20 @@
     (common-string/trim-ws str)))
 
 (defn- send-msg! [msg format-plaintext-message]
-  (let [from     (common-string/trim-ws (:from msg))
-        sender   (common-string/trim-ws (:sender msg))
-        to       (mapv common-string/trim-ws (:to msg))
-        bcc      (trim-ws-or-nil (:bcc msg))
-        reply-to (trim-ws-or-nil (:reply-to msg))
-        subject  (common-string/trim-ws (:subject msg))]
-    (log/info (format "Sending %s message from %s (with sender %s) to %s (lang: %s) with subject '%s'"
-                      (name (:type msg))
-                      from
-                      sender
-                      to
-                      (name (:lang msg))
-                      subject))
+  (let [from            (common-string/trim-ws (:from msg))
+        sender          (common-string/trim-ws (:sender msg))
+        to              (mapv common-string/trim-ws (:to msg))
+        bcc             (trim-ws-or-nil (:bcc msg))
+        reply-to        (trim-ws-or-nil (:reply-to msg))
+        subject         (common-string/trim-ws (:subject msg))
+        msg-description (format "%s message from %s (with sender %s) to %s (lang: %s) with subject '%s'"
+                                (name (:type msg))
+                                from
+                                sender
+                                to
+                                (name (:lang msg))
+                                subject)]
+    (log/info "Sending email:" msg-description)
     (let [email (format-plaintext-message msg)
           send-fn (if (:enabled? smtp-config)
                     (fn []
@@ -70,16 +75,12 @@
                         (.send msg)))
                     (fn []
                       (when (:print-mail-on-disable? smtp-config)
-                        (log/info "Sending message: " email))))]
+                        (log/info "Would have sent email:" email))))]
       (when (not (try-send! (:retry-initial-wait smtp-config)
                             (:retry-multiplier smtp-config)
                             (:retry-max-time smtp-config)
                             send-fn))
-        (log/info (format "Failed to send %s message to %s (lang: %s) with subject '%s'"
-                          (str (:type msg))
-                          to
-                          (:lang msg)
-                          subject))))))
+        (log/error "Failed sending email:" msg-description)))))
 
 (defn start-background-sender [mail-templates]
   (reset! run? true)
