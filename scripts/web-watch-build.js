@@ -66,7 +66,7 @@ const queue1 = runFun => {
     isRunning = false
     if (isQueued) {
       isQueued = false
-      setImmediate(() => { queuedRunFun() })
+      setImmediate(queuedRunFun)
       return true
     } else {
       return false
