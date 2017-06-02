@@ -17,8 +17,16 @@ export default class HakuEdit extends Component {
     const allowAllHakuEdits = userHasEditPrivilege && (avustushaku.status === "new" || avustushaku.status === "draft")
     const allowNondisruptiveHakuEdits = userHasEditPrivilege && (allowAllHakuEdits || avustushaku.phase === "current" || avustushaku.phase === "upcoming")
 
+    const onChangeListener = (target, value) => {
+      controller.onChangeListener(avustushaku, target, value)
+    }
+
     const onChange = e => {
-      controller.onChangeListener(avustushaku, e.target, e.target.value)
+      onChangeListener(e.target, e.target.value)
+    }
+
+    const onChangeTrimWs = e => {
+      onChangeListener(e.target, e.target.value.replace(/\s/g, " "))
     }
 
     return (
@@ -31,8 +39,24 @@ export default class HakuEdit extends Component {
           <thead><tr><th>Haun nimi</th><th>Haun nimi ruotsiksi</th></tr></thead>
           <tbody>
             <tr>
-              <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-fi" value={avustushaku.content.name.fi}  disabled={!allowNondisruptiveHakuEdits}/></td>
-              <td><textarea onChange={onChange} rows="2" maxLength="200" id="haku-name-sv" value={avustushaku.content.name.sv}  disabled={!allowNondisruptiveHakuEdits}/></td>
+              <td>
+                <textarea id="haku-name-fi"
+                          rows="2"
+                          maxLength="200"
+                          value={avustushaku.content.name.fi}
+                          onChange={onChangeTrimWs}
+                          disabled={!allowNondisruptiveHakuEdits}
+                          />
+              </td>
+              <td>
+                <textarea id="haku-name-sv"
+                          rows="2"
+                          maxLength="200"
+                          value={avustushaku.content.name.sv}
+                          onChange={onChangeTrimWs}
+                          disabled={!allowNondisruptiveHakuEdits}
+                          />
+              </td>
             </tr>
           </tbody>
         </table>
