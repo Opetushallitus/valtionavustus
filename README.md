@@ -3,42 +3,48 @@
 Valtionavustusten hakemiseen, käsittelyyn ja myöntämiseen tarkoitetut
 palvelut.
 
+Projekti koostuu kahdesta web-palvelusta: va-hakija ja
+va-virkailija. Näillä on omat Leiningen-moduulit projektin
+juurihakemistossa. Web-sovelluksien yhteinen koodi on moduulissa
+va-common. Lisäksi moduulissa soresu-form on geneerinen lomake-editori,
+joka on yhteinen riippuvuus muille projektin moduuleille. Soresu-form
+pitää asentaa git submodulena.
+
 [Tekninen dokumentaatio](doc/README.md)
 
-# Riippuvuudet
+## Riippuvuudet
 
-* [Node.js](https://nodejs.org/)
+* [Node.js 6](https://nodejs.org/)
 * [Leiningen](https://leiningen.org/)
-* [PostgreSQL](https://www.postgresql.org/)
+* [PostgreSQL 9.4](https://www.postgresql.org/)
 * [Soresu](https://github.com/Opetushallitus/soresu-form)
 
-Lisää Soresu forms -submoduli paikalleen:
+Asenna soresu-form-moduuli:
 
 ``` shell
 git submodule init
 git submodule update
 ```
 
-Riippuvuudet asentuvat ajamalla komennot:
+Käytä OPH:n VPN:ää, jotta voit ladata tarvittavat jar-paketit OPH:n
+Artifactorystä.
 
-``` shell
-cd soresu-form && npm install && cd ..
-cd va-common && npm install && cd ..
-cd va-hakija && npm install && cd ..
-cd va-virkailija && npm install
-```
+## Kehitysympäristö
 
 Kehitystyössä hyödyllisiä työkaluja:
 
 * [FakeSMTP](https://nilhcem.github.io/FakeSMTP/)
 
-# Tietokanta
+Projektin juurihakemisto sisältää `lein`-skriptin, jota voi käyttää
+Leiningenin ajamiseen. Tämä takaa kiinteän version käytön Leiningenistä.
 
-Huom: Linux-koneilla postgres-komennot on helpointa ajaa
+### Tietokanta
+
+*Huom:* Linux-koneilla Postgres-komennot on helpointa ajaa
 postgres-käyttäjänä:
 
 ``` shell
-sudo su postgres
+sudo -s -u postgres
 ```
 
 Luo paikallinen postgres-datahakemisto:
@@ -47,7 +53,7 @@ Luo paikallinen postgres-datahakemisto:
 initdb -d postgres
 ```
 
-Käynnistä tietokantaserveri:
+Käynnistä tietokantapalvelin:
 
 ``` shell
 postgres -D postgres
@@ -66,66 +72,166 @@ Luo tietokanta nimeltään `va-dev`:
 createdb -E UTF-8 va-dev
 ```
 
-Asenna kaikki modulit paikalliseen m2-repositoryyn:
+Kun web-sovellus käynnistyy, ajaa se tarvittavat migraatiot
+tietokantaan.
 
-``` shell
-lein modules do buildfront, install
-```
-
-Serverin start ajaa automaattisesti migraatiot:
-
-``` shell
-cd va-hakija
-../lein run
-```
-
-ja eri terminaalissa:
-
-``` shell
-cd va-virkailija
-../lein run
-```
-
-Tietokannan saa kokonaan tyhjättyä ajamalla:
+Tietokannan saa tyhjennettyä ajamalla:
 
 ``` shell
 dropdb va-dev
-createdb -E utf-8 va-dev
+createdb -E UTF-8 va-dev
 ```
 
-# Käynnistys
+### Frontend
 
-*Huom*: Leiningenin trampoline-komento on tarpeellinen, koska muuten
-JVM:n shutdown-hookkia ei ajeta. Tämä taas jättää mahdollisesti
-resursseja vapauttamatta. Uberjarin kautta ajaessa ongelmaa ei ole.
+Asenna kaikki frontendin buildaamiseen käytetyt paketit:
 
-Paikallisesti (ilman fronttibuildia):
+``` shell
+for dir in soresu-form va-common va-hakija va-virkailija scripts; do
+    pushd "$dir" && npm install && popd
+done
+```
+
+Käynnistä frontendin assettien monitorointi, kääntäen tarvittaessa:
+
+``` shell
+./scripts/web-watch-build.js
+```
+
+Vaihtoehtoisesti webpackin inkrementaalista kääntämistä hyödyntävä
+build. Tällöin riippuvuuksissa (soresu-form, va-common) tapahtuvat
+muutokset eivät siirry webpackin käännökseen, ellei itse web-sovelluksen
+lähdekoodi muutu myös:
+
+``` shell
+cd va-hakija
+npm run watch
+
+cd va-virkailija
+npm run watch
+```
+
+Mikäli kirjoitat muutoksia pääasiassa soresu-formiin tai va-commoniin,
+käytä `web-watch-build.js`-skriptiä, koska tällöin muutokset siirtyvät
+varmasti va-hakijaan ja va-virkailijaan.
+
+Frontendin yksikkötestit on kirjoitettu Mochalla. Niiden ajaminen,
+esimerkiksi va-hakija-moduulissa:
+
+``` shell
+cd va-hakija
+npm run test         # kerta-ajo
+npm run watch-test   # monitorointi ja ajo muutoksista
+```
+
+Frontendin Mocha-pohjaisten UI-testien ajaminen selaimessa, esimerkiksi
+va-hakija-moduulissa. Käynnistä ensin web-sovellus testiympäristössä:
+
+``` shell
+cd va-hakija
+../lein with-profile test trampoline run
+```
+
+ja sitten avaa [testien url](http://localhost:8081/test/runner.html)
+selaimessa.
+
+Frontendin tuotantoversion build, projektin juurihakemistossa:
+
+``` shell
+./lein modules buildfront
+```
+
+### Backend
+
+Asenna ensin web-sovelluksien riippuvuudet paikalliseen m2-hakemistoon:
+
+``` shell
+./lein modules install
+```
+
+Web-sovelluksien ajaminen Leiningenissa tapahtuu käyttämällä
+`trampoline`-komentoa, jotta JVM ajaa shutdown-hookit, joissa
+vapautetaan resursseja. Uberjarin kautta ajaessa ongelmaa ei ole:
 
 ``` shell
 cd va-hakija
 ../lein trampoline run
 ```
 
+Toisessa terminaalissa:
+
 ``` shell
 cd va-virkailija
 ../lein trampoline run
 ```
 
-Kannan tyhjäys, fronttibuildi ja sovelluksen käynnistys paikallisesti:
+Web-sovelluksen palvelimen käynnistys ajaa tietokannan migraatiot
+automaattisesti.
+
+Kaikkien moduulien testien ajaminen, projektin juurihakemistossa:
+
+``` shell
+lein modules test
+```
+
+Yksittäisen moduulin testien ajaminen, esimerkkinä va-hakija:
+
+``` shell
+cd va-hakija
+lein with-profile test spec -f d       # kerta-ajo
+lein with-profile test spec -a         # monitorointi ja ajo muutoksista
+lein with-profile test spec -a -t tag  # monitorointi ja ajo vain testeille, jotka merkitty tägillä `tag`
+```
+
+Backendin testit sisältävät myös frontendin yksikkötestien ajon ja
+UI-testien ajon PhantomJS:llä (tiedostot `mocha_spec.clj`).
+
+Mikäli muutat frontendin koodia, pitää ne kääntää erikseen (katso yllä).
+
+Backendin tuotantoversion build, projektin juurihakemistossa:
+
+``` shell
+lein modules uberjar
+```
+
+### Ajoympäristöt
+
+Sovelluksen ajoympäristön voi asettaa Leiningenin komennolla
+`with-profile PROFILE`. Esimerkiksi `test`-ympäristön käyttö
+web-sovelluksen ajamiseen:
+
+``` shell
+cd va-hakija
+../lein with-profile test trampoline run
+```
+
+Ajoympäristojen konfiguraatiot ovat moduulien
+`config`-hakemistossa
+[`.edn`](https://github.com/edn-format/edn)-tiedostoissa.
+
+Komento `lein test` käyttää `test`-ympäristöä
+automaattisesti. [Lisätietoja Leiningenin profiileista](https://github.com/technomancy/leiningen/blob/master/doc/PROFILES.md).
+
+### Sekalaisia komentoja
+
+Tietokannan tyhjennys:
+
+``` shell
+cd va-hakija
+../lein dbclear
+```
+
+Leiningenin komentoja voi ketjuttaa käyttämällä `do`-komentoa ja
+erottelemalla halutut komennot pilkulla ja välilyönnillä. Esimerkiksi
+tietokannan tyhjennys, tuotantoa vastaava fronttibuildi ja sovelluksen
+käynnistys:
 
 ``` shell
 cd va-hakija
 ../lein trampoline do dbclear, buildfront, run
 ```
 
-Tai virkailijasovellukselle:
-
-``` shell
-cd va-virkailija
-../lein trampoline do dbclear, buildfront, run
-```
-
-Hakijasovellus tuotantoversiona:
+Hakijasovelluksen tuotantoversion ajo:
 
 ``` shell
 cd va-hakija
@@ -133,55 +239,13 @@ cd va-hakija
 CONFIG=config/va-prod.edn java -jar target/uberjar/hakija-0.1.0-SNAPSHOT-standalone.jar
 ```
 
-*Huom:* Jar-tiedoston versio voi vaihtua.
-
-Eri ympäristön voi ottaa käyttöön seuraavasti (ympäristöjen konffit ovat
-`config` hakemistossa):
-
-``` shell
-../lein with-profile [dev,test,va-test,va-prod] run
-```
-
-# Testien ajo
-
-Kaikkien testien ajo (ajaa myös frontendin testit):
-
-``` shell
-./lein with-profile test do modules clean, modules spec -f d
-```
-
-tai (automaattisesti pelkät hakijapuolen testit aina muutoksissa):
-
-``` shell
-cd va-hakija
-../lein with-profile test spec -a
-```
-
-Ajettavaa testisettiä voi rajata tiettyyn tägiin lisäämällä esimerkiksi
-parametrin `-t ui` tai `-t server`.
-
-*Huom:* Vaikka `lein run` lataa automaattisesti muuttuneet koodit,
-Javascriptin automaattikäännöstä varten pitää käynnistää erilliseen
-terminaaliin oma watch komento:
-
-``` shell
-cd va-hakija
-npm run watch
-```
-
-``` shell
-cd va-virkailija
-npm run watch
-```
-
-Yhteisten jarrien teko automaattisesti aina muutoksista:
+Riippuvuutena toimivien moduulien jarrien buildaus automaattisesti
+muutoksista:
 
 ``` shell
 cd soresu-form
 ../lein auto install
-```
 
-``` shell
 cd va-common
 ../lein auto install
 ```
@@ -192,36 +256,17 @@ Kaikkien moduulien install ja testien ajo projektin juuressa:
 ./lein with-profile test do modules install, modules spec -f d
 ```
 
-## Frontendin yksikkötestit
-
-``` shell
-cd soresu-form  # tai va-hakija
-npm run test
-npm run watch-test
-```
-
-## Frontendin UI-testit
-
-Voit ajaa [selaimella](http://localhost:8081/test/runner.html).
-
-# Konfiguraatiot
-
-Eri konfiguraatiot sijaitsevat hakemistossa `config`.
-
-Konfiguraatiotiedostot ovat EDN-formaatissa, joka on yksinkertaistettu
-Clojure-tyyppinen tietorakenne.
-
-# Muut komennot
-
-Ovatko riippuvuudet päivittyneet? Aja alimodulissa seuraavat komennot:
+Backendin riippuvuuksien versioiden tarkistus, projektin
+juurihakemistossa:
 
 ``` shell
 ./lein modules ancient
 ```
 
-ja
+Frontendin riippuvuuksien tarkistus, moduulin hakemistossa:
 
 ``` shell
+cd va-hakija
 npm outdated
 ```
 
@@ -232,7 +277,7 @@ cd va-hakija
 ../lein populate 400
 ```
 
-# Interaktiivinen kehitys
+### Interaktiivinen kehitys
 
 Luo `checkouts`-hakemistot hakijan ja virkailijan
 sovellusmoduuleihin. Projektin juurihakemistossa:
@@ -247,7 +292,8 @@ for dir in va-hakija va-virkailija; do
 done
 ```
 
-Leiningen tunnistaa nyt `soresu` ja `common` -kirjastot ns.
+Leiningen tunnistaa nyt `soresu` ja `common` -kirjastot
+ns.
 [checkout dependencyinä](https://github.com/technomancy/leiningen/blob/master/doc/TUTORIAL.md#checkout-dependencies),
 jolloin muutokset lähdekoodissa ja muutoksen evaluointi voidaan saada
 näkyviin hakijan ja virkailijan sovelluksissa ajonaikaisesti.
@@ -271,7 +317,7 @@ Esimerkiksi Emacsin
 
 4. Muutoksen vaikutuksen pitäisi näkyä sovelluksessa.
 
-# JConsole-yhteys palvelimelle
+## JConsole-yhteys palvelimelle
 
 1. Mene palvelimelle, esim: `./servers/ssh_to_va-test.bash`
 2. Etsi Java-sovelluksen prosessi-id: `ps -fe | grep java`
@@ -292,7 +338,7 @@ Esimerkiksi Emacsin
      - va-hakija: "localhost:20876"
      - va-virkailija: "localhost:21322"
 
-# Tuetut selaimet
+## Tuetut selaimet
 
 Hakijan käyttöliittymä: viimeisin stabiili Google Chrome ja Mozilla
 Firefox, IE11.
