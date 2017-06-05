@@ -208,6 +208,22 @@
       "fi": "Syötä arvo kokonaisina euroina",
       "sv": "Skriv in värdet som hela euro"
     },
+    "table-misses-one-value": {
+      "fi": "Taulukosta puuttuu arvo",
+      "sv": "TODO: Taulukosta puuttuu arvo"
+    },
+    "table-misses-many-values": {
+      "fi": "Taulukosta puuttuu arvoja",
+      "sv": "TODO: Taulukosta puuttuu arvoja"
+    },
+    "table-has-one-invalid-value": {
+      "fi": "Taulukossa on virheellinen arvo",
+      "sv": "TODO: Taulukossa on virheellinen arvo"
+    },
+    "table-has-many-invalid-values": {
+      "fi": "Taulukossa on virheellisiä arvoja",
+      "sv": "TODO: Taulukossa on virheellisiä arvoja"
+    },
     "finnishBusinessId": {
       "fi": "Tarkista y-tunnus",
       "sv": "Kontrollera företags- och organisationsnummer"
