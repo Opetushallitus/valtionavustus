@@ -17,7 +17,7 @@ pitää asentaa git submodulena.
 * [Node.js 6](https://nodejs.org/)
 * [Leiningen](https://leiningen.org/)
 * [PostgreSQL 9.4](https://www.postgresql.org/)
-* [Soresu](https://github.com/Opetushallitus/soresu-form)
+* [soresu-form](https://github.com/Opetushallitus/soresu-form)
 
 Asenna soresu-form-moduuli:
 
@@ -112,10 +112,11 @@ npm run watch
 ```
 
 Mikäli kirjoitat muutoksia pääasiassa soresu-formiin tai va-commoniin,
-käytä `web-watch-build.js`-skriptiä, koska tällöin muutokset siirtyvät
-varmasti va-hakijaan ja va-virkailijaan.
+käytä `web-watch-build.js`-skriptiä, jotta muutokset siirtyvät varmasti
+va-hakijaan ja va-virkailijaan.
 
-Frontendin yksikkötestit on kirjoitettu Mochalla. Niiden ajaminen,
+Frontendin yksikkötestit on
+kirjoitettu [Mochalla](https://mochajs.org/). Niiden ajaminen,
 esimerkiksi va-hakija-moduulissa:
 
 ``` shell
@@ -143,7 +144,8 @@ Frontendin tuotantoversion build, projektin juurihakemistossa:
 
 ### Backend
 
-Asenna ensin web-sovelluksien riippuvuudet paikalliseen m2-hakemistoon:
+Asenna ensin web-sovelluksien riippuvuudet paikalliseen
+`~/.m2`-hakemistoon:
 
 ``` shell
 ./lein modules install
@@ -151,7 +153,7 @@ Asenna ensin web-sovelluksien riippuvuudet paikalliseen m2-hakemistoon:
 
 Web-sovelluksien ajaminen Leiningenissa tapahtuu käyttämällä
 `trampoline`-komentoa, jotta JVM ajaa shutdown-hookit, joissa
-vapautetaan resursseja. Uberjarin kautta ajaessa ongelmaa ei ole:
+vapautetaan resursseja (uberjarin kautta ajaessa ongelmaa ei ole):
 
 ``` shell
 cd va-hakija
@@ -186,7 +188,8 @@ lein with-profile test spec -a -t tag  # monitorointi ja ajo vain testeille, jot
 Backendin testit sisältävät myös frontendin yksikkötestien ajon ja
 UI-testien ajon PhantomJS:llä (tiedostot `mocha_spec.clj`).
 
-Mikäli muutat frontendin koodia, pitää ne kääntää erikseen (katso yllä).
+Mikäli muutat frontendin koodia, pitää ne kääntää erikseen (katso
+ylhäältä).
 
 Backendin tuotantoversion build, projektin juurihakemistossa:
 
