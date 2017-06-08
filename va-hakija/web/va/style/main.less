@@ -1,37 +1,6 @@
 @import "npm://va-common/web/va/style/soresu-va.less";
 @import "topbar";
 
-.accordion {
-  overflow-y: hidden;
-  margin-bottom: 40px;
-  transition-property: all;
-  transition-duration: 0.5s;
-  transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
-  width: @section-width;
-  &.closed {
-    max-height: 0;
-  }
-  &.open {
-    max-height: 320px; /* This should be slightly greater than real max height, and given to make slide animation work */
-  }
-}
-.opener-handle {
-  color: @light-blue;
-  cursor: pointer;
-
-  &.closed:after {
-    vertical-align: bottom;
-    content: " \02C5";
-    font-family: Arial, sans-serif;
-  }
-
-  &.open:after {
-    vertical-align: bottom;
-    content: " \02C4";
-    font-family: Arial, sans-serif;
-  }
-}
-
 .va-old-browser-warning {
   position: fixed;
   top: 0;
