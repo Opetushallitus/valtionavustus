@@ -7,7 +7,6 @@ import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
 import MathUtil from 'soresu-form/web/form/MathUtil'
 import MoneyTextField from 'soresu-form/web/form/component/MoneyTextField.jsx'
 import Translator from 'soresu-form/web/form/Translator'
-import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 
 export default class VaBudgetElement extends React.Component {
   constructor(props) {
