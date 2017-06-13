@@ -24,12 +24,14 @@ export default class VaFormTopbar extends React.Component {
     const translations = configuration.translations
     const formTranslator = new Translator(translations.form)
     const preview = configuration.preview
-    const formIsValidOnClientSide = _.reduce(state.form.validationErrors, function (allValid, fieldErrors) {
-      return allValid === true && fieldErrors.length === 0
-    }, true)
-    const formIsValidOnServerSide = state.saveStatus.savedObject && _.reduce(state.saveStatus.savedObject["validation-errors"], function (allValid, fieldErrors) {
-      return allValid === true && fieldErrors.length === 0
-    }, true)
+    const formIsValidOnClientSide = _.reduce(
+      validationErrors,
+      (allValid, fieldErrors) => allValid && fieldErrors.length === 0,
+      true)
+    const formIsValidOnServerSide = state.saveStatus.savedObject && _.reduce(
+      state.saveStatus.savedObject["validation-errors"],
+      (allValid, fieldErrors) => allValid && fieldErrors.length === 0,
+      true)
     const formOperations = state.extensionApi.formOperations
     const previewUrl = formOperations.urlCreator.existingSubmissionPreviewUrl(state,lang);
     const openPreview = function() {
