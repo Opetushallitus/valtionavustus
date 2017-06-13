@@ -6,8 +6,7 @@
             [oph.soresu.common.jdbc.extensions :refer :all]
             [oph.soresu.form.formutil :as form-util]
             [oph.va.jdbc.extensions :refer :all]
-            [oph.va.hakija.db.queries :as queries]
-            [oph.va.budget :as va-budget]))
+            [oph.va.hakija.db.queries :as queries]))
 
 (defn slurp-binary-file! [file]
   (io! (with-open [reader (io/input-stream file)]
@@ -33,17 +32,6 @@
 (defn add-paatos-view[hakemus-id headers remote-addr]
   (exec :form-db queries/create-paatos-view! {:hakemus_id hakemus-id :headers headers :remote_addr remote-addr}))
 
-(defn- calculate-budget-summary [avustushaku-id answers]
-  (let [avustushaku (get-avustushaku avustushaku-id)
-        form-id (:form avustushaku)
-        form (form-db/get-form form-id)]
-    (va-budget/calculate-totals-hakija answers avustushaku form)))
-
-(defn- get-budget-params [avustushaku-id answers]
-  (let [budget-summary (calculate-budget-summary avustushaku-id answers)]
-    {:budget_total (or (:total-needed budget-summary) 0)
-     :budget_oph_share (or (:oph-share budget-summary) 0)}))
-
 (defn- pluck-key [answers key as default]
   (let [value (or (form-util/find-answer-value answers key) default)]
     {as value}))
@@ -54,7 +42,6 @@
 
 (defn- merge-calculated-params [params avustushaku-id answers]
   (merge params
-         (get-budget-params avustushaku-id answers)
          (get-organization-name answers)
          (get-project-name answers)
          (get-language answers)))
@@ -92,7 +79,11 @@
                                           (exec :form-db queries/create-register-number-sequence<! params))]
         (format "%d/%s" seq_number avustushaku-register-number)))))
 
-(defn create-hakemus! [avustushaku-id form-id answers hakemus-type register-number]
+(defn- convert-budget-totals [budget-totals]
+  {:budget_total (or (:total-needed budget-totals) 0)
+   :budget_oph_share (or (:oph-share budget-totals) 0)})
+
+(defn create-hakemus! [avustushaku-id form-id answers hakemus-type register-number budget-totals]
   (let [submission (form-db/create-submission! form-id answers)
         user-key (generate-hash-id)
         params (-> {:avustushaku_id avustushaku-id
@@ -100,6 +91,7 @@
                     :form_submission (:id submission)
                     :register_number (if (nil? register-number) (generate-register-number avustushaku-id user-key) register-number)
                     :hakemus_type hakemus-type}
+                   (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params avustushaku-id answers))
         hakemus (exec :form-db queries/create-hakemus<! params)]
     {:hakemus hakemus :submission submission}))
@@ -107,7 +99,7 @@
 (defn update-hakemus-parent-id [hakemus-id parent-id]
   (exec :form-db queries/update-hakemus-parent-id! {:id hakemus-id :parent_id parent-id}))
 
-(defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers]
+(defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (let [register-number (or register-number
                             (generate-register-number avustushaku-id hakemus-id))
         params (-> {:avustushaku_id avustushaku-id
@@ -119,12 +111,13 @@
                     :register_number register-number
                     :form_submission_id submission-id
                     :form_submission_version submission-version}
+                   (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params avustushaku-id answers))]
     (exec-all :form-db [queries/lock-hakemus params
                    queries/close-existing-hakemus! params
                    queries/update-hakemus-submission<! params])))
 
-(defn- update-status [avustushaku-id hakemus-id submission-id submission-version register-number answers status status-change-comment]
+(defn- update-status [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals status status-change-comment]
   (let [params (-> {:avustushaku_id avustushaku-id
                     :user_key hakemus-id
                     :user_oid nil
@@ -136,19 +129,20 @@
                     :register_number register-number
                     :status status
                     :status_change_comment status-change-comment}
+                   (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params avustushaku-id answers))]
     (exec-all :form-db [queries/lock-hakemus params
                    queries/close-existing-hakemus! params
                    queries/update-hakemus-status<! params])))
 
-(defn verify-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers :draft nil))
+(defn verify-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :draft nil))
 
-(defn submit-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers :submitted nil))
+(defn submit-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :submitted nil))
 
-(defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers comment]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers :cancelled comment))
+(defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals comment]
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment))
 
 (defn update-loppuselvitys-status [hakemus-id status]
   (exec :form-db queries/update-loppuselvitys-status<! {:id hakemus-id :status status}))

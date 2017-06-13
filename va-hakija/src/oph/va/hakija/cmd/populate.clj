@@ -1,6 +1,7 @@
 (ns oph.va.hakija.cmd.populate
   (:use [clojure.tools.trace :only [trace]])
-  (:require [oph.va.hakija.db :refer :all]
+  (:require [oph.va.budget :as va-budget]
+            [oph.va.hakija.db :refer :all]
             [oph.soresu.form.validation :as validation]
             [oph.soresu.form.db :refer :all]
             [oph.soresu.form.formutil :as form-util])
@@ -156,7 +157,12 @@
     (trace "Processing avustushaku" (-> avustushaku :content :name :fi))
     (doseq [x (range 0 amount)]
       (trace "Generating hakemus" x)
-      (let [hakemus (->> (create-hakemus! avustushaku-id form-id {} "hakemus" nil)
+      (let [hakemus (->> (create-hakemus! avustushaku-id
+                                          form-id
+                                          {}
+                                          "hakemus"
+                                          nil
+                                          (va-budget/calculate-totals-hakija {} avustushaku form))
                          :hakemus)
             submission-id (:form_submission_id hakemus)
             answers (form-util/generate-answers form
@@ -174,7 +180,8 @@
                         submission-id
                         submission-version
                         (:register_number hakemus)
-                        answers)))))
+                        answers
+                        (va-budget/calculate-totals-hakija answers avustushaku form))))))
 
 (defn -main [& args]
   (let [avustushaut (->> (list-avustushaut)

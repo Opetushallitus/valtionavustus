@@ -12,6 +12,7 @@
             [oph.soresu.form.formutil :refer :all]
             [oph.va.routes :refer :all]
             [oph.soresu.form.schema :refer :all]
+            [oph.va.budget :as va-budget]
             [oph.va.hakija.db :as va-db]
             [oph.va.hakija.notification-formatter :as va-submit-notification]
             [oph.va.hakija.attachment-validator :as attachment-validator]
@@ -48,8 +49,13 @@
         form (form-db/get-form form-id)
         security-validation (validation/validate-form-security form answers)]
     (if (every? empty? (vals security-validation))
-      (if-let [new-hakemus (va-db/create-hakemus! haku-id form-id answers "hakemus"  nil)]
-        ;; TODO: extract
+      (let [budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)]
+        (if-let [new-hakemus (va-db/create-hakemus! haku-id
+                                                    form-id
+                                                    answers
+                                                    "hakemus"
+                                                    nil
+                                                    budget-totals)]
         (let [validation (validation/validate-form form answers {})
               language (keyword (-> new-hakemus :hakemus :language))
               avustushaku-title (-> avustushaku-content :name language)
@@ -71,13 +77,12 @@
                                                 avustushaku-start-date
                                                 avustushaku-end-date)
             (hakemus-ok-response (:hakemus new-hakemus) (without-id (:submission new-hakemus)) validation))
-        (internal-server-error!))
+        (internal-server-error!)))
       (bad-request! security-validation))))
 
 (defn- ok-id [hakemus]
   (ok {:id (:user_key hakemus)
-       :language (:language hakemus)})
-)
+       :language (:language hakemus)}))
 
 (defn on-selvitys-init [haku-id hakemus-key selvitys-type]
   (let [avustushaku (va-db/get-avustushaku haku-id)
@@ -88,8 +93,17 @@
         existing-selvitys (va-db/find-hakemus-by-parent-id-and-type hakemus-id selvitys-type)
         register-number (:register_number hakemus)]
     (if (nil? existing-selvitys)
-      (let [
-            new-hakemus-with-submission (va-db/create-hakemus! haku-id form-id {:value [{:key "language", :value (:language hakemus), :fieldType "radioButton"}]} selvitys-type register-number)
+      (let [form (form-db/get-form form-id)
+            answers {:value [{:key "language"
+                              :value (:language hakemus)
+                              :fieldType "radioButton"}]}
+            budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+            new-hakemus-with-submission (va-db/create-hakemus! haku-id
+                                                               form-id
+                                                               answers
+                                                               selvitys-type
+                                                               register-number
+                                                               budget-totals)
             new-hakemus (:hakemus new-hakemus-with-submission)
             new-hakemus-id (:id new-hakemus)
             updated (va-db/update-hakemus-parent-id new-hakemus-id hakemus-id)]
@@ -97,7 +111,8 @@
       (ok-id existing-selvitys))))
 
 (defn on-get-current-answers [haku-id hakemus-id form-key]
-  (let [form-id (form-key (va-db/get-avustushaku haku-id))
+  (let [avustushaku (va-db/get-avustushaku haku-id)
+        form-id (form-key avustushaku)
         form (form-db/get-form form-id)
         hakemus (va-db/get-hakemus hakemus-id)
         submission-id (:form_submission_id hakemus)
@@ -107,38 +122,44 @@
         attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
         validation (validation/validate-form form answers attachments)]
     (if (= (:status hakemus) "new")
-      (let [verified-hakemus (va-db/verify-hakemus haku-id
+      (let [budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+            verified-hakemus (va-db/verify-hakemus haku-id
                                                    hakemus-id
                                                    submission-id
                                                    submission-version
                                                    (:register_number hakemus)
-                                                   answers)]
+                                                   answers
+                                                   budget-totals)]
         (hakemus-ok-response verified-hakemus submission validation))
       (hakemus-ok-response hakemus submission validation))))
 
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
   (let [hakemus (va-db/get-hakemus hakemus-id)
-        form-id (:form (get-open-avustushaku haku-id hakemus))
+        avustushaku (get-open-avustushaku haku-id hakemus)
+        form-id (:form avustushaku)
         form (form-db/get-form form-id)
         security-validation (validation/validate-form-security form answers)]
     (if (every? empty? (vals security-validation))
       (if (= base-version (:version hakemus))
         (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
               validation (validation/validate-form form answers attachments)
+              budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
               updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
               updated-hakemus (va-db/update-submission haku-id
                                                        hakemus-id
                                                        (:form_submission_id hakemus)
                                                        (:version updated-submission)
                                                        (:register_number hakemus)
-                                                       answers)]
+                                                       answers
+                                                       budget-totals)]
           (hakemus-ok-response updated-hakemus updated-submission validation))
         (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
 
 (defn on-selvitys-update [haku-id hakemus-id base-version answers form-key]
   (let [hakemus (va-db/get-hakemus hakemus-id)
-        form-id (form-key (va-db/get-avustushaku haku-id))
+        avustushaku (va-db/get-avustushaku haku-id)
+        form-id (form-key avustushaku)
         form (form-db/get-form form-id)
         security-validation (validation/validate-form-security form answers)]
     (if (every? empty? (vals security-validation))
@@ -146,12 +167,14 @@
         (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
               validation (validation/validate-form form answers attachments)
               updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
+              budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
               updated-hakemus (va-db/update-submission haku-id
                                                        hakemus-id
                                                        (:form_submission_id hakemus)
                                                        (:version updated-submission)
                                                        (:register_number hakemus)
-                                                       answers)]
+                                                       answers
+                                                       budget-totals)]
           (hakemus-ok-response updated-hakemus updated-submission validation))
         (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
@@ -168,12 +191,14 @@
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
+              budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
               submitted-hakemus (va-db/submit-hakemus haku-id
                                                       hakemus-id
                                                       submission-id
                                                       submission-version
                                                       (:register_number hakemus)
-                                                      answers)]
+                                                      answers
+                                                      budget-totals)]
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku)
           (hakemus-ok-response submitted-hakemus saved-submission validation))
         (hakemus-conflict-response hakemus))
@@ -192,12 +217,14 @@
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
               parent_id (:parent_id hakemus)
+              budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
               submitted-hakemus (va-db/submit-hakemus haku-id
                                                       hakemus-id
                                                       submission-id
                                                       submission-version
                                                       (:register_number hakemus)
-                                                      answers)
+                                                      answers
+                                                      budget-totals)
               is-loppuselvitys (= selvitys-type "loppuselvitys")
               updated-selvitys-status (if is-loppuselvitys (va-db/update-loppuselvitys-status parent_id "submitted") (va-db/update-valiselvitys-status parent_id "submitted"))]
           (hakemus-ok-response submitted-hakemus saved-submission validation))
@@ -216,12 +243,14 @@
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
+              budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
               submitted-hakemus (va-db/submit-hakemus haku-id
                                                       hakemus-id
                                                       submission-id
                                                       submission-version
                                                       (:register_number hakemus)
-                                                      answers)
+                                                      answers
+                                                      budget-totals)
               change-requests (va-db/list-hakemus-change-requests hakemus-id)
               email-of-virkailija (:user_email (last change-requests))]
           (if email-of-virkailija
@@ -243,12 +272,14 @@
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
+              budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
               submitted-hakemus (va-db/submit-hakemus haku-id
                                                       hakemus-id
                                                       submission-id
                                                       submission-version
                                                       (:register_number hakemus)
-                                                      answers)]
+                                                      answers
+                                                      budget-totals)]
           (method-not-allowed! {:officer-edit "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))

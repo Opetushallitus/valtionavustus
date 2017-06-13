@@ -7,6 +7,7 @@
             [clj-time.format :as f]
             [clj-time.local :as l]
             [oph.soresu.form.db :as form-db]
+            [oph.va.budget :as va-budget]
             [oph.va.hakija.db :as va-db]
             [oph.soresu.form.formutil :as formutil]
             [oph.common.testing.spec-plumbing :refer :all]
@@ -312,7 +313,18 @@
                                :form_submission_id)]
         (should= 200 status)
         (should= "draft" (:status json))
-        (va-db/cancel-hakemus 1 id submission-id submission-version nil valid-answers "Peruttu hakijan pyynnöstä")
+        (let [avustushaku (va-db/get-avustushaku 1)
+              form (form-db/get-form (:form avustushaku))]
+          (va-db/cancel-hakemus 1
+                              id
+                              submission-id
+                              submission-version
+                              nil
+                              valid-answers
+                              (va-budget/calculate-totals-hakija valid-answers
+                                                                 avustushaku
+                                                                 form)
+                              "Peruttu hakijan pyynnöstä"))
 
         ;; Get after cancellation
         (let [{:keys [status headers body error] :as resp} (get! (str "/api/avustushaku/1/hakemus/" id))]
