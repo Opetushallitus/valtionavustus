@@ -25,13 +25,23 @@
 
 (defn find-by-id [json id] (first (filter (fn [e] (.equals ( :id e) id)) (-> (formutil/flatten-elements (json :content))))))
 
-(defn update-answers [answers key value]
-  (letfn [(update-fn [answer] (if (= (:key answer) key)
-                                {:key       key
-                                 :value     value
-                                 :fieldType (:fieldType answer)}
-                                answer))]
-    {:value (map update-fn (:value answers))}))
+(defn update-answers
+  ([answers key val & kvs]
+   (if (-> kvs count even?)
+     (let [key-vals  (->> kvs
+                          (partition 2)
+                          (map vec)
+                          (apply vector [key val])
+                          (into {}))
+           update-fn (fn [answer]
+                       (if-some [key (:key answer)]
+                         (if (contains? key-vals key)
+                           (assoc answer :value (get key-vals key))
+                           answer)
+                         answer))]
+       (assoc answers :value (map update-fn (:value answers))))
+     (throw (IllegalArgumentException.
+             "update-answers expects even number of arguments after key-val, found odd number")))))
 
 (defn conj-answers [answers answer]
   (update answers :value #(conj % answer)))
