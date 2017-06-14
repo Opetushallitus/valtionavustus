@@ -1,7 +1,7 @@
 (ns oph.va.budget-spec
   (:require [speclj.core :refer :all]
             [oph.soresu.form.formutil :refer [transform-form-content]]
-            [oph.va.budget :refer :all]))
+            [oph.va.budget :as va-budget]))
 
 (def budget-form
   {:id 1
@@ -124,12 +124,12 @@
 
 (describe "Budget calculation for hakija"
 
-          (tags :server)
+          (tags :budget)
 
           (it "Calculates trivial case correctly"
-              (let [totals (oph.va.budget/calculate-totals-hakija complete-valid-answers
-                                                                  avustushaku
-                                                                  budget-form)]
+              (let [totals (va-budget/calculate-totals-hakija complete-valid-answers
+                                                              avustushaku
+                                                              budget-form)]
                 (should= 12000 (:total-needed totals))
                 (should= 10800 (:oph-share totals))))
 
@@ -138,9 +138,9 @@
                                                       {:key "personnel-costs-row.amount" :value ""}
                                                       {:key "project-incomes-row.amount" :value "1500"}
                                                       {:key "eu-programs-income-row.amount" :value "500"}]}
-                    totals (oph.va.budget/calculate-totals-hakija answers-with-empty-field
-                                                                  avustushaku
-                                                                  budget-form)]
+                    totals (va-budget/calculate-totals-hakija answers-with-empty-field
+                                                              avustushaku
+                                                              budget-form)]
                 (should= 2000 (:total-needed totals))
                 (should= 1800 (:oph-share totals))))
 
@@ -153,108 +153,108 @@
                                                        :value "1500"}
                                                       {:key "eu-programs-income-row.amount"
                                                        :value "500"}]}
-                    totals (oph.va.budget/calculate-totals-hakija answers-with-empty-field
-                                                                  avustushaku
-                                                                  budget-form)]
+                    totals (va-budget/calculate-totals-hakija answers-with-empty-field
+                                                              avustushaku
+                                                              budget-form)]
                 (should= 2000 (:total-needed totals))
                 (should= 1800 (:oph-share totals))))
 
           (it "Calculates corner cases correctly"
               (let [answers-with-empty-field {:value [{:key "coordination-costs-row.amount" :value "10"}
                                                       {:key "eu-programs-income-row.amount" :value "1"}]}
-                    totals (oph.va.budget/calculate-totals-hakija answers-with-empty-field
-                                                                  avustushaku
-                                                                  budget-form)]
+                    totals (va-budget/calculate-totals-hakija answers-with-empty-field
+                                                              avustushaku
+                                                              budget-form)]
                 (should= 9 (:total-needed totals))
                 (should= 8 (:oph-share totals))))
 
           (it "Calculates budget with floating self-financing amount"
-              (let [totals (oph.va.budget/calculate-totals-hakija (conj-answers complete-valid-answers
-                                                                                {:key "self-financing-amount"
-                                                                                 :value "2300"})
-                                                                  avustushaku
-                                                                  budget-form-with-self-financing-amount)]
+              (let [totals (va-budget/calculate-totals-hakija (conj-answers complete-valid-answers
+                                                                            {:key "self-financing-amount"
+                                                                             :value "2300"})
+                                                              avustushaku
+                                                              budget-form-with-self-financing-amount)]
                 (should= 12000 (:total-needed totals))
                 (should= 9700 (:oph-share totals))))
 
           (it "Fallbacks to minimum self-financing amount if self-financing amount answer is too small"
-              (let [totals (oph.va.budget/calculate-totals-hakija (conj-answers complete-valid-answers
-                                                                                {:key "self-financing-amount"
-                                                                                 :value "900"})
-                                                                  avustushaku
-                                                                  budget-form-with-self-financing-amount)]
+              (let [totals (va-budget/calculate-totals-hakija (conj-answers complete-valid-answers
+                                                                            {:key "self-financing-amount"
+                                                                             :value "900"})
+                                                              avustushaku
+                                                              budget-form-with-self-financing-amount)]
                 (should= 12000 (:total-needed totals))
                 (should= 10800 (:oph-share totals))))
 
           (it "Fallbacks to minimum self-financing amount if self-financing amount answer is invalid"
-              (let [totals (oph.va.budget/calculate-totals-hakija (conj-answers complete-valid-answers
-                                                                                {:key "self-financing-amount"
-                                                                                 :value "garbage"})
-                                                                  avustushaku
-                                                                  budget-form-with-self-financing-amount)]
+              (let [totals (va-budget/calculate-totals-hakija (conj-answers complete-valid-answers
+                                                                            {:key "self-financing-amount"
+                                                                             :value "garbage"})
+                                                              avustushaku
+                                                              budget-form-with-self-financing-amount)]
                 (should= 12000 (:total-needed totals))
                 (should= 10800 (:oph-share totals))))
 
           (it "Fallbacks to minimum self-financing amount if there's no self-financing amount answer"
-              (let [totals (oph.va.budget/calculate-totals-hakija complete-valid-answers
-                                                                  avustushaku
-                                                                  budget-form-with-self-financing-amount)]
+              (let [totals (va-budget/calculate-totals-hakija complete-valid-answers
+                                                              avustushaku
+                                                              budget-form-with-self-financing-amount)]
                 (should= 12000 (:total-needed totals))
                 (should= 10800 (:oph-share totals))))
 
           (it "Finds self-financing amount field if budget summary is not last field inside budget field"
-              (let [totals (oph.va.budget/calculate-totals-hakija (conj-answers complete-valid-answers
-                                                                                {:key "self-financing-amount"
-                                                                                 :value "2300"})
-                                                                  avustushaku
-                                                                  budget-form-with-summary-not-last)]
+              (let [totals (va-budget/calculate-totals-hakija (conj-answers complete-valid-answers
+                                                                            {:key "self-financing-amount"
+                                                                             :value "2300"})
+                                                              avustushaku
+                                                              budget-form-with-summary-not-last)]
                 (should= 12000 (:total-needed totals))
                 (should= 9700 (:oph-share totals))))
 )
 
 (describe "Budget calculation for virkailija"
 
-          (tags :server)
+          (tags :budget)
 
           (it "Calculates budget with fixed self-financing percentage and detailed-costs"
-              (let [totals (oph.va.budget/calculate-totals-virkailija complete-valid-answers
-                                                                      avustushaku
-                                                                      budget-form
-                                                                      {}
-                                                                      true
-                                                                      -9999)]
+              (let [totals (va-budget/calculate-totals-virkailija complete-valid-answers
+                                                                  avustushaku
+                                                                  budget-form
+                                                                  {}
+                                                                  true
+                                                                  -9999)]
                 (should= 12000 (:total-needed totals))
                 (should= 10800 (:oph-share totals))))
 
           (it "Calculates budget with floating self-financing percentage and detailed-costs"
-              (let [totals (oph.va.budget/calculate-totals-virkailija complete-valid-answers
-                                                                      avustushaku
-                                                                      budget-form-with-self-financing-amount
-                                                                      {:budget_oph_share 7236
-                                                                       :budget_total     10000}
-                                                                      true
-                                                                      -9999)]
+              (let [totals (va-budget/calculate-totals-virkailija complete-valid-answers
+                                                                  avustushaku
+                                                                  budget-form-with-self-financing-amount
+                                                                  {:budget_oph_share 7236
+                                                                   :budget_total     10000}
+                                                                  true
+                                                                  -9999)]
                 (should= 12000 (:total-needed totals))
                 (should= 8683 (:oph-share totals))))
 
           (it "Calculates budget with fixed self-financing percentage and granted-costs"
-              (let [totals (oph.va.budget/calculate-totals-virkailija complete-valid-answers
-                                                                      avustushaku
-                                                                      budget-form
-                                                                      {}
-                                                                      false
-                                                                      11200)]
+              (let [totals (va-budget/calculate-totals-virkailija complete-valid-answers
+                                                                  avustushaku
+                                                                  budget-form
+                                                                  {}
+                                                                  false
+                                                                  11200)]
                 (should= 9200 (:total-needed totals))
                 (should= 8280 (:oph-share totals))))
 
           (it "Calculates budget with floating self-financing percentage and granted-costs"
-              (let [totals (oph.va.budget/calculate-totals-virkailija complete-valid-answers
-                                                                      avustushaku
-                                                                      budget-form-with-self-financing-amount
-                                                                      {:budget_oph_share 7267
-                                                                       :budget_total     10000}
-                                                                      false
-                                                                      11200)]
+              (let [totals (va-budget/calculate-totals-virkailija complete-valid-answers
+                                                                  avustushaku
+                                                                  budget-form-with-self-financing-amount
+                                                                  {:budget_oph_share 7267
+                                                                   :budget_total     10000}
+                                                                  false
+                                                                  11200)]
                 (should= 9200 (:total-needed totals))
                 (should= 6685 (:oph-share totals)))))
 
