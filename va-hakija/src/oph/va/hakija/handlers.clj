@@ -56,19 +56,20 @@
                                                     "hakemus"
                                                     nil
                                                     budget-totals)]
-        (let [validation (validation/validate-form form answers {})
-              language (keyword (-> new-hakemus :hakemus :language))
-              avustushaku-title (-> avustushaku-content :name language)
-              avustushaku-duration (->> avustushaku-content
-                                        :duration)
-              avustushaku-start-date (->> avustushaku-duration
-                                          :start
+          (let [validation (merge (validation/validate-form form answers {})
+                                  (va-budget/validate-budget-hakija answers budget-totals form))
+                language (keyword (-> new-hakemus :hakemus :language))
+                avustushaku-title (-> avustushaku-content :name language)
+                avustushaku-duration (->> avustushaku-content
+                                          :duration)
+                avustushaku-start-date (->> avustushaku-duration
+                                            :start
+                                            (datetime/parse))
+                avustushaku-end-date (->> avustushaku-duration
+                                          :end
                                           (datetime/parse))
-              avustushaku-end-date (->> avustushaku-duration
-                                        :end
-                                        (datetime/parse))
-              email (find-answer-value answers "primary-email")
-              user-key (-> new-hakemus :hakemus :user_key)]
+                email (find-answer-value answers "primary-email")
+                user-key (-> new-hakemus :hakemus :user_key)]
             (va-email/send-new-hakemus-message! language
                                                 [email]
                                                 haku-id
@@ -120,10 +121,11 @@
         submission-version (:version submission)
         answers (:answers submission)
         attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
-        validation (validation/validate-form form answers attachments)]
+        budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+        validation (merge (validation/validate-form form answers attachments)
+                          (va-budget/validate-budget-hakija answers budget-totals form))]
     (if (= (:status hakemus) "new")
-      (let [budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
-            verified-hakemus (va-db/verify-hakemus haku-id
+      (let [verified-hakemus (va-db/verify-hakemus haku-id
                                                    hakemus-id
                                                    submission-id
                                                    submission-version
@@ -142,8 +144,9 @@
     (if (every? empty? (vals security-validation))
       (if (= base-version (:version hakemus))
         (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
-              validation (validation/validate-form form answers attachments)
               budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+              validation (merge (validation/validate-form form answers attachments)
+                                (va-budget/validate-budget-hakija answers budget-totals form))
               updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
               updated-hakemus (va-db/update-submission haku-id
                                                        hakemus-id
@@ -165,9 +168,10 @@
     (if (every? empty? (vals security-validation))
       (if (= base-version (:version hakemus))
         (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
-              validation (validation/validate-form form answers attachments)
-              updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
               budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+              validation (merge (validation/validate-form form answers attachments)
+                                (va-budget/validate-budget-hakija answers budget-totals form))
+              updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
               updated-hakemus (va-db/update-submission haku-id
                                                        hakemus-id
                                                        (:form_submission_id hakemus)
@@ -185,13 +189,14 @@
         form (form-db/get-form form-id)
         hakemus (va-db/get-hakemus hakemus-id)
         attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
-        validation (validation/validate-form form answers attachments)]
+        budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+        validation (merge (validation/validate-form form answers attachments)
+                          (va-budget/validate-budget-hakija answers budget-totals form))]
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
-              budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
               submitted-hakemus (va-db/submit-hakemus haku-id
                                                       hakemus-id
                                                       submission-id
@@ -210,14 +215,15 @@
         form (form-db/get-form form-id)
         hakemus (va-db/get-hakemus hakemus-id)
         attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
-        validation (validation/validate-form form answers attachments)]
+        budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+        validation (merge (validation/validate-form form answers attachments)
+                          (va-budget/validate-budget-hakija answers budget-totals form))]
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
               parent_id (:parent_id hakemus)
-              budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
               submitted-hakemus (va-db/submit-hakemus haku-id
                                                       hakemus-id
                                                       submission-id
@@ -237,13 +243,14 @@
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
         attachments (va-db/get-attachments hakemus-id (:id hakemus))
-        validation (validation/validate-form form answers attachments)]
+        budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+        validation (merge (validation/validate-form form answers attachments)
+                          (va-budget/validate-budget-hakija answers budget-totals form))]
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
-              budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
               submitted-hakemus (va-db/submit-hakemus haku-id
                                                       hakemus-id
                                                       submission-id
@@ -266,13 +273,14 @@
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
         attachments (va-db/get-attachments hakemus-id (:id hakemus))
-        validation (validation/validate-form form answers attachments)]
+        budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+        validation (merge (validation/validate-form form answers attachments)
+                          (va-budget/validate-budget-hakija answers budget-totals form))]
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
-              budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
               submitted-hakemus (va-db/submit-hakemus haku-id
                                                       hakemus-id
                                                       submission-id

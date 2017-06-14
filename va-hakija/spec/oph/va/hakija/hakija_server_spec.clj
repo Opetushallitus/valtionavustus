@@ -88,6 +88,21 @@
            {:key "other-public-financing-income-row.amount" :value "10" :fieldType "moneyField"}
            {:key "private-financing-income-row.amount" :value "10" :fieldType "moneyField"}]})
 
+(def negative-budget-answers
+  (update-answers valid-answers
+                  "coordination-costs-row.amount"            "10"
+                  "personnel-costs-row.amount"               "0"
+                  "service-purchase-costs-row.amount"        "0"
+                  "material-costs-row.amount"                "0"
+                  "rent-costs-row.amount"                    "0"
+                  "equipment-costs-row.amount"               "0"
+                  "steamship-costs-row.amount"               "0"
+                  "other-costs-row.amount"                   "0"
+                  "project-incomes-row.amount"               "10"
+                  "eu-programs-income-row.amount"            "0"
+                  "other-public-financing-income-row.amount" "0"
+                  "private-financing-income-row.amount"      "0"))
+
 (def most-required-missing
   {:project-begin                                        []
    :applicant-name                                       [{:error "required"}]
@@ -354,6 +369,26 @@
           (should= 200 status)
           (should= 2030 (:budget_total posted-hakemus))
           (should= 1522 (:budget_oph_share posted-hakemus))))
+
+  (it "Validates budget on put (creation)"
+      (let [{:keys [status json]} (put-hakemus negative-budget-answers)
+            validation-errors (:validation-errors json)]
+        (should= 200 status)
+        (should= [{:error "negative-budget"}] (:budget validation-errors))))
+
+  (it "Validates budget on post (update)"
+      (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+            {:keys [status body]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version) negative-budget-answers)
+            validation-errors (:validation-errors (json->map body))]
+        (should= 200 status)
+        (should= [{:error "negative-budget"}] (:budget validation-errors))))
+
+  (it "Validates budget on submit"
+      (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+            {:keys [status body]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version "/submit") negative-budget-answers)
+            validation-errors (json->map body)]
+        (should= 400 status)
+        (should= [{:error "negative-budget"}] (:budget validation-errors))))
 
   (it "Stores organization and project names to database on put (creation)"
       (let [{:keys [hakemus-id status]} (put-hakemus valid-answers)
