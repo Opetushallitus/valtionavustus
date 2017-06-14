@@ -258,4 +258,122 @@
                 (should= 9200 (:total-needed totals))
                 (should= 6685 (:oph-share totals)))))
 
+(describe "Budget validation for hakija"
+
+          (tags :budget :validation)
+
+          (it "Returns empty map for valid answers without budget in form"
+              (let [form       {:content []}
+                    totals     (va-budget/calculate-totals-hakija complete-valid-answers
+                                                                  avustushaku
+                                                                  form)
+                    validation (va-budget/validate-budget-hakija complete-valid-answers
+                                                                 totals
+                                                                 form)]
+                (should= {} validation)))
+
+          (it "Validates valid answers with success"
+              (let [totals     (va-budget/calculate-totals-hakija complete-valid-answers
+                                                                  avustushaku
+                                                                  budget-form)
+                    validation (va-budget/validate-budget-hakija complete-valid-answers
+                                                                 totals
+                                                                 budget-form)]
+                (should= {:budget []} validation)))
+
+          (it "Validates empty answers with failure"
+              (let [empty-answers {:value []}
+                    totals        (va-budget/calculate-totals-hakija empty-answers
+                                                                     avustushaku
+                                                                     budget-form)
+                    validation    (va-budget/validate-budget-hakija empty-answers
+                                                                    totals
+                                                                    budget-form)]
+                (should= {:budget [{:error "negative-budget"}]} validation)))
+
+          (it "Validates answers with negative budget total with failure"
+              (let [answers       {:value [{:key "personnel-costs-row.amount" :value "1000"}
+                                           {:key "project-incomes-row.amount" :value "1001"}]}
+                    totals        (va-budget/calculate-totals-hakija answers
+                                                                     avustushaku
+                                                                     budget-form)
+                    validation    (va-budget/validate-budget-hakija answers
+                                                                    totals
+                                                                    budget-form)]
+                (should= {:budget [{:error "negative-budget"}]} validation)))
+
+          (it "Validates answers with zero budget total with failure"
+              (let [answers       {:value [{:key "personnel-costs-row.amount" :value "1000"}
+                                           {:key "project-incomes-row.amount" :value "1000"}]}
+                    totals        (va-budget/calculate-totals-hakija answers
+                                                                     avustushaku
+                                                                     budget-form)
+                    validation    (va-budget/validate-budget-hakija answers
+                                                                    totals
+                                                                    budget-form)]
+                (should= {:budget [{:error "negative-budget"}]} validation)))
+
+          (it "Validates answers with self-financing amount greater than minimum self-financing with success"
+              (let [answers    (conj-answers complete-valid-answers
+                                             {:key "self-financing-amount"
+                                              :value "1600"})
+                    totals     (va-budget/calculate-totals-hakija answers
+                                                                  avustushaku
+                                                                  budget-form-with-self-financing-amount)
+                    validation (va-budget/validate-budget-hakija answers
+                                                                 totals
+                                                                 budget-form-with-self-financing-amount)]
+                (should= 12000 (:total-needed totals))
+                (should= 10400 (:oph-share totals))
+                (should= {:budget []} validation)))
+
+          (it "Validates answers with self-financing amount equal to minimum self-financing with success"
+              (let [answers    (conj-answers complete-valid-answers
+                                             {:key "self-financing-amount"
+                                              :value "1200"})
+                    totals     (va-budget/calculate-totals-hakija answers
+                                                                  avustushaku
+                                                                  budget-form-with-self-financing-amount)
+                    validation (va-budget/validate-budget-hakija answers
+                                                                 totals
+                                                                 budget-form-with-self-financing-amount)]
+                (should= 12000 (:total-needed totals))
+                (should= 10800 (:oph-share totals))
+                (should= {:budget []} validation)))
+
+          (it "Validates answers with self-financing amount less than minimum self-financing with failure"
+              (let [answers    (conj-answers complete-valid-answers
+                                             {:key "self-financing-amount"
+                                              :value "800"})
+                    totals     (va-budget/calculate-totals-hakija answers
+                                                                  avustushaku
+                                                                  budget-form-with-self-financing-amount)
+                    validation (va-budget/validate-budget-hakija answers
+                                                                 totals
+                                                                 budget-form-with-self-financing-amount)]
+                (should= 12000 (:total-needed totals))
+                (should= 10800 (:oph-share totals))
+                (should= {:budget [{:error "insufficient-self-financing"}]} validation)))
+
+          (it "Validates answers with missing self-financing amount with failure"
+              (let [totals     (va-budget/calculate-totals-hakija complete-valid-answers
+                                                                  avustushaku
+                                                                  budget-form-with-self-financing-amount)
+                    validation (va-budget/validate-budget-hakija complete-valid-answers
+                                                                 totals
+                                                                 budget-form-with-self-financing-amount)]
+                (should= 12000 (:total-needed totals))
+                (should= 10800 (:oph-share totals))
+                (should= {:budget [{:error "insufficient-self-financing"}]} validation)))
+
+          (it "Skips self-financing validation if budget is negative"
+              (let [answers       {:value []}
+                    totals        (va-budget/calculate-totals-hakija answers
+                                                                     avustushaku
+                                                                     budget-form-with-self-financing-amount)
+                    validation    (va-budget/validate-budget-hakija answers
+                                                                    totals
+                                                                    budget-form-with-self-financing-amount)]
+                (should= {:budget [{:error "negative-budget"}]} validation))))
+
 (run-specs)

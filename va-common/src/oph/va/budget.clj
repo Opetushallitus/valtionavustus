@@ -56,6 +56,10 @@
            (formutil/find-fields* #(= "vaSelfFinancingField" (:fieldType %)))
            first))
 
+(defn- find-self-financing-answer-value [answers self-financing-field]
+  (let [self-financing-field-id (:id self-financing-field)]
+    (sanitise (formutil/find-answer-value answers self-financing-field-id))))
+
 (defn- select-self-financing-amount-virkailija [hakemus self-financing-percentage total-sum budget-field-children _]
   (if (:id (find-self-financing-field budget-field-children))
     (let [hakemus-oph-share (:budget_oph_share hakemus)
@@ -66,8 +70,8 @@
 
 (defn- select-self-financing-amount-hakija [self-financing-percentage total-sum budget-field-children answers]
   (let [min-self-financing-amount (percentage-share-rounded-up-of self-financing-percentage total-sum)]
-    (if-let [self-financing-field-id (:id (find-self-financing-field budget-field-children))]
-      (let [self-financing-amount (sanitise (formutil/find-answer-value answers self-financing-field-id))]
+    (if-some [self-financing-field (find-self-financing-field budget-field-children)]
+      (let [self-financing-amount (find-self-financing-answer-value answers self-financing-field)]
         (max self-financing-amount min-self-financing-amount))
       min-self-financing-amount)))
 
@@ -117,3 +121,31 @@
                     true
                     0
                     select-self-financing-amount-hakija))
+
+(defn- validate-total-needed-is-positive [budget-totals]
+  (if (<= (:total-needed budget-totals) 0)
+    [{:error "negative-budget"}]
+    []))
+
+(defn- validate-self-financing-is-sufficient [answers budget-field budget-totals]
+  (let [total-needed (:total-needed budget-totals)
+        valid-result []]
+    (if (> total-needed 0)
+      (if-some [self-financing-field (find-self-financing-field (:children budget-field))]
+        (let [oph-share               (:oph-share budget-totals)
+              self-financing-amount   (find-self-financing-answer-value answers self-financing-field)
+              expected-self-financing (- total-needed oph-share)]
+          (if (< self-financing-amount expected-self-financing)
+            [{:error "insufficient-self-financing"}]
+            valid-result))
+        valid-result)
+      valid-result)))
+
+(defn validate-budget-hakija [answers budget-totals form]
+  (if-some [budget-field (-> (:content form)
+                             find-budget-fields
+                             first)]
+    (let [field-id (keyword (:id budget-field))]
+      {field-id (concat (validate-total-needed-is-positive budget-totals)
+                        (validate-self-financing-is-sufficient answers budget-field budget-totals))})
+    {}))
