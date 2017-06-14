@@ -168,6 +168,15 @@
                 (should= 9 (:total-needed totals))
                 (should= 8 (:oph-share totals))))
 
+          (it "Returns zero OPH share if budget is negative"
+              (let [answers {:value [{:key "coordination-costs-row.amount" :value "1000"}
+                                     {:key "eu-programs-income-row.amount" :value "1100"}]}
+                    totals (va-budget/calculate-totals-hakija answers
+                                                              avustushaku
+                                                              budget-form)]
+                (should= -100 (:total-needed totals))
+                (should= 0 (:oph-share totals))))
+
           (it "Calculates budget with floating self-financing amount"
               (let [totals (va-budget/calculate-totals-hakija (conj-answers complete-valid-answers
                                                                             {:key "self-financing-amount"
