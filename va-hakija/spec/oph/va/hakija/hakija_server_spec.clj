@@ -451,7 +451,7 @@
         (should= "ended" (:phase json))))
 )
 
-(describe "HTTP server befere haku has started"
+(describe "HTTP server before haku has started"
 
   (tags :server)
 
