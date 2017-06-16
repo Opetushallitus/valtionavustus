@@ -4,7 +4,7 @@
   (:require [environ.core :refer [env]]
             [speclj.core :refer :all]))
 
-(describe "va-hakija JavaScript Mocha unit tests"
+(describe "va-common JavaScript Mocha unit tests"
   (tags :mocha)
 
   (it "succeeds"
