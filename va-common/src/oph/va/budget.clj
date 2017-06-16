@@ -1,20 +1,15 @@
 (ns oph.va.budget
   (:use [clojure.tools.trace :only [trace]])
-  (:require [oph.soresu.form.formutil :as formutil]
+  (:require [oph.soresu.common.math :as math]
+            [oph.soresu.form.formutil :as formutil]
             [clojure.core.reducers :as r]))
-
-(defn- sanitise [raw-answer-value]
-  (try
-    (Integer/parseInt raw-answer-value)
-    (catch Exception e
-      0)))
 
 (defn amount-field-of [budget-item]
   (nth (:children budget-item) 1))
 
 (defn read-amount [budget-item answers]
   (let [raw-answer-value (formutil/find-answer-value answers (:id (amount-field-of budget-item)))
-        numeric-value (sanitise raw-answer-value)]
+        numeric-value (math/parse-integer raw-answer-value)]
     numeric-value))
 
 (defn read-amount-income [budget-item answers only-incomes]
@@ -58,7 +53,7 @@
 
 (defn- find-self-financing-answer-value [answers self-financing-field]
   (let [self-financing-field-id (:id self-financing-field)]
-    (sanitise (formutil/find-answer-value answers self-financing-field-id))))
+    (math/parse-integer (formutil/find-answer-value answers self-financing-field-id))))
 
 (defn- select-self-financing-amount-virkailija [hakemus self-financing-percentage total-sum budget-field-children _]
   (if (:id (find-self-financing-field budget-field-children))
