@@ -27,6 +27,17 @@
   (-> (partial formutil/has-field-type? "vaSummingBudgetElement")
       (filter children)))
 
+(defn- find-budget-summary-field [budget-field-children]
+  (->> budget-field-children
+       (filter (partial formutil/has-field-type? "vaBudgetSummaryElement"))
+       first))
+
+(defn find-self-financing-field [budget-field-children]
+  (if-some [budget-summary-field (find-budget-summary-field budget-field-children)]
+    (some->> (:children budget-summary-field)
+             (formutil/find-fields* (partial formutil/has-field-type? "vaSelfFinancingField"))
+             first)))
+
 (defn- find-budget-item-elements [children]
   (-> (fn [summing-field] (:children summing-field))
       (map children)
@@ -44,12 +55,6 @@
 
 (defn- percentage-share-rounded-up-of [percentage total]
   (share-rounded-up-of (/ percentage 100) total))
-
-(defn find-self-financing-field [budget-field-children]
-  (some->> budget-field-children
-           (filter #(= "vaBudgetSummaryElement" (:fieldType %)))
-           (formutil/find-fields* #(= "vaSelfFinancingField" (:fieldType %)))
-           first))
 
 (defn- find-self-financing-answer-value [answers self-financing-field]
   (let [self-financing-field-id (:id self-financing-field)]
@@ -137,10 +142,12 @@
       valid-result)))
 
 (defn validate-budget-hakija [answers budget-totals form]
-  (if-some [budget-field (-> (:content form)
-                             find-budget-fields
-                             first)]
+  (if-some [budget-field (some-> (:content form)
+                                 find-budget-fields
+                                 first)]
     (let [field-id (keyword (:id budget-field))]
-      {field-id (concat (validate-total-needed-is-positive budget-totals)
-                        (validate-self-financing-is-sufficient answers budget-field budget-totals))})
+      (if (find-budget-summary-field (:children budget-field))
+        {field-id (concat (validate-total-needed-is-positive budget-totals)
+                          (validate-self-financing-is-sufficient answers budget-field budget-totals))}
+        {field-id []}))
     {}))

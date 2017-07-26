@@ -1,7 +1,17 @@
 (ns oph.va.budget-spec
   (:require [speclj.core :refer :all]
-            [oph.soresu.form.formutil :refer [transform-form-content]]
+            [oph.soresu.form.formutil :as formutil]
             [oph.va.budget :as va-budget]))
+
+(defn- transform-budget-children [budget-form transform-fn]
+  (formutil/transform-form-content budget-form
+                                   (fn [field]
+                                     (if (= "vaBudget" (:fieldType field))
+                                       (update field :children transform-fn)
+                                       field))))
+
+(defn- conj-answers [answers answer]
+  (update answers :value #(conj % answer)))
 
 (def budget-form
   {:id 1
@@ -71,37 +81,25 @@
          :fieldType "vaBudget"}]
      :fieldType "theme"}] })
 
-(def budget-form-with-self-financing-amount
-  (let [budget-summary {:id         "budget-summary",
-                        :fieldClass "wrapperElement",
-                        :fieldType  "vaBudgetSummaryElement",
-                        :children [{:id        "self-financing-amount",
-                                   :fieldClass "formField",
-                                   :fieldType  "vaSelfFinancingField"}]}]
-    (transform-form-content budget-form
-                            (fn [field]
-                              (if (= "vaBudget" (:fieldType field))
-                                (update field
-                                        :children
-                                        (fn [children]
-                                          (conj children budget-summary)))
-                                field)))))
+(def budget-summary-element
+  {:id         "budget-summary"
+   :fieldClass "wrapperElement"
+   :fieldType  "vaBudgetSummaryElement"})
 
-(def budget-form-with-summary-not-last
-  (let [others {:id         "others",
-                :fieldClass "wrapperElement",
-                :fieldType  "fieldset",
-                :children   [{:id         "other",
-                              :fieldClass "formField",
-                              :fieldType  "textField"}]}]
-    (transform-form-content budget-form-with-self-financing-amount
-                            (fn [field]
-                              (if (= "vaBudget" (:fieldType field))
-                                (update field
-                                        :children
-                                        (fn [children]
-                                          (conj children others)))
-                                field)))))
+(def budget-form-with-summary
+  (transform-budget-children budget-form
+                             (fn [children]
+                               (conj children budget-summary-element))))
+
+(def budget-form-with-self-financing-amount
+  (let [budget-summary (assoc budget-summary-element
+                              :children
+                              [{:id         "self-financing-amount"
+                                :fieldClass "formField"
+                                :fieldType  "vaSelfFinancingField"}])]
+    (transform-budget-children budget-form
+                               (fn [children]
+                                 (conj children budget-summary)))))
 
 (def complete-valid-answers
   {:value [
@@ -118,9 +116,6 @@
     {:key "organization" :value "Testiorganisaatio"}]})
 
 (def avustushaku {:content {:self-financing-percentage 10}})
-
-(defn conj-answers [answers answer]
-  (update answers :value #(conj % answer)))
 
 (describe "Budget calculation for hakija"
 
@@ -212,14 +207,22 @@
                 (should= 10800 (:oph-share totals))))
 
           (it "Finds self-financing amount field if budget summary is not last field inside budget field"
-              (let [totals (va-budget/calculate-totals-hakija (conj-answers complete-valid-answers
+              (let [other-field {:id         "others"
+                                 :fieldClass "wrapperElement"
+                                 :fieldType  "fieldset"
+                                 :children   [{:id         "other"
+                                               :fieldClass "formField"
+                                               :fieldType  "textField"}]}
+                    form        (transform-budget-children budget-form-with-self-financing-amount
+                                                           (fn [children]
+                                                             (conj children other-field)))
+                    totals      (va-budget/calculate-totals-hakija (conj-answers complete-valid-answers
                                                                             {:key "self-financing-amount"
                                                                              :value "2300"})
                                                               avustushaku
-                                                              budget-form-with-summary-not-last)]
+                                                              form)]
                 (should= 12000 (:total-needed totals))
-                (should= 9700 (:oph-share totals))))
-)
+                (should= 9700 (:oph-share totals)))))
 
 (describe "Budget calculation for virkailija"
 
@@ -271,7 +274,7 @@
 
           (tags :budget :validation)
 
-          (it "Returns empty map for valid answers without budget in form"
+          (it "Returns empty map for valid answers for form without budget"
               (let [form       {:content []}
                     totals     (va-budget/calculate-totals-hakija complete-valid-answers
                                                                   avustushaku
@@ -279,28 +282,59 @@
                     validation (va-budget/validate-budget-hakija complete-valid-answers
                                                                  totals
                                                                  form)]
+                (should= nil totals)
                 (should= {} validation)))
 
-          (it "Validates valid answers with success"
+          (it "Validates valid answers for budget with summary with success"
               (let [totals     (va-budget/calculate-totals-hakija complete-valid-answers
                                                                   avustushaku
-                                                                  budget-form)
+                                                                  budget-form-with-summary)
                     validation (va-budget/validate-budget-hakija complete-valid-answers
                                                                  totals
-                                                                 budget-form)]
+                                                                 budget-form-with-summary)]
+                (should= 12000 (:total-needed totals))
+                (should= 10800 (:oph-share totals))
                 (should= {:budget []} validation)))
 
-          (it "Validates empty answers with failure"
+          (it "Validates empty answers for budget with summary with failure"
               (let [empty-answers {:value []}
                     totals        (va-budget/calculate-totals-hakija empty-answers
                                                                      avustushaku
-                                                                     budget-form)
+                                                                     budget-form-with-summary)
                     validation    (va-budget/validate-budget-hakija empty-answers
                                                                     totals
-                                                                    budget-form)]
+                                                                    budget-form-with-summary)]
+                (should= 0 (:total-needed totals))
+                (should= 0 (:oph-share totals))
                 (should= {:budget [{:error "negative-budget"}]} validation)))
 
-          (it "Validates answers with negative budget total with failure"
+          (it "Validates answers with negative budget total for budget with summary with failure"
+              (let [answers       {:value [{:key "personnel-costs-row.amount" :value "1000"}
+                                           {:key "project-incomes-row.amount" :value "1001"}]}
+                    totals        (va-budget/calculate-totals-hakija answers
+                                                                     avustushaku
+                                                                     budget-form-with-summary)
+                    validation    (va-budget/validate-budget-hakija answers
+                                                                    totals
+                                                                    budget-form-with-summary)]
+                (should= -1 (:total-needed totals))
+                (should= 0 (:oph-share totals))
+                (should= {:budget [{:error "negative-budget"}]} validation)))
+
+          (it "Validates answers with zero budget total for budget with summary with failure"
+              (let [answers       {:value [{:key "personnel-costs-row.amount" :value "1000"}
+                                           {:key "project-incomes-row.amount" :value "1000"}]}
+                    totals        (va-budget/calculate-totals-hakija answers
+                                                                     avustushaku
+                                                                     budget-form-with-summary)
+                    validation    (va-budget/validate-budget-hakija answers
+                                                                    totals
+                                                                    budget-form-with-summary)]
+                (should= 0 (:total-needed totals))
+                (should= 0 (:oph-share totals))
+                (should= {:budget [{:error "negative-budget"}]} validation)))
+
+          (it "Skips negative-budget validation for answers with negative budget total if budget has no summary"
               (let [answers       {:value [{:key "personnel-costs-row.amount" :value "1000"}
                                            {:key "project-incomes-row.amount" :value "1001"}]}
                     totals        (va-budget/calculate-totals-hakija answers
@@ -309,18 +343,21 @@
                     validation    (va-budget/validate-budget-hakija answers
                                                                     totals
                                                                     budget-form)]
-                (should= {:budget [{:error "negative-budget"}]} validation)))
+                (should= -1 (:total-needed totals))
+                (should= 0 (:oph-share totals))
+                (should= {:budget []} validation)))
 
-          (it "Validates answers with zero budget total with failure"
-              (let [answers       {:value [{:key "personnel-costs-row.amount" :value "1000"}
-                                           {:key "project-incomes-row.amount" :value "1000"}]}
+          (it "Skips negative-budget validation for answers with zero budget total if budget has no summary"
+              (let [answers       {:value []}
                     totals        (va-budget/calculate-totals-hakija answers
                                                                      avustushaku
                                                                      budget-form)
                     validation    (va-budget/validate-budget-hakija answers
                                                                     totals
                                                                     budget-form)]
-                (should= {:budget [{:error "negative-budget"}]} validation)))
+                (should= 0 (:total-needed totals))
+                (should= 0 (:oph-share totals))
+                (should= {:budget []} validation)))
 
           (it "Validates answers with self-financing amount greater than minimum self-financing with success"
               (let [answers    (conj-answers complete-valid-answers
