@@ -45,7 +45,7 @@
             expect(applicationPage.classAttributeOf("organization")).to.include('error')
           })
           it("kerrotaan automaattitallennuksesta", function() {
-            expect(applicationPage.saveInfo()).to.equal("Kaikki muutokset tallennettu")
+            expect(applicationPage.formSaveMessage().text()).to.match(/tallennettu/i)
           })
           it("kerrotaan puuttuvasta kentästä", function() {
             expect(applicationPage.getInput("organization").value()).to.equal('')
@@ -79,7 +79,7 @@
             it("näkyy haun nimi oikein", function() {
               expect(applicationPage.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
             })
-            it("näkyy validointi virheet", function() {
+            it("näkyy validointivirheet", function() {
               expect(applicationPage.classAttributeOf("organization")).to.include('error')
             })
             it("kerrotaan puuttuvasta kentästä", function() {
@@ -89,6 +89,9 @@
               expect(applicationPage.getInput("project-description.project-description-1.goal").value()).to.equal('Hankkeen ensimmäinen tavoite.')
               expect(applicationPage.getInput("project-description.project-description-1.activity").value()).to.equal('Hankkeen ensimmäinen toiminta.')
               expect(applicationPage.getInput("project-description.project-description-1.result").value()).to.equal('Hankkeen ensimmäinen tulos.')
+            })
+            it("näkyy ilmoitus että lomaketta ei ole lähetetty", function() {
+              expect(applicationPage.formNotSentMessage().text()).to.equal("Hakemusta ei ole lähetetty")
             })
             it("lähetys on disabloitu", function() {
               expect(applicationPage.submitButton().isEnabled()).to.equal(false)
@@ -116,6 +119,9 @@
               })
               it("lähetä nappi disabloituu", function() {
                 expect(applicationPage.submitButton().isEnabled()).to.equal(false)
+              })
+              it("ei näy ilmoitusta että lomaketta ei ole lähetetty", function() {
+                expect(applicationPage.formNotSentMessage().length).to.equal(0)
               })
               it("kerrotaan, että hakemus on lähetetty", function() {
                 expect(applicationPage.submitButton().text()).to.equal("Hakemus lähetetty")

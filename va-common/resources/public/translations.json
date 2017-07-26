@@ -21,12 +21,16 @@
       "sv": "Mellanredovisning"
     },
     "saving": {
-      "fi": "Tallennetaan...",
-      "sv": "Sparar..."
+      "fi": "Tallennetaan…",
+      "sv": "Sparar…"
     },
     "saved": {
-      "fi": "Kaikki muutokset tallennettu",
-      "sv": "Alla ändringar sparade"
+      "fi": "Tallennettu {{timestamp}}",
+      "sv": "Sparat {{timestamp}}"
+    },
+    "hakemus-not-submitted": {
+      "fi": "Hakemusta ei ole lähetetty",
+      "sv": "Ansökän inte sänt"
     },
     "submit": {
       "fi": "Lähetä käsiteltäväksi",

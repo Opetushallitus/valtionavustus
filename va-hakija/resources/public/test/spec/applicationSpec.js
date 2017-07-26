@@ -39,8 +39,11 @@
         it("kielen vaihto osoittaa ruotsiin", function() {
           expect(applicationPage.toggleLanguageButton().text()).to.deep.equal('På svenska')
         })
-        it("tallennus info on tyhjä", function() {
-          expect(applicationPage.saveInfo()).to.equal("")
+        it("ei näytetä tietoa tallennuksesta", function() {
+          expect(applicationPage.formSaveMessage().length).to.equal(0)
+        })
+        it("ei näytetä ilmoitusta että lomaketta ei ole lähetetty", function() {
+          expect(applicationPage.formNotSentMessage().length).to.equal(0)
         })
         it("ei valiteta vielä pakollisista kentästä", function() {
           expect(applicationPage.validationErrorsSummary()).to.equal("")
@@ -71,6 +74,12 @@
         )
         it("ei valiteta vielä muista pakollisista kentästä", function() {
           expect(applicationPage.validationErrorsSummary()).to.equal("")
+        })
+        it("näytetään tieto tallennuksesta", function() {
+          expect(applicationPage.formSaveMessage().text()).to.match(/tallennettu/i)
+        })
+        it("näytetään ilmoitus että lomaketta ei ole lähetetty", function() {
+          expect(applicationPage.formNotSentMessage().text()).to.equal("Hakemusta ei ole lähetetty")
         })
         it('lomake ei ole lähetettävissä', function() {
           expect(applicationPage.submitButton().isEnabled()).to.equal(false)

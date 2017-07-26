@@ -6,6 +6,7 @@
 (s/defschema Hakemus
   "Hakemus contains hakemus, last submission and server validation error info about it"
   {:id     (s/maybe s/Str)
+   (s/optional-key :created-at) s/Inst
    :version Long
    :version-date s/Inst
    :status HakemusStatus

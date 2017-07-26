@@ -34,7 +34,7 @@ function ApplicationPage() {
     waitAutoSave: function() {
       var errorBefore =  api.saveError()
       return wait.until(function() {
-        return pageApi.elementText("pending-changes") != "true" && "Kaikki muutokset tallennettu" === api.saveInfo() || api.saveError() !== errorBefore
+        return (pageApi.elementText("pending-changes") !== "true" && /tallennettu/i.test(api.formSaveMessage().text())) || api.saveError() !== errorBefore
       })()
     },
     submitButton: function() {
@@ -54,8 +54,11 @@ function ApplicationPage() {
         return api.submitButton().text() !== textBefore
       })()
     },
-    saveInfo: function() {
-      return applicationElement().find("#form-controls .info :visible").text()
+    formSaveMessage: function() {
+      return applicationElement().find("#form-controls .form-status .save-message")
+    },
+    formNotSentMessage: function() {
+      return applicationElement().find("#form-controls .form-status .not-sent-message")
     },
     saveError: function() {
       return applicationElement().find("#server-info .server-error:visible").text()

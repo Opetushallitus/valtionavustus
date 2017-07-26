@@ -34,6 +34,7 @@
 
 (defn- hakemus-ok-response [hakemus submission validation]
   (ok {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
+       :created-at (:created_at hakemus)
        :status (:status hakemus)
        :status-comment (:status_change_comment hakemus)
        :register-number (:register_number hakemus)
