@@ -2,7 +2,6 @@
 
 #topbar {
   width: 100%;
-  height: 120px;
   background-color: #fff;
   position: fixed;
   top: 0;
@@ -10,81 +9,101 @@
   z-index: 100;
 
   #logo {
-    margin: 20px 70px 0 20px;
-    float: left;
+    display: inline-block;
+    vertical-align: top;
+    margin: 20px 70px 20px 20px;
+  }
+
+  .topbar-right {
+    display: inline-block;
+    vertical-align: top;
+    margin: 25px 0 8px 0;
   }
 
   h1 {
-    margin: 39px 30px 0 0;
-    float: left;
+    display: inline-block;
+    vertical-align: middle;
+    width: 110px;
+    margin-right: 30px;
     font-size: 22px;
     font-weight: normal;
     text-transform: uppercase;
-    display: block;
-    text-align: right;
-    max-width: 300px;
   }
 
   #form-controls {
-    margin-top: 28px;
-    float: left;
+    display: inline-block;
+    vertical-align: middle;
     border-left: 1px solid @light-gray;
-    height: 58px;
     padding-left: 20px;
 
-    .status {
-      float: left;
-      width: 180px;
-      height: 42px;
-      margin-top: 5px;
-      margin-right: 20px;
-
-      .messages {
-        font-size: 13px;
-        color: @form-label-black;
-        position: relative;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-
-    #form-error-summary {
-      font-size: 13px;
-      padding-left: 200px;
-      clear: left;
-      float: left;
-      margin-right: 20px;
-      #validation-errors-summary{
-        margin-right: 10px;
-        position: relative;
-        &:before{
-          position: absolute;
-          right: -20px;
-          content:'|';
-          color:@light-gray;
-        }
-      }
-    }
-    .preview-link{
-      font-size: 13px;
-      float: right;
+    .form-control, #toggle-language, #preview-button {
+      display: inline-block;
+      vertical-align: middle;
     }
 
     button {
       margin-top: 5px;
     }
+
+    .form-control-button-tooltip {
+      top: ~"calc(100% + 6px)";
+      left: 50%;
+      margin-left: -316px;
+    }
   }
 
-  #server-info {
-    clear: both;
-    margin-left: 330px;
+  #form-save-status {
+    display: inline-block;
+    vertical-align: middle;
+    width: 180px;
+    height: 42px;
+    margin-right: 20px;
+
+    .messages {
+      font-size: 13px;
+      color: @form-label-black;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  .important-info {
+    display: inline-block;
+    vertical-align: top;
     color: @bright-red;
-    .environment {
-      text-transform: uppercase;
+    width: 340px;
+    margin-right: 20px;
+  }
+
+  #environment-info {
+    text-transform: uppercase;
+    margin-right: 10px;
+  }
+
+  #form-error-summary {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 13px;
+    margin-right: 20px;
+
+    .validation-errors-summary {
+      margin-right: 10px;
+      position: relative;
+
+      &:before {
+        position: absolute;
+        right: -20px;
+        content: '|';
+        color: @light-gray;
+      }
     }
-    .environment:after {
-      content: " ";
-    }
+  }
+
+  .preview-link {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 13px;
   }
 }
 

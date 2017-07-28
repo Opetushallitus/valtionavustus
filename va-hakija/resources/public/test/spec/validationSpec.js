@@ -199,8 +199,8 @@
               expect(errorCount).to.be.at.least(10)
               expect(applicationPage.validationErrorsSummary()).to.equal(errorCount + ' vastauksessa puutteita')
             })
-            it('virhekuvakset eivät ole näkyvissä', function() {
-              expect(applicationPage.validationErrors().length).to.equal(0)
+            it('virhekuvaukset eivät ole näkyvissä', function() {
+              expect(applicationPage.validationErrors().is(":hidden")).to.be.true
             })
           })
           describe('virheenyhteenvedossa', function() {
@@ -263,8 +263,8 @@
                 before(
                   applicationPage.validationErrorsButton().click
                 )
-                it('virhekuvakset eivät ole enää näkyvissä', function() {
-                  expect(applicationPage.validationErrors().length).to.equal(0)
+                it('virhekuvaukset eivät ole enää näkyvissä', function() {
+                  expect(applicationPage.validationErrors().is(":hidden")).to.be.true
                 })
               })
             })

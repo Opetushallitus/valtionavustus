@@ -55,25 +55,25 @@ function ApplicationPage() {
       })()
     },
     formSaveMessage: function() {
-      return applicationElement().find("#form-controls .form-status .save-message")
+      return applicationElement().find("#form-save-status .save-message")
     },
     formNotSentMessage: function() {
-      return applicationElement().find("#form-controls .form-status .not-sent-message")
+      return applicationElement().find("#form-save-status .not-sent-message")
     },
     saveError: function() {
-      return applicationElement().find("#server-info .server-error:visible").text()
+      return applicationElement().find("#server-error").text()
     },
     validationErrorsSummary: function() {
-      return applicationElement().find("#validation-errors-summary:not([hidden])").text()
+      return applicationElement().find("#form-error-summary .validation-errors-summary").text()
     },
     validationErrorsButton: function() {
-      return pageApi.createClickable(function() { return applicationElement().find("#validation-errors-summary") })
+      return pageApi.createClickable(function() { return applicationElement().find("#form-error-summary .validation-errors-summary") })
     },
     validationErrors: function() {
-      return applicationElement().find("#validation-errors:not([hidden])")
+      return applicationElement().find("#form-error-summary .validation-errors")
     },
     detailedValidationErrors: function() {
-      const errorMessageElements = applicationElement().find("#validation-errors").find('div.error')
+      const errorMessageElements = applicationElement().find("#form-error-summary .validation-errors").find('div.error')
       return _.map(errorMessageElements, function(element) { return S(element).text() })
     },
     toggleLanguage: function () {
