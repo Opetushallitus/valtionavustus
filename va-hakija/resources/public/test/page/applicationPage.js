@@ -32,19 +32,19 @@ function ApplicationPage() {
       return pageApi.elementText("entity-version")
     },
     waitAutoSave: function() {
-      var errorBefore =  api.saveError()
+      var errorBefore =  api.serverError()
       return wait.until(function() {
-        return (pageApi.elementText("pending-changes") !== "true" && /tallennettu/i.test(api.formSaveMessage().text())) || api.saveError() !== errorBefore
+        return (pageApi.elementText("pending-changes") !== "true" && /tallennettu/i.test(api.formSaveMessage().text())) || api.serverError() !== errorBefore
       })()
     },
     submitButton: function() {
       return pageApi.createClickable(function() { return applicationElement().find("#submit") })
     },
     submitAndWaitErrorChange: function() {
-      var errorBefore =  api.saveError()
+      var errorBefore =  api.serverError()
       api.submitButton().click()
       return wait.until(function() {
-        return api.saveError() !== errorBefore
+        return api.serverError() !== errorBefore
       })()
     },
     submitAndWaitOk: function() {
@@ -60,7 +60,7 @@ function ApplicationPage() {
     formNotSentMessage: function() {
       return applicationElement().find("#form-save-status .not-sent-message")
     },
-    saveError: function() {
+    serverError: function() {
       return applicationElement().find("#server-error").text()
     },
     validationErrorsSummary: function() {

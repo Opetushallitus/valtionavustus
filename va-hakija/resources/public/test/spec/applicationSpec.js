@@ -98,7 +98,7 @@
 
         describe('automaattitallennuksen jälkeen', function() {
           it('ei virheitä tallennuksesta', function() {
-            expect(applicationPage.saveError()).to.equal('')
+            expect(applicationPage.serverError()).to.equal('')
           })
         })
 
@@ -369,7 +369,7 @@
             )
             describe("epäonnistumisen jälkeen", function() {
               it("yleinen virhe näytetään", function() {
-                expect(applicationPage.saveError()).to.equal('Ei tallennettu - tarkista syöttämäsi tiedot.')
+                expect(applicationPage.serverError()).to.equal('Ei tallennettu - tarkista syöttämäsi tiedot.')
               })
               it("kentän virhe näytetään", function() {
                 expect(applicationPage.detailedValidationErrors()).to.deep.equal(['Hakijaorganisaatio: Pakollinen tieto'])
@@ -384,7 +384,7 @@
                   applicationPage.waitAutoSave
               )
               it("virheet häviää", function() {
-                expect(applicationPage.saveError()).to.equal('')
+                expect(applicationPage.serverError()).to.equal('')
               })
               it("lähetys nappi enabloituu", function() {
                 expect(applicationPage.submitButton().isEnabled()).to.equal(true)
@@ -399,7 +399,7 @@
             )
             describe("epäonnistumisen jälkeen", function() {
               it("yleinen virhe näytetään", function() {
-                expect(applicationPage.saveError()).to.equal('Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.')
+                expect(applicationPage.serverError()).to.equal('Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.')
               })
               it("lähetys nappi on yhä enabloitu", function() {
                 expect(applicationPage.submitButton().isEnabled()).to.equal(true)
@@ -410,7 +410,7 @@
                   applicationPage.submitAndWaitErrorChange
               )
               it("virhe häviää", function() {
-                expect(applicationPage.saveError()).to.equal('')
+                expect(applicationPage.serverError()).to.equal('')
               })
             })
           })
@@ -426,7 +426,7 @@
               loginPage.setSystemTime("2015-09-30T16:14:59.999+03")
           )
           it.skip("yleinen virhe näytetään", function() {
-            expect(applicationPage.saveError()).to.equal('Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.')
+            expect(applicationPage.serverError()).to.equal('Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.')
           })
         })
 
@@ -521,7 +521,7 @@
           )
           describe('muokattaessa jotain kenttää', function() {
             it("yleinen virhe näytetään", function() {
-              expect(applicationPage.saveError()).to.equal('Hakemus on muuttunut. Lataa sivu uudestaan.')
+              expect(applicationPage.serverError()).to.equal('Hakemus on muuttunut. Lataa sivu uudestaan.')
             })
           })
           describe('sivun uudelleen latauksen jälkeen', function() {
