@@ -89,7 +89,7 @@ export default class VaFormTopbar extends React.Component {
               <div className="important-info">
                 <EnvironmentInfo environment={configuration.environment}/>
                 {isHakemus && hasEnded && (
-                  <LocalizedString translations={translations.form} translationKey="has-ended" lang={lang} />
+                  <LocalizedString htmlId="avustushaku-has-ended-message" translations={translations.form} translationKey="has-ended" lang={lang} />
                 )}
                 <ServerError serverError={saveStatus.serverError} translations={translations.errors} lang={lang}/>
               </div>

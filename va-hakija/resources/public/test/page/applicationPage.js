@@ -22,6 +22,9 @@ function ApplicationPage() {
       }
       return openPage(function() { return basePath + "?preview=true&devel=true&avustushaku=1&hakemus=" + hakemusIdGetter() + "&lang=" + lang}, pageLoadedCheck)
     },
+    isPreview: function() {
+      return _.includes(testFrame().document.location.search.substr(1).split("&"), "preview=true")
+    },
     applicationName: function() {
       return applicationElement().find("#container h1").first().text().trim()
     },
@@ -62,6 +65,9 @@ function ApplicationPage() {
     },
     serverError: function() {
       return applicationElement().find("#server-error").text()
+    },
+    avustushakuHasEndedMessage: function() {
+      return applicationElement().find("#avustushaku-has-ended-message").text()
     },
     validationErrorsSummary: function() {
       return applicationElement().find("#form-error-summary .validation-errors-summary").text()

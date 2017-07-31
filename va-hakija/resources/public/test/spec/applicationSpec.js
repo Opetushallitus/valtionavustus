@@ -416,31 +416,42 @@
           })
         })
 
-        describe("hakuajan loppumisen jälkeen lomaketta muokattaessa", function() {
+        describe("hakuajan loppumisen jälkeen lomaketta avattaessa", function() {
           before(
-              loginPage.setSystemTime("2015-09-30T16:15:00.000+03"),
-              applicationPage.setInputValue("project-name", "Uusin automaattitestihanke")
+            loginPage.setSystemTime("2015-09-30T16:15:00.000+03"),
+            applicationPage.setInputValue("project-name", "Uusin automaattitestihanke"),
+            wait.until(function() { return S(".soresu-preview").is(":visible") })
           )
 
-          after(
-              loginPage.setSystemTime("2015-09-30T16:14:59.999+03")
-          )
-          it.skip("yleinen virhe näytetään", function() {
-            expect(applicationPage.serverError()).to.equal('Lähettäminen epäonnistui. Yritä myöhemmin uudelleen.')
+          after(function() {
+            loginPage.setSystemTime("2015-09-30T16:14:59.999+03")()
+          })
+
+          it("sivu siirtyy lomakkeen esikatseluun", function() {
+            expect(applicationPage.isPreview()).to.be.true
+          })
+
+          it("näytetään ilmoitus avustushaun sulkeutumisesta", function() {
+            expect(applicationPage.avustushakuHasEndedMessage()).to.equal("Hakuaika on päättynyt")
+          })
+
+          it("ei näytetä lomakkeen kontrolleja", function() {
+            expect(S("#form-controls").length).to.equal(0)
           })
         })
 
         describe('riippuvassa kentässä', function() {
           var originalValue = ""
+
           before(
-              loginPage.openLoginPage(),
-              loginPage.login,
-              enterValidValuesToPage,
-              applicationPage.setInputValue("other-organizations.other-organizations-1.email", "invalid@email"),
-              applicationPage.waitAutoSave,
-              function() {
-                originalValue = applicationPage.getInput("other-organizations.other-organizations-1.name").value()
-              }
+            loginPage.openLoginPage(),
+            loginPage.login,
+            enterValidValuesToPage,
+            applicationPage.setInputValue("other-organizations.other-organizations-1.email", "invalid@email"),
+            applicationPage.waitAutoSave,
+            function() {
+              originalValue = applicationPage.getInput("other-organizations.other-organizations-1.name").value()
+            }
           )
 
           describe('alkutilassa', function() {
