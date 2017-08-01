@@ -44,7 +44,7 @@
           it("pakollisesta kentästä kerrotaan", function() {
             expect(applicationPage.classAttributeOf("organization")).to.include('error')
           })
-          it("kerrotaan automaattitallennuksesta", function() {
+          it("kerrotaan lomakkeen tallennuksesta", function() {
             expect(applicationPage.formSaveMessage().text()).to.match(/tallennettu/i)
           })
           it("kerrotaan puuttuvasta kentästä", function() {
@@ -59,6 +59,9 @@
           )
           it("näkyy haun nimen oikein", function() {
             expect(applicationPage.applicationName()).to.deep.equal('Ammatillinen koulutus - Ammatillisen peruskoulutuksen laadun kehittäminen')
+          })
+          it("kerrotaan lomakkeen tallennuksesta", function() {
+            expect(applicationPage.formSaveMessage().text()).to.match(/tallennettu/i)
           })
           it("on organisaatio yhä tyhjä", function() {
             expect(applicationPage.elementText("organization")).to.equal('')

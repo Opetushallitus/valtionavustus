@@ -12,12 +12,21 @@
     display: inline-block;
     vertical-align: top;
     margin: 20px 70px 20px 20px;
+
+    @media print {
+      margin-top: 0;
+    }
   }
 
   .topbar-right {
     display: inline-block;
     vertical-align: top;
     margin: 25px 0 8px 0;
+
+    @media print {
+      margin-top: 5px;
+      width: ~"calc(100% - 330px)";
+    }
   }
 
   h1 {
@@ -39,16 +48,30 @@
     .form-control, #toggle-language, #preview-button {
       display: inline-block;
       vertical-align: middle;
+
+      @media print {
+        display: none;
+      }
     }
 
     button {
       margin-top: 5px;
+
+      @media print {
+        display: none;
+      }
     }
 
     .form-control-button-tooltip {
       top: ~"calc(100% + 6px)";
       left: 50%;
       margin-left: -316px;
+    }
+
+    @media print {
+      border: none;
+      text-align: right;
+      width: ~"calc(100% - 160px)";
     }
   }
 
@@ -74,6 +97,10 @@
     color: @bright-red;
     width: 340px;
     margin-right: 20px;
+
+    @media print {
+      display: none;
+    }
   }
 
   #environment-info {
@@ -105,10 +132,19 @@
     vertical-align: baseline;
     font-size: 13px;
   }
+
+  @media print {
+    position: relative;
+    box-shadow: none;
+  }
 }
 
 #top-container {
   width: @form-width;
   margin-left: auto;
   margin-right: auto;
+
+  @media print {
+    width: 100%;
+  }
 }

@@ -434,10 +434,6 @@
           it("näytetään ilmoitus avustushaun sulkeutumisesta", function() {
             expect(applicationPage.avustushakuHasEndedMessage()).to.equal("Hakuaika on päättynyt")
           })
-
-          it("ei näytetä lomakkeen kontrolleja", function() {
-            expect(S("#form-controls").length).to.equal(0)
-          })
         })
 
         describe('riippuvassa kentässä', function() {
@@ -552,6 +548,26 @@
         )
         it("näkyy haun nimi ruotsiksi", function() {
           expect(applicationPage.applicationName()).to.deep.equal('Stöd för genomförande av kvalitetsstrategin')
+        })
+      })
+
+      describe("lomakkeen esikatselussa", function() {
+        before(applicationPage.openPreview(loginPage.getHakemusId))
+
+        it("kerrotaan, että lomaketta ei ole lähetetty", function() {
+          expect(applicationPage.formNotSentMessage().text()).to.equal("Hakemusta ei ole lähetetty")
+        })
+
+        it("kerrotaan lomakkeen tallennuksesta", function() {
+          expect(applicationPage.formSaveMessage().text()).to.match(/tallennettu/i)
+        })
+
+        it("ei näytetä lähetysnappeja", function() {
+          expect(S("#form-controls button").length).to.equal(0)
+        })
+
+        it("ei näytetä linkkiä esikatseluun", function() {
+          expect(S("#topbar .preview-link").length).to.equal(0)
         })
       })
     })
