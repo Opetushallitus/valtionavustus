@@ -416,7 +416,7 @@
           })
         })
 
-        describe("hakuajan loppumisen jälkeen lomaketta avattaessa", function() {
+        describe.skip("hakuajan loppumisen jälkeen lomaketta avattaessa", function() {
           before(
             loginPage.setSystemTime("2015-09-30T16:15:00.000+03"),
             applicationPage.setInputValue("project-name", "Uusin automaattitestihanke"),
