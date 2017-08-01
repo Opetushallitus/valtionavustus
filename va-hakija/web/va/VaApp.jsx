@@ -83,7 +83,7 @@ function isEmptyOrReopenedHakemus(savedObject) {
 
 function onInitialStateLoaded(initialState) {
   if(initialState.avustushaku.phase !== "current" && !initialState.configuration.preview && !isEmptyOrReopenedHakemus(initialState.saveStatus.savedObject)) {
-    window.location = urlCreator.existingSubmissionPreviewUrl(initialState)
+    window.location.href = urlCreator.existingSubmissionPreviewUrl(initialState)
     return
   }
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {

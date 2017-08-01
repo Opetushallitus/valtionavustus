@@ -59,7 +59,7 @@ export default class VaLogin extends React.Component {
         })
         const hakemusId = response.id
         if(hakemusId) {
-          window.location = urlCreator.existingSubmissionEditUrl(model.avustushaku.id, hakemusId, model.lang, model.devel)
+          window.location.href = urlCreator.existingSubmissionEditUrl(model.avustushaku.id, hakemusId, model.lang, model.devel)
         }
       })
       .catch(function(response) {

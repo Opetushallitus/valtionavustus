@@ -205,7 +205,7 @@ function initSelvitys(avustusHakuId, hakemusId, selvitysType, showPreview){
   HttpUtil.get("/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/init/` + hakemusId).then(response => {
     const hakemusId = response.id
     const hakemusLang = lang ? lang : response.language
-    window.location = `/avustushaku/${avustusHakuId}/${selvitysType}?${selvitysType}=${hakemusId}&lang=${hakemusLang}` + (showPreview == 'true' ? '&preview=true' : '')
+    window.location.href = `/avustushaku/${avustusHakuId}/${selvitysType}?${selvitysType}=${hakemusId}&lang=${hakemusLang}` + (showPreview == 'true' ? '&preview=true' : '')
   })
 }
 
