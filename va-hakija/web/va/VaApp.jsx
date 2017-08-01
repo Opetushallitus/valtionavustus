@@ -82,13 +82,14 @@ function isEmptyOrReopenedHakemus(savedObject) {
 }
 
 function onInitialStateLoaded(initialState) {
-  if(initialState.avustushaku.phase !== "current" && !initialState.configuration.preview && !isEmptyOrReopenedHakemus(initialState.saveStatus.savedObject)) {
-    window.location.href = urlCreator.existingSubmissionPreviewUrl(initialState)
-    return
-  }
   budgetCalculator.deriveValuesForAllBudgetElementsByMutation(initialState, {
     reportValidationErrors: isNotFirstEdit(initialState)
   })
+  if (initialState.avustushaku.phase !== "current" &&
+      !initialState.configuration.preview &&
+      !isEmptyOrReopenedHakemus(initialState.saveStatus.savedObject)) {
+    window.location.href = urlCreator.existingSubmissionPreviewUrl(initialState)
+  }
 }
 
 function initVaFormController() {
