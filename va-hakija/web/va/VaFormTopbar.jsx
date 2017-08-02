@@ -55,34 +55,38 @@ export default class VaFormTopbar extends React.Component {
         <div id="top-container">
           <img id="logo" src="img/logo-240x68@2x.png" width="240" height="68" alt="Opetushallitus / Utbildningsstyrelsen" />
           <div className="topbar-right">
-            <h1 id="topic"><LocalizedString translations={translations.form} translationKey={topicKey} lang={lang}/></h1>
-            <div id="form-controls">
+            <div className="topbar-title-and-save-status">
+              <h1 id="topic"><LocalizedString translations={translations.form} translationKey={topicKey} lang={lang}/></h1>
               <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang}/>
-              {!preview && isNormalEdit() && (
-                <div className="form-control soresu-tooltip soresu-tooltip-down">
-                  <TextButton htmlId="submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey={submitTextKey} lang={lang} />
-                  <span className="form-control-button-tooltip">{helpText}</span>
-                </div>
-              )}
-              {!preview && isChangeRequestResponse() && (
-                <div className="form-control soresu-tooltip soresu-tooltip-down">
-                  <TextButton htmlId="change-request-response" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="change-request-response" lang={lang} />
-                  <span className="form-control-button-tooltip">{formTranslator.translate("change-request-response-help", lang)}</span>
-                </div>
-              )}
-              {!preview && isInVirkailijaEditMode() && (
-                <div className="form-control soresu-tooltip soresu-tooltip-down">
-                  <TextButton htmlId="virkailija-edit-submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="virkailija-edit-submit" lang={lang} />
-                  <span className="form-control-button-tooltip">{formTranslator.translate("virkailija-edit-submit-help", lang)}</span>
-                </div>
-              )}
-              {!preview && configuration.develMode && (
-                <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>
-              )}
-              {!preview && configuration.develMode && (
-                <TextButton htmlId="preview-button" onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)} translations={translations.form} translationKey="preview" lang={lang} />
-              )}
             </div>
+            {!preview && (
+              <div id="form-controls">
+                {isNormalEdit() && (
+                  <div className="form-control soresu-tooltip soresu-tooltip-down">
+                    <TextButton htmlId="submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey={submitTextKey} lang={lang} />
+                    <span className="form-control-button-tooltip">{helpText}</span>
+                  </div>
+                )}
+                {isChangeRequestResponse() && (
+                  <div className="form-control soresu-tooltip soresu-tooltip-down">
+                    <TextButton htmlId="change-request-response" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="change-request-response" lang={lang} />
+                    <span className="form-control-button-tooltip">{formTranslator.translate("change-request-response-help", lang)}</span>
+                  </div>
+                )}
+                {isInVirkailijaEditMode() && (
+                  <div className="form-control soresu-tooltip soresu-tooltip-down">
+                    <TextButton htmlId="virkailija-edit-submit" onClick={controller.submit} disabled={isSubmitDisabled()} translations={translations.form} translationKey="virkailija-edit-submit" lang={lang} />
+                    <span className="form-control-button-tooltip">{formTranslator.translate("virkailija-edit-submit-help", lang)}</span>
+                  </div>
+                )}
+                {configuration.develMode && (
+                  <ToggleLanguageButton id="toggle-language" controller={controller} languages={translations.languages} lang={lang}/>
+                )}
+                {configuration.develMode && (
+                  <TextButton htmlId="preview-button" onClick={openPreview} disabled={!controller.isSaveDraftAllowed(state)} translations={translations.form} translationKey="preview" lang={lang} />
+                )}
+              </div>
+            )}
             <div>
               <div className="important-info">
                 <EnvironmentInfo environment={configuration.environment}/>

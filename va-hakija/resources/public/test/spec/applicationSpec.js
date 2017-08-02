@@ -563,7 +563,7 @@
         })
 
         it("ei näytetä lähetysnappeja", function() {
-          expect(S("#form-controls button").length).to.equal(0)
+          expect(S("#form-controls").length).to.equal(0)
         })
 
         it("ei näytetä linkkiä esikatseluun", function() {
