@@ -88,7 +88,11 @@ function onInitialStateLoaded(initialState) {
   if (initialState.avustushaku.phase !== "current" &&
       !initialState.configuration.preview &&
       !isEmptyOrReopenedHakemus(initialState.saveStatus.savedObject)) {
-    window.location.href = urlCreator.existingSubmissionPreviewUrl(initialState, VaUrlCreator.chooseInitialLanguage(urlContent))
+    window.location.href = urlCreator.existingSubmissionPreviewUrl(
+      initialState.avustushaku.id,
+      initialState.saveStatus.hakemusId,
+      initialState.configuration.lang,
+      initialState.configuration.develMode)
   }
 }
 

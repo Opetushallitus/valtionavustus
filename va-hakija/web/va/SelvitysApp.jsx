@@ -48,11 +48,16 @@ class SelvitysUrlCreator extends UrlCreator {
     function entityApiUrl(avustusHakuId, hakemusId, hakemusBaseVersion) {
       return "/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/` + hakemusId + (typeof hakemusBaseVersion == "number" ? "/" + hakemusBaseVersion : "")
     }
+
     const attachmentDirectAccessUrl = function(state, field) {
       const avustusHakuId = state.avustushaku.id
       const hakemusId = state.saveStatus.hakemusId
       return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/attachments/" + field.id
     }
+
+    const existingSubmissionEditUrl = (avustushakuId, selvitysId, lang, devel) =>
+      `/avustushaku/${avustushakuId}/${selvitysType}?${selvitysType}=${selvitysId}&lang=${lang}${devel ? "&devel=true" : ""}`
+
     const urls = {
       formApiUrl: function (formId) {
         return "/api/form/" + formId
@@ -76,12 +81,9 @@ class SelvitysUrlCreator extends UrlCreator {
         var selvitysId = query[selvitysType]
         return entityApiUrl(avustusHakuId, selvitysId)
       },
-      existingSubmissionEditUrl: function (avustusHakuId, selvitysId, lang, devel) {
-        return "/avustushaku/" + avustusHakuId + "/" + selvitysType + "?" + selvitysType + "="  + selvitysId + "&lang=" + lang + (devel ? "&devel=true" : "")
-      },
-      existingSubmissionPreviewUrl: function (state, lang) {
-        const selvitysId = state.saveStatus.hakemusId
-        return "?" + selvitysType + "=" + selvitysId + "&lang=" + lang + "&preview=true"
+      existingSubmissionEditUrl,
+      existingSubmissionPreviewUrl: function (avustushakuId, selvitysId, lang, devel) {
+        return existingSubmissionEditUrl(avustushakuId, selvitysId, lang, devel) + "&preview=true"
       },
       loadAttachmentsApiUrl: function (urlContent) {
         const query = urlContent.parsedQuery

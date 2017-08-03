@@ -33,7 +33,12 @@ export default class VaFormTopbar extends React.Component {
       (allValid, fieldErrors) => allValid && fieldErrors.length === 0,
       true)
     const formOperations = state.extensionApi.formOperations
-    const previewUrl = formOperations.urlCreator.existingSubmissionPreviewUrl(state, lang);
+    const previewUrl = formOperations.urlCreator.existingSubmissionPreviewUrl(
+      avustushaku.id,
+      state.saveStatus.hakemusId,
+      lang,
+      configuration.develMode
+    )
     const openPreview = function() {
       window.open(previewUrl, "preview")
     }

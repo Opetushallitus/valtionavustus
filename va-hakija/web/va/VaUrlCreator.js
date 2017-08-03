@@ -7,11 +7,16 @@ export default class VaUrlCreator extends UrlCreator {
     function entityApiUrl(avustusHakuId, hakemusId, hakemusBaseVersion) {
       return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + (typeof hakemusBaseVersion == "number" ? "/" + hakemusBaseVersion : "")
     }
+
     const attachmentDirectAccessUrl = function(state, field) {
       const avustusHakuId = state.avustushaku.id
       const hakemusId = state.saveStatus.hakemusId
       return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/attachments/" + field.id
     }
+
+    const existingSubmissionEditUrl = (avustusHakuId, hakemusId, lang, devel) =>
+      `/avustushaku/${avustusHakuId}/nayta?avustushaku=${avustusHakuId}&hakemus=${hakemusId}&lang=${lang}${devel ? "&devel=true" : ""}`
+
     const urls = {
       formApiUrl: function (formId) {
         return "/api/form/" + formId
@@ -36,13 +41,9 @@ export default class VaUrlCreator extends UrlCreator {
         const hakemusId = query.hakemus
         return entityApiUrl(avustusHakuId, hakemusId)
       },
-      existingSubmissionEditUrl: function (avustusHakuId, hakemusId, lang, devel) {
-        return "/avustushaku/" + avustusHakuId + "/nayta?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId + "&lang=" + lang + (devel ? "&devel=true" : "")
-      },
-      existingSubmissionPreviewUrl: function (state, lang) {
-        const avustusHakuId = state.avustushaku.id
-        const hakemusId = state.saveStatus.hakemusId
-        return "?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId + "&lang=" + lang + "&preview=true"
+      existingSubmissionEditUrl,
+      existingSubmissionPreviewUrl: function (avustushakuId, hakemusId, lang, devel) {
+        return existingSubmissionEditUrl(avustushakuId, hakemusId, lang, devel) + "&preview=true"
       },
       loadAttachmentsApiUrl: function (urlContent) {
         const query = urlContent.parsedQuery
