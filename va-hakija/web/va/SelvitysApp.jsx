@@ -100,30 +100,6 @@ class SelvitysUrlCreator extends UrlCreator {
     }
     super(urls)
   }
-
-  avustusHakuApiUrl(avustusHakuId) {
-    return "/api/avustushaku/" + avustusHakuId
-  }
-
-  environmentConfigUrl() {
-    return "/environment"
-  }
-
-  static chooseInitialLanguage(urlContent) {
-    const langQueryParam = urlContent.parsedQuery.lang
-    const hostname = urlContent.location.hostname
-    return langQueryParam ? langQueryParam : hostname.indexOf("statsunderstod.oph.fi") > -1 ? "sv" : "fi"
-  }
-
-  static parseAvustusHakuId(urlContent) {
-    const location = urlContent.location
-    const pathname = location.pathname
-    const parsedAvustusHakuIdObjectFi = new RouteParser('/avustushaku/:avustushaku_id/*ignore').match(pathname)
-    const parsedAvustusHakuIdObjectSv = new RouteParser('/statsunderstod/:avustushaku_id/*ignore').match(pathname)
-    const fallbackHakuId = urlContent.parsedQuery.avustushaku // Leave this here for now in case of old ?avustushaku=1 URLs still around
-    return parsedAvustusHakuIdObjectFi.avustushaku_id || parsedAvustusHakuIdObjectSv.avustushaku_id || fallbackHakuId
-  }
-
 }
 
 const urlCreator = new SelvitysUrlCreator(selvitysType)
@@ -156,8 +132,8 @@ function printEntityId(state) {
 const urlContent = { parsedQuery: query, location: location }
 const develMode =  query.devel === 'true'
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
-const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(avustusHakuId)))
-const environmentP = Bacon.fromPromise(HttpUtil.get(urlCreator.environmentConfigUrl()))
+const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
+const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
@@ -182,7 +158,7 @@ function initFormController() {
     "customFieldSyntaxValidator": VaSyntaxValidator
   })
   const formOperations = {
-    "chooseInitialLanguage": SelvitysUrlCreator.chooseInitialLanguage,
+    "chooseInitialLanguage": VaUrlCreator.chooseInitialLanguage,
     "containsExistingEntityId": containsExistingEntityId,
     "isFieldEnabled": isFieldEnabled,
     "onFieldUpdate": onFieldUpdate,
@@ -193,7 +169,7 @@ function initFormController() {
     "responseParser": responseParser,
     "printEntityId": printEntityId
   }
-  const initialValues = {"language": SelvitysUrlCreator.chooseInitialLanguage(urlContent)}
+  const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function(state) {
     return <VaForm controller={controller} state={state} hakemusType={selvitysType}/>

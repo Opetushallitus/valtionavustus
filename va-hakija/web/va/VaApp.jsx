@@ -68,8 +68,8 @@ const query = queryString.parse(location.search)
 const urlContent = { parsedQuery: query, location: location }
 const develMode =  query.devel === 'true'
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
-const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(avustusHakuId)))
-const environmentP = Bacon.fromPromise(HttpUtil.get(urlCreator.environmentConfigUrl()))
+const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
+const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
 
 function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP

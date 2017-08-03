@@ -62,11 +62,11 @@ export default class VaUrlCreator extends UrlCreator {
     super(urls)
   }
 
-  avustusHakuApiUrl(avustusHakuId) {
+  static avustusHakuApiUrl(avustusHakuId) {
     return "/api/avustushaku/" + avustusHakuId
   }
 
-  environmentConfigUrl() {
+  static environmentConfigUrl() {
     return "/environment"
   }
 

@@ -119,8 +119,8 @@ const query = QueryString.parse(location.search)
 const urlContent = { parsedQuery: query, location: location }
 const translationsP = Bacon.fromPromise(HttpUtil.get("/translations.json"))
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
-const avustusHakuP = Bacon.fromPromise(HttpUtil.get(urlCreator.avustusHakuApiUrl(avustusHakuId)))
-const environmentP = Bacon.fromPromise(HttpUtil.get(urlCreator.environmentConfigUrl()))
+const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
+const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
 
 const initialStateTemplate = {
   translations: translationsP,
