@@ -43,8 +43,8 @@ const responseParser = new ResponseParser({
   getFormAnswers: function(response) { return response.submission.answers }
 })
 
-class SelvitysUrlCreator extends UrlCreator{
-  constructor() {
+class SelvitysUrlCreator extends UrlCreator {
+  constructor(selvitysType) {
     function entityApiUrl(avustusHakuId, hakemusId, hakemusBaseVersion) {
       return "/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/` + hakemusId + (typeof hakemusBaseVersion == "number" ? "/" + hakemusBaseVersion : "")
     }
@@ -76,13 +76,12 @@ class SelvitysUrlCreator extends UrlCreator{
         var selvitysId = query[selvitysType]
         return entityApiUrl(avustusHakuId, selvitysId)
       },
-      existingSubmissionEditUrl: function (avustusHakuId, hakemusId, lang, devel) {
-        return "/avustushaku/" + avustusHakuId + "/nayta?avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId + "&lang=" + lang + (devel ? "&devel=true" : "")
+      existingSubmissionEditUrl: function (avustusHakuId, selvitysId, lang, devel) {
+        return "/avustushaku/" + avustusHakuId + "/" + selvitysType + "?" + selvitysType + "="  + selvitysId + "&lang=" + lang + (devel ? "&devel=true" : "")
       },
-      existingSubmissionPreviewUrl: function (state) {
-        const avustusHakuId = state.avustushaku.id
-        const hakemusId = state.saveStatus.hakemusId
-        return "?preview=true&avustushaku=" + avustusHakuId + "&hakemus=" + hakemusId
+      existingSubmissionPreviewUrl: function (state, lang) {
+        const selvitysId = state.saveStatus.hakemusId
+        return "?" + selvitysType + "=" + selvitysId + "&lang=" + lang + "&preview=true"
       },
       loadAttachmentsApiUrl: function (urlContent) {
         const query = urlContent.parsedQuery
@@ -127,7 +126,7 @@ class SelvitysUrlCreator extends UrlCreator{
 
 }
 
-const urlCreator = new SelvitysUrlCreator()
+const urlCreator = new SelvitysUrlCreator(selvitysType)
 const budgetCalculator = new VaBudgetCalculator((descriptionField, state) => {
   FieldUpdateHandler.triggerFieldUpdatesForValidation([descriptionField], state)
 })
