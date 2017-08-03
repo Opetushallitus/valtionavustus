@@ -32,6 +32,14 @@
       "fi": "Hakemusta ei ole lähetetty",
       "sv": "Ansökän inte sänt"
     },
+    "valiselvitys-not-submitted": {
+      "fi": "Väliselvitystä ei ole lähetetty",
+      "sv": "Mellanredovisning inte sänt"
+    },
+    "loppuselvitys-not-submitted": {
+      "fi": "Loppuselvitystä ei ole lähetetty",
+      "sv": "Slutredovisning inte sänt"
+    },
     "submit": {
       "fi": "Lähetä käsiteltäväksi",
       "sv": "Sänd för behandling"

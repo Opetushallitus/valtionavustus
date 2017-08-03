@@ -62,7 +62,7 @@ export default class VaFormTopbar extends React.Component {
           <div className="topbar-right">
             <div className="topbar-title-and-save-status">
               <h1 id="topic"><LocalizedString translations={translations.form} translationKey={topicKey} lang={lang}/></h1>
-              <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang}/>
+              <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang} hakemusType={hakemusType}/>
             </div>
             {!preview && (
               <div id="form-controls">
