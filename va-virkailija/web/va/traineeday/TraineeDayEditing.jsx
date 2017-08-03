@@ -27,7 +27,7 @@ export default class TraineeDayEditing extends Component {
     }
 
     const formOperations = {
-      chooseInitialLanguage: function() {return "fi"},
+      chooseInitialLanguage: () => "fi",
       containsExistingEntityId: undefined,
       isFieldEnabled: function(saved, fieldId) {return allowEditing},
       onFieldUpdate: undefined,

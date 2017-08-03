@@ -110,7 +110,7 @@ class SelvitysUrlCreator extends UrlCreator{
     return "/environment"
   }
 
-  chooseInitialLanguage(urlContent) {
+  static chooseInitialLanguage(urlContent) {
     const langQueryParam = urlContent.parsedQuery.lang
     const hostname = urlContent.location.hostname
     return langQueryParam ? langQueryParam : hostname.indexOf("statsunderstod.oph.fi") > -1 ? "sv" : "fi"
@@ -183,7 +183,7 @@ function initFormController() {
     "customFieldSyntaxValidator": VaSyntaxValidator
   })
   const formOperations = {
-    "chooseInitialLanguage": urlCreator.chooseInitialLanguage,
+    "chooseInitialLanguage": SelvitysUrlCreator.chooseInitialLanguage,
     "containsExistingEntityId": containsExistingEntityId,
     "isFieldEnabled": isFieldEnabled,
     "onFieldUpdate": onFieldUpdate,
@@ -194,7 +194,7 @@ function initFormController() {
     "responseParser": responseParser,
     "printEntityId": printEntityId
   }
-  const initialValues = {"language": urlCreator.chooseInitialLanguage(urlContent)}
+  const initialValues = {"language": SelvitysUrlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function(state) {
     return <VaForm controller={controller} state={state} hakemusType={selvitysType}/>

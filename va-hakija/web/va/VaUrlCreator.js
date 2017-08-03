@@ -70,7 +70,7 @@ export default class VaUrlCreator extends UrlCreator {
     return "/environment"
   }
 
-  chooseInitialLanguage(urlContent) {
+  static chooseInitialLanguage(urlContent) {
     const langQueryParam = urlContent.parsedQuery.lang
     const hostname = urlContent.location.hostname
     return langQueryParam ? langQueryParam : hostname.indexOf("statsunderstod.oph.fi") > -1 ? "sv" : "fi"

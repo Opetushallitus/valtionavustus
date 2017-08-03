@@ -124,7 +124,7 @@ const environmentP = Bacon.fromPromise(HttpUtil.get(urlCreator.environmentConfig
 
 const initialStateTemplate = {
   translations: translationsP,
-  lang: urlCreator.chooseInitialLanguage(urlContent),
+  lang: VaUrlCreator.chooseInitialLanguage(urlContent),
   devel: query.devel,
   avustushaku: avustusHakuP,
   environment: environmentP

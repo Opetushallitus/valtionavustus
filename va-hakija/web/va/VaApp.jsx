@@ -88,7 +88,7 @@ function onInitialStateLoaded(initialState) {
   if (initialState.avustushaku.phase !== "current" &&
       !initialState.configuration.preview &&
       !isEmptyOrReopenedHakemus(initialState.saveStatus.savedObject)) {
-    window.location.href = urlCreator.existingSubmissionPreviewUrl(initialState)
+    window.location.href = urlCreator.existingSubmissionPreviewUrl(initialState, VaUrlCreator.chooseInitialLanguage(urlContent))
   }
 }
 
@@ -103,7 +103,7 @@ function initVaFormController() {
     "customFieldSyntaxValidator": VaSyntaxValidator
   })
   const formOperations = {
-    "chooseInitialLanguage": urlCreator.chooseInitialLanguage,
+    "chooseInitialLanguage": VaUrlCreator.chooseInitialLanguage,
     "containsExistingEntityId": containsExistingEntityId,
     "isFieldEnabled": isFieldEnabled,
     "onFieldUpdate": onFieldUpdate,
@@ -114,7 +114,7 @@ function initVaFormController() {
     "responseParser": responseParser,
     "printEntityId": printEntityId
   }
-  const initialValues = {"language": urlCreator.chooseInitialLanguage(urlContent)}
+  const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function(state) {
     return <VaForm controller={controller} state={state} hakemusType="hakemus"/>
