@@ -1,3 +1,4 @@
+PIP_BIN ?= /usr/local/bin/pip2
 PYTHON_BIN ?= /usr/local/bin/python2.7
 PYTHON_REQUIREMENTS ?= requirements.txt
 PYTHON_VENV_DIR ?= python-venv
@@ -20,7 +21,7 @@ install: $(PYTHON_VENV_DIR)
 $(PYTHON_VENV_DIR): $(PYTHON_REQUIREMENTS)
 	rm -rf "$(PYTHON_VENV_DIR)"
 	mkdir -p "$(PYTHON_VENV_DIR)"
-	pip install virtualenv
+	$(PIP_BIN) install virtualenv
 	virtualenv -p "$(PYTHON_BIN)" "$(PYTHON_VENV_DIR)"
 	$(PYTHON_VENV_DIR)/bin/pip install -r "$(PYTHON_REQUIREMENTS)"
 
