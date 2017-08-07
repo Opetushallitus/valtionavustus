@@ -22,9 +22,8 @@
     "moment-timezone": "0.4.0",
     "phantomjs-polyfill-find": "github:ptim/phantomjs-polyfill-find",
     "query-string": "2.2.0",
-    "react": "^0.14.3",
-    "react-addons-css-transition-group": "0.14.3",
-    "react-dom": "^0.14.3",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
     "route-parser": "^0.0.4",
     "seamless-immutable": "^2.4.2",
     "soresu-form": "file:../soresu-form"
@@ -41,7 +40,6 @@
     "mocha-junit-reporter": "^1.5.0",
     "mocha-phantomjs": "3.5.6",
     "phantomjs": "1.9.17",
-    "react-tools": "^0.13.3",
     "style-loader": "^0.12.3",
     "watch-spawn": "^1.0.5",
     "webpack": "^1.10.5"

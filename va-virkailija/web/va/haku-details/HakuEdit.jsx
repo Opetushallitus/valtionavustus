@@ -337,7 +337,7 @@ class SetStatus extends React.Component {
                name="status"
                value={status}
                onChange={onChange}
-               checked={status === currentStatus ? true: null}
+               checked={status === currentStatus}
                disabled={isDisabled(status)}
             />
       )
@@ -370,7 +370,7 @@ class RegisterNumber extends React.Component {
   render() {
     const avustushaku = this.props.avustushaku
     const allowAllHakuEdits = this.props.allowAllHakuEdits
-    const registerNumber = avustushaku["register-number"]
+    const registerNumber = avustushaku["register-number"] || ""
 
     const isRegisterNumberValid = RegisterNumber.isValid(avustushaku)
     const registerNumberClass = isRegisterNumberValid ? "" : "error"
