@@ -134,7 +134,6 @@ function takeScreenshot() {
   }
 }
 
-
 (function improveMocha() {
   var origBefore = before
   before = function() {

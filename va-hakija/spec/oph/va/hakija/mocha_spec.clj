@@ -17,10 +17,11 @@
   (around-all [_] (with-test-server! :form-db #(start-server "localhost" 9000 false) (_)))
 
   (it "succeeds"
-      (let [results (sh "node_modules/mocha-phantomjs/bin/mocha-phantomjs"
-                        "-R" "xunit"
-                        "-s" "webSecurityEnabled=false"
-                        "http://localhost:9000/test/runner.html")]
+      (let [results (sh "./node_modules/.bin/phantomjs"
+                        "--web-security=false"
+                        "./node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js"
+                        "http://localhost:9000/test/runner.html"
+                        "xunit")]
         (let [output-lines (split (:out results) #"\n")
               test-run-output (filter is-test-output? output-lines)
               test-report-xml-path "target/junit-mocha-js-ui.xml"]

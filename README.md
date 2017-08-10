@@ -125,8 +125,9 @@ npm run test         # kerta-ajo
 npm run watch-test   # monitorointi ja ajo muutoksista
 ```
 
-Frontendin Mocha-pohjaisten UI-testien ajaminen selaimessa, esimerkiksi
-va-hakija-moduulissa. Käynnistä ensin web-sovellus testiympäristössä:
+Va-hakija-moduulilla on Mocha-pohjaistet UI-testit. Ne voi ajaa selaimessa, kun on ensin
+käynnistänyt va-hakijan web-sovelluksen testiympäristössä:
+
 
 ``` shell
 cd va-hakija
@@ -135,6 +136,13 @@ cd va-hakija
 
 ja sitten avaa [testien url](http://localhost:8081/test/runner.html)
 selaimessa.
+
+Vaihtoehtoisesti UI-testit voi ajaa PhantomJS:llä:
+
+``` shell
+cd va-hakija
+npm run test-browser
+```
 
 Frontendin tuotantoversion build, projektin juurihakemistossa:
 
