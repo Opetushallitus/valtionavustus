@@ -44,8 +44,21 @@ function Page(mainElement) {
     createClickable: function(el) {
       return Clickable(el)
     },
+    elementById: function(id) {
+      return S("#" + escapeSelector(id))
+    },
     elementText: function(id) {
       return api.elementTextBySelector("#" + escapeSelector(id))
+    },
+    elementIsInViewport: function(el) {
+      var rect = el[0].getBoundingClientRect()
+      var docEl = testFrame().document.documentElement
+      return (
+        rect.top >= 0 &&
+        rect.top <= docEl.clientHeight &&
+        rect.left >= 0 &&
+        rect.left <= docEl.clientWidth
+      )
     },
     elementTextBySelector: function(selector) {
       var found = mainElement().find(selector).first()

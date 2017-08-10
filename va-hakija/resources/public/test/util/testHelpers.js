@@ -96,8 +96,8 @@ function testFrame() {
 }
 
 function triggerEvent(element, eventName) {
-  const evt = testFrame().document.createEvent('HTMLEvents');
-  evt.initEvent(eventName, true, true);
+  const evt = new (testFrame().window).Event(eventName, {bubbles: true, cancellable: true})
+  evt.simulated = true
   element[0].dispatchEvent(evt);
 }
 

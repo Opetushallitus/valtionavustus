@@ -208,30 +208,32 @@
           })
           describe('virheenyhteenvedossa', function() {
             describe('klikattaessa virheyhteenvetoa', function() {
-              var tavoiteVirhe
+              var elementId = 'project-description.project-description-1.goal'
+              var errorElement
               before(
                 applicationPage.validationErrorsButton().click,
                 function() {
-                  tavoiteVirhe = applicationPage.validationErrors().find(".error[data-reactid*='project-description-1=1goal-validation-error']")
+                  errorElement = applicationPage.validationErrors().find('[data-field-id="' + elementId +'"]')
                 }
               )
               it("näkyy yhtä monta kuvausta kuin virhettä", function() {
                 expect(applicationPage.validationErrors().find('.error').length).to.equal(errorCount)
               })
               it("näkyy pakollinen tieto: Tavoite", function() {
-                expect(tavoiteVirhe.text()).to.equal('Tavoite: Pakollinen tieto')
+                expect(errorElement.text()).to.equal('Tavoite: Pakollinen tieto')
               })
               it("tavoite virhettä edellinen virhe on edellinen pakollinen kohta lomakkeelta", function() {
-                expect(tavoiteVirhe.prev().text()).to.equal('Miten hanke tukee hankkeessa mukana olevien koulutuksen järjestäjien strategisten tavoitteiden saavuttamista?: Pakollinen tieto')
+                expect(errorElement.prev().text()).to.equal('Miten hanke tukee hankkeessa mukana olevien koulutuksen järjestäjien strategisten tavoitteiden saavuttamista?: Pakollinen tieto')
               })
-              describe('klikattaessa tavoite kentän virhettä', function() {
+              describe('klikattaessa tavoitekentän virhettä', function() {
                 before(
                   function() {
-                    triggerEvent(tavoiteVirhe.find("a").first(), "click")
-                  }
+                    triggerEvent(errorElement.find("a").first(), "click")
+                  },
+                  wait.forMilliseconds(1000)
                 )
-                it("focus siirtyy kenttään", function() {
-                  // tarkasta käsin ajamalla testiä
+                it("kenttä skrollautuu näkyviin", function() {
+                  expect(applicationPage.elementIsInViewport(applicationPage.elementById(elementId))).to.be.true
                 })
               })
               describe('syötettäessä ensimmäinen projektin tavoite', function() {
@@ -245,20 +247,24 @@
                   expect(applicationPage.validationErrors().find('.error').length).to.equal(errorCount - 3)
                 })
                 describe('syötettäessä toinen projektin tavoite osittain', function() {
-                  var tulosVirhe
+                  var goalElementId = "project-description.project-description-2.goal"
+                  var resultElementId = "project-description.project-description-2.result"
+                  var errorElement
                   before(
-                    applicationPage.setInputValue("project-description.project-description-2.goal", "Tavoite 2"),
+                    applicationPage.setInputValue(goalElementId, "Tavoite 2"),
                     applicationPage.waitAutoSave,
-                    function() {tulosVirhe = applicationPage.validationErrors().find(".error[data-reactid*='project-description-2=1result-validation-error']")}
+                    function() {
+                      errorElement = applicationPage.validationErrors().find('[data-field-id="' + resultElementId +'"]')
+                    }
                   )
                   it("näkyy uusia virheitä", function() {
                     expect(applicationPage.validationErrors().find('.error').length).to.equal(errorCount - 3 + 2)
                   })
                   it("vaaditaan syöttämään toiselle tavoitteelle tulos", function() {
-                    expect(tulosVirhe.text()).to.equal('Tulos: Pakollinen tieto')
+                    expect(errorElement.text()).to.equal('Tulos: Pakollinen tieto')
                   })
                   it("tulos virhettä seuraava virhe on seuraava pakollinen kohta lomakkeelta", function() {
-                    expect(tulosVirhe.next().text()).to.equal('Hankkeen kohderyhmät: Pakollinen tieto')
+                    expect(errorElement.next().text()).to.equal('Hankkeen kohderyhmät: Pakollinen tieto')
                   })
                 })
               })
