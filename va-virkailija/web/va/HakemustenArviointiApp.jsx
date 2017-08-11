@@ -95,11 +95,15 @@ const avustushakuId = parsedAvustusHakuIdObject ? parsedAvustusHakuIdObject["avu
 LocalStorage.saveAvustushakuId(avustushakuId)
 const query = queryString.parse(location.search)
 const evaluator = query.arvioija ? parseInt(query.arvioija) : undefined
+const develMode = query.devel === 'true'
 const controller = new HakemustenArviointiController()
 const stateP = controller.initializeState(avustushakuId,evaluator)
 
 stateP.onValue((state) => {
   if (state.hakuData && state.userInfo) {
+    if (develMode) {
+      console.log("Updating UI with state:", state)
+    }
     ReactDOM.render(<App state={state} controller={controller}/>, document.getElementById('app'))
   }
 })
