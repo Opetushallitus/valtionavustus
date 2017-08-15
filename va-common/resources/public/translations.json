@@ -77,7 +77,7 @@
       "sv": "När slutredovisningen är klar skickas den till Utbildningsstyrelsen för behandling. Slutredovisningen kan redigeras också efter att den har skickats in, ända tills tidsfristen går ut."
     },
     "savehelp-valiselvitys": {
-      "fi": "Kun väliselvitys on valmis, se lähetetään Opetushallitukseen käsiteltäväksi ennen hakuajan umpeutumista.",
+      "fi": "Kun väliselvitys on valmis, se lähetetään Opetushallitukseen käsiteltäväksi ennen määräajan umpeutumista. Väliselvitystä voi muokata lähettämisen jälkeen määräajan puitteissa.",
       "sv": "När mellanredovisningen är klar skickas den till Utbildningsstyrelsen för behandling. Mellanredovisningen kan redigeras också efter att den har skickats in, ända tills tidsfristen går ut."
     },
     "change-request-response": {
