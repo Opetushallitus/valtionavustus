@@ -149,7 +149,7 @@ const makeBuildDispatcher = () => {
   })
 
   const webappBuilders = ["va-hakija", "va-virkailija"].reduce((acc0, webapp) => {
-    const build = makeQueuedSpawn("npm", ["run", "dev-build"], webapp)
+    const build = makeQueuedSpawn("npm", ["run", "build"], webapp)
     acc0[webapp] = build
     return acc0
   }, {})

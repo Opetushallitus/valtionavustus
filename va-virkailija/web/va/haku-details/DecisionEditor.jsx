@@ -198,8 +198,16 @@ class DecisionDateAndSend extends React.Component {
 
   fetchEmailState(avustushakuId) {
     const sendS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/sent/${avustushakuId}`,{}))
-    sendS.onValue((res)=>{
-      this.setState({...this.state, count:res.count, sent:res.sent, mail:res.mail, sentTime: res['sent-time'], exampleUrl: res['example-url'],paatokset:res.paatokset})
+    sendS.onValue(res => {
+      this.setState({
+        ...this.state,
+        count: res.count,
+        sent: res.sent,
+        mail: res.mail,
+        sentTime: res['sent-time'],
+        exampleUrl: res['example-url'],
+        paatokset: res.paatokset
+      })
     })
   }
 

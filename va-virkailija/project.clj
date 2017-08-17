@@ -22,7 +22,7 @@
   :plugins [[speclj "3.3.1"]
             [lein-modules "0.3.11"]
             [lein-environ "1.0.0"]
-            [lein-shell "0.4.0"]
+            [lein-shell "0.5.0"]
             [lein-auto "0.1.2"]
             [lein-ancient "0.6.7"]]
 
@@ -37,4 +37,6 @@
   :profiles {:uberjar {:aot [oph.va.virkailija.main]}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.virkailija.db.migrations/migrate" "virkailija-db" "db.migration" "oph.va.virkailija.db.migrations"]
             "dbclear" ["run" "-m" "oph.soresu.common.db/clear-db!" "virkailija-db" "virkailija"]
-            "buildfront" ^{:doc "Build frontend code with npm"} ["do" ["shell" "npm" "install"] ["shell" "npm" "run" "build"]]})
+            "buildfront" ^{:doc "Build frontend code with npm"} ["do"
+                                                                 ["shell" "npm" "install"]
+                                                                 ["shell" "npm" "run" "build-production"]]})

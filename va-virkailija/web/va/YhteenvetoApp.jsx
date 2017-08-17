@@ -170,7 +170,7 @@ const SummaryTableRow = ({label, count, applied, granted, isTotalSummary = false
   )
 }
 
-export default class SummaryListing extends Component {
+class SummaryListing extends Component {
   render() {
     const hakemusList = this.props.hakemusList
     const hakemusListSorted = _.sortBy(hakemusList,'organization-name')
