@@ -8,8 +8,6 @@ import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
 import Translator from 'soresu-form/web/form/Translator'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
-import FormUtil from 'soresu-form/web/form/FormUtil'
-import JsUtil from 'soresu-form/web/form/JsUtil'
 
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 

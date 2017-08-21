@@ -6,7 +6,6 @@ import queryString from 'query-string'
 import RouteParser from 'route-parser'
 
 import Dispatcher from 'soresu-form/web/Dispatcher'
-import DateUtil from 'soresu-form/web/form/DateUtil'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'

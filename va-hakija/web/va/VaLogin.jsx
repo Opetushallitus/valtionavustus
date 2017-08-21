@@ -10,7 +10,6 @@ import common from 'soresu-form/web/form/style/main.less'
 import loginStyle from './style/va-login.less'
 
 import HttpUtil from 'va-common/web/HttpUtil'
-import FormUtil from 'soresu-form/web/form/FormUtil.js'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import {DateRangeInfoElement, H1InfoElement} from 'soresu-form/web/form/component/InfoElement.jsx'
 import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'

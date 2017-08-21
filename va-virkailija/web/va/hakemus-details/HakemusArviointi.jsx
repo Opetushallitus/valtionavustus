@@ -3,7 +3,6 @@ import HttpUtil from 'va-common/web/HttpUtil.js'
 import React, { Component } from 'react'
 import _ from 'lodash'
 import DateUtil from 'soresu-form/web/form/DateUtil'
-import FormUtil from 'soresu-form/web/form/FormUtil'
 
 import HakemusBudgetEditing, { BudgetGranted } from '../budgetedit/HakemusBudgetEditing.jsx'
 

@@ -1,5 +1,3 @@
-import FormUtil from 'soresu-form/web/form/FormUtil'
-
 import BudgetBusinessRules from '../budgetedit/BudgetBusinessRules'
 
 export default class SeurantaBudgetEditFormController {

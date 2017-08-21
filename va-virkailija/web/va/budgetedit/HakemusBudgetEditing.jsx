@@ -1,7 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
 
-import JsUtil from 'soresu-form/web/form/JsUtil'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
