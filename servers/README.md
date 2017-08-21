@@ -120,7 +120,7 @@ Voit käyttää vipua `-vvvv` nähdäksesi tarkemmin mitä komento tekee.
 ### Provisioi palvelinten ssh-tunnukset
 
 ``` bash
-ansible-playbook -i vmware_inventory.py init_ssh.yml
+ansible-playbook -i vmware_inventory.py site.yml -t ssh
 ```
 
 ### Provisioi palvelinten palomuurit
