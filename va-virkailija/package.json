@@ -43,20 +43,14 @@
     "mocha-junit-reporter": "^1.5.0",
     "style-loader": "^0.18.2",
     "url-loader": "^0.5.9",
-    "watch-spawn": "^1.0.5",
     "webpack": "^3.5.5"
   },
   "private": false,
   "scripts": {
     "build": "webpack --bail",
     "build-production": "NODE_ENV=production npm run build",
-    "watch-build": "webpack --progress --colors --watch",
-    "watch-web": "watch-spawn -k -i -p 'node_modules/va-common/package.json' -p 'node_modules/soresu-form/package.json' -p 'web/**/*' -p 'package.json' npm run build",
-    "update-common-web": "rm -rf node_modules/va-common && npm install va-common",
-    "watch-common-web": "watch-spawn -k -p '../va-common/web/**/*' -p '../va-common/package.json' npm run update-common-web",
-    "update-soresu-form-web": "rm -rf node_modules/soresu-form && npm install soresu-form",
-    "watch-soresu-form-web": "watch-spawn -k -p '../soresu-form/web/**/*' -p '../soresu-form/package.json' npm run update-soresu-form-web",
-    "watch": "npm run update-common-web && npm run update-soresu-form-web && (npm run watch-common-web & npm run watch-soresu-form-web & npm run watch-webpack)",
-    "watch-and-rebuild": "npm run update-common-web && npm run update-soresu-form-web && (npm run watch-common-web & npm run watch-soresu-form-web & npm run watch-web)"
+    "build-watch": "webpack --progress --watch",
+    "reinstall-soresu-form": "rm -rf node_modules/soresu-form && npm install -q soresu-form",
+    "reinstall-va-common": "rm -rf node_modules/va-common && npm install -q va-common"
   }
 }

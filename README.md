@@ -175,7 +175,7 @@ done
 Käynnistä frontendin assettien monitorointi, kääntäen tarvittaessa:
 
 ``` shell
-./scripts/web-watch-build.js
+./scripts/build-watch-all.js
 ```
 
 Vaihtoehtoisesti webpackin inkrementaalista kääntämistä hyödyntävä
@@ -185,14 +185,14 @@ lähdekoodi muutu myös:
 
 ``` shell
 cd va-hakija
-npm run watch
+npm run build-watch
 
 cd va-virkailija
-npm run watch
+npm run build-watch
 ```
 
 Mikäli kirjoitat muutoksia pääasiassa soresu-formiin tai va-commoniin,
-käytä `web-watch-build.js`-skriptiä, jotta muutokset siirtyvät varmasti
+käytä `build-watch-all.js`-skriptiä, jotta muutokset siirtyvät varmasti
 va-hakijaan ja va-virkailijaan.
 
 Frontendin yksikkötestit on
@@ -202,7 +202,7 @@ esimerkiksi va-hakija-moduulissa:
 ``` shell
 cd va-hakija
 npm run test         # kerta-ajo
-npm run watch-test   # monitorointi ja ajo muutoksista
+npm run test-watch   # monitorointi ja ajo muutoksista
 ```
 
 Va-hakija-moduulilla on Mocha-pohjaistet UI-testit. Ne voi ajaa selaimessa, kun on ensin
