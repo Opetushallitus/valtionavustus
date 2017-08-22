@@ -1,0 +1,11 @@
+version: "2"
+
+services:
+  va-postgres:
+    build:
+      context: ./db
+    env_file:
+      - db-variables.env
+    image: "postgres"
+    ports:
+      - "5432:5432"

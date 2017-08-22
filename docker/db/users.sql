@@ -1,0 +1,3 @@
+CREATE ROLE va_hakija PASSWORD 'va' SUPERUSER;
+CREATE ROLE va_virkailija PASSWORD 'va' SUPERUSER;
+
