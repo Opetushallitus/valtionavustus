@@ -1,8 +1,0 @@
-- src: https://github.com/FloeDesignTechnologies/ansible-haproxy
-  name: info.haproxy
-- src: https://github.com/Stouts/Stouts.jenkins
-  name: Stouts.jenkins
-- src: geerlingguy.nodejs
-- src: geerlingguy.nginx
-- src: https://github.com/timorantalaiho/ansible-postgresql
-  name: postgresql

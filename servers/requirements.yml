@@ -1,2 +1,26 @@
 - src: gaqzi.ssh-config
   path: library
+  version: v0.3.0
+
+- src: https://github.com/FloeDesignTechnologies/ansible-haproxy
+  name: info.haproxy
+  path: roles/3rdparty
+  # version: not specified, contains local modifications :(
+
+- src: https://github.com/Stouts/Stouts.jenkins
+  name: Stouts.jenkins
+  path: roles/3rdparty
+  # version: not specified, contains local modifications :(
+
+- src: geerlingguy.nodejs
+  path: roles/3rdparty
+  version: 4.1.1
+
+- src: geerlingguy.nginx
+  path: roles/3rdparty
+  version: 1.7.0
+
+- src: https://github.com/timorantalaiho/ansible-postgresql
+  name: postgresql
+  path: roles/3rdparty
+  # version: not specified, contains local modifications :(
