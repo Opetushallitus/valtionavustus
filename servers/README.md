@@ -36,22 +36,19 @@ Asennuksen jälkeen ota Virtualenv käyttöön:
 eval `make venv`
 ```
 
-Hakemistossa `roles/3rdparty` on asennettu muiden tekemät
-Ansible-roolit. Nämä on asennettu Ansible Galaxystä:
+Hakemistossa `roles/3rdparty` on asennettu muiden tekemät Ansible-roolit
+ja hakemistossa `library` Ansibleen lisätyt moduulit. Nämä asennetaan
+Ansible Galaxyllä:
 
 ``` bash
-ansible-galaxy install --roles-path=roles/3rdparty --role-file=third_party_roles.yml  --ignore-errors
+ansible-galaxy install -r requirements.yml
 ```
 
 Roolin päivittäminen onnistuu vivulla `--force` (ansible-galaxy kertoo siitä).
 
-``` bash
-ansible-galaxy install gaqzi.ssh-config -p library/
-```
-
 ## Yhteyden testaaminen palvelimille
 
-Palveliment ovat CSC:n VMware-ympäristöss'. Palvelinten Ansible
+Palveliment ovat CSC:n VMware-ympäristössä. Palvelinten Ansible
 Inventoryn meta-tiedot on listattu staattisesti tiedostossa
 `vmware_inventory.json`. Käyttö:
 
@@ -59,7 +56,13 @@ Inventoryn meta-tiedot on listattu staattisesti tiedostossa
 ./vmware_inventory.py
 ```
 
-Tarkista, että palvelimet vastaavat Ansiblen pingiin:
+Tarkista, että pääset ssh:lla palvelimille:
+
+``` bash
+ssh -F ssh.config oph-va-app-test01 'echo ok'
+```
+
+Tarkista, että palvelimet vastaavat pingiin:
 
 ``` bash
 # kaikki palvelimet
@@ -71,10 +74,22 @@ ansible oph-va-app-test01.csc.fi -i vmware_inventory.py -m ping
 
 ## Tehtäviä
 
-### Uuden käyttäjän lisääminen buildikoneelle kirjautumista varten
+### Provisioi palvelinten ssh-tunnukset
 
 ``` bash
-./ssh_to_va-build.bash add_va_jenkins_user.bash $username
+ansible-playbook -i vmware_inventory.py site.yml -t ssh
+```
+
+### Provisioi palvelinten palomuurit
+
+``` bash
+ansible-playbook -i vmware_inventory.py site.yml -t firewall
+```
+
+### Uuden käyttäjän lisääminen CI:n Jenkinsiin
+
+``` bash
+ssh -F ssh.config oph-va-ci-test01 add_va_jenkins_user.bash $username
 ```
 
 ### Buildikoneen päivitys
@@ -83,8 +98,8 @@ Jenkinsin päivityksen jälkeen lisää jobeihin Slack-notifikaatiot
 päälle käsin: Jenkinsin jobin Configure -> Add post-build action ->
 Slack Notifications.
 
-Jos buildikoneen jenkins-käyttäjän SSH-avain on muuttunut, se tulee
-lisätä soresu-form -repon deployment-avaimiin.
+Jos buildikoneen jenkins-käyttäjän ssh-avain on muuttunut, se tulee
+lisätä soresu-formin deployment-avaimiin GitHubissa.
 
 ### Provisioi palvelin
 
@@ -103,7 +118,7 @@ Provisioi yksittäinen palvelin:
 ansible-playbook -i vmware_inventory.py site.yml -l oph-va-app-test01.csc.fi
 ```
 
-Jos haluat ajaa provisioinnin tietystä Ansiblen taskita lähtien:
+Jos haluat ajaa provisioinnin tietystä Ansiblen taskista lähtien:
 
 ``` bash
 ansible-playbook -i vmware_inventory.py site.yml -l oph-va-app-test01.csc.fi --step --start-at-task="Add supervisor conf to start and stop the applications"
@@ -116,15 +131,3 @@ ansible-playbook -i vmware_inventory.py site.yml
 ```
 
 Voit käyttää vipua `-vvvv` nähdäksesi tarkemmin mitä komento tekee.
-
-### Provisioi palvelinten ssh-tunnukset
-
-``` bash
-ansible-playbook -i vmware_inventory.py site.yml -t ssh
-```
-
-### Provisioi palvelinten palomuurit
-
-``` bash
-ansible-playbook -i vmware_inventory.py site.yml -t firewall
-```
