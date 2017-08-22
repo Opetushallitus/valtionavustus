@@ -108,7 +108,8 @@ initdb -D postgresql-data
 ```
 
 Halutessasi aseta seuraavat tiedostoon
-`postgresql-data/postgresql.conf`:
+`postgresql-data/postgresql.conf`, jotta voit seurata tarkemmin mitä
+tietokannassa tapahtuu:
 
 ```
 log_destination = 'stderr'

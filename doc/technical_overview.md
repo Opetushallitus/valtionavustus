@@ -2,7 +2,7 @@
 
 ## Technologies
 
-### Server software
+### Backend software
 
 * Clojure with JDK 1.8
 * [Leiningen](http://leiningen.org) for [building](../README.md)
@@ -15,7 +15,7 @@
   initialization and migrations
 * Postgresql 9.4 database, with support for **jsonb** type field
 
-### Client (browser) software
+### Frontend (browser) software
 
 * [React](https://facebook.github.io/react) JSX components for rendering
   HTML in clientside
@@ -25,7 +25,7 @@
 * [Node.js](https://nodejs.org) For [building](../README.md) JS packages
   with [Browserify](http://browserify.org)
 
-### Documentation
+### Documentation tools
 
 * [yEd](https://www.yworks.com/products/yed) for editing graphs
 * [IntelliJ IDEA](https://www.jetbrains.com/idea/) for creating database
@@ -45,7 +45,7 @@ Environment specific application configurations are in
 [va-hakija/config](../va-hakija/config/) and
 [va-virkailija/config](../va-virkailija/config/)
 
-### Server & Network architecture
+### Server and network architecture
 
 ![Server architecture](https://rawgit.com/Opetushallitus/valtionavustus/f1de261192b0094a19f28054f955147416d25371/doc/deployment.svg)
 
@@ -66,7 +66,7 @@ Data flow of application (in Finnish, because all terms are in Finnish):
 
 Valtionavustus application is divided to following major parts:
 
-* [Soresu-form](https://github.com/Opetushallitus/soresu-form), which is
+* [soresu-form](https://github.com/Opetushallitus/soresu-form), which is
   the generic form library (including both React client UI and Clojure
   server code),
 * [va-common](../va-common/), which contains the React client UI and
@@ -83,10 +83,10 @@ Internal structure of application architecture:
 
 ## API documentation
 
-For Hakija app, the API documentation can be viewed via
+For va-hakija, the API documentation can be viewed via
 [Swagger](https://valtionavustukset.oph.fi/doc).
 
-Virkailija app
+va-virkailija
 [Swagger](https://virkailija.valtionavustukset.oph.fi/doc) requires
 signing in with correct account.
 
