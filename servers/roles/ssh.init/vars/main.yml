@@ -1,28 +1,16 @@
 adminusers:
-  auramo:
-    state: absent
-    name: Perttu Auramo
-  jhietama:
-    state: present
-    name: Janne Hietamäki
-  jkytomak:
-    state: present
-    name: Jyri Kytömäki
-  hsalokor:
-    state: absent
-    name: Harri Salokorpi
   pam:
     state: present
     name: Petri Ämmälä
-  smensola:
+  Silvast:
     state: present
-    name: Sami Mensola
-  thrantal:
+    name: Anne-Mari Silvast
+  stormaaja:
     state: present
-    name: Timo Rantalaiho
+    name: Matti Ahinko
   tkareine:
     state: present
     name: Tuomas Kareinen
   wallops:
     state: present
-    name: Wall Ops
+    name: WallOps

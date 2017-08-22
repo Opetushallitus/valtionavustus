@@ -1,2 +1,3 @@
 *openrc.sh
-python-venv
+fact_cache/
+python-venv/
