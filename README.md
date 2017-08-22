@@ -1,21 +1,63 @@
-# Valtionavustus
+# Valtionavustukset
 
-Valtionavustusten hakemiseen, käsittelyyn ja myöntämiseen tarkoitetut
-palvelut.
+Opetushallituksen (OPH) valtionavustusten hakemiseen, käsittelyyn ja
+myöntämiseen tarkoitetut palvelut.
 
 Projekti koostuu kahdesta web-palvelusta: va-hakija ja
 va-virkailija. Näillä on omat Leiningen-moduulit projektin
 juurihakemistossa. Web-sovelluksien yhteinen koodi on moduulissa
 va-common. Lisäksi moduulissa soresu-form on geneerinen lomake-editori,
 joka on yhteinen riippuvuus muille projektin moduuleille. Soresu-form
-pitää asentaa git submodulena.
+pitää asentaa git-submodulena.
 
-[Tekninen dokumentaatio](doc/README.md)
+Tässä README:ssä on yleiskuvaus palveluista, lisää dokumentaatiota:
+
+* [Tekninen yleiskuvaus](doc/technical_overview.md)
+* [Tietokantaoperaatiot](doc/database_operations.md)
+
+## Käsitteitä ja käyttäjärooleja
+
+_Hakija_ on käyttäjä, joka täyttää ja lähettää _hakemuksen_ avoimeen
+_avustushakuun_. Kuka tahansa voi lähettää hakemuksen (ei
+autentikointia). Tähän käytetään va-hakija-sovellusta.
+
+Virkailijan käyttöliittymässä (va-virkailija-sovellus) arvioidaan
+hakemuksia. Sovellukseen kirjaudutaan OPH:n CAS-palvelun kautta. CAS
+hakee käyttäjäoikeudet OPH:n LDAP:sta, johon on tallennettu käyttäjien
+tyypit.
+
+Käyttäjätyypit:
+
+* Normaali (VA-käyttäjä)
+  - voi lukea kaikkia hakuja ja hakemuksia
+  - voi muokata niitä hakuja, joissa on esittelijä-roolissa
+  - voi arvioida niitä hakuja, joissa on arvioija-roolissa
+* Admin (VA-pääkäyttäjä)
+  - voi lukea ja muokata kaikkia hakuja ja hakemuksia
+
+Hakukohtaiset roolit:
+
+* Esittelijä
+  - voi muokata hakua ja siihen saapuneita hakemuksia
+  - haun "vastaava"
+  - vastaa rahoituksen jakautumisesta hyväksyttyjen hakemuksien kesken
+* Arvioija
+  - voi rajatusti muokata hakua: arvioi tiettyjä kohtia hausta ja voi muokata osia rahoituksesta
+  - tukeva rooli esittelijälle
+
+Haun roolista huolimatta kuka tahansa VA-käyttäjä voi kommentoida hakemuksia.
+
+| Käsite | Kuvaus |
+|---|---|
+| Haku tai avustushaku | Mahdollistaa rahan jakamisen hakijoille. Avustushaulle tehdään lomake, joka julkaistaan. Hakija lähettää avustushakukohtaisen hakemuksen. |
+| Hakemus | Hakijan kirjoittama avustushakukohtainen anomus rahoituksen saamiseksi. |
+| Diaarinumero | Tunniste haun arkistointia varten. Usealla haulla voi olla sama diaarinumero. va-virkailija-sovellus lähettää haun (joka sisältää diaarinumeron) sähköpostilla kirjaamo.oph.fi:hin, jossa haut tulostetaan ja arkistoidaan. OPH:lla on suunnitteilla on ottaa käyttöön sähköinen arkistointi, jolloin diaarinumero tulisi hakuun automaattisesti integraation kautta. |
 
 ## Riippuvuudet
 
 * [Node.js 6](https://nodejs.org/)
 * [Leiningen](https://leiningen.org/)
+* [Java SE Development Kit 8](http://www.oracle.com/technetwork/java/javase/index.html)
 * [PostgreSQL 9.4](https://www.postgresql.org/)
 * [soresu-form](https://github.com/Opetushallitus/soresu-form)
 
@@ -38,6 +80,18 @@ Kehitystyössä hyödyllisiä työkaluja:
 Projektin juurihakemisto sisältää `lein`-skriptin, jota voi käyttää
 Leiningenin ajamiseen. Tämä takaa kiinteän version käytön Leiningenistä.
 
+### Suositeltu hakemistohierarkia
+
+``` bash
+ls -lA oph
+```
+
+```
+drwxr-xr-x  26 username  staff    884 Feb 17 09:46 postgresql-data/
+drwxr-xr-x  26 username  staff    884 Feb 17 09:46 valtionavustus/
+drwxr-xr-x  25 username  staff    850 Feb 17 10:54 valtionavustus-secret/
+```
+
 ### Tietokanta
 
 *Huom:* Linux-koneilla Postgres-komennot on helpointa ajaa
@@ -47,16 +101,25 @@ postgres-käyttäjänä:
 sudo -s -u postgres
 ```
 
-Luo paikallinen postgres-datahakemisto:
+Luo paikallinen datahakemisto:
 
 ``` shell
-initdb -d postgres
+initdb -D postgresql-data
+```
+
+Halutessasi aseta seuraavat tiedostoon
+`postgresql-data/postgresql.conf`:
+
+```
+log_destination = 'stderr'
+log_line_prefix = '%t %u '
+log_statement = 'mod'
 ```
 
 Käynnistä tietokantapalvelin:
 
 ``` shell
-postgres -D postgres
+postgres -D postgresql-data
 ```
 
 Luo käyttäjät `va-hakija` ja `va-virkailija` (kummankin salasana `va`):
@@ -153,7 +216,8 @@ Frontendin tuotantoversion build, projektin juurihakemistossa:
 ### Backend
 
 Asenna ensin web-sovelluksien riippuvuudet paikalliseen
-`~/.m2`-hakemistoon:
+`~/.m2`-hakemistoon. Tarvitset tätä varten OPH:n VPN:n, koska osa
+riippuvuuksista on OPH:n Artifactoryssä:
 
 ``` shell
 ./lein modules install
@@ -223,7 +287,7 @@ Ajoympäristojen konfiguraatiot ovat moduulien
 Komento `lein test` käyttää `test`-ympäristöä
 automaattisesti. [Lisätietoja Leiningenin profiileista](https://github.com/technomancy/leiningen/blob/master/doc/PROFILES.md).
 
-### Sekalaisia komentoja
+### Yleisiä komentoja
 
 Tietokannan tyhjennys:
 
@@ -328,27 +392,6 @@ Esimerkiksi Emacsin
 
 4. Muutoksen vaikutuksen pitäisi näkyä sovelluksessa.
 
-## JConsole-yhteys palvelimelle
-
-1. Mene palvelimelle, esim: `./servers/ssh_to_va-test.bash`
-2. Etsi Java-sovelluksen prosessi-id: `ps -fe | grep java`
-3. Etsi mitä portteja prosessi kuuntelee, esim: `sudo lsof -a -iTCP
-   -sTCP:LISTEN -n -P | grep $PID`
-   * Katso mikä on prosessin vaihtuva RMI-portti (se, joka ei ole
-     palvelun oletus-http-portti eikä oletus-JMX-portti)
-   * Oletetaan, että JMX-portit ovat: va-hakija=10876, va.virkailija=11322
-4. Avaa uusi ssh-yhteys koneelle ja putkita RMI-portti (JMX-portti
-   putkitetaan valmiiksi ssh-skriptissä), esim:
-   `.servers/ssh_to_va-test.bash -L46498:localhost:46498`
-5. Avaa JConsole omalla koneellasi (`jconsole &`) ja muodosta
-   remote-yhteydet Java-sovelluksiin käyttäen osoitteina:
-   * testissä:
-     - va-hakija: "localhost:10876"
-     - va-virkailija: "localhost:11322"
-   * tuotannossa:
-     - va-hakija: "localhost:20876"
-     - va-virkailija: "localhost:21322"
-
 ## Tuetut selaimet
 
 Hakijan käyttöliittymä: viimeisin stabiili Google Chrome ja Mozilla
@@ -356,3 +399,32 @@ Firefox, IE11.
 
 Virkailijan käyttöliittymä: viimeisin stabiili Google Chrome ja Mozilla
 Firefox.
+
+## Käyttöliittymän ratkaisuja
+
+Ei näkymää, jossa listataan avoimet haut. OPH linkittää avoimet haut
+oph.fi:hin käsin. Tämä johtuu prosessista, joilla hakuja luodaan (uusi
+haku vaatii asetuksen).
+
+Hakemuksen voi arvioida vasta hakuajan umpeuduttua. Tämä siksi, että
+hakija voi muokata hakemusta siihen asti.
+
+Hakemuksen tilat:
+
+* hakijan näkökulmasta
+  - uusi
+  - luonnos
+  - lähetetty
+  - odottaa täydennystä
+  - poistettu
+* virkailijan ja arvioijan näkökulmasta
+  - käsittelemättä
+  - käsittelyssä
+  - mahdollinen
+  - hylätty (mahdollinen lopputila)
+  - hyväksytty (mahdollinen lopputila)
+
+va-virkailijan hakulomakkeen json-editorilla voi täysin muokata
+lomakkeen sisältöä. Kaikkia graafisen lomake-editorin komponentteja ei
+ole toteutettu. Lomakkeen voi kopioida json-editorin kautta toiseen
+avustushakuun.

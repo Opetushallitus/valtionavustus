@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+
+set -uo pipefail
+
+print_usage() {
+    local this_script
+    this_script=${0##*/}
+
+    cat << EOF
+Execute SQL query with \`psql\`, produce pretty-printed JSON output with
+\`jq\`.
+
+Usage: $this_script [-C|-M] -c command [psql options]
+
+    -c, --command command    SQL query to execute (mandatory)
+    -C, --color-output       explicitly enable jq color output
+    -M, --monochrome-output  explicitly disable jq color output
+    -?, --help               display this message and exit
+
+Other options are passed to psql as is (such as \`-d db_name\`).
+
+If program's output is to a terminal and no jq color option is set,
+enable color output implicitly.
+
+Example: $this_script -d mydb -c 'select(1)'
+EOF
+}
+
+command=
+psql_args=()
+jq_args=()
+
+while :; do
+    case ${1:-} in
+        -\?|--help)
+            print_usage
+            exit
+            ;;
+        -C|--color-output|-M|--monochrome-output)
+            jq_args+=($1)
+            ;;
+        -c|--command)
+            if [[ -n ${2:-} ]]; then
+                command=$2
+                shift
+            else
+                printf 'ERROR: "--command" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -?*)
+            psql_args+=($1)
+
+            if [[ -n ${2:-} && $2 != -* ]]; then
+                psql_args+=($2)
+                shift
+            fi
+            ;;
+        *)
+            break
+    esac
+
+    shift
+done
+
+if [[ -z $command ]]; then
+    print_usage
+    exit 1
+fi
+
+# implicitly enable jq color output when user has not specified jq color
+# options and this script outputs to tty
+if [[ ${#jq_args[@]} -eq 0 && -t 1 ]]; then
+    jq_args+=(-C)
+fi
+
+psql -q -t ${psql_args[@]:+"${psql_args[@]}"} << EOF
+\o '|jq ${jq_args[@]:+"${jq_args[@]}"} .'
+select row_to_json(t) from ($command) t
+EOF
