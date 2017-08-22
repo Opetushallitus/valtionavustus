@@ -23,7 +23,7 @@
   changes and initiating rerendering of React components
 * [Babel](https://babeljs.io) For ES6 javascript support
 * [Node.js](https://nodejs.org) For [building](../README.md) JS packages
-  with [Browserify](http://browserify.org)
+  with [webpack](https://webpack.js.org/)
 
 ### Documentation tools
 
