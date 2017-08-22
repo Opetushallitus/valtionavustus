@@ -5,6 +5,9 @@ adminusers:
   Silvast:
     state: present
     name: Anne-Mari Silvast
+  stormaaja:
+    state: present
+    name: Matti Ahinko
   tkareine:
     state: present
     name: Tuomas Kareinen
