@@ -13,3 +13,4 @@ postgres
 pom.xml
 git-HEAD.txt
 learn
+docker/db-variables.env
