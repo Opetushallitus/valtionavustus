@@ -1,4 +1,3 @@
-// Required because of old PhantomJS, can be removed after 2.0 PhantomJS is in use
 (function () {
 
   var Ap = Array.prototype;
