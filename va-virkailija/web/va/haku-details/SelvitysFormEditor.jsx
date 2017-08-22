@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
+
+import HttpUtil from "va-common/web/HttpUtil"
+
 import FormEditor from './FormEditor.jsx'
-import HttpUtil from "../../../../va-common/web/HttpUtil";
 
 export default class SelvitysFormEditor extends React.Component{
 

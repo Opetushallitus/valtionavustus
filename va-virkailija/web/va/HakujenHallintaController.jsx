@@ -6,13 +6,13 @@ import RouteParser from 'route-parser'
 
 import HttpUtil from 'va-common/web/HttpUtil.js'
 import Dispatcher from 'soresu-form/web/Dispatcher'
-import LocalStorage from './LocalStorage'
+import FormUtil from "soresu-form/web/form/FormUtil"
 
+import LocalStorage from './LocalStorage'
 import LdapSearchParameters from './haku-details/LdapSearchParameters.js'
 import LoppuselvitysForm from './data/LoppuselvitysForm.json'
 import ValiselvitysForm from './data/ValiselvitysForm.json'
 import Rahoitusalueet from './data/Rahoitusalueet'
-import FormUtil from "../../../soresu-form/web/form/FormUtil"
 import HakuStatuses from './haku-details/HakuStatuses'
 import HakuPhases from './haku-details/HakuPhases'
 const dispatcher = new Dispatcher()
