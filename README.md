@@ -82,6 +82,22 @@ dropdb va-dev
 createdb -E UTF-8 va-dev
 ```
 
+#### Docker
+
+Vaihtoehtoisesti voit ajaa tietokantaa docker-composella.
+
+`docker`-kansiossa
+
+- Vaihda `db-variables.env`-tiedostoon haluamasi postgres-käyttäjän salasana.
+  - Tiedosto on `.gitignore`:ssa, joten salasanasi ei päädy versiohallintaan.
+- Aja `docker-compose up -d`
+
+Jos tahdot tyhjentää tietokannan tai teet muutoksia docker-tiedostoihin, aja komento
+
+    docker-compose up --build -d
+
+`-d` -vipu laittaa imagen pyörimään taustalle (daemon).
+
 ### Frontend
 
 Asenna kaikki frontendin buildaamiseen käytetyt paketit:
