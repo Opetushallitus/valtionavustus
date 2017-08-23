@@ -136,24 +136,24 @@ class SetArviointiStatus extends React.Component {
     const status = arvio ? arvio.status : undefined
     const controller = this.props.controller
     const statuses = []
-    const statusValues = HakemusArviointiStatuses.allStatuses();
+    const statusValues = HakemusArviointiStatuses.allStatuses()
     for (var i=0; i < statusValues.length; i++) {
       const htmlId = "set-arvio-status-" + statusValues[i]
       const statusFI = HakemusArviointiStatuses.statusToFI(statusValues[i])
       const onChange = allowEditing ? controller.setHakemusArvioStatus(hakemus, statusValues[i]) : null
       statuses.push(
-          <input id={htmlId}
-                 type="radio"
-                 key={htmlId}
-                 name="status"
-                 value={statusValues[i]}
-                 disabled={!allowEditing}
-                 onChange={onChange}
-                 checked={statusValues[i] === status ? true: null}
-              />
+        <input id={htmlId}
+               type="radio"
+               key={htmlId}
+               name="status"
+               value={statusValues[i]}
+               disabled={!allowEditing}
+               onChange={onChange}
+               checked={statusValues[i] === status}
+            />
       )
       statuses.push(
-          <label key={htmlId + "-label"} htmlFor={htmlId}>{statusFI}</label>
+        <label key={htmlId + "-label"} htmlFor={htmlId}>{statusFI}</label>
       )
     }
 

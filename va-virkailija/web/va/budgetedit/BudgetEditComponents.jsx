@@ -45,7 +45,7 @@ class ToggleKonttaSumma extends React.Component {
                value={obj.useDetailedCosts}
                disabled={disabled}
                onChange={onChange}
-               checked={obj.useDetailedCosts === useDetailedCosts ? true: null}
+               checked={obj.useDetailedCosts === useDetailedCosts}
         />,
         <label key={htmlId + "-label"} htmlFor={htmlId}>{obj.text}</label>
       ]
