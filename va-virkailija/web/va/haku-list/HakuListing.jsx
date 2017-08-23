@@ -202,7 +202,7 @@ class StatusFilter extends Component {
     return (
       <div className="status-filter">
         <a onClick={this.handleClick}>{label}</a>
-        <button type="button" hidden={!hasFilters} onClick={onDelete} className="filter-remove" alt="Poista tila rajaukset" title="Poista tila rajaukset" tabIndex="-1" />
+        <button type="button" hidden={!hasFilters} onClick={onDelete} className="filter-remove" alt="Poista tilojen rajaukset" title="Poista tilojen rajaukset" tabIndex="-1" />
         <div className="status-filter-popup popup-box-shadow" hidden={!this.state.open}>
              {statuses}
         </div>
