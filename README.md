@@ -148,19 +148,23 @@ createdb -E UTF-8 va-dev
 
 #### Docker
 
-Vaihtoehtoisesti voit ajaa tietokantaa docker-composella.
+Vaihtoehtoisesti voit ajaa tietokantaa
+[docker-composella](https://docs.docker.com/compose/). Hakemistossa
+`scripts/docker`:
 
-`docker`-kansiossa
+1. Vaihda `db-variables.env`-tiedostoon haluamasi postgres-käyttäjän
+   salasana. Tiedosto on `.gitignore`:ssa, joten salasanasi ei päädy
+   versiohallintaan.
+2. Aja `docker-compose up -d`
 
-- Vaihda `db-variables.env`-tiedostoon haluamasi postgres-käyttäjän salasana.
-  - Tiedosto on `.gitignore`:ssa, joten salasanasi ei päädy versiohallintaan.
-- Aja `docker-compose up -d`
+Jos tahdot tyhjentää tietokannan tai teet muutoksia docker-tiedostoihin,
+aja:
 
-Jos tahdot tyhjentää tietokannan tai teet muutoksia docker-tiedostoihin, aja komento
+``` bash
+docker-compose up --build -d
+```
 
-    docker-compose up --build -d
-
-`-d` -vipu laittaa imagen pyörimään taustalle (daemon).
+Vipu `-d` asettaa imagen pyörimään taustalle (daemon).
 
 ### Frontend
 
