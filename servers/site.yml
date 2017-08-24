@@ -32,7 +32,7 @@
   sudo: yes
   roles:
   - {role: ssh.init, tags: ['ssh']}
-  - node
+  - {role: node, tags: ['nodejs']}
   - common
   - buildmachine
   - valtionavustus.build
