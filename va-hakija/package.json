@@ -1,11 +1,11 @@
 {
-  "name": "va-web",
+  "name": "va-hakija",
   "version": "1.0.0",
-  "description": "OPH Valtionavustus Web UI",
+  "description": "OPH Valtionavustukset hakija web UI",
   "license": "EUPL-1.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com:Opetushallitus/va.git"
+    "url": "https://github.com/Opetushallitus/valtionavustus.git"
   },
   "dependencies": {
     "baconjs": "^0.7.59",
@@ -19,7 +19,6 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "route-parser": "^0.0.4",
-    "seamless-immutable": "^2.4.2",
     "soresu-form": "file:../soresu-form",
     "va-common": "file:../va-common"
   },

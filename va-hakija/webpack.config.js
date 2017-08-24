@@ -38,8 +38,8 @@ module.exports = {
         include:
           [
             "web/",
-            "node_modules/soresu-form/web/",
-            "node_modules/va-common/web/"
+            "../soresu-form/web/",
+            "../va-common/web/"
           ].map(m => path.resolve(__dirname, m)),
         use: {
           loader: "babel-loader",

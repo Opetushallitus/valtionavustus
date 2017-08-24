@@ -1,11 +1,11 @@
 {
-  "name": "va-web",
+  "name": "va-virkailija",
   "version": "1.0.0",
-  "description": "OPH Valtionavustus Web UI",
+  "description": "OPH Valtionavustukset virkailija web UI",
   "license": "EUPL-1.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com:Opetushallitus/va.git"
+    "url": "https://github.com/Opetushallitus/valtionavustus.git"
   },
   "dependencies": {
     "baconjs": "^0.7.59",

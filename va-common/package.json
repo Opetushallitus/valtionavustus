@@ -1,11 +1,11 @@
 {
   "name": "va-common",
   "version": "1.0.0",
-  "description": "OPH Valtionavustus common parts",
+  "description": "OPH Valtionavustukset common parts",
   "license": "EUPL-1.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com:Opetushallitus/va.git"
+    "url": "https://github.com/Opetushallitus/valtionavustus.git"
   },
   "files": [
     "web"
@@ -19,12 +19,10 @@
     "console-polyfill": "^0.2.1",
     "lodash": "^3.9.3",
     "moment-timezone": "0.4.0",
-    "query-string": "2.2.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "route-parser": "^0.0.4",
-    "seamless-immutable": "^2.4.2",
-    "soresu-form": "file:../soresu-form"
+    "soresu-form": "../soresu-form"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

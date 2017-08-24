@@ -1,7 +1,7 @@
 {
   "name": "va-scripts",
   "version": "0.0.0",
-  "description": "OPH Valtionavustus scripts",
+  "description": "OPH Valtionavustukset scripts",
   "dependencies": {
     "baconjs": "^0.7.93",
     "chalk": "^2.1.0",
