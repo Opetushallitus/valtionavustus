@@ -1,13 +1,14 @@
-import React, {Component} from "react";
-import _ from "lodash";
-import FormContainer from "soresu-form/web/form/FormContainer.jsx";
-import FormRules from "soresu-form/web/form/FormRules";
-import FormBranchGrower from "soresu-form/web/form/FormBranchGrower";
-import VaComponentFactory from "va-common/web/va/VaComponentFactory";
-import VaPreviewComponentFactory from "va-common/web/va/VaPreviewComponentFactory";
-import EditsDisplayingFormView from "./EditsDisplayingFormView.jsx";
-import FakeFormController from "../form/FakeFormController.js";
-import FakeFormState from "../form/FakeFormState.js";
+import React, {Component} from "react"
+import _ from "lodash"
+
+import FormContainer from "soresu-form/web/form/FormContainer.jsx"
+import FormRules from "soresu-form/web/form/FormRules"
+import FormBranchGrower from "soresu-form/web/form/FormBranchGrower"
+import VaComponentFactory from "va-common/web/va/VaComponentFactory"
+import VaPreviewComponentFactory from "va-common/web/va/VaPreviewComponentFactory"
+import EditsDisplayingFormView from "./EditsDisplayingFormView.jsx"
+import FakeFormController from "../form/FakeFormController"
+import FakeFormState from "../form/FakeFormState"
 
 export default class SelvitysPreview extends Component {
 

@@ -4,7 +4,7 @@ import ClassNames from 'classnames'
 
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import Translator from 'soresu-form/web/form/Translator'
-import ComponentFactory from 'soresu-form/web/form/ComponentFactory.js'
+import ComponentFactory from 'soresu-form/web/form/ComponentFactory.jsx'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent.jsx'
 import BasicValue from 'soresu-form/web/form/preview/BasicValue.jsx'

@@ -1,6 +1,4 @@
-import React from 'react'
-
-import ComponentFactory from 'soresu-form/web/form/ComponentFactory'
+import ComponentFactory from 'soresu-form/web/form/ComponentFactory.jsx'
 import CheckboxButton from 'soresu-form/web/form/component/CheckboxButton.jsx'
 import EmailTextField from 'soresu-form/web/form/component/EmailTextField.jsx'
 import MoneyTextField from 'soresu-form/web/form/component/MoneyTextField.jsx'

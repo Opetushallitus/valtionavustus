@@ -11,7 +11,7 @@ import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 import FakeFormState from '../form/FakeFormState'
 import BudgetBusinessRules from '../budgetedit/BudgetBusinessRules'
 import SeurantaBudgetEditFormController from './SeurantaBudgetEditFormController'
-import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFactory'
+import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFactory.jsx'
 
 import style from '../style/budgetedit.less'
 

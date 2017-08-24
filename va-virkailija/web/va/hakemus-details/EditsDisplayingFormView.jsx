@@ -4,7 +4,6 @@ import _ from 'lodash'
 import JsUtil from 'soresu-form/web/JsUtil'
 import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 
-
 export default class EditsDisplayingFormView extends React.Component {
   static renderField(controller, formEditController, state, infoElementValues, field) {
     const fields = state.form.content

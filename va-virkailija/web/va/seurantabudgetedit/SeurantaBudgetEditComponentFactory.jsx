@@ -1,6 +1,6 @@
 import React from 'react'
 
-import ComponentFactory from 'soresu-form/web/form/ComponentFactory'
+import ComponentFactory from 'soresu-form/web/form/ComponentFactory.jsx'
 
 import {EditSummingBudgetElement, EditBudgetItemElement} from './SeurantaBudgetEditComponents.jsx'
 import BudgetEditElement from '../budgetedit/BudgetEditComponents.jsx'

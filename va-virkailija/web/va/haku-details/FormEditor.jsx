@@ -1,15 +1,15 @@
 import React, { Component } from 'react'
 
-import vaCommonStyles from 'va-common/web/va/style/soresu-va.less';
-import soresuFormEditStyles from 'soresu-form/web/form/style/formedit.less';
+import vaCommonStyles from 'va-common/web/va/style/soresu-va.less'
+import soresuFormEditStyles from 'soresu-form/web/form/style/formedit.less'
 
 import FormEdit from 'soresu-form/web/form/edit/FormEdit.jsx'
 import FormEditorController from 'soresu-form/web/form/edit/FormEditController'
 import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 
-import FakeFormController from '../form/FakeFormController.js'
-import FakeFormState from '../form/FakeFormState.js'
+import FakeFormController from '../form/FakeFormController'
+import FakeFormState from '../form/FakeFormState'
 
 export default class FormEditor extends Component {
   render() {

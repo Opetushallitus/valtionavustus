@@ -1,8 +1,6 @@
-import React from 'react'
-
 import _ from 'lodash'
 
-import ComponentFactory from 'soresu-form/web/form/ComponentFactory'
+import ComponentFactory from 'soresu-form/web/form/ComponentFactory.jsx'
 
 import {BudgetSummaryElement} from 'va-common/web/va/VaBudgetComponents.jsx'
 

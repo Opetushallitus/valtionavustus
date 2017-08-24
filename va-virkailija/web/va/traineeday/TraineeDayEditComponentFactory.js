@@ -1,6 +1,6 @@
-import ComponentFactory from 'soresu-form/web/form/ComponentFactory'
+import ComponentFactory from 'soresu-form/web/form/ComponentFactory.jsx'
 import TraineeDayEditCalculator from './TraineeDayEditCalculator.jsx'
-import {FieldOnChangePropertyMapper} from 'soresu-form/web/form/component/PropertyMapper.js'
+import {FieldOnChangePropertyMapper} from 'soresu-form/web/form/component/PropertyMapper'
 import TraineeDayCalculatorSummary from './TraineeDayCalculatorSummary.jsx'
 
 export default class TraineeDayEditComponentFactory extends ComponentFactory {

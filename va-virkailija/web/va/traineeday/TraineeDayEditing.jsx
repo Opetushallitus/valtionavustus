@@ -8,7 +8,7 @@ import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
 
 import FakeFormState from '../form/FakeFormState'
 import TraineeDayEditFormController from './TraineeDayEditFormController.jsx'
-import TraineeDayEditComponentFactory from './TraineeDayEditComponentFactory.jsx'
+import TraineeDayEditComponentFactory from './TraineeDayEditComponentFactory'
 
 import style from '../style/traineeday.less'
 
