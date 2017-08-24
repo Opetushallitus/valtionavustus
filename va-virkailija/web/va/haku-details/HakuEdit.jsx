@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 
-import DateUtil from 'soresu-form/web/form/DateUtil'
+import DateUtil from 'soresu-form/web/DateUtil'
 
 import HakuStatus from "../avustushaku/HakuStatus.jsx"
-
 import HakuRoles from "./HakuRoles.jsx"
 import ChooseRahoitusalueet from "./ChooseRahoitusalueet.jsx"
 

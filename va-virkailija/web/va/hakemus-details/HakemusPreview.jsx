@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
 
+import DateUtil from 'soresu-form/web/DateUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 import FormRules from 'soresu-form/web/form/FormRules'
@@ -12,9 +13,8 @@ import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber.js
 import VaChangeRequest from 'va-common/web/va/VaChangeRequest.jsx'
 
 import EditsDisplayingFormView from './EditsDisplayingFormView.jsx'
-import FakeFormController from '../form/FakeFormController.js'
-import FakeFormState from '../form/FakeFormState.js'
-import DateUtil from 'soresu-form/web/form/DateUtil'
+import FakeFormController from '../form/FakeFormController'
+import FakeFormState from '../form/FakeFormState'
 
 import style from '../style/formpreview.less'
 

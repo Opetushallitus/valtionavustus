@@ -4,7 +4,7 @@ import React from 'react'
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent.jsx'
 import BasicTextField from 'soresu-form/web/form/component/BasicTextField.jsx'
 import Translator from 'soresu-form/web/form/Translator'
-import MathUtil from 'soresu-form/web/form/MathUtil'
+import MathUtil from 'soresu-form/web/MathUtil'
 
 import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
 import VaTraineeDayCalculator from 'va-common/web/va/VaTraineeDayCalculator.jsx'

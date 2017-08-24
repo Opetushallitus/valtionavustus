@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
-
-import DateUtil from 'soresu-form/web/form/DateUtil'
 import moment from 'moment'
+
+import DateUtil from 'soresu-form/web/DateUtil'
 
 import HakuStatus from '../avustushaku/HakuStatus.jsx'
 import HakuPhase from '../avustushaku/HakuPhase.jsx'
-import HakuStatuses from '../haku-details/HakuStatuses.js'
+import HakuStatuses from '../haku-details/HakuStatuses'
 import HakuPhases from '../haku-details/HakuPhases'
 import HakemusListing from '../hakemus-list/HakemusListing.jsx'
 

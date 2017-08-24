@@ -1,15 +1,16 @@
-import Bacon from 'baconjs'
-import HttpUtil from 'va-common/web/HttpUtil.js'
-import React, { Component } from 'react'
 import _ from 'lodash'
-import DateUtil from 'soresu-form/web/form/DateUtil'
+import React, { Component } from 'react'
+import Bacon from 'baconjs'
+
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import DateUtil from 'soresu-form/web/DateUtil'
 
 import HakemusBudgetEditing, { BudgetGranted } from '../budgetedit/HakemusBudgetEditing.jsx'
 
 import HakemusScoring from './HakemusScoring.jsx'
 import HakemusComments from './HakemusComments.jsx'
-import HakemusArviointiStatuses from "./HakemusArviointiStatuses.js"
-import HakemusStatuses from './HakemusStatuses.js'
+import HakemusArviointiStatuses from "./HakemusArviointiStatuses"
+import HakemusStatuses from './HakemusStatuses'
 import TraineeDayEditing from '../traineeday/TraineeDayEditing.jsx'
 import ChooseRahoitusalueAndTalousarviotili from './ChooseRahoitusalueAndTalousarviotili.jsx'
 import SpecifyOppilaitos from './SpecifyOppilaitos.jsx'
@@ -17,6 +18,7 @@ import AcademySize from './AcademySize.jsx'
 import Perustelut from './Perustelut.jsx'
 import PresenterComment from './PresenterComment.jsx'
 import EditStatus from './EditStatus.jsx'
+
 import admin from '../style/admin.less'
 
 export default class HakemusArviointi extends Component {

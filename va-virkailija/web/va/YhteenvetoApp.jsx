@@ -6,8 +6,8 @@ import _ from 'lodash'
 import RouteParser from 'route-parser'
 
 import YhteenvetoController from './YhteenvetoController.jsx'
-import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'
-import DateUtil from 'soresu-form/web/form/DateUtil'
+import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses'
+import DateUtil from 'soresu-form/web/DateUtil'
 import Rahoitusalueet from './data/Rahoitusalueet'
 
 import style from './style/main.less'

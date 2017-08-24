@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import HttpUtil from "va-common/web/HttpUtil"
+import HttpUtil from "soresu-form/web/HttpUtil"
 
 import FormEditor from './FormEditor.jsx'
 

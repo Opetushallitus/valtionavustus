@@ -1,8 +1,8 @@
 import _ from 'lodash'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
-import JsUtil from 'soresu-form/web/form/JsUtil'
-import MathUtil from 'soresu-form/web/form/MathUtil'
+import JsUtil from 'soresu-form/web/JsUtil'
+import MathUtil from 'soresu-form/web/MathUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import MoneyValidator from 'soresu-form/web/form/MoneyValidator'
 

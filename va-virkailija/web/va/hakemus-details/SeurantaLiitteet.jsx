@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 
 import AttachmentField from 'soresu-form/web/form/component/AttachmentField.jsx'
-import HttpUtil from 'va-common/web/HttpUtil'
+import HttpUtil from 'soresu-form/web/HttpUtil'
 
 export default class SeurantaLiitteet extends React.Component {
   render() {

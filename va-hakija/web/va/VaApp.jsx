@@ -7,15 +7,15 @@ import Bacon from 'baconjs'
 import _ from 'lodash'
 import queryString from 'query-string'
 
-import HttpUtil from 'va-common/web/HttpUtil'
+import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import FormController from 'soresu-form/web/form/FormController'
-import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler.js'
+import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
 import ResponseParser from 'soresu-form/web/form/ResponseParser'
 
 import VaForm from './VaForm.jsx'
 import VaUrlCreator from './VaUrlCreator'
-import VaComponentFactory from 'va-common/web/va/VaComponentFactory.js'
+import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import {BudgetItemElement} from 'va-common/web/va/VaBudgetComponents.jsx'

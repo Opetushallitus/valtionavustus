@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import HttpUtil from 'va-common/web/HttpUtil.js'
+import HttpUtil from 'soresu-form/web/HttpUtil'
 
 const initialState = {open:false,comment:''}
 

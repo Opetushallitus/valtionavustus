@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import FormUtil from 'soresu-form/web/form/FormUtil'
 import _ from 'lodash'
 import ClassNames from 'classnames'
+
+import FormUtil from 'soresu-form/web/form/FormUtil'
 
 const ToggleFilterButton  = ({controller,hakemusFilter}) => {
   const activeFilterCount = hakemusFilter.answers.length

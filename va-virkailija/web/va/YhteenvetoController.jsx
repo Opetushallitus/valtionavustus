@@ -1,11 +1,10 @@
 import Bacon from 'baconjs'
 import _ from 'lodash'
 import Immutable from 'seamless-immutable'
-
 import queryString from 'query-string'
 import RouteParser from 'route-parser'
 
-import HttpUtil from 'va-common/web/HttpUtil.js'
+import HttpUtil from 'soresu-form/web/HttpUtil'
 import Dispatcher from 'soresu-form/web/Dispatcher'
 
 import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses.js'

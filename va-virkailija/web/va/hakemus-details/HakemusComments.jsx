@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
-import DateUtil from 'soresu-form/web/form/DateUtil'
+import DateUtil from 'soresu-form/web/DateUtil'
 
-import NameFormatter from 'va-common/web/va/util/NameFormatter.js'
+import NameFormatter from 'va-common/web/va/util/NameFormatter'
 
 export default class HakemusComments extends Component {
 

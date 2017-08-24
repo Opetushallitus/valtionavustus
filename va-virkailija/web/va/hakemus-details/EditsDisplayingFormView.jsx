@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import JsUtil from 'soresu-form/web/form/JsUtil'
+import JsUtil from 'soresu-form/web/JsUtil'
 import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 
 

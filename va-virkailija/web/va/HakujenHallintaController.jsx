@@ -4,12 +4,12 @@ import Immutable from 'seamless-immutable'
 import moment from 'moment-timezone'
 import RouteParser from 'route-parser'
 
-import HttpUtil from 'va-common/web/HttpUtil.js'
+import HttpUtil from 'soresu-form/web/HttpUtil'
 import Dispatcher from 'soresu-form/web/Dispatcher'
 import FormUtil from "soresu-form/web/form/FormUtil"
 
 import LocalStorage from './LocalStorage'
-import LdapSearchParameters from './haku-details/LdapSearchParameters.js'
+import LdapSearchParameters from './haku-details/LdapSearchParameters'
 import LoppuselvitysForm from './data/LoppuselvitysForm.json'
 import ValiselvitysForm from './data/ValiselvitysForm.json'
 import Rahoitusalueet from './data/Rahoitusalueet'

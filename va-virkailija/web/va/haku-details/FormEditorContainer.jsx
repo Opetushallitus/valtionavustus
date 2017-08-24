@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
+
+import DateUtil from 'soresu-form/web/DateUtil'
+
 import FormEditor from './FormEditor.jsx'
 import FormJsonEditor from './FormJsonEditor.jsx'
-import DateUtil from 'soresu-form/web/form/DateUtil'
 
 export default class FormEditorContainer extends Component {
   render() {

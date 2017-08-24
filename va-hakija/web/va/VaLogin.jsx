@@ -9,7 +9,7 @@ import Bacon from 'baconjs'
 import common from 'soresu-form/web/form/style/main.less'
 import loginStyle from './style/va-login.less'
 
-import HttpUtil from 'va-common/web/HttpUtil'
+import HttpUtil from 'soresu-form/web/HttpUtil'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import {DateRangeInfoElement, H1InfoElement} from 'soresu-form/web/form/component/InfoElement.jsx'
 import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
@@ -17,7 +17,7 @@ import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
 import VaLoginTopbar from './VaLoginTopbar.jsx'
 import VaUrlCreator from './VaUrlCreator.js'
 
-import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator.js'
+import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 import TextButton from 'soresu-form/web/form/component/TextButton.jsx'
 import EmailTextField from 'soresu-form/web/form/component/EmailTextField.jsx'
 

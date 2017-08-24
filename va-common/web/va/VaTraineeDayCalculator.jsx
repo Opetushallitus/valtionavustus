@@ -6,7 +6,7 @@ import _ from 'lodash'
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent.jsx'
 import RadioButton from 'soresu-form/web/form/component/RadioButton.jsx'
 import BasicTextField from 'soresu-form/web/form/component/BasicTextField.jsx'
-import MathUtil from 'soresu-form/web/form/MathUtil'
+import MathUtil from 'soresu-form/web/MathUtil'
 import Translator from 'soresu-form/web/form/Translator'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 

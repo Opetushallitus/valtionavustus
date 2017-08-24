@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
-import Liitteet from 'va-common/web/va/data/Liitteet'
 import Bacon from 'baconjs'
-import HttpUtil from 'va-common/web/HttpUtil.js'
-import DateUtil from 'soresu-form/web/form/DateUtil'
-import PaatosUrl from '../hakemus-details/PaatosUrl.js'
+
+import DateUtil from 'soresu-form/web/DateUtil'
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import Liitteet from 'va-common/web/va/data/Liitteet'
+
+import PaatosUrl from '../hakemus-details/PaatosUrl'
 import Selvitys from './Selvitys.jsx'
 
 const DecisionField = ({avustushaku, title, id,language, onChange}) => {

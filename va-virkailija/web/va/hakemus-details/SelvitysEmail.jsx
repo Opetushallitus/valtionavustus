@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import Bacon from 'baconjs'
-import HttpUtil from 'va-common/web/HttpUtil.js'
-import NameFormatter from 'va-common/web/va/util/NameFormatter.js'
+
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import NameFormatter from 'va-common/web/va/util/NameFormatter'
 
 const defaultMessage = (avustushakuName, selvitysName, name, email)=>{
   return `Hei,

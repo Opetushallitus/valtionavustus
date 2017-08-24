@@ -1,16 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Bacon from 'baconjs'
+import queryString from 'query-string'
 
-import HttpUtil from 'va-common/web/HttpUtil'
+import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import virkailija from './style/virkailija.less'
 import topbar from './style/topbar.less'
 import style from './style/login.less'
 
 import TopBar from './TopBar.jsx'
-
-import queryString from 'query-string'
 
 export default class Login extends React.Component {
   render() {

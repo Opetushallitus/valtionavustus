@@ -2,7 +2,7 @@ import React from 'react'
 import ClassNames from 'classnames'
 
 import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
-import NameFormatter from 'va-common/web/va/util/NameFormatter.js'
+import NameFormatter from 'va-common/web/va/util/NameFormatter'
 
 export default class TopBar extends React.Component {
   render() {

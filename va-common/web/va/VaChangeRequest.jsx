@@ -1,9 +1,9 @@
 import React from 'react'
 
-import DateUtil from 'soresu-form/web/form/DateUtil'
-import Translator from 'soresu-form/web/form/Translator.js'
+import DateUtil from 'soresu-form/web/DateUtil'
+import Translator from 'soresu-form/web/form/Translator'
 
-import NameFormatter from 'va-common/web/va/util/NameFormatter.js'
+import NameFormatter from './util/NameFormatter'
 
 export default class VaChangeRequest extends React.Component {
   render() {

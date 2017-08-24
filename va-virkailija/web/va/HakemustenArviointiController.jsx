@@ -8,10 +8,10 @@ import RouteParser from 'route-parser'
 import Dispatcher from 'soresu-form/web/Dispatcher'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
+import HttpUtil from 'soresu-form/web/HttpUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
 
-import HttpUtil from 'va-common/web/HttpUtil'
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
 

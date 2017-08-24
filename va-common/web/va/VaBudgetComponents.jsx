@@ -4,7 +4,7 @@ import ClassNames from 'classnames'
 
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
-import MathUtil from 'soresu-form/web/form/MathUtil'
+import MathUtil from 'soresu-form/web/MathUtil'
 import MoneyTextField from 'soresu-form/web/form/component/MoneyTextField.jsx'
 import Translator from 'soresu-form/web/form/Translator'
 

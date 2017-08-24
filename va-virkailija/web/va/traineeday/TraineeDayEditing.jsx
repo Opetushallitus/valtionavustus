@@ -6,7 +6,7 @@ import Form from 'soresu-form/web/form/Form.jsx'
 
 import VaTraineeDayUtil from 'va-common/web/va/VaTraineeDayUtil'
 
-import FakeFormState from '../form/FakeFormState.js'
+import FakeFormState from '../form/FakeFormState'
 import TraineeDayEditFormController from './TraineeDayEditFormController.jsx'
 import TraineeDayEditComponentFactory from './TraineeDayEditComponentFactory.jsx'
 
