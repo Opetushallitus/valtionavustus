@@ -22,8 +22,8 @@
 * [Bacon.js](https://baconjs.github.io/) For handling client side state
   changes and initiating rerendering of React components
 * [Babel](https://babeljs.io) For ES6 javascript support
-* [Node.js](https://nodejs.org) For [building](../README.md) JS packages
-  with [webpack](https://webpack.js.org/)
+* [Node.js](https://nodejs.org) For [building](../README.md) JavaScript
+  source and npm packages with [webpack](https://webpack.js.org/)
 
 ### Documentation tools
 

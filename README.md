@@ -55,7 +55,7 @@ Haun roolista huolimatta kuka tahansa VA-käyttäjä voi kommentoida hakemuksia.
 
 ## Riippuvuudet
 
-* [Node.js 6](https://nodejs.org/)
+* [Node.js 8](https://nodejs.org/)
 * [Leiningen](https://leiningen.org/)
 * [Java SE Development Kit 8](http://www.oracle.com/technetwork/java/javase/index.html)
 * [PostgreSQL 9.4](https://www.postgresql.org/)
