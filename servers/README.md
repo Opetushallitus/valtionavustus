@@ -55,15 +55,17 @@ Roolin päivittäminen onnistuu vivulla `--force`.
 
 ## Yhteyden testaaminen palvelimille
 
-Palveliment ovat CSC:n VMware-ympäristössä. Palvelinten Ansible
-Inventoryn meta-tiedot on listattu staattisesti tiedostossa
+Palvelimet ovat CSC:n VMware-ympäristössä. Palvelinten Ansible
+inventoryn meta-tiedot on listattu staattisesti tiedostossa
 `vmware_inventory.json`. Käyttö:
 
 ``` bash
 ./vmware_inventory.py
 ```
 
-Tarkista, että pääset ssh:lla palvelimille:
+CSC:n palomuuri suojaa VMware-ympäristöä. Tarvitset OPH:n VPN:n
+päästäksesi ssh:lla palvelimille. VPN:n ollessa päällä, testaa
+ssh-yhteyttä:
 
 ``` bash
 ssh -F ssh.config oph-va-app-test01 'echo ok'
