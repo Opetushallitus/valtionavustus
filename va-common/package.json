@@ -22,7 +22,7 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "route-parser": "^0.0.4",
-    "soresu-form": "../soresu-form"
+    "soresu-form": "file:../soresu-form"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
