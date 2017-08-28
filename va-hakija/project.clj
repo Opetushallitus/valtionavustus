@@ -35,6 +35,6 @@
   :aliases {"dbmigrate" ["run" "-m" "oph.va.hakija.db.migrations/migrate" "form-db" "db.migration" "oph.va.hakija.db.migrations"]
             "dbclear" ["run" "-m" "oph.soresu.common.db/clear-db!" "form-db" "hakija"]
             "buildfront" ^{:doc "Build frontend code with npm"} ["do"
-                                                                 ["shell" "npm" "install"]
+                                                                 ["shell" "npm" "install" "--no-save"]
                                                                  ["shell" "npm" "run" "build-production"]]
             "populate" ^{:doc "Generate applications"} ["run" "-m" "oph.va.hakija.cmd.populate"]})

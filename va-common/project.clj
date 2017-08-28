@@ -81,4 +81,4 @@
   :auto {:default {:paths ["src", "resources", "spec"]
                    :file-pattern #"\.(clj|sql|json)$"}}
 
-  :aliases {"buildfront" ^{:doc "Build frontend code with npm"} ["shell" "npm" "install"]})
+  :aliases {"buildfront" ^{:doc "Build frontend code with npm"} ["shell" "npm" "install" "--no-save"]})

@@ -172,7 +172,7 @@ Asenna kaikki frontendin buildaamiseen käytetyt paketit:
 
 ``` shell
 for dir in soresu-form va-common va-hakija va-virkailija; do
-    pushd "$dir" && npm install && popd
+    pushd "$dir" && npm install --no-save && popd
 done
 ```
 
