@@ -45,8 +45,6 @@
   "scripts": {
     "build": "webpack --bail",
     "build-production": "NODE_ENV=production npm run build",
-    "build-watch": "webpack --progress --watch",
-    "reinstall-soresu-form": "rm -rf node_modules/soresu-form && npm install -q soresu-form",
-    "reinstall-va-common": "rm -rf node_modules/va-common && npm install -q va-common"
+    "build-watch": "webpack --progress --watch"
   }
 }
