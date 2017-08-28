@@ -171,21 +171,15 @@ Vipu `-d` asettaa imagen pyörimään taustalle (daemon).
 Asenna kaikki frontendin buildaamiseen käytetyt paketit:
 
 ``` shell
-for dir in soresu-form va-common va-hakija va-virkailija scripts; do
+for dir in soresu-form va-common va-hakija va-virkailija; do
     pushd "$dir" && npm install && popd
 done
 ```
 
-Käynnistä frontendin assettien monitorointi, kääntäen tarvittaessa:
-
-``` shell
-./scripts/build-watch-all.js
-```
-
-Vaihtoehtoisesti webpackin inkrementaalista kääntämistä hyödyntävä
-build. Tällöin riippuvuuksissa (soresu-form, va-common) tapahtuvat
-muutokset eivät siirry webpackin käännökseen, ellei itse web-sovelluksen
-lähdekoodi muutu myös:
+Käynnistä frontendin assettien buildi webpackilla. Tällöin webpack
+generoi selaimen käyttämät JavaScript-tiedostot. Webpack buildaa
+tarvittaessa uudelleen, jos lähdekoodi yllä olevissa hakemistoissa
+muuttuu:
 
 ``` shell
 cd va-hakija
@@ -194,10 +188,6 @@ npm run build-watch
 cd va-virkailija
 npm run build-watch
 ```
-
-Mikäli kirjoitat muutoksia pääasiassa soresu-formiin tai va-commoniin,
-käytä `build-watch-all.js`-skriptiä, jotta muutokset siirtyvät varmasti
-va-hakijaan ja va-virkailijaan.
 
 Frontendin yksikkötestit on
 kirjoitettu [Mochalla](https://mochajs.org/). Niiden ajaminen,
