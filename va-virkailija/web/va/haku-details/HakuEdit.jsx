@@ -63,9 +63,9 @@ export default class HakuEdit extends Component {
         <div className="haku-duration-and-self-financing">
           <div className="haku-duration-edit-container">
             <h3>{avustushaku.content.duration.label.fi}</h3>
-            <DateField id="hakuaika-start" onChange={onChange} value={avustushaku.content.duration.start} disabled={!allowAllHakuEdits} />
+            <DateField id="hakuaika-start" onBlur={onChange} value={avustushaku.content.duration.start} disabled={!allowAllHakuEdits} />
             <span className="dateDivider" />
-            <DateField id="hakuaika-end" onChange={onChange} value={avustushaku.content.duration.end} disabled={!allowNondisruptiveHakuEdits} />
+            <DateField id="hakuaika-end" onBlur={onChange} value={avustushaku.content.duration.end} disabled={!allowNondisruptiveHakuEdits} />
           </div>
           <div className="haku-self-financing-edit-container">
             <h3>Hakijan omarahoitusvaatimus</h3>
@@ -101,28 +101,36 @@ class CreateHaku extends React.Component {
 class DateField extends React.Component {
   constructor(props) {
     super(props)
-    this.handleChange = this.handleChange.bind(this)
-    const dateStr = DateUtil.asDateString(this.props.value) + " " + DateUtil.asTimeString(this.props.value)
-    this.state = {value: dateStr}
+    this.state = {value: DateField.asDateTimeString(this.props.value)}
+    this.onChange = this.onChange.bind(this)
   }
 
   componentWillReceiveProps(nextProps) {
-    if(this.props.value !== nextProps.value) {
-      const dateStr = DateUtil.asDateString(nextProps.value) + " " + DateUtil.asTimeString(nextProps.value)
-      this.setState({value: dateStr})
+    if (this.props.value !== nextProps.value) {
+      this.setState({value: DateField.asDateTimeString(nextProps.value)})
     }
   }
 
-  handleChange(event) {
+  onChange(event) {
     this.setState({value: event.target.value})
   }
 
   render() {
-    const id = this.props.id
-    const onChange = this.props.onChange
-    const disabled = this.props.disabled
-    const value = this.state.value
-    return <input className="date" maxLength="16" size="16" type="text" id={id} onChange={this.handleChange} onBlur={onChange} value={value} disabled={disabled}/>
+    return (
+      <input className="date"
+             maxLength="16"
+             size="16"
+             type="text"
+             id={this.props.id}
+             onChange={this.onChange}
+             onBlur={this.props.onBlur}
+             value={this.state.value}
+             disabled={this.props.disabled}/>
+    )
+  }
+
+  static asDateTimeString(value) {
+    return DateUtil.asDateString(value) + " " + DateUtil.asTimeString(value)
   }
 }
 

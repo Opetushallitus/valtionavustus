@@ -28,35 +28,36 @@ const DecisionFields = ({title,avustushaku,id,onChange}) =>
 
 
 class DateField extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props)
-    const field = props.field
-    this.state = {value: this.value(props,field),field:field}
+    this.state = {value: this.value(props, props.field)}
+    this.onChange = this.onChange.bind(this)
   }
 
   value(props,field) {
-    return _.get(props.avustushaku, `decision.${field}`, "")
+    return _.get(props.avustushaku, `decision.${field}`, "") || ""
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.avustushaku.id!=this.props.avustushaku.id){
-      this.setState({
-        value: this.value(nextProps,nextProps.field)
-      })
+    if (nextProps.avustushaku.id != this.props.avustushaku.id) {
+      this.setState({value: this.value(nextProps, nextProps.field)})
     }
   }
 
+  onChange(event) {
+    this.setState({value: event.target.value})
+    this.props.controller.onChangeListener(this.props.avustushaku, event.target, event.target.value)
+  }
+
   render() {
-    const onChange = (event)=>{
-      this.setState({value:event.target.value})
-      this.props.controller.onChangeListener(this.props.avustushaku, event.target, event.target.value)
-    }
-    const field = this.state.field
     return (
       <div className="decision-date">
         <div className="decision-column">
           <span className="decision-date-label">{this.props.label}</span>
-          <input type="text" value={this.state.value} id={`decision.${field}`} onChange={onChange}/>
+          <input type="text"
+                 value={this.state.value}
+                 id={`decision.${this.props.field}`}
+                 onChange={this.onChange}/>
         </div>
       </div>
     )
