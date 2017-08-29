@@ -11,6 +11,9 @@ const plugins =
     new webpack.optimize.CommonsChunkPlugin({
       name: "commons",
       filename: "js/commons.js"
+    }),
+    new webpack.ProvidePlugin({
+      Promise: "bluebird"
     })
   ).concat(process.env.NODE_ENV === "production"
     ? [new webpack.optimize.UglifyJsPlugin({
@@ -65,6 +68,7 @@ module.exports = {
   },
   resolve: {
     alias: {
+      bluebird: path.resolve(__dirname, "../soresu-form/node_modules/bluebird"),
       react: path.resolve(__dirname, 'node_modules/react'),
       "react-dom": path.resolve(__dirname, 'node_modules/react-dom')
     }
