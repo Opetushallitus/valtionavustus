@@ -242,7 +242,7 @@ Web-sovelluksen rollbackin voi tehdä vaihtamalla kohde, johon symlink
 va-hakijan rollback:
 
 ``` bash
-ssh -F ssh.config oph-va-app-prod-1
+ssh -F ssh.config oph-va-app-prod01
 
 cd /data/www
 sudo supervisorctl stop va-hakija
