@@ -452,8 +452,9 @@ Ominaisuudet yms. toteutetaan omina brancheina, jotka on tehty `develop`
 `master`-haarasta. Tällöin hotfixin julkaisun jälkeen tulee muutokset
 rebasettaa/mergetä `develop`-haaraan.
 
-Branchit nimetään Jira-tiketin mukaan, esimerkiksi `VA3-24: Rearrange of form
-fields`. Voit käyttää branchin nimeämisessä myös suomenkieltä.
+Branchit nimetään Jira-tiketin mukaan, esimerkiksi
+`va3-24-rearrange-of-form-fields`. Voit käyttää branchin nimeämisessä myös
+suomenkieltä.
 
 Branchit mergetään `develop`-haaraan pull requesteilla.
 
