@@ -263,6 +263,16 @@
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
+(defroutes* organisation-routes
+  "API for fetching organisational data with businessId"
+  (GET "/:businessId" [businessId]
+  {:status 200
+   :headers {"Content-Type" "application/json"}
+   :body {:name "Nakkila"
+          :email "test@test.com"
+          :address "PL1 000 Nakkila"
+          :businessId businessId}}))
+
 (defroutes* doc-routes
   "API documentation browser"
   (swagger-ui))
@@ -291,6 +301,7 @@
 
   (context* "/doc" [] doc-routes)
 
+
   ;; Resources
   config-routes
   resource-routes)
@@ -312,6 +323,8 @@
   ;; Documentation
   (context* "/doc" [] doc-routes)
 
+;;Api for businessId search (y-tunnus)
+  (context* "/api/businessId" [] organisation-routes)
   ;; Resources
   config-routes
   resource-routes)
