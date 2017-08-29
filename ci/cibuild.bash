@@ -96,7 +96,7 @@ function restart_application() {
   echo
   echo "Stopping application..."
   if [ "$target_server_name" = "va-dev" ] || [[ "$target_server_name" == *".csc.fi" ]]; then
-    $SSH "sudo supervisorctl stop $module_name"
+    $SSH "supervisorctl stop $module_name"
   else
     $SSH "sudo /usr/local/bin/va_app.bash --stop $module_name"
   fi
@@ -108,7 +108,7 @@ function restart_application() {
   echo "=============================="
   echo
   if [ "$target_server_name" = "va-dev" ] || [[ "$target_server_name" == *".csc.fi" ]]; then
-    APP_COMMAND="sudo supervisorctl start $module_name"
+    APP_COMMAND="supervisorctl start $module_name"
   else
     APP_COMMAND="sudo /usr/local/bin/va_app.bash --start $module_name ${CURRENT_DIR}/${module_name}.jar file:${CURRENT_DIR}/resources/log4j-deployed.properties ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
   fi
