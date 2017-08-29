@@ -439,3 +439,26 @@ va-virkailijan hakulomakkeen json-editorilla voi täysin muokata
 lomakkeen sisältöä. Kaikkia graafisen lomake-editorin komponentteja ei
 ole toteutettu. Lomakkeen voi kopioida json-editorin kautta toiseen
 avustushakuun.
+
+## Käytänteitä
+
+Git workflow on "Long-Running Branches" tyyppinen: [Git Branching - Branching
+Workflows](https://git-scm.com/book/en/v2/Git-Branching-Branching-Workflows).
+
+Kehityksessä käytetään `develop`-haaraa.
+
+Ominaisuudet yms. toteutetaan omina brancheina, jotka on tehty `develop`
+-haarasta. Tähän poikkeuksen tekevät kiireelliset hotfixit, jotka tehdään
+`master`-haarasta. Tällöin hotfixin julkaisun jälkeen tulee muutokset
+rebasettaa/mergetä `develop`-haaraan.
+
+Branchit nimetään Jira-tiketin mukaan, esimerkiksi `VA3-24: Rearrange of form
+fields`. Voit käyttää branchin nimeämisessä myös suomenkieltä.
+
+Branchit mergetään `develop`-haaraan pull requesteilla.
+
+`develop`-haara mergetään `master`:iin keskitetysti, esimerkiksi ennen sprint
+-demoa.
+
+
+
