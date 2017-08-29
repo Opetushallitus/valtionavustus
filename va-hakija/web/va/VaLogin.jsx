@@ -46,8 +46,7 @@ export default class VaLogin extends React.Component {
     const vaLogin = this
     const email = this.state.email
     const model = this.props.model
-    try {
-      HttpUtil.put(url, {
+    HttpUtil.put(url, {
         value: [{key:"primary-email", value: email, fieldType: "emailField"},{key:"language", value: model.lang, fieldType: "radioButton"}]
       })
       .then(function(response) {
@@ -64,13 +63,6 @@ export default class VaLogin extends React.Component {
         console.error(`Error in creating new hakemus, PUT ${url}`, error)
         vaLogin.setState({error: "error"})
       })
-    }
-    catch(error) {
-      console.error("PUT error to", url, ". Error=", error)
-      vaLogin.setState({
-        error: "error"
-      })
-    }
   }
 
   render() {
