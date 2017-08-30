@@ -231,12 +231,13 @@ export default class HakujenHallintaController {
   }
 
   onHakuCreation(state, baseHaku) {
-    HttpUtil.put("/api/avustushaku", {baseHakuId: baseHaku.id})
+    const url = "/api/avustushaku"
+    HttpUtil.put(url, {baseHakuId: baseHaku.id})
       .then(function (response) {
         dispatcher.push(events.hakuCreated, response)
       })
-      .catch(function (response) {
-        console.error('Unexpected create error:', response.statusText)
+      .catch(function (error) {
+        console.error(`Error in creating new avustushaku, PUT ${url}`, error)
         dispatcher.push(events.saveCompleted, {error: "unexpected-create-error"})
       })
     return state
@@ -429,16 +430,16 @@ export default class HakujenHallintaController {
   }
 
   onHakuSave(state) {
-    HttpUtil.post("/api/avustushaku/" + state.selectedHaku.id, _.omit(state.selectedHaku, ["roles", "formContent", "privileges", "valiselvitysForm", "loppuselvitysForm"]))
+    const url = "/api/avustushaku/" + state.selectedHaku.id
+    HttpUtil.post(url, _.omit(state.selectedHaku, ["roles", "formContent", "privileges", "valiselvitysForm", "loppuselvitysForm"]))
       .then(function (response) {
         dispatcher.push(events.saveCompleted, response)
       })
-      .catch(function (response) {
-        if(response.status === 400) {
+      .catch(function (error) {
+        if (error.response && error.response.status === 400) {
           dispatcher.push(events.saveCompleted, {error: "validation-error"})
-        }
-        else {
-          console.error('Unexpected save error:', response.statusText)
+        } else {
+          console.error('Error in saving avustushaku, POST ${url}', error)
           dispatcher.push(events.saveCompleted, {error: "unexpected-save-error"})
         }
       })
@@ -554,7 +555,8 @@ export default class HakujenHallintaController {
     const avustushaku = formSaveObject.haku
     const editedForm = formSaveObject.form
     const selvitysType = formSaveObject.selvitysType
-    HttpUtil.post(`/api/avustushaku/${avustushaku.id}/selvitysform/${selvitysType}`, editedForm)
+    const url = `/api/avustushaku/${avustushaku.id}/selvitysform/${selvitysType}`
+    HttpUtil.post(url, editedForm)
       .then(function (response) {
         dispatcher.push(events.selvitysFormSaveCompleted, {
           avustusHakuId: avustushaku.id,
@@ -562,13 +564,12 @@ export default class HakujenHallintaController {
           selvitysType: selvitysType
         })
       })
-      .catch(function (response) {
-        if(response.status === 400) {
-          console.error('Validation error:', response.statusText)
+      .catch(function (error) {
+        if (error.response && error.response.status === 400) {
+          console.warn("Selvitys form validation error:", error)
           dispatcher.push(events.saveCompleted, {error: "validation-error"})
-        }
-        else {
-          console.error('Unexpected save error:', response.statusText)
+        } else {
+          console.error(`Error in saving selvitys form, POST ${url}`, error)
           dispatcher.push(events.saveCompleted, {error: "unexpected-save-error"})
         }
       })
@@ -595,12 +596,13 @@ export default class HakujenHallintaController {
   static loadSelvitysForm(avustushaku, selvitysType) {
     const form = appendBudgetComponent(selvitysType, avustushaku)
     const url = HakujenHallintaController.initSelvitysFormUrl(avustushaku, selvitysType)
-    HttpUtil.post(url, form).then(form => {
+    HttpUtil.post(url, form)
+      .then(form => {
         dispatcher.push(events.selvitysFormLoaded, {haku: avustushaku, form: form, selvitysType: selvitysType})
-      }
-    ).catch((response) => {
-      console.error("Failed to load selvitys form " + selvitysType, response)
-    })
+      })
+      .catch(error => {
+        console.error(`Error in initializing selvitys (${selvitysType}) form, POST ${url}`, error)
+      })
   }
 
   selvitysFormOnRecreate(avustushaku, selvitysType) {
@@ -623,12 +625,13 @@ export default class HakujenHallintaController {
     state.ldapSearch.input = searchInput
     if(searchInput.length >= LdapSearchParameters.minimumSearchInputLength()) {
       state.ldapSearch.loading = true
-      HttpUtil.post("/api/ldap/search", {searchInput: searchInput})
+      const url = "/api/ldap/search"
+      HttpUtil.post(url, {searchInput: searchInput})
         .then(r => {
           dispatcher.push(events.ldapSearchFinished, r)
         })
-        .catch(r => {
-          console.error('Got bad response from LDAP search', r)
+        .catch(error => {
+          console.error(`Error in LDAP search, POST ${url}`, error)
           dispatcher.push(events.ldapSearchFinished, {error: true, results: [], truncated: false})
         })
     }
@@ -669,12 +672,13 @@ export default class HakujenHallintaController {
       return state
     }
     state.koodistos.loading = true
-    HttpUtil.get("/api/koodisto/")
+    const url = "/api/koodisto/"
+    HttpUtil.get(url)
       .then(r => {
         dispatcher.push(events.koodistosLoaded, r)
       })
-      .catch(r => {
-        console.error('Got bad response when loading koodistos from server', r)
+      .catch(error => {
+        console.error(`Error in loading koodistos, GET ${url}`, error)
         dispatcher.push(events.koodistosLoaded, null)
       })
     return state
@@ -695,17 +699,16 @@ export default class HakujenHallintaController {
   onFormSaved(state, formSaveObject) {
     const avustushaku = formSaveObject.haku
     const editedForm = formSaveObject.form
-
-    HttpUtil.post("/api/avustushaku/" + avustushaku.id + "/form", editedForm)
+    const url = "/api/avustushaku/" + avustushaku.id + "/form"
+    HttpUtil.post(url, editedForm)
       .then(function (response) {
         dispatcher.push(events.formSaveCompleted, {avustusHakuId: avustushaku.id, fromFromServer: response})
       })
-      .catch(function (response) {
-        if(response.status === 400) {
+      .catch(function (error) {
+        if (error && error.response.status === 400) {
           dispatcher.push(events.saveCompleted, {error: "validation-error"})
-        }
-        else {
-          console.error('Unexpected save error:', response.statusText)
+        } else {
+          console.error(`Error in saving form, POST ${url}`, error)
           dispatcher.push(events.saveCompleted, {error: "unexpected-save-error"})
         }
       })

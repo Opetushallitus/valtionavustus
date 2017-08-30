@@ -61,11 +61,9 @@ export default class VaLogin extends React.Component {
           window.location.href = urlCreator.existingSubmissionEditUrl(model.avustushaku.id, hakemusId, model.lang, model.devel)
         }
       })
-      .catch(function(response) {
-        console.error("PUT error to", url, ". Response=", JSON.stringify(response))
-        vaLogin.setState({
-          error: "error"
-        })
+      .catch(function(error) {
+        console.error(`Error in creating new hakemus, PUT ${url}`, error)
+        vaLogin.setState({error: "error"})
       })
     }
     catch(error) {
