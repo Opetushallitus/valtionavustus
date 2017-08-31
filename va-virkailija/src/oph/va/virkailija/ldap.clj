@@ -67,19 +67,26 @@
   (let [conditions (mapv create-or-filter search-terms)]
         (str "(&" "(employeeNumber=*)" (clojure.string/join conditions)")")))
 
+(defn search-input->ldap-filter [search-input]
+  (-> search-input
+      (clojure.string/split #"\s+")
+      distinct
+      create-and-filter))
+
 (defn details->map-with-roles [user-details]
   (merge (details->map user-details)
          {:va-user (has-group? user-details (-> config :ldap :required-group))
           :va-admin (has-group? user-details (-> config :ldap :admin-group))}))
 
-(defn- by-access-and-name [user1 user2]
-  (compare [(:va-user user2) (:va-admin user2) (:surname user1) (:first-name user1)]
-           [(:va-user user1) (:va-admin user1) (:surname user2) (:first-name user2)]))
+(defn- user-sorting-criteria [user]
+  [(not (:va-user user)) (not (:va-admin user)) (:surname user) (:first-name user)])
 
 (defn search-users [search-input]
-  (let [search-terms (clojure.string/split search-input #" ")
-        filter-string (create-and-filter search-terms)]
-    (->> (do-with-ldap #(ldap/search % (people-path-base) {:filter filter-string}))
+  (let [ldap-filter (search-input->ldap-filter search-input)
+        ldap-result (do-with-ldap #(ldap/search % (people-path-base) {:filter ldap-filter}))]
+    (->> ldap-result
          (map details->map-with-roles)
-         (sort by-access-and-name))))
+         (reduce (fn [acc m] (assoc acc (:person-oid m) m)) {})
+         vals
+         (sort-by user-sorting-criteria))))
 
