@@ -548,7 +548,7 @@
  (with-test-server! :form-db #(start-server "localhost" test-server-port false) (_)))
 
   (it "Tries to get organizational data with business id"
-  (let [{:keys [status headers body error] :as resp} (get! "/businessid?id=12345-6")
+  (let [{:keys [status headers body error] :as resp} (get! "/api/organisations/?organisationId=123555")
         data (json->map body)]
     (should= 200 status)
     (should-contain :email (keys data))
