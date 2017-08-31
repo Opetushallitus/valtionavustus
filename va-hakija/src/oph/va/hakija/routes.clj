@@ -265,14 +265,14 @@
 
 (defroutes* organisation-routes
   "API for fetching organisational data with businessId"
-  (GET "/" [id]
-    :query-params [id]
+  (GET "/" [organisationId]
+    :query-params [organisationId]
     {:status 200
      :headers {"Content-Type" "application/json"}
      :body {:name "Nakkila"
             :email "test@test.com"
             :address "PL1 000 Nakkila"
-            :businessId id}}))
+            :businessId organisationId}}))
 
 (defroutes* doc-routes
   "API documentation browser"
@@ -325,7 +325,7 @@
   (context* "/doc" [] doc-routes)
 
 ;;Api for businessId search (y-tunnus)
-  (context* "/businessid" [] organisation-routes)
+  (context* "/api/organisations" [] organisation-routes)
   ;; Resources
   config-routes
   resource-routes)
