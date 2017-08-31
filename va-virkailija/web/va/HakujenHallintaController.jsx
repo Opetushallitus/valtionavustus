@@ -235,6 +235,7 @@ export default class HakujenHallintaController {
     HttpUtil.put(url, {baseHakuId: baseHaku.id})
       .then(function (response) {
         dispatcher.push(events.hakuCreated, response)
+        return null
       })
       .catch(function (error) {
         console.error(`Error in creating new avustushaku, PUT ${url}`, error)

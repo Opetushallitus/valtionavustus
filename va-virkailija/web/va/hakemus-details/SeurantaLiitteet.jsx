@@ -22,6 +22,7 @@ export default class SeurantaLiitteet extends React.Component {
       HttpUtil.put(url, formData)
         .then(function(response) {
           controller.refreshAttachments(avustushakuId)
+          return null
         })
         .catch(function(error) {
           console.error(`Error in adding attachment with drag'n'drop, PUT ${url}`, error)
@@ -34,6 +35,7 @@ export default class SeurantaLiitteet extends React.Component {
       HttpUtil.delete(url)
         .then(function(response) {
           controller.refreshAttachments(avustushakuId)
+          return null
         })
         .catch(function(error) {
           console.error(`Error in removing attachment, DELETE ${url}`, error)
