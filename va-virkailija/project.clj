@@ -34,7 +34,7 @@
   :aot [oph.va.jdbc.enums
         oph.va.virkailija.db.migrations
         clj-time.core]
-  :profiles {:uberjar {:aot [oph.va.virkailija.main]}}
+  :profiles {:uberjar {:aot :all}}
   :aliases {"dbmigrate" ["run" "-m" "oph.va.virkailija.db.migrations/migrate" "virkailija-db" "db.migration" "oph.va.virkailija.db.migrations"]
             "dbclear" ["run" "-m" "oph.soresu.common.db/clear-db!" "virkailija-db" "virkailija"]
             "buildfront" ^{:doc "Build frontend code with npm"} ["do"
