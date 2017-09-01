@@ -4,7 +4,8 @@
             [cheshire.core :as json]
             [clj-ldap.client :as ldap]
             [clojure.tools.logging :as log])
-  (:import (java.net InetAddress)))
+  (:import (java.net InetAddress)
+           (com.unboundid.ldap.sdk Filter)))
 
 (defn- people-path-base []
   (-> config :ldap :people-path-base))
@@ -58,20 +59,22 @@
                      required-group " or " admin-group" , got only "
                      (pr-str description))))))
 
-(defn- create-or-filter [search-term]
-  (letfn [(create-matcher [attribute] (str "(" attribute "=*" search-term ")(" attribute "=" search-term "*)"))]
-    (let [matchers (mapv create-matcher ["mail" "givenName" "sn" "cn"])]
-      (str "(|" (clojure.string/join matchers)")"))))
+(def ^:private employee-attributes ["mail" "givenName" "sn" "cn"])
 
-(defn- create-and-filter [search-terms]
-  (let [conditions (mapv create-or-filter search-terms)]
-        (str "(&" "(employeeNumber=*)" (clojure.string/join conditions)")")))
+(defn- create-employee-attributes-filter [search-term]
+  (letfn [(make-attribute-filter [attribute]
+            (Filter/createSubstringFilter attribute nil (into-array String [search-term]) nil))]
+    (Filter/createORFilter (mapv make-attribute-filter employee-attributes))))
+
+(defn- create-employee-ldap-filter [search-terms]
+  (Filter/createANDFilter (cons (Filter/createPresenceFilter "employeeNumber")
+                                (mapv create-employee-attributes-filter search-terms))))
 
 (defn search-input->ldap-filter [search-input]
   (-> search-input
       (clojure.string/split #"\s+")
       distinct
-      create-and-filter))
+      create-employee-ldap-filter))
 
 (defn details->map-with-roles [user-details]
   (merge (details->map user-details)
