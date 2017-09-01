@@ -3,7 +3,7 @@
   :url "https://github.com/Opetushallitus/valtionavustus"
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [oph/soresu "0.1.0-SNAPSHOT"]
 
                  ;; HTTP server
