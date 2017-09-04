@@ -296,12 +296,6 @@ table.translation, #haku-roles table {
   }
 }
 
-
-.textarea-email {
-  width: 97%;
-  min-height: 120px;
-}
-
 .btn-fixed{
   position: fixed;
   right: 10px;
@@ -407,16 +401,33 @@ table.translation, #haku-roles table {
   h3{margin-top: 0;margin-bottom: 20px;}
 }
 
-.selvitys-email-header{
+.selvitys-email-header {
   margin-bottom: 10px;
   margin-top: 10px;
+
+  &__header {
+    text-align: left;
+  }
+
+  &__value {
+    padding-left: 10px;
+  }
 }
 
-.selvitys-email-send{
-  white-space:pre-line;
-  margin-top:10px;
-  background-color: #f0f0f0;
+.selvitys-email-message {
+  width: ~"calc(100% - 20px)";
   padding: 10px;
+  margin-top: 10px;
+
+  &--sent {
+    white-space: pre;
+    background-color: #f0f0f0;
+  }
+
+  &--unsent {
+    min-height: 180px;
+    display: block;
+  }
 }
 
 .haku-filter-remove{

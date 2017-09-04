@@ -26,7 +26,14 @@ export default class Selvitys extends Component {
 
         />}
         <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} preview={preview} label="Linkki lomakkeelle"/>
-        {hasSelvitys && <SelvitysEmail controller={controller} selvitysType={selvitysType} hakemus={hakemus} avustushaku={avustushaku} selvitysHakemus={selvitysHakemus} userInfo={userInfo}/>}
+        {hasSelvitys && <SelvitysEmail controller={controller}
+                                       selvitysType={selvitysType}
+                                       hakemus={hakemus}
+                                       avustushaku={avustushaku}
+                                       selvitysHakemus={selvitysHakemus}
+                                       userInfo={userInfo}
+                                       lang={selvitysHakemus.language}
+                                       translations={translations["selvitys-email"]}/>}
       </div>
     )
   }

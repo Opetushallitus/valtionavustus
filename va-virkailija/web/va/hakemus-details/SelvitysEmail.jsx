@@ -1,97 +1,166 @@
-import React, {Component} from 'react'
-import Bacon from 'baconjs'
+import React from 'react'
+import _ from 'lodash'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
+import JsUtil from 'soresu-form/web/JsUtil'
+import Translator from 'soresu-form/web/form/Translator'
 import NameFormatter from 'va-common/web/va/util/NameFormatter'
 
-const defaultMessage = (avustushakuName, selvitysName, name, email)=>{
-  return `Hei,
-Hankkeen '${avustushakuName}' ${selvitysName} on nyt käsitelty ja hyväksytty.
-
-Terveisin,
-${name}
-${email}
-`
+const findRecipientEmail = answers => {
+  const field = JsUtil.findFirst(answers, f => f.key === "primary-email")
+  return field ? field.value : ""
 }
 
-const defaultSubject = (selvitysType) => {
-  return selvitysType=='valiselvitys' ? 'Väliselvitys käsitelty' : 'Loppuselvitys käsitelty'
+const makeState = ({hakemus, selvitysType, selvitysHakemus, avustushaku, userInfo, lang, translations}) => {
+  const translator = new Translator(translations)
+
+  const selvitysTypeLowercase = translator.translate(selvitysType, lang)
+  const selvitysTypeCapitalized = _.capitalize(translator.translate(selvitysType, lang))
+  const avustushakuName = _.get(avustushaku, ["content", "name", lang])
+  const projectName = selvitysHakemus["project-name"]
+  const registerNumber = selvitysHakemus["register-number"]
+  const senderName = NameFormatter.onlyFirstForename(userInfo["first-name"]) + " " + userInfo["surname"]
+  const senderEmail = userInfo.email
+  const recipientEmail = findRecipientEmail(hakemus.answers)
+
+  return {
+    message: translator.translate("default-message", lang, "", {
+      "selvitys-type-lowercase": selvitysTypeLowercase,
+      "selvitys-type-capitalized": selvitysTypeCapitalized,
+      "project-name": projectName,
+      "avustushaku-name": avustushakuName,
+      "sender-name": senderName,
+      "sender-email": senderEmail
+    }),
+    subject: translator.translate("default-subject", lang, "", {
+      "selvitys-type-capitalized": selvitysTypeCapitalized,
+      "register-number": registerNumber
+    }),
+    recipientEmail
+  }
 }
 
-const initState = ({selvitysType, avustushaku, userInfo}) => {
-  const selvitysName = selvitysType=='valiselvitys' ? 'väliselvitys' : 'loppuselvitys'
-  const name = NameFormatter.onlyFirstForename(userInfo["first-name"]) + " " + userInfo["surname"]
-  const email = userInfo.email
-  return {message:defaultMessage(avustushaku.content.name.fi,selvitysName, name, email), subject: defaultSubject(selvitysType)}
+const makeFinnishGenetiveFormOfSelvitysType = selvitysType =>
+  selvitysType == 'valiselvitys' ? "väliselvityksen" : "loppuselvityksen"
+
+const makeTitleForSent = selvitysType =>
+  `Lähetetty ${makeFinnishGenetiveFormOfSelvitysType(selvitysType)} hyväksyntä`
+
+const makeTitleForUnsent = (selvitysType, lang) => {
+  const suffix = lang == 'sv' ? " ruotsiksi" : ""
+  return `Lähetä ${makeFinnishGenetiveFormOfSelvitysType(selvitysType)} hyväksyntä${suffix}`
 }
 
-export default class SelvitysEmail extends Component {
-
-  constructor(props){
+export default class SelvitysEmail extends React.Component {
+  constructor(props) {
     super(props)
-    this.state = initState(props)
+    this.onMessageChange = this.onMessageChange.bind(this)
+    this.onSubjectChange = this.onSubjectChange.bind(this)
+    this.onSendMessage = this.onSendMessage.bind(this)
+    this.state = makeState(props)
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.hakemus.id !== nextProps.hakemus.id) {
-      this.setState(initState(nextProps))
+    if (this.props.hakemus.id !== nextProps.hakemus.id ||
+        this.props.selvitysType !== nextProps.selvitysType) {
+      this.setState(makeState(nextProps))
     }
   }
 
-  render() {
-    const {controller,avustushaku,hakemus, selvitysHakemus, selvitysType} = this.props
-    const avustushakuId = avustushaku.id
-    const subject = this.state.subject
-    const message = this.state.message
-    const selvitysEmail = selvitysHakemus["selvitys-email"]
-    const selvitysEmailSent = selvitysEmail!=null
-    const email = _.find(hakemus.answers,(i)=>i.key=='primary-email').value
-    const title = selvitysType=='valiselvitys' ? 'Väliselvityksen hyväksyntä' : 'Loppuselvityksen hyväksyntä'
-    const titleWithLanguage = selvitysHakemus.language=="sv" ? `${title} ruotsiksi` : title
+  onMessageChange(event) {
+    this.setState({message: event.target.value})
+  }
 
-    const onMessageChange = (event) => {
-      this.setState({message: event.target.value})
+  onSubjectChange(event) {
+    this.setState({subject: event.target.value})
+  }
+
+  onSendMessage() {
+    const request = {
+      message: this.state.message,
+      "selvitys-hakemus-id": this.props.selvitysHakemus.id,
+      to: this.state.recipientEmail,
+      subject: this.state.subject
     }
 
-    const onSubjectChange = (event) => {
-      this.setState({subject: event.target.value})
-    }
+    const avustushakuId = this.props.avustushaku.id
+    const selvitysType = this.props.selvitysType
+    const controller = this.props.controller
+    const url = `/api/avustushaku/${avustushakuId}/selvitys/${selvitysType}/send`
 
-    const onSendMessage = () =>{
-      const request = {
-        message:message,
-        "selvitys-hakemus-id":selvitysHakemus.id,
-        to:email,
-        subject:subject
-      }
-      const sendS = Bacon.fromPromise(HttpUtil.post(`/api/avustushaku/${avustushakuId}/selvitys/${selvitysType}/send`,request))
-      sendS.onValue((res)=>{
+    HttpUtil.post(url, request)
+      .then(res => {
         controller.loadSelvitys()
         controller.refreshHakemukset(avustushakuId)
+        return null
       })
-    }
+      .catch(error => {
+        console.error(`Error in sending selvitys email, POST ${url}`, error)
+      })
+  }
 
-    return(
+  render() {
+    const {
+      selvitysHakemus,
+      selvitysType,
+      lang
+    } = this.props
+
+    const {
+      message,
+      subject,
+      recipientEmail
+    } = this.state
+
+    const sentSelvitysEmail = selvitysHakemus["selvitys-email"]
+
+    const title = sentSelvitysEmail
+      ? makeTitleForSent(selvitysType)
+      : makeTitleForUnsent(selvitysType, lang)
+
+    const recipientEmailInUse = sentSelvitysEmail
+      ? sentSelvitysEmail.to
+      : recipientEmail
+
+    return (
       <div>
-        {selvitysEmailSent && <div>
-          <h2>{title}</h2>
-          <div className="selvitys-email-header">
-            <div>Lähetetty {selvitysEmail.send}</div>
-            <div>To: {selvitysEmail.to}</div>
-            <div>Subject: {selvitysEmail.subject}</div>
+        <h2>{title}</h2>
+        <table className="selvitys-email-header">
+          <tbody>
+            {sentSelvitysEmail && (
+              <tr>
+                <th className="selvitys-email-header__header">Lähetetty:</th>
+                <td className="selvitys-email-header__value">{sentSelvitysEmail.send}</td>
+              </tr>
+            )}
+            <tr>
+              <th className="selvitys-email-header__header">Lähettäjä:</th>
+              <td className="selvitys-email-header__value">no-reply@oph.fi</td>
+            </tr>
+            <tr>
+              <th className="selvitys-email-header__header">Vastaanottaja:</th>
+              <td className="selvitys-email-header__value"><a href={'mailto:' + recipientEmailInUse}>{recipientEmailInUse}</a></td>
+            </tr>
+            <tr>
+              <th className="selvitys-email-header__header">Aihe:</th>
+              <td className="selvitys-email-header__value">
+                {sentSelvitysEmail && sentSelvitysEmail.subject}
+                {!sentSelvitysEmail && (
+                  <input type="text" size="65" value={subject} onChange={this.onSubjectChange}/>
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        {sentSelvitysEmail && (
+          <div className="selvitys-email-message selvitys-email-message--sent">{sentSelvitysEmail.message}</div>
+        )}
+        {!sentSelvitysEmail && (
+          <div>
+            <textarea className="selvitys-email-message selvitys-email-message--unsent" value={message} onChange={this.onMessageChange}/>
+            <button onClick={this.onSendMessage}>Lähetä viesti</button>
           </div>
-          <div className="selvitys-email-send">{selvitysEmail.message}</div>
-        </div>}
-        {!selvitysEmailSent && <div>
-          <h2>{titleWithLanguage}</h2>
-          <div className="selvitys-email-header">
-            <div>From: no-reply@oph.fi</div>
-            <div>To: <a href={'mailto:' + email}>{email}</a></div>
-            <div>Subject: <input size="40" type="text" value={subject} onChange={onSubjectChange}/></div>
-          </div>
-          <textarea className="textarea-email" value={message} onChange={onMessageChange}/>
-          <button onClick={onSendMessage}>Hyväksy ja lähetä viesti</button>
-        </div>}
+        )}
       </div>
     )
   }
