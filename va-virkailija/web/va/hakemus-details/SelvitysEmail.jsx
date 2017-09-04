@@ -61,8 +61,7 @@ export default class SelvitysEmail extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.hakemus.id !== nextProps.hakemus.id ||
-        this.props.selvitysType !== nextProps.selvitysType) {
+    if (this.props.selvitysHakemus.id !== nextProps.selvitysHakemus.id) {
       this.setState(makeState(nextProps))
     }
   }
