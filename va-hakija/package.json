@@ -32,6 +32,11 @@
     "babel-register": "^6.26.0",
     "chai": "^4.1.1",
     "css-loader": "^0.28.5",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
     "file-loader": "^0.11.2",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
@@ -50,6 +55,7 @@
     "build-watch": "webpack --progress --watch",
     "test": "mocha --require web/test/babelhook -R spec ./web/test/*Test.js",
     "test-browser": "phantomjs --web-security=false node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js http://localhost:8081/test/runner.html spec",
-    "test-watch": "mocha --watch --require web/test/babelhook web/test/*Test.js"
+    "test-watch": "mocha --watch --require web/test/babelhook web/test/*Test.js",
+    "lint": "node_modules/eslint/bin/eslint.js web/**/*"
   }
 }
