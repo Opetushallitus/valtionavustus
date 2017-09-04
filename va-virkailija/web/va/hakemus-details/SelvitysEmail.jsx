@@ -54,8 +54,9 @@ const makeTitleForUnsent = (selvitysType, lang) => {
 export default class SelvitysEmail extends React.Component {
   constructor(props) {
     super(props)
-    this.onMessageChange = this.onMessageChange.bind(this)
+    this.onRecipientEmailChange = this.onRecipientEmailChange.bind(this)
     this.onSubjectChange = this.onSubjectChange.bind(this)
+    this.onMessageChange = this.onMessageChange.bind(this)
     this.onSendMessage = this.onSendMessage.bind(this)
     this.state = makeState(props)
   }
@@ -66,12 +67,16 @@ export default class SelvitysEmail extends React.Component {
     }
   }
 
-  onMessageChange(event) {
-    this.setState({message: event.target.value})
+  onRecipientEmailChange(event) {
+    this.setState({recipientEmail: event.target.value})
   }
 
   onSubjectChange(event) {
     this.setState({subject: event.target.value})
+  }
+
+  onMessageChange(event) {
+    this.setState({message: event.target.value})
   }
 
   onSendMessage() {
@@ -117,10 +122,6 @@ export default class SelvitysEmail extends React.Component {
       ? makeTitleForSent(selvitysType)
       : makeTitleForUnsent(selvitysType, lang)
 
-    const recipientEmailInUse = sentSelvitysEmail
-      ? sentSelvitysEmail.to
-      : recipientEmail
-
     return (
       <div>
         <h2>{title}</h2>
@@ -138,7 +139,14 @@ export default class SelvitysEmail extends React.Component {
             </tr>
             <tr>
               <th className="selvitys-email-header__header">Vastaanottaja:</th>
-              <td className="selvitys-email-header__value"><a href={'mailto:' + recipientEmailInUse}>{recipientEmailInUse}</a></td>
+              <td className="selvitys-email-header__value">
+              {sentSelvitysEmail && (
+                <a href={'mailto:' + sentSelvitysEmail.to}>{sentSelvitysEmail.to}</a>
+              )}
+              {!sentSelvitysEmail && (
+                <input type="text" size="65" value={recipientEmail} onChange={this.onRecipientEmailChange}/>
+              )}
+              </td>
             </tr>
             <tr>
               <th className="selvitys-email-header__header">Aihe:</th>
