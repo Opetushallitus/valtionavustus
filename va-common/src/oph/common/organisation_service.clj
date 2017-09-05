@@ -17,11 +17,19 @@
 (defn- json->map [body] (cheshire/parse-string body true))
 
 (defn find-by-id
-  "Fetch organisation data by organisation id (Y-tunnus in Finnish)."
+  "Fetch organisation data by organisation id (Y-tunnus in Finnish).
+  If server returns anything that OK (HTTP 200) exception will be thrown.
+  Note: Compojure API should catch that exception and return appropriate error."
   [organisation-id]
   (let [url
-        (str service-url "organisaatio/" organisation-id "?includeImage=false")]
-    (json->map (:body @(http/get url)))))
+        (str service-url "organisaatio/" organisation-id "?includeImage=false")
+        {:keys [status body error headers]}
+         @(http/get url)]
+    (if (= status 200)
+      (json->map body)
+      (throw (ex-info "Error while fetching organisation info"
+                      {:status status :url url :body body
+                       :error error :headers headers})))))
 
 (defn compact-address
   "Convert full address info to compact one:
