@@ -31,28 +31,39 @@
      :postal-number (clojure.string/replace postinumeroUri "posti_" "")
      :city postitoimipaikka})
 
+(defn compact-organisation-info
+  "Function compacts organisation info.
+  Values are being filtered by given language and unused values are being
+  filtered out.
+  Output will be
+  {:name :email :organisation-id :county})"
+  [lang {:keys [nimi yhteystiedot ytunnus]}]
+  (let [translated-contact
+        (into {} (or
+                   (filter-translations lang yhteystiedot)
+                   (filter-translations :fi yhteystiedot)))]
+    {:name (or (lang nimi) (:fi nimi))
+     :email (:email translated-contact)
+     :organisation-id ytunnus
+     :contact (compact-address translated-contact)
+     :county nil}))
+
 (defn get-compact-translated-info
   "Get (find) organisation with given organisation id (Y-tunnus in Finnish)
   and compact info to contain only necessary data. Data will be in following:
   {:name, :email, :organisation-id, :contact {:address, :postal-number, :city},
   :county}.
-  
+
   You can also give language. If data is found in given language, translated
   info will be returned. Otherwise it will be in Finnish.
-  
+
   Language can be {:fi, :sv, :en}
-  
-  Function assumes name and contact info are translated."
+
+  Function assumes name and contact info are translated.
+
+  Data will be in form of
+  {:name :email :organisation-id :county}" 
   ([id lang]
-  (let [{:keys [nimi yhteystiedot ytunnus]} (find-by-id id)
-        translated-contact
-        (into {} (or
-                   (filter-translations lang yhteystiedot)
-                   (filter-translations :fi yhteystiedot)))]
-    {:name (or (lang nimi) (:fi nimi))
-     :email (:email translated-contact) 
-     :organisation-id ytunnus
-     :contact (compact-address translated-contact)
-     :county nil}))
+   (compact-organisation-info lang (find-by-id id)))
   ([id]
    (get-compact-translated-info id :fi)))
