@@ -17,9 +17,7 @@
 (defn- json->map [body] (cheshire/parse-string body true))
 
 (defn find-by-id
-  "Fetch organisation data by organisation id (Y-tunnus in Finnish).
-  If server returns anything that OK (HTTP 200) exception will be thrown.
-  Note: Compojure API should catch that exception and return appropriate error."
+  "Fetch organisation data by organisation id (Y-tunnus in Finnish)."
   [organisation-id]
   (let [url
         (str service-url "organisaatio/" organisation-id "?includeImage=false")
@@ -71,7 +69,10 @@
   Function assumes name and contact info are translated.
 
   Data will be in form of
-  {:name :email :organisation-id :county}" 
+  {:name :email :organisation-id :county}
+
+  If remote server returns error (status anything else than HTTP OK/200)
+  exception will be handled. Compojure API should handle this exception."
   ([id lang]
    (compact-organisation-info lang (find-by-id id)))
   ([id]
