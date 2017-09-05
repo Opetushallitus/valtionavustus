@@ -41,13 +41,13 @@ const makeState = ({hakemus, selvitysType, selvitysHakemus, avustushaku, userInf
 }
 
 const makeFinnishGenetiveFormOfSelvitysType = selvitysType =>
-  selvitysType == 'valiselvitys' ? "väliselvityksen" : "loppuselvityksen"
+  selvitysType === 'valiselvitys' ? "väliselvityksen" : "loppuselvityksen"
 
 const makeTitleForSent = selvitysType =>
   `Lähetetty ${makeFinnishGenetiveFormOfSelvitysType(selvitysType)} hyväksyntä`
 
 const makeTitleForUnsent = (selvitysType, lang) => {
-  const suffix = lang == 'sv' ? " ruotsiksi" : ""
+  const suffix = lang === 'sv' ? " ruotsiksi" : ""
   return `Lähetä ${makeFinnishGenetiveFormOfSelvitysType(selvitysType)} hyväksyntä${suffix}`
 }
 
