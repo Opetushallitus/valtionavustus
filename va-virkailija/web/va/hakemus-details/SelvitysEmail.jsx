@@ -1,4 +1,5 @@
 import React from 'react'
+import Immutable from 'seamless-immutable'
 import _ from 'lodash'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -6,10 +7,31 @@ import JsUtil from 'soresu-form/web/JsUtil'
 import Translator from 'soresu-form/web/form/Translator'
 import NameFormatter from 'va-common/web/va/util/NameFormatter'
 
-const findRecipientEmail = answers => {
-  const field = JsUtil.findFirst(answers, f => f.key === "primary-email")
-  return field ? field.value : ""
+const emailNotificationFieldType = "vaEmailNotification"
+
+const legacyEmailFieldIds = Immutable(["organization-email", "primary-email", "signature-email"])
+
+const isNonEmptyEmailField = field =>
+  (field.fieldType === emailNotificationFieldType || _.includes(legacyEmailFieldIds, field.key)) &&
+  !_.isEmpty(field.value)
+
+const findFirstPreferredEmail = emailFields => {
+  if (!emailFields.length) {
+    return null
+  }
+
+  const preferred = _.find(emailFields, f => f.fieldType === emailNotificationFieldType)
+
+  if (preferred) {
+    return preferred.value
+  }
+
+  return emailFields[0].value
 }
+
+const findRecipientEmail = (selvitysAnswers, hakemusAnswers) =>
+  findFirstPreferredEmail(JsUtil.flatFilter(selvitysAnswers, isNonEmptyEmailField)) ||
+    findFirstPreferredEmail(JsUtil.flatFilter(hakemusAnswers, isNonEmptyEmailField))
 
 const makeState = ({hakemus, selvitysType, selvitysHakemus, avustushaku, userInfo, lang, translations}) => {
   const translator = new Translator(translations)
@@ -21,7 +43,7 @@ const makeState = ({hakemus, selvitysType, selvitysHakemus, avustushaku, userInf
   const registerNumber = selvitysHakemus["register-number"]
   const senderName = NameFormatter.onlyFirstForename(userInfo["first-name"]) + " " + userInfo["surname"]
   const senderEmail = userInfo.email
-  const recipientEmail = findRecipientEmail(hakemus.answers)
+  const recipientEmail = findRecipientEmail(selvitysHakemus.answers, hakemus.answers) || ""
 
   return {
     message: translator.translate("default-message", lang, "", {
