@@ -19,7 +19,8 @@
 (defn find-by-id
   "Fetch organisation data by organisation id (Y-tunnus in Finnish)."
   [organisation-id]
-  (let [url (str service-url "organisaatio/" organisation-id "?includeImage=false")]
+  (let [url
+        (str service-url "organisaatio/" organisation-id "?includeImage=false")]
     (json->map (:body @(http/get url)))))
 
 (defn compact-address
