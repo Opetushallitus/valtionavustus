@@ -26,11 +26,10 @@
   "Convert full address info to compact one:
   {:address :postal-number :city}
   Postal addess is being trimmed by removing Finnish tag 'posti_'."
-  [address]
-  (let [{:keys [osoite postinumeroUri postitoimipaikka]} address]
-    {:address osoite
+  [{:keys [osoite postinumeroUri postitoimipaikka]}]
+  {:address osoite
      :postal-number (clojure.string/replace postinumeroUri "posti_" "")
-     :city postitoimipaikka}))
+     :city postitoimipaikka})
 
 (defn get-compact-translated-info
   "Get (find) organisation with given organisation id (Y-tunnus in Finnish)
