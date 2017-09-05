@@ -166,7 +166,7 @@ export default class SelvitysEmail extends React.Component {
                 <a href={'mailto:' + sentSelvitysEmail.to}>{sentSelvitysEmail.to}</a>
               )}
               {!sentSelvitysEmail && (
-                <input type="text" size="65" value={recipientEmail} onChange={this.onRecipientEmailChange}/>
+                <input type="text" className="selvitys-email-header__value-input" value={recipientEmail} onChange={this.onRecipientEmailChange}/>
               )}
               </td>
             </tr>
@@ -175,7 +175,7 @@ export default class SelvitysEmail extends React.Component {
               <td className="selvitys-email-header__value">
                 {sentSelvitysEmail && sentSelvitysEmail.subject}
                 {!sentSelvitysEmail && (
-                  <input type="text" size="65" value={subject} onChange={this.onSubjectChange}/>
+                  <input className="selvitys-email-header__value-input" type="text" value={subject} onChange={this.onSubjectChange}/>
                 )}
               </td>
             </tr>
