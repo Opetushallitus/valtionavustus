@@ -19,6 +19,8 @@
        "compile"
   ]
 
+  :repl-options {:timeout 1200000}
+
   :plugins [[speclj "3.3.1"]
             [lein-modules "0.3.11"]
             [lein-environ "1.0.0"]
