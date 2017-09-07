@@ -23,8 +23,9 @@
         (str service-url "organisaatio/" organisation-id "?includeImage=false")
         {:keys [status body error headers]}
          @(http/get url)]
-    (if (= status 200)
-      (json->map body)
+    (case status
+      200 (json->map body)
+      404 nil
       (throw (ex-info "Error while fetching organisation info"
                       {:status status :url url :body body
                        :error error :headers headers})))))
@@ -71,9 +72,12 @@
   Data will be in form of
   {:name :email :organisation-id :county}
 
-  If remote server returns error (status anything else than HTTP OK/200)
-  exception will be handled. Compojure API should handle this exception."
+  If no organisation is found nil will be returned.
+
+  If remote server returns error exception will be thrown. Compojure API should
+  handle this exception."
   ([id lang]
-   (compact-organisation-info lang (find-by-id id)))
+   (let [organisation-info (find-by-id id)]
+     (when organisation-info (compact-organisation-info lang organisation-info))))
   ([id]
    (get-compact-translated-info id :fi)))
