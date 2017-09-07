@@ -181,6 +181,24 @@
       }
     }
   },
+  "selvitys-email": {
+    "default-message": {
+      "fi": "Hyvä vastaanottaja,\n\nHankkeen \"{{project-name}}\" (\"{{avustushaku-name}}\") {{selvitys-type-lowercase}} on käsitelty.\n\nTerveisin,\n  {{sender-name}}\n  {{sender-email}}\n",
+      "sv": "Bästa mottagare,\n\n{{selvitys-type-capitalized}} för projektet \"{{project-name}}\" (\"{{avustushaku-name}}\") är behandlad.\n\nHälsningar,\n  {{sender-name}}\n  {{sender-email}}\n"
+    },
+    "default-subject": {
+      "fi": "{{selvitys-type-capitalized}} {{register-number}} käsitelty",
+      "sv": "{{selvitys-type-capitalized}} {{register-number}} är behandlad"
+    },
+    "valiselvitys": {
+      "fi": "väliselvitys",
+      "sv": "mellanredovisningen"
+    },
+    "loppuselvitys": {
+      "fi": "loppuselvitys",
+      "sv": "slutredovisningen"
+    }
+  },
   "misc": {
     "time": {
       "fi": "klo",

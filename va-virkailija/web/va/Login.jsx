@@ -1,3 +1,5 @@
+import "soresu-form/web/polyfills"
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Bacon from 'baconjs'

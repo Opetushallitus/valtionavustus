@@ -289,7 +289,7 @@ export default class HakemustenArviointiController {
             }
           })
           .catch(function(error) {
-            console.error(error)
+            console.error(`Error in saving hakemus arvio, POST ${updateUrl}`, error)
             dispatcher.push(events.saveCompleted, "unexpected-save-error")
           })
     }
@@ -312,7 +312,7 @@ export default class HakemustenArviointiController {
           }
         })
         .catch(function(error) {
-          console.error(error)
+          console.error(`Error in updating hakemus status, POST ${updateUrl}`, error)
           dispatcher.push(events.saveCompleted, "unexpected-save-error")
         })
     return state
@@ -374,7 +374,8 @@ export default class HakemustenArviointiController {
 
   onAddComment(state, newComment) {
     state.saveStatus.saveInProgress = true
-    HttpUtil.post(HakemustenArviointiController.commentsUrl(state), { comment: newComment })
+    const url = HakemustenArviointiController.commentsUrl(state)
+    HttpUtil.post(url, { comment: newComment })
       .then(comments => {
         if(comments instanceof Object) {
           dispatcher.push(events.commentsLoaded, comments)
@@ -385,7 +386,7 @@ export default class HakemustenArviointiController {
         }
       })
       .catch(function(error) {
-        console.error(error)
+        console.error(`Error in adding comment, POST ${url}`, error)
         dispatcher.push(events.saveCompleted, "unexpected-save-error")
       })
     return state
@@ -414,7 +415,8 @@ export default class HakemustenArviointiController {
 
   onGotoSavedSearch(state, hakemusList) {
     const idsToList = _.map(hakemusList, h => { return h.id })
-    HttpUtil.put(HakemustenArviointiController.savedSearchUrl(state), { "hakemus-ids": idsToList })
+    const url = HakemustenArviointiController.savedSearchUrl(state)
+    HttpUtil.put(url, { "hakemus-ids": idsToList })
       .then(savedSearchResponse => {
         if (savedSearchResponse instanceof Object) {
           window.localStorage.setItem("va.arviointi.admin.summary.url", savedSearchResponse["search-url"])
@@ -424,7 +426,7 @@ export default class HakemustenArviointiController {
         }
       })
       .catch(function(error) {
-        console.error('Got error on saved search initialization', error)
+        console.error(`Error in initializing saved search, PUT ${url}`, error)
         dispatcher.push(events.saveCompleted, "unexpected-save-error")
       })
     return state
@@ -520,7 +522,7 @@ export default class HakemustenArviointiController {
         }
       })
       .catch(function(error) {
-        console.error(error)
+        console.error(`Error in saving hakemus score, POST ${updateUrl}`, error)
         dispatcher.push(events.saveCompleted, "unexpected-save-error")
       })
     return state

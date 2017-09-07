@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import ClassNames from 'classnames'
+import _ from 'lodash'
 
 import CSSTransitionGroup from 'soresu-form/web/form/component/wrapper/CSSTransitionGroup.jsx'
 import LdapSearchParameters from './LdapSearchParameters'

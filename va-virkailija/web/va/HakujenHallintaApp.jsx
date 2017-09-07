@@ -1,5 +1,5 @@
-import PolyfillBind from 'va-common/web/polyfill-bind'
-import ConsolePolyfill from 'console-polyfill'
+import "soresu-form/web/polyfills"
+
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import queryString from 'query-string'

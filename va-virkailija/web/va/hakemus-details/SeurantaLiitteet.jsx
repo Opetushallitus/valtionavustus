@@ -18,12 +18,14 @@ export default class SeurantaLiitteet extends React.Component {
       const file = files[0]
       const formData = new FormData()
       formData.append('file', file)
-      HttpUtil.put(`${hakijaServer}api/avustushaku/${avustushakuId}/hakemus/${hakemusUserKey}/${hakemus.version}/attachments/${fieldId}`, formData)
+      const url = `${hakijaServer}api/avustushaku/${avustushakuId}/hakemus/${hakemusUserKey}/${hakemus.version}/attachments/${fieldId}`
+      HttpUtil.put(url, formData)
         .then(function(response) {
           controller.refreshAttachments(avustushakuId)
+          return null
         })
         .catch(function(error) {
-          console.error(error)
+          console.error(`Error in adding attachment with drag'n'drop, PUT ${url}`, error)
           controller.saveError()
         })
     }
@@ -33,9 +35,10 @@ export default class SeurantaLiitteet extends React.Component {
       HttpUtil.delete(url)
         .then(function(response) {
           controller.refreshAttachments(avustushakuId)
+          return null
         })
         .catch(function(error) {
-          console.error(error)
+          console.error(`Error in removing attachment, DELETE ${url}`, error)
           controller.saveError()
         })
     }

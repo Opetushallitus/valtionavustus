@@ -11,12 +11,8 @@
     "web"
   ],
   "dependencies": {
-    "array-find-polyfill": "^0.1.0",
-    "axios": "^0.5.4",
     "baconjs": "^0.7.59",
-    "bluebird": "2.9.34",
     "classnames": "^2.1.3",
-    "console-polyfill": "^0.2.1",
     "lodash": "^3.9.3",
     "moment-timezone": "0.4.0",
     "route-parser": "^0.0.4",

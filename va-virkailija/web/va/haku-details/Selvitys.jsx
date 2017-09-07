@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import moment from 'moment'
+import _ from 'lodash'
 
 export default class Selvitys extends React.Component{
   render(){
@@ -26,43 +27,47 @@ export default class Selvitys extends React.Component{
 
 
 class DateField extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props)
-    const field = props.field
-    this.state = {value: this.value(props,field),field:field}
+    this.state = {value: this.value(props, props.field)}
+    this.onChange = this.onChange.bind(this)
+    this.onBlur = this.onBlur.bind(this)
   }
 
-  value(props,field) {
-    return _.get(props.avustushaku, field, "")
+  value(props, field) {
+    return props.avustushaku[field] || ""
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.avustushaku.id!=this.props.avustushaku.id){
-      this.setState({
-        value: this.value(nextProps,nextProps.field)
-      })
+    if (nextProps.avustushaku.id != this.props.avustushaku.id) {
+      this.setState({value: this.value(nextProps, nextProps.field)})
+    }
+  }
+
+  onChange(event) {
+    this.setState({value: event.target.value, invalid: false})
+  }
+
+  onBlur(event) {
+    const value = event.target.value
+    const isValid = moment(value, ["D.M.YYYY"], true).isValid() || value == ""
+    if (isValid) {
+      this.props.controller.onChangeListener(this.props.avustushaku, event.target, value)
+    } else {
+      this.setState({invalid: true})
     }
   }
 
   render() {
-    const onChange = (event)=>{
-      this.setState({value:event.target.value,invalid:false})
-    }
-
-    const onBlur = (event)=>{
-      const value = event.target.value
-      const isValid = moment(value, ["D.M.YYYY"],true).isValid() || value==""
-      if(isValid) {
-        this.props.controller.onChangeListener(this.props.avustushaku, event.target, value)
-      }
-      else{
-        this.setState({invalid:true})
-      }
-    }
-    const field = this.state.field
     return (
-      <span className="decision-date" style={{marginLeft:10,marginRight:10}}>
-        <input type="text" placeholder="p.k.vvvv" className={this.state.invalid ? 'error' : ''} value={this.state.value} id={field} onChange={onChange} onBlur={onBlur}/>
+      <span className="decision-date" style={{marginLeft: 10, marginRight: 10}}>
+        <input type="text"
+               placeholder="p.k.vvvv"
+               className={this.state.invalid ? 'error' : ''}
+               value={this.state.value}
+               id={this.props.field}
+               onChange={this.onChange}
+               onBlur={this.onBlur}/>
       </span>
     )
   }

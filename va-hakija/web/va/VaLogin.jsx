@@ -1,6 +1,5 @@
-import PolyfillBind from 'va-common/web/polyfill-bind'
+import "soresu-form/web/polyfills"
 
-import ConsolePolyfill from 'console-polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import QueryString from 'query-string'
@@ -47,8 +46,7 @@ export default class VaLogin extends React.Component {
     const vaLogin = this
     const email = this.state.email
     const model = this.props.model
-    try {
-      HttpUtil.put(url, {
+    HttpUtil.put(url, {
         value: [{key:"primary-email", value: email, fieldType: "emailField"},{key:"language", value: model.lang, fieldType: "radioButton"}]
       })
       .then(function(response) {
@@ -61,19 +59,10 @@ export default class VaLogin extends React.Component {
           window.location.href = urlCreator.existingSubmissionEditUrl(model.avustushaku.id, hakemusId, model.lang, model.devel)
         }
       })
-      .catch(function(response) {
-        console.error("PUT error to", url, ". Response=", JSON.stringify(response))
-        vaLogin.setState({
-          error: "error"
-        })
+      .catch(function(error) {
+        console.error(`Error in creating new hakemus, PUT ${url}`, error)
+        vaLogin.setState({error: "error"})
       })
-    }
-    catch(error) {
-      console.error("PUT error to", url, ". Error=", error)
-      vaLogin.setState({
-        error: "error"
-      })
-    }
   }
 
   render() {
