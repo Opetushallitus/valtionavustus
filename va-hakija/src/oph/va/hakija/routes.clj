@@ -268,9 +268,12 @@
   "API for fetching organisational data with businessId"
   (GET "/" [organisation-id]
     :query-params [organisation-id]
-    {:status 200
-     :headers {"Content-Type" "application/json"}
-     :body (org/get-compact-translated-info organisation-id)}))
+    (let [organisation-info (org/get-compact-translated-info organisation-id)]
+      (if organisation-info
+        {:status 200
+         :headers {"Content-Type" "application/json"}
+         :body organisation-info}
+        {:status 404}))))
 
 (defroutes* doc-routes
   "API documentation browser"
