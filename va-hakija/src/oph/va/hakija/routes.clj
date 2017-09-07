@@ -18,7 +18,8 @@
             [oph.soresu.form.routes :refer :all]
             [oph.va.hakija.db :as hakija-db]
             [oph.va.hakija.schema :refer :all]
-            [oph.va.hakija.handlers :refer :all]))
+            [oph.va.hakija.handlers :refer :all]
+            [oph.common.organisation-service :as org]))
 
 (defroutes* healthcheck-routes
   "Healthcheck routes"
@@ -265,14 +266,11 @@
 
 (defroutes* organisation-routes
   "API for fetching organisational data with businessId"
-  (GET "/" [organisationId]
-    :query-params [organisationId]
+  (GET "/" [organisation-id]
+    :query-params [organisation-id]
     {:status 200
      :headers {"Content-Type" "application/json"}
-     :body {:name "Nakkila"
-            :email "test@test.com"
-            :address "PL1 000 Nakkila"
-            :businessId organisationId}}))
+     :body (org/get-compact-translated-info organisation-id)}))
 
 (defroutes* doc-routes
   "API documentation browser"
