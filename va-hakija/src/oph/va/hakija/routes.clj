@@ -18,7 +18,8 @@
             [oph.soresu.form.routes :refer :all]
             [oph.va.hakija.db :as hakija-db]
             [oph.va.hakija.schema :refer :all]
-            [oph.va.hakija.handlers :refer :all]))
+            [oph.va.hakija.handlers :refer :all]
+            [oph.common.organisation-service :as org]))
 
 (defroutes* healthcheck-routes
   "Healthcheck routes"
@@ -263,6 +264,20 @@
   (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
   (route/not-found "<p>Page not found.</p>"))
 
+(defroutes* organisation-routes
+  "API for fetching organisational data with businessId"
+  (GET "/" [organisation-id lang]
+    :query-params [organisation-id lang]
+    (let [organisation-info
+          (org/get-compact-translated-info
+            organisation-id
+            (or (keyword lang) :fi))]
+      (if organisation-info
+        {:status 200
+         :headers {"Content-Type" "application/json"}
+         :body organisation-info}
+        {:status 404}))))
+
 (defroutes* doc-routes
   "API documentation browser"
   (swagger-ui))
@@ -291,6 +306,7 @@
 
   (context* "/doc" [] doc-routes)
 
+
   ;; Resources
   config-routes
   resource-routes)
@@ -312,6 +328,8 @@
   ;; Documentation
   (context* "/doc" [] doc-routes)
 
+;;Api for businessId search (y-tunnus)
+  (context* "/api/organisations" [] organisation-routes)
   ;; Resources
   config-routes
   resource-routes)

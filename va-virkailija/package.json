@@ -33,6 +33,12 @@
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "css-loader": "^0.28.5",
+    "eslint": "^4.5.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
     "file-loader": "^0.11.2",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
@@ -44,6 +50,8 @@
   "scripts": {
     "build": "webpack --bail",
     "build-production": "NODE_ENV=production npm run build",
-    "build-watch": "webpack --progress --watch"
+    "build-watch": "webpack --progress --watch",
+    "lint": "node_modules/eslint/bin/eslint.js web/**/*"
+
   }
 }
