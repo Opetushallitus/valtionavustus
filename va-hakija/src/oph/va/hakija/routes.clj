@@ -266,9 +266,12 @@
 
 (defroutes* organisation-routes
   "API for fetching organisational data with businessId"
-  (GET "/" [organisation-id]
-    :query-params [organisation-id]
-    (let [organisation-info (org/get-compact-translated-info organisation-id)]
+  (GET "/" [organisation-id lang]
+    :query-params [organisation-id lang]
+    (let [organisation-info
+          (org/get-compact-translated-info
+            organisation-id
+            (or (keyword lang) :fi))]
       (if organisation-info
         {:status 200
          :headers {"Content-Type" "application/json"}
