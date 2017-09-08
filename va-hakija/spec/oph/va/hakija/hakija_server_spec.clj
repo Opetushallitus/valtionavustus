@@ -542,16 +542,4 @@
         (should= 40 (:budget_total posted-hakemus))
         (should= 14 (:budget_oph_share posted-hakemus)))))
 
-(describe "Tries to get data out of businessId API"
-
-(around-all [_]
- (with-test-server! :form-db #(start-server "localhost" test-server-port false) (_)))
-
-  (it "Tries to get organizational data with business id"
-  (let [{:keys [status headers body error] :as resp} (get! "/api/organisations/?organisation-id=0204819-8")
-        data (json->map body)]
-    (should= 200 status)
-    (should-contain :email (keys data))
-    (should= #{:email :name :county :contact :organisation-id} (set (keys data))))))
-
 (run-specs)
