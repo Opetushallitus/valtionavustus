@@ -7,6 +7,7 @@ import FormComponent from './component/FormComponent.jsx'
 import InfoElement from './component/InfoElement.jsx'
 import WrapperComponent from './component/wrapper/WrapperComponent.jsx'
 import InputValueStorage from './InputValueStorage.js'
+import BusinessIdSearch from './component/BusinessIdSearch.jsx'
 
 export default class Form extends React.Component {
   render() {
