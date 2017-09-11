@@ -1,0 +1,11 @@
+.idea
+*.iml
+target
+.lein-*
+.nrepl-port
+node_modules
+npm-cache
+**/.*.swp
+**/.DS_Store
+**/npm-debug.log
+pom.xml

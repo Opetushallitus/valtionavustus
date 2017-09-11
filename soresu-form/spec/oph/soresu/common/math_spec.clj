@@ -1,0 +1,46 @@
+(ns oph.soresu.common.math-spec
+  (:require [speclj.core :refer :all]
+            [oph.soresu.common.math :refer :all]))
+
+(defn- test-parse [value]
+  [(parse-integer value)
+   (represents-integer? value)
+   (parse-decimal value)
+   (represents-decimal? value)])
+
+(describe "math"
+          (it "parses integers and decimals"
+              (should= [0 true 0 true] (test-parse 0))
+              (should= [0 true 0 true] (test-parse -0))
+              (should= [101 true 101 true] (test-parse 101))
+              (should= [-101 true -101 true] (test-parse -101))
+              (should= [0 false 1 true] (test-parse 1.0))
+              (should= [0 false -1 true] (test-parse -1.0))
+              (should= [0 false 1.01 true] (test-parse 1.01))
+              (should= [0 false -1.01 true] (test-parse -1.01))
+              (should= [0 true 0 true] (test-parse "0"))
+              (should= [0 false 0 false] (test-parse "-0"))
+              (should= [101 true 101 true] (test-parse "101"))
+              (should= [-101 true -101 true] (test-parse "-101"))
+              (should= [0 false 1 true] (test-parse "1.0"))
+              (should= [0 false -1 true] (test-parse "-1.0"))
+              (should= [0 false 1.01 true] (test-parse "1.01"))
+              (should= [0 false -1.01 true] (test-parse "-1.01"))
+              (should= [0 false 1.01 true] (test-parse "1,01"))
+              (should= [0 false -1.01 true] (test-parse "-1,01"))
+              (should= [0 false 0 false] (test-parse ""))
+              (should= [0 false 0 false] (test-parse "-"))
+              (should= [0 false 0 false] (test-parse "a"))
+              (should= [10 false 10 false] (test-parse " 10"))
+              (should= [10 false 10 false] (test-parse " 10\t\n"))
+              (should= [0 false 10 false] (test-parse " 10.0"))
+              (should= [0 false 10 false] (test-parse " 10,0"))
+              (should= [0 false -10 false] (test-parse " -10.0"))
+              (should= [0 false -10 false] (test-parse " -10,0"))
+              (should= [0 false 1.01 false] (test-parse " 1.01 "))
+              (should= [0 false -1.01 false] (test-parse " -1,01 "))
+              (should= [0 false 0 false] (test-parse false))
+              (should= [0 false 0 false] (test-parse true))
+              (should= [0 false 0 false] (test-parse nil))))
+
+(run-specs)

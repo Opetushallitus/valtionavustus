@@ -1,0 +1,110 @@
+@import "common.less";
+
+@popup-height: 240px;
+@popup-internal-width: 96%;
+
+.rw-dropdownlist {
+  position: relative;
+  display: inline-block;
+
+  min-width: @preview-width;
+  background-color: @lighterer-gray;
+  margin: 5px 4px 4px 0;
+  padding: 4px 20px 4px 11px;
+  border: 1px solid @lighterer-gray;
+  cursor: pointer;
+  color: @light-blue;
+
+  transition-property: all;
+  transition-duration: 0.2s;
+
+  &.rw-open {
+    height: @popup-height;
+    .popup-box-shadow;
+    background-color: @off-white;
+
+    .rw-popup-container {
+      opacity: 1;
+    }
+
+    div.rw-input {
+      padding-bottom: 4px;
+      border-bottom: 1px solid @light-gray;
+    }
+  }
+
+  input {
+    width: @popup-internal-width;
+    height: 34px;
+    padding-left: 4px;
+    border: 1px solid @darkish-gray;
+  }
+
+  .rw-sr {
+    display: none;
+  }
+
+  &:active, &:focus {
+    outline: none;
+  }
+
+  .rw-i {
+    display: inline-block;
+    box-sizing: border-box;
+  }
+
+  .rw-select {
+    position: absolute;
+    top: 7px;
+    left: 22px;
+  }
+
+  .rw-input:active, .rw-input:focus {
+    outline: none;
+  }
+
+  .rw-popup-container {
+    position: absolute;
+    top: 50px;
+    background-color: @off-white;
+    max-height: 198px;
+    width: @popup-internal-width + 1%;
+    overflow: hidden !important; // !important must be used in this container to override inline styles of ReactWidgets.DropdownList
+
+    transition-property: all;
+    transition-duration: 0.05s;
+    opacity: 0;
+
+    display: block;
+
+    ul {
+      height: @popup-height - 92px;
+      padding: 0px;
+      margin: 5px 0 0 0;
+      overflow: auto;
+    }
+
+    li {
+      &:before {
+        content: "";
+        padding-right: 0;
+      }
+
+      width: @popup-internal-width;
+      display: block;
+      padding: 5px;
+
+      &[aria-selected="true"] {
+        background-color: @light-blue;
+        color: white;
+        border-radius: 2px;
+      }
+      &[aria-selected="false"]:hover {
+        background-color: @lighter-blue;
+      }
+      &.rw-list-empty {
+        color: @darkish-gray;
+      }
+    }
+  }
+}

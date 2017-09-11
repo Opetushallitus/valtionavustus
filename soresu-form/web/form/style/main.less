@@ -1,0 +1,738 @@
+@import "variables.less";
+@import "common.less";
+@import "soresu-react-widget-dropdown.less";
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background-color: @lightest-gray;
+  color: @text-black;
+  font-size: 16px;
+
+  @media print {
+    background-color: white;
+    color: black;
+  }
+}
+
+a {
+  color: @light-blue;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+ul {
+  // VA-specific style?
+  margin: 10px 0 0 -40px;
+  list-style: none;
+
+  li {
+    display: table-row;
+  }
+
+  li:before {
+    color: @light-green;
+    content:"•";
+    font-size: 14px;
+    padding-right: 10px;
+    display: table-cell;
+  }
+}
+
+.popup {
+  position: fixed;
+  max-height: 250px;
+  z-index: 101;
+  overflow: auto;
+  margin-right: 20px;
+  background-color: rgba(255,255,255,1);
+  padding: 10px;
+  box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28);
+}
+
+#container {
+  max-width: @form-width;
+  margin-top: 140px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px 20px 20px;
+
+  h1 {
+    font-weight: 300;
+    font-size: 24px;
+    margin: 0;
+  }
+
+  h2, h3 {
+    color: @darker-gray;
+    font-weight: 300;
+    font-size: 18px;
+
+    @media print {
+      color: black;
+    }
+  }
+
+  h2 > span {
+    text-transform: uppercase;
+  }
+
+  @media print {
+    margin: 0;
+  }
+}
+
+// SORESU FORM STYLES
+.soresu-form {
+  fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  label {
+    color: @form-label-black;
+    margin: 0 0 8px 0;
+
+    &.disabled {
+      color: @darker-gray;
+    }
+
+    :after {
+      content: " ";
+    }
+
+  }
+
+  p.soresu-info-element {
+    color: @form-label-black;
+    font-size: 15px;
+  }
+
+  .required:after {
+    content: "\00a0*";
+  }
+}
+
+section.soresu-theme {
+  margin: 25px 0 0 0;
+  padding-top: 25px;
+  border-top: 1px solid @light-gray;
+
+  h2 {
+    float: left;
+  }
+
+  label {
+    display: block;
+  }
+
+  >div {
+    margin: 0 0 0 250px;
+
+    >div, >fieldset, >p.soresu-info-element {
+      margin: 15px 0 20px 0;
+    }
+  }
+
+  @media print {
+    border-top: 0;
+  }
+}
+
+// FIELDSETS / WRAPPERS
+.soresu-fieldset,
+.soresu-growing-fieldset {
+  div {
+    display: inline-block;
+    max-width: @section-width + 11px;
+  }
+
+  >div .soresu-dropdown {
+    top: -46px;
+    margin-top: 46px;
+    margin-right: 44px;
+  }
+}
+
+.soresu-growing-fieldset {
+  div.extra-large {
+    display: block;
+  }
+
+  ol {
+    list-style-type: none;
+    counter-reset: item;
+
+    li.soresu-growing-fieldset-child {
+      margin: 20px 0 0 -58px;
+
+      &.disabled {
+        color: @darker-gray;
+      }
+    }
+
+    li:before {
+      content: counter(item) "  ";
+      counter-increment: item;
+      float: left;
+      width: 1em;
+      font-size: 18px;
+      margin-top: 15px;
+    }
+
+  }
+
+  &.show-only-first-label ol {
+    li:first-child:before {
+      margin-top: 45px;
+    }
+  }
+
+  .soresu-growing-fieldset-child-transition-exit {
+    opacity: 1;
+    transition: all 0.3s linear;
+
+    &.soresu-growing-fieldset-child-transition-exit-active {
+      opacity: 0.01;
+      .scale(0);
+    }
+  }
+}
+// END FIELDSETS / WRAPPERS
+
+// FORM COMPONENTS
+.soresu-text-component() {
+  input[type=text],
+  input[type=email],
+  textarea {
+    border: 1px solid @middle-gray;
+    padding: 8px;
+    background-color: #fff;
+  }
+
+  input[type=text].error,
+  input[type=email].error,
+  textarea.error {
+    border: 1px solid @bright-red;
+  }
+
+  textarea[disabled], input[disabled] {
+    cursor: default;
+    background-color: @lightest-gray;
+    border: 1px solid @light-gray;
+  }
+}
+
+.soresu-focus-animation() {
+  input:focus,
+  select:focus,
+  textarea:focus,
+  button:focus {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid @light-blue;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    .ease-in-out(0.30s);
+    outline: none;
+  }
+}
+
+.soresu-text-field,
+.soresu-email-field {
+  .soresu-text-component();
+  .soresu-focus-animation();
+  .soresu-focus-show-error();
+
+  input[type=text], input[type=email] {
+    margin: 5px 10px 0 0;
+    font-size: 18px;
+
+    &.extra-extra-small {
+      width: ceil(@section-width / 8)  - 18px;
+    }
+    &.extra-small {
+      width: ceil(@section-width / 4)  - 18px;
+    }
+    &.small {
+      width: ceil(@section-width / 3) - 18px;
+    }
+    &.medium {
+      width: ceil(@section-width / 2) - 18px;
+    }
+    &.large {
+      width: ceil(@section-width / 1.5) - 28px;
+    }
+    &.extra-large {
+      width: @section-width - 18px;
+    }
+  }
+
+  label {
+    &.extra-extra-small {
+      width: ceil(@section-width / 8)  - 8px;
+    }
+    &.extra-small {
+      width: ceil(@section-width / 4)  - 8px;
+    }
+    &.small {
+      width: ceil(@section-width / 3) - 8px;
+    }
+    &.medium {
+      width: ceil(@section-width / 2) - 8px;
+    }
+    &.large {
+      width: ceil(@section-width / 1.5) - 18px;
+    }
+    &.extra-large {
+      width: @section-width - 8px;
+    }
+  }
+}
+
+.soresu-money-field {
+  .soresu-text-field();
+
+  input {
+    text-align: right;
+  }
+}
+
+.soresu-finnish-business-id-field {
+  .soresu-text-field();
+}
+
+.soresu-text-area {
+  .soresu-text-component();
+  .soresu-focus-animation();
+  .soresu-focus-show-error();
+
+  label {
+    max-width: @section-width;
+  }
+
+  textarea {
+    width: @section-width - 18px;
+    height: 12em;
+    font-size: 16px;
+
+    &.extra-extra-small {
+      height: 1em;
+    }
+    &.extra-small {
+      height: 3em;
+    }
+    &.small {
+      height: 6em;
+    }
+    &.medium {
+      height: 12em;
+    }
+    &.large {
+      height: 18em;
+    }
+    &.extra-large {
+      height: 24em;
+    }
+  }
+
+  .length-left {
+    color: @dark-gray;
+    font-size: 12px;
+    width: @section-width - 10px;
+    text-align: right;
+  }
+
+  @media print {
+    width: 100%;
+  }
+}
+
+.soresu-text-button {
+  .soresu-focus-animation();
+}
+
+.soresu-dropdown() {
+  .soresu-focus-animation();
+  .soresu-focus-show-error();
+}
+
+.soresu-radio, .soresu-checkbox {
+  input[type=radio], input[type=checkbox] {
+    display: none;
+  }
+
+  input[type=radio] + label, input[type=checkbox] + label  {
+    display: inline-block;
+    color: @dark-gray;
+    margin: 4px 3px;
+    padding: 12px 30px;
+    background-color: #fff;
+    border: solid 1px @middle-gray;
+    cursor: pointer;
+  }
+
+  input[type=radio] + label.error, input[type=checkbox] + label.error {
+    border: solid 1px @bright-red;
+  }
+
+  input[type=checkbox] + label  {
+    width: @section-width - 68px;
+  }
+
+  input[type=radio]:checked + label, input[type=checkbox]:checked + label {
+    color: #000;
+    background: #fff url('../img/checkmark.png') no-repeat 10px 19px;
+    margin: 1px 1px;
+    border: solid 4px @light-green;
+  }
+
+  input[disabled] + label {
+    color: @light-gray;
+    border-color: @light-gray;
+    background-color: @lightest-gray;
+    cursor: default;
+  }
+
+  input[disabled]:checked + label {
+    color: @dark-gray;
+    border: solid 4px @light-gray;
+    background-color: @lightest-gray;
+  }
+}
+
+.soresu-table {
+  @content-padding: 4px 10px;
+
+  border-collapse: separate;
+  border-spacing: 20px;
+  border: 1px solid transparent;
+
+  div {
+    display: block;  // override leaking `.soresu-fieldset div` rule
+  }
+
+  &--preview {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  &--error {
+    border: 1px solid @bright-red;
+  }
+
+  &--disabled {
+    .soresu-table__caption,
+    .soresu-table__column-title-cell,
+    .soresu-table__row-title-cell,
+    .soresu-table__value-cell,
+    .soresu-table__sum-cell {
+      color: @darker-gray;
+    }
+
+    .soresu-table__value-cell-input {
+      background-color: @lightest-gray;
+      border-color: @light-gray;
+    }
+  }
+
+  &__caption {
+    color: @form-label-black;
+    text-align: left;
+  }
+
+  &__column-title-cell {
+    color: @form-label-black;
+    text-align: left;
+    &--number {
+      text-align: right;
+    }
+    &--preview {
+      padding: @content-padding;
+    }
+  }
+
+  &__row-title-cell {
+    color: @form-label-black;
+    text-align: right;
+    &--preview {
+      padding: @content-padding;
+    }
+  }
+
+  &__value-cell {
+    &--number {
+      text-align: right;
+      .soresu-table__value-cell-input {
+        text-align: right;
+      }
+    }
+    &--placeholder .soresu-table__value-cell-input {
+      border-color: @lightish-gray;
+    }
+    &--preview {
+      padding: @content-padding;
+      border-bottom: 1px solid @middle-gray;
+    }
+  }
+
+  &__value-cell-input {
+    text-align: left;
+    padding: 5px 9px;
+    border: 1px solid @middle-gray;
+    &--error {
+      border: 1px solid @bright-red;
+    }
+  }
+
+  &__sum-cell {
+    color: @form-label-black;
+    padding: @content-padding;
+    &--number {
+      border-bottom: 1px solid @middle-gray;
+      text-align: right;
+    }
+    &--preview {
+      border-bottom: 1px solid @middle-gray;
+    }
+  }
+
+  &__cell-positioner {
+    width: 100%;
+    position: relative;
+  }
+
+  &__remove-row-button {
+    position: absolute;
+    right: -30px;
+    top: 8px;
+  }
+}
+
+div.soresu-attachment-input-field {
+  button.soresu-remove {
+    position: relative;
+    top: 4px;
+    left: 6px;
+  }
+
+  div.soresu-attachment-display {
+    display: inline-block;
+    margin: 0;
+  }
+}
+
+.soresu-file-upload {
+  margin-top: 10px;
+  margin-bottom: 4px;
+
+  &.error {
+    span.required {
+      color: @bright-red;
+    }
+  }
+  .soresu-upload-button {
+    color: #fff;
+    background-color: @light-green;
+    border-width: 0;
+    margin: 4px 0 4px 0;
+    padding: 4px 24px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  &.disabled {
+    color: @darker-gray;
+    .soresu-upload-button {
+      background-color: @light-gray;
+      border: 1px solid @light-gray;
+      cursor: default;
+    }
+    div {
+      border-color: @dark-gray;
+      cursor: default;
+    }
+  }
+}
+
+button.soresu-remove {
+  background: transparent url('../img/remove_line_enabled.png') no-repeat left top;
+  border-width: 0;
+  width: 20px;
+  height: 22px;
+}
+button[disabled].soresu-remove {
+  background: transparent url('../img/remove_line_disabled.png') no-repeat left top;
+}
+
+button.soresu-text-button {
+  color: #fff;
+  background-color: @light-green;
+  border-width: 0;
+  margin: 4px 20px 4px 0;
+  padding: 8px 15px;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+button[disabled].soresu-text-button {
+  background-color: @light-gray;
+  border: 1px solid @light-gray;
+}
+
+@soresu-dropdown-width: 350px;
+.soresu-dropdown {
+  position: relative;
+  min-height: 70px;
+  margin-top: 0;
+  padding-left: 0;
+  min-width: @soresu-dropdown-width;
+
+  .rw-dropdownlist {
+    min-width: @soresu-dropdown-width;
+    background: none;
+    border: none;
+    padding: 0 0 4px 0;
+    transition-duration: 0.2s;
+    input {
+      width: @soresu-dropdown-width - 20px;
+    }
+
+    .rw-popup-container {
+      z-index: 20000;
+      width: @soresu-dropdown-width + 26px;
+      max-height: 1000px;
+      padding-top: 16px;
+      top: 50px;
+      border: 1px solid @light-gray;
+      border-top: none;
+      transition-duration: 0.5s;
+
+      ul {
+        height: auto;
+      }
+      li {
+        margin: 0 12px 0 12px;
+        width: auto;
+      }
+    }
+
+    &.rw-open {
+      height: auto;
+      box-shadow: none;
+      div.rw-input {
+        border: solid 4px @light-green;
+        padding: 10px;
+        span {
+          .soresu-chevron-up(14px, 1px, @mid-gray);
+        }
+      }
+      input.rw-input {
+        height: 26px;
+        margin-left: 12px;
+        margin-bottom: 2px;
+      }
+    }
+  }
+
+  div.rw-input {
+    min-width: @soresu-dropdown-width;
+    margin: 0;
+    padding: 10px;
+    color: #000;
+    background-color: #fff;
+    border: solid 4px @light-green;
+    span {
+      padding-bottom: 8px;
+      .soresu-chevron-down(14px, 1px, @mid-gray);
+    }
+  }
+
+  .rw-state-disabled div.rw-input {
+    color: @dark-gray;
+    border: solid 4px @light-gray;
+    background-color: @lightest-gray;
+    cursor: default;
+  }
+}
+.soresu-dropdown.soresu-dropdown-unselected .rw-dropdownlist div.rw-input {
+  border: solid 1px @middle-gray;
+}
+.soresu-dropdown.error .rw-dropdownlist div.rw-input {
+  border: solid 1px @bright-red;
+}
+.soresu-tooltip {
+  position: relative;
+  &.soresu-help-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-top: 1px;
+    margin-left: 5px;
+    background: transparent url('../img/show_tooltip.png') no-repeat left top;
+  }
+}
+
+.soresu-tooltip > span {
+  .box-triangle(295px);
+  position: absolute;
+  width: 600px;
+  left: -223px;
+  margin-left: -76px;
+  margin-bottom: -4px;
+  color: @form-label-black;
+  background: #fff;
+  border: 1px solid @light-gray;
+  font-size: 14px;
+  padding: 5px 15px;
+  visibility: hidden;
+}
+
+:hover.soresu-tooltip > span {
+  visibility: visible;
+  opacity: 0.95;
+  z-index: 99;
+}
+
+.soresu-tooltip-up > span {
+  .box-triangle-down(@light-gray, #fff);
+}
+
+:hover.soresu-tooltip-up > span {
+  bottom: 32px;
+}
+
+.soresu-tooltip-down > span {
+  .box-triangle-up(@light-gray, #fff);
+}
+
+:hover.soresu-tooltip-down > span {
+  top: 42px;
+}
+
+.soresu-opener-handle {
+  color: @light-blue;
+  cursor: pointer;
+
+  &.closed:after {
+    content: " \25BC";
+    font-family: Arial, sans-serif;
+  }
+
+  &.open:after {
+    content: " \25B2";
+    font-family: Arial, sans-serif;
+  }
+}
+
+.soresu-accordion {
+  overflow-y: hidden;
+  margin-bottom: 40px;
+  transition-property: max-height;
+  transition-duration: 0.5s;
+  transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+  width: @section-width;
+}

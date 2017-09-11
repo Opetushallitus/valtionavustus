@@ -1,0 +1,133 @@
+@import "variables";
+
+div.soresu-attachment-block {
+  display: block;
+  width: @section-width;
+  padding-top: 10px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid @light-gray;
+
+  &:nth-child(1) {
+    border-top: 1px solid @light-gray;
+    margin-top: 6px;
+  }
+
+  label {
+    margin: 0;
+  }
+}
+
+div.soresu-attachment-display {
+  display: block;
+  a {
+    text-decoration: none;
+  }
+  span {
+    color: @dark-gray;
+  }
+  button.soresu-remove {
+    position: relative;
+    top: 6px;
+    left: 20px;
+  }
+}
+
+.soresu-attachment-missing {
+  display: inline;
+  color: @dark-gray;
+}
+
+.soresu-preview {
+  .soresu-key {
+    color: @form-label-black;
+    font-weight: 400;
+    display: block;
+    padding: 10px 10px 3px 0;
+  }
+
+  .soresu-value {
+    color: @text-black;
+    font-size: 18px;
+  }
+
+  .soresu-preview-element {
+    &.extra-extra-small {
+      width: ceil(@section-width / 8);
+    }
+    &.extra-small {
+      width: ceil(@section-width / 4);
+    }
+    &.small {
+      width: ceil(@section-width / 3);
+    }
+    &.medium {
+      width: ceil(@section-width / 2);
+    }
+    &.large {
+      width: ceil(@section-width / 1.5);
+
+      @media print {
+        width: 400px;
+      }
+    }
+    &.extra-large {
+      width: @section-width;
+    }
+
+    .soresu-money {
+      &:after {
+        content: "\00A0€"
+      }
+    }
+  }
+
+  .soresu-text-area {
+    &.extra-extra-small, &.extra-small, &.small, &.medium, &.large, &.extra-large {
+      width: @section-width;
+      text-align: justify;
+    }
+  }
+  .soresu-preview-fieldset,  .soresu-preview-growing-fieldset {
+
+    div.extra-large {
+      display: block;
+    }
+
+    .soresu-preview-element {
+      display: inline-block;
+    }
+
+    .hidden {
+      display: none;
+    }
+  }
+
+  .soresu-preview-growing-fieldset {
+    ol {
+      margin: 20px 0 0 -56px;
+      list-style-type: none;
+      counter-reset: item;
+
+      li:before {
+        content: counter(item) "  ";
+        counter-increment: item;
+        float: left;
+        width: 1em;
+        font-weight: 600;
+      }
+
+      li.soresu-preview-growing-fieldset-child {
+        margin: 0 0 10px 0;
+        > * {
+          margin-left: 15px;
+        }
+      }
+    }
+
+    &.show-only-first-label ol {
+      li:first-child:before {
+        margin-top: 22px;
+      }
+    }
+  }
+}

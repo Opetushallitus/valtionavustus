@@ -1,0 +1,49 @@
+{
+  "name": "soresu-form",
+  "version": "1.0.0",
+  "description": "Soresu Form library",
+  "license": "EUPL-1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Opetushallitus/soresu-form.git"
+  },
+  "files": [
+    "web"
+  ],
+  "dependencies": {
+    "axios": "^0.16.2",
+    "baconjs": "^0.7.59",
+    "big.js": "^3.1.3",
+    "bluebird": "^3.5.0",
+    "classnames": "^2.1.3",
+    "console-polyfill": "^0.2.1",
+    "lodash": "^3.9.3",
+    "moment-timezone": "0.4.0",
+    "query-string": "2.2.0",
+    "react-dropzone": "^4.0.1",
+    "react-transition-group": "^2.2.0",
+    "react-widgets": "^3.4.8",
+    "seamless-immutable": "^2.4.2",
+    "speakingurl": "7.0.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.1",
+    "mocha": "^3.5.0",
+    "mocha-junit-reporter": "^1.5.0",
+    "react": "^15.6.1"
+  },
+  "peerDependencies": {
+    "react": "^15.6.1"
+  },
+  "private": true,
+  "scripts": {
+    "test": "mocha --require babel-register web/test/*Test.js",
+    "test-watch": "mocha --watch --require babel-register web/test/*Test.js",
+    "lint": "eslint web/**/*"
+  }
+}
