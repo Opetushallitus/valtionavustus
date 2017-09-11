@@ -175,13 +175,21 @@ export class EditComponent extends React.Component {
   }
 
   sizeClassName() {
-    if (this.param("size") && !Number.isInteger(this.param("size"))) return this.param("size")
-    else return undefined
+    if (this.param("size") && !Number.isInteger(this.param("size"))) {
+      return this.param("size")
+    }
+    else {
+      return undefined
+    }
   }
 
   param(param, defaultValue) {
-    if (!this.props.field.params) return defaultValue
-    if (this.props.field.params[param] !== undefined) return this.props.field.params[param]
+    if (!this.props.field.params) {
+      return defaultValue
+    }
+    if (this.props.field.params[param] !== undefined) {
+      return this.props.field.params[param]
+    }
     return defaultValue
   }
 }
