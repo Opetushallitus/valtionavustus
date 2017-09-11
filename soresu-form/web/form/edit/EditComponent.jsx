@@ -193,7 +193,7 @@ export class FieldEditComponent extends EditComponent {
     var requiredEdit = undefined
     if(typeof field.required != "undefined") {
       requiredEdit = (
-          <span className="soresu-edit-property">
+        <span className="soresu-edit-property">
           <input onChange={this.fieldValueUpdater(x => x, "required", !field.required)} type="checkbox" id={htmlId+"-required"} name={htmlId+"-required"} checked={field.required}/>
           <label htmlFor={htmlId+"-required"}> Pakollinen tieto</label>
         </span>
@@ -244,7 +244,7 @@ export class AppendableEditWrapper extends EditComponent {
   render() {
     return super.renderEditable(
       <div className="soresu-edit-wrapped-view">
-       {this.props.wrappedElement}
+        {this.props.wrappedElement}
       </div>
     )
   }
@@ -305,11 +305,11 @@ export class TextFieldEdit extends FieldEditComponent {
     for (var i = 0; i < sizeAlternatives.length; i++) {
       sizeAlternenativeButtons.push(
         <input type="radio" id={htmlId + ".size." + i}
-               key={"size-input-" + i}
-               name={htmlId + "-size"}
-               value={sizeAlternatives[i]}
-               onChange={this.fieldValueUpdater(x => x.params, "size")}
-               checked={sizeAlternatives[i] === field.params.size} />
+          key={"size-input-" + i}
+          name={htmlId + "-size"}
+          value={sizeAlternatives[i]}
+          onChange={this.fieldValueUpdater(x => x.params, "size")}
+          checked={sizeAlternatives[i] === field.params.size} />
       )
       sizeAlternenativeButtons.push(
         <label className="soresu-size-selection" key={"size-label-" + i} htmlFor={htmlId + ".size." + i}>
