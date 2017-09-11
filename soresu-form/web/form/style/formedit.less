@@ -12,56 +12,37 @@
 }
 
 .soresu-edit h3 {
-  color: @mid-gray;
   font-weight: 400;
 }
 
 div.soresu-form-edit {
-  &.soresu-edit {
-    border-left: none;
-  }
   padding-top: 10px;
   h3 {
     width: 83%;
     text-transform: uppercase;
-    padding-bottom: 10px;
-    border-bottom: 2px solid @lighter-gray;
   }
   button.soresu-edit {
     font-size: 16px;
     margin-left: 6px;
     padding: 4px 8px;
   }
-
-  > div.soresu-appendable-wrapper-edit {
-    padding-left: 0;
-  }
-
-}
-
-ol {
-  div.soresu-field-edit {
-    padding-left: 30px;
-  }
 }
 
 div.soresu-edit {
-  padding: 0 0 10px 0;
-  border-right: none;
+  border: 1px solid @lightish-gray;
+  background-color: @lighterer-gray;
+  border-radius: 4px;
+  margin: 5px;
+  padding-bottom: 10px;
   table.translation {
     margin-top: 20px;
     width: 93%;
   }
 }
 
-div.soresu-appendable-wrapper-edit {
-  padding-left: 15px;
-}
-
 div.soresu-field-edit, div.soresu-appendable-wrapper-edit {
   .soresu-focus-show-error();
   position: relative;
-  margin: 10px 10px 0 0;
   label, table.translation th {
     color: #000;
     font-size: 16px;
@@ -96,15 +77,7 @@ div.soresu-field-edit, div.soresu-appendable-wrapper-edit {
 }
 
 div.soresu-field-edit {
-  padding-top: 10px;
-  padding-left: 40px;
-  margin-bottom: 30px;
-  border-left: 1px solid #e6e6e6;
-  padding-bottom: 0;
-  &:last-child  {
-    margin-bottom: 0;
-  }
-  .soresu-edit-properties-line {
+ .soresu-edit-properties-line {
     display: table;
     table-layout: fixed;
     margin-top: 10px;
@@ -120,17 +93,29 @@ div.soresu-field-edit {
   }
 }
 
-.soresu-field-edit-tools {
-  position: absolute;
+.soresu-field-content {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.soresu-field-header {
   display: flex;
-  top: 4%;
-  padding-left: 20px;
-  margin-right: 4px;
-  margin-top: 4px;
+  padding: 10px;
+  background-color: @lightest-gray;
+  border-bottom: 2px solid @lighter-gray;
+  border-radius: 5px 5px 0px 0px;
+}
+
+.soresu-field-title {
+  flex: 1;
+  margin: 0px;
+}
+
+.soresu-field-edit-tools {
   cursor: pointer;
   color: #a9a3a1;
-  right: 16%;
   height: 25px;
+  display: flex;
 }
 
 .soresu-field-edit-button {
