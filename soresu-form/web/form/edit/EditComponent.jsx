@@ -76,18 +76,26 @@ export class EditComponent extends React.Component {
     return (
       <table className="translation">
         <thead><tr><th>{name + " suomeksi"}</th><th>{name + " ruotsiksi"}</th></tr></thead>
-        <tbody><tr>
-          <td><textarea className={classNamesFi}
-                        onChange={this.fieldValueUpdater(valueGetter, "fi")}
-                        name={htmlId+"-fi"}
-                        value={valueGetter(field).fi}>
-          </textarea></td>
-          <td><textarea className={classNamesSv}
-                        onChange={this.fieldValueUpdater(valueGetter, "sv")}
-                        name={htmlId+"-sv"}
-                        value={valueGetter(field).sv}>
-          </textarea></td>
-        </tr></tbody>
+        <tbody>
+          <tr>
+            <td>
+              <textarea
+                className={classNamesFi}
+                onChange={this.fieldValueUpdater(valueGetter, "fi")}
+                name={htmlId+"-fi"}
+                value={valueGetter(field).fi}>
+              </textarea>
+            </td>
+            <td>
+              <textarea
+                className={classNamesSv}
+                onChange={this.fieldValueUpdater(valueGetter, "sv")}
+                name={htmlId+"-sv"}
+                value={valueGetter(field).sv}>
+              </textarea>
+            </td>
+          </tr>
+        </tbody>
       </table>
     )
   }
