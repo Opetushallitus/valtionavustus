@@ -106,16 +106,16 @@ export class EditComponent extends React.Component {
     formEditorController.addChildFieldAfter(field, fieldType)
   }
 
-  handleOnRemoveFieldClick(e) {
+  handleOnRemoveFieldClick() {
     const {field, formEditorController} = this.props
     formEditorController.removeField(field)
   }
 
-  handleOnMoveFieldUpClick(e) {
+  handleOnMoveFieldUpClick() {
     this.props.formEditorController.moveField(this.props.field, -1)
   }
 
-  handleOnMoveFieldDownClick(e) {
+  handleOnMoveFieldDownClick() {
     this.props.formEditorController.moveField(this.props.field, 1)
   }
 
