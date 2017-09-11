@@ -124,8 +124,9 @@ export class EditComponent extends React.Component {
     const htmlId = this.props.htmlId
 
     const addableFields = Object.keys(
-      FormEditorController.addableFieldTypes()).filter(
-        t => hiddenFields.indexOf(t) === -1)
+      FormEditorController.addableFieldTypes()
+    ).filter(
+      t => hiddenFields.indexOf(t) === -1)
 
     const addElementButtons = addableFields.map((key, i) => (
       <a href="#" key={i} className="soresu-edit" onClick={this.handleOnAddClick.bind(this, key)}>
@@ -136,7 +137,7 @@ export class EditComponent extends React.Component {
     var labelEdit = this.renderTranslationTable(htmlId + "-label", this.labelName(), x => x.label)
     const editFields = addableFields.indexOf(field.fieldType) !== -1 ? (
       <div className="soresu-field-edit-tools">
-       <span onClick={this.handleOnMoveFieldUpClick.bind(this)}
+        <span onClick={this.handleOnMoveFieldUpClick.bind(this)}
           className="soresu-field-move-up soresu-field-edit-button" />
         <span onClick={this.handleOnMoveFieldDownClick.bind(this)}
           className="soresu-field-move-down soresu-field-edit-button" />
