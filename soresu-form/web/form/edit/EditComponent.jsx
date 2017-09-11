@@ -121,7 +121,6 @@ export class EditComponent extends React.Component {
 
   renderEditable(fieldSpecificEdit) {
     const field = this.props.field
-    const formEditorController = this.props.formEditorController
     const htmlId = this.props.htmlId
 
     const addableFields = Object.keys(
