@@ -7,8 +7,7 @@ Projekti koostuu kahdesta web-palvelusta: va-hakija ja
 va-virkailija. Näillä on omat Leiningen-moduulit projektin
 juurihakemistossa. Web-sovelluksien yhteinen koodi on moduulissa
 va-common. Lisäksi moduulissa soresu-form on geneerinen lomake-editori,
-joka on yhteinen riippuvuus muille projektin moduuleille. Soresu-form
-pitää asentaa git-submodulena.
+joka on yhteinen riippuvuus muille projektin moduuleille.
 
 Tässä README:ssä on yleiskuvaus palveluista, lisää dokumentaatiota:
 
@@ -59,14 +58,6 @@ Haun roolista huolimatta kuka tahansa VA-käyttäjä voi kommentoida hakemuksia.
 * [Leiningen](https://leiningen.org/)
 * [Java SE Development Kit 8](http://www.oracle.com/technetwork/java/javase/index.html)
 * [PostgreSQL 9.4](https://www.postgresql.org/)
-* [soresu-form](https://github.com/Opetushallitus/soresu-form)
-
-Asenna soresu-form-moduuli:
-
-``` shell
-git submodule init
-git submodule update
-```
 
 Käytä OPH:n VPN:ää, jotta voit ladata tarvittavat jar-paketit OPH:n
 Artifactorystä.
