@@ -249,9 +249,6 @@ done
 
 source `dirname $0`/postgresql_container_functions.bash
 
-git submodule init
-git submodule update
-
 for (( i = 0; i < ${#commands[@]} ; i++ )); do
     printf "\n**** Running: ${commands[$i]} *****\n\n"
     eval "${commands[$i]}"
