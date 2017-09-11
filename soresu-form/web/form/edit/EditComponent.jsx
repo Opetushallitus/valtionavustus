@@ -1,11 +1,11 @@
-import React from 'react'
-import ClassNames from 'classnames'
-import slug from 'speakingurl'
-import _ from 'lodash'
+import React from "react"
+import ClassNames from "classnames"
+import slug from "speakingurl"
+import _ from "lodash"
 
-import FormEditorController from './FormEditController'
-import MathUtil from '../../MathUtil'
-import SyntaxValidator from '../SyntaxValidator'
+import FormEditorController from "./FormEditController"
+import MathUtil from "../../MathUtil"
+import SyntaxValidator from "../SyntaxValidator"
 
 const hiddenFields = [
   "theme", "growingFieldsetChild", "fieldset"
@@ -55,7 +55,7 @@ export class EditComponent extends React.Component {
     const field = this.props.field
     const formEditorController = this.props.formEditorController
     return e => {
-      formEditorController.editField(field.id, valueContainerGetter, valueName, typeof newValue === 'undefined' ? e.target.value : newValue)
+      formEditorController.editField(field.id, valueContainerGetter, valueName, typeof newValue === "undefined" ? e.target.value : newValue)
     }
 
   }
@@ -68,7 +68,7 @@ export class EditComponent extends React.Component {
 
   renderTranslationTable(htmlId, name, valueGetter, extraClassName, validator) {
     const field = this.props.field
-    if(typeof valueGetter(field) === 'undefined') {
+    if(typeof valueGetter(field) === "undefined") {
       return undefined
     }
     const classNamesFi = EditComponent.fieldClassWithValidation(valueGetter(field).fi, validator, extraClassName)
@@ -183,7 +183,7 @@ export class FieldEditComponent extends EditComponent {
     const field = this.props.field
     const htmlId = this.props.htmlId
     var requiredEdit = undefined
-    if(typeof field.required != 'undefined') {
+    if(typeof field.required != "undefined") {
       requiredEdit = (
           <span className="soresu-edit-property">
           <input onChange={this.fieldValueUpdater(x => x, "required", !field.required)} type="checkbox" id={htmlId+"-required"} name={htmlId+"-required"} checked={field.required}/>
