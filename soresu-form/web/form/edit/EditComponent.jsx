@@ -375,7 +375,7 @@ export class MultipleChoiceEdit extends FieldEditComponent {
         <span className="soresu-radio-option-edit-title">
           {title}
         </span>
-        <input type="text" placeholder="Vastausvaihtoehto" 
+        <input type="text" placeholder="Vastausvaihtoehto"
           onChange={createOnChange("fi")} value={labelGetter(field).fi}/>
         <input type="text" placeholder="Vastausvaihtoehto ruotsiksi"
           onChange={createOnChange("sv")} value={labelGetter(field).sv}/>
