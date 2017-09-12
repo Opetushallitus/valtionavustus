@@ -152,9 +152,9 @@
 .Modal {
   position: fixed;
   top: 30%;
-  left: 500px;
-  right: 150px;
-  bottom: 300px;
+  left: 30%;
+  right: 40%;
+  bottom: 30%;
   background-color: @lighter-gray;
   height: 300px;
   width: 600px;
@@ -183,6 +183,10 @@
   opacity: none;
 }
 
+.get-business-id:disabled {
+  background-color: @darker-gray;
+}
+
 .Overlay {
   position: absolute;
   top: 30% !important;
@@ -192,4 +196,8 @@
   height: 0px;
   width: 0px;
   background-color: @lightest-gray;
+}
+
+input[type=text].error {
+  border: 2px solid @bright-red;
 }
