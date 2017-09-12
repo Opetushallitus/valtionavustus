@@ -355,44 +355,38 @@ export class MultipleChoiceEdit extends FieldEditComponent {
     this.props.formEditorController.appendOption(field)
   }
 
-  render() {
-    const {
-      field,
-      formEditorController
-    } = this.props
-
-    const renderOption = option => {
-      const indexOfOption = _.indexOf(field.options, option)
-      const labelGetter = f => f.options[indexOfOption].label
-      const valueGetter = f => f.options[indexOfOption]
-      const createOnChange = lang => {
-        return e => {
-          this.fieldValueUpdater(labelGetter, lang)(e)
-          if (lang === "fi") {
-            this.fieldValueUpdater(valueGetter, "value", slug(e.target.value))(e)
-          }
+  renderOption(field, option) {
+    const indexOfOption = _.indexOf(field.options, option)
+    const labelGetter = f => f.options[indexOfOption].label
+    const valueGetter = f => f.options[indexOfOption]
+    const createOnChange = lang => {
+      return e => {
+        this.fieldValueUpdater(labelGetter, lang)(e)
+        if (lang === "fi") {
+          this.fieldValueUpdater(valueGetter, "value", slug(e.target.value))(e)
         }
       }
-
-      const title = "Vastausvaihtoehto " + (indexOfOption + 1)
-      return (
-        <div className="soresu-radio-option-edit" key={field.id + "-option-" + indexOfOption}>
-          <span className="soresu-radio-option-edit-title">{title}</span>
-          <input type="text" placeholder="Vastausvaihtoehto" onChange={createOnChange("fi")} value={labelGetter(field).fi}/>
-          <input type="text" placeholder="Vastausvaihtoehto ruotsiksi" onChange={createOnChange("sv")} value={labelGetter(field).sv}/>
-          <span
-            onClick={this.removeOption.bind(this, field, option)}
-            className="soresu-edit soresu-field-remove soresu-field-edit-icon"
-          />
-        </div>
-      )
     }
 
-    const optionElements = _.map(field.options, renderOption)
+    const title = "Vastausvaihtoehto " + (indexOfOption + 1)
+    return (
+      <div className="soresu-radio-option-edit" key={field.id + "-option-" + indexOfOption}>
+        <span className="soresu-radio-option-edit-title">{title}</span>
+        <input type="text" placeholder="Vastausvaihtoehto" onChange={createOnChange("fi")} value={labelGetter(field).fi}/>
+        <input type="text" placeholder="Vastausvaihtoehto ruotsiksi" onChange={createOnChange("sv")} value={labelGetter(field).sv}/>
+        <span
+          onClick={this.removeOption.bind(this, field, option)}
+          className="soresu-edit soresu-field-remove soresu-field-edit-icon"
+        />
+      </div>
+    )
+  }
 
+  render() {
+    const field = this.props.field
     return super.renderEditable(
       <div className="soresu-radio-button-edit">
-        {optionElements}
+        {field.options.map(option => this.renderOption(field, option))}
         <button
           type="button"
           className="soresu-edit"
