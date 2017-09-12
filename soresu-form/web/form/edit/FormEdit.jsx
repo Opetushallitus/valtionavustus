@@ -13,7 +13,9 @@ import FormPreview from "../FormPreview.jsx"
 
 export default class FormEdit extends React.Component {
 
-  static createFormEditComponent(controller, formEditorController, state, field, fieldProperties, renderingParameters) {
+  static createFormEditComponent(controller, formEditorController, state,
+    field, fieldProperties, renderingParameters) {
+
     const translations = state.configuration.translations
     return <FormEditComponent {...fieldProperties}
       renderingParameters={renderingParameters}
@@ -22,9 +24,10 @@ export default class FormEdit extends React.Component {
       formEditorController={formEditorController}
       customProps={controller.getCustomComponentProperties(state)}
       attachment={state.saveStatus.attachments[field.id]}
-      attachmentDownloadUrl={controller.createAttachmentDownloadUrl(state, field) }
+      attachmentDownloadUrl={controller.createAttachmentDownloadUrl(
+        state, field) }
       koodistos={state.koodistos}
-      koodistosLoader={state.koodistosLoader}/>
+      koodistosLoader={state.koodistosLoader} />
   }
 
   static renderField(controller, formEditorController, state,
@@ -92,11 +95,20 @@ export default class FormEdit extends React.Component {
     const fields = state.form.content
 
     const renderField = function(field) {
-      return FormEdit.renderField(controller, formEditorController, state, infoElementValues, field)
+      return FormEdit.renderField(
+        controller, formEditorController, state, infoElementValues, field)
     }
 
-    const readOnlyNotificationText = formEditorController.readOnlyNotificationText ? formEditorController.readOnlyNotificationText : "Ei muokkausoikeutta"
-    const readOnlyNotification = formEditorController.allowEditing ? null : <div className="soresu-read-only-notification">{readOnlyNotificationText}</div>
+    const readOnlyNotificationText =
+      formEditorController.readOnlyNotificationText ?
+        formEditorController.readOnlyNotificationText : "Ei muokkausoikeutta"
+
+    const readOnlyNotification = formEditorController.allowEditing ?
+      null : (
+        <div className="soresu-read-only-notification">
+          {readOnlyNotificationText}
+        </div>
+      )
 
     return (
       <div className="soresu-form-edit soresu-edit">
