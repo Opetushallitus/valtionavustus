@@ -1,7 +1,4 @@
 import React from "react"
-import _ from "lodash"
-
-import styles from "../style/preview.less"
 
 import {
   BasicFieldEdit,
