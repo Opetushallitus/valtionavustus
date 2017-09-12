@@ -52,8 +52,7 @@ export default class FormEdit extends React.Component {
           field={field} />
       )
     } else if (field.fieldClass == "wrapperElement") {
-      if(controller.getCustomPreviewComponentTypeMapping()[field.fieldType] ||
-        field.fieldType === "growingFieldset") {
+      if(controller.getCustomPreviewComponentTypeMapping()[field.fieldType]) {
 
         const previewWrapperElement = FormPreview.createWrapperComponent(
           FormPreview.renderField, controller, formEditorController, state,
