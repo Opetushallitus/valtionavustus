@@ -370,10 +370,15 @@ export class MultipleChoiceEdit extends FieldEditComponent {
 
     const title = "Vastausvaihtoehto " + (indexOfOption + 1)
     return (
-      <div className="soresu-radio-option-edit" key={field.id + "-option-" + indexOfOption}>
-        <span className="soresu-radio-option-edit-title">{title}</span>
-        <input type="text" placeholder="Vastausvaihtoehto" onChange={createOnChange("fi")} value={labelGetter(field).fi}/>
-        <input type="text" placeholder="Vastausvaihtoehto ruotsiksi" onChange={createOnChange("sv")} value={labelGetter(field).sv}/>
+      <div className="soresu-radio-option-edit"
+        key={field.id + "-option-" + indexOfOption}>
+        <span className="soresu-radio-option-edit-title">
+          {title}
+        </span>
+        <input type="text" placeholder="Vastausvaihtoehto" 
+          onChange={createOnChange("fi")} value={labelGetter(field).fi}/>
+        <input type="text" placeholder="Vastausvaihtoehto ruotsiksi"
+          onChange={createOnChange("sv")} value={labelGetter(field).sv}/>
         <span
           onClick={this.removeOption.bind(this, field, option)}
           className="soresu-edit soresu-field-remove soresu-field-edit-icon"
