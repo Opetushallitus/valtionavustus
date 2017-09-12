@@ -223,6 +223,26 @@
     "officer_edit": {
       "fi": "Virkailijan muokkaus",
       "sv": "Tjänstemans ändring"
+    },
+    "cancel": {
+      "fi":"Peruuta",
+      "sv":"Avbryt"
+    },
+    "give-businessid" : {
+      "fi": "Aloita syöttämällä y-tunnus",
+      "sv": "Börja med att fylla i Företags- och organisationsnummer"
+    },
+    "organisation-info": {
+      "fi": "Tiedot haetaan organisaatiopalvelusta",
+      "sv": "Information ska hämtas from organisationsservice"
+    },
+    "get": {
+      "fi": "Hae",
+      "sv": "Sök"
+    },
+    "business-id": {
+      "fi": "Y-tunnus",
+      "sv": "FO numret"
     }
   },
   "errors": {
