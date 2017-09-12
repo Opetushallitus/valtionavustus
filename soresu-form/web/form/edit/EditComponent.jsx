@@ -1,11 +1,11 @@
-import React from 'react'
-import ClassNames from 'classnames'
-import slug from 'speakingurl'
-import _ from 'lodash'
+import React from "react"
+import ClassNames from "classnames"
+import slug from "speakingurl"
+import _ from "lodash"
 
-import FormEditorController from './FormEditController'
-import MathUtil from '../../MathUtil'
-import SyntaxValidator from '../SyntaxValidator'
+import FormEditorController from "./FormEditController"
+import MathUtil from "../../MathUtil"
+import SyntaxValidator from "../SyntaxValidator"
 
 const hiddenFields = [
   "theme", "growingFieldsetChild", "fieldset"
@@ -55,7 +55,7 @@ export class EditComponent extends React.Component {
     const field = this.props.field
     const formEditorController = this.props.formEditorController
     return e => {
-      formEditorController.editField(field.id, valueContainerGetter, valueName, typeof newValue === 'undefined' ? e.target.value : newValue)
+      formEditorController.editField(field.id, valueContainerGetter, valueName, typeof newValue === "undefined" ? e.target.value : newValue)
     }
 
   }
@@ -68,7 +68,7 @@ export class EditComponent extends React.Component {
 
   renderTranslationTable(htmlId, name, valueGetter, extraClassName, validator) {
     const field = this.props.field
-    if(typeof valueGetter(field) === 'undefined') {
+    if(typeof valueGetter(field) === "undefined") {
       return undefined
     }
     const classNamesFi = EditComponent.fieldClassWithValidation(valueGetter(field).fi, validator, extraClassName)
@@ -76,18 +76,26 @@ export class EditComponent extends React.Component {
     return (
       <table className="translation">
         <thead><tr><th>{name + " suomeksi"}</th><th>{name + " ruotsiksi"}</th></tr></thead>
-        <tbody><tr>
-          <td><textarea className={classNamesFi}
-                        onChange={this.fieldValueUpdater(valueGetter, "fi")}
-                        name={htmlId+"-fi"}
-                        value={valueGetter(field).fi}>
-          </textarea></td>
-          <td><textarea className={classNamesSv}
-                        onChange={this.fieldValueUpdater(valueGetter, "sv")}
-                        name={htmlId+"-sv"}
-                        value={valueGetter(field).sv}>
-          </textarea></td>
-        </tr></tbody>
+        <tbody>
+          <tr>
+            <td>
+              <textarea
+                className={classNamesFi}
+                onChange={this.fieldValueUpdater(valueGetter, "fi")}
+                name={htmlId+"-fi"}
+                value={valueGetter(field).fi}>
+              </textarea>
+            </td>
+            <td>
+              <textarea
+                className={classNamesSv}
+                onChange={this.fieldValueUpdater(valueGetter, "sv")}
+                name={htmlId+"-sv"}
+                value={valueGetter(field).sv}>
+              </textarea>
+            </td>
+          </tr>
+        </tbody>
       </table>
     )
   }
@@ -98,27 +106,27 @@ export class EditComponent extends React.Component {
     formEditorController.addChildFieldAfter(field, fieldType)
   }
 
-  handleOnRemoveFieldClick(e) {
+  handleOnRemoveFieldClick() {
     const {field, formEditorController} = this.props
     formEditorController.removeField(field)
   }
 
-  handleOnMoveFieldUpClick(e) {
+  handleOnMoveFieldUpClick() {
     this.props.formEditorController.moveField(this.props.field, -1)
   }
 
-  handleOnMoveFieldDownClick(e) {
+  handleOnMoveFieldDownClick() {
     this.props.formEditorController.moveField(this.props.field, 1)
   }
 
   renderEditable(fieldSpecificEdit) {
     const field = this.props.field
-    const formEditorController = this.props.formEditorController
     const htmlId = this.props.htmlId
 
     const addableFields = Object.keys(
-      FormEditorController.addableFieldTypes()).filter(
-        t => hiddenFields.indexOf(t) === -1)
+      FormEditorController.addableFieldTypes()
+    ).filter(
+      t => hiddenFields.indexOf(t) === -1)
 
     const addElementButtons = addableFields.map((key, i) => (
       <a href="#" key={i} className="soresu-edit" onClick={this.handleOnAddClick.bind(this, key)}>
@@ -129,7 +137,7 @@ export class EditComponent extends React.Component {
     var labelEdit = this.renderTranslationTable(htmlId + "-label", this.labelName(), x => x.label)
     const editFields = addableFields.indexOf(field.fieldType) !== -1 ? (
       <div className="soresu-field-edit-tools">
-       <span onClick={this.handleOnMoveFieldUpClick.bind(this)}
+        <span onClick={this.handleOnMoveFieldUpClick.bind(this)}
           className="soresu-field-move-up soresu-field-edit-button" />
         <span onClick={this.handleOnMoveFieldDownClick.bind(this)}
           className="soresu-field-move-down soresu-field-edit-button" />
@@ -139,12 +147,20 @@ export class EditComponent extends React.Component {
 
     return (
       <div key={htmlId} className={this.className()}>
-        <h3>{EditComponent.fieldTypeInFI(field.fieldType)}</h3>
-        {editFields}
-        {labelEdit}
-        {fieldSpecificEdit}
-        <div className="soresu-field-add">
-          <div className="soresu-field-add-header"></div><div className="soresu-field-adders">{addElementButtons}</div>
+        <div className="soresu-field-header">
+          <span className="soresu-field-title">
+            <h3>{EditComponent.fieldTypeInFI(field.fieldType)}</h3>
+          </span>
+          <span>
+            {editFields}
+          </span>
+        </div>
+        <div className="soresu-field-content">
+          {labelEdit}
+          {fieldSpecificEdit}
+          <div className="soresu-field-add">
+            <div className="soresu-field-add-header"></div><div className="soresu-field-adders">{addElementButtons}</div>
+          </div>
         </div>
       </div>
     )
@@ -159,13 +175,21 @@ export class EditComponent extends React.Component {
   }
 
   sizeClassName() {
-    if (this.param("size") && !Number.isInteger(this.param("size"))) return this.param("size")
-    else return undefined
+    if (this.param("size") && !Number.isInteger(this.param("size"))) {
+      return this.param("size")
+    }
+    else {
+      return undefined
+    }
   }
 
   param(param, defaultValue) {
-    if (!this.props.field.params) return defaultValue
-    if (this.props.field.params[param] !== undefined) return this.props.field.params[param]
+    if (!this.props.field.params) {
+      return defaultValue
+    }
+    if (this.props.field.params[param] !== undefined) {
+      return this.props.field.params[param]
+    }
     return defaultValue
   }
 }
@@ -175,9 +199,9 @@ export class FieldEditComponent extends EditComponent {
     const field = this.props.field
     const htmlId = this.props.htmlId
     var requiredEdit = undefined
-    if(typeof field.required != 'undefined') {
+    if(typeof field.required != "undefined") {
       requiredEdit = (
-          <span className="soresu-edit-property">
+        <span className="soresu-edit-property">
           <input onChange={this.fieldValueUpdater(x => x, "required", !field.required)} type="checkbox" id={htmlId+"-required"} name={htmlId+"-required"} checked={field.required}/>
           <label htmlFor={htmlId+"-required"}> Pakollinen tieto</label>
         </span>
@@ -228,7 +252,7 @@ export class AppendableEditWrapper extends EditComponent {
   render() {
     return super.renderEditable(
       <div className="soresu-edit-wrapped-view">
-       {this.props.wrappedElement}
+        {this.props.wrappedElement}
       </div>
     )
   }
@@ -289,11 +313,11 @@ export class TextFieldEdit extends FieldEditComponent {
     for (var i = 0; i < sizeAlternatives.length; i++) {
       sizeAlternenativeButtons.push(
         <input type="radio" id={htmlId + ".size." + i}
-               key={"size-input-" + i}
-               name={htmlId + "-size"}
-               value={sizeAlternatives[i]}
-               onChange={this.fieldValueUpdater(x => x.params, "size")}
-               checked={sizeAlternatives[i] === field.params.size} />
+          key={"size-input-" + i}
+          name={htmlId + "-size"}
+          value={sizeAlternatives[i]}
+          onChange={this.fieldValueUpdater(x => x.params, "size")}
+          checked={sizeAlternatives[i] === field.params.size} />
       )
       sizeAlternenativeButtons.push(
         <label className="soresu-size-selection" key={"size-label-" + i} htmlFor={htmlId + ".size." + i}>
@@ -322,46 +346,58 @@ export class TextAreaEdit extends TextFieldEdit {
 }
 
 export class MultipleChoiceEdit extends FieldEditComponent {
-  render() {
-    const {
-      field,
-      formEditorController
-    } = this.props
 
-    const renderOption = option => {
-      const indexOfOption = _.indexOf(field.options, option)
-      const labelGetter = f => f.options[indexOfOption].label
-      const valueGetter = f => f.options[indexOfOption]
-      const createOnChange = lang => {
-        return e => {
-          this.fieldValueUpdater(labelGetter, lang)(e)
-          if (lang === "fi") {
-            this.fieldValueUpdater(valueGetter, "value", slug(e.target.value))(e)
-          }
+  removeOption(field, option) {
+    this.props.formEditorController.removeOption(field, option)
+  }
+
+  appendOption(field) {
+    this.props.formEditorController.appendOption(field)
+  }
+
+  renderOption(field, option) {
+    const indexOfOption = _.indexOf(field.options, option)
+    const labelGetter = f => f.options[indexOfOption].label
+    const valueGetter = f => f.options[indexOfOption]
+    const createOnChange = lang => {
+      return e => {
+        this.fieldValueUpdater(labelGetter, lang)(e)
+        if (lang === "fi") {
+          this.fieldValueUpdater(valueGetter, "value", slug(e.target.value))(e)
         }
       }
-      const removeOption = e => {
-        formEditorController.removeOption(field, option)
-      }
-      const title = "Vastausvaihtoehto " + (indexOfOption + 1)
-      return (
-        <div className="soresu-radio-option-edit" key={field.id + "-option-" + indexOfOption}>
-          <span className="soresu-radio-option-edit-title">{title}</span>
-          <input type="text" placeholder="Vastausvaihtoehto" onChange={createOnChange("fi")} value={labelGetter(field).fi}/>
-          <input type="text" placeholder="Vastausvaihtoehto ruotsiksi" onChange={createOnChange("sv")} value={labelGetter(field).sv}/>
-          <span onClick={removeOption} className="soresu-edit soresu-field-remove soresu-field-edit-icon"></span>
-        </div>
-      )
     }
 
-    const optionElements = _.map(field.options, renderOption)
+    const title = "Vastausvaihtoehto " + (indexOfOption + 1)
+    return (
+      <div className="soresu-radio-option-edit"
+        key={field.id + "-option-" + indexOfOption}>
+        <span className="soresu-radio-option-edit-title">
+          {title}
+        </span>
+        <input type="text" placeholder="Vastausvaihtoehto"
+          onChange={createOnChange("fi")} value={labelGetter(field).fi}/>
+        <input type="text" placeholder="Vastausvaihtoehto ruotsiksi"
+          onChange={createOnChange("sv")} value={labelGetter(field).sv}/>
+        <span
+          onClick={this.removeOption.bind(this, field, option)}
+          className="soresu-edit soresu-field-remove soresu-field-edit-icon"
+        />
+      </div>
+    )
+  }
 
-    const appendOption = e => { formEditorController.appendOption(field) }
-
+  render() {
+    const field = this.props.field
     return super.renderEditable(
       <div className="soresu-radio-button-edit">
-        {optionElements}
-        <button type="button" className="soresu-edit" onClick={appendOption}>Lisää vastausvaihtoehto {field.options.length + 1}</button>
+        {field.options.map(option => this.renderOption(field, option))}
+        <button
+          type="button"
+          className="soresu-edit"
+          onClick={this.appendOption.bind(this, field)}>
+            Lisää vastausvaihtoehto {field.options.length + 1}
+        </button>
       </div>)
   }
 }
