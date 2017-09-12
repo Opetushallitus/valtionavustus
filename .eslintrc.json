@@ -12,6 +12,7 @@
     "no-trailing-spaces": "error",
     "quotes": ["error", "double"],
     "indent": ["error", 2, {"SwitchCase": 1}],
-    "curly": "error"
+    "curly": "error",
+    "react/prop-types": [2, {"skipUndeclared": true}]
   }
 }
