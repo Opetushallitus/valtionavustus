@@ -18,34 +18,6 @@ export default class BusinessIdSearch extends React.Component {
     this.state = {
         modalIsOpen: true
       }
-
-    this.customStyle = {
-        overlay : {
-          position          : 'fixed',
-          top               : 150,
-          left              : 500,
-          right             : 150,
-          bottom            : 300,
-          width             : 600,
-          height            : 300,
-          backgroundColor   : 'rgba(255, 255, 255, 0.75)'
-        },
-        content : {
-          position                   : 'absolute',
-          top                        : '40px',
-          left                       : '40px',
-          right                      : '40px',
-          bottom                     : '40px',
-          border                     : '1px solid #ccc',
-          background                 : '#fff',
-          overflow                   : 'auto',
-          WebkitOverflowScrolling    : 'touch',
-          borderRadius               : '4px',
-          outline                    : 'none',
-          padding                    : '20px'
-
-        }
-      }
   }
 
   openModal() {
@@ -56,18 +28,9 @@ export default class BusinessIdSearch extends React.Component {
   this.subtitle.style.color = '#f00';
 }
 
-  closeModal(id) {
-  //handleclick with id
-  handleclick(id)
-  this.setState({modalIsOpen: false})
-  console.log(this.props.state)
-}
-
-handleSubmitClick() {
-  const name = this.myInput
-  handleClick(name)
-  this.setState({modalIsOpen: false})
-}
+  closeModal() {
+    this.setState({modalIsOpen: false})
+  }
 
   changeFieldValue(data, fieldName, dataField){
     if (dataField != "contact") {
@@ -79,10 +42,8 @@ handleSubmitClick() {
   }
 
   handleSubmit(event) {
-   console.log('A name was submitted: ' + this.input.value);
    this.handleClick(this.input.value)
    this.setState({modalIsOpen: false})
-   //event.preventDefault();
  }
 
   handleClick(id) {
@@ -106,21 +67,21 @@ handleSubmitClick() {
          isOpen={this.state.modalIsOpen}
          onRequestClose={this.closeModal}
          contentLabel="Modal"
-         style={this.customStyle}
-       >
-       <h1>Aloita syöttämällä y-tunnus</h1>
-       <p>Etc.</p>
-         <div>
+         className="Modal"
+         overlayClassName="Overlay"
+        >
+       <div>
+           <h1>Aloita syöttämällä y-tunnus</h1>
+           <p>Tiedot haetaan organisaatiopalvelusta</p>
            <form onSubmit={this.handleSubmit}>
-            <label>
+            <label className="ModalLabel">
               Y-tunnus:
-              <input type="text" ref={(input) => this.input = input} />
+              <input className="soresu-text-field" type="text" ref={(input) => this.input = input} />
             </label>
-            <input type="submit" value="Hae" />
+            <input className="soresu-text-button" type="submit" value="Hae" />
           </form>
-
+          <p><a href="#" onClick={this.closeModal}> Peruuta</a></p>
         </div>
-
        </Modal>
      </div>)
    }
