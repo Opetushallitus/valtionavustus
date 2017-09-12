@@ -98,11 +98,14 @@ export default class FormEdit extends React.Component {
     const readOnlyNotificationText = formEditorController.readOnlyNotificationText ? formEditorController.readOnlyNotificationText : "Ei muokkausoikeutta"
     const readOnlyNotification = formEditorController.allowEditing ? null : <div className="soresu-read-only-notification">{readOnlyNotificationText}</div>
 
-    return  <div className="soresu-form-edit soresu-edit">
-      {readOnlyNotification}
-      <CSSTransitionGroup transitionName="soresu-dynamic-children-transition">
-        {fields.map(renderField)}
-      </CSSTransitionGroup>
-    </div>
+    return (
+      <div className="soresu-form-edit soresu-edit">
+        {readOnlyNotification}
+        <CSSTransitionGroup
+          transitionName="soresu-dynamic-children-transition">
+          {fields.map(renderField)}
+        </CSSTransitionGroup>
+      </div>
+    )
   }
 }
