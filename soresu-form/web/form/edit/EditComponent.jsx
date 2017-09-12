@@ -351,6 +351,10 @@ export class MultipleChoiceEdit extends FieldEditComponent {
     this.props.formEditorController.removeOption(field, option)
   }
 
+  appendOption(field) {
+    this.props.formEditorController.appendOption(field)
+  }
+
   render() {
     const {
       field,
@@ -386,12 +390,15 @@ export class MultipleChoiceEdit extends FieldEditComponent {
 
     const optionElements = _.map(field.options, renderOption)
 
-    const appendOption = e => { formEditorController.appendOption(field) }
-
     return super.renderEditable(
       <div className="soresu-radio-button-edit">
         {optionElements}
-        <button type="button" className="soresu-edit" onClick={appendOption}>Lisää vastausvaihtoehto {field.options.length + 1}</button>
+        <button
+          type="button"
+          className="soresu-edit"
+          onClick={this.appendOption.bind(this, field)}>
+            Lisää vastausvaihtoehto {field.options.length + 1}
+        </button>
       </div>)
   }
 }
