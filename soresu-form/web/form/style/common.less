@@ -147,3 +147,49 @@
     border-top-color: #fff; /* Match background colour */
   }
 }
+
+
+.Modal {
+  position: fixed;
+  top: 30%;
+  left: 500px;
+  right: 150px;
+  bottom: 300px;
+  background-color: @lighter-gray;
+  height: 300px;
+  width: 600px;
+  padding: 30px 5px 15px 0px;
+  border-radius: 8px;
+  opacity: 1;
+}
+
+.ModalLabel {
+  padding-right: 0px;
+}
+
+.ModalLabel > input {
+  margin: 0 10px 0 10px;
+  padding: 8px;
+}
+
+.Modal:focus {
+  outline: none;
+}
+
+.Modal > div {
+  text-align: center;
+  vertical-align: middle;
+  margin-top: 60px;
+  opacity: none;
+}
+
+.Overlay {
+  position: absolute;
+  top: 30% !important;
+  left: 40px;
+  right: 40px;
+  bottom: 40px;
+  height: 0px;
+  width: 0px;
+  background-color: @lightest-gray;
+}
