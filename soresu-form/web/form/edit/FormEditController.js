@@ -111,7 +111,8 @@ export default class FormEditorController {
       case "growingFieldsetChild":
         return {
           children: [
-            this.createNewField("textField", `${id}.textField`)
+            this.createNewField("textField",
+              this.generateUniqueId(`${id}.textField`, 0, "_"))
           ]
         }
       case "growingFieldset":
@@ -172,15 +173,18 @@ export default class FormEditorController {
     return newField
   }
 
-  generateUniqueId(fieldType, index) {
-    const proposed = `${fieldType}-${index}`
-    if (_.isEmpty(JsUtil.flatFilter(
-      this.formDraftJson.content, n => n.id === proposed))) {
-      return proposed
-    }
-    return this.generateUniqueId(fieldType, index + 1)
+  findElementsById(id) {
+    return JsUtil.flatFilter(
+      this.formDraftJson.content, n => n.id === id)
   }
 
+  generateUniqueId(baseId, index, delimiter = "-") {
+    const proposed = `${baseId}${delimiter}${index}`
+    if (_.isEmpty(this.findElementsById(proposed))) {
+      return proposed
+    }
+    return this.generateUniqueId(baseId, index + 1, delimiter)
+  }
 
   addChildFieldAfter(fieldToAddAfter, newFieldType) {
     this.doEdit(() => {
@@ -190,7 +194,11 @@ export default class FormEditorController {
       const fieldToAddAfterOnForm = FormUtil.findField(formDraftJson.content, fieldToAddAfter.id)
       const indexOfNewChild = childArray.indexOf(fieldToAddAfterOnForm) + 1
 
-      const newId = this.generateUniqueId(newFieldType, 0)
+      const newId = parentField &&
+        parentField.fieldType === "growingFieldsetChild" ?
+        this.generateUniqueId(
+          `${parentField.id}.${newFieldType}`, 0, "_") :
+        this.generateUniqueId(newFieldType, 0)
       const newChild = this.createNewField(newFieldType, newId)
 
       const parent = parentField ? FormUtil.findField(formDraftJson.content, parentField.id) : formDraftJson.content
