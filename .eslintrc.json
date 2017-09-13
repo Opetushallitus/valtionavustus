@@ -13,6 +13,7 @@
     "quotes": ["error", "double"],
     "indent": ["error", 2, {"SwitchCase": 1}],
     "curly": "error",
-    "react/prop-types": [2, {"skipUndeclared": true}]
+    "react/prop-types": [2, {"skipUndeclared": true}],
+    "no-var": "error"
   }
 }
