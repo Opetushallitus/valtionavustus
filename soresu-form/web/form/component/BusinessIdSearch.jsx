@@ -6,6 +6,7 @@ import FormUtil from '../FormUtil.js'
 import LocalizedString from './LocalizedString.jsx'
 import Translator from '../Translator.js'
 import HttpUtil from '../../HttpUtil.js'
+import VaUrlCreator from '../../../../va-hakija/web/va/VaUrlCreator.js'
 
 
 export default class BusinessIdSearch extends React.Component {
@@ -77,8 +78,8 @@ export default class BusinessIdSearch extends React.Component {
   handleClick(id) {
       const businessIdField = this.props.state.saveStatus.values.value.filter(value => value.key == "business-id")
       const language = this.props.state.configuration.lang
-
-      HttpUtil.get("http://localhost:8080/api/organisations/?organisation-id=" + id + "&lang=" + language).then(
+      const url = this.props.controller.createOrganisationInfoUrl(this.props.state)
+      HttpUtil.get(url + id + "&lang=" + language).then(
         response   => {
           const fieldNames = ["organization", "organization-email", "business-id", "organization-postal-address"]
           const dataFieldNames = ["name", "email",  "organisation-id", "contact"]
