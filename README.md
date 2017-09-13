@@ -433,6 +433,8 @@ avustushakuun.
 
 ## Käytänteitä
 
+### Git
+
 Git workflow on "Long-Running Branches" tyyppinen: [Git Branching - Branching
 Workflows](https://git-scm.com/book/en/v2/Git-Branching-Branching-Workflows).
 
@@ -451,6 +453,14 @@ Branchit mergetään `develop`-haaraan pull requesteilla.
 
 `develop`-haara mergetään `master`:iin keskitetysti, esimerkiksi ennen sprint
 -demoa.
+
+### Tyyli
+
+- `.editorconfig`-tiedostossa on määritelty perustyylit, kuten
+  - sisennys: 2 välilyöntiä
+  - rivin pituus 80 merkkiä
+- Frontendissä CSS-luokkien nimet pienellä ja sanat viivalla eroteltuna
+
 
 
 
