@@ -198,7 +198,7 @@ export default class FormEditorController {
         parentField.fieldType === "growingFieldsetChild" ?
         this.generateUniqueId(
           `${parentField.id}.${newFieldType}`, 0, "_") :
-          this.generateUniqueId(newFieldType, 0)
+        this.generateUniqueId(newFieldType, 0)
       const newChild = this.createNewField(newFieldType, newId)
 
       const parent = parentField ? FormUtil.findField(formDraftJson.content, parentField.id) : formDraftJson.content
