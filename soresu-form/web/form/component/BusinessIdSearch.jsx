@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
-import axios from 'axios'
 import FormController from '../FormController.js'
 import FormUtil from '../FormUtil.js'
 import LocalizedString from './LocalizedString.jsx'
 import Translator from '../Translator.js'
+import HttpUtil from '../../HttpUtil.js'
 
 
 export default class BusinessIdSearch extends React.Component {
@@ -78,12 +78,12 @@ export default class BusinessIdSearch extends React.Component {
       const businessIdField = this.props.state.saveStatus.values.value.filter(value => value.key == "business-id")
       const language = this.props.state.configuration.lang
 
-      axios.get("http://localhost:8080/api/organisations/?organisation-id=" + id + "&lang=" + language ).then(({ data })=> {
-        const fieldNames = ["organization", "organization-email", "business-id", "organization-postal-address"]
-        const dataFieldNames = ["name", "email",  "organisation-id", "contact"]
-        fieldNames.map((item, key) => this.changeFieldValue(data, item, dataFieldNames[key]))
-     })
-   }
+      HttpUtil.get("http://localhost:8080/api/organisations/?organisation-id=" + id + "&lang=" + language).then(
+        response   => {
+          const fieldNames = ["organization", "organization-email", "business-id", "organization-postal-address"]
+          const dataFieldNames = ["name", "email",  "organisation-id", "contact"]
+          fieldNames.map((item, key) => this.changeFieldValue(response, item, dataFieldNames[key]))})
+     }
 
 
    render() {
