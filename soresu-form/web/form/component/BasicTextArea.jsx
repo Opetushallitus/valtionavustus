@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import LocalizedString from './LocalizedString.jsx'
 import BasicFieldComponent from './BasicFieldComponent.jsx'
+import BasicSizedComponent from './BasicSizedComponent.jsx'
 
 export default class BasicTextArea extends BasicSizedComponent {
   render() {
