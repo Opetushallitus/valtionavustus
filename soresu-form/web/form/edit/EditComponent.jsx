@@ -108,7 +108,9 @@ export class EditComponent extends React.Component {
 
   handleOnRemoveFieldClick() {
     const {field, formEditorController} = this.props
-    formEditorController.removeField(field)
+    if (confirm('Oletko varma, että haluat poistaa kentän?')) {
+      formEditorController.removeField(field)
+    }
   }
 
   handleOnMoveFieldUpClick() {
@@ -160,7 +162,8 @@ export class EditComponent extends React.Component {
           {labelEdit}
           {fieldSpecificEdit}
           <div className="soresu-field-add">
-            <div className="soresu-field-add-header"></div><div className="soresu-field-adders">{addElementButtons}</div>
+            <div className="soresu-field-add-header" />
+            <div className="soresu-field-adders">{addElementButtons}</div>
           </div>
         </div>
       </div>
