@@ -31,7 +31,7 @@ export default class BusinessIdSearch extends React.Component {
   }
 
   openModal() {
-  this.modalIsOpen = true
+    this.setState({modalIsOpen: true})
 }
 
   afterOpenModal() {

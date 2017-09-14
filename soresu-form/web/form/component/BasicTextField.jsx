@@ -29,6 +29,8 @@ export default class BasicTextField extends BasicSizedComponent {
         onBlur={props.onBlur}
         onChange={props.onChange}
         />
-    </div>)
+
+    </div>
+  )
   }
 }
