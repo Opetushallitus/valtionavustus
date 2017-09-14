@@ -36,15 +36,14 @@ export default class FormContainer extends React.Component {
     }
     const formElement = React.createElement(formContainerClass, formElementProps)
 
-    // Check if page is refressed and if in that case some values are missing.
+    // Check if page is refreshed and if in that case some values are missing.
 
-    const conditions = (performance.navigation.type == 1) && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getFieldValue(item)).some(x => x == ""))
+    const conditions = (this.props.state.saveStatus.changes == false) || ((performance.navigation.type == 1) && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getFieldValue(item)).some(x => (x == "" || x == null))))
 
 
     return (
       <section id={containerId} onLoad={this.updateRefreshStatus}>
         {headerElements}
-        {console.log(conditions2) }
         { (conditions) &&
           <BusinessIdSearch state={this.props.state} controller={controller}/> }
             {formElement}
