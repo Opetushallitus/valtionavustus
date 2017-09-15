@@ -61,8 +61,8 @@ export default class BusinessIdSearch extends React.Component {
 
   handleChange(event) {
     var inputted = event.target.value
-    this.setState({typed: inputted})
     this.validate(inputted)
+    this.setState({typed: inputted})
   }
 
   //validate input of business-id
@@ -71,6 +71,8 @@ export default class BusinessIdSearch extends React.Component {
     if (text.match(/^\d{7}-\d$/)) {
       this.setState({isDisabled: false})
       this.setState({error: ""})
+    }else {
+      this.setState({isDisabled: true})
     }
   }
 
