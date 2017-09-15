@@ -38,7 +38,7 @@ export default class FormContainer extends React.Component {
 
     // Check if page is refreshed and if in that case some values are missing.
 
-    const conditions = (this.props.state.saveStatus.changes == false) || ((performance.navigation.type == 1) && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getFieldValue(item)).some(x => (x == "" || x == null))))
+    const conditions = (this.props.state.saveStatus.savedObject != null) && ((this.props.state.saveStatus.changes == false) || ((performance.navigation.type == 1) && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getFieldValue(item)).some(x => (x == "" || x == null)))))
 
 
     return (
