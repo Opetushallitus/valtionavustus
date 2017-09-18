@@ -4,55 +4,38 @@
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
   :repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [[org.clojure/clojure]
 
-                 ;; HTTP server
-                 [javax.servlet/servlet-api "2.5"]
-                 [http-kit "2.1.19"]
-                 [ring "1.4.0"]
-                 [ring/ring-jetty-adapter "1.4.0"]
-                 [ring/ring-servlet "1.4.0"]
-                 [ring/ring-devel "1.4.0"]
-                 [ring/ring-core "1.4.0"]
+                 [http-kit]
+                 [ring/ring-core]
+                 [ring/ring-devel]
+                 [compojure :exclusions [instaparse]]
+                 [metosin/compojure-api :exclusions [commons-codec
+                                                     instaparse
+                                                     joda-time
+                                                     clj-time
+                                                     org.clojure/tools.reader
+                                                     prismatic/schema
+                                                     ring]]
 
-                 ;; Routing
-                 [ring/ring-defaults "0.1.5"]
-                 [compojure "1.4.0" :exclusions [instaparse]]
-                 [metosin/compojure-api "0.23.0" :exclusions [commons-codec
-                                                              instaparse
-                                                              joda-time
-                                                              clj-time
-                                                              org.clojure/tools.reader
-                                                              prismatic/schema]]
+                 [cheshire]
+                 [prismatic/schema]
 
-                 ;; JSON
-                 [cheshire "5.5.0"]
-                 [prismatic/schema "0.4.4"]
+                 [org.postgresql/postgresql]
+                 [yesql]
+                 [hikari-cp :exclusions [prismatic/schema]]
+                 [org.flywaydb/flyway-core]
 
-                 ;; SQL + migrations
-                 [yesql "0.5.3"]
-                 [org.postgresql/postgresql "9.4.1212"]
-                 [hikari-cp "1.7.5" :exclusions [prismatic/schema]]
-                 [org.flywaydb/flyway-core "4.0.3"]
+                 [speclj]
+                 [speclj-junit]
 
-                 ;; Testing
-                 [speclj "3.3.1"]
-                 ;; for junit output: lein spec -f junit
-                 [speclj-junit "0.0.11"]
+                 [environ]
 
-                 ;; Configuration
-                 [environ "1.0.0"]
+                 [org.clojure/tools.logging]
 
-                 ;; Logging
-                 [org.slf4j/slf4j-log4j12 "1.7.12"]
-                 [org.clojure/tools.logging "0.3.1"]
-                 [ring.middleware.logger "0.5.0"]
-                 [ring.middleware.conditional "0.2.0"]
-                 [fi.reaktor.log4j/log4j-email-throttle "1.0.0"]
-
-                 ;; Utils
-                 [org.clojure/tools.trace "0.7.8"]
-                 [pandect "0.5.3"]]
+                 [clj-time]
+                 [org.clojure/tools.trace]
+                 [pandect]]
 
   :target-path "target/%s"
 
