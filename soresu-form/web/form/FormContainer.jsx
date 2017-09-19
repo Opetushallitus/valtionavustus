@@ -1,7 +1,6 @@
-import React from 'react'
-import _ from 'lodash'
-import FormPreview from './FormPreview.jsx'
-import BusinessIdSearch from './component/BusinessIdSearch.jsx'
+import React from "react"
+import _ from "lodash"
+import BusinessIdSearch from "./component/BusinessIdSearch.jsx"
 
 
 export default class FormContainer extends React.Component {
@@ -32,16 +31,16 @@ export default class FormContainer extends React.Component {
     const formElement = React.createElement(formContainerClass, formElementProps)
 
     // Check if page is refreshed and if in that case some values are missing.
-    const conditions =  ((this.props.state.saveStatus.savedObject.version == 1) || ((performance.navigation.type == 1) && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getFieldValue(item)).some(x => (x == "" || x == null)))))
+    const conditions =  ((this.props.state.saveStatus.savedObject != null) && ((this.props.state.saveStatus.savedObject.version == 1) || ((performance.navigation.type == 1) && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getFieldValue(item)).some(x => (x == "" || x == null))))))
 
 
     return (
-      <section id={containerId} onLoad={this.checkFirstVisit} >
+      <section id={containerId} >
         {headerElements}
         { (conditions) &&
           <BusinessIdSearch state={this.props.state} controller={controller}/> }
-            {formElement}
-          </section>
-        )
-      }
-    }
+        {formElement}
+      </section>
+    )
+  }
+}

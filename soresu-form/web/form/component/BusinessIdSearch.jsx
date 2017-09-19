@@ -1,12 +1,9 @@
-import React from 'react'
-import ReactDOM from 'react-dom';
-import Modal from 'react-modal';
-import FormController from '../FormController.js'
-import FormUtil from '../FormUtil.js'
-import LocalizedString from './LocalizedString.jsx'
-import Translator from '../Translator.js'
-import HttpUtil from '../../HttpUtil.js'
-import VaUrlCreator from '../../../../va-hakija/web/va/VaUrlCreator.js'
+import React from "react"
+import Modal from "react-modal"
+import FormUtil from "../FormUtil.js"
+import LocalizedString from "./LocalizedString.jsx"
+import Translator from "../Translator.js"
+import HttpUtil from "../../HttpUtil.js"
 
 
 export default class BusinessIdSearch extends React.Component {
@@ -22,9 +19,12 @@ export default class BusinessIdSearch extends React.Component {
     this.validate = this.validate.bind(this)
     this.state = {
       modalIsOpen: true,
-      typed: '',
+      typed: "",
       isDisabled: true,
-      error: "error"
+      error: "error",
+      incorrectBusinessId: false,
+      otherErrorOnBusinessId: false,
+      businessId: ""
     }
     this.lang = this.props.state.configuration.lang
     this.translations = this.props.state.configuration.translations.misc
@@ -37,7 +37,7 @@ export default class BusinessIdSearch extends React.Component {
   }
 
   afterOpenModal() {
-    this.subtitle.style.color = '#f00';
+    this.subtitle.style.color = "#f00"
   }
 
   closeModal() {
@@ -55,8 +55,8 @@ export default class BusinessIdSearch extends React.Component {
   }
 
   // events from inputting the organisational id (y-tunnus)
-  handleOnSubmit(event) {
-    this.handleClick(this.input.value)
+  handleOnSubmit() {
+    this.handleClick(this.state.businessId)
     this.setState({modalIsOpen: false})
   }
 
@@ -65,6 +65,7 @@ export default class BusinessIdSearch extends React.Component {
     const inputted = event.target.value
     this.validate(inputted)
     this.setState({typed: inputted})
+    this.setState({businessId: inputted})
   }
 
   //validate input of business-id
@@ -81,7 +82,6 @@ export default class BusinessIdSearch extends React.Component {
 
   // actions that happen after user has submitted their organisation-id, calls backend organisaton api
   handleClick(id) {
-    const businessIdField = this.props.state.saveStatus.values.value.filter(value => value.key == "business-id")
     const language = this.props.state.configuration.lang
     const url = this.props.controller.createOrganisationInfoUrl(this.props.state)
     const mappedFieldNames = {
@@ -91,41 +91,45 @@ export default class BusinessIdSearch extends React.Component {
       "organization-postal-address" : "contact"
     }
 
-    const translator = new Translator(this.translations)
-
     HttpUtil.get(url + id + "&lang=" + language).then(
       response   => {
         Object.keys(mappedFieldNames).forEach(key =>   this.changeFieldValue(response, key, mappedFieldNames[key]))
       }).catch(error => {
-        if (error.response.status == 404) {
-          alert(translator.translate("not-found-business-id", this.lang))
-        }else {
-          alert(translator.translate("error-with-business-id", this.lang))}})}
+      if (error.response.status == 404){
+        this.setState({incorrectBusinessId: true})
+        this.openModal()
+      }else {
+        this.setState({otherErrorOnBusinessId: true})
+        this.setState({incorrectBusinessId: false})
+        this.openModal()
+      }})}
 
 
-      render() {
+  render() {
 
-        return (
+    return (
+      <div>
+        <Modal
+          isOpen={this.state.modalIsOpen}
+          contentLabel="modal"
+          className="modal"
+          overlayClassName="overlay"
+        >
           <div>
-            <Modal
-              isOpen={this.state.modalIsOpen}
-              contentLabel="Modal"
-              className="Modal"
-              overlayClassName="Overlay"
-              >
-              <div>
-                <h1><LocalizedString translations={this.translations} translationKey="give-businessid" lang={this.lang}/></h1>
-                <p><LocalizedString translations={this.translations} translationKey="organisation-info" lang={this.lang}/></p>
-                <form onSubmit={this.handleOnSubmit}>
-                  <label className="ModalLabel">
-                    <LocalizedString translations={this.translations} translationKey="business-id" lang={this.lang}/> :
-                      <input className={this.state.error} type="text" ref={(input) => this.input = input} onChange={ this.handleOnChange } />
-                    </label>
-                    <input className={"get-business-id" + " " + "soresu-text-button"} type="submit" value={this.translator.translate("get", this.lang)} disabled={this.state.isDisabled} />
-                  </form>
-                  <p><a href="#" onClick={this.closeModal}><LocalizedString translations={this.translations} translationKey="cancel" lang={this.lang}/></a></p>
-                </div>
-              </Modal>
-            </div>)
-          }
-        }
+            <h1><LocalizedString translations={this.translations} translationKey="give-businessid" lang={this.lang}/></h1>
+            <p><LocalizedString translations={this.translations} translationKey="organisation-info" lang={this.lang}/></p>
+            <p id="not-found-business-id">{this.state.incorrectBusinessId && <LocalizedString translations={this.translations} translationKey="not-found-business-id" lang={this.lang}/>}</p>
+            <p id="other-error-business-id">{this.state.otherErrorOnBusinessId && <LocalizedString translations={this.translations} translationKey="error-with-business-id" lang={this.lang}/>}</p>
+            <form onSubmit={this.handleOnSubmit}>
+              <label className="modal-label">
+                <LocalizedString translations={this.translations} translationKey="business-id" lang={this.lang}/> :
+                <input className={this.state.error} type="text" value={this.state.businessId} onChange={ this.handleOnChange } />
+              </label>
+              <input className={"get-business-id" + " " + "soresu-text-button"} type="submit" value={this.translator.translate("get", this.lang)} disabled={this.state.isDisabled} />
+            </form>
+            <p><a href="#" onClick={this.closeModal}><LocalizedString translations={this.translations} translationKey="cancel" lang={this.lang}/></a></p>
+          </div>
+        </Modal>
+      </div>)
+  }
+}
