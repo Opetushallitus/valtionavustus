@@ -32,16 +32,16 @@
                        buddy/buddy-auth "0.6.1"
                        com.novemberain/pantomime "2.7.0"
                        compojure "1.4.0"
-                       http-kit "2.1.19"
+                       http-kit "2.2.0"
                        metosin/compojure-api "0.23.1"
-                       ring/ring-core "1.4.0"
-                       ring/ring-devel "1.4.0"
+                       ring/ring-core "1.6.2"
+                       ring/ring-devel "1.6.2"
                        ring.middleware.conditional "0.2.0"
                        ring.middleware.logger "0.5.0"
                        ring/ring-defaults "0.1.5"
 
                        ;; json
-                       cheshire "5.5.0"
+                       cheshire "5.8.0"
                        org.clojure/data.json "0.2.6"
                        prismatic/schema "0.4.4"
 
@@ -63,9 +63,9 @@
 
                        ;; logging
                        fi.reaktor.log4j/log4j-email-throttle "1.0.0"
-                       org.clojure/tools.logging "0.3.1"
-                       org.slf4j/slf4j-log4j12 "1.7.12"
                        log4j "1.2.17"
+                       org.clojure/tools.logging "0.4.0"
+                       org.slf4j/slf4j-log4j12 "1.7.25"
 
                        ;; other
                        clj-time "0.14.0"
@@ -74,7 +74,7 @@
                        dk.ative/docjure "1.9.0"
                        oph/clj-util "0.1.0"
                        org.apache.commons/commons-email "1.4"
-                       org.clojure/core.async "0.2.371"
+                       org.clojure/core.async "0.2.395"
                        org.clojure/core.memoize "0.5.9"
                        org.clojure/tools.trace "0.7.9"
                        pandect "0.5.4"}
