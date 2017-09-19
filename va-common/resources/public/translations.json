@@ -243,6 +243,14 @@
     "business-id": {
       "fi": "Y-tunnus",
       "sv": "FO numret"
+    },
+    "not-found-business-id": {
+      "fi": "Y-tunnusta ei löytynyt",
+      "sv": "FO numret finss inte"
+    },
+    "error-with-business-id": {
+      "fi": "Y-tunnusta haettaessa tapahtui virhe",
+      "sv": "Nånting gick fel med FO numret"
     }
   },
   "errors": {

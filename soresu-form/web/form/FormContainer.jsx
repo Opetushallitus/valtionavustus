@@ -8,7 +8,6 @@ export default class FormContainer extends React.Component {
   constructor(props){
     super(props)
     this.getFieldValue = this.getFieldValue.bind(this)
-    this.updateRefreshStatus = this.updateRefreshStatus.bind(this)
   }
 
 
@@ -19,10 +18,6 @@ export default class FormContainer extends React.Component {
     } else{
       return null
     }
-  }
-
-  updateRefreshStatus(){
-    console.log("refreshed!")
   }
 
   render() {
@@ -37,12 +32,11 @@ export default class FormContainer extends React.Component {
     const formElement = React.createElement(formContainerClass, formElementProps)
 
     // Check if page is refreshed and if in that case some values are missing.
-
-    const conditions = (this.props.state.saveStatus.savedObject != null) && ((this.props.state.saveStatus.changes == false) || ((performance.navigation.type == 1) && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getFieldValue(item)).some(x => (x == "" || x == null)))))
+    const conditions =  ((this.props.state.saveStatus.savedObject.version == 1) || ((performance.navigation.type == 1) && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getFieldValue(item)).some(x => (x == "" || x == null)))))
 
 
     return (
-      <section id={containerId} onLoad={this.updateRefreshStatus}>
+      <section id={containerId} onLoad={this.checkFirstVisit} >
         {headerElements}
         { (conditions) &&
           <BusinessIdSearch state={this.props.state} controller={controller}/> }

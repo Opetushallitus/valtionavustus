@@ -17,8 +17,8 @@ export default class BusinessIdSearch extends React.Component {
     this.openModal = this.openModal.bind(this)
     this.afterOpenModal = this.afterOpenModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleOnChange = this.handleOnChange.bind(this)
+    this.handleOnSubmit = this.handleOnSubmit.bind(this)
     this.validate = this.validate.bind(this)
     this.state = {
       modalIsOpen: true,
@@ -28,7 +28,9 @@ export default class BusinessIdSearch extends React.Component {
     }
     this.lang = this.props.state.configuration.lang
     this.translations = this.props.state.configuration.translations.misc
+    this.translator = new Translator(this.props.state.configuration.translations.misc)
   }
+
 
   openModal() {
     this.setState({modalIsOpen: true})
@@ -53,14 +55,14 @@ export default class BusinessIdSearch extends React.Component {
   }
 
   // events from inputting the organisational id (y-tunnus)
-  handleSubmit(event) {
+  handleOnSubmit(event) {
     this.handleClick(this.input.value)
     this.setState({modalIsOpen: false})
   }
 
 
-  handleChange(event) {
-    var inputted = event.target.value
+  handleOnChange(event) {
+    const inputted = event.target.value
     this.validate(inputted)
     this.setState({typed: inputted})
   }
@@ -68,7 +70,8 @@ export default class BusinessIdSearch extends React.Component {
   //validate input of business-id
   validate(inputted){
     const text = inputted
-    if (text.match(/^\d{7}-\d$/)) {
+    const businessIdMatch = /^\d{7}-\d$/
+    if (text.match(businessIdMatch)) {
       this.setState({isDisabled: false})
       this.setState({error: ""})
     }else {
@@ -81,22 +84,31 @@ export default class BusinessIdSearch extends React.Component {
     const businessIdField = this.props.state.saveStatus.values.value.filter(value => value.key == "business-id")
     const language = this.props.state.configuration.lang
     const url = this.props.controller.createOrganisationInfoUrl(this.props.state)
+    const mappedFieldNames = {
+      "organization": "name",
+      "organization-email": "email",
+      "business-id": "organisation-id",
+      "organization-postal-address" : "contact"
+    }
+
+    const translator = new Translator(this.translations)
+
     HttpUtil.get(url + id + "&lang=" + language).then(
       response   => {
-        const fieldNames = ["organization", "organization-email", "business-id", "organization-postal-address"]
-        const dataFieldNames = ["name", "email",  "organisation-id", "contact"]
-        fieldNames.map((item, key) => this.changeFieldValue(response, item, dataFieldNames[key]))})
-      }
+        Object.keys(mappedFieldNames).forEach(key =>   this.changeFieldValue(response, key, mappedFieldNames[key]))
+      }).catch(error => {
+        if (error.response.status == 404) {
+          alert(translator.translate("not-found-business-id", this.lang))
+        }else {
+          alert(translator.translate("error-with-business-id", this.lang))}})}
 
 
       render() {
-        const translator = new Translator(this.translations)
-        return (
 
+        return (
           <div>
             <Modal
               isOpen={this.state.modalIsOpen}
-              onRequestClose={this.closeModal}
               contentLabel="Modal"
               className="Modal"
               overlayClassName="Overlay"
@@ -104,12 +116,12 @@ export default class BusinessIdSearch extends React.Component {
               <div>
                 <h1><LocalizedString translations={this.translations} translationKey="give-businessid" lang={this.lang}/></h1>
                 <p><LocalizedString translations={this.translations} translationKey="organisation-info" lang={this.lang}/></p>
-                <form onSubmit={this.handleSubmit}>
+                <form onSubmit={this.handleOnSubmit}>
                   <label className="ModalLabel">
                     <LocalizedString translations={this.translations} translationKey="business-id" lang={this.lang}/> :
-                      <input className={this.state.error} type="text" ref={(input) => this.input = input} onChange={ this.handleChange } />
+                      <input className={this.state.error} type="text" ref={(input) => this.input = input} onChange={ this.handleOnChange } />
                     </label>
-                    <input className={"get-business-id" + " " + "soresu-text-button"} type="submit" value={translator.translate("get", this.lang)} disabled={this.state.isDisabled} />
+                    <input className={"get-business-id" + " " + "soresu-text-button"} type="submit" value={this.translator.translate("get", this.lang)} disabled={this.state.isDisabled} />
                   </form>
                   <p><a href="#" onClick={this.closeModal}><LocalizedString translations={this.translations} translationKey="cancel" lang={this.lang}/></a></p>
                 </div>
