@@ -73,8 +73,8 @@
                        de.ubercode.clostache/clostache "1.4.0"
                        dk.ative/docjure "1.9.0"
                        oph/clj-util "0.1.0"
-                       org.apache.commons/commons-email "1.4"
-                       org.clojure/core.async "0.2.395"
+                       org.apache.commons/commons-email "1.5"
+                       org.clojure/core.async "0.3.443"
                        org.clojure/core.memoize "0.5.9"
                        org.clojure/tools.trace "0.7.9"
                        pandect "0.5.4"}
