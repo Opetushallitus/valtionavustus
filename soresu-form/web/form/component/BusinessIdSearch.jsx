@@ -24,11 +24,18 @@ export default class BusinessIdSearch extends React.Component {
       error: "error",
       incorrectBusinessId: false,
       otherErrorOnBusinessId: false,
-      businessId: ""
+      businessId: "",
+      mappedFieldNames : {
+        "organization": "name",
+        "organization-email": "email",
+        "business-id": "organisation-id",
+        "organization-postal-address" : "contact"
+      }
     }
     this.lang = this.props.state.configuration.lang
     this.translations = this.props.state.configuration.translations.misc
     this.translator = new Translator(this.props.state.configuration.translations.misc)
+
   }
 
 
@@ -84,16 +91,10 @@ export default class BusinessIdSearch extends React.Component {
   handleClick(id) {
     const language = this.props.state.configuration.lang
     const url = this.props.controller.createOrganisationInfoUrl(this.props.state)
-    const mappedFieldNames = {
-      "organization": "name",
-      "organization-email": "email",
-      "business-id": "organisation-id",
-      "organization-postal-address" : "contact"
-    }
 
     HttpUtil.get(url + id + "&lang=" + language).then(
       response   => {
-        Object.keys(mappedFieldNames).forEach(key =>   this.changeFieldValue(response, key, mappedFieldNames[key]))
+        Object.keys(this.state.mappedFieldNames).forEach(key =>   this.changeFieldValue(response, key, this.state.mappedFieldNames[key]))
       }).catch(error => {
       if (error.response.status == 404){
         this.setState({incorrectBusinessId: true})
