@@ -49,15 +49,26 @@
 - lineinfile: dest=/etc/default/rng-tools line="HRNGDEVICE=/dev/urandom"
   when: ansible_os_family == 'Debian'
 
-- lineinfile: dest=/usr/lib/systemd/system/rngd.service
-              regexp="^ExecStart"
-              line="ExecStart=/sbin/rngd -f -r /dev/urandom"
-              state=present
+- name: Add systemd override directory for rngd
+  file: path=/etc/systemd/system/rngd.service.d state=directory owner=root mode=0755
+  when: ansible_os_family == 'RedHat'
+  tags: rngd
+
+- name: Add systemd override for rngd to use /dev/urandom device as input
+  copy:
+    src: rngd-systemctl-override.conf
+    dest: /etc/systemd/system/rngd.service.d/override.conf
+    owner: root
+    mode: 0644
   register: rngd_service_changed
   when: ansible_os_family == 'RedHat'
 
-- name: reload systemd if rng daemon was changed
+- name: reload systemd if rngd was changed
   command: systemctl daemon-reload
+  when: rngd_service_changed.changed
+
+- name: restart rngd if its config was changed
+  service: name=rngd state=restarted
   when: rngd_service_changed.changed
 
 - name: Force rng-tools restart and run it on boot
