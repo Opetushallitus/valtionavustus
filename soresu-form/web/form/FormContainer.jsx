@@ -11,7 +11,7 @@ export default class FormContainer extends React.Component {
 
 
   getFieldValue(id){
-    if (this.props.state.configuration.preview == false) {
+    if (this.props.state.configuration.preview === false) {
       const fieldValues = this.props.state.saveStatus.values.value
       if (fieldValues.find(x => x.key === id) != undefined){
         return fieldValues.filter(value => value.key == id)[0].value
@@ -33,9 +33,9 @@ export default class FormContainer extends React.Component {
     const formElement = React.createElement(formContainerClass, formElementProps)
 
 
-    const isPreviewPage = (this.props.state.saveStatus.savedObject == null)
-    const isAdminViewPage = (this.props.state.configuration.preview == true)
-    const areEmptyFields =  (( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) =>   this.getFieldValue(item)).some(x => (x == "" || x == null))))
+    const isPreviewPage = this.props.state.saveStatus.savedObject === null
+    const isAdminViewPage = this.props.state.configuration.preview === true
+    const areEmptyFields =  ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) =>   this.getFieldValue(item)).some(x => (x == "" || x == null))
 
     // Check any of the values are missing, if so, show the modal
     const isBusinessIdSearchNeeded = (!isPreviewPage && !isAdminViewPage && areEmptyFields)
