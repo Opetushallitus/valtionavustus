@@ -1,8 +1,20 @@
 (defproject oph-va/virkailija "0.1.0-SNAPSHOT"
-  :description "OPH Valtionavustus, virkailijakäyttöliittymä"
-  :url "https://github.com/Opetushallitus/valtionavustus"
-  :license {:name "EUPL licence"
-            :url "http://opensource.org/licenses/EUPL-1.1"}
+
+  :description "OPH Valtionavustus, virkailijan käyttöliittymä"
+
+  :plugins [[lein-parent "0.3.2"]]
+
+  :parent-project {:path "../parent-project.clj"
+                   :inherit [:url
+                             :license
+                             :min-lein-version
+                             :repositories
+                             :managed-dependencies
+                             :pedantic?
+                             :plugins
+                             :uberjar-exclusions
+                             :auto-clean]}
+
   :dependencies [[oph-va/common]
                  [buddy/buddy-auth]
                  [com.cemerick/url :exclusions [com.cemerick/clojurescript.test]]
@@ -11,34 +23,27 @@
                  [org.clojars.pntblnk/clj-ldap]
                  [org.clojure/data.json]]
 
+  :profiles {:uberjar {:aot :all}
+             :dev     {:env {:config "config/dev.edn"
+                             :configsecrets "../../valtionavustus-secret/config/secret-dev.edn"}}
+             :test    {:env {:config "config/test.edn"}}
+             :prod    {:env {:config "config/va-prod.edn"}}}
+
   :main oph.va.virkailija.main
-  :jvm-opts ["-Xmx500m"]
-  :target-path "target/%s"
-
-  :prep-tasks [
-       "compile"
-  ]
-
-  :repl-options {:timeout 1200000}
-
-  :plugins [[speclj "3.3.1"]
-            [lein-modules "0.3.11"]
-            [lein-environ "1.0.0"]
-            [lein-shell "0.5.0"]
-            [lein-auto "0.1.2"]
-            [lein-ancient "0.6.7"]]
-
-  :test-paths ["spec"]
-
-  :uberjar-exclusions [#"public/test"]
-  :auto-clean false
 
   :aot [oph.va.jdbc.enums
         oph.va.virkailija.db.migrations
         clj-time.core]
-  :profiles {:uberjar {:aot :all}}
-  :aliases {"dbmigrate" ["run" "-m" "oph.va.virkailija.db.migrations/migrate" "virkailija-db" "db.migration" "oph.va.virkailija.db.migrations"]
-            "dbclear" ["run" "-m" "oph.soresu.common.db/clear-db!" "virkailija-db" "virkailija"]
-            "buildfront" ^{:doc "Build frontend code with npm"} ["do"
-                                                                 ["shell" "npm" "install" "--no-save"]
-                                                                 ["shell" "npm" "run" "build-production"]]})
+
+  :uberjar-exclusions [#"public/test"]
+
+  :jvm-opts ["-Xmx500m"]
+
+  :test-paths ["spec"]
+
+  :prep-tasks ["compile"]
+
+  :aliases {"dbmigrate"  ["run" "-m" "oph.va.virkailija.db.migrations/migrate" "virkailija-db" "db.migration" "oph.va.virkailija.db.migrations"]
+
+            "dbclear"    ["run" "-m" "oph.soresu.common.db/clear-db!" "virkailija-db" "virkailija"]}
+)

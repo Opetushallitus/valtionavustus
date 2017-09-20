@@ -47,9 +47,9 @@
     "build": "webpack --bail",
     "build-production": "NODE_ENV=production npm run build",
     "build-watch": "webpack --progress --watch",
-    "test": "mocha --require web/test/babelhook -R spec ./web/test/*Test.js",
+    "test": "mocha --require web/test/babelhook $MOCHA_ARGS ./web/test/*Test.js",
     "test-browser": "phantomjs --web-security=false node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js http://localhost:8081/test/runner.html spec",
-    "test-watch": "mocha --watch --require web/test/babelhook web/test/*Test.js",
+    "test-watch": "mocha --watch --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js",
     "lint": "eslint web/**/*"
   }
 }

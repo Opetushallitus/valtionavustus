@@ -34,8 +34,8 @@
   },
   "private": true,
   "scripts": {
-    "test": "mocha --require web/test/babelhook web/test/*Test.js",
-    "test-watch": "mocha --watch --require web/test/babelhook web/test/*Test.js",
+    "test": "mocha --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js",
+    "test-watch": "mocha --watch --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js",
     "lint": "eslint web/**/*"
   }
 }

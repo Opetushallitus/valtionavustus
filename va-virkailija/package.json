@@ -45,6 +45,7 @@
     "build": "webpack --bail",
     "build-production": "NODE_ENV=production npm run build",
     "build-watch": "webpack --progress --watch",
-    "lint": "eslint web/**/*"
+    "lint": "eslint web/**/*",
+    "test": "true"
   }
 }

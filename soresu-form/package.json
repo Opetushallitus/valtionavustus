@@ -42,8 +42,8 @@
   },
   "private": true,
   "scripts": {
-    "test": "mocha --require babel-register web/test/*Test.js",
-    "test-watch": "mocha --watch --require babel-register web/test/*Test.js",
+    "test": "mocha --require babel-register $MOCHA_ARGS web/test/*Test.js",
+    "test-watch": "mocha --watch --require babel-register $MOCHA_ARGS web/test/*Test.js",
     "lint": "eslint web/**/*"
   }
 }
