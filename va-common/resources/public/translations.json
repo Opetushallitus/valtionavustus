@@ -246,7 +246,7 @@
     },
     "not-found-business-id": {
       "fi": "Y-tunnusta ei löytynyt",
-      "sv": "FO numret finss inte"
+      "sv": "FO numret finns inte"
     },
     "error-with-business-id": {
       "fi": "Y-tunnusta haettaessa tapahtui virhe",
