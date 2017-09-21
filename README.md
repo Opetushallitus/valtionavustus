@@ -431,7 +431,7 @@ lomakkeen sisältöä. Kaikkia graafisen lomake-editorin komponentteja ei
 ole toteutettu. Lomakkeen voi kopioida json-editorin kautta toiseen
 avustushakuun.
 
-## Käytänteitä
+## Käytäntöjä
 
 Git workflow on "Long-Running Branches" tyyppinen: [Git Branching - Branching
 Workflows](https://git-scm.com/book/en/v2/Git-Branching-Branching-Workflows).
@@ -449,8 +449,5 @@ suomenkieltä.
 
 Branchit mergetään `develop`-haaraan pull requesteilla.
 
-`develop`-haara mergetään `master`:iin keskitetysti, esimerkiksi ennen sprint
--demoa.
-
-
-
+`develop`-haara mergetään `master`:iin hallitusti, esimerkiksi ennen sprintin
+demoa.
