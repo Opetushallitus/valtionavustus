@@ -225,33 +225,33 @@
       "sv": "Tjänstemans ändring"
     },
     "cancel": {
-      "fi":"Peruuta",
-      "sv":"Avbryt"
-    },
-    "give-businessid" : {
-      "fi": "Aloita syöttämällä y-tunnus",
-      "sv": "Börja med att fylla i Företags- och organisationsnummer"
-    },
-    "organisation-info": {
-      "fi": "Tiedot haetaan organisaatiopalvelusta",
-      "sv": "Information ska hämtas from organisationsservice"
-    },
-    "get": {
-      "fi": "Hae",
-      "sv": "Sök"
-    },
-    "business-id": {
-      "fi": "Y-tunnus",
-      "sv": "FO numret"
-    },
-    "not-found-business-id": {
-      "fi": "Y-tunnusta ei löytynyt",
-      "sv": "FO numret finns inte"
-    },
-    "error-with-business-id": {
-      "fi": "Y-tunnusta haettaessa tapahtui virhe",
-      "sv": "Nånting gick fel med FO numret"
-    }
+         "fi":"Peruuta",
+         "sv":"Avbryt"
+       },
+       "give-businessid" : {
+         "fi": "Aloita syöttämällä y-tunnus",
+         "sv": "Börja med att fylla i Företags- och organisationsnummer"
+       },
+       "organisation-info": {
+         "fi": "Tiedot haetaan organisaatiopalvelusta",
+         "sv": "Information ska hämtas from organisationsservice"
+       },
+       "get": {
+         "fi": "Hae",
+         "sv": "Sök"
+       },
+       "business-id": {
+         "fi": "Y-tunnus",
+         "sv": "FO numret"
+       },
+       "not-found-business-id": {
+         "fi": "Y-tunnusta ei löytynyt",
+         "sv": "FO numret finns inte"
+       },
+       "error-with-business-id": {
+         "fi": "Y-tunnusta haettaessa tapahtui virhe",
+         "sv": "Nånting gick fel med FO numret"
+       }
   },
   "errors": {
     "required": {
