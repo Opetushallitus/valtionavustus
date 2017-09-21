@@ -37,6 +37,7 @@ export default class FormContainer extends React.Component {
     const isAdminViewPage = this.props.state.configuration.preview === true
     const areEmptyFields =  ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) =>   this.getFieldValue(item)).some(x => (x == "" || x == null))
 
+
     // Check any of the values are missing, if so, show the modal
     const isBusinessIdSearchNeeded = !isPreviewPage && !isAdminViewPage && areEmptyFields
 

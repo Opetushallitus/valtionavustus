@@ -39,6 +39,7 @@ export default class BusinessIdSearch extends React.Component {
   }
 
 
+
   openModal() {
     this.setState({modalIsOpen: true})
   }
@@ -109,6 +110,7 @@ export default class BusinessIdSearch extends React.Component {
   render() {
 
     return (
+
       <div>
         <Modal
           isOpen={this.state.modalIsOpen}
