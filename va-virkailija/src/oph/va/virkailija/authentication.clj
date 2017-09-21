@@ -10,15 +10,15 @@
   (if-let [details (login ticket virkailija-login-url)]
     (let [username (:username details)
           token ticket]
-      (log/info username "logged in succesfully with ticket" ticket)
       (swap! tokens assoc token details)
+      (log/info username "logged in:" ticket (format "(%d tickets in cache)" (count @tokens)))
       {:username username
        :person-oid (:person-oid details)
        :token token})
     (log/warn "Login failed for CAS ticket " ticket)))
 
 (defn check-identity [identity]
-  (if-let [{:keys [token username]} identity]
+  (if-let [token (:token identity)]
     (get @tokens token)))
 
 (defn get-identity [request]
@@ -26,19 +26,24 @@
                       :session
                       :identity)))
 
-(defn logout-ticket [ticket]
+(defn- logout-ticket [ticket]
   (if (contains? @tokens ticket)
     (do
-      (log/info ticket "logged out")
-      (swap! tokens dissoc ticket))
-    (log/info "trying to logout CAS ticket without active session" ticket)))
+      (swap! tokens dissoc ticket)
+      (log/info "logged out:" ticket (format "(%d tickets in cache)" (count @tokens))))
+    (log/info "trying to logout CAS ticket without active session:" ticket)))
 
 (defn cas-initiated-logout [logout-request]
   (let [ticket (CasLogout/parseTicketFromLogoutRequest logout-request)]
     (if (.isEmpty ticket)
       (log/error "Could not parse ticket from CAS request" logout-request)
-      (logout-ticket (.get ticket)))))
+      (if-let [token (.get ticket)]
+        (do
+          (log/info "logging out (CAS initiated):" token)
+          (logout-ticket token))))))
 
 (defn logout [identity]
-  (if-let [{:keys [token username]} identity]
-    (logout-ticket token)))
+  (if-let [token (:token identity)]
+    (do
+      (log/info "logging out (user initiated):" token)
+      (logout-ticket token))))
