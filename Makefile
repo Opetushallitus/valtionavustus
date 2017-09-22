@@ -96,7 +96,7 @@ Targets:
   build                       `npm-build`, `lein-build`
   test                        `npm-test`, `lein-test`
 
-  npm-clean                   Remove installed npm modules from $$CHILD_PROJECTS.
+  npm-clean                   Remove installed npm modules and frontend build products from $$CHILD_PROJECTS.
   npm-install-modules         Install npm modules for $$CHILD_PROJECTS.
   npm-build-frontends         Build frontend sources for va-hakija and va-virkailija.
   npm-build                   `npm-install-modules`, `npm-build-frontends`
@@ -140,7 +140,7 @@ Examples:
 endef
 
 define npm_clean
-cd '$(1)' && rm -fr node_modules
+cd '$(1)' && rm -fr node_modules && rm -fr resources/public/js
 endef
 
 define npm_install_modules
