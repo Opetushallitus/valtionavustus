@@ -137,6 +137,8 @@ Examples:
   Run clean build of frontend and backend, followed by tests:
 
   make clean build test
+
+See README.md for more.
 endef
 
 define npm_clean

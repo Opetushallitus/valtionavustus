@@ -1,21 +1,19 @@
+SHELL := bash  # required for `help` target
+
 PIP_BIN ?= /usr/local/bin/pip2
 PYTHON_BIN ?= /usr/local/bin/python2.7
 PYTHON_REQUIREMENTS ?= requirements.txt
 PYTHON_VENV_DIR ?= python-venv
 
-.PHONY: help venv install uninstall
-
+.PHONY: help
 help:
-	@echo 'make install        Install Python virtualenv'
-	@echo 'make uninstall      Uninstall Python virtualenv'
-	@echo 'eval `make venv`    Activate Python virtualenv for current shell'
-	@echo 'deactivate          Deactivate Python virtualenv from current shell'
-	@echo
-	@echo 'See README.md for more.'
+	@echo -e '$(subst $(newline),\n,$(usage_text))'
 
-venv:
-	@echo "source $(PYTHON_VENV_DIR)/bin/activate"
+.PHONY: clean
+clean:
+	rm -rf "$(PYTHON_VENV_DIR)"
 
+.PHONY: install
 install: $(PYTHON_VENV_DIR)
 
 $(PYTHON_VENV_DIR): $(PYTHON_REQUIREMENTS)
@@ -25,5 +23,29 @@ $(PYTHON_VENV_DIR): $(PYTHON_REQUIREMENTS)
 	virtualenv -p "$(PYTHON_BIN)" "$(PYTHON_VENV_DIR)"
 	$(PYTHON_VENV_DIR)/bin/pip install -r "$(PYTHON_REQUIREMENTS)"
 
-uninstall:
-	rm -rf "$(PYTHON_VENV_DIR)"
+.PHONY: venv
+venv:
+	@echo "source $(PYTHON_VENV_DIR)/bin/activate"
+
+define newline
+
+
+endef
+
+define usage_text
+Targets:
+
+  help     Show this guide.
+  clean    Uninstall Python virtualenv.
+  install  Install Python virtualenv.
+  venv     Print shell commands to activate virtualenv.
+
+Examples:
+
+  Activate Python virtualenv for current shell:
+
+  eval `make venv`   # activate virtualenv
+  deactivate         # later, to deactivate virtualenv
+
+See README.md for more.
+endef
