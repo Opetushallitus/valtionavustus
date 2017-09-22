@@ -13,7 +13,8 @@
                              :pedantic?
                              :plugins
                              :uberjar-exclusions
-                             :auto-clean]}
+                             :auto-clean
+                             :prep-tasks]}
 
   :dependencies [[oph-va/common]
                  [buddy/buddy-auth]
