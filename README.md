@@ -381,24 +381,59 @@ dependencyinä](https://github.com/technomancy/leiningen/blob/master/doc/TUTORIA
 jolloin muutokset lähdekoodissa ja muutoksen evaluointi voidaan saada
 näkyviin hakijan ja virkailijan sovelluksissa ajonaikaisesti.
 
+Jotkut kehitystyökalut saattavat injektoida Leiningeniä käynnistäessä
+overridaavan riippuvuuden `org.clojure/tools.nrepl`-jarriin, jota myös
+Leiningen itse käyttää. Mikäli overriden versio on eri kuin Leiningenin
+käyttämä versio, ilmoittaa Leiningen virheestä ja aborttaa, koska asetus
+`:pedantic? :abort` on päällä. Voit ratkaista ongelman kahdella eri
+tavalla:
+
+* Aseta `:pedantic? :range` Leiningenin user-profiiliin tiedostossa
+  `~/.lein/profiles.clj`:
+
+  ``` edn
+  {:user {:pedantic? :range}
+  ```
+
+  Tällöin Leiningen varoittaa overridaavista riippuvuuksista, mutta ei
+  aborttaa.
+
+* Määrittele `org.clojure/tools.nrepl`-jarrin versio samaksi kuin mitä
+  kehitystyökalu käyttää tiedostoon `~/.lein/profiles.clj`. Esimerkiksi:
+
+  ``` edn
+  {:repl {:dependencies [[org.clojure/tools.nrepl "0.2.13"]]}}
+  ```
+
 Esimerkiksi Emacsin
 [CIDER](https://cider.readthedocs.io/)-kehitysympäristöä käyttäessä:
 
-1. Käynnistä REPL hakijan tai virkailijan moduulissa: avaa moduulissa
+1. Aseta `(customize-set-variable 'cider-prompt-for-symbol nil)`, jotta
+   CIDER ei [injektoi riippuvuuksia
+   automaattisesti](https://github.com/clojure-emacs/cider/blob/master/doc/installation.md#ciders-nrepl-middleware).
+
+2. Aseta CIDERin riippuvuudet `~/.lein/profiles.clj`:ssä:
+
+   ``` edn
+   {:repl {:plugins [[cider/cider-nrepl "0.16.0-SNAPSHOT"]]
+           :dependencies [[org.clojure/tools.nrepl "0.2.13"]]}}
+   ```
+
+3. Käynnistä REPL hakijan tai virkailijan moduulissa: avaa moduulissa
    oleva clj-lähdekoodi puskuriin (esim. tiedosto
    `va-virkailija/src/oph/va/virkailija/routes.clj`) ja suorita
    Emacs-komento `cider-jack-in`
 
-2. Kun REPL on käynnistynyt, käynnistä sovelluspalvelin REPL:ssä:
+4. Kun REPL on käynnistynyt, käynnistä sovelluspalvelin REPL:ssä:
 
    ```
-   oph.va.hakija.main> (def main (-main))
+   oph.va.virkailija.main> (def main (-main))
    ```
 
-3. Muokkaa `soresu` tai `common` -kirjastossa olevaa clj-lähdekoodia,
+5. Muokkaa `soresu` tai `common` -kirjastossa olevaa clj-lähdekoodia,
    evaluoi muutos (esim. Emacs-komento `cider-eval-defun-at-point`)
 
-4. Muutoksen vaikutuksen pitäisi näkyä sovelluksessa.
+6. Muutoksen vaikutuksen pitäisi näkyä sovelluksessa.
 
 ## Tuetut selaimet
 
