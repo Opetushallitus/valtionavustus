@@ -33,7 +33,7 @@ function clean() {
 }
 
 function add_git_head_snippets() {
-  echo "=== add git head snippets ==="
+  echo "Adding git head snippets..."
   for m in va-hakija va-virkailija; do
     pushd "$m"
     git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
@@ -42,6 +42,7 @@ function add_git_head_snippets() {
 }
 
 function build() {
+  add_git_head_snippets
   time make build
 }
 
