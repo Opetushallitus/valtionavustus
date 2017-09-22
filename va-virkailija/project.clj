@@ -41,7 +41,7 @@
 
   :test-paths ["spec"]
 
-  :prep-tasks ["compile"]
+  :target-path "target/%s"
 
   :aliases {"dbmigrate"  ["run" "-m" "oph.va.virkailija.db.migrations/migrate" "virkailija-db" "db.migration" "oph.va.virkailija.db.migrations"]
 

@@ -50,4 +50,6 @@
                  [pandect]]
 
   :test-paths ["spec"]
+
+  :target-path "target/%s"
 )

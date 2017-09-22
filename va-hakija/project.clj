@@ -36,6 +36,8 @@
 
   :test-paths ["spec"]
 
+  :target-path "target/%s"
+
   :aliases {"dbmigrate"  ["run" "-m" "oph.va.hakija.db.migrations/migrate" "form-db" "db.migration" "oph.va.hakija.db.migrations"]
 
             "dbclear"    ["run" "-m" "oph.soresu.common.db/clear-db!" "form-db" "hakija"]

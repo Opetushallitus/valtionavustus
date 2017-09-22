@@ -31,6 +31,8 @@
 
   :test-paths ["spec"]
 
+  :target-path "target/%s"
+
   :auto {:default {:paths ["src", "resources", "spec"]
                    :file-pattern #"\.(clj|sql|json)$"}}
 )
