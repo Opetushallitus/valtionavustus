@@ -26,10 +26,10 @@
   (it "formats decimal"
       (should= "13" (ks/format-decimal 13)))
 
-  (it "removes trailing .0 from decimal"
+  (it "removes trailing dot 0 from decimal"
       (should= "10" (ks/format-decimal 10.000)))
 
   (it "outputs comma as decimal separator"
-              (should= "13,0001" (ks/format-decimal 13.0001))))
+      (should= "13,0001" (ks/format-decimal 13.0001))))
 
 (run-specs)
