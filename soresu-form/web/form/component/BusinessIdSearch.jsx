@@ -1,5 +1,5 @@
 import React from "react"
-import Modal from "react-modal"
+import ModalDialog from "./ModalDialog.jsx"
 import FormUtil from "../FormUtil.js"
 import LocalizedString from "./LocalizedString.jsx"
 import Translator from "../Translator.js"
@@ -112,7 +112,7 @@ export default class BusinessIdSearch extends React.Component {
     return (
 
       <div>
-        <Modal
+        <ModalDialog
           isOpen={this.state.modalIsOpen}
           contentLabel="modal"
           className="modal"
@@ -132,7 +132,7 @@ export default class BusinessIdSearch extends React.Component {
             </form>
             <p><a href="#" onClick={this.closeModal}><LocalizedString translations={this.translations} translationKey="cancel" lang={this.lang}/></a></p>
           </div>
-        </Modal>
+        </ModalDialog>
       </div>)
   }
 }
