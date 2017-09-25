@@ -1,42 +1,46 @@
 (defproject oph-va/hakija "0.1.0-SNAPSHOT"
+
   :description "OPH Valtionavustus, hakijan lomake"
-  :url "https://github.com/Opetushallitus/valtionavustus"
-  :license {:name "EUPL licence"
-            :url "http://opensource.org/licenses/EUPL-1.1"}
-  :dependencies [[oph-va/common "0.1.0-SNAPSHOT"]
-                 ;; MIME type checking
-                 [com.novemberain/pantomime "2.7.0"]]
+
+  :plugins [[lein-parent "0.3.2"]]
+
+  :parent-project {:path "../parent-project.clj"
+                   :inherit [:url
+                             :license
+                             :min-lein-version
+                             :repositories
+                             :managed-dependencies
+                             :pedantic?
+                             :plugins
+                             :uberjar-exclusions
+                             :auto-clean
+                             :prep-tasks]}
+
+  :dependencies [[oph-va/common]
+                 [com.novemberain/pantomime]]
+
+  :profiles {:uberjar {:aot :all}
+             :dev     {:env {:config "config/dev.edn"}}
+             :test    {:env {:config "config/test.edn"}}
+             :prod    {:env {:config "config/prod.edn"}}}
 
   :main oph.va.hakija.main
-  :jvm-opts ["-Xmx500m"]
-  :target-path "target/%s"
-
-  :prep-tasks [
-       "compile"
-  ]
-
-  :repl-options {:timeout 1200000}
-
-  :plugins [[speclj "3.3.1"]
-            [lein-modules "0.3.11"]
-            [lein-environ "1.0.0"]
-            [lein-shell "0.4.0"]
-            [lein-auto "0.1.2"]
-            [lein-ancient "0.6.7"]]
-
-  :test-paths ["spec"]
-
-  :uberjar-exclusions [#"public/test"]
-  :auto-clean false
 
   :aot [oph.va.jdbc.enums
         oph.va.hakija.db.migrations
         clj-time.core]
-  :profiles {:uberjar {:aot :all}
-             :test    {:dependencies [[environ "1.0.2"]]}}
-  :aliases {"dbmigrate" ["run" "-m" "oph.va.hakija.db.migrations/migrate" "form-db" "db.migration" "oph.va.hakija.db.migrations"]
-            "dbclear" ["run" "-m" "oph.soresu.common.db/clear-db!" "form-db" "hakija"]
-            "buildfront" ^{:doc "Build frontend code with npm"} ["do"
-                                                                 ["shell" "npm" "install" "--no-save"]
-                                                                 ["shell" "npm" "run" "build-production"]]
-            "populate" ^{:doc "Generate applications"} ["run" "-m" "oph.va.hakija.cmd.populate"]})
+
+  :uberjar-exclusions [#"public/test"]
+
+  :jvm-opts ["-Xmx500m"]
+
+  :test-paths ["spec"]
+
+  :target-path "target/%s"
+
+  :aliases {"dbmigrate"  ["run" "-m" "oph.va.hakija.db.migrations/migrate" "form-db" "db.migration" "oph.va.hakija.db.migrations"]
+
+            "dbclear"    ["run" "-m" "oph.soresu.common.db/clear-db!" "form-db" "hakija"]
+
+            "populate"   ^{:doc "Generate applications"} ["run" "-m" "oph.va.hakija.cmd.populate"]}
+)

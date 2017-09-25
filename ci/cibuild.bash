@@ -1,23 +1,24 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -euo pipefail
 
-pushd `dirname $0` > /dev/null
-SCRIPTPATH=`pwd -P`
-PROJECTROOTPATH=$SCRIPTPATH/..
-popd > /dev/null
-LEIN=$PROJECTROOTPATH/lein
+function cd_project_root_dir() {
+  local script_dir=$(dirname "$0")
+  cd "$script_dir/.." || exit 3
+}
 
-export PATH=$PATH:$(dirname $LEIN)
-export DEBUG=true
+cd_project_root_dir
 
 function show_usage() {
-cat << EOF
-  Usage: ${0##*/} [clean] [uberjar] [test] [-p <docker postgresql port>] [deploy] [deploy_jar -m <module>] [-s <target server name> ] [-d] [-r] [-j <source jar path>]
-    -p specifies the host port on which Docker binds Postgresql, it should be same in the app config
-    -d disables running Postgresql in Docker container around the build
-    -r recreate database when deploying (default: false)
-    -j specifies the path to source jar
-    -m specifies the module to deploy: va-hakija or va-virkailija
+  cat << EOF
+Usage: ${0##*/} [-d] [-p <docker_postgres_port] [-r] [clean] [build] [test] [deploy] [deploy_jar -m <module> -s <target_server_name> [-j <source_jar_path>]]
+
+  -d  Disables running PostgreSQL in Docker container
+  -p  The host port to which Docker binds PostgreSQL; should be the same as in the app config
+  -r  Recreate database when deploying (default: false)
+  -m  The module to deploy: va-hakija or va-virkailija
+  -s  Target server hostname
+  -j  Source jar path
 EOF
   exit 2
 }
@@ -28,37 +29,24 @@ va_hakija_default_source_path="va-hakija/target/uberjar/hakija-*-standalone.jar"
 va_virkailija_default_source_path="va-virkailija/target/uberjar/virkailija-*-standalone.jar"
 
 function clean() {
-  time $LEIN modules clean
-  echo "Emptying all subdirectories with name 'node_modules', (BUILD_NUMBER=$BUILD_NUMBER)"
-  time find $PROJECTROOTPATH -depth -type d -name 'node_modules' -exec rm -rf {} \;
+  time make clean
 }
 
-function install_module() {
-  cd $1
-  echo "Running lein install for $1"
-  time $LEIN install
-  cd ..
-}
-
-function buildfront() {
-  install_module soresu-form
-  install_module va-common
-  time $LEIN with-profile ci do modules buildfront
-}
-
-function uberjar() {
+function add_git_head_snippets() {
+  echo "Adding git head snippets..."
   for m in va-hakija va-virkailija; do
-    cd $m
+    pushd "$m"
     git show --pretty=short --abbrev-commit -s HEAD > resources/public/git-HEAD.txt
-    cd ..
+    popd
   done
-  time $LEIN with-profile ci do modules uberjar
+}
+
+function build() {
+  add_git_head_snippets
+  time make build
 }
 
 function start_postgresql_in_docker() {
-  echo "=============================="
-  echo
-  echo "Starting Postgresql in Docker"
   start_postgresql_in_container
   wait_for_postgresql_to_be_available
   # give_schema_to_va hakija  # When using our own schema that is owned by va, we don't need to give it access
@@ -70,30 +58,32 @@ function run_tests() {
     start_postgresql_in_docker
   fi
 
-  lein_modules_spec_exit_code=0
-  time $LEIN with-profile ci modules spec -f junit || lein_modules_spec_exit_code=$?
+  local tests_exit_code
+  tests_exit_code=0
+
+  time make test \
+    MOCHA_ARGS="--reporter mocha-junit-reporter" \
+    MOCHA_FILE="target/junit-mocha-js-unit.xml" \
+    SPECLJ_ARGS="-f junit" \
+    || tests_exit_code=$?
 
   if [ "$run_docker_postgresql" = true ]; then
     remove_postgresql_container
   fi
 
-  if [ $lein_modules_spec_exit_code -ne 0 ]; then
-    echo "lein modules spec failed: $lein_modules_spec_exit_code"
-    exit $lein_modules_spec_exit_code
+  if [ $tests_exit_code -ne 0 ]; then
+    echo "Tests failed: $tests_exit_code"
+    exit $tests_exit_code
   fi
 }
 
 function drop_database() {
-  echo "=============================="
-  echo
-  echo "...dropping db.."
+  echo "Dropping database..."
   $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/va-hakija/resources/sql/drop_schema.sql -v schema_name=hakija"
 }
 
 function restart_application() {
   module_name=$1
-  echo "=============================="
-  echo
   echo "Stopping application..."
   if [ "$target_server_name" = "va-dev" ] || [[ "$target_server_name" == *".csc.fi" ]]; then
     $SSH "supervisorctl stop $module_name"
@@ -105,19 +95,17 @@ function restart_application() {
   else
     echo "Not dropping existing database."
   fi
-  echo "=============================="
-  echo
   if [ "$target_server_name" = "va-dev" ] || [[ "$target_server_name" == *".csc.fi" ]]; then
     APP_COMMAND="supervisorctl start $module_name"
   else
     APP_COMMAND="sudo /usr/local/bin/va_app.bash --start $module_name ${CURRENT_DIR}/${module_name}.jar file:${CURRENT_DIR}/resources/log4j-deployed.properties ${CURRENT_DIR}/config/defaults.edn ${CURRENT_DIR}/config/${target_server_name}.edn"
   fi
-  echo "...starting application with command \"${APP_COMMAND}\" ..."
+  echo "Starting application (${APP_COMMAND}) ..."
   $SSH "${APP_COMMAND}"
 }
 
 function do_deploy_jar() {
-  if [ -z ${target_server_name+x} ]; then
+  if [[ -z $target_server_name ]]; then
     echo "deploy: Please provide target server name with -s option."
     exit 4
   fi
@@ -128,35 +116,26 @@ function do_deploy_jar() {
     jar_source_path=${jar_to_deploy_source_path}
   fi
   application_port=$3
-  echo "=============================="
-  echo "Starting $module_name : "
-  echo
-  echo "Transfering to application server ${target_server_name}"
+  echo "Starting $module_name..."
+  echo "Transfering to application server ${target_server_name} ..."
   SSH_KEY=~/.ssh/id_deploy
   SSH_USER=va-deploy
   SSH="ssh -i $SSH_KEY va-deploy@${target_server_name}"
   BASE_DIR=/data/www
   CURRENT_DIR=${BASE_DIR}/${module_name}-current
-  echo "=============================="
-  echo
   TARGET_DIR=${BASE_DIR}/${module_name}-`date +'%Y%m%d%H%M%S'`
   TARGET_JAR_PATH=${TARGET_DIR}/${module_name}.jar
-  echo "...copying artifacts to ${target_server_name}:${TARGET_DIR} ..."
+  echo "Copying artifacts to ${target_server_name}:${TARGET_DIR} ..."
   $SSH "mkdir -p ${TARGET_DIR}"
   scp -p -i ${SSH_KEY} ${jar_source_path} ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
   scp -pr -i ${SSH_KEY} ${module_name}/config ${module_name}/resources ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
   $SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
   restart_application ${module_name}
-  echo "=============================="
-  echo
   CAT_LOG_COMMAND="$SSH tail -n 100 /logs/valtionavustus/${module_name}_run.log /logs/valtionavustus/${module_name}_application.log"
   HEALTH_CHECK_COMMAND="`dirname $0`/health_check.bash ${SSH_USER} ${SSH_KEY} ${target_server_name} ${application_port} $CAT_LOG_COMMAND"
-  echo "...checking that it really comes up, with $HEALTH_CHECK_COMMAND ..."
+  echo "Checking that application responds to healthcheck ($HEALTH_CHECK_COMMAND)..."
   $HEALTH_CHECK_COMMAND
-  echo
-  echo "=============================="
-  echo
-  echo "...start of $module_name done!"
+  echo "Success in starting $module_name"
 }
 
 function deploy_hakija() {
@@ -178,7 +157,7 @@ function deploy_jar() {
   elif [ "$module_to_deploy" = "va-virkailija" ]; then
     deploy_virkailija
   else
-    echo "deploy_jar: unknown module_name '$module_to_deploy' ."
+    echo "deploy_jar: unknown module_name \"$module_to_deploy\"."
     show_usage
     exit 6
   fi
@@ -202,11 +181,8 @@ while [[ $# > 0 ]]; do
       clean)
       commands+=('clean')
       ;;
-      buildfront)
-      commands+=('buildfront')
-      ;;
-      uberjar)
-      commands+=('uberjar')
+      build)
+      commands+=('build')
       ;;
       test)
       commands+=('run_tests')
@@ -250,6 +226,6 @@ done
 source `dirname $0`/postgresql_container_functions.bash
 
 for (( i = 0; i < ${#commands[@]} ; i++ )); do
-    printf "\n**** Running: ${commands[$i]} *****\n\n"
+    printf "\n**** ${commands[$i]} *****\n\n"
     eval "${commands[$i]}"
 done

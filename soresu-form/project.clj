@@ -1,76 +1,55 @@
 (defproject oph/soresu "0.1.0-SNAPSHOT"
+
   :description "OPH Soresu forms"
-  :url "https://github.com/Opetushallitus/valtionavustus"
-  :license {:name "EUPL licence"
-            :url "http://opensource.org/licenses/EUPL-1.1"}
-  :repositories {"Laughing Panda" "http://maven.laughingpanda.org/maven2"}
-  :dependencies [[org.clojure/clojure "1.8.0"]
 
-                 ;; HTTP server
-                 [javax.servlet/servlet-api "2.5"]
-                 [http-kit "2.1.19"]
-                 [ring "1.4.0"]
-                 [ring/ring-jetty-adapter "1.4.0"]
-                 [ring/ring-servlet "1.4.0"]
-                 [ring/ring-devel "1.4.0"]
-                 [ring/ring-core "1.4.0"]
+  :plugins [[lein-parent "0.3.2"]]
 
-                 ;; Routing
-                 [ring/ring-defaults "0.1.5"]
-                 [compojure "1.4.0" :exclusions [instaparse]]
-                 [metosin/compojure-api "0.23.0" :exclusions [commons-codec
-                                                              instaparse
-                                                              joda-time
-                                                              clj-time
-                                                              org.clojure/tools.reader
-                                                              prismatic/schema]]
+  :parent-project {:path "../parent-project.clj"
+                   :inherit [:url
+                             :license
+                             :min-lein-version
+                             :repositories
+                             :managed-dependencies
+                             :pedantic?
+                             :plugins
+                             :uberjar-exclusions
+                             :auto-clean
+                             :prep-tasks]}
 
-                 ;; JSON
-                 [cheshire "5.5.0"]
-                 [prismatic/schema "0.4.4"]
+  :dependencies [[org.clojure/clojure]
 
-                 ;; SQL + migrations
-                 [yesql "0.5.3"]
-                 [org.postgresql/postgresql "9.4.1212"]
-                 [hikari-cp "1.7.5" :exclusions [prismatic/schema]]
-                 [org.flywaydb/flyway-core "4.0.3"]
+                 [http-kit]
+                 [ring/ring-core]
+                 [ring/ring-devel]
+                 [compojure :exclusions [instaparse]]
+                 [metosin/compojure-api :exclusions [commons-codec
+                                                     instaparse
+                                                     joda-time
+                                                     clj-time
+                                                     org.clojure/tools.reader
+                                                     prismatic/schema
+                                                     ring]]
 
-                 ;; Testing
-                 [speclj "3.3.1"]
-                 ;; for junit output: lein spec -f junit
-                 [speclj-junit "0.0.11"]
+                 [cheshire]
+                 [prismatic/schema]
 
-                 ;; Configuration
-                 [environ "1.0.0"]
+                 [org.postgresql/postgresql]
+                 [yesql]
+                 [hikari-cp :exclusions [prismatic/schema]]
+                 [org.flywaydb/flyway-core]
 
-                 ;; Logging
-                 [org.slf4j/slf4j-log4j12 "1.7.12"]
-                 [org.clojure/tools.logging "0.3.1"]
-                 [ring.middleware.logger "0.5.0"]
-                 [ring.middleware.conditional "0.2.0"]
-                 [fi.reaktor.log4j/log4j-email-throttle "1.0.0"]
+                 [speclj]
+                 [speclj-junit]
 
-                 ;; Utils
-                 [org.clojure/tools.trace "0.7.8"]
-                 [pandect "0.5.3"]]
+                 [environ]
 
-  :target-path "target/%s"
+                 [org.clojure/tools.logging]
 
-  :prep-tasks [
-       "buildfront"
-       "compile"
-  ]
-
-  :plugins [[speclj "3.3.1"]
-            [lein-modules "0.3.11"]
-            [lein-environ "1.0.0"]
-            [lein-shell "0.4.0"]
-            [lein-auto "0.1.2"]
-            [lein-ancient "0.6.7"]]
+                 [clj-time]
+                 [org.clojure/tools.trace]
+                 [pandect]]
 
   :test-paths ["spec"]
 
-  :uberjar-exclusions [#".*"]                               ;; Kludge to make top-level "lein sub uberjar" faster
-  :auto-clean false
-
-  :aliases {"buildfront" ^{:doc "Build frontend code with npm"} ["shell" "npm" "install" "--no-save"]})
+  :target-path "target/%s"
+)

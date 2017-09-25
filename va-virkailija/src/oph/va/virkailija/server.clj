@@ -7,7 +7,7 @@
             [ring.middleware.defaults :refer :all]
             [buddy.auth :refer [authenticated?]]
             [buddy.auth.middleware :refer [wrap-authentication]]
-            [buddy.auth.accessrules :refer [wrap-access-rules success error]]
+            [buddy.auth.accessrules :refer [wrap-access-rules error]]
             [buddy.auth.backends.session :refer [session-backend]]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
