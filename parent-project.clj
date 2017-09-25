@@ -25,7 +25,7 @@
                          ;; http
                          [buddy/buddy-auth "0.6.1"]
                          [com.novemberain/pantomime "2.7.0"]
-                         [compojure "1.4.0"]
+                         [compojure "1.6.0"]
                          [http-kit "2.2.0"]
                          [metosin/compojure-api "0.23.1"]
                          [ring/ring-core "1.6.2"]
