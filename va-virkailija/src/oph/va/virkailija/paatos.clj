@@ -1,7 +1,6 @@
 (ns oph.va.virkailija.paatos
   (:require
     [ring.util.http-response :refer :all]
-    [compojure.core :refer [defroutes GET POST]]
     [compojure.api.sweet :refer :all]
     [oph.va.hakija.api :as hakija-api]
     [oph.soresu.form.formutil :as formutil]

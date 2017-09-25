@@ -1,11 +1,11 @@
 (ns ^{:skip-aot true} oph.va.virkailija.routes
   (:use [clojure.tools.trace :only [trace]]
         [clojure.pprint :only [pprint]])
-  (:require [compojure.route :as route]
-            [clojure.tools.logging :as log]
+  (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
-            [compojure.core :refer [defroutes GET POST]]
+            [compojure.core :as compojure]
+            [compojure.route :as compojure-route]
             [compojure.api.sweet :refer :all]
             [compojure.api.exception :as compojure-ex]
             [ring.swagger.json-schema-dirty]
@@ -101,10 +101,10 @@
             (GET* "/" [] (on-healthcheck))
             (HEAD* "/" [] (on-healthcheck)))
 
-(defroutes resource-routes
-  (GET "/" [] (return-html "index.html"))
-  (GET "/admin/*" [] (return-html "admin.html"))
-  (GET "/yhteenveto/*" [] (return-html "summary.html"))
+(compojure/defroutes resource-routes
+  (compojure/GET "/" [] (return-html "index.html"))
+  (compojure/GET "/admin/*" [] (return-html "admin.html"))
+  (compojure/GET "/yhteenveto/*" [] (return-html "summary.html"))
   (GET* "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
         :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
         (on-hakemus-preview avustushaku-id hakemus-user-key))
@@ -118,11 +118,11 @@
         :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
         :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
         (on-selvitys avustushaku-id hakemus selvitys-type preview))
-  (GET "/translations.json" [] (get-translations))
-  (GET "/avustushaku/:id/*" [id] (return-html "index.html"))
+  (compojure/GET "/translations.json" [] (get-translations))
+  (compojure/GET "/avustushaku/:id/*" [id] (return-html "index.html"))
   (make-permanent-logo-route)
-  (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
-  (route/not-found "<p>Page not found.</p>"))
+  (compojure-route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
+  (compojure-route/not-found "<p>Page not found.</p>"))
 
 (defn- get-avustushaku-status []
   (GET* "/" [status]
@@ -548,10 +548,10 @@
                           (assoc-in [:headers "Access-Control-Allow-Origin"] "*"))
                       (not-found)))))
 
-(defroutes* userinfo-routes
+(compojure/defroutes userinfo-routes
             "User information"
 
-            (GET "/" [:as request]
+            (compojure/GET "/" [:as request]
               (ok (authentication/get-identity request))))
 
 (defroutes* ldap-routes
@@ -602,7 +602,7 @@
 (defroutes* login-routes
             "Authentication"
 
-            (GET "/logged-out" [] (return-html "login.html"))
+            (compojure/GET "/logged-out" [] (return-html "login.html"))
 
             (GET* "/cas" [ticket :as request]
                   :query-params [{ticket :- s/Str nil}]
@@ -627,7 +627,7 @@
                    :summary "Handle logout request from cas"
                    (authentication/cas-initiated-logout logoutRequest))
 
-            (GET "/logout" [:as request]
+            (compojure/GET "/logout" [:as request]
               (authentication/logout (-> request :session :identity))
               (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
                   (assoc :session nil))))

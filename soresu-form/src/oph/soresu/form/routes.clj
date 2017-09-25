@@ -1,9 +1,7 @@
 (ns oph.soresu.form.routes
   (:use [clojure.tools.trace :only [trace]])
-  (:require [compojure.route :as route]
-            [ring.util.http-response :refer :all]
+  (:require [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
-            [compojure.core :refer [GET]]
             [compojure.api.sweet :refer :all]
             [schema.core :as s]
             [oph.soresu.form.db :as form-db]

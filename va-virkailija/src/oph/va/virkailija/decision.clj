@@ -3,7 +3,6 @@
             [clostache.parser :refer [render]]
             [clojure.data.json :as json]
             [compojure.api.sweet :refer :all]
-            [compojure.core :refer [defroutes GET POST]]
             [oph.common.email :as email]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.soresu.form.formutil :as formutil]

@@ -1,10 +1,10 @@
 (ns ^{:skip-aot true} oph.va.hakija.routes
   (:use [clojure.tools.trace :only [trace]])
-  (:require [compojure.route :as route]
-            [clojure.tools.logging :as log]
+  (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
-            [compojure.core :refer [defroutes GET]]
+            [compojure.core :as compojure]
+            [compojure.route :as compojure-route]
             [compojure.api.sweet :refer :all]
             [compojure.api.exception :as compojure-ex]
             [compojure.api.upload :as upload]
@@ -21,17 +21,18 @@
             [oph.va.hakija.handlers :refer :all]
             [oph.common.organisation-service :as org]))
 
-(defroutes* healthcheck-routes
+(compojure/defroutes healthcheck-routes
   "Healthcheck routes"
 
-  (GET* "/" []
-        (if (hakija-db/health-check)
-          (ok {})
-          (not-found)))
-  (HEAD* "/" []
-        (if (hakija-db/health-check)
-          (ok {})
-          (not-found))))
+  (compojure/GET "/" []
+    (if (hakija-db/health-check)
+      (ok {})
+      (not-found)))
+
+  (compojure/HEAD "/" []
+    (if (hakija-db/health-check)
+      (ok {})
+      (not-found))))
 
 (defn- system-time-ok-response [datetime]
   (ok {:system-time (.toDate datetime)}))
@@ -225,18 +226,18 @@
     (if-let [hakemus-id (:id hakemus)]
       (hakija-db/add-paatos-view hakemus-id headers remote-addr))))
 
-(defroutes resource-routes
-  (GET "/" request
+(compojure/defroutes resource-routes
+  (compojure/GET "/" request
     (if (= (:name (environment-content)) "dev") (resp/redirect "/avustushaku/1/")
     (if (= (:server-name request) "statsunderstod.oph.fi")
       (resp/redirect "http://www.oph.fi/finansiering/statsunderstod")
       (resp/redirect "http://oph.fi/rahoitus/valtionavustukset"))))
 
   ;; Finnish subcontext
-  (GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
-  (GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "selvitys.html"))
-  (GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))
-  (GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
+  (compojure/GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
+  (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "selvitys.html"))
+  (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))
+  (compojure/GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
 
   (GET* "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
        :path-params [avustushaku-id :- Long user-key :- s/Str]
@@ -252,21 +253,21 @@
          )
        )
 
-  (route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
+  (compojure-route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
 
   ;; Swedish subcontext
-  (GET "/statsunderstod/:avustushaku-id/visa" [avustushaku-id] (return-html "index.html"))
-  (GET "/statsunderstod/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
-  (route/resources "/statsunderstod/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
+  (compojure/GET "/statsunderstod/:avustushaku-id/visa" [avustushaku-id] (return-html "index.html"))
+  (compojure/GET "/statsunderstod/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
+  (compojure-route/resources "/statsunderstod/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
 
   (make-permanent-logo-route)
 
-  (route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
-  (route/not-found "<p>Page not found.</p>"))
+  (compojure-route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
+  (compojure-route/not-found "<p>Page not found.</p>"))
 
 (defroutes* organisation-routes
   "API for fetching organisational data with businessId"
-  (GET "/" [organisation-id lang]
+  (GET* "/" [organisation-id lang]
     :query-params [organisation-id lang]
     (let [organisation-info
           (org/get-compact-translated-info
