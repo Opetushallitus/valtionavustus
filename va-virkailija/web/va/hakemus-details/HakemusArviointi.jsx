@@ -264,7 +264,7 @@ class SummaryComment extends React.Component {
     const allowEditing = this.props.allowEditing
     const controller = this.props.controller
     return <div className="value-edit summary-comment">
-      <label htmlFor="summary-comment">Huomautus ratkaisuyhteenvetoon</label>
+      <label htmlFor="summary-comment">Huomautus päätöslistaan</label>
       <textarea id="summary-comment" rows="1" disabled={!allowEditing} value={this.state.summaryComment}
              onChange={evt => this.summaryCommentUpdated(evt.target.value) } maxLength="128" />
     </div>
