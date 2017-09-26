@@ -509,7 +509,7 @@ luomista, jotta `master` ei eroa liiaksi `develop`:sta.
 
 Ennen pull requestin avaamista, toteuta ja tarkista seuraavat kohdat:
 
-[ ] Ohjeet kohta kohdalta, kuinka toteutus testataan (PR:n selitteeseen mukaan)
-[ ] Aja eslint
-[ ] Aja testit
+- [ ] Ohjeet kohta kohdalta, kuinka toteutus testataan (PR:n selitteeseen mukaan)
+- [ ] Aja eslint
+- [ ] Aja testit
 
