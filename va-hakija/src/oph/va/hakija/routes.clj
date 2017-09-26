@@ -8,6 +8,7 @@
             [compojure.api.sweet :refer :all]
             [compojure.api.exception :as compojure-ex]
             [compojure.api.upload :as upload]
+            [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
             [schema.core :as s]
             [oph.common.datetime :as datetime]
             [oph.soresu.common.config :refer [config config-simple-name]]

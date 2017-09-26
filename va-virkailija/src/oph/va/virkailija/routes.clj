@@ -8,7 +8,7 @@
             [compojure.route :as compojure-route]
             [compojure.api.sweet :refer :all]
             [compojure.api.exception :as compojure-ex]
-            [ring.swagger.json-schema-dirty]
+            [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
             [schema.core :as s]
             [cemerick.url :refer [map->query]]
             [oph.soresu.common.config :refer [config config-simple-name]]
