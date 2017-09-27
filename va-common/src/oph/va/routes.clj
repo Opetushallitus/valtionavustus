@@ -3,7 +3,7 @@
             [oph.soresu.common.routes :refer :all]
             [ring.util.http-response :refer :all]
             [compojure.core :as compojure]
-            [compojure.api.sweet :refer :all]
+            [compojure.api.sweet :as compojure-api]
             [clj-time.core :as t]
             [oph.common.datetime :as datetime]
             [oph.va.schema :refer :all]
@@ -36,17 +36,19 @@
     (-> (resource-response "public/img/logo-176x50@2x.png")
         (content-type "image/png"))))
 
-(defroutes* config-routes
-  (GET* "/environment" []
-         :return Environment
-         (ok (environment-content)))
+(compojure-api/defroutes config-routes
+  (compojure-api/GET "/environment" []
+    :return Environment
+    (ok (environment-content)))
+
   (compojure/GET "/translations.json" [] (get-translations))
-  (POST* "/errorlogger" []
-         :body [stacktrace (describe s/Any "JavaScript stack trace")]
-         :return nil
-         :summary "Sends client errors to serverside"
-         (log/warn stacktrace)
-         (ok)))
+
+  (compojure-api/POST "/errorlogger" []
+    :body [stacktrace (compojure-api/describe s/Any "JavaScript stack trace")]
+    :return nil
+    :summary "Sends client errors to serverside"
+    (log/warn stacktrace)
+    (ok)))
 
 (defmulti avustushaku-phase (fn [avustushaku] [(:status avustushaku)
                                                (t/after? (datetime/now) (datetime/parse (:start (:duration (:content avustushaku)))))

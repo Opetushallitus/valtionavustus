@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]
             [clostache.parser :refer [render]]
             [clojure.data.json :as json]
-            [compojure.api.sweet :refer :all]
+            [compojure.api.sweet :as compojure-api]
             [oph.common.email :as email]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.soresu.form.formutil :as formutil]
@@ -244,12 +244,12 @@
         body (render template params)]
     body))
 
-(defroutes* decision-routes
-            "Decision"
+(compojure-api/defroutes decision-routes
+  "Decision"
 
-            (GET* "/avustushaku/:avustushaku-id/hakemus/:hakemus-id" []
-                  :path-params [avustushaku-id :- Long hakemus-id :- Long]
-                  (let [body (paatos-html hakemus-id)]
-                    {:status  200
-                     :headers {"Content-Type" "text/html"}
-                     :body    body})))
+  (compojure-api/GET "/avustushaku/:avustushaku-id/hakemus/:hakemus-id" []
+    :path-params [avustushaku-id :- Long hakemus-id :- Long]
+    (let [body (paatos-html hakemus-id)]
+      {:status  200
+       :headers {"Content-Type" "text/html"}
+       :body    body})))

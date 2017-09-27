@@ -2,7 +2,7 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
-            [compojure.api.sweet :refer :all]
+            [compojure.api.sweet :as compojure-api]
             [schema.core :as s]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.schema :refer :all]
@@ -43,62 +43,64 @@
        (without-id)
        (formhandler/add-koodisto-values :form-db)))
 
-(defroutes* form-restricted-routes
+(compojure-api/defroutes form-restricted-routes
   "Restricted form routes"
 
-  (GET* "/:id" [id]
-        :path-params [id :- Long]
-        :return Form
-        (let [form (form-db/get-form id)]
-          (if form
-            (ok (form-to-return form))
-            (not-found)))))
+  (compojure-api/GET "/:id" [id]
+    :path-params [id :- Long]
+    :return Form
+    (let [form (form-db/get-form id)]
+      (if form
+        (ok (form-to-return form))
+        (not-found)))))
 
-(defroutes* form-routes
+(compojure-api/defroutes form-routes
   "Form routes"
 
-  (GET* "/" []
-        :return [Form]
-        (ok (form-db/list-forms)))
+  (compojure-api/GET "/" []
+    :return [Form]
+    (ok (form-db/list-forms)))
 
-  (GET* "/:id" [id]
-        :path-params [id :- Long]
-        :return Form
-        (let [form (form-db/get-form id)]
-          (if form
-            (ok (form-to-return form))
-            (not-found))))
+  (compojure-api/GET "/:id" [id]
+    :path-params [id :- Long]
+    :return Form
+    (let [form (form-db/get-form id)]
+      (if form
+        (ok (form-to-return form))
+        (not-found))))
 
-  (GET* "/:form-id/values/:values-id" [form-id values-id]
-        :path-params [form-id :- Long, values-id :- Long]
-        :return  Submission
-        :summary "Get current answers"
-        (get-form-submission form-id values-id))
+  (compojure-api/GET "/:form-id/values/:values-id" [form-id values-id]
+    :path-params [form-id :- Long, values-id :- Long]
+    :return  Submission
+    :summary "Get current answers"
+    (get-form-submission form-id values-id))
 
-  (GET* "/:form-id/values/:values-id/versions" [form-id values-id]
-        :path-params [form-id :- Long, values-id :- Long]
-        :return  [Submission]
-        :summary "Get all versions of submitted answers"
-        (get-form-submission-versions form-id values-id))
+  (compojure-api/GET "/:form-id/values/:values-id/versions" [form-id values-id]
+    :path-params [form-id :- Long, values-id :- Long]
+    :return  [Submission]
+    :summary "Get all versions of submitted answers"
+    (get-form-submission-versions form-id values-id))
 
-  (PUT* "/:form-id/values" [form-id :as request]
-        :path-params [form-id :- Long]
-        :body    [answers (describe Answers "New answers")]
-        :return  (s/either Submission
-                           SubmissionValidationErrors)
-        :summary "Create initial form answers"
-        (let [validation (validation/validate-form (form-db/get-form form-id) answers {})]
-          (if (every? empty? (vals validation))
-            (create-form-submission form-id answers)
-            (bad-request! validation))))
+  (compojure-api/PUT "/:form-id/values" [form-id :as request]
+    :path-params [form-id :- Long]
+    :body    [answers (compojure-api/describe Answers "New answers")]
+    :return  (s/if error-type?
+               SubmissionValidationErrors
+               Submission)
+    :summary "Create initial form answers"
+    (let [validation (validation/validate-form (form-db/get-form form-id) answers {})]
+      (if (every? empty? (vals validation))
+        (create-form-submission form-id answers)
+        (bad-request! validation))))
 
-  (POST* "/:form-id/values/:values-id" [form-id values-id :as request]
-         :path-params [form-id :- Long, values-id :- Long]
-         :body    [answers (describe Answers "New answers")]
-         :return  (s/either Submission
-                            SubmissionValidationErrors)
-         :summary "Update form values"
-         (let [validation (validation/validate-form (form-db/get-form form-id) answers {})]
-           (if (every? empty? (vals validation))
-             (update-form-submission form-id values-id  answers)
-             (bad-request! validation)))))
+  (compojure-api/POST "/:form-id/values/:values-id" [form-id values-id :as request]
+    :path-params [form-id :- Long, values-id :- Long]
+    :body    [answers (compojure-api/describe Answers "New answers")]
+    :return  (s/if error-type?
+               SubmissionValidationErrors
+               Submission)
+    :summary "Update form values"
+    (let [validation (validation/validate-form (form-db/get-form form-id) answers {})]
+      (if (every? empty? (vals validation))
+        (update-form-submission form-id values-id  answers)
+        (bad-request! validation)))))

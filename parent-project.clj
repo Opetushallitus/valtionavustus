@@ -27,7 +27,7 @@
                          [com.novemberain/pantomime "2.7.0"]
                          [compojure "1.6.0"]
                          [http-kit "2.2.0"]
-                         [metosin/compojure-api "0.23.1"]
+                         [metosin/compojure-api "1.1.11"]
                          [ring/ring-core "1.6.2"]
                          [ring/ring-devel "1.6.2"]
                          [ring.middleware.conditional "0.2.0"]
@@ -37,7 +37,7 @@
                          ;; json
                          [cheshire "5.8.0"]
                          [org.clojure/data.json "0.2.6"]
-                         [prismatic/schema "0.4.4"]
+                         [prismatic/schema "1.1.6"]
 
                          ;; database
                          [hikari-cp "1.7.5"]
@@ -74,6 +74,7 @@
                          [org.apache.commons/commons-email "1.5"]
                          [org.clojure/core.async "0.3.443"]
                          [org.clojure/core.memoize "0.5.9"]
+                         [org.clojure/tools.reader "1.1.0"]
                          [org.clojure/tools.trace "0.7.9"]
                          [org.scala-lang.modules/scala-xml_2.11 "1.0.6"]
                          [org.scala-lang/scala-library "2.11.11"]
