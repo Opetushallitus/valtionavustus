@@ -22,18 +22,17 @@
             [oph.va.hakija.handlers :refer :all]
             [oph.common.organisation-service :as org]))
 
-(compojure/defroutes healthcheck-routes
+(defn- on-healthcheck []
+  (if (hakija-db/health-check)
+    (ok {})
+    (not-found)))
+
+(compojure-api/defroutes healthcheck-routes
   "Healthcheck routes"
 
-  (compojure/GET "/" []
-    (if (hakija-db/health-check)
-      (ok {})
-      (not-found)))
+  (compojure-api/GET "/" [] (on-healthcheck))
 
-  (compojure/HEAD "/" []
-    (if (hakija-db/health-check)
-      (ok {})
-      (not-found))))
+  (compojure-api/HEAD "/" [] (on-healthcheck)))
 
 (defn- system-time-ok-response [datetime]
   (ok {:system-time (.toDate datetime)}))
@@ -226,42 +225,43 @@
     (if-let [hakemus-id (:id hakemus)]
       (hakija-db/add-paatos-view hakemus-id headers remote-addr))))
 
-(compojure/defroutes resource-routes
-  (compojure/GET "/" request
-    (if (= (:name (va-routes/environment-content)) "dev") (resp/redirect "/avustushaku/1/")
-    (if (= (:server-name request) "statsunderstod.oph.fi")
-      (resp/redirect "http://www.oph.fi/finansiering/statsunderstod")
-      (resp/redirect "http://oph.fi/rahoitus/valtionavustukset"))))
+(compojure-api/defroutes resource-routes
+  (compojure-api/undocumented
+   (compojure/GET "/" request
+     (if (= (:name (va-routes/environment-content)) "dev") (resp/redirect "/avustushaku/1/")
+         (if (= (:server-name request) "statsunderstod.oph.fi")
+           (resp/redirect "http://www.oph.fi/finansiering/statsunderstod")
+           (resp/redirect "http://oph.fi/rahoitus/valtionavustukset"))))
 
-  ;; Finnish subcontext
-  (compojure/GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
-  (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "selvitys.html"))
-  (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))
-  (compojure/GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
+   ;; Finnish subcontext
+   (compojure/GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "index.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "selvitys.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
 
-  (compojure-api/GET "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
-    :path-params [avustushaku-id :- Long user-key :- s/Str]
-    :query-params [{nolog :- s/Str nil}]
-    (if (nil? nolog) (log-paatos-display user-key (:headers request) (:remote-addr request)))
-    (let [hakemus (hakija-db/get-hakemus user-key)
-          hakemus-id (:id hakemus)
-          hakemus-paatos (hakija-db/get-hakemus-paatos hakemus-id)
-          decision (:decision hakemus-paatos)]
-      {:status 200
-       :headers {"Content-Type" "text/html"}
-       :body decision}))
+   (compojure-api/GET "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
+     :path-params [avustushaku-id :- Long user-key :- s/Str]
+     :query-params [{nolog :- s/Str nil}]
+     (if (nil? nolog) (log-paatos-display user-key (:headers request) (:remote-addr request)))
+     (let [hakemus (hakija-db/get-hakemus user-key)
+           hakemus-id (:id hakemus)
+           hakemus-paatos (hakija-db/get-hakemus-paatos hakemus-id)
+           decision (:decision hakemus-paatos)]
+       {:status 200
+        :headers {"Content-Type" "text/html"}
+        :body decision}))
 
-  (compojure-route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
+   (compojure-route/resources "/avustushaku/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
 
-  ;; Swedish subcontext
-  (compojure/GET "/statsunderstod/:avustushaku-id/visa" [avustushaku-id] (return-html "index.html"))
-  (compojure/GET "/statsunderstod/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
-  (compojure-route/resources "/statsunderstod/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
+   ;;; Swedish subcontext
+   (compojure/GET "/statsunderstod/:avustushaku-id/visa" [avustushaku-id] (return-html "index.html"))
+   (compojure/GET "/statsunderstod/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
 
-  (va-routes/make-permanent-logo-route)
+   va-routes/logo-route
 
-  (compojure-route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
-  (compojure-route/not-found "<p>Page not found.</p>"))
+   (compojure-route/resources "/statsunderstod/:avustushaku-id/" {:mime-types {"html" "text/html; charset=utf-8"}})
+   (compojure-route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
+   (compojure-route/not-found "<p>Page not found.</p>")))
 
 (compojure-api/defroutes organisation-routes
   "API for fetching organisational data with businessId"

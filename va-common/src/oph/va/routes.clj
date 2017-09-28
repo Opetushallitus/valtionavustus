@@ -28,11 +28,11 @@
 (defn get-translations []
   (return-from-classpath "translations.json" "application/json; charset=utf-8"))
 
-(defn make-permanent-logo-route []
-  "Permanent url for logo. The url allows changing the logo later. The
-   image height must be an integer multiple of 50px so that the result
-   of image downscaling made by the browser is crisp."
-  (compojure/GET "/img/logo.png" []
+(def logo-route
+  (compojure-api/GET "/img/logo.png" []
+    :summary "Permanent url for logo. The url allows changing the logo later. The "
+             "image height must be an integer multiple of 50px so that the result "
+             "of image downscaling made by the browser is crisp."
     (-> (resource-response "public/img/logo-176x50@2x.png")
         (content-type "image/png"))))
 
@@ -41,7 +41,9 @@
     :return Environment
     (ok (environment-content)))
 
-  (compojure/GET "/translations.json" [] (get-translations))
+  (compojure-api/GET "/translations.json" []
+    :summary "Translated messages (localization)"
+    (get-translations))
 
   (compojure-api/POST "/errorlogger" []
     :body [stacktrace (compojure-api/describe s/Any "JavaScript stack trace")]

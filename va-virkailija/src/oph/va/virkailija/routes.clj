@@ -99,30 +99,45 @@
   "Healthcheck routes"
 
   (compojure-api/GET "/" [] (on-healthcheck))
+
   (compojure-api/HEAD "/" [] (on-healthcheck)))
 
-(compojure/defroutes resource-routes
-  (compojure/GET "/" [] (return-html "index.html"))
-  (compojure/GET "/admin/*" [] (return-html "admin.html"))
-  (compojure/GET "/yhteenveto/*" [] (return-html "summary.html"))
-  (compojure-api/GET "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
-    :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
-    (on-hakemus-preview avustushaku-id hakemus-user-key))
-  (compojure-api/GET "/hakemus-edit/:avustushaku-id/:hakemus-user-key" []
-    :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
-    (on-hakemus-edit avustushaku-id hakemus-user-key))
-  (compojure-api/GET "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
-    :path-params [avustushaku-id :- Long, user-key :- s/Str]
-    (on-paatos-preview avustushaku-id user-key))
-  (compojure-api/GET "/selvitys/avustushaku/:avustushaku-id/:selvitys-type" []
-    :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
-    :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
-    (on-selvitys avustushaku-id hakemus selvitys-type preview))
-  (compojure/GET "/translations.json" [] (va-routes/get-translations))
-  (compojure/GET "/avustushaku/:id/*" [id] (return-html "index.html"))
-  (va-routes/make-permanent-logo-route)
-  (compojure-route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
-  (compojure-route/not-found "<p>Page not found.</p>"))
+(compojure-api/defroutes resource-routes
+  (compojure-api/GET "/translations.json" []
+    :summary "Translated messages (localization)"
+    (va-routes/get-translations))
+
+  (compojure-api/undocumented
+   (compojure/GET "/" [] (return-html "index.html"))
+
+   (compojure/GET "/admin/*" [] (return-html "admin.html"))
+
+   (compojure/GET "/yhteenveto/*" [] (return-html "summary.html"))
+
+   (compojure-api/GET "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
+     :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
+     (on-hakemus-preview avustushaku-id hakemus-user-key))
+
+   (compojure-api/GET "/hakemus-edit/:avustushaku-id/:hakemus-user-key" []
+     :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
+     (on-hakemus-edit avustushaku-id hakemus-user-key))
+
+   (compojure-api/GET "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
+     :path-params [avustushaku-id :- Long, user-key :- s/Str]
+     (on-paatos-preview avustushaku-id user-key))
+
+   (compojure-api/GET "/selvitys/avustushaku/:avustushaku-id/:selvitys-type" []
+     :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
+     :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
+     (on-selvitys avustushaku-id hakemus selvitys-type preview))
+
+   (compojure/GET "/avustushaku/:id/*" [id] (return-html "index.html"))
+
+   va-routes/logo-route
+
+   (compojure-route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
+
+   (compojure-route/not-found "<p>Page not found.</p>")))
 
 (defn- get-avustushaku-status []
   (compojure-api/GET "/" [status]
@@ -542,10 +557,10 @@
             (assoc-in [:headers "Access-Control-Allow-Origin"] "*"))
         (not-found)))))
 
-(compojure/defroutes userinfo-routes
+(compojure-api/defroutes userinfo-routes
   "User information"
 
-  (compojure/GET "/" [:as request]
+  (compojure-api/GET "/" [:as request]
     (ok (authentication/get-identity request))))
 
 (compojure-api/defroutes ldap-routes
@@ -596,8 +611,6 @@
 (compojure-api/defroutes login-routes
   "Authentication"
 
-  (compojure/GET "/logged-out" [] (return-html "login.html"))
-
   (compojure-api/GET "/cas" [ticket :as request]
     :query-params [{ticket :- s/Str nil}]
     :return s/Any
@@ -621,10 +634,13 @@
     :summary "Handle logout request from cas"
     (authentication/cas-initiated-logout logoutRequest))
 
-  (compojure/GET "/logout" [:as request]
-    (authentication/logout (-> request :session :identity))
-    (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
-        (assoc :session nil))))
+  (compojure-api/undocumented
+   (compojure/GET "/logout" [:as request]
+     (authentication/logout (-> request :session :identity))
+     (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
+         (assoc :session nil)))
+
+   (compojure/GET "/logged-out" [] (return-html "login.html"))))
 
 (def api-config
   {:formats [:json-kw]
