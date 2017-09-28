@@ -495,9 +495,21 @@ Branchit mergetään `develop`-haaraan pull requesteilla.
 `develop`-haara mergetään `master`:iin hallitusti, esimerkiksi ennen
 sprintin demoa.
 
+`master`-haara kannattaa mergetä `develop`:iin aina ennen uuden branchin
+luomista, jotta `master` ei eroa liiaksi `develop`:sta.
+
 ### Tyyli
 
 - `.editorconfig`-tiedostossa on määritelty perustyylit, kuten
   - sisennys: 2 välilyöntiä
   - rivin pituus 80 merkkiä
 - Frontendissä CSS-luokkien nimet pienellä ja sanat viivalla eroteltuna
+
+### Kehityksen muistilista
+
+Ennen pull requestin avaamista, toteuta ja tarkista seuraavat kohdat:
+
+- [ ] Ohjeet kohta kohdalta, kuinka toteutus testataan (PR:n selitteeseen mukaan)
+- [ ] Aja eslint
+- [ ] Aja testit
+
