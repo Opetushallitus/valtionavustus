@@ -5,10 +5,10 @@ import BusinessIdSearch from "./component/BusinessIdSearch.jsx"
 export default class FormContainer extends React.Component {
   constructor(props){
     super(props)
-     this.getFieldValue = this.getFieldValue.bind(this)
+     this.getOrganizationValues = this.getOrganizationValues.bind(this)
   }
 
-  getFieldValue(id){
+  getOrganizationValues(id){
       if (this.props.state.configuration.preview) {
         return null
       }
@@ -33,20 +33,16 @@ export default class FormContainer extends React.Component {
     const isTestProfile = this.props.state.configuration.develMode
     const isPreviewPage = this.props.state.saveStatus.savedObject === null
     const isAdminViewPage = this.props.state.configuration.preview === true
-    const areEmptyFields =  !this.getFieldValue("organization") || !this.getFieldValue("organization-email") || !this.getFieldValue("business-id") || !this.getFieldValue("organization-postal-address")
+    const isRefreshed = performance.navigation.type == 1
 
-    const fieldValue = this.props.state.saveStatus.values.value
-    //const isOrganizationNull = fieldValue["organization"]
+    const conditions = !isTestProfile && !isAdminViewPage && (!isPreviewPage && ((this.props.state.saveStatus.savedObject.version == 1) || (isRefreshed && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getOrganizationValues(item)).some(x => (x == "" || x == null))))))
 
-    // Check any of the values are missing, if so, show the modal
-    const isBusinessIdSearchNeeded = !isPreviewPage && !isAdminViewPage && areEmptyFields
 
 
     return (
       <section id={containerId} >
         {headerElements}
-        {console.log(areEmptyFields)}
-        { (isBusinessIdSearchNeeded) &&
+        { (conditions) &&
           <BusinessIdSearch state={this.props.state} controller={controller}/> }
         {formElement}
       </section>
