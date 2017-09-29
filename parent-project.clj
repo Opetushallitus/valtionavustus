@@ -32,7 +32,7 @@
                          [ring/ring-devel "1.6.2"]
                          [ring.middleware.conditional "0.2.0"]
                          [ring.middleware.logger "0.5.0"]
-                         [ring/ring-defaults "0.1.5"]
+                         [ring/ring-defaults "0.3.1"]
 
                          ;; json
                          [cheshire "5.8.0"]

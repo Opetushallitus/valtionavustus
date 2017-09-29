@@ -86,6 +86,7 @@
                      (assoc-in [:session :store] (cookie-store {:key (-> config :server :cookie-key)}))
                      (assoc-in [:session :cookie-name] "identity")
                      (assoc-in [:session :cookie-attrs :max-age] 60000)
+                     (assoc-in [:session :cookie-attrs :same-site] :lax)  ; required for CAS initiated redirection
                      (assoc-in [:session :cookie-attrs :secure] (-> config :server :require-https?)))
         handler (as-> #'all-routes h
                   (with-authentication h)
