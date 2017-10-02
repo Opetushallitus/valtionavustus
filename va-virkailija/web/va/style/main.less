@@ -396,21 +396,47 @@ table.hakemus-list {
       margin-bottom: 10px;
       margin-top: 10px;
 
-      &__header {
+      &__header, &__value {
         text-align: left;
+        vertical-align: top;
+      }
+
+      &__header {
+        padding: 4px 4px 4px 0;
+
+        &--for-value-input {
+          padding-top: 8px;
+        }
       }
 
       &__value {
-        padding: 4px 0 4px 10px;
+        padding: 4px 0 4px 4px;
+      }
+
+      &__value-input-container {
+        position: relative;
+      }
+
+      .selvitys-email-header__value-input-container + .selvitys-email-header__value-input-container {
+        margin-top: 4px;
       }
 
       &__value-input {
         width: 500px;
+        height: 28px;
 
         &--error {
           background-color: lighten(@bright-red, 33%);
           border-color: @bright-red;
         }
+      }
+
+      &__remove-value-input-button {
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        right: -26px;
+        bottom: 3px;
       }
     }
 
