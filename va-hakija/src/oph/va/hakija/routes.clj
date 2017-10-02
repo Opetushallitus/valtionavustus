@@ -303,6 +303,8 @@
 
   (compojure-api/context "/api/avustushaku" [] :tags ["avustushaut"] avustushaku-routes)
 
+  (compojure-api/context "/api/organisations" [] organisation-routes)
+
   va-routes/config-routes
   resource-routes)
 
