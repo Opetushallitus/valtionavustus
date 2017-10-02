@@ -3,9 +3,9 @@
 *.iml
 .*.swp
 .DS_Store
+.idea/
 .lein-*
 .nrepl-port
-/.idea/
 /doc/gh-md-toc
 /servers/fact_cache/
 /servers/python-venv/
