@@ -1,12 +1,24 @@
 (ns oph.soresu.form.schema
   (:require [schema.core :as s]
-            [oph.soresu.common.types :as types]))
+            [schema.spec.leaf :as s-leaf]
+            [schema.spec.core :as s-spec]
+            [oph.soresu.common.types :as types])
+  (:import [javax.mail.internet AddressException InternetAddress]))
 
 (defn field-class-type-of? [field-class n]
   (and (map? n) (= (:fieldClass n) field-class)))
 
 (defn error-type? [n]
   (and (map? n) (contains? n :error)))
+
+(def Email
+  (s/pred (fn [s]
+            (and (string? s)
+                 (try
+                   (do (.validate (InternetAddress. s))
+                       true)
+                   (catch AddressException e false))))
+          "Email"))
 
 (defn create-form-schema [custom-wrapper-element-types custom-form-element-types custom-info-element-types]
   (s/defschema LocalizedString {:fi s/Str
