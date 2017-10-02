@@ -1,8 +1,7 @@
 (ns oph.va.virkailija.paatos
   (:require
     [ring.util.http-response :refer :all]
-    [compojure.core :refer [defroutes GET POST]]
-    [compojure.api.sweet :refer :all]
+    [compojure.api.sweet :as compojure-api]
     [oph.va.hakija.api :as hakija-api]
     [oph.soresu.form.formutil :as formutil]
     [oph.va.virkailija.email :as email]
@@ -96,48 +95,48 @@
     (run! (partial send-selvitys-for-all avustushaku-id selvitys-type) accepted-ids)
     (ok {:count (count accepted-ids)})))
 
-(defroutes* paatos-routes
+(compojure-api/defroutes paatos-routes
   "Paatos routes"
 
-  (POST* "/sendall/:avustushaku-id" []
-         :path-params [avustushaku-id :- Long]
-         (let [ids (get-hakemus-ids-to-send avustushaku-id)]
-           (log/info "Send all paatos ids " ids)
-           (run! send-paatos-for-all ids)
-           (ok (merge {:status "ok"}
-                      (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
+  (compojure-api/POST "/sendall/:avustushaku-id" []
+    :path-params [avustushaku-id :- Long]
+    (let [ids (get-hakemus-ids-to-send avustushaku-id)]
+      (log/info "Send all paatos ids " ids)
+      (run! send-paatos-for-all ids)
+      (ok (merge {:status "ok"}
+                 (select-keys (get-sent-status avustushaku-id) [:sent :count :sent-time :paatokset])))))
 
-  (POST* "/regenerate/:avustushaku-id" []
-         :path-params [avustushaku-id :- Long]
-         (let [ids-result (hakija-api/find-regenerate-hakemus-paatos-ids avustushaku-id)
-               ids (map :hakemus_id ids-result)]
-           (log/info "Regenereate " ids)
-           (run! regenerate-paatos ids)
-           (ok {:status "ok"})))
+  (compojure-api/POST "/regenerate/:avustushaku-id" []
+    :path-params [avustushaku-id :- Long]
+    (let [ids-result (hakija-api/find-regenerate-hakemus-paatos-ids avustushaku-id)
+          ids (map :hakemus_id ids-result)]
+      (log/info "Regenereate " ids)
+      (run! regenerate-paatos ids)
+      (ok {:status "ok"})))
 
 
-  (GET* "/sent/:avustushaku-id" []
-        :path-params [avustushaku-id :- Long]
-        (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
-              avustushaku-name (-> avustushaku :content :name :fi)
-              sent-status (get-sent-status avustushaku-id)
-              first-hakemus-id (first (:ids sent-status))
-              first-hakemus (hakija-api/get-hakemus first-hakemus-id)
-              first-hakemus-user-key (:user_key first-hakemus)]
-          (ok (merge
-                {:status "ok"
-                 :mail (email/mail-example
-                         :paatos {:avustushaku-name avustushaku-name
-                                  :url "URL_PLACEHOLDER"
-                                  :register-number (:register_number first-hakemus)
-                                  :project-name (:project_name first-hakemus)})
-                 :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)}
-                (select-keys sent-status [:sent :count :sent-time :paatokset])))))
+  (compojure-api/GET "/sent/:avustushaku-id" []
+    :path-params [avustushaku-id :- Long]
+    (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+          avustushaku-name (-> avustushaku :content :name :fi)
+          sent-status (get-sent-status avustushaku-id)
+          first-hakemus-id (first (:ids sent-status))
+          first-hakemus (hakija-api/get-hakemus first-hakemus-id)
+          first-hakemus-user-key (:user_key first-hakemus)]
+      (ok (merge
+           {:status "ok"
+            :mail (email/mail-example
+                   :paatos {:avustushaku-name avustushaku-name
+                            :url "URL_PLACEHOLDER"
+                            :register-number (:register_number first-hakemus)
+                            :project-name (:project_name first-hakemus)})
+            :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)}
+           (select-keys sent-status [:sent :count :sent-time :paatokset])))))
 
-  (GET* "/views/:hakemus-id" []
-        :path-params [hakemus-id :- Long]
-        (ok {:views (hakija-api/find-paatos-views hakemus-id)}))
+  (compojure-api/GET "/views/:hakemus-id" []
+    :path-params [hakemus-id :- Long]
+    (ok {:views (hakija-api/find-paatos-views hakemus-id)}))
 
-  (GET* "/emails/:hakemus-id" []
-        :path-params [hakemus-id :- Long]
-        (ok {:emails (paatos-emails hakemus-id)})))
+  (compojure-api/GET "/emails/:hakemus-id" []
+    :path-params [hakemus-id :- Long]
+    (ok {:emails (paatos-emails hakemus-id)})))
