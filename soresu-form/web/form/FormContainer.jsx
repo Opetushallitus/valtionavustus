@@ -44,8 +44,6 @@ export default class FormContainer extends React.Component {
     return (
       <section id={containerId} >
         {headerElements}
-        {console.log(isLoppuselvitys)}
-        {console.log(isValiselvitys)}
         { (conditions) &&
           <BusinessIdSearch state={this.props.state} controller={controller}/> }
         {formElement}
