@@ -34,8 +34,8 @@ export default class FormContainer extends React.Component {
     const isPreviewPage = this.props.state.saveStatus.savedObject === null
     const isAdminViewPage = this.props.state.configuration.preview === true
     const isRefreshed = performance.navigation.type == 1
-    const isValiselvitys = this.props.state.avustushaku.valiselvitysdate
-    const isLoppuselvitys = this.props.state.avustushaku.loppuselvitysdate
+    const isValiselvitys = this.props.hakemusType == "valiselvitys"
+    const isLoppuselvitys = this.props.hakemusType == "loppuselvitys"
 
     const conditions = !isTestProfile && !isAdminViewPage && !isValiselvitys && !isLoppuselvitys && (!isPreviewPage && ((this.props.state.saveStatus.savedObject.version == 1) || (isRefreshed && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getOrganizationValues(item)).some(x => (x == "" || x == null))))))
 
@@ -44,6 +44,8 @@ export default class FormContainer extends React.Component {
     return (
       <section id={containerId} >
         {headerElements}
+        {console.log(isLoppuselvitys)}
+        {console.log(isValiselvitys)}
         { (conditions) &&
           <BusinessIdSearch state={this.props.state} controller={controller}/> }
         {formElement}
