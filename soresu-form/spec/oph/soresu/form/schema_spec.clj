@@ -1,9 +1,7 @@
 (ns oph.soresu.form.schema-spec
   (:require [speclj.core :refer :all]
             [oph.soresu.form.schema :refer :all]
-            [schema.core :as s])
-
-  (:import [oph.soresu.form.schema EmailSchema]))
+            [schema.core :as s]))
 
 (describe "form schema"
   (it "validates email"
