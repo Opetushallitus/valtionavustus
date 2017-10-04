@@ -14,20 +14,21 @@ const organizationToFormFieldIds = {
   "contact": "organization-postal-address"
 }
 
+const validateBusinessId = str =>
+  str.match(/^\d{7}-\d$/) ? {isDisabled: false, error: ""} : {isDisabled: true}
+
 export default class BusinessIdSearch extends React.Component {
   constructor(props) {
     super(props)
-    this.handleClick = this.handleClick.bind(this)
+    this.fetchOrganizationData = this.fetchOrganizationData.bind(this)
     this.changeFieldValue = this.changeFieldValue.bind(this)
     this.openModal = this.openModal.bind(this)
     this.afterOpenModal = this.afterOpenModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
     this.handleOnChange = this.handleOnChange.bind(this)
     this.handleOnSubmit = this.handleOnSubmit.bind(this)
-    this.validate = this.validate.bind(this)
     this.state = {
       modalIsOpen: true,
-      typed: "",
       isDisabled: true,
       error: "error",
       incorrectBusinessId: false,
@@ -52,7 +53,6 @@ export default class BusinessIdSearch extends React.Component {
     this.setState({modalIsOpen: false})
   }
 
-
   changeFieldValue(data, fieldId, organizationFieldName) {
     const field = FormUtil.findField(this.formContent, fieldId)
 
@@ -71,32 +71,19 @@ export default class BusinessIdSearch extends React.Component {
 
   // events from inputting the organisational id (y-tunnus)
   handleOnSubmit() {
-    this.handleClick(this.state.businessId)
-    this.setState({modalIsOpen: false})
+    this.setState(state => {
+      this.fetchOrganizationData(state.businessId)
+      return {modalIsOpen: false}
+    })
   }
-
 
   handleOnChange(event) {
     const inputted = event.target.value
-    this.validate(inputted)
-    this.setState({typed: inputted})
-    this.setState({businessId: inputted})
-  }
-
-  //validate input of business-id
-  validate(inputted){
-    const text = inputted
-    const businessIdMatch = /^\d{7}-\d$/
-    if (text.match(businessIdMatch)) {
-      this.setState({isDisabled: false})
-      this.setState({error: ""})
-    }else {
-      this.setState({isDisabled: true})
-    }
+    this.setState({businessId: inputted, ...validateBusinessId(inputted)})
   }
 
   // actions that happen after user has submitted their organisation-id, calls backend organisaton api
-  handleClick(id) {
+  fetchOrganizationData(id) {
     const language = this.props.state.configuration.lang
     const url = this.props.controller.createOrganisationInfoUrl(this.props.state)
 
