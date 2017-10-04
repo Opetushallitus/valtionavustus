@@ -5,19 +5,19 @@ import BusinessIdSearch from "./component/BusinessIdSearch.jsx"
 export default class FormContainer extends React.Component {
   constructor(props){
     super(props)
-     this.getOrganizationValues = this.getOrganizationValues.bind(this)
+     this.getOrganizationValue = this.getOrganizationValue.bind(this)
   }
 
-  getOrganizationValues(id){
-      if (this.props.state.configuration.preview) {
-        return null
-      }
-      const fieldValues = this.props.state.saveStatus.values.value
-      if (fieldValues.find(x => x.key === id) != undefined){
-        return fieldValues.filter(value => value.key == id)[0].value
-      }
+  getOrganizationValue(id) {
+    if (this.props.state.configuration.preview) {
       return null
     }
+    const fieldValues = this.props.state.saveStatus.values.value
+    const value = _.find(fieldValues, x => x.key === id)
+    return value !== undefined
+      ? value.value
+      : null
+  }
 
   render() {
     const {state, controller, formContainerClass} = this.props
@@ -37,7 +37,7 @@ export default class FormContainer extends React.Component {
     const isValiselvitys = this.props.hakemusType == "valiselvitys"
     const isLoppuselvitys = this.props.hakemusType == "loppuselvitys"
 
-    const conditions = !isTestProfile && !isAdminViewPage && !isValiselvitys && !isLoppuselvitys && (!isPreviewPage && ((this.props.state.saveStatus.savedObject.version == 1) || (isRefreshed && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getOrganizationValues(item)).some(x => (x == "" || x == null))))))
+    const conditions = !isTestProfile && !isAdminViewPage && !isValiselvitys && !isLoppuselvitys && (!isPreviewPage && ((this.props.state.saveStatus.savedObject.version == 1) || (isRefreshed && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getOrganizationValue(item)).some(x => (x == "" || x == null))))))
 
 
 
