@@ -15,7 +15,7 @@ const organizationToFormFieldIds = {
 }
 
 const validateBusinessId = str =>
-  str.match(/^\d{7}-\d$/) ? {isDisabled: false, error: ""} : {isDisabled: true}
+  str.match(/^\d{7}-\d$/) ? {isDisabled: false, error: ""} : {isDisabled: true, error: "error"}
 
 export default class BusinessIdSearch extends React.Component {
   constructor(props) {
