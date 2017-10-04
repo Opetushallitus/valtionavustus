@@ -43,6 +43,7 @@ export default class VaForm extends React.Component {
                        formContainerClass={formContainerClass}
                        headerElements={headerElements}
                        infoElementValues={state.avustushaku}
+                       hakemusType = {this.props.hakemusType}
         />
       </div>
     )

@@ -36,8 +36,8 @@
   Postal addess is being trimmed by removing Finnish tag 'posti_'."
   [{:keys [osoite postinumeroUri postitoimipaikka]}]
   {:address osoite
-     :postal-number (clojure.string/replace postinumeroUri "posti_" "")
-     :city postitoimipaikka})
+   :postal-number (clojure.string/replace (str postinumeroUri) "posti_" "")
+   :city postitoimipaikka})
 
 (defn compact-organisation-info
   "Function compacts organisation info.

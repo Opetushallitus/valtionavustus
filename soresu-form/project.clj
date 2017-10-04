@@ -21,21 +21,15 @@
                  [http-kit]
                  [ring/ring-core]
                  [ring/ring-devel]
-                 [compojure :exclusions [instaparse]]
-                 [metosin/compojure-api :exclusions [commons-codec
-                                                     instaparse
-                                                     joda-time
-                                                     clj-time
-                                                     org.clojure/tools.reader
-                                                     prismatic/schema
-                                                     ring]]
+                 [compojure]
+                 [metosin/compojure-api]
 
                  [cheshire]
                  [prismatic/schema]
 
                  [org.postgresql/postgresql]
                  [yesql]
-                 [hikari-cp :exclusions [prismatic/schema]]
+                 [hikari-cp]
                  [org.flywaydb/flyway-core]
 
                  [speclj]

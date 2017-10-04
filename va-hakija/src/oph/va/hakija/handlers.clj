@@ -1,9 +1,6 @@
 (ns ^{:skip-aot true} oph.va.hakija.handlers
   (:use [clojure.tools.trace :only [trace]])
   (:require [ring.util.http-response :refer :all]
-            [compojure.core :refer [defroutes GET]]
-            [compojure.api.sweet :refer :all]
-            [ring.swagger.json-schema-dirty]
             [oph.soresu.common.config :refer [config config-simple-name]]
             [oph.common.datetime :as datetime]
             [oph.soresu.form.db :as form-db]
