@@ -1,5 +1,24 @@
 (ns oph.soresu.form.schema
-  (:require [schema.core :as s]))
+  (:require [schema.core :as s]
+            [schema.spec.leaf :as s-leaf]
+            [schema.spec.core :as s-spec]
+            [oph.soresu.common.types :as types])
+  (:import [javax.mail.internet AddressException InternetAddress]))
+
+(defn field-class-type-of? [field-class n]
+  (and (map? n) (= (:fieldClass n) field-class)))
+
+(defn error-type? [n]
+  (and (map? n) (contains? n :error)))
+
+(def Email
+  (s/pred (fn [s]
+            (and (string? s)
+                 (try
+                   (do (.validate (InternetAddress. s))
+                       true)
+                   (catch AddressException e false))))
+          "Email"))
 
 (defn create-form-schema [custom-wrapper-element-types custom-form-element-types custom-info-element-types]
   (s/defschema LocalizedString {:fi s/Str
@@ -45,8 +64,8 @@
                             :required s/Bool
                             (s/optional-key :label) LocalizedString
                             :helpText LocalizedString
-                            (s/optional-key :initialValue) (s/either LocalizedString
-                                                                     s/Int)
+                            (s/optional-key :initialValue) (s/conditional integer? s/Int
+                                                                          :else LocalizedString)
                             (s/optional-key :params) s/Any
                             (s/optional-key :options) [Option]
                             :fieldType (apply s/enum form-element-types)})
@@ -58,30 +77,31 @@
                               (s/optional-key :label) LocalizedString
                               (s/optional-key :text) LocalizedString})
 
-    (s/defschema BasicElement (s/either FormField
-                                        Button
-                                        InfoElement))
+    (s/defschema BasicElement (s/conditional (partial field-class-type-of? "formField") FormField
+                                             (partial field-class-type-of? "button") Button
+                                             (partial field-class-type-of? "infoElement") InfoElement))
 
-    (s/defschema WrapperElement {:fieldClass              (s/eq "wrapperElement")
-                                 :id                      s/Str
-                                 :fieldType               (apply s/enum wrapper-element-types )
-                                 :children                [(s/either BasicElement
-                                                           (s/recursive #'WrapperElement))]
-                                 (s/optional-key :params) s/Any
-                                 (s/optional-key :label)  LocalizedString
+    (s/defschema WrapperElement {:fieldClass                (s/eq "wrapperElement")
+                                 :id                        s/Str
+                                 :fieldType                 (apply s/enum wrapper-element-types )
+                                 :children                  [(s/if (partial field-class-type-of? "wrapperElement")
+                                                               (s/recursive #'WrapperElement)
+                                                               BasicElement)]
+                                 (s/optional-key :params)   s/Any
+                                 (s/optional-key :label)    LocalizedString
                                  (s/optional-key :helpText) LocalizedString})
 
     (s/defschema Answer {:key s/Str,
-                           :value (s/either s/Str
-                                            s/Int
-                                            [s/Str]
-                                            [[s/Str]]
-                                            [(s/recursive #'Answer)])
-                           :fieldType (apply s/enum all-answer-element-types)}))
+                         :value (s/conditional integer? s/Int
+                                               string? s/Str
+                                               (partial types/sequential-of? String) [s/Str]
+                                               (partial types/sequential-2d-of? String) [[s/Str]]
+                                               :else [(s/recursive #'Answer)])
+                         :fieldType (apply s/enum all-answer-element-types)}))
 
-
-  (s/defschema Content [(s/either BasicElement
-                                  WrapperElement)])
+  (s/defschema Content [(s/if (partial field-class-type-of? "wrapperElement")
+                          WrapperElement
+                          BasicElement)])
 
   (s/defschema Rule {:type s/Str
                      :triggerId s/Str
@@ -90,8 +110,8 @@
 
   (s/defschema Rules [Rule])
 
-  (s/defschema Form {:content Content,
-                     :rules Rules,
+  (s/defschema Form {:content Content
+                     :rules Rules
                      :created_at s/Inst
                      :updated_at s/Inst})
 

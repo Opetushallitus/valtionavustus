@@ -1,9 +1,11 @@
 import React from 'react'
 import Immutable from 'seamless-immutable'
 import _ from 'lodash'
+import ClassNames from 'classnames'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import JsUtil from 'soresu-form/web/JsUtil'
+import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 import Translator from 'soresu-form/web/form/Translator'
 import NameFormatter from 'va-common/web/va/util/NameFormatter'
 
@@ -33,6 +35,8 @@ const findRecipientEmail = (selvitysAnswers, hakemusAnswers) =>
   findFirstPreferredEmail(JsUtil.flatFilter(selvitysAnswers, isNonEmptyEmailField)) ||
     findFirstPreferredEmail(JsUtil.flatFilter(hakemusAnswers, isNonEmptyEmailField))
 
+const isValidEmail = email => !SyntaxValidator.validateEmail(email)
+
 const makeState = ({hakemus, selvitysType, selvitysHakemus, avustushaku, userInfo, lang, translations}) => {
   const translator = new Translator(translations)
 
@@ -58,7 +62,10 @@ const makeState = ({hakemus, selvitysType, selvitysHakemus, avustushaku, userInf
       "selvitys-type-capitalized": selvitysTypeCapitalized,
       "register-number": registerNumber
     }),
-    recipientEmail
+    recipientEmail: {
+      value: recipientEmail,
+      isValid: isValidEmail(recipientEmail)
+    }
   }
 }
 
@@ -90,7 +97,13 @@ export default class SelvitysEmail extends React.Component {
   }
 
   onRecipientEmailChange(event) {
-    this.setState({recipientEmail: event.target.value})
+    const value = event.target.value
+    this.setState({
+      recipientEmail: {
+        value,
+        isValid: isValidEmail(value)
+      }
+    })
   }
 
   onSubjectChange(event) {
@@ -105,7 +118,7 @@ export default class SelvitysEmail extends React.Component {
     const request = {
       message: this.state.message,
       "selvitys-hakemus-id": this.props.selvitysHakemus.id,
-      to: this.state.recipientEmail,
+      to: this.state.recipientEmail.value,
       subject: this.state.subject
     }
 
@@ -166,7 +179,12 @@ export default class SelvitysEmail extends React.Component {
                 <a href={'mailto:' + sentSelvitysEmail.to}>{sentSelvitysEmail.to}</a>
               )}
               {!sentSelvitysEmail && (
-                <input type="text" className="selvitys-email-header__value-input" value={recipientEmail} onChange={this.onRecipientEmailChange}/>
+                <input type="text"
+                       className={ClassNames("selvitys-email-header__value-input", {
+                         "selvitys-email-header__value-input--error": !recipientEmail.isValid
+                       })}
+                       value={recipientEmail.value}
+                       onChange={this.onRecipientEmailChange}/>
               )}
               </td>
             </tr>
@@ -187,7 +205,7 @@ export default class SelvitysEmail extends React.Component {
         {!sentSelvitysEmail && (
           <div>
             <textarea className="selvitys-email-message selvitys-email-message--unsent" value={message} onChange={this.onMessageChange}/>
-            <button onClick={this.onSendMessage}>Lähetä viesti</button>
+            <button onClick={this.onSendMessage} disabled={!recipientEmail.isValid}>Lähetä viesti</button>
           </div>
         )}
       </div>
