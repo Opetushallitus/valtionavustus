@@ -1,10 +1,18 @@
 import React from "react"
+import _ from 'lodash'
+
 import ModalDialog from "./ModalDialog.jsx"
 import FormUtil from "../FormUtil.js"
 import LocalizedString from "./LocalizedString.jsx"
 import Translator from "../Translator.js"
 import HttpUtil from "../../HttpUtil.js"
 
+const organizationToFormFieldIds = {
+  "name": "organization",
+  "email": "organization-email",
+  "organisation-id": "business-id",
+  "contact": "organization-postal-address"
+}
 
 export default class BusinessIdSearch extends React.Component {
   constructor(props) {
@@ -24,21 +32,13 @@ export default class BusinessIdSearch extends React.Component {
       error: "error",
       incorrectBusinessId: false,
       otherErrorOnBusinessId: false,
-      businessId: "",
-      mappedFieldNames : {
-        "organization": "name",
-        "organization-email": "email",
-        "business-id": "organisation-id",
-        "organization-postal-address" : "contact"
-      }
+      businessId: ""
     }
     this.lang = this.props.state.configuration.lang
     this.translations = this.props.state.configuration.translations.misc
     this.translator = new Translator(this.props.state.configuration.translations.misc)
-
+    this.formContent = _.get(this.props, 'state.form.content', [])
   }
-
-
 
   openModal() {
     this.setState({modalIsOpen: true})
@@ -53,12 +53,19 @@ export default class BusinessIdSearch extends React.Component {
   }
 
 
-  changeFieldValue(data, fieldName, dataField){
-    if (dataField != "contact") {
-      this.props.controller.componentOnChangeListener(FormUtil.findField(this.props.state, fieldName), data[dataField])
-    } else {
-      const address = data.contact.address + " " + data.contact["postal-number"] + " " + data.contact.city
-      this.props.controller.componentOnChangeListener(FormUtil.findField(this.props.state, fieldName), address)
+  changeFieldValue(data, fieldId, organizationFieldName) {
+    const field = FormUtil.findField(this.formContent, fieldId)
+
+    if (!field) {
+      return  // nothing to change
+    }
+
+    const fieldValue = organizationFieldName === "contact"
+      ? _.trim(`${data.contact.address || ""} ${data.contact["postal-number"] || ""} ${data.contact.city || ""}`)
+      : data[organizationFieldName]
+
+    if (!_.isEmpty(fieldValue)) {
+      this.props.controller.componentOnChangeListener(field, fieldValue)
     }
   }
 
@@ -93,19 +100,22 @@ export default class BusinessIdSearch extends React.Component {
     const language = this.props.state.configuration.lang
     const url = this.props.controller.createOrganisationInfoUrl(this.props.state)
 
-    HttpUtil.get(url + id + "&lang=" + language).then(
-      response   => {
-        Object.keys(this.state.mappedFieldNames).forEach(key =>   this.changeFieldValue(response, key, this.state.mappedFieldNames[key]))
+    HttpUtil.get(url + id + "&lang=" + language)
+      .then(response => {
+        _.each(organizationToFormFieldIds, (formFieldId, organizationFieldName) => {
+          if (!_.isEmpty(response[organizationFieldName])) {
+            this.changeFieldValue(response, formFieldId, organizationFieldName)
+          }
+        })
       }).catch(error => {
-      if (error.response.status == 404){
-        this.setState({incorrectBusinessId: true})
-        this.openModal()
-      }else {
-        this.setState({otherErrorOnBusinessId: true})
-        this.setState({incorrectBusinessId: false})
-        this.openModal()
-      }})}
-
+        if (error.response.status == 404) {
+          this.setState({incorrectBusinessId: true})
+          this.openModal()
+        } else {
+          this.setState({otherErrorOnBusinessId: true, incorrectBusinessId: false})
+          this.openModal()
+        }
+      })}
 
   render() {
 
