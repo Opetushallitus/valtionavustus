@@ -28,6 +28,7 @@ export default class VaForm extends React.Component {
                                             lang={state.configuration.lang} />
     const headerElements = [registerNumberDisplay, changeRequest]
     const formContainerClass = state.configuration.preview ? FormPreview : Form
+    const show = this.props.showBusinessIdSearch && this.props.hakemusType == "hakemus"
     return(
       <div>
         <VaOldBrowserWarning lang={state.configuration.lang}
@@ -44,6 +45,7 @@ export default class VaForm extends React.Component {
                        headerElements={headerElements}
                        infoElementValues={state.avustushaku}
                        hakemusType = {this.props.hakemusType}
+                       showBusinessIdSearch = {this.props.showBusinessIdSearch}
         />
       </div>
     )
