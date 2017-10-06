@@ -1,6 +1,7 @@
 (ns ^{:skip-aot true} oph.va.hakija.handlers
   (:use [clojure.tools.trace :only [trace]])
-  (:require [ring.util.http-response :refer :all]
+  (:require [clojure.tools.logging :as log]
+            [ring.util.http-response :refer :all]
             [oph.soresu.common.config :refer [config config-simple-name]]
             [oph.common.datetime :as datetime]
             [oph.soresu.form.db :as form-db]
@@ -294,27 +295,48 @@
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
     (va-db/get-attachments hakemus-id (:id hakemus))))
 
-(defn on-attachment-create [haku-id hakemus-id hakemus-base-version field-id filename content-type size tempfile allow-origin]
-  (let [real-content-type (attachment-validator/validate-file-content-type tempfile filename content-type)
-        hakemus (va-db/get-hakemus hakemus-id)]
-    (if hakemus
-      (if-let [attachment (va-db/create-attachment (:id hakemus)
-                                                   hakemus-base-version
-                                                   field-id
-                                                   (attachment-validator/file-name-according-to-content-type filename real-content-type)
-                                                   real-content-type
-                                                   size
-                                                   tempfile)]
-        (-> (ok (va-db/convert-attachment (:id hakemus) attachment)) (assoc-in [:headers "Access-Control-Allow-Origin"] allow-origin))
-        (bad-request {:error true}))
-      (bad-request! {:error true}))))
+(defn on-attachment-create
+  {:post [#(not (nil? %))]}
+  [haku-id hakemus-id hakemus-base-version field-id filename provided-content-type size tempfile]
+  (let [content-type-validation-result (attachment-validator/validate-file-content-type tempfile provided-content-type)
+        detected-content-type          (:detected-content-type content-type-validation-result)]
+    (if (:allowed? content-type-validation-result)
+      (if-let [hakemus (va-db/get-hakemus hakemus-id)]
+        (let [fixed-filename (attachment-validator/file-name-according-to-content-type filename detected-content-type)]
+          (when (not= fixed-filename filename)
+            (log/warn (str "Request with filename '"
+                           filename
+                           "' has wrong extension for it's content-type '"
+                           detected-content-type
+                           "'. Renaming to '"
+                           fixed-filename
+                           "'.")))
+          (when-let [attachment (va-db/create-attachment (:id hakemus)
+                                                         hakemus-base-version
+                                                         field-id
+                                                         fixed-filename
+                                                         detected-content-type
+                                                         size
+                                                         tempfile)]
+            (-> (ok (va-db/convert-attachment (:id hakemus) attachment)))))
+        (not-found))
+      (do
+        (log/warn (str "Request with illegal content-type '"
+                       detected-content-type
+                       "' of file '"
+                       filename
+                       "' (provided '"
+                       provided-content-type
+                       "')"))
+        (bad-request (merge content-type-validation-result {:error true}))))))
 
-(defn on-attachment-delete [haku-id hakemus-id field-id allow-origin]
+(defn on-attachment-delete [haku-id hakemus-id field-id]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
     (if (va-db/attachment-exists? (:id hakemus) field-id)
       (do (va-db/close-existing-attachment! (:id hakemus) field-id)
-          (-> (ok) (assoc-in [:headers "Access-Control-Allow-Origin"] allow-origin)))
-      (not-found))))
+          (ok))
+      (not-found))
+    (not-found)))
 
 (defn on-attachment-get [haku-id hakemus-id field-id]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
