@@ -297,7 +297,7 @@
 
 (defn on-attachment-create
   [haku-id hakemus-id hakemus-base-version field-id filename provided-content-type size tempfile]
-  {:post [(not (nil? %))]}
+  {:post [(some? %)]}
   (let [content-type-validation-result (attachment-validator/validate-file-content-type tempfile provided-content-type)
         detected-content-type          (:detected-content-type content-type-validation-result)]
     (if (:allowed? content-type-validation-result)
