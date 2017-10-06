@@ -296,8 +296,8 @@
     (va-db/get-attachments hakemus-id (:id hakemus))))
 
 (defn on-attachment-create
-  {:post [#(not (nil? %))]}
   [haku-id hakemus-id hakemus-base-version field-id filename provided-content-type size tempfile]
+  {:post [(not (nil? %))]}
   (let [content-type-validation-result (attachment-validator/validate-file-content-type tempfile provided-content-type)
         detected-content-type          (:detected-content-type content-type-validation-result)]
     (if (:allowed? content-type-validation-result)
