@@ -1,44 +1,45 @@
 import React from "react"
+import _ from 'lodash'
+
 import ModalDialog from "./ModalDialog.jsx"
 import FormUtil from "../FormUtil.js"
 import LocalizedString from "./LocalizedString.jsx"
 import Translator from "../Translator.js"
 import HttpUtil from "../../HttpUtil.js"
 
+const organizationToFormFieldIds = {
+  "name": "organization",
+  "email": "organization-email",
+  "organisation-id": "business-id",
+  "contact": "organization-postal-address"
+}
+
+const validateBusinessId = str =>
+  str.match(/^\d{7}-\d$/) ? {isDisabled: false, error: ""} : {isDisabled: true, error: "error"}
 
 export default class BusinessIdSearch extends React.Component {
   constructor(props) {
     super(props)
-    this.handleClick = this.handleClick.bind(this)
+    this.fetchOrganizationData = this.fetchOrganizationData.bind(this)
     this.changeFieldValue = this.changeFieldValue.bind(this)
     this.openModal = this.openModal.bind(this)
     this.afterOpenModal = this.afterOpenModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
     this.handleOnChange = this.handleOnChange.bind(this)
     this.handleOnSubmit = this.handleOnSubmit.bind(this)
-    this.validate = this.validate.bind(this)
     this.state = {
       modalIsOpen: true,
-      typed: "",
       isDisabled: true,
       error: "error",
       incorrectBusinessId: false,
       otherErrorOnBusinessId: false,
-      businessId: "",
-      mappedFieldNames : {
-        "organization": "name",
-        "organization-email": "email",
-        "business-id": "organisation-id",
-        "organization-postal-address" : "contact"
-      }
+      businessId: ""
     }
     this.lang = this.props.state.configuration.lang
     this.translations = this.props.state.configuration.translations.misc
     this.translator = new Translator(this.props.state.configuration.translations.misc)
-
+    this.formContent = _.get(this.props, 'state.form.content', [])
   }
-
-
 
   openModal() {
     this.setState({modalIsOpen: true})
@@ -52,60 +53,56 @@ export default class BusinessIdSearch extends React.Component {
     this.setState({modalIsOpen: false})
   }
 
+  changeFieldValue(data, fieldId, organizationFieldName) {
+    const field = FormUtil.findField(this.formContent, fieldId)
 
-  changeFieldValue(data, fieldName, dataField){
-    if (dataField != "contact") {
-      this.props.controller.componentOnChangeListener(FormUtil.findField(this.props.state, fieldName), data[dataField])
-    } else {
-      const address = data.contact.address + " " + data.contact["postal-number"] + " " + data.contact.city
-      this.props.controller.componentOnChangeListener(FormUtil.findField(this.props.state, fieldName), address)
+    if (!field) {
+      return  // nothing to change
+    }
+
+    const fieldValue = organizationFieldName === "contact"
+      ? _.trim(`${data.contact.address || ""} ${data.contact["postal-number"] || ""} ${data.contact.city || ""}`)
+      : data[organizationFieldName]
+
+    if (!_.isEmpty(fieldValue)) {
+      this.props.controller.componentOnChangeListener(field, fieldValue)
     }
   }
 
   // events from inputting the organisational id (y-tunnus)
   handleOnSubmit() {
-    this.handleClick(this.state.businessId)
-    this.setState({modalIsOpen: false})
+    this.setState(state => {
+      this.fetchOrganizationData(state.businessId)
+      return {modalIsOpen: false}
+    })
   }
-
 
   handleOnChange(event) {
     const inputted = event.target.value
-    this.validate(inputted)
-    this.setState({typed: inputted})
-    this.setState({businessId: inputted})
-  }
-
-  //validate input of business-id
-  validate(inputted){
-    const text = inputted
-    const businessIdMatch = /^\d{7}-\d$/
-    if (text.match(businessIdMatch)) {
-      this.setState({isDisabled: false})
-      this.setState({error: ""})
-    }else {
-      this.setState({isDisabled: true})
-    }
+    this.setState({businessId: inputted, ...validateBusinessId(inputted)})
   }
 
   // actions that happen after user has submitted their organisation-id, calls backend organisaton api
-  handleClick(id) {
+  fetchOrganizationData(id) {
     const language = this.props.state.configuration.lang
     const url = this.props.controller.createOrganisationInfoUrl(this.props.state)
 
-    HttpUtil.get(url + id + "&lang=" + language).then(
-      response   => {
-        Object.keys(this.state.mappedFieldNames).forEach(key =>   this.changeFieldValue(response, key, this.state.mappedFieldNames[key]))
+    HttpUtil.get(url + id + "&lang=" + language)
+      .then(response => {
+        _.each(organizationToFormFieldIds, (formFieldId, organizationFieldName) => {
+          if (!_.isEmpty(response[organizationFieldName])) {
+            this.changeFieldValue(response, formFieldId, organizationFieldName)
+          }
+        })
       }).catch(error => {
-      if (error.response.status == 404){
-        this.setState({incorrectBusinessId: true})
-        this.openModal()
-      }else {
-        this.setState({otherErrorOnBusinessId: true})
-        this.setState({incorrectBusinessId: false})
-        this.openModal()
-      }})}
-
+        if (error.response.status == 404) {
+          this.setState({incorrectBusinessId: true})
+          this.openModal()
+        } else {
+          this.setState({otherErrorOnBusinessId: true, incorrectBusinessId: false})
+          this.openModal()
+        }
+      })}
 
   render() {
 

@@ -2,19 +2,18 @@
   (:require [speclj.core :refer :all]
             [oph.common.organisation-service :as o]))
 
-(def
-  contact-collection
+(def contact-collection
   [{:kieli "kieli_sv#1" :email "turun.kaupunki@turku.fi" }
-  {:kieli "kieli_fi#1" :email "turun.kaupunki@turku.fi" }
-  {:kieli "kieli_fi#1" :osoite "PL 355" :postinumeroUri "posti_20101"}
-  {:kieli "kieli_fi#1" :www "http://www.turku.fi"}
-  {:kieli "kieli_fi#1" :numero "02  262 7229" :tyyppi "puhelin"}
-  {:kieli "kieli_fi#1" :numero "02-330 000" :tyyppi "faksi"}
-  {:postitoimipaikka "ÅBO" :kieli "kieli_sv#1"}
-  {:kieli "kieli_sv#1" :osoite "PL 355" :postinumeroUri "posti_20101"}
-  {:kieli "kieli_sv#1" :www "http://www.turku.fi"}
-  {:kieli "kieli_sv#1" :numero "02-330 000", :tyyppi "puhelin"}
-  {:postitoimipaikka "TURKU" :kieli "kieli_fi#1" :osoite "PL 355"}])
+   {:kieli "kieli_fi#1" :email "turun.kaupunki@turku.fi" }
+   {:kieli "kieli_fi#1" :osoite "PL 355" :postinumeroUri "posti_20101"}
+   {:kieli "kieli_fi#1" :www "http://www.turku.fi"}
+   {:kieli "kieli_fi#1" :numero "02  262 7229" :tyyppi "puhelin"}
+   {:kieli "kieli_fi#1" :numero "02-330 000" :tyyppi "faksi"}
+   {:postitoimipaikka "ÅBO" :kieli "kieli_sv#1"}
+   {:kieli "kieli_sv#1" :osoite "PL 355" :postinumeroUri "posti_20101"}
+   {:kieli "kieli_sv#1" :www "http://www.turku.fi"}
+   {:kieli "kieli_sv#1" :numero "02-330 000", :tyyppi "puhelin"}
+   {:postitoimipaikka "TURKU" :kieli "kieli_fi#1" :osoite "PL 355"}])
 
 (def organisation
   {:nimi {:fi "Turun kaupunki" :sv "Åbo stad"}
@@ -47,10 +46,8 @@
       (should= 3 (count compacted))
       (should= "TURKU" (:city compacted)))))
 
-(describe
-  "Compact organisation info"
-  (it
-    "compacts organisation info"
+(describe "Compacting organisation info"
+  (it "compacts simple organization fetch result"
     (let [compacted (o/compact-organisation-info :fi organisation)]
       (should-not (empty? compacted))
       (should= 5 (count compacted))
@@ -61,6 +58,26 @@
       (should= 3 (count (:contact compacted)))
       (should= "TURKU" (get-in compacted [:contact :city]))
       (should= "PL 355" (get-in compacted [:contact :address]))
-      (should= "20101" (get-in compacted [:contact :postal-number])))))
+      (should= "20101" (get-in compacted [:contact :postal-number]))))
+
+  (it "strips posti_ prefix from postinumeroUri field"
+    (let [compacted (o/compact-organisation-info :fi (assoc organisation
+                                                            :yhteystiedot
+                                                            [{:kieli "kieli_fi#1"
+                                                              :postinumeroUri "posti_40720"}]))]
+      (should= "40720" (-> compacted :contact :postal-number))))
+
+  (it "returns empty string for postal number when postinumeroUri field is null"
+    (let [compacted (o/compact-organisation-info :fi (assoc organisation
+                                                            :yhteystiedot
+                                                            [{:kieli "kieli_fi#1"
+                                                              :postinumeroUri nil}]))]
+      (should= "" (-> compacted :contact :postal-number))))
+
+  (it "returns empty string for postal number when postinumeroUri field does not exist"
+    (let [compacted (o/compact-organisation-info :fi (assoc organisation
+                                                            :yhteystiedot
+                                                            []))]
+      (should= "" (-> compacted :contact :postal-number)))))
 
 (run-specs)
