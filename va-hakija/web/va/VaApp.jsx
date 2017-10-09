@@ -1,24 +1,24 @@
 import "soresu-form/web/polyfills"
 
-import React from 'react'
-import ReactDOM from 'react-dom'
-import Bacon from 'baconjs'
-import _ from 'lodash'
-import queryString from 'query-string'
+import React from "react"
+import ReactDOM from "react-dom"
+import Bacon from "baconjs"
+import _ from "lodash"
+import queryString from "query-string"
 
-import HttpUtil from 'soresu-form/web/HttpUtil'
+import HttpUtil from "soresu-form/web/HttpUtil"
 
-import FormController from 'soresu-form/web/form/FormController'
-import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
-import ResponseParser from 'soresu-form/web/form/ResponseParser'
+import FormController from "soresu-form/web/form/FormController"
+import FieldUpdateHandler from "soresu-form/web/form/FieldUpdateHandler"
+import ResponseParser from "soresu-form/web/form/ResponseParser"
 
-import VaForm from './VaForm.jsx'
-import VaUrlCreator from './VaUrlCreator'
-import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
-import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
-import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
-import {BudgetItemElement} from 'va-common/web/va/VaBudgetComponents.jsx'
-import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
+import VaForm from "./VaForm.jsx"
+import VaUrlCreator from "./VaUrlCreator"
+import VaComponentFactory from "va-common/web/va/VaComponentFactory"
+import VaSyntaxValidator from "va-common/web/va/VaSyntaxValidator"
+import VaPreviewComponentFactory from "va-common/web/va/VaPreviewComponentFactory"
+import {BudgetItemElement} from "va-common/web/va/VaBudgetComponents.jsx"
+import VaBudgetCalculator from "va-common/web/va/VaBudgetCalculator"
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 
@@ -64,7 +64,7 @@ function printEntityId(state) {
 
 const query = queryString.parse(location.search)
 const urlContent = { parsedQuery: query, location: location }
-const develMode =  query.devel === 'true'
+const develMode =  query.devel === "true"
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
 const avustusHakuP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId)))
 const environmentP = Bacon.fromPromise(HttpUtil.get(VaUrlCreator.environmentConfigUrl()))
@@ -76,7 +76,7 @@ function initialStateTemplateTransformation(template) {
 }
 
 function isEmptyOrReopenedHakemus(savedObject) {
-  return !savedObject || (savedObject.status === 'pending_change_request' || savedObject.status === 'officer_edit')
+  return !savedObject || (savedObject.status === "pending_change_request" || savedObject.status === "officer_edit")
 }
 
 function onInitialStateLoaded(initialState) {
@@ -132,5 +132,5 @@ app.stateProperty.onValue((state) => {
   if (develMode) {
     console.log("Updating UI with state:", state)
   }
-  ReactDOM.render(app.getReactComponent(state), document.getElementById('app'))
+  ReactDOM.render(app.getReactComponent(state), document.getElementById("app"))
 })
