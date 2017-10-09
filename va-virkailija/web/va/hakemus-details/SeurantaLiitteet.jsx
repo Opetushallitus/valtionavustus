@@ -3,6 +3,7 @@ import React from 'react'
 
 import AttachmentField from 'soresu-form/web/form/component/AttachmentField.jsx'
 import HttpUtil from 'soresu-form/web/HttpUtil'
+import Translator from 'soresu-form/web/form/Translator'
 
 export default class SeurantaLiitteet extends React.Component {
   render() {
@@ -25,8 +26,20 @@ export default class SeurantaLiitteet extends React.Component {
           return null
         })
         .catch(function(error) {
-          console.error(`Error in adding attachment with drag'n'drop, PUT ${url}`, error)
-          controller.saveError()
+          if (error.response &&
+              error.response.status === 400 &&
+              error.response.data &&
+              error.response.data["detected-content-type"]) {
+            const translator = new Translator(translations.errors)
+            alert(translator.translate("attachment-has-illegal-content-type-error",
+                                       "fi",
+                                       undefined,
+                                       {"illegal-content-type": error.response.data["detected-content-type"]}))
+
+          } else {
+            console.error(`Error in adding attachment, PUT ${url}`, error)
+            controller.saveError()
+          }
         })
     }
 
