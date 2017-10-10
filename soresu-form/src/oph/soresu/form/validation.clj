@@ -2,6 +2,7 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.string :as string]
             [oph.soresu.common.math :as math]
+            [oph.soresu.common.validation :as validation]
             [oph.soresu.form.formutil :refer :all]
             [oph.soresu.form.rules :as rules]))
 
@@ -52,12 +53,9 @@
   (if (or (not (has-field-type? "emailField" field))
           (empty? answer))
     []
-    (if (and (re-matches #"\S+@\S+\.\S+" answer)
-             (not (re-matches #".*%0[aA].*" answer))
-             (<= (count answer) 254)
-             (> (-> answer (string/split #"\.") last count) 1))
-        []
-        [{:error "email"}])))
+    (if (validation/email-address? answer)
+      []
+      [{:error "email"}])))
 
 (defn- validate-finnish-business-id-field [field answer]
   (if (or (not (has-field-type? "finnishBusinessIdField" field))

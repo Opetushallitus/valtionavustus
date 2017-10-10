@@ -89,21 +89,9 @@
             result (validate-field (answers-for field "") [] field)]
         (should= {:email []} result)))
 
-  (it "validates email"
-      (let [result (validate-field (answers-for email-field "testi@test.org") [] email-field)]
-        (should= {:email []} result)))
-
-  (it "validates email with +part"
-      (let [result (validate-field (answers-for email-field "testi+extra@test.org") [] email-field)]
-        (should= {:email []} result)))
-
-  (it "validates email with no @ as invalid"
-      (let [result (validate-field (answers-for  email-field "testitest.org") [] email-field)]
-        (should= {:email [{:error "email"}]} result)))
-
-  (it "validates email with only one domain part as invalid"
-      (let [result (validate-field (answers-for email-field "testi@test") [] email-field)]
-        (should= {:email [{:error "email"}]} result)))
+  (it "validates non-empty email"
+      (should= {:email []} (validate-field (answers-for email-field "testi@test.org") [] email-field))
+      (should= {:email [{:error "email"}]} (validate-field (answers-for email-field "invalid") [] email-field)))
 
   (it "validates empty email as required"
       (let [result (validate-field (answers-for email-field "") [] email-field)]

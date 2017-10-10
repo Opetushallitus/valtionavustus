@@ -2,8 +2,8 @@
   (:require [schema.core :as s]
             [schema.spec.leaf :as s-leaf]
             [schema.spec.core :as s-spec]
-            [oph.soresu.common.types :as types])
-  (:import [javax.mail.internet AddressException InternetAddress]))
+            [oph.soresu.common.types :as types]
+            [oph.soresu.common.validation :as validation]))
 
 (defn field-class-type-of? [field-class n]
   (and (map? n) (= (:fieldClass n) field-class)))
@@ -12,13 +12,7 @@
   (and (map? n) (contains? n :error)))
 
 (def Email
-  (s/pred (fn [s]
-            (and (string? s)
-                 (try
-                   (do (.validate (InternetAddress. s))
-                       true)
-                   (catch AddressException e false))))
-          "Email"))
+  (s/pred validation/email-address? "Email"))
 
 (defn create-form-schema [custom-wrapper-element-types custom-form-element-types custom-info-element-types]
   (s/defschema LocalizedString {:fi s/Str

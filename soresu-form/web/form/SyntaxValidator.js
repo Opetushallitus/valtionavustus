@@ -65,15 +65,13 @@ export default class SyntaxValidator {
   }
 
   static validateEmail(input) {
-    function lastPartIsLongerThanOne(email) {
-      const parts = email.split('\.')
-      return parts[parts.length -1].length > 1
-    }
-    // Pretty basic regexp, allows anything@anything.anything
-    const validEmailRegexp = /^[^\s@]+@(([a-zA-Z\-0-9])+\.)+([a-zA-Z\-0-9])+$/
-    const invalidEmailRegexp = /.*([^\x00-\x7F]|%0[aA]).*/
-    const validEmail = validEmailRegexp.test(input) && lastPartIsLongerThanOne(input) && !invalidEmailRegexp.test(input)
-    return validEmail ? undefined : { error: "email" }
+    const validEmailRegexp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+    const invalidEmailRegexp = /[^\x00-\x7F]|%0[aA]/
+    const isEmailValid = _.isString(input) &&
+      (input.length <= 254) &&
+      validEmailRegexp.test(input) &&
+      !invalidEmailRegexp.test(input)
+    return isEmailValid ? undefined : { error: "email" }
   }
 
   static validateUrl(input) {
