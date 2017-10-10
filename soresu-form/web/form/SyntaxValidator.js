@@ -65,15 +65,13 @@ export default class SyntaxValidator {
   }
 
   static validateEmail(input) {
-    function lastPartIsLongerThanOne(email) {
-      const parts = email.split('\.')
-      return parts[parts.length -1].length > 1
-    }
-    // Pretty basic regexp, allows anything@anything.anything
-    const validEmailRegexp = /^[^\s@]+@(([a-zA-Z\-0-9])+\.)+([a-zA-Z\-0-9])+$/
-    const invalidEmailRegexp = /.*([^\x00-\x7F]|%0[aA]).*/
-    const validEmail = validEmailRegexp.test(input) && lastPartIsLongerThanOne(input) && !invalidEmailRegexp.test(input)
-    return validEmail ? undefined : { error: "email" }
+    const validEmailRegexp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+    const invalidEmailRegexp = /[^\x00-\x7F]|%0[aA]/
+    const isEmailValid = _.isString(input) &&
+      (input.length <= 254) &&
+      validEmailRegexp.test(input) &&
+      !invalidEmailRegexp.test(input)
+    return isEmailValid ? undefined : { error: "email" }
   }
 
   static validateUrl(input) {
@@ -89,14 +87,14 @@ export default class SyntaxValidator {
     if (!hasValidForm) {
       return {error: "finnishBusinessId"}
     }
-    var checkDigit = parseInt(input[8])
+    var checkDigit = parseInt(input[8], 10)
     var multipliers = [7, 9, 10, 5, 8, 4, 2]
     var digits = []
-    for (var i = 0; i < 7; i++) {
-      digits.push(parseInt(input[i]))
+    for (let i = 0; i < 7; i++) {
+      digits.push(parseInt(input[i], 10))
     }
     var sum = 0
-    for (var i = 0; i < 7; i++) {
+    for (let i = 0; i < 7; i++) {
       sum += multipliers[i] * digits[i]
     }
     var modulo = sum % 11

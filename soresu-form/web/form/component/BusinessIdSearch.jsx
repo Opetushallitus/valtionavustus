@@ -2,10 +2,11 @@ import React from "react"
 import _ from 'lodash'
 
 import ModalDialog from "./ModalDialog.jsx"
-import FormUtil from "../FormUtil.js"
+import FormUtil from "../FormUtil"
 import LocalizedString from "./LocalizedString.jsx"
-import Translator from "../Translator.js"
-import HttpUtil from "../../HttpUtil.js"
+import Translator from "../Translator"
+import HttpUtil from "../../HttpUtil"
+import SyntaxValidator from "../SyntaxValidator"
 
 const organizationToFormFieldIds = {
   "name": "organization",
@@ -15,7 +16,9 @@ const organizationToFormFieldIds = {
 }
 
 const validateBusinessId = str =>
-  str.match(/^\d{7}-\d$/) ? {isDisabled: false, error: ""} : {isDisabled: true, error: "error"}
+  SyntaxValidator.validateBusinessId(str) === undefined
+    ? {isDisabled: false, error: ""}
+    : {isDisabled: true, error: "error"}
 
 export default class BusinessIdSearch extends React.Component {
   constructor(props) {
