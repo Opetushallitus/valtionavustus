@@ -264,17 +264,12 @@
 (compojure-api/defroutes organisation-routes
   "API for fetching organisational data with businessId"
 
-  (compojure-api/GET "/" [organisation-id lang]
-    :query-params [organisation-id lang]
-    (let [organisation-info
-          (org/get-compact-translated-info
-            organisation-id
-            (or (keyword lang) :fi))]
+  (compojure-api/GET "/" []
+    :query-params [organisation-id :- FinnishBusinessId {lang :- s/Keyword :fi}]
+    (let [organisation-info (org/get-compact-translated-info organisation-id lang)]
       (if organisation-info
-        {:status 200
-         :headers {"Content-Type" "application/json"}
-         :body organisation-info}
-        {:status 404}))))
+        (ok organisation-info)
+        (not-found)))))
 
 (def api-config
   {:formats [:json-kw]

@@ -14,6 +14,9 @@
 (def Email
   (s/pred validation/email-address? "Email"))
 
+(def FinnishBusinessId
+  (s/pred validation/finnish-business-id? "FinnishBusinessId"))
+
 (defn create-form-schema [custom-wrapper-element-types custom-form-element-types custom-info-element-types]
   (s/defschema LocalizedString {:fi s/Str
                                 :sv s/Str})
