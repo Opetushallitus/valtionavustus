@@ -562,7 +562,9 @@ export default class HakemustenArviointiController {
 
     const findSelfFinancingSpecField = () => {
       const budgetSummaryElement = _.find(budgetElement.children, n => n.fieldType === "vaBudgetSummaryElement")
-      return FormUtil.findFieldByFieldType(budgetSummaryElement, "vaSelfFinancingField")
+      return budgetSummaryElement
+        ? FormUtil.findFieldByFieldType(budgetSummaryElement, "vaSelfFinancingField")
+        : null
     }
 
     const writeChangedAnswerFieldValues = fields => {

@@ -139,3 +139,21 @@
     (let [new-decision (set/rename-keys (:decision avustushaku) {:esittelija :valmistelija})
           changed-avustushaku (assoc avustushaku :decision new-decision)]
       (common-db/exec :form-db update-avustushaku-decision! changed-avustushaku))))
+
+(defquery get-hakemukset-with-selvitys-email "db/migration/queries/m1_46-get-hakemukset-with-selvitys-email.sql")
+(defquery update-hakemus-selvitys-email-by-id! "db/migration/queries/m1_46-update-hakemus-selvitys-email-by-id.sql")
+
+(migrations/defmigration migrate-change-to-field-inside-selvitys-email-to-array "1.46"
+  "Change `to` field inside `selvitys_email` jsonb field to be an array of emails"
+  (letfn [(convert-selvitys-email [email]
+            (let [org-to (:to email)
+                  new-to (cond
+                           (sequential? org-to) org-to
+                           (some? org-to) [org-to]
+                           :else [])]
+              (assoc email :to new-to)))]
+    (doseq [hakemus (common-db/exec :form-db get-hakemukset-with-selvitys-email {})]
+      (common-db/exec :form-db
+                      update-hakemus-selvitys-email-by-id!
+                      {:id             (:id hakemus)
+                       :selvitys_email (convert-selvitys-email (:selvitys_email hakemus))}))))

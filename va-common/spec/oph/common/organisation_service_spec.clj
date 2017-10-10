@@ -3,17 +3,17 @@
             [oph.common.organisation-service :as o]))
 
 (def contact-collection
-  [{:kieli "kieli_sv#1" :email "turun.kaupunki@turku.fi" }
-   {:kieli "kieli_fi#1" :email "turun.kaupunki@turku.fi" }
+  [{:kieli "kieli_fi#1" :email "info@turku.fi"}
+   {:kieli "kieli_sv#1" :email "info@abo.fi"}
    {:kieli "kieli_fi#1" :osoite "PL 355" :postinumeroUri "posti_20101"}
+   {:kieli "kieli_sv#1" :osoite "PL 356" :postinumeroUri "posti_20102"}
    {:kieli "kieli_fi#1" :www "http://www.turku.fi"}
+   {:kieli "kieli_sv#1" :www "http://www.abo.fi"}
    {:kieli "kieli_fi#1" :numero "02  262 7229" :tyyppi "puhelin"}
-   {:kieli "kieli_fi#1" :numero "02-330 000" :tyyppi "faksi"}
-   {:postitoimipaikka "ÅBO" :kieli "kieli_sv#1"}
-   {:kieli "kieli_sv#1" :osoite "PL 355" :postinumeroUri "posti_20101"}
-   {:kieli "kieli_sv#1" :www "http://www.turku.fi"}
-   {:kieli "kieli_sv#1" :numero "02-330 000", :tyyppi "puhelin"}
-   {:postitoimipaikka "TURKU" :kieli "kieli_fi#1" :osoite "PL 355"}])
+   {:kieli "kieli_fi#1" :numero "02-330 001" :tyyppi "faksi"}
+   {:kieli "kieli_sv#1" :numero "02-330 002", :tyyppi "puhelin"}
+   {:kieli "kieli_fi#1" :postitoimipaikka "TURKU" :osoite "PL 355"}
+   {:kieli "kieli_sv#1" :postitoimipaikka "ÅBO"}])
 
 (def organisation
   {:nimi {:fi "Turun kaupunki" :sv "Åbo stad"}
@@ -21,37 +21,11 @@
    :tyypit ["Koulutustoimija"]
    :yhteystiedot contact-collection})
 
-(describe
-  "Filter translations"
-  (it "filters translations in collection"
-    (let [filtered (o/filter-translations :sv contact-collection)]
-      (should-not (empty? filtered))
-      (should= 5 (count filtered))
-      (should= "ÅBO" (:postitoimipaikka (second filtered ))))
-    (let [filtered (o/filter-translations :fi contact-collection)]
-      (should-not (empty? filtered))
-      (should= 6 (count filtered))
-      (should= "TURKU" (:postitoimipaikka (last filtered ))))
-    (let [filtered (o/filter-translations :en contact-collection)]
-      (should (empty? filtered)))))
-
-(describe
-  "Compact address data"
-  (it
-    "compacts translated address data"
-    (let [compacted
-          (o/compact-address
-            (into {} (o/filter-translations :fi contact-collection)))]
-      (should-not (empty? compacted))
-      (should= 3 (count compacted))
-      (should= "TURKU" (:city compacted)))))
-
 (describe "Compacting organisation info"
-  (it "compacts simple organization fetch result"
+  (it "compacts fields in search result"
     (let [compacted (o/compact-organisation-info :fi organisation)]
-      (should-not (empty? compacted))
       (should= 5 (count compacted))
-      (should= "turun.kaupunki@turku.fi" (:email compacted))
+      (should= "info@turku.fi" (:email compacted))
       (should= "0204819-8" (:organisation-id compacted))
       (should= "Turun kaupunki" (:name compacted))
       (should-not (empty? (:contact compacted)))
@@ -78,6 +52,95 @@
     (let [compacted (o/compact-organisation-info :fi (assoc organisation
                                                             :yhteystiedot
                                                             []))]
-      (should= "" (-> compacted :contact :postal-number)))))
+      (should= "" (-> compacted :contact :postal-number))))
+
+  (it "collects address parts across fieldsets if there's no osoiteTyyppi in any fieldset"
+      (let [compacted (o/compact-organisation-info :fi (assoc organisation
+                                                              :yhteystiedot
+                                                              [{:kieli "kieli_fi#1"
+                                                                :postitoimipaikka "JYVÄSKYLÄ"}
+                                                               {:kieli "kieli_fi#1"
+                                                                :osoite "Viitaniementie 1 A"}]))
+            compacted-contact (:contact compacted)]
+        (should= "Viitaniementie 1 A" (:address compacted-contact))
+        (should= "JYVÄSKYLÄ" (:city compacted-contact))))
+
+  (it "collects address parts from single fieldset if osoiteTyyppi exists in a fieldset"
+      (let [compacted (o/compact-organisation-info :fi (assoc organisation
+                                                              :yhteystiedot
+                                                              [{:kieli "kieli_fi#1"
+                                                                :osoite "Viitaniementie 1 A"
+                                                                :postitoimipaikka "JYVÄSKYLÄ 1"}
+                                                               {:kieli "kieli_fi#1"
+                                                                :osoiteTyyppi "kaynti"
+                                                                :osoite "Viitaniementie 1 B"
+                                                                :postitoimipaikka "JYVÄSKYLÄ 2"}
+                                                               {:kieli "kieli_fi#1"
+                                                                :osoite "Viitaniementie 1 C"}]))
+            compacted-contact (:contact compacted)]
+        (should= "Viitaniementie 1 B" (:address compacted-contact))
+        (should= "JYVÄSKYLÄ 2" (:city compacted-contact))))
+
+  (it "prefers posti osoiteTyyppi over other values"
+      (let [compacted (o/compact-organisation-info :fi (assoc organisation
+                                                              :yhteystiedot
+                                                              [{:kieli "kieli_fi#1"
+                                                                :osoiteTyyppi "kaynti"
+                                                                :postinumeroUri nil
+                                                                :postitoimipaikka "JYVÄSKYLÄ 1"
+                                                                :osoite "Viitaniementie 1 A"}
+                                                               {:kieli "kieli_fi#1"
+                                                                :osoiteTyyppi "posti"
+                                                                :postinumeroUri "posti_40720"
+                                                                :postitoimipaikka "JYVÄSKYLÄ 2"
+                                                                :osoite "Viitaniementie 1 B"}
+                                                               {:kieli "kieli_fi#1"
+                                                                :osoiteTyyppi "kaynti"
+                                                                :postinumeroUri nil
+                                                                :postitoimipaikka ""
+                                                                :osoite "Viitaniementie 1 C"}]))
+            compacted-contact (:contact compacted)]
+        (should= "Viitaniementie 1 B" (:address compacted-contact))
+        (should= "40720" (:postal-number compacted-contact))
+        (should= "JYVÄSKYLÄ 2" (:city compacted-contact))))
+
+  (it "selects field by language"
+    (let [compacted (o/compact-organisation-info :sv (assoc organisation
+                                                            :yhteystiedot
+                                                            [{:kieli "kieli_sv#1"
+                                                              :email "info@abo.fi"}
+                                                             {:kieli "kieli_fi#1"
+                                                              :email "info@turku.fi"}]))]
+      (should= "info@abo.fi" (:email compacted))))
+
+  (it "falls back to Finnish language if field with wanted language does not exist"
+    (let [compacted (o/compact-organisation-info :sv (assoc organisation
+                                                            :yhteystiedot
+                                                            [{:kieli "kieli_fi#1"
+                                                              :email "info@turku.fi"}]))]
+      (should= "info@turku.fi" (:email compacted))))
+
+  (it "falls back to Finnish language if field with wanted language is empty"
+    (let [compacted (o/compact-organisation-info :sv (assoc organisation
+                                                            :yhteystiedot
+                                                            [{:kieli "kieli_sv#1"
+                                                              :email ""}
+                                                             {:kieli "kieli_fi#1"
+                                                              :email "info@turku.fi"}]))]
+      (should= "info@turku.fi" (:email compacted))))
+
+  (it "falls back to Finnish language per field"
+    (let [compacted (o/compact-organisation-info :sv (assoc organisation
+                                                            :yhteystiedot
+                                                            [{:kieli "kieli_sv#1"
+                                                              :name "Åbo stad"}
+                                                             {:kieli "kieli_fi#1"
+                                                              :name "Åbo stad"}
+                                                             {:kieli "kieli_sv#1"
+                                                              :email ""}
+                                                             {:kieli "kieli_fi#1"
+                                                              :email "info@turku.fi"}]))]
+      (should= "Åbo stad" (:name compacted))
+      (should= "info@turku.fi" (:email compacted)))))
 
 (run-specs)

@@ -155,6 +155,10 @@
     :summary "List current attachments"
     (ok (on-attachment-list haku-id hakemus-id))))
 
+(defn- get-attachment []
+  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
+    :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
+    (on-attachment-get haku-id hakemus-id field-id)))
 
 (defn- options-del-attachment []
   (compojure-api/OPTIONS "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
@@ -167,9 +171,15 @@
   (compojure-api/DELETE "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
     :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
     :summary "Delete attachment (marks attachment as closed)"
-    (on-attachment-delete haku-id
-                          hakemus-id
-                          field-id (va-routes/virkailija-url))))
+    (let [response (on-attachment-delete haku-id hakemus-id field-id)]
+      (assoc-in response [:headers "Access-Control-Allow-Origin"] (va-routes/virkailija-url)))))
+
+(defn- options-put-attachment []
+  (compojure-api/OPTIONS "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id" [haku-id hakemus-id hakemus-base-version field-id]
+    :path-params [haku-id :- Long, hakemus-id :- s/Str, hakemus-base-version :- Long, field-id :- s/Str]
+    (-> (ok {:status "ok"})
+        (assoc-in [:headers "Access-Control-Allow-Origin"] (va-routes/virkailija-url))
+        (assoc-in [:headers "Access-Control-Allow-Methods"] "PUT"))))
 
 (defn- put-attachment []
   (compojure-api/PUT "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id" [haku-id hakemus-id hakemus-base-version field-id]
@@ -177,28 +187,16 @@
     :multipart-params [file :- compojure-upload/TempFileUpload]
     :return Attachment
     :summary "Add new attachment. Existing attachment with same id is closed."
-    (let [{:keys [filename content-type size tempfile]} file]
-      (on-attachment-create haku-id
-                            hakemus-id
-                            hakemus-base-version
-                            field-id
-                            filename
-                            content-type
-                            size
-                            tempfile
-                            (va-routes/virkailija-url)))))
-
-(defn- options-attachment []
-  (compojure-api/OPTIONS "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id" [haku-id hakemus-id hakemus-base-version field-id]
-    :path-params [haku-id :- Long, hakemus-id :- s/Str, hakemus-base-version :- Long, field-id :- s/Str]
-    (-> (ok {:status "ok"})
-        (assoc-in [:headers "Access-Control-Allow-Origin"] (va-routes/virkailija-url))
-        (assoc-in [:headers "Access-Control-Allow-Methods"] "PUT"))))
-
-(defn- get-attachment []
-  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
-    :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
-    (on-attachment-get haku-id hakemus-id field-id)))
+    (let [{:keys [filename content-type size tempfile]} file
+          response (on-attachment-create haku-id
+                                         hakemus-id
+                                         hakemus-base-version
+                                         field-id
+                                         filename
+                                         content-type
+                                         size
+                                         tempfile)]
+      (assoc-in response [:headers "Access-Control-Allow-Origin"] (va-routes/virkailija-url)))))
 
 (compojure-api/defroutes avustushaku-routes
   "Avustushaku routes"
@@ -214,11 +212,11 @@
   (post-change-request-response)
   (officer-edit-submit)
   (get-attachments)
+  (get-attachment)
   (options-del-attachment)
   (del-attachment)
-  (put-attachment)
-  (options-attachment)
-  (get-attachment))
+  (options-put-attachment)
+  (put-attachment))
 
 (defn log-paatos-display [user-key headers remote-addr]
   (let [hakemus (hakija-db/get-hakemus user-key)]

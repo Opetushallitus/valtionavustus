@@ -67,7 +67,7 @@
 (s/defschema SelvitysEmail
   "Loppu/Valiselvitys email"
   {:message s/Str
-   :to Email
+   :to [(s/one Email "email") Email]
    :subject s/Str
    :selvitys-hakemus-id Long})
 
