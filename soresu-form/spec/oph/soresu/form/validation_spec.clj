@@ -97,33 +97,13 @@
       (let [result (validate-field (answers-for email-field "") [] email-field)]
         (should= {:email [{:error "required"}]} result)))
 
+  (it "validates non-empty finnish business"
+      (should= {:y-tunnus []} (validate-field (answers-for finnish-business-id-field "1629284-5") [] finnish-business-id-field))
+      (should= {:y-tunnus [{:error "finnishBusinessId"}]} (validate-field (answers-for finnish-business-id-field "1629284-6") [] finnish-business-id-field)))
+
   (it "validates empty finnish-business-id-field as required"
       (let [result (validate-field (answers-for finnish-business-id-field nil) [] finnish-business-id-field)]
         (should= {:y-tunnus [{:error "required"}]} result)))
-
-  (it "validates finnish business with checksum 0"
-      (let [result (validate-field (answers-for finnish-business-id-field "0165761-0") [] finnish-business-id-field)]
-        (should= {:y-tunnus []} result)))
-
-  (it "validates common valid finnish business id"
-      (let [result (validate-field (answers-for finnish-business-id-field "1629284-5") [] finnish-business-id-field)]
-        (should= {:y-tunnus []} result)))
-
-  (it "validates valid finnish business id with checksum 0"
-      (let [result (validate-field (answers-for finnish-business-id-field "0165761-0") [] finnish-business-id-field)]
-        (should= {:y-tunnus []} result)))
-
-  (it "validates empty finnish business id as required"
-      (let [result (validate-field (answers-for finnish-business-id-field "") [] finnish-business-id-field)]
-        (should= {:y-tunnus [{:error "required"}]} result)))
-
-  (it "validates finnish business id with wrong checskum as invalid"
-      (let [result (validate-field (answers-for finnish-business-id-field "1629284-6") [] finnish-business-id-field)]
-        (should= {:y-tunnus [{:error "finnishBusinessId"}]} result)))
-
-  (it "validates finnish business id with wrong syntax as invalid"
-      (let [result (validate-field (answers-for finnish-business-id-field "165761-0") [] finnish-business-id-field)]
-        (should= {:y-tunnus [{:error "finnishBusinessId"}]} result)))
 
   (it "validates attachment"
       (let [result (validate-field empty-answers (attachments-for attachment-field "file.txt") attachment-field)]

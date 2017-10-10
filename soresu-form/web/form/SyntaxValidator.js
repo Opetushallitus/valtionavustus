@@ -87,14 +87,14 @@ export default class SyntaxValidator {
     if (!hasValidForm) {
       return {error: "finnishBusinessId"}
     }
-    var checkDigit = parseInt(input[8])
+    var checkDigit = parseInt(input[8], 10)
     var multipliers = [7, 9, 10, 5, 8, 4, 2]
     var digits = []
-    for (var i = 0; i < 7; i++) {
-      digits.push(parseInt(input[i]))
+    for (let i = 0; i < 7; i++) {
+      digits.push(parseInt(input[i], 10))
     }
     var sum = 0
-    for (var i = 0; i < 7; i++) {
+    for (let i = 0; i < 7; i++) {
       sum += multipliers[i] * digits[i]
     }
     var modulo = sum % 11

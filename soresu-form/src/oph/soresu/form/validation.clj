@@ -61,16 +61,8 @@
   (if (or (not (has-field-type? "finnishBusinessIdField" field))
           (empty? answer))
     []
-    (if (re-matches #"^[0-9]{7}-[0-9]$" answer)
-      (let [multipliers [7 9 10 5 8 4 2]
-            check-digit (read-string (subs answer 8 9))
-            digits (mapv (comp read-string str) (subs answer 0 7))
-            sum (apply + (map * multipliers digits))
-            remainder (mod sum 11)
-            calculated-check-digit (if (= remainder 0) 0 (- 11 remainder))]
-        (if (= check-digit calculated-check-digit)
-          []
-          [{:error "finnishBusinessId"}]))
+    (if (validation/finnish-business-id? answer)
+      []
       [{:error "finnishBusinessId"}])))
 
 (defn- validate-attachment [attachments field]
