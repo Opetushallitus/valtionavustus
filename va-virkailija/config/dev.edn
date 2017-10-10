@@ -2,7 +2,8 @@
           :url {:fi "http://localhost:8080/"
                 :sv "http://localhost:8080/"}
           :enable-access-log? false
-          :require-https? false}
+          :require-https? false
+          :local-front-url "http://localhost:3449"}
  :api {:restricted-routes? false}
  :virkailija-db {:database-name "va-dev"}
  :form-db {:database-name "va-dev"}
