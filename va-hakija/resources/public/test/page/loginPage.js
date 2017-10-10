@@ -15,8 +15,11 @@ function LoginPage() {
       }, pageLoadedCheck)
     },
     login: function () {
-      pageApi.setInputValue("primary-email", "yhteyshenkilo@example.com")()
-      api.submitButton().click()
+      pageApi
+        .setInputValue("primary-email", "yhteyshenkilo@example.com")()
+        .then(function() {
+          api.submitButton().click()
+        })
       return wait.until(api.hakemusIdIsPresent)().then(
         api.storeHakemusIdFromHtml
       )
