@@ -21,19 +21,34 @@
   ;; s/pred wrapped inside s/conditional to avoid breaking Swagger spec generation
   (s/conditional :else (s/pred validation/finnish-business-id? "FinnishBusinessId")))
 
+(s/defschema LocalizedString {:fi s/Str
+                              :sv s/Str})
+
+(s/defschema Option {:value s/Str
+                     (s/optional-key :label) LocalizedString})
+
+(s/defschema Button {:fieldClass (s/eq "button")
+                     :id s/Str
+                     (s/optional-key :label) LocalizedString
+                     (s/optional-key :params) s/Any
+                     :fieldType s/Keyword})
+
+(s/defschema Rule {:type s/Str
+                   :triggerId s/Str
+                   :targetIds [s/Str]
+                   (s/optional-key :params) s/Any})
+
+(s/defschema Rules [Rule])
+
+(s/defschema SubmissionValidationError
+  {:error s/Str
+   (s/optional-key :info) s/Any})
+
+(s/defschema SubmissionValidationErrors
+  "Submission validation errors contain a mapping from field id to list of validation errors"
+  {s/Keyword [SubmissionValidationError]})
+
 (defn create-form-schema [custom-wrapper-element-types custom-form-element-types custom-info-element-types]
-  (s/defschema LocalizedString {:fi s/Str
-                                :sv s/Str})
-
-  (s/defschema Option {:value s/Str
-                       (s/optional-key :label) LocalizedString})
-
-  (s/defschema Button {:fieldClass (s/eq "button")
-                       :id s/Str
-                       (s/optional-key :label) LocalizedString
-                       (s/optional-key :params) s/Any
-                       :fieldType s/Keyword})
-
   (let [default-form-element-types ["textField"
                                     "textArea"
                                     "nameField"
@@ -60,6 +75,7 @@
                                     "dateRange"
                                     "endOfDateRange"]
         info-element-types (into custom-info-element-types default-info-element-types)]
+
     (s/defschema FormField {:fieldClass (s/eq "formField")
                             :id s/Str
                             :required s/Bool
@@ -104,13 +120,6 @@
                           WrapperElement
                           BasicElement)])
 
-  (s/defschema Rule {:type s/Str
-                     :triggerId s/Str
-                     :targetIds [s/Str]
-                     (s/optional-key :params) s/Any})
-
-  (s/defschema Rules [Rule])
-
   (s/defschema Form {:content Content
                      :rules Rules
                      :created_at s/Inst
@@ -126,11 +135,4 @@
                            :version Long
                            :version_closed (s/maybe s/Inst)
                            :answers Answers})
-
-  (s/defschema SubmissionValidationError
-    {:error s/Str
-     (s/optional-key :info) s/Any})
-
-  (s/defschema SubmissionValidationErrors
-    "Submission validation errors contain a mapping from field id to list of validation errors"
-    {s/Keyword [SubmissionValidationError]}))
+)
