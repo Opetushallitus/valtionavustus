@@ -23,7 +23,7 @@
                          [oph-va/common "0.1.0-SNAPSHOT"]
 
                          ;; http
-                         [buddy/buddy-auth "0.6.1"]
+                         [buddy/buddy-auth "2.1.0"]
                          [com.novemberain/pantomime "2.7.0"]
                          [compojure "1.6.0"]
                          [http-kit "2.2.0"]
@@ -62,6 +62,7 @@
                          [org.slf4j/slf4j-log4j12 "1.7.25"]
 
                          ;; other
+                         [buddy/buddy-core "1.4.0"]
                          [clj-time "0.14.0"]
                          [com.cemerick/url "0.1.1"]
                          [com.google.guava/guava "17.0"]
@@ -77,8 +78,7 @@
                          [org.clojure/tools.reader "1.1.0"]
                          [org.clojure/tools.trace "0.7.9"]
                          [org.scala-lang.modules/scala-xml_2.11 "1.0.6"]
-                         [org.scala-lang/scala-library "2.11.11"]
-                         [pandect "0.5.4"]]
+                         [org.scala-lang/scala-library "2.11.11"]]
 
   :pedantic? :abort
 
