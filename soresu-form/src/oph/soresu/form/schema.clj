@@ -11,11 +11,15 @@
 (defn error-type? [n]
   (and (map? n) (contains? n :error)))
 
-(def Email
-  (s/pred validation/email-address? "Email"))
+(s/defschema Email
+  "Email"
+  ;; s/pred wrapped inside s/conditional to avoid breaking Swagger spec generation
+  (s/conditional :else (s/pred validation/email-address? "Email")))
 
-(def FinnishBusinessId
-  (s/pred validation/finnish-business-id? "FinnishBusinessId"))
+(s/defschema FinnishBusinessId
+  "Finnish business-id"
+  ;; s/pred wrapped inside s/conditional to avoid breaking Swagger spec generation
+  (s/conditional :else (s/pred validation/finnish-business-id? "FinnishBusinessId")))
 
 (defn create-form-schema [custom-wrapper-element-types custom-form-element-types custom-info-element-types]
   (s/defschema LocalizedString {:fi s/Str
