@@ -30,9 +30,31 @@ export default class HakuEdit extends Component {
 
     return (
       <div id="haku-edit">
-        <div id="haku-edit-header">
-          <RegisterNumber controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} onChange={onChange} />
-          <CreateHaku controller={controller} avustushaku={avustushaku}/>
+        <div id="haku-edit-header" className="editor-header">
+          <div className="editor-header-element">
+            <RegisterNumber controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} onChange={onChange} />
+          </div>
+          <div className="editor-header-element">
+            <h3>Toimintayksikkö</h3>
+            <input id="operational-unit" type="text"
+              disabled={!allowAllHakuEdits} onChange={onChange}
+              value={avustushaku.content["operational-unit"]} />
+          </div>
+          <div className="editor-header-element">
+            <h3>Projekti</h3>
+            <input id="project" type="text"
+              disabled={!allowAllHakuEdits} onChange={onChange}
+              value={avustushaku.content["project"]} />
+          </div>
+          <div className="editor-header-element">
+            <h3>Toiminto</h3>
+            <input id="operation" type="text"
+              disabled={!allowAllHakuEdits} onChange={onChange}
+              value={avustushaku.content["operation"]} />
+          </div>
+          <div className="editor-header-element">
+            <CreateHaku controller={controller} avustushaku={avustushaku}/>
+          </div>
         </div>
         <table id="name" className="translation">
           <thead><tr><th>Haun nimi</th><th>Haun nimi ruotsiksi</th></tr></thead>
@@ -76,6 +98,7 @@ export default class HakuEdit extends Component {
         <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange}/>
         <ChooseRahoitusalueet avustushaku={avustushaku} allowEditing={allowNondisruptiveHakuEdits} onChange={onChange} controller={controller} />
         <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
+
         <AcademySize value={avustushaku.is_academysize} disabled={!allowAllHakuEdits} onChange={onChange} />
         <HakuRoles avustushaku={avustushaku} ldapSearch={ldapSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
