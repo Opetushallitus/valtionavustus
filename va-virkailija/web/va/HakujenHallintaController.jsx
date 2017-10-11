@@ -268,7 +268,7 @@ export default class HakujenHallintaController {
     const multiplemaksuera = /set-maksuera-(\w+)/.exec(update.field.id)
     const loppuselvitysdate = update.field.id == "loppuselvitysdate"
     const valiselvitysdate = update.field.id == "valiselvitysdate"
-    var doSave = true
+
     if(hakuname) {
       const lang = hakuname[1]
       update.avustushaku.content.name[lang] = update.newValue
@@ -277,7 +277,7 @@ export default class HakujenHallintaController {
       const startOrEnd = hakuaika[1]
       const newDate = moment(update.newValue, "DD.MM.YYYY HH.mm")
       if(newDate.isSame(update.avustushaku.content.duration[startOrEnd])) {
-        doSave = false
+        return state
       }
       else {
         update.avustushaku.content.duration[startOrEnd] = newDate.toDate()
@@ -335,15 +335,13 @@ export default class HakujenHallintaController {
     }
     else if(valiselvitysdate) {
       update.avustushaku.valiselvitysdate = update.newValue
+    } else {
+      console.error(
+        "Unsupported update to field ", update.field.id, ":", update)
+      return state
     }
-    else {
-      console.error("Unsupported update to field ", update.field.id, ":", update)
-      doSave = false
-    }
-    if(doSave) {
-      state = this.startAutoSave(state, update.avustushaku)
-    }
-    return state
+
+    return this.startAutoSave(state, update.avustushaku)
   }
 
   getOrCreateRahoitusalue(currentRahoitusalueet, selectedRahoitusalue) {
