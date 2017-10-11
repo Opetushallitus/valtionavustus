@@ -261,10 +261,7 @@ export default class HakujenHallintaController {
 
     if (basicFields.indexOf(fieldId) > -1) {
       update.avustushaku[fieldId] = update.newValue
-      return this.startAutoSave(state, update.avustushaku)
-    }
-
-    if (fieldId === "haku-self-financing-percentage") {
+    } else if (fieldId === "haku-self-financing-percentage") {
       update.avustushaku.content["self-financing-percentage"] =
         parseInt(update.newValue)
     } else if (fieldId.startsWith("haku-name-")) {
