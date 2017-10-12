@@ -156,24 +156,32 @@
   (let [base-haku (-> base-haku-id
                       (hakija-api/get-hakudata)
                       :avustushaku)
-        {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
+        {:keys [name selection-criteria self-financing-percentage focus-areas
+                operational-unit project operation]} (:content base-haku)
         haku-type (:haku-type base-haku)
         form-id (:form base-haku)
         decision (:decision base-haku)
-        new-haku (hakija-api/create-avustushaku {:name (add-copy-suffixes name)
-                                                 :duration {:start (clj-time/plus (clj-time/now) (clj-time/months 1))
-                                                            :end (clj-time/plus (clj-time/now) (clj-time/months 2))
-                                                            :label {:fi "Hakuaika"
-                                                                    :sv "Ansökningstid"}}
-                                                 :selection-criteria selection-criteria
-                                                 :self-financing-percentage self-financing-percentage
-                                                 :focus-areas focus-areas}
-                                                form-id
-                                                decision
-                                                haku-type)]
+        new-haku (hakija-api/create-avustushaku
+                   {:name (add-copy-suffixes name)
+                    :duration {:start (clj-time/plus
+                                        (clj-time/now) (clj-time/months 1))
+                               :end (clj-time/plus
+                                      (clj-time/now) (clj-time/months 2))
+                               :label {:fi "Hakuaika"
+                                       :sv "Ansökningstid"}}
+                    :selection-criteria selection-criteria
+                    :self-financing-percentage self-financing-percentage
+                    :focus-areas focus-areas
+                    :operational-unit operational-unit
+                    :project project
+                    :operation operation}
+                   form-id
+                   decision
+                   haku-type)]
     (hakija-api/create-avustushaku-role {:avustushaku (:id new-haku)
                                          :role "presenting_officer"
-                                         :name (str (:first-name identity) " " (:surname identity))
+                                         :name (str (:first-name identity) " "
+                                                    (:surname identity))
                                          :email (:email identity)
                                          :oid (:person-oid identity)})
     new-haku))

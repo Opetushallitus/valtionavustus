@@ -54,6 +54,10 @@ const events = {
   clearFilters: 'clearFilters'
 }
 
+const basicFields = ["loppuselvitysdate", "valiselvitysdate", "register-number"]
+
+const paymentFields = ["operational-unit", "project", "operation"]
+
 function appendBudgetComponent(selvitysType, avustushaku) {
   const form = selvitysType == "valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
   const originalVaBudget = FormUtil.findFieldByFieldType(avustushaku.formContent.content, "vaBudget")
@@ -255,47 +259,35 @@ export default class HakujenHallintaController {
   }
 
   onUpdateField(state, update) {
-    const hakuname = /haku-name-(\w+)/.exec(update.field.id)
-    const hakuaika = /hakuaika-(\w+)/.exec(update.field.id)
-    const hakuType = /set-haku-type-(\w+)/.exec(update.field.id)
-    const isAcademySize = /set-is_academysize-(\w+)/.exec(update.field.id)
-    const status = /set-status-(\w+)/.exec(update.field.id)
-    const financingProcentage = /haku-self-financing-percentage/.exec(update.field.id)
-    const rahoitusalue = /rahoitusalue-(\d+)-tili-(\d+)/.exec(update.field.id)
-    const selectionCriteria = /selection-criteria-(\d+)-(\w+)/.exec(update.field.id)
-    const focusArea = /focus-area-(\d+)-(\w+)/.exec(update.field.id)
-    const registerNumber = /register-number/.exec(update.field.id)
-    const multiplemaksuera = /set-maksuera-(\w+)/.exec(update.field.id)
-    const loppuselvitysdate = update.field.id == "loppuselvitysdate"
-    const valiselvitysdate = update.field.id == "valiselvitysdate"
-    var doSave = true
-    if(hakuname) {
+    const fieldId = update.field.id
+
+    if (basicFields.indexOf(fieldId) > -1) {
+      update.avustushaku[fieldId] = update.newValue
+    } else if (paymentFields.indexOf(fieldId) > -1) {
+      update.avustushaku.content[fieldId] = update.newValue
+    } else if (fieldId === "haku-self-financing-percentage") {
+      update.avustushaku.content["self-financing-percentage"] =
+        parseInt(update.newValue)
+    } else if (fieldId.startsWith("haku-name-")) {
+      const hakuname = /haku-name-(\w+)/.exec(fieldId)
       const lang = hakuname[1]
       update.avustushaku.content.name[lang] = update.newValue
-    }
-    else if(hakuaika) {
+    } else if (fieldId.startsWith("hakuaika-")) {
+      const hakuaika = /hakuaika-(\w+)/.exec(fieldId)
       const startOrEnd = hakuaika[1]
       const newDate = moment(update.newValue, "DD.MM.YYYY HH.mm")
       if(newDate.isSame(update.avustushaku.content.duration[startOrEnd])) {
-        doSave = false
+        return state
       }
-      else {
-        update.avustushaku.content.duration[startOrEnd] = newDate.toDate()
-      }
-    }
-    else if(financingProcentage) {
-      update.avustushaku.content["self-financing-percentage"] = parseInt(update.newValue)
-    }
-    else if(hakuType) {
+      update.avustushaku.content.duration[startOrEnd] = newDate.toDate()
+    } else if (fieldId.startsWith("set-haku-type-")) {
       update.avustushaku["haku-type"] = update.newValue
-    }
-    else if(isAcademySize) {
-      update.avustushaku.is_academysize = update.newValue === 'true'
-    }
-    else if(status) {
-      update.avustushaku.status = update.newValue
-    }
-    else if(rahoitusalue) {
+    } else if (fieldId.startsWith("set-is_academysize-")) {
+      update.avustushaku["is_academysize"] = update.newValue === 'true'
+    } else if (fieldId.startsWith("set-status-")) {
+      update.avustushaku["status"] = update.newValue
+    } else if (fieldId.startsWith("rahoitusalue-")) {
+      const rahoitusalue = /rahoitusalue-(\d+)-tili-(\d+)/.exec(fieldId)
       const rahoitussalueIndex = rahoitusalue[1]
       const selectedRahoitusalue = Rahoitusalueet[rahoitussalueIndex]
       const currentRahoitusalueet = this.getOrCreateRahoitusalueet(update.avustushaku);
@@ -309,41 +301,28 @@ export default class HakujenHallintaController {
       } else {
         rahoitusalueValue.talousarviotilit[talousarviotiliIndex] = talousarviotiliValue
       }
-    }
-    else if(selectionCriteria) {
+    } else if (fieldId.startsWith("selection-criteria-")) {
+      const selectionCriteria = /selection-criteria-(\d+)-(\w+)/.exec(fieldId)
       const index = selectionCriteria[1]
       const lang = selectionCriteria[2]
       update.avustushaku.content['selection-criteria'].items[index][lang] = update.newValue
-    }
-    else if(focusArea) {
+    } else if (fieldId.startsWith("focus-area-")) {
+      const focusArea = /focus-area-(\d+)-(\w+)/.exec(fieldId)
       const index = focusArea[1]
       const lang = focusArea[2]
       update.avustushaku.content['focus-areas'].items[index][lang] = update.newValue
-    }
-    else if(registerNumber) {
-      update.avustushaku["register-number"] = update.newValue
-    }
-    else if(multiplemaksuera) {
-      update.avustushaku.content.multiplemaksuera = update.newValue === "true"
-    }
-    else if(update.field.id.indexOf("decision.") != -1) {
+    } else if (fieldId.startsWith("set-maksuera-")) {
+      update.avustushaku.content["multiplemaksuera"] = update.newValue === "true"
+    } else if (update.field.id.indexOf("decision.") != -1) {
       const fieldName = update.field.id.substr(9)
       _.set(update.avustushaku.decision, fieldName, update.newValue)
+    } else {
+      console.error(
+        "Unsupported update to field ", update.field.id, ":", update)
+      return state
     }
-    else if(loppuselvitysdate) {
-      update.avustushaku.loppuselvitysdate = update.newValue
-    }
-    else if(valiselvitysdate) {
-      update.avustushaku.valiselvitysdate = update.newValue
-    }
-    else {
-      console.error("Unsupported update to field ", update.field.id, ":", update)
-      doSave = false
-    }
-    if(doSave) {
-      state = this.startAutoSave(state, update.avustushaku)
-    }
-    return state
+
+    return this.startAutoSave(state, update.avustushaku)
   }
 
   getOrCreateRahoitusalue(currentRahoitusalueet, selectedRahoitusalue) {
