@@ -654,7 +654,6 @@
    :swagger {:ui "/doc"
              :spec "/swagger.json"
              :data {:info {:title "Valtionavustus API"}
-                    :ignore-missing-mappings? true
                     :tags [{:name "avustushaku"
                             :description "Avustushaku and hakemus listing and filtering"}
                            {:name "login"
