@@ -5,10 +5,9 @@
             [ring.middleware.session.cookie :refer [cookie-store]]
             [ring.middleware.not-modified :refer [wrap-not-modified]]
             [ring.middleware.defaults :refer :all]
-            [buddy.auth :refer [authenticated?]]
-            [buddy.auth.middleware :refer [wrap-authentication]]
-            [buddy.auth.accessrules :refer [wrap-access-rules error]]
-            [buddy.auth.backends.session :refer [session-backend]]
+            [buddy.auth.middleware :as buddy-middleware]
+            [buddy.auth.accessrules :as buddy-accessrules]
+            [buddy.auth.backends.session :as buddy-session]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
             [oph.soresu.common.config :refer [config]]
@@ -31,10 +30,6 @@
   (email/stop-background-sender)
   (db/close-datasource! :virkailija-db))
 
-(def backend (session-backend))
-
-(defn any-access [request] true)
-
 (defn- query-string-for-redirect-location [original-request]
   (if-let [original-query-string (:query-string original-request)]
     (str "?" original-query-string)))
@@ -48,37 +43,37 @@
      :body    (str "Access to " (:uri request) " is not authorized, redirecting to login")
      :session {:original-url original-url}}))
 
-(defn authenticated-access [request]
+(defn- any-access [request] true)
+
+(defn- authenticated-access [request]
   (if (auth/check-identity (-> request :session :identity))
     true
-    (error "Authentication required")))
-
-(def rules [{:pattern #"^/login.*$"
-             :handler any-access}
-            {:pattern #"^/environment"
-             :handler any-access}
-            {:pattern #"^/errorlogger"
-             :handler any-access}
-            {:pattern #"^/js/.*"
-             :handler any-access}
-            {:pattern #"^/img/.*"
-             :handler any-access}
-            {:pattern #"^/css/.*"
-             :handler any-access}
-            {:pattern #"^/api/healthcheck"
-             :handler any-access}
-            {:pattern #"^/public/.*"
-             :handler any-access}
-            {:pattern #"^/favicon.ico"
-             :handler any-access}
-            {:pattern #".*"
-             :handler authenticated-access
-             :on-error redirect-to-login}])
+    (buddy-accessrules/error "Authentication required")))
 
 (defn- with-authentication [site]
   (-> site
-      (wrap-authentication backend)
-      (wrap-access-rules {:rules rules})))
+      (buddy-middleware/wrap-authentication (buddy-session/session-backend))
+      (buddy-accessrules/wrap-access-rules {:rules [{:pattern #"^/login.*$"
+                                                     :handler any-access}
+                                                    {:pattern #"^/environment"
+                                                     :handler any-access}
+                                                    {:pattern #"^/errorlogger"
+                                                     :handler any-access}
+                                                    {:pattern #"^/js/.*"
+                                                     :handler any-access}
+                                                    {:pattern #"^/img/.*"
+                                                     :handler any-access}
+                                                    {:pattern #"^/css/.*"
+                                                     :handler any-access}
+                                                    {:pattern #"^/api/healthcheck"
+                                                     :handler any-access}
+                                                    {:pattern #"^/public/.*"
+                                                     :handler any-access}
+                                                    {:pattern #"^/favicon.ico"
+                                                     :handler any-access}
+                                                    {:pattern #".*"
+                                                     :handler authenticated-access
+                                                     :on-error redirect-to-login}]})))
 
 (defn start-server [host port auto-reload?]
   (let [defaults (-> site-defaults
