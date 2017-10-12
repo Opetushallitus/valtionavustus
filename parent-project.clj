@@ -24,7 +24,7 @@
 
                          ;; http
                          [buddy/buddy-auth "2.1.0"]
-                         [com.novemberain/pantomime "2.7.0"]
+                         [com.novemberain/pantomime "2.9.0"]
                          [compojure "1.6.0"]
                          [http-kit "2.2.0"]
                          [metosin/compojure-api "1.1.11"]
@@ -37,6 +37,11 @@
                          ;; json
                          [cheshire "5.8.0"]
                          [org.clojure/data.json "0.2.6"]
+                         [com.fasterxml.jackson.core/jackson-core "2.9.1"]
+                         [com.fasterxml.jackson.core/jackson-databind "2.9.1"]
+                         [com.fasterxml.jackson.core/jackson-annotations "2.9.1"]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.9.1"]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.9.1"]
                          [prismatic/schema "1.1.6"]
 
                          ;; database
@@ -60,9 +65,14 @@
                          [log4j "1.2.17"]
                          [org.clojure/tools.logging "0.4.0"]
                          [org.slf4j/slf4j-log4j12 "1.7.25"]
+                         [commons-logging "1.2"]
+
+                         ;; cryptography
+                         [org.bouncycastle/bcpkix-jdk15on "1.58"]
+                         [org.bouncycastle/bcprov-jdk15on "1.58"]
+                         [buddy/buddy-core "1.4.0"]
 
                          ;; other
-                         [buddy/buddy-core "1.4.0"]
                          [clj-time "0.14.0"]
                          [com.cemerick/url "0.1.1"]
                          [com.google.guava/guava "17.0"]

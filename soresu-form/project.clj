@@ -40,6 +40,7 @@
                  [org.clojure/tools.logging]
 
                  [buddy/buddy-core]
+
                  [clj-time]
                  [org.clojure/tools.trace]]
 
