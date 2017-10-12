@@ -5,7 +5,18 @@ import BusinessIdSearch from "./component/BusinessIdSearch.jsx"
 export default class FormContainer extends React.Component {
   constructor(props){
     super(props)
-    this.getOrganizationValue = this.getOrganizationValue.bind(this)
+     this.getOrganizationValues = this.getOrganizationValues.bind(this)
+  }
+
+  getOrganizationValues(id) {
+    if (this.props.state.configuration.preview) {
+      return null
+    }
+    const fieldValues = this.props.state.saveStatus.values.value
+    const value = _.find(fieldValues, x => x.key === id)
+    return value !== undefined
+      ? value.value
+      : null
   }
 
   render() {
@@ -22,7 +33,7 @@ export default class FormContainer extends React.Component {
     const isTestProfile = this.props.state.configuration.develMode
     const isPreviewPage = this.props.state.saveStatus.savedObject === null
 
-    const isBusinessIdSearchNeeded = this.props.showBusinessIdSearch && !isTestProfile && !isPreviewPage && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getOrganizationValues(item)).some(x => (x === "" || x === null)))
+    const isBusinessIdSearchNeeded = this.props.showBusinessIdSearch && !isTestProfile && !isPreviewPage && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getOrganizationValues(item)).some(x => (x == "" || x == null)))
 
     return (
       <section id={containerId} >
