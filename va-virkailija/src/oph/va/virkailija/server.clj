@@ -75,6 +75,13 @@
              :handler authenticated-access
              :on-error redirect-to-login}])
 
+(defn wrap-with-local-cors [handler url]
+  (fn [request]
+    (let [response (handler request)]
+      (-> response
+          (assoc-in [:headers "Access-Control-Allow-Origin"] url)
+          (assoc-in [:headers "Access-Control-Allow-Credentials"] true)))))
+
 (defn- with-authentication [site]
   (-> site
       (wrap-authentication backend)
@@ -94,6 +101,9 @@
                   (server/wrap-logger h)
                   (server/wrap-cache-control h)
                   (wrap-not-modified h)
+                  (if-let [local-url (get-in config [:server :local-front-url])]
+                    (wrap-with-local-cors h local-url)
+                    h)
                   (if auto-reload?
                     (wrap-reload h)
                     h))
