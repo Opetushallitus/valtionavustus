@@ -56,6 +56,8 @@ const events = {
 
 const basicFields = ["loppuselvitysdate", "valiselvitysdate", "register-number"]
 
+const paymentFields = ["operational-unit", "project", "operation"]
+
 function appendBudgetComponent(selvitysType, avustushaku) {
   const form = selvitysType == "valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
   const originalVaBudget = FormUtil.findFieldByFieldType(avustushaku.formContent.content, "vaBudget")
@@ -261,6 +263,8 @@ export default class HakujenHallintaController {
 
     if (basicFields.indexOf(fieldId) > -1) {
       update.avustushaku[fieldId] = update.newValue
+    } else if (paymentFields.indexOf(fieldId) > -1) {
+      update.avustushaku.content[fieldId] = update.newValue
     } else if (fieldId === "haku-self-financing-percentage") {
       update.avustushaku.content["self-financing-percentage"] =
         parseInt(update.newValue)
