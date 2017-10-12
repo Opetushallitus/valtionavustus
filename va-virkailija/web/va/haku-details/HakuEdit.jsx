@@ -31,32 +31,11 @@ export default class HakuEdit extends Component {
     return (
       <div id="haku-edit">
         <div id="haku-edit-header" className="editor-header">
-          <div className="editor-header-element">
+          <div className="field-register-number">
             <RegisterNumber controller={controller} avustushaku={avustushaku}
               allowAllHakuEdits={allowAllHakuEdits} onChange={onChange} />
           </div>
-          <div className="editor-header-element">
-            <h3>Toimintayksikkö</h3>
-            <input id="operational-unit" type="text"
-              disabled={!allowAllHakuEdits} onChange={onChange}
-              required="true"
-              value={avustushaku.content["operational-unit"]} />
-          </div>
-          <div className="editor-header-element">
-            <h3>Projekti</h3>
-            <input id="project" type="text"
-              disabled={!allowAllHakuEdits} onChange={onChange}
-              required="true"
-              value={avustushaku.content["project"]} />
-          </div>
-          <div className="editor-header-element">
-            <h3>Toiminto</h3>
-            <input id="operation" type="text"
-              disabled={!allowAllHakuEdits} onChange={onChange}
-              required="true"
-              value={avustushaku.content["operation"]} />
-          </div>
-          <div className="editor-header-element">
+         <div className="editor-header-element">
             <CreateHaku controller={controller} avustushaku={avustushaku}/>
           </div>
         </div>
@@ -85,6 +64,29 @@ export default class HakuEdit extends Component {
             </tr>
           </tbody>
         </table>
+        <div className="editor-field-row">
+          <div className="editor-row-element">
+            <h3 className="required">Toimintayksikkö</h3>
+            <input id="operational-unit" type="text"
+              disabled={!allowAllHakuEdits} onChange={onChange}
+              required="true"
+              value={avustushaku.content["operational-unit"]} />
+          </div>
+          <div className="editor-row-element">
+            <h3 className="required">Projekti</h3>
+            <input id="project" type="text"
+              disabled={!allowAllHakuEdits} onChange={onChange}
+              required="true"
+              value={avustushaku.content["project"]} />
+          </div>
+          <div className="editor-row-element">
+            <h3 className="required">Toiminto</h3>
+            <input id="operation" type="text"
+              disabled={!allowAllHakuEdits} onChange={onChange}
+              required="true"
+              value={avustushaku.content["operation"]} />
+          </div>
+        </div>
         <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} />
         <div className="haku-duration-and-self-financing">
           <div className="haku-duration-edit-container">
