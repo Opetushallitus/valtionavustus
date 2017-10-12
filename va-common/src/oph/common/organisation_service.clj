@@ -4,15 +4,24 @@
 
 (def service-url "https://virkailija.opintopolku.fi/organisaatio-service/rest/")
 
-(def languages {:fi "kieli_fi#1" :sv "kieli_sv#1" :en "kieli_en#1" })
+(def languages {:fi "kieli_fi#1" :sv "kieli_sv#1" :en "kieli_en#1"})
 
-(def compact-contact-fields #{ :osoite :postinumeroUri :postitoimipaikka })
+(def postal-address-fields #{:osoite :postinumeroUri :postitoimipaikka :osoiteTyyppi})
 
-(defn filter-translations
-  "Filter vector collection of values by translation.
-  Collections of 'organisaatio-service' has :kieli key defining translation."
-  [lang col]
-    (not-empty (filter #(= (:kieli %) (lang languages)) col)))
+(defn- make-contact-field-collector [lang]
+  (fn [acc fieldset]
+    (let [osoitetyyppi (:osoiteTyyppi fieldset)]
+      (if (seq osoitetyyppi)
+        (if (not= (:osoiteTyyppi acc) "posti")
+          (into acc (filter (fn [[k _]] (postal-address-fields k))) fieldset)
+          acc)
+        (merge-with (fn [res cur] (if (empty? res) cur res)) acc fieldset)))))
+
+(defn- reduce-contact-fields [lang fieldsets acc]
+  (let [fieldsets-in-lang (filter #(= (:kieli %) lang) fieldsets)]
+    (reduce (make-contact-field-collector lang)
+            acc
+            fieldsets-in-lang)))
 
 (defn- json->map [body] (cheshire/parse-string body true))
 
@@ -46,15 +55,19 @@
   Output will be
   {:name :email :organisation-id :county})"
   [lang {:keys [nimi yhteystiedot ytunnus]}]
-  (let [translated-contact
-        (into {} (or
-                   (filter-translations lang yhteystiedot)
-                   (filter-translations :fi yhteystiedot)))]
-    {:name (or (lang nimi) (:fi nimi))
-     :email (:email translated-contact)
+  (let [translated-contact-by-primary-lang (reduce-contact-fields (lang languages)
+                                                                  yhteystiedot
+                                                                  {})
+        translated-contact                 (if (= :fi lang)
+                                             translated-contact-by-primary-lang
+                                             (reduce-contact-fields (:fi languages)
+                                                                    yhteystiedot
+                                                                    translated-contact-by-primary-lang))]
+    {:name            (or (lang nimi) (:fi nimi))
+     :email           (:email translated-contact)
      :organisation-id ytunnus
-     :contact (compact-address translated-contact)
-     :county nil}))
+     :contact         (compact-address translated-contact)
+     :county          nil}))
 
 (defn get-compact-translated-info
   "Get (find) organisation with given organisation id (Y-tunnus in Finnish)
