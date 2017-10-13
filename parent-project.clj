@@ -33,6 +33,7 @@
                          [ring.middleware.conditional "0.2.0"]
                          [ring.middleware.logger "0.5.0"]
                          [ring/ring-defaults "0.3.1"]
+                         [ring/ring-session-timeout "0.2.0"]
 
                          ;; json
                          [cheshire "5.8.0"]

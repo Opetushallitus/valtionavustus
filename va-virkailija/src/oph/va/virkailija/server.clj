@@ -4,6 +4,7 @@
   (:require [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.session.cookie :refer [cookie-store]]
             [ring.middleware.not-modified :refer [wrap-not-modified]]
+            [ring.middleware.session-timeout :as ring-session-timeout]
             [ring.middleware.defaults :refer :all]
             [buddy.auth.middleware :as buddy-middleware]
             [buddy.auth.accessrules :as buddy-accessrules]
@@ -34,7 +35,7 @@
   (if-let [original-query-string (:query-string original-request)]
     (str "?" original-query-string)))
 
-(defn- redirect-to-login [request response]
+(defn- redirect-to-login [request]
   (let [original-url (str (:uri request) (query-string-for-redirect-location request))
         return-url virkailija-login-url]
     {:status  302
@@ -73,18 +74,21 @@
                                                      :handler any-access}
                                                     {:pattern #".*"
                                                      :handler authenticated-access
-                                                     :on-error redirect-to-login}]})))
+                                                     :on-error (fn [request _]
+                                                                 (redirect-to-login request))}]})))
 
 (defn start-server [host port auto-reload?]
   (let [defaults (-> site-defaults
                      (assoc-in [:security :anti-forgery] false)
                      (assoc-in [:session :store] (cookie-store {:key (-> config :server :cookie-key)}))
                      (assoc-in [:session :cookie-name] "identity")
-                     (assoc-in [:session :cookie-attrs :max-age] 60000)
+                     (assoc-in [:session :cookie-attrs :max-age] (-> config :server :session_timeout_in_s))
                      (assoc-in [:session :cookie-attrs :same-site] :lax)  ; required for CAS initiated redirection
                      (assoc-in [:session :cookie-attrs :secure] (-> config :server :require-https?)))
         handler (as-> #'all-routes h
                   (with-authentication h)
+                  (ring-session-timeout/wrap-absolute-session-timeout h {:timeout (-> config :server :session_timeout_in_s)
+                                                                         :timeout-handler redirect-to-login})
                   (wrap-defaults h defaults)
                   (server/wrap-logger h)
                   (server/wrap-cache-control h)
