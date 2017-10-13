@@ -32,9 +32,9 @@
                                  :duration Duration
                                  :focus-areas LocalizedStringList
                                  :selection-criteria LocalizedStringList
-                                 (s/optional-key :operational-unit) s/Str
-                                 (s/optional-key :project) s/Str
-                                 (s/optional-key :operation) s/Str
+                                 :operational-unit s/Str
+                                 :project s/Str
+                                 :operation s/Str
                                  (s/optional-key :rahoitusalueet) [Rahoitusalue]
                                  (s/optional-key :multiplemaksuera) s/Bool
                                  :self-financing-percentage (s/conditional is-percentage? s/Num)})
