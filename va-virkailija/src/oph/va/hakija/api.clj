@@ -73,20 +73,8 @@
          (map avustushaku-response-content)
          first)))
 
-(defn assoc-in-if [m ks value]
-  (if (nil? (get-in m ks))
-    (assoc-in m ks value)
-    m))
-
-(defn set-missing-content-values [grant]
-  (-> grant
-      (assoc-in-if [:content :operational-unit] "")
-      (assoc-in-if [:content :project] "")
-      (assoc-in-if [:content :operation] "")))
-
 (defn get-avustushaku [id]
-  (set-missing-content-values
-    (first (exec :form-db hakija-queries/get-avustushaku {:id id}))))
+  (first (exec :form-db hakija-queries/get-avustushaku {:id id})))
 
 (defn- map-status-list [statuses]
   (map (fn [status] (new HakuStatus status)) statuses))
@@ -95,16 +83,12 @@
   (first (exec :form-db hakija-queries/get-avustushaku-by-status {:id avustushaku-id :statuses (map-status-list statuses)})))
 
 (defn list-avustushaut []
-  (map #(-> %
-            (avustushaku-response-content)
-            (set-missing-content-values))
+  (map avustushaku-response-content
        (exec :form-db hakija-queries/list-avustushaut-not-deleted {})))
 
 (defn list-avustushaut-by-status [statuses]
   (if statuses
-    (map #(-> %
-              (avustushaku-response-content)
-              (set-missing-content-values))
+    (map avustushaku-response-content
          (exec :form-db hakija-queries/list-avustushaut-by-status
                {:statuses (map-status-list statuses)}))
     (list-avustushaut)))
