@@ -60,22 +60,34 @@ table.translation, #haku-roles table {
   }
 }
 
+.editor-header {
+  display: flex;
+  padding-bottom: 10px;
+}
+
+.editor-field-row {
+  display: flex;
+}
+
+.editor-row-element {
+  flex: 0.25;
+}
+
+.field-register-number {
+  flex: 1;
+}
+
 #haku-edit {
 
   #haku-edit-header {
     width: @content-width;
     border-bottom: 1px solid @light-gray;
-    .haku-edit-registernumber {
-      width: @content-width - 171px;
-      display: inline-block;
-      margin-bottom: 8px;
-    }
+
     h3 {
       display: inline-block;
     }
     input {
       display: inline-block;
-      margin-left: 8px;
     }
     #create-haku {
       width: 150px;
@@ -399,40 +411,6 @@ table.translation, #haku-roles table {
 .send-decisions-panel{
   padding-top: 20px;
   h3{margin-top: 0;margin-bottom: 20px;}
-}
-
-.selvitys-email-header {
-  margin-bottom: 10px;
-  margin-top: 10px;
-
-  &__header {
-    text-align: left;
-  }
-
-  &__value {
-    padding: 4px 0 4px 10px;
-  }
-
-  &__value-input {
-    width: 500px;
-  }
-}
-
-.selvitys-email-message {
-  width: ~"calc(100% - 20px)";
-  padding: 10px;
-  margin: 10px 0;
-
-  &--sent {
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-    background-color: #f0f0f0;
-  }
-
-  &--unsent {
-    min-height: 180px;
-    display: block;
-  }
 }
 
 .haku-filter-remove{

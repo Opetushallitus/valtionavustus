@@ -30,9 +30,14 @@ export default class HakuEdit extends Component {
 
     return (
       <div id="haku-edit">
-        <div id="haku-edit-header">
-          <RegisterNumber controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} onChange={onChange} />
-          <CreateHaku controller={controller} avustushaku={avustushaku}/>
+        <div id="haku-edit-header" className="editor-header">
+          <div className="field-register-number">
+            <RegisterNumber controller={controller} avustushaku={avustushaku}
+              allowAllHakuEdits={allowAllHakuEdits} onChange={onChange} />
+          </div>
+         <div className="editor-header-element">
+            <CreateHaku controller={controller} avustushaku={avustushaku}/>
+          </div>
         </div>
         <table id="name" className="translation">
           <thead><tr><th>Haun nimi</th><th>Haun nimi ruotsiksi</th></tr></thead>
@@ -59,6 +64,29 @@ export default class HakuEdit extends Component {
             </tr>
           </tbody>
         </table>
+        <div className="editor-field-row">
+          <div className="editor-row-element">
+            <h3 className="required">Toimintayksikkö</h3>
+            <input id="operational-unit" type="text"
+              disabled={!allowAllHakuEdits} onChange={onChange}
+              required="true"
+              value={avustushaku.content["operational-unit"]} />
+          </div>
+          <div className="editor-row-element">
+            <h3 className="required">Projekti</h3>
+            <input id="project" type="text"
+              disabled={!allowAllHakuEdits} onChange={onChange}
+              required="true"
+              value={avustushaku.content["project"]} />
+          </div>
+          <div className="editor-row-element">
+            <h3 className="required">Toiminto</h3>
+            <input id="operation" type="text"
+              disabled={!allowAllHakuEdits} onChange={onChange}
+              required="true"
+              value={avustushaku.content["operation"]} />
+          </div>
+        </div>
         <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} />
         <div className="haku-duration-and-self-financing">
           <div className="haku-duration-edit-container">
@@ -76,6 +104,7 @@ export default class HakuEdit extends Component {
         <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange}/>
         <ChooseRahoitusalueet avustushaku={avustushaku} allowEditing={allowNondisruptiveHakuEdits} onChange={onChange} controller={controller} />
         <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
+
         <AcademySize value={avustushaku.is_academysize} disabled={!allowAllHakuEdits} onChange={onChange} />
         <HakuRoles avustushaku={avustushaku} ldapSearch={ldapSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
@@ -393,7 +422,7 @@ class RegisterNumber extends React.Component {
     return <div className="haku-edit-registernumber">
              <h3 className="required">Diaarinumero</h3>
              <input type="text" disabled={!allowAllHakuEdits} onChange={this.props.onChange} className={registerNumberClass} maxLength="128" placeholder="Esim. 340/2015" id="register-number" value={registerNumber} />
-             {errorString}
+             <div>{errorString}</div>
            </div>
   }
 }

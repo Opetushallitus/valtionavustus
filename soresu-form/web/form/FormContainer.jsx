@@ -2,23 +2,21 @@ import React from "react"
 import _ from "lodash"
 import BusinessIdSearch from "./component/BusinessIdSearch.jsx"
 
-
 export default class FormContainer extends React.Component {
   constructor(props){
     super(props)
-    this.getFieldValue = this.getFieldValue.bind(this)
+     this.getOrganizationValues = this.getOrganizationValues.bind(this)
   }
 
-
-  getFieldValue(id){
-    if (this.props.state.configuration.preview === false) {
-      const fieldValues = this.props.state.saveStatus.values.value
-      if (fieldValues.find(x => x.key === id) != undefined){
-        return fieldValues.filter(value => value.key == id)[0].value
-      } else{
-        return null
-      }
+  getOrganizationValues(id) {
+    if (this.props.state.configuration.preview) {
+      return null
     }
+    const fieldValues = this.props.state.saveStatus.values.value
+    const value = _.find(fieldValues, x => x.key === id)
+    return value !== undefined
+      ? value.value
+      : null
   }
 
   render() {
@@ -32,14 +30,10 @@ export default class FormContainer extends React.Component {
     }
     const formElement = React.createElement(formContainerClass, formElementProps)
 
-
+    const isTestProfile = this.props.state.configuration.develMode
     const isPreviewPage = this.props.state.saveStatus.savedObject === null
-    const isAdminViewPage = this.props.state.configuration.preview === true
-    const areEmptyFields =  ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) =>   this.getFieldValue(item)).some(x => (x == "" || x == null))
 
-
-    // Check any of the values are missing, if so, show the modal
-    const isBusinessIdSearchNeeded = !isPreviewPage && !isAdminViewPage && areEmptyFields
+    const isBusinessIdSearchNeeded = this.props.showBusinessIdSearch && !isTestProfile && !isPreviewPage && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getOrganizationValues(item)).some(x => (x == "" || x == null)))
 
     return (
       <section id={containerId} >

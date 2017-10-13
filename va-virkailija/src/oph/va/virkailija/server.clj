@@ -75,29 +75,35 @@
              :handler authenticated-access
              :on-error redirect-to-login}])
 
+(defn wrap-with-local-cors [handler url]
+  (fn [request]
+    (let [response (handler request)]
+      (-> response
+          (assoc-in [:headers "Access-Control-Allow-Origin"] url)
+          (assoc-in [:headers "Access-Control-Allow-Credentials"] true)))))
+
 (defn- with-authentication [site]
   (-> site
       (wrap-authentication backend)
       (wrap-access-rules {:rules rules})))
 
 (defn start-server [host port auto-reload?]
-  (let [cookie-defaults {:max-age 60000
-                         :http-only (-> config :server :require-https?)}
-        cookie-attrs (if (-> config :server :require-https?)
-                       (assoc cookie-defaults :secure true)
-                       cookie-defaults)
-        cookie-store (cookie-store {:key (-> config :server :cookie-key)})
-        defaults (-> site-defaults
+  (let [defaults (-> site-defaults
                      (assoc-in [:security :anti-forgery] false)
-                     (assoc :session {:store cookie-store
-                                      :cookie-name "identity"
-                                      :cookie-attrs cookie-attrs}))
+                     (assoc-in [:session :store] (cookie-store {:key (-> config :server :cookie-key)}))
+                     (assoc-in [:session :cookie-name] "identity")
+                     (assoc-in [:session :cookie-attrs :max-age] 60000)
+                     (assoc-in [:session :cookie-attrs :same-site] :lax)  ; required for CAS initiated redirection
+                     (assoc-in [:session :cookie-attrs :secure] (-> config :server :require-https?)))
         handler (as-> #'all-routes h
                   (with-authentication h)
                   (wrap-defaults h defaults)
                   (server/wrap-logger h)
                   (server/wrap-cache-control h)
                   (wrap-not-modified h)
+                  (if-let [local-url (get-in config [:server :local-front-url])]
+                    (wrap-with-local-cors h local-url)
+                    h)
                   (if auto-reload?
                     (wrap-reload h)
                     h))
