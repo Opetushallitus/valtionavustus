@@ -157,3 +157,22 @@
                       update-hakemus-selvitys-email-by-id!
                       {:id             (:id hakemus)
                        :selvitys_email (convert-selvitys-email (:selvitys_email hakemus))}))))
+(defn assoc-in-if [m ks value]
+  (if (nil? (get-in m ks))
+    (assoc-in m ks value)
+    m))
+
+(defn set-missing-content-values [grant]
+  (-> grant
+      (assoc-in-if [:content :operational-unit] "")
+      (assoc-in-if [:content :project] "")
+      (assoc-in-if [:content :operation] "")))
+
+(migrations/defmigration migrate-add-default-values-for-payment-fields "1.47"
+  "Add default values for payment fields `operational-unit`, `project`,
+  `operation`. Default value will be empty string."
+  (doseq [avustushaku (va-db/list-avustushaut)]
+    (common-db/exec
+      :form-db
+      update-avustushaku-content!
+      (set-missing-content-values avustushaku))))
