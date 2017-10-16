@@ -25,7 +25,7 @@ export default class SummaryApp extends Component {
       <RahoitusalueList hakemusList={hakemusList}/>
 
     const titleString = SummaryApp.titleString(avustushaku)
-    const mailToBody = encodeURIComponent(titleString + "\n\nLinkki ratkaisuyhteenvetoon:\n\n" + location.href)
+    const mailToBody = encodeURIComponent(titleString + "\n\nLinkki päätöslistaan:\n\n" + location.href)
     const mailToLink = "mailto:?subject=" + titleString + "&body=" + mailToBody
 
     return (
@@ -46,7 +46,7 @@ export default class SummaryApp extends Component {
   }
 
   static titleString(avustushaku) {
-    return "Ratkaisuyhteenveto – " + SummaryApp.avustusHakuLabelString(avustushaku)
+    return "Päätöslista – " + SummaryApp.avustusHakuLabelString(avustushaku)
   }
 
   static avustusHakuLabelString(avustushaku) {
@@ -132,7 +132,7 @@ class SummaryHeading extends Component {
     return (
       <div>
         <h1>{titleString}</h1>
-        <h2 style={{textTransform:'uppercase'}}>Ratkaisuyhteenveto</h2>
+        <h2 style={{textTransform:'uppercase'}}>Päätöslista</h2>
         <table className="summary-heading-table">
           <thead>
             <tr>
