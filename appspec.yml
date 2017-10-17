@@ -5,6 +5,6 @@ files:
     destination: /home/ec2-user/va-virkailija/
 hooks:
   ApplicationStart:
-    - location: /home/ec2-user/va-virkailija/build_run_docker.sh
+    - location: ci/dev_start_virkailija.sh
       timeout: 10
       runas: ec2-user
