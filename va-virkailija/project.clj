@@ -22,7 +22,8 @@
                  [dk.ative/docjure]
                  [oph/clj-util]
                  [org.clojars.pntblnk/clj-ldap]
-                 [org.clojure/data.json]]
+                 [org.clojure/data.json]
+                 [org.clojure/data.xml]]
 
   :profiles {:uberjar {:aot :all}
              :dev     {:env {:config "config/dev.edn"
