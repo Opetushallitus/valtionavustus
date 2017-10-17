@@ -1,0 +1,10 @@
+version: 0.0
+os: linux
+files:
+  - source: ./virkailija-0.1.0-SNAPSHOT-standalone.jar
+    destination: /home/ec2-user/va-virkailija/
+hooks:
+  ApplicationStart:
+    - location: /home/ec2-user/va-virkailija/build_run_docker.sh
+      timeout: 10
+      runas: ec2-user

@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-
+#!/bin/bash
 echo "building valtionavustus"
 make clean
-make test
 make build
