@@ -18,18 +18,19 @@
             [oph.va.virkailija.email :as email]))
 
 (defn- startup [config]
-  (log/info "Using configuration: " config)
-  (log/info "Running db migrations")
+  (log/info "Startup, with configuration: " config)
   (dbmigrations/migrate :virkailija-db
                         "db.migration"
                         "oph.va.virkailija.db.migrations")
-  (log/info "Starting e-mail sender")
-  (email/start-background-sender))
+  (email/start-background-sender)
+  (auth/start-background-job-token-timeout))
 
 (defn- shutdown []
-  (log/info "Shutting down all services")
+  (log/info "Shutting down...")
   (email/stop-background-sender)
-  (db/close-datasource! :virkailija-db))
+  (auth/stop-background-job-token-timeout)
+  (db/close-datasource! :virkailija-db)
+  (shutdown-agents))
 
 (defn- query-string-for-redirect-location [original-request]
   (if-let [original-query-string (:query-string original-request)]
@@ -47,7 +48,7 @@
 (defn- any-access [request] true)
 
 (defn- authenticated-access [request]
-  (if (auth/check-identity (-> request :session :identity))
+  (if (auth/get-request-identity request)
     true
     (buddy-accessrules/error "Authentication required")))
 

@@ -84,17 +84,17 @@
 
 (defn start-background-sender [mail-templates]
   (reset! run? true)
-  (go (log/info "Starting mail sender loop")
+  (go (log/info "Starting background mail sending...")
       (while (= @run? true)
         (let [msg (<! mail-queue)]
           (case (:operation msg)
             :stop (reset! run? false)
             :send (send-msg! msg
                              (partial render (get-in mail-templates [(:type msg) (:lang msg)]))))))
-        (log/info "Exiting mail sender loop - mail sending is shut down")))
+      (log/info "Stopped background mail sending")))
 
 (defn stop-background-sender []
-  (log/info "Signaling mail sender to stop")
+  (log/info "Stopping background mail sending...")
   (>!! mail-queue {:operation :stop}))
 
 (defn generate-url [avustushaku-id lang lang-str user-key preview?]

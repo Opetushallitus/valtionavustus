@@ -11,16 +11,14 @@
             [oph.va.hakija.email :as email]))
 
 (defn- startup [config]
-  (log/info "Using configuration: " config)
-  (log/info "Running db migrations")
+  (log/info "Startup, with configuration:" config)
   (dbmigrations/migrate :form-db
                         "db.migration"
                         "oph.va.hakija.db.migrations")
-  (log/info "Starting e-mail sender")
   (email/start-background-sender))
 
 (defn- shutdown []
-  (log/info "Shutting down all services")
+  (log/info "Shutting down...")
   (email/stop-background-sender)
   (db/close-datasource! :form-db))
 
