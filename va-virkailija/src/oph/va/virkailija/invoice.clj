@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.invoice
   (:require [clojure.data.xml :as xml]))
 
-(defn write-xml [tags file]
+(defn write-xml! [tags file]
   (with-open [out-file (java.io.FileWriter. file)]
     (xml/emit tags out-file)))
 
