@@ -1,13 +1,27 @@
 (ns oph.va.virkailija.invoice
-  (:require [clojure.data.xml :refer [element]]))
+  (:require [clojure.data.xml :refer [element emit emit-str parse]]))
 
 (defn write-xml! [tags file]
   (with-open [out-file (java.io.FileWriter. file)]
-    (xml/emit tags out-file)))
+    (emit tags out-file)))
 
 (defn read-xml [file]
   (with-open [input (java.io.FileInputStream. file)]
-    (xml/parse input)))
+    (parse input)))
+
+(defn create-supplier-tags [supplier]
+  (element :Toimittaja {}
+    (element :Y-tunnus {})
+    (element :Hlo-tunnus {})
+    (element :Nimi {})
+    (element :Postiosoite {})
+    (element :Paikkakunta {})
+    (element :Maa {})
+    (element :Iban-tili {})
+    (element :Pankkiavain {})
+    (element :Pankki-maa {})
+    (element :Kieli {})
+    (element :Valuutta {})))
 
 (defn create-header-tags [invoice]
   (element :Header {}
@@ -21,18 +35,7 @@
     (element :Asiatarkastaja {})
     (element :Hyvaksyja {})
     (element :Tositelaji {})
-    (element :Toimittaja {}
-      (element :Y-tunnus {})
-      (element :Hlo-tunnus {})
-      (element :Nimi {})
-      (element :Postiosoite {})
-      (element :Paikkakunta {})
-      (element :Maa {})
-      (element :Iban-tili {})
-      (element :Pankkiavain {})
-      (element :Pankki-maa {})
-      (element :Kieli {})
-      (element :Valuutta {}))))
+    (create-supplier-tags (get invoice :supplier))))
 
 (defn create-posting-tags [row]
   (element :Posting {}
@@ -60,6 +63,9 @@
   (element :VA-invoice {}
     (create-header-tags invoice)
     (create-postings-tags invoice)))
+
+(defn tags-to-str [tags]
+  (emit-str tags))
 
 (defn is-valid? [tags]
   false)
