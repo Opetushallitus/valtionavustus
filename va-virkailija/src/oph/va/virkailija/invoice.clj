@@ -9,7 +9,7 @@
   (with-open [input (java.io.FileInputStream. file)]
     (parse input)))
 
-(defn create-supplier-tags [supplier]
+(defn- create-supplier-tags [supplier]
   (element :Toimittaja {}
     (element :Y-tunnus {})
     (element :Hlo-tunnus {})
@@ -23,7 +23,7 @@
     (element :Kieli {})
     (element :Valuutta {})))
 
-(defn create-header-tags [invoice]
+(defn- create-header-tags [invoice]
   (element :Header {}
     (element :Maksuera {})
     (element :Laskunpaiva {})
@@ -37,7 +37,7 @@
     (element :Tositelaji {})
     (create-supplier-tags (get invoice :supplier))))
 
-(defn create-posting-tags [row]
+(defn- create-posting-tags [row]
   (element :Posting {}
     (element :Summa {})
     (element :LKP-tili {})
@@ -55,7 +55,7 @@
     (element :Varalla1 {})
     (element :Varalla2 {})))
 
-(defn create-postings-tags [invoice]
+(defn- create-postings-tags [invoice]
   (element :Postings {}
     (doall (map create-posting-tags (get invoice :rows [])))))
 
