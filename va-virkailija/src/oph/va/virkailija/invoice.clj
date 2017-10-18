@@ -3,7 +3,7 @@
 
 (defn write-xml [tags file]
   (with-open [out-file (java.io.FileWriter. file)]
-    (xml/emit data out-file)))
+    (xml/emit tags out-file)))
 
 (defn read-xml [file]
   (with-open [input (java.io.FileInputStream. file)]
