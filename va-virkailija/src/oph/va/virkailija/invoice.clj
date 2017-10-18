@@ -67,5 +67,3 @@
 (defn tags-to-str [tags]
   (emit-str tags))
 
-(defn is-valid? [tags]
-  false)
