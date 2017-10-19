@@ -9,7 +9,10 @@
 
 (def ^{:private true} tokens (atom {}))
 
-(def ^{:private true} token-timeout-ms (* 1000 (-> config :server :session_timeout_in_s)))
+(def ^{:private true} token-timeout-ms (-> config
+                                           (get-in [:server :session_timeout_in_s])
+                                           (+ 5)  ; ensure token timeout happens after session timeout
+                                           (* 1000)))
 
 (def ^{:private true} token-timeout-chan (chan 1))
 
