@@ -38,28 +38,28 @@
    :subject (:fi (msg-type mail-titles))
    :sender (-> email/smtp-config :sender)})
 
-(defn start-background-sender []
-  (email/start-background-sender mail-templates))
+(defn start-background-job-send-mails []
+  (email/start-background-job-send-mails mail-templates))
 
-(defn stop-background-sender []
-  (email/stop-background-sender))
+(defn stop-background-job-send-mails []
+  (email/stop-background-job-send-mails))
 
 (defn send-change-request-message! [lang to avustushaku-id avustushaku-name user-key change-request presenting-officer-email]
   (let [lang-str (or (clojure.core/name lang) "fi")
         url (email/generate-url avustushaku-id lang lang-str user-key false)]
     (log/info "Url would be: " url)
-    (>!! email/mail-queue {:operation :send
-                           :type :change-request
-                           :lang lang
-                           :from (-> email/smtp-config :from lang)
-                           :reply-to presenting-officer-email
-                           :bcc presenting-officer-email
-                           :sender (-> email/smtp-config :sender)
-                           :subject (get-in mail-titles [:change-request lang])
-                           :to [to]
-                           :avustushaku avustushaku-name
-                           :url url
-                           :change-request change-request})))
+    (>!! email/mail-chan {:operation :send
+                          :type :change-request
+                          :lang lang
+                          :from (-> email/smtp-config :from lang)
+                          :reply-to presenting-officer-email
+                          :bcc presenting-officer-email
+                          :sender (-> email/smtp-config :sender)
+                          :subject (get-in mail-titles [:change-request lang])
+                          :to [to]
+                          :avustushaku avustushaku-name
+                          :url url
+                          :change-request change-request})))
 
 (defn paatos-url [avustushaku-id user-key lang]
   (let [va-url (-> config :server :url lang)]
@@ -77,31 +77,30 @@
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])]
     (log/info "Url would be: " url)
-    (>!! email/mail-queue {:operation :send
-                           :type :paatos
-                           :lang lang
-                           :from (-> email/smtp-config :from lang)
-                           :reply-to reply-to
-                           :sender (-> email/smtp-config :sender)
-                           :subject mail-subject
-                           :avustushaku-name avustushaku-name
-                           :to to
-                           :url url
-                           :register-number (:register_number hakemus)
-                           :project-name (:project_name hakemus)})))
+    (>!! email/mail-chan {:operation :send
+                          :type :paatos
+                          :lang lang
+                          :from (-> email/smtp-config :from lang)
+                          :reply-to reply-to
+                          :sender (-> email/smtp-config :sender)
+                          :subject mail-subject
+                          :avustushaku-name avustushaku-name
+                          :to to
+                          :url url
+                          :register-number (:register_number hakemus)
+                          :project-name (:project_name hakemus)})))
 
 
 (defn send-selvitys! [to hakemus mail-subject mail-message]
   (let [lang (keyword (:language hakemus))]
-    (>!! email/mail-queue {:operation :send
-                           :type :selvitys
-                           :lang lang
-                           :from (-> email/smtp-config :from lang)
-                           :sender (-> email/smtp-config :sender)
-                           :subject mail-subject
-                           :to to
-                           :body mail-message
-                           })))
+    (>!! email/mail-chan {:operation :send
+                          :type :selvitys
+                          :lang lang
+                          :from (-> email/smtp-config :from lang)
+                          :sender (-> email/smtp-config :sender)
+                          :subject mail-subject
+                          :to to
+                          :body mail-message})))
 
 (defn send-selvitys-notification! [to avustushaku hakemus selvitys-type arvio roles]
   (let [lang-str (:language hakemus)
@@ -113,16 +112,16 @@
         selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)]
     (log/info "Url would be: " url)
-    (>!! email/mail-queue {:operation :send
-                           :type (keyword (str selvitys-type "-notification"))
-                           :lang lang
-                           :from (-> email/smtp-config :from lang)
-                           :sender (-> email/smtp-config :sender)
-                           :subject mail-subject
-                           :selvitysdate ((keyword (str selvitys-type "date")) avustushaku)
-                           :presenter-name (:name presenter)
-                           :avustushaku-name avustushaku-name
-                           :to to
-                           :url url
-                           :register-number (:register_number hakemus)
-                           :project-name (:project_name hakemus)})))
+    (>!! email/mail-chan {:operation :send
+                          :type (keyword (str selvitys-type "-notification"))
+                          :lang lang
+                          :from (-> email/smtp-config :from lang)
+                          :sender (-> email/smtp-config :sender)
+                          :subject mail-subject
+                          :selvitysdate ((keyword (str selvitys-type "date")) avustushaku)
+                          :presenter-name (:name presenter)
+                          :avustushaku-name avustushaku-name
+                          :to to
+                          :url url
+                          :register-number (:register_number hakemus)
+                          :project-name (:project_name hakemus)})))

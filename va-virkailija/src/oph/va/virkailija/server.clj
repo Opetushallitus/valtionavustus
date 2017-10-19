@@ -11,6 +11,7 @@
             [buddy.auth.backends.session :as buddy-session]
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
+            [oph.common.background-job-supervisor :as job-supervisor]
             [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :as db]
             [oph.va.virkailija.authentication :as auth]
@@ -22,15 +23,15 @@
   (dbmigrations/migrate :virkailija-db
                         "db.migration"
                         "oph.va.virkailija.db.migrations")
-  (email/start-background-sender)
-  (auth/start-background-job-token-timeout))
+  (email/start-background-job-send-mails)
+  (auth/start-background-job-timeout-tokens))
 
 (defn- shutdown []
   (log/info "Shutting down...")
-  (email/stop-background-sender)
-  (auth/stop-background-job-token-timeout)
+  (email/stop-background-job-send-mails)
+  (auth/stop-background-job-timeout-tokens)
   (db/close-datasource! :virkailija-db)
-  (shutdown-agents))
+  (job-supervisor/await-jobs!))
 
 (defn- query-string-for-redirect-location [original-request]
   (if-let [original-query-string (:query-string original-request)]

@@ -2,15 +2,16 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [oph.va.virkailija.login :refer [login]]
             [oph.soresu.common.config :refer [config]]
-            [clojure.core.async :refer [<! go timeout]]
+            [oph.common.background-job-supervisor :as job-supervisor]
+            [clojure.core.async :refer [<! >!! alts! go chan timeout]]
             [clojure.tools.logging :as log])
   (:import (fi.vm.sade.utils.cas CasLogout)))
 
-(defonce ^{:private true} tokens (atom {}))
+(def ^{:private true} tokens (atom {}))
 
-(defonce ^{:private true} token-timeout-ms (* 1000 (-> config :server :session_timeout_in_s)))
+(def ^{:private true} token-timeout-ms (* 1000 (-> config :server :session_timeout_in_s)))
 
-(defonce ^{:private true} token-timeout-agent (agent {:run-job? false}))
+(def ^{:private true} token-timeout-chan (chan 1))
 
 (defn- remove-timed-out-tokens [tokens]
   (let [now-time-ms (System/currentTimeMillis)]
@@ -26,23 +27,20 @@
   (go
     (log/info "Starting background job: token timeout...")
     (loop []
-      (<! (timeout 500))
-      (swap! tokens remove-timed-out-tokens)
-      (if (:run-job? @token-timeout-agent)
-        (recur)))
+      (let [[value _] (alts! [token-timeout-chan (timeout 500)])]
+        (if (nil? value)
+          (do
+            (swap! tokens remove-timed-out-tokens)
+            (recur)))))
     (log/info "Stopped background job: token timeout.")))
 
-(defn start-background-job-token-timeout []
-  (send token-timeout-agent
-        (fn [{:keys [run-job?] :as state}]
-          (if run-job?
-            state  ; do nothing, already running
-            (do
-              (start-loop-remove-timed-out-tokens)
-              (assoc state :run-job? true))))))
+(defn start-background-job-timeout-tokens []
+  (job-supervisor/start-background-job :timeout-tokens
+                                       start-loop-remove-timed-out-tokens
+                                       #(>!! token-timeout-chan {:operation :stop})))
 
-(defn stop-background-job-token-timeout []
-  (send token-timeout-agent assoc :run-job? false))
+(defn stop-background-job-timeout-tokens []
+  (job-supervisor/stop-background-job :timeout-tokens))
 
 (defn authenticate [ticket virkailija-login-url]
   (if-let [details (login ticket virkailija-login-url)]
