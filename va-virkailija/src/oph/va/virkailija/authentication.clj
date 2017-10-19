@@ -49,7 +49,7 @@
     (let [username (:username details)
           token ticket]
       (swap! tokens assoc token {:details details :timeout-at-ms (+ token-timeout-ms (System/currentTimeMillis))})
-      (log/info username "logged in:" ticket (format "(%d tickets in cache)" (count @tokens)))
+      (log/info username "Logged in:" ticket (format "(%d tickets in cache)" (count @tokens)))
       {:username username
        :person-oid (:person-oid details)
        :token token})
@@ -66,8 +66,8 @@
   (if (contains? @tokens ticket)
     (do
       (swap! tokens dissoc ticket)
-      (log/info "logged out:" ticket (format "(%d tickets in cache)" (count @tokens))))
-    (log/info "trying to logout CAS ticket without active session:" ticket)))
+      (log/info "Logged out:" ticket (format "(%d tickets in cache)" (count @tokens))))
+    (log/info "Trying to logout CAS ticket without active session:" ticket)))
 
 (defn cas-initiated-logout [logout-request]
   (let [ticket (CasLogout/parseTicketFromLogoutRequest logout-request)]
@@ -75,11 +75,11 @@
       (log/error "Could not parse ticket from CAS request" logout-request)
       (if-let [token (.get ticket)]
         (do
-          (log/info "logging out (CAS initiated):" token)
+          (log/info "Logging out (CAS initiated):" token)
           (logout-ticket token))))))
 
 (defn logout [identity]
   (if-let [token (:token identity)]
     (do
-      (log/info "logging out (user initiated):" token)
+      (log/info "Logging out (user initiated):" token)
       (logout-ticket token))))
