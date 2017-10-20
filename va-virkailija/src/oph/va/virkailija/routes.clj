@@ -86,15 +86,6 @@
       (not (= "published" (:status avustushaku))) (method-not-allowed!)
       :else {:avustushaku avustushaku :hakemus hakemus})))
 
-(defn- get-hakemus-and-avustushaku [avustushaku-id hakemus-id]
-  (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
-        hakemus (hakija-api/get-hakemus hakemus-id)]
-    (cond
-      (not hakemus) (not-found!)
-      (not (= (:id avustushaku) (:avustushaku hakemus))) (bad-request!)
-      :else {:avustushaku avustushaku :hakemus hakemus})))
-
-
 (compojure-api/defroutes healthcheck-routes
   "Healthcheck routes"
 
@@ -430,7 +421,7 @@
                              (:selection-criteria-index score)
                              (:score score))))))
 
-(defn- post-status []
+(defn- post-hakemus-status []
   (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id :as request]
     :path-params [avustushaku-id :- Long, hakemus-id :- Long]
     :body [body {:status va-schema/HakemusStatus
@@ -446,7 +437,7 @@
       (if (= new-status "pending_change_request")
         (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
               answers (:answers submission)
-              language (keyword (:language updated-hakemus))
+              language (keyword (or (formutil/find-answer-value answers "language") "fi"))
               avustushaku-name (-> avustushaku :content :name language)
               email (formutil/find-answer-value answers "primary-email")
               user-key (:user_key updated-hakemus)
@@ -512,32 +503,9 @@
   (get-change-requests)
   (get-scores)
   (post-scores)
+  (post-hakemus-status)
   (put-searches)
-  (get-search)
-
-  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id :as request]
-    :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-    :body [body {:status va-schema/HakemusStatus
-                 :comment s/Str}]
-    :return {:hakemus-id Long
-             :status va-schema/HakemusStatus}
-    :summary "Update status of hakemus"
-    (let [{:keys [avustushaku hakemus]} (get-hakemus-and-avustushaku avustushaku-id hakemus-id)
-          identity (authentication/get-request-identity request)
-          new-status (:status body)
-          status-comment (:comment body)
-          updated-hakemus (hakija-api/update-hakemus-status hakemus new-status status-comment identity)]
-      (if (= new-status "pending_change_request")
-        (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
-              answers (:answers submission)
-              language (keyword (or (formutil/find-answer-value answers "language") "fi"))
-              avustushaku-name (-> avustushaku :content :name language)
-              email (formutil/find-answer-value answers "primary-email")
-              user-key (:user_key updated-hakemus)
-              presenting-officer-email (:email identity)]
-          (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment presenting-officer-email)))
-      (ok {:hakemus-id hakemus-id
-           :status new-status}))))
+  (get-search))
 
 (compojure-api/defroutes public-routes
   "Public API"
