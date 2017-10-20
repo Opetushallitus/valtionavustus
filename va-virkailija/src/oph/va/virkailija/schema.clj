@@ -245,5 +245,6 @@
   "Generated invoice"
   {:VA-invoice
    {:Header InvoiceHeader
-    :Postings InvoicePostings}})
+    :Postings
+    {:Posting InvoicePostings}}})
 
