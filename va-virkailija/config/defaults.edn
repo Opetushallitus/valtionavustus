@@ -5,6 +5,7 @@
           :port 8081
           :require-https? true
           :attachment-max-size 50 ;in megabytes
+          :session_timeout_in_s 3600
           :threads 16
           :virkailija-url "http://localhost:8081"}
  :opintopolku {:url "https://testi.virkailija.opintopolku.fi"

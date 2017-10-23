@@ -18,6 +18,7 @@
 
   :dependencies [[oph-va/common]
                  [buddy/buddy-auth]
+                 [ring/ring-session-timeout]
                  [com.cemerick/url :exclusions [com.cemerick/clojurescript.test]]
                  [dk.ative/docjure]
                  [oph/clj-util]

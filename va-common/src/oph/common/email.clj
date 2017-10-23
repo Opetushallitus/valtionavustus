@@ -5,7 +5,8 @@
             [clojure.java.io :as io]
             [clostache.parser :refer [render]]
             [oph.soresu.common.config :refer [config]]
-            [oph.common.string :as common-string])
+            [oph.common.string :as common-string]
+            [oph.common.background-job-supervisor :as job-supervisor])
   (:import [org.apache.commons.mail SimpleEmail]))
 
 (defn load-template [path]
@@ -14,8 +15,8 @@
        slurp))
 
 (def smtp-config (:email config))
-(defonce mail-queue (chan (:queue-size smtp-config)))
-(defonce run? (atom true))
+
+(def mail-chan (chan (:queue-size smtp-config)))
 
 (defn- try-send! [time multiplier max-time send-fn]
   (if (>= time max-time)
@@ -82,20 +83,28 @@
                             send-fn))
         (log/error "Failed sending email:" msg-description)))))
 
-(defn start-background-sender [mail-templates]
-  (reset! run? true)
-  (go (log/info "Starting mail sender loop")
-      (while (= @run? true)
-        (let [msg (<! mail-queue)]
-          (case (:operation msg)
-            :stop (reset! run? false)
-            :send (send-msg! msg
-                             (partial render (get-in mail-templates [(:type msg) (:lang msg)]))))))
-        (log/info "Exiting mail sender loop - mail sending is shut down")))
+(defn start-loop-send-mails [mail-templates]
+  (go
+    (log/info "Starting background job: send mails...")
+    (loop []
+      (let [msg   (<! mail-chan)
+            stop? (case (:operation msg)
+                    :stop true
+                    :send (do
+                            (send-msg! msg
+                                       (partial render (get-in mail-templates [(:type msg) (:lang msg)])))
+                            false))]
+        (if (not stop?)
+          (recur))))
+    (log/info "Stopped background job: send mails.")))
 
-(defn stop-background-sender []
-  (log/info "Signaling mail sender to stop")
-  (>!! mail-queue {:operation :stop}))
+(defn start-background-job-send-mails [mail-templates]
+  (job-supervisor/start-background-job :send-mails
+                                       (partial start-loop-send-mails mail-templates)
+                                       #(>!! mail-chan {:operation :stop})))
+
+(defn stop-background-job-send-mails []
+  (job-supervisor/stop-background-job :send-mails))
 
 (defn generate-url [avustushaku-id lang lang-str user-key preview?]
   (str (-> config :server :url lang)

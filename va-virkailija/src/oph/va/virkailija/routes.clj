@@ -86,15 +86,6 @@
       (not (= "published" (:status avustushaku))) (method-not-allowed!)
       :else {:avustushaku avustushaku :hakemus hakemus})))
 
-(defn- get-hakemus-and-avustushaku [avustushaku-id hakemus-id]
-  (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
-        hakemus (hakija-api/get-hakemus hakemus-id)]
-    (cond
-      (not hakemus) (not-found!)
-      (not (= (:id avustushaku) (:avustushaku hakemus))) (bad-request!)
-      :else {:avustushaku avustushaku :hakemus hakemus})))
-
-
 (compojure-api/defroutes healthcheck-routes
   "Healthcheck routes"
 
@@ -153,7 +144,7 @@
     :body [base-haku-id-wrapper (compojure-api/describe {:baseHakuId Long} "id of avustushaku to use as base")]
     :return va-schema/AvustusHaku
     :summary "Copy existing avustushaku as new one by id of the existing avustushaku"
-    (ok (hakudata/create-new-avustushaku (:baseHakuId base-haku-id-wrapper) (authentication/get-identity request)))))
+    (ok (hakudata/create-new-avustushaku (:baseHakuId base-haku-id-wrapper) (authentication/get-request-identity request)))))
 
 (defn- post-avustushaku []
   (compojure-api/POST "/:avustushaku-id" []
@@ -170,7 +161,7 @@
     :path-params [avustushaku-id :- Long]
     :return virkailija-schema/HakuData
     :summary "Return all relevant avustushaku data (including answers, comments, form and current user privileges)"
-    (let [identity (authentication/get-identity request)]
+    (let [identity (authentication/get-request-identity request)]
       (if-let [response (hakudata/get-combined-avustushaku-data-with-privileges avustushaku-id identity)]
         (ok response)
         (not-found)))))
@@ -180,7 +171,7 @@
     :path-params [hakemus-id :- Long avustushaku-id :- Long]
     :return s/Any
     :summary "Return all relevant selvitys data including answers, form and attachments"
-    (let [identity (authentication/get-identity request)]
+    (let [identity (authentication/get-request-identity request)]
       (if-let [response (hakija-api/get-selvitysdata avustushaku-id hakemus-id)]
         (ok response)
         (not-found)))))
@@ -227,7 +218,7 @@
   (compojure-api/GET "/:haku-id/export.xslx" [haku-id :as request]
     :path-params [haku-id :- Long]
     :summary "Export Excel XLSX document for given avustushaku"
-    (let [identity (authentication/get-identity request)
+    (let [identity (authentication/get-request-identity request)
           document (export/export-avustushaku haku-id)]
       (-> (ok document)
           (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
@@ -275,7 +266,7 @@
     :path-params [avustushaku-id :- Long]
     :return virkailija-schema/HakuPrivileges
     :summary "Show current user privileges for given avustushaku"
-    (let [identity (authentication/get-identity request)
+    (let [identity (authentication/get-request-identity request)
           haku-roles (hakija-api/get-avustushaku-roles avustushaku-id)
           privileges (authorization/resolve-privileges identity avustushaku-id haku-roles)]
       (if privileges
@@ -310,7 +301,7 @@
     :return virkailija-schema/Arvio
     :summary "Update arvio for given hakemus. Creates arvio if missing."
     (if-let [avustushaku (hakija-api/get-avustushaku avustushaku-id)]
-      (let [identity (authentication/get-identity request)]
+      (let [identity (authentication/get-request-identity request)]
         (ok (-> (virkailija-db/update-or-create-hakemus-arvio avustushaku hakemus-id arvio identity)
                 hakudata/arvio-json)))
       (not-found))))
@@ -328,7 +319,7 @@
     :body [comment (compojure-api/describe virkailija-schema/NewComment "New comment")]
     :return virkailija-schema/Comments
     :summary "Add a comment for hakemus. As response, return all comments"
-    (let [identity (authentication/get-identity request)
+    (let [identity (authentication/get-request-identity request)
           _avustushaku_and_hakemus_exists? (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
       (ok (virkailija-db/add-comment hakemus-id
                                      (:first-name identity)
@@ -422,7 +413,7 @@
     :return virkailija-schema/ScoringOfArvio
     :summary "Submit scorings for given arvio."
     :description "Scorings are automatically assigned to logged in user."
-    (let [identity (authentication/get-identity request)
+    (let [identity (authentication/get-request-identity request)
           _avustushaku_and_hakemus_exists? (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
       (ok (scoring/add-score avustushaku-id
                              hakemus-id
@@ -430,7 +421,7 @@
                              (:selection-criteria-index score)
                              (:score score))))))
 
-(defn- post-status []
+(defn- post-hakemus-status []
   (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id :as request]
     :path-params [avustushaku-id :- Long, hakemus-id :- Long]
     :body [body {:status va-schema/HakemusStatus
@@ -439,14 +430,14 @@
              :status va-schema/HakemusStatus}
     :summary "Update status of hakemus"
     (let [{:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)
-          identity (authentication/get-identity request)
+          identity (authentication/get-request-identity request)
           new-status (:status body)
           status-comment (:comment body)
           updated-hakemus (hakija-api/update-hakemus-status hakemus new-status status-comment identity)]
       (if (= new-status "pending_change_request")
         (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
               answers (:answers submission)
-              language (keyword (:language updated-hakemus))
+              language (keyword (or (formutil/find-answer-value answers "language") "fi"))
               avustushaku-name (-> avustushaku :content :name language)
               email (formutil/find-answer-value answers "primary-email")
               user-key (:user_key updated-hakemus)
@@ -462,7 +453,7 @@
     :return {:search-url s/Str}
     :summary "Create new stored search"
     :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
-    (let [identity (authentication/get-identity request)
+    (let [identity (authentication/get-request-identity request)
           search-id (create-or-get-search avustushaku-id body identity)
           search-url (str "/yhteenveto/avustushaku/" avustushaku-id "/listaus/" search-id "/")]
       (ok {:search-url search-url}))))
@@ -512,32 +503,9 @@
   (get-change-requests)
   (get-scores)
   (post-scores)
+  (post-hakemus-status)
   (put-searches)
-  (get-search)
-
-  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/status" [avustushaku-id hakemus-id :as request]
-    :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-    :body [body {:status va-schema/HakemusStatus
-                 :comment s/Str}]
-    :return {:hakemus-id Long
-             :status va-schema/HakemusStatus}
-    :summary "Update status of hakemus"
-    (let [{:keys [avustushaku hakemus]} (get-hakemus-and-avustushaku avustushaku-id hakemus-id)
-          identity (authentication/get-identity request)
-          new-status (:status body)
-          status-comment (:comment body)
-          updated-hakemus (hakija-api/update-hakemus-status hakemus new-status status-comment identity)]
-      (if (= new-status "pending_change_request")
-        (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
-              answers (:answers submission)
-              language (keyword (or (formutil/find-answer-value answers "language") "fi"))
-              avustushaku-name (-> avustushaku :content :name language)
-              email (formutil/find-answer-value answers "primary-email")
-              user-key (:user_key updated-hakemus)
-              presenting-officer-email (:email identity)]
-          (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment presenting-officer-email)))
-      (ok {:hakemus-id hakemus-id
-           :status new-status}))))
+  (get-search))
 
 (compojure-api/defroutes public-routes
   "Public API"
@@ -564,7 +532,7 @@
   "User information"
 
   (compojure-api/GET "/" [:as request]
-    (ok (authentication/get-identity request))))
+    (ok (authentication/get-request-identity request))))
 
 (compojure-api/defroutes ldap-routes
   "LDAP search"

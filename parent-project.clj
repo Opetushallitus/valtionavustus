@@ -23,8 +23,8 @@
                          [oph-va/common "0.1.0-SNAPSHOT"]
 
                          ;; http
-                         [buddy/buddy-auth "0.6.1"]
-                         [com.novemberain/pantomime "2.7.0"]
+                         [buddy/buddy-auth "2.1.0"]
+                         [com.novemberain/pantomime "2.9.0"]
                          [compojure "1.6.0"]
                          [http-kit "2.2.0"]
                          [metosin/compojure-api "1.1.11"]
@@ -33,10 +33,16 @@
                          [ring.middleware.conditional "0.2.0"]
                          [ring.middleware.logger "0.5.0"]
                          [ring/ring-defaults "0.3.1"]
+                         [ring/ring-session-timeout "0.2.0"]
 
                          ;; json
                          [cheshire "5.8.0"]
                          [org.clojure/data.json "0.2.6"]
+                         [com.fasterxml.jackson.core/jackson-core "2.9.1"]
+                         [com.fasterxml.jackson.core/jackson-databind "2.9.1"]
+                         [com.fasterxml.jackson.core/jackson-annotations "2.9.1"]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.9.1"]
+                         [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.9.1"]
                          [prismatic/schema "1.1.6"]
 
                          ;; database
@@ -60,6 +66,12 @@
                          [log4j "1.2.17"]
                          [org.clojure/tools.logging "0.4.0"]
                          [org.slf4j/slf4j-log4j12 "1.7.25"]
+                         [commons-logging "1.2"]
+
+                         ;; cryptography
+                         [org.bouncycastle/bcpkix-jdk15on "1.58"]
+                         [org.bouncycastle/bcprov-jdk15on "1.58"]
+                         [buddy/buddy-core "1.4.0"]
 
                          ;; other
                          [clj-time "0.14.0"]
@@ -77,8 +89,7 @@
                          [org.clojure/tools.reader "1.1.0"]
                          [org.clojure/tools.trace "0.7.9"]
                          [org.scala-lang.modules/scala-xml_2.11 "1.0.6"]
-                         [org.scala-lang/scala-library "2.11.11"]
-                         [pandect "0.5.4"]]
+                         [org.scala-lang/scala-library "2.11.11"]]
 
   :pedantic? :abort
 
