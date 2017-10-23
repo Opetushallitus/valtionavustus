@@ -13,15 +13,17 @@
                              :pedantic?
                              :plugins
                              :uberjar-exclusions
-                             :auto-clean
-                             :prep-tasks]}
+                             :auto-clean]}
+
+  :prep-tasks ["javac" "compile"]
 
   :dependencies [[oph-va/common]
                  [buddy/buddy-auth]
                  [ring/ring-session-timeout]
                  [com.cemerick/url :exclusions [com.cemerick/clojurescript.test]]
                  [dk.ative/docjure]
-                 [oph/clj-util]
+                 [fi.vm.sade/scala-cas_2.11]
+                 [org.http4s/http4s-blaze-client_2.11]
                  [org.clojars.pntblnk/clj-ldap]
                  [org.clojure/data.json]]
 
@@ -40,6 +42,10 @@
   :uberjar-exclusions [#"public/test"]
 
   :jvm-opts ["-Xmx500m"]
+
+  :javac-options ["-target" "1.8" "-source" "1.8" "-encoding" "UTF-8" "-deprecation"]
+
+  :java-source-paths ["src-java"]
 
   :test-paths ["spec"]
 
