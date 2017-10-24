@@ -110,4 +110,6 @@
   :auto-clean true
 
   :prep-tasks ["compile"]
+
+  :javac-options ["-target" "1.8" "-source" "1.8" "-encoding" "UTF-8" "-deprecation"]
 )

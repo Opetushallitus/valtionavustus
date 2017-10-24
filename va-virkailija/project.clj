@@ -13,9 +13,8 @@
                              :pedantic?
                              :plugins
                              :uberjar-exclusions
-                             :auto-clean]}
-
-  :prep-tasks ["javac" "compile"]
+                             :auto-clean
+                             :javac-options]}
 
   :dependencies [[oph-va/common]
                  [buddy/buddy-auth]
@@ -43,9 +42,11 @@
 
   :jvm-opts ["-Xmx500m"]
 
-  :javac-options ["-target" "1.8" "-source" "1.8" "-encoding" "UTF-8" "-deprecation"]
+  :prep-tasks ["javac" "compile"]
 
-  :java-source-paths ["src-java"]
+  :source-paths ["src/clojure"]
+
+  :java-source-paths ["src/java"]
 
   :test-paths ["spec"]
 
