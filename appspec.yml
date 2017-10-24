@@ -6,5 +6,5 @@ files:
 hooks:
   ApplicationStart:
     - location: ci/dev_start_virkailija.sh
-      timeout: 10
+      timeout: 60
       runas: ec2-user
