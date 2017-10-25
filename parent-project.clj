@@ -46,9 +46,9 @@
                          [prismatic/schema "1.1.6"]
 
                          ;; database
-                         [hikari-cp "1.7.5"]
-                         [org.flywaydb/flyway-core "4.0.3"]
-                         [org.postgresql/postgresql "9.4.1212"]
+                         [hikari-cp "1.8.1"]
+                         [org.flywaydb/flyway-core "4.2.0"]
+                         [org.postgresql/postgresql "42.1.4"]
                          [yesql "0.5.3"]
 
                          ;; ldap
