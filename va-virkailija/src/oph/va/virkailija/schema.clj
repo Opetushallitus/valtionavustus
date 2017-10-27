@@ -248,3 +248,25 @@
     :Postings
     {:Posting InvoicePostings}}})
 
+(def Payment
+  { :id s/Int
+    :created_at s/Inst
+    :application_id  s/Int
+    :application_version s/Int
+    :grant_id s/Int
+    :state s/Int
+    :installment s/Str
+    :document_type s/Str
+    :invoice_date s/Inst
+    :due_date s/Inst
+    :amount s/Int
+    :long_ref s/Str
+    :receipt_date s/Inst
+    :transaction_account s/Str
+    :currency s/Str
+    :lkp_account s/Str
+    :takp_account s/Str})
+
+(def Payments
+  [Payment])
+
