@@ -310,6 +310,7 @@ export default class HakemustenArviointiController {
           else {
             dispatcher.push(events.saveCompleted, "unexpected-save-error")
           }
+          return null
         })
         .catch(function(error) {
           console.error(`Error in updating hakemus status, POST ${updateUrl}`, error)

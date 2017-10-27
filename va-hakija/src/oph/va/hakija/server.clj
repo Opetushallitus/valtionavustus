@@ -4,6 +4,7 @@
             [ring.middleware.not-modified :refer [wrap-not-modified]]
             [ring.middleware.defaults :refer :all]
             [clojure.tools.logging :as log]
+            [oph.common.background-job-supervisor :as job-supervisor]
             [oph.common.server :as server]
             [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :as db]
@@ -11,18 +12,17 @@
             [oph.va.hakija.email :as email]))
 
 (defn- startup [config]
-  (log/info "Using configuration: " config)
-  (log/info "Running db migrations")
+  (log/info "Startup, with configuration:" config)
   (dbmigrations/migrate :form-db
                         "db.migration"
                         "oph.va.hakija.db.migrations")
-  (log/info "Starting e-mail sender")
-  (email/start-background-sender))
+  (email/start-background-job-send-mails))
 
 (defn- shutdown []
-  (log/info "Shutting down all services")
-  (email/stop-background-sender)
-  (db/close-datasource! :form-db))
+  (log/info "Shutting down...")
+  (email/stop-background-job-send-mails)
+  (db/close-datasource! :form-db)
+  (job-supervisor/await-jobs!))
 
 (defn- create-restricted-routes [] #'restricted-routes)
 (defn- create-all-routes [] #'all-routes)

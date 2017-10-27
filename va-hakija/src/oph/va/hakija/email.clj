@@ -23,11 +23,11 @@
                        :sv (email/load-template "email-templates/hakemus-submitted.plain.sv")}
    :hakemus-change-request-responded {:fi (email/load-template "email-templates/hakemus-change-request-responded.plain.fi")}})
 
-(defn start-background-sender []
-  (email/start-background-sender mail-templates))
+(defn start-background-job-send-mails []
+  (email/start-background-job-send-mails mail-templates))
 
-(defn stop-background-sender []
-  (email/stop-background-sender))
+(defn stop-background-job-send-mails []
+  (email/stop-background-job-send-mails))
 
 (defn oph-register-email-title [is-change-request-response? avustushaku-name start-date-string end-date-string]
   (if is-change-request-response?
@@ -42,33 +42,33 @@
         end-time-string (datetime/time-string end-date)
         url (email/generate-url avustushaku-id lang lang-str user-key false)]
     (log/info "Url would be: " url)
-    (>!! email/mail-queue {:operation :send
-                           :type :new-hakemus
-                           :lang lang
-                           :from (-> email/smtp-config :from lang)
-                           :sender (-> email/smtp-config :sender)
-                           :subject (get-in mail-titles [:new-hakemus lang])
-                           :to to
-                           :avustushaku avustushaku
-                           :start-date start-date-string
-                           :start-time start-time-string
-                           :end-date end-date-string
-                           :end-time end-time-string
-                           :url url})))
+    (>!! email/mail-chan {:operation :send
+                          :type :new-hakemus
+                          :lang lang
+                          :from (-> email/smtp-config :from lang)
+                          :sender (-> email/smtp-config :sender)
+                          :subject (get-in mail-titles [:new-hakemus lang])
+                          :to to
+                          :avustushaku avustushaku
+                          :start-date start-date-string
+                          :start-time start-time-string
+                          :end-date end-date-string
+                          :end-time end-time-string
+                          :url url})))
 
 (defn send-change-request-responded-message-to-virkailija! [to avustushaku-id avustushaku-name-fi hakemus-db-id]
   (let [lang :fi
         url (email/generate-virkailija-url avustushaku-id hakemus-db-id)]
     (log/info "Url would be: " url)
-    (>!! email/mail-queue {:operation :send
-                           :type :hakemus-change-request-responded
-                           :lang lang
-                           :from (-> email/smtp-config :from lang)
-                           :sender (-> email/smtp-config :sender)
-                           :subject (get-in mail-titles [:hakemus-change-request-responded lang])
-                           :to to
-                           :avustushaku avustushaku-name-fi
-                           :url url})))
+    (>!! email/mail-chan {:operation :send
+                          :type :hakemus-change-request-responded
+                          :lang lang
+                          :from (-> email/smtp-config :from lang)
+                          :sender (-> email/smtp-config :sender)
+                          :subject (get-in mail-titles [:hakemus-change-request-responded lang])
+                          :to to
+                          :avustushaku avustushaku-name-fi
+                          :url url})))
 
 (defn send-hakemus-submitted-message! [is-change-request-response? lang to avustushaku-id avustushaku user-key start-date end-date]
   (let [lang-str (or (clojure.core/name lang) "fi")
@@ -94,5 +94,5 @@
                              (assoc :to (vector (-> email/smtp-config :registry-address)))
                              (assoc :subject (oph-register-email-title is-change-request-response? avustushaku start-date-string end-date-string)))]
     (log/info "Url would be: " url)
-    (>!! email/mail-queue user-message)
-    (>!! email/mail-queue registry-message)))
+    (>!! email/mail-chan user-message)
+    (>!! email/mail-chan registry-message)))

@@ -1,18 +1,21 @@
 (ns oph.soresu.common.db
   (:use [oph.soresu.common.config :only [config config-name]]
         [clojure.tools.trace :only [trace]])
-  (:require [clojure.java.jdbc :as jdbc]
+  (:require [buddy.core.hash :as buddy-hash]
+            [buddy.core.codecs :as buddy-codecs]
+            [clojure.java.jdbc :as jdbc]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
             [hikari-cp.core :refer :all]
-            [oph.soresu.common.jdbc.extensions]
-            [pandect.algo.sha256 :refer :all])
+            [oph.soresu.common.jdbc.extensions])
   (:import [java.security SecureRandom]))
 
 (def random (SecureRandom.))
 
 (defn generate-hash-id []
-  (sha256 (.generateSeed random (/ 512 8))))
+  (-> (.generateSeed random (/ 512 8))
+      buddy-hash/sha256
+      buddy-codecs/bytes->hex))
 
 (defn escape-like-pattern [pattern]
   (string/replace pattern #"(\\|%|_)" "\\\\$1"))

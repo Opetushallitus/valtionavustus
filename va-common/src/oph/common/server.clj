@@ -20,16 +20,20 @@
   (fail-if-server-running host port)
   (on-startup)
   (log/info (format "Starting server in URL http://%s:%d/" host port))
-  (let [max-body (* attachment-max-size 1024 1024)
-        stop (run-server routes {:host host
-                                 :port port
-                                 :thread threads
-                                 :max-body max-body})]
-    (.addShutdownHook (Runtime/getRuntime) (Thread. on-shutdown))
+  (let [max-body           (* attachment-max-size 1024 1024)
+        stop               (run-server routes {:host host
+                                               :port port
+                                               :thread threads
+                                               :max-body max-body})
+        shutdown-done?     (atom false)
+        check-and-shutdown (fn []
+                             (if (compare-and-set! shutdown-done? false true)
+                               (on-shutdown)))]
+    (.addShutdownHook (Runtime/getRuntime) (Thread. check-and-shutdown))
     ;; Return stop-function with our own shutdown
     (fn []
       (stop)
-      (on-shutdown))))
+      (check-and-shutdown))))
 
 (defn wrap-logger [handler]
   (if (-> config :server :enable-access-log?)

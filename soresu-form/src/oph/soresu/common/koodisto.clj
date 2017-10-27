@@ -1,9 +1,10 @@
 (ns oph.soresu.common.koodisto
   (:use [clojure.tools.trace])
-  (:require [org.httpkit.client :as http]
+  (:require [buddy.core.hash :as buddy-hash]
+            [buddy.core.codecs :as buddy-codecs]
+            [org.httpkit.client :as http]
             [cheshire.core :as cheshire]
             [clojure.string :as str]
-            [pandect.algo.sha256 :refer :all]
             [oph.soresu.common.db :as db]
             [oph.soresu.common.db.queries :as queries]))
 
@@ -78,21 +79,21 @@
          (mapv koodi-value->soresu-option)
          (sort-by (fn [x] (-> x :label :fi)) compare-case-insensitively))))
 
-(defn- get-cached-koodisto [db-key koodisto-uri version checksum]
+(defn- get-cached-koodisto [db-key koodisto-uri version]
   (->> {:koodisto_uri koodisto-uri
-        :version version
-        :checksum checksum}
+        :version version}
        (db/exec db-key queries/get-koodisto)
        first))
 
 (defn get-cached-koodi-options [db-key koodisto-uri version]
-  (if-let [cached-koodisto (get-cached-koodisto db-key koodisto-uri version nil)]
+  (if-let [cached-koodisto (get-cached-koodisto db-key koodisto-uri version)]
     cached-koodisto
     (let [koodisto (get-koodi-options koodisto-uri version)
-          checksum (->> (cheshire/generate-string koodisto)
-                        (sha256))]
+          checksum (-> (cheshire/generate-string koodisto)
+                       buddy-hash/sha256
+                       buddy-codecs/bytes->hex)]
       (db/exec db-key queries/create-koodisto<! {:koodisto_uri koodisto-uri
                                                  :version version
                                                  :checksum checksum
                                                  :content [koodisto]})
-      (get-cached-koodisto db-key koodisto-uri version checksum))))
+      (get-cached-koodisto db-key koodisto-uri version))))
