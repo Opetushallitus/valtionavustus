@@ -175,6 +175,15 @@
         (ok response)
         (not-found)))))
 
+(defn- get-avustushaku-payments []
+  (compojure-api/GET "/:avustushaku-id/payments" [avustushaku-id :as request]
+    :path-params [avustushaku-id :- Long]
+    :return virkailija-schema/Payments
+    :summary "Return payments of particular avustushaku"
+    (if-let [response (hakudata/get-avustushaku-payments avustushaku-id)]
+      (ok response)
+      (not-found))))
+
 (defn- get-selvitys []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/selvitys" [hakemus-id avustushaku-id :as request]
     :path-params [hakemus-id :- Long avustushaku-id :- Long]
@@ -489,6 +498,7 @@
   (put-avustushaku)
   (post-avustushaku)
   (get-avustushaku)
+  (get-avustushaku-payments)
   (get-selvitys)
   (send-selvitys)
   (send-selvitys-email)
