@@ -250,22 +250,25 @@
 
 (def Payment
   { :id s/Int
-    :created_at s/Inst
-    :application_id  s/Int
-    :application_version s/Int
-    :grant_id s/Int
+    :created-at s/Inst
+    :application-id  s/Int
+    :application-version s/Int
+    :grant-id s/Int
     :state s/Int
     :installment s/Str
-    :document_type s/Str
-    :invoice_date s/Inst
-    :due_date s/Inst
+    :document-type s/Str
+    :invoice-date s/Inst
+    :due-date s/Inst
     :amount s/Int
-    :long_ref s/Str
-    :receipt_date s/Inst
-    :transaction_account s/Str
+    :long-ref s/Str
+    :receipt-date s/Inst
+    :transaction-account s/Str
     :currency s/Str
-    :lkp_account s/Str
-    :takp_account s/Str})
+    :lkp-account s/Str
+    :takp-account s/Str
+    :organization-name s/Str
+    :project-name s/Str
+    :grant-content s/Any})
 
 (def Payments
   [Payment])
