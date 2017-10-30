@@ -32,11 +32,13 @@ export default class FormContainer extends React.Component {
 
     const isTestProfile = this.props.state.configuration.develMode
     const isPreviewPage = this.props.state.saveStatus.savedObject === null
+    const isPreviewMode = this.props.state.configuration.preview
 
-    const isBusinessIdSearchNeeded = this.props.showBusinessIdSearch && !isTestProfile && !isPreviewPage && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getOrganizationValues(item)).some(x => (x == "" || x == null)))
+    const isBusinessIdSearchNeeded = this.props.showBusinessIdSearch && !isTestProfile && !isPreviewPage && !isPreviewMode && ( ["organization", "organization-email", "business-id", "organization-postal-address"].map((item) => this.getOrganizationValues(item)).some(x => (x == "" || x == null)))
 
     return (
       <section id={containerId} >
+        {console.log(isPreviewMode)}
         {headerElements}
         { (isBusinessIdSearchNeeded) &&
           <BusinessIdSearch state={this.props.state} controller={controller}/> }
