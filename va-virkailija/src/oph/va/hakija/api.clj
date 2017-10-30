@@ -77,11 +77,10 @@
   (first (exec :form-db hakija-queries/get-avustushaku {:id id})))
 
 (defn get-avustushaku-payments [avustushaku-id]
-  (first
-    (exec
-      :form-db
-      hakija-queries/get-avustushaku-payments
-      {:application avustushaku-id})))
+  (exec
+    :form-db
+    hakija-queries/get-avustushaku-payments
+    {:grant_id avustushaku-id}))
 
 (defn- map-status-list [statuses]
   (map (fn [status] (new HakuStatus status)) statuses))

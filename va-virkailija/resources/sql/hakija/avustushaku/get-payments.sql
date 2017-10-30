@@ -1,1 +1,1 @@
-select * from payments where application_id = :application
+select * from payments where grant_id = :grant_id
