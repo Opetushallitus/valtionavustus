@@ -11,7 +11,8 @@
             [clojure.tools.logging :as log]
             [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.email :as email]
-            [oph.common.datetime :as datetime])
+            [oph.common.datetime :as datetime]
+            [clojure.set :refer [rename-keys]])
   (:import (oph.va.jdbc.enums HakuStatus HakuRole HakuType)))
 
 (defn convert-attachment [attachment]
@@ -76,11 +77,29 @@
 (defn get-avustushaku [id]
   (first (exec :form-db hakija-queries/get-avustushaku {:id id})))
 
+(defn contains-underscore? [k]
+  (.contains (name k) "_"))
+
+(defn convert-underscore-keyword [k]
+  (keyword
+    (.replace (name k) "_" "-")))
+
+(defn map-underscore-keys [m]
+  (reduce
+    #(merge %1 {%2 (convert-underscore-keyword %2)})
+    {}
+    (filter contains-underscore? (keys m))))
+
+(defn convert-to-dash-keys [m]
+  (rename-keys m (map-underscore-keys m)))
+
 (defn get-avustushaku-payments [avustushaku-id]
-  (exec
-    :form-db
-    hakija-queries/get-avustushaku-payments
-    {:grant_id avustushaku-id}))
+  (map
+    convert-to-dash-keys
+    (exec
+      :form-db
+      hakija-queries/get-avustushaku-payments
+      {:grant_id avustushaku-id})))
 
 (defn- map-status-list [statuses]
   (map (fn [status] (new HakuStatus status)) statuses))
