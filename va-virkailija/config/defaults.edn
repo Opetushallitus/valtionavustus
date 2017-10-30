@@ -33,6 +33,7 @@
          :from {:fi "no-reply@valtionavustukset.oph.fi"
                 :sv "no-reply@statsunderstod.oph.fi"}
          :sender "no-reply@csc.fi"
+         :to-finance ["test@test.com"]
          :bounce-address "va-dev@reaktor.com"
          :print-mail-on-disable? true
          :retry-initial-wait 2000

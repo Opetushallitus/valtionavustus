@@ -17,6 +17,8 @@
                                :sv "Mellanredovisningnen redo att fyllas"}
    :loppuselvitys-notification {:fi "Loppuselvitys täytettävissä haulle"
                                 :sv "Slutredovisningen redo att fyllasSELV"}
+   :payments-info-notification    {:fi "Maksatukset lähetettävissä avustushaulle"
+                                :sv "Maksatukset lähetettävissä avustushaulle"}
    })
 
 (def mail-templates
@@ -30,8 +32,10 @@
                                :sv (email/load-template "email-templates/valiselvitys-notification.plain.sv")}
    :loppuselvitys-notification {:fi (email/load-template "email-templates/loppuselvitys-notification.plain.fi")
                                 :sv (email/load-template "email-templates/loppuselvitys-notification.plain.sv")}
+   :payments-info-notification {:fi (email/load-template "email-templates/payments-info-to-finance.fi")
+                                  :sv (email/load-template "email-templates/payments-info-to-finance.fi")}
 
-   })
+  })
 
 (defn mail-example [msg-type & [data]]
   {:content (render (:fi (msg-type mail-templates)) (if data data {}))
@@ -125,3 +129,14 @@
                           :url url
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)})))
+
+(defn send-payments-info-to-finance! [avustushaku-id]
+  (let [lang :fi
+        mail-subject (get-in mail-titles [:payments-info-notification lang])]
+    (>!! email/mail-chan {:operation :send
+                          :type :payments-info-notification
+                          :lang lang
+                          :from (-> email/smtp-config :from lang)
+                          :sender (-> email/smtp-config :sender)
+                          :subject mail-subject
+                          :to (-> email/smtp-config :to-finance)})))
