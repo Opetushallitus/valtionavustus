@@ -84,7 +84,9 @@ export default class BusinessIdSearch extends React.Component {
   }
 
   // events from inputting the organisational id (y-tunnus)
-  handleOnSubmit() {
+  handleOnSubmit(event) {
+    event.preventDefault()
+
     this.setState(state => {
       this.fetchOrganizationData(state.businessId)
       return {modalIsOpen: false}
