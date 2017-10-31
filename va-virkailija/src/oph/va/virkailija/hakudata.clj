@@ -95,6 +95,9 @@
 (defn get-avustushaku-payments [avustushaku-id]
   (hakija-api/get-avustushaku-payments avustushaku-id))
 
+(defn create-avustushaku-payments! [payments]
+  (hakija-api/create-avustushaku-payments! payments))
+
 (defn- hakemus->hakemus-simple [hakemus]
   (let [answers {:value (:answers hakemus)}
         paatos-status (-> hakemus :arvio :status)
