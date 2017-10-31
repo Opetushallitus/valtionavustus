@@ -331,13 +331,21 @@
   (doseq [index (range 0 (count columns))]
     (.autoSizeColumn sheet index)))
 
-(def lkp-map {:kunta-kuntayhtymae 82000000
-             :julkisoikeudellinen-yhteisoe 82500000
-             :rekisteroeity-yhteisoe-tai-saeaetioe 82500000
-             :yliopisto 82930000
-             :yksityinen-yhteisoe 82300000
-             :valtio 82950000
-             })
+(def lkp-map {:kunta_kirkko                         82000000
+              :kunta-kuntayhtymae                   82000000
+
+              :liiketalous                          82300000
+              :yksityinen-yhteisoe                  82300000
+
+              :julkisoikeudellinen-yhteisoe         82500000
+              :rekisteroeity-yhteisoe-tai-saeaetioe 82500000
+              :voittoa_tavoittelematon              82500000
+
+              :eu_maat                              82820000
+
+              :yliopisto                            82930000
+
+              :valtio                               82950000})
 
 (defn add-paatos-data [paatos-date hakemus]
   (let [answers (:answers hakemus)
