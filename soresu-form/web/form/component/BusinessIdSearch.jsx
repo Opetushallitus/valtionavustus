@@ -146,7 +146,7 @@ export default class BusinessIdSearch extends React.Component {
               </label>
               <input className={"get-business-id" + " " + "soresu-text-button"} type="submit" value={this.translator.translate("get", this.lang)} disabled={this.state.isDisabled} />
             </form>
-            <p><a href="#" onClick={this.closeModal}><LocalizedString translations={this.translations} translationKey="cancel" lang={this.lang}/></a></p>
+            <p><a href="javascript:" onClick={this.closeModal}><LocalizedString translations={this.translations} translationKey="cancel" lang={this.lang}/></a></p>
           </div>
         </ModalDialog>
       </div>)

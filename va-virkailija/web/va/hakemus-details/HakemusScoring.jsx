@@ -154,7 +154,7 @@ class SeeOthersScores extends Component {
     }
 
     return <div className={classNames}>
-      <a href="#" title={titleText} onClick={onClick}>{labelText}</a>
+      <a href="javascript:" title={titleText} onClick={onClick}>{labelText}</a>
     </div>
 
     function resolveLabelText() {
