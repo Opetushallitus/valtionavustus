@@ -42,7 +42,6 @@ export default class BusinessIdSearch extends React.Component {
     this.fetchOrganizationData = this.fetchOrganizationData.bind(this)
     this.changeFieldValue = this.changeFieldValue.bind(this)
     this.openModal = this.openModal.bind(this)
-    this.afterOpenModal = this.afterOpenModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
     this.handleOnChange = this.handleOnChange.bind(this)
     this.handleOnSubmit = this.handleOnSubmit.bind(this)
@@ -62,10 +61,6 @@ export default class BusinessIdSearch extends React.Component {
 
   openModal() {
     this.setState({modalIsOpen: true})
-  }
-
-  afterOpenModal() {
-    this.subtitle.style.color = "#f00"
   }
 
   closeModal() {
