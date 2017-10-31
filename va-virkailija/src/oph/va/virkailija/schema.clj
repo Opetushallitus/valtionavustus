@@ -268,7 +268,9 @@
     :takp-account s/Str
     (s/optional-key :organization-name) s/Str
     (s/optional-key :project-name) s/Str
-    (s/optional-key :grant-content) s/Any})
+    (s/optional-key :grant-content) s/Any
+    :inspector-email s/Str
+    :acceptor-email s/Str})
 
 (def Payments
   [Payment])
