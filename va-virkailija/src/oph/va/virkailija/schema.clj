@@ -249,26 +249,26 @@
     {:Posting InvoicePostings}}})
 
 (def Payment
-  { :id s/Int
-    :created-at s/Inst
+  { (s/optional-key :id) s/Int
+    (s/optional-key :created-at) s/Inst
     :application-id  s/Int
     :application-version s/Int
     :grant-id s/Int
     :state s/Int
     :installment s/Str
     :document-type s/Str
-    :invoice-date s/Inst
-    :due-date s/Inst
+    (s/optional-key :invoice-date) s/Inst
+    (s/optional-key :due-date) s/Inst
     :amount s/Int
     :long-ref s/Str
-    :receipt-date s/Inst
+    (s/optional-key :receipt-date) s/Inst
     :transaction-account s/Str
     :currency s/Str
     :lkp-account s/Str
     :takp-account s/Str
-    :organization-name s/Str
-    :project-name s/Str
-    :grant-content s/Any})
+    (s/optional-key :organization-name) s/Str
+    (s/optional-key :project-name) s/Str
+    (s/optional-key :grant-content) s/Any})
 
 (def Payments
   [Payment])
