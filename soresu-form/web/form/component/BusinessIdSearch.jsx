@@ -128,12 +128,7 @@ export default class BusinessIdSearch extends React.Component {
     return (
 
       <div>
-        <ModalDialog
-          isOpen={this.state.modalIsOpen}
-          contentLabel="modal"
-          className="modal"
-          overlayClassName="overlay"
-        >
+        <ModalDialog isOpen={this.state.modalIsOpen} className="modal" overlayClassName="overlay">
           <div>
             <h1><LocalizedString translations={this.translations} translationKey="give-businessid" lang={this.lang}/></h1>
             <p><LocalizedString translations={this.translations} translationKey="organisation-info" lang={this.lang}/></p>
