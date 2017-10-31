@@ -38,7 +38,6 @@ export default class FormContainer extends React.Component {
 
     return (
       <section id={containerId} >
-        {console.log(isPreviewMode)}
         {headerElements}
         { (isBusinessIdSearchNeeded) &&
           <BusinessIdSearch state={this.props.state} controller={controller}/> }
