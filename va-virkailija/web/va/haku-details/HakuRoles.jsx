@@ -72,7 +72,7 @@ class PersonSelectList extends React.Component {
       }
 
       return <li key={r["person-oid"]} title={titleText} className={personIsInRolesAlready ? "disabled" : null}>
-               <a href="#" onClick={onClick} className={personIsInRolesAlready ? "disabled" : null}>
+               <a href="javascript:" onClick={onClick} className={personIsInRolesAlready ? "disabled" : null}>
                  <span className="person-description">{displayText}</span>
                  <span className={"access-level " + accessLevel.className}>{accessLevel.description + ")"}</span>
                </a>

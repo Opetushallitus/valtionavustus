@@ -14,6 +14,10 @@
   yum:  pkg=git state=latest
   when: ansible_os_family == 'RedHat'
 
+- name: Install OpenJDK Java Development Environment (RedHat)
+  yum: name=java-1.8.0-openjdk-devel
+  when: ansible_os_family == 'RedHat'
+
 - name: Disallow jenkins port access in firewall (RedHat)
   lineinfile:
     dest: '{{ iptables_script }}'
