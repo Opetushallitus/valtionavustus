@@ -77,34 +77,37 @@
 (defn get-avustushaku [id]
   (first (exec :form-db hakija-queries/get-avustushaku {:id id})))
 
-(defn contains-underscore? [k]
-  (.contains (name k) "_"))
+(defn- key-contains? [k v]
+  (.contains (name k) v))
 
-(defn convert-underscore-keyword [k]
+(defn- replace-in-key [k s d]
   (keyword
-    (.replace (name k) "_" "-")))
+    (.replace (name k) s d)))
 
-(defn map-underscore-keys [m]
+(defn- map-filter-keys [c f m]
   (reduce
-    #(merge %1 {%2 (convert-underscore-keyword %2)})
-    {}
-    (filter contains-underscore? (keys m))))
+    #(merge %1 {%2 (c %2)}) {} (filter f (keys m))))
+
+(defn- contains-underscore? [k]
+  (key-contains? k "_"))
+
+(defn- contains-dash? [k]
+  (key-contains? k "-"))
+
+(defn- convert-underscore-keyword [k]
+  (replace-in-key k "_" "-"))
+
+(defn- convert-dash-keyword [k]
+  (replace-in-key k "-" "_"))
+
+(defn- map-underscore-keys [m]
+  (map-filter-keys convert-underscore-keyword contains-underscore? m))
+
+(defn- map-dash-keys [m]
+  (map-filter-keys convert-dash-keyword contains-dash? m))
 
 (defn convert-to-dash-keys [m]
   (rename-keys m (map-underscore-keys m)))
-
-(defn contains-dash? [k]
-  (.contains (name k) "-"))
-
-(defn convert-dash-keyword [k]
-  (keyword
-    (.replace (name k) "-" "_")))
-
-(defn map-dash-keys [m]
-  (reduce
-    #(merge %1 {%2 (convert-dash-keyword %2)})
-    {}
-    (filter contains-dash? (keys m))))
 
 (defn convert-to-underscore-keys [m]
   (rename-keys m (map-dash-keys m)))
