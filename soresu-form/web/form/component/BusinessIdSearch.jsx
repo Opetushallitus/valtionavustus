@@ -137,7 +137,7 @@ export default class BusinessIdSearch extends React.Component {
             <form onSubmit={this.handleOnSubmit}>
               <label className="modal-label">
                 <LocalizedString translations={this.translations} translationKey="business-id" lang={this.lang}/> :
-                <input className={this.state.error} type="text" value={this.state.businessId} onChange={ this.handleOnChange } />
+                <input className={this.state.error} type="text" value={this.state.businessId} onChange={this.handleOnChange} autoFocus />
               </label>
               <input className={"get-business-id" + " " + "soresu-text-button"} type="submit" value={this.translator.translate("get", this.lang)} disabled={this.state.isDisabled} />
             </form>
