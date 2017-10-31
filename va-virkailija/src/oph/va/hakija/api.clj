@@ -93,6 +93,22 @@
 (defn convert-to-dash-keys [m]
   (rename-keys m (map-underscore-keys m)))
 
+(defn contains-dash? [k]
+  (.contains (name k) "-"))
+
+(defn convert-dash-keyword [k]
+  (keyword
+    (.replace (name k) "-" "_")))
+
+(defn map-dash-keys [m]
+  (reduce
+    #(merge %1 {%2 (convert-dash-keyword %2)})
+    {}
+    (filter contains-dash? (keys m))))
+
+(defn convert-to-underscore-keys [m]
+  (rename-keys m (map-dash-keys m)))
+
 (defn get-avustushaku-payments [avustushaku-id]
   (map
     convert-to-dash-keys
@@ -100,6 +116,17 @@
       :form-db
       hakija-queries/get-avustushaku-payments
       {:grant_id avustushaku-id})))
+
+(defn create-avustushaku-payments! [payments]
+  (doall
+    (mapv
+      #(convert-to-dash-keys
+         (first
+           (exec
+             :form-db
+             hakija-queries/create-avustushaku-payment
+             (convert-to-underscore-keys %))))
+      payments)))
 
 (defn- map-status-list [statuses]
   (map (fn [status] (new HakuStatus status)) statuses))
