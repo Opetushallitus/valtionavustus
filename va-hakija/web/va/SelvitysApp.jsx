@@ -172,7 +172,7 @@ function initFormController() {
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function(state) {
-    return <VaForm controller={controller} state={state} hakemusType={selvitysType} showBusinessIdSearch={false}/>
+    return <VaForm controller={controller} state={state} hakemusType={selvitysType} useBusinessIdSearch={false} />
   }}
 }
 

@@ -15,6 +15,22 @@ const organizationToFormFieldIds = {
   "contact": "organization-postal-address"
 }
 
+const findFieldAnswerValue = (answers, fieldId) => {
+  const value = _.find(answers, x => x.key === fieldId)
+  return value !== undefined ? value.value : undefined
+}
+
+const findBusinessIdRelatedFieldIdWithEmptyValue = (formContent, savedAnswers) =>
+  _.find(
+    _.values(organizationToFormFieldIds),
+    fieldId => FormUtil.findField(formContent, fieldId) && _.isEmpty(findFieldAnswerValue(savedAnswers, fieldId)))
+
+const shouldShowBusinessIdSearch = state =>
+  !state.configuration.develMode &&
+    !state.configuration.preview &&
+    state.saveStatus.savedObject !== null &&
+    findBusinessIdRelatedFieldIdWithEmptyValue(state.form.content, state.saveStatus.values.value)
+
 const validateBusinessId = str =>
   SyntaxValidator.validateBusinessId(str) === undefined
     ? {isDisabled: false, error: ""}
@@ -31,7 +47,7 @@ export default class BusinessIdSearch extends React.Component {
     this.handleOnChange = this.handleOnChange.bind(this)
     this.handleOnSubmit = this.handleOnSubmit.bind(this)
     this.state = {
-      modalIsOpen: true,
+      modalIsOpen: shouldShowBusinessIdSearch(this.props.state),
       isDisabled: true,
       error: "error",
       incorrectBusinessId: false,
