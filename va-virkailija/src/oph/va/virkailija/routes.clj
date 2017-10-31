@@ -472,7 +472,7 @@
   (compojure-api/POST "/:avustushaku-id/payments-email" [avustushaku-id :as request]
     :path-params [avustushaku-id :- Long]
     :summary "POST email to finance department"
-  (payments-info/send-payments-info avustushaku-id)))
+  (payments-info/send-payments-info avustushaku-id (hakija-api/get-avustushaku avustushaku-id))))
 
 (compojure-api/defroutes avustushaku-routes
   "Hakemus listing and filtering"

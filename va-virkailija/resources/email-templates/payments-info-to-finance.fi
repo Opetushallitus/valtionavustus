@@ -1,6 +1,6 @@
-avustushaun maksatustiedot ovat nyt valmiina lähetettäväksi Palkeisiin.
+Avustushaun " {{ avustushaku-name }} " maksatustiedot ovat nyt valmiina lähetettäväksi Palkeisiin.
 
-Maksatuksen tiedot voitte tarkastella ja käsitellä tästä linkistä:
+Maksatuksen tiedot voitte tarkastella ja käsitellä tästä linkistä: {{& url }}
 
 Opetushallitus
 Hakaniemenranta 6

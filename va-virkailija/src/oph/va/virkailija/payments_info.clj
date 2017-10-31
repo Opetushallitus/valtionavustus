@@ -13,7 +13,7 @@
     [oph.va.virkailija.decision :as decision]))
 
 
-(defn send-payments-info [avustushaku-id]
+(defn send-payments-info [avustushaku-id avustushaku]
   (log/info "send-payments-info-to-finance" avustushaku-id)
-    (email/send-payments-info-to-finance! avustushaku-id)
+    (email/send-payments-info-to-finance! avustushaku-id avustushaku)
     (ok {:response "sent e-mail to finance"}))

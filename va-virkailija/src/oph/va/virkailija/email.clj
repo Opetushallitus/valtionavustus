@@ -74,6 +74,10 @@
         lang-str (or (clojure.core/name lang) "fi")]
   (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" user-key "&lang=" lang-str)))
 
+(defn payment-url [avustushaku-id]
+  (let [admin-url (-> config :server :admin-url)]
+  (str admin-url "/" avustushaku-id "/payments")))
+
 (defn send-paatos! [to avustushaku hakemus reply-to]
   (let [lang-str (:language hakemus)
         lang (keyword lang-str)
@@ -130,13 +134,17 @@
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)})))
 
-(defn send-payments-info-to-finance! [avustushaku-id]
+(defn send-payments-info-to-finance! [avustushaku-id avustushaku]
   (let [lang :fi
-        mail-subject (get-in mail-titles [:payments-info-notification lang])]
+        mail-subject (get-in mail-titles [:payments-info-notification lang])
+        url (payment-url avustushaku-id)
+        avustushaku-name (get-in avustushaku [:content :name lang])]
     (>!! email/mail-chan {:operation :send
                           :type :payments-info-notification
                           :lang lang
                           :from (-> email/smtp-config :from lang)
                           :sender (-> email/smtp-config :sender)
                           :subject mail-subject
-                          :to (-> email/smtp-config :to-finance)})))
+                          :to (-> email/smtp-config :to-finance)
+                          :url url
+                          :avustushaku-name avustushaku-name})))
