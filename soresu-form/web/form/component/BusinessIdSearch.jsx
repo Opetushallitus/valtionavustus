@@ -57,7 +57,7 @@ export default class BusinessIdSearch extends React.Component {
     this.lang = this.props.state.configuration.lang
     this.translations = this.props.state.configuration.translations.misc
     this.translator = new Translator(this.props.state.configuration.translations.misc)
-    this.formContent = _.get(this.props, 'state.form.content', [])
+    this.formContent = this.props.state.form.content
   }
 
   openModal() {
