@@ -6,4 +6,5 @@ VALUES (:application_id, :application_version, :grant_id, :state,
   :installment, :document_type, now(), now() + '7 days', :amount, :long_ref,
   now(), :transaction_account, :currency, :lkp_account, :takp_account,
   :partner, :inspector_email, :acceptor_email)
+RETURNING *
 
