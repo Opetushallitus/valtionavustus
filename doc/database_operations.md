@@ -32,6 +32,12 @@ On yleistä, että asiakas pyytää tarkistamaan tietyn hakemuksen tilan, erityi
 psql -U va_hakija -h localhost -p 30022 -d va-prod -c "select created_at, status, form_submission_id, form_submission_version from hakija.hakemukset where id = 5007 order by created_at" | less
 ```
 
+### Avustushaun hakeminen lomakkeen sisällön perusteella
+
+``` bash
+psql -U va_hakija -h localhost -p 30022 -d va-prod -c "select avustushaut.id as avustushaku_id, forms.id as form_id from hakija.forms join hakija.avustushaut on forms.id = avustushaut.form where forms.content::text ilike '%liiketaloudellisin perustein toimiva yhtiö%'"
+```
+
 ### Tietokannan dumpin luonti
 
 CI tekee tuotannon tietokannasta dumpin joka yö. Dumpit ovat saatavilla

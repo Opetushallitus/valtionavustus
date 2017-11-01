@@ -15,6 +15,22 @@ const organizationToFormFieldIds = {
   "contact": "organization-postal-address"
 }
 
+const findFieldAnswerValue = (answers, fieldId) => {
+  const value = _.find(answers, x => x.key === fieldId)
+  return value !== undefined ? value.value : undefined
+}
+
+const findBusinessIdRelatedFieldIdWithEmptyValue = (formContent, savedAnswers) =>
+  _.find(
+    _.values(organizationToFormFieldIds),
+    fieldId => FormUtil.findField(formContent, fieldId) && _.isEmpty(findFieldAnswerValue(savedAnswers, fieldId)))
+
+const shouldShowBusinessIdSearch = state =>
+  !state.configuration.develMode &&
+    !state.configuration.preview &&
+    state.saveStatus.savedObject !== null &&
+    findBusinessIdRelatedFieldIdWithEmptyValue(state.form.content, state.saveStatus.values.value)
+
 const validateBusinessId = str =>
   SyntaxValidator.validateBusinessId(str) === undefined
     ? {isDisabled: false, error: ""}
@@ -26,12 +42,11 @@ export default class BusinessIdSearch extends React.Component {
     this.fetchOrganizationData = this.fetchOrganizationData.bind(this)
     this.changeFieldValue = this.changeFieldValue.bind(this)
     this.openModal = this.openModal.bind(this)
-    this.afterOpenModal = this.afterOpenModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
     this.handleOnChange = this.handleOnChange.bind(this)
     this.handleOnSubmit = this.handleOnSubmit.bind(this)
     this.state = {
-      modalIsOpen: true,
+      modalIsOpen: shouldShowBusinessIdSearch(this.props.state),
       isDisabled: true,
       error: "error",
       incorrectBusinessId: false,
@@ -41,15 +56,11 @@ export default class BusinessIdSearch extends React.Component {
     this.lang = this.props.state.configuration.lang
     this.translations = this.props.state.configuration.translations.misc
     this.translator = new Translator(this.props.state.configuration.translations.misc)
-    this.formContent = _.get(this.props, 'state.form.content', [])
+    this.formContent = this.props.state.form.content
   }
 
   openModal() {
     this.setState({modalIsOpen: true})
-  }
-
-  afterOpenModal() {
-    this.subtitle.style.color = "#f00"
   }
 
   closeModal() {
@@ -73,7 +84,9 @@ export default class BusinessIdSearch extends React.Component {
   }
 
   // events from inputting the organisational id (y-tunnus)
-  handleOnSubmit() {
+  handleOnSubmit(event) {
+    event.preventDefault()
+
     this.setState(state => {
       this.fetchOrganizationData(state.businessId)
       return {modalIsOpen: false}
@@ -112,12 +125,7 @@ export default class BusinessIdSearch extends React.Component {
     return (
 
       <div>
-        <ModalDialog
-          isOpen={this.state.modalIsOpen}
-          contentLabel="modal"
-          className="modal"
-          overlayClassName="overlay"
-        >
+        <ModalDialog isOpen={this.state.modalIsOpen} className="modal" overlayClassName="overlay">
           <div>
             <h1><LocalizedString translations={this.translations} translationKey="give-businessid" lang={this.lang}/></h1>
             <p><LocalizedString translations={this.translations} translationKey="organisation-info" lang={this.lang}/></p>
@@ -126,11 +134,11 @@ export default class BusinessIdSearch extends React.Component {
             <form onSubmit={this.handleOnSubmit}>
               <label className="modal-label">
                 <LocalizedString translations={this.translations} translationKey="business-id" lang={this.lang}/> :
-                <input className={this.state.error} type="text" value={this.state.businessId} onChange={ this.handleOnChange } />
+                <input className={this.state.error} type="text" value={this.state.businessId} onChange={this.handleOnChange} autoFocus />
               </label>
               <input className={"get-business-id" + " " + "soresu-text-button"} type="submit" value={this.translator.translate("get", this.lang)} disabled={this.state.isDisabled} />
             </form>
-            <p><a href="#" onClick={this.closeModal}><LocalizedString translations={this.translations} translationKey="cancel" lang={this.lang}/></a></p>
+            <p><a href="javascript:" onClick={this.closeModal}><LocalizedString translations={this.translations} translationKey="cancel" lang={this.lang}/></a></p>
           </div>
         </ModalDialog>
       </div>)

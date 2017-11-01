@@ -46,9 +46,9 @@
                          [prismatic/schema "1.1.6"]
 
                          ;; database
-                         [hikari-cp "1.7.5"]
-                         [org.flywaydb/flyway-core "4.0.3"]
-                         [org.postgresql/postgresql "9.4.1212"]
+                         [hikari-cp "1.8.1"]
+                         [org.flywaydb/flyway-core "4.2.0"]
+                         [org.postgresql/postgresql "42.1.4"]
                          [yesql "0.5.3"]
 
                          ;; ldap
@@ -66,12 +66,20 @@
                          [log4j "1.2.17"]
                          [org.clojure/tools.logging "0.4.0"]
                          [org.slf4j/slf4j-log4j12 "1.7.25"]
+                         [org.slf4j/slf4j-api "1.7.25"]
                          [commons-logging "1.2"]
+                         [org.log4s/log4s_2.11 "1.4.0"]
 
                          ;; cryptography
                          [org.bouncycastle/bcpkix-jdk15on "1.58"]
                          [org.bouncycastle/bcprov-jdk15on "1.58"]
                          [buddy/buddy-core "1.4.0"]
+
+                         ;; cas
+                         [fi.vm.sade/scala-cas_2.11 "0.5.0-20171020.072952-1"]
+                         [org.http4s/http4s-blaze-client_2.11 "0.16.5"]
+                         [org.http4s/http4s-client_2.11 "0.16.5"]
+                         [org.http4s/http4s-dsl_2.11 "0.16.5"]
 
                          ;; other
                          [clj-time "0.14.0"]
@@ -82,7 +90,6 @@
                          [de.ubercode.clostache/clostache "1.4.0"]
                          [dk.ative/docjure "1.9.0"]
                          [instaparse "1.4.7"]
-                         [oph/clj-util "0.1.0"]
                          [org.apache.commons/commons-email "1.5"]
                          [org.clojure/core.async "0.3.443"]
                          [org.clojure/core.memoize "0.5.9"]
@@ -104,4 +111,6 @@
   :auto-clean true
 
   :prep-tasks ["compile"]
+
+  :javac-options ["-target" "1.8" "-source" "1.8" "-encoding" "UTF-8" "-deprecation"]
 )
