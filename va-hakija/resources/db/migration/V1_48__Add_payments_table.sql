@@ -16,6 +16,7 @@ CREATE TABLE payments (
     currency            VARCHAR(3) NOT NULL DEFAULT 'EUR',
     lkp_account         VARCHAR(8) NOT NULL,
     takp_account        VARCHAR(12) NOT NULL,
+    partner             VARCHAR(6) NOT NULL,
     inspector_email     TEXT NOT NULL,
     acceptor_email      TEXT NOT NULL,
     FOREIGN KEY (grant_id) REFERENCES avustushaut (id)

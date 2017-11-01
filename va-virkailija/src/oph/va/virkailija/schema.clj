@@ -269,6 +269,7 @@
     (s/optional-key :organization-name) s/Str
     (s/optional-key :project-name) s/Str
     (s/optional-key :grant-content) s/Any
+    :partner s/Str
     :inspector-email s/Str
     :acceptor-email s/Str})
 
