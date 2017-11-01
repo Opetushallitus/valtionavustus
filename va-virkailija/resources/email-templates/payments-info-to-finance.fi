@@ -1,10 +1,13 @@
-Avustushaun " {{ avustushaku-name }} " maksatustiedot ovat nyt valmiina lähetettäväksi Palkeisiin.
 
-Maksatuksen tiedot voitte tarkastella ja käsitellä tästä linkistä: {{& url }}
+Hei,
+{{ avustushaku-name }} - diaarinumero {{diaarinumero}}
+- myönnetyt valtionavustukset ovat valmiit maksettavaksi.
 
-Opetushallitus
-Hakaniemenranta 6
-PL 380, 00531 Helsinki
+Linkki
+{{& url }}
 
-puhelin 029 533 1000
-etunimi.sukunimi@oph.fi
+Ystävällisin terveisin
+VA-järjestelmä - {{& presenting-officer-name}}, {{& presenting-officer-email}}
+
+
+Tämä viesti on lähetetty automaattisesti, eikä siihen voi vastata.

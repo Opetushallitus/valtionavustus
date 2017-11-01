@@ -472,7 +472,13 @@
   (compojure-api/POST "/:avustushaku-id/payments-email" [avustushaku-id :as request]
     :path-params [avustushaku-id :- Long]
     :summary "POST email to finance department"
-  (payments-info/send-payments-info avustushaku-id (hakija-api/get-avustushaku avustushaku-id))))
+  (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+        identity (authentication/get-request-identity request)
+        presenting-officer-email (:email identity)
+        presenting-officer-name (str (:first-name identity) " " (:surname identity))
+        form (hakija-api/get-form-by-avustushaku avustushaku-id)
+        register-number (:register_number avustushaku)]
+    (payments-info/send-payments-info avustushaku-id avustushaku presenting-officer-email presenting-officer-name register-number))))
 
 (compojure-api/defroutes avustushaku-routes
   "Hakemus listing and filtering"
