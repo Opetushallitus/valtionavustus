@@ -180,7 +180,7 @@
     :path-params [avustushaku-id :- Long]
     :body [payments (compojure-api/describe
                       virkailija-schema/Payments
-                      "Create new payments for avustushaku")]
+                      "Return created payments")]
     :return virkailija-schema/Payments
     :summary "Create new payments for avustushaku"
     (ok (hakudata/create-avustushaku-payments! payments))))
