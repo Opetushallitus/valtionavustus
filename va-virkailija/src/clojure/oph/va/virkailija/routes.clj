@@ -166,6 +166,33 @@
         (ok response)
         (not-found)))))
 
+(defn- get-avustushaku-payments []
+  (compojure-api/GET "/:avustushaku-id/payments" [avustushaku-id :as request]
+    :path-params [avustushaku-id :- Long]
+    :return virkailija-schema/Payments
+    :summary "Return payments of particular avustushaku"
+    (if-let [response (hakudata/get-avustushaku-payments avustushaku-id)]
+      (ok response)
+      (not-found))))
+
+(defn- post-create-avustushaku-payments []
+  (compojure-api/POST "/:avustushaku-id/payments" [avustushaku-id :as request]
+    :path-params [avustushaku-id :- Long]
+    :body [payments (compojure-api/describe
+                      virkailija-schema/Payments
+                      "Return created payments")]
+    :return virkailija-schema/Payments
+    :summary "Create new payments for avustushaku"
+    (ok (hakudata/create-avustushaku-payments! payments))))
+
+(defn- options-create-avustushaku-payments []
+  (compojure-api/OPTIONS
+    "/:avustushaku-id/payments" [avustushaku-id :as request]
+    :path-params [avustushaku-id :- Long]
+    :return s/Any
+    :summary "Route OPTIONS"
+    (ok "")))
+
 (defn- get-selvitys []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/selvitys" [hakemus-id avustushaku-id :as request]
     :path-params [hakemus-id :- Long avustushaku-id :- Long]
@@ -480,6 +507,9 @@
   (put-avustushaku)
   (post-avustushaku)
   (get-avustushaku)
+  (get-avustushaku-payments)
+  (post-create-avustushaku-payments)
+  (options-create-avustushaku-payments)
   (get-selvitys)
   (send-selvitys)
   (send-selvitys-email)
