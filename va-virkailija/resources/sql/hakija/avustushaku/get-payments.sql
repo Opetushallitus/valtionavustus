@@ -12,5 +12,5 @@ LEFT JOIN
   avustushaut
   ON
     avustushaut.id = payments.grant_id
-WHERE payments.grant_id = :grant_id;
+WHERE payments.grant_id = :grant_id
 
