@@ -53,6 +53,41 @@ ansible-galaxy install -r requirements.yml
 
 Roolin päivittäminen onnistuu vivulla `--force`.
 
+## Salaisuuksien asennus
+
+Suositeltu järjestely projektin tiedostoille ja hakemistoille:
+
+``` bash
+ls -lA oph
+```
+
+```
+-rw-------   1 username  staff     33 Nov  3 09:57 .ansible-vault-pass-va.txt
+-rw-------   1 username  staff    301 Nov  3 09:10 .env-va.sh
+drwxr-xr-x  29 username  staff    986 Nov  1 09:34 valtionavustus/
+drwxr-xr-x   9 username  staff    306 Nov  3 09:06 valtionavustus-secret/
+```
+
+Huomaa `chmod 600` -oikeudet tiedostoille `.env-va.sh` ja
+`.ansible-vault-pass-va.txt`.
+
+Tiedosto `.env-va.sh` sisältää polun Ansible Vaultin salasanatiedostoon:
+
+``` shell
+export ANSIBLE_VAULT_PASSWORD_FILE=~/Projects/oph/.ansible-vault-pass-va.txt
+```
+
+Tiedosto `.ansible-vault-pass-va.txt` sisältää Ansible Vaultin
+salasanan.
+
+Testaa Ansible Vaultin käyttöä avaamalla salasanalla suojattu tiedosto:
+
+``` shell
+eval `make venv`   # ellet jo ole suorittanut
+source .env-va.sh
+ansible-vault view group_vars/all/va-secrets-vault.yml
+```
+
 ## Yhteyden testaaminen palvelimille
 
 Palvelimet ovat CSC:n VMware-ympäristössä. Palvelinten Ansible
