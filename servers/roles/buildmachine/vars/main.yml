@@ -36,4 +36,4 @@ jenkins_plugins: [github, git, greenballs]
 # System config
 # =============
 jenkins_system_config:
-  admin_email: va-dev@reaktor.com
+  admin_email: "{{ team_email_recipients.dev }}"
