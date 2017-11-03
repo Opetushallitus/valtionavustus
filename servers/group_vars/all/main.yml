@@ -1,0 +1,26 @@
+ubuntu_common_required_packages:
+  - ufw
+  - fail2ban
+  - unattended-upgrades
+  - xfsprogs
+  - lvm2
+  - supervisor
+
+centos_common_required_packages:
+  - fail2ban
+  - nc
+  - xfsprogs
+  - lvm2*
+  - supervisor
+
+iptables_script: /etc/rc.d/rc.firewall.local
+
+csc_host_info_config_path: /etc/csc/host.info
+
+alert_email_recipient: "{{ vault_alert_email_recipient }}"
+
+team_email_recipients: "{{ vault_team_email_recipients }}"
+
+system_reboot_needed_email_recipient: "{{ team_email_recipients.dev }} {{ team_email_recipients.ops }}"
+
+root_user_email_recipient: "{{ team_email_recipients.dev }}, {{ team_email_recipients.ops }}"
