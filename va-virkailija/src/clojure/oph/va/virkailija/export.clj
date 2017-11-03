@@ -341,6 +341,8 @@
               :rekisteroeity-yhteisoe-tai-saeaetioe 82500000
               :voittoa_tavoittelematon              82500000
 
+              :ei-eu-maat                           82800000
+
               :eu-maat                              82820000
 
               :yliopisto                            82930000
