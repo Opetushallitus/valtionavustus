@@ -47,5 +47,8 @@ Examples:
   eval `make venv`   # activate virtualenv
   deactivate         # later, to deactivate virtualenv
 
+Remember to set $$ANSIBLE_VAULT_PASSWORD_FILE if you run Ansible
+(`source .env-va.sh`).
+
 See README.md for more.
 endef

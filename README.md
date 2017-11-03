@@ -79,7 +79,7 @@ make help
 Juurihakemisto sisältää `lein`-skriptin, jota voi käyttää Leiningenin
 ajamiseen. Tämä takaa staattisen version käytön Leiningenistä.
 
-### Suositeltu hakemistohierarkia
+### Suositeltu hakemistojärjestely
 
 ``` bash
 ls -lA oph
