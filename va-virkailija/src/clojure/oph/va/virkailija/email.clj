@@ -76,7 +76,7 @@
 
 (defn payment-url [avustushaku-id]
   (let [admin-url (-> config :server :admin-url)]
-  (str admin-url "/" avustushaku-id "/payments")))
+  (str admin-url "/grants/" avustushaku-id "/payments")))
 
 (defn send-paatos! [to avustushaku hakemus reply-to]
   (let [lang-str (:language hakemus)
@@ -134,12 +134,14 @@
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)})))
 
-(defn send-payments-info-to-finance! [avustushaku-id avustushaku presenting-officer-email presenting-officer-name register-number]
+(defn send-payments-info-to-finance! [payments-info]
   (let [lang :fi
         mail-subject (get-in mail-titles [:payments-info-notification lang])
-        url (payment-url avustushaku-id)
-        avustushaku-name (get-in avustushaku [:content :name lang])
-        diaarinumero register-number]
+        url (payment-url (:avustushaku-id payments-info))
+        avustushaku-name (get-in (:avustushaku payments-info) [:content :name lang])
+        diaarinumero (:register-number payments-info)
+        presenting-officer-email (:presenting-officer-email payments-info)
+        presenting-officer-name (:presenting-officer-name payments-info)]
     (>!! email/mail-chan {:operation :send
                           :type :payments-info-notification
                           :lang lang

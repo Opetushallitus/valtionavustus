@@ -477,8 +477,9 @@
         presenting-officer-email (:email identity)
         presenting-officer-name (str (:first-name identity) " " (:surname identity))
         form (hakija-api/get-form-by-avustushaku avustushaku-id)
-        register-number (:register_number avustushaku)]
-    (payments-info/send-payments-info avustushaku-id avustushaku presenting-officer-email presenting-officer-name register-number))))
+        register-number (:register_number avustushaku)
+        payments-info {:avustushaku-id avustushaku-id :avustushaku avustushaku :presenting-officer-email presenting-officer-email :presenting-officer-name presenting-officer-name :register-number register-number}]
+    (payments-info/send-payments-info payments-info))))
 
 (compojure-api/defroutes avustushaku-routes
   "Hakemus listing and filtering"
