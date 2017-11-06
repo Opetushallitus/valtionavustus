@@ -437,19 +437,21 @@
     (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
           identity (authentication/get-request-identity request)
           new-status (:status body)
-          status-comment (:comment body)
-          updated-hakemus (hakija-api/update-hakemus-status hakemus new-status status-comment identity)]
-      (if (= new-status "pending_change_request")
-        (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
-              answers (:answers submission)
-              language (keyword (or (formutil/find-answer-value answers "language") "fi"))
-              avustushaku-name (-> avustushaku :content :name language)
-              email (formutil/find-answer-value answers "primary-email")
-              user-key (:user_key updated-hakemus)
-              presenting-officer-email (:email identity)]
-          (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment presenting-officer-email)))
-      (ok {:hakemus-id hakemus-id
-           :status new-status}))))
+          status-comment (:comment body)]
+      (if (and (= "cancelled" new-status) (= "resolved" (:status avustushaku)))
+        (method-not-allowed!))
+      (let [updated-hakemus (hakija-api/update-hakemus-status hakemus new-status status-comment identity)]
+        (if (= new-status "pending_change_request")
+          (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
+                answers (:answers submission)
+                language (keyword (or (formutil/find-answer-value answers "language") "fi"))
+                avustushaku-name (-> avustushaku :content :name language)
+                email (formutil/find-answer-value answers "primary-email")
+                user-key (:user_key updated-hakemus)
+                presenting-officer-email (:email identity)]
+            (email/send-change-request-message! language email avustushaku-id avustushaku-name user-key status-comment presenting-officer-email)))
+        (ok {:hakemus-id hakemus-id
+             :status new-status})))))
 
 (defn- put-searches []
   (compojure-api/PUT "/:avustushaku-id/searches" [avustushaku-id :as request]
