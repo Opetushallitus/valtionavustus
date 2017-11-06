@@ -230,10 +230,11 @@ export default class HakemustenArviointiController {
     const hakuIsPublishedAndEnded = avustushaku.status === "published" && avustushaku.phase === "ended"
 
     state.selectedHakemusAccessControl = {
-      allowHakemusCommenting:   hakuIsPublishedAndEnded,
-      allowHakemusStateChanges: hakuIsPublishedAndEnded && privileges["change-hakemus-state"],
-      allowHakemusScoring:      hakuIsPublishedAndEnded && privileges["score-hakemus"],
-      allowEditStateChanges:    privileges["change-hakemus-state"]
+      allowHakemusCommenting:     hakuIsPublishedAndEnded,
+      allowHakemusStateChanges:   hakuIsPublishedAndEnded && privileges["change-hakemus-state"],
+      allowHakemusScoring:        hakuIsPublishedAndEnded && privileges["score-hakemus"],
+      allowHakemusOfficerEditing: privileges["change-hakemus-state"],
+      allowHakemusCancellation:   avustushaku.status !== "resolved" && privileges["change-hakemus-state"]
     }
   }
 

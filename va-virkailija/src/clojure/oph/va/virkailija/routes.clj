@@ -77,14 +77,19 @@
         preview-url (str hakija-app-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" hakemus-user-key "&preview=" showPreview)]
     (resp/redirect preview-url)))
 
-(defn- get-hakemus-and-published-avustushaku [avustushaku-id hakemus-id]
+(defn- get-hakemus-and-its-avustushaku [avustushaku-id hakemus-id]
   (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
         hakemus (hakija-api/get-hakemus hakemus-id)]
     (cond
       (not hakemus) (not-found!)
       (not (= (:id avustushaku) (:avustushaku hakemus))) (bad-request!)
-      (not (= "published" (:status avustushaku))) (method-not-allowed!)
       :else {:avustushaku avustushaku :hakemus hakemus})))
+
+(defn- get-hakemus-and-its-published-avustushaku [avustushaku-id hakemus-id]
+  (let [{:keys [avustushaku] :as hakemus-and-avustushaku} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)]
+    (if (= "published" (:status avustushaku))
+      hakemus-and-avustushaku
+      (method-not-allowed!))))
 
 (compojure-api/defroutes healthcheck-routes
   "Healthcheck routes"
@@ -320,7 +325,7 @@
     :return virkailija-schema/Comments
     :summary "Add a comment for hakemus. As response, return all comments"
     (let [identity (authentication/get-request-identity request)
-          _avustushaku_and_hakemus_exists? (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
+          _avustushaku_and_hakemus_exists? (get-hakemus-and-its-published-avustushaku avustushaku-id hakemus-id)]
       (ok (virkailija-db/add-comment hakemus-id
                                      (:first-name identity)
                                      (:surname identity)
@@ -414,7 +419,7 @@
     :summary "Submit scorings for given arvio."
     :description "Scorings are automatically assigned to logged in user."
     (let [identity (authentication/get-request-identity request)
-          _avustushaku_and_hakemus_exists? (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)]
+          _avustushaku_and_hakemus_exists? (get-hakemus-and-its-published-avustushaku avustushaku-id hakemus-id)]
       (ok (scoring/add-score avustushaku-id
                              hakemus-id
                              identity
@@ -429,7 +434,7 @@
     :return {:hakemus-id Long
              :status va-schema/HakemusStatus}
     :summary "Update status of hakemus"
-    (let [{:keys [avustushaku hakemus]} (get-hakemus-and-published-avustushaku avustushaku-id hakemus-id)
+    (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
           identity (authentication/get-request-identity request)
           new-status (:status body)
           status-comment (:comment body)
