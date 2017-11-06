@@ -32,7 +32,8 @@ export default class HakemusArviointi extends Component {
       allowHakemusCommenting,
       allowHakemusStateChanges,
       allowHakemusScoring,
-      allowEditStateChanges
+      allowHakemusOfficerEditing,
+      allowHakemusCancellation
     } = this.props.selectedHakemusAccessControl
     const userInfo = this.props.userInfo
     const comments = hakemus.comments
@@ -54,8 +55,8 @@ export default class HakemusArviointi extends Component {
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
-       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowEditStateChanges} status="officer_edit"/>
-       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowEditStateChanges && avustushaku.status !== "resolved"} status="cancelled"/>
+       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit"/>
+       <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled"/>
        <ChangeLog hakemus={hakemus}/>
      </div>
     )
