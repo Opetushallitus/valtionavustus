@@ -197,3 +197,82 @@
 (s/defschema AvustushakuOrganizationNameQuery
   "Find avustushaut by organization name (minimum string length: 3)"
   (s/conditional (fn [s] (> (count s) 2)) s/Str))
+
+(def InvoiceSupplier
+  {:Y-tunnus s/Str
+   (s/optional-key :Hlo-tunnus) s/Str
+   :Nimi s/Str
+   :Postiosoite s/Str
+   :Paikkakunta s/Str
+   :Maa s/Str
+   :Iban-tili s/Str
+   :Pankkiavain s/Str
+   :Pankki-maa s/Str
+   :Kieli s/Str
+   :Valuutta s/Str})
+
+(def InvoiceHeader
+  {:Maksuera s/Str
+   :Laskunpaiva s/Str
+   :Erapvm s/Str
+   :Bruttosumma s/Num
+   :Maksuehto s/Str
+   :Pitkaviite s/Str
+   :Tositepvm s/Str
+   :Asiatarkastaja s/Str
+   :Hyvaksyja s/Str
+   :Tositelaji s/Str
+   :Toimittaja InvoiceSupplier})
+
+(def InvoicePostings
+  {:Summa s/Num
+   :LKP-tili s/Str
+   (s/optional-key :ALV-koodi) s/Str
+   :TaKp-tili s/Str
+   :Toimintayksikko s/Str
+   :Valtuusnro s/Str
+   :Projekti s/Str
+   :Toiminto s/Str
+   :Suorite s/Str
+   :AlueKunta s/Str
+   :Kumppani s/Str
+   :Seuko1 s/Str
+   :Seuko2 s/Str
+   (s/optional-key :Varalla1) s/Str
+   (s/optional-key :Varalla2) s/Str})
+
+(def Invoice
+  "Generated invoice"
+  {:VA-invoice
+   {:Header InvoiceHeader
+    :Postings
+    {:Posting InvoicePostings}}})
+
+(def Payment
+  { (s/optional-key :id) s/Int
+    (s/optional-key :created-at) s/Inst
+    :application-id  s/Int
+    :application-version s/Int
+    :grant-id s/Int
+    :state s/Int
+    :installment s/Str
+    :document-type s/Str
+    (s/optional-key :invoice-date) s/Inst
+    (s/optional-key :due-date) s/Inst
+    :amount s/Int
+    :long-ref s/Str
+    (s/optional-key :receipt-date) s/Inst
+    :transaction-account s/Str
+    :currency s/Str
+    :lkp-account s/Str
+    :takp-account s/Str
+    (s/optional-key :organization-name) s/Str
+    (s/optional-key :project-name) s/Str
+    (s/optional-key :grant-content) s/Any
+    :partner s/Str
+    :inspector-email s/Str
+    :acceptor-email s/Str})
+
+(def Payments
+  [Payment])
+

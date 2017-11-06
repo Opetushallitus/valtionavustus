@@ -24,7 +24,8 @@
                  [fi.vm.sade/scala-cas_2.11]
                  [org.http4s/http4s-blaze-client_2.11]
                  [org.clojars.pntblnk/clj-ldap]
-                 [org.clojure/data.json]]
+                 [org.clojure/data.json]
+                 [org.clojure/data.xml]]
 
   :profiles {:uberjar {:aot :all}
              :dev     {:env {:config "config/dev.edn"
