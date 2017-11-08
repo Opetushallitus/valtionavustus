@@ -22,6 +22,8 @@
 (defquery list-matching-avustushaut-by-ids "sql/hakija/avustushaku/list-matching-by-ids.sql")
 
 (defquery get-grants "sql/hakija/grants/get-grants.sql")
+(defquery get-grants-with-content
+  "sql/hakija/grants/get-grants-with-content.sql")
 (defquery get-grant "sql/hakija/grants/get-grant.sql")
 
 (defquery list-hakemukset-by-avustushaku "sql/hakija/hakemus/list-by-avustushaku.sql")
