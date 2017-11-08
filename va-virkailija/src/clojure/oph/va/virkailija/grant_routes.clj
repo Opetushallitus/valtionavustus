@@ -3,11 +3,13 @@
             [oph.va.hakija.grant-data :as grant-data]
             [ring.util.http-response :refer [ok not-found]]
             [compojure.core :as compojure]
+            [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]))
 
 (defn- get-grants []
   (compojure-api/GET "/" []
     :path-params []
+    :query-params [{include-content :- s/Bool false}]
     :return virkailija-schema/Grants
     :summary "Return list of grants"
     (ok (grant-data/get-grants))))
