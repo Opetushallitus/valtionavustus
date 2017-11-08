@@ -1,6 +1,7 @@
 {:server {:allow-db-clear? true
           :url {:fi "http://localhost:8080/"
                 :sv "http://localhost:8080/"}
+          :admin-url "http://localhost/admin-ui"
           :enable-access-log? false
           :require-https? false
           :local-front-url "http://localhost:3449"}

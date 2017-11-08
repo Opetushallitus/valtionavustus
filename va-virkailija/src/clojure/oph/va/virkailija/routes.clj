@@ -32,7 +32,8 @@
             [oph.va.virkailija.decision :as decision]
             [oph.va.virkailija.hakemus-search :as hakemus-search]
             [oph.soresu.common.koodisto :as koodisto]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [oph.va.virkailija.payments_info :as payments-info]))
 
 (defonce opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
 
@@ -494,6 +495,19 @@
     (let [saved-search (get-saved-search avustushaku-id saved-search-id)]
       (ok (:query saved-search)))))
 
+(defn- post-payments-info-email []
+  (compojure-api/POST "/:avustushaku-id/payments-email" [avustushaku-id :as request]
+    :path-params [avustushaku-id :- Long]
+    :summary "POST email to finance department"
+  (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+        identity (authentication/get-request-identity request)
+        presenting-officer-email (:email identity)
+        presenting-officer-name (str (:first-name identity) " " (:surname identity))
+        form (hakija-api/get-form-by-avustushaku avustushaku-id)
+        register-number (:register_number avustushaku)
+        payments-info {:avustushaku-id avustushaku-id :avustushaku avustushaku :presenting-officer-email presenting-officer-email :presenting-officer-name presenting-officer-name :register-number register-number}]
+    (payments-info/send-payments-info payments-info))))
+
 (compojure-api/defroutes avustushaku-routes
   "Hakemus listing and filtering"
 
@@ -535,7 +549,8 @@
   (post-scores)
   (post-hakemus-status)
   (put-searches)
-  (get-search))
+  (get-search)
+  (post-payments-info-email))
 
 (compojure-api/defroutes public-routes
   "Public API"

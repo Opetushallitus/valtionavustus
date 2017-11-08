@@ -1,0 +1,13 @@
+
+Hei,
+{{ avustushaku-name }} - diaarinumero {{diaarinumero}}
+- myönnetyt valtionavustukset ovat valmiit maksettavaksi.
+
+Linkki
+{{& url }}
+
+Ystävällisin terveisin
+VA-järjestelmä - {{& presenting-officer-name}}, {{& presenting-officer-email}}
+
+
+Tämä viesti on lähetetty automaattisesti, eikä siihen voi vastata.
