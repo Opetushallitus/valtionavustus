@@ -9,10 +9,11 @@
 (defn- get-grants []
   (compojure-api/GET "/" []
     :path-params []
-    :query-params [{include-content :- s/Bool false}]
+    :query-params [{include :- String ""}]
     :return virkailija-schema/Grants
     :summary "Return list of grants"
-    (ok (grant-data/get-grants))))
+    (prn include)
+    (ok (grant-data/get-grants {:include-content (= include "content")}))))
 
 (defn- get-grant []
   (compojure-api/GET
