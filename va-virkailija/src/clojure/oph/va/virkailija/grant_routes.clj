@@ -17,7 +17,7 @@
 (defn- get-grant []
   (compojure-api/GET
     "/:grant-id/" [grant-id :as request]
-    :path-params [grant-id :- long]
+    :path-params [grant-id :- Long]
     :return virkailija-schema/Grant
     :summary "Return basic info of single grant"
     (if-let [response (grant-data/get-grant grant-id)]
