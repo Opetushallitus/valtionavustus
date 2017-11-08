@@ -21,6 +21,9 @@
 (defquery get-avustushaku-roles "sql/hakija/avustushaku/get-roles.sql")
 (defquery list-matching-avustushaut-by-ids "sql/hakija/avustushaku/list-matching-by-ids.sql")
 
+(defquery get-grants "sql/hakija/grants/get-grants.sql")
+(defquery get-grant "sql/hakija/grants/get-grant.sql")
+
 (defquery list-hakemukset-by-avustushaku "sql/hakija/hakemus/list-by-avustushaku.sql")
 (defquery get-by-type-and-parent-id "sql/hakija/hakemus/get-by-type-and-parent-id.sql")
 (defquery list-hakemus-paatos-email-statuses "sql/hakija/hakemus/list-hakemus-paatokset-by-avustushaku.sql")
