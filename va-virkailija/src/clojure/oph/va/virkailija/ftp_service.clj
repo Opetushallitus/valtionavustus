@@ -7,7 +7,6 @@
 
 ;(def haku (first (hakija-api/get-avustushaku-payments 2)))
 ;(def payment (dissoc haku :grant-content))
-
 (def ftp-config (:ftp config))
 
 (defn send-sftp [file]
