@@ -45,7 +45,7 @@ class ExistingAttachmentComponent extends React.Component {
     const attachment = this.props.attachment
     const downloadUrl = this.props.downloadUrl
     const removeProperties = _.cloneDeep(this.props)
-    removeProperties.renderingParameters = removeProperties.renderingParameters ? removeProperties.renderingParameters : {}
+    removeProperties.renderingParameters = _.isObject(removeProperties.renderingParameters) ? removeProperties.renderingParameters : {}
     removeProperties.renderingParameters.removeMe = this.props.onRemove
 
     const attachmentDisplay = <AttachmentDisplay {...this.props} attachment={attachment} downloadUrl={downloadUrl}/>
