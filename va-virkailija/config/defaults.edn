@@ -38,8 +38,4 @@
          :print-mail-on-disable? true
          :retry-initial-wait 2000
          :retry-multiplier 4
-         :retry-max-time 60000}
- :ftp  {:host-ip "localhost"
-        :port 2222
-        :local_path "/tmp/"
-        :remote_path "/home/oph002/to_rondo/va/"}}
+         :retry-max-time 60000}}
