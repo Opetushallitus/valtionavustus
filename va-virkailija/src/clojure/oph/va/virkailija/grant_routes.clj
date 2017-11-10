@@ -12,8 +12,7 @@
     :query-params [{include :- String ""}]
     :return virkailija-schema/Grants
     :summary "Return list of grants"
-    (prn include)
-    (ok (grant-data/get-grants {:include-content (= include "content")}))))
+    (ok (grant-data/get-grants {:include include}))))
 
 (defn- get-grant []
   (compojure-api/GET
@@ -25,7 +24,18 @@
       (ok response)
       (not-found))))
 
+(defn- get-grant-applications []
+  (compojure-api/GET
+    "/:grant-id/applications/" [grant-id :as request]
+    :path-params [grant-id :- Long]
+    :query-params [{include :- String ""}]
+    :return [virkailija-schema/Application]
+    :summary "Return applications of a grant"
+    (ok (grant-data/get-grant-applications
+         {:grant-id grant-id :include include}))))
+
 (compojure-api/defroutes routes
   "grant routes"
   (get-grant)
-  (get-grants))
+  (get-grants)
+  (get-grant-applications))
