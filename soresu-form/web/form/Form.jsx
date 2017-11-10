@@ -50,9 +50,11 @@ export default class Form extends React.Component {
       }
     }
 
-    return <form className="soresu-form">
-            {fields.map(renderField)}
-           </form>
+    return (
+      <form className="soresu-form">
+        {_.map(fields, f => renderField(f))}
+      </form>
+    )
 
     function createInfoElement(fieldProperties) {
       return <InfoElement {...fieldProperties}
