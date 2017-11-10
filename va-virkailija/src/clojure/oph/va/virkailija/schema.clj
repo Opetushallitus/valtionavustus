@@ -229,14 +229,14 @@
    (s/optional-key :ALV-koodi) s/Str
    :TaKp-tili s/Str
    :Toimintayksikko s/Str
-   :Valtuusnro s/Str
+   :Valtuusnro (s/optional-key s/Str)
    :Projekti s/Str
    :Toiminto s/Str
-   :Suorite s/Str
-   :AlueKunta s/Str
+   :Suorite (s/optional-key s/Str)
+   :AlueKunta (s/optional-key s/Str)
    :Kumppani s/Str
-   :Seuko1 s/Str
-   :Seuko2 s/Str
+   :Seuko1 (s/optional-key s/Str)
+   :Seuko2 (s/optional-key s/Str)
    (s/optional-key :Varalla1) s/Str
    (s/optional-key :Varalla2) s/Str})
 
