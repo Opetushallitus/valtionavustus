@@ -3,9 +3,9 @@
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.hakija.api :refer [convert-to-dash-keys]]))
 
-(defn get-grants [props]
+(defn get-grants [template]
   (mapv convert-to-dash-keys
-        (exec :form-db (if (:include-content props)
+        (exec :form-db (if (= template "with-content")
                          hakija-queries/get-grants-with-content
                          hakija-queries/get-grants) {})))
 
