@@ -7,7 +7,7 @@ JOIN
   hakija.form_submissions s
     ON (h.form_submission_id = s.id AND h.form_submission_version = s.version)
 WHERE
-  h.avustushaku = :grant_id;
+  h.avustushaku = :grant_id
   AND h.status != 'cancelled'
   AND h.status != 'new'
   AND h.version_closed IS NULL
