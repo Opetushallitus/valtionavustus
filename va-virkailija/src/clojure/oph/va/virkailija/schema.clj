@@ -302,3 +302,16 @@
 (s/defschema Grants
   "List of grants"
   [Grant])
+
+(s/defschema Application
+  "Grant application"
+  {:id s/Int
+   :created-at s/Inst
+   :version s/Int
+   :budget-total s/Int
+   :budget-oph-share s/Int
+   :organization-name s/Str
+   :project-name s/Str
+   :register-number s/Str
+   :language s/Str
+   (s/optional-key :evaluation) s/Any})
