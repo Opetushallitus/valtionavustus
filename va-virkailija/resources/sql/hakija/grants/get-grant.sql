@@ -3,4 +3,4 @@ SELECT
 FROM
   avustushaut
 WHERE
-  id = :grant_id
+  id = :grant_id;
