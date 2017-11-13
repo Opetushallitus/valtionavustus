@@ -314,4 +314,5 @@
    :project-name s/Str
    :register-number s/Str
    :language s/Str
-   (s/optional-key :evaluation) s/Any})
+   (s/optional-key :evaluation) s/Any
+   (s/optional-key :answers) [Answer]})
