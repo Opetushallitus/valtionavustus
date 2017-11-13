@@ -21,11 +21,15 @@
 (defn- find-evaluation-by-id [col id]
   (first (filter #(= (:hakemus-id %) id) col)))
 
+(defn answers-to-vec [application]
+  (update application :answers vec))
+
 (defn get-grant-applications-with-evaluation [grant-id]
   (let [evaluations (get-grant-evaluations grant-id)
         convert
         (fn [a]
           (-> a
+              answers-to-vec
               convert-to-dash-keys
               (conj
                {:evaluation (find-evaluation-by-id evaluations (:id a))})))]
