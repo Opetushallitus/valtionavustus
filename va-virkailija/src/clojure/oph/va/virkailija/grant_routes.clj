@@ -28,11 +28,12 @@
   (compojure-api/GET
     "/:grant-id/applications/" [grant-id :as request]
     :path-params [grant-id :- Long]
-    :query-params [{include :- String ""}]
+    :query-params [{template :- String ""}]
     :return [virkailija-schema/Application]
     :summary "Return applications of a grant"
-    (ok (grant-data/get-grant-applications
-         {:grant-id grant-id :include include}))))
+    (ok (if (= template "with-evaluation")
+          (grant-data/get-grant-applications-with-evaluation grant-id)
+          (grant-data/get-grant-applications grant-id)))))
 
 (compojure-api/defroutes routes
   "grant routes"
