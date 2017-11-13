@@ -1,15 +1,11 @@
-(ns oph.va.virkailija.ftp_service
+(ns oph.va.virkailija.ftp-service
   (:require [clj-ssh.ssh :as ssh]
             [oph.va.hakija.api :as hakija-api];
             [oph.va.virkailija.invoice :as invoice]
             [oph.soresu.common.config :refer [config]]))
 
 
-;(def haku (first (hakija-api/get-avustushaku-payments 2)))
-;(def payment (dissoc haku :grant-content))
-(def ftp-config (:ftp config))
-
-(defn send-sftp [file]
+(defn send-sftp [file ftp-config]
   (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})
         session (ssh/session agent (ftp-config :host-ip) { :username (ftp-config :username) :password (ftp-config :password) :port (ftp-config :port) :strict-host-key-checking :no})]
         (ssh/with-connection session
@@ -19,6 +15,7 @@
 
 
 (defn send-to-rondo [payment application]
-  (let [file (str (ftp-config :local_path) "maksatus" "-" (payment :grant-id) "-" (payment :created-at) ".xml")]
+  (let [ftp-config (:ftp config)
+        file (str (ftp-config :local_path) "maksatus" "-" "avustushaku" "-" (payment :grant-id) "-" (System/currentTimeMillis) ".xml")]
   (invoice/write-xml! (invoice/payment-to-xml payment application) file)
-  (send-sftp file)))
+  (send-sftp file ftp-config)))
