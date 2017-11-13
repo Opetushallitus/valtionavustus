@@ -21,7 +21,7 @@
 (defn- find-evaluation-by-id [col id]
   (first (filter #(= (:hakemus-id %) id) col)))
 
-(defn answers-to-vec [application]
+(defn- answers-to-vec [application]
   (update application :answers vec))
 
 (defn get-grant-applications-with-evaluation [grant-id]
