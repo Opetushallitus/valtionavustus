@@ -26,7 +26,7 @@
                  [org.clojars.pntblnk/clj-ldap]
                  [org.clojure/data.json]
                  [org.clojure/data.xml]
-                 [clj-ssh "0.5.14"]]
+                 [clj-ssh]]
 
   :profiles {:uberjar {:aot :all}
              :dev     {:env {:config "config/dev.edn"

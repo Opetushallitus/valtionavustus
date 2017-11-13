@@ -97,7 +97,8 @@
                          [org.clojure/tools.trace "0.7.9"]
                          [org.scala-lang.modules/scala-xml_2.11 "1.0.6"]
                          [org.scala-lang/scala-library "2.11.11"]
-                         [org.clojure/data.xml "0.0.8"]]
+                         [org.clojure/data.xml "0.0.8"]
+                         [clj-ssh "0.5.14"]]
 
   :pedantic? :abort
 
