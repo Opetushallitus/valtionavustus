@@ -637,7 +637,7 @@
 
   (compojure-api/undocumented
    (compojure/GET "/logout" request
-     (authentication/logout (-> request :session :identity))
+     (authentication/user-initiated-logout (-> request :session :identity))
      (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
          (assoc :session nil)))
 

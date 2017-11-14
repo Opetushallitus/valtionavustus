@@ -28,7 +28,7 @@
                 :user (:user ldap-config)
                 :password (:password ldap-config)})))
 
-(defn do-with-ldap [operation]
+(defn- do-with-ldap [operation]
   (with-open [ldap-server (create-ldap-connection)]
     (operation ldap-server)))
 
