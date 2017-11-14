@@ -176,10 +176,9 @@
     :path-params [hakemus-id :- Long avustushaku-id :- Long]
     :return s/Any
     :summary "Return all relevant selvitys data including answers, form and attachments"
-    (let [identity (authentication/get-request-identity request)]
-      (if-let [response (hakija-api/get-selvitysdata avustushaku-id hakemus-id)]
-        (ok response)
-        (not-found)))))
+    (if-let [response (hakija-api/get-selvitysdata avustushaku-id hakemus-id)]
+      (ok response)
+      (not-found))))
 
 (defn- send-selvitys []
   (compojure-api/POST "/:avustushaku-id/selvitys/:selvitys-type/send" []
@@ -223,8 +222,7 @@
   (compojure-api/GET "/:haku-id/export.xslx" [haku-id :as request]
     :path-params [haku-id :- Long]
     :summary "Export Excel XLSX document for given avustushaku"
-    (let [identity (authentication/get-request-identity request)
-          document (export/export-avustushaku haku-id)]
+    (let [document (export/export-avustushaku haku-id)]
       (-> (ok document)
           (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
           (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"avustushaku-" haku-id ".xlsx\""))))))
