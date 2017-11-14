@@ -4,7 +4,8 @@
             [ring.util.http-response :refer [ok not-found]]
             [compojure.core :as compojure]
             [schema.core :as s]
-            [oph.va.virkailija.schema :as virkailija-schema]))
+            [oph.va.virkailija.schema :as virkailija-schema]
+            [oph.va.virkailija.ftp-service :as ftp-service]))
 
 (defn- get-grants []
   (compojure-api/GET "/" []
@@ -34,6 +35,16 @@
     (ok (if (= template "with-evaluation")
           (grant-data/get-grant-applications-with-evaluation grant-id)
           (grant-data/get-grant-applications grant-id)))))
+
+(defn- send-invoice []
+  (compojure-api/POST "/:id/invoice/" []
+    :path-params [id :- Long]
+    :summary "Send one invoice to Rondo."
+    (ok (ftp-service/send-to-rondo id))))
+
+(compojure-api/defroutes payment-routes
+  "payment routes"
+  (send-invoice))
 
 (compojure-api/defroutes routes
   "grant routes"

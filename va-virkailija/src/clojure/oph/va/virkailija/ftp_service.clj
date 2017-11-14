@@ -14,8 +14,10 @@
               (ssh/sftp channel {} :put file (ftp-config :remote_path)))))))
 
 
-(defn send-to-rondo [payment application]
-  (let [ftp-config (:ftp config)
-        file (str (ftp-config :local_path) "maksatus" "-" "avustushaku" "-" (payment :grant-id) "-" (System/currentTimeMillis) ".xml")]
+(defn send-to-rondo [payment-id]
+  (let [payment (hakija-api/get-payment-by-id payment-id)
+        ftp-config (:ftp config)
+        file (str (ftp-config :local_path) "maksatus" "-" "avustushaku" "-" (payment :grant_id) "-" (System/currentTimeMillis) ".xml")
+        application (payment :application_id)]
   (invoice/write-xml! (invoice/payment-to-xml payment application) file)
   (send-sftp file ftp-config)))

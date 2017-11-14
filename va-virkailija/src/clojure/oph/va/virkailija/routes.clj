@@ -690,6 +690,7 @@
   (compojure-api/context "/api/paatos" [] :tags ["paatos"] paatos/paatos-routes)
   (compojure-api/context "/paatos" [] :tags ["paatos"] decision/decision-routes)
   (compojure-api/context "/api/v2/grants" [] :tags ["grants"] grant-routes/routes)
+  (compojure-api/context "/api/v2/payments" [] :tags ["payments"] grant-routes/payment-routes)
 
   va-routes/config-routes
   resource-routes)

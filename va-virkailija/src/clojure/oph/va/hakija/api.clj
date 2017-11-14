@@ -120,6 +120,7 @@
       hakija-queries/get-avustushaku-payments
       {:grant_id avustushaku-id})))
 
+
 (defn create-avustushaku-payments! [payments]
   (doall
     (mapv
@@ -130,6 +131,31 @@
              hakija-queries/create-avustushaku-payment
              (convert-to-underscore-keys %))))
       payments)))
+
+      (defn- payment->json [payment]
+       {:amount (:amount (first payment))
+        :receipt_date (:receipt_date (first payment))
+        :takp_account (:takp_account (first payment))
+        :due_date (:due_date (first payment))
+        :partner (:partner (first payment))
+        :lkp_account (:lkp_account (first payment))
+        :grant_id (:grant_id (first payment))
+        :long_ref (:long_ref (first payment))
+        :state (:state (first payment))
+        :currency (:currency (first payment))
+        :installment (:installment (first payment))
+        :invoice_date (:invoice_date (first payment))
+        :application_version (:application_version (first payment))
+        :id (:id (first payment))
+        :document_type (:document_type (first payment))
+        :transaction_account (:transaction_account (first payment))
+        :application_id (:application_id (first payment))
+        :acceptor_email (:acceptor_email (first payment))
+        :inspector_email (:inspector_email (first payment))
+        :created_at (:created_at (first payment))})
+
+(defn get-payment-by-id [payment-id]
+  (payment->json (exec :form-db hakija-queries/get-payment-by-id {:payment_id payment-id})))
 
 (defn- map-status-list [statuses]
   (map (fn [status] (new HakuStatus status)) statuses))
@@ -169,8 +195,7 @@
          first)))
 
 (defn delete-avustushaku-role [avustushaku-id role-id]
- (exec :form-db hakija-queries/delete-avustushaku-role! {:avustushaku avustushaku-id
-                                                           :id role-id}))
+ (exec :form-db hakija-queries/delete-avustushaku-role! {:avustushaku avustushaku-id :id role-id}))
 
 (defn update-avustushaku-role [avustushaku-id role]
   (let [role-enum (new HakuRole (:role role))
