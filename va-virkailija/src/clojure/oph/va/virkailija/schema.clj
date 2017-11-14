@@ -26,8 +26,8 @@
   {:names [s/Str]})
 
 (s/defschema ArvioRole
-             "Role for arvio"
-             {:evaluators [Long]})
+  "Role for arvio"
+  {:evaluators [Long]})
 
 (s/defschema Tag
   "Tags for arvio"
@@ -53,8 +53,7 @@
    (s/optional-key :academysize) (s/maybe s/Int)
    (s/optional-key :perustelut) (s/maybe s/Str)
    (s/optional-key :presentercomment) (s/maybe s/Str)
-   (s/optional-key :changelog) (s/maybe s/Any)
-  })
+   (s/optional-key :changelog) (s/maybe s/Any)})
 
 (s/defschema NewComment
   "New comment to be added"
@@ -249,30 +248,71 @@
     {:Posting InvoicePostings}}})
 
 (def Payment
-  { (s/optional-key :id) s/Int
-    (s/optional-key :created-at) s/Inst
-    :application-id  s/Int
-    :application-version s/Int
-    :grant-id s/Int
-    :state s/Int
-    :installment s/Str
-    :document-type s/Str
-    (s/optional-key :invoice-date) s/Inst
-    (s/optional-key :due-date) s/Inst
-    :amount s/Int
-    :long-ref s/Str
-    (s/optional-key :receipt-date) s/Inst
-    :transaction-account s/Str
-    :currency s/Str
-    :lkp-account s/Str
-    :takp-account s/Str
-    (s/optional-key :organization-name) s/Str
-    (s/optional-key :project-name) s/Str
-    (s/optional-key :grant-content) s/Any
-    :partner s/Str
-    :inspector-email s/Str
-    :acceptor-email s/Str})
+  {(s/optional-key :id) s/Int
+   (s/optional-key :created-at) s/Inst
+   :application-id  s/Int
+   :application-version s/Int
+   :grant-id s/Int
+   :state s/Int
+   :installment s/Str
+   :document-type s/Str
+   (s/optional-key :invoice-date) s/Inst
+   (s/optional-key :due-date) s/Inst
+   :amount s/Int
+   :long-ref s/Str
+   (s/optional-key :receipt-date) s/Inst
+   :transaction-account s/Str
+   :currency s/Str
+   :lkp-account s/Str
+   :takp-account s/Str
+   (s/optional-key :organization-name) s/Str
+   (s/optional-key :project-name) s/Str
+   (s/optional-key :grant-content) s/Any
+   :partner s/Str
+   :inspector-email s/Str
+   :acceptor-email s/Str})
 
 (def Payments
   [Payment])
 
+(s/defschema GrantStatus
+  "Grant status"
+  (s/enum "new" "draft" "published" "deleted"))
+
+(s/defschema GrantType
+  "Grant type"
+  (s/enum "yleisavustus" "erityisavustus"))
+
+(s/defschema Grant
+  "Grant (avustushaku) schema"
+  {:id s/Int
+   :created-at s/Inst
+   :form s/Int
+   (s/optional-key :content) s/Any
+   :status GrantStatus
+   :register-number (s/maybe s/Str)
+   (s/optional-key :decision) s/Any
+   :valiselvitysdate (s/maybe s/Inst)
+   :loppuselvitysdate (s/maybe s/Inst)
+   :form-loppuselvitys (s/maybe s/Int)
+   :form-valiselvitys (s/maybe s/Int)
+   :is-academysize s/Bool
+   :haku-type GrantType})
+
+(s/defschema Grants
+  "List of grants"
+  [Grant])
+
+(s/defschema Application
+  "Grant application"
+  {:id s/Int
+   :created-at s/Inst
+   :version s/Int
+   :budget-total s/Int
+   :budget-oph-share s/Int
+   :organization-name s/Str
+   :project-name s/Str
+   :register-number s/Str
+   :language s/Str
+   (s/optional-key :evaluation) s/Any
+   (s/optional-key :answers) [Answer]})

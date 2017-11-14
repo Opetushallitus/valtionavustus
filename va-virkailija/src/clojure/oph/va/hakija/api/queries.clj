@@ -13,13 +13,19 @@
 (defquery get-avustushaku "sql/hakija/avustushaku/get.sql")
 (defquery get-avustushaku-payments "sql/hakija/avustushaku/get-payments.sql")
 (defquery create-avustushaku-payment "sql/hakija/avustushaku/create-payment.sql")
-(defquery get-avustushaku-by-status"sql/hakija/avustushaku/get-by-status.sql")
+(defquery get-avustushaku-by-status "sql/hakija/avustushaku/get-by-status.sql")
 (defquery create-avustushaku-role<! "sql/hakija/avustushaku/create-role.sql")
 (defquery get-avustushaku-role "sql/hakija/avustushaku/get-role.sql")
 (defquery update-avustushaku-role! "sql/hakija/avustushaku/update-role.sql")
 (defquery delete-avustushaku-role! "sql/hakija/avustushaku/delete-role.sql")
 (defquery get-avustushaku-roles "sql/hakija/avustushaku/get-roles.sql")
 (defquery list-matching-avustushaut-by-ids "sql/hakija/avustushaku/list-matching-by-ids.sql")
+
+(defquery get-grants "sql/hakija/grants/get-grants.sql")
+(defquery get-grants-with-content
+  "sql/hakija/grants/get-grants-with-content.sql")
+(defquery get-grant "sql/hakija/grants/get-grant.sql")
+(defquery get-grant-applications "sql/hakija/grants/get-grant-applications.sql")
 
 (defquery list-hakemukset-by-avustushaku "sql/hakija/hakemus/list-by-avustushaku.sql")
 (defquery get-by-type-and-parent-id "sql/hakija/hakemus/get-by-type-and-parent-id.sql")
