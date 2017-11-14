@@ -1,86 +1,91 @@
 (ns oph.va.virkailija.authentication
   (:use [clojure.tools.trace :only [trace]])
-  (:require [oph.va.virkailija.login :refer [login]]
-            [oph.soresu.common.config :refer [config]]
+  (:require [oph.soresu.common.config :refer [config]]
+            [oph.va.virkailija.cas :as cas]
+            [oph.va.virkailija.ldap :as ldap]
             [oph.common.background-job-supervisor :as job-supervisor]
             [clojure.core.async :refer [<! >!! alts! go chan timeout]]
             [clojure.tools.logging :as log])
   (:import (fi.vm.sade.utils.cas CasLogout)))
 
-(def ^{:private true} tokens (atom {}))
+(def ^:private sessions (atom {}))
 
-(def ^{:private true} token-timeout-ms (-> config
-                                           (get-in [:server :session_timeout_in_s])
-                                           (+ 5)  ; ensure token timeout happens after session timeout
-                                           (* 1000)))
+(def ^:private sessions-timeout-ms (-> config
+                                       (get-in [:server :session_timeout_in_s])
+                                       (+ 5)  ; ensure backend session timeout happens after browser session timeout
+                                       (* 1000)))
 
-(def ^{:private true} token-timeout-chan (chan 1))
+(def ^:private sessions-timeout-chan (chan 1))
 
-(defn- remove-timed-out-tokens [tokens]
+(defn- remove-timed-out-sessions [sessions]
   (let [now-time-ms (System/currentTimeMillis)]
-    (reduce-kv (fn [acc token data]
-                 (let [timeout-at-ms (:timeout-at-ms data)]
+    (reduce-kv (fn [acc cas-ticket session-data]
+                 (let [timeout-at-ms (:timeout-at-ms session-data)]
                    (if (< timeout-at-ms now-time-ms)
                      acc
-                     (assoc acc token data))))
+                     (assoc acc cas-ticket session-data))))
                {}
-               tokens)))
+               sessions)))
 
-(defn- start-loop-remove-timed-out-tokens []
+(defn- start-loop-remove-timed-out-sessions []
   (go
-    (log/info "Starting background job: token timeout...")
+    (log/info "Starting background job: sessions timeout...")
     (loop []
-      (let [[value _] (alts! [token-timeout-chan (timeout 500)])]
+      (let [[value _] (alts! [sessions-timeout-chan (timeout 500)])]
         (if (nil? value)
           (do
-            (swap! tokens remove-timed-out-tokens)
+            (swap! sessions remove-timed-out-sessions)
             (recur)))))
-    (log/info "Stopped background job: token timeout.")))
+    (log/info "Stopped background job: sessions timeout.")))
 
-(defn start-background-job-timeout-tokens []
-  (job-supervisor/start-background-job :timeout-tokens
-                                       start-loop-remove-timed-out-tokens
-                                       #(>!! token-timeout-chan {:operation :stop})))
+(defn start-background-job-timeout-sessions []
+  (job-supervisor/start-background-job :timeout-sessions
+                                       start-loop-remove-timed-out-sessions
+                                       #(>!! sessions-timeout-chan {:operation :stop})))
 
-(defn stop-background-job-timeout-tokens []
-  (job-supervisor/stop-background-job :timeout-tokens))
+(defn stop-background-job-timeout-sessions []
+  (job-supervisor/stop-background-job :timeout-sessions))
 
-(defn authenticate [ticket virkailija-login-url]
-  (if-let [details (login ticket virkailija-login-url)]
-    (let [username (:username details)
-          token ticket]
-      (swap! tokens assoc token {:details details :timeout-at-ms (+ token-timeout-ms (System/currentTimeMillis))})
-      (log/info username "Logged in:" ticket (format "(%d tickets in cache)" (count @tokens)))
-      {:username username
-       :person-oid (:person-oid details)
-       :token token})
-    (log/warn "Login failed for CAS ticket " ticket)))
+(defn- authenticate-and-authorize-va-user [cas-ticket virkailija-login-url]
+  (if-let [username (cas/validate-service-ticket virkailija-login-url cas-ticket)]
+    (ldap/check-app-access username)))
+
+(defn authenticate [cas-ticket virkailija-login-url]
+  (if-let [identity (authenticate-and-authorize-va-user cas-ticket virkailija-login-url)]
+    (let [username (:username identity)]
+      (swap! sessions assoc cas-ticket {:identity      identity
+                                        :timeout-at-ms (+ sessions-timeout-ms (System/currentTimeMillis))})
+      (log/infof "Login: %s with %s (%d sessions in cache)" username cas-ticket (count @sessions))
+      {:username   username
+       :person-oid (:person-oid identity)
+       :token      cas-ticket})
+    (log/warn "Login failed for CAS ticket " cas-ticket)))
 
 (defn get-identity [identity]
-  (if-let [token (:token identity)]
-    (get-in @tokens [token :details])))
+  (if-let [cas-ticket (:token identity)]
+    (get-in @sessions [cas-ticket :identity])))
 
 (defn get-request-identity [request]
   (get-identity (-> request :session :identity)))
 
-(defn- logout-ticket [ticket]
-  (if (contains? @tokens ticket)
+(defn- do-logout [cas-ticket initiator-info]
+  (if-let [session (get @sessions cas-ticket)]
     (do
-      (swap! tokens dissoc ticket)
-      (log/info "Logged out:" ticket (format "(%d tickets in cache)" (count @tokens))))
-    (log/info "Trying to logout CAS ticket without active session:" ticket)))
+      (swap! sessions dissoc cas-ticket)
+      (log/infof "Logout: %s with %s (%s) (%d sessions in cache)"
+                 (get-in session [:identity :username])
+                 cas-ticket
+                 initiator-info
+                 (count @sessions)))
+    (log/info "Trying to logout CAS ticket without active session: " cas-ticket)))
 
 (defn cas-initiated-logout [logout-request]
-  (let [ticket (CasLogout/parseTicketFromLogoutRequest logout-request)]
-    (if (.isEmpty ticket)
-      (log/error "Could not parse ticket from CAS request" logout-request)
-      (if-let [token (.get ticket)]
-        (do
-          (log/info "Logging out (CAS initiated):" token)
-          (logout-ticket token))))))
+  (let [cas-ticket-option (CasLogout/parseTicketFromLogoutRequest logout-request)]
+    (if (.isEmpty cas-ticket-option)
+      (log/error "Could not parse ticket from CAS request: " logout-request)
+      (if-let [cas-ticket (.get cas-ticket-option)]
+        (do-logout cas-ticket "CAS initiated")))))
 
-(defn logout [identity]
-  (if-let [token (:token identity)]
-    (do
-      (log/info "Logging out (user initiated):" token)
-      (logout-ticket token))))
+(defn user-initiated-logout [identity]
+  (if-let [cas-ticket (:token identity)]
+    (do-logout cas-ticket "user initiated")))

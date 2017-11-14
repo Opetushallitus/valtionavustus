@@ -24,12 +24,12 @@
                         "db.migration"
                         "oph.va.virkailija.db.migrations")
   (email/start-background-job-send-mails)
-  (auth/start-background-job-timeout-tokens))
+  (auth/start-background-job-timeout-sessions))
 
 (defn- shutdown []
   (log/info "Shutting down...")
   (email/stop-background-job-send-mails)
-  (auth/stop-background-job-timeout-tokens)
+  (auth/stop-background-job-timeout-sessions)
   (db/close-datasource! :virkailija-db)
   (job-supervisor/await-jobs!))
 
