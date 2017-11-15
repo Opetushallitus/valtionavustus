@@ -593,9 +593,9 @@
     :summary "Handle login CAS ticket and logout callback from cas"
     (try
       (if ticket
-        (if-let [identity (authentication/authenticate ticket virkailija-login-url)]
+        (if (authentication/authenticate ticket virkailija-login-url)
           (-> (resp/redirect (url-after-login request))
-              (assoc :session {:identity identity}))
+              (assoc :session {:cas-ticket ticket}))
           (redirect-to-loggged-out-page request {"not-permitted" "true"}))
         (redirect-to-loggged-out-page request {}))
       (catch Exception e
@@ -608,11 +608,14 @@
     :form-params [logoutRequest :- s/Str]
     :return s/Any
     :summary "Handle logout request from cas"
-    (authentication/cas-initiated-logout logoutRequest))
+    (authentication/cas-initiated-logout logoutRequest)
+    (-> (ok)
+        (assoc :session nil)))
 
   (compojure-api/undocumented
    (compojure/GET "/logout" request
-     (authentication/user-initiated-logout (-> request :session :identity))
+     (if-let [cas-ticket (get-in request [:session :cas-ticket])]
+       (authentication/user-initiated-logout cas-ticket))
      (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
          (assoc :session nil)))
 

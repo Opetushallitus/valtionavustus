@@ -90,7 +90,7 @@
   (let [defaults (-> site-defaults
                      (assoc-in [:security :anti-forgery] false)
                      (assoc-in [:session :store] (cookie-store {:key (-> config :server :cookie-key)}))
-                     (assoc-in [:session :cookie-name] "identity")
+                     (assoc-in [:session :cookie-name] "va")
                      (assoc-in [:session :cookie-attrs :max-age] (-> config :server :session_timeout_in_s))
                      (assoc-in [:session :cookie-attrs :same-site] :lax)  ; required for CAS initiated redirection
                      (assoc-in [:session :cookie-attrs :secure] (-> config :server :require-https?)))
