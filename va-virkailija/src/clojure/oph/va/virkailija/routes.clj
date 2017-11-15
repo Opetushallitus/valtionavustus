@@ -34,7 +34,8 @@
             [oph.soresu.common.koodisto :as koodisto]
             [clojure.tools.logging :as log]
             [oph.va.virkailija.payments_info :as payments-info]
-            [oph.va.virkailija.grant-routes :as grant-routes]))
+            [oph.va.virkailija.grant-routes :as grant-routes]
+            [oph.va.virkailija.application-routes :as application-routes]))
 
 (defonce opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
 
@@ -690,6 +691,9 @@
   (compojure-api/context "/api/paatos" [] :tags ["paatos"] paatos/paatos-routes)
   (compojure-api/context "/paatos" [] :tags ["paatos"] decision/decision-routes)
   (compojure-api/context "/api/v2/grants" [] :tags ["grants"] grant-routes/routes)
+  (compojure-api/context "/api/v2/applications" [] :tags ["applications"]
+                         application-routes/routes)
+
   (compojure-api/context "/api/v2/payments" [] :tags ["payments"] grant-routes/payment-routes)
 
   va-routes/config-routes
