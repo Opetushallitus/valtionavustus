@@ -8,14 +8,14 @@
             [clojure.tools.logging :as log])
   (:import (fi.vm.sade.utils.cas CasLogout)))
 
-(def ^:private sessions (atom {}))
+(def ^:private session-store (atom {}))
 
-(def ^:private sessions-timeout-ms (-> config
-                                       (get-in [:server :session_timeout_in_s])
-                                       (+ 5)  ; ensure backend session timeout happens after browser session timeout
-                                       (* 1000)))
+(def ^:private session-timeout-ms (-> config
+                                      (get-in [:server :session_timeout_in_s])
+                                      (+ 5)  ; ensure backend session timeout happens after browser session timeout
+                                      (* 1000)))
 
-(def ^:private sessions-timeout-chan (chan 1))
+(def ^:private session-timeout-chan (chan 1))
 
 (defn- remove-timed-out-sessions [sessions]
   (let [now-time-ms (System/currentTimeMillis)]
@@ -31,17 +31,17 @@
   (go
     (log/info "Starting background job: sessions timeout...")
     (loop []
-      (let [[value _] (alts! [sessions-timeout-chan (timeout 500)])]
+      (let [[value _] (alts! [session-timeout-chan (timeout 500)])]
         (if (nil? value)
           (do
-            (swap! sessions remove-timed-out-sessions)
+            (swap! session-store remove-timed-out-sessions)
             (recur)))))
     (log/info "Stopped background job: sessions timeout.")))
 
 (defn start-background-job-timeout-sessions []
   (job-supervisor/start-background-job :timeout-sessions
                                        start-loop-remove-timed-out-sessions
-                                       #(>!! sessions-timeout-chan {:operation :stop})))
+                                       #(>!! session-timeout-chan {:operation :stop})))
 
 (defn stop-background-job-timeout-sessions []
   (job-supervisor/stop-background-job :timeout-sessions))
@@ -52,32 +52,33 @@
 
 (defn authenticate [cas-ticket virkailija-login-url]
   (if-let [identity (authenticate-and-authorize-va-user cas-ticket virkailija-login-url)]
-    (let [username (:username identity)]
-      (swap! sessions assoc cas-ticket {:identity      identity
-                                        :timeout-at-ms (+ sessions-timeout-ms (System/currentTimeMillis))})
-      (log/infof "Login: %s with %s (%d sessions in cache)" username cas-ticket (count @sessions))
-      {:username   username
-       :person-oid (:person-oid identity)
-       :token      cas-ticket})
+    (do
+      (swap! session-store assoc cas-ticket {:identity      identity
+                                             :cas-ticket    cas-ticket
+                                             :timeout-at-ms (+ session-timeout-ms (System/currentTimeMillis))})
+      (log/infof "Login: %s with %s (%d sessions in cache)"
+                 (:username identity)
+                 cas-ticket
+                 (count @session-store))
+      true)
     (log/warn "Login failed for CAS ticket " cas-ticket)))
 
-(defn get-identity [identity]
-  (if-let [cas-ticket (:token identity)]
-    (get-in @sessions [cas-ticket :identity])))
+(defn- get-identity [cas-ticket]
+  (get-in @session-store [cas-ticket :identity]))
 
 (defn get-request-identity [request]
-  (get-identity (-> request :session :identity)))
+  (get-identity (-> request :session :cas-ticket)))
 
 (defn- do-logout [cas-ticket initiator-info]
-  (if-let [session (get @sessions cas-ticket)]
+  (if-let [session-data (get @session-store cas-ticket)]
     (do
-      (swap! sessions dissoc cas-ticket)
+      (swap! session-store dissoc cas-ticket)
       (log/infof "Logout: %s with %s (%s) (%d sessions in cache)"
-                 (get-in session [:identity :username])
+                 (get-in session-data [:identity :username])
                  cas-ticket
                  initiator-info
-                 (count @sessions)))
-    (log/info "Trying to logout CAS ticket without active session: " cas-ticket)))
+                 (count @session-store)))
+    (log/info "Trying to logout CAS ticket without active session with " cas-ticket)))
 
 (defn cas-initiated-logout [logout-request]
   (let [cas-ticket-option (CasLogout/parseTicketFromLogoutRequest logout-request)]
@@ -86,6 +87,5 @@
       (if-let [cas-ticket (.get cas-ticket-option)]
         (do-logout cas-ticket "CAS initiated")))))
 
-(defn user-initiated-logout [identity]
-  (if-let [cas-ticket (:token identity)]
-    (do-logout cas-ticket "user initiated")))
+(defn user-initiated-logout [cas-ticket]
+  (do-logout cas-ticket "user initiated"))
