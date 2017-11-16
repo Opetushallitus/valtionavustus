@@ -4,8 +4,8 @@
 (defn- background-error-handler [agent exception]
   (log/error agent ":" exception))
 
-(def ^{:private true} supervised-jobs (agent {}
-                                             :error-handler background-error-handler))
+(def ^:private supervised-jobs (agent {}
+                                      :error-handler background-error-handler))
 
 (defn start-background-job
   "Register a name for a long-running lightweight job with a
