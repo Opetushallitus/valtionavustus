@@ -26,6 +26,8 @@
   "sql/hakija/grants/get-grants-with-content.sql")
 (defquery get-grant "sql/hakija/grants/get-grant.sql")
 (defquery get-grant-applications "sql/hakija/grants/get-grant-applications.sql")
+(defquery get-grant-applications-with-evaluation
+  "sql/hakija/grants/get-grant-applications-with-evaluation.sql")
 
 (defquery get-application "sql/hakija/applications/get-application.sql")
 (defquery get-application-with-evaluation-and-answers
