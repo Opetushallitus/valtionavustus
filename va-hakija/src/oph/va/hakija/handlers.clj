@@ -1,4 +1,4 @@
-(ns ^{:skip-aot true} oph.va.hakija.handlers
+(ns oph.va.hakija.handlers
   (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]

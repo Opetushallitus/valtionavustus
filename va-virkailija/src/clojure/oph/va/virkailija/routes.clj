@@ -1,4 +1,4 @@
-(ns ^{:skip-aot true} oph.va.virkailija.routes
+(ns oph.va.virkailija.routes
   (:use [clojure.tools.trace :only [trace]]
         [clojure.pprint :only [pprint]])
   (:require [clojure.tools.logging :as log]
