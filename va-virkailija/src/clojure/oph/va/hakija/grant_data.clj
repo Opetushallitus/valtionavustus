@@ -3,11 +3,13 @@
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.hakija.api :refer [convert-to-dash-keys]]))
 
-(defn get-grants [template]
+(defn get-grants []
   (mapv convert-to-dash-keys
-        (exec :form-db (if (= template "with-content")
-                         hakija-queries/get-grants-with-content
-                         hakija-queries/get-grants) {})))
+        (exec :form-db hakija-queries/get-grants {})))
+
+(defn get-grants-with-content []
+  (mapv convert-to-dash-keys
+        (exec :form-db hakija-queries/get-grants-with-content {})))
 
 (defn get-grant [grant-id]
   (convert-to-dash-keys
@@ -18,24 +20,10 @@
         (exec :form-db hakija-queries/list-hakemus-paatos-email-statuses
               {:avustushaku_id grant-id})))
 
-(defn- find-evaluation-by-id [col id]
-  (first (filter #(= (:hakemus-id %) id) col)))
-
-(defn- answers-to-vec [application]
-  (update application :answers vec))
-
 (defn get-grant-applications-with-evaluation [grant-id]
-  (let [evaluations (get-grant-evaluations grant-id)
-        convert
-        (fn [a]
-          (-> a
-              answers-to-vec
-              convert-to-dash-keys
-              (conj
-               {:evaluation (find-evaluation-by-id evaluations (:id a))})))]
-    (mapv convert
-          (exec :form-db hakija-queries/get-grant-applications
-                {:grant_id grant-id}))))
+  (mapv convert-to-dash-keys
+        (exec :form-db hakija-queries/get-grant-applications-with-evaluation
+              {:grant_id grant-id})))
 
 (defn get-grant-applications [grant-id]
   (mapv convert-to-dash-keys
