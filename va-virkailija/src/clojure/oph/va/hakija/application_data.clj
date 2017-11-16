@@ -16,25 +16,36 @@
     (exec :form-db hakija-queries/get-application-with-evaluation-and-answers
           {:application_id id}))))
 
-(defn get-next-installment []
-  "2000")
-
-(defn create-payment [application-id]
+(defn create-payment [application-id payment-data]
   (let [application (get-application application-id)
         grant (grant-data/get-grant (:grant-id application))
         payment {:application_id application-id
                  :application_version (:version application)
                  :grant_id (:id grant)
                  :state 0
-                 :installment (get-next-installment)
-                 :document_type "XB"
-                 :amount (:budget-granted application)
-                 :long_ref ""
-                 :transaction_account ""
-                 :currency "EUR"
-                 :lkp_account ""
-                 :takp_account ""
-                 :partner ""
-                 :inspector_email ""
-                 :acceptor_email ""}]
+                 :document_type (get payment-data :document-type "XA")
+                 :transaction_account (get payment-data :transaction-account "")
+                 :currency (get payment-data :currency "EUR")
+                 :partner (:partner payment-data "")
+                 :inspector_email (:inspector-email payment-data "")
+                 :acceptor_email (:acceptor-email payment-data "")
+                 :organisation (:organisation payment-data "")
+                 :installment_number (:installment-number payment-data 0)}]
+    (exec :form-db hakija-queries/create-payment payment)))
+
+(defn update-payment [application-id payment-data]
+  (let [application (get-application application-id)
+        grant (grant-data/get-grant (:grant-id application))
+        payment {:application_id application-id
+                 :application_version (:version application)
+                 :grant_id (:id grant)
+                 :state 0
+                 :document_type (get payment-data :document-type "XA")
+                 :transaction_account (get payment-data :transaction-account "")
+                 :currency (get payment-data :currency "EUR")
+                 :partner (:partner payment-data "")
+                 :inspector_email (:inspector-email payment-data "")
+                 :acceptor_email (:acceptor-email payment-data "")
+                 :organisation (:organisation payment-data "")
+                 :installment_number (:installment-number payment-data 0)}]
     (exec :form-db hakija-queries/create-payment payment)))
