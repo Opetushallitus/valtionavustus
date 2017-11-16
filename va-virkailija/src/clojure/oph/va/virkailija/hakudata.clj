@@ -1,4 +1,4 @@
-(ns ^{:skip-aot true} oph.va.virkailija.hakudata
+(ns oph.va.virkailija.hakudata
   (:use [clojure.tools.trace :only [trace]])
   (:require [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.scoring :as scoring]
