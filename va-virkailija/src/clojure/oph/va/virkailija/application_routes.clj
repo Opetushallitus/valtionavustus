@@ -10,13 +10,17 @@
   (compojure-api/POST "/:application-id/payments/" [application-id :as request]
     :path-params [application-id :- Long]
     :query-params []
-    :return virkailija-schema/Application
+    :body [payment-emails
+           (compojure-api/describe
+            virkailija-schema/PaymentEmails
+            "Create payments")]
+    :return virkailija-schema/Payment
     :summary "Create new payment for application"
     (ok (application-data/create-payment application-id))))
 
 (defn- create-payment-options []
   (compojure-api/OPTIONS "/:application-id/payments/"
-                         [application-id :as request]
+    [application-id :as request]
     :path-params [application-id :- Long]
     :query-params []
     :summary "Create new payment OPTIONS"
