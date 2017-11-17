@@ -34,11 +34,17 @@
             [oph.soresu.common.koodisto :as koodisto]
             [clojure.tools.logging :as log]))
 
-(defonce opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
+(def opintopolku-login-url
+  (when-not *compile-files*
+    (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login))))
 
-(defonce opintopolku-logout-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-logout)))
+(def opintopolku-logout-url
+  (when-not *compile-files*
+    (str (-> config :opintopolku :url) (-> config :opintopolku :cas-logout))))
 
-(defonce virkailija-login-url (str (-> config :server :virkailija-url) "/login/cas"))
+(def virkailija-login-url
+  (when-not *compile-files*
+    (str (-> config :server :virkailija-url) "/login/cas")))
 
 (defn- on-healthcheck []
   (if (and (virkailija-db/health-check)

@@ -14,7 +14,9 @@
        io/resource
        slurp))
 
-(def smtp-config (:email config))
+(def smtp-config
+  (when-not *compile-files*
+    (:email config)))
 
 (def mail-chan (chan (:queue-size smtp-config)))
 

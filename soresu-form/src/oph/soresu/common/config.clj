@@ -8,9 +8,11 @@
 (defn config-simple-name []
   (last (re-find #"\S+/(\S+).edn" (config-name))))
 
-(defonce defaults (-> (or (env :configdefaults) "config/defaults.edn")
-                      (slurp)
-                      (clojure.edn/read-string)))
+(def defaults
+  (when-not *compile-files*
+    (-> (or (env :configdefaults) "config/defaults.edn")
+        (slurp)
+        (clojure.edn/read-string))))
 
 (defn- slurp-if-found [path]
   (try
@@ -19,11 +21,12 @@
       (log/warn (str "Could not read configuration from '" path "'"))
       "{}")))
 
-(defonce secrets
-  (if-let [config-secrets (env :configsecrets)]
-    (->  config-secrets
-         (slurp-if-found)
-         (clojure.edn/read-string))))
+(def secrets
+  (when-not *compile-files*
+    (if-let [config-secrets (env :configsecrets)]
+      (->  config-secrets
+           (slurp-if-found)
+           (clojure.edn/read-string)))))
 
 (defn- merge-with-defaults [config]
   (merge-with merge defaults config))
@@ -33,9 +36,11 @@
     (merge-with merge secrets-config config)
     config))
 
-(defonce config (->> (or (env :config) "config/dev.edn")
-                    (slurp)
-                    (clojure.edn/read-string)
-                    (merge-with-defaults)
-                    (merge-with-secrets)))
+(def config
+  (when-not *compile-files*
+    (->> (or (env :config) "config/dev.edn")
+         (slurp)
+         (clojure.edn/read-string)
+         (merge-with-defaults)
+         (merge-with-secrets))))
 

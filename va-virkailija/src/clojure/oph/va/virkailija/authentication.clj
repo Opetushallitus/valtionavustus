@@ -10,12 +10,14 @@
 
 (def ^:private session-store (atom {}))
 
-(def ^:private session-timeout-ms (-> config
-                                      (get-in [:server :session_timeout_in_s])
-                                      (+ 5)  ; ensure backend session timeout happens after browser session timeout
-                                      (* 1000)))
-
 (def ^:private session-timeout-chan (chan 1))
+
+(def ^:private session-timeout-ms
+  (when-not *compile-files*
+    (-> config
+        (get-in [:server :session_timeout_in_s])
+        (+ 5)  ; ensure backend session timeout happens after browser session timeout
+        (* 1000))))
 
 (defn- remove-timed-out-sessions [sessions]
   (let [now-time-ms (System/currentTimeMillis)]
