@@ -275,6 +275,11 @@
 (def Payments
   [Payment])
 
+(s/defschema PaymentEmails
+  "Payment emails"
+  {:inspector-email s/Str
+   :acceptor-email s/Str})
+
 (s/defschema GrantStatus
   "Grant status"
   (s/enum "new" "draft" "published" "deleted"))
@@ -314,5 +319,8 @@
    :project-name s/Str
    :register-number s/Str
    :language s/Str
+   :budget-granted s/Int
+   :costs-granted s/Int
+   :payment-state (s/maybe s/Int)
    (s/optional-key :evaluation) s/Any
    (s/optional-key :answers) [Answer]})
