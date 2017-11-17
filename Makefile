@@ -168,7 +168,7 @@ cd '$(1)' && rm -fr target
 endef
 
 define lein_install_jar
-cd '$(1)' && $(LEIN) with-profile test install
+cd '$(1)' && $(LEIN) install
 endef
 
 define lein_test
@@ -176,7 +176,7 @@ cd '$(1)' && $(LEIN) with-profile test spec $(SPECLJ_ARGS)
 endef
 
 define lein_build
-cd '$(1)' && $(LEIN) with-profile test uberjar
+cd '$(1)' && $(LEIN) uberjar
 endef
 
 define lein_outdated_dependencies
