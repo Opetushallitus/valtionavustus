@@ -1,8 +1,12 @@
-INSERT INTO payments (application_id, application_version, grant_id, state,
-  installment, document_type, invoice_date, due_date, amount, long_ref,
-  receipt_date, transaction_account, currency, lkp_account, takp_account,
-  partner, inspector_email, acceptor_email)
-VALUES (:application_id, :application_version, :grant_id, :state,
-  :installment, :document_type, now(), now() + '7 days', :amount, :long_ref,
-  now(), :transaction_account, :currency, :lkp_account, :takp_account,
-  :partner, :inspector_email, :acceptor_email);
+INSERT INTO payments (id, version, application_id, application_version, grant_id, state,
+  document_type, invoice_date, due_date,
+  receipt_date, transaction_account, currency,
+  partner, inspector_email, acceptor_email, installment_number, organisation)
+VALUES(
+  NEXTVAL('payments_id_seq'), 0,
+  :application_id, :application_version, :grant_id, :state,
+  :document_type, :invoice_date::timestamptz, :due_date::timestamptz,
+  :receipt_date::timestamptz, :transaction_account, :currency,
+  :partner, :inspector_email, :acceptor_email, :installment_number,
+  :organisation)
+RETURNING *;
