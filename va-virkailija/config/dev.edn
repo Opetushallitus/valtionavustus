@@ -12,7 +12,7 @@
          :host "localhost"
          :port 2500
          :to-finance ["test@test.com"]}
- :ftp  {:host-ip "dockerftp"
+ :ftp  {:host-ip "dockerfta"
         :port 2222
         :local_path "/tmp/"
         :remote_path "/home/oph/to_rondo/va/"
