@@ -282,7 +282,7 @@
 
 (s/defschema GrantStatus
   "Grant status"
-  (s/enum "new" "draft" "published" "deleted"))
+  (s/enum "new" "draft" "published" "deleted", "resolved"))
 
 (s/defschema GrantType
   "Grant type"
