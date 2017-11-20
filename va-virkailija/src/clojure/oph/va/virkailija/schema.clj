@@ -247,33 +247,26 @@
     :Postings
     {:Posting InvoicePostings}}})
 
-(def Payment
-  {(s/optional-key :id) s/Int
+(s/defschema Payment
+  "Payment"
+  {:id s/Int
+   :version s/Int
+   :version-closed (s/maybe s/Inst)
    (s/optional-key :created-at) s/Inst
    :application-id  s/Int
    :application-version s/Int
-   :grant-id s/Int
    :state s/Int
-   :installment s/Str
+   :installment-number s/Int
+   :organisation s/Str
    :document-type s/Str
    (s/optional-key :invoice-date) s/Inst
    (s/optional-key :due-date) s/Inst
-   :amount s/Int
-   :long-ref s/Str
    (s/optional-key :receipt-date) s/Inst
    :transaction-account s/Str
    :currency s/Str
-   :lkp-account s/Str
-   :takp-account s/Str
-   (s/optional-key :organization-name) s/Str
-   (s/optional-key :project-name) s/Str
-   (s/optional-key :grant-content) s/Any
    :partner s/Str
    :inspector-email s/Str
    :acceptor-email s/Str})
-
-(def Payments
-  [Payment])
 
 (s/defschema PaymentEmails
   "Payment emails"
