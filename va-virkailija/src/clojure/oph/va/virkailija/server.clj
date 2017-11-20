@@ -66,34 +66,31 @@
   (-> site
       (buddy-middleware/wrap-authentication (buddy-session/session-backend))
       (buddy-accessrules/wrap-access-rules
-        {:rules [{:pattern #"^/login.*$"
-                  :handler any-access}
-                 {:pattern #"^/environment"
-                  :handler any-access}
-                 {:pattern #"^/api/avustushaku/\d+/payments$"
-                  :request-method :options
-                  :handler any-access}
-                 {:pattern #"^/api/v2/applications/\d+/payments/$"
-                  :request-method :options
-                  :handler any-access}
-                 {:pattern #"^/errorlogger"
-                  :handler any-access}
-                 {:pattern #"^/js/.*"
-                  :handler any-access}
-                 {:pattern #"^/img/.*"
-                  :handler any-access}
-                 {:pattern #"^/css/.*"
-                  :handler any-access}
-                 {:pattern #"^/api/healthcheck"
-                  :handler any-access}
-                 {:pattern #"^/public/.*"
-                  :handler any-access}
-                 {:pattern #"^/favicon.ico"
-                  :handler any-access}
-                 {:pattern #".*"
-                  :handler authenticated-access
-                  :on-error (fn [request _]
-                                                                 (redirect-to-login request))}]})))
+       {:rules [{:pattern #"^/login.*$"
+                 :handler any-access}
+                {:pattern #"^/environment"
+                 :handler any-access}
+                {:pattern #"^/api/v2/applications/\d+/payments/$"
+                 :request-method :options
+                 :handler any-access}
+                {:pattern #"^/errorlogger"
+                 :handler any-access}
+                {:pattern #"^/js/.*"
+                 :handler any-access}
+                {:pattern #"^/img/.*"
+                 :handler any-access}
+                {:pattern #"^/css/.*"
+                 :handler any-access}
+                {:pattern #"^/api/healthcheck"
+                 :handler any-access}
+                {:pattern #"^/public/.*"
+                 :handler any-access}
+                {:pattern #"^/favicon.ico"
+                 :handler any-access}
+                {:pattern #".*"
+                 :handler authenticated-access
+                 :on-error (fn [request _]
+                             (redirect-to-login request))}]})))
 
 (defn start-server [host port auto-reload?]
   (let [defaults (-> site-defaults
@@ -104,19 +101,19 @@
                      (assoc-in [:session :cookie-attrs :same-site] :lax)  ; required for CAS initiated redirection
                      (assoc-in [:session :cookie-attrs :secure] (-> config :server :require-https?)))
         handler (as-> #'all-routes h
-                  (with-authentication h)
-                  (ring-session-timeout/wrap-absolute-session-timeout h {:timeout (-> config :server :session_timeout_in_s)
-                                                                         :timeout-handler redirect-to-login})
-                  (wrap-defaults h defaults)
-                  (server/wrap-logger h)
-                  (server/wrap-cache-control h)
-                  (wrap-not-modified h)
-                  (if-let [local-url (get-in config [:server :local-front-url])]
-                    (wrap-with-local-cors h local-url)
-                    h)
-                  (if auto-reload?
-                    (wrap-reload h)
-                    h))
+                      (with-authentication h)
+                      (ring-session-timeout/wrap-absolute-session-timeout h {:timeout (-> config :server :session_timeout_in_s)
+                                                                             :timeout-handler redirect-to-login})
+                      (wrap-defaults h defaults)
+                      (server/wrap-logger h)
+                      (server/wrap-cache-control h)
+                      (wrap-not-modified h)
+                      (if-let [local-url (get-in config [:server :local-front-url])]
+                        (wrap-with-local-cors h local-url)
+                        h)
+                      (if auto-reload?
+                        (wrap-reload h)
+                        h))
         threads (or (-> config :server :threads) 16)
         attachment-max-size (or (-> config :server :attachment-max-size) 50)]
     (server/start-server {:host host
