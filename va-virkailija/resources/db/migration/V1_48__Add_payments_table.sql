@@ -20,6 +20,7 @@ CREATE TABLE payments (
     PRIMARY KEY (id, version)
 );
 
+CREATE SEQUENCE payments_id_seq;
 CREATE INDEX ON payments (application_id);
 
 comment on table payments is 'Payments table (maksatus)';
