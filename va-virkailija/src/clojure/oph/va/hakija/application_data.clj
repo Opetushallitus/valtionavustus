@@ -4,7 +4,8 @@
             [oph.va.hakija.api :refer [convert-to-dash-keys]]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
-            [oph.va.hakija.grant-data :as grant-data])
+            [oph.va.hakija.grant-data :as grant-data]
+            [oph.va.virkailija.payments-data :as payments-data])
   (:import (oph.va.jdbc.enums)))
 
 (defn get-application [id]
@@ -17,11 +18,6 @@
    (first
     (exec :form-db hakija-queries/get-application-with-evaluation-and-answers
           {:application_id id}))))
-
-(defn get-payment [id]
-  (convert-to-dash-keys
-   (first
-    (exec :form-db hakija-queries/get-payment {:payment_id id}))))
 
 (defn create-payment [application-id payment-data]
   (when
@@ -52,11 +48,12 @@
                  :installment_number (get payment-data :installment-number 0)}
         payment-id
         (:id (first (exec :form-db hakija-queries/create-payment payment)))]
-    (get-payment payment-id)))
+    (payments-data/get-payment payment-id)))
 
 (defn update-payment [application-id payment-data]
   (let [application (get-application application-id)
-        payment {:application_id application-id
+        payment {:payment_id (:id payment-data)
+                 :application_id application-id
                  :application_version (:version application)
                  :grant_id (:grant-id application)
                  :state (:state payment-data)
@@ -71,5 +68,6 @@
                  :acceptor_email (:acceptor-email payment-data)
                  :organisation (:organisation payment-data)
                  :installment_number (:installment-number payment-data)}]
+    (payments-data/close-version (:id payment-data) (:version payment-data))
     (convert-to-dash-keys
      (first (exec :form-db hakija-queries/create-payment payment)))))
