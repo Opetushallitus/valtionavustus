@@ -70,6 +70,9 @@
                  :handler any-access}
                 {:pattern #"^/environment"
                  :handler any-access}
+                {:pattern #"^/api/v2/payments/\d+/$"
+                 :request-method :options
+                 :handler any-access}
                 {:pattern #"^/api/v2/applications/\d+/payments/$"
                  :request-method :options
                  :handler any-access}

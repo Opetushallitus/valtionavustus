@@ -35,7 +35,8 @@
             [clojure.tools.logging :as log]
             [oph.va.virkailija.payments_info :as payments-info]
             [oph.va.virkailija.grant-routes :as grant-routes]
-            [oph.va.virkailija.application-routes :as application-routes]))
+            [oph.va.virkailija.application-routes :as application-routes]
+            [oph.va.virkailija.payments-routes :as payments-routes]))
 
 (defonce opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
 
@@ -663,6 +664,8 @@
   (compojure-api/context "/api/v2/grants" [] :tags ["grants"] grant-routes/routes)
   (compojure-api/context "/api/v2/applications" [] :tags ["applications"]
     application-routes/routes)
+  (compojure-api/context "/api/v2/payments" [] :tags ["payments"]
+    payments-routes/routes)
 
   va-routes/config-routes
   resource-routes)
