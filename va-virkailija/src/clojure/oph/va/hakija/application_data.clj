@@ -24,6 +24,13 @@
     (exec :form-db hakija-queries/get-payment {:payment_id id}))))
 
 (defn create-payment [application-id payment-data]
+  (when
+   (not
+    (empty?
+     (exec :form-db hakija-queries/get-application-payments
+           {:application_id application-id})))
+    (throw
+     (Exception. "Application already contains a payment")))
   (let [application (get-application application-id)
         payment {:application_id application-id
                  :application_version (:version application)
