@@ -13,7 +13,7 @@ JOIN
     ON (h.id = a.hakemus_id)
 LEFT JOIN
   hakija.payments p
-    ON (p.application_id = h.id)
+    ON (p.application_id = h.id AND p.version_closed IS NULL)
 WHERE
   h.avustushaku = :grant_id
   AND h.status != 'cancelled'
