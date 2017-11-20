@@ -22,3 +22,5 @@ ALTER TABLE hakija.payments
 ALTER TABLE hakija.payments
   ADD PRIMARY KEY (id, version);
 
+ALTER TABLE payments
+  ADD version_closed DATE;
