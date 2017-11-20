@@ -33,6 +33,8 @@
 (defquery get-application-with-evaluation-and-answers
   "sql/hakija/applications/get-application-with-evaluation-and-answers.sql")
 
+(defquery get-application-payments
+  "sql/hakija/applications/get-application-payments.sql")
 (defquery create-payment "sql/hakija/applications/create-payment.sql")
 (defquery get-payment "sql/virkailija/payments/get-payment.sql")
 
