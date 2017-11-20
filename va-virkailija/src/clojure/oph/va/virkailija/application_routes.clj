@@ -16,7 +16,7 @@
             "Create payments")]
     :return virkailija-schema/Payment
     :summary "Create new payment for application"
-    (ok (application-data/create-payment application-id))))
+    (ok (application-data/create-payment application-id payment-emails))))
 
 (defn- create-payment-options []
   (compojure-api/OPTIONS "/:application-id/payments/"
