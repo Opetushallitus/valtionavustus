@@ -49,25 +49,3 @@
         payment-id
         (:id (first (exec :form-db hakija-queries/create-payment payment)))]
     (payments-data/get-payment payment-id)))
-
-(defn update-payment [application-id payment-data]
-  (let [application (get-application application-id)
-        payment {:payment_id (:id payment-data)
-                 :application_id application-id
-                 :application_version (:version application)
-                 :grant_id (:grant-id application)
-                 :state (:state payment-data)
-                 :document_type (:document-type payment-data)
-                 :invoice_date  (c/to-sql-time (:invoice-date payment-data))
-                 :due_date (c/to-sql-time (:due-date payment-data))
-                 :receipt_date (c/to-sql-time (:receipt-date payment-data))
-                 :transaction_account (:transaction-account payment-data)
-                 :currency (:currency payment-data)
-                 :partner (:partner payment-data)
-                 :inspector_email (:inspector-email payment-data)
-                 :acceptor_email (:acceptor-email payment-data)
-                 :organisation (:organisation payment-data)
-                 :installment_number (:installment-number payment-data)}]
-    (payments-data/close-version (:id payment-data) (:version payment-data))
-    (convert-to-dash-keys
-     (first (exec :form-db hakija-queries/create-payment payment)))))
