@@ -8,4 +8,4 @@ VALUES(
   :invoice_date::timestamptz, :due_date::timestamptz,
   :receipt_date::timestamptz, :transaction_account, :currency, :partner,
   :inspector_email, :acceptor_email, :installment_number, :organisation)
-RETURNING *;
+RETURNING id;
