@@ -12,7 +12,7 @@ JOIN
     ON (h.id = a.hakemus_id)
 JOIN
   hakija.payments p
-    ON (p.application_id = h.id) ORDER BY p.version DESC LIMIT 1
+    ON (p.application_id = h.id AND p.version_closed IS NULL)
 WHERE
   h.id = :application_id
   AND h.status != 'cancelled'
