@@ -12,6 +12,9 @@
                :cas-login "/cas/login?service="
                :cas-logout "/cas/logout?service="
                :permission-request "/authentication-henkiloui/html/#/omattiedot2"}
+ :kayttooikeus-service {:va-service-name "VALTIONAVUSTUS"
+                        :admin-privilege-name "ADMIN"
+                        :user-privilege-name "USER"}
  :ui {:show-environment? true
       :paatos-path "/api/avustushaku/paatos/"}
  :virkailija-db {:pool-name "virkailija-pool"
