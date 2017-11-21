@@ -25,6 +25,7 @@
 (defquery get-search "sql/virkailija/saved_search/get.sql")
 
 (defquery get-payment "sql/virkailija/payments/get-payment.sql")
+(defquery get-payment-version "sql/virkailija/payments/get-payment-version.sql")
 (defquery payment-close-version
   "sql/virkailija/payments/payment-close-version.sql")
 (defquery update-payment "sql/virkailija/payments/update-payment.sql")
