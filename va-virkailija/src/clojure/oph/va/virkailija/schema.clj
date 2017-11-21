@@ -251,22 +251,22 @@
   "Payment"
   {:id s/Int
    :version s/Int
-   :version-closed (s/maybe s/Inst)
+   (s/optional-key :version-closed) (s/maybe s/Inst)
    (s/optional-key :created-at) s/Inst
    :application-id  s/Int
    :application-version s/Int
    :state s/Int
-   :installment-number s/Int
-   :organisation s/Str
-   :document-type s/Str
+   (s/optional-key :installment-number) s/Int
+   (s/optional-key :organisation) s/Str
+   (s/optional-key :document-type) s/Str
    (s/optional-key :invoice-date) s/Inst
    (s/optional-key :due-date) s/Inst
    (s/optional-key :receipt-date) s/Inst
-   :transaction-account s/Str
-   :currency s/Str
-   :partner s/Str
-   :inspector-email s/Str
-   :acceptor-email s/Str})
+   (s/optional-key :transaction-account) s/Str
+   (s/optional-key :currency) s/Str
+   (s/optional-key :partner) s/Str
+   (s/optional-key :inspector-email) s/Str
+   (s/optional-key :acceptor-email) s/Str})
 
 (s/defschema PaymentEmails
   "Payment emails"
@@ -315,5 +315,7 @@
    :budget-granted s/Int
    :costs-granted s/Int
    :payment-state (s/maybe s/Int)
+   :payment-id (s/maybe s/Int)
+   :payment-version (s/maybe s/Int)
    (s/optional-key :evaluation) s/Any
    (s/optional-key :answers) [Answer]})
