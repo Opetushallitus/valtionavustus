@@ -7,7 +7,7 @@
             [oph.va.virkailija.schema :as virkailija-schema]))
 
 (defn- update-payment []
-  (compojure-api/POST "/:payment-id/" [payment-id :as request]
+  (compojure-api/PUT "/:payment-id/" [payment-id :as request]
     :path-params [payment-id :- Long]
     :query-params []
     :body [payment-data
@@ -16,7 +16,7 @@
             "Update payment")]
     :return virkailija-schema/Payment
     :summary "Create new payment for application"
-    (ok (payments-data/update-payment payment-id payment-data))))
+    (ok (payments-data/update-payment payment-data))))
 
 (defn- update-payment-options []
   (compojure-api/OPTIONS "/:payment-id/"
