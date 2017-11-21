@@ -2,7 +2,7 @@ SELECT
   h.id, h.created_at, h.version, h.budget_total, h.budget_oph_share,
   h.organization_name, h.project_name, h.register_number, h.language,
   s.answers->'value' AS answers, a.budget_granted, a.costs_granted,
-  p.state AS payment_state
+  p.state AS payment_state, p.id AS payment_id, p.version AS payment_version
 FROM
   hakija.hakemukset h
 JOIN
