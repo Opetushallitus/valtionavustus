@@ -37,7 +37,7 @@
         payment (dissoc (merge old-payment payment-data)
                         :version :version-closed)
         result
-        (-> payment
+        (->> payment
             convert-timestamps
             convert-to-underscore-keys
             (exec :form-db queries/update-payment)
