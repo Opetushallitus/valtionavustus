@@ -47,6 +47,5 @@ SELECT id,
        status_loppuselvitys
 FROM hakemukset
 WHERE user_key = :user_key AND form_submission_id = :form_submission_id
-GROUP BY id, status, last_status_change_at, version
 ORDER BY version DESC
 LIMIT 1
