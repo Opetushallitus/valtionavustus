@@ -19,6 +19,13 @@
   (exec :form-db queries/payment-close-version
         {:id id :version version}))
 
+(defn- convert-timestamps [m]
+  (assoc
+   m
+   :due-date (c/to-sql-time (:due-date m))
+   :receipt-date (c/to-sql-time (:receipt-date m))
+   :invoice-date (c/to-sql-time (:receipt-date m))))
+
 (defn update-payment [payment-data]
   (let [old-payment (get-payment (:id payment-data) (:version payment-data))
         payment (dissoc (merge old-payment payment-data)
@@ -26,4 +33,4 @@
     (close-version (:id payment-data) (:version payment-data))
     (convert-to-dash-keys
      (first (exec :form-db queries/update-payment
-                  (convert-to-underscore-keys payment))))))
+                  (convert-to-underscore-keys (convert-timestamps payment)))))))
