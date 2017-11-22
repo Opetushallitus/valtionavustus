@@ -35,5 +35,5 @@
          (first (exec :form-db queries/update-payment
                       (convert-to-underscore-keys
                        (convert-timestamps payment)))))]
-    (when (nil? result) (throw Exception. "Failed to update payment"))
+    (when (nil? result) (throw (Exception. "Failed to update payment")))
     (close-version (:id payment-data) (:version payment-data))))
