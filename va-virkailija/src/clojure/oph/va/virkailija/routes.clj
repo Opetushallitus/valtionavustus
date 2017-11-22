@@ -35,7 +35,8 @@
             [clojure.tools.logging :as log]
             [oph.va.virkailija.payments_info :as payments-info]
             [oph.va.virkailija.grant-routes :as grant-routes]
-            [oph.va.virkailija.application-routes :as application-routes]))
+            [oph.va.virkailija.application-routes :as application-routes]
+            [oph.va.virkailija.payments-routes :as payments-routes]))
 
 (defonce opintopolku-login-url (str (-> config :opintopolku :url) (-> config :opintopolku :cas-login)))
 
@@ -168,33 +169,6 @@
       (if-let [response (hakudata/get-combined-avustushaku-data-with-privileges avustushaku-id identity)]
         (ok response)
         (not-found)))))
-
-(defn- get-avustushaku-payments []
-  (compojure-api/GET "/:avustushaku-id/payments" [avustushaku-id :as request]
-    :path-params [avustushaku-id :- Long]
-    :return virkailija-schema/Payments
-    :summary "Return payments of particular avustushaku"
-    (if-let [response (hakudata/get-avustushaku-payments avustushaku-id)]
-      (ok response)
-      (not-found))))
-
-(defn- post-create-avustushaku-payments []
-  (compojure-api/POST "/:avustushaku-id/payments" [avustushaku-id :as request]
-    :path-params [avustushaku-id :- Long]
-    :body [payments (compojure-api/describe
-                      virkailija-schema/Payments
-                      "Return created payments")]
-    :return virkailija-schema/Payments
-    :summary "Create new payments for avustushaku"
-    (ok (hakudata/create-avustushaku-payments! payments))))
-
-(defn- options-create-avustushaku-payments []
-  (compojure-api/OPTIONS
-    "/:avustushaku-id/payments" [avustushaku-id :as request]
-    :path-params [avustushaku-id :- Long]
-    :return s/Any
-    :summary "Route OPTIONS"
-    (ok "")))
 
 (defn- get-selvitys []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/selvitys" [hakemus-id avustushaku-id :as request]
@@ -501,14 +475,14 @@
   (compojure-api/POST "/:avustushaku-id/payments-email" [avustushaku-id :as request]
     :path-params [avustushaku-id :- Long]
     :summary "POST email to finance department"
-  (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
-        identity (authentication/get-request-identity request)
-        presenting-officer-email (:email identity)
-        presenting-officer-name (str (:first-name identity) " " (:surname identity))
-        form (hakija-api/get-form-by-avustushaku avustushaku-id)
-        register-number (:register_number avustushaku)
-        payments-info {:avustushaku-id avustushaku-id :avustushaku avustushaku :presenting-officer-email presenting-officer-email :presenting-officer-name presenting-officer-name :register-number register-number}]
-    (payments-info/send-payments-info payments-info))))
+    (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+          identity (authentication/get-request-identity request)
+          presenting-officer-email (:email identity)
+          presenting-officer-name (str (:first-name identity) " " (:surname identity))
+          form (hakija-api/get-form-by-avustushaku avustushaku-id)
+          register-number (:register_number avustushaku)
+          payments-info {:avustushaku-id avustushaku-id :avustushaku avustushaku :presenting-officer-email presenting-officer-email :presenting-officer-name presenting-officer-name :register-number register-number}]
+      (payments-info/send-payments-info payments-info))))
 
 (compojure-api/defroutes avustushaku-routes
   "Hakemus listing and filtering"
@@ -523,9 +497,6 @@
   (put-avustushaku)
   (post-avustushaku)
   (get-avustushaku)
-  (get-avustushaku-payments)
-  (post-create-avustushaku-payments)
-  (options-create-avustushaku-payments)
   (get-selvitys)
   (send-selvitys)
   (send-selvitys-email)
@@ -692,7 +663,9 @@
   (compojure-api/context "/paatos" [] :tags ["paatos"] decision/decision-routes)
   (compojure-api/context "/api/v2/grants" [] :tags ["grants"] grant-routes/routes)
   (compojure-api/context "/api/v2/applications" [] :tags ["applications"]
-                         application-routes/routes)
+    application-routes/routes)
+  (compojure-api/context "/api/v2/payments" [] :tags ["payments"]
+    payments-routes/routes)
 
   va-routes/config-routes
   resource-routes)

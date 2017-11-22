@@ -12,7 +12,9 @@
     :query-params [{template :- String ""}]
     :return virkailija-schema/Grants
     :summary "Return list of grants"
-    (ok (grant-data/get-grants template))))
+    (ok (if (= template "with-content")
+          (grant-data/get-grants-with-content)
+          (grant-data/get-grants)))))
 
 (defn- get-grant []
   (compojure-api/GET
