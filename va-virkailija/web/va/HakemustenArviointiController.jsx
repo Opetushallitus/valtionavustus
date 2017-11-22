@@ -459,7 +459,7 @@ export default class HakemustenArviointiController {
   }
 
   static findHakemus(state, hakemusId) {
-    return _.find(state.hakuData.hakemukset, h => { return h.id === hakemusId })
+    return _.find(state.hakuData.hakemukset, h => h.id === hakemusId)
   }
 
   onScoresLoaded(state, hakemusIdWithScoring) {
