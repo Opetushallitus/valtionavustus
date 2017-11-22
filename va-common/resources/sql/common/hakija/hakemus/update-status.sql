@@ -23,7 +23,7 @@ INSERT INTO hakemukset(
 SELECT id,
        :avustushaku_id,
        :user_key,
-       max(version) + 1,
+       version + 1,
        :form_submission_id,
        :form_submission_version,
        :budget_total,
@@ -43,4 +43,5 @@ SELECT id,
        parent_id
 FROM hakemukset
 WHERE user_key = :user_key AND form_submission_id = :form_submission_id
-GROUP BY id, hakemus_type, parent_id
+ORDER BY version DESC
+LIMIT 1
