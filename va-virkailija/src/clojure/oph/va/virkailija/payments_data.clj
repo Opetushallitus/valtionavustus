@@ -29,8 +29,11 @@
 (defn update-payment [payment-data]
   (let [old-payment (get-payment (:id payment-data) (:version payment-data))
         payment (dissoc (merge old-payment payment-data)
-                        :version :version-closed)]
-    (close-version (:id payment-data) (:version payment-data))
-    (convert-to-dash-keys
-     (first (exec :form-db queries/update-payment
-                  (convert-to-underscore-keys (convert-timestamps payment)))))))
+                        :version :version-closed)
+        result
+        (convert-to-dash-keys
+         (first (exec :form-db queries/update-payment
+                      (convert-to-underscore-keys
+                       (convert-timestamps payment)))))]
+    (when (nil? result) (throw Exception. "Failed to update payment"))
+    (close-version (:id payment-data) (:version payment-data))))
