@@ -19,21 +19,30 @@
   (exec :form-db queries/payment-close-version
         {:id id :version version}))
 
-(defn- convert-timestamps [m]
-  (assoc
-   m
-   :due-date (c/to-sql-time (:due-date m))
-   :receipt-date (c/to-sql-time (:receipt-date m))
-   :invoice-date (c/to-sql-time (:receipt-date m))))
+(defn- get-keys-present [m ks]
+  (keys (select-keys m ks)))
+
+(defn- update-all [m ks f]
+  (reduce #(update-in % [%2] f) m ks))
+
+(defn convert-timestamps [m]
+  (let [timestamp-keys
+        (get-keys-present m [:due-date :invoice-date :receipt-date])]
+    (if (empty? timestamp-keys)
+      m
+      (update-all m timestamp-keys c/to-sql-time))))
 
 (defn update-payment [payment-data]
   (let [old-payment (get-payment (:id payment-data) (:version payment-data))
         payment (dissoc (merge old-payment payment-data)
                         :version :version-closed)
         result
-        (convert-to-dash-keys
-         (first (exec :form-db queries/update-payment
-                      (convert-to-underscore-keys
-                       (convert-timestamps payment)))))]
+        (-> payment
+            convert-timestamps
+            convert-to-underscore-keys
+            (exec :form-db queries/update-payment)
+            first
+            convert-to-dash-keys)]
     (when (nil? result) (throw (Exception. "Failed to update payment")))
-    (close-version (:id payment-data) (:version payment-data))))
+    (close-version (:id payment-data) (:version payment-data))
+    result))
