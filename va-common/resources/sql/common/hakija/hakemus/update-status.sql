@@ -19,7 +19,9 @@ INSERT INTO hakemukset(
        status_change_comment,
        last_status_change_at,
        hakemus_type,
-       parent_id)
+       parent_id,
+       status_valiselvitys,
+       status_loppuselvitys)
 SELECT id,
        :avustushaku_id,
        :user_key,
@@ -40,7 +42,9 @@ SELECT id,
        :status_change_comment,
        now(),
        hakemus_type,
-       parent_id
+       parent_id,
+       status_valiselvitys,
+       status_loppuselvitys
 FROM hakemukset
 WHERE user_key = :user_key AND form_submission_id = :form_submission_id
 ORDER BY version DESC
