@@ -199,6 +199,9 @@ export default class HakemustenArviointiController {
   onHakemusSelection(state, hakemusIdToSelect) {
     state = this.onSaveHakemusArvio(state, state.selectedHakemus)
     state.selectedHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdToSelect)
+    if (!state.selectedHakemus) {
+      throw new Error(`Avustushaku ${state.hakuData.avustushaku.id} does not have hakemus ${hakemusIdToSelect}`)
+    }
     const pathname = location.pathname
     const parsedUrl = new RouteParser('/avustushaku/:avustushaku_id/(hakemus/:hakemus_id/:subTab/)*ignore').match(pathname)
     const subTab = parsedUrl.subTab || 'arviointi'
