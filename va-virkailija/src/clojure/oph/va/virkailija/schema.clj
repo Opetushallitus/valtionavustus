@@ -310,7 +310,7 @@
    :budget-oph-share s/Int
    :organization-name s/Str
    :project-name s/Str
-   :register-number s/Str
+   :register-number (s/maybe s/Str)
    :language s/Str
    :budget-granted s/Int
    :costs-granted s/Int
