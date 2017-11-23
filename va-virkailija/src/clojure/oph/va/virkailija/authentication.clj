@@ -34,10 +34,9 @@
     (log/info "Starting background job: sessions timeout...")
     (loop []
       (let [[value _] (alts! [session-timeout-chan (timeout 500)])]
-        (if (nil? value)
-          (do
-            (swap! session-store remove-timed-out-sessions)
-            (recur)))))
+        (when (nil? value)
+          (swap! session-store remove-timed-out-sessions)
+          (recur))))
     (log/info "Stopped background job: sessions timeout.")))
 
 (defn start-background-job-timeout-sessions []
