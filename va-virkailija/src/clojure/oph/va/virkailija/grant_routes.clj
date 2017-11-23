@@ -37,8 +37,17 @@
           (grant-data/get-grant-applications-with-evaluation grant-id)
           (grant-data/get-grant-applications grant-id)))))
 
+(defn- get-grant-payments []
+  (compojure-api/GET
+    "/:grant-id/payments/" [grant-id :as request]
+    :path-params [grant-id :- Long]
+    :return [virkailija-schema/Payment]
+    :summary "Return payments of a grant"
+    (ok (grant-data/get-grant-payments grant-id))))
+
 (compojure-api/defroutes routes
   "grant routes"
   (get-grant)
   (get-grants)
-  (get-grant-applications))
+  (get-grant-applications)
+  (get-grant-payments))
