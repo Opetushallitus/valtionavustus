@@ -1,7 +1,7 @@
 SELECT
   h.id, h.created_at, h.version, h.budget_total, h.budget_oph_share,
   h.organization_name, h.project_name, h.register_number, h.language,
-  s.answers->'value' AS answers, a.budget_granted, a.costs_granted, p.state
+  s.answers->'value' AS answers, a.budget_granted, a.costs_granted
 FROM
   hakija.hakemukset h
 JOIN
@@ -10,9 +10,6 @@ JOIN
 JOIN
   virkailija.arviot a
     ON (h.id = a.hakemus_id)
-JOIN
-  hakija.payments p
-    ON (p.application_id = h.id) ORDER BY p.version DESC LIMIT 1
 WHERE
   h.id = :application_id
   AND h.status != 'cancelled'

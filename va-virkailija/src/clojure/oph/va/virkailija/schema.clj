@@ -247,33 +247,26 @@
     :Postings
     {:Posting InvoicePostings}}})
 
-(def Payment
-  {(s/optional-key :id) s/Int
+(s/defschema Payment
+  "Payment"
+  {:id s/Int
+   :version s/Int
+   (s/optional-key :version-closed) (s/maybe s/Inst)
    (s/optional-key :created-at) s/Inst
    :application-id  s/Int
    :application-version s/Int
-   :grant-id s/Int
    :state s/Int
-   :installment s/Str
-   :document-type s/Str
+   (s/optional-key :installment-number) s/Int
+   (s/optional-key :organisation) s/Str
+   (s/optional-key :document-type) s/Str
    (s/optional-key :invoice-date) s/Inst
    (s/optional-key :due-date) s/Inst
-   :amount s/Int
-   :long-ref s/Str
    (s/optional-key :receipt-date) s/Inst
-   :transaction-account s/Str
-   :currency s/Str
-   :lkp-account s/Str
-   :takp-account s/Str
-   (s/optional-key :organization-name) s/Str
-   (s/optional-key :project-name) s/Str
-   (s/optional-key :grant-content) s/Any
-   :partner s/Str
-   :inspector-email s/Str
-   :acceptor-email s/Str})
-
-(def Payments
-  [Payment])
+   (s/optional-key :transaction-account) s/Str
+   (s/optional-key :currency) s/Str
+   (s/optional-key :partner) s/Str
+   (s/optional-key :inspector-email) s/Str
+   (s/optional-key :acceptor-email) s/Str})
 
 (s/defschema PaymentEmails
   "Payment emails"
@@ -282,7 +275,7 @@
 
 (s/defschema GrantStatus
   "Grant status"
-  (s/enum "new" "draft" "published" "deleted"))
+  (s/enum "new" "draft" "published" "deleted", "resolved"))
 
 (s/defschema GrantType
   "Grant type"
@@ -317,10 +310,9 @@
    :budget-oph-share s/Int
    :organization-name s/Str
    :project-name s/Str
-   :register-number s/Str
+   :register-number (s/maybe s/Str)
    :language s/Str
    :budget-granted s/Int
    :costs-granted s/Int
-   :payment-state (s/maybe s/Int)
    (s/optional-key :evaluation) s/Any
    (s/optional-key :answers) [Answer]})

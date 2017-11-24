@@ -1,7 +1,7 @@
 SELECT
   h.id, h.created_at, h.version, h.budget_total, h.budget_oph_share,
   h.organization_name, h.project_name, h.register_number, h.language,
-  s.answers->'value' AS answers
+  h.avustushaku AS grant_id, s.answers->'value' AS answers
 FROM
   hakija.hakemukset h
 JOIN

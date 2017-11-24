@@ -1,6 +1,7 @@
 (ns oph.va.hakija.grant-data
   (:require [oph.soresu.common.db :refer [exec]]
             [oph.va.hakija.api.queries :as hakija-queries]
+            [oph.va.virkailija.db.queries :as virkailija-queries]
             [oph.va.hakija.api :refer [convert-to-dash-keys]]))
 
 (defn get-grants []
@@ -29,3 +30,7 @@
   (mapv convert-to-dash-keys
         (exec :form-db hakija-queries/get-grant-applications
               {:grant_id grant-id})))
+
+(defn get-grant-payments [id]
+  (mapv convert-to-dash-keys
+        (exec :form-db virkailija-queries/get-grant-payments {:id id})))

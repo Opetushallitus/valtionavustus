@@ -33,6 +33,9 @@
 (defquery get-application "sql/hakija/applications/get-application.sql")
 (defquery get-application-with-evaluation-and-answers
   "sql/hakija/applications/get-application-with-evaluation-and-answers.sql")
+
+(defquery get-application-payments
+  "sql/hakija/applications/get-application-payments.sql")
 (defquery create-payment "sql/hakija/applications/create-payment.sql")
 
 (defquery list-hakemukset-by-avustushaku "sql/hakija/hakemus/list-by-avustushaku.sql")
