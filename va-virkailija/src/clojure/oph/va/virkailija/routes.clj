@@ -484,6 +484,12 @@
           payments-info {:avustushaku-id avustushaku-id :avustushaku avustushaku :presenting-officer-email presenting-officer-email :presenting-officer-name presenting-officer-name :register-number register-number}]
       (payments-info/send-payments-info payments-info))))
 
+(defn- options-payments-info-email []
+  (compojure-api/OPTIONS "/:avustushaku-id/payments-email/" [avustushaku-id :as request]
+    :path-params [avustushaku-id :- Long]
+    :summary "OPTIONS for email to finance department"
+    (ok)))
+
 (compojure-api/defroutes avustushaku-routes
   "Hakemus listing and filtering"
 
@@ -523,7 +529,8 @@
   (post-hakemus-status)
   (put-searches)
   (get-search)
-  (post-payments-info-email))
+  (post-payments-info-email)
+  (options-payments-info-email))
 
 (compojure-api/defroutes public-routes
   "Public API"
