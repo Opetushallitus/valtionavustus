@@ -310,12 +310,9 @@
    :budget-oph-share s/Int
    :organization-name s/Str
    :project-name s/Str
-   :register-number s/Str
+   :register-number (s/maybe s/Str)
    :language s/Str
    :budget-granted s/Int
    :costs-granted s/Int
-   :payment-state (s/maybe s/Int)
-   :payment-id (s/maybe s/Int)
-   :payment-version (s/maybe s/Int)
    (s/optional-key :evaluation) s/Any
    (s/optional-key :answers) [Answer]})
