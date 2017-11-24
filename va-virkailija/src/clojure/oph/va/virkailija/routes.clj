@@ -472,7 +472,7 @@
       (ok (:query saved-search)))))
 
 (defn- post-payments-info-email []
-  (compojure-api/POST "/:avustushaku-id/payments-email" [avustushaku-id :as request]
+  (compojure-api/POST "/:avustushaku-id/payments-email/" [avustushaku-id :as request]
     :path-params [avustushaku-id :- Long]
     :summary "POST email to finance department"
     (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
