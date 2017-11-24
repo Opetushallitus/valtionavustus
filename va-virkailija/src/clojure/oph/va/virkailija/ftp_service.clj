@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.ftp-service
   (:require [clj-ssh.ssh :as ssh]
+            [ring.util.http-response :refer :all]
             [oph.va.hakija.api :as hakija-api];
             [oph.va.virkailija.invoice :as invoice]
             [oph.soresu.common.config :refer [config]]))
@@ -11,7 +12,8 @@
         (ssh/with-connection session
           (let [channel (ssh/ssh-sftp session)]
             (ssh/with-channel-connection channel
-              (ssh/sftp channel {} :put file (ftp-config :remote_path)))))))
+              (let [result (ssh/sftp channel {} :put file (ftp-config :remote_path))]
+                (println result)))))))
 
 
 (defn send-to-rondo [payment-id]

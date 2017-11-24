@@ -76,6 +76,9 @@
                  {:pattern #"^/api/v2/applications/\d+/payments/$"
                   :request-method :options
                   :handler any-access}
+                  {:pattern #"^/api/v2/payments/\d+/invoice/$"
+                   :request-method :options
+                   :handler any-access}
                  {:pattern #"^/errorlogger"
                   :handler any-access}
                  {:pattern #"^/js/.*"

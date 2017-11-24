@@ -39,13 +39,27 @@
           (grant-data/get-grant-applications grant-id)))))
 
 (defn- send-invoice []
-  (compojure-api/POST "/:id/invoice/" []
+  (compojure-api/POST "/:id/invoice/" [id :as request]
     :path-params [id :- Long]
     :summary "Send one invoice to Rondo."
-    (ok (ftp-service/send-to-rondo id))))
+  ;;  (ok (ftp-service/send-to-rondo id))
+    (if-let [response (ftp-service/send-to-rondo id)]
+      (ok response)
+      (not-found))))
+
+(defn- options-send-invoice []
+  (compojure-api/OPTIONS
+  "/:id/invoice/"  [id :as request]
+    :path-params [id :- Long]
+    :return s/Any
+    :summary "Route OPTIONS"
+    (-> (ok "")
+        (assoc-in [:headers "Access-Control-Allow-Methods"] "POST, GET, OPTIONS"))))
+
 
 (compojure-api/defroutes payment-routes
   "payment routes"
+  (options-send-invoice)
   (send-invoice))
 
 (compojure-api/defroutes routes
