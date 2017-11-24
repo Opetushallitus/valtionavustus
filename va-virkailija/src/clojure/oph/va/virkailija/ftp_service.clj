@@ -3,7 +3,8 @@
             [ring.util.http-response :refer :all]
             [oph.va.hakija.api :as hakija-api];
             [oph.va.virkailija.invoice :as invoice]
-            [oph.soresu.common.config :refer [config]]))
+            [oph.soresu.common.config :refer [config]]
+            [oph.va.virkailija.payments-data :as payments-data]))
 
 
 (defn send-sftp [file ftp-config]
@@ -12,12 +13,11 @@
         (ssh/with-connection session
           (let [channel (ssh/ssh-sftp session)]
             (ssh/with-channel-connection channel
-              (let [result (ssh/sftp channel {} :put file (ftp-config :remote_path))]
-                (println result)))))))
+              (ssh/sftp channel {} :put file (ftp-config :remote_path)))))))
 
 
 (defn send-to-rondo [payment-id]
-  (let [payment (hakija-api/get-payment-by-id payment-id)
+  (let [payment (payments-data/get-payment payment-id)
         ftp-config (:ftp config)
         file (str (ftp-config :local_path) "maksatus" "-" "avustushaku" "-" (payment :grant_id) "-" (System/currentTimeMillis) ".xml")
         application (payment :application_id)]

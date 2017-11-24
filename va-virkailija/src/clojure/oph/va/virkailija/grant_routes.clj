@@ -50,10 +50,7 @@
       (compojure-api/POST "/:id/invoice/" [id :as request]
         :path-params [id :- Long]
         :summary "Send one invoice to Rondo."
-      ;;  (ok (ftp-service/send-to-rondo id))
-        (if-let [response (ftp-service/send-to-rondo id)]
-          (ok response)
-          (not-found))))
+      (ok (ftp-service/send-to-rondo id))))
 
     (defn- options-send-invoice []
       (compojure-api/OPTIONS
