@@ -26,8 +26,8 @@
   {:names [s/Str]})
 
 (s/defschema ArvioRole
-             "Role for arvio"
-             {:evaluators [Long]})
+  "Role for arvio"
+  {:evaluators [Long]})
 
 (s/defschema Tag
   "Tags for arvio"
@@ -53,8 +53,7 @@
    (s/optional-key :academysize) (s/maybe s/Int)
    (s/optional-key :perustelut) (s/maybe s/Str)
    (s/optional-key :presentercomment) (s/maybe s/Str)
-   (s/optional-key :changelog) (s/maybe s/Any)
-  })
+   (s/optional-key :changelog) (s/maybe s/Any)})
 
 (s/defschema NewComment
   "New comment to be added"
@@ -197,3 +196,123 @@
 (s/defschema AvustushakuOrganizationNameQuery
   "Find avustushaut by organization name (minimum string length: 3)"
   (s/conditional (fn [s] (> (count s) 2)) s/Str))
+
+(def InvoiceSupplier
+  {:Y-tunnus s/Str
+   (s/optional-key :Hlo-tunnus) s/Str
+   :Nimi s/Str
+   :Postiosoite s/Str
+   :Paikkakunta s/Str
+   :Maa s/Str
+   :Iban-tili s/Str
+   :Pankkiavain s/Str
+   :Pankki-maa s/Str
+   :Kieli s/Str
+   :Valuutta s/Str})
+
+(def InvoiceHeader
+  {:Maksuera s/Str
+   :Laskunpaiva s/Str
+   :Erapvm s/Str
+   :Bruttosumma s/Num
+   :Maksuehto s/Str
+   :Pitkaviite s/Str
+   :Tositepvm s/Str
+   :Asiatarkastaja s/Str
+   :Hyvaksyja s/Str
+   :Tositelaji s/Str
+   :Toimittaja InvoiceSupplier})
+
+(def InvoicePostings
+  {:Summa s/Num
+   :LKP-tili s/Str
+   (s/optional-key :ALV-koodi) s/Str
+   :TaKp-tili s/Str
+   :Toimintayksikko s/Str
+   :Valtuusnro (s/optional-key s/Str)
+   :Projekti s/Str
+   :Toiminto s/Str
+   :Suorite (s/optional-key s/Str)
+   :AlueKunta (s/optional-key s/Str)
+   :Kumppani s/Str
+   :Seuko1 (s/optional-key s/Str)
+   :Seuko2 (s/optional-key s/Str)
+   (s/optional-key :Varalla1) s/Str
+   (s/optional-key :Varalla2) s/Str})
+
+(def Invoice
+  "Generated invoice"
+  {:VA-invoice
+   {:Header InvoiceHeader
+    :Postings
+    {:Posting InvoicePostings}}})
+
+(s/defschema Payment
+  "Payment"
+  {:id s/Int
+   :version s/Int
+   (s/optional-key :version-closed) (s/maybe s/Inst)
+   (s/optional-key :created-at) s/Inst
+   :application-id  s/Int
+   :application-version s/Int
+   :state s/Int
+   (s/optional-key :installment-number) s/Int
+   (s/optional-key :organisation) s/Str
+   (s/optional-key :document-type) s/Str
+   (s/optional-key :invoice-date) s/Inst
+   (s/optional-key :due-date) s/Inst
+   (s/optional-key :receipt-date) s/Inst
+   (s/optional-key :transaction-account) s/Str
+   (s/optional-key :currency) s/Str
+   (s/optional-key :partner) s/Str
+   (s/optional-key :inspector-email) s/Str
+   (s/optional-key :acceptor-email) s/Str})
+
+(s/defschema PaymentEmails
+  "Payment emails"
+  {:inspector-email s/Str
+   :acceptor-email s/Str})
+
+(s/defschema GrantStatus
+  "Grant status"
+  (s/enum "new" "draft" "published" "deleted", "resolved"))
+
+(s/defschema GrantType
+  "Grant type"
+  (s/enum "yleisavustus" "erityisavustus"))
+
+(s/defschema Grant
+  "Grant (avustushaku) schema"
+  {:id s/Int
+   :created-at s/Inst
+   :form s/Int
+   (s/optional-key :content) s/Any
+   :status GrantStatus
+   :register-number (s/maybe s/Str)
+   (s/optional-key :decision) s/Any
+   :valiselvitysdate (s/maybe s/Inst)
+   :loppuselvitysdate (s/maybe s/Inst)
+   :form-loppuselvitys (s/maybe s/Int)
+   :form-valiselvitys (s/maybe s/Int)
+   :is-academysize s/Bool
+   :haku-type GrantType})
+
+(s/defschema Grants
+  "List of grants"
+  [Grant])
+
+(s/defschema Application
+  "Grant application"
+  {:id s/Int
+   :created-at s/Inst
+   :version s/Int
+   :budget-total s/Int
+   :budget-oph-share s/Int
+   :organization-name s/Str
+   :project-name s/Str
+   :register-number (s/maybe s/Str)
+   :language s/Str
+   :budget-granted s/Int
+   :costs-granted s/Int
+   (s/optional-key :evaluation) s/Any
+   (s/optional-key :answers) [Answer]})

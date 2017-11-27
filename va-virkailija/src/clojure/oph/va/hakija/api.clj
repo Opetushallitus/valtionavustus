@@ -11,7 +11,8 @@
             [clojure.tools.logging :as log]
             [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.email :as email]
-            [oph.common.datetime :as datetime])
+            [oph.common.datetime :as datetime]
+            [clojure.set :refer [rename-keys]])
   (:import (oph.va.jdbc.enums HakuStatus HakuRole HakuType)))
 
 (defn convert-attachment [attachment]
@@ -76,6 +77,62 @@
 (defn get-avustushaku [id]
   (first (exec :form-db hakija-queries/get-avustushaku {:id id})))
 
+(defn- key-contains? [k v]
+  (.contains (name k) v))
+
+(defn- replace-in-key [k s d]
+  (keyword
+    (.replace (name k) s d)))
+
+(defn- map-filter-keys [c f m]
+  (reduce
+    #(merge %1 {%2 (c %2)}) {} (filter f (keys m))))
+
+(defn- contains-underscore? [k]
+  (key-contains? k "_"))
+
+(defn- contains-dash? [k]
+  (key-contains? k "-"))
+
+(defn- convert-underscore-keyword [k]
+  (replace-in-key k "_" "-"))
+
+(defn- convert-dash-keyword [k]
+  (replace-in-key k "-" "_"))
+
+(defn- map-underscore-keys [m]
+  (map-filter-keys convert-underscore-keyword contains-underscore? m))
+
+(defn- map-dash-keys [m]
+  (map-filter-keys convert-dash-keyword contains-dash? m))
+
+(defn convert-to-dash-keys [m]
+  (rename-keys m (map-underscore-keys m)))
+
+(defn convert-to-underscore-keys [m]
+  (rename-keys m (map-dash-keys m)))
+
+(defn get-avustushaku-payments [avustushaku-id]
+  (map
+    convert-to-dash-keys
+    (exec
+      :form-db
+      hakija-queries/get-avustushaku-payments
+      {:grant_id avustushaku-id})))
+
+
+(defn create-avustushaku-payments! [payments]
+  (doall
+    (mapv
+      #(convert-to-dash-keys
+         (first
+           (exec
+             :form-db
+             hakija-queries/create-avustushaku-payment
+             (convert-to-underscore-keys %))))
+      payments)))
+
+
 (defn- map-status-list [statuses]
   (map (fn [status] (new HakuStatus status)) statuses))
 
@@ -114,8 +171,7 @@
          first)))
 
 (defn delete-avustushaku-role [avustushaku-id role-id]
- (exec :form-db hakija-queries/delete-avustushaku-role! {:avustushaku avustushaku-id
-                                                           :id role-id}))
+ (exec :form-db hakija-queries/delete-avustushaku-role! {:avustushaku avustushaku-id :id role-id}))
 
 (defn update-avustushaku-role [avustushaku-id role]
   (let [role-enum (new HakuRole (:role role))
