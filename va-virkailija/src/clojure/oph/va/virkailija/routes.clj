@@ -636,7 +636,15 @@
      (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
          (assoc :session nil)))
 
-   (compojure/GET "/logged-out" [] (return-html "login.html"))))
+   (compojure/GET "/logged-out" [] (return-html "login.html")))
+
+  (compojure-api/GET
+    "/sessions/" [:as request]
+    :return (s/maybe s/Str)
+    :summary "Enpoint for checking if session is valid"
+    (if-let [identity (authentication/get-request-identity request)]
+      (ok "ok")
+      (unauthorized))))
 
 (def api-config
   {:formats [:json-kw]
