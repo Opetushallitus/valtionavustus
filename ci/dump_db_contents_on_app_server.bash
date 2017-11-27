@@ -25,7 +25,7 @@ make_dump() {
 find "$DUMPS_DIR" \
      -mindepth 1 \
      -maxdepth 1 \
-     -mtime +30 \
+     -mtime +24 \
      -exec echo 'Removing old dump: {}' \; \
      -exec rm -f -- '{}' \;
 
