@@ -19,7 +19,7 @@ table.haku-list {
   }
 }
 
-table.translation, #haku-roles table {
+table.translation {
   margin-top: 10px;
   width: 100%;
   text-align: left;
@@ -120,23 +120,38 @@ table.translation, #haku-roles table {
     text-align: right;
   }
 
-  #haku-roles {
+  .haku-roles {
     margin-top: 30px;
-    input, select {
-      max-width: @content-width / 4;
-      width: @content-width / 4;
+
+    &-role-column,
+    &-name-column,
+    &-email-column {
+      text-align: left;
+      padding: 5px 8px;
     }
 
-    table button.remove {
-      opacity: 1.0;
-      cursor: pointer;
+    &-role-column {
+      padding-left: 0;
+    }
+
+    &-name-column, &-email-column {
+      input {
+        width: 280px;
+      }
+    }
+
+    &-email-column {
+      padding-right: 0;
+      position: relative;
+    }
+
+    &-remove {
+      position: absolute;
+      right: -34px;
+      top: 4px;
+
       &:disabled {
-        cursor: default;
-        height: 23px;
-        left: -2px;
-        opacity: 0.4;
-        position: relative;
-        top: -4px;
+        background-position: -1px -3px;
       }
     }
   }
@@ -200,58 +215,42 @@ table.translation, #haku-roles table {
     .hidden {
       display: none;
     }
-    .person-adder-input {
-      * {
-        margin-right: 30px;
-      }
+    .va-user-search-block {
+      display: inline-block;
+      position: relative;
       button.remove {
-        position: relative;
-        opacity: 0.4;
-        cursor: default;
-        left: -54px;
+        position: absolute;
+        right: -2px;
         top: -5px;
+        height: 24px;
         &.enabled {
-          opacity: 0.8;
-          cursor: pointer;
-          left: -52px;
-          top: -2px;
+          background-position: 1px 3px;
         }
       }
     }
     #va-user-search-results {
-      background: transparent;
       &.loading {
         background: white url('../img/ajax-loader.gif') no-repeat 4px 4px;
       }
       min-height: 20px;
-      position: relative;
-      left: 162px;
-      top: 0;
+      width: 800px;
+      position: absolute;
+      left: 0;
+      top: 18px;
       ul {
-        position: absolute;
-        top: -16px;
         background: white;
         box-shadow: 0 1px 2px 0 rgba(0,0,0,0.40);
         border-radius: 0 0 4px 4px;
         list-style: none;
         padding-left: 0;
+        display: inline-block;
         li {
-          width: @content-width / 1.4;
           margin-right: 0;
+          padding: 0 20px;
           line-height: 27px;
           .access-level {
             display: inline-block;
             width: 132px;
-          }
-          .va-admin {
-          }
-          .va-user {
-          }
-          .no-va-access {
-          }
-          .person-description {
-            margin-left: 10px;
-            margin-right: 0;
           }
           a {
             &.disabled {
