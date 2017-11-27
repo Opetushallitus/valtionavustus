@@ -130,7 +130,7 @@
   (s/enum "presenting_officer" "evaluator"))
 
 (s/defschema NewRole {:name s/Str
-                      :email s/Str
+                      :email (s/maybe s/Str)
                       :role (s/maybe RoleType)
                       :oid s/Str})
 
@@ -138,7 +138,7 @@
 
 (s/defschema Role {:id s/Int
                    :name s/Str
-                   :email s/Str
+                   :email (s/maybe s/Str)
                    :role RoleType
                    :oid (s/maybe s/Str)})
 
@@ -176,22 +176,18 @@
   "Saved search listing certain hakemukset by ids or possibly dynamic search in the future"
   {:hakemus-ids (s/maybe [Long])})
 
-(s/defschema LdapSearchResult
-  "Single person entity from LDAP search"
-  {:username (s/maybe s/Str)
-   :person-oid (s/maybe s/Str)
+(s/defschema VaUserSearchResult
+  "Single person entity from VA user search"
+  {:person-oid s/Str
    :first-name (s/maybe s/Str)
    :surname (s/maybe s/Str)
    :email (s/maybe s/Str)
-   :lang (s/maybe s/Str)
-   :va-user s/Bool
-   :va-admin s/Bool})
+   :lang s/Str
+   :privileges [s/Str]})
 
-(s/defschema LdapSearchResults
-  "Complete results of an LDAP search"
-  {:results [LdapSearchResult]
-   :error s/Bool
-   :truncated s/Bool})
+(s/defschema VaUserSearchResults
+  "Complete results of VA user search"
+  {:results [VaUserSearchResult]})
 
 (s/defschema AvustushakuOrganizationNameQuery
   "Find avustushaut by organization name (minimum string length: 3)"

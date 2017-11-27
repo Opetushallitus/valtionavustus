@@ -3,44 +3,43 @@ import ClassNames from 'classnames'
 import _ from 'lodash'
 
 import CSSTransitionGroup from 'soresu-form/web/form/component/wrapper/CSSTransitionGroup.jsx'
-import LdapSearchParameters from './LdapSearchParameters'
-
+import VaUserSearchParameters from './VaUserSearchParameters'
 
 export default class HakuRoles extends Component {
   render() {
-    const {controller, avustushaku, userHasEditPrivilege, ldapSearch, userInfo} = this.props
+    const {controller, avustushaku, userHasEditPrivilege, vaUserSearch, userInfo} = this.props
     const roles = _.sortBy(avustushaku.roles, 'name')
     const roleRows = roles ? roles.map(role => <RoleRow key={role.id} role={role} avustushaku={avustushaku} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller}/>) : []
 
     const startSearch = e => {
       const input = _.trim(e.target.value)
-      controller.startLdapSearch(input)
+      controller.startVaUserSearch(input)
     }
 
-    const searchErrorClass = ldapSearch.result.error ? "error" : "hidden"
-    const hasInput = ldapSearch.input.length > 0
+    const searchErrorClass = vaUserSearch.result.error ? "error" : "hidden"
+    const hasInput = vaUserSearch.input.length > 0
     const clearInputButtonClassname = ClassNames("remove", { enabled: hasInput })
 
     return (
       <div id="haku-roles">
         <table>
-          <thead><tr><th>Rooli</th><th>Sidottu LDAPiin?</th><th>Nimi</th><th>Sähköposti</th></tr></thead>
+          <thead><tr><th>Rooli</th><th></th><th>Nimi</th><th>Sähköposti</th></tr></thead>
           <CSSTransitionGroup transitionName="haku-roles-transition" component="tbody">
           {roleRows}
           </CSSTransitionGroup>
         </table>
 
-        <div id="add-new-person-from-ldap">
-          <div className="ldap-error-display"><span className={searchErrorClass}>Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.</span></div>
+        <div id="va-user-search-add-role">
+          <div className="va-user-search-error-display"><span className={searchErrorClass}>Virhe henkilön haussa. Yritä uudestaan eri hakuehdoilla ja lataa sivu uudestaan, jollei se auta.</span></div>
           <div className="person-adder-input">
             Lisää uusi henkilö
-            <input id="ldap-search-input" type="text" placeholder={"Hae"} onChange={startSearch} disabled={!roles || !userHasEditPrivilege}/>
+            <input id="va-user-search-input" type="text" placeholder={"Hae"} onChange={startSearch} disabled={!roles || !userHasEditPrivilege}/>
             <button type="button" className={clearInputButtonClassname} title="Tyhjennä" disabled={!hasInput} onClick={(e) => {
-                const ldapSearchInput = document.getElementById('ldap-search-input')
-                ldapSearchInput.value = ''
+                const vaUserSearchInput = document.getElementById('va-user-search-input')
+                vaUserSearchInput.value = ''
                 startSearch(e)
               }} />
-            <PersonSelectList ldapSearch={ldapSearch} avustushaku={avustushaku} controller={controller} />
+            <PersonSelectList vaUserSearch={vaUserSearch} avustushaku={avustushaku} controller={controller} />
           </div>
         </div>
       </div>
@@ -51,17 +50,16 @@ export default class HakuRoles extends Component {
 
 class PersonSelectList extends React.Component {
   render() {
-    const {ldapSearch, avustushaku, controller} = this.props
-    const personRows = _.map(ldapSearch.result.results, r => {
+    const {vaUserSearch, avustushaku, controller} = this.props
+    const personRows = _.map(vaUserSearch.result.results, r => {
       const firstName = r["first-name"]
       const lastName = r["surname"]
       const email = r["email"]
       const oid = r["person-oid"]
-      const name = firstName ? firstName + " "  + lastName : lastName
-      const newRole = { name: firstAndLast(name), email: email, role: null, oid: oid }
-      const accessLevel = userDetailsToClassAndFi(r)
+      const name = firstName ? firstName + " " + lastName : lastName
+      const newRole = { name: PersonSelectList.prettifyFirstAndLastName(name), email: email, role: null, oid: oid }
+      const accessLevel = PersonSelectList.privilegesToClassAndDescription(r.privileges)
       const displayText = name + " (" + email + ", "
-
       const personIsInRolesAlready = _.some(avustushaku.roles, r => { return r.oid === oid })
       const titleText = `${name}  <${email}>(${accessLevel.description}, oid ${oid})${personIsInRolesAlready ? ' (Käyttäjä on jo lisätty avustushakuun)' : ''}`
       const onClick = e => {
@@ -78,30 +76,32 @@ class PersonSelectList extends React.Component {
                </a>
              </li>
     })
-    const resultRows = personRows.length === 0 ? [ <li key="no-results-row" className="no-results-row">Ei hakutuloksia.</li>] : personRows
-    const searchResultClassNames = ClassNames(undefined, { loading: ldapSearch.loading,
-                                                           hidden: ldapSearch.input.length < LdapSearchParameters.minimumSearchInputLength() })
-    return <div id="ldap-search-results" className={searchResultClassNames}>
-               <ul className={searchResultClassNames}>
-                 {resultRows}
-               </ul>
-           </div>
+    const resultRows = personRows.length === 0 ? [<li key="no-results-row" className="no-results-row">Ei hakutuloksia.</li>] : personRows
+    const searchResultClassNames = ClassNames(undefined, { loading: vaUserSearch.loading,
+                                                           hidden: vaUserSearch.input.length < VaUserSearchParameters.minimumSearchInputLength() })
+    return (
+      <div id="va-user-search-results" className={searchResultClassNames}>
+        <ul className={searchResultClassNames}>
+          {resultRows}
+        </ul>
+      </div>
+    )
+  }
 
-
-    function userDetailsToClassAndFi(userDetails) {
-      if (userDetails["va-admin"]) {
-        return { className: "va-admin", description: "VA-pääkäyttäjä" }
-      }
-      if (userDetails["va-user"]) {
-        return { className: "va-user", description: "VA-käyttäjä" }
-      }
-      return { className: "no-va-access", description: "Ei VA-oikeuksia" }
+  static privilegesToClassAndDescription(privileges) {
+    if (_.includes(privileges, "va-admin")) {
+      return { className: "va-admin", description: "VA-pääkäyttäjä" }
+    } else if (_.includes(privileges, "va-user")) {
+      return { className: "va-user", description: "VA-käyttäjä" }
     }
+    return { className: "no-va-access", description: "Ei VA-oikeuksia" }
+  }
 
-    function firstAndLast(fullName) {
-      const splitted = fullName.split(' ')
-      return splitted[0] + ' ' + splitted.pop()
-    }
+  static prettifyFirstAndLastName(fullName) {
+    const splitted = fullName.split(' ')
+    return splitted.length > 1
+      ? splitted[0] + ' ' + _.last(splitted)
+      : splitted[0]
   }
 }
 

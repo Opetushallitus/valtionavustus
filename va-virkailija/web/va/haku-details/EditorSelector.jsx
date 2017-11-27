@@ -9,12 +9,12 @@ import SelvitysFormEditor from './SelvitysFormEditor.jsx'
 
 export default class EditorSelector extends React.Component {
   render() {
-    const {subTab, controller, avustushaku, formDraft, ldapSearch, koodistos, userInfo, environment, translations, valiselvitysFormDraft, loppuselvitysFormDraft} = this.props
+    const {subTab, controller, avustushaku, formDraft, vaUserSearch, koodistos, userInfo, environment, translations, valiselvitysFormDraft, loppuselvitysFormDraft} = this.props
     var subTabContent
     switch (subTab) {
       case "haku-editor":
         subTabContent = <HakuEdit avustushaku={avustushaku}
-                                  ldapSearch={ldapSearch}
+                                  vaUserSearch={vaUserSearch}
                                   userInfo={userInfo}
                                   controller={controller} />
         break
