@@ -280,11 +280,11 @@
     :path-params [avustushaku-id :- Long]
     :return virkailija-schema/HakuPrivileges
     :summary "Show current user privileges for given avustushaku"
-    (let [identity (authentication/get-request-identity request)
-          haku-roles (hakija-api/get-avustushaku-roles avustushaku-id)
-          privileges (authorization/resolve-privileges identity avustushaku-id haku-roles)]
-      (if privileges
-        (ok privileges)
+    (let [user-identity   (authentication/get-request-identity request)
+          user-haku-role  (hakija-api/get-avustushaku-role-by-avustushaku-id-and-person-oid avustushaku-id (:person-oid user-identity))
+          user-privileges (authorization/resolve-user-privileges user-identity user-haku-role)]
+      (if user-privileges
+        (ok user-privileges)
         (not-found)))))
 
 (defn- get-avustushaku-form []

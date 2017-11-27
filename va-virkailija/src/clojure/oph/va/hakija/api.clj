@@ -157,10 +157,6 @@
    :role (:role role)
    :oid (:oid role)})
 
-(defn- roles->json [roles]
-  (-> role->json
-      (map roles)))
-
 (defn create-avustushaku-role [role]
   (let [role-enum (new HakuRole (:role role))
         role-to-save (assoc role :role role-enum)
@@ -183,7 +179,16 @@
          first)))
 
 (defn get-avustushaku-roles [avustushaku-id]
-  (roles->json (exec :form-db hakija-queries/get-avustushaku-roles {:avustushaku_id avustushaku-id})))
+  (->> {:avustushaku_id avustushaku-id}
+       (exec :form-db hakija-queries/get-avustushaku-roles)
+       (map role->json)))
+
+(defn get-avustushaku-role-by-avustushaku-id-and-person-oid [avustushaku-id person-oid]
+  (->> {:avustushaku_id avustushaku-id
+        :oid            person-oid}
+       (exec :form-db hakija-queries/get-avustushaku-role-by-avustushaku-id-and-person-oid)
+       (map role->json)
+       first))
 
 (defn- form->json [form]
   (let [form-for-rendering (formhandler/add-koodisto-values :form-db form)]
