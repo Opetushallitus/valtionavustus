@@ -8,9 +8,24 @@ import VaUserSearchParameters from './VaUserSearchParameters'
 
 export default class HakuRoles extends Component {
   render() {
-    const {controller, avustushaku, userHasEditPrivilege, vaUserSearch, userInfo} = this.props
+    const {
+      controller,
+      avustushaku,
+      userHasEditPrivilege,
+      userHasEditMyHakuRolePrivilege,
+      vaUserSearch,
+      userInfo
+    } = this.props
     const roles = _.sortBy(avustushaku.roles, 'name')
-    const roleRows = roles ? roles.map(role => <RoleRow key={role.id} role={role} avustushaku={avustushaku} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller}/>) : []
+    const roleRows = roles ? roles.map(role => (
+      <RoleRow key={role.id}
+               role={role}
+               avustushaku={avustushaku}
+               userInfo={userInfo}
+               userHasEditPrivilege={userHasEditPrivilege}
+               userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege}
+               controller={controller}/>
+    )) : []
 
     const startSearch = e => {
       const input = _.trim(e.target.value)
@@ -127,10 +142,17 @@ class RoleRow extends React.Component {
   }
 
   render() {
-    const {role, controller, avustushaku, userInfo, privileges, userHasEditPrivilege} = this.props
+    const {
+      role,
+      controller,
+      avustushaku,
+      userInfo,
+      userHasEditPrivilege,
+      userHasEditMyHakuRolePrivilege
+    } = this.props
     const thisRowIsMe = role.oid === userInfo["person-oid"]
-    const disableEditing = !userHasEditPrivilege || (thisRowIsMe && privileges && !privileges["edit-my-haku-role"])
-    const removeTitleText = disableEditing && userHasEditPrivilege ? "Et voi poistaa itseltäsi oikeuksia hakuun" : "Poista"
+    const disableEditing = !userHasEditPrivilege || (thisRowIsMe && !userHasEditMyHakuRolePrivilege)
+    const removeTitleText = (disableEditing && userHasEditPrivilege) ? "Et voi poistaa itseltäsi oikeuksia hakuun" : "Poista"
     const onDelete = controller.deleteRole(avustushaku, role)
     return (
       <tr>
