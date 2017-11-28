@@ -51,9 +51,6 @@
                          [org.postgresql/postgresql "42.1.4"]
                          [yesql "0.5.3"]
 
-                         ;; ldap
-                         [org.clojars.pntblnk/clj-ldap "0.0.12"]
-
                          ;; testing
                          [speclj "3.3.1"]
                          [speclj-junit "0.0.11"]
