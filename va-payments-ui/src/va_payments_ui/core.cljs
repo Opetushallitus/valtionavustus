@@ -136,10 +136,11 @@
    [:a {:href "/admin/"} "Hakujen hallinta"]
    [:a {:href "/va-payments-ui/payments"} "Maksatusten hallinta"]])
 
-(defn render-applications [applications]
-  [:div
-   [:h3 "Myönteiset päätökset"]
-   (applications/applications-table applications)])
+(defn render-applications [applications grant]
+ [:div
+  [:h3 "Myönteiset päätökset"]
+  [:p (applications/project-info grant)]
+  (applications/applications-table applications)])
 
 (defn role-select [value on-change]
   [ui/select-field {:value value :floating-label-text "Rooli"
@@ -221,7 +222,7 @@
                         #(show-message! "Virhe tietojen latauksessa")))))})
           (when-let [grant (get @grants @selected-grant)]
             [:div
-             (render-applications current-applications)
+             (render-applications current-applications grant)
                [:div
                 (when (= @user-role "presenting_officer")
                   (when-let [grant (nth @grants @selected-grant)]
