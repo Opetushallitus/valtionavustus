@@ -42,5 +42,5 @@
          :retry-initial-wait 2000
          :retry-multiplier 4
          :retry-max-time 60000}
- :va-users {:use-cache true
+ :va-users {:use-cache? true
             :cache-refresh-interval-in-s 300}}

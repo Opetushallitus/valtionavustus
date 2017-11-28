@@ -26,14 +26,14 @@
                         "oph.va.virkailija.db.migrations")
   (email/start-background-job-send-mails)
   (auth/start-background-job-timeout-sessions)
-  (if (get-in config [:va-users :use-cache])
+  (if (get-in config [:va-users :use-cache?])
     (va-users/start-background-job-update-va-users-cache)))
 
 (defn- shutdown []
   (log/info "Shutting down...")
   (email/stop-background-job-send-mails)
   (auth/stop-background-job-timeout-sessions)
-  (if (get-in config [:va-users :use-cache])
+  (if (get-in config [:va-users :use-cache?])
     (va-users/stop-background-job-update-va-users-cache))
   (db/close-datasource! :virkailija-db)
   (job-supervisor/await-jobs!))
