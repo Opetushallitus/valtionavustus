@@ -12,7 +12,7 @@
   {:person-oid s/Str
    :first-name s/Str
    :last-name s/Str
-   :email s/Str
+   :email (s/maybe s/Str)
    :score-average s/Num})
 
 (s/defschema Scoring
@@ -77,7 +77,7 @@
    :created_at s/Inst
    :first_name s/Str
    :last_name s/Str
-   :email s/Str
+   :email (s/maybe s/Str)
    :comment s/Str})
 
 (s/defschema Comments
@@ -95,7 +95,7 @@
    :person-oid s/Str
    :first-name s/Str
    :last-name s/Str
-   :email s/Str
+   :email (s/maybe s/Str)
    :selection-criteria-index s/Int
    :score s/Int
    :created-at s/Inst
