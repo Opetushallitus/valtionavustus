@@ -22,9 +22,8 @@ _avustushakuun_. Kuka tahansa voi lähettää hakemuksen (ei
 autentikointia). Tähän käytetään va-hakija-sovellusta.
 
 Virkailijan käyttöliittymässä (va-virkailija-sovellus) arvioidaan
-hakemuksia. Sovellukseen kirjaudutaan OPH:n CAS-palvelun kautta. CAS
-hakee käyttäjäoikeudet OPH:n LDAP:sta, johon on tallennettu käyttäjien
-tyypit.
+hakemuksia. Sovellukseen kirjaudutaan OPH:n CAS-palvelun (autentikointi)
+ja Käyttöoikeuspalvelun (autorisointi) kautta.
 
 Käyttäjätyypit:
 
@@ -434,6 +433,17 @@ Esimerkiksi Emacsin
    evaluoi muutos (esim. Emacs-komento `cider-eval-defun-at-point`)
 
 6. Muutoksen vaikutuksen pitäisi näkyä sovelluksessa.
+
+## Integraatiot
+
+Va-hakija ja va-virkailija käyttävät seuraavia palveluja integraatioina:
+
+Kuvaus | Dokumentaatio | Käytössä | Muuta
+---|---|---|---
+CAS | [palvelukortti](https://confluence.csc.fi/display/oppija/Rajapintojen+autentikaatio) [protokolla](https://apereo.github.io/cas/4.2.x/protocol/CAS-Protocol.html) | va-virkailija | Käyttäjän autentikointi va-virkailijaan. Va-virkailija-sovelluksen autentikointi muihin OPH:n palveluihin (service user).
+Käyttöoikeuspalvelu | [palvelukortti](https://confluence.csc.fi/pages/viewpage.action?pageId=68725146) [api](https://testi.virkailija.opintopolku.fi/kayttooikeus-service/swagger-ui.html) | va-virkailija | VA-käyttäjän haku käyttäjätunnuksen perusteella, VA-palvelun kaikkien käyttäjien haku.
+Oppijanumerorekisteri | [palvelukortti](https://confluence.csc.fi/display/OPHPALV/Oppijanumerorekisteri) [api](https://testi.virkailija.opintopolku.fi/oppijanumerorekisteri-service/swagger-ui.html) | va-virkailija | Käyttäjän haku person-oid:lla.
+Koodistopalvelu | [palvelukortti](https://confluence.csc.fi/display/OPHPALV/Koodistopalvelu) [api][koodisto-api] [hallinta-ui](https://testi.virkailija.opintopolku.fi/koodisto-ui/html/index.html#/etusivu) | va-hakija, va-virkailija | Koodien ja metatietojen haku ja luonti.
 
 ## Tuetut selaimet
 
