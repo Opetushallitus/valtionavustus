@@ -140,9 +140,9 @@ class RoleRow extends React.Component {
             <option value="evaluator">Arvioija</option>
           </select>
         </td>
-        <td className="haku-roles-name-column"><input type="text" value={role.name} name="name" onChange={this.handleChange}/></td>
+        <td className="haku-roles-name-column"><input type="text" value={role.name} name="name" onChange={this.handleChange} disabled={disableEditing}/></td>
         <td className="haku-roles-email-column">
-          <input type="text" value={role.email || ""} name="email" onChange={this.handleChange}/>
+          <input type="text" value={role.email || ""} name="email" onChange={this.handleChange} disabled={disableEditing}/>
           <button type="button" onClick={onDelete} className="remove haku-roles-remove" alt="Poista" title={removeTitleText} tabIndex="-1" disabled={disableEditing} />
         </td>
       </tr>
