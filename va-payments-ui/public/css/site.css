@@ -1,0 +1,43 @@
+body {
+  font-family: 'Helvetica Neue', Verdana, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  color: #000;
+}
+h1 {
+  font-size: 2.5em
+}
+
+h2 {
+  font-size: 2em
+}
+
+h3 {
+  font-size: 1.5em
+}
+
+a {
+  text-decoration: none;
+  color: #09f;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+#app {
+  padding-bottom: 10px;
+}
+
+.top-links {
+  font-size: 18px;
+  text-transform: uppercase;
+}
+
+.top-links a {
+  padding: 20px;
+}
+
+
