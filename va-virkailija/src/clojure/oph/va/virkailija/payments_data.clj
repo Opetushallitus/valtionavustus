@@ -32,17 +32,21 @@
       m
       (update-all m timestamp-keys c/to-sql-time))))
 
+(defn next-installment-number []
+  (convert-to-dash-keys
+  (first (exec :form-db queries/get-next-payment-installment-number {}))))
+
 (defn update-payment [payment-data]
   (let [old-payment (get-payment (:id payment-data) (:version payment-data))
         payment (dissoc (merge old-payment payment-data)
                         :version :version-closed)
         result
         (->> payment
-            convert-timestamps
-            convert-to-underscore-keys
-            (exec :form-db queries/update-payment)
-            first
-            convert-to-dash-keys)]
+             convert-timestamps
+             convert-to-underscore-keys
+             (exec :form-db queries/update-payment)
+             first
+             convert-to-dash-keys)]
     (when (nil? result) (throw (Exception. "Failed to update payment")))
     (close-version (:id payment-data) (:version payment-data))
     result))
