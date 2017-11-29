@@ -26,7 +26,15 @@
     :summary "Update payment OPTIONS"
     (ok "")))
 
+(defn- get-next-installment-number []
+  (compojure-api/GET "/next-installment-number/" []
+    :path-params []
+    :return virkailija-schema/PaymentInstallmentNumber
+    :summary "Return next installment number"
+    (ok (payments-data/next-installment-number))))
+
 (compojure-api/defroutes routes
   "payment routes"
   (update-payment)
-  (update-payment-options))
+  (update-payment-options)
+  (get-next-installment-number))
