@@ -21,7 +21,6 @@
           (mod (t/year (c/from-sql-time (:created-at payment))) 1000)
           (:installment-number payment)))
 
-
 (defn- payment-to-invoice [payment application]
   [:VA-invoice
    [:Header
