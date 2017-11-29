@@ -1,16 +1,22 @@
 (ns oph.va.virkailija.invoice
   (:require [clojure.data.xml :refer [emit emit-str parse
-                                      sexp-as-element]]))
+                                      sexp-as-element]]
+            [clj-time.core :as t]
+            [clj-time.coerce :as c]))
 
 (defn- get-answer-value [answers key]
   (:value
-    (first
-      (filter #(= (:key %) key) answers))))
+   (first
+    (filter #(= (:key %) key) answers))))
 
 (defn- payment-to-invoice [payment application]
   [:VA-invoice
    [:Header
-    [:Maksuera (payment :installment)]
+    [:Maksuera
+     (format "%s%d%d"
+             (:organisation payment)
+             (:installment-number payment)
+             (t/year (c/from-sql-time (:created-at payment))))]
     [:Laskunpaiva (:invoice-date payment)]
     [:Erapvm (:due-date payment)]
     [:Bruttosumma (:amount payment)]
@@ -20,23 +26,23 @@
     [:Asiatarkastaja (:inspector-email payment)]
     [:Hyvaksyja (:acceptor-email payment)]
     [:Tositelaji (:document-type payment)]
-     [:Toimittaja
-      [:Y-tunnus (get-answer-value (:answers application) "business-id")]
-      [:Nimi (:organization-name application)]
-      [:Postiosoite
+    [:Toimittaja
+     [:Y-tunnus (get-answer-value (:answers application) "business-id")]
+     [:Nimi (:organization-name application)]
+     [:Postiosoite
       (or (get-answer-value (:answers application) "address") "")]
-      [:Paikkakunta
+     [:Paikkakunta
       (or (get-answer-value (:answers application) "city") "")]
-      [:Maa
+     [:Maa
       (or (get-answer-value (:answers application) "country") "")]
-      [:Iban-tili
+     [:Iban-tili
       (get-answer-value (:answers application) "bank-iban")]
-      [:Pankkiavain
+     [:Pankkiavain
       (get-answer-value (:answers application) "bank-bic")]
-      [:Pankki-maa
+     [:Pankki-maa
       (or (get-answer-value (:answers application) "bank-country") "")]
-      [:Kieli (:language application)]
-      [:Valuutta (:currency payment)]]
+     [:Kieli (:language application)]
+     [:Valuutta (:currency payment)]]
     [:Postings
      [:Posting
       [:Summa (:amount payment)]
@@ -67,4 +73,3 @@
   clojure.data.xml.elements."
   (with-open [input (java.io.FileInputStream. file)]
     (parse input)))
-
