@@ -27,9 +27,9 @@
     [:Maksuera (get-installment payment)]
     [:Laskunpaiva (:invoice-date payment)]
     [:Erapvm (:due-date payment)]
-    [:Bruttosumma (:amount payment)]
+    [:Bruttosumma (:budget-granted application)]
     [:Maksuehto "Z001"]
-    [:Pitkaviite (:long-ref payment)]
+    [:Pitkaviite (:register-number application)]
     [:Tositepvm (:receipt-date payment)]
     [:Asiatarkastaja (:inspector-email payment)]
     [:Hyvaksyja (:acceptor-email payment)]
@@ -47,12 +47,12 @@
      [:Valuutta (:currency payment)]]
     [:Postings
      [:Posting
-      [:Summa (:amount payment)]
-      [:LKP-tili (:lkp-account payment)]
-      [:TaKp-tili (:takp-account payment)]
-      [:Toimintayksikko (:operational-unit payment)]
-      [:Projekti (:project payment)]
-      [:Toiminto (:operation payment)]
+      [:Summa (:budget-granted application)]
+      [:LKP-tili (:lkp-account application)]
+      [:TaKp-tili (:takp-account application)]
+      [:Toimintayksikko (:operational-unit application)]
+      [:Projekti (:project application)]
+      [:Toiminto (:operation application)]
       [:Kumppani (:partner payment)]]]]])
 
 (defn payment-to-xml [payment application]
