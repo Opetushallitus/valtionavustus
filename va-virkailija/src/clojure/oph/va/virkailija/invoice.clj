@@ -13,7 +13,7 @@
    (or (get-answer-value answers key) not-found)))
 
 (defn get-installment [payment]
-  "Generating installment from organisation, year and installment-number.
+  "Generating installment of organisation, year and installment-number.
   Installment is something like '660017006' where 6600 is organisation, 17 is
   year and 006 is order number or identification number, if you will."
   (format "%s%02d%03d"
