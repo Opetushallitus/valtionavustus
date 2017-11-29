@@ -6,20 +6,23 @@
 
 (defn- get-answer-value
   ([answers key]
-  (:value
-   (first
-    (filter #(= (:key %) key) answers))))
+   (:value
+    (first
+     (filter #(= (:key %) key) answers))))
   ([answers key not-found]
    (or (get-answer-value answers key) not-found)))
+
+(defn get-installment [payment]
+  (format "%s%d%d"
+          (:organisation payment)
+          (:installment-number payment)
+          (t/year (c/from-sql-time (:created-at payment)))))
+
 
 (defn- payment-to-invoice [payment application]
   [:VA-invoice
    [:Header
-    [:Maksuera
-     (format "%s%d%d"
-             (:organisation payment)
-             (:installment-number payment)
-             (t/year (c/from-sql-time (:created-at payment))))]
+    [:Maksuera (get-installment payment)]
     [:Laskunpaiva (:invoice-date payment)]
     [:Erapvm (:due-date payment)]
     [:Bruttosumma (:amount payment)]
@@ -32,18 +35,12 @@
     [:Toimittaja
      [:Y-tunnus (get-answer-value (:answers application) "business-id")]
      [:Nimi (:organization-name application)]
-     [:Postiosoite
-      (get-answer-value (:answers application) "address" "")]
-     [:Paikkakunta
-      (get-answer-value (:answers application) "city" "")]
-     [:Maa
-      (get-answer-value (:answers application) "country" "")]
-     [:Iban-tili
-      (get-answer-value (:answers application) "bank-iban")]
-     [:Pankkiavain
-      (get-answer-value (:answers application) "bank-bic")]
-     [:Pankki-maa
-      (get-answer-value (:answers application) "bank-country" "")]
+     [:Postiosoite (get-answer-value (:answers application) "address" "")]
+     [:Paikkakunta (get-answer-value (:answers application) "city" "")]
+     [:Maa (get-answer-value (:answers application) "country" "")]
+     [:Iban-tili (get-answer-value (:answers application) "bank-iban")]
+     [:Pankkiavain (get-answer-value (:answers application) "bank-bic")]
+     [:Pankki-maa (get-answer-value (:answers application) "bank-country" "")]
      [:Kieli (:language application)]
      [:Valuutta (:currency payment)]]
     [:Postings
