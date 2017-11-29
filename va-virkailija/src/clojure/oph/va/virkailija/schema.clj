@@ -266,10 +266,11 @@
   "Payment installment number"
   {:installment-number s/Int})
 
-(s/defschema PaymentEmails
+(s/defschema NewPayment
   "Payment emails"
   {:inspector-email s/Str
-   :acceptor-email s/Str})
+   :acceptor-email s/Str
+   :installment-number s/Int})
 
 (s/defschema GrantStatus
   "Grant status"
