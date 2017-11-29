@@ -13,7 +13,7 @@
    (or (get-answer-value answers key) not-found)))
 
 (defn get-installment [payment]
-  (format "%s%d%d"
+  (format "%s%03d%02d"
           (:organisation payment)
           (:installment-number payment)
           (t/year (c/from-sql-time (:created-at payment)))))
