@@ -34,7 +34,7 @@
 
 (defn next-installment-number []
   (convert-to-dash-keys
-  (first (exec :form-db queries/get-next-payment-installment-number {}))))
+   (first (exec :form-db queries/get-next-payment-installment-number {}))))
 
 (defn update-payment [payment-data]
   (let [old-payment (get-payment (:id payment-data) (:version payment-data))
