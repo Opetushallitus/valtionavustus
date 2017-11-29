@@ -2,7 +2,7 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [oph.soresu.common.config :refer [config]]
             [oph.va.virkailija.cas :as cas]
-            [oph.va.virkailija.ldap :as ldap]
+            [oph.va.virkailija.va-users :as va-users]
             [oph.common.background-job-supervisor :as job-supervisor]
             [clojure.core.async :refer [<! >!! alts! go chan timeout]]
             [clojure.tools.logging :as log])
@@ -34,10 +34,9 @@
     (log/info "Starting background job: sessions timeout...")
     (loop []
       (let [[value _] (alts! [session-timeout-chan (timeout 500)])]
-        (if (nil? value)
-          (do
-            (swap! session-store remove-timed-out-sessions)
-            (recur)))))
+        (when (nil? value)
+          (swap! session-store remove-timed-out-sessions)
+          (recur))))
     (log/info "Stopped background job: sessions timeout.")))
 
 (defn start-background-job-timeout-sessions []
@@ -50,7 +49,7 @@
 
 (defn- authenticate-and-authorize-va-user [cas-ticket virkailija-login-url]
   (if-let [username (cas/validate-service-ticket virkailija-login-url cas-ticket)]
-    (ldap/check-app-access username)))
+    (va-users/get-va-user-by-username username)))
 
 (defn authenticate [cas-ticket virkailija-login-url]
   (if-let [identity (authenticate-and-authorize-va-user cas-ticket virkailija-login-url)]

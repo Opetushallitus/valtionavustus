@@ -30,3 +30,10 @@
 (defquery payment-close-version
   "sql/virkailija/payments/payment-close-version.sql")
 (defquery update-payment "sql/virkailija/payments/update-payment.sql")
+
+(defquery lock-va-users-cache-exclusively! "sql/virkailija/va_users_cache/lock-exclusively.sql")
+(defquery update-va-user-cache! "sql/virkailija/va_users_cache/update.sql")
+(defquery create-va-user-cache<! "sql/virkailija/va_users_cache/create.sql")
+(defquery delete-va-user-cache-by-not-in! "sql/virkailija/va_users_cache/delete-by-not-in.sql")
+(defquery delete-va-user-cache! "sql/virkailija/va_users_cache/delete.sql")
+(defquery get-va-user-cache-by-person-oid "sql/virkailija/va_users_cache/get-by-person-oid.sql")

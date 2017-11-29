@@ -80,11 +80,15 @@
     (-> haku-data
         (assoc :hakemukset (map (partial add-scores-to-hakemus scores) hakemukset)))))
 
-(defn- add-privileges [identity haku-data]
-  (-> haku-data
-      (assoc :privileges (authorization/resolve-privileges identity
-                                                           (-> haku-data :avustushaku :id)
-                                                           (:roles haku-data)))))
+(defn- add-privileges [user-identity haku-data]
+  (let [person-oid     (:person-oid user-identity)
+        user-haku-role (->> :roles
+                            haku-data
+                            (filter (fn [role] (= (:oid role) person-oid)))
+                            first)]
+    (assoc haku-data
+           :privileges
+           (authorization/resolve-user-privileges user-identity user-haku-role))))
 
 (defn get-combined-avustushaku-data [avustushaku-id]
   (when-let [avustushaku (hakija-api/get-hakudata avustushaku-id)]

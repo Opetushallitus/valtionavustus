@@ -17,8 +17,8 @@
                             :virkailija-server {:url (:virkailija-url (:server config))}
                             :paatos-path (:paatos-path (:ui config))}
         opintopolku (:opintopolku config)]
-    (if opintopolku
-      (assoc common-environment :opintopolku {:url (:url opintopolku)
+    (if-let [opintopolku-url (:url opintopolku)]
+      (assoc common-environment :opintopolku {:url                opintopolku-url
                                               :permission-request (:permission-request opintopolku)})
       common-environment)))
 

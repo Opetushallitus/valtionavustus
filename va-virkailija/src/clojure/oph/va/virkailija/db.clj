@@ -5,6 +5,9 @@
   (:require [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.db.queries :as queries]
             [oph.va.hakija.api :as hakija-api]
+            [clojure.string :as string]
+            [clojure.java.jdbc :as jdbc]
+            [clojure.tools.logging :as log]
             [oph.va.budget :as va-budget])
   (:import [java.util Date]))
 
@@ -258,3 +261,60 @@
     (->> {:hakemus_ids (vec hakemus-ids)}
       (exec :virkailija-db queries/get-accepted-hakemus-ids)
       (map :hakemus_id))))
+
+(defn- va-user->db [va-user]
+  {:person_oid (:person-oid va-user)
+   :first_name (:first-name va-user)
+   :surname    (:surname va-user)
+   :email      (:email va-user)
+   :content    {:lang       (:lang va-user)
+                :privileges (:privileges va-user)}})
+
+(defn- db->va-user [db]
+  {:person-oid (:person_oid db)
+   :first-name (:first_name db)
+   :surname    (:surname db)
+   :email      (:email db)
+   :lang       (-> db :content :lang)
+   :privileges (-> db :content :privileges)})
+
+(defn update-va-users-cache [va-users]
+  (with-transaction :virkailija-db connection
+    (let [db-options {:connection connection}]
+      (queries/lock-va-users-cache-exclusively! {} db-options)
+      (doseq [user va-users]
+        (let [db-user     (va-user->db user)
+              num-updated (queries/update-va-user-cache! db-user db-options)]
+          (when (< num-updated 1)
+            (queries/create-va-user-cache<! db-user db-options))))
+      (let [person-oids (into [] (map :person-oid va-users))]
+        (if (seq person-oids)
+          (queries/delete-va-user-cache-by-not-in! {:person_oids person-oids} db-options)
+          (queries/delete-va-user-cache! {} db-options))))))
+
+(defn get-va-user-cache-by-person-oid [person-oid]
+  (->> {:person_oid person-oid}
+       (exec :virkailija-db queries/get-va-user-cache-by-person-oid)
+       (map db->va-user)
+       first))
+
+(def ^:private va-users-cache-columns-to-search ["first_name" "surname" "email"])
+
+(defn search-va-users-cache-by-terms [terms]
+  (let [like-exprs-for-each-term     (->> va-users-cache-columns-to-search
+                                          (map #(str % " ilike ?"))
+                                          (string/join " or "))
+        num-terms                    (count terms)
+        like-exprs-for-all-terms     (str "(" (string/join ") and (" (repeat num-terms like-exprs-for-each-term)) ")")
+        escaped-terms                (map #(str "%" (escape-like-pattern %) "%") terms)
+        num-columns-to-search        (count va-users-cache-columns-to-search)
+        escaped-terms-for-like-exprs (mapcat #(repeat num-columns-to-search %) escaped-terms)]
+    (with-transaction :virkailija-db connection
+      (jdbc/query connection
+                  (cons (string/join " "
+                                     ["select person_oid, first_name, surname, email, content"
+                                      "from va_users_cache"
+                                      "where" like-exprs-for-all-terms
+                                      "order by first_name, surname, email"])
+                        escaped-terms-for-like-exprs)
+                  {:row-fn db->va-user}))))

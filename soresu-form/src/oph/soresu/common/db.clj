@@ -84,3 +84,8 @@
   `(jdbc/with-db-transaction [connection# {:datasource (get-datasource ~ds-key)}]
      (last (for [[query# params#] (partition 2 ~query-list)]
              (query# params# {:connection connection#})))))
+
+(defmacro with-transaction [ds-key connection & body]
+  `(let [~connection {:datasource (get-datasource ~ds-key)}]
+     (jdbc/with-db-transaction [conn# ~connection]
+       ~@body)))

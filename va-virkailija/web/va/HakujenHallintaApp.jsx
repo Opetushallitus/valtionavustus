@@ -36,7 +36,7 @@ export default class AdminApp extends Component {
                           valiselvitysFormDraft={state.valiselvitysFormDrafts[selectedHaku.id]}
                           loppuselvitysFormDraft={state.loppuselvitysFormDrafts[selectedHaku.id]}
                           environment={environment}
-                          ldapSearch={state.ldapSearch}
+                          vaUserSearch={state.vaUserSearch}
                           koodistos={state.koodistos}
                           userInfo={state.userInfo}
                           controller={controller}

@@ -9,7 +9,7 @@ import Dispatcher from 'soresu-form/web/Dispatcher'
 import FormUtil from "soresu-form/web/form/FormUtil"
 
 import LocalStorage from './LocalStorage'
-import LdapSearchParameters from './haku-details/LdapSearchParameters'
+import VaUserSearchParameters from './haku-details/VaUserSearchParameters'
 import LoppuselvitysForm from './data/LoppuselvitysForm.json'
 import ValiselvitysForm from './data/ValiselvitysForm.json'
 import Rahoitusalueet from './data/Rahoitusalueet'
@@ -47,8 +47,8 @@ const events = {
   beforeUnload: 'beforeUnload',
   selectEditorSubTab: 'selectEditorSubTab',
   setFilter: 'onSetFilter',
-  ldapSearchStarted: 'ldapSearchStarted',
-  ldapSearchFinished: 'ldapSearchFinished',
+  vaUserSearchStarted: 'vaUserSearchStarted',
+  vaUserSearchFinished: 'vaUserSearchFinished',
   ensureKoodistosLoaded: 'ensureKoodistosLoaded',
   koodistosLoaded: 'koodistosLoaded',
   clearFilters: 'clearFilters'
@@ -130,10 +130,10 @@ export default class HakujenHallintaController {
       loppuselvitysFormDrafts: {},
       valiselvitysFormDrafts: {},
       subTab: subTab,
-      ldapSearch: {
+      vaUserSearch: {
         input: "",
         loading: false,
-        result: {error: false, results: [], truncated: false}
+        result: {error: false, results: []}
       },
       koodistos: {
         content: null,
@@ -159,9 +159,9 @@ export default class HakujenHallintaController {
     this.autoSave = _.debounce(function () {
       dispatcher.push(events.saveHaku)
     }, 3000)
-    this.startLdapSearch = _.debounce((searchInput) => {
-      dispatcher.push(events.ldapSearchStarted, searchInput)
-    }, LdapSearchParameters.ldapSearchDebounceMillis())
+    this.startVaUserSearch = _.debounce((searchInput) => {
+      dispatcher.push(events.vaUserSearchStarted, searchInput)
+    }, VaUserSearchParameters.searchDebounceMillis())
     this._bind('onInitialState', 'onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
       'onHakuSave', 'onAddTalousarviotili', 'onDeleteTalousarviotili', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
       'onBeforeUnload', 'onRolesLoaded', 'onRoleCreated', 'onRoleDeleted', 'saveRole')
@@ -202,8 +202,8 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.deleteFocusArea)], this.onDeleteFocusArea,
       [dispatcher.stream(events.beforeUnload)], this.onBeforeUnload,
       [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab,
-      [dispatcher.stream(events.ldapSearchStarted)], this.onStartLdapSearch,
-      [dispatcher.stream(events.ldapSearchFinished)], this.onLdapSearchFinished,
+      [dispatcher.stream(events.vaUserSearchStarted)], this.onStartVaUserSearch,
+      [dispatcher.stream(events.vaUserSearchFinished)], this.onVaUserSearchFinished,
       [dispatcher.stream(events.ensureKoodistosLoaded)], this.onEnsureKoodistoLoaded,
       [dispatcher.stream(events.setFilter)], this.onSetFilter,
       [dispatcher.stream(events.koodistosLoaded)], this.onKoodistosLoaded,
@@ -601,26 +601,26 @@ export default class HakujenHallintaController {
     return state
   }
 
-  onStartLdapSearch(state, searchInput) {
-    state.ldapSearch.input = searchInput
-    if(searchInput.length >= LdapSearchParameters.minimumSearchInputLength()) {
-      state.ldapSearch.loading = true
-      const url = "/api/ldap/search"
+  onStartVaUserSearch(state, searchInput) {
+    state.vaUserSearch.input = searchInput
+    if(searchInput.length >= VaUserSearchParameters.minimumSearchInputLength()) {
+      state.vaUserSearch.loading = true
+      const url = "/api/va-user/search"
       HttpUtil.post(url, {searchInput: searchInput})
         .then(r => {
-          dispatcher.push(events.ldapSearchFinished, r)
+          dispatcher.push(events.vaUserSearchFinished, r)
         })
         .catch(error => {
-          console.error(`Error in LDAP search, POST ${url}`, error)
-          dispatcher.push(events.ldapSearchFinished, {error: true, results: [], truncated: false})
+          console.error(`Error in VA user search, POST ${url}`, error)
+          dispatcher.push(events.vaUserSearchFinished, {error: true, results: []})
         })
     }
     return state
   }
 
-  onLdapSearchFinished(state, ldapSearchResponse) {
-    state.ldapSearch.result = ldapSearchResponse
-    state.ldapSearch.loading = false
+  onVaUserSearchFinished(state, searchResponse) {
+    state.vaUserSearch.result = searchResponse
+    state.vaUserSearch.loading = false
     return state
   }
 
