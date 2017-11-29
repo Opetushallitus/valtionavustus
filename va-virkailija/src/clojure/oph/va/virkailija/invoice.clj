@@ -13,10 +13,13 @@
    (or (get-answer-value answers key) not-found)))
 
 (defn get-installment [payment]
-  (format "%s%03d%02d"
+  "Generating installment from organisation, year and installment-number.
+  Installment is something like '660017006' where 6600 is organisation, 17 is
+  year and 006 is order number or identification number, if you will."
+  (format "%s%02d%03d"
           (:organisation payment)
-          (:installment-number payment)
-          (t/year (c/from-sql-time (:created-at payment)))))
+          (mod (t/year (c/from-sql-time (:created-at payment))) 1000)
+          (:installment-number payment)))
 
 
 (defn- payment-to-invoice [payment application]
