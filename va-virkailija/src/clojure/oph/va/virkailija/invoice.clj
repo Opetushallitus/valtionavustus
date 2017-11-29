@@ -4,10 +4,13 @@
             [clj-time.core :as t]
             [clj-time.coerce :as c]))
 
-(defn- get-answer-value [answers key]
+(defn- get-answer-value
+  ([answers key]
   (:value
    (first
     (filter #(= (:key %) key) answers))))
+  ([answers key not-found]
+   (or (get-answer-value answers key) not-found)))
 
 (defn- payment-to-invoice [payment application]
   [:VA-invoice
@@ -30,17 +33,17 @@
      [:Y-tunnus (get-answer-value (:answers application) "business-id")]
      [:Nimi (:organization-name application)]
      [:Postiosoite
-      (or (get-answer-value (:answers application) "address") "")]
+      (get-answer-value (:answers application) "address" "")]
      [:Paikkakunta
-      (or (get-answer-value (:answers application) "city") "")]
+      (get-answer-value (:answers application) "city" "")]
      [:Maa
-      (or (get-answer-value (:answers application) "country") "")]
+      (get-answer-value (:answers application) "country" "")]
      [:Iban-tili
       (get-answer-value (:answers application) "bank-iban")]
      [:Pankkiavain
       (get-answer-value (:answers application) "bank-bic")]
      [:Pankki-maa
-      (or (get-answer-value (:answers application) "bank-country") "")]
+      (get-answer-value (:answers application) "bank-country" "")]
      [:Kieli (:language application)]
      [:Valuutta (:currency payment)]]
     [:Postings
