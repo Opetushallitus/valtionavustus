@@ -1,5 +1,5 @@
 SELECT
-  COUNT(*), EXTRACT(YEAR FROM created_at) AS year
+  COUNT(id), EXTRACT(YEAR FROM created_at) AS year
 FROM
   hakija.hakemukset
 WHERE
