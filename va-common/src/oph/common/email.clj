@@ -2,6 +2,7 @@
   (:require [clojure.core.async :refer [<! >!! go chan]]
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
+            [clojure.string :as string]
             [clojure.java.io :as io]
             [clostache.parser :refer [render]]
             [oph.soresu.common.config :refer [config]]
@@ -57,28 +58,52 @@
                                 (name (:lang msg))
                                 subject)]
     (log/info "Sending email:" msg-description)
-    (let [email (format-plaintext-message msg)
+    (let [email-msg (format-plaintext-message msg)
+          email-obj (let [msg (SimpleEmail.)]
+                      (doto msg
+                        (.setHostName (:host smtp-config))
+                        (.setSmtpPort (:port smtp-config))
+                        (.setFrom from)
+                        (.addHeader "Sender" sender)
+                        (.setBounceAddress (:bounce-address smtp-config))
+                        (.setSubject subject)
+                        (.setMsg email-msg))
+                      (when reply-to
+                        (.addReplyTo msg reply-to))
+                      (when bcc
+                        (.addBcc msg bcc))
+                      (doseq [address to]
+                        (.addTo msg address))
+                      msg)
           send-fn (if (:enabled? smtp-config)
                     (fn []
-                      (let [msg (SimpleEmail.)]
-                        (doto msg
-                          (.setHostName (:host smtp-config))
-                          (.setSmtpPort (:port smtp-config))
-                          (.setFrom from)
-                          (.addHeader "Sender" sender)
-                          (.setBounceAddress (:bounce-address smtp-config))
-                          (.setSubject subject)
-                          (.setMsg email))
-                        (when reply-to
-                          (.addReplyTo msg reply-to))
-                        (when bcc
-                          (.addBcc msg bcc))
-                        (doseq [address to]
-                          (.addTo msg address))
-                        (.send msg)))
+                      (.send email-obj))
                     (fn []
                       (when (:print-mail-on-disable? smtp-config)
-                        (log/info "Would have sent email:" email))))]
+                        (log/infof (string/join "\n"
+                                                ["Would have sent email:"
+                                                 "----"
+                                                 "hostname: %s"
+                                                 "smtp port: %s"
+                                                 "to: %s"
+                                                 "bcc: %s"
+                                                 "from: %s"
+                                                 "reply-to: %s"
+                                                 "bounce address: %s"
+                                                 "other headers: %s"
+                                                 "subject: %s"
+                                                 "\n%s"
+                                                 "----"])
+                                   (.getHostName email-obj)
+                                   (.getSmtpPort email-obj)
+                                   (.getToAddresses email-obj)
+                                   (.getBccAddresses email-obj)
+                                   (.getFromAddress email-obj)
+                                   (.getReplyToAddresses email-obj)
+                                   (.getBounceAddress email-obj)
+                                   (.getHeaders email-obj)
+                                   (.getSubject email-obj)
+                                   email-msg))))]
       (when (not (try-send! (:retry-initial-wait smtp-config)
                             (:retry-multiplier smtp-config)
                             (:retry-max-time smtp-config)

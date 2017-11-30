@@ -6,4 +6,5 @@
  :api {:restricted-routes? false}
  :virkailija-db {:database-name "va-test"}
  :form-db {:database-name "va-test"}
- :email {:print-mail-on-disable? false}}
+ :email {:print-mail-on-disable? false}
+ :va-users {:use-cache? false}}

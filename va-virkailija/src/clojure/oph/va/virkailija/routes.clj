@@ -31,6 +31,7 @@
             [oph.va.virkailija.paatos :as paatos]
             [oph.va.virkailija.decision :as decision]
             [oph.va.virkailija.hakemus-search :as hakemus-search]
+            [oph.va.virkailija.va-users :as va-users]
             [oph.soresu.common.koodisto :as koodisto]
             [clojure.tools.logging :as log]
             [oph.va.virkailija.payments_info :as payments-info]
@@ -279,11 +280,11 @@
     :path-params [avustushaku-id :- Long]
     :return virkailija-schema/HakuPrivileges
     :summary "Show current user privileges for given avustushaku"
-    (let [identity (authentication/get-request-identity request)
-          haku-roles (hakija-api/get-avustushaku-roles avustushaku-id)
-          privileges (authorization/resolve-privileges identity avustushaku-id haku-roles)]
-      (if privileges
-        (ok privileges)
+    (let [user-identity   (authentication/get-request-identity request)
+          user-haku-role  (hakija-api/get-avustushaku-role-by-avustushaku-id-and-person-oid avustushaku-id (:person-oid user-identity))
+          user-privileges (authorization/resolve-user-privileges user-identity user-haku-role)]
+      (if user-privileges
+        (ok user-privileges)
         (not-found)))))
 
 (defn- get-avustushaku-form []
@@ -570,19 +571,17 @@
   (compojure-api/GET "/" request
     (ok (authentication/get-request-identity request))))
 
-(compojure-api/defroutes ldap-routes
-  "LDAP search"
+(compojure-api/defroutes va-user-routes
+  "VA users"
 
   (compojure-api/POST "/search" []
-    :body [body (compojure-api/describe {:searchInput s/Str} "User input of LDAP search box")]
-    :return virkailija-schema/LdapSearchResults
-    :summary "Search users from OPH LDAP."
-    :description "Each search term must be found as part of user name or email. Case does not matter."
-    (let [search-input (:searchInput body)
-          search-results (oph.va.virkailija.ldap/search-users search-input)]
-      (ok {:results search-results
-           :error false
-           :truncated false}))))
+    :body [body (compojure-api/describe {:searchInput s/Str} "User input of VA user search box")]
+    :return virkailija-schema/VaUserSearchResults
+    :summary "Search VA users"
+    :description "Each search term must be found as part of user name or email, case insensitive."
+    (let [search-input   (:searchInput body)
+          search-results (va-users/search-va-users search-input)]
+      (ok {:results search-results}))))
 
 (compojure-api/defroutes koodisto-routes
   "Koodisto-service access"
@@ -685,7 +684,7 @@
   (compojure-api/context "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
   (compojure-api/context "/login" [] :tags ["login"] login-routes)
   (compojure-api/context "/api/userinfo" [] :tags ["userinfo"] userinfo-routes)
-  (compojure-api/context "/api/ldap" [] :tags ["ldap"] ldap-routes)
+  (compojure-api/context "/api/va-user" [] :tags ["va-user"] va-user-routes)
   (compojure-api/context "/api/koodisto" [] :tags ["koodisto"] koodisto-routes)
   (compojure-api/context "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
   (compojure-api/context "/api/paatos" [] :tags ["paatos"] paatos/paatos-routes)

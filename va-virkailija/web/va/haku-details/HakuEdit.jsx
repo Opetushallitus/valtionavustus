@@ -10,11 +10,12 @@ export default class HakuEdit extends Component {
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
-    const ldapSearch = this.props.ldapSearch
+    const vaUserSearch = this.props.vaUserSearch
     const userInfo = this.props.userInfo
     const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
     const allowAllHakuEdits = userHasEditPrivilege && (avustushaku.status === "new" || avustushaku.status === "draft")
     const allowNondisruptiveHakuEdits = userHasEditPrivilege && (allowAllHakuEdits || avustushaku.phase === "current" || avustushaku.phase === "upcoming")
+    const userHasEditMyHakuRolePrivilege = avustushaku.privileges && avustushaku.privileges["edit-my-haku-role"]
 
     const onChangeListener = (target, value) => {
       controller.onChangeListener(avustushaku, target, value)
@@ -106,7 +107,7 @@ export default class HakuEdit extends Component {
         <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
 
         <AcademySize value={avustushaku.is_academysize} disabled={!allowAllHakuEdits} onChange={onChange} />
-        <HakuRoles avustushaku={avustushaku} ldapSearch={ldapSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} controller={controller} />
+        <HakuRoles avustushaku={avustushaku} vaUserSearch={vaUserSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege} controller={controller} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
         <FocusArea controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
       </div>

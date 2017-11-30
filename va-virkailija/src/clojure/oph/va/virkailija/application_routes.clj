@@ -12,7 +12,7 @@
     :query-params []
     :body [payment-emails
            (compojure-api/describe
-            virkailija-schema/PaymentEmails
+            virkailija-schema/NewPayment
             "Create payments")]
     :return virkailija-schema/Payment
     :summary "Create new payment for application"

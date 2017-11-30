@@ -16,7 +16,8 @@
             [oph.soresu.common.db :as db]
             [oph.va.virkailija.authentication :as auth]
             [oph.va.virkailija.db.migrations :as dbmigrations]
-            [oph.va.virkailija.email :as email]))
+            [oph.va.virkailija.email :as email]
+            [oph.va.virkailija.va-users :as va-users]))
 
 (defn- startup [config]
   (log/info "Startup, with configuration: " config)
@@ -24,12 +25,16 @@
                         "db.migration"
                         "oph.va.virkailija.db.migrations")
   (email/start-background-job-send-mails)
-  (auth/start-background-job-timeout-sessions))
+  (auth/start-background-job-timeout-sessions)
+  (if (get-in config [:va-users :use-cache?])
+    (va-users/start-background-job-update-va-users-cache)))
 
 (defn- shutdown []
   (log/info "Shutting down...")
   (email/stop-background-job-send-mails)
   (auth/stop-background-job-timeout-sessions)
+  (if (get-in config [:va-users :use-cache?])
+    (va-users/stop-background-job-update-va-users-cache))
   (db/close-datasource! :virkailija-db)
   (job-supervisor/await-jobs!))
 
