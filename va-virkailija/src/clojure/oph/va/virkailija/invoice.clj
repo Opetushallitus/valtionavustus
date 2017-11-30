@@ -1,50 +1,58 @@
 (ns oph.va.virkailija.invoice
   (:require [clojure.data.xml :refer [emit emit-str parse
-                                      sexp-as-element]]))
+                                      sexp-as-element]]
+            [clj-time.core :as t]
+            [clj-time.coerce :as c]))
 
-(defn- get-answer-value [answers key]
-  (:value
+(defn- get-answer-value
+  ([answers key]
+   (:value
     (first
-      (filter #(= (:key %) key) answers))))
+     (filter #(= (:key %) key) answers))))
+  ([answers key not-found]
+   (or (get-answer-value answers key) not-found)))
+
+(defn get-installment [payment]
+  "Generating installment of organisation, year and installment-number.
+  Installment is something like '660017006' where 6600 is organisation, 17 is
+  year and 006 is order number or identification number, if you will."
+  (format "%s%02d%03d"
+          (:organisation payment)
+          (mod (t/year (c/from-sql-time (:created-at payment))) 1000)
+          (:installment-number payment)))
 
 (defn- payment-to-invoice [payment application]
   [:VA-invoice
    [:Header
-    [:Maksuera (payment :installment)]
+    [:Maksuera (get-installment payment)]
     [:Laskunpaiva (:invoice-date payment)]
     [:Erapvm (:due-date payment)]
-    [:Bruttosumma (:amount payment)]
+    [:Bruttosumma (:budget-granted application)]
     [:Maksuehto "Z001"]
-    [:Pitkaviite (:long-ref payment)]
+    [:Pitkaviite (:register-number application)]
     [:Tositepvm (:receipt-date payment)]
     [:Asiatarkastaja (:inspector-email payment)]
     [:Hyvaksyja (:acceptor-email payment)]
     [:Tositelaji (:document-type payment)]
-     [:Toimittaja
-      [:Y-tunnus (get-answer-value (:answers application) "business-id")]
-      [:Nimi (:organization-name application)]
-      [:Postiosoite
-      (or (get-answer-value (:answers application) "address") "")]
-      [:Paikkakunta
-      (or (get-answer-value (:answers application) "city") "")]
-      [:Maa
-      (or (get-answer-value (:answers application) "country") "")]
-      [:Iban-tili
-      (get-answer-value (:answers application) "bank-iban")]
-      [:Pankkiavain
-      (get-answer-value (:answers application) "bank-bic")]
-      [:Pankki-maa
-      (or (get-answer-value (:answers application) "bank-country") "")]
-      [:Kieli (:language application)]
-      [:Valuutta (:currency payment)]]
+    [:Toimittaja
+     [:Y-tunnus (get-answer-value (:answers application) "business-id")]
+     [:Nimi (:organization-name application)]
+     [:Postiosoite (get-answer-value (:answers application) "address" "")]
+     [:Paikkakunta (get-answer-value (:answers application) "city" "")]
+     [:Maa (get-answer-value (:answers application) "country" "")]
+     [:Iban-tili (get-answer-value (:answers application) "bank-iban")]
+     [:Pankkiavain (get-answer-value (:answers application) "bank-bic")]
+     [:Pankki-maa (get-answer-value (:answers application) "bank-country" "")]
+     [:Kieli (:language application)]
+     [:Valuutta (:currency payment)]]
     [:Postings
      [:Posting
-      [:Summa (:amount payment)]
-      [:LKP-tili (:lkp-account payment)]
-      [:TaKp-tili (:takp-account payment)]
-      [:Toimintayksikko (:operational-unit payment)]
-      [:Projekti (:project payment)]
-      [:Toiminto (:operation payment)]
+      [:Summa (:budget-granted application)]
+      [:LKP-tili (:lkp-account application)]
+      [:TaKp-tili (:takp-account application)]
+      [:Toimintayksikko (:operational-unit application)]
+      [:Projekti (:project application)]
+      [:Toiminto (:operation application)]
       [:Kumppani (:partner payment)]]]]])
 
 (defn payment-to-xml [payment application]
@@ -67,4 +75,3 @@
   clojure.data.xml.elements."
   (with-open [input (java.io.FileInputStream. file)]
     (parse input)))
-

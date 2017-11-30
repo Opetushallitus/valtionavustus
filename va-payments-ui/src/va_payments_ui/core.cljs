@@ -184,7 +184,8 @@
 
 (defn render-financials-manager [current-applications on-change]
   (let [payment-values
-        (r/atom {:currency "EUR" :payment-term "Z001" :document-type "XA"})]
+        (r/atom {:currency "EUR" :payment-term "Z001"
+                 :document-type "XA" :organisation "6600"})]
     [(fn []
        [:div
         (financing/payment-fields
