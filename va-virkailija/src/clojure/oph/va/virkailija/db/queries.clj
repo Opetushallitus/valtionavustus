@@ -42,4 +42,6 @@
 
 (defquery get-application-count-by-year
   "sql/virkailija/reporting/get-application-count-by-year.sql")
+(defquery get-evaluation-count-by-year
+  "sql/virkailija/reporting/get-evaluation-count-by-year.sql")
 
