@@ -99,11 +99,20 @@
 
 (defn create-application-payments! [applications values on-success on-error]
   (go
-    (doseq [application applications]
-      (let [response (async/<! (connection/create-application-payment
-                                 (:id application) values))]
-        (when-not (:success response)
-          (on-error (:status response) (:error-text response)))))
+    (let [next-i-number-response
+          (async/<! (connection/get-next-installment-number))]
+      (if (:success next-i-number-response)
+        (doseq [application applications]
+          (let [new-payment-values
+                (assoc values :installment-number
+                       (get-in next-i-number-response
+                               [:body :installment-number]))
+                response (async/<! (connection/create-application-payment
+                                     (:id application) new-payment-values))]
+            (when-not (:success response)
+              (on-error (:status response) (:error-text response)))))
+        (on-error (:status next-i-number-response)
+                  (:error-text next-i-number-response))))
     (on-success)))
 
 (defn update-payments! [payments on-success on-error]

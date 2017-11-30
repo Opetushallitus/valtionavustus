@@ -262,10 +262,15 @@
    (s/optional-key :inspector-email) s/Str
    (s/optional-key :acceptor-email) s/Str})
 
-(s/defschema PaymentEmails
+(s/defschema PaymentInstallmentNumber
+  "Payment installment number"
+  {:installment-number s/Int})
+
+(s/defschema NewPayment
   "Payment emails"
   {:inspector-email s/Str
-   :acceptor-email s/Str})
+   :acceptor-email s/Str
+   :installment-number s/Int})
 
 (s/defschema GrantStatus
   "Grant status"

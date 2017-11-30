@@ -30,6 +30,8 @@
 (defquery payment-close-version
   "sql/virkailija/payments/payment-close-version.sql")
 (defquery update-payment "sql/virkailija/payments/update-payment.sql")
+(defquery get-next-payment-installment-number
+  "sql/virkailija/payments/get-next-installment-number.sql")
 
 (defquery lock-va-users-cache-exclusively! "sql/virkailija/va_users_cache/lock-exclusively.sql")
 (defquery update-va-user-cache! "sql/virkailija/va_users_cache/update.sql")
