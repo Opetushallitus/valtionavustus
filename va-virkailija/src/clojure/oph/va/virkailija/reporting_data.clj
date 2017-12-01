@@ -48,7 +48,7 @@
    :granted (get-yearly-granted)
    :total-grant-count (:count (get-total-grant-count))})
 
-(defn get-year-report-str []
+(defn get-yearly-report-str []
   (let [report (get-year-report)]
     (with-out-str
       (prn "Applications")
