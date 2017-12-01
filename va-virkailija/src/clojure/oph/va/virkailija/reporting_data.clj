@@ -50,14 +50,14 @@
 
 (defn get-year-report-str []
   (let [report (get-year-report)]
-  (with-out-str
-    (prn "Applications")
-    (print-table (:applications report))
-    (prn "Evaluations accepted")
-    (print-table (:evaluations-accepted report))
-    (prn "Evaluations rejected")
-    (print-table (:evaluations-rejected report))
-    (prn "Granted")
-    (print-table (:granted report))
-    (prn "Total grant count")
-    (:total-grant-count report))))
+    (with-out-str
+      (prn "Applications")
+      (print-table (:applications report))
+      (prn "Evaluations accepted")
+      (print-table (:evaluations-accepted report))
+      (prn "Evaluations rejected")
+      (print-table (:evaluations-rejected report))
+      (prn "Granted")
+      (print-table (:granted report))
+      (prn "Total grant count")
+      (:total-grant-count report))))
