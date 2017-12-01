@@ -40,8 +40,8 @@
 (defquery delete-va-user-cache! "sql/virkailija/va_users_cache/delete.sql")
 (defquery get-va-user-cache-by-person-oid "sql/virkailija/va_users_cache/get-by-person-oid.sql")
 
-(defquery get-application-count-by-year
-  "sql/virkailija/reporting/get-application-count-by-year.sql")
+(defquery get-yearly-application-info
+  "sql/virkailija/reporting/get-yearly-application-info.sql")
 (defquery get-evaluation-count-by-year
   "sql/virkailija/reporting/get-evaluation-count-by-year.sql")
 
