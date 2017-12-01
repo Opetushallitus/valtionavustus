@@ -15,12 +15,12 @@
 
 (defn get-accepted-count-by-year []
   (year-to-int-all-v
-   (exec :form-db queries/get-evaluation-count-by-year
+   (exec :form-db queries/get-yearly-evaluation-count-by-status
          {:status "accepted"})))
 
 (defn get-rejected-count-by-year []
   (year-to-int-all-v
-   (exec :form-db queries/get-evaluation-count-by-year
+   (exec :form-db queries/get-yearly-evaluation-count-by-status
          {:status "rejected"})))
 
 (defn get-year-report []
