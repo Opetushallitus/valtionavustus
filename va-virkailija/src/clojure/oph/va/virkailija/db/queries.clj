@@ -44,4 +44,5 @@
   "sql/virkailija/reporting/get-yearly-application-info.sql")
 (defquery get-yearly-evaluation-count-by-status
   "sql/virkailija/reporting/get-yearly-evaluation-count-by-status.sql")
+(defquery get-yearly-granted "sql/virkailija/reporting/get-yearly-granted.sql")
 

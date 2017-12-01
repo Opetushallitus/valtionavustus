@@ -23,7 +23,13 @@
    (exec :form-db queries/get-yearly-evaluation-count-by-status
          {:status "rejected"})))
 
+(defn get-yearly-granted []
+  (mapv convert-to-dash-keys
+        (year-to-int-all-v
+         (exec :form-db queries/get-yearly-granted {}))))
+
 (defn get-year-report []
-  {:applications (get-application-count-by-year)
+  {:applications (get-yearly-application-info)
    :evaluations-accepted (get-accepted-count-by-year)
-   :evaluations-rejected (get-rejected-count-by-year)})
+   :evaluations-rejected (get-rejected-count-by-year)
+   :granted (get-yearly-granted)})
