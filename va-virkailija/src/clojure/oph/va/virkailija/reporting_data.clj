@@ -28,6 +28,9 @@
         (year-to-int-all-v
          (exec :form-db queries/get-yearly-granted {}))))
 
+(defn get-total-grant-count []
+  (first (exec :form-db queries/get-total-grant-count {})))
+
 (defn total-value [c k]
   (reduce #(+ %1 (get %2 k)) 0 c))
 
@@ -41,4 +44,5 @@
   {:applications (get-yearly-application-info)
    :evaluations-accepted (get-accepted-count-by-year)
    :evaluations-rejected (get-rejected-count-by-year)
-   :granted (get-yearly-granted)})
+   :granted (get-yearly-granted)
+   :total-grant-count (:count (get-total-grant-count))})
