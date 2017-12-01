@@ -2,7 +2,8 @@
   (:require
    [oph.soresu.common.db :refer [exec]]
    [oph.va.virkailija.db.queries :as queries]
-   [oph.va.hakija.api :refer [convert-to-dash-keys]])
+   [oph.va.hakija.api :refer [convert-to-dash-keys]]
+   [clojure.pprint :refer [print-table]])
   (:import (oph.va.jdbc.enums HakuStatus)))
 
 (defn year-to-int-all-v [c]
@@ -46,3 +47,17 @@
    :evaluations-rejected (get-rejected-count-by-year)
    :granted (get-yearly-granted)
    :total-grant-count (:count (get-total-grant-count))})
+
+(defn get-year-report-str []
+  (let [report (get-year-report)]
+  (with-out-str
+    (prn "Applications")
+    (print-table (:applications report))
+    (prn "Evaluations accepted")
+    (print-table (:evaluations-accepted report))
+    (prn "Evaluations rejected")
+    (print-table (:evaluations-rejected report))
+    (prn "Granted")
+    (print-table (:granted report))
+    (prn "Total grant count")
+    (:total-grant-count report))))
