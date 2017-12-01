@@ -28,6 +28,15 @@
         (year-to-int-all-v
          (exec :form-db queries/get-yearly-granted {}))))
 
+(defn total-value [c k]
+  (reduce #(+ %1 (get %2 k)) 0 c))
+
+(defn calculate-totals [applications granted]
+  {:budget-total (total-value applications :budget-total)
+   :budget-oph-share (total-value applications :budget-oph-share)
+   :budget-granted (total-value granted :budget-granted)
+   :costs-granted (total-value granted :costs-granted)})
+
 (defn get-year-report []
   {:applications (get-yearly-application-info)
    :evaluations-accepted (get-accepted-count-by-year)
