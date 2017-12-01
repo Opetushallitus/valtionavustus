@@ -1,6 +1,6 @@
 SELECT
   EXTRACT(YEAR FROM h.created_at) AS year,
-  SUM(budget_granted) AS bugdet_granted,
+  SUM(budget_granted) AS budget_granted,
   SUM(costs_granted) AS costs_granted
 FROM
   hakija.hakemukset h
