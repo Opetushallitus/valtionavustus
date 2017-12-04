@@ -289,8 +289,8 @@
    :status GrantStatus
    :register-number (s/maybe s/Str)
    (s/optional-key :decision) s/Any
-   :valiselvitysdate (s/maybe s/Inst)
-   :loppuselvitysdate (s/maybe s/Inst)
+   :valiselvitysdate (s/maybe s/Str)
+   :loppuselvitysdate (s/maybe s/Str)
    :form-loppuselvitys (s/maybe s/Int)
    :form-valiselvitys (s/maybe s/Int)
    :is-academysize s/Bool

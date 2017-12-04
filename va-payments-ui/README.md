@@ -6,13 +6,17 @@ Maksatusten käyttöliittymä
 
 ### Kehitystila
 
-Käynnistä Figwheel compoler:
+1. Käynnistä Virkailijan näkymä
+
+2. Käynnistä Figwheel compiler
+
+Figwheel compiler lähtee käyntiin komennolla:
 
     lein figwheel
 
-Figwheel puskee cljs muutokset selaimelle.
+Figwheel puskee cljs muutokset suoraan selaimelle.
 
-Kun Figwheel on käynnissä, pitäisi selaimeen aueta `public/index.html`
+Kun Figwheel on käynnissä, pitäisi selaimeen aueta `/payments/`
 
 ### Repl
 
@@ -47,5 +51,4 @@ Eli käytettävä config-tiedosto annetaan polun kera
 ## TODO
 
 - SASS tai vastaava
-- Joko siistimpi router tai jo olemassa oleva ratkaisu
 
