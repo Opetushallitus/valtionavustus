@@ -1,8 +1,21 @@
 (defproject va-payments-ui "0.1.0"
   :description "Valtionavustus maksatusten käyttöliittymä"
-  :url "http://github.com/opetushallitus/valtionavustus"
-  :license {:name "European Union Public License 1.2 tai uudempi"
-            :url "https://joinup.ec.europa.eu/community/eupl/og_page/eupl"}
+
+  :plugins [[lein-parent "0.3.2"]
+            [lein-cljsbuild "1.1.7"]
+            [lein-figwheel "0.5.14"]]
+
+  :parent-project {:path "../parent-project.clj"
+                   :inherit [:url
+                             :license
+                             :min-lein-version
+                             :repositories
+;                             :managed-dependencies
+;                             :pedantic?
+                             :plugins
+                             :uberjar-exclusions
+                             :auto-clean
+                             :javac-options]}
 
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.946"]
@@ -10,11 +23,6 @@
                  [cljsjs/react-dom "15.6.2-1"]
                  [cljs-react-material-ui "0.2.48"]
                  [cljs-http "0.1.43"]]
-
-  :plugins [[lein-cljsbuild "1.1.7"]
-            [lein-figwheel "0.5.14"]]
-
-  :min-lein-version "2.5.0"
 
   :clean-targets ^{:protect false}
   [:target-path
