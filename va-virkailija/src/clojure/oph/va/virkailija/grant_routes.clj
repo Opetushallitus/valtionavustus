@@ -58,8 +58,7 @@
         :path-params [id :- Long]
         :return s/Any
         :summary "Route OPTIONS"
-        (-> (ok "")
-            (assoc-in [:headers "Access-Control-Allow-Methods"] "POST, GET, OPTIONS"))))
+        (ok "")))
 
 
 (compojure-api/defroutes payment-routes
