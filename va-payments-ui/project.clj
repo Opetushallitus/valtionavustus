@@ -31,7 +31,7 @@
    [:cljsbuild :builds :app :compiler :output-dir]
    [:cljsbuild :builds :app :compiler :output-to]]
 
-  :resource-paths ["public"]
+  :resource-paths ["../va-virkailija/resources/public/payments"]
 
   :figwheel {:http-server-root "."
              :nrepl-port 7002
@@ -44,21 +44,21 @@
     {:source-paths ["src" "env/dev/cljs" "src_clj"]
      :compiler
      {:main "va-payments-ui.dev"
-      :output-to "public/js/app.js"
-      :output-dir "public/js/out"
-      :asset-path "/js/out"
+      :output-to "../va-virkailija/resources/public/payments/js/app.js"
+      :output-dir "../va-virkailija/resources/public/payments/js/out"
+      :asset-path "/payments/js/out"
       :source-map true
       :optimizations :none
       :pretty-print  true
       :closure-defines #=(eval (:closure-defines config))}
      :figwheel
      {:on-jsload "va-payments-ui.core/mount-root"
-      :open-urls ["http://localhost:3449/"]}}
+      :open-urls ["http://localhost:8081/payments/"]}}
     :release
     {:source-paths ["src" "env/prod/cljs"]
      :compiler
-     {:output-to "public/js/app.js"
-      :output-dir "public/js/release"
+     {:output-to "../va-virkailija/resources/public/payments/js/app.js"
+      :output-dir "../va-virkailija/resources/public/payments/js/release"
       :asset-path "/payments/js/out"
       :optimizations :advanced
       :pretty-print false
