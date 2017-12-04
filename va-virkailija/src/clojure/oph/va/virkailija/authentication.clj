@@ -12,10 +12,10 @@
 
 (def ^:private session-timeout-chan (chan 1))
 
-(def ^:private session-timeout-ms
+(def ^:private session-timeout-in-ms
   (when-not *compile-files*
     (-> config
-        (get-in [:server :session_timeout_in_s])
+        (get-in [:server :session-timeout-in-s])
         (+ 5)  ; ensure backend session timeout happens after browser session timeout
         (* 1000))))
 
@@ -56,7 +56,7 @@
     (do
       (swap! session-store assoc cas-ticket {:identity      identity
                                              :cas-ticket    cas-ticket
-                                             :timeout-at-ms (+ session-timeout-ms (System/currentTimeMillis))})
+                                             :timeout-at-ms (+ session-timeout-in-ms (System/currentTimeMillis))})
       (log/infof "Login: %s with %s (%d sessions in cache)"
                  (:username identity)
                  cas-ticket
