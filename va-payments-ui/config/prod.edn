@@ -1,0 +1,4 @@
+{:asset-path "/js/out"
+ :backend-url "https://virkailija.valtionavustukset.oph.fi"
+ :service "https://virkailija.valtionavustukset.oph.fi/login/cas"
+ :login-url "https://virkailija.opintopolku.fi/cas/login"}
