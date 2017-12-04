@@ -36,8 +36,7 @@
   :figwheel {:http-server-root "."
              :nrepl-port 7002
              :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"]
-             :css-dirs ["public/css"]
-             :ring-handler "va-payments-ui.dev-server/dev-app"}
+             :css-dirs ["public/css"]}
   :cljsbuild
   {:builds
    {:app
