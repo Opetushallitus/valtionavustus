@@ -39,17 +39,13 @@ Myös esimerkiksi rlwrap toimii figwheelin kanssa:
 
 ### Tuotantopaketin luonti
 
-```
-lein clean
-lein package
-```
+    config="config/prod.edn" lein package
+
+Eli käytettävä config-tiedosto annetaan polun kera
+"config"-ympäristömuuttujalla.
 
 ## TODO
 
 - SASS tai vastaava
 - Joko siistimpi router tai jo olemassa oleva ratkaisu
-
-## Lisenssi
-
-EUPL 1.2 tai uudempi.
 
