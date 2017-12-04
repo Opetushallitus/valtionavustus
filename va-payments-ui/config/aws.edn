@@ -1,4 +1,8 @@
-{:asset-path "/payments/js/out"
- :backend-url "http://valtionavustukset.aws.opintopolku.fi"
- :service "http://valtionavustukset.aws.opintopolku.fi/login/cas"
- :login-url "https://testi.virkailija.opintopolku.fi/cas/login"}
+{:closure-defines
+ {"va_payments_ui.connection.backend_url"
+  "http://valtionavustukset.aws.opintopolku.fi"
+  "va_payments_ui.connection.service"
+  "https://testi.virkailija.valtionavustukset.oph.fi"
+  "va_payments_ui.connection.login_url"
+  "https://testi.virkailija.opintopolku.fi/cas/login"}}
+

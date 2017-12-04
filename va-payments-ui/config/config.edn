@@ -1,9 +1,4 @@
-{:asset-path "/js/out"
- :backend-url "http://localhost:8081"
- :service "http://localhost:8081/login/cas"
- :login-url "https://testi.virkailija.opintopolku.fi/cas/login"
- :open-urls ["http://localhost:3449/"]
- :closure-defines
+{:closure-defines
  {"va_payments_ui.connection.backend_url"
   "http://localhost:8081"
   "va_payments_ui.connection.service"
