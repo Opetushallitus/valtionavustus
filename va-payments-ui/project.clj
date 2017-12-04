@@ -1,3 +1,5 @@
+(def config (load-file (or (System/getenv "config") "config/config.edn")))
+
 (defproject va-payments-ui "0.1.0"
   :description "Valtionavustus maksatusten käyttöliittymä"
   :url "http://github.com/opetushallitus/valtionavustus"
@@ -36,16 +38,11 @@
      {:main "va-payments-ui.dev"
       :output-to "public/js/app.js"
       :output-dir "public/js/out"
-      :asset-path   "/js/out"
+      :asset-path "/js/out"
       :source-map true
       :optimizations :none
       :pretty-print  true
-      :closure-defines
-      {"va_payments_ui.connection.backend_url" "http://localhost:8081"
-       "va_payments_ui.connection.service"
-       "http://localhost:8081/login/cas"
-       "va_payments_ui.connection.login_url"
-       "https://testi.virkailija.opintopolku.fi/cas/login"}}
+      :closure-defines #=(eval (:closure-defines config))}
      :figwheel
      {:on-jsload "va-payments-ui.core/mount-root"
       :open-urls ["http://localhost:3449/"]}}
@@ -54,32 +51,10 @@
      :compiler
      {:output-to "public/js/app.js"
       :output-dir "public/js/release"
-      :asset-path   "/payments/js/out"
-      :closure-defines
-      {"va_payments_ui.connection.backend_url" "http://localhost"
-       "va_payments_ui.connection.service"
-       "http://localhost/login/cas"
-       "va_payments_ui.connection.login_url"
-       "https://testi.virkailija.opintopolku.fi/cas/login"
-       }
+      :asset-path "/payments/js/out"
       :optimizations :advanced
-      :pretty-print false}}
-    :production
-    {:source-paths ["src" "env/prod/cljs"]
-     :compiler
-     {:output-to "public/js/app.js"
-      :output-dir "public/js/prod"
-      :asset-path   "/payments/js/out"
-      :closure-defines
-      {"va_payments_ui.connection.backend_url"
-       "http://valtionavustukset.aws.opintopolku.fi"
-       "va_payments_ui.connection.service"
-       "http://valtionavustukset.aws.opintopolku.fi/login/cas"
-       "va_payments_ui.connection.login_url"
-       "https://testi.virkailija.opintopolku.fi/cas/login"
-       }
-      :optimizations :advanced
-      :pretty-print false}}
+      :pretty-print false
+      :closure-defines #=(eval (:closure-defines config))}}
     :test
     {:source-paths ["src" "test" "env/test/cljs"]
      :compiler
@@ -90,8 +65,7 @@
       :optimizations :whitespace
       :pretty-print  true}}}}
 
-  :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]
-            "production" ["do" "clean" ["cljsbuild" "once" "production"]]}
+  :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]}
 
   :profiles {:dev {:dependencies [[binaryage/devtools "0.9.4"]
                                   [figwheel-sidecar "0.5.13"]
