@@ -3,8 +3,7 @@
                 :sv "http://localhost:8080/"}
           :admin-url "http://localhost/admin-ui"
           :enable-access-log? false
-          :require-https? false
-          :local-front-url "http://localhost:3449"}
+          :require-https? false}
  :api {:restricted-routes? false}
  :virkailija-db {:database-name "va-dev"}
  :form-db {:database-name "va-dev"}
