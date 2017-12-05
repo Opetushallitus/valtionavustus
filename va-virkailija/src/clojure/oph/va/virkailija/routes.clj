@@ -141,6 +141,12 @@
 
    (compojure/GET "/avustushaku/:id/*" [id] (return-html "index.html"))
 
+   (compojure/GET "/payments/" []
+                  (return-html "payments/index.html"))
+
+   (compojure-route/resources "/payments/"
+                              {:mime-types {"html" "text/html; charset=utf-8"}})
+
    va-routes/logo-route
 
    (compojure-route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})

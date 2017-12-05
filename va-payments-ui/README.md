@@ -6,13 +6,17 @@ Maksatusten käyttöliittymä
 
 ### Kehitystila
 
-Käynnistä Figwheel compoler:
+1. Käynnistä Virkailijan näkymä
+
+2. Käynnistä Figwheel compiler
+
+Figwheel compiler lähtee käyntiin komennolla:
 
     lein figwheel
 
-Figwheel puskee cljs muutokset selaimelle.
+Figwheel puskee cljs muutokset suoraan selaimelle.
 
-Kun Figwheel on käynnissä, pitäisi selaimeen aueta `public/index.html`
+Kun Figwheel on käynnissä, pitäisi selaimeen aueta `/payments/`
 
 ### Repl
 
@@ -39,17 +43,12 @@ Myös esimerkiksi rlwrap toimii figwheelin kanssa:
 
 ### Tuotantopaketin luonti
 
-```
-lein clean
-lein package
-```
+    config="config/prod.edn" lein package
+
+Eli käytettävä config-tiedosto annetaan polun kera
+"config"-ympäristömuuttujalla.
 
 ## TODO
 
 - SASS tai vastaava
-- Joko siistimpi router tai jo olemassa oleva ratkaisu
-
-## Lisenssi
-
-EUPL 1.2 tai uudempi.
 
