@@ -76,7 +76,7 @@
 
 (defn payment-url [avustushaku-id]
   (format "%s/payments/?grant=%d"
-          (-> config :server :admin-url) avustushaku-id))
+          (get-in config [:server :virkailija-url]) avustushaku-id))
 
 (defn send-paatos! [to avustushaku hakemus reply-to]
   (let [lang-str (:language hakemus)
