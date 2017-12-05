@@ -37,7 +37,8 @@
             [oph.va.virkailija.payments_info :as payments-info]
             [oph.va.virkailija.grant-routes :as grant-routes]
             [oph.va.virkailija.application-routes :as application-routes]
-            [oph.va.virkailija.payments-routes :as payments-routes]))
+            [oph.va.virkailija.payments-routes :as payments-routes]
+            [oph.va.virkailija.reporting-data :as reporting]))
 
 (def opintopolku-login-url
   (when-not *compile-files*
@@ -664,6 +665,15 @@
       (ok "ok")
       (unauthorized))))
 
+
+ (compojure-api/defroutes reports-routes
+  "Reports"
+
+  (compojure-api/GET "/" request
+    :return s/Any
+    :summary "Simple yearly reporting overview"
+    (ok (reporting/get-yearly-report))))
+
 (def api-config
   {:formats [:json-kw]
    :exceptions {:handlers {::compojure-ex/response-validation compojure-error-handler
@@ -701,6 +711,8 @@
     payments-routes/routes)
 
   (compojure-api/context "/api/v2/payments" [] :tags ["payments"] grant-routes/payment-routes)
+  (compojure-api/context
+    "/api/v2/reports" [] :tags ["reports"] reports-routes)
 
   va-routes/config-routes
   resource-routes)
