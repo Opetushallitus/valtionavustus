@@ -51,7 +51,7 @@ Myös esimerkiksi rlwrap toimii figwheelin kanssa:
 `package` on alias, jolla tehdään sekä clean että build. Jos pelkän cleanin
 tarvitsee tehdä, niin se onnistuu `../lein clean`
 
-Eli käytettävä config-tiedosto annetaan polun kera
+Käytettävä config-tiedosto annetaan polun kera
 "config"-ympäristömuuttujalla. Paketti luodaan `va-virkailija`:n
 `resources/public/payments`-kansioon. Myös kehitysaikainen build menee samaiseen
 kansioon, jolloin sitä voi käyttää virkailijan näkymästä `payments/`-polussa.
