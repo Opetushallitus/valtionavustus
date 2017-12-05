@@ -48,10 +48,8 @@
    :granted (get-yearly-granted)
    :total-grant-count (:count (get-total-grant-count))})
 
-(defn get-yearly-report-str []
-  (let [report (get-yearly-report)]
-    (with-out-str
-      (prn "Applications")
+(defn print-yearly-report [report]
+  (prn "Applications")
       (print-table (:applications report))
       (prn "Evaluations accepted")
       (print-table (:evaluations-accepted report))
@@ -60,4 +58,8 @@
       (prn "Granted")
       (print-table (:granted report))
       (prn "Total grant count")
-      (:total-grant-count report))))
+      (:total-grant-count report))
+
+(defn get-yearly-report-str []
+  (let [report (get-yearly-report)]
+    (with-out-str (print-yearly-report report))))
