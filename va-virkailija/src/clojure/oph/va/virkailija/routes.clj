@@ -673,8 +673,7 @@
   (compojure-api/GET "/" request
     :return s/Any
     :summary "Simple yearly reporting overview"
-    (ok (reporting/get-yearly-report)))
-  (compojure/GET))
+    (ok (reporting/get-yearly-report))))
 
 (def api-config
   {:formats [:json-kw]
