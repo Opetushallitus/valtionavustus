@@ -90,12 +90,12 @@
                      (assoc-in [:security :anti-forgery] false)
                      (assoc-in [:session :store] (cookie-store {:key (-> config :server :cookie-key)}))
                      (assoc-in [:session :cookie-name] "va")
-                     (assoc-in [:session :cookie-attrs :max-age] (-> config :server :session_timeout_in_s))
+                     (assoc-in [:session :cookie-attrs :max-age] (-> config :server :session-timeout-in-s))
                      (assoc-in [:session :cookie-attrs :same-site] :lax)  ; required for CAS initiated redirection
                      (assoc-in [:session :cookie-attrs :secure] (-> config :server :require-https?)))
         handler (as-> #'all-routes h
                       (with-authentication h)
-                      (ring-session-timeout/wrap-absolute-session-timeout h {:timeout (-> config :server :session_timeout_in_s)
+                      (ring-session-timeout/wrap-absolute-session-timeout h {:timeout (-> config :server :session-timeout-in-s)
                                                                              :timeout-handler redirect-to-login})
                       (wrap-defaults h defaults)
                       (server/wrap-logger h)

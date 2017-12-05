@@ -5,7 +5,7 @@
           :port 8081
           :require-https? true
           :attachment-max-size 50 ;in megabytes
-          :session_timeout_in_s 28800
+          :session-timeout-in-s 28800
           :threads 16
           :virkailija-url "http://localhost:8081"}
  :opintopolku {:url "https://testi.virkailija.opintopolku.fi"
@@ -43,4 +43,5 @@
          :retry-multiplier 4
          :retry-max-time 60000}
  :va-users {:use-cache? true
-            :cache-refresh-interval-in-s 300}}
+            :cache-refresh-interval-in-s 300
+            :cache-max-refresh-interval-in-s 10800}}
