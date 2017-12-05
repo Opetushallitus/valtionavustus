@@ -14,7 +14,7 @@
     :return virkailija-schema/Grants
     :summary "Return list of grants"
     (ok (if (= template "with-content")
-          (grant-data/get-grants-with-content)
+          (grant-data/get-resolved-grants-with-content)
           (grant-data/get-grants)))))
 
 (defn- get-grant []
