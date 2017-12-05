@@ -40,7 +40,7 @@
   :cljsbuild
   {:builds
    {:app
-    {:source-paths ["src" "env/dev/cljs" "src_clj"]
+    {:source-paths ["src" "env/dev/cljs"]
      :compiler
      {:main "va-payments-ui.dev"
       :output-to "../va-virkailija/resources/public/payments/js/app.js"
