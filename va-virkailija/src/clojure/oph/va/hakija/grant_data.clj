@@ -8,9 +8,9 @@
   (mapv convert-to-dash-keys
         (exec :form-db hakija-queries/get-grants {})))
 
-(defn get-grants-with-content []
+(defn get-resolved-grants-with-content []
   (mapv convert-to-dash-keys
-        (exec :form-db hakija-queries/get-grants-with-content {})))
+        (exec :form-db hakija-queries/get-resolved-grants-with-content {})))
 
 (defn get-grant [grant-id]
   (convert-to-dash-keys

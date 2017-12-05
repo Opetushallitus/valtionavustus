@@ -75,8 +75,8 @@
   (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" user-key "&lang=" lang-str)))
 
 (defn payment-url [avustushaku-id]
-  (let [admin-url (-> config :server :admin-url)]
-  (str admin-url "/grants/" avustushaku-id "/payments")))
+  (format "%s/payments/?grant=%d"
+          (get-in config [:server :virkailija-url]) avustushaku-id))
 
 (defn send-paatos! [to avustushaku hakemus reply-to]
   (let [lang-str (:language hakemus)
