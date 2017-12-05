@@ -49,7 +49,7 @@
    :total-grant-count (:count (get-total-grant-count))})
 
 (defn get-yearly-report-str []
-  (let [report (get-year-report)]
+  (let [report (get-yearly-report)]
     (with-out-str
       (prn "Applications")
       (print-table (:applications report))
