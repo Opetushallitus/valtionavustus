@@ -49,18 +49,3 @@
     [ui/table-body {:display-row-checkbox false}
      (doall
        (map-indexed render-application applications))]]])
-
-(defn project-info [grant]
-   [ui/grid-list {:cols 6 :cell-width "auto" :cell-height "auto"}
-     [ui/text-field {:disabled :true
-                     :underline-disabled-style {:border-bottom "none"}
-                     :floating-label-text "Toimintayksikkö"
-                     :default-value (get-in grant [:content :operational-unit])}]
-     [ui/text-field {:disabled :true
-                     :underline-disabled-style {:border-bottom "none"}
-                     :floating-label-text "Projekti"
-                     :default-value (get-in grant [:content :project])}]
-     [ui/text-field {:disabled :true
-                     :underline-disabled-style {:border-bottom "none"}
-                     :floating-label-text "Toiminto"
-                     :default-value (get-in grant [:content :operation])}]])

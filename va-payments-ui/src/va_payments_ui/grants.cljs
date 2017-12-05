@@ -43,3 +43,9 @@
    [ui/table-body {:display-row-checkbox false :deselect-on-clickaway false}
     (for [grant grants]
       (grant-row grant (= (.indexOf grants grant) value)))]])
+
+(defn project-info [grant]
+   [ui/grid-list {:cols 6 :cell-width "auto" :cell-height "auto"}
+    [:div [:label "Toimintayksikkö: "]  (get-in grant [:content :operational-unit])]
+    [:div [:label "Projekti: "] (get-in grant [:content :project])]
+    [:div [:label "Toiminto: "] (get-in grant [:content :operation])]])
