@@ -12,7 +12,7 @@ Maksatusten käyttöliittymä
 
 Figwheel compiler lähtee käyntiin komennolla:
 
-    lein figwheel
+    ./lein figwheel
 
 Figwheel puskee cljs muutokset suoraan selaimelle.
 
@@ -29,6 +29,9 @@ user=> (use 'figwheel-sidecar.repl-api)
 user=> (start-figwheel!)
 ```
 
+Leiningenin replin kanssa on ollut ongelmia requiren kanssa, koska se etsii
+oletuksena .clj-tiedostoja.
+
 Myös esimerkiksi rlwrap toimii figwheelin kanssa:
 
     rlwrap lein figwheel
@@ -43,12 +46,13 @@ Myös esimerkiksi rlwrap toimii figwheelin kanssa:
 
 ### Tuotantopaketin luonti
 
-    config="config/prod.edn" lein package
+    config="config/prod.edn" ../lein package
+
+`package` on alias, jolla tehdään sekä clean että build. Jos pelkän cleanin
+tarvitsee tehdä, niin se onnistuu `../lein clean`
 
 Eli käytettävä config-tiedosto annetaan polun kera
-"config"-ympäristömuuttujalla.
-
-## TODO
-
-- SASS tai vastaava
+"config"-ympäristömuuttujalla. Paketti luodaan `va-virkailija`:n
+`resources/public/payments`-kansioon. Myös kehitysaikainen build menee samaiseen
+kansioon, jolloin sitä voi käyttää virkailijan näkymästä `payments/`-polussa.
 
