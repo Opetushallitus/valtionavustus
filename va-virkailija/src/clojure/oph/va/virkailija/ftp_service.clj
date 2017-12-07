@@ -8,25 +8,26 @@
             [clojure.tools.logging :as log]))
 
 (defn send-sftp! [file ftp-config]
-  (if (get-in config [:rondo-sftp :enabled?])
-    (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})
-          session (ssh/session agent (:host-ip ftp-config)
-                               {:username (:username ftp-config)
-                                :password (:password ftp-config)
-                                :port (ftp-config :port)
-                                :strict-host-key-checking :no})]
-      (ssh/with-connection session
-        (let [channel (ssh/ssh-sftp session)]
-          (ssh/with-channel-connection channel
-            (ssh/sftp channel {} :put file (:remote_path ftp-config))))))
-    (log/info (format "Would send %s to %s" file (:host-ip ftp-config)))))
+  (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})
+        session (ssh/session agent (:host-ip ftp-config)
+                             {:username (:username ftp-config)
+                              :password (:password ftp-config)
+                              :port (ftp-config :port)
+                              :strict-host-key-checking :no})]
+    (ssh/with-connection session
+      (let [channel (ssh/ssh-sftp session)]
+        (ssh/with-channel-connection channel
+          (ssh/sftp channel {} :put file (:remote_path ftp-config)))))))
 
 (defn send-to-rondo! [payment-id]
+
   (let [payment (payments-data/get-payment payment-id)
         ftp-config (:rondo-sftp config)
         file (format "%s/payment-%d-%d.xml"
-                     (:local_path ftp-config) (:id payment)
+                     (:local-path ftp-config) (:id payment)
                      (System/currentTimeMillis))
-        application (:application_id payment)]
+        application (:application-id payment)]
     (invoice/write-xml! (invoice/payment-to-xml payment application) file)
-    (send-sftp! file ftp-config)))
+    (if (get-in config [:rondo-sftp :enabled?])
+      (send-sftp! file ftp-config)
+      (log/info (format "Would send %s to %s" file (:host-ip ftp-config))))))
