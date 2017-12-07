@@ -26,7 +26,7 @@
         ftp-config (:ftp config)
         file (str (ftp-config :local_path)
                   "maksatus" "-" "avustushaku" "-"
-                  (payment :grant_id) "-" (System/currentTimeMillis) ".xml")
+                  (:id payment) "-" (System/currentTimeMillis) ".xml")
         application (payment :application_id)]
     (invoice/write-xml! (invoice/payment-to-xml payment application) file)
     (send-sftp! file ftp-config)))
