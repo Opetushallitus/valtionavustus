@@ -430,10 +430,11 @@ Esimerkiksi Emacsin
    CIDER ei [injektoi riippuvuuksia
    automaattisesti](https://github.com/clojure-emacs/cider/blob/master/doc/installation.md#ciders-nrepl-middleware).
 
-2. Aseta CIDERin riippuvuudet `~/.lein/profiles.clj`:ssä:
+2. Aseta CIDERin riippuvuudet `~/.lein/profiles.clj`:ssä (versionumerot
+   riippuvat CIDER:n versiosta):
 
    ``` edn
-   {:repl {:plugins [[cider/cider-nrepl "0.16.0-SNAPSHOT"]]
+   {:repl {:plugins [[cider/cider-nrepl "0.15.1"]]
            :dependencies [[org.clojure/tools.nrepl "0.2.13"]]}}
    ```
 
