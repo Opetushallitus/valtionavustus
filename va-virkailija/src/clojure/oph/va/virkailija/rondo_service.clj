@@ -1,4 +1,4 @@
-(ns oph.va.virkailija.ftp-service
+(ns oph.va.virkailija.rondo-service
   (:require [clj-ssh.ssh :as ssh]
             [ring.util.http-response :refer :all]
             [oph.va.hakija.api :as hakija-api];
