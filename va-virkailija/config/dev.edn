@@ -11,8 +11,8 @@
          :port 2500
          :to-finance ["test@test.com"]}
  :rondo-sftp  {:host-ip "dockerftp"
-        :port 2222
-        :local_path "/tmp/"
-        :remote_path "/home/oph/to_rondo/va/"
-        :username "ansku"
-        :password "va"}}
+               :port 2222
+               :local_path "/tmp/"
+               :remote_path "/home/oph/to_rondo/va/"
+               :username "ansku"
+               :password "va"}}
