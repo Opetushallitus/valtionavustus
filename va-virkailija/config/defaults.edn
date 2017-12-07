@@ -11,7 +11,7 @@
  :opintopolku {:url "https://testi.virkailija.opintopolku.fi"
                :cas-login "/cas/login?service="
                :cas-logout "/cas/logout?service="
-               :permission-request "/authentication-henkiloui/html/#/omattiedot2"}
+               :permission-request "/henkilo-ui/omattiedot"}
  :kayttooikeus-service {:va-service-name "VALTIONAVUSTUS"
                         :admin-privilege-name "ADMIN"
                         :user-privilege-name "USER"}
