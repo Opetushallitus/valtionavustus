@@ -7,7 +7,7 @@
             [oph.va.virkailija.payments-data :as payments-data]
             [clojure.tools.logging :as log]))
 
-(defn send-sftp [file ftp-config]
+(defn send-sftp! [file ftp-config]
   (if (get-in config [:email :enabled?])
     (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})
           session (ssh/session agent (ftp-config :host-ip)
@@ -21,7 +21,7 @@
             (ssh/sftp channel {} :put file (ftp-config :remote_path))))))
     (log/info (format "Would send %s to %s" file (:host-ip ftp-config)))))
 
-(defn send-to-rondo [payment-id]
+(defn send-to-rondo! [payment-id]
   (let [payment (payments-data/get-payment payment-id)
         ftp-config (:ftp config)
         file (str (ftp-config :local_path)
@@ -29,4 +29,4 @@
                   (payment :grant_id) "-" (System/currentTimeMillis) ".xml")
         application (payment :application_id)]
     (invoice/write-xml! (invoice/payment-to-xml payment application) file)
-    (send-sftp file ftp-config)))
+    (send-sftp! file ftp-config)))
