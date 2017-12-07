@@ -24,7 +24,7 @@
 (defn send-to-rondo! [payment-id]
   (let [payment (payments-data/get-payment payment-id)
         ftp-config (:ftp config)
-        file (format "%s/payment-%d-%s.xml"
+        file (format "%s/payment-%d-%d.xml"
                      (:local_path ftp-config) (:id payment)
                      (System/currentTimeMillis))
         application (:application_id payment)]
