@@ -251,6 +251,25 @@ cd va-virkailija
 
 Backendin käynnistys ajaa tietokannan migraatiot automaattisesti.
 
+Va-hakijan tai va-virkailijan käynnistys `lein trampoline run`:lla
+saattaa epäonnistua:
+
+```
+Exception in thread "main" java.lang.IllegalArgumentException: No matching ctor found for class java.net.Socket, compiling:(/private/var/folders/sk/grc8h2hn49lc8wfgnxnl5jqh0000gn/T/form-init5349156603706809421.clj:1:125)
+
+# tai
+
+Exception in thread "main" java.lang.IllegalArgumentException: Duplicate key: null, compiling:(kayttooikeus_service.clj:15:5)
+```
+
+Tämä on todennäköisesti bugi Leiningenissä: se ei suorita tiedostoa
+`soresu-form/src/oph/soresu/common/config.clj` silloin, kun va-hakija
+tai va-virkailija requiraa sen. Ongelman voi kiertää komentamalla:
+
+``` bash
+touch soresu-form/src/oph/soresu/common/config.clj
+```
+
 Backendin uberjarrien buildi, projektin juurihakemistossa:
 
 ``` shell
