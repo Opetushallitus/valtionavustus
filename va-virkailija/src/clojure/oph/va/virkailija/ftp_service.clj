@@ -12,7 +12,7 @@
         session (ssh/session agent (:host-ip ftp-config)
                              {:username (:username ftp-config)
                               :password (:password ftp-config)
-                              :port (ftp-config :port)
+                              :port (:port ftp-config)
                               :strict-host-key-checking :no})]
     (ssh/with-connection session
       (let [channel (ssh/ssh-sftp session)]
