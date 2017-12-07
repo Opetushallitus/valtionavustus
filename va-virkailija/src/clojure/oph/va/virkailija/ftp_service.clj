@@ -8,7 +8,7 @@
             [clojure.tools.logging :as log]))
 
 (defn send-sftp! [file ftp-config]
-  (if (get-in config [:email :enabled?])
+  (if (get-in config [:rondo-sftp :enabled?])
     (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})
           session (ssh/session agent (:host-ip ftp-config)
                                {:username (:username ftp-config)

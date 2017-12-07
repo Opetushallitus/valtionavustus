@@ -45,4 +45,4 @@
  :va-users {:use-cache? true
             :cache-refresh-interval-in-s 300
             :cache-max-refresh-interval-in-s 10800}
- :ftp {:enabled? false}}
+ :rondo-sftp {:enabled? false}}
