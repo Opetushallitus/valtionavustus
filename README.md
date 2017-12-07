@@ -251,6 +251,25 @@ cd va-virkailija
 
 Backendin käynnistys ajaa tietokannan migraatiot automaattisesti.
 
+Va-hakijan tai va-virkailijan käynnistys `lein trampoline run`:lla
+saattaa epäonnistua:
+
+```
+Exception in thread "main" java.lang.IllegalArgumentException: No matching ctor found for class java.net.Socket, compiling:(/private/var/folders/sk/grc8h2hn49lc8wfgnxnl5jqh0000gn/T/form-init5349156603706809421.clj:1:125)
+
+# tai
+
+Exception in thread "main" java.lang.IllegalArgumentException: Duplicate key: null, compiling:(kayttooikeus_service.clj:15:5)
+```
+
+Tämä on todennäköisesti bugi Leiningenissä: se ei suorita tiedostoa
+`soresu-form/src/oph/soresu/common/config.clj` silloin, kun va-hakija
+tai va-virkailija requiraa sen. Ongelman voi kiertää komentamalla:
+
+``` bash
+touch soresu-form/src/oph/soresu/common/config.clj
+```
+
 Backendin uberjarrien buildi, projektin juurihakemistossa:
 
 ``` shell
@@ -411,10 +430,11 @@ Esimerkiksi Emacsin
    CIDER ei [injektoi riippuvuuksia
    automaattisesti](https://github.com/clojure-emacs/cider/blob/master/doc/installation.md#ciders-nrepl-middleware).
 
-2. Aseta CIDERin riippuvuudet `~/.lein/profiles.clj`:ssä:
+2. Aseta CIDERin riippuvuudet `~/.lein/profiles.clj`:ssä (versionumerot
+   riippuvat CIDER:n versiosta):
 
    ``` edn
-   {:repl {:plugins [[cider/cider-nrepl "0.16.0-SNAPSHOT"]]
+   {:repl {:plugins [[cider/cider-nrepl "0.15.1"]]
            :dependencies [[org.clojure/tools.nrepl "0.2.13"]]}}
    ```
 
@@ -442,6 +462,7 @@ Kuvaus | Dokumentaatio | Käytössä | Muuta
 ---|---|---|---
 CAS | [palvelukortti](https://confluence.csc.fi/display/oppija/Rajapintojen+autentikaatio) [protokolla](https://apereo.github.io/cas/4.2.x/protocol/CAS-Protocol.html) | va-virkailija | Käyttäjän autentikointi va-virkailijaan. Va-virkailija-sovelluksen autentikointi muihin OPH:n palveluihin (service user).
 Käyttöoikeuspalvelu | [palvelukortti](https://confluence.csc.fi/pages/viewpage.action?pageId=68725146) [api](https://testi.virkailija.opintopolku.fi/kayttooikeus-service/swagger-ui.html) | va-virkailija | VA-käyttäjän haku käyttäjätunnuksen perusteella, VA-palvelun kaikkien käyttäjien haku.
+Organisaatiopalvelu | [palvelukortti](https://confluence.csc.fi/display/OPHPALV/Organisaatiotietojen+hallintapalvelu) [api](https://testi.virkailija.opintopolku.fi/organisaatio-service/swagger/index.html) | va-hakija | Hakijan organisaation tietojen haku Y-tunnuksen perusteella.
 Oppijanumerorekisteri | [palvelukortti](https://confluence.csc.fi/display/OPHPALV/Oppijanumerorekisteri) [api](https://testi.virkailija.opintopolku.fi/oppijanumerorekisteri-service/swagger-ui.html) | va-virkailija | Käyttäjän haku person-oid:lla.
 Koodistopalvelu | [palvelukortti](https://confluence.csc.fi/display/OPHPALV/Koodistopalvelu) [api](https://testi.virkailija.opintopolku.fi/koodisto-service/swagger/index.html) [hallinta-ui](https://testi.virkailija.opintopolku.fi/koodisto-ui/html/index.html#/etusivu) | va-hakija, va-virkailija | Koodien ja metatietojen haku ja luonti.
 
