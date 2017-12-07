@@ -10,15 +10,15 @@
 (defn send-sftp! [file ftp-config]
   (if (get-in config [:email :enabled?])
     (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})
-          session (ssh/session agent (ftp-config :host-ip)
-                               {:username (ftp-config :username)
-                                :password (ftp-config :password)
+          session (ssh/session agent (:host-ip ftp-config)
+                               {:username (:username ftp-config)
+                                :password (:password ftp-config)
                                 :port (ftp-config :port)
                                 :strict-host-key-checking :no})]
       (ssh/with-connection session
         (let [channel (ssh/ssh-sftp session)]
           (ssh/with-channel-connection channel
-            (ssh/sftp channel {} :put file (ftp-config :remote_path))))))
+            (ssh/sftp channel {} :put file (:remote_path ftp-config))))))
     (log/info (format "Would send %s to %s" file (:host-ip ftp-config)))))
 
 (defn send-to-rondo! [payment-id]
@@ -27,6 +27,6 @@
         file (str (ftp-config :local_path)
                   "maksatus" "-" "avustushaku" "-"
                   (:id payment) "-" (System/currentTimeMillis) ".xml")
-        application (payment :application_id)]
+        application (:application_id payment)]
     (invoice/write-xml! (invoice/payment-to-xml payment application) file)
     (send-sftp! file ftp-config)))
