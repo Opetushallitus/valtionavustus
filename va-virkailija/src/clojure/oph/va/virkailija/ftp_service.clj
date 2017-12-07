@@ -24,9 +24,9 @@
 (defn send-to-rondo! [payment-id]
   (let [payment (payments-data/get-payment payment-id)
         ftp-config (:ftp config)
-        file (str (ftp-config :local_path)
-                  "maksatus" "-" "avustushaku" "-"
-                  (:id payment) "-" (System/currentTimeMillis) ".xml")
+        file (format "%s/payment-%d-%s.xml"
+                     (:local_path ftp-config) (:id payment)
+                     (System/currentTimeMillis))
         application (:application_id payment)]
     (invoice/write-xml! (invoice/payment-to-xml payment application) file)
     (send-sftp! file ftp-config)))
