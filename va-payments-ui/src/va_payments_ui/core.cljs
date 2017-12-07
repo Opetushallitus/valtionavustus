@@ -145,9 +145,6 @@
    [:a {:href "/admin/"} "Hakujen hallinta"]
    [:a {:href "/va-payments-ui/payments"} "Maksatusten hallinta"]])
 
-(defn show-project-info [grant]
-    [:div (project-info grant)])
-
 (defn render-applications [applications]
  [:div
   (applications/applications-table applications)])
@@ -234,7 +231,7 @@
           (when-let [grant (get @grants @selected-grant)]
             [:div
             [:h3 "Myönteiset päätökset"]
-            (show-project-info grant)
+            [:div (project-info grant)]
              (render-applications current-applications)
                [:div
                 (when (= @user-role "presenting_officer")
