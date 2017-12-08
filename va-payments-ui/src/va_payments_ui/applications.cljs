@@ -49,4 +49,3 @@
     [ui/table-body {:display-row-checkbox false}
      (doall
        (map-indexed render-application applications))]]])
-

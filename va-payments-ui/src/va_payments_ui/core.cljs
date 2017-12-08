@@ -11,7 +11,7 @@
     [va-payments-ui.applications :as applications]
     [va-payments-ui.connection :as connection]
     [va-payments-ui.router :as router]
-    [va-payments-ui.grants :refer [grants-table]]
+    [va-payments-ui.grants :refer [grants-table project-info]]
     [va-payments-ui.financing :as financing]
     [va-payments-ui.utils :refer [toggle remove-nil format any-nil?]]))
 
@@ -146,9 +146,8 @@
    [:a {:href "/va-payments-ui/payments"} "Maksatusten hallinta"]])
 
 (defn render-applications [applications]
-  [:div
-   [:h3 "Myönteiset päätökset"]
-   (applications/applications-table applications)])
+ [:div
+  (applications/applications-table applications)])
 
 (defn role-select [value on-change]
   [ui/select-field {:value value :floating-label-text "Rooli"
@@ -231,6 +230,8 @@
                         #(show-message! "Virhe tietojen latauksessa")))))})
           (when-let [grant (get @grants @selected-grant)]
             [:div
+            [:h3 "Myönteiset päätökset"]
+            [:div (project-info grant)]
              (render-applications current-applications)
                [:div
                 (when (= @user-role "presenting_officer")

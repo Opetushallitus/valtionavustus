@@ -22,9 +22,6 @@
   [ui/table-row {:key (:id grant) :selected selected}
    [ui/table-row-column (get grant :register-number)]
    [ui/table-row-column (get-in grant [:content :name :fi])]
-   [ui/table-row-column (get-in grant [:content :operational-unit])]
-   [ui/table-row-column (get-in grant [:content :project])]
-   [ui/table-row-column (get-in grant [:content :operation])]
    [ui/table-row-column (get status-str (:status grant))]
    [ui/table-row-column (get phase-str (:phase grant))]
    [ui/table-row-column (get-in grant [:content :duration :start])]
@@ -39,9 +36,6 @@
     [ui/table-row
      [ui/table-header-column "Diaarinumero"]
      [ui/table-header-column "Nimi"]
-     [ui/table-header-column "Toimintayksikkö"]
-     [ui/table-header-column "Projekti"]
-     [ui/table-header-column "Toiminto"]
      [ui/table-header-column "Tila"]
      [ui/table-header-column "Vaihe"]
      [ui/table-header-column "Haku alkaa"]
@@ -50,4 +44,8 @@
     (for [grant grants]
       (grant-row grant (= (.indexOf grants grant) value)))]])
 
-
+(defn project-info [grant]
+   [ui/grid-list {:cols 6 :cell-height "auto" :style  {:margin 20}}
+    [:div [:label "Toimintayksikkö: "]  (get-in grant [:content :operational-unit])]
+    [:div [:label "Projekti: "] (get-in grant [:content :project])]
+    [:div [:label "Toiminto: "] (get-in grant [:content :operation])]])
