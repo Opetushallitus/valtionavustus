@@ -39,6 +39,15 @@
         (on-success (:body response))
         (on-error (:status response) (:error-text response))))))
 
+(defn multi-request-with-go [params f on-success on-error]
+  (go
+    (doseq [param params]
+      (let [response
+            (async/<! (f param))]
+        (when-not (:success response)
+          (on-error (:status response) (:error-text response)))))
+    (on-success)))
+
 (defn get-config [{:keys [on-success on-error]}]
   (request-with-go connection/get-config on-success on-error))
 
@@ -79,13 +88,8 @@
     (on-success)))
 
 (defn update-payments! [payments on-success on-error]
-  (go
-    (doseq [payment payments]
-      (let [response
-            (async/<! (connection/update-payment payment))]
-        (when-not (:success response)
-          (on-error (:status response) (:error-text response)))))
-    (on-success)))
+  (multi-request-with-go
+    connection/update-payment payments on-success on-error))
 
 (defn redirect-to-login! []
   (-> js/window
