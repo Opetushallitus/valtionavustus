@@ -32,46 +32,35 @@
 (defn show-message! [message]
   (reset! snackbar {:open true :message message}))
 
-(defn get-config [{:keys [on-success on-error]}]
+(defn request-with-go [f on-success on-error]
   (go
-    (let [response (async/<! (connection/get-config))]
+    (let [response (async/<! (f))]
       (if (:success response)
         (on-success (:body response))
-        (on-error (:status response))))))
+        (on-error (:status response) (:error-text response))))))
+
+(defn get-config [{:keys [on-success on-error]}]
+  (request-with-go connection/get-config on-success on-error))
+
+(defn check-session [{:keys [on-success on-error]}]
+  (request-with-go connection/check-session on-success on-error))
+
+(defn download-grant-applications [grant-id on-success on-error]
+  (request-with-go #(connection/get-grant-applications grant-id)
+                  on-success on-error))
+
+(defn download-grants [on-success on-error]
+  (request-with-go connection/get-grants-list on-success on-error))
+
+(defn download-grant-payments [grant-id on-success on-error]
+  (request-with-go #(connection/get-grant-payments grant-id)
+                   on-success on-error))
 
 (defn redirect-to-login! []
   (-> js/window
       .-location
       .-href
      (set! connection/login-url-with-service)))
-
-(defn check-session [{:keys [on-success on-error]}]
-  (go
-    (let [response (async/<! (connection/check-session))]
-      (if (:success response)
-        (on-success)
-        (on-error (:status response))))))
-
-(defn download-grant-applications [grant-id on-success on-error]
-  (go
-    (let [response (async/<! (connection/get-grant-applications grant-id))]
-      (if (:success response)
-        (on-success (get response :body))
-        (on-error (:status response) (:error-text response))))))
-
-(defn download-grants [on-success on-error]
-  (go
-    (let [response (async/<! (connection/get-grants-list))]
-      (if (:success response)
-        (on-success (:body response))
-        (on-error (:status response) (:error-text response))))))
-
-(defn download-grant-payments [grant-id on-success on-error]
-  (go
-    (let [response (async/<! (connection/get-grant-payments grant-id))]
-      (if (:success response)
-        (on-success (get response :body))
-        (on-error (:status response) (:error-text response))))))
 
 (defn combine-application-payment [application payment]
   (let [selected-values (select-keys payment [:id :version :state])]
@@ -321,13 +310,13 @@
   (mount-root)
  (get-config
    {:on-error
-    (fn [status] (show-message! "Virhe tietojen latauksessa"))
+    (fn [_ __] (show-message! "Virhe tietojen latauksessa"))
     :on-success
     (fn [config]
        (connection/set-config! config))})
        (check-session
          {:on-success
-          (fn []
+          (fn [_]
             (download-grants
               (fn [result]
                 (do (reset! grants result)
@@ -345,4 +334,4 @@
               (fn [code text]
                 (show-message! "Virhe tietojen latauksessa"))))
           :on-error
-          (fn [status] (when (= status 401) (redirect-to-login!)))}))
+          (fn [status _] (when (= status 401) (redirect-to-login!)))}))
