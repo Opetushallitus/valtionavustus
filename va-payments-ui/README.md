@@ -42,6 +42,19 @@ Myös esimerkiksi rlwrap toimii figwheelin kanssa:
 - [Material UI](http://www.material-ui.com)
 - [Figwheel](https://github.com/bhauman/lein-figwheel)
 
+### Testaus
+
+Sovellus on konfiguroitu käyttämään [doo]
+(https://github.com/bensu/do://github.com/bensu/doo.) -runneria.
+
+Testit voit ajaa kerran:
+
+    $ ../lein doo once
+
+Tai watching-modessa:
+
+    $ ../lein doo
+
 ## Tuotanto
 
 ### Tuotantopaketin luonti
