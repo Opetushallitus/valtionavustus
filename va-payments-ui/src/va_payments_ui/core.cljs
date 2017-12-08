@@ -32,6 +32,13 @@
 (defn show-message! [message]
   (reset! snackbar {:open true :message message}))
 
+(defn get-config [{:keys [on-success on-error]}]
+  (go
+    (let [response (async/<! (connection/get-config))]
+      (if (:success response)
+        (on-success (:body response))
+        (on-error (:status response))))))
+
 (defn redirect-to-login! []
   (-> js/window
       .-location
@@ -312,24 +319,30 @@
 
 (defn init! []
   (mount-root)
-  (check-session
-    {:on-success
-     (fn []
-       (download-grants
-         (fn [result]
-           (do (reset! grants result)
-               (reset! selected-grant
-                       (if-let
-                         [grant-id (get-param-grant)]
-                         (find-index-of @grants #(= grant-id (:id %)))
-                        0)))
-           (when-let [selected-grant-id
-                      (get (nth @grants @selected-grant) :id)]
-             (download-grant-data
-               selected-grant-id
-               #(do (reset! applications %1) (reset! payments %2))
-               #(show-message! "Virhe tietojen latauksessa"))))
-         (fn [code text]
-           (show-message! "Virhe tietojen latauksessa"))))
-     :on-error
-     (fn [status] (when (= status 401) (redirect-to-login!)))}))
+ (get-config
+   {:on-error
+    (fn [status] (show-message! "Virhe tietojen latauksessa"))
+    :on-success
+    (fn [config]
+       (connection/set-config! config))})
+       (check-session
+         {:on-success
+          (fn []
+            (download-grants
+              (fn [result]
+                (do (reset! grants result)
+                    (reset! selected-grant
+                            (if-let
+                              [grant-id (get-param-grant)]
+                              (find-index-of @grants #(= grant-id (:id %)))
+                             0)))
+                (when-let [selected-grant-id
+                           (get (nth @grants @selected-grant) :id)]
+                  (download-grant-data
+                    selected-grant-id
+                    #(do (reset! applications %1) (reset! payments %2))
+                    #(show-message! "Virhe tietojen latauksessa"))))
+              (fn [code text]
+                (show-message! "Virhe tietojen latauksessa"))))
+          :on-error
+          (fn [status] (when (= status 401) (redirect-to-login!)))}))
