@@ -66,7 +66,7 @@ Tai watching-modessa:
 Sovelluksen kääntäminen tuotantoympäristöön:
 
 ``` bash
-CONFIG=config/prod.edn ../lein package
+../lein package
 ```
 
 `package` on alias, joka suorittaa `clean` ja `build` -taskit.
