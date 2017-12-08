@@ -51,11 +51,15 @@ Sovellus on konfiguroitu käyttämään [doo]
 
 Testit voit ajaa kerran:
 
-    $ ../lein doo once
+``` bash
+../lein doo once
+```
 
 Tai watching-modessa:
 
+``` bash
     $ ../lein doo
+```
 
 ## Tuotantoympäristö
 
