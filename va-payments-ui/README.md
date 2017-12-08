@@ -23,7 +23,7 @@ Kääntäjä luo buildin hakemistoon
 `../va-virkailija/resources/public/payments`.
 
 Figwheel puskee muutokset `.cljs`-tiedostoissa selaimelle. Kun Figwheel
-on käynnissä, pitäisi selaimeen aueta `/payments/`.
+on käynnistynyt, pitäisi selaimeen aueta `/payments/`.
 
 ### REPL
 
@@ -66,7 +66,7 @@ Tai watching-modessa:
 Sovelluksen kääntäminen tuotantoympäristöön:
 
 ``` bash
-CONFIG=config/prod.edn ../lein package
+../lein package
 ```
 
 `package` on alias, joka suorittaa `clean` ja `build` -taskit.
