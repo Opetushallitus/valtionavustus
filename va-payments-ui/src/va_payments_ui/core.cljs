@@ -56,6 +56,10 @@
   (request-with-go #(connection/get-grant-payments grant-id)
                    on-success on-error))
 
+(defn send-payments-email [grant-id on-success on-error]
+  (request-with-go #(connection/send-payments-email grant-id)
+                   on-success on-error))
+
 (defn create-application-payments! [applications values on-success on-error]
   (go
     (let [next-i-number-response
@@ -82,17 +86,6 @@
         (when-not (:success response)
           (on-error (:status response) (:error-text response)))))
     (on-success)))
-
-(defn create-grant-payments! [id payments on-success on-error]
-  (go
-    (let [response (async/<! (connection/create-grant-payments id payments))]
-      (if (:success response)
-        (on-success)
-        (on-error (:status response) (:error-text response))))))
-
-(defn send-payments-email [grant-id on-success on-error]
-  (request-with-go #(connection/send-payments-email grant-id)
-                   on-success on-error))
 
 (defn redirect-to-login! []
   (-> js/window
