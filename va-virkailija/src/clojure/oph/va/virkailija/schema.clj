@@ -262,10 +262,15 @@
    (s/optional-key :inspector-email) s/Str
    (s/optional-key :acceptor-email) s/Str})
 
-(s/defschema PaymentEmails
+(s/defschema PaymentInstallmentNumber
+  "Payment installment number"
+  {:installment-number s/Int})
+
+(s/defschema NewPayment
   "Payment emails"
   {:inspector-email s/Str
-   :acceptor-email s/Str})
+   :acceptor-email s/Str
+   :installment-number s/Int})
 
 (s/defschema GrantStatus
   "Grant status"
@@ -284,8 +289,8 @@
    :status GrantStatus
    :register-number (s/maybe s/Str)
    (s/optional-key :decision) s/Any
-   :valiselvitysdate (s/maybe s/Inst)
-   :loppuselvitysdate (s/maybe s/Inst)
+   :valiselvitysdate (s/maybe s/Str)
+   :loppuselvitysdate (s/maybe s/Str)
    :form-loppuselvitys (s/maybe s/Int)
    :form-valiselvitys (s/maybe s/Int)
    :is-academysize s/Bool

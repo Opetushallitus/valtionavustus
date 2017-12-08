@@ -37,7 +37,8 @@
             [oph.va.virkailija.payments_info :as payments-info]
             [oph.va.virkailija.grant-routes :as grant-routes]
             [oph.va.virkailija.application-routes :as application-routes]
-            [oph.va.virkailija.payments-routes :as payments-routes]))
+            [oph.va.virkailija.payments-routes :as payments-routes]
+            [oph.va.virkailija.reporting-data :as reporting]))
 
 (def opintopolku-login-url
   (when-not *compile-files*
@@ -139,6 +140,11 @@
      (on-selvitys avustushaku-id hakemus selvitys-type preview))
 
    (compojure/GET "/avustushaku/:id/*" [id] (return-html "index.html"))
+
+   (compojure/GET "/payments/" [] (return-html "payments/index.html"))
+
+   (compojure-route/resources "/payments/"
+                              {:mime-types {"html" "text/html; charset=utf-8"}})
 
    va-routes/logo-route
 
@@ -649,7 +655,24 @@
      (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
          (assoc :session nil)))
 
-   (compojure/GET "/logged-out" [] (return-html "login.html"))))
+   (compojure/GET "/logged-out" [] (return-html "login.html")))
+
+  (compojure-api/GET
+    "/sessions/" [:as request]
+    :return (s/maybe s/Str)
+    :summary "Enpoint for checking if session is valid"
+    (if-let [identity (authentication/get-request-identity request)]
+      (ok "ok")
+      (unauthorized))))
+
+
+ (compojure-api/defroutes reports-routes
+  "Reports"
+
+  (compojure-api/GET "/" request
+    :return s/Any
+    :summary "Simple yearly reporting overview"
+    (ok (reporting/get-yearly-report))))
 
 (def api-config
   {:formats [:json-kw]
@@ -688,6 +711,8 @@
     payments-routes/routes)
 
   (compojure-api/context "/api/v2/payments" [] :tags ["payments"] grant-routes/payment-routes)
+  (compojure-api/context
+    "/api/v2/reports" [] :tags ["reports"] reports-routes)
 
   va-routes/config-routes
   resource-routes)

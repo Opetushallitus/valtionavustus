@@ -5,4 +5,4 @@ SELECT
 FROM
   avustushaut
 WHERE
-  status != 'deleted';
+  status = 'resolved';

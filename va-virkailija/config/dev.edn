@@ -1,20 +1,12 @@
 {:server {:allow-db-clear? true
           :url {:fi "http://localhost:8080/"
                 :sv "http://localhost:8080/"}
-          :admin-url "http://localhost/admin-ui"
           :enable-access-log? false
-          :require-https? false
-          :local-front-url "http://localhost:3449"}
+          :require-https? false}
  :api {:restricted-routes? false}
  :virkailija-db {:database-name "va-dev"}
  :form-db {:database-name "va-dev"}
  :email {:enabled? false
          :host "localhost"
          :port 2500
-         :to-finance ["test@test.com"]}
- :ftp  {:host-ip "dockerftp"
-        :port 2222
-        :local_path "/tmp/"
-        :remote_path "/home/oph/to_rondo/va/"
-        :username "ansku"
-        :password "va"}}
+         :to-finance ["test@test.com"]}}

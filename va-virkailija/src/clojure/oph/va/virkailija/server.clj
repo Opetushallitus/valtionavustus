@@ -58,17 +58,6 @@
     true
     (buddy-accessrules/error "Authentication required")))
 
-(defn wrap-with-local-cors [handler url]
-  (fn [request]
-    (let [response (handler request)]
-      (-> response
-          (assoc-in [:headers "Access-Control-Allow-Origin"] url)
-          (assoc-in [:headers "Access-Control-Allow-Methods"]
-                    "POST, GET, OPTIONS, PUT")
-          (assoc-in [:headers "Access-Control-Allow-Headers"]
-                    "Content-Type")
-          (assoc-in [:headers "Access-Control-Allow-Credentials"] true)))))
-
 (defn- with-authentication [site]
   (-> site
       (buddy-middleware/wrap-authentication (buddy-session/session-backend))
@@ -77,18 +66,6 @@
                  :handler any-access}
                 {:pattern #"^/environment"
                  :handler any-access}
-                {:pattern #"^/api/v2/payments/\d+/$"
-                 :request-method :options
-                 :handler any-access}
-                {:pattern #"^/api/avustushaku/\d+/payments-email/$"
-                 :request-method :options
-                 :handler any-access}
-                {:pattern #"^/api/v2/applications/\d+/payments/$"
-                 :request-method :options
-                 :handler any-access}
-                 {:pattern #"^/api/v2/payments/\d+/invoice/$"
-                  :request-method :options
-                  :handler any-access}
                 {:pattern #"^/errorlogger"
                  :handler any-access}
                 {:pattern #"^/js/.*"
@@ -124,9 +101,6 @@
                       (server/wrap-logger h)
                       (server/wrap-cache-control h)
                       (wrap-not-modified h)
-                      (if-let [local-url (get-in config [:server :local-front-url])]
-                        (wrap-with-local-cors h local-url)
-                        h)
                       (if auto-reload?
                         (wrap-reload h)
                         h))

@@ -5,7 +5,7 @@
             [compojure.core :as compojure]
             [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]
-            [oph.va.virkailija.ftp-service :as ftp-service]))
+            [oph.va.virkailija.rondo-service :as rondo-service]))
 
 (defn- get-grants []
   (compojure-api/GET "/" []
@@ -14,7 +14,7 @@
     :return virkailija-schema/Grants
     :summary "Return list of grants"
     (ok (if (= template "with-content")
-          (grant-data/get-grants-with-content)
+          (grant-data/get-resolved-grants-with-content)
           (grant-data/get-grants)))))
 
 (defn- get-grant []
@@ -50,7 +50,7 @@
       (compojure-api/POST "/:id/invoice/" [id :as request]
         :path-params [id :- Long]
         :summary "Send one invoice to Rondo."
-      (ok (ftp-service/send-to-rondo id))))
+      (ok (rondo-service/send-to-rondo! id))))
 
     (defn- options-send-invoice []
       (compojure-api/OPTIONS
@@ -58,8 +58,7 @@
         :path-params [id :- Long]
         :return s/Any
         :summary "Route OPTIONS"
-        (-> (ok "")
-            (assoc-in [:headers "Access-Control-Allow-Methods"] "POST, GET, OPTIONS"))))
+        (ok "")))
 
 
 (compojure-api/defroutes payment-routes

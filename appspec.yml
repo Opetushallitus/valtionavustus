@@ -5,11 +5,16 @@ files:
     destination: /home/ec2-user/va-virkailija/
   - source: va-hakija/target/uberjar/hakija-0.1.0-SNAPSHOT-standalone.jar
     destination: /home/ec2-user/va-hakija/
+  - source: va-payments-ui/
+    destination: /home/ec2-user/va-payments-ui/
 hooks:
   ApplicationStart:
     - location: ci/dev_start_virkailija.sh
       timeout: 80
       runas: ec2-user
     - location: ci/dev_start_hakija.sh
+      timeout: 80
+      runas: ec2-user
+    - location: ci/dev_start_payments.sh
       timeout: 80
       runas: ec2-user

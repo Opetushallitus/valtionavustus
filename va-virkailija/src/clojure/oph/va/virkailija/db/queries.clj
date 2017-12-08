@@ -30,6 +30,8 @@
 (defquery payment-close-version
   "sql/virkailija/payments/payment-close-version.sql")
 (defquery update-payment "sql/virkailija/payments/update-payment.sql")
+(defquery get-next-payment-installment-number
+  "sql/virkailija/payments/get-next-installment-number.sql")
 
 (defquery lock-va-users-cache-exclusively! "sql/virkailija/va_users_cache/lock-exclusively.sql")
 (defquery update-va-user-cache! "sql/virkailija/va_users_cache/update.sql")
@@ -37,3 +39,12 @@
 (defquery delete-va-user-cache-by-not-in! "sql/virkailija/va_users_cache/delete-by-not-in.sql")
 (defquery delete-va-user-cache! "sql/virkailija/va_users_cache/delete.sql")
 (defquery get-va-user-cache-by-person-oid "sql/virkailija/va_users_cache/get-by-person-oid.sql")
+
+(defquery get-yearly-application-info
+  "sql/virkailija/reporting/get-yearly-application-info.sql")
+(defquery get-yearly-evaluation-count-by-status
+  "sql/virkailija/reporting/get-yearly-evaluation-count-by-status.sql")
+(defquery get-yearly-granted "sql/virkailija/reporting/get-yearly-granted.sql")
+(defquery get-total-grant-count
+  "sql/virkailija/reporting/get-total-grant-count.sql")
+

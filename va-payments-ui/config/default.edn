@@ -1,0 +1,8 @@
+{:closure-defines
+ {"va_payments_ui.connection.backend_url"
+  "http://localhost:8081"
+  "va_payments_ui.connection.service"
+  "http://localhost:8081/login/cas"
+  "va_payments_ui.connection.login_url"
+  "https://testi.virkailija.opintopolku.fi/cas/login"}
+ }
