@@ -1,4 +1,4 @@
-(def config (load-file (or (System/getenv "config") "config/config.edn")))
+(def config (load-file (or (System/getenv "config") "config/default.edn")))
 
 (defproject va-payments-ui "0.1.0"
   :description "Valtionavustus maksatusten käyttöliittymä"
