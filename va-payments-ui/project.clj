@@ -7,7 +7,8 @@
 
   :plugins [[lein-parent "0.3.2"]
             [lein-cljsbuild "1.1.7"]
-            [lein-figwheel "0.5.14"]]
+            [lein-figwheel "0.5.14"]
+            [lein-doo "0.1.8"]]
 
   :parent-project {:path "../parent-project.clj"
                    :inherit [:url
@@ -67,12 +68,15 @@
     :test
     {:source-paths ["src" "test" "env/test/cljs"]
      :compiler
-     {:main va-payments-ui.main-test
-      :asset-path "/js/out"
+     {:main va-payments-ui.runner
+      :asset-path "target/cljstest/public/js/out"
       :output-to "target/test.js"
       :output-dir "target/cljstest/public/js/out"
-      :optimizations :whitespace
-      :pretty-print  true}}}}
+      :pretty-print  true
+      :target :nodejs}}}}
+
+  :doo {:build "test"
+        :alias {:default [:node]}}
 
   :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]}
 

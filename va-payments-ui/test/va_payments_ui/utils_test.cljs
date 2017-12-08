@@ -7,7 +7,6 @@
   (is (not (utils/any-nil? {:hello "word"} [])))
   (is (not (utils/any-nil? {:hello nil} [])))
   (is (utils/any-nil? {nil nil} [nil]))
-  (is (not (utils/any-nil? {} [:hello :world])))
   (is (utils/any-nil? {} [:hello :world]))
   (is (utils/any-nil? {:hello "something"} [:hello :world]))
   (is (not (utils/any-nil? {:hello "something" :world "words"} [:hello :world])))

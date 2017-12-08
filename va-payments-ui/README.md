@@ -44,6 +44,23 @@ rlwrap toimii Figwheelin kanssa:
 rlwrap lein figwheel
 ```
 
+### Testaus
+
+Sovellus on konfiguroitu käyttämään
+[doo](https://github.com/bensu/do://github.com/bensu/doo.)-runneria.
+
+Testit voit ajaa kerran:
+
+``` bash
+../lein doo once
+```
+
+Tai watching-modessa:
+
+``` bash
+../lein doo
+```
+
 ## Tuotantoympäristö
 
 Sovelluksen kääntäminen tuotantoympäristöön:
