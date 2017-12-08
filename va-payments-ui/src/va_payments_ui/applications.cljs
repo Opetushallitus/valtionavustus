@@ -23,7 +23,7 @@
   [ui/table-row {:key i}
    [ui/table-row-column (state-to-str (:payment-state application))]
    [ui/table-row-column (:organization-name application)]
-   [ui/table-row-column (:project-name application)]
+   [ui/table-row-column [:a {:href (str "/avustushaku/" (:grant-id application) "/hakemus/"(:id application) "/arviointi/")} (:project-name application)]]
    [ui/table-row-column (get application :budget-granted)]
    [ui/table-row-column
     (get-answer-value (:answers application) "bank-iban")]
@@ -32,7 +32,7 @@
    [ui/table-row-column (get-in application [:arvio :takp-account])]
    [ui/table-row-column (get-in application [:arvio :amount])]])
 
-(defn applications-table [applications]
+(defn applications-table [applications grant-id]
   [:div
    [ui/table {:fixed-header true :height "250px" :selectable false}
     [ui/table-header {:adjust-for-checkbox false :display-select-all false}
@@ -48,4 +48,4 @@
       [ui/table-header-column "Tiliöintisumma"]]]
     [ui/table-body {:display-row-checkbox false}
      (doall
-       (map-indexed render-application applications))]]])
+       (map-indexed render-application (map #(assoc % :grant-id grant-id) applications)))]]])

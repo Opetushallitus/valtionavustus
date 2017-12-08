@@ -141,9 +141,9 @@
    [:a {:href "/admin/"} "Hakujen hallinta"]
    [:a {:href "/va-payments-ui/payments"} "Maksatusten hallinta"]])
 
-(defn render-applications [applications]
+(defn render-applications [applications grant-id]
  [:div
-  (applications/applications-table applications)])
+  (applications/applications-table applications grant-id)])
 
 (defn role-select [value on-change]
   [ui/select-field {:value value :floating-label-text "Rooli"
@@ -228,7 +228,7 @@
             [:div
             [:h3 "Myönteiset päätökset"]
             [:div (project-info grant)]
-             (render-applications current-applications)
+             (render-applications current-applications (:id grant))
                [:div
                 (when (= @user-role "presenting_officer")
                   (when-let [grant (nth @grants @selected-grant)]
