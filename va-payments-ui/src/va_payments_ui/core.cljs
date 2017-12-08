@@ -323,7 +323,7 @@
                               (find-index-of @grants #(= grant-id (:id %)))
                              0)))
                 (when-let [selected-grant-id
-                           (get (nth @grants @selected-grant) :id)]
+                           (get-in @grants [@selected-grant :id])]
                   (download-grant-data
                     selected-grant-id
                     #(do (reset! applications %1) (reset! payments %2))
