@@ -58,7 +58,7 @@ Testit voit ajaa kerran:
 Tai watching-modessa:
 
 ``` bash
-    $ ../lein doo
+../lein doo
 ```
 
 ## Tuotantoympäristö
