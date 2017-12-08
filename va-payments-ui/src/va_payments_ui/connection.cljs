@@ -5,61 +5,65 @@
             [goog.net.cookies]
             [va-payments-ui.utils :refer [format]]))
 
-(goog-define backend-url "http://localhost")
-
-(goog-define service "http://localhost/login/cas")
-
-(goog-define login-url "https://testi.virkailija.opintopolku.fi/cas/login")
-
-(def login-url-with-service (format "%s?service=%s" login-url service))
-
 (def api-path "api/v2")
 
+(defonce config (atom {}))
+
+(defn login-url-with-service []
+  (format "%s?service=%s/login/cas"
+          (get-in config [:opintopolku :url])
+          (get-in config [:virkailija-server :url])))
+
 (defn get-grant-data [id]
-  (http/get (format "%s/%s/grants/%d/" backend-url api-path id)
+  (http/get (format "/%s/grants/%d/" api-path id)
             {:with-credentials? true}))
 
 (defn get-grant-applications [id]
-  (http/get (format "%s/%s/grants/%d/applications/?template=with-evaluation"
-                    backend-url api-path id)
+  (http/get (format "/%s/grants/%d/applications/?template=with-evaluation"
+                    api-path id)
             {:with-credentials? true}))
 
 (defn get-grants-list []
-  (http/get (format "%s/%s/grants/?template=with-content" backend-url api-path)
+  (http/get (format "/%s/grants/?template=with-content" api-path)
             {:with-credentials? true}))
 
 (defn get-grant-payments [id]
-    (http/get (format "%s/%s/grants/%d/payments/" backend-url api-path id)
+    (http/get (format "/%s/grants/%d/payments/" api-path id)
             {:with-credentials? true}))
 
 (defn get-next-installment-number []
-    (http/get (format "%s/%s/payments/next-installment-number/"
-                      backend-url api-path)
+    (http/get (format "/%s/payments/next-installment-number/"
+                      api-path)
             {:with-credentials? true}))
 
 (defn create-application-payment [id values]
-  (http/post (format "%s/%s/applications/%s/payments/" backend-url api-path id)
+  (http/post (format "/%s/applications/%s/payments/" api-path id)
              {:json-params values
               :with-credentials? true}))
 
 (defn update-payment [payment]
-  (http/put (format "%s/%s/payments/%d/" backend-url api-path (:id payment))
+  (http/put (format "/%s/payments/%d/" api-path (:id payment))
              {:json-params payment
               :with-credentials? true}))
 
 (defn create-grant-payments [id payments]
-  (http/post (str backend-url "/api/avustushaku/" id "/payments")
+  (http/post (str "/api/avustushaku/" id "/payments")
              {:json-params payments
               :with-credentials? true}))
 
 (defn send-payments-email [id]
   (http/post (format
-               "%s/api/avustushaku/%d/payments-email/" backend-url id)
+               "/api/avustushaku/%d/payments-email/" id)
              {:json-params {}
               :with-credentials? true}))
 
 (defn check-session []
-  (http/get (format "%s/login/sessions/" backend-url)
+  (http/get (format "/login/sessions/")
             {:with-credentials? true}))
 
+(defn get-config []
+  (http/get (format "/environment")
+            {:with-credentials? true}))
 
+(defn set-config! [c]
+  (reset! config c))

@@ -1,9 +1,0 @@
-{:closure-defines
- {"va_payments_ui.connection.backend_url"
-  "https://virkailija.valtionavustukset.oph.fi"
-  "va_payments_ui.connection.service"
-  "https://virkailija.valtionavustukset.oph.fi/login/cas"
-  "va_payments_ui.connection.login_url"
-  "https://virkailija.opintopolku.fi/cas/login"}}
-
-

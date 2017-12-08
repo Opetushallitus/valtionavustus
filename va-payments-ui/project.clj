@@ -1,7 +1,3 @@
-(def config (load-file (or (System/getenv "CONFIG") "config/default.edn")))
-
-(println "Configuration:" config)
-
 (defproject va-payments-ui "0.1.0"
   :description "Valtionavustus maksatusten käyttöliittymä"
 
@@ -51,8 +47,7 @@
       :asset-path "/payments/js/out"
       :source-map true
       :optimizations :none
-      :pretty-print  true
-      :closure-defines #=(eval (:closure-defines config))}
+      :pretty-print  true}
      :figwheel
      {:on-jsload "va-payments-ui.core/mount-root"
       :open-urls ["http://localhost:8081/payments/"]}}
@@ -63,8 +58,7 @@
       :output-dir "../va-virkailija/resources/public/payments/js/release"
       :asset-path "/payments/js/out"
       :optimizations :advanced
-      :pretty-print false
-      :closure-defines #=(eval (:closure-defines config))}}
+      :pretty-print false}}
     :test
     {:source-paths ["src" "test" "env/test/cljs"]
      :compiler
