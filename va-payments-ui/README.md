@@ -46,8 +46,8 @@ rlwrap lein figwheel
 
 ### Testaus
 
-Sovellus on konfiguroitu käyttämään [doo]
-(https://github.com/bensu/do://github.com/bensu/doo.) -runneria.
+Sovellus on konfiguroitu käyttämään
+[doo](https://github.com/bensu/do://github.com/bensu/doo.)-runneria.
 
 Testit voit ajaa kerran:
 
