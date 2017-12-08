@@ -38,9 +38,6 @@ lein repl
 Leiningenin REPL:n kanssa on ollut ongelmia requiren kanssa, koska se
 etsii oletuksena .clj-tiedostoja.
 
-
->>>>>>> develop
-
 rlwrap toimii Figwheelin kanssa:
 
 ``` bash
