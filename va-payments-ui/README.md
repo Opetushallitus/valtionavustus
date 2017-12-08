@@ -2,57 +2,54 @@
 
 Maksatusten käyttöliittymä
 
-## Kehitys
+## Riippuvuudet
 
-### Kehitystila
+* [Reagent](https://reagent-project.github.io/)
+* [Material UI](http://www.material-ui.com/)
+* [Figwheel](https://github.com/bhauman/lein-figwheel)
 
-1. Käynnistä Virkailijan näkymä
+## Kehitysympäristö
 
-2. Käynnistä Figwheel compiler
+1. Käynnistä va-virkailija
+2. Käynnistä Figwheel-kääntäjä
 
 Figwheel compiler lähtee käyntiin komennolla:
 
-    ./lein figwheel
-
-Figwheel puskee cljs muutokset suoraan selaimelle.
-
-Kun Figwheel on käynnissä, pitäisi selaimeen aueta `/payments/`
-
-### Repl
-
-Jos tahdot käyttää leiningenin repliä, onnistuu figwheelin käynnistys myös tätä
-kautta.
-
-```
-$ lein repl
-user=> (use 'figwheel-sidecar.repl-api)
-user=> (start-figwheel!)
+``` bash
+../lein figwheel
 ```
 
-Leiningenin replin kanssa on ollut ongelmia requiren kanssa, koska se etsii
-oletuksena .clj-tiedostoja.
+Kääntäjä luo buildin hakemistoon
+`../va-virkailija/resources/public/payments`.
 
-Myös esimerkiksi rlwrap toimii figwheelin kanssa:
+Figwheel puskee muutokset `.cljs`-tiedostoissa selaimelle. Kun Figwheel
+on käynnissä, pitäisi selaimeen aueta `/payments/`.
 
-    rlwrap lein figwheel
+### REPL
 
-### Sovellus käyttää seuraavia kirjastoja:
+Figwheelin voi käynnistää REPL:n kautta:
 
-- [Reagent](https://reagent-project.github.io/)
-- [Material UI](http://www.material-ui.com)
-- [Figwheel](https://github.com/bhauman/lein-figwheel)
+``` bash
+lein repl
+# user=> (use 'figwheel-sidecar.repl-api)
+# user=> (start-figwheel!)
+```
 
-## Tuotanto
+Leiningenin REPL:n kanssa on ollut ongelmia requiren kanssa, koska se
+etsii oletuksena .clj-tiedostoja.
 
-### Tuotantopaketin luonti
+rlwrap toimii Figwheelin kanssa:
 
-    config="config/prod.edn" ../lein package
+``` bash
+rlwrap lein figwheel
+```
 
-`package` on alias, jolla tehdään sekä clean että build. Jos pelkän cleanin
-tarvitsee tehdä, niin se onnistuu `../lein clean`
+## Tuotantoympäristö
 
-Käytettävä config-tiedosto annetaan polun kera
-"config"-ympäristömuuttujalla. Paketti luodaan `va-virkailija`:n
-`resources/public/payments`-kansioon. Myös kehitysaikainen build menee samaiseen
-kansioon, jolloin sitä voi käyttää virkailijan näkymästä `payments/`-polussa.
+Sovelluksen kääntäminen tuotantoympäristöön:
 
+``` bash
+CONFIG=config/prod.edn ../lein package
+```
+
+`package` on alias, joka suorittaa `clean` ja `build` -taskit.
