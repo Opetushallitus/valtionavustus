@@ -12,7 +12,7 @@ Maksatusten käyttöliittymä
 
 Figwheel compiler lähtee käyntiin komennolla:
 
-    ./lein figwheel
+    ../lein figwheel
 
 Figwheel puskee cljs muutokset suoraan selaimelle.
 
@@ -24,7 +24,7 @@ Jos tahdot käyttää leiningenin repliä, onnistuu figwheelin käynnistys myös
 kautta.
 
 ```
-$ lein repl
+$ ../lein repl
 user=> (use 'figwheel-sidecar.repl-api)
 user=> (start-figwheel!)
 ```
@@ -34,7 +34,7 @@ oletuksena .clj-tiedostoja.
 
 Myös esimerkiksi rlwrap toimii figwheelin kanssa:
 
-    rlwrap lein figwheel
+    rlwrap ../lein figwheel
 
 ### Sovellus käyttää seuraavia kirjastoja:
 
