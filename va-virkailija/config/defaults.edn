@@ -44,4 +44,6 @@
          :retry-max-time 60000}
  :va-users {:use-cache? true
             :cache-refresh-interval-in-s 300
-            :cache-max-refresh-interval-in-s 10800}}
+            :cache-max-refresh-interval-in-s 10800}
+ :rondo-sftp {:enabled? false
+              :local-path "/tmp"}}
