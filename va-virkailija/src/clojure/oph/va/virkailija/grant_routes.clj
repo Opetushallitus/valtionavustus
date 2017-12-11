@@ -53,7 +53,7 @@
     :path-params [id :- Long]
     :return s/Any
     :summary "Delete grant payments"
-    (when-not (:delete-payments? config)
+    (when-not (get-in config [:payments :delete-payments?])
       (throw (Exception. "Route not allowed")))
     (grant-data/delete-grant-payments id)
     (ok)))
