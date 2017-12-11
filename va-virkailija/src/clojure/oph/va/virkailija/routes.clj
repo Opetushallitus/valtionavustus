@@ -709,8 +709,6 @@
     application-routes/routes)
   (compojure-api/context "/api/v2/payments" [] :tags ["payments"]
     payments-routes/routes)
-
-  (compojure-api/context "/api/v2/payments" [] :tags ["payments"] grant-routes/payment-routes)
   (compojure-api/context
     "/api/v2/reports" [] :tags ["reports"] reports-routes)
 

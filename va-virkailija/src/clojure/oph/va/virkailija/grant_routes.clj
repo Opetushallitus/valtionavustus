@@ -58,11 +58,6 @@
     (grant-data/delete-grant-payments id)
     (ok)))
 
-(compojure-api/defroutes payment-routes
-      "payment routes"
-      (options-send-invoice)
-      (send-invoice))
-
 (compojure-api/defroutes routes
   "grant routes"
   (get-grant)
