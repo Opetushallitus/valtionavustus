@@ -204,7 +204,11 @@
 (defn home-page []
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme
-                 {:palette {:text-color (color :black)}})}
+                 {:font-family ["Open Sans", "Helvetica", "sans-serif"]
+                  :font-size "95%"
+                  :palette {:text-color (color :black)
+                            :primary1-color "#4c7f00"
+                            :picker-header-color (color :red-500)}})}
    [:div
     (top-links 0)
     (let [current-applications
