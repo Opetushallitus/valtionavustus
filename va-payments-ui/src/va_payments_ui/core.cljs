@@ -27,7 +27,7 @@
 
 (defonce snackbar (r/atom {:open false :message "" }))
 
-(defonce environment (r/atom ""))
+(defonce delete-payments? (r/atom false))
 
 (def button-style {:margin 12})
 
@@ -219,7 +219,7 @@
                  {:palette {:text-color (color :black)}})}
    [:div
     (top-links 0)
-    (when (or (= @environment "dev") (= @environment "va-test"))
+    (when @delete-payments?
       [ui/grid-list {:cols 6 :cell-height "auto"}
        (role-select @user-role #(reset! user-role %))
        [ui/raised-button
@@ -343,7 +343,7 @@
     (fn [_ __] (show-message! "Virhe tietojen latauksessa"))
     :on-success
     (fn [config]
-      (reset! environment (:name config))
+      (reset! delete-payments? (get-in config [:payments :delete-payments?]))
        (connection/set-config! config))})
        (check-session
          {:on-success
