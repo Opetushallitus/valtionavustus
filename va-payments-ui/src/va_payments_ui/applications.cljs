@@ -23,7 +23,7 @@
   [ui/table-row {:key i}
    [ui/table-row-column (state-to-str (:payment-state application))]
    [ui/table-row-column (:organization-name application)]
-   [ui/table-row-column (:project-name application)]
+   [ui/table-row-column [:a {:target "_blank" :href (str "/avustushaku/" (:grant-id application) "/hakemus/"(:id application) "/arviointi/")} (:project-name application)]]
    [ui/table-row-column (get application :budget-granted)]
    [ui/table-row-column
     (get-answer-value (:answers application) "bank-iban")]

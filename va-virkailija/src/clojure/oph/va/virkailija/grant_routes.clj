@@ -47,20 +47,6 @@
     :summary "Return payments of a grant"
     (ok (grant-data/get-grant-payments grant-id))))
 
-    (defn- send-invoice []
-      (compojure-api/POST "/:id/invoice/" [id :as request]
-        :path-params [id :- Long]
-        :summary "Send one invoice to Rondo."
-      (ok (rondo-service/send-to-rondo! id))))
-
-    (defn- options-send-invoice []
-      (compojure-api/OPTIONS
-      "/:id/invoice/"  [id :as request]
-        :path-params [id :- Long]
-        :return s/Any
-        :summary "Route OPTIONS"
-        (ok "")))
-
 (defn- delete-payments []
   (compojure-api/DELETE
     "/:id/payments/" [id :as request]

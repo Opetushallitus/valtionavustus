@@ -41,6 +41,15 @@
         (on-success (:body response))
         (on-error (:status response) (:error-text response))))))
 
+(defn multi-request-with-go [params f on-success on-error]
+  (go
+    (doseq [param params]
+      (let [response
+            (async/<! (f param))]
+        (when-not (:success response)
+          (on-error (:status response) (:error-text response)))))
+    (on-success)))
+
 (defn get-config [{:keys [on-success on-error]}]
   (request-with-go connection/get-config on-success on-error))
 
@@ -57,6 +66,44 @@
 (defn download-grant-payments [grant-id on-success on-error]
   (request-with-go #(connection/get-grant-payments grant-id)
                    on-success on-error))
+
+(defn send-payments-email [grant-id on-success on-error]
+  (request-with-go #(connection/send-payments-email grant-id)
+                   on-success on-error))
+
+(defn create-application-payments! [applications values on-success on-error]
+  (go
+    (let [next-i-number-response
+          (async/<! (connection/get-next-installment-number))]
+      (if (:success next-i-number-response)
+        (doseq [application applications]
+          (let [new-payment-values
+                (assoc values :installment-number
+                       (get-in next-i-number-response
+                               [:body :installment-number]))
+                response (async/<! (connection/create-application-payment
+                                     (:id application) new-payment-values))]
+            (when-not (:success response)
+              (on-error (:status response) (:error-text response)))))
+        (on-error (:status next-i-number-response)
+                  (:error-text next-i-number-response))))
+    (on-success)))
+
+(defn update-payments! [payments on-success on-error]
+  (multi-request-with-go
+    connection/update-payment payments on-success on-error))
+
+(defn send-xml-invoices! [{:keys [payments on-success on-error]}]
+  (go
+    (doseq [payment payments]
+      (let [xml-response (async/<! (connection/send-xml-invoice payment))]
+        (if (:success xml-response)
+          (let [update-response (async/<! (connection/update-payment payment))]
+            (when-not (:success update-response)
+              (on-error (:status update-response)
+                        (:error-text update-response))))
+          (on-error (:status xml-response) (:error-text xml-response)))))
+    (on-success)))
 
 (defn redirect-to-login! []
   (-> js/window
@@ -263,7 +310,7 @@
                               (:id grant)
                               (fn [result] (reset! payments result))
                               show-error-message!))
-                          (fn [code text]
+                          (fn [_ __]
                             (show-message!
                               "Virhe maksatuksen luonnissa")))))))
                 (when (= @user-role "acceptor")
@@ -278,7 +325,7 @@
                         (fn []
                           (send-payments-email
                             (:id grant)
-                            (fn []
+                            (fn [_]
                               (do
                                 (show-message!
                                   "Ilmoitus taloushallintoon lähetetty")
@@ -286,26 +333,29 @@
                                  (:id grant)
                                  (fn [result] (reset! payments result))
                                  show-error-message!)))
-                            (fn []
+                            (fn [_ __]
                               (show-message!
                                 "Virhe sähköpostin lähetyksessä"))))
-                        (fn [code ]
+                        (fn [_ __]
                           (show-message! "Virhe maksatuksien päivityksessä")))}])
                 (when (= @user-role "financials_manager")
                   (render-financials-manager
                     current-applications
                     (fn [payment-values]
-                      (update-payments!
-                        payment-values
-                        (fn []
-                          (show-message! "Maksatukset lähetetty Rondoon")
-                          (download-grant-payments
-                            (:id grant)
-                            (fn [result] (reset! payments result))
-                            show-error-message!))
-                        (fn [code text]
-                          (show-message!
-                            "Virhe maksatuksien päivityksessä"))))))]])
+                      (send-xml-invoices!
+                        {:payments
+                         payment-values
+                         :on-success
+                         (fn []
+                           (show-message! "Maksatukset lähetetty Rondoon")
+                           (download-grant-payments
+                             (:id grant)
+                             (fn [result] (reset! payments result))
+                             show-error-message!))
+                         :on-error
+                         (fn [_ __]
+                           (show-message!
+                             "Virhe maksatuksien päivityksessä"))}))))]])
            [ui/snackbar
             (conj @snackbar
                   {:auto-hide-duration 4000
@@ -348,12 +398,12 @@
                               (find-index-of @grants #(= grant-id (:id %)))
                              0)))
                 (when-let [selected-grant-id
-                           (get (nth @grants @selected-grant) :id)]
+                           (get-in @grants [@selected-grant :id])]
                   (download-grant-data
                     selected-grant-id
                     #(do (reset! applications %1) (reset! payments %2))
                     #(show-message! "Virhe tietojen latauksessa"))))
-              (fn [code text]
+              (fn [_ __]
                 (show-message! "Virhe tietojen latauksessa"))))
           :on-error
           (fn [status _] (when (= status 401) (redirect-to-login!)))}))
