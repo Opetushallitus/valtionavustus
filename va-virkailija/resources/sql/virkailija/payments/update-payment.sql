@@ -5,7 +5,7 @@ INSERT INTO virkailija.payments (id, version, application_id,
 VALUES(
   :id,
   (SELECT GREATEST(MAX(version), 0) + 1
-    FROM virkailija.payments WHERE id = :id),
+    FROM virkailija.payments WHERE id = :id AND deleted IS NULL),
   :application_id, :application_version, :state, :document_type,
   :invoice_date::timestamptz, :due_date::timestamptz,
   :receipt_date::timestamptz, :transaction_account, :currency,

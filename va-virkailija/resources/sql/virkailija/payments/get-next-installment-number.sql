@@ -3,5 +3,6 @@ SELECT
 FROM
   virkailija.payments
 WHERE
-  date_part('year', created_at) = date_part('year', CURRENT_DATE);
+  date_part('year', created_at) = date_part('year', CURRENT_DATE) AND
+  deleted IS NULL;
 
