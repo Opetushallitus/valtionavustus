@@ -142,47 +142,6 @@
         on-error))
     on-error))
 
-(defn create-application-payments! [applications values on-success on-error]
-  (go
-    (let [next-i-number-response
-          (async/<! (connection/get-next-installment-number))]
-      (if (:success next-i-number-response)
-        (doseq [application applications]
-          (let [new-payment-values
-                (assoc values :installment-number
-                       (get-in next-i-number-response
-                               [:body :installment-number]))
-                response (async/<! (connection/create-application-payment
-                                     (:id application) new-payment-values))]
-            (when-not (:success response)
-              (on-error (:status response) (:error-text response)))))
-        (on-error (:status next-i-number-response)
-                  (:error-text next-i-number-response))))
-    (on-success)))
-
-(defn update-payments! [payments on-success on-error]
-  (go
-    (doseq [payment payments]
-      (let [response
-            (async/<! (connection/update-payment payment))]
-        (when-not (:success response)
-          (on-error (:status response) (:error-text response)))))
-    (on-success)))
-
-(defn create-grant-payments! [id payments on-success on-error]
-  (go
-    (let [response (async/<! (connection/create-grant-payments id payments))]
-      (if (:success response)
-        (on-success)
-        (on-error (:status response) (:error-text response))))))
-
-(defn send-payments-email [grant-id on-success on-error]
-  (go
-    (let [response (async/<! (connection/send-payments-email grant-id))]
-      (if (:success response)
-        (on-success)
-        (on-error (:status response) (:error-text response))))))
-
 (defn delete-grant-payments! [{:keys [grant-id on-success on-error]}]
   (request-with-go
     #(connection/delete-grant-payments grant-id) on-success on-error))
