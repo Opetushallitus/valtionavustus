@@ -313,5 +313,6 @@
    :language s/Str
    :budget-granted s/Int
    :costs-granted s/Int
+   (s/optional-key :grant-id) s/Int
    (s/optional-key :evaluation) s/Any
    (s/optional-key :answers) [Answer]})
