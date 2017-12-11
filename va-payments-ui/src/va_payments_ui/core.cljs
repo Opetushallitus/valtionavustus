@@ -248,7 +248,7 @@
                               (:id grant)
                               (fn [result] (reset! payments result))
                               show-error-message!))
-                          (fn [code text]
+                          (fn [_ __]
                             (show-message!
                               "Virhe maksatuksen luonnissa")))))))
                 (when (= @user-role "acceptor")
@@ -274,7 +274,7 @@
                             (fn [_ __]
                               (show-message!
                                 "Virhe sähköpostin lähetyksessä"))))
-                        (fn [code ]
+                        (fn [_ __]
                           (show-message! "Virhe maksatuksien päivityksessä")))}])
                 (when (= @user-role "financials_manager")
                   (render-financials-manager
@@ -291,7 +291,7 @@
                              (fn [result] (reset! payments result))
                              show-error-message!))
                          :on-error
-                         (fn [code text]
+                         (fn [_ __]
                            (show-message!
                              "Virhe maksatuksien päivityksessä"))}))))]])
            [ui/snackbar
@@ -340,7 +340,7 @@
                     selected-grant-id
                     #(do (reset! applications %1) (reset! payments %2))
                     #(show-message! "Virhe tietojen latauksessa"))))
-              (fn [code text]
+              (fn [_ __]
                 (show-message! "Virhe tietojen latauksessa"))))
           :on-error
           (fn [status _] (when (= status 401) (redirect-to-login!)))}))
