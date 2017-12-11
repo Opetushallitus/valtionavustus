@@ -44,6 +44,7 @@
                           :hakija-server {:url LocalizedString}
                           :virkailija-server {:url s/Str}
                           :paatos-path s/Str
+                          (s/optional-key :payments) (s/maybe {:delete-payments? s/Bool})
                           (s/optional-key :opintopolku) {:url s/Str
                                                          :permission-request s/Str}})
 
