@@ -213,21 +213,22 @@
                  {:palette {:text-color (color :black)}})}
    [:div
     (top-links 0)
-    [ui/grid-list {:cols 6 :cell-height "auto"}
-     (role-select @user-role #(reset! user-role %))
-     [ui/raised-button
-      {:primary true :label "Poista maksatukset" :style button-style
-       :on-click
-       #(let [grant-id (get-in @grants [@selected-grant :id])]
-          (delete-grant-payments!
-          {:grant-id grant-id
-           :on-success
-           (fn [_]
-             (download-grant-data
-               grant-id
-               (fn [a p] (do (reset! applications a) (reset! payments p)))
-               (fn [_ __])))
-           :on-error (fn [_ __])}))}]]
+    (when (or (= @environment "dev") (= @environment "va-test"))
+      [ui/grid-list {:cols 6 :cell-height "auto"}
+       (role-select @user-role #(reset! user-role %))
+       [ui/raised-button
+        {:primary true :label "Poista maksatukset" :style button-style
+         :on-click
+         #(let [grant-id (get-in @grants [@selected-grant :id])]
+            (delete-grant-payments!
+            {:grant-id grant-id
+             :on-success
+             (fn [_]
+               (download-grant-data
+                 grant-id
+                 (fn [a p] (do (reset! applications a) (reset! payments p)))
+                 (fn [_ __])))
+             :on-error (fn [_ __])}))}]])
     (let [current-applications
           (-> @applications
               (combine @payments)
