@@ -6,7 +6,7 @@
             [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.rondo-service :as rondo-service]
-            [oph.soresu.common.config :refer [config-simple-name]]))
+            [oph.soresu.common.config :refer [config]]))
 
 (defn- get-grants []
   (compojure-api/GET "/" []
@@ -53,7 +53,7 @@
     :path-params [id :- Long]
     :return s/Any
     :summary "Delete grant payments"
-    (when-not (:delete-payments? config-simple-name)
+    (when-not (:delete-payments? config)
       (throw (Exception. "Route not allowed")))
     (grant-data/delete-grant-payments id)
     (ok)))
