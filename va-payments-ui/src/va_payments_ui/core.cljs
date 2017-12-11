@@ -91,6 +91,18 @@
   (multi-request-with-go
     connection/update-payment payments on-success on-error))
 
+(defn send-xml-invoices! [{:keys [payments on-success on-error]}]
+  (go
+    (doseq [payment payments]
+      (let [xml-response (async/<! (connection/send-xml-invoice payment))]
+        (if (:success xml-response)
+          (let [update-response (async/<! (connection/update-payment payment))]
+            (when-not (:success update-response)
+              (on-error (:status update-response)
+                        (:error-text update-response))))
+          (on-error (:status xml-response) (:error-text xml-response)))))
+    (on-success)))
+
 (defn redirect-to-login! []
   (-> js/window
       .-location
@@ -268,17 +280,20 @@
                   (render-financials-manager
                     current-applications
                     (fn [payment-values]
-                      (update-payments!
-                        payment-values
-                        (fn []
-                          (show-message! "Maksatukset lähetetty Rondoon")
-                          (download-grant-payments
-                            (:id grant)
-                            (fn [result] (reset! payments result))
-                            show-error-message!))
-                        (fn [code text]
-                          (show-message!
-                            "Virhe maksatuksien päivityksessä"))))))]])
+                      (send-xml-invoices!
+                        {:payments
+                         payment-values
+                         :on-success
+                         (fn []
+                           (show-message! "Maksatukset lähetetty Rondoon")
+                           (download-grant-payments
+                             (:id grant)
+                             (fn [result] (reset! payments result))
+                             show-error-message!))
+                         :on-error
+                         (fn [code text]
+                           (show-message!
+                             "Virhe maksatuksien päivityksessä"))}))))]])
            [ui/snackbar
             (conj @snackbar
                   {:auto-hide-duration 4000
