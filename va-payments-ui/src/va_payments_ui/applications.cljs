@@ -32,7 +32,7 @@
    [ui/table-row-column (get-in application [:arvio :takp-account])]
    [ui/table-row-column (get-in application [:arvio :amount])]])
 
-(defn applications-table [applications grant-id]
+(defn applications-table [applications]
   [:div
    [ui/table {:fixed-header true :height "250px" :selectable false}
     [ui/table-header {:adjust-for-checkbox false :display-select-all false}
