@@ -5,6 +5,7 @@
           :require-https? false}
  :api {:restricted-routes? false}
  :virkailija-db {:database-name "va-dev"}
+ :payments {:delete-payments? true}
  :form-db {:database-name "va-dev"}
  :email {:enabled? false
          :host "localhost"
