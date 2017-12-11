@@ -26,6 +26,7 @@
 
 (defquery get-payment "sql/virkailija/payments/get-payment.sql")
 (defquery get-grant-payments "sql/virkailija/grants/get-grant-payments.sql")
+(defquery delete-grant-payments "sql/virkailija/grants/delete-grant-payments.sql")
 (defquery get-payment-version "sql/virkailija/payments/get-payment-version.sql")
 (defquery payment-close-version
   "sql/virkailija/payments/payment-close-version.sql")

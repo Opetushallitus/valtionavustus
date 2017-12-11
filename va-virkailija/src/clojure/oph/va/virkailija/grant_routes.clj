@@ -60,6 +60,15 @@
         :summary "Route OPTIONS"
         (ok "")))
 
+(defn- delete-payments []
+  (compojure-api/DELETE
+    "/:id/payments/" [id :as request]
+    :path-params [id :- Long]
+    :return s/Any
+    :summary "Delete grant payments"
+    (grant-data/delete-grant-payments id)
+    (ok)))
+
 
 (compojure-api/defroutes payment-routes
       "payment routes"
@@ -71,4 +80,5 @@
   (get-grant)
   (get-grants)
   (get-grant-applications)
-  (get-grant-payments))
+  (get-grant-payments)
+  (delete-payments))
