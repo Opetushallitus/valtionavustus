@@ -3,4 +3,4 @@ SELECT
 FROM
   hakija.avustushaku_roles
 WHERE
-  avustushaku = :grant_id;
+  avustushaku = :id;
