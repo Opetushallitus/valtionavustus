@@ -64,7 +64,7 @@
     :path-params [id :- Long]
     :return [virkailija-schema/GrantRole]
     :summary "Return grant roles"
-    (ok grant-data/get-grant-roles id)))
+    (ok (grant-data/get-grant-roles id))))
 
 (compojure-api/defroutes routes
   "grant routes"
