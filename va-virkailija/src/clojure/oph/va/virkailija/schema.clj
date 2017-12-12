@@ -296,6 +296,12 @@
    :is-academysize s/Bool
    :haku-type GrantType})
 
+(s/defschema GrantRole
+  "Grant Role"
+  {:grant-id s/Int
+   :oid s/Str
+   :role s/Str})
+
 (s/defschema Grants
   "List of grants"
   [Grant])
