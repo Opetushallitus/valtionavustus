@@ -19,11 +19,13 @@
 
 (defonce grant-roles (r/atom {}))
 
+(defonce overridden-role (r/atom nil))
+
 (defonce applications (r/atom []))
 
 (defonce payments (r/atom []))
 
-(defonce selected-grant (r/atom 0))
+(defonce selected-grant (r/atom nil))
 
 (defonce user-info (r/atom {}))
 
@@ -165,64 +167,69 @@
    [:div
     (top-links 0)
     (grants-table
-      {:grants @grants :value @selected-grant
+      {:grants @grants
+       :value (find-index-of @grants #(= (:id %) (:id @selected-grant)))
        :on-change
        (fn [row]
-         (do (reset! selected-grant row)
-             (if-let [grant (get @grants row)]
+         (do (reset! selected-grant (get @grants row))
+             (when @selected-grant
                (do (api/download-grant-data
-                     (:id grant)
+                     (:id @selected-grant)
                      #(do (reset! applications %1) (reset! payments %2))
                      #(show-message! "Virhe tietojen latauksessa"))
                    (api/get-grant-roles
-                     {:grant-id (:id grant)
+                     {:grant-id (:id @selected-grant)
                       :on-success #(reset! grant-roles %)
                       :on-error
                       #(show-message! "Virhe roolien latauksessa")})))))})
-    (let [grant (get @grants @selected-grant)
-          user-role (when grant
-                      (find-role @grant-roles (:id grant) (:oid user-info)))
-          current-applications
-          (-> @applications
-              (api/combine @payments)
-              (filter-applications user-role))]
+    (let [user-role
+          (or @overridden-role
+              (when @selected-grant
+                (find-role
+                  @grant-roles (:id @selected-grant) (:oid user-info))))
+          current-applications (-> @applications
+                                   (api/combine @payments)
+                                   (filter-applications user-role))]
       [(fn []
          [:div
           (let []
-            (when (and grant (not-empty? user-role))
+            (when (and @selected-grant (not-empty? user-role))
               [:div
                [:h3 "Myönteiset päätökset"]
-                [:div (project-info grant)]
+                [:div (project-info @selected-grant)]
                 (applications/applications-table current-applications)
-                (when-let [grant (get @grants @selected-grant)])
+                (when @selected-grant
                   (render-role-operations
-                    user-role grant current-applications)]))
+                    user-role @selected-grant current-applications))]))
           [ui/snackbar
            (conj @snackbar
                  {:auto-hide-duration 4000
                   :on-request-close
                   #(reset! snackbar {:open false :message ""})})]])])
-    (when @delete-payments?
-      (let [grant (get @grants @selected-grant)
-            user-role (when grant
-                      (find-role @grant-roles (:id grant) (:oid user-info)))]
-        [ui/grid-list {:cols 6 :cell-height "auto"}
-         (role-select user-role #(reset! grant-roles [{:oid (:oid @user-info)
-                                                       :grant-id (:id grant)
-                                                       :role %}]))
+    [:div
+     (when (some #(= % "va-admin") (:privileges @user-info))
+       (let [user-role
+             (or @overridden-role
+                 (when @selected-grant
+                   (find-role
+                     @grant-roles (:id @selected-grant) (:oid user-info))))]
+         (role-select user-role #(reset! overridden-role %))))
+     (when @delete-payments?
+      [ui/grid-list {:cols 6 :cell-height "auto"}
+
          [ui/raised-button
           {:primary true :label "Poista maksatukset" :style button-style
            :on-click
            #(api/delete-grant-payments!
-              {:grant-id (:id grant)
+              {:grant-id (:id @selected-grant)
                :on-success
                (fn [_]
                  (api/download-grant-data
-                   (:id grant)
+                   (:id @selected-grant)
                    (fn [a p]
                      (do (reset! applications a) (reset! payments p)))
                    (fn [_ __])))
-               :on-error (fn [_ __])})}]]))]])
+               :on-error (fn [_ __])})}]])]]])
 
 (defn mount-root []
   (r/render [home-page] (.getElementById js/document "app")))
@@ -244,9 +251,9 @@
            (do (reset! grants result)
                (reset! selected-grant
                        (if-let [grant-id (get-param-grant)]
-                         (find-index-of @grants #(= grant-id (:id %)))
-                         0)))
-           (when-let [selected-grant-id (get-in @grants [@selected-grant :id])]
+                         (first (filter #(= (:id %) grant-id) result))
+                         (first result))))
+           (when-let [selected-grant-id (:id @selected-grant)]
              (do (api/download-grant-data
                    selected-grant-id
                    #(do (reset! applications %1) (reset! payments %2))
