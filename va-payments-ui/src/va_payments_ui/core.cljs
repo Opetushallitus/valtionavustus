@@ -189,7 +189,6 @@
                                    :acceptor-email]))
           :on-click #(on-change @payment-values)}]])]))
 
-
 (defn render-role-operations [role grant current-applications]
   [:div
    (when (= role "presenting_officer")
