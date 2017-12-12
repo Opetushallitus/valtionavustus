@@ -167,7 +167,21 @@
                  {:palette {:text-color (color :black)}})}
    [:div
     (top-links 0)
-
+    (grants-table
+      {:grants @grants :value @selected-grant
+       :on-change
+       (fn [row]
+         (do (reset! selected-grant row)
+             (if-let [grant (get @grants row)]
+               (do (api/download-grant-data
+                     (:id grant)
+                     #(do (reset! applications %1) (reset! payments %2))
+                     #(show-message! "Virhe tietojen latauksessa"))
+                   (api/get-grant-roles
+                     {:grant-id (:id grant)
+                      :on-success #(reset! grant-roles %)
+                      :on-error
+                      #(show-message! "Virhe roolien latauksessa")})))))})
     (let [grant (get @grants @selected-grant)
           user-role (when grant
                       (find-role @grant-roles (:id grant) (:oid user-info)))
@@ -177,6 +191,15 @@
               (filter-applications user-role))]
       [(fn []
          [:div
+          (let []
+            (when (and grant (not-empty? user-role))
+              [:div
+               [:h3 "Myönteiset päätökset"]
+                [:div (project-info grant)]
+                (applications/applications-table current-applications)
+                (when-let [grant (get @grants @selected-grant)])
+                  (render-role-operations
+                    user-role grant current-applications)]))
           (when @delete-payments?
             [ui/grid-list {:cols 6 :cell-height "auto"}
              (role-select user-role
@@ -194,30 +217,6 @@
                          (do (reset! applications a) (reset! payments p)))
                        (fn [_ __])))
                    :on-error (fn [_ __])})}]])
-          (grants-table
-            {:grants @grants :value @selected-grant
-             :on-change
-             (fn [row]
-               (do (reset! selected-grant row)
-                   (if grant
-                     (do (api/download-grant-data
-                           (:id grant)
-                           #(do (reset! applications %1) (reset! payments %2))
-                           #(show-message! "Virhe tietojen latauksessa"))
-                         (api/get-grant-roles
-                           {:grant-id (:id grant)
-                            :on-success #(reset! grant-roles %)
-                            :on-error
-                            #(show-message! "Virhe roolien latauksessa")})))))})
-          (let []
-            (when (and grant (not-empty? user-role))
-              [:div
-               [:h3 "Myönteiset päätökset"]
-                [:div (project-info grant)]
-                (applications/applications-table current-applications)
-                (when-let [grant (get @grants @selected-grant)])
-                  (render-role-operations
-                    user-role grant current-applications)]))
           [ui/snackbar
            (conj @snackbar
                  {:auto-hide-duration 4000
