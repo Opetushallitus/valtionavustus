@@ -2,7 +2,10 @@
    (:require
      [reagent.core :as r]
      [cljsjs.material-ui]
-     [cljs-react-material-ui.reagent :as ui]))
+     [cljs-react-material-ui.reagent :as ui]
+     [va-payments-ui.payments :refer [get-payment-data]]
+     [va-payments-ui.core :refer [button-style]]
+     [va-payments-ui.utils :refer [remove-nil any-nil?]]))
 
 (def week-in-ms (* 1000 60 60 24 7))
 
@@ -53,4 +56,27 @@
                     :value (:receipt-date values)
                     :on-change
                     #(on-change :receipt-date %2)}]])
+
+(defn render-financials-manager [current-applications on-change]
+  (let [payment-values
+        (r/atom {:currency "EUR" :payment-term "Z001"
+                 :document-type "XA" :organisation "6600"})]
+    [(fn []
+       [:div
+        (payment-fields
+          @payment-values #(swap! payment-values assoc %1 %2))
+        [ui/raised-button
+         {:primary true :label "Lähetä Rondoon"
+          :style button-style
+          :disabled
+          (or (empty? current-applications)
+              (any-nil? @payment-values
+                        [:transaction-account :due-date :invoice-date :currency
+                         :payment-term :document-type :receipt-date]))
+          :on-click
+          #(on-change
+             (mapv remove-nil
+                   (get-payment-data
+                     current-applications
+                     (assoc @payment-values :payment-state 2))))}]])]))
 

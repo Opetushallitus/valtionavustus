@@ -189,28 +189,6 @@
                                    :acceptor-email]))
           :on-click #(on-change @payment-values)}]])]))
 
-(defn render-financials-manager [current-applications on-change]
-  (let [payment-values
-        (r/atom {:currency "EUR" :payment-term "Z001"
-                 :document-type "XA" :organisation "6600"})]
-    [(fn []
-       [:div
-        (financing/payment-fields
-          @payment-values #(swap! payment-values assoc %1 %2))
-        [ui/raised-button
-         {:primary true :label "Lähetä Rondoon"
-          :style button-style
-          :disabled
-          (or (empty? current-applications)
-              (any-nil? @payment-values
-                        [:transaction-account :due-date :invoice-date :currency
-                         :payment-term :document-type :receipt-date]))
-          :on-click
-          #(on-change
-             (mapv remove-nil
-                   (get-payment-data
-                     current-applications
-                     (assoc @payment-values :payment-state 2))))}]])]))
 
 (defn render-role-operations [role grant current-applications]
   [:div
@@ -251,7 +229,7 @@
            (fn [_ __]
              (show-message! "Virhe maksatuksien päivityksessä")))}])
    (when (= role "financials_manager")
-     (render-financials-manager
+     (financing/render-financials-manager
        current-applications
        (fn [payment-values]
          (send-xml-invoices!
