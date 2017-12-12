@@ -35,6 +35,10 @@
 (defn show-message! [message]
   (reset! snackbar {:open true :message message}))
 
+(defn show-error-message! [code text]
+  (show-message!
+    (format "Virhe tietojen latauksessa. Virhe %s (%d)" text code)))
+
 (defn request-with-go [f on-success on-error]
   (go
     (let [response (async/<! (f))]
@@ -167,10 +171,6 @@
     "acceptor" (filter #(= (get % :payment-state) 0) col)
     "financials_manager" (filter #(= (get % :payment-state) 1) col)
     col))
-
-(defn show-error-message! [code text]
-  (show-message!
-    (format "Virhe tietojen latauksessa. Virhe %s (%d)" text code)))
 
 (defn render-presenting-officer [current-applications on-change]
   (let [payment-values (r/atom {})]
