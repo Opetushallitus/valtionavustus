@@ -236,22 +236,18 @@
         :on-click
         #(update-payments!
            (mapv remove-nil
-             (get-payment-data
-               current-applications {:payment-state 1}))
+             (get-payment-data current-applications {:payment-state 1}))
            (fn []
              (send-payments-email
                (:id grant)
                (fn [_]
                  (do
-                   (show-message!
-                     "Ilmoitus taloushallintoon lähetetty")
+                   (show-message! "Ilmoitus taloushallintoon lähetetty")
                    (download-grant-payments
                     (:id grant)
                     (fn [result] (reset! payments result))
                     show-error-message!)))
-               (fn [_ __]
-                 (show-message!
-                   "Virhe sähköpostin lähetyksessä"))))
+               (fn [_ __] (show-message! "Virhe sähköpostin lähetyksessä"))))
            (fn [_ __]
              (show-message! "Virhe maksatuksien päivityksessä")))}])
    (when (= role "financials_manager")
@@ -272,7 +268,6 @@
             (fn [_ __]
               (show-message!
                 "Virhe maksatuksien päivityksessä"))}))))])
-
 
 (defn home-page []
   [ui/mui-theme-provider
