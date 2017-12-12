@@ -151,7 +151,6 @@
      nil)])
 
 (defn find-role [grant-roles current-grant-id user-oid]
-  (prn grant-roles)
   (loop [i 0]
     (when-let [grant-role (get grant-roles i)]
       (if (and (= (:grant-id grant-role) current-grant-id)
