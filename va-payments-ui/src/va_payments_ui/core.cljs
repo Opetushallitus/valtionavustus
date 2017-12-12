@@ -191,7 +191,8 @@
 
 (defn render-role-operations [role grant current-applications]
   [:div
-   (when (= role "presenting_officer")
+   (case role
+     "presenting_officer"
      (render-presenting-officer
          current-applications
          (fn [values]
@@ -205,8 +206,8 @@
                  show-error-message!))
              (fn [_ __]
                (show-message!
-                 "Virhe maksatuksen luonnissa"))))))
-   (when (= role "acceptor")
+                 "Virhe maksatuksen luonnissa")))))
+     "acceptor"
      [ui/raised-button
        {:primary true :disabled (empty? current-applications)
         :label "Ilmoita taloushallintoon" :style button-style
@@ -226,8 +227,8 @@
                     show-error-message!)))
                (fn [_ __] (show-message! "Virhe sähköpostin lähetyksessä"))))
            (fn [_ __]
-             (show-message! "Virhe maksatuksien päivityksessä")))}])
-   (when (= role "financials_manager")
+             (show-message! "Virhe maksatuksien päivityksessä")))}]
+     "financials_manager"
      (financing/render-financials-manager
        current-applications
        (fn [payment-values]
