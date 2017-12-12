@@ -4,7 +4,8 @@
             [ring.util.http-response :refer [ok not-found]]
             [compojure.core :as compojure]
             [schema.core :as s]
-            [oph.va.virkailija.schema :as virkailija-schema]))
+            [oph.va.virkailija.schema :as virkailija-schema]
+            [oph.va.virkailija.rondo-service :as rondo-service]))
 
 (defn- update-payment []
   (compojure-api/PUT "/:payment-id/" [payment-id :as request]
@@ -33,8 +34,16 @@
     :summary "Return next installment number"
     (ok (payments-data/next-installment-number))))
 
+(defn- send-invoice []
+  (compojure-api/POST "/:id/invoice/" [id :as request]
+    :path-params [id :- Long]
+    :summary "Create XML invoice and send it to Rondo."
+    (rondo-service/send-to-rondo! id)
+    (ok)))
+
 (compojure-api/defroutes routes
   "payment routes"
   (update-payment)
   (update-payment-options)
-  (get-next-installment-number))
+  (get-next-installment-number)
+  (send-invoice))

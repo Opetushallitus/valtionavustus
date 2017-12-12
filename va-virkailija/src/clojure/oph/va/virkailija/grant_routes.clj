@@ -5,7 +5,8 @@
             [compojure.core :as compojure]
             [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]
-            [oph.va.virkailija.rondo-service :as rondo-service]))
+            [oph.va.virkailija.rondo-service :as rondo-service]
+            [oph.soresu.common.config :refer [config]]))
 
 (defn- get-grants []
   (compojure-api/GET "/" []
@@ -46,29 +47,21 @@
     :summary "Return payments of a grant"
     (ok (grant-data/get-grant-payments grant-id))))
 
-    (defn- send-invoice []
-      (compojure-api/POST "/:id/invoice/" [id :as request]
-        :path-params [id :- Long]
-        :summary "Send one invoice to Rondo."
-      (ok (rondo-service/send-to-rondo! id))))
-
-    (defn- options-send-invoice []
-      (compojure-api/OPTIONS
-      "/:id/invoice/"  [id :as request]
-        :path-params [id :- Long]
-        :return s/Any
-        :summary "Route OPTIONS"
-        (ok "")))
-
-
-(compojure-api/defroutes payment-routes
-      "payment routes"
-      (options-send-invoice)
-      (send-invoice))
+(defn- delete-payments []
+  (compojure-api/DELETE
+    "/:id/payments/" [id :as request]
+    :path-params [id :- Long]
+    :return s/Any
+    :summary "Delete grant payments"
+    (when-not (get-in config [:payments :delete-payments?])
+      (throw (Exception. "Route not allowed")))
+    (grant-data/delete-grant-payments id)
+    (ok)))
 
 (compojure-api/defroutes routes
   "grant routes"
   (get-grant)
   (get-grants)
   (get-grant-applications)
-  (get-grant-payments))
+  (get-grant-payments)
+  (delete-payments))
