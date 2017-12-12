@@ -25,6 +25,8 @@
 
 (defonce user-role (r/atom "presenting_officer"))
 
+(defonce user-info (r/atom {}))
+
 (defonce snackbar (r/atom {:open false :message "" }))
 
 (defonce delete-payments? (r/atom false))
@@ -212,6 +214,9 @@
      (fn [config]
        (reset! delete-payments? (get-in config [:payments :delete-payments?]))
        (connection/set-config! config)
+       (api/get-user-info
+         {:on-success #(reset! user-info %)
+          :on-error #(show-message! "Virhe käyttäjätietojen latauksessa")})
        (api/download-grants
          (fn [result]
            (do (reset! grants result)

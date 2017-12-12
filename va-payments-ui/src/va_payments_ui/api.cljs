@@ -3,6 +3,7 @@
   (:require
     [cljs.core.async :as async]
     [va-payments-ui.connection :as connection]))
+
 (defn request-with-go [f on-success on-error]
   (go
     (let [response (async/<! (f))]
@@ -21,6 +22,9 @@
 
 (defn get-config [{:keys [on-success on-error]}]
   (request-with-go connection/get-config on-success on-error))
+
+(defn get-user-info [{:keys [on-success on-error]}]
+  (request-with-go connection/get-user-info on-success on-error))
 
 (defn check-session [{:keys [on-success on-error]}]
   (request-with-go connection/check-session on-success on-error))

@@ -73,5 +73,9 @@
   (http/get (format "/environment")
             {:with-credentials? true}))
 
+(defn get-user-info []
+  (http/get (format "/api/userinfo/")
+            {:with-credentials? true}))
+
 (defn set-config! [c]
   (reset! config c))
