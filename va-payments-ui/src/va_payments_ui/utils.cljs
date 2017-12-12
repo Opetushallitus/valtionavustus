@@ -9,6 +9,8 @@
   (or (not= (count ks) (count (select-keys m ks)))
        (not-every? some? (vals (select-keys m ks)))))
 
+(defn not-empty? [v] (not (empty? v)))
+
 (defn format [fmt & args]
   "Format string"
   (apply gstring/format fmt args))
