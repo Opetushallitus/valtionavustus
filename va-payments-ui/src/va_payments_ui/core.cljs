@@ -212,6 +212,67 @@
                      current-applications
                      (assoc @payment-values :payment-state 2))))}]])]))
 
+(defn render-role-operations [role grant current-applications]
+  [:div
+   (when (= role "presenting_officer")
+     (render-presenting-officer
+         current-applications
+         (fn [values]
+           (create-application-payments!
+             current-applications values
+             (fn []
+               (show-message! "Maksatukset luotu")
+               (download-grant-payments
+                 (:id grant)
+                 (fn [result] (reset! payments result))
+                 show-error-message!))
+             (fn [_ __]
+               (show-message!
+                 "Virhe maksatuksen luonnissa"))))))
+   (when (= role "acceptor")
+     [ui/raised-button
+       {:primary true :disabled (empty? current-applications)
+        :label "Ilmoita taloushallintoon" :style button-style
+        :on-click
+        #(update-payments!
+           (mapv remove-nil
+             (get-payment-data
+               current-applications {:payment-state 1}))
+           (fn []
+             (send-payments-email
+               (:id grant)
+               (fn [_]
+                 (do
+                   (show-message!
+                     "Ilmoitus taloushallintoon lähetetty")
+                   (download-grant-payments
+                    (:id grant)
+                    (fn [result] (reset! payments result))
+                    show-error-message!)))
+               (fn [_ __]
+                 (show-message!
+                   "Virhe sähköpostin lähetyksessä"))))
+           (fn [_ __]
+             (show-message! "Virhe maksatuksien päivityksessä")))}])
+   (when (= role "financials_manager")
+     (render-financials-manager
+       current-applications
+       (fn [payment-values]
+         (send-xml-invoices!
+           {:payments
+            payment-values
+            :on-success
+            (fn []
+              (show-message! "Maksatukset lähetetty Rondoon")
+              (download-grant-payments
+                (:id grant)
+                (fn [result] (reset! payments result))
+                show-error-message!))
+            :on-error
+            (fn [_ __]
+              (show-message!
+                "Virhe maksatuksien päivityksessä"))}))))])
+
 
 (defn home-page []
   [ui/mui-theme-provider
@@ -255,66 +316,8 @@
             [:h3 "Myönteiset päätökset"]
             [:div (project-info grant)]
              (render-applications current-applications)
-               [:div
-                (when (= @user-role "presenting_officer")
-                  (when-let [grant (nth @grants @selected-grant)]
-                    (render-presenting-officer
-                      current-applications
-                      (fn [values]
-                        (create-application-payments!
-                          current-applications values
-                          (fn []
-                            (show-message! "Maksatukset luotu")
-                            (download-grant-payments
-                              (:id grant)
-                              (fn [result] (reset! payments result))
-                              show-error-message!))
-                          (fn [_ __]
-                            (show-message!
-                              "Virhe maksatuksen luonnissa")))))))
-                (when (= @user-role "acceptor")
-                  [ui/raised-button
-                    {:primary true :disabled (empty? current-applications)
-                     :label "Ilmoita taloushallintoon" :style button-style
-                     :on-click
-                     #(update-payments!
-                        (mapv remove-nil
-                          (get-payment-data
-                            current-applications {:payment-state 1}))
-                        (fn []
-                          (send-payments-email
-                            (:id grant)
-                            (fn [_]
-                              (do
-                                (show-message!
-                                  "Ilmoitus taloushallintoon lähetetty")
-                                (download-grant-payments
-                                 (:id grant)
-                                 (fn [result] (reset! payments result))
-                                 show-error-message!)))
-                            (fn [_ __]
-                              (show-message!
-                                "Virhe sähköpostin lähetyksessä"))))
-                        (fn [_ __]
-                          (show-message! "Virhe maksatuksien päivityksessä")))}])
-                (when (= @user-role "financials_manager")
-                  (render-financials-manager
-                    current-applications
-                    (fn [payment-values]
-                      (send-xml-invoices!
-                        {:payments
-                         payment-values
-                         :on-success
-                         (fn []
-                           (show-message! "Maksatukset lähetetty Rondoon")
-                           (download-grant-payments
-                             (:id grant)
-                             (fn [result] (reset! payments result))
-                             show-error-message!))
-                         :on-error
-                         (fn [_ __]
-                           (show-message!
-                             "Virhe maksatuksien päivityksessä"))}))))]])
+             (when-let [grant (get @grants @selected-grant)])
+               (render-role-operations @user-role grant current-applications)])
            [ui/snackbar
             (conj @snackbar
                   {:auto-hide-duration 4000
