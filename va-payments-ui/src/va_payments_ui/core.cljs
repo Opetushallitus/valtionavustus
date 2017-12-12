@@ -308,16 +308,17 @@
                         #(show-message! "Virhe tietojen latauksessa")))))})
           (when-let [grant (get @grants @selected-grant)]
             [:div
-            [:h3 "Myönteiset päätökset"]
-            [:div (project-info grant)]
-             (render-applications current-applications)
-             (when-let [grant (get @grants @selected-grant)])
-               (render-role-operations @user-role grant current-applications)])
-           [ui/snackbar
-            (conj @snackbar
-                  {:auto-hide-duration 4000
-                   :on-request-close
-                   #(reset! snackbar {:open false :message ""})})]])])]])
+             [:h3 "Myönteiset päätökset"]
+              [:div (project-info grant)]
+               (render-applications current-applications)
+               (when-let [grant (get @grants @selected-grant)])
+                 (render-role-operations
+                   @user-role grant current-applications)])
+          [ui/snackbar
+           (conj @snackbar
+                 {:auto-hide-duration 4000
+                  :on-request-close
+                  #(reset! snackbar {:open false :message ""})})]])])]])
 
 (defn mount-root []
   (r/render [home-page] (.getElementById js/document "app")))
