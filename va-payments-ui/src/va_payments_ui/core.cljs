@@ -1,14 +1,11 @@
 (ns va-payments-ui.core
-  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
     [reagent.core :as r]
     [cljsjs.material-ui]
     [cljs-react-material-ui.core :refer [get-mui-theme color]]
     [cljs-react-material-ui.reagent :as ui]
-    [cljs-react-material-ui.icons :as ic]
-    [cljs.core.async :as async]
     [va-payments-ui.api :as api]
-    [va-payments-ui.payments :refer [create-payments get-payment-data]]
+    [va-payments-ui.payments :refer [get-payment-data]]
     [va-payments-ui.applications :as applications]
     [va-payments-ui.connection :as connection]
     [va-payments-ui.router :as router]
