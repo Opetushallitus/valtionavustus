@@ -150,8 +150,6 @@
                 "Virhe maksatuksien päivityksessä"))})))
      nil)])
 
-(defn update-role! [oid roles role])
-
 (defn find-role [grant-roles current-grant-id user-oid]
   (prn grant-roles)
   (loop [i 0]
@@ -203,7 +201,9 @@
           (when @delete-payments?
             [ui/grid-list {:cols 6 :cell-height "auto"}
              (role-select user-role
-                          #(update-role! (:oid user-info) grant-roles %))
+                          #(reset! grant-roles [{:oid (:oid @user-info)
+                                                 :grant-id (:id grant)
+                                                 :role %}]))
              [ui/raised-button
               {:primary true :label "Poista maksatukset" :style button-style
                :on-click
