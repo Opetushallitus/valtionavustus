@@ -60,7 +60,7 @@
 
 (defn update-payments! [payments on-success on-error]
   (multi-request-with-go
-    connection/update-payment payments on-success on-error))
+    payments connection/update-payment on-success on-error))
 
 (defn send-xml-invoices! [{:keys [payments on-success on-error]}]
   (go
