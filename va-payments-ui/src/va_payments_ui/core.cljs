@@ -14,7 +14,8 @@
     [va-payments-ui.grants :refer [grants-table project-info]]
     [va-payments-ui.financing :as financing]
     [va-payments-ui.utils
-     :refer [toggle remove-nil format any-nil? not-empty?]]))
+     :refer [toggle remove-nil format any-nil? not-empty?]]
+    [va-payments-ui.theme :refer [button-style]]))
 
 (defonce grants (r/atom []))
 
@@ -29,8 +30,6 @@
 (defonce snackbar (r/atom {:open false :message "" }))
 
 (defonce delete-payments? (r/atom false))
-
-(def button-style {:margin 12})
 
 (defn show-message! [message]
   (reset! snackbar {:open true :message message}))

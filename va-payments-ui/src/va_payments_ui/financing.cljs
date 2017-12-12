@@ -4,7 +4,7 @@
      [cljsjs.material-ui]
      [cljs-react-material-ui.reagent :as ui]
      [va-payments-ui.payments :refer [get-payment-data]]
-     [va-payments-ui.core :refer [button-style]]
+     [va-payments-ui.theme :refer [button-style]]
      [va-payments-ui.utils :refer [remove-nil any-nil?]]))
 
 (def week-in-ms (* 1000 60 60 24 7))
