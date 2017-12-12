@@ -205,31 +205,23 @@
 
 (defn init! []
   (mount-root)
- (api/get-config
-   {:on-error
-    (fn [_ __] (show-message! "Virhe tietojen latauksessa"))
-    :on-success
-    (fn [config]
-      (reset! delete-payments? (get-in config [:payments :delete-payments?]))
-       (connection/set-config! config))})
-       (api/check-session
-         {:on-success
-          (fn [_]
-            (api/download-grants
-              (fn [result]
-                (do (reset! grants result)
-                    (reset! selected-grant
-                            (if-let
-                              [grant-id (get-param-grant)]
-                              (find-index-of @grants #(= grant-id (:id %)))
-                             0)))
-                (when-let [selected-grant-id
-                           (get-in @grants [@selected-grant :id])]
-                  (api/download-grant-data
-                    selected-grant-id
-                    #(do (reset! applications %1) (reset! payments %2))
-                    #(show-message! "Virhe tietojen latauksessa"))))
-              (fn [_ __]
-                (show-message! "Virhe tietojen latauksessa"))))
-          :on-error
-          (fn [status _] (when (= status 401) (redirect-to-login!)))}))
+  (api/get-config
+    {:on-error
+     (fn [_ __] (show-message! "Virhe tietojen latauksessa"))
+     :on-success
+     (fn [config]
+       (reset! delete-payments? (get-in config [:payments :delete-payments?]))
+       (connection/set-config! config)
+       (api/download-grants
+         (fn [result]
+           (do (reset! grants result)
+               (reset! selected-grant
+                       (if-let [grant-id (get-param-grant)]
+                         (find-index-of @grants #(= grant-id (:id %)))
+                         0)))
+           (when-let [selected-grant-id (get-in @grants [@selected-grant :id])]
+             (api/download-grant-data
+               selected-grant-id
+               #(do (reset! applications %1) (reset! payments %2))
+               #(show-message! "Virhe tietojen latauksessa"))))
+         (fn [_ __] (show-message! "Virhe tietojen latauksessa"))))}))
