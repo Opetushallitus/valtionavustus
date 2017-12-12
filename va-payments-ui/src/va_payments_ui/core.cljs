@@ -45,6 +45,18 @@
       .-href
      (set! connection/login-url-with-service)))
 
+(defn find-index-of
+  ([col pred i m]
+   (if (>= i m)
+     nil
+     (if (pred (nth col i)) i (recur col pred (inc i) m))))
+  ([col pred]
+   (find-index-of col pred 0 (count col))))
+
+(defn get-param-grant []
+  (let [grant-id (js/parseInt (router/get-current-param :grant))]
+    (when-not (js/isNaN grant-id) grant-id)))
+
 (defn top-links [grant-id]
   [:div {:class "top-links"}
    [:a {:href (str "/avustushaku/" grant-id)}
@@ -193,18 +205,6 @@
 
 (defn mount-root []
   (r/render [home-page] (.getElementById js/document "app")))
-
-(defn find-index-of
-  ([col pred i m]
-   (if (>= i m)
-     nil
-     (if (pred (nth col i)) i (recur col pred (inc i) m))))
-  ([col pred]
-   (find-index-of col pred 0 (count col))))
-
-(defn get-param-grant []
-  (let [grant-id (js/parseInt (router/get-current-param :grant))]
-    (when-not (js/isNaN grant-id) grant-id)))
 
 (defn init! []
   (mount-root)
