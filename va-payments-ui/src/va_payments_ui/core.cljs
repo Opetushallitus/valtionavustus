@@ -198,30 +198,32 @@
                 (when-let [grant (get @grants @selected-grant)])
                   (render-role-operations
                     user-role grant current-applications)]))
-          (when @delete-payments?
-            [ui/grid-list {:cols 6 :cell-height "auto"}
-             (role-select user-role
-                          #(reset! grant-roles [{:oid (:oid @user-info)
-                                                 :grant-id (:id grant)
-                                                 :role %}]))
-             [ui/raised-button
-              {:primary true :label "Poista maksatukset" :style button-style
-               :on-click
-               #(api/delete-grant-payments!
-                  {:grant-id (:id grant)
-                   :on-success
-                   (fn [_]
-                     (api/download-grant-data
-                       (:id grant)
-                       (fn [a p]
-                         (do (reset! applications a) (reset! payments p)))
-                       (fn [_ __])))
-                   :on-error (fn [_ __])})}]])
           [ui/snackbar
            (conj @snackbar
                  {:auto-hide-duration 4000
                   :on-request-close
-                  #(reset! snackbar {:open false :message ""})})]])])]])
+                  #(reset! snackbar {:open false :message ""})})]])])
+    (when @delete-payments?
+      (let [grant (get @grants @selected-grant)
+            user-role (when grant
+                      (find-role @grant-roles (:id grant) (:oid user-info)))]
+        [ui/grid-list {:cols 6 :cell-height "auto"}
+         (role-select user-role #(reset! grant-roles [{:oid (:oid @user-info)
+                                                       :grant-id (:id grant)
+                                                       :role %}]))
+         [ui/raised-button
+          {:primary true :label "Poista maksatukset" :style button-style
+           :on-click
+           #(api/delete-grant-payments!
+              {:grant-id (:id grant)
+               :on-success
+               (fn [_]
+                 (api/download-grant-data
+                   (:id grant)
+                   (fn [a p]
+                     (do (reset! applications a) (reset! payments p)))
+                   (fn [_ __])))
+               :on-error (fn [_ __])})}]]))]])
 
 (defn mount-root []
   (r/render [home-page] (.getElementById js/document "app")))
