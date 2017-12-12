@@ -27,6 +27,8 @@
 
 (defonce snackbar (r/atom {:open false :message "" }))
 
+(defonce delete-payments? (r/atom false))
+
 (def button-style {:margin 12})
 
 (defn show-message! [message]
@@ -140,6 +142,10 @@
         on-error))
     on-error))
 
+(defn delete-grant-payments! [{:keys [grant-id on-success on-error]}]
+  (request-with-go
+    #(connection/delete-grant-payments grant-id) on-success on-error))
+
 (defn top-links [grant-id]
   [:div {:class "top-links"}
    [:a {:href (str "/avustushaku/" grant-id)}
@@ -213,14 +219,28 @@
                  {:palette {:text-color (color :black)}})}
    [:div
     (top-links 0)
+    (when @delete-payments?
+      [ui/grid-list {:cols 6 :cell-height "auto"}
+       (role-select @user-role #(reset! user-role %))
+       [ui/raised-button
+        {:primary true :label "Poista maksatukset" :style button-style
+         :on-click
+         #(let [grant-id (get-in @grants [@selected-grant :id])]
+            (delete-grant-payments!
+            {:grant-id grant-id
+             :on-success
+             (fn [_]
+               (download-grant-data
+                 grant-id
+                 (fn [a p] (do (reset! applications a) (reset! payments p)))
+                 (fn [_ __])))
+             :on-error (fn [_ __])}))}]])
     (let [current-applications
           (-> @applications
               (combine @payments)
               (filter-applications @user-role))]
       [(fn []
          [:div
-          (role-select
-            @user-role #(reset! user-role %))
           (grants-table
             {:grants @grants :value @selected-grant
              :on-change
@@ -323,6 +343,7 @@
     (fn [_ __] (show-message! "Virhe tietojen latauksessa"))
     :on-success
     (fn [config]
+      (reset! delete-payments? (get-in config [:payments :delete-payments?]))
        (connection/set-config! config))})
        (check-session
          {:on-success

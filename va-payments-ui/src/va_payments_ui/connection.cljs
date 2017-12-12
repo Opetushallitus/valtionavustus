@@ -57,6 +57,9 @@
              {:json-params {}
               :with-credentials? true}))
 
+(defn delete-grant-payments [id]
+  (http/delete (format "/%s/grants/%d/payments/" api-path id)))
+
 (defn check-session []
   (http/get (format "/login/sessions/")
             {:with-credentials? true}))

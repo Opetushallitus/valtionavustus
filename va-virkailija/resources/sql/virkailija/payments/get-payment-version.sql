@@ -5,4 +5,4 @@ SELECT id, version, version_closed, created_at, application_id,
 FROM
   virkailija.payments
 WHERE
-  id = :id AND version = :version;
+  id = :id AND version = :version AND deleted IS NULL;
