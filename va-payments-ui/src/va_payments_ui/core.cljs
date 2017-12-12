@@ -7,6 +7,7 @@
     [cljs-react-material-ui.reagent :as ui]
     [cljs-react-material-ui.icons :as ic]
     [cljs.core.async :as async]
+    [va-payments-ui.api :as api]
     [va-payments-ui.payments :refer [create-payments get-payment-data]]
     [va-payments-ui.applications :as applications]
     [va-payments-ui.connection :as connection]
@@ -38,117 +39,11 @@
   (show-message!
     (format "Virhe tietojen latauksessa. Virhe %s (%d)" text code)))
 
-(defn request-with-go [f on-success on-error]
-  (go
-    (let [response (async/<! (f))]
-      (if (:success response)
-        (on-success (:body response))
-        (on-error (:status response) (:error-text response))))))
-
-(defn multi-request-with-go [params f on-success on-error]
-  (go
-    (doseq [param params]
-      (let [response
-            (async/<! (f param))]
-        (when-not (:success response)
-          (on-error (:status response) (:error-text response)))))
-    (on-success)))
-
-(defn get-config [{:keys [on-success on-error]}]
-  (request-with-go connection/get-config on-success on-error))
-
-(defn check-session [{:keys [on-success on-error]}]
-  (request-with-go connection/check-session on-success on-error))
-
-(defn download-grant-applications [grant-id on-success on-error]
-  (request-with-go #(connection/get-grant-applications grant-id)
-                  on-success on-error))
-
-(defn download-grants [on-success on-error]
-  (request-with-go connection/get-grants-list on-success on-error))
-
-(defn download-grant-payments [grant-id on-success on-error]
-  (request-with-go #(connection/get-grant-payments grant-id)
-                   on-success on-error))
-
-(defn send-payments-email [grant-id on-success on-error]
-  (request-with-go #(connection/send-payments-email grant-id)
-                   on-success on-error))
-
-(defn create-application-payments! [applications values on-success on-error]
-  (go
-    (let [next-i-number-response
-          (async/<! (connection/get-next-installment-number))]
-      (if (:success next-i-number-response)
-        (doseq [application applications]
-          (let [new-payment-values
-                (assoc values :installment-number
-                       (get-in next-i-number-response
-                               [:body :installment-number]))
-                response (async/<! (connection/create-application-payment
-                                     (:id application) new-payment-values))]
-            (when-not (:success response)
-              (on-error (:status response) (:error-text response)))))
-        (on-error (:status next-i-number-response)
-                  (:error-text next-i-number-response))))
-    (on-success)))
-
-(defn update-payments! [payments on-success on-error]
-  (multi-request-with-go
-    connection/update-payment payments on-success on-error))
-
-(defn send-xml-invoices! [{:keys [payments on-success on-error]}]
-  (go
-    (doseq [payment payments]
-      (let [xml-response (async/<! (connection/send-xml-invoice payment))]
-        (if (:success xml-response)
-          (let [update-response (async/<! (connection/update-payment payment))]
-            (when-not (:success update-response)
-              (on-error (:status update-response)
-                        (:error-text update-response))))
-          (on-error (:status xml-response) (:error-text xml-response)))))
-    (on-success)))
-
 (defn redirect-to-login! []
   (-> js/window
       .-location
       .-href
      (set! connection/login-url-with-service)))
-
-(defn combine-application-payment [application payment]
-  (let [selected-values (select-keys payment [:id :version :state])]
-    (merge
-      application
-      (clojure.set/rename-keys selected-values
-                   {:id :payment-id
-                    :version :payment-version
-                    :state :payment-state}))))
-
-(defn find-application-payment [payments application-id application-version]
-  (first
-    (filter
-      #(and (= (:application-version %) application-version)
-            (= (:application-id %) application-id))
-      payments)))
-
-(defn combine [applications payments]
-  (mapv #(combine-application-payment
-           % (find-application-payment payments (:id %) (:version %)))
-        applications))
-
-(defn download-grant-data [grant-id on-success on-error]
-  (download-grant-applications
-    grant-id
-    (fn [applications]
-      (download-grant-payments
-        grant-id
-        (fn [payments] (on-success applications payments))
-        on-error))
-    on-error))
-
-(defn delete-grant-payments! [{:keys [grant-id on-success on-error]}]
-  (request-with-go
-    #(connection/delete-grant-payments grant-id) on-success on-error))
 
 (defn top-links [grant-id]
   [:div {:class "top-links"}
@@ -192,11 +87,11 @@
      (render-presenting-officer
          current-applications
          (fn [values]
-           (create-application-payments!
+           (api/create-application-payments!
              current-applications values
              (fn []
                (show-message! "Maksatukset luotu")
-               (download-grant-payments
+               (api/download-grant-payments
                  (:id grant)
                  (fn [result] (reset! payments result))
                  show-error-message!))
@@ -208,16 +103,16 @@
        {:primary true :disabled (empty? current-applications)
         :label "Ilmoita taloushallintoon" :style button-style
         :on-click
-        #(update-payments!
+        #(api/update-payments!
            (mapv remove-nil
              (get-payment-data current-applications {:payment-state 1}))
            (fn []
-             (send-payments-email
+             (api/send-payments-email
                (:id grant)
                (fn [_]
                  (do
                    (show-message! "Ilmoitus taloushallintoon lähetetty")
-                   (download-grant-payments
+                   (api/download-grant-payments
                     (:id grant)
                     (fn [result] (reset! payments result))
                     show-error-message!)))
@@ -228,13 +123,13 @@
      (financing/render-financials-manager
        current-applications
        (fn [payment-values]
-         (send-xml-invoices!
+         (api/send-xml-invoices!
            {:payments
             payment-values
             :on-success
             (fn []
               (show-message! "Maksatukset lähetetty Rondoon")
-              (download-grant-payments
+              (api/download-grant-payments
                 (:id grant)
                 (fn [result] (reset! payments result))
                 show-error-message!))
@@ -257,18 +152,18 @@
         {:primary true :label "Poista maksatukset" :style button-style
          :on-click
          #(let [grant-id (get-in @grants [@selected-grant :id])]
-            (delete-grant-payments!
+            (api/delete-grant-payments!
             {:grant-id grant-id
              :on-success
              (fn [_]
-               (download-grant-data
+               (api/download-grant-data
                  grant-id
                  (fn [a p] (do (reset! applications a) (reset! payments p)))
                  (fn [_ __])))
              :on-error (fn [_ __])}))}]])
     (let [current-applications
           (-> @applications
-              (combine @payments)
+              (api/combine @payments)
               (filter-applications @user-role))]
       [(fn []
          [:div
@@ -278,7 +173,7 @@
              (fn [row]
                (do (reset! selected-grant row)
                    (when-let [grant (nth @grants row)]
-                     (download-grant-data (:id grant)
+                     (api/download-grant-data (:id grant)
                         #(do (reset! applications %1) (reset! payments %2))
                         #(show-message! "Virhe tietojen latauksessa")))))})
           (let [grant (get @grants @selected-grant)]
@@ -313,17 +208,17 @@
 
 (defn init! []
   (mount-root)
- (get-config
+ (api/get-config
    {:on-error
     (fn [_ __] (show-message! "Virhe tietojen latauksessa"))
     :on-success
     (fn [config]
       (reset! delete-payments? (get-in config [:payments :delete-payments?]))
        (connection/set-config! config))})
-       (check-session
+       (api/check-session
          {:on-success
           (fn [_]
-            (download-grants
+            (api/download-grants
               (fn [result]
                 (do (reset! grants result)
                     (reset! selected-grant
@@ -333,7 +228,7 @@
                              0)))
                 (when-let [selected-grant-id
                            (get-in @grants [@selected-grant :id])]
-                  (download-grant-data
+                  (api/download-grant-data
                     selected-grant-id
                     #(do (reset! applications %1) (reset! payments %2))
                     #(show-message! "Virhe tietojen latauksessa"))))
