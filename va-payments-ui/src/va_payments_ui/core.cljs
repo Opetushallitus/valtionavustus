@@ -154,10 +154,6 @@
    [:a {:href "/admin/"} "Hakujen hallinta"]
    [:a {:href "/va-payments-ui/payments"} "Maksatusten hallinta"]])
 
-(defn render-applications [applications]
- [:div
-  (applications/applications-table applications)])
-
 (defn role-select [value on-change]
   [ui/select-field {:value value :floating-label-text "Rooli"
                     :on-change #(on-change %3)}
@@ -291,10 +287,10 @@
               [:div
                [:h3 "Myönteiset päätökset"]
                 [:div (project-info grant)]
-                 (render-applications current-applications)
-                 (when-let [grant (get @grants @selected-grant)])
-                   (render-role-operations
-                     @user-role grant current-applications)]))
+                (applications/applications-table current-applications)
+                (when-let [grant (get @grants @selected-grant)])
+                  (render-role-operations
+                    @user-role grant current-applications)]))
           [ui/snackbar
            (conj @snackbar
                  {:auto-hide-duration 4000
