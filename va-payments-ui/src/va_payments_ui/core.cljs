@@ -13,7 +13,8 @@
     [va-payments-ui.router :as router]
     [va-payments-ui.grants :refer [grants-table project-info]]
     [va-payments-ui.financing :as financing]
-    [va-payments-ui.utils :refer [toggle remove-nil format any-nil?]]))
+    [va-payments-ui.utils
+     :refer [toggle remove-nil format any-nil? not-empty?]]))
 
 (defonce grants (r/atom []))
 
@@ -285,14 +286,15 @@
                      (download-grant-data (:id grant)
                         #(do (reset! applications %1) (reset! payments %2))
                         #(show-message! "Virhe tietojen latauksessa")))))})
-          (when-let [grant (get @grants @selected-grant)]
-            [:div
-             [:h3 "Myönteiset päätökset"]
-              [:div (project-info grant)]
-               (render-applications current-applications)
-               (when-let [grant (get @grants @selected-grant)])
-                 (render-role-operations
-                   @user-role grant current-applications)])
+          (let [grant (get @grants @selected-grant)]
+            (when (and grant (not-empty? @user-role))
+              [:div
+               [:h3 "Myönteiset päätökset"]
+                [:div (project-info grant)]
+                 (render-applications current-applications)
+                 (when-let [grant (get @grants @selected-grant)])
+                   (render-role-operations
+                     @user-role grant current-applications)]))
           [ui/snackbar
            (conj @snackbar
                  {:auto-hide-duration 4000
