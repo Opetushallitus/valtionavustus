@@ -245,7 +245,8 @@
             :on-error
             (fn [_ __]
               (show-message!
-                "Virhe maksatuksien päivityksessä"))}))))])
+                "Virhe maksatuksien päivityksessä"))})))
+     nil)])
 
 (defn home-page []
   [ui/mui-theme-provider
