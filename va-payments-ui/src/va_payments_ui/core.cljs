@@ -166,6 +166,7 @@
                  {:palette {:text-color (color :black)}})}
    [:div
     (top-links 0)
+    [:hr]
     (grants-table
       {:grants @grants
        :value (find-index-of @grants #(= (:id %) (:id @selected-grant)))
@@ -192,21 +193,20 @@
                                    (filter-applications user-role))]
       [(fn []
          [:div
-          (let []
-            (when (and @selected-grant (not-empty? user-role))
-              [:div
-               [:h3 "Myönteiset päätökset"]
-                [:div (project-info @selected-grant)]
+          (when (and @selected-grant (not-empty? user-role))
+            [:div
+             [:h3 "Myönteiset päätökset"]
                 (applications/applications-table current-applications)
                 (when @selected-grant
                   (render-role-operations
-                    user-role @selected-grant current-applications))]))
+                    user-role @selected-grant current-applications))])
           [ui/snackbar
            (conj @snackbar
                  {:auto-hide-duration 4000
                   :on-request-close
                   #(reset! snackbar {:open false :message ""})})]])])
     [:div
+     [:hr]
      (when (some #(= % "va-admin") (:privileges @user-info))
        (let [user-role
              (or @overridden-role
