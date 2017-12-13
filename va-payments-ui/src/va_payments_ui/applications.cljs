@@ -4,7 +4,8 @@
    [cljsjs.material-ui]
    [cljs-react-material-ui.reagent :as ui]
    [va-payments-ui.utils :refer
-    [assoc-all-with toggle toggle-in]]))
+    [assoc-all-with toggle toggle-in]]
+   [va-payments-ui.utils :refer [format]]))
 
 (defn get-answer-value [answers key]
   (:value
@@ -23,7 +24,11 @@
   [ui/table-row {:key i}
    [ui/table-row-column (state-to-str (:payment-state application))]
    [ui/table-row-column (:organization-name application)]
-   [ui/table-row-column [:a {:target "_blank" :href (str "/avustushaku/" (:grant-id application) "/hakemus/" (:id application) "/arviointi/")} (:project-name application)]]
+   [ui/table-row-column
+    [:a {:target "_blank"
+         :href (format "/avustushaku/%d/hakemus/%d/arviointi/"
+                       (:grant-id application) (:id application))}
+     (:project-name application)]]
    [ui/table-row-column (get application :budget-granted)]
    [ui/table-row-column
     (get-answer-value (:answers application) "bank-iban")]
