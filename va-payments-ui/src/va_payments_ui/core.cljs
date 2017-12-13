@@ -187,7 +187,7 @@
           (or @overridden-role
             (when @selected-grant
               (find-role
-                @grant-roles (:id @selected-grant) (:oid user-info))))
+                @grant-roles (:id @selected-grant) (:person-oid @user-info))))
           current-applications (-> @applications
                                  (api/combine @payments)
                                  (filter-applications user-role))]
@@ -212,7 +212,9 @@
              (or @overridden-role
                (when @selected-grant
                  (find-role
-                   @grant-roles (:id @selected-grant) (:oid user-info))))]
+                   @grant-roles
+                   (:id @selected-grant)
+                   (:person-oid @user-info))))]
          (role-select user-role #(reset! overridden-role %))))
      (when @delete-payments?
        [ui/grid-list {:cols 6 :cell-height "auto"}
