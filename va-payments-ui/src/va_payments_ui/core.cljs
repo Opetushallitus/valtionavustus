@@ -63,7 +63,7 @@
    [:a {:href (str "/avustushaku/" grant-id)}
     "Hakemusten arviointi"]
    [:a {:href "/admin/"} "Hakujen hallinta"]
-   [:a {:href "/va-payments-ui/payments"} "Maksatusten hallinta"]])
+   [:a {:href "/payments"} "Maksatusten hallinta"]])
 
 (defn role-select [value on-change]
   [ui/select-field {:value value :floating-label-text "Rooli"
