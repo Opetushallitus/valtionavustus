@@ -13,7 +13,7 @@
     [va-payments-ui.financing :as financing]
     [va-payments-ui.utils
      :refer [toggle remove-nil format any-nil? not-empty?]]
-    [va-payments-ui.theme :refer [button-style]]))
+    [va-payments-ui.theme :refer [button-style material-styles general-styles]]))
 
 (defonce grants (r/atom []))
 
@@ -150,13 +150,8 @@
 
 (defn home-page []
   [ui/mui-theme-provider
-   {:mui-theme (get-mui-theme
-                 {:font-family ["Open Sans", "Helvetica", "sans-serif"]
-                  :font-size "95%"
-                  :palette {:text-color (color :black)
-                            :primary1-color "#4c7f00"
-                            :picker-header-color (color :red-500)}})}
-   [:div
+   {:mui-theme (get-mui-theme material-styles)}
+   [:div {:style general-styles}
     (top-links 0)
     (when @delete-payments?
       [ui/grid-list {:cols 6 :cell-height "auto"}

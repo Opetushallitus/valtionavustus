@@ -4,7 +4,8 @@
     [cljsjs.material-ui]
     [cljs-react-material-ui.reagent :as ui]
     [va-payments-ui.utils :refer
-     [assoc-all-with toggle toggle-in]]))
+     [assoc-all-with toggle toggle-in]]
+    [va-payments-ui.theme :refer [material-styles]]))
 
 (defn get-answer-value [answers key]
   (:value
@@ -34,7 +35,7 @@
 
 (defn applications-table [applications]
   [:div
-   [ui/table {:fixed-header true :height "250px" :selectable false}
+   [ui/table {:fixed-header true :height "250px" :selectable false  :style (:table material-styles)}
     [ui/table-header {:adjust-for-checkbox false :display-select-all false}
      [ui/table-row
       [ui/table-header-column "Tila"]
