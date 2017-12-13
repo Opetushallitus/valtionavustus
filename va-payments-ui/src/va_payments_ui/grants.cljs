@@ -33,7 +33,8 @@
              :selectable true
              :multi-selectable false
              :height "250px"
-             :style (:table material-styles)}
+             :style (:table material-styles)
+             :class "table"}
    [ui/table-header {:display-select-all false :adjust-for-checkbox false}
     [ui/table-row {:style {:font-size "80px"}}
      [ui/table-header-column "Diaarinumero"]

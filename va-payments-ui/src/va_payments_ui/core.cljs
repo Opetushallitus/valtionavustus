@@ -56,10 +56,10 @@
 
 (defn top-links [grant-id]
   [:div {:class "top-links"}
-   [:a {:href (str "/avustushaku/" grant-id)}
+   [:a {:href (str "/avustushaku/" grant-id) :style (:a general-styles)}
     "Hakemusten arviointi"]
-   [:a {:href "/admin/"} "Hakujen hallinta"]
-   [:a {:href "/va-payments-ui/payments"} "Maksatusten hallinta"]])
+   [:a {:href "/admin/" :style (:a general-styles)} "Hakujen hallinta"]
+   [:a {:href "/va-payments-ui/payments" :style (:a general-styles)} "Maksatusten hallinta"]])
 
 (defn role-select [value on-change]
   [ui/select-field {:value value :floating-label-text "Rooli"
@@ -151,7 +151,7 @@
 (defn home-page []
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme material-styles)}
-   [:div {:style general-styles}
+   [:div {:style general-styles :class "content"}
     (top-links 0)
     (when @delete-payments?
       [ui/grid-list {:cols 6 :cell-height "auto"}
