@@ -46,6 +46,7 @@
 
 (defn project-info [grant]
   [ui/grid-list {:cols 6 :cell-height "auto" :style  {:margin 20}}
-   [:div [:label "Toimintayksikkö: "]  (get-in grant [:content :operational-unit])]
+   [:div [:label "Toimintayksikkö: "]
+    (get-in grant [:content :operational-unit])]
    [:div [:label "Projekti: "] (get-in grant [:content :project])]
    [:div [:label "Toiminto: "] (get-in grant [:content :operation])]])
