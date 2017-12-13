@@ -1,11 +1,11 @@
 (ns va-payments-ui.financing
-   (:require
-     [reagent.core :as r]
-     [cljsjs.material-ui]
-     [cljs-react-material-ui.reagent :as ui]
-     [va-payments-ui.payments :refer [get-payment-data]]
-     [va-payments-ui.theme :refer [button-style]]
-     [va-payments-ui.utils :refer [remove-nil any-nil?]]))
+  (:require
+   [reagent.core :as r]
+   [cljsjs.material-ui]
+   [cljs-react-material-ui.reagent :as ui]
+   [va-payments-ui.payments :refer [get-payment-data]]
+   [va-payments-ui.theme :refer [button-style]]
+   [va-payments-ui.utils :refer [remove-nil any-nil?]]))
 
 (def week-in-ms (* 1000 60 60 24 7))
 
@@ -15,15 +15,15 @@
   (js/Date. (+ (.getTime (js/Date.)) milliseconds)))
 
 (defn payment-emails [values on-change]
- [ui/grid-list {:cols 6 :cell-height "auto"}
+  [ui/grid-list {:cols 6 :cell-height "auto"}
    [ui/text-field {:floating-label-text "Tarkastajan sähköpostiosoite"
                    :value (get values :inspector-email "")
                    :on-change
-                    #(on-change :inspector-email (.-value (.-target %)))}]
+                   #(on-change :inspector-email (.-value (.-target %)))}]
    [ui/text-field {:floating-label-text "Hyväksyjän sähköpostiosoite"
                    :value (get values :acceptor-email "")
                    :on-change
-                    #(on-change :acceptor-email (.-value (.-target %)))}]])
+                   #(on-change :acceptor-email (.-value (.-target %)))}]])
 
 (defn payment-fields [values on-change]
   [ui/grid-list {:cols 4 :cell-height "auto"}
@@ -64,7 +64,7 @@
     [(fn []
        [:div
         (payment-fields
-          @payment-values #(swap! payment-values assoc %1 %2))
+         @payment-values #(swap! payment-values assoc %1 %2))
         [ui/raised-button
          {:primary true :label "Lähetä Rondoon"
           :style button-style
@@ -75,8 +75,8 @@
                          :payment-term :document-type :receipt-date]))
           :on-click
           #(on-change
-             (mapv remove-nil
-                   (get-payment-data
-                     current-applications
-                     (assoc @payment-values :payment-state 2))))}]])]))
+            (mapv remove-nil
+                  (get-payment-data
+                   current-applications
+                   (assoc @payment-values :payment-state 2))))}]])]))
 

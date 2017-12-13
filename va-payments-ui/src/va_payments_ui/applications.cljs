@@ -1,15 +1,15 @@
 (ns va-payments-ui.applications
   (:require
-    [reagent.core :as r]
-    [cljsjs.material-ui]
-    [cljs-react-material-ui.reagent :as ui]
-    [va-payments-ui.utils :refer
-     [assoc-all-with toggle toggle-in]]))
+   [reagent.core :as r]
+   [cljsjs.material-ui]
+   [cljs-react-material-ui.reagent :as ui]
+   [va-payments-ui.utils :refer
+    [assoc-all-with toggle toggle-in]]))
 
 (defn get-answer-value [answers key]
   (:value
-    (first
-      (filter #(= (:key %) key) answers))))
+   (first
+    (filter #(= (:key %) key) answers))))
 
 (defn state-to-str [state]
   (case state
@@ -23,7 +23,7 @@
   [ui/table-row {:key i}
    [ui/table-row-column (state-to-str (:payment-state application))]
    [ui/table-row-column (:organization-name application)]
-   [ui/table-row-column [:a {:target "_blank" :href (str "/avustushaku/" (:grant-id application) "/hakemus/"(:id application) "/arviointi/")} (:project-name application)]]
+   [ui/table-row-column [:a {:target "_blank" :href (str "/avustushaku/" (:grant-id application) "/hakemus/" (:id application) "/arviointi/")} (:project-name application)]]
    [ui/table-row-column (get application :budget-granted)]
    [ui/table-row-column
     (get-answer-value (:answers application) "bank-iban")]
@@ -48,4 +48,4 @@
       [ui/table-header-column "Tiliöintisumma"]]]
     [ui/table-body {:display-row-checkbox false}
      (doall
-       (map-indexed render-application applications))]]])
+      (map-indexed render-application applications))]]])

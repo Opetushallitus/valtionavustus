@@ -28,12 +28,12 @@
             {:with-credentials? true}))
 
 (defn get-grant-payments [id]
-    (http/get (format "/%s/grants/%d/payments/" api-path id)
+  (http/get (format "/%s/grants/%d/payments/" api-path id)
             {:with-credentials? true}))
 
 (defn get-next-installment-number []
-    (http/get (format "/%s/payments/next-installment-number/"
-                      api-path)
+  (http/get (format "/%s/payments/next-installment-number/"
+                    api-path)
             {:with-credentials? true}))
 
 (defn create-application-payment [id values]
@@ -43,8 +43,8 @@
 
 (defn update-payment [payment]
   (http/put (format "/%s/payments/%d/" api-path (:id payment))
-             {:json-params payment
-              :with-credentials? true}))
+            {:json-params payment
+             :with-credentials? true}))
 
 (defn create-grant-payments [id payments]
   (http/post (str "/api/avustushaku/" id "/payments")
@@ -53,7 +53,7 @@
 
 (defn send-payments-email [id]
   (http/post (format
-               "/api/avustushaku/%d/payments-email/" id)
+              "/api/avustushaku/%d/payments-email/" id)
              {:json-params {}
               :with-credentials? true}))
 
