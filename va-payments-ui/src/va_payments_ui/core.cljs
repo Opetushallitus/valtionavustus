@@ -219,16 +219,17 @@
         [ui/raised-button
          {:primary true :label "Poista maksatukset" :style button-style
           :on-click
-          #(api/delete-grant-payments!
-            {:grant-id (:id @selected-grant)
-             :on-success
-             (fn [_]
-               (api/download-grant-data
-                (:id @selected-grant)
-                (fn [a p]
-                  (do (reset! applications a) (reset! payments p)))
-                (fn [_ __])))
-             :on-error (fn [_ __])})}]])]]])
+          (fn []
+            (api/delete-grant-payments!
+              {:grant-id (:id @selected-grant)
+               :on-success
+               (fn [_]
+                 (api/download-grant-data
+                  (:id @selected-grant)
+                  (fn [a p]
+                    (do (reset! applications a) (reset! payments p)))
+                  (fn [_ __])))
+               :on-error (fn [_ __])}))}]])]]])
 
 (defn mount-root []
   (r/render [home-page] (.getElementById js/document "app")))
