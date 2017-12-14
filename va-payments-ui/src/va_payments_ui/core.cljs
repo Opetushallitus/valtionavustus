@@ -195,6 +195,9 @@
          [:div
           (when (and @selected-grant (not-empty? user-role))
             [:div
+             [:hr]
+             (project-info @selected-grant)
+             [:hr]
              [:h3 "Myönteiset päätökset"]
              (applications/applications-table current-applications)
              (when @selected-grant
