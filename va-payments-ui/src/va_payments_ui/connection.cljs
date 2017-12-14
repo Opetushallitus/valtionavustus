@@ -57,6 +57,9 @@
              {:json-params {}
               :with-credentials? true}))
 
+(defn get-payment-history [id]
+  (http/get (format "/%s/applications/%d/payments-history/" api-path id)))
+
 (defn delete-grant-payments [id]
   (http/delete (format "/%s/grants/%d/payments/" api-path id)))
 
