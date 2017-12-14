@@ -5,7 +5,7 @@
    [cljs-react-material-ui.core :refer [get-mui-theme color]]
    [cljs-react-material-ui.reagent :as ui]
    [va-payments-ui.api :as api]
-   [va-payments-ui.payments :refer [get-payment-data]]
+   [va-payments-ui.payments :as payments]
    [va-payments-ui.applications :as applications]
    [va-payments-ui.connection :as connection]
    [va-payments-ui.router :as router]
@@ -30,6 +30,8 @@
 (defonce user-info (r/atom {}))
 
 (defonce snackbar (r/atom {:open false :message ""}))
+
+(defonce dialog (r/atom {:open false}))
 
 (defonce delete-payments? (r/atom false))
 
@@ -118,7 +120,8 @@
        :on-click
        #(api/update-payments!
          (mapv remove-nil
-               (get-payment-data current-applications {:payment-state 1}))
+               (payments/get-payment-data
+                current-applications {:payment-state 1}))
          (fn []
            (api/send-payments-email
             (:id grant)
@@ -160,6 +163,9 @@
         (:role grant-role)
         (recur (+ i 1))))))
 
+(defn show-dialog! [content]
+  (swap! dialog assoc :open true :children content))
+
 (defn home-page []
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme
@@ -199,7 +205,16 @@
              (project-info @selected-grant)
              [:hr]
              [:h3 "Myönteiset päätökset"]
-             (applications/applications-table current-applications)
+             (applications/applications-table
+              current-applications
+              (fn [id] (api/get-payment-history
+                        {:application-id id
+                         :on-success
+                         #(show-dialog!
+                           (r/as-element (payments/render-history %)))
+                         :on-error
+                         #(show-message!
+                           "Virhe maksatuksen tietojen latauksessa")})))
              (when @selected-grant
                (render-role-operations
                 user-role @selected-grant current-applications))])
@@ -234,7 +249,9 @@
                  (fn [a p]
                    (do (reset! applications a) (reset! payments p)))
                  (fn [_ __])))
-              :on-error (fn [_ __])}))}]])]]])
+              :on-error (fn [_ __])}))}]])]
+    [ui/dialog
+     (conj @dialog {:on-request-close #(swap! dialog assoc :open false)})]]])
 
 (defn mount-root []
   (r/render [home-page] (.getElementById js/document "app")))
