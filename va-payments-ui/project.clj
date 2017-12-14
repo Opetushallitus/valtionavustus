@@ -6,6 +6,8 @@
             [lein-figwheel "0.5.14"]
             [lein-doo "0.1.8"]]
 
+  :source-paths ["src"]
+
   :parent-project {:path "../parent-project.clj"
                    :inherit [:url
                              :license
@@ -74,10 +76,12 @@
 
   :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]}
 
-  :profiles {:dev {:dependencies [[binaryage/devtools "0.9.4"]
+  :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.2.1"]
+                                  [binaryage/devtools "0.9.4"]
                                   [figwheel-sidecar "0.5.13"]
                                   [org.clojure/tools.nrepl "0.2.13"]
                                   [com.cemerick/piggieback "0.2.2"]
                                   [compojure "1.6.0"]
                                   [ring "1.6.2"]
-                                  [ring/ring-defaults "0.3.1"]]}})
+                                  [ring/ring-defaults "0.3.1"]]}}
+  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]})

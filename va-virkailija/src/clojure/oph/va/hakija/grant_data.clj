@@ -37,3 +37,7 @@
 
 (defn delete-grant-payments [id]
   (exec :form-db virkailija-queries/delete-grant-payments {:id id}))
+
+(defn get-grant-roles [id]
+  (mapv convert-to-dash-keys
+        (exec :form-db virkailija-queries/get-grant-roles {:id id})))
