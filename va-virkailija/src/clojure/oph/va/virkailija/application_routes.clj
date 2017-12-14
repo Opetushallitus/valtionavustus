@@ -26,7 +26,15 @@
     :summary "Create new payment OPTIONS"
     (ok "")))
 
+(defn- get-payments-history []
+  (compojure-api/GET
+    "/:id/payments-history/" [id :as request]
+    :path-params [id :- Long]
+    :summary "Get payment history"
+    (ok (application-data/get-payments-history id))))
+
 (compojure-api/defroutes routes
   "application routes"
   (create-payment)
-  (create-payment-options))
+  (create-payment-options)
+  (get-payments-history))
