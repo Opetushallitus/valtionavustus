@@ -12,7 +12,7 @@
   (is (not (utils/any-nil? {:hello "something" :world "words"} [:hello :world])))
   (is (utils/any-nil? {:hello "something" :world "words"} [:hello :world :sep]))
   (is
-    (utils/any-nil? {:hello "something" :world "words" :sep nil} [:hello :world :sep]))
+   (utils/any-nil? {:hello "something" :world "words" :sep nil} [:hello :world :sep]))
   (is (not (utils/any-nil?
-             {:hello "something" :world "words" :sep "others"} [:hello :world :sep]))))
+            {:hello "something" :world "words" :sep "others"} [:hello :world :sep]))))
 
