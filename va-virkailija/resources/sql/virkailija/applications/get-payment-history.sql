@@ -6,4 +6,5 @@ SELECT
 FROM
   virkailija.payments
 WHERE
-  application_id = :application_id;
+  application_id = :application_id
+ORDER BY created_at;
