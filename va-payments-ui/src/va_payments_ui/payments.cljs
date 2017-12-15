@@ -3,7 +3,10 @@
    [reagent.core :as r]
    [cljsjs.material-ui]
    [cljs-react-material-ui.reagent :as ui]
-   [cljs-react-material-ui.icons :as ic]))
+   [cljs-react-material-ui.icons :as ic]
+   [cljs-time.format :as tf]))
+
+(def date-formatter (tf/formatter "dd.MM.yyyy"))
 
 (defn map-to-new-payment [application]
   {:application-id (:id application)
@@ -35,14 +38,17 @@
          {:state (:payment-state payment-values)})]
     (mapv #(merge (map-to-payment %) selected-values) applications)))
 
+(defn to-simple-date [d]
+ (tf/unparse date-formatter (tf/parse d)))
+
 (defn render-history-item [i application]
   [ui/table-row {:key i}
    [ui/table-row-column (:created-at application)]
    [ui/table-row-column (:version application)]
    [ui/table-row-column (:state application)]
-   [ui/table-row-column (:invoice-date application)]
-   [ui/table-row-column (:due-date application)]
-   [ui/table-row-column (:receipt-date application)]
+   [ui/table-row-column (to-simple-date (:invoice-date application))]
+   [ui/table-row-column (to-simple-date (:due-date application))]
+   [ui/table-row-column (to-simple-date (:receipt-date application))]
    [ui/table-row-column (:transaction-account application)]
    [ui/table-row-column (:document-type application)]
    [ui/table-row-column (:inspector-email application)]
