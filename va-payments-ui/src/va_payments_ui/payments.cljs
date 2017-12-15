@@ -7,6 +7,7 @@
    [cljs-time.format :as tf]))
 
 (def date-formatter (tf/formatter "dd.MM.yyyy"))
+(def date-time-formatter (tf/formatter "dd.MM.yyyy HH:mm"))
 
 (defn map-to-new-payment [application]
   {:application-id (:id application)
@@ -41,9 +42,12 @@
 (defn to-simple-date [d]
  (tf/unparse date-formatter (tf/parse d)))
 
+(defn to-simple-date-time [d]
+ (tf/unparse date-time-formatter (tf/parse d)))
+
 (defn render-history-item [i application]
   [ui/table-row {:key i}
-   [ui/table-row-column (:created-at application)]
+   [ui/table-row-column (to-simple-date-time (:created-at application))]
    [ui/table-row-column (:version application)]
    [ui/table-row-column (:state application)]
    [ui/table-row-column (to-simple-date (:invoice-date application))]
@@ -53,7 +57,8 @@
    [ui/table-row-column (:document-type application)]
    [ui/table-row-column (:inspector-email application)]
    [ui/table-row-column (:acceptor-email application)]
-   [ui/table-row-column (:deleted application)]])
+   [ui/table-row-column (when (:deleted application)
+                          (to-simple-date-time (:deleted application)))]])
 
 (defn render-history [payments]
   [ui/table {:fixed-header true :height "250px" :selectable false}
