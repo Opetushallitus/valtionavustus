@@ -62,7 +62,7 @@
                           (to-simple-date-time (:deleted application)))]])
 
 (defn render-history [payments]
-  [ui/table {:fixed-header true :height "250px" :selectable false}
+  [ui/table {:fixed-header true :selectable false}
    [ui/table-header {:adjust-for-checkbox false :display-select-all false}
     [ui/table-row
      [ui/table-header-column "Aika"]
