@@ -4,7 +4,8 @@
    [cljsjs.material-ui]
    [cljs-react-material-ui.reagent :as ui]
    [cljs-react-material-ui.icons :as ic]
-   [cljs-time.format :as tf]))
+   [cljs-time.format :as tf]
+   [va-payments-ui.applications :refer [state-to-str]]))
 
 (def date-formatter (tf/formatter "dd.MM.yyyy"))
 (def date-time-formatter (tf/formatter "dd.MM.yyyy HH:mm"))
@@ -49,7 +50,7 @@
   [ui/table-row {:key i}
    [ui/table-row-column (to-simple-date-time (:created-at application))]
    [ui/table-row-column (:version application)]
-   [ui/table-row-column (:state application)]
+   [ui/table-row-column (state-to-str (:state application))]
    [ui/table-row-column (to-simple-date (:invoice-date application))]
    [ui/table-row-column (to-simple-date (:due-date application))]
    [ui/table-row-column (to-simple-date (:receipt-date application))]
