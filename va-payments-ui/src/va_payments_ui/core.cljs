@@ -168,8 +168,7 @@
 
 (defn home-page []
   [ui/mui-theme-provider
-   {:mui-theme (get-mui-theme
-                 {:palette {:text-color (color :black)}})}
+   {:mui-theme (get-mui-theme {:palette {:text-color (color :black)}})}
    [:div
     (top-links 0)
     [:hr]
