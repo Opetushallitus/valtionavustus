@@ -41,10 +41,10 @@
     (mapv #(merge (map-to-payment %) selected-values) applications)))
 
 (defn to-simple-date [d]
- (tf/unparse-local date-formatter (tf/parse d)))
+  (tf/unparse-local date-formatter (tf/parse d)))
 
 (defn to-simple-date-time [d]
- (tf/unparse-local date-time-formatter (tf/parse d)))
+  (tf/unparse-local date-time-formatter (tf/parse d)))
 
 (defn render-history-item [i application]
   [ui/table-row {:key i}
