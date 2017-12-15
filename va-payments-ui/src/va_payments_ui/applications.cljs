@@ -3,6 +3,7 @@
    [reagent.core :as r]
    [cljsjs.material-ui]
    [cljs-react-material-ui.reagent :as ui]
+   [cljs-react-material-ui.icons :as ic]
    [va-payments-ui.utils :refer
     [assoc-all-with toggle toggle-in]]
    [va-payments-ui.utils :refer [format]]))
@@ -20,7 +21,7 @@
     3 "Maksettu"
     "Odottaa maksatusta"))
 
-(defn render-application [i application]
+(defn render-application [i application on-info-clicked]
   [ui/table-row {:key i}
    [ui/table-row-column (state-to-str (:payment-state application))]
    [ui/table-row-column (:organization-name application)]
@@ -35,9 +36,12 @@
    [ui/table-row-column (get application :register-number)]
    [ui/table-row-column (get-in application [:arvio :lkp-account])]
    [ui/table-row-column (get-in application [:arvio :takp-account])]
-   [ui/table-row-column (get-in application [:arvio :amount])]])
+   [ui/table-row-column (get-in application [:arvio :amount])]
+   [ui/table-row-column
+    [ui/icon-button {:on-click #(on-info-clicked (:id application))}
+     [ic/action-info-outline]]]])
 
-(defn applications-table [applications]
+(defn applications-table [applications on-info-clicked]
   [:div
    [ui/table {:fixed-header true :height "250px" :selectable false}
     [ui/table-header {:adjust-for-checkbox false :display-select-all false}
@@ -50,7 +54,10 @@
       [ui/table-header-column "Pitkäviite"]
       [ui/table-header-column "LKP-tili"]
       [ui/table-header-column "TaKp-tili"]
-      [ui/table-header-column "Tiliöintisumma"]]]
+      [ui/table-header-column "Tiliöintisumma"]
+      [ui/table-header-column "Lisätietoja"]]]
     [ui/table-body {:display-row-checkbox false}
      (doall
-      (map-indexed render-application applications))]]])
+      (map-indexed
+       #(render-application %1 %2 on-info-clicked)
+       applications))]]])

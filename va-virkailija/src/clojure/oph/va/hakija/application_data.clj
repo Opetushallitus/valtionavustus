@@ -5,7 +5,8 @@
             [clj-time.core :as t]
             [clj-time.coerce :as c]
             [oph.va.hakija.grant-data :as grant-data]
-            [oph.va.virkailija.payments-data :as payments-data])
+            [oph.va.virkailija.payments-data :as payments-data]
+            [oph.va.virkailija.db.queries :as virkailija-queries])
   (:import (oph.va.jdbc.enums)))
 
 (defn get-application [id]
@@ -49,3 +50,9 @@
         payment-id
         (:id (first (exec :form-db hakija-queries/create-payment payment)))]
     (payments-data/get-payment payment-id)))
+
+(defn get-payments-history [id]
+  (mapv
+   convert-to-dash-keys
+   (exec :form-db virkailija-queries/get-payment-history
+         {:application_id id})))

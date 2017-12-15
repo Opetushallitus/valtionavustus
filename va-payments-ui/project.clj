@@ -25,7 +25,8 @@
                  [reagent "0.8.0-alpha2"]
                  [cljsjs/react-dom "15.6.2-1"]
                  [cljs-react-material-ui "0.2.48"]
-                 [cljs-http "0.1.43"]]
+                 [cljs-http "0.1.43"]
+                 [com.andrewmcveigh/cljs-time "0.5.2"]]
 
   :clean-targets ^{:protect false}
   [:target-path
