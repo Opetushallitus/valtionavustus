@@ -47,20 +47,20 @@ Environment specific application configurations are in
 
 ### Server and network architecture
 
-![Server architecture](https://rawgit.com/Opetushallitus/valtionavustus/f1de261192b0094a19f28054f955147416d25371/doc/deployment.svg)
+![Server architecture](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/deployment.svg)
 
 ### General architecture
 
 General architecture including integrations and data flows (from
 originator towards receiver) is described in picture below.
 
-![General architecture](https://rawgit.com/Opetushallitus/valtionavustus/f1de261192b0094a19f28054f955147416d25371/doc/architecture.svg)
+![General architecture](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/architecture.svg)
 
 ### Data flow
 
 Data flow of application (in Finnish, because all terms are in Finnish):
 
-![Data flow](https://rawgit.com/Opetushallitus/valtionavustus/f1de261192b0094a19f28054f955147416d25371/doc/data-flow.svg)
+![Data flow](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/data-flow.svg)
 
 ### Application architecture
 
@@ -79,7 +79,7 @@ Valtionavustus application is divided to following major parts:
 
 Internal structure of application architecture:
 
-![Internal architecture](https://rawgit.com/Opetushallitus/valtionavustus/f1de261192b0094a19f28054f955147416d25371/doc/internal-architecture.svg)
+![Internal architecture](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/internal-architecture.svg)
 
 ## API documentation
 
@@ -125,13 +125,13 @@ There are two kinds of Flyway migrations in use:
 Migrations are automatically performed on server startup for both
 virkailija and hakija apps, and are forward-only.
 
-### hakija database
+### va-hakija database
 
-![hakija schema](https://rawgit.com/Opetushallitus/valtionavustus/f1de261192b0094a19f28054f955147416d25371/doc/hakija.svg)
+![hakija schema](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/hakija.svg)
 
-### virkailija database
+### va-virkailija database
 
-![virkailija schema](https://rawgit.com/Opetushallitus/valtionavustus/f1de261192b0094a19f28054f955147416d25371/doc/virkailija.svg)
+![virkailija schema](https://rawgit.com/Opetushallitus/valtionavustus/master/doc/virkailija.svg)
 
 ## Localization
 
