@@ -252,7 +252,8 @@
     [ui/dialog
      {:on-request-close #(swap! dialog assoc :open false)
       :children (:content @dialog)
-      :open (:open @dialog)}]]])
+      :open (:open @dialog)
+      :content-style {:width "100%", :max-width "none"}}]]])
 
 (defn mount-root []
   (r/render [home-page] (.getElementById js/document "app")))
