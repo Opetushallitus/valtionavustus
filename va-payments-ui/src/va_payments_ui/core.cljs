@@ -164,12 +164,12 @@
         (recur (+ i 1))))))
 
 (defn show-dialog! [content]
-  (swap! dialog assoc :open true :children content))
+  (swap! dialog assoc :open true :content content))
 
 (defn home-page []
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme
-                {:palette {:text-color (color :black)}})}
+                 {:palette {:text-color (color :black)}})}
    [:div
     (top-links 0)
     [:hr]
@@ -251,7 +251,9 @@
                  (fn [_ __])))
               :on-error (fn [_ __])}))}]])]
     [ui/dialog
-     (conj @dialog {:on-request-close #(swap! dialog assoc :open false)})]]])
+     {:on-request-close #(swap! dialog assoc :open false)
+      :children (:content @dialog)
+      :open (:open @dialog)}]]])
 
 (defn mount-root []
   (r/render [home-page] (.getElementById js/document "app")))
