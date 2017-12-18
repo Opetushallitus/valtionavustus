@@ -76,7 +76,7 @@ lein-install-jar-commons:
 
 .PHONY: lein-build-payments-frontend
 lein-build-payments-frontend:
-	cd va-payments-ui && CONFIG=config/qa.edn $(LEIN) package
+	cd va-payments-ui && $(LEIN) package
 
 .PHONY: lein-build-backends
 lein-build-backends:
