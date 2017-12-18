@@ -280,7 +280,7 @@ Yksittäisen Leiningen-projektin testien ajaminen, esimerkkinä va-hakija:
 
 ``` shell
 cd va-hakija
-../lein test                              # kerta-ajo, alias komennolle `../lein with-profile test spec -f d`
+../lein with-profile test spec -f d       # kerta-ajo
 ../lein with-profile test spec -a         # monitorointi ja ajo muutoksista
 ../lein with-profile test spec -a -t tag  # monitorointi ja ajo vain testeille, jotka merkitty tägillä `tag`
 ```

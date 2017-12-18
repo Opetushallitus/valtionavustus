@@ -75,8 +75,7 @@
   :doo {:build "test"
         :alias {:default [:node]}}
 
-  :aliases {"test" ["doo" "once"]
-            "package" ["do" "clean" ["cljsbuild" "once" "release"]]}
+  :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]}
 
   :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.2.1"]
                                   [binaryage/devtools "0.9.4"]

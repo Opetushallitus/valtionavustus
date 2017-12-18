@@ -14,8 +14,7 @@
                              :plugins
                              :uberjar-exclusions
                              :auto-clean
-                             :prep-tasks
-                             :aliases]}
+                             :prep-tasks]}
 
   :dependencies [[org.clojure/clojure]
 

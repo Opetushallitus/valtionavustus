@@ -52,7 +52,7 @@ Sovellus on konfiguroitu käyttämään
 Testit voit ajaa kerran:
 
 ``` bash
-../lein test
+../lein doo once
 ```
 
 Tai watching-modessa:

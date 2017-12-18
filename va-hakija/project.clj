@@ -14,8 +14,7 @@
                              :plugins
                              :uberjar-exclusions
                              :auto-clean
-                             :prep-tasks
-                             :aliases]}
+                             :prep-tasks]}
 
   :dependencies [[oph-va/common]
                  [com.novemberain/pantomime]]

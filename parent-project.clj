@@ -111,6 +111,4 @@
   :prep-tasks ["compile"]
 
   :javac-options ["-target" "1.8" "-source" "1.8" "-encoding" "UTF-8" "-deprecation"]
-
-  :aliases {"test" ["with-profile" "test" "spec" "-f" "d"]}
 )

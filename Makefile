@@ -1,6 +1,8 @@
 SHELL := bash  # required for `help` target
 LEIN := ../lein
 
+SPECLJ_ARGS ?= -f d
+
 NPM_PROJECTS ?= soresu-form va-common va-hakija va-virkailija
 LEIN_PROJECTS ?= soresu-form va-common va-hakija va-payments-ui va-virkailija
 
@@ -83,7 +85,11 @@ lein-build-backends:
 
 .PHONY: lein-test
 lein-test:
-	$(foreach lein_project,$(LEIN_PROJECTS),$(call lein_test,$(lein_project))$(newline))
+	$(call lein_speclj,soresu-form)
+	$(call lein_speclj,va-common)
+	$(call lein_speclj,va-hakija)
+	cd va-payments-ui && $(LEIN) doo once
+	$(call lein_speclj,va-virkailija)
 
 .PHONY: lein-outdated-dependencies
 lein-outdated-dependencies:
@@ -199,8 +205,8 @@ define lein_install_jar
 cd '$(1)' && $(LEIN) install
 endef
 
-define lein_test
-cd '$(1)' && $(LEIN) test
+define lein_speclj
+cd '$(1)' && $(LEIN) with-profile test spec $(SPECLJ_ARGS)
 endef
 
 define lein_build_backend
