@@ -14,7 +14,8 @@
                              :plugins
                              :uberjar-exclusions
                              :auto-clean
-                             :javac-options]}
+                             :javac-options
+                             :aliases]}
 
   :dependencies [[oph-va/common]
                  [buddy/buddy-auth]
