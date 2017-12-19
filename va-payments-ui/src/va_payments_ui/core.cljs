@@ -83,17 +83,18 @@
           :label "Lähetä maksatukset" :style button-style
           :on-click
           (fn [_]
-            (api/create-application-payments!
-             current-applications payment-values
-             (fn []
-               (show-message! "Maksatukset luotu")
-               (api/download-grant-payments
-                (:id grant)
-                (fn [result] (reset! payments result))
-                show-error-message!))
-             (fn [_ __]
-               (show-message!
-                "Virhe maksatuksen luonnissa"))))}]])]))
+            (api/send-payments!
+             {:applications current-applications
+              :payment-values @payment-values
+              :on-finished-
+              (fn [_]
+                (show-message! "Maksatukset lähetetty")
+                (api/download-grant-payments
+                  (:id grant)
+                  #((reset! payments %))
+                  #(show-message! "Virhe maksatuksien lähetyksessä")))
+              :on-error
+              #(show-message! "Virhe maksatuksien lähetyksessä")}))}]])]))
 
 (defn show-dialog! [content]
   (swap! dialog assoc :open true :content content))
