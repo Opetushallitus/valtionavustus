@@ -31,11 +31,6 @@
   (http/get (format "/%s/grants/%d/payments/" api-path id)
             {:with-credentials? true}))
 
-(defn get-next-installment-number []
-  (http/get (format "/%s/payments/next-installment-number/"
-                    api-path)
-            {:with-credentials? true}))
-
 (defn create-application-payment [id values]
   (http/post (format "/%s/applications/%s/payments/" api-path id)
              {:json-params values

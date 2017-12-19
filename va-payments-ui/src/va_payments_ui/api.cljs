@@ -40,43 +40,15 @@
   (request-with-go #(connection/get-grant-payments grant-id)
                    on-success on-error))
 
-(defn send-payments-email [grant-id on-success on-error]
-  (request-with-go #(connection/send-payments-email grant-id)
-                   on-success on-error))
-
-(defn create-application-payments! [applications values on-success on-error]
+(defn send-payments! [{:keys [applications values on-finished on-error]}]
   (go
-    (let [next-i-number-response
-          (async/<! (connection/get-next-installment-number))]
-      (if (:success next-i-number-response)
-        (doseq [application applications]
-          (let [new-payment-values
-                (assoc values :installment-number
-                       (get-in next-i-number-response
-                               [:body :installment-number]))
-                response (async/<! (connection/create-application-payment
-                                    (:id application) new-payment-values))]
-            (when-not (:success response)
-              (on-error (:status response) (:error-text response)))))
-        (on-error (:status next-i-number-response)
-                  (:error-text next-i-number-response))))
-    (on-success)))
-
-(defn update-payments! [payments on-success on-error]
-  (multi-request-with-go
-   payments connection/update-payment on-success on-error))
-
-(defn send-xml-invoices! [{:keys [payments on-success on-error]}]
-  (go
-    (doseq [payment payments]
-      (let [xml-response (async/<! (connection/send-xml-invoice payment))]
-        (if (:success xml-response)
-          (let [update-response (async/<! (connection/update-payment payment))]
-            (when-not (:success update-response)
-              (on-error (:status update-response)
-                        (:error-text update-response))))
-          (on-error (:status xml-response) (:error-text xml-response)))))
-    (on-success)))
+    (doseq [application applications]
+      (let [response
+            (async/<! (connection/create-application-payment
+                        (:id application) values))]
+        (when-not (:success response)
+          (on-error (:status response) (:error-text response)))))
+    (on-finished)))
 
 (defn combine-application-payment [application payment]
   (let [selected-values (select-keys payment [:id :version :state])]
