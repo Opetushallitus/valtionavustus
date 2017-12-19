@@ -81,11 +81,31 @@
 (defn show-dialog! [content]
   (swap! dialog assoc :open true :content content))
 
+(defn render-admin-tools []
+  [:div
+   [:hr]
+   (when @delete-payments?
+     [ui/grid-list {:cols 6 :cell-height "auto"}
+      [ui/raised-button
+       {:primary true :label "Poista maksatukset" :style button-style
+        :on-click
+        (fn []
+          (api/delete-grant-payments!
+           {:grant-id (:id @selected-grant)
+            :on-success
+            (fn [_]
+              (api/download-grant-data
+               (:id @selected-grant)
+               (fn [a p]
+                 (do (reset! applications a) (reset! payments p)))
+               (fn [_ __])))
+            :on-error (fn [_ __])}))}]])])
+
 (defn home-page []
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme {:palette {:text-color (color :black)}})}
    [:div
-    (top-links 0)
+    (top-links (get @selected-grant :id 0))
     [:hr]
     (grants-table
      {:grants @grants
@@ -123,24 +143,7 @@
                  {:auto-hide-duration 4000
                   :on-request-close
                   #(reset! snackbar {:open false :message ""})})]])])
-    [:div
-     [:hr]
-     (when @delete-payments?
-       [ui/grid-list {:cols 6 :cell-height "auto"}
-        [ui/raised-button
-         {:primary true :label "Poista maksatukset" :style button-style
-          :on-click
-          (fn []
-            (api/delete-grant-payments!
-             {:grant-id (:id @selected-grant)
-              :on-success
-              (fn [_]
-                (api/download-grant-data
-                 (:id @selected-grant)
-                 (fn [a p]
-                   (do (reset! applications a) (reset! payments p)))
-                 (fn [_ __])))
-              :on-error (fn [_ __])}))}]])]
+    (render-admin-tools)
     [ui/dialog
      {:on-request-close #(swap! dialog assoc :open false)
       :children (:content @dialog)
