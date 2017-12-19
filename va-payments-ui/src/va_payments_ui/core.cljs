@@ -63,12 +63,6 @@
    [:a {:href "/admin/"} "Hakujen hallinta"]
    [:a {:href "/payments"} "Maksatusten hallinta"]])
 
-(defn render-presenting-officer [current-applications on-change]
-  (let [payment-values (r/atom {})]
-    [(fn []
-       [:div
-        ()])]))
-
 (defn render-payment-fields [grant current-applications]
   (let [payment-values
         (r/atom {:currency "EUR" :payment-term "Z001"
