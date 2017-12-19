@@ -74,9 +74,26 @@
         (financing/payment-fields
          @payment-values #(swap! payment-values assoc %1 %2))
         [ui/raised-button
-         {:primary true :disabled (empty? current-applications)
+         {:primary true
+          :disabled
+          (any-nil?
+           @payment-values
+           [:inspector-email :acceptor-email :transaction-account :due-date
+            :invoice-date :payment-term :document-type :receipt-date])
           :label "Lähetä maksatukset" :style button-style
-          :on-click #()}]])]))
+          :on-click
+          (fn [_]
+            (api/create-application-payments!
+             current-applications payment-values
+             (fn []
+               (show-message! "Maksatukset luotu")
+               (api/download-grant-payments
+                (:id grant)
+                (fn [result] (reset! payments result))
+                show-error-message!))
+             (fn [_ __]
+               (show-message!
+                "Virhe maksatuksen luonnissa"))))}]])]))
 
 (defn show-dialog! [content]
   (swap! dialog assoc :open true :content content))
