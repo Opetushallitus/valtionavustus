@@ -55,6 +55,9 @@
     (close-version (:id payment-data) (:version payment-data))
     result))
 
+(defn- store-pament [payment]
+  (exec :form-db hakija-queries/create-payment payment))
+
 (defn create-payment [payment-data]
   (when
    (not
@@ -64,25 +67,14 @@
     (throw
      (Exception. "Application already contains a payment")))
   (let [application (application-data/get-application
-                      (:application-id payment-data))
-        payment {:application_id (:application-id payment-data)
-                 :application_version (:version application)
-                 :grant_id (:grant-id application)
-                 :state 0
-                 :document_type (get payment-data :document-type "XA")
-                 :invoice_date  (get payment-data :invoice-date
-                                     (c/to-sql-time (t/now)))
-                 :due_date (get payment-data :due-date
-                                (c/to-sql-time (t/now)))
-                 :receipt_date (get payment-data :receipt-date
-                                    (c/to-sql-time (t/now)))
-                 :transaction_account (get payment-data :transaction-account "")
-                 :currency (get payment-data :currency "EUR")
-                 :partner (get payment-data :partner "")
-                 :inspector_email (get payment-data :inspector-email "")
-                 :acceptor_email (get payment-data :acceptor-email "")
-                 :organisation (get payment-data :organisation "")
-                 :installment_number (get payment-data :installment-number 0)}
+                     (:application-id payment-data))
         payment-id
-        (:id (first (exec :form-db hakija-queries/create-payment payment)))]
+        (-> payment-data
+            (assoc :application-version (:version application))
+            (conj (select-keys application [:version :grant-id]))
+            convert-timestamps
+            convert-to-underscore-keys
+            store-pament
+            first
+            :id)]
     (get-payment payment-id)))
