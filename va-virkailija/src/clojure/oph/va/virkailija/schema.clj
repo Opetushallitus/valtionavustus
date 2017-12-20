@@ -243,12 +243,12 @@
 
 (s/defschema Payment
   "Payment"
-  {:id s/Int
-   :version s/Int
+  {(s/optional-key :id) s/Int
+   (s/optional-key :version) s/Int
    (s/optional-key :version-closed) (s/maybe s/Inst)
    (s/optional-key :created-at) s/Inst
    :application-id  s/Int
-   :application-version s/Int
+   (s/optional-key :application-version) s/Int
    :state s/Int
    (s/optional-key :installment-number) s/Int
    (s/optional-key :organisation) s/Str
@@ -258,6 +258,7 @@
    (s/optional-key :receipt-date) s/Inst
    (s/optional-key :transaction-account) s/Str
    (s/optional-key :currency) s/Str
+   (s/optional-key :payment-term) s/Str
    (s/optional-key :partner) s/Str
    (s/optional-key :inspector-email) s/Str
    (s/optional-key :acceptor-email) s/Str})
@@ -265,12 +266,6 @@
 (s/defschema PaymentInstallmentNumber
   "Payment installment number"
   {:installment-number s/Int})
-
-(s/defschema NewPayment
-  "Payment emails"
-  {:inspector-email s/Str
-   :acceptor-email s/Str
-   :installment-number s/Int})
 
 (s/defschema GrantStatus
   "Grant status"
