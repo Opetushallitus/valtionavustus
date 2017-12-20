@@ -1,19 +1,19 @@
 (ns va-payments-ui.core
   (:require
-   [reagent.core :as r]
-   [cljsjs.material-ui]
-   [cljs-react-material-ui.core :refer [get-mui-theme color]]
-   [cljs-react-material-ui.reagent :as ui]
-   [va-payments-ui.api :as api]
-   [va-payments-ui.payments :as payments]
-   [va-payments-ui.applications :as applications]
-   [va-payments-ui.connection :as connection]
-   [va-payments-ui.router :as router]
-   [va-payments-ui.grants :refer [grants-table project-info]]
-   [va-payments-ui.financing :as financing]
-   [va-payments-ui.utils
-    :refer [toggle remove-nil format any-nil? not-empty?]]
-   [va-payments-ui.theme :refer [button-style]]))
+    [reagent.core :as r]
+    [cljsjs.material-ui]
+    [cljs-react-material-ui.core :refer [get-mui-theme color]]
+    [cljs-react-material-ui.reagent :as ui]
+    [va-payments-ui.api :as api]
+    [va-payments-ui.payments :refer [get-payment-data]]
+    [va-payments-ui.applications :as applications]
+    [va-payments-ui.connection :as connection]
+    [va-payments-ui.router :as router]
+    [va-payments-ui.grants :refer [grants-table project-info]]
+    [va-payments-ui.financing :as financing]
+    [va-payments-ui.utils
+     :refer [toggle remove-nil format any-nil? not-empty?]]
+    [va-payments-ui.theme :refer [button-style material-styles general-styles]]))
 
 (defonce grants (r/atom []))
 
@@ -62,7 +62,7 @@
 
 (defn top-links [grant-id]
   [:div {:class "top-links"}
-   [:a {:href (str "/avustushaku/" grant-id)}
+   [:a {:href (str "/avustushaku/" grant-id) :style (:a general-styles)}
     "Hakemusten arviointi"]
    [:a {:href "/admin/"} "Hakujen hallinta"]
    [:a {:href "/payments"} "Maksatusten hallinta"]])
@@ -168,8 +168,8 @@
 
 (defn home-page []
   [ui/mui-theme-provider
-   {:mui-theme (get-mui-theme {:palette {:text-color (color :black)}})}
-   [:div
+   {:mui-theme (get-mui-theme material-styles)}
+   [:div {:style general-styles :class "content"}
     (top-links 0)
     [:hr]
     (grants-table

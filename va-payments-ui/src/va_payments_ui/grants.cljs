@@ -1,10 +1,11 @@
 (ns va-payments-ui.grants
   (:require
-   [reagent.core :as r]
-   [cljsjs.material-ui]
-   [cljs-react-material-ui.core :refer [get-mui-theme color]]
-   [cljs-react-material-ui.reagent :as ui]
-   [cljs-react-material-ui.icons :as ic]))
+    [reagent.core :as r]
+    [cljsjs.material-ui]
+    [cljs-react-material-ui.core :refer [get-mui-theme color]]
+    [cljs-react-material-ui.reagent :as ui]
+    [cljs-react-material-ui.icons :as ic]
+    [va-payments-ui.theme :refer [material-styles]]))
 
 (def status-str
   {"deleted" "Poistettu"
@@ -31,9 +32,11 @@
   [ui/table {:on-cell-click #(on-change %1)
              :selectable true
              :multi-selectable false
-             :height "250px"}
+             :height "250px"
+             :style (:table material-styles)
+             :class "table"}
    [ui/table-header {:display-select-all false :adjust-for-checkbox false}
-    [ui/table-row
+    [ui/table-row {:style {:font-size "80px"}}
      [ui/table-header-column "Diaarinumero"]
      [ui/table-header-column "Nimi"]
      [ui/table-header-column "Tila"]
