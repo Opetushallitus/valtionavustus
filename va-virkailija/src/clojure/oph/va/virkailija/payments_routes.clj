@@ -38,7 +38,7 @@
   (compojure-api/POST "/:id/invoice/" [id :as request]
     :path-params [id :- Long]
     :summary "Create XML invoice and send it to Rondo."
-        (ok)))
+    (ok)))
 
 (defn- create-payment []
   (compojure-api/POST "/" []
@@ -62,7 +62,6 @@
     :summary "Create new payment OPTIONS"
     (ok "")))
 
-
 (compojure-api/defroutes routes
   "payment routes"
   (update-payment)
@@ -70,5 +69,4 @@
   (get-next-installment-number)
   (send-invoice)
   (create-payment)
-  (create-payment-options)
-)
+  (create-payment-options))
