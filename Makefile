@@ -76,7 +76,7 @@ lein-install-jar-commons:
 
 .PHONY: lein-build-payments-frontend
 lein-build-payments-frontend:
-	cd va-payments-ui && CONFIG=config/qa.edn $(LEIN) package
+	cd va-payments-ui && $(LEIN) package
 
 .PHONY: lein-build-backends
 lein-build-backends:
@@ -85,10 +85,11 @@ lein-build-backends:
 
 .PHONY: lein-test
 lein-test:
-	$(call lein_test,soresu-form)
-	$(call lein_test,va-common)
-	$(call lein_test,va-hakija)
-	$(call lein_test,va-virkailija)
+	$(call lein_speclj,soresu-form)
+	$(call lein_speclj,va-common)
+	$(call lein_speclj,va-hakija)
+	cd va-payments-ui && $(LEIN) doo once
+	$(call lein_speclj,va-virkailija)
 
 .PHONY: lein-outdated-dependencies
 lein-outdated-dependencies:
@@ -204,7 +205,7 @@ define lein_install_jar
 cd '$(1)' && $(LEIN) install
 endef
 
-define lein_test
+define lein_speclj
 cd '$(1)' && $(LEIN) with-profile test spec $(SPECLJ_ARGS)
 endef
 

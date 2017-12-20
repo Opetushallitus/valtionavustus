@@ -58,10 +58,19 @@
     (grant-data/delete-grant-payments id)
     (ok)))
 
+(defn- get-grant-roles []
+  (compojure-api/GET
+    "/:id/roles/" [id :as request]
+    :path-params [id :- Long]
+    :return [virkailija-schema/GrantRole]
+    :summary "Return grant roles"
+    (ok (grant-data/get-grant-roles id))))
+
 (compojure-api/defroutes routes
   "grant routes"
   (get-grant)
   (get-grants)
   (get-grant-applications)
   (get-grant-payments)
-  (delete-payments))
+  (delete-payments)
+  (get-grant-roles))

@@ -26,6 +26,7 @@
 
 (defquery get-payment "sql/virkailija/payments/get-payment.sql")
 (defquery get-grant-payments "sql/virkailija/grants/get-grant-payments.sql")
+(defquery get-grant-roles "sql/virkailija/grants/get-grant-roles.sql")
 (defquery delete-grant-payments "sql/virkailija/grants/delete-grant-payments.sql")
 (defquery get-payment-version "sql/virkailija/payments/get-payment-version.sql")
 (defquery payment-close-version
@@ -33,6 +34,7 @@
 (defquery update-payment "sql/virkailija/payments/update-payment.sql")
 (defquery get-next-payment-installment-number
   "sql/virkailija/payments/get-next-installment-number.sql")
+(defquery get-payment-history "sql/virkailija/applications/get-payment-history.sql")
 
 (defquery lock-va-users-cache-exclusively! "sql/virkailija/va_users_cache/lock-exclusively.sql")
 (defquery update-va-user-cache! "sql/virkailija/va_users_cache/update.sql")

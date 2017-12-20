@@ -6,6 +6,8 @@
             [lein-figwheel "0.5.14"]
             [lein-doo "0.1.8"]]
 
+  :source-paths ["src"]
+
   :parent-project {:path "../parent-project.clj"
                    :inherit [:url
                              :license
@@ -23,7 +25,8 @@
                  [reagent "0.8.0-alpha2"]
                  [cljsjs/react-dom "15.6.2-1"]
                  [cljs-react-material-ui "0.2.48"]
-                 [cljs-http "0.1.43"]]
+                 [cljs-http "0.1.43"]
+                 [com.andrewmcveigh/cljs-time "0.5.2"]]
 
   :clean-targets ^{:protect false}
   [:target-path
@@ -74,10 +77,12 @@
 
   :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]}
 
-  :profiles {:dev {:dependencies [[binaryage/devtools "0.9.4"]
+  :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.2.1"]
+                                  [binaryage/devtools "0.9.4"]
                                   [figwheel-sidecar "0.5.13"]
                                   [org.clojure/tools.nrepl "0.2.13"]
                                   [com.cemerick/piggieback "0.2.2"]
                                   [compojure "1.6.0"]
                                   [ring "1.6.2"]
-                                  [ring/ring-defaults "0.3.1"]]}})
+                                  [ring/ring-defaults "0.3.1"]]}}
+  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]})

@@ -1,13 +1,13 @@
 (ns va-payments-ui.utils
   (:require
-    [goog.string :as gstring]
-    [goog.string.format]))
+   [goog.string :as gstring]
+   [goog.string.format]))
 
 (defn not-nil? [v] (not (nil? v)))
 
 (defn any-nil? [m ks]
   (or (not= (count ks) (count (select-keys m ks)))
-       (not-every? some? (vals (select-keys m ks)))))
+      (not-every? some? (vals (select-keys m ks)))))
 
 (defn not-empty? [v] (not (empty? v)))
 
@@ -29,10 +29,10 @@
 
 (defn assoc-all-when [c k v p?]
   (mapv
-    #(if (p? %)
-       (assoc % k v)
-       %)
-    c))
+   #(if (p? %)
+      (assoc % k v)
+      %)
+   c))
 
 (defn assoc-all-with [c k f a1]
   (mapv #(assoc % k (f % a1)) c))
