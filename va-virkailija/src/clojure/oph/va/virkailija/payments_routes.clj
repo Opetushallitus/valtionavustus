@@ -38,18 +38,21 @@
   (compojure-api/POST "/:id/invoice/" [id :as request]
     :path-params [id :- Long]
     :summary "Create XML invoice and send it to Rondo."
-    (rondo-service/send-to-rondo! id)
-    (ok)))
+        (ok)))
 
 (defn- create-payment []
   (compojure-api/POST "/" []
     :body [payment-values
            (compojure-api/describe
             virkailija-schema/Payment
-            "Create payments")]
+            "Create payments to Rondo")]
     :return virkailija-schema/Payment
-    :summary "Create new payment for application"
-    (ok (payments-data/create-payment payment-values))))
+    :summary "Create new payment for application. Payment will be sent to Rondo
+             and stored to database."
+    (let [payment (payments-data/create-payment payment-values)]
+      (prn "RONDOOOO  " payment)
+      (rondo-service/send-to-rondo! (:id payment))
+      (ok (payments-data/update-payment (assoc payment :state 2))))))
 
 (defn- create-payment-options []
   (compojure-api/OPTIONS "/"
