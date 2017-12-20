@@ -69,7 +69,7 @@
 (defn render-payment-fields [on-change]
   (let [payment-values
         (r/atom {:currency "EUR" :payment-term "Z001" :partner ""
-                 :document-type "XA" :organisation "6600" :state 2
+                 :document-type "XA" :organisation "6600" :state 0
                  :transaction-account "5000" :due-date (js/Date.)
                  :invoice-date (js/Date.) :receipt-date (js/Date.)})]
     [(fn []
