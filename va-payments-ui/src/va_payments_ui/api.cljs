@@ -11,15 +11,6 @@
         (on-success (:body response))
         (on-error (:status response) (:error-text response))))))
 
-(defn multi-request-with-go [params f on-success on-error]
-  (go
-    (doseq [param params]
-      (let [response
-            (async/<! (f param))]
-        (when-not (:success response)
-          (on-error (:status response) (:error-text response)))))
-    (on-success)))
-
 (defn get-config [{:keys [on-success on-error]}]
   (request-with-go connection/get-config on-success on-error))
 
@@ -39,16 +30,6 @@
 (defn download-grant-payments [grant-id on-success on-error]
   (request-with-go #(connection/get-grant-payments grant-id)
                    on-success on-error))
-
-(defn send-payments! [{:keys [applications values on-finished on-error]}]
-  (go
-    (doseq [application applications]
-      (let [response
-            (async/<! (connection/create-application-payment
-                        (:id application) values))]
-        (when-not (:success response)
-          (on-error (:status response) (:error-text response)))))
-    (on-finished)))
 
 (defn combine-application-payment [application payment]
   (let [selected-values (select-keys payment [:id :version :state])]
