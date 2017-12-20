@@ -1,7 +1,5 @@
 (ns va-payments-ui.connection
-  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs-http.client :as http]
-            [cljs.core.async :refer [<!]]
             [goog.net.cookies]
             [va-payments-ui.utils :refer [format]]))
 
@@ -31,8 +29,8 @@
   (http/get (format "/%s/grants/%d/payments/" api-path id)
             {:with-credentials? true}))
 
-(defn create-application-payment [id values]
-  (http/post (format "/%s/applications/%s/payments/" api-path id)
+(defn create-payment [values]
+  (http/post (format "/%s/payments/" api-path)
              {:json-params values
               :with-credentials? true}))
 
@@ -78,6 +76,10 @@
 (defn get-user-info []
   (http/get (format "/api/userinfo/")
             {:with-credentials? true}))
+
+(defn get-next-installment-number []
+  (http/get (format "/%s/payments/next-installment-number/" api-path)
+                    {:with-credentials? true}))
 
 (defn set-config! [c]
   (reset! config c))
