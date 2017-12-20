@@ -56,7 +56,7 @@
     result))
 
 (defn- store-payment [payment]
-  (exec :form-db hakija-queries/create-payment payment))
+  (exec :form-db queries/create-payment payment))
 
 (defn create-payment [payment-data]
   (when
@@ -67,14 +67,11 @@
     (throw
      (Exception. "Application already contains a payment")))
   (let [application (application-data/get-application
-                     (:application-id payment-data))
-        payment-id
-        (-> payment-data
-            (assoc :application-version (:version application))
-            (conj (select-keys application [:version :grant-id]))
-            convert-timestamps
-            convert-to-underscore-keys
-            store-payment
-            first
-            :id)]
-    (get-payment payment-id)))
+                     (:application-id payment-data))]
+    (-> payment-data
+        (assoc :application-version (:version application))
+        (conj (select-keys application [:version :grant-id]))
+        convert-timestamps
+        convert-to-underscore-keys
+        store-payment
+        first)))
