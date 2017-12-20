@@ -10,4 +10,11 @@
  :email {:enabled? false
          :host "localhost"
          :port 2500
-         :to-finance ["test@test.com"]}}
+         :to-finance ["test@test.com"]}
+ :rondo-sftp {:enabled? true
+              :host-ip "dockerftp"
+              :port 2222
+              :local-path "/tmp/"
+              :remote_path "/home/oph/to_rondo/va/"
+              :username "ansku"
+              :password "va"}}
