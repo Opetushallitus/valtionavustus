@@ -41,9 +41,31 @@
     (rondo-service/send-to-rondo! id)
     (ok)))
 
+(defn- create-payment []
+  (compojure-api/POST "/" []
+    :body [payment-values
+           (compojure-api/describe
+            virkailija-schema/Payment
+            "Create payments")]
+    :return virkailija-schema/Payment
+    :summary "Create new payment for application"
+    (ok (payments-data/create-payment payment-values))))
+
+(defn- create-payment-options []
+  (compojure-api/OPTIONS "/"
+    [application-id :as request]
+    :path-params [application-id :- Long]
+    :query-params []
+    :summary "Create new payment OPTIONS"
+    (ok "")))
+
+
 (compojure-api/defroutes routes
   "payment routes"
   (update-payment)
   (update-payment-options)
   (get-next-installment-number)
-  (send-invoice))
+  (send-invoice)
+  (create-payment)
+  (create-payment-options)
+)
