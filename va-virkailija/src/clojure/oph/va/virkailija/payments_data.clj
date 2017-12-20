@@ -55,7 +55,7 @@
     (close-version (:id payment-data) (:version payment-data))
     result))
 
-(defn- store-pament [payment]
+(defn- store-payment [payment]
   (exec :form-db hakija-queries/create-payment payment))
 
 (defn create-payment [payment-data]
@@ -74,7 +74,7 @@
             (conj (select-keys application [:version :grant-id]))
             convert-timestamps
             convert-to-underscore-keys
-            store-pament
+            store-payment
             first
             :id)]
     (get-payment payment-id)))
