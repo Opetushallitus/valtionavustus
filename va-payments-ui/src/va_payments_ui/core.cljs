@@ -1,5 +1,8 @@
 (ns va-payments-ui.core
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
+   [cljs.core.async :refer [<!]]
+   [va-payments-ui.connection :as connection]
    [reagent.core :as r]
    [cljsjs.material-ui]
    [cljs-react-material-ui.core :refer [get-mui-theme color]]
@@ -63,10 +66,12 @@
    [:a {:href "/admin/"} "Hakujen hallinta"]
    [:a {:href "/payments"} "Maksatusten hallinta"]])
 
-(defn render-payment-fields [grant current-applications]
+(defn render-payment-fields [on-change]
   (let [payment-values
-        (r/atom {:currency "EUR" :payment-term "Z001"
-                 :document-type "XA" :organisation "6600"})]
+        (r/atom {:currency "EUR" :payment-term "Z001" :partner ""
+                 :document-type "XA" :organisation "6600" :state 2
+                 :transaction-account "5000" :due-date (js/Date.)
+                 :invoice-date (js/Date.) :receipt-date (js/Date.)})]
     [(fn []
        [:div
         (financing/payment-emails
@@ -75,26 +80,14 @@
          @payment-values #(swap! payment-values assoc %1 %2))
         [ui/raised-button
          {:primary true
-          :disabled
-          (any-nil?
-           @payment-values
-           [:inspector-email :acceptor-email :transaction-account :due-date
-            :invoice-date :payment-term :document-type :receipt-date])
-          :label "Lähetä maksatukset" :style button-style
-          :on-click
-          (fn [_]
-            (api/send-payments!
-             {:applications current-applications
-              :payment-values @payment-values
-              :on-finished-
-              (fn [_]
-                (show-message! "Maksatukset lähetetty")
-                (api/download-grant-payments
-                  (:id grant)
-                  #((reset! payments %))
-                  #(show-message! "Virhe maksatuksien lähetyksessä")))
-              :on-error
-              #(show-message! "Virhe maksatuksien lähetyksessä")}))}]])]))
+          :disabled (any-nil?
+                      @payment-values
+                      [:inspector-email :acceptor-email :transaction-account
+                       :due-date :invoice-date :payment-term :document-type
+                       :receipt-date])
+          :label "Lähetä maksatukset"
+          :style button-style
+          :on-click #(on-change @payment-values)}]])]))
 
 (defn show-dialog! [content]
   (swap! dialog assoc :open true :content content))
@@ -155,7 +148,26 @@
                        :on-error
                        #(show-message!
                          "Virhe maksatuksen tietojen latauksessa")})))
-           (render-payment-fields @selected-grant current-applications)]
+           (render-payment-fields
+             (fn [payment-values]
+               (go
+                 (let [nin-result (<! (connection/get-next-installment-number))]
+                   (if (:success nin-result)
+                     (let [values (conj payment-values (:body nin-result))]
+                       (doseq [application current-applications]
+                         (let [payment-result
+                               (<! (connection/create-payment
+                                     (assoc values :application-id
+                                            (:id application))))]
+                           (when-not (:success payment-result)
+                             (show-message!
+                               "Maksatuksen lähetyksessä ongelma"))))
+                       (let [grant-result (<! (connection/get-grant-payments
+                                                (:id @selected-grant)))]
+                         (if (:success grant-result)
+                           (reset! payments (:body grant-result))
+                           (show-message! "Maksatuksien latauksessa ongelma"))))
+                     (show-message! "Maksatuserän haussa ongelma"))))))]
           [ui/snackbar
            (conj @snackbar
                  {:auto-hide-duration 4000
