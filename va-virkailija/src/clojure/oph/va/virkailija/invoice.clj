@@ -27,38 +27,39 @@
    nil))
 
 (defn payment-to-invoice [payment application]
-  [:VA-invoice
-   [:Header
-    [:Maksuera (get-installment payment)]
-    [:Laskunpaiva (:invoice-date payment)]
-    [:Erapvm (:due-date payment)]
-    [:Bruttosumma (:budget-granted application)]
-    [:Maksuehto "Z001"]
-    [:Pitkaviite (:register-number application)]
-    [:Tositepvm (:receipt-date payment)]
-    [:Asiatarkastaja (:inspector-email payment)]
-    [:Hyvaksyja (:acceptor-email payment)]
-    [:Tositelaji (:document-type payment)]
-    [:Toimittaja
-     [:Y-tunnus (get-answer-value (:answers application) "business-id")]
-     [:Nimi (:organization-name application)]
-     [:Postiosoite (get-answer-value (:answers application) "address" "")]
-     [:Paikkakunta (get-answer-value (:answers application) "city" "")]
-     [:Maa (get-answer-value (:answers application) "country" "")]
-     [:Iban-tili (get-answer-value (:answers application) "bank-iban")]
-     [:Pankkiavain (get-answer-value (:answers application) "bank-bic")]
-     [:Pankki-maa (get-answer-value (:answers application) "bank-country" "")]
-     [:Kieli (:language application)]
-     [:Valuutta (:currency payment)]]
-    [:Postings
-     [:Posting
-      [:Summa (:budget-granted application)]
-      [:LKP-tili (:lkp-account application)]
-      [:TaKp-tili (:takp-account application)]
-      [:Toimintayksikko (:operational-unit application)]
-      [:Projekti (:project application)]
-      [:Toiminto (:operation application)]
-      [:Kumppani (:partner payment)]]]]])
+  (let [answers (:answers application)]
+    [:VA-invoice
+     [:Header
+      [:Maksuera (get-installment payment)]
+      [:Laskunpaiva (:invoice-date payment)]
+      [:Erapvm (:due-date payment)]
+      [:Bruttosumma (:budget-granted application)]
+      [:Maksuehto "Z001"]
+      [:Pitkaviite (:register-number application)]
+      [:Tositepvm (:receipt-date payment)]
+      [:Asiatarkastaja (:inspector-email payment)]
+      [:Hyvaksyja (:acceptor-email payment)]
+      [:Tositelaji (:document-type payment)]
+      [:Toimittaja
+       [:Y-tunnus (get-answer-value answers "business-id")]
+       [:Nimi (:organization-name application)]
+       [:Postiosoite (get-answer-value answers "address" "")]
+       [:Paikkakunta (get-answer-value answers "city" "")]
+       [:Maa (get-answer-value answers "country" "")]
+       [:Iban-tili (get-answer-value answers "bank-iban")]
+       [:Pankkiavain (get-answer-value answers "bank-bic")]
+       [:Pankki-maa (get-answer-value answers "bank-country" "")]
+       [:Kieli (:language application)]
+       [:Valuutta (:currency payment)]]
+      [:Postings
+       [:Posting
+        [:Summa (:budget-granted application)]
+        [:LKP-tili (:lkp-account application)]
+        [:TaKp-tili (:takp-account application)]
+        [:Toimintayksikko (:operational-unit application)]
+        [:Projekti (:project application)]
+        [:Toiminto (:operation application)]
+        [:Kumppani (:partner payment)]]]]]))
 
 (defn payment-to-xml [payment application]
   "Creates xml document (tags) of given payment of Valtionavustukset maksatus.
