@@ -34,12 +34,6 @@
     :summary "Return next installment number"
     (ok (payments-data/next-installment-number))))
 
-(defn- send-invoice []
-  (compojure-api/POST "/:id/invoice/" [id :as request]
-    :path-params [id :- Long]
-    :summary "Create XML invoice and send it to Rondo."
-    (ok)))
-
 (defn- create-payment []
   (compojure-api/POST "/" []
     :body [payment-values
@@ -66,6 +60,5 @@
   (update-payment)
   (update-payment-options)
   (get-next-installment-number)
-  (send-invoice)
   (create-payment)
   (create-payment-options))
