@@ -66,10 +66,6 @@
   (request-with-go
    #(connection/delete-grant-payments grant-id) on-success on-error))
 
-(defn get-grant-roles [{:keys [grant-id on-success on-error]}]
-  (request-with-go
-   #(connection/get-grant-roles grant-id) on-success on-error))
-
 (defn get-payment-history [{:keys [application-id on-success on-error]}]
   (request-with-go #(connection/get-payment-history application-id)
                    on-success on-error))
