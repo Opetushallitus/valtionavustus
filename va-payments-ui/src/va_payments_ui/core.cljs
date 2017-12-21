@@ -65,7 +65,7 @@
     "Hakemusten arviointi"]
    [:a {:href "/admin/"} "Hakujen hallinta"]
    [:a {:href "/payments"} "Maksatusten hallinta"]
-   [:div
+   [:div {:class "logout-button"}
     [ui/flat-button
      {:label "Kirjaudu ulos"
       :on-click #(redirect-to "/login/logout")}]]])
