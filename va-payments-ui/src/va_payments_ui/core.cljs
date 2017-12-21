@@ -16,7 +16,7 @@
    [va-payments-ui.financing :as financing]
    [va-payments-ui.utils
     :refer [toggle remove-nil format any-nil? not-empty?]]
-   [va-payments-ui.theme :refer [button-style]]))
+   [va-payments-ui.theme :refer [button-style general-styles material-styles]]))
 
 (defonce grants (r/atom []))
 
@@ -41,11 +41,14 @@
   (show-message!
    (format "Virhe tietojen latauksessa. Virhe %s (%d)" text code)))
 
-(defn redirect-to-login! []
+(defn redirect-to! [url]
   (-> js/window
       .-location
       .-href
-      (set! connection/login-url-with-service)))
+      (set! url)))
+
+(defn redirect-to-login! []
+  (redirect-to! connection/login-url-with-service))
 
 (defn find-index-of
   ([col pred i m]
@@ -61,10 +64,14 @@
 
 (defn top-links [grant-id]
   [:div {:class "top-links"}
-   [:a {:href (str "/avustushaku/" grant-id)}
+   [:a {:href (str "/avustushaku/" grant-id) :style (:a general-styles)}
     "Hakemusten arviointi"]
    [:a {:href "/admin/"} "Hakujen hallinta"]
-   [:a {:href "/payments"} "Maksatusten hallinta"]])
+   [:a {:href "/payments"} "Maksatusten hallinta"]
+   [:div {:class "logout-button"}
+    [ui/flat-button
+     {:label "Kirjaudu ulos"
+      :on-click #(redirect-to! "/login/logout")}]]])
 
 (defn render-payment-fields [on-change]
   (let [payment-values
@@ -98,7 +105,7 @@
    (when @delete-payments?
      [ui/grid-list {:cols 6 :cell-height "auto"}
       [ui/raised-button
-       {:primary true :label "Poista maksatukset" :style button-style
+       {:primary true :label "Poista maksatukset" :style (:raised-button material-styles)
         :on-click
         (fn []
           (api/delete-grant-payments!
@@ -114,7 +121,7 @@
 
 (defn home-page []
   [ui/mui-theme-provider
-   {:mui-theme (get-mui-theme {:palette {:text-color (color :black)}})}
+   {:mui-theme (get-mui-theme (get-mui-theme material-styles))}
    [:div
     (top-links (get @selected-grant :id 0))
     [:hr]

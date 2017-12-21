@@ -1,12 +1,13 @@
 (ns va-payments-ui.applications
   (:require
-   [reagent.core :as r]
-   [cljsjs.material-ui]
-   [cljs-react-material-ui.reagent :as ui]
-   [cljs-react-material-ui.icons :as ic]
-   [va-payments-ui.utils :refer
-    [assoc-all-with toggle toggle-in]]
-   [va-payments-ui.utils :refer [format]]))
+    [reagent.core :as r]
+    [cljsjs.material-ui]
+    [cljs-react-material-ui.reagent :as ui]
+    [cljs-react-material-ui.icons :as ic]
+    [va-payments-ui.utils :refer
+     [assoc-all-with toggle toggle-in]]
+    [va-payments-ui.theme :refer [material-styles]]
+    [va-payments-ui.utils :refer [format]]))
 
 (defn get-answer-value [answers key]
   (:value
@@ -43,7 +44,7 @@
 
 (defn applications-table [applications on-info-clicked]
   [:div
-   [ui/table {:fixed-header true :height "250px" :selectable false}
+   [ui/table {:fixed-header true :height "250px" :selectable false  :style (:table material-styles)}
     [ui/table-header {:adjust-for-checkbox false :display-select-all false}
      [ui/table-row
       [ui/table-header-column "Tila"]
