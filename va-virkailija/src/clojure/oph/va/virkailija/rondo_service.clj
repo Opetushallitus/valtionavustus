@@ -4,7 +4,6 @@
             [oph.va.hakija.api :as hakija-api];
             [oph.va.virkailija.invoice :as invoice]
             [oph.soresu.common.config :refer [config]]
-            [oph.va.virkailija.payments-data :as payments-data]
             [clojure.tools.logging :as log]))
 
 (defn send-sftp! [file sftp-config]
@@ -19,9 +18,8 @@
         (ssh/with-channel-connection channel
           (ssh/sftp channel {} :put file (:remote_path sftp-config)))))))
 
-(defn send-to-rondo! [payment-id]
-  (let [payment (payments-data/get-payment payment-id)
-        sftp-config (:rondo-sftp config)
+(defn send-to-rondo! [payment]
+  (let [sftp-config (:rondo-sftp config)
         file (format "%s/payment-%d-%d.xml"
                      (:local-path sftp-config) (:id payment)
                      (System/currentTimeMillis))
