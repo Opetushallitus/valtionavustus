@@ -50,7 +50,6 @@
     :summary "Create new payment for application. Payment will be sent to Rondo
              and stored to database."
     (let [payment (payments-data/create-payment payment-values)]
-      (prn "RONDOOOO  " payment)
       (rondo-service/send-to-rondo! (:id payment))
       (ok (payments-data/update-payment (assoc payment :state 2))))))
 
