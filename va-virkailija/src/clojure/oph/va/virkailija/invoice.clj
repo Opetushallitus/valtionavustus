@@ -4,7 +4,7 @@
             [clj-time.core :as t]
             [clj-time.coerce :as c]))
 
-(defn- get-answer-value
+(defn get-answer-value
   ([answers key]
    (:value
     (first
@@ -15,13 +15,18 @@
 (defn get-installment [payment]
   "Generating installment of organisation, year and installment-number.
   Installment is something like '660017006' where 6600 is organisation, 17 is
-  year and 006 is order number or identification number, if you will."
-  (format "%s%02d%03d"
-          (:organisation payment)
-          (mod (t/year (c/from-sql-time (:created-at payment))) 1000)
-          (:installment-number payment)))
+  year and 006 is order number or identification number, if you will.
+  If some of values is missing, nil is being returned."
+  (if (and (:created-at payment)
+           (:organisation payment)
+           (:installment-number payment))
+    (format "%s%02d%03d"
+            (:organisation payment)
+            (mod (t/year (:created-at payment)) 1000)
+            (:installment-number payment))
+   nil))
 
-(defn- payment-to-invoice [payment application]
+(defn payment-to-invoice [payment application]
   [:VA-invoice
    [:Header
     [:Maksuera (get-installment payment)]
