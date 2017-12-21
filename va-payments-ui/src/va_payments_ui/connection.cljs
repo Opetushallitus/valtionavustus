@@ -56,10 +56,6 @@
 (defn delete-grant-payments [id]
   (http/delete (format "/%s/grants/%d/payments/" api-path id)))
 
-(defn get-grant-roles [id]
-  (http/get (format "/%s/grants/%d/roles/" api-path id)
-            {:with-credentials? true}))
-
 (defn check-session []
   (http/get (format "/login/sessions/")
             {:with-credentials? true}))
