@@ -16,7 +16,7 @@
    [va-payments-ui.financing :as financing]
    [va-payments-ui.utils
     :refer [toggle remove-nil format any-nil? not-empty?]]
-   [va-payments-ui.theme :refer [button-style]]))
+   [va-payments-ui.theme :refer [button-style general-styles material-styles]]))
 
 (defonce grants (r/atom []))
 
@@ -98,7 +98,7 @@
    (when @delete-payments?
      [ui/grid-list {:cols 6 :cell-height "auto"}
       [ui/raised-button
-       {:primary true :label "Poista maksatukset" :style button-style
+       {:primary true :label "Poista maksatukset" :style (:raised-button material-styles)
         :on-click
         (fn []
           (api/delete-grant-payments!
@@ -114,7 +114,7 @@
 
 (defn home-page []
   [ui/mui-theme-provider
-   {:mui-theme (get-mui-theme {:palette {:text-color (color :black)}})}
+   {:mui-theme (get-mui-theme (get-mui-theme material-styles))}
    [:div
     (top-links (get @selected-grant :id 0))
     [:hr]

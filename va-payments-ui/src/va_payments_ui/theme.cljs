@@ -10,7 +10,8 @@
                        :palette {:text-color (color :black)
                                  :primary1-color "#4c7f00"
                                  :picker-header-color "#4c7f00"
-                                 :accent1-color "#00b5f0"}})
+                                 :accent1-color "#00b5f0"}
+                       :raised-button {:margin 12}})
 
 (def general-styles {:font-family ["Open Sans", "Helvetica", "sans-serif"]
                      :font-size "95%"
