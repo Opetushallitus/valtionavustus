@@ -64,7 +64,11 @@
    [:a {:href (str "/avustushaku/" grant-id)}
     "Hakemusten arviointi"]
    [:a {:href "/admin/"} "Hakujen hallinta"]
-   [:a {:href "/payments"} "Maksatusten hallinta"]])
+   [:a {:href "/payments"} "Maksatusten hallinta"]
+   [:div
+    [ui/flat-button
+     {:label "Kirjaudu ulos"
+      :on-click #(redirect-to "/login/logout")}]]])
 
 (defn render-payment-fields [on-change]
   (let [payment-values
