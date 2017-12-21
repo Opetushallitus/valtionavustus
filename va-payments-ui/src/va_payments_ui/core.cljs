@@ -73,29 +73,6 @@
      {:label "Kirjaudu ulos"
       :on-click #(redirect-to! "/login/logout")}]]])
 
-(defn render-payment-fields [on-change]
-  (let [payment-values
-        (r/atom {:currency "EUR" :payment-term "Z001" :partner ""
-                 :document-type "XA" :organisation "6600" :state 0
-                 :transaction-account "5000" :due-date (js/Date.)
-                 :invoice-date (js/Date.) :receipt-date (js/Date.)})]
-    [(fn []
-       [:div
-        (financing/payment-emails
-         @payment-values #(swap! payment-values assoc %1 %2))
-        (financing/payment-fields
-         @payment-values #(swap! payment-values assoc %1 %2))
-        [ui/raised-button
-         {:primary true
-          :disabled (any-nil?
-                      @payment-values
-                      [:inspector-email :acceptor-email :transaction-account
-                       :due-date :invoice-date :payment-term :document-type
-                       :receipt-date])
-          :label "Lähetä maksatukset"
-          :style button-style
-          :on-click #(on-change @payment-values)}]])]))
-
 (defn show-dialog! [content]
   (swap! dialog assoc :open true :content content))
 
@@ -137,30 +114,52 @@
                    #(do (reset! applications %1) (reset! payments %2))
                    #(show-message! "Virhe tietojen latauksessa"))))))})
     (let [current-applications (-> @applications
-                                   (api/combine @payments))]
+                                   (api/combine @payments))
+          payment-values
+          (r/atom {:currency "EUR" :payment-term "Z001" :partner ""
+                   :document-type "XA" :organisation "6600" :state 0
+                   :transaction-account "5000" :due-date (js/Date.)
+                   :invoice-date (js/Date.) :receipt-date (js/Date.)})]
       [(fn []
          [:div
           [:div
            [:hr]
            (project-info @selected-grant)
            [:hr]
+           [:div
+            [:h3 "Maksatuksen tiedot"]
+            (financing/payment-emails
+              @payment-values #(swap! payment-values assoc %1 %2))
+             (financing/payment-fields
+              @payment-values #(swap! payment-values assoc %1 %2))
+             ]
            [:h3 "Myönteiset päätökset"]
-           (applications/applications-table
-            current-applications
-            (fn [id] (api/get-payment-history
-                      {:application-id id
-                       :on-success
-                       #(show-dialog!
-                         (r/as-element (payments/render-history %)))
-                       :on-error
-                       #(show-message!
-                         "Virhe maksatuksen tietojen latauksessa")})))
-           (render-payment-fields
-             (fn [payment-values]
+            (applications/applications-table
+              current-applications
+              (fn [id] (api/get-payment-history
+                         {:application-id id
+                          :on-success
+                          #(show-dialog!
+                             (r/as-element (payments/render-history %)))
+                          :on-error
+                          #(show-message!
+                             "Virhe maksatuksen tietojen latauksessa")})))]
+          [ui/raised-button
+            {:primary true
+             :disabled (any-nil?
+                         @payment-values
+                         [:inspector-email :acceptor-email
+                          :transaction-account :due-date :invoice-date
+                          :payment-term :document-type :receipt-date])
+             :label "Lähetä maksatukset"
+             :style button-style
+             :on-click
+             (fn [_]
                (go
-                 (let [nin-result (<! (connection/get-next-installment-number))]
+                 (let [nin-result
+                       (<! (connection/get-next-installment-number))]
                    (if (:success nin-result)
-                     (let [values (conj payment-values (:body nin-result))]
+                     (let [values (conj @payment-values (:body nin-result))]
                        (doseq [application current-applications]
                          (let [payment-result
                                (<! (connection/create-payment
@@ -173,8 +172,9 @@
                                                 (:id @selected-grant)))]
                          (if (:success grant-result)
                            (reset! payments (:body grant-result))
-                           (show-message! "Maksatuksien latauksessa ongelma"))))
-                     (show-message! "Maksatuserän haussa ongelma"))))))]
+                           (show-message!
+                             "Maksatuksien latauksessa ongelma"))))
+                     (show-message! "Maksatuserän haussa ongelma")))))}]
           [ui/snackbar
            (conj @snackbar
                  {:auto-hide-duration 4000
