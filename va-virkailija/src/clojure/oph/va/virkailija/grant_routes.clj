@@ -64,5 +64,4 @@
   (get-grants)
   (get-grant-applications)
   (get-grant-payments)
-  (delete-payments)
-  (get-grant-roles))
+  (delete-payments))
