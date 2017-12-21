@@ -57,26 +57,3 @@
                     :on-change
                     #(on-change :receipt-date %2)}]])
 
-(defn render-financials-manager [current-applications on-change]
-  (let [payment-values
-        (r/atom {:currency "EUR" :payment-term "Z001"
-                 :document-type "XA" :organisation "6600"})]
-    [(fn []
-       [:div
-        (payment-fields
-         @payment-values #(swap! payment-values assoc %1 %2))
-        [ui/raised-button
-         {:primary true :label "Lähetä Rondoon"
-          :style button-style
-          :disabled
-          (or (empty? current-applications)
-              (any-nil? @payment-values
-                        [:transaction-account :due-date :invoice-date :currency
-                         :payment-term :document-type :receipt-date]))
-          :on-click
-          #(on-change
-            (mapv remove-nil
-                  (get-payment-data
-                   current-applications
-                   (assoc @payment-values :payment-state 2))))}]])]))
-

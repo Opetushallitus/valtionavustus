@@ -3,7 +3,11 @@
    [oph.soresu.common.db :refer [exec]]
    [oph.va.hakija.api :refer [convert-to-dash-keys convert-to-underscore-keys]]
    [clj-time.coerce :as c]
-   [oph.va.virkailija.db.queries :as queries]))
+   [oph.va.hakija.api.queries :as hakija-queries]
+   [clj-time.core :as t]
+   [clj-time.coerce :as c]
+   [oph.va.virkailija.db.queries :as queries]
+   [oph.va.hakija.application-data :as application-data]))
 
 (defn get-payment
   ([id]
@@ -50,3 +54,24 @@
     (when (nil? result) (throw (Exception. "Failed to update payment")))
     (close-version (:id payment-data) (:version payment-data))
     result))
+
+(defn- store-payment [payment]
+  (exec :form-db queries/create-payment payment))
+
+(defn create-payment [payment-data]
+  (when
+   (not
+    (empty?
+     (exec :form-db hakija-queries/get-application-payments
+           {:application_id (:application-id payment-data)})))
+    (throw
+     (Exception. "Application already contains a payment")))
+  (let [application (application-data/get-application
+                     (:application-id payment-data))]
+    (-> payment-data
+        (assoc :application-version (:version application))
+        (conj (select-keys application [:version :grant-id]))
+        convert-timestamps
+        convert-to-underscore-keys
+        store-payment
+        first)))

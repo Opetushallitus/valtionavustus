@@ -1,5 +1,8 @@
 (ns va-payments-ui.core
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
+   [cljs.core.async :refer [<!]]
+   [va-payments-ui.connection :as connection]
    [reagent.core :as r]
    [cljsjs.material-ui]
    [cljs-react-material-ui.core :refer [get-mui-theme color]]
@@ -16,10 +19,6 @@
    [va-payments-ui.theme :refer [button-style]]))
 
 (defonce grants (r/atom []))
-
-(defonce grant-roles (r/atom {}))
-
-(defonce overridden-role (r/atom nil))
 
 (defonce applications (r/atom []))
 
@@ -67,110 +66,57 @@
    [:a {:href "/admin/"} "Hakujen hallinta"]
    [:a {:href "/payments"} "Maksatusten hallinta"]])
 
-(defn role-select [value on-change]
-  [ui/select-field {:value value :floating-label-text "Rooli"
-                    :on-change #(on-change %3)}
-   [ui/menu-item {:value "presenting_officer" :primary-text "Virkailija"}]
-   [ui/menu-item {:value "acceptor" :primary-text "Hyväksyjä"}]
-   [ui/menu-item {:value "financials_manager" :primary-text "Taloushallinto"}]])
-
-(defn filter-applications [col role]
-  (case role
-    "presenting_officer" (filter #(nil? (get % :payment-state)) col)
-    "acceptor" (filter #(= (get % :payment-state) 0) col)
-    "financials_manager" (filter #(= (get % :payment-state) 1) col)
-    col))
-
-(defn render-presenting-officer [current-applications on-change]
-  (let [payment-values (r/atom {})]
+(defn render-payment-fields [on-change]
+  (let [payment-values
+        (r/atom {:currency "EUR" :payment-term "Z001" :partner ""
+                 :document-type "XA" :organisation "6600" :state 0
+                 :transaction-account "5000" :due-date (js/Date.)
+                 :invoice-date (js/Date.) :receipt-date (js/Date.)})]
     [(fn []
        [:div
         (financing/payment-emails
          @payment-values #(swap! payment-values assoc %1 %2))
+        (financing/payment-fields
+         @payment-values #(swap! payment-values assoc %1 %2))
         [ui/raised-button
-         {:primary true :label "Luo maksatukset" :style button-style
-          :disabled (or (empty? current-applications)
-                        (any-nil? @payment-values
-                                  [:inspector-email
-                                   :acceptor-email]))
+         {:primary true
+          :disabled (any-nil?
+                      @payment-values
+                      [:inspector-email :acceptor-email :transaction-account
+                       :due-date :invoice-date :payment-term :document-type
+                       :receipt-date])
+          :label "Lähetä maksatukset"
+          :style button-style
           :on-click #(on-change @payment-values)}]])]))
-
-(defn render-role-operations [role grant current-applications]
-  [:div
-   (case role
-     "presenting_officer"
-     (render-presenting-officer
-      current-applications
-      (fn [values]
-        (api/create-application-payments!
-         current-applications values
-         (fn []
-           (show-message! "Maksatukset luotu")
-           (api/download-grant-payments
-            (:id grant)
-            (fn [result] (reset! payments result))
-            show-error-message!))
-         (fn [_ __]
-           (show-message!
-            "Virhe maksatuksen luonnissa")))))
-     "acceptor"
-     [ui/raised-button
-      {:primary true :disabled (empty? current-applications)
-       :label "Ilmoita taloushallintoon" :style button-style
-       :on-click
-       #(api/update-payments!
-         (mapv remove-nil
-               (payments/get-payment-data
-                current-applications {:payment-state 1}))
-         (fn []
-           (api/send-payments-email
-            (:id grant)
-            (fn [_]
-              (do
-                (show-message! "Ilmoitus taloushallintoon lähetetty")
-                (api/download-grant-payments
-                 (:id grant)
-                 (fn [result] (reset! payments result))
-                 show-error-message!)))
-            (fn [_ __] (show-message! "Virhe sähköpostin lähetyksessä"))))
-         (fn [_ __]
-           (show-message! "Virhe maksatuksien päivityksessä")))}]
-     "financials_manager"
-     (financing/render-financials-manager
-      current-applications
-      (fn [payment-values]
-        (api/send-xml-invoices!
-         {:payments
-          payment-values
-          :on-success
-          (fn []
-            (show-message! "Maksatukset lähetetty Rondoon")
-            (api/download-grant-payments
-             (:id grant)
-             (fn [result] (reset! payments result))
-             show-error-message!))
-          :on-error
-          (fn [_ __]
-            (show-message!
-             "Virhe maksatuksien päivityksessä"))})))
-     nil)])
-
-(defn find-role [grant-roles current-grant-id user-oid]
-  (loop [i 0]
-    (when-let [grant-role (get grant-roles i)]
-      (if (and (= (:grant-id grant-role) current-grant-id)
-               (= (:oid grant-role) user-oid))
-        (:role grant-role)
-        (recur (+ i 1))))))
 
 (defn show-dialog! [content]
   (swap! dialog assoc :open true :content content))
+
+(defn render-admin-tools []
+  [:div
+   [:hr]
+   (when @delete-payments?
+     [ui/grid-list {:cols 6 :cell-height "auto"}
+      [ui/raised-button
+       {:primary true :label "Poista maksatukset" :style button-style
+        :on-click
+        (fn []
+          (api/delete-grant-payments!
+           {:grant-id (:id @selected-grant)
+            :on-success
+            (fn [_]
+              (api/download-grant-data
+               (:id @selected-grant)
+               (fn [a p]
+                 (do (reset! applications a) (reset! payments p)))
+               (fn [_ __])))
+            :on-error (fn [_ __])}))}]])])
 
 (defn home-page []
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme {:palette {:text-color (color :black)}})}
    [:div
-    (top-links 0)
+    (top-links (get @selected-grant :id 0))
     [:hr]
     (grants-table
      {:grants @grants
@@ -182,73 +128,52 @@
               (do (api/download-grant-data
                    (:id @selected-grant)
                    #(do (reset! applications %1) (reset! payments %2))
-                   #(show-message! "Virhe tietojen latauksessa"))
-                  (api/get-grant-roles
-                   {:grant-id (:id @selected-grant)
-                    :on-success #(reset! grant-roles %)
-                    :on-error
-                    #(show-message! "Virhe roolien latauksessa")})))))})
-    (let [user-role
-          (or @overridden-role
-              (when @selected-grant
-                (find-role
-                 @grant-roles (:id @selected-grant) (:person-oid @user-info))))
-          current-applications (-> @applications
-                                   (api/combine @payments)
-                                   (filter-applications user-role))]
+                   #(show-message! "Virhe tietojen latauksessa"))))))})
+    (let [current-applications (-> @applications
+                                   (api/combine @payments))]
       [(fn []
          [:div
-          (when (and @selected-grant (not-empty? user-role))
-            [:div
-             [:hr]
-             (project-info @selected-grant)
-             [:hr]
-             [:h3 "Myönteiset päätökset"]
-             (applications/applications-table
-              current-applications
-              (fn [id] (api/get-payment-history
-                        {:application-id id
-                         :on-success
-                         #(show-dialog!
-                           (r/as-element (payments/render-history %)))
-                         :on-error
-                         #(show-message!
-                           "Virhe maksatuksen tietojen latauksessa")})))
-             (when @selected-grant
-               (render-role-operations
-                user-role @selected-grant current-applications))])
+          [:div
+           [:hr]
+           (project-info @selected-grant)
+           [:hr]
+           [:h3 "Myönteiset päätökset"]
+           (applications/applications-table
+            current-applications
+            (fn [id] (api/get-payment-history
+                      {:application-id id
+                       :on-success
+                       #(show-dialog!
+                         (r/as-element (payments/render-history %)))
+                       :on-error
+                       #(show-message!
+                         "Virhe maksatuksen tietojen latauksessa")})))
+           (render-payment-fields
+             (fn [payment-values]
+               (go
+                 (let [nin-result (<! (connection/get-next-installment-number))]
+                   (if (:success nin-result)
+                     (let [values (conj payment-values (:body nin-result))]
+                       (doseq [application current-applications]
+                         (let [payment-result
+                               (<! (connection/create-payment
+                                     (assoc values :application-id
+                                            (:id application))))]
+                           (when-not (:success payment-result)
+                             (show-message!
+                               "Maksatuksen lähetyksessä ongelma"))))
+                       (let [grant-result (<! (connection/get-grant-payments
+                                                (:id @selected-grant)))]
+                         (if (:success grant-result)
+                           (reset! payments (:body grant-result))
+                           (show-message! "Maksatuksien latauksessa ongelma"))))
+                     (show-message! "Maksatuserän haussa ongelma"))))))]
           [ui/snackbar
            (conj @snackbar
                  {:auto-hide-duration 4000
                   :on-request-close
                   #(reset! snackbar {:open false :message ""})})]])])
-    [:div
-     [:hr]
-     (when (some #(= % "va-admin") (:privileges @user-info))
-       (let [user-role
-             (or @overridden-role
-                 (when @selected-grant
-                   (find-role
-                    @grant-roles
-                    (:id @selected-grant)
-                    (:person-oid @user-info))))]
-         (role-select user-role #(reset! overridden-role %))))
-     (when @delete-payments?
-       [ui/grid-list {:cols 6 :cell-height "auto"}
-        [ui/raised-button
-         {:primary true :label "Poista maksatukset" :style button-style
-          :on-click
-          (fn []
-            (api/delete-grant-payments!
-             {:grant-id (:id @selected-grant)
-              :on-success
-              (fn [_]
-                (api/download-grant-data
-                 (:id @selected-grant)
-                 (fn [a p]
-                   (do (reset! applications a) (reset! payments p)))
-                 (fn [_ __])))
-              :on-error (fn [_ __])}))}]])]
+    (render-admin-tools)
     [ui/dialog
      {:on-request-close #(swap! dialog assoc :open false)
       :children (:content @dialog)
@@ -281,9 +206,5 @@
            (do (api/download-grant-data
                 selected-grant-id
                 #(do (reset! applications %1) (reset! payments %2))
-                #(show-message! "Virhe tietojen latauksessa"))
-               (api/get-grant-roles
-                {:grant-id selected-grant-id
-                 :on-success #(reset! grant-roles %)
-                 :on-error #(show-message! "Virhe roolien latauksessa")}))))
+                #(show-message! "Virhe tietojen latauksessa")))))
        (fn [_ __] (show-message! "Virhe tietojen latauksessa"))))}))

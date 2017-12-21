@@ -6,26 +6,6 @@
             [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]))
 
-(defn- create-payment []
-  (compojure-api/POST "/:application-id/payments/" [application-id :as request]
-    :path-params [application-id :- Long]
-    :query-params []
-    :body [payment-emails
-           (compojure-api/describe
-            virkailija-schema/NewPayment
-            "Create payments")]
-    :return virkailija-schema/Payment
-    :summary "Create new payment for application"
-    (ok (application-data/create-payment application-id payment-emails))))
-
-(defn- create-payment-options []
-  (compojure-api/OPTIONS "/:application-id/payments/"
-    [application-id :as request]
-    :path-params [application-id :- Long]
-    :query-params []
-    :summary "Create new payment OPTIONS"
-    (ok "")))
-
 (defn- get-payments-history []
   (compojure-api/GET
     "/:id/payments-history/" [id :as request]
@@ -35,6 +15,4 @@
 
 (compojure-api/defroutes routes
   "application routes"
-  (create-payment)
-  (create-payment-options)
   (get-payments-history))
