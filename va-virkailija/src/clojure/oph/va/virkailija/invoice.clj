@@ -22,7 +22,7 @@
            (:installment-number payment))
     (format "%s%02d%03d"
             (:organisation payment)
-            (mod (t/year (:created-at payment)) 1000)
+            (mod (t/year (c/to-date-time (:created-at payment))) 1000)
             (:installment-number payment))
    nil))
 
