@@ -41,11 +41,14 @@
   (show-message!
    (format "Virhe tietojen latauksessa. Virhe %s (%d)" text code)))
 
-(defn redirect-to-login! []
+(defn redirect-to! [url]
   (-> js/window
       .-location
       .-href
-      (set! connection/login-url-with-service)))
+      (set! url)))
+
+(defn redirect-to-login! []
+  (redirect-to! connection/login-url-with-service))
 
 (defn find-index-of
   ([col pred i m]
@@ -65,10 +68,10 @@
     "Hakemusten arviointi"]
    [:a {:href "/admin/"} "Hakujen hallinta"]
    [:a {:href "/payments"} "Maksatusten hallinta"]
-   [:div {:class "logout-button"}
+   [:div {:class "logout-button"}
     [ui/flat-button
      {:label "Kirjaudu ulos"
-      :on-click #(redirect-to "/login/logout")}]]])
+      :on-click #(redirect-to! "/login/logout")}]]])
 
 (defn render-payment-fields [on-change]
   (let [payment-values
