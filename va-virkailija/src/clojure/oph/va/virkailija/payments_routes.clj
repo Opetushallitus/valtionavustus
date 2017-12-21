@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.payments-routes
   (:require [compojure.api.sweet :as compojure-api]
             [oph.va.virkailija.payments-data :as payments-data]
+            [oph.va.hakija.application-data :as application-data]
             [ring.util.http-response :refer [ok not-found]]
             [compojure.core :as compojure]
             [schema.core :as s]
@@ -44,7 +45,9 @@
     :summary "Create new payment for application. Payment will be sent to Rondo
              and stored to database."
     (let [payment (payments-data/create-payment payment-values)]
-      (rondo-service/send-to-rondo! (payments-data/get-payment (:id payment)))
+      (rondo-service/send-to-rondo!
+        (payments-data/get-payment (:id payment))
+        (application-data/get-application (:application-id payment)))
       (ok (payments-data/update-payment (assoc payment :state 2))))))
 
 (defn- create-payment-options []
