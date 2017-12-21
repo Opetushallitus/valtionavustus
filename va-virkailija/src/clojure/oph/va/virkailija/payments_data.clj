@@ -87,4 +87,6 @@
         convert-timestamps-to-sql
         convert-to-underscore-keys
         store-payment
-        first)))
+        first
+        convert-to-dash-keys
+        convert-timestamps-from-sql)))
