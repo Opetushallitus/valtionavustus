@@ -3,7 +3,6 @@
    [reagent.core :as r]
    [cljsjs.material-ui]
    [cljs-react-material-ui.reagent :as ui]
-   [cljs-react-material-ui.icons :as ic]
    [cljs-time.format :as tf]
    [va-payments-ui.applications :refer [state-to-str]]))
 
