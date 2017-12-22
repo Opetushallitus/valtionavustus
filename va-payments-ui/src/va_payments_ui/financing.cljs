@@ -73,5 +73,12 @@
                     :style {:display "inline-block"}
                     :value (:receipt-date values)
                     :on-change
-                    #(on-change :receipt-date %2)}]])
+                    #(on-change :receipt-date %2)}]
+   [ui/text-field {:floating-label-text "Kumppanikoodi"
+                   :value (get values :partner "")
+                   :on-change
+                   (fn [e]
+                     (let [value (.-value (.-target e))]
+                       (when (<= (count value) 6)
+                         (on-change :partner value))))}]])
 
