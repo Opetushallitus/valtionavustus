@@ -4,7 +4,7 @@
             [clj-time.core :as t]
             [clj-time.coerce :as c]))
 
-(defn- get-answer-value
+(defn get-answer-value
   ([answers key]
    (:value
     (first
@@ -15,45 +15,51 @@
 (defn get-installment [payment]
   "Generating installment of organisation, year and installment-number.
   Installment is something like '660017006' where 6600 is organisation, 17 is
-  year and 006 is order number or identification number, if you will."
-  (format "%s%02d%03d"
-          (:organisation payment)
-          (mod (t/year (c/from-sql-time (:created-at payment))) 1000)
-          (:installment-number payment)))
+  year and 006 is order number or identification number, if you will.
+  If some of values is missing, nil is being returned."
+  (if (and (:created-at payment)
+           (:organisation payment)
+           (:installment-number payment))
+    (format "%s%02d%03d"
+            (:organisation payment)
+            (mod (t/year (c/to-date-time (:created-at payment))) 1000)
+            (:installment-number payment))
+   nil))
 
-(defn- payment-to-invoice [payment application]
-  [:VA-invoice
-   [:Header
-    [:Maksuera (get-installment payment)]
-    [:Laskunpaiva (:invoice-date payment)]
-    [:Erapvm (:due-date payment)]
-    [:Bruttosumma (:budget-granted application)]
-    [:Maksuehto "Z001"]
-    [:Pitkaviite (:register-number application)]
-    [:Tositepvm (:receipt-date payment)]
-    [:Asiatarkastaja (:inspector-email payment)]
-    [:Hyvaksyja (:acceptor-email payment)]
-    [:Tositelaji (:document-type payment)]
-    [:Toimittaja
-     [:Y-tunnus (get-answer-value (:answers application) "business-id")]
-     [:Nimi (:organization-name application)]
-     [:Postiosoite (get-answer-value (:answers application) "address" "")]
-     [:Paikkakunta (get-answer-value (:answers application) "city" "")]
-     [:Maa (get-answer-value (:answers application) "country" "")]
-     [:Iban-tili (get-answer-value (:answers application) "bank-iban")]
-     [:Pankkiavain (get-answer-value (:answers application) "bank-bic")]
-     [:Pankki-maa (get-answer-value (:answers application) "bank-country" "")]
-     [:Kieli (:language application)]
-     [:Valuutta (:currency payment)]]
-    [:Postings
-     [:Posting
-      [:Summa (:budget-granted application)]
-      [:LKP-tili (:lkp-account application)]
-      [:TaKp-tili (:takp-account application)]
-      [:Toimintayksikko (:operational-unit application)]
-      [:Projekti (:project application)]
-      [:Toiminto (:operation application)]
-      [:Kumppani (:partner payment)]]]]])
+(defn payment-to-invoice [payment application]
+  (let [answers (:answers application)]
+    [:VA-invoice
+     [:Header
+      [:Maksuera (get-installment payment)]
+      [:Laskunpaiva (:invoice-date payment)]
+      [:Erapvm (:due-date payment)]
+      [:Bruttosumma (:budget-granted application)]
+      [:Maksuehto "Z001"]
+      [:Pitkaviite (:register-number application)]
+      [:Tositepvm (:receipt-date payment)]
+      [:Asiatarkastaja (:inspector-email payment)]
+      [:Hyvaksyja (:acceptor-email payment)]
+      [:Tositelaji (:document-type payment)]
+      [:Toimittaja
+       [:Y-tunnus (get-answer-value answers "business-id")]
+       [:Nimi (:organization-name application)]
+       [:Postiosoite (get-answer-value answers "address" "")]
+       [:Paikkakunta (get-answer-value answers "city" "")]
+       [:Maa (get-answer-value answers "country" "")]
+       [:Iban-tili (get-answer-value answers "bank-iban")]
+       [:Pankkiavain (get-answer-value answers "bank-bic")]
+       [:Pankki-maa (get-answer-value answers "bank-country" "")]
+       [:Kieli (:language application)]
+       [:Valuutta (:currency payment)]]
+      [:Postings
+       [:Posting
+        [:Summa (:budget-granted application)]
+        [:LKP-tili (:lkp-account application)]
+        [:TaKp-tili (:takp-account application)]
+        [:Toimintayksikko (:operational-unit application)]
+        [:Projekti (:project application)]
+        [:Toiminto (:operation application)]
+        [:Kumppani (:partner payment)]]]]]))
 
 (defn payment-to-xml [payment application]
   "Creates xml document (tags) of given payment of Valtionavustukset maksatus.
