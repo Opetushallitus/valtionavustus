@@ -42,7 +42,8 @@
             {:with-credentials? true}))
 
 (defn get-grant-payments [id]
-  (get-cached (format "/%s/grants/%d/payments/" api-path id)))
+  (http/get (format "/%s/grants/%d/payments/" api-path id)
+            {:with-credentials? true}))
 
 (defn create-payment [values]
   (http/post (format "/%s/payments/" api-path)
