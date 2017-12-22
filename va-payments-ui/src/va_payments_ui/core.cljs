@@ -146,11 +146,15 @@
                              "Virhe maksatuksen tietojen latauksessa")})))]
           [ui/raised-button
             {:primary true
-             :disabled (any-nil?
-                         @payment-values
-                         [:inspector-email :acceptor-email
-                          :transaction-account :due-date :invoice-date
-                          :payment-term :document-type :receipt-date])
+             :disabled (or
+                         (any-nil?
+                           @payment-values
+                           [:transaction-account :due-date :invoice-date
+                            :payment-term :document-type :receipt-date])
+                         (not (financing/valid-email?
+                           (:inspector-email @payment-values)))
+                         (not (financing/valid-email?
+                           (:acceptor-email @payment-values))))
              :label "Lähetä maksatukset"
              :style button-style
              :on-click
