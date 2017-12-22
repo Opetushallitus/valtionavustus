@@ -17,3 +17,5 @@
                      :font-size "95%"
                      :line-height "1.45"
                      :a {:color "#159ecb" :font-size "font-size: 1.25rem"}})
+
+(def text-field-error {:border-color "#f44336"})
