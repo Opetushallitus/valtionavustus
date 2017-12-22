@@ -261,7 +261,8 @@
    (s/optional-key :payment-term) s/Str
    (s/optional-key :partner) s/Str
    (s/optional-key :inspector-email) s/Str
-   (s/optional-key :acceptor-email) s/Str})
+   (s/optional-key :acceptor-email) s/Str
+   (s/optional-key :filename) (s/maybe s/Str)})
 
 (s/defschema PaymentInstallmentNumber
   "Payment installment number"
