@@ -205,34 +205,36 @@
 
 (defn init! []
   (mount-root)
-  (api/get-config
-   {:on-error
-    (fn [_ __] (show-message! "Virhe tietojen latauksessa"))
-    :on-success
-    (fn [config]
-      (reset! delete-payments? (get-in config [:payments :delete-payments?]))
-      (connection/set-config! config)
-      (api/get-user-info
-       {:on-success #(reset! user-info %)
-        :on-error #(show-message! "Virhe käyttäjätietojen latauksessa")})
-      (api/download-grants
-       (fn [result]
-         (do (reset! grants result)
-             (reset! selected-grant
-                     (if-let [grant-id (get-param-grant)]
-                       (first (filter #(= (:id %) grant-id) result))
-                       (first result))))
-         (when-let [selected-grant-id (:id @selected-grant)]
-           (go
-             (let [grant-id (:id @selected-grant)
-                   applications-response
-                   (<! (connection/get-grant-applications grant-id))
-                   payments-response
-                   (<! (connection/get-grant-payments grant-id))]
-               (if (:success applications-response)
-                 (reset! applications (:body applications-response))
-                 (show-message! "Virhe hakemusten latauksessa"))
-               (if (:success payments-response)
-                 (reset! payments (:body payments-response))
-                 (show-message! "Virhe maksatusten latauksessa"))))))
-       (fn [_ __] (show-message! "Virhe tietojen latauksessa"))))}))
+  (go
+    (let [config-result (<! (connection/get-config))]
+      (if (:success config-result)
+        (do (reset! delete-payments?
+              (get-in config-result [:body :payments :delete-payments?]))
+            (connection/set-config! (:body config-result))
+            (let [user-info-result (<! (connection/get-user-info))]
+              (if (:success user-info-result)
+                (do
+                  (reset! user-info (:body user-info-result))
+                  (api/download-grants
+                    (fn [result]
+                      (do (reset! grants result)
+                          (reset! selected-grant
+                                  (if-let [grant-id (get-param-grant)]
+                                    (first (filter #(= (:id %) grant-id) result))
+                                    (first result))))
+                      (when-let [selected-grant-id (:id @selected-grant)]
+                        (go
+                          (let [grant-id (:id @selected-grant)
+                                applications-response
+                                (<! (connection/get-grant-applications grant-id))
+                                payments-response
+                                (<! (connection/get-grant-payments grant-id))]
+                            (if (:success applications-response)
+                              (reset! applications (:body applications-response))
+                              (show-message! "Virhe hakemusten latauksessa"))
+                            (if (:success payments-response)
+                              (reset! payments (:body payments-response))
+                              (show-message! "Virhe maksatusten latauksessa"))))))
+                    (fn [_ __] (show-message! "Virhe tietojen latauksessa")))
+                (show-message! "Virhe käyttäjätietojen latauksessa")))))
+        (show-message! "Virhe asetusten latauksessa")))))
