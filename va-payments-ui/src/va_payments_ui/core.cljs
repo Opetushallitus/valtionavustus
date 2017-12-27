@@ -110,10 +110,18 @@
       (fn [row]
         (do (reset! selected-grant (get @grants row))
             (when @selected-grant
-              (do (api/download-grant-data
-                   (:id @selected-grant)
-                   #(do (reset! applications %1) (reset! payments %2))
-                   #(show-message! "Virhe tietojen latauksessa"))))))})
+              (go
+                (let [grant-id (:id @selected-grant)
+                      applications-response
+                      (<! (connection/get-grant-applications grant-id))
+                      payments-response
+                      (<! (connection/get-grant-payments grant-id))]
+                  (if (:success applications-response)
+                    (reset! applications (:body applications-response))
+                    (show-message! "Virhe hakemusten latauksessa"))
+                  (if (:success payments-response)
+                    (reset! payments (:body payments-response))
+                    (show-message! "Virhe maksatusten latauksessa")))))))})
     (let [current-applications (-> @applications
                                    (api/combine @payments))
           payment-values
@@ -215,8 +223,16 @@
                        (first (filter #(= (:id %) grant-id) result))
                        (first result))))
          (when-let [selected-grant-id (:id @selected-grant)]
-           (do (api/download-grant-data
-                selected-grant-id
-                #(do (reset! applications %1) (reset! payments %2))
-                #(show-message! "Virhe tietojen latauksessa")))))
+           (go
+             (let [grant-id (:id @selected-grant)
+                   applications-response
+                   (<! (connection/get-grant-applications grant-id))
+                   payments-response
+                   (<! (connection/get-grant-payments grant-id))]
+               (if (:success applications-response)
+                 (reset! applications (:body applications-response))
+                 (show-message! "Virhe hakemusten latauksessa"))
+               (if (:success payments-response)
+                 (reset! payments (:body payments-response))
+                 (show-message! "Virhe maksatusten latauksessa"))))))
        (fn [_ __] (show-message! "Virhe tietojen latauksessa"))))}))
