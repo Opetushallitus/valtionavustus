@@ -1,4 +1,4 @@
-(ns oph.va.hakija.grant-data
+(ns oph.va.virkailija.grant-data
   (:require [oph.soresu.common.db :refer [exec]]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.virkailija.db.queries :as virkailija-queries]
