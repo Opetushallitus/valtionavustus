@@ -1,7 +1,8 @@
 (ns oph.va.virkailija.payments-data
   (:require
    [oph.soresu.common.db :refer [exec]]
-   [oph.va.hakija.api :refer [convert-to-dash-keys convert-to-underscore-keys]]
+   [oph.va.virkailija.utils
+    :refer [convert-to-dash-keys convert-to-underscore-keys]]
    [clj-time.coerce :as c]
    [clj-time.core :as t]
    [clj-time.coerce :as c]

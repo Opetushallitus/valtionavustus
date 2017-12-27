@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.grant-data
   (:require [oph.soresu.common.db :refer [exec]]
             [oph.va.virkailija.db.queries :as virkailija-queries]
-            [oph.va.hakija.api :refer [convert-to-dash-keys]]))
+            [oph.va.virkailija.utils :refer [convert-to-dash-keys]]))
 
 (defn get-grants []
   (mapv convert-to-dash-keys

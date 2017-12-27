@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.application-data
   (:require [oph.soresu.common.db :refer [exec]]
-            [oph.va.hakija.api :refer [convert-to-dash-keys]]
+            [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
             [oph.va.virkailija.grant-data :as grant-data]

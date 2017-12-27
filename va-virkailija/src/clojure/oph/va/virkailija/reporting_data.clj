@@ -2,7 +2,7 @@
   (:require
    [oph.soresu.common.db :refer [exec]]
    [oph.va.virkailija.db.queries :as queries]
-   [oph.va.hakija.api :refer [convert-to-dash-keys]]
+   [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
    [clojure.pprint :refer [print-table]])
   (:import (oph.va.jdbc.enums HakuStatus)))
 
