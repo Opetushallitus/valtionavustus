@@ -46,6 +46,7 @@
         :filename filename})
       (ok (payments-data/update-payment
            (assoc payment :state 2 :filename filename))))))
+
 (compojure-api/defroutes routes
   "payment routes"
   (update-payment)

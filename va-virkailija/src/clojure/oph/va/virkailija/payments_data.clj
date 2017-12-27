@@ -17,7 +17,7 @@
 (defn convert-timestamps [m f]
   (let [timestamp-keys
         (get-keys-present
-          m [:due-date :invoice-date :receipt-date])]
+         m [:due-date :invoice-date :receipt-date])]
     (if (empty? timestamp-keys)
       m
       (update-all m timestamp-keys f))))
@@ -33,16 +33,16 @@
 (defn get-payment
   ([id]
    (->
-     (exec :form-db queries/get-payment {:id id})
-     first
-     convert-to-dash-keys
-     convert-timestamps-from-sql))
+    (exec :form-db queries/get-payment {:id id})
+    first
+    convert-to-dash-keys
+    convert-timestamps-from-sql))
   ([id version]
    (->
-     (exec :form-db queries/get-payment-version {:id id :version version})
-     first
-     convert-to-dash-keys
-     convert-timestamps-from-sql)))
+    (exec :form-db queries/get-payment-version {:id id :version version})
+    first
+    convert-to-dash-keys
+    convert-timestamps-from-sql)))
 
 (defn close-version [id version]
   (exec :form-db queries/payment-close-version
