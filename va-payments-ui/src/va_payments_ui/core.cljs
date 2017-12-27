@@ -14,7 +14,7 @@
    [va-payments-ui.grants :refer [grants-table project-info]]
    [va-payments-ui.financing :as financing]
    [va-payments-ui.utils
-    :refer [toggle remove-nil format any-nil? not-empty?]]
+    :refer [toggle remove-nil format no-nils? not-empty?]]
    [va-payments-ui.theme :refer [button-style general-styles material-styles]]))
 
 (defonce grants (r/atom []))
@@ -96,6 +96,15 @@
                     (show-message! "Virhe tietojen latauksessa")))
                 (show-message! "Virhe maksatusten poistossa")))))}]])])
 
+(defn valid-payment-values? [values]
+  (and
+    (no-nils?
+      values
+      [:transaction-account :due-date :invoice-date
+       :payment-term :document-type :receipt-date])
+    (financing/valid-email? (:inspector-email values))
+    (financing/valid-email? (:acceptor-email values))))
+
 (defn home-page []
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme (get-mui-theme material-styles))}
@@ -154,15 +163,7 @@
                       (show-message! "Virhe historiatietojen latauksessa"))))))]
           [ui/raised-button
             {:primary true
-             :disabled (or
-                         (any-nil?
-                           @payment-values
-                           [:transaction-account :due-date :invoice-date
-                            :payment-term :document-type :receipt-date])
-                         (not (financing/valid-email?
-                           (:inspector-email @payment-values)))
-                         (not (financing/valid-email?
-                           (:acceptor-email @payment-values))))
+             :disabled (not (valid-payment-values? @payment-values))
              :label "Lähetä maksatukset"
              :style button-style
              :on-click
