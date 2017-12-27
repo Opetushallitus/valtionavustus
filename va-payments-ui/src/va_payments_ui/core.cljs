@@ -7,7 +7,6 @@
    [cljsjs.material-ui]
    [cljs-react-material-ui.core :refer [get-mui-theme color]]
    [cljs-react-material-ui.reagent :as ui]
-   [va-payments-ui.api :as api]
    [va-payments-ui.payments :as payments]
    [va-payments-ui.applications :as applications]
    [va-payments-ui.connection :as connection]
@@ -123,7 +122,7 @@
                     (reset! payments (:body payments-response))
                     (show-message! "Virhe maksatusten latauksessa")))))))})
     (let [current-applications (-> @applications
-                                   (api/combine @payments))
+                                   (payments/combine @payments))
           payment-values
           (r/atom {:currency "EUR" :payment-term "Z001" :partner ""
                    :document-type "XA" :organisation "6600" :state 0
@@ -215,21 +214,21 @@
               (if (:success user-info-result)
                 (do
                   (reset! user-info (:body user-info-result))
-                  (let [grants-result (<! connection/get-grants)]
+                  (let [grants-result (<! (connection/get-grants))]
                     (if (:success grants-result)
                       (do (reset! grants (:body grants-result))
                           (reset! selected-grant
                                   (if-let [grant-id (get-param-grant)]
                                     (first (filter #(= (:id %) grant-id)
-                                                   (:body grants-result)))
-                                    (first (:body grants-result))))
+                                                   @grants))
+                                    (first @grants)))
                           (when-let [selected-grant-id (:id @selected-grant)]
-                            (let [grant-id (:id @selected-grant)
-                                  applications-response
+                            (let [applications-response
                                   (<! (connection/get-grant-applications
-                                        grant-id))
+                                        selected-grant-id))
                                   payments-response
-                                  (<! (connection/get-grant-payments grant-id))]
+                                  (<! (connection/get-grant-payments
+                                        selected-grant-id))]
                               (if (:success applications-response)
                                 (reset! applications
                                         (:body applications-response))
@@ -238,6 +237,6 @@
                                 (reset! payments (:body payments-response))
                                 (show-message!
                                   "Virhe maksatusten latauksessa")))))
-                    (show-message! "Virhe tietojen latauksessa")))
-                (show-message! "Virhe käyttäjätietojen latauksessa")))))
+                    (show-message! "Virhe tietojen latauksessa"))))
+                (show-message! "Virhe käyttäjätietojen latauksessa"))))
         (show-message! "Virhe asetusten latauksessa")))))
