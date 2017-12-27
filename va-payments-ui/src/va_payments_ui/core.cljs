@@ -82,7 +82,8 @@
    (when @delete-payments?
      [ui/grid-list {:cols 6 :cell-height "auto"}
       [ui/raised-button
-       {:primary true :label "Poista maksatukset" :style (:raised-button material-styles)
+       {:primary true :label "Poista maksatukset"
+        :style (:raised-button material-styles)
         :on-click
         (fn []
           (go
