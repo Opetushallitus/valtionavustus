@@ -20,14 +20,6 @@
     :summary "Create new payment for application"
     (ok (payments-data/update-payment payment-data))))
 
-(defn- update-payment-options []
-  (compojure-api/OPTIONS "/:payment-id/"
-    [application-id :as request]
-    :path-params [payment-id :- Long]
-    :query-params []
-    :summary "Update payment OPTIONS"
-    (ok "")))
-
 (defn- get-next-installment-number []
   (compojure-api/GET "/next-installment-number/" []
     :path-params []
@@ -54,19 +46,8 @@
         :filename filename})
       (ok (payments-data/update-payment
            (assoc payment :state 2 :filename filename))))))
-
-(defn- create-payment-options []
-  (compojure-api/OPTIONS "/"
-    [application-id :as request]
-    :path-params [application-id :- Long]
-    :query-params []
-    :summary "Create new payment OPTIONS"
-    (ok "")))
-
 (compojure-api/defroutes routes
   "payment routes"
   (update-payment)
-  (update-payment-options)
   (get-next-installment-number)
-  (create-payment)
-  (create-payment-options))
+  (create-payment))
