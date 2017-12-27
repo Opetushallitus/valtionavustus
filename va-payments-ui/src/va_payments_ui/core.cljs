@@ -145,14 +145,14 @@
            [:h3 "Myönteiset päätökset"]
             (applications/applications-table
               current-applications
-              (fn [id] (api/get-payment-history
-                         {:application-id id
-                          :on-success
-                          #(show-dialog!
-                             (r/as-element (payments/render-history %)))
-                          :on-error
-                          #(show-message!
-                             "Virhe maksatuksen tietojen latauksessa")})))]
+              (fn [id]
+                (go
+                  (let [result (<! (connection/get-payment-history id))]
+                    (if (:success result)
+                      (show-dialog!
+                        (r/as-element
+                          (payments/render-history (:body result))))
+                      (show-message! "Virhe historiatietojen latauksessa"))))))]
           [ui/raised-button
             {:primary true
              :disabled (or
