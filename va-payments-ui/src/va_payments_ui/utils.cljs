@@ -12,8 +12,8 @@
 (defn no-nils? [m ks]
   (let [selected-keys (select-keys m ks)]
     (and
-      (= (count ks) (count selected-keys))
-      (every? some? (vals selected-keys)))))
+     (= (count ks) (count selected-keys))
+     (every? some? (vals selected-keys)))))
 
 (defn not-empty? [v] (not (empty? v)))
 

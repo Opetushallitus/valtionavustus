@@ -1,6 +1,6 @@
 (ns va-payments-ui.theme
   (:require
-      [cljs-react-material-ui.core :refer [color]]))
+   [cljs-react-material-ui.core :refer [color]]))
 
 (def button-style {:margin 12})
 
