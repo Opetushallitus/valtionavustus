@@ -7,7 +7,6 @@
    [cljsjs.material-ui]
    [cljs-react-material-ui.core :refer [get-mui-theme color]]
    [cljs-react-material-ui.reagent :as ui]
-   [va-payments-ui.api :as api]
    [va-payments-ui.payments :as payments]
    [va-payments-ui.applications :as applications]
    [va-payments-ui.connection :as connection]
@@ -15,7 +14,7 @@
    [va-payments-ui.grants :refer [grants-table project-info]]
    [va-payments-ui.financing :as financing]
    [va-payments-ui.utils
-    :refer [toggle remove-nil format any-nil? not-empty?]]
+    :refer [toggle remove-nil format no-nils? not-empty?]]
    [va-payments-ui.theme :refer [button-style general-styles material-styles]]))
 
 (defonce grants (r/atom []))
@@ -85,16 +84,26 @@
        {:primary true :label "Poista maksatukset" :style (:raised-button material-styles)
         :on-click
         (fn []
-          (api/delete-grant-payments!
-           {:grant-id (:id @selected-grant)
-            :on-success
-            (fn [_]
-              (api/download-grant-data
-               (:id @selected-grant)
-               (fn [a p]
-                 (do (reset! applications a) (reset! payments p)))
-               (fn [_ __])))
-            :on-error (fn [_ __])}))}]])])
+          (go
+            (let [grant-id (:id @selected-grant)
+                  response
+                  (<! (connection/delete-grant-payments grant-id))]
+              (if (:success response)
+                (let [download-response
+                      (<! (connection/get-grant-payments grant-id))]
+                  (if (:success download-response)
+                    (reset! payments (:body download-response))
+                    (show-message! "Virhe tietojen latauksessa")))
+                (show-message! "Virhe maksatusten poistossa")))))}]])])
+
+(defn valid-payment-values? [values]
+  (and
+    (no-nils?
+      values
+      [:transaction-account :due-date :invoice-date
+       :payment-term :document-type :receipt-date])
+    (financing/valid-email? (:inspector-email values))
+    (financing/valid-email? (:acceptor-email values))))
 
 (defn home-page []
   [ui/mui-theme-provider
@@ -109,12 +118,20 @@
       (fn [row]
         (do (reset! selected-grant (get @grants row))
             (when @selected-grant
-              (do (api/download-grant-data
-                   (:id @selected-grant)
-                   #(do (reset! applications %1) (reset! payments %2))
-                   #(show-message! "Virhe tietojen latauksessa"))))))})
+              (go
+                (let [grant-id (:id @selected-grant)
+                      applications-response
+                      (<! (connection/get-grant-applications grant-id))
+                      payments-response
+                      (<! (connection/get-grant-payments grant-id))]
+                  (if (:success applications-response)
+                    (reset! applications (:body applications-response))
+                    (show-message! "Virhe hakemusten latauksessa"))
+                  (if (:success payments-response)
+                    (reset! payments (:body payments-response))
+                    (show-message! "Virhe maksatusten latauksessa")))))))})
     (let [current-applications (-> @applications
-                                   (api/combine @payments))
+                                   (payments/combine @payments))
           payment-values
           (r/atom {:currency "EUR" :payment-term "Z001" :partner ""
                    :document-type "XA" :organisation "6600" :state 0
@@ -136,25 +153,17 @@
            [:h3 "Myönteiset päätökset"]
             (applications/applications-table
               current-applications
-              (fn [id] (api/get-payment-history
-                         {:application-id id
-                          :on-success
-                          #(show-dialog!
-                             (r/as-element (payments/render-history %)))
-                          :on-error
-                          #(show-message!
-                             "Virhe maksatuksen tietojen latauksessa")})))]
+              (fn [id]
+                (go
+                  (let [result (<! (connection/get-payment-history id))]
+                    (if (:success result)
+                      (show-dialog!
+                        (r/as-element
+                          (payments/render-history (:body result))))
+                      (show-message! "Virhe historiatietojen latauksessa"))))))]
           [ui/raised-button
             {:primary true
-             :disabled (or
-                         (any-nil?
-                           @payment-values
-                           [:transaction-account :due-date :invoice-date
-                            :payment-term :document-type :receipt-date])
-                         (not (financing/valid-email?
-                           (:inspector-email @payment-values)))
-                         (not (financing/valid-email?
-                           (:acceptor-email @payment-values))))
+             :disabled (not (valid-payment-values? @payment-values))
              :label "Lähetä maksatukset"
              :style button-style
              :on-click
@@ -196,26 +205,39 @@
 
 (defn init! []
   (mount-root)
-  (api/get-config
-   {:on-error
-    (fn [_ __] (show-message! "Virhe tietojen latauksessa"))
-    :on-success
-    (fn [config]
-      (reset! delete-payments? (get-in config [:payments :delete-payments?]))
-      (connection/set-config! config)
-      (api/get-user-info
-       {:on-success #(reset! user-info %)
-        :on-error #(show-message! "Virhe käyttäjätietojen latauksessa")})
-      (api/download-grants
-       (fn [result]
-         (do (reset! grants result)
-             (reset! selected-grant
-                     (if-let [grant-id (get-param-grant)]
-                       (first (filter #(= (:id %) grant-id) result))
-                       (first result))))
-         (when-let [selected-grant-id (:id @selected-grant)]
-           (do (api/download-grant-data
-                selected-grant-id
-                #(do (reset! applications %1) (reset! payments %2))
-                #(show-message! "Virhe tietojen latauksessa")))))
-       (fn [_ __] (show-message! "Virhe tietojen latauksessa"))))}))
+  (go
+    (let [config-result (<! (connection/get-config))]
+      (if (:success config-result)
+        (do (reset! delete-payments?
+              (get-in config-result [:body :payments :delete-payments?]))
+            (connection/set-config! (:body config-result))
+            (let [user-info-result (<! (connection/get-user-info))]
+              (if (:success user-info-result)
+                (do
+                  (reset! user-info (:body user-info-result))
+                  (let [grants-result (<! (connection/get-grants))]
+                    (if (:success grants-result)
+                      (do (reset! grants (:body grants-result))
+                          (reset! selected-grant
+                                  (if-let [grant-id (get-param-grant)]
+                                    (first (filter #(= (:id %) grant-id)
+                                                   @grants))
+                                    (first @grants)))
+                          (when-let [selected-grant-id (:id @selected-grant)]
+                            (let [applications-response
+                                  (<! (connection/get-grant-applications
+                                        selected-grant-id))
+                                  payments-response
+                                  (<! (connection/get-grant-payments
+                                        selected-grant-id))]
+                              (if (:success applications-response)
+                                (reset! applications
+                                        (:body applications-response))
+                                (show-message! "Virhe hakemusten latauksessa"))
+                              (if (:success payments-response)
+                                (reset! payments (:body payments-response))
+                                (show-message!
+                                  "Virhe maksatusten latauksessa")))))
+                    (show-message! "Virhe tietojen latauksessa"))))
+                (show-message! "Virhe käyttäjätietojen latauksessa"))))
+        (show-message! "Virhe asetusten latauksessa")))))
