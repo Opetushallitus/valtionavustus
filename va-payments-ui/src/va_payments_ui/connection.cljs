@@ -37,7 +37,7 @@
   (get-cached (format "/%s/grants/%d/applications/?template=with-evaluation"
                     api-path id)))
 
-(defn get-grants-list []
+(defn get-grants []
   (http/get (format "/%s/grants/?template=with-content" api-path)
             {:with-credentials? true}))
 

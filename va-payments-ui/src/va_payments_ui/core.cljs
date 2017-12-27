@@ -215,26 +215,29 @@
               (if (:success user-info-result)
                 (do
                   (reset! user-info (:body user-info-result))
-                  (api/download-grants
-                    (fn [result]
-                      (do (reset! grants result)
+                  (let [grants-result (<! connection/get-grants)]
+                    (if (:success grants-result)
+                      (do (reset! grants (:body grants-result))
                           (reset! selected-grant
                                   (if-let [grant-id (get-param-grant)]
-                                    (first (filter #(= (:id %) grant-id) result))
-                                    (first result))))
-                      (when-let [selected-grant-id (:id @selected-grant)]
-                        (go
-                          (let [grant-id (:id @selected-grant)
-                                applications-response
-                                (<! (connection/get-grant-applications grant-id))
-                                payments-response
-                                (<! (connection/get-grant-payments grant-id))]
-                            (if (:success applications-response)
-                              (reset! applications (:body applications-response))
-                              (show-message! "Virhe hakemusten latauksessa"))
-                            (if (:success payments-response)
-                              (reset! payments (:body payments-response))
-                              (show-message! "Virhe maksatusten latauksessa"))))))
-                    (fn [_ __] (show-message! "Virhe tietojen latauksessa")))
+                                    (first (filter #(= (:id %) grant-id)
+                                                   (:body grants-result)))
+                                    (first (:body grants-result))))
+                          (when-let [selected-grant-id (:id @selected-grant)]
+                            (let [grant-id (:id @selected-grant)
+                                  applications-response
+                                  (<! (connection/get-grant-applications
+                                        grant-id))
+                                  payments-response
+                                  (<! (connection/get-grant-payments grant-id))]
+                              (if (:success applications-response)
+                                (reset! applications
+                                        (:body applications-response))
+                                (show-message! "Virhe hakemusten latauksessa"))
+                              (if (:success payments-response)
+                                (reset! payments (:body payments-response))
+                                (show-message!
+                                  "Virhe maksatusten latauksessa")))))
+                    (show-message! "Virhe tietojen latauksessa")))
                 (show-message! "Virhe käyttäjätietojen latauksessa")))))
         (show-message! "Virhe asetusten latauksessa")))))
