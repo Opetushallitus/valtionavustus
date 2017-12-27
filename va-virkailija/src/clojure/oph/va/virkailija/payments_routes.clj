@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.payments-routes
   (:require [compojure.api.sweet :as compojure-api]
             [oph.va.virkailija.payments-data :as payments-data]
-            [oph.va.hakija.application-data :as application-data]
+            [oph.va.virkailija.application-data :as application-data]
             [ring.util.http-response :refer [ok not-found]]
             [compojure.core :as compojure]
             [schema.core :as s]
