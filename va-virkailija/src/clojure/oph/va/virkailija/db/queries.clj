@@ -24,10 +24,18 @@
 (defquery create-search<! "sql/virkailija/saved_search/create.sql")
 (defquery get-search "sql/virkailija/saved_search/get.sql")
 
-(defquery get-payment "sql/virkailija/payments/get-payment.sql")
-(defquery get-grant-payments "sql/virkailija/grants/get-grant-payments.sql")
+(defquery get-grants "sql/hakija/grants/get-grants.sql")
+(defquery get-resolved-grants-with-content
+  "sql/hakija/grants/get-resolved-grants-with-content.sql")
+(defquery get-grant "sql/hakija/grants/get-grant.sql")
+(defquery get-grant-applications "sql/hakija/grants/get-grant-applications.sql")
+(defquery get-grant-applications-with-evaluation
+  "sql/hakija/grants/get-grant-applications-with-evaluation.sql")
 (defquery get-grant-roles "sql/virkailija/grants/get-grant-roles.sql")
+(defquery get-grant-payments "sql/virkailija/grants/get-grant-payments.sql")
 (defquery delete-grant-payments "sql/virkailija/grants/delete-grant-payments.sql")
+
+(defquery get-payment "sql/virkailija/payments/get-payment.sql")
 (defquery get-payment-version "sql/virkailija/payments/get-payment-version.sql")
 (defquery payment-close-version
   "sql/virkailija/payments/payment-close-version.sql")
@@ -36,6 +44,12 @@
   "sql/virkailija/payments/get-next-installment-number.sql")
 (defquery get-payment-history "sql/virkailija/applications/get-payment-history.sql")
 (defquery create-payment "sql/virkailija/payments/create-payment.sql")
+
+(defquery get-application "sql/hakija/applications/get-application.sql")
+(defquery get-application-with-evaluation-and-answers
+  "sql/hakija/applications/get-application-with-evaluation-and-answers.sql")
+(defquery get-application-payments
+  "sql/hakija/applications/get-application-payments.sql")
 
 (defquery lock-va-users-cache-exclusively! "sql/virkailija/va_users_cache/lock-exclusively.sql")
 (defquery update-va-user-cache! "sql/virkailija/va_users_cache/update.sql")
@@ -51,4 +65,5 @@
 (defquery get-yearly-granted "sql/virkailija/reporting/get-yearly-granted.sql")
 (defquery get-total-grant-count
   "sql/virkailija/reporting/get-total-grant-count.sql")
+
 

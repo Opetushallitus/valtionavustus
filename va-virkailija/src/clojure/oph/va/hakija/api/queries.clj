@@ -22,21 +22,6 @@
 (defquery get-avustushaku-role-by-avustushaku-id-and-person-oid "sql/hakija/avustushaku/get-role-by-avustushaku-id-and-person-oid.sql")
 (defquery list-matching-avustushaut-by-ids "sql/hakija/avustushaku/list-matching-by-ids.sql")
 
-(defquery get-grants "sql/hakija/grants/get-grants.sql")
-(defquery get-resolved-grants-with-content
-  "sql/hakija/grants/get-resolved-grants-with-content.sql")
-(defquery get-grant "sql/hakija/grants/get-grant.sql")
-(defquery get-grant-applications "sql/hakija/grants/get-grant-applications.sql")
-(defquery get-grant-applications-with-evaluation
-  "sql/hakija/grants/get-grant-applications-with-evaluation.sql")
-
-(defquery get-application "sql/hakija/applications/get-application.sql")
-(defquery get-application-with-evaluation-and-answers
-  "sql/hakija/applications/get-application-with-evaluation-and-answers.sql")
-
-(defquery get-application-payments
-  "sql/hakija/applications/get-application-payments.sql")
-
 (defquery list-hakemukset-by-avustushaku "sql/hakija/hakemus/list-by-avustushaku.sql")
 (defquery get-by-type-and-parent-id "sql/hakija/hakemus/get-by-type-and-parent-id.sql")
 (defquery list-hakemus-paatos-email-statuses "sql/hakija/hakemus/list-hakemus-paatokset-by-avustushaku.sql")
