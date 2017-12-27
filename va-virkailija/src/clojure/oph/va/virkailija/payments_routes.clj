@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.payments-routes
   (:require [compojure.api.sweet :as compojure-api]
             [oph.va.virkailija.payments-data :as payments-data]
-            [oph.va.hakija.application-data :as application-data]
+            [oph.va.virkailija.application-data :as application-data]
             [ring.util.http-response :refer [ok not-found]]
             [compojure.core :as compojure]
             [schema.core :as s]
@@ -19,14 +19,6 @@
     :return virkailija-schema/Payment
     :summary "Create new payment for application"
     (ok (payments-data/update-payment payment-data))))
-
-(defn- update-payment-options []
-  (compojure-api/OPTIONS "/:payment-id/"
-    [application-id :as request]
-    :path-params [payment-id :- Long]
-    :query-params []
-    :summary "Update payment OPTIONS"
-    (ok "")))
 
 (defn- get-next-installment-number []
   (compojure-api/GET "/next-installment-number/" []
@@ -55,18 +47,8 @@
       (ok (payments-data/update-payment
            (assoc payment :state 2 :filename filename))))))
 
-(defn- create-payment-options []
-  (compojure-api/OPTIONS "/"
-    [application-id :as request]
-    :path-params [application-id :- Long]
-    :query-params []
-    :summary "Create new payment OPTIONS"
-    (ok "")))
-
 (compojure-api/defroutes routes
   "payment routes"
   (update-payment)
-  (update-payment-options)
   (get-next-installment-number)
-  (create-payment)
-  (create-payment-options))
+  (create-payment))

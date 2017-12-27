@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.grant-routes
   (:require [compojure.api.sweet :as compojure-api]
-            [oph.va.hakija.grant-data :as grant-data]
+            [oph.va.virkailija.grant-data :as grant-data]
             [ring.util.http-response :refer [ok not-found]]
             [compojure.core :as compojure]
             [schema.core :as s]
