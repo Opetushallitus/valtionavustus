@@ -27,9 +27,9 @@
                    :type "email"
                    :underline-style
                    (when (and
-                           (not-empty? (:inspector-email values))
-                           (not (valid-email? (:inspector-email values))))
-                                       text-field-error)
+                          (not-empty? (:inspector-email values))
+                          (not (valid-email? (:inspector-email values))))
+                     text-field-error)
                    :on-change
                    #(on-change :inspector-email (.-value (.-target %)))}]
    [ui/text-field {:floating-label-text "Hyväksyjän sähköpostiosoite"
@@ -37,9 +37,9 @@
                    :type "email"
                    :underline-style
                    (when (and
-                           (not-empty? (:acceptor-email values))
-                           (not (valid-email? (:acceptor-email values))))
-                                       text-field-error)
+                          (not-empty? (:acceptor-email values))
+                          (not (valid-email? (:acceptor-email values))))
+                     text-field-error)
                    :on-change
                    #(on-change :acceptor-email (.-value (.-target %)))}]])
 

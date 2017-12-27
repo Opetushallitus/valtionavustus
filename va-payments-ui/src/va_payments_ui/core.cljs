@@ -2,6 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
    [cljs.core.async :refer [<!]]
+   [clojure.string :refer [lower-case includes?]]
    [va-payments-ui.connection :as connection]
    [reagent.core :as r]
    [cljsjs.material-ui]
@@ -81,7 +82,8 @@
    (when @delete-payments?
      [ui/grid-list {:cols 6 :cell-height "auto"}
       [ui/raised-button
-       {:primary true :label "Poista maksatukset" :style (:raised-button material-styles)
+       {:primary true :label "Poista maksatukset"
+        :style (:raised-button material-styles)
         :on-click
         (fn []
           (go
@@ -98,12 +100,20 @@
 
 (defn valid-payment-values? [values]
   (and
-    (no-nils?
-      values
-      [:transaction-account :due-date :invoice-date
-       :payment-term :document-type :receipt-date])
-    (financing/valid-email? (:inspector-email values))
-    (financing/valid-email? (:acceptor-email values))))
+   (no-nils?
+    values
+    [:transaction-account :due-date :invoice-date
+     :payment-term :document-type :receipt-date])
+   (financing/valid-email? (:inspector-email values))
+   (financing/valid-email? (:acceptor-email values))))
+
+(defn grant-matches? [g s]
+  (if (empty? s)
+    true
+    (let [s-lower (lower-case s)]
+      (or
+       (includes? (:register-number g) s-lower)
+       (includes? (lower-case (get-in g [:content :name :fi])) s-lower)))))
 
 (defn home-page []
   [ui/mui-theme-provider
@@ -111,25 +121,38 @@
    [:div
     (top-links (get @selected-grant :id 0))
     [:hr]
-    (grants-table
-     {:grants @grants
-      :value (find-index-of @grants #(= (:id %) (:id @selected-grant)))
-      :on-change
-      (fn [row]
-        (do (reset! selected-grant (get @grants row))
-            (when @selected-grant
-              (go
-                (let [grant-id (:id @selected-grant)
-                      applications-response
-                      (<! (connection/get-grant-applications grant-id))
-                      payments-response
-                      (<! (connection/get-grant-payments grant-id))]
-                  (if (:success applications-response)
-                    (reset! applications (:body applications-response))
-                    (show-message! "Virhe hakemusten latauksessa"))
-                  (if (:success payments-response)
-                    (reset! payments (:body payments-response))
-                    (show-message! "Virhe maksatusten latauksessa")))))))})
+    (let [filter-str (r/atom "")]
+      [(fn []
+         [:div
+          [ui/text-field {:floating-label-text "Hakujen suodatus"
+                          :value @filter-str
+                          :on-change
+                          #(reset! filter-str (.-value (.-target %)))}]
+          (let [filtered-grants
+                (filter #(grant-matches? % @filter-str) @grants)]
+            (grants-table
+             {:grants filtered-grants
+              :value
+              (find-index-of
+               filtered-grants #(= (:id %) (:id @selected-grant)))
+              :on-change
+              (fn [row]
+                (do (reset! selected-grant (get filtered-grants row))
+                    (when @selected-grant
+                      (go
+                        (let [grant-id (:id @selected-grant)
+                              applications-response
+                              (<! (connection/get-grant-applications grant-id))
+                              payments-response
+                              (<! (connection/get-grant-payments grant-id))]
+                          (if (:success applications-response)
+                            (reset! applications (:body applications-response))
+                            (show-message! "Virhe hakemusten latauksessa"))
+                          (if (:success payments-response)
+                            (reset! payments (:body payments-response))
+                            (show-message!
+                             "Virhe maksatusten latauksessa")))))))}))])])
+
     (let [current-applications (-> @applications
                                    (payments/combine @payments))
           payment-values
@@ -146,48 +169,47 @@
            [:div
             [:h3 "Maksatuksen tiedot"]
             (financing/payment-emails
-              @payment-values #(swap! payment-values assoc %1 %2))
-             (financing/payment-fields
-              @payment-values #(swap! payment-values assoc %1 %2))
-             ]
+             @payment-values #(swap! payment-values assoc %1 %2))
+            (financing/payment-fields
+             @payment-values #(swap! payment-values assoc %1 %2))]
            [:h3 "Myönteiset päätökset"]
-            (applications/applications-table
-              current-applications
-              (fn [id]
-                (go
-                  (let [result (<! (connection/get-payment-history id))]
-                    (if (:success result)
-                      (show-dialog!
-                        (r/as-element
-                          (payments/render-history (:body result))))
-                      (show-message! "Virhe historiatietojen latauksessa"))))))]
+           (applications/applications-table
+            current-applications
+            (fn [id]
+              (go
+                (let [result (<! (connection/get-payment-history id))]
+                  (if (:success result)
+                    (show-dialog!
+                     (r/as-element
+                      (payments/render-history (:body result))))
+                    (show-message! "Virhe historiatietojen latauksessa"))))))]
           [ui/raised-button
-            {:primary true
-             :disabled (not (valid-payment-values? @payment-values))
-             :label "Lähetä maksatukset"
-             :style button-style
-             :on-click
-             (fn [_]
-               (go
-                 (let [nin-result
-                       (<! (connection/get-next-installment-number))]
-                   (if (:success nin-result)
-                     (let [values (conj @payment-values (:body nin-result))]
-                       (doseq [application current-applications]
-                         (let [payment-result
-                               (<! (connection/create-payment
-                                     (assoc values :application-id
-                                            (:id application))))]
-                           (when-not (:success payment-result)
-                             (show-message!
-                               "Maksatuksen lähetyksessä ongelma"))))
-                       (let [grant-result (<! (connection/get-grant-payments
-                                                (:id @selected-grant)))]
-                         (if (:success grant-result)
-                           (reset! payments (:body grant-result))
-                           (show-message!
-                             "Maksatuksien latauksessa ongelma"))))
-                     (show-message! "Maksatuserän haussa ongelma")))))}]
+           {:primary true
+            :disabled (not (valid-payment-values? @payment-values))
+            :label "Lähetä maksatukset"
+            :style button-style
+            :on-click
+            (fn [_]
+              (go
+                (let [nin-result
+                      (<! (connection/get-next-installment-number))]
+                  (if (:success nin-result)
+                    (let [values (conj @payment-values (:body nin-result))]
+                      (doseq [application current-applications]
+                        (let [payment-result
+                              (<! (connection/create-payment
+                                   (assoc values :application-id
+                                          (:id application))))]
+                          (when-not (:success payment-result)
+                            (show-message!
+                             "Maksatuksen lähetyksessä ongelma"))))
+                      (let [grant-result (<! (connection/get-grant-payments
+                                              (:id @selected-grant)))]
+                        (if (:success grant-result)
+                          (reset! payments (:body grant-result))
+                          (show-message!
+                           "Maksatuksien latauksessa ongelma"))))
+                    (show-message! "Maksatuserän haussa ongelma")))))}]
           [ui/snackbar
            (conj @snackbar
                  {:auto-hide-duration 4000
@@ -209,7 +231,7 @@
     (let [config-result (<! (connection/get-config))]
       (if (:success config-result)
         (do (reset! delete-payments?
-              (get-in config-result [:body :payments :delete-payments?]))
+                    (get-in config-result [:body :payments :delete-payments?]))
             (connection/set-config! (:body config-result))
             (let [user-info-result (<! (connection/get-user-info))]
               (if (:success user-info-result)
@@ -226,10 +248,10 @@
                           (when-let [selected-grant-id (:id @selected-grant)]
                             (let [applications-response
                                   (<! (connection/get-grant-applications
-                                        selected-grant-id))
+                                       selected-grant-id))
                                   payments-response
                                   (<! (connection/get-grant-payments
-                                        selected-grant-id))]
+                                       selected-grant-id))]
                               (if (:success applications-response)
                                 (reset! applications
                                         (:body applications-response))
@@ -237,7 +259,7 @@
                               (if (:success payments-response)
                                 (reset! payments (:body payments-response))
                                 (show-message!
-                                  "Virhe maksatusten latauksessa")))))
-                    (show-message! "Virhe tietojen latauksessa"))))
+                                 "Virhe maksatusten latauksessa")))))
+                      (show-message! "Virhe tietojen latauksessa"))))
                 (show-message! "Virhe käyttäjätietojen latauksessa"))))
         (show-message! "Virhe asetusten latauksessa")))))

@@ -1,13 +1,13 @@
 (ns va-payments-ui.applications
   (:require
-    [reagent.core :as r]
-    [cljsjs.material-ui]
-    [cljs-react-material-ui.reagent :as ui]
-    [cljs-react-material-ui.icons :as ic]
-    [va-payments-ui.utils :refer
-     [assoc-all-with toggle toggle-in]]
-    [va-payments-ui.theme :refer [material-styles]]
-    [va-payments-ui.utils :refer [format]]))
+   [reagent.core :as r]
+   [cljsjs.material-ui]
+   [cljs-react-material-ui.reagent :as ui]
+   [cljs-react-material-ui.icons :as ic]
+   [va-payments-ui.utils :refer
+    [assoc-all-with toggle toggle-in]]
+   [va-payments-ui.theme :refer [material-styles]]
+   [va-payments-ui.utils :refer [format]]))
 
 (defn get-answer-value [answers key]
   (:value

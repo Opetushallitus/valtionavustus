@@ -35,7 +35,7 @@
 
 (defn get-grant-applications [id]
   (get-cached (format "/%s/grants/%d/applications/?template=with-evaluation"
-                    api-path id)))
+                      api-path id)))
 
 (defn get-grants []
   (http/get (format "/%s/grants/?template=with-content" api-path)
@@ -82,7 +82,7 @@
 
 (defn get-next-installment-number []
   (http/get (format "/%s/payments/next-installment-number/" api-path)
-                    {:with-credentials? true}))
+            {:with-credentials? true}))
 
 (defn set-config! [c]
   (reset! config c))

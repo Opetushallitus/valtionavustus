@@ -1,11 +1,11 @@
 (ns va-payments-ui.grants
   (:require
-    [reagent.core :as r]
-    [cljsjs.material-ui]
-    [cljs-react-material-ui.core :refer [get-mui-theme color]]
-    [cljs-react-material-ui.reagent :as ui]
-    [cljs-react-material-ui.icons :as ic]
-    [va-payments-ui.theme :refer [material-styles]]))
+   [reagent.core :as r]
+   [cljsjs.material-ui]
+   [cljs-react-material-ui.core :refer [get-mui-theme color]]
+   [cljs-react-material-ui.reagent :as ui]
+   [cljs-react-material-ui.icons :as ic]
+   [va-payments-ui.theme :refer [material-styles]]))
 
 (def status-str
   {"deleted" "Poistettu"
