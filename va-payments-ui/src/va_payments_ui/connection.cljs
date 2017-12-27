@@ -6,11 +6,11 @@
    [goog.net.cookies]
    [va-payments-ui.utils :refer [format]]))
 
-(def api-path "api/v2")
+(def ^:private api-path "api/v2")
 
-(defonce cache (atom {}))
+(defonce ^:private cache (atom {}))
 
-(defonce config (atom {}))
+(defonce ^:private config (atom {}))
 
 (defn get-cached [url]
   (let [c (chan)
@@ -71,15 +71,6 @@
 
 (defn delete-grant-payments [id]
   (http/delete (format "/%s/grants/%d/payments/" api-path id)))
-
-(defn check-session []
-  (http/get (format "/login/sessions/")
-            {:with-credentials? true}))
-
-(defn send-xml-invoice [payment]
-  (http/post (format "/%s/payments/%d/invoice/" api-path (:id payment))
-             {:json-params {}
-              :with-credentials? true}))
 
 (defn get-config []
   (http/get (format "/environment")
