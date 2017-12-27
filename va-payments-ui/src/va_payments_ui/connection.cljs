@@ -1,11 +1,28 @@
 (ns va-payments-ui.connection
-  (:require [cljs-http.client :as http]
-            [goog.net.cookies]
-            [va-payments-ui.utils :refer [format]]))
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require
+   [cljs.core.async :refer [<! chan]]
+   [cljs-http.client :as http]
+   [goog.net.cookies]
+   [va-payments-ui.utils :refer [format]]))
 
 (def api-path "api/v2")
 
+(defonce cache (atom {}))
+
 (defonce config (atom {}))
+
+(defn get-cached [url]
+  (let [c (chan)
+        cached-result (get @cache url)]
+    (go
+      (if (nil? cached-result)
+        (let [result (<! (http/get url {:with-credentials? true}))]
+          (when (:success result)
+            (swap! cache assoc url (assoc result :cached true)))
+          (>! c result))
+        (>! c cached-result)))
+    c))
 
 (defn login-url-with-service []
   (format "%s?service=%s/login/cas"
@@ -17,9 +34,8 @@
             {:with-credentials? true}))
 
 (defn get-grant-applications [id]
-  (http/get (format "/%s/grants/%d/applications/?template=with-evaluation"
-                    api-path id)
-            {:with-credentials? true}))
+  (get-cached (format "/%s/grants/%d/applications/?template=with-evaluation"
+                    api-path id)))
 
 (defn get-grants-list []
   (http/get (format "/%s/grants/?template=with-content" api-path)
