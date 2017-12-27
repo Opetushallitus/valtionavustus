@@ -85,16 +85,17 @@
        {:primary true :label "Poista maksatukset" :style (:raised-button material-styles)
         :on-click
         (fn []
-          (api/delete-grant-payments!
-           {:grant-id (:id @selected-grant)
-            :on-success
-            (fn [_]
-              (api/download-grant-data
-               (:id @selected-grant)
-               (fn [a p]
-                 (do (reset! applications a) (reset! payments p)))
-               (fn [_ __])))
-            :on-error (fn [_ __])}))}]])])
+          (go
+            (let [grant-id (:id @selected-grant)
+                  response
+                  (<! (connection/delete-grant-payments grant-id))]
+              (if (:success response)
+                (let [download-response
+                      (<! (connection/get-grant-payments grant-id))]
+                  (if (:success download-response)
+                    (reset! payments (:body download-response))
+                    (show-message! "Virhe tietojen latauksessa")))
+                (show-message! "Virhe maksatusten poistossa")))))}]])])
 
 (defn home-page []
   [ui/mui-theme-provider
