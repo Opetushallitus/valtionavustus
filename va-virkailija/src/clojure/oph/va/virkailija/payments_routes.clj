@@ -8,46 +8,57 @@
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.rondo-service :as rondo-service]))
 
-(defn- update-payment []
-  (compojure-api/PUT "/:payment-id/" [payment-id :as request]
+(defn- update-payment
+  []
+  (compojure-api/PUT
+    "/:payment-id/" [payment-id :as request]
     :path-params [payment-id :- Long]
     :query-params []
     :body [payment-data
-           (compojure-api/describe
-            virkailija-schema/Payment
-            "Update payment")]
+     (compojure-api/describe virkailija-schema/Payment
+                             "Update payment")]
     :return virkailija-schema/Payment
     :summary "Create new payment for application"
     (ok (payments-data/update-payment payment-data))))
 
-(defn- get-next-installment-number []
-  (compojure-api/GET "/next-installment-number/" []
+(defn- get-next-installment-number
+  []
+  (compojure-api/GET
+    "/next-installment-number/" []
     :path-params []
     :return virkailija-schema/PaymentInstallmentNumber
     :summary "Return next installment number"
     (ok (payments-data/next-installment-number))))
 
-(defn- create-payment []
-  (compojure-api/POST "/" []
+(defn- create-payment
+  []
+  (compojure-api/POST
+    "/" []
     :body [payment-values
-           (compojure-api/describe
-            virkailija-schema/Payment
-            "Create payments to Rondo")]
+     (compojure-api/describe virkailija-schema/Payment
+                             "Create payments to Rondo")]
     :return virkailija-schema/Payment
     :summary "Create new payment for application. Payment will be sent to Rondo
              and stored to database."
-    (let [payment (payments-data/create-payment payment-values)
+    (let [payment (or (application-data/get-application-payment
+                        (:application-id payment-values))
+                      (payments-data/create-payment payment-values))
           filename (format "payment-%d-%d.xml"
-                           (:id payment) (System/currentTimeMillis))]
+                           (:id payment)
+                           (System/currentTimeMillis))]
+      (when (= (:state payment) 2)
+        (throw (Exception. "Application already has a payment sent to Rondo")))
       (rondo-service/send-to-rondo!
-       {:payment (payments-data/get-payment (:id payment))
-        :application (application-data/get-application
-                      (:application-id payment))
-        :filename filename})
-      (ok (payments-data/update-payment
-           (assoc payment :state 2 :filename filename))))))
+        {:payment (payments-data/get-payment (:id payment)),
+         :application (application-data/get-application (:application-id
+                                                          payment)),
+         :filename filename})
+      (ok (payments-data/update-payment (assoc payment
+                                          :state 2
+                                          :filename filename))))))
 
-(compojure-api/defroutes routes
+(compojure-api/defroutes
+  routes
   "payment routes"
   (update-payment)
   (get-next-installment-number)
