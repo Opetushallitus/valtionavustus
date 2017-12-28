@@ -24,3 +24,10 @@
    convert-to-dash-keys
    (exec :form-db virkailija-queries/get-payment-history
          {:application_id id})))
+
+(defn get-application-payment
+  [id]
+  (convert-to-dash-keys
+    (last
+      (exec :form-db virkailija-queries/get-application-payments
+            {:application_id id}))))
