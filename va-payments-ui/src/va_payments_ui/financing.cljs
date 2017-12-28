@@ -3,7 +3,7 @@
             [cljsjs.material-ui]
             [cljs-react-material-ui.reagent :as ui]
             [va-payments-ui.payments :refer [get-payment-data]]
-            [va-payments-ui.theme :refer [button-style text-field-error]]
+            [va-payments-ui.theme :as theme]
             [va-payments-ui.utils :refer
              [remove-nil any-nil? not-nil? not-empty?]]))
 
@@ -27,7 +27,7 @@
      :type "email"
      :underline-style (when (and (not-empty? (:inspector-email values))
                                  (not (valid-email? (:inspector-email values))))
-                        text-field-error)
+                        theme/text-field-error)
      :on-change #(on-change :inspector-email (.-value (.-target %)))}]
    [ui/text-field
     {:floating-label-text "Hyväksyjän sähköpostiosoite"
@@ -35,7 +35,7 @@
      :type "email"
      :underline-style (when (and (not-empty? (:acceptor-email values))
                                  (not (valid-email? (:acceptor-email values))))
-                        text-field-error)
+                        theme/text-field-error)
      :on-change #(on-change :acceptor-email (.-value (.-target %)))}]])
 
 (defn payment-fields
