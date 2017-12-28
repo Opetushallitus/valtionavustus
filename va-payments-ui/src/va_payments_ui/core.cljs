@@ -18,6 +18,8 @@
             [va-payments-ui.theme :refer
              [button-style general-styles material-styles]]))
 
+(def week-in-ms (* 1000 60 60 24 7))
+
 (defonce grants (r/atom []))
 
 (defonce applications (r/atom []))
@@ -148,16 +150,17 @@
                                "Virhe maksatusten latauksessa")))))))}))])])
     (let [current-applications (-> @applications
                                    (payments/combine @payments))
-          payment-values (r/atom {:currency "EUR"
-                                  :payment-term "Z001"
-                                  :partner ""
-                                  :document-type "XA"
-                                  :organisation "6600"
-                                  :state 0
-                                  :transaction-account "5000"
-                                  :due-date (js/Date.)
-                                  :invoice-date (js/Date.)
-                                  :receipt-date (js/Date.)})]
+          payment-values
+            (r/atom {:currency "EUR"
+                     :payment-term "Z001"
+                     :partner ""
+                     :document-type "XA"
+                     :organisation "6600"
+                     :state 0
+                     :transaction-account "5000"
+                     :due-date (js/Date. (+ (.now js/Date) week-in-ms))
+                     :invoice-date (js/Date.)
+                     :receipt-date (js/Date.)})]
       [(fn []
          [:div
           [:div [:hr] (project-info @selected-grant) [:hr]
