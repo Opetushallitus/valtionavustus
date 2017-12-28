@@ -121,7 +121,7 @@
            {:floating-label-text "Hakujen suodatus",
             :value @filter-str,
             :on-change #(reset! filter-str (.-value (.-target %)))}]
-          (let [filtered-grants (filter #(grant-matches? % @filter-str)
+          (let [filtered-grants (filterv #(grant-matches? % @filter-str)
                                   @grants)]
             (grants-table
               {:grants filtered-grants,
