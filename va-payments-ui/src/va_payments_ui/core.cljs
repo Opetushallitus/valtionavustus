@@ -15,8 +15,7 @@
             [va-payments-ui.financing :as financing]
             [va-payments-ui.utils :refer
              [toggle remove-nil format no-nils? not-empty?]]
-            [va-payments-ui.theme :refer
-             [button-style general-styles material-styles]]))
+            [va-payments-ui.theme :as theme]))
 
 (def week-in-ms (* 1000 60 60 24 7))
 
@@ -62,12 +61,20 @@
   (let [grant-id (js/parseInt (router/get-current-param :grant))]
     (when-not (js/isNaN grant-id) grant-id)))
 
+(defn create-link
+  [href title active]
+  [:a {:href href :style (if active theme/active-link theme/link)} title])
+
 (defn top-links
-  [grant-id]
+  [grant-id current-path]
   [:div {:class "top-links"}
-   [:a {:href (str "/avustushaku/" grant-id) :style (:a general-styles)}
-    "Hakemusten arviointi"] [:a {:href "/admin/"} "Hakujen hallinta"]
-   [:a {:href "/payments"} "Maksatusten hallinta"]
+   (create-link (str "/avustushaku/" grant-id)
+                "Hakemusten arviointi"
+                (= current-path "/avustushaku/"))
+   (create-link "/admin/" "Hakujen hallinta" (= current-path "/admin/"))
+   (create-link "/payments/"
+                "Maksatusten hallinta"
+                (= current-path "/payments/"))
    [:div {:class "logout-button"}
     [ui/flat-button
      {:label "Kirjaudu ulos" :on-click #(redirect-to! "/login/logout")}]]])
@@ -82,7 +89,7 @@
       [ui/raised-button
        {:primary true
         :label "Poista maksatukset"
-        :style (:raised-button material-styles)
+        :style theme/button
         :on-click
           (fn []
             (go (let [grant-id (:id @selected-grant)
@@ -114,8 +121,8 @@
 (defn home-page
   []
   [ui/mui-theme-provider
-   {:mui-theme (get-mui-theme (get-mui-theme material-styles))}
-   [:div (top-links (get @selected-grant :id 0)) [:hr]
+   {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
+   [:div (top-links (get @selected-grant :id 0) (router/get-current-path)) [:hr]
     (let [filter-str (r/atom "")]
       [(fn []
          [:div
@@ -186,7 +193,7 @@
            {:primary true
             :disabled (not (valid-payment-values? @payment-values))
             :label "Lähetä maksatukset"
-            :style button-style
+            :style theme/button
             :on-click
               (fn [_]
                 (go (let [applications-to-send
