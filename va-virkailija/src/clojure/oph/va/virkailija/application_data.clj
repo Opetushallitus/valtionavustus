@@ -29,5 +29,5 @@
   [id]
   (convert-to-dash-keys
     (last
-      (exec :form-db virkailija-queries/get-application-payments
+      (exec :form-db virkailija-queries/get-application-payment
             {:application_id id}))))
