@@ -36,16 +36,23 @@
     :return virkailija-schema/Payment
     :summary "Create new payment for application. Payment will be sent to Rondo
              and stored to database."
-    (let [payment (payments-data/create-payment payment-values)
-          filename (format "payment-%d-%d.xml"
-                           (:id payment) (System/currentTimeMillis))]
-      (rondo-service/send-to-rondo!
-       {:payment (payments-data/get-payment (:id payment))
-        :application (application-data/get-application
-                      (:application-id payment))
-        :filename filename})
-      (ok (payments-data/update-payment
-           (assoc payment :state 2 :filename filename))))))
+      (let [payment
+            (or
+              (application-data/get-application-payment
+                (:application-id payment-values))
+              (payments-data/create-payment payment-values))
+            filename (format "payment-%d-%d.xml"
+                             (:id payment) (System/currentTimeMillis))]
+        (when (= (:state payment) 2)
+          (throw (Exception.
+                   "Application already has a payment sent to Rondo")))
+        (rondo-service/send-to-rondo!
+         {:payment (payments-data/get-payment (:id payment))
+          :application (application-data/get-application
+                        (:application-id payment))
+          :filename filename})
+        (ok (payments-data/update-payment
+             (assoc payment :state 2 :filename filename))))))
 
 (compojure-api/defroutes routes
   "payment routes"
