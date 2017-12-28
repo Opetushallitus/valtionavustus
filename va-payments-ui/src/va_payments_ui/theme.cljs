@@ -19,4 +19,6 @@
 
 (def link {:color "#159ecb" :font-size "font-size: 1.25rem"})
 
+(def active-link (assoc link :color "#2a2a2a"))
+
 (def text-field-error {:border-color "#f44336"})
