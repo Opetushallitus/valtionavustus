@@ -185,15 +185,19 @@
             :style button-style,
             :on-click
               (fn [_]
-                (go (let [nin-result
+                (go (let [applications-to-send
+                          (filter #(< (get % :payment-state) 2)
+                                  current-applications)
+                          nin-result
                             (<! (connection/get-next-installment-number))]
                       (if (:success nin-result)
                         (let [values (conj @payment-values (:body nin-result))]
-                          (doseq [application current-applications]
-                            (let [payment-result (<! (connection/create-payment
-                                                       (assoc values
-                                                         :application-id
-                                                           (:id application))))]
+                          (doseq [application applications-to-send]
+                            (let [payment-result
+                                  (<! (connection/create-payment
+                                        (assoc values
+                                               :application-id
+                                               (:id application))))]
                               (when-not (:success payment-result)
                                 (show-message!
                                   "Maksatuksen lähetyksessä ongelma"))))
