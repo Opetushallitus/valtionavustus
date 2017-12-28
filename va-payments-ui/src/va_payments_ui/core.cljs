@@ -161,7 +161,9 @@
       [(fn []
          [:div
           [:div [:hr] (project-info @selected-grant) [:hr]
-           [:div [:h3 "Maksatuksen tiedot"]
+           [:div (when (some #(= (get % :payment-state) 2) current-applications)
+                   {:style {:opacity 0.2 :pointer-events "none"}})
+            [:h3 "Maksatuksen tiedot"]
             (financing/payment-emails @payment-values
                                       #(swap! payment-values assoc %1 %2))
             (financing/payment-fields @payment-values
