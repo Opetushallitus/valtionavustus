@@ -27,7 +27,7 @@
    [ui/table-row-column (:organization-name application)]
    [ui/table-row-column
     [:a
-     {:target "_blank",
+     {:target "_blank"
       :href (format "/avustushaku/%d/hakemus/%d/arviointi/"
                     (:grant-id application)
                     (:id application))} (:project-name application)]]
@@ -45,11 +45,11 @@
   [applications on-info-clicked]
   [:div
    [ui/table
-    {:fixed-header true,
-     :height "250px",
-     :selectable false,
+    {:fixed-header true
+     :height "250px"
+     :selectable false
      :style (:table material-styles)}
-    [ui/table-header {:adjust-for-checkbox false, :display-select-all false}
+    [ui/table-header {:adjust-for-checkbox false :display-select-all false}
      [ui/table-row [ui/table-header-column "Tila"]
       [ui/table-header-column "Toimittajan nimi"]
       [ui/table-header-column "Hanke"]

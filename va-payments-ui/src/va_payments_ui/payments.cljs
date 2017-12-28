@@ -10,8 +10,8 @@
 
 (defn map-to-new-payment
   [application]
-  {:application-id (:id application),
-   :application-version (:version application),
+  {:application-id (:id application)
+   :application-version (:version application)
    :state 0})
 
 (defn create-payments
@@ -24,9 +24,9 @@
 
 (defn map-to-payment
   [application]
-  {:id (:payment-id application),
-   :version (:payment-version application),
-   :application-id (:id application),
+  {:id (:payment-id application)
+   :version (:payment-version application)
+   :application-id (:id application)
    :application-version (:version application)})
 
 (defn get-payment-data
@@ -65,8 +65,8 @@
 
 (defn render-history
   [payments]
-  [ui/table {:fixed-header true, :selectable false}
-   [ui/table-header {:adjust-for-checkbox false, :display-select-all false}
+  [ui/table {:fixed-header true :selectable false}
+   [ui/table-header {:adjust-for-checkbox false :display-select-all false}
     [ui/table-row [ui/table-header-column "Aika"]
      [ui/table-header-column "Versio"] [ui/table-header-column "Tila"]
      [ui/table-header-column "Laskun päivä"] [ui/table-header-column "Eräpäivä"]
@@ -82,8 +82,8 @@
   (let [selected-values (select-keys payment [:id :version :state])]
     (merge application
            (clojure.set/rename-keys selected-values
-                                    {:id :payment-id,
-                                     :version :payment-version,
+                                    {:id :payment-id
+                                     :version :payment-version
                                      :state :payment-state}))))
 
 (defn find-application-payment

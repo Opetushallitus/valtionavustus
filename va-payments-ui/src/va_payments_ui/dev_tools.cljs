@@ -12,7 +12,6 @@
 (defn post-data
   [path data]
   "Function for testing data connection."
-  (go
-    (let [response
-            (<! (http/post path {:with-credentials? true, :json-params data}))]
-      (println response))))
+  (go (let [response
+              (<! (http/post path {:with-credentials? true :json-params data}))]
+        (println response))))

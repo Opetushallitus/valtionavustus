@@ -52,22 +52,22 @@
 (defn create-payment
   [values]
   (http/post (format "/%s/payments/" api-path)
-             {:json-params values, :with-credentials? true}))
+             {:json-params values :with-credentials? true}))
 
 (defn update-payment
   [payment]
   (http/put (format "/%s/payments/%d/" api-path (:id payment))
-            {:json-params payment, :with-credentials? true}))
+            {:json-params payment :with-credentials? true}))
 
 (defn create-grant-payments
   [id payments]
   (http/post (str "/api/avustushaku/" id "/payments")
-             {:json-params payments, :with-credentials? true}))
+             {:json-params payments :with-credentials? true}))
 
 (defn send-payments-email
   [id]
   (http/post (format "/api/avustushaku/%d/payments-email/" id)
-             {:json-params {}, :with-credentials? true}))
+             {:json-params {} :with-credentials? true}))
 
 (defn get-payment-history
   [id]

@@ -28,13 +28,13 @@
 
 (defonce user-info (r/atom {}))
 
-(defonce snackbar (r/atom {:open false, :message ""}))
+(defonce snackbar (r/atom {:open false :message ""}))
 
 (defonce dialog (r/atom {:open false}))
 
 (defonce delete-payments? (r/atom false))
 
-(defn show-message! [message] (reset! snackbar {:open true, :message message}))
+(defn show-message! [message] (reset! snackbar {:open true :message message}))
 
 (defn show-error-message!
   [code text]
@@ -63,12 +63,12 @@
 (defn top-links
   [grant-id]
   [:div {:class "top-links"}
-   [:a {:href (str "/avustushaku/" grant-id), :style (:a general-styles)}
+   [:a {:href (str "/avustushaku/" grant-id) :style (:a general-styles)}
     "Hakemusten arviointi"] [:a {:href "/admin/"} "Hakujen hallinta"]
    [:a {:href "/payments"} "Maksatusten hallinta"]
    [:div {:class "logout-button"}
     [ui/flat-button
-     {:label "Kirjaudu ulos", :on-click #(redirect-to! "/login/logout")}]]])
+     {:label "Kirjaudu ulos" :on-click #(redirect-to! "/login/logout")}]]])
 
 (defn show-dialog! [content] (swap! dialog assoc :open true :content content))
 
@@ -76,11 +76,11 @@
   []
   [:div [:hr]
    (when @delete-payments?
-     [ui/grid-list {:cols 6, :cell-height "auto"}
+     [ui/grid-list {:cols 6 :cell-height "auto"}
       [ui/raised-button
-       {:primary true,
-        :label "Poista maksatukset",
-        :style (:raised-button material-styles),
+       {:primary true
+        :label "Poista maksatukset"
+        :style (:raised-button material-styles)
         :on-click
           (fn []
             (go (let [grant-id (:id @selected-grant)
@@ -118,15 +118,15 @@
       [(fn []
          [:div
           [ui/text-field
-           {:floating-label-text "Hakujen suodatus",
-            :value @filter-str,
+           {:floating-label-text "Hakujen suodatus"
+            :value @filter-str
             :on-change #(reset! filter-str (.-value (.-target %)))}]
           (let [filtered-grants (filterv #(grant-matches? % @filter-str)
                                   @grants)]
             (grants-table
-              {:grants filtered-grants,
+              {:grants filtered-grants
                :value (find-index-of filtered-grants
-                                     #(= (:id %) (:id @selected-grant))),
+                                     #(= (:id %) (:id @selected-grant)))
                :on-change
                  (fn [row]
                    (do
@@ -148,21 +148,22 @@
                                "Virhe maksatusten latauksessa")))))))}))])])
     (let [current-applications (-> @applications
                                    (payments/combine @payments))
-          payment-values (r/atom {:currency "EUR",
-                                  :payment-term "Z001",
-                                  :partner "",
-                                  :document-type "XA",
-                                  :organisation "6600",
-                                  :state 0,
-                                  :transaction-account "5000",
-                                  :due-date (js/Date.),
-                                  :invoice-date (js/Date.),
+          payment-values (r/atom {:currency "EUR"
+                                  :payment-term "Z001"
+                                  :partner ""
+                                  :document-type "XA"
+                                  :organisation "6600"
+                                  :state 0
+                                  :transaction-account "5000"
+                                  :due-date (js/Date.)
+                                  :invoice-date (js/Date.)
                                   :receipt-date (js/Date.)})]
       [(fn []
          [:div
           [:div [:hr] (project-info @selected-grant) [:hr]
-           [:div (when (some #(= (get % :payment-state) 2) current-applications)
-                   {:style {:opacity 0.2 :pointer-events "none"}})
+           [:div
+            (when (some #(= (get % :payment-state) 2) current-applications)
+              {:style {:opacity 0.2 :pointer-events "none"}})
             [:h3 "Maksatuksen tiedot"]
             (financing/payment-emails @payment-values
                                       #(swap! payment-values assoc %1 %2))
@@ -179,25 +180,24 @@
                                                    (:body result))))
                      (show-message! "Virhe historiatietojen latauksessa"))))))]
           [ui/raised-button
-           {:primary true,
-            :disabled (not (valid-payment-values? @payment-values)),
-            :label "Lähetä maksatukset",
-            :style button-style,
+           {:primary true
+            :disabled (not (valid-payment-values? @payment-values))
+            :label "Lähetä maksatukset"
+            :style button-style
             :on-click
               (fn [_]
                 (go (let [applications-to-send
-                          (filter #(< (get % :payment-state) 2)
-                                  current-applications)
+                            (filter #(< (get % :payment-state) 2)
+                              current-applications)
                           nin-result
                             (<! (connection/get-next-installment-number))]
                       (if (:success nin-result)
                         (let [values (conj @payment-values (:body nin-result))]
                           (doseq [application applications-to-send]
-                            (let [payment-result
-                                  (<! (connection/create-payment
-                                        (assoc values
-                                               :application-id
-                                               (:id application))))]
+                            (let [payment-result (<! (connection/create-payment
+                                                       (assoc values
+                                                         :application-id
+                                                           (:id application))))]
                               (when-not (:success payment-result)
                                 (show-message!
                                   "Maksatuksen lähetyksessä ongelma"))))
@@ -210,15 +210,15 @@
                         (show-message! "Maksatuserän haussa ongelma")))))}]
           [ui/snackbar
            (conj @snackbar
-                 {:auto-hide-duration 4000,
+                 {:auto-hide-duration 4000
                   :on-request-close #(reset! snackbar
-                                             {:open false, :message ""})})]])])
+                                             {:open false :message ""})})]])])
     (render-admin-tools)
     [ui/dialog
-     {:on-request-close #(swap! dialog assoc :open false),
-      :children (:content @dialog),
-      :open (:open @dialog),
-      :content-style {:width "95%", :max-width "none"}}]]])
+     {:on-request-close #(swap! dialog assoc :open false)
+      :children (:content @dialog)
+      :open (:open @dialog)
+      :content-style {:width "95%" :max-width "none"}}]]])
 
 (defn mount-root [] (r/render [home-page] (.getElementById js/document "app")))
 
