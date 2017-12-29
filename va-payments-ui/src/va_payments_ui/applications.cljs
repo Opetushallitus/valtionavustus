@@ -23,7 +23,7 @@
 (defn render-application
   [i application on-info-clicked]
   [ui/table-row {:key i}
-   [ui/table-row-column (state-to-str (:payment-state application))]
+   [ui/table-row-column (state-to-str (get-in application [:payment :state]))]
    [ui/table-row-column (:organization-name application)]
    [ui/table-row-column
     [:a
