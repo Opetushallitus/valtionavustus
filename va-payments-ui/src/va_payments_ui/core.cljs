@@ -17,8 +17,6 @@
              [toggle remove-nil format no-nils? not-empty?]]
             [va-payments-ui.theme :as theme]))
 
-(def week-in-ms (* 1000 60 60 24 7))
-
 (defonce grants (r/atom []))
 
 (defonce applications (r/atom []))
@@ -165,7 +163,7 @@
                      :organisation "6600"
                      :state 0
                      :transaction-account "5000"
-                     :due-date (js/Date. (+ (.now js/Date) week-in-ms))
+                     :due-date (financing/now-plus financing/week-in-ms)
                      :invoice-date (js/Date.)
                      :receipt-date (js/Date.)})]
       [(fn []
