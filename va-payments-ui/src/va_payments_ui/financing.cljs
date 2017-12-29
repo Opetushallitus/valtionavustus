@@ -13,7 +13,11 @@
 (def re-email
   #"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
-(defn now-plus [milliseconds] (js/Date. (+ (.getTime (js/Date.)) milliseconds)))
+(defn now-plus
+  [milliseconds]
+  (-> (.now js/Date)
+      (+ milliseconds)
+      (js/Date.)))
 
 (defn valid-email? [v] (and (not-empty? v) (not-nil? (re-matches re-email v))))
 
