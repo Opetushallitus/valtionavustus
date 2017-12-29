@@ -49,9 +49,9 @@
       (when (= (:state payment) 2)
         (throw (Exception. "Application already has a payment sent to Rondo")))
       (rondo-service/send-to-rondo!
-        {:payment (payments-data/get-payment (:id payment)),
+        {:payment (payments-data/get-payment (:id payment))
          :application (application-data/get-application (:application-id
-                                                          payment)),
+                                                          payment))
          :filename filename})
       (ok (payments-data/update-payment (assoc payment
                                           :state 2

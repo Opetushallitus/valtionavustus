@@ -59,11 +59,6 @@
   (http/put (format "/%s/payments/%d/" api-path (:id payment))
             {:json-params payment :with-credentials? true}))
 
-(defn create-grant-payments
-  [id payments]
-  (http/post (str "/api/avustushaku/" id "/payments")
-             {:json-params payments :with-credentials? true}))
-
 (defn send-payments-email
   [id]
   (http/post (format "/api/avustushaku/%d/payments-email/" id)

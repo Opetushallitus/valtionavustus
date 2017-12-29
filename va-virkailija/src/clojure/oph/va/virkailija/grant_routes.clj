@@ -18,16 +18,6 @@
           (grant-data/get-resolved-grants-with-content)
           (grant-data/get-grants)))))
 
-(defn- get-grant []
-  (compojure-api/GET
-    "/:grant-id/" [grant-id :as request]
-    :path-params [grant-id :- Long]
-    :return virkailija-schema/Grant
-    :summary "Return basic info of single grant"
-    (if-let [response (grant-data/get-grant grant-id)]
-      (ok response)
-      (not-found))))
-
 (defn- get-grant-applications []
   (compojure-api/GET
     "/:grant-id/applications/" [grant-id :as request]
@@ -60,7 +50,6 @@
 
 (compojure-api/defroutes routes
   "grant routes"
-  (get-grant)
   (get-grants)
   (get-grant-applications)
   (get-grant-payments)
