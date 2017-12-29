@@ -77,15 +77,6 @@
    [ui/table-body {:display-row-checkbox false}
     (doall (map-indexed render-history-item payments))]])
 
-(defn combine-application-payment
-  [application payment]
-  (let [selected-values (select-keys payment [:id :version :state])]
-    (merge application
-           (clojure.set/rename-keys selected-values
-                                    {:id :payment-id
-                                     :version :payment-version
-                                     :state :payment-state}))))
-
 (defn find-application-payment
   [payments application-id application-version]
   (first (filter #(and (= (:application-version %) application-version)
@@ -94,7 +85,6 @@
 
 (defn combine
   [applications payments]
-  (mapv #(combine-application-payment
-           %
-           (find-application-payment payments (:id %) (:version %)))
+  (mapv
+    #(assoc % :payment (find-application-payment payments (:id %) (:version %)))
     applications))
