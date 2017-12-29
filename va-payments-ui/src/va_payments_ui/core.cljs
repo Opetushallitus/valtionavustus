@@ -182,14 +182,16 @@
                                       #(swap! payment-values assoc %1 %2))]
            [:h3 "Myönteiset päätökset"]
            (applications/applications-table
-             current-applications
-             (fn [id]
-               (go
-                 (let [result (<! (connection/get-payment-history id))]
-                   (if (:success result)
-                     (show-dialog! (r/as-element (payments/render-history
-                                                   (:body result))))
-                     (show-message! "Virhe historiatietojen latauksessa"))))))]
+             {:applications current-applications
+              :on-info-clicked
+                (fn [id]
+                  (go
+                    (let [result (<! (connection/get-payment-history id))]
+                      (if (:success result)
+                        (show-dialog! (r/as-element (payments/render-history
+                                                      (:body result))))
+                        (show-message! "Virhe historiatietojen latauksessa")))))
+              :is-admin? (is-admin? @user-info)})]
           [ui/raised-button
            {:primary true
             :disabled (not (valid-payment-values? @payment-values))

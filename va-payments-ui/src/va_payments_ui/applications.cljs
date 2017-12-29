@@ -43,7 +43,7 @@
        [ic/action-info-outline]])]])
 
 (defn applications-table
-  [applications on-info-clicked is-admin?]
+  [{:keys [applications on-info-clicked is-admin?]}]
   [:div
    [ui/table
     {:fixed-header true
