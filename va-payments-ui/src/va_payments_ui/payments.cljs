@@ -53,6 +53,6 @@
 
 (defn combine
   [applications payments]
-  (mapv
-    #(assoc % :payment (find-application-payment payments (:id %) (:version %)))
+  (mapv #(assoc %
+          :payment (find-application-payment payments (:id %) (:version %)))
     applications))
