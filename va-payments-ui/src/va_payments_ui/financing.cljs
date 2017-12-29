@@ -2,7 +2,6 @@
   (:require [reagent.core :as r]
             [cljsjs.material-ui]
             [cljs-react-material-ui.reagent :as ui]
-            [va-payments-ui.payments :refer [get-payment-data]]
             [va-payments-ui.theme :as theme]
             [va-payments-ui.utils :refer
              [remove-nil any-nil? not-nil? not-empty?]]))
