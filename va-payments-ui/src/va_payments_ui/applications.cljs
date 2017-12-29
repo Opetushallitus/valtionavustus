@@ -21,7 +21,7 @@
     "Odottaa maksatusta"))
 
 (defn render-application
-  [i application on-info-clicked]
+  [i application on-info-clicked is-admin?]
   [ui/table-row {:key i}
    [ui/table-row-column (state-to-str (get-in application [:payment :state]))]
    [ui/table-row-column (:organization-name application)]
@@ -38,11 +38,12 @@
    [ui/table-row-column (get-in application [:arvio :takp-account])]
    [ui/table-row-column (get-in application [:arvio :amount])]
    [ui/table-row-column
-    [ui/icon-button {:on-click #(on-info-clicked (:id application))}
-     [ic/action-info-outline]]]])
+    (when is-admin?
+      [ui/icon-button {:on-click #(on-info-clicked (:id application))}
+       [ic/action-info-outline]])]])
 
 (defn applications-table
-  [applications on-info-clicked]
+  [{:keys [applications on-info-clicked is-admin?]}]
   [:div
    [ui/table
     {:fixed-header true
@@ -57,7 +58,7 @@
       [ui/table-header-column "Pitkäviite"] [ui/table-header-column "LKP-tili"]
       [ui/table-header-column "TaKp-tili"]
       [ui/table-header-column "Tiliöintisumma"]
-      [ui/table-header-column "Lisätietoja"]]]
+      (when is-admin? [ui/table-header-column "Lisätietoja"])]]
     [ui/table-body {:display-row-checkbox false}
-     (doall (map-indexed #(render-application %1 %2 on-info-clicked)
+     (doall (map-indexed #(render-application %1 %2 on-info-clicked is-admin?)
                          applications))]]])

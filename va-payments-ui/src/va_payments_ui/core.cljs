@@ -14,7 +14,7 @@
             [va-payments-ui.grants :refer [grants-table project-info]]
             [va-payments-ui.financing :as financing]
             [va-payments-ui.utils :refer
-             [toggle remove-nil format no-nils? not-empty?]]
+             [toggle remove-nil format no-nils? not-empty? not-nil?]]
             [va-payments-ui.theme :as theme]))
 
 (defonce grants (r/atom []))
@@ -82,23 +82,22 @@
 (defn render-admin-tools
   []
   [:div [:hr]
-   (when @delete-payments?
-     [ui/grid-list {:cols 6 :cell-height "auto"}
-      [ui/raised-button
-       {:primary true
-        :label "Poista maksatukset"
-        :style theme/button
-        :on-click
-          (fn []
-            (go (let [grant-id (:id @selected-grant)
-                      response (<! (connection/delete-grant-payments grant-id))]
-                  (if (:success response)
-                    (let [download-response (<! (connection/get-grant-payments
-                                                  grant-id))]
-                      (if (:success download-response)
-                        (reset! payments (:body download-response))
-                        (show-message! "Virhe tietojen latauksessa")))
-                    (show-message! "Virhe maksatusten poistossa")))))}]])])
+   [ui/grid-list {:cols 6 :cell-height "auto"}
+    [ui/raised-button
+     {:primary true
+      :label "Poista maksatukset"
+      :style theme/button
+      :on-click (fn []
+                  (go (let [grant-id (:id @selected-grant)
+                            response (<! (connection/delete-grant-payments
+                                           grant-id))]
+                        (if (:success response)
+                          (let [download-response
+                                  (<! (connection/get-grant-payments grant-id))]
+                            (if (:success download-response)
+                              (reset! payments (:body download-response))
+                              (show-message! "Virhe tietojen latauksessa")))
+                          (show-message! "Virhe maksatusten poistossa")))))}]]])
 
 (defn valid-payment-values?
   [values]
@@ -115,6 +114,10 @@
     (let [s-lower (lower-case s)]
       (or (includes? (:register-number g) s-lower)
           (includes? (lower-case (get-in g [:content :name :fi])) s-lower)))))
+
+(defn is-admin?
+  [user]
+  (not-nil? (some #(= % "va-admin") (get user :privileges))))
 
 (defn home-page
   []
@@ -179,14 +182,16 @@
                                       #(swap! payment-values assoc %1 %2))]
            [:h3 "Myönteiset päätökset"]
            (applications/applications-table
-             current-applications
-             (fn [id]
-               (go
-                 (let [result (<! (connection/get-payment-history id))]
-                   (if (:success result)
-                     (show-dialog! (r/as-element (payments/render-history
-                                                   (:body result))))
-                     (show-message! "Virhe historiatietojen latauksessa"))))))]
+             {:applications current-applications
+              :on-info-clicked
+                (fn [id]
+                  (go
+                    (let [result (<! (connection/get-payment-history id))]
+                      (if (:success result)
+                        (show-dialog! (r/as-element (payments/render-history
+                                                      (:body result))))
+                        (show-message! "Virhe historiatietojen latauksessa")))))
+              :is-admin? (is-admin? @user-info)})]
           [ui/raised-button
            {:primary true
             :disabled (not (valid-payment-values? @payment-values))
@@ -221,7 +226,7 @@
                  {:auto-hide-duration 4000
                   :on-request-close #(reset! snackbar
                                              {:open false :message ""})})]])])
-    (render-admin-tools)
+    (when (and @delete-payments? (is-admin? @user-info)) (render-admin-tools))
     [ui/dialog
      {:on-request-close #(swap! dialog assoc :open false)
       :children (:content @dialog)
