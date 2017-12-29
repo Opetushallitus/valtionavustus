@@ -8,38 +8,6 @@
 (def date-formatter (tf/formatter "dd.MM.yyyy"))
 (def date-time-formatter (tf/formatter "dd.MM.yyyy HH:mm"))
 
-(defn map-to-new-payment
-  [application]
-  {:application-id (:id application)
-   :application-version (:version application)
-   :state 0})
-
-(defn create-payments
-  [grant applications payment-values]
-  (let [selected-values (select-keys payment-values
-                                     [:document-type :transaction-account
-                                      :currency :partner :inspector-email
-                                      :acceptor-email])]
-    (mapv #(merge (map-to-new-payment %) selected-values) applications)))
-
-(defn map-to-payment
-  [application]
-  {:id (:payment-id application)
-   :version (:payment-version application)
-   :application-id (:id application)
-   :application-version (:version application)})
-
-(defn get-payment-data
-  [applications payment-values]
-  (let [selected-values (merge (select-keys
-                                 payment-values
-                                 [:installment-number :organisation
-                                  :document-type :invoice-date :due-date
-                                  :receipt-date :transaction-account :currency
-                                  :partner :inspector-email :acceptor-email])
-                               {:state (:payment-state payment-values)})]
-    (mapv #(merge (map-to-payment %) selected-values) applications)))
-
 (defn to-simple-date [d] (tf/unparse-local date-formatter (tf/parse d)))
 
 (defn to-simple-date-time
@@ -77,15 +45,6 @@
    [ui/table-body {:display-row-checkbox false}
     (doall (map-indexed render-history-item payments))]])
 
-(defn combine-application-payment
-  [application payment]
-  (let [selected-values (select-keys payment [:id :version :state])]
-    (merge application
-           (clojure.set/rename-keys selected-values
-                                    {:id :payment-id
-                                     :version :payment-version
-                                     :state :payment-state}))))
-
 (defn find-application-payment
   [payments application-id application-version]
   (first (filter #(and (= (:application-version %) application-version)
@@ -94,7 +53,6 @@
 
 (defn combine
   [applications payments]
-  (mapv #(combine-application-payment
-           %
-           (find-application-payment payments (:id %) (:version %)))
+  (mapv #(assoc %
+          :payment (find-application-payment payments (:id %) (:version %)))
     applications))
