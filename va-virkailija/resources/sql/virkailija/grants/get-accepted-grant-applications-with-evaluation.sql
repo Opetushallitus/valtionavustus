@@ -11,8 +11,9 @@ JOIN
     ON (h.id = a.hakemus_id)
 WHERE
   h.avustushaku = :grant_id
-  AND h.status != 'cancelled'
+  AND h.status != 'draft'
   AND h.status != 'new'
+  AND a.status = 'accepted'
   AND h.version_closed IS NULL
   AND h.hakemus_type = 'hakemus'
 ORDER BY
