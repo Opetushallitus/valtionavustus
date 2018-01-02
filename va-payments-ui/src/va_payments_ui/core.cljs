@@ -124,7 +124,7 @@
 (add-watch
   selected-grant
   "s"
-  (fn [k reference old-state new-state]
+  (fn [_ reference __ new-state]
     (when new-state
       (go (let [grant-id (:id new-state)
                 applications-response (<! (connection/get-grant-applications
