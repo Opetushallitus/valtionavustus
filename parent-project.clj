@@ -92,7 +92,8 @@
                          [figwheel-sidecar "0.5.13"]
                          [org.clojure/tools.nrepl "0.2.13"]
                          [com.cemerick/piggieback "0.2.2"]
-                         [com.google.guava/guava "23.6-jre"]
+                         [com.google.guava/guava "23.6-jre"
+                          :exclusions [com.google.code.findbugs/jsr305]]
 
                          ;; other
                          [clj-time "0.14.0"]
