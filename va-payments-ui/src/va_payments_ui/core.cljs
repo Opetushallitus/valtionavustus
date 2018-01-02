@@ -143,10 +143,14 @@
    {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
    [:div (top-links (get @selected-grant :id 0) (router/get-current-path)) [:hr]
     [:div
-     [ui/text-field
-      {:floating-label-text "Hakujen suodatus"
-       :value @grant-filter
-       :on-change #(reset! grant-filter (.-value (.-target %)))}]
+     [:div
+      [ui/text-field
+       {:floating-label-text "Hakujen suodatus"
+        :value @grant-filter
+        :on-change #(reset! grant-filter (.-value (.-target %)))}]
+      [ui/toggle
+       {:label "Piilota vanhat haut" :default-toggled true
+        :style {:width "200px"}}]]
      (let [filtered-grants (filterv #(grant-matches? % @grant-filter) @grants)]
        (grants-table
          {:grants filtered-grants
