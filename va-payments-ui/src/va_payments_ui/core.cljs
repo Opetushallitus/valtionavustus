@@ -33,6 +33,8 @@
 
 (defonce delete-payments? (r/atom false))
 
+(defonce grant-filter (r/atom ""))
+
 (defn show-message! [message] (reset! snackbar {:open true :message message}))
 
 (defn show-error-message!
@@ -119,43 +121,39 @@
   [user]
   (not-nil? (some #(= % "va-admin") (get user :privileges))))
 
+(add-watch
+  selected-grant
+  "s"
+  (fn [_ reference __ new-state]
+    (when new-state
+      (go (let [grant-id (:id new-state)
+                applications-response (<! (connection/get-grant-applications
+                                            grant-id))
+                payments-response (<! (connection/get-grant-payments grant-id))]
+            (if (:success applications-response)
+              (reset! applications (:body applications-response))
+              (show-message! "Virhe hakemusten latauksessa"))
+            (if (:success payments-response)
+              (reset! payments (:body payments-response))
+              (show-message! "Virhe maksatusten latauksessa")))))))
+
 (defn home-page
   []
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
    [:div (top-links (get @selected-grant :id 0) (router/get-current-path)) [:hr]
-    (let [filter-str (r/atom "")]
-      [(fn []
-         [:div
-          [ui/text-field
-           {:floating-label-text "Hakujen suodatus"
-            :value @filter-str
-            :on-change #(reset! filter-str (.-value (.-target %)))}]
-          (let [filtered-grants (filterv #(grant-matches? % @filter-str)
-                                  @grants)]
-            (grants-table
-              {:grants filtered-grants
-               :value (find-index-of filtered-grants
-                                     #(= (:id %) (:id @selected-grant)))
-               :on-change
-                 (fn [row]
-                   (do
-                     (reset! selected-grant (get filtered-grants row))
-                     (when @selected-grant
-                       (go
-                         (let [grant-id (:id @selected-grant)
-                               applications-response
-                                 (<! (connection/get-grant-applications
-                                       grant-id))
-                               payments-response
-                                 (<! (connection/get-grant-payments grant-id))]
-                           (if (:success applications-response)
-                             (reset! applications (:body applications-response))
-                             (show-message! "Virhe hakemusten latauksessa"))
-                           (if (:success payments-response)
-                             (reset! payments (:body payments-response))
-                             (show-message!
-                               "Virhe maksatusten latauksessa")))))))}))])])
+    [:div
+     [ui/text-field
+      {:floating-label-text "Hakujen suodatus"
+       :value @grant-filter
+       :on-change #(reset! grant-filter (.-value (.-target %)))}]
+     (let [filtered-grants (filterv #(grant-matches? % @grant-filter) @grants)]
+       (grants-table
+         {:grants filtered-grants
+          :value (find-index-of filtered-grants
+                                #(= (:id %) (:id @selected-grant)))
+          :on-change (fn [row]
+                       (reset! selected-grant (get filtered-grants row)))}))]
     (let [current-applications (-> @applications
                                    (payments/combine @payments))
           payment-values
