@@ -13,20 +13,20 @@
                              :license
                              :min-lein-version
                              :repositories
-;                             :managed-dependencies
-;                             :pedantic?
+                             :managed-dependencies
+                             ;:pedantic?
                              :plugins
                              :uberjar-exclusions
                              :auto-clean
                              :javac-options]}
 
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.946"]
-                 [reagent "0.8.0-alpha2"]
-                 [cljsjs/react-dom "15.6.2-1"]
-                 [cljs-react-material-ui "0.2.48"]
-                 [cljs-http "0.1.43"]
-                 [com.andrewmcveigh/cljs-time "0.5.2"]]
+  :dependencies [[org.clojure/clojure]
+                 [org.clojure/clojurescript]
+                 [reagent]
+                 [cljsjs/react-dom]
+                 [cljs-react-material-ui]
+                 [cljs-http]
+                 [com.andrewmcveigh/cljs-time]]
 
   :clean-targets ^{:protect false}
   [:target-path
@@ -77,12 +77,10 @@
 
   :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]}
 
-  :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.2.1"]
-                                  [binaryage/devtools "0.9.4"]
-                                  [figwheel-sidecar "0.5.13"]
-                                  [org.clojure/tools.nrepl "0.2.13"]
-                                  [com.cemerick/piggieback "0.2.2"]
-                                  [compojure "1.6.0"]
-                                  [ring "1.6.2"]
-                                  [ring/ring-defaults "0.3.1"]]}}
+  :profiles {:dev {:dependencies [[com.cemerick/piggieback]
+                                  [binaryage/devtools]
+                                  [figwheel-sidecar]
+                                  [org.clojure/tools.nrepl]
+                                  [com.cemerick/piggieback]
+                                  [com.google.guava/guava]]}}
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]})

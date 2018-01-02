@@ -78,6 +78,22 @@
                          [org.http4s/http4s-client_2.11 "0.16.5"]
                          [org.http4s/http4s-dsl_2.11 "0.16.5"]
 
+                         ;; ClojureScript
+                         [org.clojure/clojurescript "1.9.946"]
+                         [reagent "0.8.0-alpha2"]
+                         [cljsjs/react-dom "15.6.2-1"]
+                         [cljs-react-material-ui "0.2.48"]
+                         [cljs-http "0.1.43"]
+                         [com.andrewmcveigh/cljs-time "0.5.2"]
+
+                         ;; CLJS Dev
+                         [com.cemerick/piggieback "0.2.1"]
+                         [binaryage/devtools "0.9.4"]
+                         [figwheel-sidecar "0.5.13"]
+                         [org.clojure/tools.nrepl "0.2.13"]
+                         [com.cemerick/piggieback "0.2.2"]
+                         [com.google.guava/guava "23.6-jre"]
+
                          ;; other
                          [clj-time "0.14.0"]
                          [com.cemerick/url "0.1.1"]
