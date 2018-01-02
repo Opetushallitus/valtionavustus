@@ -77,10 +77,10 @@
 
   :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]}
 
-  :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.2.1"]
-                                  [binaryage/devtools "0.9.4"]
-                                  [figwheel-sidecar "0.5.13"]
-                                  [org.clojure/tools.nrepl "0.2.13"]
-                                  [com.cemerick/piggieback "0.2.2"]
-                                  [com.google.guava/guava "23.6-jre"]]}}
+  :profiles {:dev {:dependencies [[com.cemerick/piggieback]
+                                  [binaryage/devtools]
+                                  [figwheel-sidecar]
+                                  [org.clojure/tools.nrepl]
+                                  [com.cemerick/piggieback]
+                                  [com.google.guava/guava]]}}
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]})
