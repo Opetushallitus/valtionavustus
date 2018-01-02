@@ -14,7 +14,7 @@
                              :min-lein-version
                              :repositories
 ;                             :managed-dependencies
-;                             :pedantic?
+                             :pedantic?
                              :plugins
                              :uberjar-exclusions
                              :auto-clean
