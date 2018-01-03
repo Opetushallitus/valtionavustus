@@ -1,22 +1,22 @@
 (ns va-payments-ui.core
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [cljs.core.async :refer [<!]]
-            [va-payments-ui.connection :as connection]
-            [reagent.core :as r]
-            [cljsjs.material-ui]
-            [cljs-react-material-ui.core :refer [get-mui-theme color]]
-            [cljs-react-material-ui.reagent :as ui]
-            [va-payments-ui.payments-ui :as payments-ui]
-            [va-payments-ui.applications :as applications]
-            [va-payments-ui.connection :as connection]
-            [va-payments-ui.router :as router]
-            [va-payments-ui.grants-ui :refer [grants-table project-info]]
-            [va-payments-ui.grants :refer
-             [grant-matches? remove-old convert-dates]]
-            [va-payments-ui.financing :as financing]
-            [va-payments-ui.utils :refer
-             [toggle remove-nil format no-nils? not-empty? not-nil?]]
-            [va-payments-ui.theme :as theme]))
+  (:require
+    [cljs.core.async :refer [<!]]
+    [va-payments-ui.connection :as connection]
+    [reagent.core :as r]
+    [cljsjs.material-ui]
+    [cljs-react-material-ui.core :refer [get-mui-theme color]]
+    [cljs-react-material-ui.reagent :as ui]
+    [va-payments-ui.payments-ui :as payments-ui]
+    [va-payments-ui.applications :as applications]
+    [va-payments-ui.connection :as connection]
+    [va-payments-ui.router :as router]
+    [va-payments-ui.grants-ui :refer [grants-table project-info]]
+    [va-payments-ui.grants :refer [grant-matches? remove-old convert-dates]]
+    [va-payments-ui.financing :as financing]
+    [va-payments-ui.utils :refer
+     [toggle remove-nil format no-nils? not-empty? not-nil? find-index-of]]
+    [va-payments-ui.theme :as theme]))
 
 (defonce grants (r/atom []))
 
@@ -46,11 +46,6 @@
 (defn redirect-to-login!
   []
   (router/redirect-to! connection/login-url-with-service))
-
-(defn find-index-of
-  ([col pred i m]
-   (if (>= i m) nil (if (pred (nth col i)) i (recur col pred (inc i) m))))
-  ([col pred] (find-index-of col pred 0 (count col))))
 
 (defn get-param-grant
   []

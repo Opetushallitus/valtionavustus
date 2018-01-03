@@ -41,5 +41,11 @@
 
 (defn remove-nil [m] (into {} (filter (comp some? val) m)))
 
-(defn update-all [xs ks f]
+(defn update-all
+  [xs ks f]
   (mapv (fn [x] (reduce #(update-in % [%2] f) x ks)) xs))
+
+(defn find-index-of
+  ([col pred i m]
+   (if (>= i m) nil (if (pred (nth col i)) i (recur col pred (inc i) m))))
+  ([col pred] (find-index-of col pred 0 (count col))))
