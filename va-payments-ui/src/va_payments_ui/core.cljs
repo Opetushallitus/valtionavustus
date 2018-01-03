@@ -33,7 +33,7 @@
 
 (defonce delete-payments? (r/atom false))
 
-(defonce grant-filter (r/atom ""))
+(defonce grant-filter (r/atom {:filter-str "" :filter-paid true}))
 
 (defn show-message! [message] (reset! snackbar {:open true :message message}))
 
@@ -146,12 +146,16 @@
      [:div
       [ui/text-field
        {:floating-label-text "Hakujen suodatus"
-        :value @grant-filter
-        :on-change #(reset! grant-filter (.-value (.-target %)))}]
+        :value (:filter-str @grant-filter)
+        :on-change
+        #(swap! grant-filter assoc :filter-str (.-value (.-target %)))}]
       [ui/toggle
-       {:label "Piilota vanhat haut" :default-toggled true
+       {:label "Piilota maksetut haut"
+        :toggled (:filter-paid @grant-filter)
+        :on-toggle #(swap! grant-filter assoc :filter-paid %2)
         :style {:width "200px"}}]]
-     (let [filtered-grants (filterv #(grant-matches? % @grant-filter) @grants)]
+     (let [filtered-grants
+           (filterv #(grant-matches? % (:filter-str @grant-filter)) @grants)]
        (grants-table
          {:grants filtered-grants
           :value (find-index-of filtered-grants
