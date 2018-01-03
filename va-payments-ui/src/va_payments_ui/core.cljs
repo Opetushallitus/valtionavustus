@@ -12,7 +12,7 @@
             [va-payments-ui.connection :as connection]
             [va-payments-ui.router :as router]
             [va-payments-ui.grants-ui :refer [grants-table project-info]]
-            [va-payments-ui.grant-utils :as grant-utils]
+            [va-payments-ui.grants :as grants]
             [va-payments-ui.financing :as financing]
             [va-payments-ui.utils :refer
              [toggle remove-nil format no-nils? not-empty? not-nil?]]
@@ -159,7 +159,7 @@
            (filterv #(grant-matches?
                        % (:filter-str @grant-filter))
                     (if (:filter-old @grant-filter)
-                      (grant-utils/remove-old @grants)
+                      (grants/remove-old @grants)
                       @grants))]
        (grants-table
          {:grants filtered-grants
@@ -168,7 +168,7 @@
           :on-change (fn [row]
                        (reset! selected-grant (get filtered-grants row)))}))]
     (let [current-applications (-> @applications
-                                   (payments/combine @payments))
+                                   (payments-ui/combine @payments))
           payment-values
             (r/atom {:currency "EUR"
                      :payment-term "Z001"
@@ -264,7 +264,7 @@
                   (if (:success grants-result)
                     (do
                       (reset! grants
-                              (grant-utils/convert-dates (:body grants-result)))
+                              (grants/convert-dates (:body grants-result)))
                       (reset! selected-grant
                               (if-let [grant-id (get-param-grant)]
                                 (first (filter #(= (:id %) grant-id) @grants))
