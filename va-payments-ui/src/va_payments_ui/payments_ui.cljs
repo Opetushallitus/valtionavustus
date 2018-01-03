@@ -2,17 +2,8 @@
   (:require [reagent.core :as r]
             [cljsjs.material-ui]
             [cljs-react-material-ui.reagent :as ui]
-            [cljs-time.format :as tf]
-            [va-payments-ui.applications :refer [state-to-str]]))
-
-(def date-formatter (tf/formatter "dd.MM.yyyy"))
-(def date-time-formatter (tf/formatter "dd.MM.yyyy HH:mm"))
-
-(defn to-simple-date [d] (tf/unparse-local date-formatter (tf/parse d)))
-
-(defn to-simple-date-time
-  [d]
-  (tf/unparse-local date-time-formatter (tf/parse d)))
+            [va-payments-ui.applications :refer [state-to-str]]
+            [va-payments-ui.utils :refer [to-simple-date-time to-simple-date]]))
 
 (defn render-history-item
   [i application]
