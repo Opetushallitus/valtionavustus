@@ -8,6 +8,7 @@
     [cljs-react-material-ui.core :refer [get-mui-theme color]]
     [cljs-react-material-ui.reagent :as ui]
     [va-payments-ui.payments-ui :as payments-ui]
+    [va-payments-ui.payments :as payments]
     [va-payments-ui.applications :as applications]
     [va-payments-ui.connection :as connection]
     [va-payments-ui.router :as router]
@@ -93,14 +94,6 @@
                               (show-message! "Virhe tietojen latauksessa")))
                           (show-message! "Virhe maksatusten poistossa")))))}]]])
 
-(defn valid-payment-values?
-  [values]
-  (and (no-nils? values
-                 [:transaction-account :due-date :invoice-date :payment-term
-                  :document-type :receipt-date])
-       (financing/valid-email? (:inspector-email values))
-       (financing/valid-email? (:acceptor-email values))))
-
 (defn is-admin?
   [user]
   (not-nil? (some #(= % "va-admin") (get user :privileges))))
@@ -185,7 +178,7 @@
               :is-admin? (is-admin? @user-info)})]
           [ui/raised-button
            {:primary true
-            :disabled (not (valid-payment-values? @payment-values))
+            :disabled (not (payments/valid-payment-values? @payment-values))
             :label "Lähetä maksatukset"
             :style theme/button
             :on-click
