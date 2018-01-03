@@ -1,6 +1,22 @@
 (ns va-payments-ui.utils
   (:require [goog.string :as gstring]
-            [goog.string.format]))
+            [goog.string.format]
+            [cljs-time.format :as tf]))
+
+(def re-email
+  #"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+
+(def date-formatter (tf/formatter "dd.MM.yyyy"))
+
+(def date-time-formatter (tf/formatter "dd.MM.yyyy HH:mm"))
+
+(defn to-simple-date
+  [d]
+  (if (empty? d) nil (tf/unparse-local date-formatter (tf/parse d))))
+
+(defn to-simple-date-time
+  [d]
+  (tf/unparse-local date-time-formatter (tf/parse d)))
 
 (defn not-nil? [v] (not (nil? v)))
 
@@ -40,3 +56,14 @@
 (defn toggle-in [c ks] (assoc-in c ks (not (get-in c ks))))
 
 (defn remove-nil [m] (into {} (filter (comp some? val) m)))
+
+(defn update-all
+  [xs ks f]
+  (mapv (fn [x] (reduce #(update-in % [%2] f) x ks)) xs))
+
+(defn find-index-of
+  ([col pred i m]
+   (if (>= i m) nil (if (pred (nth col i)) i (recur col pred (inc i) m))))
+  ([col pred] (find-index-of col pred 0 (count col))))
+
+(defn valid-email? [v] (and (not-empty? v) (not-nil? (re-matches re-email v))))

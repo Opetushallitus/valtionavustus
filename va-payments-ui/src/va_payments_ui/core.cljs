@@ -1,21 +1,23 @@
 (ns va-payments-ui.core
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [cljs.core.async :refer [<!]]
-            [clojure.string :refer [lower-case includes?]]
-            [va-payments-ui.connection :as connection]
-            [reagent.core :as r]
-            [cljsjs.material-ui]
-            [cljs-react-material-ui.core :refer [get-mui-theme color]]
-            [cljs-react-material-ui.reagent :as ui]
-            [va-payments-ui.payments :as payments]
-            [va-payments-ui.applications :as applications]
-            [va-payments-ui.connection :as connection]
-            [va-payments-ui.router :as router]
-            [va-payments-ui.grants :refer [grants-table project-info]]
-            [va-payments-ui.financing :as financing]
-            [va-payments-ui.utils :refer
-             [toggle remove-nil format no-nils? not-empty? not-nil?]]
-            [va-payments-ui.theme :as theme]))
+  (:require
+    [cljs.core.async :refer [<!]]
+    [va-payments-ui.connection :as connection]
+    [reagent.core :as r]
+    [cljsjs.material-ui]
+    [cljs-react-material-ui.core :refer [get-mui-theme color]]
+    [cljs-react-material-ui.reagent :as ui]
+    [va-payments-ui.payments-ui :as payments-ui]
+    [va-payments-ui.payments :as payments]
+    [va-payments-ui.applications :as applications]
+    [va-payments-ui.connection :as connection]
+    [va-payments-ui.router :as router]
+    [va-payments-ui.grants-ui :refer [grants-table project-info]]
+    [va-payments-ui.grants :refer [grant-matches? remove-old convert-dates]]
+    [va-payments-ui.financing :as financing]
+    [va-payments-ui.utils :refer
+     [toggle remove-nil format no-nils? not-empty? not-nil? find-index-of]]
+    [va-payments-ui.theme :as theme]))
 
 (defonce grants (r/atom []))
 
@@ -33,7 +35,7 @@
 
 (defonce delete-payments? (r/atom false))
 
-(defonce grant-filter (r/atom ""))
+(defonce grant-filter (r/atom {:filter-str "" :filter-old true}))
 
 (defn show-message! [message] (reset! snackbar {:open true :message message}))
 
@@ -42,19 +44,9 @@
   (show-message!
     (format "Virhe tietojen latauksessa. Virhe %s (%d)" text code)))
 
-(defn redirect-to!
-  [url]
-  (-> js/window
-      .-location
-      .-href
-      (set! url)))
-
-(defn redirect-to-login! [] (redirect-to! connection/login-url-with-service))
-
-(defn find-index-of
-  ([col pred i m]
-   (if (>= i m) nil (if (pred (nth col i)) i (recur col pred (inc i) m))))
-  ([col pred] (find-index-of col pred 0 (count col))))
+(defn redirect-to-login!
+  []
+  (router/redirect-to! connection/login-url-with-service))
 
 (defn get-param-grant
   []
@@ -77,7 +69,8 @@
                 (= current-path "/payments/"))
    [:div {:class "logout-button"}
     [ui/flat-button
-     {:label "Kirjaudu ulos" :on-click #(redirect-to! "/login/logout")}]]])
+     {:label "Kirjaudu ulos"
+      :on-click #(router/redirect-to! "/login/logout")}]]])
 
 (defn show-dialog! [content] (swap! dialog assoc :open true :content content))
 
@@ -100,22 +93,6 @@
                               (reset! payments (:body download-response))
                               (show-message! "Virhe tietojen latauksessa")))
                           (show-message! "Virhe maksatusten poistossa")))))}]]])
-
-(defn valid-payment-values?
-  [values]
-  (and (no-nils? values
-                 [:transaction-account :due-date :invoice-date :payment-term
-                  :document-type :receipt-date])
-       (financing/valid-email? (:inspector-email values))
-       (financing/valid-email? (:acceptor-email values))))
-
-(defn grant-matches?
-  [g s]
-  (if (empty? s)
-    true
-    (let [s-lower (lower-case s)]
-      (or (includes? (:register-number g) s-lower)
-          (includes? (lower-case (get-in g [:content :name :fi])) s-lower)))))
 
 (defn is-admin?
   [user]
@@ -143,11 +120,20 @@
    {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
    [:div (top-links (get @selected-grant :id 0) (router/get-current-path)) [:hr]
     [:div
-     [ui/text-field
-      {:floating-label-text "Hakujen suodatus"
-       :value @grant-filter
-       :on-change #(reset! grant-filter (.-value (.-target %)))}]
-     (let [filtered-grants (filterv #(grant-matches? % @grant-filter) @grants)]
+     [:div
+      [ui/text-field
+       {:floating-label-text "Hakujen suodatus"
+        :value (:filter-str @grant-filter)
+        :on-change
+          #(swap! grant-filter assoc :filter-str (.-value (.-target %)))}]
+      [ui/toggle
+       {:label "Piilota vanhat haut"
+        :toggled (:filter-old @grant-filter)
+        :on-toggle #(swap! grant-filter assoc :filter-old %2)
+        :style {:width "200px"}}]]
+     (let [filtered-grants
+             (filterv #(grant-matches? % (:filter-str @grant-filter))
+               (if (:filter-old @grant-filter) (remove-old @grants) @grants))]
        (grants-table
          {:grants filtered-grants
           :value (find-index-of filtered-grants
@@ -155,7 +141,7 @@
           :on-change (fn [row]
                        (reset! selected-grant (get filtered-grants row)))}))]
     (let [current-applications (-> @applications
-                                   (payments/combine @payments))
+                                   (payments-ui/combine @payments))
           payment-values
             (r/atom {:currency "EUR"
                      :payment-term "Z001"
@@ -186,13 +172,13 @@
                   (go
                     (let [result (<! (connection/get-payment-history id))]
                       (if (:success result)
-                        (show-dialog! (r/as-element (payments/render-history
+                        (show-dialog! (r/as-element (payments-ui/render-history
                                                       (:body result))))
                         (show-message! "Virhe historiatietojen latauksessa")))))
               :is-admin? (is-admin? @user-info)})]
           [ui/raised-button
            {:primary true
-            :disabled (not (valid-payment-values? @payment-values))
+            :disabled (not (payments/valid-payment-values? @payment-values))
             :label "Lähetä maksatukset"
             :style theme/button
             :on-click
@@ -250,7 +236,7 @@
                 (let [grants-result (<! (connection/get-grants))]
                   (if (:success grants-result)
                     (do
-                      (reset! grants (:body grants-result))
+                      (reset! grants (convert-dates (:body grants-result)))
                       (reset! selected-grant
                               (if-let [grant-id (get-param-grant)]
                                 (first (filter #(= (:id %) grant-id) @grants))

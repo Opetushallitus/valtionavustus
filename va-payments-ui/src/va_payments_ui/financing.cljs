@@ -4,22 +4,17 @@
             [cljs-react-material-ui.reagent :as ui]
             [va-payments-ui.theme :as theme]
             [va-payments-ui.utils :refer
-             [remove-nil any-nil? not-nil? not-empty?]]))
+             [remove-nil any-nil? not-nil? not-empty? valid-email?]]))
 
 (def week-in-ms (* 1000 60 60 24 7))
 
 (def transaction-accounts ["5000" "5220" "5230" "5240" "5250"])
-
-(def re-email
-  #"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 (defn now-plus
   [milliseconds]
   (-> (.now js/Date)
       (+ milliseconds)
       (js/Date.)))
-
-(defn valid-email? [v] (and (not-empty? v) (not-nil? (re-matches re-email v))))
 
 (defn payment-emails
   [values on-change]
