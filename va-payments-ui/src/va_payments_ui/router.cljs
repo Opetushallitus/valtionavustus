@@ -35,4 +35,11 @@
         (merge-params)
         (get param))))
 
+(defn redirect-to!
+  [url]
+  (-> js/window
+      .-location
+      .-href
+      (set! url)))
+
 (defn get-current-param [param] (get-param (get-current-query) param))

@@ -43,14 +43,9 @@
   (show-message!
     (format "Virhe tietojen latauksessa. Virhe %s (%d)" text code)))
 
-(defn redirect-to!
-  [url]
-  (-> js/window
-      .-location
-      .-href
-      (set! url)))
-
-(defn redirect-to-login! [] (redirect-to! connection/login-url-with-service))
+(defn redirect-to-login!
+  []
+  (router/redirect-to! connection/login-url-with-service))
 
 (defn find-index-of
   ([col pred i m]
@@ -78,7 +73,8 @@
                 (= current-path "/payments/"))
    [:div {:class "logout-button"}
     [ui/flat-button
-     {:label "Kirjaudu ulos" :on-click #(redirect-to! "/login/logout")}]]])
+     {:label "Kirjaudu ulos"
+      :on-click #(router/redirect-to! "/login/logout")}]]])
 
 (defn show-dialog! [content] (swap! dialog assoc :open true :content content))
 
@@ -149,9 +145,7 @@
         :style {:width "200px"}}]]
      (let [filtered-grants
              (filterv #(grant-matches? % (:filter-str @grant-filter))
-               (if (:filter-old @grant-filter)
-                 (remove-old @grants)
-                 @grants))]
+               (if (:filter-old @grant-filter) (remove-old @grants) @grants))]
        (grants-table
          {:grants filtered-grants
           :value (find-index-of filtered-grants
@@ -254,8 +248,7 @@
                 (let [grants-result (<! (connection/get-grants))]
                   (if (:success grants-result)
                     (do
-                      (reset! grants
-                              (convert-dates (:body grants-result)))
+                      (reset! grants (convert-dates (:body grants-result)))
                       (reset! selected-grant
                               (if-let [grant-id (get-param-grant)]
                                 (first (filter #(= (:id %) grant-id) @grants))
