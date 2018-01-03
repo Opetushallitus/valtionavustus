@@ -18,7 +18,6 @@
   [d]
   (tf/unparse-local date-time-formatter (tf/parse d)))
 
-
 (defn not-nil? [v] (not (nil? v)))
 
 (defn any-nil?
