@@ -1,10 +1,13 @@
-(ns va-payments-ui.grants
+(ns va-payments-ui.grants-ui
   (:require [reagent.core :as r]
             [cljsjs.material-ui]
             [cljs-react-material-ui.core :refer [get-mui-theme color]]
             [cljs-react-material-ui.reagent :as ui]
             [cljs-react-material-ui.icons :as ic]
-            [va-payments-ui.theme :refer [material-styles]]))
+            [va-payments-ui.theme :refer [material-styles]]
+            [cljs-time.format :as f]
+            [cljs-time.core :as t]
+            [va-payments-ui.utils :refer [update-all]]))
 
 (def status-str
   {"deleted" "Poistettu"
@@ -50,3 +53,4 @@
     (get-in grant [:content :operational-unit])]
    [:div [:label "Projekti: "] (get-in grant [:content :project])]
    [:div [:label "Toiminto: "] (get-in grant [:content :operation])]])
+
