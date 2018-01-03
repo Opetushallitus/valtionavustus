@@ -2,6 +2,9 @@
   (:require [goog.string :as gstring]
             [goog.string.format]))
 
+(def re-email
+  #"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+
 (defn not-nil? [v] (not (nil? v)))
 
 (defn any-nil?
@@ -49,3 +52,7 @@
   ([col pred i m]
    (if (>= i m) nil (if (pred (nth col i)) i (recur col pred (inc i) m))))
   ([col pred] (find-index-of col pred 0 (count col))))
+
+(defn valid-email? [v] (and (not-empty? v) (not-nil? (re-matches re-email v))))
+
+
