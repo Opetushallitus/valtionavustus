@@ -40,3 +40,6 @@
 (defn toggle-in [c ks] (assoc-in c ks (not (get-in c ks))))
 
 (defn remove-nil [m] (into {} (filter (comp some? val) m)))
+
+(defn update-all [xs ks f]
+  (mapv (fn [x] (reduce #(update-in % [%2] f) x ks)) xs))
