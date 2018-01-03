@@ -4,7 +4,7 @@
             [cljs-react-material-ui.reagent :as ui]
             [cljs-react-material-ui.icons :as ic]
             [va-payments-ui.utils :refer [assoc-all-with toggle toggle-in]]
-            [va-payments-ui.theme :refer [material-styles]]
+            [va-payments-ui.theme :as theme]
             [va-payments-ui.utils :refer [format]]))
 
 (defn get-answer-value
@@ -46,10 +46,8 @@
   [{:keys [applications on-info-clicked is-admin?]}]
   [:div
    [ui/table
-    {:fixed-header true
-     :height "250px"
-     :selectable false
-     :style (:table material-styles)}
+    {:fixed-header true :selectable false
+     :body-style theme/table-body}
     [ui/table-header {:adjust-for-checkbox false :display-select-all false}
      [ui/table-row [ui/table-header-column "Tila"]
       [ui/table-header-column "Toimittajan nimi"]
