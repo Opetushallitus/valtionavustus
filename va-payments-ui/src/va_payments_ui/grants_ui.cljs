@@ -7,7 +7,7 @@
             [va-payments-ui.theme :refer [material-styles]]
             [cljs-time.format :as f]
             [cljs-time.core :as t]
-            [va-payments-ui.utils :refer [update-all]]))
+            [va-payments-ui.utils :refer [update-all to-simple-date-time]]))
 
 (def status-str
   {"deleted" "Poistettu"
@@ -25,8 +25,10 @@
    [ui/table-row-column (get-in grant [:content :name :fi])]
    [ui/table-row-column (get status-str (:status grant))]
    [ui/table-row-column (get phase-str (:phase grant))]
-   [ui/table-row-column (get-in grant [:content :duration :start])]
-   [ui/table-row-column (get-in grant [:content :duration :end])]])
+   [ui/table-row-column
+    (to-simple-date-time (get-in grant [:content :duration :start]))]
+   [ui/table-row-column
+    (to-simple-date-time (get-in grant [:content :duration :end]))]])
 
 (defn grants-table
   [{:keys [on-change grants value]}]
@@ -53,4 +55,3 @@
     (get-in grant [:content :operational-unit])]
    [:div [:label "Projekti: "] (get-in grant [:content :project])]
    [:div [:label "Toiminto: "] (get-in grant [:content :operation])]])
-
