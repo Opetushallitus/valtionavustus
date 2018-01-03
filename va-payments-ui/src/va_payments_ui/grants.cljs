@@ -2,22 +2,29 @@
   (:require [clojure.string :refer [lower-case includes?]]
             [cljs-time.format :as f]
             [cljs-time.core :as t]
-            [va-payments-ui.utils :refer [update-all]]))
+            [va-payments-ui.utils :refer [update-all date-formatter]]))
+
+(def lifetime-limit (t/minus (t/now) (t/months 12)))
 
 (defn remove-old
   [grants]
   (filterv #(and (= (:status %) "resolved")
                  (or (nil? (:loppuselvitysdate %))
-                     (t/after? (:loppuselvitysdate %)
-                               (t/minus (t/today) (t/months 12)))))
+                     (t/after? (:loppuselvitysdate %) lifetime-limit)))
     grants))
+
+(defn parse-date [s]
+  (if (empty? s)
+    nil
+    (f/parse date-formatter s)))
+
+(defn convert-grant-dates
+  [grant]
+  (update grant :loppuselvitysdate parse-date))
 
 (defn convert-dates
   [grants]
-  (update-all grants
-              [:valiselvitysdate :loppuselvitysdate :created-at
-               [:content :duration :end] [:content :duration :start]]
-              f/parse))
+  (mapv convert-grant-dates grants))
 
 (defn grant-matches?
   [g s]
