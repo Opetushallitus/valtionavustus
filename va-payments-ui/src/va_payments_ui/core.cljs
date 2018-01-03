@@ -7,11 +7,12 @@
             [cljsjs.material-ui]
             [cljs-react-material-ui.core :refer [get-mui-theme color]]
             [cljs-react-material-ui.reagent :as ui]
-            [va-payments-ui.payments :as payments]
+            [va-payments-ui.payments-ui :as payments-ui]
             [va-payments-ui.applications :as applications]
             [va-payments-ui.connection :as connection]
             [va-payments-ui.router :as router]
-            [va-payments-ui.grants :refer [grants-table project-info]]
+            [va-payments-ui.grants-ui :refer [grants-table project-info]]
+            [va-payments-ui.grant-utils :as grant-utils]
             [va-payments-ui.financing :as financing]
             [va-payments-ui.utils :refer
              [toggle remove-nil format no-nils? not-empty? not-nil?]]
@@ -33,7 +34,7 @@
 
 (defonce delete-payments? (r/atom false))
 
-(defonce grant-filter (r/atom {:filter-str "" :filter-paid true}))
+(defonce grant-filter (r/atom {:filter-str "" :filter-old true}))
 
 (defn show-message! [message] (reset! snackbar {:open true :message message}))
 
@@ -150,12 +151,16 @@
         :on-change
         #(swap! grant-filter assoc :filter-str (.-value (.-target %)))}]
       [ui/toggle
-       {:label "Piilota maksetut haut"
-        :toggled (:filter-paid @grant-filter)
-        :on-toggle #(swap! grant-filter assoc :filter-paid %2)
+       {:label "Piilota vanhat haut"
+        :toggled (:filter-old @grant-filter)
+        :on-toggle #(swap! grant-filter assoc :filter-old %2)
         :style {:width "200px"}}]]
      (let [filtered-grants
-           (filterv #(grant-matches? % (:filter-str @grant-filter)) @grants)]
+           (filterv #(grant-matches?
+                       % (:filter-str @grant-filter))
+                    (if (:filter-old @grant-filter)
+                      (grant-utils/remove-old @grants)
+                      @grants))]
        (grants-table
          {:grants filtered-grants
           :value (find-index-of filtered-grants
@@ -194,7 +199,7 @@
                   (go
                     (let [result (<! (connection/get-payment-history id))]
                       (if (:success result)
-                        (show-dialog! (r/as-element (payments/render-history
+                        (show-dialog! (r/as-element (payments-ui/render-history
                                                       (:body result))))
                         (show-message! "Virhe historiatietojen latauksessa")))))
               :is-admin? (is-admin? @user-info)})]
@@ -258,7 +263,8 @@
                 (let [grants-result (<! (connection/get-grants))]
                   (if (:success grants-result)
                     (do
-                      (reset! grants (:body grants-result))
+                      (reset! grants
+                              (grant-utils/convert-dates (:body grants-result)))
                       (reset! selected-grant
                               (if-let [grant-id (get-param-grant)]
                                 (first (filter #(= (:id %) grant-id) @grants))
