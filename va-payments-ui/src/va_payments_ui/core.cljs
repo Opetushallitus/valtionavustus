@@ -1,7 +1,6 @@
 (ns va-payments-ui.core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs.core.async :refer [<!]]
-            [clojure.string :refer [lower-case includes?]]
             [va-payments-ui.connection :as connection]
             [reagent.core :as r]
             [cljsjs.material-ui]
@@ -12,7 +11,8 @@
             [va-payments-ui.connection :as connection]
             [va-payments-ui.router :as router]
             [va-payments-ui.grants-ui :refer [grants-table project-info]]
-            [va-payments-ui.grants :as grants]
+            [va-payments-ui.grants :refer
+             [grant-matches? remove-old convert-dates]]
             [va-payments-ui.financing :as financing]
             [va-payments-ui.utils :refer
              [toggle remove-nil format no-nils? not-empty? not-nil?]]
@@ -110,14 +110,6 @@
        (financing/valid-email? (:inspector-email values))
        (financing/valid-email? (:acceptor-email values))))
 
-(defn grant-matches?
-  [g s]
-  (if (empty? s)
-    true
-    (let [s-lower (lower-case s)]
-      (or (includes? (:register-number g) s-lower)
-          (includes? (lower-case (get-in g [:content :name :fi])) s-lower)))))
-
 (defn is-admin?
   [user]
   (not-nil? (some #(= % "va-admin") (get user :privileges))))
@@ -149,18 +141,17 @@
        {:floating-label-text "Hakujen suodatus"
         :value (:filter-str @grant-filter)
         :on-change
-        #(swap! grant-filter assoc :filter-str (.-value (.-target %)))}]
+          #(swap! grant-filter assoc :filter-str (.-value (.-target %)))}]
       [ui/toggle
        {:label "Piilota vanhat haut"
         :toggled (:filter-old @grant-filter)
         :on-toggle #(swap! grant-filter assoc :filter-old %2)
         :style {:width "200px"}}]]
      (let [filtered-grants
-           (filterv #(grant-matches?
-                       % (:filter-str @grant-filter))
-                    (if (:filter-old @grant-filter)
-                      (grants/remove-old @grants)
-                      @grants))]
+             (filterv #(grant-matches? % (:filter-str @grant-filter))
+               (if (:filter-old @grant-filter)
+                 (remove-old @grants)
+                 @grants))]
        (grants-table
          {:grants filtered-grants
           :value (find-index-of filtered-grants
@@ -264,7 +255,7 @@
                   (if (:success grants-result)
                     (do
                       (reset! grants
-                              (grants/convert-dates (:body grants-result)))
+                              (convert-dates (:body grants-result)))
                       (reset! selected-grant
                               (if-let [grant-id (get-param-grant)]
                                 (first (filter #(= (:id %) grant-id) @grants))
