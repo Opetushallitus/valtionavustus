@@ -1,4 +1,4 @@
-(ns va-payments-ui.payments
+(ns va-payments-ui.payments-ui
   (:require [reagent.core :as r]
             [cljsjs.material-ui]
             [cljs-react-material-ui.reagent :as ui]
