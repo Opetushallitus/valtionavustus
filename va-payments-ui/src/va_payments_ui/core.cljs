@@ -101,7 +101,7 @@
 (add-watch
   selected-grant
   "s"
-  (fn [_ reference __ new-state]
+  (fn [_ _ ___ new-state]
     (when new-state
       (go (let [grant-id (:id new-state)
                 applications-response (<! (connection/get-grant-applications
@@ -204,13 +204,12 @@
                               (reset! payments (:body grant-result))
                               (show-message!
                                 "Maksatuksien latauksessa ongelma"))))
-                        (show-message! "Maksatuserän haussa ongelma")))))}]
-          [ui/snackbar
-           (conj @snackbar
-                 {:auto-hide-duration 4000
-                  :on-request-close #(reset! snackbar
-                                             {:open false :message ""})})]])])
+                        (show-message! "Maksatuserän haussa ongelma")))))}]])])
     (when (and @delete-payments? (is-admin? @user-info)) (render-admin-tools))
+    [ui/snackbar
+     (conj @snackbar
+           {:auto-hide-duration 4000
+            :on-request-close #(reset! snackbar {:open false :message ""})})]
     [ui/dialog
      {:on-request-close #(swap! dialog assoc :open false)
       :children (:content @dialog)
