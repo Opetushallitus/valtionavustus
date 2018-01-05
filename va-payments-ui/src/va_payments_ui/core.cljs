@@ -280,30 +280,30 @@
   []
   (mount-root)
   (go
-      (let [dialog-chan (show-loading-dialog! "Ladataan tietoja" 3)
-            config-result (<! (connection/get-config))]
-        (put! dialog-chan 1)
-        (if (:success config-result)
-          (do
-            (reset! delete-payments?
-                    (get-in config-result [:body :payments :delete-payments?]))
-            (connection/set-config! (:body config-result))
-            (let [user-info-result (<! (connection/get-user-info))]
-              (put! dialog-chan 1)
-              (if (:success user-info-result)
-                (do
-                  (reset! user-info (:body user-info-result))
-                  (let [grants-result (<! (connection/get-grants))]
-                    (put! dialog-chan 2)
-                    (if (:success grants-result)
-                      (do
-                        (reset! grants (convert-dates (:body grants-result)))
-                        (reset! selected-grant
-                                (if-let [grant-id (get-param-grant)]
-                                  (first (filter #(= (:id %) grant-id) @grants))
-                                  (first @grants))))
-                      (show-message! "Virhe tietojen latauksessa"))))
-                (show-message! "Virhe käyttäjätietojen latauksessa"))))
-          (show-message! "Virhe asetusten latauksessa")
-          (put! dialog-chan 3))
-       (close! dialog-chan))))
+    (let [dialog-chan (show-loading-dialog! "Ladataan tietoja" 3)
+          config-result (<! (connection/get-config))]
+      (put! dialog-chan 1)
+      (if (:success config-result)
+        (do
+          (reset! delete-payments?
+                  (get-in config-result [:body :payments :delete-payments?]))
+          (connection/set-config! (:body config-result))
+          (let [user-info-result (<! (connection/get-user-info))]
+            (put! dialog-chan 1)
+            (if (:success user-info-result)
+              (do
+                (reset! user-info (:body user-info-result))
+                (let [grants-result (<! (connection/get-grants))]
+                  (put! dialog-chan 2)
+                  (if (:success grants-result)
+                    (do
+                      (reset! grants (convert-dates (:body grants-result)))
+                      (reset! selected-grant
+                              (if-let [grant-id (get-param-grant)]
+                                (first (filter #(= (:id %) grant-id) @grants))
+                                (first @grants))))
+                    (show-message! "Virhe tietojen latauksessa"))))
+              (show-message! "Virhe käyttäjätietojen latauksessa"))))
+        (show-message! "Virhe asetusten latauksessa")
+        (put! dialog-chan 3))
+     (close! dialog-chan))))
