@@ -1,7 +1,7 @@
 (ns va-payments-ui.core
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
-    [cljs.core.async :refer [<!]]
+    [cljs.core.async :refer [<! put! chan close! sliding-buffer]]
     [va-payments-ui.connection :as connection]
     [reagent.core :as r]
     [cljsjs.material-ui]
@@ -33,6 +33,8 @@
 
 (defonce dialog (r/atom {:open false}))
 
+(defonce loading-dialog (r/atom {:open false}))
+
 (defonce delete-payments? (r/atom false))
 
 (defonce grant-filter (r/atom {:filter-str "" :filter-old true}))
@@ -44,21 +46,29 @@
   (show-message!
     (format "Virhe tietojen latauksessa. Virhe %s (%d)" text code)))
 
-(defn redirect-to-login!
-  []
+(defn show-loading-dialog! [message max-value]
+  (reset! loading-dialog {:open true :content message :max max-value :value 0})
+  (let [c (chan (sliding-buffer 1024))]
+    (go-loop []
+      (let [v (<! c)]
+        (if v
+          (do
+            (swap! loading-dialog assoc :value v)
+            (recur))
+          (reset! loading-dialog {:open false}))))
+    c))
+
+(defn redirect-to-login! []
   (router/redirect-to! connection/login-url-with-service))
 
-(defn get-param-grant
-  []
+(defn get-param-grant []
   (let [grant-id (js/parseInt (router/get-current-param :grant))]
     (when-not (js/isNaN grant-id) grant-id)))
 
-(defn create-link
-  [href title active]
+(defn create-link [href title active]
   [:a {:href href :style (if active theme/active-link theme/link)} title])
 
-(defn top-links
-  [grant-id current-path]
+(defn top-links [grant-id current-path]
   [:div {:class "top-links"}
    (create-link (str "/avustushaku/" grant-id)
                 "Hakemusten arviointi"
@@ -74,9 +84,9 @@
 
 (defn show-dialog! [content] (swap! dialog assoc :open true :content content))
 
-(defn render-admin-tools
-  []
-  [:div [:hr]
+(defn render-admin-tools []
+  [:div
+   [:hr]
    [ui/grid-list {:cols 6 :cell-height "auto"}
     [ui/raised-button
      {:primary true
@@ -103,37 +113,105 @@
   "s"
   (fn [_ _ ___ new-state]
     (when new-state
-      (go (let [grant-id (:id new-state)
-                applications-response (<! (connection/get-grant-applications
-                                            grant-id))
+      (let [dialog-chan (show-loading-dialog! "Ladataan hakemuksia" 2)]
+        (go
+          (let [grant-id (:id new-state)
+                applications-response
+                (<! (connection/get-grant-applications grant-id))
                 payments-response (<! (connection/get-grant-payments grant-id))]
+            (put! dialog-chan 1)
             (if (:success applications-response)
               (reset! applications (:body applications-response))
               (show-message! "Virhe hakemusten latauksessa"))
             (if (:success payments-response)
               (reset! payments (:body payments-response))
-              (show-message! "Virhe maksatusten latauksessa")))))))
+              (show-message! "Virhe maksatusten latauksessa"))
+            (put! dialog-chan 2))
+          (close! dialog-chan))))))
 
-(defn home-page
-  []
+(defn render-dialogs []
+  [:div
+   [ui/snackbar
+    (conj @snackbar
+          {:auto-hide-duration 4000
+           :on-request-close #(reset! snackbar {:open false :message ""})})]
+   [ui/dialog
+    {:on-request-close #(swap! dialog assoc :open false)
+     :children (:content @dialog)
+     :open (:open @dialog)
+     :content-style {:width "95%" :max-width "none"}}]
+   [ui/dialog
+    {:children
+     (r/as-element
+       [:div
+        [ui/linear-progress
+         {:max (:max @loading-dialog) :value (:value @loading-dialog)
+          :open (:open @loading-dialog) :mode "determinate"}]
+        [:span
+         {:style {:text-align "center" :width "100%"}}
+         (:content @loading-dialog)]])
+     :modal true
+     :open (:open @loading-dialog)
+     :content-style {:width "95%" :max-width "none"}}]])
+
+(defn render-grant-filters [values on-change]
+  [:div
+   [ui/text-field
+    {:floating-label-text "Hakujen suodatus"
+     :value (:filter-str values)
+     :on-change #(on-change :filter-str (.-value (.-target %)))}]
+   [ui/toggle
+    {:label "Piilota vanhat haut"
+     :toggled (:filter-old values)
+     :on-toggle #(on-change :filter-old %2)
+     :style {:width "200px"}}]])
+
+(defn send-payments! [applications-to-send payment-values]
+  (go
+    (let [dialog-chan
+          (show-loading-dialog!
+            "Lähetetään maksatuksia"
+            (+ (count applications-to-send) 10))
+          nin-result
+          (<! (connection/get-next-installment-number))]
+      (put! dialog-chan 1)
+      (if (:success nin-result)
+        (let [values (conj payment-values (:body nin-result))]
+          (loop [index 0]
+            (when-let [application
+                       (get applications-to-send index)]
+              (let [payment-result
+                    (<! (connection/create-payment
+                          (assoc values :application-id
+                                 (:id application))))]
+                (put! dialog-chan (inc index))
+                (if (:success payment-result)
+                  (recur (inc index))
+                  (show-message!
+                    "Maksatuksen lähetyksessä ongelma")))))
+          (let [grant-result (<! (connection/get-grant-payments
+                                   (:id @selected-grant)))]
+            (if (:success grant-result)
+              (reset! payments (:body grant-result))
+              (show-message!
+                "Maksatuksien latauksessa ongelma"))))
+        (show-message! "Maksatuserän haussa ongelma"))
+      (put! dialog-chan (+ (count applications-to-send) 10))
+      (close! dialog-chan))))
+
+(defn home-page []
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
-   [:div (top-links (get @selected-grant :id 0) (router/get-current-path)) [:hr]
+   [:div
+    (top-links (get @selected-grant :id 0) (router/get-current-path))
+    [:hr]
     [:div
-     [:div
-      [ui/text-field
-       {:floating-label-text "Hakujen suodatus"
-        :value (:filter-str @grant-filter)
-        :on-change
-          #(swap! grant-filter assoc :filter-str (.-value (.-target %)))}]
-      [ui/toggle
-       {:label "Piilota vanhat haut"
-        :toggled (:filter-old @grant-filter)
-        :on-toggle #(swap! grant-filter assoc :filter-old %2)
-        :style {:width "200px"}}]]
+     (render-grant-filters @grant-filter #(swap! grant-filter assoc %1 %2))
      (let [filtered-grants
-             (filterv #(grant-matches? % (:filter-str @grant-filter))
-               (if (:filter-old @grant-filter) (remove-old @grants) @grants))]
+           (filterv #(grant-matches? % (:filter-str @grant-filter))
+                    (if (:filter-old @grant-filter)
+                      (remove-old @grants)
+                      @grants))]
        (grants-table
          {:grants filtered-grants
           :value (find-index-of filtered-grants
@@ -155,7 +233,10 @@
                      :receipt-date (js/Date.)})]
       [(fn []
          [:div
-          [:div [:hr] (project-info @selected-grant) [:hr]
+          [:div
+           [:hr]
+           (project-info @selected-grant)
+           [:hr]
            [:div
             (when (some #(= (get % :payment-state) 2) current-applications)
               {:style {:opacity 0.2 :pointer-events "none"}})
@@ -174,7 +255,8 @@
                       (if (:success result)
                         (show-dialog! (r/as-element (payments-ui/render-history
                                                       (:body result))))
-                        (show-message! "Virhe historiatietojen latauksessa")))))
+                        (show-message!
+                          "Virhe historiatietojen latauksessa")))))
               :is-admin? (is-admin? @user-info)})]
           [ui/raised-button
            {:primary true
@@ -182,39 +264,15 @@
             :label "Lähetä maksatukset"
             :style theme/button
             :on-click
-              (fn [_]
-                (go (let [applications-to-send
-                            (filter #(< (get % :payment-state) 2)
-                              current-applications)
-                          nin-result
-                            (<! (connection/get-next-installment-number))]
-                      (if (:success nin-result)
-                        (let [values (conj @payment-values (:body nin-result))]
-                          (doseq [application applications-to-send]
-                            (let [payment-result (<! (connection/create-payment
-                                                       (assoc values
-                                                         :application-id
-                                                           (:id application))))]
-                              (when-not (:success payment-result)
-                                (show-message!
-                                  "Maksatuksen lähetyksessä ongelma"))))
-                          (let [grant-result (<! (connection/get-grant-payments
-                                                   (:id @selected-grant)))]
-                            (if (:success grant-result)
-                              (reset! payments (:body grant-result))
-                              (show-message!
-                                "Maksatuksien latauksessa ongelma"))))
-                        (show-message! "Maksatuserän haussa ongelma")))))}]])])
-    (when (and @delete-payments? (is-admin? @user-info)) (render-admin-tools))
-    [ui/snackbar
-     (conj @snackbar
-           {:auto-hide-duration 4000
-            :on-request-close #(reset! snackbar {:open false :message ""})})]
-    [ui/dialog
-     {:on-request-close #(swap! dialog assoc :open false)
-      :children (:content @dialog)
-      :open (:open @dialog)
-      :content-style {:width "95%" :max-width "none"}}]]])
+            (fn [_]
+              (send-payments!
+                (filterv #(< (get % :payment-state) 2)
+                         current-applications)
+                @payment-values))}]])])
+    (when
+      (and @delete-payments? (is-admin? @user-info))
+      (render-admin-tools))
+    (render-dialogs)]])
 
 (defn mount-root [] (r/render [home-page] (.getElementById js/document "app")))
 
@@ -222,37 +280,30 @@
   []
   (mount-root)
   (go
-    (let [config-result (<! (connection/get-config))]
-      (if (:success config-result)
-        (do
-          (reset! delete-payments?
-                  (get-in config-result [:body :payments :delete-payments?]))
-          (connection/set-config! (:body config-result))
-          (let [user-info-result (<! (connection/get-user-info))]
-            (if (:success user-info-result)
-              (do
-                (reset! user-info (:body user-info-result))
-                (let [grants-result (<! (connection/get-grants))]
-                  (if (:success grants-result)
-                    (do
-                      (reset! grants (convert-dates (:body grants-result)))
-                      (reset! selected-grant
-                              (if-let [grant-id (get-param-grant)]
-                                (first (filter #(= (:id %) grant-id) @grants))
-                                (first @grants)))
-                      (when-let [selected-grant-id (:id @selected-grant)]
-                        (let [applications-response
-                                (<! (connection/get-grant-applications
-                                      selected-grant-id))
-                              payments-response (<!
-                                                  (connection/get-grant-payments
-                                                    selected-grant-id))]
-                          (if (:success applications-response)
-                            (reset! applications (:body applications-response))
-                            (show-message! "Virhe hakemusten latauksessa"))
-                          (if (:success payments-response)
-                            (reset! payments (:body payments-response))
-                            (show-message! "Virhe maksatusten latauksessa")))))
-                    (show-message! "Virhe tietojen latauksessa"))))
-              (show-message! "Virhe käyttäjätietojen latauksessa"))))
-        (show-message! "Virhe asetusten latauksessa")))))
+      (let [dialog-chan (show-loading-dialog! "Ladataan tietoja" 3)
+            config-result (<! (connection/get-config))]
+        (put! dialog-chan 1)
+        (if (:success config-result)
+          (do
+            (reset! delete-payments?
+                    (get-in config-result [:body :payments :delete-payments?]))
+            (connection/set-config! (:body config-result))
+            (let [user-info-result (<! (connection/get-user-info))]
+              (put! dialog-chan 1)
+              (if (:success user-info-result)
+                (do
+                  (reset! user-info (:body user-info-result))
+                  (let [grants-result (<! (connection/get-grants))]
+                    (put! dialog-chan 2)
+                    (if (:success grants-result)
+                      (do
+                        (reset! grants (convert-dates (:body grants-result)))
+                        (reset! selected-grant
+                                (if-let [grant-id (get-param-grant)]
+                                  (first (filter #(= (:id %) grant-id) @grants))
+                                  (first @grants))))
+                      (show-message! "Virhe tietojen latauksessa"))))
+                (show-message! "Virhe käyttäjätietojen latauksessa"))))
+          (show-message! "Virhe asetusten latauksessa")
+          (put! dialog-chan 3))
+       (close! dialog-chan))))
