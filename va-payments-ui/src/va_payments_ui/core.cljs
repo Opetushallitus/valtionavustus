@@ -29,33 +29,36 @@
 
 (defonce user-info (r/atom {}))
 
-(defonce snackbar (r/atom {:open false :message ""}))
-
-(defonce dialog (r/atom {:open false}))
-
-(defonce loading-dialog (r/atom {:open false}))
-
 (defonce delete-payments? (r/atom false))
 
 (defonce grant-filter (r/atom {:filter-str "" :filter-old true}))
 
-(defn show-message! [message] (reset! snackbar {:open true :message message}))
+(defonce dialogs (r/atom {:generic {:open false}
+                          :loading {:open false}
+                          :snackbar {:open false :message ""}}))
+
+(defn show-message! [message]
+  (swap! dialogs update-in [:snackbar] assoc :open true :message message))
 
 (defn show-error-message! [code text]
   (show-message!
     (format "Virhe tietojen latauksessa. Virhe %s (%d)" text code)))
 
 (defn show-loading-dialog! [message max-value]
-  (reset! loading-dialog {:open true :content message :max max-value :value 0})
+  (swap! dialogs update-in [:loading] assoc
+         :open true :content message :max max-value :value 0)
   (let [c (chan (sliding-buffer 1024))]
     (go-loop []
       (let [v (<! c)]
         (if v
           (do
-            (swap! loading-dialog assoc :value v)
+            (swap! dialogs assoc-in [:loading :value] v)
             (recur))
-          (reset! loading-dialog {:open false}))))
+          (swap! dialogs assoc-in [:loading :open] false))))
     c))
+
+(defn show-dialog! [content]
+  (swap! dialogs update-in [:generic] assoc :open true :content content))
 
 (defn redirect-to-login! []
   (router/redirect-to! connection/login-url-with-service))
@@ -81,8 +84,6 @@
      {:label "Kirjaudu ulos"
       :on-click #(router/redirect-to! "/login/logout")}]]])
 
-(defn show-dialog! [content] (swap! dialog assoc :open true :content content))
-
 (defn render-admin-tools []
   [:div
    [:hr]
@@ -107,29 +108,30 @@
   [user]
   (not-nil? (some #(= % "va-admin") (get user :privileges))))
 
-(defn render-dialogs []
+(defn render-dialogs [dialog-values on-close]
   [:div
    [ui/snackbar
-    (conj @snackbar
+    (conj (:snackbar dialog-values)
           {:auto-hide-duration 4000
-           :on-request-close #(reset! snackbar {:open false :message ""})})]
+           :on-request-close #(on-close :snackbar)})]
    [ui/dialog
-    {:on-request-close #(swap! dialog assoc :open false)
-     :children (:content @dialog)
-     :open (:open @dialog)
+    {:on-request-close #(on-close :generic)
+     :children (get-in dialog-values [:generic :content])
+     :open (get-in dialog-values [:generic :open])
      :content-style {:width "95%" :max-width "none"}}]
    [ui/dialog
     {:children
      (r/as-element
        [:div
         [ui/linear-progress
-         {:max (:max @loading-dialog) :value (:value @loading-dialog)
-          :open (:open @loading-dialog) :mode "determinate"}]
+         {:max (get-in dialog-values [:loading :max])
+          :value (get-in dialog-values [:loading :value])
+          :mode "determinate"}]
         [:span
          {:style {:text-align "center" :width "100%"}}
-         (:content @loading-dialog)]])
+         (get-in dialog-values [:loading :content])]])
      :modal true
-     :open (:open @loading-dialog)
+     :open (get-in dialog-values [:loading :open])
      :content-style {:width "95%" :max-width "none"}}]])
 
 (defn render-grant-filters [values on-change]
@@ -247,10 +249,9 @@
                 (filterv #(< (get % :payment-state) 2)
                          current-applications)
                 @payment-values))}]])])
-    (when
-      (and @delete-payments? (is-admin? @user-info))
+    (when (and @delete-payments? (is-admin? @user-info))
       (render-admin-tools))
-    (render-dialogs)]])
+    (render-dialogs @dialogs #(swap! dialogs assoc-in [% :open] false))]])
 
 (defn mount-root [] (r/render [home-page] (.getElementById js/document "app")))
 
