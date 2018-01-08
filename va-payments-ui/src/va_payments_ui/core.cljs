@@ -241,15 +241,19 @@
              {:applications current-applications
               :on-info-clicked
                 (fn [id]
-                  (go
-                    (let [result (<! (connection/get-payment-history id))]
-                      (if (:success result)
-                        (show-dialog!
-                          "Maksatuksen historia"
-                          (r/as-element (payments-ui/render-history
-                                                      (:body result))))
-                        (show-message!
-                          "Virhe historiatietojen latauksessa")))))
+                  (let [dialog-chan
+                        (show-loading-dialog! "Ladataan historiatietoja" 2)]
+                    (go
+                      (put! dialog-chan 1)
+                      (let [result (<! (connection/get-payment-history id))]
+                      (close! dialog-chan)
+                        (if (:success result)
+                          (show-dialog!
+                            "Maksatuksen historia"
+                            (r/as-element (payments-ui/render-history
+                                                        (:body result))))
+                          (show-message!
+                            "Virhe historiatietojen latauksessa"))))))
               :is-admin? (is-admin? @user-info)})]
           [ui/raised-button
            {:primary true
