@@ -38,12 +38,19 @@
                           :loading {:open false}
                           :snackbar {:open false :message ""}}))
 
+(defn is-admin?
+  [user]
+  (not-nil? (some #(= % "va-admin") (get user :privileges))))
+
 (defn show-message! [message]
   (swap! dialogs update-in [:snackbar] assoc :open true :message message))
 
-(defn show-error-message! [code text]
+(defn show-error-message! [message {:keys [status error-text]}]
   (show-message!
-    (format "Virhe tietojen latauksessa. Virhe %s (%d)" text code)))
+    (if (is-admin? @user-info)
+      (format "%s - Palvelimen virheviesti: %s. Virhekoodi %d"
+              message error-text status)
+      message)))
 
 (defn show-loading-dialog! [message max-value]
   (swap! dialogs update-in [:loading] assoc
@@ -103,12 +110,14 @@
                                   (<! (connection/get-grant-payments grant-id))]
                             (if (:success download-response)
                               (reset! payments (:body download-response))
-                              (show-message! "Virhe tietojen latauksessa")))
-                          (show-message! "Virhe maksatusten poistossa")))))}]]])
-
-(defn is-admin?
-  [user]
-  (not-nil? (some #(= % "va-admin") (get user :privileges))))
+                              (show-error-message!
+                                "Virhe tietojen latauksessa"
+                                (select-keys download-response
+                                             [:status :error-text]))))
+                          (show-error-message!
+                            "Virhe maksatusten poistossa"
+                            (select-keys response
+                                         [:status :error-text]))))))}]]])
 
 (defn render-dialogs [{:keys [snackbar generic loading]} on-close]
   [:div
@@ -178,15 +187,19 @@
                 (put! dialog-chan (inc index))
                 (if (:success payment-result)
                   (recur (inc index))
-                  (show-message!
-                    "Maksatuksen lähetyksessä ongelma")))))
+                  (show-error-message!
+                    "Maksatuksen lähetyksessä ongelma"
+                    (select-keys payment-result [:status :error-text]))))))
           (let [grant-result (<! (connection/get-grant-payments
                                    (:id @selected-grant)))]
             (if (:success grant-result)
               (reset! payments (:body grant-result))
-              (show-message!
-                "Maksatuksien latauksessa ongelma"))))
-        (show-message! "Maksatuserän haussa ongelma"))
+              (show-error-message!
+                "Maksatuksien latauksessa ongelma"
+                (select-keys grant-result [:status :error-text])))))
+        (show-error-message!
+          "Maksatuserän haussa ongelma"
+          (select-keys nin-result [:status :error-text])))
       (put! dialog-chan (+ (count applications-to-send) 10))
       (close! dialog-chan))))
 
@@ -252,8 +265,9 @@
                             "Maksatuksen historia"
                             (r/as-element (payments-ui/render-history
                                                         (:body result))))
-                          (show-message!
-                            "Virhe historiatietojen latauksessa"))))))
+                          (show-error-message!
+                            "Virhe historiatietojen latauksessa"
+                            (select-keys result [:status :error-text])))))))
               :is-admin? (is-admin? @user-info)})]
           [ui/raised-button
            {:primary true
@@ -289,10 +303,14 @@
               (put! dialog-chan 2)
               (if (:success applications-response)
                 (reset! applications (:body applications-response))
-                (show-message! "Virhe hakemusten latauksessa"))
+                (show-error-message!
+                  "Virhe hakemusten latauksessa"
+                  (select-keys applications-response [:status :error-text])))
               (if (:success payments-response)
                 (reset! payments (:body payments-response))
-                (show-message! "Virhe maksatusten latauksessa"))
+                (show-error-message!
+                  "Virhe maksatusten latauksessa"
+                  (select-keys payments-response [:status :error-text])))
               (put! dialog-chan 3))
             (close! dialog-chan))))))
   (go
@@ -318,8 +336,14 @@
                               (if-let [grant-id (get-param-grant)]
                                 (first (filter #(= (:id %) grant-id) @grants))
                                 (first @grants))))
-                    (show-message! "Virhe tietojen latauksessa"))))
-              (show-message! "Virhe käyttäjätietojen latauksessa"))))
-        (show-message! "Virhe asetusten latauksessa")
+                    (show-error-message!
+                      "Virhe tietojen latauksessa"
+                      (select-keys grants-result [:status :error-text])))))
+              (show-error-message!
+                "Virhe käyttäjätietojen latauksessa"
+                (select-keys user-info-result [:status :error-text])))))
+        (show-error-message!
+          "Virhe asetusten latauksessa"
+          (select-keys config-result [:status :error-text]))
         (put! dialog-chan 3))
      (close! dialog-chan))))
