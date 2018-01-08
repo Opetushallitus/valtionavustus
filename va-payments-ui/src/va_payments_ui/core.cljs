@@ -42,15 +42,33 @@
   [user]
   (not-nil? (some #(= % "va-admin") (get user :privileges))))
 
+(defn show-dialog! [title content]
+  (swap! dialogs update-in [:generic]
+         assoc :open true :content content :title title))
+
+(defn show-error-message-dialog! [status error-text]
+  (show-dialog!
+    "Palvelimen virheviesti"
+    (r/as-element
+      [:div
+       [:div "Virheviesti: " error-text]
+       [:div "Virhekoodi: " status]])))
+
 (defn show-message! [message]
   (swap! dialogs update-in [:snackbar] assoc :open true :message message))
 
+(defn show-admin-message! [message status error-text]
+  (swap! dialogs update-in [:snackbar] assoc
+         :open true
+         :message message
+         :action-title "Lisätietoja"
+         :on-action-click
+         #(show-error-message-dialog! status error-text)))
+
 (defn show-error-message! [message {:keys [status error-text]}]
-  (show-message!
-    (if (is-admin? @user-info)
-      (format "%s - Palvelimen virheviesti: %s. Virhekoodi %d"
-              message error-text status)
-      message)))
+  (if (is-admin? @user-info)
+    (show-admin-message! message status error-text)
+    (show-message! message)))
 
 (defn show-loading-dialog! [message max-value]
   (swap! dialogs update-in [:loading] assoc
@@ -64,10 +82,6 @@
             (recur))
           (swap! dialogs assoc-in [:loading :open] false))))
     c))
-
-(defn show-dialog! [title content]
-  (swap! dialogs update-in [:generic]
-         assoc :open true :content content :title title))
 
 (defn redirect-to-login! []
   (router/redirect-to! connection/login-url-with-service))
@@ -122,9 +136,12 @@
 (defn render-dialogs [{:keys [snackbar generic loading]} on-close]
   [:div
    [ui/snackbar
-    (conj snackbar
-          {:auto-hide-duration 4000
-           :on-request-close #(on-close :snackbar)})]
+    {:open (:open snackbar)
+     :message (:message snackbar)
+     :auto-hide-duration 4000
+     :on-action-touch-tap (:on-action-click snackbar)
+     :on-request-close #(on-close :snackbar)
+     :action (:action-title snackbar)}]
    [ui/dialog
     {:on-request-close #(on-close :generic)
      :children (:content generic)
