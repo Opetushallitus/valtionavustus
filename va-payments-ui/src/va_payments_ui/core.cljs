@@ -108,30 +108,30 @@
   [user]
   (not-nil? (some #(= % "va-admin") (get user :privileges))))
 
-(defn render-dialogs [dialog-values on-close]
+(defn render-dialogs [{:keys [snackbar generic loading]} on-close]
   [:div
    [ui/snackbar
-    (conj (:snackbar dialog-values)
+    (conj snackbar
           {:auto-hide-duration 4000
            :on-request-close #(on-close :snackbar)})]
    [ui/dialog
     {:on-request-close #(on-close :generic)
-     :children (get-in dialog-values [:generic :content])
-     :open (get-in dialog-values [:generic :open])
+     :children (:content generic)
+     :open (:open generic)
      :content-style {:width "95%" :max-width "none"}}]
    [ui/dialog
     {:children
      (r/as-element
        [:div
         [ui/linear-progress
-         {:max (get-in dialog-values [:loading :max])
-          :value (get-in dialog-values [:loading :value])
+         {:max (:max loading)
+          :value (:value loading)
           :mode "determinate"}]
         [:span
          {:style {:text-align "center" :width "100%"}}
-         (get-in dialog-values [:loading :content])]])
+         (:content loading)]])
      :modal true
-     :open (get-in dialog-values [:loading :open])
+     :open (:open loading)
      :content-style {:width "95%" :max-width "none"}}]])
 
 (defn render-grant-filters [values on-change]
