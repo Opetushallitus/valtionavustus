@@ -279,20 +279,21 @@
     "s"
     (fn [_ _ ___ new-state]
       (when new-state
-        (let [dialog-chan (show-loading-dialog! "Ladataan hakemuksia" 2)]
+        (let [dialog-chan (show-loading-dialog! "Ladataan hakemuksia" 3)]
+          (put! dialog-chan 1)
           (go
             (let [grant-id (:id new-state)
                   applications-response
                   (<! (connection/get-grant-applications grant-id))
                   payments-response (<! (connection/get-grant-payments grant-id))]
-              (put! dialog-chan 1)
+              (put! dialog-chan 2)
               (if (:success applications-response)
                 (reset! applications (:body applications-response))
                 (show-message! "Virhe hakemusten latauksessa"))
               (if (:success payments-response)
                 (reset! payments (:body payments-response))
                 (show-message! "Virhe maksatusten latauksessa"))
-              (put! dialog-chan 2))
+              (put! dialog-chan 3))
             (close! dialog-chan))))))
   (go
     (let [dialog-chan (show-loading-dialog! "Ladataan tietoja" 3)
