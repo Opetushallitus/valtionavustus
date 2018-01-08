@@ -246,7 +246,7 @@
                     (go
                       (put! dialog-chan 1)
                       (let [result (<! (connection/get-payment-history id))]
-                      (close! dialog-chan)
+                        (close! dialog-chan)
                         (if (:success result)
                           (show-dialog!
                             "Maksatuksen historia"
