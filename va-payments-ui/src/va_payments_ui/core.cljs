@@ -41,8 +41,7 @@
 
 (defn show-message! [message] (reset! snackbar {:open true :message message}))
 
-(defn show-error-message!
-  [code text]
+(defn show-error-message! [code text]
   (show-message!
     (format "Virhe tietojen latauksessa. Virhe %s (%d)" text code)))
 
@@ -107,27 +106,6 @@
 (defn is-admin?
   [user]
   (not-nil? (some #(= % "va-admin") (get user :privileges))))
-
-(add-watch
-  selected-grant
-  "s"
-  (fn [_ _ ___ new-state]
-    (when new-state
-      (let [dialog-chan (show-loading-dialog! "Ladataan hakemuksia" 2)]
-        (go
-          (let [grant-id (:id new-state)
-                applications-response
-                (<! (connection/get-grant-applications grant-id))
-                payments-response (<! (connection/get-grant-payments grant-id))]
-            (put! dialog-chan 1)
-            (if (:success applications-response)
-              (reset! applications (:body applications-response))
-              (show-message! "Virhe hakemusten latauksessa"))
-            (if (:success payments-response)
-              (reset! payments (:body payments-response))
-              (show-message! "Virhe maksatusten latauksessa"))
-            (put! dialog-chan 2))
-          (close! dialog-chan))))))
 
 (defn render-dialogs []
   [:div
@@ -276,9 +254,28 @@
 
 (defn mount-root [] (r/render [home-page] (.getElementById js/document "app")))
 
-(defn init!
-  []
+(defn init! []
   (mount-root)
+  (add-watch
+    selected-grant
+    "s"
+    (fn [_ _ ___ new-state]
+      (when new-state
+        (let [dialog-chan (show-loading-dialog! "Ladataan hakemuksia" 2)]
+          (go
+            (let [grant-id (:id new-state)
+                  applications-response
+                  (<! (connection/get-grant-applications grant-id))
+                  payments-response (<! (connection/get-grant-payments grant-id))]
+              (put! dialog-chan 1)
+              (if (:success applications-response)
+                (reset! applications (:body applications-response))
+                (show-message! "Virhe hakemusten latauksessa"))
+              (if (:success payments-response)
+                (reset! payments (:body payments-response))
+                (show-message! "Virhe maksatusten latauksessa"))
+              (put! dialog-chan 2))
+            (close! dialog-chan))))))
   (go
     (let [dialog-chan (show-loading-dialog! "Ladataan tietoja" 3)
           config-result (<! (connection/get-config))]
