@@ -7,6 +7,7 @@
     [cljsjs.material-ui]
     [cljs-react-material-ui.core :refer [get-mui-theme color]]
     [cljs-react-material-ui.reagent :as ui]
+    [cljs-react-material-ui.icons :as ic]
     [va-payments-ui.payments-ui :as payments-ui]
     [va-payments-ui.payments :as payments]
     [va-payments-ui.applications :as applications]
@@ -57,8 +58,9 @@
           (swap! dialogs assoc-in [:loading :open] false))))
     c))
 
-(defn show-dialog! [content]
-  (swap! dialogs update-in [:generic] assoc :open true :content content))
+(defn show-dialog! [title content]
+  (swap! dialogs update-in [:generic]
+         assoc :open true :content content :title title))
 
 (defn redirect-to-login! []
   (router/redirect-to! connection/login-url-with-service))
@@ -117,6 +119,15 @@
    [ui/dialog
     {:on-request-close #(on-close :generic)
      :children (:content generic)
+     :title
+     (r/as-element
+       [:div [ui/app-bar {:title (:title generic)
+                          :show-menu-icon-button false
+                          :icon-element-right
+                          (r/as-element [ui/icon-button
+                                         {:on-click #(on-close :generic)}
+                                         [ic/navigation-close
+                                          {:color (color :white)}]])}]])
      :open (:open generic)
      :content-style {:width "95%" :max-width "none"}}]
    [ui/dialog
@@ -233,7 +244,9 @@
                   (go
                     (let [result (<! (connection/get-payment-history id))]
                       (if (:success result)
-                        (show-dialog! (r/as-element (payments-ui/render-history
+                        (show-dialog!
+                          "Maksatuksen historia"
+                          (r/as-element (payments-ui/render-history
                                                       (:body result))))
                         (show-message!
                           "Virhe historiatietojen latauksessa")))))
