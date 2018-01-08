@@ -241,15 +241,19 @@
              {:applications current-applications
               :on-info-clicked
                 (fn [id]
-                  (go
-                    (let [result (<! (connection/get-payment-history id))]
-                      (if (:success result)
-                        (show-dialog!
-                          "Maksatuksen historia"
-                          (r/as-element (payments-ui/render-history
-                                                      (:body result))))
-                        (show-message!
-                          "Virhe historiatietojen latauksessa")))))
+                  (let [dialog-chan
+                        (show-loading-dialog! "Ladataan historiatietoja" 2)]
+                    (go
+                      (put! dialog-chan 1)
+                      (let [result (<! (connection/get-payment-history id))]
+                        (close! dialog-chan)
+                        (if (:success result)
+                          (show-dialog!
+                            "Maksatuksen historia"
+                            (r/as-element (payments-ui/render-history
+                                                        (:body result))))
+                          (show-message!
+                            "Virhe historiatietojen latauksessa"))))))
               :is-admin? (is-admin? @user-info)})]
           [ui/raised-button
            {:primary true
@@ -275,20 +279,21 @@
     "s"
     (fn [_ _ ___ new-state]
       (when new-state
-        (let [dialog-chan (show-loading-dialog! "Ladataan hakemuksia" 2)]
+        (let [dialog-chan (show-loading-dialog! "Ladataan hakemuksia" 3)]
+          (put! dialog-chan 1)
           (go
             (let [grant-id (:id new-state)
                   applications-response
                   (<! (connection/get-grant-applications grant-id))
                   payments-response (<! (connection/get-grant-payments grant-id))]
-              (put! dialog-chan 1)
+              (put! dialog-chan 2)
               (if (:success applications-response)
                 (reset! applications (:body applications-response))
                 (show-message! "Virhe hakemusten latauksessa"))
               (if (:success payments-response)
                 (reset! payments (:body payments-response))
                 (show-message! "Virhe maksatusten latauksessa"))
-              (put! dialog-chan 2))
+              (put! dialog-chan 3))
             (close! dialog-chan))))))
   (go
     (let [dialog-chan (show-loading-dialog! "Ladataan tietoja" 3)
