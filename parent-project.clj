@@ -87,18 +87,16 @@
                          [com.andrewmcveigh/cljs-time "0.5.2"]
 
                          ;; CLJS Dev
-                         [com.cemerick/piggieback "0.2.1"]
-                         [binaryage/devtools "0.9.4"]
-                         [figwheel-sidecar "0.5.13"]
-                         [org.clojure/tools.nrepl "0.2.13"]
                          [com.cemerick/piggieback "0.2.2"]
+                         [binaryage/devtools "0.9.4"]
+                         [figwheel-sidecar "0.5.14"]
+                         [org.clojure/tools.nrepl "0.2.13"]
                          [com.google.guava/guava "23.6-jre"
                           :exclusions [com.google.code.findbugs/jsr305]]
 
                          ;; other
                          [clj-time "0.14.0"]
                          [com.cemerick/url "0.1.1"]
-                         [com.google.guava/guava "17.0"]
                          [commons-codec "1.10"]
                          [commons-io "2.5"]
                          [de.ubercode.clostache/clostache "1.4.0"]
