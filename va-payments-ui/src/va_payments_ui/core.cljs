@@ -195,7 +195,7 @@
       (if (:success nin-result)
         (let [values (conj payment-values (:body nin-result))]
           (loop [index 0]
-            (when-let [application
+            (if-let [application
                        (get applications-to-send index)]
               (let [payment-result
                     (<! (connection/create-payment
@@ -206,7 +206,8 @@
                   (recur (inc index))
                   (show-error-message!
                     "Maksatuksen lähetyksessä ongelma"
-                    (select-keys payment-result [:status :error-text]))))))
+                    (select-keys payment-result [:status :error-text]))))
+              (show-message! "Kaikki maksatukset lähetetty")))
           (let [grant-result (<! (connection/get-grant-payments
                                    (:id @selected-grant)))]
             (if (:success grant-result)
