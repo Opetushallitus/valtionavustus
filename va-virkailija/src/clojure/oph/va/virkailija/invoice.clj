@@ -2,7 +2,10 @@
   (:require [clojure.data.xml :refer [emit emit-str parse
                                       sexp-as-element]]
             [clj-time.core :as t]
-            [clj-time.coerce :as c]))
+            [clj-time.coerce :as c]
+            [clj-time.format :as f]))
+
+(def date-formatter (f/formatter "yyyy-MM-dd"))
 
 (defn get-answer-value
   ([answers key]
@@ -11,6 +14,11 @@
      (filter #(= (:key %) key) answers))))
   ([answers key not-found]
    (or (get-answer-value answers key) not-found)))
+
+(defn format-date [date]
+  (if date
+    (f/unparse date-formatter date)
+    date))
 
 (defn get-installment [payment]
   "Generating installment of organisation, year and installment-number.
@@ -31,12 +39,12 @@
     [:VA-invoice
      [:Header
       [:Maksuera (get-installment payment)]
-      [:Laskunpaiva (:invoice-date payment)]
-      [:Erapvm (:due-date payment)]
+      [:Laskunpaiva (format-date (:invoice-date payment))]
+      [:Erapvm (format-date (:due-date payment))]
       [:Bruttosumma (:budget-granted application)]
       [:Maksuehto "Z001"]
       [:Pitkaviite (:register-number application)]
-      [:Tositepvm (:receipt-date payment)]
+      [:Tositepvm (format-date (:receipt-date payment))]
       [:Asiatarkastaja (:inspector-email payment)]
       [:Hyvaksyja (:acceptor-email payment)]
       [:Tositelaji (:document-type payment)]
