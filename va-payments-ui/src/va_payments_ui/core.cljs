@@ -295,7 +295,7 @@
             :on-click
             (fn [_]
               (send-payments!
-                (filterv #(< (get % :payment-state) 2)
+                (filterv #(< (get-in % [:payment :state]) 2)
                          current-applications)
                 @payment-values))}]])])
     (when (and @delete-payments? (is-admin? @user-info))
