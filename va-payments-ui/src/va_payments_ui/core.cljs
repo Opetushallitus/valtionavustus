@@ -300,7 +300,10 @@
                 @payment-values))}]])])
     (when (and @delete-payments? (is-admin? @user-info))
       (render-admin-tools))
-    (render-dialogs @dialogs #(swap! dialogs assoc-in [% :open] false))]])
+    (render-dialogs
+      @dialogs
+      #(do (if (= % :snackbar) (swap! dialogs assoc :snackbar {:open false}))
+           (swap! dialogs assoc-in [% :open] false)))]])
 
 (defn mount-root [] (r/render [home-page] (.getElementById js/document "app")))
 
