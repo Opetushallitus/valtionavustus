@@ -260,7 +260,7 @@
            (project-info @selected-grant)
            [:hr]
            [:div
-            (when (some #(= (get % :payment-state) 2) current-applications)
+            (when-not (some #(< (get-in % [:payment :state]) 2) current-applications)
               {:style {:opacity 0.2 :pointer-events "none"}})
             [:h3 "Maksatuksen tiedot"]
             (financing/payment-emails @payment-values
