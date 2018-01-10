@@ -2,6 +2,7 @@
   (:require [compojure.api.sweet :as compojure-api]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.application-data :as application-data]
+            [oph.va.virkailija.grant-data :as grant-data]
             [ring.util.http-response :refer [ok not-found]]
             [compojure.core :as compojure]
             [schema.core :as s]
@@ -45,15 +46,16 @@
                            (System/currentTimeMillis))]
       (when (= (:state payment) 2)
         (throw (Exception. "Application already has a payment sent to Rondo")))
-      (rondo-service/send-to-rondo!
-        {:payment (payments-data/get-payment (:id payment))
-         :application
-         (application-data/get-application-with-evaluation-and-answers
-           (:application-id payment))
-         :filename filename})
-      (ok (payments-data/update-payment (assoc payment
-                                          :state 2
-                                          :filename filename))))))
+      (let [application
+            (application-data/get-application-with-evaluation-and-answers
+              (:application-id payment))]
+        (rondo-service/send-to-rondo!
+          {:payment (payments-data/get-payment (:id payment))
+           :application application
+           :grant (grant-data/get-grant (:grant-id application))
+           :filename filename}))
+      (ok (payments-data/update-payment
+            (assoc payment :state 2 :filename filename))))))
 
 (compojure-api/defroutes
   routes
