@@ -226,7 +226,7 @@
    {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
    [:div
     (top-links (get @selected-grant :id 0) (router/get-current-path))
-    [:hr]
+    [:hr theme/hr-top]
     [:div
      (render-grant-filters @grant-filter #(swap! grant-filter assoc %1 %2))
      (let [filtered-grants

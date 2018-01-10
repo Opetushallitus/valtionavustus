@@ -25,4 +25,4 @@
 
 (def table-body {:max-height "250px"})
 
-(def top-hr {:color "#4c7f00"}
+(def hr-top {:color "#4c7f00"})
