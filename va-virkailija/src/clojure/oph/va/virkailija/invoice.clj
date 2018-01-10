@@ -34,7 +34,7 @@
             (:installment-number payment))
    nil))
 
-(defn payment-to-invoice [payment application]
+(defn payment-to-invoice [payment application grant]
   (let [answers (:answers application)]
     [:VA-invoice
      [:Header
@@ -64,15 +64,15 @@
         [:Summa (:budget-granted application)]
         [:LKP-tili (:lkp-account application)]
         [:TaKp-tili (:takp-account application)]
-        [:Toimintayksikko (:operational-unit application)]
-        [:Projekti (:project application)]
-        [:Toiminto (:operation application)]
+        [:Toimintayksikko (get-in grant [:content :operational-unit])]
+        [:Projekti (get-in grant [:content :project])]
+        [:Toiminto  (get-in grant [:content :operation])]
         [:Kumppani (:partner payment)]]]]]))
 
-(defn payment-to-xml [payment application]
+(defn payment-to-xml [payment application grant]
   "Creates xml document (tags) of given payment of Valtionavustukset maksatus.
   Document should be valid document for VIA/Rondo."
-  (sexp-as-element (payment-to-invoice payment application)))
+  (sexp-as-element (payment-to-invoice payment application grant)))
 
 (defn tags-to-str [tags]
   "Converts XML document of clojure.data.xml.elements tags to a string."
