@@ -24,3 +24,5 @@
 (def text-field-error {:border-color "#f44336"})
 
 (def table-body {:max-height "250px"})
+
+(def top-hr {:color "#4c7f00"}
