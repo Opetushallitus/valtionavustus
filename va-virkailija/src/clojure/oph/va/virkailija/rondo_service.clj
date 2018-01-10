@@ -18,10 +18,10 @@
         (ssh/with-channel-connection channel
           (ssh/sftp channel {} :put file (:remote_path sftp-config)))))))
 
-(defn send-to-rondo! [{:keys [payment application filename]}]
+(defn send-to-rondo! [{:keys [payment application grant filename]}]
   (let [sftp-config (:rondo-sftp config)
         file (format "%s/%s" (:local-path sftp-config) filename)]
-    (invoice/write-xml! (invoice/payment-to-xml payment application) file)
+    (invoice/write-xml! (invoice/payment-to-xml payment application grant) file)
     (if (:enabled? sftp-config)
       (send-sftp! file sftp-config)
       (log/info (format "Would send %s to %s" file (:host-ip sftp-config))))))
