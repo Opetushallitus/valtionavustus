@@ -6,7 +6,7 @@
    :line-height "1.45"
    :table {:font-size "95%"}
    :palette {:text-color (color :black)
-             :primary1-color "#a6dcee"
+             :primary1-color "#00b5f0"
              :picker-header-color "#4c7f00"
              :accent1-color "#00b5f0"}})
 
