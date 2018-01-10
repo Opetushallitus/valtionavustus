@@ -302,7 +302,7 @@
       (render-admin-tools))
     (render-dialogs
       @dialogs
-      #(do (if (= % :snackbar) (swap! dialogs assoc :snackbar {:open false}))
+      #(do (if (= % :snackbar) (swap! dialogs assoc :snackbar {:open false :message ""}))
            (swap! dialogs assoc-in [% :open] false)))]])
 
 (defn mount-root [] (r/render [home-page] (.getElementById js/document "app")))
