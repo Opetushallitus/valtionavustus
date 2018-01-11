@@ -271,22 +271,25 @@
            (applications/applications-table
              {:applications current-applications
               :on-info-clicked
-                (fn [id]
-                  (let [dialog-chan
-                        (show-loading-dialog! "Ladataan historiatietoja" 2)]
-                    (go
-                      (put! dialog-chan 1)
-                      (let [result (<! (connection/get-payment-history id))]
-                        (close! dialog-chan)
-                        (if (:success result)
-                          (show-dialog!
-                            "Maksatuksen historia"
-                            (r/as-element (payments-ui/render-history
-                                                        (:body result))))
-                          (show-error-message!
-                            "Virhe historiatietojen latauksessa"
-                            (select-keys result [:status :error-text])))))))
+              (fn [id]
+                (let [dialog-chan
+                      (show-loading-dialog! "Ladataan historiatietoja" 2)]
+                  (go
+                    (put! dialog-chan 1)
+                    (let [result (<! (connection/get-payment-history id))]
+                      (close! dialog-chan)
+                      (if (:success result)
+                        (show-dialog!
+                          "Maksatuksen historia"
+                          (r/as-element (payments-ui/render-history
+                                          (:body result))))
+                        (show-error-message!
+                          "Virhe historiatietojen latauksessa"
+                          (select-keys result [:status :error-text])))))))
               :is-admin? (is-admin? @user-info)})]
+          (when (get-in @selected-grant [:content :multiplemaksuera])
+            [:div {:style theme/notice} "Ainoastaan yhden erän maksatukset on tuettu tällä hetkellä.
+             Monen erän maksatukset tulee luoda manuaalisesti."])
           [ui/raised-button
            {:primary true
             :disabled (not (payments/valid-payment-values? @payment-values))
@@ -294,10 +297,11 @@
             :style theme/button
             :on-click
             (fn [_]
-              (send-payments!
-                (filterv #(< (get-in % [:payment :state]) 2)
-                         current-applications)
-                @payment-values))}]])])
+              (when-not (get-in @selected-grant [:content :multiplemaksuera])
+                (send-payments!
+                  (filterv #(< (get-in % [:payment :state]) 2)
+                           current-applications)
+                  @payment-values)))}]])])
     (when (and @delete-payments? (is-admin? @user-info))
       (render-admin-tools))
     (render-dialogs
