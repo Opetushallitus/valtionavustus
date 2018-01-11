@@ -42,8 +42,8 @@
                         (:application-id payment-values))
                       (payments-data/create-payment payment-values))
           application
-            (application-data/get-application-with-evaluation-and-answers
-              (:application-id payment))
+          (application-data/get-application-with-evaluation-and-answers
+            (:application-id payment))
           grant (grant-data/get-grant (:grant-id application))
           filename (format "payment-%d-%d.xml"
                            (:id payment)
