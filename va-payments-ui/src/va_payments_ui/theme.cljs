@@ -26,3 +26,5 @@
 (def table-body {:max-height "250px"})
 
 (def hr-top {:color "#4c7f00"})
+
+(def notice {:padding "10px"})
