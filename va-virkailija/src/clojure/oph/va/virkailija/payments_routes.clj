@@ -41,19 +41,22 @@
     (let [payment (or (application-data/get-application-payment
                         (:application-id payment-values))
                       (payments-data/create-payment payment-values))
+          application
+            (application-data/get-application-with-evaluation-and-answers
+              (:application-id payment))
+          grant (grant-data/get-grant (:grant-id application))
           filename (format "payment-%d-%d.xml"
                            (:id payment)
                            (System/currentTimeMillis))]
+      (when (get-in grant [:content :multiplemaksuera])
+        (throw (Exception. "Multiple installments is not supported.")))
       (when (= (:state payment) 2)
         (throw (Exception. "Application already has a payment sent to Rondo")))
-      (let [application
-            (application-data/get-application-with-evaluation-and-answers
-              (:application-id payment))]
-        (rondo-service/send-to-rondo!
-          {:payment (payments-data/get-payment (:id payment))
-           :application application
-           :grant (grant-data/get-grant (:grant-id application))
-           :filename filename}))
+      (rondo-service/send-to-rondo!
+        {:payment (payments-data/get-payment (:id payment))
+         :application application
+         :grant grant
+         :filename filename})
       (ok (payments-data/update-payment
             (assoc payment :state 2 :filename filename))))))
 
