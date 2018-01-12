@@ -70,7 +70,7 @@ export default class TableFieldPropertyMapper {
 const ensureArraySize = (size, fillValue, ary) => {
   const numMissingValues = size - ary.length
 
-  if (numMissingValues == 0) {
+  if (numMissingValues === 0) {
     return ary
   } else if (numMissingValues > 0) {
     return ary.concat(_.fill(Array(numMissingValues), fillValue))
