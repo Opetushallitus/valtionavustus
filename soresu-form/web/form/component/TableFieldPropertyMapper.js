@@ -2,6 +2,7 @@ import _ from 'lodash'
 
 import {DefaultPropertyMapper} from './PropertyMapper'
 import MathUtil from '../../MathUtil'
+import Translator from '../Translator'
 
 export default class TableFieldPropertyMapper {
   static map(props) {
@@ -15,6 +16,10 @@ export default class TableFieldPropertyMapper {
 
     const rowParams = makeRowParams(DefaultPropertyMapper.param(field, "rows", []))
     const columnParams = makeColumnParams(DefaultPropertyMapper.param(field, "columns", []))
+    const sumTitle = makeSumTitle(
+      DefaultPropertyMapper.param(field, "sumTitle", {}),
+      props.translations.form["table-field"],
+      lang)
     const cellValues = makeCellValues(rowParams.length, columnParams.length, parseSavedValue(_.get(props, "value", [])))
     const isGrowingTable = _.isEmpty(rowParams)
     const columnSums = makeColumnSums(columnParams, cellValues)
@@ -62,7 +67,7 @@ export default class TableFieldPropertyMapper {
       renderingParameters: props.renderingParameters || {},
       required: field.required,
       fieldTranslations: field,
-      miscTranslations: props.translations.form["table-field"]
+      sumTitle
     })
   }
 }
@@ -140,6 +145,11 @@ const changeCellValue = (cellValues, numColumns, cellValue, cellRowIndex, cellCo
 
   return newCellValues
 }
+
+const makeSumTitle = (sumTitleParam, tableFieldTranslations, lang) =>
+  _.isEmpty(sumTitleParam)
+    ? new Translator(tableFieldTranslations).translate("sum-title", lang, "=")
+    : sumTitleParam[lang]
 
 const hasTableRequiredError = validationErrors =>
   _.some(validationErrors, err => err.error === "required")

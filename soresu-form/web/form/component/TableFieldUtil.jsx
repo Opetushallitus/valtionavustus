@@ -2,8 +2,6 @@ import _ from 'lodash'
 import React from 'react'
 import ClassNames from 'classnames'
 
-import LocalizedString from './LocalizedString.jsx'
-
 export default class TableFieldUtil {
   static makeTable({
     htmlId,
@@ -11,8 +9,7 @@ export default class TableFieldUtil {
     columnParams,
     columnSums,
     cellValues,
-    miscTranslations,
-    lang,
+    sumTitle,
     makeCaption,
     makeValueCell,
     tableClassNames = "",
@@ -22,8 +19,6 @@ export default class TableFieldUtil {
   }) {
     const isGrowingTable = _.isEmpty(rowParams)
     const usesSumCalculation = _.some(columnParams, col => col.calculateSum)
-    const lastColIndex = columnParams.length - 1
-    const lastRowIndex = cellValues.length - 1
 
     const makeTableClassNames = () =>
       ClassNames("soresu-table", tableClassNames, {
@@ -85,9 +80,7 @@ export default class TableFieldUtil {
         {usesSumCalculation && (
           <tfoot>
             <tr>
-              <th className={makeRowTitleCellClassNames()}>
-                <LocalizedString translations={miscTranslations} translationKey="sum-title" lang={lang} />
-              </th>
+              <th className={makeRowTitleCellClassNames()}>{sumTitle}</th>
               {_.map(columnParams, makeColumnSumCell)}
             </tr>
           </tfoot>
