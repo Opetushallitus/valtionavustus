@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.collection.JavaConversions;
 import scala.runtime.AbstractFunction1;
+import scala.runtime.AbstractPartialFunction;
+import scala.util.control.NonFatal$;
 import scalaz.concurrent.Task;
 import scalaz.concurrent.Task$;
 
@@ -90,6 +92,20 @@ public class JavaClient {
                         }
                     });
                 }
+            }
+        }).handleWith(new AbstractPartialFunction<Throwable, Task<String>>() {
+            @Override
+            public Task<String> apply(Throwable ex) {
+                String msg = String.format("Failed requesting %s %s", request.method().name(), request.uri().toString());
+                LOG.warn(msg, ex);
+                Task tmp = Task.fail(new RuntimeException(msg, ex));
+                @SuppressWarnings("unchecked")
+                Task<String> ret = tmp;
+                return ret;
+            }
+
+            public boolean isDefinedAt(Throwable ex) {
+                return NonFatal$.MODULE$.apply(ex) && !(ex instanceof ResponseException);
             }
         });
     }
