@@ -114,7 +114,7 @@
 
   :pedantic? :abort
 
-  :plugins [[lein-ancient "0.6.14"]
+  :plugins [[lein-ancient "0.6.15"]
             [lein-auto "0.1.3"]
             [lein-environ "1.1.0"]
             [speclj "3.3.2"]]

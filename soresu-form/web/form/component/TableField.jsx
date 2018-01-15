@@ -28,8 +28,8 @@ export default class TableField extends React.Component {
       disabled,
       required,
       renderingParameters,
+      sumTitle,
       fieldTranslations,
-      miscTranslations,
       lang
     } = this.props
 
@@ -126,9 +126,7 @@ export default class TableField extends React.Component {
       columnParams,
       columnSums,
       cellValues: cells,
-      fieldTranslations,
-      miscTranslations,
-      lang,
+      sumTitle,
       makeCaption,
       makeValueCell,
       tableClassNames: makeTableClassNames()
