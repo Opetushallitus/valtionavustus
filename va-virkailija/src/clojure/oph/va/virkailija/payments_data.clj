@@ -86,8 +86,8 @@
   (let [application (application-data/get-application
                      (:application-id payment-data))]
     (-> payment-data
-        (assoc :application-version (:version application))
-        (conj (select-keys application [:version :grant-id]))
+        (assoc :application-version (:version application)
+               :grant-id (:grant-id application))
         (merge (get-user-info identity))
         convert-timestamps-to-sql
         convert-to-underscore-keys
