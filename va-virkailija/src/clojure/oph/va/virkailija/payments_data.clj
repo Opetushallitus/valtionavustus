@@ -51,11 +51,15 @@
 
 (defn next-installment-number []
   (convert-to-dash-keys
-   (first (exec :form-db queries/get-next-payment-installment-number {}))))
+    (first (exec :form-db queries/get-next-payment-installment-number {}))))
 
-(defn update-payment [payment-data]
+(defn- get-user-info [identity]
+  {:user-oid (:person-oid identity)
+   :user-name (format "%s %s" (:first-name identity) (:surname identity))})
+
+(defn update-payment [payment-data identity]
   (let [old-payment (get-payment (:id payment-data) (:version payment-data))
-        payment (dissoc (merge old-payment payment-data)
+        payment (dissoc (merge old-payment payment-data (get-user-info identity))
                         :version :version-closed)
         result
         (->> payment
@@ -71,7 +75,7 @@
 (defn- store-payment [payment]
   (exec :form-db queries/create-payment payment))
 
-(defn create-payment [payment-data]
+(defn create-payment [payment-data identity]
   (when
    (not
     (empty?
@@ -82,8 +86,9 @@
   (let [application (application-data/get-application
                      (:application-id payment-data))]
     (-> payment-data
-        (assoc :application-version (:version application))
-        (conj (select-keys application [:version :grant-id]))
+        (assoc :application-version (:version application)
+               :grant-id (:grant-id application))
+        (merge (get-user-info identity))
         convert-timestamps-to-sql
         convert-to-underscore-keys
         store-payment
