@@ -7,7 +7,8 @@
             [compojure.core :as compojure]
             [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]
-            [oph.va.virkailija.rondo-service :as rondo-service]))
+            [oph.va.virkailija.rondo-service :as rondo-service]
+            [oph.va.virkailija.authentication :as authentication]))
 
 (defn- update-payment []
   (compojure-api/PUT
@@ -19,7 +20,9 @@
                              "Update payment")]
     :return virkailija-schema/Payment
     :summary "Create new payment for application"
-    (ok (payments-data/update-payment payment-data))))
+    (ok (payments-data/update-payment
+          payment-data
+          (authentication/get-request-identity request)))))
 
 (defn- get-next-installment-number []
   (compojure-api/GET
@@ -31,16 +34,16 @@
 
 (defn- create-payment []
   (compojure-api/POST
-    "/" []
-    :body [payment-values
-     (compojure-api/describe virkailija-schema/Payment
-                             "Create payments to Rondo")]
+    "/" [:as request]
+    :body [payment-values (compojure-api/describe virkailija-schema/Payment
+                                                  "Create payments to Rondo")]
     :return virkailija-schema/Payment
     :summary "Create new payment for application. Payment will be sent to Rondo
              and stored to database."
-    (let [payment (or (application-data/get-application-payment
+    (let [identity (authentication/get-request-identity request)
+          payment (or (application-data/get-application-payment
                         (:application-id payment-values))
-                      (payments-data/create-payment payment-values))
+                      (payments-data/create-payment payment-values identity))
           application
           (application-data/get-application-with-evaluation-and-answers
             (:application-id payment))
@@ -48,6 +51,7 @@
           filename (format "payment-%d-%d.xml"
                            (:id payment)
                            (System/currentTimeMillis))]
+
       (when (get-in grant [:content :multiplemaksuera])
         (throw (Exception. "Multiple installments is not supported.")))
       (when (= (:state payment) 2)
@@ -58,7 +62,8 @@
          :grant grant
          :filename filename})
       (ok (payments-data/update-payment
-            (assoc payment :state 2 :filename filename))))))
+            (assoc payment :state 2 :filename filename)
+            identity)))))
 
 (compojure-api/defroutes
   routes
