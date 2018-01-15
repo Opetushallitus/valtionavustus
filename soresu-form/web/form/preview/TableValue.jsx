@@ -14,8 +14,8 @@ export default class TableValue extends React.Component {
       columnSums,
       cellValues,
       renderingParameters,
+      sumTitle,
       fieldTranslations,
-      miscTranslations,
       lang
     } = this.props
 
@@ -50,8 +50,7 @@ export default class TableValue extends React.Component {
       columnParams,
       columnSums,
       cellValues,
-      miscTranslations,
-      lang,
+      sumTitle,
       makeCaption,
       makeValueCell,
       tableClassNames: "soresu-table--preview",
