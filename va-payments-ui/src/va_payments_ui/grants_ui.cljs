@@ -9,15 +9,6 @@
             [cljs-time.core :as t]
             [va-payments-ui.utils :refer [update-all to-simple-date-time]]))
 
-(def status-str
-  {"deleted" "Poistettu"
-   "draft" "Luonnos"
-   "published" "Julkaistu"
-   "resolved" "Ratkaistu"
-   "new" "Uusi"})
-
-(def phase-str {"current" "Auki" "unpublished" "Kiinni" "ended" "Kiinni"})
-
 (defn grant-row
   [grant selected]
   [ui/table-row {:key (:id grant) :selected selected}
