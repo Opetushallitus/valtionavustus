@@ -5,4 +5,6 @@ SELECT
 FROM
   avustushaut
 WHERE
-  status = 'resolved';
+  status = 'resolved'
+ORDER
+  BY created_at DESC;
