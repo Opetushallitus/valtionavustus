@@ -23,5 +23,10 @@
         file (format "%s/%s" (:local-path sftp-config) filename)]
     (invoice/write-xml! (invoice/payment-to-xml payment application grant) file)
     (if (:enabled? sftp-config)
-      (send-sftp! file sftp-config)
-      (log/info (format "Would send %s to %s" file (:host-ip sftp-config))))))
+      (let [result (send-sftp! file sftp-config)]
+        (if (nil? result)
+          {:success true}
+          {:success false :value result}))
+      (do
+        (log/info (format "Would send %s to %s" file (:host-ip sftp-config)))
+        {:success true}))))

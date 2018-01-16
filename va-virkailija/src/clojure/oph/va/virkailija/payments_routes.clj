@@ -1,14 +1,17 @@
 (ns oph.va.virkailija.payments-routes
-  (:require [compojure.api.sweet :as compojure-api]
+  (:require [clojure.core.async :as a]
+            [compojure.api.sweet :as compojure-api]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.application-data :as application-data]
             [oph.va.virkailija.grant-data :as grant-data]
-            [ring.util.http-response :refer [ok not-found]]
+            [ring.util.http-response :refer [ok not-found request-timeout]]
             [compojure.core :as compojure]
             [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.authentication :as authentication]))
+
+(def timeout-limit 10000)
 
 (defn- update-payment []
   (compojure-api/PUT
@@ -56,14 +59,20 @@
         (throw (Exception. "Multiple installments is not supported.")))
       (when (= (:state payment) 2)
         (throw (Exception. "Application already has a payment sent to Rondo")))
-      (rondo-service/send-to-rondo!
-        {:payment (payments-data/get-payment (:id payment))
-         :application application
-         :grant grant
-         :filename filename})
-      (ok (payments-data/update-payment
-            (assoc payment :state 2 :filename filename)
-            identity)))))
+
+      (let [c (a/chan)]
+        (a/go
+          (a/>! c (rondo-service/send-to-rondo!
+                    {:payment (payments-data/get-payment (:id payment))
+                     :application application
+                     :grant grant
+                     :filename filename})))
+        (a/alt!!
+          c ([v] (when (not (:success v)) (throw (Exception. (str (:value v)))))
+             (ok (payments-data/update-payment
+                   (assoc payment :state 2 :filename filename)
+                   identity)))
+          (a/timeout timeout-limit) ([_] (request-timeout "Rondo timeout")))))))
 
 (compojure-api/defroutes
   routes
