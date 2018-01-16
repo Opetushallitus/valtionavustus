@@ -11,6 +11,8 @@
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.authentication :as authentication]))
 
+(def timeout-limit 10000)
+
 (defn- update-payment []
   (compojure-api/PUT
     "/:payment-id/" [payment-id :as request]
@@ -70,7 +72,7 @@
              (ok (payments-data/update-payment
                    (assoc payment :state 2 :filename filename)
                    identity)))
-          (a/timeout 10000) ([_] (request-timeout "Rondo timeout")))))))
+          (a/timeout timeout-limit) ([_] (request-timeout "Rondo timeout")))))))
 
 (compojure-api/defroutes
   routes
