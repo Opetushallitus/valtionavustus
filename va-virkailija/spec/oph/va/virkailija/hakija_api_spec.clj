@@ -3,7 +3,8 @@
        [clojure.pprint :only [pprint]])
   (:require
     [speclj.core :refer :all]
-    [oph.va.hakija.api :refer :all]))
+    [oph.va.hakija.api :refer :all]
+    [oph.va.virkailija.utils :refer [convert-to-underscore-keys convert-to-dash-keys]]))
 
 (def payments-with-dash
   [{:amount 2000 :transaction-account "1234" :application-id 41 :takp-account "521"
@@ -48,4 +49,3 @@
       (second payments-with-dash)
       (convert-to-dash-keys
         (convert-to-underscore-keys (second payments-with-dash))))))
-
