@@ -68,7 +68,8 @@
                      :grant grant
                      :filename filename})))
         (a/alt!!
-          c ([v] (when (not (:success v)) (throw (Exception. (str (:value v)))))
+          c ([v]
+             (when (not (:success v)) (throw (Exception. (str (:value v)))))
              (ok (payments-data/update-payment
                    (assoc payment :state 2 :filename filename)
                    identity)))
