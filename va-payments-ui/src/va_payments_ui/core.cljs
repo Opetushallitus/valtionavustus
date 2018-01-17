@@ -95,7 +95,7 @@
 
 (defn top-links [grant-id current-path]
   [:div {:class "top-links"}
-   (create-link (str "/avustushaku/" grant-id)
+   (create-link (format "/avustushaku/%d/" grant-id)
                 "Hakemusten arviointi"
                 (= current-path "/avustushaku/"))
    (create-link "/admin/" "Hakujen hallinta" (= current-path "/admin/"))
