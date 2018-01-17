@@ -33,10 +33,8 @@ Figwheelin voi käynnistää REPL:n kautta:
 lein repl
 # user=> (use 'figwheel-sidecar.repl-api)
 # user=> (start-figwheel!)
+# user=> (cljs-repl)
 ```
-
-Leiningenin REPL:n kanssa on ollut ongelmia requiren kanssa, koska se
-etsii oletuksena .clj-tiedostoja.
 
 rlwrap toimii Figwheelin kanssa:
 
