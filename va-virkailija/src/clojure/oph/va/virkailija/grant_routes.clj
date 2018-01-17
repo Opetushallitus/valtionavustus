@@ -48,9 +48,18 @@
     (grant-data/delete-grant-payments id)
     (ok)))
 
+(defn- post-payments-email []
+  (compojure-api/POST
+    "/:id/payments-email/" [id :as request]
+    :path-params [id :- Long]
+    :body [payments-info virkailija-schema/PaymentsEmail]
+    :summary "Send payments information email"
+    (grant-data/send-payments-email (merge {:grant-id id} payments-info))))
+
 (compojure-api/defroutes routes
   "grant routes"
   (get-grants)
   (get-grant-applications)
   (get-grant-payments)
-  (delete-payments))
+  (delete-payments)
+  (post-payments-email))
