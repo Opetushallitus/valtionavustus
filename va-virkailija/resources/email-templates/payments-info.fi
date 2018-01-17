@@ -1,0 +1,12 @@
+
+Avustuserä on lähetetty maksettavaksi {{date}}.
+
+Maksuerä: {{installment}}
+
+Avustuksen saajia: {{count}}
+
+Euromäärä yhteensä: {{total-granted}} €
+
+---
+
+Tämä viesti on lähetetty automaattisesti, eikä siihen voi vastata.
