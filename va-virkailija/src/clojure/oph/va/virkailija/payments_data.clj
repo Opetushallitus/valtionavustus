@@ -5,7 +5,6 @@
     :refer [convert-to-dash-keys convert-to-underscore-keys]]
    [clj-time.coerce :as c]
    [clj-time.core :as t]
-   [clj-time.coerce :as c]
    [oph.va.virkailija.db.queries :as queries]
    [oph.va.virkailija.application-data :as application-data]))
 
