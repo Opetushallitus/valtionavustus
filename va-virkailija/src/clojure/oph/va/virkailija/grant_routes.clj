@@ -54,7 +54,8 @@
     :path-params [id :- Long]
     :body [payments-info virkailija-schema/PaymentsEmail]
     :summary "Send payments information email"
-    (grant-data/send-payments-email (merge {:grant-id id} payments-info))))
+    (grant-data/send-payments-email (merge {:grant-id id} payments-info))
+    (ok "")))
 
 (compojure-api/defroutes routes
   "grant routes"
