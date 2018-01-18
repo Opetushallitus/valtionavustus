@@ -17,9 +17,9 @@
                                :sv "Mellanredovisningnen redo att fyllas"}
    :loppuselvitys-notification {:fi "Loppuselvitys täytettävissä haulle"
                                 :sv "Slutredovisningen redo att fyllasSELV"}
-   :payments-info-notification    {:fi "Valtionavustukset valmiit maksettavaksi"
-                                :sv "Valtionavustukset valmiit maksettavaksi"}
-   })
+   :payments-info-notification
+   {:fi "Automaattinen viesti - Valtionavustuserän '%s' maksatus suoritettu"
+    :sv "Automatiskt meddelande - Statsunderstöd '%s' betald"}})
 
 (def mail-templates
   {:change-request {:fi (email/load-template "email-templates/change-request.plain.fi")
@@ -32,10 +32,9 @@
                                :sv (email/load-template "email-templates/valiselvitys-notification.plain.sv")}
    :loppuselvitys-notification {:fi (email/load-template "email-templates/loppuselvitys-notification.plain.fi")
                                 :sv (email/load-template "email-templates/loppuselvitys-notification.plain.sv")}
-   :payments-info-notification {:fi (email/load-template "email-templates/payments-info-to-finance.fi")
-                                  :sv (email/load-template "email-templates/payments-info-to-finance.fi")}
-
-  })
+   :payments-info-notification
+   {:fi (email/load-template "email-templates/payments-info.fi")
+    :sv (email/load-template "email-templates/payments-info.fi")}})
 
 (defn mail-example [msg-type & [data]]
   {:content (render (:fi (msg-type mail-templates)) (if data data {}))
@@ -74,9 +73,9 @@
         lang-str (or (clojure.core/name lang) "fi")]
   (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" user-key "&lang=" lang-str)))
 
-(defn payment-url [avustushaku-id]
+(defn payment-url [grant-id]
   (format "%s/payments/?grant=%d"
-          (get-in config [:server :virkailija-url]) avustushaku-id))
+          (get-in config [:server :virkailija-url]) grant-id))
 
 (defn send-paatos! [to avustushaku hakemus reply-to]
   (let [lang-str (:language hakemus)
@@ -134,23 +133,20 @@
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)})))
 
-(defn send-payments-info-to-finance! [payments-info]
+(defn send-payments-info! [payments-info]
   (let [lang :fi
-        mail-subject (get-in mail-titles [:payments-info-notification lang])
-        url (payment-url (:avustushaku-id payments-info))
-        avustushaku-name (get-in (:avustushaku payments-info) [:content :name lang])
-        diaarinumero (:register-number payments-info)
-        presenting-officer-email (:presenting-officer-email payments-info)
-        presenting-officer-name (:presenting-officer-name payments-info)]
+        grant-title (get-in payments-info [:title lang])
+        mail-subject
+        (format (get-in mail-titles [:payments-info-notification lang])
+                grant-title)]
     (>!! email/mail-chan {:operation :send
                           :type :payments-info-notification
                           :lang lang
                           :from (-> email/smtp-config :from lang)
                           :sender (-> email/smtp-config :sender)
                           :subject mail-subject
-                          :to (-> email/smtp-config :to-finance)
-                          :url url
-                          :avustushaku-name avustushaku-name
-                          :presenting-officer-email presenting-officer-email
-                          :presenting-officer-name presenting-officer-name
-                          :diaarinumero diaarinumero})))
+                          :to (:receivers payments-info)
+                          :date (:date payments-info)
+                          :installment (:installment payments-info)
+                          :count (:count payments-info)
+                          :total-granted (:total-granted payments-info)})))

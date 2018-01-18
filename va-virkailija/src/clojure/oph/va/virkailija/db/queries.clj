@@ -33,7 +33,10 @@
   "sql/virkailija/grants/get-accepted-grant-applications-with-evaluation.sql")
 (defquery get-grant-roles "sql/virkailija/grants/get-grant-roles.sql")
 (defquery get-grant-payments "sql/virkailija/grants/get-grant-payments.sql")
-(defquery delete-grant-payments "sql/virkailija/grants/delete-grant-payments.sql")
+(defquery delete-grant-payments
+  "sql/virkailija/grants/delete-grant-payments.sql")
+(defquery get-grant-payments-info
+  "sql/virkailija/grants/get-grant-payments-info.sql")
 
 (defquery get-payment "sql/virkailija/payments/get-payment.sql")
 (defquery get-payment-version "sql/virkailija/payments/get-payment-version.sql")
@@ -67,5 +70,3 @@
 (defquery get-yearly-granted "sql/virkailija/reporting/get-yearly-granted.sql")
 (defquery get-total-grant-count
   "sql/virkailija/reporting/get-total-grant-count.sql")
-
-

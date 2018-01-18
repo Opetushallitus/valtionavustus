@@ -9,22 +9,11 @@
             [cljs-time.core :as t]
             [va-payments-ui.utils :refer [update-all to-simple-date-time]]))
 
-(def status-str
-  {"deleted" "Poistettu"
-   "draft" "Luonnos"
-   "published" "Julkaistu"
-   "resolved" "Ratkaistu"
-   "new" "Uusi"})
-
-(def phase-str {"current" "Auki" "unpublished" "Kiinni" "ended" "Kiinni"})
-
 (defn grant-row
   [grant selected]
   [ui/table-row {:key (:id grant) :selected selected}
    [ui/table-row-column (get grant :register-number)]
    [ui/table-row-column (get-in grant [:content :name :fi])]
-   [ui/table-row-column (get status-str (:status grant))]
-   [ui/table-row-column (get phase-str (:phase grant))]
    [ui/table-row-column
     (to-simple-date-time (get-in grant [:content :duration :start]))]
    [ui/table-row-column
@@ -41,8 +30,8 @@
     :class "table"}
    [ui/table-header {:display-select-all false :adjust-for-checkbox false}
     [ui/table-row {:style {:font-size "80px"}}
-     [ui/table-header-column "Diaarinumero"] [ui/table-header-column "Nimi"]
-     [ui/table-header-column "Tila"] [ui/table-header-column "Vaihe"]
+     [ui/table-header-column "Diaarinumero"]
+     [ui/table-header-column "Nimi"]
      [ui/table-header-column "Haku alkaa"]
      [ui/table-header-column "Haku päättyy"]]]
    [ui/table-body {:display-row-checkbox false :deselect-on-clickaway false}

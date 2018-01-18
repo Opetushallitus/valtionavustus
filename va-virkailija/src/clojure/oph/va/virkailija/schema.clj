@@ -319,3 +319,9 @@
    (s/optional-key :grant-id) s/Int
    (s/optional-key :evaluation) s/Any
    (s/optional-key :answers) [Answer]})
+
+(s/defschema PaymentsEmail
+  "Grant payments email"
+  {:acceptor-email s/Str
+   :inspector-email s/Str
+   :installment s/Str})
