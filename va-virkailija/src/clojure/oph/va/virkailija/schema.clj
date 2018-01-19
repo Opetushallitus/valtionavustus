@@ -324,4 +324,5 @@
   "Grant payments email"
   {:acceptor-email s/Str
    :inspector-email s/Str
-   :installment s/Str})
+   :installment-number s/Int
+   :organisation s/Str})
