@@ -20,19 +20,22 @@
     (f/unparse date-formatter date)
     date))
 
-(defn get-installment [payment]
-  "Generating installment of organisation, year and installment-number.
+(defn get-installment
+  ([organisation year installment-number]
+   (format "%s%02d%03d" organisation year installment-number))
+  ([payment]
+   "Generating installment of organisation, year and installment-number.
   Installment is something like '660017006' where 6600 is organisation, 17 is
   year and 006 is order number or identification number, if you will.
   If some of values is missing, nil is being returned."
-  (if (and (:created-at payment)
-           (:organisation payment)
-           (:installment-number payment))
-    (format "%s%02d%03d"
+   (if (and (:created-at payment)
             (:organisation payment)
-            (mod (t/year (c/to-date-time (:created-at payment))) 1000)
             (:installment-number payment))
-   nil))
+     (get-installment
+       (:organisation payment)
+       (mod (t/year (c/to-date-time (:created-at payment))) 1000)
+       (:installment-number payment))
+     nil)))
 
 (defn payment-to-invoice [payment application grant]
   (let [answers (:answers application)]

@@ -49,19 +49,24 @@
                  {:grant_id id :installment_number installment-number}))))
 
 (defn send-payments-email
-  [{:keys [installment inspector-email acceptor-email grant-id]}]
-  (when (not= (count installment) 9) (throw (Exception. "Invalid installment")))
+  [{:keys [installment-number inspector-email acceptor-email
+           grant-id organisation]}]
+  (when (not (integer? installment-number)) (throw (Exception. "Invalid installment number")))
 
   (let [grant (convert-to-dash-keys
                 (first (exec :form-db virkailija-queries/get-grant
                              {:grant_id grant-id})))
-        installment-number (parse-installment-number installment)
-        payments-info (get-grant-payments-info grant-id installment-number)]
+        now (t/now)
+        payments-info (get-grant-payments-info grant-id installment-number)
+        installment (get-installment
+                      organisation
+                      (t/year now)
+                      installment-number)]
 
     (email/send-payments-info!
       {:receivers [inspector-email acceptor-email]
        :installment installment
        :title (get-in grant [:content :name])
-       :date (f/unparse date-formatter (t/now))
+       :date (f/unparse date-formatter now)
        :count (:count payments-info)
        :total-granted (:total-granted payments-info)})))
