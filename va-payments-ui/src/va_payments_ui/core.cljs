@@ -177,6 +177,8 @@
     {:floating-label-text "Hakujen suodatus"
      :value (:filter-str values)
      :on-change #(on-change :filter-str (.-value (.-target %)))}]
+   [ui/icon-button {:on-click #(on-change :filter-str "")}
+    [ic/action-highlight-off {:color "gray"}]]
    [ui/toggle
     {:label "Piilota vanhat haut"
      :toggled (:filter-old values)
