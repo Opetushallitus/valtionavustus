@@ -60,9 +60,9 @@
             {:json-params payment :with-credentials? true}))
 
 (defn send-payments-email
-  [id]
-  (http/post (format "/api/avustushaku/%d/payments-email/" id)
-             {:json-params {} :with-credentials? true}))
+  [id data]
+  (http/post (format "/%s/grants/%d/payments-email/" api-path id)
+             {:json-params data :with-credentials? true}))
 
 (defn get-payment-history
   [id]
