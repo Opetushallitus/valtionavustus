@@ -30,3 +30,15 @@
       (do
         (log/info (format "Would send %s to %s" file (:host-ip sftp-config)))
         {:success true}))))
+
+(defn get-sftp [file sftp-config]
+    (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})
+        session (ssh/session agent (:host-ip sftp-config)
+                             {:username (:username sftp-config)
+                              :password (:password sftp-config)
+                              :port (:port sftp-config)
+                              :strict-host-key-checking :no})]
+    (ssh/with-connection session
+      (let [channel (ssh/ssh-sftp session)]
+        (ssh/with-channel-connection channel
+          (ssh/sftp channel {} :get (format "%s/%s" (:remote_path config) file) file))))))
