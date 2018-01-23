@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.invoice
-  (:require [clojure.data.xml :refer [emit emit-str parse
+  (:require [oph.va.virkailija.lkp-templates :as lkp]
+   [clojure.data.xml :refer [emit emit-str parse
                                       sexp-as-element]]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
@@ -65,7 +66,7 @@
       [:Postings
        [:Posting
         [:Summa (:budget-granted application)]
-        [:LKP-tili (:lkp-account application)]
+        [:LKP-tili (lkp/get-lkp-account (:answers application))]
         [:TaKp-tili (:takp-account application)]
         [:Toimintayksikko (get-in grant [:content :operational-unit])]
         [:Projekti (get-in grant [:content :project])]
