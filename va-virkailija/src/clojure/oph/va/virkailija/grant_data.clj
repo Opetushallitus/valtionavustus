@@ -26,11 +26,11 @@
   (assoc application :lkp-account (lkp/get-lkp-account (:answers application))))
 
 (defn get-grant-applications-with-evaluation [grant-id]
-  (mapv
-    set-lkp-account
-    (map convert-to-dash-keys
-         (exec :form-db virkailija-queries/get-grant-applications-with-evaluation
-               {:grant_id grant-id}))))
+  (->> (exec :form-db
+             virkailija-queries/get-grant-applications-with-evaluation
+             {:grant_id grant-id} )
+      (map convert-to-dash-keys)
+      (mapv set-lkp-account)))
 
 (defn get-grant-applications [grant-id]
   (mapv convert-to-dash-keys
