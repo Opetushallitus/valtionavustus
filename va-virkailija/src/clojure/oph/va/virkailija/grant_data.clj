@@ -4,6 +4,7 @@
             [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
             [oph.va.virkailija.invoice :refer [get-installment]]
             [oph.va.virkailija.email :as email]
+            [oph.va.virkailija.lkp-templates :as lkp]
             [clj-time.core :as t]
             [clj-time.format :as f]))
 
@@ -21,10 +22,15 @@
   (convert-to-dash-keys
    (first (exec :form-db virkailija-queries/get-grant {:grant_id grant-id}))))
 
+(defn- set-lkp-account [application]
+  (assoc application :lkp-account (lkp/get-lkp-account (:answers application))))
+
 (defn get-grant-applications-with-evaluation [grant-id]
-  (mapv convert-to-dash-keys
-        (exec :form-db virkailija-queries/get-grant-applications-with-evaluation
-              {:grant_id grant-id})))
+  (mapv
+    set-lkp-account
+    (map convert-to-dash-keys
+         (exec :form-db virkailija-queries/get-grant-applications-with-evaluation
+               {:grant_id grant-id}))))
 
 (defn get-grant-applications [grant-id]
   (mapv convert-to-dash-keys
