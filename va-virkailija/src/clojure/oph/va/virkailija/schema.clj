@@ -317,6 +317,7 @@
    :budget-granted s/Int
    :costs-granted s/Int
    :lkp-account (s/maybe s/Str)
+   :takp-account (s/maybe s/Str)
    (s/optional-key :grant-id) s/Int
    (s/optional-key :evaluation) s/Any
    (s/optional-key :answers) [Answer]})
