@@ -1,9 +1,9 @@
 {:name "LKP account with ownership-type value"
  :key "ownership-type"
- :accounts {"kunta_kirkko" 82000000
-            "liiketalous" 82300000
-            "voittoa_tavoittelematon" 82500000
-            "yliopisto" 82930000
-            "valtio" 82950000
-            "eu-maat" 82820000
-            "ei-eu-maat" 82800000}}
+ :accounts {"kunta_kirkko" "82000000"
+            "liiketalous" "82300000"
+            "voittoa_tavoittelematon" "82500000"
+            "yliopisto" "82930000"
+            "valtio" "82950000"
+            "eu-maat" "82820000"
+            "ei-eu-maat" "82800000"}}
