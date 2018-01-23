@@ -1,8 +1,7 @@
 (ns oph.va.virkailija.lkp-templates)
 
-(def templates (atom []))
-
-(defn set-templates! [v] (reset! templates v))
+(def templates (map #(-> % slurp read-string)
+                    (.listFiles (io/file (io/resource "lkp-templates")))))
 
 (defn get-matching-account [{:keys [key value]}]
   (some
