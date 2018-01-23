@@ -35,7 +35,7 @@
    [ui/table-row-column (get-answer-value (:answers application) "bank-iban")]
    [ui/table-row-column (get application :register-number)]
    [ui/table-row-column (get application :lkp-account)]
-   [ui/table-row-column (get-in application [:arvio :takp-account])]
+   [ui/table-row-column (get application :takp-account)]
    [ui/table-row-column (get application :budget-granted)]
    [ui/table-row-column
     (when is-admin?
