@@ -23,7 +23,7 @@
                                           :value "key-number-0"}])))
           (it "gets first valid LKP account with multiple valid ones"
               (should= 1234567
-                       (get-lkp-account templates
+                       (get-lkp-account (vec templates)
                                         [{:key "some-unique-key"
                                           :value "key-number-1"}
                                          {:key "some-other-unique-key"
