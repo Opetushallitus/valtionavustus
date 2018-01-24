@@ -18,6 +18,7 @@
     1 "Hyväksytty"
     2 "Lähetetty Rondoon"
     3 "Maksettu"
+    4 "Epäonnistunut"
     "Odottaa maksatusta"))
 
 (defn render-application
