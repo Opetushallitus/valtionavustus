@@ -62,14 +62,19 @@
 
       (let [c (a/chan)]
         (a/go
-          (a/>! c (rondo-service/send-to-rondo!
-                    {:payment (payments-data/get-payment (:id payment))
-                     :application application
-                     :grant grant
-                     :filename filename})))
+          (try
+            (a/>! c (rondo-service/send-to-rondo!
+                     {:payment (payments-data/get-payment (:id payment))
+                      :application application
+                      :grant grant
+                      :filename filename}))
+            (catch Exception e
+              (a/>! c {:success false :exception e}))))
         (a/alt!!
           c ([v]
-             (when (not (:success v)) (throw (Exception. (str (:value v)))))
+             (when (not (:success v))
+               (throw (or (:exception v)
+                          (Exception. (str (:value v))))))
              (ok (payments-data/update-payment
                    (assoc payment :state 2 :filename filename)
                    identity)))
