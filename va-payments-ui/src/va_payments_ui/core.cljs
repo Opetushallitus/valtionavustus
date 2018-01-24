@@ -208,22 +208,21 @@
                   (recur (inc index))
                   (show-error-message!
                     "Maksatuksen lähetyksessä ongelma"
-                    (select-keys payment-result [:status :error-text]))))
-
-              (let [email-result
-                    (<!
-                      (connection/send-payments-email
-                        (:id @selected-grant)
-                        {:acceptor-email (:acceptor-email payment-values)
-                         :inspector-email (:inspector-email payment-values)
-                         :organisation (:organisation payment-values)
-                         :installment-number
-                         (get-in nin-result [:body :installment-number])}))]
-                (if (:success email-result)
-                  (show-message! "Kaikki maksatukset lähetetty")
-                  (show-message!
-                    "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin
-                       lähetyksessä tapahtui virhe")))))
+                    (select-keys payment-result [:status :error-text]))))))
+          (let [email-result
+                (<!
+                  (connection/send-payments-email
+                    (:id @selected-grant)
+                    {:acceptor-email (:acceptor-email payment-values)
+                     :inspector-email (:inspector-email payment-values)
+                     :organisation (:organisation payment-values)
+                     :installment-number
+                     (get-in nin-result [:body :installment-number])}))]
+            (if (:success email-result)
+              (show-message! "Kaikki maksatukset lähetetty")
+              (show-message!
+                "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin
+                       lähetyksessä tapahtui virhe")))
           (let [grant-result (<! (connection/get-grant-payments
                                    (:id @selected-grant)))]
             (if (:success grant-result)
