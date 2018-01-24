@@ -16,7 +16,7 @@
    :valiselvitys-notification {:fi "Väliselvitys täytettävissä haulle"
                                :sv "Mellanredovisningnen redo att fyllas"}
    :loppuselvitys-notification {:fi "Loppuselvitys täytettävissä haulle"
-                                :sv "Slutredovisningen redo att fyllasSELV"}
+                                :sv "Slutredovisningen redo att fyllas"}
    :payments-info-notification
    {:fi "Automaattinen viesti - Valtionavustuserän '%s' maksatus suoritettu"
     :sv "Automatiskt meddelande - Statsunderstöd '%s' betald"}})
