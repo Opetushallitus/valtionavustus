@@ -78,6 +78,15 @@
   Document should be valid document for VIA/Rondo."
   (sexp-as-element (payment-to-invoice payment application grant)))
 
+(defn get-content [xml ks]
+  (loop [content (list xml) xks ks]
+    (if (empty? xks)
+      content
+      (let [k (first xks)
+            v (some (fn [e] (when (= (:tag e) k) e)) content)]
+        (when (not (nil? v))
+          (recur (:content v) (rest xks)))))))
+
 (defn tags-to-str [tags]
   "Converts XML document of clojure.data.xml.elements tags to a string."
   (emit-str tags))
