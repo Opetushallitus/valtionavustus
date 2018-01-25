@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.invoice-spec
   (:require [speclj.core :refer [describe it should=]]
             [clj-time.format :as f]
+            [clojure.data.xml :as xml]
             [oph.va.virkailija.invoice :as invoice]))
 
 (def payment {:acceptor-email "acceptor@example.com"
@@ -32,6 +33,13 @@
 (def answers '({:key "key1" :value "somevalue" :fieldType "textArea"}
                {:key "email" :value "test@user.com" :fieldType "emailField"}))
 
+(def response-tags [:VA-invoice
+                    [:Header
+                     [:Pitkaviite "1/234/2018"]
+                     [:Maksupvm "2018-01-25"]]])
+
+(def response-xml (xml/sexp-as-element response-tags))
+
 (describe "Get answer value"
           (it "gets answer value"
               (should= "test@user.com"
@@ -53,3 +61,36 @@
               (should= nil (invoice/get-installment nil))
               (should= nil (invoice/get-installment {:some "Value"}))))
 
+(describe "Get response XML element content"
+          (it "gets content of Pitkaviite"
+              (should=
+                '("1/234/2018")
+                (invoice/get-content response-xml
+                                     [:VA-invoice :Header :Pitkaviite])))
+          (it "gets content of Maksupvm"
+              (should=
+                '("2018-01-25")
+                (invoice/get-content response-xml
+                                     [:VA-invoice :Header :Maksupvm]))))
+
+(describe "Handle response XML get value errors"
+          (it "returns nil if last not found"
+              (should=
+                nil
+                (invoice/get-content response-xml
+                                     [:VA-invoice :Header :Not-Found])))
+          (it "returns nil if first tag not found"
+              (should=
+                nil
+                (invoice/get-content response-xml
+                                     [:Not-Found :Header :Pitkaviite])))
+          (it "returns nil if xml is nil"
+              (should= nil (invoice/get-content nil [:Not-Valid :Child])))
+          (it "returns root content if keys are empty"
+              (should=
+                :VA-invoice
+                (:tag (first (invoice/get-content response-xml [])))))
+          (it "returns root content if keys are nil"
+              (should=
+                :VA-invoice
+                (:tag (first (invoice/get-content response-xml nil))))))
