@@ -88,8 +88,8 @@
           (recur (:content v) (rest xks)))))))
 
 (defn read-response-xml [xml]
-  {:register-number (first (get-value xml [:VA-invoice :Header :Pitkaviite]))
-   :payment-date (first (get-value xml [:VA-invoice :Header :Maksupvm]))})
+  {:register-number (first (get-content xml [:VA-invoice :Header :Pitkaviite]))
+   :payment-date (first (get-content xml [:VA-invoice :Header :Maksupvm]))})
 
 (defn tags-to-str [tags]
   "Converts XML document of clojure.data.xml.elements tags to a string."
