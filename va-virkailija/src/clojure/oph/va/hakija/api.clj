@@ -7,6 +7,7 @@
             [oph.va.jdbc.enums]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.hakija.domain :as hakija-domain]
+            [oph.va.environment :as environment]
             [oph.va.routes :refer :all]
             [clojure.tools.logging :as log]
             [oph.soresu.form.formutil :as formutil]
@@ -209,7 +210,7 @@
           hakemukset (exec :form-db hakija-queries/list-hakemukset-by-avustushaku {:avustushaku_id avustushaku-id})
           attachments (exec :form-db hakija-queries/list-attachments-by-avustushaku {:avustushaku_id avustushaku-id})]
       {:avustushaku (avustushaku-response-content avustushaku)
-       :environment (environment-content)
+       :environment (environment/get-content)
        :roles roles
        :form (form->json form)
        :hakemukset (hakemukset->json hakemukset)
