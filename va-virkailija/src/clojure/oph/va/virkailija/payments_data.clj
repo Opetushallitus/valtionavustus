@@ -6,7 +6,8 @@
    [clj-time.coerce :as c]
    [clj-time.core :as t]
    [oph.va.virkailija.db.queries :as queries]
-   [oph.va.virkailija.application-data :as application-data]))
+   [oph.va.virkailija.application-data :as application-data]
+   [oph.va.virkailija.invoice :as invoice]))
 
 (defn- get-keys-present [m ks]
   (keys (select-keys m ks)))
@@ -94,3 +95,23 @@
         first
         convert-to-dash-keys
         convert-timestamps-from-sql)))
+
+(defn get-by-rn-and-date [values]
+  (->> values
+       convert-to-underscore-keys
+       (exec :form-db queries/get-by-rn-and-date)
+       (map convert-to-dash-keys)))
+
+(defn update-state-by-response [xml]
+  (let [response-values (invoice/read-response-xml xml)
+        payments (get-by-rn-and-date response-values)
+        payment (first payments)]
+    (cond (empty? payments) (throw (Exception. "No payment found"))
+          (> (count payments) 1)
+          (throw (Exception. "Multiple payments found with the same register
+                              number and invoice date"))
+          (not= (:state payment) 2)
+          (throw (Exception. "Payment is not sent to Rondo or it's state is
+                              not valid. It should be 2 in this stage.")))
+    (update-payment (assoc (first payments) :state 3)
+                    {:person-oid "-" :first-name "Rondo"})))
