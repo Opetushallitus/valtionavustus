@@ -2,7 +2,7 @@
   (:require
    [oph.soresu.common.db :refer [exec]]
    [oph.va.virkailija.utils
-    :refer [convert-to-dash-keys convert-to-underscore-keys]]
+    :refer [convert-to-dash-keys convert-to-underscore-keys update-some]]
    [clj-time.coerce :as c]
    [clj-time.core :as t]
    [oph.va.virkailija.db.queries :as queries]
@@ -12,24 +12,21 @@
 (defn- get-keys-present [m ks]
   (keys (select-keys m ks)))
 
-(defn- update-all [m ks f]
-  (reduce #(update-in % [%2] f) m ks))
+(defn from-sql-date [d] (.toLocalDate d))
 
-(defn convert-timestamps [m f]
-  (let [timestamp-keys
-        (get-keys-present
-         m [:due-date :invoice-date :receipt-date])]
-    (if (empty? timestamp-keys)
-      m
-      (update-all m timestamp-keys f))))
+(defn convert-timestamps-from-sql [p]
+  (-> p
+      (update-some :create-at c/from-sql-time)
+      (update-some :due-date from-sql-date)
+      (update-some :invoice-date from-sql-date)
+      (update-some :receipt-date from-sql-date)))
 
-(defn convert-timestamps-from-sql [m]
-  (conj {:created-at (c/from-sql-time (:created-at m))}
-        (convert-timestamps m c/from-sql-date)))
-
-(defn convert-timestamps-to-sql [m]
-  (conj {:created-at (c/to-sql-time (:created-at m))}
-        (convert-timestamps m c/to-sql-date)))
+(defn convert-timestamps-to-sql [p]
+  (-> p
+      (update-some :create-at c/to-sql-time)
+      (update-some :due-date c/to-sql-date)
+      (update-some :invoice-date c/to-sql-date)
+      (update-some :receipt-date c/to-sql-date)))
 
 (defn get-payment
   ([id]
