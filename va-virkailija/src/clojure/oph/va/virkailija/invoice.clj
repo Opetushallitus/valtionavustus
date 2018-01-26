@@ -89,7 +89,7 @@
 
 (defn read-response-xml [xml]
   {:register-number (first (get-content xml [:VA-invoice :Header :Pitkaviite]))
-   :payment-date (first (get-content xml [:VA-invoice :Header :Maksupvm]))})
+   :invoice-date (first (get-content xml [:VA-invoice :Header :Maksupvm]))})
 
 (defn tags-to-str [tags]
   "Converts XML document of clojure.data.xml.elements tags to a string."
