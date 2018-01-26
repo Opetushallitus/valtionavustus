@@ -1,10 +1,11 @@
 (ns oph.va.virkailija.grant-data
   (:require [oph.soresu.common.db :refer [exec]]
             [oph.va.virkailija.db.queries :as virkailija-queries]
-            [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
+            [oph.va.virkailija.utils :refer [convert-to-dash-keys update-some]]
             [oph.va.virkailija.invoice :refer [get-installment]]
             [oph.va.virkailija.email :as email]
             [oph.va.virkailija.lkp-templates :as lkp]
+            [clj-time.coerce :as c]
             [clj-time.core :as t]
             [clj-time.format :as f]))
 
@@ -37,9 +38,20 @@
         (exec :form-db virkailija-queries/get-grant-applications
               {:grant_id grant-id})))
 
+(defn from-sql-date [d]
+  (.toLocalDate d))
+
+(defn- convert-dates [p]
+  (-> p
+      (update-some :create-at c/from-sql-time)
+      (update-some :due-date from-sql-date)
+      (update-some :invoice-date from-sql-date)
+      (update-some :receipt-date from-sql-date)))
+
 (defn get-grant-payments [id]
-  (mapv convert-to-dash-keys
-        (exec :form-db virkailija-queries/get-grant-payments {:id id})))
+  (->> (exec :form-db virkailija-queries/get-grant-payments {:id id})
+       (mapv convert-to-dash-keys)
+       (mapv convert-dates)))
 
 (defn delete-grant-payments [id]
   (exec :form-db virkailija-queries/delete-grant-payments {:id id}))
