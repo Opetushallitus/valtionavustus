@@ -23,7 +23,7 @@
    [ui/table-row-column (:user-name application)]])
 
 (defn render-history [payments]
-  [ui/table {:fixed-header true :selectable false}
+  [ui/table {:fixed-header true :selectable false :height "300px"}
    [ui/table-header {:adjust-for-checkbox false :display-select-all false}
     [ui/table-row [ui/table-header-column "Aika"]
      [ui/table-header-column "Versio"] [ui/table-header-column "Tila"]
