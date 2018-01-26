@@ -113,5 +113,5 @@
           (not= (:state payment) 2)
           (throw (Exception. "Payment is not sent to Rondo or it's state is
                               not valid. It should be 2 in this stage.")))
-    (update-payment (assoc (first payments) :state 3)
+    (update-payment (assoc payment :state 3)
                     {:person-oid "-" :first-name "Rondo" :surname ""})))
