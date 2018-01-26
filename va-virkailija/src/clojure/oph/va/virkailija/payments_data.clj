@@ -106,12 +106,20 @@
   (let [response-values (invoice/read-response-xml xml)
         payments (get-by-rn-and-date response-values)
         payment (first payments)]
-    (cond (empty? payments) (throw (Exception. "No payment found"))
+    (cond (empty? payments)
+          (throw (Exception. (format "No payment found with values: %s"
+                                     response-values)))
           (> (count payments) 1)
-          (throw (Exception. "Multiple payments found with the same register
-                              number and invoice date"))
+          (throw (Exception. (format
+                               "Multiple payments found with the same register
+                                number and invoice date: %s" response-values)))
+          (= (:state payment) 3)
+          (throw (Exception. (format "Payment (id %d) is already paid."
+                                     (:id payment))))
           (not= (:state payment) 2)
-          (throw (Exception. "Payment is not sent to Rondo or it's state is
-                              not valid. It should be 2 in this stage.")))
+          (throw (Exception.
+                   (format "Payment (id %d) is not sent to Rondo or it's state
+                            (%d) is not valid. It should be 2 in this stage."
+                           (:id payment) (:state payment)))))
     (update-payment (assoc payment :state 3)
                     {:person-oid "-" :first-name "Rondo" :surname ""})))
