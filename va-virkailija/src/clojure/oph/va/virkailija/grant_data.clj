@@ -4,6 +4,7 @@
             [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
             [oph.va.virkailija.invoice :refer [get-installment]]
             [oph.va.virkailija.email :as email]
+            [oph.va.virkailija.lkp-templates :as lkp]
             [clj-time.core :as t]
             [clj-time.format :as f]))
 
@@ -21,10 +22,15 @@
   (convert-to-dash-keys
    (first (exec :form-db virkailija-queries/get-grant {:grant_id grant-id}))))
 
+(defn- set-lkp-account [application]
+  (assoc application :lkp-account (lkp/get-lkp-account (:answers application))))
+
 (defn get-grant-applications-with-evaluation [grant-id]
-  (mapv convert-to-dash-keys
-        (exec :form-db virkailija-queries/get-grant-applications-with-evaluation
-              {:grant_id grant-id})))
+  (->> (exec :form-db
+             virkailija-queries/get-grant-applications-with-evaluation
+             {:grant_id grant-id} )
+      (map convert-to-dash-keys)
+      (mapv set-lkp-account)))
 
 (defn get-grant-applications [grant-id]
   (mapv convert-to-dash-keys
@@ -49,19 +55,24 @@
                  {:grant_id id :installment_number installment-number}))))
 
 (defn send-payments-email
-  [{:keys [installment inspector-email acceptor-email grant-id]}]
-  (when (not= (count installment) 9) (throw (Exception. "Invalid installment")))
+  [{:keys [installment-number inspector-email acceptor-email
+           grant-id organisation]}]
+  (when (not (integer? installment-number)) (throw (Exception. "Invalid installment number")))
 
   (let [grant (convert-to-dash-keys
                 (first (exec :form-db virkailija-queries/get-grant
                              {:grant_id grant-id})))
-        installment-number (parse-installment-number installment)
-        payments-info (get-grant-payments-info grant-id installment-number)]
+        now (t/now)
+        payments-info (get-grant-payments-info grant-id installment-number)
+        installment (get-installment
+                      organisation
+                      (t/year now)
+                      installment-number)]
 
     (email/send-payments-info!
       {:receivers [inspector-email acceptor-email]
        :installment installment
        :title (get-in grant [:content :name])
-       :date (f/unparse date-formatter (t/now))
+       :date (f/unparse date-formatter now)
        :count (:count payments-info)
        :total-granted (:total-granted payments-info)})))

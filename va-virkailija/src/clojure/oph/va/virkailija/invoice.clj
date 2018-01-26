@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.invoice
-  (:require [clojure.data.xml :refer [emit emit-str parse
+  (:require [oph.va.virkailija.lkp-templates :as lkp]
+   [clojure.data.xml :refer [emit emit-str parse
                                       sexp-as-element]]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
@@ -20,19 +21,22 @@
     (f/unparse date-formatter date)
     date))
 
-(defn get-installment [payment]
-  "Generating installment of organisation, year and installment-number.
+(defn get-installment
+  ([organisation year installment-number]
+   (format "%s%02d%03d" organisation year installment-number))
+  ([payment]
+   "Generating installment of organisation, year and installment-number.
   Installment is something like '660017006' where 6600 is organisation, 17 is
   year and 006 is order number or identification number, if you will.
   If some of values is missing, nil is being returned."
-  (if (and (:created-at payment)
-           (:organisation payment)
-           (:installment-number payment))
-    (format "%s%02d%03d"
+   (if (and (:created-at payment)
             (:organisation payment)
-            (mod (t/year (c/to-date-time (:created-at payment))) 1000)
             (:installment-number payment))
-   nil))
+     (get-installment
+       (:organisation payment)
+       (mod (t/year (c/to-date-time (:created-at payment))) 1000)
+       (:installment-number payment))
+     nil)))
 
 (defn payment-to-invoice [payment application grant]
   (let [answers (:answers application)]
@@ -62,7 +66,7 @@
       [:Postings
        [:Posting
         [:Summa (:budget-granted application)]
-        [:LKP-tili (:lkp-account application)]
+        [:LKP-tili (lkp/get-lkp-account (:answers application))]
         [:TaKp-tili (:takp-account application)]
         [:Toimintayksikko (get-in grant [:content :operational-unit])]
         [:Projekti (get-in grant [:content :project])]
@@ -73,6 +77,19 @@
   "Creates xml document (tags) of given payment of Valtionavustukset maksatus.
   Document should be valid document for VIA/Rondo."
   (sexp-as-element (payment-to-invoice payment application grant)))
+
+(defn get-content [xml ks]
+  (loop [content (list xml) xks ks]
+    (if (empty? xks)
+      content
+      (let [k (first xks)
+            v (some (fn [e] (when (= (:tag e) k) e)) content)]
+        (when (not (nil? v))
+          (recur (:content v) (rest xks)))))))
+
+(defn read-response-xml [xml]
+  {:register-number (first (get-content xml [:VA-invoice :Header :Pitkaviite]))
+   :invoice-date (first (get-content xml [:VA-invoice :Header :Maksupvm]))})
 
 (defn tags-to-str [tags]
   "Converts XML document of clojure.data.xml.elements tags to a string."
