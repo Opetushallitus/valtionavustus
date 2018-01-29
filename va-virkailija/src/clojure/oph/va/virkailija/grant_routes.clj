@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.grant-routes
   (:require [compojure.api.sweet :as compojure-api]
             [oph.va.virkailija.grant-data :as grant-data]
+            [oph.va.virkailija.payments-data :as payments-data]
             [ring.util.http-response :refer [ok not-found]]
             [compojure.core :as compojure]
             [schema.core :as s]
@@ -35,7 +36,7 @@
     :path-params [grant-id :- Long]
     :return [virkailija-schema/Payment]
     :summary "Return payments of a grant"
-    (ok (grant-data/get-grant-payments grant-id))))
+    (ok (payments-data/get-grant-payments grant-id))))
 
 (defn- delete-payments []
   (compojure-api/DELETE
@@ -45,7 +46,7 @@
     :summary "Delete grant payments"
     (when-not (get-in config [:payments :delete-payments?])
       (throw (Exception. "Route not allowed")))
-    (grant-data/delete-grant-payments id)
+    (payments-data/delete-grant-payments id)
     (ok)))
 
 (defn- post-payments-email []
@@ -54,7 +55,7 @@
     :path-params [id :- Long]
     :body [payments-info virkailija-schema/PaymentsEmail]
     :summary "Send payments information email"
-    (grant-data/send-payments-email (merge {:grant-id id} payments-info))
+    (payments-data/send-payments-email (merge {:grant-id id} payments-info))
     (ok "")))
 
 (compojure-api/defroutes routes

@@ -5,14 +5,27 @@
     :refer [convert-to-dash-keys convert-to-underscore-keys update-some]]
    [clj-time.coerce :as c]
    [clj-time.core :as t]
+   [clj-time.format :as f]
    [oph.va.virkailija.db.queries :as queries]
    [oph.va.virkailija.application-data :as application-data]
-   [oph.va.virkailija.invoice :as invoice]))
+   [oph.va.virkailija.invoice :as invoice]
+   [oph.va.virkailija.email :as email]
+   [oph.va.virkailija.invoice :refer [get-installment]]))
+
+(def date-formatter (f/formatter "dd.MM.YYYY"))
 
 (defn- get-keys-present [m ks]
   (keys (select-keys m ks)))
 
 (defn from-sql-date [d] (.toLocalDate d))
+
+(defn- convert-dates [p]
+  (-> p
+      (update-some :create-at c/from-sql-time)
+      (update-some :due-date from-sql-date)
+      (update-some :invoice-date from-sql-date)
+      (update-some :receipt-date from-sql-date)))
+
 
 (defn convert-timestamps-from-sql [p]
   (-> p
@@ -118,3 +131,44 @@
                            (:id payment) (:state payment)))))
     (update-payment (assoc payment :state 3)
                     {:person-oid "-" :first-name "Rondo" :surname ""})))
+
+(defn get-grant-payments [id]
+  (->> (exec :form-db queries/get-grant-payments {:id id})
+       (mapv convert-to-dash-keys)
+       (mapv convert-dates)))
+
+(defn delete-grant-payments [id]
+  (exec :form-db queries/delete-grant-payments {:id id}))
+
+(defn parse-installment-number [s]
+  (-> s
+      (subs 6)
+      (Integer/parseInt)))
+
+(defn get-grant-payments-info [id installment-number]
+  (convert-to-dash-keys
+    (first (exec :form-db queries/get-grant-payments-info
+                 {:grant_id id :installment_number installment-number}))))
+
+(defn send-payments-email
+  [{:keys [installment-number inspector-email acceptor-email
+           grant-id organisation]}]
+  (when (not (integer? installment-number)) (throw (Exception. "Invalid installment number")))
+
+  (let [grant (convert-to-dash-keys
+                (first (exec :form-db queries/get-grant
+                             {:grant_id grant-id})))
+        now (t/now)
+        payments-info (get-grant-payments-info grant-id installment-number)
+        installment (get-installment
+                      organisation
+                      (t/year now)
+                      installment-number)]
+
+    (email/send-payments-info!
+      {:receivers [inspector-email acceptor-email]
+       :installment installment
+       :title (get-in grant [:content :name])
+       :date (f/unparse date-formatter now)
+       :count (:count payments-info)
+       :total-granted (:total-granted payments-info)})))
