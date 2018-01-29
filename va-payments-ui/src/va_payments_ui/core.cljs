@@ -238,6 +238,19 @@
       (put! dialog-chan (+ (count applications-to-send) 10))
       (close! dialog-chan))))
 
+(defn format-date [d]
+  (when (some? d)
+   (format "%04d-%02d-%02d"
+           (.getFullYear d)
+           (+ (.getMonth d) 1 )
+           (.getDate d))))
+
+(defn convert-payment-dates [values]
+  (-> values
+      (update :due-date format-date)
+      (update :receipt-date format-date)
+      (update :invoice-date format-date)))
+
 (defn home-page []
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
@@ -318,7 +331,7 @@
                 (send-payments!
                   (filterv #(< (get-in % [:payment :state]) 2)
                            current-applications)
-                  @payment-values)))}]])])
+                  (convert-payment-dates @payment-values))))}]])])
     (when (and @delete-payments? (is-admin? @user-info))
       (render-admin-tools))
     (render-dialogs

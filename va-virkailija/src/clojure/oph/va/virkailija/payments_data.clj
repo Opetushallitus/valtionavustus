@@ -2,34 +2,29 @@
   (:require
    [oph.soresu.common.db :refer [exec]]
    [oph.va.virkailija.utils
-    :refer [convert-to-dash-keys convert-to-underscore-keys]]
+    :refer [convert-to-dash-keys convert-to-underscore-keys update-some]]
    [clj-time.coerce :as c]
    [clj-time.core :as t]
+   [clj-time.format :as f]
    [oph.va.virkailija.db.queries :as queries]
    [oph.va.virkailija.application-data :as application-data]
-   [oph.va.virkailija.invoice :as invoice]))
+   [oph.va.virkailija.invoice :as invoice]
+   [oph.va.virkailija.email :as email]
+   [oph.va.virkailija.invoice :refer [get-installment]]))
+
+(def date-formatter (f/formatter "dd.MM.YYYY"))
 
 (defn- get-keys-present [m ks]
   (keys (select-keys m ks)))
 
-(defn- update-all [m ks f]
-  (reduce #(update-in % [%2] f) m ks))
+(defn from-sql-date [d] (.toLocalDate d))
 
-(defn convert-timestamps [m f]
-  (let [timestamp-keys
-        (get-keys-present
-         m [:due-date :invoice-date :receipt-date])]
-    (if (empty? timestamp-keys)
-      m
-      (update-all m timestamp-keys f))))
-
-(defn convert-timestamps-from-sql [m]
-  (conj {:created-at (c/from-sql-time (:created-at m))}
-        (convert-timestamps m c/from-sql-date)))
-
-(defn convert-timestamps-to-sql [m]
-  (conj {:created-at (c/to-sql-time (:created-at m))}
-        (convert-timestamps m c/to-sql-date)))
+(defn convert-timestamps-from-sql [p]
+  (-> p
+      (update-some :create-at c/from-sql-time)
+      (update-some :due-date from-sql-date)
+      (update-some :invoice-date from-sql-date)
+      (update-some :receipt-date from-sql-date)))
 
 (defn get-payment
   ([id]
@@ -63,11 +58,11 @@
                         :version :version-closed)
         result
         (->> payment
-             convert-timestamps-to-sql
              convert-to-underscore-keys
              (exec :form-db queries/update-payment)
              first
-             convert-to-dash-keys)]
+             convert-to-dash-keys
+             convert-timestamps-from-sql)]
     (when (nil? result) (throw (Exception. "Failed to update payment")))
     (close-version (:id payment-data) (:version payment-data))
     result))
@@ -89,7 +84,6 @@
         (assoc :application-version (:version application)
                :grant-id (:grant-id application))
         (merge (get-user-info identity))
-        convert-timestamps-to-sql
         convert-to-underscore-keys
         store-payment
         first
@@ -123,3 +117,44 @@
                            (:id payment) (:state payment)))))
     (update-payment (assoc payment :state 3)
                     {:person-oid "-" :first-name "Rondo" :surname ""})))
+
+(defn get-grant-payments [id]
+  (->> (exec :form-db queries/get-grant-payments {:id id})
+       (mapv convert-to-dash-keys)
+       (mapv convert-timestamps-from-sql)))
+
+(defn delete-grant-payments [id]
+  (exec :form-db queries/delete-grant-payments {:id id}))
+
+(defn parse-installment-number [s]
+  (-> s
+      (subs 6)
+      (Integer/parseInt)))
+
+(defn get-grant-payments-info [id installment-number]
+  (convert-to-dash-keys
+    (first (exec :form-db queries/get-grant-payments-info
+                 {:grant_id id :installment_number installment-number}))))
+
+(defn send-payments-email
+  [{:keys [installment-number inspector-email acceptor-email
+           grant-id organisation]}]
+  (when (not (integer? installment-number)) (throw (Exception. "Invalid installment number")))
+
+  (let [grant (convert-to-dash-keys
+                (first (exec :form-db queries/get-grant
+                             {:grant_id grant-id})))
+        now (t/now)
+        payments-info (get-grant-payments-info grant-id installment-number)
+        installment (get-installment
+                      organisation
+                      (t/year now)
+                      installment-number)]
+
+    (email/send-payments-info!
+      {:receivers [inspector-email acceptor-email]
+       :installment installment
+       :title (get-in grant [:content :name])
+       :date (f/unparse date-formatter now)
+       :count (:count payments-info)
+       :total-granted (:total-granted payments-info)})))

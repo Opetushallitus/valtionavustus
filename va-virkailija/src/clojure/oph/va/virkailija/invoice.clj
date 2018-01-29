@@ -18,7 +18,7 @@
 
 (defn format-date [date]
   (if date
-    (f/unparse date-formatter date)
+    (f/unparse date-formatter (c/from-long (.toEpochDay date)))
     date))
 
 (defn get-installment

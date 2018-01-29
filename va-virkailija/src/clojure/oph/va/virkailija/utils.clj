@@ -36,4 +36,7 @@
 (defn convert-to-underscore-keys [m]
   (rename-keys m (map-dash-keys m)))
 
-
+(defn update-some [m k f]
+  (if (contains? m k)
+    (update m k f)
+    m))
