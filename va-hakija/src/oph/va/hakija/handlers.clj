@@ -2,7 +2,7 @@
   (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
-            [oph.soresu.common.config :refer [config config-simple-name]]
+            [oph.soresu.common.config :refer [config]]
             [oph.common.datetime :as datetime]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.validation :as validation]

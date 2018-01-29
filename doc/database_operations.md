@@ -2,6 +2,20 @@
 
 Komento [psql-jq](../scripts/psql-jq) on wrapperi komennoille `psql` ja `jq`.
 
+### Tiedotteen asettamimen
+
+Tiedote näkyy va-hakijassa ja va-virkailijassa sivuston yläosassa.
+
+``` sql
+update hakija.environment set notice = '{"fi": "Käyttökatko palvelussa to 1.2. klo 16.30 alkaen. Palvelu on taas käytössä tiistaiaamuna 6.2. klo 8.00.", "sv": "Driftsavbrott torsdagen 1.2 fr.o.m. kl. 16.30. Tjänsterna är i bruk igen tisdag morgon 6.2 kl. 8.00."}';
+```
+
+### Tiedotteen poistaminen
+
+``` sql
+update hakija.environment set notice = '{"fi": "", "sv": ""}';
+```
+
 ### Avustushaun listaus jsonina
 
 ``` bash

@@ -1,30 +1,17 @@
 (ns oph.va.routes
-  (:require [oph.soresu.common.config :refer :all]
-            [oph.soresu.common.routes :refer :all]
+  (:require [oph.soresu.common.routes :refer :all]
             [ring.util.http-response :refer :all]
             [compojure.core :as compojure]
             [compojure.api.sweet :as compojure-api]
             [clj-time.core :as t]
             [oph.common.datetime :as datetime]
+            [oph.va.environment :as environment]
             [oph.va.schema :refer :all]
             [schema.core :as s]
             [clojure.tools.logging :as log]))
 
-(defn environment-content []
-  (let [common-environment {:name (config-simple-name)
-                            :show-name (:show-environment? (:ui config))
-                            :hakija-server {:url (:url (:server config))}
-                            :virkailija-server {:url (:virkailija-url (:server config))}
-                            :paatos-path (:paatos-path (:ui config))
-                            :payments (:payments config)}
-        opintopolku (:opintopolku config)]
-    (if-let [opintopolku-url (:url opintopolku)]
-      (assoc common-environment :opintopolku {:url opintopolku-url
-                                              :permission-request (:permission-request opintopolku)})
-      common-environment)))
-
 (defn virkailija-url []
-  (-> (environment-content) :virkailija-server :url))
+  (-> (environment/get-content) :virkailija-server :url))
 
 (defn get-translations []
   (return-from-classpath "translations.json" "application/json; charset=utf-8"))
@@ -40,7 +27,7 @@
 (compojure-api/defroutes config-routes
   (compojure-api/GET "/environment" []
     :return Environment
-    (ok (environment-content)))
+    (ok (environment/get-content)))
 
   (compojure-api/GET "/translations.json" []
     :summary "Translated messages (localization)"

@@ -1,13 +1,26 @@
-import React from 'react'
+import React from "react"
+import _ from "lodash"
 
 export default class EnvironmentInfo extends React.Component {
   render() {
-    const environment = this.props.environment
+    const {
+      "show-name": showName,
+      name,
+      notice: noticeTranslations
+    } = this.props.environment
 
-    if (!environment['show-name']) {
+    const notice = noticeTranslations[this.props.lang]
+    const showNotice = !_.isEmpty(notice)
+
+    if (!showName && !showNotice) {
       return null
     }
 
-    return <span id="environment-info">{environment.name}</span>
+    return (
+      <div className="environment-info">
+        {showName && <div className="environment-info__name">{name}</div>}
+        {showNotice && <div className="environment-info__notice">{notice}</div>}
+      </div>
+    )
   }
 }
