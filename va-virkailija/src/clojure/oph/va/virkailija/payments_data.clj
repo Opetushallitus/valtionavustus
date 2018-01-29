@@ -26,13 +26,6 @@
       (update-some :invoice-date from-sql-date)
       (update-some :receipt-date from-sql-date)))
 
-(defn convert-timestamps-to-sql [p]
-  (-> p
-      (update-some :create-at c/to-sql-time)
-      (update-some :due-date c/to-sql-date)
-      (update-some :invoice-date c/to-sql-date)
-      (update-some :receipt-date c/to-sql-date)))
-
 (defn get-payment
   ([id]
    (->
