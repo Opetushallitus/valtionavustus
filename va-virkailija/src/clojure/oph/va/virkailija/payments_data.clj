@@ -60,7 +60,6 @@
                         :version :version-closed)
         result
         (->> payment
-             convert-timestamps-to-sql
              convert-to-underscore-keys
              (exec :form-db queries/update-payment)
              first
@@ -86,7 +85,6 @@
         (assoc :application-version (:version application)
                :grant-id (:grant-id application))
         (merge (get-user-info identity))
-        convert-timestamps-to-sql
         convert-to-underscore-keys
         store-payment
         first
