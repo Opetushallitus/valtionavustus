@@ -19,14 +19,6 @@
 
 (defn from-sql-date [d] (.toLocalDate d))
 
-(defn- convert-dates [p]
-  (-> p
-      (update-some :create-at c/from-sql-time)
-      (update-some :due-date from-sql-date)
-      (update-some :invoice-date from-sql-date)
-      (update-some :receipt-date from-sql-date)))
-
-
 (defn convert-timestamps-from-sql [p]
   (-> p
       (update-some :create-at c/from-sql-time)
@@ -76,7 +68,8 @@
              convert-to-underscore-keys
              (exec :form-db queries/update-payment)
              first
-             convert-to-dash-keys)]
+             convert-to-dash-keys
+             convert-timestamps-from-sql)]
     (when (nil? result) (throw (Exception. "Failed to update payment")))
     (close-version (:id payment-data) (:version payment-data))
     result))
@@ -135,7 +128,7 @@
 (defn get-grant-payments [id]
   (->> (exec :form-db queries/get-grant-payments {:id id})
        (mapv convert-to-dash-keys)
-       (mapv convert-dates)))
+       (mapv convert-timestamps-from-sql)))
 
 (defn delete-grant-payments [id]
   (exec :form-db queries/delete-grant-payments {:id id}))
