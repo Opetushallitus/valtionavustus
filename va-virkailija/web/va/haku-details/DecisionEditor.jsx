@@ -385,7 +385,7 @@ class DecisionDateAndSend extends React.Component {
                     {this.state.paatosDetail==paatos.id &&
                       <div className="panel person-panel person-panel--sm person-panel--view-details">
                         <button className="close" onClick={onCloseViews}>x</button>
-                        <table classNam="table">
+                        <table className="table">
                           <colgroup>
                             <col width="20%"/>
                             <col width="20%"/>
