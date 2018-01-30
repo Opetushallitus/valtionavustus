@@ -4,7 +4,6 @@ import Bacon from 'baconjs'
 
 import DateUtil from 'soresu-form/web/DateUtil'
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import Liitteet from 'va-common/web/va/data/Liitteet'
 
 import PaatosUrl from '../hakemus-details/PaatosUrl'
 import Selvitys from './Selvitys.jsx'
@@ -64,10 +63,10 @@ class DateField extends React.Component {
   }
 }
 
-
 class LiitteetList extends React.Component{
   render(){
     const avustushaku = this.props.avustushaku
+    const decisionLiitteet = this.props.decisionLiitteet
     const controller = this.props.controller
     const environment = this.props.environment
     const hakijaUrlFi = environment["hakija-server"].url.fi
@@ -91,7 +90,7 @@ class LiitteetList extends React.Component{
       return(
         <div key={liite.id}>
           <label>
-            <input type={liiteTotalCount > 1 ? "radio" : "checkbox"} name={group} onChange={liiteChanged} value={liite.id} checked={checked}/> {liite.fi} - {liite.id} <a href={`${link_fi}`} target="_blank">fi</a> <a href={`${link_sv}`} target="_blank">sv</a>
+            <input type={liiteTotalCount > 1 ? "radio" : "checkbox"} name={group} onChange={liiteChanged} value={liite.id} checked={checked}/> {liite.langs.fi} - {liite.id} <a href={`${link_fi}`} target="_blank">fi</a> <a href={`${link_sv}`} target="_blank">sv</a>
           </label>
         </div>
         )
@@ -100,16 +99,13 @@ class LiitteetList extends React.Component{
       <div>
         <h4>Päätöksen liitteet</h4>
         <div className="liite-row">
-          {Liitteet.map((group)=>{return (
+          {_.map(decisionLiitteet, group =>
             <div key={group.group}>
               <h5>{group.group}</h5>
-              {group.attachments.map(_.partial(Liite, group.group, group.attachments.length))}
+              {_.map(group.attachments, _.partial(Liite, group.group, group.attachments.length))}
             </div>
-            )
-            }
           )}
         </div>
-
       </div>
     )
   }
@@ -339,7 +335,12 @@ class DecisionDateAndSend extends React.Component {
 
 export default class DecisionEditor extends React.Component {
   render() {
-    const {avustushaku,environment,controller} = this.props
+    const {
+      avustushaku,
+      decisionLiitteet,
+      environment,
+      controller
+    } = this.props
     const onChange = (e) => controller.onChangeListener(avustushaku, e.target, e.target.value)
     const fields = [
       {id:"sovelletutsaannokset",title:"Sovelletut säännökset"},
@@ -367,7 +368,7 @@ export default class DecisionEditor extends React.Component {
         <DecisionFields key="maksu" title="Avustuksen maksuaika" avustushaku={avustushaku} id="maksu" onChange={onChange}/>
         <Selvitys {...this.props}/>
         {avustushaku.content.multiplemaksuera===true && <DateField avustushaku={avustushaku} controller={controller} field="maksudate" label="Viimeinen maksuerä"/>}
-        <LiitteetList environment={environment} avustushaku={avustushaku} controller={controller}/>
+        <LiitteetList environment={environment} avustushaku={avustushaku} decisionLiitteet={decisionLiitteet} controller={controller}/>
         <DecisionDateAndSend avustushaku={avustushaku} controller={controller}/>
       </div>
     )

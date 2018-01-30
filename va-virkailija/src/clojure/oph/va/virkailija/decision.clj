@@ -4,65 +4,16 @@
             [clojure.data.json :as json]
             [compojure.api.sweet :as compojure-api]
             [oph.common.email :as email]
+            [oph.va.decision-liitteet :as decision-liitteet]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.kayttosuunnitelma :as ks]
             [oph.va.virkailija.koulutusosio :as koulutusosio]
             [schema.core :as s]))
 
-(def Liitteet [
-                {
-                 :group "Ehdot"
-                 :attachments [
-                              {
-                               :id "2a_ehdot_ja_rajoitukset_eritysavustus"
-                               :fi "Eritysavustukseen liittyvät ehdot ja rajoitukset"
-                               :sv "Villkor och begränsningar för specialunderstöd "
-                               }
-                              {
-                               :id "2b_ehdot_ja_rajoitukset_yleisavustus"
-                               :fi "Yleisavustukseen liittyvät ehdot ja rajoitukset"
-                               :sv "Villkor och begränsningar för allmänt understöd "
-                               }
-                              ]
-                 }
-                {
-                 :group "Oikaisuvaatimusosoitus"
-                 :attachments [
-                              {
-                               :id "3a_oikaisuvaatimusosoitus_valtionavustuslaki"
-                               :fi "Oikaisuvaatimusosoitus"
-                               :sv "Rättelseyrkande"
-                               }
-                              {
-                               :id "3b_oikaisuvaatimusosoitus_laki_vapaasta_sivistystyosta"
-                               :fi "Oikaisuvaatimusosoitus"
-                               :sv "Rättelseyrkande"
-                               }
-                              {
-                               :id "3c_oikaisuvaatimusosoitus_laki_opetus_ja_kulttuuritoimen_rahoituksesta"
-                               :fi "Oikaisuvaatimusosoitus"
-                               :sv "Rättelseyrkande"
-                               }
-                              ]
-                 }
-                {
-                 :group "Valtionavustusten yleisohje"
-                 :attachments [
-                              {
-                               :id "va_yleisohje"
-                               :fi "Valtionavustusten yleisohje"
-                               :sv "Allmänna anvisningar om statsunderstöd"
-                               }
-                              ]
-                }
-               ])
-
-
 (defn decision-translation [translations lang keyword-or-key]
   (let [key (if (keyword? keyword-or-key) keyword-or-key (keyword keyword-or-key))]
     (-> translations :paatos key lang)))
-
 
 (defn content-with-paragraphs [content]
   (let [rows (str/split content #"\n")
@@ -126,32 +77,30 @@
       "")))
 
 
-(defn find-liite [all-attachements attachements group-name]
-  (let [row (first (filter #(= (:group %) group-name) attachements))
-        group (first (filter #(= (:group %) group-name) all-attachements))
+(defn find-liite [attachments group-name]
+  (let [row (first (filter #(= (:group %) group-name) attachments))
+        group (first (filter #(= (:group %) group-name) decision-liitteet/Liitteet))
         row-id (:id row)
         group-attachments (:attachments group)
-        attachment (first (filter #(= (:id %) row-id) group-attachments))
-        ]
+        attachment (first (filter #(= (:id %) row-id) group-attachments))]
     attachment))
 
 (defn liite-row [liite lang]
   (let [liite-id (:id liite)
         lang-str (name lang)
         link (str "/liitteet/" liite-id "_" lang-str ".pdf")
-        liite-name (lang liite)]
+        liite-name (get-in liite [:langs lang])]
     (if (not-empty liite-id)
       (str "<div><a href='" link "'>" liite-name "</a></div>")
       "")))
 
 (defn liitteet-list [avustushaku hakemus translate lang has-budget]
-  (let [all-liitteet Liitteet
-        liitteet (-> avustushaku :decision :liitteet)
+  (let [liitteet (-> avustushaku :decision :liitteet)
         decision-status (-> hakemus :arvio :status)
         rejected (= decision-status "rejected")
-        ehdot (find-liite all-liitteet liitteet "Ehdot")
-        oikaisuvaatimus (find-liite all-liitteet liitteet "Oikaisuvaatimusosoitus")
-        yleisohje (find-liite all-liitteet liitteet "Valtionavustusten yleisohje")
+        ehdot (find-liite liitteet "Ehdot")
+        oikaisuvaatimus (find-liite liitteet "Oikaisuvaatimusosoitus")
+        yleisohje (find-liite liitteet "Valtionavustusten yleisohje")
         row-kayttosuunnitelma (str "<div>" (translate :kayttosuunnitelma) "</div>")
         row-oikaisuvaatimus (liite-row oikaisuvaatimus lang)
         row-ehdot (liite-row ehdot lang)
