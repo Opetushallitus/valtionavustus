@@ -62,10 +62,9 @@
                                       (s/optional-key :fi) s/Str
                                       (s/optional-key :sv)  s/Str})
 
-(s/defschema Liite {
-                    :group s/Str
+(s/defschema Liite {:group s/Str
                     :id s/Str
-                    }
+                    :version s/Str}
 )
 
 (defn myonteinen-lisateksti-schema-key [rahoitusalue]

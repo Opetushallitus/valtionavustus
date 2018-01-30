@@ -81,18 +81,19 @@
   (let [row (first (filter #(= (:group %) group-name) attachments))
         group (first (filter #(= (:group %) group-name) decision-liitteet/Liitteet))
         row-id (:id row)
-        group-attachments (:attachments group)
-        attachment (first (filter #(= (:id %) row-id) group-attachments))]
-    attachment))
+        attachment (first (filter #(= (:id %) row-id) (:attachments group)))]
+    {:id      row-id
+     :langs   (:langs attachment)
+     :version (:version row)}))
 
 (defn liite-row [liite lang]
-  (let [liite-id (:id liite)
-        lang-str (name lang)
-        link (str "/liitteet/" liite-id "_" lang-str ".pdf")
-        liite-name (get-in liite [:langs lang])]
-    (if (not-empty liite-id)
-      (str "<div><a href='" link "'>" liite-name "</a></div>")
-      "")))
+  (if-some [liite-id (:id liite)]
+    (let [liite-version (:version liite)
+          lang-str (name lang)
+          link (str "/liitteet/" liite-id liite-version "_" lang-str ".pdf")
+          liite-name (get-in liite [:langs lang])]
+      (str "<div><a href='" link "'>" liite-name "</a></div>"))
+    ""))
 
 (defn liitteet-list [avustushaku hakemus translate lang has-budget]
   (let [liitteet (-> avustushaku :decision :liitteet)
