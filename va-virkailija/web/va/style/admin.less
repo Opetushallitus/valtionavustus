@@ -401,9 +401,40 @@ table.translation {
   white-space: pre;
 }
 
-.liite-row{
-  input[type=radio]{
+.decision-liite-selection {
+  input[type=radio] {
     display: inline-block;
+  }
+
+  &__liite-id {
+    font-size: 80%;
+    margin-left: 6px;
+
+    &::before {
+      content: "(";
+    }
+
+    &::after {
+      content: ")";
+    }
+  }
+
+  &__liite + &__liite {
+    margin-top: 6px;
+  }
+
+  &__liite-input,
+  &__liite-version-input {
+    margin-right: 6px;
+  }
+
+  &__liite-version {
+    display: block;
+    margin-left: 22px;
+  }
+
+  &__link {
+    margin-left: 6px;
   }
 }
 

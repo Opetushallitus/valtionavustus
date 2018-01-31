@@ -119,6 +119,7 @@ export default class HakujenHallintaController {
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")).map(Immutable),
       environment: Bacon.fromPromise(HttpUtil.get("/environment")),
+      decisionLiitteet: Bacon.fromPromise(HttpUtil.get("/api/paatos/liitteet")).map(Immutable),
       hakuId: hakuId,
       selectedHaku: undefined,
       saveStatus: {

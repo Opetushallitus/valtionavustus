@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 
 import ClassNames from 'classnames'
 
@@ -9,8 +9,21 @@ import SelvitysFormEditor from './SelvitysFormEditor.jsx'
 
 export default class EditorSelector extends React.Component {
   render() {
-    const {subTab, controller, avustushaku, formDraft, vaUserSearch, koodistos, userInfo, environment, translations, valiselvitysFormDraft, loppuselvitysFormDraft} = this.props
-    var subTabContent
+    const {
+      subTab,
+      controller,
+      avustushaku,
+      decisionLiitteet,
+      formDraft,
+      vaUserSearch,
+      koodistos,
+      userInfo,
+      environment,
+      translations,
+      valiselvitysFormDraft,
+      loppuselvitysFormDraft
+    } = this.props
+    let subTabContent
     switch (subTab) {
       case "haku-editor":
         subTabContent = <HakuEdit avustushaku={avustushaku}
@@ -28,6 +41,7 @@ export default class EditorSelector extends React.Component {
         break
       case "decision":
         subTabContent = <DecisionEditor avustushaku={avustushaku}
+                                        decisionLiitteet={decisionLiitteet}
                                         environment={environment}
                                         controller={controller}
                                         translations={translations}
