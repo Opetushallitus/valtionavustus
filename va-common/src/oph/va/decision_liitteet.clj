@@ -6,11 +6,7 @@
                    :langs    {:fi "Eritysavustukseen liittyvät ehdot ja rajoitukset"
                               :sv "Villkor och begränsningar för specialunderstöd"}
                    :versions [{:id          ""
-                               :description "Alkuperäinen"}
-                              {:id          "_2018-03"
-                               :description "Voimassa 3/2018 alkaen"}
-                              {:id          "_2020-01"
-                               :description "Voimassa 1/2020 alkaen"}]}
+                               :description "Alkuperäinen"}]}
                   {:id       "2b_ehdot_ja_rajoitukset_yleisavustus"
                    :langs    {:fi "Yleisavustukseen liittyvät ehdot ja rajoitukset"
                               :sv "Villkor och begränsningar för allmänt understöd"}
@@ -26,9 +22,7 @@
                    :langs    {:fi "Oikaisuvaatimusosoitus"
                               :sv "Rättelseyrkande"}
                    :versions [{:id          ""
-                               :description "Alkuperäinen"}
-                              {:id          "_2018-06"
-                               :description "Voimassa 6/2018 alkaen"}]}
+                               :description "Alkuperäinen"}]}
                   {:id       "3c_oikaisuvaatimusosoitus_laki_opetus_ja_kulttuuritoimen_rahoituksesta"
                    :langs    {:fi "Oikaisuvaatimusosoitus"
                               :sv "Rättelseyrkande"}
