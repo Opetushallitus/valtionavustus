@@ -177,6 +177,8 @@
     {:floating-label-text "Hakujen suodatus"
      :value (:filter-str values)
      :on-change #(on-change :filter-str (.-value (.-target %)))}]
+   [ui/icon-button {:on-click #(on-change :filter-str "")}
+    [ic/action-highlight-off {:color "gray"}]]
    [ui/toggle
     {:label "Piilota vanhat haut"
      :toggled (:filter-old values)
@@ -193,35 +195,35 @@
           (<! (connection/get-next-installment-number))]
       (put! dialog-chan 1)
       (if (:success nin-result)
-        (let [values (conj payment-values (:body nin-result))]
-          (loop [index 0]
-            (if-let [application
-                     (get applications-to-send index)]
-              (let [payment-result
-                    (<! (connection/create-payment
-                          (assoc values :application-id
-                                 (:id application))))]
-                (put! dialog-chan (inc index))
-                (if (:success payment-result)
-                  (recur (inc index))
-                  (show-error-message!
-                    "Maksatuksen lähetyksessä ongelma"
-                    (select-keys payment-result [:status :error-text]))))
-
-              (let [email-result
-                    (<!
-                      (connection/send-payments-email
-                        (:id @selected-grant)
-                        {:acceptor-email (:acceptor-email payment-values)
-                         :inspector-email (:inspector-email payment-values)
-                         :organisation (:organisation payment-values)
-                         :installment-number
-                         (get-in nin-result [:body :installment-number])}))]
-                (if (:success email-result)
-                  (show-message! "Kaikki maksatukset lähetetty")
-                  (show-message!
-                    "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin
-                       lähetyksessä tapahtui virhe")))))
+        (let [values (conj payment-values (:body nin-result))
+              error
+              (loop [index 0]
+                (if-let [application
+                         (get applications-to-send index)]
+                  (let [payment-result
+                        (<! (connection/create-payment
+                              (assoc values :application-id
+                                     (:id application))))]
+                    (put! dialog-chan (inc index))
+                    (if (:success payment-result)
+                      (recur (inc index))
+                      (select-keys payment-result [:status :error-text])))))]
+          (if (nil? error)
+            (let [email-result
+                  (<!
+                    (connection/send-payments-email
+                      (:id @selected-grant)
+                      {:acceptor-email (:acceptor-email payment-values)
+                       :inspector-email (:inspector-email payment-values)
+                       :organisation (:organisation payment-values)
+                       :installment-number
+                       (get-in nin-result [:body :installment-number])}))]
+              (if (:success email-result)
+                (show-message! "Kaikki maksatukset lähetetty")
+                (show-message!
+                  "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin
+                       lähetyksessä tapahtui virhe")))
+            (show-error-message! "Maksatuksen lähetyksessä ongelma" error))
           (let [grant-result (<! (connection/get-grant-payments
                                    (:id @selected-grant)))]
             (if (:success grant-result)
@@ -229,11 +231,25 @@
               (show-error-message!
                 "Maksatuksien latauksessa ongelma"
                 (select-keys grant-result [:status :error-text])))))
+
         (show-error-message!
           "Maksatuserän haussa ongelma"
           (select-keys nin-result [:status :error-text])))
       (put! dialog-chan (+ (count applications-to-send) 10))
       (close! dialog-chan))))
+
+(defn format-date [d]
+  (when (some? d)
+   (format "%04d-%02d-%02d"
+           (.getFullYear d)
+           (+ (.getMonth d) 1 )
+           (.getDate d))))
+
+(defn convert-payment-dates [values]
+  (-> values
+      (update :due-date format-date)
+      (update :receipt-date format-date)
+      (update :invoice-date format-date)))
 
 (defn home-page []
   [ui/mui-theme-provider
@@ -315,7 +331,7 @@
                 (send-payments!
                   (filterv #(< (get-in % [:payment :state]) 2)
                            current-applications)
-                  @payment-values)))}]])])
+                  (convert-payment-dates @payment-values))))}]])])
     (when (and @delete-payments? (is-admin? @user-info))
       (render-admin-tools))
     (render-dialogs

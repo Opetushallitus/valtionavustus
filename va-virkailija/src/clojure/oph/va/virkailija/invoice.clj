@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.invoice
-  (:require [clojure.data.xml :refer [emit emit-str parse
+  (:require [oph.va.virkailija.lkp-templates :as lkp]
+   [clojure.data.xml :refer [emit emit-str parse
                                       sexp-as-element]]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
@@ -17,7 +18,7 @@
 
 (defn format-date [date]
   (if date
-    (f/unparse date-formatter date)
+    (f/unparse date-formatter (c/from-long (.toEpochDay date)))
     date))
 
 (defn get-installment
@@ -65,7 +66,7 @@
       [:Postings
        [:Posting
         [:Summa (:budget-granted application)]
-        [:LKP-tili (:lkp-account application)]
+        [:LKP-tili (lkp/get-lkp-account (:answers application))]
         [:TaKp-tili (:takp-account application)]
         [:Toimintayksikko (get-in grant [:content :operational-unit])]
         [:Projekti (get-in grant [:content :project])]
@@ -76,6 +77,19 @@
   "Creates xml document (tags) of given payment of Valtionavustukset maksatus.
   Document should be valid document for VIA/Rondo."
   (sexp-as-element (payment-to-invoice payment application grant)))
+
+(defn get-content [xml ks]
+  (loop [content (list xml) xks ks]
+    (if (empty? xks)
+      content
+      (let [k (first xks)
+            v (some (fn [e] (when (= (:tag e) k) e)) content)]
+        (when (not (nil? v))
+          (recur (:content v) (rest xks)))))))
+
+(defn read-response-xml [xml]
+  {:register-number (first (get-content xml [:VA-invoice :Header :Pitkaviite]))
+   :invoice-date (first (get-content xml [:VA-invoice :Header :Maksupvm]))})
 
 (defn tags-to-str [tags]
   "Converts XML document of clojure.data.xml.elements tags to a string."

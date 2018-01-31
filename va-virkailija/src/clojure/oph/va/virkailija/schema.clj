@@ -1,7 +1,8 @@
 (ns oph.va.virkailija.schema
   (:require [schema.core :as s]
             [oph.soresu.form.schema :refer :all]
-            [oph.va.schema :refer :all]))
+            [oph.va.schema :refer :all])
+  (:import (java.time LocalDate)))
 
 (s/defschema ArvioStatus
   "Status from the opetushallitus point of view"
@@ -253,9 +254,9 @@
    (s/optional-key :installment-number) s/Int
    (s/optional-key :organisation) s/Str
    (s/optional-key :document-type) s/Str
-   (s/optional-key :invoice-date) s/Inst
-   (s/optional-key :due-date) s/Inst
-   (s/optional-key :receipt-date) s/Inst
+   (s/optional-key :invoice-date) LocalDate
+   (s/optional-key :due-date) LocalDate
+   (s/optional-key :receipt-date) LocalDate
    (s/optional-key :transaction-account) s/Str
    (s/optional-key :currency) s/Str
    (s/optional-key :payment-term) s/Str
@@ -316,6 +317,8 @@
    :language s/Str
    :budget-granted s/Int
    :costs-granted s/Int
+   :lkp-account (s/maybe s/Str)
+   :takp-account (s/maybe s/Str)
    (s/optional-key :grant-id) s/Int
    (s/optional-key :evaluation) s/Any
    (s/optional-key :answers) [Answer]})
