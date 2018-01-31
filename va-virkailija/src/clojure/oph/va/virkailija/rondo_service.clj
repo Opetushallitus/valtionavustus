@@ -4,7 +4,8 @@
             [oph.va.hakija.api :as hakija-api];
             [oph.va.virkailija.invoice :as invoice]
             [oph.soresu.common.config :refer [config]]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [clojure.string :as strc]))
 
 (defn do-sftp! [method file sftp-config]
   (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})
@@ -18,7 +19,7 @@
       (ssh/with-channel-connection channel
         (cond
           (= method "put") (ssh/sftp channel {} :put file (:remote_path sftp-config))
-          (= method "get") (ssh/sftp channel {} :get (format "%s/%s" (:remote_path sftp-config) file) (format "%s/%s" (:local_path sftp-config) file))))))))
+          (= method "get") (ssh/sftp channel {} :get (format "%s/%s" (:remote_path sftp-config) file) (format "%s/%s" (:local-path sftp-config) file))))))))
 
 
 (defn send-to-rondo! [{:keys [payment application grant filename]}]
@@ -33,3 +34,24 @@
       (do
         (log/info (format "Would send %s to %s" file (:host-ip sftp-config)))
         {:success true}))))
+
+(defn get-file-list [result]
+      (let [output (map #(str %) result)]
+        (map #(last (strc/split % #"\s+")) output)))
+
+
+(defn get-files-from-rondo [config]
+          (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})]
+             (let [sftp-config (:rondo-sftp config)
+                   session (ssh/session agent (:host-ip sftp-config)
+                                {:username (:username sftp-config)
+                                 :password (:password sftp-config)
+                                 :port (:port sftp-config)
+                                 :strict-host-key-checking :no})]
+               (ssh/with-connection session
+                 (let [channel (ssh/ssh-sftp session)]
+                   (ssh/with-channel-connection channel
+                    (ssh/sftp channel {} :cd "/upload")
+                     (let [result (ssh/ssh-sftp-cmd channel :ls ["*.xml"] :with-monitor)
+                           file-list (get-file-list result)]
+                       (map #(do-sftp! "get" % sftp-config) file-list))))))))
