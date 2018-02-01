@@ -19,8 +19,8 @@ csc_host_info_config_path: /etc/csc/host.info
 
 alert_email_recipient: "{{ vault_alert_email_recipient }}"
 
-team_email_recipients: "{{ vault_team_email_recipients }}"
+ticket_email_recipient: "{{ vault_ticket_email_recipient }}"
 
-system_reboot_needed_email_recipient: "{{ team_email_recipients.dev }} {{ team_email_recipients.ops }}"
+system_reboot_needed_email_recipient: "{{ alert_email_recipient }} {{ ticket_email_recipient }}"
 
-root_user_email_recipient: "{{ team_email_recipients.dev }}, {{ team_email_recipients.ops }}"
+root_user_email_recipient: "{{ alert_email_recipient }}"
