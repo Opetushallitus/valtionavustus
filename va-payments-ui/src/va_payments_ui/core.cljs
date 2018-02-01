@@ -17,14 +17,16 @@
     [va-payments-ui.grants :refer [grant-matches? remove-old convert-dates]]
     [va-payments-ui.financing :as financing]
     [va-payments-ui.utils :refer
-     [toggle remove-nil format no-nils? not-empty? not-nil? find-index-of]]
+     [remove-nil format no-nils? not-empty? not-nil? find-index-of]]
     [va-payments-ui.theme :as theme]))
 
 (defonce grants (r/atom []))
 
-(defonce applications (r/atom []))
+(defonce applications (atom []))
 
-(defonce payments (r/atom []))
+(defonce payments (atom []))
+
+(defonce current-applications (r/atom []))
 
 (defonce selected-grant (r/atom nil))
 
@@ -37,6 +39,18 @@
 (defonce dialogs (r/atom {:generic {:open false}
                           :loading {:open false}
                           :snackbar {:open false :message ""}}))
+
+(defonce payment-values
+  (r/atom {:currency "EUR"
+           :payment-term "Z001"
+           :partner ""
+           :document-type "XA"
+           :organisation "6600"
+           :state 0
+           :transaction-account "5000"
+           :due-date (financing/now-plus financing/week-in-ms)
+           :invoice-date (js/Date.)
+           :receipt-date (js/Date.)}))
 
 (defn is-admin?
   [user]
@@ -270,68 +284,55 @@
                                 #(= (:id %) (:id @selected-grant)))
           :on-change (fn [row]
                        (reset! selected-grant (get filtered-grants row)))}))]
-    (let [current-applications (-> @applications
-                                   (payments-ui/combine @payments))
-          payment-values
-            (r/atom {:currency "EUR"
-                     :payment-term "Z001"
-                     :partner ""
-                     :document-type "XA"
-                     :organisation "6600"
-                     :state 0
-                     :transaction-account "5000"
-                     :due-date (financing/now-plus financing/week-in-ms)
-                     :invoice-date (js/Date.)
-                     :receipt-date (js/Date.)})]
-      [(fn []
-         [:div
-          [:div
-           [:hr]
-           (project-info @selected-grant)
-           [:hr]
-           [:div
-            (when-not (some #(< (get-in % [:payment :state]) 2) current-applications)
-              {:style {:opacity 0.2 :pointer-events "none"}})
-            [:h3 "Maksatuksen tiedot"]
-            (financing/payment-emails @payment-values
-                                      #(swap! payment-values assoc %1 %2))
-            (financing/payment-fields @payment-values
-                                      #(swap! payment-values assoc %1 %2))]
-           [:h3 "Myönteiset päätökset"]
-           (applications/applications-table
-             {:applications current-applications
-              :on-info-clicked
-              (fn [id]
-                (let [dialog-chan
-                      (show-loading-dialog! "Ladataan historiatietoja" 2)]
-                  (go
-                    (put! dialog-chan 1)
-                    (let [result (<! (connection/get-payment-history id))]
-                      (close! dialog-chan)
-                      (if (:success result)
-                        (show-dialog!
-                          "Maksatuksen historia"
-                          (r/as-element (payments-ui/render-history
-                                          (:body result))))
-                        (show-error-message!
-                          "Virhe historiatietojen latauksessa"
-                          (select-keys result [:status :error-text])))))))
-              :is-admin? (is-admin? @user-info)})]
-          (when (get-in @selected-grant [:content :multiplemaksuera])
-            [:div {:style theme/notice} "Ainoastaan yhden erän maksatukset on tuettu tällä hetkellä.
+    [:div
+     [:div
+      [:hr]
+      (project-info @selected-grant)
+      [:hr]
+      [:div
+       (when-not (some #(< (get-in % [:payment :state]) 2)
+                       @current-applications)
+         {:style {:opacity 0.2 :pointer-events "none"}})
+       [:h3 "Maksatuksen tiedot"]
+       (financing/payment-emails @payment-values
+                                 #(swap! payment-values assoc %1 %2))
+       (financing/payment-fields @payment-values
+                                 #(swap! payment-values assoc %1 %2))]
+      [:h3 "Myönteiset päätökset"]
+      (applications/applications-table
+        {:applications @current-applications
+         :on-info-clicked
+         (fn [id]
+           (let [dialog-chan
+                 (show-loading-dialog! "Ladataan historiatietoja" 2)]
+             (go
+               (put! dialog-chan 1)
+               (let [result (<! (connection/get-payment-history id))]
+                 (close! dialog-chan)
+                 (if (:success result)
+                   (show-dialog!
+                     "Maksatuksen historia"
+                     (r/as-element (payments-ui/render-history
+                                     (:body result))))
+                   (show-error-message!
+                     "Virhe historiatietojen latauksessa"
+                     (select-keys result [:status :error-text])))))))
+         :is-admin? (is-admin? @user-info)})]
+     (when (get-in @selected-grant [:content :multiplemaksuera])
+       [:div {:style theme/notice} "Ainoastaan yhden erän maksatukset on tuettu tällä hetkellä.
              Monen erän maksatukset tulee luoda manuaalisesti."])
-          [ui/raised-button
-           {:primary true
-            :disabled (not (payments/valid-payment-values? @payment-values))
-            :label "Lähetä maksatukset"
-            :style theme/button
-            :on-click
-            (fn [_]
-              (when-not (get-in @selected-grant [:content :multiplemaksuera])
-                (send-payments!
-                  (filterv #(< (get-in % [:payment :state]) 2)
-                           current-applications)
-                  (convert-payment-dates @payment-values))))}]])])
+     [ui/raised-button
+      {:primary true
+       :disabled (not (payments/valid-payment-values? @payment-values))
+       :label "Lähetä maksatukset"
+       :style theme/button
+       :on-click
+       (fn [_]
+         (when-not (get-in @selected-grant [:content :multiplemaksuera])
+           (send-payments!
+             (filterv #(< (get-in % [:payment :state]) 2)
+                      @current-applications)
+             (convert-payment-dates @payment-values))))}]]
     (when (and @delete-payments? (is-admin? @user-info))
       (render-admin-tools))
     (render-dialogs
@@ -368,6 +369,11 @@
                   (select-keys payments-response [:status :error-text])))
               (put! dialog-chan 3))
             (close! dialog-chan))))))
+  (add-watch applications ""
+             #(reset! current-applications (payments-ui/combine %4 @payments)))
+  (add-watch payments ""
+             #(reset! current-applications
+                      (payments-ui/combine @applications %4)))
   (go
     (let [dialog-chan (show-loading-dialog! "Ladataan tietoja" 3)
           config-result (<! (connection/get-config))]
@@ -401,4 +407,4 @@
           "Virhe asetusten latauksessa"
           (select-keys config-result [:status :error-text]))
         (put! dialog-chan 3))
-     (close! dialog-chan))))
+      (close! dialog-chan))))
