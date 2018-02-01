@@ -99,6 +99,7 @@
     line: 'root:\t\t{{ root_user_email_recipient }}'
     state: present
   when: ansible_os_family == 'RedHat'
+  notify: Init alias db
 
 - name: Disallow automatic system reboot, send email instead
   lineinfile:
