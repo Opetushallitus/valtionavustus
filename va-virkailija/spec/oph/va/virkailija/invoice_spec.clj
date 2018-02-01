@@ -2,7 +2,8 @@
   (:require [speclj.core :refer [describe it should=]]
             [clj-time.format :as f]
             [clojure.data.xml :as xml]
-            [oph.va.virkailija.invoice :as invoice]))
+            [oph.va.virkailija.invoice :as invoice]
+            [oph.va.virkailija.payments-data :as payments-data]))
 
 (def payment {:acceptor-email "acceptor@example.com"
               :created-at (f/parse "2017-12-20T10:24:59.750Z")
@@ -97,12 +98,12 @@
 
 (describe "Parse installment number"
           (it "gets installment number"
-              (should= 1 (invoice/parse-installment-number "660018001")))
+              (should= 1 (payments-data/parse-installment-number "660018001")))
           (it "fails on nil value"
-              (should-throw (invoice/parse-installment-number nil)))
+              (should-throw (payments-data/parse-installment-number nil)))
           (it "fails on empty value"
-              (should-throw (invoice/parse-installment-number "")))
+              (should-throw (payments-data/parse-installment-number "")))
           (it "fails on invalid value"
-              (should-throw (invoice/parse-installment-number "660018")))
+              (should-throw (payments-data/parse-installment-number "660018")))
           (it "fails on invalid value"
-              (should-throw (invoice/parse-installment-number "6600"))))
+              (should-throw (payments-data/parse-installment-number "6600"))))
