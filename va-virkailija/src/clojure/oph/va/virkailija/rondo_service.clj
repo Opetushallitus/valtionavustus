@@ -3,6 +3,7 @@
             [ring.util.http-response :refer :all]
             [oph.va.hakija.api :as hakija-api];
             [oph.va.virkailija.invoice :as invoice]
+            [oph.va.virkailija.payments-data :as payments-data]
             [oph.soresu.common.config :refer [config]]
             [clojure.tools.logging :as log]
             [clojure.string :as strc]))
@@ -43,10 +44,10 @@
 (defn handle-one-xml [filename sftp-config]
   (let [ xml-file-path (format "%s/%s" (:local-path sftp-config) filename)]
     (do-sftp! "get" filename sftp-config)
-    (invoice/read-response-xml (invoice/read-xml xml-file-path)))
+    (payments-data/update-state-by-response (invoice/read-xml xml-file-path))
     (do-sftp! "rm" filename sftp-config))
 
-(defn get-files-from-rondo [config]
+(defn get-state-from-rondo []
           (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})]
              (let [sftp-config (:rondo-sftp config)
                    session (ssh/session agent (:host-ip sftp-config)

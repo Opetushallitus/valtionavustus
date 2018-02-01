@@ -80,9 +80,17 @@
                    identity)))
           (a/timeout timeout-limit) ([_] (request-timeout "Rondo timeout")))))))
 
+(defn- get-state-of-payments []
+  (compojure-api/GET
+    "/update-payments-state/" []
+    :path-params []
+    :summary "Fetch payments state from rondo"
+    (ok (rondo-service/get-state-from-rondo))))
+
 (compojure-api/defroutes
   routes
   "payment routes"
   (update-payment)
   (get-next-installment-number)
-  (create-payment))
+  (create-payment)
+  (get-state-of-payments))
