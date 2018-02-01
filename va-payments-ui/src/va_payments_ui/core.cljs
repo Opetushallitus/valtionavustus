@@ -17,7 +17,7 @@
     [va-payments-ui.grants :refer [grant-matches? remove-old convert-dates]]
     [va-payments-ui.financing :as financing]
     [va-payments-ui.utils :refer
-     [toggle remove-nil format no-nils? not-empty? not-nil? find-index-of]]
+     [remove-nil format no-nils? not-empty? not-nil? find-index-of]]
     [va-payments-ui.theme :as theme]))
 
 (defonce grants (r/atom []))

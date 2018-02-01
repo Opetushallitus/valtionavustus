@@ -2,7 +2,7 @@
   (:require [clojure.string :refer [lower-case includes?]]
             [cljs-time.format :as f]
             [cljs-time.core :as t]
-            [va-payments-ui.utils :refer [update-all date-formatter]]))
+            [va-payments-ui.utils :refer [date-formatter]]))
 
 (def lifetime-limit (t/minus (t/now) (t/months 12)))
 
