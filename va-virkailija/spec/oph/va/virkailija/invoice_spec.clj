@@ -94,3 +94,15 @@
               (should=
                 :VA-invoice
                 (:tag (first (invoice/get-content response-xml nil))))))
+
+(describe "Parse installment number"
+          (it "gets installment number"
+              (should= 1 (invoice/parse-installment-number "660018001")))
+          (it "fails on nil value"
+              (should-throw (invoice/parse-installment-number nil)))
+          (it "fails on empty value"
+              (should-throw (invoice/parse-installment-number "")))
+          (it "fails on invalid value"
+              (should-throw (invoice/parse-installment-number "660018")))
+          (it "fails on invalid value"
+              (should-throw (invoice/parse-installment-number "6600"))))
