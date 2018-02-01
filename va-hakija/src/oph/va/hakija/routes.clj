@@ -11,7 +11,7 @@
             [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
             [schema.core :as s]
             [oph.common.datetime :as datetime]
-            [oph.soresu.common.config :refer [config config-simple-name]]
+            [oph.soresu.common.config :refer [config-simple-name]]
             [oph.soresu.common.routes :refer :all]
             [oph.va.schema :refer :all]
             [oph.soresu.form.schema :refer :all]
@@ -226,7 +226,7 @@
 (compojure-api/defroutes resource-routes
   (compojure-api/undocumented
    (compojure/GET "/" request
-     (if (= (:name (va-routes/environment-content)) "dev") (resp/redirect "/avustushaku/1/")
+     (if (= (config-simple-name) "dev") (resp/redirect "/avustushaku/1/")
          (if (= (:server-name request) "statsunderstod.oph.fi")
            (resp/redirect "http://www.oph.fi/finansiering/statsunderstod")
            (resp/redirect "http://oph.fi/rahoitus/valtionavustukset"))))

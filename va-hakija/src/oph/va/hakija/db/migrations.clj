@@ -176,3 +176,15 @@
       :form-db
       update-avustushaku-content!
       (set-missing-content-values avustushaku))))
+
+(migrations/defmigration migrate-add-empty-versions-to-avustushaku-decision-attachments "1.50"
+  "Add empty versions to decision attachments in avustushaut"
+  (doseq [avustushaku (va-db/list-avustushaut)]
+    (let [decision (:decision avustushaku)]
+      (when-some [decision-liitteet (:liitteet decision)]
+        (let [new-liitteet (map (fn [l] (assoc l :version "")) decision-liitteet)
+              new-decision (assoc decision :liitteet new-liitteet)]
+          (common-db/exec :form-db
+                          update-avustushaku-decision!
+                          {:id       (:id avustushaku)
+                           :decision new-decision}))))))

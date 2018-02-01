@@ -4,7 +4,6 @@ import Bacon from 'baconjs'
 
 import DateUtil from 'soresu-form/web/DateUtil'
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import Liitteet from 'va-common/web/va/data/Liitteet'
 
 import PaatosUrl from '../hakemus-details/PaatosUrl'
 import Selvitys from './Selvitys.jsx'
@@ -64,54 +63,162 @@ class DateField extends React.Component {
   }
 }
 
+class LiitteetSelection extends React.Component {
+  constructor(props) {
+    super(props)
+    const selectedLiitteet = _.get(this.props.avustushaku, "decision.liitteet", [])
+    this.state = {
+      selectedLiitteet: this.makeSelectedLiitteet(selectedLiitteet),
+      selectedVersions: this.makeSelectedVersions(selectedLiitteet)
+    }
+    this.onChangeLiite = this.onChangeLiite.bind(this)
+    this.onChangeLiiteVersion = this.onChangeLiiteVersion.bind(this)
+  }
 
-class LiitteetList extends React.Component{
-  render(){
-    const avustushaku = this.props.avustushaku
-    const controller = this.props.controller
-    const environment = this.props.environment
-    const hakijaUrlFi = environment["hakija-server"].url.fi
-    const hakijaUrlSv = environment["hakija-server"].url.sv
-    const liitteet = _.get(avustushaku,"decision.liitteet",[])
-    const Liite = (group, liiteTotalCount, liite) =>{
-      const checked =  _.any(liitteet,(currentLiite) => currentLiite.group==group && currentLiite.id==liite.id)
-      const liiteChanged = (event) => {
-        const newValue = {
-          group:group,
-          id: event.target.value
-        }
-        var newLiitteet = _.reject(liitteet,(l)=>l.group==newValue.group)
-        if (!checked) {
-          newLiitteet = newLiitteet.concat([newValue])
-        }
-        controller.onChangeListener(avustushaku, {id:"decision.liitteet"}, newLiitteet)
+  makeSelectedLiitteet(selectedLiitteet) {
+    const available = this.props.decisionLiitteet
+
+    const findAvailableLiite = liite => {
+      const foundGroup = _.find(available, l => l.group === liite.group)
+      if (!foundGroup) {
+        return undefined
       }
-      const link_fi = `${hakijaUrlFi}liitteet/${liite.id}_fi.pdf`
-      const link_sv = `${hakijaUrlSv}liitteet/${liite.id}_sv.pdf`
-      return(
-        <div key={liite.id}>
-          <label>
-            <input type={liiteTotalCount > 1 ? "radio" : "checkbox"} name={group} onChange={liiteChanged} value={liite.id} checked={checked}/> {liite.fi} - {liite.id} <a href={`${link_fi}`} target="_blank">fi</a> <a href={`${link_sv}`} target="_blank">sv</a>
-          </label>
-        </div>
-        )
+      return _.find(foundGroup.attachments, l => l.id === liite.id)
+    }
+
+    return _.reduce(selectedLiitteet, (acc, l) => {
+      const foundSelected = findAvailableLiite(l)
+      if (foundSelected) {
+        acc[l.group] = foundSelected.id
       }
-    return(
+      return acc
+    }, {})
+  }
+
+  makeSelectedVersions(selectedLiitteet) {
+    const candidateVersionsInSelectedLiitteet = _.reduce(selectedLiitteet, (acc, l) => {
+      acc[l.id] = l.version
+      return acc
+    }, {})
+
+    return _.reduce(this.props.decisionLiitteet, (acc, g) => {
+      _.forEach(g.attachments, a => {
+        const userSelectedVersion = candidateVersionsInSelectedLiitteet[a.id]
+        const isVersionAvailable = userSelectedVersion !== undefined && _.find(a.versions, v => v.id === userSelectedVersion) !== undefined
+        acc[a.id] = isVersionAvailable ? userSelectedVersion : _.last(a.versions).id
+      })
+      return acc
+    }, {})
+  }
+
+  onChangeLiite(event) {
+    const {
+      value: liiteId,
+      checked: isChecked
+    } = event.target
+    const liiteGroup = event.target.dataset.group
+    this.setState(state => {
+      const selectedLiitteet = isChecked
+        ? _.assign({}, state.selectedLiitteet, {[liiteGroup]: liiteId})
+        : _.omit(state.selectedLiitteet, [liiteGroup])
+      this.updateSelectedLiitteet(selectedLiitteet, state.selectedVersions)
+      return {selectedLiitteet}
+    })
+  }
+
+  onChangeLiiteVersion(event) {
+    const versionId = event.target.value
+    const liiteId = event.target.dataset.liite
+    this.setState(state => {
+      const selectedVersions = _.assign({}, state.selectedVersions, {[liiteId]: versionId})
+      this.updateSelectedLiitteet(state.selectedLiitteet, selectedVersions)
+      return {selectedVersions}
+    })
+  }
+
+  updateSelectedLiitteet(selectedLiitteet, selectedVersions) {
+    const liitteet = _.map(selectedLiitteet, (liiteId, groupId) => ({
+      group: groupId,
+      id: liiteId,
+      version: selectedVersions[liiteId]
+    }))
+    this.props.controller.onChangeListener(this.props.avustushaku, {id: "decision.liitteet"}, liitteet)
+  }
+
+  render() {
+    return (
       <div>
         <h4>Päätöksen liitteet</h4>
-        <div className="liite-row">
-          {Liitteet.map((group)=>{return (
-            <div key={group.group}>
-              <h5>{group.group}</h5>
-              {group.attachments.map(_.partial(Liite, group.group, group.attachments.length))}
-            </div>
-            )
-            }
-          )}
+        <div className="decision-liite-selection">
+          {_.map(this.props.decisionLiitteet, group => this.renderLiiteGroup(group))}
         </div>
-
       </div>
     )
+  }
+
+  renderLiiteGroup(group) {
+    return (
+      <div key={group.group}>
+        <h5>{group.group}</h5>
+        {_.map(group.attachments, attachment => this.renderLiite(attachment, group.group))}
+      </div>
+    )
+  }
+
+  renderLiite(attachment, groupId) {
+    const isSelected = this.state.selectedLiitteet[groupId] === attachment.id
+
+    return (
+      <div key={attachment.id} className="decision-liite-selection__liite">
+        <label>
+          <input type="checkbox"
+                 className="decision-liite-selection__liite-input"
+                 data-group={groupId}
+                 name={"decision-liite-group--" + groupId}
+                 value={attachment.id}
+                 checked={isSelected}
+                 onChange={this.onChangeLiite} />
+          {attachment.langs.fi} <span className="decision-liite-selection__liite-id">{attachment.id}</span>
+        </label>
+        {attachment.versions.length > 1
+          ? <div>{_.map(attachment.versions, v => this.renderLiiteVersion(attachment, isSelected, v))}</div>
+          : this.renderLiiteVersionLinks(attachment.id, attachment.versions[0].id)
+        }
+      </div>
+    )
+  }
+
+  renderLiiteVersion(attachment, isLiiteSelected, versionSpec) {
+    const isSelected = this.state.selectedVersions[attachment.id] === versionSpec.id
+
+    return (
+      <label key={"v" + versionSpec.id} className="decision-liite-selection__liite-version">
+        <input type="radio"
+               className="decision-liite-selection__liite-version-input"
+               data-liite={attachment.id}
+               name={"decision-liite-version--" + attachment.id}
+               value={versionSpec.id}
+               checked={isSelected}
+               onChange={this.onChangeLiiteVersion}
+               disabled={!isLiiteSelected} />
+        {versionSpec.description}
+        {this.renderLiiteVersionLinks(attachment.id, versionSpec.id)}
+      </label>
+    )
+  }
+
+  renderLiiteVersionLinks(attachmentId, versionSuffix) {
+    return (
+      <span>
+        {_.map(["fi", "sv"], lang => this.renderLiiteVersionLink(attachmentId, versionSuffix, lang))}
+      </span>
+    )
+  }
+
+  renderLiiteVersionLink(attachmentId, versionId, lang) {
+    const hakijaUrl = this.props.environment["hakija-server"].url[lang]
+    const linkUrl = `${hakijaUrl}liitteet/${attachmentId}${versionId}_${lang}.pdf`
+    return <a key={lang} className="decision-liite-selection__link" href={linkUrl} target="_blank">{lang}</a>
   }
 }
 
@@ -278,7 +385,7 @@ class DecisionDateAndSend extends React.Component {
                     {this.state.paatosDetail==paatos.id &&
                       <div className="panel person-panel person-panel--sm person-panel--view-details">
                         <button className="close" onClick={onCloseViews}>x</button>
-                        <table classNam="table">
+                        <table className="table">
                           <colgroup>
                             <col width="20%"/>
                             <col width="20%"/>
@@ -339,7 +446,12 @@ class DecisionDateAndSend extends React.Component {
 
 export default class DecisionEditor extends React.Component {
   render() {
-    const {avustushaku,environment,controller} = this.props
+    const {
+      avustushaku,
+      decisionLiitteet,
+      environment,
+      controller
+    } = this.props
     const onChange = (e) => controller.onChangeListener(avustushaku, e.target, e.target.value)
     const fields = [
       {id:"sovelletutsaannokset",title:"Sovelletut säännökset"},
@@ -367,7 +479,7 @@ export default class DecisionEditor extends React.Component {
         <DecisionFields key="maksu" title="Avustuksen maksuaika" avustushaku={avustushaku} id="maksu" onChange={onChange}/>
         <Selvitys {...this.props}/>
         {avustushaku.content.multiplemaksuera===true && <DateField avustushaku={avustushaku} controller={controller} field="maksudate" label="Viimeinen maksuerä"/>}
-        <LiitteetList environment={environment} avustushaku={avustushaku} controller={controller}/>
+        <LiitteetSelection environment={environment} avustushaku={avustushaku} decisionLiitteet={decisionLiitteet} controller={controller}/>
         <DecisionDateAndSend avustushaku={avustushaku} controller={controller}/>
       </div>
     )

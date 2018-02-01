@@ -11,7 +11,7 @@
             [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
             [schema.core :as s]
             [cemerick.url :refer [map->query]]
-            [oph.soresu.common.config :refer [config config-simple-name]]
+            [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.routes :refer :all]
             [oph.soresu.form.formutil :as formutil]
             [oph.va.routes :as va-routes]

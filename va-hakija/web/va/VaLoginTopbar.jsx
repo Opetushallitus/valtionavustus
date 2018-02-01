@@ -6,15 +6,16 @@ import EnvironmentInfo from 'va-common/web/va/EnvironmentInfo.jsx'
 
 export default class VaLoginTopbar extends React.Component {
   render() {
+    const lang = this.props.lang
     return (
       <section id="topbar">
         <div id="top-container">
           <img id="logo" src="img/logo-240x68@2x.png" width="240" height="68" alt="Opetushallitus / Utbildningsstyrelsen" />
           <div className="topbar-right">
-            <h1 id="topic"><LocalizedString translations={this.props.translations.form} translationKey="heading" lang={this.props.lang}/></h1>
+            <h1 id="topic"><LocalizedString translations={this.props.translations.form} translationKey="heading" lang={lang}/></h1>
             <div>
               <div className="important-info">
-                <EnvironmentInfo environment={this.props.environment}/>
+                <EnvironmentInfo environment={this.props.environment} lang={lang}/>
               </div>
             </div>
           </div>

@@ -32,6 +32,7 @@ export default class AdminApp extends Component {
           />
           <EditorSelector subTab={state.subTab}
                           avustushaku={selectedHaku}
+                          decisionLiitteet={state.decisionLiitteet}
                           formDraft={state.formDrafts[selectedHaku.id]}
                           valiselvitysFormDraft={state.valiselvitysFormDrafts[selectedHaku.id]}
                           loppuselvitysFormDraft={state.loppuselvitysFormDrafts[selectedHaku.id]}

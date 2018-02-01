@@ -44,6 +44,7 @@
                           :hakija-server {:url LocalizedString}
                           :virkailija-server {:url s/Str}
                           :paatos-path s/Str
+                          :notice {:fi s/Str :sv s/Str}
                           (s/optional-key :payments) (s/maybe {:delete-payments? s/Bool})
                           (s/optional-key :opintopolku) {:url s/Str
                                                          :permission-request s/Str}})
@@ -61,10 +62,9 @@
                                       (s/optional-key :fi) s/Str
                                       (s/optional-key :sv)  s/Str})
 
-(s/defschema Liite {
-                    :group s/Str
+(s/defschema Liite {:group s/Str
                     :id s/Str
-                    }
+                    :version s/Str}
 )
 
 (defn myonteinen-lisateksti-schema-key [rahoitusalue]
