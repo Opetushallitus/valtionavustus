@@ -39,6 +39,10 @@
       (let [output (map #(str %) result)]
         (map #(last (strc/split % #"\s+")) output)))
 
+(defn handle-one-xml [filename sftp-config]
+  (let [ xml-file-path (format "%s/%s" (:local-path sftp-config) filename)]
+    (do-sftp! "get" filename sftp-config)
+    (invoice/read-response-xml (invoice/read-xml xml-file-path))))
 
 (defn get-files-from-rondo [config]
           (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})]
@@ -54,4 +58,4 @@
                     (ssh/sftp channel {} :cd "/upload")
                      (let [result (ssh/ssh-sftp-cmd channel :ls ["*.xml"] :with-monitor)
                            file-list (get-file-list result)]
-                       (map #(do-sftp! "get" % sftp-config) file-list))))))))
+                       (map #(handle-one-xml % sftp-config) file-list))))))))
