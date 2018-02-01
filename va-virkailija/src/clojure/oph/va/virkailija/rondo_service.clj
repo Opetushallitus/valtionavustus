@@ -19,7 +19,8 @@
       (ssh/with-channel-connection channel
         (cond
           (= method "put") (ssh/sftp channel {} :put file (:remote_path sftp-config))
-          (= method "get") (ssh/sftp channel {} :get (format "%s/%s" (:remote_path sftp-config) file) (format "%s/%s" (:local-path sftp-config) file))))))))
+          (= method "get") (ssh/sftp channel {} :get (format "%s/%s" (:remote_path sftp-config) file) (format "%s/%s" (:local-path sftp-config) file))
+          (= method "rm") (ssh/sftp channel {} :rm (format "%s/%s" (:remote_path sftp-config) file))))))))
 
 
 (defn send-to-rondo! [{:keys [payment application grant filename]}]
@@ -42,7 +43,8 @@
 (defn handle-one-xml [filename sftp-config]
   (let [ xml-file-path (format "%s/%s" (:local-path sftp-config) filename)]
     (do-sftp! "get" filename sftp-config)
-    (invoice/read-response-xml (invoice/read-xml xml-file-path))))
+    (invoice/read-response-xml (invoice/read-xml xml-file-path)))
+    (do-sftp! "rm" filename sftp-config))
 
 (defn get-files-from-rondo [config]
           (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})]
