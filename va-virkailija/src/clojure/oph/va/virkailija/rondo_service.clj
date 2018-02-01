@@ -45,7 +45,7 @@
   (let [ xml-file-path (format "%s/%s" (:local-path sftp-config) filename)]
     (do-sftp! "get" filename sftp-config)
     (payments-data/update-state-by-response (invoice/read-xml xml-file-path))
-    (do-sftp! "rm" filename sftp-config))
+    (do-sftp! "rm" filename sftp-config)))
 
 (defn get-state-from-rondo []
           (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})]
