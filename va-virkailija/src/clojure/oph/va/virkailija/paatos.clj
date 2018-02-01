@@ -4,6 +4,7 @@
     [compojure.api.sweet :as compojure-api]
     [oph.va.hakija.api :as hakija-api]
     [oph.soresu.form.formutil :as formutil]
+    [oph.va.decision-liitteet :as decision-liitteet]
     [oph.va.virkailija.email :as email]
     [oph.va.virkailija.schema :as virkailija-schema]
     [oph.va.virkailija.hakudata :as hakudata]
@@ -97,6 +98,9 @@
 
 (compojure-api/defroutes paatos-routes
   "Paatos routes"
+
+  (compojure-api/GET "/liitteet" []
+    (ok decision-liitteet/Liitteet))
 
   (compojure-api/POST "/sendall/:avustushaku-id" []
     :path-params [avustushaku-id :- Long]
