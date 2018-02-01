@@ -1,5 +1,5 @@
 (ns oph.va.virkailija.invoice-spec
-  (:require [speclj.core :refer [describe it should=]]
+  (:require [speclj.core :refer [describe it should= should-throw]]
             [clj-time.format :as f]
             [clojure.data.xml :as xml]
             [oph.va.virkailija.invoice :as invoice]
