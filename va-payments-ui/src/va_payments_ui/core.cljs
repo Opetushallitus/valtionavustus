@@ -265,6 +265,9 @@
       (update :receipt-date format-date)
       (update :invoice-date format-date)))
 
+(defn notice [message]
+  [:div {:style theme/notice} message])
+
 (defn home-page []
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
@@ -318,21 +321,32 @@
                      "Virhe historiatietojen latauksessa"
                      (select-keys result [:status :error-text])))))))
          :is-admin? (is-admin? @user-info)})]
-     (when (get-in @selected-grant [:content :multiplemaksuera])
-       [:div {:style theme/notice} "Ainoastaan yhden erän maksatukset on tuettu tällä hetkellä.
-             Monen erän maksatukset tulee luoda manuaalisesti."])
-     [ui/raised-button
-      {:primary true
-       :disabled (not (payments/valid-payment-values? @payment-values))
-       :label "Lähetä maksatukset"
-       :style theme/button
-       :on-click
-       (fn [_]
-         (when-not (get-in @selected-grant [:content :multiplemaksuera])
-           (send-payments!
-             (filterv #(< (get-in % [:payment :state]) 2)
-                      @current-applications)
-             (convert-payment-dates @payment-values))))}]]
+     (let [multipayment? (get-in @selected-grant [:content :multiplemaksuera])
+           accounts-nil? (some #(when-not (or (get % :lkp-account)
+                                              (get % :takp-account)) true)
+                               @current-applications)]
+       [:div
+        (when multipayment?
+          (notice "Ainoastaan yhden erän maksatukset on tuettu tällä hetkellä.
+             Monen erän maksatukset tulee luoda manuaalisesti."))
+        (when accounts-nil?
+          (notice "Joillakin hakemuksilla ei ole LKP- tai TaKP-tiliä, joten
+                   makastukset tulee luoda manuaalisesti."))
+        [ui/raised-button
+         {:primary true
+          :disabled
+          (or
+            (not (payments/valid-payment-values? @payment-values))
+            multipayment?
+            (not accounts-nil?))
+          :label "Lähetä maksatukset"
+          :style theme/button
+          :on-click
+          (fn [_]
+            (send-payments!
+              (filterv #(< (get-in % [:payment :state]) 2)
+                       @current-applications)
+              (convert-payment-dates @payment-values)))}]])]
     (when (and @delete-payments? (is-admin? @user-info))
       (render-admin-tools))
     (render-dialogs
