@@ -336,8 +336,7 @@
           :disabled
           (or
             (not (payments/valid-payment-values? @payment-values))
-            multipayment?
-            (not accounts-nil?))
+            multipayment? accounts-nil?)
           :label "Lähetä maksatukset"
           :style theme/button
           :on-click
