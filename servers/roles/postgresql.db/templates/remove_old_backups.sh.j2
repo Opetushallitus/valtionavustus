@@ -6,5 +6,5 @@
 find "{{ postgresql_backup_dir }}/" \
      -mindepth 1 \
      -maxdepth 1 \
-     -mtime +5 \
+     -mtime +18 \
      -exec rm -fr -- '{}' \;
