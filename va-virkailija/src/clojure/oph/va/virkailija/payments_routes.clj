@@ -81,7 +81,7 @@
           (a/timeout timeout-limit) ([_] (request-timeout "Rondo timeout")))))))
 
 (defn- get-state-of-payments []
-  (compojure-api/GET
+  (compojure-api/POST
     "/update-payments-state/" []
     :path-params []
     :summary "Fetch payments state from rondo"
