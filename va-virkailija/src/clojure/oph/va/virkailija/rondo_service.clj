@@ -20,7 +20,7 @@
       (ssh/with-channel-connection channel
         (cond
           (= method "put") (ssh/sftp channel {} :put file (:remote_path sftp-config))
-          (= method "get") (ssh/sftp channel {} :get (format "%s/%s" (:remote_path sftp-config) file) (format "%s/%s" (:local-path sftp-config) file))
+          (= method "get") (ssh/sftp channel {} :get (format "%s/%s" (:remote_path_from sftp-config) file) (format "%s/%s" (:local-path sftp-config) file))
           (= method "rm") (ssh/sftp channel {} :rm (format "%s/%s" (:remote_path sftp-config) file))))))))
 
 
