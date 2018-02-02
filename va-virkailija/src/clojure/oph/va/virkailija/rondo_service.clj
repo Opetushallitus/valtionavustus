@@ -58,7 +58,7 @@
                (ssh/with-connection session
                  (let [channel (ssh/ssh-sftp session)]
                    (ssh/with-channel-connection channel
-                    (ssh/sftp channel {} :cd "/upload")
+                    (ssh/sftp channel {} :cd (:remote_path_from sftp-config))
                      (let [result (ssh/ssh-sftp-cmd channel :ls ["*.xml"] :with-monitor)
                            file-list (get-file-list result)]
                        (map #(handle-one-xml % sftp-config) file-list))))))))
