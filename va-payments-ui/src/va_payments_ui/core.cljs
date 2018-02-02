@@ -315,8 +315,7 @@
                  (if (:success result)
                    (show-dialog!
                      "Maksatuksen historia"
-                     (r/as-element (payments-ui/render-history
-                                     (:body result))))
+                     (r/as-element (payments-ui/render-history (:body result))))
                    (show-error-message!
                      "Virhe historiatietojen latauksessa"
                      (select-keys result [:status :error-text])))))))
