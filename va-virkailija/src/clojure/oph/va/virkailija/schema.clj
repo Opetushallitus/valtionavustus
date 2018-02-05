@@ -252,7 +252,6 @@
    (s/optional-key :application-version) s/Int
    :state s/Int
    (s/optional-key :installment-number) s/Int
-   (s/optional-key :organisation) s/Str
    (s/optional-key :document-type) s/Str
    (s/optional-key :invoice-date) LocalDate
    (s/optional-key :due-date) LocalDate
