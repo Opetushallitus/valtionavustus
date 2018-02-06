@@ -45,7 +45,6 @@
            :payment-term "Z001"
            :partner ""
            :document-type "XA"
-           :organisation "6600"
            :state 0
            :transaction-account "5000"
            :due-date (financing/now-plus financing/week-in-ms)
