@@ -8,29 +8,31 @@
             [clojure.tools.logging :as log]
             [clojure.string :as strc]))
 
-(defn do-sftp! [method file]
+
+(defn create-session! [& {:keys [file method]}]
   (let [sftp-config (:rondo-sftp config)
         agent (ssh/ssh-agent {:use-system-ssh-agent false})
       session (ssh/session agent (:host-ip sftp-config)
                            {:username (:username sftp-config)
                             :password (:password sftp-config)
                             :port (:port sftp-config)
-                            :strict-host-key-checking :no})]
+                            :strict-host-key-checking :no})
+        remote (:remote_path sftp-config)]
   (ssh/with-connection session
     (let [channel (ssh/ssh-sftp session)]
       (ssh/with-channel-connection channel
         (cond
-          (= method "put") (ssh/sftp channel {} :put file (:remote_path sftp-config))
-          (= method "get") (ssh/sftp channel {} :get (format "%s/%s" (:remote_path_from sftp-config)  (.getName (clojure.java.io/file file))) file)
-          (= method "rm") (ssh/sftp channel {} :rm (format "%s/%s" (:remote_path sftp-config) file))))))))
-
+          (= method :put) (ssh/sftp channel {} method file remote)
+          (= method :get) (ssh/sftp channel {} method (format "%s/%s" remote (.getName (clojure.java.io/file file))) file)
+          (= method :rm )(ssh/sftp channel {} method (format "%s/%s" remote file))
+          (= method :cdls)(ssh/with-channel-connection channel (ssh/sftp channel {} :cd remote) (ssh/ssh-sftp-cmd channel :ls ["*.xml"] :with-monitor))))))))
 
 (defn send-to-rondo! [{:keys [payment application grant filename]}]
   (let [sftp-config (:rondo-sftp config)
         file (format "%s/%s" (:local-path sftp-config) filename)]
     (invoice/write-xml! (invoice/payment-to-xml payment application grant) file)
     (if (:enabled? sftp-config)
-      (let [result (do-sftp! "put" file)]
+      (let [result (create-session! :method :put :file file)]
         (if (nil? result)
           {:success true}
           {:success false :value result}))
@@ -39,29 +41,18 @@
         {:success true}))))
 
 (defn get-file-list [result]
-      (let [output (map #(str %) result)]
-        (map #(last (strc/split % #"\s+")) output)))
+        (map #(last (strc/split % #"\s+")) (map str result)))
 
 (defn handle-one-xml [filename tmp-path]
   (let [xml-file-path (format "%s/%s" tmp-path filename)]
-    (do-sftp! "get" xml-file-path)
+    (create-session! :method :get :file xml-file-path)
     (payments-data/update-state-by-response (invoice/read-xml xml-file-path))
-    (do-sftp! "rm" filename)
+    (create-session! :method :rm :file filename)
     (clojure.java.io/delete-file xml-file-path)))
 
+
 (defn get-state-from-rondo []
-          (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})]
-             (let [sftp-config (:rondo-sftp config)
-                   session (ssh/session agent (:host-ip sftp-config)
-                                {:username (:username sftp-config)
-                                 :password (:password sftp-config)
-                                 :port (:port sftp-config)
-                                 :strict-host-key-checking :no})]
-               (ssh/with-connection session
-                 (let [channel (ssh/ssh-sftp session)]
-                   (ssh/with-channel-connection channel
-                    (ssh/sftp channel {} :cd (:remote_path_from sftp-config))
-                     (let [result (ssh/ssh-sftp-cmd channel :ls ["*.xml"] :with-monitor)
-                           file-list (get-file-list result)
-                           tmp-path (System/getProperty "java.io.tmpdir")]
-                       (map #(handle-one-xml % tmp-path) file-list))))))))
+(let [result (create-session! :method :cdls)
+      file-list (get-file-list result)
+      tmp-path (System/getProperty"java.io.tmpdir")]
+  (map #(handle-one-xml % tmp-path) file-list)))
