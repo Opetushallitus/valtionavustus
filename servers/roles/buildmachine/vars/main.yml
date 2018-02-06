@@ -36,4 +36,4 @@ jenkins_plugins: [github, git, greenballs]
 # System config
 # =============
 jenkins_system_config:
-  admin_email: "{{ alert_email_recipient }}"
+  admin_email: "{{ alert_mail_recipient }}"

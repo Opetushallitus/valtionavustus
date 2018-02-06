@@ -92,16 +92,16 @@
 - name: Disable selinux
   selinux: state=disabled
 
-- name: Set email receiver for root user
+- name: Set mail receiver for root user
   lineinfile:
     dest: '/etc/aliases'
     regexp: '^root:'
-    line: 'root:\t\t{{ root_user_email_recipient }}'
+    line: 'root:\t\t{{ root_user_mail_recipient }}'
     state: present
   when: ansible_os_family == 'RedHat'
   notify: Init alias db
 
-- name: Disallow automatic system reboot, send email instead
+- name: Disallow automatic system reboot, send mail instead
   lineinfile:
     dest: '{{ csc_host_info_config_path }}'
     regexp: '^REBOOT='
@@ -109,10 +109,10 @@
     state: present
   when: ansible_os_family == 'RedHat'
 
-- name: Set email receiver for system reboot needed mail
+- name: Set mail receiver for system reboot needed mail
   lineinfile:
     dest: '{{ csc_host_info_config_path }}'
     regexp: '^MAIL_ADDR='
-    line: 'MAIL_ADDR="{{ system_reboot_needed_email_recipient }}"'
+    line: 'MAIL_ADDR="{{ system_reboot_needed_mail_recipient }}"'
     state: present
   when: ansible_os_family == 'RedHat'
