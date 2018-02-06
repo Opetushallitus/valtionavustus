@@ -8,7 +8,7 @@
           :session-timeout-in-s 28800
           :threads 16
           :virkailija-url "http://localhost:8081"}
- :opintopolku {:url "https://testi.virkailija.opintopolku.fi"
+ :opintopolku {:url "https://virkailija.testiopintopolku.fi"
                :cas-login "/cas/login?service="
                :cas-logout "/cas/logout?service="
                :permission-request "/henkilo-ui/omattiedot"}
