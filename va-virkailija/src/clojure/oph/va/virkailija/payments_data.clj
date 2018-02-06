@@ -10,7 +10,7 @@
    [oph.va.virkailija.application-data :as application-data]
    [oph.va.virkailija.invoice :as invoice]
    [oph.va.virkailija.email :as email]
-   [oph.va.virkailija.invoice :refer [get-installment]]))
+   [oph.va.virkailija.invoice :refer [get-batch-id]]))
 
 (def date-formatter (f/formatter "dd.MM.YYYY"))
 
@@ -44,9 +44,9 @@
   (exec :form-db queries/payment-close-version
         {:id id :version version}))
 
-(defn next-installment-number []
+(defn next-batch-number []
   (convert-to-dash-keys
-    (first (exec :form-db queries/get-next-payment-installment-number {}))))
+    (first (exec :form-db queries/get-next-payment-batch-number {}))))
 
 (defn- get-user-info [identity]
   {:user-oid (:person-oid identity)
@@ -126,34 +126,34 @@
 (defn delete-grant-payments [id]
   (exec :form-db queries/delete-grant-payments {:id id}))
 
-(defn parse-installment-number [s]
+(defn parse-batch-number [s]
   (-> s
       (subs 6)
       (Integer/parseInt)))
 
-(defn get-grant-payments-info [id installment-number]
+(defn get-grant-payments-info [id batch-number]
   (convert-to-dash-keys
     (first (exec :form-db queries/get-grant-payments-info
-                 {:grant_id id :installment_number installment-number}))))
+                 {:grant_id id :batch_number batch-number}))))
 
 (defn send-payments-email
-  [{:keys [installment-number inspector-email acceptor-email
+  [{:keys [batch-number inspector-email acceptor-email
            grant-id organisation]}]
-  (when (not (integer? installment-number)) (throw (Exception. "Invalid installment number")))
+  (when (not (integer? batch-number )) (throw (Exception. "Invalid batch number")))
 
   (let [grant (convert-to-dash-keys
                 (first (exec :form-db queries/get-grant
                              {:grant_id grant-id})))
         now (t/now)
-        payments-info (get-grant-payments-info grant-id installment-number)
-        installment (get-installment
+        payments-info (get-grant-payments-info grant-id batch-number)
+        batch-id (get-batch-id
                       organisation
                       (t/year now)
-                      installment-number)]
+                      batch-number)]
 
     (email/send-payments-info!
       {:receivers [inspector-email acceptor-email]
-       :installment installment
+       :batch-id batch-id
        :title (get-in grant [:content :name])
        :date (f/unparse date-formatter now)
        :count (:count payments-info)

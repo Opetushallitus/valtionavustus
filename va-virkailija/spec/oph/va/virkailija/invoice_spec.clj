@@ -18,7 +18,7 @@
               :state 0
               :transaction-account "5000"
               :partner ""
-              :installment-number 13})
+              :batch-number 13})
 
 (def application {:project-name "Example project"
                   :register-number "1/234/2017"
@@ -55,12 +55,12 @@
               (should= "somevalue"
                        (invoice/get-answer-value answers "key1" "default"))))
 
-(describe "Get installment number of payment"
-          (it "calculates installment number"
-              (should= "660017013" (invoice/get-installment payment)))
+(describe "Get batch number of payment"
+          (it "calculates batch id"
+              (should= "660017013" (invoice/get-batch-id payment)))
           (it "returns nil if any needed value is nil"
-              (should= nil (invoice/get-installment nil))
-              (should= nil (invoice/get-installment {:some "Value"}))))
+              (should= nil (invoice/get-batch-id nil))
+              (should= nil (invoice/get-batch-id {:some "Value"}))))
 
 (describe "Get response XML element content"
           (it "gets content of Pitkaviite"
@@ -96,14 +96,14 @@
                 :VA-invoice
                 (:tag (first (invoice/get-content response-xml nil))))))
 
-(describe "Parse installment number"
-          (it "gets installment number"
-              (should= 1 (payments-data/parse-installment-number "660018001")))
+(describe "Parse bvatch number"
+          (it "gets batch number"
+              (should= 1 (payments-data/parse-batch-number "660018001")))
           (it "fails on nil value"
-              (should-throw (payments-data/parse-installment-number nil)))
+              (should-throw (payments-data/parse-batch-number nil)))
           (it "fails on empty value"
-              (should-throw (payments-data/parse-installment-number "")))
+              (should-throw (payments-data/parse-batch-number "")))
           (it "fails on invalid value"
-              (should-throw (payments-data/parse-installment-number "660018")))
+              (should-throw (payments-data/parse-batch-number "660018")))
           (it "fails on invalid value"
-              (should-throw (payments-data/parse-installment-number "6600"))))
+              (should-throw (payments-data/parse-batch-number "6600"))))

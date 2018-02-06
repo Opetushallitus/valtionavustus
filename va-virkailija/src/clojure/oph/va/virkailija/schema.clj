@@ -251,7 +251,7 @@
    :application-id  s/Int
    (s/optional-key :application-version) s/Int
    :state s/Int
-   (s/optional-key :installment-number) s/Int
+   (s/optional-key :batch-number) s/Int
    (s/optional-key :document-type) s/Str
    (s/optional-key :invoice-date) LocalDate
    (s/optional-key :due-date) LocalDate
@@ -265,9 +265,9 @@
    (s/optional-key :filename) (s/maybe s/Str)
    (s/optional-key :user-name) s/Str})
 
-(s/defschema PaymentInstallmentNumber
-  "Payment installment number"
-  {:installment-number s/Int})
+(s/defschema PaymentBatchNumber
+  "Payment batch number"
+  {:batch-number s/Int})
 
 (s/defschema GrantStatus
   "Grant status"
@@ -326,5 +326,5 @@
   "Grant payments email"
   {:acceptor-email s/Str
    :inspector-email s/Str
-   :installment-number s/Int
+   :batch-id s/Int
    :organisation s/Str})

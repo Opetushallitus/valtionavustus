@@ -147,6 +147,6 @@
                           :subject mail-subject
                           :to (:receivers payments-info)
                           :date (:date payments-info)
-                          :installment (:installment payments-info)
+                          :batch-id (:batch-id payments-info)
                           :count (:count payments-info)
                           :total-granted (:total-granted payments-info)})))
