@@ -1,2 +1,5 @@
 - name: Reload iptables
   command: /etc/rc.d/rc.firewall
+
+- name: Init alias db
+  command: newaliases

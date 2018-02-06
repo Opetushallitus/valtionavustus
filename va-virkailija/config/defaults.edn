@@ -8,7 +8,7 @@
           :session-timeout-in-s 28800
           :threads 16
           :virkailija-url "http://localhost:8081"}
- :opintopolku {:url "https://testi.virkailija.opintopolku.fi"
+ :opintopolku {:url "https://virkailija.testiopintopolku.fi"
                :cas-login "/cas/login?service="
                :cas-logout "/cas/logout?service="
                :permission-request "/henkilo-ui/omattiedot"}
@@ -37,7 +37,7 @@
                 :sv "no-reply@statsunderstod.oph.fi"}
          :sender "no-reply@csc.fi"
          :to-finance ["test@test.com"]
-         :bounce-address "va-dev@reaktor.com"
+         :bounce-address "oph-va-alerts@reaktor.com"
          :print-mail-on-disable? true
          :retry-initial-wait 2000
          :retry-multiplier 4
