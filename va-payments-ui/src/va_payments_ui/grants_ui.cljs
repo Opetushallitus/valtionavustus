@@ -7,7 +7,7 @@
             [va-payments-ui.theme :refer [material-styles]]
             [cljs-time.format :as f]
             [cljs-time.core :as t]
-            [va-payments-ui.utils :refer [update-all to-simple-date-time]]))
+            [va-payments-ui.utils :refer [to-simple-date-time]]))
 
 (defn grant-row
   [grant selected]

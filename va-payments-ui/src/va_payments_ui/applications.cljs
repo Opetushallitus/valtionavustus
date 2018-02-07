@@ -3,7 +3,6 @@
             [cljsjs.material-ui]
             [cljs-react-material-ui.reagent :as ui]
             [cljs-react-material-ui.icons :as ic]
-            [va-payments-ui.utils :refer [assoc-all-with toggle toggle-in]]
             [va-payments-ui.theme :as theme]
             [va-payments-ui.utils :refer [format]]))
 

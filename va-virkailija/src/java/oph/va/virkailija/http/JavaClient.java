@@ -14,9 +14,13 @@ import org.http4s.Response;
 import org.http4s.Service;
 import org.http4s.Uri;
 import org.http4s.client.Client;
+import org.http4s.headers.Accept$;
 import org.http4s.package$;
+import org.http4s.util.NonEmptyList;
+import org.http4s.util.Renderable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.Option;
 import scala.collection.JavaConversions;
 import scala.runtime.AbstractFunction1;
 import scala.runtime.AbstractPartialFunction;
@@ -66,32 +70,25 @@ public class JavaClient {
         // on {@link EntityDecoder} in the request
         return client.fetch(request, new AbstractFunction1<Response, Task<String>>() {
             @Override
-            public Task<String> apply(Response response) {
-                Task<String> bodyText = response.as(EntityDecoder$.MODULE$.text(Charset.UTF$minus8()));
+            public Task<String> apply(final Response response) {
+                return response.as(EntityDecoder$.MODULE$.text(Charset.UTF$minus8())).flatMap(new AbstractFunction1<String, Task<String>>() {
+                    public Task<String> apply(String body) {
+                        ResponseException responseException = checkSuccessfulResponse(request, response, body);
 
-                if (response.status().isSuccess()) {
-                    return bodyText;
-                } else {
-                    return bodyText.flatMap(new AbstractFunction1<String, Task<String>>() {
-                        @Override
-                        public Task<String> apply(String body) {
-                            LOG.warn("Unsuccessful HTTP response status: {} for {} {}\n----\n{}\n----",
-                                    response.status().code(),
-                                    request.method().name(),
-                                    request.uri().toString(),
-                                    body);
+                        if (responseException == null) {
+                            responseException = checkResponseContentType(request, response, body);
+                        }
 
-                            Task tmp = Task.fail(new ResponseException(
-                                    response.status().code(),
-                                    request.method().name(),
-                                    request.uri().toString(),
-                                    body));
+                        if (responseException != null) {
+                            Task tmp = Task.fail(responseException);
                             @SuppressWarnings("unchecked")
                             Task<String> ret = tmp;
                             return ret;
                         }
-                    });
-                }
+
+                        return Task.now(body);
+                    }
+                });
             }
         }).handleWith(new AbstractPartialFunction<Throwable, Task<String>>() {
             @Override
@@ -130,5 +127,60 @@ public class JavaClient {
         headers.add(Header$.MODULE$.apply("clientSubSystemCode", CLIENT_SUBSYSTEM_CODE));
 
         return Headers.apply(JavaConversions.asScalaSet(headers).toSeq());
+    }
+
+    private static ResponseException checkSuccessfulResponse(Request request, Response response, String body) {
+        if (!response.status().isSuccess()) {
+            String reason = "Unsuccessful status code";
+            LOG.warn("{}: {} for {} {}\n----\n{}\n----",
+                    reason,
+                    response.status().code(),
+                    request.method().name(),
+                    request.uri().toString(),
+                    body);
+            return new ResponseException(
+                    reason,
+                    response.status().code(),
+                    request.method().name(),
+                    request.uri().toString(),
+                    body);
+        }
+
+        return null;
+    }
+
+    private static ResponseException checkResponseContentType(Request request, Response response, String body) {
+        Option tmpRequestAcceptHeader = request.headers().get(Accept$.MODULE$);
+        @SuppressWarnings("unchecked")
+        Option<Header.Recurring> requestAcceptHeader = (Option<Header.Recurring>) tmpRequestAcceptHeader;
+
+        if (requestAcceptHeader.isDefined() && response.contentType().isDefined()) {
+            NonEmptyList<String> acceptContentTypes = requestAcceptHeader.get().values().map(new AbstractFunction1<Object, String>() {
+                public String apply(Object renderable) {
+                    return ((Renderable) renderable).renderString().toLowerCase();
+                }
+            });
+
+            String actualContentType = response.contentType().get().mediaType().renderString().toLowerCase();
+
+            if (!acceptContentTypes.contains(actualContentType)) {
+                String reason = String.format("Unexpected Content-Type: %s (accepting %s)",
+                        actualContentType,
+                        acceptContentTypes.mkString(", "));
+                LOG.warn("{} for {} {}\n----\n{}\n----",
+                        reason,
+                        request.method().name(),
+                        request.uri().toString(),
+                        body);
+                return new ResponseException(
+                        reason,
+                        response.status().code(),
+                        request.method().name(),
+                        request.uri().toString(),
+                        body);
+            }
+        }
+
+        return null;
     }
 }
