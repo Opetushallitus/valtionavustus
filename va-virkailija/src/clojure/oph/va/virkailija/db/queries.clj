@@ -49,7 +49,7 @@
 (defquery create-payment "sql/virkailija/payments/create-payment.sql")
 (defquery get-by-rn-and-date "sql/virkailija/payments/get-by-rn-and-date.sql")
 
-(defquery find-batch "sql/virkailija/payments/find-batch.sql")
+(defquery find-batch "sql/virkailija/payment_batches/find-batch.sql")
 (defquery create-batch "sql/virkailija/payment_batches/create-batch.sql")
 
 (defquery get-application "sql/virkailija/applications/get-application.sql")
