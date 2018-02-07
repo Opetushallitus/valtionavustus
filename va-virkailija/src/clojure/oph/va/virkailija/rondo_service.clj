@@ -8,15 +8,18 @@
             [clojure.tools.logging :as log]
             [clojure.string :as strc]))
 
-
-(defn create-session! [& {:keys [file method]}]
+(defn create-session
+  [config]
   (let [sftp-config (:rondo-sftp config)
-        agent (ssh/ssh-agent {:use-system-ssh-agent false})
-      session (ssh/session agent (:host-ip sftp-config)
+        agent (ssh/ssh-agent {:use-system-ssh-agent false})]
+        session (ssh/session agent (:host-ip sftp-config)
                            {:username (:username sftp-config)
                             :password (:password sftp-config)
                             :port (:port sftp-config)
-                            :strict-host-key-checking :no})
+                            :strict-host-key-checking :no}))
+
+(defn do-sftp! [& {:keys [file method]}]
+  (let [session (create-session config)
         remote (:remote_path sftp-config)]
   (ssh/with-connection session
     (let [channel (ssh/ssh-sftp session)]
@@ -32,7 +35,7 @@
         file (format "%s/%s" (:local-path sftp-config) filename)]
     (invoice/write-xml! (invoice/payment-to-xml payment application grant) file)
     (if (:enabled? sftp-config)
-      (let [result (create-session! :method :put :file file)]
+      (let [result (do-ftp! :method :put :file file)]
         (if (nil? result)
           {:success true}
           {:success false :value result}))
@@ -45,14 +48,14 @@
 
 (defn handle-one-xml [filename tmp-path]
   (let [xml-file-path (format "%s/%s" tmp-path filename)]
-    (create-session! :method :get :file xml-file-path)
+    (do-ftp! :method :get :file xml-file-path)
     (payments-data/update-state-by-response (invoice/read-xml xml-file-path))
-    (create-session! :method :rm :file filename)
+    (do-ftp! :method :rm :file filename)
     (clojure.java.io/delete-file xml-file-path)))
 
 
 (defn get-state-from-rondo []
-(let [result (create-session! :method :cdls)
+(let [result (do-ftp! :method :cdls)
       file-list (get-file-list result)
       tmp-path (System/getProperty"java.io.tmpdir")]
   (map #(handle-one-xml % tmp-path) file-list)))
