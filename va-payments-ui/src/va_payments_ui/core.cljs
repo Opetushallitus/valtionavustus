@@ -18,7 +18,9 @@
     [va-payments-ui.financing :as financing]
     [va-payments-ui.utils :refer
      [remove-nil format no-nils? not-empty? not-nil? find-index-of]]
-    [va-payments-ui.theme :as theme]))
+    [va-payments-ui.theme :as theme]
+    [cljs-time.format :as tf]
+    [cljs-time.coerce :as tc]))
 
 (defonce grants (r/atom []))
 
@@ -40,16 +42,17 @@
                           :loading {:open false}
                           :snackbar {:open false :message ""}}))
 
-(defonce payment-values
-  (r/atom {:currency "EUR"
-           :payment-term "Z001"
+(def default-batch-values
+  {:currency "EUR"
            :partner ""
            :document-type "XA"
-           :state 0
            :transaction-account "5000"
            :due-date (financing/now-plus financing/week-in-ms)
            :invoice-date (js/Date.)
-           :receipt-date (js/Date.)}))
+           :receipt-date (js/Date.)})
+
+(defonce payment-values
+  (r/atom {}))
 
 (defn is-admin?
   [user]
@@ -198,56 +201,49 @@
      :on-toggle #(on-change :filter-old %2)
      :style {:width "200px"}}]])
 
-(defn send-payments! [applications-to-send payment-values]
+(defn send-payments! [applications-to-send values]
   (go
     (let [dialog-chan
           (show-loading-dialog!
             "Lähetetään maksatuksia"
-            (+ (count applications-to-send) 10))
-          nin-result
-          (<! (connection/get-next-installment-number))]
+            (+ (count applications-to-send) 10))]
       (put! dialog-chan 1)
-      (if (:success nin-result)
-        (let [values (conj payment-values (:body nin-result))
-              error
-              (loop [index 0]
-                (if-let [application
-                         (get applications-to-send index)]
-                  (let [payment-result
-                        (<! (connection/create-payment
-                              (assoc values :application-id
-                                     (:id application))))]
-                    (put! dialog-chan (inc index))
-                    (if (:success payment-result)
-                      (recur (inc index))
-                      (select-keys payment-result [:status :error-text])))))]
-          (if (nil? error)
-            (let [email-result
-                  (<!
-                    (connection/send-payments-email
-                      (:id @selected-grant)
-                      {:acceptor-email (:acceptor-email payment-values)
-                       :inspector-email (:inspector-email payment-values)
-                       :organisation (:organisation payment-values)
-                       :installment-number
-                       (get-in nin-result [:body :installment-number])}))]
-              (if (:success email-result)
-                (show-message! "Kaikki maksatukset lähetetty")
-                (show-message!
-                  "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin
+      (let [error
+            (loop [index 0]
+              (if-let [application
+                       (get applications-to-send index)]
+                (let [payment-result
+                      (<! (connection/create-payment
+                            {:batch-id (:batch-id values)
+                             :application-id (:id application)
+                             :state (:state values)}))]
+                  (put! dialog-chan (inc index))
+                  (if (:success payment-result)
+                    (recur (inc index))
+                    (select-keys payment-result [:status :error-text])))))]
+        (if (nil? error)
+          (let [email-result
+                (<!
+                  (connection/send-payments-email
+                    (:id @selected-grant)
+                    (select-keys values [:acceptor-email
+                                         :inspector-email
+                                         :organisation
+                                         :batch-number
+                                         :batch-id])))]
+            (if (:success email-result)
+              (show-message! "Kaikki maksatukset lähetetty")
+              (show-message!
+                "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin
                        lähetyksessä tapahtui virhe")))
-            (show-error-message! "Maksatuksen lähetyksessä ongelma" error))
-          (let [grant-result (<! (connection/get-grant-payments
-                                   (:id @selected-grant)))]
-            (if (:success grant-result)
-              (reset! payments (:body grant-result))
-              (show-error-message!
-                "Maksatuksien latauksessa ongelma"
-                (select-keys grant-result [:status :error-text])))))
-
-        (show-error-message!
-          "Maksatuserän haussa ongelma"
-          (select-keys nin-result [:status :error-text])))
+          (show-error-message! "Maksatuksen lähetyksessä ongelma" error))
+        (let [grant-result (<! (connection/get-grant-payments
+                                 (:id @selected-grant)))]
+          (if (:success grant-result)
+            (reset! payments (:body grant-result))
+            (show-error-message!
+              "Maksatuksien latauksessa ongelma"
+              (select-keys grant-result [:status :error-text])))))
       (put! dialog-chan (+ (count applications-to-send) 10))
       (close! dialog-chan))))
 
@@ -263,6 +259,17 @@
       (update :due-date format-date)
       (update :receipt-date format-date)
       (update :invoice-date format-date)))
+
+(defn parse-date [s]
+  (-> s
+      tf/parse
+      tc/to-date))
+
+(defn parse-batch-dates [batch]
+  (-> batch
+      (update :due-date parse-date)
+      (update :receipt-date parse-date)
+      (update :invoice-date parse-date)))
 
 (defn notice [message]
   [:div {:style theme/notice} message])
@@ -340,10 +347,33 @@
           :style theme/button
           :on-click
           (fn [_]
-            (send-payments!
-              (filterv #(< (get-in % [:payment :state]) 2)
-                       @current-applications)
-              (convert-payment-dates @payment-values)))}]])]
+            (go
+              (let [batch-result
+                    (if (some? (:id @payment-values))
+                      {:body @payment-values :success true}
+                      (<! (connection/create-payment-batch
+                            (-> @payment-values
+                                convert-payment-dates
+                                (assoc :grant-id (:id @selected-grant))))))
+                    batch (:body batch-result)]
+                (if (:success batch-result)
+                  (send-payments!
+                     (filterv #(< (get-in % [:payment :state]) 2)
+                              @current-applications)
+                     (assoc
+                       (select-keys batch
+                                    [:acceptor-email
+                                    :inspector-email
+                                    :batch-number])
+                       :state 0
+                       :organisation
+                       (if (= (:document-type batch) "XB")
+                         "6604"
+                         "6600")
+                       :batch-id (:id batch)))
+                  (show-error-message!
+                    "Virhe maksuerän luonnissa"
+                    batch-result)))))}]])]
     (when (and @delete-payments? (is-admin? @user-info))
       (render-admin-tools))
     (render-dialogs
@@ -367,7 +397,16 @@
             (let [grant-id (:id new-state)
                   applications-response
                   (<! (connection/get-grant-applications grant-id))
-                  payments-response (<! (connection/get-grant-payments grant-id))]
+                  payments-response (<! (connection/get-grant-payments grant-id))
+                  batch-response
+                  (<! (connection/find-payment-batch
+                        grant-id (format-date (js/Date.))))]
+              (reset! payment-values
+                      (if (= (:status batch-response) 200)
+                        (-> (:body batch-response)
+                            parse-batch-dates
+                            (assoc :read-only true))
+                        default-batch-values))
               (put! dialog-chan 2)
               (if (:success applications-response)
                 (reset! applications (:body applications-response))
