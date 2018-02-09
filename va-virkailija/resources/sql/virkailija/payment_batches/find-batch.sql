@@ -5,4 +5,4 @@ SELECT
 FROM
   virkailija.payment_batches
 WHERE
-  created_at = :batch_date::date AND grant_id = :grant_id
+  receipt_date = :batch_date::date AND grant_id = :grant_id
