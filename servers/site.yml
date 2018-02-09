@@ -1,26 +1,19 @@
-- hosts: oph-va-app-test01.csc.fi
+- hosts: va_app_qa
   sudo: yes
-  vars:
-    app_profile: va-test
-    dbname: va-qa
   roles:
   - {role: ssh.init, tags: ['ssh']}
   - common
   - valtionavustus.app
 
-- hosts: oph-va-app-prod01.csc.fi
+- hosts: va_app_prod
   sudo: yes
-  vars:
-    app_profile: va-prod
-    dbname: va-prod
   roles:
   - {role: ssh.init, tags: ['ssh']}
   - common
   - valtionavustus.app
 
-- hosts: oph-va-lb-prod01.csc.fi
+- hosts: va_loadbalancer
   sudo: yes
-  vars_files: ['loadbalancer-prod.yml']
   roles:
   - {role: ssh.init, tags: ['ssh']}
   - {role: common}
@@ -28,7 +21,7 @@
   - {role: ssl-cert, tags: ['install', 'certs']}
   - {role: va-haproxy, tags: ['update']}
 
-- hosts: oph-va-ci-test01.csc.fi
+- hosts: va_build
   sudo: yes
   roles:
   - {role: ssh.init, tags: ['ssh']}
