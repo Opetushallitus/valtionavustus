@@ -9,7 +9,8 @@
 (defn find-batch [date grant-id]
   (-> (exec :form-db queries/find-batch {:batch_date date :grant_id grant-id})
       first
-      convert-to-dash-keys))
+      convert-to-dash-keys
+      convert-timestamps-from-sql))
 
 (defn create-batch [values]
   (->> values
