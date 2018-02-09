@@ -131,7 +131,7 @@
                  {:grant_id id :batch_id batch-id}))))
 
 (defn send-payments-email
-  [{:keys [batch-id inspector-email acceptor-email
+  [{:keys [batch-id inspector-email acceptor-email receipt-date
            grant-id organisation batch-number]}]
   (let [grant (convert-to-dash-keys
                 (first (exec :form-db queries/get-grant
