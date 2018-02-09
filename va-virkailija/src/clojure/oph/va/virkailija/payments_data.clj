@@ -137,11 +137,13 @@
                 (first (exec :form-db queries/get-grant
                              {:grant_id grant-id})))
         now (t/now)
-        payments-info (get-grant-payments-info grant-id batch-id)]
+        payments-info (get-grant-payments-info grant-id batch-id)
+        batch-key (invoice/get-batch-id
+                    organisation receipt-date batch-number)]
 
     (email/send-payments-info!
       {:receivers [inspector-email acceptor-email]
-       :batch-number batch-number
+       :batch-key batch-key
        :title (get-in grant [:content :name])
        :date (f/unparse date-formatter now)
        :count (:count payments-info)
