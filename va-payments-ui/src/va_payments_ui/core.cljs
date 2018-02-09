@@ -302,8 +302,8 @@
        (or
          (:read-only @batch-values)
          (when-not (some #(< (get-in % [:payment :state]) 2)
-                        @current-applications)
-          {:style {:opacity 0.2 :pointer-events "none"}}))
+                         @current-applications)
+           {:style {:opacity 0.2 :pointer-events "none"}}))
        [:h3 "Maksatuksen tiedot"]
        (financing/payment-emails @batch-values
                                  #(swap! batch-values assoc %1 %2))
@@ -360,19 +360,19 @@
                     batch (:body batch-result)]
                 (if (:success batch-result)
                   (send-payments!
-                     (filterv #(< (get-in % [:payment :state]) 2)
-                              @current-applications)
-                     (assoc
-                       (select-keys batch
-                                    [:acceptor-email
+                    (filterv #(< (get-in % [:payment :state]) 2)
+                             @current-applications)
+                    (assoc
+                      (select-keys batch
+                                   [:acceptor-email
                                     :inspector-email
                                     :batch-number])
-                       :state 0
-                       :organisation
-                       (if (= (:document-type batch) "XB")
-                         "6604"
-                         "6600")
-                       :batch-id (:id batch)))
+                      :state 0
+                      :organisation
+                      (if (= (:document-type batch) "XB")
+                        "6604"
+                        "6600")
+                      :batch-id (:id batch)))
                   (show-error-message!
                     "Virhe maksuerän luonnissa"
                     batch-result)))))}]])]
@@ -380,7 +380,7 @@
       (render-admin-tools))
     (render-dialogs
       @dialogs
-      #(do (if (= % :snackbar)
+      #(do (when (= % :snackbar)
              (swap! dialogs assoc :snackbar {:open false :message ""}))
            (swap! dialogs assoc-in [% :open] false)))]])
 
