@@ -299,9 +299,11 @@
       (project-info @selected-grant)
       [:hr]
       [:div
-       (when-not (some #(< (get-in % [:payment :state]) 2)
-                       @current-applications)
-         {:style {:opacity 0.2 :pointer-events "none"}})
+       (or
+         (:read-only @batch-values)
+         (when-not (some #(< (get-in % [:payment :state]) 2)
+                        @current-applications)
+          {:style {:opacity 0.2 :pointer-events "none"}}))
        [:h3 "Maksatuksen tiedot"]
        (financing/payment-emails @batch-values
                                  #(swap! batch-values assoc %1 %2))
