@@ -71,4 +71,5 @@ DROP COLUMN transaction_account,
 DROP COLUMN currency,
 DROP COLUMN partner,
 DROP COLUMN inspector_email,
-DROP COLUMN acceptor_email;
+DROP COLUMN acceptor_email,
+DROP COLUMN organisation;
