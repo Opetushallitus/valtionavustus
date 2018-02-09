@@ -1,2 +1,3 @@
 app_profile: va-test
 dbname: va-qa
+logs_mail_recipient: "{{ notification_mail_recipient }}"
