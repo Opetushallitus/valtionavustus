@@ -51,7 +51,7 @@
            :invoice-date (js/Date.)
            :receipt-date (js/Date.)})
 
-(defonce payment-values
+(defonce batch-values
   (r/atom {}))
 
 (defn is-admin?
@@ -303,10 +303,10 @@
                        @current-applications)
          {:style {:opacity 0.2 :pointer-events "none"}})
        [:h3 "Maksatuksen tiedot"]
-       (financing/payment-emails @payment-values
-                                 #(swap! payment-values assoc %1 %2))
-       (financing/payment-fields @payment-values
-                                 #(swap! payment-values assoc %1 %2))]
+       (financing/payment-emails @batch-values
+                                 #(swap! batch-values assoc %1 %2))
+       (financing/payment-fields @batch-values
+                                 #(swap! batch-values assoc %1 %2))]
       [:h3 "Myönteiset päätökset"]
       (applications/applications-table
         {:applications @current-applications
@@ -341,7 +341,7 @@
          {:primary true
           :disabled
           (or
-            (not (payments/valid-payment-values? @payment-values))
+            (not (payments/valid-batch-values? @batch-values))
             multipayment? accounts-nil?)
           :label "Lähetä maksatukset"
           :style theme/button
@@ -349,10 +349,10 @@
           (fn [_]
             (go
               (let [batch-result
-                    (if (some? (:id @payment-values))
-                      {:body @payment-values :success true}
+                    (if (some? (:id @batch-values))
+                      {:body @batch-values :success true}
                       (<! (connection/create-payment-batch
-                            (-> @payment-values
+                            (-> @batch-values
                                 convert-payment-dates
                                 (assoc :grant-id (:id @selected-grant))))))
                     batch (:body batch-result)]
@@ -401,7 +401,7 @@
                   batch-response
                   (<! (connection/find-payment-batch
                         grant-id (format-date (js/Date.))))]
-              (reset! payment-values
+              (reset! batch-values
                       (if (= (:status batch-response) 200)
                         (-> (:body batch-response)
                             parse-batch-dates

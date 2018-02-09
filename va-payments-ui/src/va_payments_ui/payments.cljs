@@ -1,7 +1,7 @@
 (ns va-payments-ui.payments
   (:require [va-payments-ui.utils :refer [no-nils? valid-email?]]))
 
-(defn valid-payment-values?
+(defn valid-batch-values?
   [values]
   (and (no-nils? values
                  [:transaction-account :due-date :invoice-date :document-type
