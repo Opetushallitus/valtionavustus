@@ -1,5 +1,7 @@
 SHELL := bash  # required for `help` target
 
+CFLAGS ?= -I/usr/local/include
+LDFLAGS ?= -L/usr/local/lib
 PIP_BIN ?= /usr/local/bin/pip2
 PYTHON_BIN ?= /usr/local/bin/python2.7
 PYTHON_REQUIREMENTS ?= requirements.txt
