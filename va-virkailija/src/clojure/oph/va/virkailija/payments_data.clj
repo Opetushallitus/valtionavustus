@@ -138,7 +138,7 @@
                              {:grant_id grant-id})))
         now (t/now)
         payments-info (get-grant-payments-info grant-id batch-id)
-        batch-key (invoice/get-batch-id
+        batch-key (invoice/get-batch-key
                     organisation receipt-date batch-number)]
 
     (email/send-payments-info!

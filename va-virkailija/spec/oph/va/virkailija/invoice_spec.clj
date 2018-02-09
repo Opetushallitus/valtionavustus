@@ -57,10 +57,10 @@
 
 (describe "Get batch number of payment"
           (it "calculates batch id"
-              (should= "660017013" (invoice/get-batch-id payment)))
+              (should= "660017013" (invoice/get-batch-key payment)))
           (it "returns nil if any needed value is nil"
-              (should= nil (invoice/get-batch-id nil))
-              (should= nil (invoice/get-batch-id {:some "Value"}))))
+              (should= nil (invoice/get-batch-key nil))
+              (should= nil (invoice/get-batch-key {:some "Value"}))))
 
 (describe "Get response XML element content"
           (it "gets content of Pitkaviite"

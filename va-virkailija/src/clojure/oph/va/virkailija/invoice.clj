@@ -21,7 +21,7 @@
     (f/unparse date-formatter (c/from-long (.toEpochDay date)))
     date))
 
-(defn get-batch-id
+(defn get-batch-key
   ([organisation year batch-number]
    (format "%s%02d%03d" organisation year batch-number))
   ([payment]
@@ -32,7 +32,7 @@
    (if (and (:created-at payment)
             (:organisation payment)
             (:batch-number payment))
-     (get-batch-id
+     (get-batch-key
        (:organisation payment)
        (mod (t/year (c/to-date-time (:created-at payment))) 1000)
        (:batch-number payment))
@@ -42,7 +42,7 @@
   (let [answers (:answers application)]
     [:VA-invoice
      [:Header
-      [:Maksuera (get-batch-id payment)]
+      [:Maksuera (get-batch-key payment)]
       [:Laskunpaiva (format-date (:invoice-date payment))]
       [:Erapvm (format-date (:due-date payment))]
       [:Bruttosumma (:budget-granted application)]
