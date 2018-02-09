@@ -9,8 +9,7 @@
    [oph.va.virkailija.db.queries :as queries]
    [oph.va.virkailija.application-data :as application-data]
    [oph.va.virkailija.invoice :as invoice]
-   [oph.va.virkailija.email :as email]
-   [oph.va.virkailija.invoice :refer [get-batch-id]]))
+   [oph.va.virkailija.email :as email]))
 
 (def date-formatter (f/formatter "dd.MM.YYYY"))
 
@@ -131,29 +130,23 @@
       (subs 6)
       (Integer/parseInt)))
 
-(defn get-grant-payments-info [id batch-number]
+(defn get-grant-payments-info [id batch-id]
   (convert-to-dash-keys
     (first (exec :form-db queries/get-grant-payments-info
-                 {:grant_id id :batch_number batch-number}))))
+                 {:grant_id id :batch_id batch-id}))))
 
 (defn send-payments-email
-  [{:keys [batch-number inspector-email acceptor-email
-           grant-id organisation]}]
-  (when (not (integer? batch-number )) (throw (Exception. "Invalid batch number")))
-
+  [{:keys [batch-id inspector-email acceptor-email
+           grant-id organisation batch-number]}]
   (let [grant (convert-to-dash-keys
                 (first (exec :form-db queries/get-grant
                              {:grant_id grant-id})))
         now (t/now)
-        payments-info (get-grant-payments-info grant-id batch-number)
-        batch-id (get-batch-id
-                      organisation
-                      (t/year now)
-                      batch-number)]
+        payments-info (get-grant-payments-info grant-id batch-id)]
 
     (email/send-payments-info!
       {:receivers [inspector-email acceptor-email]
-       :batch-id batch-id
+       :batch-number batch-number
        :title (get-in grant [:content :name])
        :date (f/unparse date-formatter now)
        :count (:count payments-info)
