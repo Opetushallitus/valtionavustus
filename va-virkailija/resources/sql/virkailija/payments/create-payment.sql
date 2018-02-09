@@ -4,4 +4,4 @@ VALUES(
   NEXTVAL('virkailija.payments_id_seq'), 0,
   :application_id, :application_version, :state, :user_name, :user_oid,
   :batch_id)
-RETURNING id, version, application_id, application_version, state;
+RETURNING id, version, application_id, application_version, state, batch_id;

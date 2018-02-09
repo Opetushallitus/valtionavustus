@@ -9,4 +9,4 @@ JOIN
     ON
       b.id = p.batch_id
 WHERE
-  id = :id AND version = :version AND deleted IS NULL;
+  p.id = :id AND p.version = :version AND p.deleted IS NULL;
