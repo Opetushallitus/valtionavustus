@@ -27,14 +27,6 @@
           payment-data
           (authentication/get-request-identity request)))))
 
-(defn- get-next-installment-number []
-  (compojure-api/GET
-    "/next-installment-number/" []
-    :path-params []
-    :return virkailija-schema/PaymentInstallmentNumber
-    :summary "Return next installment number"
-    (ok (payments-data/next-installment-number))))
-
 (defn- create-payment []
   (compojure-api/POST
     "/" [:as request]
@@ -56,7 +48,7 @@
                            (System/currentTimeMillis))]
 
       (when (get-in grant [:content :multiplemaksuera])
-        (throw (Exception. "Multiple installments is not supported.")))
+        (throw (Exception. "Multiple payment batches is not supported.")))
       (when (= (:state payment) 2)
         (throw (Exception. "Application already has a payment sent to Rondo")))
 
@@ -91,6 +83,5 @@
   routes
   "payment routes"
   (update-payment)
-  (get-next-installment-number)
   (create-payment)
   (get-state-of-payments))

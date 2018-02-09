@@ -1,7 +1,7 @@
 
 Avustuserä on lähetetty maksettavaksi {{date}}.
 
-Maksuerä: {{installment}}
+Maksuerä: {{batch-key}}
 
 Avustuksen saajia: {{count}}
 

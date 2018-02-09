@@ -80,9 +80,13 @@
   []
   (http/get (format "/api/userinfo/") {:with-credentials? true}))
 
-(defn get-next-installment-number
-  []
-  (http/get (format "/%s/payments/next-installment-number/" api-path)
+(defn find-payment-batch [grant-id date]
+  (http/get (format "/%s/payment-batches/?grant-id=%d&date=%s"
+                    api-path grant-id date)
             {:with-credentials? true}))
+
+(defn create-payment-batch [data]
+  (http/post (format "/%s/payment-batches/" api-path)
+             {:json-params data :with-credentials? true}))
 
 (defn set-config! [c] (reset! config c))
