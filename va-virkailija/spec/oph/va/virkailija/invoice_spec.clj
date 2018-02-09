@@ -95,15 +95,3 @@
               (should=
                 :VA-invoice
                 (:tag (first (invoice/get-content response-xml nil))))))
-
-(describe "Parse bvatch number"
-          (it "gets batch number"
-              (should= 1 (payments-data/parse-batch-number "660018001")))
-          (it "fails on nil value"
-              (should-throw (payments-data/parse-batch-number nil)))
-          (it "fails on empty value"
-              (should-throw (payments-data/parse-batch-number "")))
-          (it "fails on invalid value"
-              (should-throw (payments-data/parse-batch-number "660018")))
-          (it "fails on invalid value"
-              (should-throw (payments-data/parse-batch-number "6600"))))
