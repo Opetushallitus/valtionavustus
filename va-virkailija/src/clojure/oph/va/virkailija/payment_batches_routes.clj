@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.payment-batches-routes
   (:require [compojure.api.sweet :as compojure-api]
-            [ring.util.http-response :refer [ok not-found]]
+            [ring.util.http-response :refer [ok no-content]]
             [oph.va.virkailija.payment-batches-data :as data]
             [oph.va.virkailija.schema :as schema])
   (:import (java.time LocalDate)))
@@ -12,7 +12,7 @@
     :summary "Find payment batch by date and grant id"
     (if-let [batch (data/find-batch date grant-id)]
       (ok batch)
-      (not-found))))
+      (no-content))))
 
 (defn- create-payment-batch []
   (compojure-api/POST
