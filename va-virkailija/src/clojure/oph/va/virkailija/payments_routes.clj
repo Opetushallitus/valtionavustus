@@ -27,14 +27,6 @@
           payment-data
           (authentication/get-request-identity request)))))
 
-(defn- get-next-batch-number []
-  (compojure-api/GET
-    "/next-batch-number/" []
-    :path-params []
-    :return virkailija-schema/PaymentBatchNumber
-    :summary "Return next batch number"
-    (ok (payments-data/next-batch-number))))
-
 (defn- create-payment []
   (compojure-api/POST
     "/" [:as request]
