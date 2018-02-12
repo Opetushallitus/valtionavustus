@@ -1,6 +1,6 @@
-# Payments UI
+# Admin UI
 
-Maksatusten käyttöliittymä
+Pääkäyttäjän käyttöliittymä
 
 ## Riippuvuudet
 
@@ -20,10 +20,10 @@ Figwheel compiler lähtee käyntiin komennolla:
 ```
 
 Kääntäjä luo buildin hakemistoon
-`../va-virkailija/resources/public/payments`.
+`../va-virkailija/resources/public/admin-ui`.
 
 Figwheel puskee muutokset `.cljs`-tiedostoissa selaimelle. Kun Figwheel
-on käynnistynyt, pitäisi selaimeen aueta `/payments/`.
+on käynnistynyt, pitäisi selaimeen aueta `/admin-ui/`.
 
 ### REPL
 

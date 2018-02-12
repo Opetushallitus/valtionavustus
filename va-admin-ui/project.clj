@@ -1,5 +1,5 @@
-(defproject va-payments-ui "0.1.0"
-  :description "Valtionavustus maksatusten käyttöliittymä"
+(defproject admin-ui "0.2.0"
+  :description "Valtionavustus pääkäyttäjän käyttöliittymä"
 
   :plugins [[lein-parent "0.3.2"]
             [lein-cljsbuild "1.1.7"]
@@ -33,39 +33,39 @@
    [:cljsbuild :builds :app :compiler :output-dir]
    [:cljsbuild :builds :app :compiler :output-to]]
 
-  :resource-paths ["../va-virkailija/resources/public/payments"]
+  :resource-paths ["../va-virkailija/resources/public/admin-ui"]
 
   :figwheel {:http-server-root "."
              :nrepl-port 7002
              :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"]
-             :css-dirs ["../va-virkailija/resources/public/payments/css"]}
+             :css-dirs ["../va-virkailija/resources/public/admin-ui/css"]}
   :cljsbuild
   {:builds
    {:app
     {:source-paths ["src" "env/dev/cljs"]
      :compiler
-     {:main "va-payments-ui.dev"
-      :output-to "../va-virkailija/resources/public/payments/js/app.js"
-      :output-dir "../va-virkailija/resources/public/payments/js/out"
-      :asset-path "/payments/js/out"
+     {:main "oph.va.admin-ui.dev"
+      :output-to "../va-virkailija/resources/public/admin-ui/js/app.js"
+      :output-dir "../va-virkailija/resources/public/admin-ui/js/out"
+      :asset-path "/admin-ui/js/out"
       :source-map true
       :optimizations :none
       :pretty-print  true}
      :figwheel
-     {:on-jsload "va-payments-ui.core/mount-root"
-      :open-urls ["http://localhost:8081/payments/"]}}
+     {:on-jsload "oph.va.admin-ui.core/mount-root"
+      :open-urls ["http://localhost:8081/admin-ui/"]}}
     :release
     {:source-paths ["src" "env/prod/cljs"]
      :compiler
-     {:output-to "../va-virkailija/resources/public/payments/js/app.js"
-      :output-dir "../va-virkailija/resources/public/payments/js/release"
-      :asset-path "/payments/js/out"
+     {:output-to "../va-virkailija/resources/public/admin-ui/js/app.js"
+      :output-dir "../va-virkailija/resources/public/admin-ui/js/release"
+      :asset-path "/admin-ui/js/out"
       :optimizations :advanced
       :pretty-print false}}
     :test
     {:source-paths ["src" "test" "env/test/cljs"]
      :compiler
-     {:main va-payments-ui.runner
+     {:main oph.va.admin-ui.runner
       :asset-path "target/cljstest/public/js/out"
       :output-to "target/test.js"
       :output-dir "target/cljstest/public/js/out"
