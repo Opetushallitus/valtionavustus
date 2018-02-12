@@ -1,4 +1,3 @@
-(ns va-payments-ui.test)
+(ns oph.va.admin-ui.test)
 
 (enable-console-print!)
-
