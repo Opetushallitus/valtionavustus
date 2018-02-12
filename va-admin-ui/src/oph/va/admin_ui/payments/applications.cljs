@@ -1,10 +1,10 @@
-(ns oph.va.admin-ui.applications
+(ns oph.va.admin-ui.payments.applications
   (:require [reagent.core :as r]
             [cljsjs.material-ui]
             [cljs-react-material-ui.reagent :as ui]
             [cljs-react-material-ui.icons :as ic]
             [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.utils :refer [format]]))
+            [oph.va.admin-ui.payments.utils :refer [format]]))
 
 (defn get-answer-value
   [answers key]

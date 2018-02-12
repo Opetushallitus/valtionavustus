@@ -1,9 +1,9 @@
-(ns oph.va.admin-ui.payments-ui
+(ns oph.va.admin-ui.payments.payments-ui
   (:require [reagent.core :as r]
             [cljsjs.material-ui]
             [cljs-react-material-ui.reagent :as ui]
-            [oph.va.admin-ui.applications :refer [state-to-str]]
-            [oph.va.admin-ui.utils :refer [to-simple-date-time to-simple-date]]))
+            [oph.va.admin-ui.payments.applications :refer [state-to-str]]
+            [oph.va.admin-ui.payments.utils :refer [to-simple-date-time to-simple-date]]))
 
 (defn render-history-item [i application]
   [ui/table-row {:key i}
