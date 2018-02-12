@@ -1,5 +1,3 @@
----
-
 certs_dir: '../../valtionavustus-secret/certs/qa_and_prod'
 
 # ACL:s for different endpoints

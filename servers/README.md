@@ -17,12 +17,16 @@ Pythonin 2.7-versiota. Ansiblea kannattaa ajaa
 [Virtualenvissä](http://docs.python-guide.org/en/latest/dev/virtualenvs/),
 jotta dependencyt ovat oikein.
 
-Jos käytät macOS:ää, tarvitset OpenSSL:n, jossa on TLS1.2 tuki, ja
-Pythonin, joka on käännetty sitä vasten. Voit asentaa ne Homebrewillä:
+Jos käytät macOS:ää, tarvitset seuraavat riippuvuudet:
+
+- OpenSSL, jossa on TLS1.2 tuki
+- Pythonin, joka on käännetty yllä olevaa OpenSSL:ää vasten
+- GNU Multiple Precision Arithmetic Library (GMP)
+
+Voit asentaa ne Homebrewillä:
 
 ``` bash
-brew install openssl
-brew install python
+brew install openssl gmp python
 ```
 
 Asennus, jos Python-binääri on polussa `/usr/local/bin/python2.7`:

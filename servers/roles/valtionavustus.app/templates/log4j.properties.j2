@@ -1,6 +1,6 @@
 log4j.rootLogger=DEBUG, ApplicationLog, email
 
-log4j.appender.ApplicationLog.File=/logs/valtionavustus/va-virkailija_application.log
+log4j.appender.ApplicationLog.File={{ logs_dir }}/valtionavustus/{{ item }}_application.log
 log4j.appender.ApplicationLog=org.apache.log4j.RollingFileAppender
 log4j.appender.ApplicationLog.Append=true
 log4j.appender.ApplicationLog.layout=org.apache.log4j.PatternLayout
@@ -8,14 +8,14 @@ log4j.appender.ApplicationLog.layout.ConversionPattern=%d{ISO8601} %-5p [%t] %c:
 log4j.appender.ApplicationLog.MaxFileSize=10MB
 log4j.appender.ApplicationLog.MaxBackupIndex=100
 
-log4j.logger.oph=INFO
 log4j.logger.com=INFO
 log4j.logger.fi=INFO
+log4j.logger.oph=INFO
 log4j.logger.org=INFO
 
 log4j.logger.onelog=INFO, AccessLog
 log4j.additivity.onelog= false
-log4j.appender.AccessLog.File=/logs/valtionavustus/va-virkailija_access.log
+log4j.appender.AccessLog.File={{ logs_dir }}/valtionavustus/{{ item }}_access.log
 log4j.appender.AccessLog=org.apache.log4j.DailyRollingFileAppender
 log4j.appender.AccessLog.DatePattern='.'yyyy-MM-dd
 log4j.appender.AccessLog.Append=true
@@ -28,8 +28,8 @@ log4j.appender.email.threshold=WARN
 # amount of log events to be sent as context (also max log event count in buffered emails)
 log4j.appender.email.bufferSize=50
 log4j.appender.email.SMTPHost=smtp.sdn.csc.fi
-log4j.appender.email.from=oph-va-alerts@reaktor.com
-log4j.appender.email.to=oph-va-alerts@reaktor.com
+log4j.appender.email.from={{ logs_mail_recipient }}
+log4j.appender.email.to={{ logs_mail_recipient }}
 log4j.appender.email.subject=[${log4j.email.environment}] Virhe palvelimella
 log4j.appender.email.layout=org.apache.log4j.PatternLayout
 log4j.appender.email.layout.conversionPattern=%d{ISO8601} %-5p [%t] %c: %m%n

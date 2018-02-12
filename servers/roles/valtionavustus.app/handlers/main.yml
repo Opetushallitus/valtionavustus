@@ -1,0 +1,15 @@
+- name: Restart supervisord
+  service:
+    name: supervisord
+    state: started
+    enabled: yes
+
+- name: Restart va-hakija
+  supervisorctl:
+    name: va-hakija
+    state: restarted
+
+- name: Restart va-virkailija
+  supervisorctl:
+    name: va-virkailija
+    state: restarted

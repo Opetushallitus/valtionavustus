@@ -1,5 +1,5 @@
 {
-  "gateways": {
+  "va_loadbalancer": {
     "hosts": [
       "oph-va-lb-prod01.csc.fi"
     ]
