@@ -13,9 +13,6 @@
 
 (def date-formatter (f/formatter "dd.MM.YYYY"))
 
-(defn- get-keys-present [m ks]
-  (keys (select-keys m ks)))
-
 (defn from-sql-date [d] (.toLocalDate d))
 
 (defn convert-timestamps-from-sql [p]
@@ -137,9 +134,10 @@
                 (first (exec :form-db queries/get-grant
                              {:grant_id grant-id})))
         now (t/now)
+        receipt-year (mod (.getYear receipt-date) 100)
         payments-info (get-grant-payments-info grant-id batch-id)
         batch-key (invoice/get-batch-key
-                    organisation receipt-date batch-number)]
+                    organisation receipt-year batch-number)]
 
     (email/send-payments-info!
       {:receivers [inspector-email acceptor-email]

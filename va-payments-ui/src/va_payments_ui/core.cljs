@@ -230,7 +230,8 @@
                                          :inspector-email
                                          :organisation
                                          :batch-number
-                                         :batch-id])))]
+                                         :batch-id
+                                         :receipt-date])))]
             (if (:success email-result)
               (show-message! "Kaikki maksatukset lähetetty")
               (show-message!
@@ -331,7 +332,10 @@
      (let [multipayment? (get-in @selected-grant [:content :multiplemaksuera])
            accounts-nil? (some #(when-not (or (get % :lkp-account)
                                               (get % :takp-account)) true)
-                               @current-applications)]
+                               @current-applications)
+           unsent-payments? (some
+                              #(when (< (get-in % [:payment :state]) 2) true)
+                              @current-applications)]
        [:div
         (when multipayment?
           (notice "Ainoastaan yhden erän maksatukset on tuettu tällä hetkellä.
@@ -344,7 +348,8 @@
           :disabled
           (or
             (not (payments/valid-batch-values? @batch-values))
-            multipayment? accounts-nil?)
+            multipayment? accounts-nil?
+            (not unsent-payments?))
           :label "Lähetä maksatukset"
           :style theme/button
           :on-click
@@ -352,7 +357,8 @@
             (go
               (let [batch-result
                     (if (some? (:id @batch-values))
-                      {:body @batch-values :success true}
+                      {:body (convert-payment-dates @batch-values)
+                       :success true}
                       (<! (connection/create-payment-batch
                             (-> @batch-values
                                 convert-payment-dates
@@ -366,7 +372,8 @@
                       (select-keys batch
                                    [:acceptor-email
                                     :inspector-email
-                                    :batch-number])
+                                    :batch-number
+                                    :receipt-date])
                       :state 0
                       :organisation
                       (if (= (:document-type batch) "XB")

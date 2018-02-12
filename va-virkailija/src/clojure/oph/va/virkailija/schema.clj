@@ -329,7 +329,8 @@
    :inspector-email s/Str
    :batch-number s/Int
    :batch-id s/Int
-   :organisation s/Str})
+   :organisation s/Str
+   :receipt-date LocalDate})
 
 (s/defschema PaymentBatch
   "Payment batch"

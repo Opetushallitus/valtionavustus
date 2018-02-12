@@ -34,7 +34,7 @@
             (:batch-number payment))
      (get-batch-key
        (:organisation payment)
-       (mod (t/year (c/to-date-time (:created-at payment))) 1000)
+       (mod (t/year (c/to-date-time (:created-at payment))) 100)
        (:batch-number payment))
      nil)))
 
