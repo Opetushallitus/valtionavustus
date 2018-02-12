@@ -13,9 +13,9 @@
    {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
    [:div
     (case (router/get-current-path)
-          "/payments/" (payments-core/home-page)
+          "/admin-ui/payments/" (payments-core/home-page)
           (do
-            (router/redirect-to! "/payments/")
+            (router/redirect-to! "/admin-ui/payments/")
             "Redirecting..."))]])
 
 (defn mount-root [] (r/render [home-page] (.getElementById js/document "app")))
@@ -23,5 +23,5 @@
 (defn init! []
   (mount-root)
   (case (router/get-current-path)
-   "/payments/" (payments-core/init!)
+   "/admin-ui/payments/" (payments-core/init!)
    ""))

@@ -142,12 +142,7 @@
 
    (compojure/GET "/avustushaku/:id/*" [id] (return-html "index.html"))
 
-   (compojure/GET "/payments/" [] (return-html "admin-ui/index.html"))
-
-   (compojure-route/resources "/payments/"
-                              {:mime-types {"html" "text/html; charset=utf-8"}})
-
-   (compojure/GET "/admin-ui/" [] (return-html "admin-ui/index.html"))
+   (compojure/GET "/admin-ui/*" [] (return-html "admin-ui/index.html"))
 
    (compojure-route/resources "/admin-ui/"
                               {:mime-types {"html" "text/html; charset=utf-8"}})
