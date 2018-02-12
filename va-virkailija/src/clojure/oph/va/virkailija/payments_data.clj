@@ -134,7 +134,7 @@
                 (first (exec :form-db queries/get-grant
                              {:grant_id grant-id})))
         now (t/now)
-        receipt-year (t/year (f/parse receipt-date))
+        receipt-year (mod (.getYear receipt-date) 100)
         payments-info (get-grant-payments-info grant-id batch-id)
         batch-key (invoice/get-batch-key
                     organisation receipt-year batch-number)]
