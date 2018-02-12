@@ -1,6 +1,6 @@
-(ns ^:figwheel-no-load va-payments-ui.dev
+(ns ^:figwheel-no-load oph.va.admin-ui.dev
   (:require
-    [va-payments-ui.core :as core]
+    [oph.va.admin-ui.core :as core]
     [devtools.core :as devtools]))
 
 (enable-console-print!)
