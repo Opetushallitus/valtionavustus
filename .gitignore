@@ -1,6 +1,6 @@
 **/checkouts/
 **/resources/public/js/
-**/resources/public/payments/js
+**/resources/public/admin-ui/js
 *.iml
 .*.swp
 .DS_Store
