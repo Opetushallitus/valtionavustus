@@ -9,9 +9,11 @@
             [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.rondo-service :as rondo-service]
-            [oph.va.virkailija.authentication :as authentication]))
+            [oph.va.virkailija.authentication :as authentication]
+            [clojure.tools.logging :as log]))
 
 (def timeout-limit 10000)
+(def timeout-limit-schedule 120000)
 
 (defn- update-payment []
   (compojure-api/PUT
@@ -83,9 +85,21 @@
 (defn- get-state-of-payments []
   (compojure-api/POST
     "/update-payments-state/" []
-    :path-params []
     :summary "Fetch payments state from rondo"
-    (ok (rondo-service/get-state-from-rondo))))
+      (let [c (a/chan)]
+        (a/go
+          (try
+            (a/>! c (rondo-service/get-state-from-rondo))
+            (catch Exception e
+              (a/>! c {:success false :exception e}))))
+        (a/alt!!
+          c ([v]
+             (when (not (:success v))
+               (throw (or (:exception v)
+                          (Exception. (str (:value v))))))
+             (ok (log/info "Succesfully retrieved state from Rondo!")))
+          (a/timeout timeout-limit-schedule) ([_] (request-timeout "Rondo timeout"))))))
+
 
 (compojure-api/defroutes
   routes

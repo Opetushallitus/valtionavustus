@@ -55,7 +55,10 @@
 
 
 (defn get-state-from-rondo []
-(let [result (do-sftp! :method :cdls)
-      file-list (get-file-list result)
+(let [list (do-sftp! :method :cdls)
+      file-list (get-file-list list)
       tmp-path (System/getProperty"java.io.tmpdir")]
-  (map #(handle-one-xml % tmp-path) file-list)))
+  (let [result (map #(handle-one-xml % tmp-path) file-list)]
+    (if (every? true? (into-array (doall result)))
+      {:success true}
+      {:success false :value result}))))
