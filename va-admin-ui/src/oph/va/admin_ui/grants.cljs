@@ -1,8 +1,8 @@
-(ns va-payments-ui.grants
+(ns oph.va.admin-ui.grants
   (:require [clojure.string :refer [lower-case includes?]]
             [cljs-time.format :as f]
             [cljs-time.core :as t]
-            [va-payments-ui.utils :refer [date-formatter]]))
+            [oph.va.admin-ui.utils :refer [date-formatter]]))
 
 (def lifetime-limit (t/minus (t/now) (t/months 12)))
 

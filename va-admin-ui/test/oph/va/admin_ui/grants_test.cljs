@@ -1,7 +1,7 @@
-(ns va-payments-ui.grants-test
+(ns oph.va.admin-ui.grants-test
   (:require [cljs.test :refer-macros [is are deftest testing use-fixtures]]
             [cljs-time.core :as t]
-            [va-payments-ui.grants :as grants]))
+            [oph.va.admin-ui.grants :as grants]))
 
 (deftest test-remove-old
   (let [grants [{:loppuselvitysdate (t/now) :status "resolved"}

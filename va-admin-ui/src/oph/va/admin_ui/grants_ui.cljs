@@ -1,13 +1,13 @@
-(ns va-payments-ui.grants-ui
+(ns oph.va.admin-ui.grants-ui
   (:require [reagent.core :as r]
             [cljsjs.material-ui]
             [cljs-react-material-ui.core :refer [get-mui-theme color]]
             [cljs-react-material-ui.reagent :as ui]
             [cljs-react-material-ui.icons :as ic]
-            [va-payments-ui.theme :refer [material-styles]]
+            [oph.va.admin-ui.theme :refer [material-styles]]
             [cljs-time.format :as f]
             [cljs-time.core :as t]
-            [va-payments-ui.utils :refer [to-simple-date-time]]))
+            [oph.va.admin-ui.utils :refer [to-simple-date-time]]))
 
 (defn grant-row
   [grant selected]

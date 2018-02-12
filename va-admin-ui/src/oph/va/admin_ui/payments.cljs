@@ -1,5 +1,5 @@
-(ns va-payments-ui.payments
-  (:require [va-payments-ui.utils :refer [no-nils? valid-email?]]))
+(ns oph.va.admin-ui.payments
+  (:require [oph.va.admin-ui.utils :refer [no-nils? valid-email?]]))
 
 (defn valid-batch-values?
   [values]

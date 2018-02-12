@@ -1,4 +1,4 @@
-(ns va-payments-ui.utils
+(ns oph.va.admin-ui.utils
   (:require [goog.string :as gstring]
             [goog.string.format]
             [cljs-time.format :as tf]))

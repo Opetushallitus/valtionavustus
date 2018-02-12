@@ -1,9 +1,9 @@
-(ns va-payments-ui.financing
+(ns oph.va.admin-ui.financing
   (:require [reagent.core :as r]
             [cljsjs.material-ui]
             [cljs-react-material-ui.reagent :as ui]
-            [va-payments-ui.theme :as theme]
-            [va-payments-ui.utils :refer
+            [oph.va.admin-ui.theme :as theme]
+            [oph.va.admin-ui.utils :refer
              [remove-nil any-nil? not-nil? not-empty? valid-email?]]))
 
 (def week-in-ms (* 1000 60 60 24 7))

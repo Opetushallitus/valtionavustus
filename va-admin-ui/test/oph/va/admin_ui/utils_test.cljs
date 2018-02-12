@@ -1,6 +1,6 @@
-(ns va-payments-ui.utils-test
+(ns oph.va.admin-ui.utils-test
   (:require [cljs.test :refer-macros [is are deftest testing use-fixtures]]
-            [va-payments-ui.utils :as utils]))
+            [oph.va.admin-ui.utils :as utils]))
 
 (deftest test-any-nil
   (is (not (utils/any-nil? {} [])))

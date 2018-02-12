@@ -1,24 +1,24 @@
-(ns va-payments-ui.core
+(ns oph.va.admin-ui.core
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
     [cljs.core.async :refer [<! put! chan close! sliding-buffer]]
-    [va-payments-ui.connection :as connection]
+    [oph.va.admin-ui.connection :as connection]
     [reagent.core :as r]
     [cljsjs.material-ui]
     [cljs-react-material-ui.core :refer [get-mui-theme color]]
     [cljs-react-material-ui.reagent :as ui]
     [cljs-react-material-ui.icons :as ic]
-    [va-payments-ui.payments-ui :as payments-ui]
-    [va-payments-ui.payments :as payments]
-    [va-payments-ui.applications :as applications]
-    [va-payments-ui.connection :as connection]
-    [va-payments-ui.router :as router]
-    [va-payments-ui.grants-ui :refer [grants-table project-info]]
-    [va-payments-ui.grants :refer [grant-matches? remove-old convert-dates]]
-    [va-payments-ui.financing :as financing]
-    [va-payments-ui.utils :refer
+    [oph.va.admin-ui.payments-ui :as payments-ui]
+    [oph.va.admin-ui.payments :as payments]
+    [oph.va.admin-ui.applications :as applications]
+    [oph.va.admin-ui.connection :as connection]
+    [oph.va.admin-ui.router :as router]
+    [oph.va.admin-ui.grants-ui :refer [grants-table project-info]]
+    [oph.va.admin-ui.grants :refer [grant-matches? remove-old convert-dates]]
+    [oph.va.admin-ui.financing :as financing]
+    [oph.va.admin-ui.utils :refer
      [remove-nil format no-nils? not-empty? not-nil? find-index-of]]
-    [va-payments-ui.theme :as theme]
+    [oph.va.admin-ui.theme :as theme]
     [cljs-time.format :as tf]
     [cljs-time.coerce :as tc]))
 

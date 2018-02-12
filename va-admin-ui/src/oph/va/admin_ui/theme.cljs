@@ -1,4 +1,4 @@
-(ns va-payments-ui.theme
+(ns oph.va.admin-ui.theme
   (:require [cljs-react-material-ui.core :refer [color]]))
 
 (def material-styles

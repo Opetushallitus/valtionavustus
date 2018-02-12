@@ -1,4 +1,4 @@
-(ns va-payments-ui.router)
+(ns oph.va.admin-ui.router)
 
 (defn- split-param [param] (let [[k v] (.split param "=")] {(keyword k) v}))
 

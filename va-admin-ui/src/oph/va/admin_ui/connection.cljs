@@ -1,9 +1,9 @@
-(ns va-payments-ui.connection
+(ns oph.va.admin-ui.connection
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs.core.async :refer [<! chan]]
             [cljs-http.client :as http]
             [goog.net.cookies]
-            [va-payments-ui.utils :refer [format]]))
+            [oph.va.admin-ui.utils :refer [format]]))
 
 (def ^:private api-path "api/v2")
 
