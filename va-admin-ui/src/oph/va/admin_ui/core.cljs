@@ -6,7 +6,8 @@
    [cljs-react-material-ui.core :refer [get-mui-theme color]]
    [cljs-react-material-ui.reagent :as ui]
    [oph.va.admin-ui.router :as router]
-   [oph.va.admin-ui.payments.payments-core :as payments-core]))
+   [oph.va.admin-ui.payments.payments-core :as payments-core]
+   [oph.va.admin-ui.code-values-core :as code-values-core]))
 
 (defn create-link [href title active]
   [:a {:href href :style (if active theme/active-link theme/link)} title])
@@ -35,6 +36,7 @@
      [:hr theme/hr-top]]
     (case (router/get-current-path)
           "/admin-ui/payments/" (payments-core/home-page)
+          "/admin-ui/code-values/" (code-values-core/home-page)
           (do
             (router/redirect-to! "/admin-ui/payments/")
             "Redirecting..."))]])
@@ -45,4 +47,5 @@
   (mount-root)
   (case (router/get-current-path)
    "/admin-ui/payments/" (payments-core/init!)
+   "/admin-ui/code-values/" (code-values-core/init!)
    ""))
