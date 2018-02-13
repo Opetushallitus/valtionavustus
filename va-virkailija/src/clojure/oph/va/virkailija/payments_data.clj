@@ -40,10 +40,6 @@
   (exec :form-db queries/payment-close-version
         {:id id :version version}))
 
-(defn next-batch-number []
-  (convert-to-dash-keys
-    (first (exec :form-db queries/get-next-payment-batch-number {}))))
-
 (defn- get-user-info [identity]
   {:user-oid (:person-oid identity)
    :user-name (format "%s %s" (:first-name identity) (:surname identity))})

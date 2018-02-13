@@ -43,8 +43,6 @@
 (defquery payment-close-version
   "sql/virkailija/payments/payment-close-version.sql")
 (defquery update-payment "sql/virkailija/payments/update-payment.sql")
-(defquery get-next-payment-batch-number
-  "sql/virkailija/payments/get-next-batch-number.sql")
 (defquery get-payment-history "sql/virkailija/applications/get-payment-history.sql")
 (defquery create-payment "sql/virkailija/payments/create-payment.sql")
 (defquery get-by-rn-and-date "sql/virkailija/payments/get-by-rn-and-date.sql")
