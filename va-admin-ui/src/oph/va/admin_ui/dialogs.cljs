@@ -13,7 +13,7 @@
 (defonce user-info (r/atom {}))
 
 (defonce dialogs (r/atom {:generic {:open false}
-                          :loading {:open false}
+                          :loading {}
                           :snackbar {:open false :message ""}}))
 
 (defn show-dialog! [title content]
@@ -45,17 +45,18 @@
     (show-message! message)))
 
 (defn show-loading-dialog! [message max-value]
-  (swap! dialogs update-in [:loading] assoc
-         :open true :content message :max max-value :value 0)
-  (let [c (chan (sliding-buffer 1024))]
-    (go-loop []
-      (let [v (<! c)]
-        (if v
-          (do
-            (swap! dialogs assoc-in [:loading :value] v)
-            (recur))
-          (swap! dialogs assoc-in [:loading :open] false))))
-    c))
+  (let [id (.getTime (js/Date.))]
+   (swap! dialogs update-in [:loading] assoc
+          id {:content message :max max-value :value 0})
+   (let [c (chan (sliding-buffer 1024))]
+     (go-loop []
+       (let [v (<! c)]
+         (if v
+           (do
+             (swap! dialogs assoc-in [:loading id :value] v)
+             (recur))
+           (swap! dialogs update-in [:loading] dissoc id))))
+     c)))
 
 (defn render-dialogs [{:keys [snackbar generic loading]} on-close]
   [:div
@@ -83,16 +84,23 @@
    [ui/dialog
     {:children
      (r/as-element
-       [:div
-        [ui/linear-progress
-         {:max (:max loading)
-          :value (:value loading)
-          :mode "determinate"}]
-        [:span
-         {:style {:text-align "center" :width "100%"}}
-         (:content loading)]])
+
+      [ui/list
+       (doall
+          (map-indexed
+            (fn [i [_ c]]
+              [ui/list-item
+               {:key i}
+               [:span
+                {:style {:text-align "center" :width "100%"}}
+                (:content c)]
+               [ui/linear-progress
+                {:max (:max c)
+                 :value (:value c)
+                 :mode "determinate"}]])
+            loading))])
      :modal true
-     :open (:open loading)
+     :open (> (count loading) 0)
      :content-style {:width "95%" :max-width "none"}}]])
 
 (defn render []
