@@ -10,6 +10,8 @@
 
 (def transaction-accounts ["5000" "5220" "5230" "5240" "5250"])
 
+(def document-id-max-size 12)
+
 (defn now-plus
   [milliseconds]
   (-> (.now js/Date)
@@ -75,5 +77,5 @@
      :value (get values :document-id "")
      :on-change (fn [e]
                   (let [value (-> e .-target .-value)]
-                    (when (<= (count value) 12)
+                    (when (<= (count value) document-id-max-size)
                       (on-change :document-id value))))}]])
