@@ -10,6 +10,8 @@
 
 (def transaction-accounts ["5000" "5220" "5230" "5240" "5250"])
 
+(def document-id-max-size 12)
+
 (defn now-plus
   [milliseconds]
   (-> (.now js/Date)
@@ -53,11 +55,6 @@
     {:floating-label-text "Laskun päivämäärä"
      :value (:invoice-date values)
      :on-change #(on-change :invoice-date %2)}]
-   [ui/text-field
-    {:floating-label-text "Maksuehto"
-     :value (get values :payment-term "Z001")
-     :read-only true
-     :on-change #(on-change :payment-term (.-value (.-target %)))}]
    [ui/select-field
     {:floating-label-text "Tositelaji"
      :value (get values :document-type "XA")
@@ -74,4 +71,11 @@
      :value (get values :partner "")
      :on-change (fn [e]
                   (let [value (.-value (.-target e))]
-                    (when (<= (count value) 6) (on-change :partner value))))}]])
+                    (when (<= (count value) 6) (on-change :partner value))))}]
+   [ui/text-field
+    {:floating-label-text "Asiakirjan tunnus"
+     :value (get values :document-id "")
+     :on-change (fn [e]
+                  (let [value (-> e .-target .-value)]
+                    (when (<= (count value) document-id-max-size)
+                      (on-change :document-id value))))}]])
