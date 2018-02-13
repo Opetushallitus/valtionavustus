@@ -345,4 +345,5 @@
    :partner s/Str
    :inspector-email s/Str
    :acceptor-email s/Str
-   :grant-id s/Int})
+   :grant-id s/Int
+   :document-id s/Str})
