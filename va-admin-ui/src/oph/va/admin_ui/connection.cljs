@@ -1,4 +1,4 @@
-(ns oph.va.admin-ui.payments.connection
+(ns oph.va.admin-ui.connection
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs.core.async :refer [<! chan]]
             [cljs-http.client :as http]
@@ -90,3 +90,5 @@
              {:json-params data :with-credentials? true}))
 
 (defn set-config! [c] (reset! config c))
+
+(defn delete-payments? [] (get-in @config [:payments :delete-payments?]))
