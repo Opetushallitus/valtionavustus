@@ -53,11 +53,6 @@
     {:floating-label-text "Laskun päivämäärä"
      :value (:invoice-date values)
      :on-change #(on-change :invoice-date %2)}]
-   [ui/text-field
-    {:floating-label-text "Maksuehto"
-     :value (get values :payment-term "Z001")
-     :read-only true
-     :on-change #(on-change :payment-term (.-value (.-target %)))}]
    [ui/select-field
     {:floating-label-text "Tositelaji"
      :value (get values :document-type "XA")
