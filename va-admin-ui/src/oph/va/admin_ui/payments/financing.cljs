@@ -74,4 +74,11 @@
      :value (get values :partner "")
      :on-change (fn [e]
                   (let [value (.-value (.-target e))]
-                    (when (<= (count value) 6) (on-change :partner value))))}]])
+                    (when (<= (count value) 6) (on-change :partner value))))}]
+   [ui/text-field
+    {:floating-label-text "Asiakirjan tunnus"
+     :value (get values :document-id "")
+     :on-change (fn [e]
+                  (let [value (-> e .-target .-value)]
+                    (when (<= (count value) 12)
+                      (on-change :document-id value))))}]])
