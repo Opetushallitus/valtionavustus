@@ -107,23 +107,6 @@
   (let [grant-id (js/parseInt (router/get-current-param :grant))]
     (when-not (js/isNaN grant-id) grant-id)))
 
-(defn create-link [href title active]
-  [:a {:href href :style (if active theme/active-link theme/link)} title])
-
-(defn top-links [grant-id current-path]
-  [:div {:class "top-links"}
-   (create-link (format "/avustushaku/%d/" grant-id)
-                "Hakemusten arviointi"
-                (= current-path "/avustushaku/"))
-   (create-link "/admin/" "Hakujen hallinta" (= current-path "/admin/"))
-   (create-link "/payments/"
-                "Maksatusten hallinta"
-                (= current-path "/payments/"))
-   [:div {:class "logout-button"}
-    [ui/flat-button
-     {:label "Kirjaudu ulos"
-      :on-click #(router/redirect-to! "/login/logout")}]]])
-
 (defn render-admin-tools []
   [:div
    [:hr]
@@ -278,117 +261,115 @@
 
 (defn home-page []
   [:div
-    (top-links (get @selected-grant :id 0) (router/get-current-path))
-    [:hr theme/hr-top]
+   [:div
+    (render-grant-filters @grant-filter #(swap! grant-filter assoc %1 %2))
+    (let [filtered-grants
+          (filterv #(grant-matches? % (:filter-str @grant-filter))
+                   (if (:filter-old @grant-filter)
+                     (remove-old @grants)
+                     @grants))]
+      (grants-table
+        {:grants filtered-grants
+         :value (find-index-of filtered-grants
+                               #(= (:id %) (:id @selected-grant)))
+         :on-change (fn [row]
+                      (reset! selected-grant (get filtered-grants row)))}))]
+   [:div
     [:div
-     (render-grant-filters @grant-filter #(swap! grant-filter assoc %1 %2))
-     (let [filtered-grants
-           (filterv #(grant-matches? % (:filter-str @grant-filter))
-                    (if (:filter-old @grant-filter)
-                      (remove-old @grants)
-                      @grants))]
-       (grants-table
-         {:grants filtered-grants
-          :value (find-index-of filtered-grants
-                                #(= (:id %) (:id @selected-grant)))
-          :on-change (fn [row]
-                       (reset! selected-grant (get filtered-grants row)))}))]
-    [:div
+     [:hr]
+     (project-info @selected-grant)
+     [:hr]
      [:div
-      [:hr]
-      (project-info @selected-grant)
-      [:hr]
-      [:div
-       (or
-         (:read-only @batch-values)
-         (when-not (some #(< (get-in % [:payment :state]) 2)
-                         @current-applications)
-           {:style {:opacity 0.2 :pointer-events "none"}}))
-       [:h3 "Maksatuksen tiedot"]
-       (financing/payment-emails @batch-values
-                                 #(swap! batch-values assoc %1 %2))
-       (financing/payment-fields @batch-values
-                                 #(swap! batch-values assoc %1 %2))]
-      [:h3 "Myönteiset päätökset"]
-      (applications/applications-table
-        {:applications @current-applications
-         :on-info-clicked
-         (fn [id]
-           (let [dialog-chan
-                 (show-loading-dialog! "Ladataan historiatietoja" 2)]
-             (go
-               (put! dialog-chan 1)
-               (let [result (<! (connection/get-payment-history id))]
-                 (close! dialog-chan)
-                 (if (:success result)
-                   (show-dialog!
-                     "Maksatuksen historia"
-                     (r/as-element (payments-ui/render-history (:body result))))
-                   (show-error-message!
-                     "Virhe historiatietojen latauksessa"
-                     (select-keys result [:status :error-text])))))))
-         :is-admin? (is-admin? @user-info)})]
-     (let [multipayment? (get-in @selected-grant [:content :multiplemaksuera])
-           accounts-nil? (some #(when-not (or (get % :lkp-account)
-                                              (get % :takp-account)) true)
-                               @current-applications)
-           unsent-payments? (some
-                              #(when (< (get-in % [:payment :state]) 2) true)
-                              @current-applications)]
-       [:div
-        (when multipayment?
-          (notice "Ainoastaan yhden erän maksatukset on tuettu tällä hetkellä.
-             Monen erän maksatukset tulee luoda manuaalisesti."))
-        (when accounts-nil?
-          (notice "Joillakin hakemuksilla ei ole LKP- tai TaKP-tiliä, joten
-                   makastukset tulee luoda manuaalisesti."))
-        [ui/raised-button
-         {:primary true
-          :disabled
-          (or
-            (not (payments/valid-batch-values? @batch-values))
-            multipayment? accounts-nil?
-            (not unsent-payments?))
-          :label "Lähetä maksatukset"
-          :style theme/button
-          :on-click
-          (fn [_]
+      (or
+        (:read-only @batch-values)
+        (when-not (some #(< (get-in % [:payment :state]) 2)
+                        @current-applications)
+          {:style {:opacity 0.2 :pointer-events "none"}}))
+      [:h3 "Maksatuksen tiedot"]
+      (financing/payment-emails @batch-values
+                                #(swap! batch-values assoc %1 %2))
+      (financing/payment-fields @batch-values
+                                #(swap! batch-values assoc %1 %2))]
+     [:h3 "Myönteiset päätökset"]
+     (applications/applications-table
+       {:applications @current-applications
+        :on-info-clicked
+        (fn [id]
+          (let [dialog-chan
+                (show-loading-dialog! "Ladataan historiatietoja" 2)]
             (go
-              (let [batch-result
-                    (if (some? (:id @batch-values))
-                      {:body (convert-payment-dates @batch-values)
-                       :success true}
-                      (<! (connection/create-payment-batch
-                            (-> @batch-values
-                                convert-payment-dates
-                                (assoc :grant-id (:id @selected-grant))))))
-                    batch (:body batch-result)]
-                (if (:success batch-result)
-                  (send-payments!
-                    (filterv #(< (get-in % [:payment :state]) 2)
-                             @current-applications)
-                    (assoc
-                      (select-keys batch
-                                   [:acceptor-email
-                                    :inspector-email
-                                    :batch-number
-                                    :receipt-date])
-                      :state 0
-                      :organisation
-                      (if (= (:document-type batch) "XB")
-                        "6604"
-                        "6600")
-                      :batch-id (:id batch)))
+              (put! dialog-chan 1)
+              (let [result (<! (connection/get-payment-history id))]
+                (close! dialog-chan)
+                (if (:success result)
+                  (show-dialog!
+                    "Maksatuksen historia"
+                    (r/as-element (payments-ui/render-history (:body result))))
                   (show-error-message!
-                    "Virhe maksuerän luonnissa"
-                    batch-result)))))}]])]
-    (when (and @delete-payments? (is-admin? @user-info))
-      (render-admin-tools))
-    (render-dialogs
-      @dialogs
-      #(do (when (= % :snackbar)
-             (swap! dialogs assoc :snackbar {:open false :message ""}))
-           (swap! dialogs assoc-in [% :open] false)))])
+                    "Virhe historiatietojen latauksessa"
+                    (select-keys result [:status :error-text])))))))
+        :is-admin? (is-admin? @user-info)})]
+    (let [multipayment? (get-in @selected-grant [:content :multiplemaksuera])
+          accounts-nil? (some #(when-not (or (get % :lkp-account)
+                                             (get % :takp-account)) true)
+                              @current-applications)
+          unsent-payments? (some
+                             #(when (< (get-in % [:payment :state]) 2) true)
+                             @current-applications)]
+      [:div
+       (when multipayment?
+         (notice "Ainoastaan yhden erän maksatukset on tuettu tällä hetkellä.
+             Monen erän maksatukset tulee luoda manuaalisesti."))
+       (when accounts-nil?
+         (notice "Joillakin hakemuksilla ei ole LKP- tai TaKP-tiliä, joten
+                   makastukset tulee luoda manuaalisesti."))
+       [ui/raised-button
+        {:primary true
+         :disabled
+         (or
+           (not (payments/valid-batch-values? @batch-values))
+           multipayment? accounts-nil?
+           (not unsent-payments?))
+         :label "Lähetä maksatukset"
+         :style theme/button
+         :on-click
+         (fn [_]
+           (go
+             (let [batch-result
+                   (if (some? (:id @batch-values))
+                     {:body (convert-payment-dates @batch-values)
+                      :success true}
+                     (<! (connection/create-payment-batch
+                           (-> @batch-values
+                               convert-payment-dates
+                               (assoc :grant-id (:id @selected-grant))))))
+                   batch (:body batch-result)]
+               (if (:success batch-result)
+                 (send-payments!
+                   (filterv #(< (get-in % [:payment :state]) 2)
+                            @current-applications)
+                   (assoc
+                     (select-keys batch
+                                  [:acceptor-email
+                                   :inspector-email
+                                   :batch-number
+                                   :receipt-date])
+                     :state 0
+                     :organisation
+                     (if (= (:document-type batch) "XB")
+                       "6604"
+                       "6600")
+                     :batch-id (:id batch)))
+                 (show-error-message!
+                   "Virhe maksuerän luonnissa"
+                   batch-result)))))}]])]
+   (when (and @delete-payments? (is-admin? @user-info))
+     (render-admin-tools))
+   (render-dialogs
+     @dialogs
+     #(do (when (= % :snackbar)
+            (swap! dialogs assoc :snackbar {:open false :message ""}))
+          (swap! dialogs assoc-in [% :open] false)))])
 
 (defn init! []
   (add-watch
