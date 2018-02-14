@@ -15,21 +15,23 @@
 
 (defonce user-info (r/atom {}))
 
-(defn create-link [href title active]
-  [:a {:href href :style (if active theme/active-link theme/link)} title])
+(def top-links
+  {"/avustushaku" "Hakemusten arviointi"
+   "/admin/" "Hakujen hallinta"
+   "/admin-ui/payments/" "Maksatusten hallinta"
+   "/admin-ui/code-values/" "Koodienhallinta"})
 
-(defn top-links [current-path]
+(defn create-link [href title active]
+  [:a {:key href :href href
+       :style (if active theme/active-link theme/link)}
+   title])
+
+(defn render-top-links [current-path]
   [:div {:class "top-links"}
-   (create-link "/avustushaku"
-                "Hakemusten arviointi"
-                (= current-path "/avustushaku/"))
-   (create-link "/admin/" "Hakujen hallinta" (= current-path "/admin/"))
-   (create-link "/admin-ui/payments/"
-                "Maksatusten hallinta"
-                (= current-path "/payments/"))
-   (create-link "/admin-ui/code-values/"
-                "Koodienhallinta"
-                (= current-path "/admin-ui/code-values/"))
+   (doall
+     (map
+       (fn [[link title]]
+         (create-link link title (= current-path link))) top-links))
    [:div {:class "logout-button"}
     [ui/flat-button
      {:label "Kirjaudu ulos"
@@ -43,7 +45,7 @@
     {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
     [:div
      [:div
-      (top-links (router/get-current-path))
+      (render-top-links (router/get-current-path))
       [:hr theme/hr-top]]
      (case (router/get-current-path)
        "/admin-ui/payments/" (payments-core/home-page data)
