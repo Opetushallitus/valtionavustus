@@ -24,7 +24,7 @@
                 "Hakemusten arviointi"
                 (= current-path "/avustushaku/"))
    (create-link "/admin/" "Hakujen hallinta" (= current-path "/admin/"))
-   (create-link "/payments/"
+   (create-link "/admin-ui/payments/"
                 "Maksatusten hallinta"
                 (= current-path "/payments/"))
    [:div {:class "logout-button"}
