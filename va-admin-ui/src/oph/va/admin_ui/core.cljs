@@ -27,6 +27,9 @@
    (create-link "/admin-ui/payments/"
                 "Maksatusten hallinta"
                 (= current-path "/payments/"))
+   (create-link "/admin-ui/code-values/"
+                "Koodienhallinta"
+                (= current-path "/admin-ui/code-values/"))
    [:div {:class "logout-button"}
     [ui/flat-button
      {:label "Kirjaudu ulos"
