@@ -12,18 +12,37 @@
 
 (defonce code-values (r/atom {}))
 
+(def default-values {:year 2018 :code "" :secondary "" :primary ""})
+
 (defn render-add-code [props]
-  [:div {:style {:max-width 1000}}
-   [:div
-    [ui/text-field {:floating-label-text "Vuosi"
-                    :style {:width 50 :margin-right 15}}]
-    [ui/text-field {:floating-label-text "Koodi"
-                    :style {:width 100 :margin-right 15}}]
-    [ui/text-field {:floating-label-text "Osasto"
-                    :style {:margin-right 15}}]
-    [ui/text-field {:floating-label-text "Nimi"
-                     :style {:margin-right 15}}]]
-   [ui/raised-button {:label "Lisää" :primary true}]])
+  (let [v (r/atom default-values)]
+    (fn [props]
+      [:div {:style {:max-width 1000}}
+       [:div
+        [ui/text-field {:floating-label-text "Vuosi"
+                        :value (:year @v)
+                        :on-change #(swap! v assoc :year (.-value (.-target %)))
+                        :style {:width 50 :margin-right 15}}]
+        [ui/text-field {:floating-label-text "Koodi"
+                        :value (:code @v)
+                        :on-change #(swap! v assoc :code (.-value (.-target %)))
+                        :style {:width 100 :margin-right 15}}]
+        [ui/text-field {:floating-label-text "Osasto"
+                        :value (:secondary @v)
+                        :on-change #(swap! v assoc :secondary
+                                           (.-value (.-target %)))
+                        :style {:margin-right 15}}]
+        [ui/text-field {:floating-label-text "Nimi"
+                        :value (:primary @v)
+                        :on-change #(swap! v assoc :primary
+                                           (.-value (.-target %)))
+                        :style {:margin-right 15}}]]
+       [ui/raised-button {:label "Lisää" :primary true
+                          :on-click
+                          (fn []
+                            (swap! code-values
+                                   update (:type props) conj @v)
+                            (reset! v default-values))}]])))
 
 (defn render-code-row [i row]
   [ui/table-row {:key i}
