@@ -13,12 +13,16 @@
 (defonce code-values (r/atom {}))
 
 (defn render-add-code [props]
-  [:div
-   [ui/grid-list {:cols 4 :cell-height "auto"}
-    [ui/text-field {:floating-label-text "Vuosi"}]
-    [ui/text-field {:floating-label-text "Koodi"}]
-    [ui/text-field {:floating-label-text "Osasto"}]
-    [ui/text-field {:floating-label-text "Nimi"}]]
+  [:div {:style {:max-width 1000}}
+   [:div
+    [ui/text-field {:floating-label-text "Vuosi"
+                    :style {:width 50 :margin-right 15}}]
+    [ui/text-field {:floating-label-text "Koodi"
+                    :style {:width 100 :margin-right 15}}]
+    [ui/text-field {:floating-label-text "Osasto"
+                    :style {:margin-right 15}}]
+    [ui/text-field {:floating-label-text "Nimi"
+                     :style {:margin-right 15}}]]
    [ui/raised-button {:label "Lisää" :primary true}]])
 
 (defn render-code-row [i row]
