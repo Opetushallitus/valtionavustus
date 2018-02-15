@@ -22,7 +22,7 @@
    [ui/raised-button {:label "Lisää" :primary true}]])
 
 (defn render-code-row [i row]
-  [ui/table-row i
+  [ui/table-row {:key i}
    [ui/table-row-column (:year row)]
    [ui/table-row-column (:code row)]
    [ui/table-row-column (:secondary row)]
@@ -31,10 +31,12 @@
 (defn render-code-table [values]
   [ui/table {:fixed-header true :selectable false :body-style theme/table-body}
    [ui/table-header {:adjust-for-checkbox false :display-select-all false}
-    [ui/table-header-column "Vuosi"]
-    [ui/table-header-column "Koodi"]
-    [ui/table-header-column "Osasto"]
-    [ui/table-header-column "Nimi"]
+    [ui/table-row
+     [ui/table-header-column "Vuosi"]
+     [ui/table-header-column "Koodi"]
+     [ui/table-header-column "Osasto"]
+     [ui/table-header-column "Nimi"]]]
+   [ui/table-body {:display-row-checkbox false}
     (doall (map-indexed render-code-row values))]])
 
 (defn home-page []
