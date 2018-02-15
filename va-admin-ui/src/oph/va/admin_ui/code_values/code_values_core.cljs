@@ -1,11 +1,14 @@
 (ns oph.va.admin-ui.code-values-core
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
+   [cljs.core.async :refer [<!]]
    [reagent.core :as r]
    [cljsjs.material-ui]
    [cljs-react-material-ui.core :refer [color]]
    [cljs-react-material-ui.reagent :as ui]
    [cljs-react-material-ui.icons :as ic]
-   [oph.va.admin-ui.theme :as theme]))
+   [oph.va.admin-ui.theme :as theme]
+   [oph.va.admin-ui.connection :as connection]))
 
 (defonce code-values (r/atom {}))
 
@@ -45,4 +48,8 @@
     [ui/tab {:label "Toiminto"}
      [render-add-code {:type :operation}]]]])
 
-(defn init! [])
+(defn init! []
+  (go
+    (let [result (<! (connection/get-code-values-by-type))]
+      (if (:success result)
+        (reset! code-values (:body result))))))
