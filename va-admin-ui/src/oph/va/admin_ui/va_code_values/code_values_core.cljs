@@ -1,4 +1,4 @@
-(ns oph.va.admin-ui.code-values-core
+(ns oph.va.admin-ui.va-code-values-core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
    [cljs.core.async :refer [<!]]
@@ -75,6 +75,6 @@
 
 (defn init! []
   (go
-    (let [result (<! (connection/get-code-values-by-type))]
+    (let [result (<! (connection/va-get-code-values-by-type))]
       (if (:success result)
         (reset! code-values (:body result))))))

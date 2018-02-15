@@ -11,7 +11,7 @@
    [oph.va.admin-ui.router :as router]
    [oph.va.admin-ui.dialogs :as dialogs]
    [oph.va.admin-ui.payments.payments-core :as payments-core]
-   [oph.va.admin-ui.code-values-core :as code-values-core]))
+   [oph.va.admin-ui.va-code-values-core :as code-values-core]))
 
 (defonce user-info (r/atom {}))
 
@@ -19,7 +19,7 @@
   {"/avustushaku" "Hakemusten arviointi"
    "/admin/" "Hakujen hallinta"
    "/admin-ui/payments/" "Maksatusten hallinta"
-   "/admin-ui/code-values/" "Koodienhallinta"})
+   "/admin-ui/va-code-values/" "VA-Koodienhallinta"})
 
 (defn create-link [href title active]
   [:a {:key href :href href
@@ -49,7 +49,7 @@
       [:hr theme/hr-top]]
      (case (router/get-current-path)
        "/admin-ui/payments/" (payments-core/home-page data)
-       "/admin-ui/code-values/" (code-values-core/home-page)
+       "/admin-ui/va-code-values/" (code-values-core/home-page)
        (do
          (router/redirect-to! "/admin-ui/payments/")
          "Redirecting..."))
@@ -80,5 +80,5 @@
       (close! dialog-chan)))
   (case (router/get-current-path)
    "/admin-ui/payments/" (payments-core/init!)
-   "/admin-ui/code-values/" (code-values-core/init!)
+   "/admin-ui/va-code-values/" (code-values-core/init!)
    ""))
