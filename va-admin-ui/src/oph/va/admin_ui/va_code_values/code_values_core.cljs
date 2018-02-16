@@ -73,9 +73,11 @@
      [render-add-code {:code-type :operational-unit}]
      [render-code-table (:operational-unit @code-values)]]
     [ui/tab {:label "Projekti"}
-     [render-add-code {:code-type :project}]]
+     [render-add-code {:code-type :project}]
+     [render-code-table (:project @code-values)]]
     [ui/tab {:label "Toiminto"}
-     [render-add-code {:code-type :operation}]]]])
+     [render-add-code {:code-type :operation}]
+     [render-code-table (:operation @code-values)]]]])
 
 (defn init! []
   (go
