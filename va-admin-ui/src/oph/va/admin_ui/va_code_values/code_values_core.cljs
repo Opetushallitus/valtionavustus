@@ -14,10 +14,16 @@
 
 (def default-values {:year 2018 :code "" :secondary "" :primary ""})
 
-(def value-fields [{:id :year :size 50 :title "Vuosi"}
-                   {:id :code :size 100 :title "Koodi"}
-                   {:id :secondary :title "Osasto"}
-                   {:id :primary :title "Nimi"}])
+(def value-fields
+  {:year {:size 50 :title "Vuosi"}
+   :code {:size 100 :title "Koodi"}
+   :secondary {:title "Osasto"}
+   :primary {:title "Nimi"}})
+
+(defn filter-by-props [fields props]
+  (if (not= (:type props) :operational-unit)
+    (dissoc fields :secondary)
+    fields))
 
 (defn render-add-code [props]
   (let [v (r/atom default-values)]
@@ -25,16 +31,16 @@
       [:div {:style {:max-width 1000}}
        [:div
         (doall
-          (map-indexed
-            (fn [i field]
+          (map
+            (fn [[id field]]
               [ui/text-field
-               {:key i
+               {:key id
                 :floating-label-text (:title field)
-                :value (get @v (:id field))
+                :value (get @v id)
                 :on-change #(swap! v assoc (:id field)
                                    (.-value (.-target %)))
                 :style (assoc theme/text-field :width (:size field))}])
-            value-fields))]
+            (filter-by-props value-fields props)))]
        [ui/raised-button {:label "Lisää" :primary true
                           :on-click
                           (fn []
