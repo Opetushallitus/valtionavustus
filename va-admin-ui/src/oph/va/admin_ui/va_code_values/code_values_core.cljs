@@ -14,29 +14,27 @@
 
 (def default-values {:year 2018 :code "" :secondary "" :primary ""})
 
+(def value-fields #{{:id :year :size 50 :title "Vuosi"}
+                    {:id :code :size 100 :title "Koodi"}
+                    {:id :secondary :title "Osasto"}
+                    {:id :primary :title "Nimi"}})
+
 (defn render-add-code [props]
   (let [v (r/atom default-values)]
     (fn [props]
       [:div {:style {:max-width 1000}}
        [:div
-        [ui/text-field {:floating-label-text "Vuosi"
-                        :value (:year @v)
-                        :on-change #(swap! v assoc :year (.-value (.-target %)))
-                        :style {:width 50 :margin-right 15}}]
-        [ui/text-field {:floating-label-text "Koodi"
-                        :value (:code @v)
-                        :on-change #(swap! v assoc :code (.-value (.-target %)))
-                        :style {:width 100 :margin-right 15}}]
-        [ui/text-field {:floating-label-text "Osasto"
-                        :value (:secondary @v)
-                        :on-change #(swap! v assoc :secondary
-                                           (.-value (.-target %)))
-                        :style {:margin-right 15}}]
-        [ui/text-field {:floating-label-text "Nimi"
-                        :value (:primary @v)
-                        :on-change #(swap! v assoc :primary
-                                           (.-value (.-target %)))
-                        :style {:margin-right 15}}]]
+        (doall
+          (map-indexed
+            (fn [i field]
+              [ui/text-field
+               {:key i
+                :floating-label-text (:title field)
+                :value (get @v (:id field))
+                :on-change #(swap! v assoc (:id field)
+                                   (.-value (.-target %)))
+                :style {:width (:size field) :margin-right 15}}])
+            value-fields))]
        [ui/raised-button {:label "Lisää" :primary true
                           :on-click
                           (fn []
@@ -75,6 +73,6 @@
 
 (defn init! []
   (go
-    (let [result (<! (connection/va-get-code-values-by-type))]
+    (let [result (<! (connection/get-code-values-by-type))]
       (if (:success result)
         (reset! code-values (:body result))))))
