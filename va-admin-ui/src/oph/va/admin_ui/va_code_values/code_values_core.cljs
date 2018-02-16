@@ -21,7 +21,7 @@
    :primary {:title "Nimi"}})
 
 (defn filter-by-props [fields props]
-  (if (not= (:type props) :operational-unit)
+  (if (not= (:code-type props) :operational-unit)
     (dissoc fields :secondary)
     fields))
 
@@ -45,7 +45,7 @@
                           :on-click
                           (fn []
                             (swap! code-values
-                                   update (:type props) conj @v)
+                                   update (:code-type props) conj @v)
                             (reset! v default-values))}]])))
 
 (defn render-code-row [i row]
@@ -70,12 +70,12 @@
   [:div
    [ui/tabs
     [ui/tab {:label "Toimintayksikkö"}
-     [render-add-code {:type :operational-unit}]
+     [render-add-code {:code-type :operational-unit}]
      [render-code-table (:operational-unit @code-values)]]
     [ui/tab {:label "Projekti"}
-     [render-add-code {:type :project}]]
+     [render-add-code {:code-type :project}]]
     [ui/tab {:label "Toiminto"}
-     [render-add-code {:type :operation}]]]])
+     [render-add-code {:code-type :operation}]]]])
 
 (defn init! []
   (go
