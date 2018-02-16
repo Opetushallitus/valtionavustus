@@ -29,6 +29,8 @@
                  [ring.middleware.logger]
                  [ring/ring-defaults]]
 
+  :aot [oph.common.log4j]
+
   :test-paths ["spec"]
 
   :target-path "target/%s"
