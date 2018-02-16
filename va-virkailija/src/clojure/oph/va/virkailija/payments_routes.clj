@@ -74,28 +74,10 @@
                    identity)))
           (a/timeout timeout-limit) ([_] (request-timeout "Rondo timeout")))))))
 
-(defn- get-state-of-payments []
-  (compojure-api/POST
-    "/update-payments-state/" []
-    :summary "Fetch payments state from rondo"
-      (let [c (a/chan)]
-        (a/go
-          (try
-            (a/>! c (rondo-service/get-state-from-rondo))
-            (catch Exception e
-              (a/>! c {:success false :exception e}))))
-        (a/alt!!
-          c ([v]
-             (when (not (:success v))
-               (throw (or (:exception v)
-                          (Exception. (str (:value v))))))
-             (ok (log/info "Succesfully retrieved state from Rondo!")))
-          (a/timeout timeout-limit-schedule) ([_] (request-timeout "Rondo timeout"))))))
 
 
 (compojure-api/defroutes
   routes
   "payment routes"
   (update-payment)
-  (create-payment)
-  (get-state-of-payments))
+  (create-payment))
