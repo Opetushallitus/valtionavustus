@@ -73,6 +73,6 @@
 
 (defn init! []
   (go
-    (let [result (<! (connection/get-code-values-by-type))]
+    (let [result (<! (connection/get-va-code-values-by-type))]
       (if (:success result)
         (reset! code-values (:body result))))))
