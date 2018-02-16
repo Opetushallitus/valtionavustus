@@ -25,14 +25,14 @@
              (when (not (:success v))
                (throw (or (:exception v)
                           (Exception. (str (:value v))))))
-             (ok (log/info "Succesfully retrieved state from Rondo!")))
+             (ok (log/info "Succesfully fethced state from Rondo!")))
           (a/timeout timeout-limit-schedule) ([_] (request-timeout "Rondo timeout")))))
 
 
 (defjob RondoJob
   [ctx]
-  (get-state-of-payments)
-  (log/info "Running scheduled fetch of payments now from rondo!"))
+  (log/info "Running scheduled fetch of payments now from rondo!")
+  (get-state-of-payments))
 
 (defn schedule-fetch-from-rondo []
   (let [s   (-> (qs/initialize) qs/start)
@@ -43,7 +43,7 @@
                   (t/with-identity (t/key "triggers.Rondo"))
                   (t/start-now)
                   (t/with-schedule (schedule
-                                     (cron-schedule "0 58 15 ? * *"))))]
+                                     (cron-schedule "0 00 04 ? * *"))))]
   (qs/schedule s job trigger)))
 
 (defn stop-schedule-from-rondo []
