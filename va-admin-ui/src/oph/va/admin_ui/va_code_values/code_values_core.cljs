@@ -14,10 +14,10 @@
 
 (def default-values {:year 2018 :code "" :secondary "" :primary ""})
 
-(def value-fields #{{:id :year :size 50 :title "Vuosi"}
-                    {:id :code :size 100 :title "Koodi"}
-                    {:id :secondary :title "Osasto"}
-                    {:id :primary :title "Nimi"}})
+(def value-fields [{:id :year :size 50 :title "Vuosi"}
+                   {:id :code :size 100 :title "Koodi"}
+                   {:id :secondary :title "Osasto"}
+                   {:id :primary :title "Nimi"}])
 
 (defn render-add-code [props]
   (let [v (r/atom default-values)]
@@ -33,7 +33,7 @@
                 :value (get @v (:id field))
                 :on-change #(swap! v assoc (:id field)
                                    (.-value (.-target %)))
-                :style {:width (:size field) :margin-right 15}}])
+                :style (assoc theme/text-field :width (:size field))}])
             value-fields))]
        [ui/raised-button {:label "Lisää" :primary true
                           :on-click
