@@ -12,48 +12,7 @@
 
 (defonce code-values (r/atom {}))
 
-(def default-values {:year 2018 :code "" :secondary "" :primary ""})
-
-(def value-fields
-  {:year {:size 50 :title "Vuosi"}
-   :code {:size 100 :title "Koodi"}
-   :secondary {:title "Osasto"}
-   :primary {:title "Nimi"}})
-
-(defn filter-by-props [fields props]
-  (if (not= (:code-type props) :operational-unit)
-    (dissoc fields :secondary)
-    fields))
-
-(defn render-add-code [props]
-  (let [v (r/atom default-values)]
-    (fn [props]
-      [:div {:style {:max-width 1000}}
-       [:div
-        (doall
-          (map
-            (fn [[id field]]
-              [ui/text-field
-               {:key id
-                :floating-label-text (:title field)
-                :value (get @v id)
-                :on-change #(swap! v assoc (:id field)
-                                   (.-value (.-target %)))
-                :style (assoc theme/text-field :width (:size field))}])
-            (filter-by-props value-fields props)))]
-       [ui/raised-button {:label "Lisää" :primary true
-                          :on-click
-                          (fn []
-                            (swap! code-values
-                                   update (:code-type props) conj @v)
-                            (reset! v default-values))}]])))
-
-(defn render-code-row [i row]
-  [ui/table-row {:key i}
-   [ui/table-row-column (:year row)]
-   [ui/table-row-column (:code row)]
-   [ui/table-row-column (:secondary row)]
-   [ui/table-row-column (:primary row)]])
+(def default-values {:year 2018 :code "" :name ""})
 
 (defn render-code-table [values]
   [ui/table {:fixed-header true :selectable false :body-style theme/table-body}
@@ -61,23 +20,60 @@
     [ui/table-row
      [ui/table-header-column "Vuosi"]
      [ui/table-header-column "Koodi"]
-     [ui/table-header-column "Osasto"]
      [ui/table-header-column "Nimi"]]]
    [ui/table-body {:display-row-checkbox false}
-    (doall (map-indexed render-code-row values))]])
+    (doall
+      (map-indexed
+        (fn [i row]
+          [ui/table-row {:key i}
+           [ui/table-row-column (:year row)]
+           [ui/table-row-column (:code row)]
+           [ui/table-row-column (:name row)]])
+        values))]])
+
+(defn render-add-item [on-change]
+  (let [v (r/atom default-values)]
+    (fn [on-change]
+      [:div {:style {:max-width 1000}}
+       [:div
+        [ui/text-field
+         {:floating-label-text "Vuosi"
+          :value (:year @v)
+          :on-change #(swap! v assoc :year (.-value (.-target %)))
+          :style (assoc theme/text-field :width 50)}]
+        [ui/text-field
+         {:floating-label-text "Koodi"
+          :value (:code @v)
+          :on-change #(swap! v assoc :code (.-value (.-target %)))
+          :style (assoc theme/text-field :width 100)}]
+        [ui/text-field
+         {:floating-label-text "Nimi"
+          :value (:name @v)
+          :on-change #(swap! v assoc :name (.-value (.-target %)))
+          :style theme/text-field}]]
+       [ui/raised-button
+        {:label "Lisää"
+         :primary true
+         :on-click
+         (fn [e]
+           (on-change @v)
+           (reset! v default-values))}]])))
 
 (defn home-page []
   [:div
    [ui/tabs
     [ui/tab {:label "Toimintayksikkö"}
-     [render-add-code {:code-type :operational-unit}]
-     [render-code-table (:operational-unit @code-values)]]
+     [render-add-item
+      #(swap! code-values update :operational-unit conj %)]
+     (render-code-table (:operational-unit @code-values))]
     [ui/tab {:label "Projekti"}
-     [render-add-code {:code-type :project}]
-     [render-code-table (:project @code-values)]]
+     [render-add-item
+        #(swap! code-values update :project conj %)]
+     (render-code-table (:project @code-values))]
     [ui/tab {:label "Toiminto"}
-     [render-add-code {:code-type :operation}]
-     [render-code-table (:operation @code-values)]]]])
+     [render-add-item
+        #(swap! code-values update :operation conj %)]
+     (render-code-table (:operation @code-values))]]])
 
 (defn init! []
   (go
