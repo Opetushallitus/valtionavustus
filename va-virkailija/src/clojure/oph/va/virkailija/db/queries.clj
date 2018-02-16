@@ -43,11 +43,12 @@
 (defquery payment-close-version
   "sql/virkailija/payments/payment-close-version.sql")
 (defquery update-payment "sql/virkailija/payments/update-payment.sql")
-(defquery get-next-payment-installment-number
-  "sql/virkailija/payments/get-next-installment-number.sql")
 (defquery get-payment-history "sql/virkailija/applications/get-payment-history.sql")
 (defquery create-payment "sql/virkailija/payments/create-payment.sql")
 (defquery get-by-rn-and-date "sql/virkailija/payments/get-by-rn-and-date.sql")
+
+(defquery find-batch "sql/virkailija/payment_batches/find-batch.sql")
+(defquery create-batch "sql/virkailija/payment_batches/create-batch.sql")
 
 (defquery get-application "sql/virkailija/applications/get-application.sql")
 (defquery get-application-with-evaluation-and-answers

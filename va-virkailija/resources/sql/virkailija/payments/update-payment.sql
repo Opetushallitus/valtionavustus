@@ -1,19 +1,11 @@
 INSERT INTO virkailija.payments (id, version, application_id,
-  application_version, state, document_type, invoice_date, due_date,
-  receipt_date, transaction_account, currency,
-  partner, inspector_email, acceptor_email, installment_number, organisation,
-  filename, user_name, user_oid)
+  application_version, state, filename, user_name, user_oid, batch_id)
 VALUES(
   :id,
   (SELECT GREATEST(MAX(version), 0) + 1
     FROM virkailija.payments WHERE id = :id AND deleted IS NULL),
-  :application_id, :application_version, :state, :document_type,
-  :invoice_date::date, :due_date::date,
-  :receipt_date::date, :transaction_account, :currency,
-  :partner, :inspector_email, :acceptor_email, :installment_number,
-  :organisation, :filename, :user_name, :user_oid)
+  :application_id, :application_version, :state, :filename, :user_name,
+  :user_oid, :batch_id)
 RETURNING
   id, version, version_closed, created_at, application_id, application_version,
-  state, installment_number, organisation, document_type, invoice_date,
-  due_date, receipt_date, transaction_account, currency, partner,
-  inspector_email, acceptor_email;
+  state, batch_id;

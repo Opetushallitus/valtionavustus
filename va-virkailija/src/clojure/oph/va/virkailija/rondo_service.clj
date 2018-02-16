@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.rondo-service
   (:require [clj-ssh.ssh :as ssh]
             [ring.util.http-response :refer :all]
-            [oph.va.hakija.api :as hakija-api];
+            [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.invoice :as invoice]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.soresu.common.config :refer [config]]

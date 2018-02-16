@@ -37,7 +37,9 @@
             [oph.va.virkailija.grant-routes :as grant-routes]
             [oph.va.virkailija.application-routes :as application-routes]
             [oph.va.virkailija.payments-routes :as payments-routes]
-            [oph.va.virkailija.reporting-data :as reporting]))
+            [oph.va.virkailija.reporting-data :as reporting]
+            [oph.va.virkailija.payment-batches-routes
+             :as payment-batches-routes]))
 
 (def opintopolku-login-url
   (when-not *compile-files*
@@ -140,9 +142,9 @@
 
    (compojure/GET "/avustushaku/:id/*" [id] (return-html "index.html"))
 
-   (compojure/GET "/payments/" [] (return-html "payments/index.html"))
+   (compojure/GET "/admin-ui/*" [] (return-html "admin-ui/index.html"))
 
-   (compojure-route/resources "/payments/"
+   (compojure-route/resources "/admin-ui/"
                               {:mime-types {"html" "text/html; charset=utf-8"}})
 
    va-routes/logo-route
@@ -689,6 +691,8 @@
     payments-routes/routes)
   (compojure-api/context
     "/api/v2/reports" [] :tags ["reports"] reports-routes)
+  (compojure-api/context "/api/v2/payment-batches" [] :tags ["payment batches"]
+                         payment-batches-routes/routes)
 
   va-routes/config-routes
   resource-routes)

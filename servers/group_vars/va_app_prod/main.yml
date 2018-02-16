@@ -1,0 +1,3 @@
+app_profile: va-prod
+dbname: va-prod
+logs_mail_recipient: "{{ alert_mail_recipient }}"

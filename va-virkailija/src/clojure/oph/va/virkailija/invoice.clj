@@ -21,28 +21,28 @@
     (f/unparse date-formatter (c/from-long (.toEpochDay date)))
     date))
 
-(defn get-installment
-  ([organisation year installment-number]
-   (format "%s%02d%03d" organisation year installment-number))
+(defn get-batch-key
+  ([organisation year batch-number]
+   (format "%s%02d%03d" organisation year batch-number))
   ([payment]
-   "Generating installment of organisation, year and installment-number.
-  Installment is something like '660017006' where 6600 is organisation, 17 is
+   "Generating batch id of organisation, year and batch-number.
+  Batch id is something like '660017006' where 6600 is organisation, 17 is
   year and 006 is order number or identification number, if you will.
   If some of values is missing, nil is being returned."
    (if (and (:created-at payment)
             (:organisation payment)
-            (:installment-number payment))
-     (get-installment
+            (:batch-number payment))
+     (get-batch-key
        (:organisation payment)
-       (mod (t/year (c/to-date-time (:created-at payment))) 1000)
-       (:installment-number payment))
+       (mod (t/year (c/to-date-time (:created-at payment))) 100)
+       (:batch-number payment))
      nil)))
 
 (defn payment-to-invoice [payment application grant]
   (let [answers (:answers application)]
     [:VA-invoice
      [:Header
-      [:Maksuera (get-installment payment)]
+      [:Maksuera (get-batch-key payment)]
       [:Laskunpaiva (format-date (:invoice-date payment))]
       [:Erapvm (format-date (:due-date payment))]
       [:Bruttosumma (:budget-granted application)]

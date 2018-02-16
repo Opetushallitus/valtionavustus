@@ -1,9 +1,12 @@
-SELECT id, version, version_closed, created_at, application_id,
-  application_version, state, installment_number, organisation, document_type,
-  invoice_date, due_date, receipt_date, transaction_account, currency, partner,
-  inspector_email, acceptor_email
+SELECT p.id, p.version, p.version_closed, p.created_at, p.application_id,
+  p.application_version, p.state, b.batch_number, b.document_type,
+  b.invoice_date, b.due_date, b.receipt_date, b.transaction_account, b.currency,
+  b.partner, b.inspector_email, b.acceptor_email, p.batch_id
 FROM
-  virkailija.payments
+  virkailija.payments p
+JOIN
+  virkailija.payment_batches b
+    ON
+      b.id = p.batch_id
 WHERE
-  id = :id AND deleted IS NULL;
-
+  p.id = :id AND p.deleted IS NULL;
