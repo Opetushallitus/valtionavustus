@@ -10,8 +10,6 @@
    [cljs-react-material-ui.reagent :as ui]
    [oph.va.admin-ui.user :as user]))
 
-(defonce user-info (r/atom {}))
-
 (defonce dialogs (r/atom {:generic {:open false}
                           :loading {}
                           :snackbar {:open false :message ""}}))
@@ -40,7 +38,7 @@
          #(show-error-message-dialog! status error-text)))
 
 (defn show-error-message! [message {:keys [status error-text]}]
-  (if (user/is-admin? @user-info)
+  (if (user/is-admin? (deref user/user-info))
     (show-admin-message! message status error-text)
     (show-message! message)))
 

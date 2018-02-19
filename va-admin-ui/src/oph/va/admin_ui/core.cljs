@@ -11,9 +11,8 @@
    [oph.va.admin-ui.router :as router]
    [oph.va.admin-ui.dialogs :as dialogs]
    [oph.va.admin-ui.payments.payments-core :as payments-core]
-   [oph.va.admin-ui.va-code-values-core :as code-values-core]))
-
-(defonce user-info (r/atom {}))
+   [oph.va.admin-ui.va-code-values-core :as code-values-core]
+   [oph.va.admin-ui.user :as user]))
 
 (def top-links
   {"/avustushaku" "Hakemusten arviointi"
@@ -39,7 +38,7 @@
 
 
 (defn home-page []
-  (let [data {:user-info @user-info
+  (let [data {:user-info (deref user/user-info)
               :delete-payments? (connection/delete-payments?)}]
     [ui/mui-theme-provider
     {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
@@ -69,7 +68,7 @@
           (let [user-info-result (<! (connection/get-user-info))]
             (put! dialog-chan 2)
             (if (:success user-info-result)
-               (reset! user-info (:body user-info-result))
+               (reset! user/user-info (:body user-info-result))
                (dialogs/show-error-message!
                 "Virhe käyttäjätietojen latauksessa"
                 (select-keys user-info-result [:status :error-text])))))
