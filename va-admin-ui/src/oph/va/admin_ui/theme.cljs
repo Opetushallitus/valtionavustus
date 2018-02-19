@@ -28,3 +28,5 @@
 (def hr-top {:color "#4c7f00"})
 
 (def notice {:padding "10px"})
+
+(def text-field {:margin-right 15})
