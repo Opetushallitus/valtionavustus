@@ -13,7 +13,7 @@
     [:span {:class "oph-label" :aria-describedby "field-text"}
      (:label-text props)]
     [:input
-     (update (select-keys props [:value :type :onchange])
+     (update (select-keys props [:value :type :on-change])
              :class str "oph-input")]
     (when-some [help-text (:help-text props)]
       [:div {:class "oph-field-text"} help-text])]))
