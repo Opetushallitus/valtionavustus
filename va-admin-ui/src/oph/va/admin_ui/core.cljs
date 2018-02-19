@@ -67,7 +67,7 @@
         (do
           (connection/set-config! (:body config-result))
           (let [user-info-result (<! (connection/get-user-info))]
-            (put! dialog-chan 1)
+            (put! dialog-chan 2)
             (if (:success user-info-result)
                (reset! user-info (:body user-info-result))
                (dialogs/show-error-message!
