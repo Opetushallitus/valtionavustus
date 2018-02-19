@@ -19,7 +19,7 @@
   :dependencies [[oph-va/common]
                  [com.novemberain/pantomime]]
 
-  :profiles {:uberjar {:aot :all}
+  :profiles {:uberjar {:aot [oph.va.hakija.main]}
              :dev     {:env {:config "config/dev.edn"}}
              :test    {:env {:config "config/test.edn"}}
              :prod    {:env {:config "config/prod.edn"}}}
