@@ -36,7 +36,7 @@
        [:div
         [ui/text-field
          {:floating-label-text "Vuosi"
-          :value (or (:year @v) (.getFullYear (js/Date.)))
+          :value (or (:year @v) "")
           :on-change #(swap! v assoc :year (.-value (.-target %)))
           :style (assoc theme/text-field :width 50)}]
         [ui/text-field
@@ -52,7 +52,8 @@
        [ui/raised-button
         {:label "Lisää"
          :primary true
-         :disabled (some #(when (nil? %) true) @v)
+         :disabled (or (not= (count @v) 3)
+                       (some #(when (not (some? %)) true) @v))
          :on-click
          (fn [e]
            (on-change @v)
