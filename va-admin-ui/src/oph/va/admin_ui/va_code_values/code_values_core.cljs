@@ -12,8 +12,6 @@
 
 (defonce code-values (r/atom {}))
 
-(def default-values {:year 2018 :code "" :name ""})
-
 (defn render-code-table [values]
   [ui/table {:fixed-header true :selectable false :body-style theme/table-body}
    [ui/table-header {:adjust-for-checkbox false :display-select-all false}
@@ -32,48 +30,49 @@
         values))]])
 
 (defn render-add-item [on-change]
-  (let [v (r/atom default-values)]
+  (let [v (r/atom {})]
     (fn [on-change]
       [:div {:style {:max-width 1000}}
        [:div
         [ui/text-field
          {:floating-label-text "Vuosi"
-          :value (:year @v)
+          :value (or (:year @v) (.getFullYear (js/Date.)))
           :on-change #(swap! v assoc :year (.-value (.-target %)))
           :style (assoc theme/text-field :width 50)}]
         [ui/text-field
          {:floating-label-text "Koodi"
-          :value (:code @v)
+          :value (or (:code @v) "")
           :on-change #(swap! v assoc :code (.-value (.-target %)))
           :style (assoc theme/text-field :width 100)}]
         [ui/text-field
          {:floating-label-text "Nimi"
-          :value (:name @v)
+          :value (or (:name @v) "")
           :on-change #(swap! v assoc :name (.-value (.-target %)))
           :style theme/text-field}]]
        [ui/raised-button
         {:label "Lisää"
          :primary true
+         :disabled (some #(when (nil? %) true) @v)
          :on-click
          (fn [e]
            (on-change @v)
-           (reset! v default-values))}]])))
+           (reset! v {}))}]])))
+
+(defn render-tab [k]
+  [:div
+   [render-add-item
+      #(swap! code-values update k conj %)]
+     (render-code-table (get @code-values k))])
 
 (defn home-page []
   [:div
    [ui/tabs
     [ui/tab {:label "Toimintayksikkö"}
-     [render-add-item
-      #(swap! code-values update :operational-unit conj %)]
-     (render-code-table (:operational-unit @code-values))]
+     (render-tab :operational-unit)]
     [ui/tab {:label "Projekti"}
-     [render-add-item
-        #(swap! code-values update :project conj %)]
-     (render-code-table (:project @code-values))]
+     (render-tab :project)]
     [ui/tab {:label "Toiminto"}
-     [render-add-item
-        #(swap! code-values update :operation conj %)]
-     (render-code-table (:operation @code-values))]]])
+     (render-tab :operation)]]])
 
 (defn init! []
   (go
