@@ -61,8 +61,8 @@
 (defn render-tab [k]
   [:div
    [render-add-item
-      #(swap! code-values update k conj %)]
-     (render-code-table (get @code-values k))])
+    #(swap! code-values update k conj %)]
+   (render-code-table (get @code-values k))])
 
 (defn home-page []
   [:div
