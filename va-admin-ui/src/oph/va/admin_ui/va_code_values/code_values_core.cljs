@@ -1,14 +1,15 @@
 (ns oph.va.admin-ui.va-code-values-core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
-   [cljs.core.async :refer [<!]]
+   [cljs.core.async :refer [<! put! close!]]
    [reagent.core :as r]
    [cljsjs.material-ui]
    [cljs-react-material-ui.core :refer [color]]
    [cljs-react-material-ui.reagent :as ui]
    [cljs-react-material-ui.icons :as ic]
    [oph.va.admin-ui.theme :as theme]
-   [oph.va.admin-ui.connection :as connection]))
+   [oph.va.admin-ui.connection :as connection]
+   [oph.va.admin-ui.dialogs :as dialogs]))
 
 (defonce code-values (r/atom {}))
 
@@ -77,6 +78,9 @@
 
 (defn init! []
   (go
-    (let [result (<! (connection/get-va-code-values-by-type))]
+    (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan koodeja" 1)
+          result (<! (connection/get-va-code-values-by-type))]
+      (put! dialog-chan 1)
       (if (:success result)
-        (reset! code-values (:body result))))))
+        (reset! code-values (:body result)))
+      (close! dialog-chan))))
