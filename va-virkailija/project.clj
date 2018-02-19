@@ -35,9 +35,7 @@
 
   :main oph.va.virkailija.main
 
-  :aot [oph.va.jdbc.enums
-        oph.va.virkailija.db.migrations
-        clj-time.core]
+  :aot [oph.va.virkailija.db.migrations]
 
   :uberjar-exclusions [#"public/test"]
 

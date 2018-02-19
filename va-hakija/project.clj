@@ -26,9 +26,7 @@
 
   :main oph.va.hakija.main
 
-  :aot [oph.va.jdbc.enums
-        oph.va.hakija.db.migrations
-        clj-time.core]
+  :aot [oph.va.hakija.db.migrations]
 
   :uberjar-exclusions [#"public/test"]
 

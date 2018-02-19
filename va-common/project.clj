@@ -28,7 +28,8 @@
                  [ring.middleware.logger]
                  [ring/ring-defaults]]
 
-  :aot [oph.common.log4j]
+  :aot [oph.common.log4j
+        oph.va.jdbc.enums]
 
   :test-paths ["spec"]
 
