@@ -1,5 +1,6 @@
 (ns oph.va.admin-ui.components.ui
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            [reagent.core :as r]))
 
 (defn default-style [style]
   (if (nil? (:margin style))
@@ -37,3 +38,21 @@
        (assoc :class (generate-button-class p))
        (update :style default-style))
    (:label p)])
+
+(defn tabs [children]
+  (let [selected (r/atom 0)]
+   (fn [children]
+    [:div {:class "oph-typography"}
+     [:div {:class "oph-tabs"}
+      (doall
+        (map-indexed
+          (fn [i c]
+            [:a {:key i
+                 :on-click #(reset! selected i)
+                 :class
+                 (str "oph-tab-item"
+                      (when (= @selected i) " oph-tab-item-is-active"))}
+             (:label c)])
+          children))]
+     [:div
+      (get-in children [@selected :content])]])))
