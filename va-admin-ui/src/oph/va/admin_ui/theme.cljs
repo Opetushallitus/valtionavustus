@@ -30,3 +30,7 @@
 (def notice {:padding "10px"})
 
 (def text-field {:margin-right 15 :display "inline-block"})
+
+(def tabs-header {:cursor "pointer"})
+
+(def tab-header-link {:text-decoration "none"})
