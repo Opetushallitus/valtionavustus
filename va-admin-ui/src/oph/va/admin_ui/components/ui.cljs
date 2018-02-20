@@ -45,7 +45,7 @@
   (let [selected (r/atom 0)]
    (fn [children]
     [:div {:class "oph-typography"}
-     [:div {:class "oph-tabs"}
+     [:div {:class "oph-tabs" :style {:cursor "pointer"}}
       (doall
         (map-indexed
           (fn [i c]
