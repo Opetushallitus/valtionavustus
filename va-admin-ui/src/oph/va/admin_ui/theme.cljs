@@ -29,4 +29,4 @@
 
 (def notice {:padding "10px"})
 
-(def text-field {:margin-right 15})
+(def text-field {:margin-right 15 :display "inline-block"})
