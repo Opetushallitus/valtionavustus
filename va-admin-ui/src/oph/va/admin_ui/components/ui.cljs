@@ -1,6 +1,7 @@
 (ns oph.va.admin-ui.components.ui
   (:require [clojure.string :as string]
-            [reagent.core :as r]))
+            [reagent.core :as r]
+            [oph.va.admin-ui.theme :as theme]))
 
 (defn default-style [style]
   (if (nil? (:margin style))
@@ -45,11 +46,12 @@
   (let [selected (r/atom 0)]
    (fn [children]
     [:div {:class "oph-typography"}
-     [:div {:class "oph-tabs" :style {:cursor "pointer"}}
+     [:div {:class "oph-tabs" :style theme/tabs-header}
       (doall
         (map-indexed
           (fn [i c]
             [:a {:key i
+                 :style theme/tab-header-link
                  :on-click #(reset! selected i)
                  :class
                  (str "oph-tab-item"
