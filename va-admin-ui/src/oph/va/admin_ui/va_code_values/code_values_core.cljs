@@ -5,6 +5,7 @@
    [reagent.core :as r]
    [cljsjs.material-ui]
    [cljs-react-material-ui.core :refer [color]]
+   [oph.va.admin-ui.components.ui :as va-ui]
    [cljs-react-material-ui.reagent :as ui]
    [cljs-react-material-ui.icons :as ic]
    [oph.va.admin-ui.theme :as theme]
@@ -34,23 +35,23 @@
   (let [v (r/atom {})]
     (fn [on-change]
       [:div {:style {:max-width 1000}}
-       [:div
-        [ui/text-field
+       [:div {:style {:display "inline"}}
+        [va-ui/text-field
          {:floating-label-text "Vuosi"
           :value (or (:year @v) "")
           :on-change #(swap! v assoc :year (.-value (.-target %)))
           :style (assoc theme/text-field :width 50)}]
-        [ui/text-field
+        [va-ui/text-field
          {:floating-label-text "Koodi"
           :value (or (:code @v) "")
           :on-change #(swap! v assoc :code (.-value (.-target %)))
           :style (assoc theme/text-field :width 100)}]
-        [ui/text-field
+        [va-ui/text-field
          {:floating-label-text "Nimi"
           :value (or (:name @v) "")
           :on-change #(swap! v assoc :name (.-value (.-target %)))
-          :style theme/text-field}]]
-       [ui/raised-button
+          :style (assoc theme/text-field :width 350)}]]
+       [va-ui/raised-button
         {:label "Lisää"
          :primary true
          :disabled (or (not= (count @v) 3)
@@ -68,13 +69,10 @@
 
 (defn home-page []
   [:div
-   [ui/tabs
-    [ui/tab {:label "Toimintayksikkö"}
-     (render-tab :operational-unit)]
-    [ui/tab {:label "Projekti"}
-     (render-tab :project)]
-    [ui/tab {:label "Toiminto"}
-     (render-tab :operation)]]])
+   [va-ui/tabs
+    [{:label "Toimintayksikkö" :content (render-tab :operational-unit)}
+     {:label "Projekti" :content (render-tab :project)}
+     {:label "Toiminto" :content (render-tab :operation)}]]])
 
 (defn init! []
   (go
