@@ -39,6 +39,8 @@
        (update :style default-style))
    (:label p)])
 
+(def raised-button button)
+
 (defn tabs [children]
   (let [selected (r/atom 0)]
    (fn [children]
