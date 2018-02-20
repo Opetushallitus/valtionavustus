@@ -35,6 +35,3 @@ log4j.appender.smtp.subject=[${log4j.email.environment}] Virhe palvelimella
 log4j.appender.smtp.layout=org.apache.log4j.PatternLayout
 log4j.appender.smtp.layout.conversionPattern=%d{ISO8601} %-5p [%t] %c: %m%n
 log4j.appender.smtp.EvaluatorClass=oph.common.log4j.SMTPThrottle
-
-oph.common.log4j.SMTPThrottle.threshold=ERROR
-
