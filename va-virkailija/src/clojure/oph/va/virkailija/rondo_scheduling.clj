@@ -11,7 +11,7 @@
             [oph.va.virkailija.payments-routes :as payments-routes]
             [ring.util.http-response :refer [ok not-found request-timeout]]))
 
-(def timeout-limit-schedule 120000)
+(def timeout-limit-schedule 400000)
 
 (defn get-state-of-payments []
       (let [c (a/chan)]
@@ -25,7 +25,7 @@
              (when (not (:success v))
                (throw (or (:exception v)
                           (Exception. (str (:value v))))))
-             (ok (log/info "Succesfully fethced state from Rondo!")))
+             (ok (log/debug "Succesfully fetched state from Rondo!")))
           (a/timeout timeout-limit-schedule) ([_] (request-timeout "Rondo timeout")))))
 
 
@@ -38,12 +38,12 @@
   (let [s   (-> (qs/initialize) qs/start)
         job (j/build
               (j/of-type RondoJob)
-              (j/with-identity (j/key "jobs.RondoJob")))
+              (j/with-identity (j/key "jobs.RondoJob3")))
         trigger (t/build
                   (t/with-identity (t/key "triggers.Rondo"))
                   (t/start-now)
                   (t/with-schedule (schedule
-                                     (cron-schedule "0 00 04 ? * *"))))]
+                                     (cron-schedule "0 58 17 ? * *"))))]
   (qs/schedule s job trigger)))
 
 (defn stop-schedule-from-rondo []

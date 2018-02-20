@@ -9,11 +9,9 @@
             [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.rondo-service :as rondo-service]
-            [oph.va.virkailija.authentication :as authentication]
-            [clojure.tools.logging :as log]))
+            [oph.va.virkailija.authentication :as authentication]))
 
 (def timeout-limit 10000)
-(def timeout-limit-schedule 120000)
 
 (defn- update-payment []
   (compojure-api/PUT
