@@ -29,7 +29,7 @@
 
 (def notice {:padding "10px"})
 
-(def text-field {:margin-right 15 :display "inline-block"})
+(def text-field {:margin 5 :display "inline-block"})
 
 (def tabs-header {:cursor "pointer"})
 

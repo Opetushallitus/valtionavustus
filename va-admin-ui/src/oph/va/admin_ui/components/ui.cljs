@@ -8,7 +8,7 @@
 
 (defn default-style [style]
   (if (nil? (:margin style))
-      (assoc style :margin "5px" :display "inline-block")
+      (merge theme/text-field style)
       style))
 
 (defn text-field [p]
