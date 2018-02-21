@@ -22,6 +22,19 @@
     (when-some [help-text (:help-text props)]
       [:div {:class "oph-field-text"} help-text])]))
 
+(defn select-field [props values]
+  [:div {:class "oph-field"}
+   [:label {:class "oph-label"} (or (:label props)
+                                    (:floating-label-text props))]
+   [:div {:class "oph-select-container"}
+    [:select {:class "oph-input oph-select"
+              :value (or (:value props) "")
+              :on-change #((:on-change props) (.-value (.-target %))) }
+     (for [value values]
+       [:option {:value (:value value)
+                 :key (:value value)}
+        (:primary-text value)])]]])
+
 (defn date-picker [props]
   (let [label (or (:floating-label-text props) (:label props))]
    [:div {:class "oph-field"}
