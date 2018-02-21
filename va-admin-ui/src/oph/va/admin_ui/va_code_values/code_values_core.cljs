@@ -39,8 +39,10 @@
         [va-ui/text-field
          {:floating-label-text "Vuosi"
           :value (or (:year @v) "")
+          :type "number"
+          :max-length 4
           :on-change #(swap! v assoc :year (.-value (.-target %)))
-          :style (assoc theme/text-field :width 50)}]
+          :style (assoc theme/text-field :width 75)}]
         [va-ui/text-field
          {:floating-label-text "Koodi"
           :value (or (:code @v) "")
