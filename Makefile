@@ -65,6 +65,9 @@ lein-clean-targets:
 .PHONY: lein-clean-admin-frontend
 lein-clean-admin-frontend:
 	rm -fr va-virkailija/resources/public/admin-ui/js
+	rm -f va-virkailija/resources/public/admin-ui/css/*-min.css
+	rm -f va-admin-ui/package*.json
+	rm -rf va-admin-ui/node_modules
 
 .PHONY: lein-build
 lein-build: lein-install-jar-commons lein-build-admin-frontend lein-build-backends
