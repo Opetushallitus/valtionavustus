@@ -1,6 +1,8 @@
 (ns oph.va.admin-ui.components.ui
   (:require [clojure.string :as string]
             [reagent.core :as r]
+            [cljsjs.material-ui]
+            [cljs-react-material-ui.reagent :as material]
             [oph.va.admin-ui.theme :as theme]))
 
 (defn default-style [style]
@@ -19,6 +21,24 @@
              :class str "oph-input")]
     (when-some [help-text (:help-text props)]
       [:div {:class "oph-field-text"} help-text])]))
+
+(defn date-picker [props]
+  (let [label (or (:floating-label-text props) (:label props))]
+   [:div {:class "oph-field"}
+    [:span {:class "oph-label" :aria-describedby "field-text"} label]
+    [material/date-picker {:value (:value props)
+                           :class "oph-input"
+                           :name label
+                           :underline-show false
+                           :style {:width "auto" :height "auto"}
+                           :text-field-style {:width "auto"
+                                              :height "auto"
+                                              :line-height "inherit"
+                                              :font-family "inherit"}
+                           :input-style {}}]]))
+
+(defn menu-item [props]
+  [:option {:value (:value props)} (:primary-text props)])
 
 (defn remove-nils [c] (disj c nil))
 
