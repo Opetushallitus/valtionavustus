@@ -44,6 +44,8 @@
                  [clj-time]
                  [org.clojure/tools.trace]]
 
+  :aot [clj-time.core]
+
   :test-paths ["spec"]
 
   :target-path "target/%s"

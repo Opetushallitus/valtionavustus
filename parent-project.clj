@@ -12,9 +12,7 @@
                                     :sign-releases false
                                     :snapshots false}]
                  ["snapshots"      {:url "https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local"
-                                    :releases false}]
-                 ["Laughing Panda" {:url "http://maven.laughingpanda.org/maven2"
-                                    :snapshots false}]]
+                                    :releases false}]]
 
   :managed-dependencies [[org.clojure/clojure "1.8.0"]
 
@@ -59,7 +57,6 @@
                          [environ "1.1.0"]
 
                          ;; logging
-                         [fi.reaktor.log4j/log4j-email-throttle "1.0.0"]
                          [log4j "1.2.17"]
                          [org.clojure/tools.logging "0.4.0"]
                          [org.slf4j/slf4j-log4j12 "1.7.25"]
