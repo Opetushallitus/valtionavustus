@@ -170,6 +170,11 @@
 (defn notice [message]
   [:div {:style theme/notice} message])
 
+(defn any-account-nil? [a]
+  (some?
+    (some #(when-not (and (some? (get % :lkp-account))
+                          (some? (get % :takp-account))) %) a)))
+
 (defn home-page [{:keys [user-info delete-payments?]}]
   [:div
    [:div
@@ -221,9 +226,7 @@
                     (select-keys result [:status :error-text])))))))
         :is-admin? (user/is-admin? user-info)})]
     (let [multipayment? (get-in @selected-grant [:content :multiplemaksuera])
-          accounts-nil? (some #(when-not (or (get % :lkp-account)
-                                             (get % :takp-account)) true)
-                              @current-applications)
+          accounts-nil? (any-account-nil? @current-applications)
           unsent-payments? (some
                              #(when (< (get-in % [:payment :state]) 2) true)
                              @current-applications)]
