@@ -2,7 +2,8 @@
   (:require [clojure.string :as string]
             [reagent.core :as r]
             [cljsjs.material-ui]
-            [cljs-react-material-ui.reagent :as material]
+            [cljs-react-material-ui.reagent :refer [date-picker]
+             :rename {date-picker material-date-picker}]
             [oph.va.admin-ui.theme :as theme]))
 
 (defn default-style [style]
@@ -40,7 +41,7 @@
   (let [label (or (:floating-label-text props) (:label props))]
    [:div {:class "oph-field" :style (default-style (:style props))}
     [:span {:class "oph-label" :aria-describedby "field-text"} label]
-    [material/date-picker {:value (:value props)
+    [material-date-picker {:value (:value props)
                            :class "oph-input"
                            :name label
                            :underline-show false
