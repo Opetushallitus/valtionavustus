@@ -54,8 +54,6 @@
       :output-to "../va-virkailija/resources/public/admin-ui/js/app.js"
       :output-dir "../va-virkailija/resources/public/admin-ui/js/out"
       :asset-path "/admin-ui/js/out"
-      :install-deps true
-      :npm-deps {:oph-virkailija-style-guide "git+https://github.com/Opetushallitus/virkailija-styles.git"}
       :source-map true
       :optimizations :none
       :pretty-print  true}
