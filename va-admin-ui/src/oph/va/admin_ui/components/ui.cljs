@@ -17,7 +17,8 @@
     [:span {:class "oph-label" :aria-describedby "field-text"}
      (:label-text props)]
     [:input
-     (update (select-keys props [:value :type :on-change])
+     (update (select-keys props [:value :type :on-change :type :size :min :max
+                                 :max-length])
              :class str "oph-input")]
     (when-some [help-text (:help-text props)]
       [:div {:class "oph-field-text"} help-text])]))
