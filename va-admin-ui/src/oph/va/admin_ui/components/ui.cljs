@@ -6,15 +6,10 @@
              :rename {date-picker material-date-picker}]
             [oph.va.admin-ui.theme :as theme]))
 
-(defn default-style [style]
-  (if (nil? (:margin style))
-      (merge theme/text-field style)
-      style))
-
 (defn text-field [p]
   (let [props
         (assoc p :label-text (or (:floating-label-text p) (:label-text p)))]
-   [:div {:class "oph-field" :style (default-style (:style p))}
+   [:div {:class "oph-field" :style (merge theme/text-field (:style p))}
     [:span {:class "oph-label" :aria-describedby "field-text"}
      (:label-text props)]
     [:input
@@ -25,7 +20,7 @@
       [:div {:class "oph-field-text"} help-text])]))
 
 (defn select-field [props values]
-  [:div {:class "oph-field" :style (default-style (:style props))}
+  [:div {:class "oph-field" :style (merge theme/select-field (:style props))}
    [:label {:class "oph-label"} (or (:label props)
                                     (:floating-label-text props))]
    [:div {:class "oph-select-container"}
@@ -39,7 +34,7 @@
 
 (defn date-picker [props]
   (let [label (or (:floating-label-text props) (:label props))]
-   [:div {:class "oph-field" :style (default-style (:style props))}
+   [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
     [:span {:class "oph-label" :aria-describedby "field-text"} label]
     [material-date-picker {:value (:value props)
                            :class "oph-input"
@@ -65,12 +60,15 @@
        (string/join " ")
        string/trim))
 
+(defn set-button-style [props]
+  (assoc props :style (merge theme/button (:style props))))
+
 (defn button [p]
   [:button
    (-> p
        (select-keys [:on-click :style :disabled])
        (assoc :class (generate-button-class p))
-       (update :style default-style))
+       set-button-style)
    (:label p)])
 
 (def raised-button button)
