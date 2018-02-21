@@ -10,8 +10,6 @@
              :picker-header-color "#4c7f00"
              :accent1-color "#00b5f0"}})
 
-(def button {:margin 12})
-
 (def general-styles
   {:font-family ["Open Sans" "Helvetica" "sans-serif"]
    :font-size "95%"
@@ -29,4 +27,14 @@
 
 (def notice {:padding "10px"})
 
-(def text-field {:margin-right 15})
+(def text-field {:margin 5 :display "inline-block"})
+
+(def select-field text-field)
+
+(def date-picker text-field)
+
+(def tabs-header {:cursor "pointer"})
+
+(def tab-header-link {:text-decoration "none"})
+
+(def button (merge text-field {:margin 12}))

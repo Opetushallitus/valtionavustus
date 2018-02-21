@@ -1,6 +1,8 @@
 **/checkouts/
 **/resources/public/js/
 **/resources/public/admin-ui/js
+**/resources/public/admin-ui/css/*-min.css
+/va-admin-ui/package*
 *.iml
 .*.swp
 .DS_Store
