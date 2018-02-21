@@ -8,6 +8,7 @@
     [cljs-react-material-ui.core :refer [color]]
     [cljs-react-material-ui.reagent :as ui]
     [cljs-react-material-ui.icons :as ic]
+    [oph.va.admin-ui.components.ui :as va-ui]
     [oph.va.admin-ui.payments.payments-ui :as payments-ui]
     [oph.va.admin-ui.payments.payments :as payments]
     [oph.va.admin-ui.payments.applications :as applications]
@@ -59,7 +60,7 @@
   [:div
    [:hr]
    [ui/grid-list {:cols 6 :cell-height "auto"}
-    [ui/raised-button
+    [va-ui/raised-button
      {:primary true
       :label "Poista maksatukset"
       :style theme/button
@@ -83,7 +84,7 @@
 
 (defn render-grant-filters [values on-change]
   [:div
-   [ui/text-field
+   [va-ui/text-field
     {:floating-label-text "Hakujen suodatus"
      :value (:filter-str values)
      :on-change #(on-change :filter-str (.-value (.-target %)))}]
@@ -233,7 +234,7 @@
        (when accounts-nil?
          (notice "Joillakin hakemuksilla ei ole LKP- tai TaKP-tiliä, joten
                    makastukset tulee luoda manuaalisesti."))
-       [ui/raised-button
+       [va-ui/raised-button
         {:primary true
          :disabled
          (or
