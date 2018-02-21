@@ -52,9 +52,6 @@
                            :input-style {}
                            :on-change (:on-change props)}]]))
 
-(defn menu-item [props]
-  [:option {:value (:value props)} (:primary-text props)])
-
 (defn remove-nils [c] (disj c nil))
 
 (defn generate-button-class [props]
