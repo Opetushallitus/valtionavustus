@@ -7,7 +7,7 @@
 
 (defn default-style [style]
   (if (nil? (:margin style))
-      (assoc style :margin "5px")
+      (assoc style :margin "5px" :display "inline-block")
       style))
 
 (defn text-field [p]
@@ -23,7 +23,7 @@
       [:div {:class "oph-field-text"} help-text])]))
 
 (defn select-field [props values]
-  [:div {:class "oph-field"}
+  [:div {:class "oph-field" :style (default-style (:style props))}
    [:label {:class "oph-label"} (or (:label props)
                                     (:floating-label-text props))]
    [:div {:class "oph-select-container"}
@@ -37,7 +37,7 @@
 
 (defn date-picker [props]
   (let [label (or (:floating-label-text props) (:label props))]
-   [:div {:class "oph-field"}
+   [:div {:class "oph-field" :style (default-style (:style props))}
     [:span {:class "oph-label" :aria-describedby "field-text"} label]
     [material/date-picker {:value (:value props)
                            :class "oph-input"
@@ -48,7 +48,8 @@
                                               :height "auto"
                                               :line-height "inherit"
                                               :font-family "inherit"}
-                           :input-style {}}]]))
+                           :input-style {}
+                           :on-change (:on-change props)}]]))
 
 (defn menu-item [props]
   [:option {:value (:value props)} (:primary-text props)])
