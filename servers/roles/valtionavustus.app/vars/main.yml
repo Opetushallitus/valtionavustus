@@ -1,3 +1,4 @@
+log4j_smtp_throttle_wait_interval_s: "{{ 3 * 60 * 60 }}"
 logs_dir: /logs
 data_dir: /data
 postgresql_version: 9.4

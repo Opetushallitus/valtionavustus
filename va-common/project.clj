@@ -19,7 +19,6 @@
   :dependencies [[org.clojure/clojure]
                  [oph/soresu]
                  [de.ubercode.clostache/clostache]
-                 [fi.reaktor.log4j/log4j-email-throttle]
                  [org.apache.commons/commons-email]
                  [org.clojure/core.async]
                  [org.clojure/core.memoize]
@@ -28,6 +27,9 @@
                  [ring.middleware.conditional :exclusions [ring]]
                  [ring.middleware.logger]
                  [ring/ring-defaults]]
+
+  :aot [oph.common.log4j
+        oph.va.jdbc.enums]
 
   :test-paths ["spec"]
 
