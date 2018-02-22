@@ -379,7 +379,7 @@
     :costsGranted 4450,
     :budget-granted 4005},
    :status-loppuselvitys "missing"}
-  {:version-date #inst "2018-01-12T09:58:47.379780000-00:00",
+  {:version-date #inst "2018-01-24T09:58:47.379780000-00:00",
    :project-name "",
    :register-number "2/351/2018",
    :status-comment nil,
@@ -460,7 +460,7 @@
     :costsGranted 35400,
     :budget-granted 31860},
    :status-loppuselvitys "missing"},
-  {:version-date #inst "2018-01-13T13:52:04.473973000-00:00",
+  {:version-date #inst "2018-01-21T13:52:04.473973000-00:00",
    :project-name "",
    :register-number "3/351/2018",
    :status-comment nil,
