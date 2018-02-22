@@ -3,6 +3,7 @@
   (:require [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.scoring :as scoring]
             [oph.soresu.form.formutil :as formutil]
+            [oph.va.routes :as va-routes]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.authorization :as authorization]
             [clj-time.core :as clj-time]))
@@ -115,6 +116,19 @@
      :paatos paatos-clear
      :perustelut (-> hakemus :arvio :perustelut)}))
 
+(defn get-hakudata-for-export [avustushaku-id]
+  (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
+        form        (hakija-api/get-form-by-avustushaku avustushaku-id)
+        hakemukset  (hakija-api/get-hakemukset-for-export avustushaku-id)
+        arviot      (get-arviot-map hakemukset)
+        scores      (scoring/get-avustushaku-scores avustushaku-id)]
+    {:avustushaku (va-routes/avustushaku-response-content avustushaku)
+     :form        (hakija-api/form->json form)
+     :hakemukset  (map (fn [h]
+                         (->> h
+                              (find-and-add-arvio arviot)
+                              (add-scores-to-hakemus scores)))
+                       hakemukset)}))
 
 (defn get-avustushaku-and-paatokset
   [avustushaku-id]
