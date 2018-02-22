@@ -37,6 +37,8 @@
   "sql/virkailija/grants/delete-grant-payments.sql")
 (defquery get-grant-payments-info
   "sql/virkailija/grants/get-grant-payments-info.sql")
+(defquery get-unpaid-applications
+  "sql/virkailija/grants/get-unpaid-applications.sql")
 
 (defquery get-payment "sql/virkailija/payments/get-payment.sql")
 (defquery get-payment-version "sql/virkailija/payments/get-payment-version.sql")
@@ -49,6 +51,7 @@
 
 (defquery find-batch "sql/virkailija/payment_batches/find-batch.sql")
 (defquery create-batch "sql/virkailija/payment_batches/create-batch.sql")
+(defquery get-batch "sql/virkailija/payment_batches/get-batch.sql")
 
 (defquery get-application "sql/virkailija/applications/get-application.sql")
 (defquery get-application-with-evaluation-and-answers
