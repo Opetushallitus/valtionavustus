@@ -54,29 +54,3 @@
 
 (defn delete-remote-file [filename]
   (do-sftp! :method :rm :file filename :path (:remote_path_from (:rondo-sftp config))))
-
-  (defn try-to-update-payments [xml-file-path]
-    (try
-      (payments-data/update-state-by-response (invoice/read-xml xml-file-path))
-      (catch Exception e (ex-data e))))
-
-(defn handle-one-xml [filename]
-  (get-remote-file filename)
-  (let [xml-file-path (format "%s/%s" (System/getProperty"java.io.tmpdir") filename)
-        result (try-to-update-payments xml-file-path)]
-    (cond (= (:cause result) "already-paid")
-          (delete-remote-file filename)
-          (some? (:cause result))
-          (throw (Exception. (:error-message result)))
-          (nil? result)
-          (clojure.java.io/delete-file xml-file-path)))
-    (delete-remote-file filename))
-
-
-(defn get-state-from-rondo []
-  (let [file-list (get-remote-file-list)
-        result (map #(handle-one-xml %) file-list)]
-        (log/info result)
-           (if (every? nil? result)
-             {:success true}
-             {:success false :value result})))
