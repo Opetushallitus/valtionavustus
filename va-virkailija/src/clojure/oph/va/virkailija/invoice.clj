@@ -16,11 +16,6 @@
   ([answers key not-found]
    (or (get-answer-value answers key) not-found)))
 
-(defn format-date [date]
-  (if date
-    (f/unparse date-formatter (c/from-long (.toEpochDay date)))
-    date))
-
 (defn get-batch-key
   ([organisation year batch-number]
    (format "%s%02d%03d" organisation year batch-number))
@@ -43,12 +38,12 @@
     [:VA-invoice
      [:Header
       [:Maksuera (get-batch-key payment)]
-      [:Laskunpaiva (format-date (:invoice-date payment))]
-      [:Erapvm (format-date (:due-date payment))]
+      [:Laskunpaiva (.toString (:invoice-date payment))]
+      [:Erapvm (.toString (:due-date payment))]
       [:Bruttosumma (:budget-granted application)]
       [:Maksuehto "Z001"]
       [:Pitkaviite (:register-number application)]
-      [:Tositepvm (format-date (:receipt-date payment))]
+      [:Tositepvm (.toString (:receipt-date payment))]
       [:Asiatarkastaja (:inspector-email payment)]
       [:Hyvaksyja (:acceptor-email payment)]
       [:Tositelaji (:document-type payment)]
