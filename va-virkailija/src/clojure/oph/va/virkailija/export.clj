@@ -385,7 +385,7 @@
   (let [avustushaku (:avustushaku avustushaku-combined)
         paatos-date (-> avustushaku :decision :date)
         hakemus-list (->> (avustushaku->hakemukset avustushaku-combined)
-                          (sort-by :register-number))
+                          (sort-by first))
         map-paatos-data (partial add-paatos-data paatos-date)
         has-multiple-maksuera (-> avustushaku :content :multiplemaksuera)
         accepted-list (filter #(= "accepted" (-> % :arvio :status)) hakemus-list)
