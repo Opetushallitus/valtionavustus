@@ -9,7 +9,8 @@
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.schema :as schema]
-            [oph.va.virkailija.authentication :as authentication])
+            [oph.va.virkailija.authentication :as authentication]
+            [oph.va.virkailija.utils :refer [with-timeout]])
   (:import (java.time LocalDate)))
 
 (def timeout-limit 10000)
@@ -42,14 +43,6 @@
    :application-version (:version application)
    :state 0
    :batch-id (:id batch)})
-
-(defn with-timeout [f t tv]
-  (let [c (a/chan)]
-    (a/go
-      (a/>! c (f)))
-    (a/alt!!
-      c ([v] v)
-      (a/timeout t) ([_] tv))))
 
 (defn- create-payments []
   (compojure-api/POST
