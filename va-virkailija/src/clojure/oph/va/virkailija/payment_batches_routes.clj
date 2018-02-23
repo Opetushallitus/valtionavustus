@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.payment-batches-routes
-  (:require [clojure.core.async :as a]
+  (:require [clojure.tools.logging :as log]
+            [clojure.core.async :as a]
             [compojure.api.sweet :as compojure-api]
             [ring.util.http-response :refer [ok no-content request-timeout]]
             [oph.va.virkailija.payment-batches-data :as data]
@@ -36,6 +37,20 @@
           "Payment batch already found for given grant and current date.")))
     (ok (data/create-batch batch-values))))
 
+(defn create-payment-values [application batch]
+  {:application-id (:id application)
+   :application-version (:version application)
+   :state 0
+   :batch-id (:id batch)})
+
+(defn with-timeout [f t tv]
+  (let [c (a/chan)]
+    (a/go
+      (a/>! c (f)))
+    (a/alt!!
+      c ([v] v)
+      (a/timeout t) ([_] tv))))
+
 (defn- create-payments []
   (compojure-api/POST
     "/:id/payments/" [id :as request]
@@ -49,53 +64,41 @@
       (when (get-in grant [:content :multiplemaksuera])
         (throw (Exception. "Multiple payment batches is not supported.")))
 
-      (let [applications
-            (grant-data/get-unpaid-applications (:id grant))
+      (let [applications (grant-data/get-unpaid-applications (:id grant))
             c (a/chan)]
         (a/go
           (doseq [application applications]
-            (let [payment-values {:application-id (:id application)
-                                  :application-version (:version application)
-                                  :state 0
-                                  :batch-id (:id batch)}
-                  payment
+            (let [payment
                   (or (application-data/get-application-payment
                         (:id application))
-                      (payments-data/create-payment payment-values identity))
+                      (payments-data/create-payment
+                        (create-payment-values application batch) identity))
                   filename (format "payment-%d-%d.xml"
-                                   (:id payment)
-                                   (System/currentTimeMillis))
-                  ac (a/chan)]
-              (a/go
-                (try
-                  (rondo-service/send-to-rondo!
-                    {:payment (payments-data/get-payment (:id payment))
-                     :application application
-                     :grant grant
-                     :filename filename})
-                  (a/>! ac {:success true})
-                  (catch Exception e
-                    (a/>! ac {:success false :exception e}))))
-              (a/alt!
-                ac ([v]
-                    (if (:success v)
-                      (payments-data/update-payment
-                        (assoc payment :state 2 :filename filename)
-                        identity)
-                      (do
-                        (a/>! c v)
-                        (throw (:exception v))))
-                    )
-                (a/timeout timeout-limit)
-                ([_]
-                 (a/>! c {:success false :error :timeout})
-                 (throw "SSH timeout")))))
-          (a/>! c {:success true}))
-        (let [result (a/<!! c)]
-          (cond
-            (:success result) (ok {:success true})
-            (= (:error result) :timeout) (request-timeout {:success false})
-            :else (throw (:exception result))))))))
+                                   (:id payment) (System/currentTimeMillis))]
+              (let [result
+                    (with-timeout
+                      #(try
+                         (rondo-service/send-to-rondo!
+                           {:payment (payments-data/get-payment (:id payment))
+                            :application application
+                            :grant grant
+                            :filename filename})
+                         (catch Exception e
+                           {:success false :error-type :exception :exception e}))
+                      timeout-limit
+                      {:success false :error-type :timeout})]
+                (if (:success result)
+                  (payments-data/update-payment
+                    (assoc payment :state 2 :filename filename) identity)
+                  (a/>! c (:error result))))))
+          (a/close! c))
+        (let [error-count
+              (loop [error-count 0]
+                (if-let [error (a/<!! c)]
+                  (do (log/error error)
+                      (recur (inc error-count)))
+                  error-count))]
+          (ok {:success (= error-count 0)}))))))
 
 (compojure-api/defroutes
   routes
