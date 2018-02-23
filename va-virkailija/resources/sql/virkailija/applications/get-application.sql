@@ -11,6 +11,7 @@ WHERE
   h.id = :application_id
   AND h.status != 'cancelled'
   AND h.status != 'new'
+  AND h.status != 'draft'
   AND h.version_closed IS NULL
   AND h.hakemus_type = 'hakemus'
 ORDER BY

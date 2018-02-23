@@ -30,3 +30,8 @@
   (mapv convert-to-dash-keys
         (exec :form-db virkailija-queries/get-grant-applications
               {:grant_id grant-id})))
+
+(defn get-unpaid-applications [grant-id]
+  (mapv convert-to-dash-keys
+        (exec :form-db virkailija-queries/get-unpaid-applications
+              {:grant_id grant-id})))

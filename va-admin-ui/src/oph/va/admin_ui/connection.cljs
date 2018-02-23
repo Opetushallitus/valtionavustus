@@ -89,6 +89,10 @@
   (http/post (format "/%s/payment-batches/" api-path)
              {:json-params data :with-credentials? true}))
 
+(defn create-batch-payments [id]
+  (http/post (format "/%s/payment-batches/%d/payments/" api-path id)
+             {:with-credentials? true}))
+
 (defn get-va-code-values-by-type []
   (let [c (chan)]
     (go
