@@ -21,7 +21,6 @@
           (rondo-service/get-remote-file filename)
           (try
             (payments-data/update-state-by-response (invoice/read-xml (format "%s/%s" xml-path filename)))
-
           (catch clojure.lang.ExceptionInfo e
             (if (= "already-paid" (-> e ex-data :cause))
               (rondo-service/delete-remote-file filename)
@@ -67,7 +66,7 @@
                   (t/with-identity (t/key "triggers.Rondo"))
                   (t/start-now)
                   (t/with-schedule (schedule
-                                     (cron-schedule "0 39 14 ? * *"))))]
+                                     (cron-schedule "0 00 04 ? * *"))))]
   (qs/schedule s job trigger)))
 
 (defn stop-schedule-from-rondo []
