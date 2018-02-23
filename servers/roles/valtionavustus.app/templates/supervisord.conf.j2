@@ -93,6 +93,7 @@ command=/usr/bin/java
   -Djava.net.preferIPv4Stack=true
   -Dlog4j.email.environment="%(host_node_name)s %(program_name)s"
   -Dlog4j.configuration=file:{{ data_dir }}/www/config/%(program_name)s-log4j.properties
+  -Doph.common.log4j.SMTPThrottle.waitIntervalS={{ log4j_smtp_throttle_wait_interval_s }}
   {{ data_dir }}/www/%(program_name)s-current/%(program_name)s.jar
 environment=configsecrets={{ data_dir }}/www/config/secret-{{ app_profile }}.edn,configdefaults={{ data_dir }}/www/%(program_name)s-current/config/defaults.edn,config={{ data_dir }}/www/%(program_name)s-current/config/{{ app_profile }}.edn ; process environment additions (def no adds)
 ;process_name=%(program_name)s ; process_name expr (default %(program_name)s)
@@ -137,6 +138,7 @@ command=/usr/bin/java
   -Djava.net.preferIPv4Stack=true
   -Dlog4j.email.environment="%(host_node_name)s %(program_name)s"
   -Dlog4j.configuration=file:{{ data_dir }}/www/config/%(program_name)s-log4j.properties
+  -Doph.common.log4j.SMTPThrottle.waitIntervalS={{ log4j_smtp_throttle_wait_interval_s }}
   {{ data_dir }}/www/%(program_name)s-current/%(program_name)s.jar
 environment=configsecrets={{ data_dir }}/www/config/secret-{{ app_profile }}.edn,configdefaults={{ data_dir }}/www/%(program_name)s-current/config/defaults.edn,config={{ data_dir }}/www/%(program_name)s-current/config/{{ app_profile }}.edn ; process environment additions (def no adds)
 ;process_name=%(program_name)s ; process_name expr (default %(program_name)s)

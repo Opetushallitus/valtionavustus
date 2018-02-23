@@ -29,11 +29,6 @@
 (defn stop-background-job-send-mails []
   (email/stop-background-job-send-mails))
 
-(defn oph-register-email-title [is-change-request-response? avustushaku-name start-date-string end-date-string]
-  (if is-change-request-response?
-    (str "[Valtionavustus] Täydennetty hakemus hakuun '" avustushaku-name "' (" start-date-string "-" end-date-string ")")
-    (str "[Valtionavustus] Uusi hakemus hakuun '" avustushaku-name "' (" start-date-string "-" end-date-string ")")))
-
 (defn send-new-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
   (let [lang-str (or (clojure.core/name lang) "fi")
         start-date-string (datetime/date-string start-date)
@@ -89,10 +84,6 @@
                       :start-time start-time-string
                       :end-date end-date-string
                       :end-time end-time-string
-                      :url url}
-        registry-message (-> user-message
-                             (assoc :to (vector (-> email/smtp-config :registry-address)))
-                             (assoc :subject (oph-register-email-title is-change-request-response? avustushaku start-date-string end-date-string)))]
+                      :url url}]
     (log/info "Url would be: " url)
-    (>!! email/mail-chan user-message)
-    (>!! email/mail-chan registry-message)))
+    (>!! email/mail-chan user-message)))

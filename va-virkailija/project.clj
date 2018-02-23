@@ -28,7 +28,7 @@
                  [clj-ssh]
                  [clojurewerkz/quartzite]]
 
-  :profiles {:uberjar {:aot :all}
+  :profiles {:uberjar {:aot [oph.va.virkailija.main]}
              :dev     {:env {:config "config/dev.edn"
                              :configsecrets "../../valtionavustus-secret/config/secret-dev.edn"}}
              :test    {:env {:config "config/test.edn"}}
@@ -36,9 +36,7 @@
 
   :main oph.va.virkailija.main
 
-  :aot [oph.va.jdbc.enums
-        oph.va.virkailija.db.migrations
-        clj-time.core]
+  :aot [oph.va.virkailija.db.migrations]
 
   :uberjar-exclusions [#"public/test"]
 

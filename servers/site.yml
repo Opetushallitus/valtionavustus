@@ -1,11 +1,4 @@
-- hosts: va_app_qa
-  sudo: yes
-  roles:
-  - {role: ssh.init, tags: ['ssh']}
-  - common
-  - valtionavustus.app
-
-- hosts: va_app_prod
+- hosts: va_app
   sudo: yes
   roles:
   - {role: ssh.init, tags: ['ssh']}
