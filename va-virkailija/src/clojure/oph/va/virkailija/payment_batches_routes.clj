@@ -78,7 +78,6 @@
                     (a/>! ac {:success false :exception e}))))
               (a/alt!
                 ac ([v]
-                    (prn v)
                     (if (:success v)
                       (payments-data/update-payment
                         (assoc payment :state 2 :filename filename)
