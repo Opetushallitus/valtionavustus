@@ -90,7 +90,7 @@
                 (if (:success result)
                   (payments-data/update-payment
                     (assoc payment :state 2 :filename filename) identity)
-                  (a/>! c (:error result))))))
+                  (a/>! c (:error-type result))))))
           (a/close! c))
         (let [error-count
               (loop [error-count 0]
@@ -105,5 +105,4 @@
   "payment batches routes"
   (find-payment-batch)
   (create-payment-batch)
-  (create-payments)
-  (create-dsa))
+  (create-payments))
