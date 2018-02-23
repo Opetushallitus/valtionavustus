@@ -35,8 +35,8 @@
           wb     (spreadsheet/load-workbook (ByteArrayInputStream. export))]
       (should= [["Diaarinumero" "Hakijaorganisaatio" "Hankkeen nimi" "Asiointikieli" "Ehdotettu budjetti" "OPH:n avustuksen osuus" "Myönnetty avustus" "Arviokeskiarvo"]
                 ["1/351/2018" "Hakija 1 fi" "" "fi" 4500.0 4050.0 4005.0 nil]
-                ["2/351/2018" "Hakija 2 sv" "" "sv" 35433.0 31889.0 31860.0 nil]
-                ["3/351/2018" "Hakija 3 fi" "" "fi" 3059.0 2753.0 0.0 nil]]
+                ["3/351/2018" "Hakija 3 fi" "" "fi" 3059.0 2753.0 0.0 nil]
+                ["2/351/2018" "Hakija 2 sv" "" "sv" 35433.0 31889.0 31860.0 nil]]
                (sheet-cell-values (spreadsheet/select-sheet "Hakemukset" wb)))
       (should= [["Diaarinumero" "Hakijaorganisaatio" "Projektin nimi" "Asiointikieli" "Ehdotettu budjetti" "OPH:n avustuksen osuus" "Myönnetty avustus" "Arviokeskiarvo" "Hakijaorganisaatio" "Organisaation sähköposti" "Y-tunnus" "Yhteyshenkilö" "Sähköposti" "Osoite" "Allekirjoitusoikeudellinen henkilö" "Sähköposti" "Tilinumero IBAN-muodossa" "Pankin BIC/SWIFT-koodi" "Oppilaitosmuoto" "Hankkeen kustannukset" "Hankkeen kustannukset" "EU-ohjelmat" "EU-ohjelmat" "Muu julkinen rahoitus" "Muu julkinen rahoitus" "Yksityinen rahoitus" "Yksityinen rahoitus" "Muut tulot" "Muut tulot"]
                 ["1/351/2018" "Hakija 1 fi" "" "fi" 4500.0 4050.0 4005.0 nil "Hakija 1" "username+org1@example.com" "4580113-5" "Matti Virtanen" "username+con1@example.com" "Kujakatu 1" "Matti Virtanen" "username+sig1@example.com" "FI44 8571 1440 0073 18" "OKOASDFG" "Kansanopisto" "Tarkenna tarvittaessa" 4500.0 "" 0.0 "" 0.0 "" 0.0 "" 0.0]
