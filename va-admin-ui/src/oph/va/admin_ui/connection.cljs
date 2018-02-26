@@ -101,6 +101,11 @@
                {}}))
     c))
 
+(defn create-va-code-value [values]
+  (http/post (format "/%s/va-code-values/" api-path)
+             {:with-credentials? true
+              :json-params values}))
+
 (defn set-config! [c] (reset! config c))
 
 (defn delete-payments? [] (get-in @config [:payments :delete-payments?]))
