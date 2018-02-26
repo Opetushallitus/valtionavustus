@@ -14,6 +14,10 @@
 
 (defonce code-values (r/atom {}))
 
+(def value-types {:operational-unit "Toimintayksikkö"
+                  :project "Projekti"
+                  :operation "Toiminto"})
+
 (defn render-code-table [values]
   [ui/table {:fixed-header true :selectable false :body-style theme/table-body}
    [ui/table-header {:adjust-for-checkbox false :display-select-all false}
@@ -28,7 +32,7 @@
           [ui/table-row {:key i}
            [ui/table-row-column (:year row)]
            [ui/table-row-column (:code row)]
-           [ui/table-row-column (:code_value row)]])
+           [ui/table-row-column (:code-value row)]])
         values))]])
 
 (defn create-catch-enter [f]
@@ -88,29 +92,31 @@
 
 (defn render-tab [k]
   [:div
-   [render-add-item
-    (fn [values]
-      (go
-        (let [result (<! (connection/create-va-code-value
-                           (assoc values :value-type k)))]
-          (if (:success result)
-            (swap! code-values update k conj (:body result))
-            (dialogs/show-error-message! "Virhe koodin lisäämisessä"
-                           (select-keys result [:status :error-text]))))))]
+   [(render-add-item
+      (fn [values]
+        (go
+          (let [result (<! (connection/create-va-code-value
+                             (assoc values :value-type (name k))))]
+            (if (:success result)
+              (swap! code-values update k conj (:body result))
+              (dialogs/show-error-message!
+                "Virhe koodin lisäämisessä"
+                (select-keys result [:status :error-text])))))))]
    (render-code-table (get @code-values k))])
 
 (defn home-page []
   [:div
    [va-ui/tabs
-    [{:label "Toimintayksikkö" :content (render-tab :operational-unit)}
-     {:label "Projekti" :content (render-tab :project)}
-     {:label "Toiminto" :content (render-tab :operation)}]]])
+    (mapv (fn [[k v]] {:label v :content (render-tab k)}) value-types)]])
 
 (defn init! []
   (go
-    (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan koodeja" 1)
-          result (<! (connection/get-va-code-values-by-type))]
+    (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan koodeja" 3)]
       (put! dialog-chan 1)
-      (if (:success result)
-        (reset! code-values (:body result)))
+      (doseq [[k _] value-types]
+       (let [result
+             (<! (connection/get-va-code-values-by-type (name k)))]
+         (if (:success result)
+           (swap! code-values assoc k (:body result)))))
+       (put! dialog-chan 2)
       (close! dialog-chan))))
