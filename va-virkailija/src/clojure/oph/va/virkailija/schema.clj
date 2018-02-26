@@ -347,3 +347,7 @@
    :acceptor-email s/Str
    :grant-id s/Int
    :document-id s/Str})
+
+(s/defschema PaymentsCreateResult
+  "Payment create result"
+  {:success s/Bool})

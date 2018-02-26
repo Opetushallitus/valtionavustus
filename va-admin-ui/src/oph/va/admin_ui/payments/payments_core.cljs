@@ -100,23 +100,11 @@
   (go
     (let [dialog-chan
           (dialogs/show-loading-dialog!
-            "Lähetetään maksatuksia"
-            (+ (count applications-to-send) 10))]
+            "Lähetetään maksatuksia" 6)]
       (put! dialog-chan 1)
-      (let [error
-            (loop [index 0]
-              (if-let [application
-                       (get applications-to-send index)]
-                (let [payment-result
-                      (<! (connection/create-payment
-                            {:batch-id (:batch-id values)
-                             :application-id (:id application)
-                             :state (:state values)}))]
-                  (put! dialog-chan (inc index))
-                  (if (:success payment-result)
-                    (recur (inc index))
-                    (select-keys payment-result [:status :error-text])))))]
-        (if (nil? error)
+      (let [result (<! (connection/create-batch-payments (:batch-id values)))]
+        (put! dialog-chan 2)
+        (if (:success result)
           (let [email-result
                 (<!
                   (connection/send-payments-email
@@ -127,20 +115,24 @@
                                          :batch-number
                                          :batch-id
                                          :receipt-date])))]
+            (put! dialog-chan 3)
             (if (:success email-result)
               (dialogs/show-message! "Kaikki maksatukset lähetetty")
               (dialogs/show-message!
                 "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin
                        lähetyksessä tapahtui virhe")))
-          (dialogs/show-error-message! "Maksatuksen lähetyksessä ongelma" error))
+          (dialogs/show-error-message!
+            "Maksatuksen lähetyksessä ongelma"
+            (select-keys result [:status :error-text])))
         (let [grant-result (<! (connection/get-grant-payments
                                  (:id @selected-grant)))]
+          (put! dialog-chan 4)
           (if (:success grant-result)
             (reset! payments (:body grant-result))
             (dialogs/show-error-message!
               "Maksatuksien latauksessa ongelma"
               (select-keys grant-result [:status :error-text])))))
-      (put! dialog-chan (+ (count applications-to-send) 10))
+      (put! dialog-chan 5)
       (close! dialog-chan))))
 
 (defn format-date [d]
