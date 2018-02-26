@@ -14,7 +14,7 @@
      (:label-text props)]
     [:input
      (update (select-keys props [:value :type :on-change :type :size :min :max
-                                 :max-length])
+                                 :max-length :on-key-press])
              :class str "oph-input")]
     (when-some [help-text (:help-text props)]
       [:div {:class "oph-field-text"} help-text])]))
