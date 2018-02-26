@@ -1,4 +1,4 @@
-(ns oph.va.admin-ui.va-code-values-core
+(ns oph.va.admin-ui.va-code-values.va-code-values-core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
    [cljs.core.async :refer [<! put! close!]]
@@ -28,11 +28,29 @@
           [ui/table-row {:key i}
            [ui/table-row-column (:year row)]
            [ui/table-row-column (:code row)]
-           [ui/table-row-column (:name row)]])
+           [ui/table-row-column (:code_value row)]])
         values))]])
 
+(defn create-catch-enter [f]
+  (fn [e]
+    (when (= (.-key e) "Enter")
+      (f))))
+
+(defn is-valid? [m]
+  (and (= (count m) 3)
+       (not-any? empty?
+                 (->> m
+                      vals
+                      (map str)))))
+
 (defn render-add-item [on-change]
-  (let [v (r/atom {})]
+  (let [v (r/atom {})
+        on-submit
+        (fn []
+          (when (is-valid? @v)
+            (do (on-change @v)
+                (reset! v {}))))
+        catch-enter (create-catch-enter on-submit)]
     (fn [on-change]
       [:div {:style {:max-width 1000}}
        [:div {:style {:display "inline"}}
@@ -41,32 +59,44 @@
           :value (or (:year @v) "")
           :type "number"
           :max-length 4
-          :on-change #(swap! v assoc :year (.-value (.-target %)))
-          :style (assoc theme/text-field :width 75)}]
+          :on-change
+          (fn [e]
+            (let [result (js/parseInt (.-value (.-target e)))]
+              (swap! v assoc :year
+                     (if (js/isNaN result)
+                       ""
+                       result))))
+          :style (assoc theme/text-field :width 75)
+          :on-key-press catch-enter}]
         [va-ui/text-field
          {:floating-label-text "Koodi"
           :value (or (:code @v) "")
           :on-change #(swap! v assoc :code (.-value (.-target %)))
-          :style (assoc theme/text-field :width 100)}]
+          :style (assoc theme/text-field :width 100)
+          :on-key-press catch-enter}]
         [va-ui/text-field
          {:floating-label-text "Nimi"
-          :value (or (:name @v) "")
-          :on-change #(swap! v assoc :name (.-value (.-target %)))
-          :style (assoc theme/text-field :width 350)}]]
+          :value (or (:code-value @v) "")
+          :on-change #(swap! v assoc :code-value (.-value (.-target %)))
+          :style (assoc theme/text-field :width 350)
+          :on-key-press catch-enter}]]
        [va-ui/raised-button
         {:label "Lisää"
          :primary true
-         :disabled (or (not= (count @v) 3)
-                       (some #(when (not (some? %)) true) @v))
-         :on-click
-         (fn [e]
-           (on-change @v)
-           (reset! v {}))}]])))
+         :disabled (not (is-valid? @v))
+         :on-click on-submit}]])))
 
 (defn render-tab [k]
   [:div
    [render-add-item
-    #(swap! code-values update k conj %)]
+    (fn [values]
+      (go
+        (let [result (<! (connection/create-va-code-value
+                           (assoc values :value-type k)))]
+          (if (:success result)
+            (swap! code-values update k conj (:body result))
+            (dialogs/show-error-message! "Virhe koodin lisäämisessä"
+                           (select-keys result [:status :error-text]))))))]
    (render-code-table (get @code-values k))])
 
 (defn home-page []
