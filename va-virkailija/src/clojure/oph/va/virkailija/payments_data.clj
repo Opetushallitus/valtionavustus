@@ -93,20 +93,19 @@
         payments (get-by-rn-and-date response-values)
         payment (first payments)]
     (cond (empty? payments)
-          (throw (Exception. (format "No payment found with values: %s"
-                                     response-values)))
+          (throw (ex-info "No payments found!" {:cause "no-payment" :error-message (format "No payment found with values: %s" response-values) }))
           (> (count payments) 1)
-          (throw (Exception. (format
-                               "Multiple payments found with the same register
-                                number and invoice date: %s" response-values)))
+          (throw (ex-info "Multiple payments found" {:cause "multiple-payments" :error-message (format
+                                                     "Multiple payments found with the same register
+                                                      number and invoice date: %s" response-values)}))
           (= (:state payment) 3)
-          (throw (Exception. (format "Payment (id %d) is already paid."
-                                     (:id payment))))
+          (throw (ex-info "Payment already paid" {:cause "already-paid" :error-message (format "Payment (id %d) is already paid."
+                                                                (:id payment))}))
           (not= (:state payment) 2)
-          (throw (Exception.
-                   (format "Payment (id %d) is not sent to Rondo or it's state
-                            (%d) is not valid. It should be 2 in this stage."
-                           (:id payment) (:state payment)))))
+          (throw (ex-info
+                   "State not valid" {:cause "state-not-valid" :error-message (format "Payment (id %d) is not sent to Rondo or it's state
+                                    (%d) is not valid. It should be 2 in this stage."
+                                   (:id payment) (:state payment))})))
     (update-payment (assoc payment :state 3)
                     {:person-oid "-" :first-name "Rondo" :surname ""})))
 

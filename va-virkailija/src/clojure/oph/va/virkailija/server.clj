@@ -17,7 +17,8 @@
             [oph.va.virkailija.authentication :as auth]
             [oph.va.virkailija.db.migrations :as dbmigrations]
             [oph.va.virkailija.email :as email]
-            [oph.va.virkailija.va-users :as va-users]))
+            [oph.va.virkailija.va-users :as va-users]
+            [oph.va.virkailija.rondo-scheduling :as rondo-scheduling]))
 
 (defn- startup [config]
   (log/info "Startup, with configuration: " config)
@@ -27,7 +28,8 @@
   (email/start-background-job-send-mails)
   (auth/start-background-job-timeout-sessions)
   (if (get-in config [:va-users :use-cache?])
-    (va-users/start-background-job-update-va-users-cache)))
+    (va-users/start-background-job-update-va-users-cache))
+  (rondo-scheduling/schedule-fetch-from-rondo))
 
 (defn- shutdown []
   (log/info "Shutting down...")
@@ -36,7 +38,8 @@
   (if (get-in config [:va-users :use-cache?])
     (va-users/stop-background-job-update-va-users-cache))
   (db/close-datasource! :virkailija-db)
-  (job-supervisor/await-jobs!))
+  (job-supervisor/await-jobs!)
+  (rondo-scheduling/stop-schedule-from-rondo))
 
 (defn- query-string-for-redirect-location [original-request]
   (if-let [original-query-string (:query-string original-request)]
