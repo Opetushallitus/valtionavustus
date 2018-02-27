@@ -115,13 +115,17 @@
 
 (defn create-item! [value-type values]
   (go
-    (let [result (<! (connection/create-va-code-value
-                       (assoc values :value-type (name value-type))))]
-      (if (:success result)
-        (swap! code-values conj (:body result))
-        (dialogs/show-error-message!
-          "Virhe koodin lisäämisessä"
-          (select-keys result [:status :error-text]))))))
+    (let [dialog-chan (dialogs/show-loading-dialog! "Lähetetään tietoja" 3)]
+      (put! dialog-chan 1)
+      (let [result (<! (connection/create-va-code-value
+                         (assoc values :value-type (name value-type))))]
+        (put! dialog-chan 2)
+        (if (:success result)
+          (swap! code-values conj (:body result))
+          (dialogs/show-error-message!
+            "Virhe koodin lisäämisessä"
+            (select-keys result [:status :error-text]))))
+      (close! dialog-chan))))
 
 (defn current-year []
   (.getFullYear (js/Date.)))
