@@ -1,7 +1,6 @@
-(ns oph.va.virkailija.lkp-template-spec
+(ns oph.va.virkailija.lkp-templates-spec
   (:require [speclj.core :refer [describe it should= should-throw]]
-            [oph.va.virkailija.lkp-templates
-             :refer [get-lkp-account]]))
+            [oph.va.virkailija.lkp-templates :refer [get-lkp-account]]))
 
 (def templates
   '({:key "some-unique-key"

@@ -7,10 +7,9 @@
             [clj-time.format :as clj-time-format]
             [dk.ative.docjure.spreadsheet :as spreadsheet]
             [oph.soresu.form.formutil :as formutil]
-            [oph.soresu.form.formhandler :as formhandler]
-            [oph.va.virkailija.hakudata :as hakudata])
-  (:import [java.io ByteArrayOutputStream ByteArrayInputStream] (org.joda.time DateTime))
-  )
+            [oph.soresu.form.formhandler :as formhandler])
+  (:import [java.io ByteArrayOutputStream]
+           [org.joda.time DateTime]))
 
 (def main-sheet-name "Hakemukset")
 (def main-sheet-columns ["Diaarinumero"
@@ -382,9 +381,8 @@
       )
     ))
 
-(defn export-avustushaku [avustushaku-id]
-  (let [avustushaku-combined (hakudata/get-combined-avustushaku-data avustushaku-id)
-        avustushaku (:avustushaku avustushaku-combined)
+(defn export-avustushaku [avustushaku-combined]
+  (let [avustushaku (:avustushaku avustushaku-combined)
         paatos-date (-> avustushaku :decision :date)
         hakemus-list (->> (avustushaku->hakemukset avustushaku-combined)
                           (sort-by first))
@@ -447,4 +445,4 @@
     (spreadsheet/set-row-style! maksu-header-row header-style)
 
     (.write wb output)
-    (ByteArrayInputStream. (.toByteArray output))))
+    (.toByteArray output)))

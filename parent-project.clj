@@ -97,7 +97,7 @@
                          [commons-codec "1.10"]
                          [commons-io "2.5"]
                          [de.ubercode.clostache/clostache "1.4.0"]
-                         [dk.ative/docjure "1.9.0"]
+                         [dk.ative/docjure "1.12.0"]
                          [instaparse "1.4.7"]
                          [org.apache.commons/commons-email "1.5"]
                          [org.clojure/core.async "0.3.443"]
@@ -107,7 +107,8 @@
                          [org.scala-lang.modules/scala-xml_2.11 "1.0.6"]
                          [org.scala-lang/scala-library "2.11.11"]
                          [org.clojure/data.xml "0.0.8"]
-                         [clj-ssh "0.5.14"]]
+                         [clj-ssh "0.5.14"]
+                         [clojurewerkz/quartzite "2.0.0"]]
 
   :pedantic? :abort
 

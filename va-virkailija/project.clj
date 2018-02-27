@@ -25,12 +25,14 @@
                  [org.http4s/http4s-blaze-client_2.11]
                  [org.clojure/data.json]
                  [org.clojure/data.xml]
-                 [clj-ssh]]
+                 [clj-ssh]
+                 [clojurewerkz/quartzite]]
 
   :profiles {:uberjar {:aot [oph.va.virkailija.main]}
              :dev     {:env {:config "config/dev.edn"
                              :configsecrets "../../valtionavustus-secret/config/secret-dev.edn"}}
-             :test    {:env {:config "config/test.edn"}}
+             :test    {:env {:config "config/test.edn"}
+                       :resource-paths ["test-resources"]}
              :prod    {:env {:config "config/va-prod.edn"}}}
 
   :main oph.va.virkailija.main

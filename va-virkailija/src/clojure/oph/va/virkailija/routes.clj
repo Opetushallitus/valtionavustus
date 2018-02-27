@@ -41,7 +41,8 @@
             [oph.va.virkailija.payment-batches-routes
              :as payment-batches-routes]
             [oph.va.virkailija.va-code-values-routes
-             :as va-code-values-routes]))
+             :as va-code-values-routes])
+  (:import [java.io ByteArrayInputStream]))
 
 (def opintopolku-login-url
   (when-not *compile-files*
@@ -242,7 +243,9 @@
   (compojure-api/GET "/:haku-id/export.xslx" []
     :path-params [haku-id :- Long]
     :summary "Export Excel XLSX document for given avustushaku"
-    (let [document (export/export-avustushaku haku-id)]
+    (let [document (-> (hakudata/get-combined-avustushaku-data haku-id)
+                       export/export-avustushaku
+                       (ByteArrayInputStream.))]
       (-> (ok document)
           (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
           (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"avustushaku-" haku-id ".xlsx\""))))))
