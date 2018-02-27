@@ -14,23 +14,25 @@
      (:label-text props)]
     [:input
      (update (select-keys props [:value :type :on-change :type :size :min :max
-                                 :max-length])
+                                 :max-length :on-key-press])
              :class str "oph-input")]
     (when-some [help-text (:help-text props)]
       [:div {:class "oph-field-text"} help-text])]))
 
-(defn select-field [props values]
+(defn select-field [props]
   [:div {:class "oph-field" :style (merge theme/select-field (:style props))}
    [:label {:class "oph-label"} (or (:label props)
                                     (:floating-label-text props))]
    [:div {:class "oph-select-container"}
     [:select {:class "oph-input oph-select"
-              :value (or (:value props) "")
-              :on-change #((:on-change props) (.-value (.-target %))) }
-     (for [value values]
-       [:option {:value (:value value)
-                 :key (:value value)}
-        (:primary-text value)])]]])
+              :value (or (:value props) (first (:values props)))
+              :on-change #((:on-change props) (.-value (.-target %)))}
+     (doall
+       (map
+         (fn [value] [:option {:value (:value value)
+                               :key (:value value)}
+                      (:primary-text value)])
+         (:values props)))]]])
 
 (defn date-picker [props]
   (let [label (or (:floating-label-text props) (:label props))]
@@ -72,22 +74,3 @@
    (:label p)])
 
 (def raised-button button)
-
-(defn tabs [children]
-  (let [selected (r/atom 0)]
-   (fn [children]
-    [:div {:class "oph-typography"}
-     [:div {:class "oph-tabs" :style theme/tabs-header}
-      (doall
-        (map-indexed
-          (fn [i c]
-            [:a {:key i
-                 :style theme/tab-header-link
-                 :on-click #(reset! selected i)
-                 :class
-                 (str "oph-tab-item"
-                      (when (= @selected i) " oph-tab-item-is-active"))}
-             (:label c)])
-          children))]
-     [:div
-      (get-in children [@selected :content])]])))

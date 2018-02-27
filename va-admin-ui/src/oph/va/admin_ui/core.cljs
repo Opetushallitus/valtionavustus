@@ -11,7 +11,7 @@
    [oph.va.admin-ui.router :as router]
    [oph.va.admin-ui.dialogs :as dialogs]
    [oph.va.admin-ui.payments.payments-core :as payments-core]
-   [oph.va.admin-ui.va-code-values-core :as code-values-core]
+   [oph.va.admin-ui.va-code-values.va-code-values-core :as code-values-core]
    [oph.va.admin-ui.user :as user]))
 
 (def top-links

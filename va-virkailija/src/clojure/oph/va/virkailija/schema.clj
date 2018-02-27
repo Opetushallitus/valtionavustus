@@ -351,3 +351,11 @@
 (s/defschema PaymentsCreateResult
   "Payment create result"
   {:success s/Bool})
+
+(s/defschema VACodeValue
+  "VA Code Value"
+  {(s/optional-key :id) s/Int
+   :value-type s/Str
+   :year s/Int
+   :code s/Str
+   :code-value s/Str})

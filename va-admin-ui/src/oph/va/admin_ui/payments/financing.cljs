@@ -45,9 +45,10 @@
    [va-ui/select-field
     {:floating-label-text "Maksuliikemenotili"
      :value (get values :transaction-account)
-     :on-change #(on-change :transaction-account %)}
-    (map (fn [acc] {:key acc :value acc :primary-text acc})
-         transaction-accounts)]
+     :on-change #(on-change :transaction-account %)
+     :values
+     (map (fn [acc] {:key acc :value acc :primary-text acc})
+          transaction-accounts)}]
    [va-ui/date-picker
     {:floating-label-text "Eräpäivä"
      :value (:due-date values)
@@ -59,9 +60,9 @@
    [va-ui/select-field
     {:floating-label-text "Tositelaji"
      :value (get values :document-type "XA")
-     :on-change #(on-change :document-type %)}
-    [{:value "XA" :primary-text "XA"}
-     {:value "XB" :primary-text "XB"}]]
+     :on-change #(on-change :document-type %)
+     :values [{:value "XA" :primary-text "XA"}
+              {:value "XB" :primary-text "XB"}]}]
    [va-ui/date-picker
     {:floating-label-text "Tositepäivämäärä"
      :style {:display "inline-block"}

@@ -93,13 +93,14 @@
   (http/post (format "/%s/payment-batches/%d/payments/" api-path id)
              {:with-credentials? true}))
 
-(defn get-va-code-values-by-type []
-  (let [c (chan)]
-    (go
-      (>! c {:success true
-               :body
-               {}}))
-    c))
+(defn get-va-code-values-by-type [value-type year]
+  (get-cached (format "/%s/va-code-values?value-type=%s&year=%d"
+                    api-path value-type year)))
+
+(defn create-va-code-value [values]
+  (http/post (format "/%s/va-code-values/" api-path)
+             {:with-credentials? true
+              :json-params values}))
 
 (defn set-config! [c] (reset! config c))
 
