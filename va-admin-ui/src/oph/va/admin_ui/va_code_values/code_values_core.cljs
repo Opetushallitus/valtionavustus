@@ -12,11 +12,15 @@
    [oph.va.admin-ui.connection :as connection]
    [oph.va.admin-ui.dialogs :as dialogs]))
 
-(defonce code-values (r/atom {}))
+(defonce code-values (r/atom []))
+
+(defonce code-filter (r/atom {}))
 
 (def value-types {:operational-unit "Toimintayksikkö"
                   :project "Projekti"
                   :operation "Toiminto"})
+
+(def years (mapv #(hash-map :primary-text % :value %) (range 2018 2038)))
 
 (defn render-code-table [values]
   [ui/table {:fixed-header true :selectable false :body-style theme/table-body}
@@ -90,33 +94,68 @@
          :disabled (not (is-valid? @v))
          :on-click on-submit}]])))
 
-(defn render-tab [k]
+(defn render-filter [values on-change]
   [:div
-   [(render-add-item
-      (fn [values]
-        (go
-          (let [result (<! (connection/create-va-code-value
-                             (assoc values :value-type (name k))))]
-            (if (:success result)
-              (swap! code-values update k conj (:body result))
-              (dialogs/show-error-message!
-                "Virhe koodin lisäämisessä"
-                (select-keys result [:status :error-text])))))))]
-   (render-code-table (get @code-values k))])
+   [va-ui/text-field {:value (or (:code values) "")
+                      :on-change #(on-change :code %)}]])
 
-(defn home-page []
-  [:div
-   [va-ui/tabs
-    (mapv (fn [[k v]] {:label v :content (render-tab k)}) value-types)]])
-
-(defn init! []
+(defn download-items! [value-type year]
   (go
     (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan koodeja" 3)]
       (put! dialog-chan 1)
-      (doseq [[k _] value-types]
-       (let [result
-             (<! (connection/get-va-code-values-by-type (name k)))]
-         (if (:success result)
-           (swap! code-values assoc k (:body result)))))
-       (put! dialog-chan 2)
+      (let [result
+            (<! (connection/get-va-code-values-by-type (name value-type) year))]
+        (if (:success result)
+          (reset! code-values (:body result))
+          (dialogs/show-error-message!
+            "Virhe koodien latauksessa"
+            (select-keys result [:status :error-text]))))
+      (put! dialog-chan 2)
       (close! dialog-chan))))
+
+(defn create-item! [value-type values]
+  (go
+    (let [result (<! (connection/create-va-code-value
+                       (assoc values :value-type (name value-type))))]
+      (if (:success result)
+        (swap! code-values conj (:body result))
+        (dialogs/show-error-message!
+          "Virhe koodin lisäämisessä"
+          (select-keys result [:status :error-text]))))))
+
+(defn current-year []
+  (.getFullYear (js/Date.)))
+
+(defn home-page []
+  [:div
+   [:div {:class "oph-typography"}
+    [:div {:class "oph-tabs" :style theme/tabs-header}
+     (doall
+       (map-indexed
+         (fn [i [k v]]
+           [:a {:key i
+                :style theme/tab-header-link
+                :on-click (fn [_]
+                            (reset! code-values [])
+                            (swap! code-filter assoc :value-type k
+                                   :year (current-year)))
+                :class
+                (str "oph-tab-item"
+                     (when (= (:value-type @code-filter) k) " oph-tab-item-is-active"))}
+            v])
+         value-types))]]
+   [:div
+    [(render-add-item #(create-item! (:value-type @code-filter) %))]
+    [:hr]
+    [:div
+     (va-ui/select-field
+       {:value (:year @code-filter)
+        :on-change #(swap! code-filter assoc :year (js/parseInt %))
+        :values years})]
+    (render-code-table @code-values)]])
+
+(defn init! []
+  (add-watch code-filter ""
+             #(download-items! (:value-type %4) (:year %4)))
+  (reset! code-filter {:value-type :operational-unit
+                       :year (current-year)}))
