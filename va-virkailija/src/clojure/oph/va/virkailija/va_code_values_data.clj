@@ -4,10 +4,11 @@
             [oph.va.virkailija.utils :refer
              [convert-to-dash-keys convert-to-underscore-keys]]))
 
-(defn get-va-code-values [value-type]
+(defn get-va-code-values [value-type year]
   (map
     convert-to-dash-keys
-    (exec :form-db queries/get-va-code-values {:value_type value-type})))
+    (exec :form-db queries/get-va-code-values {:value_type value-type
+                                               :year year})))
 
 (defn create-va-code-value [values]
   (->> values

@@ -3,4 +3,4 @@ SELECT
 FROM
   virkailija.va_code_values
 WHERE
-  value_type = :value_type AND deleted IS NULL
+  value_type = :value_type AND year = :year AND deleted IS NULL
