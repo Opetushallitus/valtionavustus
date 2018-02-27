@@ -93,8 +93,9 @@
   (http/post (format "/%s/payment-batches/%d/payments/" api-path id)
              {:with-credentials? true}))
 
-(defn get-va-code-values-by-type [value-type]
-  (http/get (format "/%s/va-code-values?value-type=%s" api-path value-type)))
+(defn get-va-code-values-by-type [value-type year]
+  (get-cached (format "/%s/va-code-values?value-type=%s&year=%d"
+                    api-path value-type year)))
 
 (defn create-va-code-value [values]
   (http/post (format "/%s/va-code-values/" api-path)
