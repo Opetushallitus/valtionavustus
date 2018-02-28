@@ -5,6 +5,7 @@ import DateUtil from 'soresu-form/web/DateUtil'
 import HakuStatus from "../avustushaku/HakuStatus.jsx"
 import HakuRoles from "./HakuRoles.jsx"
 import ChooseRahoitusalueet from "./ChooseRahoitusalueet.jsx"
+import AutoCompleteCodeValue from "./AutoCompleteCodeValue.jsx"
 
 export default class HakuEdit extends Component {
   render() {
@@ -66,6 +67,10 @@ export default class HakuEdit extends Component {
           </tbody>
         </table>
         <div className="editor-field-row">
+        <div className="editor-row-element">
+          <h3 className="required">Testaus</h3>
+            <AutoCompleteCodeValue codeType="operational-unit" id="operational-unit" />
+        </div>
           <div className="editor-row-element">
             <h3 className="required">Toimintayksikkö</h3>
             <input id="operational-unit" type="text"
