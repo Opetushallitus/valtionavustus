@@ -80,3 +80,6 @@
   "sql/virkailija/va_code_values/get-va-code-values.sql")
 (defquery create-va-code-value
   "sql/virkailija/va_code_values/create-va-code-value.sql")
+(defquery check-code-usage "sql/virkailija/va_code_values/check-code-usage.sql")
+(defquery delete-va-code-value
+  "sql/virkailija/va_code_values/delete-va-code-value.sql")
