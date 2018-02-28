@@ -39,7 +39,7 @@
            [ui/table-row-column (:code row)]
            [ui/table-row-column (:code-value row)]
            [ui/table-row-column
-            [ui/icon-button {:on-click #(prn row)}
+            [ui/icon-button {:on-click #()}
              [ic/action-delete {:color "gray"}]]]])
         values))]])
 
