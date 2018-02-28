@@ -22,13 +22,35 @@
 
 (def years (mapv #(hash-map :primary-text % :value %) (range 2018 2038)))
 
+(defn delete-code! [id]
+  (go
+    (let [dialog-chan (dialogs/show-loading-dialog! "Poistetaan koodia" 3)]
+      (put! dialog-chan 1)
+      (let [result
+            (<! (connection/delete-va-code-value id))]
+        (cond
+          (:success result)
+          (do
+            (reset! code-values (filter #(not= (:id %) id) @code-values))
+            (dialogs/show-message! "Koodi poistettu"))
+          (= (:status result) 405)
+          (dialogs/show-message!
+            "Koodi on käytössä joten sitä ei voi poistaa")
+          :else
+          (dialogs/show-error-message!
+            "Virhe koodin poistamisessa"
+            (select-keys result [:status :error-text]))))
+      (put! dialog-chan 2)
+      (close! dialog-chan))))
+
 (defn render-code-table [values]
   [ui/table {:fixed-header true :selectable false :body-style theme/table-body}
    [ui/table-header {:adjust-for-checkbox false :display-select-all false}
     [ui/table-row
      [ui/table-header-column "Vuosi"]
      [ui/table-header-column "Koodi"]
-     [ui/table-header-column "Nimi"]]]
+     [ui/table-header-column "Nimi"]
+     [ui/table-header-column "Toiminnot"]]]
    [ui/table-body {:display-row-checkbox false}
     (doall
       (map-indexed
@@ -36,7 +58,10 @@
           [ui/table-row {:key i}
            [ui/table-row-column (:year row)]
            [ui/table-row-column (:code row)]
-           [ui/table-row-column (:code-value row)]])
+           [ui/table-row-column (:code-value row)]
+           [ui/table-row-column
+            [ui/icon-button {:on-click #(delete-code! (:id row))}
+             [ic/action-delete {:color "gray"}]]]])
         values))]])
 
 (defn create-catch-enter [f]
