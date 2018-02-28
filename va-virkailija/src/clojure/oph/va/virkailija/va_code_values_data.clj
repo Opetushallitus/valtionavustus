@@ -16,3 +16,6 @@
       (exec :form-db queries/create-va-code-value)
       first
       convert-to-dash-keys))
+
+(defn delete-va-code-value! [id]
+  (exec :form-db queries/delete-va-code-value {:id id}))
