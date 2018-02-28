@@ -17,5 +17,10 @@
       first
       convert-to-dash-keys))
 
+(defn code-used? [id]
+  (-> (exec :form-db queries/check-code-usage {:id id})
+      first
+      :used))
+
 (defn delete-va-code-value! [id]
   (exec :form-db queries/delete-va-code-value {:id id}))
