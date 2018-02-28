@@ -22,7 +22,7 @@
 
 (def years (mapv #(hash-map :primary-text % :value %) (range 2018 2038)))
 
-(defn remove-code! [id]
+(defn delete-code! [id]
   (go
     (let [dialog-chan (dialogs/show-loading-dialog! "Poistetaan koodia" 3)]
       (put! dialog-chan 1)
@@ -60,7 +60,7 @@
            [ui/table-row-column (:code row)]
            [ui/table-row-column (:code-value row)]
            [ui/table-row-column
-            [ui/icon-button {:on-click #(remove-code! (:id row))}
+            [ui/icon-button {:on-click #(delete-code! (:id row))}
              [ic/action-delete {:color "gray"}]]]])
         values))]])
 
