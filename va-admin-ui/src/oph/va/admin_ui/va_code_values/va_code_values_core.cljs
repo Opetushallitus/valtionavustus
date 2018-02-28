@@ -28,7 +28,8 @@
     [ui/table-row
      [ui/table-header-column "Vuosi"]
      [ui/table-header-column "Koodi"]
-     [ui/table-header-column "Nimi"]]]
+     [ui/table-header-column "Nimi"]
+     [ui/table-header-column "Toiminnot"]]]
    [ui/table-body {:display-row-checkbox false}
     (doall
       (map-indexed
@@ -36,7 +37,10 @@
           [ui/table-row {:key i}
            [ui/table-row-column (:year row)]
            [ui/table-row-column (:code row)]
-           [ui/table-row-column (:code-value row)]])
+           [ui/table-row-column (:code-value row)]
+           [ui/table-row-column
+            [ui/icon-button {:on-click #(prn row)}
+             [ic/action-delete {:color "gray"}]]]])
         values))]])
 
 (defn create-catch-enter [f]
