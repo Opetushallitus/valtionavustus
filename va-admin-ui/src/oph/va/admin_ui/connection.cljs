@@ -102,6 +102,10 @@
              {:with-credentials? true
               :json-params values}))
 
+(defn delete-va-code-value [id]
+  (http/delete (format "/%s/va-code-values/%d/" api-path id)
+               {:with-credentials? true}))
+
 (defn set-config! [c] (reset! config c))
 
 (defn delete-payments? [] (get-in @config [:payments :delete-payments?]))
