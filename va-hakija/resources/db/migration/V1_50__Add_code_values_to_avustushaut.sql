@@ -1,8 +1,8 @@
 ALTER TABLE
   hakija.avustushaut
 ADD COLUMN
-  operational_unit INTEGER,
+  operational_unit_id INTEGER,
 ADD COLUMN
-  project INTEGER,
+  project_id INTEGER,
 ADD COLUMN
-  operation INTEGER;
+  operation_id INTEGER;
