@@ -24,16 +24,6 @@
     [cljs-time.format :as tf]
     [cljs-time.coerce :as tc]))
 
-(defonce grants (r/atom []))
-
-(defonce applications (atom []))
-
-(defonce payments (atom []))
-
-(defonce current-applications (r/atom []))
-
-(defonce selected-grant (r/atom nil))
-
 (def default-batch-values
   {:currency "EUR"
    :partner ""
@@ -44,9 +34,6 @@
    :receipt-date (js/Date.)
    :document-id "ID"})
 
-(defonce batch-values
-  (r/atom {}))
-
 (defn redirect-to-login! []
   (router/redirect-to! connection/login-url-with-service))
 
@@ -54,7 +41,7 @@
   (let [grant-id (js/parseInt (router/get-current-param :grant))]
     (when-not (js/isNaN grant-id) grant-id)))
 
-(defn render-admin-tools []
+(defn render-admin-tools [payments selected-grant]
   [:div
    [:hr]
    [ui/grid-list {:cols 6 :cell-height "auto"}
@@ -63,7 +50,7 @@
       :label "Poista maksatukset"
       :style theme/button
       :on-click (fn []
-                  (go (let [grant-id (:id @selected-grant)
+                  (go (let [grant-id (:id selected-grant)
                             response (<! (connection/delete-grant-payments
                                            grant-id))]
                         (if (:success response)
@@ -94,7 +81,7 @@
      :on-toggle #(on-change :filter-old %2)
      :style {:width "200px"}}]])
 
-(defn send-payments! [applications-to-send values]
+(defn send-payments! [applications-to-send values selected-grant payments]
   (go
     (let [dialog-chan
           (dialogs/show-loading-dialog!
@@ -106,7 +93,7 @@
           (let [email-result
                 (<!
                   (connection/send-payments-email
-                    (:id @selected-grant)
+                    (:id selected-grant)
                     (select-keys values [:acceptor-email
                                          :inspector-email
                                          :organisation
@@ -123,7 +110,7 @@
             "Maksatuksen lähetyksessä ongelma"
             (select-keys result [:status :error-text])))
         (let [grant-result (<! (connection/get-grant-payments
-                                 (:id @selected-grant)))]
+                                 (:id selected-grant)))]
           (put! dialog-chan 4)
           (if (:success grant-result)
             (reset! payments (:body grant-result))
@@ -165,7 +152,9 @@
     (some #(when-not (and (some? (get % :lkp-account))
                           (some? (get % :takp-account))) %) a)))
 
-(defn home-page [{:keys [user-info delete-payments?]}]
+(defn home-page [{:keys [selected-grant batch-values applications
+                     current-applications payments grants]}
+                 {:keys [user-info delete-payments?]}]
   [:div
    [(let [grant-filter (r/atom {:filter-str "" :filter-old true}) ]
       (fn []
@@ -266,14 +255,16 @@
                         (if (= (:document-type batch) "XB")
                           "6604"
                           "6600")
-                        :batch-id (:id batch)))
+                        :batch-id (:id batch))
+                      @selected-grant payments)
                     (dialogs/show-error-message!
                       "Virhe maksuerän luonnissa"
                       batch-result)))))}]])])]
    (when (and delete-payments? (user/is-admin? user-info))
-     (render-admin-tools))])
+     (render-admin-tools payments @selected-grant))])
 
-(defn init! []
+(defn init! [{:keys [selected-grant batch-values applications
+                     current-applications payments grants]}]
   (add-watch
     selected-grant
     "s"
