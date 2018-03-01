@@ -26,17 +26,15 @@
     {:floating-label-text "Tarkastajan sähköpostiosoite"
      :value (get values :inspector-email "")
      :type "email"
-     :underline-style (when (and (not-empty? (:inspector-email values))
-                                 (not (valid-email? (:inspector-email values))))
-                        theme/text-field-error)
+     :error (and (not-empty? (:inspector-email values))
+                 (not (valid-email? (:inspector-email values))))
      :on-change #(on-change :inspector-email (.-value (.-target %)))}]
    [va-ui/text-field
     {:floating-label-text "Hyväksyjän sähköpostiosoite"
      :value (get values :acceptor-email "")
      :type "email"
-     :underline-style (when (and (not-empty? (:acceptor-email values))
-                                 (not (valid-email? (:acceptor-email values))))
-                        theme/text-field-error)
+     :error (and (not-empty? (:acceptor-email values))
+                 (not (valid-email? (:acceptor-email values))))
      :on-change #(on-change :acceptor-email (.-value (.-target %)))}]])
 
 (defn payment-fields

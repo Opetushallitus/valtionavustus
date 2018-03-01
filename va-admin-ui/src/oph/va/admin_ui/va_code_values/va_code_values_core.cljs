@@ -12,17 +12,13 @@
    [oph.va.admin-ui.connection :as connection]
    [oph.va.admin-ui.dialogs :as dialogs]))
 
-(defonce code-values (r/atom []))
-
-(defonce code-filter (r/atom {}))
-
 (def value-types {:operational-unit "Toimintayksikkö"
                   :project "Projekti"
                   :operation "Toiminto"})
 
 (def years (mapv #(hash-map :primary-text % :value %) (range 2018 2038)))
 
-(defn delete-code! [id]
+(defn delete-code! [id code-values]
   (go
     (let [dialog-chan (dialogs/show-loading-dialog! "Poistetaan koodia" 3)]
       (put! dialog-chan 1)
@@ -43,7 +39,7 @@
       (put! dialog-chan 2)
       (close! dialog-chan))))
 
-(defn render-code-table [values]
+(defn render-code-table [values on-delete]
   [ui/table {:fixed-header true :selectable false :body-style theme/table-body}
    [ui/table-header {:adjust-for-checkbox false :display-select-all false}
     [ui/table-row
@@ -60,7 +56,7 @@
            [ui/table-row-column (:code row)]
            [ui/table-row-column (:code-value row)]
            [ui/table-row-column
-            [ui/icon-button {:on-click #(delete-code! (:id row))}
+            [ui/icon-button {:on-click #(on-delete (:id row))}
              [ic/action-delete {:color "gray"}]]]])
         values))]])
 
@@ -124,7 +120,7 @@
    [va-ui/text-field {:value (or (:code values) "")
                       :on-change #(on-change :code %)}]])
 
-(defn download-items! [value-type year]
+(defn download-items! [value-type year code-values]
   (go
     (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan koodeja" 3)]
       (put! dialog-chan 1)
@@ -138,7 +134,7 @@
       (put! dialog-chan 2)
       (close! dialog-chan))))
 
-(defn create-item! [value-type values]
+(defn create-item! [value-type values code-values]
   (go
     (let [dialog-chan (dialogs/show-loading-dialog! "Lähetetään tietoja" 3)]
       (put! dialog-chan 1)
@@ -155,7 +151,7 @@
 (defn current-year []
   (.getFullYear (js/Date.)))
 
-(defn home-page []
+(defn home-page [{:keys [code-values code-filter]}]
   [:div
    [:div {:class "oph-typography"}
     [:div {:class "oph-tabs" :style theme/tabs-header}
@@ -174,17 +170,17 @@
             v])
          value-types))]]
    [:div
-    [(render-add-item #(create-item! (:value-type @code-filter) %))]
+    [(render-add-item #(create-item! (:value-type @code-filter) % code-values))]
     [:hr]
     [:div
      (va-ui/select-field
        {:value (:year @code-filter)
         :on-change #(swap! code-filter assoc :year (js/parseInt %))
         :values years})]
-    (render-code-table @code-values)]])
+    (render-code-table @code-values #(delete-code! % code-values))]])
 
-(defn init! []
+(defn init! [{:keys [code-values code-filter]}]
   (add-watch code-filter ""
-             #(download-items! (:value-type %4) (:year %4)))
+             #(download-items! (:value-type %4) (:year %4) code-values))
   (reset! code-filter {:value-type :operational-unit
                        :year (current-year)}))

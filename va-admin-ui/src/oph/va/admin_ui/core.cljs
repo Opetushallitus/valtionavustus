@@ -14,6 +14,16 @@
    [oph.va.admin-ui.va-code-values.va-code-values-core :as code-values-core]
    [oph.va.admin-ui.user :as user]))
 
+(defonce payments-state {:grants (r/atom [])
+                         :applications (r/atom [])
+                         :payments (r/atom [])
+                         :current-applications (r/atom [])
+                         :selected-grant (r/atom nil)
+                         :batch-values (r/atom {})})
+
+(defonce code-values-state {:code-values (r/atom [])
+                            :code-filter (r/atom {})})
+
 (def top-links
   {"/avustushaku" "Hakemusten arviointi"
    "/admin/" "Hakujen hallinta"
@@ -47,8 +57,9 @@
       (render-top-links (router/get-current-path))
       [:hr theme/hr-top]]
      (case (router/get-current-path)
-       "/admin-ui/payments/" (payments-core/home-page data)
-       "/admin-ui/va-code-values/" (code-values-core/home-page)
+       "/admin-ui/payments/" (payments-core/home-page payments-state data)
+       "/admin-ui/va-code-values/"
+       (code-values-core/home-page code-values-state)
        (do
          (router/redirect-to! "/admin-ui/payments/")
          "Redirecting..."))
@@ -78,6 +89,6 @@
       (put! dialog-chan 3)
       (close! dialog-chan)))
   (case (router/get-current-path)
-   "/admin-ui/payments/" (payments-core/init!)
-   "/admin-ui/va-code-values/" (code-values-core/init!)
+   "/admin-ui/payments/" (payments-core/init! payments-state)
+   "/admin-ui/va-code-values/" (code-values-core/init! code-values-state)
    ""))
