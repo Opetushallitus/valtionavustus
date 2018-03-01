@@ -13,9 +13,11 @@
     [:span {:class "oph-label" :aria-describedby "field-text"}
      (:label-text props)]
     [:input
-     (update (select-keys props [:value :type :on-change :type :size :min :max
-                                 :max-length :on-key-press])
-             :class str "oph-input")]
+     (-> props
+         (select-keys [:value :type :on-change :type :size :min :max
+                             :max-length :on-key-press])
+         (update :class str "oph-input")
+         (assoc :style (if (:error props) {:border-color "#f44336"} {})))]
     (when-some [help-text (:help-text props)]
       [:div {:class "oph-field-text"} help-text])]))
 
