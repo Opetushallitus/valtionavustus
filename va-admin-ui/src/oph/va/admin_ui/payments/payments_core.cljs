@@ -167,7 +167,7 @@
     :batch-id (:id batch)))
 
 (defn home-page [{:keys [selected-grant batch-values applications
-                     current-applications payments grants]}
+                         current-applications payments grants]}
                  {:keys [user-info delete-payments?]}]
   [:div
    [(let [grant-filter (r/atom {:filter-str "" :filter-old true}) ]
