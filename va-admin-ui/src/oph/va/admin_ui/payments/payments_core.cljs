@@ -152,6 +152,20 @@
     (some #(when-not (and (some? (get % :lkp-account))
                           (some? (get % :takp-account))) %) a)))
 
+(defn get-batch-values [batch]
+  (assoc
+    (select-keys batch
+                 [:acceptor-email
+                  :inspector-email
+                  :batch-number
+                  :receipt-date])
+    :state 0
+    :organisation
+    (if (= (:document-type batch) "XB")
+      "6604"
+      "6600")
+    :batch-id (:id batch)))
+
 (defn home-page [{:keys [selected-grant batch-values applications
                      current-applications payments grants]}
                  {:keys [user-info delete-payments?]}]
@@ -244,18 +258,7 @@
                     (send-payments!
                       (filterv #(< (get-in % [:payment :state]) 2)
                                @current-applications)
-                      (assoc
-                        (select-keys batch
-                                     [:acceptor-email
-                                      :inspector-email
-                                      :batch-number
-                                      :receipt-date])
-                        :state 0
-                        :organisation
-                        (if (= (:document-type batch) "XB")
-                          "6604"
-                          "6600")
-                        :batch-id (:id batch))
+                      (get-batch-values batch)
                       @selected-grant payments)
                     (dialogs/show-error-message!
                       "Virhe maksuerän luonnissa"
