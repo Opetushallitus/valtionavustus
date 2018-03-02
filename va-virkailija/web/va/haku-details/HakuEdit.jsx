@@ -6,6 +6,7 @@ import HakuStatus from "../avustushaku/HakuStatus.jsx"
 import HakuRoles from "./HakuRoles.jsx"
 import ChooseRahoitusalueet from "./ChooseRahoitusalueet.jsx"
 import AutoCompleteCodeValue from "./AutoCompleteCodeValue.jsx"
+import Select from 'react-select';
 
 export default class HakuEdit extends Component {
   render() {
@@ -68,30 +69,17 @@ export default class HakuEdit extends Component {
         </table>
         <div className="editor-field-row">
         <div className="editor-row-element">
-          <h3 className="required">Testaus</h3>
-            <AutoCompleteCodeValue codeType="operational-unit" id="operational-unit" />
+          <h3 className="required">Toimintayksikkö (uusi)</h3>
+            <AutoCompleteCodeValue codeType="operational" id="operational-unit" controller={controller} avustushaku={avustushaku} onChange={onChange}/>
         </div>
-          <div className="editor-row-element">
-            <h3 className="required">Toimintayksikkö</h3>
-            <input id="operational-unit" type="text"
-              disabled={!allowAllHakuEdits} onChange={onChange}
-              required="true"
-              value={avustushaku.content["operational-unit"]} />
-          </div>
-          <div className="editor-row-element">
-            <h3 className="required">Projekti</h3>
-            <input id="project" type="text"
-              disabled={!allowAllHakuEdits} onChange={onChange}
-              required="true"
-              value={avustushaku.content["project"]} />
-          </div>
-          <div className="editor-row-element">
-            <h3 className="required">Toiminto</h3>
-            <input id="operation" type="text"
-              disabled={!allowAllHakuEdits} onChange={onChange}
-              required="true"
-              value={avustushaku.content["operation"]} />
-          </div>
+        <div className="editor-row-element">
+          <h3 className="required">Projekti (uusi)</h3>
+            <AutoCompleteCodeValue codeType="project" id="project" controller={controller} avustushaku={avustushaku} onChange={onChange}/>
+        </div>
+        <div className="editor-row-element">
+          <h3 className="required">Toiminto (uusi)</h3>
+            <AutoCompleteCodeValue codeType="operation" id="operation" controller={controller} avustushaku={avustushaku} onChange={onChange}/>
+        </div>
         </div>
         <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} />
         <div className="haku-duration-and-self-financing">
