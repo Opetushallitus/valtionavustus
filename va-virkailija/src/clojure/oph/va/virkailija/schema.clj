@@ -160,7 +160,10 @@
    :attachments s/Any
    :budget-total-sum s/Int
    :budget-oph-share-sum s/Int
-   :budget-granted-sum s/Int})
+   :budget-granted-sum s/Int
+   :operation_id (s/maybe s/Int)
+   :operational_unit_id (s/maybe s/Int)
+   :project (s/maybe s/Int)})
 
 (s/defschema PaatosData
   "Decision response with related avustushaku, form, roles, hakemus"
