@@ -23,7 +23,7 @@
 
 (def hr-top {:color "#4c7f00"})
 
-(def notice {:padding "10px"})
+(def notice {:margin 10})
 
 (def text-field {:margin 5 :display "inline-block"})
 
