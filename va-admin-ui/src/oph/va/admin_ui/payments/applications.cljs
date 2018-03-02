@@ -28,12 +28,14 @@
       :href (format "/avustushaku/%d/hakemus/%d/arviointi/"
                     (:grant-id application)
                     (:id application))} (:project-name application)]]
-   [ui/table-row-column (get application :budget-granted)]
+   [ui/table-row-column
+    (.toLocaleString (get application :budget-granted)) " €"]
    [ui/table-row-column (get-answer-value (:answers application) "bank-iban")]
    [ui/table-row-column (get application :register-number)]
    [ui/table-row-column (get application :lkp-account)]
    [ui/table-row-column (get application :takp-account)]
-   [ui/table-row-column (get application :budget-granted)]
+   [ui/table-row-column
+    (.toLocaleString (get application :budget-granted)) " €"]
    [ui/table-row-column
     (when is-admin?
       [ui/icon-button {:on-click #(on-info-clicked (:id application))}
