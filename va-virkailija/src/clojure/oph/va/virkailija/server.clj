@@ -27,7 +27,7 @@
                         "oph.va.virkailija.db.migrations")
   (email/start-background-job-send-mails)
   (auth/start-background-job-timeout-sessions)
-  (if (get-in config [:va-users :use-cache?])
+  (when (get-in config [:va-users :use-cache?])
     (va-users/start-background-job-update-va-users-cache))
   (when (get-in config [:rondo-scheduler :enabled?])
     (rondo-scheduling/schedule-fetch-from-rondo)))
