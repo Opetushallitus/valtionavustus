@@ -29,7 +29,8 @@
   (auth/start-background-job-timeout-sessions)
   (if (get-in config [:va-users :use-cache?])
     (va-users/start-background-job-update-va-users-cache))
-  (rondo-scheduling/schedule-fetch-from-rondo))
+  (when (get-in config [:rondo-scheduler :enabled?])
+    (rondo-scheduling/schedule-fetch-from-rondo)))
 
 (defn- shutdown []
   (log/info "Shutting down...")
