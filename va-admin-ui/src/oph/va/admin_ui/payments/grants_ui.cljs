@@ -11,7 +11,7 @@
 
 (defn grant-row
   [grant selected]
-  [ui/table-row {:key (:id grant) :selected selected}
+  [ui/table-row {:key (:id grant) :selected selected :style {:cursor "default"}}
    [ui/table-row-column (get grant :register-number)]
    [ui/table-row-column (get-in grant [:content :name :fi])]
    [ui/table-row-column
