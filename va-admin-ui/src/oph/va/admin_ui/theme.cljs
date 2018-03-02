@@ -36,3 +36,5 @@
 (def tab-header-link {:text-decoration "none"})
 
 (def button (merge text-field {:margin 12}))
+
+(def striped-row {:background-color "#f6f4f0"})

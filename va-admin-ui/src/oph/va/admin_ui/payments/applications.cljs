@@ -19,7 +19,7 @@
     "Odottaa maksatusta"))
 
 (defn render-application [i application on-info-clicked is-admin?]
-  [ui/table-row {:key i}
+  [ui/table-row {:key i :style (when (odd? i) theme/striped-row)}
    [ui/table-row-column (state-to-str (get-in application [:payment :state]))]
    [ui/table-row-column (:organization-name application)]
    [ui/table-row-column
