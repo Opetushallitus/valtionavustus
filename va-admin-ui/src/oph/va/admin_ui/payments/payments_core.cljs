@@ -145,7 +145,7 @@
       (update :invoice-date parse-date)))
 
 (defn notice [message]
-  [:div {:style theme/notice} message])
+  [ui/card {:style theme/notice} [ui/card-text message]])
 
 (defn any-account-nil? [a]
   (some?
