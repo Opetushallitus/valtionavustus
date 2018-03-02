@@ -6,12 +6,10 @@
             [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.payments.utils :refer [format]]))
 
-(defn get-answer-value
-  [answers key]
+(defn get-answer-value [answers key]
   (:value (first (filter #(= (:key %) key) answers))))
 
-(defn state-to-str
-  [state]
+(defn state-to-str [state]
   (case state
     0 "Luotu"
     1 "Hyväksytty"
@@ -20,8 +18,7 @@
     4 "Epäonnistunut"
     "Odottaa maksatusta"))
 
-(defn render-application
-  [i application on-info-clicked is-admin?]
+(defn render-application [i application on-info-clicked is-admin?]
   [ui/table-row {:key i}
    [ui/table-row-column (state-to-str (get-in application [:payment :state]))]
    [ui/table-row-column (:organization-name application)]
@@ -42,8 +39,7 @@
       [ui/icon-button {:on-click #(on-info-clicked (:id application))}
        [ic/action-info-outline]])]])
 
-(defn applications-table
-  [{:keys [applications on-info-clicked is-admin?]}]
+(defn applications-table [{:keys [applications on-info-clicked is-admin?]}]
   [:div
    [ui/table {:fixed-header true :selectable false :body-style theme/table-body}
     [ui/table-header {:adjust-for-checkbox false :display-select-all false}
