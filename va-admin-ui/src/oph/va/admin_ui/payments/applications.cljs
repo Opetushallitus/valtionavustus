@@ -31,7 +31,7 @@
    [ui/table-row-column
     (.toLocaleString (get application :budget-granted)) " €"]
    [ui/table-row-column (get-answer-value (:answers application) "bank-iban")]
-   [ui/table-row-column (get application :register-number)]
+   [ui/table-row-column {:style {:text-align "right"}} (get application :register-number)]
    [ui/table-row-column (get application :lkp-account)]
    [ui/table-row-column (get application :takp-account)]
    [ui/table-row-column
@@ -50,7 +50,8 @@
       [ui/table-header-column "Toimittajan nimi"]
       [ui/table-header-column "Hanke"]
       [ui/table-header-column "Myönnetty summa"] [ui/table-header-column "IBAN"]
-      [ui/table-header-column "Pitkäviite"] [ui/table-header-column "LKP-tili"]
+      [ui/table-header-column {:style {:text-align "right"}} "Pitkäviite"]
+      [ui/table-header-column "LKP-tili"]
       [ui/table-header-column "TaKp-tili"]
       [ui/table-header-column "Tiliöintisumma"]
       (when is-admin? [ui/table-header-column "Lisätietoja"])]]
