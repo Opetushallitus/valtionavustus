@@ -22,6 +22,12 @@ export default class AutocompleteCodeValue extends Component {
     this.getOptions = this.getOptions.bind(this)
   }
 
+  componentDidMount() {
+      this.setState({
+        options: this.getOptions()
+      })
+    }
+
 getOptions() {
   HttpUtil.get(`/api/v2/va-code-values/?value-type=${this.state.codeType}&year=2018`)
     .then(response => {
@@ -37,12 +43,10 @@ updateValue (newValue) {
   this.props.controller.onChangeListener(this.props.avustushaku, {
     id: this.state.id
   }, newValue);
-
 }
 
 
   render() {
-    const uusiarvo = this.getOptions();
     return (
       <VirtualizedSelect ref="codeValueSelect"
           id="codeValue"
