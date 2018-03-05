@@ -56,7 +56,11 @@
            [ui/table-row-column (:code row)]
            [ui/table-row-column (:code-value row)]
            [ui/table-row-column
-            [ui/icon-button {:on-click #(on-delete (:id row))}
+            [ui/icon-button
+             {:on-click
+              (fn [_]
+                (when (js/confirm "Oletko varma, että halut poistaa koodin?")
+                  (on-delete (:id row))))}
              [ic/action-delete {:color "gray"}]]]])
         values))]])
 
