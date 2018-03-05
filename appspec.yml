@@ -5,6 +5,8 @@ files:
     destination: /home/ec2-user/va-virkailija/
   - source: va-hakija/target/uberjar/hakija-0.1.0-SNAPSHOT-standalone.jar
     destination: /home/ec2-user/va-hakija/
+  - source: ci/dev-recreate-containers.sh
+    destination: /home/ec2-user/ci/dev-recreate-containers.sh
 hooks:
   ApplicationStart:
     - location: ci/dev-recreate-containers.sh
