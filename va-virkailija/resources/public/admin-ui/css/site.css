@@ -51,3 +51,7 @@ hr {
 .logout-button {
   float: right;
 }
+
+.oph-select-container:before {
+  pointer-events: none;
+}

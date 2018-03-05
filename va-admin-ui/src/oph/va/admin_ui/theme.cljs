@@ -19,8 +19,6 @@
 
 (def active-link (assoc link :color "#2a2a2a"))
 
-(def text-field-error {:border-color "#f44336"})
-
 (def table-body {:max-height "250px"})
 
 (def hr-top {:color "#4c7f00"})

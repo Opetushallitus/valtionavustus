@@ -1,27 +1,32 @@
 import React, { Component } from 'react'
 import Select from 'react-select';
+import { Async } from 'react-select';
 import BasicTextField from 'soresu-form/web/form/component/BasicTextField.jsx'
 import VirtualizedSelect from 'react-virtualized-select';
+import HttpUtil from 'soresu-form/web/HttpUtil'
 
 export default class AutocompleteCodeValue extends Component {
   constructor(props) {
     super(props)
-    // this.handleChange = this.handleChange.bind(this)
     this.state = {
       selectValue: "",
-      selectedOption: "",
       avustushaku: this.props.avustushaku,
-      operationalUnit: this.props.avustushaku.content["operational-unit"],
-      project: this.props.avustushaku.content["project"],
-      operation: this.props.avustushaku.content["operation"],
       controller: this.props.controller,
       codeType: this.props.codeType,
-      id: this.props.id
+      id: this.props.id,
+      codeValues: {data: ""},
+      options: ""
     }
     this.setState = this.setState.bind(this)
     this.updateValue = this.updateValue.bind(this)
-    // this.onChangeListener = this.onChangeListener.bind(this)
+    this.getOptions = this.getOptions.bind(this)
+  }
 
+getOptions() {
+  HttpUtil.get(`/api/v2/va-code-values/?value-type=${this.state.codeType}&year=2018`)
+    .then(response => {
+      this.setState({options: response  })}
+    )
   }
 
 updateValue (newValue) {
@@ -37,27 +42,21 @@ updateValue (newValue) {
 
 
   render() {
-
-  var codeValues = { operational: [{ name: '1144'},
-    { name: '2223'}], project: [{ name: '9999'},
-     { name: '8888'}], operation: [{ name: '5555'},
-      { name: '4444'}]}
-
-  const codeType = this.state.codeType
-
+    const uusiarvo = this.getOptions();
     return (
       <VirtualizedSelect ref="codeValueSelect"
           id="codeValue"
-          options={codeValues[codeType]}
 					simpleValue
 					clearable
+          options={this.state.options}
 					value={this.state.selectValue}
 					onChange={this.updateValue}
 					searchable
-					labelKey="name"
-					valueKey="name"
+					labelKey="code-value"
+					valueKey="code"
           placeholder="Valitse listasta"
           style={{ width: '97%' }}
+          backspaceRemoves={true}
 				/>
 
     );

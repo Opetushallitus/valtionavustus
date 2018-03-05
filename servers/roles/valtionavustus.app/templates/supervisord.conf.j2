@@ -125,8 +125,8 @@ stdout_logfile={{ logs_dir }}/valtionavustus/%(program_name)s_run.log       ; st
 [program:va-virkailija]
 command=/usr/bin/java
   -jar
-  -Xms500m
-  -Xmx500m
+  -Xms786m
+  -Xmx786m
   -XX:+HeapDumpOnOutOfMemoryError
   -XX:HeapDumpPath={{ data_dir }}/www/dumps
   -Dcom.sun.management.jmxremote

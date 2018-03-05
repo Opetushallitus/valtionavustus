@@ -160,7 +160,10 @@
    :attachments s/Any
    :budget-total-sum s/Int
    :budget-oph-share-sum s/Int
-   :budget-granted-sum s/Int})
+   :budget-granted-sum s/Int
+   (s/optional-key :operation_id) (s/maybe s/Int)
+   (s/optional-key :operational_unit_id) (s/maybe s/Int)
+   (s/optional-key :project) (s/maybe s/Int)})
 
 (s/defschema PaatosData
   "Decision response with related avustushaku, form, roles, hakemus"
@@ -351,3 +354,11 @@
 (s/defschema PaymentsCreateResult
   "Payment create result"
   {:success s/Bool})
+
+(s/defschema VACodeValue
+  "VA Code Value"
+  {(s/optional-key :id) s/Int
+   :value-type s/Str
+   :year s/Int
+   :code s/Str
+   :code-value s/Str})
