@@ -14,7 +14,6 @@ export default class AutocompleteCodeValue extends Component {
       controller: this.props.controller,
       codeType: this.props.codeType,
       id: this.props.id,
-      codeValues: {data: ""},
       options: ""
     }
     this.setState = this.setState.bind(this)
