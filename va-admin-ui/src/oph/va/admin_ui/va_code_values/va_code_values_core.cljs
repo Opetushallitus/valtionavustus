@@ -155,6 +155,16 @@
 (defn current-year []
   (.getFullYear (js/Date.)))
 
+(defn lower-str-contains? [s substr]
+  (-> s
+      .toLowerCase
+      (.indexOf substr)
+      (not= -1)))
+
+(defn code-value-matches? [s v]
+  (or (lower-str-contains? (:code v) s)
+      (lower-str-contains? (:code-value v) s)))
+
 (defn home-page [{:keys [code-values code-filter]}]
   [:div
    [:div {:class "oph-typography"}
@@ -176,12 +186,22 @@
    [:div
     [(render-add-item #(create-item! (:value-type @code-filter) % code-values))]
     [:hr]
-    [:div
-     (va-ui/select-field
-       {:value (:year @code-filter)
-        :on-change #(swap! code-filter assoc :year (js/parseInt %))
-        :values years})]
-    (render-code-table @code-values #(delete-code! % code-values))]])
+    [(let [filter-str (r/atom "")]
+       (fn []
+         [:div
+          [:div
+           (va-ui/select-field
+             {:value (:year @code-filter)
+              :on-change #(swap! code-filter assoc :year (js/parseInt %))
+              :values years})
+           (va-ui/text-field
+             {:value @filter-str
+              :on-change #(reset! filter-str (.-value (.-target %)))})]
+          (render-code-table
+            (if (empty? @filter-str)
+              @code-values
+              (filter #(code-value-matches? @filter-str %) @code-values))
+            #(delete-code! % code-values))]))]]])
 
 (defn init! [{:keys [code-values code-filter]}]
   (add-watch code-filter ""
