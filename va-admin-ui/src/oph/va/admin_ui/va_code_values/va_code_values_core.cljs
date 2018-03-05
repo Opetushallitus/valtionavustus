@@ -56,7 +56,11 @@
            [ui/table-row-column (:code row)]
            [ui/table-row-column (:code-value row)]
            [ui/table-row-column
-            [ui/icon-button {:on-click #(on-delete (:id row))}
+            [ui/icon-button
+             {:on-click
+              (fn [_]
+                (when (js/confirm "Oletko varma, että halut poistaa koodin?")
+                  (on-delete (:id row))))}
              [ic/action-delete {:color "gray"}]]]])
         values))]])
 
@@ -151,6 +155,16 @@
 (defn current-year []
   (.getFullYear (js/Date.)))
 
+(defn lower-str-contains? [s substr]
+  (-> s
+      .toLowerCase
+      (.indexOf substr)
+      (not= -1)))
+
+(defn code-value-matches? [s v]
+  (or (lower-str-contains? (:code v) s)
+      (lower-str-contains? (:code-value v) s)))
+
 (defn home-page [{:keys [code-values code-filter]}]
   [:div
    [:div {:class "oph-typography"}
@@ -172,12 +186,22 @@
    [:div
     [(render-add-item #(create-item! (:value-type @code-filter) % code-values))]
     [:hr]
-    [:div
-     (va-ui/select-field
-       {:value (:year @code-filter)
-        :on-change #(swap! code-filter assoc :year (js/parseInt %))
-        :values years})]
-    (render-code-table @code-values #(delete-code! % code-values))]])
+    [(let [filter-str (r/atom "")]
+       (fn []
+         [:div
+          [:div
+           (va-ui/select-field
+             {:value (:year @code-filter)
+              :on-change #(swap! code-filter assoc :year (js/parseInt %))
+              :values years})
+           (va-ui/text-field
+             {:value @filter-str
+              :on-change #(reset! filter-str (.-value (.-target %)))})]
+          (render-code-table
+            (if (empty? @filter-str)
+              @code-values
+              (filter #(code-value-matches? @filter-str %) @code-values))
+            #(delete-code! % code-values))]))]]])
 
 (defn init! [{:keys [code-values code-filter]}]
   (add-watch code-filter ""
