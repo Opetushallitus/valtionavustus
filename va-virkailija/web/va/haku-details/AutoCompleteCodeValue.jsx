@@ -17,7 +17,6 @@ export default class AutocompleteCodeValue extends Component {
     super(props)
     this.state = {
       selectValue: "",
-      showValue: "",
       avustushaku: this.props.avustushaku,
       controller: this.props.controller,
       codeType: this.props.codeType,
@@ -44,14 +43,13 @@ getOptions() {
     )
   }
 
-updateValue (code, codeValue) {
+updateValue (newValue) {
   this.setState({
-    selectValue: code,
-    showValue: codeValue
+    selectValue: newValue
   })
   this.props.controller.onChangeListener(this.props.avustushaku, {
     id: this.state.id
-  }, code);
+  }, newValue);
 }
 
 NameOptionRenderer({key, labelKey, option, selectValue, style, valueArray, valueKey }) {
@@ -61,7 +59,7 @@ NameOptionRenderer({key, labelKey, option, selectValue, style, valueArray, value
       className="Select-input"
       style={{ width: '97%' }}
       key={key}
-      onClick={() => this.updateValue(option.code, option.code + " " + option["code-value"])}
+      onClick={() => this.updateValue(option.code)}
     >
       {option.code + " " + option["code-value"]}
     </div>
