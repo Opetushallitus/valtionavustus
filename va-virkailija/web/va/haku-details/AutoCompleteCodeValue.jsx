@@ -43,13 +43,19 @@ getOptions() {
     )
   }
 
-updateValue (newValue) {
+updateValue (option) {
   this.setState({
-    selectValue: newValue
+    selectValue: option
   })
-  this.props.controller.onChangeListener(this.props.avustushaku, {
-    id: this.state.id
-  }, newValue);
+
+  if (this.state.codeType == "project") {
+    this.state.avustushaku["project_id"] = option.id
+    console.log(option.id)
+  } else if (this.state.codeType == "operation"){
+     this.state.avustushaku["operation_id"] = option.id
+   }else if (this.state.codeType == "operational-unit"){
+   this.state.avustushaku["operational_unit_id"] = option.id
+ }
 }
 
 NameOptionRenderer({key, labelKey, option, selectValue, style, valueArray, valueKey }) {
@@ -59,7 +65,7 @@ NameOptionRenderer({key, labelKey, option, selectValue, style, valueArray, value
       className="Select-input"
       style={{ width: '97%' }}
       key={key}
-      onClick={() => this.updateValue(option.code)}
+      onClick={() => this.updateValue(option)}
     >
       {option.code + " " + option["code-value"]}
     </div>
@@ -67,7 +73,6 @@ NameOptionRenderer({key, labelKey, option, selectValue, style, valueArray, value
 }
 
 codeValueRenderer(option){
-  console.log(option)
   return (
     <div>{option.code + " " + option["code-value"]}</div>
   )

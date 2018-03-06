@@ -116,7 +116,10 @@
                           (s/optional-key :decision) Decision
                           :form Long
                           (s/optional-key :form_loppuselvitys) (s/maybe Long)
-                          (s/optional-key :form_valiselvitys) (s/maybe Long)})
+                          (s/optional-key :form_valiselvitys) (s/maybe Long)
+                          (s/optional-key :operation_id) (s/maybe s/Int)
+                          (s/optional-key :operational_unit_id) (s/maybe s/Int)
+                          (s/optional-key :project_id) (s/maybe s/Int)})
 
 (s/defschema HakemusStatus
   "Status from the applicant point of view"
