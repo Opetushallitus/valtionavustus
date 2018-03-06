@@ -12,6 +12,7 @@
    [oph.va.admin-ui.dialogs :as dialogs]
    [oph.va.admin-ui.payments.payments-core :as payments-core]
    [oph.va.admin-ui.va-code-values.va-code-values-core :as code-values-core]
+   [oph.va.admin-ui.reports.reports-core :as reports-core]
    [oph.va.admin-ui.user :as user]))
 
 (defonce payments-state {:grants (r/atom [])
@@ -60,6 +61,7 @@
        "/admin-ui/payments/" (payments-core/home-page payments-state data)
        "/admin-ui/va-code-values/"
        (code-values-core/home-page code-values-state)
+       "/admin-ui/reports/" (reports-core/home-page {})
        (do
          (router/redirect-to! "/admin-ui/payments/")
          "Redirecting..."))
@@ -91,4 +93,5 @@
   (case (router/get-current-path)
    "/admin-ui/payments/" (payments-core/init! payments-state)
    "/admin-ui/va-code-values/" (code-values-core/init! code-values-state)
+   "/admin-ui/reports/" (reports-core/init! {})
    ""))
