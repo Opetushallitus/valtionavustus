@@ -21,8 +21,6 @@ function run-container {
   cd ..
 }
 
-cd ..
-
 # va-virkailija
 remove-container "va-virkailija"
 create-container "va-virkailija"
