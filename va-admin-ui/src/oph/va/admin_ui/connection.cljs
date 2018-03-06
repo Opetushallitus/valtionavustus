@@ -106,6 +106,9 @@
   (http/delete (format "/%s/va-code-values/%d/" api-path id)
                {:with-credentials? true}))
 
+(defn get-reports []
+  (get-cached (str "/" api-path "/reports/")))
+
 (defn set-config! [c] (reset! config c))
 
 (defn delete-payments? [] (get-in @config [:payments :delete-payments?]))

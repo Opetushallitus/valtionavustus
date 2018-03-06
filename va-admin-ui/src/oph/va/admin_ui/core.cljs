@@ -12,6 +12,7 @@
    [oph.va.admin-ui.dialogs :as dialogs]
    [oph.va.admin-ui.payments.payments-core :as payments-core]
    [oph.va.admin-ui.va-code-values.va-code-values-core :as code-values-core]
+   [oph.va.admin-ui.reports.reports-core :as reports-core]
    [oph.va.admin-ui.user :as user]))
 
 (defonce payments-state {:grants (r/atom [])
@@ -24,11 +25,14 @@
 (defonce code-values-state {:code-values (r/atom [])
                             :code-filter (r/atom {})})
 
+(defonce reports-state {:data (r/atom {})})
+
 (def top-links
   {"/avustushaku" "Hakemusten arviointi"
    "/admin/" "Hakujen hallinta"
    "/admin-ui/payments/" "Maksatusten hallinta"
-   "/admin-ui/va-code-values/" "VA-Koodienhallinta"})
+   "/admin-ui/va-code-values/" "VA-Koodienhallinta"
+   "/admin-ui/reports/" "VA-pulssi"})
 
 (defn create-link [href title active]
   [:a {:key href :href href
@@ -60,6 +64,7 @@
        "/admin-ui/payments/" (payments-core/home-page payments-state data)
        "/admin-ui/va-code-values/"
        (code-values-core/home-page code-values-state)
+       "/admin-ui/reports/" (reports-core/home-page reports-state)
        (do
          (router/redirect-to! "/admin-ui/payments/")
          "Redirecting..."))
@@ -91,4 +96,5 @@
   (case (router/get-current-path)
    "/admin-ui/payments/" (payments-core/init! payments-state)
    "/admin-ui/va-code-values/" (code-values-core/init! code-values-state)
+   "/admin-ui/reports/" (reports-core/init! reports-state)
    ""))
