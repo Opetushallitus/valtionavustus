@@ -25,6 +25,8 @@
 (defonce code-values-state {:code-values (r/atom [])
                             :code-filter (r/atom {})})
 
+(defonce reports-state {:data (r/atom {})})
+
 (def top-links
   {"/avustushaku" "Hakemusten arviointi"
    "/admin/" "Hakujen hallinta"
@@ -62,7 +64,7 @@
        "/admin-ui/payments/" (payments-core/home-page payments-state data)
        "/admin-ui/va-code-values/"
        (code-values-core/home-page code-values-state)
-       "/admin-ui/reports/" (reports-core/home-page {})
+       "/admin-ui/reports/" (reports-core/home-page reports-state)
        (do
          (router/redirect-to! "/admin-ui/payments/")
          "Redirecting..."))
@@ -94,5 +96,5 @@
   (case (router/get-current-path)
    "/admin-ui/payments/" (payments-core/init! payments-state)
    "/admin-ui/va-code-values/" (code-values-core/init! code-values-state)
-   "/admin-ui/reports/" (reports-core/init! {})
+   "/admin-ui/reports/" (reports-core/init! reports-state)
    ""))
