@@ -1,6 +1,10 @@
 (ns oph.va.admin-ui.reports.reports-core
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
-   [cljsjs.chartjs]))
+   [cljsjs.chartjs]
+   [cljs.core.async :refer [put! <! close!]]
+   [oph.va.admin-ui.connection :as connection]
+   [oph.va.admin-ui.dialogs :as dialogs]))
 
 (def colors
   {:blue "rgb(54, 162, 235)"
@@ -90,4 +94,17 @@
    [(create-chart "total-granted"
                   (gen-granted-data (:granted @data)))]])
 
-(defn init! [{:keys [data]}])
+
+(defn init! [{:keys [data]}]
+  (go
+    (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan raportteja" 3)]
+      (put! dialog-chan 1)
+      (let [result
+            (<! (connection/get-reports))]
+        (if (:success result)
+          (reset! data (:body result))
+          (dialogs/show-error-message!
+            "Virhe raporttien latauksessa"
+            (select-keys result [:status :error-text]))))
+      (put! dialog-chan 2)
+      (close! dialog-chan))))
