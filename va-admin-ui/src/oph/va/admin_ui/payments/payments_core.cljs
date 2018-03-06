@@ -145,7 +145,7 @@
       (update :invoice-date parse-date)))
 
 (defn notice [message]
-  [:div {:style theme/notice} message])
+  [ui/card {:style theme/notice} [ui/card-text message]])
 
 (defn any-account-nil? [a]
   (some?
@@ -197,7 +197,7 @@
            (when-not (some #(< (get-in % [:payment :state]) 2)
                            @current-applications)
              {:style {:opacity 0.2 :pointer-events "none"}}))
-         [:h3 "Maksatuksen tiedot"]
+         [:h3 "Maksuerän tiedot"]
          (financing/payment-emails @batch-values
                                    #(swap! batch-values assoc %1 %2))
          (financing/payment-fields @batch-values

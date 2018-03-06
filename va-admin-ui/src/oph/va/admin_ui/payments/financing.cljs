@@ -39,7 +39,7 @@
 
 (defn payment-fields
   [values on-change]
-  [ui/grid-list {:cols 4 :cell-height "auto"}
+  [ui/grid-list {:cols 4 :cell-height "auto" :style {:max-width 1000}}
    [va-ui/select-field
     {:floating-label-text "Maksuliikemenotili"
      :value (get values :transaction-account)
