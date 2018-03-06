@@ -29,7 +29,8 @@
   {"/avustushaku" "Hakemusten arviointi"
    "/admin/" "Hakujen hallinta"
    "/admin-ui/payments/" "Maksatusten hallinta"
-   "/admin-ui/va-code-values/" "VA-Koodienhallinta"})
+   "/admin-ui/va-code-values/" "VA-Koodienhallinta"
+   "/admin-ui/reports/" "VA-pulssi"})
 
 (defn create-link [href title active]
   [:a {:key href :href href
