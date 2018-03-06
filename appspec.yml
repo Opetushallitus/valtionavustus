@@ -6,9 +6,9 @@ files:
   - source: va-hakija/target/uberjar/hakija-0.1.0-SNAPSHOT-standalone.jar
     destination: /home/ec2-user/va-hakija/
   - source: ci/dev-recreate-containers.sh
-    destination: /home/ec2-user/ci/
+    destination: /home/ec2-user/
 hooks:
   ApplicationStart:
-    - location: ci/dev-recreate-containers.sh
+    - location: dev-recreate-containers.sh
       timeout: 160
       runas: ec2-user
