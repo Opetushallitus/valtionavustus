@@ -38,10 +38,10 @@
    [ui/table-row-column (get application :takp-account)]
    [ui/table-row-column
     (.toLocaleString (get application :budget-granted)) " €"]
-   [ui/table-row-column
-    (when is-admin?
-      [ui/icon-button {:on-click #(on-info-clicked (:id application))}
-       [ic/action-info-outline]])]])
+   (when is-admin?
+     [ui/table-row-column
+    [ui/icon-button {:on-click #(on-info-clicked (:id application))}
+       [ic/action-info-outline]]])])
 
 (defn applications-table [{:keys [applications on-info-clicked is-admin?]}]
   [:div
