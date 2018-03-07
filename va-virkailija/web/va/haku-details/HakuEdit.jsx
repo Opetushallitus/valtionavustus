@@ -70,15 +70,15 @@ export default class HakuEdit extends Component {
         <div className="editor-field-row">
         <div className="editor-row-element">
           <h3 className="required">Toimintayksikkö</h3>
-            <AutoCompleteCodeValue codeType="operational-unit"  controller={controller} avustushaku={avustushaku} onChange={onChange}/>
+            <AutoCompleteCodeValue id="operational-unit" codeType="operational-unit" id="operational-unit" controller={controller} avustushaku={avustushaku} onChange={onChange}/>
         </div>
         <div className="editor-row-element">
           <h3 className="required">Projekti</h3>
-            <AutoCompleteCodeValue codeType="project" controller={controller} avustushaku={avustushaku} onChange={onChange}/>
+            <AutoCompleteCodeValue id="project" codeType="project" controller={controller} avustushaku={avustushaku} onChange={onChange}/>
         </div>
         <div className="editor-row-element">
           <h3 className="required">Toiminto</h3>
-            <AutoCompleteCodeValue codeType="operation" controller={controller} avustushaku={avustushaku} onChange={onChange}/>
+            <AutoCompleteCodeValue id="operation" codeType="operation" controller={controller} avustushaku={avustushaku} onChange={onChange}/>
         </div>
         </div>
         <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} />

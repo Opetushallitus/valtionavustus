@@ -161,9 +161,9 @@
    :budget-total-sum s/Int
    :budget-oph-share-sum s/Int
    :budget-granted-sum s/Int
-   (s/optional-key :operation_id) (s/maybe s/Int)
-   (s/optional-key :operational_unit_id) (s/maybe s/Int)
-   (s/optional-key :project_id) (s/maybe s/Int)})
+   (s/optional-key :operation) (s/maybe s/Int)
+   (s/optional-key :operational-unit) (s/maybe s/Int)
+   (s/optional-key :project) (s/maybe s/Int)})
 
 (s/defschema PaatosData
   "Decision response with related avustushaku, form, roles, hakemus"

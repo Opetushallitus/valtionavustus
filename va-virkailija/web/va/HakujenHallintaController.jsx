@@ -261,12 +261,9 @@ export default class HakujenHallintaController {
 
   onUpdateField(state, update) {
     const fieldId = update.field.id
-
     if (basicFields.indexOf(fieldId) > -1) {
       update.avustushaku[fieldId] = update.newValue
-    } else if (paymentFields.indexOf(fieldId) > -1) {
-      update.avustushaku.content[fieldId] = update.newValue
-    } else if (fieldId === "haku-self-financing-percentage") {
+    }  else if (fieldId === "haku-self-financing-percentage") {
       update.avustushaku.content["self-financing-percentage"] =
         parseInt(update.newValue)
     } else if (fieldId.startsWith("haku-name-")) {
@@ -287,7 +284,14 @@ export default class HakujenHallintaController {
       update.avustushaku["is_academysize"] = update.newValue === 'true'
     } else if (fieldId.startsWith("set-status-")) {
       update.avustushaku["status"] = update.newValue
-    } else if (fieldId.startsWith("rahoitusalue-")) {
+    }else if (fieldId.startsWith("operational-unit")) {
+      update.avustushaku["operational-unit"] = update.newValue
+    }else if (fieldId.startsWith("operation")) {
+      update.avustushaku["operation"] = update.newValue
+    }else if (fieldId.startsWith("project")) {
+      update.avustushaku["project"] = update.newValue
+    }
+    else if (fieldId.startsWith("rahoitusalue-")) {
       const rahoitusalue = /rahoitusalue-(\d+)-tili-(\d+)/.exec(fieldId)
       const rahoitussalueIndex = rahoitusalue[1]
       const selectedRahoitusalue = Rahoitusalueet[rahoitussalueIndex]

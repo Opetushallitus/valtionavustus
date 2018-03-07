@@ -49,19 +49,20 @@ updateValue (option) {
   })
 
   if (this.state.codeType == "project") {
-    this.state.avustushaku["project_id"] = option.id
-    console.log(option.id)
+    this.state.avustushaku["project"] = option.id
+    this.props.controller.onChangeListener(this.state.avustushaku, {id: this.state.id}, option.id)
   } else if (this.state.codeType == "operation"){
-     this.state.avustushaku["operation_id"] = option.id
+     this.state.avustushaku["operation"] = option.id
+     this.props.controller.onChangeListener(this.state.avustushaku, {id: this.state.id}, option.id)
    }else if (this.state.codeType == "operational-unit"){
-   this.state.avustushaku["operational_unit_id"] = option.id
+   this.state.avustushaku["operational-unit"] = option.id
+   this.props.controller.onChangeListener(this.state.avustushaku, {id: this.state.id}, option.id)
  }
 }
 
 NameOptionRenderer({key, labelKey, option, selectValue, style, valueArray, valueKey }) {
   return (
     <div
-      id="codeValue"
       className="Select-input"
       style={{ width: '97%' }}
       key={key}
@@ -83,6 +84,7 @@ codeValueRenderer(option){
   render() {
     return (
       <VirtualizedSelect ref="codeValueSelect"
+          id={this.state.codeType}
           labelKey='code'
           placeholder="Valitse listasta"
           style={{ width: '97%' }}
