@@ -326,7 +326,6 @@ export default class HakujenHallintaController {
         "Unsupported update to field ", update.field.id, ":", update)
       return state
     }
-
     return this.startAutoSave(state, update.avustushaku)
   }
 
@@ -416,6 +415,7 @@ export default class HakujenHallintaController {
 
   onHakuSave(state) {
     const url = "/api/avustushaku/" + state.selectedHaku.id
+    console.log(_.omit(state.selectedHaku, ["roles", "formContent", "privileges", "valiselvitysForm", "loppuselvitysForm"]))
     HttpUtil.post(url, _.omit(state.selectedHaku, ["roles", "formContent", "privileges", "valiselvitysForm", "loppuselvitysForm"]))
       .then(function (response) {
         dispatcher.push(events.saveCompleted, response)

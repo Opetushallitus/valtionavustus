@@ -32,9 +32,9 @@
                                  :duration Duration
                                  :focus-areas LocalizedStringList
                                  :selection-criteria LocalizedStringList
-                                 :operational-unit s/Str
-                                 :project s/Str
-                                 :operation s/Str
+                                 (s/optional-key :operation) (s/maybe s/Str)
+                                 (s/optional-key :operational-unit) (s/maybe s/Str)
+                                 (s/optional-key :project) (s/maybe s/Str)
                                  (s/optional-key :rahoitusalueet) [Rahoitusalue]
                                  (s/optional-key :multiplemaksuera) s/Bool
                                  :self-financing-percentage (s/conditional is-percentage? s/Num)})
@@ -117,9 +117,9 @@
                           :form Long
                           (s/optional-key :form_loppuselvitys) (s/maybe Long)
                           (s/optional-key :form_valiselvitys) (s/maybe Long)
-                          (s/optional-key :operation_id) (s/maybe s/Int)
-                          (s/optional-key :operational_unit_id) (s/maybe s/Int)
-                          (s/optional-key :project_id) (s/maybe s/Int)})
+                          (s/optional-key :operation) (s/maybe s/Int)
+                          (s/optional-key :operational-unit) (s/maybe s/Int)
+                          (s/optional-key :project) (s/maybe s/Int)})
 
 (s/defschema HakemusStatus
   "Status from the applicant point of view"

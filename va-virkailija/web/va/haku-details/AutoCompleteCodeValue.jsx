@@ -6,12 +6,6 @@ import VirtualizedSelect from 'react-virtualized-select';
 import HttpUtil from 'soresu-form/web/HttpUtil'
 
 
-class codeLabels extends React.Component {
-    render() {
-      return
-				 <div>{this.props.state.option.code + " " + this.props.state.option["code-value"]} </div>}
-  }
-
 export default class AutocompleteCodeValue extends Component {
   constructor(props) {
     super(props)
@@ -31,33 +25,22 @@ export default class AutocompleteCodeValue extends Component {
   }
 
   componentDidMount() {
-      this.setState({
-        options: this.getOptions()
-      })
-    }
+        this.setState({
+          options: this.getOptions()
+        })
+      }
 
 getOptions() {
   HttpUtil.get(`/api/v2/va-code-values/?value-type=${this.state.codeType}&year=2018`)
     .then(response => {
-      this.setState({options: response  })}
-    )
-  }
+      this.setState({options: response})})}
 
 updateValue (option) {
   this.setState({
     selectValue: option
   })
 
-  if (this.state.codeType == "project") {
-    this.state.avustushaku["project"] = option.id
-    this.props.controller.onChangeListener(this.state.avustushaku, {id: this.state.id}, option.id)
-  } else if (this.state.codeType == "operation"){
-     this.state.avustushaku["operation"] = option.id
-     this.props.controller.onChangeListener(this.state.avustushaku, {id: this.state.id}, option.id)
-   }else if (this.state.codeType == "operational-unit"){
-   this.state.avustushaku["operational-unit"] = option.id
-   this.props.controller.onChangeListener(this.state.avustushaku, {id: this.state.id}, option.id)
- }
+  this.props.controller.onChangeListener(this.state.avustushaku, {id: this.state.id}, option.id)
 }
 
 NameOptionRenderer({key, labelKey, option, selectValue, style, valueArray, valueKey }) {
