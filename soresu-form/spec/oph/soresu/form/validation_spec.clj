@@ -46,40 +46,41 @@
    :fieldType  "namedAttachment"
    :required   true})
 
-(def table-field-fixed-rows
-  {:id         "art-courses"
+(defn- make-table-field [id params]
+  {:id         id
    :fieldClass "formField"
    :fieldType  "tableField"
    :required   true
-   :params     {:columns [{:title        {:fi "Oppilaitos"
-                                          :sv "TODO: Oppilaitos"}
-                           :valueType    "string"
-                           :maxlength    30}
-                          {:title        {:fi "Opiskelijoita"
-                                          :sv "TODO: Opiskelijoita"}
-                           :valueType    "integer"
-                           :maxlength    6
-                           :calculateSum true}
-                          {:title        {:fi "Tuntimäärä"
-                                          :sv "TODO: Tuntimäärä"}
-                           :valueType    "decimal"
-                           :maxlength    4
-                           :calculateSum true}]
-                :rows     [{:title       {:fi "Perspektiivi 101"
-                                          :sv "SV: Perspektiivi 101"}}
-                           {:title       {:fi "Vesivärit"
-                                          :sv "SV: Vesivärit"}}
-                           {:title       {:fi "Liidut"
-                                          :sv "SV: Liidut"}}]}})
+   :params     params})
+
+(def table-field-fixed-rows
+  (make-table-field "art-courses"
+                    {:columns [{:title        {:fi "Oppilaitos"
+                                               :sv "TODO: Oppilaitos"}
+                                :valueType    "string"
+                                :maxlength    30}
+                               {:title        {:fi "Opiskelijoita"
+                                               :sv "TODO: Opiskelijoita"}
+                                :valueType    "integer"
+                                :maxlength    6
+                                :calculateSum true}
+                               {:title        {:fi "Tuntimäärä"
+                                               :sv "TODO: Tuntimäärä"}
+                                :valueType    "decimal"
+                                :maxlength    4
+                                :calculateSum true}]
+                     :rows     [{:title       {:fi "Perspektiivi 101"
+                                               :sv "SV: Perspektiivi 101"}}
+                                {:title       {:fi "Vesivärit"
+                                               :sv "SV: Vesivärit"}}
+                                {:title       {:fi "Liidut"
+                                               :sv "SV: Liidut"}}]}))
 
 (def table-field-free-rows
-  {:id         "favorite-colors"
-   :fieldClass "formField"
-   :fieldType  "tableField"
-   :required   true
-   :params     {:columns [{:title    {:fi "Väri"
-                                      :sv "TODO: Väri"}
-                           :valueType "string"}]}})
+  (make-table-field "favorite-colors"
+                    {:columns [{:title {:fi "Väri"
+                                        :sv "TODO: Väri"}
+                                :valueType "string"}]}))
 
 (describe "validation"
   (tags :validation)
@@ -201,6 +202,66 @@
                     ["Peruskoulu", "20", "41"]
                     ["Lastentarha", "50", "-"]]
             result (validate-field (answers-for table-field-fixed-rows value) [] table-field-fixed-rows)]
-        (should= {:art-courses [{:error "table-has-cell-with-invalid-value"}]} result))))
+        (should= {:art-courses [{:error "table-has-cell-with-invalid-value"}]} result)))
+
+    (it "validates table with fixed rows and empty values in nonrequired columns as valid"
+      (let [field  (assoc-in table-field-fixed-rows [:params :columns 1 :required] false)
+            value  [["Lukio", "", "31"]
+                    ["Peruskoulu", "30", "41"]
+                    ["Lastentarha", "", "51"]]
+            result (validate-field (answers-for field value) [] field)]
+        (should= {:art-courses []} result)))
+
+    (it "validates table with fixed rows and empty values in nonrequired rows as valid"
+      (let [field  (assoc-in table-field-fixed-rows [:params :rows 1 :required] false)
+            value  [["Lukio", "30", "31"]
+                    ["", "", ""]
+                    ["Lastentarha", "50", "51"]]
+            result (validate-field (answers-for field value) [] field)]
+        (should= {:art-courses []} result)))
+
+    (it "validates table with free rows and empty value in nonrequired column as valid"
+      (let [field  (make-table-field "favorite-games"
+                                     {:columns [{:title {:fi "Peli"
+                                                         :sv "Spel"}
+                                                 :valueType "string"
+                                                 :required true}
+                                                {:title {:fi "Syy"
+                                                         :sv "Orsak"}
+                                                 :valueType "string"
+                                                 :required false}]})
+            value  [["ME2", ""]
+                    ["Metroid Prime", "sense of exploration"]]
+            result (validate-field (answers-for field value) [] field)]
+        (should= {:favorite-games []} result)))
+
+    (it "validates table with free rows and empty value in required column as invalid"
+      (let [field  (make-table-field "favorite-games"
+                                     {:columns [{:title {:fi "Peli"
+                                                         :sv "Spel"}
+                                                 :valueType "string"
+                                                 :required true}
+                                                {:title {:fi "Syy"
+                                                         :sv "Orsak"}
+                                                 :valueType "string"
+                                                 :required false}]})
+            value  [["ME2", ""]
+                    ["", "sense of exploration"]]
+            result (validate-field (answers-for field value) [] field)]
+        (should= {:favorite-games [{:error "table-has-cell-with-invalid-value"}]} result)))
+
+    (it "validates table with invalid value in nonrequired column as invalid"
+      (let [field  (make-table-field "favorite-games"
+                                     {:columns [{:title {:fi "Peli"
+                                                         :sv "Spel"}
+                                                 :valueType "string"
+                                                 :required true}
+                                                {:title {:fi "Tunteja"
+                                                         :sv "Timmar"}
+                                                 :valueType "integer"
+                                                 :required false}]})
+            value  [["ME2", "a"]]
+            result (validate-field (answers-for field value) [] field)]
+        (should= {:favorite-games [{:error "table-has-cell-with-invalid-value"}]} result))))
 
 (run-specs)
