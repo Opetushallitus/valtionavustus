@@ -41,6 +41,9 @@ updateValue (option) {
   })
 
   this.props.controller.onChangeListener(this.state.avustushaku, {id: this.state.id}, option.id)
+  
+  this.props.avustushaku[this.state.codeType] = option.id
+
 }
 
 NameOptionRenderer({key, labelKey, option, selectValue, style, valueArray, valueKey }) {
@@ -65,6 +68,7 @@ codeValueRenderer(option){
 
 
   render() {
+    const currentValue = this.state.avustushaku[this.state.codeType] || ""
     return (
       <VirtualizedSelect ref="codeValueSelect"
           id={this.state.codeType}
@@ -76,7 +80,7 @@ codeValueRenderer(option){
           onChange={this.updateValue}
           optionRenderer={this.NameOptionRenderer}
           valueKey='code'
-          value={this.state.selectValue}
+          value={this.state.selectValue || currentValue}
           valueRenderer={this.codeValueRenderer}
 				/>
 
