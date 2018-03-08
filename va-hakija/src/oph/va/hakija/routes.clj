@@ -11,7 +11,7 @@
             [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
             [schema.core :as s]
             [oph.common.datetime :as datetime]
-            [oph.soresu.common.config :refer [config-simple-name]]
+            [oph.soresu.common.config :refer [config-simple-name config]]
             [oph.soresu.common.routes :refer :all]
             [oph.va.schema :refer :all]
             [oph.soresu.form.schema :refer :all]
@@ -236,6 +236,13 @@
    (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
+
+   (when (get-in config [:applications-ui :enabled?])
+     (compojure/GET "/applications/*" [] (return-html "applications/index.html")))
+   (when (get-in config [:applications-ui :enabled?])
+     (compojure-route/resources "/applications/"
+                               {:mime-types {"html" "text/html; charset=utf-8"}}))
+
 
    (compojure-api/GET "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
      :path-params [avustushaku-id :- Long user-key :- s/Str]
