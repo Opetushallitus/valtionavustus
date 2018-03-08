@@ -15,6 +15,7 @@ export default class AutocompleteCodeValue extends Component {
       controller: this.props.controller,
       codeType: this.props.codeType,
       id: this.props.id,
+      avustushaku_id: this.props.avustushaku.id,
       options: []
     }
     this.setState = this.setState.bind(this)
@@ -30,20 +31,24 @@ export default class AutocompleteCodeValue extends Component {
         })
       }
 
+componentWillReceiveProps(nextProps) {
+   if (nextProps.avustushaku.id != this.state.avustushaku.id && this.props.avustushaku[this.props.codeType] != null) {
+   this.setState({selectValue: this.state.options.find(k => k.id==nextProps.avustushaku[this.props.codeType])})
+   }
+ }
+
 getOptions() {
   HttpUtil.get(`/api/v2/va-code-values/?value-type=${this.state.codeType}&year=2018`)
     .then(response => {
-      this.setState({options: response})})}
+      this.setState({options: response, selectValue: response.find(k => k.id==this.props.avustushaku[this.props.codeType])})
+    console.log(this.props.avustushaku[this.props.codeType])})}
 
 updateValue (option) {
   this.setState({
     selectValue: option
   })
-
   this.props.controller.onChangeListener(this.state.avustushaku, {id: this.state.id}, option.id)
-  
   this.props.avustushaku[this.state.codeType] = option.id
-
 }
 
 NameOptionRenderer({key, labelKey, option, selectValue, style, valueArray, valueKey }) {
@@ -80,7 +85,7 @@ codeValueRenderer(option){
           onChange={this.updateValue}
           optionRenderer={this.NameOptionRenderer}
           valueKey='code'
-          value={this.state.selectValue || currentValue}
+          value={this.state.selectValue}
           valueRenderer={this.codeValueRenderer}
 				/>
 
