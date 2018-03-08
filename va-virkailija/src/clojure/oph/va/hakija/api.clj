@@ -52,7 +52,8 @@
                                :decision decision
                                :project_id project
                                :operation_id operation
-                               :operational_unit_id operational-unit})]
+                               :operational_unit_id operational-unit
+                               })]
     (->> avustushaku-id
          (exec :form-db hakija-queries/get-avustushaku)
          (map avustushaku-response-content)
@@ -69,9 +70,9 @@
                                    :register_number (:register-number avustushaku)
                                    :is_academysize (:is_academysize avustushaku)
                                    :haku_type (new HakuType (:haku-type avustushaku))
-                                   :project_id (:project_id avustushaku)
-                                   :operation_id (:operation_id avustushaku)
-                                   :operational_unit_id (:operational_unit_id avustushaku))]
+                                   :project_id (:project avustushaku)
+                                   :operation_id (:operation avustushaku)
+                                   :operational_unit_id (:operational-unit avustushaku))]
     (exec-all :form-db
               [hakija-queries/archive-avustushaku! avustushaku-to-save
                hakija-queries/update-avustushaku! avustushaku-to-save])
