@@ -415,7 +415,6 @@ export default class HakujenHallintaController {
 
   onHakuSave(state) {
     const url = "/api/avustushaku/" + state.selectedHaku.id
-    console.log(_.omit(state.selectedHaku, ["roles", "formContent", "privileges", "valiselvitysForm", "loppuselvitysForm"]))
     HttpUtil.post(url, _.omit(state.selectedHaku, ["roles", "formContent", "privileges", "valiselvitysForm", "loppuselvitysForm"]))
       .then(function (response) {
         dispatcher.push(events.saveCompleted, response)
