@@ -76,8 +76,10 @@
 (defquery get-total-grant-count
   "sql/virkailija/reporting/get-total-grant-count.sql")
 
-(defquery get-va-code-values
-  "sql/virkailija/va_code_values/get-va-code-values.sql")
+(defquery get-va-code-values-by-type-and-year
+  "sql/virkailija/va_code_values/get-va-code-values-by-type-and-year.sql")
+(defquery get-current-va-code-values-by-type
+  "sql/virkailija/va_code_values/get-current-va-code-values-by-type.sql")
 (defquery create-va-code-value
   "sql/virkailija/va_code_values/create-va-code-value.sql")
 (defquery check-code-usage "sql/virkailija/va_code_values/check-code-usage.sql")
