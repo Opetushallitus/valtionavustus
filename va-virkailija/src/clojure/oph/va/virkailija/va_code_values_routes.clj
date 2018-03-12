@@ -5,12 +5,13 @@
             [oph.va.virkailija.va-code-values-data :as data]
             [oph.va.virkailija.schema :as schema]))
 
-(defn is-admin? [identity]
+(defn has-privilege? [identity privilege]
   (true?
-    (some #(= % "va-admin") (:privileges identity))))
+    (some #(= % privilege) (:privileges identity))))
 
 (defmacro with-admin [request & forms]
-  `(if (is-admin? (authentication/get-request-identity ~request))
+  `(if (has-privilege?
+         (authentication/get-request-identity ~request) "va-admin")
      (do ~@forms)
      (unauthorized "")))
 
