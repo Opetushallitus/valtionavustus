@@ -38,7 +38,7 @@ componentWillReceiveProps(nextProps) {
  }
 
 getOptions() {
-  HttpUtil.get(`/api/v2/va-code-values/?value-type=${this.state.codeType}&year=2018`)
+  HttpUtil.get(`/api/v2/va-code-values/?value-type=${this.state.codeType}`)
     .then(response => {
       this.setState({options: response, selectValue: response.find(k => k.id==this.props.avustushaku[this.props.codeType])})})}
 
