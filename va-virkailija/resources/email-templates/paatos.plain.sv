@@ -4,7 +4,7 @@ Ansökan om understöd: {{ avustushaku-name }}
 
 Beslut link: {{& url }}
 
-Begär tilläggsuppgifter per e-post statsunderstod@oph.fi
+Den föredragande som ansvarar för ansökningen har nämnts i beslutet.
 
 Utbildningsstyrelsen
 Hagnäskajen 6

@@ -27,11 +27,12 @@ export default class TableFieldUtil {
 
     const makeColumnTitleCellClassNames = col =>
       ClassNames("soresu-table__column-title-cell", columnTitleCellClassNames, {
+        "required": col.required,
         "soresu-table__column-title-cell--number": col.calculateSum
       })
 
-    const makeRowTitleCellClassNames = () =>
-      ClassNames("soresu-table__row-title-cell", rowTitleCellClassNames)
+    const makeRowTitleCellClassNames = row =>
+      ClassNames("soresu-table__row-title-cell", rowTitleCellClassNames, {"required": row.required})
 
     const makeSumCellClassNames = col =>
       ClassNames("soresu-table__sum-cell", sumCellClassNames, {
@@ -52,7 +53,7 @@ export default class TableFieldUtil {
     const makeRowTitleCell = index => {
       const row = rowParams[index]
       return row
-        ? <th className={makeRowTitleCellClassNames()}>{row.title}</th>
+        ? <th className={makeRowTitleCellClassNames(row)}>{row.title}</th>
         : null
     }
 
@@ -80,12 +81,16 @@ export default class TableFieldUtil {
         {usesSumCalculation && (
           <tfoot>
             <tr>
-              <th className={makeRowTitleCellClassNames()}>{sumTitle}</th>
+              <th className={makeRowTitleCellClassNames({required: false})}>{sumTitle}</th>
               {_.map(columnParams, makeColumnSumCell)}
             </tr>
           </tfoot>
         )}
       </table>
     )
+  }
+
+  static parseRequiredParam(val) {
+    return _.isBoolean(val) ? val : true
   }
 }
