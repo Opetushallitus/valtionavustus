@@ -40,8 +40,7 @@ componentWillReceiveProps(nextProps) {
 getOptions() {
   HttpUtil.get(`/api/v2/va-code-values/?value-type=${this.state.codeType}&year=2018`)
     .then(response => {
-      this.setState({options: response, selectValue: response.find(k => k.id==this.props.avustushaku[this.props.codeType])})
-    console.log(this.props.avustushaku[this.props.codeType])})}
+      this.setState({options: response, selectValue: response.find(k => k.id==this.props.avustushaku[this.props.codeType])})})}
 
 updateValue (option) {
   this.setState({
@@ -74,6 +73,7 @@ codeValueRenderer(option){
 
   render() {
     const currentValue = this.state.avustushaku[this.state.codeType] || ""
+    const value = this.state.selectValue && this.state.selectValue["code-value"]
     return (
       <VirtualizedSelect ref="codeValueSelect"
           id={this.state.codeType}
@@ -84,7 +84,7 @@ codeValueRenderer(option){
           options={this.state.options}
           onChange={this.updateValue}
           optionRenderer={this.NameOptionRenderer}
-          valueKey='code'
+          valueKey='code-value'
           value={this.state.selectValue}
           valueRenderer={this.codeValueRenderer}
 				/>
