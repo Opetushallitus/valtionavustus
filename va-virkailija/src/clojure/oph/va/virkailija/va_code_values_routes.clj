@@ -1,8 +1,18 @@
 (ns oph.va.virkailija.va-code-values-routes
   (:require [compojure.api.sweet :as compojure-api]
-            [ring.util.http-response :refer [ok method-not-allowed]]
+            [oph.va.virkailija.authentication :as authentication]
+            [ring.util.http-response :refer [ok method-not-allowed unauthorized]]
             [oph.va.virkailija.va-code-values-data :as data]
             [oph.va.virkailija.schema :as schema]))
+
+(defn is-admin? [identity]
+  (true?
+    (some #(= % "va-admin") (:privileges identity))))
+
+(defmacro with-admin [request & forms]
+  `(if (is-admin? (authentication/get-request-identity ~request))
+     (do ~@forms)
+     (unauthorized "")))
 
 (defn- get-va-code-values []
   (compojure-api/GET
@@ -10,19 +20,21 @@
     :query-params [value-type :- String, {year :- Long nil}]
     :return [schema/VACodeValue]
     :summary "Get all VA code values"
-    (ok
-      (if (some? year)
-        (data/get-va-code-values value-type year)
-        (data/get-va-code-values value-type)))))
+    (with-admin request
+      (ok
+        (if (some? year)
+          (data/get-va-code-values value-type year)
+          (data/get-va-code-values value-type))))))
 
 (defn- create-va-code-value []
   (compojure-api/POST
     "/" [:as request]
     :body [code-values (compojure-api/describe schema/VACodeValue
-                                                 "Create VA Code Value")]
+                                               "Create VA Code Value")]
     :return schema/VACodeValue
     :summary "Create new VA Code Value"
-    (ok (data/create-va-code-value code-values))))
+    (with-admin request
+      (ok (data/create-va-code-value code-values)))))
 
 (defn- delete-va-code-value []
   (compojure-api/DELETE
@@ -30,10 +42,11 @@
     :path-params [id :- Long]
     :summary
     "Delete VA Code value. Only unused codes are allowed to be deleted"
-    (if (data/code-used? id)
-      (method-not-allowed)
-      (do (data/delete-va-code-value! id)
-          (ok "")))))
+    (with-admin request
+      (if (data/code-used? id)
+        (method-not-allowed)
+        (do (data/delete-va-code-value! id)
+            (ok ""))))))
 
 (compojure-api/defroutes
   routes
