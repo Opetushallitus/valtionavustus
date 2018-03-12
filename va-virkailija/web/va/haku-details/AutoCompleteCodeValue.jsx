@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Select from 'react-select';
 import { Async } from 'react-select';
+import 'react-select/less/default.less';
 import BasicTextField from 'soresu-form/web/form/component/BasicTextField.jsx'
 import VirtualizedSelect from 'react-virtualized-select';
 import HttpUtil from 'soresu-form/web/HttpUtil'
