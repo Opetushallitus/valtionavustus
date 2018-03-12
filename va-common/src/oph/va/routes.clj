@@ -64,6 +64,6 @@
    :form        (:form avustushaku)
    :form_loppuselvitys        (:form_loppuselvitys avustushaku)
    :form_valiselvitys         (:form_valiselvitys avustushaku)
-   :project (:project_id avustushaku)
+   :project                   (:project_id avustushaku)
    :operation (:operation_id avustushaku)
    :operational-unit (:operational_unit_id avustushaku)})
