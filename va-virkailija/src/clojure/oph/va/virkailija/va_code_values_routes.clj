@@ -7,10 +7,13 @@
 (defn- get-va-code-values []
   (compojure-api/GET
     "/" [:as request]
-    :query-params [value-type :- String, year :- Long]
+    :query-params [value-type :- String, {year :- Long nil}]
     :return [schema/VACodeValue]
     :summary "Get all VA code values"
-    (ok (data/get-va-code-values value-type year))))
+    (ok
+      (if (some? year)
+        (data/get-va-code-values value-type year)
+        (data/get-va-code-values value-type)))))
 
 (defn- create-va-code-value []
   (compojure-api/POST
