@@ -200,7 +200,8 @@
           (render-code-table
             (if (empty? @filter-str)
               @code-values
-              (filter #(code-value-matches? @filter-str %) @code-values))
+              (filter #(code-value-matches? (.toLowerCase @filter-str) %)
+                      @code-values))
             #(delete-code! % code-values))]))]]])
 
 (defn init! [{:keys [code-values code-filter]}]
