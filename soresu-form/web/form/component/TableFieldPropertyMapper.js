@@ -3,19 +3,27 @@ import _ from 'lodash'
 import {DefaultPropertyMapper} from './PropertyMapper'
 import MathUtil from '../../MathUtil'
 import Translator from '../Translator'
+import TableFieldUtil from './TableFieldUtil.jsx'
 
 export default class TableFieldPropertyMapper {
   static map(props) {
     const {lang, field, disabled, onChange, validationErrors} = props
 
     const makeRowParams = paramRows =>
-      _.map(paramRows, row => _.assign({}, row, {title: row.title[lang]}))
+      _.map(paramRows, row => _.assign({}, row, {
+        title: row.title[lang],
+        required: TableFieldUtil.parseRequiredParam(row.required)
+      }))
 
     const makeColumnParams = paramColumns =>
-      _.map(paramColumns, col => _.assign({}, col, {title: col.title[lang]}))
+      _.map(paramColumns, col => _.assign({}, col, {
+        title: col.title[lang],
+        required: TableFieldUtil.parseRequiredParam(col.required)
+      }))
 
     const rowParams = makeRowParams(DefaultPropertyMapper.param(field, "rows", []))
     const columnParams = makeColumnParams(DefaultPropertyMapper.param(field, "columns", []))
+
     const sumTitle = makeSumTitle(
       DefaultPropertyMapper.param(field, "sumTitle", {}),
       props.translations.form["table-field"],

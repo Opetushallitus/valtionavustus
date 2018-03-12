@@ -415,6 +415,11 @@ section.soresu-theme {
     display: block;  // override leaking `.soresu-fieldset div` rule
   }
 
+  th.required::after {
+    font-weight: normal;
+    font-size: 80%;
+  }
+
   &--preview {
     border-collapse: collapse;
     border-spacing: 0;

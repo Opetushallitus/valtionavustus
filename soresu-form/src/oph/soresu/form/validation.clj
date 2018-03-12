@@ -101,27 +101,39 @@
     "decimal" (math/represents-decimal? value)
     true))
 
-(defn- validate-table-field-cell-value [type value]
-  (let [as-str (str value)]
-    (and (validate-table-field-cell-is-nonempty as-str)
-         (validate-table-field-cell-is-valid-type type as-str))))
+(defn- validate-table-field-cell-value [row-required? col-required? type value]
+  (let [value-str      (str value)
+        empty-value?   (-> value string/trim empty?)
+        cell-required? (and row-required? col-required?)]
+    (cond
+      (and cell-required? empty-value?) false
+      (and (not empty-value?) (not (validate-table-field-cell-is-valid-type type value-str))) false
+      :else true)))
 
-(defn- validate-table-field-cell [field answer]
-  (let [max-sizes-by-column (->> field
-                                 :params
-                                 :columns
-                                 (mapv :maxlength))
-        types-by-column     (->> field
-                                 :params
-                                 :columns
-                                 (mapv :valueType))
-        validate-cell       (fn [col-idx value]
-                              (if (validate-table-field-cell-max-size (get max-sizes-by-column col-idx) value)
-                                (if (validate-table-field-cell-value (get types-by-column col-idx) value)
-                                  nil
-                                  "table-has-cell-with-invalid-value")
-                                "table-has-cell-exceeding-max-length"))]
-    (if-some [cell-error (some #(some identity (map-indexed validate-cell %)) answer)]
+(defn- parse-table-field-required-param [val]
+  (if (instance? Boolean val)
+    val
+    true))
+
+(defn- validate-table-field-cells [field answer]
+  (let [column-params-by-column (vec (get-in field [:params :columns]))
+        row-params-by-row       (vec (get-in field [:params :rows]))
+        validate-cell           (fn [row-idx col-idx value]
+                                  (let [col-params (get column-params-by-column col-idx)
+                                        row-params (get row-params-by-row row-idx)]
+                                    (if (validate-table-field-cell-max-size (:maxlength col-params) value)
+                                      (if (validate-table-field-cell-value (parse-table-field-required-param (:required row-params))
+                                                                           (parse-table-field-required-param (:required col-params))
+                                                                           (:valueType col-params)
+                                                                           value)
+                                        nil
+                                        "table-has-cell-with-invalid-value")
+                                      "table-has-cell-exceeding-max-length")))]
+    (if-some [cell-error (some (fn [[row-idx row]]
+                                 (some (fn [[col-idx cell]]
+                                         (validate-cell row-idx col-idx cell))
+                                       (map-indexed vector row)))
+                               (map-indexed vector answer))]
       [{:error cell-error}]
       [])))
 
@@ -132,7 +144,7 @@
       (let [dimensions-validation (validate-table-field-dimensions field answer)]
         (if (and (empty? dimensions-validation)
                  (seq answers))
-          (validate-table-field-cell field answer)
+          (validate-table-field-cells field answer)
           dimensions-validation))
       required-validation)))
 

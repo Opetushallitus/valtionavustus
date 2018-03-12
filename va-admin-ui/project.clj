@@ -27,7 +27,8 @@
                  [cljsjs/react-dom]
                  [cljs-react-material-ui]
                  [cljs-http]
-                 [com.andrewmcveigh/cljs-time]]
+                 [com.andrewmcveigh/cljs-time]
+                 [cljsjs/chartjs]]
 
   :clean-targets ^{:protect false}
   [:target-path

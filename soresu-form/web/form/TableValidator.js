@@ -1,10 +1,12 @@
 import _ from 'lodash'
 
 import MathUtil from '../MathUtil'
+import TableFieldUtil from './component/TableFieldUtil.jsx'
 
 export default class TableValidator {
   static validateTable(field, values) {
     const numRows = values.length
+    const rowParams = _.get(field, "params.rows", [])
     const columnParams = _.get(field, "params.columns", [])
     const numColumns = columnParams.length
 
@@ -15,14 +17,18 @@ export default class TableValidator {
 
     for (let rowIndex = 0; rowIndex < numRows; rowIndex += 1) {
       const valueRow = values[rowIndex]
+      const isRowRequired = TableFieldUtil.parseRequiredParam(_.get(rowParams, [rowIndex, "required"]))
 
       for (let colIndex = 0; colIndex < numColumns; colIndex += 1) {
         const cellValue = valueRow[colIndex]
+        const isColumnRequired = TableFieldUtil.parseRequiredParam(columnParams[colIndex].required)
+        const isCellRequired = isRowRequired && isColumnRequired
+        const isCellEmpty = isCellEmptyOrWs(cellValue)
 
-        if (isCellEmptyOrWs(cellValue)) {
+        if (isCellRequired && isCellEmpty) {
           countMissingValues += 1
           cellsWithErrors[TableValidator.cellErrorIdFor(rowIndex, colIndex)] = true
-        } else if (!isCellValueValidType(columnParams[colIndex].valueType, cellValue)) {
+        } else if (!isCellEmpty && !isCellValueValidType(columnParams[colIndex].valueType, cellValue)) {
           countInvalidValues += 1
           cellsWithErrors[TableValidator.cellErrorIdFor(rowIndex, colIndex)] = true
         }

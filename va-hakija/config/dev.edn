@@ -6,4 +6,5 @@
  :form-db {:database-name "va-dev"}
  :email {:enabled? false
          :host "localhost"
-         :port 2500}}
+         :port 2500}
+ :applications-ui {:enabled? true}}

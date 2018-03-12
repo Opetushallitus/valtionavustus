@@ -29,6 +29,10 @@
     [:select {:class "oph-input oph-select"
               :value (or (:value props) (first (:values props)))
               :on-change #((:on-change props) (.-value (.-target %)))}
+     (when (:include-empty? props)
+       [:option {:value nil
+                 :key nil}
+        ""])
      (doall
        (map
          (fn [value] [:option {:value (:value value)

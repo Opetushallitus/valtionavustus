@@ -10,7 +10,8 @@
    [cljs-react-material-ui.icons :as ic]
    [oph.va.admin-ui.theme :as theme]
    [oph.va.admin-ui.connection :as connection]
-   [oph.va.admin-ui.dialogs :as dialogs]))
+   [oph.va.admin-ui.dialogs :as dialogs]
+   [oph.va.admin-ui.utils :refer [parse-int]]))
 
 (def value-types {:operational-unit "Toimintayksikkö"
                   :project "Projekti"
@@ -129,7 +130,10 @@
     (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan koodeja" 3)]
       (put! dialog-chan 1)
       (let [result
-            (<! (connection/get-va-code-values-by-type (name value-type) year))]
+            (if (some? year)
+              (<! (connection/get-va-code-values-by-type-and-year
+                    (name value-type) year))
+              (<! (connection/get-va-code-values-by-type (name value-type))))]
         (if (:success result)
           (reset! code-values (:body result))
           (dialogs/show-error-message!
@@ -192,19 +196,21 @@
           [:div
            (va-ui/select-field
              {:value (:year @code-filter)
-              :on-change #(swap! code-filter assoc :year (js/parseInt %))
-              :values years})
+              :on-change #(swap! code-filter assoc :year (parse-int %))
+              :values years
+              :include-empty? true})
            (va-ui/text-field
              {:value @filter-str
               :on-change #(reset! filter-str (.-value (.-target %)))})]
           (render-code-table
             (if (empty? @filter-str)
               @code-values
-              (filter #(code-value-matches? @filter-str %) @code-values))
+              (filter #(code-value-matches? (.toLowerCase @filter-str) %)
+                      @code-values))
             #(delete-code! % code-values))]))]]])
 
 (defn init! [{:keys [code-values code-filter]}]
   (add-watch code-filter ""
              #(download-items! (:value-type %4) (:year %4) code-values))
   (reset! code-filter {:value-type :operational-unit
-                       :year (current-year)}))
+                       :year nil}))

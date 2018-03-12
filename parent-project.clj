@@ -82,6 +82,7 @@
                          [cljs-react-material-ui "0.2.48"]
                          [cljs-http "0.1.43"]
                          [com.andrewmcveigh/cljs-time "0.5.2"]
+                         [cljsjs/chartjs "2.7.0-0"]
 
                          ;; CLJS Dev
                          [com.cemerick/piggieback "0.2.2"]

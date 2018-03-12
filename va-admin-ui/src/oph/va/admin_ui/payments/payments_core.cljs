@@ -89,7 +89,7 @@
       (put! dialog-chan 1)
       (let [result (<! (connection/create-batch-payments (:batch-id values)))]
         (put! dialog-chan 2)
-        (if (:success result)
+        (if (and (:success result) (get-in result [:body :success]))
           (let [email-result
                 (<!
                   (connection/send-payments-email
