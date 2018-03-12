@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.utils
-  (:require [clojure.set :refer [rename-keys]]))
+  (:require [clojure.set :refer [rename-keys]]
+            [clojure.core.async :refer [go timeout chan >! alt!!]]))
 
 (defn- key-contains? [k v]
   (.contains (name k) v))
@@ -40,3 +41,16 @@
   (if (contains? m k)
     (update m k f)
     m))
+
+(defn with-timeout
+  "Function for performing task with timeout protection.
+  Given function (f) will be called.
+  If timeout (t) happens before given function finishes timeout value (tv)
+  will be returned."
+  [f t tv & a]
+  (let [c (chan)]
+    (go
+      (>! c (f)))
+    (alt!!
+      c ([v] v)
+      (timeout t) ([_] tv))))

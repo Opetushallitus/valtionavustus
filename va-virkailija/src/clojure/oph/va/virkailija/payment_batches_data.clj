@@ -19,3 +19,9 @@
        first
        convert-to-dash-keys
        convert-timestamps-from-sql))
+
+(defn get-batch [id]
+  (-> (exec :form-db queries/get-batch {:batch_id id})
+      first
+      convert-to-dash-keys
+      convert-timestamps-from-sql))

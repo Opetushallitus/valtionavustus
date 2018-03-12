@@ -25,7 +25,8 @@
                  [org.http4s/http4s-blaze-client_2.11]
                  [org.clojure/data.json]
                  [org.clojure/data.xml]
-                 [clj-ssh]]
+                 [clj-ssh]
+                 [clojurewerkz/quartzite]]
 
   :profiles {:uberjar {:aot [oph.va.virkailija.main]}
              :dev     {:env {:config "config/dev.edn"

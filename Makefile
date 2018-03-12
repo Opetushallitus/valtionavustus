@@ -4,7 +4,7 @@ LEIN := ../lein
 SPECLJ_ARGS ?= -f d
 
 NPM_PROJECTS ?= soresu-form va-common va-hakija va-virkailija
-LEIN_PROJECTS ?= soresu-form va-common va-hakija va-admin-ui va-virkailija
+LEIN_PROJECTS ?= soresu-form va-common va-applications-ui va-hakija va-admin-ui va-virkailija
 
 LEIN_CHECKOUTS_BASEDIRS := va-hakija/checkouts va-virkailija/checkouts
 LEIN_CHECKOUTS := soresu-form va-common
@@ -56,27 +56,33 @@ npm-outdated-dependencies:
 	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_outdated_dependencies,$(npm_project))$(newline))
 
 .PHONY: lein-clean
-lein-clean: lein-clean-admin-frontend lein-clean-targets
+lein-clean: lein-clean-frontends lein-clean-targets
 
 .PHONY: lein-clean-targets
 lein-clean-targets:
 	$(foreach lein_project,$(LEIN_PROJECTS),$(call lein_clean_target,$(lein_project))$(newline))
 
-.PHONY: lein-clean-admin-frontend
-lein-clean-admin-frontend:
+.PHONY: lein-clean-frontends
+lein-clean-frontends:
 	rm -fr va-virkailija/resources/public/admin-ui/js
+	rm -f va-virkailija/resources/public/admin-ui/css/*-min.css
+	rm -f va-admin-ui/package*.json
+	rm -rf va-admin-ui/node_modules
+	rm -fr va-hakija/resources/public/applications/js
+	rm -f va-hakija/resources/public/applications/css/*-min.css
 
 .PHONY: lein-build
-lein-build: lein-install-jar-commons lein-build-admin-frontend lein-build-backends
+lein-build: lein-install-jar-commons lein-build-frontends lein-build-backends
 
 .PHONY: lein-install-jar-commons
 lein-install-jar-commons:
 	$(call lein_install_jar,soresu-form)
 	$(call lein_install_jar,va-common)
 
-.PHONY: lein-build-admin-frontend
-lein-build-admin-frontend:
-	cd va-admin-ui && $(LEIN) package
+.PHONY: lein-build-frontends
+lein-build-frontends:
+	$(call lein_build_frontend,va-applications-ui)
+	$(call lein_build_frontend,va-admin-ui)
 
 .PHONY: lein-build-backends
 lein-build-backends:
@@ -88,7 +94,8 @@ lein-test:
 	$(call lein_speclj,soresu-form)
 	$(call lein_speclj,va-common)
 	$(call lein_speclj,va-hakija)
-	cd va-admin-ui && $(LEIN) doo once
+	$(call lein_doo,va-applications-ui)
+	$(call lein_doo,va-admin-ui)
 	$(call lein_speclj,va-virkailija)
 
 .PHONY: lein-outdated-dependencies
@@ -132,10 +139,10 @@ Targets:
 
   lein-clean                    `lein-clean-admin-frontend`, `lein-clean-targets`
   lein-clean-targets            Remove Leiningen target directories from $$LEIN_PROJECTS.
-  lein-clean-admin-frontend  Remove CLJS build artifacts from va-virkailija, produced by va-admin-ui.
-  lein-build                    `lein-install-jar-commons`, `lein-build-admin-frontend`, `lein-build-backends`
+  lein-clean-frontends          Remove CLJS build artifacts from va-virkailija and va-hakija, produced by va-admin-ui and va-applications-ui.
+  lein-build                    `lein-install-jar-commons`, `lein-build-frontends`, `lein-build-backends`
   lein-install-jar-commons      Install jars for soresu-form and va-common.
-  lein-build-admin-frontend  Build CLJS for va-virkailija, produced by va-admin-ui.
+  lein-build-frontends		Build CLJS fronends for va-virkailija and va-hakija (va-admin-ui and va-applications-ui)
   lein-build-backends           Build backend uberjars for va-hakija and va-virkailija.
   lein-test                     Run Leiningen tests for $$LEIN_PROJECTS.
   lein-outdated-dependencies    Show outdated Leiningen dependencies for $$LEIN_PROJECTS.
@@ -162,7 +169,6 @@ Examples:
   Run Leiningen tests with JUnit XML reporter for Speclj:
 
   make lein-test SPECLJ_ARGS="-f junit"
-
 
   Run clean build of frontend and backend, followed by tests:
 
@@ -209,8 +215,16 @@ define lein_speclj
 cd '$(1)' && $(LEIN) with-profile test spec $(SPECLJ_ARGS)
 endef
 
+define lein_doo
+cd '$(1)' && $(LEIN) doo once
+endef
+
 define lein_build_backend
 cd '$(1)' && $(LEIN) uberjar
+endef
+
+define lein_build_frontend
+cd '$(1)' && $(LEIN) package
 endef
 
 define lein_outdated_dependencies

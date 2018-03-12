@@ -7,7 +7,7 @@ JOIN
   virkailija.payments p
   ON
     (p.application_id = h.id AND p.version_closed IS NULL AND
-     p.deleted IS NULL AND p.batch_id = :batch_id)
+     p.deleted IS NULL AND p.batch_id = :batch_id AND p.state = 2)
 JOIN
   virkailija.arviot a ON a.hakemus_id = p.application_id
 WHERE

@@ -1,4 +1,4 @@
-(ns oph.va.admin-ui.payments.connection
+(ns oph.va.admin-ui.connection
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs.core.async :refer [<! chan]]
             [cljs-http.client :as http]
@@ -89,4 +89,26 @@
   (http/post (format "/%s/payment-batches/" api-path)
              {:json-params data :with-credentials? true}))
 
+(defn create-batch-payments [id]
+  (http/post (format "/%s/payment-batches/%d/payments/" api-path id)
+             {:with-credentials? true}))
+
+(defn get-va-code-values-by-type [value-type year]
+  (get-cached (format "/%s/va-code-values?value-type=%s&year=%d"
+                    api-path value-type year)))
+
+(defn create-va-code-value [values]
+  (http/post (format "/%s/va-code-values/" api-path)
+             {:with-credentials? true
+              :json-params values}))
+
+(defn delete-va-code-value [id]
+  (http/delete (format "/%s/va-code-values/%d/" api-path id)
+               {:with-credentials? true}))
+
+(defn get-reports []
+  (get-cached (str "/" api-path "/reports/")))
+
 (defn set-config! [c] (reset! config c))
+
+(defn delete-payments? [] (get-in @config [:payments :delete-payments?]))

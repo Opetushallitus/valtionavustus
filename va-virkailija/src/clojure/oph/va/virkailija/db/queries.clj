@@ -37,6 +37,8 @@
   "sql/virkailija/grants/delete-grant-payments.sql")
 (defquery get-grant-payments-info
   "sql/virkailija/grants/get-grant-payments-info.sql")
+(defquery get-unpaid-applications
+  "sql/virkailija/grants/get-unpaid-applications.sql")
 
 (defquery get-payment "sql/virkailija/payments/get-payment.sql")
 (defquery get-payment-version "sql/virkailija/payments/get-payment-version.sql")
@@ -49,6 +51,7 @@
 
 (defquery find-batch "sql/virkailija/payment_batches/find-batch.sql")
 (defquery create-batch "sql/virkailija/payment_batches/create-batch.sql")
+(defquery get-batch "sql/virkailija/payment_batches/get-batch.sql")
 
 (defquery get-application "sql/virkailija/applications/get-application.sql")
 (defquery get-application-with-evaluation-and-answers
@@ -72,3 +75,11 @@
 (defquery get-yearly-granted "sql/virkailija/reporting/get-yearly-granted.sql")
 (defquery get-total-grant-count
   "sql/virkailija/reporting/get-total-grant-count.sql")
+
+(defquery get-va-code-values
+  "sql/virkailija/va_code_values/get-va-code-values.sql")
+(defquery create-va-code-value
+  "sql/virkailija/va_code_values/create-va-code-value.sql")
+(defquery check-code-usage "sql/virkailija/va_code_values/check-code-usage.sql")
+(defquery delete-va-code-value
+  "sql/virkailija/va_code_values/delete-va-code-value.sql")

@@ -82,6 +82,7 @@
                          [cljs-react-material-ui "0.2.48"]
                          [cljs-http "0.1.43"]
                          [com.andrewmcveigh/cljs-time "0.5.2"]
+                         [cljsjs/chartjs "2.7.0-0"]
 
                          ;; CLJS Dev
                          [com.cemerick/piggieback "0.2.2"]
@@ -107,7 +108,8 @@
                          [org.scala-lang.modules/scala-xml_2.11 "1.0.6"]
                          [org.scala-lang/scala-library "2.11.11"]
                          [org.clojure/data.xml "0.0.8"]
-                         [clj-ssh "0.5.14"]]
+                         [clj-ssh "0.5.14"]
+                         [clojurewerkz/quartzite "2.0.0"]]
 
   :pedantic? :abort
 

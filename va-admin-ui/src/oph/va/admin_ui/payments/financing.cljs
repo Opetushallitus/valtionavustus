@@ -2,6 +2,7 @@
   (:require [reagent.core :as r]
             [cljsjs.material-ui]
             [cljs-react-material-ui.reagent :as ui]
+            [oph.va.admin-ui.components.ui :as va-ui]
             [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.payments.utils :refer
              [remove-nil any-nil? not-nil? not-empty? valid-email?]]))
@@ -21,58 +22,57 @@
 (defn payment-emails
   [values on-change]
   [ui/grid-list {:cols 6 :cell-height "auto"}
-   [ui/text-field
+   [va-ui/text-field
     {:floating-label-text "Tarkastajan sähköpostiosoite"
      :value (get values :inspector-email "")
      :type "email"
-     :underline-style (when (and (not-empty? (:inspector-email values))
-                                 (not (valid-email? (:inspector-email values))))
-                        theme/text-field-error)
+     :error (and (not-empty? (:inspector-email values))
+                 (not (valid-email? (:inspector-email values))))
      :on-change #(on-change :inspector-email (.-value (.-target %)))}]
-   [ui/text-field
+   [va-ui/text-field
     {:floating-label-text "Hyväksyjän sähköpostiosoite"
      :value (get values :acceptor-email "")
      :type "email"
-     :underline-style (when (and (not-empty? (:acceptor-email values))
-                                 (not (valid-email? (:acceptor-email values))))
-                        theme/text-field-error)
+     :error (and (not-empty? (:acceptor-email values))
+                 (not (valid-email? (:acceptor-email values))))
      :on-change #(on-change :acceptor-email (.-value (.-target %)))}]])
 
 (defn payment-fields
   [values on-change]
-  [ui/grid-list {:cols 4 :cell-height "auto"}
-   [ui/select-field
+  [ui/grid-list {:cols 4 :cell-height "auto" :style {:max-width 1000}}
+   [va-ui/select-field
     {:floating-label-text "Maksuliikemenotili"
      :value (get values :transaction-account)
-     :on-change #(on-change :transaction-account %3)}
-    (for [acc transaction-accounts]
-      [ui/menu-item {:key acc :value acc :primary-text acc}])]
-   [ui/date-picker
+     :on-change #(on-change :transaction-account %)
+     :values
+     (map (fn [acc] {:key acc :value acc :primary-text acc})
+          transaction-accounts)}]
+   [va-ui/date-picker
     {:floating-label-text "Eräpäivä"
      :value (:due-date values)
      :on-change #(on-change :due-date %2)}]
-   [ui/date-picker
+   [va-ui/date-picker
     {:floating-label-text "Laskun päivämäärä"
      :value (:invoice-date values)
      :on-change #(on-change :invoice-date %2)}]
-   [ui/select-field
+   [va-ui/select-field
     {:floating-label-text "Tositelaji"
      :value (get values :document-type "XA")
-     :on-change #(on-change :document-type %3)}
-    [ui/menu-item {:value "XA" :primary-text "XA"}]
-    [ui/menu-item {:value "XB" :primary-text "XB"}]]
-   [ui/date-picker
+     :on-change #(on-change :document-type %)
+     :values [{:value "XA" :primary-text "XA"}
+              {:value "XB" :primary-text "XB"}]}]
+   [va-ui/date-picker
     {:floating-label-text "Tositepäivämäärä"
      :style {:display "inline-block"}
      :value (:receipt-date values)
      :on-change #(on-change :receipt-date %2)}]
-   [ui/text-field
+   [va-ui/text-field
     {:floating-label-text "Kumppanikoodi"
      :value (get values :partner "")
      :on-change (fn [e]
                   (let [value (.-value (.-target e))]
                     (when (<= (count value) 6) (on-change :partner value))))}]
-   [ui/text-field
+   [va-ui/text-field
     {:floating-label-text "Asiakirjan tunnus"
      :value (get values :document-id "")
      :on-change (fn [e]

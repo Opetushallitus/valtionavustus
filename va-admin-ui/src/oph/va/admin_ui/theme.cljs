@@ -10,8 +10,6 @@
              :picker-header-color "#4c7f00"
              :accent1-color "#00b5f0"}})
 
-(def button {:margin 12})
-
 (def general-styles
   {:font-family ["Open Sans" "Helvetica" "sans-serif"]
    :font-size "95%"
@@ -21,10 +19,22 @@
 
 (def active-link (assoc link :color "#2a2a2a"))
 
-(def text-field-error {:border-color "#f44336"})
-
 (def table-body {:max-height "250px"})
 
 (def hr-top {:color "#4c7f00"})
 
-(def notice {:padding "10px"})
+(def notice {:margin 10})
+
+(def text-field {:margin 5 :display "inline-block"})
+
+(def select-field text-field)
+
+(def date-picker text-field)
+
+(def tabs-header {:cursor "pointer"})
+
+(def tab-header-link {:text-decoration "none"})
+
+(def button (merge text-field {:margin 12}))
+
+(def striped-row {:background-color "#f6f4f0"})

@@ -38,7 +38,10 @@
             [oph.va.virkailija.application-routes :as application-routes]
             [oph.va.virkailija.payments-routes :as payments-routes]
             [oph.va.virkailija.reporting-data :as reporting]
-            [oph.va.virkailija.payment-batches-routes :as payment-batches-routes])
+            [oph.va.virkailija.payment-batches-routes
+             :as payment-batches-routes]
+            [oph.va.virkailija.va-code-values-routes
+             :as va-code-values-routes])
   (:import [java.io ByteArrayInputStream]))
 
 (def opintopolku-login-url
@@ -695,6 +698,8 @@
     "/api/v2/reports" [] :tags ["reports"] reports-routes)
   (compojure-api/context "/api/v2/payment-batches" [] :tags ["payment batches"]
                          payment-batches-routes/routes)
+  (compojure-api/context "/api/v2/va-code-values" [] :tags ["va-code-values"]
+                         va-code-values-routes/routes)
 
   va-routes/config-routes
   resource-routes)

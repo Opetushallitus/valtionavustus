@@ -10,10 +10,20 @@ Pääkäyttäjän käyttöliittymä
 
 ## Kehitysympäristö
 
-1. Käynnistä va-virkailija
-2. Käynnistä Figwheel-kääntäjä
+1. Käännä riippuvuudet `make clean build`
+2. Käynnistä va-virkailija
+3. Käynnistä Figwheel-kääntäjä
 
-Figwheel compiler lähtee käyntiin komennolla:
+Figwheel kannattaa ajaa suoraan REPL:stä (esim. Emacs Cider):
+
+``` bash
+lein repl
+# user=> (use 'figwheel-sidecar.repl-api)
+# user=> (start-figwheel!)
+# user=> (cljs-repl)
+```
+
+Figwheel compiler lähtee käyntiin myös komennolla:
 
 ``` bash
 ../lein figwheel
@@ -25,18 +35,9 @@ Kääntäjä luo buildin hakemistoon
 Figwheel puskee muutokset `.cljs`-tiedostoissa selaimelle. Kun Figwheel
 on käynnistynyt, pitäisi selaimeen aueta `/admin-ui/`.
 
-### REPL
+### Vaihtoehtoinen REPL
 
-Figwheelin voi käynnistää REPL:n kautta:
-
-``` bash
-lein repl
-# user=> (use 'figwheel-sidecar.repl-api)
-# user=> (start-figwheel!)
-# user=> (cljs-repl)
-```
-
-rlwrap toimii Figwheelin kanssa:
+Myös rlwrap toimii Figwheelin kanssa:
 
 ``` bash
 rlwrap lein figwheel
