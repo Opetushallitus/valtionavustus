@@ -5,16 +5,21 @@
              [convert-to-dash-keys convert-to-underscore-keys]]))
 
 (defn get-va-code-values
-  ([value-type]
-   (map
-     convert-to-dash-keys
-     (exec :form-db queries/get-current-va-code-values-by-type
-           {:value_type value-type})))
   ([value-type year]
    (map
      convert-to-dash-keys
-     (exec :form-db queries/get-va-code-values-by-type-and-year
-           {:value_type value-type :year year}))))
+     (cond
+       (and (some? value-type) (some? year))
+       (exec :form-db queries/get-va-code-values-by-type-and-year
+                  {:value_type value-type :year year})
+       (some? value-type)
+       (exec :form-db queries/get-current-va-code-values-by-type
+                  {:value_type value-type})
+       (some? year)
+       (exec :form-db queries/get-va-code-values-by-year
+                  {:year year})
+       :else
+       (exec :form-db queries/get-current-va-code-values {})))))
 
 (defn create-va-code-value [values]
   (->> values
