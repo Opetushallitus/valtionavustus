@@ -116,6 +116,33 @@ export default class HakuEdit extends Component {
               <span>%</span>
             </div>
           </div>
+          <div>
+            <div>
+              <label className="haku-edit-radio-button-item">
+                <input type="radio" name="payment-size-limit" value="no-limit"
+                       className="haku-edit-radio-button"/>
+                Avustushaun kaikille edunsaajille maksetaan useammassa erässä
+              </label>
+              <label className="haku-edit-radio-button-item">
+                <input type="radio" name="payment-size-limit" value="fixed-limit"
+                       className="haku-edit-radio-button"/>
+                Maksetaan useammassa erässä, kun OPH:n avustus hankkeelle (ts. maksettava kokonaissumma) on vähintään
+                <input className="haku-edit-inline-input" type="number"
+                       onChange={onChange}
+                       value={avustushaku.content["payments-fixed-limit"]} />
+                <span>€</span>
+              </label>
+            </div>
+            <div className="haku-edit-subrow">
+              <label className="haku-edit-field-label">
+                Ensimmäisen erän osuus OPH:n avustuksesta hankkeelle (ts. maksettava kokonaissumma) on vähintään
+                <input type="number" className="haku-edit-inline-input"
+                       onChange={onChange}
+                       value={avustushaku.content["first-payment-batch-size"]}/>
+                <span>€</span>
+              </label>
+            </div>
+          </div>
         </div>
         <div className="editor-field-row">
           <div className="editor-row-element">
