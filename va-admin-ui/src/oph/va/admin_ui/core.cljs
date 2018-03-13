@@ -28,23 +28,25 @@
 (defonce reports-state {:data (r/atom {})})
 
 (def top-links
-  {"/avustushaku" "Hakemusten arviointi"
-   "/admin/" "Hakujen hallinta"
-   "/admin-ui/payments/" "Maksatusten hallinta"
-   "/admin-ui/va-code-values/" "VA-Koodienhallinta"
-   "/admin-ui/reports/" "VA-pulssi"})
+  {:grant-evaluations {:link "/avustushaku" :title "Hakemusten arviointi"}
+   :grant-admin {:link "/admin/" :title "Hakujen hallinta"}
+   :payments {:link"/admin-ui/payments/" :title "Maksatusten hallinta"}
+   :va-code-values {:link "/admin-ui/va-code-values/"
+                    :title "VA-Koodienhallinta"}
+   :va-pulse {:link "/admin-ui/reports/" :title "VA-pulssi"}})
 
 (defn create-link [href title active]
   [:a {:key href :href href
        :style (if active theme/active-link theme/link)}
    title])
 
-(defn render-top-links [current-path]
+(defn render-top-links [current-path links]
   [:div {:class "top-links"}
    (doall
      (map
-       (fn [[link title]]
-         (create-link link title (= current-path link))) top-links))
+       (fn [[k {:keys [link title]}]]
+         (create-link link title (= current-path link)))
+       links))
    [:div {:class "logout-button"}
     [ui/flat-button
      {:label "Kirjaudu ulos"
@@ -58,7 +60,10 @@
     {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
     [:div
      [:div
-      (render-top-links (router/get-current-path))
+      (render-top-links (router/get-current-path)
+                        (if (user/is-admin? (deref user/user-info))
+                          top-links
+                          (dissoc top-links :va-code-values)))
       [:hr theme/hr-top]]
      (case (router/get-current-path)
        "/admin-ui/payments/" (payments-core/home-page payments-state data)

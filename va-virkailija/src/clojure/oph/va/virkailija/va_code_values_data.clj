@@ -4,6 +4,16 @@
             [oph.va.virkailija.utils :refer
              [convert-to-dash-keys convert-to-underscore-keys]]))
 
+(defn has-privilege? [identity privilege]
+  (true?
+    (some #(= % privilege) (:privileges identity))))
+
+(defmacro with-admin [request form unauthorized]
+  `(if (has-privilege?
+         (authentication/get-request-identity ~request) "va-admin")
+     ~form
+     ~unauthorized))
+
 (defn get-va-code-values
   ([value-type year]
    (map
