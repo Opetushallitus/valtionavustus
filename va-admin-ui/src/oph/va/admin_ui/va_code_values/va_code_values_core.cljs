@@ -183,8 +183,7 @@
                 :style theme/tab-header-link
                 :on-click (fn [_]
                             (reset! code-values [])
-                            (swap! code-filter assoc :value-type k
-                                   :year (current-year)))
+                            (swap! code-filter assoc :value-type k))
                 :class
                 (str "oph-tab-item"
                      (when (= (:value-type @code-filter) k) " oph-tab-item-is-active"))}
