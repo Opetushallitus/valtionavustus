@@ -23,6 +23,9 @@
           (>! c cached-result)))
     c))
 
+(defn remove-cached! [path]
+  (apply swap! cache dissoc (filter #(> (.indexOf % path) -1) (keys @cache))))
+
 (defn login-url-with-service
   []
   (format "%s?service=%s/login/cas"
