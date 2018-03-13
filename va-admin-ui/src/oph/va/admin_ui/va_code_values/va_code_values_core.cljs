@@ -29,6 +29,7 @@
           (:success result)
           (do
             (reset! code-values (filter #(not= (:id %) id) @code-values))
+            (connection/remove-cached! "va-code-values")
             (dialogs/show-message! "Koodi poistettu"))
           (= (:status result) 405)
           (dialogs/show-message!
@@ -150,7 +151,9 @@
                          (assoc values :value-type (name value-type))))]
         (put! dialog-chan 2)
         (if (:success result)
-          (swap! code-values conj (:body result))
+          (do
+            (swap! code-values conj (:body result))
+            (connection/remove-cached! "va-code-values"))
           (dialogs/show-error-message!
             "Virhe koodin lisäämisessä"
             (select-keys result [:status :error-text]))))
