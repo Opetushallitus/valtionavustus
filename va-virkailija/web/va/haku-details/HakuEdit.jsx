@@ -105,7 +105,20 @@ export default class HakuEdit extends Component {
         <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange}/>
         <ChooseRahoitusalueet avustushaku={avustushaku} allowEditing={allowNondisruptiveHakuEdits} onChange={onChange} controller={controller} />
         <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
-
+        <div className="editor-field-row">
+          <div className="editor-row-element">
+            <h3>Maksatus</h3>
+          </div>
+        </div>
+        <div className="editor-field-row">
+          <div className="editor-row-element">
+            <h3 className="required">Kokonaissumma</h3>
+            <input id="total-grant-size" type="number"
+              disabled={!allowAllHakuEdits} onChange={onChange}
+              required="true"
+              value={avustushaku.content["total-grant-size"]} /> €
+          </div>
+        </div>
         <AcademySize value={avustushaku.is_academysize} disabled={!allowAllHakuEdits} onChange={onChange} />
         <HakuRoles avustushaku={avustushaku} vaUserSearch={vaUserSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege} controller={controller} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
