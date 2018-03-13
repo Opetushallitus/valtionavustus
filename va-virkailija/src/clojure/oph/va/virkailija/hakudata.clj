@@ -164,9 +164,9 @@
         haku-type (:haku-type base-haku)
         form-id (:form base-haku)
         decision (:decision base-haku)
-        project (:project base-haku)
-        operation (:operation base-haku)
-        operational-unit (:operational-unit base-haku)
+        project-id (:project-id base-haku)
+        operation-id (:operation-id base-haku)
+        operational-unit-id (:operational-unit-id base-haku)
         new-haku (hakija-api/create-avustushaku
                    {:name (add-copy-suffixes name)
                     :duration {:start (clj-time/plus
@@ -181,9 +181,9 @@
                    form-id
                    decision
                    haku-type
-                   project
-                   operation
-                   operational-unit)]
+                   project-id
+                   operation-id
+                   operational-unit-id)]
     (hakija-api/create-avustushaku-role {:avustushaku (:id new-haku)
                                          :role "presenting_officer"
                                          :name (str (:first-name identity) " "

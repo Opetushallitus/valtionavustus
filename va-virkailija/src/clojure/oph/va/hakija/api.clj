@@ -39,7 +39,7 @@
        :?column?
        (= 1)))
 
-(defn create-avustushaku [avustushaku-content template-form-id decision haku-type project operation operational-unit]
+(defn create-avustushaku [avustushaku-content template-form-id decision haku-type project-id operation-id operational-unit-id]
   (let [form-id (:id (exec :form-db
                            hakija-queries/copy-form<!
                            {:id template-form-id}))
@@ -50,9 +50,9 @@
                                :haku_type (new HakuType haku-type)
                                :register_number nil
                                :decision decision
-                               :project_id project
-                               :operation_id operation
-                               :operational_unit_id operational-unit
+                               :project_id project-id
+                               :operation_id operation-id
+                               :operational_unit_id operational-unit-id
                                })]
     (->> avustushaku-id
          (exec :form-db hakija-queries/get-avustushaku)
@@ -70,9 +70,9 @@
                                    :register_number (:register-number avustushaku)
                                    :is_academysize (:is_academysize avustushaku)
                                    :haku_type (new HakuType (:haku-type avustushaku))
-                                   :project_id (:project avustushaku)
-                                   :operation_id (:operation avustushaku)
-                                   :operational_unit_id (:operational-unit avustushaku))]
+                                   :project_id (:project-id avustushaku)
+                                   :operation_id (:operation-id avustushaku)
+                                   :operational_unit_id (:operational-unit-id avustushaku))]
     (exec-all :form-db
               [hakija-queries/archive-avustushaku! avustushaku-to-save
                hakija-queries/update-avustushaku! avustushaku-to-save])

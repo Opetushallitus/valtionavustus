@@ -36,9 +36,10 @@ export default class AutocompleteCodeValue extends Component {
   }
 
   getOptions() {
-    HttpUtil.get(`/api/v2/va-code-values/?value-type=${this.state.codeType}`)
+    HttpUtil.get(`/api/v2/va-code-values/?value-type=${this.state.id}`)
       .then(response => {
-        this.setState({options: response, selectValue: response.find(k => k.id===this.props.avustushaku[this.props.codeType])})})}
+        this.setState({options: response, selectValue: response.find(k => k.id===this.props.avustushaku[this.props.codeType])})
+      console.log(response)})}
 
   updateValue (option) {
     this.setState({
