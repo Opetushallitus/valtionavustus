@@ -96,18 +96,25 @@ export default class HakuEdit extends Component {
             <span className="dateDivider" />
             <DateField id="hakuaika-end" onBlur={onChange} value={avustushaku.content.duration.end} disabled={!allowNondisruptiveHakuEdits} />
           </div>
-          <div className="haku-self-financing-edit-container">
-            <h3>Hakijan omarahoitusvaatimus</h3>
-            <input  id="haku-self-financing-percentage"  type="number" min="0" max="99" className="percentage" required="true" maxLength="2"
-                   onChange={onChange} disabled={!allowAllHakuEdits} value={avustushaku.content["self-financing-percentage"]} /><span>%</span>
-          </div>
         </div>
         <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange}/>
         <ChooseRahoitusalueet avustushaku={avustushaku} allowEditing={allowNondisruptiveHakuEdits} onChange={onChange} controller={controller} />
-        <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
-        <div className="editor-field-row">
-          <div className="editor-row-element">
-            <h3>Maksatus</h3>
+        <div>
+          <h3>Maksatus</h3>
+          <div>
+            <div  className="haku-edit-field-container">
+              <Maksuerat value={avustushaku.content.multiplemaksuera}
+                         disabled={!allowAllHakuEdits} onChange={onChange}/>
+            </div>
+            <div className="haku-edit-field-container">
+              <h3>Hakijan omarahoitusvaatimus</h3>
+              <input id="haku-self-financing-percentage" type="number"
+                     min="0" max="99" className="percentage" required="true"
+                     maxLength="2" onChange={onChange}
+                     disabled={!allowAllHakuEdits}
+                     value={avustushaku.content["self-financing-percentage"]} />
+              <span>%</span>
+            </div>
           </div>
         </div>
         <div className="editor-field-row">
@@ -116,7 +123,7 @@ export default class HakuEdit extends Component {
             <input id="total-grant-size" type="number"
               disabled={!allowAllHakuEdits} onChange={onChange}
               required="true"
-              value={avustushaku.content["total-grant-size"]} /> €
+              value={avustushaku.content["total-grant-size"]} />
           </div>
         </div>
         <AcademySize value={avustushaku.is_academysize} disabled={!allowAllHakuEdits} onChange={onChange} />
