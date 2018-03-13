@@ -124,6 +124,7 @@ export default class HakuEdit extends Component {
               disabled={!allowAllHakuEdits} onChange={onChange}
               required="true"
               value={avustushaku.content["total-grant-size"]} />
+            <span> €</span>
           </div>
         </div>
         <AcademySize value={avustushaku.is_academysize} disabled={!allowAllHakuEdits} onChange={onChange} />
