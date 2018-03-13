@@ -8,14 +8,11 @@
 (defn- get-va-code-values []
   (compojure-api/GET
     "/" [:as request]
-    :query-params [value-type :- String, {year :- Long nil}]
+    :query-params [{value-type :- String nil}, {year :- Long nil}]
     :return [schema/VACodeValue]
     :summary "Get all VA code values"
     (with-admin request
-      (ok
-        (if (some? year)
-          (data/get-va-code-values value-type year)
-          (data/get-va-code-values value-type)))
+      (ok (data/get-va-code-values value-type year))
       (unauthorized ""))))
 
 (defn- create-va-code-value []
