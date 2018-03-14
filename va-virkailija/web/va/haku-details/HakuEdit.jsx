@@ -116,7 +116,8 @@ export default class HakuEdit extends Component {
               <span>%</span>
             </div>
           </div>
-          <div>
+          <div className={avustushaku.content.multiplemaksuera ?
+               null : "haku-edit-disabled-form"}>
             <div>
               <label className="haku-edit-radio-button-item">
                 <input type="radio" name="payment-size-limit" value="no-limit"
@@ -149,16 +150,16 @@ export default class HakuEdit extends Component {
                 <span>%</span>
               </label>
             </div>
-          </div>
-        </div>
-        <div className="editor-field-row">
-          <div className="editor-row-element">
-            <h3 className="required">Kokonaissumma</h3>
-            <input id="total-grant-size" type="number"
-                   disabled={!allowAllHakuEdits} onChange={onChange}
-                   required="true"
-                   value={avustushaku.content["total-grant-size"]}/>
-            <span> €</span>
+            <div className="editor-field-row">
+              <div className="editor-row-element">
+                <h3 className="required">Kokonaissumma</h3>
+                <input id="total-grant-size" type="number"
+                       disabled={!allowAllHakuEdits} onChange={onChange}
+                       required="true"
+                       value={avustushaku.content["total-grant-size"]}/>
+                <span> €</span>
+              </div>
+            </div>
           </div>
         </div>
         <AcademySize value={avustushaku.is_academysize} disabled={!allowAllHakuEdits} onChange={onChange} />
