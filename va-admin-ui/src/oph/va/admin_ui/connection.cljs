@@ -52,16 +52,6 @@
   (http/get (format "/%s/grants/%d/payments/" api-path id)
             {:with-credentials? true}))
 
-(defn create-payment
-  [values]
-  (http/post (format "/%s/payments/" api-path)
-             {:json-params values :with-credentials? true}))
-
-(defn update-payment
-  [payment]
-  (http/put (format "/%s/payments/%d/" api-path (:id payment))
-            {:json-params payment :with-credentials? true}))
-
 (defn send-payments-email
   [id data]
   (http/post (format "/%s/grants/%d/payments-email/" api-path id)
