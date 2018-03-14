@@ -116,7 +116,8 @@ export default class HakuEdit extends Component {
               <span>%</span>
             </div>
           </div>
-          <div className={avustushaku.content.multiplemaksuera ?
+          <div className={
+                 avustushaku.content.multiplemaksuera && allowAllHakuEdits ?
                null : "haku-edit-disabled-form"}>
             <div>
               <label className="haku-edit-radio-button-item">
