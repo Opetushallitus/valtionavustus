@@ -120,16 +120,22 @@ export default class HakuEdit extends Component {
             <div>
               <label className="haku-edit-radio-button-item">
                 <input type="radio" name="payment-size-limit" value="no-limit"
-                       className="haku-edit-radio-button"/>
+                       checked={avustushaku.content["payment-size-limit"] === "no-limit"}
+                       className="haku-edit-radio-button" onChange={onChange}
+                       id="payment-size-limit-1"/>
                 Avustushaun kaikille edunsaajille maksetaan useammassa erässä
               </label>
               <label className="haku-edit-radio-button-item">
                 <input type="radio" name="payment-size-limit" value="fixed-limit"
-                       className="haku-edit-radio-button"/>
+                       checked={avustushaku.content["payment-size-limit"] === "fixed-limit"}
+                       className="haku-edit-radio-button" onChange={onChange}
+                       id="payment-size-limit-2"/>
                 Maksetaan useammassa erässä, kun OPH:n avustus hankkeelle (ts. maksettava kokonaissumma) on vähintään
                 <input className="haku-edit-inline-input" type="number"
+                       id="payment-fixed-limit"
+                       disabled={avustushaku.content["payment-size-limit"] !== "fixed-limit"}
                        onChange={onChange}
-                       value={avustushaku.content["payments-fixed-limit"]} />
+                       value={avustushaku.content["payment-fixed-limit"]} />
                 <span>€</span>
               </label>
             </div>
@@ -137,9 +143,10 @@ export default class HakuEdit extends Component {
               <label className="haku-edit-field-label">
                 Ensimmäisen erän osuus OPH:n avustuksesta hankkeelle (ts. maksettava kokonaissumma) on vähintään
                 <input type="number" className="haku-edit-inline-input"
+                       id="payment-min-first-batch"
                        onChange={onChange}
-                       value={avustushaku.content["first-payment-batch-size"]}/>
-                <span>€</span>
+                       value={avustushaku.content["payment-min-first-batch"]}/>
+                <span>%</span>
               </label>
             </div>
           </div>
@@ -148,9 +155,9 @@ export default class HakuEdit extends Component {
           <div className="editor-row-element">
             <h3 className="required">Kokonaissumma</h3>
             <input id="total-grant-size" type="number"
-              disabled={!allowAllHakuEdits} onChange={onChange}
-              required="true"
-              value={avustushaku.content["total-grant-size"]} />
+                   disabled={!allowAllHakuEdits} onChange={onChange}
+                   required="true"
+                   value={avustushaku.content["total-grant-size"]}/>
             <span> €</span>
           </div>
         </div>

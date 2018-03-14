@@ -35,6 +35,10 @@
                                  :operational-unit s/Str
                                  :project s/Str
                                  :operation s/Str
+                                 (s/optional-key :payment-size-limit) s/Str
+                                 (s/optional-key :payment-min-first-batch) s/Num
+                                 (s/optional-key :payment-fixed-limit) s/Int
+                                 (s/optional-key :total-grant-size) s/Int
                                  (s/optional-key :rahoitusalueet) [Rahoitusalue]
                                  (s/optional-key :multiplemaksuera) s/Bool
                                  :self-financing-percentage (s/conditional is-percentage? s/Num)})
