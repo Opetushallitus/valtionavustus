@@ -103,7 +103,7 @@ export default class HakuEdit extends Component {
           <div className="multibatch-fields">
             <h3>Maksatus</h3>
             <div>
-              <div  className="haku-edit-field-container">
+              <div className="haku-edit-field-container">
                 <Maksuerat value={avustushaku.content.multiplemaksuera}
                            disabled={!allowAllHakuEdits} onChange={onChange}/>
               </div>
