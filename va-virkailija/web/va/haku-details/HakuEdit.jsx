@@ -388,7 +388,6 @@ class Maksuerat extends React.Component {
 
     return (
       <div id="set-maksuerat">
-        <h3>Maksuerät</h3>
         <fieldset className="soresu-radiobutton-group">
           {optionsHtml}
         </fieldset>
