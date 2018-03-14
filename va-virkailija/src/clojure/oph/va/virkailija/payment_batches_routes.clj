@@ -54,9 +54,6 @@
     (let [identity (authentication/get-request-identity request)
           batch (data/get-batch id)
           grant (grant-data/get-grant (:grant-id batch))]
-      (when (get-in grant [:content :multiplemaksuera])
-        (throw (Exception. "Multiple payment batches is not supported.")))
-
       (let [applications (grant-data/get-unpaid-applications (:id grant))
             c (a/chan)]
         (a/go

@@ -8,7 +8,6 @@
             [clojurewerkz.quartzite.schedule.cron :refer [schedule cron-schedule]]
             [clojure.tools.logging :as log]
             [oph.va.virkailija.rondo-service :as rondo-service]
-            [oph.va.virkailija.payments-routes :as payments-routes]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.invoice :as invoice]
             [ring.util.http-response :refer [ok not-found request-timeout]]))
