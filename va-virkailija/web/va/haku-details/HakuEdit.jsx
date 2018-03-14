@@ -136,7 +136,7 @@ export default class HakuEdit extends Component {
                        id="payment-fixed-limit"
                        disabled={avustushaku.content["payment-size-limit"] !== "fixed-limit"}
                        onChange={onChange}
-                       value={avustushaku.content["payment-fixed-limit"]} />
+                       value={avustushaku.content["payment-fixed-limit"] || ""} />
                 <span>€</span>
               </label>
             </div>
@@ -146,7 +146,7 @@ export default class HakuEdit extends Component {
                 <input type="number" className="haku-edit-inline-input"
                        id="payment-min-first-batch"
                        onChange={onChange}
-                       value={avustushaku.content["payment-min-first-batch"]}/>
+                       value={avustushaku.content["payment-min-first-batch"] || ""}/>
                 <span>%</span>
               </label>
             </div>
@@ -156,7 +156,7 @@ export default class HakuEdit extends Component {
                 <input id="total-grant-size" type="number"
                        disabled={!allowAllHakuEdits} onChange={onChange}
                        required="true"
-                       value={avustushaku.content["total-grant-size"]}/>
+                       value={avustushaku.content["total-grant-size"] || ""}/>
                 <span> €</span>
               </div>
             </div>
