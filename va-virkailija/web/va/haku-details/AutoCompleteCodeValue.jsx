@@ -14,19 +14,12 @@ export default class AutocompleteCodeValue extends Component {
       codeType: this.props.codeType,
       id: this.props.id,
       avustushaku_id: this.props.avustushaku.id,
-      options: []
+      options: this.props.codeOptions
     }
     this.setState = this.setState.bind(this)
     this.updateValue = this.updateValue.bind(this)
-    this.getOptions = this.getOptions.bind(this)
     this.NameOptionRenderer = this.NameOptionRenderer.bind(this)
     this.codeValueRenderer = this.codeValueRenderer.bind(this)
-  }
-
-  componentDidMount() {
-    this.setState({
-      options: this.getOptions()
-    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -34,12 +27,6 @@ export default class AutocompleteCodeValue extends Component {
         this.setState({selectValue: this.state.options.find(k => k.id === nextProps.avustushaku[this.props.codeType])})
     }
   }
-
-  getOptions() {
-    HttpUtil.get(`/api/v2/va-code-values/?value-type=${this.state.id}`)
-      .then(response => {
-        this.setState({options: response, selectValue: response.find(k => k.id===this.props.avustushaku[this.props.codeType])})
-      console.log(response)})}
 
   updateValue (option) {
     this.setState({
