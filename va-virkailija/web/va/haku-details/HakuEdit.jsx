@@ -100,56 +100,58 @@ export default class HakuEdit extends Component {
         <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange}/>
         <ChooseRahoitusalueet avustushaku={avustushaku} allowEditing={allowNondisruptiveHakuEdits} onChange={onChange} controller={controller} />
         <div>
-          <h3>Maksatus</h3>
-          <div>
-            <div  className="haku-edit-field-container">
-              <Maksuerat value={avustushaku.content.multiplemaksuera}
-                         disabled={!allowAllHakuEdits} onChange={onChange}/>
-            </div>
-            <div className="haku-edit-field-container">
-              <h3>Hakijan omarahoitusvaatimus</h3>
-              <input id="haku-self-financing-percentage" type="number"
-                     min="0" max="99" className="percentage" required="true"
-                     maxLength="2" onChange={onChange}
-                     disabled={!allowAllHakuEdits}
-                     value={avustushaku.content["self-financing-percentage"]} />
-              <span>%</span>
-            </div>
-          </div>
-          <div className={
-                 avustushaku.content.multiplemaksuera && allowAllHakuEdits ?
-               null : "haku-edit-disabled-form"}>
+          <div className="multibatch-fields">
+            <h3>Maksatus</h3>
             <div>
-              <label className="haku-edit-radio-button-item">
-                <input type="radio" name="payment-size-limit" value="no-limit"
-                       checked={avustushaku.content["payment-size-limit"] === "no-limit"}
-                       className="haku-edit-radio-button" onChange={onChange}
-                       id="payment-size-limit-1"/>
-                Avustushaun kaikille edunsaajille maksetaan useammassa erässä
-              </label>
-              <label className="haku-edit-radio-button-item">
-                <input type="radio" name="payment-size-limit" value="fixed-limit"
-                       checked={avustushaku.content["payment-size-limit"] === "fixed-limit"}
-                       className="haku-edit-radio-button" onChange={onChange}
-                       id="payment-size-limit-2"/>
-                Maksetaan useammassa erässä, kun OPH:n avustus hankkeelle (ts. maksettava kokonaissumma) on vähintään
-                <input className="haku-edit-inline-input" type="number"
-                       id="payment-fixed-limit"
-                       disabled={avustushaku.content["payment-size-limit"] !== "fixed-limit"}
-                       onChange={onChange}
-                       value={avustushaku.content["payment-fixed-limit"] || ""} />
-                <span>€</span>
-              </label>
-            </div>
-            <div className="haku-edit-subrow">
-              <label className="haku-edit-field-label">
-                Ensimmäisen erän osuus OPH:n avustuksesta hankkeelle (ts. maksettava kokonaissumma) on vähintään
-                <input type="number" className="haku-edit-inline-input"
-                       id="payment-min-first-batch"
-                       onChange={onChange}
-                       value={avustushaku.content["payment-min-first-batch"] || ""}/>
+              <div  className="haku-edit-field-container">
+                <Maksuerat value={avustushaku.content.multiplemaksuera}
+                           disabled={!allowAllHakuEdits} onChange={onChange}/>
+              </div>
+              <div className="haku-edit-field-container">
+                <h3>Hakijan omarahoitusvaatimus</h3>
+                <input id="haku-self-financing-percentage" type="number"
+                       min="0" max="99" className="percentage" required="true"
+                       maxLength="2" onChange={onChange}
+                       disabled={!allowAllHakuEdits}
+                       value={avustushaku.content["self-financing-percentage"]} />
                 <span>%</span>
-              </label>
+              </div>
+            </div>
+            <div className={
+                   avustushaku.content.multiplemaksuera && allowAllHakuEdits ?
+                 null : "haku-edit-disabled-form"}>
+              <div>
+                <label className="haku-edit-radio-button-item">
+                  <input type="radio" name="payment-size-limit" value="no-limit"
+                         checked={avustushaku.content["payment-size-limit"] === "no-limit"}
+                         className="haku-edit-radio-button" onChange={onChange}
+                         id="payment-size-limit-1"/>
+                  Avustushaun kaikille edunsaajille maksetaan useammassa erässä
+                </label>
+                <label className="haku-edit-radio-button-item">
+                  <input type="radio" name="payment-size-limit" value="fixed-limit"
+                         checked={avustushaku.content["payment-size-limit"] === "fixed-limit"}
+                         className="haku-edit-radio-button" onChange={onChange}
+                         id="payment-size-limit-2"/>
+                  Maksetaan useammassa erässä, kun OPH:n avustus hankkeelle (ts. maksettava kokonaissumma) on vähintään
+                  <input className="haku-edit-inline-input" type="number"
+                         id="payment-fixed-limit"
+                         disabled={avustushaku.content["payment-size-limit"] !== "fixed-limit"}
+                         onChange={onChange}
+                         value={avustushaku.content["payment-fixed-limit"] || ""} />
+                  <span>€</span>
+                </label>
+              </div>
+              <div className="haku-edit-subrow">
+                <label className="haku-edit-field-label">
+                  Ensimmäisen erän osuus OPH:n avustuksesta hankkeelle (ts. maksettava kokonaissumma) on vähintään
+                  <input type="number" className="haku-edit-inline-input"
+                         id="payment-min-first-batch"
+                         onChange={onChange}
+                         value={avustushaku.content["payment-min-first-batch"] || ""}/>
+                  <span>%</span>
+                </label>
+              </div>
             </div>
           </div>
           <div className="editor-field-row">
