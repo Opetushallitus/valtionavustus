@@ -151,15 +151,15 @@ export default class HakuEdit extends Component {
                 <span>%</span>
               </label>
             </div>
-            <div className="editor-field-row">
-              <div className="editor-row-element">
-                <h3 className="required">Kokonaissumma</h3>
-                <input id="total-grant-size" type="number"
-                       disabled={!allowAllHakuEdits} onChange={onChange}
-                       required="true"
-                       value={avustushaku.content["total-grant-size"] || ""}/>
-                <span> €</span>
-              </div>
+          </div>
+          <div className="editor-field-row">
+            <div className="editor-row-element">
+              <h3 className="required">Kokonaissumma</h3>
+              <input id="total-grant-size" type="number"
+                     disabled={!allowAllHakuEdits} onChange={onChange}
+                     required="true"
+                     value={avustushaku.content["total-grant-size"] || ""}/>
+              <span> €</span>
             </div>
           </div>
         </div>
