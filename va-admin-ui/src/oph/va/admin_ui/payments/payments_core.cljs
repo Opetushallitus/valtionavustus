@@ -221,15 +221,11 @@
                        "Virhe historiatietojen latauksessa"
                        (select-keys result [:status :error-text])))))))
            :is-admin? (user/is-admin? user-info)})]
-       (let [multipayment? (get-in @selected-grant [:content :multiplemaksuera])
-             accounts-nil? (any-account-nil? @current-applications)
+       (let [accounts-nil? (any-account-nil? @current-applications)
              unsent-payments? (some
                                 #(when (< (get-in % [:payment :state]) 2) true)
                                 @current-applications)]
          [:div
-          (when multipayment?
-            (notice "Ainoastaan yhden erän maksatukset on tuettu tällä hetkellä.
-             Monen erän maksatukset tulee luoda manuaalisesti."))
           (when accounts-nil?
             (notice "Joillakin hakemuksilla ei ole LKP- tai TaKP-tiliä, joten
                    makastukset tulee luoda manuaalisesti."))
@@ -238,7 +234,7 @@
             :disabled
             (or
               (not (payments/valid-batch-values? @batch-values))
-              multipayment? accounts-nil?
+              accounts-nil?
               (not unsent-payments?))
             :label "Lähetä maksatukset"
             :style theme/button
