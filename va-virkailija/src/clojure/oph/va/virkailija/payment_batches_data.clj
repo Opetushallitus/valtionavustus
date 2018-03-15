@@ -42,7 +42,12 @@
 (defn create-filename [payment]
   (format "payment-%d-%d.xml" (:id payment) (System/currentTimeMillis)))
 
-(defn create-multibatch-payment [application data])
+(defn create-multibatch-payment [application data]
+  (let [payments (application-data/get-application-payments (:id application))]
+    (cond (and (every? #(> (:state %) 1) payments)
+               (>= (reduce #(+ %1 (:sum %2)) 0 payments)))
+          {:success false :error-type :already-paid}))
+  {:success true})
 
 (defn create-single-batch-payment [application data]
   (let [payments (application-data/get-application-payments (:id application))]
@@ -51,7 +56,7 @@
             (or (first payments)
                 (payments-data/create-payment
                   (create-payment-values
-                    application (:batch data)) (:identity data)))
+                    application (:batch data))(:identity data)))
             filename (create-filename payment)
             result
             (with-timeout
@@ -65,7 +70,7 @@
                    {:success false :error-type :exception :exception e}))
               timeout-limit {:success false :error-type :timeout})]
         (assoc result :filename filename :payment payment))
-      {:success true})))
+      {:success false :error-type :already-paid})))
 
 (defn create-payments [data]
   (let [{:keys [identity batch grant]} data
@@ -75,12 +80,14 @@
               (grant-data/get-grant-applications-with-evaluation (:id grant))]
         (let [result
               (if (get-in grant [:content :multiplemaksuera])
-                (create-multibatch-payment)
+                (create-multibatch-payment application data)
                 (create-single-batch-payment application data))]
-          (if (:success result)
+          (cond
+            (:success result)
             (payments-data/update-payment
               (assoc (:payment result)
                      :state 2 :filename (:filename result)) identity)
-            (a/>! c (:error-type result)))))
+            (not= (:error-type result) :already-paid)
+              (a/>! c (:error-type result)))))
       (a/close! c))
     c))
