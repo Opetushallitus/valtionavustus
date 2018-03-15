@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-//import Select from 'react-select';
 import 'react-select/less/default.less'
 import VirtualizedSelect from 'react-virtualized-select'
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -7,33 +6,20 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 export default class AutocompleteCodeValue extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      selectValue: "",
-      avustushaku: this.props.avustushaku,
-      controller: this.props.controller,
-      codeType: this.props.codeType,
-      id: this.props.id,
-      avustushaku_id: this.props.avustushaku.id,
-      options: this.props.codeOptions
-    }
-    this.setState = this.setState.bind(this)
     this.updateValue = this.updateValue.bind(this)
     this.NameOptionRenderer = this.NameOptionRenderer.bind(this)
     this.codeValueRenderer = this.codeValueRenderer.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.avustushaku.id !== this.state.avustushaku.id && this.props.avustushaku[this.props.codeType] !== null) {
-        this.setState({selectValue: this.state.options.find(k => k.id === nextProps.avustushaku[this.props.codeType])})
-    }
-  }
 
   updateValue (option) {
-    this.setState({
-      selectValue: option
-    })
-    this.props.controller.onChangeListener(this.state.avustushaku, {id: this.state.id}, option.id)
-    this.props.avustushaku[this.state.codeType] = option.id
+    if (option == null) {
+      this.props.controller.onChangeListener(this.props.avustushaku, {id: this.props.id}, null)
+      this.props.avustushaku[this.state.codeType] = null
+    } else {
+      this.props.controller.onChangeListener(this.props.avustushaku, {id: this.props.id}, option.id)
+      this.props.avustushaku[this.props.codeType] = option.id
+      }
   }
 
   NameOptionRenderer({key, option }) {
@@ -49,6 +35,7 @@ export default class AutocompleteCodeValue extends Component {
     )
   }
 
+
   codeValueRenderer(option){
     return (
       <div>{option.code + " " + option["code-value"]}</div>
@@ -59,16 +46,16 @@ export default class AutocompleteCodeValue extends Component {
   render() {
     return (
       <VirtualizedSelect
-        id={this.state.codeType}
+        id={this.props.codeType}
         labelKey='code'
         placeholder="Valitse listasta"
         style={{ width: "97%" }}
         backspaceRemoves={true}
-        options={this.state.options}
+        options={this.props.codeOptions}
         onChange={this.updateValue}
         optionRenderer={this.NameOptionRenderer}
         valueKey='code-value'
-        value={this.state.selectValue}
+        value={this.props.selectedValue}
         valueRenderer={this.codeValueRenderer}
       />
     )

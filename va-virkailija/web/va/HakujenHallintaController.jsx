@@ -283,12 +283,12 @@ export default class HakujenHallintaController {
     update.avustushaku["is_academysize"] = update.newValue === 'true'
   } else if (fieldId.startsWith("set-status-")) {
     update.avustushaku["status"] = update.newValue
-  }else if (fieldId.startsWith("operational-unit")) {
-    update.avustushaku["operational-unit"] = update.newValue
-  }else if (fieldId.startsWith("operation")) {
-    update.avustushaku["operation"] = update.newValue
-  }else if (fieldId.startsWith("project")) {
-    update.avustushaku["project"] = update.newValue
+  }else if (fieldId.startsWith("operational-unit-id")) {
+    update.avustushaku["operational-unit-id"] = update.newValue
+  }else if (fieldId.startsWith("operation-id")) {
+    update.avustushaku["operation-id"] = update.newValue
+  }else if (fieldId.startsWith("project-id")) {
+    update.avustushaku["project-id"] = update.newValue
   }
   else if (fieldId.startsWith("rahoitusalue-")) {
     const rahoitusalue = /rahoitusalue-(\d+)-tili-(\d+)/.exec(fieldId)
