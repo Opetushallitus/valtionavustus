@@ -111,8 +111,8 @@
 
 (defn get-grant-payments [id]
   (->> (exec :form-db queries/get-grant-payments {:id id})
-       (mapv convert-to-dash-keys)
-       (mapv convert-timestamps-from-sql)))
+       (map convert-to-dash-keys)
+       (map convert-timestamps-from-sql)))
 
 (defn delete-grant-payments [id]
   (exec :form-db queries/delete-grant-payments {:id id}))
