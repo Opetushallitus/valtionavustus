@@ -29,7 +29,7 @@
                                     virkailija-queries/get-application-payment
                                     {:application_id id}))))
 
-(defn get-application-paymentos [id]
+(defn get-application-payments [id]
   (map convert-to-dash-keys (exec :form-db
                                   virkailija-queries/get-application-payments
                                   {:application_id id})))
