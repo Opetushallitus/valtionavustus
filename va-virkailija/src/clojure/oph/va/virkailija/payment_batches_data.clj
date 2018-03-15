@@ -45,7 +45,8 @@
 (defn create-multibatch-payment [application data]
   (let [payments (application-data/get-application-payments (:id application))]
     (cond (and (every? #(> (:state %) 1) payments)
-               (>= (reduce #(+ %1 (:sum %2)) 0 payments)))
+               (>= (reduce #(+ %1 (:sum %2)) 0 payments)
+                   (:budget-granted application)))
           {:success false :error-type :already-paid}))
   {:success true})
 
