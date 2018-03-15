@@ -54,7 +54,7 @@
                           :notice {:fi s/Str :sv s/Str}
                           (s/optional-key :payments) (s/maybe {:delete-payments? s/Bool})
                           (s/optional-key :opintopolku) {:url s/Str
-                                                         :permission-request s/Str}})x
+                                                         :permission-request s/Str}})
 
 (s/defschema HakuType
   (s/enum "yleisavustus" "erityisavustus"))
