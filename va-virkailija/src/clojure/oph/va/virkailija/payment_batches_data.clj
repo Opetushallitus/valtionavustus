@@ -39,33 +39,48 @@
    :state 0
    :batch-id (:id batch)})
 
-(defn create-payments [{:keys [identity batch grant]}]
-  (let [c (a/chan)]
+(defn create-filename [payment]
+  (format "payment-%d-%d.xml" (:id payment) (System/currentTimeMillis)))
+
+(defn create-multibatch-payment [application data])
+
+(defn create-single-batch-payment [application data]
+  (let [payments (application-data/get-application-payments (:id application))]
+    (if (or (empty? payments) (< (:state (first payments)) 2))
+      (let [payment
+            (or (first payments)
+                (payments-data/create-payment
+                  (create-payment-values
+                    application (:batch data)) (:identity data)))
+            filename (create-filename payment)
+            result
+            (with-timeout
+              #(try
+                 (rondo-service/send-to-rondo!
+                   {:payment (payments-data/get-payment (:id payment))
+                    :application application
+                    :grant (:grant data)
+                    :filename filename})
+                 (catch Exception e
+                   {:success false :error-type :exception :exception e}))
+              timeout-limit {:success false :error-type :timeout})]
+        (assoc result :filename filename :payment payment))
+      {:success true})))
+
+(defn create-payments [data]
+  (let [{:keys [identity batch grant]} data
+        c (a/chan)]
     (a/go
-      (let [applications (grant-data/get-unpaid-applications (:id grant))]
-        (doseq [application applications]
-          (let [payment
-                (or (application-data/get-application-payment
-                      (:id application))
-                    (payments-data/create-payment
-                      (create-payment-values application batch) identity))
-                filename (format "payment-%d-%d.xml"
-                                 (:id payment) (System/currentTimeMillis))]
-            (let [result
-                  (with-timeout
-                    #(try
-                       (rondo-service/send-to-rondo!
-                         {:payment (payments-data/get-payment (:id payment))
-                          :application application
-                          :grant grant
-                          :filename filename})
-                       (catch Exception e
-                         {:success false :error-type :exception :exception e}))
-                    timeout-limit
-                    {:success false :error-type :timeout})]
-              (if (:success result)
-                (payments-data/update-payment
-                  (assoc payment :state 2 :filename filename) identity)
-                (a/>! c (:error-type result))))))
-        (a/close! c)))
+      (doseq [application
+              (grant-data/get-grant-applications-with-evaluation (:id grant))]
+        (let [result
+              (if (get-in grant [:content :multiplemaksuera])
+                (create-multibatch-payment)
+                (create-single-batch-payment application data))]
+          (if (:success result)
+            (payments-data/update-payment
+              (assoc (:payment result)
+                     :state 2 :filename (:filename result)) identity)
+            (a/>! c (:error-type result)))))
+      (a/close! c))
     c))
