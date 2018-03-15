@@ -267,7 +267,8 @@
    (s/optional-key :acceptor-email) s/Str
    (s/optional-key :filename) (s/maybe s/Str)
    (s/optional-key :user-name) s/Str
-   :batch-id s/Int})
+   :batch-id s/Int
+   :payment-sum s/Int})
 
 (s/defschema PaymentBatchNumber
   "Payment batch number"

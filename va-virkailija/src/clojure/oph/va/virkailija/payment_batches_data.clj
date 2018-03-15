@@ -55,8 +55,11 @@
       (let [payment
             (or (first payments)
                 (payments-data/create-payment
-                  (create-payment-values
-                    application (:batch data))(:identity data)))
+                  (assoc
+                    (create-payment-values
+                     application (:batch data))
+                    :payment-sum (:budget-granted application))
+                  (:identity data)))
             filename (create-filename payment)
             result
             (with-timeout
