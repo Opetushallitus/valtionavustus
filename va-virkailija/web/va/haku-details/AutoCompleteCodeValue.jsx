@@ -15,7 +15,7 @@ export default class AutocompleteCodeValue extends Component {
   updateValue (option) {
     if (option == null) {
       this.props.controller.onChangeListener(this.props.avustushaku, {id: this.props.id}, null)
-      this.props.avustushaku[this.state.codeType] = null
+      this.props.avustushaku[this.props.codeType] = null
     } else {
       this.props.controller.onChangeListener(this.props.avustushaku, {id: this.props.id}, option.id)
       this.props.avustushaku[this.props.codeType] = option.id
