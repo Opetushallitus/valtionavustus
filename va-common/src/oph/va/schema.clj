@@ -36,9 +36,9 @@
                                  (s/optional-key :payment-min-first-batch) s/Num
                                  (s/optional-key :payment-fixed-limit) s/Int
                                  (s/optional-key :total-grant-size) s/Int
-                                 (s/optional-key :operation-id) (s/maybe s/Str)
-                                 (s/optional-key :operational-unit-id) (s/maybe s/Str)
-                                 (s/optional-key :project-id) (s/maybe s/Str)
+                                 (s/optional-key :operation) (s/maybe s/Str)
+                                 (s/optional-key :operational-unit) (s/maybe s/Str)
+                                 (s/optional-key :project) (s/maybe s/Str)
                                  (s/optional-key :rahoitusalueet) [Rahoitusalue]
                                  (s/optional-key :multiplemaksuera) s/Bool
                                  :self-financing-percentage (s/conditional is-percentage? s/Num)})
