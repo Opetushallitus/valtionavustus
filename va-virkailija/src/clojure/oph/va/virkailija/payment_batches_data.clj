@@ -43,8 +43,7 @@
   (let [c (a/chan)]
     (a/go
       (let [applications (grant-data/get-unpaid-applications (:id grant))]
-        (a/go
-          (doseq [application applications]
+        (doseq [application applications]
             (let [payment
                   (or (application-data/get-application-payment
                         (:id application))
@@ -68,5 +67,5 @@
                   (payments-data/update-payment
                     (assoc payment :state 2 :filename filename) identity)
                   (a/>! c (:error-type result))))))
-          (a/close! c))))
+          (a/close! c)))
     c))
