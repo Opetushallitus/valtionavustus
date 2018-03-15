@@ -44,28 +44,28 @@
     (a/go
       (let [applications (grant-data/get-unpaid-applications (:id grant))]
         (doseq [application applications]
-            (let [payment
-                  (or (application-data/get-application-payment
-                        (:id application))
-                      (payments-data/create-payment
-                        (create-payment-values application batch) identity))
-                  filename (format "payment-%d-%d.xml"
-                                   (:id payment) (System/currentTimeMillis))]
-              (let [result
-                    (with-timeout
-                      #(try
-                         (rondo-service/send-to-rondo!
-                           {:payment (payments-data/get-payment (:id payment))
-                            :application application
-                            :grant grant
-                            :filename filename})
-                         (catch Exception e
-                           {:success false :error-type :exception :exception e}))
-                      timeout-limit
-                      {:success false :error-type :timeout})]
-                (if (:success result)
-                  (payments-data/update-payment
-                    (assoc payment :state 2 :filename filename) identity)
-                  (a/>! c (:error-type result))))))
-          (a/close! c)))
+          (let [payment
+                (or (application-data/get-application-payment
+                      (:id application))
+                    (payments-data/create-payment
+                      (create-payment-values application batch) identity))
+                filename (format "payment-%d-%d.xml"
+                                 (:id payment) (System/currentTimeMillis))]
+            (let [result
+                  (with-timeout
+                    #(try
+                       (rondo-service/send-to-rondo!
+                         {:payment (payments-data/get-payment (:id payment))
+                          :application application
+                          :grant grant
+                          :filename filename})
+                       (catch Exception e
+                         {:success false :error-type :exception :exception e}))
+                    timeout-limit
+                    {:success false :error-type :timeout})]
+              (if (:success result)
+                (payments-data/update-payment
+                  (assoc payment :state 2 :filename filename) identity)
+                (a/>! c (:error-type result))))))
+        (a/close! c)))
     c))
