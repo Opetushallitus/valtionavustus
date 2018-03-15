@@ -1,20 +1,53 @@
 {
-  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "root": true,
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+  "env": {
+    "browser": true
+  },
   "parserOptions": {
-    "ecmaVersion": 5,
-    "sourceType": "module",
+    "ecmaVersion": 2015,
     "ecmaFeatures": {
-      "jsx": true
-    }
+      "experimentalObjectRestSpread": true
+    },
+    "sourceType": "module"
   },
   "rules": {
-    "semi": [2, "never"],
-    "no-trailing-spaces": "error",
-    "quotes": ["error", "double"],
-    "indent": ["error", 2, {"SwitchCase": 1}],
     "curly": "error",
-    "react/prop-types": [2, {"skipUndeclared": true}],
-    "no-var": "error",
-    "eqeqeq": "error"
-  }
+    "eqeqeq": "warn",
+    "no-console": "off",
+    "no-const-assign": "error",
+    "no-trailing-spaces": "error",
+    "no-unneeded-ternary": "error",
+    "no-unused-expressions": "error",
+    "no-var": "warn",
+    "prefer-const": "error",
+    "react/prop-types": ["error", {"skipUndeclared": true}],
+    "semi": ["warn", "never"]
+  },
+  "overrides": [
+    {
+      "files": [
+        "parent-webpack.config.js",
+        "*/webpack.config.js"
+      ],
+      "env": {
+        "node": true
+      }
+    },
+    {
+      "files": [
+        "*/web/test/**/*Test.js",
+        "*/resources/public/test/**/*Spec.js"
+      ],
+      "env": {
+        "mocha": true
+      },
+      "rules": {
+        "no-unused-expressions": "off"
+      }
+    }
+  ]
 }

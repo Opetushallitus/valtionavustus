@@ -115,6 +115,10 @@ lein-install-checkouts: $(LEIN_CHECKOUT_DIRS)
 lein-clean-checkouts:
 	rm -fr $(LEIN_CHECKOUTS_BASEDIRS)
 
+.PHONY:
+eslint:
+	eslint --ignore-path .gitignore --ignore-pattern '*.json' '**/*.js*'
+
 define newline
 
 
@@ -124,6 +128,7 @@ define usage_text
 Targets:
 
   help                          Show this guide.
+
   clean                         `npm-clean`, `lein-clean`
   build                         `npm-build`, `lein-build`
   test                          `npm-test`, `lein-test`
@@ -148,6 +153,8 @@ Targets:
   lein-outdated-dependencies    Show outdated Leiningen dependencies for $$LEIN_PROJECTS.
   lein-install-checkouts        Install Leiningen checkout directories for va-hakija and va-virkailija.
   lein-clean-checkouts          Remove Leiningen checkout directories for va-hakija and va-virkailija.
+
+  eslint                        Run ESLint against JavaScript sources.
 
 Examples:
 
