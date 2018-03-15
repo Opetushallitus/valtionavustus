@@ -42,12 +42,30 @@
 (defn create-filename [payment]
   (format "payment-%d-%d.xml" (:id payment) (System/currentTimeMillis)))
 
+(defn send-to-rondo! [payment application grant filename]
+  (with-timeout
+    #(try
+       (rondo-service/send-to-rondo!
+         {:payment (payments-data/get-payment (:id payment))
+          :application application
+          :grant grant
+          :filename filename})
+       (catch Exception e
+         {:success false :error-type :exception :exception e}))
+    timeout-limit {:success false :error-type :timeout}))
+
 (defn create-multibatch-payment [application data]
   (let [payments (application-data/get-application-payments (:id application))]
     (cond (and (every? #(> (:state %) 1) payments)
                (>= (reduce #(+ %1 (:sum %2)) 0 payments)
                    (:budget-granted application)))
-          {:success false :error-type :already-paid}))
+          {:success false :error-type :already-paid}
+          (some #(when (< (:state %) 2) %))
+          (let [payment (some #(when (< (:state %) 2) %))
+                filename (create-filename payment)]
+            (assoc
+              (send-to-rondo! payment application (:grant data) filename)
+              :filename filename :payment payment))))
   {:success true})
 
 (defn create-single-batch-payment [application data]
@@ -62,17 +80,7 @@
                     :payment-sum (:budget-granted application))
                   (:identity data)))
             filename (create-filename payment)
-            result
-            (with-timeout
-              #(try
-                 (rondo-service/send-to-rondo!
-                   {:payment (payments-data/get-payment (:id payment))
-                    :application application
-                    :grant (:grant data)
-                    :filename filename})
-                 (catch Exception e
-                   {:success false :error-type :exception :exception e}))
-              timeout-limit {:success false :error-type :timeout})]
+            result (send-to-rondo! payment application (:grant data) filename)]
         (assoc result :filename filename :payment payment))
       {:success false :error-type :already-paid})))
 
