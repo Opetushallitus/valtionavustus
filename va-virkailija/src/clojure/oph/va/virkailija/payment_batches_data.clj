@@ -54,19 +54,22 @@
          {:success false :error-type :exception :exception e}))
     timeout-limit {:success false :error-type :timeout}))
 
+(defn get-unpaid-payment [payments]
+  (some #(when (< (:state %) 2) %) payments))
+
 (defn create-multibatch-payment [application data]
   (let [payments (application-data/get-application-payments (:id application))]
     (cond (and (every? #(> (:state %) 1) payments)
                (>= (reduce #(+ %1 (:sum %2)) 0 payments)
                    (:budget-granted application)))
           {:success false :error-type :already-paid}
-          (some #(when (< (:state %) 2) %))
-          (let [payment (some #(when (< (:state %) 2) %))
+          (get-unpaid-payment payments)
+          (let [payment (get-unpaid-payment payments)
                 filename (create-filename payment)]
             (assoc
               (send-to-rondo! payment application (:grant data) filename)
-              :filename filename :payment payment))))
-  {:success true})
+              :filename filename :payment payment))
+          :else {:success false :error-type :unknown-payment})))
 
 (defn create-single-batch-payment [application data]
   (let [payments (application-data/get-application-payments (:id application))]
@@ -79,9 +82,9 @@
                      application (:batch data))
                     :payment-sum (:budget-granted application))
                   (:identity data)))
-            filename (create-filename payment)
-            result (send-to-rondo! payment application (:grant data) filename)]
-        (assoc result :filename filename :payment payment))
+            filename (create-filename payment)]
+        (assoc (send-to-rondo! payment application (:grant data) filename)
+               :filename filename :payment payment))
       {:success false :error-type :already-paid})))
 
 (defn create-payments [data]
