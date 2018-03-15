@@ -5,6 +5,6 @@ SELECT
 FROM
   avustushaut
 WHERE
-  status = 'resolved'
+  status = 'resolved' OR status = 'published'
 ORDER
   BY created_at DESC;
