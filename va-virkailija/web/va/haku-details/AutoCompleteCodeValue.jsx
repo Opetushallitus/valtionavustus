@@ -4,25 +4,8 @@ import VirtualizedSelect from 'react-virtualized-select'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 
 export default class AutocompleteCodeValue extends Component {
-  constructor(props) {
-    super(props)
-    this.updateValue = this.updateValue.bind(this)
-    this.NameOptionRenderer = this.NameOptionRenderer.bind(this)
-    this.codeValueRenderer = this.codeValueRenderer.bind(this)
-  }
 
-
-  updateValue (option) {
-    if (option == null) {
-      this.props.controller.onChangeListener(this.props.avustushaku, {id: this.props.id}, null)
-      this.props.avustushaku[this.state.codeType] = null
-    } else {
-      this.props.controller.onChangeListener(this.props.avustushaku, {id: this.props.id}, option.id)
-      this.props.avustushaku[this.props.codeType] = option.id
-      }
-  }
-
-  NameOptionRenderer({key, option }) {
+  NameOptionRenderer: (key, option ) => {
     return (
       <div
         className="Select-input"
@@ -35,8 +18,17 @@ export default class AutocompleteCodeValue extends Component {
     )
   }
 
+  updateValue: (option) => {
+    if (option == null) {
+      this.props.controller.onChangeListener(this.props.avustushaku, {id: this.props.id}, null)
+      this.props.avustushaku[this.state.codeType] = null
+    } else {
+      this.props.controller.onChangeListener(this.props.avustushaku, {id: this.props.id}, option.id)
+      this.props.avustushaku[this.props.codeType] = option.id
+      }
+  }
 
-  codeValueRenderer(option){
+  codeValueRenderer: (option) => {
     return (
       <div>{option.code + " " + option["code-value"]}</div>
     )
