@@ -93,6 +93,70 @@ describe("FormBranchEditableFieldGrower", () => {
     })
   })
 
+  it("modifies form fields and answers for growing fieldset with vaProjectDescription type children", () => {
+    const answersObject = makeAnswersObject([makeGrowingFieldsetAnswer("vaProjectDescription", [
+      {
+        key: 2,
+        value: [
+          {key: "goal", value: "Goal2", fieldType: "textField"},
+          {key: "money", value: "12", fieldType: "moneyField"}
+        ]
+      }
+    ])])
+
+    const state = {
+      configuration: {
+        form: {
+          content: [makeWrapperFieldSpec([makeGrowingFieldsetSpec("vaProjectDescription", [1], [
+            {key: "goal", fieldType: "textField"},
+            {key: "money", fieldType: "moneyField"}
+          ])])]
+        }
+      },
+      form: {
+        content: [makeWrapperFieldSpec(makeGrowingFieldsetSpec("vaProjectDescription", [2], [
+          {key: "goal", fieldType: "textField"},
+          {key: "money", fieldType: "moneyField"}
+        ]))]
+      },
+      saveStatus: {
+        values: answersObject
+      },
+      extensionApi: {}
+    }
+
+    FormBranchEditableFieldGrower.ensureFirstChildIsRequired(state, FormUtil.findField(state.form.content, "my-fieldset"))
+
+    expect(getFieldsetIdTree(state.form.content)).to.eql([["my-fieldset-1", ["my-fieldset-1.goal", "my-fieldset-1.money"]]])
+
+    expect(answersObject).to.eql({
+      "value": [
+        {
+          "fieldType": "growingFieldset",
+          "key": "my-fieldset",
+          "value": [
+            {
+              "fieldType": "vaProjectDescription",
+              "key": "my-fieldset-1",
+              "value": [
+                {
+                  "fieldType": "textField",
+                  "key": "my-fieldset-1.goal",
+                  "value": "Goal2"
+                },
+                {
+                  "fieldType": "moneyField",
+                  "key": "my-fieldset-1.money",
+                  "value": "12"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    })
+  })
+
   it("triggers validation for modified fields", () => {
     const answersObject = makeAnswersObject([makeGrowingFieldsetAnswer("growingFieldsetChild", [
       {
