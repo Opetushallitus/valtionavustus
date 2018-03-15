@@ -32,7 +32,6 @@
                                  :duration Duration
                                  :focus-areas LocalizedStringList
                                  :selection-criteria LocalizedStringList
-<<<<<<< HEAD
                                  :operational-unit s/Str
                                  :project s/Str
                                  :operation s/Str
@@ -40,11 +39,9 @@
                                  (s/optional-key :payment-min-first-batch) s/Num
                                  (s/optional-key :payment-fixed-limit) s/Int
                                  (s/optional-key :total-grant-size) s/Int
-=======
                                  (s/optional-key :operation) (s/maybe s/Str)
                                  (s/optional-key :operational-unit) (s/maybe s/Str)
                                  (s/optional-key :project) (s/maybe s/Str)
->>>>>>> va3-213-autocomplete-fields-to-grants
                                  (s/optional-key :rahoitusalueet) [Rahoitusalue]
                                  (s/optional-key :multiplemaksuera) s/Bool
                                  :self-financing-percentage (s/conditional is-percentage? s/Num)})
@@ -57,7 +54,7 @@
                           :notice {:fi s/Str :sv s/Str}
                           (s/optional-key :payments) (s/maybe {:delete-payments? s/Bool})
                           (s/optional-key :opintopolku) {:url s/Str
-                                                         :permission-request s/Str}})
+                                                         :permission-request s/Str}})x
 
 (s/defschema HakuType
   (s/enum "yleisavustus" "erityisavustus"))
