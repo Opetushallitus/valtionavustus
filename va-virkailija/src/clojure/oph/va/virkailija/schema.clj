@@ -325,7 +325,9 @@
    :takp-account (s/maybe s/Str)
    (s/optional-key :grant-id) s/Int
    (s/optional-key :evaluation) s/Any
-   (s/optional-key :answers) [Answer]})
+   (s/optional-key :answers) [Answer]
+   (s/optional-key :payment-decisions) (s/maybe [{:id s/Int :payment-sum s/Int
+                                         :takp-account s/Str}])})
 
 (s/defschema PaymentsEmail
   "Grant payments email"
