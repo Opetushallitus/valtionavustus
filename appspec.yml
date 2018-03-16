@@ -7,6 +7,10 @@ files:
     destination: /home/ec2-user/va-hakija/
   - source: ci/dev-recreate-containers.sh
     destination: /home/ec2-user/ci/
+  - source: scripts/docker/va-virkailija/Dockerfile
+    destination: /home/ec2-user/va-virkalija
+  - source: scripts/docker/va-hakija/Dockerfile
+    destination: /home/ec2-user/va-hakija
 hooks:
   ApplicationStart:
     - location: ci/dev-recreate-containers.sh
