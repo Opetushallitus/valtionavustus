@@ -8,7 +8,7 @@ files:
   - source: ci/dev-recreate-containers.sh
     destination: /home/ec2-user/ci/
   - source: scripts/docker/va-virkailija/Dockerfile
-    destination: /home/ec2-user/va-virkalija
+    destination: /home/ec2-user/va-virkailija
   - source: scripts/docker/va-hakija/Dockerfile
     destination: /home/ec2-user/va-hakija
 hooks:
