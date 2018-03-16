@@ -269,7 +269,7 @@
    (s/optional-key :user-name) s/Str
    :batch-id s/Int
    :payment-sum s/Int
-   :decision-id (s/maybe s/Int)})
+   (s/optional-key :decision-id) (s/maybe s/Int)})
 
 (s/defschema PaymentBatchNumber
   "Payment batch number"
