@@ -9,6 +9,6 @@ files:
     destination: /home/ec2-user/ci/
 hooks:
   ApplicationStart:
-    - location: /home/ec2-user/ci/dev-recreate-containers.sh
+    - location: ci/dev-recreate-containers.sh
       timeout: 80
       runas: ec2-user
