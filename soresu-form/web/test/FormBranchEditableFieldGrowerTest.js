@@ -1,4 +1,5 @@
 import { expect } from "chai"
+import Immutable from 'seamless-immutable'
 import FormUtil from "../form/FormUtil"
 import FormBranchEditableFieldGrower from "../form/FormBranchEditableFieldGrower"
 
@@ -34,7 +35,8 @@ describe("FormBranchEditableFieldGrower", () => {
         content: [makeWrapperFieldSpec([makeGrowingFieldsetSpec("growingFieldsetChild", [2, 3], [
           {key: "name", fieldType: "textField"},
           {key: "email", fieldType: "vaEmailNotification"}
-        ])])]
+        ])])],
+        validationErrors: Immutable({})
       },
       saveStatus: {
         values: answersObject
@@ -117,7 +119,8 @@ describe("FormBranchEditableFieldGrower", () => {
         content: [makeWrapperFieldSpec(makeGrowingFieldsetSpec("vaProjectDescription", [2], [
           {key: "goal", fieldType: "textField"},
           {key: "money", fieldType: "moneyField"}
-        ]))]
+        ]))],
+        validationErrors: Immutable({})
       },
       saveStatus: {
         values: answersObject
@@ -180,7 +183,8 @@ describe("FormBranchEditableFieldGrower", () => {
       form: {
         content: [makeWrapperFieldSpec([makeGrowingFieldsetSpec("growingFieldsetChild", [2, 3], [
           {key: "money", fieldType: "moneyField"}
-        ])])]
+        ])])],
+        validationErrors: Immutable({})
       },
       saveStatus: {
         values: answersObject
@@ -191,6 +195,41 @@ describe("FormBranchEditableFieldGrower", () => {
     FormBranchEditableFieldGrower.ensureFirstChildIsRequired(state, FormUtil.findField(state.form.content, "my-fieldset"))
 
     expect(state.form.validationErrors).to.eql({"my-fieldset-1.money": [{error: "money"}]})
+  })
+
+  it("clears previous validation error for modified field", () => {
+    const answersObject = makeAnswersObject([makeGrowingFieldsetAnswer("growingFieldsetChild", [
+      {
+        key: 2,
+        value: [{key: "money", value: "", fieldType: "moneyField"}]
+      }
+    ])])
+
+    const state = {
+      configuration: {
+        form: {
+          content: [makeWrapperFieldSpec([makeGrowingFieldsetSpec("growingFieldsetChild", [1], [
+            {key: "money", fieldType: "moneyField", required: true}
+          ])])]
+        }
+      },
+      form: {
+        content: [makeWrapperFieldSpec([makeGrowingFieldsetSpec("growingFieldsetChild", [2], [
+          {key: "money", fieldType: "moneyField"}
+        ])])],
+        validationErrors: Immutable({
+          "my-fieldset-2.money": [{error: "required"}]
+        })
+      },
+      saveStatus: {
+        values: answersObject
+      },
+      extensionApi: {}
+    }
+
+    FormBranchEditableFieldGrower.ensureFirstChildIsRequired(state, FormUtil.findField(state.form.content, "my-fieldset"))
+
+    expect(state.form.validationErrors).to.eql({"my-fieldset-1.money": [{error: "required"}]})
   })
 
   it("sets modified field required if the prototype field was required", () => {
@@ -216,7 +255,8 @@ describe("FormBranchEditableFieldGrower", () => {
       form: {
         content: [makeWrapperFieldSpec([makeGrowingFieldsetSpec("growingFieldsetChild", [2, 3], [
           {key: "money", fieldType: "moneyField"}
-        ])])]
+        ])])],
+        validationErrors: Immutable({})
       },
       saveStatus: {
         values: answersObject

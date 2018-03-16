@@ -15,6 +15,7 @@ export default class FormBranchEditableFieldGrower {
     const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(prototypeForm.content, growingParent.id)
     const answersToDelete = []
     const answersToWrite = []
+    const validationErrorsToDelete = []
 
     const processFirstChildChildren = operation => {
       _.forEach(JsUtil.flatFilter(firstChildOfGrowingSet, n => !_.isUndefined(n.id)), operation)
@@ -25,6 +26,7 @@ export default class FormBranchEditableFieldGrower {
         const prototypeNode = FormUtil.findFieldIgnoringIndex(childPrototype, n.id)
         const existingInputValue = InputValueStorage.readValue(null, answersObject, n.id)
         answersToWrite.push(FieldUpdateHandler.createFieldUpdate(prototypeNode, existingInputValue, syntaxValidator))
+        validationErrorsToDelete.push(n.id)
       } else if (n.children) {
         answersToDelete.push(n.id)
       }
@@ -50,6 +52,9 @@ export default class FormBranchEditableFieldGrower {
     growingParent.children.sort((firstChild, secondChild) => {
       return JsUtil.naturalCompare(firstChild.id, secondChild.id)
     })
+
+    // clear validation errors from the original position of moved field
+    state.form.validationErrors = state.form.validationErrors.without(validationErrorsToDelete)
 
     const fieldsToValidate = JsUtil.flatFilter(
       firstChildOfGrowingSet,
