@@ -1,4 +1,6 @@
 ALTER TABLE
   virkailija.payments
 ADD COLUMN
-  sum INTEGER DEFAULT 0;
+  payment_sum INTEGER DEFAULT 0,
+ADD COLUMN
+  decision_id INTEGER;
