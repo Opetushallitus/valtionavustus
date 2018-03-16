@@ -40,12 +40,17 @@
    [ui/table-body {:display-row-checkbox false}
     (doall (map-indexed render-history-item payments))]])
 
-(defn find-application-payment [payments application-id application-version]
-  (first (filter #(and (= (:application-version %) application-version)
-                       (= (:application-id %) application-id))
-           payments)))
+(defn find-application-payments [payments application-id application-version]
+  (filter #(and (= (:application-version %) application-version)
+                (= (:application-id %) application-id))
+          payments))
 
 (defn combine [applications payments]
-  (mapv #(assoc %
-          :payment (find-application-payment payments (:id %) (:version %)))
+  (mapv
+    (fn [a]
+      (let [payments (find-application-payments payments (:id a) (:version a))]
+             (assoc a
+                    :payments payments
+                    :total-paid (reduce #(+ %1 (:payment-sum %2))
+                                        0 payments))))
     applications))
