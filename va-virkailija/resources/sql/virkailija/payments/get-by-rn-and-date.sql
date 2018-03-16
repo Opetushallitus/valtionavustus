@@ -3,7 +3,7 @@ SELECT
   p.application_version, p.state, b.document_type, b.invoice_date, b.due_date,
   b.receipt_date, b.transaction_account, b.currency, b.partner,
   b.inspector_email, b.acceptor_email, b.batch_number, p.filename, p.user_name,
-  p.user_oid, p.batch_id
+  p.user_oid, p.batch_id, p.payment_sum, p.decision_id
 FROM
   virkailija.payments AS p
 JOIN
