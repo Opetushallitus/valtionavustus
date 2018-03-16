@@ -1,10 +1,7 @@
-import queryString from 'query-string'
-
 import Dispatcher from '../Dispatcher'
 
 import FieldUpdateHandler from './FieldUpdateHandler.js'
 import SyntaxValidator from './SyntaxValidator.js'
-import FormStateTransitions from './FormStateTransitions.js'
 import FormStateLoop from './FormStateLoop.js'
 
 const dispatcher = new Dispatcher()
