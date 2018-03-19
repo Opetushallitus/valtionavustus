@@ -51,17 +51,18 @@
           :grant grant
           :filename filename})
        (catch Exception e
-         {:success false :error-type :exception :exception e}))
+         {:success false :error {:error-type :exception :exception e}}))
     timeout-limit {:success false :error-type :timeout}))
 
 (defn get-unpaid-payment [payments]
   (some #(when (< (:state %) 2) %) payments))
 
 (defn create-single-payment [application data sum]
-  (let [payments (application-data/get-application-payments (:id application))]
-    (if (or (empty? payments) (< (:state (first payments)) 2))
+  (let [payments (application-data/get-application-payments (:id application))
+        unpaid-payment (get-unpaid-payment payments)]
+    (if (or (empty? payments) (some? unpaid-payment))
       (let [payment
-            (or (first payments)
+            (or unpaid-payment
                 (payments-data/create-payment
                   (assoc
                     (create-payment-values
@@ -74,28 +75,21 @@
       {:success false :error-type :already-paid})))
 
 (defn create-multibatch-payment [application data]
-  (let [payments (application-data/get-application-payments (:id application))
-        paid-sum (reduce #(+ %1 (:sum %2)) 0 payments)]
-    (cond (and (every? #(> (:state %) 1) payments)
-               (>= paid-sum (:budget-granted application)))
-          {:success false :error-type :already-paid}
-          (get-unpaid-payment payments)
-          (let [payment (get-unpaid-payment payments)
-                filename (create-filename payment)]
-            (assoc
-              (send-to-rondo! payment application (:grant data) filename)
-              :filename filename :payment payment))
-          (some? (find-first-unpaid-decision
-                   payments (:payment-decisions application)))
-          (let [decision (find-first-unpaid-decision
-                           payments (:payment-decisions application))]
-            (create-single-payment
-              application (assoc data :decision-id (:id decision))
-              (:payment-sum decision)))
-          :else {:success false :error-type :unknown-payment})))
+  (let [payment (application-data/get-application-payment-by-state
+                  (:id application) 1)
+        filename (create-filename payment)]
+    (if (some? payment)
+
+      (let [updated-payment (payments-data/update-payment
+                             (assoc payment :batch-id (get-in data [:batch :id]))
+                             (:identity data))]
+        (-> updated-payment
+            (send-to-rondo! application (:grant data) filename)
+            (assoc :filename filename :payment updated-payment)))
+      {:success false :error-type :already-paid})))
 
 (defn create-payments [data]
-  (let [{:keys [identity batch grant]} data
+  (let [{:keys [identity grant]} data
         c (a/chan)]
     (a/go
       (doseq [application
@@ -103,14 +97,13 @@
         (let [result
               (if (get-in grant [:content :multiplemaksuera])
                 (create-multibatch-payment application data)
-                (create-single-payment application data
-                                             (:budget-granted application)))]
-          (cond
+                (create-single-payment
+                  application data (:budget-granted application)))]
+          (when
             (:success result)
             (payments-data/update-payment
               (assoc (:payment result)
-                     :state 2 :filename (:filename result)) identity)
-            (not= (:error-type result) :already-paid)
-              (a/>! c (:error-type result)))))
+                     :state 2 :filename (:filename result)) identity))
+          (a/>! c result)))
       (a/close! c))
     c))
