@@ -9,7 +9,7 @@ JOIN
   virkailija.payments p
     ON
     (p.application_id = h.id AND p.version_closed IS NULL AND p.deleted IS NULL)
-JOIN
+LEFT JOIN
   virkailija.payment_batches b
     ON
       b.id = p.batch_id
