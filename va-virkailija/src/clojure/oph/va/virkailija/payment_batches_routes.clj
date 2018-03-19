@@ -36,6 +36,7 @@
   (compojure-api/POST
     "/:id/payments/" [id :as request]
     :path-params [id :- Long]
+
     :return schema/PaymentsCreateResult
     :summary "Create new payments for unpaid applications of grant. Payments
               will be sent to Rondo and stored to database."
@@ -44,13 +45,21 @@
               {:batch batch
                :grant (grant-data/get-grant (:grant-id batch))
                :identity (authentication/get-request-identity request) } )]
-      (let [error-count
-            (loop [error-count 0]
-              (if-let [error (<!! c)]
-                (do (log/error error)
-                    (recur (inc error-count)))
-                error-count))]
-        (ok {:success (= error-count 0)})))))
+      (let [result
+            (loop [total-result {:count 0 :error-count 0 :errors '()}]
+              (if-let [r (<!! c)]
+                (if (:success r)
+                  (recur (update total-result :count inc))
+                  (do (when (= (get-in r [:error :error-type]) :exception)
+                        (log/error (get-in r [:error :exception])))
+                      (recur (-> total-result
+                                 (update :count inc)
+                                 (update :error-count inc)
+                                 (update :errors conj (:error r))))))
+                total-result))]
+        (ok {:success
+             (and (= (:error-count result) 0) (> (:count result) 0))
+             :errors (map :error-type (:errors result))})))))
 
 (compojure-api/defroutes
   routes
