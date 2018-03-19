@@ -107,12 +107,22 @@
                                                     :new (:status new)}))
     changelog))
 
+(defn- compare-accepts-grant [changelog identity timestamp existing new]
+  (if (not (= (:accepts-grant new) (keyword (:accepts-grant existing))))
+    (append-changelog changelog (->changelog-entry identity
+                                                   "accepts-grant-change"
+                                                   timestamp
+                                                   {:old (:accepts-grant existing)
+                                                    :new (:accepts new)}))
+    changelog))
+
 (defn- update-changelog [identity existing new]
   (let [changelog (:changelog existing)
         timestamp (Date.)]
     (if identity
       (-> (if changelog changelog [])
         (compare-status identity timestamp existing new)
+        (compare-accepts-grant identity timestamp existing new)
         (compare-oppilaitokset identity timestamp existing new)
         (compare-budget-granted identity timestamp existing new)
         (compare-summary-comment identity timestamp existing new)
