@@ -132,17 +132,6 @@ export class MultipleOptionFieldOnChangePropertyMapper {
   }
 }
 
-export class ButtonPropertyMapper {
-  static map(props) {
-    const commonProps = FieldPropertyMapper.map(props)
-    const controller = props.controller
-    const onClick = (e) => { controller.componentOnChangeListener(props.field, "click"); e.preventDefault() }
-    return _.extend(commonProps, {
-      onClick: onClick
-    })
-  }
-}
-
 export class AttachmentDisplayPropertyMapper {
   static map(props) {
     const commonProps = FieldPropertyMapper.map(props)
