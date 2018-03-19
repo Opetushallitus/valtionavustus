@@ -57,12 +57,6 @@
 (defn get-unpaid-payment [payments]
   (some #(when (< (:state %) 2) %) payments))
 
-(defn is-paid? [{:keys [id]} payments]
-  (true? (some #(= (:decision_id %) id) payments)))
-
-(defn find-first-unpaid-decision [payments decisions]
-  (some #(when-not (is-paid? % payments) %) decisions))
-
 (defn create-single-payment [application data sum]
   (let [payments (application-data/get-application-payments (:id application))]
     (if (or (empty? payments) (< (:state (first payments)) 2))
@@ -72,8 +66,7 @@
                   (assoc
                     (create-payment-values
                       application (:batch data))
-                    :payment-sum sum
-                    :decision-id (:decision-id data))
+                    :payment-sum sum)
                   (:identity data)))
             filename (create-filename payment)]
         (assoc (send-to-rondo! payment application (:grant data) filename)
