@@ -63,13 +63,6 @@
   (exec :form-db queries/create-payment payment))
 
 (defn create-payment [payment-data identity]
-  (when
-   (not
-    (empty?
-     (exec :form-db queries/get-application-payments
-           {:application_id (:application-id payment-data)})))
-    (throw
-     (Exception. "Application already contains a payment")))
   (let [application (application-data/get-application
                      (:application-id payment-data))]
     (-> payment-data
