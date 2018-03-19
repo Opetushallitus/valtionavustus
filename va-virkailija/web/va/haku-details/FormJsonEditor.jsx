@@ -1,6 +1,7 @@
-import React, { Component } from 'react'
+import React from 'react'
+import _ from 'lodash'
 
-export default class FormJsonEditor extends Component {
+export default class FormJsonEditor extends React.Component {
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
@@ -9,16 +10,15 @@ export default class FormJsonEditor extends Component {
     const onChange = e => {
       controller.formOnChangeListener(avustushaku, e.target.value)
     }
-    const onClick = e => {
+    const onClick = () => {
       controller.saveForm(avustushaku, formDraft)
     }
 
-    var parsedForm = formDraft
-    var parseError = false
+    let parsedForm = formDraft
+    let parseError = false
     try {
       parsedForm = JSON.parse(formDraft)
-    }
-    catch (error) {
+    } catch (error) {
       parseError = error.toString()
     }
     const disableSave = !allowSave() || !formHasBeenEdited()

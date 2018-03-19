@@ -227,9 +227,9 @@ export default class HakujenHallintaController {
   }
 
   onInitialState(emptyState, realInitialState) {
-    var hakuList = realInitialState.hakuList;
-    if(hakuList && !_.isEmpty(hakuList)) {
-      const selectedHaku = _.find(hakuList, (h)=>h.id == realInitialState.hakuId) || hakuList[0]
+    const hakuList = realInitialState.hakuList
+    if (hakuList && !_.isEmpty(hakuList)) {
+      const selectedHaku = _.find(hakuList, h => h.id === realInitialState.hakuId) || hakuList[0]
       realInitialState = this.onHakuSelection(realInitialState, selectedHaku)
     }
     return realInitialState
@@ -266,7 +266,7 @@ export default class HakujenHallintaController {
       update.avustushaku[fieldId] = update.newValue
     } else if (paymentFields.indexOf(fieldId) > -1) {
       update.avustushaku.content[fieldId] = update.newValue
-    } else if (fieldId === "haku-self-financing-percentage") {
+    } else if (fieldId === "haku-self-financing-percentage") {
       update.avustushaku.content["self-financing-percentage"] =
         parseInt(update.newValue)
     } else if (fieldId.startsWith("haku-name-")) {
@@ -291,8 +291,8 @@ export default class HakujenHallintaController {
       const rahoitusalue = /rahoitusalue-(\d+)-tili-(\d+)/.exec(fieldId)
       const rahoitussalueIndex = rahoitusalue[1]
       const selectedRahoitusalue = Rahoitusalueet[rahoitussalueIndex]
-      const currentRahoitusalueet = this.getOrCreateRahoitusalueet(update.avustushaku);
-      const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, selectedRahoitusalue);
+      const currentRahoitusalueet = this.getOrCreateRahoitusalueet(update.avustushaku)
+      const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, selectedRahoitusalue)
 
       const talousarviotiliIndex = rahoitusalue[2]
       const talousarviotiliValue = update.newValue
@@ -314,7 +314,7 @@ export default class HakujenHallintaController {
       update.avustushaku.content['focus-areas'].items[index][lang] = update.newValue
     } else if (fieldId.startsWith("set-maksuera-")) {
       update.avustushaku.content["multiplemaksuera"] = update.newValue === "true"
-    } else if (update.field.id.indexOf("decision.") != -1) {
+    } else if (update.field.id.indexOf("decision.") !== -1) {
       const fieldName = update.field.id.substr(9)
       _.set(update.avustushaku.decision, fieldName, update.newValue)
     } else {
@@ -327,7 +327,7 @@ export default class HakujenHallintaController {
   }
 
   getOrCreateRahoitusalue(currentRahoitusalueet, selectedRahoitusalue) {
-    var currentValueIndex = this.getRahoitusalueIndex(currentRahoitusalueet, selectedRahoitusalue)
+    let currentValueIndex = this.getRahoitusalueIndex(currentRahoitusalueet, selectedRahoitusalue)
     if (currentValueIndex < 0) {
       currentRahoitusalueet.push({"rahoitusalue": selectedRahoitusalue, "talousarviotilit": []})
       currentValueIndex = currentRahoitusalueet.length - 1
@@ -347,15 +347,15 @@ export default class HakujenHallintaController {
   }
 
   onAddTalousarviotili(state, addition) {
-    const currentRahoitusalueet = this.getOrCreateRahoitusalueet(addition.avustushaku);
-    const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, addition.rahoitusalue);
+    const currentRahoitusalueet = this.getOrCreateRahoitusalueet(addition.avustushaku)
+    const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, addition.rahoitusalue)
     rahoitusalueValue.talousarviotilit.push("")
     return state
   }
 
   onDeleteTalousarviotili(state, deletion) {
-    const currentRahoitusalueet = this.getOrCreateRahoitusalueet(deletion.avustushaku);
-    const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, deletion.rahoitusalue);
+    const currentRahoitusalueet = this.getOrCreateRahoitusalueet(deletion.avustushaku)
+    const rahoitusalueValue = this.getOrCreateRahoitusalue(currentRahoitusalueet, deletion.rahoitusalue)
     if (deletion.index < rahoitusalueValue.talousarviotilit.length) {
       rahoitusalueValue.talousarviotilit.splice(deletion.index, 1)
       if (rahoitusalueValue.talousarviotilit.length === 0) {
@@ -759,7 +759,7 @@ export default class HakujenHallintaController {
   deleteRole(avustushaku, role) {
     return function () {
       HttpUtil.delete(HakujenHallintaController.roleUrl(avustushaku) + "/" + role.id)
-        .then(function (response) {
+        .then(function () {
           dispatcher.push(events.roleDeleted, {haku: avustushaku, role: role})
         })
     }
@@ -771,7 +771,7 @@ export default class HakujenHallintaController {
 
   saveRole(avustushaku, role) {
     HttpUtil.post(HakujenHallintaController.roleUrl(avustushaku) + "/" + role.id, role)
-      .then(response => {
+      .then(() => {
         this.loadPrivileges(avustushaku)
       })
   }

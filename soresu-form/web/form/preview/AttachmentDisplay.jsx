@@ -1,5 +1,4 @@
 import React from 'react'
-import ClassNames from 'classnames'
 
 import PreviewComponent from './PreviewComponent.jsx'
 import {BasicInfoComponent} from '../component/InfoElement.jsx'

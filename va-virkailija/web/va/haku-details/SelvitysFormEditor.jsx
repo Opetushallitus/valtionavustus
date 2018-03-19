@@ -1,11 +1,11 @@
-import React, { Component } from 'react'
+import React from 'react'
+import _ from 'lodash'
 
 import HttpUtil from "soresu-form/web/HttpUtil"
 
 import FormEditor from './FormEditor.jsx'
 
-export default class SelvitysFormEditor extends React.Component{
-
+export default class SelvitysFormEditor extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.avustushaku.id !== nextProps.avustushaku.id) {
       this.setState({count:undefined, sending:false})
@@ -58,9 +58,8 @@ export default class SelvitysFormEditor extends React.Component{
         .then(response => {
           this.setState({count: response.count, sending: false})
         })
-
     }
-    
+
     const valiselvitysSection = <div>
       <h4>Väliselvitysten lähettäminen</h4>
       <p>Väliselvitys tulee toimittaa viimeistään <strong>{this.props.avustushaku[selvitysType + 'date']}</strong>.</p>

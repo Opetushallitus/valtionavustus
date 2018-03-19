@@ -8,12 +8,11 @@ import TopBar from './TopBar.jsx'
 import HakujenHallintaController from './HakujenHallintaController.jsx'
 import HakuListing from './haku-list/HakuListing.jsx'
 import EditorSelector from './haku-details/EditorSelector.jsx'
-import HakuEdit from './haku-details/HakuEdit.jsx'
 import LocalStorage from './LocalStorage'
 
-import virkailija from './style/virkailija.less'
-import topbar from './style/topbar.less'
-import admin from './style/admin.less'
+import './style/virkailija.less'
+import './style/topbar.less'
+import './style/admin.less'
 
 export default class AdminApp extends Component {
   render() {

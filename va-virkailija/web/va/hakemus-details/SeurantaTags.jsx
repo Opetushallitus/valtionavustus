@@ -20,7 +20,7 @@ export default class SeurantaTags extends Component {
 
     const predefinedTags = ["budjettimuutos", "sisällön muutos", "lisäaika"]
     const hakuUsedTags = _.uniq(_.flatten(hakuData.hakemukset.map((i)=>_.get(i, 'arvio.tags.value'))))
-    var allTags = _.sortBy(_.uniq(hakuUsedTags.concat(predefinedTags)))
+    const allTags = _.sortBy(_.uniq(hakuUsedTags.concat(predefinedTags)))
 
     const classNames = (tag) =>{
       const selected = _.contains(currentTags,tag)

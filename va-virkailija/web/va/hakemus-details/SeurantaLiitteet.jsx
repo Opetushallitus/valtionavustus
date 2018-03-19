@@ -21,7 +21,7 @@ export default class SeurantaLiitteet extends React.Component {
       formData.append('file', file)
       const url = `${hakijaServer}api/avustushaku/${avustushakuId}/hakemus/${hakemusUserKey}/${hakemus.version}/attachments/${fieldId}`
       HttpUtil.put(url, formData)
-        .then(function(response) {
+        .then(function() {
           controller.refreshAttachments(avustushakuId)
           return null
         })
@@ -46,7 +46,7 @@ export default class SeurantaLiitteet extends React.Component {
     const onRemove = fieldId => {
       const url = `${hakijaServer}api/avustushaku/${avustushakuId}/hakemus/${hakemusUserKey}/attachments/${fieldId}`
       HttpUtil.delete(url)
-        .then(function(response) {
+        .then(function() {
           controller.refreshAttachments(avustushakuId)
           return null
         })

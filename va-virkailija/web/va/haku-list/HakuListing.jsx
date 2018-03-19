@@ -37,7 +37,7 @@ export default class HakuListing extends Component {
       const value = fieldGetter(hakemus)
       const filterStartDate = _.isEmpty(filterStart) ? "" : moment(filterStart, "DD.MM.YYYY")
       const filterEndDate = _.isEmpty(filterEnd) ? "" : moment(filterEnd, "DD.MM.YYYY")
-      return moment(value).startOf('day').isBetween(filterStartDate, filterEndDate, null, '[]');
+      return moment(value).startOf('day').isBetween(filterStartDate, filterEndDate, null, '[]')
     }
   }
 
@@ -62,8 +62,8 @@ export default class HakuListing extends Component {
     }
 
     const hasFilters =
-      filter.status.length!=HakuStatuses.allStatuses().length ||
-      filter.phase.length!=HakuPhases.allStatuses().length ||
+      filter.status.length !== HakuStatuses.allStatuses().length ||
+      filter.phase.length !== HakuPhases.allStatuses().length ||
       filter.avustushaku.length>0 ||
       filter.startdatestart.length>0 ||
       filter.startdateend.length>0 ||
@@ -168,18 +168,17 @@ class StatusFilter extends Component {
     const statusFilter = filter[filterField]
     const statuses = []
     const onCheckboxChange = function(status) {
-      return function(e) {
-        if(_.contains(statusFilter, status)) {
+      return function() {
+        if (_.contains(statusFilter, status)) {
           controller.setFilter(filterField,  _.without(statusFilter, status))
-        }
-        else {
+        } else {
           controller.setFilter(filterField, _.union(statusFilter, [status]))
         }
       }
     }
 
     const self = this
-    const onDelete = function(e) {
+    const onDelete = function() {
       self.setState({
         open: false
       })
@@ -187,7 +186,7 @@ class StatusFilter extends Component {
     }
     const hasFilters = statusFilter.length !== statusValues.length
 
-    for (var i=0; i < statusValues.length; i++) {
+    for (let i = 0; i < statusValues.length; i++) {
       const status = statusValues[i]
       const checked = _.contains(statusFilter, status)
       const htmlId = "filter-by-status-" + status
@@ -230,8 +229,8 @@ class DateFilter extends Component {
 
     const updateFilter = (type,event) => {
       const value = event.target.value
-      const isValid = moment(value, ["D.M.YYYY"],true).isValid() || value==""
-      if(isValid){
+      const isValid = moment(value, ["D.M.YYYY"],true).isValid() || value === ""
+      if (isValid) {
         controller.setFilter(filterField + type, value)
       }
       const stateChanges = {start:undefined,end:undefined}

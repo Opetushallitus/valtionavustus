@@ -1,14 +1,13 @@
 import _ from 'lodash'
-import verboseAssert from 'assert'
 import { assert } from 'chai'
 import JsUtil from '../JsUtil'
 import FormErrorSummary from '../form/component/FormErrorSummary.jsx'
 import TestUtil from './TestUtil'
 
-const formContent = TestUtil.testFormJson()
-var validationErrors = {}
-
 describe('Form full of errors', function() {
+  const formContent = TestUtil.testFormJson()
+  let validationErrors = {}
+
   beforeEach(function() {
     validationErrors = _(JsUtil.flatFilter(formContent, x => !_.isUndefined(x.id) && x.fieldClass === "formField"))
       .map(field => { return { id: field.id, errors: [ { 'error': 'required' } ] }})

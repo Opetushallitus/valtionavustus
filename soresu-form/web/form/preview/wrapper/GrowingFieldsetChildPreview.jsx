@@ -21,6 +21,6 @@ export default class GrowingFieldsetChildPreviewElement extends React.Component 
   }
 
   isHidden() {
-    return this.props.renderingParameters && this.props.renderingParameters.valueIsEmpty === true;
+    return this.props.renderingParameters && this.props.renderingParameters.valueIsEmpty === true
   }
 }

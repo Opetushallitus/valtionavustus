@@ -117,7 +117,7 @@ lein-clean-checkouts:
 
 .PHONY:
 eslint:
-	eslint --ignore-path .gitignore --ignore-pattern '*.json' '**/*.js*'
+	eslint --ignore-path .gitignore --ignore-pattern '*.json' --ignore-pattern '**/test/lib' '**/*.js*'
 
 define newline
 

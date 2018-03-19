@@ -8,8 +8,8 @@ import RahoitusalueSelections from './RahoitusalueSelections'
 export default class ChooseRahoitusalueAndTalousarvioTili extends React.Component {
   constructor(props) {
     super(props)
-    this.selectRahoitusalue = this.selectRahoitusalue.bind(this);
-    this.selectTalousarviotili = this.selectTalousarviotili.bind(this);
+    this.selectRahoitusalue = this.selectRahoitusalue.bind(this)
+    this.selectTalousarviotili = this.selectTalousarviotili.bind(this)
   }
 
   selectRahoitusalue(selection) {

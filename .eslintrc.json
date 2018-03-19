@@ -39,14 +39,40 @@
     },
     {
       "files": [
-        "*/web/test/**/*Test.js",
-        "*/resources/public/test/**/*Spec.js"
+        "*/web/test/**/*Test.js"
       ],
       "env": {
         "mocha": true
       },
       "rules": {
         "no-unused-expressions": "off"
+      }
+    },
+    {
+      "files": [
+        "**/resources/public/test/**/*.js"
+      ],
+      "env": {
+        "browser": true
+      },
+      "parserOptions": {
+        "ecmaVersion": 5,
+        "sourceType": "script"
+      },
+      "rules": {
+        "no-delete-var": "off",
+        "no-undef": "off",
+        "no-unused-expressions": "off",
+        "no-unused-vars": "off",
+        "no-var": "off"
+      }
+    },
+    {
+      "files": [
+        "*/web/test/babelhook.js"
+      ],
+      "env": {
+        "node": true
       }
     }
   ]

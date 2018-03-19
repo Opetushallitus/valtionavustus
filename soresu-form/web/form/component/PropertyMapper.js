@@ -8,8 +8,12 @@ export class DefaultPropertyMapper {
   }
 
   static param(field, param, defaultValue) {
-    if (!field.params) return defaultValue
-    if (field.params[param] !== undefined) return field.params[param]
+    if (!field.params) {
+      return defaultValue
+    }
+    if (field.params[param] !== undefined) {
+      return field.params[param]
+    }
     return defaultValue
   }
 }

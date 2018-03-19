@@ -7,9 +7,9 @@ import queryString from 'query-string'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 
-import virkailija from './style/virkailija.less'
-import topbar from './style/topbar.less'
-import style from './style/login.less'
+import './style/virkailija.less'
+import './style/topbar.less'
+import './style/login.less'
 
 import TopBar from './TopBar.jsx'
 
@@ -21,8 +21,8 @@ export default class Login extends React.Component {
     const query = queryString.parse(location.search)
     const errorMessage = (<div className="error">Sisäänkirjautuminen epäonnistui.</div>)
     const notPermittedMessage = (<div className="error">Sinulla ei ole oikeuksia valtionavustusjärjestelmään.</div>)
-    const error = query.error == "true" ? errorMessage : undefined
-    const notPermitted = query["not-permitted"] == "true" ? notPermittedMessage : undefined
+    const error = query.error === "true" ? errorMessage : undefined
+    const notPermitted = query["not-permitted"] === "true" ? notPermittedMessage : undefined
     return (
       <div>
         <TopBar environment={environment}/>

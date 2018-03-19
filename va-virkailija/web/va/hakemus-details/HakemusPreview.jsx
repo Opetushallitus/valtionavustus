@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
-import Immutable from 'seamless-immutable'
 
 import DateUtil from 'soresu-form/web/DateUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
-import FormPreview from 'soresu-form/web/form/FormPreview.jsx'
 import FormRules from 'soresu-form/web/form/FormRules'
 import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
 import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
@@ -16,7 +14,7 @@ import EditsDisplayingFormView from './EditsDisplayingFormView.jsx'
 import FakeFormController from '../form/FakeFormController'
 import FakeFormState from '../form/FakeFormState'
 
-import style from '../style/formpreview.less'
+import '../style/formpreview.less'
 
 export default class HakemusPreview extends Component {
   render() {
@@ -80,8 +78,8 @@ export default class HakemusPreview extends Component {
 class VaChangeRequests extends Component {
   render() {
     const changeRequests = this.props.changeRequests
-    var changeRequestElements = []
-    if(changeRequests) {
+    let changeRequestElements = []
+    if (changeRequests) {
       changeRequestElements = _.map(changeRequests, cr => <VaChangeRequest hakemus={cr}
                                                                            key={cr.version}
                                                                            translations={this.props.translations}

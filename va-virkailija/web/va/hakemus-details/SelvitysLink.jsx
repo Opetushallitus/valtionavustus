@@ -4,7 +4,7 @@ export default class SelvitysLink extends Component {
   render() {
     const {hakemus, avustushaku, selvitysType, preview, label} = this.props
     const userKey = hakemus["user-key"]
-    const publicUrl = hakemus ? SelvitysUrl.selvitys(avustushaku.id, userKey, selvitysType, preview) : undefined
+    const publicUrl = hakemus ? selvitysUrl(avustushaku.id, userKey, selvitysType, preview) : undefined
 
     return hakemus && hakemus["user-key"] ?
       <span className="decision">
@@ -14,17 +14,5 @@ export default class SelvitysLink extends Component {
   }
 }
 
-class SelvitysUrl {
-
-  static loppuselvitys(avustushakuId, userKey) {
-    return selvitys(avustushakuId, userKey, "loppuselvitys")
-  }
-
-  static valiselvitys(avustushakuId, userKey) {
-    return selvitys(avustushakuId, userKey, "valiselvitys")
-  }
-
-  static selvitys(avustushakuId, hakemusKey, selvitysType, showPreview) {
-    return `/selvitys/avustushaku/${avustushakuId}/${selvitysType}?hakemus=${hakemusKey}` + (selvitysType == 'valiselvitys' ? `&preview=${showPreview}`: '')
-  }
-}
+const selvitysUrl = (avustushakuId, hakemusKey, selvitysType, showPreview) =>
+  `/selvitys/avustushaku/${avustushakuId}/${selvitysType}?hakemus=${hakemusKey}` + (selvitysType === 'valiselvitys' ? `&preview=${showPreview}`: '')

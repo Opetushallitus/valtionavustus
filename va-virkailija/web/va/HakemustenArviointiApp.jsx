@@ -6,8 +6,6 @@ import _ from 'lodash'
 import RouteParser from 'route-parser'
 import queryString from 'query-string'
 
-import Dispatcher from 'soresu-form/web/Dispatcher'
-
 import TopBar from './TopBar.jsx'
 import HakemustenArviointiController from './HakemustenArviointiController.jsx'
 import HakemusListing from './hakemus-list/HakemusListing.jsx'
@@ -19,9 +17,9 @@ import ExcelExportLink from './avustushaku/ExcelExportLink.jsx'
 import HakemusFilter from './hakemus-filter/HakemusFilter.jsx'
 import LocalStorage from './LocalStorage'
 
-import topbar from './style/topbar.less'
-import style from './style/main.less'
-import selector from './style/switcher.less'
+import './style/topbar.less'
+import './style/main.less'
+import './style/switcher.less'
 
 export default class App extends Component {
   render() {

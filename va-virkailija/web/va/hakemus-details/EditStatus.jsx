@@ -19,8 +19,8 @@ export default class EditStatus extends Component {
   render() {
     const {avustushaku, hakemus, allowEditing,status} = this.props
     const avustushakuId = avustushaku.id
-    const cancelled = status=='cancelled'
-    const onOpen = () =>{
+    const cancelled = status === 'cancelled'
+    const onOpen = () => {
       this.setState({open:true})
     }
 
@@ -35,15 +35,13 @@ export default class EditStatus extends Component {
         "status": status,
         "comment": this.state.comment
       }
-      HttpUtil.post(url, request).then((res)=> {
+      HttpUtil.post(url, request).then(() => {
         this.setState({submitting: false, submitted: true})
         if(!cancelled){
           window.open(editUrl,'_blank')
         }
-        }
-      )
+      })
     }
-
 
     const onStatusCommentChange = (event) =>{
       this.setState({comment:event.target.value})
@@ -53,7 +51,7 @@ export default class EditStatus extends Component {
       return null
     }
 
-    if(hakemus.status=='officer_edit' && status=='officer_edit'){
+    if (hakemus.status === 'officer_edit' && status === 'officer_edit') {
       return (<a href={editUrl} target="_blank">Siirry muokkaamaan</a>)
     }
 

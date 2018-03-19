@@ -1,6 +1,6 @@
 var expect = chai.expect
 chai.should()
-chai.config.truncateThreshold = 0; // disable truncating
+chai.config.truncateThreshold = 0 // disable truncating
 
 function S(selector) {
   try {
@@ -10,8 +10,8 @@ function S(selector) {
     return testFrame().jQuery(selector)
   } catch (e) {
     console.log("Premature access to testFrame.jQuery, printing stack trace.")
-    console.log(new Error().stack);
-    throw e;
+    console.log(new Error().stack)
+    throw e
   }
 }
 
@@ -19,7 +19,9 @@ wait = {
   waitIntervalMs: 10,
   until: function(condition, maxWaitMs) {
     return function() {
-      if (maxWaitMs == undefined) maxWaitMs = testTimeoutDefault;
+      if (maxWaitMs == null) {
+        maxWaitMs = testTimeoutDefault
+      }
       var deferred = Q.defer()
       var count = Math.floor(maxWaitMs / wait.waitIntervalMs);
 
@@ -27,7 +29,7 @@ wait = {
         if (condition()) {
           deferred.resolve()
         } else if (remaining === 0) {
-          const errorStr = "timeout of " + maxWaitMs + "ms in wait.until for condition:\n" + condition
+          var errorStr = "timeout of " + maxWaitMs + "ms in wait.until for condition:\n" + condition
           console.error(new Error(errorStr))
           deferred.reject(errorStr)
         } else {
@@ -56,10 +58,11 @@ wait = {
 mockAjax = {
   init: function() {
     var deferred = Q.defer()
-    if (testFrame().sinon)
+    if (testFrame().sinon) {
       deferred.resolve()
-    else
+    } else {
       testFrame().$.getScript('test/lib/sinon-server-1.15.0.js', function() { deferred.resolve() } )
+    }
     return deferred.promise
   },
   respondOnce: function (method, url, responseCode, responseObject) {
@@ -68,7 +71,7 @@ mockAjax = {
       xhr.useFilters = true
       xhr.addFilter(function(method, url) {
         var requestedFakeUrl = url.indexOf(_fakeAjaxParams.url) === 0
-        return !requestedFakeUrl || method != _fakeAjaxParams.method
+        return !requestedFakeUrl || method !== _fakeAjaxParams.method
       })
       xhr.onCreate = function (request) {
         window.setTimeout(function() {
@@ -96,9 +99,9 @@ function testFrame() {
 }
 
 function triggerEvent(element, eventName) {
-  const evt = new (testFrame().window).Event(eventName, {bubbles: true, cancellable: true})
+  var evt = new (testFrame().window).Event(eventName, {bubbles: true, cancellable: true})
   evt.simulated = true
-  element[0].dispatchEvent(evt);
+  element[0].dispatchEvent(evt)
 }
 
 function openPage(pathGetter, predicate) {
@@ -120,7 +123,7 @@ function openPage(pathGetter, predicate) {
         testTimeoutPageLoad
     )().then(function() {
         window.uiError = null
-        testFrame().onerror = function(err) { window.uiError = err; } // Hack: force mocha to fail on unhandled exceptions
+        testFrame().onerror = function(err) { window.uiError = err } // Hack: force mocha to fail on unhandled exceptions
     })
   }
 }

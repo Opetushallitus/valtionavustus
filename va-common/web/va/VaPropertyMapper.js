@@ -1,8 +1,6 @@
-import React from 'react'
 import _ from 'lodash'
 
 import {
-  DefaultPropertyMapper,
   MultipleOptionFieldOnChangePropertyMapper,
   TextFieldPropertyMapper
 } from 'soresu-form/web/form/component/PropertyMapper.js'
@@ -11,7 +9,7 @@ export class VaFocusAreasPropertyMapper {
   static map(props) {
     const avustushaku = props.customProps.avustushaku
     const focusAreas = avustushaku.content['focus-areas']
-    var index = 0
+    let index = 0
     const options = _.map(focusAreas.items, item => {
       const value = 'focus-area-' + index
       index++

@@ -3,7 +3,6 @@ import "soresu-form/web/polyfills"
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Bacon from 'baconjs'
-import _ from 'lodash'
 import queryString from 'query-string'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -17,15 +16,14 @@ import VaUrlCreator from './VaUrlCreator'
 import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
 import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
-import {BudgetItemElement} from 'va-common/web/va/VaBudgetComponents.jsx'
 import VaBudgetCalculator from 'va-common/web/va/VaBudgetCalculator'
 import UrlCreator from 'soresu-form/web/form/UrlCreator'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
-const selvitysType = location.pathname.indexOf("loppuselvitys")!=-1 ? "loppuselvitys" : "valiselvitys"
+const selvitysType = location.pathname.indexOf("loppuselvitys") !== -1 ? "loppuselvitys" : "valiselvitys"
 const query = queryString.parse(location.search)
-var selvitysId = query[selvitysType]
-var showPreview = query.preview
+const selvitysId = query[selvitysType]
+const showPreview = query.preview
 const lang = query.lang
 
 function containsExistingEntityId(urlContent) {
@@ -33,7 +31,7 @@ function containsExistingEntityId(urlContent) {
   return query[selvitysType] && query[selvitysType].length > 0
 }
 
-function isFieldEnabled(saved, fieldId) {
+function isFieldEnabled(saved) {
   return saved
 }
 
@@ -44,7 +42,7 @@ const responseParser = new ResponseParser({
 class SelvitysUrlCreator extends UrlCreator {
   constructor(selvitysType) {
     function entityApiUrl(avustusHakuId, hakemusId, hakemusBaseVersion) {
-      return "/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/` + hakemusId + (typeof hakemusBaseVersion == "number" ? "/" + hakemusBaseVersion : "")
+      return "/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/` + hakemusId + (typeof hakemusBaseVersion === "number" ? "/" + hakemusBaseVersion : "")
     }
 
     const attachmentDirectAccessUrl = function(state, field) {
@@ -60,7 +58,7 @@ class SelvitysUrlCreator extends UrlCreator {
       formApiUrl: function (formId) {
         return "/api/form/" + formId
       },
-      newEntityApiUrl: function (state) {
+      newEntityApiUrl: function () {
         // loadEntity creates
       },
       editEntityApiUrl: function (state) {
@@ -76,7 +74,7 @@ class SelvitysUrlCreator extends UrlCreator {
       loadEntityApiUrl: function (urlContent) {
         const query = urlContent.parsedQuery
         const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
-        var selvitysId = query[selvitysType]
+        const selvitysId = query[selvitysType]
         return entityApiUrl(avustusHakuId, selvitysId)
       },
       existingSubmissionEditUrl,
@@ -107,7 +105,7 @@ const budgetCalculator = new VaBudgetCalculator((descriptionField, state) => {
   FieldUpdateHandler.triggerFieldUpdatesForValidation([descriptionField], state)
 })
 
-function onFieldUpdate(state, field, newFieldValue) {
+function onFieldUpdate(state, field) {
   if (field.fieldType === "moneyField" || field.fieldType === "vaSelfFinancingField") {
     budgetCalculator.handleBudgetAmountUpdate(state, field.id)
   }
@@ -171,7 +169,7 @@ function initFormController() {
   }
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
-  return { stateProperty: stateProperty, getReactComponent: function(state) {
+  return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
     return <VaForm controller={controller} state={state} hakemusType={selvitysType} useBusinessIdSearch={false} />
   }}
 }
@@ -180,7 +178,7 @@ function initSelvitys(avustusHakuId, hakemusId, selvitysType, showPreview){
   HttpUtil.get("/api/avustushaku/" + avustusHakuId + `/selvitys/${selvitysType}/init/` + hakemusId).then(response => {
     const hakemusId = response.id
     const hakemusLang = lang ? lang : response.language
-    window.location.href = `/avustushaku/${avustusHakuId}/${selvitysType}?${selvitysType}=${hakemusId}&lang=${hakemusLang}` + (showPreview == 'true' ? '&preview=true' : '')
+    window.location.href = `/avustushaku/${avustusHakuId}/${selvitysType}?${selvitysType}=${hakemusId}&lang=${hakemusLang}` + (showPreview === 'true' ? '&preview=true' : '')
   })
 }
 

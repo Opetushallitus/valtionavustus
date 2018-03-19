@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import _ from 'lodash'
 import JsUtil from '../JsUtil'
 
 describe('Js util', function() {

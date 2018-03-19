@@ -12,7 +12,7 @@ import VaTraineeDayUtil from './VaTraineeDayUtil'
 
 const formatFloatString = stringValue => {
   const sanitizedString = stringValue.replace(".", ",").replace(/[^\d,]/g, "")
-  if(sanitizedString.indexOf(",") < 0 || sanitizedString.endsWith(",")) {
+  if (sanitizedString.indexOf(",") < 0 || sanitizedString.endsWith(",")) {
     return sanitizedString
   }
   const floatValue = MathUtil.parseDecimal(sanitizedString)
@@ -71,9 +71,9 @@ export default class VaTraineeDayCalculator extends BasicFieldComponent {
 
   static onChange(subfield, props, valueHolder, field) {
     return (event) => {
-      var value = event.target.value
-      var scopeValue = VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "scope")
-      var personCountValue = VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "person-count")
+      let value = event.target.value
+      let scopeValue = VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "scope")
+      let personCountValue = VaTraineeDayUtil.readSubfieldValue(valueHolder.value, field.id, "person-count")
       if(event.target.id.endsWith("scope")) {
         value = formatFloatString(value)
         scopeValue = value

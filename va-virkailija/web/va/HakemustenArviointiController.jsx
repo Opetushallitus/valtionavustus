@@ -60,7 +60,7 @@ export default class HakemustenArviointiController {
     this._bind('onInitialState', 'onHakemusSelection', 'onUpdateHakemusStatus', 'onUpdateHakemusArvio', 'onSaveHakemusArvio', 'onBeforeUnload','onRefreshHakemukset')
     this.autoSaveHakemusArvio = _.debounce(function(updatedHakemus){ dispatcher.push(events.saveHakemusArvio, updatedHakemus) }, 3000)
 
-    Bacon.fromEvent(window, "beforeunload").onValue(function(event) {
+    Bacon.fromEvent(window, "beforeunload").onValue(function() {
       // For some odd reason Safari always displays a dialog here
       // But it's probably safer to always save the document anyway
       dispatcher.push(events.beforeUnload)
@@ -177,7 +177,7 @@ export default class HakemustenArviointiController {
 
   onInitialState(emptyState, realInitialState) {
     const query = queryString.parse(location.search)
-    if (query.showAll != "true") {
+    if (query.showAll !== "true") {
       realInitialState.hakuData.hakemukset = HakemustenArviointiController.filterHakemukset(realInitialState.hakuData.hakemukset)
     }
     const parsedHakemusIdObject = new RouteParser('/*ignore/hakemus/:hakemus_id/*ignore').match(location.pathname)
@@ -206,7 +206,7 @@ export default class HakemustenArviointiController {
     const parsedUrl = new RouteParser('/avustushaku/:avustushaku_id/(hakemus/:hakemus_id/:subTab/)*ignore').match(pathname)
     const subTab = parsedUrl.subTab || 'arviointi'
     state.subTab = subTab
-    if (!_.isUndefined(history.pushState) && parsedUrl.hakemus_id != hakemusIdToSelect.toString()) {
+    if (!_.isUndefined(history.pushState) && parsedUrl.hakemus_id !== hakemusIdToSelect.toString()) {
       const newUrl = "/avustushaku/" + parsedUrl.avustushaku_id + "/hakemus/" + hakemusIdToSelect + "/" + subTab + "/" + location.search
       history.pushState({}, window.title, newUrl)
     }
@@ -220,8 +220,8 @@ export default class HakemustenArviointiController {
     this.loadSelvitys()
     this.loadChangeRequests(state, hakemusIdToSelect)
     this.loadAttachmentVersions(state, hakemusIdToSelect)
-    if(state.personSelectHakemusId!=null){
-      state.personSelectHakemusId=hakemusIdToSelect
+    if (state.personSelectHakemusId != null) {
+      state.personSelectHakemusId = hakemusIdToSelect
     }
     return state
   }
@@ -261,14 +261,14 @@ export default class HakemustenArviointiController {
 
   onToggleHakemusFilter(state){
     state.hakemusFilter.isOpen = !state.hakemusFilter.isOpen
-    return state;
+    return state
   }
 
   onUpdateHakemusArvio(state, updatedHakemus) {
     state.saveStatus.saveInProgress = true
     updatedHakemus.arvio.hasChanges = true
     if (_.isUndefined(updatedHakemus.arvio.scoring)) {
-      delete updatedHakemus.arvio["scoring"];
+      delete updatedHakemus.arvio["scoring"]
     }
     this.autoSaveHakemusArvio(updatedHakemus)
     return state
@@ -403,7 +403,7 @@ export default class HakemustenArviointiController {
 
   onSetFilter(state, newFilter) {
     state.hakemusFilter[newFilter.filterId] = newFilter.filter
-    if(newFilter.filterId=="evaluator"){
+    if (newFilter.filterId === "evaluator") {
       const avustushakuId = state.hakuData.avustushaku.id
       const evaluatorId = newFilter.filter
       const avustushakuUrl =  `/avustushaku/${avustushakuId}/`
@@ -511,7 +511,7 @@ export default class HakemustenArviointiController {
 
   onSetScore(state, indexAndScore) {
     const { selectionCriteriaIndex, newScore } = indexAndScore
-    const hakemus = state.selectedHakemus;
+    const hakemus = state.selectedHakemus
     const updateUrl = HakemustenArviointiController.scoresUrl(state, hakemus.id)
     state.saveStatus.saveInProgress = true
     HttpUtil.post(updateUrl, { "selection-criteria-index": selectionCriteriaIndex, "score": newScore })
@@ -906,7 +906,7 @@ export default class HakemustenArviointiController {
 
   removeOppilaitos(hakemus, index) {
     if(hakemus.arvio["oppilaitokset"] && index >= 0 && index < hakemus.arvio["oppilaitokset"].names.length) {
-      hakemus.arvio["oppilaitokset"].names.splice(index, 1);
+      hakemus.arvio["oppilaitokset"].names.splice(index, 1)
       dispatcher.push(events.updateHakemusArvio, hakemus)
     }
   }
@@ -970,10 +970,9 @@ export default class HakemustenArviointiController {
   }
 
   toggleHakemusRole(roleId,hakemus,roleField) {
-    if(roleField=="presenter"){
+    if (roleField === "presenter"){
         hakemus.arvio["presenter-role-id"]=roleId
-    }
-    else{
+    } else {
       const currentRoles = hakemus.arvio.roles[roleField]
       hakemus.arvio.roles[roleField] = _.includes(currentRoles, roleId) ? _.without(currentRoles,roleId) : currentRoles.concat(roleId)
     }

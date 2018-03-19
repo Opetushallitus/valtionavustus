@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import _ from 'lodash'
 import Bacon from 'baconjs'
 
@@ -11,7 +11,7 @@ import Selvitys from './Selvitys.jsx'
 const DecisionField = ({avustushaku, title, id,language, onChange}) => {
   const fieldId= `decision.${id}.${language}`
   const value = _.get(avustushaku, fieldId, "")
-  const titleLanguage = language=="sv" ? `${title} ruotsiksi` : title
+  const titleLanguage = language === "sv" ? `${title} ruotsiksi` : title
   return(
     <div className="decision-column">
       <label>{titleLanguage}</label>
@@ -38,7 +38,7 @@ class DateField extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.avustushaku.id != this.props.avustushaku.id) {
+    if (nextProps.avustushaku.id !== this.props.avustushaku.id) {
       this.setState({value: this.value(nextProps, nextProps.field)})
     }
   }
@@ -238,7 +238,7 @@ class RegenerateDecisions extends React.Component {
     const onRegenerate = () =>{
       this.setState({regenerating:true})
       const sendS = Bacon.fromPromise(HttpUtil.post(`/api/paatos/regenerate/${avustushaku.id}`,{}))
-      sendS.onValue((res)=>{
+      sendS.onValue(() => {
         this.setState({completed:true})
       })
     }
@@ -267,7 +267,7 @@ class DecisionDateAndSend extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.avustushaku.id!=this.props.avustushaku.id) {
+    if (nextProps.avustushaku.id !== this.props.avustushaku.id) {
       this.setState({preview:false,count:undefined,sending:false})
       this.fetchEmailState(nextProps.avustushaku.id)
     }
@@ -295,14 +295,18 @@ class DecisionDateAndSend extends React.Component {
     </div>
   }
 
-  sentOk() { return _.isNumber(this.state.count) && this.state.count == this.state.sent }
+  sentOk() { return _.isNumber(this.state.count) && this.state.count === this.state.sent }
 
   mailsToSend() { return !this.sentOk() && !this.state.sending }
 
   mailsToSendLabel() {
-    if (this.sentOk()) return '0'
+    if (this.sentOk()) {
+      return '0'
+    }
     //If, for some reason not all of the mails have been sent
-    if (this.state.sent !== 0 && this.state.count > 0) return `${(this.state.count-this.state.sent)}/${this.state.count}`
+    if (this.state.sent !== 0 && this.state.count > 0) {
+      return `${(this.state.count-this.state.sent)}/${this.state.count}`
+    }
     return this.state.count + ''
   }
 
@@ -336,7 +340,9 @@ class DecisionDateAndSend extends React.Component {
       )
     }
 
-    if (!_.isNumber(this.state.count)) return <img src="/img/ajax-loader.gif"/>
+    if (!_.isNumber(this.state.count)) {
+      return <img src="/img/ajax-loader.gif"/>
+    }
 
     const onShowViews = (paatos) =>{
       const sendS = Bacon.fromPromise(HttpUtil.get(`/api/paatos/views/${paatos.id}`,{}))
@@ -380,9 +386,9 @@ class DecisionDateAndSend extends React.Component {
                   <td><a target="_blank" href={PaatosUrl.publicLink(this.props.avustushaku.id,paatos.user_key)}>{paatos.id} {paatos["organization-name"]} - {paatos["project-name"]}</a></td>
                   <td>{paatos["sent-emails"].addresses.join(" ")}</td>
                   <td style={{position:'relative'}}>
-                    {paatos.view_count==0 && <span>{paatos.view_count}</span>}
-                    {paatos.view_count>0 && <a onClick={onShowViews.bind(this, paatos)}>{paatos.view_count}</a>}
-                    {this.state.paatosDetail==paatos.id &&
+                    {paatos.view_count === 0 && <span>{paatos.view_count}</span>}
+                    {paatos.view_count > 0 && <a onClick={onShowViews.bind(this, paatos)}>{paatos.view_count}</a>}
+                    {this.state.paatosDetail === paatos.id &&
                       <div className="panel person-panel person-panel--sm person-panel--view-details">
                         <button className="close" onClick={onCloseViews}>x</button>
                         <table className="table">
@@ -465,7 +471,7 @@ export default class DecisionEditor extends React.Component {
     ]
     const rahoitusAlueDecisionSubfields = _.isEmpty(avustushaku.content.rahoitusalueet)
       ? []
-      : avustushaku.content.rahoitusalueet.map(row => <DecisionFields key={row.rahoitusalue} title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue} avustushaku={avustushaku} id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s\.]/g, "_")} onChange={onChange}/>)
+      : avustushaku.content.rahoitusalueet.map(row => <DecisionFields key={row.rahoitusalue} title={"Myönteisen päätöksen lisäteksti - " + row.rahoitusalue} avustushaku={avustushaku} id={"myonteinenlisateksti-" + row.rahoitusalue.replace(/[\s.]/g, "_")} onChange={onChange}/>)
     return (
       <div className="decision-editor">
         <DecisionFields key="taustaa" title="Taustaa" avustushaku={avustushaku} id="taustaa" onChange={onChange}/>
