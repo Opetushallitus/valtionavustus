@@ -60,6 +60,8 @@
   "sql/virkailija/applications/get-application-payments.sql")
 (defquery get-application-payment
   "sql/virkailija/applications/get-application-payment.sql")
+(defquery get-application-payment-by-state
+  "sql/virkailija/applications/get-application-payment-by-state.sql")
 (defquery get-total-paid "sql/virkailija/applications/get-total-paid.sql")
 
 (defquery lock-va-users-cache-exclusively! "sql/virkailija/va_users_cache/lock-exclusively.sql")

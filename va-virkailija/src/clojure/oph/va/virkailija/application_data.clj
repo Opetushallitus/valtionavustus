@@ -29,6 +29,13 @@
                                     virkailija-queries/get-application-payment
                                     {:application_id id}))))
 
+(defn get-application-payment-by-state [application-id state]
+  (convert-to-dash-keys
+    (last (exec :form-db
+                virkailija-queries/get-application-payment-by-state
+                {:application_id application-id
+                 :state state}))))
+
 (defn get-application-payments [id]
   (map convert-to-dash-keys (exec :form-db
                                   virkailija-queries/get-application-payments
