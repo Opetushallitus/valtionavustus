@@ -81,7 +81,7 @@
      :on-toggle #(on-change :filter-old %2)
      :style {:width "200px"}}]])
 
-(defn send-payments! [applications-to-send values selected-grant payments]
+(defn send-payments! [values selected-grant payments]
   (go
     (let [dialog-chan
           (dialogs/show-loading-dialog!
@@ -277,8 +277,6 @@
                         batch (:body batch-result)]
                     (if (:success batch-result)
                       (send-payments!
-                        (filterv #(< (get-in % [:payment :state]) 2)
-                                 @current-applications)
                         (get-batch-values batch)
                         @selected-grant payments)
                       (dialogs/show-error-message!
