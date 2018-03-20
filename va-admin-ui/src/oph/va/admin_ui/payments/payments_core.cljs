@@ -184,8 +184,8 @@
   (true?
     (some
       (fn [{:keys [payments]}]
-        (and
-          (> (count payments))
+        (or
+          (empty? payments)
           (some (fn [payment]
                  (< (:state payment) 2))
                payments)))
