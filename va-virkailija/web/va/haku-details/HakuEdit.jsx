@@ -5,6 +5,8 @@ import DateUtil from 'soresu-form/web/DateUtil'
 import HakuStatus from "../avustushaku/HakuStatus.jsx"
 import HakuRoles from "./HakuRoles.jsx"
 import ChooseRahoitusalueet from "./ChooseRahoitusalueet.jsx"
+import AutoCompleteCodeValue from "./AutoCompleteCodeValue.jsx"
+import Select from 'react-select';
 
 export default class HakuEdit extends Component {
   render() {
@@ -16,6 +18,9 @@ export default class HakuEdit extends Component {
     const allowAllHakuEdits = userHasEditPrivilege && (avustushaku.status === "new" || avustushaku.status === "draft")
     const allowNondisruptiveHakuEdits = userHasEditPrivilege && (allowAllHakuEdits || avustushaku.phase === "current" || avustushaku.phase === "upcoming")
     const userHasEditMyHakuRolePrivilege = avustushaku.privileges && avustushaku.privileges["edit-my-haku-role"]
+    const selectedValueProject = this.props.codeOptions.filter(k => k.id===avustushaku["project-id"])[0] || ""
+    const selectedValueOperation = this.props.codeOptions.filter(k => k.id===avustushaku["operation-id"])[0] || ""
+    const selectedValueOperationalUnit = this.props.codeOptions.filter(k => k.id===avustushaku["operational-unit-id"])[0] || ""
 
     const onChangeListener = (target, value) => {
       controller.onChangeListener(avustushaku, target, value)
@@ -66,27 +71,18 @@ export default class HakuEdit extends Component {
           </tbody>
         </table>
         <div className="editor-field-row">
-          <div className="editor-row-element">
-            <h3 className="required">Toimintayksikkö</h3>
-            <input id="operational-unit" type="text"
-              disabled={!allowAllHakuEdits} onChange={onChange}
-              required="true"
-              value={avustushaku.content["operational-unit"]} />
-          </div>
-          <div className="editor-row-element">
-            <h3 className="required">Projekti</h3>
-            <input id="project" type="text"
-              disabled={!allowAllHakuEdits} onChange={onChange}
-              required="true"
-              value={avustushaku.content["project"]} />
-          </div>
-          <div className="editor-row-element">
-            <h3 className="required">Toiminto</h3>
-            <input id="operation" type="text"
-              disabled={!allowAllHakuEdits} onChange={onChange}
-              required="true"
-              value={avustushaku.content["operation"]} />
-          </div>
+        <div className="editor-row-element">
+          <h3 className="required">Toimintayksikkö</h3>
+           <AutoCompleteCodeValue id="operational-unit-id" codeType="operational-unit-id" controller={controller} avustushaku={avustushaku} onChange={onChange} codeOptions={this.props.codeOptions.filter(k => k["value-type"]==="operational-unit")} selectedValue={selectedValueOperationalUnit}/>
+        </div>
+        <div className="editor-row-element">
+          <h3 className="required">Projekti</h3>
+            <AutoCompleteCodeValue id="project-id" codeType="project-id" controller={controller} avustushaku={avustushaku} onChange={onChange} codeOptions={this.props.codeOptions.filter(k => k["value-type"]==="project")} selectedValue={selectedValueProject}/>
+        </div>
+        <div className="editor-row-element">
+          <h3 className="required">Toiminto</h3>
+            <AutoCompleteCodeValue id="operation-id" codeType="operation-id" controller={controller} avustushaku={avustushaku} onChange={onChange} codeOptions={this.props.codeOptions.filter(k => k["value-type"]==="operation")} selectedValue={selectedValueOperation}/>
+        </div>
         </div>
         <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} />
         <div className="haku-duration-and-self-financing">

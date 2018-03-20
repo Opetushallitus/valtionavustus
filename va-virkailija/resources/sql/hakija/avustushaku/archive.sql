@@ -7,7 +7,10 @@ insert into archived_avustushaut (
     register_number,
     is_academysize,
     content,
-    decision)
+    decision,
+    operational_unit_id,
+    project_id,
+    operation_id)
   select
     id,
     form,
@@ -17,6 +20,9 @@ insert into archived_avustushaut (
     register_number,
     is_academysize,
     content,
-    decision
+    decision,
+    operational_unit_id,
+    project_id,
+    operation_id
   from avustushaut
   where id = :id
