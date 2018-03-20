@@ -16,7 +16,7 @@
   },
   "rules": {
     "curly": "error",
-    "eqeqeq": "warn",
+    "eqeqeq": ["warn", "always", {"null": "ignore"}],
     "no-console": "off",
     "no-const-assign": "error",
     "no-trailing-spaces": "error",
