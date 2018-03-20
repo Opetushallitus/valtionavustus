@@ -79,7 +79,6 @@
                   (:id application) 1)
         filename (create-filename payment)]
     (if (some? payment)
-
       (let [updated-payment (payments-data/update-payment
                              (assoc payment :batch-id (get-in data [:batch :id]))
                              (:identity data))]
