@@ -52,5 +52,6 @@
              (assoc a
                     :payments payments
                     :total-paid (reduce #(+ %1 (:payment-sum %2))
-                                        0 payments))))
+                                        0 (filter #(> (:state %) 1)
+                                                  payments)))))
     applications))
