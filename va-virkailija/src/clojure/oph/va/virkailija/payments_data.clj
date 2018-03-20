@@ -62,16 +62,20 @@
 (defn- store-payment [payment]
   (exec :form-db queries/create-payment payment))
 
+(defn- total-paid [application-id]
+  (or
+    (->
+      (exec :form-db queries/get-total-paid {:application_id application-id})
+      first
+      :total_paid)
+    0))
+
 (defn create-payment [payment-data identity]
-  (when
-   (not
-    (empty?
-     (exec :form-db queries/get-application-payments
-           {:application_id (:application-id payment-data)})))
-    (throw
-     (Exception. "Application already contains a payment")))
   (let [application (application-data/get-application
-                     (:application-id payment-data))]
+                      (:application-id payment-data))]
+    (when (> (+ (total-paid (:application-id payment-data))
+                (:payment-sum payment-data))
+             (:budget-granted application)))
     (-> payment-data
         (assoc :application-version (:version application)
                :grant-id (:grant-id application))
@@ -111,8 +115,8 @@
 
 (defn get-grant-payments [id]
   (->> (exec :form-db queries/get-grant-payments {:id id})
-       (mapv convert-to-dash-keys)
-       (mapv convert-timestamps-from-sql)))
+       (map convert-to-dash-keys)
+       (map convert-timestamps-from-sql)))
 
 (defn delete-grant-payments [id]
   (exec :form-db queries/delete-grant-payments {:id id}))

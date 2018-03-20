@@ -254,20 +254,21 @@
    :application-id  s/Int
    (s/optional-key :application-version) s/Int
    :state s/Int
-   (s/optional-key :batch-number) s/Int
-   (s/optional-key :document-type) s/Str
-   (s/optional-key :invoice-date) LocalDate
-   (s/optional-key :due-date) LocalDate
-   (s/optional-key :receipt-date) LocalDate
-   (s/optional-key :transaction-account) s/Str
-   (s/optional-key :currency) s/Str
-   (s/optional-key :payment-term) s/Str
-   (s/optional-key :partner) s/Str
-   (s/optional-key :inspector-email) s/Str
-   (s/optional-key :acceptor-email) s/Str
+   (s/optional-key :batch-number) (s/maybe s/Int)
+   (s/optional-key :document-type) (s/maybe s/Str)
+   (s/optional-key :invoice-date) (s/maybe LocalDate)
+   (s/optional-key :due-date) (s/maybe LocalDate)
+   (s/optional-key :receipt-date) (s/maybe LocalDate)
+   (s/optional-key :transaction-account) (s/maybe s/Str)
+   (s/optional-key :currency) (s/maybe s/Str)
+   (s/optional-key :payment-term) (s/maybe s/Str)
+   (s/optional-key :partner) (s/maybe s/Str)
+   (s/optional-key :inspector-email) (s/maybe s/Str)
+   (s/optional-key :acceptor-email) (s/maybe s/Str)
    (s/optional-key :filename) (s/maybe s/Str)
    (s/optional-key :user-name) s/Str
-   :batch-id s/Int})
+   (s/optional-key :batch-id) (s/maybe s/Int)
+   :payment-sum s/Int})
 
 (s/defschema PaymentBatchNumber
   "Payment batch number"
@@ -324,7 +325,9 @@
    :takp-account (s/maybe s/Str)
    (s/optional-key :grant-id) s/Int
    (s/optional-key :evaluation) s/Any
-   (s/optional-key :answers) [Answer]})
+   (s/optional-key :answers) [Answer]
+   (s/optional-key :payment-decisions) (s/maybe [{:id s/Int :payment-sum s/Int
+                                         :takp-account s/Str}])})
 
 (s/defschema PaymentsEmail
   "Grant payments email"
@@ -353,7 +356,7 @@
 
 (s/defschema PaymentsCreateResult
   "Payment create result"
-  {:success s/Bool})
+  {:success s/Bool :errors [s/Any]})
 
 (s/defschema VACodeValue
   "VA Code Value"
