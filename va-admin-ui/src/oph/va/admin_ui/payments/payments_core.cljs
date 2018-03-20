@@ -166,6 +166,31 @@
       "6600")
     :batch-id (:id batch)))
 
+(defn paid-full? [application]
+  (>= (reduce #(+ %1 (:payment-sum %2)) 0 (:payments application))
+      (:budget-granted application)))
+
+(defn multibatch-payable? [applications]
+  (true?
+    (some
+      (fn [application]
+        (and
+          (not (paid-full? application))
+          (some (fn [payment] (= (:state payment) 1))
+               (:payments application))))
+      applications)))
+
+(defn singlebatch-payable? [applications]
+  (true?
+    (some
+      (fn [{:keys [payments]}]
+        (and
+          (> (count payments))
+          (some (fn [payment]
+                 (< (:state payment) 2))
+               payments)))
+      applications)))
+
 (defn home-page [{:keys [selected-grant batch-values applications
                          current-applications payments grants]}
                  {:keys [user-info delete-payments?]}]
@@ -222,9 +247,11 @@
                        (select-keys result [:status :error-text])))))))
            :is-admin? (user/is-admin? user-info)})]
        (let [accounts-nil? (any-account-nil? @current-applications)
-             unsent-payments? (some
-                                #(when (< (get-in % [:payment :state]) 2) true)
-                                @current-applications)]
+             multibatch? (get-in @selected-grant [:content :multiplemaksuera])
+             unsent-payments?
+             (if multibatch?
+               (multibatch-payable? @current-applications)
+               (singlebatch-payable? @current-applications))]
          [:div
           (when accounts-nil?
             (notice "Joillakin hakemuksilla ei ole LKP- tai TaKP-tiliä, joten
