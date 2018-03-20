@@ -247,9 +247,8 @@
                        (select-keys result [:status :error-text])))))))
            :is-admin? (user/is-admin? user-info)})]
        (let [accounts-nil? (any-account-nil? @current-applications)
-             multibatch? (get-in @selected-grant [:content :multiplemaksuera])
              unsent-payments?
-             (if multibatch?
+             (if (get-in @selected-grant [:content :multiplemaksuera])
                (multibatch-payable? @current-applications)
                (singlebatch-payable? @current-applications))]
          [:div
