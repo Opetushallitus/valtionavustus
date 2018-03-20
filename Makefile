@@ -36,15 +36,15 @@ npm-clean-frontends:
 	$(call npm_clean_frontend,va-virkailija)
 
 .PHONY: npm-build
-npm-build: npm-lint npm-install-modules npm-build-frontends
-
-.PHONY: npm-lint
-npm-lint:
-	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_lint,$(npm_project))$(newline))
+npm-build: npm-install-modules npm-lint npm-build-frontends
 
 .PHONY: npm-install-modules
 npm-install-modules:
 	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_install_modules,$(npm_project))$(newline))
+
+.PHONY: npm-lint
+npm-lint:
+	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_lint,$(npm_project))$(newline))
 
 .PHONY: npm-build-frontends
 npm-build-frontends:
