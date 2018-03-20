@@ -33,20 +33,19 @@ export default class SelvitysFormEditor extends React.Component {
       controller.saveSelvitysForm(avustushaku, formDraft, selvitysType)
     }
 
-    var parsedForm = formDraft
-    var parseError = false
+    let parsedForm = formDraft
+    let parseError = false
     try {
       parsedForm = JSON.parse(formDraft)
-    }
-    catch (error) {
+    } catch (error) {
       parseError = error.toString()
     }
 
     function formHasBeenEdited() {
-      return (formDraft && formContent) && !_.isEqual(parsedForm, formContent)
+      return formDraft && formContent && !_.isEqual(parsedForm, formContent)
     }
 
-    const disableSave = !formHasBeenEdited()
+    const disableSave = parseError !== false || !formHasBeenEdited()
 
     const recreateForm = () => {
       controller.selvitysFormOnRecreate(avustushaku, selvitysType)
@@ -96,8 +95,9 @@ export default class SelvitysFormEditor extends React.Component {
         <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} />
         <div className="form-json-editor">
           <h3>Hakulomakkeen sisältö</h3>
+          <span className="error">{parseError}</span>
+          <button className="btn-fixed" type="button" onClick={onSaveForm} disabled={disableSave}>Tallenna</button>
           <textarea onChange={onJsonChange} value={formDraft}/>
-          <button className="btn-fixed" type="button" onClick={onSaveForm}  disabled={disableSave}>Tallenna</button>
         </div>
       </div>
     )
