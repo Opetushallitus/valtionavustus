@@ -213,18 +213,17 @@
          [:hr]
          (project-info @selected-grant)]))]
    [(fn []
-      (let [unfilled-payments?
-            (true? (some #(or (< (get-in % [:payment :state]) 2))
-                         @current-applications))]
+      (let [unsent-payments?
+            (if (get-in @selected-grant [:content :multiplemaksuera])
+              (multibatch-payable? @current-applications)
+              (singlebatch-payable? @current-applications))]
         [:div
          [:div
           [:hr]
           [:div
-           (when
-               (or
-                 (:read-only @batch-values)
-                 (not unfilled-payments?))
-             {:style {:opacity 0.2 :pointer-events "none"}})
+           (when (or
+                   (:read-only @batch-values)
+                   (not unsent-payments?)))
            [:h3 "Maksuerän tiedot"]
            (financing/payment-emails @batch-values
                                      #(swap! batch-values assoc %1 %2))
@@ -260,7 +259,7 @@
               (or
                 (not (payments/valid-batch-values? @batch-values))
                 accounts-nil?
-                (not unfilled-payments?))
+                (not unsent-payments?))
               :label "Lähetä maksatukset"
               :style theme/button
               :on-click
@@ -281,8 +280,7 @@
                         @selected-grant payments)
                       (dialogs/show-error-message!
                         "Virhe maksuerän luonnissa"
-                        batch-result)))))}]])]))
-    ]
+                        batch-result)))))}]])]))]
    (when (and delete-payments? (user/is-admin? user-info))
      (render-admin-tools payments @selected-grant))])
 
