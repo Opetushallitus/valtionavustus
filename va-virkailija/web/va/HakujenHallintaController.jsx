@@ -59,12 +59,12 @@ const basicFields = ["loppuselvitysdate", "valiselvitysdate", "register-number"]
 const paymentFields = ["operational-unit", "project", "operation"]
 
 function appendBudgetComponent(selvitysType, avustushaku) {
-  const form = selvitysType == "valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
+  const form = selvitysType === "valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
   const originalVaBudget = FormUtil.findFieldByFieldType(avustushaku.formContent.content, "vaBudget")
   const selvitysVaBudget = FormUtil.findFieldByFieldType(form.content, "vaBudget")
   if(originalVaBudget) {
-    const childrenWithoutBudgetSummary = originalVaBudget.children.filter((i)=>i.id!='budget-summary')
-    if(selvitysVaBudget) {
+    const childrenWithoutBudgetSummary = originalVaBudget.children.filter(i => i.id !== 'budget-summary')
+    if (selvitysVaBudget) {
       selvitysVaBudget.children = childrenWithoutBudgetSummary
     } else {
       form.content.push({
@@ -167,7 +167,7 @@ export default class HakujenHallintaController {
       'onHakuSave', 'onAddTalousarviotili', 'onDeleteTalousarviotili', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
       'onBeforeUnload', 'onRolesLoaded', 'onRoleCreated', 'onRoleDeleted', 'saveRole')
 
-    Bacon.fromEvent(window, "beforeunload").onValue(function (event) {
+    Bacon.fromEvent(window, "beforeunload").onValue(function() {
       // For some odd reason Safari always displays a dialog here
       // But it's probably safer to always save the document anyway
       dispatcher.push(events.beforeUnload)
@@ -212,7 +212,7 @@ export default class HakujenHallintaController {
     )
 
     function consolidateSubTabSelectionWithUrl() {
-      var subTab = "haku-editor"
+      let subTab = "haku-editor"
       const parsedUrl = new RouteParser('/admin/:subTab/*ignore').match(location.pathname)
       if(!_.isUndefined(history.pushState)) {
         if(parsedUrl["subTab"]) {

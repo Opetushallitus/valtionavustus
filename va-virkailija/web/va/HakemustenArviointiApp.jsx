@@ -89,7 +89,7 @@ const parsedAvustusHakuIdObject = new RouteParser('/avustushaku/:avustushaku_id/
 if (!parsedAvustusHakuIdObject || _.isUndefined(parsedAvustusHakuIdObject["avustushaku_id"])) {
   window.location.href = "/avustushaku/" + defaultHakuId + "/"
 }
-const avustushakuId = parsedAvustusHakuIdObject ? parsedAvustusHakuIdObject["avustushaku_id"] : defaultHakuId
+const avustushakuId = parsedAvustusHakuIdObject ? parseInt(parsedAvustusHakuIdObject["avustushaku_id"], 10) : defaultHakuId
 LocalStorage.saveAvustushakuId(avustushakuId)
 const query = queryString.parse(location.search)
 const evaluator = query.arvioija ? parseInt(query.arvioija) : undefined
