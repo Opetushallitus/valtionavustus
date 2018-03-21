@@ -27,8 +27,9 @@ export default class Selvitys extends Component {
                                          form={form}
 
         />}
-        <ApplicationPayments application={hakemus} grant={avustushaku}
-                             onAddPayment={controller.addPayment}/>
+        {avustushaku.content["multiplemaksuera"] &&
+          <ApplicationPayments application={hakemus} grant={avustushaku}
+                               onAddPayment={controller.addPayment}/>}
         <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} preview={preview} label="Linkki lomakkeelle"/>
         {hasSelvitys && <SelvitysEmail controller={controller}
                                        selvitysType={selvitysType}
