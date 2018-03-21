@@ -27,6 +27,11 @@ describe('Js util', function() {
       const index = JsUtil.findIndexOfFirst(Tree, el => el.a1 && el.b1)
       expect(index).to.equal(0)
     })
+
+    it('returns -1 when match is not found', function() {
+      const index = JsUtil.findIndexOfFirst(Tree, el => el.token === "nosuch")
+      expect(index).to.equal(-1)
+    })
   })
 
   describe('finding json node containing id', function() {
