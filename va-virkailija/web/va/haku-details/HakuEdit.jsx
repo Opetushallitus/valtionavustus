@@ -7,7 +7,6 @@ import HakuStatus from "../avustushaku/HakuStatus.jsx"
 import HakuRoles from "./HakuRoles.jsx"
 import ChooseRahoitusalueet from "./ChooseRahoitusalueet.jsx"
 import AutoCompleteCodeValue from "./AutoCompleteCodeValue.jsx"
-import Select from 'react-select';
 
 export default class HakuEdit extends Component {
   render() {
