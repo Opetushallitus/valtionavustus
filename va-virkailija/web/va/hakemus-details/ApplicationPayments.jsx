@@ -10,12 +10,12 @@ export default class ApplicationPayments extends Component {
   }
 
   onAddPayment() {
-    this.props.onAddPayment(Number(this.state.value))
+    this.props.onAddPayment(this.state.value)
     this.setState({value: ""})
   }
 
   onValueChange(e) {
-    this.setState({value: e.target.value})
+    this.setState({value: Number(e.target.value)})
   }
 
   localeString(num) {
@@ -46,12 +46,13 @@ export default class ApplicationPayments extends Component {
       </tr>
     )
   }
-
   render() {
     const {application, grant} = this.props
     const payments = application.payments || []
     const renderPaymentPercentage =
           this.createPaymentPercentageRenderer(application["budget-oph-share"])
+    const paidToDate = payments.reduce((p, n) => p + n["payment-sum"], 0)
+    const grantLeft = application["budget-oph-share"] - paidToDate
     return (
       <div>
         <h3>Maksuerät</h3>
@@ -76,13 +77,20 @@ export default class ApplicationPayments extends Component {
                 </td>
               </tr>
               {payments.map(this.renderPayment)}
+              {(grantLeft > 0) ? (
+                <tr>
+                  <td>{`${payments.length + 1}. erä`}</td>
+                  <td className="payment-money-column">
+                    <input value={this.state.value}
+                           onChange={this.onValueChange}
+                           type={this.props.inputType}
+                           size={10}/> €
+                  </td>
+                </tr>) : null}
               <tr>
-                <td>{`${payments.length + 1}. erä`}</td>
+                <td>Yhteensä</td>
                 <td className="payment-money-column">
-                  <input value={this.state.value}
-                         onChange={this.onValueChange}
-                         type={this.props.inputType}
-                         size={10}/> €
+                  {paidToDate + this.state.value} €
                 </td>
               </tr>
             </tbody>
@@ -102,14 +110,24 @@ export default class ApplicationPayments extends Component {
                 </td>
               </tr>
               {payments.map(renderPaymentPercentage)}
-              {
+              {(grantLeft > 0) ?
                 renderPaymentPercentage({"payment-sum": this.state.value},
-                  payments.length)
+                  payments.length) : null
               }
+              <tr>
+                <td>Yhteensä</td>
+                <td className="payment-money-column">
+                  {
+                    (100.0 * (paidToDate + this.state.value) /
+                     application["budget-oph-share"]).toFixed(0)
+                  } %
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
-        <button onClick={this.onAddPayment}>
+        <button onClick={this.onAddPayment}
+                disabled={(grantLeft - this.state.value) <= 0}>
           Lisää {payments.length + 1}. erä maksatuslistaan
         </button>
       </div>
