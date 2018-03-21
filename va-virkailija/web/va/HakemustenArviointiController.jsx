@@ -52,13 +52,15 @@ const events = {
   togglePersonSelect:'togglePersonSelect',
   clearFilters:'clearFilters',
   selectEditorSubTab: 'selectEditorSubTab',
-  paymentsLoaded: 'paymentsLoaded'
+  paymentsLoaded: 'paymentsLoaded',
+  addPayment: 'addPayment',
+  appendPayment: 'appendPayment'
 }
 
 export default class HakemustenArviointiController {
 
   initializeState(avustushakuId,evaluator) {
-    this._bind('onInitialState', 'onHakemusSelection', 'onUpdateHakemusStatus', 'onUpdateHakemusArvio', 'onSaveHakemusArvio', 'onBeforeUnload','onRefreshHakemukset')
+    this._bind('onInitialState', 'onHakemusSelection', 'onUpdateHakemusStatus', 'onUpdateHakemusArvio', 'onSaveHakemusArvio', 'onBeforeUnload','onRefreshHakemukset', 'onAddPayment')
     this.autoSaveHakemusArvio = _.debounce(function(updatedHakemus){ dispatcher.push(events.saveHakemusArvio, updatedHakemus) }, 3000)
 
     Bacon.fromEvent(window, "beforeunload").onValue(function() {
@@ -138,7 +140,9 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.toggleHakemusFilter)], this.onToggleHakemusFilter,
       [dispatcher.stream(events.clearFilters)], this.onClearFilters,
       [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab,
-      [dispatcher.stream(events.paymentsLoaded)], this.onPaymentsLoaded
+      [dispatcher.stream(events.paymentsLoaded)], this.onPaymentsLoaded,
+      [dispatcher.stream(events.addPayment)], this.onAddPayment,
+      [dispatcher.stream(events.appendPayment)], this.onAppendPayment
     )
   }
 
@@ -506,8 +510,6 @@ export default class HakemustenArviointiController {
     return HakemustenArviointiController.doOnAnswerValue(state, value, "seuranta-answers" )
   }
 
-
-
   onChangeRequestsLoaded(state, hakemusIdWithChangeRequests) {
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithChangeRequests.hakemusId)
     if (relevantHakemus) {
@@ -520,6 +522,14 @@ export default class HakemustenArviointiController {
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithAttachmentVersions.hakemusId)
     if (relevantHakemus) {
       relevantHakemus.attachmentVersions = hakemusIdWithAttachmentVersions.attachmentVersions
+    }
+    return state
+  }
+
+  onPaymentsLoaded(state, data) {
+    const application = HakemustenArviointiController.findHakemus(state, data.hakemusId)
+    if (application) {
+      application.payments = data.payments
     }
     return state
   }
@@ -565,12 +575,34 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onPaymentsLoaded(state, hakemusIdWithScoring) {
-    const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithScoring.hakemusId)
-    console.log(hakemusIdWithScoring)
-    if (relevantHakemus) {
-      relevantHakemus.payments = hakemusIdWithScoring.payments
-    }
+  onAddPayment(state, paymentSum) {
+    const hakemus = state.selectedHakemus
+    const url = "/api/v2/payments/"
+    state.saveStatus.saveInProgress = true
+    HttpUtil.post(url,
+                  { "application-id": hakemus.id,
+                    "application-version": hakemus.version,
+                    "state": 1,
+                    "batch-id": null,
+                    "payment-sum": paymentSum })
+      .then(function(response) {
+        if(response instanceof Object) {
+          dispatcher.push(events.appendPayment, response)
+          dispatcher.push(events.saveCompleted)
+        }
+        else {
+          dispatcher.push(events.saveCompleted, "unexpected-save-error")
+        }
+      })
+      .catch(function(error) {
+        console.error(`Error in adding payment, POST ${url}`, error)
+        dispatcher.push(events.saveCompleted, "unexpected-save-error")
+      })
+    return state
+  }
+
+  onAppendPayment(state, payment) {
+    state.selectedHakemus.payments.push(payment)
     return state
   }
 
@@ -1005,6 +1037,10 @@ export default class HakemustenArviointiController {
 
   clearFilters(){
     dispatcher.push(events.clearFilters)
+  }
+
+  addPayment(paymentSum) {
+    dispatcher.push(events.addPayment, paymentSum)
   }
 
   onSelectEditorSubTab(state, subTabToSelect) {
