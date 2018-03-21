@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 export default class HakuStatus extends Component {
   render() {
     const status = this.props.status
-    var value = status
+    let value = status
     switch(status) {
       case "new":
         value = "Uusi"

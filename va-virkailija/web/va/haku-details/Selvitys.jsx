@@ -1,10 +1,8 @@
-import React, { Component } from 'react'
+import React from 'react'
 import moment from 'moment'
-import _ from 'lodash'
 
 export default class Selvitys extends React.Component{
   render(){
-    const {controller, avustushaku} = this.props
     return (
       <div>
         <h4>Väliselvitys</h4>
@@ -39,7 +37,7 @@ class DateField extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.avustushaku.id != this.props.avustushaku.id) {
+    if (nextProps.avustushaku.id !== this.props.avustushaku.id) {
       this.setState({value: this.value(nextProps, nextProps.field)})
     }
   }
@@ -50,7 +48,7 @@ class DateField extends React.Component {
 
   onBlur(event) {
     const value = event.target.value
-    const isValid = moment(value, ["D.M.YYYY"], true).isValid() || value == ""
+    const isValid = moment(value, ["D.M.YYYY"], true).isValid() || value === ""
     if (isValid) {
       this.props.controller.onChangeListener(this.props.avustushaku, event.target, value)
     } else {

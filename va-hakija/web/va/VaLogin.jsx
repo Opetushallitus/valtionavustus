@@ -5,8 +5,8 @@ import ReactDOM from 'react-dom'
 import QueryString from 'query-string'
 import Bacon from 'baconjs'
 
-import common from 'soresu-form/web/form/style/main.less'
-import loginStyle from './style/va-login.less'
+import 'soresu-form/web/form/style/main.less'
+import './style/va-login.less'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'

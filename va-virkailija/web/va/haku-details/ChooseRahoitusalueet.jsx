@@ -1,12 +1,12 @@
 import _ from 'lodash'
-import React, { Component } from 'react'
+import React from 'react'
 import Rahoitusalueet from '../data/Rahoitusalueet'
 
 const RahoitusalueRow = ({idPrefix, avustushaku, rahoitusalue, allowEditing, onChange, controller, currentRahoitusalueet}) =>{
-  const currentValueIndex = currentRahoitusalueet ? _.findIndex(currentRahoitusalueet, function(o) { return o.rahoitusalue == rahoitusalue; }) : -1
+  const currentValueIndex = currentRahoitusalueet ? _.findIndex(currentRahoitusalueet, function(o) { return o.rahoitusalue === rahoitusalue }) : -1
   const talousarviotilit = currentValueIndex > -1 ? currentRahoitusalueet[currentValueIndex].talousarviotilit : [""]
   const talousarvioTiliRows = []
-  for (var index=0; index < talousarviotilit.length; index++) {
+  for (let index = 0; index < talousarviotilit.length; index++) {
     const htmlId = idPrefix + index
     const label = index === 0 ? <label>{rahoitusalue}</label> : null
 

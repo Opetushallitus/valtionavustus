@@ -10,8 +10,8 @@ import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses
 import DateUtil from 'soresu-form/web/DateUtil'
 import Rahoitusalueet from './data/Rahoitusalueet'
 
-import style from './style/main.less'
-import summaryStyle from './style/summary.less'
+import './style/main.less'
+import './style/summary.less'
 
 export default class SummaryApp extends Component {
   render() {
@@ -83,7 +83,7 @@ const RahoitusalueList = ({hakemusList})=>{
   const rahoitusAlueetNameValues = _.chain(applicationsByRahoitusalue).
     omit([nullValue,undefinedValue]).
     keys().
-    sortBy((x)=> x==withoutLabel ? 9999: Rahoitusalueet.indexOf(x)).
+    sortBy((x)=> x === withoutLabel ? 9999: Rahoitusalueet.indexOf(x)).
     map((x)=>{return {
       name:x,
       values:applicationsByRahoitusalue[x]
@@ -108,8 +108,8 @@ const RahoitusalueList = ({hakemusList})=>{
 
 
 const SumBy = (list,fieldFunc) => _.sum(list.map(fieldFunc))
-const SumByOphShare = _.partialRight(SumBy, (hakemus)=>hakemus["budget-oph-share"]);
-const SumByBudgetGranted = _.partialRight(SumBy, (hakemus)=>hakemus.arvio["budget-granted"]);
+const SumByOphShare = _.partialRight(SumBy, (hakemus)=>hakemus["budget-oph-share"])
+const SumByBudgetGranted = _.partialRight(SumBy, (hakemus)=>hakemus.arvio["budget-granted"])
 
 class SummaryHeading extends Component {
   render() {

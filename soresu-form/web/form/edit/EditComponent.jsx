@@ -137,7 +137,7 @@ export class EditComponent extends React.Component {
       </a>
     ))
 
-    var labelEdit = this.renderTranslationTable(htmlId + "-label", this.labelName(), x => x.label)
+    const labelEdit = this.renderTranslationTable(htmlId + "-label", this.labelName(), x => x.label)
     const editFields = addableFields.indexOf(field.fieldType) !== -1 ? (
       <div className="soresu-field-edit-tools">
         <span onClick={this.handleOnMoveFieldUpClick.bind(this)}
@@ -202,8 +202,8 @@ export class FieldEditComponent extends EditComponent {
   renderEditable(fieldSpecificElementEdit, fieldSpecificPropertyEditors) {
     const field = this.props.field
     const htmlId = this.props.htmlId
-    var requiredEdit = undefined
-    if(typeof field.required != "undefined") {
+    let requiredEdit = undefined
+    if(typeof field.required !== "undefined") {
       requiredEdit = (
         <span className="soresu-edit-property">
           <input onChange={this.fieldValueUpdater(x => x, "required", !field.required)} type="checkbox" id={htmlId+"-required"} name={htmlId+"-required"} checked={field.required}/>
@@ -211,7 +211,7 @@ export class FieldEditComponent extends EditComponent {
         </span>
       )
     }
-    var helpTextEdit = this.renderTranslationTable(htmlId + "-help-text", "Ohjeteksti", x => x.helpText, "larger-textarea")
+    const helpTextEdit = this.renderTranslationTable(htmlId + "-help-text", "Ohjeteksti", x => x.helpText, "larger-textarea")
     return super.renderEditable(
       <div>
         {helpTextEdit}
@@ -314,7 +314,7 @@ export class TextFieldEdit extends FieldEditComponent {
       "large": "L"
     }
     const sizeAlternenativeButtons = []
-    for (var i = 0; i < sizeAlternatives.length; i++) {
+    for (let i = 0; i < sizeAlternatives.length; i++) {
       sizeAlternenativeButtons.push(
         <input type="radio" id={htmlId + ".size." + i}
           key={"size-input-" + i}

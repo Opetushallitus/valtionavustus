@@ -1,11 +1,11 @@
-import React, { Component } from 'react'
+import React from 'react'
+import _ from 'lodash'
 
 import HttpUtil from "soresu-form/web/HttpUtil"
 
 import FormEditor from './FormEditor.jsx'
 
-export default class SelvitysFormEditor extends React.Component{
-
+export default class SelvitysFormEditor extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.avustushaku.id !== nextProps.avustushaku.id) {
       this.setState({count:undefined, sending:false})
@@ -33,20 +33,19 @@ export default class SelvitysFormEditor extends React.Component{
       controller.saveSelvitysForm(avustushaku, formDraft, selvitysType)
     }
 
-    var parsedForm = formDraft
-    var parseError = false
+    let parsedForm = formDraft
+    let parseError = false
     try {
       parsedForm = JSON.parse(formDraft)
-    }
-    catch (error) {
+    } catch (error) {
       parseError = error.toString()
     }
 
     function formHasBeenEdited() {
-      return (formDraft && formContent) && !_.isEqual(parsedForm, formContent)
+      return formDraft && formContent && !_.isEqual(parsedForm, formContent)
     }
 
-    const disableSave = !formHasBeenEdited()
+    const disableSave = parseError !== false || !formHasBeenEdited()
 
     const recreateForm = () => {
       controller.selvitysFormOnRecreate(avustushaku, selvitysType)
@@ -58,9 +57,8 @@ export default class SelvitysFormEditor extends React.Component{
         .then(response => {
           this.setState({count: response.count, sending: false})
         })
-
     }
-    
+
     const valiselvitysSection = <div>
       <h4>Väliselvitysten lähettäminen</h4>
       <p>Väliselvitys tulee toimittaa viimeistään <strong>{this.props.avustushaku[selvitysType + 'date']}</strong>.</p>
@@ -97,8 +95,9 @@ export default class SelvitysFormEditor extends React.Component{
         <FormEditor avustushaku={avustushaku} translations={translations} formDraft={formDraft} koodistos={koodistos} controller={controller} onFormChange={onFormChange} />
         <div className="form-json-editor">
           <h3>Hakulomakkeen sisältö</h3>
+          <span className="error">{parseError}</span>
+          <button className="btn-fixed" type="button" onClick={onSaveForm} disabled={disableSave}>Tallenna</button>
           <textarea onChange={onJsonChange} value={formDraft}/>
-          <button className="btn-fixed" type="button" onClick={onSaveForm}  disabled={disableSave}>Tallenna</button>
         </div>
       </div>
     )

@@ -19,7 +19,7 @@ export default class HakemusComments extends Component {
     }
   }
 
-  shouldComponentUpdate (nextProps, nextState) {
+  shouldComponentUpdate (nextProps) {
     if (this.props.hakemus.id !== nextProps.hakemus.id) {
       this.checkComments()
       this.setState({comment:"",added:false})
@@ -34,7 +34,7 @@ export default class HakemusComments extends Component {
   render() {
     const controller = this.props.controller
     const allowHakemusCommenting = this.props.allowHakemusCommenting
-    var commentsToRender = []
+    let commentsToRender = []
     const commentsInState = this.props.comments
     if (_.isArray(commentsInState)) {
       commentsToRender = commentsInState
@@ -48,7 +48,7 @@ export default class HakemusComments extends Component {
     }
 
     const commentComponents = commentsToRender.map(c => <Comment comment={c} key={c.id}/>)
-    const noComments = commentsToRender.length==0
+    const noComments = commentsToRender.length === 0
     return (
       <div id="hakemus-comment-container" className="hakemus-arviointi-section">
         <label>Kommentit:</label>
@@ -60,7 +60,7 @@ export default class HakemusComments extends Component {
                   value={this.state.comment}
                   onChange={handleChange}
                   hidden={!allowHakemusCommenting} disabled={!allowHakemusCommenting}/>
-        <button type="button" disabled={this.state.comment.length==0} onClick={addComment}>Lisää</button>
+        <button type="button" disabled={this.state.comment.length === 0} onClick={addComment}>Lisää</button>
         <span hidden={!this.state.added}>Kommentti lisätty</span>
       </div>
     )

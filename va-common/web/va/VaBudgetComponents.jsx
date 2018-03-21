@@ -5,7 +5,6 @@ import ClassNames from 'classnames'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip.jsx'
 import MathUtil from 'soresu-form/web/MathUtil'
-import MoneyTextField from 'soresu-form/web/form/component/MoneyTextField.jsx'
 import Translator from 'soresu-form/web/form/Translator'
 
 export default class VaBudgetElement extends React.Component {
@@ -112,7 +111,6 @@ export class BudgetSummaryElement extends React.Component {
 
   render() {
     const htmlId = this.props.htmlId
-    const field = this.props.field
     const translations = this.props.translations.form.budget
     const lang = this.props.lang
     const checkNumbersMessage = this.miscTranslator.translate("check-numbers", lang, "VIRHE")

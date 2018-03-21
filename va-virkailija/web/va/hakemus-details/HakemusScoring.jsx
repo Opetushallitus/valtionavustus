@@ -41,7 +41,7 @@ export default class HakemusScoring extends Component {
   }
 
   static createValintaPerusteRows(allScoresOfHakemus, valintaperusteet, personOid, allowHakemusScoring, controller) {
-    var perusteIndex = 0
+    let perusteIndex = 0
     return _.map(valintaperusteet, peruste => { return <ValintaPerusteRow valintaperuste={peruste}
                                                                           scores={findScores(perusteIndex)}
                                                                           selectionCriteriaIndex={perusteIndex}
@@ -121,7 +121,7 @@ class StarElement extends Component {
     const controller = this.props.controller
     const enableEditing = allowHakemusScoring && !_.isUndefined(controller)
     const classNames = ClassNames("single-score", {editable: enableEditing})
-    const onClick = enableEditing ? event => { controller.setScore(selectionCriteriaIndex, indexOfStar) } : undefined
+    const onClick = enableEditing ? () => { controller.setScore(selectionCriteriaIndex, indexOfStar) } : undefined
     const showHover = enableEditing && !starVisible ? event => { event.target.setAttribute("src", "/img/star_hover.png") } : undefined
     const hideHover = enableEditing && !starVisible ? event => { event.target.setAttribute("src", starImage)} : undefined
     return <img className={classNames}

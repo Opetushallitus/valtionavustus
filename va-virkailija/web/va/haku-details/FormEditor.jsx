@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
-import vaCommonStyles from 'va-common/web/va/style/soresu-va.less'
-import soresuFormEditStyles from 'soresu-form/web/form/style/formedit.less'
+import 'va-common/web/va/style/soresu-va.less'
+import 'soresu-form/web/form/style/formedit.less'
 
 import FormEdit from 'soresu-form/web/form/edit/FormEdit.jsx'
 import FormEditorController from 'soresu-form/web/form/edit/FormEditController'

@@ -1,7 +1,6 @@
 (function() {
-  const applicationPage = ApplicationPage()
-  const loginPage = LoginPage()
-
+  var applicationPage = ApplicationPage()
+  var loginPage = LoginPage()
 
   beforeEach(function() {
     window.localStorage.clear()

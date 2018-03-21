@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React from 'react'
+import _ from 'lodash'
 import Bacon from 'baconjs'
 
 export default class AcademySize extends React.Component {
-
   constructor(props) {
     super(props)
     this.state = initialState(props)
@@ -17,8 +17,8 @@ export default class AcademySize extends React.Component {
   }
 
   render() {
-    const {avustushaku, hakemus, allowEditing, controller} = this.props
-    if(!avustushaku.is_academysize) {
+    const {avustushaku, hakemus, allowEditing} = this.props
+    if (!avustushaku.is_academysize) {
       return null
     }
     const onChange = (event) => {

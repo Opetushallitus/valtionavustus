@@ -4,16 +4,14 @@ import _ from 'lodash'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
 import Form from 'soresu-form/web/form/Form.jsx'
-import FormStateLoop from 'soresu-form/web/form/FormStateLoop'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 
 import FakeFormState from '../form/FakeFormState'
-import BudgetBusinessRules from '../budgetedit/BudgetBusinessRules'
 import SeurantaBudgetEditFormController from './SeurantaBudgetEditFormController'
 import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFactory.jsx'
 
-import style from '../style/budgetedit.less'
+import '../style/budgetedit.less'
 
 export default class SeurantaBudgetEditing extends React.Component {
   static validateFields(form, answers) {
@@ -43,7 +41,7 @@ export default class SeurantaBudgetEditing extends React.Component {
     const formOperations = {
       chooseInitialLanguage: () => "fi",
       containsExistingEntityId: undefined,
-      isFieldEnabled: (saved, fieldId) => true,
+      isFieldEnabled: () => true,
       onFieldUpdate: undefined,
       isSaveDraftAllowed: () => true,
       isNotFirstEdit: () => true,

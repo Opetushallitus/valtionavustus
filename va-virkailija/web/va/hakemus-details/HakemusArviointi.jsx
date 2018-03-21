@@ -5,12 +5,11 @@ import Bacon from 'baconjs'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import DateUtil from 'soresu-form/web/DateUtil'
 
-import HakemusBudgetEditing, { BudgetGranted } from '../budgetedit/HakemusBudgetEditing.jsx'
+import HakemusBudgetEditing from '../budgetedit/HakemusBudgetEditing.jsx'
 
 import HakemusScoring from './HakemusScoring.jsx'
 import HakemusComments from './HakemusComments.jsx'
 import HakemusArviointiStatuses from "./HakemusArviointiStatuses"
-import HakemusStatuses from './HakemusStatuses'
 import TraineeDayEditing from '../traineeday/TraineeDayEditing.jsx'
 import ChooseRahoitusalueAndTalousarviotili from './ChooseRahoitusalueAndTalousarviotili.jsx'
 import SpecifyOppilaitos from './SpecifyOppilaitos.jsx'
@@ -19,7 +18,7 @@ import Perustelut from './Perustelut.jsx'
 import PresenterComment from './PresenterComment.jsx'
 import EditStatus from './EditStatus.jsx'
 
-import admin from '../style/admin.less'
+import '../style/admin.less'
 
 export default class HakemusArviointi extends Component {
   render() {
@@ -67,7 +66,9 @@ class ChangeLog extends React.Component{
   render(){
     const hakemus = this.props.hakemus
     const changelogs = _.get(this.props.hakemus, "arvio.changelog")
-    if (!changelogs) return null
+    if (!changelogs) {
+      return null
+    }
     return (
       <div className="changelog">
         <h2 className="changelog__heading">Muutoshistoria</h2>
@@ -140,7 +141,7 @@ class SetArviointiStatus extends React.Component {
     const controller = this.props.controller
     const statuses = []
     const statusValues = HakemusArviointiStatuses.allStatuses()
-    for (var i=0; i < statusValues.length; i++) {
+    for (let i = 0; i < statusValues.length; i++) {
       const htmlId = "set-arvio-status-" + statusValues[i]
       const statusFI = HakemusArviointiStatuses.statusToFI(statusValues[i])
       const onChange = allowEditing ? controller.setHakemusArvioStatus(hakemus, statusValues[i]) : null
@@ -174,12 +175,12 @@ class ChangeRequest extends React.Component {
 
   constructor(props){
     super(props)
-    this.state = {preview:false}
+    this.state = {preview: false}
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.hakemus.id !== nextProps.hakemus.id) {
-      this.state = {preview:false}
+      this.setState({preview: false})
     }
   }
 
@@ -199,7 +200,7 @@ class ChangeRequest extends React.Component {
     const onTextChange = function(event) {
       controller.setChangeRequestText(hakemus, event.target.value)()
     }
-    const sendChangeRequest = allowEditing ? controller.setHakemusStatus(hakemus, "pending_change_request", _ => hakemus.changeRequest) : null
+    const sendChangeRequest = allowEditing ? controller.setHakemusStatus(hakemus, "pending_change_request", () => hakemus.changeRequest) : null
     const newChangeRequest = typeof hakemus.changeRequest !== 'undefined' && !hasChangeRequired
 
     const onPreview = () =>{
@@ -261,9 +262,7 @@ class SummaryComment extends React.Component {
   }
 
   render() {
-    const hakemus = this.props.hakemus
     const allowEditing = this.props.allowEditing
-    const controller = this.props.controller
     return <div className="value-edit summary-comment">
       <label htmlFor="summary-comment">Huomautus päätöslistaan</label>
       <textarea id="summary-comment" rows="1" disabled={!allowEditing} value={this.state.summaryComment}

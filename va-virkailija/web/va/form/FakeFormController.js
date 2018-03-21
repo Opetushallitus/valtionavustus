@@ -1,7 +1,4 @@
-import React, { Component } from 'react'
-
 export default class FakeFormController {
-
   constructor(customComponentFactory, customPreviewComponentFactory, avustushaku, hakemus) {
     this.customComponentFactory = customComponentFactory
     this.customPreviewComponentFactory = customPreviewComponentFactory
@@ -13,7 +10,7 @@ export default class FakeFormController {
     return fieldId
   }
 
-  componentDidMount(field, initialValue) {
+  componentDidMount() {
   }
 
   getCustomComponentTypeMapping() {
@@ -35,7 +32,7 @@ export default class FakeFormController {
     return this.customPreviewComponentFactory.createComponent(componentProps)
   }
 
-  getCustomComponentProperties(state) {
+  getCustomComponentProperties() {
     return { "avustushaku": this.avustushaku }
   }
 

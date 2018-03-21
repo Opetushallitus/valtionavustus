@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React from 'react'
+import _ from 'lodash'
 import Bacon from 'baconjs'
 
 export default class PresenterComment extends React.Component {
@@ -18,7 +19,7 @@ export default class PresenterComment extends React.Component {
 
   render() {
     const onChange = (e)=> {
-      const value = e.target.value;
+      const value = e.target.value
       this.setState({value: value})
       this.changeBus.push([this.props.hakemus, value])
     }

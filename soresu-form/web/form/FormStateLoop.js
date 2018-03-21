@@ -107,7 +107,7 @@ export default class FormStateLoop {
       dispatcher.push(events.initialState, state)
     })
 
-    Bacon.fromEvent(window, "beforeunload").onValue(function(event) {
+    Bacon.fromEvent(window, "beforeunload").onValue(function() {
       // For some odd reason Safari always displays a dialog here
       // But it's probably safer to always save the document anyway
       dispatcher.push(events.beforeUnload)
@@ -153,7 +153,7 @@ export default class FormStateLoop {
     }
 
     function getInitialFormValuesPromise(formOperations, formP, initialValues, savedObjectP, lang) {
-      var valuesP = savedObjectP.map(function(savedObject) {
+      const valuesP = savedObjectP.map(function(savedObject) {
         if(savedObject) {
           return formOperations.responseParser.getFormAnswers(savedObject)
         }

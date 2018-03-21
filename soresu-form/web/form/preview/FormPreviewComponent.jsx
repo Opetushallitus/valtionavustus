@@ -11,7 +11,6 @@ import {
   TextFieldPropertyMapper,
   OptionFieldPropertyMapper,
   MultipleOptionFieldOnChangePropertyMapper,
-  ButtonPropertyMapper,
   AttachmentDisplayPropertyMapper,
 } from '../component/PropertyMapper'
 import TableValuePropertyMapper from './TableValuePropertyMapper'
