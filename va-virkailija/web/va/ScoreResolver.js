@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export default class ScoreResolver {
   static scoreToFI(score) {
     switch(score) {
@@ -22,7 +24,7 @@ export default class ScoreResolver {
     const numberOfScorings = averagesByUser.length
     const meanScore = ScoreResolver.effectiveAverage(scoring, userInfo)
     const scoringSubstantive = numberOfScorings > 1 ? " arviota" : " arvio"
-    return numberOfScorings + scoringSubstantive + ". Keskiarvo: " + meanToDisplay(meanScore) + "\n" + createSummaryText();
+    return numberOfScorings + scoringSubstantive + ". Keskiarvo: " + meanToDisplay(meanScore) + "\n" + createSummaryText()
 
     function createSummaryText() {
       const othersScorings = ScoreResolver.othersScorings(scoring, userInfo)

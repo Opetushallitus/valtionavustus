@@ -32,7 +32,7 @@ export default class Translator {
   static replaceKeys(value, keyValues) {
     const NON_BREAKING_SPACE = "\u00A0"
     if(keyValues instanceof Object) {
-      for (var key in keyValues) {
+      for (const key in keyValues) {
         const keyValue = keyValues[key] ? keyValues[key] : NON_BREAKING_SPACE
         value = value.replace("{{" + key + "}}", keyValue)
       }
