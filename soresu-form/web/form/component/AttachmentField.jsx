@@ -7,8 +7,6 @@ import AttachmentDisplay from '../preview/AttachmentDisplay.jsx'
 import RemoveButton from './RemoveButton.jsx'
 import BasicSizedComponent from './BasicSizedComponent.jsx'
 import LocalizedString from './LocalizedString.jsx'
-import HelpTooltip from './HelpTooltip.jsx'
-import Translator from '../Translator'
 
 export default class AttachmentField extends BasicSizedComponent {
   render() {

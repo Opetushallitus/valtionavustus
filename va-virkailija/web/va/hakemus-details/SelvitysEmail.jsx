@@ -163,7 +163,7 @@ export default class SelvitysEmail extends React.Component {
     const url = `/api/avustushaku/${avustushakuId}/selvitys/${selvitysType}/send`
 
     HttpUtil.post(url, request)
-      .then(res => {
+      .then(() => {
         controller.loadSelvitys()
         controller.refreshHakemukset(avustushakuId)
         return null

@@ -19,7 +19,7 @@ export default class FormUtil {
     }
     const diff = targetScrollPos - startScrollPos
     const scrollStep = Math.PI / (duration / 10)
-    var count = 0
+    let count = 0
     const scrollInterval = setInterval(function(){
       count = count + 1
       const nextScrollPos = startScrollPos + diff * (0.5 - 0.5 * Math.cos(count * scrollStep))
@@ -37,7 +37,8 @@ export default class FormUtil {
 
   static findChildIndexAccordingToFieldSpecification(specificationChildren, currentChildren, fieldId) {
     const newFieldSpecIndex = _.findIndex(specificationChildren, FormUtil.idIsSameOrSameIfIndexIgnoredPredicate(fieldId))
-    for (var index = 0; index < currentChildren.length; index++) {
+    let index = 0
+    for (; index < currentChildren.length; index++) {
       const sibling = currentChildren[index]
       const siblingSpecIndex = _.findIndex(specificationChildren, FormUtil.idIsSameOrSameIfIndexIgnoredPredicate(sibling.id))
       if(siblingSpecIndex > newFieldSpecIndex){
@@ -81,7 +82,9 @@ export default class FormUtil {
   }
 
   static isSameIfIndexIgnored(id1, id2) {
-    if(!id1 || !id2) return false
+    if (!id1 || !id2) {
+      return false
+    }
     return this.withOutIndex(id1) === this.withOutIndex(id2)
   }
 

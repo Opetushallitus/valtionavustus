@@ -158,7 +158,7 @@ export default class FormStateTransitions {
       const lang = state.configuration.lang
       state.saveStatus.attachmentUploadsInProgress[fieldOfFile.id] = true
       HttpUtil.delete(url)
-        .then(function(response) {
+        .then(function() {
           console.log("Deleted attachment: " + fieldOfFile.id)
           dispatcher.push(events.attachmentRemovalCompleted, fieldOfFile)
           return null
@@ -291,7 +291,7 @@ export default class FormStateTransitions {
 
   onSaveCompleted(stateFromUiLoop, stateWithServerChanges) {
     const formOperations = stateFromUiLoop.extensionApi.formOperations
-    var locallyStoredValues = LocalStorage.load(formOperations.createUiStateIdentifier, stateWithServerChanges)
+    const locallyStoredValues = LocalStorage.load(formOperations.createUiStateIdentifier, stateWithServerChanges)
     stateFromUiLoop.saveStatus.changes = !_.isEqual(stateFromUiLoop.saveStatus.values, stateWithServerChanges.saveStatus.values)
     stateFromUiLoop.saveStatus.saveInProgress = false
     stateFromUiLoop.saveStatus.serverError = ""

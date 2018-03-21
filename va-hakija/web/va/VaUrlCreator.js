@@ -5,7 +5,7 @@ import UrlCreator from 'soresu-form/web/form/UrlCreator'
 export default class VaUrlCreator extends UrlCreator {
   constructor() {
     function entityApiUrl(avustusHakuId, hakemusId, hakemusBaseVersion) {
-      return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + (typeof hakemusBaseVersion == "number" ? "/" + hakemusBaseVersion : "")
+      return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + (typeof hakemusBaseVersion === "number" ? "/" + hakemusBaseVersion : "")
     }
 
     const attachmentDirectAccessUrl = function(state, field) {
@@ -57,7 +57,7 @@ export default class VaUrlCreator extends UrlCreator {
         const hakemusVersion = state.saveStatus.savedObject.version
         return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/" + hakemusVersion + "/attachments/" + field.id
       },
-      organisationInfoUrl: function (state) {
+      organisationInfoUrl: function () {
         return "/api/organisations/?organisation-id="
       },
       attachmentDownloadUrl: attachmentDirectAccessUrl,

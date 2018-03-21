@@ -83,11 +83,11 @@ export default class HakemusListing extends Component {
       if(_.isEmpty(answers)) {
         return false
       }
-      const filtersWithoutExcluded = filters.filter((answer)=>answer.id!="rahoitusalue" && answer.id!="tags")
-      const answerMatchPredicate = (filter) => _.find(answers, (a)=> a.key == filter.id && a.value == filter.answer);
-      const groupedByQuestion = _.groupBy(filtersWithoutExcluded, 'id');
+      const filtersWithoutExcluded = filters.filter(answer => answer.id !== "rahoitusalue" && answer.id !== "tags")
+      const answerMatchPredicate = filter => _.find(answers, a => a.key === filter.id && a.value === filter.answer)
+      const groupedByQuestion = _.groupBy(filtersWithoutExcluded, 'id')
       const filterValuesByQuestion = _.values(groupedByQuestion)
-      const questionMatches = filterValuesByQuestion.map((v)=> _.some(v,answerMatchPredicate))
+      const questionMatches = filterValuesByQuestion.map(v => _.some(v,answerMatchPredicate))
       return _.every(questionMatches)
     }
   }
@@ -112,33 +112,33 @@ export default class HakemusListing extends Component {
       if(!_.isNumber(fieldGetter(hakemus))) {
         return false
       }
-      return fieldGetter(hakemus)==filter
+      return fieldGetter(hakemus) === filter
     }
   }
 
   static _filterRahoitusaluePredicate(fieldGetter, filters) {
-    const rahoitusAlueetFilter = filters.filter((i)=>i.id=="rahoitusalue")
+    const rahoitusAlueetFilter = filters.filter(i => i.id === "rahoitusalue")
     if(_.isEmpty(rahoitusAlueetFilter)) {
       return function() {return true}
     }
     return function(hakemus) {
-      const fieldValue = fieldGetter(hakemus);
+      const fieldValue = fieldGetter(hakemus)
       if(_.isUndefined(fieldValue) || _.isNull(fieldValue)) {
-        return _.some(rahoitusAlueetFilter, (i)=>i.answer=="Ei rahoitusaluetta")
+        return _.some(rahoitusAlueetFilter, i => i.answer === "Ei rahoitusaluetta")
       }
-      return _.contains(rahoitusAlueetFilter.map((i)=>i.answer),fieldValue)
+      return _.contains(rahoitusAlueetFilter.map(i => i.answer),fieldValue)
     }
   }
 
   static _filterTagsPredicate(fieldGetter, filters) {
-    const tagsFilter = filters.filter((i)=>i.id=="tags")
+    const tagsFilter = filters.filter(i => i.id === "tags")
     if(_.isEmpty(tagsFilter)) {
       return function() {return true}
     }
     return function(hakemus) {
-      const fieldValue = fieldGetter(hakemus);
-      const answers = tagsFilter.map((i)=>i.answer)
-      return _.some(fieldValue,(i) => _.contains(answers,i))
+      const fieldValue = fieldGetter(hakemus)
+      const answers = tagsFilter.map(i => i.answer)
+      return _.some(fieldValue, i => _.contains(answers, i))
     }
   }
 
@@ -180,7 +180,7 @@ export default class HakemusListing extends Component {
   render() {
     const {controller, userInfo, state, hasSelected, selectedHakemus, previouslySelectedHakemus, hakemusList, privileges,avustushaku} = this.props
     const avustushakuStatus = avustushaku.status
-    const isResolved = avustushakuStatus=="resolved"
+    const isResolved = avustushakuStatus === "resolved"
     const isAcademysize = avustushaku.is_academysize
     const filter = this.props.hakemusFilter
     const sorter = this.props.hakemusSorter
@@ -289,7 +289,7 @@ class ApplicationSummaryLink extends Component {
     const linkText = filteredHakemusList.length + "/" + hakemusList.length + " hakemusta"
     return disabled ? <span>{linkText}</span> : <a className="summary-link" href="/yhteenveto/" target="_blank" onClick={onClick}>{linkText}</a>
 
-    function onClick(e) {
+    function onClick() {
       controller.gotoSavedSearch(filteredHakemusList)
     }
   }
@@ -311,12 +311,12 @@ class HakemusSorter extends Component {
   onSorterClick() {
     const field = this.props.field
     const sorter = _.find(this.props.sorter, sorter => sorter.field === field)
-    var currentOrder = _.get(sorter, "order", "");
+    let currentOrder = _.get(sorter, "order", "")
     const controller = this.props.controller
 
     if (this.props.sorter.length > 1) {
       currentOrder = "desc"
-    } else if (currentOrder == "desc") {
+    } else if (currentOrder === "desc") {
       currentOrder = "asc"
     } else {
       currentOrder = "desc"
@@ -327,13 +327,13 @@ class HakemusSorter extends Component {
   render() {
     const field = this.props.field
     const sorter = _.find(this.props.sorter, sorter => sorter.field === field)
-    const sort = _.get(sorter, "order", "");
-    var sortedClass = "sort sort-none"
+    const sort = _.get(sorter, "order", "")
+    let sortedClass = "sort sort-none"
     if (this.isSortedByField()) {
-      if (sort == "") {
+      if (sort === "") {
         sortedClass = "sort sort-desc"
       } else {
-        sortedClass = sort == "asc" ? "sort sort-asc" : "sort sort-desc"
+        sortedClass = sort === "asc" ? "sort sort-asc" : "sort sort-desc"
       }
     }
 
@@ -386,18 +386,17 @@ class StatusFilter extends Component {
     const statusFilter = this.props.filter[filterField]
     const statuses = []
     const onCheckboxChange = function(status) {
-      return function(e) {
-        if(_.contains(statusFilter, status)) {
+      return function() {
+        if (_.contains(statusFilter, status)) {
           controller.setFilter(filterField,  _.without(statusFilter, status))
-        }
-        else {
+        } else {
           controller.setFilter(filterField, _.union(statusFilter, [status]))
         }
       }
     }
 
     const self = this
-    const onDelete = function(e) {
+    const onDelete = function() {
       self.setState({
         open: false
       })
@@ -405,7 +404,7 @@ class StatusFilter extends Component {
     }
     const hasFilters = statusFilter.length !== statusValues.length
 
-    for (var i=0; i < statusValues.length; i++) {
+    for (let i = 0; i < statusValues.length; i++) {
       const status = statusValues[i]
       const checked = _.contains(statusFilter, status)
       const htmlId = "filter-by-status-" + status
@@ -445,7 +444,7 @@ class HakemusRow extends Component {
     const changeRequest = HakemusListing._fieldGetter("change-request")(hakemus)
     const statusComment = hakemus["status-comment"] ? ":\n" + hakemus["status-comment"] : ""
     const changeRequestTitle = changeRequest ? "Odottaa täydennystä" + statusComment : ""
-    var hakemusName = ""
+    let hakemusName = ""
     if (_.isEmpty(hakemus["project-name"])) {
       hakemusName = hakemus["register-number"]
     } else {
@@ -479,15 +478,20 @@ class Scoring extends Component {
       const isVisible = Math.ceil(meanScore) >= indexOfStar
       const starImage = isVisible ? "/img/star_on.png" : "/img/star_off.png"
 
-      var className = "single-score"
+      let className = "single-score"
 
       const needsScaling = normalizedMeanScore > indexOfStar && normalizedMeanScore < indexOfStar + 1
       if (needsScaling) {
-        const delta = normalizedMeanScore - indexOfStar;
-        if (delta <= 0.25) className = "single-score-0"
-        else if (delta <= 0.5) className = "single-score-25"
-        else if (delta <= 0.75) className = "single-score-50"
-        else className = "single-score-75"
+        const delta = normalizedMeanScore - indexOfStar
+        if (delta <= 0.25) {
+          className = "single-score-0"
+        } else if (delta <= 0.5) {
+          className = "single-score-25"
+        } else if (delta <= 0.75) {
+          className = "single-score-50"
+        } else {
+          className = "single-score-75"
+        }
       }
       return (<img key={indexOfStar} className={className} src={starImage} />)
     })

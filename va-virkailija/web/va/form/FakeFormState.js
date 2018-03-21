@@ -1,4 +1,3 @@
-import React, { Component } from 'react'
 import Immutable from 'seamless-immutable'
 import _ from 'lodash'
 
@@ -8,7 +7,7 @@ import VaSyntaxValidator from 'va-common/web/va/VaSyntaxValidator'
 export default class FakeFormState {
 
   static resolveAttachmentsProperty(allAttachments, hakemus) {
-    if (!allAttachments || !hakemus.id ) {
+    if (!allAttachments || !hakemus.id) {
       return {}
     }
     const attachmentsForId = allAttachments[hakemus.id.toString()]

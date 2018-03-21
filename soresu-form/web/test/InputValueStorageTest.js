@@ -1,11 +1,10 @@
-const _ = require('lodash')
-const verboseAssert = require('assert')
+import _ from 'lodash'
+import verboseAssert from 'assert'
 import { assert } from 'chai'
 import JsUtil from '../JsUtil'
 import InputValueStorage  from '../form/InputValueStorage'
 import TestUtil from './TestUtil'
 
-var answersObject = {}
 const formContent = TestUtil.testFormJson()
 
 function writeValue(form, answers, fieldId, value) {
@@ -17,6 +16,8 @@ function writeValue(form, answers, fieldId, value) {
 }
 
 describe('Input value storage', function() {
+  let answersObject = {}
+
   beforeEach(function() {
     answersObject = {}
   })
@@ -213,7 +214,7 @@ describe('Input value storage', function() {
       const otherOrganizationsItem = storedRootValue[0]
       assert.deepEqual(_.keys(otherOrganizationsItem), ["key", "value", "fieldType"])
       assert.deepEqual(otherOrganizationsItem.key, "other-organizations")
-      var otherOrganizationsValue = otherOrganizationsItem.value
+      const otherOrganizationsValue = otherOrganizationsItem.value
       assert.isArray(otherOrganizationsValue)
       assert.lengthOf(otherOrganizationsValue, 1, JSON.stringify(otherOrganizationsValue))
 

@@ -4,7 +4,8 @@ import HakemusPreview from './HakemusPreview.jsx'
 import HakemusArviointi from './HakemusArviointi.jsx'
 import Selvitys from './Selvitys.jsx'
 import Seuranta from './Seuranta.jsx'
-import styles from './hakemusDetails.less'
+
+import './hakemusDetails.less'
 
 export default class HakemusDetails extends Component {
   render() {
@@ -19,9 +20,11 @@ export default class HakemusDetails extends Component {
     const translations = this.props.translations
     const selectedHakemusAccessControl = this.props.selectedHakemusAccessControl
     const subTab = this.props.subTab
-    if(hidden) return null;
+    if (hidden) {
+      return null
+    }
 
-    const onClose = (e) => {
+    const onClose = () => {
       document.body.classList.remove('split-view')
       controller.closeHakemusDetail()
     }

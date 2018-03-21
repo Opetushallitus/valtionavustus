@@ -24,16 +24,16 @@ export default class InputValueStorage {
     const growingParent = FormUtil.findGrowingParent(formSpecificationContent, fieldId)
     if (!growingParent) {
       writeChildValue(answersObject, field, newValue)
-      return
+      return undefined
     }
 
-    var growingParentExistingValues = JsUtil.flatFilter(answersObject, n => { return n.key === growingParent.id })
+    let growingParentExistingValues = JsUtil.flatFilter(answersObject, n => { return n.key === growingParent.id })
     if (_.isEmpty(growingParentExistingValues)) {
       writeChildValue(answersObject, growingParent, [])
       growingParentExistingValues = JsUtil.flatFilter(answersObject, n => { return n.key === growingParent.id })
     }
     const repeatingItemField = JsUtil.findJsonNodeContainingId(growingParent.children, fieldId)
-    var repeatingItemExistingValues = JsUtil.flatFilter(growingParentExistingValues, n => { return n.key === repeatingItemField.id })
+    let repeatingItemExistingValues = JsUtil.flatFilter(growingParentExistingValues, n => { return n.key === repeatingItemField.id })
     if (_.isEmpty(repeatingItemExistingValues)) {
       writeChildValue(growingParentExistingValues[0], repeatingItemField, [])
       repeatingItemExistingValues = JsUtil.flatFilter(answersObject, n => { return n.key === repeatingItemField.id })

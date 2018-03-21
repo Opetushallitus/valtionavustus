@@ -10,7 +10,7 @@ export default class EditsDisplayingFormView extends React.Component {
     const translations = state.configuration.translations
     const htmlId = controller.constructHtmlId(fields, field.id)
     const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field, controller: controller, translations: translations }
-    if (field.fieldClass == "formField") {
+    if (field.fieldClass === "formField") {
       const oldAnswer = _.find(state.answersDelta.changedAnswers, a => { return a.key === field.id })
       if (oldAnswer) {
         return <DiffDisplayingField key={"diff-display-" + field.id} field={field} oldAnswer={oldAnswer}
@@ -23,13 +23,12 @@ export default class EditsDisplayingFormView extends React.Component {
                                     state={state} infoElementValues={infoElementValues} controller={controller} translations={translations}/>
       }
       return FormPreview.createFormPreviewComponent(controller, state, field, fieldProperties)
-    } else if (field.fieldClass == "infoElement") {
+    } else if (field.fieldClass === "infoElement") {
       return FormPreview.createInfoComponent(state, infoElementValues, field, fieldProperties, true)
-    } else if (field.fieldClass == "wrapperElement") {
+    } else if (field.fieldClass === "wrapperElement") {
       return FormPreview.createWrapperComponent(EditsDisplayingFormView.renderField, controller, formEditController, state, infoElementValues, field, fieldProperties)
     }
   }
-
 
   render() {
     const controller = this.props.controller
@@ -52,8 +51,8 @@ export default class EditsDisplayingFormView extends React.Component {
     }
     const oldestAnswers = changeRequests[0].answers
     const answersDelta = createDeltaFromUpdatedAttachments(attachmentVersions, changeRequests[0].version)
-    addDeltaFromChangedAnswers(answersDelta, oldestAnswers, currentAnswers);
-    addDeltaFromNewAnswers(currentAnswers, oldestAnswers, answersDelta);
+    addDeltaFromChangedAnswers(answersDelta, oldestAnswers, currentAnswers)
+    addDeltaFromNewAnswers(currentAnswers, oldestAnswers, answersDelta)
     return answersDelta
 
 
@@ -62,7 +61,7 @@ export default class EditsDisplayingFormView extends React.Component {
       _.forEach(_.keys(versionsByFieldId), fieldId => {
         versionsByFieldId[fieldId] = stripNonSubmittedVersions(versionsByFieldId[fieldId])
       })
-      const fieldIdsOfUpdatedAttachments = _.filter(_.keys(versionsByFieldId), fieldId => { 
+      const fieldIdsOfUpdatedAttachments = _.filter(_.keys(versionsByFieldId), fieldId => {
         return versionsByFieldId[fieldId].length > 1
       })
       return { changedAnswers: _.map(fieldIdsOfUpdatedAttachments, fieldId => {
@@ -149,7 +148,7 @@ class DiffDisplayingField extends React.Component {
       const fields = state.form.content
       const htmlId = controller.constructHtmlId(fields, field.id)
       const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field,controller:controller,translations:translations }
-      const renderingParameters = { overridingInputValue: oldAnswer.value };
+      const renderingParameters = { overridingInputValue: oldAnswer.value }
       const downloadUrl = attachmentVersion ? controller.createAttachmentVersionDownloadUrl(field, attachmentVersion.version) : null
       return FormPreview._createFormPreviewComponent(controller, state, field, fieldProperties, renderingParameters, attachmentVersion, downloadUrl)
 

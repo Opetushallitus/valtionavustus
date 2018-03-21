@@ -10,7 +10,7 @@ export default class MultipleOptionValue extends PreviewComponent {
     const lang = this.props.lang
     const values = []
     if (options) {
-      for (var i=0; i < options.length; i++) {
+      for (let i = 0; i < options.length; i++) {
         const isFirst = values.length === 0
         const option = options[i]
         if (_.contains(this.props.value, option.value)) {

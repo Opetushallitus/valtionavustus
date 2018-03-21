@@ -4,12 +4,12 @@ import BasicFieldComponent from './BasicFieldComponent.jsx'
 
 export default class RadioButton extends BasicFieldComponent {
   render() {
-    const props = this.props;
-    const radiobuttons = [];
+    const props = this.props
+    const radiobuttons = []
     const classStr = this.resolveClassName()
 
     if (props.options) {
-      for (var i=0; i < props.options.length; i++) {
+      for (let i = 0; i < props.options.length; i++) {
         const label = new Translator(props.options[i]).translate("label", props.lang, props.options[i].value)
         radiobuttons.push(<input type="radio" id={props.htmlId + ".radio." + i}
                                  key={props.htmlId + "." + props.options[i].value}

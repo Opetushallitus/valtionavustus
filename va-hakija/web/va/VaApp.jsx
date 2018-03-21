@@ -3,7 +3,6 @@ import "soresu-form/web/polyfills"
 import React from "react"
 import ReactDOM from "react-dom"
 import Bacon from "baconjs"
-import _ from "lodash"
 import queryString from "query-string"
 
 import HttpUtil from "soresu-form/web/HttpUtil"
@@ -17,7 +16,6 @@ import VaUrlCreator from "./VaUrlCreator"
 import VaComponentFactory from "va-common/web/va/VaComponentFactory"
 import VaSyntaxValidator from "va-common/web/va/VaSyntaxValidator"
 import VaPreviewComponentFactory from "va-common/web/va/VaPreviewComponentFactory"
-import {BudgetItemElement} from "va-common/web/va/VaBudgetComponents.jsx"
 import VaBudgetCalculator from "va-common/web/va/VaBudgetCalculator"
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
@@ -27,7 +25,7 @@ function containsExistingEntityId(urlContent) {
   return query.hakemus && query.hakemus.length > 0
 }
 
-function isFieldEnabled(saved, fieldId) {
+function isFieldEnabled(saved) {
   return saved
 }
 
@@ -40,7 +38,7 @@ const budgetCalculator = new VaBudgetCalculator((descriptionField, state) => {
   FieldUpdateHandler.triggerFieldUpdatesForValidation([descriptionField], state)
 })
 
-function onFieldUpdate(state, field, newFieldValue) {
+function onFieldUpdate(state, field) {
   if (field.fieldType === "moneyField" || field.fieldType === "vaSelfFinancingField") {
     budgetCalculator.handleBudgetAmountUpdate(state, field.id)
   }
@@ -118,7 +116,7 @@ function initVaFormController() {
   }
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
-  return { stateProperty: stateProperty, getReactComponent: function(state) {
+  return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
     return <VaForm controller={controller} state={state} hakemusType="hakemus" useBusinessIdSearch={true} />
   }}
 }

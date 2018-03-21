@@ -9,7 +9,7 @@ export default class NameFormatter {
 
   static onlyFirstForename(forenames) {
     if(forenames && forenames.indexOf(' ') > 0) {
-      return forenames.split(' ')[0];
+      return forenames.split(' ')[0]
     }
     return forenames ? forenames : ""
   }

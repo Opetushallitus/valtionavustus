@@ -17,6 +17,7 @@ describe('Syntax validator', function() {
     expect(SyntaxValidator.validateEmail("first. last@example.com")).to.eql({error: "email"})
     expect(SyntaxValidator.validateEmail("first .last@example.com")).to.eql({error: "email"})
     expect(SyntaxValidator.validateEmail("äö@example.com")).to.eql({error: "email"})
+    expect(SyntaxValidator.validateEmail("\xa9@example.com")).to.eql({error: "email"})
     expect(SyntaxValidator.validateEmail("invalid.em%0Ail@example.com")).to.eql({error: "email"})
     expect(SyntaxValidator.validateEmail("invalid.em%0ail@example.com")).to.eql({error: "email"})
     expect(SyntaxValidator.validateEmail(" user@example.com")).to.eql({error: "email"})
@@ -28,9 +29,18 @@ describe('Syntax validator', function() {
     expect(SyntaxValidator.validateEmail("user1@example.com user2@example.com")).to.eql({error: "email"})
     expect(SyntaxValidator.validateEmail("user1@example.com, user2@example.com")).to.eql({error: "email"})
     expect(SyntaxValidator.validateEmail("user1@example.com; user2@example.com")).to.eql({error: "email"})
+    expect(SyntaxValidator.validateEmail("%0a@example.com")).to.eql({error: "email"})
+    expect(SyntaxValidator.validateEmail("%0A@example.com")).to.eql({error: "email"})
     expect(SyntaxValidator.validateEmail("")).to.eql({error: "email"})
     expect(SyntaxValidator.validateEmail(42)).to.eql({error: "email"})
     expect(SyntaxValidator.validateEmail(null)).to.eql({error: "email"})
+  })
+
+  it('validates URL', function() {
+    expect(SyntaxValidator.validateUrl("http://www.example.com/foo/?bar=baz&ans=42&quux")).to.eql(undefined)
+    expect(SyntaxValidator.validateUrl("https://www.example.com/")).to.eql(undefined)
+    expect(SyntaxValidator.validateUrl("http://exa-MPLE.com/")).to.eql(undefined)
+    expect(SyntaxValidator.validateUrl("http://www.exa-mple.com/search?q=foo:bar+AND+man:'zap'&qs=id,bid&qss=json&rest_params=~:/@!$()*,;%#mg=o")).to.eql(undefined)
   })
 
   it('validates Finnish business-id', function() {

@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 
@@ -27,10 +27,11 @@ const FilterQuestion = ({question, controller, hakemusFilter}) =>{
 
   const questionClass = ClassNames('hakemus-filter-question',{
     'hakemus-filter-question--open': question.open
-  });
+  })
+
   return(
     <div>
-      <div className={questionClass} onClick={onQuestionClick.bind(this,question.id)}>{question.label} <span hidden={activeFilterCount==0}>({activeFilterCount})</span></div>
+      <div className={questionClass} onClick={onQuestionClick.bind(this,question.id)}>{question.label} <span hidden={activeFilterCount === 0}>({activeFilterCount})</span></div>
       <div className="hakemus-filter-options" hidden={!question.open}>
         {question.options.map((option)=><FilterOption key={option.label} hakemusFilter={hakemusFilter} question={question} option={option} controller={controller}></FilterOption>)}
       </div>
@@ -51,7 +52,7 @@ const FilterOption = ({question,option,controller,hakemusFilter}) => {
 
   const btnClass = ClassNames('btn','btn-sm','btn-simple',{
     'btn-selected': option.selected
-  });
+  })
 
   return (
     <button className={btnClass} style={{marginRight:10}} onClick={onClick.bind(this, option)}>{option.label}</button>
@@ -59,7 +60,7 @@ const FilterOption = ({question,option,controller,hakemusFilter}) => {
 }
 
 const RemoveFilter = ({controller,hakemusFilter}) => {
-  const hidden = hakemusFilter.answers.length==0 &&
+  const hidden = hakemusFilter.answers.length === 0 &&
     !_.isNumber(hakemusFilter.evaluator) &&
     !_.isNumber(hakemusFilter.presenter)
   const onRemove = () => controller.clearFilters()
@@ -76,7 +77,7 @@ const FilterList  = ({hakemusFilter,hakuData,controller}) => {
   const answers = hakemusFilter.answers
 
   const buildQuestions = () => {
-    const selectedPredicate = (questionId, answer) => _.some(answers, (a)=>a.answer == answer && a.id == questionId)
+    const selectedPredicate = (questionId, answer) => _.some(answers, a => a.answer === answer && a.id === questionId)
     const mapOption = (questionId, option) =>(
       {
         label: option.label.fi,

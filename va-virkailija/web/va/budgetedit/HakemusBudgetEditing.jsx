@@ -7,12 +7,11 @@ import Form from 'soresu-form/web/form/Form.jsx'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 
-import BudgetBusinessRules from './BudgetBusinessRules'
 import BudgetEditFormController from './BudgetEditFormController'
 import BudgetEditComponentFactory from './BudgetEditComponentFactory'
 import FakeFormState from '../form/FakeFormState'
 
-import style from '../style/budgetedit.less'
+import '../style/budgetedit.less'
 
 export default class HakemusBudgetEditing extends React.Component {
   static isEditingAllowed(allowEditingArvio, formContent, fieldId) {

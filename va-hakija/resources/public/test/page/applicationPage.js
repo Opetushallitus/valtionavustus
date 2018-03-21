@@ -79,7 +79,7 @@ function ApplicationPage() {
       return applicationElement().find("#form-error-summary .validation-errors")
     },
     detailedValidationErrors: function() {
-      const errorMessageElements = applicationElement().find("#form-error-summary .validation-errors").find('div.error')
+      var errorMessageElements = applicationElement().find("#form-error-summary .validation-errors").find('div.error')
       return _.map(errorMessageElements, function(element) { return S(element).text() })
     },
     toggleLanguage: function () {

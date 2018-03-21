@@ -4,7 +4,6 @@ import _ from 'lodash'
 
 import LocalizedString from './LocalizedString.jsx'
 import HelpTooltip from './HelpTooltip.jsx'
-import Translator from './../Translator.js'
 
 export default class BasicFieldComponent extends React.Component {
   constructor(props) {
@@ -35,8 +34,9 @@ export default class BasicFieldComponent extends React.Component {
 
   label(className) {
     const translationKey = this.props.translationKey
-    if (this.hideLabel() || !this.props.translations[translationKey]) return undefined
-    else {
+    if (this.hideLabel() || !this.props.translations[translationKey]) {
+      return undefined
+    } else {
       return (<label htmlFor={this.props.htmlId}
                      className={this.labelClassName(className)}>
                 <LocalizedString className={ this.props.required ? "required" : undefined }
@@ -70,8 +70,12 @@ export default class BasicFieldComponent extends React.Component {
   }
 
   param(param, defaultValue) {
-    if (!this.props.field.params) return defaultValue
-    if (this.props.field.params[param] !== undefined) return this.props.field.params[param]
+    if (!this.props.field.params) {
+      return defaultValue
+    }
+    if (this.props.field.params[param] !== undefined) {
+      return this.props.field.params[param]
+    }
     return defaultValue
   }
 }

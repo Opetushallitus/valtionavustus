@@ -1,4 +1,4 @@
-import React from 'react'
+import _ from 'lodash'
 import BasicValue from './BasicValue.jsx'
 import ClassNames from 'classnames'
 
