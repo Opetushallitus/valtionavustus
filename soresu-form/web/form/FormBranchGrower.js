@@ -61,41 +61,42 @@ export default class FormBranchGrower {
 
   static expandGrowingFieldSetIfNeeded(state, fieldUpdate) {
     const growingParent = fieldUpdate.growingParent
+
     if (!growingParent) {
       return
     }
 
-    if (growingFieldSetExpandMustBeTriggered(state)) {
-      expandGrowingFieldset(state)
-    }
+    const childFields = JsUtil.flatFilter(growingParent.children, n => !_.isUndefined(n.id))
+    const childFieldIds = childFields.map(n => n.id)
 
-    function growingFieldSetExpandMustBeTriggered(state) {
-      const allFieldIdsInSameGrowingSet = JsUtil.flatFilter(growingParent.children, n => { return !_.isUndefined(n.id)}).
-        map(n => { return n.id })
-      const wholeSetIsValid = _.reduce(allFieldIdsInSameGrowingSet, (acc, fieldId) => {
-        return acc && (!state.form.validationErrors[fieldId] || state.form.validationErrors[fieldId].length === 0)
-      }, true)
+    const areAllChildFieldsValid = () => _.reduce(
+      childFieldIds,
+      (acc, fieldId) => acc && (!state.form.validationErrors[fieldId] || state.form.validationErrors[fieldId].length === 0),
+      true
+    )
 
-       // TODO: Last check is needed, because otherwise we get adding too many rows
+    const isFieldUpdateForLastChild = () => {
+      // TODO: Last check is needed, because otherwise we get adding too many rows
       // -> should check instead, that we have at least one enabled row with all fields empty
-      const lastEnabledChildOfGrowingSet = _.last(_.filter(growingParent.children, f => { return !f.forceDisabled }))
-      const thisFieldIsInLastChildToBeRepeated = _.some(lastEnabledChildOfGrowingSet.children, x => { return x.id === fieldUpdate.id })
-
-      return wholeSetIsValid && thisFieldIsInLastChildToBeRepeated
+      const lastEnabledChildOfGrowingSet = _.last(_.filter(growingParent.children, f => !f.forceDisabled))
+      return _.some(lastEnabledChildOfGrowingSet.children, x => x.id === fieldUpdate.id)
     }
 
-    function expandGrowingFieldset(state) {
-      const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(state.configuration.form.content, growingParent.id)
-      _.forEach(JsUtil.flatFilter(growingParent.children, n => { return !_.isUndefined(n.id) }), n => {
-        const requiredInPrototype = FormUtil.findFieldIgnoringIndex(childPrototype, n.id).required
-        if(requiredInPrototype && !n.forceDisabled) {
-          n.required = true
-        }
-        n.forceDisabled = false
-      })
-      const newSet = FormBranchGrower.createNewChild(growingParent, childPrototype, false)
-      growingParent.children.push(newSet)
+    if (!areAllChildFieldsValid() || !isFieldUpdateForLastChild()) {
+      return
     }
+
+    const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(state.configuration.form.content, growingParent.id)
+
+    _.forEach(childFields, n => {
+      const requiredInPrototype = FormUtil.findFieldIgnoringIndex(childPrototype, n.id).required
+      if (requiredInPrototype && !n.forceDisabled) {
+        n.required = true
+      }
+      n.forceDisabled = false
+    })
+
+    growingParent.children.push(FormBranchGrower.createNewChild(growingParent, childPrototype, false))
   }
 
   /**
