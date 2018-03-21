@@ -51,7 +51,8 @@ const events = {
   toggleHakemusFilter:'toggleHakemusFilter',
   togglePersonSelect:'togglePersonSelect',
   clearFilters:'clearFilters',
-  selectEditorSubTab: 'selectEditorSubTab'
+  selectEditorSubTab: 'selectEditorSubTab',
+  paymentsLoaded: 'paymentsLoaded'
 }
 
 export default class HakemustenArviointiController {
@@ -136,7 +137,8 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.gotoSavedSearch)], this.onGotoSavedSearch,
       [dispatcher.stream(events.toggleHakemusFilter)], this.onToggleHakemusFilter,
       [dispatcher.stream(events.clearFilters)], this.onClearFilters,
-      [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab
+      [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab,
+      [dispatcher.stream(events.paymentsLoaded)], this.onPaymentsLoaded
     )
   }
 
@@ -166,6 +168,10 @@ export default class HakemustenArviointiController {
 
   static savedSearchUrl(state) {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/searches"
+  }
+
+  static paymentsUrl(state) {
+    return "/api/v2/applications/" + state.selectedHakemus.id + "/payments/"
   }
 
   static filterHakemukset(hakemukset){
@@ -216,6 +222,7 @@ export default class HakemustenArviointiController {
     this.setDefaultTraineeDayValuesForSelectedHakemusOverriddenAnswers(state)
     this.validateHakemusRahoitusalueAndTalousarviotiliSelection(state)
     this.loadScores(state, hakemusIdToSelect)
+    this.loadPayments(state, hakemusIdToSelect)
     this.loadComments()
     this.loadSelvitys()
     this.loadChangeRequests(state, hakemusIdToSelect)
@@ -446,6 +453,14 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  loadPayments(state, applicationId) {
+    HttpUtil.get(HakemustenArviointiController.paymentsUrl(state, applicationId)).then(response => {
+      dispatcher.push(events.paymentsLoaded,
+                      {hakemusId: applicationId, payments: response})
+    })
+    return state
+  }
+
   loadChangeRequests(state, hakemusId) {
     HttpUtil.get(HakemustenArviointiController.changeRequestsUrl(state, hakemusId)).then(response => {
       dispatcher.push(events.changeRequestsLoaded, {hakemusId: hakemusId,
@@ -547,6 +562,15 @@ export default class HakemustenArviointiController {
     state.hakemusFilter.answers = []
     state.hakemusFilter.evaluator = undefined
     state.hakemusFilter.presenter = undefined
+    return state
+  }
+
+  onPaymentsLoaded(state, hakemusIdWithScoring) {
+    const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithScoring.hakemusId)
+    console.log(hakemusIdWithScoring)
+    if (relevantHakemus) {
+      relevantHakemus.payments = hakemusIdWithScoring.payments
+    }
     return state
   }
 
