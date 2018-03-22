@@ -15,7 +15,6 @@ export default class ApplicationPayments extends Component {
     const currentPaymentsLength = this.props.payments ? this.props.payments.length : 0
     const nextPaymentsLength = nextProps.payments ? nextProps.payments.length : 0
     if (currentPaymentsLength !== nextPaymentsLength) {
-      console.log("Updating ps")
       this.resetPaymentSum(nextProps.payments)
     }
   }
