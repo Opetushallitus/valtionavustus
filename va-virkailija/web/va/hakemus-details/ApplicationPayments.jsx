@@ -45,6 +45,9 @@ export default class ApplicationPayments extends Component {
 
   onAddPayment() {
     this.props.onAddPayment(this.state.newPaymentSum)
+    this.setState({
+      newPaymentSum: this.props.application["budget-oph-share"]
+        - this.paidToDate(this.props.payments) - this.state.newPaymentSum})
   }
 
   onPaymentSumChange(e) {
