@@ -8,7 +8,10 @@ export default class ApplicationPayments extends Component {
     this.renderPayment = this.renderPayment.bind(this)
     this.resetPaymentSum = this.resetPaymentSum.bind(this)
     this.paidToDate = this.paidToDate.bind(this)
-    this.resetPaymentSum(this.props.payments)
+    const defaultSum = Math.floor(
+      this.calculateDefaultValue(
+        this.props.grant, this.props.application, this.props.payments))
+    this.state = {newPaymentSum: isFinite(defaultSum) ? defaultSum : 0}
   }
 
   componentWillReceiveProps(nextProps) {
@@ -23,8 +26,8 @@ export default class ApplicationPayments extends Component {
     const value = Math.floor(
       this.calculateDefaultValue(
         this.props.grant, this.props.application, payments))
-    this.state = {
-      newPaymentSum: isFinite(value) ? value : 0 }
+    this.setState({
+      newPaymentSum: isFinite(value) ? value : 0 })
   }
 
   calculateDefaultValue(grant, application, payments) {
