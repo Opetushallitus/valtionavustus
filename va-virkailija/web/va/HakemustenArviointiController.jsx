@@ -60,7 +60,7 @@ const events = {
 export default class HakemustenArviointiController {
 
   initializeState(avustushakuId,evaluator) {
-    this._bind('onInitialState', 'onHakemusSelection', 'onUpdateHakemusStatus', 'onUpdateHakemusArvio', 'onSaveHakemusArvio', 'onBeforeUnload','onRefreshHakemukset', 'onAddPayment')
+    this._bind('onInitialState', 'onHakemusSelection', 'onUpdateHakemusStatus', 'onUpdateHakemusArvio', 'onSaveHakemusArvio', 'onBeforeUnload','onRefreshHakemukset')
     this.autoSaveHakemusArvio = _.debounce(function(updatedHakemus){ dispatcher.push(events.saveHakemusArvio, updatedHakemus) }, 3000)
 
     Bacon.fromEvent(window, "beforeunload").onValue(function() {
