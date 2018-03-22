@@ -75,7 +75,7 @@ export default class ApplicationPayments extends Component {
       <tr key={i}>
         <td>{i + 1}. erä OPH:n avustussummasta</td>
         <td className="payment-money-column">
-          {(100.0 * p["payment-sum"] / total).toFixed(0)}%
+          {(100.0 * p["payment-sum"] / total).toFixed(0)} %
         </td>
       </tr>
     )
@@ -134,13 +134,13 @@ export default class ApplicationPayments extends Component {
               <tr>
                 <td>Omarahoitus-%</td>
                 <td className="payment-money-column">
-                  {grant.content["self-financing-percentage"]}%
+                  {grant.content["self-financing-percentage"]} %
                 </td>
               </tr>
               <tr>
                 <td>OPH:n rahoitus-%</td>
                 <td className="payment-money-column">
-                  {100 - grant.content["self-financing-percentage"]}%
+                  {100 - grant.content["self-financing-percentage"]} %
                 </td>
               </tr>
               {payments.map(renderPaymentPercentage)}
