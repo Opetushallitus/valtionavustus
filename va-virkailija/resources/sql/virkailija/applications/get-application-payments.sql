@@ -5,4 +5,6 @@ FROM
 WHERE
   application_id = :application_id AND
   version_closed IS NULL AND
-  deleted IS NULL;
+  deleted IS NULL
+ORDER
+  BY id;
