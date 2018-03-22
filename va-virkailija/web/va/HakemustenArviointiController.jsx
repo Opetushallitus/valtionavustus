@@ -458,9 +458,10 @@ export default class HakemustenArviointiController {
   }
 
   loadPayments(state, applicationId) {
-    HttpUtil.get(HakemustenArviointiController.paymentsUrl(state, applicationId)).then(response => {
-      dispatcher.push(events.paymentsLoaded,
-                      {hakemusId: applicationId, payments: response})
+    HttpUtil.get(HakemustenArviointiController.paymentsUrl(
+      state, applicationId)).then(response => {
+        dispatcher.push(events.paymentsLoaded,
+                        {applicationId: applicationId, payments: response})
     })
     return state
   }
@@ -527,7 +528,8 @@ export default class HakemustenArviointiController {
   }
 
   onPaymentsLoaded(state, data) {
-    const application = HakemustenArviointiController.findHakemus(state, data.hakemusId)
+    const application = HakemustenArviointiController.findHakemus(
+      state, data.applicationId)
     if (application) {
       application.payments = data.payments
     }
