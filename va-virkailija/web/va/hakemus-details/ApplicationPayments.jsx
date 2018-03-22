@@ -90,7 +90,7 @@ export default class ApplicationPayments extends Component {
     const paidToDate = this.paidToDate(payments)
     const grantLeft = application["budget-oph-share"] - paidToDate
     return (
-      <div>
+      <div className={!this.props.payments ? "application-payments-disabled" : ""}>
         <h3>Maksuerät</h3>
         <div>
           Rahoitettavaa yhteensä {this.localeString(application["budget-total"])} €
