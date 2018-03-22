@@ -36,12 +36,11 @@ export default class FormBranchGrower {
     _.forEach(JsUtil.flatFilter(formContent, n => { return n.fieldType === "growingFieldset"}), g => {
       const growingSetValue = InputValueStorage.readValue(formContent, answers, g.id)
       const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(formSpecificationContent, g.id)
-      if (!_.isUndefined(growingSetValue) && !_.isEmpty(growingSetValue)) {
+      if (growingSetValue != null && !_.isEmpty(growingSetValue)) {
         populateGrowingSet(g, childPrototype, growingSetValue)
       }
-      if(addPlaceHolders) {
-        const firstChildValue = g.children.length > 0 ? InputValueStorage.readValue(formContent, answers, g.children[0].id) : undefined
-        if (g.children.length > 1 || (!_.isUndefined(growingSetValue) && !_.isEmpty(firstChildValue))) {
+      if (addPlaceHolders) {
+        if (haveChildrenAnswers(g.children, growingSetValue)) {
           const enabledPlaceHolderChild = FormBranchGrower.createNewChild(g, childPrototype, true)
           g.children.push(enabledPlaceHolderChild)
         }
@@ -66,37 +65,33 @@ export default class FormBranchGrower {
       return
     }
 
-    const childFields = JsUtil.flatFilter(growingParent.children, n => !_.isUndefined(n.id))
-    const childFieldIds = childFields.map(n => n.id)
+    const growingChildren = growingParent.children
 
-    const areAllChildFieldsValid = () => _.reduce(
-      childFieldIds,
-      (acc, fieldId) => acc && (!state.form.validationErrors[fieldId] || state.form.validationErrors[fieldId].length === 0),
-      true
-    )
+    if (FormUtil.findField(growingChildren[growingChildren.length - 2], fieldUpdate.id)) {
+      // Is the user currently editing a field in last enabled child? If
+      // so, enable the disabled child and set required status for all
+      // fields in current child.
 
-    const isFieldUpdateForLastChild = () => {
-      // TODO: Last check is needed, because otherwise we get adding too many rows
-      // -> should check instead, that we have at least one enabled row with all fields empty
-      const lastEnabledChildOfGrowingSet = _.last(_.filter(growingParent.children, f => !f.forceDisabled))
-      return _.some(lastEnabledChildOfGrowingSet.children, x => x.id === fieldUpdate.id)
+      const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(state.configuration.form.content, growingParent.id)
+
+      JsUtil.fastTraverse(growingChildren[growingChildren.length - 2], f => {
+        if (f.id != null) {
+          if (FormUtil.findFieldIgnoringIndex(childPrototype, f.id).required) {
+            f.required = true
+          }
+        }
+        return true
+      })
+
+      JsUtil.fastTraverse(growingChildren[growingChildren.length - 1], f => {
+        if (f.id != null) {
+          delete f.forceDisabled
+        }
+        return true
+      })
+
+      growingChildren.push(FormBranchGrower.createNewChild(growingParent, childPrototype, false))
     }
-
-    if (!areAllChildFieldsValid() || !isFieldUpdateForLastChild()) {
-      return
-    }
-
-    const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(state.configuration.form.content, growingParent.id)
-
-    _.forEach(childFields, n => {
-      const requiredInPrototype = FormUtil.findFieldIgnoringIndex(childPrototype, n.id).required
-      if (requiredInPrototype && !n.forceDisabled) {
-        n.required = true
-      }
-      n.forceDisabled = false
-    })
-
-    growingParent.children.push(FormBranchGrower.createNewChild(growingParent, childPrototype, false))
   }
 
   /**
@@ -124,12 +119,17 @@ export default class FormBranchGrower {
     const currentLastChild = _.last(parentNode.children)
     const newChild = childPrototype.asMutable({deep: true})
     populateNewIdsTo(newChild, currentLastChild)
-    _.forEach(JsUtil.flatFilter(newChild, n => { return !_.isUndefined(n.id) }),
-      field => {
-        field.required = false
-        field.forceDisabled = !enable
+    JsUtil.fastTraverse(newChild, f => {
+      if (f.id != null) {
+        if (f.required) {
+          f.required = false
+        }
+        if (!enable) {
+          f.forceDisabled = true
+        }
       }
-    )
+      return true
+    })
     return newChild
 
     function populateNewIdsTo(node, currentLastChild) {
@@ -142,3 +142,12 @@ export default class FormBranchGrower {
     }
   }
 }
+
+const haveChildrenAnswers = (children, answers) =>
+  children.length > 1 || hasFirstChildAnswer(children, answers)
+
+const hasFirstChildAnswer = (children, answers) =>
+  children.length > 0 && !areAllFieldAnswersEmpty(InputValueStorage.readValue(null, answers, children[0].id))
+
+const areAllFieldAnswersEmpty = answers =>
+  _.every(answers, a => _.isEmpty(a.value))
