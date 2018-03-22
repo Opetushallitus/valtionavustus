@@ -36,7 +36,7 @@
   },
   "private": true,
   "scripts": {
-    "lint": "eslint --ignore-path ../.gitignore --ignore-pattern '*.json' --ignore-pattern '**/test/lib' '**/*.js?'",
+    "lint": "eslint --ignore-path ../.gitignore --ignore-pattern '*.json' --ignore-pattern '**/test/lib' '**/*.js*'",
     "test": "mocha --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js",
     "test-watch": "mocha --watch --require web/test/babelhook $MOCHA_ARGS web/test/*Test.js"
   }

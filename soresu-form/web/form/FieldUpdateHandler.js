@@ -12,7 +12,7 @@ export default class FieldUpdateHandler {
             value: value,
             fieldType: field.fieldType,
             validationErrors:
-            SyntaxValidator.validateSyntax(field, value, customFieldSyntaxValidator) };
+            SyntaxValidator.validateSyntax(field, value, customFieldSyntaxValidator) }
   }
 
   static updateStateFromFieldUpdate(state, fieldUpdate) {
@@ -31,7 +31,7 @@ export default class FieldUpdateHandler {
       const triggeringFieldId = triggeringFieldUpdate.id
       const myGroup = JsUtil.findJsonNodeContainingId(growingFieldSet.children, triggeringFieldId)
       const fieldsToValidate = JsUtil.flatFilter(myGroup, f => { return !_.isUndefined(f.id) && f.fieldClass === "formField" && f.id !== triggeringFieldId })
-      FieldUpdateHandler.triggerFieldUpdatesForValidation(fieldsToValidate, state);
+      FieldUpdateHandler.triggerFieldUpdatesForValidation(fieldsToValidate, state)
       return !_.isEmpty(fieldsToValidate)
     }
     return false

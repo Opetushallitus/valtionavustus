@@ -27,13 +27,13 @@ export default class SeurantaBudgetEditFormController {
     this.arviointiController.setHakemusSeurantaAnswerValue(this.hakemus.id, field, newValue)
   }
 
-  componentDidMount(field, initialValue) {
+  componentDidMount() {
   }
 
-  initFieldValidation(field, value) {
+  initFieldValidation() {
   }
 
-  isSaveDraftAllowed(state) {
+  isSaveDraftAllowed() {
     return true
   }
 

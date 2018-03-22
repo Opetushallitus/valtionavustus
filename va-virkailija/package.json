@@ -49,7 +49,7 @@
     "build": "webpack --bail",
     "build-production": "NODE_ENV=production npm run build",
     "build-watch": "webpack --progress --watch",
-    "lint": "eslint --ignore-path ../.gitignore --ignore-pattern '*.json' --ignore-pattern '**/test/lib' '**/*.js?'",
+    "lint": "eslint --ignore-path ../.gitignore --ignore-pattern '*.json' --ignore-pattern '**/test/lib' '**/*.js*'",
     "test": "true"
   }
 }
