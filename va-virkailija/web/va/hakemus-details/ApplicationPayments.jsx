@@ -161,7 +161,7 @@ export default class ApplicationPayments extends Component {
           </table>
         </div>
         <button onClick={this.onAddPayment}
-                disabled={(grantLeft - this.state.newPaymentSum) <= 0}>
+                disabled={(grantLeft - this.state.newPaymentSum) < 0}>
           Lisää {payments.length + 1}. erä maksatuslistaan
         </button>
       </div>
