@@ -166,18 +166,12 @@
       "6600")
     :batch-id (:id batch)))
 
-(defn paid-full? [application]
-  (>= (reduce #(+ %1 (:payment-sum %2)) 0 (:payments application))
-      (:budget-granted application)))
-
 (defn multibatch-payable? [applications]
   (true?
     (some
       (fn [application]
-        (and
-          (not (paid-full? application))
-          (some (fn [payment] (= (:state payment) 1))
-               (:payments application))))
+        (some (fn [payment] (= (:state payment) 1))
+              (:payments application)))
       applications)))
 
 (defn singlebatch-payable? [applications]
