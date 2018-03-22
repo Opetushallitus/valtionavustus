@@ -75,7 +75,7 @@
                       (:application-id payment-data))]
     (when (> (+ (total-paid (:application-id payment-data))
                 (:payment-sum payment-data))
-             (:budget-granted application)))
+             (:budget-oph-share application)))
     (-> payment-data
         (assoc :application-version (:version application)
                :grant-id (:grant-id application))

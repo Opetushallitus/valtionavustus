@@ -320,6 +320,16 @@ export default class HakujenHallintaController {
       update.avustushaku["operation-id"] = update.newValue
     } else if (fieldId.startsWith("project-id")) {
       update.avustushaku["project-id"] = update.newValue
+    } else if (update.field.name === "payment-size-limit") {
+      update.avustushaku.content["payment-size-limit"] = update.newValue
+    } else if (fieldId === "payment-fixed-limit") {
+      update.avustushaku.content["payment-fixed-limit"] =
+        parseInt(update.newValue)
+    } else if (fieldId === "payment-min-first-batch") {
+      update.avustushaku.content["payment-min-first-batch"] =
+        parseInt(update.newValue)
+    } else if (fieldId === "total-grant-size") {
+      update.avustushaku.content["total-grant-size"] = parseInt(update.newValue)
     } else {
       console.error(
         "Unsupported update to field ", update.field.id, ":", update)

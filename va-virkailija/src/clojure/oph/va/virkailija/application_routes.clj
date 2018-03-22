@@ -13,6 +13,14 @@
     :summary "Get payment history"
     (ok (application-data/get-payments-history id))))
 
+(defn- get-payments []
+  (compojure-api/GET
+    "/:id/payments/" [id :as request]
+    :path-params [id :- Long]
+    :summary "Get application payments"
+    (ok (application-data/get-application-payments id))))
+
 (compojure-api/defroutes routes
   "application routes"
-  (get-payments-history))
+  (get-payments-history)
+  (get-payments))
