@@ -6,7 +6,29 @@ export default class ApplicationPayments extends Component {
     this.onAddPayment = this.onAddPayment.bind(this)
     this.onPaymentSumChange = this.onPaymentSumChange.bind(this)
     this.renderPayment = this.renderPayment.bind(this)
-    this.state = {newPaymentSum: 0}
+    this.resetPaymentSum = this.resetPaymentSum.bind(this)
+    this.resetPaymentSum()
+  }
+
+  resetPaymentSum() {
+    const value = Math.floor(
+      this.calculateDefaultValue(this.props.grant, this.props.application))
+    this.state = {
+      newPaymentSum: isFinite(value) ? value : 0 }
+  }
+
+  calculateDefaultValue(grant, application) {
+    if ((!application.payments || application.payments.length === 0) &&
+        (grant.content["payment-size-limit"] === "no-limit" ||
+         application["budget-oph-share"] >=
+         grant.content["payment-fixed-limit"])) {
+      return application["budget-oph-share"] *
+        grant.content["payment-min-first-batch"] / 100.0
+    } else {
+      const paidToDate = application.payments ?
+            application.payments.reduce((p, n) => p + n["payment-sum"], 0) : 0
+      return application["budget-oph-share"] - paidToDate
+    }
   }
 
   onAddPayment() {
