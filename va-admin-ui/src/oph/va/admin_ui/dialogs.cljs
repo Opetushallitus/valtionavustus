@@ -34,8 +34,7 @@
 
 (defn show-error-dialog! [message]
   (swap! dialogs update-in [:error-dialog]
-         assoc :open true :message message :title "Virhe"
-         :action-title nil))
+         assoc :open true :message message :title "Virhe"))
 
 (defn show-admin-message! [message status error-text]
   (show-error-dialog! (format "%s - %s (%d)" message error-text status)))
@@ -65,9 +64,7 @@
     {:open (:open snackbar)
      :message (:message snackbar)
      :auto-hide-duration 4000
-     :on-action-touch-tap (:on-action-click snackbar)
-     :on-request-close #(on-close :snackbar)
-     :action (:action-title snackbar)}]
+     :on-request-close #(on-close :snackbar)}]
    [ui/dialog
     {:on-request-close #(on-close :generic)
      :children (:content generic)
