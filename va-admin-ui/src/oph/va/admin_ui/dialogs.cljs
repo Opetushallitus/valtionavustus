@@ -8,11 +8,14 @@
    [cljs-react-material-ui.icons :as ic]
    [cljsjs.material-ui]
    [cljs-react-material-ui.reagent :as ui]
-   [oph.va.admin-ui.user :as user]))
+   [oph.va.admin-ui.user :as user]
+   [oph.va.admin-ui.components.ui :as va-ui]
+   [oph.va.admin-ui.utils :refer [format]]))
 
 (defonce dialogs (r/atom {:generic {:open false}
                           :loading {}
-                          :snackbar {:open false :message ""}}))
+                          :snackbar {:open false :message ""}
+                          :error-dialog {:open false}}))
 
 (defn show-dialog! [title content]
   (swap! dialogs update-in [:generic]
@@ -29,18 +32,17 @@
 (defn show-message! [message]
   (swap! dialogs update-in [:snackbar] assoc :open true :message message))
 
+(defn show-error-dialog! [message]
+  (swap! dialogs update-in [:error-dialog]
+         assoc :open true :message message :title "Virhe"))
+
 (defn show-admin-message! [message status error-text]
-  (swap! dialogs update-in [:snackbar] assoc
-         :open true
-         :message message
-         :action-title "Lisätietoja"
-         :on-action-click
-         #(show-error-message-dialog! status error-text)))
+  (show-error-dialog! (format "%s - %s (%d)" message error-text status)))
 
 (defn show-error-message! [message {:keys [status error-text]}]
   (if (user/is-admin? (deref user/user-info))
     (show-admin-message! message status error-text)
-    (show-message! message)))
+    (show-error-dialog! message)))
 
 (defn show-loading-dialog! [message max-value]
   (let [id (.getTime (js/Date.))]
@@ -56,15 +58,13 @@
            (swap! dialogs update-in [:loading] dissoc id))))
      c)))
 
-(defn render-dialogs [{:keys [snackbar generic loading]} on-close]
+(defn render-dialogs [{:keys [snackbar generic loading error-dialog]} on-close]
   [:div
    [ui/snackbar
     {:open (:open snackbar)
      :message (:message snackbar)
      :auto-hide-duration 4000
-     :on-action-touch-tap (:on-action-click snackbar)
-     :on-request-close #(on-close :snackbar)
-     :action (:action-title snackbar)}]
+     :on-request-close #(on-close :snackbar)}]
    [ui/dialog
     {:on-request-close #(on-close :generic)
      :children (:content generic)
@@ -82,9 +82,8 @@
    [ui/dialog
     {:children
      (r/as-element
-
-      [ui/list
-       (doall
+       [ui/list
+        (doall
           (map-indexed
             (fn [i [_ c]]
               [ui/list-item
@@ -99,7 +98,16 @@
             loading))])
      :modal true
      :open (> (count loading) 0)
-     :content-style {:width "95%" :max-width "none"}}]])
+     :content-style {:width "95%" :max-width "none"}}]
+   [ui/dialog
+    {:modal true
+     :open (:open error-dialog)
+     :actions [(r/as-element
+                 [va-ui/button
+                  {:label "Ok" :primary true
+                   :on-click #(on-close :error-dialog)}])]
+     :title (:title error-dialog)}
+    (:message error-dialog)]])
 
 (defn render []
   (render-dialogs
