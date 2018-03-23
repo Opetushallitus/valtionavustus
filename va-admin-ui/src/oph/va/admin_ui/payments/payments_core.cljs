@@ -10,19 +10,19 @@
     [cljs-react-material-ui.icons :as ic]
     [oph.va.admin-ui.components.ui :as va-ui]
     [oph.va.admin-ui.payments.payments-ui :as payments-ui]
-    [oph.va.admin-ui.payments.payments :as payments]
+    [oph.va.admin-ui.payments.payments :as payments
+     :refer [multibatch-payable? singlebatch-payable? any-account-nil?
+             convert-payment-dates get-batch-values format-date
+             parse-batch-dates]]
     [oph.va.admin-ui.payments.applications :as applications]
     [oph.va.admin-ui.router :as router]
     [oph.va.admin-ui.payments.grants-ui :refer [grants-table project-info]]
     [oph.va.admin-ui.payments.grants :refer [grant-matches? remove-old convert-dates]]
     [oph.va.admin-ui.payments.financing :as financing]
-    [oph.va.admin-ui.payments.utils :refer
-     [remove-nil format no-nils? not-empty? not-nil? find-index-of]]
+    [oph.va.admin-ui.payments.utils :refer [find-index-of]]
     [oph.va.admin-ui.dialogs :as dialogs]
     [oph.va.admin-ui.user :as user]
-    [oph.va.admin-ui.theme :as theme]
-    [cljs-time.format :as tf]
-    [cljs-time.coerce :as tc]))
+    [oph.va.admin-ui.theme :as theme]))
 
 (def default-batch-values
   {:currency "EUR"
@@ -120,70 +120,8 @@
       (put! dialog-chan 5)
       (close! dialog-chan))))
 
-(defn format-date [d]
-  (when (some? d)
-   (format "%04d-%02d-%02d"
-           (.getFullYear d)
-           (+ (.getMonth d) 1 )
-           (.getDate d))))
-
-(defn convert-payment-dates [values]
-  (-> values
-      (update :due-date format-date)
-      (update :receipt-date format-date)
-      (update :invoice-date format-date)))
-
-(defn parse-date [s]
-  (-> s
-      tf/parse
-      tc/to-date))
-
-(defn parse-batch-dates [batch]
-  (-> batch
-      (update :due-date parse-date)
-      (update :receipt-date parse-date)
-      (update :invoice-date parse-date)))
-
 (defn notice [message]
   [ui/card {:style theme/notice} [ui/card-text message]])
-
-(defn any-account-nil? [a]
-  (some?
-    (some #(when-not (and (some? (get % :lkp-account))
-                          (some? (get % :takp-account))) %) a)))
-
-(defn get-batch-values [batch]
-  (assoc
-    (select-keys batch
-                 [:acceptor-email
-                  :inspector-email
-                  :batch-number
-                  :receipt-date])
-    :state 0
-    :organisation
-    (if (= (:document-type batch) "XB")
-      "6604"
-      "6600")
-    :batch-id (:id batch)))
-
-(defn multibatch-payable? [applications]
-  (true?
-    (some
-      (fn [application]
-        (some (fn [payment] (= (:state payment) 1))
-              (:payments application)))
-      applications)))
-
-(defn singlebatch-payable? [applications]
-  (true?
-    (some
-      (fn [{:keys [payments]}]
-        (or
-          (empty? payments)
-          (some (fn [payment]
-                 (< (:state payment) 2))
-               payments)))
-      applications)))
 
 (defn home-page [{:keys [selected-grant batch-values applications
                          current-applications payments grants]}
