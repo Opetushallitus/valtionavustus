@@ -79,3 +79,11 @@
       (update :due-date parse-date)
       (update :receipt-date parse-date)
       (update :invoice-date parse-date)))
+
+(def error-messages
+  {"timeout" "Rondo-yhteydessä onglemia"
+   "already-paid" "Maksatukset on jo lähetetty"
+   "exception" "Palvelinvirhe"})
+
+(defn get-error-messages [errors default-value]
+  (map #(get error-messages % default-value) errors))

@@ -2,6 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
     [cljs.core.async :refer [<! put! chan close! sliding-buffer]]
+    [clojure.string :refer [join]]
     [oph.va.admin-ui.connection :as connection]
     [reagent.core :as r]
     [cljsjs.material-ui]
@@ -13,7 +14,7 @@
     [oph.va.admin-ui.payments.payments :as payments
      :refer [multibatch-payable? singlebatch-payable? any-account-nil?
              convert-payment-dates get-batch-values format-date
-             parse-batch-dates]]
+             parse-batch-dates get-error-messages]]
     [oph.va.admin-ui.payments.applications :as applications]
     [oph.va.admin-ui.router :as router]
     [oph.va.admin-ui.payments.grants-ui :refer [grants-table project-info]]
@@ -107,7 +108,12 @@
                 "Kaikki maksatukset lähetetty, mutta vahvistussähköpostin
                        lähetyksessä tapahtui virhe")))
           (dialogs/show-error-message!
-            "Maksatuksen lähetyksessä ongelma"
+            (-> result
+                (get-in [:body :errors])
+                distinct
+                (get-error-messages "Maksatusten lähetyksessä ongelma")
+                distinct
+                join)
             (select-keys result [:status :error-text])))
         (let [grant-result (<! (connection/get-grant-payments
                                  (:id selected-grant)))]
