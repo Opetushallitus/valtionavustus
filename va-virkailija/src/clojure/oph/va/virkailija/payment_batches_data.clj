@@ -11,6 +11,7 @@
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.grant-data :as grant-data]))
+
 (def timeout-limit 10000)
 
 (defn find-batch [date grant-id]
@@ -52,7 +53,7 @@
           :filename filename})
        (catch Exception e
          {:success false :error {:error-type :exception :exception e}}))
-    timeout-limit {:success false :error-type :timeout}))
+    timeout-limit {:success false :error {:error-type :timeout}}))
 
 (defn get-unpaid-payment [payments]
   (some #(when (< (:state %) 2) %) payments))
@@ -72,7 +73,7 @@
             filename (create-filename payment)]
         (assoc (send-to-rondo! payment application (:grant data) filename)
                :filename filename :payment payment))
-      {:success false :error-type :already-paid})))
+      {:success false :error {:error-type :already-paid}})))
 
 (defn create-multibatch-payment [application data]
   (let [payment (application-data/get-application-payment-by-state
@@ -85,7 +86,7 @@
         (-> updated-payment
             (send-to-rondo! application (:grant data) filename)
             (assoc :filename filename :payment updated-payment)))
-      {:success false :error-type :already-paid})))
+      {:success false :error {:error-type :already-paid}})))
 
 (defn create-payments [data]
   (let [{:keys [identity grant]} data

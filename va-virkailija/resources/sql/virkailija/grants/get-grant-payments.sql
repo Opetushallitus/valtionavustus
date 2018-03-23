@@ -14,4 +14,6 @@ LEFT JOIN
     ON
       b.id = p.batch_id
 WHERE
-  h.avustushaku = :id AND h.version_closed IS NULL;
+  h.avustushaku = :id AND h.version_closed IS NULL
+ORDER
+  BY id;
