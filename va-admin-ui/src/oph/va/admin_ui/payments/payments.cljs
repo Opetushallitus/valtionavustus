@@ -31,24 +31,30 @@
       "6600")
     :batch-id (:id batch)))
 
+(defn batch-payable? [pred applications]
+  (and
+    (not (empty? applications))
+    (true?
+      (some
+        pred
+        applications))))
+
 (defn multibatch-payable? [applications]
-  (true?
-    (some
-      (fn [application]
-        (some (fn [payment] (= (:state payment) 1))
-              (:payments application)))
-      applications)))
+  (batch-payable?
+    (fn [application]
+      (some (fn [payment] (= (:state payment) 1))
+            (:payments application)))
+    applications))
 
 (defn singlebatch-payable? [applications]
-  (true?
-    (some
-      (fn [{:keys [payments]}]
-        (or
-          (empty? payments)
-          (some (fn [payment]
-                 (< (:state payment) 2))
-               payments)))
-      applications)))
+  (batch-payable?
+    (fn [{:keys [payments]}]
+      (or
+        (empty? payments)
+        (some (fn [payment]
+                (< (:state payment) 2))
+              payments)))
+    applications))
 
 (defn format-date [d]
   (when (some? d)
