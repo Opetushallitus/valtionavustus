@@ -4,7 +4,7 @@
             [cljs-react-material-ui.reagent :as ui]
             [cljs-react-material-ui.icons :as ic]
             [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.payments.utils :refer [format]]))
+            [oph.va.admin-ui.utils :refer [format]]))
 
 (defn get-answer-value [answers key]
   (:value (first (filter #(= (:key %) key) answers))))

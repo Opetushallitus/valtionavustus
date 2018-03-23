@@ -1,6 +1,6 @@
 (ns oph.va.admin-ui.payments.payments
   (:require [oph.va.admin-ui.payments.utils :refer [no-nils? valid-email?]]
-            [oph.va.admin-ui.payments.utils :refer [format]]
+            [oph.va.admin-ui.utils :refer [format]]
             [cljs-time.coerce :as tc]
             [cljs-time.format :as tf]))
 
