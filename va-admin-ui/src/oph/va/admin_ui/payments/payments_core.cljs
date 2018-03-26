@@ -18,7 +18,7 @@
     [oph.va.admin-ui.payments.applications :as applications]
     [oph.va.admin-ui.router :as router]
     [oph.va.admin-ui.payments.grants-ui :refer [grants-table project-info]]
-    [oph.va.admin-ui.payments.grants :refer [grant-matches? remove-old convert-dates]]
+    [oph.va.admin-ui.payments.grants :refer [grant-matches? convert-dates]]
     [oph.va.admin-ui.payments.financing :as financing]
     [oph.va.admin-ui.payments.utils :refer [find-index-of]]
     [oph.va.admin-ui.dialogs :as dialogs]
@@ -68,19 +68,14 @@
                             (select-keys response
                                          [:status :error-text]))))))}]]])
 
-(defn render-grant-filters [values on-change]
+(defn render-grant-filters [filter-str on-change]
   [:div
    [va-ui/text-field
     {:floating-label-text "Hakujen suodatus"
-     :value (:filter-str values)
-     :on-change #(on-change :filter-str (.-value (.-target %)))}]
-   [ui/icon-button {:on-click #(on-change :filter-str "")}
-    [ic/action-highlight-off {:color "gray"}]]
-   [ui/toggle
-    {:label "Piilota vanhat haut"
-     :toggled (:filter-old values)
-     :on-toggle #(on-change :filter-old %2)
-     :style {:width "200px"}}]])
+     :value filter-str
+     :on-change #(on-change (.-value (.-target %)))}]
+   [ui/icon-button {:on-click #(on-change "")}
+    [ic/action-highlight-off {:color "gray"}]]])
 
 (defn send-payments! [values selected-grant payments]
   (go
@@ -133,15 +128,12 @@
                          current-applications payments grants]}
                  {:keys [user-info delete-payments?]}]
   [:div
-   [(let [grant-filter (r/atom {:filter-str "" :filter-old true}) ]
+   [(let [grant-filter (r/atom "") ]
       (fn []
         [:div
-         (render-grant-filters @grant-filter #(swap! grant-filter assoc %1 %2))
+         (render-grant-filters @grant-filter #(reset! grant-filter %))
          (let [filtered-grants
-               (filterv #(grant-matches? % (:filter-str @grant-filter))
-                        (if (:filter-old @grant-filter)
-                          (remove-old @grants)
-                          @grants))]
+               (filterv #(grant-matches? % @grant-filter) @grants)]
            (grants-table
              {:grants filtered-grants
               :value (find-index-of filtered-grants
