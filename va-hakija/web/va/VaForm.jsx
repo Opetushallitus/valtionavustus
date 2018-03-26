@@ -11,7 +11,7 @@ import VaChangeRequest from 'va-common/web/va/VaChangeRequest.jsx'
 import VaFormTopbar from './VaFormTopbar.jsx'
 import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'
 
-import style from './style/main.less'
+import './style/main.less'
 
 export default class VaForm extends React.Component {
   render() {

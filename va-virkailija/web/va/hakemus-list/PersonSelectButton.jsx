@@ -1,10 +1,11 @@
 import React from 'react'
+import _ from 'lodash'
 import ClassNames from 'classnames'
 
 const RoleButton = ({role,roleField,controller,hakemus}) => {
   const onClick = () => controller.toggleHakemusRole(role.id,hakemus,roleField)
   const currentRoles = hakemus.arvio.roles[roleField]
-  const active = roleField=="presenter" ? hakemus.arvio["presenter-role-id"]==role.id : _.includes(currentRoles,role.id)
+  const active = roleField === "presenter" ? hakemus.arvio["presenter-role-id"] === role.id : _.includes(currentRoles,role.id)
   const buttonClass = ClassNames('btn btn-sm',{
     'btn-selected': active,
     'btn-simple': !active
@@ -24,10 +25,12 @@ const RoleContainer = ({roleName,roleField,roles,controller,hakemus}) => {
 }
 
 const PersonSelectPanel = ({hakemus,state,controller}) => {
-  const show = state.personSelectHakemusId==hakemus.id
-  if (!show) return <span/>
+  const show = state.personSelectHakemusId === hakemus.id
+  if (!show) {
+    return <span/>
+  }
   const roles = state.hakuData.roles
-  const filterByRole = (roles,role)=> _.sortBy(roles.filter((currentRole)=>currentRole.role==role),'name')
+  const filterByRole = (roles,role)=> _.sortBy(roles.filter((currentRole)=>currentRole.role === role),'name')
   const presenters = filterByRole(roles,"presenting_officer")
   const evaluators = filterByRole(roles,"evaluator")
   const onCloseClick = () => controller.togglePersonSelect(undefined)
@@ -42,14 +45,16 @@ const PersonSelectPanel = ({hakemus,state,controller}) => {
 
 
 const PersonSelectButton = ({controller,hakemus,state,show}) => {
-  if (!show) return <span/>
+  if (!show) {
+    return <span/>
+  }
   const onClick = () => {
     controller.togglePersonSelect(hakemus.id)
     document.body.classList.add('split-view')
   }
   const roles = _.pluck(state.hakuData.roles,'id')
-  const presenterRoleId = hakemus.arvio["presenter-role-id"];
-  const personCount = hakemus.arvio.roles.evaluators.filter((id)=>_.includes(roles,id)).length + (presenterRoleId && _.includes(roles,presenterRoleId) ? 1 : 0)
+  const presenterRoleId = hakemus.arvio["presenter-role-id"]
+  const personCount = hakemus.arvio.roles.evaluators.filter(id => _.includes(roles,id)).length + (presenterRoleId && _.includes(roles,presenterRoleId) ? 1 : 0)
   const countIndicator = personCount > 0 ? personCount : "+"
   return(
     <div>

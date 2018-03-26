@@ -22,7 +22,6 @@ import {
   OptionFieldPropertyMapper,
   DropdownFieldPropertyMapper,
   MultipleOptionFieldOnChangePropertyMapper,
-  ButtonPropertyMapper,
   AttachmentFieldPropertyMapper,
   KoodistoFieldPropertyMapper,
 } from './PropertyMapper'

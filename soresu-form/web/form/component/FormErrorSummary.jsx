@@ -17,8 +17,8 @@ export default class FormErrorSummary extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const oldIdsOfInvalidFields = _.keys(this.props.validationErrors);
-    const newIdsOfInvalidFields = _.keys(nextProps.validationErrors);
+    const oldIdsOfInvalidFields = _.keys(this.props.validationErrors)
+    const newIdsOfInvalidFields = _.keys(nextProps.validationErrors)
     const oldValidationErrors = this.props.validationErrors
     const isUptoDate = this.state.open === nextState.open &&
                         this.props.lang === nextProps.lang &&
@@ -83,7 +83,7 @@ export default class FormErrorSummary extends React.Component {
       })
     }
 
-    var results = []
+    const results = []
     JsUtil.traverseMatching(formContent, x => { return x && !_.isUndefined(x.id) }, gatherParentAndErrorsFromChildren)
     return _.sortBy(results, x => {return FormUtil.findFieldIndex(formContent, x.field.id)})
   }
@@ -92,7 +92,7 @@ export default class FormErrorSummary extends React.Component {
     const fieldErrors = []
     const labelHolder = field.label ? field : closestParent
     const htmlId = this.controller.constructHtmlId(formContent, field.id)
-    for (var i = 0; i < errors.length; i++) {
+    for (let i = 0; i < errors.length; i++) {
       const error = errors[i]
       const key = htmlId+ "-validation-error-" + error.error
       if (fieldErrors.length > 0) {
@@ -109,7 +109,7 @@ export default class FormErrorSummary extends React.Component {
 
   jumpToField(id) {
     return function(event) {
-      var field = document.getElementById(id)
+      let field = document.getElementById(id)
       if(!field) {
         const elementsByName = document.getElementsByName(id)
         if(elementsByName.length > 0) {

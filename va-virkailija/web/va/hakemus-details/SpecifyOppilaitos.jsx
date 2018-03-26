@@ -40,11 +40,11 @@ export default class SpecifyOppilaitos extends React.Component {
           } : null
     }
     const onOppilaitosRemove = function(index) {
-      return allowEditing ? (event) => {
+      return allowEditing ? () => {
             controller.removeOppilaitos(hakemus, index)
           } : null
     }
-    var oppilaitosIndex = 0
+    let oppilaitosIndex = 0
     for (; oppilaitosIndex < currentOppilaitokset.length; oppilaitosIndex++) {
       oppilaitosRows.push(<OppilaitosRow key={"oppilaitos-" + oppilaitosIndex} value={currentOppilaitokset[oppilaitosIndex]} onChange={onOppilaitosChange(oppilaitosIndex)} onDelete={onOppilaitosRemove(oppilaitosIndex)}
                                          allowEditing={allowEditing}/>)

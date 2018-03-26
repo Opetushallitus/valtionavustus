@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import styles from './style/preview.less'
+import './style/preview.less'
 
 import FormPreviewComponent from './preview/FormPreviewComponent.jsx'
 import InfoElement from './component/InfoElement.jsx'
@@ -15,11 +15,11 @@ export default class FormPreview extends React.Component {
     const htmlId = controller.constructHtmlId(fields, field.id)
     const translations = state.configuration.translations
     const fieldProperties = { fieldType: field.fieldType, lang: state.configuration.lang, key: htmlId, htmlId: htmlId, field: field, controller: controller, translations: translations }
-    if (field.fieldClass == "formField") {
+    if (field.fieldClass === "formField") {
       return FormPreview.createFormPreviewComponent(controller, state, field, fieldProperties, renderingParameters)
-    } else if (field.fieldClass == "infoElement") {
+    } else if (field.fieldClass === "infoElement") {
       return FormPreview.createInfoComponent(state, infoElementValues, field, fieldProperties, true)
-    } else if (field.fieldClass == "wrapperElement") {
+    } else if (field.fieldClass === "wrapperElement") {
       return FormPreview.createWrapperComponent(FormPreview.renderField, controller, formEditController, state, infoElementValues, field, fieldProperties, renderingParameters)
     }
   }
@@ -33,7 +33,7 @@ export default class FormPreview extends React.Component {
   static _createFormPreviewComponent(controller, state, field, fieldProperties, renderingParameters, attachment, attachmentDownloadUrl) {
     const values = state.saveStatus.values
     const fields = state.form.content
-    var existingInputValue = (renderingParameters && !_.isUndefined(renderingParameters.overridingInputValue)) ? renderingParameters.overridingInputValue : InputValueStorage.readValue(fields, values, field.id)
+    const existingInputValue = (renderingParameters && !_.isUndefined(renderingParameters.overridingInputValue)) ? renderingParameters.overridingInputValue : InputValueStorage.readValue(fields, values, field.id)
     const value = _.isUndefined(existingInputValue) ? "" : existingInputValue
     return <FormPreviewComponent {...fieldProperties}
         value={value}
@@ -72,17 +72,20 @@ export default class FormPreview extends React.Component {
     }
 
     const children = []
-    for (var i = 0; i < field.children.length; i++) {
+    for (let i = 0; i < field.children.length; i++) {
       const childRenderingParameters = resolveChildRenderingParameters(i)
       children.push(renderFieldFunction(controller, editorController, state, infoElementValues, field.children[i], childRenderingParameters))
     }
 
-    return <WrapperPreviewComponent {...fieldProperties}
-        children={children}
-        renderingParameters={renderingParameters}
-        controller={controller}
-        customProps={controller.getCustomComponentProperties(state)}
-        answersObject={values} />
+    return (
+      <WrapperPreviewComponent {...fieldProperties}
+                               renderingParameters={renderingParameters}
+                               controller={controller}
+                               customProps={controller.getCustomComponentProperties(state)}
+                               answersObject={values}>
+        {children}
+      </WrapperPreviewComponent>
+    )
   }
 
   render() {

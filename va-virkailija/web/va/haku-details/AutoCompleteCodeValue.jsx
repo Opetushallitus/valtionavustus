@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import 'react-select/less/default.less'
 import VirtualizedSelect from 'react-virtualized-select'
-import HttpUtil from 'soresu-form/web/HttpUtil'
 
 export default class AutocompleteCodeValue extends Component {
   constructor(props) {

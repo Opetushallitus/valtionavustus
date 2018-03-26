@@ -9,22 +9,31 @@ import FormUtil from './FormUtil'
 export default class FormBranchEditableFieldGrower {
   static ensureFirstChildIsRequired(state, growingParent) {
     const firstChildOfGrowingSet = _.first(growingParent.children)
-    const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(state.configuration.form.content, growingParent.id)
-    const idsWhoseInputToDelete = []
-    const updatesToWrite = []
+    const prototypeForm = state.configuration.form
+    const answersObject = state.saveStatus.values
+    const syntaxValidator = state.extensionApi.customFieldSyntaxValidator
+    const childPrototype = FormBranchGrower.getGrowingFieldSetChildPrototype(prototypeForm.content, growingParent.id)
+    const answersToDelete = []
+    const answersToWrite = []
+    const validationErrorsToDelete = []
+
+    const processFirstChildChildren = operation => {
+      _.forEach(JsUtil.flatFilter(firstChildOfGrowingSet, n => !_.isUndefined(n.id)), operation)
+    }
 
     processFirstChildChildren(n => {
-      const prototypeNode = FormUtil.findFieldIgnoringIndex(childPrototype, n.id)
-      const existingInputValue = InputValueStorage.readValue(state.configuration.form, state.saveStatus.values, n.id)
-      const isGrowingFieldSetOrInfoValue = prototypeNode.fieldType === "growingFieldset" || prototypeNode.fieldType === "growingFieldsetChild" || prototypeNode.fieldClass === "infoElement"
-      if (!isGrowingFieldSetOrInfoValue) {
-        updatesToWrite.push(FieldUpdateHandler.createFieldUpdate(prototypeNode, existingInputValue, state.extensionApi.customFieldSyntaxValidator))
+      if (!_.isUndefined(n.id) && n.fieldClass === "formField") {
+        const prototypeNode = FormUtil.findFieldIgnoringIndex(childPrototype, n.id)
+        const existingInputValue = InputValueStorage.readValue(null, answersObject, n.id)
+        answersToWrite.push(FieldUpdateHandler.createFieldUpdate(prototypeNode, existingInputValue, syntaxValidator))
+        validationErrorsToDelete.push(n.id)
+      } else if (n.children) {
+        answersToDelete.push(n.id)
       }
-      idsWhoseInputToDelete.push(n.id)
     })
 
-    _.forEach(idsWhoseInputToDelete, fieldIdToEmpty => {
-      InputValueStorage.deleteValue(growingParent, state.saveStatus.values, fieldIdToEmpty)
+    _.forEach(answersToDelete, fieldIdToEmpty => {
+      InputValueStorage.deleteValue(growingParent, answersObject, fieldIdToEmpty)
     })
 
     processFirstChildChildren(n => {
@@ -36,21 +45,21 @@ export default class FormBranchEditableFieldGrower {
       }
     })
 
-    _.each(updatesToWrite, fieldUpdate => {
-      InputValueStorage.writeValue(state.configuration.form, state.saveStatus.values, fieldUpdate)
+    _.forEach(answersToWrite, fieldUpdate => {
+      InputValueStorage.writeValue(prototypeForm, answersObject, fieldUpdate)
     })
 
     growingParent.children.sort((firstChild, secondChild) => {
       return JsUtil.naturalCompare(firstChild.id, secondChild.id)
     })
 
-    const fieldsToValidate = JsUtil.flatFilter(_.first(growingParent.children), f => { return !_.isUndefined(f.id) && f.fieldClass === "formField"})
-    FieldUpdateHandler.triggerFieldUpdatesForValidation(fieldsToValidate, state)
+    // clear validation errors from the original position of moved field
+    state.form.validationErrors = state.form.validationErrors.without(validationErrorsToDelete)
 
-    function processFirstChildChildren(operation) {
-      _.forEach(JsUtil.flatFilter(firstChildOfGrowingSet, n => { return !_.isUndefined(n.id) }), n => {
-        operation(n)
-      })
-    }
+    const fieldsToValidate = JsUtil.flatFilter(
+      firstChildOfGrowingSet,
+      f => !_.isUndefined(f.id) && f.fieldClass === "formField"
+    )
+    FieldUpdateHandler.triggerFieldUpdatesForValidation(fieldsToValidate, state)
   }
 }

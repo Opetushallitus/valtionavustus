@@ -35,7 +35,7 @@ export default class MathUtil {
 
   static parseDecimal(value) {
     return _.isNumber(value)
-      ? (value === -0 ? 0 : value)
+      ? (value === 0 ? 0 : value)
       : parseFloat(normalizeDecimalStr("" + value))
   }
 

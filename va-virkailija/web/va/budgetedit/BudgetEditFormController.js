@@ -32,7 +32,7 @@ export default class BudgetEditFormController {
             originalHakemus: this.hakemus}
   }
 
-  copyOriginalValues(event) {
+  copyOriginalValues() {
     const budgetItems = FormUtil.findFieldsByFieldType(this.form.content, 'vaBudgetItemElement')
     budgetItems.map(budgetItem => this.componentOnChangeListener(budgetItem.children[1], InputValueStorage.readValue(this.form.content, this.hakemus.answers, budgetItem.children[1].id)))
   }
@@ -49,22 +49,26 @@ export default class BudgetEditFormController {
       .filter(budgetItem => budgetItem.params.incrementsTotal)
       .map(findCost)
     const useDetailedCosts = event.target.value === 'true'
-    if(_.sum(budgetItemsAmounts) === 0) this.copyOriginalValues()
+    if (_.sum(budgetItemsAmounts) === 0) {
+      this.copyOriginalValues()
+    }
     this.arviointiController.toggleDetailedCosts(this.hakemus, useDetailedCosts)
   }
 
   costsGrantedOnChangeListener(event) {
     const newValue = Number(event.target.value.replace(/\s+/, ''))
-    if(!isNaN(newValue)) this.arviointiController.setCostsGrantedValue(this.hakemus, newValue)
+    if (!isNaN(newValue)) {
+      this.arviointiController.setCostsGrantedValue(this.hakemus, newValue)
+    }
   }
 
-  componentDidMount(field, initialValue) {
+  componentDidMount() {
   }
 
-  initFieldValidation(field, value) {
+  initFieldValidation() {
   }
 
-  isSaveDraftAllowed(state) {
+  isSaveDraftAllowed() {
     return true
   }
 

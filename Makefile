@@ -36,11 +36,15 @@ npm-clean-frontends:
 	$(call npm_clean_frontend,va-virkailija)
 
 .PHONY: npm-build
-npm-build: npm-install-modules npm-build-frontends
+npm-build: npm-install-modules npm-lint npm-build-frontends
 
 .PHONY: npm-install-modules
 npm-install-modules:
 	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_install_modules,$(npm_project))$(newline))
+
+.PHONY: npm-lint
+npm-lint:
+	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_lint,$(npm_project))$(newline))
 
 .PHONY: npm-build-frontends
 npm-build-frontends:
@@ -124,6 +128,7 @@ define usage_text
 Targets:
 
   help                          Show this guide.
+
   clean                         `npm-clean`, `lein-clean`
   build                         `npm-build`, `lein-build`
   test                          `npm-test`, `lein-test`
@@ -131,7 +136,8 @@ Targets:
   npm-clean                     `npm-clean-modules`, `npm-clean-frontends`
   npm-clean-modules             Remove installed npm modules from $$NPM_PROJECTS.
   npm-clean-frontends           Remove frontend build products from va-hakija and va-virkailija.
-  npm-build                     `npm-install-modules`, `npm-build-frontends`
+  npm-build                     `npm-lint`, `npm-install-modules`, `npm-build-frontends`
+  npm-lint                      Run JavaScript linter for $$NPM_PROJECTS.
   npm-install-modules           Install npm modules for $$NPM_PROJECTS.
   npm-build-frontends           Build frontend sources for va-hakija and va-virkailija.
   npm-test                      Run npm unit tests for $$NPM_PROJECTS.
@@ -187,6 +193,10 @@ endef
 
 define npm_install_modules
 cd '$(1)' && npm install --no-save
+endef
+
+define npm_lint
+cd '$(1)' && npm run lint
 endef
 
 define npm_test

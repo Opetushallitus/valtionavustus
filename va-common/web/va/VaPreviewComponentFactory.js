@@ -2,7 +2,6 @@ import _ from 'lodash'
 import React from 'react'
 import ClassNames from 'classnames'
 
-import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import Translator from 'soresu-form/web/form/Translator'
 import ComponentFactory from 'soresu-form/web/form/ComponentFactory.jsx'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
@@ -14,7 +13,6 @@ import {FieldOnChangePropertyMapper} from 'soresu-form/web/form/component/Proper
 
 import VaBudgetElement, {
   SummingBudgetElement,
-  BudgetItemElement,
   BudgetSummaryElement
 } from './VaBudgetComponents.jsx'
 
@@ -91,7 +89,7 @@ class VaProjectDescriptionPreview extends React.Component {
   }
 
   isHidden() {
-    return this.props.renderingParameters && this.props.renderingParameters.valueIsEmpty === true;
+    return this.props.renderingParameters && this.props.renderingParameters.valueIsEmpty === true
   }
 }
 

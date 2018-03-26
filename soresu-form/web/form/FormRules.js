@@ -6,12 +6,12 @@ import InputValueStorage from './InputValueStorage'
 
 export default class FormRules {
   static applyRulesToForm(formSpecification, formState, values) {
-    for (var i = 0; i < formSpecification.rules.length; i++) {
+    for (let i = 0; i < formSpecification.rules.length; i++) {
       const rule = formSpecification.rules[i]
       switch(rule.type) {
         case "includeIf":
           formState = FormRules.handleIncludeIf(rule, formSpecification, formState, values)
-          break;
+          break
         default:
           console.error("Unsupported rule of type", rule.type, rule)
       }
@@ -24,7 +24,7 @@ export default class FormRules {
     const triggerValue = rule.params.triggerValue
     const includeIds = rule.targetIds
     const doInclude = InputValueStorage.readValue(formState.content, values, triggerId) === triggerValue
-    for(var i = 0; i < includeIds.length; i++) {
+    for (let i = 0; i < includeIds.length; i++) {
       FormRules.doIncludeOrRemoveField(doInclude, includeIds[i], formSpecification, formState, values)
     }
     return formState
@@ -60,11 +60,11 @@ export default class FormRules {
   static removeField(formState, parentField, fieldToRemove) {
     formState.validationErrors = formState.validationErrors.merge({[fieldToRemove.id]: []})
     const subFieldIds = FormUtil.findSubFieldIds(fieldToRemove)
-    for(var i = 0; i < subFieldIds.length; i++) {
+    for (let i = 0; i < subFieldIds.length; i++) {
       formState.validationErrors = formState.validationErrors.merge({[subFieldIds[i]]: []})
     }
     _.remove(parentField.children, function(child) {
-      return child.id === fieldToRemove.id;
+      return child.id === fieldToRemove.id
     })
     return formState
   }

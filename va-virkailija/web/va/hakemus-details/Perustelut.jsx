@@ -1,5 +1,5 @@
 import Bacon from 'baconjs'
-import React, { Component } from 'react'
+import React from 'react'
 import _ from "lodash"
 import rejectedReasonsByLanguage from './rejectedReasonsByLanguage.json'
 export default class Perustelut extends React.Component {
@@ -29,7 +29,6 @@ export default class Perustelut extends React.Component {
     // and that causes the attribute to go missing from the resulting HTML tag
     // which causes nasty issues with React, unless we explicitly set this to
     // empty string here
-    const perustelut = _.get(hakemus, "arvio.perustelut") || ""
     const controller = this.props.controller
     const addReason = (reason) => {
       const currentPerustelut = getPerustelut(this.props)

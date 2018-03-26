@@ -1,4 +1,8 @@
-(ns oph.va.admin-ui.utils)
+(ns oph.va.admin-ui.utils
+  (:require [goog.string :as gstring]
+            [goog.string.format]))
+
+(defn format [fmt & args] "Format string" (apply gstring/format fmt args))
 
 (defn parse-int
   ([s d]

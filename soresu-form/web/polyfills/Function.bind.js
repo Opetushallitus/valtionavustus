@@ -1,15 +1,15 @@
 (function () {
-  var slice = Array.prototype.slice
+  const slice = Array.prototype.slice
 
   // PhantomJS doesn't support Function.prototype.bind natively, so
   // polyfill it whenever this module is required.
   if (typeof Function.prototype.bind !== "function") {
     Function.prototype.bind = function (context) {
-      var func = this
-      var args = slice.call(arguments, 1)
+      const func = this
+      const args = slice.call(arguments, 1)
 
       function bound() {
-        var invokedAsConstructor = func.prototype && (this instanceof func)
+        const invokedAsConstructor = func.prototype && (this instanceof func)
         return func.apply(
           // Ignore the context parameter when invoking the bound function
           // as a constructor. Note that this includes not only constructor

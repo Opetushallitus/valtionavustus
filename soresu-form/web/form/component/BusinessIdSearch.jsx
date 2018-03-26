@@ -111,7 +111,7 @@ export default class BusinessIdSearch extends React.Component {
           }
         })
       }).catch(error => {
-        if (error.response.status == 404) {
+        if (error.response.status === 404) {
           this.setState({incorrectBusinessId: true})
           this.openModal()
         } else {

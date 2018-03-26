@@ -1,8 +1,5 @@
 import Bacon from 'baconjs'
 import _ from 'lodash'
-import Immutable from 'seamless-immutable'
-import queryString from 'query-string'
-import RouteParser from 'route-parser'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import Dispatcher from 'soresu-form/web/Dispatcher'

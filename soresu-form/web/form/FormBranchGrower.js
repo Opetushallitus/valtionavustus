@@ -133,7 +133,7 @@ export default class FormBranchGrower {
 
     function populateNewIdsTo(node, currentLastChild) {
       const prototypeId = node.id
-      var lastIndex = FormUtil.parseIndexFrom(currentLastChild.id)
+      const lastIndex = FormUtil.parseIndexFrom(currentLastChild.id)
       node.id = FormUtil.withOutIndex(prototypeId) + "-" + (lastIndex + 1)
       _.forEach(node.children, n => {
         n.id = n.id.replace(prototypeId, node.id)

@@ -38,7 +38,7 @@
   (rename-keys m (map-dash-keys m)))
 
 (defn update-some [m k f]
-  (if (contains? m k)
+  (if (some? (get m k))
     (update m k f)
     m))
 

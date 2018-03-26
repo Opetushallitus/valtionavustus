@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 export default class HakuPhase extends Component {
   render() {
     const phase = this.props.phase
-    var value = phase
+    let value = phase
     switch(phase) {
       case "upcoming":
         value = "Aukeamassa"

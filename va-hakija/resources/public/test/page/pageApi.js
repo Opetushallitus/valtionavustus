@@ -100,26 +100,27 @@ function Page(mainElement) {
           case "TEXTAREA":
             input.val(value)
             triggerEvent(input, "input")
-            break;
+            break
           case "RADIO":
             var radioOption = _(input).find(function(item) { return $(item).prop("value") == value })
             S(radioOption).click()
             triggerEvent(S(radioOption), "click")
-            break;
+            break
           case "SELECT":
             var option = _(input.children()).find(function(item) { return $(item).prop("value") == value })
             input.val($(option).attr("value"))
             triggerEvent(input, "change")
-            break;
+            break
         }
       }
     }
 
     function inputType(el) {
-      if (el.prop("tagName") == "SELECT" || el.prop("tagName") == "TEXTAREA")
+      if (el.prop("tagName") === "SELECT" || el.prop("tagName") === "TEXTAREA") {
         return el.prop("tagName")
-      else
+      } else {
         return el.prop("type").toUpperCase()
+      }
     }
   }
 

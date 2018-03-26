@@ -1,5 +1,3 @@
-import _ from 'lodash'
-
 export default class UrlCreator {
   constructor(props) {
     function defaultImpl() {

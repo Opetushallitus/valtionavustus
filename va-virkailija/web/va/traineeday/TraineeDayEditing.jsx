@@ -10,7 +10,7 @@ import FakeFormState from '../form/FakeFormState'
 import TraineeDayEditFormController from './TraineeDayEditFormController.jsx'
 import TraineeDayEditComponentFactory from './TraineeDayEditComponentFactory'
 
-import style from '../style/traineeday.less'
+import '../style/traineeday.less'
 
 export default class TraineeDayEditing extends Component {
   render() {
@@ -29,7 +29,7 @@ export default class TraineeDayEditing extends Component {
     const formOperations = {
       chooseInitialLanguage: () => "fi",
       containsExistingEntityId: undefined,
-      isFieldEnabled: function(saved, fieldId) {return allowEditing},
+      isFieldEnabled: function() {return allowEditing},
       onFieldUpdate: undefined,
       isSaveDraftAllowed: function() {return allowEditing},
       isNotFirstEdit: function() {return true},

@@ -3,8 +3,6 @@ import _ from 'lodash'
 
 import ReactWidgets from 'react-widgets'
 
-import moment from 'moment-timezone'
-
 import {EditComponent, FieldEditComponent} from './EditComponent.jsx'
 
 export default class KoodistoFieldEdit extends FieldEditComponent {
@@ -45,7 +43,7 @@ export default class KoodistoFieldEdit extends FieldEditComponent {
     const field = this.props.field
     const inputTypeAlternatives = ["radioButton", "checkboxButton", "dropdown"]
     const inputTypeAlternativeButtons = []
-    for (var i = 0; i < inputTypeAlternatives.length; i++) {
+    for (let i = 0; i < inputTypeAlternatives.length; i++) {
       inputTypeAlternativeButtons.push(
         <input type="radio" id={htmlId + ".inputType." + i}
                key={"input-type-input-" + i}

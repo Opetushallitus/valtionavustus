@@ -4,7 +4,7 @@
             [cljs-react-material-ui.reagent :as ui]
             [cljs-react-material-ui.icons :as ic]
             [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.payments.utils :refer [format]]))
+            [oph.va.admin-ui.utils :refer [format]]))
 
 (defn get-answer-value [answers key]
   (:value (first (filter #(= (:key %) key) answers))))
@@ -20,7 +20,8 @@
 
 (defn render-application [i application on-info-clicked is-admin?]
   [ui/table-row {:key i :style (when (odd? i) theme/striped-row)}
-   [ui/table-row-column (state-to-str (get-in application [:payment :state]))]
+   [ui/table-row-column
+    (state-to-str (:state (last (:payments application))))]
    [ui/table-row-column {:title (:organization-name application)}
     (:organization-name application)]
    [ui/table-row-column
@@ -37,7 +38,7 @@
    [ui/table-row-column (get application :lkp-account)]
    [ui/table-row-column (get application :takp-account)]
    [ui/table-row-column
-    (.toLocaleString (get application :budget-granted)) " €"]
+    (.toLocaleString (get application :total-paid)) " €"]
    (when is-admin?
      [ui/table-row-column
     [ui/icon-button {:on-click #(on-info-clicked (:id application))}
@@ -55,7 +56,7 @@
       [ui/table-header-column {:style {:text-align "right"}} "Pitkäviite"]
       [ui/table-header-column "LKP-tili"]
       [ui/table-header-column "TaKp-tili"]
-      [ui/table-header-column "Tiliöintisumma"]
+      [ui/table-header-column "Maksettu"]
       (when is-admin? [ui/table-header-column "Lisätietoja"])]]
     [ui/table-body {:display-row-checkbox false}
      (doall (map-indexed #(render-application %1 %2 on-info-clicked is-admin?)

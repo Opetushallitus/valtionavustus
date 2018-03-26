@@ -1,13 +1,12 @@
 import React from 'react'
 import _ from 'lodash'
 
-import styles from './style/main.less'
+import './style/main.less'
 
 import FormComponent from './component/FormComponent.jsx'
 import InfoElement from './component/InfoElement.jsx'
 import WrapperComponent from './component/wrapper/WrapperComponent.jsx'
 import InputValueStorage from './InputValueStorage.js'
-import BusinessIdSearch from './component/BusinessIdSearch.jsx'
 
 export default class Form extends React.Component {
   render() {
@@ -31,7 +30,7 @@ export default class Form extends React.Component {
         customProps: controller.getCustomComponentProperties(state)
       }
 
-      if (field.fieldClass == "infoElement") {
+      if (field.fieldClass === "infoElement") {
         return createInfoElement(fieldProperties)
       } else {
         const formOperations = state.extensionApi.formOperations
@@ -42,9 +41,9 @@ export default class Form extends React.Component {
                                                                allAttachments: state.saveStatus.attachments,
                                                                attachmentUploadsInProgress: state.saveStatus.attachmentUploadsInProgress})
 
-        if (field.fieldClass == "formField" || field.fieldClass == "button") {
+        if (field.fieldClass === "formField" || field.fieldClass === "button") {
           return createFormComponent(field, extendedProperties)
-        } else if (field.fieldClass == "wrapperElement") {
+        } else if (field.fieldClass === "wrapperElement") {
           return createWrapperElement(field, extendedProperties, renderingParameters)
         }
       }
@@ -97,13 +96,11 @@ export default class Form extends React.Component {
       }
 
       const children = []
-      for (var i = 0; i < field.children.length; i++) {
+      for (let i = 0; i < field.children.length; i++) {
         children.push(renderField(field.children[i], resolveChildRenderingParameters(i)))
       }
 
-      return <WrapperComponent {...fieldProperties}
-                               children={children}
-                               answersObject={values} />
+      return <WrapperComponent {...fieldProperties} answersObject={values}>{children}</WrapperComponent>
     }
   }
 }

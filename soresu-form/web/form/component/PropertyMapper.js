@@ -8,8 +8,12 @@ export class DefaultPropertyMapper {
   }
 
   static param(field, param, defaultValue) {
-    if (!field.params) return defaultValue
-    if (field.params[param] !== undefined) return field.params[param]
+    if (!field.params) {
+      return defaultValue
+    }
+    if (field.params[param] !== undefined) {
+      return field.params[param]
+    }
     return defaultValue
   }
 }
@@ -124,17 +128,6 @@ export class MultipleOptionFieldOnChangePropertyMapper {
     return _.extend(optionProps, {
       value: value,
       onChange: onChange
-    })
-  }
-}
-
-export class ButtonPropertyMapper {
-  static map(props) {
-    const commonProps = FieldPropertyMapper.map(props)
-    const controller = props.controller
-    const onClick = (e) => { controller.componentOnChangeListener(props.field, "click"); e.preventDefault() }
-    return _.extend(commonProps, {
-      onClick: onClick
     })
   }
 }

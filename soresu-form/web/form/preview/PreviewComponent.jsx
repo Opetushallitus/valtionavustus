@@ -19,13 +19,17 @@ export default class PreviewComponent extends React.Component {
   }
 
   sizeClassName() {
-    if (this.param("size") && !Number.isInteger(this.param("size"))) return this.param("size")
-    else return undefined
+    if (this.param("size") && !Number.isInteger(this.param("size"))) {
+      return this.param("size")
+    } else {
+      return undefined
+    }
   }
 
   label() {
-    if (this.hideLabel() || !this.props.field.label) return undefined
-    else {
+    if (this.hideLabel() || !this.props.field.label) {
+      return undefined
+    } else {
       return (<LocalizedString className="soresu-key"
                                translations={this.props.field}
                                translationKey="label"
@@ -38,8 +42,12 @@ export default class PreviewComponent extends React.Component {
   }
 
   param(param, defaultValue) {
-    if (!this.props.field.params) return defaultValue
-    if (this.props.field.params[param] !== undefined) return this.props.field.params[param]
+    if (!this.props.field.params) {
+      return defaultValue
+    }
+    if (this.props.field.params[param] !== undefined) {
+      return this.props.field.params[param]
+    }
     return defaultValue
   }
 }

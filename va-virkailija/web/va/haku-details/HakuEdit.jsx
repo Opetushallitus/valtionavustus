@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import _ from 'lodash'
 
 import DateUtil from 'soresu-form/web/DateUtil'
 
@@ -6,7 +7,6 @@ import HakuStatus from "../avustushaku/HakuStatus.jsx"
 import HakuRoles from "./HakuRoles.jsx"
 import ChooseRahoitusalueet from "./ChooseRahoitusalueet.jsx"
 import AutoCompleteCodeValue from "./AutoCompleteCodeValue.jsx"
-import Select from 'react-select';
 
 export default class HakuEdit extends Component {
   render() {
@@ -228,7 +228,7 @@ class SelectionCriteria extends React.Component {
     const allowAllHakuEdits = this.props.allowAllHakuEdits
     const allowNondisruptiveHakuEdits = this.props.allowNondisruptiveHakuEdits
     const criteriaItems = []
-    for (var index=0; index < selectionCriteria.items.length; index++) {
+    for (let index = 0; index < selectionCriteria.items.length; index++) {
       const htmlId = "selection-criteria-" + index + "-"
       criteriaItems.push(
         <tr key={index}>
@@ -260,7 +260,7 @@ class FocusArea extends React.Component {
     const allowAllHakuEdits = this.props.allowAllHakuEdits
     const allowNondisruptiveHakuEdits = this.props.allowNondisruptiveHakuEdits
     const focusAreaItems = []
-    for (var index=0; index < focusAreas.items.length; index++) {
+    for (let index = 0; index < focusAreas.items.length; index++) {
       const htmlId = "focus-area-" + index + "-"
       focusAreaItems.push(
         <tr key={index}>
@@ -322,8 +322,8 @@ class AcademySize extends React.Component {
     const onChange = this.props.onChange
     const isDisabled = this.props.disabled
     const options = []
-    const values = [false, true];
-    for (var i=0; i < values.length; i++) {
+    const values = [false, true]
+    for (let i=0; i < values.length; i++) {
       const value = values[i]
       const htmlId = "set-is_academysize-" + value
       options.push(
@@ -399,7 +399,7 @@ class SetStatus extends React.Component {
     const hakuIsValid = this.props.hakuIsValid
     const userHasEditPrivilege = this.props.userHasEditPrivilege
     const statuses = []
-    const statusValues = ['deleted', 'draft', 'published', 'resolved'];
+    const statusValues = ['deleted', 'draft', 'published', 'resolved']
     const isDisabled = function(status) {
       if (!userHasEditPrivilege) {
         return true
@@ -418,7 +418,7 @@ class SetStatus extends React.Component {
       }
       return false
     }
-    for (var i=0; i < statusValues.length; i++) {
+    for (let i = 0; i < statusValues.length; i++) {
       const status = statusValues[i]
       const htmlId = "set-status-" + status
       statuses.push(
@@ -466,7 +466,7 @@ class RegisterNumber extends React.Component {
     const isRegisterNumberValid = RegisterNumber.isValid(avustushaku)
     const registerNumberClass = isRegisterNumberValid ? "" : "error"
     const errorStyle = {paddingLeft: "5px"}
-    var errorString = ""
+    let errorString = ""
     if (_.isNull(registerNumber) || _.isEmpty(registerNumber)) {
       errorString = <span style={errorStyle} className="error">Diaarinumero on pakollinen tieto</span>
     } else if (!isRegisterNumberValid) {

@@ -1,10 +1,11 @@
 import React from 'react'
+import _ from 'lodash'
 import Translator from '../Translator.js'
 
 export default class HelpTooltip extends React.Component {
   render() {
     const translator = new Translator(this.props)
-    const helpText = _.get(this.props, "content." + this.props.lang);
+    const helpText = _.get(this.props, "content." + this.props.lang)
     if (!helpText || "" === helpText) {
       return <span/>
     }
