@@ -4,6 +4,7 @@
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.invoice :as invoice]
             [oph.va.virkailija.payments-data :as payments-data]
+            [oph.va.virkailija.payment-batches-data :as batch-data]
             [oph.soresu.common.config :refer [config]]
             [clojure.tools.logging :as log]
             [clojure.string :as strc]))
@@ -33,8 +34,12 @@
 
 (defn send-to-rondo! [{:keys [payment application grant filename]}]
   (let [sftp-config (:rondo-sftp config)
-        file (format "%s/%s" (:local-path sftp-config) filename)]
-    (invoice/write-xml! (invoice/payment-to-xml payment application grant) file)
+        file (format "%s/%s" (:local-path sftp-config) filename)
+        batch (batch-data/get-batch (:batch-id payment))]
+    (invoice/write-xml!
+      (invoice/payment-to-xml
+        {:payment payment :application application :grant grant :batch batch})
+      file)
     (if (:enabled? sftp-config)
       (let [result (do-sftp! :method :put :file file :path (:remote_path (:rondo-sftp config)))]
         (if (nil? result)
