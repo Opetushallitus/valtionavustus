@@ -109,7 +109,7 @@
           :value (or (:code @v) "")
           :validator #(<= (-> % .-target .-value .-length) 13)
           :on-change #(swap! v assoc :code (.-value (.-target %)))
-          :style (assoc theme/text-field :width 100)
+          :style (assoc theme/text-field :width 150)
           :on-key-press catch-enter}]
         [va-ui/text-field
          {:floating-label-text "Nimi"
