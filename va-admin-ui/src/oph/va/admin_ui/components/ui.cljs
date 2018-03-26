@@ -23,9 +23,9 @@
          (select-keys [:value :type :type :size :min :max
                              :max-length :on-key-press])
          (update :class str "oph-input")
-         (assoc :style (if (:error props) {:border-color "#f44336"} {})
-                :on-change
-                (add-validator (:on-change props) (:validator props))))]
+         (assoc
+           :style (if (:error props) {:border-color "#f44336"} {})
+           :on-change (add-validator (:on-change props) (:validator props))))]
     (when-some [help-text (:help-text props)]
       [:div {:class "oph-field-text"} help-text])]))
 
