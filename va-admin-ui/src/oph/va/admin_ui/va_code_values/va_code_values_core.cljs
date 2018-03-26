@@ -94,7 +94,7 @@
           :value (or (:year @v) "")
           :type "number"
           :max-length 4
-          :validator #(< (parse-int (.-value (.-target %))) 2100)
+          :validator #(< (parse-int (-> % .-target .-value)) 2100)
           :on-change
           (fn [e]
             (let [result (js/parseInt (.-value (.-target e)))]
