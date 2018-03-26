@@ -43,14 +43,15 @@
 (defn create-filename [payment]
   (format "payment-%d-%d.xml" (:id payment) (System/currentTimeMillis)))
 
-(defn send-to-rondo! [payment application grant filename]
+(defn send-to-rondo! [payment application grant filename batch]
   (with-timeout
     #(try
        (rondo-service/send-to-rondo!
          {:payment (payments-data/get-payment (:id payment))
           :application application
           :grant grant
-          :filename filename})
+          :filename filename
+          :batch batch})
        (catch Exception e
          {:success false :error {:error-type :exception :exception e}}))
     timeout-limit {:success false :error {:error-type :timeout}}))
@@ -71,7 +72,8 @@
                     :payment-sum sum)
                   (:identity data)))
             filename (create-filename payment)]
-        (assoc (send-to-rondo! payment application (:grant data) filename)
+        (assoc (send-to-rondo! payment application (:grant data) filename
+                               (:batch data))
                :filename filename :payment payment))
       {:success false :error {:error-type :already-paid}})))
 
@@ -84,7 +86,7 @@
                              (assoc payment :batch-id (get-in data [:batch :id]))
                              (:identity data))]
         (-> updated-payment
-            (send-to-rondo! application (:grant data) filename)
+            (send-to-rondo! application (:grant data) filename (:batch data))
             (assoc :filename filename :payment updated-payment)))
       {:success false :error {:error-type :already-paid}})))
 
