@@ -31,8 +31,18 @@ export default class FormUtil {
     },10)
   }
 
-  static idIsSameOrSameIfIndexIgnoredPredicate(fieldId) {
-    return field => { return field.id === fieldId || FormUtil.isSameIfIndexIgnored(field.id, fieldId)}
+  static idIsSameOrSameIfIndexIgnoredPredicate(findId) {
+    const findIdSansIndex = findId ? FormUtil.withOutIndex(findId) : findId
+    return field => {
+      const givenFieldId = field.id
+      if (givenFieldId === findIdSansIndex) {
+        return true
+      }
+      if (!givenFieldId || !findIdSansIndex) {
+        return false
+      }
+      return FormUtil.withOutIndex(givenFieldId) === findIdSansIndex
+    }
   }
 
   static findChildIndexAccordingToFieldSpecification(specificationChildren, currentChildren, fieldId) {
@@ -79,13 +89,6 @@ export default class FormUtil {
   static findGrowingParent(formContent, fieldId) {
     const allGrowingFieldsets = JsUtil.flatFilter(formContent, n => { return n.fieldType === "growingFieldset" })
     return JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
-  }
-
-  static isSameIfIndexIgnored(id1, id2) {
-    if (!id1 || !id2) {
-      return false
-    }
-    return this.withOutIndex(id1) === this.withOutIndex(id2)
   }
 
   static withOutIndex(id) {
