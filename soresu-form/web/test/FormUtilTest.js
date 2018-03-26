@@ -111,6 +111,265 @@ describe('Form util', function() {
     })
   })
 
+  describe('finding index of child field according to field specification', function() {
+    const parentFieldChildrenSpec = [
+      {
+        "label": {
+          "fi": "Hankkeen nimi",
+          "sv": "Projektets namn"
+        },
+        "fieldClass": "formField",
+        "helpText": {
+          "fi": "",
+          "sv": ""
+        },
+        "id": "project-name",
+        "params": {
+          "size": "large",
+          "maxlength": 200
+        },
+        "required": true,
+        "fieldType": "textField"
+      },
+      {
+        "label": {
+          "fi": "Asiointikieli",
+          "sv": "Projektets språk"
+        },
+        "fieldClass": "formField",
+        "helpText": {
+          "fi": "",
+          "sv": ""
+        },
+        "id": "language",
+        "options": [
+          {
+            "value": "fi",
+            "label": {
+              "fi": "Suomi",
+              "sv": "Finska"
+            }
+          },
+          {
+            "value": "sv",
+            "label": {
+              "fi": "Ruotsi",
+              "sv": "Svenska"
+            }
+          }
+        ],
+        "required": true,
+        "fieldType": "radioButton"
+      },
+      {
+        "label": {
+          "fi": "Onko kyseessä yhteishanke",
+          "sv": "Är projektet ett samprojekt"
+        },
+        "fieldClass": "formField",
+        "helpText": {
+          "fi": "",
+          "sv": ""
+        },
+        "id": "combined-effort",
+        "options": [
+          {
+            "value": "yes",
+            "label": {
+              "fi": "Kyllä",
+              "sv": "Ja"
+            }
+          },
+          {
+            "value": "no",
+            "label": {
+              "fi": "Ei",
+              "sv": "Nej"
+            }
+          }
+        ],
+        "required": true,
+        "fieldType": "radioButton"
+      },
+      {
+        "fieldClass": "wrapperElement",
+        "id": "other-organizations",
+        "fieldType": "growingFieldset",
+        "children": [
+          {
+            "fieldClass": "wrapperElement",
+            "id": "other-organizations-1",
+            "fieldType": "growingFieldsetChild",
+            "children": [
+              {
+                "label": {
+                  "fi": "Hankkeen muut organisaatiot",
+                  "sv": "Övriga samarbetspartner"
+                },
+                "fieldClass": "formField",
+                "helpText": {
+                    "fi": "",
+                    "sv": ""
+                },
+                "id": "other-organizations.other-organizations-1.name",
+                "params": {
+                  "size": "large",
+                  "maxlength": 80
+                },
+                "required": true,
+                "fieldType": "textField"
+              },
+              {
+                "label": {
+                  "fi": "Yhteyshenkilön sähköposti",
+                  "sv": "Kontaktpersonens e-postadress"
+                },
+                "fieldClass": "formField",
+                "helpText": {
+                  "fi": "",
+                  "sv": ""
+                },
+                "id": "other-organizations.other-organizations-1.email",
+                "params": {
+                  "size": "small",
+                  "maxlength": 80
+                },
+                "required": true,
+                "fieldType": "emailField"
+              }
+            ]
+          }
+        ],
+        "params": {
+          "showOnlyFirstLabels": true
+        }
+      },
+      {
+        "label": {
+          "fi": "Muut yhteistyökumppanit",
+          "sv": "Övriga samarbetspartner"
+        },
+        "fieldClass": "formField",
+        "helpText": {
+          "fi": "",
+          "sv": ""
+        },
+        "id": "other-partners",
+        "params": {
+          "maxlength": 1000
+        },
+        "required": false,
+        "fieldType": "textArea"
+      }
+    ]
+
+    const parentFieldChildren = [
+      {
+        "label": {
+          "fi": "Hankkeen nimi",
+          "sv": "Projektets namn"
+        },
+        "fieldClass": "formField",
+        "helpText": {
+          "fi": "",
+          "sv": ""
+        },
+        "id": "project-name",
+        "params": {
+          "size": "large",
+          "maxlength": 200
+        },
+        "required": true,
+        "fieldType": "textField"
+      },
+      {
+        "label": {
+          "fi": "Asiointikieli",
+          "sv": "Projektets språk"
+        },
+        "fieldClass": "formField",
+        "helpText": {
+          "fi": "",
+          "sv": ""
+        },
+        "id": "language",
+        "options": [
+          {
+            "value": "fi",
+            "label": {
+              "fi": "Suomi",
+              "sv": "Finska"
+            }
+          },
+          {
+            "value": "sv",
+            "label": {
+              "fi": "Ruotsi",
+              "sv": "Svenska"
+            }
+          }
+        ],
+        "required": true,
+        "fieldType": "radioButton"
+      },
+      {
+        "label": {
+          "fi": "Onko kyseessä yhteishanke",
+          "sv": "Är projektet ett samprojekt"
+        },
+        "fieldClass": "formField",
+        "helpText": {
+          "fi": "",
+          "sv": ""
+        },
+        "id": "combined-effort",
+        "options": [
+          {
+            "value": "yes",
+            "label": {
+              "fi": "Kyllä",
+              "sv": "Ja"
+            }
+          },
+          {
+            "value": "no",
+            "label": {
+              "fi": "Ei",
+              "sv": "Nej"
+            }
+          }
+        ],
+        "required": true,
+        "fieldType": "radioButton"
+      },
+      {
+        "label": {
+          "fi": "Muut yhteistyökumppanit",
+          "sv": "Övriga samarbetspartner"
+        },
+        "fieldClass": "formField",
+        "helpText": {
+          "fi": "",
+          "sv": ""
+        },
+        "id": "other-partners",
+        "params": {
+          "maxlength": 1000
+        },
+        "required": false,
+        "fieldType": "textArea"
+      }
+    ]
+
+    it('returns index of found children', function() {
+      expect(FormUtil.findChildIndexAccordingToFieldSpecification(parentFieldChildrenSpec, parentFieldChildren, "other-organizations")).to.equal(3)
+    })
+
+    it('returns 0 when not found', function() {
+      expect(FormUtil.findChildIndexAccordingToFieldSpecification(parentFieldChildrenSpec, parentFieldChildren, "nosuch")).to.equal(0)
+    })
+  })
+
   it('returns the growing fieldset by the id of a child element', function() {
     const calcId = "alphakoulutusosiot.alphakoulutusosio-1.koulutettavapaivat"
     const growingFieldSet = {
