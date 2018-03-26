@@ -8,12 +8,12 @@ FROM
   avustushaut h
 LEFT JOIN
   virkailija.va_code_values pu
-    ON pu.id = h.operational_unit_id
+    ON (pu.id = h.operational_unit_id AND pu.deleted IS NULL)
 LEFT JOIN
   virkailija.va_code_values p
-    ON p.id = h.project_id
+    ON (p.id = h.project_id AND p.deleted IS NULL)
 LEFT JOIN
   virkailija.va_code_values o
-    ON o.id = h.operation_id
+    ON (o.id = h.operation_id AND o.deleted IS NULL)
 WHERE
   h.status != 'deleted';

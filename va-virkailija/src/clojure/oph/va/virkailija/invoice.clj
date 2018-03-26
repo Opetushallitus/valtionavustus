@@ -8,6 +8,8 @@
 
 (def date-formatter (f/formatter "yyyy-MM-dd"))
 
+(def organisations {"XA" 6600 "XB" 6604})
+
 (defn get-answer-value
   ([answers key]
    (:value
@@ -19,25 +21,25 @@
 (defn get-batch-key
   ([organisation year batch-number]
    (format "%s%02d%03d" organisation year batch-number))
-  ([payment]
+  ([batch]
    "Generating batch id of organisation, year and batch-number.
   Batch id is something like '660017006' where 6600 is organisation, 17 is
   year and 006 is order number or identification number, if you will.
   If some of values is missing, nil is being returned."
-   (if (and (:created-at payment)
-            (:organisation payment)
-            (:batch-number payment))
+   (if (and (:created-at batch)
+            (:document-type batch)
+            (:batch-number batch))
      (get-batch-key
-       (:organisation payment)
-       (mod (t/year (c/to-date-time (:created-at payment))) 100)
-       (:batch-number payment))
+       (get organisations (:document-type batch))
+       (mod (t/year (c/to-date-time (:created-at batch))) 100)
+       (:batch-number batch))
      nil)))
 
-(defn payment-to-invoice [payment application grant]
+(defn payment-to-invoice [{:keys [payment application grant batch]}]
   (let [answers (:answers application)]
     [:VA-invoice
      [:Header
-      [:Maksuera (get-batch-key payment)]
+      [:Maksuera (get-batch-key batch)]
       [:Laskunpaiva (.toString (:invoice-date payment))]
       [:Erapvm (.toString (:due-date payment))]
       [:Bruttosumma (:budget-granted application)]
@@ -68,10 +70,10 @@
         [:Toiminto  (:operation grant)]
         [:Kumppani (:partner payment)]]]]]))
 
-(defn payment-to-xml [payment application grant]
+(defn payment-to-xml [data]
   "Creates xml document (tags) of given payment of Valtionavustukset maksatus.
   Document should be valid document for VIA/Rondo."
-  (sexp-as-element (payment-to-invoice payment application grant)))
+  (sexp-as-element (payment-to-invoice data)))
 
 (defn get-content [xml ks]
   (loop [content (list xml) xks ks]
