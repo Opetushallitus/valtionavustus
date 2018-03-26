@@ -4,18 +4,29 @@ import FormUtil from '../form/FormUtil'
 
 describe('Form util', function() {
   it('returns first field matching id', function() {
+    const objFoo1 = {id: "foo-1", content: "cont"}
+    const objFoo = {id: "foo", children: [objFoo1]}
+    const objMan = {id: "man"}
+    const tree = {children: [{id: "bar"}, objFoo, objMan]}
+    expect(FormUtil.findField(tree, "foo")).to.equal(objFoo)
+    expect(FormUtil.findField(tree, "foo-1")).to.equal(objFoo1)
+    expect(FormUtil.findField(tree, "man")).to.equal(objMan)
+    expect(FormUtil.findField(tree, "nosuch")).to.be.null
+  })
+
+  it('returns index of first field matching id', function() {
     const tree = {
       children: [
-        {
-          id: "foo1",
-          children: [
-            {id: "foo2", content: "cont"}
-          ]
-        },
-        {id: "foo3"}
+        {id: "bar"},
+        {id: "foo", children: [{id: "foo-1", content: "cont"}]},
+        {id: "man"}
       ]
     }
-    expect(FormUtil.findField(tree, "foo2")).to.eql({id: "foo2", content: "cont"})
+    expect(FormUtil.findIndexOfField(tree, "foo")).to.equal(3)
+    expect(FormUtil.findIndexOfField(tree, "man")).to.equal(6)
+    expect(FormUtil.findIndexOfField(tree, "foo-1")).to.equal(5)
+    expect(FormUtil.findIndexOfField(tree, "foo-2")).to.equal(-1)
+    expect(FormUtil.findIndexOfField(tree, "nosuch")).to.equal(-1)
   })
 
   it('returns first field matching type', function() {
@@ -76,38 +87,6 @@ describe('Form util', function() {
         children: [{id: "bar"}]
       }
       expect(FormUtil.findFieldIgnoringIndex(tree, "foo")).to.be.null
-    })
-  })
-
-  describe("Finding index of first matching field, ignoring id's index suffix", function() {
-    it('returns object when ids match exactly', function() {
-      const tree = {
-        children: [
-          {
-            id: "foo1",
-            children: [
-              {id: "foo2", content: "cont"}
-            ]
-          },
-          {id: "foo3"}
-        ]
-      }
-      expect(FormUtil.findFieldIndex(tree, "foo2")).to.equal(4)
-    })
-
-    it('returns index when ids match, sans index suffix', function() {
-      const tree = {
-        children: [
-          {
-            id: "foo1",
-            children: [
-              {id: "foo2-2", content: "cont"}
-            ]
-          },
-          {id: "foo3"}
-        ]
-      }
-      expect(FormUtil.findFieldIndex(tree, "foo2")).to.equal(4)
     })
   })
 

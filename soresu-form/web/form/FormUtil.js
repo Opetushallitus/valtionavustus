@@ -49,7 +49,11 @@ export default class FormUtil {
   }
 
   static findField(formContent, fieldId) {
-    return JsUtil.findFirst(formContent, n => { return n.id === fieldId })
+    return JsUtil.findFirst(formContent, n => n.id === fieldId)
+  }
+
+  static findIndexOfField(formContent, fieldId) {
+    return JsUtil.findIndexOfFirst(formContent, n => n.id === fieldId)
   }
 
   static findFieldByFieldType(formContent, fieldType) {
@@ -66,10 +70,6 @@ export default class FormUtil {
 
   static findSubFieldIds(field) {
     return JsUtil.traverseMatching(field.children, n => { return n.id}, n => { return n.id})
-  }
-
-  static findFieldIndex(formContent, fieldId) {
-    return JsUtil.findIndexOfFirst(formContent, FormUtil.idIsSameOrSameIfIndexIgnoredPredicate(fieldId))
   }
 
   static findFieldWithDirectChild(formContent, childId) {
