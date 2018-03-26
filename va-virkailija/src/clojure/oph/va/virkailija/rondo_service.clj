@@ -3,8 +3,6 @@
             [ring.util.http-response :refer :all]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.invoice :as invoice]
-            [oph.va.virkailija.payments-data :as payments-data]
-            [oph.va.virkailija.payment-batches-data :as batch-data]
             [oph.soresu.common.config :refer [config]]
             [clojure.tools.logging :as log]
             [clojure.string :as strc]))
@@ -32,10 +30,9 @@
           (= method :rm )(ssh/sftp channel {} method (format "%s/%s" path file))
           (= method :cdls)(ssh/with-channel-connection channel (ssh/sftp channel {} :cd path) (ssh/ssh-sftp-cmd channel :ls ["*.xml"] :with-monitor))))))))
 
-(defn send-to-rondo! [{:keys [payment application grant filename]}]
+(defn send-to-rondo! [{:keys [payment application grant filename batch]}]
   (let [sftp-config (:rondo-sftp config)
-        file (format "%s/%s" (:local-path sftp-config) filename)
-        batch (batch-data/get-batch (:batch-id payment))]
+        file (format "%s/%s" (:local-path sftp-config) filename)]
     (invoice/write-xml!
       (invoice/payment-to-xml
         {:payment payment :application application :grant grant :batch batch})
