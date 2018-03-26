@@ -94,6 +94,7 @@
           :value (or (:year @v) "")
           :type "number"
           :max-length 4
+          :validator #(< (parse-int (.-value (.-target %))) 2100)
           :on-change
           (fn [e]
             (let [result (js/parseInt (.-value (.-target e)))]
@@ -106,6 +107,7 @@
         [va-ui/text-field
          {:floating-label-text "Koodi"
           :value (or (:code @v) "")
+          :validator #(<= (-> % .-target .-value .-length) 13)
           :on-change #(swap! v assoc :code (.-value (.-target %)))
           :style (assoc theme/text-field :width 100)
           :on-key-press catch-enter}]
