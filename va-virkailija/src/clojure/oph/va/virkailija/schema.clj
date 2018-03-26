@@ -296,7 +296,13 @@
    :form-loppuselvitys (s/maybe s/Int)
    :form-valiselvitys (s/maybe s/Int)
    :is-academysize s/Bool
-   :haku-type GrantType})
+   :haku-type GrantType
+   (s/optional-key :operational-unit-id) (s/maybe s/Int)
+   (s/optional-key :operational-unit) (s/maybe s/Str)
+   (s/optional-key :project-id) (s/maybe s/Int)
+   (s/optional-key :project) (s/maybe s/Str)
+   (s/optional-key :operation-id) (s/maybe s/Int)
+   (s/optional-key :operation) (s/maybe s/Str)})
 
 (s/defschema GrantRole
   "Grant Role"

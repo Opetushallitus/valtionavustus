@@ -63,9 +63,9 @@
         [:Summa (:budget-granted application)]
         [:LKP-tili (lkp/get-lkp-account (:answers application))]
         [:TaKp-tili (:takp-account application)]
-        [:Toimintayksikko (get-in grant [:content :operational-unit])]
-        [:Projekti (get-in grant [:content :project])]
-        [:Toiminto  (get-in grant [:content :operation])]
+        [:Toimintayksikko (:operational-unit grant)]
+        [:Projekti (:project grant)]
+        [:Toiminto  (:operation grant)]
         [:Kumppani (:partner payment)]]]]]))
 
 (defn payment-to-xml [payment application grant]
