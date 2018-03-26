@@ -33,35 +33,49 @@ describe('Form util', function() {
     expect(FormUtil.findFieldByFieldType(tree, "vaBudget")).to.eql({id: "foo2", fieldType: "vaBudget"})
   })
 
-  describe("Finding first matching field, ignoring id's index suffix", function() {
-    it('returns object when ids match exactly', function() {
+  describe("Finding first matching field, ignoring identifier index suffix", function() {
+    it('returns found object when ids match exactly, when id does not have index suffix', function() {
+      const obj1 = {id: "foo2", content: "cont"}
+      const obj2 = {id: "bar"}
       const tree = {
         children: [
-          {
-            id: "foo1",
-            children: [
-              {id: "foo2", content: "cont"}
-            ]
-          },
-          {id: "foo3"}
+          {id: "foo", children: [obj1]},
+          obj2
         ]
       }
-      expect(FormUtil.findFieldIgnoringIndex(tree, "foo2")).to.eql({id: "foo2", content: "cont"})
+      expect(FormUtil.findFieldIgnoringIndex(tree, "foo2")).to.equal(obj1)
+      expect(FormUtil.findFieldIgnoringIndex(tree, "bar")).to.equal(obj2)
     })
 
-    it('returns object when ids match, sans index suffix', function() {
+    it('returns found root object when id with suffix matches to root id without index suffix', function() {
+      const obj = {id: "foo", children: [{id: "foo-1", content: "cont"}]}
       const tree = {
         children: [
-          {
-            id: "foo1",
-            children: [
-              {id: "foo2-2", content: "cont"}
-            ]
-          },
-          {id: "foo3"}
+          obj,
+          {id: "bar"}
         ]
       }
-      expect(FormUtil.findFieldIgnoringIndex(tree, "foo2")).to.eql({id: "foo2-2", content: "cont"})
+      expect(FormUtil.findFieldIgnoringIndex(tree, "foo-1")).to.equal(obj)
+      expect(FormUtil.findFieldIgnoringIndex(tree, "foo-2")).to.equal(obj)
+    })
+
+    it('returns first found root object', function() {
+      const obj = {id: "foo-1", children: [{id: "foo-1-1", content: "cont"}]}
+      const tree = {
+        children: [
+          obj,
+          {id: "foo-1"}
+        ]
+      }
+      expect(FormUtil.findFieldIgnoringIndex(tree, "foo-1")).to.equal(obj)
+      expect(FormUtil.findFieldIgnoringIndex(tree, "foo")).to.equal(obj)
+    })
+
+    it('returns null when no ids match', function() {
+      const tree = {
+        children: [{id: "bar"}]
+      }
+      expect(FormUtil.findFieldIgnoringIndex(tree, "foo")).to.be.null
     })
   })
 
