@@ -402,6 +402,46 @@ describe('Form util', function() {
     expect(FormUtil.findGrowingParent(tree, calcId)).to.equal(growingFieldSet)
   })
 
+  it('returns predicate for checking if id is same or same if ignoring index', () => {
+    _.forEach([
+      ["foo",         "foo",         true],
+      ["foo-1",       "foo-1",       true],
+      ["foo-1",       "foo-2",       true],
+      ["foo-2",       "foo-1",       true],
+      ["foo-1",       "foo",         true],
+      ["foo",         "foo-1",       true],
+
+      ["foo.bar",     "foo.bar",     true],
+
+      ["foo.bar-1",   "foo.bar-1",   true],
+      ["foo.bar",     "foo.bar-1",   true],
+      ["foo.bar-1",   "foo.bar",     true],
+
+      ["foo-1.bar-1", "foo-1.bar-1", true],
+
+      ["foo-1.bar-1", "foo.bar-1",   true],
+      ["foo-1.bar-1", "foo-1.bar",   true],
+      ["foo-1.bar-1", "foo.bar",     true],
+
+      ["foo.bar-1",   "foo-1.bar-1", true],
+      ["foo-1.bar",   "foo-1.bar-1", true],
+      ["foo.bar",     "foo-1.bar-1", true],
+
+      ["foo.bar",     "foo.man",     false],
+      ["",            "foo",         false],
+      ["foo",         "",            false],
+      ["",            "",            true],
+      [null,          null,          true],
+      [undefined,     undefined,     true],
+      [null,          "",            false],
+      [null,          undefined,     false],
+      [undefined,     null,          false],
+      [undefined,     "",            false]
+    ], ([findId, fieldId, expected]) => {
+      expect(FormUtil.idIsSameOrSameIfIndexIgnoredPredicate(findId)({id: fieldId})).to.equal(expected)
+    })
+  })
+
   it('returns id without index', function() {
     expect(FormUtil.withOutIndex('foo.man-1.bar_zap-2')).to.equal('foo.man.bar_zap')
   })
