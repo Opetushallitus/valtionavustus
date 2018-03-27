@@ -31,8 +31,18 @@ export default class FormUtil {
     },10)
   }
 
-  static idIsSameOrSameIfIndexIgnoredPredicate(fieldId) {
-    return field => { return field.id === fieldId || FormUtil.isSameIfIndexIgnored(field.id, fieldId)}
+  static idIsSameOrSameIfIndexIgnoredPredicate(findId) {
+    const findIdSansIndex = findId ? FormUtil.withOutIndex(findId) : findId
+    return field => {
+      const givenFieldId = field.id
+      if (givenFieldId === findIdSansIndex) {
+        return true
+      }
+      if (!givenFieldId || !findIdSansIndex) {
+        return false
+      }
+      return FormUtil.withOutIndex(givenFieldId) === findIdSansIndex
+    }
   }
 
   static findChildIndexAccordingToFieldSpecification(specificationChildren, currentChildren, fieldId) {
@@ -49,7 +59,11 @@ export default class FormUtil {
   }
 
   static findField(formContent, fieldId) {
-    return JsUtil.findFirst(formContent, n => { return n.id === fieldId })
+    return JsUtil.findFirst(formContent, n => n.id === fieldId)
+  }
+
+  static findIndexOfField(formContent, fieldId) {
+    return JsUtil.findIndexOfFirst(formContent, n => n.id === fieldId)
   }
 
   static findFieldByFieldType(formContent, fieldType) {
@@ -68,10 +82,6 @@ export default class FormUtil {
     return JsUtil.traverseMatching(field.children, n => { return n.id}, n => { return n.id})
   }
 
-  static findFieldIndex(formContent, fieldId) {
-    return JsUtil.findIndexOfFirst(formContent, FormUtil.idIsSameOrSameIfIndexIgnoredPredicate(fieldId))
-  }
-
   static findFieldWithDirectChild(formContent, childId) {
     return JsUtil.findFirst(formContent, n => { return _.some(n.children, c => { return c.id === childId })})
   }
@@ -79,13 +89,6 @@ export default class FormUtil {
   static findGrowingParent(formContent, fieldId) {
     const allGrowingFieldsets = JsUtil.flatFilter(formContent, n => { return n.fieldType === "growingFieldset" })
     return JsUtil.findJsonNodeContainingId(allGrowingFieldsets, fieldId)
-  }
-
-  static isSameIfIndexIgnored(id1, id2) {
-    if (!id1 || !id2) {
-      return false
-    }
-    return this.withOutIndex(id1) === this.withOutIndex(id2)
   }
 
   static withOutIndex(id) {
