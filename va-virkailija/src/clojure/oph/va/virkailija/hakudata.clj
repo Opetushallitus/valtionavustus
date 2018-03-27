@@ -26,8 +26,8 @@
    :tags (:tags arvio)
    :oppilaitokset (:oppilaitokset arvio)
    :changelog (:changelog arvio)
-   :accepts-grant (:accepts-grant arvio)
-   :to-pay (:to-pay arvio)})
+   :accepts-grant (or (:accepts_grant arvio) true)
+   :should-pay (or (:should_pay arvio) true)})
 
 
 (defn- add-arvio [arvio hakemus]
@@ -45,7 +45,7 @@
                            :tags               {:value []}
                            :oppilaitokset      {:names []}
                            :accepts-grant true
-                           })))
+                           :should-pay true})))
 
 (defn- find-and-add-arvio [arviot hakemus]
   (add-arvio (get arviot (:id hakemus)) hakemus))
