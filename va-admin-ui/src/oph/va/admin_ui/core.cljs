@@ -28,7 +28,7 @@
 (defonce reports-state {:data (r/atom {})})
 
 (def top-links
-  {:grant-evaluations {:link "/avustushaku" :title "Hakemusten arviointi"}
+  {:grant-evaluations {:link "/" :title "Hakemusten arviointi"}
    :grant-admin {:link "/admin/" :title "Hakujen hallinta"}
    :payments {:link"/admin-ui/payments/" :title "Maksatusten hallinta"}
    :va-code-values {:link "/admin-ui/va-code-values/"
@@ -40,13 +40,16 @@
        :style (if active theme/active-link theme/link)}
    title])
 
-(defn render-top-links [current-path links]
+(defn render-top-links [current-path links selected-grant]
   [:div {:class "top-links"}
    (doall
      (map
        (fn [[k {:keys [link title]}]]
          (create-link link title (= current-path link)))
-       links))
+       (if (not (empty? selected-grant))
+         (update-in links [:grant-evaluations :link]
+                    str "avustushaku/" (:id selected-grant) "/")
+         links)))
    [:div {:class "logout-button"}
     [ui/flat-button
      {:label "Kirjaudu ulos"
@@ -63,7 +66,8 @@
       (render-top-links (router/get-current-path)
                         (if (user/is-admin? (deref user/user-info))
                           top-links
-                          (dissoc top-links :va-code-values)))
+                          (dissoc top-links :va-code-values))
+                        (deref (:selected-grant payments-state)))
       [:hr theme/hr-top]]
      (case (router/get-current-path)
        "/admin-ui/payments/" (payments-core/home-page payments-state data)
