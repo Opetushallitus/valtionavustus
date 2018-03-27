@@ -4,7 +4,8 @@
    [cljsjs.chartjs]
    [cljs.core.async :refer [put! <! close!]]
    [oph.va.admin-ui.connection :as connection]
-   [oph.va.admin-ui.dialogs :as dialogs]))
+   [oph.va.admin-ui.dialogs :as dialogs]
+   [reagent.core :as r]))
 
 (def colors
   {:blue "rgb(54, 162, 235)"
@@ -94,6 +95,7 @@
    [(create-chart "total-granted"
                   (gen-granted-data (:granted @data)))]])
 
+(defn create-state [] {:data (r/atom {})})
 
 (defn init! [{:keys [data]}]
   (go

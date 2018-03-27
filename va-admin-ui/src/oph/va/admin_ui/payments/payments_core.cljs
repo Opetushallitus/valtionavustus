@@ -214,6 +214,14 @@
    (when (and delete-payments? (user/is-admin? user-info))
      (render-admin-tools payments @selected-grant))])
 
+(defn create-state []
+  {:grants (r/atom [])
+   :applications (r/atom [])
+   :payments (r/atom [])
+   :current-applications (r/atom [])
+   :selected-grant (r/atom nil)
+   :batch-values (r/atom {})})
+
 (defn init! [{:keys [selected-grant batch-values applications
                      current-applications payments grants]}]
   (add-watch

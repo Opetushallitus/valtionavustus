@@ -15,18 +15,6 @@
    [oph.va.admin-ui.reports.reports-core :as reports-core]
    [oph.va.admin-ui.user :as user]))
 
-(defonce payments-state {:grants (r/atom [])
-                         :applications (r/atom [])
-                         :payments (r/atom [])
-                         :current-applications (r/atom [])
-                         :selected-grant (r/atom nil)
-                         :batch-values (r/atom {})})
-
-(defonce code-values-state {:code-values (r/atom [])
-                            :code-filter (r/atom {})})
-
-(defonce reports-state {:data (r/atom {})})
-
 (def top-links
   {:grant-evaluations {:link "/" :title "Hakemusten arviointi"}
    :grant-admin {:link "/admin/" :title "Hakujen hallinta"}
@@ -40,15 +28,15 @@
        :style (if active theme/active-link theme/link)}
    title])
 
-(defn render-top-links [current-path links selected-grant]
+(defn render-top-links [current-path links selected-grant-id]
   [:div {:class "top-links"}
    (doall
      (map
        (fn [[k {:keys [link title]}]]
          (create-link link title (= current-path link)))
-       (if (not (empty? selected-grant))
+       (if (some? selected-grant-id)
          (update-in links [:grant-evaluations :link]
-                    str "avustushaku/" (:id selected-grant) "/")
+                    str "avustushaku/" selected-grant-id "/")
          links)))
    [:div {:class "logout-button"}
     [ui/flat-button
@@ -56,54 +44,62 @@
       :on-click #(router/redirect-to! "/login/logout")}]]])
 
 
-(defn home-page []
+(defn home-page [state]
   (let [data {:user-info (deref user/user-info)
               :delete-payments? (connection/delete-payments?)}]
     [ui/mui-theme-provider
-    {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
-    [:div
+     {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
      [:div
-      (render-top-links (router/get-current-path)
-                        (if (user/is-admin? (deref user/user-info))
-                          top-links
-                          (dissoc top-links :va-code-values))
-                        (deref (:selected-grant payments-state)))
-      [:hr theme/hr-top]]
-     (case (router/get-current-path)
-       "/admin-ui/payments/" (payments-core/home-page payments-state data)
-       "/admin-ui/va-code-values/"
-       (code-values-core/home-page code-values-state)
-       "/admin-ui/reports/" (reports-core/home-page reports-state)
-       (do
-         (router/redirect-to! "/admin-ui/payments/")
-         "Redirecting..."))
-     (dialogs/render)]]))
+      [:div
+       (render-top-links
+         (router/get-current-path)
+         (if (user/is-admin? (deref user/user-info))
+           top-links
+           (dissoc top-links :va-code-values))
+         (when (:selected-grant state) (:id (deref (:selected-grant state)))))
+       [:hr theme/hr-top]]
+      (case (router/get-current-path)
+        "/admin-ui/payments/" (payments-core/home-page state data)
+        "/admin-ui/va-code-values/"
+        (code-values-core/home-page state)
+        "/admin-ui/reports/" (reports-core/home-page state)
+        (do
+          (router/redirect-to! "/admin-ui/payments/")
+          "Redirecting..."))
+      (dialogs/render)]]))
 
-(defn mount-root [] (r/render [home-page] (.getElementById js/document "app")))
+(defn mount-root [state]
+  (r/render [home-page state] (.getElementById js/document "app")))
 
 (defn init! []
-  (mount-root)
-   (go
-    (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan asetuksia" 3)
-          config-result (<! (connection/get-config))]
-      (put! dialog-chan 1)
-      (if (:success config-result)
-        (do
-          (connection/set-config! (:body config-result))
-          (let [user-info-result (<! (connection/get-user-info))]
-            (put! dialog-chan 2)
-            (if (:success user-info-result)
-               (reset! user/user-info (:body user-info-result))
-               (dialogs/show-error-message!
-                "Virhe käyttäjätietojen latauksessa"
-                (select-keys user-info-result [:status :error-text])))))
-        (dialogs/show-error-message!
-          "Virhe asetusten latauksessa"
-          (select-keys config-result [:status :error-text])))
-      (put! dialog-chan 3)
-      (close! dialog-chan)))
-  (case (router/get-current-path)
-   "/admin-ui/payments/" (payments-core/init! payments-state)
-   "/admin-ui/va-code-values/" (code-values-core/init! code-values-state)
-   "/admin-ui/reports/" (reports-core/init! reports-state)
-   ""))
+  (let [state
+        (case (router/get-current-path)
+          "/admin-ui/payments/" (payments-core/create-state)
+          "/admin-ui/va-code-values/" (code-values-core/create-state)
+          "/admin-ui/reports/" (reports-core/create-state)
+          "")]
+    (mount-root state)
+    (go
+      (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan asetuksia" 3)
+            config-result (<! (connection/get-config))]
+        (put! dialog-chan 1)
+        (if (:success config-result)
+          (do
+            (connection/set-config! (:body config-result))
+            (let [user-info-result (<! (connection/get-user-info))]
+              (put! dialog-chan 2)
+              (if (:success user-info-result)
+                (reset! user/user-info (:body user-info-result))
+                (dialogs/show-error-message!
+                  "Virhe käyttäjätietojen latauksessa"
+                  (select-keys user-info-result [:status :error-text])))))
+          (dialogs/show-error-message!
+            "Virhe asetusten latauksessa"
+            (select-keys config-result [:status :error-text])))
+        (put! dialog-chan 3)
+        (close! dialog-chan)))
+    (case (router/get-current-path)
+      "/admin-ui/payments/" (payments-core/init! state)
+      "/admin-ui/va-code-values/" (code-values-core/init! state)
+      "/admin-ui/reports/" (reports-core/init! state)
+      "")))
