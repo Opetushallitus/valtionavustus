@@ -213,6 +213,10 @@
                       @code-values))
             #(delete-code! % code-values))]))]]])
 
+(defn create-state []
+  {:code-values (r/atom [])
+   :code-filter (r/atom {})})
+
 (defn init! [{:keys [code-values code-filter]}]
   (add-watch code-filter ""
              #(download-items! (:value-type %4) (:year %4) code-values))
