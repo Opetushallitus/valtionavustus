@@ -113,8 +113,17 @@
                                                    "accepts-grant-change"
                                                    timestamp
                                                    {:old (:accepts-grant existing)
-                                                    :new (:accepts new)}))
+                                                    :new (:accepts-grant new)}))
     changelog))
+
+    (defn- compare-should-pay [changelog identity timestamp existing new]
+      (if (not (= (:should-pay new) (keyword (:should-pay existing))))
+        (append-changelog changelog (->changelog-entry identity
+                                                       "should-pay-change"
+                                                       timestamp
+                                                       {:old (:should-pay existing)
+                                                        :new (:should-pay new)}))
+        changelog))
 
 (defn- update-changelog [identity existing new]
   (let [changelog (:changelog existing)
