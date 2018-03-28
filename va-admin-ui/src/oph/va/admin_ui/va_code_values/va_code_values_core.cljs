@@ -19,6 +19,10 @@
 
 (def years (mapv #(hash-map :primary-text % :value %) (range 2018 2038)))
 
+(defonce state
+  {:code-values (r/atom [])
+   :code-filter (r/atom {})})
+
 (defn delete-code! [id code-values]
   (go
     (let [dialog-chan (dialogs/show-loading-dialog! "Poistetaan koodia" 3)]
@@ -174,51 +178,48 @@
   (or (lower-str-contains? (:code v) s)
       (lower-str-contains? (:code-value v) s)))
 
-(defn home-page [{:keys [code-values code-filter]}]
-  [:div
-   [:div {:class "oph-typography"}
-    [:div {:class "oph-tabs" :style theme/tabs-header}
-     (doall
-       (map-indexed
-         (fn [i [k v]]
-           [:a {:key i
-                :style theme/tab-header-link
-                :on-click (fn [_]
-                            (reset! code-values [])
-                            (swap! code-filter assoc :value-type k))
-                :class
-                (str "oph-tab-item"
-                     (when (= (:value-type @code-filter) k) " oph-tab-item-is-active"))}
-            v])
-         value-types))]]
-   [:div
-    [(render-add-item #(create-item! (:value-type @code-filter) % code-values))]
-    [:hr]
-    [(let [filter-str (r/atom "")]
-       (fn []
-         [:div
-          [:div
-           (va-ui/select-field
-             {:value (:year @code-filter)
-              :on-change #(swap! code-filter assoc :year (parse-int %))
-              :values years
-              :include-empty? true})
-           (va-ui/text-field
-             {:value @filter-str
-              :on-change #(reset! filter-str (.-value (.-target %)))})]
-          (render-code-table
-            (if (empty? @filter-str)
-              @code-values
-              (filter #(code-value-matches? (.toLowerCase @filter-str) %)
-                      @code-values))
-            #(delete-code! % code-values))]))]]])
+(defn home-page []
+  (let [{:keys [code-values code-filter]} state]
+    [:div
+     [:div {:class "oph-typography"}
+      [:div {:class "oph-tabs" :style theme/tabs-header}
+       (doall
+         (map-indexed
+           (fn [i [k v]]
+             [:a {:key i
+                  :style theme/tab-header-link
+                  :on-click (fn [_]
+                              (reset! code-values [])
+                              (swap! code-filter assoc :value-type k))
+                  :class
+                  (str "oph-tab-item"
+                       (when (= (:value-type @code-filter) k) " oph-tab-item-is-active"))}
+              v])
+           value-types))]]
+     [:div
+      [(render-add-item #(create-item! (:value-type @code-filter) % code-values))]
+      [:hr]
+      [(let [filter-str (r/atom "")]
+         (fn []
+           [:div
+            [:div
+             (va-ui/select-field
+               {:value (:year @code-filter)
+                :on-change #(swap! code-filter assoc :year (parse-int %))
+                :values years
+                :include-empty? true})
+             (va-ui/text-field
+               {:value @filter-str
+                :on-change #(reset! filter-str (.-value (.-target %)))})]
+            (render-code-table
+              (if (empty? @filter-str)
+                @code-values
+                (filter #(code-value-matches? (.toLowerCase @filter-str) %)
+                        @code-values))
+              #(delete-code! % code-values))]))]]]))
 
-(defn create-state []
-  {:code-values (r/atom [])
-   :code-filter (r/atom {})})
-
-(defn init! [{:keys [code-values code-filter]}]
-  (add-watch code-filter ""
-             #(download-items! (:value-type %4) (:year %4) code-values))
-  (reset! code-filter {:value-type :operational-unit
-                       :year nil}))
+(defn init! []
+  (add-watch (:code-filter state) ""
+             #(download-items! (:value-type %4) (:year %4) (:code-values state)))
+  (reset! (:code-filter state) {:value-type :operational-unit
+                         :year nil}))
