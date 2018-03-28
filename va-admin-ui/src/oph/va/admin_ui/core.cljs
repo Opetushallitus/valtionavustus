@@ -44,7 +44,7 @@
       :on-click #(router/redirect-to! "/login/logout")}]]])
 
 
-(defn home-page [state]
+(defn home-page []
   (let [data {:user-info (deref user/user-info)
               :delete-payments? (connection/delete-payments?)}]
     [ui/mui-theme-provider
@@ -56,50 +56,45 @@
          (if (user/is-admin? (deref user/user-info))
            top-links
            (dissoc top-links :va-code-values))
-         (when (:selected-grant state) (:id (deref (:selected-grant state)))))
+         (when (:selected-grant payments-core/state)
+           (:id (deref (:selected-grant payments-core/state)))))
        [:hr theme/hr-top]]
       (case (router/get-current-path)
-        "/admin-ui/payments/" (payments-core/home-page state data)
+        "/admin-ui/payments/" (payments-core/home-page data)
         "/admin-ui/va-code-values/"
-        (code-values-core/home-page state)
-        "/admin-ui/reports/" (reports-core/home-page state)
+        (code-values-core/home-page)
+        "/admin-ui/reports/" (reports-core/home-page)
         (do
           (router/redirect-to! "/admin-ui/payments/")
           "Redirecting..."))
       (dialogs/render)]]))
 
-(defn mount-root [state]
-  (r/render [home-page state] (.getElementById js/document "app")))
+(defn mount-root []
+  (r/render [home-page] (.getElementById js/document "app")))
 
 (defn init! []
-  (let [state
-        (case (router/get-current-path)
-          "/admin-ui/payments/" (payments-core/create-state)
-          "/admin-ui/va-code-values/" (code-values-core/create-state)
-          "/admin-ui/reports/" (reports-core/create-state)
-          "")]
-    (mount-root state)
-    (go
-      (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan asetuksia" 3)
-            config-result (<! (connection/get-config))]
-        (put! dialog-chan 1)
-        (if (:success config-result)
-          (do
-            (connection/set-config! (:body config-result))
-            (let [user-info-result (<! (connection/get-user-info))]
-              (put! dialog-chan 2)
-              (if (:success user-info-result)
-                (reset! user/user-info (:body user-info-result))
-                (dialogs/show-error-message!
-                  "Virhe käyttäjätietojen latauksessa"
-                  (select-keys user-info-result [:status :error-text])))))
-          (dialogs/show-error-message!
-            "Virhe asetusten latauksessa"
-            (select-keys config-result [:status :error-text])))
-        (put! dialog-chan 3)
-        (close! dialog-chan)))
-    (case (router/get-current-path)
-      "/admin-ui/payments/" (payments-core/init! state)
-      "/admin-ui/va-code-values/" (code-values-core/init! state)
-      "/admin-ui/reports/" (reports-core/init! state)
-      "")))
+  (mount-root)
+  (go
+    (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan asetuksia" 3)
+          config-result (<! (connection/get-config))]
+      (put! dialog-chan 1)
+      (if (:success config-result)
+        (do
+          (connection/set-config! (:body config-result))
+          (let [user-info-result (<! (connection/get-user-info))]
+            (put! dialog-chan 2)
+            (if (:success user-info-result)
+              (reset! user/user-info (:body user-info-result))
+              (dialogs/show-error-message!
+                "Virhe käyttäjätietojen latauksessa"
+                (select-keys user-info-result [:status :error-text])))))
+        (dialogs/show-error-message!
+          "Virhe asetusten latauksessa"
+          (select-keys config-result [:status :error-text])))
+      (put! dialog-chan 3)
+      (close! dialog-chan)))
+  (case (router/get-current-path)
+    "/admin-ui/payments/" (payments-core/init!)
+    "/admin-ui/va-code-values/" (code-values-core/init!)
+    "/admin-ui/reports/" (reports-core/init!)
+    ""))
