@@ -49,6 +49,8 @@ export default class HakemusArviointi extends Component {
                        allowHakemusScoring={allowHakemusScoring} userInfo={userInfo} showOthersScores={showOthersScores}/>
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments} allowHakemusCommenting={allowHakemusCommenting}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <ShouldPay controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges}/>
+       <AcceptsGrant controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges}/>
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
@@ -169,6 +171,76 @@ class SetArviointiStatus extends React.Component {
   }
 }
 
+class ShouldPay extends React.Component {
+  render() {
+    const hakemus = this.props.hakemus
+    const allowEditing = this.props.allowEditing
+    const arvio = hakemus.arvio
+    const selectedShouldPay = arvio["should-pay"]
+    const isDisabled = this.props.disabled
+    const onChange = allowEditing ? controller.setHakemusShouldPay(hakemus, !acceptsGrant) : null
+    const options = _.flatten([
+      {htmlId: "set-should-pay-true", value: true, label: "Kyllä"},
+      {htmlId: "set-should-pay-false", value: false, label: "Ei"}
+    ].map(spec =>
+      [
+        <input id={spec.htmlId}
+               key={spec.htmlId}
+               type="radio"
+               name="should-pay"
+               value={spec.value}
+               onChange={onChange}
+               checked={spec.value === selectedShouldPay}
+               disabled={allowEditing} />,
+        <label key={spec.htmlId + "-label"}
+               htmlFor={spec.htmlId}>{spec.label}</label>
+      ]
+    ))
+    return (
+      <div id="set-accepts-grant">
+        <h3>Maksuun:</h3>
+        <fieldset className="soresu-radiobutton-group">
+          {options}
+        </fieldset>
+      </div>
+    )
+  }
+}
+class AcceptsGrant extends React.Component {
+  render() {
+    const hakemus = this.props.hakemus
+    const allowEditing = this.props.allowEditing
+    const arvio = hakemus.arvio
+    const selectedAccepts = arvio["accepts-grant"]
+    const isDisabled = this.props.disabled
+    const onChange = allowEditing ? controller.setHakemusArvioAcceptsGrant(hakemus, !acceptsGrant) : null
+    const options = _.flatten([
+      {htmlId: "set-accepts-grant-true", value: true, label: "Kyllä"},
+      {htmlId: "set-accepts-grant-false", value: false, label: "Ei"}
+    ].map(spec =>
+      [
+        <input id={spec.htmlId}
+               key={spec.htmlId}
+               type="radio"
+               name="accepts-grant"
+               value={spec.value}
+               onChange={onChange}
+               checked={spec.value === selectedAccepts}
+               disabled={allowEditing} />,
+        <label key={spec.htmlId + "-label"}
+               htmlFor={spec.htmlId}>{spec.label}</label>
+      ]
+    ))
+    return (
+      <div id="set-accepts-grant">
+        <h3>Ottaa vastaan:</h3>
+        <fieldset className="soresu-radiobutton-group">
+          {options}
+        </fieldset>
+      </div>
+    )
+  }
+}
 
 
 class ChangeRequest extends React.Component {

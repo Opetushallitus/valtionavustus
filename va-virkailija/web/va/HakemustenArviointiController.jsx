@@ -867,6 +867,20 @@ export default class HakemustenArviointiController {
     }
   }
 
+  setHakemusArvioAcceptsGrant(hakemus, newAcceptsGrant) {
+    return function() {
+      hakemus.arvio["accepts-grant"] = newAcceptsGrant
+      dispatcher.push(events.updateHakemusArvio, hakemus)
+    }
+  }
+
+  setHakemusShouldPay(hakemus, newShouldPay) {
+    return function() {
+      hakemus.arvio["accepts-grant"] = newShouldPay
+      dispatcher.push(events.updateHakemusArvio, hakemus)
+    }
+  }
+
   toggleDetailedCosts(hakemus, useDetailedCosts) {
     hakemus.arvio.useDetailedCosts = useDetailedCosts
     dispatcher.push(events.updateHakemusArvio, hakemus)
