@@ -24,11 +24,9 @@ export default class AutocompleteCodeValue extends Component {
   NameOptionRenderer({key, option }) {
     return (
       <div
-        className="Select-input"
-        style={{ width: "97%" }}
+        className="Select-input name-option-renderer"
         key={key}
-        onClick={() => this.updateValue(option)}
-      >
+        onClick={() => this.updateValue(option)} >
         {option.code + " " + option["code-value"]}
       </div>
     )
@@ -37,8 +35,9 @@ export default class AutocompleteCodeValue extends Component {
 
   codeValueRenderer(option){
     return (
-      <div>{option.code + " " + option["code-value"]}</div>
-    )
+      <div className="code-value-renderer">
+        {option.code} {option["code-value"]}
+      </div>)
   }
 
 
@@ -48,7 +47,6 @@ export default class AutocompleteCodeValue extends Component {
         id={this.props.codeType}
         labelKey='code'
         placeholder="Valitse listasta"
-        style={{ width: "97%" }}
         backspaceRemoves={true}
         options={this.props.codeOptions}
         onChange={this.updateValue}
