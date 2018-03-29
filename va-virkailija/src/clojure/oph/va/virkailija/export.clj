@@ -137,7 +137,7 @@
          (filter (comp not empty?)))))
 
 (defn- hakemus->map [hakemus]
-  (let [answers (formutil/unwrap-answers (:answers hakemus) ["checkboxButton" "vaFocusAreas"])]
+  (let [answers (formutil/unwrap-answers (:answers hakemus) ["checkboxButton" "vaFocusAreas" "tableField"])]
     (reduce (fn [answer-map [field-name _ lookup-fn]]
               (assoc answer-map field-name (lookup-fn hakemus)))
             answers
@@ -197,6 +197,9 @@
                           (map (fn [index] (->> (nth focus-areas index)
                                                 :fi)))
                           (string/join "; ")))
+    "tableField" (->> (get answer-set id)
+                      (map (fn [row] (str "[" (string/join " | " row) "]")))
+                      (string/join " "))
     "moneyField" (str->int (get answer-set id))
     "vaTraineeDayCalculator" (str->float (get answer-set (str id ".total")))
     (get answer-set id)))
@@ -216,8 +219,10 @@
                            (conj acc [(:key child) (mapv :key (:value child))]))
         convert-answers-to-lookup-table (fn [value]
                                           (array-map (:key value) (reduce descend-to-child (array-map) (:value value))))
+        growing-fieldset-answer? (fn [answer] (and (vector? (:value answer))
+                                                   (= "growingFieldset" (:fieldType answer))))
         process-answers (fn [answers] (->> answers
-                                           (filter (fn [value] (vector? (:value value))))
+                                           (filter growing-fieldset-answer?)
                                            (mapv convert-answers-to-lookup-table)))
         combine (fn [accumulated single-entry]
                   (reduce (fn [acc item]
