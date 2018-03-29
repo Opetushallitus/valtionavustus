@@ -48,7 +48,8 @@
       (let [result
             (loop [total-result {:count 0 :error-count 0 :errors '()}]
               (if-let [r (<!! c)]
-                (if (:success r)
+                (if (or (:success r)
+                        (= (get-in r [:error :error-type]) :no-payments))
                   (recur (update total-result :count inc))
                   (do (when (= (get-in r [:error :error-type]) :exception)
                         (log/error (get-in r [:error :exception])))
