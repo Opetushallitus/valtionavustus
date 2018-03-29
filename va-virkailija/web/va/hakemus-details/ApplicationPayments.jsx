@@ -73,9 +73,10 @@ export default class ApplicationPayments extends Component {
           {this.localeString(p["payment-sum"])} €
         </td>
         <td>
-          <button type="button"
-                  className="remove delete-payment-button"
-                  alt="Poista maksuerä"/>
+          {p.state === 1 &&
+            <button type="button"
+                    className="remove delete-payment-button"
+                    alt="Poista maksuerä"/>}
         </td>
       </tr>)
   }
