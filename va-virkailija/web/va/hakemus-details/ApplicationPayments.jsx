@@ -66,6 +66,7 @@ export default class ApplicationPayments extends Component {
   }
 
   renderPayment(p, i) {
+    const onRemoveCurrentPayment = () => this.props.onRemovePayment(p.id)
     return (
       <tr key={i}>
         <td>{i + 1}. erä</td>
@@ -75,6 +76,7 @@ export default class ApplicationPayments extends Component {
         <td>
           {p.state === 1 &&
             <button type="button"
+                    onClick={onRemoveCurrentPayment}
                     className="remove delete-payment-button"
                     alt="Poista maksuerä"/>}
         </td>
