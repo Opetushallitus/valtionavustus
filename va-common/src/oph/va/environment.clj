@@ -15,7 +15,8 @@
                             :virkailija-server {:url (:virkailija-url (:server config))}
                             :paatos-path (:paatos-path (:ui config))
                             :payments (:payments config)
-                            :notice (get-notice)}
+                            :notice (get-notice)
+                            :application-change (:application-change config)}
         opintopolku (:opintopolku config)]
     (if-let [opintopolku-url (:url opintopolku)]
       (assoc common-environment :opintopolku {:url opintopolku-url
