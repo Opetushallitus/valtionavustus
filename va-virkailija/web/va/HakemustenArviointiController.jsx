@@ -611,7 +611,7 @@ export default class HakemustenArviointiController {
     const url = `/api/v2/payments/${id}/`
     state.saveStatus.saveInProgress = true
     HttpUtil.delete(url)
-      .then(function(response) {
+      .then(function() {
         dispatcher.push(events.paymentRemoved, id)
         dispatcher.push(events.saveCompleted)
       })
