@@ -239,11 +239,11 @@
                                    :change-request change-request
                                    :url "[linkki hakemukseen]"})}))))
 
-(defn- get-haku-export []
+(defn- get-avustushaku-export []
   (compojure-api/GET "/:haku-id/export.xslx" []
     :path-params [haku-id :- Long]
-    :summary "Export Excel XLSX document for given avustushaku"
-    (let [document (-> (hakudata/get-combined-avustushaku-data haku-id)
+    :summary "Export Excel XLSX document for avustushaku"
+    (let [document (-> (hakudata/get-hakudata-for-export haku-id)
                        export/export-avustushaku
                        (ByteArrayInputStream.))]
       (-> (ok document)
@@ -512,7 +512,7 @@
   (send-selvitys)
   (send-selvitys-email)
   (post-change-request-email)
-  (get-haku-export)
+  (get-avustushaku-export)
   (get-avustushaku-role)
   (put-avustushaku-role)
   (post-avustushaku-role)
