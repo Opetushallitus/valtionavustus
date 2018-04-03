@@ -32,9 +32,9 @@
         (comp :budget-granted :arvio)
         (comp :score-total-average :scoring :arvio)))
 
-(def answers-sheet-name "Vastaukset")
+(def hakemus-answers-sheet-name "Hakemuksien vastaukset")
 
-(def answers-sheet-fixed-fields
+(def hakemus-answers-sheet-fixed-fields
   [["fixed-register-number" "Diaarinumero" :register-number {:fieldType "textField"}]
    ["fixed-organization-name" "Hakijaorganisaatio" :organization-name {:fieldType "textField"}]
    ["fixed-project-name" "Projektin nimi" :project-name {:fieldType "textField"}]
@@ -43,6 +43,16 @@
    ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share {:fieldType "numberField"}]
    ["fixed-budget-granted" "Myönnetty avustus" (comp :budget-granted :arvio) {:fieldType "numberField"}]
    ["fixed-score-total-average" "Arviokeskiarvo" (comp :score-total-average :scoring :arvio) {:fieldType "numberField"}]])
+
+(def loppuselvitys-answers-sheet-name "Loppuselvityksien vastaukset")
+
+(def loppuselvitys-answers-sheet-fixed-fields
+  [["fixed-register-number" "Diaarinumero" :register-number {:fieldType "textField"}]
+   ["fixed-organization-name" "Hakijaorganisaatio" :organization-name {:fieldType "textField"}]
+   ["fixed-project-name" "Projektin nimi" :project-name {:fieldType "textField"}]
+   ["fixed-language" "Asiointikieli" :language {:fieldType "textField"}]
+   ["fixed-budget-total" "Toteutunut budjetti" :budget-total {:fieldType "numberField"}]
+   ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share {:fieldType "numberField"}]])
 
 (def maksu-sheet-name "Tiliöinti")
 
@@ -213,12 +223,12 @@
          (reduce unwrap-double-nested-lists [])
          (filter (comp not empty?)))))
 
-(defn- hakemus->answers-sheet-map [hakemus]
+(defn- hakemus->answers-sheet-map [fixed-fields hakemus]
   (let [answers (formutil/unwrap-answers (:answers hakemus) ["checkboxButton" "vaFocusAreas" "tableField"])]
     (reduce (fn [answer-map [field-name _ lookup-fn]]
               (assoc answer-map field-name (lookup-fn hakemus)))
             answers
-            answers-sheet-fixed-fields)))
+            fixed-fields)))
 
 (defn- remove-white-spaces [str]
   (string/replace str #"\s" ""))
@@ -365,45 +375,48 @@
          [main-sheet-columns]
          (mapv hakemus->main-sheet-rows hakemukset)))
 
-(defn- make-answers-sheet-rows [form hakemukset va-focus-areas-label va-focus-areas-items]
+(defn- make-answers-sheet-rows [form hakemukset va-focus-areas-label va-focus-areas-items fixed-fields]
   (let [growing-fieldset-lut           (generate-growing-fieldset-lut hakemukset)
         answers-key-label-type-triples (avustushaku->formlabels form
                                                                 va-focus-areas-label
                                                                 growing-fieldset-lut)
         answers-keys                   (apply conj
-                                              (mapv first answers-sheet-fixed-fields)
+                                              (mapv first fixed-fields)
                                               (mapv first answers-key-label-type-triples))
         answers-labels                 (apply conj
-                                              (mapv second answers-sheet-fixed-fields)
+                                              (mapv second fixed-fields)
                                               (mapv second answers-key-label-type-triples))
         answers-types                  (apply conj
-                                              (mapv fourth answers-sheet-fixed-fields)
+                                              (mapv fourth fixed-fields)
                                               (mapv third answers-key-label-type-triples))
         answers-rows                   (extract-answer-values answers-keys
                                                               answers-types
-                                                              (map hakemus->answers-sheet-map hakemukset)
+                                                              (map (partial hakemus->answers-sheet-map fixed-fields)
+                                                                   hakemukset)
                                                               va-focus-areas-items)]
     (apply conj [answers-labels] answers-rows)))
 
 (defn- make-maksu-sheet-rows [accepted-hakemukset paatos-date has-multiple-maksuera]
-  (let [map-paatos-data (partial add-paatos-data paatos-date)
-        map-split-multiple (partial split-multiple-maksuera-if-needed has-multiple-maksuera)
+  (let [map-paatos-data                   (partial add-paatos-data paatos-date)
+        map-split-multiple                (partial split-multiple-maksuera-if-needed has-multiple-maksuera)
         accepted-list-multiple-maksuera-1 (mapv map-split-multiple accepted-hakemukset)
         accepted-list-multiple-maksuera-2 (flatten accepted-list-multiple-maksuera-1)
-        accepted-list-sorted (sort-by :organization-name accepted-list-multiple-maksuera-2)
-        accepted-list-paatos (mapv map-paatos-data accepted-list-sorted)]
+        accepted-list-sorted              (sort-by :organization-name accepted-list-multiple-maksuera-2)
+        accepted-list-paatos              (mapv map-paatos-data accepted-list-sorted)]
     (apply conj
            [maksu-sheet-columns]
            (mapv hakemus->maksu-sheet-rows accepted-list-paatos))))
 
 (defn export-avustushaku [avustushaku-combined]
   (let [avustushaku           (:avustushaku avustushaku-combined)
-        va-focus-areas-label  (->> avustushaku :content :focus-areas :label :fi)
-        va-focus-areas-items  (->> avustushaku :content :focus-areas :items)
+        va-focus-areas-label  (-> avustushaku :content :focus-areas :label :fi)
+        va-focus-areas-items  (-> avustushaku :content :focus-areas :items)
         paatos-date           (-> avustushaku :decision :date)
         has-multiple-maksuera (-> avustushaku :content :multiplemaksuera)
         hakemus-form          (:form avustushaku-combined)
         hakemus-list          (:hakemukset avustushaku-combined)
+        loppuselvitys-form    (:form_loppuselvitys avustushaku-combined)
+        loppuselvitys-list    (:loppuselvitykset avustushaku-combined)
 
         output (ByteArrayOutputStream.)
 
@@ -412,17 +425,23 @@
 
         main-sheet (spreadsheet/select-sheet main-sheet-name wb)
 
-        main-header-row (first (spreadsheet/row-seq main-sheet))
+        hakemus-answers-sheet (let [sheet (spreadsheet/add-sheet! wb hakemus-answers-sheet-name)]
+                                (spreadsheet/add-rows! sheet
+                                                       (make-answers-sheet-rows hakemus-form
+                                                                                hakemus-list
+                                                                                va-focus-areas-label
+                                                                                va-focus-areas-items
+                                                                                hakemus-answers-sheet-fixed-fields))
+                                sheet)
 
-        answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
-                        (spreadsheet/add-rows! sheet
-                                               (make-answers-sheet-rows hakemus-form
-                                                                        hakemus-list
-                                                                        va-focus-areas-label
-                                                                        va-focus-areas-items))
-                        sheet)
-
-        answers-header-row (first (spreadsheet/row-seq answers-sheet))
+        loppuselvitys-answers-sheet (let [sheet (spreadsheet/add-sheet! wb loppuselvitys-answers-sheet-name)]
+                                      (spreadsheet/add-rows! sheet
+                                                             (make-answers-sheet-rows loppuselvitys-form
+                                                                                      loppuselvitys-list
+                                                                                      va-focus-areas-label
+                                                                                      va-focus-areas-items
+                                                                                      loppuselvitys-answers-sheet-fixed-fields))
+                                      sheet)
 
         maksu-sheet (let [sheet (spreadsheet/add-sheet! wb maksu-sheet-name)]
                       (spreadsheet/add-rows! sheet
@@ -431,19 +450,15 @@
                                                                     has-multiple-maksuera))
                       sheet)
 
-        maksu-header-row (first (spreadsheet/row-seq maksu-sheet))
-
         header-style (spreadsheet/create-cell-style! wb {:background :yellow
                                                          :font       {:bold true}})]
 
-    (fit-columns main-sheet)
-    (fit-columns answers-sheet)
-    (fit-columns maksu-sheet)
-
-    ;; Style first row
-    (spreadsheet/set-row-style! main-header-row header-style)
-    (spreadsheet/set-row-style! answers-header-row header-style)
-    (spreadsheet/set-row-style! maksu-header-row header-style)
+    (doseq [sheet [main-sheet
+                   hakemus-answers-sheet
+                   loppuselvitys-answers-sheet
+                   maksu-sheet]]
+      (fit-columns sheet)
+      (spreadsheet/set-row-style! (first (spreadsheet/row-seq sheet)) header-style))
 
     (.write wb output)
     (.toByteArray output)))

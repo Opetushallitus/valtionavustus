@@ -19,5 +19,5 @@ where
     h.avustushaku = :avustushaku_id
     and h.status in ('submitted', 'pending_change_request', 'officer_edit')
     and h.version_closed is null
-    and h.hakemus_type = 'hakemus'
+    and h.hakemus_type = :hakemus_type
 order by h.register_number
