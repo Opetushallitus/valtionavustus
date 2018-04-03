@@ -16,7 +16,19 @@
     (let [identity (authentication/get-request-identity request)]
       (ok (payments-data/create-payment payment-values identity)))))
 
+(defn- delete-payment []
+  (compojure-api/DELETE
+    "/:id/" [id :as request]
+    :path-params [id :- Long]
+    :summary "Delete payment with state 1"
+    (let [payment (payments-data/get-payment id)]
+      (when (not= (:state payment) 1)
+        (throw "Exception"))
+      (delete-payment id)
+      nil)))
+
 (compojure-api/defroutes
   routes
   "payment routes"
-  (create-payment))
+  (create-payment)
+  (delete-payment))
