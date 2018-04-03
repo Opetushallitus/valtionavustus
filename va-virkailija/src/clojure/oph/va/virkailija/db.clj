@@ -107,16 +107,6 @@
                                                     :new (:status new)}))
     changelog))
 
-(defn- compare-accepts-grant [changelog identity timestamp existing new]
-  (let [new-accepts-grant (:accepts_grant new)
-        existing-accepts-grant (:accepts_grant existing)]
-    (if (not (= new-accepts-grant))
-      (append-changelog changelog (->changelog-entry identity
-                                                     "accepts-grant-change"
-                                                     timestamp
-                                                     {:old existing-accepts-grant
-                                                      :new new-accepts-grant}))
-      changelog)))
 
     (defn- compare-should-pay [changelog identity timestamp existing new]
       (if (not (= (:should-pay new) (keyword (:should-pay existing))))
@@ -133,7 +123,6 @@
     (if identity
       (-> (if changelog changelog [])
         (compare-status identity timestamp existing new)
-        (compare-accepts-grant identity timestamp existing new)
         (compare-oppilaitokset identity timestamp existing new)
         (compare-budget-granted identity timestamp existing new)
         (compare-summary-comment identity timestamp existing new)
@@ -181,7 +170,6 @@
                         :perustelut (:perustelut arvio)
                         :tags (:tags arvio)
                         :oppilaitokset {:names oppilaitokset-names}
-                        :accepts_grant (:accepts-grant arvio)
                         :should_pay (:should-pay arvio)
                         }
         existing (get-arvio hakemus-id)

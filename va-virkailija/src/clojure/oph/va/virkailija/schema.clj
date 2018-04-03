@@ -55,7 +55,6 @@
    (s/optional-key :perustelut) (s/maybe s/Str)
    (s/optional-key :presentercomment) (s/maybe s/Str)
    (s/optional-key :changelog) (s/maybe s/Any)
-   (s/optional-key :accepts-grant) (s/maybe s/Bool)
    (s/optional-key :should-pay) (s/maybe s/Bool)})
 
 (s/defschema NewComment
