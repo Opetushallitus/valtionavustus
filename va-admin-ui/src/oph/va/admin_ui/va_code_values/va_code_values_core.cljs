@@ -10,13 +10,18 @@
    [cljs-react-material-ui.icons :as ic]
    [oph.va.admin-ui.theme :as theme]
    [oph.va.admin-ui.connection :as connection]
-   [oph.va.admin-ui.dialogs :as dialogs]))
+   [oph.va.admin-ui.dialogs :as dialogs]
+   [oph.va.admin-ui.utils :refer [parse-int]]))
 
 (def value-types {:operational-unit "Toimintayksikkö"
                   :project "Projekti"
                   :operation "Toiminto"})
 
 (def years (mapv #(hash-map :primary-text % :value %) (range 2018 2038)))
+
+(defonce state
+  {:code-values (r/atom [])
+   :code-filter (r/atom {})})
 
 (defn delete-code! [id code-values]
   (go
@@ -28,6 +33,7 @@
           (:success result)
           (do
             (reset! code-values (filter #(not= (:id %) id) @code-values))
+            (connection/remove-cached! "va-code-values")
             (dialogs/show-message! "Koodi poistettu"))
           (= (:status result) 405)
           (dialogs/show-message!
@@ -92,6 +98,7 @@
           :value (or (:year @v) "")
           :type "number"
           :max-length 4
+          :validator #(< (parse-int (-> % .-target .-value)) 2100)
           :on-change
           (fn [e]
             (let [result (js/parseInt (.-value (.-target e)))]
@@ -104,8 +111,9 @@
         [va-ui/text-field
          {:floating-label-text "Koodi"
           :value (or (:code @v) "")
+          :validator #(<= (-> % .-target .-value .-length) 13)
           :on-change #(swap! v assoc :code (.-value (.-target %)))
-          :style (assoc theme/text-field :width 100)
+          :style (assoc theme/text-field :width 150)
           :on-key-press catch-enter}]
         [va-ui/text-field
          {:floating-label-text "Nimi"
@@ -129,7 +137,10 @@
     (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan koodeja" 3)]
       (put! dialog-chan 1)
       (let [result
-            (<! (connection/get-va-code-values-by-type (name value-type) year))]
+            (if (some? year)
+              (<! (connection/get-va-code-values-by-type-and-year
+                    (name value-type) year))
+              (<! (connection/get-va-code-values-by-type (name value-type))))]
         (if (:success result)
           (reset! code-values (:body result))
           (dialogs/show-error-message!
@@ -146,7 +157,9 @@
                          (assoc values :value-type (name value-type))))]
         (put! dialog-chan 2)
         (if (:success result)
-          (swap! code-values conj (:body result))
+          (do
+            (swap! code-values conj (:body result))
+            (connection/remove-cached! "va-code-values"))
           (dialogs/show-error-message!
             "Virhe koodin lisäämisessä"
             (select-keys result [:status :error-text]))))
@@ -165,46 +178,48 @@
   (or (lower-str-contains? (:code v) s)
       (lower-str-contains? (:code-value v) s)))
 
-(defn home-page [{:keys [code-values code-filter]}]
-  [:div
-   [:div {:class "oph-typography"}
-    [:div {:class "oph-tabs" :style theme/tabs-header}
-     (doall
-       (map-indexed
-         (fn [i [k v]]
-           [:a {:key i
-                :style theme/tab-header-link
-                :on-click (fn [_]
-                            (reset! code-values [])
-                            (swap! code-filter assoc :value-type k
-                                   :year (current-year)))
-                :class
-                (str "oph-tab-item"
-                     (when (= (:value-type @code-filter) k) " oph-tab-item-is-active"))}
-            v])
-         value-types))]]
-   [:div
-    [(render-add-item #(create-item! (:value-type @code-filter) % code-values))]
-    [:hr]
-    [(let [filter-str (r/atom "")]
-       (fn []
-         [:div
-          [:div
-           (va-ui/select-field
-             {:value (:year @code-filter)
-              :on-change #(swap! code-filter assoc :year (js/parseInt %))
-              :values years})
-           (va-ui/text-field
-             {:value @filter-str
-              :on-change #(reset! filter-str (.-value (.-target %)))})]
-          (render-code-table
-            (if (empty? @filter-str)
-              @code-values
-              (filter #(code-value-matches? @filter-str %) @code-values))
-            #(delete-code! % code-values))]))]]])
+(defn home-page []
+  (let [{:keys [code-values code-filter]} state]
+    [:div
+     [:div {:class "oph-typography"}
+      [:div {:class "oph-tabs" :style theme/tabs-header}
+       (doall
+         (map-indexed
+           (fn [i [k v]]
+             [:a {:key i
+                  :style theme/tab-header-link
+                  :on-click (fn [_]
+                              (reset! code-values [])
+                              (swap! code-filter assoc :value-type k))
+                  :class
+                  (str "oph-tab-item"
+                       (when (= (:value-type @code-filter) k) " oph-tab-item-is-active"))}
+              v])
+           value-types))]]
+     [:div
+      [(render-add-item #(create-item! (:value-type @code-filter) % code-values))]
+      [:hr]
+      [(let [filter-str (r/atom "")]
+         (fn []
+           [:div
+            [:div
+             (va-ui/select-field
+               {:value (:year @code-filter)
+                :on-change #(swap! code-filter assoc :year (parse-int %))
+                :values years
+                :include-empty? true})
+             (va-ui/text-field
+               {:value @filter-str
+                :on-change #(reset! filter-str (.-value (.-target %)))})]
+            (render-code-table
+              (if (empty? @filter-str)
+                @code-values
+                (filter #(code-value-matches? (.toLowerCase @filter-str) %)
+                        @code-values))
+              #(delete-code! % code-values))]))]]]))
 
-(defn init! [{:keys [code-values code-filter]}]
-  (add-watch code-filter ""
-             #(download-items! (:value-type %4) (:year %4) code-values))
-  (reset! code-filter {:value-type :operational-unit
-                       :year (current-year)}))
+(defn init! []
+  (add-watch (:code-filter state) ""
+             #(download-items! (:value-type %4) (:year %4) (:code-values state)))
+  (reset! (:code-filter state) {:value-type :operational-unit
+                         :year nil}))

@@ -174,11 +174,13 @@
   (let [base-haku (-> base-haku-id
                       (hakija-api/get-hakudata)
                       :avustushaku)
-        {:keys [name selection-criteria self-financing-percentage focus-areas
-                operational-unit project operation]} (:content base-haku)
+        {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
         haku-type (:haku-type base-haku)
         form-id (:form base-haku)
         decision (:decision base-haku)
+        project-id (:project-id base-haku)
+        operation-id (:operation-id base-haku)
+        operational-unit-id (:operational-unit-id base-haku)
         new-haku (hakija-api/create-avustushaku
                    {:name (add-copy-suffixes name)
                     :duration {:start (clj-time/plus
@@ -189,13 +191,13 @@
                                        :sv "Ansökningstid"}}
                     :selection-criteria selection-criteria
                     :self-financing-percentage self-financing-percentage
-                    :focus-areas focus-areas
-                    :operational-unit operational-unit
-                    :project project
-                    :operation operation}
+                    :focus-areas focus-areas}
                    form-id
                    decision
-                   haku-type)]
+                   haku-type
+                   project-id
+                   operation-id
+                   operational-unit-id)]
     (hakija-api/create-avustushaku-role {:avustushaku (:id new-haku)
                                          :role "presenting_officer"
                                          :name (str (:first-name identity) " "

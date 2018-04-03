@@ -56,8 +56,6 @@ const events = {
 
 const basicFields = ["loppuselvitysdate", "valiselvitysdate", "register-number"]
 
-const paymentFields = ["operational-unit", "project", "operation"]
-
 function appendBudgetComponent(selvitysType, avustushaku) {
   const form = selvitysType === "valiselvitys" ? ValiselvitysForm : LoppuselvitysForm
   const originalVaBudget = FormUtil.findFieldByFieldType(avustushaku.formContent.content, "vaBudget")
@@ -119,6 +117,7 @@ export default class HakujenHallintaController {
       userInfo: Bacon.fromPromise(HttpUtil.get("/api/userinfo")),
       translations: Bacon.fromPromise(HttpUtil.get("/translations.json")).map(Immutable),
       environment: Bacon.fromPromise(HttpUtil.get("/environment")),
+      codeOptions: Bacon.fromPromise(HttpUtil.get("/api/v2/va-code-values/")),
       decisionLiitteet: Bacon.fromPromise(HttpUtil.get("/api/paatos/liitteet")).map(Immutable),
       hakuId: hakuId,
       selectedHaku: undefined,
@@ -264,8 +263,6 @@ export default class HakujenHallintaController {
 
     if (basicFields.indexOf(fieldId) > -1) {
       update.avustushaku[fieldId] = update.newValue
-    } else if (paymentFields.indexOf(fieldId) > -1) {
-      update.avustushaku.content[fieldId] = update.newValue
     } else if (fieldId === "haku-self-financing-percentage") {
       update.avustushaku.content["self-financing-percentage"] =
         parseInt(update.newValue)
@@ -317,12 +314,27 @@ export default class HakujenHallintaController {
     } else if (update.field.id.indexOf("decision.") !== -1) {
       const fieldName = update.field.id.substr(9)
       _.set(update.avustushaku.decision, fieldName, update.newValue)
+    } else if (fieldId.startsWith("operational-unit-id")) {
+      update.avustushaku["operational-unit-id"] = update.newValue
+    } else if (fieldId.startsWith("operation-id")) {
+      update.avustushaku["operation-id"] = update.newValue
+    } else if (fieldId.startsWith("project-id")) {
+      update.avustushaku["project-id"] = update.newValue
+    } else if (update.field.name === "payment-size-limit") {
+      update.avustushaku.content["payment-size-limit"] = update.newValue
+    } else if (fieldId === "payment-fixed-limit") {
+      update.avustushaku.content["payment-fixed-limit"] =
+        parseInt(update.newValue)
+    } else if (fieldId === "payment-min-first-batch") {
+      update.avustushaku.content["payment-min-first-batch"] =
+        parseInt(update.newValue)
+    } else if (fieldId === "total-grant-size") {
+      update.avustushaku.content["total-grant-size"] = parseInt(update.newValue)
     } else {
       console.error(
         "Unsupported update to field ", update.field.id, ":", update)
       return state
     }
-
     return this.startAutoSave(state, update.avustushaku)
   }
 

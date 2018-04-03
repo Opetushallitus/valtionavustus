@@ -1,81 +1,22 @@
 (ns oph.va.virkailija.payments-routes
-  (:require [clojure.core.async :as a]
-            [compojure.api.sweet :as compojure-api]
+  (:require [compojure.api.sweet :as compojure-api]
             [oph.va.virkailija.payments-data :as payments-data]
-            [oph.va.virkailija.application-data :as application-data]
-            [oph.va.virkailija.grant-data :as grant-data]
-            [ring.util.http-response :refer [ok not-found request-timeout]]
+            [ring.util.http-response :refer [ok]]
             [compojure.core :as compojure]
-            [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]
-            [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.authentication :as authentication]))
-
-(def timeout-limit 10000)
-
-(defn- update-payment []
-  (compojure-api/PUT
-    "/:payment-id/" [payment-id :as request]
-    :path-params [payment-id :- Long]
-    :query-params []
-    :body [payment-data
-     (compojure-api/describe virkailija-schema/Payment
-                             "Update payment")]
-    :return virkailija-schema/Payment
-    :summary "Create new payment for application"
-    (ok (payments-data/update-payment
-          payment-data
-          (authentication/get-request-identity request)))))
 
 (defn- create-payment []
   (compojure-api/POST
     "/" [:as request]
-    :body [payment-values (compojure-api/describe virkailija-schema/Payment
-                                                  "Create payments to Rondo")]
+    :body [payment-values
+           (compojure-api/describe virkailija-schema/Payment "Create payment")]
     :return virkailija-schema/Payment
-    :summary "Create new payment for application. Payment will be sent to Rondo
-             and stored to database."
-    (let [identity (authentication/get-request-identity request)
-          payment (or (application-data/get-application-payment
-                        (:application-id payment-values))
-                      (payments-data/create-payment payment-values identity))
-          application
-          (application-data/get-application-with-evaluation-and-answers
-            (:application-id payment))
-          grant (grant-data/get-grant (:grant-id application))
-          filename (format "payment-%d-%d.xml"
-                           (:id payment)
-                           (System/currentTimeMillis))]
-
-      (when (get-in grant [:content :multiplemaksuera])
-        (throw (Exception. "Multiple payment batches is not supported.")))
-      (when (= (:state payment) 2)
-        (throw (Exception. "Application already has a payment sent to Rondo")))
-
-      (let [c (a/chan)]
-        (a/go
-          (try
-            (a/>! c (rondo-service/send-to-rondo!
-                     {:payment (payments-data/get-payment (:id payment))
-                      :application application
-                      :grant grant
-                      :filename filename}))
-            (catch Exception e
-              (a/>! c {:success false :exception e}))))
-        (a/alt!!
-          c ([v]
-             (when (not (:success v))
-               (throw (or (:exception v)
-                          (Exception. (str (:value v))))))
-             (ok (payments-data/update-payment
-                   (assoc payment :state 2 :filename filename)
-                   identity)))
-          (a/timeout timeout-limit) ([_] (request-timeout "Rondo timeout")))))))
-
-
+    :summary "Create new payment for application"
+    (let [identity (authentication/get-request-identity request)]
+      (ok (payments-data/create-payment payment-values identity)))))
 
 (compojure-api/defroutes
   routes
   "payment routes"
-  (update-payment)
   (create-payment))

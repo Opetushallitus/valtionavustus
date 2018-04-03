@@ -21,7 +21,8 @@ export default class EditorSelector extends React.Component {
       environment,
       translations,
       valiselvitysFormDraft,
-      loppuselvitysFormDraft
+      loppuselvitysFormDraft,
+      codeOptions
     } = this.props
     let subTabContent
     switch (subTab) {
@@ -29,7 +30,8 @@ export default class EditorSelector extends React.Component {
         subTabContent = <HakuEdit avustushaku={avustushaku}
                                   vaUserSearch={vaUserSearch}
                                   userInfo={userInfo}
-                                  controller={controller} />
+                                  controller={controller}
+                                  codeOptions={codeOptions} />
         break
       case "form-editor":
         subTabContent = <FormEditorContainer avustushaku={avustushaku}

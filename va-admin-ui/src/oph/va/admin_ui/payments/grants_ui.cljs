@@ -9,11 +9,18 @@
             [cljs-time.core :as t]
             [oph.va.admin-ui.payments.utils :refer [to-simple-date-time]]))
 
+(def status-strs
+  {"resolved" "Ratkaistu"
+   "published" "Julkaistu"
+   "draft" "Luonnos"
+   "deleted" "Poistettu"})
+
 (defn grant-row
   [grant selected]
   [ui/table-row {:key (:id grant) :selected selected :style {:cursor "default"}}
    [ui/table-row-column (get grant :register-number)]
    [ui/table-row-column (get-in grant [:content :name :fi])]
+   [ui/table-row-column (get status-strs (get grant :status))]
    [ui/table-row-column
     (to-simple-date-time (get-in grant [:content :duration :start]))]
    [ui/table-row-column
@@ -32,15 +39,14 @@
     [ui/table-row {:style {:font-size "80px"}}
      [ui/table-header-column "Diaarinumero"]
      [ui/table-header-column "Nimi"]
+     [ui/table-header-column "Tila"]
      [ui/table-header-column "Haku alkaa"]
      [ui/table-header-column "Haku päättyy"]]]
    [ui/table-body {:display-row-checkbox false :deselect-on-clickaway false}
     (for [grant grants] (grant-row grant (= (.indexOf grants grant) value)))]])
 
-(defn project-info
-  [grant]
+(defn project-info [grant]
   [ui/grid-list {:cols 6 :cell-height "auto" :style {:margin 20}}
-   [:div [:label "Toimintayksikkö: "]
-    (get-in grant [:content :operational-unit])]
-   [:div [:label "Projekti: "] (get-in grant [:content :project])]
-   [:div [:label "Toiminto: "] (get-in grant [:content :operation])]])
+   [:div [:label "Toimintayksikkö: "] (:operational-unit grant)]
+   [:div [:label "Projekti: "] (:project grant)]
+   [:div [:label "Toiminto: "] (:operation grant)]])

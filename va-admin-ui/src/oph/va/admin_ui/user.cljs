@@ -3,4 +3,4 @@
 (defonce user-info (atom {}))
 
 (defn is-admin? [user]
-  (not (nil? (some #(= % "va-admin") (get user :privileges)))))
+  (true? (some #(= % "va-admin") (get user :privileges))))

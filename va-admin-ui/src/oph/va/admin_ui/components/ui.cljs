@@ -6,6 +6,12 @@
              :rename {date-picker material-date-picker}]
             [oph.va.admin-ui.theme :as theme]))
 
+(defn- add-validator [on-change validator]
+  (if (some? validator)
+    (fn [v]
+      (when (validator v) (on-change v)))
+    on-change))
+
 (defn text-field [p]
   (let [props
         (assoc p :label-text (or (:floating-label-text p) (:label-text p)))]
@@ -14,10 +20,12 @@
      (:label-text props)]
     [:input
      (-> props
-         (select-keys [:value :type :on-change :type :size :min :max
+         (select-keys [:value :type :type :size :min :max
                              :max-length :on-key-press])
          (update :class str "oph-input")
-         (assoc :style (if (:error props) {:border-color "#f44336"} {})))]
+         (assoc
+           :style (if (:error props) {:border-color "#f44336"} {})
+           :on-change (add-validator (:on-change props) (:validator props))))]
     (when-some [help-text (:help-text props)]
       [:div {:class "oph-field-text"} help-text])]))
 
@@ -29,6 +37,10 @@
     [:select {:class "oph-input oph-select"
               :value (or (:value props) (first (:values props)))
               :on-change #((:on-change props) (.-value (.-target %)))}
+     (when (:include-empty? props)
+       [:option {:value nil
+                 :key nil}
+        ""])
      (doall
        (map
          (fn [value] [:option {:value (:value value)

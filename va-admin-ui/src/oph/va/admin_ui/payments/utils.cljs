@@ -1,7 +1,5 @@
 (ns oph.va.admin-ui.payments.utils
-  (:require [goog.string :as gstring]
-            [goog.string.format]
-            [cljs-time.format :as tf]))
+  (:require [cljs-time.format :as tf]))
 
 (def re-email
   #"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
@@ -28,8 +26,6 @@
          (every? some? (vals selected-keys)))))
 
 (defn not-empty? [v] (not (empty? v)))
-
-(defn format [fmt & args] "Format string" (apply gstring/format fmt args))
 
 (defn get-current-year-short []
   "Get current year as a short version (i.e. 17)"

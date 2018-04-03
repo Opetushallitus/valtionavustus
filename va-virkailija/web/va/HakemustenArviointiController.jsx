@@ -51,7 +51,10 @@ const events = {
   toggleHakemusFilter:'toggleHakemusFilter',
   togglePersonSelect:'togglePersonSelect',
   clearFilters:'clearFilters',
-  selectEditorSubTab: 'selectEditorSubTab'
+  selectEditorSubTab: 'selectEditorSubTab',
+  paymentsLoaded: 'paymentsLoaded',
+  addPayment: 'addPayment',
+  appendPayment: 'appendPayment'
 }
 
 export default class HakemustenArviointiController {
@@ -136,7 +139,10 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.gotoSavedSearch)], this.onGotoSavedSearch,
       [dispatcher.stream(events.toggleHakemusFilter)], this.onToggleHakemusFilter,
       [dispatcher.stream(events.clearFilters)], this.onClearFilters,
-      [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab
+      [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab,
+      [dispatcher.stream(events.paymentsLoaded)], this.onPaymentsLoaded,
+      [dispatcher.stream(events.addPayment)], this.onAddPayment,
+      [dispatcher.stream(events.appendPayment)], this.onAppendPayment
     )
   }
 
@@ -166,6 +172,10 @@ export default class HakemustenArviointiController {
 
   static savedSearchUrl(state) {
     return "/api/avustushaku/" + state.hakuData.avustushaku.id + "/searches"
+  }
+
+  static paymentsUrl(state) {
+    return "/api/v2/applications/" + state.selectedHakemus.id + "/payments/"
   }
 
   static filterHakemukset(hakemukset){
@@ -216,6 +226,7 @@ export default class HakemustenArviointiController {
     this.setDefaultTraineeDayValuesForSelectedHakemusOverriddenAnswers(state)
     this.validateHakemusRahoitusalueAndTalousarviotiliSelection(state)
     this.loadScores(state, hakemusIdToSelect)
+    this.loadPayments(state, hakemusIdToSelect)
     this.loadComments()
     this.loadSelvitys()
     this.loadChangeRequests(state, hakemusIdToSelect)
@@ -446,6 +457,15 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  loadPayments(state, applicationId) {
+    HttpUtil.get(HakemustenArviointiController.paymentsUrl(
+      state, applicationId)).then(response => {
+        dispatcher.push(events.paymentsLoaded,
+                        {applicationId: applicationId, payments: response})
+    })
+    return state
+  }
+
   loadChangeRequests(state, hakemusId) {
     HttpUtil.get(HakemustenArviointiController.changeRequestsUrl(state, hakemusId)).then(response => {
       dispatcher.push(events.changeRequestsLoaded, {hakemusId: hakemusId,
@@ -491,8 +511,6 @@ export default class HakemustenArviointiController {
     return HakemustenArviointiController.doOnAnswerValue(state, value, "seuranta-answers" )
   }
 
-
-
   onChangeRequestsLoaded(state, hakemusIdWithChangeRequests) {
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithChangeRequests.hakemusId)
     if (relevantHakemus) {
@@ -505,6 +523,15 @@ export default class HakemustenArviointiController {
     const relevantHakemus = HakemustenArviointiController.findHakemus(state, hakemusIdWithAttachmentVersions.hakemusId)
     if (relevantHakemus) {
       relevantHakemus.attachmentVersions = hakemusIdWithAttachmentVersions.attachmentVersions
+    }
+    return state
+  }
+
+  onPaymentsLoaded(state, data) {
+    const application = HakemustenArviointiController.findHakemus(
+      state, data.applicationId)
+    if (application) {
+      application.payments = data.payments
     }
     return state
   }
@@ -547,6 +574,37 @@ export default class HakemustenArviointiController {
     state.hakemusFilter.answers = []
     state.hakemusFilter.evaluator = undefined
     state.hakemusFilter.presenter = undefined
+    return state
+  }
+
+  onAddPayment(state, paymentSum) {
+    const hakemus = state.selectedHakemus
+    const url = "/api/v2/payments/"
+    state.saveStatus.saveInProgress = true
+    HttpUtil.post(url,
+                  { "application-id": hakemus.id,
+                    "application-version": hakemus.version,
+                    "state": 1,
+                    "batch-id": null,
+                    "payment-sum": paymentSum })
+      .then(function(response) {
+        if(response instanceof Object) {
+          dispatcher.push(events.appendPayment, response)
+          dispatcher.push(events.saveCompleted)
+        }
+        else {
+          dispatcher.push(events.saveCompleted, "unexpected-save-error")
+        }
+      })
+      .catch(function(error) {
+        console.error(`Error in adding payment, POST ${url}`, error)
+        dispatcher.push(events.saveCompleted, "unexpected-save-error")
+      })
+    return state
+  }
+
+  onAppendPayment(state, payment) {
+    state.selectedHakemus.payments.push(payment)
     return state
   }
 
@@ -981,6 +1039,10 @@ export default class HakemustenArviointiController {
 
   clearFilters(){
     dispatcher.push(events.clearFilters)
+  }
+
+  addPayment(paymentSum) {
+    dispatcher.push(events.addPayment, paymentSum)
   }
 
   onSelectEditorSubTab(state, subTabToSelect) {

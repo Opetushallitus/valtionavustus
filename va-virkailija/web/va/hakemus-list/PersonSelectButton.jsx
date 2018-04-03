@@ -56,9 +56,14 @@ const PersonSelectButton = ({controller,hakemus,state,show}) => {
   const presenterRoleId = hakemus.arvio["presenter-role-id"]
   const personCount = hakemus.arvio.roles.evaluators.filter(id => _.includes(roles,id)).length + (presenterRoleId && _.includes(roles,presenterRoleId) ? 1 : 0)
   const countIndicator = personCount > 0 ? personCount : "+"
+  const presenter = state.hakuData.roles.find(r => r.id === presenterRoleId)
+  const presenterName = presenter ? presenter.name : ""
   return(
     <div>
-      <button onClick={onClick} className="btn btn-sm btn-simple btn-role"><span className="btn-role__count">{countIndicator}</span></button>
+      <button onClick={onClick} className="btn btn-sm btn-simple btn-role"
+              title={presenterName}>
+        <span className="btn-role__count">{countIndicator}</span>
+      </button>
       <PersonSelectPanel hakemus={hakemus} state={state} controller={controller}/>
     </div>
   )

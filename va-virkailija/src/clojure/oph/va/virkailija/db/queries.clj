@@ -60,6 +60,9 @@
   "sql/virkailija/applications/get-application-payments.sql")
 (defquery get-application-payment
   "sql/virkailija/applications/get-application-payment.sql")
+(defquery get-application-payment-by-state
+  "sql/virkailija/applications/get-application-payment-by-state.sql")
+(defquery get-total-paid "sql/virkailija/applications/get-total-paid.sql")
 
 (defquery lock-va-users-cache-exclusively! "sql/virkailija/va_users_cache/lock-exclusively.sql")
 (defquery update-va-user-cache! "sql/virkailija/va_users_cache/update.sql")
@@ -76,8 +79,14 @@
 (defquery get-total-grant-count
   "sql/virkailija/reporting/get-total-grant-count.sql")
 
-(defquery get-va-code-values
-  "sql/virkailija/va_code_values/get-va-code-values.sql")
+(defquery get-va-code-values-by-type-and-year
+  "sql/virkailija/va_code_values/get-va-code-values-by-type-and-year.sql")
+(defquery get-va-code-values-by-year
+  "sql/virkailija/va_code_values/get-va-code-values-by-year.sql")
+(defquery get-current-va-code-values-by-type
+  "sql/virkailija/va_code_values/get-current-va-code-values-by-type.sql")
+(defquery get-current-va-code-values
+  "sql/virkailija/va_code_values/get-current-va-code-values.sql")
 (defquery create-va-code-value
   "sql/virkailija/va_code_values/create-va-code-value.sql")
 (defquery check-code-usage "sql/virkailija/va_code_values/check-code-usage.sql")

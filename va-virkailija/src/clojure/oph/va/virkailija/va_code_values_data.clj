@@ -4,11 +4,32 @@
             [oph.va.virkailija.utils :refer
              [convert-to-dash-keys convert-to-underscore-keys]]))
 
-(defn get-va-code-values [value-type year]
-  (map
-    convert-to-dash-keys
-    (exec :form-db queries/get-va-code-values {:value_type value-type
-                                               :year year})))
+(defn has-privilege? [identity privilege]
+  (true?
+    (some #(= % privilege) (:privileges identity))))
+
+(defmacro with-admin [request form unauthorized]
+  `(if (has-privilege?
+         (authentication/get-request-identity ~request) "va-admin")
+     ~form
+     ~unauthorized))
+
+(defn get-va-code-values
+  ([value-type year]
+   (map
+     convert-to-dash-keys
+     (cond
+       (and (some? value-type) (some? year))
+       (exec :form-db queries/get-va-code-values-by-type-and-year
+                  {:value_type value-type :year year})
+       (some? value-type)
+       (exec :form-db queries/get-current-va-code-values-by-type
+                  {:value_type value-type})
+       (some? year)
+       (exec :form-db queries/get-va-code-values-by-year
+                  {:year year})
+       :else
+       (exec :form-db queries/get-current-va-code-values {})))))
 
 (defn create-va-code-value [values]
   (->> values

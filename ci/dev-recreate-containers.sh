@@ -10,13 +10,13 @@ function remove-container {
 }
 
 function create-container {
-  cd $1
+  cd /home/ec2-user/$1
   docker build -t $1 .
   cd ..
 }
 
 function run-container {
-  cd $1
+  cd /home/ec2-user/$1
   docker run -d -p "$2:$2" --env-file="$1.env" --name "$1" --net "$NETWORK" --network-alias "$1" "$1"
   cd ..
 }

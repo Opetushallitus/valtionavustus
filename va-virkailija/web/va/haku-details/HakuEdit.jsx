@@ -6,6 +6,7 @@ import DateUtil from 'soresu-form/web/DateUtil'
 import HakuStatus from "../avustushaku/HakuStatus.jsx"
 import HakuRoles from "./HakuRoles.jsx"
 import ChooseRahoitusalueet from "./ChooseRahoitusalueet.jsx"
+import AutoCompleteCodeValue from "./AutoCompleteCodeValue.jsx"
 
 export default class HakuEdit extends Component {
   render() {
@@ -17,6 +18,9 @@ export default class HakuEdit extends Component {
     const allowAllHakuEdits = userHasEditPrivilege && (avustushaku.status === "new" || avustushaku.status === "draft")
     const allowNondisruptiveHakuEdits = userHasEditPrivilege && (allowAllHakuEdits || avustushaku.phase === "current" || avustushaku.phase === "upcoming")
     const userHasEditMyHakuRolePrivilege = avustushaku.privileges && avustushaku.privileges["edit-my-haku-role"]
+    const selectedValueProject = this.props.codeOptions.filter(k => k.id===avustushaku["project-id"])[0] || ""
+    const selectedValueOperation = this.props.codeOptions.filter(k => k.id===avustushaku["operation-id"])[0] || ""
+    const selectedValueOperationalUnit = this.props.codeOptions.filter(k => k.id===avustushaku["operational-unit-id"])[0] || ""
 
     const onChangeListener = (target, value) => {
       controller.onChangeListener(avustushaku, target, value)
@@ -67,27 +71,18 @@ export default class HakuEdit extends Component {
           </tbody>
         </table>
         <div className="editor-field-row">
-          <div className="editor-row-element">
-            <h3 className="required">Toimintayksikkö</h3>
-            <input id="operational-unit" type="text"
-              disabled={!allowAllHakuEdits} onChange={onChange}
-              required="true"
-              value={avustushaku.content["operational-unit"]} />
-          </div>
-          <div className="editor-row-element">
-            <h3 className="required">Projekti</h3>
-            <input id="project" type="text"
-              disabled={!allowAllHakuEdits} onChange={onChange}
-              required="true"
-              value={avustushaku.content["project"]} />
-          </div>
-          <div className="editor-row-element">
-            <h3 className="required">Toiminto</h3>
-            <input id="operation" type="text"
-              disabled={!allowAllHakuEdits} onChange={onChange}
-              required="true"
-              value={avustushaku.content["operation"]} />
-          </div>
+        <div className="editor-row-element">
+          <h3 className="required">Toimintayksikkö</h3>
+           <AutoCompleteCodeValue id="operational-unit-id" codeType="operational-unit-id" controller={controller} avustushaku={avustushaku} onChange={onChange} codeOptions={this.props.codeOptions.filter(k => k["value-type"]==="operational-unit")} selectedValue={selectedValueOperationalUnit}/>
+        </div>
+        <div className="editor-row-element">
+          <h3 className="required">Projekti</h3>
+            <AutoCompleteCodeValue id="project-id" codeType="project-id" controller={controller} avustushaku={avustushaku} onChange={onChange} codeOptions={this.props.codeOptions.filter(k => k["value-type"]==="project")} selectedValue={selectedValueProject}/>
+        </div>
+        <div className="editor-row-element">
+          <h3 className="required">Toiminto</h3>
+            <AutoCompleteCodeValue id="operation-id" codeType="operation-id" controller={controller} avustushaku={avustushaku} onChange={onChange} codeOptions={this.props.codeOptions.filter(k => k["value-type"]==="operation")} selectedValue={selectedValueOperation}/>
+        </div>
         </div>
         <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} />
         <div className="haku-duration-and-self-financing">
@@ -97,16 +92,75 @@ export default class HakuEdit extends Component {
             <span className="dateDivider" />
             <DateField id="hakuaika-end" onBlur={onChange} value={avustushaku.content.duration.end} disabled={!allowNondisruptiveHakuEdits} />
           </div>
-          <div className="haku-self-financing-edit-container">
-            <h3>Hakijan omarahoitusvaatimus</h3>
-            <input  id="haku-self-financing-percentage"  type="number" min="0" max="99" className="percentage" required="true" maxLength="2"
-                   onChange={onChange} disabled={!allowAllHakuEdits} value={avustushaku.content["self-financing-percentage"]} /><span>%</span>
-          </div>
         </div>
         <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange}/>
         <ChooseRahoitusalueet avustushaku={avustushaku} allowEditing={allowNondisruptiveHakuEdits} onChange={onChange} controller={controller} />
-        <Maksuerat value={avustushaku.content.multiplemaksuera} disabled={!allowAllHakuEdits} onChange={onChange}/>
-
+        <div>
+          <div className="multibatch-fields">
+            <h3>Maksatus</h3>
+            <div>
+              <div className="haku-edit-field-container">
+                <Maksuerat value={avustushaku.content.multiplemaksuera}
+                           disabled={!allowAllHakuEdits} onChange={onChange}/>
+              </div>
+              <div className="haku-edit-field-container">
+                <h3>Hakijan omarahoitusvaatimus</h3>
+                <input id="haku-self-financing-percentage" type="number"
+                       min="0" max="99" className="percentage" required="true"
+                       maxLength="2" onChange={onChange}
+                       disabled={!allowAllHakuEdits}
+                       value={avustushaku.content["self-financing-percentage"]} />
+                <span>%</span>
+              </div>
+            </div>
+            <div className={
+                   avustushaku.content.multiplemaksuera && allowAllHakuEdits ?
+                 null : "haku-edit-disabled-form"}>
+              <div>
+                <label className="haku-edit-radio-button-item">
+                  <input type="radio" name="payment-size-limit" value="no-limit"
+                         checked={avustushaku.content["payment-size-limit"] === "no-limit"}
+                         className="haku-edit-radio-button" onChange={onChange}
+                         id="payment-size-limit-1"/>
+                  Avustushaun kaikille edunsaajille maksetaan useammassa erässä
+                </label>
+                <label className="haku-edit-radio-button-item">
+                  <input type="radio" name="payment-size-limit" value="fixed-limit"
+                         checked={avustushaku.content["payment-size-limit"] === "fixed-limit"}
+                         className="haku-edit-radio-button" onChange={onChange}
+                         id="payment-size-limit-2"/>
+                  Maksetaan useammassa erässä, kun OPH:n avustus hankkeelle (ts. maksettava kokonaissumma) on vähintään
+                  <input className="haku-edit-inline-input" type="number"
+                         id="payment-fixed-limit"
+                         disabled={avustushaku.content["payment-size-limit"] !== "fixed-limit"}
+                         onChange={onChange}
+                         value={avustushaku.content["payment-fixed-limit"] || ""} />
+                  <span>€</span>
+                </label>
+              </div>
+              <div className="haku-edit-subrow">
+                <label className="haku-edit-field-label">
+                  Ensimmäisen erän osuus OPH:n avustuksesta hankkeelle (ts. maksettava kokonaissumma) on vähintään
+                  <input type="number" className="haku-edit-inline-input"
+                         id="payment-min-first-batch"
+                         onChange={onChange}
+                         value={avustushaku.content["payment-min-first-batch"] || ""}/>
+                  <span>%</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div className="editor-field-row">
+            <div className="editor-row-element">
+              <h3 className="required">Kokonaissumma</h3>
+              <input id="total-grant-size" type="number"
+                     disabled={!allowAllHakuEdits} onChange={onChange}
+                     required="true"
+                     value={avustushaku.content["total-grant-size"] || ""}/>
+              <span> €</span>
+            </div>
+          </div>
+        </div>
         <AcademySize value={avustushaku.is_academysize} disabled={!allowAllHakuEdits} onChange={onChange} />
         <HakuRoles avustushaku={avustushaku} vaUserSearch={vaUserSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege} controller={controller} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
@@ -306,7 +360,7 @@ class Maksuerat extends React.Component {
     const isDisabled = this.props.disabled
     const options = [
       {label:"Yksi maksuerä",value:false},
-      {label:"Kaksi maksuerää",value:true}
+      {label:"Useampi maksuerä",value:true}
     ]
     const optionsHtml = options.map(option=>{
       const value = option.value
@@ -330,7 +384,6 @@ class Maksuerat extends React.Component {
 
     return (
       <div id="set-maksuerat">
-        <h3>Maksuerät</h3>
         <fieldset className="soresu-radiobutton-group">
           {optionsHtml}
         </fieldset>
