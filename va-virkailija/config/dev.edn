@@ -10,4 +10,5 @@
  :email {:enabled? false
          :host "localhost"
          :port 2500
-         :to-finance ["test@test.com"]}}
+         :to-finance ["test@test.com"]}
+ :multibatch-payments {:enabled? true}}
