@@ -237,13 +237,6 @@
    (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
 
-   (when (get-in config [:applications-ui :enabled?])
-     (compojure/GET "/applications/*" [] (return-html "applications/index.html")))
-   (when (get-in config [:applications-ui :enabled?])
-     (compojure-route/resources "/applications/"
-                               {:mime-types {"html" "text/html; charset=utf-8"}}))
-
-
    (compojure-api/GET "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
      :path-params [avustushaku-id :- Long user-key :- s/Str]
      :query-params [{nolog :- s/Str nil}]
