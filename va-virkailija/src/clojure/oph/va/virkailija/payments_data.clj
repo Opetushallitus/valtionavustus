@@ -121,6 +121,9 @@
 (defn delete-grant-payments [id]
   (exec :form-db queries/delete-grant-payments {:id id}))
 
+(defn delete-payment [id]
+  (exec :form-db queries/delete-payment {:id id}))
+
 (defn get-grant-payments-info [id batch-id]
   (convert-to-dash-keys
     (first (exec :form-db queries/get-grant-payments-info
