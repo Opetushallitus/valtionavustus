@@ -22,9 +22,19 @@
                          "Myönnetty avustus"
                          "Arviokeskiarvo"])
 
+(def hakemus->main-sheet-rows
+  (juxt :register-number
+        :organization-name
+        :project-name
+        :language
+        :budget-total
+        :budget-oph-share
+        (comp :budget-granted :arvio)
+        (comp :score-total-average :scoring :arvio)))
+
 (def answers-sheet-name "Vastaukset")
 
-(def answers-fixed-fields
+(def answers-sheet-fixed-fields
   [["fixed-register-number" "Diaarinumero" :register-number {:fieldType "textField"}]
    ["fixed-organization-name" "Hakijaorganisaatio" :organization-name {:fieldType "textField"}]
    ["fixed-project-name" "Projektin nimi" :project-name {:fieldType "textField"}]
@@ -35,6 +45,74 @@
    ["fixed-score-total-average" "Arviokeskiarvo" (comp :score-total-average :scoring :arvio) {:fieldType "numberField"}]])
 
 (def maksu-sheet-name "Tiliöinti")
+
+(def maksu-sheet-columns
+  ["Maksuerä"
+   "Toimittaja-numero"
+   "Toimittajan nimi"
+   "Pankkitili"
+   "Maksuliike-menotili"
+   "Eräpvm"
+   "EUR"
+   "Val"
+   "Maksu ehto"
+   "Pitkä viite"
+   "Laskun päivämäärä"
+   "Tositelaji"
+   "Tosite-päivä"
+   "LKP-TILI"
+   "ALV-koodi"
+   "Tiliöinti-summa"
+   "Toiminta-yksikkö"
+   "TaKp-tili"
+   "Valtuus-numero"
+   "Projekti"
+   "Toiminto"
+   "Suorite"
+   "Alue / Kunta"
+   "Kumppani"
+   "Seuranta kohde 1"
+   "Seuranta kohde 2"
+   "Varalla 1"
+   "Varalla 1"
+   "KOM-yksikkö"
+   "Selite (Tiliöinti)"
+   "Asiatarkastajan sähiköpostiosoite"
+   "Hyväksyjän sähiköpostiosoite"])
+
+(def hakemus->maksu-sheet-rows
+  (juxt :era
+        (constantly "")
+        :organization-name
+        :iban
+        (constantly "FI1950000121501406")
+        (constantly "")
+        :payment
+        (constantly "EUR")
+        (constantly "Z001")
+        :register-number
+        :paatos-date
+        (constantly "XA")
+        :paatos-date
+        :lkp
+        (constantly "")
+        :payment
+        (constantly "")
+        :takp
+        (constantly "")
+        (constantly "")
+        (constantly "6600151502")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")
+        (constantly "")))
 
 (defn- third [list] (nth list 2))
 
@@ -135,12 +213,12 @@
          (reduce unwrap-double-nested-lists [])
          (filter (comp not empty?)))))
 
-(defn- hakemus->map [hakemus]
+(defn- hakemus->answers-sheet-map [hakemus]
   (let [answers (formutil/unwrap-answers (:answers hakemus) ["checkboxButton" "vaFocusAreas" "tableField"])]
     (reduce (fn [answer-map [field-name _ lookup-fn]]
               (assoc answer-map field-name (lookup-fn hakemus)))
             answers
-            answers-fixed-fields)))
+            answers-sheet-fixed-fields)))
 
 (defn- remove-white-spaces [str]
   (string/replace str #"\s" ""))
@@ -202,11 +280,6 @@
   (let [extract-answers (fn [answer-set] (mapv (partial get-by-id answer-set va-focus-areas-items) answer-keys answer-types))]
     (mapv extract-answers answers)))
 
-(defn- flatten-answers [hakemukset answer-keys answer-labels answer-types va-focus-areas-items]
-  (let [answers      (map hakemus->map hakemukset)
-        flat-answers (extract-answer-values answer-keys answer-types answers va-focus-areas-items)]
-    (apply conj [answer-labels] flat-answers)))
-
 (defn- generate-growing-fieldset-lut [hakemukset]
   (let [answer-list (map :answers hakemukset)
         descend-to-child (fn [acc child]
@@ -227,49 +300,6 @@
          (mapv process-answers)
          (reduce combine (array-map)))))
 
-(def hakemus->main-sheet-rows
-  (juxt :register-number
-        :organization-name
-        :project-name
-        :language
-        :budget-total
-        :budget-oph-share
-        (comp :budget-granted :arvio)
-        (comp :score-total-average :scoring :arvio)))
-
-(def maksu-columns ["Maksuerä"
-                    "Toimittaja-numero"
-                    "Toimittajan nimi"
-                    "Pankkitili"
-                    "Maksuliike-menotili"
-                    "Eräpvm"
-                    "EUR"
-                    "Val"
-                    "Maksu ehto"
-                    "Pitkä viite"
-                    "Laskun päivämäärä"
-                    "Tositelaji"
-                    "Tosite-päivä"
-                    "LKP-TILI"
-                    "ALV-koodi"
-                    "Tiliöinti-summa"
-                    "Toiminta-yksikkö"
-                    "TaKp-tili"
-                    "Valtuus-numero"
-                    "Projekti"
-                    "Toiminto"
-                    "Suorite"
-                    "Alue / Kunta"
-                    "Kumppani"
-                    "Seuranta kohde 1"
-                    "Seuranta kohde 2"
-                    "Varalla 1"
-                    "Varalla 1"
-                    "KOM-yksikkö"
-                    "Selite (Tiliöinti)"
-                    "Asiatarkastajan sähiköpostiosoite"
-                    "Hyväksyjän sähiköpostiosoite"])
-
 (defn- format-date [date-string]
   (try
     (let [date (clj-time-format/parse (clj-time-format/formatter "dd.MM.YYYY") date-string)
@@ -277,44 +307,9 @@
       formatted)
   (catch Exception e (if (nil? date-string) "" date-string))))
 
-(def hakemus->maksu-rows
-  (juxt :era
-        (constantly "")
-        :organization-name
-        :iban
-        (constantly "FI1950000121501406")
-        (constantly "")
-        :payment
-        (constantly "EUR")
-        (constantly "Z001")
-        :register-number
-        :paatos-date
-        (constantly "XA")
-        :paatos-date
-        :lkp
-        (constantly "")
-        :payment
-        (constantly "")
-        :takp
-        (constantly "")
-        (constantly "")
-        (constantly "6600151502")
-        (constantly "")
-        (constantly "")
-        (constantly "")
-        (constantly "")
-        (constantly "")
-        (constantly "")
-        (constantly "")
-        (constantly "")
-        (constantly "")
-        (constantly "")
-        (constantly "")
-        ))
-
-(defn- fit-columns [num-columns sheet]
+(defn- fit-columns [sheet]
   ;; Make columns fit the data
-  (doseq [index (range 0 num-columns)]
+  (doseq [index (range 0 (-> sheet (.getRow 0) .getLastCellNum))]
     (.autoSizeColumn sheet index)))
 
 (def lkp-map {:kunta_kirkko                         82000000
@@ -360,73 +355,90 @@
         first-round-paid (if multiple-maksuera (Math/round (* 0.6 total-paid)) total-paid)
         second-round-paid (Math/round (* 0.4 total-paid))
         hakemus1 (assoc hakemus :era 1 :payment first-round-paid)
-        hakemus2 (assoc hakemus :era 2 :payment second-round-paid)
-        ]
+        hakemus2 (assoc hakemus :era 2 :payment second-round-paid)]
     (if multiple-maksuera
       [hakemus1 hakemus2]
-      [hakemus1]
-      )
-    ))
+      [hakemus1])))
 
-(defn export-avustushaku [avustushaku-combined]
-  (let [avustushaku (:avustushaku avustushaku-combined)
-        hakemus-form (:form avustushaku-combined)
-        va-focus-areas-label (->> avustushaku :content :focus-areas :label :fi)
-        va-focus-areas-items (->> avustushaku :content :focus-areas :items)
-        paatos-date (-> avustushaku :decision :date)
-        hakemus-list (:hakemukset avustushaku-combined)
-        map-paatos-data (partial add-paatos-data paatos-date)
-        has-multiple-maksuera (-> avustushaku :content :multiplemaksuera)
-        accepted-list (filter #(= "accepted" (-> % :arvio :status)) hakemus-list)
+(defn- make-main-sheet-rows [hakemukset]
+  (apply conj
+         [main-sheet-columns]
+         (mapv hakemus->main-sheet-rows hakemukset)))
+
+(defn- make-answers-sheet-rows [form hakemukset va-focus-areas-label va-focus-areas-items]
+  (let [growing-fieldset-lut           (generate-growing-fieldset-lut hakemukset)
+        answers-key-label-type-triples (avustushaku->formlabels form
+                                                                va-focus-areas-label
+                                                                growing-fieldset-lut)
+        answers-keys                   (apply conj
+                                              (mapv first answers-sheet-fixed-fields)
+                                              (mapv first answers-key-label-type-triples))
+        answers-labels                 (apply conj
+                                              (mapv second answers-sheet-fixed-fields)
+                                              (mapv second answers-key-label-type-triples))
+        answers-types                  (apply conj
+                                              (mapv fourth answers-sheet-fixed-fields)
+                                              (mapv third answers-key-label-type-triples))
+        answers-rows                   (extract-answer-values answers-keys
+                                                              answers-types
+                                                              (map hakemus->answers-sheet-map hakemukset)
+                                                              va-focus-areas-items)]
+    (apply conj [answers-labels] answers-rows)))
+
+(defn- make-maksu-sheet-rows [accepted-hakemukset paatos-date has-multiple-maksuera]
+  (let [map-paatos-data (partial add-paatos-data paatos-date)
         map-split-multiple (partial split-multiple-maksuera-if-needed has-multiple-maksuera)
-        accepted-list-multiple-maksuera-1 (mapv map-split-multiple accepted-list)
+        accepted-list-multiple-maksuera-1 (mapv map-split-multiple accepted-hakemukset)
         accepted-list-multiple-maksuera-2 (flatten accepted-list-multiple-maksuera-1)
         accepted-list-sorted (sort-by :organization-name accepted-list-multiple-maksuera-2)
-        accepted-list-paatos (mapv map-paatos-data accepted-list-sorted)
+        accepted-list-paatos (mapv map-paatos-data accepted-list-sorted)]
+    (apply conj
+           [maksu-sheet-columns]
+           (mapv hakemus->maksu-sheet-rows accepted-list-paatos))))
+
+(defn export-avustushaku [avustushaku-combined]
+  (let [avustushaku           (:avustushaku avustushaku-combined)
+        va-focus-areas-label  (->> avustushaku :content :focus-areas :label :fi)
+        va-focus-areas-items  (->> avustushaku :content :focus-areas :items)
+        paatos-date           (-> avustushaku :decision :date)
+        has-multiple-maksuera (-> avustushaku :content :multiplemaksuera)
+        hakemus-form          (:form avustushaku-combined)
+        hakemus-list          (:hakemukset avustushaku-combined)
 
         output (ByteArrayOutputStream.)
 
-        main-sheet-rows (mapv hakemus->main-sheet-rows hakemus-list)
         wb (spreadsheet/create-workbook main-sheet-name
-                                        (apply conj [main-sheet-columns] main-sheet-rows))
+                                        (make-main-sheet-rows hakemus-list))
 
         main-sheet (spreadsheet/select-sheet main-sheet-name wb)
+
         main-header-row (first (spreadsheet/row-seq main-sheet))
 
-        growing-fieldset-lut (generate-growing-fieldset-lut hakemus-list)
-
-        answer-key-label-type-triples (avustushaku->formlabels hakemus-form va-focus-areas-label growing-fieldset-lut)
-
-        answer-keys (apply conj
-                           (mapv first answers-fixed-fields)
-                           (mapv first answer-key-label-type-triples))
-        answer-labels (apply conj
-                             (mapv second answers-fixed-fields)
-                             (mapv second answer-key-label-type-triples))
-        answer-types (apply conj
-                            (mapv fourth answers-fixed-fields)
-                            (mapv third answer-key-label-type-triples))
-
-        answer-flatdata (flatten-answers hakemus-list answer-keys answer-labels answer-types va-focus-areas-items)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
-                        (spreadsheet/add-rows! sheet answer-flatdata)
+                        (spreadsheet/add-rows! sheet
+                                               (make-answers-sheet-rows hakemus-form
+                                                                        hakemus-list
+                                                                        va-focus-areas-label
+                                                                        va-focus-areas-items))
                         sheet)
+
         answers-header-row (first (spreadsheet/row-seq answers-sheet))
 
-        maksu-rows (mapv hakemus->maksu-rows accepted-list-paatos)
-        maksu-sheet (let [sheet (spreadsheet/add-sheet! wb maksu-sheet-name)
-                          rows (apply conj [maksu-columns] maksu-rows)]
-                      (spreadsheet/add-rows! sheet rows)
+        maksu-sheet (let [sheet (spreadsheet/add-sheet! wb maksu-sheet-name)]
+                      (spreadsheet/add-rows! sheet
+                                             (make-maksu-sheet-rows (filter #(= "accepted" (-> % :arvio :status)) hakemus-list)
+                                                                    paatos-date
+                                                                    has-multiple-maksuera))
                       sheet)
-        maksu-header-row (first (spreadsheet/row-seq maksu-sheet))
 
+        maksu-header-row (first (spreadsheet/row-seq maksu-sheet))
 
         header-style (spreadsheet/create-cell-style! wb {:background :yellow
                                                          :font       {:bold true}})]
 
-    (fit-columns (count main-sheet-columns) main-sheet)
-    (fit-columns (count answer-keys) answers-sheet)
-    (fit-columns (count maksu-columns) maksu-sheet)
+    (fit-columns main-sheet)
+    (fit-columns answers-sheet)
+    (fit-columns maksu-sheet)
 
     ;; Style first row
     (spreadsheet/set-row-style! main-header-row header-style)
