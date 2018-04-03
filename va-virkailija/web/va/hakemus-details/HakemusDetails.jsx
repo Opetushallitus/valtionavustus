@@ -18,6 +18,7 @@ export default class HakemusDetails extends Component {
     const loadingComments = this.props.loadingComments
     const showOthersScores = this.props.showOthersScores
     const translations = this.props.translations
+    const environment = this.props.environment
     const selectedHakemusAccessControl = this.props.selectedHakemusAccessControl
     const subTab = this.props.subTab
     if (hidden) {
@@ -58,9 +59,17 @@ export default class HakemusDetails extends Component {
                                    controller={controller}/>
 
         case 'valiselvitys':
-          return <Selvitys controller={controller} hakemus={hakemus} avustushaku={avustushaku} userInfo={userInfo} translations={translations} selvitysType="valiselvitys"/>
+          return <Selvitys controller={controller} hakemus={hakemus}
+                           avustushaku={avustushaku} userInfo={userInfo}
+                           translations={translations}
+                           selvitysType="valiselvitys"
+                           environment={environment}/>
         case 'loppuselvitys':
-          return <Selvitys controller={controller} hakemus={hakemus} avustushaku={avustushaku} userInfo={userInfo} translations={translations} selvitysType="loppuselvitys"/>
+          return <Selvitys controller={controller} hakemus={hakemus}
+                           avustushaku={avustushaku} userInfo={userInfo}
+                           translations={translations}
+                           selvitysType="loppuselvitys"
+                           environment={environment}/>
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
         default:
