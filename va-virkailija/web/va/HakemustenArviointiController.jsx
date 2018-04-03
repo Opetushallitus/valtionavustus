@@ -54,6 +54,8 @@ const events = {
   selectEditorSubTab: 'selectEditorSubTab',
   paymentsLoaded: 'paymentsLoaded',
   addPayment: 'addPayment',
+  removePayment: 'removePayment',
+  paymentRemoved: 'paymentRemoved',
   appendPayment: 'appendPayment'
 }
 
@@ -142,6 +144,8 @@ export default class HakemustenArviointiController {
       [dispatcher.stream(events.selectEditorSubTab)], this.onSelectEditorSubTab,
       [dispatcher.stream(events.paymentsLoaded)], this.onPaymentsLoaded,
       [dispatcher.stream(events.addPayment)], this.onAddPayment,
+      [dispatcher.stream(events.removePayment)], this.onRemovePayment,
+      [dispatcher.stream(events.paymentRemoved)], this.onPaymentRemoved,
       [dispatcher.stream(events.appendPayment)], this.onAppendPayment
     )
   }
@@ -603,6 +607,31 @@ export default class HakemustenArviointiController {
     return state
   }
 
+  onRemovePayment(state, id) {
+    const url = `/api/v2/payments/${id}/`
+    state.saveStatus.saveInProgress = true
+    HttpUtil.delete(url)
+      .then(function(response) {
+        if(response instanceof Object) {
+          dispatcher.push(events.paymentRemoved, id)
+          dispatcher.push(events.saveCompleted)
+        }
+        else {
+          dispatcher.push(events.saveCompleted, "unexpected-save-error")
+        }
+      })
+      .catch(function(error) {
+        console.error(`Error removing payment, DELETE ${url}`, error)
+        dispatcher.push(events.saveCompleted, "unexpected-save-error")
+      })
+    return state
+  }
+
+  onPaymentRemoved(state, id) {
+    _.remove(state.selectedHakemus.payments, p => p.id === id)
+    return state
+  }
+
   onAppendPayment(state, payment) {
     state.selectedHakemus.payments.push(payment)
     return state
@@ -1043,6 +1072,10 @@ export default class HakemustenArviointiController {
 
   addPayment(paymentSum) {
     dispatcher.push(events.addPayment, paymentSum)
+  }
+
+  removePayment(id) {
+    dispatcher.push(events.removePayment, id)
   }
 
   onSelectEditorSubTab(state, subTabToSelect) {
