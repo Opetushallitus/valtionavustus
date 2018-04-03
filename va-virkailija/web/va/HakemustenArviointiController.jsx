@@ -612,13 +612,8 @@ export default class HakemustenArviointiController {
     state.saveStatus.saveInProgress = true
     HttpUtil.delete(url)
       .then(function(response) {
-        if(response instanceof Object) {
-          dispatcher.push(events.paymentRemoved, id)
-          dispatcher.push(events.saveCompleted)
-        }
-        else {
-          dispatcher.push(events.saveCompleted, "unexpected-save-error")
-        }
+        dispatcher.push(events.paymentRemoved, id)
+        dispatcher.push(events.saveCompleted)
       })
       .catch(function(error) {
         console.error(`Error removing payment, DELETE ${url}`, error)
