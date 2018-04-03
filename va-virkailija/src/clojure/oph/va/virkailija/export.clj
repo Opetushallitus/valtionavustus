@@ -61,13 +61,13 @@
         (assoc :fieldType (:fieldType field))
         add-options)))
 
-(defn- field->label [avustushaku field parent suffix]
+(defn- field->label [field parent suffix va-focus-areas-label]
   (if (= (:fieldType field) "vaFocusAreas")
-    (->> avustushaku :avustushaku :content :focus-areas :label :fi)
+    va-focus-areas-label
     (str (or (-> field :label :fi)
              (-> parent :label :fi)) suffix)))
 
-(defn- mark-and-reject-growing-fields [avustushaku wrappers data field]
+(defn- mark-and-reject-growing-fields [wrappers va-focus-areas-label data field]
   (let [parent (find-parent wrappers (:id field))
         grandparent (find-parent wrappers (:id parent))
         add-reject (fn [data]
@@ -88,10 +88,10 @@
 
       ;; Normal case - add value to data
       (add-value data [(:id field)
-                       (field->label avustushaku field parent "")
+                       (field->label field parent "" va-focus-areas-label)
                        (field->type field)]))))
 
-(defn- process-growing-field [avustushaku fields wrappers id]
+(defn- process-growing-field [fields wrappers va-focus-areas-label id]
   (let [seq-number (last (re-find #"([0-9]+)[^0-9]*$" id))
         mangled-id (string/replace id #"[0-9]+([^0-9]*)$" "1$1")
         field (->> fields
@@ -99,19 +99,19 @@
                    first)
         parent (find-parent wrappers field)]
     [id
-     (field->label avustushaku field parent (str " " seq-number))
+     (field->label field parent (str " " seq-number) va-focus-areas-label)
      (field->type field)]))
 
-(defn- inject-growing-fieldsets [avustushaku fields wrappers growing-fieldset-lut triples]
+(defn- inject-growing-fieldsets [fields wrappers va-focus-areas-label growing-fieldset-lut triples]
   (if (map? triples)
     (let [fieldset-id (:growingField triples)
           fieldset-lut (get growing-fieldset-lut fieldset-id)]
       (->> (keys fieldset-lut)
            (reduce (fn [acc entry]
                      (apply conj acc (mapv (partial process-growing-field
-                                                    avustushaku
                                                     fields
-                                                    wrappers)
+                                                    wrappers
+                                                    va-focus-areas-label)
                                            (get fieldset-lut entry))))
                    [])))
     triples))
@@ -121,18 +121,17 @@
     (apply conj list item)
     (conj list item)))
 
-(defn- avustushaku->formlabels [avustushaku growing-fieldset-lut]
-  (let [form (->> avustushaku
-                  :form
-                  (formhandler/add-koodisto-values :form-db)
-                  :content)
-        fields (formutil/find-fields form)
-        wrappers (formutil/find-wrapper-elements form)]
-    (->> form
+(defn- avustushaku->formlabels [form va-focus-areas-label growing-fieldset-lut]
+  (let [rich-form (->> form
+                       (formhandler/add-koodisto-values :form-db)
+                       :content)
+        fields    (formutil/find-fields rich-form)
+        wrappers  (formutil/find-wrapper-elements rich-form)]
+    (->> rich-form
          (formutil/find-fields)
-         (reduce (partial mark-and-reject-growing-fields avustushaku wrappers) {:rejects #{} :values []})
+         (reduce (partial mark-and-reject-growing-fields wrappers va-focus-areas-label) {:rejects #{} :values []})
          :values
-         (map (partial inject-growing-fieldsets avustushaku fields wrappers growing-fieldset-lut))
+         (map (partial inject-growing-fieldsets fields wrappers va-focus-areas-label growing-fieldset-lut))
          (reduce unwrap-double-nested-lists [])
          (filter (comp not empty?)))))
 
@@ -160,7 +159,7 @@
   (when (not (empty? str))
     (Integer/parseInt (remove-white-spaces str))))
 
-(defn- get-by-id [avustushaku answer-set id answer-type]
+(defn- get-by-id [answer-set va-focus-areas-items id answer-type]
   (case (:fieldType answer-type)
     "radioButton" (let [value (get answer-set id)]
                     (or (->> answer-type
@@ -184,19 +183,14 @@
                             (filter (fn [val] (formutil/in? value (:value val))))
                             (map (fn [val] (->> val :label :fi)))
                             (string/join "; ")))
-    "vaFocusAreas" (let [value (get answer-set id)
-                         focus-areas (->> avustushaku
-                                          :content
-                                          :focus-areas
-                                          :items)]
-                     (->> value
-                          (map (fn [val] (->> val
-                                              (re-find #".*([0-9]+)$")
-                                              last
-                                              (Long/parseLong))))
-                          (map (fn [index] (->> (nth focus-areas index)
-                                                :fi)))
-                          (string/join "; ")))
+    "vaFocusAreas" (->> (get answer-set id)
+                        (map (fn [val] (->> val
+                                            (re-find #".*([0-9]+)$")
+                                            last
+                                            (Long/parseLong))))
+                        (map (fn [index] (->> (nth va-focus-areas-items index)
+                                              :fi)))
+                        (string/join "; "))
     "tableField" (->> (get answer-set id)
                       (map (fn [row] (str "[" (string/join " | " row) "]")))
                       (string/join " "))
@@ -204,13 +198,13 @@
     "vaTraineeDayCalculator" (str->float (get answer-set (str id ".total")))
     (get answer-set id)))
 
-(defn- extract-answer-values [avustushaku answer-keys answer-types answers]
-  (let [extract-answers (fn [answer-set] (mapv (partial get-by-id avustushaku answer-set) answer-keys answer-types))]
+(defn- extract-answer-values [answer-keys answer-types answers va-focus-areas-items]
+  (let [extract-answers (fn [answer-set] (mapv (partial get-by-id answer-set va-focus-areas-items) answer-keys answer-types))]
     (mapv extract-answers answers)))
 
-(defn- flatten-answers [avustushaku hakemukset answer-keys answer-labels answer-types]
+(defn- flatten-answers [hakemukset answer-keys answer-labels answer-types va-focus-areas-items]
   (let [answers      (map hakemus->map hakemukset)
-        flat-answers (extract-answer-values avustushaku answer-keys answer-types answers)]
+        flat-answers (extract-answer-values answer-keys answer-types answers va-focus-areas-items)]
     (apply conj [answer-labels] flat-answers)))
 
 (defn- generate-growing-fieldset-lut [hakemukset]
@@ -318,9 +312,9 @@
         (constantly "")
         ))
 
-(defn- fit-columns [columns sheet]
+(defn- fit-columns [num-columns sheet]
   ;; Make columns fit the data
-  (doseq [index (range 0 (count columns))]
+  (doseq [index (range 0 num-columns)]
     (.autoSizeColumn sheet index)))
 
 (def lkp-map {:kunta_kirkko                         82000000
@@ -376,6 +370,9 @@
 
 (defn export-avustushaku [avustushaku-combined]
   (let [avustushaku (:avustushaku avustushaku-combined)
+        hakemus-form (:form avustushaku-combined)
+        va-focus-areas-label (->> avustushaku :content :focus-areas :label :fi)
+        va-focus-areas-items (->> avustushaku :content :focus-areas :items)
         paatos-date (-> avustushaku :decision :date)
         hakemus-list (:hakemukset avustushaku-combined)
         map-paatos-data (partial add-paatos-data paatos-date)
@@ -398,7 +395,7 @@
 
         growing-fieldset-lut (generate-growing-fieldset-lut hakemus-list)
 
-        answer-key-label-type-triples (avustushaku->formlabels avustushaku-combined growing-fieldset-lut)
+        answer-key-label-type-triples (avustushaku->formlabels hakemus-form va-focus-areas-label growing-fieldset-lut)
 
         answer-keys (apply conj
                            (mapv first answers-fixed-fields)
@@ -410,7 +407,7 @@
                             (mapv fourth answers-fixed-fields)
                             (mapv third answer-key-label-type-triples))
 
-        answer-flatdata (flatten-answers avustushaku hakemus-list answer-keys answer-labels answer-types)
+        answer-flatdata (flatten-answers hakemus-list answer-keys answer-labels answer-types va-focus-areas-items)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
                         (spreadsheet/add-rows! sheet answer-flatdata)
                         sheet)
@@ -427,9 +424,9 @@
         header-style (spreadsheet/create-cell-style! wb {:background :yellow
                                                          :font       {:bold true}})]
 
-    (fit-columns main-sheet-columns main-sheet)
-    (fit-columns answer-keys answers-sheet)
-    (fit-columns maksu-columns maksu-sheet)
+    (fit-columns (count main-sheet-columns) main-sheet)
+    (fit-columns (count answer-keys) answers-sheet)
+    (fit-columns (count maksu-columns) maksu-sheet)
 
     ;; Style first row
     (spreadsheet/set-row-style! main-header-row header-style)
