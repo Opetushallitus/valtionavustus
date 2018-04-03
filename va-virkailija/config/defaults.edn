@@ -47,4 +47,5 @@
             :cache-max-refresh-interval-in-s 10800}
  :rondo-sftp {:enabled? false
               :local-path "/tmp"}
- :rondo-scheduler {:enabled? false}}
+ :rondo-scheduler {:enabled? false}
+ :multibatch-payments {:enabled? false}}

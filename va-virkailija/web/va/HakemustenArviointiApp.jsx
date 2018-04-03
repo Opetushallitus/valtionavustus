@@ -35,10 +35,11 @@ export default class App extends Component {
     const loadingComments = state.loadingComments
     const avustushakuList = state.avustushakuList
     const subTab = state.subTab
+    const environment = hakuData.environment
 
     return (
       <section>
-        <TopBar activeTab="arviointi" environment={hakuData.environment} state={state}/>
+        <TopBar activeTab="arviointi" environment={environment} state={state}/>
         <section id="main-container" className="section-container">
           <div id="list-container" className={hasSelected ? "has-selected" : ""}>
             <div id="list-heading">
@@ -72,7 +73,8 @@ export default class App extends Component {
                           loadingComments={loadingComments}
                           showOthersScores={state.showOthersScores}
                           subTab={subTab}
-                          controller={controller}/>
+                          controller={controller}
+                          environment={environment}/>
           <div hidden={!hasSelected} id="footer">
             <HakemusHakijaSidePreviewLink hakemus={selectedHakemus} avustushaku={avustushaku} />
             <HakemusDecisionLink hakemus={selectedHakemus} avustushaku={avustushaku} />
