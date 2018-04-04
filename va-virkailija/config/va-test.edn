@@ -15,4 +15,4 @@
          :retry-multiplier 4
          :retry-max-time 60000}
  :rondo-scheduler {:enabled? true}
- :multibatch-payments {:enabled? false}}
+ :multibatch-payments {:enabled? true}}
