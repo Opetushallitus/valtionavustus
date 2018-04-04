@@ -26,7 +26,8 @@
    :tags (:tags arvio)
    :oppilaitokset (:oppilaitokset arvio)
    :changelog (:changelog arvio)
-   :should-pay (or (:should_pay arvio) true)})
+   :should-pay (:should_pay arvio)
+   :should-pay-comments (:should-pay-comments arvio)})
 
 
 (defn- add-arvio [arvio hakemus]
@@ -42,8 +43,7 @@
                            :useDetailedCosts   false
                            :roles              {:evaluators []}
                            :tags               {:value []}
-                           :oppilaitokset      {:names []}
-                           :should-pay true})))
+                           :oppilaitokset      {:names []}})))
 
 (defn- find-and-add-arvio [arviot hakemus]
   (add-arvio (get arviot (:id hakemus)) hakemus))
@@ -114,7 +114,6 @@
      :diaarinumero (:register-number hakemus)
      :paatos paatos-clear
      :perustelut (-> hakemus :arvio :perustelut)}))
-
 
 (defn get-avustushaku-and-paatokset
   [avustushaku-id]

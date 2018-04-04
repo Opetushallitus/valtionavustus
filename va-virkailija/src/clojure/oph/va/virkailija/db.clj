@@ -61,7 +61,7 @@
                                                       :new new-comment}))
       changelog)))
 
-
+ 
 (defn- compare-oppilaitokset [changelog identity timestamp existing new]
   (let [new-oppilaitokset (:oppilaitokset new)
         existing-oppilaitokset (:oppilaitokset existing)]
@@ -108,14 +108,26 @@
     changelog))
 
 
-    (defn- compare-should-pay [changelog identity timestamp existing new]
-      (if (not (= (:should-pay new) (keyword (:should-pay existing))))
-        (append-changelog changelog (->changelog-entry identity
+(defn- compare-should-pay [changelog identity timestamp existing new]
+  (if (not (= (:should_pay new) (keyword (:should_pay existing))))
+    (append-changelog changelog (->changelog-entry identity
                                                        "should-pay-change"
                                                        timestamp
-                                                       {:old (:should-pay existing)
-                                                        :new (:should-pay new)}))
+                                                       {:old (:should_pay existing)
+                                                        :new (:should_pay new)}))
         changelog))
+
+(defn- compare-should-pay-comment [changelog identity timestamp existing new]
+  (let [old-comment (:should_pay_comments existing)
+        new-comment (:should_pay_comments  new)]
+    (if (not (= old-comment new-comment))
+      (append-changelog changelog (->changelog-entry identity
+                                                     "presenter-comment"
+                                                     timestamp
+                                                     {:old old-comment
+                                                      :new new-comment}))
+      changelog)))
+
 
 (defn- update-changelog [identity existing new]
   (let [changelog (:changelog existing)
@@ -124,6 +136,7 @@
       (-> (if changelog changelog [])
         (compare-status identity timestamp existing new)
         (compare-oppilaitokset identity timestamp existing new)
+        (compare-should-pay identity timestamp existing new)
         (compare-budget-granted identity timestamp existing new)
         (compare-summary-comment identity timestamp existing new)
         (compare-presenter-comment identity timestamp existing new)
@@ -171,6 +184,7 @@
                         :tags (:tags arvio)
                         :oppilaitokset {:names oppilaitokset-names}
                         :should_pay (:should-pay arvio)
+                        :should_pay_comments (:should-pay-comments arvio)
                         }
         existing (get-arvio hakemus-id)
         changelog (update-changelog identity existing arvio-to-save)

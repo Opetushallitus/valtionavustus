@@ -52,10 +52,11 @@
    (s/optional-key :rahoitusalue) (s/maybe s/Str)
    (s/optional-key :talousarviotili) (s/maybe s/Str)
    (s/optional-key :academysize) (s/maybe s/Int)
-   (s/optional-key :perustelut) (s/maybe s/Str)
+   (s/optional-key :perustelut) (s/maybe s/Str) 
    (s/optional-key :presentercomment) (s/maybe s/Str)
    (s/optional-key :changelog) (s/maybe s/Any)
-   (s/optional-key :should-pay) (s/maybe s/Bool)})
+   (s/optional-key :should-pay) (s/maybe s/Bool)
+   (s/optional-key :should-pay-comments) (s/maybe s/Str)})
 
 (s/defschema NewComment
   "New comment to be added"
