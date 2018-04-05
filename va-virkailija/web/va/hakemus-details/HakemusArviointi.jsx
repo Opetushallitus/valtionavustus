@@ -38,6 +38,7 @@ export default class HakemusArviointi extends Component {
     const comments = hakemus.comments
     const loadingComments = this.props.loadingComments
     const showOthersScores = this.props.showOthersScores
+    const showShouldPayComments = true
 
     return (
      <div id="arviointi-tab">
@@ -51,7 +52,8 @@ export default class HakemusArviointi extends Component {
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <ShouldPay controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges}/>      
- <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} />
+       <ShouldPayComments showField={showShouldPayComments} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges}/>
+       <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
@@ -170,16 +172,57 @@ class SetArviointiStatus extends React.Component {
   }
 }
 
+class ShouldPayComments extends React.Component {
+  constructor(props){
+    super(props)
+    this.state={shouldPayComments: getShouldPayComments(this.props.hakemus)}
+  }
+
+ componentWillReceiveProps(nextProps) {
+    if (this.props.hakemus.id !== nextProps.hakemus.id) {
+      this.setState({shouldPayComments: getShouldPayComments(nextProps.hakemus)})
+    }
+  }
+
+  commentsUpdated(newComment){
+    this.setState({shouldPayComments: newComment})
+    console.log("uusi kommentti: " + this.state.shouldPayComments)
+    this.props.controller.setHakemusShouldPayComments(this.props.hakemus, newComment)
+}
+  
+  render() { 
+    const allowEditing = this.props.allowEditing
+
+ return(
+   <div className="value-edit should-pay-comment">
+      <label htmlFor="should-pay-comment">Perustelut, miksi ei makseta: </label>
+      <textarea id="should-pay-comment" rows="5" disabled={false} value={this.state.shouldPayComments}
+             onChange={evt => this.commentsUpdated(evt.target.value) } maxLength="128" />
+    </div>  
+)
+}
+
+}
+
+function getShouldPayComments(hakemus) {
+  const arvio = hakemus.arvio ? hakemus.arvio : {}
+  return arvio["should-pay-comments"]
+}
+
+
 class ShouldPay extends React.Component {
   render() {
     const hakemus = this.props.hakemus
-    const allowEditing = this.props.allowEditing
+    const allowEditing = true
+//this.props.allowEditing
     const controller = this.props.controller
     const arvio = hakemus.arvio
     const selectedShouldPay = arvio["should-pay"]
-    console.log(arvio["should-pay"])
     const isDisabled = this.props.disabled
-    const onChange = allowEditing ? controller.setHakemusShouldPay(hakemus, !selectedShouldPay) : null
+    const onChange = function(event) {
+      controller.setHakemusShouldPay(hakemus, event.target.value)()
+    }
+
     const options = _.flatten([
       {htmlId: "set-should-pay-true", value: true, label: "Kyllä"},
       {htmlId: "set-should-pay-false", value: false, label: "Ei"}
@@ -197,12 +240,14 @@ class ShouldPay extends React.Component {
                htmlFor={spec.htmlId}>{spec.label}</label>
       ]
     ))
+        
     return (
-      <div id="set-accepts-grant">
+      <div id="set-should-pay-grant">
         <h3>Maksuun:</h3>
         <fieldset className="soresu-radiobutton-group">
           {options}
         </fieldset>
+        
       </div>
     )
   }
@@ -238,7 +283,7 @@ class ChangeRequest extends React.Component {
     const closeEdit = allowEditing ? controller.setChangeRequestText(hakemus, undefined) : null
     const onTextChange = function(event) {
       controller.setChangeRequestText(hakemus, event.target.value)()
-    }
+    }  
     const sendChangeRequest = allowEditing ? controller.setHakemusStatus(hakemus, "pending_change_request", () => hakemus.changeRequest) : null
     const newChangeRequest = typeof hakemus.changeRequest !== 'undefined' && !hasChangeRequired
 
@@ -306,7 +351,7 @@ class SummaryComment extends React.Component {
       <label htmlFor="summary-comment">Huomautus päätöslistaan</label>
       <textarea id="summary-comment" rows="1" disabled={!allowEditing} value={this.state.summaryComment}
              onChange={evt => this.summaryCommentUpdated(evt.target.value) } maxLength="128" />
-    </div>
+    </div> 
   }
 }
 
