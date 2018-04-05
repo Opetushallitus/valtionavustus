@@ -39,7 +39,7 @@ export default class FormContainer extends React.Component {
                 <LocalizedString translations={translations.form}
                                  translationKey="grant-refuse-sent" lang={lang}/>
             </div>}
-          <div className={status === "denied" ? "disabled" : null}>
+          <div className={status === "refused" ? "disabled" : null}>
             <p>
               <LocalizedString translations={translations.form}
                                translationKey="grant-refuse-info" lang={lang}/>
