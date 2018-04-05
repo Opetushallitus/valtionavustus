@@ -4,7 +4,9 @@ import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 export default class FormContainer extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {isChecked: false, comment: ""}
+    this.state =
+      {isChecked: false,
+       comment: props.state.saveStatus.savedObject["status-comment"] || ""}
     this.onCheckedChange = this.onCheckedChange.bind(this)
     this.onCommentChange = this.onCommentChange.bind(this)
     this.onSubmitClicked = this.onSubmitClicked.bind(this)
