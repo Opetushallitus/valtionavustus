@@ -19,3 +19,7 @@
   "Hakemus with user key and language"
   {:id s/Str
    :language s/Str})
+
+(s/defschema RefuseData
+  "Application refuse data"
+  {:comment s/Str})

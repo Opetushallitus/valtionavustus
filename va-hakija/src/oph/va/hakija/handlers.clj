@@ -159,6 +159,27 @@
         (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
 
+(defn on-refuse-application [application-id base-version comment]
+  (let [application (va-db/get-hakemus application-id)
+        grant (va-db/get-avustushaku (:avustushaku application))
+        form (form-db/get-form (:form grant))
+        submission
+        (:body (get-form-submission (:form grant)
+                                    (:form_submission_id application)))
+        updated-submission
+        (:body
+         (update-form-submission
+           (:id form) (:form_submission_id application) (:answers submission)))
+        budget-totals (va-budget/calculate-totals-hakija
+                        (:answers updated-submission) grant form)]
+    (if (and (= (:version application) base-version)
+             (not= (:status application) "refused"))
+      (hakemus-ok-response
+        (va-db/refuse-application
+          application updated-submission budget-totals comment)
+        updated-submission {})
+      (hakemus-conflict-response application))))
+
 (defn on-selvitys-update [haku-id hakemus-id base-version answers form-key]
   (let [hakemus (va-db/get-hakemus hakemus-id)
         avustushaku (va-db/get-avustushaku haku-id)

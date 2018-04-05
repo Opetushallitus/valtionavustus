@@ -116,6 +116,16 @@
     :summary "Create initial hakemus"
     (on-hakemus-create haku-id answers)))
 
+(defn- put-refuse-hakemus []
+  (compojure-api/PUT "/:grant-id/hakemus/:application-id/:base-version/refuse/"
+                     [grant-id application-id base-version :as request]
+    :path-params
+    [grant-id :- Long, application-id :- s/Str, base-version :- Long]
+    :body [refuse-data (compojure-api/describe RefuseData "Refuse data")]
+    :return Hakemus
+    :summary "Update application status to refused"
+    (on-refuse-application application-id base-version (:comment refuse-data))))
+
 (defn- post-hakemus []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version" [haku-id hakemus-id base-version :as request]
     :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
@@ -207,6 +217,7 @@
   (post-selvitys)
   (post-selvitys-submit)
   (put-hakemus)
+  (put-refuse-hakemus)
   (post-hakemus)
   (post-hakemus-submit)
   (post-change-request-response)
