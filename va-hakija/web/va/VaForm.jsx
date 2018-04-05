@@ -40,10 +40,11 @@ export default class VaForm extends React.Component {
                       state={state}
                       hakemusType={hakemusType}
         />
-        {configuration.environment["grant-refuse"] &&
-          configuration.environment["grant-refuse"]["enabled?"] &&
+        {configuration.environment["application-change"] &&
+          configuration.environment["application-change"]["refuse-enabled?"] &&
           configuration.preview &&
-          <GrantRefuse controller={controller} state={state}/>}
+          <GrantRefuse controller={controller} state={state}
+                       onSubmit={controller.refuseApplication}/>}
         <FormContainer controller={controller}
                        state={state}
                        formContainerClass={formContainerClass}
