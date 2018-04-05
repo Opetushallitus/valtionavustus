@@ -4,12 +4,22 @@ import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
 export default class FormContainer extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {isChecked: false}
+    this.state = {isChecked: false, comment: ""}
     this.onCheckedChange = this.onCheckedChange.bind(this)
+    this.onCommentChange = this.onCommentChange.bind(this)
+    this.onSubmitClicked = this.onSubmitClicked.bind(this)
   }
 
   onCheckedChange() {
     this.setState({isChecked: !this.state.isChecked})
+  }
+
+  onCommentChange(e) {
+    this.setState({comment: e.target.value})
+  }
+
+  onSubmitClicked() {
+    this.props.onSubmit(this.state.comment)
   }
 
   render() {
@@ -34,7 +44,14 @@ export default class FormContainer extends React.Component {
               <LocalizedString translations={translations.form}
                                translationKey="grant-refuse-info" lang={lang}/>
             </p>
-            <div>
+            <div className="soresu-form">
+              <div className="refuse-comment soresu-text-area">
+                <label>
+                  <span className="required soresu-key">Perustelut</span>
+                </label>
+                <textarea onChange={this.onCommentChange}
+                          value={this.state.comment} />
+              </div>
               <div>
                 <label className="checkbox-label">
                   <input type="checkbox"
@@ -46,8 +63,8 @@ export default class FormContainer extends React.Component {
                 </label>
               </div>
               <button className="soresu-text-button"
-                      disabled={!this.state.isChecked}
-                      onClick={this.props.onRefuseClick}>
+                      disabled={!this.state.isChecked || this.state.comment.length === 0 }
+                      onClick={this.onSubmitClicked}>
                 <LocalizedString translations={translations.form}
                                  translationKey="grant-refuse-send"
                                  lang={lang}/>
