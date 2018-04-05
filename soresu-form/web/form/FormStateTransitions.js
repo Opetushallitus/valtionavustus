@@ -17,7 +17,8 @@ import Translator from './Translator'
 const serverOperations = {
   initialSave: 'initialSave',
   autoSave: 'autoSave',
-  submit: 'submit'
+  submit: 'submit',
+  refuseApplication: 'refuseApplication'
 }
 
 export default class FormStateTransitions {
@@ -29,7 +30,7 @@ export default class FormStateTransitions {
       'startAutoSave', 'onInitialState', 'onUpdateField', 'onFieldValidation', 'onChangeLang', 'updateOld', 'onSave',
       'onBeforeUnload', 'onInitAutoSave', 'onSaveCompleted', 'onSubmit', 'onRemoveField', 'onServerError', 'onUploadAttachment',
       'onRemoveAttachment', 'onAttachmentUploadCompleted', 'onAttachmentRemovalCompleted', 'pushSaveCompletedEvent',
-      'refreshStateFromServer')
+      'refreshStateFromServer', 'onRefuseApplication')
   }
 
   _bind(...methods) {
@@ -207,6 +208,8 @@ export default class FormStateTransitions {
       dispatcher.push(events.serverError, {error: "unexpected-save-error"})
     } else if (serverOperation === serverOperations.autoSave) {
       dispatcher.push(events.initAutoSave)
+    } else if (serverOperation === serverOperations.refuseApplication) {
+      dispatcher.push(events.serverError, {error: "unexpected-save-error"})
     }
   }
 
@@ -346,6 +349,34 @@ export default class FormStateTransitions {
     if(serverErrors.validationErrors) {
       state.form.validationErrors = state.form.validationErrors.merge(serverErrors.validationErrors)
     }
+    return state
+  }
+
+  onRefuseApplication(state, comment, onSuccessCallback) {
+    const formOperations = state.extensionApi.formOperations
+    const url = formOperations.urlCreator.refuseApplicationApiUrl(state)
+    const dispatcher = this.dispatcher
+    const events = this.events
+    const self = this
+    state.saveStatus.saveInProgress = true
+    HttpUtil.put(url, {comment: comment})
+      .then(function(response) {
+        self.pushSaveCompletedEvent(state, response, onSuccessCallback)
+      })
+      .catch(function(error) {
+        FormStateTransitions.handleServerError(
+          dispatcher,
+          events,
+          error,
+          "PUT",
+          url,
+          serverOperations.refuseApplication)
+      })
+    return state
+  }
+
+  onApplicationRefused(state) {
+    state.saveStatus.savedObject.status = "refused"
     return state
   }
 }
