@@ -14,7 +14,9 @@ insert into arviot (
   use_overridden_detailed_costs,
   presentercomment,
   academysize,
-  oppilaitokset)
+  oppilaitokset,
+  should_pay,
+  should_pay_comments)
 values (
   :hakemus_id,
   :status,
@@ -31,4 +33,6 @@ values (
   :use_overridden_detailed_costs,
   :presentercomment,
   :academysize,
-  :oppilaitokset)
+  :oppilaitokset,
+  :should_pay,
+  :should_pay_comments)
