@@ -46,7 +46,8 @@ export default class FormContainer extends React.Component {
                 </label>
               </div>
               <button className="soresu-text-button"
-                      disabled={!this.state.isChecked}>
+                      disabled={!this.state.isChecked}
+                      onClick={this.props.onRefuseClick}>
                 <LocalizedString translations={translations.form}
                                  translationKey="grant-refuse-send"
                                  lang={lang}/>
