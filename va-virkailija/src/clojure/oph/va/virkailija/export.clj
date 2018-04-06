@@ -77,8 +77,8 @@
    "Varalla 1"
    "KOM-yksikkö"
    "Selite (Tiliöinti)"
-   "Asiatarkastajan sähiköpostiosoite"
-   "Hyväksyjän sähiköpostiosoite"])
+   "Asiatarkastajan sähköpostiosoite"
+   "Hyväksyjän sähköpostiosoite"])
 
 (def hakemus->maksu-sheet-rows
   (juxt :era
