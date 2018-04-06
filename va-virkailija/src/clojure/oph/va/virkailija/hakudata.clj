@@ -27,7 +27,7 @@
    :oppilaitokset (:oppilaitokset arvio)
    :changelog (:changelog arvio)
    :should-pay (:should_pay arvio)
-   :should-pay-comments (:should-pay-comments arvio)})
+   :should-pay-comments (:should_pay_comments arvio)})
 
 
 (defn- add-arvio [arvio hakemus]
