@@ -68,7 +68,7 @@ export default class JsUtil {
         return true  // keep searching
       }
     })
-    return index
+    return found ? index : -1
   }
 
   static findJsonNodeContainingId(objectOrArray, idToFind) {

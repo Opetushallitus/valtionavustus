@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.payments-routes
   (:require [compojure.api.sweet :as compojure-api]
             [oph.va.virkailija.payments-data :as payments-data]
-            [ring.util.http-response :refer [ok]]
+            [ring.util.http-response :refer [ok not-found]]
             [compojure.core :as compojure]
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.authentication :as authentication]))
@@ -16,7 +16,21 @@
     (let [identity (authentication/get-request-identity request)]
       (ok (payments-data/create-payment payment-values identity)))))
 
+(defn- delete-payment []
+  (compojure-api/DELETE
+    "/:id/" [id :as request]
+    :path-params [id :- Long]
+    :summary "Delete payment with state 1"
+    (if-let [payment (payments-data/get-payment id)]
+      (do
+        (when (not= (:state payment) 1)
+          (throw (Exception. "Only newly created is allowed to be deleted")))
+        (payments-data/delete-payment id)
+        (ok ""))
+      (not-found ""))))
+
 (compojure-api/defroutes
   routes
   "payment routes"
-  (create-payment))
+  (create-payment)
+  (delete-payment))

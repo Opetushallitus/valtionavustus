@@ -4,7 +4,8 @@
    [cljsjs.chartjs]
    [cljs.core.async :refer [put! <! close!]]
    [oph.va.admin-ui.connection :as connection]
-   [oph.va.admin-ui.dialogs :as dialogs]))
+   [oph.va.admin-ui.dialogs :as dialogs]
+   [reagent.core :as r]))
 
 (def colors
   {:blue "rgb(54, 162, 235)"
@@ -14,6 +15,8 @@
    :red "rgb(255, 99, 132)"
    :yellow "rgb(255, 205, 86)"
    :grey "rgb(201, 203, 207)"})
+
+(defonce data (r/atom {}))
 
 (defn show-data! [id chart-data]
   (let [context (.getContext (.getElementById js/document id) "2d")]
@@ -82,7 +85,7 @@
       {:component-did-mount
        #(show-data! id data)}))
 
-(defn home-page [{:keys [data]}]
+(defn home-page []
   [:div
    [(create-chart "applications"
                   (gen-evaluations-data
@@ -94,8 +97,7 @@
    [(create-chart "total-granted"
                   (gen-granted-data (:granted @data)))]])
 
-
-(defn init! [{:keys [data]}]
+(defn init! []
   (go
     (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan raportteja" 3)]
       (put! dialog-chan 1)

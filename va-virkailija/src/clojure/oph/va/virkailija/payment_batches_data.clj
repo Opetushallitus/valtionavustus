@@ -88,7 +88,7 @@
         (-> updated-payment
             (send-to-rondo! application (:grant data) filename (:batch data))
             (assoc :filename filename :payment updated-payment)))
-      {:success false :error {:error-type :already-paid}})))
+      {:success false :error {:error-type :no-payments}})))
 
 (defn create-payments [data]
   (let [{:keys [identity grant]} data

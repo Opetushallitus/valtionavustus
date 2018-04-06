@@ -17,9 +17,21 @@ describe('Js util', function() {
     expect(object).to.eql({id: 'id-3', token: Token})
   })
 
-  it('finds index of first matching object', function() {
-    const index = JsUtil.findIndexOfFirst(Tree, el => el.token === Token)
-    expect(index).to.equal(TraversingStepsToToken - 1)
+  describe('finding index of first matching object', function() {
+    it('returns index when object matches', function() {
+      const index = JsUtil.findIndexOfFirst(Tree, el => el.token === Token)
+      expect(index).to.equal(TraversingStepsToToken - 1)
+    })
+
+    it('returns 0 when matching root object', function() {
+      const index = JsUtil.findIndexOfFirst(Tree, el => el.a1 && el.b1)
+      expect(index).to.equal(0)
+    })
+
+    it('returns -1 when match is not found', function() {
+      const index = JsUtil.findIndexOfFirst(Tree, el => el.token === "nosuch")
+      expect(index).to.equal(-1)
+    })
   })
 
   describe('finding json node containing id', function() {

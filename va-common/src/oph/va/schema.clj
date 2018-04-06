@@ -43,15 +43,19 @@
                                  (s/optional-key :multiplemaksuera) s/Bool
                                  :self-financing-percentage (s/conditional is-percentage? s/Num)})
 
-(s/defschema Environment {:name s/Str
-                          :show-name s/Bool
-                          :hakija-server {:url LocalizedString}
-                          :virkailija-server {:url s/Str}
-                          :paatos-path s/Str
-                          :notice {:fi s/Str :sv s/Str}
-                          (s/optional-key :payments) (s/maybe {:delete-payments? s/Bool})
-                          (s/optional-key :opintopolku) {:url s/Str
-                                                         :permission-request s/Str}})
+(s/defschema Environment
+  {:name s/Str
+   :show-name s/Bool
+   :hakija-server {:url LocalizedString}
+   :virkailija-server {:url s/Str}
+   :paatos-path s/Str
+   :notice {:fi s/Str :sv s/Str}
+   (s/optional-key :payments) (s/maybe {:delete-payments? s/Bool})
+   (s/optional-key :opintopolku) {:url s/Str
+                                  :permission-request s/Str}
+   (s/optional-key :application-change) (s/maybe {:disabled? s/Bool})
+   (s/optional-key :multibatch-payments) (s/maybe {:enabled? s/Bool})})
+
 
 (s/defschema HakuType
   (s/enum "yleisavustus" "erityisavustus"))

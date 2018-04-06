@@ -141,7 +141,7 @@
        (map role->json)
        first))
 
-(defn- form->json [form]
+(defn form->json [form]
   (let [form-for-rendering (formhandler/add-koodisto-values :form-db form)]
     {:content (:content form-for-rendering)
        :rules (:rules form-for-rendering)}))
@@ -227,6 +227,11 @@
                          (into {}))
        :budget-total-sum (reduce + (map :budget_total hakemukset))
        :budget-oph-share-sum (reduce + (map :budget_oph_share hakemukset))})))
+
+(defn get-hakemukset-for-export [avustushaku-id]
+  (->> {:avustushaku_id avustushaku-id}
+       (exec :form-db hakija-queries/list-hakemukset-for-export-by-avustushaku)
+       hakemukset->json))
 
 (defn get-selvitysdata [avustushaku-id hakemus-id]
   (let [avustushaku (get-avustushaku avustushaku-id)

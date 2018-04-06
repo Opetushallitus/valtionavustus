@@ -6,13 +6,6 @@
 
 (def lifetime-limit (t/minus (t/now) (t/months 12)))
 
-(defn remove-old
-  [grants]
-  (filterv #(and (= (:status %) "resolved")
-                 (or (nil? (:loppuselvitysdate %))
-                     (t/after? (:loppuselvitysdate %) lifetime-limit)))
-    grants))
-
 (defn parse-date [s]
   (if (empty? s)
     nil

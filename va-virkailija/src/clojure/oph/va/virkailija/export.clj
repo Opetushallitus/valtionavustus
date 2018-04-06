@@ -12,6 +12,7 @@
            [org.joda.time DateTime]))
 
 (def main-sheet-name "Hakemukset")
+
 (def main-sheet-columns ["Diaarinumero"
                          "Hakijaorganisaatio"
                          "Hankkeen nimi"
@@ -35,8 +36,9 @@
 
 (def maksu-sheet-name "Tiliöinti")
 
-(defn third [list] (nth list 2))
-(defn fourth [list] (nth list 3))
+(defn- third [list] (nth list 2))
+
+(defn- fourth [list] (nth list 3))
 
 (defn- has-child? [id node]
   (when-let [children (:children node)]
@@ -49,11 +51,6 @@
   (->> wrappers
        (filter (partial has-child? id))
        first))
-
-(defn- valid-hakemus? [hakemus]
-  (or (= (:status hakemus) "submitted")
-      (= (:status hakemus) "pending_change_request")
-      (= (:status hakemus) "officer_edit")))
 
 (defn- field->type [field]
   (let [add-options (fn [type-map]
@@ -139,24 +136,20 @@
          (reduce unwrap-double-nested-lists [])
          (filter (comp not empty?)))))
 
-(defn- avustushaku->hakemukset [avustushaku]
-  (->> (:hakemukset avustushaku)
-       (filter valid-hakemus?)))
-
 (defn- hakemus->map [hakemus]
-  (let [answers (formutil/unwrap-answers (:answers hakemus) ["checkboxButton" "vaFocusAreas"])]
+  (let [answers (formutil/unwrap-answers (:answers hakemus) ["checkboxButton" "vaFocusAreas" "tableField"])]
     (reduce (fn [answer-map [field-name _ lookup-fn]]
               (assoc answer-map field-name (lookup-fn hakemus)))
             answers
             answers-fixed-fields)))
 
-(defn remove-white-spaces [str]
+(defn- remove-white-spaces [str]
   (string/replace str #"\s" ""))
 
-(defn comma-to-dot [str]
+(defn- comma-to-dot [str]
   (string/replace str "," "."))
 
-(defn remove-dots [str]
+(defn- remove-dots [str]
   (string/replace str "." ""))
 
 (defn- str->float [str]
@@ -167,7 +160,7 @@
   (when (not (empty? str))
     (Integer/parseInt (remove-white-spaces str))))
 
-(defn get-by-id [avustushaku answer-set id answer-type]
+(defn- get-by-id [avustushaku answer-set id answer-type]
   (case (:fieldType answer-type)
     "radioButton" (let [value (get answer-set id)]
                     (or (->> answer-type
@@ -193,7 +186,6 @@
                             (string/join "; ")))
     "vaFocusAreas" (let [value (get answer-set id)
                          focus-areas (->> avustushaku
-                                          :avustushaku
                                           :content
                                           :focus-areas
                                           :items)]
@@ -205,6 +197,9 @@
                           (map (fn [index] (->> (nth focus-areas index)
                                                 :fi)))
                           (string/join "; ")))
+    "tableField" (->> (get answer-set id)
+                      (map (fn [row] (str "[" (string/join " | " row) "]")))
+                      (string/join " "))
     "moneyField" (str->int (get answer-set id))
     "vaTraineeDayCalculator" (str->float (get answer-set (str id ".total")))
     (get answer-set id)))
@@ -213,23 +208,21 @@
   (let [extract-answers (fn [answer-set] (mapv (partial get-by-id avustushaku answer-set) answer-keys answer-types))]
     (mapv extract-answers answers)))
 
-(defn flatten-answers [avustushaku answer-keys answer-labels answer-types]
-  (let [hakemukset (avustushaku->hakemukset avustushaku)
-        answers (map hakemus->map hakemukset)
-        flat-answers (->> (extract-answer-values avustushaku answer-keys answer-types answers)
-                          (sort-by first))]
+(defn- flatten-answers [avustushaku hakemukset answer-keys answer-labels answer-types]
+  (let [answers      (map hakemus->map hakemukset)
+        flat-answers (extract-answer-values avustushaku answer-keys answer-types answers)]
     (apply conj [answer-labels] flat-answers)))
 
-(defn generate-growing-fieldset-lut [avustushaku]
-  (let [answer-list (->> (avustushaku->hakemukset avustushaku)
-                         (sort-by first)
-                         (map :answers))
+(defn- generate-growing-fieldset-lut [hakemukset]
+  (let [answer-list (map :answers hakemukset)
         descend-to-child (fn [acc child]
                            (conj acc [(:key child) (mapv :key (:value child))]))
         convert-answers-to-lookup-table (fn [value]
                                           (array-map (:key value) (reduce descend-to-child (array-map) (:value value))))
+        growing-fieldset-answer? (fn [answer] (and (vector? (:value answer))
+                                                   (= "growingFieldset" (:fieldType answer))))
         process-answers (fn [answers] (->> answers
-                                           (filter (fn [value] (vector? (:value value))))
+                                           (filter growing-fieldset-answer?)
                                            (mapv convert-answers-to-lookup-table)))
         combine (fn [accumulated single-entry]
                   (reduce (fn [acc item]
@@ -283,7 +276,7 @@
                     "Asiatarkastajan sähiköpostiosoite"
                     "Hyväksyjän sähiköpostiosoite"])
 
-(defn format-date [date-string]
+(defn- format-date [date-string]
   (try
     (let [date (clj-time-format/parse (clj-time-format/formatter "dd.MM.YYYY") date-string)
           formatted (.print (clj-time-format/formatter "ddMMyyyy") date)]
@@ -366,7 +359,7 @@
                    :lkp lkp
                    :takp takp)))
 
-(defn split-multiple-maksuera-if-needed [has-multiple-maksuera hakemus]
+(defn- split-multiple-maksuera-if-needed [has-multiple-maksuera hakemus]
   (let [arvio (:arvio hakemus)
         total-paid (:budget-granted arvio)
         multiple-maksuera (and has-multiple-maksuera (> total-paid 60000))
@@ -384,8 +377,7 @@
 (defn export-avustushaku [avustushaku-combined]
   (let [avustushaku (:avustushaku avustushaku-combined)
         paatos-date (-> avustushaku :decision :date)
-        hakemus-list (->> (avustushaku->hakemukset avustushaku-combined)
-                          (sort-by first))
+        hakemus-list (:hakemukset avustushaku-combined)
         map-paatos-data (partial add-paatos-data paatos-date)
         has-multiple-maksuera (-> avustushaku :content :multiplemaksuera)
         accepted-list (filter #(= "accepted" (-> % :arvio :status)) hakemus-list)
@@ -404,7 +396,7 @@
         main-sheet (spreadsheet/select-sheet main-sheet-name wb)
         main-header-row (first (spreadsheet/row-seq main-sheet))
 
-        growing-fieldset-lut (generate-growing-fieldset-lut avustushaku-combined)
+        growing-fieldset-lut (generate-growing-fieldset-lut hakemus-list)
 
         answer-key-label-type-triples (avustushaku->formlabels avustushaku-combined growing-fieldset-lut)
 
@@ -418,7 +410,7 @@
                             (mapv fourth answers-fixed-fields)
                             (mapv third answer-key-label-type-triples))
 
-        answer-flatdata (flatten-answers avustushaku-combined answer-keys answer-labels answer-types)
+        answer-flatdata (flatten-answers avustushaku hakemus-list answer-keys answer-labels answer-types)
         answers-sheet (let [sheet (spreadsheet/add-sheet! wb answers-sheet-name)]
                         (spreadsheet/add-rows! sheet answer-flatdata)
                         sheet)
