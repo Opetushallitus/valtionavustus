@@ -14,7 +14,8 @@
                              :plugins
                              :uberjar-exclusions
                              :auto-clean
-                             :javac-options]}
+                             :javac-options
+                             :jvm-opts]}
 
   :dependencies [[oph-va/common]
                  [buddy/buddy-auth]
@@ -40,8 +41,6 @@
   :aot [oph.va.virkailija.db.migrations]
 
   :uberjar-exclusions [#"public/test"]
-
-  :jvm-opts ["-Xmx500m"]
 
   :prep-tasks ["javac" "compile"]
 
