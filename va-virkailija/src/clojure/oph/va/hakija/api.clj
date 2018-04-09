@@ -228,9 +228,9 @@
        :budget-total-sum (reduce + (map :budget_total hakemukset))
        :budget-oph-share-sum (reduce + (map :budget_oph_share hakemukset))})))
 
-(defn get-hakemukset-for-export [avustushaku-id]
-  (->> {:avustushaku_id avustushaku-id}
-       (exec :form-db hakija-queries/list-hakemukset-for-export-by-avustushaku)
+(defn get-hakemukset-for-export [hakemus-type avustushaku-id]
+  (->> {:hakemus_type hakemus-type :avustushaku_id avustushaku-id}
+       (exec :form-db hakija-queries/list-hakemukset-for-export-by-type-and-avustushaku)
        hakemukset->json))
 
 (defn get-selvitysdata [avustushaku-id hakemus-id]
