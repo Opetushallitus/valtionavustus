@@ -4,7 +4,8 @@
             [clojure.java.io :as io]
             [dk.ative.docjure.spreadsheet :as spreadsheet]
             [oph.va.virkailija.export :as export])
-  (:import [java.io ByteArrayInputStream]))
+  (:import [java.io ByteArrayInputStream]
+           [org.apache.poi.ss.usermodel Cell CellType]))
 
 (defn- read-edn-input [input]
   (with-open [r (io/reader input)]
@@ -17,6 +18,89 @@
   (for [row (spreadsheet/row-seq sheet)]
     (for [cell row]
       (spreadsheet/read-cell cell))))
+
+(defn- cell-properties [^Cell cell]
+  {:type            (.getCellTypeEnum cell)
+   :value           (spreadsheet/read-cell cell)
+   :quote-prefixed? (-> cell .getCellStyle .getQuotePrefixed)})
+
+(defn- make-bare-avustushaku []
+  {:content {:self-financing-percentage 10
+             :focus-areas {:items [{:fi "Piste 1", :sv "s"}]
+                           :label {:fi "Painopistealueet" :sv "Fokusområden"}}
+             :selection-criteria {:items [{:fi "", :sv ""}]
+                                  :label {:fi "Valintaperusteet", :sv "Urvalsgrunder"}}}
+   :haku-type "erityisavustus"
+   :decision {:date "19.1.2018"}})
+
+(defn- make-bare-form [fields]
+  {:content fields
+   :rules '()})
+
+(defn- make-bare-hakemus [answers]
+  {:version-date (java.sql.Timestamp. 0)
+   :project-name "projname1"
+   :register-number "1/1/2018"
+   :organization-name "orgname1"
+   :budget-total 4500
+   :budget-oph-share 4050
+   :status "submitted"
+   :language "fi"
+   :answers answers})
+
+(defn- make-bare-avustushaku-combined [hakemus-form-fields hakemus-answers]
+  {:avustushaku        (make-bare-avustushaku)
+   :form               (make-bare-form hakemus-form-fields)
+   :hakemukset         (list (make-bare-hakemus hakemus-answers))
+   :form_loppuselvitys (make-bare-form '())
+   :loppuselvitykset   (list (make-bare-hakemus '()))})
+
+(defn- make-bare-form-field
+  ([]
+   (make-bare-form-field {}))
+
+  ([field-spec]
+   (merge {:id "test"
+           :label {:fi "test-label-fi", :sv "test-label-sv"}
+           :params {:size "small", :maxlength 80}
+           :helpText {:fi "test-help-fi", :sv "test-help-sv"}
+           :required true
+           :fieldType "textField"
+           :fieldClass "formField"}
+          field-spec)))
+
+(defn- make-bare-answer
+  ([]
+   (make-bare-answer {}))
+
+  ([answer]
+   (merge {:key "test" :value "" :fieldType "textField"}
+          answer)))
+
+(defn- get-answer-cell
+  ([wb]
+   (get-answer-cell wb "test-label-fi"))
+
+  ([wb answer-label]
+   (let [sheet      (spreadsheet/select-sheet export/hakemus-answers-sheet-name wb)
+         header-row (first (sheet-cell-values sheet))
+         column-idx (.indexOf (vec header-row) answer-label)]
+     (when (< column-idx 0)
+       (throw (IllegalArgumentException. (format "No column with label \"%s\"" answer-label))))
+     (-> sheet
+         (.getRow 1)
+         (.getCell column-idx)))))
+
+(defn- save-load-workbook [avustushaku]
+  (-> avustushaku
+      export/export-avustushaku
+      (ByteArrayInputStream.)
+      spreadsheet/load-workbook))
+
+(defn- save-load-cell [value]
+  (let [wb (save-load-workbook (make-bare-avustushaku-combined (list (make-bare-form-field {}))
+                                                               (list (make-bare-answer {:value value}))))]
+    (get-answer-cell wb)))
 
 (describe "Excel export"
   (it "allows nil IBAN in form submission input"
@@ -33,9 +117,24 @@
     (let [paatos-data (export/add-paatos-data nil {:arvio {:talousarviotili "1.2.3.4"}})]
       (should= "1234" (:takp paatos-data))))
 
+  (it "quotes cell with formula like value"
+    (should= {:type            CellType/STRING
+              :value           "=1+1"
+              :quote-prefixed? true}
+             (cell-properties (save-load-cell "=1+1"))))
+
+  (it "does not quote cell with regular value"
+    (should= {:type            CellType/STRING
+              :value           "1"
+              :quote-prefixed? false}
+             (cell-properties (save-load-cell "1")))
+    (should= {:type            CellType/NUMERIC
+              :value           1.0
+              :quote-prefixed? false}
+             (cell-properties (save-load-cell 1))))
+
   (it "exports avustushaku with simple form"
-    (let [export (export/export-avustushaku (read-edn-resource "avustushaku-combined-simple-form.edn"))
-          wb     (spreadsheet/load-workbook (ByteArrayInputStream. export))]
+    (let [wb (save-load-workbook (read-edn-resource "avustushaku-combined-simple-form.edn"))]
       (should= [["Diaarinumero" "Hakijaorganisaatio" "Hankkeen nimi" "Asiointikieli" "Ehdotettu budjetti" "OPH:n avustuksen osuus" "Myönnetty avustus" "Arviokeskiarvo"]
                 ["1/351/2018" "Hakija 1 fi" "" "fi" 4500.0 4050.0 4005.0 nil]
                 ["2/351/2018" "Hakija 2 sv" "" "sv" 35433.0 31889.0 31860.0 nil]
@@ -54,8 +153,7 @@
                (sheet-cell-values (spreadsheet/select-sheet export/maksu-sheet-name wb)))))
 
   (it "exports avustushaku with complex form"
-    (let [export (export/export-avustushaku (read-edn-resource "avustushaku-combined-complex-form.edn"))
-          wb     (spreadsheet/load-workbook (ByteArrayInputStream. export))]
+    (let [wb (save-load-workbook (read-edn-resource "avustushaku-combined-complex-form.edn"))]
       (should= [["Diaarinumero" "Hakijaorganisaatio" "Hankkeen nimi" "Asiointikieli" "Ehdotettu budjetti" "OPH:n avustuksen osuus" "Myönnetty avustus" "Arviokeskiarvo"]
                 ["1/344/2018" "Hakijaorg 1" "" "fi" 36700.0 28259.0 27412.0 1.0]
                 ["2/344/2018" "Hakijaorg 2" "" "fi" 34700.0 26719.0 25872.0 1.5]

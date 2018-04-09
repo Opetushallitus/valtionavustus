@@ -9,7 +9,10 @@
             [oph.soresu.form.formutil :as formutil]
             [oph.soresu.form.formhandler :as formhandler])
   (:import [java.io ByteArrayOutputStream]
+           [org.apache.poi.ss.usermodel CellStyle CellType Sheet]
            [org.joda.time DateTime]))
+
+(def unsafe-cell-string-value-prefixes "=-+@")
 
 (def main-sheet-name "Hakemukset")
 
@@ -317,10 +320,23 @@
       formatted)
   (catch Exception e (if (nil? date-string) "" date-string))))
 
-(defn- fit-columns [sheet]
+(defn- fit-columns [^Sheet sheet]
   ;; Make columns fit the data
   (doseq [index (range 0 (-> sheet (.getRow 0) .getLastCellNum))]
     (.autoSizeColumn sheet index)))
+
+(defn- unsafe-string-cell-value? [^String value]
+  (if (.isEmpty value)
+    false
+    (let [value-first-char (.codePointAt value 0)]
+      (>= (.indexOf unsafe-cell-string-value-prefixes value-first-char) 0))))
+
+(defn- quote-string-cells-with-formula-like-value [^Sheet sheet ^CellStyle safe-formula-style]
+  (doseq [cell (spreadsheet/cell-seq sheet)
+          :when (and (some? cell)
+                     (= (.getCellTypeEnum cell) CellType/STRING)
+                     (unsafe-string-cell-value? (.getStringCellValue cell)))]
+    (.setCellStyle cell safe-formula-style)))
 
 (def lkp-map {:kunta_kirkko                         82000000
               :kunta-kuntayhtymae                   82000000
@@ -451,13 +467,17 @@
                       sheet)
 
         header-style (spreadsheet/create-cell-style! wb {:background :yellow
-                                                         :font       {:bold true}})]
+                                                         :font       {:bold true}})
+
+        safe-formula-style (doto (.createCellStyle wb)
+                             (.setQuotePrefixed true))]
 
     (doseq [sheet [main-sheet
                    hakemus-answers-sheet
                    loppuselvitys-answers-sheet
                    maksu-sheet]]
       (fit-columns sheet)
+      (quote-string-cells-with-formula-like-value sheet safe-formula-style)
       (spreadsheet/set-row-style! (first (spreadsheet/row-seq sheet)) header-style))
 
     (.write wb output)
