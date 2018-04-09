@@ -74,7 +74,6 @@
     owner: www
     group: www
     mode: 0700
-  tags: ['mymy123']
 
 - name: Copy .ssh/known_hosts for www user
   template:
@@ -83,7 +82,6 @@
     owner: www
     group: www
     mode: 0600
-  tags: ['mymy123']
 
 - name: Create dumps dir
   file: path={{ data_dir }}/www/dumps owner=www group=www-data state=directory mode=0775
