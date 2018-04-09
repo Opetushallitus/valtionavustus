@@ -893,14 +893,9 @@ export default class HakemustenArviointiController {
 
   setHakemusShouldPay(hakemus, newShouldPay) {
     return function() {
-     if(newShouldPay === "false"){
-      hakemus.arvio["should-pay"] = false
-     } else {
-      hakemus.arvio["should-pay"] = true
-     }
-      dispatcher.push(events.updateHakemusArvio, hakemus)
-    }
-  }
+    hakemus.arvio["should-pay"] = newShouldPay === "true"
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }}
 
 setHakemusShouldPayComments(hakemus, newShouldPayComment) {
     hakemus.arvio["should-pay-comments"] = newShouldPayComment
@@ -1024,12 +1019,12 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  setHakemusSummaryComment(hakemus, newSummaryComment){
+  setHakemusSummaryComment(hakemus, newSummaryComment) {
     hakemus.arvio["summary-comment"] = newSummaryComment
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  setArvioPerustelut(hakemus, perustelut){
+  setArvioPerustelut(hakemus, perustelut) {
     hakemus.arvio.perustelut = perustelut
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
@@ -1077,7 +1072,7 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  clearFilters(){
+  clearFilters() {
     dispatcher.push(events.clearFilters)
   }
 

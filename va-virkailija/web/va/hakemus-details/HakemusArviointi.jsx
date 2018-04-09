@@ -17,6 +17,8 @@ import AcademySize from './AcademySize.jsx'
 import Perustelut from './Perustelut.jsx'
 import PresenterComment from './PresenterComment.jsx'
 import EditStatus from './EditStatus.jsx'
+import ShouldPay from './ShouldPay.jsx'
+import ShouldPayComments from './ShouldPayComments.jsx'
 
 import '../style/admin.less'
 
@@ -107,7 +109,8 @@ class ChangeLogRow extends React.Component{
       "summary-comment": "Perustelut hakijalle",
       "overridden-answers-change": "Sisältöä päivitetty",
       "presenter-comment": "Valmistelijan huomiot päivitetty",
-      "status-change": "Tila päivitetty"
+      "status-change": "Tila päivitetty",
+      "should-pay-change" : "Maksuun kyllä/ei päivitetty"
     }
     const typeTranslated = types[changelog.type] || changelog.type
     const dateStr = DateUtil.asDateString(changelog.timestamp) + " " + DateUtil.asTimeString(changelog.timestamp)
@@ -171,89 +174,6 @@ class SetArviointiStatus extends React.Component {
     )
   }
 }
-
-class ShouldPayComments extends React.Component {
-  constructor(props){
-    super(props)
-    this.state={shouldPayComments: getShouldPayComments(this.props.hakemus)}
-    this.shouldPayCommentsBus = new Bacon.Bus()
-    this.shouldPayCommentsBus.debounce(1000).onValue(([hakemus, newshouldPayComment]) => this.props.controller.setHakemusShouldPayComments(hakemus, newshouldPayComment))
-  }
-
- componentWillReceiveProps(nextProps) {
-    if (this.props.hakemus.id !== nextProps.hakemus.id) {
-      this.setState({shouldPayComments: getShouldPayComments(nextProps.hakemus)})
-    }
-  }
-
-  commentsUpdated(newshouldPayComment){
-    this.setState({shouldPayComments: newshouldPayComment})
-    this.shouldPayCommentsBus.push([this.props.hakemus, newshouldPayComment])
-}
-
-  render() {
-    const allowEditing = this.props.allowEditing
-
- return(
-   <div className="value-edit should-pay-comment">
-      <label htmlFor="should-pay-comment">Perustelut, miksi ei makseta: </label>
-      <textarea id="should-pay-comment" rows="5" disabled={false} value={this.state.shouldPayComments || "" }
-             onChange={evt => this.commentsUpdated(evt.target.value) } maxLength="128" />
-    </div>
-)
-}
-
-}
-
-function getShouldPayComments(hakemus) {
-  const arvio = hakemus.arvio ? hakemus.arvio : {}
-  return arvio["should-pay-comments"]
-}
-
-
-class ShouldPay extends React.Component {
-  render() {
-    const hakemus = this.props.hakemus
-    const allowEditing = true
-//this.props.allowEditing
-    const controller = this.props.controller
-    const arvio = hakemus.arvio
-    const selectedShouldPay = arvio["should-pay"]
-    const isDisabled = this.props.disabled
-    const onChange = function(event) {
-      controller.setHakemusShouldPay(hakemus, event.target.value)()
-    }
-
-    const options = _.flatten([
-      {htmlId: "set-should-pay-true", value: true, label: "Kyllä"},
-      {htmlId: "set-should-pay-false", value: false, label: "Ei"}
-    ].map(spec =>
-      [
-        <input id={spec.htmlId}
-               key={spec.htmlId}
-               type="radio"
-               name="should-pay"
-               value={spec.value}
-               onChange={onChange}
-               checked={spec.value === selectedShouldPay}
-               disabled={!allowEditing} />,
-        <label key={spec.htmlId + "-label"}
-               htmlFor={spec.htmlId}>{spec.label}</label>
-      ]
-    ))
-
-    return (
-      <div id="set-should-pay-grant">
-        <h3>Maksuun:</h3>
-        <fieldset className="soresu-radiobutton-group">
-          {options}
-        </fieldset>
-
-      </div>
-    )
-  }
-}
-
 
 
 class ChangeRequest extends React.Component {

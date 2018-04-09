@@ -7,6 +7,7 @@ import HakemusSelvitysStatuses from '../hakemus-details/HakemusSelvitysStatuses.
 import ScoreResolver from '../ScoreResolver.js'
 import PersonFilterButton from './PersonFilterButton.jsx'
 import PersonSelectButton from './PersonSelectButton.jsx'
+import ShouldPayIcon from './ShouldPayIcon.jsx'
 
 export default class HakemusListing extends Component {
 
@@ -49,12 +50,7 @@ export default class HakemusListing extends Component {
       case "tags":
         return hakemus => hakemus.arvio.tags.value
       case "should-pay":
-        return hakemus => {
-          if(hakemus.arvio["should-pay"] === false) {
-            return "!"
-          }
-          return " "
-        }
+        return hakemus => hakemus.arvio["should-pay"] ? "" : "!"
       case "score":
         return hakemus => {
           const score = ScoreResolver.effectiveAverage(hakemus.arvio.scoring, userInfo, allowHakemusScoring)
@@ -194,7 +190,7 @@ export default class HakemusListing extends Component {
     const allowHakemusScoring = privileges["score-hakemus"]
     const allowChangeHakemusState = privileges["change-hakemus-state"]
     const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter, userInfo, allowHakemusScoring)
-    const includesShouldNotPay = hakemusList.map(hakemus => hakemus.arvio["should-pay"] === false).some(x => x === true)
+    const includesShouldNotPay = hakemusList.some(h => !h.arvio["should-pay"])
     const ophShareSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x["budget-oph-share"])))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
       return <HakemusRow
@@ -454,9 +450,6 @@ class HakemusRow extends Component {
     const changeRequest = HakemusListing._fieldGetter("change-request")(hakemus)
     const statusComment = hakemus["status-comment"] ? ":\n" + hakemus["status-comment"] : ""
     const changeRequestTitle = changeRequest ? "Odottaa täydennystä" + statusComment : ""
-    const shouldPayGrantIcon =  HakemusListing._fieldGetter("should-pay")(hakemus)
-    const hoverTextToShouldPay = hakemus.arvio["should-pay-comments"]
-    const shouldPayTitle = hakemus.arvio["should-pay"] ? "" : "Ei makseta: " + hoverTextToShouldPay
     let hakemusName = ""
     if (_.isEmpty(hakemus["project-name"])) {
       hakemusName = hakemus["register-number"]
@@ -470,8 +463,8 @@ class HakemusRow extends Component {
       <td className="status-column">{statusFI}</td>
       {!isResolved && <td className="change-request-column" title={changeRequestTitle}>{changeRequest}</td>}
       {!isResolved && isAcademysize && <td className="academysize-column">{hakemus.arvio.academysize}</td>}
-      {includesShouldNotPay && <td className="should-pay-notification-column"><span id="should-pay-notification" title={shouldPayTitle}>{shouldPayGrantIcon}</span></td>}
-      {!isResolved && <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>}
+      <td className="should-pay-notification-column">
+      <ShouldPayIcon show={allowChangeHakemusState} controller={controller} hakemus={hakemus} state={state} show={includesShouldNotPay}/></td>
       {isResolved && <td className="selvitys-column">{statusValiselvitys}</td>}
       {isResolved && <td className="selvitys-column">{statusLoppuselvitys}</td>}
       <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>

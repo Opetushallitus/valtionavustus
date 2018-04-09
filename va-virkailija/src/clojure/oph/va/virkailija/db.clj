@@ -61,7 +61,7 @@
                                                       :new new-comment}))
       changelog)))
 
- 
+
 (defn- compare-oppilaitokset [changelog identity timestamp existing new]
   (let [new-oppilaitokset (:oppilaitokset new)
         existing-oppilaitokset (:oppilaitokset existing)]
@@ -109,7 +109,7 @@
 
 
 (defn- compare-should-pay [changelog identity timestamp existing new]
-  (if (not (= (:should_pay new) (keyword (:should_pay existing))))
+  (if (not= (:should_pay new) (keyword (:should_pay existing)))
     (append-changelog changelog (->changelog-entry identity
                                                        "should-pay-change"
                                                        timestamp
@@ -122,7 +122,7 @@
         new-comment (:should_pay_comments  new)]
     (if (not (= old-comment new-comment))
       (append-changelog changelog (->changelog-entry identity
-                                                     "presenter-comment"
+                                                     "should-pay-comment-change"
                                                      timestamp
                                                      {:old old-comment
                                                       :new new-comment}))
