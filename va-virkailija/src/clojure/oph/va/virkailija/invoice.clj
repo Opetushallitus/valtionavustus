@@ -40,15 +40,15 @@
     [:VA-invoice
      [:Header
       [:Maksuera (get-batch-key batch)]
-      [:Laskunpaiva (.toString (:invoice-date payment))]
-      [:Erapvm (.toString (:due-date payment))]
+      [:Laskunpaiva (.toString (:invoice-date batch))]
+      [:Erapvm (.toString (:due-date batch))]
       [:Bruttosumma (:budget-granted application)]
       [:Maksuehto "Z001"]
       [:Pitkaviite (:register-number application)]
-      [:Tositepvm (.toString (:receipt-date payment))]
-      [:Asiatarkastaja (:inspector-email payment)]
-      [:Hyvaksyja (:acceptor-email payment)]
-      [:Tositelaji (:document-type payment)]
+      [:Tositepvm (.toString (:receipt-date batch))]
+      [:Asiatarkastaja (:inspector-email batch)]
+      [:Hyvaksyja (:acceptor-email batch)]
+      [:Tositelaji (:document-type batch)]
       [:Toimittaja
        [:Y-tunnus (get-answer-value answers "business-id")]
        [:Nimi (:organization-name application)]
@@ -59,7 +59,7 @@
        [:Pankkiavain (get-answer-value answers "bank-bic")]
        [:Pankki-maa (get-answer-value answers "bank-country" "")]
        [:Kieli (:language application)]
-       [:Valuutta (:currency payment)]]
+       [:Valuutta (:currency batch)]]
       [:Postings
        [:Posting
         [:Summa (:budget-granted application)]
@@ -68,7 +68,7 @@
         [:Toimintayksikko (:operational-unit grant)]
         [:Projekti (:project grant)]
         [:Toiminto  (:operation grant)]
-        [:Kumppani (:partner payment)]]]]]))
+        [:Kumppani (:partner batch)]]]]]))
 
 (defn payment-to-xml [data]
   "Creates xml document (tags) of given payment of Valtionavustukset maksatus.
