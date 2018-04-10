@@ -30,6 +30,8 @@ export default class VaForm extends React.Component {
                                             lang={configuration.lang} />
     const headerElements = [registerNumberDisplay, changeRequest]
     const formContainerClass = configuration.preview ? FormPreview : Form
+    const refuseEnabled = configuration.environment["application-change"] &&
+          configuration.environment["application-change"]["refuse-enabled?"]
     return(
       <div>
         <VaOldBrowserWarning lang={configuration.lang}
@@ -40,9 +42,7 @@ export default class VaForm extends React.Component {
                       state={state}
                       hakemusType={hakemusType}
         />
-        {configuration.environment["application-change"] &&
-          configuration.environment["application-change"]["refuse-enabled?"] &&
-          configuration.preview &&
+        {refuseEnabled && configuration.preview &&
           <GrantRefuse controller={controller} state={state}
                        onSubmit={controller.refuseApplication}/>}
         <FormContainer controller={controller}
