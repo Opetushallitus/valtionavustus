@@ -117,18 +117,22 @@
      :perustelut (-> hakemus :arvio :perustelut)}))
 
 (defn get-hakudata-for-export [avustushaku-id]
-  (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
-        form        (hakija-api/get-form-by-avustushaku avustushaku-id)
-        hakemukset  (hakija-api/get-hakemukset-for-export avustushaku-id)
-        arviot      (get-arviot-map hakemukset)
-        scores      (scoring/get-avustushaku-scores avustushaku-id)]
-    {:avustushaku (va-routes/avustushaku-response-content avustushaku)
-     :form        (hakija-api/form->json form)
-     :hakemukset  (map (fn [h]
-                         (->> h
-                              (find-and-add-arvio arviot)
-                              (add-scores-to-hakemus scores)))
-                       hakemukset)}))
+  (let [avustushaku        (hakija-api/get-avustushaku avustushaku-id)
+        form               (hakija-api/form->json (hakija-api/get-form-by-avustushaku avustushaku-id))
+        hakemukset         (hakija-api/get-hakemukset-for-export "hakemus" avustushaku-id)
+        form-loppuselvitys (hakija-api/form->json (hakija-api/get-form-by-id (:form_loppuselvitys avustushaku)))
+        loppuselvitykset   (hakija-api/get-hakemukset-for-export "loppuselvitys" avustushaku-id)
+        arviot             (get-arviot-map hakemukset)
+        scores             (scoring/get-avustushaku-scores avustushaku-id)]
+    {:avustushaku        (va-routes/avustushaku-response-content avustushaku)
+     :form               form
+     :hakemukset         (map (fn [h]
+                                (->> h
+                                     (find-and-add-arvio arviot)
+                                     (add-scores-to-hakemus scores)))
+                              hakemukset)
+     :form_loppuselvitys form-loppuselvitys
+     :loppuselvitykset   loppuselvitykset}))
 
 (defn get-avustushaku-and-paatokset
   [avustushaku-id]
