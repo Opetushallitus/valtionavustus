@@ -121,12 +121,13 @@
                      [grant-id application-id base-version :as request]
     :path-params
     [grant-id :- Long, application-id :- s/Str, base-version :- Long]
+    :return  Hakemus
     :body [refuse-data (compojure-api/describe RefuseData "Refuse data")]
-    :return Hakemus
     :summary "Update application status to refused"
     (when-not (get-in config [:application-change :refuse-enabled?])
       (throw (Exception. "Refuse application is not enabled")))
-    (on-refuse-application application-id base-version (:comment refuse-data))))
+    (on-refuse-application
+      grant-id application-id base-version (:comment refuse-data))))
 
 (defn- post-hakemus []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version" [haku-id hakemus-id base-version :as request]
