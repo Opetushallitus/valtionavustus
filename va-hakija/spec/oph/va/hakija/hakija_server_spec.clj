@@ -427,7 +427,8 @@
                 {:comment "Some valid comment"})
               json (json->map body)]
           (should= 200 status)
-          (should= "refused" (:status json)))))
+          (should= (:refused json))
+          (should= (:refused-comment json) "Some valid comment"))))
 
 (describe "HTTP server when haku has ended"
 
