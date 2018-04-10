@@ -441,30 +441,24 @@
 
         main-sheet (spreadsheet/select-sheet main-sheet-name wb)
 
-        hakemus-answers-sheet (let [sheet (spreadsheet/add-sheet! wb hakemus-answers-sheet-name)]
-                                (spreadsheet/add-rows! sheet
-                                                       (make-answers-sheet-rows hakemus-form
+        hakemus-answers-sheet (doto (spreadsheet/add-sheet! wb hakemus-answers-sheet-name)
+                                (spreadsheet/add-rows! (make-answers-sheet-rows hakemus-form
                                                                                 hakemus-list
                                                                                 va-focus-areas-label
                                                                                 va-focus-areas-items
-                                                                                hakemus-answers-sheet-fixed-fields))
-                                sheet)
+                                                                                hakemus-answers-sheet-fixed-fields)))
 
-        loppuselvitys-answers-sheet (let [sheet (spreadsheet/add-sheet! wb loppuselvitys-answers-sheet-name)]
-                                      (spreadsheet/add-rows! sheet
-                                                             (make-answers-sheet-rows loppuselvitys-form
+        loppuselvitys-answers-sheet (doto (spreadsheet/add-sheet! wb loppuselvitys-answers-sheet-name)
+                                      (spreadsheet/add-rows! (make-answers-sheet-rows loppuselvitys-form
                                                                                       loppuselvitys-list
                                                                                       va-focus-areas-label
                                                                                       va-focus-areas-items
-                                                                                      loppuselvitys-answers-sheet-fixed-fields))
-                                      sheet)
+                                                                                      loppuselvitys-answers-sheet-fixed-fields)))
 
-        maksu-sheet (let [sheet (spreadsheet/add-sheet! wb maksu-sheet-name)]
-                      (spreadsheet/add-rows! sheet
-                                             (make-maksu-sheet-rows (filter #(= "accepted" (-> % :arvio :status)) hakemus-list)
+        maksu-sheet (doto (spreadsheet/add-sheet! wb maksu-sheet-name)
+                      (spreadsheet/add-rows! (make-maksu-sheet-rows (filter #(= "accepted" (-> % :arvio :status)) hakemus-list)
                                                                     paatos-date
-                                                                    has-multiple-maksuera))
-                      sheet)
+                                                                    has-multiple-maksuera)))
 
         header-style (spreadsheet/create-cell-style! wb {:background :yellow
                                                          :font       {:bold true}})
