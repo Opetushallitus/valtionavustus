@@ -464,7 +464,7 @@ class HakemusRow extends Component {
       {!isResolved && <td className="change-request-column" title={changeRequestTitle}>{changeRequest}</td>}
       {!isResolved && isAcademysize && <td className="academysize-column">{hakemus.arvio.academysize}</td>}
       <td className="should-pay-notification-column">
-      <ShouldPayIcon show={allowChangeHakemusState} controller={controller} hakemus={hakemus} state={state} show={includesShouldNotPay}/></td>
+      <ShouldPayIcon controller={controller} hakemus={hakemus} state={state} show={includesShouldNotPay}/></td>
       {isResolved && <td className="selvitys-column">{statusValiselvitys}</td>}
       {isResolved && <td className="selvitys-column">{statusLoppuselvitys}</td>}
       <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>

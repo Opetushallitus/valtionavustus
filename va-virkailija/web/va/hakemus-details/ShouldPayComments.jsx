@@ -1,6 +1,5 @@
 import Bacon from 'baconjs'
 import React from 'react'
-import _ from "lodash"
 
 export default class ShouldPayComments extends React.Component {
   constructor(props){

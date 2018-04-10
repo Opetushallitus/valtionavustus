@@ -1,4 +1,3 @@
-import Bacon from 'baconjs'
 import React from 'react'
 import _ from "lodash"
 
