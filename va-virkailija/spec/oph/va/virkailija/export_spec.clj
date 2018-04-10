@@ -14,7 +14,7 @@
   (read-edn-input (io/resource (str "export/" path))))
 
 (defn- sheet-cell-values [sheet]
-  (for [row (spreadsheet/into-seq sheet)]
+  (for [row (spreadsheet/row-seq sheet)]
     (for [cell row]
       (spreadsheet/read-cell cell))))
 
