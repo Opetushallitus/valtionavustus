@@ -15,6 +15,7 @@
 (defquery update-loppuselvitys-status<! "sql/common/hakija/hakemus/update-loppuselvitys-status.sql")
 (defquery update-valiselvitys-status<! "sql/common/hakija/hakemus/update-valiselvitys-status.sql")
 (defquery close-existing-hakemus! "sql/common/hakija/hakemus/close-existing.sql")
+(defquery set-refused "sql/hakemus/set-refused.sql")
 
 (defquery get-avustushaku "sql/avustushaku/get.sql")
 (defquery list-avustushaut "sql/avustushaku/list.sql")
