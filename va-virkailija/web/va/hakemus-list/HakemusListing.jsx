@@ -191,8 +191,9 @@ export default class HakemusListing extends Component {
     const allowChangeHakemusState = privileges["change-hakemus-state"]
     const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter, userInfo, allowHakemusScoring)
 
-    const includesShouldNotPay = hakemusList.some(h => ("should-pay" in h.arvio) && !h.arvio["should-pay"])
-    const notPayCount = hakemusList.filter(h => !h.arvio["should-pay"]).length
+    const notPayable = hakemusList.filter(h => h.arvio["should-pay"] === false)
+    const includesShouldNotPay = notPayable.length > 0
+    const notPayCount = notPayable.length
     const notPayTitle = "Yhteensä: " + notPayCount + " kpl hakemuksia merkattu ei maksettavaksi."
     const notPayValue = "(" + notPayCount + ")"
 
