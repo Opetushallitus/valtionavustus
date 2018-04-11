@@ -426,7 +426,7 @@
                 (format "/api/avustushaku/1/hakemus/%s/%d/refuse/" hakemus-id version)
                 {:comment "Some valid comment"})
               json (json->map body)]
-          (should= 200 status)
+          (should= status 200)
           (should (:refused json))
           (should= (:refused-comment json) "Some valid comment"))))
 
