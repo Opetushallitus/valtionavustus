@@ -891,6 +891,17 @@ export default class HakemustenArviointiController {
     }
   }
 
+  setHakemusShouldPay(hakemus, newShouldPay) {
+    return function() {
+    hakemus.arvio["should-pay"] = newShouldPay === "true"
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }}
+
+setHakemusShouldPayComments(hakemus, newShouldPayComment) {
+    hakemus.arvio["should-pay-comments"] = newShouldPayComment
+    dispatcher.push(events.updateHakemusArvio, hakemus)
+  }
+
   toggleDetailedCosts(hakemus, useDetailedCosts) {
     hakemus.arvio.useDetailedCosts = useDetailedCosts
     dispatcher.push(events.updateHakemusArvio, hakemus)
@@ -1061,7 +1072,7 @@ export default class HakemustenArviointiController {
     dispatcher.push(events.updateHakemusArvio, hakemus)
   }
 
-  clearFilters(){
+  clearFilters() {
     dispatcher.push(events.clearFilters)
   }
 

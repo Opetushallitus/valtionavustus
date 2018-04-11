@@ -7,6 +7,7 @@ import HakemusSelvitysStatuses from '../hakemus-details/HakemusSelvitysStatuses.
 import ScoreResolver from '../ScoreResolver.js'
 import PersonFilterButton from './PersonFilterButton.jsx'
 import PersonSelectButton from './PersonSelectButton.jsx'
+import ShouldPayIcon from './ShouldPayIcon.jsx'
 
 export default class HakemusListing extends Component {
 
@@ -48,6 +49,8 @@ export default class HakemusListing extends Component {
         return hakemus => hakemus.arvio["presenter-role-id"]
       case "tags":
         return hakemus => hakemus.arvio.tags.value
+      case "should-pay":
+        return hakemus => hakemus.arvio["should-pay"] ? "" : "!"
       case "score":
         return hakemus => {
           const score = ScoreResolver.effectiveAverage(hakemus.arvio.scoring, userInfo, allowHakemusScoring)
@@ -187,6 +190,7 @@ export default class HakemusListing extends Component {
     const allowHakemusScoring = privileges["score-hakemus"]
     const allowChangeHakemusState = privileges["change-hakemus-state"]
     const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter, userInfo, allowHakemusScoring)
+    const includesShouldNotPay = hakemusList.some(h => !h.arvio["should-pay"])
     const ophShareSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x["budget-oph-share"])))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
       return <HakemusRow
@@ -200,7 +204,8 @@ export default class HakemusListing extends Component {
         controller={controller}
         isResolved={isResolved}
         isAcademysize={isAcademysize}
-        state={state}/> })
+        state={state}
+        includesShouldNotPay={includesShouldNotPay}/> })
     const budgetGrantedSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x.arvio["budget-granted"])))
 
     const onFilterChange = function(filterId) {
@@ -238,6 +243,7 @@ export default class HakemusListing extends Component {
           </th>
           {!isResolved && <ChangeRequestHeader field="change-request" sorter={sorter} controller={controller} hakemusList={filteredHakemusList} />}
           {!isResolved && isAcademysize && <th className="academysize-column">Koko<HakemusSorter field="academysize" sorter={sorter} controller={controller}/></th>}
+          {includesShouldNotPay && <th className="should-pay-notification-column">Maksatus <HakemusSorter field="granted-sum" sorter={sorter} controller={controller}/></th> }
           {!isResolved && <th className="applied-sum-column">Haettu <HakemusSorter field="applied-sum" sorter={sorter} controller={controller}/></th>}
           {isResolved && <th className="selvitys-column">
             <StatusFilter controller={controller}
@@ -433,7 +439,7 @@ class HakemusRow extends Component {
     return this.props.hakemus === this.props.selectedHakemus || this.props.hakemus === this.props.previouslySelectedHakemus
   }
   render() {
-    const {state, hakemus, userInfo, allowHakemusScoring, allowChangeHakemusState, selectedHakemus, previouslySelectedHakemus, isResolved, isAcademysize} = this.props
+    const {state, hakemus, userInfo, allowHakemusScoring, allowChangeHakemusState, selectedHakemus, previouslySelectedHakemus, isResolved, isAcademysize, includesShouldNotPay} = this.props
     const htmlId = "hakemus-" + hakemus.id
     const thisIsSelected = hakemus === selectedHakemus || hakemus === previouslySelectedHakemus
     const rowClass = thisIsSelected ? "selected overview-row" : "unselected overview-row"
@@ -457,7 +463,8 @@ class HakemusRow extends Component {
       <td className="status-column">{statusFI}</td>
       {!isResolved && <td className="change-request-column" title={changeRequestTitle}>{changeRequest}</td>}
       {!isResolved && isAcademysize && <td className="academysize-column">{hakemus.arvio.academysize}</td>}
-      {!isResolved && <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>}
+      <td className="should-pay-notification-column">
+      <ShouldPayIcon controller={controller} hakemus={hakemus} state={state} show={includesShouldNotPay}/></td>
       {isResolved && <td className="selvitys-column">{statusValiselvitys}</td>}
       {isResolved && <td className="selvitys-column">{statusLoppuselvitys}</td>}
       <td className="granted-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus.arvio["budget-granted"])}</span></td>

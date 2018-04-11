@@ -39,7 +39,10 @@
        :version (:version hakemus)
        :version-date (:last_status_change_at hakemus)
        :submission (without-id submission)
-       :validation-errors validation}))
+       :validation-errors validation
+       :refused (:refused hakemus)
+       :refused_at (:refused_at hakemus)
+       :refused_comment (:refused_comment hakemus)}))
 
 (defn on-hakemus-create [haku-id answers]
   (let [avustushaku (get-open-avustushaku haku-id {})
@@ -159,25 +162,17 @@
         (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
 
-(defn on-refuse-application [application-id base-version comment]
+(defn on-refuse-application [grant-id application-id base-version comment]
   (let [application (va-db/get-hakemus application-id)
         grant (va-db/get-avustushaku (:avustushaku application))
-        form (form-db/get-form (:form grant))
-        submission
-        (:body (get-form-submission (:form grant)
-                                    (:form_submission_id application)))
-        updated-submission
-        (:body
-         (update-form-submission
-           (:id form) (:form_submission_id application) (:answers submission)))
-        budget-totals (va-budget/calculate-totals-hakija
-                        (:answers updated-submission) grant form)]
+        submission (:body (get-form-submission
+                            (:form grant)
+                            (:form_submission_id application)))]
     (if (and (= (:version application) base-version)
-             (not= (:status application) "refused"))
-      (hakemus-ok-response
-        (va-db/refuse-application
-          application updated-submission budget-totals comment)
-        updated-submission {})
+             (not (:refused application)))
+      (do
+        (va-db/refuse-application application comment)
+        (hakemus-ok-response (va-db/get-hakemus application-id) submission {}))
       (hakemus-conflict-response application))))
 
 (defn on-selvitys-update [haku-id hakemus-id base-version answers form-key]

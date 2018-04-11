@@ -376,7 +376,7 @@ export default class FormStateTransitions {
   }
 
   onApplicationRefused(state) {
-    state.saveStatus.savedObject.status = "refused"
+    state.saveStatus.savedObject.refused = true
     return state
   }
 }

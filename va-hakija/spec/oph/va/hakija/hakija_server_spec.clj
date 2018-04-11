@@ -419,15 +419,16 @@
           (should= "Yet another organisaatio" (:organization_name posted-hakemus))
           (should= "Uudempi projekti" (:project_name posted-hakemus))))
 
-  (it "PUT /api/avustushaku/1/hakemus/:id/refuse should set application to refused state"
+  (it "PUT /api/avustushaku/1/hakemus/:id/:versio/refuse should set application to refused state"
       (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
               {:keys [status headers body] :as response}
               (put!
                 (format "/api/avustushaku/1/hakemus/%s/%d/refuse/" hakemus-id version)
                 {:comment "Some valid comment"})
               json (json->map body)]
-          (should= 200 status)
-          (should= "refused" (:status json)))))
+          (should= status 200)
+          (should (:refused json))
+          (should= (:refused-comment json) "Some valid comment"))))
 
 (describe "HTTP server when haku has ended"
 

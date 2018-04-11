@@ -1,15 +1,14 @@
 import React from "react"
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
+import DateUtil from 'soresu-form/web/DateUtil.js'
 
 export default class FormContainer extends React.Component {
   constructor(props) {
     super(props)
-    const status = this.props.state.saveStatus.savedObject.status
-    const initialComment = status === "refused" ?
-          props.state.saveStatus.savedObject["status-comment"] : ""
-    this.state =
-      {isChecked: false,
-       comment: initialComment}
+    const refused = this.props.state.saveStatus.savedObject.refused || false
+    const initialComment = refused ?
+          props.state.saveStatus.savedObject["refused-comment"] : ""
+    this.state = {isChecked: false, comment: initialComment}
     this.onCheckedChange = this.onCheckedChange.bind(this)
     this.onCommentChange = this.onCommentChange.bind(this)
     this.onSubmitClicked = this.onSubmitClicked.bind(this)
@@ -31,7 +30,8 @@ export default class FormContainer extends React.Component {
     const configuration = this.props.state.configuration
     const translations = configuration.translations
     const lang = configuration.lang
-    const status = this.props.state.saveStatus.savedObject.status
+    const refused = this.props.state.saveStatus.savedObject.refused || false
+    const refusedAt = this.props.state.saveStatus.savedObject["refused-at"]
     return (
       <section className="container-section">
         <div>
@@ -39,12 +39,13 @@ export default class FormContainer extends React.Component {
             <LocalizedString translations={translations.form}
                              translationKey="grant-refuse-title" lang={lang}/>
           </h3>
-          {status === "refused" &&
+          {refused &&
             <div>
-                <LocalizedString translations={translations.form}
-                                 translationKey="grant-refuse-sent" lang={lang}/>
+              <LocalizedString translations={translations.form}
+                               translationKey="grant-refuse-sent" lang={lang}/>
+              <span> {DateUtil.asDateTimeString(refusedAt)}</span>
             </div>}
-          <div className={status === "refused" ? "disabled" : null}>
+          <div className={refused ? "disabled" : null}>
             <p>
               <LocalizedString translations={translations.form}
                                translationKey="grant-refuse-info" lang={lang}/>
