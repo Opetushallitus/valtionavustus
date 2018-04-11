@@ -196,8 +196,6 @@ export default class HakemusListing extends Component {
     const notPayTitle = "Yhteensä: " + notPayCount + " kpl hakemuksia merkattu ei maksettavaksi."
     const notPayValue = "(" + notPayCount + ")"
 
-    console.log(!isResolved)
-
     const ophShareSum = HakemusListing.formatNumber(_.sum(filteredHakemusList.map(x => x["budget-oph-share"])))
     const hakemusElements = _.map(filteredHakemusList, hakemus => {
       return <HakemusRow
