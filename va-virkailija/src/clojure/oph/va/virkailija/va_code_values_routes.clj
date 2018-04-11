@@ -1,6 +1,5 @@
 (ns oph.va.virkailija.va-code-values-routes
   (:require [compojure.api.sweet :as compojure-api]
-            [oph.va.virkailija.authentication :as authentication]
             [ring.util.http-response :refer [ok method-not-allowed unauthorized]]
             [oph.va.virkailija.va-code-values-data :as data :refer [with-admin]]
             [oph.va.virkailija.schema :as schema]))
