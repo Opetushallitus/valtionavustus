@@ -462,7 +462,7 @@ class HakemusRow extends Component {
     } else {
       hakemusName = hakemus["project-name"] + " (" + hakemus["register-number"] + ")"
     }
-    const showNotPayIcon = "should-pay" in hakemus.arvio && !hakemus.arvio["should-pay"]
+    const showNotPayIcon = "should-pay" in hakemus.arvio && hakemus.arvio["should-pay"] !== null && !hakemus.arvio["should-pay"]
 
     return <tr id={htmlId} className={rowClass} onClick={controller.selectHakemus}>
       <td className="organization-column" title={hakemus["organization-name"]}>{hakemus["organization-name"]}</td>
