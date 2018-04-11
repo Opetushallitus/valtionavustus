@@ -1,5 +1,6 @@
 import React from "react"
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString.jsx'
+import DateUtil from 'soresu-form/web/DateUtil.js'
 
 export default class FormContainer extends React.Component {
   constructor(props) {
@@ -30,6 +31,7 @@ export default class FormContainer extends React.Component {
     const translations = configuration.translations
     const lang = configuration.lang
     const refused = this.props.state.saveStatus.savedObject.refused || false
+    const refusedAt = this.props.state.saveStatus.savedObject["refused-at"]
     return (
       <section className="container-section">
         <div>
@@ -39,8 +41,9 @@ export default class FormContainer extends React.Component {
           </h3>
           {refused &&
             <div>
-                <LocalizedString translations={translations.form}
-                                 translationKey="grant-refuse-sent" lang={lang}/>
+              <LocalizedString translations={translations.form}
+                               translationKey="grant-refuse-sent" lang={lang}/>
+              <span> {DateUtil.asDateTimeString(refusedAt)}</span>
             </div>}
           <div className={refused ? "disabled" : null}>
             <p>
