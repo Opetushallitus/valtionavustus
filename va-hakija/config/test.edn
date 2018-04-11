@@ -6,4 +6,4 @@
  :api {:restricted-routes? false}
  :form-db {:database-name "va-test"}
  :email {:print-mail-on-disable? false}
- :application-change {:refuse-enabled? true}
+ :application-change {:refuse-enabled? true}}
