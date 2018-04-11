@@ -8,4 +8,8 @@ export default class DateUtil {
   static asTimeString(date) {
     return moment(date).tz('Europe/Helsinki').format('H.mm')
   }
+
+  static asDateTimeString(date) {
+    return moment(date).tz('Europe/Helsinki').format('D.M.YYYY H.mm')
+  }
 }
