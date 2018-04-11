@@ -144,6 +144,12 @@
 (defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals comment]
   (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment))
 
+(defn refuse-application [application comment]
+  (let [params (assoc application :refused true :refused_comment comment)]
+    (exec-all :form-db [queries/lock-hakemus params
+                        queries/close-existing-hakemus! params
+                        queries/set-refused params])))
+
 (defn update-loppuselvitys-status [hakemus-id status]
   (exec :form-db queries/update-loppuselvitys-status<! {:id hakemus-id :status status}))
 

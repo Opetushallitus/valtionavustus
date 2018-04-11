@@ -61,7 +61,13 @@ export default class VaUrlCreator extends UrlCreator {
         return "/api/organisations/?organisation-id="
       },
       attachmentDownloadUrl: attachmentDirectAccessUrl,
-      attachmentDeleteUrl: attachmentDirectAccessUrl
+      attachmentDeleteUrl: attachmentDirectAccessUrl,
+      refuseApplicationApiUrl: function (state) {
+        const grantId = state.avustushaku.id
+        const applicationId = state.saveStatus.hakemusId
+        const baseVersion = state.saveStatus.savedObject.version
+        return "/api/avustushaku/" + grantId + "/hakemus/" + applicationId + "/" + baseVersion  + "/refuse/"
+      }
     }
     super(urls)
   }

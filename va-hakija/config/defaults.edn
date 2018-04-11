@@ -37,4 +37,5 @@
          :retry-initial-wait 2000
          :retry-multiplier 4
          :retry-max-time 60000}
- :application-change {:disabled? true}}
+ :application-change {:change-enabled? false
+                      :refuse-enabled? false}}
