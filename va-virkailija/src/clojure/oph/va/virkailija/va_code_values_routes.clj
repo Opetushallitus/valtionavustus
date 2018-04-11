@@ -10,9 +10,7 @@
     :query-params [{value-type :- String nil}, {year :- Long nil}]
     :return [schema/VACodeValue]
     :summary "Get all VA code values"
-    (with-admin request
-      (ok (data/get-va-code-values value-type year))
-      (unauthorized ""))))
+    (ok (data/get-va-code-values value-type year))))
 
 (defn- create-va-code-value []
   (compojure-api/POST
