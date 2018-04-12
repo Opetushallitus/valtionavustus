@@ -14,6 +14,8 @@
 
 (def unsafe-cell-string-value-prefixes "=-+@")
 
+(def column-default-width-in-chars 30)
+
 (def cell-value-no-fit-threshold-in-chars 40)
 
 (def main-sheet-name "Hakemukset")
@@ -341,6 +343,7 @@
       true)))
 
 (defn- adjust-cells-style! [^Sheet sheet ^CellStyle header-style ^CellStyle safe-formula-style]
+  (.setDefaultColumnWidth sheet column-default-width-in-chars)
   (spreadsheet/set-row-style! (.getRow sheet 0) header-style)
   (let [cols-not-to-fit (reduce (fn [cols-not-to-fit row]
                               (reduce-kv (fn [cols-not-to-fit col-idx cell]
