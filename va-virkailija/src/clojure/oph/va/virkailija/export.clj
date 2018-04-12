@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.export
   (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.java.io :as io]
-            [clojure.set :refer :all]
+            [clojure.set :as clj-set]
             [clojure.string :as string]
             [clj-time.core :as clj-time]
             [clj-time.format :as clj-time-format]
@@ -9,10 +9,12 @@
             [oph.soresu.form.formutil :as formutil]
             [oph.soresu.form.formhandler :as formhandler])
   (:import [java.io ByteArrayOutputStream]
-           [org.apache.poi.ss.usermodel CellStyle CellType Sheet]
+           [org.apache.poi.ss.usermodel Cell CellStyle CellType Sheet]
            [org.joda.time DateTime]))
 
 (def unsafe-cell-string-value-prefixes "=-+@")
+
+(def cell-value-no-fit-threshold-in-chars 40)
 
 (def main-sheet-name "Hakemukset")
 
@@ -320,23 +322,43 @@
       formatted)
   (catch Exception e (if (nil? date-string) "" date-string))))
 
-(defn- fit-columns [^Sheet sheet]
-  ;; Make columns fit the data
-  (doseq [index (range 0 (-> sheet (.getRow 0) .getLastCellNum))]
-    (.autoSizeColumn sheet index)))
-
 (defn- unsafe-string-cell-value? [^String value]
   (if (.isEmpty value)
     false
     (let [value-first-char (.codePointAt value 0)]
       (>= (.indexOf unsafe-cell-string-value-prefixes value-first-char) 0))))
 
-(defn- quote-string-cells-with-formula-like-value [^Sheet sheet ^CellStyle safe-formula-style]
-  (doseq [cell (spreadsheet/cell-seq sheet)
-          :when (and (some? cell)
-                     (= (.getCellTypeEnum cell) CellType/STRING)
-                     (unsafe-string-cell-value? (.getStringCellValue cell)))]
+(defn- quote-string-cell-with-formula-like-value! [^Cell cell ^CellStyle safe-formula-style]
+  (when (and (= (.getCellTypeEnum cell) CellType/STRING)
+             (unsafe-string-cell-value? (.getStringCellValue cell)))
     (.setCellStyle cell safe-formula-style)))
+
+(defn- fit-cell? [^Cell cell]
+  (let [value-str (-> cell spreadsheet/read-cell str)]
+    (if (>= (count value-str) cell-value-no-fit-threshold-in-chars)
+      (let [str-rows (string/split value-str #"\n")]
+        (not-any? #(>= (count %) cell-value-no-fit-threshold-in-chars) str-rows))
+      true)))
+
+(defn- adjust-cells-style! [^Sheet sheet ^CellStyle header-style ^CellStyle safe-formula-style]
+  (spreadsheet/set-row-style! (.getRow sheet 0) header-style)
+  (let [cols-not-to-fit (reduce (fn [cols-not-to-fit row]
+                              (reduce-kv (fn [cols-not-to-fit col-idx cell]
+                                           (if (some? cell)
+                                             (do
+                                               (quote-string-cell-with-formula-like-value! cell safe-formula-style)
+                                               (if (fit-cell? cell)
+                                                 cols-not-to-fit
+                                                 (conj cols-not-to-fit col-idx)))
+                                             cols-not-to-fit))
+                                         cols-not-to-fit
+                                         (vec (spreadsheet/cell-seq row))))
+                            #{}
+                            (spreadsheet/row-seq sheet))
+        cols-to-fit (clj-set/difference (set (range 0 (-> sheet (.getRow 0) .getLastCellNum)))
+                                        cols-not-to-fit)]
+    (doseq [col-idx cols-to-fit]
+      (.autoSizeColumn sheet col-idx))))
 
 (def lkp-map {:kunta_kirkko                         82000000
               :kunta-kuntayhtymae                   82000000
@@ -470,9 +492,7 @@
                    hakemus-answers-sheet
                    loppuselvitys-answers-sheet
                    maksu-sheet]]
-      (fit-columns sheet)
-      (quote-string-cells-with-formula-like-value sheet safe-formula-style)
-      (spreadsheet/set-row-style! (first (spreadsheet/row-seq sheet)) header-style))
+      (adjust-cells-style! sheet header-style safe-formula-style))
 
     (.write wb output)
     (.toByteArray output)))

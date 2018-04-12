@@ -2,10 +2,17 @@
   (:require [speclj.core :refer :all]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
+            [clojure.string :as string]
             [dk.ative.docjure.spreadsheet :as spreadsheet]
             [oph.va.virkailija.export :as export])
   (:import [java.io ByteArrayInputStream]
            [org.apache.poi.ss.usermodel Cell CellType]))
+
+(defn- rand-string [chars n]
+  (->> #(rand-nth chars)
+       repeatedly
+       (take n)
+       (apply str)))
 
 (defn- read-edn-input [input]
   (with-open [r (io/reader input)]
@@ -19,10 +26,15 @@
     (for [cell row]
       (spreadsheet/read-cell cell))))
 
-(defn- cell-properties [^Cell cell]
+(defn- cell-value-properties [^Cell cell]
   {:type            (.getCellTypeEnum cell)
    :value           (spreadsheet/read-cell cell)
    :quote-prefixed? (-> cell .getCellStyle .getQuotePrefixed)})
+
+(defn- cell-width [^Cell cell]
+  (let [sheet   (.getSheet cell)
+        col-idx (.getColumnIndex cell)]
+    (.getColumnWidth sheet col-idx)))
 
 (defn- make-bare-avustushaku []
   {:content {:self-financing-percentage 10
@@ -77,19 +89,15 @@
    (merge {:key "test" :value "" :fieldType "textField"}
           answer)))
 
-(defn- get-answer-cell
-  ([wb]
-   (get-answer-cell wb "test-label-fi"))
-
-  ([wb answer-label]
-   (let [sheet      (spreadsheet/select-sheet export/hakemus-answers-sheet-name wb)
-         header-row (first (sheet-cell-values sheet))
-         column-idx (.indexOf (vec header-row) answer-label)]
-     (when (< column-idx 0)
-       (throw (IllegalArgumentException. (format "No column with label \"%s\"" answer-label))))
-     (-> sheet
-         (.getRow 1)
-         (.getCell column-idx)))))
+(defn- get-answer-cell [wb answer-label]
+  (let [sheet      (spreadsheet/select-sheet export/hakemus-answers-sheet-name wb)
+        header-row (first (sheet-cell-values sheet))
+        column-idx (.indexOf (vec header-row) answer-label)]
+    (when (< column-idx 0)
+      (throw (IllegalArgumentException. (format "No column with label \"%s\"" answer-label))))
+    (-> sheet
+        (.getRow 1)
+        (.getCell column-idx))))
 
 (defn- save-load-workbook [avustushaku]
   (-> avustushaku
@@ -97,10 +105,16 @@
       (ByteArrayInputStream.)
       spreadsheet/load-workbook))
 
-(defn- save-load-cell [value]
-  (let [wb (save-load-workbook (make-bare-avustushaku-combined (list (make-bare-form-field {}))
-                                                               (list (make-bare-answer {:value value}))))]
-    (get-answer-cell wb)))
+(defn- save-load-cell
+  ([answer-value]
+   (save-load-cell answer-value {}))
+
+  ([answer-value field-spec]
+   (let [form-field (make-bare-form-field field-spec)
+         answer     (make-bare-answer {:value answer-value})
+         wb         (save-load-workbook (make-bare-avustushaku-combined (list form-field)
+                                                                        (list answer)))]
+     (get-answer-cell wb (get-in form-field [:label :fi])))))
 
 (describe "Excel export"
   (it "allows nil IBAN in form submission input"
@@ -121,17 +135,28 @@
     (should= {:type            CellType/STRING
               :value           "=1+1"
               :quote-prefixed? true}
-             (cell-properties (save-load-cell "=1+1"))))
+             (cell-value-properties (save-load-cell "=1+1"))))
 
   (it "does not quote cell with regular value"
     (should= {:type            CellType/STRING
               :value           "1"
               :quote-prefixed? false}
-             (cell-properties (save-load-cell "1")))
+             (cell-value-properties (save-load-cell "1")))
     (should= {:type            CellType/NUMERIC
               :value           1.0
               :quote-prefixed? false}
-             (cell-properties (save-load-cell 1))))
+             (cell-value-properties (save-load-cell 1))))
+
+  (it "fits column for value less than threshold in size"
+    (let [rand-value                  (partial rand-string "abc")
+          [fitted-value-no-newlines
+           fitted-value-with-newlines
+           not-fitted-value]          (for [cell-value [(rand-value (- export/cell-value-no-fit-threshold-in-chars 1))
+                                                        (string/join "\n" (repeat 3 rand-value))
+                                                        (rand-value export/cell-value-no-fit-threshold-in-chars)]]
+                                        (cell-width (save-load-cell cell-value {:label {:fi ""}})))]
+      (should-be #(> % not-fitted-value) fitted-value-no-newlines)
+      (should-be #(> % not-fitted-value) fitted-value-with-newlines)))
 
   (it "exports avustushaku with simple form"
     (let [wb (save-load-workbook (read-edn-resource "avustushaku-combined-simple-form.edn"))]
