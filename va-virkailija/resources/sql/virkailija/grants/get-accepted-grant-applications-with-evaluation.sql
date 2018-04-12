@@ -17,6 +17,7 @@ WHERE
   AND h.status != 'draft'
   AND h.status != 'new'
   AND a.status = 'accepted'
+  AND h.refused IS NOT TRUE
   AND h.version_closed IS NULL
   AND h.hakemus_type = 'hakemus'
 ORDER BY
