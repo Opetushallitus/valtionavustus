@@ -13,7 +13,8 @@ export default class TopBar extends React.Component {
       <section id="topbar">
         <div id="top-container">
           <img id="logo" src="/img/logo-176x50@2x.png" width="176" height="50" alt="Opetushallitus / Utbildningsstyrelsen" />
-          <TopBarTabs disabled={!state} activeTab={this.props.activeTab}/>
+          <TopBarTabs disabled={!state} activeTab={this.props.activeTab}
+                      config={state.environment} userInfo={state.userInfo}/>
           {controls}
           <EnvironmentInfo environment={environment} lang="fi"/>
         </div>
@@ -23,13 +24,28 @@ export default class TopBar extends React.Component {
 }
 
 class TopBarTabs extends React.Component {
+
+  isEnabled(config, k ) {
+    return config[k] && config[k]["enabled?"]
+  }
+
   render() {
-    const activeTab = this.props.activeTab
-    const disabled = this.props.disabled
+    const {activeTab, disabled, config, userInfo} = this.props
+    const isAdmin = userInfo.privileges.indexOf("va-admin") > -1
     return (
       <div id="tabs">
         <TopBarTab id="arviointi" label="Hakemusten arviointi" href="/" disabled={disabled} activeTab={activeTab}/>
         <TopBarTab id="admin" label="Hakujen hallinta" href="/admin/" disabled={disabled} activeTab={activeTab}/>
+        {this.isEnabled(config, "payments") &&
+          <TopBarTab id="payments" label="Maksatukset" href="/admin-ui/payments/"
+                    disabled={disabled} activeTab={activeTab}/>}
+        {this.isEnabled(config, "va-code-values") &&
+           <TopBarTab id="va-code-values" label="VA-koodienhallinta"
+                        href="/admin-ui/va-code-values/" disabled={disabled}
+                        activeTab={activeTab}/>}
+        {isAdmin && this.isEnabled(config, "reports") &&
+           <TopBarTab id="reports" label="VA-pulssi" href="/admin-ui/reports/"
+                      disabled={disabled} activeTab={activeTab}/>}
       </div>
     )
   }
