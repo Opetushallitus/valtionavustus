@@ -48,4 +48,7 @@
  :rondo-sftp {:enabled? false
               :local-path "/tmp"}
  :rondo-scheduler {:enabled? false}
- :multibatch-payments {:enabled? false}}
+ :payments {:enabled? false}
+ :multibatch-payments {:enabled? false}
+ :va-code-values {:enabled? false}
+ :reports {:enabled? false}}
