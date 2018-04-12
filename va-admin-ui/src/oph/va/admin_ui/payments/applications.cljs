@@ -60,4 +60,18 @@
       (when is-admin? [ui/table-header-column "Lisätietoja"])]]
     [ui/table-body {:display-row-checkbox false}
      (doall (map-indexed #(render-application %1 %2 on-info-clicked is-admin?)
-                         applications))]]])
+                         applications))]
+    [ui/table-footer {:adjust-for-checkbox false}
+     [ui/table-row
+      [ui/table-row-column]
+      [ui/table-row-column]
+      [ui/table-row-column "Yhteensä"]
+      [ui/table-row-column
+       (.toLocaleString (reduce #(+ %1 (:budget-granted %2)) 0 applications))
+       " €"]
+      [ui/table-row-column]
+      [ui/table-row-column]
+      [ui/table-row-column]
+      [ui/table-row-column]
+      [ui/table-row-column]
+      (when is-admin? [ui/table-row-column])]]]])

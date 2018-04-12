@@ -9,6 +9,7 @@ import VaComponentFactory from 'va-common/web/va/VaComponentFactory'
 import VaPreviewComponentFactory from 'va-common/web/va/VaPreviewComponentFactory'
 import VaHakemusRegisterNumber from 'va-common/web/va/VaHakemusRegisterNumber.jsx'
 import VaChangeRequest from 'va-common/web/va/VaChangeRequest.jsx'
+import GrantRefusedNotice from './GrantRefusedNotice.jsx'
 
 import EditsDisplayingFormView from './EditsDisplayingFormView.jsx'
 import FakeFormController from '../form/FakeFormController'
@@ -41,7 +42,13 @@ export default class HakemusPreview extends Component {
       infoElementValues: avustushaku,
       controller: new FakeFormController(new VaComponentFactory(), new VaPreviewComponentFactory(), avustushaku, hakemus),
       containerId: "preview-container",
-      headerElements: [registerNumberDisplay, changeRequests, <small key="version-date">Päivitetty {formattedVersionDate}</small>]
+      headerElements: [registerNumberDisplay,
+                       changeRequests,
+                       <small key="version-date">
+                         Päivitetty {formattedVersionDate}
+                       </small>,
+                       <GrantRefusedNotice application={hakemus}
+                                           key="grant-refused" />]
     }
     return <FormContainer {...formElementProps} />
 

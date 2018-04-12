@@ -1,5 +1,8 @@
-select h.id, h.version, h.created_at, h.organization_name, h.project_name, h.language, h.status, h.status_change_comment, h.budget_total, h.budget_oph_share,
-  s.answers->'value' as answer_values, h.user_key, h.register_number, h.status_loppuselvitys, h.status_valiselvitys
+select h.id, h.version, h.created_at, h.organization_name, h.project_name,
+       h.language, h.status, h.status_change_comment, h.budget_total,
+       h.budget_oph_share, s.answers->'value' as answer_values, h.user_key,
+       h.register_number, h.status_loppuselvitys, h.status_valiselvitys,
+       h.refused, h.refused_comment, h.refused_at
 from hakija.hakemukset h
   join hakija.form_submissions s on (h.form_submission_id = s.id and h.form_submission_version = s.version)
 where h.avustushaku = :avustushaku_id
