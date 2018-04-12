@@ -18,7 +18,9 @@
          :payments (:payments config)
          :notice (get-notice)
          :application-change (:application-change config)
-         :multibatch-payments (:multibatch-payments config)}
+         :multibatch-payments (:multibatch-payments config)
+         :reports (:reports config)
+         :va-code-values (:va-code-values config)}
         opintopolku (:opintopolku config)]
     (if-let [opintopolku-url (:url opintopolku)]
       (assoc common-environment :opintopolku {:url opintopolku-url
