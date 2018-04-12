@@ -52,7 +52,7 @@
    (s/optional-key :rahoitusalue) (s/maybe s/Str)
    (s/optional-key :talousarviotili) (s/maybe s/Str)
    (s/optional-key :academysize) (s/maybe s/Int)
-   (s/optional-key :perustelut) (s/maybe s/Str) 
+   (s/optional-key :perustelut) (s/maybe s/Str)
    (s/optional-key :presentercomment) (s/maybe s/Str)
    (s/optional-key :changelog) (s/maybe s/Any)
    (s/optional-key :should-pay) (s/maybe s/Bool)
@@ -127,7 +127,10 @@
                       :status-loppuselvitys (s/maybe s/Str)
                       :status-valiselvitys (s/maybe s/Str)
                       :selvitys-email (s/maybe s/Str)
-                      :answers [Answer]})
+                      :answers [Answer]
+                      (s/optional-key :refused) (s/maybe s/Bool)
+                      (s/optional-key :refused-comment) (s/maybe s/Str)
+                      (s/optional-key :refused-at) (s/maybe s/Inst)})
 
 (s/defschema RoleType
   (s/enum "presenting_officer" "evaluator"))
