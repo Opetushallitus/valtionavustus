@@ -10,7 +10,6 @@
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.invoice :as invoice]
-            [ring.util.http-response :refer [ok not-found request-timeout]]
             [oph.soresu.common.config :refer [config]]))
 
 (def timeout-limit-schedule 600000)
@@ -49,8 +48,8 @@
              (when (not (:success v))
                (throw (or (:exception v)
                           (Exception. (str (:value v))))))
-             (ok (log/debug "Succesfully fetched state from Rondo!")))
-          (a/timeout timeout-limit-schedule) ([_] (request-timeout "Rondo timeout")))))
+             (log/debug "Succesfully fetched state from Rondo!"))
+          (a/timeout timeout-limit-schedule) (log/debug "Succesfully fetched state from Rondo!"))))
 
 (defjob RondoJob
   [ctx]
@@ -66,7 +65,7 @@
                   (t/with-identity (t/key "triggers.Rondo"))
                   (t/start-now)
                   (t/with-schedule (schedule
-                                     (cron-schedule (:scheduling (:rondo-scheduler config))))))]
+                                     (cron-schedule (:scheduling (:rondo-scheduler config)) ))))]
   (qs/schedule s job trigger)))
 
 (defn stop-schedule-from-rondo []
