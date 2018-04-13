@@ -9,7 +9,7 @@
             [oph.soresu.form.formutil :as formutil]
             [oph.soresu.form.formhandler :as formhandler])
   (:import [java.io ByteArrayOutputStream]
-           [org.apache.poi.ss.usermodel Cell CellStyle CellType Sheet]
+           [org.apache.poi.ss.usermodel Cell CellStyle CellType Sheet Workbook]
            [org.joda.time DateTime]))
 
 (def unsafe-cell-string-value-prefixes "=-+@")
@@ -18,9 +18,11 @@
 
 (def cell-value-no-fit-threshold-in-chars 40)
 
+(def register-number-label-name "Diaarinumero")
+
 (def main-sheet-name "Hakemukset")
 
-(def main-sheet-columns ["Diaarinumero"
+(def main-sheet-columns [register-number-label-name
                          "Hakijaorganisaatio"
                          "Hankkeen nimi"
                          "Asiointikieli"
@@ -39,10 +41,10 @@
         (comp :budget-granted :arvio)
         (comp :score-total-average :scoring :arvio)))
 
-(def hakemus-answers-sheet-name "Hakemuksien vastaukset")
+(def hakemus-all-answers-sheet-name "Hakemuksien vastaukset")
 
-(def hakemus-answers-sheet-fixed-fields
-  [["fixed-register-number" "Diaarinumero" :register-number {:fieldType "textField"}]
+(def hakemus-all-answers-sheet-fixed-fields
+  [["fixed-register-number" register-number-label-name :register-number {:fieldType "textField"}]
    ["fixed-organization-name" "Hakijaorganisaatio" :organization-name {:fieldType "textField"}]
    ["fixed-project-name" "Projektin nimi" :project-name {:fieldType "textField"}]
    ["fixed-language" "Asiointikieli" :language {:fieldType "textField"}]
@@ -51,15 +53,19 @@
    ["fixed-budget-granted" "Myönnetty avustus" (comp :budget-granted :arvio) {:fieldType "numberField"}]
    ["fixed-score-total-average" "Arviokeskiarvo" (comp :score-total-average :scoring :arvio) {:fieldType "numberField"}]])
 
-(def loppuselvitys-answers-sheet-name "Loppuselvityksien vastaukset")
+(def hakemus-table-answers-sheet-name "Hakemuksien taulukot")
 
-(def loppuselvitys-answers-sheet-fixed-fields
-  [["fixed-register-number" "Diaarinumero" :register-number {:fieldType "textField"}]
+(def loppuselvitys-all-answers-sheet-name "Loppuselvityksien vastaukset")
+
+(def loppuselvitys-all-answers-sheet-fixed-fields
+  [["fixed-register-number" register-number-label-name :register-number {:fieldType "textField"}]
    ["fixed-organization-name" "Hakijaorganisaatio" :organization-name {:fieldType "textField"}]
    ["fixed-project-name" "Projektin nimi" :project-name {:fieldType "textField"}]
    ["fixed-language" "Asiointikieli" :language {:fieldType "textField"}]
    ["fixed-budget-total" "Toteutunut budjetti" :budget-total {:fieldType "numberField"}]
    ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share {:fieldType "numberField"}]])
+
+(def loppuselvitys-table-answers-sheet-name "Loppuselvityksien taulukot")
 
 (def maksu-sheet-name "Tiliöinti")
 
@@ -148,13 +154,7 @@
        first))
 
 (defn- field->type [field]
-  (let [add-options (fn [type-map]
-                (if (:options field)
-                  (assoc type-map :options (:options field))
-                  type-map))]
-    (-> {}
-        (assoc :fieldType (:fieldType field))
-        add-options)))
+  (select-keys field [:fieldType :options :params]))
 
 (defn- field->label [field parent suffix va-focus-areas-label]
   (if (= (:fieldType field) "vaFocusAreas")
@@ -321,6 +321,109 @@
       formatted)
   (catch Exception e (if (nil? date-string) "" date-string))))
 
+(defn- extract-table-field-specs [answer-keys answer-labels answer-types]
+  (->> (map (fn [k l t] {:key k :label l :type t})
+            answer-keys answer-labels answer-types)
+       (filter (fn [{t :type}] (= (:fieldType t) "tableField")))))
+
+(defn- extract-table-field-answers [field-specs answer-set]
+  (mapv (fn [{key :key}] (get answer-set key))
+        field-specs))
+
+(defn- gather-table-max-rows-and-columns [num-fields answers-values]
+  (reduce (fn [{:keys [max-rows-by-answers max-columns-by-field]} table-values]
+            (let [{:keys [max-rows max-columns]} (reduce-kv (fn [{:keys [max-rows max-columns]} col-idx table-value]
+                                                              (let [rows    (count table-value)
+                                                                    columns (count (first table-value))]
+                                                                {:max-rows    (max max-rows rows)
+                                                                 :max-columns (update max-columns col-idx max columns)}))
+                                                            {:max-rows    0
+                                                             :max-columns max-columns-by-field}
+                                                            table-values)]
+              {:max-rows-by-answers  (conj max-rows-by-answers max-rows)
+               :max-columns-by-field max-columns}))
+          {:max-rows-by-answers  []
+           :max-columns-by-field (vec (repeat num-fields 0))}
+          answers-values))
+
+(defn- growing-table? [field-spec]
+  (empty? (get-in field-spec [:type :params :rows])))
+
+(defn- pad-flatten-table-values [max-row max-columns-by-field field-specs table-values]
+  (let [row-pad (+ 1 max-row)]
+    (reduce (fn [rows [max-column field-spec table-value]]
+              (let [col-pad            (+ 1 max-column)
+                    num-rows           (count table-value)
+                    row-labels         (vec (get-in field-spec [:type :params :rows]))
+                    padded-table-value (into (vec table-value) (repeat (- row-pad num-rows) []))]
+                (reduce-kv (fn [rows row-idx table-row]
+                             (let [num-cols   (count table-row)
+                                   row-label  (get-in row-labels [row-idx :title :fi])
+                                   padded-row (-> (if (some? row-label) [row-label] [])
+                                                  (into table-row)
+                                                  (into (repeat (- col-pad num-cols) nil)))]
+                               (update rows row-idx into padded-row)))
+                           rows
+                           padded-table-value)))
+            (vec (repeat max-row []))
+            (map vector max-columns-by-field field-specs table-values))))
+
+(defn- scan-table-start-column-indexes [field-specs max-columns-by-field]
+  (reduce (fn [sums [field-spec max-column]]
+            (conj sums
+                  (+ max-column
+                     1
+                     (if (growing-table? field-spec) 0 1)
+                     (peek sums))))
+          [0]
+          (map vector field-specs max-columns-by-field)))
+
+(defn- table-field-answers->rows [field-specs answers-values]
+  (let [{:keys [max-rows-by-answers
+                max-columns-by-field]} (gather-table-max-rows-and-columns (count field-specs) answers-values)]
+    (let [start-column-indexes (scan-table-start-column-indexes field-specs max-columns-by-field)
+          col-header-indexes   (into []
+                                     (mapcat (fn [field-spec max-column start-col-idx]
+                                               (let [num-cols (+ max-column (if (growing-table? field-spec) 0 1))]
+                                                 (range start-col-idx (+ start-col-idx num-cols))))
+                                             field-specs
+                                             max-columns-by-field
+                                             start-column-indexes))
+          row-header-indexes   (->> start-column-indexes
+                                    (map (fn [field-spec column-idx]
+                                           (if (growing-table? field-spec)
+                                              nil
+                                              column-idx))
+                                         field-specs)
+                                    (filterv some?)
+                                    set)
+          field-label-row      (into []
+                                     (mapcat (fn [field-spec max-column]
+                                               (let [num-cols (+ max-column (if (growing-table? field-spec) 0 1))]
+                                                 (cons (:label field-spec) (repeat num-cols nil))))
+                                             field-specs
+                                             max-columns-by-field))
+          column-label-row     (into []
+                                     (mapcat (fn [field-spec]
+                                               (-> (if (growing-table? field-spec) [] [nil])
+                                                   (into (mapv (fn [col-spec]
+                                                                 (get-in col-spec [:title :fi]))
+                                                               (get-in field-spec [:type :params :columns])))
+                                                   (conj nil)))
+                                             field-specs))
+          data-rows            (reduce (fn [rows [max-row table-values]]
+                                         (into rows (pad-flatten-table-values max-row
+                                                                              max-columns-by-field
+                                                                              field-specs
+                                                                              table-values)))
+                                       []
+                                       (map vector max-rows-by-answers answers-values))]
+      {:rows                  (into [field-label-row column-label-row] data-rows)
+       :header-cell-coords    (into #{} (mapcat (fn [row-idx]
+                                                  (map (partial vector row-idx) col-header-indexes))
+                                                '(0 1)))
+       :header-column-indexes row-header-indexes})))
+
 (defn- unsafe-string-cell-value? [^String value]
   (if (.isEmpty value)
     false
@@ -339,22 +442,36 @@
         (not-any? #(>= (count %) cell-value-no-fit-threshold-in-chars) str-rows))
       true)))
 
-(defn- adjust-cells-style! [^Sheet sheet ^CellStyle header-style ^CellStyle safe-formula-style]
+(defn- adjust-cells-style! [{:keys [^Sheet sheet
+                                    header-row-indexes
+                                    header-column-indexes
+                                    header-cell-coords]}
+                            ^CellStyle header-style
+                            ^CellStyle safe-formula-style]
   (.setDefaultColumnWidth sheet column-default-width-in-chars)
-  (spreadsheet/set-row-style! (.getRow sheet 0) header-style)
-  (let [cols-not-to-fit (reduce (fn [cols-not-to-fit row]
-                              (reduce-kv (fn [cols-not-to-fit col-idx cell]
-                                           (if (some? cell)
-                                             (do
-                                               (quote-string-cell-with-formula-like-value! cell safe-formula-style)
-                                               (if (fit-cell? cell)
-                                                 cols-not-to-fit
-                                                 (conj cols-not-to-fit col-idx)))
-                                             cols-not-to-fit))
-                                         cols-not-to-fit
-                                         (vec (spreadsheet/cell-seq row))))
-                            #{}
-                            (spreadsheet/row-seq sheet))
+  (let [cols-not-to-fit (reduce-kv
+                         (fn [cols-not-to-fit row-idx row]
+                           (when (contains? header-row-indexes row-idx)
+                             (spreadsheet/set-row-style! row header-style))
+
+                           (reduce-kv
+                            (fn [cols-not-to-fit col-idx cell]
+                              (if (some? cell)
+                                (do
+                                  (when (or (contains? header-column-indexes col-idx)
+                                            (contains? header-cell-coords [row-idx col-idx]))
+                                    (.setCellStyle cell header-style))
+
+                                  (quote-string-cell-with-formula-like-value! cell safe-formula-style)
+
+                                  (if (fit-cell? cell)
+                                    cols-not-to-fit
+                                    (conj cols-not-to-fit col-idx)))
+                                cols-not-to-fit))
+                            cols-not-to-fit
+                            (spreadsheet/into-seq row)))
+                         #{}
+                         (spreadsheet/into-seq sheet))
         cols-to-fit (clj-set/difference (set (range 0 (-> sheet (.getRow 0) .getLastCellNum)))
                                         cols-not-to-fit)]
     (doseq [col-idx cols-to-fit]
@@ -415,6 +532,7 @@
 
 (defn- make-answers-sheet-rows [form hakemukset va-focus-areas-label va-focus-areas-items fixed-fields]
   (let [growing-fieldset-lut          (generate-growing-fieldset-lut hakemukset)
+
         answer-key-label-type-triples (avustushaku->formlabels form
                                                                va-focus-areas-label
                                                                growing-fieldset-lut)
@@ -429,9 +547,38 @@
                                              (mapv third answer-key-label-type-triples))
         answer-sets                   (map (partial hakemus->answers-sheet-map fixed-fields)
                                            hakemukset)
-        all-answers-rows              (mapv (partial answers->strs answer-keys answer-types va-focus-areas-items)
-                                            answer-sets)]
-    (apply conj [answer-labels] all-answers-rows)))
+
+        all-answers-data-rows         (mapv (partial answers->strs answer-keys answer-types va-focus-areas-items)
+                                            answer-sets)
+        all-answers-rows              (into [answer-labels] all-answers-data-rows)
+
+        table-field-specs             (extract-table-field-specs answer-keys answer-labels answer-types)]
+    (if (empty? table-field-specs)
+      {:all-answers-rows all-answers-rows}
+
+      (let [table-field-answers
+            (map (partial extract-table-field-answers table-field-specs)
+                 answer-sets)
+
+            register-number-table-field-spec
+            {:label nil :type {:params {:columns [{:title {:fi register-number-label-name}}]}}}
+
+            register-number-table-field-answers
+            (map (fn [hakemus] [[(get hakemus :register-number)]])
+                 hakemukset)
+
+            {table-answers-rows          :rows
+             table-header-cell-coords    :header-cell-coords
+             table-header-column-indexes :header-column-indexes}
+            (table-field-answers->rows (cons register-number-table-field-spec table-field-specs)
+                                       (map (fn [r as] (into [r] as))
+                                            register-number-table-field-answers
+                                            table-field-answers))]
+
+        {:all-answers-rows            all-answers-rows
+         :table-answers-rows          table-answers-rows
+         :table-header-cell-coords    table-header-cell-coords
+         :table-header-column-indexes table-header-column-indexes}))))
 
 (defn- make-maksu-sheet-rows [accepted-hakemukset paatos-date has-multiple-maksuera]
   (let [map-paatos-data                   (partial add-paatos-data paatos-date)
@@ -444,6 +591,35 @@
            [maksu-sheet-columns]
            (mapv hakemus->maksu-sheet-rows accepted-list-paatos))))
 
+(defn- make-answers-sheets [^Workbook wb
+                            all-answers-sheet-name
+                            table-answers-sheet-name
+                            hakemus-form
+                            hakemus-list
+                            va-focus-areas-label
+                            va-focus-areas-items
+                            answers-sheet-fixed-fields]
+  (let [{:keys [all-answers-rows
+                table-answers-rows
+                table-header-cell-coords
+                table-header-column-indexes]} (make-answers-sheet-rows hakemus-form
+                                                                       hakemus-list
+                                                                       va-focus-areas-label
+                                                                       va-focus-areas-items
+                                                                       answers-sheet-fixed-fields)
+        all-answers-sheet {:sheet              (doto (spreadsheet/add-sheet! wb all-answers-sheet-name)
+                                                 (spreadsheet/add-rows! all-answers-rows))
+                           :header-row-indexes #{0}}
+
+        table-answers-sheet (when (seq table-answers-rows)
+                              {:sheet                 (doto (spreadsheet/add-sheet! wb table-answers-sheet-name)
+                                                        (spreadsheet/add-rows! table-answers-rows))
+                               :header-cell-coords    table-header-cell-coords
+                               :header-column-indexes table-header-column-indexes})]
+    (if (some? table-answers-sheet)
+      [all-answers-sheet table-answers-sheet]
+      [all-answers-sheet])))
+
 (defn export-avustushaku [avustushaku-combined]
   (let [avustushaku           (:avustushaku avustushaku-combined)
         va-focus-areas-label  (-> avustushaku :content :focus-areas :label :fi)
@@ -455,42 +631,48 @@
         loppuselvitys-form    (:form_loppuselvitys avustushaku-combined)
         loppuselvitys-list    (:loppuselvitykset avustushaku-combined)
 
-        output (ByteArrayOutputStream.)
+        output                (ByteArrayOutputStream.)
 
-        wb (spreadsheet/create-workbook main-sheet-name
-                                        (make-main-sheet-rows hakemus-list))
+        wb                    (spreadsheet/create-workbook main-sheet-name
+                                                           (make-main-sheet-rows hakemus-list))
 
-        main-sheet (spreadsheet/select-sheet main-sheet-name wb)
+        main-sheet            {:sheet              (spreadsheet/select-sheet main-sheet-name wb)
+                               :header-row-indexes #{0}}
 
-        hakemus-answers-sheet (doto (spreadsheet/add-sheet! wb hakemus-answers-sheet-name)
-                                (spreadsheet/add-rows! (make-answers-sheet-rows hakemus-form
-                                                                                hakemus-list
-                                                                                va-focus-areas-label
-                                                                                va-focus-areas-items
-                                                                                hakemus-answers-sheet-fixed-fields)))
+        hakemus-sheets        (make-answers-sheets wb
+                                                   hakemus-all-answers-sheet-name
+                                                   hakemus-table-answers-sheet-name
+                                                   hakemus-form
+                                                   hakemus-list
+                                                   va-focus-areas-label
+                                                   va-focus-areas-items
+                                                   hakemus-all-answers-sheet-fixed-fields)
 
-        loppuselvitys-answers-sheet (doto (spreadsheet/add-sheet! wb loppuselvitys-answers-sheet-name)
-                                      (spreadsheet/add-rows! (make-answers-sheet-rows loppuselvitys-form
-                                                                                      loppuselvitys-list
-                                                                                      va-focus-areas-label
-                                                                                      va-focus-areas-items
-                                                                                      loppuselvitys-answers-sheet-fixed-fields)))
+        loppuselvitys-sheets (make-answers-sheets wb
+                                                  loppuselvitys-all-answers-sheet-name
+                                                  loppuselvitys-table-answers-sheet-name
+                                                  loppuselvitys-form
+                                                  loppuselvitys-list
+                                                  va-focus-areas-label
+                                                  va-focus-areas-items
+                                                  loppuselvitys-all-answers-sheet-fixed-fields)
 
-        maksu-sheet (doto (spreadsheet/add-sheet! wb maksu-sheet-name)
-                      (spreadsheet/add-rows! (make-maksu-sheet-rows (filter #(= "accepted" (-> % :arvio :status)) hakemus-list)
-                                                                    paatos-date
-                                                                    has-multiple-maksuera)))
+        maksu-sheet           {:sheet (doto (spreadsheet/add-sheet! wb maksu-sheet-name)
+                                        (spreadsheet/add-rows! (make-maksu-sheet-rows (filter #(= "accepted" (-> % :arvio :status)) hakemus-list)
+                                                                                      paatos-date
+                                                                                      has-multiple-maksuera)))
+                               :header-row-indexes #{0}}
 
-        header-style (spreadsheet/create-cell-style! wb {:background :yellow
-                                                         :font       {:bold true}})
+        safe-formula-style    (doto (.createCellStyle wb)
+                                (.setQuotePrefixed true))
 
-        safe-formula-style (doto (.createCellStyle wb)
-                             (.setQuotePrefixed true))]
+        header-style          (spreadsheet/create-cell-style! wb {:background :yellow
+                                                                  :font       {:bold true}})]
 
-    (doseq [sheet [main-sheet
-                   hakemus-answers-sheet
-                   loppuselvitys-answers-sheet
-                   maksu-sheet]]
+    (doseq [sheet (-> [main-sheet]
+                      (into hakemus-sheets)
+                      (into loppuselvitys-sheets)
+                      (conj maksu-sheet))]
       (adjust-cells-style! sheet header-style safe-formula-style))
 
     (.write wb output)
