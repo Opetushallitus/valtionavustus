@@ -40,8 +40,9 @@
    :state 0
    :batch-id (:id batch)})
 
-(defn create-filename [payment]
-  (format "payment-%d-%d.xml" (:id payment) (System/currentTimeMillis)))
+(defn create-filename
+  ([payment id-gen-fn] (format "payment-%d-%d.xml" (:id payment) (id-gen-fn)))
+  ([payment] (create-filename payment  #(System/currentTimeMillis))))
 
 (defn send-to-rondo! [payment application grant filename batch]
   (with-timeout
