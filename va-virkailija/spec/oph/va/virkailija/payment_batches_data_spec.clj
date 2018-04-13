@@ -26,15 +26,16 @@
    {:id 3 :state 2}
    {:id 4 :state 1}])
 
-(describe "Create payment values"
+(describe "Create payment data"
           (tags :paymentbatch)
           (it "creates payment values of valid batch values"
               (should= {:application-id 1
                         :application-version 1
                         :state 0
-                        :batch-id 2}
-                       (data/create-payment-values
-                         valid-application valid-values))))
+                        :batch-id 2
+                        :sum 2500}
+                       (data/create-payment-data
+                         valid-application valid-values 2500))))
 
 (describe "Create filename"
           (tags :paymentbatch)
