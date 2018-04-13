@@ -34,11 +34,12 @@
       convert-to-dash-keys
       convert-timestamps-from-sql))
 
-(defn create-payment-values [application batch]
+(defn create-payment-data [application batch sum]
   {:application-id (:id application)
    :application-version (:version application)
    :state 0
-   :batch-id (:id batch)})
+   :batch-id (:id batch)
+   :sum sum})
 
 (defn create-filename
   ([payment id-gen-fn] (format "payment-%d-%d.xml" (:id payment) (id-gen-fn)))
@@ -67,10 +68,7 @@
       (let [payment
             (or unpaid-payment
                 (payments-data/create-payment
-                  (assoc
-                    (create-payment-values
-                      application (:batch data))
-                    :payment-sum sum)
+                  (create-payment-data application (:batch data) sum)
                   (:identity data)))
             filename (create-filename payment)]
         (assoc (send-to-rondo! payment application (:grant data) filename
