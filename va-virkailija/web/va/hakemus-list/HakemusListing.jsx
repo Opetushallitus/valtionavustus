@@ -191,7 +191,8 @@ export default class HakemusListing extends Component {
     const allowChangeHakemusState = privileges["change-hakemus-state"]
     const filteredHakemusList = HakemusListing._sort(HakemusListing._filter(hakemusList, filter), sorter, userInfo, allowHakemusScoring)
 
-    const notPayable = hakemusList.filter(h => h.arvio["should-pay"] === false)
+    const notPayable = hakemusList.filter(
+      h => h.arvio["should-pay"] === false || h.refused === true)
     const includesShouldNotPay = notPayable.length > 0
     const notPayCount = notPayable.length
     const notPayTitle = "Yhteensä: " + notPayCount + " kpl hakemuksia merkattu ei maksettavaksi."
@@ -471,7 +472,9 @@ class HakemusRow extends Component {
       <td className="status-column">{statusFI}</td>
       {!isResolved && <td className="change-request-column" title={changeRequestTitle}>{changeRequest}</td>}
       <td className="should-pay-notification-column">
-      <ShouldPayIcon controller={controller} hakemus={hakemus} state={state} show={showNotPayIcon}/></td>
+        <ShouldPayIcon controller={controller} hakemus={hakemus} state={state} show={showNotPayIcon}/>
+        {hakemus.refused && <span title={hakemus["refused-comment"]}>H</span>}
+      </td>
       {!isResolved && isAcademysize && <td className="academysize-column">{hakemus.arvio.academysize}</td>}
       {!isResolved && <td className="applied-sum-column"><span className="money">{HakemusListing.formatNumber(hakemus["budget-oph-share"])}</span></td>}
       {isResolved && <td className="selvitys-column">{statusValiselvitys}</td>}
