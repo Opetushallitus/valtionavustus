@@ -44,7 +44,8 @@
                            :useDetailedCosts   false
                            :roles              {:evaluators []}
                            :tags               {:value []}
-                           :oppilaitokset      {:names []}})))
+                           :oppilaitokset      {:names []}
+                           :should-pay true})))
 
 (defn- find-and-add-arvio [arviot hakemus]
   (add-arvio (get arviot (:id hakemus)) hakemus))

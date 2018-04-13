@@ -13,7 +13,7 @@ export default class ShouldPay extends React.Component {
     const hakemus = this.props.hakemus
     const allowEditing = this.props.allowEditing
     const arvio = hakemus.arvio
-    const selectedShouldPay = arvio["should-pay"]
+    const selectedShouldPay = arvio["should-pay"] !== false
     this.onHakemusShouldPayChange = this.onHakemusShouldPayChange.bind(this)
 
     const options = _.flatten([
