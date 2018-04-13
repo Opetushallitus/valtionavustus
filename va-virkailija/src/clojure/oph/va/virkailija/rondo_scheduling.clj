@@ -10,7 +10,8 @@
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.invoice :as invoice]
-            [ring.util.http-response :refer [ok not-found request-timeout]]))
+            [ring.util.http-response :refer [ok not-found request-timeout]]
+            [oph.soresu.common.config :refer [config]]))
 
 (def timeout-limit-schedule 600000)
 
@@ -65,7 +66,7 @@
                   (t/with-identity (t/key "triggers.Rondo"))
                   (t/start-now)
                   (t/with-schedule (schedule
-                                     (cron-schedule "0 00 04 ? * *"))))]
+                                     (cron-schedule (:scheduling (:rondo-scheduler config))))))]
   (qs/schedule s job trigger)))
 
 (defn stop-schedule-from-rondo []
