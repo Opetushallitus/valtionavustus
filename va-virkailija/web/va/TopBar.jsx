@@ -14,7 +14,7 @@ export default class TopBar extends React.Component {
         <div id="top-container">
           <img id="logo" src="/img/logo-176x50@2x.png" width="176" height="50" alt="Opetushallitus / Utbildningsstyrelsen" />
           <TopBarTabs disabled={!state} activeTab={this.props.activeTab}
-                      config={state.environment} userInfo={state.userInfo}/>
+                      config={environment} userInfo={state.userInfo}/>
           {controls}
           <EnvironmentInfo environment={environment} lang="fi"/>
         </div>
