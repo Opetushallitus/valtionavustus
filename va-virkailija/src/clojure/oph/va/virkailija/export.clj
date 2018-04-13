@@ -254,7 +254,7 @@
   (when (not (empty? str))
     (Integer/parseInt (remove-white-spaces str))))
 
-(defn- get-by-id [answer-set va-focus-areas-items id answer-type]
+(defn- answer->str [answer-set va-focus-areas-items id answer-type]
   (case (:fieldType answer-type)
     "radioButton" (let [value (get answer-set id)]
                     (or (->> answer-type
@@ -293,9 +293,10 @@
     "vaTraineeDayCalculator" (str->float (get answer-set (str id ".total")))
     (get answer-set id)))
 
-(defn- extract-answer-values [answer-keys answer-types answers va-focus-areas-items]
-  (let [extract-answers (fn [answer-set] (mapv (partial get-by-id answer-set va-focus-areas-items) answer-keys answer-types))]
-    (mapv extract-answers answers)))
+(defn- answers->strs [answer-keys answer-types va-focus-areas-items answer-set]
+  (mapv (partial answer->str answer-set va-focus-areas-items)
+        answer-keys
+        answer-types))
 
 (defn- generate-growing-fieldset-lut [hakemukset]
   (let [answer-list (map :answers hakemukset)
@@ -417,25 +418,24 @@
          (mapv hakemus->main-sheet-rows hakemukset)))
 
 (defn- make-answers-sheet-rows [form hakemukset va-focus-areas-label va-focus-areas-items fixed-fields]
-  (let [growing-fieldset-lut           (generate-growing-fieldset-lut hakemukset)
-        answers-key-label-type-triples (avustushaku->formlabels form
-                                                                va-focus-areas-label
-                                                                growing-fieldset-lut)
-        answers-keys                   (apply conj
-                                              (mapv first fixed-fields)
-                                              (mapv first answers-key-label-type-triples))
-        answers-labels                 (apply conj
-                                              (mapv second fixed-fields)
-                                              (mapv second answers-key-label-type-triples))
-        answers-types                  (apply conj
-                                              (mapv fourth fixed-fields)
-                                              (mapv third answers-key-label-type-triples))
-        answers-rows                   (extract-answer-values answers-keys
-                                                              answers-types
-                                                              (map (partial hakemus->answers-sheet-map fixed-fields)
-                                                                   hakemukset)
-                                                              va-focus-areas-items)]
-    (apply conj [answers-labels] answers-rows)))
+  (let [growing-fieldset-lut          (generate-growing-fieldset-lut hakemukset)
+        answer-key-label-type-triples (avustushaku->formlabels form
+                                                               va-focus-areas-label
+                                                               growing-fieldset-lut)
+        answer-keys                   (apply conj
+                                             (mapv first fixed-fields)
+                                             (mapv first answer-key-label-type-triples))
+        answer-labels                 (apply conj
+                                             (mapv second fixed-fields)
+                                             (mapv second answer-key-label-type-triples))
+        answer-types                  (apply conj
+                                             (mapv fourth fixed-fields)
+                                             (mapv third answer-key-label-type-triples))
+        answer-sets                   (map (partial hakemus->answers-sheet-map fixed-fields)
+                                           hakemukset)
+        all-answers-rows              (mapv (partial answers->strs answer-keys answer-types va-focus-areas-items)
+                                            answer-sets)]
+    (apply conj [answer-labels] all-answers-rows)))
 
 (defn- make-maksu-sheet-rows [accepted-hakemukset paatos-date has-multiple-maksuera]
   (let [map-paatos-data                   (partial add-paatos-data paatos-date)
