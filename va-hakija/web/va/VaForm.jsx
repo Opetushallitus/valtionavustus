@@ -33,6 +33,7 @@ export default class VaForm extends React.Component {
     const refuseEnabled = configuration.environment["application-change"] &&
           configuration.environment["application-change"]["refuse-enabled?"]
     const showGrantRefuse = refuseEnabled && configuration.preview
+          && state.token
     return(
       <div>
         <VaOldBrowserWarning lang={configuration.lang}
