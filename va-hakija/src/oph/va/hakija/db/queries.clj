@@ -18,6 +18,7 @@
 (defquery set-refused "sql/hakemus/set-refused.sql")
 (defquery create-application-token "sql/hakemus/create-application-token.sql")
 (defquery get-application-token "sql/hakemus/get-application-token.sql")
+(defquery find-application-token "sql/hakemus/find-application-token.sql")
 
 (defquery get-avustushaku "sql/avustushaku/get.sql")
 (defquery list-avustushaut "sql/avustushaku/list.sql")
