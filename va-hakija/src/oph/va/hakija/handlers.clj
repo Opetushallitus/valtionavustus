@@ -41,8 +41,8 @@
        :submission (without-id submission)
        :validation-errors validation
        :refused (:refused hakemus)
-       :refused_at (:refused_at hakemus)
-       :refused_comment (:refused_comment hakemus)}))
+       :refused-at (:refused_at hakemus)
+       :refused-comment (:refused_comment hakemus)}))
 
 (defn on-hakemus-create [haku-id answers]
   (let [avustushaku (get-open-avustushaku haku-id {})
