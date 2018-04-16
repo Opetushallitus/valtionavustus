@@ -162,18 +162,21 @@
         (hakemus-conflict-response hakemus))
       (bad-request! security-validation))))
 
-(defn on-refuse-application [grant-id application-id base-version comment]
+(defn on-refuse-application [grant-id application-id base-version comment token]
   (let [application (va-db/get-hakemus application-id)
         grant (va-db/get-avustushaku (:avustushaku application))
         submission (:body (get-form-submission
                             (:form grant)
                             (:form_submission_id application)))]
-    (if (and (= (:version application) base-version)
+    (cond
+      (not (va-db/valid-token? token (:id application)))
+      (unauthorized "Incorrect token")
+      (and (= (:version application) base-version)
              (not (:refused application)))
       (do
         (va-db/refuse-application application comment)
         (hakemus-ok-response (va-db/get-hakemus application-id) submission {}))
-      (hakemus-conflict-response application))))
+      :else (hakemus-conflict-response application))))
 
 (defn on-selvitys-update [haku-id hakemus-id base-version answers form-key]
   (let [hakemus (va-db/get-hakemus hakemus-id)
