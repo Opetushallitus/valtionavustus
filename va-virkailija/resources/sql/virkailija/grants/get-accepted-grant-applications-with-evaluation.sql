@@ -18,7 +18,7 @@ WHERE
   AND h.status != 'new'
   AND a.status = 'accepted'
   AND h.refused IS NOT TRUE
-  AND h.should_pay IS NOT FALSE
+  AND a.should_pay IS NOT FALSE
   AND h.version_closed IS NULL
   AND h.hakemus_type = 'hakemus'
 ORDER BY
