@@ -26,3 +26,11 @@
 (s/defschema RefuseData
   "Application refuse data"
   {:comment s/Str})
+
+(s/defschema ApplicationTokenData
+  "Application token data for testing"
+  {:application-id s/Int})
+
+(s/defschema ApplicationToken
+  "Application token for testing"
+  {:token s/Str})
