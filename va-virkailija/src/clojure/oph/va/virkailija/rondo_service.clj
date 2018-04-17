@@ -52,18 +52,21 @@
         {:success true}))))
 
 (defn get-remote-file-list [config]
-  (let [result (do-sftp! :method :cdls :path (:remote_path_from config)
+  (let [result (do-sftp! :method :cdls
+                         :path (:remote_path_from config)
                          :config config)]
     (map #(last (strc/split % #"\s+")) (map str result))))
 
 (defn get-remote-file [filename config]
   (let [xml-file-path
         (format "%s/%s" (System/getProperty"java.io.tmpdir") filename)]
-    (do-sftp! :method :get :file xml-file-path
+    (do-sftp! :method :get
+              :file xml-file-path
               :path (:remote_path_from config)
               :config config)))
 
 (defn delete-remote-file [filename config]
-  (do-sftp! :method :rm :file filename
+  (do-sftp! :method :rm
+            :file filename
             :path (:remote_path_from config)
             :config config))
