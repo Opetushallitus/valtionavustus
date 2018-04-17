@@ -67,6 +67,22 @@
     - Restart va-hakija
     - Restart va-virkailija
 
+- name: Create ~www/.ssh directory
+  file:
+    path: "~www/.ssh"
+    state: directory
+    owner: www
+    group: www
+    mode: 0700
+
+- name: Copy .ssh/known_hosts for www user
+  template:
+    src: "ssh_known_hosts.j2"
+    dest: "~www/.ssh/known_hosts"
+    owner: www
+    group: www
+    mode: 0600
+
 - name: Create dumps dir
   file: path={{ data_dir }}/www/dumps owner=www group=www-data state=directory mode=0775
 

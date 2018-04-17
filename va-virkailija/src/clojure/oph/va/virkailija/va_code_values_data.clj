@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.va-code-values-data
   (:require [oph.soresu.common.db :refer [exec]]
+            [oph.va.virkailija.authentication :as authentication]
             [oph.va.virkailija.db.queries :as queries]
             [oph.va.virkailija.utils :refer
              [convert-to-dash-keys convert-to-underscore-keys]]))

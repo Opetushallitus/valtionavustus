@@ -1,6 +1,5 @@
 (ns oph.va.virkailija.va-code-values-routes
   (:require [compojure.api.sweet :as compojure-api]
-            [oph.va.virkailija.authentication :as authentication]
             [ring.util.http-response :refer [ok method-not-allowed unauthorized]]
             [oph.va.virkailija.va-code-values-data :as data :refer [with-admin]]
             [oph.va.virkailija.schema :as schema]))
@@ -11,9 +10,7 @@
     :query-params [{value-type :- String nil}, {year :- Long nil}]
     :return [schema/VACodeValue]
     :summary "Get all VA code values"
-    (with-admin request
-      (ok (data/get-va-code-values value-type year))
-      (unauthorized ""))))
+    (ok (data/get-va-code-values value-type year))))
 
 (defn- create-va-code-value []
   (compojure-api/POST
