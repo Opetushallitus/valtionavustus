@@ -7,7 +7,9 @@
           :attachment-max-size 50 ;in megabytes
           :session-timeout-in-s 28800
           :threads 16
-          :virkailija-url "http://localhost:8081"}
+          :virkailija-url "http://localhost:8081"
+          :rondo-sftp {:enabled? false
+                       :local-path "/tmp"}}
  :opintopolku {:url "https://virkailija.testiopintopolku.fi"
                :cas-login "/cas/login?service="
                :cas-logout "/cas/logout?service="
@@ -45,8 +47,6 @@
  :va-users {:use-cache? true
             :cache-refresh-interval-in-s 300
             :cache-max-refresh-interval-in-s 10800}
- :rondo-sftp {:enabled? false
-              :local-path "/tmp"}
  :rondo-scheduler {:enabled? false}
  :payments {:enabled? false}
  :multibatch-payments {:enabled? false}
