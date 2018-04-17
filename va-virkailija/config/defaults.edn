@@ -7,9 +7,7 @@
           :attachment-max-size 50 ;in megabytes
           :session-timeout-in-s 28800
           :threads 16
-          :virkailija-url "http://localhost:8081"
-          :rondo-sftp {:enabled? false
-                       :local-path "/tmp"}}
+          :virkailija-url "http://localhost:8081"}
  :opintopolku {:url "https://virkailija.testiopintopolku.fi"
                :cas-login "/cas/login?service="
                :cas-logout "/cas/logout?service="
