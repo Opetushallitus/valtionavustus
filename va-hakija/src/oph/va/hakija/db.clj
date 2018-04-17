@@ -214,7 +214,8 @@
 
 (defn create-application-token [application-id]
   (let [existing-token
-        (first (exec :form-db queries/find-application-token application-id))]
+        (first (exec :form-db queries/find-application-token
+                     {:application_id application-id}))]
 
     (if (some? existing-token)
       {:token (:token existing-token)}
