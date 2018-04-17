@@ -31,8 +31,10 @@
 
   :profiles {:uberjar {:aot [oph.va.virkailija.main]}
              :dev     {:env {:config "config/dev.edn"
-                             :configsecrets "../../valtionavustus-secret/config/secret-dev.edn"}}
-             :test    {:env {:config "config/test.edn"}
+                             :configsecrets "../../valtionavustus-secret/config/secret-dev.edn"
+                             :environment "dev"}}
+             :test    {:env {:config "config/test.edn"
+                             :environment "test"}
                        :resource-paths ["test-resources"]}
              :prod    {:env {:config "config/va-prod.edn"}}}
 
