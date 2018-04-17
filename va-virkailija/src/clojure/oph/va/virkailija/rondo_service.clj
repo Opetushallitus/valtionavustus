@@ -34,8 +34,13 @@
             (ssh/sftp channel {} :cd path)
             (ssh/ssh-sftp-cmd channel :ls ["*.xml"] :with-monitor))))))))
 
+(defn- get-local-file [config filename]
+  (format "%s/%s"
+          (get config :local-path (System/getProperty "java.io.tmpdir"))
+          filename))
+
 (defn send-to-rondo! [{:keys [payment application grant filename batch config]}]
-  (let [file (format "%s/%s" (:local-path config) filename)]
+  (let [file (get-local-file config filename)]
     (invoice/write-xml!
       (invoice/payment-to-xml
         {:payment payment :application application :grant grant :batch batch})
@@ -58,8 +63,7 @@
     (map #(last (strc/split % #"\s+")) (map str result))))
 
 (defn get-remote-file [filename config]
-  (let [xml-file-path
-        (format "%s/%s" (System/getProperty"java.io.tmpdir") filename)]
+  (let [xml-file-path (get-local-file config filename)]
     (do-sftp! :method :get
               :file xml-file-path
               :path (:remote_path_from config)
