@@ -10,7 +10,8 @@
             [oph.va.virkailija.application-data :as application-data]
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.payments-data :as payments-data]
-            [oph.va.virkailija.grant-data :as grant-data]))
+            [oph.va.virkailija.grant-data :as grant-data]
+            [oph.soresu.common.config :refer [config]]))
 
 (def timeout-limit 10000)
 
@@ -51,7 +52,8 @@
           :application application
           :grant grant
           :filename filename
-          :batch batch})
+          :batch batch
+          :config (get-in config [:server :rondo-sftp])})
        (catch Exception e
          {:success false :error {:error-type :exception :exception e}}))
     timeout-limit {:success false :error {:error-type :timeout}}))
