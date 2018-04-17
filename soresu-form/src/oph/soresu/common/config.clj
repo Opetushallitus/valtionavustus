@@ -3,6 +3,8 @@
             [environ.core :refer [env]]
             [clojure.tools.logging :as log]))
 
+(def environment (env :environment))
+
 (defn config-name [] (env :config))
 
 (defn config-simple-name []
@@ -43,4 +45,3 @@
          (clojure.edn/read-string)
          (merge-with-defaults)
          (merge-with-secrets))))
-
