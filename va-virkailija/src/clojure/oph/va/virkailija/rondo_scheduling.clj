@@ -10,51 +10,53 @@
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.invoice :as invoice]
-            [ring.util.http-response :refer [ok not-found request-timeout]]))
+            [ring.util.http-response :refer [ok not-found request-timeout]]
+            [oph.soresu.common.config :refer [config]]))
 
 (def timeout-limit-schedule 600000)
 
 
-(defn fetch-xml-files [xml-path list-of-files]
-        (doseq [filename list-of-files]
-          (rondo-service/get-remote-file filename)
-          (try
-            (payments-data/update-state-by-response (invoice/read-xml (format "%s/%s" xml-path filename)))
-          (catch clojure.lang.ExceptionInfo e
-            (if (= "already-paid" (-> e ex-data :cause))
-              (rondo-service/delete-remote-file filename)
-              (throw (Exception. (str "Unable to update payment: " (:error-message e)))))))
-          (rondo-service/delete-remote-file filename)
-          (clojure.java.io/delete-file (format "%s/%s" xml-path filename))))
+(defn fetch-xml-files [xml-path list-of-files sftp-config]
+  (doseq [filename list-of-files]
+    (rondo-service/get-remote-file filename sftp-config)
+    (try
+      (payments-data/update-state-by-response
+        (invoice/read-xml (format "%s/%s" xml-path filename)))
+      (catch clojure.lang.ExceptionInfo e
+        (if (= "already-paid" (-> e ex-data :cause))
+          (rondo-service/delete-remote-file filename sftp-config)
+          (throw (Exception. (str "Unable to update payment: " (:error-message e)))))))
+    (rondo-service/delete-remote-file filename sftp-config)
+    (clojure.java.io/delete-file (format "%s/%s" xml-path filename))))
 
 
-(defn fetch-feedback-from-rondo []
-  (let [list-of-files (rondo-service/get-remote-file-list)
+(defn fetch-feedback-from-rondo [sftp-config]
+  (let [list-of-files (rondo-service/get-remote-file-list sftp-config)
         xml-path (System/getProperty"java.io.tmpdir")
-        result (fetch-xml-files xml-path  list-of-files)]
+        result (fetch-xml-files xml-path list-of-files sftp-config)]
         (if (nil? result)
           {:success true}
           {:success false :value result})))
 
-(defn get-state-of-payments []
-      (let [c (a/chan)]
-        (a/go
-          (try
-            (a/>! c (fetch-feedback-from-rondo))
-            (catch Exception e
-              (a/>! c {:success false :exception e}))))
-        (a/alt!!
-          c ([v]
-             (when (not (:success v))
-               (throw (or (:exception v)
-                          (Exception. (str (:value v))))))
-             (ok (log/debug "Succesfully fetched state from Rondo!")))
-          (a/timeout timeout-limit-schedule) ([_] (request-timeout "Rondo timeout")))))
+(defn get-state-of-payments [sftp-config]
+  (let [c (a/chan)]
+    (a/go
+      (try
+        (a/>! c (fetch-feedback-from-rondo sftp-config))
+        (catch Exception e
+          (a/>! c {:success false :exception e}))))
+    (a/alt!!
+      c ([v]
+         (when (not (:success v))
+           (throw (or (:exception v)
+                      (Exception. (str (:value v))))))
+         (ok (log/debug "Succesfully fetched state from Rondo!")))
+      (a/timeout timeout-limit-schedule) ([_] (request-timeout "Rondo timeout")))))
 
 (defjob RondoJob
   [ctx]
   (log/info "Running scheduled fetch of payments now from rondo!")
-  (get-state-of-payments))
+  (get-state-of-payments (get-in config [:server :rondo-sftp])))
 
 (defn schedule-fetch-from-rondo []
   (let [s   (-> (qs/initialize) qs/start)
