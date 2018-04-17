@@ -61,6 +61,11 @@
         (should= valid-payment-batch
                  (dissoc (json->map body) :id :batch-number))))
 
+  (it "prevents duplicate payment batches"
+      (let [{:keys [status body]}
+            (post! "/api/v2/payment-batches/" valid-payment-batch)]
+        (should= 409 status)))
+
   (it "find payment batch (finds one)"
       (let [{:keys [status body]}
             (get!
