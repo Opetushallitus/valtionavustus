@@ -550,7 +550,7 @@
   (around-all [_]
     (set-time hakemus-open-timestamp (_)))
 
-  (it "prevents refuse without token"
+  (it "prevents refuse application and user without token"
       (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
             {:keys [status] :as response}
             (put!
@@ -558,7 +558,7 @@
               {:comment "Some valid comment"})]
           (should= 401 status)))
 
-  (it "prevents refuse with incorrect token"
+  (it "prevents refuse application without token and user with incorrect token"
       (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
             {:keys [status] :as response}
             (put!
@@ -566,6 +566,34 @@
                       hakemus-id version)
               {:comment "Some valid comment"})]
           (should= 401 status)))
+
+  (it "prevents refuse application by user without token"
+       (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+             application (va-db/get-hakemus hakemus-id)
+             {:keys [body]}
+             (post! "/api/test/application_tokens/"
+                    {:application-id (:id application)})
+             {:keys [status] :as response}
+             (put!
+               (format "/api/avustushaku/1/hakemus/%s/%d/refuse/"
+                       hakemus-id version)
+               {:comment "Some valid comment"})
+             hakemus (va-db/get-hakemus hakemus-id)]
+         (should= 401 status)))
+
+  (it "prevents refuse with incorrect token"
+       (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+             application (va-db/get-hakemus hakemus-id)
+             {:keys [body]}
+             (post! "/api/test/application_tokens/"
+                    {:application-id (:id application)})
+             {:keys [status] :as response}
+             (put!
+               (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=invalid"
+                       hakemus-id version)
+               {:comment "Some valid comment"})
+             hakemus (va-db/get-hakemus hakemus-id)]
+         (should= 401 status)))
 
   (it "sets application to refused state"
        (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
