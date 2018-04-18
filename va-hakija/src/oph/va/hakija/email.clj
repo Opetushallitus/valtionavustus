@@ -5,7 +5,8 @@
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
             [clostache.parser :refer [render]]
-            [oph.soresu.common.config :refer [config]]))
+            [oph.soresu.common.config :refer [config]]
+            [oph.va.hakija.application-data :refer [create-application-token]]))
 
 (def mail-titles
   {:new-hakemus {:fi "Linkki organisaationne avustushakemukseen"
@@ -21,6 +22,9 @@
                  :sv (email/load-template "email-templates/new-hakemus.plain.sv")}
    :hakemus-submitted {:fi (email/load-template "email-templates/hakemus-submitted.plain.fi")
                        :sv (email/load-template "email-templates/hakemus-submitted.plain.sv")}
+   :hakemus-submitted-refuse
+   {:fi (email/load-template "email-templates/hakemus-submitted-refuse.plain.fi")
+    :sv (email/load-template "email-templates/hakemus-submitted-refuse.plain.fi")}
    :hakemus-change-request-responded {:fi (email/load-template "email-templates/hakemus-change-request-responded.plain.fi")}})
 
 (defn start-background-job-send-mails []
@@ -72,8 +76,15 @@
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
         url (email/generate-url avustushaku-id lang lang-str user-key true)
+        refuse-enabled?
+        (get-in config [:application-change :refuse-enabled?] false)
+        refuse-url
+        (when refuse-enabled?
+          (format "%s&token=%s" url (create-application-token user-key)))
         user-message {:operation :send
-                      :type :hakemus-submitted
+                      :type (if refuse-enabled?
+                              :hakemus-submitted-refuse
+                              :hakemus-submitted)
                       :lang lang
                       :from (-> email/smtp-config :from lang)
                       :sender (-> email/smtp-config :sender)
@@ -84,6 +95,8 @@
                       :start-time start-time-string
                       :end-date end-date-string
                       :end-time end-time-string
-                      :url url}]
-    (log/info "Url would be: " url)
+                      :url url
+                      :refuse-url refuse-url}]
+    (log/info "Urls would be: " url)
+    (when refuse-enabled? (log/info "Refuse url: " refuse-url))
     (>!! email/mail-chan user-message)))
