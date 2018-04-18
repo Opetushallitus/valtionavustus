@@ -15,6 +15,8 @@ import GrantRefuse from './GrantRefuse.jsx'
 
 import './style/main.less'
 
+const allowedStatuses = ["officer_edit", "submitted", "pending_change_request"]
+
 export default class VaForm extends React.Component {
   render() {
     const {controller, state, hakemusType} = this.props
@@ -34,6 +36,7 @@ export default class VaForm extends React.Component {
           configuration.environment["application-change"]["refuse-enabled?"]
     const showGrantRefuse = refuseEnabled && configuration.preview
           && state.token
+          && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1
     return(
       <div>
         <VaOldBrowserWarning lang={configuration.lang}
