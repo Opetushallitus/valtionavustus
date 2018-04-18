@@ -168,11 +168,7 @@
         add-reject (fn [data]
                      (assoc data :rejects (conj (:rejects data) (:id grandparent))))
         add-value (fn [data value]
-                    (assoc data :values (conj (:values data) value)))
-        add-options (fn [type-map]
-                      (if (:options field)
-                        (assoc type-map :options (:options field))
-                        type-map))]
+                    (assoc data :values (conj (:values data) value)))]
     (if (= "growingFieldset" (:fieldType grandparent))
       ;; Special case: handle growing field sets by placing marker
       (let [reject? (contains? (-> data :rejects) (:id grandparent))
