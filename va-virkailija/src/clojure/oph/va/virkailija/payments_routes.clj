@@ -23,9 +23,9 @@
     :summary "Delete payment with state 1"
     (if-let [payment (payments-data/get-payment id)]
       (if (= (:state payment) 1)
-        (bad-request "Only newly created is allowed to be deleted")
         (do (payments-data/delete-payment id)
-            (ok "")))
+            (ok ""))
+        (bad-request "Only newly created is allowed to be deleted"))
       (not-found ""))))
 
 (compojure-api/defroutes
