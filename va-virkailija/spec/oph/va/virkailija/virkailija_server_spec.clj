@@ -7,7 +7,9 @@
             [clj-time.format :as f]
             [clj-time.local :as l]
             [oph.common.testing.spec-plumbing :refer :all]
-            [oph.va.virkailija.server :refer :all]))
+            [oph.va.virkailija.server :refer :all]
+            [oph.soresu.common.db :refer [exec]]
+            [oph.va.hakija.api.queries :as hakija-queries]))
 
 (def test-server-port 9001)
 (def base-url (str "http://localhost:" test-server-port))
@@ -38,12 +40,55 @@
    :code "1234567890"
    :code-value "Example value"})
 
+(def valid-payment-values
+  {:state 1
+   :batch-id nil
+   :payment-sum 50000})
+
+(def admin-authentication
+  {:cas-ticket nil
+   :timeout-at-ms (+ 100000000 (System/currentTimeMillis))
+   :identity {:person-oid "1.1.111.111.11.11111111111",
+              :first-name "Tero",
+              :surname "Testaaja",
+              :email nil,
+              :lang "fi",
+              :privileges '("va-admin" "va-user"),
+              :username "testaaja"}})
+
+(defn create-submission [grant]
+  (first (exec :form-db hakija-queries/create-submission
+               {:id 1
+                :form (:form grant)
+                :answers {}
+                :user_key "123456789"})))
+
+(defn create-application [grant submission]
+  (first (exec :form-db hakija-queries/create-hakemus
+               {:avustushaku_id (:id grant)
+                :status :submitted
+                :user_key "123456789"
+                :form_submission_id (:id submission)
+                :form_submission_version (:version submission)
+                :version (:version submission)
+                :budget_total 200000
+                :budget_oph_share 1500000
+                :organization_name "Test Organisation"
+                :project_name "Test Project"
+                :language "fi"
+                :register_number "123/456/78"
+                :hakemus_type "hakemus"})))
+
 (describe "HTTP server"
 
   (tags :server)
 
   ;; Start HTTP server for running tests
-  (around-all [_] (with-test-server! :virkailija-db #(start-server "localhost" test-server-port false) (_)))
+  (around-all [_] (with-test-server! :virkailija-db
+                    #(start-server
+                       {:host "localhost"
+                        :port test-server-port
+                        :auto-reload? false}) (_)))
 
   (it "GET to / without authentication should redirect to login page"
       (let [{:keys [status body]} (get! "/")]
@@ -58,7 +103,11 @@
     [_]
     (with-test-server!
       :virkailija-db
-      #(start-server "localhost" test-server-port false true) (_)))
+      #(start-server
+         {:host "localhost"
+          :port test-server-port
+          :auto-reload? false
+          :without-authentication? true}) (_)))
 
   (it "creates payment batch"
       (let [{:keys [status body]}
@@ -98,7 +147,11 @@
     [_]
     (with-test-server!
       :virkailija-db
-      #(start-server "localhost" test-server-port false true) (_)))
+      #(start-server
+         {:host "localhost"
+          :port test-server-port
+          :auto-reload? false
+          :without-authentication? true}) (_)))
 
   (it "gets grants without content"
       (let [{:keys [status body]}
@@ -118,6 +171,36 @@
         (should= 1 (count grants))
         (should (every? #(some? (:content %)) grants)))))
 
+(describe "Payments routes"
+
+          (tags :server :payments)
+
+          (around-all
+            [_]
+            (with-test-server!
+              :virkailija-db
+              #(start-server
+                 {:host "localhost"
+                  :port test-server-port
+                  :auto-reload? false
+                  :without-authentication? true
+                  :authentication admin-authentication}) (_)))
+
+          (it "creates new payment"
+              (let [{:keys [body status]} (get! "/api/v2/grants/")
+                    grant (first (json->map body))
+                    submission (create-submission grant)
+                    application (create-application grant submission)
+                    payment-values (assoc valid-payment-values
+                                          :application-id (:id application)
+                                          :application-version (:version application))
+                    {:keys [status body]}
+                    (post! "/api/v2/payments/" payment-values)]
+                (should= 200 status)
+                (should= (assoc payment-values
+                                :version 0)
+                         (dissoc (json->map body) :id)))))
+
 (describe "VA code values routes"
 
   (tags :server :vacodevalues)
@@ -126,7 +209,11 @@
     [_]
     (with-test-server!
       :virkailija-db
-      #(start-server "localhost" test-server-port false true) (_)))
+      #(start-server
+         {:host "localhost"
+          :port test-server-port
+          :auto-reload? false
+          :without-authentication? true}) (_)))
 
   (it "denies of non-admin create code value"
       (let [{:keys [status body]}
