@@ -32,6 +32,12 @@
    :grant-id 1
    :document-id "ID1234567890"})
 
+(def valid-va-code-value
+  {:value-type "operational-unit"
+   :year 2018
+   :code "1234567890"
+   :code-value "Example value"})
+
 (describe "HTTP server"
 
   (tags :server)
@@ -111,5 +117,22 @@
         (should (some? grants))
         (should= 1 (count grants))
         (should (every? #(some? (:content %)) grants)))))
+
+(describe "VA code values routes"
+
+  (tags :server :vacodevalues)
+
+  (around-all
+    [_]
+    (with-test-server!
+      :virkailija-db
+      #(start-server "localhost" test-server-port false true) (_)))
+
+  (it "denies of non-admin create code value"
+      (let [{:keys [status body]}
+            (post! "/api/v2/va-code-values/" valid-va-code-value)]
+        (should= 401 status)
+        (should= valid-va-code-value
+                 (dissoc (json->map body) :id)))))
 
 (run-specs)
