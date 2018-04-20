@@ -14,7 +14,7 @@
                            {:username (:username config)
                             :password (:password config)
                             :port (:port config)
-                            :strict-host-key-checking :no})))
+                            :strict-host-key-checking (:strict-host-key-checking config)})))
 
 (defn do-sftp! [& {:keys [file method path config]}]
   (let [session (create-session config)
