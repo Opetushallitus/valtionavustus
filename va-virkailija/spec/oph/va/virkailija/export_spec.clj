@@ -180,8 +180,7 @@
       (should-be-nil (spreadsheet/select-sheet export/loppuselvitys-table-answers-sheet-name wb))))
 
   (it "exports avustushaku with complex form"
-    (let [wb (save-load-workbook (read-edn-resource "avustushaku-combined-complex-form.edn"))
-          _  (spreadsheet/save-workbook-into-file! "/Users/tkareine/tmp/out.xlsx" wb)]
+    (let [wb (save-load-workbook (read-edn-resource "avustushaku-combined-complex-form.edn"))]
       (should= [["Diaarinumero" "Hakijaorganisaatio" "Hankkeen nimi" "Asiointikieli" "Ehdotettu budjetti" "OPH:n avustuksen osuus" "Myönnetty avustus" "Arviokeskiarvo"]
                 ["1/344/2018" "Hakijaorg 1" "" "fi" 36700.0 28259.0 27412.0 1.0]
                 ["2/344/2018" "Hakijaorg 2" "" "fi" 34700.0 26719.0 25872.0 1.5]
