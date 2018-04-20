@@ -9,7 +9,8 @@
             [oph.common.testing.spec-plumbing :refer :all]
             [oph.va.virkailija.server :refer :all]
             [oph.soresu.common.db :refer [exec]]
-            [oph.va.hakija.api.queries :as hakija-queries]))
+            [oph.va.hakija.api.queries :as hakija-queries]
+            [oph.va.virkailija.payments-data :as payments-data]))
 
 (def test-server-port 9001)
 (def base-url (str "http://localhost:" test-server-port))
@@ -19,6 +20,7 @@
                                                     :headers {"Content-Type" "application/json"}}))
 (defn post! [path body] @(http/post (path->url path) {:body (generate-string body true)
                                                       :headers {"Content-Type" "application/json"}}))
+(defn delete! [path] @(http/delete (path->url path) {:as :text}))
 (defn json->map [body] (parse-string body true))
 
 (def valid-payment-batch
@@ -171,35 +173,72 @@
         (should= 1 (count grants))
         (should (every? #(some? (:content %)) grants)))))
 
-(describe "Payments routes"
+(describe
+  "Payments routes"
 
-          (tags :server :payments)
+  (tags :server :payments)
 
-          (around-all
-            [_]
-            (with-test-server!
-              :virkailija-db
-              #(start-server
-                 {:host "localhost"
-                  :port test-server-port
-                  :auto-reload? false
-                  :without-authentication? true
-                  :authentication admin-authentication}) (_)))
+  (around-all
+    [_]
+    (with-test-server!
+      :virkailija-db
+      #(start-server
+         {:host "localhost"
+          :port test-server-port
+          :auto-reload? false
+          :without-authentication? true
+          :authentication admin-authentication}) (_)))
 
-          (it "creates new payment"
-              (let [{:keys [body status]} (get! "/api/v2/grants/")
-                    grant (first (json->map body))
-                    submission (create-submission grant)
-                    application (create-application grant submission)
-                    payment-values (assoc valid-payment-values
-                                          :application-id (:id application)
-                                          :application-version (:version application))
-                    {:keys [status body]}
-                    (post! "/api/v2/payments/" payment-values)]
-                (should= 200 status)
-                (should= (assoc payment-values
-                                :version 0)
-                         (dissoc (json->map body) :id)))))
+  (it "creates new payment"
+      (let [{:keys [body]} (get! "/api/v2/grants/")
+            grant (first (json->map body))
+            submission (create-submission grant)
+            application (create-application grant submission)
+            payment-values (assoc valid-payment-values
+                                  :application-id (:id application)
+                                  :application-version (:version application))
+            {:keys [status body]}
+            (post! "/api/v2/payments/" payment-values)]
+        (should= 200 status)
+        (should= (assoc payment-values
+                        :version 0)
+                 (dissoc (json->map body) :id))))
+
+  (it "deletes created payment"
+      (let [{:keys [body]} (get! "/api/v2/grants/")
+            grant (first (json->map body))
+            submission (create-submission grant)
+            application (create-application grant submission)
+            payment-values (assoc valid-payment-values
+                                  :application-id (:id application)
+                                  :application-version (:version application))
+            {:keys [body]}
+            (post! "/api/v2/payments/" payment-values)
+            payment (json->map body)]
+        (should (some? (payments-data/get-payment (:id payment))))
+        (let [{:keys [status body]}
+              (delete! (format "/api/v2/payments/%d/" (:id payment)))]
+          (should= 200 status)
+          (should= nil (payments-data/get-payment (:id payment))))))
+
+  (it "prevents delete of older payment"
+      (let [{:keys [body]} (get! "/api/v2/grants/")
+            grant (first (json->map body))
+            submission (create-submission grant)
+            application (create-application grant submission)
+            payment-values (assoc valid-payment-values
+                                  :application-id (:id application)
+                                  :application-version (:version application))
+            {:keys [body]}
+            (post! "/api/v2/payments/" payment-values)
+            payment
+            (payments-data/update-payment
+              (assoc (json->map body) :state 2 :filename "")
+              {:person-oid "" :first-name "" :surname ""})
+            {:keys [status body]}
+            (delete! (format "/api/v2/payments/%d/" (:id payment)))]
+        (should= 400 status)
+        (should (some? (payments-data/get-payment (:id payment)))))))
 
 (describe "VA code values routes"
 
