@@ -7,7 +7,6 @@
             [clojure.string :as strc]))
 
 
-
 (defn create-session
   [config]
   (let [agent (ssh/ssh-agent {:use-system-ssh-agent false})]
