@@ -9,4 +9,8 @@ LEFT JOIN
     ON
       b.id = p.batch_id
 WHERE
-  p.id = :id AND p.deleted IS NULL;
+  p.id = :id AND p.deleted IS NULL AND p.version_closed IS NULL
+ORDER
+  BY p.version DESC
+LIMIT
+  1;
