@@ -90,8 +90,7 @@
                              (redirect-to-login request))}]})))
 
 (defn- without-authentication [site]
-  (when
-      (not (or (= environment "dev") (= environment "test")))
+  (when (not (or (= environment "dev") (= environment "test")))
     (throw (Exception.
              "Authentication is allowed only in dev or test environments")))
   (-> site
@@ -102,8 +101,10 @@
                  :on-error (fn [request _]
                              (redirect-to-login request))}]})))
 
-(defn start-server
-  ([host port auto-reload? skip-authentication?]
+(defn start-server [{:keys [host port auto-reload?
+                      without-authentication? authentication]}]
+  (when (not (nil? authentication))
+    (auth/add-authentication authentication))
    (let [defaults (-> site-defaults
                       (assoc-in [:security :anti-forgery] false)
                       (assoc-in [:session :store]
@@ -115,7 +116,7 @@
                       (assoc-in [:session :cookie-attrs :same-site] :lax) ; required for CAS initiated redirection
                       (assoc-in [:session :cookie-attrs :secure]
                                 (-> config :server :require-https?)))
-         authenticator (if skip-authentication?
+         authenticator (if without-authentication?
                          without-authentication
                          with-authentication)
          handler (as-> #'all-routes h
@@ -140,4 +141,3 @@
                            :on-shutdown shutdown
                            :threads threads
                            :attachment-max-size attachment-max-size})))
-  ([host port auto-reload?] (start-server host port auto-reload? false)))

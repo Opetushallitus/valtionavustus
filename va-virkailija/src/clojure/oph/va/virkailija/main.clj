@@ -8,4 +8,4 @@
         auto-reload? (:auto-reload? server-config)
         port (:port server-config)
         host (:host server-config)]
-    (start-server host port auto-reload?)))
+    (start-server {:host host :port port :auto-reload? auto-reload?})))

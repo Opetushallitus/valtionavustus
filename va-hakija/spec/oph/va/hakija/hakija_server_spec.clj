@@ -542,73 +542,73 @@
 
 (describe "HTTP server with change applications"
 
-  (tags :server :applicationchange)
+          (tags :server :applicationchange)
 
-  (around-all [_]
-    (with-test-server! :form-db #(start-server "localhost" test-server-port false) (_)))
+          (around-all
+            [_] (with-test-server! :form-db
+                  #(start-server "localhost" test-server-port false) (_)))
 
-  (around-all [_]
-    (set-time hakemus-open-timestamp (_)))
+          (around-all [_] (set-time hakemus-open-timestamp (_)))
 
-  (it "prevents refuse application and user without token"
-      (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
-            {:keys [status] :as response}
-            (put!
-              (format "/api/avustushaku/1/hakemus/%s/%d/refuse/" hakemus-id version)
-              {:comment "Some valid comment"})]
-          (should= 401 status)))
+          (it "prevents refuse application and user without token"
+              (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+                    {:keys [status] :as response}
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/" hakemus-id version)
+                      {:comment "Some valid comment"})]
+                (should= 401 status)))
 
-  (it "prevents refuse application without token and user with incorrect token"
-      (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
-            {:keys [status] :as response}
-            (put!
-              (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=invalid"
-                      hakemus-id version)
-              {:comment "Some valid comment"})]
-          (should= 401 status)))
+          (it "prevents refuse application without token and user with incorrect token"
+              (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+                    {:keys [status] :as response}
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=invalid"
+                              hakemus-id version)
+                      {:comment "Some valid comment"})]
+                (should= 401 status)))
 
-  (it "prevents refuse application by user without token"
-       (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
-             application (va-db/get-hakemus hakemus-id)
-             {:keys [body]}
-             (post! "/api/test/application_tokens/"
-                    {:application-id (:id application)})
-             {:keys [status] :as response}
-             (put!
-               (format "/api/avustushaku/1/hakemus/%s/%d/refuse/"
-                       hakemus-id version)
-               {:comment "Some valid comment"})
-             hakemus (va-db/get-hakemus hakemus-id)]
-         (should= 401 status)))
+          (it "prevents refuse application by user without token"
+              (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+                    application (va-db/get-hakemus hakemus-id)
+                    {:keys [body]}
+                    (post! "/api/test/application_tokens/"
+                           {:application-id (:id application)})
+                    {:keys [status] :as response}
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/"
+                              hakemus-id version)
+                      {:comment "Some valid comment"})
+                    hakemus (va-db/get-hakemus hakemus-id)]
+                (should= 401 status)))
 
-  (it "prevents refuse with incorrect token"
-       (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
-             application (va-db/get-hakemus hakemus-id)
-             {:keys [body]}
-             (post! "/api/test/application_tokens/"
-                    {:application-id (:id application)})
-             {:keys [status] :as response}
-             (put!
-               (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=invalid"
-                       hakemus-id version)
-               {:comment "Some valid comment"})
-             hakemus (va-db/get-hakemus hakemus-id)]
-         (should= 401 status)))
+          (it "prevents refuse with incorrect token"
+              (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+                    application (va-db/get-hakemus hakemus-id)
+                    {:keys [body]}
+                    (post! "/api/test/application_tokens/"
+                           {:application-id (:id application)})
+                    {:keys [status] :as response}
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=invalid"
+                              hakemus-id version)
+                      {:comment "Some valid comment"})
+                    hakemus (va-db/get-hakemus hakemus-id)]
+                (should= 401 status)))
 
-  (it "sets application to refused state"
-       (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
-             application (va-db/get-hakemus hakemus-id)
-             {:keys [body]} (post! "/api/test/application_tokens/"
+          (it "sets application to refused state"
+              (let [{:keys [hakemus-id]} (put-hakemus valid-answers)
+                    application (va-db/get-hakemus hakemus-id)
+                    {:keys [body]} (post! "/api/test/application_tokens/"
                                           {:application-id (:id application)})
-             token (:token (json->map body))
-             {:keys [status] :as response}
-             (put!
-               (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=%s"
-                       hakemus-id version token)
-               {:comment "Some valid comment"})
-             hakemus (va-db/get-hakemus hakemus-id)]
-         (should= 200 status)
-         (should (:refused hakemus))
-         (should= "Some valid comment" (:refused_comment hakemus)))))
+                    token (:token (json->map body))
+                    {:keys [status]}
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=%s"
+                              hakemus-id (:version application) token)
+                      {:comment "Some valid comment"})
+                    hakemus (va-db/get-hakemus hakemus-id)]
+                (should= 200 status)
+                (should (:refused hakemus))
+                (should= "Some valid comment" (:refused_comment hakemus)))))
 
 (run-specs)
