@@ -14,7 +14,8 @@
                              :plugins
                              :uberjar-exclusions
                              :auto-clean
-                             :prep-tasks]}
+                             :prep-tasks
+                             :jvm-opts]}
 
   :dependencies [[oph-va/common]
                  [com.novemberain/pantomime]]
@@ -29,8 +30,6 @@
   :aot [oph.va.hakija.db.migrations]
 
   :uberjar-exclusions [#"public/test"]
-
-  :jvm-opts ["-Xmx500m"]
 
   :test-paths ["spec"]
 

@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.authentication
   (:use [clojure.tools.trace :only [trace]])
-  (:require [oph.soresu.common.config :refer [config]]
+  (:require [oph.soresu.common.config :refer [config environment]]
             [oph.va.virkailija.cas :as cas]
             [oph.va.virkailija.va-users :as va-users]
             [oph.common.background-job-supervisor :as job-supervisor]
@@ -18,6 +18,11 @@
         (get-in [:server :session-timeout-in-s])
         (+ 5)  ; ensure backend session timeout happens after browser session timeout
         (* 1000))))
+
+(defn add-authentication [authentication]
+  (when (and (not= environment "dev") (not= environment "test"))
+    (throw (Exception. "Function is only for testing")))
+  (swap! session-store assoc (:cas-ticket authentication) authentication))
 
 (defn- remove-timed-out-sessions [sessions]
   (let [now-time-ms (System/currentTimeMillis)]

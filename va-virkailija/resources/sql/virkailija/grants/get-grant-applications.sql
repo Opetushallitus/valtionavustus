@@ -4,6 +4,9 @@ SELECT
 FROM
   hakija.hakemukset h
 JOIN
+  virkailija.arviot a
+    ON (h.id = a.hakemus_id)
+JOIN
   hakija.form_submissions s
     ON (h.form_submission_id = s.id AND h.form_submission_version = s.version)
 WHERE
@@ -12,6 +15,7 @@ WHERE
   AND h.status != 'new'
   AND h.status != 'draft'
   AND h.refused IS NOT TRUE
+  AND a.should_pay IS NOT FALSE
   AND h.version_closed IS NULL
   AND h.hakemus_type = 'hakemus'
 ORDER BY

@@ -26,3 +26,5 @@ ticket_mail_recipient: "{{ vault_ticket_mail_recipient }}"
 system_reboot_needed_mail_recipient: "{{ alert_mail_recipient }} {{ ticket_mail_recipient }}"
 
 root_user_mail_recipient: "{{ alert_mail_recipient }}"
+
+rondo_sftp_host: "{{ vault_rondo_sftp_host }}"

@@ -85,14 +85,16 @@ command=/usr/bin/java
   -XX:+HeapDumpOnOutOfMemoryError
   -XX:HeapDumpPath={{ data_dir }}/www/dumps
   -Dcom.sun.management.jmxremote
-  -Dcom.sun.management.jmxremote.port=10876
-  -Djava.rmi.server.hostname=127.0.0.1
-  -Dcom.sun.management.jmxremote.local.only=false
   -Dcom.sun.management.jmxremote.authenticate=false
+  -Dcom.sun.management.jmxremote.local.only=false
+  -Dcom.sun.management.jmxremote.port=10876
   -Dcom.sun.management.jmxremote.ssl=false
+  -Dfile.encoding=UTF-8
+  -Djava.awt.headless=true
   -Djava.net.preferIPv4Stack=true
-  -Dlog4j.email.environment="%(host_node_name)s %(program_name)s"
+  -Djava.rmi.server.hostname=127.0.0.1
   -Dlog4j.configuration=file:{{ data_dir }}/www/config/%(program_name)s-log4j.properties
+  -Dlog4j.email.environment="%(host_node_name)s %(program_name)s"
   -Doph.common.log4j.SMTPThrottle.waitIntervalS={{ log4j_smtp_throttle_wait_interval_s }}
   {{ data_dir }}/www/%(program_name)s-current/%(program_name)s.jar
 environment=configsecrets={{ data_dir }}/www/config/secret-{{ app_profile }}.edn,configdefaults={{ data_dir }}/www/%(program_name)s-current/config/defaults.edn,config={{ data_dir }}/www/%(program_name)s-current/config/{{ app_profile }}.edn ; process environment additions (def no adds)
@@ -130,14 +132,16 @@ command=/usr/bin/java
   -XX:+HeapDumpOnOutOfMemoryError
   -XX:HeapDumpPath={{ data_dir }}/www/dumps
   -Dcom.sun.management.jmxremote
-  -Dcom.sun.management.jmxremote.port=11322
-  -Djava.rmi.server.hostname=127.0.0.1
-  -Dcom.sun.management.jmxremote.local.only=false
   -Dcom.sun.management.jmxremote.authenticate=false
+  -Dcom.sun.management.jmxremote.local.only=false
+  -Dcom.sun.management.jmxremote.port=11322
   -Dcom.sun.management.jmxremote.ssl=false
+  -Dfile.encoding=UTF-8
+  -Djava.awt.headless=true
   -Djava.net.preferIPv4Stack=true
-  -Dlog4j.email.environment="%(host_node_name)s %(program_name)s"
+  -Djava.rmi.server.hostname=127.0.0.1
   -Dlog4j.configuration=file:{{ data_dir }}/www/config/%(program_name)s-log4j.properties
+  -Dlog4j.email.environment="%(host_node_name)s %(program_name)s"
   -Doph.common.log4j.SMTPThrottle.waitIntervalS={{ log4j_smtp_throttle_wait_interval_s }}
   {{ data_dir }}/www/%(program_name)s-current/%(program_name)s.jar
 environment=configsecrets={{ data_dir }}/www/config/secret-{{ app_profile }}.edn,configdefaults={{ data_dir }}/www/%(program_name)s-current/config/defaults.edn,config={{ data_dir }}/www/%(program_name)s-current/config/{{ app_profile }}.edn ; process environment additions (def no adds)

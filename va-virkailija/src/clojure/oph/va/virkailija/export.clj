@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.export
   (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.java.io :as io]
-            [clojure.set :refer :all]
+            [clojure.set :as clj-set]
             [clojure.string :as string]
             [clj-time.core :as clj-time]
             [clj-time.format :as clj-time-format]
@@ -9,7 +9,14 @@
             [oph.soresu.form.formutil :as formutil]
             [oph.soresu.form.formhandler :as formhandler])
   (:import [java.io ByteArrayOutputStream]
+           [org.apache.poi.ss.usermodel Cell CellStyle CellType Sheet]
            [org.joda.time DateTime]))
+
+(def unsafe-cell-string-value-prefixes "=-+@")
+
+(def column-default-width-in-chars 30)
+
+(def cell-value-no-fit-threshold-in-chars 40)
 
 (def main-sheet-name "Hakemukset")
 
@@ -280,8 +287,8 @@
                                               :fi)))
                         (string/join "; "))
     "tableField" (->> (get answer-set id)
-                      (map (fn [row] (str "[" (string/join " | " row) "]")))
-                      (string/join " "))
+                      (map (partial string/join " | "))
+                      (string/join "\n"))
     "moneyField" (str->int (get answer-set id))
     "vaTraineeDayCalculator" (str->float (get answer-set (str id ".total")))
     (get answer-set id)))
@@ -317,10 +324,44 @@
       formatted)
   (catch Exception e (if (nil? date-string) "" date-string))))
 
-(defn- fit-columns [sheet]
-  ;; Make columns fit the data
-  (doseq [index (range 0 (-> sheet (.getRow 0) .getLastCellNum))]
-    (.autoSizeColumn sheet index)))
+(defn- unsafe-string-cell-value? [^String value]
+  (if (.isEmpty value)
+    false
+    (let [value-first-char (.codePointAt value 0)]
+      (>= (.indexOf unsafe-cell-string-value-prefixes value-first-char) 0))))
+
+(defn- quote-string-cell-with-formula-like-value! [^Cell cell ^CellStyle safe-formula-style]
+  (when (and (= (.getCellTypeEnum cell) CellType/STRING)
+             (unsafe-string-cell-value? (.getStringCellValue cell)))
+    (.setCellStyle cell safe-formula-style)))
+
+(defn- fit-cell? [^Cell cell]
+  (let [value-str (-> cell spreadsheet/read-cell str)]
+    (if (>= (count value-str) cell-value-no-fit-threshold-in-chars)
+      (let [str-rows (string/split value-str #"\n")]
+        (not-any? #(>= (count %) cell-value-no-fit-threshold-in-chars) str-rows))
+      true)))
+
+(defn- adjust-cells-style! [^Sheet sheet ^CellStyle header-style ^CellStyle safe-formula-style]
+  (.setDefaultColumnWidth sheet column-default-width-in-chars)
+  (spreadsheet/set-row-style! (.getRow sheet 0) header-style)
+  (let [cols-not-to-fit (reduce (fn [cols-not-to-fit row]
+                              (reduce-kv (fn [cols-not-to-fit col-idx cell]
+                                           (if (some? cell)
+                                             (do
+                                               (quote-string-cell-with-formula-like-value! cell safe-formula-style)
+                                               (if (fit-cell? cell)
+                                                 cols-not-to-fit
+                                                 (conj cols-not-to-fit col-idx)))
+                                             cols-not-to-fit))
+                                         cols-not-to-fit
+                                         (vec (spreadsheet/cell-seq row))))
+                            #{}
+                            (spreadsheet/row-seq sheet))
+        cols-to-fit (clj-set/difference (set (range 0 (-> sheet (.getRow 0) .getLastCellNum)))
+                                        cols-not-to-fit)]
+    (doseq [col-idx cols-to-fit]
+      (.autoSizeColumn sheet col-idx))))
 
 (def lkp-map {:kunta_kirkko                         82000000
               :kunta-kuntayhtymae                   82000000
@@ -425,40 +466,36 @@
 
         main-sheet (spreadsheet/select-sheet main-sheet-name wb)
 
-        hakemus-answers-sheet (let [sheet (spreadsheet/add-sheet! wb hakemus-answers-sheet-name)]
-                                (spreadsheet/add-rows! sheet
-                                                       (make-answers-sheet-rows hakemus-form
+        hakemus-answers-sheet (doto (spreadsheet/add-sheet! wb hakemus-answers-sheet-name)
+                                (spreadsheet/add-rows! (make-answers-sheet-rows hakemus-form
                                                                                 hakemus-list
                                                                                 va-focus-areas-label
                                                                                 va-focus-areas-items
-                                                                                hakemus-answers-sheet-fixed-fields))
-                                sheet)
+                                                                                hakemus-answers-sheet-fixed-fields)))
 
-        loppuselvitys-answers-sheet (let [sheet (spreadsheet/add-sheet! wb loppuselvitys-answers-sheet-name)]
-                                      (spreadsheet/add-rows! sheet
-                                                             (make-answers-sheet-rows loppuselvitys-form
+        loppuselvitys-answers-sheet (doto (spreadsheet/add-sheet! wb loppuselvitys-answers-sheet-name)
+                                      (spreadsheet/add-rows! (make-answers-sheet-rows loppuselvitys-form
                                                                                       loppuselvitys-list
                                                                                       va-focus-areas-label
                                                                                       va-focus-areas-items
-                                                                                      loppuselvitys-answers-sheet-fixed-fields))
-                                      sheet)
+                                                                                      loppuselvitys-answers-sheet-fixed-fields)))
 
-        maksu-sheet (let [sheet (spreadsheet/add-sheet! wb maksu-sheet-name)]
-                      (spreadsheet/add-rows! sheet
-                                             (make-maksu-sheet-rows (filter #(= "accepted" (-> % :arvio :status)) hakemus-list)
+        maksu-sheet (doto (spreadsheet/add-sheet! wb maksu-sheet-name)
+                      (spreadsheet/add-rows! (make-maksu-sheet-rows (filter #(= "accepted" (-> % :arvio :status)) hakemus-list)
                                                                     paatos-date
-                                                                    has-multiple-maksuera))
-                      sheet)
+                                                                    has-multiple-maksuera)))
 
         header-style (spreadsheet/create-cell-style! wb {:background :yellow
-                                                         :font       {:bold true}})]
+                                                         :font       {:bold true}})
+
+        safe-formula-style (doto (.createCellStyle wb)
+                             (.setQuotePrefixed true))]
 
     (doseq [sheet [main-sheet
                    hakemus-answers-sheet
                    loppuselvitys-answers-sheet
                    maksu-sheet]]
-      (fit-columns sheet)
-      (spreadsheet/set-row-style! (first (spreadsheet/row-seq sheet)) header-style))
+      (adjust-cells-style! sheet header-style safe-formula-style))
 
     (.write wb output)
     (.toByteArray output)))

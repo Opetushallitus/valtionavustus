@@ -12,7 +12,7 @@
             [clojure.tools.logging :as log]
             [oph.common.server :as server]
             [oph.common.background-job-supervisor :as job-supervisor]
-            [oph.soresu.common.config :refer [config]]
+            [oph.soresu.common.config :refer [config environment]]
             [oph.soresu.common.db :as db]
             [oph.va.virkailija.authentication :as auth]
             [oph.va.virkailija.db.migrations :as dbmigrations]
@@ -89,32 +89,55 @@
                  :on-error (fn [request _]
                              (redirect-to-login request))}]})))
 
-(defn start-server [host port auto-reload?]
-  (let [defaults (-> site-defaults
-                     (assoc-in [:security :anti-forgery] false)
-                     (assoc-in [:session :store] (cookie-store {:key (-> config :server :cookie-key)}))
-                     (assoc-in [:session :cookie-name] "va")
-                     (assoc-in [:session :cookie-attrs :max-age] (-> config :server :session-timeout-in-s))
-                     (assoc-in [:session :cookie-attrs :same-site] :lax)  ; required for CAS initiated redirection
-                     (assoc-in [:session :cookie-attrs :secure] (-> config :server :require-https?)))
-        handler (as-> #'all-routes h
-                      (with-authentication h)
-                      (ring-session-timeout/wrap-absolute-session-timeout h {:timeout (-> config :server :session-timeout-in-s)
-                                                                             :timeout-handler redirect-to-login})
-                      (wrap-defaults h defaults)
-                      (server/wrap-logger h)
-                      (server/wrap-cache-control h)
-                      (wrap-not-modified h)
-                      (if auto-reload?
-                        (wrap-reload h)
-                        h))
-        threads (or (-> config :server :threads) 16)
-        attachment-max-size (or (-> config :server :attachment-max-size) 50)]
-    (server/start-server {:host host
-                          :port port
-                          :auto-reload? auto-reload?
-                          :routes handler
-                          :on-startup (partial startup config)
-                          :on-shutdown shutdown
-                          :threads threads
-                          :attachment-max-size attachment-max-size})))
+(defn- without-authentication [site]
+  (when (not (or (= environment "dev") (= environment "test")))
+    (throw (Exception.
+             "Authentication is allowed only in dev or test environments")))
+  (-> site
+      (buddy-middleware/wrap-authentication (buddy-session/session-backend))
+      (buddy-accessrules/wrap-access-rules
+       {:rules [{:pattern #".*"
+                 :handler any-access
+                 :on-error (fn [request _]
+                             (redirect-to-login request))}]})))
+
+(defn start-server [{:keys [host port auto-reload?
+                      without-authentication? authentication]}]
+  (when (not (nil? authentication))
+    (auth/add-authentication authentication))
+   (let [defaults (-> site-defaults
+                      (assoc-in [:security :anti-forgery] false)
+                      (assoc-in [:session :store]
+                                (cookie-store
+                                  {:key (-> config :server :cookie-key)}))
+                      (assoc-in [:session :cookie-name] "va")
+                      (assoc-in [:session :cookie-attrs :max-age]
+                                (-> config :server :session-timeout-in-s))
+                      (assoc-in [:session :cookie-attrs :same-site] :lax) ; required for CAS initiated redirection
+                      (assoc-in [:session :cookie-attrs :secure]
+                                (-> config :server :require-https?)))
+         authenticator (if without-authentication?
+                         without-authentication
+                         with-authentication)
+         handler (as-> #'all-routes h
+                   (authenticator h)
+                   (ring-session-timeout/wrap-absolute-session-timeout
+                     h {:timeout (-> config :server :session-timeout-in-s)
+                        :timeout-handler redirect-to-login})
+                   (wrap-defaults h defaults)
+                   (server/wrap-logger h)
+                   (server/wrap-cache-control h)
+                   (wrap-not-modified h)
+                   (if auto-reload?
+                     (wrap-reload h)
+                     h))
+         threads (or (-> config :server :threads) 16)
+         attachment-max-size (or (-> config :server :attachment-max-size) 50)]
+     (server/start-server {:host host
+                           :port port
+                           :auto-reload? auto-reload?
+                           :routes handler
+                           :on-startup (partial startup config)
+                           :on-shutdown shutdown
+                           :threads threads
+                           :attachment-max-size attachment-max-size})))

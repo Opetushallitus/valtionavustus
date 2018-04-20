@@ -15,22 +15,24 @@
 (def timeout-limit-schedule 600000)
 
 
-(defn fetch-xml-files [xml-path list-of-files]
-        (doseq [filename list-of-files]
-          (rondo-service/get-remote-file filename)
-          (try
-            (payments-data/update-state-by-response (invoice/read-xml (format "%s/%s" xml-path filename)))
-          (catch clojure.lang.ExceptionInfo e
-            (if (= "already-paid" (-> e ex-data :cause))
-              (rondo-service/delete-remote-file filename))
-            (throw (Exception. (str "Unable to update payment: " (:error-message e))))))
-          (rondo-service/delete-remote-file filename)
-          (clojure.java.io/delete-file (format "%s/%s" xml-path filename))))
+(defn fetch-xml-files [xml-path list-of-files sftp-config]
+  (doseq [filename list-of-files]
+    (rondo-service/get-remote-file filename sftp-config)
+    (try
+      (payments-data/update-state-by-response
+        (invoice/read-xml (format "%s/%s" xml-path filename)))
+      (catch clojure.lang.ExceptionInfo e
+        (if (= "already-paid" (-> e ex-data :cause))
+          (rondo-service/delete-remote-file filename sftp-config)
+          (throw (Exception. (str "Unable to update payment: " (:error-message e)))))))
+    (rondo-service/delete-remote-file filename sftp-config)
+    (clojure.java.io/delete-file (format "%s/%s" xml-path filename))))
 
-(defn fetch-feedback-from-rondo []
-  (let [list-of-files (rondo-service/get-remote-file-list)
+
+(defn fetch-feedback-from-rondo [sftp-config]
+  (let [list-of-files (rondo-service/get-remote-file-list sftp-config)
         xml-path (System/getProperty"java.io.tmpdir")
-        result (fetch-xml-files xml-path  list-of-files)]
+        result (fetch-xml-files xml-path list-of-files sftp-config)]
         (if (nil? result)
           {:success true}
           {:success false :value result})))
@@ -53,7 +55,7 @@
 (defjob RondoJob
   [ctx]
   (log/info "Running scheduled fetch of payments now from rondo!")
-  (get-state-of-payments))
+  (get-state-of-payments (get-in config [:server :rondo-sftp])))
 
 (defn schedule-fetch-from-rondo []
   (let [s   (-> (qs/initialize) qs/start)

@@ -14,7 +14,8 @@
                              :plugins
                              :uberjar-exclusions
                              :auto-clean
-                             :javac-options]}
+                             :javac-options
+                             :jvm-opts]}
 
   :dependencies [[oph-va/common]
                  [buddy/buddy-auth]
@@ -30,8 +31,10 @@
 
   :profiles {:uberjar {:aot [oph.va.virkailija.main]}
              :dev     {:env {:config "config/dev.edn"
-                             :configsecrets "../../valtionavustus-secret/config/secret-dev.edn"}}
-             :test    {:env {:config "config/test.edn"}
+                             :configsecrets "../../valtionavustus-secret/config/secret-dev.edn"
+                             :environment "dev"}}
+             :test    {:env {:config "config/test.edn"
+                             :environment "test"}
                        :resource-paths ["test-resources"]}
              :prod    {:env {:config "config/va-prod.edn"}}}
 
@@ -40,8 +43,6 @@
   :aot [oph.va.virkailija.db.migrations]
 
   :uberjar-exclusions [#"public/test"]
-
-  :jvm-opts ["-Xmx500m"]
 
   :prep-tasks ["javac" "compile"]
 

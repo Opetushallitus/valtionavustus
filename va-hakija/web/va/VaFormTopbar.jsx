@@ -37,7 +37,8 @@ export default class VaFormTopbar extends React.Component {
       avustushaku.id,
       state.saveStatus.hakemusId,
       lang,
-      configuration.develMode
+      configuration.develMode,
+      state.token
     )
     const openPreview = function() {
       window.open(previewUrl, "preview")

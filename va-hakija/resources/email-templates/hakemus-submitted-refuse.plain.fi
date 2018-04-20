@@ -1,0 +1,20 @@
+Avustushakemus: {{ avustushaku }}
+
+Hakuaika: {{ start-date }} klo {{ start-time }} — {{ end-date }} klo {{ end-time }}
+
+Hakemustanne voitte tarkastella tästä linkistä: {{& url }}
+
+Hausta vastaava valmistelija on mainittu hakutiedotteessa.
+
+Jos päätätte olla ottamatta avustusta vastaan, voitte tehdä ilmoituksen tästä linkistä: {{& refuse-url }}
+
+Ilmoitus tulee tehdä, ennen kuin avustus on maksettu.
+
+Huomaathan, että jos otatte avustuksen vastaan, ei siitä tarvitse erillistä ilmoitusta tehdä.
+
+Opetushallitus
+Hakaniemenranta 6
+PL 380, 00531 Helsinki
+
+puhelin 029 533 1000
+faksi 029 533 1035

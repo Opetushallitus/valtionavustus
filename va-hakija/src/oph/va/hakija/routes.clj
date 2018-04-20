@@ -52,7 +52,16 @@
   (compojure-api/DELETE "/system-time" []
     :return SystemTime
     (datetime/reset-time)
-    (system-time-ok-response (datetime/now))))
+    (system-time-ok-response (datetime/now)))
+
+  (compojure-api/POST
+    "/application_tokens/"
+    []
+    :body [token-data
+           (compojure-api/describe ApplicationTokenData
+                                   "New application token for tests")]
+    :return ApplicationToken
+    (ok (hakija-db/create-application-token (:application-id token-data)))))
 
 (defn- avustushaku-ok-response [avustushaku]
   (ok (va-routes/avustushaku-response-content avustushaku)))
@@ -121,13 +130,14 @@
                      [grant-id application-id base-version :as request]
     :path-params
     [grant-id :- Long, application-id :- s/Str, base-version :- Long]
+    :query-params [{token :- String nil}]
     :return  Hakemus
     :body [refuse-data (compojure-api/describe RefuseData "Refuse data")]
     :summary "Update application status to refused"
     (when-not (get-in config [:application-change :refuse-enabled?])
       (throw (Exception. "Refuse application is not enabled")))
     (on-refuse-application
-      grant-id application-id base-version (:comment refuse-data))))
+      grant-id application-id base-version (:comment refuse-data) token)))
 
 (defn- post-hakemus []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version" [haku-id hakemus-id base-version :as request]
