@@ -22,11 +22,10 @@
             (payments-data/update-state-by-response (invoice/read-xml (format "%s/%s" xml-path filename)))
           (catch clojure.lang.ExceptionInfo e
             (if (= "already-paid" (-> e ex-data :cause))
-              (rondo-service/delete-remote-file filename)
-              (throw (Exception. (str "Unable to update payment: " (:error-message e)))))))
+              (rondo-service/delete-remote-file filename))
+            (throw (Exception. (str "Unable to update payment: " (:error-message e))))))
           (rondo-service/delete-remote-file filename)
           (clojure.java.io/delete-file (format "%s/%s" xml-path filename))))
-
 
 (defn fetch-feedback-from-rondo []
   (let [list-of-files (rondo-service/get-remote-file-list)

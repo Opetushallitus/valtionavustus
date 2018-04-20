@@ -7,6 +7,8 @@
             [clojure.tools.logging :as log]
             [clojure.string :as strc]))
 
+
+
 (defn create-session
   [config]
   (let [sftp-config (:rondo-sftp config)
@@ -15,7 +17,7 @@
                            {:username (:username sftp-config)
                             :password (:password sftp-config)
                             :port (:port sftp-config)
-                            :strict-host-key-checking :yes})))
+                            :strict-host-key-checking :no})))
 
 (defn do-sftp! [& {:keys [file method path]}]
   (let [session (create-session config)
