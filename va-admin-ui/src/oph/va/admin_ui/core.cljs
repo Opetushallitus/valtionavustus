@@ -13,6 +13,7 @@
    [oph.va.admin-ui.payments.payments-core :as payments-core]
    [oph.va.admin-ui.va-code-values.va-code-values-core :as code-values-core]
    [oph.va.admin-ui.reports.reports-core :as reports-core]
+   [oph.va.admin-ui.search.search-core :as search-core]
    [oph.va.admin-ui.user :as user]))
 
 (def top-links
@@ -21,7 +22,8 @@
    :payments {:link"/admin-ui/payments/" :title "Maksatusten hallinta"}
    :va-code-values {:link "/admin-ui/va-code-values/"
                     :title "VA-Koodienhallinta"}
-   :va-pulse {:link "/admin-ui/reports/" :title "VA-pulssi"}})
+   :va-pulse {:link "/admin-ui/reports/" :title "VA-pulssi"}
+   :search {:link "/admin-ui/search/" :title "Haku"}})
 
 (defn create-link [href title active]
   [:a {:key href :href href
@@ -64,6 +66,7 @@
         "/admin-ui/va-code-values/"
         (code-values-core/home-page)
         "/admin-ui/reports/" (reports-core/home-page)
+        "/admin-ui/search/" (search-core/home-page)
         (do
           (router/redirect-to! "/admin-ui/payments/")
           "Redirecting..."))
@@ -97,4 +100,5 @@
     "/admin-ui/payments/" (payments-core/init!)
     "/admin-ui/va-code-values/" (code-values-core/init!)
     "/admin-ui/reports/" (reports-core/init!)
+    "/admin-ui/search/" (search-core/init!)
     ""))
