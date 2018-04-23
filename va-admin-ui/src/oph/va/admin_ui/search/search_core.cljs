@@ -6,14 +6,19 @@
    [oph.va.admin-ui.components.ui :as va-ui]
    [oph.va.admin-ui.theme :as theme]
    [oph.va.admin-ui.payments.utils :refer [to-simple-date-time]]
-   [oph.va.admin-ui.connection :as connection]))
+   [oph.va.admin-ui.connection :as connection]
+   [cljs-react-material-ui.core :refer [get-mui-theme color]]
+   [cljs-react-material-ui.reagent :as ui]
+   [oph.va.admin-ui.dialogs :as dialogs]))
 
 (defonce search-results
   {:grants (r/atom [])
    :applications (r/atom [])})
 
 (defonce state
-  (r/atom {:grants-searching false :applications-searching false}))
+  (r/atom {:grants-searching false
+           :applications-searching false
+           :term-length-error false}))
 
 (def max-str-len 60)
 
@@ -23,14 +28,23 @@
     s))
 
 (defn search-items [term]
+  (swap! state assoc :grants-searching true :applications-searching true)
   (go
     (let [result (<! (connection/find-grants term))]
       (if (:success result)
-        (reset! (:grants search-results) (:body result)))))
+        (reset! (:grants search-results) (:body result))
+        (dialogs/show-error-message!
+          "Virhe hakujen etsimisessä"
+          (select-keys result [:status :error-text])))
+      (swap! state assoc :grants-searching false)))
   (go
     (let [result (<! (connection/find-applications term))]
       (if (:success result)
-        (reset! (:applications search-results) (:body result))))))
+        (reset! (:applications search-results) (:body result))
+        (dialogs/show-error-message!
+          "Virhe hakemusten etsimisessä"
+          (select-keys result [:status :error-text])))
+      (swap! state assoc :applications-searching false))))
 
 (defn render-result-item [i link title content]
   [:div {:key i}
@@ -64,12 +78,15 @@
          (:organization-name application))
     (:project-name application)))
 
-(defn render-search-results [results title renderer]
+(defn render-search [results title renderer searching?]
   [:div
    [:h2 title]
-   (if (> (count results) 0)
-     (doall (map-indexed renderer results))
-     [:span "Ei hakutuloksia"])])
+
+   (if searching?
+     [ui/circular-progress]
+     (if (> (count results) 0)
+       (doall (map-indexed renderer results))
+       [:span "Ei hakutuloksia"]))])
 
 (defn home-page []
   [:div
@@ -77,19 +94,26 @@
       (fn []
         [:div
          [va-ui/text-field
-          {:on-change #(reset! search-term (-> % .-target .-value))
-           :on-enter-pressed #(search-items @search-term)
+          {:error (:term-length-error @state)
+           :on-change #(reset! search-term (-> % .-target .-value))
+           :on-enter-pressed #(if (> (count @search-term) 3)
+                                (do
+                                  (search-items @search-term)
+                                  (swap! state assoc :term-length-error false))
+                                (swap! state assoc :term-length-error true))
            :style (assoc theme/text-field :width 575)}]]))]
    [(fn []
-      (render-search-results
+      (render-search
         (deref (:grants search-results))
         "Avustushaut"
-        render-grant))]
+        render-grant
+        (:grants-searching @state)))]
    [(fn []
-      (render-search-results
+      (render-search
         (deref (:applications search-results))
         "Hakemukset"
-        render-application))]])
+        render-application
+        (:applications-searching @state)))]])
 
 
 (defn init! [])
