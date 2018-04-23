@@ -84,7 +84,6 @@
 (defn render-search [results title renderer searching?]
   [:div
    [:h2 title]
-
    (if searching?
      [ui/circular-progress]
      (if (> (count results) 0)
