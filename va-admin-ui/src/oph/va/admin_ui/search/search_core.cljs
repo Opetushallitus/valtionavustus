@@ -23,7 +23,11 @@
   (go
     (let [result (<! (connection/find-grants term))]
       (if (:success result)
-        (reset! (:grants search-results) (:body result))))))
+        (reset! (:grants search-results) (:body result)))))
+  (go
+    (let [result (<! (connection/find-applications term))]
+      (if (:success result)
+        (reset! (:applications search-results) (:body result))))))
 
 (defn render-result-item [i link title content]
   [:div {:key i}
@@ -33,13 +37,16 @@
       (shrink title)]]]
    [:div content]])
 
+(defn format-title [grant]
+  (str (when (not (empty? (:register-number grant)))
+         (str (:register-number grant) " - "))
+       (get-in grant [:content :name :fi])))
+
 (defn render-grant [i grant]
   (render-result-item
     i
     (str "/avustushaku/" (:id grant) "/")
-    (str (get grant :register-number)
-         " - "
-         (get-in grant [:content :name :fi]))
+    (format-title grant)
     nil))
 
 (defn render-application [i application]
@@ -64,7 +71,7 @@
       (fn []
         [:div
          [va-ui/text-field
-          {:on-change #(reset! search-term %)
+          {:on-change #(reset! search-term (-> % .-target .-value))
            :on-enter-pressed #(search-items @search-term)
            :style (assoc theme/text-field :width 575)}]]))]
    [(fn []
