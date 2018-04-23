@@ -18,36 +18,35 @@
 
 (def cell-value-no-fit-threshold-in-chars 40)
 
-(def register-number-label-name "Diaarinumero")
+(def common-field-labels
+  (array-map :register-number   "Diaarinumero"
+             :organization-name "Hakijaorganisaatio"
+             :project-name      "Hankkeen nimi"
+             :language          "Asiointikieli"))
 
 (def main-sheet-name "Hakemukset")
 
-(def main-sheet-columns [register-number-label-name
-                         "Hakijaorganisaatio"
-                         "Hankkeen nimi"
-                         "Asiointikieli"
-                         "Ehdotettu budjetti"
-                         "OPH:n avustuksen osuus"
-                         "Myönnetty avustus"
-                         "Arviokeskiarvo"])
+(def main-sheet-columns
+  (into (vec (vals common-field-labels))
+        '("Ehdotettu budjetti"
+          "OPH:n avustuksen osuus"
+          "Myönnetty avustus"
+          "Arviokeskiarvo")))
 
 (def hakemus->main-sheet-rows
-  (juxt :register-number
-        :organization-name
-        :project-name
-        :language
-        :budget-total
-        :budget-oph-share
-        (comp :budget-granted :arvio)
-        (comp :score-total-average :scoring :arvio)))
+  (apply juxt (into (vec (keys common-field-labels))
+                    [:budget-total
+                     :budget-oph-share
+                     (comp :budget-granted :arvio)
+                     (comp :score-total-average :scoring :arvio)])))
 
 (def hakemus-all-answers-sheet-name "Hakemuksien vastaukset")
 
 (def hakemus-all-answers-sheet-fixed-fields
-  [["fixed-register-number" register-number-label-name :register-number {:fieldType "textField"}]
-   ["fixed-organization-name" "Hakijaorganisaatio" :organization-name {:fieldType "textField"}]
-   ["fixed-project-name" "Projektin nimi" :project-name {:fieldType "textField"}]
-   ["fixed-language" "Asiointikieli" :language {:fieldType "textField"}]
+  [["fixed-register-number" (:register-number common-field-labels) :register-number {:fieldType "textField"}]
+   ["fixed-organization-name" (:organization-name common-field-labels) :organization-name {:fieldType "textField"}]
+   ["fixed-project-name" (:project-name common-field-labels) :project-name {:fieldType "textField"}]
+   ["fixed-language" (:language common-field-labels) :language {:fieldType "textField"}]
    ["fixed-budget-total" "Ehdotettu budjetti" :budget-total {:fieldType "numberField"}]
    ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share {:fieldType "numberField"}]
    ["fixed-budget-granted" "Myönnetty avustus" (comp :budget-granted :arvio) {:fieldType "numberField"}]
@@ -58,10 +57,10 @@
 (def loppuselvitys-all-answers-sheet-name "Loppuselvityksien vastaukset")
 
 (def loppuselvitys-all-answers-sheet-fixed-fields
-  [["fixed-register-number" register-number-label-name :register-number {:fieldType "textField"}]
-   ["fixed-organization-name" "Hakijaorganisaatio" :organization-name {:fieldType "textField"}]
-   ["fixed-project-name" "Projektin nimi" :project-name {:fieldType "textField"}]
-   ["fixed-language" "Asiointikieli" :language {:fieldType "textField"}]
+  [["fixed-register-number" (:register-number common-field-labels) :register-number {:fieldType "textField"}]
+   ["fixed-organization-name" (:organization-name common-field-labels) :organization-name {:fieldType "textField"}]
+   ["fixed-project-name" (:project-name common-field-labels) :project-name {:fieldType "textField"}]
+   ["fixed-language" (:language common-field-labels) :language {:fieldType "textField"}]
    ["fixed-budget-total" "Toteutunut budjetti" :budget-total {:fieldType "numberField"}]
    ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share {:fieldType "numberField"}]])
 
@@ -561,7 +560,7 @@
                  answer-sets)
 
             register-number-table-field-spec
-            {:label nil :type {:params {:columns [{:title {:fi register-number-label-name}}]}}}
+            {:label nil :type {:params {:columns [{:title {:fi (:register-number common-field-labels)}}]}}}
 
             register-number-table-field-answers
             (map (fn [hakemus] [[(get hakemus :register-number)]])
