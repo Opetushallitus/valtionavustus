@@ -13,6 +13,9 @@
    :applications (r/atom [])
    :payments (r/atom [])})
 
+(defonce state
+  (r/atom {:grants-searching false :applications-searching false}))
+
 (def max-str-len 60)
 
 (defn shrink [s]
