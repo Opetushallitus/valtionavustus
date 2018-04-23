@@ -10,8 +10,7 @@
 
 (defonce search-results
   {:grants (r/atom [])
-   :applications (r/atom [])
-   :payments (r/atom [])})
+   :applications (r/atom [])})
 
 (defonce state
   (r/atom {:grants-searching false :applications-searching false}))
