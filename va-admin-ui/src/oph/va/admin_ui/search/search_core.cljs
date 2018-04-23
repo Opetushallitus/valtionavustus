@@ -118,5 +118,4 @@
         render-application
         (:applications-searching @state)))]])
 
-
 (defn init! [])
