@@ -559,19 +559,18 @@
             (map (partial extract-table-field-answers table-field-specs)
                  answer-sets)
 
-            register-number-table-field-spec
-            {:label nil :type {:params {:columns [{:title {:fi (:register-number common-field-labels)}}]}}}
+            id-table-field-spec
+            {:label nil :type {:params {:columns (mapv (fn [[_ v]] {:title {:fi v}}) common-field-labels)}}}
 
-            register-number-table-field-answers
-            (map (fn [hakemus] [[(get hakemus :register-number)]])
-                 hakemukset)
+            id-table-field-answers
+            (map (fn [hakemus] [(mapv (fn [[k _]] (get hakemus k)) common-field-labels)]) hakemukset)
 
             {table-answers-rows          :rows
              table-header-cell-coords    :header-cell-coords
              table-header-column-indexes :header-column-indexes}
-            (table-field-answers->rows (cons register-number-table-field-spec table-field-specs)
+            (table-field-answers->rows (cons id-table-field-spec table-field-specs)
                                        (map (fn [r as] (into [r] as))
-                                            register-number-table-field-answers
+                                            id-table-field-answers
                                             table-field-answers))]
 
         {:all-answers-rows            all-answers-rows
