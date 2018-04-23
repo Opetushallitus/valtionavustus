@@ -44,4 +44,4 @@
   (map convert-to-dash-keys
        (exec :form-db
              virkailija-queries/find-applications
-             {:search_term (str "%" search-term "%")})))
+             {:search_term (str "%" (clojure.string/lower-case search-term) "%")})))

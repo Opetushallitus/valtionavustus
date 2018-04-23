@@ -15,7 +15,8 @@
 (defn find-grants [search-term]
   (mapv convert-to-dash-keys
         (exec :form-db virkailija-queries/find-grants
-              {:search_term (str "%" search-term "%")})))
+              {:search_term
+               (str "%" (clojure.string/lower-case search-term) "%")})))
 
 (defn get-grant [grant-id]
   (convert-to-dash-keys

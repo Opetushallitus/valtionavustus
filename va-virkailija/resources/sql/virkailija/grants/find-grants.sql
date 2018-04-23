@@ -6,4 +6,4 @@ FROM
   hakija.avustushaut
 WHERE
   register_number LIKE :search_term
-  OR LOWER(content#>>'{name,fi}') LIKE LOWER(:search_term)
+  OR LOWER(content#>>'{name,fi}') LIKE :search_term

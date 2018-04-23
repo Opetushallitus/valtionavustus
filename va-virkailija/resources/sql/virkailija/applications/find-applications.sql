@@ -8,5 +8,5 @@ WHERE
   version_closed IS NULL
   AND
     (register_number LIKE :search_term
-    OR project_name LIKE :search_term
-    OR organization_name LIKE :search_term)
+    OR LOWER(project_name) LIKE :search_term
+    OR LOWER(organization_name) LIKE :search_term)
