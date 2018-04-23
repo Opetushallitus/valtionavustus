@@ -59,14 +59,17 @@
          (str (:register-number grant) " - "))
        (get-in grant [:content :name :fi])))
 
+(defn format-duration [duration]
+  (str (when (some? (:start duration)) (to-simple-date-time (:start duration)))
+         " - "
+         (when (some? (:end duration)) (to-simple-date-time (:end duration)))))
+
 (defn render-grant [i grant]
   (render-result-item
     i
     (str "/avustushaku/" (:id grant) "/")
     (format-title grant)
-    (str (to-simple-date-time (get-in grant [:content :duration :start]))
-         " - "
-         (to-simple-date-time (get-in grant [:content :duration :end])))))
+    (format-duration (get-in grant [:content :duration]))))
 
 (defn render-application [i application]
   (render-result-item
@@ -94,7 +97,8 @@
       (fn []
         [:div
          [va-ui/text-field
-          {:error (:term-length-error @state)
+          {:help-text "Hakusanan pituus tulee olla yli kolme merkkiä"
+           :error (:term-length-error @state)
            :on-change #(reset! search-term (-> % .-target .-value))
            :on-enter-pressed #(if (> (count @search-term) 3)
                                 (do
