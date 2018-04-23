@@ -5,6 +5,7 @@
    [cljs.core.async :refer [put! <! close!]]
    [oph.va.admin-ui.components.ui :as va-ui]
    [oph.va.admin-ui.theme :as theme]
+   [oph.va.admin-ui.payments.utils :refer [to-simple-date-time]]
    [oph.va.admin-ui.connection :as connection]))
 
 (defonce search-results
@@ -47,12 +48,15 @@
     i
     (str "/avustushaku/" (:id grant) "/")
     (format-title grant)
-    nil))
+    (str (to-simple-date-time (get-in grant [:content :duration :start]))
+         " - "
+         (to-simple-date-time (get-in grant [:content :duration :end])))))
 
 (defn render-application [i application]
   (render-result-item
     i
-    (str "/avustushaku/" (:avustushaku application) "/" (:id application) "/")
+    (str "/avustushaku/"
+         (:grant-id application) "/hakemus/" (:id application) "/")
     (str (get application :register-number)
          " - "
          (:organization-name application))
