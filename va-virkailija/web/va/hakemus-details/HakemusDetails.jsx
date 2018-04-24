@@ -52,22 +52,19 @@ export default class HakemusDetails extends Component {
                                    showOthersScores={showOthersScores}
                                    subTab={subTab}
                                    controller={controller}
-                                   multibatchEnabled={multibatchEnabled}
-                                   environment={environment}/>
+                                   multibatchEnabled={multibatchEnabled}/>
 
         case 'valiselvitys':
           return <Selvitys controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo}
                            translations={translations}
                            selvitysType="valiselvitys"
-                           environment={environment}
                            multibatchEnabled={multibatchEnabled}/>
         case 'loppuselvitys':
           return <Selvitys controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo}
                            translations={translations}
                            selvitysType="loppuselvitys"
-                           environment={environment}
                            multibatchEnabled={multibatchEnabled}/>
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>

@@ -10,7 +10,7 @@ import ApplicationPayments from './ApplicationPayments.jsx'
 export default class Selvitys extends Component {
   render() {
     const {controller, hakemus, avustushaku, translations, selvitysType,
-           userInfo, environment, multibatchEnabled} = this.props
+           userInfo, multibatchEnabled} = this.props
     const hasSelvitys = _.has(hakemus,`selvitys.${selvitysType}.answers`)
     const preview = _.eq(selvitysType, 'valiselvitys')
     const selvitysHakemus = _.get(hakemus,`selvitys.${selvitysType}`)
