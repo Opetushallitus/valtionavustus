@@ -21,6 +21,8 @@
 
 (def table-body {:max-height "250px"})
 
+(def table-cell {:font-size 16})
+
 (def hr-top {:color "#4c7f00"})
 
 (def notice {:margin 10})
