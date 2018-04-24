@@ -19,16 +19,16 @@ import PresenterComment from './PresenterComment.jsx'
 import EditStatus from './EditStatus.jsx'
 import ShouldPay from './ShouldPay.jsx'
 import ShouldPayComments from './ShouldPayComments.jsx'
+import ApplicationPayments from './ApplicationPayments.jsx'
 
 import '../style/admin.less'
 
 export default class HakemusArviointi extends Component {
   render() {
-    const controller = this.props.controller
-    const hakemus = this.props.hakemus
-    const avustushaku = this.props.avustushaku
-    const hakuData = this.props.hakuData
-    const translations = this.props.translations
+    const {controller, hakemus, avustushaku, hakuData, translations,
+           userInfo, loadingComments, showOthersScores,
+           multibatchEnabled} = this.props
+    const environment = hakuData.environment
     const {
       allowHakemusCommenting,
       allowHakemusStateChanges,
@@ -36,10 +36,7 @@ export default class HakemusArviointi extends Component {
       allowHakemusOfficerEditing,
       allowHakemusCancellation
     } = this.props.selectedHakemusAccessControl
-    const userInfo = this.props.userInfo
     const comments = hakemus.comments
-    const loadingComments = this.props.loadingComments
-    const showOthersScores = this.props.showOthersScores
     const showShouldPayComments = true
 
     return (
