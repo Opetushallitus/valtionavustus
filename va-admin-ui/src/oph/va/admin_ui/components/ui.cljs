@@ -25,7 +25,10 @@
          (update :class str "oph-input")
          (assoc
            :style (if (:error props) {:border-color "#f44336"} {})
-           :on-change (add-validator (:on-change props) (:validator props))))]
+           :on-change (add-validator (:on-change props) (:validator props))
+           :on-key-press #(when (and (some? (:on-enter-pressed props))
+                                     (= (.-key %) "Enter"))
+                            ((:on-enter-pressed props)))))]
     (when-some [help-text (:help-text props)]
       [:div {:class "oph-field-text"} help-text])]))
 

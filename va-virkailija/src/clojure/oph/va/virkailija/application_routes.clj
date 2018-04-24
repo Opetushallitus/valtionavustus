@@ -20,7 +20,19 @@
     :summary "Get application payments"
     (ok (application-data/get-application-payments id))))
 
+(defn- get-applications []
+  (compojure-api/GET "/" []
+    :path-params []
+    :query-params [{search :- String ""}]
+    :return [virkailija-schema/Application]
+    :summary "Return list of applications"
+    (ok
+      (if (not (empty? search))
+        (application-data/find-applications search)
+        (not-found "No route found")))))
+
 (compojure-api/defroutes routes
   "application routes"
   (get-payments-history)
-  (get-payments))
+  (get-payments)
+  (get-applications))
