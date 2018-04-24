@@ -27,8 +27,7 @@ export default class HakemusArviointi extends Component {
   render() {
     const {controller, hakemus, avustushaku, hakuData, translations,
            userInfo, loadingComments, showOthersScores,
-           multibatchEnabled} = this.props
-    const environment = hakuData.environment
+           multibatchEnabled, environment} = this.props
     const {
       allowHakemusCommenting,
       allowHakemusStateChanges,

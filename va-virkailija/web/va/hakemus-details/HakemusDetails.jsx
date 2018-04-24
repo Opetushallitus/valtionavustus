@@ -52,7 +52,8 @@ export default class HakemusDetails extends Component {
                                    showOthersScores={showOthersScores}
                                    subTab={subTab}
                                    controller={controller}
-                                   multibatchEnabled={multibatchEnabled}/>
+                                   multibatchEnabled={multibatchEnabled}
+                                   environment={environment}/>
 
         case 'valiselvitys':
           return <Selvitys controller={controller} hakemus={hakemus}
