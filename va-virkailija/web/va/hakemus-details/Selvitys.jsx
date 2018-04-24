@@ -10,10 +10,7 @@ import ApplicationPayments from './ApplicationPayments.jsx'
 export default class Selvitys extends Component {
   render() {
     const {controller, hakemus, avustushaku, translations, selvitysType,
-           userInfo, environment} = this.props
-    const multibatchEnabled =
-          (environment["multibatch-payments"] &&
-           environment["multibatch-payments"]["enabled?"]) || false
+           userInfo, environment, multibatchEnabled} = this.props
     const hasSelvitys = _.has(hakemus,`selvitys.${selvitysType}.answers`)
     const preview = _.eq(selvitysType, 'valiselvitys')
     const selvitysHakemus = _.get(hakemus,`selvitys.${selvitysType}`)
@@ -31,7 +28,10 @@ export default class Selvitys extends Component {
 
         />}
         {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
-          <ApplicationPayments application={hakemus} grant={avustushaku} payments={hakemus.payments}
+          <ApplicationPayments application={hakemus}
+                               grant={avustushaku}
+                               index={selvitysType === "valiselvitys" ? 1 : 2}
+                               payments={hakemus.payments}
                                onAddPayment={controller.addPayment}
                                onRemovePayment={controller.removePayment}/>}
         <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} preview={preview} label="Linkki lomakkeelle"/>
