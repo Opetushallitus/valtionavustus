@@ -9,18 +9,13 @@ import './hakemusDetails.less'
 
 export default class HakemusDetails extends Component {
   render() {
-    const hidden = this.props.hidden
-    const controller = this.props.controller
-    const hakemus = this.props.hakemus
-    const avustushaku = this.props.avustushaku
-    const hakuData = this.props.hakuData
-    const userInfo = this.props.userInfo
-    const loadingComments = this.props.loadingComments
-    const showOthersScores = this.props.showOthersScores
-    const translations = this.props.translations
-    const environment = this.props.environment
-    const selectedHakemusAccessControl = this.props.selectedHakemusAccessControl
-    const subTab = this.props.subTab
+    const {hidden, controller, hakemus, avustushaku, hakuData, userInfo,
+           loadingComments, showOthersScores, translations, environment,
+           selectedHakemusAccessControl, subTab} = this.props
+    const multibatchEnabled =
+          (environment["multibatch-payments"] &&
+           environment["multibatch-payments"]["enabled?"]) || false
+
     if (hidden) {
       return null
     }
@@ -56,20 +51,21 @@ export default class HakemusDetails extends Component {
                                    loadingComments={loadingComments}
                                    showOthersScores={showOthersScores}
                                    subTab={subTab}
-                                   controller={controller}/>
+                                   controller={controller}
+                                   multibatchEnabled={multibatchEnabled}/>
 
         case 'valiselvitys':
           return <Selvitys controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo}
                            translations={translations}
                            selvitysType="valiselvitys"
-                           environment={environment}/>
+                           multibatchEnabled={multibatchEnabled}/>
         case 'loppuselvitys':
           return <Selvitys controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo}
                            translations={translations}
                            selvitysType="loppuselvitys"
-                           environment={environment}/>
+                           multibatchEnabled={multibatchEnabled}/>
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
         default:
