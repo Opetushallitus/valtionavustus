@@ -55,6 +55,13 @@ export default class HakemusArviointi extends Component {
        <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
+         <ApplicationPayments application={hakemus}
+                              grant={avustushaku}
+                              index={0}
+                              payments={hakemus.payments}
+                              onAddPayment={controller.addPayment}
+                              onRemovePayment={controller.removePayment}/>}
        <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit"/>
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled"/>
