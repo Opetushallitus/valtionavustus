@@ -12,6 +12,10 @@ export default class HakemusDetails extends Component {
     const {hidden, controller, hakemus, avustushaku, hakuData, userInfo,
            loadingComments, showOthersScores, translations, environment,
            selectedHakemusAccessControl, subTab} = this.props
+    const multibatchEnabled =
+          (environment["multibatch-payments"] &&
+           environment["multibatch-payments"]["enabled?"]) || false
+
     if (hidden) {
       return null
     }
@@ -47,20 +51,23 @@ export default class HakemusDetails extends Component {
                                    loadingComments={loadingComments}
                                    showOthersScores={showOthersScores}
                                    subTab={subTab}
-                                   controller={controller}/>
+                                   controller={controller}
+                                   multibatchEnabled={multibatchEnabled}/>
 
         case 'valiselvitys':
           return <Selvitys controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo}
                            translations={translations}
                            selvitysType="valiselvitys"
-                           environment={environment}/>
+                           environment={environment}
+                           multibatchEnabled={multibatchEnabled}/>
         case 'loppuselvitys':
           return <Selvitys controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo}
                            translations={translations}
                            selvitysType="loppuselvitys"
-                           environment={environment}/>
+                           environment={environment}
+                           multibatchEnabled={multibatchEnabled}/>
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
         default:
