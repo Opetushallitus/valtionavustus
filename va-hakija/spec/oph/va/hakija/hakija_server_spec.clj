@@ -616,6 +616,26 @@
                     hakemus (va-db/get-hakemus hakemus-id)]
                 (should= 200 status)
                 (should (:refused hakemus))
-                (should= "Some valid comment" (:refused_comment hakemus)))))
+                (should= "Some valid comment" (:refused_comment hakemus))))
+
+          (it "prevents refusing already refused application"
+              (let [{:keys [hakemus-id]} (put-hakemus valid-answers)
+                    application (va-db/get-hakemus hakemus-id)
+                    {:keys [body]} (post! "/api/test/application_tokens/"
+                                          {:application-id (:id application)})
+                    token (:token (json->map body))
+                    refuse-result-pre
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=%s"
+                              hakemus-id (:version application) token)
+                      {:comment "Some valid comment"})
+                    {:keys [status]}
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=%s"
+                              hakemus-id (:version application) token)
+                      {:comment "Some valid comment"})
+                    hakemus (va-db/get-hakemus hakemus-id)]
+                (should= 200 (:status refuse-result-pre))
+                (should= 409 status))))
 
 (run-specs)
