@@ -15,6 +15,8 @@
    [oph.va.admin-ui.reports.reports-core :as reports-core]
    [oph.va.admin-ui.user :as user]))
 
+(defonce environment (r/atom {}))
+
 (def top-links
   {:grant-evaluations {:link "/" :title "Hakemusten arviointi"}
    :grant-admin {:link "/admin/" :title "Hakujen hallinta"}
@@ -53,9 +55,12 @@
       [:div
        (render-top-links
          (router/get-current-path)
-         (if (user/is-admin? (deref user/user-info))
-           top-links
-           (dissoc top-links :va-code-values))
+         (cond-> top-links
+           (not (user/is-admin? (deref user/user-info)))
+           (dissoc top-links :va-code-values)
+           (not (get-in @environment [:reports :enabled?]))
+           (dissoc top-links :va-pulse))
+
          (when (:selected-grant payments-core/state)
            (:id (deref (:selected-grant payments-core/state)))))
        [:hr theme/hr-top]]
@@ -81,6 +86,7 @@
       (if (:success config-result)
         (do
           (connection/set-config! (:body config-result))
+          (reset! environment (select-keys (:body config-result) [:reports]))
           (let [user-info-result (<! (connection/get-user-info))]
             (put! dialog-chan 2)
             (if (:success user-info-result)
