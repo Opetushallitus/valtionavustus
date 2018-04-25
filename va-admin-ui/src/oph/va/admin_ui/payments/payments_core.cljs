@@ -32,7 +32,7 @@
    :transaction-account "5000"
    :due-date (financing/now-plus financing/week-in-ms)
    :invoice-date (js/Date.)
-   :receipt-date (js/Date.)
+   :receipt-date nil
    :document-id "ID"})
 
 (defonce state
