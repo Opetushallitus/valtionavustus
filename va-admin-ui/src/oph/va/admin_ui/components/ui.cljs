@@ -2,9 +2,31 @@
   (:require [clojure.string :as string]
             [reagent.core :as r]
             [cljsjs.material-ui]
-            [cljs-react-material-ui.reagent :refer [date-picker]
+            [cljs-react-material-ui.reagent :refer [date-picker popover]
              :rename {date-picker material-date-picker}]
             [oph.va.admin-ui.theme :as theme]))
+
+(defn tooltip [props text]
+  (let [state (r/atom {:open false :anchor-el nil})]
+    (fn [props text]
+      [:span {:style {:margin-left 5 :margin-right 5}}
+       [:button
+        {:style theme/tooltip-button
+         :on-mouse-over
+         (when (:hover? props)
+           (fn [e]
+             (swap! state assoc
+                    :open false
+                    :anchor-el (.-target e))))
+         :on-click
+         (fn [e]
+           (swap! state assoc
+                  :open (not (:open @state))
+                  :anchor-el (.-target e)))} (get props :icon "?")
+        [popover
+         (merge @state
+                {:on-request-close #(swap! state assoc :open false)})
+         [:div {:style theme/popup} text]]]])))
 
 (defn- add-validator [on-change validator]
   (if (some? validator)
