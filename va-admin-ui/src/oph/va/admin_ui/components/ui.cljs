@@ -13,10 +13,10 @@
        [:span
         {:style (:button-style props)
          :on-mouse-over
-         (when (:hover? props)
+         (when (get props :hover? true)
            (fn [e]
              (swap! state assoc
-                    :open false
+                    :open true
                     :anchor-el (.-target e))))
          :on-click
          (fn [e]
