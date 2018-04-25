@@ -40,3 +40,16 @@
 (def button (merge text-field {:margin 12}))
 
 (def striped-row {:background-color "#f6f4f0"})
+
+(def popup {:padding 10})
+
+(def tooltip {:text-align "center"
+              :margin-left 5
+              :margin-right 5
+              :width 20
+              :height 20
+              :border-radius 50
+              :color "gray"
+              :background-color "lightgray"
+              :cursor "pointer"
+              :padding "1px 5px 1px 5px"})
