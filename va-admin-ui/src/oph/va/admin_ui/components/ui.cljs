@@ -9,9 +9,9 @@
 (defn tooltip [props text]
   (let [state (r/atom {:open false :anchor-el nil})]
     (fn [props text]
-      [:span {:style {:margin-left 5 :margin-right 5}}
-       [:button
-        {:style theme/tooltip-button
+      [:span {:style (merge theme/tooltip (:style props))}
+       [:span
+        {:style (:button-style props)
          :on-mouse-over
          (when (:hover? props)
            (fn [e]
@@ -26,7 +26,7 @@
         [popover
          (merge @state
                 {:on-request-close #(swap! state assoc :open false)})
-         [:div {:style theme/popup} text]]]])))
+         [:div {:style (merge theme/popup (:content-style props))} text]]]])))
 
 (defn- add-validator [on-change validator]
   (if (some? validator)
