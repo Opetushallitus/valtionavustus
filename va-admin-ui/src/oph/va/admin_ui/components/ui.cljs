@@ -2,9 +2,31 @@
   (:require [clojure.string :as string]
             [reagent.core :as r]
             [cljsjs.material-ui]
-            [cljs-react-material-ui.reagent :refer [date-picker]
+            [cljs-react-material-ui.reagent :refer [date-picker popover]
              :rename {date-picker material-date-picker}]
             [oph.va.admin-ui.theme :as theme]))
+
+(defn tooltip [props text]
+  (let [state (r/atom {:open false :anchor-el nil})]
+    (fn [props text]
+      [:span {:style (merge theme/tooltip (:style props))}
+       [:span
+        {:style (:button-style props)
+         :on-mouse-over
+         (when (get props :hover? true)
+           (fn [e]
+             (swap! state assoc
+                    :open true
+                    :anchor-el (.-target e))))
+         :on-click
+         (fn [e]
+           (swap! state assoc
+                  :open (not (:open @state))
+                  :anchor-el (.-target e)))} (get props :icon "?")
+        [popover
+         (merge @state
+                {:on-request-close #(swap! state assoc :open false)})
+         [:div {:style (merge theme/popup (:content-style props))} text]]]])))
 
 (defn- add-validator [on-change validator]
   (if (some? validator)
@@ -17,7 +39,8 @@
         (assoc p :label-text (or (:floating-label-text p) (:label-text p)))]
    [:div {:class "oph-field" :style (merge theme/text-field (:style p))}
     [:span {:class "oph-label" :aria-describedby "field-text"}
-     (:label-text props)]
+     (:label-text props)
+     (when-some [text (:tooltip props)] [tooltip {} text])]
     [:input
      (-> props
          (select-keys [:value :type :type :size :min :max
@@ -54,7 +77,9 @@
 (defn date-picker [props]
   (let [label (or (:floating-label-text props) (:label props))]
    [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
-    [:span {:class "oph-label" :aria-describedby "field-text"} label]
+    [:span {:class "oph-label" :aria-describedby "field-text"}
+     label
+     (when-some [text (:tooltip props)] [tooltip {} text])]
     [material-date-picker {:value (:value props)
                            :class "oph-input"
                            :name label
