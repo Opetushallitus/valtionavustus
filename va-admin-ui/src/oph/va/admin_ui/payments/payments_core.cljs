@@ -132,24 +132,28 @@
 (defn notice [message]
   [ui/card {:style theme/notice} [ui/card-text message]])
 
+(defn grants-components []
+  (let [grant-filter (r/atom "")
+        {:keys [grants selected-grant]} state]
+    (fn []
+      [:div
+       (render-grant-filters @grant-filter #(reset! grant-filter %))
+       (let [filtered-grants
+             (filterv #(grant-matches? % @grant-filter) @grants)]
+         (grants-table
+           {:grants filtered-grants
+            :value (find-index-of filtered-grants
+                                  #(= (:id %) (:id @selected-grant)))
+            :on-change (fn [row]
+                         (reset! selected-grant (get filtered-grants row)))}))
+       [:hr]
+       (grant-info @selected-grant)])))
+
 (defn home-page [{:keys [user-info delete-payments?]}]
   (let [{:keys [selected-grant batch-values applications
-                current-applications payments grants]} state]
+                current-applications payments]} state]
     [:div
-     [(let [grant-filter (r/atom "") ]
-        (fn []
-          [:div
-           (render-grant-filters @grant-filter #(reset! grant-filter %))
-           (let [filtered-grants
-                 (filterv #(grant-matches? % @grant-filter) @grants)]
-             (grants-table
-               {:grants filtered-grants
-                :value (find-index-of filtered-grants
-                                      #(= (:id %) (:id @selected-grant)))
-                :on-change (fn [row]
-                             (reset! selected-grant (get filtered-grants row)))}))
-           [:hr]
-           (grant-info @selected-grant)]))]
+     [grants-components]
      [(fn []
         (let [unsent-payments?
               (if (get-in @selected-grant [:content :multiplemaksuera])
