@@ -21,7 +21,9 @@ const events = {
   startAttachmentUpload: 'startAttachmentUpload',
   attachmentUploadCompleted: 'attachmentUploadCompleted',
   startAttachmentRemoval: 'startAttachmentRemoval',
-  attachmentRemovalCompleted: 'attachmentRemovalCompleted'
+  attachmentRemovalCompleted: 'attachmentRemovalCompleted',
+  refuseApplication: 'refuseApplication',
+  onApplicationRefused: 'onApplicationRefused'
 }
 
 export default class FormController {
@@ -129,5 +131,10 @@ export default class FormController {
 
   getCustomComponentProperties(state) {
     return this.customComponentFactory ? this.customComponentFactory.getCustomComponentProperties(state) : {}
+  }
+
+  refuseApplication(comment) {
+    dispatcher.push(events.refuseApplication, comment,
+                   () => dispatcher.push(events.onApplicationRefused))
   }
 }

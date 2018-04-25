@@ -52,6 +52,8 @@
 (defquery lock-hakemus "sql/common/hakija/hakemus/lock.sql")
 (defquery close-existing-hakemus! "sql/common/hakija/hakemus/close-existing.sql")
 (defquery find-matching-hakemukset-by-organization-name "sql/hakija/hakemus/find-matching-by-organization-name.sql")
+(defquery create-hakemus "sql/hakija/hakemus/create.sql")
+(defquery create-submission "sql/hakija/hakemus/create-submission.sql")
 
 (defquery add-hakemus-paatos! "sql/hakija/hakemus/add-hakemus-paatos.sql")
 (defquery update-hakemus-paatos-decision! "sql/hakija/hakemus/update-hakemus-paatos-decision.sql")

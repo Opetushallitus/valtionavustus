@@ -8,4 +8,7 @@
  :form-db {:database-name "va-test"}
  :email {:print-mail-on-disable? false}
  :va-users {:use-cache? false}
- :multibatch-payments {:enabled? true}}
+ :payments {:enabled? true}
+ :multibatch-payments {:enabled? true}
+ :va-code-values {:enabled? true}
+ :reports {:enabled? true}}

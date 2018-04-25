@@ -97,7 +97,10 @@ export default class HakemusDetails extends Component {
             {tab('loppuselvitys', 'Loppuselvitys')}
             {tab('seuranta', 'Seuranta')}
           </div>
-          <div id="tab-content">{getSubTab(subTab)}</div>
+          <div id="tab-content"
+               className={hakemus.refused ? "disabled" : ""}>
+            {getSubTab(subTab)}
+          </div>
         </div>
       </div>
     )

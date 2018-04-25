@@ -4,6 +4,26 @@
     "sv": "På svenska"
   },
   "form": {
+    "grant-refuse-accept": {
+      "fi": "Ymmärrän, että avustus evätään, kun olen lähettänyt ilmoituksen.",
+      "sv": ""
+    },
+    "grant-refuse-info": {
+      "fi": "Tällä lomakkeella voit ilmoittaa, että jätät ottamatta avustuksen vastaan. Jos päädyt ottamaan avustuksen vastaan, sinun ei tarvitse tehdä mitään.",
+      "sv": ""
+    },
+    "grant-refuse-title": {
+      "fi": "Avustuksen vastaanottamatta jättäminen",
+      "sv": ""
+    },
+    "grant-refuse-send": {
+      "fi": "Lähetä ilmoitus",
+      "sv": ""
+    },
+    "grant-refuse-sent": {
+      "fi": "Ilmoitus avustuksen vastaanottamatta jättämisestä lähetetty hakijan toimesta",
+      "sv": ""
+    },
     "heading": {
       "fi": "Hakemus",
       "sv": "Ansökan"

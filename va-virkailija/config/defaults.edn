@@ -46,4 +46,7 @@
             :cache-refresh-interval-in-s 300
             :cache-max-refresh-interval-in-s 10800}
  :rondo-scheduler {:enabled? false}
- :multibatch-payments {:enabled? false}}
+ :payments {:enabled? false}
+ :multibatch-payments {:enabled? false}
+ :va-code-values {:enabled? false}
+ :reports {:enabled? false}}

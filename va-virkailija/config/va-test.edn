@@ -14,5 +14,10 @@
          :retry-initial-wait 2000
          :retry-multiplier 4
          :retry-max-time 60000}
- :rondo-scheduler {:enabled? false}
- :multibatch-payments {:enabled? true}}
+ :rondo-scheduler {:enabled? false
+                    :scheduling "0 00 04 ? * *"
+                    :strict-host-key-checking :yes}
+ :payments {:enabled? true}
+ :multibatch-payments {:enabled? true}
+ :va-code-values {:enabled? true}
+ :reports {:enabled? true}}

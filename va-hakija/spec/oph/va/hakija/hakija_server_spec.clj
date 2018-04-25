@@ -417,8 +417,7 @@
               posted-hakemus (va-db/get-hakemus hakemus-id)]
           (should= 200 status)
           (should= "Yet another organisaatio" (:organization_name posted-hakemus))
-          (should= "Uudempi projekti" (:project_name posted-hakemus))))
-)
+          (should= "Uudempi projekti" (:project_name posted-hakemus)))))
 
 (describe "HTTP server when haku has ended"
 
@@ -448,8 +447,7 @@
       (let [{:keys [status headers body error] :as resp} (post! "/api/avustushaku/1/hakemus/hakemus-id/1/submit" valid-answers)
             json (json->map body)]
         (should= 405 status)
-        (should= "ended" (:phase json))))
-)
+        (should= "ended" (:phase json)))))
 
 (describe "HTTP server before haku has started"
 
@@ -541,5 +539,103 @@
         (should= 200 status)
         (should= 40 (:budget_total posted-hakemus))
         (should= 14 (:budget_oph_share posted-hakemus)))))
+
+(describe "HTTP server with change applications"
+
+          (tags :server :applicationchange)
+
+          (around-all
+            [_] (with-test-server! :form-db
+                  #(start-server "localhost" test-server-port false) (_)))
+
+          (around-all [_] (set-time hakemus-open-timestamp (_)))
+
+          (it "prevents refuse application with both application and user without token"
+              (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+                    {:keys [status]}
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/"
+                              hakemus-id version)
+                      {:comment "Some valid comment"})
+                    hakemus (va-db/get-hakemus hakemus-id)]
+                (should= 401 status)
+                (should= "new" (:status hakemus))))
+
+          (it "prevents refuse application without token and user with incorrect token"
+              (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+                    {:keys [status]}
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=invalid"
+                              hakemus-id version)
+                      {:comment "Some valid comment"})
+                    hakemus (va-db/get-hakemus hakemus-id)]
+                (should= 401 status)
+                (should= "new" (:status hakemus))))
+
+          (it "prevents refuse application by user without token"
+              (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+                    application (va-db/get-hakemus hakemus-id)
+                    token-result
+                    (post! "/api/test/application_tokens/"
+                           {:application-id (:id application)})
+                    {:keys [status] :as response}
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/"
+                              hakemus-id version)
+                      {:comment "Some valid comment"})
+                    hakemus (va-db/get-hakemus hakemus-id)]
+                (should= 401 status)
+                (should= "new" (:status hakemus))))
+
+          (it "prevents refuse with incorrect token"
+              (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
+                    application (va-db/get-hakemus hakemus-id)
+                    token-result
+                    (post! "/api/test/application_tokens/"
+                           {:application-id (:id application)})
+                    {:keys [status]}
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=invalid"
+                              hakemus-id version)
+                      {:comment "Some valid comment"})
+                    hakemus (va-db/get-hakemus hakemus-id)]
+                (should= 401 status)
+                (should= "new" (:status hakemus))))
+
+          (it "sets application to refused state"
+              (let [{:keys [hakemus-id]} (put-hakemus valid-answers)
+                    application (va-db/get-hakemus hakemus-id)
+                    {:keys [body]} (post! "/api/test/application_tokens/"
+                                          {:application-id (:id application)})
+                    token (:token (json->map body))
+                    {:keys [status]}
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=%s"
+                              hakemus-id (:version application) token)
+                      {:comment "Some valid comment"})
+                    hakemus (va-db/get-hakemus hakemus-id)]
+                (should= 200 status)
+                (should (:refused hakemus))
+                (should= "Some valid comment" (:refused_comment hakemus))))
+
+          (it "prevents refusing already refused application"
+              (let [{:keys [hakemus-id]} (put-hakemus valid-answers)
+                    application (va-db/get-hakemus hakemus-id)
+                    {:keys [body]} (post! "/api/test/application_tokens/"
+                                          {:application-id (:id application)})
+                    token (:token (json->map body))
+                    refuse-result-pre
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=%s"
+                              hakemus-id (:version application) token)
+                      {:comment "Some valid comment"})
+                    {:keys [status]}
+                    (put!
+                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=%s"
+                              hakemus-id (:version application) token)
+                      {:comment "Some valid comment"})
+                    hakemus (va-db/get-hakemus hakemus-id)]
+                (should= 200 (:status refuse-result-pre))
+                (should= 409 status))))
 
 (run-specs)

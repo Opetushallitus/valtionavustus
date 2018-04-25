@@ -52,7 +52,16 @@
   (compojure-api/DELETE "/system-time" []
     :return SystemTime
     (datetime/reset-time)
-    (system-time-ok-response (datetime/now))))
+    (system-time-ok-response (datetime/now)))
+
+  (compojure-api/POST
+    "/application_tokens/"
+    []
+    :body [token-data
+           (compojure-api/describe ApplicationTokenData
+                                   "New application token for tests")]
+    :return ApplicationToken
+    (ok (hakija-db/create-application-token (:application-id token-data)))))
 
 (defn- avustushaku-ok-response [avustushaku]
   (ok (va-routes/avustushaku-response-content avustushaku)))
@@ -115,6 +124,20 @@
     :return  Hakemus
     :summary "Create initial hakemus"
     (on-hakemus-create haku-id answers)))
+
+(defn- put-refuse-hakemus []
+  (compojure-api/PUT "/:grant-id/hakemus/:application-id/:base-version/refuse/"
+                     [grant-id application-id base-version :as request]
+    :path-params
+    [grant-id :- Long, application-id :- s/Str, base-version :- Long]
+    :query-params [{token :- String nil}]
+    :return  Hakemus
+    :body [refuse-data (compojure-api/describe RefuseData "Refuse data")]
+    :summary "Update application status to refused"
+    (when-not (get-in config [:application-change :refuse-enabled?])
+      (throw (Exception. "Refuse application is not enabled")))
+    (on-refuse-application
+      grant-id application-id base-version (:comment refuse-data) token)))
 
 (defn- post-hakemus []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version" [haku-id hakemus-id base-version :as request]
@@ -207,6 +230,7 @@
   (post-selvitys)
   (post-selvitys-submit)
   (put-hakemus)
+  (put-refuse-hakemus)
   (post-hakemus)
   (post-hakemus-submit)
   (post-change-request-response)
@@ -236,13 +260,6 @@
    (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "login.html"))
-
-   (when (get-in config [:applications-ui :enabled?])
-     (compojure/GET "/applications/*" [] (return-html "applications/index.html")))
-   (when (get-in config [:applications-ui :enabled?])
-     (compojure-route/resources "/applications/"
-                               {:mime-types {"html" "text/html; charset=utf-8"}}))
-
 
    (compojure-api/GET "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
      :path-params [avustushaku-id :- Long user-key :- s/Str]

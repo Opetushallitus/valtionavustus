@@ -144,6 +144,12 @@
 (defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals comment]
   (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment))
 
+(defn refuse-application [application comment]
+  (let [params (assoc application :refused true :refused_comment comment)]
+    (exec-all :form-db [queries/lock-hakemus params
+                        queries/close-existing-hakemus! params
+                        queries/set-refused params])))
+
 (defn update-loppuselvitys-status [hakemus-id status]
   (exec :form-db queries/update-loppuselvitys-status<! {:id hakemus-id :status status}))
 
@@ -205,3 +211,23 @@
      :content-type (:content_type result)
      :filename (:filename result)
      :size (:file_size result)}))
+
+(defn create-application-token [application-id]
+  (let [existing-token
+        (first (exec :form-db queries/find-application-token
+                     {:application_id application-id}))]
+
+    (if (some? existing-token)
+      {:token (:token existing-token)}
+      (first
+        (exec :form-db queries/create-application-token
+              {:application_id application-id :token (generate-hash-id)})))))
+
+(defn valid-token? [token application-id]
+  (and
+    (some? token)
+    (>
+      (count
+        (exec :form-db queries/get-application-token
+              {:token token :application_id application-id}))
+      0)))

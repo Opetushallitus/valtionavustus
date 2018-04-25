@@ -17,6 +17,8 @@ import AcademySize from './AcademySize.jsx'
 import Perustelut from './Perustelut.jsx'
 import PresenterComment from './PresenterComment.jsx'
 import EditStatus from './EditStatus.jsx'
+import ShouldPay from './ShouldPay.jsx'
+import ShouldPayComments from './ShouldPayComments.jsx'
 
 import '../style/admin.less'
 
@@ -38,6 +40,7 @@ export default class HakemusArviointi extends Component {
     const comments = hakemus.comments
     const loadingComments = this.props.loadingComments
     const showOthersScores = this.props.showOthersScores
+    const showShouldPayComments = true
 
     return (
      <div id="arviointi-tab">
@@ -50,6 +53,8 @@ export default class HakemusArviointi extends Component {
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments} allowHakemusCommenting={allowHakemusCommenting}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       <ShouldPay controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges}/>
+       <ShouldPayComments showField={showShouldPayComments} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges}/>
        <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
@@ -104,7 +109,8 @@ class ChangeLogRow extends React.Component{
       "summary-comment": "Perustelut hakijalle",
       "overridden-answers-change": "Sisältöä päivitetty",
       "presenter-comment": "Valmistelijan huomiot päivitetty",
-      "status-change": "Tila päivitetty"
+      "status-change": "Tila päivitetty",
+      "should-pay-change" : "Maksuun kyllä/ei päivitetty"
     }
     const typeTranslated = types[changelog.type] || changelog.type
     const dateStr = DateUtil.asDateString(changelog.timestamp) + " " + DateUtil.asTimeString(changelog.timestamp)
@@ -168,7 +174,6 @@ class SetArviointiStatus extends React.Component {
     )
   }
 }
-
 
 
 class ChangeRequest extends React.Component {

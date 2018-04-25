@@ -50,11 +50,17 @@
    :virkailija-server {:url s/Str}
    :paatos-path s/Str
    :notice {:fi s/Str :sv s/Str}
-   (s/optional-key :payments) (s/maybe {:delete-payments? s/Bool})
+   (s/optional-key :payments) (s/maybe {(s/optional-key :delete-payments?) s/Bool
+                                        (s/optional-key :enabled?) s/Bool})
    (s/optional-key :opintopolku) {:url s/Str
                                   :permission-request s/Str}
-   (s/optional-key :multibatch-payments) (s/maybe {:enabled? s/Bool})}
-  )
+   (s/optional-key :application-change)
+   (s/maybe {(s/optional-key :change-enabled?) s/Bool
+             (s/optional-key :refuse-enabled?) s/Bool})
+   (s/optional-key :multibatch-payments) (s/maybe {:enabled? s/Bool})
+   (s/optional-key :va-code-values) (s/maybe {:enabled? s/Bool})
+   (s/optional-key :reports) (s/maybe {:enabled? s/Bool})})
+
 
 (s/defschema HakuType
   (s/enum "yleisavustus" "erityisavustus"))
@@ -130,7 +136,8 @@
 
 (s/defschema HakemusStatus
   "Status from the applicant point of view"
-  (s/enum "new" "draft" "submitted" "pending_change_request" "officer_edit" "cancelled"))
+  (s/enum "new" "draft" "submitted" "pending_change_request"
+          "officer_edit" "cancelled" "refused"))
 
 (s/defschema Attachment
   "Attachment metadata"

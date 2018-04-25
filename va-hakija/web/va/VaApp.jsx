@@ -71,6 +71,7 @@ function initialStateTemplateTransformation(template) {
   template.avustushaku = avustusHakuP
   template.configuration.environment = environmentP
   template.saveStatus.hakemusId = query.hakemus
+  template.token = query.token
 }
 
 function isEmptyOrReopenedHakemus(savedObject) {
@@ -88,7 +89,8 @@ function onInitialStateLoaded(initialState) {
       initialState.avustushaku.id,
       initialState.saveStatus.hakemusId,
       initialState.configuration.lang,
-      initialState.configuration.develMode)
+      initialState.configuration.develMode,
+      initialState.token)
   }
 }
 

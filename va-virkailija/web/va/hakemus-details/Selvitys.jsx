@@ -32,7 +32,8 @@ export default class Selvitys extends Component {
         />}
         {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
           <ApplicationPayments application={hakemus} grant={avustushaku} payments={hakemus.payments}
-                               onAddPayment={controller.addPayment}/>}
+                               onAddPayment={controller.addPayment}
+                               onRemovePayment={controller.removePayment}/>}
         <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} preview={preview} label="Linkki lomakkeelle"/>
         {hasSelvitys && <SelvitysEmail controller={controller}
                                        selvitysType={selvitysType}

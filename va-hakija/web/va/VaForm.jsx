@@ -11,33 +11,45 @@ import VaChangeRequest from 'va-common/web/va/VaChangeRequest.jsx'
 import VaFormTopbar from './VaFormTopbar.jsx'
 import VaOldBrowserWarning from './VaOldBrowserWarning.jsx'
 
+import GrantRefuse from './GrantRefuse.jsx'
+
 import './style/main.less'
+
+const allowedStatuses = ["officer_edit", "submitted", "pending_change_request"]
 
 export default class VaForm extends React.Component {
   render() {
     const {controller, state, hakemusType} = this.props
     const registerNumber = _.get(state.saveStatus.savedObject, "register-number", undefined)
+    const {saveStatus, configuration} = state
     const registerNumberDisplay = <VaHakemusRegisterNumber key="register-number"
                                                            registerNumber={registerNumber}
-                                                           translations={state.configuration.translations}
-                                                           lang={state.configuration.lang} />
-    const saveStatus = state.saveStatus
+                                                           translations={configuration.translations}
+                                                           lang={configuration.lang} />
     const changeRequest =  <VaChangeRequest key="change-request"
                                             hakemus={saveStatus.savedObject}
-                                            translations={state.configuration.translations}
-                                            lang={state.configuration.lang} />
+                                            translations={configuration.translations}
+                                            lang={configuration.lang} />
     const headerElements = [registerNumberDisplay, changeRequest]
-    const formContainerClass = state.configuration.preview ? FormPreview : Form
+    const formContainerClass = configuration.preview ? FormPreview : Form
+    const refuseEnabled = configuration.environment["application-change"] &&
+          configuration.environment["application-change"]["refuse-enabled?"]
+    const showGrantRefuse = refuseEnabled && configuration.preview
+          && state.token
+          && allowedStatuses.indexOf(saveStatus.savedObject.status) > -1
     return(
       <div>
-        <VaOldBrowserWarning lang={state.configuration.lang}
-                             translations={state.configuration.translations.warning}
-                             devel={state.configuration.develMode}
+        <VaOldBrowserWarning lang={configuration.lang}
+                             translations={configuration.translations.warning}
+                             devel={configuration.develMode}
         />
         <VaFormTopbar controller={controller}
                       state={state}
                       hakemusType={hakemusType}
         />
+        {showGrantRefuse &&
+          <GrantRefuse controller={controller} state={state}
+                       onSubmit={controller.refuseApplication}/>}
         <FormContainer controller={controller}
                        state={state}
                        formContainerClass={formContainerClass}

@@ -14,8 +14,8 @@ export default class VaUrlCreator extends UrlCreator {
       return "/api/avustushaku/" + avustusHakuId + "/hakemus/" + hakemusId + "/attachments/" + field.id
     }
 
-    const existingSubmissionEditUrl = (avustusHakuId, hakemusId, lang, devel) =>
-      `/avustushaku/${avustusHakuId}/nayta?avustushaku=${avustusHakuId}&hakemus=${hakemusId}&lang=${lang}${devel ? "&devel=true" : ""}`
+    const existingSubmissionEditUrl = (avustusHakuId, hakemusId, lang, devel, token) =>
+      `/avustushaku/${avustusHakuId}/nayta?avustushaku=${avustusHakuId}&hakemus=${hakemusId}&lang=${lang}${devel ? "&devel=true" : ""}${token ? ("&token=" + token) : ""}`
 
     const urls = {
       formApiUrl: function (formId) {
@@ -42,8 +42,8 @@ export default class VaUrlCreator extends UrlCreator {
         return entityApiUrl(avustusHakuId, hakemusId)
       },
       existingSubmissionEditUrl,
-      existingSubmissionPreviewUrl: function (avustushakuId, hakemusId, lang, devel) {
-        return existingSubmissionEditUrl(avustushakuId, hakemusId, lang, devel) + "&preview=true"
+      existingSubmissionPreviewUrl: function (avustushakuId, hakemusId, lang, devel, token) {
+        return existingSubmissionEditUrl(avustushakuId, hakemusId, lang, devel, token) + "&preview=true"
       },
       loadAttachmentsApiUrl: function (urlContent) {
         const query = urlContent.parsedQuery
@@ -61,7 +61,14 @@ export default class VaUrlCreator extends UrlCreator {
         return "/api/organisations/?organisation-id="
       },
       attachmentDownloadUrl: attachmentDirectAccessUrl,
-      attachmentDeleteUrl: attachmentDirectAccessUrl
+      attachmentDeleteUrl: attachmentDirectAccessUrl,
+      refuseApplicationApiUrl: function (state) {
+        const grantId = state.avustushaku.id
+        const applicationId = state.saveStatus.hakemusId
+        const baseVersion = state.saveStatus.savedObject.version
+        return "/api/avustushaku/" + grantId + "/hakemus/" + applicationId + "/"
+          + baseVersion  + "/refuse/?token=" + state.token
+      }
     }
     super(urls)
   }

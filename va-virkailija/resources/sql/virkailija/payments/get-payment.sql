@@ -4,9 +4,13 @@ SELECT p.id, p.version, p.version_closed, p.created_at, p.application_id,
   b.partner, b.inspector_email, b.acceptor_email, p.batch_id, p.payment_sum
 FROM
   virkailija.payments p
-JOIN
+LEFT JOIN
   virkailija.payment_batches b
     ON
       b.id = p.batch_id
 WHERE
-  p.id = :id AND p.deleted IS NULL;
+  p.id = :id AND p.deleted IS NULL AND p.version_closed IS NULL
+ORDER
+  BY p.version DESC
+LIMIT
+  1;

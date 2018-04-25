@@ -164,7 +164,10 @@
    :selvitys-email (:selvitys_email hakemus)
    :status-loppuselvitys (:status_loppuselvitys hakemus)
    :status-valiselvitys (:status_valiselvitys hakemus)
-   :answers (:answer_values hakemus)})
+   :answers (:answer_values hakemus)
+   :refused (get hakemus :refused false)
+   :refused-comment (:refused_comment hakemus)
+   :refused-at (:refused_at hakemus)})
 
 (defn- paatos-sent-emails->json [paatos]
   {:id (:id paatos)

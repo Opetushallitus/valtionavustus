@@ -2,7 +2,8 @@
   (:require [clojure.tools.logging :as log]
             [clojure.core.async :refer [<!!]]
             [compojure.api.sweet :as compojure-api]
-            [ring.util.http-response :refer [ok no-content request-timeout]]
+            [ring.util.http-response
+             :refer [ok no-content request-timeout conflict]]
             [oph.va.virkailija.payment-batches-data :as data]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.schema :as schema]
@@ -26,11 +27,11 @@
                                    "Create payment batch")]
     :return schema/PaymentBatch
     :summary "Create new payment batch"
-    (when (data/find-batch (:batch-date batch-values) (:grant-id batch-values))
-      (throw
-        (Exception.
-          "Payment batch already found for given grant and current date.")))
-    (ok (data/create-batch batch-values))))
+    (if (some?
+          (data/find-batch
+            (:receipt-date batch-values) (:grant-id batch-values)))
+      (conflict "Payment batch already exists")
+      (ok (data/create-batch batch-values)))))
 
 (defn- create-payments []
   (compojure-api/POST
