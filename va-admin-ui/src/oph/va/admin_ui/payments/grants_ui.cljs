@@ -46,7 +46,7 @@
    [ui/table-body {:display-row-checkbox false :deselect-on-clickaway false}
     (for [grant grants] (grant-row grant (= (.indexOf grants grant) value)))]])
 
-(defn project-info [grant]
+(defn grant-info [grant]
   [:div
    [:h3 (get-in grant [:content :name :fi])]
    [ui/grid-list {:cols 6 :cell-height "auto" :style {:margin 20}}
