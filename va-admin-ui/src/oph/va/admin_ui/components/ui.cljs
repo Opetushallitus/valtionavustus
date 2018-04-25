@@ -39,7 +39,8 @@
         (assoc p :label-text (or (:floating-label-text p) (:label-text p)))]
    [:div {:class "oph-field" :style (merge theme/text-field (:style p))}
     [:span {:class "oph-label" :aria-describedby "field-text"}
-     (:label-text props)]
+     (:label-text props)
+     (when-some [text (:tooltip props)] [tooltip {} text])]
     [:input
      (-> props
          (select-keys [:value :type :type :size :min :max
