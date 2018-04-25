@@ -18,7 +18,7 @@
   (with-open [r (io/reader input)]
     (edn/read (java.io.PushbackReader. r))))
 
-(defn read-edn-resource [path]
+(defn- read-edn-resource [path]
   (read-edn-input (io/resource (str "export/" path))))
 
 (defn- sheet-cell-values [sheet]
