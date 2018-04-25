@@ -65,6 +65,7 @@
     {:floating-label-text "Tositepäivämäärä"
      :style {:display "inline-block"}
      :value (:receipt-date values)
+     :tooltip "Tarkista tilinpäätösaikataulu"
      :on-change #(on-change :receipt-date %2)}]
    [va-ui/text-field
     {:floating-label-text "Kumppanikoodi"

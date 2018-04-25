@@ -17,7 +17,7 @@
              parse-batch-dates get-error-messages]]
     [oph.va.admin-ui.payments.applications :as applications]
     [oph.va.admin-ui.router :as router]
-    [oph.va.admin-ui.payments.grants-ui :refer [grants-table project-info]]
+    [oph.va.admin-ui.payments.grants-ui :refer [grants-table grant-info]]
     [oph.va.admin-ui.payments.grants :refer [grant-matches? convert-dates]]
     [oph.va.admin-ui.payments.financing :as financing]
     [oph.va.admin-ui.payments.utils :refer [find-index-of]]
@@ -32,7 +32,7 @@
    :transaction-account "5000"
    :due-date (financing/now-plus financing/week-in-ms)
    :invoice-date (js/Date.)
-   :receipt-date (js/Date.)
+   :receipt-date nil
    :document-id "ID"})
 
 (defonce state
@@ -149,7 +149,7 @@
                 :on-change (fn [row]
                              (reset! selected-grant (get filtered-grants row)))}))
            [:hr]
-           (project-info @selected-grant)]))]
+           (grant-info @selected-grant)]))]
      [(fn []
         (let [unsent-payments?
               (if (get-in @selected-grant [:content :multiplemaksuera])
