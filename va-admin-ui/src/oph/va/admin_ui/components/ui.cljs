@@ -77,7 +77,9 @@
 (defn date-picker [props]
   (let [label (or (:floating-label-text props) (:label props))]
    [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
-    [:span {:class "oph-label" :aria-describedby "field-text"} label]
+    [:span {:class "oph-label" :aria-describedby "field-text"}
+     label
+     (when-some [text (:tooltip props)] [tooltip {} text])]
     [material-date-picker {:value (:value props)
                            :class "oph-input"
                            :name label
