@@ -6,7 +6,7 @@
             [dk.ative.docjure.spreadsheet :as spreadsheet]
             [oph.va.virkailija.export :as export])
   (:import [java.io ByteArrayInputStream]
-           [org.apache.poi.ss.usermodel Cell CellType]))
+           [org.apache.poi.ss.usermodel Cell CellType Sheet]))
 
 (defn- rand-string [chars n]
   (->> #(rand-nth chars)
@@ -21,10 +21,23 @@
 (defn- read-edn-resource [path]
   (read-edn-input (io/resource (str "export/" path))))
 
-(defn- sheet-cell-values [sheet]
-  (for [row (spreadsheet/row-seq sheet)]
-    (for [cell row]
-      (spreadsheet/read-cell cell))))
+(defmulti ^:private sheet-cell-values class)
+
+(defmethod sheet-cell-values Sheet [^Sheet sheet]
+  (into [] (for [row (spreadsheet/row-seq sheet)]
+             (mapv spreadsheet/read-cell (spreadsheet/cell-seq row)))))
+
+(defmethod sheet-cell-values clojure.lang.IPersistentVector [^clojure.lang.IPersistentVector rows]
+  (sheet-cell-values (seq rows)))
+
+(defmethod sheet-cell-values clojure.lang.ISeq [^clojure.lang.ISeq rows]
+  (mapv (fn [^clojure.lang.ISeq row]
+          (mapv spreadsheet/read-cell row))
+        rows))
+
+(defn- sheet-cells [sheet]
+  (into [] (map (fn [row] (spreadsheet/into-seq row))
+                (spreadsheet/row-seq sheet))))
 
 (defn- cell-value-properties [^Cell cell]
   {:type            (.getCellTypeEnum cell)
@@ -99,6 +112,10 @@
         (.getRow 1)
         (.getCell column-idx))))
 
+(defn- get-table-sheet-cells [wb]
+  (let [sheet (spreadsheet/select-sheet export/hakemus-table-answers-sheet-name wb)]
+    (sheet-cells sheet)))
+
 (defn- save-load-workbook [avustushaku]
   (-> avustushaku
       export/export-avustushaku
@@ -115,6 +132,17 @@
          wb         (save-load-workbook (make-bare-avustushaku-combined (list form-field)
                                                                         (list answer)))]
      (get-all-answers-cell wb (get-in form-field [:label :fi])))))
+
+(defn- save-load-table-fields [field-params answer-values]
+  (let [field-ids   (map (fn [idx] (str "test-" idx)) (range))
+        form-fields (map (fn [id p] (make-bare-form-field {:id id :fieldType "tableField" :params p}))
+                         field-ids
+                         field-params)
+        answers     (map (fn [id v] (make-bare-answer {:key id :fieldType "tableField" :value v}))
+                         field-ids
+                         answer-values)
+        wb          (save-load-workbook (make-bare-avustushaku-combined form-fields answers))]
+    (get-table-sheet-cells wb)))
 
 (describe "Excel export"
   (it "allows nil IBAN in form submission input"
@@ -158,6 +186,51 @@
       (should-be #(> % not-fitted-value) fitted-value-no-newlines)
       (should-be #(> % not-fitted-value) fitted-value-with-newlines)))
 
+  (it "pads table with many rows after table with few rows"
+    (let [cell-values (sheet-cell-values (save-load-table-fields [{:columns [{:title {:fi "1-a"}}]
+                                                                   :rows    [{:title {:fi "1-1"}}
+                                                                             {:title {:fi "1-2"}}]}
+                                                                  {:columns [{:title {:fi "2-a"}}]}]
+                                                                 [[["1-a1"] ["1-a2"]]
+                                                                  [["2-a1"] ["2-a2"] ["2-a3"]]]))]
+      (should= [[nil nil nil nil nil "test-label-fi" nil nil "test-label-fi" nil]
+                ["Diaarinumero" "Hakijaorganisaatio" "Hankkeen nimi" "Asiointikieli" nil nil "1-a" nil "2-a" nil]
+                ["1/1/2018" "orgname1" "projname1" "fi" nil "1-1" "1-a1" nil "2-a1" nil]
+                [nil nil nil nil nil "1-2" "1-a2" nil "2-a2" nil]
+                [nil nil nil nil nil nil nil nil "2-a3" nil]
+                [nil nil nil nil nil nil nil nil nil nil]]
+               cell-values)))
+
+  (it "pads table columns by number of specified columns, not number of columns in answers"
+    (let [cell-values (sheet-cell-values (save-load-table-fields [{:columns [{:title {:fi "1-a"}}]}
+                                                                  {:columns [{:title {:fi "2-a"}}
+                                                                             {:title {:fi "2-b"}}]}]
+                                                                 [[["1-a1" "1-b1"] ["1-a2"]]
+                                                                  [["2-a1"] ["2-a2" "2-b2" "2-c2"] ["2-a3" "2-b3"]]]))]
+      (should= [[nil nil nil nil nil "test-label-fi" nil "test-label-fi" nil nil]
+                ["Diaarinumero" "Hakijaorganisaatio" "Hankkeen nimi" "Asiointikieli" nil "1-a" nil "2-a" "2-b" nil]
+                ["1/1/2018" "orgname1" "projname1" "fi" nil "1-a1" nil "2-a1" nil nil]
+                [nil nil nil nil nil "1-a2" nil "2-a2" "2-b2" nil]
+                [nil nil nil nil nil nil nil "2-a3" "2-b3" nil]
+                [nil nil nil nil nil nil nil nil nil nil]]
+               cell-values)))
+
+  (it "pads table rows by number of rows in answers, filling missing row labels with nils"
+    (let [cell-values (sheet-cell-values (save-load-table-fields [{:columns [{:title {:fi "1-a"}}]
+                                                                   :rows    [{:title {:fi "1-1"}}]}
+                                                                  {:columns [{:title {:fi "2-a"}}
+                                                                             {:title {:fi "2-b"}}]
+                                                                   :rows    [{:title {:fi "2-1"}}
+                                                                             {:title {:fi "2-2"}}]}]
+                                                                 [[["1-a1"] ["1-a2"]]
+                                                                  [["2-a1" "2-b1"]]]))]
+      (should= [[nil nil nil nil nil "test-label-fi" nil nil "test-label-fi" nil nil nil]
+                ["Diaarinumero" "Hakijaorganisaatio" "Hankkeen nimi" "Asiointikieli" nil nil "1-a" nil nil "2-a" "2-b" nil]
+                ["1/1/2018" "orgname1" "projname1" "fi" nil "1-1" "1-a1" nil "2-1" "2-a1" "2-b1" nil]
+                [nil nil nil nil nil nil "1-a2" nil "2-2" nil nil nil]
+                [nil nil nil nil nil nil nil nil nil nil nil nil]]
+               cell-values)))
+
   (it "exports avustushaku with simple form"
     (let [wb (save-load-workbook (read-edn-resource "avustushaku-combined-simple-form.edn"))]
       (should= [["Diaarinumero" "Hakijaorganisaatio" "Hankkeen nimi" "Asiointikieli" "Ehdotettu budjetti" "OPH:n avustuksen osuus" "Myönnetty avustus" "Arviokeskiarvo"]
@@ -198,19 +271,19 @@
                 ["1/344/2018" "Hakijaorg 1" "Hanke 1" "fi" nil "Perspektiivi 101" "taid11" "11" "110" nil "phy11" "14" "140" nil "Sininen" "hyvä1" nil "keltainen1" nil]
                 [nil nil nil nil nil "Vesivärit" "taid12" "12" "120" nil "phy12" "15" "150" nil "Punainen" "parempi1" nil "ruskea1" nil]
                 [nil nil nil nil nil "Liidut" "taid13" "13" "130" nil nil nil nil nil "Vihreä" "paras1" nil "violetti1" nil]
-                [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
+                [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
                 ["2/344/2018" "Hakijaorg 2" "Hanke 2" "fi" nil "Perspektiivi 101" "taid21" "21" "210" nil "phy21" "" "240" nil "Sininen" "hyvä2" nil "keltainen2" nil]
                 [nil nil nil nil nil "Vesivärit" "taid22" "22" "220" nil "phy22" "25" "250" nil "Punainen" "parempi2" nil "ruskea2" nil]
                 [nil nil nil nil nil "Liidut" "taid23" "23" "230" nil nil nil nil nil "Vihreä" "paras2" nil nil nil]
-                [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
+                [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
                 ["3/344/2018" "Hakijaorg 3" "Hanke 3" "sv" nil "Perspektiivi 101" "taid31" "31" "31,1" nil nil nil nil nil "Sininen" "hyvä3" nil nil nil]
                 [nil nil nil nil nil "Vesivärit" "taid32" "32" "32,2" nil nil nil nil nil "Punainen" "parempi3" nil nil nil]
                 [nil nil nil nil nil "Liidut" "taid33" "33" "33,3" nil nil nil nil nil "Vihreä" "paras3" nil nil nil]
-                [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
+                [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
                 ["5/344/2018" "Hakijaorg 4" "Hanke 4" "fi" nil "Perspektiivi 101" "taid41" "41" "41,1" nil "valin44" "44" "44,4" nil "Sininen" "hyvä4" nil nil nil]
                 [nil nil nil nil nil "Vesivärit" "taid42" "42" "42,2" nil nil nil nil nil "Punainen" "parempi4" nil nil nil]
                 [nil nil nil nil nil "Liidut" "taid43" "43" "43,3" nil nil nil nil nil "Vihreä" "paras4" nil nil nil]
-                [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]]
+                [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]]
                (sheet-cell-values (spreadsheet/select-sheet export/hakemus-table-answers-sheet-name wb)))
       (should= [["Diaarinumero" "Hakijaorganisaatio" "Hankkeen nimi" "Asiointikieli" "Toteutunut budjetti" "OPH:n avustuksen osuus" "Hankkeen nimi ja yhteishenkilö ja hänen yhteystiedot" "Lyhyt yhteenveto hankkeesta " "Miten hanke on käytännössä toteutettu? " "Hankkeen/toiminnan tavoite 1" "Toiminta, jolla tavoitteeseen on pyritty 1" "Konkreettiset tulokset, jotka tavoitteen osalta saavutettiin 1" "Hankkeen/toiminnan tavoite 2" "Toiminta, jolla tavoitteeseen on pyritty 2" "Konkreettiset tulokset, jotka tavoitteen osalta saavutettiin 2" "Miten hankeen toimintaa, tuloksia ja vaikutuksia on arvioitu?" "Arvostelut" "Miten hankkeesta/toiminnasta on tiedotettu?" "Tuotokset 1" "Kuvaus 1" "Saatavuustiedot, www-osoite tms. 1" "Lisätietoja 1" "Tuotokset 2" "Kuvaus 2" "Saatavuustiedot, www-osoite tms. 2" "Lisätietoja 2" "Hankkeesta/toiminnasta on esitetty ehdotuksia OPH:n hyvien käytäntöjen portaaliin" "Mikäli kyllä, ehdotuksen tai hyväksytyn käytännön tunnus" "Miten hankkeessa syntyviä tuloksia on tunnistettu, levitetty ja hyödynnetty?" "Hankkeen toimintaverkosto (muut koulutuksen järjestäjät ja koulut, yhteystiedot ja yhteyshenkilöt)" "Hankkeen toteuttamiseen osallistuneet muut yhteistyökumppanit " "Johtopäätökset, jatkotoimenpiteet ja kehittämisehdotukset" "Lisätietoja" "Kirjanpidon pääkirjaote" "Muu liite 1" "Hankkeen kustannukset" "Hankkeen kustannukset" "Laitteistokustannukset" "Laitteistokustannukset" "EU-ohjelmat" "EU-ohjelmat" "Muu julkinen rahoitus" "Muu julkinen rahoitus" "Yksityinen rahoitus" "Yksityinen rahoitus" "Muut tulot" "Muut tulot" "Verkostohankkeiden rahoitusselvitys"]
                 ["1/344/2018" "" "" "fi" 35880.0 27627.0 "Hakijaorg 1 hanke" "=1+2" "-1-3" "ttt-tavoite 1-1" "ttt-toiminta 1-1" "ttt-tulokset 1-1" "ttt-tavoite 1-2" "ttt-toiminta 1-2" "=1+1" "arvioitu 1" "arv-1 | 19\narv-2 | 18" "tiedotettu 1" "Raportti" "tuot-kuvaus 1-1" "tuot-saatavuus 1-1" "tuot-lisätietoja 1-1" "Toimintamalli" "tuot-kuvaus 1-2" "tuot-saatavuus 1-2" "" "Kyllä" "käytännön tunnus 1" "synt-tulokset 1" "toimintaverkosto 1" "muut yhteistyökumppanit 1" "johtopäätökset 1" "lisätietoja 1" "foo-1.txt" "ids.txt" "budhankkust1" 40200.0 "budlaitteistokust1" 1100.0 "budeurah1" 1205.0 "budmuujulkrah1" 1305.0 "budmyksrah1" 1405.0 "budmuuttulos1" 1505.0 "lol.js.txt"]

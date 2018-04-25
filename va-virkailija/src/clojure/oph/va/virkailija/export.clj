@@ -329,62 +329,64 @@
   (mapv (fn [{key :key}] (get answer-set key))
         field-specs))
 
-(defn- gather-table-max-rows-and-columns [num-fields answers-values]
-  (reduce (fn [{:keys [max-rows-by-answers max-columns-by-field]} table-values]
-            (let [{:keys [max-rows max-columns]} (reduce-kv (fn [{:keys [max-rows max-columns]} col-idx table-value]
-                                                              (let [rows    (count table-value)
-                                                                    columns (count (first table-value))]
-                                                                {:max-rows    (max max-rows rows)
-                                                                 :max-columns (update max-columns col-idx max columns)}))
-                                                            {:max-rows    0
-                                                             :max-columns max-columns-by-field}
-                                                            table-values)]
-              {:max-rows-by-answers  (conj max-rows-by-answers max-rows)
-               :max-columns-by-field max-columns}))
-          {:max-rows-by-answers  []
-           :max-columns-by-field (vec (repeat num-fields 0))}
-          answers-values))
-
 (defn- growing-table? [field-spec]
   (empty? (get-in field-spec [:type :params :rows])))
+
+(defn- collect-table-max-rows-and-columns [field-specs answers-values]
+  (let [max-columns-by-field (mapv (fn [field-spec]
+                                     (+ (count (get-in field-spec [:type :params :columns]))
+                                        (if (growing-table? field-spec) 0 1)))
+                                   field-specs)
+        max-rows-by-answers  (mapv (fn [table-values]
+                                     (reduce (fn [max-rows table-value]
+                                               (max max-rows (count table-value)))
+                                             0
+                                             table-values))
+                                   answers-values)]
+    {:max-rows-by-answers  max-rows-by-answers
+     :max-columns-by-field max-columns-by-field}))
 
 (defn- pad-flatten-table-values [max-row max-columns-by-field field-specs table-values]
   (let [row-pad (+ 1 max-row)]
     (reduce (fn [rows [max-column field-spec table-value]]
-              (let [col-pad            (+ 1 max-column)
+              (let [is-growing-table   (growing-table? field-spec)
+                    num-cols-in-row    (- max-column (if is-growing-table 0 1))
+                    col-pad            (+ 1 max-column)
                     num-rows           (count table-value)
                     row-labels         (vec (get-in field-spec [:type :params :rows]))
                     padded-table-value (into (vec table-value) (repeat (- row-pad num-rows) []))]
                 (reduce-kv (fn [rows row-idx table-row]
-                             (let [num-cols   (count table-row)
-                                   row-label  (get-in row-labels [row-idx :title :fi])
-                                   padded-row (-> (if (some? row-label) [row-label] [])
-                                                  (into table-row)
-                                                  (into (repeat (- col-pad num-cols) nil)))]
+                             (let [safe-table-row (vec (take num-cols-in-row table-row))
+                                   padded-row     (-> (if is-growing-table
+                                                        []
+                                                        [(get-in row-labels [row-idx :title :fi])])
+                                                      (into safe-table-row)
+                                                      (into (repeat (- col-pad
+                                                                       (count safe-table-row)
+                                                                       (if is-growing-table 0 1))
+                                                                    nil)))]
                                (update rows row-idx into padded-row)))
                            rows
                            padded-table-value)))
-            (vec (repeat max-row []))
+            (vec (repeat row-pad []))
             (map vector max-columns-by-field field-specs table-values))))
 
-(defn- scan-table-start-column-indexes [field-specs max-columns-by-field]
-  (reduce (fn [sums [field-spec max-column]]
+(defn- scan-table-start-column-indexes [max-columns-by-field]
+  (reduce (fn [sums max-column]
             (conj sums
                   (+ max-column
                      1
-                     (if (growing-table? field-spec) 0 1)
                      (peek sums))))
           [0]
-          (map vector field-specs max-columns-by-field)))
+          max-columns-by-field))
 
 (defn- table-field-answers->rows [field-specs answers-values]
   (let [{:keys [max-rows-by-answers
-                max-columns-by-field]} (gather-table-max-rows-and-columns (count field-specs) answers-values)]
-    (let [start-column-indexes (scan-table-start-column-indexes field-specs max-columns-by-field)
+                max-columns-by-field]} (collect-table-max-rows-and-columns field-specs answers-values)]
+    (let [start-column-indexes (scan-table-start-column-indexes max-columns-by-field)
           col-header-indexes   (into []
                                      (mapcat (fn [field-spec max-column start-col-idx]
-                                               (let [num-cols (+ max-column (if (growing-table? field-spec) 0 1))]
-                                                 (range start-col-idx (+ start-col-idx num-cols))))
+                                               (range start-col-idx (+ start-col-idx max-column)))
                                              field-specs
                                              max-columns-by-field
                                              start-column-indexes))
@@ -398,8 +400,7 @@
                                     set)
           field-label-row      (into []
                                      (mapcat (fn [field-spec max-column]
-                                               (let [num-cols (+ max-column (if (growing-table? field-spec) 0 1))]
-                                                 (cons (:label field-spec) (repeat num-cols nil))))
+                                               (cons (:label field-spec) (repeat max-column nil)))
                                              field-specs
                                              max-columns-by-field))
           column-label-row     (into []
