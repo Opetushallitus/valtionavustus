@@ -10,7 +10,9 @@
             [oph.va.virkailija.server :refer :all]
             [oph.soresu.common.db :refer [exec]]
             [oph.va.hakija.api.queries :as hakija-queries]
-            [oph.va.virkailija.payments-data :as payments-data]))
+            [oph.va.virkailija.payments-data :as payments-data]
+            [oph.soresu.form.db :as form-db]
+            [oph.soresu.common.db :as common-db]))
 
 (def test-server-port 9001)
 (def base-url (str "http://localhost:" test-server-port))
@@ -58,18 +60,14 @@
               :privileges '("va-admin" "va-user"),
               :username "testaaja"}})
 
-(defn create-submission [grant]
-  (first (exec :form-db hakija-queries/create-submission
-               {:id 1
-                :form (:form grant)
-                :answers {}
-                :user_key "123456789"})))
+(defn create-submission [form-id answers]
+  (form-db/create-submission! form-id answers))
 
 (defn create-application [grant submission]
   (first (exec :form-db hakija-queries/create-hakemus
                {:avustushaku_id (:id grant)
                 :status :submitted
-                :user_key "123456789"
+                :user_key (common-db/generate-hash-id)
                 :form_submission_id (:id submission)
                 :form_submission_version (:version submission)
                 :version (:version submission)
@@ -192,7 +190,7 @@
   (it "creates new payment"
       (let [{:keys [body]} (get! "/api/v2/grants/")
             grant (first (json->map body))
-            submission (create-submission grant)
+            submission (create-submission (:form grant) {})
             application (create-application grant submission)
             payment-values (assoc valid-payment-values
                                   :application-id (:id application)
@@ -207,7 +205,7 @@
   (it "deletes created payment"
       (let [{:keys [body]} (get! "/api/v2/grants/")
             grant (first (json->map body))
-            submission (create-submission grant)
+            submission (create-submission (:form grant) {})
             application (create-application grant submission)
             payment-values (assoc valid-payment-values
                                   :application-id (:id application)
@@ -224,7 +222,7 @@
   (it "prevents delete of older payment"
       (let [{:keys [body]} (get! "/api/v2/grants/")
             grant (first (json->map body))
-            submission (create-submission grant)
+            submission (create-submission (:form grant) {})
             application (create-application grant submission)
             payment-values (assoc valid-payment-values
                                   :application-id (:id application)
