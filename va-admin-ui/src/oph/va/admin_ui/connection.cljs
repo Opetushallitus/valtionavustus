@@ -42,9 +42,16 @@
                       api-path
                       id)))
 
-(defn get-grants
-  []
+(defn get-grants []
   (http/get (format "/%s/grants/?template=with-content" api-path)
+            {:with-credentials? true}))
+
+(defn find-grants [term]
+  (http/get (format "/%s/grants/?search=%s" api-path term)
+             {:with-credentials? true}))
+
+(defn find-applications [term]
+  (http/get (format "/%s/applications/?search=%s" api-path term)
             {:with-credentials? true}))
 
 (defn get-grant-payments

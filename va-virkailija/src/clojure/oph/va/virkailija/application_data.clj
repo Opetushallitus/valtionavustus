@@ -40,3 +40,8 @@
   (map convert-to-dash-keys (exec :form-db
                                   virkailija-queries/get-application-payments
                                   {:application_id id})))
+(defn find-applications [search-term]
+  (map convert-to-dash-keys
+       (exec :form-db
+             virkailija-queries/find-applications
+             {:search_term (str "%" (clojure.string/lower-case search-term) "%")})))

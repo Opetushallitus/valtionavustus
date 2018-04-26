@@ -27,6 +27,7 @@
 (defquery get-grants "sql/virkailija/grants/get-grants.sql")
 (defquery get-resolved-grants-with-content
   "sql/virkailija/grants/get-resolved-grants-with-content.sql")
+(defquery find-grants "sql/virkailija/grants/find-grants.sql")
 (defquery get-grant "sql/virkailija/grants/get-grant.sql")
 (defquery get-grant-applications "sql/virkailija/grants/get-grant-applications.sql")
 (defquery get-grant-applications-with-evaluation
@@ -64,6 +65,7 @@
 (defquery get-application-payment-by-state
   "sql/virkailija/applications/get-application-payment-by-state.sql")
 (defquery get-total-paid "sql/virkailija/applications/get-total-paid.sql")
+(defquery find-applications "sql/virkailija/applications/find-applications.sql")
 
 (defquery lock-va-users-cache-exclusively! "sql/virkailija/va_users_cache/lock-exclusively.sql")
 (defquery update-va-user-cache! "sql/virkailija/va_users_cache/update.sql")

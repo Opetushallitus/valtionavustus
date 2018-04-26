@@ -330,15 +330,18 @@
    :project-name s/Str
    :register-number (s/maybe s/Str)
    :language s/Str
-   :budget-granted s/Int
-   :costs-granted s/Int
-   :lkp-account (s/maybe s/Str)
-   :takp-account (s/maybe s/Str)
+   (s/optional-key :budget-granted) s/Int
+   (s/optional-key :costs-granted) s/Int
+   (s/optional-key :lkp-account) (s/maybe s/Str)
+   (s/optional-key :takp-account) (s/maybe s/Str)
    (s/optional-key :grant-id) s/Int
    (s/optional-key :evaluation) s/Any
    (s/optional-key :answers) [Answer]
    (s/optional-key :payment-decisions) (s/maybe [{:id s/Int :payment-sum s/Int
-                                         :takp-account s/Str}])})
+                                         :takp-account s/Str}])
+   (s/optional-key :refused) (s/maybe s/Bool)
+   (s/optional-key :refused-comment) (s/maybe s/Str)
+   (s/optional-key :refused-at) (s/maybe s/Inst)})
 
 (s/defschema PaymentsEmail
   "Grant payments email"

@@ -12,12 +12,16 @@
 (defn- get-grants []
   (compojure-api/GET "/" []
     :path-params []
-    :query-params [{template :- String ""}]
+    :query-params [{template :- String ""}, {search :- String ""}]
     :return virkailija-schema/Grants
     :summary "Return list of grants"
-    (ok (if (= template "with-content")
-          (grant-data/get-resolved-grants-with-content)
-          (grant-data/get-grants)))))
+    (ok
+      (cond
+        (= template "with-content")
+        (grant-data/get-resolved-grants-with-content)
+        (not (empty? search))
+        (grant-data/find-grants search)
+        :else (grant-data/get-grants)))))
 
 (defn- get-grant-applications []
   (compojure-api/GET
