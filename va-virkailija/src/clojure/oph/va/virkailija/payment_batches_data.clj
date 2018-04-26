@@ -16,7 +16,7 @@
 (def timeout-limit 10000)
 
 (defn find-batch [date grant-id]
-  (-> (exec :form-db queries/find-batch {:batch_date date :grant_id grant-id})
+  (-> (exec :virkailija-db queries/find-batch {:batch_date date :grant_id grant-id})
       first
       convert-to-dash-keys
       convert-timestamps-from-sql))
@@ -24,13 +24,13 @@
 (defn create-batch [values]
   (->> values
        convert-to-underscore-keys
-       (exec :form-db queries/create-batch)
+       (exec :virkailija-db queries/create-batch)
        first
        convert-to-dash-keys
        convert-timestamps-from-sql))
 
 (defn get-batch [id]
-  (-> (exec :form-db queries/get-batch {:batch_id id})
+  (-> (exec :virkailija-db queries/get-batch {:batch_id id})
       first
       convert-to-dash-keys
       convert-timestamps-from-sql))
