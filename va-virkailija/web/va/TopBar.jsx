@@ -33,8 +33,7 @@ class TopBarTabs extends React.Component {
   }
 
   render() {
-    const {activeTab, disabled, config, userInfo,
-           state, selectedHakuId} = this.props
+    const {activeTab, disabled, config, userInfo, selectedHakuId} = this.props
     const isAdmin = userInfo.privileges.indexOf("va-admin") > -1
     return (
       <div id="tabs">
