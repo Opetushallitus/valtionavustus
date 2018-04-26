@@ -12,10 +12,10 @@ export default class Seuranta extends React.Component {
     const allowEditing = this.props.selectedHakemusAccessControl.allowHakemusStateChanges
     return (
       <div className="seuranta">
-        <PresenterComment controller={controller} hakemus={hakemus}/>
         <ShouldPay controller={controller} hakemus={hakemus} allowEditing={allowEditing}/>
         <ShouldPayComments controller={controller} hakemus={hakemus} allowEditing={allowEditing}/>
         <div className="seuranta-section">
+        <PresenterComment controller={controller} hakemus={hakemus}/>
           <SeurantaBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}/>
         </div>
         <div className="seuranta-section">
