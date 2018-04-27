@@ -15,4 +15,4 @@
  :multibatch-payments {:enabled? true}
  :va-code-values {:enabled? true}
  :reports {:enabled? true}
- :application-change {:refuse-enabled? false}}
+ :application-change {:refuse-enabled? true}}
