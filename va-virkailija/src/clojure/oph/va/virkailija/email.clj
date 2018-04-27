@@ -77,6 +77,12 @@
         lang-str (or (clojure.core/name lang) "fi")]
   (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" user-key "&lang=" lang-str)))
 
+(defn refuse-url [avustushaku-id user-key lang token]
+  (let [va-url (-> config :server :url lang)
+        lang-str (or (clojure.core/name lang) "fi")]
+  (str va-url "avustushaku/" avustushaku-id "/nayta?avustushaku=" avustushaku-id
+       "&hakemus=" user-key "&lang=" lang-str "&preview=true&token=" token)))
+
 (defn payment-url [grant-id]
   (format "%s/payments/?grant=%d"
           (get-in config [:server :virkailija-url]) grant-id))
@@ -105,10 +111,11 @@
   (let [lang-str (:language hakemus)
         lang (keyword lang-str)
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
-        refuse-url (format "%s&token=%s" url token)
+        paatos-refuse-url
+        (refuse-url (:id avustushaku) (:user_key hakemus) lang token)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])]
-    (log/info "Url would be: " url)
+    (log/info "Urls would be: " url "\n" paatos-refuse-url)
     (>!! email/mail-chan {:operation :send
                           :type :paatos-refuse
                           :lang lang
@@ -119,7 +126,7 @@
                           :avustushaku-name avustushaku-name
                           :to to
                           :url url
-                          :refuse-url refuse-url
+                          :refuse-url paatos-refuse-url
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)})))
 
