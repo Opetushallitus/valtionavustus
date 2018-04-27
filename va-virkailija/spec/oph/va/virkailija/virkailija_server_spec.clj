@@ -49,6 +49,17 @@
    :batch-id nil
    :payment-sum 50000})
 
+(def user-authentication
+  {:cas-ticket nil
+   :timeout-at-ms (+ 100000000 (System/currentTimeMillis))
+   :identity {:person-oid "1.2.111.111.11.11111111111",
+              :first-name "Kalle",
+              :surname "Käyttäjä",
+              :email nil,
+              :lang "fi",
+              :privileges '("va-user"),
+              :username "kayttaja"}})
+
 (def admin-authentication
   {:cas-ticket nil
    :timeout-at-ms (+ 100000000 (System/currentTimeMillis))
@@ -238,7 +249,7 @@
         (should= 400 status)
         (should (some? (payments-data/get-payment (:id payment)))))))
 
-(describe "VA code values routes"
+(describe "VA code values routes for non-admin"
 
   (tags :server :vacodevalues)
 
@@ -250,13 +261,13 @@
          {:host "localhost"
           :port test-server-port
           :auto-reload? false
-          :without-authentication? true}) (_)))
+          :without-authentication? true
+          :authentication user-authentication}) (_)))
 
   (it "denies of non-admin create code value"
       (let [{:keys [status body]}
             (post! "/api/v2/va-code-values/" valid-va-code-value)]
         (should= 401 status)
-        (should= valid-va-code-value
-                 (dissoc (json->map body) :id)))))
+        (should (empty? body)))))
 
 (run-specs)
