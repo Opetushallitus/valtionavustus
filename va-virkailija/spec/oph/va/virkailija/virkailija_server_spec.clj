@@ -10,7 +10,9 @@
             [oph.va.virkailija.server :refer :all]
             [oph.soresu.common.db :refer [exec]]
             [oph.va.hakija.api.queries :as hakija-queries]
-            [oph.va.virkailija.payments-data :as payments-data]))
+            [oph.va.virkailija.payments-data :as payments-data]
+            [oph.soresu.form.db :as form-db]
+            [oph.soresu.common.db :as common-db]))
 
 (def test-server-port 9001)
 (def base-url (str "http://localhost:" test-server-port))
@@ -47,6 +49,17 @@
    :batch-id nil
    :payment-sum 50000})
 
+(def user-authentication
+  {:cas-ticket nil
+   :timeout-at-ms (+ 100000000 (System/currentTimeMillis))
+   :identity {:person-oid "1.2.111.111.11.11111111111",
+              :first-name "Kalle",
+              :surname "Käyttäjä",
+              :email nil,
+              :lang "fi",
+              :privileges '("va-user"),
+              :username "kayttaja"}})
+
 (def admin-authentication
   {:cas-ticket nil
    :timeout-at-ms (+ 100000000 (System/currentTimeMillis))
@@ -58,18 +71,14 @@
               :privileges '("va-admin" "va-user"),
               :username "testaaja"}})
 
-(defn create-submission [grant]
-  (first (exec :form-db hakija-queries/create-submission
-               {:id 1
-                :form (:form grant)
-                :answers {}
-                :user_key "123456789"})))
+(defn create-submission [form-id answers]
+  (form-db/create-submission! form-id answers))
 
 (defn create-application [grant submission]
   (first (exec :form-db hakija-queries/create-hakemus
                {:avustushaku_id (:id grant)
                 :status :submitted
-                :user_key "123456789"
+                :user_key (common-db/generate-hash-id)
                 :form_submission_id (:id submission)
                 :form_submission_version (:version submission)
                 :version (:version submission)
@@ -192,7 +201,7 @@
   (it "creates new payment"
       (let [{:keys [body]} (get! "/api/v2/grants/")
             grant (first (json->map body))
-            submission (create-submission grant)
+            submission (create-submission (:form grant) {})
             application (create-application grant submission)
             payment-values (assoc valid-payment-values
                                   :application-id (:id application)
@@ -207,7 +216,7 @@
   (it "deletes created payment"
       (let [{:keys [body]} (get! "/api/v2/grants/")
             grant (first (json->map body))
-            submission (create-submission grant)
+            submission (create-submission (:form grant) {})
             application (create-application grant submission)
             payment-values (assoc valid-payment-values
                                   :application-id (:id application)
@@ -224,7 +233,7 @@
   (it "prevents delete of older payment"
       (let [{:keys [body]} (get! "/api/v2/grants/")
             grant (first (json->map body))
-            submission (create-submission grant)
+            submission (create-submission (:form grant) {})
             application (create-application grant submission)
             payment-values (assoc valid-payment-values
                                   :application-id (:id application)
@@ -240,7 +249,7 @@
         (should= 400 status)
         (should (some? (payments-data/get-payment (:id payment)))))))
 
-(describe "VA code values routes"
+(describe "VA code values routes for non-admin"
 
   (tags :server :vacodevalues)
 
@@ -252,13 +261,13 @@
          {:host "localhost"
           :port test-server-port
           :auto-reload? false
-          :without-authentication? true}) (_)))
+          :without-authentication? true
+          :authentication user-authentication}) (_)))
 
   (it "denies of non-admin create code value"
       (let [{:keys [status body]}
             (post! "/api/v2/va-code-values/" valid-va-code-value)]
         (should= 401 status)
-        (should= valid-va-code-value
-                 (dissoc (json->map body) :id)))))
+        (should (empty? body)))))
 
 (run-specs)

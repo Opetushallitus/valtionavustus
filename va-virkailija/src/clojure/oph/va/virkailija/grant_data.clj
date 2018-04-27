@@ -6,11 +6,13 @@
 
 (defn get-grants []
   (mapv convert-to-dash-keys
-        (exec :form-db virkailija-queries/get-grants {})))
+        ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
+        (exec :virkailija-db virkailija-queries/get-grants {})))
 
 (defn get-resolved-grants-with-content []
   (mapv convert-to-dash-keys
-        (exec :form-db virkailija-queries/get-resolved-grants-with-content {})))
+        ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
+        (exec :virkailija-db virkailija-queries/get-resolved-grants-with-content {})))
 
 (defn find-grants [search-term]
   (mapv convert-to-dash-keys
@@ -20,13 +22,15 @@
 
 (defn get-grant [grant-id]
   (convert-to-dash-keys
-   (first (exec :form-db virkailija-queries/get-grant {:grant_id grant-id}))))
+   ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
+   (first (exec :virkailija-db virkailija-queries/get-grant {:grant_id grant-id}))))
 
 (defn- set-lkp-account [application]
   (assoc application :lkp-account (lkp/get-lkp-account (:answers application))))
 
 (defn get-grant-applications-with-evaluation [grant-id]
-  (->> (exec :form-db
+  ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
+  (->> (exec :virkailija-db
              virkailija-queries/get-grant-applications-with-evaluation
              {:grant_id grant-id} )
       (map convert-to-dash-keys)
@@ -34,10 +38,12 @@
 
 (defn get-grant-applications [grant-id]
   (mapv convert-to-dash-keys
-        (exec :form-db virkailija-queries/get-grant-applications
+        ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
+        (exec :virkailija-db virkailija-queries/get-grant-applications
               {:grant_id grant-id})))
 
 (defn get-unpaid-applications [grant-id]
   (mapv convert-to-dash-keys
-        (exec :form-db virkailija-queries/get-unpaid-applications
+        ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
+        (exec :virkailija-db virkailija-queries/get-unpaid-applications
               {:grant_id grant-id})))

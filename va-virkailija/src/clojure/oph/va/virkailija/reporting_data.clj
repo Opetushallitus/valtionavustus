@@ -12,24 +12,29 @@
 (defn get-yearly-application-info []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
+         ;; TODO: Move query to va-virkailija/src/clojure/oph/va/hakija/api.clj
          (exec :form-db queries/get-yearly-application-info {}))))
 
 (defn get-accepted-count-by-year []
   (year-to-int-all-v
-   (exec :form-db queries/get-yearly-evaluation-count-by-status
+   ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
+   (exec :virkailija-db queries/get-yearly-evaluation-count-by-status
          {:status "accepted"})))
 
 (defn get-rejected-count-by-year []
   (year-to-int-all-v
-   (exec :form-db queries/get-yearly-evaluation-count-by-status
+   ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
+   (exec :virkailija-db queries/get-yearly-evaluation-count-by-status
          {:status "rejected"})))
 
 (defn get-yearly-granted []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
-         (exec :form-db queries/get-yearly-granted {}))))
+         ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
+         (exec :virkailija-db queries/get-yearly-granted {}))))
 
 (defn get-total-grant-count []
+  ;; TODO: Move query to va-virkailija/src/clojure/oph/va/hakija/api.clj
   (first (exec :form-db queries/get-total-grant-count {})))
 
 (defn total-value [c k]

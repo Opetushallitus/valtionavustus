@@ -25,19 +25,19 @@
 (defn get-payment
   ([id]
    (->
-    (exec :form-db queries/get-payment {:id id})
+    (exec :virkailija-db queries/get-payment {:id id})
     first
     convert-to-dash-keys
     convert-timestamps-from-sql))
   ([id version]
    (->
-    (exec :form-db queries/get-payment-version {:id id :version version})
+    (exec :virkailija-db queries/get-payment-version {:id id :version version})
     first
     convert-to-dash-keys
     convert-timestamps-from-sql)))
 
 (defn close-version [id version]
-  (exec :form-db queries/payment-close-version
+  (exec :virkailija-db queries/payment-close-version
         {:id id :version version}))
 
 (defn- get-user-info [identity]
@@ -51,7 +51,7 @@
         result
         (->> payment
              convert-to-underscore-keys
-             (exec :form-db queries/update-payment)
+             (exec :virkailija-db queries/update-payment)
              first
              convert-to-dash-keys
              convert-timestamps-from-sql)]
@@ -60,12 +60,12 @@
     result))
 
 (defn- store-payment [payment]
-  (exec :form-db queries/create-payment payment))
+  (exec :virkailija-db queries/create-payment payment))
 
 (defn- total-paid [application-id]
   (or
     (->
-      (exec :form-db queries/get-total-paid {:application_id application-id})
+      (exec :virkailija-db queries/get-total-paid {:application_id application-id})
       first
       :total_paid)
     0))
@@ -89,7 +89,8 @@
 (defn get-by-rn-and-date [values]
   (->> values
        convert-to-underscore-keys
-       (exec :form-db queries/get-by-rn-and-date)
+       ;; TODO: Problematic: utilizes join between hakija and virkailija schemas
+       (exec :virkailija-db queries/get-by-rn-and-date)
        (map convert-to-dash-keys)))
 
 (defn update-state-by-response [xml]
@@ -114,26 +115,29 @@
                     {:person-oid "-" :first-name "Rondo" :surname ""})))
 
 (defn get-grant-payments [id]
-  (->> (exec :form-db queries/get-grant-payments {:id id})
+  ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
+  (->> (exec :virkailija-db queries/get-grant-payments {:id id})
        (map convert-to-dash-keys)
        (map convert-timestamps-from-sql)))
 
 (defn delete-grant-payments [id]
-  (exec :form-db queries/delete-grant-payments {:id id}))
+  (exec :virkailija-db queries/delete-grant-payments {:id id}))
 
 (defn delete-payment [id]
-  (exec :form-db queries/delete-payment {:id id}))
+  (exec :virkailija-db queries/delete-payment {:id id}))
 
 (defn get-grant-payments-info [id batch-id]
   (convert-to-dash-keys
-    (first (exec :form-db queries/get-grant-payments-info
+    ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
+    (first (exec :virkailija-db queries/get-grant-payments-info
                  {:grant_id id :batch_id batch-id}))))
 
 (defn send-payments-email
   [{:keys [batch-id inspector-email acceptor-email receipt-date
            grant-id organisation batch-number]}]
   (let [grant (convert-to-dash-keys
-                (first (exec :form-db queries/get-grant
+               ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
+                (first (exec :virkailija-db queries/get-grant
                              {:grant_id grant-id})))
         now (t/now)
         receipt-year (mod (.getYear receipt-date) 100)
