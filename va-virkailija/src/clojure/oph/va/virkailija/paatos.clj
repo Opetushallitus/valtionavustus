@@ -12,7 +12,8 @@
     [clojure.tools.logging :as log]
     [clojure.string :as str]
     [oph.va.virkailija.decision :as decision]
-    [oph.soresu.common.config :refer [config]]))
+    [oph.soresu.common.config :refer [config]]
+    [oph.va.virkailija.application-data :refer [get-application-token]]))
 
 (defn is-notification-email-field? [field]
   (or
@@ -36,12 +37,13 @@
         avustushaku (hakija-api/get-avustushaku avustushaku-id)
         presenting-officer-email (hakudata/presenting-officer-email avustushaku-id)
         decision (decision/paatos-html hakemus-id)
-        arvio (virkailija-db/get-arvio hakemus-id)]
+        arvio (virkailija-db/get-arvio hakemus-id)
+        token (when (get-in config [:application-change :refuse-enabled?])
+                (get-application-token (:id hakemus)))]
     (log/info "Sending paatos email for hakemus" hakemus-id " to " emails)
-    (if (and (get-in config [:application-change :refuse-enabled?])
-             (not= (:status arvio) "rejected"))
+    (if (and (some? token) (not= (:status arvio) "rejected"))
       (email/send-paatos-refuse!
-        emails avustushaku hakemus presenting-officer-email)
+        emails avustushaku hakemus presenting-officer-email token)
       (email/send-paatos! emails avustushaku hakemus presenting-officer-email))
     (hakija-api/add-paatos-sent-emails hakemus emails decision)
     (ok {:status "sent" :hakemus hakemus-id :emails emails})))
