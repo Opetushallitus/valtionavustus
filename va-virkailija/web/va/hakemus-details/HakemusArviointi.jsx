@@ -17,8 +17,6 @@ import AcademySize from './AcademySize.jsx'
 import Perustelut from './Perustelut.jsx'
 import PresenterComment from './PresenterComment.jsx'
 import EditStatus from './EditStatus.jsx'
-import ShouldPay from './ShouldPay.jsx'
-import ShouldPayComments from './ShouldPayComments.jsx'
 import ApplicationPayments from './ApplicationPayments.jsx'
 
 import '../style/admin.less'
