@@ -5,7 +5,7 @@ SELECT
   pu.code AS operational_unit, h.project_id,  p.code AS project,
   h.operation_id, o.code AS operation
 FROM
-  avustushaut h
+  hakija.avustushaut h
 LEFT JOIN
   virkailija.va_code_values pu
     ON (pu.id = h.operational_unit_id AND pu.deleted IS NULL)

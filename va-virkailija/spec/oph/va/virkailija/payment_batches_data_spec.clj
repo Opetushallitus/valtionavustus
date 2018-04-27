@@ -33,7 +33,7 @@
                         :application-version 1
                         :state 0
                         :batch-id 2
-                        :sum 2500}
+                        :payment-sum 2500}
                        (data/create-payment-data
                          valid-application valid-values 2500))))
 

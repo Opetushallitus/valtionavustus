@@ -19,4 +19,4 @@
           value (.getValue pgobj)]
       (case type
         "jsonb" (json/parse-string value true)
-        :else value))))
+        value))))
