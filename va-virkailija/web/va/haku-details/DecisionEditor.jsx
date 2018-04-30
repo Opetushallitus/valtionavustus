@@ -290,6 +290,12 @@ class DecisionDateAndSend extends React.Component {
   sendEmailSection() {
     return <div>
       <span className="decision-row">Päätösten lähettäminen sähköpostilla</span>
+      {this.state.refuseEnabled &&
+         <span>
+          Huomaathan, että linkkiä avustuksen hylkäämiseen ei lisätä hylättyyn
+          päätökseen.
+        </span>
+      }
       <div className="decision-separator"/>
       {this.sendControls()}
     </div>
