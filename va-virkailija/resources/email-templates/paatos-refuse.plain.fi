@@ -1,0 +1,20 @@
+{{ register-number }} - {{ project-name }}
+
+{{ avustushaku-name }}
+
+Päätöstä voitte tarkastella tästä linkistä: {{& url }}
+
+Jos päätätte olla ottamatta avustusta vastaan, voitte tehdä ilmoituksen tästä linkistä: {{& refuse-url }}
+
+Ilmoitus tulee tehdä päätöksessä mainittuun päivämäärään mennessä.
+
+Huomaathan, että jos otatte avustuksen vastaan, ei siitä tarvitse erillistä ilmoitusta tehdä.
+
+Hausta vastaava valmistelija on mainittu päätöksessä.
+
+Opetushallitus
+Hakaniemenranta 6
+PL 380, 00531 Helsinki
+
+puhelin 029 533 1000
+etunimi.sukunimi@oph.fi

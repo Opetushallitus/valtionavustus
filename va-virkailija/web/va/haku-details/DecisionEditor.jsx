@@ -263,7 +263,7 @@ class RegenerateDecisions extends React.Component {
 class DecisionDateAndSend extends React.Component {
   constructor(props){
     super(props)
-    this.state = {preview:false}
+    this.state = {preview:false, refuseEnabled: props.environment["application-change"]["refuse-enabled?"]}
   }
 
   componentWillReceiveProps(nextProps) {
@@ -290,6 +290,12 @@ class DecisionDateAndSend extends React.Component {
   sendEmailSection() {
     return <div>
       <span className="decision-row">Päätösten lähettäminen sähköpostilla</span>
+      {this.state.refuseEnabled &&
+         <span>
+          Huomaathan, että linkkiä avustuksen hylkäämiseen ei lisätä hylättyyn
+          päätökseen.
+        </span>
+      }
       <div className="decision-separator"/>
       {this.sendControls()}
     </div>
@@ -320,6 +326,7 @@ class DecisionDateAndSend extends React.Component {
         mail: res.mail,
         sentTime: res['sent-time'],
         exampleUrl: res['example-url'],
+        exampleRefuseUrl: res['example-refuse-url'],
         paatokset: res.paatokset
       })
     })
@@ -427,7 +434,21 @@ class DecisionDateAndSend extends React.Component {
   }
 
   emailPreview() {
-    const mailContent = () => this.state.mail.content.replace("URL_PLACEHOLDER", `<a href=${this.state.exampleUrl}>${this.state.exampleUrl}</a>`)
+    const mailContent = () => {
+          const content = this.state.mail.content.replace(
+            "URL_PLACEHOLDER",
+            `<a href=${this.state.exampleUrl}>${this.state.exampleUrl}</a>`
+          )
+      if (this.state.refuseEnabled) {
+        return content.replace(
+            "REFUSE_URL_PLACEHOLDER",
+            `<a href=${this.state.exampleRefuseUrl}>${this.state.exampleRefuseUrl}</a>`)
+        }
+      else {
+      return content
+      }
+    }
+
 
     return <div className="decision-email-preview">
       <div className="decision-email-row">
@@ -486,7 +507,7 @@ export default class DecisionEditor extends React.Component {
         <Selvitys {...this.props}/>
         {avustushaku.content.multiplemaksuera===true && <DateField avustushaku={avustushaku} controller={controller} field="maksudate" label="Viimeinen maksuerä"/>}
         <LiitteetSelection environment={environment} avustushaku={avustushaku} decisionLiitteet={decisionLiitteet} controller={controller}/>
-        <DecisionDateAndSend avustushaku={avustushaku} controller={controller}/>
+        <DecisionDateAndSend avustushaku={avustushaku} controller={controller} environment={environment}/>
       </div>
     )
   }

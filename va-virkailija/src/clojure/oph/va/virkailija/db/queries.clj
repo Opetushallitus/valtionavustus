@@ -66,6 +66,8 @@
   "sql/virkailija/applications/get-application-payment-by-state.sql")
 (defquery get-total-paid "sql/virkailija/applications/get-total-paid.sql")
 (defquery find-applications "sql/virkailija/applications/find-applications.sql")
+(defquery get-application-token
+  "sql/virkailija/applications/get-application-token.sql")
 
 (defquery lock-va-users-cache-exclusively! "sql/virkailija/va_users_cache/lock-exclusively.sql")
 (defquery update-va-user-cache! "sql/virkailija/va_users_cache/update.sql")

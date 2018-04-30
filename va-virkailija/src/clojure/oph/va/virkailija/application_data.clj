@@ -47,3 +47,10 @@
        (exec :form-db
              virkailija-queries/find-applications
              {:search_term (str "%" (clojure.string/lower-case search-term) "%")})))
+
+(defn get-application-token [application-id]
+  (:token
+   (first
+     (exec :form-db
+           virkailija-queries/get-application-token
+           {:application_id application-id}))))
