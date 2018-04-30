@@ -161,8 +161,11 @@
        hakemus-db-id
        "/"))
 
-(defn refuse-url [avustushaku-id user-key lang token]
-  (let [va-url (-> config :server :url lang)
-        lang-str (or (clojure.core/name lang) "fi")]
-  (str va-url "avustushaku/" avustushaku-id "/nayta?avustushaku=" avustushaku-id
-       "&hakemus=" user-key "&lang=" lang-str "&preview=true&token=" token)))
+(defn refuse-url
+  ([va-url avustushaku-id user-key lang token]
+   (let [lang-str (or (clojure.core/name lang) "fi")]
+     (str va-url "avustushaku/" avustushaku-id "/nayta?avustushaku=" avustushaku-id
+          "&hakemus=" user-key "&lang=" lang-str "&preview=true&token=" token)))
+  ([avustushaku-id user-key lang token]
+   (refuse-url
+     (get-in config [:server :url lang]) avustushaku-id user-key lang token)))
