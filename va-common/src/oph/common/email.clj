@@ -6,7 +6,7 @@
             [clojure.java.io :as io]
             [clostache.parser :refer [render]]
             [oph.soresu.common.config :refer [config]]
-            [oph.soresu.common.email-utils :refer [email-utils]]
+            [oph.common.email-utils :as email-utils]
             [oph.common.string :as common-string]
             [oph.common.background-job-supervisor :as job-supervisor])
   (:import [org.apache.commons.mail SimpleEmail]))
