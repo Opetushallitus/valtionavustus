@@ -6,6 +6,7 @@
     [oph.soresu.form.formutil :as formutil]
     [oph.va.decision-liitteet :as decision-liitteet]
     [oph.va.virkailija.email :as email]
+    [oph.common.email :refer [refuse-url]]
     [oph.va.virkailija.schema :as virkailija-schema]
     [oph.va.virkailija.hakudata :as hakudata]
     [oph.va.virkailija.db :as virkailija-db]
@@ -149,7 +150,7 @@
                     :project-name (:project_name first-hakemus)})
             :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)
             :example-refuse-url
-            (email/refuse-url
+            (refuse-url
               avustushaku-id first-hakemus-user-key :fi first-hakemus-token)}
            (select-keys sent-status [:sent :count :sent-time :paatokset])))))
 

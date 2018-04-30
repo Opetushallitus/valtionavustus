@@ -80,7 +80,8 @@
         (get-in config [:application-change :refuse-enabled?] false)
         refuse-url
         (when refuse-enabled?
-          (format "%s&token=%s" url (create-application-token user-key)))
+          (email/refuse-url avustushaku-id user-key
+                      lang (create-application-token user-key)))
         user-message {:operation :send
                       :type (if refuse-enabled?
                               :hakemus-submitted-refuse

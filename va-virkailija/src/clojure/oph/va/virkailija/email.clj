@@ -77,12 +77,6 @@
         lang-str (or (clojure.core/name lang) "fi")]
   (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" user-key "&lang=" lang-str)))
 
-(defn refuse-url [avustushaku-id user-key lang token]
-  (let [va-url (-> config :server :url lang)
-        lang-str (or (clojure.core/name lang) "fi")]
-  (str va-url "avustushaku/" avustushaku-id "/nayta?avustushaku=" avustushaku-id
-       "&hakemus=" user-key "&lang=" lang-str "&preview=true&token=" token)))
-
 (defn payment-url [grant-id]
   (format "%s/payments/?grant=%d"
           (get-in config [:server :virkailija-url]) grant-id))
@@ -112,7 +106,7 @@
         lang (keyword lang-str)
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
         paatos-refuse-url
-        (refuse-url (:id avustushaku) (:user_key hakemus) lang token)
+        (email/refuse-url (:id avustushaku) (:user_key hakemus) lang token)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])]
     (log/info "Sending decision email with refuse link")
