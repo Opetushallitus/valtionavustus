@@ -4,9 +4,13 @@ Ansökningstid: {{ start-date }} klo {{ start-time }} — {{ end-date }} klo {{ 
 
 Du kan se ansökan via länken: {{& url }}
 
-Den föredragande som ansvarar för ansökningen har nämnts i ansökningsmeddelandet.
-
 Om du väljer att inte få ett bidrag kan du rapportera det i här länken: {{& refuse-url }}
+
+Anmälan måste skickas senast det datum som anges i beslutet.
+
+Om du ska acceptera det här stöd, måste du gör ingenting.
+
+Den föredragande som ansvarar för ansökningen har nämnts i ansökningsmeddelandet.
 
 Utbildningsstyrelsen
 Hagnäskajen 6

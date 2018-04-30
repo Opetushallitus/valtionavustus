@@ -6,6 +6,10 @@ Beslut link: {{& url }}
 
 Om du väljer att inte få ett bidrag kan du rapportera det i här länken: {{& refuse-url }}
 
+Anmälan måste skickas senast det datum som anges i beslutet.
+
+Om du ska acceptera det här stöd, måste du gör ingenting.
+
 Den föredragande som ansvarar för ansökningen har nämnts i beslutet.
 
 Utbildningsstyrelsen
