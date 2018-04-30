@@ -115,6 +115,7 @@
         (refuse-url (:id avustushaku) (:user_key hakemus) lang token)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])]
+    (log/info "Sending decision email with refuse link")
     (log/info "Urls would be: " url "\n" paatos-refuse-url)
     (>!! email/mail-chan {:operation :send
                           :type :paatos-refuse
