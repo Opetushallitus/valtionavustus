@@ -6,6 +6,7 @@
             [clojure.java.io :as io]
             [clostache.parser :refer [render]]
             [oph.soresu.common.config :refer [config]]
+            [oph.soresu.common.email-utils :refer [email-utils]]
             [oph.common.string :as common-string]
             [oph.common.background-job-supervisor :as job-supervisor])
   (:import [org.apache.commons.mail SimpleEmail]))
@@ -161,11 +162,6 @@
        hakemus-db-id
        "/"))
 
-(defn refuse-url
-  ([va-url avustushaku-id user-key lang token]
-   (let [lang-str (or (clojure.core/name lang) "fi")]
-     (str va-url "avustushaku/" avustushaku-id "/nayta?avustushaku=" avustushaku-id
-          "&hakemus=" user-key "&lang=" lang-str "&preview=true&token=" token)))
-  ([avustushaku-id user-key lang token]
-   (refuse-url
-     (get-in config [:server :url lang]) avustushaku-id user-key lang token)))
+(defn refuse-url [avustushaku-id user-key lang token]
+  (email-utils/refuse-url
+     (get-in config [:server :url lang]) avustushaku-id user-key lang token))
