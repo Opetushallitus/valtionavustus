@@ -13,4 +13,4 @@ JOIN
 WHERE
   b.invoice_date = :invoice_date::date
   AND p.deleted IS NULL
-  AND p.version_closed IS NULL ;
+  AND p.version_closed IS NULL;
