@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.va-code-values-spec
   (:require [speclj.core
              :refer [describe it should]]
-            [oph.va.virkailija.va-code-values-data :refer [has-privilege?]]))
+            [oph.va.virkailija.va-code-values-routes :refer [has-privilege?]]))
 
 (describe "Checking privileges"
           (it "has privilege"
