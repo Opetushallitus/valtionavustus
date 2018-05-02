@@ -61,6 +61,8 @@
 (defquery find-applications "sql/hakija/hakemus/find-applications.sql")
 (defquery get-applications-by-grant
   "sql/hakija/hakemus/get-applications-by-grant.sql")
+(defquery find-application-by-register-number
+  "sql/hakija/hakemus/find-application-by-register-number.sql")
 
 (defquery add-hakemus-paatos! "sql/hakija/hakemus/add-hakemus-paatos.sql")
 (defquery update-hakemus-paatos-decision! "sql/hakija/hakemus/update-hakemus-paatos-decision.sql")
