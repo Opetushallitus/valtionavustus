@@ -56,6 +56,9 @@
 (defquery create-submission "sql/hakija/hakemus/create-submission.sql")
 (defquery revoke-application-tokens
   "sql/hakija/hakemus/revoke-application-tokens.sql")
+(defquery get-application "sql/hakija/hakemus/get-application.sql")
+(defquery get-application-token "sql/hakija/hakemus/get-application-token.sql")
+(defquery find-applications "sql/hakija/hakemus/find-applications.sql")
 
 (defquery add-hakemus-paatos! "sql/hakija/hakemus/add-hakemus-paatos.sql")
 (defquery update-hakemus-paatos-decision! "sql/hakija/hakemus/update-hakemus-paatos-decision.sql")

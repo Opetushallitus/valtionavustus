@@ -9,23 +9,23 @@
   (:import (oph.va.jdbc.enums)))
 
 (defn get-application [id]
-  ;; TODO: Move query to va-virkailija/src/clojure/oph/va/hakija/api.clj
   (convert-to-dash-keys (first (exec :form-db
-                                     virkailija-queries/get-application
+                                     hakija-queries/get-application
                                      {:application_id id}))))
 
 (defn get-application-with-evaluation-and-answers [id]
-  (convert-to-dash-keys
-    ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
-    (first (exec :virkailija-db
-                 virkailija-queries/get-application-with-evaluation-and-answers
-                 {:application_id id}))))
+  (when-let [application (get-application id)]
+    (merge application
+           (convert-to-dash-keys
+             (first (exec :virkailija-db
+                          virkailija-queries/get-application-evaluation
+                          {:application_id id}))))))
 
 (defn get-payments-history [id]
   (mapv convert-to-dash-keys
-    (exec :virkailija-db
-          virkailija-queries/get-payment-history
-          {:application_id id})))
+        (exec :virkailija-db
+              virkailija-queries/get-payment-history
+              {:application_id id})))
 
 (defn get-application-payment [id]
   (convert-to-dash-keys (last (exec :virkailija-db
@@ -46,14 +46,14 @@
 (defn find-applications [search-term]
   (map convert-to-dash-keys
        (exec :form-db
-             virkailija-queries/find-applications
+             hakija-queries/find-applications
              {:search_term (str "%" (clojure.string/lower-case search-term) "%")})))
 
 (defn get-application-token [application-id]
   (:token
    (first
      (exec :form-db
-           virkailija-queries/get-application-token
+           hakija-queries/get-application-token
            {:application_id application-id}))))
 
 (defn revoke-application-tokens [application-id]

@@ -55,9 +55,8 @@
 (defquery create-batch "sql/virkailija/payment_batches/create-batch.sql")
 (defquery get-batch "sql/virkailija/payment_batches/get-batch.sql")
 
-(defquery get-application "sql/virkailija/applications/get-application.sql")
-(defquery get-application-with-evaluation-and-answers
-  "sql/virkailija/applications/get-application-with-evaluation-and-answers.sql")
+(defquery get-application-evaluation
+  "sql/virkailija/applications/get-application-evaluation.sql")
 (defquery get-application-payments
   "sql/virkailija/applications/get-application-payments.sql")
 (defquery get-application-payment
@@ -65,9 +64,6 @@
 (defquery get-application-payment-by-state
   "sql/virkailija/applications/get-application-payment-by-state.sql")
 (defquery get-total-paid "sql/virkailija/applications/get-total-paid.sql")
-(defquery find-applications "sql/virkailija/applications/find-applications.sql")
-(defquery get-application-token
-  "sql/virkailija/applications/get-application-token.sql")
 
 (defquery lock-va-users-cache-exclusively! "sql/virkailija/va_users_cache/lock-exclusively.sql")
 (defquery update-va-user-cache! "sql/virkailija/va_users_cache/update.sql")
