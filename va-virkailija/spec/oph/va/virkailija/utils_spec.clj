@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.utils-spec
   (:require [speclj.core
-             :refer [describe it should= should should-not should-throw]]
+             :refer [describe it should= should should-not should-throw tags]]
             [oph.va.virkailija.utils :as utils]))
 
 (describe "Key contains"
@@ -65,3 +65,22 @@
               (should= (utils/convert-to-underscore-keys nil) nil))
           (it "should return nil on nil dash map"
               (should= (utils/convert-to-dash-keys nil) nil)))
+
+(describe "Either"
+          (tags :utils :either)
+          (it "should return true when int is found in vector"
+              (should (utils/either? 2 [1 2 3])))
+          (it "should return true when int is found in list"
+              (should (utils/either? 2 '(1 2 3))))
+          (it "should return true when key is found in set"
+              (should (utils/either? :some-key #{:other-key :some-key})))
+          (it "should return false when int is not found in vector"
+              (should-not (utils/either? 2 [3 4 3])))
+          (it "should return false when int is not found in list"
+              (should-not (utils/either? 2 '(1 3 0))))
+          (it "should return false when key is not found in set"
+              (should-not (utils/either? :not-found #{:found :other})))
+          (it "should return false when searching for nil"
+              (should-not (utils/either? nil [3 4 3])))
+          (it "should return false when searching something in nil"
+              (should-not (utils/either? 2 nil))))

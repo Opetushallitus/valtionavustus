@@ -4,7 +4,8 @@
             [oph.soresu.common.config :refer [config]]
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
-            [clostache.parser :refer [render]]))
+            [clostache.parser :refer [render]]
+            [oph.va.virkailija.application-data :refer [get-application-token]]))
 
 (def mail-titles
   {:change-request {:fi "Täydennyspyyntö avustushakemukseesi"
@@ -26,6 +27,9 @@
                     :sv (email/load-template "email-templates/change-request.plain.sv")}
    :paatos {:fi (email/load-template "email-templates/paatos.plain.fi")
             :sv (email/load-template "email-templates/paatos.plain.sv")}
+   :paatos-refuse
+   {:fi (email/load-template "email-templates/paatos-refuse.plain.fi")
+    :sv (email/load-template "email-templates/paatos-refuse.plain.sv")}
    :selvitys {:fi (email/load-template "email-templates/selvitys.plain.fi")
               :sv (email/load-template "email-templates/selvitys.plain.sv")}
    :valiselvitys-notification {:fi (email/load-template "email-templates/valiselvitys-notification.plain.fi")
@@ -94,6 +98,30 @@
                           :avustushaku-name avustushaku-name
                           :to to
                           :url url
+                          :register-number (:register_number hakemus)
+                          :project-name (:project_name hakemus)})))
+
+(defn send-paatos-refuse! [to avustushaku hakemus reply-to token]
+  (let [lang-str (:language hakemus)
+        lang (keyword lang-str)
+        url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
+        paatos-refuse-url
+        (email/refuse-url (:id avustushaku) (:user_key hakemus) lang token)
+        avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
+        mail-subject (get-in mail-titles [:paatos lang])]
+    (log/info "Sending decision email with refuse link")
+    (log/info "Urls would be: " url "\n" paatos-refuse-url)
+    (>!! email/mail-chan {:operation :send
+                          :type :paatos-refuse
+                          :lang lang
+                          :from (-> email/smtp-config :from lang)
+                          :reply-to reply-to
+                          :sender (-> email/smtp-config :sender)
+                          :subject mail-subject
+                          :avustushaku-name avustushaku-name
+                          :to to
+                          :url url
+                          :refuse-url paatos-refuse-url
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)})))
 

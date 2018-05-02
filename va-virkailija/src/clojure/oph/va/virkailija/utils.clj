@@ -54,3 +54,6 @@
     (alt!!
       c ([v] v)
       (timeout t) ([_] tv))))
+
+(defn either? [x coll]
+  (true? (some #(= % x) coll)))

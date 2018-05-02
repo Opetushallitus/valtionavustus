@@ -40,7 +40,7 @@
    :application-version (:version application)
    :state 0
    :batch-id (:id batch)
-   :sum sum})
+   :payment-sum sum})
 
 (defn create-filename
   ([payment id-gen-fn] (format "payment-%d-%d.xml" (:id payment) (id-gen-fn)))

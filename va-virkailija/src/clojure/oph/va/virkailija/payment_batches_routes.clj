@@ -7,7 +7,8 @@
             [oph.va.virkailija.payment-batches-data :as data]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.schema :as schema]
-            [oph.va.virkailija.authentication :as authentication])
+            [oph.va.virkailija.authentication :as authentication]
+            [oph.va.virkailija.utils :refer [either?]])
   (:import (java.time LocalDate)))
 
 (defn- find-payment-batch []
@@ -50,7 +51,8 @@
             (loop [total-result {:count 0 :error-count 0 :errors '()}]
               (if-let [r (<!! c)]
                 (if (or (:success r)
-                        (= (get-in r [:error :error-type]) :no-payments))
+                        (either? (get-in r [:error :error-type])
+                                 #{:already-paid :no-payments}))
                   (recur (update total-result :count inc))
                   (do (when (= (get-in r [:error :error-type]) :exception)
                         (log/error (get-in r [:error :exception])))
