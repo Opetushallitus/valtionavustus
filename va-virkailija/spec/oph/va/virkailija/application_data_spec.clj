@@ -44,7 +44,7 @@
 (describe
   "Get applications"
 
-  (tags :applications)
+  (tags :applications :getapplications)
 
   (around-all [_] (with-test-server! :virkailija-db
                     #(start-server
@@ -57,4 +57,13 @@
             submission (server/create-submission (:form grant) {})
             application (server/create-application grant submission)]
         (should-not (application-data/is-unpaid? (:id application)))))
-)
+
+  (it "find application by register number"
+      (let [grant (first (grant-data/get-grants))
+            submission (server/create-submission (:form grant) {})
+            application (server/create-application grant submission)]
+        (should=
+          (select-keys application [:id :version])
+          (select-keys (application-data/find-application-by-register-number
+             (:register_number application))
+                       [:id :version])))))
