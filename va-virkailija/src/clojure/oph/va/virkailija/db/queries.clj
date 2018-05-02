@@ -48,7 +48,6 @@
 (defquery update-payment "sql/virkailija/payments/update-payment.sql")
 (defquery get-payment-history "sql/virkailija/applications/get-payment-history.sql")
 (defquery create-payment "sql/virkailija/payments/create-payment.sql")
-(defquery get-by-rn-and-date "sql/virkailija/payments/get-by-rn-and-date.sql")
 (defquery delete-payment "sql/virkailija/payments/delete-payment.sql")
 (defquery find-payments-by-application-id-and-invoice-date
   "sql/virkailija/payments/find-by-application-id-and-invoice-date.sql")
