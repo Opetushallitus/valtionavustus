@@ -3,7 +3,6 @@
             [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
-            [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.db.queries :as virkailija-queries]
             [oph.va.hakija.api.queries :as hakija-queries])
   (:import (oph.va.jdbc.enums)))
@@ -13,13 +12,21 @@
                                      hakija-queries/get-application
                                      {:application_id id}))))
 
+(defn get-application-evaluation [application-id]
+  (convert-to-dash-keys
+    (first (exec :virkailija-db
+                 virkailija-queries/get-application-evaluation
+                 {:application_id application-id}))))
+
 (defn get-application-with-evaluation-and-answers [id]
   (when-let [application (get-application id)]
-    (merge application
-           (convert-to-dash-keys
-             (first (exec :virkailija-db
-                          virkailija-queries/get-application-evaluation
-                          {:application_id id}))))))
+    (merge application (get-application-evaluation (:id application)))))
+
+(defn get-applications-with-evaluation-by-grant [grant-id]
+  (mapv
+    #(merge (convert-to-dash-keys %) (get-application-evaluation (:id %)))
+    (exec :form-db hakija-queries/get-applications-by-grant
+          {:grant_id grant-id})))
 
 (defn get-payments-history [id]
   (mapv convert-to-dash-keys
@@ -59,4 +66,8 @@
 (defn revoke-application-tokens [application-id]
   (exec :form-db
         hakija-queries/revoke-application-tokens
+        {:application_id application-id}))
+
+(defn is-unpaid? [application-id]
+  (exec :form-db virkailija-queries/is-application-paid
         {:application_id application-id}))

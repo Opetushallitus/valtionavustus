@@ -1,8 +1,19 @@
 (ns oph.va.virkailija.va-code-values-routes
   (:require [compojure.api.sweet :as compojure-api]
             [ring.util.http-response :refer [ok method-not-allowed unauthorized]]
-            [oph.va.virkailija.va-code-values-data :as data :refer [with-admin]]
-            [oph.va.virkailija.schema :as schema]))
+            [oph.va.virkailija.va-code-values-data :as data]
+            [oph.va.virkailija.schema :as schema]
+            [oph.va.virkailija.authentication :as authentication]))
+
+(defn has-privilege? [identity privilege]
+  (true?
+    (some #(= % privilege) (:privileges identity))))
+
+(defmacro with-admin [request form unauthorized]
+  `(if (has-privilege?
+         (authentication/get-request-identity ~request) "va-admin")
+     ~form
+     ~unauthorized))
 
 (defn- get-va-code-values []
   (compojure-api/GET
