@@ -86,16 +86,21 @@
         convert-to-dash-keys
         convert-timestamps-from-sql)))
 
-(defn get-by-rn-and-date [values]
-  (->> values
-       convert-to-underscore-keys
-       ;; TODO: Problematic: utilizes join between hakija and virkailija schemas
-       (exec :virkailija-db queries/get-by-rn-and-date)
-       (map convert-to-dash-keys)))
+(defn find-payments-by-response [values]
+  "Response values: {:register-number \"string\" :invoice-date \"string\"}"
+  (let [application
+        (application-data/find-application-by-register-number
+              (:register-number values))]
+    (->
+      (exec :virkailija-db
+            queries/find-payments-by-application-id-and-invoice-date
+            {:application_id (:id application)
+             :invoice_date (:invoice-date values)})
+      (map convert-to-dash-keys))))
 
 (defn update-state-by-response [xml]
   (let [response-values (invoice/read-response-xml xml)
-        payments (get-by-rn-and-date response-values)
+        payments (find-payments-by-response response-values)
         payment (first payments)]
     (cond (empty? payments)
           (throw (ex-info "No payments found!" {:cause "no-payment" :error-message (format "No payment found with values: %s" response-values) }))

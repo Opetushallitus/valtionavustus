@@ -12,6 +12,13 @@
                                      hakija-queries/get-application
                                      {:application_id id}))))
 
+(defn find-application-by-register-number [register-number]
+  (convert-to-dash-keys
+    (first
+      (exec :form-db
+            hakija-queries/find-application-by-register-number
+            {:register_number register-number}))))
+
 (defn get-application-evaluation [application-id]
   (convert-to-dash-keys
     (first (exec :virkailija-db
