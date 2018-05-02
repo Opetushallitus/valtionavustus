@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.application-data-spec
-  (require [speclj.core :refer [should should= describe it tags around-all]]
+  (require [speclj.core
+            :refer [should should-not should= describe it tags around-all]]
            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
            [oph.va.virkailija.server :refer [start-server]]
            [oph.va.virkailija.grant-data :as grant-data]
@@ -39,3 +40,21 @@
                           (:id application))))
         (should (empty? (application-data/revoke-application-tokens
                           (:id application)))))))
+
+(describe
+  "Get applications"
+
+  (tags :applications)
+
+  (around-all [_] (with-test-server! :virkailija-db
+                    #(start-server
+                       {:host "localhost"
+                        :port test-server-port
+                        :auto-reload? false}) (_)))
+
+  (it "checks if application is unpaid"
+      (let [grant (first (grant-data/get-grants))
+            submission (server/create-submission (:form grant) {})
+            application (server/create-application grant submission)]
+        (should-not (application-data/is-unpaid? (:id application)))))
+)
