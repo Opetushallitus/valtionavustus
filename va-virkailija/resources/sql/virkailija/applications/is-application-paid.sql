@@ -1,5 +1,5 @@
 SELECT
-  COUNT(id) > 0
+  COUNT(id) > 0 AS unpaid
 FROM
   virkailija.payments
 WHERE
