@@ -4,7 +4,8 @@
             [clj-time.core :as t]
             [clj-time.coerce :as c]
             [oph.va.virkailija.grant-data :as grant-data]
-            [oph.va.virkailija.db.queries :as virkailija-queries])
+            [oph.va.virkailija.db.queries :as virkailija-queries]
+            [oph.va.hakija.api.queries :as hakija-queries])
   (:import (oph.va.jdbc.enums)))
 
 (defn get-application [id]
@@ -54,3 +55,8 @@
      (exec :form-db
            virkailija-queries/get-application-token
            {:application_id application-id}))))
+
+(defn revoke-application-tokens [application-id]
+  (exec :form-db
+        hakija-queries/revoke-application-tokens
+        {:application_id application-id}))

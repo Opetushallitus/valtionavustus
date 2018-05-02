@@ -102,11 +102,12 @@
                 (create-multibatch-payment application data)
                 (create-single-payment
                   application data (:budget-granted application)))]
-          (when
-            (:success result)
-            (payments-data/update-payment
-              (assoc (:payment result)
-                     :state 2 :filename (:filename result)) identity))
+          (when (:success result)
+            (do
+              (payments-data/update-payment
+                (assoc (:payment result)
+                       :state 2 :filename (:filename result)) identity)
+              (application-data/revoke-application-tokens (:id application))))
           (a/>! c result)))
       (a/close! c))
     c))

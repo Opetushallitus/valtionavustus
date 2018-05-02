@@ -167,7 +167,7 @@
   (it "gets grants without content"
       (let [{:keys [status body]}
             (get! "/api/v2/grants/")
-            grants (json->map body)]
+             grants (json->map body)]
         (should= 200 status)
         (should (some? grants))
         (should= 2 (count grants))
