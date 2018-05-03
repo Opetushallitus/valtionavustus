@@ -132,7 +132,7 @@
 (defn delete-payment [id]
   (exec :virkailija-db queries/delete-payment {:id id}))
 
-(defn get-grant-payments-info [batch-id]
+(defn get-batch-payments-info [batch-id]
   (convert-to-dash-keys
     (first (exec :virkailija-db queries/get-grant-payments-info
                  {:batch_id batch-id}))))
@@ -146,7 +146,7 @@
                              {:grant_id grant-id})))
         now (t/now)
         receipt-year (mod (.getYear receipt-date) 100)
-        payments-info (get-grant-payments-info grant-id batch-id)
+        payments-info (get-batch-payments-info batch-id)
         batch-key (invoice/get-batch-key
                     organisation receipt-year batch-number)]
 
