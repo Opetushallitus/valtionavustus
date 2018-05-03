@@ -12,6 +12,10 @@
 
 (def payment-date (java.time.LocalDate/of 2018 5 2))
 
+(def example-identity {:person-oid "12345"
+                       :first-name "Test"
+                       :surname "User"})
+
 (defn create-payment [grant]
   (let [submission (server/create-submission (:form grant)
                                              {:budget-oph-share 40000})
@@ -51,8 +55,8 @@
 
   (it "finds payments by register number and invoice date"
       (let [grant (first (grant-data/get-grants))
-            submission (server/create-submission (:form grant)
-                                                 {:budget-oph-share 40000})
+            submission (server/create-submission
+                         (:form grant) {:budget-oph-share 40000})
             application (server/create-application grant submission)
             batch (payment-batches-data/create-batch
                     {:receipt-date payment-date
@@ -94,4 +98,48 @@
               response (server/get!
                          (str "/api/v2/grants/" (:id grant) "/payments/"))]
           (should= 200 (:status response))
-          (should= 2 (count (server/json->map (:body response))))))))
+          (should= 2 (count (server/json->map (:body response)))))))
+
+  (it "gets application payments history"
+      (let [grant (first (grant-data/get-grants))]
+        (payments-data/delete-grant-payments (:id grant))
+        (let [submission (server/create-submission
+                           (:form grant) {:budget-oph-share 40000})
+              application (server/create-application grant submission)
+              batch (payment-batches-data/create-batch
+                      {:receipt-date payment-date
+                       :due-date payment-date
+                       :partner ""
+                       :grant-id (:id grant)
+                       :document-id ""
+                       :currency "EUR"
+                       :invoice-date payment-date
+                       :document-type "XA"
+                       :transaction-account "6000"
+                       :acceptor-email "acceptor@local"
+                       :inspector-email "inspector@local"})
+              payment1 (payments-data/create-payment
+                         {:application-id (:id application)
+                          :payment-sum 20000
+                          :batch-id (:id batch)
+                          :state 1}
+                         example-identity)
+              payment2 (payments-data/create-payment
+                         {:application-id (:id application)
+                          :payment-sum 20000
+                          :batch-id (:id batch)
+                          :state 1}
+                         example-identity)]
+          (payments-data/update-payment
+            (assoc payment1 :state 2 :filename "example.xml") example-identity)
+
+          (let [response
+                (server/get!
+                  (str "/api/v2/applications/"
+                       (:id application) "/payments-history/"))]
+            (should= 200 (:status response))
+            (let [payments (server/json->map (:body response))
+                  payment (some #(when (= (:state %) 2) %) payments)]
+              (should= 3 (count payments))
+              (should= (:id payment1) (:id payment))
+              (should= 1 (:version payment))))))))
