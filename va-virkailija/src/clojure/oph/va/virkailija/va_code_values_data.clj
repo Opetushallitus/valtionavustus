@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.va-code-values-data
   (:require [oph.soresu.common.db :refer [exec]]
             [oph.va.virkailija.db.queries :as queries]
+            [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.virkailija.utils :refer
              [convert-to-dash-keys convert-to-underscore-keys]]))
 
@@ -34,8 +35,7 @@
       convert-to-dash-keys))
 
 (defn code-used? [id]
-  ;; TODO: Move query to va-virkailija/src/clojure/oph/va/hakija/api.clj
-  (-> (exec :form-db queries/check-code-usage {:id id})
+  (-> (exec :form-db hakija-queries/check-code-usage {:id id})
       first
       :used))
 
