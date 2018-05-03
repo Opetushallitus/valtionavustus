@@ -38,12 +38,6 @@
    :grant-id 1
    :document-id "ID1234567890"})
 
-(def valid-va-code-value
-  {:value-type "operational-unit"
-   :year 2018
-   :code "1234567890"
-   :code-value "Example value"})
-
 (def valid-payment-values
   {:state 1
    :batch-id nil
@@ -248,26 +242,5 @@
             (delete! (format "/api/v2/payments/%d/" (:id payment)))]
         (should= 400 status)
         (should (some? (payments-data/get-payment (:id payment)))))))
-
-(describe "VA code values routes for non-admin"
-
-  (tags :server :vacodevalues)
-
-  (around-all
-    [_]
-    (with-test-server!
-      :virkailija-db
-      #(start-server
-         {:host "localhost"
-          :port test-server-port
-          :auto-reload? false
-          :without-authentication? true
-          :authentication user-authentication}) (_)))
-
-  (it "denies of non-admin create code value"
-      (let [{:keys [status body]}
-            (post! "/api/v2/va-code-values/" valid-va-code-value)]
-        (should= 401 status)
-        (should (empty? body)))))
 
 (run-specs)
