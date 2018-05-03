@@ -6,7 +6,8 @@
            [oph.va.virkailija.payments-data :as payments-data]
            [oph.va.virkailija.payment-batches-data :as payment-batches-data]
            [oph.va.virkailija.grant-data :as grant-data]
-           [oph.va.virkailija.virkailija-server-spec :as server]))
+           [oph.va.virkailija.virkailija-server-spec :as server]
+           [clj-time.core :as t]))
 
 (def test-server-port 9001)
 
@@ -185,7 +186,69 @@
           (payments-data/update-payment
             (assoc payment2 :state 2 :filename "example.xml") example-identity)
 
-          (let [payments-info (payments-data/get-grant-payments-info
-                                (:id grant) (:id batch))]
+          (let [payments-info (payments-data/get-batch-payments-info
+                                (:id batch))]
             (should= 50000 (:total-granted payments-info))
-            (should= 2 (:count payments-info)))))))
+            (should= 2 (:count payments-info))))))
+
+  (it "creates payments email"
+      (let [grant (first (grant-data/get-grants true))]
+        (payments-data/delete-grant-payments (:id grant))
+        (let [submission (server/create-submission
+                           (:form grant) {:budget-oph-share 40000})
+              application (server/create-application grant submission)
+              batch (payment-batches-data/create-batch
+                      {:receipt-date payment-date
+                       :due-date payment-date
+                       :partner ""
+                       :grant-id (:id grant)
+                       :document-id ""
+                       :currency "EUR"
+                       :invoice-date payment-date
+                       :document-type "XA"
+                       :transaction-account "6600"
+                       :acceptor-email "acceptor@local"
+                       :inspector-email "inspector@local"})
+              payment1 (payments-data/create-payment
+                         {:application-id (:id application)
+                          :payment-sum 20000
+                          :batch-id (:id batch)
+                          :state 1}
+                         example-identity)
+              payment2 (payments-data/create-payment
+                         {:application-id (:id application)
+                          :payment-sum 30000
+                          :batch-id (:id batch)
+                          :state 1}
+                         example-identity)
+              payment3 (payments-data/create-payment
+                         {:application-id (:id application)
+                          :payment-sum 25000
+                          :batch-id (:id batch)
+                          :state 1}
+                         example-identity)]
+          (payments-data/update-payment
+            (assoc payment1 :state 2 :filename "example.xml") example-identity)
+          (payments-data/update-payment
+            (assoc payment2 :state 2 :filename "example.xml") example-identity)
+          (prn grant)
+
+          (let [payments-email
+                (payments-data/create-payments-email
+                  {:batch-id (:id batch)
+                   :acceptor-email "acceptor@local"
+                   :inspector-email "inspector@local"
+                   :receipt-date payment-date
+                   :grant-id (:id grant)
+                   :organisation "6600"
+                   :batch-number (:batch-number batch)})]
+            (should= {:receivers ["inspector@local" "acceptor@local"]
+                      :batch-key (format "6600%02d%03d"
+                                         (mod (.getYear payment-date) 100)
+                                         (:batch-number batch))
+                      :title (get-in grant [:content :name])
+                      :date (payments-data/format-email-date
+                              (t/now))
+                      :count 2
+                      :total-granted 50000}
+                     payments-email))))))
