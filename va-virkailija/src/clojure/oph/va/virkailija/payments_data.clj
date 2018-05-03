@@ -8,6 +8,7 @@
    [clj-time.format :as f]
    [oph.va.virkailija.db.queries :as queries]
    [oph.va.virkailija.application-data :as application-data]
+   [oph.va.virkailija.grant-data :as grant-data]
    [oph.va.virkailija.invoice :as invoice]
    [oph.va.virkailija.email :as email]))
 
@@ -143,10 +144,7 @@
 (defn create-payments-email
   [{:keys [batch-id inspector-email acceptor-email receipt-date
            grant-id organisation batch-number]}]
-  (let [grant (convert-to-dash-keys
-                ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
-                (first (exec :virkailija-db queries/get-grant
-                             {:grant_id grant-id})))
+  (let [grant (grant-data/get-grant grant-id)
         now (t/now)
         receipt-year (mod (.getYear receipt-date) 100)
         payments-info (get-batch-payments-info batch-id)
