@@ -91,12 +91,12 @@
   (let [application
         (application-data/find-application-by-register-number
               (:register-number values))]
-    (->
+    (map
+      convert-to-dash-keys
       (exec :virkailija-db
             queries/find-payments-by-application-id-and-invoice-date
             {:application_id (:id application)
-             :invoice_date (:invoice-date values)})
-      (map convert-to-dash-keys))))
+             :invoice_date (:invoice-date values)}))))
 
 (defn update-state-by-response [xml]
   (let [response-values (invoice/read-response-xml xml)
@@ -120,10 +120,11 @@
                     {:person-oid "-" :first-name "Rondo" :surname ""})))
 
 (defn get-grant-payments [id]
-  ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
-  (->> (exec :virkailija-db queries/get-grant-payments {:id id})
-       (map convert-to-dash-keys)
-       (map convert-timestamps-from-sql)))
+  (->>
+    (application-data/get-applications-with-evaluation-by-grant id)
+    (reduce
+      (fn [p n] (into p (application-data/get-application-payments (:id n)))) [])
+    (map convert-timestamps-from-sql)))
 
 (defn delete-grant-payments [id]
   (exec :virkailija-db queries/delete-grant-payments {:id id}))
