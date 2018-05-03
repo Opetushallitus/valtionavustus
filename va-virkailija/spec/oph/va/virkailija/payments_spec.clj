@@ -142,4 +142,50 @@
                   payment (some #(when (= (:state %) 2) %) payments)]
               (should= 3 (count payments))
               (should= (:id payment1) (:id payment))
-              (should= 1 (:version payment))))))))
+              (should= 1 (:version payment)))))))
+
+  (it "gets grant payments info"
+      (let [grant (first (grant-data/get-grants))]
+        (payments-data/delete-grant-payments (:id grant))
+        (let [submission (server/create-submission
+                           (:form grant) {:budget-oph-share 40000})
+              application (server/create-application grant submission)
+              batch (payment-batches-data/create-batch
+                      {:receipt-date payment-date
+                       :due-date payment-date
+                       :partner ""
+                       :grant-id (:id grant)
+                       :document-id ""
+                       :currency "EUR"
+                       :invoice-date payment-date
+                       :document-type "XA"
+                       :transaction-account "6000"
+                       :acceptor-email "acceptor@local"
+                       :inspector-email "inspector@local"})
+              payment1 (payments-data/create-payment
+                         {:application-id (:id application)
+                          :payment-sum 20000
+                          :batch-id (:id batch)
+                          :state 1}
+                         example-identity)
+              payment2 (payments-data/create-payment
+                         {:application-id (:id application)
+                          :payment-sum 30000
+                          :batch-id (:id batch)
+                          :state 1}
+                         example-identity)
+              payment3 (payments-data/create-payment
+                         {:application-id (:id application)
+                          :payment-sum 25000
+                          :batch-id (:id batch)
+                          :state 1}
+                         example-identity)]
+          (payments-data/update-payment
+            (assoc payment1 :state 2 :filename "example.xml") example-identity)
+          (payments-data/update-payment
+            (assoc payment2 :state 2 :filename "example.xml") example-identity)
+
+          (let [payments-info (payments-data/get-grant-payments-info
+                                (:id grant) (:id batch))]
+            (should= 50000 (:total-granted payments-info))
+            (should= 2 (:count payments-info)))))))
