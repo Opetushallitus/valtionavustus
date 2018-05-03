@@ -70,3 +70,5 @@
 
 (defquery get-submission "sql/hakija/submission/get-by-id.sql")
 (defquery find-paatos-views "sql/hakija/hakemus-paatokset/find.sql")
+
+(defquery check-code-usage "sql/hakija/va_code_values/check-code-usage.sql")
