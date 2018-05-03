@@ -57,6 +57,7 @@
   (map convert-to-dash-keys (exec :virkailija-db
                                   virkailija-queries/get-application-payments
                                   {:application_id id})))
+
 (defn find-applications [search-term]
   (map convert-to-dash-keys
        (exec :form-db
