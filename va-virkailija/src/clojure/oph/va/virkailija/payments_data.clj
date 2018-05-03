@@ -132,11 +132,10 @@
 (defn delete-payment [id]
   (exec :virkailija-db queries/delete-payment {:id id}))
 
-(defn get-grant-payments-info [id batch-id]
+(defn get-grant-payments-info [batch-id]
   (convert-to-dash-keys
-    ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
     (first (exec :virkailija-db queries/get-grant-payments-info
-                 {:grant_id id :batch_id batch-id}))))
+                 {:batch_id batch-id}))))
 
 (defn send-payments-email
   [{:keys [batch-id inspector-email acceptor-email receipt-date
