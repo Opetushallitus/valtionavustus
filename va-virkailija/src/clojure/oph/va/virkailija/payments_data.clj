@@ -137,11 +137,14 @@
     (first (exec :virkailija-db queries/get-grant-payments-info
                  {:batch_id batch-id}))))
 
-(defn send-payments-email
+(defn format-email-date [date]
+  (f/unparse date-formatter date))
+
+(defn create-payments-email
   [{:keys [batch-id inspector-email acceptor-email receipt-date
            grant-id organisation batch-number]}]
   (let [grant (convert-to-dash-keys
-               ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
+                ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
                 (first (exec :virkailija-db queries/get-grant
                              {:grant_id grant-id})))
         now (t/now)
@@ -150,10 +153,12 @@
         batch-key (invoice/get-batch-key
                     organisation receipt-year batch-number)]
 
-    (email/send-payments-info!
-      {:receivers [inspector-email acceptor-email]
-       :batch-key batch-key
-       :title (get-in grant [:content :name])
-       :date (f/unparse date-formatter now)
-       :count (:count payments-info)
-       :total-granted (:total-granted payments-info)})))
+    {:receivers [inspector-email acceptor-email]
+     :batch-key batch-key
+     :title (get-in grant [:content :name])
+     :date (format-email-date now)
+     :count (:count payments-info)
+     :total-granted (:total-granted payments-info)}))
+
+(defn send-payments-email [data]
+  (email/send-payments-info! (create-payments-email data)))
