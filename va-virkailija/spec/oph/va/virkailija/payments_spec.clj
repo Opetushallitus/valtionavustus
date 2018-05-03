@@ -86,8 +86,8 @@
                      :invoice-date "2018-05-03"})))))
 
   (it "finds payments by grant"
-      (let [grant (first (grant-data/get-grants))
-            payment1 (create-payment grant)
+      (let [grant (first (grant-data/get-grants))]
+        (payments-data/delete-grant-payments (:id grant))
+        (let [payment1 (create-payment grant)
             payment2 (create-payment grant)]
-
-        (should= 2 (count (payments-data/get-grant-payments (:id grant)))))))
+          (should= 2 (count (payments-data/get-grant-payments (:id grant))))))))
