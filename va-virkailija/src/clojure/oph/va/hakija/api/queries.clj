@@ -72,3 +72,8 @@
 (defquery find-paatos-views "sql/hakija/hakemus-paatokset/find.sql")
 
 (defquery check-code-usage "sql/hakija/va_code_values/check-code-usage.sql")
+
+(defquery get-yearly-application-info
+  "sql/hakija/reporting/get-yearly-application-info.sql")
+(defquery get-total-grant-count
+  "sql/hakija/reporting/get-total-grant-count.sql")

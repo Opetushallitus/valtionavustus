@@ -2,6 +2,7 @@
   (:require
    [oph.soresu.common.db :refer [exec]]
    [oph.va.virkailija.db.queries :as queries]
+   [oph.va.hakija.api.queries :as hakija-queries]
    [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
    [clojure.pprint :refer [print-table]])
   (:import (oph.va.jdbc.enums HakuStatus)))
@@ -12,8 +13,7 @@
 (defn get-yearly-application-info []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
-         ;; TODO: Move query to va-virkailija/src/clojure/oph/va/hakija/api.clj
-         (exec :form-db queries/get-yearly-application-info {}))))
+         (exec :form-db hakija-queries/get-yearly-application-info {}))))
 
 (defn get-accepted-count-by-year []
   (year-to-int-all-v
@@ -34,8 +34,7 @@
          (exec :virkailija-db queries/get-yearly-granted {}))))
 
 (defn get-total-grant-count []
-  ;; TODO: Move query to va-virkailija/src/clojure/oph/va/hakija/api.clj
-  (first (exec :form-db queries/get-total-grant-count {})))
+  (first (exec :form-db hakija-queries/get-total-grant-count {})))
 
 (defn total-value [c k]
   (reduce #(+ %1 (get %2 k)) 0 c))
