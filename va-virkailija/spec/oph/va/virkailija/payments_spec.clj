@@ -46,7 +46,8 @@
                     #(start-server
                        {:host "localhost"
                         :port test-server-port
-                        :auto-reload? false}) (_)))
+                        :auto-reload? false
+                        :without-authentication? true}) (_)))
 
   (it "finds payments by register number and invoice date"
       (let [grant (first (grant-data/get-grants))
@@ -89,5 +90,8 @@
       (let [grant (first (grant-data/get-grants))]
         (payments-data/delete-grant-payments (:id grant))
         (let [payment1 (create-payment grant)
-            payment2 (create-payment grant)]
-          (should= 2 (count (payments-data/get-grant-payments (:id grant))))))))
+              payment2 (create-payment grant)
+              response (server/get!
+                         (str "/api/v2/grants/" (:id grant) "/payments/"))]
+          (should= 200 (:status response))
+          (should= 2 (count (server/json->map (:body response))))))))
