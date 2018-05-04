@@ -28,7 +28,6 @@
 (defn get-yearly-granted []
   (mapv convert-to-dash-keys
         (year-to-int-all-v
-         ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
          (exec :virkailija-db queries/get-yearly-granted {}))))
 
 (defn get-total-grant-count []
