@@ -17,13 +17,11 @@
 
 (defn get-accepted-count-by-year []
   (year-to-int-all-v
-   ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
    (exec :virkailija-db queries/get-yearly-evaluation-count-by-status
          {:status "accepted"})))
 
 (defn get-rejected-count-by-year []
   (year-to-int-all-v
-   ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
    (exec :virkailija-db queries/get-yearly-evaluation-count-by-status
          {:status "rejected"})))
 
