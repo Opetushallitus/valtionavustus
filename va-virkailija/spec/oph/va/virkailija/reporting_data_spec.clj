@@ -11,8 +11,7 @@
 
 (def test-server-port 9001)
 
-(defn- create-application-evaluation
-  ([application status]
+(defn- create-application-evaluation [application status]
    (virkailija-db/update-or-create-hakemus-arvio
        (hakija-api/get-avustushaku (:avustushaku application))
        (:id application)
@@ -21,8 +20,7 @@
         :roles {:evaluators []}
         :perustelut nil
         :acedemy-size 0
-        :budget-granted 0
-        :costsGranted 0
+        :costsGranted 30000
         :oppilaitokset []
         :presenter-role-id nil
         :presentercomment nil
@@ -33,15 +31,39 @@
         :summary-comment nil
         :tags {:value []}
         :talousarviotili nil}
-       (:identity server/user-authentication))))
+       (:identity server/user-authentication)))
 
-(defn- create-evaluation[grant status]
+(defn- create-evaluation [grant status]
    (create-application-evaluation
      (server/create-application
        grant
        (server/create-submission
          (:form grant) {:budget-oph-share 40000}))
      status))
+
+(describe
+  "Granted sums"
+
+  (tags :reporting :grantedsums)
+
+  (around-all [_] (with-test-server! :virkailija-db
+                    #(start-server
+                       {:host "localhost"
+                        :port test-server-port
+                        :auto-reload? false}) (_)))
+
+  (it "gets yearly granted sums"
+      (let [grant (first (grant-data/get-grants))]
+        (create-evaluation grant "accepted")
+        (create-evaluation grant "accepted")
+        (create-evaluation grant "accepted")
+        (create-evaluation grant "rejected")
+        (create-evaluation grant "rejected"))
+
+      (should= [{:year (.getYear (java.time.LocalDate/now))
+                 :budget-granted 90000
+                 :costs-granted 90000}]
+               (reporting-data/get-yearly-granted))))
 
 (describe
   "Get yearly evaluations"
@@ -71,7 +93,7 @@
         (let [application
               (server/create-application
                 grant (server/create-submission
-                        (:form grant) {:budget-oph-share 40000}))]
+                        (:form grant) {:budget-oph-share 10000}))]
           (create-application-evaluation application "unhandled")
           (create-application-evaluation application "accepted")
           (create-application-evaluation application "plausible")
@@ -79,7 +101,7 @@
         (let [application
               (server/create-application
                 grant (server/create-submission
-                        (:form grant) {:budget-oph-share 40000}))]
+                        (:form grant) {:budget-oph-share 50000}))]
           (create-application-evaluation application "unhandled")
           (create-application-evaluation application "accepted")
           (create-application-evaluation application "plausible")
@@ -98,7 +120,7 @@
         (let [application
               (server/create-application
                 grant (server/create-submission
-                        (:form grant) {:budget-oph-share 40000}))]
+                        (:form grant) {:budget-oph-share 25000}))]
           (create-application-evaluation application "unhandled")
           (create-application-evaluation application "accepted")
           (create-application-evaluation application "rejected")
@@ -106,7 +128,7 @@
         (let [application
               (server/create-application
                 grant (server/create-submission
-                        (:form grant) {:budget-oph-share 40000}))]
+                        (:form grant) {:budget-oph-share 30000}))]
           (create-application-evaluation application "unhandled")
           (create-application-evaluation application "accepted")
           (create-application-evaluation application "rejected")
