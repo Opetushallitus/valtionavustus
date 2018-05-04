@@ -67,7 +67,7 @@ export default class HakemusDetails extends Component {
                            selvitysType="loppuselvitys"
                            multibatchEnabled={multibatchEnabled}/>
         case 'seuranta':
-          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
+          return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selectedHakemusAccessControl={selectedHakemusAccessControl}/>
         default:
           throw new Error("Bad subTab selection '" + tabName + "'")
       }

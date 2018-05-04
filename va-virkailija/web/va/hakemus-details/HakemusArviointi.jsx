@@ -17,8 +17,6 @@ import AcademySize from './AcademySize.jsx'
 import Perustelut from './Perustelut.jsx'
 import PresenterComment from './PresenterComment.jsx'
 import EditStatus from './EditStatus.jsx'
-import ShouldPay from './ShouldPay.jsx'
-import ShouldPayComments from './ShouldPayComments.jsx'
 import ApplicationPayments from './ApplicationPayments.jsx'
 
 import '../style/admin.less'
@@ -36,7 +34,6 @@ export default class HakemusArviointi extends Component {
       allowHakemusCancellation
     } = this.props.selectedHakemusAccessControl
     const comments = hakemus.comments
-    const showShouldPayComments = true
 
     return (
      <div id="arviointi-tab">
@@ -49,8 +46,6 @@ export default class HakemusArviointi extends Component {
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments} allowHakemusCommenting={allowHakemusCommenting}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
-       <ShouldPay controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges}/>
-       <ShouldPayComments showField={showShouldPayComments} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges}/>
        <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
