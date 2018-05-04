@@ -11,8 +11,7 @@
             [oph.soresu.common.db :refer [exec]]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.virkailija.payments-data :as payments-data]
-            [oph.soresu.form.db :as form-db]
-            [oph.soresu.common.db :as common-db]))
+            [oph.soresu.form.db :as form-db]))
 
 (def test-server-port 9001)
 (def base-url (str "http://localhost:" test-server-port))
@@ -68,11 +67,15 @@
 (defn create-submission [form-id answers]
   (form-db/create-submission! form-id answers))
 
+(defn- generate-hash-id []
+  "Function for generating test id"
+  (java.util.UUID/randomUUID))
+
 (defn create-application [grant submission]
   (first (exec :form-db hakija-queries/create-hakemus
                {:avustushaku_id (:id grant)
                 :status :submitted
-                :user_key (common-db/generate-hash-id)
+                :user_key (generate-hash-id)
                 :form_submission_id (:id submission)
                 :form_submission_version (:version submission)
                 :version (:version submission)
