@@ -20,9 +20,11 @@
 (defn column [i content]
   [:th {:key i} content])
 
-(defn table [props header rows]
+(defn table [props header rows footer]
   [:table {:class "va-ui-table" :style theme/table}
    [:thead
     [:tr (doall (map-indexed header-cell header))]]
    [:tbody
-    (doall (map-indexed row rows))]])
+    (doall (map-indexed row rows))]
+   [:tfoot
+    [:tr (doall (map-indexed cell footer))]]])
