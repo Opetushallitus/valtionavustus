@@ -8,6 +8,7 @@
    [clj-time.format :as f]
    [oph.va.virkailija.db.queries :as queries]
    [oph.va.virkailija.application-data :as application-data]
+   [oph.va.virkailija.grant-data :as grant-data]
    [oph.va.virkailija.invoice :as invoice]
    [oph.va.virkailija.email :as email]))
 
@@ -86,16 +87,21 @@
         convert-to-dash-keys
         convert-timestamps-from-sql)))
 
-(defn get-by-rn-and-date [values]
-  (->> values
-       convert-to-underscore-keys
-       ;; TODO: Problematic: utilizes join between hakija and virkailija schemas
-       (exec :virkailija-db queries/get-by-rn-and-date)
-       (map convert-to-dash-keys)))
+(defn find-payments-by-response [values]
+  "Response values: {:register-number \"string\" :invoice-date \"string\"}"
+  (let [application
+        (application-data/find-application-by-register-number
+              (:register-number values))]
+    (map
+      convert-to-dash-keys
+      (exec :virkailija-db
+            queries/find-payments-by-application-id-and-invoice-date
+            {:application_id (:id application)
+             :invoice_date (:invoice-date values)}))))
 
 (defn update-state-by-response [xml]
   (let [response-values (invoice/read-response-xml xml)
-        payments (get-by-rn-and-date response-values)
+        payments (find-payments-by-response response-values)
         payment (first payments)]
     (cond (empty? payments)
           (throw (ex-info "No payments found!" {:cause "no-payment" :error-message (format "No payment found with values: %s" response-values) }))
@@ -115,10 +121,11 @@
                     {:person-oid "-" :first-name "Rondo" :surname ""})))
 
 (defn get-grant-payments [id]
-  ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
-  (->> (exec :virkailija-db queries/get-grant-payments {:id id})
-       (map convert-to-dash-keys)
-       (map convert-timestamps-from-sql)))
+  (->>
+    (application-data/get-applications-with-evaluation-by-grant id)
+    (reduce
+      (fn [p n] (into p (application-data/get-application-payments (:id n)))) [])
+    (map convert-timestamps-from-sql)))
 
 (defn delete-grant-payments [id]
   (exec :virkailija-db queries/delete-grant-payments {:id id}))
@@ -126,29 +133,30 @@
 (defn delete-payment [id]
   (exec :virkailija-db queries/delete-payment {:id id}))
 
-(defn get-grant-payments-info [id batch-id]
+(defn get-batch-payments-info [batch-id]
   (convert-to-dash-keys
-    ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
     (first (exec :virkailija-db queries/get-grant-payments-info
-                 {:grant_id id :batch_id batch-id}))))
+                 {:batch_id batch-id}))))
 
-(defn send-payments-email
+(defn format-email-date [date]
+  (f/unparse date-formatter date))
+
+(defn create-payments-email
   [{:keys [batch-id inspector-email acceptor-email receipt-date
            grant-id organisation batch-number]}]
-  (let [grant (convert-to-dash-keys
-               ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
-                (first (exec :virkailija-db queries/get-grant
-                             {:grant_id grant-id})))
+  (let [grant (grant-data/get-grant grant-id)
         now (t/now)
         receipt-year (mod (.getYear receipt-date) 100)
-        payments-info (get-grant-payments-info grant-id batch-id)
+        payments-info (get-batch-payments-info batch-id)
         batch-key (invoice/get-batch-key
                     organisation receipt-year batch-number)]
 
-    (email/send-payments-info!
-      {:receivers [inspector-email acceptor-email]
-       :batch-key batch-key
-       :title (get-in grant [:content :name])
-       :date (f/unparse date-formatter now)
-       :count (:count payments-info)
-       :total-granted (:total-granted payments-info)})))
+    {:receivers [inspector-email acceptor-email]
+     :batch-key batch-key
+     :title (get-in grant [:content :name])
+     :date (format-email-date now)
+     :count (:count payments-info)
+     :total-granted (:total-granted payments-info)}))
+
+(defn send-payments-email [data]
+  (email/send-payments-info! (create-payments-email data)))

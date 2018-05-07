@@ -1,5 +1,6 @@
 {:server {:allow-db-clear? true
           :enable-access-log? false
+          :uuid-hash? true
           :port 8081
           :url {:fi "http://localhost:8081/"
                 :sv "http://localhost:8081/"}}

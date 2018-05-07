@@ -404,3 +404,6 @@
 
 (defn list-matching-avustushaut-by-ids [ids]
   (exec :form-db hakija-queries/list-matching-avustushaut-by-ids {:ids ids}))
+
+(defn cancel-all-applications []
+  (exec :form-db hakija-queries/cancel-all-applications! {}))
