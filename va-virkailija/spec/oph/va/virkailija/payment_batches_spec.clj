@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.payment-batches-spec
   (:use [clojure.tools.trace])
-  (:require [speclj.core :refer [should should= describe it tags around-all]]
+  (:require [speclj.core :refer [should should= describe
+                                 it tags around-all run-specs]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-server]]
             [oph.va.virkailija.common-utils
@@ -62,3 +63,5 @@
             (get! "/api/v2/payment-batches/?date=2018-04-17&grant-id=1")]
         (should= 204 status)
         (should= 0 (count (json->map body))))))
+
+(run-specs)

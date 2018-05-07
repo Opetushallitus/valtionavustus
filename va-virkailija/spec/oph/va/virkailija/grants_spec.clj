@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.grants-spec
   (:use [clojure.tools.trace])
-  (:require [speclj.core :refer [should should= describe it tags around-all]]
+  (:require [speclj.core :refer [should should= describe
+                                 it tags around-all run-specs]]
             [oph.va.virkailija.common-utils :refer [get! json->map]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-server]]))
@@ -38,3 +39,5 @@
         (should (some? grants))
         (should= 1 (count grants))
         (should (every? #(some? (:content %)) grants)))))
+
+(run-specs)

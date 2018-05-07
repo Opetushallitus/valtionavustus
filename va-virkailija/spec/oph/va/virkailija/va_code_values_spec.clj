@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.va-code-values-spec
   (:require [speclj.core
-             :refer [describe it should should-not should= tags around-all]]
+             :refer [describe it should should-not should=
+                     tags around-all run-specs]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-server]]
             [oph.va.virkailija.va-code-values-routes :refer [has-privilege?]]
@@ -99,3 +100,5 @@
                  :haku-type "yleisavustus")
           hakija-api/update-avustushaku)
         (should (data/code-used? (:id code))))))
+
+(run-specs)

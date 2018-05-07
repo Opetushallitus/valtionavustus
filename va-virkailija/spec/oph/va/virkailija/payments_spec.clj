@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.payments-spec
   (require [speclj.core
-            :refer [should should-not should= describe it tags around-all]]
+            :refer [should should-not should= describe
+                    it tags around-all run-specs]]
            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
            [oph.va.virkailija.server :refer [start-server]]
            [oph.va.virkailija.payments-data :as payments-data]
@@ -320,3 +321,5 @@
             (delete! (format "/api/v2/payments/%d/" (:id payment)))]
         (should= 400 status)
         (should (some? (payments-data/get-payment (:id payment)))))))
+
+(run-specs)

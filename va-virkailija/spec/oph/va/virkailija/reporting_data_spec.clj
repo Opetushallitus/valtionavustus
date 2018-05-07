@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.reporting-data-spec
   (require [speclj.core
-            :refer [should should-not should= describe it tags around-all]]
+            :refer [should should-not should= describe
+                    it tags around-all run-specs]]
            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
            [oph.va.virkailija.server :refer [start-server]]
            [oph.va.virkailija.reporting-data :as reporting-data]
@@ -154,3 +155,5 @@
 
       (should= [{:year (.getYear (java.time.LocalDate/now)) :count 2}]
                (reporting-data/get-rejected-count-by-year))))
+
+(run-specs)

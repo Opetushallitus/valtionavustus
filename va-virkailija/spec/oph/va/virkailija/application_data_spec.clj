@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.application-data-spec
   (require [speclj.core
-            :refer [should should-not should= describe it tags around-all]]
+            :refer [should should-not should= describe
+                    it tags around-all run-specs]]
            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
            [oph.va.virkailija.server :refer [start-server]]
            [oph.va.virkailija.grant-data :as grant-data]
@@ -66,3 +67,5 @@
           (select-keys (application-data/find-application-by-register-number
              (:register_number application))
                        [:id :version])))))
+
+(run-specs)
