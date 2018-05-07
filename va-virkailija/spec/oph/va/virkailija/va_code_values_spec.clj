@@ -9,7 +9,8 @@
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.common-utils
-             :refer [user-authentication post!]]))
+             :refer [user-authentication post! add-mock-authentication
+                     remove-mock-authentication]]))
 
 (def test-server-port 9001)
 
@@ -50,14 +51,15 @@
 
   (around-all
     [_]
+    (add-mock-authentication user-authentication)
     (with-test-server!
       :virkailija-db
       #(start-server
          {:host "localhost"
           :port test-server-port
           :auto-reload? false
-          :without-authentication? true
-          :authentication user-authentication}) (_)))
+          :without-authentication? true}) (_))
+    (remove-mock-authentication user-authentication))
 
   (it "denies of non-admin create code value"
       (let [{:keys [status body]}

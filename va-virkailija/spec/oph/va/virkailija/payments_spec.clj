@@ -11,7 +11,8 @@
            [oph.va.virkailija.common-utils
             :refer [test-server-port get! post! create-submission
                     create-application json->map admin-authentication
-                    valid-payment-values delete!]]))
+                    valid-payment-values delete! add-mock-authentication
+                    remove-mock-authentication]]))
 
 (def payment-date (java.time.LocalDate/of 2018 5 2))
 
@@ -258,18 +259,19 @@
 (describe
   "Payments routes"
 
-  (tags :server :payments)
+  (tags :server :payments :paymentroutes)
 
   (around-all
     [_]
+    (add-mock-authentication admin-authentication)
     (with-test-server!
       :virkailija-db
       #(start-server
          {:host "localhost"
           :port test-server-port
           :auto-reload? false
-          :without-authentication? true
-          :authentication admin-authentication}) (_)))
+          :without-authentication? true}) (_))
+    (remove-mock-authentication admin-authentication))
 
   (it "creates new payment"
       (let [{:keys [body]} (get! "/api/v2/grants/")
