@@ -53,6 +53,8 @@
                         :auto-reload? false}) (_)))
 
   (it "gets yearly granted sums"
+      (hakija-api/cancel-all-applications)
+      (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
         (create-evaluation grant "accepted")
@@ -77,6 +79,8 @@
                         :auto-reload? false}) (_)))
 
   (it "gets accepted count grouped by year"
+      (hakija-api/cancel-all-applications)
+      (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
         (create-evaluation grant "accepted")
@@ -86,6 +90,8 @@
                (reporting-data/get-accepted-count-by-year)))
 
   (it "gets accepted count grouped by year when there is updated evaluations"
+      (hakija-api/cancel-all-applications)
+      (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
         (create-evaluation grant "accepted")
@@ -107,10 +113,12 @@
           (create-application-evaluation application "plausible")
           (create-application-evaluation application "accepted")))
 
-      (should= [{:year (.getYear (java.time.LocalDate/now)) :count 7}]
+      (should= [{:year (.getYear (java.time.LocalDate/now)) :count 4}]
                (reporting-data/get-accepted-count-by-year)))
 
   (it "gets rejected count grouped by year when there is updated evaluations"
+      (hakija-api/cancel-all-applications)
+      (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
         (create-evaluation grant "accepted")
@@ -135,10 +143,12 @@
           (create-application-evaluation application "plausible")
           (create-application-evaluation application "rejected")))
 
-      (should= [{:year (.getYear (java.time.LocalDate/now)) :count 4}]
+      (should= [{:year (.getYear (java.time.LocalDate/now)) :count 3}]
                (reporting-data/get-rejected-count-by-year)))
 
   (it "gets rejected count grouped by year"
+      (hakija-api/cancel-all-applications)
+      (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
         (create-evaluation grant "accepted")
@@ -146,5 +156,5 @@
         (create-evaluation grant "rejected")
         (create-evaluation grant "rejected"))
 
-      (should= [{:year (.getYear (java.time.LocalDate/now)) :count 6}]
+      (should= [{:year (.getYear (java.time.LocalDate/now)) :count 2}]
                (reporting-data/get-rejected-count-by-year))))

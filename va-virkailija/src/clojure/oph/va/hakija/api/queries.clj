@@ -27,6 +27,7 @@
 (defquery list-valiselvitys-hakemus-ids "sql/hakija/hakemus/list-valiselvitys-hakemus-ids.sql")
 (defquery list-loppuselvitys-hakemus-ids "sql/hakija/hakemus/list-loppuselvitys-hakemus-ids.sql")
 (defquery update-hakemus-selvitys-email! "sql/hakija/hakemus/update-hakemus-selvitys-email.sql")
+(defquery cancel-all-applications! "sql/hakija/hakemus/cancel-all.sql")
 
 (defquery copy-form<! "sql/hakija/form/copy.sql")
 (defquery get-form-by-avustushaku "sql/hakija/form/get-by-avustushaku.sql")
