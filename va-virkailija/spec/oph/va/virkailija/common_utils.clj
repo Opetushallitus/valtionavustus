@@ -7,7 +7,8 @@
             [org.httpkit.client :as http]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-server]]
-            [oph.va.hakija.api.queries :as hakija-queries]))
+            [oph.va.hakija.api.queries :as hakija-queries]
+            [oph.va.virkailija.authentication :as auth]))
 
 (def test-server-port 9001)
 (def base-url (str "http://localhost:" test-server-port))
@@ -50,6 +51,12 @@
               :lang "fi",
               :privileges '("va-admin" "va-user"),
               :username "testaaja"}})
+
+(defn add-mock-authentication [authentication]
+  (auth/add-authentication authentication))
+
+(defn remove-mock-authentication [authentication]
+  (auth/remove-authentication authentication))
 
 (defn create-submission [form-id answers]
   (form-db/create-submission! form-id answers))
