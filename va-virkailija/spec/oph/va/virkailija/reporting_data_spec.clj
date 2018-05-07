@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.reporting-data-spec
   (require [speclj.core
             :refer [should should-not should= describe
-                    it tags around-all run-specs]]
+                    it tags around-all run-specs before after]]
            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
            [oph.va.virkailija.server :refer [start-server]]
            [oph.va.virkailija.reporting-data :as reporting-data]
@@ -54,8 +54,15 @@
                         :port test-server-port
                         :auto-reload? false}) (_)))
 
+  (before
+    (virkailija-db/set-all-evaluations-unhandled)
+    (hakija-api/cancel-all-applications))
+
+  (after
+    (virkailija-db/set-all-evaluations-unhandled)
+    (hakija-api/cancel-all-applications))
+
   (it "gets yearly granted sums"
-      (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
         (create-evaluation grant "accepted")
@@ -64,7 +71,7 @@
         (create-evaluation grant "rejected"))
 
       (should= [{:year (.getYear (java.time.LocalDate/now))
-                 :budget-granted 90000
+                 :budget-granted 67500
                  :costs-granted 90000}]
                (reporting-data/get-yearly-granted))))
 
@@ -73,6 +80,14 @@
 
   (tags :reporting)
 
+  (before
+    (virkailija-db/set-all-evaluations-unhandled)
+    (hakija-api/cancel-all-applications))
+
+  (after
+    (virkailija-db/set-all-evaluations-unhandled)
+    (hakija-api/cancel-all-applications))
+
   (around-all [_] (with-test-server! :virkailija-db
                     #(start-server
                        {:host "localhost"
@@ -80,7 +95,6 @@
                         :auto-reload? false}) (_)))
 
   (it "gets accepted count grouped by year"
-      (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
         (create-evaluation grant "accepted")
@@ -90,7 +104,6 @@
                (reporting-data/get-accepted-count-by-year)))
 
   (it "gets accepted count grouped by year when there is updated evaluations"
-      (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
         (create-evaluation grant "accepted")
@@ -116,7 +129,6 @@
                (reporting-data/get-accepted-count-by-year)))
 
   (it "gets rejected count grouped by year when there is updated evaluations"
-      (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
         (create-evaluation grant "accepted")
@@ -145,7 +157,6 @@
                (reporting-data/get-rejected-count-by-year)))
 
   (it "gets rejected count grouped by year"
-      (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
         (create-evaluation grant "accepted")
