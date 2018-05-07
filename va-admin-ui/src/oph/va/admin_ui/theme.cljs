@@ -23,6 +23,8 @@
 
 (def table-cell {:font-size 16})
 
+(def table table-cell)
+
 (def hr-top {:color "#4c7f00"})
 
 (def notice {:margin 10})
