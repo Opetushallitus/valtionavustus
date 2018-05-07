@@ -6,10 +6,11 @@
            [oph.va.virkailija.payments-data :as payments-data]
            [oph.va.virkailija.payment-batches-data :as payment-batches-data]
            [oph.va.virkailija.grant-data :as grant-data]
-           [oph.va.virkailija.virkailija-server-spec :as server]
-           [clj-time.core :as t]))
-
-(def test-server-port 9001)
+           [clj-time.core :as t]
+           [oph.va.virkailija.common-utils
+            :refer [test-server-port get! post! create-submission
+                    create-application json->map admin-authentication
+                    valid-payment-values delete!]]))
 
 (def payment-date (java.time.LocalDate/of 2018 5 2))
 
@@ -18,9 +19,9 @@
                        :surname "User"})
 
 (defn create-payment [grant]
-  (let [submission (server/create-submission (:form grant)
+  (let [submission (create-submission (:form grant)
                                              {:budget-oph-share 40000})
-        application (server/create-application grant submission)
+        application (create-application grant submission)
         batch (payment-batches-data/create-batch
                 {:receipt-date payment-date
                  :due-date payment-date
@@ -56,9 +57,9 @@
 
   (it "finds payments by register number and invoice date"
       (let [grant (first (grant-data/get-grants))
-            submission (server/create-submission
+            submission (create-submission
                          (:form grant) {:budget-oph-share 40000})
-            application (server/create-application grant submission)
+            application (create-application grant submission)
             batch (payment-batches-data/create-batch
                     {:receipt-date payment-date
                      :due-date payment-date
@@ -96,17 +97,17 @@
         (payments-data/delete-grant-payments (:id grant))
         (let [payment1 (create-payment grant)
               payment2 (create-payment grant)
-              response (server/get!
+              response (get!
                          (str "/api/v2/grants/" (:id grant) "/payments/"))]
           (should= 200 (:status response))
-          (should= 2 (count (server/json->map (:body response)))))))
+          (should= 2 (count (json->map (:body response)))))))
 
   (it "gets application payments history"
       (let [grant (first (grant-data/get-grants))]
         (payments-data/delete-grant-payments (:id grant))
-        (let [submission (server/create-submission
+        (let [submission (create-submission
                            (:form grant) {:budget-oph-share 40000})
-              application (server/create-application grant submission)
+              application (create-application grant submission)
               batch (payment-batches-data/create-batch
                       {:receipt-date payment-date
                        :due-date payment-date
@@ -135,11 +136,11 @@
             (assoc payment1 :state 2 :filename "example.xml") example-identity)
 
           (let [response
-                (server/get!
+                (get!
                   (str "/api/v2/applications/"
                        (:id application) "/payments-history/"))]
             (should= 200 (:status response))
-            (let [payments (server/json->map (:body response))
+            (let [payments (json->map (:body response))
                   payment (some #(when (= (:state %) 2) %) payments)]
               (should= 3 (count payments))
               (should= (:id payment1) (:id payment))
@@ -148,9 +149,9 @@
   (it "gets grant payments info"
       (let [grant (first (grant-data/get-grants))]
         (payments-data/delete-grant-payments (:id grant))
-        (let [submission (server/create-submission
+        (let [submission (create-submission
                            (:form grant) {:budget-oph-share 40000})
-              application (server/create-application grant submission)
+              application (create-application grant submission)
               batch (payment-batches-data/create-batch
                       {:receipt-date payment-date
                        :due-date payment-date
@@ -194,9 +195,9 @@
   (it "creates payments email"
       (let [grant (first (grant-data/get-grants true))]
         (payments-data/delete-grant-payments (:id grant))
-        (let [submission (server/create-submission
+        (let [submission (create-submission
                            (:form grant) {:budget-oph-share 40000})
-              application (server/create-application grant submission)
+              application (create-application grant submission)
               batch (payment-batches-data/create-batch
                       {:receipt-date payment-date
                        :due-date payment-date
@@ -252,3 +253,70 @@
                       :count 2
                       :total-granted 50000}
                      payments-email))))))
+
+(describe
+  "Payments routes"
+
+  (tags :server :payments)
+
+  (around-all
+    [_]
+    (with-test-server!
+      :virkailija-db
+      #(start-server
+         {:host "localhost"
+          :port test-server-port
+          :auto-reload? false
+          :without-authentication? true
+          :authentication admin-authentication}) (_)))
+
+  (it "creates new payment"
+      (let [{:keys [body]} (get! "/api/v2/grants/")
+            grant (first (json->map body))
+            submission (create-submission (:form grant) {})
+            application (create-application grant submission)
+            payment-values (assoc valid-payment-values
+                                  :application-id (:id application)
+                                  :application-version (:version application))
+            {:keys [status body]}
+            (post! "/api/v2/payments/" payment-values)]
+        (should= 200 status)
+        (should= (assoc payment-values
+                        :version 0)
+                 (dissoc (json->map body) :id))))
+
+  (it "deletes created payment"
+      (let [{:keys [body]} (get! "/api/v2/grants/")
+            grant (first (json->map body))
+            submission (create-submission (:form grant) {})
+            application (create-application grant submission)
+            payment-values (assoc valid-payment-values
+                                  :application-id (:id application)
+                                  :application-version (:version application))
+            {:keys [body]}
+            (post! "/api/v2/payments/" payment-values)
+            payment (json->map body)]
+        (should (some? (payments-data/get-payment (:id payment))))
+        (let [{:keys [status body]}
+              (delete! (format "/api/v2/payments/%d/" (:id payment)))]
+          (should= 200 status)
+          (should= nil (payments-data/get-payment (:id payment))))))
+
+  (it "prevents delete of older payment"
+      (let [{:keys [body]} (get! "/api/v2/grants/")
+            grant (first (json->map body))
+            submission (create-submission (:form grant) {})
+            application (create-application grant submission)
+            payment-values (assoc valid-payment-values
+                                  :application-id (:id application)
+                                  :application-version (:version application))
+            {:keys [body]}
+            (post! "/api/v2/payments/" payment-values)
+            payment
+            (payments-data/update-payment
+              (assoc (json->map body) :state 2 :filename "")
+              {:person-oid "" :first-name "" :surname ""})
+            {:keys [status body]}
+            (delete! (format "/api/v2/payments/%d/" (:id payment)))]
+        (should= 400 status)
+        (should (some? (payments-data/get-payment (:id payment)))))))

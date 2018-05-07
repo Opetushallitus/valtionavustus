@@ -3,13 +3,13 @@
             :refer [should should-not should= describe it tags around-all]]
            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
            [oph.va.virkailija.server :refer [start-server]]
-           [oph.va.virkailija.virkailija-server-spec :as server]
            [oph.va.virkailija.reporting-data :as reporting-data]
            [oph.va.virkailija.grant-data :as grant-data]
            [oph.va.virkailija.db :as virkailija-db]
-           [oph.va.hakija.api :as hakija-api]))
-
-(def test-server-port 9001)
+           [oph.va.hakija.api :as hakija-api]
+           [oph.va.virkailija.common-utils
+            :refer [user-authentication test-server-port
+                    create-application create-submission]]))
 
 (defn- create-application-evaluation [application status]
    (virkailija-db/update-or-create-hakemus-arvio
@@ -32,13 +32,13 @@
         :summary-comment nil
         :tags {:value []}
         :talousarviotili nil}
-       (:identity server/user-authentication)))
+       (:identity user-authentication)))
 
 (defn- create-evaluation [grant status]
    (create-application-evaluation
-     (server/create-application
+     (create-application
        grant
-       (server/create-submission
+       (create-submission
          (:form grant) {:budget-oph-share 40000}))
      status))
 
@@ -95,16 +95,16 @@
         (create-evaluation grant "accepted")
         (create-evaluation grant "accepted")
         (let [application
-              (server/create-application
-                grant (server/create-submission
+              (create-application
+                grant (create-submission
                         (:form grant) {:budget-oph-share 10000}))]
           (create-application-evaluation application "unhandled")
           (create-application-evaluation application "accepted")
           (create-application-evaluation application "plausible")
           (create-application-evaluation application "rejected"))
         (let [application
-              (server/create-application
-                grant (server/create-submission
+              (create-application
+                grant (create-submission
                         (:form grant) {:budget-oph-share 50000}))]
           (create-application-evaluation application "unhandled")
           (create-application-evaluation application "accepted")
@@ -123,16 +123,16 @@
         (create-evaluation grant "rejected")
         (create-evaluation grant "rejected")
         (let [application
-              (server/create-application
-                grant (server/create-submission
+              (create-application
+                grant (create-submission
                         (:form grant) {:budget-oph-share 25000}))]
           (create-application-evaluation application "unhandled")
           (create-application-evaluation application "accepted")
           (create-application-evaluation application "rejected")
           (create-application-evaluation application "accepted"))
         (let [application
-              (server/create-application
-                grant (server/create-submission
+              (create-application
+                grant (create-submission
                         (:form grant) {:budget-oph-share 30000}))]
           (create-application-evaluation application "unhandled")
           (create-application-evaluation application "accepted")

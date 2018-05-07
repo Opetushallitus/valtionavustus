@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.grants-spec
   (:use [clojure.tools.trace])
   (:require [speclj.core :refer [should should= describe it tags around-all]]
-            [oph.va.virkailija.virkailija-server-spec :refer [get! json->map]]
+            [oph.va.virkailija.common-utils :refer [get! json->map]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-server]]))
 

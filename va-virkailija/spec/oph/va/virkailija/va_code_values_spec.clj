@@ -3,11 +3,12 @@
              :refer [describe it should should-not should= tags around-all]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-server]]
-            [oph.va.virkailija.virkailija-server-spec :as server]
             [oph.va.virkailija.va-code-values-routes :refer [has-privilege?]]
             [oph.va.virkailija.va-code-values-data :as data]
             [oph.va.hakija.api :as hakija-api]
-            [oph.va.virkailija.grant-data :as grant-data]))
+            [oph.va.virkailija.grant-data :as grant-data]
+            [oph.va.virkailija.common-utils
+             :refer [user-authentication post!]]))
 
 (def test-server-port 9001)
 
@@ -55,11 +56,11 @@
           :port test-server-port
           :auto-reload? false
           :without-authentication? true
-          :authentication server/user-authentication}) (_)))
+          :authentication user-authentication}) (_)))
 
   (it "denies of non-admin create code value"
       (let [{:keys [status body]}
-            (server/post! "/api/v2/va-code-values/" valid-va-code-value)]
+            (post! "/api/v2/va-code-values/" valid-va-code-value)]
         (should= 401 status)<
         (should (empty? body)))))
 

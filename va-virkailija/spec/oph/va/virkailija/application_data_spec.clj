@@ -5,9 +5,8 @@
            [oph.va.virkailija.server :refer [start-server]]
            [oph.va.virkailija.grant-data :as grant-data]
            [oph.va.virkailija.application-data :as application-data]
-           [oph.va.virkailija.virkailija-server-spec :as server]))
-
-(def test-server-port 9001)
+           [oph.va.virkailija.common-utils
+            :refer [test-server-port create-submission create-application]]))
 
 (describe
   "Revoke all application tokens"
@@ -22,8 +21,8 @@
 
   (it "revokes application token of application with active token"
       (let [grant (first (grant-data/get-grants))
-            submission (server/create-submission (:form grant) {})
-            application (server/create-application grant submission)
+            submission (create-submission (:form grant) {})
+            application (create-application grant submission)
             token (application-data/get-application-token (:id application))
             revoked-tokens (application-data/revoke-application-tokens
                              (:id application))]
@@ -33,8 +32,8 @@
 
   (it "does not revoke any tokens when there is no tokens"
       (let [grant (first (grant-data/get-grants))
-            submission (server/create-submission (:form grant) {})
-            application (server/create-application grant submission)]
+            submission (create-submission (:form grant) {})
+            application (create-application grant submission)]
         (application-data/revoke-application-tokens (:id application))
         (should (empty? (application-data/get-application-token
                           (:id application))))
@@ -54,14 +53,14 @@
 
   (it "checks if application is unpaid"
       (let [grant (first (grant-data/get-grants))
-            submission (server/create-submission (:form grant) {})
-            application (server/create-application grant submission)]
+            submission (create-submission (:form grant) {})
+            application (create-application grant submission)]
         (should-not (application-data/is-unpaid? (:id application)))))
 
   (it "find application by register number"
       (let [grant (first (grant-data/get-grants))
-            submission (server/create-submission (:form grant) {})
-            application (server/create-application grant submission)]
+            submission (create-submission (:form grant) {})
+            application (create-application grant submission)]
         (should=
           (select-keys application [:id :version])
           (select-keys (application-data/find-application-by-register-number

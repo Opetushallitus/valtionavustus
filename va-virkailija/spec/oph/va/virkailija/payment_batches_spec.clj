@@ -1,11 +1,10 @@
 (ns oph.va.virkailija.payment-batches-spec
   (:use [clojure.tools.trace])
   (:require [speclj.core :refer [should should= describe it tags around-all]]
-            [oph.va.virkailija.virkailija-server-spec :as server]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
-            [oph.va.virkailija.server :refer [start-server]]))
-
-(def test-server-port 9001)
+            [oph.va.virkailija.server :refer [start-server]]
+            [oph.va.virkailija.common-utils
+             :refer [test-server-port get! post! json->map]]))
 
 (def valid-payment-batch
   {:document-type "XA"
@@ -36,23 +35,23 @@
 
   (it "creates payment batch"
       (let [{:keys [status body]}
-            (server/post! "/api/v2/payment-batches/" valid-payment-batch)]
+            (post! "/api/v2/payment-batches/" valid-payment-batch)]
         (should= 200 status)
         (should= valid-payment-batch
-                 (dissoc (server/json->map body) :id :batch-number))))
+                 (dissoc (json->map body) :id :batch-number))))
 
   (it "prevents duplicate payment batches"
       (let [{:keys [status body]}
-            (server/post! "/api/v2/payment-batches/" valid-payment-batch)]
+            (post! "/api/v2/payment-batches/" valid-payment-batch)]
         (should= 409 status)))
 
   (it "find payment batch (finds one)"
       (let [{:keys [status body]}
-            (server/get!
+            (get!
               (format "/api/v2/payment-batches/?date=%s&grant-id=%d"
                       (:receipt-date valid-payment-batch)
                       (:grant-id valid-payment-batch)))
-            batch (server/json->map body)]
+            batch (json->map body)]
         (should= 200 status)
         (should (some? batch))
         (should= valid-payment-batch
@@ -60,6 +59,6 @@
 
   (it "find payment batch (not found any)"
       (let [{:keys [status body]}
-            (server/get! "/api/v2/payment-batches/?date=2018-04-17&grant-id=1")]
+            (get! "/api/v2/payment-batches/?date=2018-04-17&grant-id=1")]
         (should= 204 status)
-        (should= 0 (count (server/json->map body))))))
+        (should= 0 (count (json->map body))))))
