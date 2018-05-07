@@ -70,10 +70,9 @@
         (create-evaluation grant "rejected")
         (create-evaluation grant "rejected"))
 
-      (should= [{:year (.getYear (java.time.LocalDate/now))
-                 :budget-granted 90000
-                 :costs-granted 90000}]
-               (reporting-data/get-yearly-granted))))
+      (let [report (first (reporting-data/get-yearly-granted))]
+        (should= (.getYear (java.time.LocalDate/now)) (:year report))
+        (should= 90000 (:costs-granted report)))))
 
 (describe
   "Get yearly evaluations"
