@@ -4,7 +4,8 @@
             [cljsjs.material-ui]
             [cljs-react-material-ui.reagent :refer [date-picker popover]
              :rename {date-picker material-date-picker}]
-            [oph.va.admin-ui.theme :as theme]))
+            [oph.va.admin-ui.theme :as theme]
+            [oph.va.admin-ui.components.table :as va-table]))
 
 (defn tooltip [props text]
   (let [state (r/atom {:open false :anchor-el nil})]
@@ -116,3 +117,5 @@
    (:label p)])
 
 (def raised-button button)
+
+(def table va-table/table)
