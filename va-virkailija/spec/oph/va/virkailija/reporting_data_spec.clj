@@ -21,6 +21,7 @@
         :perustelut nil
         :acedemy-size 0
         :costsGranted 30000
+        :budget-granted 30000
         :oppilaitokset []
         :presenter-role-id nil
         :presentercomment nil
@@ -53,7 +54,6 @@
                         :auto-reload? false}) (_)))
 
   (it "gets yearly granted sums"
-      (hakija-api/cancel-all-applications)
       (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
@@ -79,7 +79,6 @@
                         :auto-reload? false}) (_)))
 
   (it "gets accepted count grouped by year"
-      (hakija-api/cancel-all-applications)
       (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
@@ -90,7 +89,6 @@
                (reporting-data/get-accepted-count-by-year)))
 
   (it "gets accepted count grouped by year when there is updated evaluations"
-      (hakija-api/cancel-all-applications)
       (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
@@ -117,7 +115,6 @@
                (reporting-data/get-accepted-count-by-year)))
 
   (it "gets rejected count grouped by year when there is updated evaluations"
-      (hakija-api/cancel-all-applications)
       (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
@@ -147,7 +144,6 @@
                (reporting-data/get-rejected-count-by-year)))
 
   (it "gets rejected count grouped by year"
-      (hakija-api/cancel-all-applications)
       (virkailija-db/set-all-evaluations-unhandled)
       (let [grant (first (grant-data/get-grants))]
         (create-evaluation grant "accepted")
