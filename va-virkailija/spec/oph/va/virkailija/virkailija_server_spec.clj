@@ -9,7 +9,7 @@
 
 (describe "HTTP server"
 
-  (tags :server)
+  (tags :server :auth)
 
   ;; Start HTTP server for running tests
   (around-all [_] (with-test-server! :virkailija-db
