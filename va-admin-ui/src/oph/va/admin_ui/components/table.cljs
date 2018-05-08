@@ -49,7 +49,7 @@
      [table-header {:style table-style
                     :overflow? overflow?}
       (fill header column-count)]
-     (if (empty? rows)
+     (if (and (empty? rows) (some? (:empty-text props)))
        [:div {:style theme/table-empty-text} (:empty-text props)]
        [table-body {:class "va-ui-table-body"
                     :style table-style} rows])
