@@ -11,9 +11,6 @@
         c (if with-props? (rest content) [content])]
     [:td props (doall (map-indexed #(vector :span {:key %1} %2) c))]))
 
-(defn header-cell [i content]
-  [:th {:key i :style {:text-align "left"}} content])
-
 (defn row [i cells]
   [:tr {:key i}
    (doall (map-indexed cell cells))])
@@ -25,12 +22,25 @@
   {:height (get props :height 300)
    :width (get props :width "100%")})
 
-(defn header [{:keys [style overflow?]} cols]
+(defn header-cell [i content on-click]
+  [:th {:key i
+        :style theme/table-header-cell
+        :on-click on-click}
+   [:span content]])
+
+(defn header [{:keys [style overflow? ordering? on-click]} cols]
   [:div {:style (assoc theme/table-header
                        :padding-right (when overflow? 14))}
-      [:table {:style style}
-       [:thead
-        [:tr (doall (map-indexed header-cell cols))]]]])
+   [:table {:style style}
+    [:thead
+     [:tr (doall
+            (map-indexed
+              (fn [i content]
+                (header-cell
+                  i content
+                  #(when on-click
+                     (on-click (get-in content [0 :key])))))
+              cols))]]]])
 
 (defn body [{:keys [style class]} rows]
   [:div {:style {:overflow "auto"
