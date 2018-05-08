@@ -56,16 +56,20 @@ hr {
   pointer-events: none;
 }
 
-.va-ui-table {
-  border-collapse: collapse;
-}
-
 .va-ui-table td, .va-ui-table th {
   padding-left: 5px;
   padding-right: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.va-ui-table tr:nth-child(even) {
+.va-ui-table table {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.va-ui-table-body tr:nth-child(even) {
   background-color: #f6f4f0;
   border-color: #f6f4f0;
 }
