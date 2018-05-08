@@ -21,16 +21,11 @@
     4 "Epäonnistunut"
     "Odottaa maksatusta"))
 
-(defn shrink-str [s]
-  (if (> (count s) (- str-limit 3))
-    (str (subs s 0 (- str-limit 3)) "...")
-    s))
-
 (defn render-application-row [application on-info-clicked]
   [[:span {:style {:text-align "right"}} (get application :register-number)]
    (state-to-str (:state (last (:payments application))))
    [:span {:title (:organization-name application)}
-    (shrink-str (:organization-name application))]
+    (:organization-name application)]
    [:a
      {:target "_blank"
       :title (:project-name application)
@@ -38,14 +33,14 @@
                     (:grant-id application)
                     (:id application))}
     [:span {:title (:project-name application)}
-     (shrink-str (:project-name application))]]
+     (:project-name application)]]
    [{:style {:text-align "right"}}
     [:span(.toLocaleString (get application :budget-granted 0)) " €"]]
    (get-answer-value (:answers application) "bank-iban")
    (get application :lkp-account)
    (get application :takp-account)
    [{:style {:text-align "right"}}
-    (.toLocaleString (get application :budget-granted 0)) " €"]
+    [:span (.toLocaleString (get application :budget-granted 0)) " €"]]
    (when (not (nil? on-info-clicked))
      [ui/icon-button {:on-click #(on-info-clicked (:id application))}
       [ic/action-info-outline]])])
@@ -57,12 +52,18 @@
 
 (defn applications-table [{:keys [applications on-info-clicked is-admin?]}]
   [va-ui/table
-   {}
+   {:empty-text "Ei maksatuksia."}
    (if is-admin? header (butlast header))
    (map
      #(render-application-row % (when is-admin? on-info-clicked))
      applications)
    ["" "" "" ""
-    [:span
-     (.toLocaleString (reduce #(+ %1 (:budget-granted %2)) 0 applications))
-     " €"]]])
+    [{:style {:text-align "right"}}
+     [:span
+      (.toLocaleString (reduce #(+ %1 (:budget-granted %2)) 0 applications))
+      " €"]]
+    "" "" ""
+    [{:style {:text-align "right"}}
+     [:span
+      (.toLocaleString (reduce #(+ %1 (:budget-granted %2)) 0 applications))
+      " €"]]]])
