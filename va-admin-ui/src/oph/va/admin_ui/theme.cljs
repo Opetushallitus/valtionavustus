@@ -32,6 +32,9 @@
                        :background-color "#f0f0f0"
                        :padding 20})
 
+(def table-footer {:overflow "hidden"
+                   :padding-top 10})
+
 (def hr-top {:color "#4c7f00"})
 
 (def notice {:margin 10})

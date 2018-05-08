@@ -49,7 +49,8 @@
                          :width (:width table-style)}}
          [:tbody {:class "va-ui-table-body"}
           (doall (map-indexed row rows))]]])
-     [:div {:style {:overflow "hidden" :padding-right (when overflow? 14)}}
+     [:div {:style (assoc theme/table-footer
+                          :padding-right (when overflow? 14))}
       [:table {:style table-style}
        [:tfoot
         [:tr (doall (map-indexed cell (fill footer column-count)))]]]]]))
