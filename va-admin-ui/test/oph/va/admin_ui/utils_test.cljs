@@ -1,17 +1,12 @@
 (ns oph.va.admin-ui.utils-test
   (:require [cljs.test :refer-macros [is are deftest testing use-fixtures]]
-            [oph.va.admin-ui.payments.utils :as utils]))
+            [oph.va.admin-ui.utils :as utils]))
 
-(deftest test-any-nil
-  (is (not (utils/any-nil? {} [])))
-  (is (not (utils/any-nil? {:hello "word"} [])))
-  (is (not (utils/any-nil? {:hello nil} [])))
-  (is (utils/any-nil? {nil nil} [nil]))
-  (is (utils/any-nil? {} [:hello :world]))
-  (is (utils/any-nil? {:hello "something"} [:hello :world]))
-  (is (not (utils/any-nil? {:hello "something" :world "words"} [:hello :world])))
-  (is (utils/any-nil? {:hello "something" :world "words"} [:hello :world :sep]))
-  (is
-   (utils/any-nil? {:hello "something" :world "words" :sep nil} [:hello :world :sep]))
-  (is (not (utils/any-nil?
-            {:hello "something" :world "words" :sep "others"} [:hello :world :sep]))))
+(deftest test-fill
+   (is (= (utils/fill ["str1" "str2"] 4 "str-x")
+          ["str1" "str2" "str-x" "str-x"]))
+   (is (= (count (utils/fill '(2 3) 5)) 5))
+   (is (= (utils/fill [2] 6) [2 "" "" "" "" ""]))
+   (is (= (utils/fill [] 0) []))
+   (is (= (utils/fill [2 5] 0) [2 5]))
+   (is (= (count (utils/fill nil 0)) 0)))
