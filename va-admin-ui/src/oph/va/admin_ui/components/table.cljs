@@ -41,6 +41,13 @@
          [:tbody {:class class}
           (doall (map-indexed row rows))]]])
 
+(defn- table-footer [{:keys [style overflow?]} content]
+  [:div {:style (assoc theme/table-footer
+                       :padding-right (when overflow? 14))}
+   [:table {:style style}
+    [:tfoot
+     [:tr (doall (map-indexed cell content))]]]])
+
 (defn table [props header rows footer]
   (let [column-count (max (count header) (count (first rows)) (count footer))
         overflow? (> (count rows) 6)
@@ -53,10 +60,8 @@
        [:div {:style theme/table-empty-text} (:empty-text props)]
        [table-body {:class "va-ui-table-body"
                     :style table-style} rows])
-     [:div {:style (assoc theme/table-footer
-                          :padding-right (when overflow? 14))}
-      [:table {:style table-style}
-       [:tfoot
-        [:tr (doall (map-indexed cell (fill footer column-count)))]]]]]))
+     [table-footer {:style table-style
+                    :overflow? overflow?}
+      (fill footer column-count)]]))
 
 (defn group-table [{:keys [header content row-renderer footer-renderer]}])
