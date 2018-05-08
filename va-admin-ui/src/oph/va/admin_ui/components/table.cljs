@@ -32,6 +32,15 @@
        [:thead
         [:tr (doall (map-indexed header-cell cols))]]]])
 
+(defn- table-body [{:keys [style class]} rows]
+  [:div {:style {:overflow "auto"
+                      :max-height (:height style)
+                      :width (:width style)} }
+        [:table {:style {:max-height (:height style)
+                         :width (:width style)}}
+         [:tbody {:class class}
+          (doall (map-indexed row rows))]]])
+
 (defn table [props header rows footer]
   (let [column-count (max (count header) (count (first rows)) (count footer))
         overflow? (> (count rows) 6)
@@ -42,13 +51,8 @@
       (fill header column-count)]
      (if (empty? rows)
        [:div {:style theme/table-empty-text} (:empty-text props)]
-       [:div {:style {:overflow "auto"
-                      :max-height (:height table-style)
-                      :width (:width table-style)} }
-        [:table {:style {:max-height (:height table-style)
-                         :width (:width table-style)}}
-         [:tbody {:class "va-ui-table-body"}
-          (doall (map-indexed row rows))]]])
+       [table-body {:class "va-ui-table-body"
+                    :style table-style} rows])
      [:div {:style (assoc theme/table-footer
                           :padding-right (when overflow? 14))}
       [:table {:style table-style}
