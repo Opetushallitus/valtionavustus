@@ -33,7 +33,8 @@
                        :padding 20})
 
 (def table-footer {:overflow "hidden"
-                   :padding-top 10})
+                   :padding-top 10
+                   :border-top "1px solid #f6f4f0"})
 
 (def hr-top {:color "#4c7f00"})
 
