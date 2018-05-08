@@ -25,16 +25,21 @@
   {:height (get props :height 300)
    :width (get props :width "100%")})
 
+(defn- table-header [{:keys [style overflow?]} cols]
+  [:div {:style (assoc theme/table-header
+                       :padding-right (when overflow? 14))}
+      [:table {:style style}
+       [:thead
+        [:tr (doall (map-indexed header-cell cols))]]]])
+
 (defn table [props header rows footer]
   (let [column-count (max (count header) (count (first rows)) (count footer))
         overflow? (> (count rows) 6)
         table-style (default-style props)]
     [:div {:class "va-ui-table"}
-     [:div {:style (assoc theme/table-header
-                          :padding-right (when overflow? 14))}
-      [:table {:style table-style}
-       [:thead
-        [:tr (doall (map-indexed header-cell (fill header column-count)))]]]]
+     [table-header {:style table-style
+                    :overflow? overflow?}
+      (fill header column-count)]
      (if (empty? rows)
        [:div {:style theme/table-empty-text} (:empty-text props)]
        [:div {:style {:overflow "auto"
@@ -48,3 +53,5 @@
       [:table {:style table-style}
        [:tfoot
         [:tr (doall (map-indexed cell (fill footer column-count)))]]]]]))
+
+(defn group-table [{:keys [header content row-renderer footer-renderer]}])
