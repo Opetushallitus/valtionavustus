@@ -16,8 +16,7 @@
 (defn table-header [& body]
   (let [{:keys [props children]} (split-component body)]
     [:div
-     (-> (select-keys props [:style :class])
-         (update :style merge theme/table-header))
+     (update props :style merge theme/table-header)
      [:table {:width "100%"}
       (apply vector :thead children)]]))
 
@@ -40,8 +39,7 @@
 (defn table-footer [& body]
   (let [{:keys [props children]} (split-component body)]
     [:div
-     (-> (select-keys props [:style :class])
-         (update :style merge theme/table-footer))
+     (update props :style merge theme/table-footer)
      [:table {:width "100%"}
       (apply vector :tfoot children)]]))
 
@@ -49,6 +47,5 @@
   (let [{:keys [props children]} (split-component body)]
     (apply vector
            :div
-           (-> (select-keys props [:style :class])
-               (update :class str " va-ui-table"))
+           (update props :class str " va-ui-table")
            children)))
