@@ -1,5 +1,6 @@
 (ns oph.va.admin-ui.components.table
-  (:require [oph.va.admin-ui.theme :as theme]))
+  (:require [oph.va.admin-ui.theme :as theme]
+            [oph.va.admin-ui.utils :refer [fill]]))
 
 (defn cell [i content]
   (let [with-props? (and (coll? content)
@@ -20,11 +21,30 @@
 (defn column [i content]
   [:th {:key i} content])
 
+(defn- default-style [props]
+  {:height (get props :height 300)
+   :width (get props :width "100%")})
+
 (defn table [props header rows footer]
-  [:table {:class "va-ui-table" :style theme/table}
-   [:thead
-    [:tr (doall (map-indexed header-cell header))]]
-   [:tbody
-    (doall (map-indexed row rows))]
-   [:tfoot
-    [:tr (doall (map-indexed cell footer))]]])
+  (let [column-count (max (count header) (count (first rows)) (count footer))
+        overflow? (> (count rows) 6)
+        table-style (default-style props)]
+    [:div {:class "va-ui-table"}
+     [:div {:style (assoc theme/table-header
+                          :padding-right (when overflow? 14))}
+      [:table {:style table-style}
+       [:thead
+        [:tr (doall (map-indexed header-cell (fill header column-count)))]]]]
+     (if (empty? rows)
+       [:div {:style theme/table-empty-text} (:empty-text props)]
+       [:div {:style {:overflow "auto"
+                      :max-height (:height table-style)
+                      :width (:width table-style)} }
+        [:table {:style {:max-height (:height table-style)
+                         :width (:width table-style)}}
+         [:tbody {:class "va-ui-table-body"}
+          (doall (map-indexed row rows))]]])
+     [:div {:style {:overflow "hidden" :padding-right (when overflow? 14)}}
+      [:table {:style table-style}
+       [:tfoot
+        [:tr (doall (map-indexed cell (fill footer column-count)))]]]]]))
