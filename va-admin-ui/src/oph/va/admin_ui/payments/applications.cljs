@@ -36,51 +36,51 @@
    [ui/table-row-column
     {:style (merge theme/table-cell {:text-align "right"})}
     (.toLocaleString (get application :budget-granted 0)) " €"]
-   [ui/table-row-column {:style theme/table-cell}
+   [ui/table-row-column
     (get-answer-value (:answers application) "bank-iban")]
-   [ui/table-row-column {:style (merge theme/table-cell {:text-align "right"})}
+   [ui/table-row-column {:style {:text-align "right"}}
     (get application :register-number)]
-   [ui/table-row-column {:style theme/table-cell}
+   [ui/table-row-column
     (get application :lkp-account)]
-   [ui/table-row-column {:style theme/table-cell}
+   [ui/table-row-column
     (get application :takp-account)]
-   [ui/table-row-column {:style (merge theme/table-cell {:text-align "right"})}
+   [ui/table-row-column {:style {:text-align "right"}}
     (.toLocaleString (get application :total-paid 0)) " €"]
    (when is-admin?
-     [ui/table-row-column {:style theme/table-cell}
+     [ui/table-row-column
     [mui/icon-button {:on-click #(on-info-clicked (:id application))}
        [ic/action-info-outline]]])])
 
 (defn applications-table [{:keys [applications on-info-clicked is-admin?]}]
   [:div
-   [ui/table {:fixed-header true :selectable false :body-style theme/table-body}
-    [ui/table-header {:adjust-for-checkbox false :display-select-all false}
+   [ui/table
+    [ui/table-header
      [ui/table-row
-      [ui/table-header-column {:style theme/table-cell} "Tila"]
-      [ui/table-header-column {:style theme/table-cell} "Toimittajan nimi"]
-      [ui/table-header-column {:style theme/table-cell} "Hanke"]
+      [ui/table-header-column "Tila"]
+      [ui/table-header-column "Toimittajan nimi"]
+      [ui/table-header-column "Hanke"]
       [ui/table-header-column
-       {:style (merge theme/table-cell {:text-align "right"})}
+       {:style {:text-align "right"}}
        "Myönnetty summa"]
-      [ui/table-header-column {:style theme/table-cell} "IBAN"]
+      [ui/table-header-column "IBAN"]
       [ui/table-header-column
-       {:style (merge theme/table-cell {:text-align "right"})}
+       {:style {:text-align "right"}}
        "Pitkäviite"]
-      [ui/table-header-column {:style theme/table-cell} "LKP-tili"]
-      [ui/table-header-column {:style theme/table-cell} "TaKp-tili"]
+      [ui/table-header-column "LKP-tili"]
+      [ui/table-header-column "TaKp-tili"]
       [ui/table-header-column
-       {:style (merge theme/table-cell {:text-align "right"})} "Maksettu"]
+       {:style {:text-align "right"}} "Maksettu"]
       (when is-admin?
-        [ui/table-header-column {:style theme/table-cell} "Lisätietoja"])]]
-    [ui/table-body {:display-row-checkbox false}
+        [ui/table-header-column "Lisätietoja"])]]
+    [ui/table-body
      (doall (map-indexed #(render-application %1 %2 on-info-clicked is-admin?)
                          applications))]
-    [ui/table-footer {:adjust-for-checkbox false}
+    [ui/table-footer
      [ui/table-row
       [ui/table-row-column]
       [ui/table-row-column]
-      [ui/table-row-column {:style theme/table-cell} "Yhteensä"]
-      [ui/table-row-column {:style theme/table-cell}
+      [ui/table-row-column "Yhteensä"]
+      [ui/table-row-column
        (.toLocaleString (reduce #(+ %1 (:budget-granted %2)) 0 applications))
        " €"]
       [ui/table-row-column]
