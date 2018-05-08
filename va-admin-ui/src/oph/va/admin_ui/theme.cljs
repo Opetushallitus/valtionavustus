@@ -23,7 +23,14 @@
 
 (def table-cell {:font-size 16})
 
+(def table-header {:border-bottom "1px solid #f6f4f0"
+                   :padding-bottom 10})
+
 (def table table-cell)
+
+(def table-empty-text {:width "100%"
+                       :background-color "#f0f0f0"
+                       :padding 20})
 
 (def hr-top {:color "#4c7f00"})
 
