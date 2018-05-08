@@ -26,6 +26,8 @@
 (def table-header {:border-bottom "1px solid #f6f4f0"
                    :padding-bottom 10})
 
+(def table-header-cell {:cursor "pointer"})
+
 (def table table-cell)
 
 (def table-empty-text {:width "100%"
