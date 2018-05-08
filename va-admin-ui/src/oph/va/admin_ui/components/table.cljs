@@ -21,18 +21,18 @@
 (defn column [i content]
   [:th {:key i} content])
 
-(defn- default-style [props]
+(defn default-style [props]
   {:height (get props :height 300)
    :width (get props :width "100%")})
 
-(defn- table-header [{:keys [style overflow?]} cols]
+(defn header [{:keys [style overflow?]} cols]
   [:div {:style (assoc theme/table-header
                        :padding-right (when overflow? 14))}
       [:table {:style style}
        [:thead
         [:tr (doall (map-indexed header-cell cols))]]]])
 
-(defn- table-body [{:keys [style class]} rows]
+(defn body [{:keys [style class]} rows]
   [:div {:style {:overflow "auto"
                       :max-height (:height style)
                       :width (:width style)} }
@@ -41,27 +41,31 @@
          [:tbody {:class class}
           (doall (map-indexed row rows))]]])
 
-(defn- table-footer [{:keys [style overflow?]} content]
+(defn footer [{:keys [style overflow?]} content]
   [:div {:style (assoc theme/table-footer
                        :padding-right (when overflow? 14))}
    [:table {:style style}
     [:tfoot
      [:tr (doall (map-indexed cell content))]]]])
 
-(defn table [props header rows footer]
-  (let [column-count (max (count header) (count (first rows)) (count footer))
-        overflow? (> (count rows) 6)
+(defn table [props header-content body-content footer-content]
+  (let [column-count
+        (max (count header-content)
+             (count (first body-content))
+             (count footer-content))
+        overflow? (> (count body-content) 6)
         table-style (default-style props)]
     [:div {:class "va-ui-table"}
-     [table-header {:style table-style
+     [header {:style table-style
                     :overflow? overflow?}
-      (fill header column-count)]
-     (if (and (empty? rows) (some? (:empty-text props)))
+      (fill header-content column-count)]
+     (if (and (empty? body-content) (some? (:empty-text props)))
        [:div {:style theme/table-empty-text} (:empty-text props)]
-       [table-body {:class "va-ui-table-body"
-                    :style table-style} rows])
-     [table-footer {:style table-style
+       [body {:class "va-ui-table-body"
+                    :style table-style}
+        body-content])
+     [footer {:style table-style
                     :overflow? overflow?}
-      (fill footer column-count)]]))
+      (fill footer-content column-count)]]))
 
 (defn group-table [{:keys [header content row-renderer footer-renderer]}])
