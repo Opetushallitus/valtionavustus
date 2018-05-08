@@ -33,7 +33,8 @@
       :href (format "/avustushaku/%d/hakemus/%d/arviointi/"
                     (:grant-id application)
                     (:id application))} (:project-name application)]]
-   [ui/table-row-column {:style theme/table-cell}
+   [ui/table-row-column
+    {:style (merge theme/table-cell {:text-align "right"})}
     (.toLocaleString (get application :budget-granted 0)) " €"]
    [ui/table-row-column {:style theme/table-cell}
     (get-answer-value (:answers application) "bank-iban")]
@@ -43,7 +44,7 @@
     (get application :lkp-account)]
    [ui/table-row-column {:style theme/table-cell}
     (get application :takp-account)]
-   [ui/table-row-column {:style theme/table-cell}
+   [ui/table-row-column {:style (merge theme/table-cell {:text-align "right"})}
     (.toLocaleString (get application :total-paid 0)) " €"]
    (when is-admin?
      [ui/table-row-column {:style theme/table-cell}
@@ -58,14 +59,17 @@
       [ui/table-header-column {:style theme/table-cell} "Tila"]
       [ui/table-header-column {:style theme/table-cell} "Toimittajan nimi"]
       [ui/table-header-column {:style theme/table-cell} "Hanke"]
-      [ui/table-header-column {:style theme/table-cell} "Myönnetty summa"]
+      [ui/table-header-column
+       {:style (merge theme/table-cell {:text-align "right"})}
+       "Myönnetty summa"]
       [ui/table-header-column {:style theme/table-cell} "IBAN"]
       [ui/table-header-column
        {:style (merge theme/table-cell {:text-align "right"})}
        "Pitkäviite"]
       [ui/table-header-column {:style theme/table-cell} "LKP-tili"]
       [ui/table-header-column {:style theme/table-cell} "TaKp-tili"]
-      [ui/table-header-column {:style theme/table-cell} "Maksettu"]
+      [ui/table-header-column
+       {:style (merge theme/table-cell {:text-align "right"})} "Maksettu"]
       (when is-admin?
         [ui/table-header-column {:style theme/table-cell} "Lisätietoja"])]]
     [ui/table-body {:display-row-checkbox false}
