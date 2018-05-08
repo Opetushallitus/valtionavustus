@@ -67,5 +67,3 @@
      [footer {:style table-style
                     :overflow? overflow?}
       (fill footer-content column-count)]]))
-
-(defn group-table [{:keys [header content row-renderer footer-renderer]}])
