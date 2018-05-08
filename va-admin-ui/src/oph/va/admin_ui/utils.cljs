@@ -9,3 +9,11 @@
    (let [parsed (js/parseInt s)]
      (if (js/isNaN parsed) d parsed)))
   ([s] (parse-int s nil)))
+
+(defn fill
+  ([coll c v]
+   (if (> c (count coll))
+     (into coll (replicate (- c (count coll)) v))
+     coll))
+  ([coll c]
+   (fill coll c "")))
