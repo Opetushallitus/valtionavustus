@@ -2,78 +2,53 @@
   (:require [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.utils :refer [fill]]))
 
-(defn cell [i content]
-  (let [with-props? (and (coll? content)
-                         (map? (first content)))
-        props (if with-props?
-                (assoc (first content) :key i)
-                {:key i})
-        c (if with-props? (rest content) [content])]
-    [:td props (doall (map-indexed #(vector :span {:key %1} %2) c))]))
+(defn- split-component [body]
+  (if (map? (first body))
+    {:props (first body)
+     :children (rest body)}
+    {:props {}
+     :children body}))
 
-(defn row [i cells]
-  [:tr {:key i}
-   (doall (map-indexed cell cells))])
+(def table-row :tr)
 
-(defn column [i content]
-  [:th {:key i} content])
+(def table-row-column :td)
 
-(defn default-style [props]
-  {:height (get props :height 300)
-   :width (get props :width "100%")})
+(defn table-header [& body]
+  (let [{:keys [props children]} (split-component body)]
+    [:div
+     (-> (select-keys props [:style :class])
+         (update :style merge theme/table-header))
+     [:table {:width "100%"}
+      (apply vector :thead children)]]))
 
-(defn header-cell [i content on-click]
-  [:th {:key i
-        :style theme/table-header-cell
-        :on-click on-click}
-   [:span content]])
+(defn table-header-column [& body]
+  (let [{:keys [props children]} (split-component body)]
+    (apply vector :th
+           (update props :style merge theme/table-header-cell)
+           children)))
 
-(defn header [{:keys [style overflow? ordering? on-click]} cols]
-  [:div {:style (assoc theme/table-header
-                       :padding-right (when overflow? 14))}
-   [:table {:style style}
-    [:thead
-     [:tr (doall
-            (map-indexed
-              (fn [i content]
-                (header-cell
-                  i content
-                  #(when on-click
-                     (on-click (get-in content [0 :key])))))
-              cols))]]]])
+(defn table-body [& body]
+  (let [{:keys [props children]} (split-component body)
+        height (get-in props [:style :table-height] 300)]
+    [:div {:style {:overflow "auto"
+                   :max-height height}}
+        [:table {:style {:max-height height :width "100%"}}
+         (apply vector :tbody
+                {:class (str "va-ui-table-body" (:class props))}
+                children)]]))
 
-(defn body [{:keys [style class]} rows]
-  [:div {:style {:overflow "auto"
-                      :max-height (:height style)
-                      :width (:width style)} }
-        [:table {:style {:max-height (:height style)
-                         :width (:width style)}}
-         [:tbody {:class class}
-          (doall (map-indexed row rows))]]])
+(defn table-footer [& body]
+  (let [{:keys [props children]} (split-component body)]
+    [:div
+     (-> (select-keys props [:style :class])
+         (update :style merge theme/table-footer))
+     [:table {:width "100%"}
+      (apply vector :tfoot children)]]))
 
-(defn footer [{:keys [style overflow?]} content]
-  [:div {:style (assoc theme/table-footer
-                       :padding-right (when overflow? 14))}
-   [:table {:style style}
-    [:tfoot
-     [:tr (doall (map-indexed cell content))]]]])
-
-(defn table [props header-content body-content footer-content]
-  (let [column-count
-        (max (count header-content)
-             (count (first body-content))
-             (count footer-content))
-        overflow? (> (count body-content) 6)
-        table-style (default-style props)]
-    [:div {:class "va-ui-table"}
-     [header {:style table-style
-                    :overflow? overflow?}
-      (fill header-content column-count)]
-     (if (and (empty? body-content) (some? (:empty-text props)))
-       [:div {:style theme/table-empty-text} (:empty-text props)]
-       [body {:class "va-ui-table-body"
-                    :style table-style}
-        body-content])
-     [footer {:style table-style
-                    :overflow? overflow?}
-      (fill footer-content column-count)]]))
+(defn table [& body]
+  (let [{:keys [props children]} (split-component body)]
+    (apply vector
+           :div
+           (-> (select-keys props [:style :class])
+               (update :class str " va-ui-table"))
+           children)))
