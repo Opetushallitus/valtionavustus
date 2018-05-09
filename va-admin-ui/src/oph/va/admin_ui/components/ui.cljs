@@ -2,6 +2,7 @@
   (:require [clojure.string :as string]
             [reagent.core :as r]
             [cljsjs.material-ui]
+            [cljs-react-material-ui.icons :as ic]
             [cljs-react-material-ui.reagent :refer [date-picker popover]
              :rename {date-picker material-date-picker}]
             [oph.va.admin-ui.theme :as theme]
@@ -119,3 +120,9 @@
 (def raised-button button)
 
 (def table va-table/table)
+
+(defn arrow [{:keys [style direction]}]
+  [:span {:style style}
+   (if (= direction :down)
+     [ic/navigation-arrow-drop-down]
+     [ic/navigation-arrow-drop-up])])
