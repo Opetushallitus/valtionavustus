@@ -84,7 +84,7 @@
    [table/table-row-column (get payment :lkp-account)]
    [table/table-row-column (get payment :takp-account)]
    [table/table-row-column {:style {:text-align "right"}}
-    (.toLocaleString (get payment :total-paid 0)) " €"]])
+    (.toLocaleString (get payment :budget-granted 0)) " €"]])
 
 (defn sort-payments [payments sort-key descend?]
   (if descend?
