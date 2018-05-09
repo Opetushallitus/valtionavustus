@@ -2,12 +2,9 @@
   (:require [cljsjs.material-ui]
             [cljs-react-material-ui.icons :as ic]
             [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.utils :refer [format]]
+            [oph.va.admin-ui.utils :refer [format get-answer-value]]
             [oph.va.admin-ui.components.table :as ui]
             [cljs-react-material-ui.reagent :as mui]))
-
-(defn get-answer-value [answers key]
-  (get (some #(when (= (:key %) key) %) answers) :value))
 
 (defn state-to-str [state]
   (case state

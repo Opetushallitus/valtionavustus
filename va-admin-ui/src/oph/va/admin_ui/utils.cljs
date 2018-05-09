@@ -17,3 +17,6 @@
      coll))
   ([coll c]
    (fill coll c "")))
+
+(defn get-answer-value [answers key]
+  (get (some #(when (= (:key %) key) %) answers) :value))
