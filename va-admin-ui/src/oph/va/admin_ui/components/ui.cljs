@@ -47,7 +47,7 @@
      (-> props
          (select-keys [:value :type :type :size :min :max
                              :max-length :on-key-press])
-         (update :class str "oph-input")
+         (update :class str " oph-input" (when (= (:size p) :small) " small"))
          (assoc
            :style (if (:error props) {:border-color "#f44336"} {})
            :on-change (add-validator (:on-change props) (:validator props))
