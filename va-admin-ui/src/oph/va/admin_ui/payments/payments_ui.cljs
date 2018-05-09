@@ -64,7 +64,7 @@
 (defn render-payment [i payment]
   [table/table-row {:key i}
    [table/table-row-column {:style {:text-align "right"}}
-    (get payment :register-number)]
+    (:register-number payment)]
    [table/table-row-column {:title (:organization-name payment)}
     (:organization-name payment)]
    [table/table-row-column
@@ -73,7 +73,8 @@
       :title (:project-name payment)
       :href (format "/avustushaku/%d/hakemus/%d/arviointi/"
                     (:grant-id payment)
-                    (:id payment))} (:project-name payment)]]
+                    (:application-id payment))}
+     (:project-name payment)]]
    [table/table-row-column
     {:style (merge theme/table-cell {:text-align "right"})}
     (.toLocaleString (get payment :budget-granted 0)) " €"]
@@ -89,14 +90,14 @@
    [table/table
     [table/table-header
      [table/table-row
-      [table/table-header-column {:style {:text-align "right"}} "Pitkäviite"]
+      [table/table-header-column "Pitkäviite"]
       [table/table-header-column "Toimittajan nimi"]
       [table/table-header-column "Hanke"]
-      [table/table-header-column {:style {:text-align "right"}} "Maksuun"]
+      [table/table-header-column "Maksuun"]
       [table/table-header-column "Pankkitilin IBAN"]
       [table/table-header-column "LKP-tili"]
       [table/table-header-column "TaKp-tili"]
-      [table/table-header-column {:style {:text-align "right"}} "Tiliöinti"]]]
+      [table/table-header-column "Tiliöinti"]]]
     [table/table-body
      (doall (map-indexed render-payment payments))]
     [table/table-footer
