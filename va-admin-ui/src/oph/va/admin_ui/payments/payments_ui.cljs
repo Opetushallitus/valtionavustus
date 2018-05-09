@@ -85,30 +85,64 @@
    [table/table-row-column {:style {:text-align "right"}}
     (.toLocaleString (get payment :total-paid 0)) " €"]])
 
+(defn sort-payments [payments sort-key descend?]
+  (if descend?
+    (sort-by sort-key payments)
+    (reverse (sort-by sort-key payments))))
+
+(defn sort-column! [sort-params sort-key]
+  (swap! sort-params assoc
+         :sort-key sort-key
+         :descend? (not (:descend? @sort-params))))
+
 (defn payments-table [payments]
-  [:div
-   [table/table
-    [table/table-header
-     [table/table-row
-      [table/table-header-column "Pitkäviite"]
-      [table/table-header-column "Toimittajan nimi"]
-      [table/table-header-column "Hanke"]
-      [table/table-header-column "Maksuun"]
-      [table/table-header-column "Pankkitilin IBAN"]
-      [table/table-header-column "LKP-tili"]
-      [table/table-header-column "TaKp-tili"]
-      [table/table-header-column "Tiliöinti"]]]
-    [table/table-body
-     (doall (map-indexed render-payment payments))]
-    [table/table-footer
-     [table/table-row
-      [table/table-row-column]
-      [table/table-row-column]
-      [table/table-row-column "Yhteensä"]
-      [table/table-row-column {:style {:text-align "right"}}
-       (.toLocaleString (reduce #(+ %1 (:budget-granted %2)) 0 payments))
-       " €"]
-      [table/table-row-column]
-      [table/table-row-column]
-      [table/table-row-column]
-      [table/table-row-column]]]]])
+  (let [sort-params (r/atom {:sort-key nil :descend? false})]
+    (fn [payments]
+      (let [sorted-payments
+            (if (nil? (:sort-key @sort-params))
+              payments
+              (sort-payments
+                payments (:sort-key @sort-params) (:descend? @sort-params)))]
+        [:div
+         [table/table
+          [table/table-header
+           [table/table-row
+            [table/table-header-column
+             {:on-click #(sort-column! sort-params :register-number)}
+             "Pitkäviite"]
+            [table/table-header-column
+             {:on-click #(sort-column! sort-params :organization-name)}
+             "Toimittajan nimi"]
+            [table/table-header-column
+             {:on-click #(sort-column! sort-params :project-name)}
+             "Hanke"]
+            [table/table-header-column
+             {:on-click #(sort-column! sort-params :payment-sum)}
+             "Maksuun"]
+            [table/table-header-column
+             {:on-click #(sort-column! sort-params :bank-iban)}
+             "Pankkitilin IBAN"]
+            [table/table-header-column
+             {:on-click #(sort-column! sort-params :lkp-account)}
+             "LKP-tili"]
+            [table/table-header-column
+             {:on-click #(sort-column! sort-params :takp-account)}
+             "TaKp-tili"]
+            [table/table-header-column
+             {:on-click #(sort-column! sort-params :budget-granted)}
+             "Tiliöinti"]]]
+          [table/table-body
+           (doall (map-indexed render-payment sorted-payments))]
+          [table/table-footer
+           [table/table-row
+            [table/table-row-column]
+            [table/table-row-column]
+            [table/table-row-column "Yhteensä"]
+            [table/table-row-column {:style {:text-align "right"}}
+             (.toLocaleString
+               (reduce #(+ %1 (:budget-granted %2)) 0 payments))
+             " €"]
+            [table/table-row-column]
+            [table/table-row-column]
+            [table/table-row-column]
+            [table/table-row-column]]]]]))))
