@@ -29,7 +29,7 @@
 (defn table-body [& body]
   (let [{:keys [props children]} (split-component body)
         height (get-in props [:style :table-height] 300)]
-    [:div {:style (merge {:max-height height} theme/table-body)}
+    [:div {:style (merge {:max-height height} theme/table-body (:style props))}
         [:table {:style {:max-height height :width "100%"}}
          (apply vector :tbody
                 {:class (str "va-ui-table-body" (:class props))}
