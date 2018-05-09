@@ -113,7 +113,10 @@
   [table/table-header-column
    [:div
     {:on-click #(on-sort column-key)}
-    title]
+    title (when (= (:sort-key sort-params) column-key)
+            [va-ui/arrow
+             {:direction (if (:descend? sort-params) :up :down)
+              :style {:float "right"}}])]
    [va-ui/text-field
     {:size :small
      :on-change #(on-filter column-key (-> % .-target .-value))}]])
