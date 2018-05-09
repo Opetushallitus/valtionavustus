@@ -55,3 +55,24 @@ hr {
 .oph-select-container:before {
   pointer-events: none;
 }
+
+.va-ui-table td, .va-ui-table th {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  padding: 5px;
+}
+
+.va-ui-table table {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.va-ui-table-body tr:nth-child(even) {
+  background-color: #f6f4f0;
+}
+
+.oph-input.small {
+  padding: 1px;
+}

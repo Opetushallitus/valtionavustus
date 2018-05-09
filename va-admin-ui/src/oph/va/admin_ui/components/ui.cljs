@@ -2,9 +2,11 @@
   (:require [clojure.string :as string]
             [reagent.core :as r]
             [cljsjs.material-ui]
+            [cljs-react-material-ui.icons :as ic]
             [cljs-react-material-ui.reagent :refer [date-picker popover]
              :rename {date-picker material-date-picker}]
-            [oph.va.admin-ui.theme :as theme]))
+            [oph.va.admin-ui.theme :as theme]
+            [oph.va.admin-ui.components.table :as va-table]))
 
 (defn tooltip [props text]
   (let [state (r/atom {:open false :anchor-el nil})]
@@ -45,7 +47,7 @@
      (-> props
          (select-keys [:value :type :type :size :min :max
                              :max-length :on-key-press])
-         (update :class str "oph-input")
+         (update :class str " oph-input" (when (= (:size p) :small) " small"))
          (assoc
            :style (if (:error props) {:border-color "#f44336"} {})
            :on-change (add-validator (:on-change props) (:validator props))
@@ -116,3 +118,11 @@
    (:label p)])
 
 (def raised-button button)
+
+(def table va-table/table)
+
+(defn arrow [{:keys [style direction]}]
+  [:span {:style style}
+   (if (= direction :down)
+     [ic/navigation-arrow-drop-down]
+     [ic/navigation-arrow-drop-up])])

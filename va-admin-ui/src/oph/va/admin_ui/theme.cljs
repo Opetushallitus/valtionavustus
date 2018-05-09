@@ -19,9 +19,26 @@
 
 (def active-link (assoc link :color "#2a2a2a"))
 
-(def table-body {:max-height "250px"})
+(def table-body {:overflow "auto"})
 
 (def table-cell {:font-size 16})
+
+(def table-header {:border-bottom "1px solid #f6f4f0"
+                   :padding-bottom 10
+                   :padding-right 14})
+
+(def table-header-cell {:cursor "pointer"})
+
+(def table table-cell)
+
+(def table-empty-text {:width "100%"
+                       :background-color "#f0f0f0"
+                       :padding 20})
+
+(def table-footer {:overflow "hidden"
+                   :padding-top 10
+                   :border-top "1px solid #f6f4f0"
+                   :padding-right 14})
 
 (def hr-top {:color "#4c7f00"})
 

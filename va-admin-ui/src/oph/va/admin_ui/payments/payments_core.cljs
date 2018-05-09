@@ -172,24 +172,7 @@
              (financing/payment-fields @batch-values
                                        #(swap! batch-values assoc %1 %2))]
             [:h3 "Myönteiset päätökset"]
-            (applications/applications-table
-              {:applications @current-applications
-               :on-info-clicked
-               (fn [id]
-                 (let [dialog-chan
-                       (dialogs/show-loading-dialog! "Ladataan historiatietoja" 2)]
-                   (go
-                     (put! dialog-chan 1)
-                     (let [result (<! (connection/get-payment-history id))]
-                       (close! dialog-chan)
-                       (if (:success result)
-                         (dialogs/show-dialog!
-                           "Maksatuksen historia"
-                           (r/as-element (payments-ui/render-history (:body result))))
-                         (dialogs/show-error-message!
-                           "Virhe historiatietojen latauksessa"
-                           (select-keys result [:status :error-text])))))))
-               :is-admin? (user/is-admin? user-info)})]
+            [payments-ui/payments-table @current-applications]]
            (let [accounts-nil? (any-account-nil? @current-applications)]
              [:div
               (when accounts-nil?
