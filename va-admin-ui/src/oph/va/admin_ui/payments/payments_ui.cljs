@@ -9,7 +9,8 @@
             [oph.va.admin-ui.payments.utils
              :refer [to-simple-date-time to-simple-date]]
             [oph.va.admin-ui.utils :refer [format get-answer-value]]
-            [oph.va.admin-ui.components.ui :as va-ui]))
+            [oph.va.admin-ui.components.ui :as va-ui]
+            [clojure.string :refer [lower-case]]))
 
 (defn render-history-item [i application]
   [ui/table-row {:key i}
@@ -96,8 +97,16 @@
          :sort-key sort-key
          :descend? (not (:descend? @sort-params))))
 
+(defn to-lower-str [v]
+  (-> v
+      str
+      lower-case))
+
 (defn payment-matches? [payment filters]
-  (every? (fn [[k v]] (> (.indexOf (str (get payment k)) v) -1) ) filters))
+  (every?
+    (fn [[k v]]
+      (> (.indexOf (to-lower-str (get payment k)) v) -1))
+    filters))
 
 (defn filter-payments [payments filters]
   (filter #(payment-matches? % filters) payments))
@@ -106,7 +115,7 @@
   (prn k v)
   (if (empty? v)
     (swap! filters dissoc k)
-    (swap! filters assoc k v)))
+    (swap! filters assoc k (lower-case v))))
 
 (defn sortable-header-column
   [{:keys [title column-key on-sort on-filter sort-params]}]
@@ -143,7 +152,7 @@
               :on-filter #(update-filters! filters %1 %2)}]
             [sortable-header-column
              {:title "Toimittajan nimi"
-              :column-key :organization+name
+              :column-key :organization-name
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
