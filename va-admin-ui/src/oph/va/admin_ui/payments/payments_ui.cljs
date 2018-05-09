@@ -181,7 +181,7 @@
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
             [sortable-header-column
-             {:title "TaKP-tili"
+             {:title "TaKp-tili"
               :column-key :takp-account
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
