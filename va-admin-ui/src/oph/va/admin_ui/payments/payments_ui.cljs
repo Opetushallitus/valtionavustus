@@ -8,7 +8,8 @@
             [oph.va.admin-ui.payments.applications :refer [state-to-str]]
             [oph.va.admin-ui.payments.utils
              :refer [to-simple-date-time to-simple-date]]
-            [oph.va.admin-ui.utils :refer [format get-answer-value]]))
+            [oph.va.admin-ui.utils :refer [format get-answer-value]]
+            [oph.va.admin-ui.components.ui :as va-ui]))
 
 (defn render-history-item [i application]
   [ui/table-row {:key i}
@@ -95,21 +96,48 @@
          :sort-key sort-key
          :descend? (not (:descend? @sort-params))))
 
+(defn payment-matches? [payment filters]
+  (every? (fn [[k v]] (> (.indexOf (str (get payment k)) v) -1) ) filters))
+
+(defn filter-payments [payments filters]
+  (filter #(payment-matches? % filters) payments))
+
+(defn update-filters! [filters k v]
+  (prn k v)
+  (if (empty? v)
+    (swap! filters dissoc k)
+    (swap! filters assoc k v)))
+
+(defn sortable-header-column
+  [{:keys [title column-key on-sort on-filter sort-params]}]
+  [table/table-header-column
+   [:div
+    {:on-click #(on-sort column-key)}
+    title]
+   [va-ui/text-field
+    {:size :small
+     :on-change #(on-filter column-key (-> % .-target .-value))}]])
+
 (defn payments-table [payments]
-  (let [sort-params (r/atom {:sort-key nil :descend? false})]
+  (let [sort-params (r/atom {:sort-key nil :descend? false})
+        filters (r/atom {})]
     (fn [payments]
-      (let [sorted-payments
-            (if (nil? (:sort-key @sort-params))
-              payments
+      (let [sorted-filtered-payments
+            (cond-> payments
+              (not-empty @filters) (filter-payments @filters)
+              (some? (:sort-key @sort-params))
               (sort-payments
-                payments (:sort-key @sort-params) (:descend? @sort-params)))]
+                (:sort-key @sort-params) (:descend? @sort-params)))]
         [:div
          [table/table
           [table/table-header
            [table/table-row
-            [table/table-header-column
-             {:on-click #(sort-column! sort-params :register-number)}
-             "Pitkäviite"]
+            [sortable-header-column
+             {:title "Pitkäviite"
+              :column-key :register-number
+              :sort-params @sort-params
+              :on-sort #(sort-column! sort-params %)
+              :on-filter #(update-filters! filters %1 %2)}]
             [table/table-header-column
              {:on-click #(sort-column! sort-params :organization-name)}
              "Toimittajan nimi"]
@@ -132,7 +160,7 @@
              {:on-click #(sort-column! sort-params :budget-granted)}
              "Tiliöinti"]]]
           [table/table-body
-           (doall (map-indexed render-payment sorted-payments))]
+           (doall (map-indexed render-payment sorted-filtered-payments))]
           [table/table-footer
            [table/table-row
             [table/table-row-column]
@@ -140,7 +168,7 @@
             [table/table-row-column "Yhteensä"]
             [table/table-row-column {:style {:text-align "right"}}
              (.toLocaleString
-               (reduce #(+ %1 (:budget-granted %2)) 0 payments))
+               (reduce #(+ %1 (:budget-granted %2)) 0 sorted-filtered-payments))
              " €"]
             [table/table-row-column]
             [table/table-row-column]
