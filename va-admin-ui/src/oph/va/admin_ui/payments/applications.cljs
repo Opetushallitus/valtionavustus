@@ -6,8 +6,6 @@
             [oph.va.admin-ui.components.table :as ui]
             [cljs-react-material-ui.reagent :as mui]))
 
-(def str-limit 30)
-
 (defn get-answer-value [answers key]
   (:value (first (filter #(= (:key %) key) answers))))
 
