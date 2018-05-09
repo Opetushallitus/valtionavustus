@@ -2,8 +2,13 @@
   (:require [reagent.core :as r]
             [cljsjs.material-ui]
             [cljs-react-material-ui.reagent :as ui]
+            [cljs-react-material-ui.icons :as ic]
+            [oph.va.admin-ui.components.table :as table]
+            [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.payments.applications :refer [state-to-str]]
-            [oph.va.admin-ui.payments.utils :refer [to-simple-date-time to-simple-date]]))
+            [oph.va.admin-ui.payments.utils
+             :refer [to-simple-date-time to-simple-date]]
+            [oph.va.admin-ui.utils :refer [format get-answer-value]]))
 
 (defn render-history-item [i application]
   [ui/table-row {:key i}
@@ -55,3 +60,54 @@
                                         0 (filter #(> (:state %) 1)
                                                   payments)))))
     applications))
+
+(defn render-payment [i payment]
+  [table/table-row {:key i}
+   [table/table-row-column {:style {:text-align "right"}}
+    (get payment :register-number)]
+   [table/table-row-column {:title (:organization-name payment)}
+    (:organization-name payment)]
+   [table/table-row-column
+    [:a
+     {:target "_blank"
+      :title (:project-name payment)
+      :href (format "/avustushaku/%d/hakemus/%d/arviointi/"
+                    (:grant-id payment)
+                    (:id payment))} (:project-name payment)]]
+   [table/table-row-column
+    {:style (merge theme/table-cell {:text-align "right"})}
+    (.toLocaleString (get payment :budget-granted 0)) " €"]
+   [table/table-row-column
+    (get-answer-value (:answers payment) "bank-iban")]
+   [table/table-row-column (get payment :lkp-account)]
+   [table/table-row-column (get payment :takp-account)]
+   [table/table-row-column {:style {:text-align "right"}}
+    (.toLocaleString (get payment :total-paid 0)) " €"]])
+
+(defn payments-table [payments]
+  [:div
+   [table/table
+    [table/table-header
+     [table/table-row
+      [table/table-header-column {:style {:text-align "right"}} "Pitkäviite"]
+      [table/table-header-column "Toimittajan nimi"]
+      [table/table-header-column "Hanke"]
+      [table/table-header-column {:style {:text-align "right"}} "Maksuun"]
+      [table/table-header-column "Pankkitilin IBAN"]
+      [table/table-header-column "LKP-tili"]
+      [table/table-header-column "TaKp-tili"]
+      [table/table-header-column {:style {:text-align "right"}} "Tiliöinti"]]]
+    [table/table-body
+     (doall (map-indexed render-payment payments))]
+    [table/table-footer
+     [table/table-row
+      [table/table-row-column]
+      [table/table-row-column]
+      [table/table-row-column "Yhteensä"]
+      [table/table-row-column {:style {:text-align "right"}}
+       (.toLocaleString (reduce #(+ %1 (:budget-granted %2)) 0 payments))
+       " €"]
+      [table/table-row-column]
+      [table/table-row-column]
+      [table/table-row-column]
+      [table/table-row-column]]]]])
