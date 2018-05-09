@@ -57,12 +57,11 @@ hr {
 }
 
 .va-ui-table td, .va-ui-table th {
-  padding-left: 5px;
-  padding-right: 5px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: left;
+  padding: 5px;
 }
 
 .va-ui-table table {
