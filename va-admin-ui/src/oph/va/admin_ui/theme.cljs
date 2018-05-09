@@ -19,7 +19,7 @@
 
 (def active-link (assoc link :color "#2a2a2a"))
 
-(def table-body {:max-height "250px"})
+(def table-body {:overflow "auto"})
 
 (def table-cell {:font-size 16})
 
