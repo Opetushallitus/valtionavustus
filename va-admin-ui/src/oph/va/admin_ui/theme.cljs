@@ -24,7 +24,8 @@
 (def table-cell {:font-size 16})
 
 (def table-header {:border-bottom "1px solid #f6f4f0"
-                   :padding-bottom 10})
+                   :padding-bottom 10
+                   :padding-right 14})
 
 (def table-header-cell {:cursor "pointer"})
 
@@ -36,7 +37,8 @@
 
 (def table-footer {:overflow "hidden"
                    :padding-top 10
-                   :border-top "1px solid #f6f4f0"})
+                   :border-top "1px solid #f6f4f0"
+                   :padding-right 14})
 
 (def hr-top {:color "#4c7f00"})
 
