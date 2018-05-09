@@ -193,6 +193,8 @@
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]]]
           [table/table-body
+           {:style {:padding-right
+                    (when (< (count sorted-filtered-payments)) 14)}}
            (doall (map-indexed render-payment sorted-filtered-payments))]
           [table/table-footer
            [table/table-row
@@ -201,9 +203,12 @@
             [table/table-row-column "Yhteensä"]
             [table/table-row-column {:style {:text-align "right"}}
              (.toLocaleString
-               (reduce #(+ %1 (:budget-granted %2)) 0 sorted-filtered-payments))
+               (reduce #(+ %1 (:payment-sum %2)) 0 sorted-filtered-payments))
              " €"]
             [table/table-row-column]
             [table/table-row-column]
             [table/table-row-column]
-            [table/table-row-column]]]]]))))
+            [table/table-row-column {:style {:text-align "right"}}
+             (.toLocaleString
+               (reduce #(+ %1 (:budget-granted %2)) 0 sorted-filtered-payments))
+             " €"]]]]]))))
