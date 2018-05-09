@@ -7,7 +7,7 @@
             [cljs-react-material-ui.reagent :as mui]))
 
 (defn get-answer-value [answers key]
-  (:value (first (filter #(= (:key %) key) answers))))
+  (get (some #(when (= (:key %) key) %) answers) :value))
 
 (defn state-to-str [state]
   (case state
