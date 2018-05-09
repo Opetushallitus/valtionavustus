@@ -172,8 +172,8 @@
              (financing/payment-fields @batch-values
                                        #(swap! batch-values assoc %1 %2))]
             [:h3 "Myönteiset päätökset"]
-            (applications/applications-table
-              {:applications @current-applications
+            (payments-ui/payments-table
+              {:payments @current-applications
                :on-info-clicked
                (fn [id]
                  (let [dialog-chan
