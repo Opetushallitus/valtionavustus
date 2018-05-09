@@ -80,7 +80,7 @@
       [ui/table-row-column]
       [ui/table-row-column]
       [ui/table-row-column "Yhteensä"]
-      [ui/table-row-column
+      [ui/table-row-column {:style {:text-align "right"}}
        (.toLocaleString (reduce #(+ %1 (:budget-granted %2)) 0 applications))
        " €"]
       [ui/table-row-column]
