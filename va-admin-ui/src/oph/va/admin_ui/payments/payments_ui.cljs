@@ -78,7 +78,7 @@
      (:project-name payment)]]
    [table/table-row-column
     {:style (merge theme/table-cell {:text-align "right"})}
-    (.toLocaleString (get payment :budget-granted 0)) " €"]
+    (.toLocaleString (get payment :payment-sum 0)) " €"]
    [table/table-row-column
     (get-answer-value (:answers payment) "bank-iban")]
    [table/table-row-column (get payment :lkp-account)]
@@ -141,27 +141,48 @@
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]
-            [table/table-header-column
-             {:on-click #(sort-column! sort-params :organization-name)}
-             "Toimittajan nimi"]
-            [table/table-header-column
-             {:on-click #(sort-column! sort-params :project-name)}
-             "Hanke"]
-            [table/table-header-column
-             {:on-click #(sort-column! sort-params :payment-sum)}
-             "Maksuun"]
-            [table/table-header-column
-             {:on-click #(sort-column! sort-params :bank-iban)}
-             "Pankkitilin IBAN"]
-            [table/table-header-column
-             {:on-click #(sort-column! sort-params :lkp-account)}
-             "LKP-tili"]
-            [table/table-header-column
-             {:on-click #(sort-column! sort-params :takp-account)}
-             "TaKp-tili"]
-            [table/table-header-column
-             {:on-click #(sort-column! sort-params :budget-granted)}
-             "Tiliöinti"]]]
+            [sortable-header-column
+             {:title "Toimittajan nimi"
+              :column-key :organization+name
+              :sort-params @sort-params
+              :on-sort #(sort-column! sort-params %)
+              :on-filter #(update-filters! filters %1 %2)}]
+            [sortable-header-column
+             {:title "Hanke"
+              :column-key :project-name
+              :sort-params @sort-params
+              :on-sort #(sort-column! sort-params %)
+              :on-filter #(update-filters! filters %1 %2)}]
+            [sortable-header-column
+             {:title "Maksuun"
+              :column-key :payment-sum
+              :sort-params @sort-params
+              :on-sort #(sort-column! sort-params %)
+              :on-filter #(update-filters! filters %1 %2)}]
+            [sortable-header-column
+             {:title "Pankkitilin IBAN"
+              :column-key :bank-iban
+              :sort-params @sort-params
+              :on-sort #(sort-column! sort-params %)
+              :on-filter #(update-filters! filters %1 %2)}]
+            [sortable-header-column
+             {:title "LKP-tili"
+              :column-key :lkp-account
+              :sort-params @sort-params
+              :on-sort #(sort-column! sort-params %)
+              :on-filter #(update-filters! filters %1 %2)}]
+            [sortable-header-column
+             {:title "TaKP-tili"
+              :column-key :takp-account
+              :sort-params @sort-params
+              :on-sort #(sort-column! sort-params %)
+              :on-filter #(update-filters! filters %1 %2)}]
+            [sortable-header-column
+             {:title "Tiliöinti"
+              :column-key :budget-granted
+              :sort-params @sort-params
+              :on-sort #(sort-column! sort-params %)
+              :on-filter #(update-filters! filters %1 %2)}]]]
           [table/table-body
            (doall (map-indexed render-payment sorted-filtered-payments))]
           [table/table-footer
