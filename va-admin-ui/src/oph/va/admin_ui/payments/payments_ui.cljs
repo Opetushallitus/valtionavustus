@@ -47,22 +47,6 @@
    [ui/table-body {:display-row-checkbox false}
     (doall (map-indexed render-history-item payments))]])
 
-(defn find-application-payments [payments application-id application-version]
-  (filter #(and (= (:application-version %) application-version)
-                (= (:application-id %) application-id))
-          payments))
-
-(defn combine [applications payments]
-  (mapv
-    (fn [a]
-      (let [payments (find-application-payments payments (:id a) (:version a))]
-             (assoc a
-                    :payments payments
-                    :total-paid (reduce #(+ %1 (:payment-sum %2))
-                                        0 (filter #(> (:state %) 1)
-                                                  payments)))))
-    applications))
-
 (defn render-payment [i payment]
   [table/table-row {:key i}
    [table/table-row-column {:style {:text-align "right"}}
