@@ -53,7 +53,7 @@
               :delete-payments? (connection/delete-payments?)}]
     [ui/mui-theme-provider
      {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
-     [:div
+     [:div {:class "oph-typography"}
       [:div
        (render-top-links
          (router/get-current-path)
