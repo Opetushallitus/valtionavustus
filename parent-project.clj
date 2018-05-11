@@ -104,7 +104,6 @@
                          [instaparse "1.4.7"]
                          [org.apache.commons/commons-email "1.5"]
                          [org.clojure/core.async "0.4.474"]
-                         [org.clojure/core.memoize "0.5.9"]
                          [org.clojure/tools.reader "1.1.0"]
                          [org.clojure/tools.trace "0.7.9"]
                          [org.scala-lang.modules/scala-xml_2.11 "1.0.6"]
