@@ -87,3 +87,12 @@
 
 (defn get-error-messages [errors default-value]
   (map #(get error-messages % default-value) errors))
+
+(defn convert-application-payments [application]
+  (let [application-info (select-keys application [:project-name :organization])]
+    (map
+      #(merge application-info application)
+      (:payments application))))
+
+(defn flatten-payments [applications]
+  (reduce #(into %1 (convert-application-payments %2)) [] applications))
