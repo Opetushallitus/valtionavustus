@@ -178,10 +178,15 @@
                   [va-ui/tab
                    {:value "outgoing"
                     :label "Lähtevät maksatukset"}
-                   [payments-ui/payments-table @current-applications]]
+                   [payments-ui/payments-table
+                    {:filter #(or (nil? (:state %)) (< (:state %) 2))}
+                    @current-applications]]
                   [va-ui/tab
                    {:value "sent"
-                    :label "Lähetetyt maksatukset"}]]))]
+                    :label "Lähetetyt maksatukset"}
+                   [payments-ui/payments-table
+                    {:filter #(> (:state %) 1)}
+                    @current-applications]]]))]
             ]
            (let [accounts-nil? (any-account-nil? @current-applications)]
              [:div
