@@ -165,12 +165,7 @@
             [:div
              (when (or
                      (:read-only @batch-values)
-                     (not unsent-payments?)))
-             [:h3 "Maksuerän tiedot"]
-             (financing/payment-emails @batch-values
-                                       #(swap! batch-values assoc %1 %2))
-             (financing/payment-fields @batch-values
-                                       #(swap! batch-values assoc %1 %2))]
+                     (not unsent-payments?)))]
             [(let [selected (r/atom "outgoing")]
                (fn []
                  [va-ui/tabs {:value @selected
@@ -178,6 +173,11 @@
                   [va-ui/tab
                    {:value "outgoing"
                     :label "Lähtevät maksatukset"}
+                   [:h3 "Maksuerän tiedot"]
+                   (financing/payment-emails @batch-values
+                                             #(swap! batch-values assoc %1 %2))
+                   (financing/payment-fields @batch-values
+                                             #(swap! batch-values assoc %1 %2))
                    [payments-ui/payments-table
                     {:filter #(or (nil? (:state %)) (< (:state %) 2))}
                     @current-applications]]
