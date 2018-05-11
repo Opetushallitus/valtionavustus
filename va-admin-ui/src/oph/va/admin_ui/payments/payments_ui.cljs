@@ -130,12 +130,22 @@
     {:size :small
      :on-change #(on-filter column-key (-> % .-target .-value))}]])
 
-(defn payments-table [props payments]
+(defn convert-application-payments [application]
+  (let [application-info (select-keys application [:project-name :organization])]
+    (map
+      #(merge application-info application)
+      (:payments application))))
+
+(defn flatten-payments [applications]
+  (reduce #(into %1 (convert-application-payments %2)) [] applications))
+
+(defn payments-table [props applications]
   (let [sort-params (r/atom {:sort-key nil :descend? false})
         filters (r/atom {})]
     (fn [props payments]
-      (let [sorted-filtered-payments
-            (cond-> (filter (:filter props) payments)
+      (let [flat-payments (flatten-payments applications)
+            sorted-filtered-payments
+            (cond-> (filter (:filter props) flat-payments)
               (not-empty @filters) (filter-payments @filters)
               (some? (:sort-key @sort-params))
               (sort-payments
