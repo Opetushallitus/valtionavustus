@@ -171,8 +171,18 @@
                                        #(swap! batch-values assoc %1 %2))
              (financing/payment-fields @batch-values
                                        #(swap! batch-values assoc %1 %2))]
-            [:h3 "Myönteiset päätökset"]
-            [payments-ui/payments-table @current-applications]]
+            [(let [selected (r/atom "outgoing")]
+               (fn []
+                 [va-ui/tabs {:value @selected
+                              :on-change #(reset! selected %)}
+                  [va-ui/tab
+                   {:value "outgoing"
+                    :label "Lähtevät maksatukset"}
+                   [payments-ui/payments-table @current-applications]]
+                  [va-ui/tab
+                   {:value "sent"
+                    :label "Lähetetyt maksatukset"}]]))]
+            ]
            (let [accounts-nil? (any-account-nil? @current-applications)]
              [:div
               (when accounts-nil?
