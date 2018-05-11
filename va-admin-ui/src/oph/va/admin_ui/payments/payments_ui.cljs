@@ -77,8 +77,7 @@
                     (:grant-id payment)
                     (:application-id payment))}
      (:project-name payment)]]
-   [table/table-row-column
-    {:style (merge theme/table-cell {:text-align "right"})}
+   [table/table-row-column {:style {:text-align "right"}}
     (.toLocaleString (get payment :payment-sum 0)) " €"]
    [table/table-row-column
     (get-answer-value (:answers payment) "bank-iban")]
