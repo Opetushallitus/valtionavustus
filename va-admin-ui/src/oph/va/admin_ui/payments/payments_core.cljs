@@ -14,7 +14,7 @@
     [oph.va.admin-ui.payments.payments :as payments
      :refer [multibatch-payable? singlebatch-payable? any-account-nil?
              convert-payment-dates get-batch-values format-date
-             parse-batch-dates get-error-messages]]
+             parse-batch-dates get-error-messages combine]]
     [oph.va.admin-ui.payments.applications :as applications]
     [oph.va.admin-ui.router :as router]
     [oph.va.admin-ui.payments.grants-ui :refer [grants-table grant-info]]
@@ -39,7 +39,6 @@
   {:grants (r/atom [])
    :applications (r/atom [])
    :payments (r/atom [])
-   :current-applications (r/atom [])
    :selected-grant (r/atom nil)
    :batch-values (r/atom {})})
 
@@ -150,15 +149,12 @@
        (grant-info @selected-grant)])))
 
 (defn home-page [{:keys [user-info delete-payments?]}]
-  (let [{:keys [selected-grant batch-values applications
-                current-applications payments]} state]
+  (let [{:keys [selected-grant batch-values applications payments]} state
+        flatten-payments (combine @applications @payments)]
     [:div
      [grants-components]
      [(fn []
-        (let [unsent-payments?
-              (if (get-in @selected-grant [:content :multiplemaksuera])
-                (multibatch-payable? @current-applications)
-                (singlebatch-payable? @current-applications))]
+        (let [unsent-payments? (some #(when (< (:state %) 2)) flatten-payments)]
           [:div
            [:div
             [:hr]
@@ -179,16 +175,13 @@
                    (financing/payment-fields @batch-values
                                              #(swap! batch-values assoc %1 %2))
                    [payments-ui/payments-table
-                    {:filter #(or (nil? (:state %)) (< (:state %) 2))}
-                    @current-applications]]
+                    (filter #(< (:state %) 2) flatten-payments)]]
                   [va-ui/tab
                    {:value "sent"
                     :label "Lähetetyt maksatukset"}
                    [payments-ui/payments-table
-                    {:filter #(> (:state %) 1)}
-                    @current-applications]]]))]
-            ]
-           (let [accounts-nil? (any-account-nil? @current-applications)]
+                    (filter #(> (:state %) 1) flatten-payments)]]]))]]
+           (let [accounts-nil? (any-account-nil? @applications)]
              [:div
               (when accounts-nil?
                 (notice "Joillakin hakemuksilla ei ole LKP- tai TaKP-tiliä, joten
@@ -225,8 +218,7 @@
        (render-admin-tools payments @selected-grant))]))
 
 (defn init! []
-  (let [{:keys [selected-grant batch-values applications
-                     current-applications payments grants]} state]
+  (let [{:keys [selected-grant batch-values applications payments grants]} state]
    (add-watch
      selected-grant
      "s"
@@ -261,11 +253,6 @@
                    (select-keys payments-response [:status :error-text])))
                (put! dialog-chan 3))
              (close! dialog-chan))))))
-   (add-watch applications ""
-              #(reset! current-applications (payments-ui/combine %4 @payments)))
-   (add-watch payments ""
-              #(reset! current-applications
-                       (payments-ui/combine @applications %4)))
    (go
      (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan haun tietoja" 3)
            grants-result (<! (connection/get-grants))]
