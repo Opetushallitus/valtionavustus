@@ -130,12 +130,12 @@
     {:size :small
      :on-change #(on-filter column-key (-> % .-target .-value))}]])
 
-(defn payments-table [payments]
+(defn payments-table [props payments]
   (let [sort-params (r/atom {:sort-key nil :descend? false})
         filters (r/atom {})]
-    (fn [payments]
+    (fn [props payments]
       (let [sorted-filtered-payments
-            (cond-> payments
+            (cond-> (filter (:filter props) payments)
               (not-empty @filters) (filter-payments @filters)
               (some? (:sort-key @sort-params))
               (sort-payments
