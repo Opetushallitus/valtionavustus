@@ -126,3 +126,24 @@
    (if (= direction :down)
      [ic/navigation-arrow-drop-down]
      [ic/navigation-arrow-drop-up])])
+
+(defn tab [props & content]
+  [:div
+   (apply vector :div content)])
+
+(defn tabs [props & children]
+  [:div {:class "oph-typography"}
+   [:div {:class "oph-tabs" :style {:cursor "pointer"}}
+    (doall
+      (map-indexed
+        (fn [i t]
+          (let [value (:value (second t))]
+            [:a {:key i
+                 :class
+                 (str "oph-tab-item"
+                      (when (= value (:value props))
+                        " oph-tab-item-is-active"))
+                 :on-click #((:on-change props) value)}
+             (:label (second t))]))
+        children))]
+   [:div {:class "oph-tab-pane oph-tab-pane-is-active" } (some #(when (= (:value (second %)) (:value props)) %) children )]])

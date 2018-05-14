@@ -2,7 +2,8 @@
   (:require [oph.va.admin-ui.payments.utils :refer [no-nils? valid-email?]]
             [oph.va.admin-ui.utils :refer [format]]
             [cljs-time.coerce :as tc]
-            [cljs-time.format :as tf]))
+            [cljs-time.format :as tf]
+            [clojure.set :refer [rename-keys]]))
 
 (defn valid-batch-values?
   [values]
@@ -87,3 +88,30 @@
 
 (defn get-error-messages [errors default-value]
   (map #(get error-messages % default-value) errors))
+
+(defn convert-application-payments [application payments]
+  (let [application-info
+        (rename-keys
+          (select-keys
+           application
+           [:project-name :organization :budget-granted])
+          {:budget-granted :payment-sum})]
+    (map
+      #(merge application-info application)
+      payments)))
+
+(defn find-application-payments [payments application-id application-version]
+  (filter #(and (= (:application-version %) application-version)
+                (= (:application-id %) application-id))
+          payments))
+
+(defn combine [applications payments]
+  (reduce
+    (fn [p n]
+      (into p
+            (let [application-payments
+                  (find-application-payments
+                    payments (:id n) (:version n))]
+              (convert-application-payments n application-payments))))
+    []
+    applications))
