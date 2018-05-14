@@ -2,7 +2,16 @@
           :url {:fi "http://localhost:8080/"
                 :sv "http://localhost:8080/"}
           :enable-access-log? false
-          :require-https? false}
+          :require-https? false
+          :rondo-sftp {:enabled? true
+                       :local-path "/home/ansku/torondo2"
+                       :remote_path "/upload"
+                       :remote_path_from "/upload"
+                       :remote_path_archive "/upload"
+                       :username "oph002"
+                       :password "va"
+                       :port 22
+                       :host-ip "127.0.0.1"}}
  :api {:restricted-routes? false}
  :virkailija-db {:database-name "va-dev"}
  :payments {:enabled? true
@@ -15,4 +24,6 @@
  :multibatch-payments {:enabled? true}
  :va-code-values {:enabled? true}
  :reports {:enabled? true}
- :application-change {:refuse-enabled? true}}
+ :rondo-scheduler {:enabled? false
+                   :scheduling "0 02 17 ? * *"
+                   :strict-host-key-checking :no}}
