@@ -94,7 +94,6 @@
   (filter #(payment-matches? % filters) payments))
 
 (defn update-filters! [filters k v]
-  (prn k v)
   (if (empty? v)
     (swap! filters dissoc k)
     (swap! filters assoc k (lower-case v))))
