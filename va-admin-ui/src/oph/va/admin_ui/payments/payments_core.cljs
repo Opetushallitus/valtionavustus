@@ -158,10 +158,6 @@
           [:div
            [:div
             [:hr]
-            [:div
-             (when (or
-                     (:read-only @batch-values)
-                     (not unsent-payments?)))]
             [(let [selected (r/atom "outgoing")]
                (fn []
                  [va-ui/tabs {:value @selected
