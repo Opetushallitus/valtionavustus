@@ -81,3 +81,10 @@
    (first
      (exec :form-db virkailija-queries/is-application-paid
            {:application_id application-id}))))
+
+(defn has-no-payments? [application-id]
+  (not
+    (:has_payments
+     (first
+       (exec :form-db virkailija-queries/application-has-payments
+             {:application_id application-id})))))
