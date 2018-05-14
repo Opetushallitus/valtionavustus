@@ -234,7 +234,6 @@
             (assoc payment1 :state 2 :filename "example.xml") example-identity)
           (payments-data/update-payment
             (assoc payment2 :state 2 :filename "example.xml") example-identity)
-          (prn grant)
 
           (let [payments-email
                 (payments-data/create-payments-email
