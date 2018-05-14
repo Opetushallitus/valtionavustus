@@ -182,6 +182,13 @@
    :batch-id nil
    :payment-sum sum})
 
+(defn valid-for-payment [application]
+  (and
+    (= (:status application) "accepted")
+    (get application :should-pay true)
+    (not (get application :refused false))
+    (application-data/has-no-payments? (:id application))))
+
 (defn create-grant-payments
   ([grant-id identity]
    (let [grant (grant-data/get-grant grant-id)]
@@ -191,7 +198,7 @@
             (create-payment-values % (get-first-payment-sum % grant))
             identity)
          (filter
-           #(application-data/has-no-payments? (:id %))
+           valid-for-payment
            (application-data/get-applications-with-evaluation-by-grant
              grant-id))))))
   ([grant-id] (create-grant-payments grant-id system-user)))
