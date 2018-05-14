@@ -192,11 +192,12 @@
                   [va-ui/tab
                    {:value "outgoing"
                     :label "Lähtevät maksatukset"}
-                   [:h3 "Maksuerän tiedot"]
-                   (financing/payment-emails @batch-values
-                                             #(swap! batch-values assoc %1 %2))
-                   (financing/payment-fields @batch-values
-                                             #(swap! batch-values assoc %1 %2))
+                   [:div {:class (when (not unsent-payments?) "disabled")}
+                    [:h3 "Maksuerän tiedot"]
+                    (financing/payment-emails @batch-values
+                                              #(swap! batch-values assoc %1 %2))
+                    (financing/payment-fields @batch-values
+                                              #(swap! batch-values assoc %1 %2))]
                    [payments-ui/payments-table
                     (filter #(< (:state %) 2) flatten-payments)]]
                   [va-ui/tab
