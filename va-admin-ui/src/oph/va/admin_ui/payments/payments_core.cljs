@@ -179,7 +179,8 @@
     [:div
      [grants-components]
      [(fn []
-        (let [unsent-payments? (some #(when (< (:state %) 2)) flatten-payments)]
+        (let [unsent-payments?
+              (some? (some #(when (< (:state %) 2) %) flatten-payments))]
           [:div {:class
                  (when (not= (:status @selected-grant) "resolved") "disabled")}
            [:div
