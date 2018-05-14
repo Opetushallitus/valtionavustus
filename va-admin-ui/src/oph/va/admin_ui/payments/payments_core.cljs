@@ -49,31 +49,56 @@
   (let [grant-id (js/parseInt (router/get-current-param :grant))]
     (when-not (js/isNaN grant-id) grant-id)))
 
-(defn render-admin-tools [payments selected-grant]
+(defn render-admin-tools [payments selected-grant delete-payments?]
   [:div
    [:hr]
+   [:h3 "Pääkäyttäjän työkalut"]
    [ui/grid-list {:cols 6 :cell-height "auto"}
+    (when delete-payments?
+      [va-ui/raised-button
+       {:primary true
+        :label "Poista maksatukset"
+        :style theme/button
+        :on-click
+        (fn []
+          (go (let [grant-id (:id selected-grant)
+                    response (<! (connection/delete-grant-payments
+                                   grant-id))]
+                (if (:success response)
+                  (let [download-response
+                        (<! (connection/get-grant-payments grant-id))]
+                    (if (:success download-response)
+                      (reset! payments (:body download-response))
+                      (dialogs/show-error-message!
+                        "Virhe tietojen latauksessa"
+                        (select-keys download-response
+                                     [:status :error-text]))))
+                  (dialogs/show-error-message!
+                    "Virhe maksatusten poistossa"
+                    (select-keys response
+                                 [:status :error-text]))))))}])
     [va-ui/raised-button
      {:primary true
-      :label "Poista maksatukset"
+      :label "Luo maksatukset"
       :style theme/button
-      :on-click (fn []
-                  (go (let [grant-id (:id selected-grant)
-                            response (<! (connection/delete-grant-payments
-                                           grant-id))]
-                        (if (:success response)
-                          (let [download-response
-                                  (<! (connection/get-grant-payments grant-id))]
-                            (if (:success download-response)
-                              (reset! payments (:body download-response))
-                              (dialogs/show-error-message!
-                                "Virhe tietojen latauksessa"
-                                (select-keys download-response
-                                             [:status :error-text]))))
-                          (dialogs/show-error-message!
-                            "Virhe maksatusten poistossa"
-                            (select-keys response
-                                         [:status :error-text]))))))}]]])
+      :on-click
+      (fn []
+        (go (let [grant-id (:id selected-grant)
+                  response (<! (connection/create-grant-payments
+                                 grant-id))]
+              (if (:success response)
+                (let [download-response
+                      (<! (connection/get-grant-payments grant-id))]
+                  (if (:success download-response)
+                    (reset! payments (:body download-response))
+                    (dialogs/show-error-message!
+                      "Virhe tietojen latauksessa"
+                      (select-keys download-response
+                                   [:status :error-text]))))
+                (dialogs/show-error-message!
+                  "Virhe maksatusten luonnissa"
+                  (select-keys response
+                               [:status :error-text]))))))}]]])
 
 (defn render-grant-filters [filter-str on-change]
   [:div
@@ -211,8 +236,8 @@
                         (dialogs/show-error-message!
                           "Virhe maksuerän luonnissa"
                           batch-result)))))}]])]))]
-     (when (and delete-payments? (user/is-admin? user-info))
-       (render-admin-tools payments @selected-grant))]))
+     (when (user/is-admin? user-info)
+       (render-admin-tools payments @selected-grant delete-payments?))]))
 
 (defn init! []
   (let [{:keys [selected-grant batch-values applications payments grants]} state]
