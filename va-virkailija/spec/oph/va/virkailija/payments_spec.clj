@@ -323,4 +323,41 @@
         (should= 400 status)
         (should (some? (payments-data/get-payment (:id payment)))))))
 
+(describe
+  "Creates grant payments"
+
+  (tags :payments :grantpayments)
+
+  (around-all [_] (with-test-server! :virkailija-db
+                    #(start-server
+                       {:host "localhost"
+                        :port test-server-port
+                        :auto-reload? false
+                        :without-authentication? true}) (_)))
+
+  (it "validates application for payment"
+      (let [grant (first (grant-data/get-grants))
+            submission (create-submission (:form grant)
+                                          {:budget-oph-share 40000})
+            application (create-application grant submission)]
+        (should (payments-data/valid-for-payment?
+                      (assoc application :status "accepted")))
+        (should-not (payments-data/valid-for-payment?
+                      (assoc application :should-pay false)))
+        (should-not (payments-data/valid-for-payment?
+                      (assoc application :refused true)))
+        (should-not (payments-data/valid-for-payment?
+                      (assoc application :status "rejected")))
+
+        (payments-data/create-payment
+              {:application-id (:id application)
+               :payment-sum 20000
+               :batch-id nil
+               :state 1}
+              {:person-oid "12345"
+               :first-name "Test"
+               :surname "User"})
+        (should-not (payments-data/valid-for-payment?
+                      (assoc application :status "accepted"))))))
+
 (run-specs)
