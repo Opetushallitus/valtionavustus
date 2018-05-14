@@ -37,4 +37,6 @@
                    :langs    {:fi "Valtionavustusten yleisohje"
                               :sv "Allmänna anvisningar om statsunderstöd"}
                    :versions [{:id          ""
-                               :description "Alkuperäinen"}]}]}])
+                               :description "Alkuperäinen"}
+                              {:id          "_2018-03"
+                               :description "Voimassa 12.3.2018 alkaen"}]}]}])

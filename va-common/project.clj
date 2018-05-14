@@ -21,7 +21,6 @@
                  [de.ubercode.clostache/clostache]
                  [org.apache.commons/commons-email]
                  [org.clojure/core.async]
-                 [org.clojure/core.memoize]
                  [org.slf4j/slf4j-log4j12]
                  [log4j]
                  [ring.middleware.conditional :exclusions [ring]]
