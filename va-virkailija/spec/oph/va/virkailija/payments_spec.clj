@@ -7,6 +7,7 @@
            [oph.va.virkailija.payments-data :as payments-data]
            [oph.va.virkailija.payment-batches-data :as payment-batches-data]
            [oph.va.virkailija.grant-data :as grant-data]
+           [oph.va.virkailija.application-data :as application-data]
            [clj-time.core :as t]
            [oph.va.virkailija.common-utils
             :refer [test-server-port get! post! create-submission
@@ -358,6 +359,41 @@
                :first-name "Test"
                :surname "User"})
         (should-not (payments-data/valid-for-payment?
-                      (assoc application :status "accepted"))))))
+                      (assoc application :status "accepted")))))
+
+  (it "gets first payment sum"
+      (let [grant (first (grant-data/get-grants))
+            submission (create-submission (:form grant) {})
+            created-application (create-application grant submission)
+            application (application-data/get-application
+                          (:id created-application))]
+
+        (should= 1500000 (payments-data/get-first-payment-sum application grant))
+        (should= 50000
+                 (payments-data/get-first-payment-sum
+                   (assoc application :budget-oph-share 50000) grant))
+        (should= 25000
+                 (payments-data/get-first-payment-sum
+                   (assoc application :budget-oph-share 50000)
+                   (-> grant
+                     (assoc-in [:content :multiplemaksuera] true)
+                     (assoc-in [:content :payment-size-limit] "no-limit")
+                     (assoc-in [:content :payment-min-first-batch] 50))))
+        (should= 25000
+                 (payments-data/get-first-payment-sum
+                   (assoc application :budget-oph-share 50000)
+                   (-> grant
+                     (assoc-in [:content :multiplemaksuera] true)
+                     (assoc-in [:content :payment-size-limit] "fixed-limit")
+                     (assoc-in [:content :payment-fixed-limit] 20000)
+                     (assoc-in [:content :payment-min-first-batch] 50))))
+        (should= 50000
+                 (payments-data/get-first-payment-sum
+                   (assoc application :budget-oph-share 50000)
+                   (-> grant
+                     (assoc-in [:content :multiplemaksuera] true)
+                     (assoc-in [:content :payment-size-limit] "fixed-limit")
+                     (assoc-in [:content :payment-fixed-limit] 52000)
+                     (assoc-in [:content :payment-min-first-batch] 50)))))))
 
 (run-specs)
