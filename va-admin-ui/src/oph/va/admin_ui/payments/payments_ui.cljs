@@ -173,10 +173,12 @@
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]]]
-          [table/table-body
-           {:style {:padding-right
-                    (when (< (count sorted-filtered-payments)) 14)}}
-           (doall (map-indexed render-payment sorted-filtered-payments))]
+          (if (empty? sorted-filtered-payments)
+            [:div {:style theme/table-empty-text} "Ei maksatuksia"]
+            [table/table-body
+             {:style {:padding-right
+                      (when (< (count sorted-filtered-payments)) 14)}}
+             (doall (map-indexed render-payment sorted-filtered-payments))])
           [table/table-footer
            [table/table-row
             [table/table-row-column]
