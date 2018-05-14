@@ -63,8 +63,7 @@
      (:project-name payment)]]
    [table/table-row-column {:style {:text-align "right"}}
     (.toLocaleString (get payment :payment-sum 0)) " €"]
-   [table/table-row-column
-    (get-answer-value (:answers payment) "bank-iban")]
+   [table/table-row-column (:bank-iban payment)    ]
    [table/table-row-column (get payment :lkp-account)]
    [table/table-row-column (get payment :takp-account)]
    [table/table-row-column {:style {:text-align "right"}}
