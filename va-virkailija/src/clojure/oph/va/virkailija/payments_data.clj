@@ -177,7 +177,7 @@
 
 (defn create-payment-values [application sum]
   {:application-id (:id application)
-   :application-versio (:version application)
+   :application-version (:version application)
    :state 0
    :batch-id nil
    :payment-sum sum})
