@@ -155,7 +155,8 @@
      [grants-components]
      [(fn []
         (let [unsent-payments? (some #(when (< (:state %) 2)) flatten-payments)]
-          [:div
+          [:div {:class
+                 (when (not= (:status @selected-grant) "resolved") "disabled")}
            [:div
             [:hr]
             [(let [selected (r/atom "outgoing")]
