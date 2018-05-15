@@ -10,38 +10,8 @@
            [oph.va.hakija.api :as hakija-api]
            [oph.va.virkailija.common-utils
             :refer [user-authentication test-server-port
-                    create-application create-submission]]))
-
-(defn- create-application-evaluation [application status]
-   (virkailija-db/update-or-create-hakemus-arvio
-       (hakija-api/get-avustushaku (:avustushaku application))
-       (:id application)
-       {:status status
-        :overridden-answers {}
-        :roles {:evaluators []}
-        :perustelut nil
-        :acedemy-size 0
-        :costsGranted 30000
-        :budget-granted 30000
-        :oppilaitokset []
-        :presenter-role-id nil
-        :presentercomment nil
-        :rahoitusalue nil
-        :seuranta-answers {}
-        :should-pay true
-        :should-pay-comments nil
-        :summary-comment nil
-        :tags {:value []}
-        :talousarviotili nil}
-       (:identity user-authentication)))
-
-(defn- create-evaluation [grant status]
-   (create-application-evaluation
-     (create-application
-       grant
-       (create-submission
-         (:form grant) {:budget-oph-share 40000}))
-     status))
+                    create-application create-submission
+                    create-application-evaluation create-evaluation]]))
 
 (describe
   "Granted sums"
