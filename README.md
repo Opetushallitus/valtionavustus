@@ -513,6 +513,9 @@ Rondo palauttaa XML-muodossa vastauksen maksatuksesta, mikä luetaan
 Rondo-Schedulerin avulla ajastetusti ja maksatuksen tila päivitetään
 tietokantaan.
 
+Maksatukset-näkymässä listataan sekä julkaistut että ratkaistut haut. Ainoastaan
+ratkaistujen hakujen maksatuslistaukset ovat käytettävissä.
+
 Maksatusprosessi etenee seuraavasti yhdessä erässä maksettavan haun kanssa:
 
 - Kun haun päätökset lähetetään, kaikille hakemuksille luodaan 1. erän maksatus
