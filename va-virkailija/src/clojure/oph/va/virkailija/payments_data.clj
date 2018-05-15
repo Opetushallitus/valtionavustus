@@ -181,11 +181,13 @@
 
 (defn get-first-payment-sum [application grant]
   (int
-    (if (and (get-in grant [:content :multiplemaksuera] false)
-             (or (= (get-in grant [:content :payment-size-limit]) "no-limit")
+    (if (and
+          (get-in grant [:content :multiplemaksuera] false)
+             (or (= (get-in grant [:content :payment-size-limit] "no-limit")
+                    "no-limit")
                  (>= (:budget-oph-share application)
                      (get-in grant [:content :payment-fixed-limit]))))
-      (* (/ (get-in grant [:content :payment-min-first-batch]) 100.0)
+      (* (/ (get-in grant [:content :payment-min-first-batch] 60) 100.0)
          (:budget-oph-share application))
       (:budget-oph-share application))))
 
