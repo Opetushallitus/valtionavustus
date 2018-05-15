@@ -28,6 +28,18 @@
       (update-some :invoice-date from-sql-date)
       (update-some :receipt-date from-sql-date)))
 
+(defn valid-for-send-payment? [application]
+  (and
+    (= (:status application) "accepted")
+    (get application :should-pay true)
+    (not (get application :refused false))))
+
+(defn valid-for-payment? [application]
+  (and
+    (valid-for-send-payment? application)
+    (application-data/has-no-payments? (:id application))))
+
+
 (defn get-payment
   ([id]
    (->
@@ -125,9 +137,10 @@
     (update-payment (assoc payment :state 3)
                     {:person-oid "-" :first-name "Rondo" :surname ""})))
 
-(defn get-grant-payments [id]
+(defn get-valid-grant-payments [id]
   (->>
     (application-data/get-applications-with-evaluation-by-grant id)
+    (filter valid-for-send-payment?)
     (reduce
       (fn [p n] (into p (application-data/get-application-payments (:id n)))) [])
     (map convert-timestamps-from-sql)))
@@ -182,13 +195,6 @@
    :state 0
    :batch-id nil
    :payment-sum sum})
-
-(defn valid-for-payment? [application]
-  (and
-    (= (:status application) "accepted")
-    (get application :should-pay true)
-    (not (get application :refused false))
-    (application-data/has-no-payments? (:id application))))
 
 (defn create-grant-payments
   ([grant-id identity]
