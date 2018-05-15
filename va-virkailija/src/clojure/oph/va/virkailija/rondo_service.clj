@@ -9,17 +9,28 @@
 
 (defrecord RondoFileService [config]
         RemoteFileService
-                  (get-remote-file-list [_] (get-remote-list config))
-                  (do-sftp! [_] (run-sftp! config))
-                  (send-to-rondo! [_] (send-payment-to-rondo! config))
-                  (get-local-path [_] (get-local-file-path config))
-                  (get-remote-file [_ filename] (get-file-from-remote filename config))
+                  (get-file-list [_] (get-remote-list config do-sftp!))
+                  (send-to-rondo! [_] (send-payment-to-rondo! config do-sftp!))
+                  (get-local-file-path [_] (get-local-file-path config))
+                  (get-remote-file [_ filename] (get-file-from-remote filename config do-sftp!))
                   (get-local-file [_ filename] (get-file-from-local config filename))
-                  (delete-remote-file [_ filename] (delete-file-from-remote filename config)))
+                  (delete-remote-file [_ filename] (delete-file-from-remote filename config do-sftp!)))
 
 (def rondo (RondoFileService. config))
 
-(get-local-file (RondoFileService. config) filename)
+; (defn get-remote-file-list [config]
+;   (get-file-list (RondoFileService. config))
+;
+; (defn send-to-rondo! [config]
+;   (send-payment-to-rondo! config do-sftp!))
+;
+; (defn get-local-path [config]
+;   (get-local-file-path (RondoFileService. config))
+;
+; (defn get-local-file [config filename]
+;   (get-local-file (RondoFileService. config) filename)
+;
+; (get-local-file (RondoFileService. config) filename)
 
 (defn create-session
   [config]
@@ -30,7 +41,7 @@
                             :port (:port config)
                             :strict-host-key-checking (:strict-host-key-checking config)})))
 
-(defn run-sftp! [& {:keys [file method path config]}]
+(defn do-sftp! [& {:keys [file method path config]}]
   (let [session (create-session config)
         remote (:remote_path config)
         remote_from (:remote_path_from config)]
@@ -57,7 +68,7 @@
           (get-local-path config)
           filename))
 
-(defn send-payment-to-rondo! [{:keys [payment application grant filename batch config]}]
+(defn send-payment-to-rondo! [{:keys [payment application grant filename batch config func]}]
   (let [file (get-local-file config filename)]
     (invoice/write-xml!
       (invoice/payment-to-xml
@@ -65,7 +76,7 @@
       file)
     (if (:enabled? config)
       (let [result
-            (do-sftp! :method :put :file file :path (:remote_path config)
+            (func :method :put :file file :path (:remote_path config)
                       :config config)]
         (if (nil? result)
           {:success true}
@@ -74,22 +85,22 @@
         (log/info (format "Would send %s to %s" file (:host-ip config)))
         {:success true}))))
 
-(defn get-remote-list [config]
- (let [result (do-sftp! :method :cdls
+(defn get-remote-list [config func]
+ (let [result (func :method :cdls
                        :path (:remote_path_from config)
                        :config config)]
   (map #(last (strc/split % #"\s+")) (map str result))))
 
 
-(defn get-file-from-remote [filename config]
+(defn get-file-from-remote [filename config func]
   (let [xml-file-path (get-local-file config filename)]
-    (do-sftp! :method :get
+    (func :method :get
               :file xml-file-path
               :path (:remote_path_from config)
               :config config)))
 
-(defn delete-file-from-remote [filename config]
-  (do-sftp! :method :rm
+(defn delete-file-from-remote [filename config func]
+  (func :method :rm
             :file filename
             :path (:remote_path_from config)
             :config config))
