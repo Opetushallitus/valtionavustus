@@ -42,7 +42,7 @@
     :path-params [grant-id :- Long]
     :return [virkailija-schema/Payment]
     :summary "Return payments of a grant"
-    (ok (payments-data/get-grant-payments grant-id))))
+    (ok (payments-data/get-valid-grant-payments grant-id))))
 
 (defn- delete-payments []
   (compojure-api/DELETE
