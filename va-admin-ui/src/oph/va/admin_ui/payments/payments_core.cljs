@@ -192,7 +192,8 @@
                  (when (not= (:status @selected-grant) "resolved") "disabled")}
            [:div
             [:hr]
-            [(let [selected (r/atom "outgoing")]
+            [(let [selected (r/atom "outgoing")
+                   accounts-nil? (any-account-nil? @applications)]
                (fn [data]
                  [va-ui/tabs {:value @selected
                               :on-change #(reset! selected %)}
@@ -204,14 +205,8 @@
                      :values @batch-values
                      :on-change #(swap! batch-values assoc %1 %2)}]
                    [payments-ui/payments-table
-                    (filter #(< (:state %) 2) flatten-payments)]]
-                  [va-ui/tab
-                   {:value "sent"
-                    :label "Lähetetyt maksatukset"}
-                   [payments-ui/payments-table
-                    (filter #(> (:state %) 1) flatten-payments)]]]))]]
-           (let [accounts-nil? (any-account-nil? @applications)]
-             [:div
+                    (filter #(< (:state %) 2) flatten-payments)]
+                   [:div
               (when accounts-nil?
                 (notice "Joillakin hakemuksilla ei ole LKP- tai TaKP-tiliä, joten
                    makastukset tulee luoda manuaalisesti."))
@@ -242,7 +237,12 @@
                           @selected-grant payments)
                         (dialogs/show-error-message!
                           "Virhe maksuerän luonnissa"
-                          batch-result)))))}]])]))]
+                          batch-result)))))}]]]
+                  [va-ui/tab
+                   {:value "sent"
+                    :label "Lähetetyt maksatukset"}
+                   [payments-ui/payments-table
+                    (filter #(> (:state %) 1) flatten-payments)]]]))]]]))]
      (when (user/is-admin? user-info)
        (render-admin-tools payments @selected-grant delete-payments?))]))
 
