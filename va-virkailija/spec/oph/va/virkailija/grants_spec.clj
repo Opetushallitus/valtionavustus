@@ -128,7 +128,7 @@
                        (format "/api/v2/grants/%d/payments/" (:id grant)) {})]
           (should= 200 (:status result))
           (should= 3 (count (json->map (:body result))))
-          (should= 3 (count (payments-data/get-grant-payments (:id grant)))))))
+          (should= 3 (count (payments-data/get-valid-grant-payments (:id grant)))))))
 
   (it "creates payments for all accepted applications"
       (let [grant (first (grant-data/get-grants))]
@@ -143,7 +143,7 @@
         (let [result (post! (format "/api/v2/grants/%d/payments/" (:id grant)) {})]
           (should= 200 (:status result))
           (should= 3 (count (json->map (:body result))))
-          (should= 3 (count (payments-data/get-grant-payments (:id grant)))))))
+          (should= 3 (count (payments-data/get-valid-grant-payments (:id grant)))))))
 
   (it "creates payments for all applications except refused"
       (let [grant (first (grant-data/get-grants))
@@ -163,7 +163,7 @@
                        (format "/api/v2/grants/%d/payments/" (:id grant)) {})]
           (should= 200 (:status result))
           (should= 3 (count (json->map (:body result))))
-          (should= 3 (count (payments-data/get-grant-payments (:id grant)))))))
+          (should= 3 (count (payments-data/get-valid-grant-payments (:id grant)))))))
 
   (it "creates payments for all applications except one which should not pay"
       (let [grant (first (grant-data/get-grants))
@@ -181,6 +181,6 @@
                        (format "/api/v2/grants/%d/payments/" (:id grant)) {})]
           (should= 200 (:status result))
           (should= 3 (count (json->map (:body result))))
-          (should= 3 (count (payments-data/get-grant-payments (:id grant))))))))
+          (should= 3 (count (payments-data/get-valid-grant-payments (:id grant))))))))
 
 (run-specs)
