@@ -531,6 +531,9 @@ Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
   - Virkailija ei ole asettanut "Ei maksuun" täppää
   - Hakija ei ole ilmoittanut, että ei ota avustusta vastaan
 - 1. erän summa määräytyy haussa tehtyjen määritysten (avustuksen leikkuri yms.)
+  - Jos näitä ei ole haun tietoihin määritelty, käytetään oletusarvona, että
+    kaikille maksetaan useassa erässä ja ensimmäinen erä on 60% myönnetystä
+    summasta
 - Virkailija luo Maksatukset-näkymässä uuden maksuerän täyttämällä tarvittavat
   tiedot ja lähettää 1. erän maksatukset Rondoon
 - Seuraavan erän summan asettaa virkailija Väliselvitys-välilehdellä
