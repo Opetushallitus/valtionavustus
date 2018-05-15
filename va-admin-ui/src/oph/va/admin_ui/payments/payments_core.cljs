@@ -173,12 +173,19 @@
        [:hr]
        (grant-info @selected-grant)])))
 
-(defn home-page [{:keys [user-info delete-payments?]}]
-  (let [{:keys [selected-grant batch-values applications payments]} state
+(defn render-batch-values [{:keys [values disabled? on-change]}]
+  [:div {:class (when disabled? "disabled")}
+   [:h3 "Maksuerän tiedot"]
+   (financing/payment-emails values #(on-change %1 %2))
+   (financing/payment-fields values #(on-change %1 %2))])
+
+(defn home-page [data]
+  (let [{:keys [user-info delete-payments?]} data
+        {:keys [selected-grant batch-values applications payments]} state
         flatten-payments (combine @applications @payments)]
     [:div
      [grants-components]
-     [(fn []
+     [(fn [data]
         (let [unsent-payments?
               (some? (some #(when (< (:state %) 2) %) flatten-payments))]
           [:div {:class
@@ -186,18 +193,16 @@
            [:div
             [:hr]
             [(let [selected (r/atom "outgoing")]
-               (fn []
+               (fn [data]
                  [va-ui/tabs {:value @selected
                               :on-change #(reset! selected %)}
                   [va-ui/tab
                    {:value "outgoing"
                     :label "Lähtevät maksatukset"}
-                   [:div {:class (when (not unsent-payments?) "disabled")}
-                    [:h3 "Maksuerän tiedot"]
-                    (financing/payment-emails @batch-values
-                                              #(swap! batch-values assoc %1 %2))
-                    (financing/payment-fields @batch-values
-                                              #(swap! batch-values assoc %1 %2))]
+                   [render-batch-values
+                    {:disabled? (not unsent-payments?)
+                     :values @batch-values
+                     :on-change #(swap! batch-values assoc %1 %2)}]
                    [payments-ui/payments-table
                     (filter #(< (:state %) 2) flatten-payments)]]
                   [va-ui/tab
