@@ -530,7 +530,8 @@ Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
   - Tila on hyväksytty
   - Virkailija ei ole asettanut "Ei maksuun" täppää
   - Hakija ei ole ilmoittanut, että ei ota avustusta vastaan
-- 1. erän summa määräytyy haussa tehtyjen määritysten (avustuksen leikkuri yms.)
+- Ensimmäisen erän summa määräytyy haussa tehtyjen määritysten (avustuksen
+  summan leikkuri yms.)
   - Jos näitä ei ole haun tietoihin määritelty, käytetään oletusarvona, että
     kaikille maksetaan useassa erässä ja ensimmäinen erä on 60% myönnetystä
     summasta
