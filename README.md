@@ -516,23 +516,20 @@ tietokantaan.
 Maksatukset-näkymässä listataan sekä julkaistut että ratkaistut haut. Ainoastaan
 ratkaistujen hakujen maksatuslistaukset ovat käytettävissä.
 
+Kun haun päätökset lähetetään, kaikille hakemuksille luodaan 1. erän maksatus
+seuraavin ehdoin:
+- Tila on hyväksytty
+- Virkailija ei ole asettanut "Ei maksuun" täppää
+- Hakija ei ole ilmoittanut, että ei ota avustusta vastaan
+
 Maksatusprosessi etenee seuraavasti yhdessä erässä maksettavan haun kanssa:
 
-- Kun haun päätökset lähetetään, kaikille hakemuksille luodaan 1. erän maksatus
-  seuraavin ehdoin:
-  - Tila on hyväksytty
-  - Virkailija ei ole asettanut "Ei maksuun" täppää
-  - Hakija ei ole ilmoittanut, että ei ota avustusta vastaan
+- Ensimmäisen erän suuruus on luonnollisesti myönnetty summa (OPH:n osuus)
 - Virkailija luo Maksatukset-näkymässä uuden maksuerän täyttämällä tarvittavat
   tiedot ja lähettää maksatukset Rondoon
 
 Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
 
-- Kun haun päätökset lähetetään, kaikille hakemuksille luodaan 1. erän maksatus
-  seuraavin ehdoin:
-  - Tila on hyväksytty
-  - Virkailija ei ole asettanut "Ei maksuun" täppää
-  - Hakija ei ole ilmoittanut, että ei ota avustusta vastaan
 - Ensimmäisen erän summa määräytyy haussa tehtyjen määritysten (avustuksen
   summan leikkuri yms.) mukaan
   - Jos näitä ei ole haun tietoihin määritelty, käytetään oletusarvona, että
