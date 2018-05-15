@@ -13,7 +13,7 @@
             :refer [test-server-port get! post! create-submission
                     create-application json->map admin-authentication
                     valid-payment-values delete! add-mock-authentication
-                    remove-mock-authentication]]))
+                    remove-mock-authentication create-application-evaluation]]))
 
 (def payment-date (java.time.LocalDate/of 2018 5 2))
 
@@ -25,6 +25,7 @@
   (let [submission (create-submission (:form grant)
                                              {:budget-oph-share 40000})
         application (create-application grant submission)
+        evaluation (create-application-evaluation application "accepted")
         batch (payment-batches-data/create-batch
                 {:receipt-date payment-date
                  :due-date payment-date
