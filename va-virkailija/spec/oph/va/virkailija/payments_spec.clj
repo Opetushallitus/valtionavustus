@@ -326,7 +326,7 @@
         (should (some? (payments-data/get-payment (:id payment)))))))
 
 (describe
-  "Creates grant payments"
+  "Grant payments"
 
   (tags :payments :grantpayments)
 
@@ -395,6 +395,11 @@
                      (assoc-in [:content :multiplemaksuera] true)
                      (assoc-in [:content :payment-size-limit] "fixed-limit")
                      (assoc-in [:content :payment-fixed-limit] 52000)
-                     (assoc-in [:content :payment-min-first-batch] 50)))))))
+                     (assoc-in [:content :payment-min-first-batch] 50))))
+        (should= 60000
+                 (payments-data/get-first-payment-sum
+                   (assoc application :budget-oph-share 100000)
+                   (-> grant
+                     (assoc-in [:content :multiplemaksuera] true)))))))
 
 (run-specs)
