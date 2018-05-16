@@ -85,7 +85,7 @@
 (defn is-unpaid? [application-id]
   (:unpaid
    (first
-     (exec :form-db virkailija-queries/is-application-paid
+     (exec :form-db virkailija-queries/is-application-unpaid
            {:application_id application-id}))))
 
 (defn has-no-payments? [application-id]
