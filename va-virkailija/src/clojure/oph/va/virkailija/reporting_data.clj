@@ -8,7 +8,8 @@
   (:import (oph.va.jdbc.enums HakuStatus)))
 
 (defn year-to-int-all-v [c]
-  (mapv #(update % :year int) c))
+  (mapv #(update % :year int)
+        (filter #(some? (get % :year)) c)))
 
 (defn get-yearly-application-info []
   (mapv convert-to-dash-keys
