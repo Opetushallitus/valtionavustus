@@ -42,7 +42,7 @@
   [ui/grid-list {:cols 4 :cell-height "auto" :style {:max-width 1000}}
    [va-ui/select-field
     {:floating-label-text "Maksuliikemenotili"
-     :value (get values :transaction-account)
+     :value (get values :transaction-account (first transaction-accounts))
      :on-change #(on-change :transaction-account %)
      :values
      (map (fn [acc] {:key acc :value acc :primary-text acc})
