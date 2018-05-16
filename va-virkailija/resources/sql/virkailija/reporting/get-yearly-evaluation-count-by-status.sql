@@ -3,7 +3,8 @@ SELECT
 FROM
   virkailija.arviot
 WHERE
-  status = :status::virkailija.status
+  status = :status::virkailija.status AND
+  changelog -> 0 ? 'timestamp'
 GROUP BY
   year
 ORDER BY
