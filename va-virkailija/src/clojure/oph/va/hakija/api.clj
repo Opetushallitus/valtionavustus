@@ -407,3 +407,11 @@
 
 (defn cancel-all-applications []
   (exec :form-db hakija-queries/cancel-all-applications! {}))
+
+(defn set-application-refused [user-key form-submission-id comment]
+  (let [params {:user_key user-key
+                :form_submission_id form-submission-id
+                :refused_comment comment}]
+    (exec-all :form-db [hakija-queries/lock-hakemus params
+                        hakija-queries/close-existing-hakemus! params
+                        hakija-queries/set-application-refused! params])))

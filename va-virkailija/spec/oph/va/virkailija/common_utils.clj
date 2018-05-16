@@ -8,7 +8,9 @@
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-server]]
             [oph.va.hakija.api.queries :as hakija-queries]
-            [oph.va.virkailija.authentication :as auth]))
+            [oph.va.virkailija.authentication :as auth]
+            [oph.va.virkailija.db :as virkailija-db]
+            [oph.va.hakija.api :as hakija-api]))
 
 (def test-server-port 9001)
 (def base-url (str "http://localhost:" test-server-port))
@@ -80,3 +82,34 @@
                 :language "fi"
                 :register_number "123/456/78"
                 :hakemus_type "hakemus"})))
+
+(defn create-application-evaluation [application status]
+   (virkailija-db/update-or-create-hakemus-arvio
+       (hakija-api/get-avustushaku (:avustushaku application))
+       (:id application)
+       {:status status
+        :overridden-answers {}
+        :roles {:evaluators []}
+        :perustelut nil
+        :acedemy-size 0
+        :costsGranted 30000
+        :budget-granted 30000
+        :oppilaitokset []
+        :presenter-role-id nil
+        :presentercomment nil
+        :rahoitusalue nil
+        :seuranta-answers {}
+        :should-pay true
+        :should-pay-comments nil
+        :summary-comment nil
+        :tags {:value []}
+        :talousarviotili nil}
+       (:identity user-authentication)))
+
+(defn create-evaluation [grant status]
+   (create-application-evaluation
+     (create-application
+       grant
+       (create-submission
+         (:form grant) {:budget-oph-share 40000}))
+     status))

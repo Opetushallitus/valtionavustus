@@ -7,12 +7,13 @@
            [oph.va.virkailija.payments-data :as payments-data]
            [oph.va.virkailija.payment-batches-data :as payment-batches-data]
            [oph.va.virkailija.grant-data :as grant-data]
+           [oph.va.virkailija.application-data :as application-data]
            [clj-time.core :as t]
            [oph.va.virkailija.common-utils
             :refer [test-server-port get! post! create-submission
                     create-application json->map admin-authentication
                     valid-payment-values delete! add-mock-authentication
-                    remove-mock-authentication]]))
+                    remove-mock-authentication create-application-evaluation]]))
 
 (def payment-date (java.time.LocalDate/of 2018 5 2))
 
@@ -24,6 +25,7 @@
   (let [submission (create-submission (:form grant)
                                              {:budget-oph-share 40000})
         application (create-application grant submission)
+        evaluation (create-application-evaluation application "accepted")
         batch (payment-batches-data/create-batch
                 {:receipt-date payment-date
                  :due-date payment-date
@@ -234,7 +236,6 @@
             (assoc payment1 :state 2 :filename "example.xml") example-identity)
           (payments-data/update-payment
             (assoc payment2 :state 2 :filename "example.xml") example-identity)
-          (prn grant)
 
           (let [payments-email
                 (payments-data/create-payments-email
@@ -323,5 +324,82 @@
             (delete! (format "/api/v2/payments/%d/" (:id payment)))]
         (should= 400 status)
         (should (some? (payments-data/get-payment (:id payment)))))))
+
+(describe
+  "Grant payments"
+
+  (tags :payments :grantpayments)
+
+  (around-all [_] (with-test-server! :virkailija-db
+                    #(start-server
+                       {:host "localhost"
+                        :port test-server-port
+                        :auto-reload? false
+                        :without-authentication? true}) (_)))
+
+  (it "validates application for payment"
+      (let [grant (first (grant-data/get-grants))
+            submission (create-submission (:form grant)
+                                          {:budget-oph-share 40000})
+            application (create-application grant submission)]
+        (should (payments-data/valid-for-payment?
+                      (assoc application :status "accepted")))
+        (should-not (payments-data/valid-for-payment?
+                      (assoc application :should-pay false)))
+        (should-not (payments-data/valid-for-payment?
+                      (assoc application :refused true)))
+        (should-not (payments-data/valid-for-payment?
+                      (assoc application :status "rejected")))
+
+        (payments-data/create-payment
+              {:application-id (:id application)
+               :payment-sum 20000
+               :batch-id nil
+               :state 1}
+              {:person-oid "12345"
+               :first-name "Test"
+               :surname "User"})
+        (should-not (payments-data/valid-for-payment?
+                      (assoc application :status "accepted")))))
+
+  (it "gets first payment sum"
+      (let [grant (first (grant-data/get-grants))
+            submission (create-submission (:form grant) {})
+            created-application (create-application grant submission)
+            application (application-data/get-application
+                          (:id created-application))]
+
+        (should= 1500000 (payments-data/get-first-payment-sum application grant))
+        (should= 50000
+                 (payments-data/get-first-payment-sum
+                   (assoc application :budget-oph-share 50000) grant))
+        (should= 25000
+                 (payments-data/get-first-payment-sum
+                   (assoc application :budget-oph-share 50000)
+                   (-> grant
+                     (assoc-in [:content :multiplemaksuera] true)
+                     (assoc-in [:content :payment-size-limit] "no-limit")
+                     (assoc-in [:content :payment-min-first-batch] 50))))
+        (should= 25000
+                 (payments-data/get-first-payment-sum
+                   (assoc application :budget-oph-share 50000)
+                   (-> grant
+                     (assoc-in [:content :multiplemaksuera] true)
+                     (assoc-in [:content :payment-size-limit] "fixed-limit")
+                     (assoc-in [:content :payment-fixed-limit] 20000)
+                     (assoc-in [:content :payment-min-first-batch] 50))))
+        (should= 50000
+                 (payments-data/get-first-payment-sum
+                   (assoc application :budget-oph-share 50000)
+                   (-> grant
+                     (assoc-in [:content :multiplemaksuera] true)
+                     (assoc-in [:content :payment-size-limit] "fixed-limit")
+                     (assoc-in [:content :payment-fixed-limit] 52000)
+                     (assoc-in [:content :payment-min-first-batch] 50))))
+        (should= 60000
+                 (payments-data/get-first-payment-sum
+                   (assoc application :budget-oph-share 100000)
+                   (-> grant
+                     (assoc-in [:content :multiplemaksuera] true)))))))
 
 (run-specs)

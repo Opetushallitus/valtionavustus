@@ -53,6 +53,12 @@
                 {:application_id application-id
                  :state state}))))
 
+(defn get-application-unsent-payment [application-id]
+  (convert-to-dash-keys
+    (last (exec :virkailija-db
+                virkailija-queries/get-application-unsent-payment
+                {:application_id application-id}))))
+
 (defn get-application-payments [id]
   (map convert-to-dash-keys (exec :virkailija-db
                                   virkailija-queries/get-application-payments
@@ -81,3 +87,10 @@
    (first
      (exec :form-db virkailija-queries/is-application-paid
            {:application_id application-id}))))
+
+(defn has-no-payments? [application-id]
+  (not
+    (:has_payments
+     (first
+       (exec :form-db virkailija-queries/application-has-payments
+             {:application_id application-id})))))

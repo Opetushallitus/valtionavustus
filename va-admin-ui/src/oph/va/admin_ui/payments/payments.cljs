@@ -1,6 +1,6 @@
 (ns oph.va.admin-ui.payments.payments
   (:require [oph.va.admin-ui.payments.utils :refer [no-nils? valid-email?]]
-            [oph.va.admin-ui.utils :refer [format]]
+            [oph.va.admin-ui.utils :refer [format get-answer-value]]
             [cljs-time.coerce :as tc]
             [cljs-time.format :as tf]
             [clojure.set :refer [rename-keys]]))
@@ -91,13 +91,14 @@
 
 (defn convert-application-payments [application payments]
   (let [application-info
-        (rename-keys
+        (assoc
           (select-keys
-           application
-           [:project-name :organization :budget-granted])
-          {:budget-granted :payment-sum})]
+             application
+             [:project-name :organization-name :budget-granted :register-number
+              :takp-account :lkp-account])
+          :bank-iban (get-answer-value (:answers application) "bank-iban"))]
     (map
-      #(merge application-info application)
+      #(merge application-info %)
       payments)))
 
 (defn find-application-payments [payments application-id application-version]

@@ -49,31 +49,56 @@
   (let [grant-id (js/parseInt (router/get-current-param :grant))]
     (when-not (js/isNaN grant-id) grant-id)))
 
-(defn render-admin-tools [payments selected-grant]
+(defn render-admin-tools [payments selected-grant delete-payments?]
   [:div
    [:hr]
+   [:h3 "Pääkäyttäjän työkalut"]
    [ui/grid-list {:cols 6 :cell-height "auto"}
+    (when delete-payments?
+      [va-ui/raised-button
+       {:primary true
+        :label "Poista maksatukset"
+        :style theme/button
+        :on-click
+        (fn []
+          (go (let [grant-id (:id selected-grant)
+                    response (<! (connection/delete-grant-payments
+                                   grant-id))]
+                (if (:success response)
+                  (let [download-response
+                        (<! (connection/get-grant-payments grant-id))]
+                    (if (:success download-response)
+                      (reset! payments (:body download-response))
+                      (dialogs/show-error-message!
+                        "Virhe tietojen latauksessa"
+                        (select-keys download-response
+                                     [:status :error-text]))))
+                  (dialogs/show-error-message!
+                    "Virhe maksatusten poistossa"
+                    (select-keys response
+                                 [:status :error-text]))))))}])
     [va-ui/raised-button
      {:primary true
-      :label "Poista maksatukset"
+      :label "Luo maksatukset"
       :style theme/button
-      :on-click (fn []
-                  (go (let [grant-id (:id selected-grant)
-                            response (<! (connection/delete-grant-payments
-                                           grant-id))]
-                        (if (:success response)
-                          (let [download-response
-                                  (<! (connection/get-grant-payments grant-id))]
-                            (if (:success download-response)
-                              (reset! payments (:body download-response))
-                              (dialogs/show-error-message!
-                                "Virhe tietojen latauksessa"
-                                (select-keys download-response
-                                             [:status :error-text]))))
-                          (dialogs/show-error-message!
-                            "Virhe maksatusten poistossa"
-                            (select-keys response
-                                         [:status :error-text]))))))}]]])
+      :on-click
+      (fn []
+        (go (let [grant-id (:id selected-grant)
+                  response (<! (connection/create-grant-payments
+                                 grant-id))]
+              (if (:success response)
+                (let [download-response
+                      (<! (connection/get-grant-payments grant-id))]
+                  (if (:success download-response)
+                    (reset! payments (:body download-response))
+                    (dialogs/show-error-message!
+                      "Virhe tietojen latauksessa"
+                      (select-keys download-response
+                                   [:status :error-text]))))
+                (dialogs/show-error-message!
+                  "Virhe maksatusten luonnissa"
+                  (select-keys response
+                               [:status :error-text]))))))}]]])
 
 (defn render-grant-filters [filter-str on-change]
   [:div
@@ -148,38 +173,40 @@
        [:hr]
        (grant-info @selected-grant)])))
 
-(defn home-page [{:keys [user-info delete-payments?]}]
-  (let [{:keys [selected-grant batch-values applications payments]} state
+(defn render-batch-values [{:keys [values disabled? on-change]}]
+  [:div {:class (when disabled? "disabled")}
+   [:h3 "Maksuerän tiedot"]
+   (financing/payment-emails values #(on-change %1 %2))
+   (financing/payment-fields values #(on-change %1 %2))])
+
+(defn home-page [data]
+  (let [{:keys [user-info delete-payments?]} data
+        {:keys [selected-grant batch-values applications payments]} state
         flatten-payments (combine @applications @payments)]
     [:div
      [grants-components]
-     [(fn []
-        (let [unsent-payments? (some #(when (< (:state %) 2)) flatten-payments)]
+     [(fn [data]
+        (let [unsent-payments?
+              (some? (some #(when (< (:state %) 2) %) flatten-payments))]
           [:div {:class
                  (when (not= (:status @selected-grant) "resolved") "disabled")}
            [:div
             [:hr]
-            [(let [selected (r/atom "outgoing")]
-               (fn []
+            [(let [selected (r/atom "outgoing")
+                   accounts-nil? (any-account-nil? @applications)]
+               (fn [data]
                  [va-ui/tabs {:value @selected
                               :on-change #(reset! selected %)}
                   [va-ui/tab
                    {:value "outgoing"
                     :label "Lähtevät maksatukset"}
-                   [:h3 "Maksuerän tiedot"]
-                   (financing/payment-emails @batch-values
-                                             #(swap! batch-values assoc %1 %2))
-                   (financing/payment-fields @batch-values
-                                             #(swap! batch-values assoc %1 %2))
+                   [render-batch-values
+                    {:disabled? (not unsent-payments?)
+                     :values @batch-values
+                     :on-change #(swap! batch-values assoc %1 %2)}]
                    [payments-ui/payments-table
-                    (filter #(< (:state %) 2) flatten-payments)]]
-                  [va-ui/tab
-                   {:value "sent"
-                    :label "Lähetetyt maksatukset"}
-                   [payments-ui/payments-table
-                    (filter #(> (:state %) 1) flatten-payments)]]]))]]
-           (let [accounts-nil? (any-account-nil? @applications)]
-             [:div
+                    (filter #(< (:state %) 2) flatten-payments)]
+                   [:div
               (when accounts-nil?
                 (notice "Joillakin hakemuksilla ei ole LKP- tai TaKP-tiliä, joten
                    makastukset tulee luoda manuaalisesti."))
@@ -210,9 +237,14 @@
                           @selected-grant payments)
                         (dialogs/show-error-message!
                           "Virhe maksuerän luonnissa"
-                          batch-result)))))}]])]))]
-     (when (and delete-payments? (user/is-admin? user-info))
-       (render-admin-tools payments @selected-grant))]))
+                          batch-result)))))}]]]
+                  [va-ui/tab
+                   {:value "sent"
+                    :label "Lähetetyt maksatukset"}
+                   [payments-ui/payments-table
+                    (filter #(> (:state %) 1) flatten-payments)]]]))]]]))]
+     (when (user/is-admin? user-info)
+       (render-admin-tools payments @selected-grant delete-payments?))]))
 
 (defn init! []
   (let [{:keys [selected-grant batch-values applications payments grants]} state]

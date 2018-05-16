@@ -2,12 +2,14 @@
   (:require [compojure.api.sweet :as compojure-api]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.payments-data :as payments-data]
-            [ring.util.http-response :refer [ok not-found]]
+            [ring.util.http-response :refer [ok not-found unauthorized]]
             [compojure.core :as compojure]
             [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.rondo-service :as rondo-service]
-            [oph.soresu.common.config :refer [config]]))
+            [oph.soresu.common.config :refer [config]]
+            [oph.va.virkailija.va-code-values-routes :refer [with-admin]]
+            [oph.va.virkailija.authentication :as authentication]))
 
 (defn- get-grants []
   (compojure-api/GET "/" []
@@ -40,7 +42,7 @@
     :path-params [grant-id :- Long]
     :return [virkailija-schema/Payment]
     :summary "Return payments of a grant"
-    (ok (payments-data/get-grant-payments grant-id))))
+    (ok (payments-data/get-valid-grant-payments grant-id))))
 
 (defn- delete-payments []
   (compojure-api/DELETE
@@ -52,6 +54,17 @@
       (throw (Exception. "Route not allowed")))
     (payments-data/delete-grant-payments id)
     (ok)))
+
+(defn- post-payments []
+  (compojure-api/POST
+    "/:id/payments/" [id :as request]
+    :path-params [id :- Long]
+    :return [virkailija-schema/Payment]
+    :summary "Create grant payments"
+    (with-admin request
+      (ok (payments-data/create-grant-payments
+            id (authentication/get-request-identity request)))
+      (unauthorized ""))))
 
 (defn- post-payments-email []
   (compojure-api/POST
@@ -68,4 +81,5 @@
   (get-grant-applications)
   (get-grant-payments)
   (delete-payments)
+  (post-payments)
   (post-payments-email))

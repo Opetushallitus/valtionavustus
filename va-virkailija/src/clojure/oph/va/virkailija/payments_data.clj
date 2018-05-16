@@ -14,6 +14,11 @@
 
 (def date-formatter (f/formatter "dd.MM.YYYY"))
 
+(def system-user
+  {:person-oid "System"
+   :first-name "Initial"
+   :surname "payment"})
+
 (defn from-sql-date [d] (.toLocalDate d))
 
 (defn convert-timestamps-from-sql [p]
@@ -22,6 +27,18 @@
       (update-some :due-date from-sql-date)
       (update-some :invoice-date from-sql-date)
       (update-some :receipt-date from-sql-date)))
+
+(defn valid-for-send-payment? [application]
+  (and
+    (= (:status application) "accepted")
+    (get application :should-pay true)
+    (not (get application :refused false))))
+
+(defn valid-for-payment? [application]
+  (and
+    (valid-for-send-payment? application)
+    (application-data/has-no-payments? (:id application))))
+
 
 (defn get-payment
   ([id]
@@ -120,9 +137,10 @@
     (update-payment (assoc payment :state 3)
                     {:person-oid "-" :first-name "Rondo" :surname ""})))
 
-(defn get-grant-payments [id]
+(defn get-valid-grant-payments [id]
   (->>
     (application-data/get-applications-with-evaluation-by-grant id)
+    (filter valid-for-send-payment?)
     (reduce
       (fn [p n] (into p (application-data/get-application-payments (:id n)))) [])
     (map convert-timestamps-from-sql)))
@@ -160,3 +178,36 @@
 
 (defn send-payments-email [data]
   (email/send-payments-info! (create-payments-email data)))
+
+(defn get-first-payment-sum [application grant]
+  (int
+    (if (and
+          (get-in grant [:content :multiplemaksuera] false)
+             (or (= (get-in grant [:content :payment-size-limit] "no-limit")
+                    "no-limit")
+                 (>= (:budget-oph-share application)
+                     (get-in grant [:content :payment-fixed-limit]))))
+      (* (/ (get-in grant [:content :payment-min-first-batch] 60) 100.0)
+         (:budget-oph-share application))
+      (:budget-oph-share application))))
+
+(defn create-payment-values [application sum]
+  {:application-id (:id application)
+   :application-version (:version application)
+   :state 0
+   :batch-id nil
+   :payment-sum sum})
+
+(defn create-grant-payments
+  ([grant-id identity]
+   (let [grant (grant-data/get-grant grant-id)]
+     (doall
+       (map
+         #(create-payment
+            (create-payment-values % (get-first-payment-sum % grant))
+            identity)
+         (filter
+           valid-for-payment?
+           (application-data/get-applications-with-evaluation-by-grant
+             grant-id))))))
+  ([grant-id] (create-grant-payments grant-id system-user)))

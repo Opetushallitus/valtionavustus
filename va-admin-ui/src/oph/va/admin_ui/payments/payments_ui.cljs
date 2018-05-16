@@ -63,8 +63,7 @@
      (:project-name payment)]]
    [table/table-row-column {:style {:text-align "right"}}
     (.toLocaleString (get payment :payment-sum 0)) " €"]
-   [table/table-row-column
-    (get-answer-value (:answers payment) "bank-iban")]
+   [table/table-row-column (:bank-iban payment)    ]
    [table/table-row-column (get payment :lkp-account)]
    [table/table-row-column (get payment :takp-account)]
    [table/table-row-column {:style {:text-align "right"}}
@@ -95,7 +94,6 @@
   (filter #(payment-matches? % filters) payments))
 
 (defn update-filters! [filters k v]
-  (prn k v)
   (if (empty? v)
     (swap! filters dissoc k)
     (swap! filters assoc k (lower-case v))))
@@ -175,10 +173,12 @@
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]]]
-          [table/table-body
-           {:style {:padding-right
-                    (when (< (count sorted-filtered-payments)) 14)}}
-           (doall (map-indexed render-payment sorted-filtered-payments))]
+          (if (empty? sorted-filtered-payments)
+            [:div {:style theme/table-empty-text} "Ei maksatuksia"]
+            [table/table-body
+             {:style {:padding-right
+                      (when (< (count sorted-filtered-payments)) 14)}}
+             (doall (map-indexed render-payment sorted-filtered-payments))])
           [table/table-footer
            [table/table-row
             [table/table-row-column]
