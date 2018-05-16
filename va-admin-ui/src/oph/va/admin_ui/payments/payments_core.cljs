@@ -247,6 +247,7 @@
        (render-admin-tools payments @selected-grant delete-payments?))]))
 
 (defn init! []
+  (prn "Initializing")
   (let [{:keys [selected-grant batch-values applications payments grants]} state]
    (add-watch
      selected-grant
@@ -256,6 +257,7 @@
          (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan hakemuksia" 3)]
            (put! dialog-chan 1)
            (go
+             (prn "Loading applications")
              (let [grant-id (:id new-state)
                    applications-response
                    (<! (connection/get-grant-applications grant-id))
@@ -286,11 +288,13 @@
                (put! dialog-chan 3))
              (close! dialog-chan))))))
    (go
+     (prn "Loading grants")
      (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan haun tietoja" 3)
            grants-result (<! (connection/get-grants))]
        (put! dialog-chan 2)
        (if (:success grants-result)
          (do
+           (prn "Set grants")
            (reset! grants (convert-dates (:body grants-result)))
            (reset! selected-grant
                    (if-let [grant-id (get-param-grant)]
