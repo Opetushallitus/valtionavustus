@@ -31,8 +31,7 @@
 
 (def table table-cell)
 
-(def table-empty-text {:width "100%"
-                       :background-color "#f0f0f0"
+(def table-empty-text {:background-color "#f0f0f0"
                        :padding 20})
 
 (def table-footer {:overflow "hidden"
