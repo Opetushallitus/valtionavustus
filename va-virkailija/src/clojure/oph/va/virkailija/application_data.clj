@@ -53,6 +53,12 @@
                 {:application_id application-id
                  :state state}))))
 
+(defn get-application-unsent-payment [application-id]
+  (convert-to-dash-keys
+    (last (exec :virkailija-db
+                virkailija-queries/get-application-unsent-payment
+                {:application_id application-id}))))
+
 (defn get-application-payments [id]
   (map convert-to-dash-keys (exec :virkailija-db
                                   virkailija-queries/get-application-payments
