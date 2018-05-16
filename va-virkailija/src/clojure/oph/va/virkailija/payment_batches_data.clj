@@ -64,7 +64,7 @@
   (some #(when (< (:state %) 2) %) payments))
 
 (defn send-payment [application data]
-  (let [payment (application-data/get-application-payment-by-state
+  (let [payment (application-data/get-application-unsent-payment-by-state
                   (:id application) 1)]
     (if (some? payment)
       (let [filename (create-filename payment)
@@ -76,7 +76,7 @@
             (assoc :filename filename :payment updated-payment)))
       {:success false :error {:error-type :no-payments}})))
 
-(defn create-payments [data]
+(defn send-payments [data]
   (let [{:keys [identity grant]} data
         c (a/chan)]
     (a/go
@@ -84,7 +84,6 @@
               (filter
                 payments-data/valid-for-send-payment?
                 (grant-data/get-grant-applications-with-evaluation (:id grant)))]
-
         (let [result (send-payment application data)]
           (when (:success result)
             (do

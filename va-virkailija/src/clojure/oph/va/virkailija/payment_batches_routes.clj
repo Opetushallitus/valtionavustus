@@ -34,7 +34,7 @@
       (conflict "Payment batch already exists")
       (ok (data/create-batch batch-values)))))
 
-(defn- create-payments []
+(defn- send-payments []
   (compojure-api/POST
     "/:id/payments/" [id :as request]
     :path-params [id :- Long]
@@ -43,7 +43,7 @@
     :summary "Create new payments for unpaid applications of grant. Payments
               will be sent to Rondo and stored to database."
     (let [batch (data/get-batch id)
-          c (data/create-payments
+          c (data/send-payments
               {:batch batch
                :grant (grant-data/get-grant (:grant-id batch))
                :identity (authentication/get-request-identity request) } )]
@@ -70,4 +70,4 @@
   "payment batches routes"
   (find-payment-batch)
   (create-payment-batch)
-  (create-payments))
+  (send-payments))
