@@ -247,7 +247,6 @@
        (render-admin-tools payments @selected-grant delete-payments?))]))
 
 (defn init! []
-  (prn "Initializing")
   (let [{:keys [selected-grant batch-values applications payments grants]} state]
    (add-watch
      selected-grant
@@ -257,7 +256,6 @@
          (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan hakemuksia" 3)]
            (put! dialog-chan 1)
            (go
-             (prn "Loading applications")
              (let [grant-id (:id new-state)
                    applications-response
                    (<! (connection/get-grant-applications grant-id))
@@ -265,7 +263,6 @@
                    batch-response
                    (<! (connection/find-payment-batch
                          grant-id (format-date (js/Date.))))]
-               (prn "Setting batch values")
                (reset! batch-values
                        (if (= (:status batch-response) 200)
                          (-> (:body batch-response)
@@ -273,13 +270,11 @@
                              (assoc :read-only true))
                          default-batch-values))
                (put! dialog-chan 2)
-               (prn "Setting application values")
                (if (:success applications-response)
                  (reset! applications (:body applications-response))
                  (dialogs/show-error-message!
                    "Virhe hakemusten latauksessa"
                    (select-keys applications-response [:status :error-text])))
-               (prn "Setting payment values")
                (if (:success payments-response)
                  (reset! payments (:body payments-response))
                  (dialogs/show-error-message!
@@ -288,13 +283,11 @@
                (put! dialog-chan 3))
              (close! dialog-chan))))))
    (go
-     (prn "Loading grants")
      (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan haun tietoja" 3)
            grants-result (<! (connection/get-grants))]
        (put! dialog-chan 2)
        (if (:success grants-result)
          (do
-           (prn "Set grants")
            (reset! grants (convert-dates (:body grants-result)))
            (reset! selected-grant
                    (if-let [grant-id (get-param-grant)]
