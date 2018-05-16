@@ -263,6 +263,7 @@
                    batch-response
                    (<! (connection/find-payment-batch
                          grant-id (format-date (js/Date.))))]
+               (prn "Setting batch values")
                (reset! batch-values
                        (if (= (:status batch-response) 200)
                          (-> (:body batch-response)
@@ -270,11 +271,13 @@
                              (assoc :read-only true))
                          default-batch-values))
                (put! dialog-chan 2)
+               (prn "Setting application values")
                (if (:success applications-response)
                  (reset! applications (:body applications-response))
                  (dialogs/show-error-message!
                    "Virhe hakemusten latauksessa"
                    (select-keys applications-response [:status :error-text])))
+               (prn "Setting payment values")
                (if (:success payments-response)
                  (reset! payments (:body payments-response))
                  (dialogs/show-error-message!
