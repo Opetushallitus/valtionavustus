@@ -64,8 +64,8 @@
   (some #(when (< (:state %) 2) %) payments))
 
 (defn send-payment [application data]
-  (let [payment (application-data/get-application-unsent-payment-by-state
-                  (:id application) 1)]
+  (let [payment (application-data/get-application-unsent-payment
+                  (:id application))]
     (if (some? payment)
       (let [filename (create-filename payment)
             updated-payment (payments-data/update-payment
