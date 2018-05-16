@@ -326,9 +326,9 @@
         (should (some? (payments-data/get-payment (:id payment)))))))
 
 (describe
-  "Grant payments"
+  "Prepare application"
 
-  (tags :payments :grantpayments)
+  (tags :payments :validatingapplication)
 
   (around-all [_] (with-test-server! :virkailija-db
                     #(start-server
@@ -337,7 +337,7 @@
                         :auto-reload? false
                         :without-authentication? true}) (_)))
 
-  (it "validates application for payment"
+  (it "validates application for creating first payment"
       (let [grant (first (grant-data/get-grants))
             submission (create-submission (:form grant)
                                           {:budget-oph-share 40000})
