@@ -79,7 +79,7 @@
 
                          ;; ClojureScript
                          [org.clojure/clojurescript "1.9.946"]
-                         [reagent "0.8.0-alpha2"]
+                         [reagent "0.8.1"]
                          [cljsjs/react-dom "15.6.2-1"]
                          [cljs-react-material-ui "0.2.48"]
                          [cljs-http "0.1.43"]
