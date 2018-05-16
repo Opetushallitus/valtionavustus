@@ -17,18 +17,15 @@ import AcademySize from './AcademySize.jsx'
 import Perustelut from './Perustelut.jsx'
 import PresenterComment from './PresenterComment.jsx'
 import EditStatus from './EditStatus.jsx'
-import ShouldPay from './ShouldPay.jsx'
-import ShouldPayComments from './ShouldPayComments.jsx'
+import ApplicationPayments from './ApplicationPayments.jsx'
 
 import '../style/admin.less'
 
 export default class HakemusArviointi extends Component {
   render() {
-    const controller = this.props.controller
-    const hakemus = this.props.hakemus
-    const avustushaku = this.props.avustushaku
-    const hakuData = this.props.hakuData
-    const translations = this.props.translations
+    const {controller, hakemus, avustushaku, hakuData, translations,
+           userInfo, loadingComments, showOthersScores,
+           multibatchEnabled} = this.props
     const {
       allowHakemusCommenting,
       allowHakemusStateChanges,
@@ -36,11 +33,7 @@ export default class HakemusArviointi extends Component {
       allowHakemusOfficerEditing,
       allowHakemusCancellation
     } = this.props.selectedHakemusAccessControl
-    const userInfo = this.props.userInfo
     const comments = hakemus.comments
-    const loadingComments = this.props.loadingComments
-    const showOthersScores = this.props.showOthersScores
-    const showShouldPayComments = true
 
     return (
      <div id="arviointi-tab">
@@ -53,11 +46,16 @@ export default class HakemusArviointi extends Component {
        <HakemusComments controller={controller} hakemus={hakemus} comments={comments} loadingComments={loadingComments} allowHakemusCommenting={allowHakemusCommenting}/>
        <SetArviointiStatus controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <Perustelut controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
-       <ShouldPay controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges}/>
-       <ShouldPayComments showField={showShouldPayComments} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges}/>
        <ChangeRequest controller={controller} hakemus={hakemus} avustushaku={avustushaku} allowEditing={allowHakemusStateChanges} />
        <SummaryComment controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
        <HakemusBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+       {multibatchEnabled && avustushaku.content["multiplemaksuera"] &&
+         <ApplicationPayments application={hakemus}
+                              grant={avustushaku}
+                              index={0}
+                              payments={hakemus.payments}
+                              onAddPayment={controller.addPayment}
+                              onRemovePayment={controller.removePayment}/>}
        <TraineeDayEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}  allowEditing={allowHakemusStateChanges} />
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusOfficerEditing} status="officer_edit"/>
        <EditStatus avustushaku={avustushaku} hakemus={hakemus} allowEditing={allowHakemusCancellation} status="cancelled"/>

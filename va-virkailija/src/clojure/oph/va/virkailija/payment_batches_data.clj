@@ -63,27 +63,12 @@
 (defn get-unpaid-payment [payments]
   (some #(when (< (:state %) 2) %) payments))
 
-(defn create-single-payment [application data sum]
-  (let [payments (application-data/get-application-payments (:id application))
-        unpaid-payment (get-unpaid-payment payments)]
-    (if (or (empty? payments) (some? unpaid-payment))
-      (let [payment
-            (or unpaid-payment
-                (payments-data/create-payment
-                  (create-payment-data application (:batch data) sum)
-                  (:identity data)))
-            filename (create-filename payment)]
-        (assoc (send-to-rondo! payment application (:grant data) filename
-                               (:batch data))
-               :filename filename :payment payment))
-      {:success false :error {:error-type :already-paid}})))
-
-(defn create-multibatch-payment [application data]
-  (let [payment (application-data/get-application-payment-by-state
-                  (:id application) 1)
-        filename (create-filename payment)]
+(defn send-payment [application data]
+  (let [payment (application-data/get-application-unsent-payment
+                  (:id application))]
     (if (some? payment)
-      (let [updated-payment (payments-data/update-payment
+      (let [filename (create-filename payment)
+            updated-payment (payments-data/update-payment
                              (assoc payment :batch-id (get-in data [:batch :id]))
                              (:identity data))]
         (-> updated-payment
@@ -91,22 +76,21 @@
             (assoc :filename filename :payment updated-payment)))
       {:success false :error {:error-type :no-payments}})))
 
-(defn create-payments [data]
+(defn send-payments [data]
   (let [{:keys [identity grant]} data
         c (a/chan)]
     (a/go
       (doseq [application
-              (grant-data/get-grant-applications-with-evaluation (:id grant))]
-        (let [result
-              (if (get-in grant [:content :multiplemaksuera])
-                (create-multibatch-payment application data)
-                (create-single-payment
-                  application data (:budget-granted application)))]
-          (when
-            (:success result)
-            (payments-data/update-payment
-              (assoc (:payment result)
-                     :state 2 :filename (:filename result)) identity))
+              (filter
+                payments-data/valid-for-send-payment?
+                (grant-data/get-grant-applications-with-evaluation (:id grant)))]
+        (let [result (send-payment application data)]
+          (when (:success result)
+            (do
+              (payments-data/update-payment
+                (assoc (:payment result)
+                       :state 2 :filename (:filename result)) identity)
+              (application-data/revoke-application-tokens (:id application))))
           (a/>! c result)))
       (a/close! c))
     c))

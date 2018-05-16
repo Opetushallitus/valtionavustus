@@ -503,6 +503,44 @@ lomakkeen sisältöä. Kaikkia graafisen lomake-editorin komponentteja ei
 ole toteutettu. Lomakkeen voi kopioida json-editorin kautta toiseen
 avustushakuun.
 
+## Maksatus
+
+Sovellus tarkistaa jokaisen maksatuksen lähetyksessä, että virkailija ei ole
+asettanut "Ei maksuun" tietoa tai hakija ei ole ilmoittanut, että ei ota
+avustusta vastaan.
+
+Rondo palauttaa XML-muodossa vastauksen maksatuksesta, mikä luetaan
+Rondo-Schedulerin avulla ajastetusti ja maksatuksen tila päivitetään
+tietokantaan.
+
+Maksatukset-näkymässä listataan sekä julkaistut että ratkaistut haut. Ainoastaan
+ratkaistujen hakujen maksatuslistaukset ovat käytettävissä.
+
+Kun haun päätökset lähetetään, kaikille hakemuksille luodaan 1. erän maksatus
+seuraavin ehdoin:
+- Tila on hyväksytty
+- Virkailija ei ole asettanut "Ei maksuun" täppää
+- Hakija ei ole ilmoittanut, että ei ota avustusta vastaan
+
+Maksatusprosessi etenee seuraavasti yhdessä erässä maksettavan haun kanssa:
+
+- Ensimmäisen erän suuruus on luonnollisesti myönnetty summa (OPH:n osuus)
+- Virkailija luo Maksatukset-näkymässä uuden maksuerän täyttämällä tarvittavat
+  tiedot ja lähettää maksatukset Rondoon
+
+Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
+
+- Ensimmäisen erän summa määräytyy haussa tehtyjen määritysten (avustuksen
+  summan leikkuri yms.) mukaan
+  - Jos näitä ei ole haun tietoihin määritelty, käytetään oletusarvona, että
+    kaikille maksetaan useassa erässä ja ensimmäinen erä on 60% myönnetystä
+    summasta
+- Virkailija luo Maksatukset-näkymässä uuden maksuerän täyttämällä tarvittavat
+  tiedot ja lähettää 1. erän maksatukset Rondoon
+- Seuraavan erän summan asettaa virkailija Väliselvitys-välilehdellä
+  - Tämän jälkeen maksu ilmestyy Maksatus-näkymään, josta sen voi lähettää,
+    kuten ensimmäisen erän
+
 ## Käytäntöjä
 
 ### Git

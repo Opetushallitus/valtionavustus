@@ -11,6 +11,7 @@
 (defquery get-accepted-hakemus-ids "sql/virkailija/arvio/get-accepted-hakemus-ids.sql")
 (defquery get-arvio "sql/virkailija/arvio/get.sql")
 (defquery list-arvio-status-and-budget-granted-by-hakemus-ids "sql/virkailija/arvio/list-status-and-budget-granted-by-hakemus-ids.sql")
+(defquery set-all-unhandled! "sql/virkailija/arvio/set-all-unhandled.sql")
 
 (defquery create-comment<! "sql/virkailija/comment/create.sql")
 (defquery list-comments "sql/virkailija/comment/list.sql")
@@ -27,6 +28,7 @@
 (defquery get-grants "sql/virkailija/grants/get-grants.sql")
 (defquery get-resolved-grants-with-content
   "sql/virkailija/grants/get-resolved-grants-with-content.sql")
+(defquery find-grants "sql/virkailija/grants/find-grants.sql")
 (defquery get-grant "sql/virkailija/grants/get-grant.sql")
 (defquery get-grant-applications "sql/virkailija/grants/get-grant-applications.sql")
 (defquery get-grant-applications-with-evaluation
@@ -47,16 +49,16 @@
 (defquery update-payment "sql/virkailija/payments/update-payment.sql")
 (defquery get-payment-history "sql/virkailija/applications/get-payment-history.sql")
 (defquery create-payment "sql/virkailija/payments/create-payment.sql")
-(defquery get-by-rn-and-date "sql/virkailija/payments/get-by-rn-and-date.sql")
 (defquery delete-payment "sql/virkailija/payments/delete-payment.sql")
+(defquery find-payments-by-application-id-and-invoice-date
+  "sql/virkailija/payments/find-by-application-id-and-invoice-date.sql")
 
 (defquery find-batch "sql/virkailija/payment_batches/find-batch.sql")
 (defquery create-batch "sql/virkailija/payment_batches/create-batch.sql")
 (defquery get-batch "sql/virkailija/payment_batches/get-batch.sql")
 
-(defquery get-application "sql/virkailija/applications/get-application.sql")
-(defquery get-application-with-evaluation-and-answers
-  "sql/virkailija/applications/get-application-with-evaluation-and-answers.sql")
+(defquery get-application-evaluation
+  "sql/virkailija/applications/get-application-evaluation.sql")
 (defquery get-application-payments
   "sql/virkailija/applications/get-application-payments.sql")
 (defquery get-application-payment
@@ -64,6 +66,12 @@
 (defquery get-application-payment-by-state
   "sql/virkailija/applications/get-application-payment-by-state.sql")
 (defquery get-total-paid "sql/virkailija/applications/get-total-paid.sql")
+(defquery is-application-paid
+  "sql/virkailija/applications/is-application-paid.sql")
+(defquery application-has-payments
+  "sql/virkailija/applications/has-payments.sql")
+(defquery get-application-unsent-payment
+  "sql/virkailija/applications/get-unsent-payment.sql")
 
 (defquery lock-va-users-cache-exclusively! "sql/virkailija/va_users_cache/lock-exclusively.sql")
 (defquery update-va-user-cache! "sql/virkailija/va_users_cache/update.sql")
@@ -72,14 +80,12 @@
 (defquery delete-va-user-cache! "sql/virkailija/va_users_cache/delete.sql")
 (defquery get-va-user-cache-by-person-oid "sql/virkailija/va_users_cache/get-by-person-oid.sql")
 
-(defquery get-yearly-application-info
-  "sql/virkailija/reporting/get-yearly-application-info.sql")
 (defquery get-yearly-evaluation-count-by-status
   "sql/virkailija/reporting/get-yearly-evaluation-count-by-status.sql")
 (defquery get-yearly-granted "sql/virkailija/reporting/get-yearly-granted.sql")
-(defquery get-total-grant-count
-  "sql/virkailija/reporting/get-total-grant-count.sql")
 
+(defquery get-va-code-value
+  "sql/virkailija/va_code_values/get-va-code-value.sql")
 (defquery get-va-code-values-by-type-and-year
   "sql/virkailija/va_code_values/get-va-code-values-by-type-and-year.sql")
 (defquery get-va-code-values-by-year
@@ -90,6 +96,5 @@
   "sql/virkailija/va_code_values/get-current-va-code-values.sql")
 (defquery create-va-code-value
   "sql/virkailija/va_code_values/create-va-code-value.sql")
-(defquery check-code-usage "sql/virkailija/va_code_values/check-code-usage.sql")
 (defquery delete-va-code-value
   "sql/virkailija/va_code_values/delete-va-code-value.sql")

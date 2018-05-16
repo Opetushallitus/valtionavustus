@@ -10,11 +10,7 @@ JOIN
   virkailija.payment_batches AS b
     ON
       b.id = p.batch_id
-JOIN
-  hakija.hakemukset AS h
-  ON
-    (p.application_id = h.id AND h.version_closed IS NULL AND
-     h.register_number = :register_number)
 WHERE
-  b.invoice_date = :invoice_date::date AND p.deleted IS NULL AND
-  p.version_closed IS NULL ;
+  b.invoice_date = :invoice_date::date
+  AND p.deleted IS NULL
+  AND p.version_closed IS NULL;

@@ -2,42 +2,54 @@
   (:require [oph.soresu.common.db :refer [exec]]
             [oph.va.virkailija.db.queries :as virkailija-queries]
             [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
-            [oph.va.virkailija.lkp-templates :as lkp]))
+            [oph.va.virkailija.lkp-templates :as lkp]
+            [oph.va.virkailija.va-code-values-data :as va-code-values]
+            [oph.va.virkailija.application-data :as application-data]))
 
-(defn get-grants []
-  (mapv convert-to-dash-keys
-        ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
-        (exec :virkailija-db virkailija-queries/get-grants {})))
+(defn get-grants
+  ([content?]
+   (let [va-code-values (va-code-values/get-va-code-values)]
+     (mapv #(va-code-values/find-grant-code-values
+              (convert-to-dash-keys %) va-code-values)
+           (exec :virkailija-db
+                 (if content?
+                   virkailija-queries/get-resolved-grants-with-content
+                   virkailija-queries/get-grants) {}))))
+  ([] (get-grants false)))
 
 (defn get-resolved-grants-with-content []
+  (get-grants true))
+
+(defn find-grants [search-term]
   (mapv convert-to-dash-keys
-        ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
-        (exec :virkailija-db virkailija-queries/get-resolved-grants-with-content {})))
+        (exec :form-db virkailija-queries/find-grants
+              {:search_term
+               (str "%" (clojure.string/lower-case search-term) "%")})))
 
 (defn get-grant [grant-id]
-  (convert-to-dash-keys
-   ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
-   (first (exec :virkailija-db virkailija-queries/get-grant {:grant_id grant-id}))))
+  (let [grant (convert-to-dash-keys
+                (first (exec :virkailija-db virkailija-queries/get-grant
+                             {:grant_id grant-id})))]
+    (merge grant
+           {:operational-unit
+            (va-code-values/get-va-code-value (:operational-unit-id grant))
+            :project
+            (va-code-values/get-va-code-value (:project-id grant))
+            :operation
+            (va-code-values/get-va-code-value (:operation-id grant))})))
 
 (defn- set-lkp-account [application]
   (assoc application :lkp-account (lkp/get-lkp-account (:answers application))))
 
 (defn get-grant-applications-with-evaluation [grant-id]
-  ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
-  (->> (exec :virkailija-db
-             virkailija-queries/get-grant-applications-with-evaluation
-             {:grant_id grant-id} )
-      (map convert-to-dash-keys)
-      (mapv set-lkp-account)))
+  (mapv
+    set-lkp-account
+    (application-data/get-applications-with-evaluation-by-grant grant-id)))
 
 (defn get-grant-applications [grant-id]
-  (mapv convert-to-dash-keys
-        ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
-        (exec :virkailija-db virkailija-queries/get-grant-applications
-              {:grant_id grant-id})))
+  (application-data/get-applications-with-evaluation-by-grant grant-id))
 
 (defn get-unpaid-applications [grant-id]
-  (mapv convert-to-dash-keys
-        ;; TODO: Problematic: query utilizes join between hakija and virkailija schemas
-        (exec :virkailija-db virkailija-queries/get-unpaid-applications
-              {:grant_id grant-id})))
+  (filterv
+    application-data/is-unpaid?
+    (application-data/get-applications-with-evaluation-by-grant grant-id)))

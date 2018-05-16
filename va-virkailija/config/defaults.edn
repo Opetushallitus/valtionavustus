@@ -49,4 +49,5 @@
  :payments {:enabled? false}
  :multibatch-payments {:enabled? false}
  :va-code-values {:enabled? false}
- :reports {:enabled? false}}
+ :reports {:enabled? false}
+ :application-change {:refuse-enabled? false}}

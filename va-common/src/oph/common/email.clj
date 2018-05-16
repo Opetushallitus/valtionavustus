@@ -6,6 +6,7 @@
             [clojure.java.io :as io]
             [clostache.parser :refer [render]]
             [oph.soresu.common.config :refer [config]]
+            [oph.common.email-utils :as email-utils]
             [oph.common.string :as common-string]
             [oph.common.background-job-supervisor :as job-supervisor])
   (:import [org.apache.commons.mail SimpleEmail]))
@@ -160,3 +161,7 @@
        "/hakemus/"
        hakemus-db-id
        "/"))
+
+(defn refuse-url [avustushaku-id user-key lang token]
+  (email-utils/refuse-url
+     (get-in config [:server :url lang]) avustushaku-id user-key lang token))

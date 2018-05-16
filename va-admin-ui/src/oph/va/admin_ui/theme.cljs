@@ -19,7 +19,26 @@
 
 (def active-link (assoc link :color "#2a2a2a"))
 
-(def table-body {:max-height "250px"})
+(def table-body {:overflow "auto"})
+
+(def table-cell {:font-size 16})
+
+(def table-header {:border-bottom "1px solid #f6f4f0"
+                   :padding-bottom 10
+                   :padding-right 14})
+
+(def table-header-cell {:cursor "pointer"})
+
+(def table table-cell)
+
+(def table-empty-text {:width "100%"
+                       :background-color "#f0f0f0"
+                       :padding 20})
+
+(def table-footer {:overflow "hidden"
+                   :padding-top 10
+                   :border-top "1px solid #f6f4f0"
+                   :padding-right 14})
 
 (def hr-top {:color "#4c7f00"})
 
@@ -38,3 +57,16 @@
 (def button (merge text-field {:margin 12}))
 
 (def striped-row {:background-color "#f6f4f0"})
+
+(def popup {:padding 10})
+
+(def tooltip {:text-align "center"
+              :margin-left 5
+              :margin-right 5
+              :width 20
+              :height 20
+              :border-radius 50
+              :color "gray"
+              :background-color "lightgray"
+              :cursor "pointer"
+              :padding "1px 5px 1px 5px"})

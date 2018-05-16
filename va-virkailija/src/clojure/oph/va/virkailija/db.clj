@@ -343,3 +343,6 @@
                                       "order by first_name, surname, email"])
                         escaped-terms-for-like-exprs)
                   {:row-fn db->va-user}))))
+
+(defn set-all-evaluations-unhandled []
+  (exec :virkailija-db queries/set-all-unhandled! {}))

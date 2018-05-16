@@ -1,19 +1,13 @@
 (ns oph.va.virkailija.va-code-values-data
   (:require [oph.soresu.common.db :refer [exec]]
-            [oph.va.virkailija.authentication :as authentication]
             [oph.va.virkailija.db.queries :as queries]
+            [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.virkailija.utils :refer
              [convert-to-dash-keys convert-to-underscore-keys]]))
 
-(defn has-privilege? [identity privilege]
-  (true?
-    (some #(= % privilege) (:privileges identity))))
-
-(defmacro with-admin [request form unauthorized]
-  `(if (has-privilege?
-         (authentication/get-request-identity ~request) "va-admin")
-     ~form
-     ~unauthorized))
+(defn get-va-code-value [id]
+  (convert-to-dash-keys
+    (first (exec :virkailija-db queries/get-va-code-value {:id id}))))
 
 (defn get-va-code-values
   ([value-type year]
@@ -30,7 +24,8 @@
        (exec :virkailija-db queries/get-va-code-values-by-year
                   {:year year})
        :else
-       (exec :virkailija-db queries/get-current-va-code-values {})))))
+       (exec :virkailija-db queries/get-current-va-code-values {}))))
+  ([] (get-va-code-values nil nil)))
 
 (defn create-va-code-value [values]
   (->> values
@@ -40,10 +35,20 @@
       convert-to-dash-keys))
 
 (defn code-used? [id]
-  ;; TODO: Move query to va-virkailija/src/clojure/oph/va/hakija/api.clj
-  (-> (exec :form-db queries/check-code-usage {:id id})
+  (-> (exec :form-db hakija-queries/check-code-usage {:id id})
       first
       :used))
 
 (defn delete-va-code-value! [id]
   (exec :virkailija-db queries/delete-va-code-value {:id id}))
+
+(defn- find-code-by-id [id va-code-values]
+  (some #(when (= (:id %) id) (:code %)) va-code-values))
+
+(defn find-grant-code-values [grant va-code-values]
+  (merge
+    grant
+    {:operational-unit (find-code-by-id
+                         (:operational-unit-id grant) va-code-values)
+     :project (find-code-by-id (:project-id grant) va-code-values)
+     :operation (find-code-by-id (:operation-id grant) va-code-values)}))

@@ -7,7 +7,8 @@
             [oph.va.virkailija.payment-batches-data :as data]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.schema :as schema]
-            [oph.va.virkailija.authentication :as authentication])
+            [oph.va.virkailija.authentication :as authentication]
+            [oph.va.virkailija.utils :refer [either?]])
   (:import (java.time LocalDate)))
 
 (defn- find-payment-batch []
@@ -33,7 +34,7 @@
       (conflict "Payment batch already exists")
       (ok (data/create-batch batch-values)))))
 
-(defn- create-payments []
+(defn- send-payments []
   (compojure-api/POST
     "/:id/payments/" [id :as request]
     :path-params [id :- Long]
@@ -42,7 +43,7 @@
     :summary "Create new payments for unpaid applications of grant. Payments
               will be sent to Rondo and stored to database."
     (let [batch (data/get-batch id)
-          c (data/create-payments
+          c (data/send-payments
               {:batch batch
                :grant (grant-data/get-grant (:grant-id batch))
                :identity (authentication/get-request-identity request) } )]
@@ -50,7 +51,8 @@
             (loop [total-result {:count 0 :error-count 0 :errors '()}]
               (if-let [r (<!! c)]
                 (if (or (:success r)
-                        (= (get-in r [:error :error-type]) :no-payments))
+                        (either? (get-in r [:error :error-type])
+                                 #{:already-paid :no-payments}))
                   (recur (update total-result :count inc))
                   (do (when (= (get-in r [:error :error-type]) :exception)
                         (log/error (get-in r [:error :exception])))
@@ -68,4 +70,4 @@
   "payment batches routes"
   (find-payment-batch)
   (create-payment-batch)
-  (create-payments))
+  (send-payments))

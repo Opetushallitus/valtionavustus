@@ -1,5 +1,5 @@
 (ns oph.va.virkailija.payment-batches-data-spec
-  (:require [speclj.core :refer [describe it should= tags]]
+  (:require [speclj.core :refer [describe it should= tags run-specs]]
             [oph.va.virkailija.payment-batches-data :as data]))
 
 (def valid-values
@@ -51,3 +51,5 @@
           (it "finds unpaid payments after paid one"
               (should= {:id 4 :state 1}
                        (data/get-unpaid-payment (subvec payments 2)))))
+
+(run-specs)
