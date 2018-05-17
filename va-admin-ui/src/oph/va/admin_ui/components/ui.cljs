@@ -3,10 +3,17 @@
             [reagent.core :as r]
             [cljsjs.material-ui]
             [cljs-react-material-ui.icons :as ic]
-            [cljs-react-material-ui.reagent :refer [date-picker popover]
-             :rename {date-picker material-date-picker}]
+            [cljs-react-material-ui.reagent :refer [popover]]
             [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.components.table :as va-table]))
+            [oph.va.admin-ui.components.table :as va-table]
+            [oph.va.admin-ui.utils :refer [format]]))
+
+(defn format-date [d]
+  (when (some? d)
+   (format "%04d-%02d-%02d"
+           (.getFullYear d)
+           (+ (.getMonth d) 1 )
+           (.getDate d))))
 
 (defn tooltip [props text]
   (let [state (r/atom {:open false :anchor-el nil})]
@@ -79,20 +86,18 @@
 (defn date-picker [props]
   (let [label (or (:floating-label-text props) (:label props))]
    [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
-    [:span {:class "oph-label" :aria-describedby "field-text"}
+    [:span {:class "oph-label"
+            :aria-describedby "field-text"
+            :style {:display "block"}}
      label
      (when-some [text (:tooltip props)] [tooltip {} text])]
-    [material-date-picker {:value (:value props)
-                           :class "oph-input"
-                           :name label
-                           :underline-show false
-                           :style {:width "auto" :height "auto"}
-                           :text-field-style {:width "auto"
-                                              :height "auto"
-                                              :line-height "inherit"
-                                              :font-family "inherit"}
-                           :input-style {}
-                           :on-change (:on-change props)}]]))
+    [:input
+     {:value (format-date (:value props))
+      :class "oph-input"
+      :name label
+      :type "date"
+      :style {:width "auto" :height "auto"}
+      :on-change (:on-change props)}]]))
 
 (defn remove-nils [c] (disj c nil))
 
