@@ -11,7 +11,10 @@
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.grant-data :as grant-data]
-            [oph.soresu.common.config :refer [config]]))
+            [oph.soresu.common.config :refer [config]]
+            [oph.va.virkailija.rondo-service :refer :all]
+            [oph.va.virkailija.remote-file-service :refer :all])
+  (:import [oph.va.virkailija.rondo_service RondoFileService]))
 
 (def timeout-limit 10000)
 
@@ -46,19 +49,23 @@
   ([payment id-gen-fn] (format "payment-%d-%d.xml" (:id payment) (id-gen-fn)))
   ([payment] (create-filename payment  #(System/currentTimeMillis))))
 
-(defn send-to-rondo! [payment application grant filename batch]
+(defn test-rondoo [configuration]
+  (RondoFileService. configuration)
+  (get-remote-file-list))
+
+(defn send-payment! [payment application grant filename batch]
+  (let [rondo-service (RondoFileService. (get-in config [:server :rondo-sftp]))]
   (with-timeout
     #(try
-       (rondo-service/send-to-rondo!
+       (rondo-service/send-to-rondo! rondo-service
          {:payment (payments-data/get-payment (:id payment))
           :application application
           :grant grant
           :filename filename
-          :batch batch
-          :config (get-in config [:server :rondo-sftp])})
+          :batch batch})
        (catch Exception e
          {:success false :error {:error-type :exception :exception e}}))
-    timeout-limit {:success false :error {:error-type :timeout}}))
+    timeout-limit {:success false :error {:error-type :timeout}})))
 
 (defn get-unpaid-payment [payments]
   (some #(when (< (:state %) 2) %) payments))
@@ -73,7 +80,7 @@
                   (create-payment-data application (:batch data) sum)
                   (:identity data)))
             filename (create-filename payment)]
-        (assoc (send-to-rondo! payment application (:grant data) filename
+        (assoc (send-payment! payment application (:grant data) filename
                                (:batch data))
                :filename filename :payment payment))
       {:success false :error {:error-type :already-paid}})))
@@ -87,7 +94,7 @@
                              (assoc payment :batch-id (get-in data [:batch :id]))
                              (:identity data))]
         (-> updated-payment
-            (send-to-rondo! application (:grant data) filename (:batch data))
+            (send-payment! application (:grant data) filename (:batch data))
             (assoc :filename filename :payment updated-payment)))
       {:success false :error {:error-type :no-payments}})))
 

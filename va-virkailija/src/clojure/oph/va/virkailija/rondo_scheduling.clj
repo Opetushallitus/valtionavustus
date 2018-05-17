@@ -11,29 +11,33 @@
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.invoice :as invoice]
             [oph.soresu.common.config :refer [config]]
-            [ring.util.http-response :refer [ok not-found request-timeout]]))
+            [ring.util.http-response :refer [ok not-found request-timeout]]
+            [oph.va.virkailija.rondo-service :refer :all]
+            [oph.va.virkailija.remote-file-service :refer :all])
+            (:import [oph.va.virkailija.rondo_service RondoFileService]))
 
 (def timeout-limit 600000)
 
 
-(defn fetch-xml-files [xml-path list-of-files sftp-config]
-  (doseq [filename list-of-files] 
-    (rondo-service/get-remote-file filename sftp-config)
+(defn fetch-xml-files [xml-path list-of-files rondo-service]
+  (doseq [filename list-of-files]
+    (rondo-service/get-remote-file rondo-service filename)
     (try
       (payments-data/update-state-by-response
-       (invoice/read-xml (rondo-service/get-local-file sftp-config filename)))
+       (invoice/read-xml (rondo-service/get-local-file  rondo-service filename)))
       (catch clojure.lang.ExceptionInfo e
         (if (= "already-paid" (-> e ex-data :cause))
-          (rondo-service/delete-remote-file filename sftp-config))
+          (rondo-service/delete-remote-file rondo-service filename))
         (throw e)))
-    (rondo-service/delete-remote-file filename sftp-config)
-    (clojure.java.io/delete-file (rondo-service/get-local-file sftp-config filename))))
+    (rondo-service/delete-remote-file rondo-service filename)
+    (clojure.java.io/delete-file (rondo-service/get-local-file rondo-service filename))))
 
 
 (defn fetch-feedback-from-rondo [sftp-config]
-  (let [list-of-files (rondo-service/get-remote-file-list sftp-config)
-        xml-path (rondo-service/get-local-path sftp-config)
-        result (fetch-xml-files xml-path list-of-files sftp-config)]
+  (let [rondo-service (RondoFileService. sftp-config)
+        list-of-files (rondo-service/get-remote-file-list rondo-service)
+        xml-path (rondo-service/get-local-path rondo-service)
+        result (fetch-xml-files xml-path list-of-files rondo-service)]
     (if (nil? result)
       {:success true}
       {:success false :value result})))
