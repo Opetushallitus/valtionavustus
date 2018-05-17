@@ -147,3 +147,12 @@
              (:label (second t))]))
         children))]
    [:div {:class "oph-tab-pane oph-tab-pane-is-active" } (some #(when (= (:value (second %)) (:value props)) %) children )]])
+
+(defn card-text [& content]
+  (apply vector :div {:style {:padding 20}} content))
+
+(defn card [props & children]
+  (let [style (if (some? (:style props))
+                (merge theme/card-style (:style props))
+                theme/card-style)]
+    (apply vector :div (merge props {:style style}) children)))
