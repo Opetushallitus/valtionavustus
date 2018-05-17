@@ -50,6 +50,8 @@ class TopBarTabs extends React.Component {
         {isAdmin && this.isEnabled(config, "reports") &&
            <TopBarTab id="reports" label="VA-pulssi" href="/admin-ui/reports/"
                       disabled={disabled} activeTab={activeTab}/>}
+        <TopBarTab id="search" label="Haku" href="/admin-ui/search/"
+                      disabled={disabled} activeTab={activeTab}/>
       </div>
     )
   }
