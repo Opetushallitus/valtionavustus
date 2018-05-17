@@ -54,7 +54,7 @@
    [:hr]
    [:h3 "Pääkäyttäjän työkalut"]
    [ui/grid-list {:cols 6 :cell-height "auto"}
-    (when delete-payments?
+    (if delete-payments?
       [va-ui/raised-button
        {:primary true
         :label "Poista maksatukset"
@@ -76,7 +76,8 @@
                   (dialogs/show-error-message!
                     "Virhe maksatusten poistossa"
                     (select-keys response
-                                 [:status :error-text]))))))}])
+                                 [:status :error-text]))))))}]
+      [:span])
     [va-ui/raised-button
      {:primary true
       :label "Luo maksatukset"
