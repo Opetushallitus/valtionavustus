@@ -105,9 +105,7 @@
    [va-ui/text-field
     {:floating-label-text "Hakujen suodatus"
      :value filter-str
-     :on-change #(on-change (.-value (.-target %)))}]
-   [ui/icon-button {:on-click #(on-change "")}
-    [ic/action-highlight-off {:color "gray"}]]])
+     :on-change #(on-change (.-value (.-target %)))}]])
 
 (defn send-payments! [values selected-grant payments]
   (go
