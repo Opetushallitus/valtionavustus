@@ -154,7 +154,7 @@
       (close! dialog-chan))))
 
 (defn notice [message]
-  [ui/card {:style theme/notice} [ui/card-text message]])
+  [va-ui/card {:style theme/notice} [va-ui/card-text message]])
 
 (defn grants-components []
   (let [grant-filter (r/atom "")
