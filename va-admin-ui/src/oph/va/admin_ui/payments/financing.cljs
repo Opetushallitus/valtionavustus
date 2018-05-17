@@ -1,7 +1,5 @@
 (ns oph.va.admin-ui.payments.financing
   (:require [reagent.core :as r]
-            [cljsjs.material-ui]
-            [cljs-react-material-ui.reagent :as ui]
             [oph.va.admin-ui.components.ui :as va-ui]
             [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.payments.utils :refer
@@ -21,7 +19,7 @@
 
 (defn payment-emails
   [values on-change]
-  [ui/grid-list {:cols 6 :cell-height "auto"}
+  [:div {:style {:display "flex"}}
    [va-ui/text-field
     {:floating-label-text "Tarkastajan sähköpostiosoite"
      :value (get values :inspector-email "")
@@ -39,44 +37,39 @@
 
 (defn payment-fields
   [values on-change]
-  [ui/grid-list {:cols 4 :cell-height "auto" :style {:max-width 1000}}
-   [va-ui/select-field
-    {:floating-label-text "Maksuliikemenotili"
-     :value (get values :transaction-account (first transaction-accounts))
-     :on-change #(on-change :transaction-account %)
-     :values
-     (map (fn [acc] {:key acc :value acc :primary-text acc})
-          transaction-accounts)}]
-   [va-ui/date-picker
-    {:floating-label-text "Eräpäivä"
-     :value (:due-date values)
-     :on-change #(on-change :due-date %2)}]
-   [va-ui/date-picker
-    {:floating-label-text "Laskun päivämäärä"
-     :value (:invoice-date values)
-     :on-change #(on-change :invoice-date %2)}]
-   [va-ui/select-field
-    {:floating-label-text "Tositelaji"
-     :value (get values :document-type "XA")
-     :on-change #(on-change :document-type %)
-     :values [{:value "XA" :primary-text "XA"}
-              {:value "XB" :primary-text "XB"}]}]
-   [va-ui/date-picker
-    {:floating-label-text "Tositepäivämäärä"
-     :style {:display "inline-block"}
-     :value (:receipt-date values)
-     :tooltip "Tarkista tilinpäätösaikataulu"
-     :on-change #(on-change :receipt-date %2)}]
-   [va-ui/text-field
-    {:floating-label-text "Kumppanikoodi"
-     :value (get values :partner "")
-     :on-change (fn [e]
-                  (let [value (.-value (.-target e))]
-                    (when (<= (count value) 6) (on-change :partner value))))}]
-   [va-ui/text-field
-    {:floating-label-text "Asiakirjan tunnus"
-     :value (get values :document-id "")
-     :on-change (fn [e]
-                  (let [value (-> e .-target .-value)]
-                    (when (<= (count value) document-id-max-size)
-                      (on-change :document-id value))))}]])
+  [:div
+   [:div {:style {:display "flex"}}
+    [va-ui/date-picker
+     {:floating-label-text "Laskun päivämäärä"
+      :value (:invoice-date values)
+      :on-change #(on-change :invoice-date %2)}]
+    [va-ui/date-picker
+     {:floating-label-text "Eräpäivä"
+      :value (:due-date values)
+      :on-change #(on-change :due-date %2)}]
+    [va-ui/select-field
+     {:floating-label-text "Maksuliikemenotili"
+      :value (get values :transaction-account (first transaction-accounts))
+      :on-change #(on-change :transaction-account %)
+      :values
+      (map (fn [acc] {:key acc :value acc :primary-text acc})
+           transaction-accounts)}]
+    [va-ui/select-field
+     {:floating-label-text "Tositelaji"
+      :value (get values :document-type "XA")
+      :on-change #(on-change :document-type %)
+      :values [{:value "XA" :primary-text "XA"}
+               {:value "XB" :primary-text "XB"}]}]
+    [va-ui/date-picker
+     {:floating-label-text "Tositepäivämäärä"
+      :style {:display "inline-block"}
+      :value (:receipt-date values)
+      :tooltip "Tarkista tilinpäätösaikataulu"
+      :on-change #(on-change :receipt-date %2)}]]
+   [:div [va-ui/text-field
+          {:floating-label-text "Asiakirjan tunnus"
+           :value (get values :document-id "")
+           :on-change (fn [e]
+                        (let [value (-> e .-target .-value)]
+                          (when (<= (count value) document-id-max-size)
+                            (on-change :document-id value))))}]]])
