@@ -67,7 +67,7 @@
    [table/table-row-column (get payment :lkp-account)]
    [table/table-row-column (get payment :takp-account)]
    [table/table-row-column {:style {:text-align "right"}}
-    (.toLocaleString (get payment :budget-granted 0)) " €"]])
+    (.toLocaleString (get payment :budget-oph-share 0)) " €"]])
 
 (defn sort-payments [payments sort-key descend?]
   (if descend?
@@ -169,7 +169,7 @@
               :on-filter #(update-filters! filters %1 %2)}]
             [sortable-header-column
              {:title "Tiliöinti"
-              :column-key :budget-granted
+              :column-key :budget-oph-share
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]]]
@@ -193,5 +193,5 @@
             [table/table-row-column]
             [table/table-row-column {:style {:text-align "right"}}
              (.toLocaleString
-               (reduce #(+ %1 (:budget-granted %2)) 0 sorted-filtered-payments))
+               (reduce #(+ %1 (get %2 :budget-oph-share 0)) 0 sorted-filtered-payments))
              " €"]]]]]))))

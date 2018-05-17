@@ -95,7 +95,7 @@
           (select-keys
              application
              [:project-name :organization-name :budget-granted :register-number
-              :takp-account :lkp-account])
+              :takp-account :lkp-account :budget-oph-share])
           :bank-iban (get-answer-value (:answers application) "bank-iban"))]
     (map
       #(merge application-info %)
