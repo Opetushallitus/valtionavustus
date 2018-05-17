@@ -53,7 +53,7 @@
   [:div
    [:hr]
    [:h3 "Pääkäyttäjän työkalut"]
-   [ui/grid-list {:cols 6 :cell-height "auto"}
+   [:div
     (when delete-payments?
       [va-ui/raised-button
        {:primary true
