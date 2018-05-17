@@ -6,23 +6,23 @@
   "form": {
     "grant-refuse-accept": {
       "fi": "Ymmärrän, että avustus evätään, kun olen lähettänyt ilmoituksen.",
-      "sv": ""
+      "sv": "Jag har förstått att anmälan leder till att beslutet om understöd upphävs."
     },
     "grant-refuse-info": {
-      "fi": "Tällä lomakkeella voit ilmoittaa, että jätät ottamatta avustuksen vastaan. Jos päädyt ottamaan avustuksen vastaan, sinun ei tarvitse tehdä mitään.",
-      "sv": ""
+      "fi": "Tällä lomakkeella avustuksen saaja voi ilmoittaa, ettei ota avustusta vastaan. Jos avustus otetaan vastaan ei toimenpiteitä tarvita.",
+      "sv": "Med den här blanketten kan mottagaren av understöd anmäla att man inte tar emot ett understöd. Om understödet tas emot behövs inga åtgärder."
     },
     "grant-refuse-title": {
       "fi": "Avustuksen vastaanottamatta jättäminen",
-      "sv": ""
+      "sv": "Anmälan om att inte ta emot understöd"
     },
     "grant-refuse-send": {
       "fi": "Lähetä ilmoitus",
-      "sv": ""
+      "sv": "Skicka anmälan"
     },
     "grant-refuse-sent": {
-      "fi": "Ilmoitus avustuksen vastaanottamatta jättämisestä lähetetty hakijan toimesta",
-      "sv": ""
+      "fi": "Ilmoitus avustuksen vastaanottamatta jättämisestä lähetetty hakijan toimesta.",
+      "sv": "Anmälan om att man inte tar emot understödet har lämnats in av den sökande."
     },
     "heading": {
       "fi": "Hakemus",
