@@ -5,10 +5,6 @@
     [clojure.string :refer [join]]
     [oph.va.admin-ui.connection :as connection]
     [reagent.core :as r]
-    [cljsjs.material-ui]
-    [cljs-react-material-ui.core :refer [color]]
-    [cljs-react-material-ui.reagent :as ui]
-    [cljs-react-material-ui.icons :as ic]
     [oph.va.admin-ui.components.ui :as va-ui]
     [oph.va.admin-ui.payments.payments-ui :as payments-ui]
     [oph.va.admin-ui.payments.payments :as payments
