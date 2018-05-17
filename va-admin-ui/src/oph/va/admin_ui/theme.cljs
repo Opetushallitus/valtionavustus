@@ -69,3 +69,9 @@
               :background-color "lightgray"
               :cursor "pointer"
               :padding "1px 5px 1px 5px"})
+
+(def card-style
+  {:box-shadow "rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px"
+   :background-color "white"
+   :border-radius "2px"
+   :margin 10})
