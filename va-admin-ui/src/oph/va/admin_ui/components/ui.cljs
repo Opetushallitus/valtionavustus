@@ -3,7 +3,6 @@
             [reagent.core :as r]
             [cljsjs.material-ui]
             [cljs-react-material-ui.icons :as ic]
-            [cljs-react-material-ui.reagent :refer [popover]]
             [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.components.table :as va-table]
             [oph.va.admin-ui.utils :refer [format]]))
@@ -15,23 +14,56 @@
            (+ (.getMonth d) 1 )
            (.getDate d))))
 
+(defn get-rectangle [element]
+  (if (some? element)
+    (let [rect (.getBoundingClientRect element)]
+      {:top (.-top rect)
+       :left (.-left rect)})
+    {:top 0 :left 0}))
+
+(defn popover [props & content]
+  (let [rect (get-rectangle (:anchor-el props))]
+    [:div
+     {:style
+      {:display (when (not (:open props)) "none")
+       :position "fixed"
+       :top 0
+       :bottom 0
+       :left 0
+       :right 0
+       :z-index 2000}
+      :on-click #(:on-request-close props)}
+     [:div
+      {:style
+       {:box-shadow
+        "rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px"
+        :background-color "white"
+        :color "black"
+        :border-radius 2
+        :position "fixed"
+        :z-index 2100
+        :overflow-y "auto"
+        :top (:top rect)
+        :left (:left rect)
+        :opacity 1
+        :box-sizing "border-box"
+        :transform "scale(1, 1)"
+        :transform-origin "left top 0px"
+        :max-height 525}}
+      (apply vector :div content)]]))
+
 (defn tooltip [props text]
   (let [state (r/atom {:open false :anchor-el nil})]
     (fn [props text]
       [:span {:style (merge theme/tooltip (:style props))}
        [:span
         {:style (:button-style props)
-         :on-mouse-over
-         (when (get props :hover? true)
-           (fn [e]
-             (swap! state assoc
-                    :open true
-                    :anchor-el (.-target e))))
          :on-click
          (fn [e]
            (swap! state assoc
                   :open (not (:open @state))
-                  :anchor-el (.-target e)))} (get props :icon "?")
+                  :anchor-el (.-target e)))}
+        (get props :icon "?")
         [popover
          (merge @state
                 {:on-request-close #(swap! state assoc :open false)})
