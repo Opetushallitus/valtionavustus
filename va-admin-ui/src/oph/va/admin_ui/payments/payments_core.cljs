@@ -254,67 +254,63 @@
       (fn [_ _ ___ new-state]
         (when new-state
           (let [grant-id (:id new-state)]
-            (when (not= (router/get-current-param :applications) "false")
-              (let [dialog-chan (dialogs/show-loading-dialog!
-                                  "Ladataan hakemuksia" 3)]
-                (go
-                  (let [applications-response
-                        (<! (connection/get-grant-applications grant-id))]
-                    (put! dialog-chan 2)
-                    (if (:success applications-response)
-                      (reset! applications (:body applications-response))
-                      (dialogs/show-error-message!
-                        "Virhe hakemusten latauksessa"
-                        (select-keys applications-response [:status :error-text])))
-                    (put! dialog-chan 3))
-                  (close! dialog-chan))))
+            (let [dialog-chan (dialogs/show-loading-dialog!
+                                "Ladataan hakemuksia" 3)]
+              (go
+                (let [applications-response
+                      (<! (connection/get-grant-applications grant-id))]
+                  (put! dialog-chan 2)
+                  (if (:success applications-response)
+                    (reset! applications (:body applications-response))
+                    (dialogs/show-error-message!
+                      "Virhe hakemusten latauksessa"
+                      (select-keys applications-response [:status :error-text])))
+                  (put! dialog-chan 3))
+                (close! dialog-chan)))
 
-            (when (not= (router/get-current-param :payments) "false")
-              (let [dialog-chan (dialogs/show-loading-dialog!
-                                  "Ladataan maksatuksia" 3)]
-                (put! dialog-chan 1)
-                (go
-                  (let [payments-response (<! (connection/get-grant-payments
-                                                grant-id))]
-                    (put! dialog-chan 2)
-                    (if (:success payments-response)
-                      (reset! payments (:body payments-response))
-                      (dialogs/show-error-message!
-                        "Virhe maksatusten latauksessa"
-                        (select-keys payments-response [:status :error-text]))))
-                  (put! dialog-chan 3)
-                  (close! dialog-chan))))
-            (when (not= (router/get-current-param :batch) "false")
-              (let [dialog-chan (dialogs/show-loading-dialog!
-                                  "Ladataan maksuerän tietoja" 3)]
-                (put! dialog-chan 1)
-                (go
-                  (let [batch-response
-                        (<! (connection/find-payment-batch
-                              grant-id (format-date (js/Date.))))]
-                    (put! dialog-chan 2)
-                    (reset! batch-values
-                            (if (= (:status batch-response) 200)
-                              (-> (:body batch-response)
-                                  parse-batch-dates
-                                  (assoc :read-only true))
-                              default-batch-values)))
-                  (put! dialog-chan 3)
-                  (close! dialog-chan))))))))
-    (when (not= (router/get-current-param :grants) "false")
-      (go
-        (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan haun tietoja" 3)
-              grants-result (<! (connection/get-grants))]
-          (put! dialog-chan 2)
-          (if (:success grants-result)
-            (do
-              (reset! grants (convert-dates (:body grants-result)))
-              (reset! selected-grant
-                      (if-let [grant-id (get-param-grant)]
-                        (first (filter #(= (:id %) grant-id) @grants))
-                        (first @grants))))
-            (dialogs/show-error-message!
-              "Virhe tietojen latauksessa"
-              (select-keys grants-result [:status :error-text])))
-          (put! dialog-chan 3)
-          (close! dialog-chan))))))
+            (let [dialog-chan (dialogs/show-loading-dialog!
+                                "Ladataan maksatuksia" 3)]
+              (put! dialog-chan 1)
+              (go
+                (let [payments-response (<! (connection/get-grant-payments
+                                              grant-id))]
+                  (put! dialog-chan 2)
+                  (if (:success payments-response)
+                    (reset! payments (:body payments-response))
+                    (dialogs/show-error-message!
+                      "Virhe maksatusten latauksessa"
+                      (select-keys payments-response [:status :error-text]))))
+                (put! dialog-chan 3)
+                (close! dialog-chan)))
+            (let [dialog-chan (dialogs/show-loading-dialog!
+                                "Ladataan maksuerän tietoja" 3)]
+              (put! dialog-chan 1)
+              (go
+                (let [batch-response
+                      (<! (connection/find-payment-batch
+                            grant-id (format-date (js/Date.))))]
+                  (put! dialog-chan 2)
+                  (reset! batch-values
+                          (if (= (:status batch-response) 200)
+                            (-> (:body batch-response)
+                                parse-batch-dates
+                                (assoc :read-only true))
+                            default-batch-values)))
+                (put! dialog-chan 3)
+                (close! dialog-chan)))))))
+    (go
+      (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan haun tietoja" 3)
+            grants-result (<! (connection/get-grants))]
+        (put! dialog-chan 2)
+        (if (:success grants-result)
+          (do
+            (reset! grants (convert-dates (:body grants-result)))
+            (reset! selected-grant
+                    (if-let [grant-id (get-param-grant)]
+                      (first (filter #(= (:id %) grant-id) @grants))
+                      (first @grants))))
+          (dialogs/show-error-message!
+            "Virhe tietojen latauksessa"
+            (select-keys grants-result [:status :error-text])))
+        (put! dialog-chan 3)
+        (close! dialog-chan)))))
