@@ -1,16 +1,11 @@
 SELECT
-  EXTRACT(YEAR FROM h.created_at) AS year,
+  EXTRACT(YEAR FROM (changelog#>>'{0, timestamp}')::timestamp) AS year,
   SUM(budget_granted) AS budget_granted,
   SUM(costs_granted) AS costs_granted
 FROM
-  hakija.hakemukset h
-JOIN
-  virkailija.arviot a
-    ON (a.hakemus_id = h.id AND a.status = 'accepted')
+  virkailija.arviot
 WHERE
-  h.status = 'submitted'
-  AND h.version_closed IS NULL
-  AND h.hakemus_type = 'hakemus'
+  status = 'accepted'
 GROUP BY
   year
 ORDER BY

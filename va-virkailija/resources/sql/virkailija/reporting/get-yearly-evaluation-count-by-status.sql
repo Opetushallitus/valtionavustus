@@ -1,16 +1,10 @@
 SELECT
-  EXTRACT(YEAR FROM h.created_at) AS year, COUNT(h.id)
+  EXTRACT(YEAR FROM (changelog#>>'{0, timestamp}')::timestamp) AS year, COUNT(id)
 FROM
-  hakija.hakemukset h
-JOIN
-  virkailija.arviot a
-    ON (a.hakemus_id = h.id AND a.status = :status::virkailija.status)
+  virkailija.arviot
 WHERE
-  h.status = 'submitted'
-  AND h.version_closed IS NULL
-  AND h.hakemus_type = 'hakemus'
+  status = :status::virkailija.status
 GROUP BY
   year
 ORDER BY
   year;
-

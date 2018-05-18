@@ -3,8 +3,8 @@
 
   :plugins [[lein-parent "0.3.2"]
             [lein-cljsbuild "1.1.7"]
-            [lein-figwheel "0.5.14"]
-            [lein-doo "0.1.8"]
+            [lein-figwheel "0.5.16"]
+            [lein-doo "0.1.10"]
             [lein-asset-minifier "0.4.4"]]
 
   :source-paths ["src"]
@@ -90,6 +90,6 @@
                                   [binaryage/devtools]
                                   [figwheel-sidecar]
                                   [org.clojure/tools.nrepl]
-                                  [com.cemerick/piggieback]
-                                  [com.google.guava/guava]]}}
+                                  [com.google.guava/guava]
+                                  [cider/cider-nrepl "0.16.0"]]}}
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]})

@@ -18,6 +18,8 @@
 
 (defonce environment (r/atom {}))
 
+(defonce initialized (r/atom false))
+
 (def top-links
   {:grant-evaluations {:link "/" :title "Hakemusten arviointi"}
    :grant-admin {:link "/admin/" :title "Hakujen hallinta"}
@@ -53,28 +55,29 @@
               :delete-payments? (connection/delete-payments?)}]
     [ui/mui-theme-provider
      {:mui-theme (get-mui-theme (get-mui-theme theme/material-styles))}
-     [:div
-      [:div
-       (render-top-links
-         (router/get-current-path)
-         (cond-> top-links
-           (not (user/is-admin? (deref user/user-info)))
-           (dissoc top-links :va-code-values)
-           (not (get-in @environment [:reports :enabled?]))
-           (dissoc top-links :va-pulse))
+     [:div {:class "oph-typography"}
+      (when @initialized
+        [:div
+         [:div
+          (render-top-links
+            (router/get-current-path)
+            (cond-> top-links
+              (not (user/is-admin? (deref user/user-info)))
+              (dissoc top-links :va-code-values)
+              (not (get-in @environment [:reports :enabled?]))
+              (dissoc top-links :va-pulse))
 
-         (when (:selected-grant payments-core/state)
-           (:id (deref (:selected-grant payments-core/state)))))
-       [:hr theme/hr-top]]
-      (case (router/get-current-path)
-        "/admin-ui/payments/" (payments-core/home-page data)
-        "/admin-ui/va-code-values/"
-        (code-values-core/home-page)
-        "/admin-ui/reports/" (reports-core/home-page)
-        "/admin-ui/search/" (search-core/home-page)
-        (do
-          (router/redirect-to! "/admin-ui/payments/")
-          "Redirecting..."))
+            (when (:selected-grant payments-core/state)
+              (:id (deref (:selected-grant payments-core/state)))))
+          [:hr theme/hr-top]]
+         (case (router/get-current-path)
+           "/admin-ui/payments/" (payments-core/home-page data)
+           "/admin-ui/va-code-values/" (code-values-core/home-page)
+           "/admin-ui/reports/" (reports-core/home-page)
+           "/admin-ui/search/" (search-core/home-page)
+           (do
+             (router/redirect-to! "/admin-ui/payments/")
+             "Redirecting..."))])
       (dialogs/render)]]))
 
 (defn mount-root []
@@ -93,7 +96,9 @@
           (let [user-info-result (<! (connection/get-user-info))]
             (put! dialog-chan 2)
             (if (:success user-info-result)
-              (reset! user/user-info (:body user-info-result))
+              (do
+                (reset! user/user-info (:body user-info-result))
+                (reset! initialized true))
               (dialogs/show-error-message!
                 "Virhe käyttäjätietojen latauksessa"
                 (select-keys user-info-result [:status :error-text])))))
@@ -101,10 +106,10 @@
           "Virhe asetusten latauksessa"
           (select-keys config-result [:status :error-text])))
       (put! dialog-chan 3)
-      (close! dialog-chan)))
-  (case (router/get-current-path)
-    "/admin-ui/payments/" (payments-core/init!)
-    "/admin-ui/va-code-values/" (code-values-core/init!)
-    "/admin-ui/reports/" (reports-core/init!)
-    "/admin-ui/search/" (search-core/init!)
-    ""))
+      (close! dialog-chan)
+      (case (router/get-current-path)
+        "/admin-ui/payments/" (payments-core/init!)
+        "/admin-ui/va-code-values/" (code-values-core/init!)
+        "/admin-ui/reports/" (reports-core/init!)
+        "/admin-ui/search/" (search-core/init!)
+        ""))))

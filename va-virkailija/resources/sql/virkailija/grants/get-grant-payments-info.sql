@@ -1,14 +1,10 @@
 SELECT
-  SUM(a.budget_granted) AS total_granted,
+  SUM(p.payment_sum) AS total_granted,
   COUNT(p.id) AS count
 FROM
-  hakija.hakemukset AS h
-JOIN
   virkailija.payments p
-  ON
-    (p.application_id = h.id AND p.version_closed IS NULL AND
-     p.deleted IS NULL AND p.batch_id = :batch_id AND p.state = 2)
-JOIN
-  virkailija.arviot a ON a.hakemus_id = p.application_id
 WHERE
-  h.avustushaku = :grant_id AND h.version_closed IS NULL;
+  p.batch_id = :batch_id
+  AND p.state = 2
+  AND p.version_closed IS NULL
+  AND p.deleted IS NULL

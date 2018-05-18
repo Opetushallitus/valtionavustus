@@ -330,6 +330,8 @@
    :project-name s/Str
    :register-number (s/maybe s/Str)
    :language s/Str
+   (s/optional-key :status) (s/maybe ArvioStatus)
+   (s/optional-key :should-pay) (s/maybe s/Bool)
    (s/optional-key :budget-granted) s/Int
    (s/optional-key :costs-granted) s/Int
    (s/optional-key :lkp-account) (s/maybe s/Str)

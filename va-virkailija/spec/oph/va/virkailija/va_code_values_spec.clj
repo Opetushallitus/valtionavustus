@@ -1,9 +1,29 @@
 (ns oph.va.virkailija.va-code-values-spec
   (:require [speclj.core
-             :refer [describe it should]]
-            [oph.va.virkailija.va-code-values-data :refer [has-privilege?]]))
+             :refer [describe it should should-not should=
+                     tags around-all run-specs]]
+            [oph.common.testing.spec-plumbing :refer [with-test-server!]]
+            [oph.va.virkailija.server :refer [start-server]]
+            [oph.va.virkailija.va-code-values-routes :refer [has-privilege?]]
+            [oph.va.virkailija.va-code-values-data :as data]
+            [oph.va.hakija.api :as hakija-api]
+            [oph.va.virkailija.grant-data :as grant-data]
+            [oph.va.virkailija.common-utils
+             :refer [user-authentication post! add-mock-authentication
+                     remove-mock-authentication]]))
+
+(def test-server-port 9001)
+
+(def valid-va-code-value
+  {:value-type "operational-unit"
+   :year 2018
+   :code "1234567890"
+   :code-value "Example value"})
 
 (describe "Checking privileges"
+
+          (tags :vacodevalues)
+
           (it "has privilege"
               (should (has-privilege?
                         {:privileges '("va-user" "va-admin")}
@@ -24,3 +44,63 @@
               (should (not (has-privilege? {} "va-admin"))))
           (it "handles nil identity"
               (should (not (has-privilege? nil "va-admin")))))
+
+(describe "VA code values routes for non-admin"
+
+  (tags :server :vacodevalues)
+
+  (around-all
+    [_]
+    (add-mock-authentication user-authentication)
+    (with-test-server!
+      :virkailija-db
+      #(start-server
+         {:host "localhost"
+          :port test-server-port
+          :auto-reload? false
+          :without-authentication? true}) (_))
+    (remove-mock-authentication user-authentication))
+
+  (it "denies of non-admin create code value"
+      (let [{:keys [status body]}
+            (post! "/api/v2/va-code-values/" valid-va-code-value)]
+        (should= 401 status)<
+        (should (empty? body)))))
+
+(describe
+  "Get and find payments"
+
+  (tags :vacodevalues)
+
+  (around-all [_] (with-test-server! :virkailija-db
+                    #(start-server
+                       {:host "localhost"
+                        :port test-server-port
+                        :auto-reload? false
+                        :without-authentication? true}) (_)))
+
+  (it "checks code usage when no code is used"
+      (let [code (data/create-va-code-value
+                   {:value-type "operational-unit"
+                    :year 2018
+                    :code "1234567"
+                    :code-value "Some value"})]
+        (should-not (data/code-used? (:id code)))))
+
+  (it "checks code usage when code is used"
+      (let [code (data/create-va-code-value
+                   {:value-type "operational-unit"
+                    :year 2018
+                    :code "1234567"
+                    :code-value "Some value"})]
+        (->
+          (grant-data/get-grants)
+          first
+          :id
+          (hakija-api/get-avustushaku)
+          (assoc :operational-unit-id (:id code)
+                 :haku-type "yleisavustus")
+          hakija-api/update-avustushaku)
+        (should (data/code-used? (:id code))))))
+
+(run-specs)

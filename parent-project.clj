@@ -22,12 +22,14 @@
 
                          ;; http
                          [buddy/buddy-auth "2.1.0"]
+                         [clout "2.2.1"]
                          [com.novemberain/pantomime "2.9.0"]
-                         [compojure "1.6.0"]
-                         [http-kit "2.2.0"]
-                         [metosin/compojure-api "1.1.11"]
-                         [ring/ring-core "1.6.2"]
-                         [ring/ring-devel "1.6.2"]
+                         [compojure "1.6.1"]
+                         [http-kit "2.3.0"]
+                         [metosin/compojure-api "1.1.12"]
+                         [ring/ring-codec "1.1.1"]
+                         [ring/ring-core "1.6.3"]
+                         [ring/ring-devel "1.6.3"]
                          [ring.middleware.conditional "0.2.0"]
                          [ring.middleware.logger "0.5.0"]
                          [ring/ring-defaults "0.3.1"]
@@ -76,9 +78,9 @@
                          [org.http4s/http4s-dsl_2.11 "0.16.5"]
 
                          ;; ClojureScript
-                         [org.clojure/clojurescript "1.9.946"]
-                         [reagent "0.8.0-alpha2"]
-                         [cljsjs/react-dom "15.6.2-1"]
+                         [org.clojure/clojurescript "1.10.238"]
+                         [reagent "0.8.1"]
+                         [cljsjs/react-dom "16.3.2-0"]
                          [cljs-react-material-ui "0.2.48"]
                          [cljs-http "0.1.43"]
                          [com.andrewmcveigh/cljs-time "0.5.2"]
@@ -86,8 +88,8 @@
 
                          ;; CLJS Dev
                          [com.cemerick/piggieback "0.2.2"]
-                         [binaryage/devtools "0.9.4"]
-                         [figwheel-sidecar "0.5.14"]
+                         [binaryage/devtools "0.9.10"]
+                         [figwheel-sidecar "0.5.16"]
                          [org.clojure/tools.nrepl "0.2.13"]
                          [com.google.guava/guava "23.6-jre"
                           :exclusions [com.google.code.findbugs/jsr305]]
@@ -101,8 +103,7 @@
                          [dk.ative/docjure "1.12.0"]
                          [instaparse "1.4.7"]
                          [org.apache.commons/commons-email "1.5"]
-                         [org.clojure/core.async "0.3.443"]
-                         [org.clojure/core.memoize "0.5.9"]
+                         [org.clojure/core.async "0.4.474"]
                          [org.clojure/tools.reader "1.1.0"]
                          [org.clojure/tools.trace "0.7.9"]
                          [org.scala-lang.modules/scala-xml_2.11 "1.0.6"]

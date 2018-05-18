@@ -14,7 +14,9 @@
     [clojure.string :as str]
     [oph.va.virkailija.decision :as decision]
     [oph.soresu.common.config :refer [config]]
-    [oph.va.virkailija.application-data :refer [get-application-token]]))
+    [oph.va.virkailija.application-data :refer [get-application-token]]
+    [oph.va.virkailija.payments-data :as payments-data]
+    [oph.va.virkailija.authentication :as authentication]))
 
 (defn is-notification-email-field? [field]
   (or
@@ -111,9 +113,15 @@
   (compojure-api/GET "/liitteet" []
     (ok decision-liitteet/Liitteet))
 
-  (compojure-api/POST "/sendall/:avustushaku-id" []
+  (compojure-api/POST
+      "/sendall/:avustushaku-id" [:as request]
     :path-params [avustushaku-id :- Long]
     (let [ids (get-hakemus-ids-to-send avustushaku-id)]
+      (when (get-in config [:payments :enabled?])
+        (do
+          (log/info "Create initial payment for applications")
+          (payments-data/create-grant-payments
+            avustushaku-id (authentication/get-request-identity request))))
       (log/info "Send all paatos ids " ids)
       (run! send-paatos-for-all ids)
       (ok (merge {:status "ok"}
@@ -138,21 +146,21 @@
           first-hakemus-user-key (:user_key first-hakemus)
           first-hakemus-token (get-application-token first-hakemus-id)]
       (ok (merge
-           {:status "ok"
-            :mail (email/mail-example
-                    (if (get-in config [:application-change :refuse-enabled?])
-                      :paatos-refuse
-                      :paatos)
-                   {:avustushaku-name avustushaku-name
-                    :url "URL_PLACEHOLDER"
-                    :refuse-url "REFUSE_URL_PLACEHOLDER"
-                    :register-number (:register_number first-hakemus)
-                    :project-name (:project_name first-hakemus)})
-            :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)
-            :example-refuse-url
-            (refuse-url
-              avustushaku-id first-hakemus-user-key :fi first-hakemus-token)}
-           (select-keys sent-status [:sent :count :sent-time :paatokset])))))
+            {:status "ok"
+             :mail (email/mail-example
+                     (if (get-in config [:application-change :refuse-enabled?])
+                       :paatos-refuse
+                       :paatos)
+                     {:avustushaku-name avustushaku-name
+                      :url "URL_PLACEHOLDER"
+                      :refuse-url "REFUSE_URL_PLACEHOLDER"
+                      :register-number (:register_number first-hakemus)
+                      :project-name (:project_name first-hakemus)})
+             :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)
+             :example-refuse-url
+             (refuse-url
+               avustushaku-id first-hakemus-user-key :fi first-hakemus-token)}
+            (select-keys sent-status [:sent :count :sent-time :paatokset])))))
 
   (compojure-api/GET "/views/:hakemus-id" []
     :path-params [hakemus-id :- Long]

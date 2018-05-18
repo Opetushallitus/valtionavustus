@@ -24,6 +24,11 @@
     (throw (Exception. "Function is only for testing")))
   (swap! session-store assoc (:cas-ticket authentication) authentication))
 
+(defn remove-authentication [authentication]
+  (when (and (not= environment "dev") (not= environment "test"))
+    (throw (Exception. "Function is only for testing")))
+  (swap! session-store dissoc (:cas-ticket authentication)))
+
 (defn- remove-timed-out-sessions [sessions]
   (let [now-time-ms (System/currentTimeMillis)]
     (reduce-kv (fn [acc cas-ticket session-data]
