@@ -73,7 +73,8 @@
   (http/delete (format "/%s/grants/%d/payments/" api-path id)))
 
 (defn create-grant-payments [id]
-  (http/post (format "/%s/grants/%d/payments/" api-path id)))
+  (http/post (format "/%s/grants/%d/payments/" api-path id)
+             {:json-params {:phase 0} :with-credentials? true}))
 
 (defn get-config
   []
