@@ -34,7 +34,7 @@
 
 
 (defn fetch-feedback-from-rondo [sftp-config]
-  (let [rondo-service (RondoFileService. sftp-config)
+  (let [rondo-service (rondo-service/create-service sftp-config)
         list-of-files (get-remote-file-list rondo-service)
         xml-path (get-local-path rondo-service)
         result (fetch-xml-files xml-path list-of-files rondo-service)]

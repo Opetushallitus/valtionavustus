@@ -50,10 +50,10 @@
   ([payment] (create-filename payment  #(System/currentTimeMillis))))
 
 (defn test-rondoo [configuration]
-  (get-remote-file-list (RondoFileService. configuration)))
+  (get-remote-file-list (rondo-service/create-service configuration)))
 
 (defn send-to-rondo! [payment application grant filename batch]
-  (let [rondo-service (RondoFileService. (get-in config [:server :rondo-sftp]))]
+  (let [rondo-service (rondo-service/create-service (get-in config [:server :rondo-sftp]))]
   (with-timeout
     #(try
        (send-payment-to-rondo! rondo-service

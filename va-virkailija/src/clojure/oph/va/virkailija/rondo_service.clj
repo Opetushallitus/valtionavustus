@@ -79,3 +79,6 @@
                             :file filename
                             :path (:remote_path_from (:configuration service))
                             :config (:configuration service))))
+
+  (defn create-service [config]
+    (RondoFileService. config))
