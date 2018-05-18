@@ -94,7 +94,7 @@
         (assoc
           (select-keys
              application
-             [:project-name :organization-name :budget-granted :register-number
+             [:project-name :organization-name :register-number
               :takp-account :lkp-account :budget-oph-share])
           :bank-iban (get-answer-value (:answers application) "bank-iban"))]
     (map
