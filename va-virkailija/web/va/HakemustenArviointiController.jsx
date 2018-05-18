@@ -581,7 +581,7 @@ export default class HakemustenArviointiController {
     return state
   }
 
-  onAddPayment(state, paymentSum) {
+  onAddPayment(state, {paymentSum, index}) {
     const hakemus = state.selectedHakemus
     const url = "/api/v2/payments/"
     state.saveStatus.saveInProgress = true
@@ -590,7 +590,8 @@ export default class HakemustenArviointiController {
                     "application-version": hakemus.version,
                     "state": 1,
                     "batch-id": null,
-                    "payment-sum": paymentSum })
+                    "payment-sum": paymentSum,
+                    "phase": index})
       .then(function(response) {
         if(response instanceof Object) {
           dispatcher.push(events.appendPayment, response)
@@ -1076,8 +1077,8 @@ setHakemusShouldPayComments(hakemus, newShouldPayComment) {
     dispatcher.push(events.clearFilters)
   }
 
-  addPayment(paymentSum) {
-    dispatcher.push(events.addPayment, paymentSum)
+  addPayment(paymentSum, index) {
+    dispatcher.push(events.addPayment, {paymentSum, index})
   }
 
   removePayment(id) {

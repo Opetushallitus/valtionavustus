@@ -191,23 +191,24 @@
          (:budget-oph-share application))
       (:budget-oph-share application))))
 
-(defn create-payment-values [application sum]
+(defn create-payment-values [application sum phase]
   {:application-id (:id application)
    :application-version (:version application)
    :state 0
    :batch-id nil
-   :payment-sum sum})
+   :payment-sum sum
+   :phase phase})
 
 (defn create-grant-payments
-  ([grant-id identity]
+  ([grant-id phase identity]
    (let [grant (grant-data/get-grant grant-id)]
      (doall
        (map
          #(create-payment
-            (create-payment-values % (get-first-payment-sum % grant))
+            (create-payment-values % (get-first-payment-sum % grant) phase)
             identity)
          (filter
            valid-for-payment?
            (application-data/get-applications-with-evaluation-by-grant
              grant-id))))))
-  ([grant-id] (create-grant-payments grant-id system-user)))
+  ([grant-id phase] (create-grant-payments grant-id phase system-user)))

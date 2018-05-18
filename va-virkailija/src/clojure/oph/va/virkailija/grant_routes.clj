@@ -60,10 +60,12 @@
     "/:id/payments/" [id :as request]
     :path-params [id :- Long]
     :return [virkailija-schema/Payment]
+    :body [grant-payments-data virkailija-schema/GrantPayment]
     :summary "Create grant payments"
     (with-admin request
       (ok (payments-data/create-grant-payments
-            id (authentication/get-request-identity request)))
+            id (:phase grant-payments-data)
+            (authentication/get-request-identity request)))
       (unauthorized ""))))
 
 (defn- post-payments-email []

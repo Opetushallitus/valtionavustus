@@ -7,7 +7,7 @@ WHERE
   version_closed IS NULL AND
   deleted IS NULL
 ORDER BY
-  id DESC,
+  id ASC,
   version DESC
 LIMIT
   1;

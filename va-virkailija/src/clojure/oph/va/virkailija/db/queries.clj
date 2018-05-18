@@ -70,8 +70,8 @@
   "sql/virkailija/applications/is-unpaid.sql")
 (defquery application-has-payments
   "sql/virkailija/applications/has-payments.sql")
-(defquery get-application-unsent-payment
-  "sql/virkailija/applications/get-unsent-payment.sql")
+(defquery get-application-unsent-payments
+  "sql/virkailija/applications/get-unsent-payments.sql")
 
 (defquery lock-va-users-cache-exclusively! "sql/virkailija/va_users_cache/lock-exclusively.sql")
 (defquery update-va-user-cache! "sql/virkailija/va_users_cache/update.sql")

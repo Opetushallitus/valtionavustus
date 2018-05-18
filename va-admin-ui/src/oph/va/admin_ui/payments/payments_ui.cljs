@@ -5,47 +5,16 @@
             [cljs-react-material-ui.icons :as ic]
             [oph.va.admin-ui.components.table :as table]
             [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.payments.applications :refer [state-to-str]]
             [oph.va.admin-ui.payments.utils
              :refer [to-simple-date-time to-simple-date]]
             [oph.va.admin-ui.utils :refer [format get-answer-value]]
             [oph.va.admin-ui.components.ui :as va-ui]
             [clojure.string :refer [lower-case]]))
 
-(defn render-history-item [i application]
-  [ui/table-row {:key i}
-   [ui/table-row-column (to-simple-date-time (:created-at application))]
-   [ui/table-row-column (:version application)]
-   [ui/table-row-column (state-to-str (:state application))]
-   [ui/table-row-column (to-simple-date (:invoice-date application))]
-   [ui/table-row-column (to-simple-date (:due-date application))]
-   [ui/table-row-column (to-simple-date (:receipt-date application))]
-   [ui/table-row-column (:transaction-account application)]
-   [ui/table-row-column (:document-type application)]
-   [ui/table-row-column (:inspector-email application)]
-   [ui/table-row-column (:acceptor-email application)]
-   [ui/table-row-column
-    (when (:deleted application)
-      (to-simple-date-time (:deleted application)))]
-   [ui/table-row-column (:user-name application)]])
-
-(defn render-history [payments]
-  [ui/table {:fixed-header true :selectable false :height "300px"}
-   [ui/table-header {:adjust-for-checkbox false :display-select-all false}
-    [ui/table-row [ui/table-header-column "Aika"]
-     [ui/table-header-column "Versio"]
-     [ui/table-header-column "Tila"]
-     [ui/table-header-column "Laskun päivä"]
-     [ui/table-header-column "Eräpäivä"]
-     [ui/table-header-column "Tositepäivä"]
-     [ui/table-header-column "Maksuliikemenotili"]
-     [ui/table-header-column "Tositelaji"]
-     [ui/table-header-column "Tarkastaja"]
-     [ui/table-header-column "Hyväksyjä"]
-     [ui/table-header-column "Poistettu"]
-     [ui/table-header-column "Käyttäjä"]]]
-   [ui/table-body {:display-row-checkbox false}
-    (doall (map-indexed render-history-item payments))]])
+(defn phase-to-name [phase]
+  (if (= phase 0)
+    "1. erä"
+    (str phase ". väliselvitys")))
 
 (defn render-payment [i payment]
   [table/table-row {:key i}
@@ -67,7 +36,7 @@
    [table/table-row-column (get payment :lkp-account)]
    [table/table-row-column (get payment :takp-account)]
    [table/table-row-column {:style {:text-align "right"}}
-    (.toLocaleString (get payment :budget-granted 0)) " €"]])
+    (.toLocaleString (get payment :budget-oph-share 0)) " €"]])
 
 (defn sort-payments [payments sort-key descend?]
   (if descend?
@@ -98,6 +67,31 @@
     (swap! filters dissoc k)
     (swap! filters assoc k (lower-case v))))
 
+(defn render-payment-group [i [phase payments]]
+  [:div {:key i :style {:padding-bottom 10}}
+   [:label (phase-to-name phase)]
+   [table/table-body
+    {:style {:border-top "1px solid #f6f4f0"
+             :border-bottom "1px solid #f6f4f0"
+             :padding-right (when (< (count payments) 14) 14)}}
+    (doall (map-indexed render-payment payments))]
+   [table/table-footer
+    [table/table-row
+     [table/table-row-column]
+     [table/table-row-column]
+     [table/table-row-column "Yhteensä"]
+     [table/table-row-column {:style {:text-align "right"}}
+      (.toLocaleString
+        (reduce #(+ %1 (:payment-sum %2)) 0 payments))
+      " €"]
+     [table/table-row-column]
+     [table/table-row-column]
+     [table/table-row-column]
+     [table/table-row-column {:style {:text-align "right"}}
+      (.toLocaleString
+        (reduce #(+ %1 (get %2 :budget-oph-share 0)) 0 payments))
+      " €"]]]])
+
 (defn sortable-header-column
   [{:keys [title column-key on-sort on-filter sort-params]}]
   [table/table-header-column
@@ -120,7 +114,8 @@
               (not-empty @filters) (filter-payments @filters)
               (some? (:sort-key @sort-params))
               (sort-payments
-                (:sort-key @sort-params) (:descend? @sort-params)))]
+                (:sort-key @sort-params) (:descend? @sort-params)))
+            grouped-payments (group-by :phase sorted-filtered-payments)]
         [:div
          [table/table
           [table/table-header
@@ -169,29 +164,13 @@
               :on-filter #(update-filters! filters %1 %2)}]
             [sortable-header-column
              {:title "Tiliöinti"
-              :column-key :budget-granted
+              :column-key :budget-oph-share
               :sort-params @sort-params
               :on-sort #(sort-column! sort-params %)
               :on-filter #(update-filters! filters %1 %2)}]]]
-          (if (empty? sorted-filtered-payments)
-            [:div {:style theme/table-empty-text} "Ei maksatuksia"]
-            [table/table-body
-             {:style {:padding-right
+
+          [:div {:style {:padding-right
                       (when (< (count sorted-filtered-payments)) 14)}}
-             (doall (map-indexed render-payment sorted-filtered-payments))])
-          [table/table-footer
-           [table/table-row
-            [table/table-row-column]
-            [table/table-row-column]
-            [table/table-row-column "Yhteensä"]
-            [table/table-row-column {:style {:text-align "right"}}
-             (.toLocaleString
-               (reduce #(+ %1 (:payment-sum %2)) 0 sorted-filtered-payments))
-             " €"]
-            [table/table-row-column]
-            [table/table-row-column]
-            [table/table-row-column]
-            [table/table-row-column {:style {:text-align "right"}}
-             (.toLocaleString
-               (reduce #(+ %1 (:budget-granted %2)) 0 sorted-filtered-payments))
-             " €"]]]]]))))
+           (if (empty? sorted-filtered-payments)
+             [:div {:style theme/table-empty-text} "Ei maksatuksia"]
+             (doall (map-indexed render-payment-group grouped-payments)))]]]))))

@@ -273,7 +273,12 @@
    (s/optional-key :filename) (s/maybe s/Str)
    (s/optional-key :user-name) s/Str
    (s/optional-key :batch-id) (s/maybe s/Int)
+   :phase (s/maybe s/Int)
    :payment-sum s/Int})
+
+(s/defschema GrantPayment
+  "Grant Payment (for creating grant payments)"
+  {:phase s/Int})
 
 (s/defschema PaymentBatchNumber
   "Payment batch number"
