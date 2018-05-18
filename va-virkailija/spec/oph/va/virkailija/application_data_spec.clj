@@ -92,7 +92,8 @@
               {:application-id (:id application)
                :payment-sum 26000
                :batch-id nil
-               :state 0}
+               :state 0
+               :phase 0}
               user)
             unsent (application-data/get-application-unsent-payment
                      (:id application))]
@@ -108,7 +109,8 @@
               {:application-id (:id application)
                :payment-sum 26000
                :batch-id nil
-               :state 0}
+               :state 0
+               :phase 0}
               user)
             updated (payments-data/update-payment
                       (assoc payment
@@ -129,7 +131,8 @@
               {:application-id (:id application)
                :payment-sum 26000
                :batch-id nil
-               :state 0}
+               :state 0
+               :phase 0}
               user)
             updated (payments-data/update-payment
                       (assoc payment :state 2 :filename "file.xml") user)]
