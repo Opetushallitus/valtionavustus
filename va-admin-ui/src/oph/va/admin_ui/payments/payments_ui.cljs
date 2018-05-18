@@ -77,7 +77,7 @@
     (doall (map-indexed render-payment payments))]
    [table/table-footer
     [table/table-row
-     [table/table-row-column (str (count payments) " maksatusta")]
+     [table/table-row-column]
      [table/table-row-column]
      [table/table-row-column "Yhteensä"]
      [table/table-row-column {:style {:text-align "right"}}
