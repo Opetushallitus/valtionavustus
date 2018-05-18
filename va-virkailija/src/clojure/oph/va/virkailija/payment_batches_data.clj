@@ -50,14 +50,13 @@
   ([payment] (create-filename payment  #(System/currentTimeMillis))))
 
 (defn test-rondoo [configuration]
-  (RondoFileService. configuration)
-  (get-remote-file-list))
+  (get-remote-file-list (RondoFileService. configuration)))
 
-(defn send-payment! [payment application grant filename batch]
+(defn send-to-rondo! [payment application grant filename batch]
   (let [rondo-service (RondoFileService. (get-in config [:server :rondo-sftp]))]
   (with-timeout
     #(try
-       (rondo-service/send-to-rondo! rondo-service
+       (send-payment-to-rondo! rondo-service
          {:payment (payments-data/get-payment (:id payment))
           :application application
           :grant grant
@@ -80,7 +79,7 @@
                   (create-payment-data application (:batch data) sum)
                   (:identity data)))
             filename (create-filename payment)]
-        (assoc (send-payment! payment application (:grant data) filename
+        (assoc (send-to-rondo! payment application (:grant data) filename
                                (:batch data))
                :filename filename :payment payment))
       {:success false :error {:error-type :already-paid}})))
@@ -94,7 +93,7 @@
                              (assoc payment :batch-id (get-in data [:batch :id]))
                              (:identity data))]
         (-> updated-payment
-            (send-payment! application (:grant data) filename (:batch data))
+            (send-to-rondo! application (:grant data) filename (:batch data))
             (assoc :filename filename :payment updated-payment)))
       {:success false :error {:error-type :no-payments}})))
 

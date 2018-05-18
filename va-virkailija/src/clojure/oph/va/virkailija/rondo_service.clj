@@ -37,13 +37,8 @@
             (ssh/sftp channel {} :cd path)
             (ssh/ssh-sftp-cmd channel :ls ["*.xml"] :with-monitor))))))))
 
-; (defn get-local-file-path [config]
-;   (get config :local-path (System/getProperty "java.io.(tmpdir")))
-;
-; (defn get-file-from-local [config filename]
-;   (format "%s/%s"
-;           (get-local-file-path config)
-;           filename))
+(defn get-local-file-path [config]
+  (get config :local-path (System/getProperty "java.io.(tmpdir")))
 
 (defn send-payment! [{:keys [payment application grant filename batch config func]}]
   (let [file (get config :local-path (System/getProperty "java.io.tmpdir"))]
@@ -62,43 +57,23 @@
         (log/info (format "Would send %s to %s" file (:host-ip config)))
         {:success true}))))
 
-; (defn get-remote-file-list [config func]
-;  (let [result (func :method :cdls
-;                        :path (:remote_path_from config)
-;                        :config config)]
-;   (map #(last (strc/split % #"\s+")) (map str result))))
-
-
-; (defn get-remote-file [filename config func]
-;   (let [xml-file-path (get-local-file-path config filename)]
-;     (func :method :get
-;               :file xml-file-path
-;               :path (:remote_path_from config)
-;               :config config)))
-
-; (defn delete-file-from-remote [filename config func]
-;   (func :method :rm
-;             :file filename
-;             :path (:remote_path_from config)
-;             :config config))
-
 (defrecord RondoFileService [configuration]
   RemoteFileService
   (send-payment-to-rondo! [service payment-values] (send-payment! (assoc payment-values :config (:configuration service) :func do-sftp!)))
   (get-remote-file-list [service]
                         (let [result (do-sftp! :method :cdls
                         :path (:remote_path_from (:configuration service))
-                        :config (:configuration service))
+                        :config (:configuration service))]
    (map #(last (strc/split % #"\s+")) (map str result))))
   (get-local-path [service] (get (:configuration service) :local-path (System/getProperty "java.io.tmpdir")))
   (get-remote-file [service filename]
-                   (let [xml-file-path (get-local-path (:configuration service) filename)]
+                   (let [xml-file-path (format "%s/%s" (get-local-file-path (:configuration service))  filename)]
                       (do-sftp! :method :get
                                 :file xml-file-path
                                 :path (:remote_path_from (:configuration service))
                                 :config (:configuration service))))
   (get-local-file [service filename]
-                  (format "%s/%s" (get-local-path) filename))
+                  (format "%s/%s" (get-local-file-path (:configuration service)) filename))
   (delete-remote-file [service filename]
                       (do-sftp! :method :rm
                             :file filename

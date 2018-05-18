@@ -21,22 +21,22 @@
 
 (defn fetch-xml-files [xml-path list-of-files rondo-service]
   (doseq [filename list-of-files]
-    (rondo-service/get-remote-file rondo-service filename)
+    (get-remote-file rondo-service filename)
     (try
       (payments-data/update-state-by-response
-       (invoice/read-xml (rondo-service/get-local-file  rondo-service filename)))
+       (invoice/read-xml (get-local-file  rondo-service filename)))
       (catch clojure.lang.ExceptionInfo e
         (if (= "already-paid" (-> e ex-data :cause))
-          (rondo-service/delete-remote-file rondo-service filename))
+          (delete-remote-file rondo-service filename))
         (throw e)))
-    (rondo-service/delete-remote-file rondo-service filename)
-    (clojure.java.io/delete-file (rondo-service/get-local-file rondo-service filename))))
+    (delete-remote-file rondo-service filename)
+    (clojure.java.io/delete-file (get-local-file rondo-service filename))))
 
 
 (defn fetch-feedback-from-rondo [sftp-config]
   (let [rondo-service (RondoFileService. sftp-config)
-        list-of-files (rondo-service/get-remote-file-list rondo-service)
-        xml-path (rondo-service/get-local-path rondo-service)
+        list-of-files (get-remote-file-list rondo-service)
+        xml-path (get-local-path rondo-service)
         result (fetch-xml-files xml-path list-of-files rondo-service)]
     (if (nil? result)
       {:success true}
