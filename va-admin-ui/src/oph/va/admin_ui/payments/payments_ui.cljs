@@ -70,8 +70,10 @@
 (defn render-payment-group [i [phase payments]]
   [:div {:key i :style {:padding-bottom 10}}
    [:label (phase-to-name phase)]
-   [table/table-body {:style {:border-top "1px solid #f6f4f0"
-                              :border-bottom "1px solid #f6f4f0"}}
+   [table/table-body
+    {:style {:border-top "1px solid #f6f4f0"
+             :border-bottom "1px solid #f6f4f0"
+             :padding-right (when (< (count payments) 14) 14)}}
     (doall (map-indexed render-payment payments))]
    [table/table-footer
     [table/table-row
