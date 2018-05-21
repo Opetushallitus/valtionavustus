@@ -7,7 +7,8 @@
             [cljs-react-material-ui.icons :as ic]
             [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.components.table :as va-table]
-            [oph.va.admin-ui.utils :refer [format]]))
+            [oph.va.admin-ui.utils :refer [format]]
+            [oph.va.admin-ui.components.tools :refer [split-component]]))
 
 (defn format-date [d]
   (when (some? d)
@@ -208,8 +209,18 @@
 (defn card-text [& content]
   (apply vector :div {:style {:padding 20}} content))
 
+(defn merge-style [props style]
+  (if (some? (:style props))
+    (merge style (:style props))
+    style))
+
 (defn card [props & children]
   (let [style (if (some? (:style props))
                 (merge theme/card-style (:style props))
                 theme/card-style)]
     (apply vector :div (merge props {:style style}) children)))
+
+(defn badge [& body]
+  (let [{:keys [props children]} (split-component body)]
+    [:span {:style (merge-style props theme/badge)}
+     (apply vector :span children)]))
