@@ -2,6 +2,8 @@
   (:require [clojure.string :as string]
             [reagent.core :as r]
             [cljsjs.material-ui]
+            [cljs-react-material-ui.reagent :refer [date-picker]
+             :rename {date-picker material-date-picker}]
             [cljs-react-material-ui.icons :as ic]
             [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.components.table :as va-table]
@@ -115,7 +117,7 @@
                       (:primary-text value)])
          (:values props)))]]])
 
-(defn date-picker [props]
+(defn date-picker-va [props]
   (let [label (or (:floating-label-text props) (:label props))]
    [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
     [:span {:class "oph-label"
@@ -130,6 +132,24 @@
       :type "date"
       :style {:width "auto" :height "auto"}
       :on-change (:on-change props)}]]))
+
+(defn date-picker [props]
+  (let [label (or (:floating-label-text props) (:label props))]
+   [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
+    [:span {:class "oph-label" :aria-describedby "field-text"}
+     label
+     (when-some [text (:tooltip props)] [tooltip {} text])]
+    [material-date-picker {:value (:value props)
+                           :class "oph-input"
+                           :name label
+                           :underline-show false
+                           :style {:width "auto" :height "auto"}
+                           :text-field-style {:width "auto"
+                                              :height "auto"
+                                              :line-height "inherit"
+                                              :font-family "inherit"}
+                           :input-style {}
+                           :on-change (:on-change props)}]]))
 
 (defn remove-nils [c] (disj c nil))
 
