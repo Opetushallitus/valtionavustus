@@ -90,7 +90,7 @@
   (it "refuses to create paymenst without privileges"
       (let [grant (first (grant-data/get-grants))]
         (let [result (post! (format "/api/v2/grants/%d/payments/"
-                                    (:id grant)) {})]
+                                    (:id grant)) {:phase 0})]
           (should= 401 (:status result))))))
 
 (describe

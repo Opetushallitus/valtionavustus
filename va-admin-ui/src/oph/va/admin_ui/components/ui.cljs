@@ -2,11 +2,58 @@
   (:require [clojure.string :as string]
             [reagent.core :as r]
             [cljsjs.material-ui]
-            [cljs-react-material-ui.icons :as ic]
-            [cljs-react-material-ui.reagent :refer [date-picker popover]
+            [cljs-react-material-ui.reagent :refer [date-picker]
              :rename {date-picker material-date-picker}]
+            [cljs-react-material-ui.icons :as ic]
             [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.components.table :as va-table]))
+            [oph.va.admin-ui.components.table :as va-table]
+            [oph.va.admin-ui.utils :refer [format]]
+            [oph.va.admin-ui.components.tools :refer [split-component]]))
+
+(defn format-date [d]
+  (when (some? d)
+   (format "%04d-%02d-%02d"
+           (.getFullYear d)
+           (+ (.getMonth d) 1 )
+           (.getDate d))))
+
+(defn get-rectangle [element]
+  (if (some? element)
+    (let [rect (.getBoundingClientRect element)]
+      {:top (.-top rect)
+       :left (.-left rect)})
+    {:top 0 :left 0}))
+
+(defn popover [props & content]
+  (let [rect (get-rectangle (:anchor-el props))]
+    [:div
+     {:style
+      {:display (when (not (:open props)) "none")
+       :position "fixed"
+       :top 0
+       :bottom 0
+       :left 0
+       :right 0
+       :z-index 2000}
+      :on-click #(:on-request-close props)}
+     [:div
+      {:style
+       {:box-shadow
+        "rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px"
+        :background-color "white"
+        :color "black"
+        :border-radius 2
+        :position "fixed"
+        :z-index 2100
+        :overflow-y "auto"
+        :top (:top rect)
+        :left (:left rect)
+        :opacity 1
+        :box-sizing "border-box"
+        :transform "scale(1, 1)"
+        :transform-origin "left top 0px"
+        :max-height 525}}
+      (apply vector :div content)]]))
 
 (defn tooltip [props text]
   (let [state (r/atom {:open false :anchor-el nil})]
@@ -14,17 +61,12 @@
       [:span {:style (merge theme/tooltip (:style props))}
        [:span
         {:style (:button-style props)
-         :on-mouse-over
-         (when (get props :hover? true)
-           (fn [e]
-             (swap! state assoc
-                    :open true
-                    :anchor-el (.-target e))))
          :on-click
          (fn [e]
            (swap! state assoc
                   :open (not (:open @state))
-                  :anchor-el (.-target e)))} (get props :icon "?")
+                  :anchor-el (.-target e)))}
+        (get props :icon "?")
         [popover
          (merge @state
                 {:on-request-close #(swap! state assoc :open false)})
@@ -76,6 +118,22 @@
                       (:primary-text value)])
          (:values props)))]]])
 
+(defn date-picker-va [props]
+  (let [label (or (:floating-label-text props) (:label props))]
+   [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
+    [:span {:class "oph-label"
+            :aria-describedby "field-text"
+            :style {:display "block"}}
+     label
+     (when-some [text (:tooltip props)] [tooltip {} text])]
+    [:input
+     {:value (format-date (:value props))
+      :class "oph-input"
+      :name label
+      :type "date"
+      :style {:width "auto" :height "auto"}
+      :on-change (:on-change props)}]]))
+
 (defn date-picker [props]
   (let [label (or (:floating-label-text props) (:label props))]
    [:div {:class "oph-field" :style (merge theme/date-picker (:style props))}
@@ -87,10 +145,7 @@
                            :name label
                            :underline-show false
                            :style {:width "auto" :height "auto"}
-                           :text-field-style {:width "auto"
-                                              :height "auto"
-                                              :line-height "inherit"
-                                              :font-family "inherit"}
+                           :text-field-style theme/date-picker-field
                            :input-style {}
                            :on-change (:on-change props)}]]))
 
@@ -147,3 +202,22 @@
              (:label (second t))]))
         children))]
    [:div {:class "oph-tab-pane oph-tab-pane-is-active" } (some #(when (= (:value (second %)) (:value props)) %) children )]])
+
+(defn card-text [& content]
+  (apply vector :div {:style {:padding 20}} content))
+
+(defn merge-style [props style]
+  (if (some? (:style props))
+    (merge style (:style props))
+    style))
+
+(defn card [props & children]
+  (let [style (if (some? (:style props))
+                (merge theme/card-style (:style props))
+                theme/card-style)]
+    (apply vector :div (merge props {:style style}) children)))
+
+(defn badge [& body]
+  (let [{:keys [props children]} (split-component body)]
+    [:span {:style (merge-style props theme/badge)}
+     (apply vector :span children)]))

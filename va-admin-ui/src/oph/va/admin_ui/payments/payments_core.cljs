@@ -5,10 +5,6 @@
     [clojure.string :refer [join]]
     [oph.va.admin-ui.connection :as connection]
     [reagent.core :as r]
-    [cljsjs.material-ui]
-    [cljs-react-material-ui.core :refer [color]]
-    [cljs-react-material-ui.reagent :as ui]
-    [cljs-react-material-ui.icons :as ic]
     [oph.va.admin-ui.components.ui :as va-ui]
     [oph.va.admin-ui.payments.payments-ui :as payments-ui]
     [oph.va.admin-ui.payments.payments :as payments
@@ -19,7 +15,7 @@
     [oph.va.admin-ui.payments.grants-ui :refer [grants-table grant-info]]
     [oph.va.admin-ui.payments.grants :refer [grant-matches? convert-dates]]
     [oph.va.admin-ui.payments.financing :as financing]
-    [oph.va.admin-ui.payments.utils :refer [find-index-of]]
+    [oph.va.admin-ui.payments.utils :refer [find-index-of is-today?]]
     [oph.va.admin-ui.dialogs :as dialogs]
     [oph.va.admin-ui.user :as user]
     [oph.va.admin-ui.theme :as theme]))
@@ -105,9 +101,7 @@
    [va-ui/text-field
     {:floating-label-text "Hakujen suodatus"
      :value filter-str
-     :on-change #(on-change (.-value (.-target %)))}]
-   [ui/icon-button {:on-click #(on-change "")}
-    [ic/action-highlight-off {:color "gray"}]]])
+     :on-change #(on-change (.-value (.-target %)))}]])
 
 (defn send-payments! [values selected-grant payments]
   (go
@@ -154,7 +148,7 @@
       (close! dialog-chan))))
 
 (defn notice [message]
-  [ui/card {:style theme/notice} [ui/card-text message]])
+  [va-ui/card {:style theme/notice} [va-ui/card-text message]])
 
 (defn grants-components []
   (let [grant-filter (r/atom "")
@@ -187,7 +181,10 @@
      [grants-components]
      [(fn [data]
         (let [unsent-payments?
-              (some? (some #(when (< (:state %) 2) %) flatten-payments))]
+              (some? (some #(when (< (:state %) 2) %) flatten-payments))
+              new-sent-payments
+              (filter #(and (> (:state %) 1)
+                            (is-today? (:created-at %))) flatten-payments)]
           [:div {:class
                  (when (not= (:status @selected-grant) "resolved") "disabled")}
            [:div
@@ -240,7 +237,11 @@
                           batch-result)))))}]]]
                   [va-ui/tab
                    {:value "sent"
-                    :label "Lähetetyt maksatukset"}
+                    :label [:span
+                            "Lähetetyt maksatukset"
+                            (when (not (empty? new-sent-payments))
+                              [va-ui/badge
+                               (str (count new-sent-payments) " uutta")])]}
                    [payments-ui/payments-table
                     (filter #(> (:state %) 1) flatten-payments)]]]))]]]))]
      (when (user/is-admin? user-info)

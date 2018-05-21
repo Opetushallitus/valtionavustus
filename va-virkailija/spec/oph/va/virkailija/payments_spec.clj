@@ -291,7 +291,8 @@
             application (create-application grant submission)
             payment-values (assoc valid-payment-values
                                   :application-id (:id application)
-                                  :application-version (:version application))
+                                  :application-version (:version application)
+                                  :phase 0)
             {:keys [status body]}
             (post! "/api/v2/payments/" payment-values)]
         (should= 200 status)
@@ -306,7 +307,8 @@
             application (create-application grant submission)
             payment-values (assoc valid-payment-values
                                   :application-id (:id application)
-                                  :application-version (:version application))
+                                  :application-version (:version application)
+                                  :phase 0)
             {:keys [body]}
             (post! "/api/v2/payments/" payment-values)
             payment (json->map body)]
@@ -323,7 +325,8 @@
             application (create-application grant submission)
             payment-values (assoc valid-payment-values
                                   :application-id (:id application)
-                                  :application-version (:version application))
+                                  :application-version (:version application)
+                                  :phase 0)
             {:keys [body]}
             (post! "/api/v2/payments/" payment-values)
             payment
