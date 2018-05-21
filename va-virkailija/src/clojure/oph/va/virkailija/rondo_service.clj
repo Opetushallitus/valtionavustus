@@ -41,7 +41,7 @@
   (get config :local-path (System/getProperty "java.io.(tmpdir")))
 
 (defn send-payment! [{:keys [payment application grant filename batch config func]}]
-  (let [file (get config :local-path (System/getProperty "java.io.tmpdir"))]
+  (let [file (format "%s/%s" (get config :local-path (System/getProperty "java.io.tmpdir")) filename)]
     (invoice/write-xml!
       (invoice/payment-to-xml
         {:payment payment :application application :grant grant :batch batch})
