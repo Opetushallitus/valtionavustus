@@ -10,5 +10,3 @@ WHERE
 ORDER BY
   id DESC,
   version DESC
-LIMIT
-  1

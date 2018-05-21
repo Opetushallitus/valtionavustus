@@ -121,7 +121,7 @@
         (do
           (log/info "Create initial payment for applications")
           (payments-data/create-grant-payments
-            avustushaku-id (authentication/get-request-identity request))))
+            avustushaku-id 0 (authentication/get-request-identity request))))
       (log/info "Send all paatos ids " ids)
       (run! send-paatos-for-all ids)
       (ok (merge {:status "ok"}

@@ -42,7 +42,8 @@
               {:application-id (:id application)
                :payment-sum 20000
                :batch-id (:id batch)
-               :state 1}
+               :state 1
+               :phase 0}
               {:person-oid "12345"
                :first-name "Test"
                :surname "User"})))
@@ -80,7 +81,8 @@
                       {:application-id (:id application)
                        :payment-sum 20000
                        :batch-id (:id batch)
-                       :state 1}
+                       :state 1
+                       :phase 0}
                       {:person-oid "12345"
                        :first-name "Test"
                        :surname "User"})]
@@ -128,13 +130,15 @@
                          {:application-id (:id application)
                           :payment-sum 20000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 0}
                          example-identity)
               payment2 (payments-data/create-payment
                          {:application-id (:id application)
                           :payment-sum 20000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 1}
                          example-identity)]
           (payments-data/update-payment
             (assoc payment1 :state 2 :filename "example.xml") example-identity)
@@ -172,19 +176,22 @@
                          {:application-id (:id application)
                           :payment-sum 20000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 0}
                          example-identity)
               payment2 (payments-data/create-payment
                          {:application-id (:id application)
                           :payment-sum 30000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 1}
                          example-identity)
               payment3 (payments-data/create-payment
                          {:application-id (:id application)
                           :payment-sum 25000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 2}
                          example-identity)]
           (payments-data/update-payment
             (assoc payment1 :state 2 :filename "example.xml") example-identity)
@@ -218,19 +225,22 @@
                          {:application-id (:id application)
                           :payment-sum 20000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 0}
                          example-identity)
               payment2 (payments-data/create-payment
                          {:application-id (:id application)
                           :payment-sum 30000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 1}
                          example-identity)
               payment3 (payments-data/create-payment
                          {:application-id (:id application)
                           :payment-sum 25000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 2}
                          example-identity)]
           (payments-data/update-payment
             (assoc payment1 :state 2 :filename "example.xml") example-identity)
@@ -355,7 +365,8 @@
               {:application-id (:id application)
                :payment-sum 20000
                :batch-id nil
-               :state 1}
+               :state 1
+               :phase 0}
               {:person-oid "12345"
                :first-name "Test"
                :surname "User"})

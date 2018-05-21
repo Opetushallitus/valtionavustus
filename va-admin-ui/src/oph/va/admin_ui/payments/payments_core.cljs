@@ -11,7 +11,6 @@
      :refer [multibatch-payable? singlebatch-payable? any-account-nil?
              convert-payment-dates get-batch-values format-date
              parse-batch-dates get-error-messages combine]]
-    [oph.va.admin-ui.payments.applications :as applications]
     [oph.va.admin-ui.router :as router]
     [oph.va.admin-ui.payments.grants-ui :refer [grants-table grant-info]]
     [oph.va.admin-ui.payments.grants :refer [grant-matches? convert-dates]]
@@ -50,7 +49,7 @@
    [:hr]
    [:h3 "Pääkäyttäjän työkalut"]
    [:div
-    (when delete-payments?
+    (if delete-payments?
       [va-ui/raised-button
        {:primary true
         :label "Poista maksatukset"
@@ -72,7 +71,8 @@
                   (dialogs/show-error-message!
                     "Virhe maksatusten poistossa"
                     (select-keys response
-                                 [:status :error-text]))))))}])
+                                 [:status :error-text]))))))}]
+      [:span])
     [va-ui/raised-button
      {:primary true
       :label "Luo maksatukset"

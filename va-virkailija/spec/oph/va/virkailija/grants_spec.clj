@@ -125,7 +125,8 @@
         (create-evaluation grant "accepted")
         (payments-data/delete-grant-payments (:id grant))
         (let [result (post!
-                       (format "/api/v2/grants/%d/payments/" (:id grant)) {})]
+                       (format "/api/v2/grants/%d/payments/" (:id grant))
+                       {:phase 0})]
           (should= 200 (:status result))
           (should= 3 (count (json->map (:body result))))
           (should= 3 (count (payments-data/get-valid-grant-payments (:id grant)))))))
@@ -140,7 +141,8 @@
         (create-evaluation grant "processing")
         (create-evaluation grant "unhandled")
         (payments-data/delete-grant-payments (:id grant))
-        (let [result (post! (format "/api/v2/grants/%d/payments/" (:id grant)) {})]
+        (let [result (post! (format "/api/v2/grants/%d/payments/" (:id grant))
+                            {:phase 0})]
           (should= 200 (:status result))
           (should= 3 (count (json->map (:body result))))
           (should= 3 (count (payments-data/get-valid-grant-payments (:id grant)))))))
@@ -160,7 +162,8 @@
         (payments-data/delete-grant-payments (:id grant))
 
         (let [result (post!
-                       (format "/api/v2/grants/%d/payments/" (:id grant)) {})]
+                       (format "/api/v2/grants/%d/payments/" (:id grant))
+                       {:phase 0})]
           (should= 200 (:status result))
           (should= 3 (count (json->map (:body result))))
           (should= 3 (count (payments-data/get-valid-grant-payments (:id grant)))))))
@@ -178,7 +181,8 @@
         (payments-data/delete-grant-payments (:id grant))
 
         (let [result (post!
-                       (format "/api/v2/grants/%d/payments/" (:id grant)) {})]
+                       (format "/api/v2/grants/%d/payments/" (:id grant))
+                       {:phase 0})]
           (should= 200 (:status result))
           (should= 3 (count (json->map (:body result))))
           (should= 3 (count (payments-data/get-valid-grant-payments (:id grant))))))))
