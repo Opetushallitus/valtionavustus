@@ -72,7 +72,7 @@
                          [buddy/buddy-core "1.4.0"]
 
                          ;; cas
-                         [fi.vm.sade/scala-cas_2.11 "0.5.1-20180518.064630-2"]
+                         [fi.vm.sade/scala-cas_2.11 "0.5.0-20180521.043847-18"]
                          [org.http4s/http4s-blaze-client_2.11 "0.16.5"]
                          [org.http4s/http4s-client_2.11 "0.16.5"]
                          [org.http4s/http4s-dsl_2.11 "0.16.5"]
