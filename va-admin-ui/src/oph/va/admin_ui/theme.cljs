@@ -74,3 +74,12 @@
    :background-color "white"
    :border-radius "2px"
    :margin 10})
+
+(def badge {:text-align "center"
+            :margin-left 5
+            :margin-right 5
+            :border-radius 5
+            :color "gray"
+            :background-color "#159ecb"
+            :cursor "pointer"
+            :padding 10})
