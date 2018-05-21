@@ -15,7 +15,7 @@
     [oph.va.admin-ui.payments.grants-ui :refer [grants-table grant-info]]
     [oph.va.admin-ui.payments.grants :refer [grant-matches? convert-dates]]
     [oph.va.admin-ui.payments.financing :as financing]
-    [oph.va.admin-ui.payments.utils :refer [find-index-of]]
+    [oph.va.admin-ui.payments.utils :refer [find-index-of is-today?]]
     [oph.va.admin-ui.dialogs :as dialogs]
     [oph.va.admin-ui.user :as user]
     [oph.va.admin-ui.theme :as theme]))
@@ -181,7 +181,10 @@
      [grants-components]
      [(fn [data]
         (let [unsent-payments?
-              (some? (some #(when (< (:state %) 2) %) flatten-payments))]
+              (some? (some #(when (< (:state %) 2) %) flatten-payments))
+              new-sent-payments
+              (filter #(and (> (:state %) 1)
+                            (is-today? (:created-at %))) flatten-payments)]
           [:div {:class
                  (when (not= (:status @selected-grant) "resolved") "disabled")}
            [:div
@@ -234,7 +237,11 @@
                           batch-result)))))}]]]
                   [va-ui/tab
                    {:value "sent"
-                    :label "Lähetetyt maksatukset"}
+                    :label [:span
+                            "Lähetetyt maksatukset"
+                            (when (not (empty? new-sent-payments))
+                              [va-ui/badge
+                               (str (count new-sent-payments) " uutta")])]}
                    [payments-ui/payments-table
                     (filter #(> (:state %) 1) flatten-payments)]]]))]]]))]
      (when (user/is-admin? user-info)
