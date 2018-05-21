@@ -145,10 +145,7 @@
                            :name label
                            :underline-show false
                            :style {:width "auto" :height "auto"}
-                           :text-field-style {:width "auto"
-                                              :height "auto"
-                                              :line-height "inherit"
-                                              :font-family "inherit"}
+                           :text-field-style theme/date-picker-field
                            :input-style {}
                            :on-change (:on-change props)}]]))
 
