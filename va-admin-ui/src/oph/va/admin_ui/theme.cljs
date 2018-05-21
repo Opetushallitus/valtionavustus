@@ -4,7 +4,6 @@
 (def material-styles
   {:font-family ["Open Sans" "Helvetica" "sans-serif"]
    :line-height "1.45"
-   :table {:font-size "95%"}
    :palette {:text-color (color :black)
              :primary1-color "#00b5f0"
              :picker-header-color "#4c7f00"
@@ -12,7 +11,6 @@
 
 (def general-styles
   {:font-family ["Open Sans" "Helvetica" "sans-serif"]
-   :font-size "95%"
    :line-height "1.45"})
 
 (def link {:color "#159ecb" :font-size "font-size: 1.25rem"})
@@ -48,6 +46,13 @@
 
 (def date-picker text-field)
 
+(def date-picker-field
+  {:width "auto"
+   :height "auto"
+   :line-height "inherit"
+   :font-family "inherit"
+   :font-size 13})
+
 (def tabs-header {:cursor "pointer"})
 
 (def tab-header-link {:text-decoration "none"})
@@ -78,8 +83,8 @@
 (def badge {:text-align "center"
             :margin-left 5
             :margin-right 5
-            :border-radius 5
-            :color "gray"
+            :border-radius 2
+            :color "white"
             :background-color "#159ecb"
             :cursor "pointer"
-            :padding 10})
+            :padding "1px 5px 1px 5px"})
