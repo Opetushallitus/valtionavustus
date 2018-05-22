@@ -7,6 +7,8 @@
             [lein-doo "0.1.10"]
             [lein-asset-minifier "0.4.4"]]
 
+  :hooks [minify-assets.plugin/hooks]
+
   :source-paths ["src"]
 
   :parent-project {:path "../parent-project.clj"
@@ -35,14 +37,18 @@
    [:cljsbuild :builds :app :compiler :output-dir]
    [:cljsbuild :builds :app :compiler :output-to]]
 
-  :resource-paths ["/resources/public/admin-ui"]
+  :resource-paths ["resources/public/admin-ui"]
 
   :figwheel {:http-server-root "."
              :nrepl-port 7002
              :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"]
-             :css-dirs ["resources/public/admin-ui/css"]}
+             :css-dirs ["../va-virkailija/resources/public/admin-ui/css"
+                        "resources/public/admin-ui/css"]}
 
   :minify-assets [[:css
+                   {:source "resources/public/admin-ui/css/site.css"
+                    :target "../va-virkailija/resources/public/admin-ui/css/site-min.css"}]
+                  [:css
                    {:source "node_modules/oph-virkailija-style-guide/oph-styles.css"
                     :target "../va-virkailija/resources/public/admin-ui/css/oph-styles-min.css"}]]
 
