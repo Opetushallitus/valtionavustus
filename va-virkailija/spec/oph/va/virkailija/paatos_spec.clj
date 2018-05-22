@@ -91,9 +91,3 @@
             (:id submission) ""))
         (should= application-ids
                  (apply sorted-set (paatos/get-hakemus-ids-to-send (:id grant)))))))
-
-(comment '
-  ({:id 98, :version 0, :project-name "Test Project", :organization-name "Test Organisation", :sent-emails nil, :view_count 0, :user_key "95500db2-5b8f-494a-8d9c-c9c3e1418ea9", :sent-time nil}
-   {:id 99, :version 0, :project-name "Test Project", :organization-name "Test Organisation", :sent-emails nil, :view_count 0, :user_key "a0cc5941-8155-43e5-b781-96232f543caa", :sent-time nil}
-   {:id 100, :version 0, :project-name "Test Project", :organization-name "Test Organisation", :sent-emails nil, :view_count 0, :user_key "516bea33-f2eb-41ed-9c99-e0eca03e14cb", :sent-time nil}
-   {:id 101, :version 0, :project-name "Test Project", :organization-name "Test Organisation", :sent-emails nil, :view_count 0, :user_key "e32ce0a0-48eb-41ae-b850-f99950b02bf7", :sent-time nil}))
