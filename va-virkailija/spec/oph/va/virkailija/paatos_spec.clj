@@ -90,4 +90,5 @@
             (:user_key application)
             (:id submission) ""))
         (should= application-ids
-                 (apply sorted-set (paatos/get-hakemus-ids-to-send (:id grant)))))))
+                 (apply sorted-set
+                        (paatos/get-hakemus-ids-to-send (:id grant)))))))
