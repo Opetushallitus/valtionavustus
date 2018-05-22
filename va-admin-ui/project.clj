@@ -35,12 +35,12 @@
    [:cljsbuild :builds :app :compiler :output-dir]
    [:cljsbuild :builds :app :compiler :output-to]]
 
-  :resource-paths ["../va-virkailija/resources/public/admin-ui"]
+  :resource-paths ["/resources/public/admin-ui"]
 
   :figwheel {:http-server-root "."
              :nrepl-port 7002
              :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"]
-             :css-dirs ["../va-virkailija/resources/public/admin-ui/css"]}
+             :css-dirs ["resources/public/admin-ui/css"]}
 
   :minify-assets [[:css
                    {:source "node_modules/oph-virkailija-style-guide/oph-styles.css"
