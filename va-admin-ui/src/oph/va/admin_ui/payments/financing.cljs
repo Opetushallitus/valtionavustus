@@ -21,7 +21,7 @@
   [values on-change]
   [:div {:style {:display "flex"}}
    [va-ui/text-field
-    {:floating-label-text "Tarkastajan sähköpostiosoite"
+    {:floating-label-text "Esittelijän sähköpostiosoite"
      :value (get values :inspector-email "")
      :type "email"
      :error (and (not-empty? (:inspector-email values))
