@@ -11,10 +11,10 @@
    [oph.va.admin-ui.components.ui :as va-ui]
    [oph.va.admin-ui.utils :refer [format]]))
 
-(defonce dialogs (r/atom {:generic {:open false}
-                          :loading {}
-                          :snackbar {:open false :message ""}
-                          :error-dialog {:open false}}))
+(defonce ^:private dialogs (r/atom {:generic {:open false}
+                                    :loading {}
+                                    :snackbar {:open false :message ""}
+                                    :error-dialog {:open false}}))
 
 (defn show-dialog! [title content]
   (swap! dialogs update-in [:generic]
