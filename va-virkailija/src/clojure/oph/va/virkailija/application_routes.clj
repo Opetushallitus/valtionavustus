@@ -5,13 +5,6 @@
             [compojure.core :as compojure]
             [oph.va.virkailija.schema :as virkailija-schema]))
 
-(defn- get-payments-history []
-  (compojure-api/GET
-    "/:id/payments-history/" [id :as request]
-    :path-params [id :- Long]
-    :summary "Get payment history"
-    (ok (application-data/get-payments-history id))))
-
 (defn- get-payments []
   (compojure-api/GET
     "/:id/payments/" [id :as request]
@@ -32,6 +25,5 @@
 
 (compojure-api/defroutes routes
   "application routes"
-  (get-payments-history)
   (get-payments)
   (get-applications))
