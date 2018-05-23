@@ -127,11 +127,6 @@
          :disabled (not (is-valid? @v))
          :on-click on-submit}]])))
 
-(defn- render-filter [values on-change]
-  [:div
-   [va-ui/text-field {:value (or (:code values) "")
-                      :on-change #(on-change :code %)}]])
-
 (defn- download-items! [value-type year code-values]
   (go
     (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan koodeja" 3)]
