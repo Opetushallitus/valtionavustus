@@ -117,18 +117,6 @@
                                                         :new (:should_pay new)}))
         changelog))
 
-(defn- compare-should-pay-comment [changelog identity timestamp existing new]
-  (let [old-comment (:should_pay_comments existing)
-        new-comment (:should_pay_comments  new)]
-    (if (not (= old-comment new-comment))
-      (append-changelog changelog (->changelog-entry identity
-                                                     "should-pay-comment-change"
-                                                     timestamp
-                                                     {:old old-comment
-                                                      :new new-comment}))
-      changelog)))
-
-
 (defn- update-changelog [identity existing new]
   (let [changelog (:changelog existing)
         timestamp (Date.)]
@@ -343,6 +331,3 @@
                                       "order by first_name, surname, email"])
                         escaped-terms-for-like-exprs)
                   {:row-fn db->va-user}))))
-
-(defn set-all-evaluations-unhandled []
-  (exec :virkailija-db queries/set-all-unhandled! {}))
