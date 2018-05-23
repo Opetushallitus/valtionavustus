@@ -11,8 +11,7 @@
 
 (defonce ^:private config (atom {}))
 
-(defn get-cached
-  [url]
+(defn- get-cached [url]
   (let [c (chan)
         cached-result (get @cache url)]
     (go (if (nil? cached-result)
@@ -23,21 +22,15 @@
           (>! c cached-result)))
     c))
 
-(defn remove-cached! [path]
+(defn- remove-cached! [path]
   (apply swap! cache dissoc (filter #(> (.indexOf % path) -1) (keys @cache))))
 
-(defn login-url-with-service
-  []
+(defn login-url-with-service []
   (format "%s?service=%s/login/cas"
           (get-in config [:opintopolku :url])
           (get-in config [:virkailija-server :url])))
 
-(defn get-grant-data
-  [id]
-  (http/get (format "/%s/grants/%d/" api-path id) {:with-credentials? true}))
-
-(defn get-grant-applications
-  [id]
+(defn get-grant-applications [id]
   (get-cached (format "/%s/grants/%d/applications/?template=with-evaluation"
                       api-path
                       id)))
@@ -54,34 +47,25 @@
   (http/get (format "/%s/applications/?search=%s" api-path term)
             {:with-credentials? true}))
 
-(defn get-grant-payments
-  [id]
+(defn get-grant-payments [id]
   (http/get (format "/%s/grants/%d/payments/" api-path id)
             {:with-credentials? true}))
 
-(defn send-payments-email
-  [id data]
+(defn send-payments-email [id data]
   (http/post (format "/%s/grants/%d/payments-email/" api-path id)
              {:json-params data :with-credentials? true}))
 
-(defn get-payment-history
-  [id]
-  (http/get (format "/%s/applications/%d/payments-history/" api-path id)))
-
-(defn delete-grant-payments
-  [id]
+(defn delete-grant-payments [id]
   (http/delete (format "/%s/grants/%d/payments/" api-path id)))
 
 (defn create-grant-payments [id]
   (http/post (format "/%s/grants/%d/payments/" api-path id)
              {:json-params {:phase 0} :with-credentials? true}))
 
-(defn get-config
-  []
+(defn get-config []
   (http/get (format "/environment") {:with-credentials? true}))
 
-(defn get-user-info
-  []
+(defn get-user-info []
   (http/get (format "/api/userinfo/") {:with-credentials? true}))
 
 (defn find-payment-batch [grant-id date]
@@ -112,7 +96,8 @@
 
 (defn delete-va-code-value [id]
   (http/delete (format "/%s/va-code-values/%d/" api-path id)
-               {:with-credentials? true}))
+               {:with-credentials? true})
+  (remove-cached! "/va-code-values/"))
 
 (defn get-reports []
   (get-cached (str "/" api-path "/reports/")))

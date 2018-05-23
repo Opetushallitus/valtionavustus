@@ -11,7 +11,6 @@
 (defquery get-accepted-hakemus-ids "sql/virkailija/arvio/get-accepted-hakemus-ids.sql")
 (defquery get-arvio "sql/virkailija/arvio/get.sql")
 (defquery list-arvio-status-and-budget-granted-by-hakemus-ids "sql/virkailija/arvio/list-status-and-budget-granted-by-hakemus-ids.sql")
-(defquery set-all-unhandled! "sql/virkailija/arvio/set-all-unhandled.sql")
 
 (defquery create-comment<! "sql/virkailija/comment/create.sql")
 (defquery list-comments "sql/virkailija/comment/list.sql")
@@ -30,24 +29,16 @@
   "sql/virkailija/grants/get-resolved-grants-with-content.sql")
 (defquery find-grants "sql/virkailija/grants/find-grants.sql")
 (defquery get-grant "sql/virkailija/grants/get-grant.sql")
-(defquery get-grant-applications "sql/virkailija/grants/get-grant-applications.sql")
-(defquery get-grant-applications-with-evaluation
-  "sql/virkailija/grants/get-accepted-grant-applications-with-evaluation.sql")
-(defquery get-grant-roles "sql/virkailija/grants/get-grant-roles.sql")
-(defquery get-grant-payments "sql/virkailija/grants/get-grant-payments.sql")
 (defquery delete-grant-payments
   "sql/virkailija/grants/delete-grant-payments.sql")
 (defquery get-grant-payments-info
   "sql/virkailija/grants/get-grant-payments-info.sql")
-(defquery get-unpaid-applications
-  "sql/virkailija/grants/get-unpaid-applications.sql")
 
 (defquery get-payment "sql/virkailija/payments/get-payment.sql")
 (defquery get-payment-version "sql/virkailija/payments/get-payment-version.sql")
 (defquery payment-close-version
   "sql/virkailija/payments/payment-close-version.sql")
 (defquery update-payment "sql/virkailija/payments/update-payment.sql")
-(defquery get-payment-history "sql/virkailija/applications/get-payment-history.sql")
 (defquery create-payment "sql/virkailija/payments/create-payment.sql")
 (defquery delete-payment "sql/virkailija/payments/delete-payment.sql")
 (defquery find-payments-by-application-id-and-invoice-date
@@ -61,13 +52,7 @@
   "sql/virkailija/applications/get-application-evaluation.sql")
 (defquery get-application-payments
   "sql/virkailija/applications/get-application-payments.sql")
-(defquery get-application-payment
-  "sql/virkailija/applications/get-application-payment.sql")
-(defquery get-application-payment-by-state
-  "sql/virkailija/applications/get-application-payment-by-state.sql")
 (defquery get-total-paid "sql/virkailija/applications/get-total-paid.sql")
-(defquery is-application-unpaid
-  "sql/virkailija/applications/is-unpaid.sql")
 (defquery application-has-payments
   "sql/virkailija/applications/has-payments.sql")
 (defquery get-application-unsent-payments

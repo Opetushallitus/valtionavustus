@@ -11,7 +11,9 @@
            [oph.va.virkailija.grant-data :as grant-data]
            [oph.va.virkailija.paatos :as paatos]
            [oph.va.virkailija.db :as virkailija-db]
-           [oph.va.hakija.api :as hakija-api]))
+           [oph.va.hakija.api :as hakija-api]
+           [oph.va.virkailija.virkailija-tools :as virkailija-tools]
+           [oph.va.virkailija.hakija-api-tools :as hakija-api-tools]))
 
 (describe
   "Paatos functions"
@@ -26,12 +28,12 @@
                         :without-authentication? true}) (_)))
 
   (before
-    (virkailija-db/set-all-evaluations-unhandled)
-    (hakija-api/cancel-all-applications))
+    (virkailija-tools/set-all-evaluations-unhandled)
+    (hakija-api-tools/cancel-all-applications))
 
   (after
-    (virkailija-db/set-all-evaluations-unhandled)
-    (hakija-api/cancel-all-applications))
+    (virkailija-tools/set-all-evaluations-unhandled)
+    (hakija-api-tools/cancel-all-applications))
 
   (it "gets no email statuses"
       (let [grant (first (grant-data/get-grants))]
@@ -56,7 +58,7 @@
         (let [submission (create-submission (:form grant) {})
               application (create-application grant submission)
               evaluation (create-application-evaluation application "accepted")]
-          (hakija-api/set-application-refused
+          (hakija-api-tools/set-application-refused
             (:user_key application) (:id submission) ""))
 
         (create-evaluation grant "rejected")
@@ -86,7 +88,7 @@
               application (create-application grant submission)
               evaluation (create-application-evaluation
                            application "accepted")]
-          (hakija-api/set-application-refused
+          (hakija-api-tools/set-application-refused
             (:user_key application)
             (:id submission) ""))
         (should= application-ids

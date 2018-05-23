@@ -1,6 +1,5 @@
 (ns oph.va.admin-ui.components.table
   (:require [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.utils :refer [fill]]
             [oph.va.admin-ui.components.tools :refer [split-component]]))
 
 (def table-row :tr)
