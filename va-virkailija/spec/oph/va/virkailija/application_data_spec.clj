@@ -57,12 +57,6 @@
                         :port test-server-port
                         :auto-reload? false}) (_)))
 
-  (it "checks if application is unpaid"
-      (let [grant (first (grant-data/get-grants))
-            submission (create-submission (:form grant) {})
-            application (create-application grant submission)]
-        (should-not (application-data/is-unpaid? (:id application)))))
-
   (it "find application by register number"
       (let [grant (first (grant-data/get-grants))
             submission (create-submission (:form grant) {})
