@@ -9,7 +9,7 @@
 
 (def ^:private document-id-max-size 12)
 
-(defn- now-plus
+(defn now-plus
   [milliseconds]
   (-> (.now js/Date)
       (+ milliseconds)

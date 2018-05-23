@@ -17,7 +17,7 @@
     (some #(when-not (and (some? (get % :lkp-account))
                           (some? (get % :takp-account))) %) a)))
 
-(defn- get-batch-values [batch]
+(defn get-batch-values [batch]
   (assoc
     (select-keys batch
                  [:acceptor-email
@@ -39,21 +39,11 @@
         pred
         applications))))
 
-(defn- multibatch-payable? [applications]
+(defn multibatch-payable? [applications]
   (batch-payable?
     (fn [application]
       (some (fn [payment] (= (:state payment) 1))
             (:payments application)))
-    applications))
-
-(defn- singlebatch-payable? [applications]
-  (batch-payable?
-    (fn [{:keys [payments]}]
-      (or
-        (empty? payments)
-        (some (fn [payment]
-                (< (:state payment) 2))
-              payments)))
     applications))
 
 (defn- format-date [d]
@@ -63,7 +53,7 @@
            (+ (.getMonth d) 1 )
            (.getDate d))))
 
-(defn- convert-payment-dates [values]
+(defn convert-payment-dates [values]
   (-> values
       (update :due-date format-date)
       (update :receipt-date format-date)
@@ -74,7 +64,7 @@
       tf/parse
       tc/to-date))
 
-(defn- parse-batch-dates [batch]
+(defn parse-batch-dates [batch]
   (-> batch
       (update :due-date parse-date)
       (update :receipt-date parse-date)
@@ -85,7 +75,7 @@
    "already-paid" "Maksatukset on jo lähetetty"
    "exception" "Palvelinvirhe"})
 
-(defn- get-error-messages [errors default-value]
+(defn get-error-messages [errors default-value]
   (map #(get error-messages % default-value) errors))
 
 (defn- convert-application-payments [application payments]
