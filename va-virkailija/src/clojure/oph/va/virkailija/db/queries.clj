@@ -53,8 +53,6 @@
 (defquery get-application-payments
   "sql/virkailija/applications/get-application-payments.sql")
 (defquery get-total-paid "sql/virkailija/applications/get-total-paid.sql")
-(defquery is-application-unpaid
-  "sql/virkailija/applications/is-unpaid.sql")
 (defquery application-has-payments
   "sql/virkailija/applications/has-payments.sql")
 (defquery get-application-unsent-payments
