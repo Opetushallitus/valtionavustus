@@ -96,7 +96,8 @@
 
 (defn delete-va-code-value [id]
   (http/delete (format "/%s/va-code-values/%d/" api-path id)
-               {:with-credentials? true}))
+               {:with-credentials? true})
+  (remove-cached! "/va-code-values/"))
 
 (defn get-reports []
   (get-cached (str "/" api-path "/reports/")))
