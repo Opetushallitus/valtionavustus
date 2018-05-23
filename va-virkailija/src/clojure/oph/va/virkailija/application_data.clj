@@ -30,12 +30,6 @@
     (exec :form-db hakija-queries/get-applications-by-grant
           {:grant_id grant-id})))
 
-(defn get-payments-history [id]
-  (mapv convert-to-dash-keys
-        (exec :virkailija-db
-              virkailija-queries/get-payment-history
-              {:application_id id})))
-
 (defn get-application-unsent-payments [application-id]
   (map
     convert-to-dash-keys
@@ -65,12 +59,6 @@
   (exec :form-db
         hakija-queries/revoke-application-tokens
         {:application_id application-id}))
-
-(defn is-unpaid? [application-id]
-  (:unpaid
-   (first
-     (exec :virkailija-db virkailija-queries/is-application-unpaid
-           {:application_id application-id}))))
 
 (defn has-no-payments? [application-id]
   (not

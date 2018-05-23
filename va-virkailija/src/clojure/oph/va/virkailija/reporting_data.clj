@@ -34,24 +34,9 @@
 (defn get-total-grant-count []
   (first (exec :form-db hakija-queries/get-total-grant-count {})))
 
-(defn total-value [c k]
-  (reduce #(+ %1 (get %2 k)) 0 c))
-
 (defn get-yearly-report []
   {:applications (get-yearly-application-info)
    :evaluations-accepted (get-accepted-count-by-year)
    :evaluations-rejected (get-rejected-count-by-year)
    :granted (get-yearly-granted)
    :total-grant-count (:count (get-total-grant-count))})
-
-(defn print-yearly-report [report]
-  (prn "Applications")
-      (print-table (:applications report))
-      (prn "Evaluations accepted")
-      (print-table (:evaluations-accepted report))
-      (prn "Evaluations rejected")
-      (print-table (:evaluations-rejected report))
-      (prn "Granted")
-      (print-table (:granted report))
-      (prn "Total grant count")
-      (:total-grant-count report))
