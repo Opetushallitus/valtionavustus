@@ -29,7 +29,6 @@
   "sql/virkailija/grants/get-resolved-grants-with-content.sql")
 (defquery find-grants "sql/virkailija/grants/find-grants.sql")
 (defquery get-grant "sql/virkailija/grants/get-grant.sql")
-(defquery get-grant-payments "sql/virkailija/grants/get-grant-payments.sql")
 (defquery delete-grant-payments
   "sql/virkailija/grants/delete-grant-payments.sql")
 (defquery get-grant-payments-info
@@ -40,7 +39,6 @@
 (defquery payment-close-version
   "sql/virkailija/payments/payment-close-version.sql")
 (defquery update-payment "sql/virkailija/payments/update-payment.sql")
-(defquery get-payment-history "sql/virkailija/applications/get-payment-history.sql")
 (defquery create-payment "sql/virkailija/payments/create-payment.sql")
 (defquery delete-payment "sql/virkailija/payments/delete-payment.sql")
 (defquery find-payments-by-application-id-and-invoice-date
@@ -54,10 +52,6 @@
   "sql/virkailija/applications/get-application-evaluation.sql")
 (defquery get-application-payments
   "sql/virkailija/applications/get-application-payments.sql")
-(defquery get-application-payment
-  "sql/virkailija/applications/get-application-payment.sql")
-(defquery get-application-payment-by-state
-  "sql/virkailija/applications/get-application-payment-by-state.sql")
 (defquery get-total-paid "sql/virkailija/applications/get-total-paid.sql")
 (defquery is-application-unpaid
   "sql/virkailija/applications/is-unpaid.sql")
