@@ -12,7 +12,7 @@
        (valid-email? (:inspector-email values))
        (valid-email? (:acceptor-email values))))
 
-(defn- any-account-nil? [a]
+(defn any-account-nil? [a]
   (some?
     (some #(when-not (and (some? (get % :lkp-account))
                           (some? (get % :takp-account))) %) a)))
