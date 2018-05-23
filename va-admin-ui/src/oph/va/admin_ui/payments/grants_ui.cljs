@@ -10,19 +10,20 @@
    "draft" "Luonnos"
    "deleted" "Poistettu"})
 
-(defn grant-row
-  [grant selected]
+(defn grant-row [grant selected]
   [ui/table-row {:key (:id grant) :selected selected :style {:cursor "default"}}
-   [ui/table-row-column {:style theme/table-cell} (get grant :register-number)]
-   [ui/table-row-column {:style theme/table-cell} (get-in grant [:content :name :fi])]
-   [ui/table-row-column {:style theme/table-cell} (get status-strs (get grant :status))]
+   [ui/table-row-column {:style theme/table-cell}
+    (get grant :register-number)]
+   [ui/table-row-column {:style theme/table-cell}
+    (get-in grant [:content :name :fi])]
+   [ui/table-row-column {:style theme/table-cell}
+    (get status-strs (get grant :status))]
    [ui/table-row-column {:style theme/table-cell}
     (to-simple-date-time (get-in grant [:content :duration :start]))]
    [ui/table-row-column {:style theme/table-cell}
     (to-simple-date-time (get-in grant [:content :duration :end]))]])
 
-(defn grants-table
-  [{:keys [on-change grants value]}]
+(defn grants-table [{:keys [on-change grants value]}]
   [ui/table
    {:on-cell-click #(on-change %1)
     :selectable true
