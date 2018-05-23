@@ -1,6 +1,5 @@
 (ns oph.va.admin-ui.payments.financing
   (:require [oph.va.admin-ui.components.ui :as va-ui]
-            [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.payments.utils :refer
              [remove-nil any-nil? not-nil? not-empty? valid-email?]]))
 
