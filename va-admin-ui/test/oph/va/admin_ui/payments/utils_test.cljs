@@ -27,6 +27,6 @@
 
 (deftest test-is-today
   (is (utils/is-today? (t/today)))
-  (is (utils/is-today? "2018-05-21"))
+  (is (utils/is-today? (str (t/today))))
   (is (utils/is-today? (t/today-at 0 0 0)))
   (is (utils/is-today? (t/today-at 23 59 59))))
