@@ -6,7 +6,6 @@
 (defquery cancel-all-applications! "sql/hakija/hakemus/cancel-all.sql")
 (defquery set-application-refused! "sql/hakija/hakemus/set-refused.sql")
 (defquery create-hakemus "sql/hakija/hakemus/create.sql")
-(defquery create-submission "sql/hakija/hakemus/create-submission.sql")
 
 (defn cancel-all-applications []
   (exec :form-db cancel-all-applications! {}))
