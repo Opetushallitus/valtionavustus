@@ -12,12 +12,12 @@
        (valid-email? (:inspector-email values))
        (valid-email? (:acceptor-email values))))
 
-(defn any-account-nil? [a]
+(defn- any-account-nil? [a]
   (some?
     (some #(when-not (and (some? (get % :lkp-account))
                           (some? (get % :takp-account))) %) a)))
 
-(defn get-batch-values [batch]
+(defn- get-batch-values [batch]
   (assoc
     (select-keys batch
                  [:acceptor-email
@@ -31,7 +31,7 @@
       "6600")
     :batch-id (:id batch)))
 
-(defn batch-payable? [pred applications]
+(defn- batch-payable? [pred applications]
   (and
     (not (empty? applications))
     (true?
@@ -39,14 +39,14 @@
         pred
         applications))))
 
-(defn multibatch-payable? [applications]
+(defn- multibatch-payable? [applications]
   (batch-payable?
     (fn [application]
       (some (fn [payment] (= (:state payment) 1))
             (:payments application)))
     applications))
 
-(defn singlebatch-payable? [applications]
+(defn- singlebatch-payable? [applications]
   (batch-payable?
     (fn [{:keys [payments]}]
       (or
@@ -56,39 +56,39 @@
               payments)))
     applications))
 
-(defn format-date [d]
+(defn- format-date [d]
   (when (some? d)
    (format "%04d-%02d-%02d"
            (.getFullYear d)
            (+ (.getMonth d) 1 )
            (.getDate d))))
 
-(defn convert-payment-dates [values]
+(defn- convert-payment-dates [values]
   (-> values
       (update :due-date format-date)
       (update :receipt-date format-date)
       (update :invoice-date format-date)))
 
-(defn parse-date [s]
+(defn- parse-date [s]
   (-> s
       tf/parse
       tc/to-date))
 
-(defn parse-batch-dates [batch]
+(defn- parse-batch-dates [batch]
   (-> batch
       (update :due-date parse-date)
       (update :receipt-date parse-date)
       (update :invoice-date parse-date)))
 
-(def error-messages
+(def ^:private error-messages
   {"timeout" "Rondo-yhteydessä onglemia"
    "already-paid" "Maksatukset on jo lähetetty"
    "exception" "Palvelinvirhe"})
 
-(defn get-error-messages [errors default-value]
+(defn- get-error-messages [errors default-value]
   (map #(get error-messages % default-value) errors))
 
-(defn convert-application-payments [application payments]
+(defn- convert-application-payments [application payments]
   (let [application-info
         (assoc
           (select-keys
@@ -100,7 +100,7 @@
       #(merge application-info %)
       payments)))
 
-(defn find-application-payments [payments application-id application-version]
+(defn- find-application-payments [payments application-id application-version]
   (filter #(and (= (:application-version %) application-version)
                 (= (:application-id %) application-id))
           payments))

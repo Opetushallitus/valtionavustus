@@ -20,7 +20,7 @@
     [oph.va.admin-ui.user :as user]
     [oph.va.admin-ui.theme :as theme]))
 
-(def default-batch-values
+(def ^:private default-batch-values
   {:currency "EUR"
    :partner ""
    :document-type "XA"
@@ -30,21 +30,21 @@
    :receipt-date nil
    :document-id "ID"})
 
-(defonce state
+(defonce ^:private state
   {:grants (r/atom [])
    :applications (r/atom [])
    :payments (r/atom [])
    :selected-grant (r/atom nil)
    :batch-values (r/atom {})})
 
-(defn redirect-to-login! []
+(defn- redirect-to-login! []
   (router/redirect-to! connection/login-url-with-service))
 
-(defn get-param-grant []
+(defn- get-param-grant []
   (let [grant-id (js/parseInt (router/get-current-param :grant))]
     (when-not (js/isNaN grant-id) grant-id)))
 
-(defn render-admin-tools [payments selected-grant delete-payments?]
+(defn- render-admin-tools [payments selected-grant delete-payments?]
   [:div
    [:hr]
    [:h3 "Pääkäyttäjän työkalut"]
@@ -96,14 +96,14 @@
                   (select-keys response
                                [:status :error-text]))))))}]]])
 
-(defn render-grant-filters [filter-str on-change]
+(defn- render-grant-filters [filter-str on-change]
   [:div
    [va-ui/text-field
     {:floating-label-text "Hakujen suodatus"
      :value filter-str
      :on-change #(on-change (.-value (.-target %)))}]])
 
-(defn send-payments! [values selected-grant payments]
+(defn- send-payments! [values selected-grant payments]
   (go
     (let [dialog-chan
           (dialogs/show-loading-dialog!
@@ -147,10 +147,10 @@
       (put! dialog-chan 5)
       (close! dialog-chan))))
 
-(defn notice [message]
+(defn- notice [message]
   [va-ui/card {:style theme/notice} [va-ui/card-text message]])
 
-(defn grants-components []
+(defn- grants-components []
   (let [grant-filter (r/atom "")
         {:keys [grants selected-grant]} state]
     (fn []
@@ -167,7 +167,7 @@
        [:hr]
        (grant-info @selected-grant)])))
 
-(defn render-batch-values [{:keys [values disabled? on-change]}]
+(defn- render-batch-values [{:keys [values disabled? on-change]}]
   [:div {:class (when disabled? "disabled")}
    [:h3 "Maksuerän tiedot"]
    (financing/payment-emails values #(on-change %1 %2))

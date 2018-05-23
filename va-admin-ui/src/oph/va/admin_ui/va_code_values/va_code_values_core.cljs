@@ -12,17 +12,18 @@
    [oph.va.admin-ui.dialogs :as dialogs]
    [oph.va.admin-ui.utils :refer [parse-int]]))
 
-(def value-types {:operational-unit "Toimintayksikkö"
+(def ^:private value-types {:operational-unit "Toimintayksikkö"
                   :project "Projekti"
                   :operation "Toiminto"})
 
-(def years (mapv #(hash-map :primary-text % :value %) (range 2018 2038)))
+(def ^:private years
+  (mapv #(hash-map :primary-text % :value %) (range 2018 2038)))
 
-(defonce state
+(defonce ^:private state
   {:code-values (r/atom [])
    :code-filter (r/atom {})})
 
-(defn delete-code! [id code-values]
+(defn- delete-code! [id code-values]
   (go
     (let [dialog-chan (dialogs/show-loading-dialog! "Poistetaan koodia" 3)]
       (put! dialog-chan 1)
@@ -44,7 +45,7 @@
       (put! dialog-chan 2)
       (close! dialog-chan))))
 
-(defn render-code-table [values on-delete]
+(defn- render-code-table [values on-delete]
   [ui/table {:fixed-header true :selectable false :body-style theme/table-body}
    [ui/table-header {:adjust-for-checkbox false :display-select-all false}
     [ui/table-row
@@ -69,19 +70,19 @@
              [ic/action-delete {:color "gray"}]]]])
         values))]])
 
-(defn create-catch-enter [f]
+(defn- create-catch-enter [f]
   (fn [e]
     (when (= (.-key e) "Enter")
       (f))))
 
-(defn is-valid? [m]
+(defn- is-valid? [m]
   (and (= (count m) 3)
        (not-any? empty?
                  (->> m
                       vals
                       (map str)))))
 
-(defn render-add-item [on-change]
+(defn- render-add-item [on-change]
   (let [v (r/atom {})
         on-submit
         (fn []
@@ -126,12 +127,12 @@
          :disabled (not (is-valid? @v))
          :on-click on-submit}]])))
 
-(defn render-filter [values on-change]
+(defn- render-filter [values on-change]
   [:div
    [va-ui/text-field {:value (or (:code values) "")
                       :on-change #(on-change :code %)}]])
 
-(defn download-items! [value-type year code-values]
+(defn- download-items! [value-type year code-values]
   (go
     (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan koodeja" 3)]
       (put! dialog-chan 1)
@@ -148,7 +149,7 @@
       (put! dialog-chan 2)
       (close! dialog-chan))))
 
-(defn create-item! [value-type values code-values]
+(defn- create-item! [value-type values code-values]
   (go
     (let [dialog-chan (dialogs/show-loading-dialog! "Lähetetään tietoja" 3)]
       (put! dialog-chan 1)
@@ -164,16 +165,16 @@
             (select-keys result [:status :error-text]))))
       (close! dialog-chan))))
 
-(defn current-year []
+(defn- current-year []
   (.getFullYear (js/Date.)))
 
-(defn lower-str-contains? [s substr]
+(defn- lower-str-contains? [s substr]
   (-> s
       .toLowerCase
       (.indexOf substr)
       (not= -1)))
 
-(defn code-value-matches? [s v]
+(defn- code-value-matches? [s v]
   (or (lower-str-contains? (:code v) s)
       (lower-str-contains? (:code-value v) s)))
 

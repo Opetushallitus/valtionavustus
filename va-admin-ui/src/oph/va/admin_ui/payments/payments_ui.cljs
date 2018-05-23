@@ -7,12 +7,12 @@
             [oph.va.admin-ui.components.ui :as va-ui]
             [clojure.string :refer [lower-case]]))
 
-(defn phase-to-name [phase]
+(defn- phase-to-name [phase]
   (if (= phase 0)
     "1. erä"
     (str phase ". väliselvitys")))
 
-(defn render-payment [i payment]
+(defn- render-payment [i payment]
   [table/table-row {:key i}
    [table/table-row-column {:style {:text-align "right"}}
     (:register-number payment)]
@@ -34,36 +34,36 @@
    [table/table-row-column {:style {:text-align "right"}}
     (.toLocaleString (get payment :budget-oph-share 0)) " €"]])
 
-(defn sort-payments [payments sort-key descend?]
+(defn- sort-payments [payments sort-key descend?]
   (if descend?
     (sort-by sort-key payments)
     (reverse (sort-by sort-key payments))))
 
-(defn sort-column! [sort-params sort-key]
+(defn- sort-column! [sort-params sort-key]
   (swap! sort-params assoc
          :sort-key sort-key
          :descend? (not (:descend? @sort-params))))
 
-(defn to-lower-str [v]
+(defn- to-lower-str [v]
   (-> v
       str
       lower-case))
 
-(defn payment-matches? [payment filters]
+(defn- payment-matches? [payment filters]
   (every?
     (fn [[k v]]
       (> (.indexOf (to-lower-str (get payment k)) v) -1))
     filters))
 
-(defn filter-payments [payments filters]
+(defn- filter-payments [payments filters]
   (filter #(payment-matches? % filters) payments))
 
-(defn update-filters! [filters k v]
+(defn- update-filters! [filters k v]
   (if (empty? v)
     (swap! filters dissoc k)
     (swap! filters assoc k (lower-case v))))
 
-(defn render-payment-group [i [phase payments]]
+(defn- render-payment-group [i [phase payments]]
   [:div {:key i :style {:padding-bottom 10}}
    [:label (phase-to-name phase)]
    [table/table-body
@@ -88,7 +88,7 @@
         (reduce #(+ %1 (get %2 :budget-oph-share 0)) 0 payments))
       " €"]]]])
 
-(defn sortable-header-column
+(defn- sortable-header-column
   [{:keys [title column-key on-sort on-filter sort-params]}]
   [table/table-header-column
    [:div

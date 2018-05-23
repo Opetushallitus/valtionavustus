@@ -4,13 +4,13 @@
             [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.payments.utils :refer [to-simple-date-time]]))
 
-(def status-strs
+(def ^:private status-strs
   {"resolved" "Ratkaistu"
    "published" "Julkaistu"
    "draft" "Luonnos"
    "deleted" "Poistettu"})
 
-(defn grant-row [grant selected]
+(defn- grant-row [grant selected]
   [ui/table-row {:key (:id grant) :selected selected :style {:cursor "default"}}
    [ui/table-row-column {:style theme/table-cell}
     (get grant :register-number)]
