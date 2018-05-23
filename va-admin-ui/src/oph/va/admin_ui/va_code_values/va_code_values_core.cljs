@@ -4,7 +4,6 @@
    [cljs.core.async :refer [<! put! close!]]
    [reagent.core :as r]
    [cljsjs.material-ui]
-   [cljs-react-material-ui.core :refer [color]]
    [oph.va.admin-ui.components.ui :as va-ui]
    [cljs-react-material-ui.reagent :as ui]
    [cljs-react-material-ui.icons :as ic]

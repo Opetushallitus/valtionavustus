@@ -1,7 +1,7 @@
 (ns oph.va.admin-ui.dialogs
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
-   [cljs.core.async :refer [<! put! chan close! sliding-buffer]]
+   [cljs.core.async :refer [<! chan sliding-buffer]]
    [reagent.core :as r]
    [cljs-react-material-ui.core :refer [color]]
    [cljs-react-material-ui.icons :as ic]

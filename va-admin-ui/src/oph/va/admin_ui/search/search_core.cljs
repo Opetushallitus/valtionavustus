@@ -2,12 +2,10 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
    [reagent.core :as r]
-   [cljs.core.async :refer [put! <! close!]]
    [oph.va.admin-ui.components.ui :as va-ui]
    [oph.va.admin-ui.theme :as theme]
    [oph.va.admin-ui.payments.utils :refer [to-simple-date-time]]
    [oph.va.admin-ui.connection :as connection]
-   [cljs-react-material-ui.core :refer [get-mui-theme color]]
    [cljs-react-material-ui.reagent :as ui]
    [oph.va.admin-ui.dialogs :as dialogs]))
 

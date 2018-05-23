@@ -3,9 +3,7 @@
             [cljsjs.material-ui]
             [oph.va.admin-ui.components.table :as table]
             [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.payments.utils
-             :refer [to-simple-date-time to-simple-date]]
-            [oph.va.admin-ui.utils :refer [format get-answer-value]]
+            [oph.va.admin-ui.utils :refer [format]]
             [oph.va.admin-ui.components.ui :as va-ui]
             [clojure.string :refer [lower-case]]))
 

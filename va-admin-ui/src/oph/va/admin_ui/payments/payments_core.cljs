@@ -1,7 +1,7 @@
 (ns oph.va.admin-ui.payments.payments-core
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
-    [cljs.core.async :refer [<! put! chan close! sliding-buffer]]
+    [cljs.core.async :refer [<! put! close!]]
     [clojure.string :refer [join]]
     [oph.va.admin-ui.connection :as connection]
     [reagent.core :as r]

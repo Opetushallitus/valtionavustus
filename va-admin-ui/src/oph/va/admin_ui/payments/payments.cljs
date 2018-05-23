@@ -2,8 +2,7 @@
   (:require [oph.va.admin-ui.payments.utils :refer [no-nils? valid-email?]]
             [oph.va.admin-ui.utils :refer [format get-answer-value]]
             [cljs-time.coerce :as tc]
-            [cljs-time.format :as tf]
-            [clojure.set :refer [rename-keys]]))
+            [cljs-time.format :as tf]))
 
 (defn valid-batch-values?
   [values]

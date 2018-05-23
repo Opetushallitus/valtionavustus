@@ -1,7 +1,7 @@
 (ns oph.va.admin-ui.payments.financing
   (:require [oph.va.admin-ui.components.ui :as va-ui]
-            [oph.va.admin-ui.payments.utils :refer
-             [remove-nil any-nil? not-nil? not-empty? valid-email?]]))
+            [oph.va.admin-ui.payments.utils
+             :refer [not-empty? valid-email?]]))
 
 (def week-in-ms (* 1000 60 60 24 7))
 
