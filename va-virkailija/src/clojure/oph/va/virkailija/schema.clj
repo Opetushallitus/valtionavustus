@@ -243,13 +243,6 @@
    (s/optional-key :Varalla1) s/Str
    (s/optional-key :Varalla2) s/Str})
 
-(def Invoice
-  "Generated invoice"
-  {:VA-invoice
-   {:Header InvoiceHeader
-    :Postings
-    {:Posting InvoicePostings}}})
-
 (s/defschema Payment
   "Payment"
   {(s/optional-key :id) s/Int
@@ -280,10 +273,6 @@
   "Grant Payment (for creating grant payments)"
   {:phase s/Int})
 
-(s/defschema PaymentBatchNumber
-  "Payment batch number"
-  {:batch-number s/Int})
-
 (s/defschema GrantStatus
   "Grant status"
   (s/enum "new" "draft" "published" "deleted", "resolved"))
@@ -313,12 +302,6 @@
    (s/optional-key :project) (s/maybe s/Str)
    (s/optional-key :operation-id) (s/maybe s/Int)
    (s/optional-key :operation) (s/maybe s/Str)})
-
-(s/defschema GrantRole
-  "Grant Role"
-  {:grant-id s/Int
-   :oid s/Str
-   :role s/Str})
 
 (s/defschema Grants
   "List of grants"

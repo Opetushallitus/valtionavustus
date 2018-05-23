@@ -24,10 +24,6 @@
                  virkailija-queries/get-application-evaluation
                  {:application_id application-id}))))
 
-(defn get-application-with-evaluation-and-answers [id]
-  (when-let [application (get-application id)]
-    (merge application (get-application-evaluation (:id application)))))
-
 (defn get-applications-with-evaluation-by-grant [grant-id]
   (mapv
     #(merge (convert-to-dash-keys %) (get-application-evaluation (:id %)))
@@ -39,19 +35,6 @@
         (exec :virkailija-db
               virkailija-queries/get-payment-history
               {:application_id id})))
-
-(defn get-application-payment [id]
-  (convert-to-dash-keys
-    (first (exec :virkailija-db
-                 virkailija-queries/get-application-payment
-                 {:application_id id}))))
-
-(defn get-application-payment-by-state [application-id state]
-  (convert-to-dash-keys
-    (last (exec :virkailija-db
-                virkailija-queries/get-application-payment-by-state
-                {:application_id application-id
-                 :state state}))))
 
 (defn get-application-unsent-payments [application-id]
   (map

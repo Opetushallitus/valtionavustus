@@ -1,12 +1,10 @@
 (ns oph.va.virkailija.invoice
   (:require [oph.va.virkailija.lkp-templates :as lkp]
-   [clojure.data.xml :refer [emit emit-str parse
+            [clojure.data.xml :refer [emit emit-str parse
                                       sexp-as-element]]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
             [clj-time.format :as f]))
-
-(def date-formatter (f/formatter "yyyy-MM-dd"))
 
 (def organisations {"XA" 6600 "XB" 6604})
 
@@ -14,7 +12,7 @@
   ([answers key]
    (:value
     (first
-     (filter #(= (:key %) key) answers))))
+      (filter #(= (:key %) key) answers))))
   ([answers key not-found]
    (or (get-answer-value answers key) not-found)))
 
@@ -87,10 +85,6 @@
 (defn read-response-xml [xml]
   {:register-number (first (get-content xml [:VA-invoice :Header :Pitkaviite]))
    :invoice-date (first (get-content xml [:VA-invoice :Header :Maksupvm]))})
-
-(defn tags-to-str [tags]
-  "Converts XML document of clojure.data.xml.elements tags to a string."
-  (emit-str tags))
 
 (defn write-xml! [tags file]
   "Writes XML document to a file.

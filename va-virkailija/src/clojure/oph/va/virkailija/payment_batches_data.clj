@@ -35,13 +35,6 @@
       convert-to-dash-keys
       convert-timestamps-from-sql))
 
-(defn create-payment-data [application batch sum]
-  {:application-id (:id application)
-   :application-version (:version application)
-   :state 0
-   :batch-id (:id batch)
-   :payment-sum sum})
-
 (defn create-filename
   ([payment id-gen-fn] (format "payment-%d-%d.xml" (:id payment) (id-gen-fn)))
   ([payment] (create-filename payment  #(System/currentTimeMillis))))
@@ -59,9 +52,6 @@
        (catch Exception e
          {:success false :error {:error-type :exception :exception e}}))
     timeout-limit {:success false :error {:error-type :timeout}}))
-
-(defn get-unpaid-payment [payments]
-  (some #(when (< (:state %) 2) %) payments))
 
 (defn send-payment [payment application data]
   (let [filename (create-filename payment)
