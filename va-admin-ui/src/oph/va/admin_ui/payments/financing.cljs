@@ -3,11 +3,11 @@
             [oph.va.admin-ui.payments.utils
              :refer [not-empty? valid-email?]]))
 
-(def week-in-ms (* 1000 60 60 24 7))
+(def ^:private week-in-ms (* 1000 60 60 24 7))
 
-(def transaction-accounts ["5000" "5220" "5230" "5240" "5250"])
+(def ^:private transaction-accounts ["5000" "5220" "5230" "5240" "5250"])
 
-(def document-id-max-size 12)
+(def ^:private document-id-max-size 12)
 
 (defn- now-plus
   [milliseconds]
