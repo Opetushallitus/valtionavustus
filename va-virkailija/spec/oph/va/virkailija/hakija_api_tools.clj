@@ -3,9 +3,9 @@
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.soresu.common.db :refer [exec exec-all]]))
 
-(defquery cancel-all-applications! "sql/hakija/hakemus/cancel-all.sql")
-(defquery set-application-refused! "sql/hakija/hakemus/set-refused.sql")
-(defquery create-hakemus "sql/hakija/hakemus/create.sql")
+(defquery cancel-all-applications! "sql/spec/hakija/cancel-all-applications.sql")
+(defquery set-application-refused! "sql/spec/hakija/set-application-refused.sql")
+(defquery create-hakemus "sql/spec/hakija/create-hakemus.sql")
 
 (defn cancel-all-applications []
   (exec :form-db cancel-all-applications! {}))
