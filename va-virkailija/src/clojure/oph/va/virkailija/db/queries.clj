@@ -30,7 +30,6 @@
   "sql/virkailija/grants/get-resolved-grants-with-content.sql")
 (defquery find-grants "sql/virkailija/grants/find-grants.sql")
 (defquery get-grant "sql/virkailija/grants/get-grant.sql")
-(defquery get-grant-applications "sql/virkailija/grants/get-grant-applications.sql")
 (defquery get-grant-applications-with-evaluation
   "sql/virkailija/grants/get-accepted-grant-applications-with-evaluation.sql")
 (defquery get-grant-payments "sql/virkailija/grants/get-grant-payments.sql")
