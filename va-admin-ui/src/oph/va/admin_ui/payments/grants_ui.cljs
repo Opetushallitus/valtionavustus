@@ -1,14 +1,8 @@
 (ns oph.va.admin-ui.payments.grants-ui
-  (:require [reagent.core :as r]
-            [cljsjs.material-ui]
-            [cljs-react-material-ui.core :refer [get-mui-theme color]]
+  (:require [cljsjs.material-ui]
             [cljs-react-material-ui.reagent :as ui]
-            [cljs-react-material-ui.icons :as ic]
-            [oph.va.admin-ui.theme :refer [material-styles]]
-            [cljs-time.format :as f]
-            [cljs-time.core :as t]
-            [oph.va.admin-ui.payments.utils :refer [to-simple-date-time]]
-            [oph.va.admin-ui.theme :as theme]))
+            [oph.va.admin-ui.theme :as theme]
+            [oph.va.admin-ui.payments.utils :refer [to-simple-date-time]]))
 
 (def status-strs
   {"resolved" "Ratkaistu"
@@ -34,7 +28,7 @@
     :selectable true
     :multi-selectable false
     :height "250px"
-    :style (:table material-styles)
+    :style (:table theme/material-styles)
     :class "table"}
    [ui/table-header {:display-select-all false :adjust-for-checkbox false}
     [ui/table-row {:style {:font-size "80px"}}

@@ -1,8 +1,6 @@
 (ns oph.va.admin-ui.payments.payments-ui
   (:require [reagent.core :as r]
             [cljsjs.material-ui]
-            [cljs-react-material-ui.reagent :as ui]
-            [cljs-react-material-ui.icons :as ic]
             [oph.va.admin-ui.components.table :as table]
             [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.payments.utils

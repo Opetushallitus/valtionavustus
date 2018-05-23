@@ -3,7 +3,6 @@
   (:require
    [cljs.core.async :refer [<! put! chan close! sliding-buffer]]
    [reagent.core :as r]
-   [oph.va.admin-ui.theme :as theme]
    [cljs-react-material-ui.core :refer [color]]
    [cljs-react-material-ui.icons :as ic]
    [cljsjs.material-ui]
