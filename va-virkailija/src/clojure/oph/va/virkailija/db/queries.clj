@@ -11,7 +11,6 @@
 (defquery get-accepted-hakemus-ids "sql/virkailija/arvio/get-accepted-hakemus-ids.sql")
 (defquery get-arvio "sql/virkailija/arvio/get.sql")
 (defquery list-arvio-status-and-budget-granted-by-hakemus-ids "sql/virkailija/arvio/list-status-and-budget-granted-by-hakemus-ids.sql")
-(defquery set-all-unhandled! "sql/virkailija/arvio/set-all-unhandled.sql")
 
 (defquery create-comment<! "sql/virkailija/comment/create.sql")
 (defquery list-comments "sql/virkailija/comment/list.sql")
