@@ -3,7 +3,6 @@
             [oph.va.virkailija.application-data :as application-data]
             [ring.util.http-response :refer [ok not-found]]
             [compojure.core :as compojure]
-            [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]))
 
 (defn- get-payments-history []

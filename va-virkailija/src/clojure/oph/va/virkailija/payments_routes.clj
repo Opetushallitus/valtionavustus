@@ -2,7 +2,6 @@
   (:require [compojure.api.sweet :as compojure-api]
             [oph.va.virkailija.payments-data :as payments-data]
             [ring.util.http-response :refer [ok not-found bad-request]]
-            [compojure.core :as compojure]
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.authentication :as authentication]))
 

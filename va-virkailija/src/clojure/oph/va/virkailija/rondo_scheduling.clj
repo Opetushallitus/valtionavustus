@@ -3,21 +3,19 @@
             [clojure.core.async :as a]
             [clojurewerkz.quartzite.scheduler :as qs]
             [clojurewerkz.quartzite.triggers :as t]
-            [clojurewerkz.quartzite.jobs :as j]
-            [clojurewerkz.quartzite.jobs :refer [defjob]]
+            [clojurewerkz.quartzite.jobs :refer [defjob] :as j]
             [clojurewerkz.quartzite.schedule.cron :refer [schedule cron-schedule]]
             [clojure.tools.logging :as log]
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.invoice :as invoice]
-            [oph.soresu.common.config :refer [config]]
-            [ring.util.http-response :refer [ok not-found request-timeout]]))
+            [oph.soresu.common.config :refer [config]]))
 
 (def timeout-limit 600000)
 
 
 (defn fetch-xml-files [xml-path list-of-files sftp-config]
-  (doseq [filename list-of-files] 
+  (doseq [filename list-of-files]
     (rondo-service/get-remote-file filename sftp-config)
     (try
       (payments-data/update-state-by-response

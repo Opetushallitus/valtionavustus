@@ -1,7 +1,6 @@
 (ns oph.va.virkailija.rondo-service
   (:require [clj-ssh.ssh :as ssh]
             [ring.util.http-response :refer :all]
-            [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.invoice :as invoice]
             [clojure.tools.logging :as log]
             [clojure.string :as strc]))
@@ -41,8 +40,8 @@
 (defn get-local-file [config filename]
   (format "%s/%s"
           (get-local-path config)
-          filename)) 
- 
+          filename))
+
 (defn send-to-rondo! [{:keys [payment application grant filename batch config]}]
   (let [file (get-local-file config filename)]
     (invoice/write-xml!
@@ -73,7 +72,7 @@
               :path (:remote_path_from config)
               :config config)))
 
-(defn delete-remote-file [filename config] 
+(defn delete-remote-file [filename config]
   (do-sftp! :method :rm
             :file filename
             :path (:remote_path_from config)

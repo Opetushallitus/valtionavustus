@@ -4,8 +4,7 @@
             [oph.soresu.common.config :refer [config]]
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
-            [clostache.parser :refer [render]]
-            [oph.va.virkailija.application-data :refer [get-application-token]]))
+            [clostache.parser :refer [render]]))
 
 (def mail-titles
   {:change-request {:fi "Täydennyspyyntö avustushakemukseesi"

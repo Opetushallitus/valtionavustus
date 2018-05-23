@@ -2,7 +2,6 @@
   (:require [oph.soresu.common.db :refer [exec]]
             [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
             [clj-time.core :as t]
-            [clj-time.coerce :as c]
             [oph.va.virkailija.db.queries :as virkailija-queries]
             [oph.va.hakija.api.queries :as hakija-queries])
   (:import (oph.va.jdbc.enums)))
