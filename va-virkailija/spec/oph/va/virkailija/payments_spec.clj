@@ -386,13 +386,7 @@
 
   (it "updates payment"
       (let [grant (first (grant-data/get-grants))
-            payment-values (assoc valid-payment-values
-                                  :application-id 1
-                                  :application-version 0
-                                  :filename "example.xml"
-                                  :phase 0)
-            payment (payments-data/create-payment
-                      payment-values example-identity)
+            payment (create-payment grant)
             updated-payment (payments-data/update-payment
                               (assoc payment
                                      :state 1
