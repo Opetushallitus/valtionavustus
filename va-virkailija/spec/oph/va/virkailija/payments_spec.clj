@@ -370,4 +370,35 @@
                    (-> grant
                      (assoc-in [:content :multiplemaksuera] true)))))))
 
+(describe
+  "Payments data functions"
+
+  (tags :server :payments :paymentsfunctions)
+
+  (around-all
+    [_]
+    (with-test-server!
+      :virkailija-db
+      #(start-server
+         {:host "localhost"
+          :port test-server-port
+          :auto-reload? false}) (_)))
+
+  (it "updates payment"
+      (let [grant (first (grant-data/get-grants))
+            payment (create-payment grant)
+            updated-payment (payments-data/update-payment
+                              (assoc payment
+                                     :state 1
+                                     :filename "example.xml")
+                              example-identity)]
+        (should (some? payment))
+        (should (some? updated-payment))
+        (should= 1 (:state updated-payment))
+        (should (nil? (:version-closed
+                       (payments-data/get-payment (:id updated-payment)))))
+        (should (some? (:version-closed
+                       (payments-data/get-payment
+                         (:id payment) (:version payment))))))))
+
 (run-specs)

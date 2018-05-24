@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.payments-data
   (:require
-   [oph.soresu.common.db :refer [exec]]
+   [oph.soresu.common.db :refer [exec exec-all]]
    [oph.va.virkailija.utils
     :refer [convert-to-dash-keys convert-to-underscore-keys update-some]]
    [clj-time.coerce :as c]
@@ -54,10 +54,6 @@
     convert-to-dash-keys
     convert-timestamps-from-sql)))
 
-(defn close-version [id version]
-  (exec :virkailija-db queries/payment-close-version
-        {:id id :version version}))
-
 (defn- get-user-info [identity]
   {:user-oid (:person-oid identity)
    :user-name (format "%s %s" (:first-name identity) (:surname identity))})
@@ -69,12 +65,13 @@
         result
         (->> payment
              convert-to-underscore-keys
-             (exec :virkailija-db queries/update-payment)
+             (vector queries/payment-close-version
+                     {:id (:id payment-data) :version (:version payment-data)}
+                     queries/update-payment)
+             (exec-all :virkailija-db)
              first
              convert-to-dash-keys
              convert-timestamps-from-sql)]
-    (when (nil? result) (throw (Exception. "Failed to update payment")))
-    (close-version (:id payment-data) (:version payment-data))
     result))
 
 (defn- store-payment [payment]
