@@ -31,7 +31,8 @@
 (def valid-payment-values
   {:state 1
    :batch-id nil
-   :payment-sum 50000})
+   :payment-sum 50000
+   :phase 0})
 
 (def user-authentication
   {:cas-ticket nil
