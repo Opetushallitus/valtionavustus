@@ -12,6 +12,7 @@
              [oph.va.virkailija.grant-data :as grant-data]
              [oph.va.virkailija.application-data :as application-data]
              [oph.va.virkailija.payments-data :as payments-data]
+             [oph.va.virkailija.payment-batches-data :as payment-batches-data]
              [oph.va.virkailija.rondo-scheduling :as rondo-scheduling]
              [clojure.string :as strc]
              [clojure.data.xml :as xml]
@@ -26,9 +27,7 @@
                    :remote_path "/to_rondo"
                    :remote_path_from "/tmp"})
 
-(def my-formatter (f/formatters :year-month-day))
-
-(def invoice-date (f/unparse my-formatter (t/today-at 00 01)))
+(def invoice-date (java.time.LocalDate/of 2018 5 2))
 
 (def resp-tags
                   [:VA-invoice
@@ -102,11 +101,23 @@
                     grant (first (grant-data/get-grants))
                     submission (create-submission (:form grant) {})
                     application (create-application grant submission)
+                    batch (payment-batches-data/create-batch
+                            {:receipt-date invoice-date
+                             :due-date invoice-date
+                             :partner ""
+                             :grant-id (:id grant)
+                             :document-id ""
+                             :currency "EUR"
+                             :invoice-date invoice-date
+                             :document-type "XA"
+                             :transaction-account "6000"
+                             :acceptor-email "acceptor@local"
+                             :inspector-email "inspector@local"})
                     payment (payments-data/create-payment
                       {:application-id (:id application)
                        :payment-sum 26000
-                       :batch-id nil
-                       :state 1
+                       :batch-id (:id batch)
+                       :state 2
                        :invoice-date invoice-date}
                       user)
                      result  (rondo-scheduling/get-state-of-payments test-service)]
