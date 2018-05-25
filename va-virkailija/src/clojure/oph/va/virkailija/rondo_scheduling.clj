@@ -19,34 +19,33 @@
 (def timeout-limit 600000)
 
 
-(defn fetch-xml-files [xml-path list-of-files rondo-service]
+(defn fetch-xml-files [xml-path list-of-files remote-service]
   (doseq [filename list-of-files]
-    (get-remote-file rondo-service filename)
+    (get-remote-file remote-service filename)
     (try
       (payments-data/update-state-by-response
-       (invoice/read-xml (get-local-file  rondo-service filename)))
+       (invoice/read-xml (get-local-file  remote-service filename)))
       (catch clojure.lang.ExceptionInfo e
         (if (= "already-paid" (-> e ex-data :cause))
-          (delete-remote-file rondo-service filename))
+          (delete-remote-file remote-service filename))
         (throw e)))
-    (delete-remote-file rondo-service filename)
-    (clojure.java.io/delete-file (get-local-file rondo-service filename))))
+    (delete-remote-file remote-service filename)
+    (clojure.java.io/delete-file (get-local-file remote-service filename))))
 
 
-(defn fetch-feedback-from-rondo [sftp-config]
-  (let [rondo-service (rondo-service/create-service sftp-config)
-        list-of-files (get-remote-file-list rondo-service)
-        xml-path (get-local-path rondo-service)
-        result (fetch-xml-files xml-path list-of-files rondo-service)]
+(defn fetch-feedback-from-rondo [remote-service]
+  (let [list-of-files (get-remote-file-list remote-service)
+        xml-path (get-local-path remote-service)
+        result (fetch-xml-files xml-path list-of-files remote-service)]
     (if (nil? result)
       {:success true}
       {:success false :value result})))
 
-(defn get-state-of-payments [sftp-config]
+(defn get-state-of-payments [remote-service]
   (let [c (a/chan)]
     (a/go
       (try
-        (a/>! c (fetch-feedback-from-rondo sftp-config))
+        (a/>! c (fetch-feedback-from-rondo remote-service))
         (catch Exception e
           (a/>! c {:success false :exception e}))))
     (a/alt!!
@@ -62,7 +61,8 @@
 (defjob RondoJob
   [ctx]
   (log/info "Running scheduled fetch of payments now from rondo!")
-  (get-state-of-payments (get-in config [:server :rondo-sftp])))
+  (let [remote-service (rondo-service/create-service (get-in config [:server :rondo-sftp]))]
+  (get-state-of-payments remote-service)))
 
 (defn schedule-fetch-from-rondo []
   (let [s   (-> (qs/initialize) qs/start)
