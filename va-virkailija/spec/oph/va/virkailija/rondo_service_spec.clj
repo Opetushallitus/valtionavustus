@@ -17,7 +17,8 @@
              [clojure.data.xml :as xml]
              [oph.va.virkailija.invoice :as invoice]
              [clojure.tools.logging :as log]
-             [oph.va.virkailija.invoice-spec :refer :all]))
+             [clj-time.format :as f]
+             [clj-time.core :as t]))
 
 
 (def configuration {:enabled? true
@@ -25,11 +26,15 @@
                    :remote_path "/to_rondo"
                    :remote_path_from "/tmp"})
 
+(def my-formatter (f/formatters :year-month-day))
+
+(def invoice-date (f/unparse my-formatter (t/today-at 00 01)))
+
 (def resp-tags
                   [:VA-invoice
                      [:Header
                       [:Pitkaviite "123/456/78"]
-                      [:Maksupvm "2018-01-25"]]])
+                      [:Maksupvm invoice-date]]])
 
 (def user {:person-oid "12345"
            :first-name "Test"
@@ -101,7 +106,8 @@
                       {:application-id (:id application)
                        :payment-sum 26000
                        :batch-id nil
-                       :state 1}
+                       :state 1
+                       :invoice-date invoice-date}
                       user)
                      result  (rondo-scheduling/get-state-of-payments test-service)]
               (println grant)
