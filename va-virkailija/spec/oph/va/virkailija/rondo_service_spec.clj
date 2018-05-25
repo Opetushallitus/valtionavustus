@@ -106,7 +106,5 @@
                      result  (rondo-scheduling/get-state-of-payments test-service)]
               (println grant)
               (should= 3 (:state (application-data/get-application-payment (:id application))))))
-
-
           )
 (run-specs)
