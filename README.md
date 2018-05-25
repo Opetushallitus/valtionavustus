@@ -541,7 +541,7 @@ Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
   - Tämän jälkeen maksu ilmestyy Maksatus-näkymään, josta sen voi lähettää,
     kuten ensimmäisen erän
 
-### Muutoksenhaku
+## Muutoksenhaku
 
 Tällä hetkellä järjestelmä tukee hakijan luomaa muutosta ainoastaan avustuksen
 vastaanottamatta jättämisen osalta.
