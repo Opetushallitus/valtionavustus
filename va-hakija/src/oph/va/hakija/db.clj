@@ -231,3 +231,7 @@
         (exec :form-db queries/get-application-token
               {:token token :application_id application-id}))
       0)))
+
+(defn revoke-token [token]
+  (exec :form-db queries/revoke-application-token!
+        {:token token}))
