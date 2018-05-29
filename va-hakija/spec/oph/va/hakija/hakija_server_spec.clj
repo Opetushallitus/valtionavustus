@@ -654,8 +654,10 @@
                     {:keys [body]} (post! "/api/test/application_tokens/"
                                           {:application-id (:id application)})
                     token (:token (json->map body))
-                    result (get! (format "/api/v2/applications/%d/tokens/%s/"
-                                         (:id application) token))]
+                    result
+                    (get!
+                      (format "/api/v2/applications/%s/tokens/%s/validate/"
+                              (:user_key application) token))]
                 (should= 200 (:status result))
                 (should= {:valid true} (json->map (:body result)))))
 
@@ -666,17 +668,34 @@
                                           {:application-id (:id application)})
                     token (:token (json->map body))]
                 (va-db/revoke-token token)
-                (let [result (get! (format "/api/v2/applications/%d/tokens/%s/"
-                                         (:id application) token))]
+                (let [result
+                      (get!
+                        (format "/api/v2/applications/%s/tokens/%s/validate/"
+                                (:user_key application) token))]
                   (should= 200 (:status result))
                   (should= {:valid false} (json->map (:body result))))))
 
           (it "validates non existing application token"
               (let [{:keys [id]} (create-hakemus!)
-                    application (va-db/get-hakemus id)]
-                (let [result (get! (format "/api/v2/applications/%d/tokens/%s/"
-                                         (:id application) nil))]
-                  (should= 200 (:status result))
-                  (should= {:valid false} (json->map (:body result)))))))
+                    application (va-db/get-hakemus id)
+                    result
+                    (get! (format "/api/v2/applications/%s/tokens/%s/validate/"
+                                  (:user_key application) nil))]
+                (should= 200 (:status result))
+                  (should= {:valid false} (json->map (:body result)))))
+
+          (it "validates invalid application token"
+              (let [{:keys [id]} (create-hakemus!)
+                    application (va-db/get-hakemus id)
+                    {:keys [body]} (post! "/api/test/application_tokens/"
+                                          {:application-id (:id application)})
+                    token (str "invalid-" (:token (json->map body)))
+                    result
+                    (get!
+                      (format "/api/v2/applications/%s/tokens/%s/validate/"
+                              (:user_key application)
+                              token))]
+                (should= 200 (:status result))
+                (should= {:valid false} (json->map (:body result))))))
 
 (run-specs)
