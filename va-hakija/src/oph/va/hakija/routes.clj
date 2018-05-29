@@ -225,12 +225,12 @@
   "API for applications"
 
   (compojure-api/GET
-    "/:application-id/tokens/:token/"
-    [application-id token :as request]
-    :path-params [application-id :- Long, token :- s/Str]
+    "/:user-key/tokens/:token/validate/"
+    [user-key token :as request]
+    :path-params [user-key :- s/Str token :- s/Str]
     :return TokenValidity
     :summary "Checking if application token is valid"
-    (ok {:valid (hakija-db/valid-token? token application-id)})))
+    (ok {:valid (hakija-db/valid-user-key-token? token user-key)})))
 
 (compojure-api/defroutes avustushaku-routes
   "Avustushaku routes"
