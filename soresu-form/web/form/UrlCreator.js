@@ -19,5 +19,6 @@ export default class UrlCreator {
     this.attachmentDeleteUrl = props.attachmentDeleteUrl || defaultImpl
     this.organisationInfoUrl = props.organisationInfoUrl || defaultImpl
     this.refuseApplicationApiUrl = props.refuseApplicationApiUrl || defaultImpl
+    this.validateTokenUrl = props.validateTokenUrl || defaultImpl
   }
 }
