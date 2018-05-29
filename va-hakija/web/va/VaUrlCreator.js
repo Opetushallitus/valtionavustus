@@ -68,6 +68,10 @@ export default class VaUrlCreator extends UrlCreator {
         const baseVersion = state.saveStatus.savedObject.version
         return "/api/avustushaku/" + grantId + "/hakemus/" + applicationId + "/"
           + baseVersion  + "/refuse/?token=" + state.token
+      },
+      validateTokenUrl: function(applicationId, token) {
+        return "/api/v2/applications/" + applicationId + "/tokens/" +
+          token + "/validate/"
       }
     }
     super(urls)

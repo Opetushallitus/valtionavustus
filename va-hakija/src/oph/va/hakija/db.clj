@@ -226,8 +226,17 @@
 (defn valid-token? [token application-id]
   (and
     (some? token)
-    (>
-      (count
+    (not
+      (empty?
         (exec :form-db queries/get-application-token
-              {:token token :application_id application-id}))
-      0)))
+              {:token token :application_id application-id})))))
+
+(defn valid-user-key-token? [token user-key]
+  (let [application (get-hakemus user-key)]
+    (and
+      (some? application)
+      (valid-token? token (:id application)))))
+
+(defn revoke-token [token]
+  (exec :form-db queries/revoke-application-token!
+        {:token token}))

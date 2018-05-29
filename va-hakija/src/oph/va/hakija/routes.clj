@@ -221,6 +221,17 @@
                                          tempfile)]
       (assoc-in response [:headers "Access-Control-Allow-Origin"] (va-routes/virkailija-url)))))
 
+(compojure-api/defroutes applications-routes
+  "API for applications"
+
+  (compojure-api/GET
+    "/:user-key/tokens/:token/validate/"
+    [user-key token :as request]
+    :path-params [user-key :- s/Str token :- s/Str]
+    :return TokenValidity
+    :summary "Checking if application token is valid"
+    (ok {:valid (hakija-db/valid-user-key-token? token user-key)})))
+
 (compojure-api/defroutes avustushaku-routes
   "Avustushaku routes"
   (get-id)
@@ -337,6 +348,8 @@
   (compojure-api/context "/api/avustushaku" [] :tags ["avustushaut"] avustushaku-routes)
 
   (compojure-api/context "/api/organisations" [] :tags ["organisations"] organisation-routes)
+
+  (compojure-api/context "/api/v2/applications" [] :tags ["applications"] applications-routes)
 
   va-routes/config-routes
   resource-routes)
