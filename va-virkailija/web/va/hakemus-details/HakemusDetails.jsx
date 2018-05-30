@@ -85,14 +85,15 @@ export default class HakemusDetails extends Component {
       <div id="hakemus-details">
         <CloseButton/>
         <ToggleButton/>
+        <div id="editor-subtab-selector"
+             className="fixed-tabs section-container">
+          {tab('arviointi', 'Arviointi')}
+          {tab('valiselvitys', 'Väliselvitys')}
+          {tab('loppuselvitys', 'Loppuselvitys')}
+          {tab('seuranta', 'Seuranta')}
+        </div>
         <HakemusPreview hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations}/>
-        <div id="hakemus-arviointi">
-          <div id="editor-subtab-selector" className="section-container">
-            {tab('arviointi', 'Arviointi')}
-            {tab('valiselvitys', 'Väliselvitys')}
-            {tab('loppuselvitys', 'Loppuselvitys')}
-            {tab('seuranta', 'Seuranta')}
-          </div>
+        <div id="hakemus-arviointi" className="fixed-content">
           <div id="tab-content"
                className={hakemus.refused ? "disabled" : ""}>
             {getSubTab(subTab)}
