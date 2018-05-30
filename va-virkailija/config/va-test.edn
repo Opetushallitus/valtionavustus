@@ -14,7 +14,7 @@
          :retry-initial-wait 2000
          :retry-multiplier 4
          :retry-max-time 60000}
- :rondo-scheduler {:enabled? false
+ :rondo-scheduler {:enabled? true
                     :scheduling "0 00 04 ? * *"
                     :strict-host-key-checking :yes}
  :payments {:enabled? true}

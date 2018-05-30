@@ -1,4 +1,4 @@
-certs_dir: '../../valtionavustus-secret/certs/qa_and_prod'
+certs_dir: '../../valtionavustus-secret/certs/lb'
 
 # ACL:s for different endpoints
 
