@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.rondo-service-spec
   (:require [speclj.core
             :refer [should should-not should= describe
-                    it tags around-all run-specs]]
+                    it tags around-all run-specs should-throw should-not-throw]]
              [oph.common.testing.spec-plumbing :refer [with-test-server!]]
              [oph.va.virkailija.common-utils
               :refer [test-server-port create-submission create-application]]
@@ -61,12 +61,7 @@
   (get-local-path [service] (:local-path (:configuration service)))
   (get-remote-file [service filename]
                    (let [xml-file-path (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename)]
-                     (invoice/write-xml! (xml/sexp-as-element resp-tags) xml-file-path)
-                      ; (do-test-sftp :method :get
-                      ;           :file xml-file-path
-                      ;           :path (:remote_path_from (:configuration service))
-                      ;           :config (:configuration service))
-                     ))
+                     (invoice/write-xml! (xml/sexp-as-element resp-tags) xml-file-path)))
   (get-local-file [service filename]
                   (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename))
   (delete-remote-file [service filename]
@@ -122,6 +117,36 @@
                       user)
                      result  (rondo-scheduling/get-state-of-payments test-service)]
               (println grant)
-              (should= 3 (:state (application-data/get-application-payment (:id application))))))
+              (should= 3 (:state (application-data/get-application-payment (:id application))))
+              (payments-data/delete-payment (:id payment))))
+
+          (it "If problems with retrieving state from rondo, show errors correctly"
+
+              (let [configuration {:enabled true
+                                  :local-path "/tmp"}
+                    test-service (create-test-service configuration)
+                    grant (first (grant-data/get-grants))
+                    result (payments-data/delete-grant-payments (:id grant))
+                    application (application-data/find-application-by-register-number "123/456/78")
+                    batch (payment-batches-data/create-batch
+                            {:receipt-date invoice-date
+                             :due-date invoice-date
+                             :partner ""
+                             :grant-id (:id grant)
+                             :document-id ""
+                             :currency "EUR"
+                             :invoice-date invoice-date
+                             :document-type "XA"
+                             :transaction-account "6000"
+                             :acceptor-email "acceptor@local"
+                             :inspector-email "inspector@local"})
+                    payment (payments-data/create-payment
+                      {:application-id (:id application)
+                       :payment-sum 26000
+                       :batch-id (:id batch)
+                       :state 0
+                       :invoice-date invoice-date}
+                      user)]
+                     (should-throw Exception (rondo-scheduling/get-state-of-payments test-service))))
           )
 (run-specs)
