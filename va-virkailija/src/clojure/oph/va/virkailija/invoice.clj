@@ -40,7 +40,7 @@
       [:Maksuera (get-batch-key batch)]
       [:Laskunpaiva (.toString (:invoice-date batch))]
       [:Erapvm (.toString (:due-date batch))]
-      [:Bruttosumma (:budget-granted application)]
+      [:Bruttosumma (:payment-sum payment)]
       [:Maksuehto "Z001"]
       [:Pitkaviite (:register-number application)]
       [:Tositepvm (.toString (:receipt-date batch))]
@@ -60,7 +60,7 @@
        [:Valuutta (:currency batch)]]
       [:Postings
        [:Posting
-        [:Summa (:budget-granted application)]
+        [:Summa (:payment-sum payment)]
         [:LKP-tili (lkp/get-lkp-account (:answers application))]
         [:TaKp-tili (:takp-account application)]
         [:Toimintayksikko (:operational-unit grant)]
