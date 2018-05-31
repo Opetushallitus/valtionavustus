@@ -163,9 +163,7 @@
                 (should-throw Exception #"No payments found!" (rondo-scheduling/get-state-of-payments test-service))))
 
           (it "When retrieving payment xml from Rondo, show parse errors, if xml is not valid"
-              (let [configuration {:enabled true
-                                   :local-path "/tmp"}
-                    test-service (create-test-service configuration)
+              (let [test-service (create-test-service configuration)
                     list-of-files (lazy-seq ["wrong.xml"])]
                 (should-throw Exception #"ParseError" (rondo-scheduling/fetch-xml-files list-of-files test-service))
                 (clojure.java.io/delete-file (get-local-file test-service "wrong.xml")))))
