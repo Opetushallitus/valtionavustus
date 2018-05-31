@@ -105,7 +105,7 @@
         :should-pay-comments nil
         :summary-comment nil
         :tags {:value []}
-        :talousarviotili nil}
+        :talousarviotili "29103013"}
        (:identity user-authentication)))
 
 (defn create-evaluation [grant status]
