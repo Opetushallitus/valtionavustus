@@ -115,13 +115,12 @@
                              {:application-id (:id application)
                               :payment-sum 26000
                               :batch-id (:id batch)
+                              :phase 0
                               :state 2
                               :invoice-date invoice-date}
                              user)
                     result  (rondo-scheduling/get-state-of-payments test-service)]
-                (println grant)
-                (should= 3 (:state (application-data/get-application-payment (:id application))))
-                (payments-data/delete-payment (:id payment))))
+                (should= 3  (:state (payments-data/get-payment (:id payment))))))
 
           (it "If problems with retrieving state from rondo, show errors correctly"
 
@@ -148,6 +147,7 @@
                               :payment-sum 26000
                               :batch-id (:id batch)
                               :state 3
+                              :phase 0
                               :invoice-date invoice-date}
                              user)]
                 (should-throw Exception #"Payment already paid" (rondo-scheduling/get-state-of-payments test-service))))
