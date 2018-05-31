@@ -72,7 +72,8 @@
               :color "gray"
               :background-color "lightgray"
               :cursor "pointer"
-              :padding "1px 5px 1px 5px"})
+              :padding "1px 7px 1px 7px"
+              :box-shadow "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"})
 
 (def card-style
   {:box-shadow "rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px"
