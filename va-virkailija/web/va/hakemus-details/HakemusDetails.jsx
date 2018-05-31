@@ -16,6 +16,11 @@ export default class HakemusDetails extends Component {
           (environment["multibatch-payments"] &&
            environment["multibatch-payments"]["enabled?"]) || false
 
+    const userOid = userInfo["person-oid"]
+    const userRole = hakuData.roles.find(r => r.oid === userOid)
+    const isPresentingOfficer =
+            userOid && userRole && userRole.role === "presenting_officer"
+
     if (hidden) {
       return null
     }
@@ -59,13 +64,15 @@ export default class HakemusDetails extends Component {
                            avustushaku={avustushaku} userInfo={userInfo}
                            translations={translations}
                            selvitysType="valiselvitys"
-                           multibatchEnabled={multibatchEnabled}/>
+                           multibatchEnabled={multibatchEnabled}
+                           isPresentingOfficer={isPresentingOfficer}/>
         case 'loppuselvitys':
           return <Selvitys controller={controller} hakemus={hakemus}
                            avustushaku={avustushaku} userInfo={userInfo}
                            translations={translations}
                            selvitysType="loppuselvitys"
-                           multibatchEnabled={multibatchEnabled}/>
+                           multibatchEnabled={multibatchEnabled}
+                           isPresentingOfficer={isPresentingOfficer}/>
         case 'seuranta':
           return <Seuranta controller={controller} hakemus={hakemus} avustushaku={avustushaku} hakuData={hakuData} translations={translations} selectedHakemusAccessControl={selectedHakemusAccessControl}/>
         default:
