@@ -61,7 +61,10 @@
   (get-local-path [service] (:local-path (:configuration service)))
   (get-remote-file [service filename]
                    (let [xml-file-path (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename)]
-                     (invoice/write-xml! (xml/sexp-as-element resp-tags) xml-file-path)))
+                   (if (= filename "wrong.xml")
+                   (with-open [w (clojure.java.io/writer  xml-file-path :append true)]
+                   (.write w (str "<VA-invoice>><Header><Pitkaviite>123/456/78<Pitkaviite//><Maksupvm>2018-05-02</Maksupvm></Header></VA-invoice>")))
+                     (invoice/write-xml! (xml/sexp-as-element resp-tags) xml-file-path))))
   (get-local-file [service filename]
                   (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename))
   (delete-remote-file [service filename]
@@ -144,9 +147,25 @@
                       {:application-id (:id application)
                        :payment-sum 26000
                        :batch-id (:id batch)
-                       :state 0
+                       :state 3
                        :invoice-date invoice-date}
                       user)]
-                     (should-throw Exception (rondo-scheduling/get-state-of-payments test-service))))
-          )
+                     (should-throw Exception #"Payment already paid" (rondo-scheduling/get-state-of-payments test-service))))
+
+             (it "When retrieving payment xml from Rondo, show errors if there are no corresponding payments"
+
+                 (let [configuration {:enabled true
+                                     :local-path "/tmp"}
+                       test-service (create-test-service configuration)
+                       grant (first (grant-data/get-grants))
+                       result (payments-data/delete-grant-payments (:id grant))
+                       application (application-data/find-application-by-register-number "123/456/78")]
+                        (should-throw Exception #"No payments found!" (rondo-scheduling/get-state-of-payments test-service))))
+
+            (it "When retrieving payment xml from Rondo, show parse errors, if xml is not valid"
+                (let [configuration {:enabled true
+                                    :local-path "/tmp"}
+                      test-service (create-test-service configuration)
+                      list-of-files (lazy-seq ["wrong.xml"])]
+                      (should-throw Exception #"ParseError" (rondo-scheduling/fetch-xml-files list-of-files test-service)))))
 (run-specs)

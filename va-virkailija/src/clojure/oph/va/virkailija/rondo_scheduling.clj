@@ -18,7 +18,7 @@
 
 (def timeout-limit 600000)
 
-  (defn fetch-xml-files [xml-path list-of-files remote-service]
+  (defn fetch-xml-files [list-of-files remote-service]
     (log/info "Will fetch the following files from Rondo: " list-of-files)
   (doseq [filename list-of-files]
     (get-remote-file remote-service filename)
@@ -36,8 +36,7 @@
 (defn fetch-feedback-from-rondo [remote-service]
   (log/debug "Running the fetch-feed-back-from rondo..")
     (let [list-of-files (get-remote-file-list remote-service)
-        xml-path (get-local-path remote-service)
-        result (fetch-xml-files xml-path list-of-files remote-service)]
+          result (fetch-xml-files list-of-files remote-service)]
     (if (nil? result)
       {:success true}
       {:success false :value result})))
