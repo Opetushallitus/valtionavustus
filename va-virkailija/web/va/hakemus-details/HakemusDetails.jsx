@@ -17,8 +17,9 @@ export default class HakemusDetails extends Component {
            environment["multibatch-payments"]["enabled?"]) || false
 
     const userOid = userInfo["person-oid"]
+    const userRole = hakuData.roles.find(r => r.oid === userOid)
     const isPresentingOfficer =
-            userOid && hakuData.roles.find(r => r.oid === userOid)
+            userOid && userRole && userRole.role === "presenting_officer"
 
     if (hidden) {
       return null
