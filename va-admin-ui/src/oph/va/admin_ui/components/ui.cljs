@@ -58,14 +58,16 @@
 (defn tooltip [props text]
   (let [state (r/atom {:open false :anchor-el nil})]
     (fn [props text]
-      [:span {:style (merge theme/tooltip (:style props))}
-       [:span
-        {:style (:button-style props)
+      [:span {:style (:style props)
+              :class "tooltip"}
+       [:button
+        {:style (merge theme/tooltip (:button-style props))
          :on-click
          (fn [e]
            (swap! state assoc
                   :open (not (:open @state))
-                  :anchor-el (.-target e)))}
+                  :anchor-el (.-target e))
+           (.preventDefault e))}
         (get props :icon "?")
         [popover
          (merge @state
@@ -102,7 +104,8 @@
 (defn select-field [props]
   [:div {:class "oph-field" :style (merge theme/select-field (:style props))}
    [:label {:class "oph-label"} (or (:label props)
-                                    (:floating-label-text props))]
+                                    (:floating-label-text props))
+    (when-some [text (:tooltip props)] [tooltip {} text])]
    [:div {:class "oph-select-container"}
     [:select {:class "oph-input oph-select"
               :value (or (:value props) (first (:values props)))

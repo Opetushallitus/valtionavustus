@@ -63,16 +63,13 @@
 
 (def popup {:padding 10})
 
-(def tooltip {:text-align "center"
-              :margin-left 5
-              :margin-right 5
-              :width 20
-              :height 20
-              :border-radius 50
+(def tooltip {:border-radius 50
               :color "gray"
               :background-color "lightgray"
               :cursor "pointer"
-              :padding "1px 5px 1px 5px"})
+              :margin-left 5
+              :border-color "transparent"
+              :box-shadow "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"})
 
 (def card-style
   {:box-shadow "rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px"
