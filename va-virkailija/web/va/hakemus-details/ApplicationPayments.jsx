@@ -100,7 +100,7 @@ export default class ApplicationPayments extends Component {
           this.createPaymentPercentageRenderer(application["budget-oph-share"])
     const paidToDate = this.paidToDate(payments)
     const grantLeft = application["budget-oph-share"] - paidToDate
-    const addEnabled = !readonly && (grantLeft > 0 && index === payments.length)
+    const addEnabled = !readonly && grantLeft > 0 && index === payments.length
 
     return (
       <div className={!this.props.payments ? "application-payments-disabled" : ""}>
