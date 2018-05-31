@@ -161,7 +161,7 @@
                        :currency "EUR"
                        :invoice-date (java.time.LocalDate/of 2017 12 20)
                        :document-type "XA"
-                       :transaction-account "6000"
+                       :transaction-account "5000"
                        :acceptor-email "acceptor@example.com"
                        :inspector-email "inspector@example.com"})
                     :created-at (f/parse "2017-12-20T10:24:59.750Z"))
@@ -194,6 +194,7 @@
               [:Asiatarkastaja "inspector@example.com"]
               [:Hyvaksyja "acceptor@example.com"]
               [:Tositelaji "XA"]
+              [:Maksutili "5000"]
               [:Toimittaja
                [:Y-tunnus "1234567-1"]
                [:Nimi "Test Organisation"]

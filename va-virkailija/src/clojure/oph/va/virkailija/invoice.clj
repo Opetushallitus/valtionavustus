@@ -47,6 +47,7 @@
       [:Asiatarkastaja (:inspector-email batch)]
       [:Hyvaksyja (:acceptor-email batch)]
       [:Tositelaji (:document-type batch)]
+      [:Maksutili (:transaction-account batch)]
       [:Toimittaja
        [:Y-tunnus (get-answer-value answers "business-id")]
        [:Nimi (:organization-name application)]
