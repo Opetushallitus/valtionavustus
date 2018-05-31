@@ -58,14 +58,16 @@
 (defn tooltip [props text]
   (let [state (r/atom {:open false :anchor-el nil})]
     (fn [props text]
-      [:span {:style (merge theme/tooltip (:style props))}
-       [:span
-        {:style (:button-style props)
+      [:span {:style (:style props)
+              :class "tooltip"}
+       [:button
+        {:style (merge theme/tooltip (:button-style props))
          :on-click
          (fn [e]
            (swap! state assoc
                   :open (not (:open @state))
-                  :anchor-el (.-target e)))}
+                  :anchor-el (.-target e))
+           (.preventDefault e))}
         (get props :icon "?")
         [popover
          (merge @state

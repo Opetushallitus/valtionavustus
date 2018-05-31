@@ -81,3 +81,7 @@ hr {
   opacity: 0.3;
   pointer-events: none;
 }
+
+.tooltip button:focus {
+  outline: 0;
+}
