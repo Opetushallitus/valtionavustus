@@ -40,15 +40,40 @@
     [va-ui/date-picker
      {:floating-label-text "Laskun päivämäärä"
       :value (:invoice-date values)
+      :tooltip "Laskun päivämäärä on päivämäärä, jolloin lasku lähtee
+                asiakkaalle. Valtionavustusjärjestelmässä päivämäärä on se
+                päivämäärä, jolloin maksu lähtee hyväksyttynä eteenpäin
+                valmistelijalta. "
       :on-change #(on-change :invoice-date %2)}]
     [va-ui/date-picker
      {:floating-label-text "Eräpäivä"
       :value (:due-date values)
+      :tooltip
+      "Eräpäivä on se päivä, jolloin maksusuoritus on viimeistään tehtävä."
       :on-change #(on-change :due-date %2)}]
     [va-ui/select-field
      {:floating-label-text "Maksuliikemenotili"
       :value (get values :transaction-account (first transaction-accounts))
       :on-change #(on-change :transaction-account %)
+      :tooltip [:div {:style {:text-align "left"}}
+                [:div
+                 "Maksuliikemenotili on tili, jolta mm. valtionavustusmaksut
+                  lähtevät. Järjestelmissä tilille on määritelty nelimerkkinen
+                  koodi. Perus-maksuliikemenotililtä voi vain maksaa ja tämän
+                  tilin koodi on 5000."]
+                [:div
+                 "Opetushallituksella on myös ns.
+                  saldollisia tilejä. Saldollisilla tileillä raha liikkuu
+                  molempiin suuntiin eli näiltä maksetaan ja näille voi myös
+                  tilittää rahaa. Saldollisilta tileiltä maksetaan
+                  apurahamaksut."]
+                [:div
+                 "Ohessa luettelo maksuliikemenotilin koodeista ja mihin
+                  maksuihin kutakin tiliä voidaan käyttää:"
+                 [:div "5000 perus-maksuliikemenotili, ns. normaalit kulut ja
+                        valtionavustukset"]
+                 [:div "5220 Nordplus-apurahat"]
+                 [:div "5250 Erasmus+ -apurahat"]]]
       :values
       (map (fn [acc] {:key acc :value acc :primary-text acc})
            transaction-accounts)}]
@@ -62,7 +87,11 @@
      {:floating-label-text "Tositepäivämäärä"
       :style {:display "inline-block"}
       :value (:receipt-date values)
-      :tooltip "Tarkista tilinpäätösaikataulu"
+      :tooltip "Tositepäivämäärä määrittää sen, mille kirjanpidon kaudelle
+                kyseinen lasku/maksu kirjautuu. Vuoden aikana tositepäivämäärä
+                voi olla sama kuin laskun päivämäärä, mutta
+                tilinpäätöstilanteessa tositepäivämäärä on määriteltävä sille
+                kaudelle, jolle lasku kuuluu."
       :on-change #(on-change :receipt-date %2)}]]
    [:div [va-ui/text-field
           {:floating-label-text "Asiakirjan tunnus"
