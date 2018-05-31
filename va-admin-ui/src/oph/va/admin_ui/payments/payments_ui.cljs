@@ -63,30 +63,31 @@
     (swap! filters dissoc k)
     (swap! filters assoc k (lower-case v))))
 
-(defn- render-payment-group [i [phase payments]]
-  [:div {:key i :style {:padding-bottom 10}}
-   [:label (phase-to-name phase)]
-   [table/table-body
-    {:style {:border-top "1px solid #f6f4f0"
-             :border-bottom "1px solid #f6f4f0"
-             :padding-right (when (< (count payments) 14) 14)}}
-    (doall (map-indexed render-payment payments))]
-   [table/table-footer
-    [table/table-row
-     [table/table-row-column]
-     [table/table-row-column]
-     [table/table-row-column "Yhteensä"]
-     [table/table-row-column {:style {:text-align "right"}}
-      (.toLocaleString
-        (reduce #(+ %1 (:payment-sum %2)) 0 payments))
-      " €"]
-     [table/table-row-column]
-     [table/table-row-column]
-     [table/table-row-column]
-     [table/table-row-column {:style {:text-align "right"}}
-      (.toLocaleString
-        (reduce #(+ %1 (get %2 :budget-oph-share 0)) 0 payments))
-      " €"]]]])
+(defn- render-payment-group [i [phase payments] filters]
+  (let [filtered-payments (filter-payments payments filters)]
+    [:div {:key i :style {:padding-bottom 10}}
+     [:label (phase-to-name phase)]
+     [table/table-body
+      {:style {:border-top "1px solid #f6f4f0"
+               :border-bottom "1px solid #f6f4f0"
+               :padding-right (when (< (count payments) 14) 14)}}
+      (doall (map-indexed render-payment filtered-payments))]
+     [table/table-footer
+      [table/table-row
+       [table/table-row-column (str (count filtered-payments) "/" (count payments) " maksatusta")]
+       [table/table-row-column]
+       [table/table-row-column "Yhteensä"]
+       [table/table-row-column {:style {:text-align "right"}}
+        (.toLocaleString
+          (reduce #(+ %1 (:payment-sum %2)) 0 filtered-payments))
+        " €"]
+       [table/table-row-column]
+       [table/table-row-column]
+       [table/table-row-column]
+       [table/table-row-column {:style {:text-align "right"}}
+        (.toLocaleString
+          (reduce #(+ %1 (get %2 :budget-oph-share 0)) 0 filtered-payments))
+        " €"]]]]))
 
 (defn- sortable-header-column
   [{:keys [title column-key on-sort on-filter sort-params]}]
@@ -107,7 +108,6 @@
     (fn [payments]
       (let [sorted-filtered-payments
             (cond-> payments
-              (not-empty @filters) (filter-payments @filters)
               (some? (:sort-key @sort-params))
               (sort-payments
                 (:sort-key @sort-params) (:descend? @sort-params)))
@@ -169,4 +169,6 @@
                       (when (< (count sorted-filtered-payments)) 14)}}
            (if (empty? sorted-filtered-payments)
              [:div {:style theme/table-empty-text} "Ei maksatuksia"]
-             (doall (map-indexed render-payment-group grouped-payments)))]]]))))
+             (doall (map-indexed
+                      #(render-payment-group %1 %2 @filters)
+                      grouped-payments)))]]]))))
