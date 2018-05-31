@@ -94,13 +94,14 @@ export default class ApplicationPayments extends Component {
     )
   }
   render() {
-    const {application, grant, index} = this.props
+    const {application, grant, index, readonly} = this.props
     const payments = this.props.payments || []
     const renderPaymentPercentage =
           this.createPaymentPercentageRenderer(application["budget-oph-share"])
     const paidToDate = this.paidToDate(payments)
     const grantLeft = application["budget-oph-share"] - paidToDate
-    const addEnabled = grantLeft > 0 && index === payments.length
+    const addEnabled = !readonly && (grantLeft > 0 && index === payments.length)
+
     return (
       <div className={!this.props.payments ? "application-payments-disabled" : ""}>
         <h3>Maksuerät</h3>
@@ -174,12 +175,13 @@ export default class ApplicationPayments extends Component {
             </tbody>
           </table>
         </div>
-        <button onClick={this.onAddPayment}
+        {addEnabled &&
+         <button onClick={this.onAddPayment}
                 disabled={((grantLeft - this.state.newPaymentSum) < 0) ||
                           grantLeft === 0 || this.state.newPaymentSum === 0 ||
                           index !== payments.length}>
           Lisää {index + 1}. erä maksatuslistaan
-        </button>
+        </button>}
       </div>
     )
   }
