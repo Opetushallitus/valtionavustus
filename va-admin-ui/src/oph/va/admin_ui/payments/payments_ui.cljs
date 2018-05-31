@@ -108,7 +108,6 @@
     (fn [payments]
       (let [sorted-filtered-payments
             (cond-> payments
-;              (not-empty @filters) (filter-payments @filters)
               (some? (:sort-key @sort-params))
               (sort-payments
                 (:sort-key @sort-params) (:descend? @sort-params)))
