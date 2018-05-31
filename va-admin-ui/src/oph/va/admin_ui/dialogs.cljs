@@ -1,9 +1,8 @@
 (ns oph.va.admin-ui.dialogs
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
-   [cljs.core.async :refer [<! put! chan close! sliding-buffer]]
+   [cljs.core.async :refer [<! chan sliding-buffer]]
    [reagent.core :as r]
-   [oph.va.admin-ui.theme :as theme]
    [cljs-react-material-ui.core :refer [color]]
    [cljs-react-material-ui.icons :as ic]
    [cljsjs.material-ui]
@@ -12,10 +11,10 @@
    [oph.va.admin-ui.components.ui :as va-ui]
    [oph.va.admin-ui.utils :refer [format]]))
 
-(defonce dialogs (r/atom {:generic {:open false}
-                          :loading {}
-                          :snackbar {:open false :message ""}
-                          :error-dialog {:open false}}))
+(defonce ^:private dialogs (r/atom {:generic {:open false}
+                                    :loading {}
+                                    :snackbar {:open false :message ""}
+                                    :error-dialog {:open false}}))
 
 (defn show-dialog! [title content]
   (swap! dialogs update-in [:generic]

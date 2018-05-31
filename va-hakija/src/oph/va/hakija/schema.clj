@@ -34,3 +34,7 @@
 (s/defschema ApplicationToken
   "Application token for testing"
   {:token s/Str})
+
+(s/defschema TokenValidity
+  "Application token validity"
+  {:valid s/Bool})

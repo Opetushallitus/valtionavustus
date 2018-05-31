@@ -541,6 +541,16 @@ Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
   - Tämän jälkeen maksu ilmestyy Maksatus-näkymään, josta sen voi lähettää,
     kuten ensimmäisen erän
 
+## Muutoksenhaku
+
+Tällä hetkellä järjestelmä tukee hakijan luomaa muutosta ainoastaan avustuksen
+vastaanottamatta jättämisen osalta.
+
+Jokaiselle hakemukselle luodaan lähetysvaiheessa (submit) vahvistussähköpostin
+luonnissa uniikki tunniste, jolla hakija pääsee lähettämään
+muutoshakemuksen. Tämä tunniste vanhenee, kun avustuksen ensimmäinen maksatus
+lähetetään.
+
 ## Käytäntöjä
 
 ### Git

@@ -1,11 +1,11 @@
 (ns oph.va.admin-ui.core
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
-   [cljs.core.async :refer [<! put! chan close! sliding-buffer]]
+   [cljs.core.async :refer [<! put! close!]]
    [reagent.core :as r]
    [oph.va.admin-ui.theme :as theme]
    [cljsjs.material-ui]
-   [cljs-react-material-ui.core :refer [get-mui-theme color]]
+   [cljs-react-material-ui.core :refer [get-mui-theme]]
    [cljs-react-material-ui.reagent :as ui]
    [oph.va.admin-ui.connection :as connection]
    [oph.va.admin-ui.router :as router]

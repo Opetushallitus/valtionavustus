@@ -38,13 +38,6 @@
       convert-to-dash-keys
       convert-timestamps-from-sql))
 
-(defn create-payment-data [application batch sum]
-  {:application-id (:id application)
-   :application-version (:version application)
-   :state 0
-   :batch-id (:id batch)
-   :payment-sum sum})
-
 (defn create-filename
   ([payment id-gen-fn] (format "payment-%d-%d.xml" (:id payment) (id-gen-fn)))
   ([payment] (create-filename payment  #(System/currentTimeMillis))))
@@ -63,21 +56,14 @@
          {:success false :error {:error-type :exception :exception e}}))
     timeout-limit {:success false :error {:error-type :timeout}})))
 
-(defn get-unpaid-payment [payments]
-  (some #(when (< (:state %) 2) %) payments))
-
-(defn send-payment [application data]
-  (let [payment (application-data/get-application-unsent-payment
-                  (:id application))]
-    (if (some? payment)
-      (let [filename (create-filename payment)
-            updated-payment (payments-data/update-payment
-                             (assoc payment :batch-id (get-in data [:batch :id]))
-                             (:identity data))]
-        (-> updated-payment
-            (send-to-rondo! application (:grant data) filename (:batch data))
-            (assoc :filename filename :payment updated-payment)))
-      {:success false :error {:error-type :no-payments}})))
+(defn send-payment [payment application data]
+  (let [filename (create-filename payment)
+        updated-payment (payments-data/update-payment
+                          (assoc payment :batch-id (get-in data [:batch :id]))
+                          (:identity data))]
+    (-> updated-payment
+        (send-to-rondo! application (:grant data) filename (:batch data))
+        (assoc :filename filename :payment updated-payment))))
 
 (defn send-payments [data]
   (let [{:keys [identity grant]} data
@@ -87,13 +73,18 @@
               (filter
                 payments-data/valid-for-send-payment?
                 (grant-data/get-grant-applications-with-evaluation (:id grant)))]
-        (let [result (send-payment application data)]
-          (when (:success result)
-            (do
-              (payments-data/update-payment
-                (assoc (:payment result)
-                       :state 2 :filename (:filename result)) identity)
-              (application-data/revoke-application-tokens (:id application))))
-          (a/>! c result)))
+        (let [payments (application-data/get-application-unsent-payments
+                         (:id application))]
+          (if (empty? payments)
+            {:success false :error {:error-type :no-payments}}
+            (doseq [payment payments]
+              (let [result (send-payment payment application data)]
+                (when (:success result)
+                  (do
+                    (payments-data/update-payment
+                      (assoc (:payment result)
+                             :state 2 :filename (:filename result)) identity)
+                    (application-data/revoke-application-tokens (:id application))))
+                (a/>! c result))))))
       (a/close! c))
     c))

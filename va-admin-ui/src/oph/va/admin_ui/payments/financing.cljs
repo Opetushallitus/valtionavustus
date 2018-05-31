@@ -1,17 +1,13 @@
 (ns oph.va.admin-ui.payments.financing
-  (:require [reagent.core :as r]
-            [cljsjs.material-ui]
-            [cljs-react-material-ui.reagent :as ui]
-            [oph.va.admin-ui.components.ui :as va-ui]
-            [oph.va.admin-ui.theme :as theme]
-            [oph.va.admin-ui.payments.utils :refer
-             [remove-nil any-nil? not-nil? not-empty? valid-email?]]))
+  (:require [oph.va.admin-ui.components.ui :as va-ui]
+            [oph.va.admin-ui.payments.utils
+             :refer [not-empty? valid-email?]]))
 
-(def week-in-ms (* 1000 60 60 24 7))
+(def ^:private week-in-ms (* 1000 60 60 24 7))
 
-(def transaction-accounts ["5000" "5220" "5230" "5240" "5250"])
+(def ^:private transaction-accounts ["5000" "5220" "5230" "5240" "5250"])
 
-(def document-id-max-size 12)
+(def ^:private document-id-max-size 12)
 
 (defn now-plus
   [milliseconds]
@@ -21,9 +17,9 @@
 
 (defn payment-emails
   [values on-change]
-  [ui/grid-list {:cols 6 :cell-height "auto"}
+  [:div {:style {:display "flex"}}
    [va-ui/text-field
-    {:floating-label-text "Tarkastajan sähköpostiosoite"
+    {:floating-label-text "Esittelijän sähköpostiosoite"
      :value (get values :inspector-email "")
      :type "email"
      :error (and (not-empty? (:inspector-email values))
@@ -39,44 +35,68 @@
 
 (defn payment-fields
   [values on-change]
-  [ui/grid-list {:cols 4 :cell-height "auto" :style {:max-width 1000}}
-   [va-ui/select-field
-    {:floating-label-text "Maksuliikemenotili"
-     :value (get values :transaction-account (first transaction-accounts))
-     :on-change #(on-change :transaction-account %)
-     :values
-     (map (fn [acc] {:key acc :value acc :primary-text acc})
-          transaction-accounts)}]
-   [va-ui/date-picker
-    {:floating-label-text "Eräpäivä"
-     :value (:due-date values)
-     :on-change #(on-change :due-date %2)}]
-   [va-ui/date-picker
-    {:floating-label-text "Laskun päivämäärä"
-     :value (:invoice-date values)
-     :on-change #(on-change :invoice-date %2)}]
-   [va-ui/select-field
-    {:floating-label-text "Tositelaji"
-     :value (get values :document-type "XA")
-     :on-change #(on-change :document-type %)
-     :values [{:value "XA" :primary-text "XA"}
-              {:value "XB" :primary-text "XB"}]}]
-   [va-ui/date-picker
-    {:floating-label-text "Tositepäivämäärä"
-     :style {:display "inline-block"}
-     :value (:receipt-date values)
-     :tooltip "Tarkista tilinpäätösaikataulu"
-     :on-change #(on-change :receipt-date %2)}]
-   [va-ui/text-field
-    {:floating-label-text "Kumppanikoodi"
-     :value (get values :partner "")
-     :on-change (fn [e]
-                  (let [value (.-value (.-target e))]
-                    (when (<= (count value) 6) (on-change :partner value))))}]
-   [va-ui/text-field
-    {:floating-label-text "Asiakirjan tunnus"
-     :value (get values :document-id "")
-     :on-change (fn [e]
-                  (let [value (-> e .-target .-value)]
-                    (when (<= (count value) document-id-max-size)
-                      (on-change :document-id value))))}]])
+  [:div
+   [:div {:style {:display "flex"}}
+    [va-ui/date-picker
+     {:floating-label-text "Laskun päivämäärä"
+      :value (:invoice-date values)
+      :tooltip "Laskun päivämäärä on päivämäärä, jolloin lasku lähtee
+                asiakkaalle. Valtionavustusjärjestelmässä päivämäärä on se
+                päivämäärä, jolloin maksu lähtee hyväksyttynä eteenpäin
+                valmistelijalta. "
+      :on-change #(on-change :invoice-date %2)}]
+    [va-ui/date-picker
+     {:floating-label-text "Eräpäivä"
+      :value (:due-date values)
+      :tooltip
+      "Eräpäivä on se päivä, jolloin maksusuoritus on viimeistään tehtävä."
+      :on-change #(on-change :due-date %2)}]
+    [va-ui/select-field
+     {:floating-label-text "Maksuliikemenotili"
+      :value (get values :transaction-account (first transaction-accounts))
+      :on-change #(on-change :transaction-account %)
+      :tooltip [:div {:style {:text-align "left"}}
+                [:div
+                 "Maksuliikemenotili on tili, jolta mm. valtionavustusmaksut
+                  lähtevät. Järjestelmissä tilille on määritelty nelimerkkinen
+                  koodi. Perus-maksuliikemenotililtä voi vain maksaa ja tämän
+                  tilin koodi on 5000."]
+                [:div
+                 "Opetushallituksella on myös ns.
+                  saldollisia tilejä. Saldollisilla tileillä raha liikkuu
+                  molempiin suuntiin eli näiltä maksetaan ja näille voi myös
+                  tilittää rahaa. Saldollisilta tileiltä maksetaan
+                  apurahamaksut."]
+                [:div
+                 "Ohessa luettelo maksuliikemenotilin koodeista ja mihin
+                  maksuihin kutakin tiliä voidaan käyttää:"
+                 [:div "5000 perus-maksuliikemenotili, ns. normaalit kulut ja
+                        valtionavustukset"]
+                 [:div "5220 Nordplus-apurahat"]
+                 [:div "5250 Erasmus+ -apurahat"]]]
+      :values
+      (map (fn [acc] {:key acc :value acc :primary-text acc})
+           transaction-accounts)}]
+    [va-ui/select-field
+     {:floating-label-text "Tositelaji"
+      :value (get values :document-type "XA")
+      :on-change #(on-change :document-type %)
+      :values [{:value "XA" :primary-text "XA"}
+               {:value "XB" :primary-text "XB"}]}]
+    [va-ui/date-picker
+     {:floating-label-text "Tositepäivämäärä"
+      :style {:display "inline-block"}
+      :value (:receipt-date values)
+      :tooltip "Tositepäivämäärä määrittää sen, mille kirjanpidon kaudelle
+                kyseinen lasku/maksu kirjautuu. Vuoden aikana tositepäivämäärä
+                voi olla sama kuin laskun päivämäärä, mutta
+                tilinpäätöstilanteessa tositepäivämäärä on määriteltävä sille
+                kaudelle, jolle lasku kuuluu."
+      :on-change #(on-change :receipt-date %2)}]]
+   [:div [va-ui/text-field
+          {:floating-label-text "Asiakirjan tunnus"
+           :value (get values :document-id "")
+           :on-change (fn [e]
+                        (let [value (-> e .-target .-value)]
+                          (when (<= (count value) document-id-max-size)
+                            (on-change :document-id value))))}]]])

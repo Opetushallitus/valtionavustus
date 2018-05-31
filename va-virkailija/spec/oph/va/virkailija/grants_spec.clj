@@ -13,7 +13,9 @@
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.grant-data :as grant-data]
-            [oph.va.virkailija.payments-data :as payments-data]))
+            [oph.va.virkailija.payments-data :as payments-data]
+            [oph.va.virkailija.virkailija-tools :as virkailija-tools]
+            [oph.va.virkailija.hakija-api-tools :as hakija-api-tools]))
 
 (defn set-application-should-pay [application should-pay? comment]
   (virkailija-db/update-or-create-hakemus-arvio
@@ -90,7 +92,7 @@
   (it "refuses to create paymenst without privileges"
       (let [grant (first (grant-data/get-grants))]
         (let [result (post! (format "/api/v2/grants/%d/payments/"
-                                    (:id grant)) {})]
+                                    (:id grant)) {:phase 0})]
           (should= 401 (:status result))))))
 
 (describe
@@ -111,12 +113,12 @@
     (remove-mock-authentication admin-authentication))
 
   (before
-    (virkailija-db/set-all-evaluations-unhandled)
-    (hakija-api/cancel-all-applications))
+    (virkailija-tools/set-all-evaluations-unhandled)
+    (hakija-api-tools/cancel-all-applications))
 
   (after
-    (virkailija-db/set-all-evaluations-unhandled)
-    (hakija-api/cancel-all-applications))
+    (virkailija-tools/set-all-evaluations-unhandled)
+    (hakija-api-tools/cancel-all-applications))
 
   (it "creates payments for all applications"
       (let [grant (first (grant-data/get-grants))]
@@ -125,7 +127,8 @@
         (create-evaluation grant "accepted")
         (payments-data/delete-grant-payments (:id grant))
         (let [result (post!
-                       (format "/api/v2/grants/%d/payments/" (:id grant)) {})]
+                       (format "/api/v2/grants/%d/payments/" (:id grant))
+                       {:phase 0})]
           (should= 200 (:status result))
           (should= 3 (count (json->map (:body result))))
           (should= 3 (count (payments-data/get-valid-grant-payments (:id grant)))))))
@@ -140,7 +143,8 @@
         (create-evaluation grant "processing")
         (create-evaluation grant "unhandled")
         (payments-data/delete-grant-payments (:id grant))
-        (let [result (post! (format "/api/v2/grants/%d/payments/" (:id grant)) {})]
+        (let [result (post! (format "/api/v2/grants/%d/payments/" (:id grant))
+                            {:phase 0})]
           (should= 200 (:status result))
           (should= 3 (count (json->map (:body result))))
           (should= 3 (count (payments-data/get-valid-grant-payments (:id grant)))))))
@@ -152,7 +156,7 @@
                           (create-submission
                             (:form grant) {:budget-oph-share 40000}))]
         (create-application-evaluation application "accepted")
-        (hakija-api/set-application-refused
+        (hakija-api-tools/set-application-refused
           (:user_key application) (:form_submission_id application) "Test")
         (create-evaluation grant "accepted")
         (create-evaluation grant "accepted")
@@ -160,7 +164,8 @@
         (payments-data/delete-grant-payments (:id grant))
 
         (let [result (post!
-                       (format "/api/v2/grants/%d/payments/" (:id grant)) {})]
+                       (format "/api/v2/grants/%d/payments/" (:id grant))
+                       {:phase 0})]
           (should= 200 (:status result))
           (should= 3 (count (json->map (:body result))))
           (should= 3 (count (payments-data/get-valid-grant-payments (:id grant)))))))
@@ -178,7 +183,8 @@
         (payments-data/delete-grant-payments (:id grant))
 
         (let [result (post!
-                       (format "/api/v2/grants/%d/payments/" (:id grant)) {})]
+                       (format "/api/v2/grants/%d/payments/" (:id grant))
+                       {:phase 0})]
           (should= 200 (:status result))
           (should= 3 (count (json->map (:body result))))
           (should= 3 (count (payments-data/get-valid-grant-payments (:id grant))))))))

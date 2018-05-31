@@ -49,7 +49,9 @@ export default class VaForm extends React.Component {
         />
         {showGrantRefuse &&
           <GrantRefuse controller={controller} state={state}
-                       onSubmit={controller.refuseApplication}/>}
+                       onSubmit={controller.refuseApplication}
+                       isTokenValid={state.tokenValidation
+                         ? state.tokenValidation.valid : false}/>}
         <FormContainer controller={controller}
                        state={state}
                        formContainerClass={formContainerClass}

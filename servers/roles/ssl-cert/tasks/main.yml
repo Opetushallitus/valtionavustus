@@ -11,13 +11,27 @@
   when: certs_dir_info.stat.isdir is not defined or certs_dir_info.stat.isdir == False
 
 - name: Get cert list
-  local_action: command ls -Al {{certs_dir}}
+  local_action: command find {{certs_dir}} -print -mindepth 1 -maxdepth 1 -name '*-vault.pem'
   sudo: no
   register: cert_files
   changed_when: False
 
 - name: List certs
-  debug: var=cert_files.stdout_lines
+  debug: var=cert_files
+
+- name: Decrypt certificates into memory
+  local_action: shell ansible-vault view {{item}}
+  sudo: no
+  register: certs_contents
+  changed_when: False
+  with_items: cert_files.stdout_lines
 
 - name: Copy SSL certificates to the server
-  copy: src={{certs_dir}}/ dest=/etc/pki/domain/certs/ owner=root group=haproxy mode=0640
+  copy:
+    content: "{{item.stdout}}"
+    dest: "/etc/pki/domain/certs/{{item.item | basename | regex_replace('-vault')}}"
+    owner: root
+    group: haproxy
+    mode: 0640
+  with_items: certs_contents.results
+  notify: Restart haproxy

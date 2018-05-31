@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.payments-data
   (:require
-   [oph.soresu.common.db :refer [exec]]
+   [oph.soresu.common.db :refer [exec exec-all]]
    [oph.va.virkailija.utils
     :refer [convert-to-dash-keys convert-to-underscore-keys update-some]]
    [clj-time.coerce :as c]
@@ -54,10 +54,6 @@
     convert-to-dash-keys
     convert-timestamps-from-sql)))
 
-(defn close-version [id version]
-  (exec :virkailija-db queries/payment-close-version
-        {:id id :version version}))
-
 (defn- get-user-info [identity]
   {:user-oid (:person-oid identity)
    :user-name (format "%s %s" (:first-name identity) (:surname identity))})
@@ -69,12 +65,13 @@
         result
         (->> payment
              convert-to-underscore-keys
-             (exec :virkailija-db queries/update-payment)
+             (vector queries/payment-close-version
+                     {:id (:id payment-data) :version (:version payment-data)}
+                     queries/update-payment)
+             (exec-all :virkailija-db)
              first
              convert-to-dash-keys
              convert-timestamps-from-sql)]
-    (when (nil? result) (throw (Exception. "Failed to update payment")))
-    (close-version (:id payment-data) (:version payment-data))
     result))
 
 (defn- store-payment [payment]
@@ -191,23 +188,24 @@
          (:budget-oph-share application))
       (:budget-oph-share application))))
 
-(defn create-payment-values [application sum]
+(defn create-payment-values [application sum phase]
   {:application-id (:id application)
    :application-version (:version application)
    :state 0
    :batch-id nil
-   :payment-sum sum})
+   :payment-sum sum
+   :phase phase})
 
 (defn create-grant-payments
-  ([grant-id identity]
+  ([grant-id phase identity]
    (let [grant (grant-data/get-grant grant-id)]
      (doall
        (map
          #(create-payment
-            (create-payment-values % (get-first-payment-sum % grant))
+            (create-payment-values % (get-first-payment-sum % grant) phase)
             identity)
          (filter
            valid-for-payment?
            (application-data/get-applications-with-evaluation-by-grant
              grant-id))))))
-  ([grant-id] (create-grant-payments grant-id system-user)))
+  ([grant-id phase] (create-grant-payments grant-id phase system-user)))

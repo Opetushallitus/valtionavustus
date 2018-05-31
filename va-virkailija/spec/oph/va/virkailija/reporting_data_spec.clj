@@ -11,7 +11,9 @@
            [oph.va.virkailija.common-utils
             :refer [user-authentication test-server-port
                     create-application create-submission
-                    create-application-evaluation create-evaluation]]))
+                    create-application-evaluation create-evaluation]]
+           [oph.va.virkailija.virkailija-tools :as virkailija-tools]
+           [oph.va.virkailija.hakija-api-tools :as hakija-api-tools]))
 
 (describe
   "Granted sums"
@@ -25,12 +27,12 @@
                         :auto-reload? false}) (_)))
 
   (before
-    (virkailija-db/set-all-evaluations-unhandled)
-    (hakija-api/cancel-all-applications))
+    (virkailija-tools/set-all-evaluations-unhandled)
+    (hakija-api-tools/cancel-all-applications))
 
   (after
-    (virkailija-db/set-all-evaluations-unhandled)
-    (hakija-api/cancel-all-applications))
+    (virkailija-tools/set-all-evaluations-unhandled)
+    (hakija-api-tools/cancel-all-applications))
 
   (it "gets yearly granted sums"
       (let [grant (first (grant-data/get-grants))]
@@ -50,12 +52,12 @@
   (tags :reporting)
 
   (before
-    (virkailija-db/set-all-evaluations-unhandled)
-    (hakija-api/cancel-all-applications))
+    (virkailija-tools/set-all-evaluations-unhandled)
+    (hakija-api-tools/cancel-all-applications))
 
   (after
-    (virkailija-db/set-all-evaluations-unhandled)
-    (hakija-api/cancel-all-applications))
+    (virkailija-tools/set-all-evaluations-unhandled)
+    (hakija-api-tools/cancel-all-applications))
 
   (around-all [_] (with-test-server! :virkailija-db
                     #(start-server

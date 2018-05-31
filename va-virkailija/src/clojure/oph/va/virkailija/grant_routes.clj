@@ -2,11 +2,9 @@
   (:require [compojure.api.sweet :as compojure-api]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.payments-data :as payments-data]
-            [ring.util.http-response :refer [ok not-found unauthorized]]
-            [compojure.core :as compojure]
+            [ring.util.http-response :refer [ok unauthorized]]
             [schema.core :as s]
             [oph.va.virkailija.schema :as virkailija-schema]
-            [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.soresu.common.config :refer [config]]
             [oph.va.virkailija.va-code-values-routes :refer [with-admin]]
             [oph.va.virkailija.authentication :as authentication]))
@@ -60,10 +58,12 @@
     "/:id/payments/" [id :as request]
     :path-params [id :- Long]
     :return [virkailija-schema/Payment]
+    :body [grant-payments-data virkailija-schema/GrantPayment]
     :summary "Create grant payments"
     (with-admin request
       (ok (payments-data/create-grant-payments
-            id (authentication/get-request-identity request)))
+            id (:phase grant-payments-data)
+            (authentication/get-request-identity request)))
       (unauthorized ""))))
 
 (defn- post-payments-email []
