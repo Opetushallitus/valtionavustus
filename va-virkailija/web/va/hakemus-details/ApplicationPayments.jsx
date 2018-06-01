@@ -146,7 +146,7 @@ export default class ApplicationPayments extends Component {
               <tr>
                 <td>Yhteensä</td>
                 <td className="payment-money-column">
-                  {paidToDate + newPaymentSum} €
+                  {this.localeString(paidToDate + newPaymentSum)} €
                 </td>
               </tr>
             </tbody>
