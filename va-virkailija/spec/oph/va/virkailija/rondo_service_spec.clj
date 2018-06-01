@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.rondo-service-spec
   (:require [speclj.core
              :refer [should should-not should= describe
-                     it tags around-all run-specs should-throw should-not-throw]]
+                     it tags around-all run-specs should-throw]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.common-utils
              :refer [test-server-port create-submission create-application]]
@@ -17,9 +17,7 @@
             [clojure.string :as strc]
             [clojure.data.xml :as xml]
             [oph.va.virkailija.invoice :as invoice]
-            [clojure.tools.logging :as log]
-            [clj-time.format :as f]
-            [clj-time.core :as t]))
+            [clojure.tools.logging :as log]))
 
 
 (def configuration {:enabled? true
@@ -39,25 +37,11 @@
            :first-name "Test"
            :surname "User"})
 
-(def test-data {:put nil
-                :get nil
-                :rm nil
-                :cdls (lazy-seq ["file.xml"])})
-
-(defn do-test-sftp [& {:keys [file method path config]}]
-  (= method :put) nil
-  (= method :get) nil
-  (= method :rm ) nil
-  (= method :cdls) (lazy-seq ["file.xml"]))
-
 (defrecord TestFileService [configuration]
   RemoteFileService
-  (send-payment-to-rondo! [service payment-values] (rondo-service/send-payment! (assoc payment-values :config (:configuration service) :func do-test-sftp)))
+  (send-payment-to-rondo! [service payment-values] (rondo-service/send-payment! (assoc payment-values :config (:configuration service) :func (constantly nil))))
   (get-remote-file-list [service]
-    (let [result (do-test-sftp :method :cdls
-                               :path (:remote_path_from (:configuration service))
-                               :config (:configuration service))]
-      (map #(last (strc/split % #"\s+")) (map str result))))
+    (list "file.xml"))
   (get-local-path [service] (:local-path (:configuration service)))
   (get-remote-file [service filename]
     (let [xml-file-path (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename)]
@@ -68,10 +52,7 @@
   (get-local-file [service filename]
     (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename))
   (delete-remote-file [service filename]
-    (do-test-sftp :method :rm
-                  :file filename
-                  :path (:remote_path_from (:configuration service))
-                  :config (:configuration service))))
+    nil))
 
 (defn create-test-service [conf]
   (TestFileService. conf))
@@ -88,7 +69,7 @@
           (it "gets list of files in mock server"
               (let [test-service (create-test-service configuration)
                     result (get-remote-file-list test-service)]
-                (should= result (:cdls test-data))))
+                (should= result (list "file.xml"))))
 
           (it "gets local path in mock server"
               (let [test-service (create-test-service configuration)]
