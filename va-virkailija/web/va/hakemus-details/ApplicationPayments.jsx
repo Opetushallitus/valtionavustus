@@ -6,34 +6,20 @@ export default class ApplicationPayments extends Component {
     this.onAddPayment = this.onAddPayment.bind(this)
     this.onPaymentSumChange = this.onPaymentSumChange.bind(this)
     this.renderPayment = this.renderPayment.bind(this)
-    this.resetPaymentSum = this.resetPaymentSum.bind(this)
     this.paidToDate = this.paidToDate.bind(this)
-    const defaultSum = Math.floor(
-      this.calculateDefaultValue(
-        props.grant, props.application, props.payments))
-    this.state = {newPaymentSum: isFinite(defaultSum) ? defaultSum : 0}
+    this.calculateNextPaymentSum = this.calculateNextPaymentSum.bind(this)
+    this.state = {newPaymentSum: this.calculateNextPaymentSum()}
   }
 
-  componentDidUpdate() {
-    if (!this.props.payments) {
-      return
-    }
-
-    const newPaymentSum = Math.floor(
-      this.calculateDefaultValue(
-        this.props.grant, this.props.application, this.props.payments))
-    if (newPaymentSum !== this.state.newPaymentSum) {
-      this.setState({
-        newPaymentSum: isFinite(newPaymentSum) ? newPaymentSum : 0 })
-    }
+  componentWillReceiveProps(nextProps) {
+    this.setState({newPaymentSum: this.calculateNextPaymentSum()})
   }
 
-  resetPaymentSum(payments) {
+  calculateNextPaymentSum() {
     const value = Math.floor(
       this.calculateDefaultValue(
-        this.props.grant, this.props.application, payments))
-    this.setState({
-      newPaymentSum: isFinite(value) ? value : 0 })
+        this.props.grant, this.props.application, this.props.payments))
+    return isFinite(value) ? value : 0
   }
 
   calculateDefaultValue(grant, application, payments) {
@@ -54,9 +40,6 @@ export default class ApplicationPayments extends Component {
 
   onAddPayment() {
     this.props.onAddPayment(this.state.newPaymentSum, this.props.index)
-    this.setState({
-      newPaymentSum: this.props.application["budget-oph-share"]
-        - this.paidToDate(this.props.payments) - this.state.newPaymentSum})
   }
 
   onPaymentSumChange(e) {
