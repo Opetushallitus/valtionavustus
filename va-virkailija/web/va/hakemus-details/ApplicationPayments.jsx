@@ -107,6 +107,7 @@ export default class ApplicationPayments extends Component {
     const paidToDate = this.paidToDate(payments)
     const grantLeft = application["budget-oph-share"] - paidToDate
     const addEnabled = !readonly && grantLeft > 0 && index === payments.length
+    const newPaymentSum = addEnabled ? this.state.newPaymentSum : 0
 
     return (
       <div className={!this.props.payments ? "application-payments-disabled" : ""}>
@@ -132,7 +133,7 @@ export default class ApplicationPayments extends Component {
                 </td>
               </tr>
               {payments.map(this.renderPayment)}
-              {(addEnabled) ? (
+              {addEnabled ? (
                 <tr>
                   <td>{`${payments.length + 1}. erä`}</td>
                   <td className="payment-money-column">
@@ -145,7 +146,7 @@ export default class ApplicationPayments extends Component {
               <tr>
                 <td>Yhteensä</td>
                 <td className="payment-money-column">
-                  {paidToDate + this.state.newPaymentSum} €
+                  {paidToDate + newPaymentSum} €
                 </td>
               </tr>
             </tbody>
@@ -165,7 +166,7 @@ export default class ApplicationPayments extends Component {
                 </td>
               </tr>
               {payments.map(renderPaymentPercentage)}
-              {(grantLeft > 0) ?
+              {(grantLeft > 0 && addEnabled) ?
                 renderPaymentPercentage({"payment-sum": this.state.newPaymentSum},
                   payments.length) : null
               }
@@ -173,7 +174,7 @@ export default class ApplicationPayments extends Component {
                 <td>Yhteensä</td>
                 <td className="payment-money-column">
                   {
-                    (100.0 * (paidToDate + this.state.newPaymentSum) /
+                    (100.0 * (paidToDate + newPaymentSum) /
                      application["budget-oph-share"]).toFixed(0)
                   } %
                 </td>
