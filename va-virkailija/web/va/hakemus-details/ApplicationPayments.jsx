@@ -10,7 +10,7 @@ export default class ApplicationPayments extends Component {
     this.paidToDate = this.paidToDate.bind(this)
     const defaultSum = Math.floor(
       this.calculateDefaultValue(
-        this.props.grant, this.props.application, this.props.payments))
+        props.grant, props.application, props.payments))
     this.state = {newPaymentSum: isFinite(defaultSum) ? defaultSum : 0}
   }
 
