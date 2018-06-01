@@ -14,11 +14,17 @@ export default class ApplicationPayments extends Component {
     this.state = {newPaymentSum: isFinite(defaultSum) ? defaultSum : 0}
   }
 
-  componentWillReceiveProps(nextProps) {
-    const currentPaymentsLength = this.props.payments ? this.props.payments.length : 0
-    const nextPaymentsLength = nextProps.payments ? nextProps.payments.length : 0
-    if (currentPaymentsLength !== nextPaymentsLength) {
-      this.resetPaymentSum(nextProps.payments)
+  componentDidUpdate() {
+    if (!this.props.payments) {
+      return
+    }
+
+    const newPaymentSum = Math.floor(
+      this.calculateDefaultValue(
+        this.props.grant, this.props.application, this.props.payments))
+    if (newPaymentSum !== this.state.newPaymentSum) {
+      this.setState({
+        newPaymentSum: isFinite(newPaymentSum) ? newPaymentSum : 0 })
     }
   }
 
