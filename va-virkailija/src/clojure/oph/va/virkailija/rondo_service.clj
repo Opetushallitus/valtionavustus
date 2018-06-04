@@ -20,8 +20,7 @@
 
 (defn do-sftp! [& {:keys [file method path config]}]
   (let [session (create-session config)
-        remote (:remote_path config)
-        remote_from (:remote_path_from config)]
+        remote (:remote_path config)]
     (ssh/with-connection session
       (let [channel (ssh/ssh-sftp session)]
         (ssh/with-channel-connection channel
@@ -38,10 +37,10 @@
               (ssh/ssh-sftp-cmd channel :ls ["*.xml"] :with-monitor))))))))
 
 (defn get-local-file-path [config]
-  (get config :local-path (System/getProperty "java.io.(tmpdir")))
+  (get-in config [:local-path] (System/getProperty "java.io.tmpdir")))
 
 (defn send-payment! [{:keys [payment application grant filename batch config func]}]
-  (let [file (format "%s/%s" (get config :local-path (System/getProperty "java.io.tmpdir")) filename)]
+  (let [file (format "%s/%s" (get-local-file-path config) filename)]
     (invoice/write-xml!
      (invoice/payment-to-xml
       {:payment payment :application application :grant grant :batch batch})
@@ -64,7 +63,7 @@
     (let [result (do-sftp! :method :cdls
                            :path (:remote_path_from (:configuration service))
                            :config (:configuration service))]
-      (map #(last (strc/split % #"\s+")) (map str result))))
+      (map #(last (strc/split (str %) #"\s")) result)))
   (get-local-path [service] (get (:configuration service) :local-path (System/getProperty "java.io.tmpdir")))
   (get-remote-file [service filename]
     (let [xml-file-path (format "%s/%s" (get-local-file-path (:configuration service))  filename)]

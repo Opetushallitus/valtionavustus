@@ -17,7 +17,7 @@
 
 (def timeout-limit 600000)
 
-(defn fetch-xml-files [list-of-files remote-service]
+(defn pop-remote-files [list-of-files remote-service]
   (log/info "Will fetch the following files from Rondo: " list-of-files)
   (doseq [filename list-of-files]
     (get-remote-file remote-service filename)
@@ -35,7 +35,7 @@
 (defn fetch-feedback-from-rondo [remote-service]
   (log/debug "Running the fetch-feed-back-from rondo..")
   (let [list-of-files (get-remote-file-list remote-service)
-        result (fetch-xml-files list-of-files remote-service)]
+        result (pop-remote-files list-of-files remote-service)]
     (if (nil? result)
       {:success true}
       {:success false :value result})))
@@ -59,10 +59,8 @@
 (defjob RondoJob
   [ctx]
   (log/info "Running scheduled fetch of payments now from rondo!")
-  (try
     (let [remote-service (rondo-service/create-service (get-in config [:server :rondo-sftp]))]
-      (get-state-of-payments remote-service))
-    (catch Exception e (str "caught exception while getting list of files from remote: " (.getMessage e)))))
+      (get-state-of-payments remote-service)))
 
 (defn schedule-fetch-from-rondo []
   (let [s   (-> (qs/initialize) qs/start)
