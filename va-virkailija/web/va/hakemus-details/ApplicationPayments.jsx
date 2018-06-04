@@ -11,7 +11,7 @@ export default class ApplicationPayments extends Component {
     this.state = {newPaymentSum: this.calculateNextPaymentSum()}
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps() {
     this.setState({newPaymentSum: this.calculateNextPaymentSum()})
   }
 
