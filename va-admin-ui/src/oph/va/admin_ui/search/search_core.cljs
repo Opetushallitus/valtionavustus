@@ -44,13 +44,13 @@
           (select-keys result [:status :error-text])))
       (swap! state assoc :applications-searching false))))
 
-(defn- render-result-item [i link title content]
+(defn- render-result-item [i link title & content]
   [:div {:key i}
    [:h3
     [:a {:href link}
      [:span {:class "search-result-title"}
       (shrink title)]]]
-   [:div content]])
+   (apply vector :div content)])
 
 (defn- format-title [grant]
   (str (when (not (empty? (:register-number grant)))
@@ -77,7 +77,12 @@
     (str (get application :register-number)
          " - "
          (:organization-name application))
-    (:project-name application)))
+    (when (not (empty? (:project-name application)))
+      [:div [:label {:style {:font-weight "bold" :padding-right 5}} "Hanke:"]
+       (:project-name application)])
+    [:div
+     [:label {:style {:font-weight "bold" :padding-right 5}} "Avustushaku:"]
+     (:grant-name application)]))
 
 (defn- render-search [results title renderer searching?]
   [:div
