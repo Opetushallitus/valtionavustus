@@ -39,6 +39,15 @@
         (merge-params)
         (get param))))
 
+(defn query->str [query]
+  (clojure.string/join
+    "&" (map #(str (name (first %)) "=" (second %)) query)))
+
+(defn set-query! [query-map]
+  (-> js/window
+      (.-history)
+      (.pushState nil "" (str "?" (query->str query-map)))))
+
 (defn redirect-to! [url]
   (-> js/window
       .-location
