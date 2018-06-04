@@ -333,6 +333,8 @@
 
   (compojure-api/context "/api/organisations" [] :tags ["organisations"] organisation-routes)
 
+  (compojure-api/context "/api/v2/applications" [] :tags ["applications"] applications-routes)
+
   va-routes/config-routes
   resource-routes)
 
