@@ -95,35 +95,40 @@
        (doall (map-indexed renderer results))
        [:span "Ei hakutuloksia"]))])
 
+(defn- search-field [props]
+  (let [search-term (r/atom (:default-value props))]
+    (fn [{:keys [error on-change]}]
+      [:div
+       [va-ui/text-field
+        {:help-text "Hakusanan pituus tulee olla yli kolme merkkiä"
+         :error error
+         :on-change #(reset! search-term (-> % .-target .-value))
+         :value @search-term
+         :on-enter-pressed #(do (prn on-change) (on-change @search-term))
+         :style (assoc theme/text-field :width 575)}]])))
+
 (defn home-page []
   [:div
-   (let [search-term
-         (r/atom (router/get-param (router/get-current-query) :search))]
-     [(fn []
-        [:div
-         [va-ui/text-field
-          {:help-text "Hakusanan pituus tulee olla yli kolme merkkiä"
-           :error (:term-length-error @state)
-           :on-change #(reset! search-term (-> % .-target .-value))
-           :value @search-term
-           :on-enter-pressed #(if (> (count @search-term) 3)
-                                (do
-                                  (search-items @search-term)
-                                  (swap! state assoc :term-length-error false))
-                                (swap! state assoc :term-length-error true))
-           :style (assoc theme/text-field :width 575)}]])])
-   [(fn []
-      (render-search
-        (deref (:grants search-results))
-        "Avustushaut"
-        render-grant
-        (:grants-searching @state)))]
-   [(fn []
-      (render-search
-        (deref (:applications search-results))
-        "Hakemukset"
-        render-application
-        (:applications-searching @state)))]])
+   [search-field
+    {:default-value "" ; (router/get-param (router/get-current-query) :search)
+     :error (:term-length-error @state)
+     :on-change
+     #(if (> (count %) 3)
+        (do
+          (prn "Hello")
+          (search-items %)
+          (swap! state assoc :term-length-error false))
+        (swap! state assoc :term-length-error true))}]
+   [render-search
+    (deref (:grants search-results))
+    "Avustushaut"
+    render-grant
+    (:grants-searching @state)]
+   [render-search
+    (deref (:applications search-results))
+    "Hakemukset"
+    render-application
+    (:applications-searching @state)]])
 
 (defn init! []
   (when-let [term (router/get-param (router/get-current-query) :search)]
