@@ -6,6 +6,7 @@
    [oph.va.admin-ui.theme :as theme]
    [oph.va.admin-ui.payments.utils :refer [to-simple-date-time]]
    [oph.va.admin-ui.connection :as connection]
+   [oph.va.admin-ui.router :as router]
    [cljs-react-material-ui.reagent :as ui]
    [oph.va.admin-ui.dialogs :as dialogs]))
 
@@ -27,6 +28,7 @@
 
 (defn- search-items [term]
   (swap! state assoc :grants-searching true :applications-searching true)
+  (router/set-query! {:search term})
   (go
     (let [result (<! (connection/find-grants term))]
       (if (:success result)
@@ -47,7 +49,7 @@
 (defn- render-result-item [i link title & content]
   [:div {:key i}
    [:h3
-    [:a {:href link}
+    [:a {:href link :target "_blank"}
      [:span {:class "search-result-title"}
       (shrink title)]]]
    (apply vector :div content)])
@@ -95,19 +97,21 @@
 
 (defn home-page []
   [:div
-   [(let [search-term (r/atom "")]
-      (fn []
+   (let [search-term
+         (r/atom (router/get-param (router/get-current-query) :search))]
+     [(fn []
         [:div
          [va-ui/text-field
           {:help-text "Hakusanan pituus tulee olla yli kolme merkkiä"
            :error (:term-length-error @state)
            :on-change #(reset! search-term (-> % .-target .-value))
+           :value @search-term
            :on-enter-pressed #(if (> (count @search-term) 3)
                                 (do
                                   (search-items @search-term)
                                   (swap! state assoc :term-length-error false))
                                 (swap! state assoc :term-length-error true))
-           :style (assoc theme/text-field :width 575)}]]))]
+           :style (assoc theme/text-field :width 575)}]])])
    [(fn []
       (render-search
         (deref (:grants search-results))
@@ -121,4 +125,6 @@
         render-application
         (:applications-searching @state)))]])
 
-(defn init! [])
+(defn init! []
+  (when-let [term (router/get-param (router/get-current-query) :search)]
+    (search-items term)))
