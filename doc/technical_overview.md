@@ -27,6 +27,7 @@
 
 ### Documentation tools
 
+* [DBeaver](https://dbeaver.io/) for generating ERD images
 * [yEd](https://www.yworks.com/products/yed) for editing graphs
 * [IntelliJ IDEA](https://www.jetbrains.com/idea/) for creating database
   diagrams

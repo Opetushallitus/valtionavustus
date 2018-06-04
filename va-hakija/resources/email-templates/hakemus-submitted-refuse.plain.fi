@@ -4,13 +4,13 @@ Hakuaika: {{ start-date }} klo {{ start-time }} — {{ end-date }} klo {{ end-ti
 
 Hakemustanne voitte tarkastella tästä linkistä: {{& url }}
 
-Hausta vastaava valmistelija on mainittu hakutiedotteessa.
-
 Jos päätätte olla ottamatta avustusta vastaan, voitte tehdä ilmoituksen tästä linkistä: {{& refuse-url }}
 
-Ilmoitus tulee tehdä päätöksessä merkittyyn päivämäärään mennessä.
+Ilmoitus tulee tehdä päätöksessä mainittuun päivämäärään mennessä.
 
-Huomaathan, että jos otatte avustuksen vastaan, ei siitä tarvitse erillistä ilmoitusta tehdä.
+Jos otatte avustuksen vastaan, ei siitä tarvitse ilmoittaa erikseen.
+
+Hausta vastaava valmistelija on mainittu hakutiedotteessa.
 
 Opetushallitus
 Hakaniemenranta 6

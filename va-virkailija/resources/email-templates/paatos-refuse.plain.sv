@@ -4,11 +4,11 @@ Ansökan om understöd: {{ avustushaku-name }}
 
 Beslut link: {{& url }}
 
-Om du väljer att inte få ett bidrag kan du rapportera det i här länken: {{& refuse-url }}
+Om ni bestämmer er för att inte ta emot understödet kan ni göra en anmälan om detta via denna länk:
 
-Anmälan måste skickas senast det datum som anges i beslutet.
+Anmälan ska göras senast det datum som framgår ur beslutet.
 
-Om du ska acceptera det här stöd, måste du gör ingenting.
+Om ni tar emot understödet behöver ni inte lämna in någon särskild anmälan om detta.
 
 Den föredragande som ansvarar för ansökningen har nämnts i beslutet.
 

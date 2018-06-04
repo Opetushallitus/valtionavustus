@@ -10,7 +10,8 @@
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.virkailija.authentication :as auth]
             [oph.va.virkailija.db :as virkailija-db]
-            [oph.va.hakija.api :as hakija-api]))
+            [oph.va.hakija.api :as hakija-api]
+            [oph.va.virkailija.hakija-api-tools :as hakija-api-tools]))
 
 (def test-server-port 9001)
 (def base-url (str "http://localhost:" test-server-port))
@@ -30,7 +31,8 @@
 (def valid-payment-values
   {:state 1
    :batch-id nil
-   :payment-sum 50000})
+   :payment-sum 50000
+   :phase 0})
 
 (def user-authentication
   {:cas-ticket nil
@@ -68,7 +70,7 @@
   (java.util.UUID/randomUUID))
 
 (defn create-application [grant submission]
-  (first (exec :form-db hakija-queries/create-hakemus
+  (first (exec :form-db hakija-api-tools/create-hakemus
                {:avustushaku_id (:id grant)
                 :status :submitted
                 :user_key (generate-hash-id)
@@ -103,7 +105,7 @@
         :should-pay-comments nil
         :summary-comment nil
         :tags {:value []}
-        :talousarviotili nil}
+        :talousarviotili "29103013"}
        (:identity user-authentication)))
 
 (defn create-evaluation [grant status]

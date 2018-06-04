@@ -27,7 +27,6 @@
 (defquery list-valiselvitys-hakemus-ids "sql/hakija/hakemus/list-valiselvitys-hakemus-ids.sql")
 (defquery list-loppuselvitys-hakemus-ids "sql/hakija/hakemus/list-loppuselvitys-hakemus-ids.sql")
 (defquery update-hakemus-selvitys-email! "sql/hakija/hakemus/update-hakemus-selvitys-email.sql")
-(defquery cancel-all-applications! "sql/hakija/hakemus/cancel-all.sql")
 
 (defquery copy-form<! "sql/hakija/form/copy.sql")
 (defquery get-form-by-avustushaku "sql/hakija/form/get-by-avustushaku.sql")
@@ -53,8 +52,6 @@
 (defquery lock-hakemus "sql/common/hakija/hakemus/lock.sql")
 (defquery close-existing-hakemus! "sql/common/hakija/hakemus/close-existing.sql")
 (defquery find-matching-hakemukset-by-organization-name "sql/hakija/hakemus/find-matching-by-organization-name.sql")
-(defquery create-hakemus "sql/hakija/hakemus/create.sql")
-(defquery create-submission "sql/hakija/hakemus/create-submission.sql")
 (defquery revoke-application-tokens
   "sql/hakija/hakemus/revoke-application-tokens.sql")
 (defquery get-application "sql/hakija/hakemus/get-application.sql")
@@ -64,7 +61,6 @@
   "sql/hakija/hakemus/get-applications-by-grant.sql")
 (defquery find-application-by-register-number
   "sql/hakija/hakemus/find-application-by-register-number.sql")
-(defquery set-application-refused! "sql/hakija/hakemus/set-refused.sql")
 
 (defquery add-hakemus-paatos! "sql/hakija/hakemus/add-hakemus-paatos.sql")
 (defquery update-hakemus-paatos-decision! "sql/hakija/hakemus/update-hakemus-paatos-decision.sql")

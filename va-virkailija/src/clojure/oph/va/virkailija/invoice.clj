@@ -1,12 +1,10 @@
 (ns oph.va.virkailija.invoice
   (:require [oph.va.virkailija.lkp-templates :as lkp]
-   [clojure.data.xml :refer [emit emit-str parse
+            [clojure.data.xml :refer [emit emit-str parse
                                       sexp-as-element]]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
             [clj-time.format :as f]))
-
-(def date-formatter (f/formatter "yyyy-MM-dd"))
 
 (def organisations {"XA" 6600 "XB" 6604})
 
@@ -14,7 +12,7 @@
   ([answers key]
    (:value
     (first
-     (filter #(= (:key %) key) answers))))
+      (filter #(= (:key %) key) answers))))
   ([answers key not-found]
    (or (get-answer-value answers key) not-found)))
 
@@ -42,13 +40,14 @@
       [:Maksuera (get-batch-key batch)]
       [:Laskunpaiva (.toString (:invoice-date batch))]
       [:Erapvm (.toString (:due-date batch))]
-      [:Bruttosumma (:budget-granted application)]
+      [:Bruttosumma (:payment-sum payment)]
       [:Maksuehto "Z001"]
       [:Pitkaviite (:register-number application)]
       [:Tositepvm (.toString (:receipt-date batch))]
       [:Asiatarkastaja (:inspector-email batch)]
       [:Hyvaksyja (:acceptor-email batch)]
       [:Tositelaji (:document-type batch)]
+      [:Maksutili (:transaction-account batch)]
       [:Toimittaja
        [:Y-tunnus (get-answer-value answers "business-id")]
        [:Nimi (:organization-name application)]
@@ -62,7 +61,7 @@
        [:Valuutta (:currency batch)]]
       [:Postings
        [:Posting
-        [:Summa (:budget-granted application)]
+        [:Summa (:payment-sum payment)]
         [:LKP-tili (lkp/get-lkp-account (:answers application))]
         [:TaKp-tili (:takp-account application)]
         [:Toimintayksikko (:operational-unit grant)]
@@ -87,10 +86,6 @@
 (defn read-response-xml [xml]
   {:register-number (first (get-content xml [:VA-invoice :Header :Pitkaviite]))
    :invoice-date (first (get-content xml [:VA-invoice :Header :Maksupvm]))})
-
-(defn tags-to-str [tags]
-  "Converts XML document of clojure.data.xml.elements tags to a string."
-  (emit-str tags))
 
 (defn write-xml! [tags file]
   "Writes XML document to a file.

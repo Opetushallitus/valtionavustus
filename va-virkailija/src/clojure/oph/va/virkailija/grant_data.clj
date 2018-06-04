@@ -48,8 +48,3 @@
 
 (defn get-grant-applications [grant-id]
   (application-data/get-applications-with-evaluation-by-grant grant-id))
-
-(defn get-unpaid-applications [grant-id]
-  (filterv
-    application-data/is-unpaid?
-    (application-data/get-applications-with-evaluation-by-grant grant-id)))

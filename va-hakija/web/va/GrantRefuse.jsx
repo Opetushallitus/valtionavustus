@@ -45,7 +45,7 @@ export default class FormContainer extends React.Component {
                                translationKey="grant-refuse-sent" lang={lang}/>
               <span> {DateUtil.asDateTimeString(refusedAt)}</span>
             </div>}
-          <div className={refused ? "disabled" : null}>
+          <div className={refused || !this.props.isTokenValid ? "disabled" : null}>
             <p>
               <LocalizedString translations={translations.form}
                                translationKey="grant-refuse-info" lang={lang}/>

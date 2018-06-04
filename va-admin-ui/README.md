@@ -23,7 +23,8 @@ lein repl
 # user=> (cljs-repl)
 ```
 
-Figwheel compiler lähtee käyntiin myös komennolla:
+Jos komentoriviltä Figwheeliä haluaa ajaa, niin Figwheel compiler lähtee
+käyntiin myös komennolla:
 
 ``` bash
 ../lein figwheel
@@ -31,6 +32,14 @@ Figwheel compiler lähtee käyntiin myös komennolla:
 
 Kääntäjä luo buildin hakemistoon
 `../va-virkailija/resources/public/admin-ui`.
+Samaiseen kansioon tulee myös mimimoidut CSS-tiedostot.
+
+Minifieristä johtuen CSS-tiedostojen muutosten seuraamiseen pitää käynnistää
+erillinen minifier watch:
+
+``` bash
+../lein minify-assets watch
+```
 
 Figwheel puskee muutokset `.cljs`-tiedostoissa selaimelle. Kun Figwheel
 on käynnistynyt, pitäisi selaimeen aueta `/admin-ui/`.

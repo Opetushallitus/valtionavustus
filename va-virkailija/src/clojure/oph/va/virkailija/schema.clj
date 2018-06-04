@@ -200,56 +200,6 @@
   "Find avustushaut by organization name (minimum string length: 3)"
   (s/conditional (fn [s] (> (count s) 2)) s/Str))
 
-(def InvoiceSupplier
-  {:Y-tunnus s/Str
-   (s/optional-key :Hlo-tunnus) s/Str
-   :Nimi s/Str
-   :Postiosoite s/Str
-   :Paikkakunta s/Str
-   :Maa s/Str
-   :Iban-tili s/Str
-   :Pankkiavain s/Str
-   :Pankki-maa s/Str
-   :Kieli s/Str
-   :Valuutta s/Str})
-
-(def InvoiceHeader
-  {:Maksuera s/Str
-   :Laskunpaiva s/Str
-   :Erapvm s/Str
-   :Bruttosumma s/Num
-   :Maksuehto s/Str
-   :Pitkaviite s/Str
-   :Tositepvm s/Str
-   :Asiatarkastaja s/Str
-   :Hyvaksyja s/Str
-   :Tositelaji s/Str
-   :Toimittaja InvoiceSupplier})
-
-(def InvoicePostings
-  {:Summa s/Num
-   :LKP-tili s/Str
-   (s/optional-key :ALV-koodi) s/Str
-   :TaKp-tili s/Str
-   :Toimintayksikko s/Str
-   :Valtuusnro (s/optional-key s/Str)
-   :Projekti s/Str
-   :Toiminto s/Str
-   :Suorite (s/optional-key s/Str)
-   :AlueKunta (s/optional-key s/Str)
-   :Kumppani s/Str
-   :Seuko1 (s/optional-key s/Str)
-   :Seuko2 (s/optional-key s/Str)
-   (s/optional-key :Varalla1) s/Str
-   (s/optional-key :Varalla2) s/Str})
-
-(def Invoice
-  "Generated invoice"
-  {:VA-invoice
-   {:Header InvoiceHeader
-    :Postings
-    {:Posting InvoicePostings}}})
-
 (s/defschema Payment
   "Payment"
   {(s/optional-key :id) s/Int
@@ -273,11 +223,12 @@
    (s/optional-key :filename) (s/maybe s/Str)
    (s/optional-key :user-name) s/Str
    (s/optional-key :batch-id) (s/maybe s/Int)
+   :phase (s/maybe s/Int)
    :payment-sum s/Int})
 
-(s/defschema PaymentBatchNumber
-  "Payment batch number"
-  {:batch-number s/Int})
+(s/defschema GrantPayment
+  "Grant Payment (for creating grant payments)"
+  {:phase s/Int})
 
 (s/defschema GrantStatus
   "Grant status"
@@ -308,12 +259,6 @@
    (s/optional-key :project) (s/maybe s/Str)
    (s/optional-key :operation-id) (s/maybe s/Int)
    (s/optional-key :operation) (s/maybe s/Str)})
-
-(s/defschema GrantRole
-  "Grant Role"
-  {:grant-id s/Int
-   :oid s/Str
-   :role s/Str})
 
 (s/defschema Grants
   "List of grants"

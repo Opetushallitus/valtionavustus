@@ -4,7 +4,6 @@
 (def material-styles
   {:font-family ["Open Sans" "Helvetica" "sans-serif"]
    :line-height "1.45"
-   :table {:font-size "95%"}
    :palette {:text-color (color :black)
              :primary1-color "#00b5f0"
              :picker-header-color "#4c7f00"
@@ -12,7 +11,6 @@
 
 (def general-styles
   {:font-family ["Open Sans" "Helvetica" "sans-serif"]
-   :font-size "95%"
    :line-height "1.45"})
 
 (def link {:color "#159ecb" :font-size "font-size: 1.25rem"})
@@ -35,7 +33,6 @@
                        :padding 20})
 
 (def table-footer {:overflow "hidden"
-                   :padding-top 10
                    :border-top "1px solid #f6f4f0"
                    :padding-right 14})
 
@@ -49,6 +46,13 @@
 
 (def date-picker text-field)
 
+(def date-picker-field
+  {:width "auto"
+   :height "auto"
+   :line-height "inherit"
+   :font-family "inherit"
+   :font-size 13})
+
 (def tabs-header {:cursor "pointer"})
 
 (def tab-header-link {:text-decoration "none"})
@@ -59,13 +63,25 @@
 
 (def popup {:padding 10})
 
-(def tooltip {:text-align "center"
-              :margin-left 5
-              :margin-right 5
-              :width 20
-              :height 20
-              :border-radius 50
+(def tooltip {:border-radius 50
               :color "gray"
               :background-color "lightgray"
               :cursor "pointer"
-              :padding "1px 5px 1px 5px"})
+              :margin-left 5
+              :border-color "transparent"
+              :box-shadow "0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"})
+
+(def card-style
+  {:box-shadow "rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px"
+   :background-color "white"
+   :border-radius "2px"
+   :margin 10})
+
+(def badge {:text-align "center"
+            :margin-left 5
+            :margin-right 5
+            :border-radius 2
+            :color "white"
+            :background-color "#159ecb"
+            :cursor "pointer"
+            :padding "1px 5px 1px 5px"})

@@ -1,5 +1,6 @@
 (ns oph.va.admin-ui.payments.utils
-  (:require [cljs-time.format :as tf]))
+  (:require [cljs-time.format :as tf]
+            [cljs-time.core :as t]))
 
 (def re-email
   #"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
@@ -7,6 +8,10 @@
 (def date-formatter (tf/formatter "dd.MM.yyyy"))
 
 (def date-time-formatter (tf/formatter "dd.MM.yyyy HH:mm"))
+
+(def today-start (t/today-at 0 0))
+
+(def today-end (t/today-at 23 59 59))
 
 (defn to-simple-date [d]
   (if (empty? d) nil (tf/unparse-local date-formatter (tf/parse d))))
@@ -45,3 +50,13 @@
   ([col pred] (find-index-of col pred 0 (count col))))
 
 (defn valid-email? [v] (and (not-empty? v) (not-nil? (re-matches re-email v))))
+
+(defn is-today? [d]
+  (let [date (if (string? d)
+               (tf/parse d)
+               d)
+        today (t/today)]
+    (and
+      (= (t/day date) (t/day today))
+      (= (t/year date) (t/year today))
+      (= (t/month date) (t/month today)))))

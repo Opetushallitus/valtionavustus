@@ -90,7 +90,8 @@ function onInitialStateLoaded(initialState) {
       initialState.saveStatus.hakemusId,
       initialState.configuration.lang,
       initialState.configuration.develMode,
-      initialState.token)
+      initialState.token,
+      initialState.isTokenValid)
   }
 }
 
