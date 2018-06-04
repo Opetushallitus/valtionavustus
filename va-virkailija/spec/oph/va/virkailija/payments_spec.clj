@@ -42,7 +42,8 @@
               {:application-id (:id application)
                :payment-sum 20000
                :batch-id (:id batch)
-               :state 1}
+               :state 1
+               :phase 0}
               {:person-oid "12345"
                :first-name "Test"
                :surname "User"})))
@@ -80,7 +81,8 @@
                       {:application-id (:id application)
                        :payment-sum 20000
                        :batch-id (:id batch)
-                       :state 1}
+                       :state 1
+                       :phase 0}
                       {:person-oid "12345"
                        :first-name "Test"
                        :surname "User"})]
@@ -106,50 +108,6 @@
           (should= 200 (:status response))
           (should= 2 (count (json->map (:body response)))))))
 
-  (it "gets application payments history"
-      (let [grant (first (grant-data/get-grants))]
-        (payments-data/delete-grant-payments (:id grant))
-        (let [submission (create-submission
-                           (:form grant) {:budget-oph-share 40000})
-              application (create-application grant submission)
-              batch (payment-batches-data/create-batch
-                      {:receipt-date payment-date
-                       :due-date payment-date
-                       :partner ""
-                       :grant-id (:id grant)
-                       :document-id ""
-                       :currency "EUR"
-                       :invoice-date payment-date
-                       :document-type "XA"
-                       :transaction-account "6000"
-                       :acceptor-email "acceptor@local"
-                       :inspector-email "inspector@local"})
-              payment1 (payments-data/create-payment
-                         {:application-id (:id application)
-                          :payment-sum 20000
-                          :batch-id (:id batch)
-                          :state 1}
-                         example-identity)
-              payment2 (payments-data/create-payment
-                         {:application-id (:id application)
-                          :payment-sum 20000
-                          :batch-id (:id batch)
-                          :state 1}
-                         example-identity)]
-          (payments-data/update-payment
-            (assoc payment1 :state 2 :filename "example.xml") example-identity)
-
-          (let [response
-                (get!
-                  (str "/api/v2/applications/"
-                       (:id application) "/payments-history/"))]
-            (should= 200 (:status response))
-            (let [payments (json->map (:body response))
-                  payment (some #(when (= (:state %) 2) %) payments)]
-              (should= 3 (count payments))
-              (should= (:id payment1) (:id payment))
-              (should= 1 (:version payment)))))))
-
   (it "gets grant payments info"
       (let [grant (first (grant-data/get-grants))]
         (payments-data/delete-grant-payments (:id grant))
@@ -172,19 +130,22 @@
                          {:application-id (:id application)
                           :payment-sum 20000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 0}
                          example-identity)
               payment2 (payments-data/create-payment
                          {:application-id (:id application)
                           :payment-sum 30000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 1}
                          example-identity)
               payment3 (payments-data/create-payment
                          {:application-id (:id application)
                           :payment-sum 25000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 2}
                          example-identity)]
           (payments-data/update-payment
             (assoc payment1 :state 2 :filename "example.xml") example-identity)
@@ -218,19 +179,22 @@
                          {:application-id (:id application)
                           :payment-sum 20000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 0}
                          example-identity)
               payment2 (payments-data/create-payment
                          {:application-id (:id application)
                           :payment-sum 30000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 1}
                          example-identity)
               payment3 (payments-data/create-payment
                          {:application-id (:id application)
                           :payment-sum 25000
                           :batch-id (:id batch)
-                          :state 1}
+                          :state 1
+                          :phase 2}
                          example-identity)]
           (payments-data/update-payment
             (assoc payment1 :state 2 :filename "example.xml") example-identity)
@@ -281,7 +245,8 @@
             application (create-application grant submission)
             payment-values (assoc valid-payment-values
                                   :application-id (:id application)
-                                  :application-version (:version application))
+                                  :application-version (:version application)
+                                  :phase 0)
             {:keys [status body]}
             (post! "/api/v2/payments/" payment-values)]
         (should= 200 status)
@@ -296,7 +261,8 @@
             application (create-application grant submission)
             payment-values (assoc valid-payment-values
                                   :application-id (:id application)
-                                  :application-version (:version application))
+                                  :application-version (:version application)
+                                  :phase 0)
             {:keys [body]}
             (post! "/api/v2/payments/" payment-values)
             payment (json->map body)]
@@ -313,7 +279,8 @@
             application (create-application grant submission)
             payment-values (assoc valid-payment-values
                                   :application-id (:id application)
-                                  :application-version (:version application))
+                                  :application-version (:version application)
+                                  :phase 0)
             {:keys [body]}
             (post! "/api/v2/payments/" payment-values)
             payment
@@ -355,7 +322,8 @@
               {:application-id (:id application)
                :payment-sum 20000
                :batch-id nil
-               :state 1}
+               :state 1
+               :phase 0}
               {:person-oid "12345"
                :first-name "Test"
                :surname "User"})
@@ -401,5 +369,36 @@
                    (assoc application :budget-oph-share 100000)
                    (-> grant
                      (assoc-in [:content :multiplemaksuera] true)))))))
+
+(describe
+  "Payments data functions"
+
+  (tags :server :payments :paymentsfunctions)
+
+  (around-all
+    [_]
+    (with-test-server!
+      :virkailija-db
+      #(start-server
+         {:host "localhost"
+          :port test-server-port
+          :auto-reload? false}) (_)))
+
+  (it "updates payment"
+      (let [grant (first (grant-data/get-grants))
+            payment (create-payment grant)
+            updated-payment (payments-data/update-payment
+                              (assoc payment
+                                     :state 1
+                                     :filename "example.xml")
+                              example-identity)]
+        (should (some? payment))
+        (should (some? updated-payment))
+        (should= 1 (:state updated-payment))
+        (should (nil? (:version-closed
+                       (payments-data/get-payment (:id updated-payment)))))
+        (should (some? (:version-closed
+                       (payments-data/get-payment
+                         (:id payment) (:version payment))))))))
 
 (run-specs)

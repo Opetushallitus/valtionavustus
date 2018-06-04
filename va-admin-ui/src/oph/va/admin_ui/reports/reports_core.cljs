@@ -7,7 +7,7 @@
    [oph.va.admin-ui.dialogs :as dialogs]
    [reagent.core :as r]))
 
-(def colors
+(def ^:private colors
   {:blue "rgb(54, 162, 235)"
    :green "rgb(75, 192, 192)"
    :orange "rgb(255, 159, 64)"
@@ -16,16 +16,16 @@
    :yellow "rgb(255, 205, 86)"
    :grey "rgb(201, 203, 207)"})
 
-(defonce data (r/atom {}))
+(defonce ^:private data (r/atom {}))
 
-(defn show-data! [id chart-data]
+(defn- show-data! [id chart-data]
   (let [context (.getContext (.getElementById js/document id) "2d")]
     (js/Chart. context (clj->js chart-data))))
 
-(defn create-canvas [id]
+(defn- create-canvas [id]
   (fn [] [:canvas {:id id :width 1200 :height 380}]))
 
-(defn gen-budget-data [applications granted]
+(defn- gen-budget-data [applications granted]
   {:type "bar"
    :options {:title {:display true :text "Budjetti"}
              :responsive true}
@@ -47,7 +47,7 @@
                       :label "Kulut"
                       :backgroundColor "#f9ff61"}]}})
 
-(defn gen-evaluations-data [applications accepted rejected]
+(defn- gen-evaluations-data [applications accepted rejected]
   {:type "bar"
    :options {:title {:display true :text "Hakemukset"}
              :responsive true}
@@ -68,7 +68,7 @@
                       :backgroundColor "#ff6384"
                       :borderColor "#ff6384"}]}})
 
-(defn gen-granted-data [granted]
+(defn- gen-granted-data [granted]
   {:type "pie"
    :options {:title {:display true :text "Myönnetyt avustukset"}
              :responsive true}
@@ -79,7 +79,7 @@
                       :backgroundColor (vals colors)}]}})
 
 
-(defn create-chart [id data]
+(defn- create-chart [id data]
   (with-meta
       (create-canvas id)
       {:component-did-mount

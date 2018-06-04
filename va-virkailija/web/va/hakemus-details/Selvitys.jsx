@@ -10,7 +10,7 @@ import ApplicationPayments from './ApplicationPayments.jsx'
 export default class Selvitys extends Component {
   render() {
     const {controller, hakemus, avustushaku, translations, selvitysType,
-           userInfo, multibatchEnabled} = this.props
+           userInfo, multibatchEnabled, isPresentingOfficer} = this.props
     const hasSelvitys = _.has(hakemus,`selvitys.${selvitysType}.answers`)
     const preview = _.eq(selvitysType, 'valiselvitys')
     const selvitysHakemus = _.get(hakemus,`selvitys.${selvitysType}`)
@@ -33,7 +33,8 @@ export default class Selvitys extends Component {
                                index={selvitysType === "valiselvitys" ? 1 : 2}
                                payments={hakemus.payments}
                                onAddPayment={controller.addPayment}
-                               onRemovePayment={controller.removePayment}/>}
+                               onRemovePayment={controller.removePayment}
+                               readonly={!isPresentingOfficer}/>}
         <SelvitysLink avustushaku={avustushaku} hakemus={hakemus} selvitysType={selvitysType} preview={preview} label="Linkki lomakkeelle"/>
         {hasSelvitys && <SelvitysEmail controller={controller}
                                        selvitysType={selvitysType}

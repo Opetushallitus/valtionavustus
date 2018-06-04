@@ -57,12 +57,6 @@
                         :port test-server-port
                         :auto-reload? false}) (_)))
 
-  (it "checks if application is unpaid"
-      (let [grant (first (grant-data/get-grants))
-            submission (create-submission (:form grant) {})
-            application (create-application grant submission)]
-        (should-not (application-data/is-unpaid? (:id application)))))
-
   (it "find application by register number"
       (let [grant (first (grant-data/get-grants))
             submission (create-submission (:form grant) {})
@@ -89,13 +83,16 @@
             submission (create-submission (:form grant) {})
             application (create-application grant submission)
             payment (payments-data/create-payment
-              {:application-id (:id application)
-               :payment-sum 26000
-               :batch-id nil
-               :state 0}
-              user)
-            unsent (application-data/get-application-unsent-payment
-                     (:id application))]
+                      {:application-id (:id application)
+                       :payment-sum 26000
+                       :batch-id nil
+                       :state 0
+                       :phase 0}
+                      user)
+            unsent-payments (application-data/get-application-unsent-payments
+                              (:id application))
+            unsent (first unsent-payments)]
+        (should= 1 (count unsent-payments))
         (should= (:id application) (:application-id unsent))
         (should= 26000 (:payment-sum unsent))
         (should= 0 (:version unsent))))
@@ -105,18 +102,22 @@
             submission (create-submission (:form grant) {})
             application (create-application grant submission)
             payment (payments-data/create-payment
-              {:application-id (:id application)
-               :payment-sum 26000
-               :batch-id nil
-               :state 0}
-              user)
+                      {:application-id (:id application)
+                       :payment-sum 26000
+                       :batch-id nil
+                       :state 0
+                       :phase 0}
+                      user)
             updated (payments-data/update-payment
                       (assoc payment
                              :payment-sum 27000
                              :filename "file.xml")
                       user)
-            updated-unsent (application-data/get-application-unsent-payment
-                             (:id application))]
+            updated-unsent-payments
+            (application-data/get-application-unsent-payments
+              (:id application))
+            updated-unsent (first updated-unsent-payments)]
+        (should= 1 (count updated-unsent-payments))
         (should= (:id application) (:application-id updated-unsent))
         (should= 27000 (:payment-sum updated-unsent))
         (should= 1 (:version updated-unsent))))
@@ -126,14 +127,15 @@
             submission (create-submission (:form grant) {})
             application (create-application grant submission)
             payment (payments-data/create-payment
-              {:application-id (:id application)
-               :payment-sum 26000
-               :batch-id nil
-               :state 0}
-              user)
+                      {:application-id (:id application)
+                       :payment-sum 26000
+                       :batch-id nil
+                       :state 0
+                       :phase 0}
+                      user)
             updated (payments-data/update-payment
                       (assoc payment :state 2 :filename "file.xml") user)]
-        (should= nil (application-data/get-application-unsent-payment
-                       (:id application))))))
+        (should= 0 (count (application-data/get-application-unsent-payments
+                            (:id application)))))))
 
 (run-specs)

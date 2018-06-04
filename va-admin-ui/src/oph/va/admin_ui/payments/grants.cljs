@@ -4,23 +4,20 @@
             [cljs-time.core :as t]
             [oph.va.admin-ui.payments.utils :refer [date-formatter]]))
 
-(def lifetime-limit (t/minus (t/now) (t/months 12)))
+(def ^:private lifetime-limit (t/minus (t/now) (t/months 12)))
 
-(defn parse-date [s]
+(defn- parse-date [s]
   (if (empty? s)
     nil
     (f/parse date-formatter s)))
 
-(defn convert-grant-dates
-  [grant]
+(defn- convert-grant-dates [grant]
   (update grant :loppuselvitysdate parse-date))
 
-(defn convert-dates
-  [grants]
+(defn convert-dates [grants]
   (mapv convert-grant-dates grants))
 
-(defn grant-matches?
-  [g s]
+(defn grant-matches? [g s]
   (if (empty? s)
     true
     (let [s-lower (lower-case s)]

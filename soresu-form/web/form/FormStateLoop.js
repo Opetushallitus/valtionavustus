@@ -69,9 +69,14 @@ export default class FormStateLoop {
                 validationErrors: Immutable({})
               }, values)
     })
+    const tokenValidation = query.token ?
+        Bacon.fromPromise(
+          HttpUtil.get(formOperations.urlCreator.validateTokenUrl(query.hakemus, query.token)))
+        : {valid: false}
 
     const initialStateTemplate = {
       form: initialFormStateP,
+      tokenValidation: tokenValidation,
       saveStatus: {
         changes: false,
         saveInProgress: false,

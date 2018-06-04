@@ -4,8 +4,7 @@
             [oph.soresu.common.config :refer [config]]
             [clojure.tools.trace :refer [trace]]
             [clojure.tools.logging :as log]
-            [clostache.parser :refer [render]]
-            [oph.va.virkailija.application-data :refer [get-application-token]]))
+            [clostache.parser :refer [render]]))
 
 (def mail-titles
   {:change-request {:fi "Täydennyspyyntö avustushakemukseesi"
@@ -76,10 +75,6 @@
   (let [va-url (-> config :server :url lang)
         lang-str (or (clojure.core/name lang) "fi")]
   (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" user-key "&lang=" lang-str)))
-
-(defn payment-url [grant-id]
-  (format "%s/payments/?grant=%d"
-          (get-in config [:server :virkailija-url]) grant-id))
 
 (defn send-paatos! [to avustushaku hakemus reply-to]
   (let [lang-str (:language hakemus)

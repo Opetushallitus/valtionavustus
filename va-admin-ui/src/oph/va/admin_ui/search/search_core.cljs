@@ -2,32 +2,30 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
    [reagent.core :as r]
-   [cljs.core.async :refer [put! <! close!]]
    [oph.va.admin-ui.components.ui :as va-ui]
    [oph.va.admin-ui.theme :as theme]
    [oph.va.admin-ui.payments.utils :refer [to-simple-date-time]]
    [oph.va.admin-ui.connection :as connection]
-   [cljs-react-material-ui.core :refer [get-mui-theme color]]
    [cljs-react-material-ui.reagent :as ui]
    [oph.va.admin-ui.dialogs :as dialogs]))
 
-(defonce search-results
+(defonce ^:private search-results
   {:grants (r/atom [])
    :applications (r/atom [])})
 
-(defonce state
+(defonce ^:private state
   (r/atom {:grants-searching false
            :applications-searching false
            :term-length-error false}))
 
-(def max-str-len 60)
+(def ^:private max-str-len 60)
 
-(defn shrink [s]
+(defn- shrink [s]
   (if (> (count s) (- max-str-len 3))
     (str (subs s 0 max-str-len) "...")
     s))
 
-(defn search-items [term]
+(defn- search-items [term]
   (swap! state assoc :grants-searching true :applications-searching true)
   (go
     (let [result (<! (connection/find-grants term))]
@@ -46,7 +44,7 @@
           (select-keys result [:status :error-text])))
       (swap! state assoc :applications-searching false))))
 
-(defn render-result-item [i link title content]
+(defn- render-result-item [i link title content]
   [:div {:key i}
    [:h3
     [:a {:href link}
@@ -54,24 +52,24 @@
       (shrink title)]]]
    [:div content]])
 
-(defn format-title [grant]
+(defn- format-title [grant]
   (str (when (not (empty? (:register-number grant)))
          (str (:register-number grant) " - "))
        (get-in grant [:content :name :fi])))
 
-(defn format-duration [duration]
+(defn- format-duration [duration]
   (str (when (some? (:start duration)) (to-simple-date-time (:start duration)))
          " - "
          (when (some? (:end duration)) (to-simple-date-time (:end duration)))))
 
-(defn render-grant [i grant]
+(defn- render-grant [i grant]
   (render-result-item
     i
     (str "/avustushaku/" (:id grant) "/")
     (format-title grant)
     (format-duration (get-in grant [:content :duration]))))
 
-(defn render-application [i application]
+(defn- render-application [i application]
   (render-result-item
     i
     (str "/avustushaku/"
@@ -81,7 +79,7 @@
          (:organization-name application))
     (:project-name application)))
 
-(defn render-search [results title renderer searching?]
+(defn- render-search [results title renderer searching?]
   [:div
    [:h2 title]
    (if searching?
