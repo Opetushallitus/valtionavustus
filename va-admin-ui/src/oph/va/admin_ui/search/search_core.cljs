@@ -55,7 +55,7 @@
    (apply vector :div content)])
 
 (defn- format-title [grant]
-  (str (when (not (empty? (:register-number grant)))
+  (str (when-not (empty? (:register-number grant))
          (str (:register-number grant) " - "))
        (get-in grant [:content :name :fi])))
 
@@ -79,7 +79,7 @@
     (str (get application :register-number)
          " - "
          (:organization-name application))
-    (when (not (empty? (:project-name application)))
+    (when-not (empty? (:project-name application))
       [:div [:label {:style {:font-weight "bold" :padding-right 5}} "Hanke:"]
        (:project-name application)])
     [:div
