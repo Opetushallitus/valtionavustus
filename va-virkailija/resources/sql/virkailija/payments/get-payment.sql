@@ -1,17 +1,10 @@
-SELECT p.id, p.version, p.version_closed, p.created_at, p.application_id,
-  p.application_version, p.state, b.batch_number, b.document_type,
-  b.invoice_date, b.due_date, b.receipt_date, b.transaction_account, b.currency,
-  b.partner, b.inspector_email, b.acceptor_email, p.batch_id, p.payment_sum,
-  p.phase
+SELECT id, version, version_closed, created_at, application_id,
+  application_version, state, batch_id, payment_sum, phase
 FROM
-  virkailija.payments p
-LEFT JOIN
-  virkailija.payment_batches b
-    ON
-      b.id = p.batch_id
+  virkailija.payments
 WHERE
   p.id = :id AND p.deleted IS NULL AND p.version_closed IS NULL
 ORDER
   BY p.version DESC
 LIMIT
-  1;
+  1
