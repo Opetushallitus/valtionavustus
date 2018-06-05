@@ -79,7 +79,8 @@
   (tags :invoice)
 
   (it "calculates batch id"
-      (should= "660017013" (invoice/get-batch-key payment)))
+      (should= "660017013"
+               (invoice/get-batch-key payment {:document-type "XA"})))
   (it "returns nil if any needed value is nil"
       (should= nil (invoice/get-batch-key nil))
       (should= nil (invoice/get-batch-key {:some "Value"}))))
