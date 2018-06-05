@@ -104,7 +104,7 @@
          :error error
          :on-change #(reset! search-term (-> % .-target .-value))
          :value @search-term
-         :on-enter-pressed #(do (prn on-change) (on-change @search-term))
+         :on-enter-pressed #(on-change @search-term)
          :style (assoc theme/text-field :width 575)}]])))
 
 (defn home-page []
@@ -119,7 +119,6 @@
      :on-change
      #(if (> (count %) 3)
         (do
-          (prn "Hello")
           (search-items %)
           (swap! state assoc :term-length-error false))
         (swap! state assoc :term-length-error true))}]
