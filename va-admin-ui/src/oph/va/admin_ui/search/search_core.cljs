@@ -111,7 +111,9 @@
   [:div
    [search-field
     {:default-value (js/decodeURIComponent
-                      (router/get-param (router/get-current-query) :search))
+                      (or
+                        (router/get-param (router/get-current-query) :search)
+                        ""))
      :error (:term-length-error @state)
      :on-change
      #(if (> (count %) 3)
