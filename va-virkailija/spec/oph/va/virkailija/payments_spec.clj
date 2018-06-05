@@ -34,8 +34,6 @@
                  :document-id ""
                  :currency "EUR"
                  :invoice-date payment-date
-                 :document-type "XA"
-                 :transaction-account "6000"
                  :acceptor-email "acceptor@local"
                  :inspector-email "inspector@local"})]
     (payments-data/create-payment
@@ -73,8 +71,6 @@
                      :document-id ""
                      :currency "EUR"
                      :invoice-date payment-date
-                     :document-type "XA"
-                     :transaction-account "6000"
                      :acceptor-email "acceptor@local"
                      :inspector-email "inspector@local"})
             payment (payments-data/create-payment
@@ -122,8 +118,6 @@
                        :document-id ""
                        :currency "EUR"
                        :invoice-date payment-date
-                       :document-type "XA"
-                       :transaction-account "6000"
                        :acceptor-email "acceptor@local"
                        :inspector-email "inspector@local"})
               payment1 (payments-data/create-payment
@@ -171,8 +165,6 @@
                        :document-id ""
                        :currency "EUR"
                        :invoice-date payment-date
-                       :document-type "XA"
-                       :transaction-account "6600"
                        :acceptor-email "acceptor@local"
                        :inspector-email "inspector@local"})
               payment1 (payments-data/create-payment

@@ -10,6 +10,7 @@
                     valid-payment-values delete! add-mock-authentication
                     create-application-evaluation
                     create-application-evaluation]]
+            [oph.va.virkailija.hakija-api-tools :as hakija-api-tools]
             [oph.va.virkailija.application-data :as application-data]
             [oph.va.virkailija.payment-batches-data :as payment-batches-data]
             [oph.va.virkailija.grant-data :as grant-data]
@@ -80,10 +81,11 @@
 
   (it "calculates batch id"
       (should= "660017013"
-               (invoice/get-batch-key payment {:document-type "XA"})))
+               (invoice/get-batch-key
+                 payment {:content {:document-type "XA"}})))
   (it "returns nil if any needed value is nil"
-      (should= nil (invoice/get-batch-key nil))
-      (should= nil (invoice/get-batch-key {:some "Value"}))))
+      (should= nil (invoice/get-batch-key nil {}))
+      (should= nil (invoice/get-batch-key {:some "Value"} {}))))
 
 (describe
   "Get response XML element content"
@@ -138,7 +140,12 @@
                         :without-authentication? true}) (_)))
 
   (it "creates invoice from payment"
-      (let [grant (first (grant-data/get-grants))
+      (let [grant (hakija-api-tools/create-grant
+                    (-> (first (grant-data/get-grants))
+                        (:id)
+                        (grant-data/get-grant)
+                        (assoc-in [:content :document-type] "XA")
+                        (assoc-in [:content :transaction-account] "5000")))
             submission
             (create-submission
               (:form grant)
@@ -161,8 +168,6 @@
                        :document-id "ID12345"
                        :currency "EUR"
                        :invoice-date (java.time.LocalDate/of 2017 12 20)
-                       :document-type "XA"
-                       :transaction-account "5000"
                        :acceptor-email "acceptor@example.com"
                        :inspector-email "inspector@example.com"})
                     :created-at (f/parse "2017-12-20T10:24:59.750Z"))

@@ -1,11 +1,18 @@
 (ns oph.va.virkailija.hakija-api-tools
   (:require [yesql.core :refer [defquery]]
             [oph.va.hakija.api.queries :as hakija-queries]
-            [oph.soresu.common.db :refer [exec exec-all]]))
+            [oph.soresu.common.db :refer [exec exec-all]]
+            [oph.va.hakija.api :as hakija-api]))
 
 (defquery cancel-all-applications! "sql/spec/hakija/cancel-all-applications.sql")
 (defquery set-application-refused! "sql/spec/hakija/set-application-refused.sql")
 (defquery create-hakemus "sql/spec/hakija/create-hakemus.sql")
+
+(defn create-grant [{:keys [content form decision haku-type project-id
+                            operation-id operational-unit-id]}]
+  (hakija-api/create-avustushaku
+    content form (or decision {}) haku-type project-id
+    operation-id operational-unit-id))
 
 (defn cancel-all-applications []
   (exec :form-db cancel-all-applications! {}))
