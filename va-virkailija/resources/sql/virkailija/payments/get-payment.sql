@@ -3,8 +3,8 @@ SELECT id, version, version_closed, created_at, application_id,
 FROM
   virkailija.payments
 WHERE
-  p.id = :id AND p.deleted IS NULL AND p.version_closed IS NULL
+  id = :id AND deleted IS NULL AND version_closed IS NULL
 ORDER
-  BY p.version DESC
+  BY version DESC
 LIMIT
   1
