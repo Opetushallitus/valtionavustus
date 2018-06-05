@@ -10,7 +10,6 @@
                     valid-payment-values delete! add-mock-authentication
                     create-application-evaluation
                     create-application-evaluation]]
-            [oph.va.virkailija.hakija-api-tools :as hakija-api-tools]
             [oph.va.virkailija.application-data :as application-data]
             [oph.va.virkailija.payment-batches-data :as payment-batches-data]
             [oph.va.virkailija.grant-data :as grant-data]
@@ -140,12 +139,7 @@
                         :without-authentication? true}) (_)))
 
   (it "creates invoice from payment"
-      (let [grant (hakija-api-tools/create-grant
-                    (-> (first (grant-data/get-grants))
-                        (:id)
-                        (grant-data/get-grant)
-                        (assoc-in [:content :document-type] "XA")
-                        (assoc-in [:content :transaction-account] "5000")))
+      (let [grant (first (grant-data/get-grants true))
             submission
             (create-submission
               (:form grant)
@@ -224,11 +218,14 @@
             (invoice/payment-to-invoice
               {:payment payment
                :application application-with-evaluation
-               :grant (assoc grant
-                             :project "6600A-M2024"
-                             :operational-unit "6600100130"
-                             :operation "6600151502"
-                             :lkp-account "82500000")
+               :grant (-> grant
+                          (assoc
+                            :project "6600A-M2024"
+                            :operational-unit "6600100130"
+                            :operation "6600151502"
+                            :lkp-account "82500000")
+                          (assoc-in [:content :document-type] "XA")
+                          (assoc-in [:content :transaction-account] "5000"))
                :batch batch}))))))
 
 (run-specs)
