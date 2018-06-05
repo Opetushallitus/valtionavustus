@@ -288,7 +288,8 @@
                                          :takp-account s/Str}])
    (s/optional-key :refused) (s/maybe s/Bool)
    (s/optional-key :refused-comment) (s/maybe s/Str)
-   (s/optional-key :refused-at) (s/maybe s/Inst)})
+   (s/optional-key :refused-at) (s/maybe s/Inst)
+   (s/optional-key :grant-name) (s/maybe s/Str)})
 
 (s/defschema PaymentsEmail
   "Grant payments email"

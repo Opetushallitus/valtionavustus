@@ -6,6 +6,7 @@
    [oph.va.admin-ui.theme :as theme]
    [oph.va.admin-ui.payments.utils :refer [to-simple-date-time]]
    [oph.va.admin-ui.connection :as connection]
+   [oph.va.admin-ui.router :as router]
    [cljs-react-material-ui.reagent :as ui]
    [oph.va.admin-ui.dialogs :as dialogs]))
 
@@ -27,6 +28,7 @@
 
 (defn- search-items [term]
   (swap! state assoc :grants-searching true :applications-searching true)
+  (router/set-query! {:search term})
   (go
     (let [result (<! (connection/find-grants term))]
       (if (:success result)
@@ -44,16 +46,16 @@
           (select-keys result [:status :error-text])))
       (swap! state assoc :applications-searching false))))
 
-(defn- render-result-item [i link title content]
+(defn- render-result-item [i link title & content]
   [:div {:key i}
    [:h3
-    [:a {:href link}
+    [:a {:href link :target "_blank"}
      [:span {:class "search-result-title"}
       (shrink title)]]]
-   [:div content]])
+   (apply vector :div content)])
 
 (defn- format-title [grant]
-  (str (when (not (empty? (:register-number grant)))
+  (str (when-not (empty? (:register-number grant))
          (str (:register-number grant) " - "))
        (get-in grant [:content :name :fi])))
 
@@ -77,7 +79,12 @@
     (str (get application :register-number)
          " - "
          (:organization-name application))
-    (:project-name application)))
+    (when-not (empty? (:project-name application))
+      [:div [:label {:style {:font-weight "bold" :padding-right 5}} "Hanke:"]
+       (:project-name application)])
+    [:div
+     [:label {:style {:font-weight "bold" :padding-right 5}} "Avustushaku:"]
+     (:grant-name application)]))
 
 (defn- render-search [results title renderer searching?]
   [:div
@@ -88,32 +95,44 @@
        (doall (map-indexed renderer results))
        [:span "Ei hakutuloksia"]))])
 
+(defn- search-field [props]
+  (let [search-term (r/atom (:default-value props))]
+    (fn [{:keys [error on-change]}]
+      [:div
+       [va-ui/text-field
+        {:help-text "Hakusanan pituus tulee olla yli kolme merkkiä"
+         :error error
+         :on-change #(reset! search-term (-> % .-target .-value))
+         :value @search-term
+         :on-enter-pressed #(on-change @search-term)
+         :style (assoc theme/text-field :width 575)}]])))
+
 (defn home-page []
   [:div
-   [(let [search-term (r/atom "")]
-      (fn []
-        [:div
-         [va-ui/text-field
-          {:help-text "Hakusanan pituus tulee olla yli kolme merkkiä"
-           :error (:term-length-error @state)
-           :on-change #(reset! search-term (-> % .-target .-value))
-           :on-enter-pressed #(if (> (count @search-term) 3)
-                                (do
-                                  (search-items @search-term)
-                                  (swap! state assoc :term-length-error false))
-                                (swap! state assoc :term-length-error true))
-           :style (assoc theme/text-field :width 575)}]]))]
-   [(fn []
-      (render-search
-        (deref (:grants search-results))
-        "Avustushaut"
-        render-grant
-        (:grants-searching @state)))]
-   [(fn []
-      (render-search
-        (deref (:applications search-results))
-        "Hakemukset"
-        render-application
-        (:applications-searching @state)))]])
+   [search-field
+    {:default-value
+     (js/decodeURIComponent
+       (or
+         (router/get-param (router/get-current-query) :search)
+         ""))
+     :error (:term-length-error @state)
+     :on-change
+     #(if (> (count %) 3)
+        (do
+          (search-items %)
+          (swap! state assoc :term-length-error false))
+        (swap! state assoc :term-length-error true))}]
+   [render-search
+    (deref (:grants search-results))
+    "Avustushaut"
+    render-grant
+    (:grants-searching @state)]
+   [render-search
+    (deref (:applications search-results))
+    "Hakemukset"
+    render-application
+    (:applications-searching @state)]])
 
-(defn init! [])
+(defn init! []
+  (when-let [term (router/get-param (router/get-current-query) :search)]
+    (search-items term)))
