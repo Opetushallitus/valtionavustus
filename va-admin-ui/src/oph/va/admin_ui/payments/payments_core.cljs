@@ -20,8 +20,6 @@
 (def ^:private default-batch-values
   {:currency "EUR"
    :partner ""
-   :document-type "XA"
-   :transaction-account "5000"
    :due-date (financing/now-plus financing/week-in-ms)
    :invoice-date (js/Date.)
    :receipt-date nil
