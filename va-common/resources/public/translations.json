@@ -16,6 +16,10 @@
       "fi": "Avustuksen vastaanottamatta jättäminen",
       "sv": "Anmälan om att inte ta emot understöd"
     },
+    "grant-refuse-token-invalid": {
+      "fi": "Ilmoituksen lähettäminen ei ole enää mahdollista. Todennäköisesti avustus tai sen ensimmäinen erä on jo maksettu.",
+      "sv": ""
+    },
     "grant-refuse-send": {
       "fi": "Lähetä ilmoitus",
       "sv": "Skicka anmälan"
