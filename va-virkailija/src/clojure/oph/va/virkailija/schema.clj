@@ -304,11 +304,9 @@
   "Payment batch"
   {(s/optional-key :id) s/Int
    (s/optional-key :batch-number) s/Int
-   :document-type s/Str
    :invoice-date LocalDate
    :due-date LocalDate
    :receipt-date LocalDate
-   :transaction-account s/Str
    :currency s/Str
    :partner s/Str
    :inspector-email s/Str
