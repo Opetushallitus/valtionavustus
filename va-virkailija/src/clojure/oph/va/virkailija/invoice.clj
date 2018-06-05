@@ -25,10 +25,10 @@
   year and 006 is order number or identification number, if you will.
   If some of values is missing, nil is being returned."
    (if (and (:created-at batch)
-            (:document-type grant)
+            (some? (get-in grant [:content :document-type]))
             (:batch-number batch))
      (get-batch-key
-       (get organisations (:document-type grant))
+       (get organisations (get-in grant [:content :document-type]))
        (mod (t/year (c/to-date-time (:created-at batch))) 100)
        (:batch-number batch))
      nil)))
