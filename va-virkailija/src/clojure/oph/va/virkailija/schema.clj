@@ -291,7 +291,8 @@
 
 (s/defschema PaymentBatch
   "Payment batch"
-  {(s/optional-key :id) s/Int
+  {:created-at s/Inst
+   (s/optional-key :id) s/Int
    (s/optional-key :batch-number) s/Int
    :invoice-date LocalDate
    :due-date LocalDate
