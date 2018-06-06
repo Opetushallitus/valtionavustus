@@ -84,3 +84,8 @@
                 (a/>! c result))))))
       (a/close! c))
     c))
+
+(defn get-batch-documents [batch-id]
+  (->> (exec :virkailija-db queries/get-batch-documents {:batch_id batch-id})
+      (map convert-to-dash-keys)
+      (map convert-timestamps-from-sql)))
