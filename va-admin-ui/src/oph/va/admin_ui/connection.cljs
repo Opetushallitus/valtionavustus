@@ -68,7 +68,7 @@
 (defn get-user-info []
   (http/get (format "/api/userinfo/") {:with-credentials? true}))
 
-(defn find-payment-batch [grant-id date]
+(defn find-payment-batches [grant-id date]
   (http/get (format "/%s/payment-batches/?grant-id=%d&date=%s"
                     api-path grant-id date)
             {:with-credentials? true}))
