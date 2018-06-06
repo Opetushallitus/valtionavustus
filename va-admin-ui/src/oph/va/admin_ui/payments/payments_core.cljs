@@ -12,10 +12,12 @@
     [oph.va.admin-ui.payments.grants-ui :refer [grants-table grant-info]]
     [oph.va.admin-ui.payments.grants :refer [grant-matches? convert-dates]]
     [oph.va.admin-ui.payments.financing :as financing]
-    [oph.va.admin-ui.payments.utils :refer [find-index-of is-today?]]
+    [oph.va.admin-ui.payments.utils
+     :refer [find-index-of is-today? to-simple-date-time]]
     [oph.va.admin-ui.dialogs :as dialogs]
     [oph.va.admin-ui.user :as user]
-    [oph.va.admin-ui.theme :as theme]))
+    [oph.va.admin-ui.theme :as theme]
+    [oph.va.admin-ui.components.table :as table]))
 
 (def ^:private default-batch-values
   {:currency "EUR"
@@ -165,11 +167,31 @@
        [:hr]
        (grant-info @selected-grant)])))
 
+(defn render-document [i document]
+  [table/table-row {:key i}
+   [table/table-row-column
+    (to-simple-date-time (:created-at document))]
+   [table/table-row-column
+    (:document-id document)]])
+
 (defn- render-batch-values [{:keys [values disabled? on-change]}]
   [:div {:class (when disabled? "disabled")}
    [:h3 "Maksuerän tiedot"]
-   (financing/payment-emails values #(on-change %1 %2))
-   (financing/payment-fields values #(on-change %1 %2))])
+   [financing/payment-batch-fields
+    {:values values :on-change #(on-change %1 %2)}]
+   [:div
+    [table/table {:style {:width 400}}
+     [table/table-header
+      [table/table-row
+       [table/table-header-column "Lisätty"]
+       [table/table-header-column "ASHA tunniste"]]]
+     [table/table-body
+      (map-indexed render-document (:documents values))]]]
+   [:div
+    [financing/document-field
+     {:on-change
+      #(on-change :documents
+                  (conj (get values :documents []) {:document-id %}))}]]])
 
 (defn home-page [data]
   (let [{:keys [user-info delete-payments?]} data
@@ -202,38 +224,38 @@
                    [payments-ui/payments-table
                     (filter #(< (:state %) 2) flatten-payments)]
                    [:div
-              (when accounts-nil?
-                (notice "Joillakin hakemuksilla ei ole LKP- tai TaKP-tiliä, joten
+                    (when accounts-nil?
+                      (notice "Joillakin hakemuksilla ei ole LKP- tai TaKP-tiliä, joten
                    makastukset tulee luoda manuaalisesti."))
-              [va-ui/raised-button
-               {:primary true
-                :disabled
-                (or
-                  (not (payments/valid-batch-values? @batch-values))
-                  accounts-nil?
-                  (not unsent-payments?))
-                :label "Lähetä maksatukset"
-                :style theme/button
-                :on-click
-                (fn [_]
-                  (go
-                    (let [batch-result
-                          (if (some? (:id @batch-values))
-                            {:body (payments/convert-payment-dates
-                                     @batch-values)
-                             :success true}
-                            (<! (connection/create-payment-batch
-                                  (-> @batch-values
-                                      payments/convert-payment-dates
-                                      (assoc :grant-id (:id @selected-grant))))))
-                          batch (:body batch-result)]
-                      (if (:success batch-result)
-                        (send-payments!
-                          (payments/get-batch-values batch)
-                          @selected-grant payments)
-                        (dialogs/show-error-message!
-                          "Virhe maksuerän luonnissa"
-                          batch-result)))))}]]]
+                    [va-ui/raised-button
+                     {:primary true
+                      :disabled
+                      (or
+                        (not (payments/valid-batch-values? @batch-values))
+                        accounts-nil?
+                        (not unsent-payments?))
+                      :label "Lähetä maksatukset"
+                      :style theme/button
+                      :on-click
+                      (fn [_]
+                        (go
+                          (let [batch-result
+                                (if (some? (:id @batch-values))
+                                  {:body (payments/convert-payment-dates
+                                           @batch-values)
+                                   :success true}
+                                  (<! (connection/create-payment-batch
+                                        (-> @batch-values
+                                            payments/convert-payment-dates
+                                            (assoc :grant-id (:id @selected-grant))))))
+                                batch (:body batch-result)]
+                            (if (:success batch-result)
+                              (send-payments!
+                                (payments/get-batch-values batch)
+                                @selected-grant payments)
+                              (dialogs/show-error-message!
+                                "Virhe maksuerän luonnissa"
+                                batch-result)))))}]]]
                   [va-ui/tab
                    {:value "sent"
                     :label [:span
@@ -287,17 +309,31 @@
               (put! dialog-chan 1)
               (go
                 (let [batch-response
-                      (<! (connection/find-payment-batch
+                      (<! (connection/find-payment-batches
                             grant-id (payments/format-date (js/Date.))))]
                   (put! dialog-chan 2)
                   (reset! batch-values
                           (if (= (:status batch-response) 200)
                             (-> (:body batch-response)
+                                last
                                 payments/parse-batch-dates
                                 (assoc :read-only true))
                             default-batch-values)))
                 (put! dialog-chan 3)
-                (close! dialog-chan)))))))
+                (close! dialog-chan)
+                (when (some? @batch-values)
+                  (let [doc-dialog-chan (dialogs/show-loading-dialog!
+                                          "Ladataan maksuerän dokumentteja" 3)]
+                    (put! doc-dialog-chan 1)
+                    (go
+                      (let [doc-response
+                            (<! (connection/get-batch-documents
+                                  (:id @batch-values)))]
+                        (put! doc-dialog-chan 2)
+                        (swap! batch-values
+                               assoc :documents (:body doc-response)))
+                      (put! doc-dialog-chan 3)
+                      (close! doc-dialog-chan))))))))))
     (go
       (let [dialog-chan (dialogs/show-loading-dialog! "Ladataan haun tietoja" 3)
             grants-result (<! (connection/get-grants))]
