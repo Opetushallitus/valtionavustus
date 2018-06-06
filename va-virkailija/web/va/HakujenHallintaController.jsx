@@ -330,6 +330,10 @@ export default class HakujenHallintaController {
         parseInt(update.newValue)
     } else if (fieldId === "total-grant-size") {
       update.avustushaku.content["total-grant-size"] = parseInt(update.newValue)
+    } else if (fieldId === "transaction-account") {
+      update.avustushaku.content["transaction-account"] = update.newValue
+    } else if (fieldId === "document-type") {
+      update.avustushaku.content["document-type"] = update.newValue
     } else {
       console.error(
         "Unsupported update to field ", update.field.id, ":", update)

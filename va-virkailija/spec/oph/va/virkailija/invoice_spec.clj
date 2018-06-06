@@ -79,10 +79,12 @@
   (tags :invoice)
 
   (it "calculates batch id"
-      (should= "660017013" (invoice/get-batch-key payment)))
+      (should= "660017013"
+               (invoice/get-batch-key
+                 payment {:content {:document-type "XA"}})))
   (it "returns nil if any needed value is nil"
-      (should= nil (invoice/get-batch-key nil))
-      (should= nil (invoice/get-batch-key {:some "Value"}))))
+      (should= nil (invoice/get-batch-key nil {}))
+      (should= nil (invoice/get-batch-key {:some "Value"} {}))))
 
 (describe
   "Get response XML element content"
@@ -137,7 +139,7 @@
                         :without-authentication? true}) (_)))
 
   (it "creates invoice from payment"
-      (let [grant (first (grant-data/get-grants))
+      (let [grant (first (grant-data/get-grants true))
             submission
             (create-submission
               (:form grant)
@@ -160,8 +162,6 @@
                        :document-id "ID12345"
                        :currency "EUR"
                        :invoice-date (java.time.LocalDate/of 2017 12 20)
-                       :document-type "XA"
-                       :transaction-account "5000"
                        :acceptor-email "acceptor@example.com"
                        :inspector-email "inspector@example.com"})
                     :created-at (f/parse "2017-12-20T10:24:59.750Z"))
@@ -218,11 +218,14 @@
             (invoice/payment-to-invoice
               {:payment payment
                :application application-with-evaluation
-               :grant (assoc grant
-                             :project "6600A-M2024"
-                             :operational-unit "6600100130"
-                             :operation "6600151502"
-                             :lkp-account "82500000")
+               :grant (-> grant
+                          (assoc
+                            :project "6600A-M2024"
+                            :operational-unit "6600100130"
+                            :operation "6600151502"
+                            :lkp-account "82500000")
+                          (assoc-in [:content :document-type] "XA")
+                          (assoc-in [:content :transaction-account] "5000"))
                :batch batch}))))))
 
 (run-specs)

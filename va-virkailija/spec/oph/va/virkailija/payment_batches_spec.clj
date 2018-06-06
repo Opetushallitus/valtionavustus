@@ -8,11 +8,9 @@
              :refer [test-server-port get! post! json->map]]))
 
 (def valid-payment-batch
-  {:document-type "XA"
-   :invoice-date "2018-04-16"
+  {:invoice-date "2018-04-16"
    :due-date "2018-04-30"
    :receipt-date "2018-04-16"
-   :transaction-account "5000"
    :currency "EUR"
    :partner "123456"
    :inspector-email "no.one@email.local"
@@ -42,20 +40,25 @@
                  (dissoc (json->map body) :id :batch-number))))
 
   (it "prevents duplicate payment batches"
+      (post! "/api/v2/payment-batches/"
+             (assoc valid-payment-batch :receipt-date "2018-01-02"))
       (let [{:keys [status body]}
-            (post! "/api/v2/payment-batches/" valid-payment-batch)]
+            (post! "/api/v2/payment-batches/"
+                   (assoc valid-payment-batch :receipt-date "2018-01-02"))]
         (should= 409 status)))
 
   (it "find payment batch (finds one)"
+      (post! "/api/v2/payment-batches/"
+             (assoc valid-payment-batch :receipt-date "2018-02-02"))
       (let [{:keys [status body]}
             (get!
               (format "/api/v2/payment-batches/?date=%s&grant-id=%d"
-                      (:receipt-date valid-payment-batch)
+                      "2018-02-02"
                       (:grant-id valid-payment-batch)))
             batch (json->map body)]
         (should= 200 status)
         (should (some? batch))
-        (should= valid-payment-batch
+        (should= (assoc valid-payment-batch :receipt-date "2018-02-02")
                  (dissoc batch :id :batch-number :created-at))))
 
   (it "find payment batch (not found any)"

@@ -51,38 +51,6 @@
       :tooltip
       "Eräpäivä on se päivä, jolloin maksusuoritus on viimeistään tehtävä."
       :on-change #(on-change :due-date %2)}]
-    [va-ui/select-field
-     {:floating-label-text "Maksuliikemenotili"
-      :value (get values :transaction-account (first transaction-accounts))
-      :on-change #(on-change :transaction-account %)
-      :tooltip [:div {:style {:text-align "left"}}
-                [:div
-                 "Maksuliikemenotili on tili, jolta mm. valtionavustusmaksut
-                  lähtevät. Järjestelmissä tilille on määritelty nelimerkkinen
-                  koodi. Perus-maksuliikemenotililtä voi vain maksaa ja tämän
-                  tilin koodi on 5000."]
-                [:div
-                 "Opetushallituksella on myös ns.
-                  saldollisia tilejä. Saldollisilla tileillä raha liikkuu
-                  molempiin suuntiin eli näiltä maksetaan ja näille voi myös
-                  tilittää rahaa. Saldollisilta tileiltä maksetaan
-                  apurahamaksut."]
-                [:div
-                 "Ohessa luettelo maksuliikemenotilin koodeista ja mihin
-                  maksuihin kutakin tiliä voidaan käyttää:"
-                 [:div "5000 perus-maksuliikemenotili, ns. normaalit kulut ja
-                        valtionavustukset"]
-                 [:div "5220 Nordplus-apurahat"]
-                 [:div "5250 Erasmus+ -apurahat"]]]
-      :values
-      (map (fn [acc] {:key acc :value acc :primary-text acc})
-           transaction-accounts)}]
-    [va-ui/select-field
-     {:floating-label-text "Tositelaji"
-      :value (get values :document-type "XA")
-      :on-change #(on-change :document-type %)
-      :values [{:value "XA" :primary-text "XA"}
-               {:value "XB" :primary-text "XB"}]}]
     [va-ui/date-picker
      {:floating-label-text "Tositepäivämäärä"
       :style {:display "inline-block"}
