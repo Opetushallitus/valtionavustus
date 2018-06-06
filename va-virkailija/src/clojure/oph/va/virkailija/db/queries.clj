@@ -44,7 +44,7 @@
 (defquery find-payments-by-application-id-and-invoice-date
   "sql/virkailija/payments/find-by-application-id-and-invoice-date.sql")
 
-(defquery find-batch "sql/virkailija/payment_batches/find-batch.sql")
+(defquery find-batches "sql/virkailija/payment_batches/find-batches.sql")
 (defquery create-batch "sql/virkailija/payment_batches/create-batch.sql")
 (defquery get-batch "sql/virkailija/payment_batches/get-batch.sql")
 

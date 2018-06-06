@@ -11,13 +11,14 @@
             [oph.va.virkailija.utils :refer [either?]])
   (:import (java.time LocalDate)))
 
-(defn- find-payment-batch []
+(defn- find-payment-batches []
   (compojure-api/GET
     "/" []
     :query-params [date :- LocalDate grant-id :- Long]
-    :summary "Find payment batch by date and grant id"
-    (if-let [batch (data/find-batch date grant-id)]
-      (ok batch)
+    :return [schema/PaymentBatch]
+    :summary "Find payment batches by date and grant id"
+    (if-let [batches (data/find-batches date grant-id)]
+      (ok batches)
       (no-content))))
 
 (defn- create-payment-batch []
@@ -28,9 +29,9 @@
                                    "Create payment batch")]
     :return schema/PaymentBatch
     :summary "Create new payment batch"
-    (if (some?
-          (data/find-batch
-            (:receipt-date batch-values) (:grant-id batch-values)))
+    (if (not (empty?
+               (data/find-batches
+                 (:receipt-date batch-values) (:grant-id batch-values))))
       (conflict "Payment batch already exists")
       (ok (data/create-batch batch-values)))))
 
@@ -68,6 +69,6 @@
 (compojure-api/defroutes
   routes
   "payment batches routes"
-  (find-payment-batch)
+  (find-payment-batches)
   (create-payment-batch)
   (send-payments))

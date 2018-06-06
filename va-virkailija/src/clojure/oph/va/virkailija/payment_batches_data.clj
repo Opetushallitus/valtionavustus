@@ -15,11 +15,10 @@
 
 (def timeout-limit 10000)
 
-(defn find-batch [date grant-id]
-  (-> (exec :virkailija-db queries/find-batch {:batch_date date :grant_id grant-id})
-      first
-      convert-to-dash-keys
-      convert-timestamps-from-sql))
+(defn find-batches [date grant-id]
+  (->> (exec :virkailija-db queries/find-batches {:batch_date date :grant_id grant-id})
+      (map convert-to-dash-keys)
+      (map convert-timestamps-from-sql)))
 
 (defn create-batch [values]
   (->> values
