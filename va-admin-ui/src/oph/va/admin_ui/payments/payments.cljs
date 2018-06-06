@@ -7,8 +7,7 @@
 (defn valid-batch-values?
   [values]
   (and (no-nils? values
-                 [:transaction-account :due-date :invoice-date :document-type
-                  :receipt-date])
+                 [:due-date :invoice-date :receipt-date])
        (valid-email? (:inspector-email values))
        (valid-email? (:acceptor-email values))))
 
@@ -25,10 +24,6 @@
                   :batch-number
                   :receipt-date])
     :state 0
-    :organisation
-    (if (= (:document-type batch) "XB")
-      "6604"
-      "6600")
     :batch-id (:id batch)))
 
 (defn- batch-payable? [pred applications]

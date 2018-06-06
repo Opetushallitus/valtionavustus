@@ -47,4 +47,8 @@
    [ui/grid-list {:cols 6 :cell-height "auto" :style {:margin 20}}
     [:div [:label "Toimintayksikkö: "] (:operational-unit grant)]
     [:div [:label "Projekti: "] (:project grant)]
-    [:div [:label "Toiminto: "] (:operation grant)]]])
+    [:div [:label "Toiminto: "] (:operation grant)]
+    [:div [:label "Maksuliikemenotili: "]
+     (get-in grant [:content :transaction-account])]
+    [:div [:label "Tositelaji: "]
+     (get-in grant [:content :document-type])]]])

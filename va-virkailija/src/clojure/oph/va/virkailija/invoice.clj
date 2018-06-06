@@ -19,16 +19,16 @@
 (defn get-batch-key
   ([organisation year batch-number]
    (format "%s%02d%03d" organisation year batch-number))
-  ([batch]
+  ([batch grant]
    "Generating batch id of organisation, year and batch-number.
   Batch id is something like '660017006' where 6600 is organisation, 17 is
   year and 006 is order number or identification number, if you will.
   If some of values is missing, nil is being returned."
    (if (and (:created-at batch)
-            (:document-type batch)
+            (some? (get-in grant [:content :document-type]))
             (:batch-number batch))
      (get-batch-key
-       (get organisations (:document-type batch))
+       (get organisations (get-in grant [:content :document-type]))
        (mod (t/year (c/to-date-time (:created-at batch))) 100)
        (:batch-number batch))
      nil)))
@@ -37,7 +37,7 @@
   (let [answers (:answers application)]
     [:VA-invoice
      [:Header
-      [:Maksuera (get-batch-key batch)]
+      [:Maksuera (get-batch-key batch grant)]
       [:Laskunpaiva (.toString (:invoice-date batch))]
       [:Erapvm (.toString (:due-date batch))]
       [:Bruttosumma (:payment-sum payment)]
@@ -46,8 +46,8 @@
       [:Tositepvm (.toString (:receipt-date batch))]
       [:Asiatarkastaja (:inspector-email batch)]
       [:Hyvaksyja (:acceptor-email batch)]
-      [:Tositelaji (:document-type batch)]
-      [:Maksutili (:transaction-account batch)]
+      [:Tositelaji (get-in grant [:content :document-type] "XA")]
+      [:Maksutili (get-in grant [:content :transaction-account] "5000")]
       [:Toimittaja
        [:Y-tunnus (get-answer-value answers "business-id")]
        [:Nimi (:organization-name application)]

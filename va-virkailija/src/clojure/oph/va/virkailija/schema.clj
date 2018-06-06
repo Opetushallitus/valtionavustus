@@ -209,17 +209,6 @@
    :application-id  s/Int
    (s/optional-key :application-version) s/Int
    :state s/Int
-   (s/optional-key :batch-number) (s/maybe s/Int)
-   (s/optional-key :document-type) (s/maybe s/Str)
-   (s/optional-key :invoice-date) (s/maybe LocalDate)
-   (s/optional-key :due-date) (s/maybe LocalDate)
-   (s/optional-key :receipt-date) (s/maybe LocalDate)
-   (s/optional-key :transaction-account) (s/maybe s/Str)
-   (s/optional-key :currency) (s/maybe s/Str)
-   (s/optional-key :payment-term) (s/maybe s/Str)
-   (s/optional-key :partner) (s/maybe s/Str)
-   (s/optional-key :inspector-email) (s/maybe s/Str)
-   (s/optional-key :acceptor-email) (s/maybe s/Str)
    (s/optional-key :filename) (s/maybe s/Str)
    (s/optional-key :user-name) s/Str
    (s/optional-key :batch-id) (s/maybe s/Int)
@@ -288,7 +277,8 @@
                                          :takp-account s/Str}])
    (s/optional-key :refused) (s/maybe s/Bool)
    (s/optional-key :refused-comment) (s/maybe s/Str)
-   (s/optional-key :refused-at) (s/maybe s/Inst)})
+   (s/optional-key :refused-at) (s/maybe s/Inst)
+   (s/optional-key :grant-name) (s/maybe s/Str)})
 
 (s/defschema PaymentsEmail
   "Grant payments email"
@@ -303,11 +293,9 @@
   "Payment batch"
   {(s/optional-key :id) s/Int
    (s/optional-key :batch-number) s/Int
-   :document-type s/Str
    :invoice-date LocalDate
    :due-date LocalDate
    :receipt-date LocalDate
-   :transaction-account s/Str
    :currency s/Str
    :partner s/Str
    :inspector-email s/Str

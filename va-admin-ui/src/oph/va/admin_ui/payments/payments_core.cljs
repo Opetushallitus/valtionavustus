@@ -20,8 +20,6 @@
 (def ^:private default-batch-values
   {:currency "EUR"
    :partner ""
-   :document-type "XA"
-   :transaction-account "5000"
    :due-date (financing/now-plus financing/week-in-ms)
    :invoice-date (js/Date.)
    :receipt-date nil
@@ -110,12 +108,18 @@
                 (<!
                   (connection/send-payments-email
                     (:id selected-grant)
-                    (select-keys values [:acceptor-email
-                                         :inspector-email
-                                         :organisation
-                                         :batch-number
-                                         :batch-id
-                                         :receipt-date])))]
+                    (assoc
+                      (select-keys values [:acceptor-email
+                                          :inspector-email
+                                          :batch-number
+                                          :batch-id
+                                          :receipt-date])
+                      :organisation
+                      (if (= (get-in
+                               selected-grant [:content :document-type])
+                             "XB")
+                        "6604"
+                        "6600"))))]
             (put! dialog-chan 3)
             (if (:success email-result)
               (dialogs/show-message! "Kaikki maksatukset lähetetty")

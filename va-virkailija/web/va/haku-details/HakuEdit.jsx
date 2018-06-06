@@ -149,6 +149,37 @@ export default class HakuEdit extends Component {
                 </label>
               </div>
             </div>
+            <div className="payments-fields">
+              <div className="haku-edit-field-container">
+                <label>
+                  <h3>Maksuliikemenotili</h3>
+                  <select id="transaction-account"
+                          onChange={onChange}
+                          name="transaction-account"
+                          value={avustushaku.content["transaction-account"] || ""}>
+                    <option value=""></option>
+                    <option value="5000">5000</option>
+                    <option value="5220">5220</option>
+                    <option value="5230">5230</option>
+                    <option value="5240">5240</option>
+                    <option value="5250">5250</option>
+                  </select>
+                </label>
+              </div>
+              <div className="haku-edit-field-container">
+                <label>
+                  <h3>Tositelaji</h3>
+                  <select id="document-type"
+                          onChange={onChange}
+                          name="document-type"
+                          value={avustushaku.content["document-type"] || ""}>
+                    <option value=""></option>
+                    <option value="XA">XA</option>
+                    <option value="XB">XB</option>
+                  </select>
+                </label>
+              </div>
+            </div>
           </div>
           <div className="editor-field-row">
             <div className="editor-row-element">

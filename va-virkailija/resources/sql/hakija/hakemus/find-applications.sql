@@ -1,12 +1,16 @@
 SELECT
-  id, created_at, version, budget_total, budget_oph_share, organization_name,
-  project_name, register_number, language,  avustushaku AS grant_id, refused,
-  refused_comment, refused_at
+  h.id, h.created_at, h.version, h.budget_total, h.budget_oph_share,
+  h.organization_name, h.project_name, h.register_number, h.language,
+  h.avustushaku AS grant_id, h.refused, h.refused_comment, h.refused_at,
+  a.content#>'{name, fi}' AS grant_name
 FROM
-  hakija.hakemukset
+  hakija.hakemukset h
+LEFT JOIN
+  hakija.avustushaut a
+    ON a.id = h.avustushaku
 WHERE
-  version_closed IS NULL
+  h.version_closed IS NULL
   AND
-    (register_number LIKE :search_term
-    OR LOWER(project_name) LIKE :search_term
-    OR LOWER(organization_name) LIKE :search_term)
+    (h.register_number LIKE :search_term
+    OR LOWER(h.project_name) LIKE :search_term
+    OR LOWER(h.organization_name) LIKE :search_term)
