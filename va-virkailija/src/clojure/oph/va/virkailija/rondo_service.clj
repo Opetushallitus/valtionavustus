@@ -73,7 +73,7 @@
                 :config (:configuration service))))
   (get-local-file [service filename]
     (format "%s/%s" (get-local-file-path (:configuration service)) filename))
-  (delete-remote-file [service filename]
+  (delete-remote-file! [service filename]
     (do-sftp! :method :rm
               :file filename
               :path (:remote_path_from (:configuration service))

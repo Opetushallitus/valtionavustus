@@ -37,7 +37,24 @@
            :first-name "Test"
            :surname "User"})
 
-(defrecord TestFileService [configuration]
+ (defrecord TestFileService [configuration]
+  RemoteFileService
+  (send-payment-to-rondo! [service payment-values] (rondo-service/send-payment! (assoc payment-values :config (:configuration service) :func (constantly nil))))
+  (get-remote-file-list [service]
+    (list "file.xml"))
+  (get-local-path [service] (:local-path (:configuration service)))
+  (get-remote-file [service filename]
+    (let [xml-file-path (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename)]
+      (invoice/write-xml! (xml/sexp-as-element resp-tags) xml-file-path)))
+  (get-local-file [service filename]
+    (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename))
+  (delete-remote-file! [service filename]
+    nil))
+
+(defn create-test-service [conf]
+  (TestFileService. conf))
+
+(defrecord WrongTestFileService [configuration]
   RemoteFileService
   (send-payment-to-rondo! [service payment-values] (rondo-service/send-payment! (assoc payment-values :config (:configuration service) :func (constantly nil))))
   (get-remote-file-list [service]
@@ -47,15 +64,16 @@
     (let [xml-file-path (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename)]
       (if (= filename "wrong.xml")
         (with-open [w (clojure.java.io/writer  xml-file-path :append true)]
-          (.write w (str "<VA-invoice>><Header><Pitkaviite>123/456/78<Pitkaviite//><Maksupvm>2018-05-02</Maksupvm></Header></VA-invoice>")))
+          (.write w "<VA-invoice>><Header><Pitkaviite>123/456/78<Pitkaviite//><Maksupvm>2018-05-02</Maksupvm></Header></VA-invoice>"))
         (invoice/write-xml! (xml/sexp-as-element resp-tags) xml-file-path))))
   (get-local-file [service filename]
     (format "%s/%s" (rondo-service/get-local-file-path (:configuration service)) filename))
-  (delete-remote-file [service filename]
+  (delete-remote-file! [service filename]
     nil))
 
-(defn create-test-service [conf]
-  (TestFileService. conf))
+
+(defn create-wrong-test-service [conf]
+  (WrongTestFileService. conf))
 
 (describe "Testing Rondo Service functions"
           (tags :rondoservice)
@@ -65,15 +83,6 @@
                               {:host "localhost"
                                :port test-server-port
                                :auto-reload? false}) (_)))
-
-          (it "gets list of files in mock server"
-              (let [test-service (create-test-service configuration)
-                    result (get-remote-file-list test-service)]
-                (should= result (list "file.xml"))))
-
-          (it "gets local path in mock server"
-              (let [test-service (create-test-service configuration)]
-                (should= (get-local-path test-service) (:local-path configuration))))
 
           (it "Gets state of payments from a remote server"
               (let [test-service (create-test-service configuration)
@@ -138,13 +147,12 @@
               (let [configuration {:enabled true
                                    :local-path "/tmp"}
                     test-service (create-test-service configuration)
-                    grant (first (grant-data/get-grants))
-                    result (payments-data/delete-grant-payments (:id grant))
-                    application (application-data/find-application-by-register-number "123/456/78")]
+                    grant (first (grant-data/get-grants))]
+                    (payments-data/delete-grant-payments (:id grant))
                 (should-throw Exception #"No payments found!" (rondo-scheduling/get-state-of-payments test-service))))
 
           (it "When retrieving payment xml from Rondo, show parse errors, if xml is not valid"
-              (let [test-service (create-test-service configuration)
+              (let [test-service (create-wrong-test-service configuration)
                     list-of-files (lazy-seq ["wrong.xml"])]
                 (should-throw Exception #"ParseError" (rondo-scheduling/pop-remote-files list-of-files test-service))
                 (clojure.java.io/delete-file (get-local-file test-service "wrong.xml")))))

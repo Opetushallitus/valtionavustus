@@ -13,29 +13,29 @@
 
 (defn find-application-by-register-number [register-number]
   (convert-to-dash-keys
-    (first
-      (exec :form-db
-            hakija-queries/find-application-by-register-number
-            {:register_number register-number}))))
+   (first
+    (exec :form-db
+          hakija-queries/find-application-by-register-number
+          {:register_number register-number}))))
 
 (defn get-application-evaluation [application-id]
   (convert-to-dash-keys
-    (first (exec :virkailija-db
-                 virkailija-queries/get-application-evaluation
-                 {:application_id application-id}))))
+   (first (exec :virkailija-db
+                virkailija-queries/get-application-evaluation
+                {:application_id application-id}))))
 
 (defn get-applications-with-evaluation-by-grant [grant-id]
   (mapv
-    #(merge (convert-to-dash-keys %) (get-application-evaluation (:id %)))
-    (exec :form-db hakija-queries/get-applications-by-grant
-          {:grant_id grant-id})))
+   #(merge (convert-to-dash-keys %) (get-application-evaluation (:id %)))
+   (exec :form-db hakija-queries/get-applications-by-grant
+         {:grant_id grant-id})))
 
 (defn get-application-unsent-payments [application-id]
   (map
-    convert-to-dash-keys
-    (exec :virkailija-db
-          virkailija-queries/get-application-unsent-payments
-          {:application_id application-id})))
+   convert-to-dash-keys
+   (exec :virkailija-db
+         virkailija-queries/get-application-unsent-payments
+         {:application_id application-id})))
 
 (defn get-application-payments [id]
   (map convert-to-dash-keys (exec :virkailija-db
@@ -48,12 +48,14 @@
              hakija-queries/find-applications
              {:search_term (str "%" (clojure.string/lower-case search-term) "%")})))
 
+
+
 (defn get-application-token [application-id]
   (:token
    (first
-     (exec :form-db
-           hakija-queries/get-application-token
-           {:application_id application-id}))))
+    (exec :form-db
+          hakija-queries/get-application-token
+          {:application_id application-id}))))
 
 (defn revoke-application-tokens [application-id]
   (exec :form-db
@@ -62,7 +64,7 @@
 
 (defn has-no-payments? [application-id]
   (not
-    (:has_payments
-     (first
-       (exec :virkailija-db virkailija-queries/application-has-payments
-             {:application_id application-id})))))
+   (:has_payments
+    (first
+     (exec :virkailija-db virkailija-queries/application-has-payments
+           {:application_id application-id})))))

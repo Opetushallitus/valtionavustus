@@ -6,12 +6,10 @@
             [clojurewerkz.quartzite.jobs :refer [defjob] :as j]
             [clojurewerkz.quartzite.schedule.cron :refer [schedule cron-schedule]]
             [clojure.tools.logging :as log]
-            [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.invoice :as invoice]
             [oph.soresu.common.config :refer [config]]
             [ring.util.http-response :refer [ok not-found request-timeout]]
-            [oph.va.virkailija.rondo-service :refer :all]
             [oph.va.virkailija.remote-file-service :refer :all])
   (:import [oph.va.virkailija.rondo_service RondoFileService]))
 
@@ -26,9 +24,9 @@
        (invoice/read-xml (get-local-file  remote-service filename)))
       (catch clojure.lang.ExceptionInfo e
         (if (= "already-paid" (-> e ex-data :cause))
-          (delete-remote-file remote-service filename))
+          (delete-remote-file! remote-service filename))
         (throw e)))
-    (delete-remote-file remote-service filename)
+    (delete-remote-file! remote-service filename)
     (clojure.java.io/delete-file (get-local-file remote-service filename))))
 
 

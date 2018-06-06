@@ -16,6 +16,7 @@
             [oph.va.virkailija.remote-file-service :refer :all])
   (:import [oph.va.virkailija.rondo_service RondoFileService]))
 
+
 (def timeout-limit 10000)
 
 (defn find-batch [date grant-id]
