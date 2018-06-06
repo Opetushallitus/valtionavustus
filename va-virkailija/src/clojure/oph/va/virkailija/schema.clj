@@ -300,8 +300,14 @@
    :partner s/Str
    :inspector-email s/Str
    :acceptor-email s/Str
-   :grant-id s/Int
-   :document-id s/Str})
+   :grant-id s/Int})
+
+(s/defschema BatchDocument
+  "Payment batch document"
+  {:created-at s/Inst
+   (s/optional-key :id) s/Int
+   :document-id s/Str
+   :phase s/Int})
 
 (s/defschema PaymentsCreateResult
   "Payment create result"
