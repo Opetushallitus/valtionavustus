@@ -72,4 +72,4 @@
        [va-ui/raised-button
       {:primary true
        :label "Lisää asiakirja"
-       :on-click #((:on-change props) @value)}]])))
+       :on-click #(do ((:on-change props) @value) (reset! value ""))}]])))
