@@ -1,5 +1,6 @@
 (ns oph.va.admin-ui.payments.financing
-  (:require [oph.va.admin-ui.components.ui :as va-ui]
+  (:require [reagent.core :as r]
+            [oph.va.admin-ui.components.ui :as va-ui]
             [oph.va.admin-ui.payments.utils
              :refer [not-empty? valid-email?]]))
 
@@ -15,26 +16,7 @@
       (+ milliseconds)
       (js/Date.)))
 
-(defn payment-emails
-  [values on-change]
-  [:div {:style {:display "flex"}}
-   [va-ui/text-field
-    {:floating-label-text "Esittelijän sähköpostiosoite"
-     :value (get values :inspector-email "")
-     :type "email"
-     :error (and (not-empty? (:inspector-email values))
-                 (not (valid-email? (:inspector-email values))))
-     :on-change #(on-change :inspector-email (.-value (.-target %)))}]
-   [va-ui/text-field
-    {:floating-label-text "Hyväksyjän sähköpostiosoite"
-     :value (get values :acceptor-email "")
-     :type "email"
-     :error (and (not-empty? (:acceptor-email values))
-                 (not (valid-email? (:acceptor-email values))))
-     :on-change #(on-change :acceptor-email (.-value (.-target %)))}]])
-
-(defn payment-fields
-  [values on-change]
+(defn payment-batch-fields [{:keys [values on-change]}]
   [:div
    [:div {:style {:display "flex"}}
     [va-ui/date-picker
@@ -60,11 +42,18 @@
                 voi olla sama kuin laskun päivämäärä, mutta
                 tilinpäätöstilanteessa tositepäivämäärä on määriteltävä sille
                 kaudelle, jolle lasku kuuluu."
-      :on-change #(on-change :receipt-date %2)}]]
-   [:div [va-ui/text-field
-          {:floating-label-text "Asiakirjan tunnus"
-           :value (get values :document-id "")
-           :on-change (fn [e]
-                        (let [value (-> e .-target .-value)]
-                          (when (<= (count value) document-id-max-size)
-                            (on-change :document-id value))))}]]])
+      :on-change #(on-change :receipt-date %2)}]
+    [va-ui/text-field
+    {:floating-label-text "Esittelijän sähköpostiosoite"
+     :value (get values :inspector-email "")
+     :type "email"
+     :error (and (not-empty? (:inspector-email values))
+                 (not (valid-email? (:inspector-email values))))
+     :on-change #(on-change :inspector-email (.-value (.-target %)))}]
+   [va-ui/text-field
+    {:floating-label-text "Hyväksyjän sähköpostiosoite"
+     :value (get values :acceptor-email "")
+     :type "email"
+     :error (and (not-empty? (:acceptor-email values))
+                 (not (valid-email? (:acceptor-email values))))
+     :on-change #(on-change :acceptor-email (.-value (.-target %)))}]]])
