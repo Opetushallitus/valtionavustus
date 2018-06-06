@@ -57,3 +57,19 @@
      :error (and (not-empty? (:acceptor-email values))
                  (not (valid-email? (:acceptor-email values))))
      :on-change #(on-change :acceptor-email (.-value (.-target %)))}]]])
+
+(defn document-field [props]
+  (let [value (r/atom "")]
+    (fn [props]
+      [:div
+       [va-ui/text-field
+        {:floating-label-text "Asiakirjan tunnus"
+         :value @value
+         :on-change (fn [e]
+                      (let [new-value (-> e .-target .-value)]
+                        (when (<= (count new-value) document-id-max-size)
+                          (reset! value new-value))))}]
+       [va-ui/raised-button
+      {:primary true
+       :label "Lisää asiakirja"
+       :on-click #((:on-change props) @value)}]])))
