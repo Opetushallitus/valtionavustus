@@ -66,9 +66,18 @@
              (and (= (:error-count result) 0) (> (:count result) 0))
              :errors (map :error-type (:errors result))})))))
 
+(defn- get-documents []
+  (compojure-api/GET
+    "/:id/documents/" []
+    :path-params [id :- Long]
+    :return [schema/BatchDocument]
+    :summary "Get payment batch documents"
+    (ok (data/get-batch-documents id))))
+
 (compojure-api/defroutes
   routes
   "payment batches routes"
   (find-payment-batches)
   (create-payment-batch)
-  (send-payments))
+  (send-payments)
+  (get-documents))
