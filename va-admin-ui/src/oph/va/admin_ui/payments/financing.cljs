@@ -42,24 +42,21 @@
                 voi olla sama kuin laskun päivämäärä, mutta
                 tilinpäätöstilanteessa tositepäivämäärä on määriteltävä sille
                 kaudelle, jolle lasku kuuluu."
-      :on-change #(on-change :receipt-date %2)}]
-    [va-ui/text-field
-    {:floating-label-text "Esittelijän sähköpostiosoite"
-     :value (get values :inspector-email "")
-     :type "email"
-     :error (and (not-empty? (:inspector-email values))
-                 (not (valid-email? (:inspector-email values))))
-     :on-change #(on-change :inspector-email (.-value (.-target %)))}]
-   [va-ui/text-field
-    {:floating-label-text "Hyväksyjän sähköpostiosoite"
-     :value (get values :acceptor-email "")
-     :type "email"
-     :error (and (not-empty? (:acceptor-email values))
-                 (not (valid-email? (:acceptor-email values))))
-     :on-change #(on-change :acceptor-email (.-value (.-target %)))}]]])
+      :on-change #(on-change :receipt-date %2)}]]])
+
+(defn- valid-document? [document]
+  (and
+    (not-empty? (:document-id document))
+    (valid-email? (:acceptor-email document))
+    (valid-email? (:presenter-email document))))
+
+(def default-document {:document-id ""
+                       :phase 0
+                       :presenter-email ""
+                       :acceptor-email ""})
 
 (defn document-field [props]
-  (let [value (r/atom {:document-id "" :phase 0})]
+  (let [value (r/atom default-document)]
     (fn [props]
       [:div
        [va-ui/select-field
@@ -76,8 +73,23 @@
                       (let [document-id (-> e .-target .-value)]
                         (when (<= (count document-id) document-id-max-size)
                           (swap! value assoc :document-id document-id))))}]
+       [va-ui/text-field
+        {:floating-label-text "Esittelijän sähköpostiosoite"
+         :value (:presenter-email @value)
+         :type "email"
+         :error (and (not-empty? (:presenter-email @value))
+                     (not (valid-email? (:presenter-email @value))))
+         :on-change #(swap! value assoc :presenter-email (.-value (.-target %)))}]
+       [va-ui/text-field
+        {:floating-label-text "Hyväksyjän sähköpostiosoite"
+         :value (:acceptor-email @value)
+         :type "email"
+         :error (and (not-empty? (:acceptor-email @value))
+                     (not (valid-email? (:acceptor-email @value))))
+         :on-change #(swap! value assoc :acceptor-email (.-value (.-target %)))}]
        [va-ui/raised-button
-      {:primary true
-       :label "Lisää asiakirja"
-       :on-click #(do ((:on-change props) @value)
-                      (reset! value {:document-id "" :phase 0}))}]])))
+        {:primary true
+         :disabled (not (valid-document? @value))
+         :label "Lisää asiakirja"
+         :on-click #(do ((:on-change props) @value)
+                        (reset! value default-document))}]])))
