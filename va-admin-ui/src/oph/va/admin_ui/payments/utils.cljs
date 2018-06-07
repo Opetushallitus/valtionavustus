@@ -66,3 +66,8 @@
       (= (t/day date) (t/day today))
       (= (t/year date) (t/year today))
       (= (t/month date) (t/month today)))))
+
+(defn phase-to-name [phase]
+  (if (= phase 0)
+    "1. erä"
+    (str phase ". väliselvitys")))
