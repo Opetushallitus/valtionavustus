@@ -2,7 +2,7 @@
   (:require [reagent.core :as r]
             [oph.va.admin-ui.components.ui :as va-ui]
             [oph.va.admin-ui.payments.utils
-             :refer [not-empty? valid-email?]]))
+             :refer [not-empty? valid-email? phase-to-name]]))
 
 (def ^:private week-in-ms (* 1000 60 60 24 7))
 
@@ -59,17 +59,25 @@
      :on-change #(on-change :acceptor-email (.-value (.-target %)))}]]])
 
 (defn document-field [props]
-  (let [value (r/atom "")]
+  (let [value (r/atom {:document-id "" :phase 0})]
     (fn [props]
       [:div
+       [va-ui/select-field
+        {:label "Vaihe"
+         :value (:phase @value)
+         :values (map #(hash-map
+                         :key % :value % :primary-text (phase-to-name %))
+                      (range 0 (:max-phases props)))
+         :on-change #(swap! value assoc :phase (js/parseInt %))}]
        [va-ui/text-field
         {:floating-label-text "Asiakirjan tunnus"
-         :value @value
+         :value (:document-id @value)
          :on-change (fn [e]
-                      (let [new-value (-> e .-target .-value)]
-                        (when (<= (count new-value) document-id-max-size)
-                          (reset! value new-value))))}]
+                      (let [document-id (-> e .-target .-value)]
+                        (when (<= (count document-id) document-id-max-size)
+                          (swap! value assoc :document-id document-id))))}]
        [va-ui/raised-button
       {:primary true
        :label "Lisää asiakirja"
-       :on-click #(do ((:on-change props) @value) (reset! value ""))}]])))
+       :on-click #(do ((:on-change props) @value)
+                      (reset! value {:document-id "" :phase 0}))}]])))
