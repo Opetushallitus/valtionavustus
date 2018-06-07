@@ -77,6 +77,11 @@
   (http/get (format "/%s/payment-batches/%d/documents/" api-path batch-id)
             {:with-credentials? true}))
 
+(defn send-batch-document [batch-id document]
+  (http/post (format "/%s/payment-batches/%d/documents/" api-path batch-id)
+             {:with-credentials? true
+              :json-params document}))
+
 (defn create-payment-batch [data]
   (http/post (format "/%s/payment-batches/" api-path)
              {:json-params data :with-credentials? true}))
