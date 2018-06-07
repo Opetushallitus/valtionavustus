@@ -307,7 +307,7 @@
    (s/optional-key :id) s/Int
    :document-id s/Str
    :phase s/Int
-   :inspector-email s/Str
+   :presenter-email s/Str
    :acceptor-email s/Str
 })
 
