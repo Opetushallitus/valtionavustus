@@ -41,6 +41,8 @@
                                  (s/optional-key :project) (s/maybe s/Str)
                                  (s/optional-key :rahoitusalueet) [Rahoitusalue]
                                  (s/optional-key :multiplemaksuera) s/Bool
+                                 (s/optional-key :transaction-account) s/Str
+                                 (s/optional-key :document-type) s/Str
                                  :self-financing-percentage (s/conditional is-percentage? s/Num)})
 
 (s/defschema Environment

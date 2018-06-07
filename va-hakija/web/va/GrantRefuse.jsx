@@ -32,6 +32,8 @@ export default class FormContainer extends React.Component {
     const lang = configuration.lang
     const refused = this.props.state.saveStatus.savedObject.refused || false
     const refusedAt = this.props.state.saveStatus.savedObject["refused-at"]
+    const isTokenValid = this.props.isTokenValid
+
     return (
       <section className="container-section">
         <div>
@@ -77,6 +79,12 @@ export default class FormContainer extends React.Component {
               </button>
             </div>
           </div>
+          {!isTokenValid && !refused ?
+            <div>
+              <LocalizedString translations={translations.form}
+                               translationKey="grant-refuse-token-invalid"
+                               lang={lang}/>
+            </div> : null}
         </div>
       </section>)
   }

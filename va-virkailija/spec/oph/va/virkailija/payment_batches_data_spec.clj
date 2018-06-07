@@ -4,11 +4,9 @@
 
 (def valid-values
   {:id 2
-   :document-type "XA"
    :invoice-date "2018-04-13"
    :due-date "2018-04-27"
    :receipt-date "2018-04-27"
-   :transaction-account "5000"
    :currency "EUR"
    :partner "001100"
    :inspector-email "test@test.test"
