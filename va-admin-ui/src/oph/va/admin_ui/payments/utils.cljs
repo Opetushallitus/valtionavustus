@@ -13,14 +13,19 @@
 
 (def today-end (t/today-at 23 59 59))
 
+(defn now [] (t/now))
+
 (defn- to-date [d f]
   (if (empty? d)
     nil
     (when-let [parsed (tf/parse d)]
       (f parsed))))
 
+(defn format-to-simple-date [d]
+  (tf/unparse-local date-formatter d))
+
 (defn to-simple-date [d]
-  (to-date d #(tf/unparse-local date-formatter %)))
+  (to-date d format-to-simple-date))
 
 (defn to-simple-date-time [d]
   (to-date d #(tf/unparse-local date-time-formatter %)))
