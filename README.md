@@ -553,6 +553,30 @@ lähetetään.
 
 ## Käytäntöjä
 
+### Koodi
+
+Ennen oman koodin julkaisua, olisi hyvä ajaa staattiset työkalut.
+
+Sekä `va-irkailija` että `va-hakija` -projekteihin on lisätty alias, jolla
+voi ajaa kaikki työkalut läpi:
+
+``` shell
+../lein checkall
+```
+
+Tämä ajaa lein check, kibit, eastwood ja bikeshed -työkalut projektin
+koodipohjalle. Eastwood-työkalussa on filteröity pois migraatiot ja testit,
+jotta työkalut eivät aja niitä ja muuta tietokantaa.
+
+Yksittäin työkaluja voit ajaa seuraavasti:
+
+``` shell
+../lein check
+../lein kibit
+../lein eastwood
+../lein bikeshed
+```
+
 ### Git
 
 Git workflow on "Long-Running Branches" tyyppinen: [Git Branching - Branching
