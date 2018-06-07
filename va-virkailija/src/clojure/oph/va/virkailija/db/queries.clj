@@ -49,6 +49,8 @@
 (defquery get-batch "sql/virkailija/payment_batches/get-batch.sql")
 (defquery get-batch-documents
   "sql/virkailija/payment_batches/get-batch-documents.sql")
+(defquery create-batch-document
+  "sql/virkailija/payment_batches/create-batch-document.sql")
 
 (defquery get-application-evaluation
   "sql/virkailija/applications/get-application-evaluation.sql")
