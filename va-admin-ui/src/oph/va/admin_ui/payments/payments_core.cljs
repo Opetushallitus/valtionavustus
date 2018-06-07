@@ -24,8 +24,7 @@
    :partner ""
    :due-date (financing/now-plus financing/week-in-ms)
    :invoice-date (js/Date.)
-   :receipt-date nil
-   :document-id "ID"})
+   :receipt-date nil})
 
 (defonce ^:private state
   {:grants (r/atom [])
@@ -250,9 +249,19 @@
                                             (assoc :grant-id (:id @selected-grant))))))
                                 batch (:body batch-result)]
                             (if (:success batch-result)
-                              (send-payments!
-                                (payments/get-batch-values batch)
-                                @selected-grant payments)
+                              (do
+                                (when-let [documents (:documents @batch-values)]
+                                  (doseq [document documents]
+                                    (let [doc-result
+                                          (<! (connection/send-batch-document
+                                                (:id batch) document))]
+                                      (when-not (:success doc-result)
+                                        (dialogs/show-error-message!
+                                          "Virhe maksuerän asiakirjan luonnissa"
+                                          doc-result)))))
+                                (send-payments!
+                                 (payments/get-batch-values batch)
+                                 @selected-grant payments))
                               (dialogs/show-error-message!
                                 "Virhe maksuerän luonnissa"
                                 batch-result)))))}]]]
@@ -313,7 +322,9 @@
                             grant-id (payments/format-date (js/Date.))))]
                   (put! dialog-chan 2)
                   (reset! batch-values
-                          (if (= (:status batch-response) 200)
+                          (if (and
+                                (= (:status batch-response) 200)
+                                (not (empty? (:body batch-response))))
                             (-> (:body batch-response)
                                 last
                                 payments/parse-batch-dates
@@ -321,7 +332,7 @@
                             default-batch-values)))
                 (put! dialog-chan 3)
                 (close! dialog-chan)
-                (when (some? @batch-values)
+                (when (some? (:id @batch-values))
                   (let [doc-dialog-chan (dialogs/show-loading-dialog!
                                           "Ladataan maksuerän dokumentteja" 3)]
                     (put! doc-dialog-chan 1)
