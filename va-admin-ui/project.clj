@@ -91,10 +91,7 @@
         :alias {:default [:node]}}
 
   :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"] "minify-assets"]
-            "checkall" ["do"
-                        ["check"]
-                        ["kibit"]
-                        ["bikeshed"]]}
+            "checkall" ["do" ["check"] ["kibit"] ["bikeshed"]]}
 
   :profiles {:dev {:dependencies [[com.cemerick/piggieback]
                                   [binaryage/devtools]
