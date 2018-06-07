@@ -89,3 +89,9 @@
   (->> (exec :virkailija-db queries/get-batch-documents {:batch_id batch-id})
       (map convert-to-dash-keys)
       (map convert-timestamps-from-sql)))
+
+(defn create-batch-document [batch-id document]
+  (->> (assoc document :batch-id batch-id)
+      convert-to-underscore-keys
+      (exec :virkailija-db queries/create-batch-document)
+      convert-to-dash-keys))
