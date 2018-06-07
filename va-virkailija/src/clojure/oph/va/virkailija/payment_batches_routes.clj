@@ -3,7 +3,7 @@
             [clojure.core.async :refer [<!!]]
             [compojure.api.sweet :as compojure-api]
             [ring.util.http-response
-             :refer [ok no-content conflict]]
+             :refer [ok no-content conflict created]]
             [oph.va.virkailija.payment-batches-data :as data]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.schema :as schema]
@@ -74,10 +74,22 @@
     :summary "Get payment batch documents"
     (ok (data/get-batch-documents id))))
 
+(defn- create-document []
+  (compojure-api/POST
+    "/:id/documents/" []
+    :path-params [id :- Long]
+    :body [document
+           (compojure-api/describe schema/BatchDocument
+                                   "Payment batch document")]
+    :return schema/BatchDocument
+    :summary "Create new payment batch document"
+    (created (data/create-batch-document id document))))
+
 (compojure-api/defroutes
   routes
   "payment batches routes"
   (find-payment-batches)
   (create-payment-batch)
   (send-payments)
-  (get-documents))
+  (get-documents)
+  (create-document))
