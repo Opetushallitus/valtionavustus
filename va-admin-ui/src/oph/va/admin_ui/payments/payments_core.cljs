@@ -13,7 +13,8 @@
     [oph.va.admin-ui.payments.grants :refer [grant-matches? convert-dates]]
     [oph.va.admin-ui.payments.financing :as financing]
     [oph.va.admin-ui.payments.utils
-     :refer [find-index-of is-today? to-simple-date-time]]
+     :refer [find-index-of is-today? to-simple-date-time
+             to-simple-date now phase-to-name]]
     [oph.va.admin-ui.dialogs :as dialogs]
     [oph.va.admin-ui.user :as user]
     [oph.va.admin-ui.theme :as theme]
@@ -169,9 +170,11 @@
 (defn render-document [i document]
   [table/table-row {:key i}
    [table/table-row-column
-    (to-simple-date-time (:created-at document))]
+    (phase-to-name (:phase document))]
    [table/table-row-column
-    (:document-id document)]])
+    (:document-id document)]
+   [table/table-row-column
+    (to-simple-date (:created-at document))]])
 
 (defn- render-batch-values [{:keys [values disabled? on-change]}]
   [:div {:class (when disabled? "disabled")}
@@ -182,15 +185,18 @@
     [table/table {:style {:width 400}}
      [table/table-header
       [table/table-row
-       [table/table-header-column "Lisätty"]
-       [table/table-header-column "ASHA tunniste"]]]
+       [table/table-header-column "Vaihe"]
+       [table/table-header-column "ASHA tunniste"]
+       [table/table-header-column "Lisätty"]]]
      [table/table-body
       (map-indexed render-document (:documents values))]]]
    [:div
     [financing/document-field
-     {:on-change
+     {:max-phases 2
+      :on-change
       #(on-change :documents
-                  (conj (get values :documents []) {:document-id %}))}]]])
+                  (conj (get values :documents [])
+                        (assoc % :created-at (str (now)))))}]]])
 
 (defn home-page [data]
   (let [{:keys [user-info delete-payments?]} data
@@ -244,24 +250,30 @@
                                            @batch-values)
                                    :success true}
                                   (<! (connection/create-payment-batch
-                                        (-> @batch-values
+                                        (-> (dissoc @batch-values :documents)
                                             payments/convert-payment-dates
                                             (assoc :grant-id (:id @selected-grant))))))
                                 batch (:body batch-result)]
                             (if (:success batch-result)
-                              (do
-                                (when-let [documents (:documents @batch-values)]
-                                  (doseq [document documents]
-                                    (let [doc-result
-                                          (<! (connection/send-batch-document
-                                                (:id batch) document))]
-                                      (when-not (:success doc-result)
-                                        (dialogs/show-error-message!
-                                          "Virhe maksuerän asiakirjan luonnissa"
-                                          doc-result)))))
-                                (send-payments!
-                                 (payments/get-batch-values batch)
-                                 @selected-grant payments))
+                              (let [last-doc-result
+                                    (loop [docs (:documents @batch-values)]
+                                      (if (empty? docs)
+                                        {:success true}
+                                        (let [doc-result
+                                              (<! (connection/send-batch-document
+                                                    (:id batch)
+                                                    (dissoc (first docs)
+                                                            :created-at)))]
+                                          (if-not (:success doc-result)
+                                            doc-result
+                                            (recur (rest docs))))))]
+                                (if (:success last-doc-result)
+                                  (send-payments!
+                                    (payments/get-batch-values batch)
+                                    @selected-grant payments)
+                                  (dialogs/show-error-message!
+                                    "Virhe maksuerän asiakirjan luonnissa"
+                                    last-doc-result)))
                               (dialogs/show-error-message!
                                 "Virhe maksuerän luonnissa"
                                 batch-result)))))}]]]
