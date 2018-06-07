@@ -34,7 +34,10 @@
      nil)))
 
 (defn payment-to-invoice [{:keys [payment application grant batch]}]
-  (let [answers (:answers application)]
+  (let [answers (:answers application)
+        document (some
+                   #(when (= (:phase %) (:phase payment)) %)
+                   (:documents batch))]
     [:VA-invoice
      [:Header
       [:Maksuera (get-batch-key batch grant)]
@@ -44,8 +47,8 @@
       [:Maksuehto "Z001"]
       [:Pitkaviite (:register-number application)]
       [:Tositepvm (.toString (:receipt-date batch))]
-      [:Asiatarkastaja (:inspector-email batch)]
-      [:Hyvaksyja (:acceptor-email batch)]
+      [:Asiatarkastaja (:presenter-email document)]
+      [:Hyvaksyja (:acceptor-email document)]
       [:Tositelaji (get-in grant [:content :document-type] "XA")]
       [:Maksutili (get-in grant [:content :transaction-account] "5000")]
       [:Toimittaja
