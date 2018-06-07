@@ -537,6 +537,9 @@ Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
     summasta
 - Virkailija luo Maksatukset-näkymässä uuden maksuerän täyttämällä tarvittavat
   tiedot ja lähettää 1. erän maksatukset Rondoon
+    - Asiakirjoja virkailija voi lisätä mielivaltaisen määrän maksuerää ja
+    vaihetta kohden. Näitä tietoja käytetään maksatusten sähköposti-ilmoituksen
+    lähettämiseen.
 - Seuraavan erän summan asettaa virkailija Väliselvitys-välilehdellä
   - Tämän jälkeen maksu ilmestyy Maksatus-näkymään, josta sen voi lähettää,
     kuten ensimmäisen erän
