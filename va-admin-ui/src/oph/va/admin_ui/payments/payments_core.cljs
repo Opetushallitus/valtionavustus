@@ -14,7 +14,7 @@
     [oph.va.admin-ui.payments.financing :as financing]
     [oph.va.admin-ui.payments.utils
      :refer [find-index-of is-today? to-simple-date-time
-             to-simple-date now phase-to-name]]
+             to-simple-date now to-iso-str phase-to-name]]
     [oph.va.admin-ui.dialogs :as dialogs]
     [oph.va.admin-ui.user :as user]
     [oph.va.admin-ui.theme :as theme]
@@ -174,6 +174,10 @@
    [table/table-row-column
     (:document-id document)]
    [table/table-row-column
+    (:presenter-email document)]
+   [table/table-row-column
+    (:acceptor-email document)]
+   [table/table-row-column
     (to-simple-date (:created-at document))]])
 
 (defn- render-batch-values [{:keys [values disabled? on-change]}]
@@ -182,21 +186,23 @@
    [financing/payment-batch-fields
     {:values values :on-change #(on-change %1 %2)}]
    [:div
-    [table/table {:style {:width 400}}
+    [table/table
      [table/table-header
       [table/table-row
        [table/table-header-column "Vaihe"]
        [table/table-header-column "ASHA tunniste"]
+       [table/table-header-column "Esittelijän sähköposti"]
+       [table/table-header-column "Hyväksyjän sähköposti"]
        [table/table-header-column "Lisätty"]]]
      [table/table-body
-      (map-indexed render-document (:documents values))]]]
+      (doall (map-indexed render-document (:documents values)))]]]
    [:div
     [financing/document-field
      {:max-phases 2
       :on-change
       #(on-change :documents
                   (conj (get values :documents [])
-                        (assoc % :created-at (str (now)))))}]]])
+                        (assoc % :created-at (to-iso-str (now)))))}]]])
 
 (defn home-page [data]
   (let [{:keys [user-info delete-payments?]} data
