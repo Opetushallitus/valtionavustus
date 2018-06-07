@@ -3,9 +3,9 @@
 
   :plugins [[lein-parent "0.3.2"]
             [lein-cljsbuild "1.1.7"]
-            [lein-figwheel "0.5.16"]
-            [lein-doo "0.1.10"]
-            [lein-asset-minifier "0.4.4"]]
+            [lein-figwheel "0.5.16" :exclusions [org.clojure/clojure]]
+            [lein-doo "0.1.10" :exclusions [org.clojure/clojure]]
+            [lein-asset-minifier "0.4.4" :exclusions [org.clojure/clojure]]]
 
   :hooks [minify-assets.plugin/hooks]
 
@@ -90,7 +90,8 @@
   :doo {:build "test"
         :alias {:default [:node]}}
 
-  :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"] "minify-assets"]}
+  :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"] "minify-assets"]
+            "checkall" ["do" ["check"] ["kibit"] ["bikeshed"]]}
 
   :profiles {:dev {:dependencies [[com.cemerick/piggieback]
                                   [binaryage/devtools]

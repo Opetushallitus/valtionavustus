@@ -537,6 +537,9 @@ Maksatusprosessi etenee seuraavasti useammassa erässä maksettavan haun kanssa:
     summasta
 - Virkailija luo Maksatukset-näkymässä uuden maksuerän täyttämällä tarvittavat
   tiedot ja lähettää 1. erän maksatukset Rondoon
+    - Asiakirjoja virkailija voi lisätä mielivaltaisen määrän maksuerää ja
+    vaihetta kohden. Näitä tietoja käytetään maksatusten sähköposti-ilmoituksen
+    lähettämiseen.
 - Seuraavan erän summan asettaa virkailija Väliselvitys-välilehdellä
   - Tämän jälkeen maksu ilmestyy Maksatus-näkymään, josta sen voi lähettää,
     kuten ensimmäisen erän
@@ -552,6 +555,31 @@ muutoshakemuksen. Tämä tunniste vanhenee, kun avustuksen ensimmäinen maksatus
 lähetetään.
 
 ## Käytäntöjä
+
+### Koodi
+
+Ennen oman koodin julkaisua, olisi hyvä ajaa staattiset työkalut.
+
+Sekä `va-virkailija`, `va-admin-ui` että `va-hakija` -projekteihin on lisätty
+alias, jolla voi ajaa kaikki työkalut läpi:
+
+``` shell
+../lein checkall
+```
+
+Tämä ajaa lein check, kibit, eastwood ja bikeshed -työkalut projektin
+koodipohjalle. `va-admin-ui`-projektissa ei ole Eastwood
+käytössä. Eastwood-työkalussa on filteröity pois migraatiot ja testit, jotta
+työkalut eivät aja niitä ja muuta tietokantaa.
+
+Yksittäin työkaluja voit ajaa seuraavasti:
+
+``` shell
+../lein check
+../lein kibit
+../lein eastwood
+../lein bikeshed
+```
 
 ### Git
 

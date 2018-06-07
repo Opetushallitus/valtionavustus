@@ -11,7 +11,11 @@
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.grant-data :as grant-data]
-            [oph.soresu.common.config :refer [config]]))
+            [oph.soresu.common.config :refer [config]]
+            [oph.va.virkailija.rondo-service :refer :all]
+            [oph.va.virkailija.remote-file-service :refer :all])
+  (:import [oph.va.virkailija.rondo_service RondoFileService]))
+
 
 (def timeout-limit 10000)
 
@@ -39,18 +43,18 @@
   ([payment] (create-filename payment  #(System/currentTimeMillis))))
 
 (defn send-to-rondo! [payment application grant filename batch]
+  (let [rondo-service (rondo-service/create-service (get-in config [:server :rondo-sftp]))]
   (with-timeout
     #(try
-       (rondo-service/send-to-rondo!
+       (send-payment-to-rondo! rondo-service
          {:payment (payments-data/get-payment (:id payment))
           :application application
           :grant grant
           :filename filename
-          :batch batch
-          :config (get-in config [:server :rondo-sftp])})
+          :batch batch})
        (catch Exception e
          {:success false :error {:error-type :exception :exception e}}))
-    timeout-limit {:success false :error {:error-type :timeout}}))
+    timeout-limit {:success false :error {:error-type :timeout}})))
 
 (defn send-payment [payment application data]
   (let [filename (create-filename payment)
