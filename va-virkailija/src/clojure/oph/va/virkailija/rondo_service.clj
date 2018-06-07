@@ -64,7 +64,7 @@
                            :path (:remote_path_from (:configuration service))
                            :config (:configuration service))]
       (map #(last (strc/split (str %) #"\s")) result)))
-  (get-local-path [service] (get (:configuration service) :local-path (System/getProperty "java.io.tmpdir")))
+  (get-local-path [service] (get-in (:configuration service) [:local-path] (System/getProperty "java.io.tmpdir")))
   (get-remote-file [service filename]
     (let [xml-file-path (format "%s/%s" (get-local-file-path (:configuration service))  filename)]
       (do-sftp! :method :get
