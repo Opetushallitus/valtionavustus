@@ -57,8 +57,8 @@
 (defjob RondoJob
   [ctx]
   (log/info "Running scheduled fetch of payments now from rondo!")
-    (let [remote-service (rondo-service/create-service (get-in config [:server :rondo-sftp]))]
-      (get-state-of-payments remote-service)))
+  (let [remote-service (rondo-service/create-service (get-in config [:server :rondo-sftp]))]
+    (get-state-of-payments remote-service)))
 
 (defn schedule-fetch-from-rondo []
   (let [s   (-> (qs/initialize) qs/start)

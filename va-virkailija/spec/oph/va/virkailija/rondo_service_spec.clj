@@ -37,7 +37,7 @@
            :first-name "Test"
            :surname "User"})
 
- (defrecord TestFileService [configuration]
+(defrecord TestFileService [configuration]
   RemoteFileService
   (send-payment-to-rondo! [service payment-values] (rondo-service/send-payment! (assoc payment-values :config (:configuration service) :func (constantly nil))))
   (get-remote-file-list [service]
@@ -148,7 +148,7 @@
                                    :local-path "/tmp"}
                     test-service (create-test-service configuration)
                     grant (first (grant-data/get-grants))]
-                    (payments-data/delete-grant-payments (:id grant))
+                (payments-data/delete-grant-payments (:id grant))
                 (should-throw Exception #"No payments found!" (rondo-scheduling/get-state-of-payments test-service))))
 
           (it "When retrieving payment xml from Rondo, show parse errors, if xml is not valid"
