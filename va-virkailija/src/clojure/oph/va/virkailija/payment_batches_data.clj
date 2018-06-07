@@ -98,4 +98,5 @@
   (->> (assoc document :batch-id batch-id)
       convert-to-underscore-keys
       (exec :virkailija-db queries/create-batch-document)
+      first
       convert-to-dash-keys))
