@@ -72,7 +72,8 @@
       (doseq [application
               (filter
                 payments-data/valid-for-send-payment?
-                (grant-data/get-grant-applications-with-evaluation (:id grant)))]
+                (grant-data/get-grant-applications-with-evaluation
+                  (:id grant)))]
         (let [payments (application-data/get-application-unsent-payments
                          (:id application))]
           (if (empty? payments)
@@ -80,11 +81,11 @@
             (doseq [payment payments]
               (let [result (send-payment payment application data)]
                 (when (:success result)
-                  (do
-                    (payments-data/update-payment
-                      (assoc (:payment result)
-                             :state 2 :filename (:filename result)) identity)
-                    (application-data/revoke-application-tokens (:id application))))
+                  (payments-data/update-payment
+                    (assoc (:payment result)
+                           :state 2 :filename (:filename result)) identity)
+                  (application-data/revoke-application-tokens
+                    (:id application)))
                 (a/>! c result))))))
       (a/close! c))
     c))

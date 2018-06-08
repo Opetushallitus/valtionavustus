@@ -24,14 +24,13 @@
   Batch id is something like '660017006' where 6600 is organisation, 17 is
   year and 006 is order number or identification number, if you will.
   If some of values is missing, nil is being returned."
-   (if (and (:created-at batch)
+   (when (and (:created-at batch)
             (some? (get-in grant [:content :document-type]))
             (:batch-number batch))
      (get-batch-key
        (get organisations (get-in grant [:content :document-type]))
        (mod (t/year (c/to-date-time (:created-at batch))) 100)
-       (:batch-number batch))
-     nil)))
+       (:batch-number batch)))))
 
 (defn payment-to-invoice [{:keys [payment application grant batch]}]
   (let [answers (:answers application)
@@ -83,7 +82,7 @@
       content
       (let [k (first xks)
             v (some (fn [e] (when (= (:tag e) k) e)) content)]
-        (when (not (nil? v))
+        (when-not (nil? v)
           (recur (:content v) (rest xks)))))))
 
 (defn read-response-xml [xml]

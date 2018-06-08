@@ -28,9 +28,8 @@
                                    "Create payment batch")]
     :return schema/PaymentBatch
     :summary "Create new payment batch"
-    (if (not (empty?
-               (data/find-batches
-                 (:receipt-date batch-values) (:grant-id batch-values))))
+    (if (seq (data/find-batches
+               (:receipt-date batch-values) (:grant-id batch-values)))
       (conflict "Payment batch already exists")
       (ok (data/create-batch batch-values)))))
 

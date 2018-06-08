@@ -19,7 +19,7 @@
       (cond
         (= template "with-content")
         (grant-data/get-resolved-grants-with-content)
-        (not (empty? search))
+        (seq search)
         (grant-data/find-grants search)
         :else (grant-data/get-grants)))))
 
