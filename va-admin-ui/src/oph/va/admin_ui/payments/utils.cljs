@@ -13,14 +13,24 @@
 
 (def today-end (t/today-at 23 59 59))
 
+(def iso8601-formatter (:basic-date-time tf/formatters))
+
+(defn now [] (t/now))
+
+(defn to-iso-str [d]
+  (tf/unparse iso8601-formatter d))
+
 (defn- to-date [d f]
   (if (empty? d)
     nil
     (when-let [parsed (tf/parse d)]
       (f parsed))))
 
+(defn format-to-simple-date [d]
+  (tf/unparse-local date-formatter d))
+
 (defn to-simple-date [d]
-  (to-date d #(tf/unparse-local date-formatter %)))
+  (to-date d format-to-simple-date))
 
 (defn to-simple-date-time [d]
   (to-date d #(tf/unparse-local date-time-formatter %)))
@@ -66,3 +76,8 @@
       (= (t/day date) (t/day today))
       (= (t/year date) (t/year today))
       (= (t/month date) (t/month today)))))
+
+(defn phase-to-name [phase]
+  (if (= phase 0)
+    "1. erä"
+    (str phase ". väliselvitys")))

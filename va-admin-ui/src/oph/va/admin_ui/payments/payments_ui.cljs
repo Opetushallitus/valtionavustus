@@ -4,13 +4,9 @@
             [oph.va.admin-ui.components.table :as table]
             [oph.va.admin-ui.theme :as theme]
             [oph.va.admin-ui.utils :refer [format]]
+            [oph.va.admin-ui.payments.utils :refer [phase-to-name]]
             [oph.va.admin-ui.components.ui :as va-ui]
             [clojure.string :refer [lower-case]]))
-
-(defn- phase-to-name [phase]
-  (if (= phase 0)
-    "1. erä"
-    (str phase ". väliselvitys")))
 
 (defn- render-payment [i payment]
   [table/table-row {:key i}

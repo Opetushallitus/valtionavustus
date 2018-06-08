@@ -19,11 +19,11 @@
 
 (def timeout-limit 10000)
 
-(defn find-batch [date grant-id]
-  (-> (exec :virkailija-db queries/find-batch {:batch_date date :grant_id grant-id})
-      first
-      convert-to-dash-keys
-      convert-timestamps-from-sql))
+(defn find-batches [date grant-id]
+  (->> (exec :virkailija-db queries/find-batches
+             {:batch_date date :grant_id grant-id})
+      (map convert-to-dash-keys)
+      (map convert-timestamps-from-sql)))
 
 (defn create-batch [values]
   (->> values
@@ -44,7 +44,8 @@
   ([payment] (create-filename payment  #(System/currentTimeMillis))))
 
 (defn send-to-rondo! [payment application grant filename batch]
-  (let [rondo-service (rondo-service/create-service (get-in config [:server :rondo-sftp]))]
+  (let [rondo-service (rondo-service/create-service
+                        (get-in config [:server :rondo-sftp]))]
   (with-timeout
     #(try
        (send-payment-to-rondo! rondo-service
@@ -73,7 +74,8 @@
       (doseq [application
               (filter
                 payments-data/valid-for-send-payment?
-                (grant-data/get-grant-applications-with-evaluation (:id grant)))]
+                (grant-data/get-grant-applications-with-evaluation
+                  (:id grant)))]
         (let [payments (application-data/get-application-unsent-payments
                          (:id application))]
           (if (empty? payments)
@@ -81,11 +83,23 @@
             (doseq [payment payments]
               (let [result (send-payment payment application data)]
                 (when (:success result)
-                  (do
-                    (payments-data/update-payment
-                      (assoc (:payment result)
-                             :state 2 :filename (:filename result)) identity)
-                    (application-data/revoke-application-tokens (:id application))))
+                  (payments-data/update-payment
+                    (assoc (:payment result)
+                           :state 2 :filename (:filename result)) identity)
+                  (application-data/revoke-application-tokens
+                    (:id application)))
                 (a/>! c result))))))
       (a/close! c))
     c))
+
+(defn get-batch-documents [batch-id]
+  (->> (exec :virkailija-db queries/get-batch-documents {:batch_id batch-id})
+      (map convert-to-dash-keys)
+      (map convert-timestamps-from-sql)))
+
+(defn create-batch-document [batch-id document]
+  (->> (assoc document :batch-id batch-id)
+       convert-to-underscore-keys
+       (exec :virkailija-db queries/create-batch-document)
+       first
+       convert-to-dash-keys))

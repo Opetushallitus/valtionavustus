@@ -581,6 +581,24 @@ Yksittäin työkaluja voit ajaa seuraavasti:
 ../lein bikeshed
 ```
 
+Myös yksittäisille nimiavaruudelle voi ajaa eastwood-linterin:
+
+``` shell
+../lein eastwood "{:namespaces [oph.va.virkailija.payment-batches-routes oph.va.virkailija.payment-batches-data]}"
+```
+
+Bikeshedin kanssa joutuu käyttämään grepiä hyväkseen:
+
+``` shell
+../lein bikeshed | grep 'Checking\|payments_data.clj'
+```
+
+Lisätietoja:
+
+- [kibit](https://github.com/jonase/kibit)
+- [eastwood](https://github.com/jonase/eastwood)
+- [lein-bikeshed](https://github.com/dakrone/lein-bikeshed)
+
 ### Git
 
 Git workflow on "Long-Running Branches" tyyppinen: [Git Branching - Branching

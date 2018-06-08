@@ -19,9 +19,9 @@
     :return [virkailija-schema/Application]
     :summary "Return list of applications"
     (ok
-      (if (not (empty? search))
-        (application-data/find-applications search)
-        (not-found "No route found")))))
+      (if (empty? search)
+        (not-found "No route found")
+        (application-data/find-applications search)))))
 
 (compojure-api/defroutes routes
   "application routes"

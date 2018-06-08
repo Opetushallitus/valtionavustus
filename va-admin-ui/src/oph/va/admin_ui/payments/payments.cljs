@@ -4,12 +4,8 @@
             [cljs-time.coerce :as tc]
             [cljs-time.format :as tf]))
 
-(defn valid-batch-values?
-  [values]
-  (and (no-nils? values
-                 [:due-date :invoice-date :receipt-date])
-       (valid-email? (:inspector-email values))
-       (valid-email? (:acceptor-email values))))
+(defn valid-batch-values? [values]
+  (no-nils? values [:due-date :invoice-date :receipt-date]))
 
 (defn any-account-nil? [a]
   (some?

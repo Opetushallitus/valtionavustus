@@ -1,7 +1,8 @@
 (ns oph.va.admin-ui.payments.financing
-  (:require [oph.va.admin-ui.components.ui :as va-ui]
+  (:require [reagent.core :as r]
+            [oph.va.admin-ui.components.ui :as va-ui]
             [oph.va.admin-ui.payments.utils
-             :refer [not-empty? valid-email?]]))
+             :refer [not-empty? valid-email? phase-to-name]]))
 
 (def ^:private week-in-ms (* 1000 60 60 24 7))
 
@@ -15,26 +16,7 @@
       (+ milliseconds)
       (js/Date.)))
 
-(defn payment-emails
-  [values on-change]
-  [:div {:style {:display "flex"}}
-   [va-ui/text-field
-    {:floating-label-text "Esittelijän sähköpostiosoite"
-     :value (get values :inspector-email "")
-     :type "email"
-     :error (and (not-empty? (:inspector-email values))
-                 (not (valid-email? (:inspector-email values))))
-     :on-change #(on-change :inspector-email (.-value (.-target %)))}]
-   [va-ui/text-field
-    {:floating-label-text "Hyväksyjän sähköpostiosoite"
-     :value (get values :acceptor-email "")
-     :type "email"
-     :error (and (not-empty? (:acceptor-email values))
-                 (not (valid-email? (:acceptor-email values))))
-     :on-change #(on-change :acceptor-email (.-value (.-target %)))}]])
-
-(defn payment-fields
-  [values on-change]
+(defn payment-batch-fields [{:keys [values on-change]}]
   [:div
    [:div {:style {:display "flex"}}
     [va-ui/date-picker
@@ -60,11 +42,54 @@
                 voi olla sama kuin laskun päivämäärä, mutta
                 tilinpäätöstilanteessa tositepäivämäärä on määriteltävä sille
                 kaudelle, jolle lasku kuuluu."
-      :on-change #(on-change :receipt-date %2)}]]
-   [:div [va-ui/text-field
-          {:floating-label-text "Asiakirjan tunnus"
-           :value (get values :document-id "")
-           :on-change (fn [e]
-                        (let [value (-> e .-target .-value)]
-                          (when (<= (count value) document-id-max-size)
-                            (on-change :document-id value))))}]]])
+      :on-change #(on-change :receipt-date %2)}]]])
+
+(defn- valid-document? [document]
+  (and
+    (not-empty? (:document-id document))
+    (valid-email? (:acceptor-email document))
+    (valid-email? (:presenter-email document))))
+
+(def default-document {:document-id ""
+                       :phase 0
+                       :presenter-email ""
+                       :acceptor-email ""})
+
+(defn document-field [props]
+  (let [value (r/atom default-document)]
+    (fn [props]
+      [:div
+       [va-ui/select-field
+        {:label "Vaihe"
+         :value (:phase @value)
+         :values (map #(hash-map
+                         :key % :value % :primary-text (phase-to-name %))
+                      (range 0 (:max-phases props)))
+         :on-change #(swap! value assoc :phase (js/parseInt %))}]
+       [va-ui/text-field
+        {:floating-label-text "Asiakirjan tunnus"
+         :value (:document-id @value)
+         :on-change (fn [e]
+                      (let [document-id (-> e .-target .-value)]
+                        (when (<= (count document-id) document-id-max-size)
+                          (swap! value assoc :document-id document-id))))}]
+       [va-ui/text-field
+        {:floating-label-text "Esittelijän sähköpostiosoite"
+         :value (:presenter-email @value)
+         :type "email"
+         :error (and (not-empty? (:presenter-email @value))
+                     (not (valid-email? (:presenter-email @value))))
+         :on-change #(swap! value assoc :presenter-email (.-value (.-target %)))}]
+       [va-ui/text-field
+        {:floating-label-text "Hyväksyjän sähköpostiosoite"
+         :value (:acceptor-email @value)
+         :type "email"
+         :error (and (not-empty? (:acceptor-email @value))
+                     (not (valid-email? (:acceptor-email @value))))
+         :on-change #(swap! value assoc :acceptor-email (.-value (.-target %)))}]
+       [va-ui/raised-button
+        {:primary true
+         :disabled (not (valid-document? @value))
+         :label "Lisää asiakirja"
+         :on-click #(do ((:on-change props) @value)
+                        (reset! value default-document))}]])))

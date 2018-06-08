@@ -31,11 +31,8 @@
                  :due-date payment-date
                  :partner ""
                  :grant-id (:id grant)
-                 :document-id ""
                  :currency "EUR"
-                 :invoice-date payment-date
-                 :acceptor-email "acceptor@local"
-                 :inspector-email "inspector@local"})]
+                 :invoice-date payment-date})]
     (payments-data/create-payment
               {:application-id (:id application)
                :payment-sum 20000
@@ -68,11 +65,8 @@
                      :due-date payment-date
                      :partner ""
                      :grant-id (:id grant)
-                     :document-id ""
                      :currency "EUR"
-                     :invoice-date payment-date
-                     :acceptor-email "acceptor@local"
-                     :inspector-email "inspector@local"})
+                     :invoice-date payment-date})
             payment (payments-data/create-payment
                       {:application-id (:id application)
                        :payment-sum 20000
@@ -115,11 +109,8 @@
                        :due-date payment-date
                        :partner ""
                        :grant-id (:id grant)
-                       :document-id ""
                        :currency "EUR"
-                       :invoice-date payment-date
-                       :acceptor-email "acceptor@local"
-                       :inspector-email "inspector@local"})
+                       :invoice-date payment-date})
               payment1 (payments-data/create-payment
                          {:application-id (:id application)
                           :payment-sum 20000
@@ -162,11 +153,8 @@
                        :due-date payment-date
                        :partner ""
                        :grant-id (:id grant)
-                       :document-id ""
                        :currency "EUR"
-                       :invoice-date payment-date
-                       :acceptor-email "acceptor@local"
-                       :inspector-email "inspector@local"})
+                       :invoice-date payment-date})
               payment1 (payments-data/create-payment
                          {:application-id (:id application)
                           :payment-sum 20000

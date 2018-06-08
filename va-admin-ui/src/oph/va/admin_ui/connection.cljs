@@ -68,10 +68,19 @@
 (defn get-user-info []
   (http/get (format "/api/userinfo/") {:with-credentials? true}))
 
-(defn find-payment-batch [grant-id date]
+(defn find-payment-batches [grant-id date]
   (http/get (format "/%s/payment-batches/?grant-id=%d&date=%s"
                     api-path grant-id date)
             {:with-credentials? true}))
+
+(defn get-batch-documents [batch-id]
+  (http/get (format "/%s/payment-batches/%d/documents/" api-path batch-id)
+            {:with-credentials? true}))
+
+(defn send-batch-document [batch-id document]
+  (http/post (format "/%s/payment-batches/%d/documents/" api-path batch-id)
+             {:with-credentials? true
+              :json-params document}))
 
 (defn create-payment-batch [data]
   (http/post (format "/%s/payment-batches/" api-path)

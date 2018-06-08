@@ -94,13 +94,10 @@
                             :due-date invoice-date
                             :partner ""
                             :grant-id (:id grant)
-                            :document-id ""
                             :currency "EUR"
                             :invoice-date invoice-date
                             :document-type "XA"
-                            :transaction-account "6000"
-                            :acceptor-email "acceptor@local"
-                            :inspector-email "inspector@local"})
+                            :transaction-account "6000"})
                     payment (payments-data/create-payment
                              {:application-id (:id application)
                               :payment-sum 26000
@@ -125,13 +122,10 @@
                             :due-date invoice-date
                             :partner ""
                             :grant-id (:id grant)
-                            :document-id ""
                             :currency "EUR"
                             :invoice-date invoice-date
                             :document-type "XA"
-                            :transaction-account "6000"
-                            :acceptor-email "acceptor@local"
-                            :inspector-email "inspector@local"})
+                            :transaction-account "6000"})
                     payment (payments-data/create-payment
                              {:application-id (:id application)
                               :payment-sum 26000
