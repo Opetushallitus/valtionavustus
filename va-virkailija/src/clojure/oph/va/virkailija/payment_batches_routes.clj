@@ -2,8 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [clojure.core.async :refer [<!!]]
             [compojure.api.sweet :as compojure-api]
-            [ring.util.http-response
-             :refer [ok no-content conflict created]]
+            [ring.util.http-response :refer [ok no-content conflict]]
             [oph.va.virkailija.payment-batches-data :as data]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.schema :as schema]
@@ -83,7 +82,7 @@
                                    "Payment batch document")]
     :return schema/BatchDocument
     :summary "Create new payment batch document"
-    (created (data/create-batch-document id document))))
+    (ok (data/create-batch-document id document))))
 
 (compojure-api/defroutes
   routes
