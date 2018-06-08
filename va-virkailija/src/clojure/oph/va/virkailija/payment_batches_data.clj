@@ -20,7 +20,8 @@
 (def timeout-limit 10000)
 
 (defn find-batches [date grant-id]
-  (->> (exec :virkailija-db queries/find-batches {:batch_date date :grant_id grant-id})
+  (->> (exec :virkailija-db queries/find-batches
+             {:batch_date date :grant_id grant-id})
       (map convert-to-dash-keys)
       (map convert-timestamps-from-sql)))
 
@@ -43,7 +44,8 @@
   ([payment] (create-filename payment  #(System/currentTimeMillis))))
 
 (defn send-to-rondo! [payment application grant filename batch]
-  (let [rondo-service (rondo-service/create-service (get-in config [:server :rondo-sftp]))]
+  (let [rondo-service (rondo-service/create-service
+                        (get-in config [:server :rondo-sftp]))]
   (with-timeout
     #(try
        (send-payment-to-rondo! rondo-service

@@ -46,7 +46,8 @@
   (map convert-to-dash-keys
        (exec :form-db
              hakija-queries/find-applications
-             {:search_term (str "%" (clojure.string/lower-case search-term) "%")})))
+             {:search_term
+              (str "%" (clojure.string/lower-case search-term) "%")})))
 
 
 

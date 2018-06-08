@@ -60,8 +60,9 @@
 
 (defn update-payment [payment-data identity]
   (let [old-payment (get-payment (:id payment-data) (:version payment-data))
-        payment (dissoc (merge old-payment payment-data (get-user-info identity))
-                        :version :version-closed)
+        payment (dissoc
+                  (merge old-payment payment-data (get-user-info identity))
+                  :version :version-closed)
         result
         (->> payment
              convert-to-underscore-keys
@@ -80,7 +81,8 @@
 (defn- total-paid [application-id]
   (or
     (->
-      (exec :virkailija-db queries/get-total-paid {:application_id application-id})
+      (exec :virkailija-db queries/get-total-paid
+            {:application_id application-id})
       first
       :total_paid)
     0))
@@ -139,7 +141,8 @@
     (application-data/get-applications-with-evaluation-by-grant id)
     (filter valid-for-send-payment?)
     (reduce
-      (fn [p n] (into p (application-data/get-application-payments (:id n)))) [])
+      (fn [p n]
+        (into p (application-data/get-application-payments (:id n)))) [])
     (map convert-timestamps-from-sql)))
 
 (defn delete-grant-payments [id]
