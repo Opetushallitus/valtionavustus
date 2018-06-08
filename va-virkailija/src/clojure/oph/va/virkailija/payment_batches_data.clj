@@ -96,7 +96,7 @@
 
 (defn create-batch-document [batch-id document]
   (->> (assoc document :batch-id batch-id)
-      convert-to-underscore-keys
-      (exec :virkailija-db queries/create-batch-document)
-      first
-      convert-to-dash-keys))
+       convert-to-underscore-keys
+       (exec :virkailija-db queries/create-batch-document)
+       first
+       convert-to-dash-keys))
