@@ -83,9 +83,7 @@
           (email/refuse-url avustushaku-id user-key
                       lang (create-application-token user-key)))
         user-message {:operation :send
-                      :type (if refuse-enabled?
-                              :hakemus-submitted-refuse
-                              :hakemus-submitted)
+                      :type  :hakemus-submitted
                       :lang lang
                       :from (-> email/smtp-config :from lang)
                       :sender (-> email/smtp-config :sender)
