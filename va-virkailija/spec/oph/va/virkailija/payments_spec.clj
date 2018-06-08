@@ -57,12 +57,9 @@
 
   (it "finds payments by register number and invoice date"
       (let [grant (first (grant-data/get-grants))
-            asd (prn "1")
             submission (create-submission
                          (:form grant) {:budget-oph-share 40000})
-            asd (prn "2")
             application (create-application grant submission)
-            asd (prn "3")
             batch (payment-batches-data/create-batch
                     {:receipt-date payment-date
                      :due-date payment-date
@@ -70,7 +67,6 @@
                      :grant-id (:id grant)
                      :currency "EUR"
                      :invoice-date payment-date})
-            asd (prn "4")
             payment (payments-data/create-payment
                       {:application-id (:id application)
                        :payment-sum 20000
