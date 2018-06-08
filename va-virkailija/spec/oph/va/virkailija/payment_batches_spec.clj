@@ -13,10 +13,7 @@
    :receipt-date "2018-04-16"
    :currency "EUR"
    :partner "123456"
-   :inspector-email "no.one@email.local"
-   :acceptor-email "no.two@email.local"
-   :grant-id 1
-   :document-id "ID1234567890"})
+   :grant-id 1})
 
 (describe "Payment batches routes"
 
@@ -55,16 +52,17 @@
               (format "/api/v2/payment-batches/?date=%s&grant-id=%d"
                       "2018-02-02"
                       (:grant-id valid-payment-batch)))
-            batch (json->map body)]
+            batches (json->map body)]
         (should= 200 status)
-        (should (some? batch))
+        (should= 1 (count batches))
+        (should (some? (first batches)))
         (should= (assoc valid-payment-batch :receipt-date "2018-02-02")
-                 (dissoc batch :id :batch-number :created-at))))
+                 (dissoc (first batches) :id :batch-number :created-at))))
 
   (it "find payment batch (not found any)"
       (let [{:keys [status body]}
             (get! "/api/v2/payment-batches/?date=2018-04-17&grant-id=1")]
-        (should= 204 status)
-        (should= 0 (count (json->map body))))))
+        (should= 200 status)
+        (should (empty (json->map body))))))
 
 (run-specs)

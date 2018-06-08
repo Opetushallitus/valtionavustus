@@ -31,11 +31,8 @@
                  :due-date payment-date
                  :partner ""
                  :grant-id (:id grant)
-                 :document-id ""
                  :currency "EUR"
-                 :invoice-date payment-date
-                 :acceptor-email "acceptor@local"
-                 :inspector-email "inspector@local"})]
+                 :invoice-date payment-date})]
     (payments-data/create-payment
               {:application-id (:id application)
                :payment-sum 20000
@@ -60,19 +57,20 @@
 
   (it "finds payments by register number and invoice date"
       (let [grant (first (grant-data/get-grants))
+            asd (prn "1")
             submission (create-submission
                          (:form grant) {:budget-oph-share 40000})
+            asd (prn "2")
             application (create-application grant submission)
+            asd (prn "3")
             batch (payment-batches-data/create-batch
                     {:receipt-date payment-date
                      :due-date payment-date
                      :partner ""
                      :grant-id (:id grant)
-                     :document-id ""
                      :currency "EUR"
-                     :invoice-date payment-date
-                     :acceptor-email "acceptor@local"
-                     :inspector-email "inspector@local"})
+                     :invoice-date payment-date})
+            asd (prn "4")
             payment (payments-data/create-payment
                       {:application-id (:id application)
                        :payment-sum 20000
@@ -115,11 +113,8 @@
                        :due-date payment-date
                        :partner ""
                        :grant-id (:id grant)
-                       :document-id ""
                        :currency "EUR"
-                       :invoice-date payment-date
-                       :acceptor-email "acceptor@local"
-                       :inspector-email "inspector@local"})
+                       :invoice-date payment-date})
               payment1 (payments-data/create-payment
                          {:application-id (:id application)
                           :payment-sum 20000
@@ -162,11 +157,8 @@
                        :due-date payment-date
                        :partner ""
                        :grant-id (:id grant)
-                       :document-id ""
                        :currency "EUR"
-                       :invoice-date payment-date
-                       :acceptor-email "acceptor@local"
-                       :inspector-email "inspector@local"})
+                       :invoice-date payment-date})
               payment1 (payments-data/create-payment
                          {:application-id (:id application)
                           :payment-sum 20000

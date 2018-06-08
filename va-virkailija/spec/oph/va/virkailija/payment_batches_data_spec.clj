@@ -9,10 +9,7 @@
    :receipt-date "2018-04-27"
    :currency "EUR"
    :partner "001100"
-   :inspector-email "test@test.test"
-   :acceptor-email "test2@test.test"
-   :grant-id 1
-   :document-id "ID1234567"})
+   :grant-id 1})
 
 (def valid-application
   {:id 1
