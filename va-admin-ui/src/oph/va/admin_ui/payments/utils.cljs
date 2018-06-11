@@ -56,7 +56,7 @@
   "Parse integer from string. If parsing fails (NaN) nil will be returned"
   (let [value (js/parseInt s)] (when-not (js/isNaN value) value)))
 
-(defn assoc-all [c k v] (into [] (map #(assoc % k v) c)))
+(defn assoc-all [c k v] (vec (map #(assoc % k v) c)))
 
 (defn remove-nil [m] (into {} (filter (comp some? val) m)))
 
