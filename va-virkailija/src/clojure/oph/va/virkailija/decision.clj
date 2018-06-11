@@ -9,7 +9,8 @@
             [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.kayttosuunnitelma :as ks]
             [oph.va.virkailija.koulutusosio :as koulutusosio]
-            [schema.core :as s]))
+            [schema.core :as s]
+            [hiccup.core :refer [html]]))
 
 (defn decision-translation [translations lang keyword-or-key]
   (let [key (if (keyword? keyword-or-key) keyword-or-key (keyword keyword-or-key))]
@@ -55,12 +56,12 @@
         multiple-maksuera (and has-multiple-maksuera (> total-paid 60000))
         first-round-paid (if multiple-maksuera (Math/round (* 0.6 total-paid)) total-paid)
         paid-formatted (ks/format-number first-round-paid)
-        extra-no-multiple "<span>.</span>"
-        extra-multiple (str "<span> " (translate :ja-loppuera-viimeistaan) " " maksu-date ".</span>")
+        extra-no-multiple [:span "."]
+        extra-multiple [:span (str  (translate :ja-loppuera-viimeistaan) "" maksu-date)]
         extra (if multiple-maksuera extra-multiple extra-no-multiple)
-        content1 (str "<p>" (translate "avustus-maksetaan") ":</p><p><strong>" iban ", " bic "</strong>" "</p>")
-        content2 (str "<p>" (translate "maksuerat-ja-ajat") ": " paid-formatted " " maksu extra "</p>")
-        content3 (when-not (nil? (:talousarviotili arvio)) (str "<p>" (translate "talousarviotili") ": " (:talousarviotili arvio) "</p>"))
+        content1 [:span [:p (str (translate "avustus-maksetaan") ":")] [:p [:strong (str iban ", " bic)]]]
+        content2 [:p (str (translate "maksuerat-ja-ajat") ": " paid-formatted " " maksu extra)]
+        content3 (when-not (nil? (:talousarviotili arvio)) [:p (str (translate "talousarviotili") ": " (:talousarviotili arvio))])
         content (str content1 content2 content3)]
     (section :avustuksen-maksu content translate false)))
 
