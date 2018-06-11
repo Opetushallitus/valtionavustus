@@ -188,11 +188,13 @@
                               (swap! code-filter assoc :value-type k))
                   :class
                   (str "oph-tab-item"
-                       (when (= (:value-type @code-filter) k) " oph-tab-item-is-active"))}
+                       (when (= (:value-type @code-filter) k)
+                         " oph-tab-item-is-active"))}
               v])
            value-types))]]
      [:div
-      [(render-add-item #(create-item! (:value-type @code-filter) % code-values))]
+      [(render-add-item #(create-item!
+                           (:value-type @code-filter) % code-values))]
       [:hr]
       [(let [filter-str (r/atom "")]
          (fn []
@@ -215,6 +217,8 @@
 
 (defn init! []
   (add-watch (:code-filter state) ""
-             #(download-items! (:value-type %4) (:year %4) (:code-values state)))
-  (reset! (:code-filter state) {:value-type :operational-unit
-                         :year nil}))
+             #(download-items!
+                (:value-type %4) (:year %4) (:code-values state)))
+  (reset! (:code-filter state)
+          {:value-type :operational-unit
+           :year nil}))

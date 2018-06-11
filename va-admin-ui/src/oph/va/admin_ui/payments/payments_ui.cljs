@@ -70,7 +70,8 @@
       (doall (map-indexed render-payment filtered-payments))]
      [table/table-footer
       [table/table-row
-       [table/table-row-column (str (count filtered-payments) "/" (count payments) " maksatusta")]
+       [table/table-row-column
+        (str (count filtered-payments) "/" (count payments) " maksatusta")]
        [table/table-row-column]
        [table/table-row-column "Yhteensä"]
        [table/table-row-column {:style {:text-align "right"}}

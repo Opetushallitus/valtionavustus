@@ -3,7 +3,10 @@
             [cljs-time.core :as t]))
 
 (def re-email
-  #"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+  (re-pattern
+    (str "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]"
+         "(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:.[a-zA-Z0-9]"
+         "(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")))
 
 (def date-formatter (tf/formatter "dd.MM.yyyy"))
 
@@ -68,7 +71,10 @@
   ([col pred]
    (find-index-of col pred 0 (count col))))
 
-(defn valid-email? [v] (and (not-empty? v) (not-nil? (re-matches re-email v))))
+(defn valid-email? [v]
+  (and
+    (not-empty? v)
+    (not-nil? (re-matches re-email v))))
 
 (defn is-today? [d]
   (let [date (if (string? d)

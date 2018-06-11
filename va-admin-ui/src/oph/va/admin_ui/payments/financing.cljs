@@ -79,14 +79,16 @@
          :type "email"
          :error (and (not-empty? (:presenter-email @value))
                      (not (valid-email? (:presenter-email @value))))
-         :on-change #(swap! value assoc :presenter-email (.-value (.-target %)))}]
+         :on-change
+         #(swap! value assoc :presenter-email (.-value (.-target %)))}]
        [va-ui/text-field
         {:floating-label-text "Hyväksyjän sähköpostiosoite"
          :value (:acceptor-email @value)
          :type "email"
          :error (and (not-empty? (:acceptor-email @value))
                      (not (valid-email? (:acceptor-email @value))))
-         :on-change #(swap! value assoc :acceptor-email (.-value (.-target %)))}]
+         :on-change
+         #(swap! value assoc :acceptor-email (.-value (.-target %)))}]
        [va-ui/raised-button
         {:primary true
          :disabled (not (valid-document? @value))
