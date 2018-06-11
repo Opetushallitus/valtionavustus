@@ -47,7 +47,7 @@
                      "<p>" avustushaku-name "</p>\n")]
     (section :asia content translate false)))
 
-(defn avustuksen-maksu [avustushaku bic iban total-paid lang translate]
+(defn avustuksen-maksu [avustushaku bic iban total-paid lang translate arvio]
   (let [decision (:decision avustushaku)
         maksu-date (:maksudate decision)
         maksu (decision-field decision :maksu lang)
@@ -60,7 +60,8 @@
         extra (if multiple-maksuera extra-multiple extra-no-multiple)
         content1 (str "<p>" (translate "avustus-maksetaan") ":</p><p><strong>" iban ", " bic "</strong>" "</p>")
         content2 (str "<p>" (translate "maksuerat-ja-ajat") ": " paid-formatted " " maksu extra "</p>")
-        content (str content1 content2)]
+        content3 (when-not (nil? (:talousarviotili arvio)) (str "<p>" (translate "talousarviotili") ": " (:talousarviotili arvio) "</p>"))
+        content (str content1 content2 content3)]
     (section :avustuksen-maksu content translate false)))
 
 (defn myonteinen-lisateksti [avustushaku hakemus lang]
@@ -146,7 +147,7 @@
         translate (partial decision-translation translations language)
         johtaja (decision-field decision :johtaja language)
         valmistelija (decision-field decision :valmistelija language)
-        avustuksen-maksu (avustuksen-maksu avustushaku bic iban total-granted language translate)
+        avustuksen-maksu (avustuksen-maksu avustushaku bic iban total-granted language translate arvio)
         myonteinen-lisateksti (myonteinen-lisateksti avustushaku hakemus language)
         form-content (-> haku-data :form :content)
         kayttosuunnitelma (ks/kayttosuunnitelma avustushaku hakemus form-content answers translate language)
