@@ -91,7 +91,7 @@
    [:h2 title]
    (if searching?
      [ui/circular-progress]
-     (if (> (count results) 0)
+     (if (pos? (count results))
        (doall (map-indexed renderer results))
        [:span "Ei hakutuloksia"]))])
 
