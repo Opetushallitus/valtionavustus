@@ -35,7 +35,7 @@
    :batch-values (r/atom {})})
 
 (defn- get-param-grant []
-  (let [grant-id (js/parseInt (router/get-current-param :grant))]
+  (let [grant-id (js/parseInt (router/get-current-param :grant-id))]
     (when-not (js/isNaN grant-id) grant-id)))
 
 (defn- render-admin-tools [payments selected-grant delete-payments?]
