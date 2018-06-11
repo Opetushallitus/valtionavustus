@@ -87,8 +87,8 @@
         on-submit
         (fn []
           (when (is-valid? @v)
-            (do (on-change @v)
-                (reset! v {}))))
+            (on-change @v)
+            (reset! v {})))
         catch-enter (create-catch-enter on-submit)]
     (fn [on-change]
       [:div {:style {:max-width 1000}}
