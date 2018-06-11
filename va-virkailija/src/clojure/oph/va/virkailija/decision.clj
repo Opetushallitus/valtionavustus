@@ -18,7 +18,7 @@
 
 (defn content-with-paragraphs [content]
   (let [rows (str/split content #"\n")
-        rows-list (mapv (fn [row] (str "<p>" row "</p>")) rows)
+        rows-list (mapv (fn [row]  (html [:p row])) rows)
         rows-p (str/join " " rows-list)]
     rows-p))
 
@@ -28,7 +28,7 @@
 (defn section [title-key content translate create-paragraph]
   (let [content-p  (if create-paragraph (content-with-paragraphs content) content)
         title (translate title-key)]
-    (str "<section class='section'><h2>" title "</h2><div class='content'>" content-p "</div></section>")))
+      (html [:section {:class "section"} [:h2 title] [:div {:class "content"} content-p]])))
 
 (defn optional-section-content [title content translate]
   (let [content-length (count content)]
@@ -44,9 +44,8 @@
   (section title-key (translate content-key) translate create-paragraph))
 
 (defn asia-section [avustushaku-name translate]
-  (let [content (str "<p>" (translate :asia-title) "</p>\n"
-                     "<p>" avustushaku-name "</p>\n")]
-    (section :asia content translate false)))
+  (let [content [:span [:p (str (translate :asia-title))] [:p avustushaku-name]]]
+  (section :asia content translate false)))
 
 (defn avustuksen-maksu [avustushaku bic iban total-paid lang translate arvio]
   (let [decision (:decision avustushaku)
@@ -56,14 +55,15 @@
         multiple-maksuera (and has-multiple-maksuera (> total-paid 60000))
         first-round-paid (if multiple-maksuera (Math/round (* 0.6 total-paid)) total-paid)
         paid-formatted (ks/format-number first-round-paid)
-        extra-no-multiple [:span "."]
+        extra-no-multiple "."
         extra-multiple [:span (str  (translate :ja-loppuera-viimeistaan) "" maksu-date)]
         extra (if multiple-maksuera extra-multiple extra-no-multiple)
         content1 [:span [:p (str (translate "avustus-maksetaan") ":")] [:p [:strong (str iban ", " bic)]]]
         content2 [:p (str (translate "maksuerat-ja-ajat") ": " paid-formatted " " maksu extra)]
         content3 (when-not (nil? (:talousarviotili arvio)) [:p (str (translate "talousarviotili") ": " (:talousarviotili arvio))])
-        content (str content1 content2 content3)]
+        content [:span content1 content2 content3]]
     (section :avustuksen-maksu content translate false)))
+
 
 (defn myonteinen-lisateksti [avustushaku hakemus lang]
   (let [rahoitusalueet (-> avustushaku :content :rahoitusalueet)
@@ -89,13 +89,13 @@
      :version (:version row)}))
 
 (defn liite-row [liite lang]
-  (if-some [liite-id (:id liite)]
-    (let [liite-version (:version liite)
-          lang-str (name lang)
-          link (str "/liitteet/" liite-id liite-version "_" lang-str ".pdf")
-          liite-name (get-in liite [:langs lang])]
-      (str "<div><a href='" link "'>" liite-name "</a></div>"))
-    ""))
+ (if-some [liite-id (:id liite)]
+   (let [liite-version (:version liite)
+         lang-str (name lang)
+         link (str "/liitteet/" liite-id liite-version "_" lang-str ".pdf")
+         liite-name (get-in liite [:langs lang])]
+     (html
+       [:div [:a {:href link} liite-name]]))))
 
 (defn liitteet-list [avustushaku hakemus translate lang has-budget]
   (let [liitteet (-> avustushaku :decision :liitteet)
@@ -104,7 +104,7 @@
         ehdot (find-liite liitteet "Ehdot")
         oikaisuvaatimus (find-liite liitteet "Oikaisuvaatimusosoitus")
         yleisohje (find-liite liitteet "Valtionavustusten yleisohje")
-        row-kayttosuunnitelma (str "<div>" (translate :kayttosuunnitelma) "</div>")
+        row-kayttosuunnitelma (html [:div (str (translate :kayttosuunnitelma))])
         row-oikaisuvaatimus (liite-row oikaisuvaatimus lang)
         row-ehdot (liite-row ehdot lang)
         row-yleisohje (liite-row yleisohje lang)
@@ -114,9 +114,9 @@
                     (str row-kayttosuunnitelma row-oikaisuvaatimus row-ehdot row-yleisohje)
                     (str row-oikaisuvaatimus row-ehdot row-yleisohje)))
         content-length (count content)]
-    (if (> content-length 0)
-      (section :liitteet content translate false)
-      "")))
+        (if (> content-length 0)
+          (section :liitteet content translate false)
+          "")))
 
 (defn paatos-html [hakemus-id]
   (let [haku-data (hakudata/get-combined-paatos-data hakemus-id)
@@ -200,8 +200,8 @@
   "Decision"
 
   (compojure-api/GET "/avustushaku/:avustushaku-id/hakemus/:hakemus-id" []
-                     :path-params [avustushaku-id :- Long hakemus-id :- Long]
-                     (let [body (paatos-html hakemus-id)]
-                       {:status  200
-                        :headers {"Content-Type" "text/html"}
-                        :body    body})))
+    :path-params [avustushaku-id :- Long hakemus-id :- Long]
+    (let [body (paatos-html hakemus-id)]
+      {:status  200
+       :headers {"Content-Type" "text/html"}
+       :body    body})))
