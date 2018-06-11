@@ -24,7 +24,7 @@
 
 (defn- batch-payable? [pred applications]
   (and
-    (not (empty? applications))
+    (seq applications)
     (true?
       (some
         pred

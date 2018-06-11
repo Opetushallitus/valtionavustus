@@ -342,7 +342,7 @@
                   (reset! batch-values
                           (if (and
                                 (= (:status batch-response) 200)
-                                (not (empty? (:body batch-response))))
+                                (seq (:body batch-response)))
                             (-> (:body batch-response)
                                 last
                                 payments/parse-batch-dates
