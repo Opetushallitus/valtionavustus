@@ -113,9 +113,9 @@
                     (str row-kayttosuunnitelma row-oikaisuvaatimus row-ehdot row-yleisohje)
                     (str row-oikaisuvaatimus row-ehdot row-yleisohje)))
         content-length (count content)]
-        (if (> content-length 0)
-          (section :liitteet content translate false)
-          "")))
+    (if (> content-length 0)
+      (section :liitteet content translate false)
+      "")))
 
 (defn paatos-html [hakemus-id]
   (let [haku-data (hakudata/get-combined-paatos-data hakemus-id)
@@ -199,8 +199,8 @@
   "Decision"
 
   (compojure-api/GET "/avustushaku/:avustushaku-id/hakemus/:hakemus-id" []
-    :path-params [avustushaku-id :- Long hakemus-id :- Long]
-    (let [body (paatos-html hakemus-id)]
-      {:status  200
-       :headers {"Content-Type" "text/html"}
-       :body    body})))
+                     :path-params [avustushaku-id :- Long hakemus-id :- Long]
+                     (let [body (paatos-html hakemus-id)]
+                       {:status  200
+                        :headers {"Content-Type" "text/html"}
+                        :body    body})))
