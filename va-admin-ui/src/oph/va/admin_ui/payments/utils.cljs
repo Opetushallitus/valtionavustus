@@ -46,7 +46,7 @@
     (and (= (count ks) (count selected-keys))
          (every? some? (vals selected-keys)))))
 
-(defn not-empty? [v] (not (empty? v)))
+(defn not-empty? [v] (seq v))
 
 (defn get-current-year-short []
   "Get current year as a short version (i.e. 17)"
