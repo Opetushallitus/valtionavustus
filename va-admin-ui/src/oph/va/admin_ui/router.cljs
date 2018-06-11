@@ -54,4 +54,5 @@
       .-href
       (set! url)))
 
-(defn get-current-param [param] (get-param (get-current-query) param))
+(defn get-current-param [param]
+  (get-param (get-current-query) param))
