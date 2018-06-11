@@ -21,8 +21,7 @@
   (tf/unparse iso8601-formatter d))
 
 (defn- to-date [d f]
-  (if (empty? d)
-    nil
+  (when-not (empty? d)
     (when-let [parsed (tf/parse d)]
       (f parsed))))
 
