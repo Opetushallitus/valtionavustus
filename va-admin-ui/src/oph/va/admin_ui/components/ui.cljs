@@ -14,7 +14,7 @@
   (when (some? d)
    (format "%04d-%02d-%02d"
            (.getFullYear d)
-           (+ (.getMonth d) 1 )
+           (inc (.getMonth d))
            (.getDate d))))
 
 (defn get-rectangle [element]
