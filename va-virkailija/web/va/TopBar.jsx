@@ -10,7 +10,9 @@ export default class TopBar extends React.Component {
     const state = this.props.state
     const controls = state ? <TopBarControls state={state}/> : ""
     const selectedHakuId =
-          state && state.selectedHaku ? state.selectedHaku.id : -1
+          (state && state.selectedHaku ? state.selectedHaku.id : null) ||
+          (state && state.hakuData && state.hakuData.avustushaku ?
+             state.hakuData.avustushaku.id : null)
     return (
       <section id="topbar">
         <div id="top-container">
@@ -41,7 +43,9 @@ class TopBarTabs extends React.Component {
         <TopBarTab id="admin" label="Hakujen hallinta" href="/admin/" disabled={disabled} activeTab={activeTab}/>
         {this.isEnabled(config, "payments") &&
           <TopBarTab id="payments" label="Maksatukset"
-                     href={`/admin-ui/payments/?grant-id=${selectedHakuId}`}
+                     href={selectedHakuId ?
+                           `/admin-ui/payments/?grant-id=${selectedHakuId}` :
+                           `/admin-ui/payments/`}
                     disabled={disabled} activeTab={activeTab}/>}
         {this.isEnabled(config, "va-code-values") &&
            <TopBarTab id="va-code-values" label="VA-koodienhallinta"

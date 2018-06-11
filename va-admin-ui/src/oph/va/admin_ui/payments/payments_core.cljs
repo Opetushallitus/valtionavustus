@@ -35,11 +35,11 @@
    :batch-values (r/atom {})})
 
 (defn- get-param-grant []
-  (let [grant-id (js/parseInt (router/get-current-param :grant))]
+  (let [grant-id (js/parseInt (router/get-current-param :grant-id))]
     (when-not (js/isNaN grant-id) grant-id)))
 
 (defn- render-admin-tools [payments selected-grant delete-payments?]
-  [:div
+  [:div {:class (when (nil? selected-grant) "disabled")}
    [:hr]
    [:h3 "Pääkäyttäjän työkalut"]
    [:div
@@ -375,10 +375,9 @@
         (if (:success grants-result)
           (do
             (reset! grants (convert-dates (:body grants-result)))
-            (reset! selected-grant
-                    (if-let [grant-id (get-param-grant)]
-                      (first (filter #(= (:id %) grant-id) @grants))
-                      (first @grants))))
+            (when-let [grant-id (get-param-grant)]
+              (when-let [grant (some #(when (= (:id %) grant-id) %) @grants)]
+                (reset! selected-grant grant))))
           (dialogs/show-error-message!
             "Virhe tietojen latauksessa"
             (select-keys grants-result [:status :error-text])))
