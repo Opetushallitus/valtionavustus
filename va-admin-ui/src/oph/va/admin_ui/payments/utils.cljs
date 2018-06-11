@@ -78,6 +78,6 @@
       (= (t/month date) (t/month today)))))
 
 (defn phase-to-name [phase]
-  (if (= phase 0)
+  (if (zero? phase)
     "1. erä"
     (str phase ". väliselvitys")))
