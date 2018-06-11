@@ -24,7 +24,7 @@
 
 (defn- batch-payable? [pred applications]
   (and
-    (not (empty? applications))
+    (seq applications)
     (true?
       (some
         pred
@@ -41,7 +41,7 @@
   (when (some? d)
    (format "%04d-%02d-%02d"
            (.getFullYear d)
-           (+ (.getMonth d) 1 )
+           (inc (.getMonth d))
            (.getDate d))))
 
 (defn convert-payment-dates [values]

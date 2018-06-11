@@ -11,12 +11,16 @@
   (is (utils/any-nil? {nil nil} [nil]))
   (is (utils/any-nil? {} [:hello :world]))
   (is (utils/any-nil? {:hello "something"} [:hello :world]))
-  (is (not (utils/any-nil? {:hello "something" :world "words"} [:hello :world])))
-  (is (utils/any-nil? {:hello "something" :world "words"} [:hello :world :sep]))
+  (is (not (utils/any-nil? {:hello "something" :world "words"}
+                           [:hello :world])))
+  (is (utils/any-nil? {:hello "something" :world "words"}
+                      [:hello :world :sep]))
   (is
-   (utils/any-nil? {:hello "something" :world "words" :sep nil} [:hello :world :sep]))
+   (utils/any-nil? {:hello "something" :world "words" :sep nil}
+                   [:hello :world :sep]))
   (is (not (utils/any-nil?
-            {:hello "something" :world "words" :sep "others"} [:hello :world :sep]))))
+            {:hello "something" :world "words" :sep "others"}
+            [:hello :world :sep]))))
 
 (defn- now-str []
   (let [now (Date.)]
@@ -30,3 +34,13 @@
   (is (utils/is-today? (str (t/today))))
   (is (utils/is-today? (t/today-at 0 0 0)))
   (is (utils/is-today? (t/today-at 23 59 59))))
+
+(deftest test-valid-email
+  (is (utils/valid-email? "user@domain.com"))
+  (is (utils/valid-email? "user.lastname@domain.com"))
+  (is (utils/valid-email? "user@domain"))
+  (is (not (utils/valid-email? "")))
+  (is (not (utils/valid-email? nil)))
+  (is (not (utils/valid-email? "@domain.com")))
+  (is (not (utils/valid-email? "domain.com")))
+  (is (not (utils/valid-email? "domain"))))

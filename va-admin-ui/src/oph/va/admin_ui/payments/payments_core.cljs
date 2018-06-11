@@ -236,8 +236,9 @@
                     (filter #(< (:state %) 2) flatten-payments)]
                    [:div
                     (when accounts-nil?
-                      (notice "Joillakin hakemuksilla ei ole LKP- tai TaKP-tiliä, joten
-                   makastukset tulee luoda manuaalisesti."))
+                      (notice "Joillakin hakemuksilla ei ole LKP- tai
+                               TaKP-tiliä, joten makastukset tulee luoda
+                               manuaalisesti."))
                     [va-ui/raised-button
                      {:primary true
                       :disabled
@@ -258,7 +259,8 @@
                                   (<! (connection/create-payment-batch
                                         (-> (dissoc @batch-values :documents)
                                             payments/convert-payment-dates
-                                            (assoc :grant-id (:id @selected-grant))))))
+                                            (assoc :grant-id
+                                                   (:id @selected-grant))))))
                                 batch (:body batch-result)]
                             (if (:success batch-result)
                               (let [last-doc-result
@@ -266,10 +268,11 @@
                                       (if (empty? docs)
                                         {:success true}
                                         (let [doc-result
-                                              (<! (connection/send-batch-document
-                                                    (:id batch)
-                                                    (dissoc (first docs)
-                                                            :created-at)))]
+                                              (<!
+                                                (connection/send-batch-document
+                                                  (:id batch)
+                                                  (dissoc (first docs)
+                                                          :created-at)))]
                                           (if-not (:success doc-result)
                                             doc-result
                                             (recur (rest docs))))))]
@@ -296,7 +299,8 @@
        (render-admin-tools payments @selected-grant delete-payments?))]))
 
 (defn init! []
-  (let [{:keys [selected-grant batch-values applications payments grants]} state]
+  (let [{:keys [selected-grant batch-values applications payments grants]}
+        state]
     (add-watch
       selected-grant
       "s"
@@ -313,7 +317,8 @@
                     (reset! applications (:body applications-response))
                     (dialogs/show-error-message!
                       "Virhe hakemusten latauksessa"
-                      (select-keys applications-response [:status :error-text])))
+                      (select-keys applications-response
+                                   [:status :error-text])))
                   (put! dialog-chan 3))
                 (close! dialog-chan)))
 
@@ -342,7 +347,7 @@
                   (reset! batch-values
                           (if (and
                                 (= (:status batch-response) 200)
-                                (not (empty? (:body batch-response))))
+                                (seq (:body batch-response)))
                             (-> (:body batch-response)
                                 last
                                 payments/parse-batch-dates

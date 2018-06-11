@@ -32,7 +32,7 @@
       (.pushState "" "" path)))
 
 (defn get-param [query param]
-  (when (not (empty? query))
+  (when (seq query)
     (-> (.split query "&")
         (js->clj)
         (split-params)

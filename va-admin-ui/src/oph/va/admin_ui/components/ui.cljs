@@ -14,7 +14,7 @@
   (when (some? d)
    (format "%04d-%02d-%02d"
            (.getFullYear d)
-           (+ (.getMonth d) 1 )
+           (inc (.getMonth d))
            (.getDate d))))
 
 (defn get-rectangle [element]
@@ -204,7 +204,9 @@
                  :on-click #((:on-change props) value)}
              (:label (second t))]))
         children))]
-   [:div {:class "oph-tab-pane oph-tab-pane-is-active" } (some #(when (= (:value (second %)) (:value props)) %) children )]])
+   [:div
+    {:class "oph-tab-pane oph-tab-pane-is-active" }
+    (some #(when (= (:value (second %)) (:value props)) %) children )]])
 
 (defn card-text [& content]
   (apply vector :div {:style {:padding 20}} content))

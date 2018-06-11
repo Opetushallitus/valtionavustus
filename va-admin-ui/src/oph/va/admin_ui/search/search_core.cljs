@@ -55,7 +55,7 @@
    (apply vector :div content)])
 
 (defn- format-title [grant]
-  (str (when-not (empty? (:register-number grant))
+  (str (when (seq (:register-number grant))
          (str (:register-number grant) " - "))
        (get-in grant [:content :name :fi])))
 
@@ -79,11 +79,15 @@
     (str (get application :register-number)
          " - "
          (:organization-name application))
-    (when-not (empty? (:project-name application))
-      [:div [:label {:style {:font-weight "bold" :padding-right 5}} "Hanke:"]
+    (when (seq (:project-name application))
+      [:div
+       [:label {:style {:font-weight "bold" :padding-right 5}}
+        "Hanke:"]
        (:project-name application)])
     [:div
-     [:label {:style {:font-weight "bold" :padding-right 5}} "Avustushaku:"]
+     [:label
+      {:style {:font-weight "bold" :padding-right 5}}
+      "Avustushaku:"]
      (:grant-name application)]))
 
 (defn- render-search [results title renderer searching?]
@@ -91,7 +95,7 @@
    [:h2 title]
    (if searching?
      [ui/circular-progress]
-     (if (> (count results) 0)
+     (if (pos? (count results))
        (doall (map-indexed renderer results))
        [:span "Ei hakutuloksia"]))])
 
