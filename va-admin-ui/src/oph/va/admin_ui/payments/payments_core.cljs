@@ -39,7 +39,7 @@
     (when-not (js/isNaN grant-id) grant-id)))
 
 (defn- render-admin-tools [payments selected-grant delete-payments?]
-  [:div
+  [:div {:class (when (nil? selected-grant) "disabled")}
    [:hr]
    [:h3 "Pääkäyttäjän työkalut"]
    [:div
