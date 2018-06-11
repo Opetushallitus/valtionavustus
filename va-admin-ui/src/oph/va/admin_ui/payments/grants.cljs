@@ -7,7 +7,7 @@
 (def ^:private lifetime-limit (t/minus (t/now) (t/months 12)))
 
 (defn- parse-date [s]
-  (when (some? s)
+  (when (seq s)
     (f/parse date-formatter s)))
 
 (defn- convert-grant-dates [grant]
