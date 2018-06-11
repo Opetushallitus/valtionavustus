@@ -375,10 +375,9 @@
         (if (:success grants-result)
           (do
             (reset! grants (convert-dates (:body grants-result)))
-            (reset! selected-grant
-                    (if-let [grant-id (get-param-grant)]
-                      (first (filter #(= (:id %) grant-id) @grants))
-                      (first @grants))))
+            (when-let [grant-id (get-param-grant)]
+              (when-let [grant (some #(when (= (:id %) grant-id) %) @grants)]
+                (reset! selected-grant grant))))
           (dialogs/show-error-message!
             "Virhe tietojen latauksessa"
             (select-keys grants-result [:status :error-text])))
