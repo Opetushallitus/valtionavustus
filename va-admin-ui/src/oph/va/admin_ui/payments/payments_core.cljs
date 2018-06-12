@@ -177,7 +177,7 @@
   (into (subvec coll 0 i)
         (subvec coll (inc i))))
 
-(defn- render-batch-values [{:keys [values disabled? on-change]}]
+(defn- render-batch-values [{:keys [values disabled? on-change max-phases]}]
   [:div {:class (when disabled? "disabled")}
    [:h3 "Maksuerän tiedot"]
    [financing/payment-batch-fields
@@ -202,9 +202,12 @@
           (:documents values)))]]]
    [:div
     [financing/document-field
-     {:max-phases 2
+     {:max-phases max-phases
       :on-change
       #(on-change :documents (conj (get values :documents []) %))}]]])
+
+(defn- count-phases [payments]
+  (count (set (map :phase payments))))
 
 (defn home-page [data]
   (let [{:keys [user-info delete-payments?]} data
@@ -230,12 +233,17 @@
                   [va-ui/tab
                    {:value "outgoing"
                     :label "Lähtevät maksatukset"}
-                   [render-batch-values
-                    {:disabled? (not unsent-payments?)
-                     :values @batch-values
-                     :on-change #(swap! batch-values assoc %1 %2)}]
-                   [payments-ui/payments-table
-                    (filter #(< (:state %) 2) flatten-payments)]
+                   [(let [outgoing-payments
+                          (filter #(< (:state %) 2) flatten-payments)]
+                      (fn [data]
+                        [:div
+                         [render-batch-values
+                          {:disabled? (not unsent-payments?)
+                           :values @batch-values
+                           :on-change #(swap! batch-values assoc %1 %2)
+                           :max-phases (count-phases outgoing-payments)}]
+                         [payments-ui/payments-table
+                          outgoing-payments]]))]
                    [:div
                     (when accounts-nil?
                       (notice "Joillakin hakemuksilla ei ole LKP- tai
