@@ -117,20 +117,40 @@
   (let [response-values (invoice/read-response-xml xml)
         payments (find-payments-by-response response-values)
         payment (first payments)]
-    (cond (empty? payments)
-          (throw (ex-info "No payments found!" {:cause "no-payment" :error-message (format "No payment found with values: %s" response-values) }))
-          (> (count payments) 1)
-          (throw (ex-info "Multiple payments found" {:cause "multiple-payments" :error-message (format
-                                                     "Multiple payments found with the same register
-                                                      number and invoice date: %s" response-values)}))
-          (= (:state payment) 3)
-          (throw (ex-info "Payment already paid" {:cause "already-paid" :error-message (format "Payment (id %d) is already paid."
-                                                                (:id payment))}))
-          (not= (:state payment) 2)
-          (throw (ex-info
-                   "State not valid" {:cause "state-not-valid" :error-message (format "Payment (id %d) is not sent to Rondo or it's state
-                                    (%d) is not valid. It should be 2 in this stage."
-                                   (:id payment) (:state payment))})))
+    (cond
+      (empty? payments)
+      (throw
+        (ex-info
+          "No payments found!"
+          {:cause "no-payment"
+           :error-message
+           (format "No payment found with values: %s" response-values)}))
+      (> (count payments) 1)
+      (throw
+        (ex-info
+          "Multiple payments found"
+          {:cause "multiple-payments"
+           :error-message
+           (format "Multiple payments found with the same register
+                    number and invoice date: %s"
+                   response-values)}))
+      (= (:state payment) 3)
+      (throw
+        (ex-info
+          "Payment already paid"
+          {:cause "already-paid"
+           :error-message
+           (format "Payment (id %d) is already paid." (:id payment))}))
+      (not= (:state payment) 2)
+      (throw
+        (ex-info
+          "State not valid"
+          {:cause "state-not-valid"
+           :error-message
+           (format
+             "Payment (id %d) is not sent to Rondo or it's state
+              (%d) is not valid. It should be 2 in this stage."
+             (:id payment) (:state payment))})))
     (update-payment (assoc payment :state 3)
                     {:person-oid "-" :first-name "Rondo" :surname ""})))
 
