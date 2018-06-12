@@ -51,9 +51,9 @@
   (http/get (format "/%s/grants/%d/payments/" api-path id)
             {:with-credentials? true}))
 
-(defn send-payments-email [id data]
-  (http/post (format "/%s/grants/%d/payments-email/" api-path id)
-             {:json-params data :with-credentials? true}))
+(defn send-payments-email [id]
+  (http/post (format "/%s/payment-batches/%d/payments-email/" api-path id)
+             {:with-credentials? true}))
 
 (defn delete-grant-payments [id]
   (http/delete (format "/%s/grants/%d/payments/" api-path id)))
