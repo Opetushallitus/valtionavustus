@@ -10,17 +10,19 @@
             [oph.va.virkailija.kayttosuunnitelma :as ks]
             [oph.va.virkailija.koulutusosio :as koulutusosio]
             [schema.core :as s]
-            [hiccup.core :refer [html]]))
+            [hiccup.core :refer [html]]
+            [clojure.tools.logging :as log]))
 
 (defn decision-translation [translations lang keyword-or-key]
   (let [key (if (keyword? keyword-or-key) keyword-or-key (keyword keyword-or-key))]
     (-> translations :paatos key lang)))
 
+
+
 (defn content-with-paragraphs [content]
   (let [rows (str/split content #"\n")
-        rows-list (mapv (fn [row]  (html [:p row])) rows)
-        rows-p (str/join " " rows-list)]
-    rows-p))
+        rows-list (html [:span (for [row rows] [:p row])])]
+    rows-list))
 
 (defn decision-field [decision key lang]
   (-> decision key lang))
