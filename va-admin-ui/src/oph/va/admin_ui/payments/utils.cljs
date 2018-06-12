@@ -81,5 +81,5 @@
 
 (defn phase-to-name [phase]
   (if (zero? phase)
-    "1. erä"
+    "Arviointi"
     (str phase ". väliselvitys")))
