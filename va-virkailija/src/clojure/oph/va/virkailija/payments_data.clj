@@ -12,8 +12,6 @@
    [oph.va.virkailija.invoice :as invoice]
    [oph.va.virkailija.email :as email]))
 
-(def date-formatter (f/formatter "dd.MM.YYYY"))
-
 (def system-user
   {:person-oid "System"
    :first-name "Initial"
@@ -77,15 +75,6 @@
 
 (defn- store-payment [payment]
   (exec :virkailija-db queries/create-payment payment))
-
-(defn- total-paid [application-id]
-  (or
-    (->
-      (exec :virkailija-db queries/get-total-paid
-            {:application_id application-id})
-      first
-      :total_paid)
-    0))
 
 (defn create-payment [payment-data identity]
   (let [application (application-data/get-application

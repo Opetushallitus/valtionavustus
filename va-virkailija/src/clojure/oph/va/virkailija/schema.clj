@@ -280,15 +280,6 @@
    (s/optional-key :refused-at) (s/maybe s/Inst)
    (s/optional-key :grant-name) (s/maybe s/Str)})
 
-(s/defschema PaymentsEmail
-  "Grant payments email"
-  {:acceptor-email s/Str
-   :inspector-email s/Str
-   :batch-number s/Int
-   :batch-id s/Int
-   :organisation s/Str
-   :receipt-date LocalDate})
-
 (s/defschema PaymentBatch
   "Payment batch"
   {(s/optional-key :created-at) s/Inst
