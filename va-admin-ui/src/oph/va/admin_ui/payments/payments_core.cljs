@@ -164,7 +164,8 @@
    [table/table-row-column
     (:acceptor-email document)]
    [table/table-row-column
-    (to-simple-date (:created-at document))]])
+    (when (seq (:created-at document))
+      (to-simple-date (:created-at document)))]])
 
 (defn- render-batch-values [{:keys [values disabled? on-change]}]
   [:div {:class (when disabled? "disabled")}
