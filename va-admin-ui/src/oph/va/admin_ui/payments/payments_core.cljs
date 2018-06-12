@@ -107,21 +107,7 @@
         (put! dialog-chan 2)
         (if (and (:success result) (get-in result [:body :success]))
           (let [email-result
-                (<!
-                  (connection/send-payments-email
-                    (:id selected-grant)
-                    (assoc
-                      (select-keys values [:acceptor-email
-                                          :inspector-email
-                                          :batch-number
-                                          :batch-id
-                                          :receipt-date])
-                      :organisation
-                      (if (= (get-in
-                               selected-grant [:content :document-type])
-                             "XB")
-                        "6604"
-                        "6600"))))]
+                (<! (connection/send-payments-email (:batch-id values)))]
             (put! dialog-chan 3)
             (if (:success email-result)
               (dialogs/show-message! "Kaikki maksatukset lähetetty")
