@@ -103,8 +103,9 @@
         convert-to-dash-keys
         convert-timestamps-from-sql)))
 
-(defn find-payments-by-response [values]
+(defn find-payments-by-response
   "Response values: {:register-number \"string\" :invoice-date \"string\"}"
+  [values]
   (let [application
         (application-data/find-application-by-register-number
               (:register-number values))]
