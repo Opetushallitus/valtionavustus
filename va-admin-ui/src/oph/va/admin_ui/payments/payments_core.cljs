@@ -249,7 +249,9 @@
                                 batch (:body batch-result)]
                             (if (:success batch-result)
                               (let [last-doc-result
-                                    (loop [docs (:documents @batch-values)]
+                                    (loop [docs
+                                           (filter #(nil? (:created-at %))
+                                                   (:documents @batch-values))]
                                       (if (empty? docs)
                                         {:success true}
                                         (let [doc-result
