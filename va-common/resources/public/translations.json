@@ -496,6 +496,10 @@
       "fi":"Maksuerät ja -ajat",
       "sv":"Betalningsrater och tidpunkter för utbetalning"
     },
+    "talousarviotili":{
+      "fi":"Talousarviotili",
+      "sv":"Budgetmoment"
+    },
     "ja-loppuera-viimeistaan":{
       "fi":"ja loppuerä viimeistään",
       "sv":"och slutraten senast"
