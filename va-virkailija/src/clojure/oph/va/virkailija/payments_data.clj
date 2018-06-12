@@ -145,6 +145,11 @@
         (into p (application-data/get-application-payments (:id n)))) [])
     (map convert-timestamps-from-sql)))
 
+(defn get-batch-payments [batch-id]
+  (map
+    convert-to-dash-keys
+    (exec :virkailija-db queries/get-batch-payments {:batch_id batch-id})))
+
 (defn delete-grant-payments [id]
   (exec :virkailija-db queries/delete-grant-payments {:id id}))
 
