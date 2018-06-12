@@ -156,34 +156,6 @@
 (defn delete-payment [id]
   (exec :virkailija-db queries/delete-payment {:id id}))
 
-(defn get-batch-payments-info [batch-id]
-  (convert-to-dash-keys
-    (first (exec :virkailija-db queries/get-grant-payments-info
-                 {:batch_id batch-id}))))
-
-(defn format-email-date [date]
-  (f/unparse date-formatter date))
-
-(defn create-payments-email
-  [{:keys [batch-id inspector-email acceptor-email receipt-date
-           grant-id organisation batch-number]}]
-  (let [grant (grant-data/get-grant grant-id)
-        now (t/now)
-        receipt-year (mod (.getYear receipt-date) 100)
-        payments-info (get-batch-payments-info batch-id)
-        batch-key (invoice/get-batch-key
-                    organisation receipt-year batch-number)]
-
-    {:receivers [inspector-email acceptor-email]
-     :batch-key batch-key
-     :title (get-in grant [:content :name])
-     :date (format-email-date now)
-     :count (:count payments-info)
-     :total-granted (:total-granted payments-info)}))
-
-(defn send-payments-email [data]
-  (email/send-payments-info! (create-payments-email data)))
-
 (defn get-first-payment-sum [application grant]
   (int
     (if (and
