@@ -98,50 +98,6 @@
           (should= 200 (:status response))
           (should= 2 (count (json->map (:body response)))))))
 
-  (it "gets grant payments info"
-      (let [grant (first (grant-data/get-grants))]
-        (payments-data/delete-grant-payments (:id grant))
-        (let [submission (create-submission
-                           (:form grant) {:budget-oph-share 40000})
-              application (create-application grant submission)
-              batch (payment-batches-data/create-batch
-                      {:receipt-date payment-date
-                       :due-date payment-date
-                       :partner ""
-                       :grant-id (:id grant)
-                       :currency "EUR"
-                       :invoice-date payment-date})
-              payment1 (payments-data/create-payment
-                         {:application-id (:id application)
-                          :payment-sum 20000
-                          :batch-id (:id batch)
-                          :state 1
-                          :phase 0}
-                         example-identity)
-              payment2 (payments-data/create-payment
-                         {:application-id (:id application)
-                          :payment-sum 30000
-                          :batch-id (:id batch)
-                          :state 1
-                          :phase 1}
-                         example-identity)
-              payment3 (payments-data/create-payment
-                         {:application-id (:id application)
-                          :payment-sum 25000
-                          :batch-id (:id batch)
-                          :state 1
-                          :phase 2}
-                         example-identity)]
-          (payments-data/update-payment
-            (assoc payment1 :state 2 :filename "example.xml") example-identity)
-          (payments-data/update-payment
-            (assoc payment2 :state 2 :filename "example.xml") example-identity)
-
-          (let [payments-info (payments-data/get-batch-payments-info
-                                (:id batch))]
-            (should= 50000 (:total-granted payments-info))
-            (should= 2 (:count payments-info))))))
-
   (it "creates payments email"
       (let [grant (first (grant-data/get-grants true))]
         (payments-data/delete-grant-payments (:id grant))
