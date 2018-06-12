@@ -16,13 +16,6 @@
 
 (def today-end (t/today-at 23 59 59))
 
-(def iso8601-formatter (:basic-date-time tf/formatters))
-
-(defn now [] (t/now))
-
-(defn to-iso-str [d]
-  (tf/unparse iso8601-formatter d))
-
 (defn- to-date [d f]
   (when (seq d)
     (when-let [parsed (tf/parse d)]

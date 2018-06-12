@@ -14,7 +14,7 @@
     [oph.va.admin-ui.payments.financing :as financing]
     [oph.va.admin-ui.payments.utils
      :refer [find-index-of is-today? to-simple-date-time
-             to-simple-date now to-iso-str phase-to-name]]
+             to-simple-date phase-to-name]]
     [oph.va.admin-ui.dialogs :as dialogs]
     [oph.va.admin-ui.user :as user]
     [oph.va.admin-ui.theme :as theme]
@@ -186,9 +186,7 @@
     [financing/document-field
      {:max-phases 2
       :on-change
-      #(on-change :documents
-                  (conj (get values :documents [])
-                        (assoc % :created-at (to-iso-str (now)))))}]]])
+      #(on-change :documents (conj (get values :documents []) %))}]]])
 
 (defn home-page [data]
   (let [{:keys [user-info delete-payments?]} data
