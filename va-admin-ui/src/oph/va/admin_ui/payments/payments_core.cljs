@@ -153,7 +153,7 @@
        [:hr]
        (grant-info @selected-grant)])))
 
-(defn render-document [i document]
+(defn render-document [i document on-delete]
   [table/table-row {:key i}
    [table/table-row-column
     (phase-to-name (:phase document))]
@@ -165,7 +165,17 @@
     (:acceptor-email document)]
    [table/table-row-column
     (when (seq (:created-at document))
-      (to-simple-date (:created-at document)))]])
+      (to-simple-date (:created-at document)))]
+   [table/table-row-column
+    (when-not (seq (:created-at document))
+      [va-ui/raised-button
+       {:label "Poista"
+        :primary true
+        :on-click #(on-delete i)}])]])
+
+(defn- removev [coll i]
+  (into (subvec coll 0 i)
+        (subvec coll (inc i))))
 
 (defn- render-batch-values [{:keys [values disabled? on-change]}]
   [:div {:class (when disabled? "disabled")}
@@ -180,9 +190,16 @@
        [table/table-header-column "ASHA tunniste"]
        [table/table-header-column "Esittelijän sähköposti"]
        [table/table-header-column "Hyväksyjän sähköposti"]
-       [table/table-header-column "Lisätty"]]]
+       [table/table-header-column "Lisätty"]
+       [table/table-header-column]]]
      [table/table-body
-      (doall (map-indexed render-document (:documents values)))]]]
+      (doall
+        (map-indexed
+          (fn [i doc]
+            (render-document
+              i doc
+              #(on-change :documents (removev (get values :documents []) i))))
+          (:documents values)))]]]
    [:div
     [financing/document-field
      {:max-phases 2
