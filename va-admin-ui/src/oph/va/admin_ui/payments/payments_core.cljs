@@ -14,7 +14,7 @@
     [oph.va.admin-ui.payments.financing :as financing]
     [oph.va.admin-ui.payments.utils
      :refer [find-index-of is-today? to-simple-date-time
-             to-simple-date now to-iso-str phase-to-name]]
+             to-simple-date phase-to-name]]
     [oph.va.admin-ui.dialogs :as dialogs]
     [oph.va.admin-ui.user :as user]
     [oph.va.admin-ui.theme :as theme]
@@ -107,21 +107,7 @@
         (put! dialog-chan 2)
         (if (and (:success result) (get-in result [:body :success]))
           (let [email-result
-                (<!
-                  (connection/send-payments-email
-                    (:id selected-grant)
-                    (assoc
-                      (select-keys values [:acceptor-email
-                                          :inspector-email
-                                          :batch-number
-                                          :batch-id
-                                          :receipt-date])
-                      :organisation
-                      (if (= (get-in
-                               selected-grant [:content :document-type])
-                             "XB")
-                        "6604"
-                        "6600"))))]
+                (<! (connection/send-payments-email (:batch-id values)))]
             (put! dialog-chan 3)
             (if (:success email-result)
               (dialogs/show-message! "Kaikki maksatukset lähetetty")
@@ -178,7 +164,8 @@
    [table/table-row-column
     (:acceptor-email document)]
    [table/table-row-column
-    (to-simple-date (:created-at document))]])
+    (when (seq (:created-at document))
+      (to-simple-date (:created-at document)))]])
 
 (defn- render-batch-values [{:keys [values disabled? on-change]}]
   [:div {:class (when disabled? "disabled")}
@@ -200,9 +187,7 @@
     [financing/document-field
      {:max-phases 2
       :on-change
-      #(on-change :documents
-                  (conj (get values :documents [])
-                        (assoc % :created-at (to-iso-str (now)))))}]]])
+      #(on-change :documents (conj (get values :documents []) %))}]]])
 
 (defn home-page [data]
   (let [{:keys [user-info delete-payments?]} data
@@ -264,7 +249,9 @@
                                 batch (:body batch-result)]
                             (if (:success batch-result)
                               (let [last-doc-result
-                                    (loop [docs (:documents @batch-values)]
+                                    (loop [docs
+                                           (filter #(nil? (:created-at %))
+                                                   (:documents @batch-values))]
                                       (if (empty? docs)
                                         {:success true}
                                         (let [doc-result

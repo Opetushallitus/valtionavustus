@@ -66,20 +66,10 @@
             (authentication/get-request-identity request)))
       (unauthorized ""))))
 
-(defn- post-payments-email []
-  (compojure-api/POST
-    "/:id/payments-email/" [id :as request]
-    :path-params [id :- Long]
-    :body [payments-info virkailija-schema/PaymentsEmail]
-    :summary "Send payments information email"
-    (payments-data/send-payments-email (merge {:grant-id id} payments-info))
-    (ok "")))
-
 (compojure-api/defroutes routes
   "grant routes"
   (get-grants)
   (get-grant-applications)
   (get-grant-payments)
   (delete-payments)
-  (post-payments)
-  (post-payments-email))
+  (post-payments))

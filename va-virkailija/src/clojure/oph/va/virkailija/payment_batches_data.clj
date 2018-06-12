@@ -13,9 +13,14 @@
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.soresu.common.config :refer [config]]
             [oph.va.virkailija.rondo-service :refer :all]
-            [oph.va.virkailija.remote-file-service :refer :all])
+            [oph.va.virkailija.remote-file-service :refer :all]
+            [oph.va.virkailija.invoice :as invoice]
+            [clj-time.core :as t]
+            [clj-time.format :as f]
+            [oph.va.virkailija.email :as email])
   (:import [oph.va.virkailija.rondo_service RondoFileService]))
 
+(def date-formatter (f/formatter "dd.MM.YYYY"))
 
 (def timeout-limit 10000)
 
@@ -103,3 +108,26 @@
        (exec :virkailija-db queries/create-batch-document)
        first
        convert-to-dash-keys))
+
+(defn create-batch-document-email
+  [{:keys [grant batch document payments]}]
+  {:receivers [(:presenter-email document) (:acceptor-email document)]
+   :batch-key (invoice/get-batch-key batch grant)
+   :title (get-in grant [:content :name])
+   :date (f/unparse date-formatter (t/now))
+   :count (count payments)
+   :total-granted (reduce #(+ %1 (:payment-sum %2)) 0 payments)})
+
+(defn send-batch-emails [batch-id]
+  (let [batch (get-batch batch-id)
+        grant (grant-data/get-grant (:grant-id batch))
+        payments (payments-data/get-batch-payments batch-id)]
+    (doseq [document (get-batch-documents batch-id)]
+      (email/send-payments-info!
+        (create-batch-document-email
+          {:grant grant
+           :batch batch
+           :document document
+           :payments (filter
+                       #(= (:phase %) (:phase document))
+                       payments)})))))
