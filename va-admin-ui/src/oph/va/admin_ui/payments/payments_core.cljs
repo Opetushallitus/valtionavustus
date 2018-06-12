@@ -178,7 +178,7 @@
         (subvec coll (inc i))))
 
 (defn- render-batch-values
-  [{:keys [values disabled? on-change max-phases add-disabled?]}]
+  [{:keys [values disabled? on-change phases]}]
   [:div {:class (when disabled? "disabled")}
    [:h3 "Maksuerän tiedot"]
    [financing/payment-batch-fields
@@ -202,14 +202,19 @@
               #(on-change :documents (removev (get values :documents []) i))))
           (:documents values)))]]]
    [:div
-    {:class (when add-disabled? "disabled")}
+    {:class (when (empty? phases) "disabled")}
     [financing/document-field
-     {:max-phases max-phases
+     {:phases phases
       :on-change
       #(on-change :documents (conj (get values :documents []) %))}]]])
 
 (defn- count-phases [payments]
   (count (set (map :phase payments))))
+
+(defn- find-available-phases [payments documents]
+  (clojure.set/difference
+    (set (map :phase payments))
+    (set (map :phase documents))))
 
 (defn home-page [data]
   (let [{:keys [user-info delete-payments?]} data
@@ -237,17 +242,17 @@
                     :label "Lähtevät maksatukset"}
                    [(let [outgoing-payments
                           (filter #(< (:state %) 2) flatten-payments)
-                          phase-count (count-phases outgoing-payments)]
+                          available-phases
+                          (find-available-phases
+                            outgoing-payments
+                            (get @batch-values :documents []))]
                       (fn [data]
                         [:div
                          [render-batch-values
                           {:disabled? (not unsent-payments?)
                            :values @batch-values
                            :on-change #(swap! batch-values assoc %1 %2)
-                           :max-phases phase-count
-                           :add-disabled?
-                           (= phase-count
-                              (count (get @batch-values :documents [])))}]
+                           :phases available-phases}]
                          [payments-ui/payments-table
                           outgoing-payments]]))]
                    [:div
