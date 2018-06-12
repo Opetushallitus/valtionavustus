@@ -83,6 +83,14 @@
     :summary "Create new payment batch document"
     (ok (data/create-batch-document id document))))
 
+(defn- send-payments-email []
+  (compojure-api/POST
+    "/:id/payments-email/" []
+    :path-params [id :- Long]
+    :summary "Send batch payments email"
+    (data/send-batch-emails id)
+    (ok "")))
+
 (compojure-api/defroutes
   routes
   "payment batches routes"
@@ -90,4 +98,5 @@
   (create-payment-batch)
   (send-payments)
   (get-documents)
-  (create-document))
+  (create-document)
+  (send-payments-email))
