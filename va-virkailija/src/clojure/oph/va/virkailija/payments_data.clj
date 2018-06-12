@@ -88,9 +88,6 @@
 (defn create-payment [payment-data identity]
   (let [application (application-data/get-application
                       (:application-id payment-data))]
-    (when (> (+ (total-paid (:application-id payment-data))
-                (:payment-sum payment-data))
-             (:budget-granted application)))
     (-> payment-data
         (assoc :application-version (:version application)
                :grant-id (:grant-id application))
