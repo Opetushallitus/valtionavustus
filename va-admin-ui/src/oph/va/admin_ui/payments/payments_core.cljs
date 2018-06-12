@@ -177,7 +177,8 @@
   (into (subvec coll 0 i)
         (subvec coll (inc i))))
 
-(defn- render-batch-values [{:keys [values disabled? on-change max-phases]}]
+(defn- render-batch-values
+  [{:keys [values disabled? on-change max-phases add-disabled?]}]
   [:div {:class (when disabled? "disabled")}
    [:h3 "Maksuerän tiedot"]
    [financing/payment-batch-fields
@@ -201,6 +202,7 @@
               #(on-change :documents (removev (get values :documents []) i))))
           (:documents values)))]]]
    [:div
+    {:class (when add-disabled? "disabled")}
     [financing/document-field
      {:max-phases max-phases
       :on-change
@@ -234,14 +236,18 @@
                    {:value "outgoing"
                     :label "Lähtevät maksatukset"}
                    [(let [outgoing-payments
-                          (filter #(< (:state %) 2) flatten-payments)]
+                          (filter #(< (:state %) 2) flatten-payments)
+                          phase-count (count-phases outgoing-payments)]
                       (fn [data]
                         [:div
                          [render-batch-values
                           {:disabled? (not unsent-payments?)
                            :values @batch-values
                            :on-change #(swap! batch-values assoc %1 %2)
-                           :max-phases (count-phases outgoing-payments)}]
+                           :max-phases phase-count
+                           :add-disabled?
+                           (= phase-count
+                              (count (get @batch-values :documents [])))}]
                          [payments-ui/payments-table
                           outgoing-payments]]))]
                    [:div
