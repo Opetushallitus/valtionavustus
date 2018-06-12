@@ -43,6 +43,7 @@
 (defquery delete-payment "sql/virkailija/payments/delete-payment.sql")
 (defquery find-payments-by-application-id-and-invoice-date
   "sql/virkailija/payments/find-by-application-id-and-invoice-date.sql")
+(defquery get-batch-payments "sql/virkailija/payments/get-batch-payments.sql")
 
 (defquery find-batches "sql/virkailija/payment_batches/find-batches.sql")
 (defquery create-batch "sql/virkailija/payment_batches/create-batch.sql")
