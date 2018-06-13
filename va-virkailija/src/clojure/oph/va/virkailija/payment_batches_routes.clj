@@ -30,7 +30,7 @@
     :summary "Create new payment batch"
     (if (seq (data/find-batches
                (:receipt-date batch-values) (:grant-id batch-values)))
-      (conflict "Payment batch already exists")
+      (conflict {:error "Payment batch already exists"})
       (ok (data/create-batch batch-values)))))
 
 (defn- send-payments []
