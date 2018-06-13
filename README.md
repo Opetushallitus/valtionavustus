@@ -554,7 +554,7 @@ luonnissa uniikki tunniste, jolla hakija pääsee lähettämään
 muutoshakemuksen. Tämä tunniste vanhenee, kun avustuksen ensimmäinen maksatus
 lähetetään.
 
-## Käytäntöjä
+## Käytänteitä
 
 ### Koodi
 
