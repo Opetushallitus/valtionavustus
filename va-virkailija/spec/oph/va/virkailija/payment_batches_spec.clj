@@ -117,6 +117,25 @@
         (should= batch-document
                  (dissoc (json->map (:body result)) :id :created-at))))
 
+  (it "prevents multiple documents per phase"
+      (let [{:keys [body]}
+            (post! "/api/v2/payment-batches/"
+                   (assoc valid-payment-batch
+                          :receipt-date "2018-04-03"))
+            batch (json->map body)
+            batch-document {:document-id "ID1234567"
+                            :presenter-email "presenter@local"
+                            :acceptor-email "acceptor@local"
+                            :phase 0}]
+        (post!
+          (format "/api/v2/payment-batches/%d/documents/" (:id batch))
+          batch-document)
+        (let [result
+              (post!
+                (format "/api/v2/payment-batches/%d/documents/" (:id batch))
+                batch-document)]
+          (should= 409 (:status result)))))
+
   (it "get batch documents"
       (let [{:keys [body]}
             (post! "/api/v2/payment-batches/"
@@ -139,7 +158,8 @@
               (get! (format
                       "/api/v2/payment-batches/%d/documents/" (:id batch)))]
           (should= 200 (:status result))
-          (should= 2 (count (json->map (:body result))))))))
+          (should= 2 (count (json->map (:body result))))))
+      ))
 
 (describe
   "Payment batches emails"
