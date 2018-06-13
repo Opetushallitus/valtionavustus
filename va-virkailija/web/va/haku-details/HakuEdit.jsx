@@ -94,7 +94,13 @@ export default class HakuEdit extends Component {
           </div>
         </div>
         <HakuType hakuType={avustushaku["haku-type"]} disabled={!allowAllHakuEdits} onChange={onChange}/>
-        <ChooseRahoitusalueet avustushaku={avustushaku} allowEditing={allowNondisruptiveHakuEdits} onChange={onChange} controller={controller} />
+        <AcademySize value={avustushaku.is_academysize}
+                     disabled={!allowAllHakuEdits}
+                     onChange={onChange} />
+        <ChooseRahoitusalueet avustushaku={avustushaku}
+                              allowEditing={allowNondisruptiveHakuEdits}
+                              onChange={onChange}
+                              controller={controller} />
         <div>
           <div className="multibatch-fields">
             <h3>Maksatus</h3>
@@ -183,7 +189,7 @@ export default class HakuEdit extends Component {
           </div>
           <div className="editor-field-row">
             <div className="editor-row-element">
-              <h3 className="required">Kokonaissumma</h3>
+              <h3 className="required">Määräraha</h3>
               <input id="total-grant-size" type="number"
                      disabled={!allowAllHakuEdits} onChange={onChange}
                      required="true"
@@ -192,7 +198,6 @@ export default class HakuEdit extends Component {
             </div>
           </div>
         </div>
-        <AcademySize value={avustushaku.is_academysize} disabled={!allowAllHakuEdits} onChange={onChange} />
         <HakuRoles avustushaku={avustushaku} vaUserSearch={vaUserSearch} userInfo={userInfo} userHasEditPrivilege={userHasEditPrivilege} userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege} controller={controller} />
         <SelectionCriteria controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />
         <FocusArea controller={controller} avustushaku={avustushaku} allowAllHakuEdits={allowAllHakuEdits} allowNondisruptiveHakuEdits={allowNondisruptiveHakuEdits} onChange={onChange} />

@@ -50,7 +50,7 @@ const describeTitle = (selectedTalousarviotili, availableTalousarviotilit) => {
   if (selectedTalousarviotili) {
     return selectedTalousarviotili
   } else if (_.isEmpty(availableTalousarviotilit)) {
-    return "Valitse ensin rahoitusalue"
+    return "Valitse ensin koulutusaste"
   } else {
     return "Ei valittu"
   }
