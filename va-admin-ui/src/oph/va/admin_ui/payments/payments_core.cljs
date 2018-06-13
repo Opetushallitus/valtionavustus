@@ -208,9 +208,6 @@
       :on-change
       #(on-change :documents (conj (get values :documents []) %))}]]])
 
-(defn- count-phases [payments]
-  (count (set (map :phase payments))))
-
 (defn- find-available-phases [payments documents]
   (clojure.set/difference
     (set (map :phase payments))
