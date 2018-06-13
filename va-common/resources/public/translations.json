@@ -28,6 +28,10 @@
       "fi": "Ilmoitus avustuksen vastaanottamatta jättämisestä lähetetty hakijan toimesta.",
       "sv": "Anmälan om att man inte tar emot understödet har lämnats in av den sökande."
     },
+    "form-is-expired": {
+      "fi": "{{formtype}} on vanhentunut",
+      "sv": "{{formtype}} är föråldrad"
+    },
     "heading": {
       "fi": "Hakemus",
       "sv": "Ansökan"
