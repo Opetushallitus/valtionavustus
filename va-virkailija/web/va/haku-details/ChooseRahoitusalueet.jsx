@@ -78,7 +78,7 @@ export default class ChooseRahoitusalueet extends React.Component {
 
     return (
       <div>
-        <h3>Rahoitusalueet (lisää momentti ottaaksesi käyttöön)</h3>
+        <h3>Koulutusasteet (lisää momentti ottaaksesi käyttöön)</h3>
         <table id="rahoitusalueet">
           {rahoitusalueItems}
         </table>
