@@ -97,7 +97,10 @@ export default class HakuEdit extends Component {
         <AcademySize value={avustushaku.is_academysize}
                      disabled={!allowAllHakuEdits}
                      onChange={onChange} />
-        <ChooseRahoitusalueet avustushaku={avustushaku} allowEditing={allowNondisruptiveHakuEdits} onChange={onChange} controller={controller} />
+        <ChooseRahoitusalueet avustushaku={avustushaku}
+                              allowEditing={allowNondisruptiveHakuEdits}
+                              onChange={onChange}
+                              controller={controller} />
         <div>
           <div className="multibatch-fields">
             <h3>Maksatus</h3>
