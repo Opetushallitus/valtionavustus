@@ -38,4 +38,5 @@
          :retry-multiplier 4
          :retry-max-time 60000}
  :application-change {:change-enabled? false
-                      :refuse-enabled? false}}
+                      :refuse-enabled? false}
+ :selvitys-limit {:enabled? false}}

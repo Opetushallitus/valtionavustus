@@ -171,11 +171,12 @@ function initFormController() {
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
-    const expired =
-          (selvitysType === "valiselvitys" &&
+    const expired = state.configuration.environment["selvitys-limit"] &&
+          state.configuration.environment["selvitys-limit"]["enabled?"] &&
+          ((selvitysType === "valiselvitys" &&
            DateUtil.isPast(state.avustushaku.valiselvitysdate)) ||
           (selvitysType === "loppuselvitys" &&
-           DateUtil.isPast(state.avustushaku.loppuselvitysdate))
+           DateUtil.isPast(state.avustushaku.loppuselvitysdate)))
 
     if (!showPreview && expired) {
       const previewUrl = formOperations.urlCreator.existingSubmissionPreviewUrl(
