@@ -558,6 +558,9 @@ lähetetään.
 
 ### Koodi
 
+Koodin tyylissä tavoitellaan
+[The Clojure Style Guidea](https://github.com/bbatsov/clojure-style-guide).
+
 Ennen oman koodin julkaisua, olisi hyvä ajaa staattiset työkalut.
 
 Sekä `va-virkailija`, `va-admin-ui` että `va-hakija` -projekteihin on lisätty
