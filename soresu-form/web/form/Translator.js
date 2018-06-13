@@ -44,5 +44,9 @@ export default class Translator {
     const value = this.getValue(key, lang, defaultValue)
     return Translator.replaceKeys(value, keyValues)
   }
-}
 
+  static translateKey(translations, key, lang, keyValues, defaultValue) {
+    const translator = new Translator(translations)
+    return translator.translate(key, lang, defaultValue, keyValues)
+  }
+}

@@ -19,7 +19,7 @@ const allowedStatuses = ["officer_edit", "submitted", "pending_change_request"]
 
 export default class VaForm extends React.Component {
   render() {
-    const {controller, state, hakemusType} = this.props
+    const {controller, state, hakemusType, isExpired} = this.props
     const registerNumber = _.get(state.saveStatus.savedObject, "register-number", undefined)
     const {saveStatus, configuration} = state
     const registerNumberDisplay = <VaHakemusRegisterNumber key="register-number"
@@ -46,7 +46,7 @@ export default class VaForm extends React.Component {
         <VaFormTopbar controller={controller}
                       state={state}
                       hakemusType={hakemusType}
-        />
+                      isExpired={isExpired} />
         {showGrantRefuse &&
           <GrantRefuse controller={controller} state={state}
                        onSubmit={controller.refuseApplication}

@@ -14,7 +14,7 @@ import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
 
 export default class VaFormTopbar extends React.Component {
   render() {
-    const {controller, state, hakemusType} = this.props
+    const {controller, state, hakemusType, isExpired} = this.props
     const saveStatus = state.saveStatus
     const configuration = state.configuration
     const avustushaku = state.avustushaku
@@ -62,7 +62,11 @@ export default class VaFormTopbar extends React.Component {
           <img id="logo" src="img/logo-240x68@2x.png" width="240" height="68" alt="Opetushallitus / Utbildningsstyrelsen" />
           <div className="topbar-right">
             <div className="topbar-title-and-save-status">
-              <h1 id="topic"><LocalizedString translations={translations.form} translationKey={topicKey} lang={lang}/></h1>
+              <h1 id="topic">
+                <LocalizedString translations={translations.form}
+                                 translationKey={topicKey}
+                                 lang={lang}/>
+              </h1>
               <FormSaveStatus saveStatus={saveStatus} translations={translations} lang={lang} hakemusType={hakemusType}/>
             </div>
             {!preview && (
@@ -99,6 +103,17 @@ export default class VaFormTopbar extends React.Component {
                 {isHakemus && hasEnded && (
                   <LocalizedString htmlId="avustushaku-has-ended-message" translations={translations.form} translationKey="has-ended" lang={lang} />
                 )}
+                {isExpired ? (
+                  <div>
+                    <LocalizedString translations={translations.form}
+                                     translationKey="form-is-expired"
+                                     lang={lang}
+                                     keyValues={
+                                       {formtype:
+                                        Translator.translateKey(
+                                          translations.form, topicKey, lang)}}/>
+                  </div>
+                  ) : null}
                 <ServerError serverError={saveStatus.serverError} translations={translations.errors} lang={lang}/>
               </div>
               {!preview && (
