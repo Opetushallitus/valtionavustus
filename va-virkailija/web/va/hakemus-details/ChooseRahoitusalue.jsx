@@ -37,7 +37,13 @@ export default class ChooseRahoitusalue extends React.Component {
         <div className="radio-container radio-container--rahoitusalue" hidden={!isOpen}>
           {availableRahoitusalueet.map(ra => {
             const isSelected = ra.rahoitusalue === selectedRahoitusalue
-            return <RadioRow key={ra.rahoitusalue} name="rahoitusalue" value={ra.rahoitusalue} isSelected={isSelected} allowEditing={allowEditing} onChange={onSelection}/>
+            return <RadioRow
+                       key={ra.rahoitusalue}
+                       name="rahoitusalue"
+                       value={ra.rahoitusalue}
+                       isSelected={isSelected}
+                       allowEditing={allowEditing}
+                       onChange={onSelection}/>
           })}
         </div>
       </div>
