@@ -157,8 +157,7 @@
               (get! (format
                       "/api/v2/payment-batches/%d/documents/" (:id batch)))]
           (should= 200 (:status result))
-          (should= 2 (count (json->map (:body result))))))
-      ))
+          (should= 2 (count (json->map (:body result))))))))
 
 (describe
   "Payment batches emails"
