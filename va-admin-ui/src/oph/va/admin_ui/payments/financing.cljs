@@ -51,12 +51,13 @@
     (valid-email? (:presenter-email document))))
 
 (def default-document {:document-id ""
-                       :phase 0
                        :presenter-email ""
                        :acceptor-email ""})
 
 (defn document-field [props]
-  (let [value (r/atom default-document)]
+  (let [value (r/atom (assoc
+                        default-document
+                        :phase (or (first (:phases props)) "")))]
     (fn [props]
       [:div
        [va-ui/select-field
@@ -64,7 +65,7 @@
          :value (:phase @value)
          :values (map #(hash-map
                          :key % :value % :primary-text (phase-to-name %))
-                      (range 0 (:max-phases props)))
+                      (:phases props))
          :on-change #(swap! value assoc :phase (js/parseInt %))}]
        [va-ui/text-field
         {:floating-label-text "Asiakirjan tunnus"

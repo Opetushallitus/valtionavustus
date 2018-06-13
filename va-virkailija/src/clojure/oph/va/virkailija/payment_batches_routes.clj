@@ -30,7 +30,7 @@
     :summary "Create new payment batch"
     (if (seq (data/find-batches
                (:receipt-date batch-values) (:grant-id batch-values)))
-      (conflict "Payment batch already exists")
+      (conflict {:error "Payment batch already exists"})
       (ok (data/create-batch batch-values)))))
 
 (defn- send-payments []
@@ -81,7 +81,11 @@
                                    "Payment batch document")]
     :return schema/BatchDocument
     :summary "Create new payment batch document"
-    (ok (data/create-batch-document id document))))
+    (if (some
+          #(when (= (:phase %) (:phase document)) %)
+          (data/get-batch-documents id))
+      (conflict {:error "No multiple documents per phase is allowed"})
+      (ok (data/create-batch-document id document)))))
 
 (defn- send-payments-email []
   (compojure-api/POST

@@ -554,9 +554,12 @@ luonnissa uniikki tunniste, jolla hakija pääsee lähettämään
 muutoshakemuksen. Tämä tunniste vanhenee, kun avustuksen ensimmäinen maksatus
 lähetetään.
 
-## Käytäntöjä
+## Käytänteitä
 
 ### Koodi
+
+Koodin tyylissä tavoitellaan
+[The Clojure Style Guidea](https://github.com/bbatsov/clojure-style-guide).
 
 Ennen oman koodin julkaisua, olisi hyvä ajaa staattiset työkalut.
 
@@ -585,6 +588,12 @@ Myös yksittäisille nimiavaruudelle voi ajaa eastwood-linterin:
 
 ``` shell
 ../lein eastwood "{:namespaces [oph.va.virkailija.payment-batches-routes oph.va.virkailija.payment-batches-data]}"
+```
+
+Kibitille voi antaa tarkastettavan tiedoston parametrina:
+
+``` shell
+../lein kibit src/clojure/oph/va/virkailija/payments_data.clj
 ```
 
 Bikeshedin kanssa joutuu käyttämään grepiä hyväkseen:

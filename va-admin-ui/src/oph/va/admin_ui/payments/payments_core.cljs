@@ -177,7 +177,8 @@
   (into (subvec coll 0 i)
         (subvec coll (inc i))))
 
-(defn- render-batch-values [{:keys [values disabled? on-change]}]
+(defn- render-batch-values
+  [{:keys [values disabled? on-change phases]}]
   [:div {:class (when disabled? "disabled")}
    [:h3 "Maksuerän tiedot"]
    [financing/payment-batch-fields
@@ -201,10 +202,16 @@
               #(on-change :documents (removev (get values :documents []) i))))
           (:documents values)))]]]
    [:div
+    {:class (when (empty? phases) "disabled")}
     [financing/document-field
-     {:max-phases 2
+     {:phases phases
       :on-change
       #(on-change :documents (conj (get values :documents []) %))}]]])
+
+(defn- find-available-phases [payments documents]
+  (clojure.set/difference
+    (set (map :phase payments))
+    (set (map :phase documents))))
 
 (defn home-page [data]
   (let [{:keys [user-info delete-payments?]} data
@@ -230,12 +237,21 @@
                   [va-ui/tab
                    {:value "outgoing"
                     :label "Lähtevät maksatukset"}
-                   [render-batch-values
-                    {:disabled? (not unsent-payments?)
-                     :values @batch-values
-                     :on-change #(swap! batch-values assoc %1 %2)}]
-                   [payments-ui/payments-table
-                    (filter #(< (:state %) 2) flatten-payments)]
+                   [(let [outgoing-payments
+                          (filter #(< (:state %) 2) flatten-payments)
+                          available-phases
+                          (find-available-phases
+                            outgoing-payments
+                            (get @batch-values :documents []))]
+                      (fn [data]
+                        [:div
+                         [render-batch-values
+                          {:disabled? (not unsent-payments?)
+                           :values @batch-values
+                           :on-change #(swap! batch-values assoc %1 %2)
+                           :phases available-phases}]
+                         [payments-ui/payments-table
+                          outgoing-payments]]))]
                    [:div
                     (when accounts-nil?
                       (notice "Joillakin hakemuksilla ei ole LKP- tai
