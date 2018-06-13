@@ -1,5 +1,4 @@
 (ns oph.va.virkailija.payment-batches-spec
-  (:use [clojure.tools.trace])
   (:require [speclj.core :refer [should should= describe
                                  it tags around-all run-specs]]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
