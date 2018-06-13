@@ -587,6 +587,12 @@ Myös yksittäisille nimiavaruudelle voi ajaa eastwood-linterin:
 ../lein eastwood "{:namespaces [oph.va.virkailija.payment-batches-routes oph.va.virkailija.payment-batches-data]}"
 ```
 
+Kibitille voi antaa tarkastettavan tiedoston parametrina:
+
+``` shell
+../lein kibit src/clojure/oph/va/virkailija/payments_data.clj
+```
+
 Bikeshedin kanssa joutuu käyttämään grepiä hyväkseen:
 
 ``` shell
