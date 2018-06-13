@@ -32,7 +32,7 @@ export default class ChooseRahoitusalue extends React.Component {
 
     return (
       <div className="hakemus-arviointi-section">
-        <label>Rahoitusalue:</label>
+        <label>Koulutusaste:</label>
         <a onClick={onToggleList} disabled={!allowEditing}>{title}</a>
         <div className="radio-container radio-container--rahoitusalue" hidden={!isOpen}>
           {availableRahoitusalueet.map(ra => {
