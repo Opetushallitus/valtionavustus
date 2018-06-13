@@ -189,7 +189,7 @@ export default class HakuEdit extends Component {
           </div>
           <div className="editor-field-row">
             <div className="editor-row-element">
-              <h3 className="required">Kokonaissumma</h3>
+              <h3 className="required">Määräraha</h3>
               <input id="total-grant-size" type="number"
                      disabled={!allowAllHakuEdits} onChange={onChange}
                      required="true"
