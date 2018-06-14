@@ -51,6 +51,11 @@
        (exec :form-db queries/get-hakemus-by-user-id)
        first))
 
+(defn get-hakemus-version [hakemus-id version]
+  (first
+    (exec :form-db queries/get-hakemus-version-by-user-id
+          {:user_key hakemus-id :version version})))
+
 (defn get-hakemus-paatos [hakemus-id]
   (->> {:hakemus_id hakemus-id}
        (exec :form-db queries/get-hakemus-paatokset)

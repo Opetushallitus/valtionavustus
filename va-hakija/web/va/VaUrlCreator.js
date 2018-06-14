@@ -39,7 +39,8 @@ export default class VaUrlCreator extends UrlCreator {
         const query = urlContent.parsedQuery
         const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
         const hakemusId = query.hakemus
-        return entityApiUrl(avustusHakuId, hakemusId)
+        return entityApiUrl(avustusHakuId, hakemusId) +
+          (query["decision-version"] ? "?decision-version=true" : "")
       },
       existingSubmissionEditUrl,
       existingSubmissionPreviewUrl: function (avustushakuId, hakemusId, lang, devel, token) {
