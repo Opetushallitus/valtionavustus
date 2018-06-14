@@ -6,7 +6,7 @@
             [oph.common.datetime :as datetime]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.validation :as validation]
-            [oph.soresu.form.routes :refer :all]
+            [oph.soresu.form.routes :refer [get-form-submission]]
             [oph.soresu.form.formutil :refer :all]
             [oph.va.routes :refer :all]
             [oph.soresu.form.schema :refer :all]
