@@ -114,6 +114,27 @@
       (not-found))
     (not-found)))
 
+(defn on-get-decision-answers [haku-id hakemus-id form-key]
+  (let [avustushaku (va-db/get-avustushaku haku-id)
+        form-id (form-key avustushaku)
+        form (form-db/get-form form-id)
+        current-hakemus (va-db/get-hakemus hakemus-id)
+        paatos (va-db/get-hakemus-paatos (:id current-hakemus))]
+    (if (nil? paatos)
+      (no-content)
+      (let [hakemus (va-db/get-hakemus-version hakemus-id (:hakemus_version paatos))
+            submission-id (:form_submission_id hakemus)
+            submission (form-db/get-form-submission-version
+                         form-id submission-id
+                         (:form_submission_version hakemus))
+            submission-version (:version submission)
+            answers (:answers submission)
+            attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
+            budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+            validation (merge (validation/validate-form form answers attachments)
+                              (va-budget/validate-budget-hakija answers budget-totals form))]
+        (hakemus-ok-response hakemus submission validation)))))
+
 (defn on-get-current-answers [haku-id hakemus-id form-key]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         form-id (form-key avustushaku)
