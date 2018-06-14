@@ -142,7 +142,7 @@
         form (form-db/get-form form-id)
         hakemus (va-db/get-hakemus hakemus-id)
         submission-id (:form_submission_id hakemus)
-        submission (form-db/get-form-submission form-id submission-id)
+        submission (:body (get-form-submission form-id submission-id))
         submission-version (:version submission)
         answers (:answers submission)
         attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
