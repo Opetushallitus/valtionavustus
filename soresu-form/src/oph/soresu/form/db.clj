@@ -38,6 +38,11 @@
        (exec :form-db queries/get-form-submission)
        first))
 
+(defn get-form-submission-version [form-id submission-id version]
+  (first
+    (exec :form-db queries/get-form-submission-version
+          {:form_id form-id :submission_id submission-id :version version})))
+
 (defn get-form-submission-versions [form-id submission-id]
   (->> {:form_id form-id :submission_id submission-id}
        (exec :form-db queries/get-form-submission-versions)))
