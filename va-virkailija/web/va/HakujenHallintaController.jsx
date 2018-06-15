@@ -25,6 +25,7 @@ const events = {
   updateField: 'updateField',
   saveHaku: 'saveHaku',
   saveCompleted: 'saveCompleted',
+  paymentsLoaded: 'paymentsLoaded',
   rolesLoaded: 'rolesLoaded',
   roleCreated: 'roleCreated',
   roleDeleted: 'roleDeleted',
@@ -88,6 +89,10 @@ function appendBudgetComponent(selvitysType, avustushaku) {
   return form
 }
 export default class HakujenHallintaController {
+
+  static paymentsUrl(avustushaku) {
+    return `/api/v2/grants/${avustushaku.id}/payments/`
+  }
 
   static roleUrl(avustushaku) {
     return `/api/avustushaku/${avustushaku.id}/role`
@@ -164,7 +169,7 @@ export default class HakujenHallintaController {
     }, VaUserSearchParameters.searchDebounceMillis())
     this._bind('onInitialState', 'onUpdateField', 'onHakuCreated', 'startAutoSave', 'onSaveCompleted', 'onHakuSelection',
       'onHakuSave', 'onAddTalousarviotili', 'onDeleteTalousarviotili', 'onAddSelectionCriteria', 'onDeleteSelectionCriteria', 'onAddFocusArea', 'onDeleteFocusArea',
-      'onBeforeUnload', 'onRolesLoaded', 'onRoleCreated', 'onRoleDeleted', 'saveRole')
+      'onBeforeUnload', 'onPaymentsLoaded', 'onRolesLoaded', 'onRoleCreated', 'onRoleDeleted', 'saveRole')
 
     Bacon.fromEvent(window, "beforeunload").onValue(function() {
       // For some odd reason Safari always displays a dialog here
@@ -181,6 +186,7 @@ export default class HakujenHallintaController {
       [dispatcher.stream(events.updateField)], this.onUpdateField,
       [dispatcher.stream(events.saveHaku)], this.onHakuSave,
       [dispatcher.stream(events.saveCompleted)], this.onSaveCompleted,
+      [dispatcher.stream(events.paymentsLoaded)], this.onPaymentsLoaded,
       [dispatcher.stream(events.rolesLoaded)], this.onRolesLoaded,
       [dispatcher.stream(events.roleCreated)], this.onRoleCreated,
       [dispatcher.stream(events.roleDeleted)], this.onRoleDeleted,
@@ -428,7 +434,11 @@ export default class HakujenHallintaController {
 
   onHakuSave(state) {
     const url = "/api/avustushaku/" + state.selectedHaku.id
-    HttpUtil.post(url, _.omit(state.selectedHaku, ["roles", "formContent", "privileges", "valiselvitysForm", "loppuselvitysForm"]))
+    HttpUtil.post(
+      url,
+      _.omit(state.selectedHaku,
+             ["roles", "formContent", "privileges",
+              "valiselvitysForm", "loppuselvitysForm", "payments"]))
       .then(function (response) {
         dispatcher.push(events.saveCompleted, response)
       })
@@ -468,8 +478,24 @@ export default class HakujenHallintaController {
     state.selectedHaku = hakuToSelect
     this.loadPrivileges(hakuToSelect)
     this.loadRoles(hakuToSelect)
+    this.loadPayments(hakuToSelect)
     this.loadForm(hakuToSelect)
     LocalStorage.saveAvustushakuId(hakuToSelect.id)
+    return state
+  }
+
+  loadPayments(selectedHaku) {
+    if(!_.isArray(selectedHaku.payments)) {
+      HttpUtil.get(
+        HakujenHallintaController.paymentsUrl(selectedHaku)).then(payments => {
+          dispatcher.push(
+            events.paymentsLoaded, {grant: selectedHaku, payments: payments})
+      })
+    }
+  }
+
+  onPaymentsLoaded(state, {grant, payments}) {
+    grant.payments = payments
     return state
   }
 
