@@ -83,7 +83,7 @@ export default class HakuEdit extends Component {
               onChange={onChange}
               codeOptions={
                 this.props.codeOptions.filter(
-                  k => k["value-type"]==="operational-unit")
+                  k => k["value-type"] === "operational-unit")
               }
               selectedValue={selectedValueOperationalUnit}/>
           </div>
@@ -96,7 +96,8 @@ export default class HakuEdit extends Component {
               avustushaku={avustushaku}
               onChange={onChange}
               codeOptions={
-                this.props.codeOptions.filter(k => k["value-type"]==="project")
+                this.props.codeOptions.filter(
+                  k => k["value-type"] === "project")
               }
               selectedValue={selectedValueProject}/>
           </div>
@@ -110,7 +111,7 @@ export default class HakuEdit extends Component {
               onChange={onChange}
               codeOptions={
                 this.props.codeOptions.filter(
-                  k => k["value-type"]==="operation")
+                  k => k["value-type"] === "operation")
               }
               selectedValue={selectedValueOperation}/>
           </div>
