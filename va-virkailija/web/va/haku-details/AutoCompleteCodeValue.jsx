@@ -55,7 +55,6 @@ export default class AutocompleteCodeValue extends Component {
         options={this.props.codeOptions}
         onChange={this.updateValue}
         optionRenderer={this.NameOptionRenderer}
-        valueKey='code-value'
         value={this.props.selectedValue}
         valueRenderer={this.codeValueRenderer}
       />
