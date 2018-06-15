@@ -26,6 +26,7 @@
 (defquery get-avustushaku "sql/avustushaku/get.sql")
 (defquery list-avustushaut "sql/avustushaku/list.sql")
 (defquery create-paatos-view!  "sql/hakemus-paatokset-views/create.sql")
+(defquery get-avustushaku-roles "sql/avustushaku/get-roles.sql")
 
 (defquery attachment-exists? "sql/attachment/exists.sql")
 (defquery list-attachments "sql/attachment/list.sql")

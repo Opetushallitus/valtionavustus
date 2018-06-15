@@ -189,7 +189,8 @@
         grant (va-db/get-avustushaku (:avustushaku application))
         submission (:body (get-form-submission
                             (:form grant)
-                            (:form_submission_id application)))]
+                            (:form_submission_id application)))
+        lang (keyword (get-in application [:hakemus :language] "fi"))]
     (cond
       (not (va-db/valid-token? token (:id application)))
       (unauthorized "Incorrect token")
@@ -197,6 +198,15 @@
              (not (:refused application)))
       (do
         (va-db/refuse-application application comment)
+        (let [roles (filter #(= (:role %) "presenting_officer")
+                            (va-db/get-avustushaku-roles (:id grant)))]
+          (when (seq roles)
+            (va-email/send-refused-message-to-presenter!
+              (map :email roles) grant (:id application))))
+        (when-let [email (find-answer-value
+                           (:answers submission) "primary-email")]
+          (va-email/send-refused-message!
+            lang [email] (get-in grant [:content :name lang])))
         (hakemus-ok-response (va-db/get-hakemus application-id) submission {}))
       :else (hakemus-conflict-response application))))
 

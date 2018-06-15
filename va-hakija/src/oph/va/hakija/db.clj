@@ -25,6 +25,9 @@
   (->> (exec :form-db queries/get-avustushaku {:id id})
        first))
 
+(defn get-avustushaku-roles [avustushaku-id]
+  (exec :form-db queries/get-avustushaku-roles {:avustushaku avustushaku-id}))
+
 (defn list-avustushaut []
   (exec :form-db queries/list-avustushaut {}))
 
