@@ -29,7 +29,8 @@ export default class AutocompleteCodeValue extends Component {
         className="Select-input name-option-renderer"
         key={key}
         onClick={() => this.updateValue(option)} >
-        {option.code + " " + option["code-value"]}
+        <span>{option.code}</span>
+        <span>{option["code-value"]}</span>
       </div>
     )
   }
