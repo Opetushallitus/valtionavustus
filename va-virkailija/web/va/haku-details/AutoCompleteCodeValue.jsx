@@ -49,7 +49,6 @@ export default class AutocompleteCodeValue extends Component {
   render() {
     return (
       <VirtualizedSelect
-        id={this.props.codeType}
         labelKey='code'
         placeholder="Valitse listasta"
         backspaceRemoves={true}
