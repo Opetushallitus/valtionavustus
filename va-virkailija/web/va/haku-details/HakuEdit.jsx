@@ -12,6 +12,8 @@ export default class HakuEdit extends Component {
   render() {
     const controller = this.props.controller
     const avustushaku = this.props.avustushaku
+    const hasNoPayments = avustushaku.payments &&
+          avustushaku.payments.length === 0
     const vaUserSearch = this.props.vaUserSearch
     const userInfo = this.props.userInfo
     const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges["edit-haku"]
@@ -119,40 +121,47 @@ export default class HakuEdit extends Component {
                 <span>%</span>
               </div>
             </div>
-            <div className={
-                   avustushaku.content.multiplemaksuera && allowAllHakuEdits ?
-                 null : "haku-edit-disabled-form"}>
-              <div>
-                <label className="haku-edit-radio-button-item">
-                  <input type="radio" name="payment-size-limit" value="no-limit"
-                         checked={avustushaku.content["payment-size-limit"] === "no-limit"}
-                         className="haku-edit-radio-button" onChange={onChange}
-                         id="payment-size-limit-1"/>
-                  Avustushaun kaikille edunsaajille maksetaan useammassa erässä
-                </label>
-                <label className="haku-edit-radio-button-item">
-                  <input type="radio" name="payment-size-limit" value="fixed-limit"
-                         checked={avustushaku.content["payment-size-limit"] === "fixed-limit"}
-                         className="haku-edit-radio-button" onChange={onChange}
-                         id="payment-size-limit-2"/>
-                  Maksetaan useammassa erässä, kun OPH:n avustus hankkeelle (ts. maksettava kokonaissumma) on vähintään
-                  <input className="haku-edit-inline-input" type="number"
-                         id="payment-fixed-limit"
-                         disabled={avustushaku.content["payment-size-limit"] !== "fixed-limit"}
-                         onChange={onChange}
-                         value={avustushaku.content["payment-fixed-limit"] || ""} />
-                  <span>€</span>
-                </label>
-              </div>
-              <div className="haku-edit-subrow">
-                <label className="haku-edit-field-label">
-                  Ensimmäisen erän osuus OPH:n avustuksesta hankkeelle (ts. maksettava kokonaissumma) on vähintään
-                  <input type="number" className="haku-edit-inline-input"
-                         id="payment-min-first-batch"
-                         onChange={onChange}
-                         value={avustushaku.content["payment-min-first-batch"] || ""}/>
-                  <span>%</span>
-                </label>
+            <div title={avustushaku.content.multiplemaksuera &&
+                        allowAllHakuEdits && !hasNoPayments ?
+                        "Avustuksen maksatuksia on jo luotu, joten arvoja ei voi enää muuttaa"
+                        : null}>
+              <div
+                className={
+                  avustushaku.content.multiplemaksuera && allowAllHakuEdits &&
+                    hasNoPayments ?
+                null : "haku-edit-disabled-form"}>
+                <div>
+                  <label className="haku-edit-radio-button-item">
+                    <input type="radio" name="payment-size-limit" value="no-limit"
+                           checked={avustushaku.content["payment-size-limit"] === "no-limit"}
+                           className="haku-edit-radio-button" onChange={onChange}
+                           id="payment-size-limit-1"/>
+                    Avustushaun kaikille edunsaajille maksetaan useammassa erässä
+                  </label>
+                  <label className="haku-edit-radio-button-item">
+                    <input type="radio" name="payment-size-limit" value="fixed-limit"
+                           checked={avustushaku.content["payment-size-limit"] === "fixed-limit"}
+                           className="haku-edit-radio-button" onChange={onChange}
+                           id="payment-size-limit-2"/>
+                    Maksetaan useammassa erässä, kun OPH:n avustus hankkeelle (ts. maksettava kokonaissumma) on vähintään
+                    <input className="haku-edit-inline-input" type="number"
+                           id="payment-fixed-limit"
+                           disabled={avustushaku.content["payment-size-limit"] !== "fixed-limit"}
+                           onChange={onChange}
+                           value={avustushaku.content["payment-fixed-limit"] || ""} />
+                    <span>€</span>
+                  </label>
+                </div>
+                <div className="haku-edit-subrow">
+                  <label className="haku-edit-field-label">
+                    Ensimmäisen erän osuus OPH:n avustuksesta hankkeelle (ts. maksettava kokonaissumma) on vähintään
+                    <input type="number" className="haku-edit-inline-input"
+                           id="payment-min-first-batch"
+                           onChange={onChange}
+                           value={avustushaku.content["payment-min-first-batch"] || ""}/>
+                    <span>%</span>
+                  </label>
+                </div>
               </div>
             </div>
             <div className="payments-fields">
