@@ -1,0 +1,5 @@
+Avustushaku: {{ grant-name }}
+
+Avustuksen saaja on ilmoittanut, ettei ota avustusta vastaan.
+
+Hakemus: {{& url }}
