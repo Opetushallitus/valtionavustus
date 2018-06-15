@@ -23,7 +23,7 @@ export default class AutocompleteCodeValue extends Component {
     }
   }
 
-  NameOptionRenderer({key, option }) {
+  NameOptionRenderer({key, option}) {
     return (
       <div
         className="Select-input name-option-renderer"
