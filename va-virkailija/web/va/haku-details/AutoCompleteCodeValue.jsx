@@ -27,7 +27,7 @@ export default class AutocompleteCodeValue extends Component {
     const onChange = () => selectValue(option)
     return (
       <div
-        className="Select-input name-option-renderer"
+        className="Select-input name-option-renderer code-value-renderer"
         key={key}
         onClick={onChange}>
         <span>{option.code}</span>
@@ -40,7 +40,8 @@ export default class AutocompleteCodeValue extends Component {
   codeValueRenderer(option){
     return (
       <div className="code-value-renderer">
-        {option.code} {option["code-value"]}
+        <span>{option.code}</span>
+        <span>{option["code-value"]}</span>
       </div>)
   }
 
