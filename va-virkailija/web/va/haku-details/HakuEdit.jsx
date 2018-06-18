@@ -166,7 +166,7 @@ export default class HakuEdit extends Component {
                            checked={avustushaku.content["payment-size-limit"] === "no-limit"}
                            className="haku-edit-radio-button" onChange={onChange}
                            id="payment-size-limit-1"/>
-                    Avustushaun kaikille edunsaajille maksetaan useammassa erässä
+                    Kaikille avustuksen saajille maksetaan useammassa erässä
                   </label>
                   <label className="haku-edit-radio-button-item">
                     <input type="radio" name="payment-size-limit" value="fixed-limit"
