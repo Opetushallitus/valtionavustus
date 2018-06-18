@@ -255,7 +255,6 @@
                                                       (:register_number hakemus)
                                                       answers
                                                       budget-totals)]
-          (va-db/set-submitted-version hakemus-id submission-id)
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku)
           (hakemus-ok-response submitted-hakemus saved-submission validation))
         (hakemus-conflict-response hakemus))

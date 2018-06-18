@@ -154,7 +154,8 @@
   (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :draft nil))
 
 (defn submit-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :submitted nil))
+  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :submitted nil)
+  (set-submitted-version hakemus-id submission-id))
 
 (defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals comment]
   (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment))
