@@ -42,16 +42,22 @@
   local_action: stat path="{{playbook_dir}}/../../valtionavustus-secret/config/secret-{{app_profile}}.edn"
   sudo: no
   register: secrets_file
+  tags:
+    - app_secrets
 
 - name: Fail if no secrets EDN config
   fail: msg='{{playbook_dir}}/../../valtionavustus-secret/config/secret-{{app_profile}}.edn file not available'
   when: secrets_file.stat.isreg is not defined or secrets_file.stat.isreg == False
+  tags:
+    - app_secrets
 
 - name: Copy secrets EDN config to the server
   copy: src={{playbook_dir}}/../../valtionavustus-secret/config/secret-{{app_profile}}.edn  dest={{ data_dir }}/www/config owner=www group=www mode=0600
   notify:
     - Restart va-hakija
     - Restart va-virkailija
+  tags:
+    - app_secrets
 
 - name: Copy log4j.properties for apps to the server
   template:
