@@ -143,6 +143,13 @@
                    queries/close-existing-hakemus! params
                    queries/update-hakemus-status<! params])))
 
+(defn set-submitted-version [user-key form-submission-id]
+  (let [params {:user_key user-key
+                :form_submission_id form-submission-id}]
+    (exec-all :form-db [queries/lock-hakemus params
+                        queries/close-existing-hakemus! params
+                        queries/set-application-submitted-version<! params])))
+
 (defn verify-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :draft nil))
 
