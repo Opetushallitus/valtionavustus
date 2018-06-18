@@ -15,7 +15,7 @@ tämä README on.
 Provisiointi tehdään Ansiblella, joka on Python-sovellus. Käytä Pythonin
 2.7-versiota. Ansiblea kannattaa ajaa
 [Pipenvin](https://docs.pipenv.org/) avulla
-[Virtualenvissä](http://docs.python-guide.org/en/latest/dev/virtualenvs/),
+[virtualenvissä](http://docs.python-guide.org/en/latest/dev/virtualenvs/),
 jotta dependencyt ovat oikein.
 
 Jos käytät macOS:ää, tarvitset seuraavat riippuvuudet:
@@ -32,13 +32,13 @@ brew install openssl gmp python
 
 Asenna [Pipenv](https://docs.pipenv.org/install/).
 
-Luo projektille Virtualenv, tämä asentaa riippuvuudet:
+Luo projektille virtualenv, tämä asentaa riippuvuudet:
 
 ``` bash
 make install
 ```
 
-Asennuksen jälkeen ota Virtualenv käyttöön:
+Asennuksen jälkeen ota virtualenv käyttöön:
 
 ``` bash
 pipenv shell
