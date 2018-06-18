@@ -103,7 +103,7 @@ export default class VaFormTopbar extends React.Component {
                 {isHakemus && hasEnded && (
                   <LocalizedString htmlId="avustushaku-has-ended-message" translations={translations.form} translationKey="has-ended" lang={lang} />
                 )}
-                {isExpired ? (
+                {!isHakemus && isExpired ? (
                   <div>
                     <LocalizedString translations={translations.form}
                                      translationKey="form-is-expired"
@@ -111,7 +111,10 @@ export default class VaFormTopbar extends React.Component {
                                      keyValues={
                                        {formtype:
                                         Translator.translateKey(
-                                          translations.form, topicKey, lang)}}/>
+                                          translations.form,
+                                          hakemusType === "valiselvitys" ?
+                                            "form-middle" : "form-final",
+                                           lang)}}/>
                   </div>
                   ) : null}
                 <ServerError serverError={saveStatus.serverError} translations={translations.errors} lang={lang}/>
