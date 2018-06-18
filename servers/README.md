@@ -12,9 +12,10 @@ tämä README on.
 
 ## Ansiblen asennus
 
-Provisiointi tehdään Ansiblella, joka on Python-sovellus. Käytä
-Pythonin 2.7-versiota. Ansiblea kannattaa ajaa
-[Virtualenvissä](http://docs.python-guide.org/en/latest/dev/virtualenvs/),
+Provisiointi tehdään Ansiblella, joka on Python-sovellus. Käytä Pythonin
+2.7-versiota. Ansiblea kannattaa ajaa
+[Pipenvin](https://docs.pipenv.org/) avulla
+[virtualenvissä](http://docs.python-guide.org/en/latest/dev/virtualenvs/),
 jotta dependencyt ovat oikein.
 
 Jos käytät macOS:ää, tarvitset seuraavat riippuvuudet:
@@ -29,22 +30,18 @@ Voit asentaa ne Homebrewillä:
 brew install openssl gmp python
 ```
 
-Asennus, jos Python-binääri on polussa `/usr/local/bin/python2.7`:
+Asenna [Pipenv](https://docs.pipenv.org/install/).
+
+Luo projektille virtualenv, tämä asentaa riippuvuudet:
 
 ``` bash
 make install
 ```
 
-Muulloin määritä asennukselle Python-binäärin polku:
+Asennuksen jälkeen ota virtualenv käyttöön:
 
 ``` bash
-PYTHON_BIN=/opt/bin/python2.7 make install
-```
-
-Asennuksen jälkeen ota Virtualenv käyttöön:
-
-``` bash
-eval `make venv`
+pipenv shell
 ```
 
 Hakemistossa `roles/3rdparty` on asennettu muiden tekemät Ansible-roolit

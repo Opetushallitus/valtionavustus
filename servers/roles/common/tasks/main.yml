@@ -38,6 +38,15 @@
   service: name=rsyslog state=restarted
   when: rsyslog_config.changed
 
+- name: Enable persistent systemd journald
+  file:
+    path: "/var/log/journal"
+    state: directory
+    owner: root
+    group: root
+    mode: 02755
+  notify: Restart systemd journald
+
 - name: APT Install rng-tools to avoid /dev/random exhaust
   apt: name=rng-tools
   when: ansible_os_family == 'Debian'

@@ -2,32 +2,23 @@ SHELL := bash  # required for `help` target
 
 CFLAGS ?= -I/usr/local/include
 LDFLAGS ?= -L/usr/local/lib
-PIP_BIN ?= /usr/local/bin/pip2
-PYTHON_BIN ?= /usr/local/bin/python2.7
-PYTHON_REQUIREMENTS ?= requirements.txt
-PYTHON_VENV_DIR ?= python-venv
+PIPENV_BIN ?= pipenv
 
 .PHONY: help
 help:
 	@echo -e '$(subst $(newline),\n,$(usage_text))'
 
+.PHONY: check_pipenv
+check_pipenv:
+	@command -v "$(PIPENV_BIN)" || ( echo "$(PIPENV_BIN) not found, see \`make help\`"; exit 1 )
+
 .PHONY: clean
-clean:
-	rm -rf "$(PYTHON_VENV_DIR)"
+clean: check_pipenv
+	pipenv --rm
 
 .PHONY: install
-install: $(PYTHON_VENV_DIR)
-
-$(PYTHON_VENV_DIR): $(PYTHON_REQUIREMENTS)
-	rm -rf "$(PYTHON_VENV_DIR)"
-	mkdir -p "$(PYTHON_VENV_DIR)"
-	$(PIP_BIN) install virtualenv
-	virtualenv -p "$(PYTHON_BIN)" "$(PYTHON_VENV_DIR)"
-	$(PYTHON_VENV_DIR)/bin/pip install -r "$(PYTHON_REQUIREMENTS)"
-
-.PHONY: venv
-venv:
-	@echo "source $(PYTHON_VENV_DIR)/bin/activate"
+install: check_pipenv
+	pipenv install
 
 define newline
 
@@ -40,14 +31,14 @@ Targets:
   help     Show this guide.
   clean    Uninstall Python virtualenv.
   install  Install Python virtualenv.
-  venv     Print shell commands to activate virtualenv.
 
 Examples:
 
   Activate Python virtualenv for current shell:
 
-  eval `make venv`   # activate virtualenv
-  deactivate         # later, to deactivate virtualenv
+  pipenv shell       # enter new shell with activated virtualenv, `exit` to exit
+
+You will need a working installation of Pipenv, see https://docs.pipenv.org/install/
 
 Remember to set $$ANSIBLE_VAULT_PASSWORD_FILE if you run Ansible
 (`source .env-va.sh`).
