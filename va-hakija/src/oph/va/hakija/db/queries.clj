@@ -13,6 +13,8 @@
 (defquery list-hakemus-change-requests-by-user-id "sql/hakemus/list-change-requests-by-user-id.sql")
 (defquery update-hakemus-submission<! "sql/hakemus/update-submission.sql")
 (defquery update-hakemus-status<! "sql/common/hakija/hakemus/update-status.sql")
+(defquery set-application-submitted-version<!
+  "sql/hakemus/set-submitted-version.sql")
 (defquery lock-hakemus "sql/common/hakija/hakemus/lock.sql")
 (defquery update-loppuselvitys-status<! "sql/common/hakija/hakemus/update-loppuselvitys-status.sql")
 (defquery update-valiselvitys-status<! "sql/common/hakija/hakemus/update-valiselvitys-status.sql")
