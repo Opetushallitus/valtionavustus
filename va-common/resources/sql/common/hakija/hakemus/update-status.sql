@@ -24,7 +24,8 @@ INSERT INTO hakemukset(
        status_loppuselvitys,
        refused,
        refused_comment,
-       refused_at)
+       refused_at,
+       submitted_version)
 SELECT id,
        :avustushaku_id,
        :user_key,
@@ -50,7 +51,8 @@ SELECT id,
        status_loppuselvitys,
        refused,
        refused_comment,
-       refused_at
+       refused_at,
+       submitted_version
 FROM hakemukset
 WHERE user_key = :user_key AND form_submission_id = :form_submission_id
 ORDER BY version DESC
