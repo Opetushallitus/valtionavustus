@@ -73,18 +73,48 @@ export default class HakuEdit extends Component {
           </tbody>
         </table>
         <div className="editor-field-row">
-        <div className="editor-row-element">
-          <h3 className="required">Toimintayksikkö</h3>
-           <AutoCompleteCodeValue id="operational-unit-id" codeType="operational-unit-id" controller={controller} avustushaku={avustushaku} onChange={onChange} codeOptions={this.props.codeOptions.filter(k => k["value-type"]==="operational-unit")} selectedValue={selectedValueOperationalUnit}/>
-        </div>
-        <div className="editor-row-element">
-          <h3 className="required">Projekti</h3>
-            <AutoCompleteCodeValue id="project-id" codeType="project-id" controller={controller} avustushaku={avustushaku} onChange={onChange} codeOptions={this.props.codeOptions.filter(k => k["value-type"]==="project")} selectedValue={selectedValueProject}/>
-        </div>
-        <div className="editor-row-element">
-          <h3 className="required">Toiminto</h3>
-            <AutoCompleteCodeValue id="operation-id" codeType="operation-id" controller={controller} avustushaku={avustushaku} onChange={onChange} codeOptions={this.props.codeOptions.filter(k => k["value-type"]==="operation")} selectedValue={selectedValueOperation}/>
-        </div>
+          <div className="editor-row-element">
+            <h3 className="required">Toimintayksikkö</h3>
+            <AutoCompleteCodeValue
+              id="operational-unit-id"
+              codeType="operational-unit-id"
+              controller={controller}
+              avustushaku={avustushaku}
+              onChange={onChange}
+              codeOptions={
+                this.props.codeOptions.filter(
+                  k => k["value-type"] === "operational-unit")
+              }
+              selectedValue={selectedValueOperationalUnit}/>
+          </div>
+          <div className="editor-row-element">
+            <h3 className="required">Projekti</h3>
+            <AutoCompleteCodeValue
+              id="project-id"
+              codeType="project-id"
+              controller={controller}
+              avustushaku={avustushaku}
+              onChange={onChange}
+              codeOptions={
+                this.props.codeOptions.filter(
+                  k => k["value-type"] === "project")
+              }
+              selectedValue={selectedValueProject}/>
+          </div>
+          <div className="editor-row-element">
+            <h3 className="required">Toiminto</h3>
+            <AutoCompleteCodeValue
+              id="operation-id"
+              codeType="operation-id"
+              controller={controller}
+              avustushaku={avustushaku}
+              onChange={onChange}
+              codeOptions={
+                this.props.codeOptions.filter(
+                  k => k["value-type"] === "operation")
+              }
+              selectedValue={selectedValueOperation}/>
+          </div>
         </div>
         <SetStatus hakuIsValid={RegisterNumber.isValid(avustushaku)} currentStatus={avustushaku.status} userHasEditPrivilege={userHasEditPrivilege} onChange={onChange} />
         <div className="haku-duration-and-self-financing">
