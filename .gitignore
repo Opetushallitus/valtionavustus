@@ -13,7 +13,6 @@
 .nrepl-port
 /doc/gh-md-toc
 /servers/fact_cache/
-/servers/python-venv/
 node_modules/
 npm-debug.log
 pom.xml
