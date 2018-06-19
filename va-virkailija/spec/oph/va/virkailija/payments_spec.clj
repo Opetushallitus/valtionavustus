@@ -22,8 +22,8 @@
                        :surname "User"})
 
 (defn create-payment [grant]
-  (let [submission (create-submission
-                     (:form grant) {:budget-oph-share 40000})
+  (let [submission (create-submission (:form grant)
+                                             {:budget-oph-share 40000})
         application (create-application grant submission)
         evaluation (create-application-evaluation application "accepted")
         batch (payment-batches-data/create-batch
@@ -61,7 +61,7 @@
   (it "finds payments by register number and invoice date"
       (let [grant (first (grant-data/get-grants))
             submission (create-submission
-                         (:form grant) {:budget-granted 40000})
+                         (:form grant) {:budget-oph-share 40000})
             application (create-application grant submission)
             batch (payment-batches-data/create-batch
                     {:receipt-date payment-date
@@ -108,7 +108,7 @@
       (let [grant (first (grant-data/get-grants))]
         (payments-data/delete-grant-payments (:id grant))
         (let [submission (create-submission
-                           (:form grant) {:budget-granted 40000})
+                           (:form grant) {:budget-oph-share 40000})
               application (create-application grant submission)
               batch (payment-batches-data/create-batch
                       {:receipt-date payment-date
@@ -155,7 +155,7 @@
       (let [grant (first (grant-data/get-grants true))]
         (payments-data/delete-grant-payments (:id grant))
         (let [submission (create-submission
-                           (:form grant) {:budget-granted 40000})
+                           (:form grant) {:budget-oph-share 40000})
               application (create-application grant submission)
               batch (payment-batches-data/create-batch
                       {:receipt-date payment-date
@@ -299,7 +299,7 @@
   (it "validates application for creating first payment"
       (let [grant (first (grant-data/get-grants))
             submission (create-submission (:form grant)
-                                          {:budget-granted 40000})
+                                          {:budget-oph-share 40000})
             application (create-application grant submission)]
         (should (payments-data/valid-for-payment?
                       (assoc application :status "accepted")))
@@ -326,29 +326,23 @@
       (let [grant (first (grant-data/get-grants))
             submission (create-submission (:form grant) {})
             created-application (create-application grant submission)
-            application-raw (application-data/get-application
-                              (:id created-application))
-            evaluation (create-application-evaluation
-                         application-raw "accepted")
             application (application-data/get-application
-                          (:id application-raw))]
+                          (:id created-application))]
 
-        (should= 1500000
-                 (payments-data/get-first-payment-sum
-                   (assoc application :budget-granted 1500000) grant))
+        (should= 1500000 (payments-data/get-first-payment-sum application grant))
         (should= 50000
                  (payments-data/get-first-payment-sum
-                   (assoc application :budget-granted 50000) grant))
+                   (assoc application :budget-oph-share 50000) grant))
         (should= 25000
                  (payments-data/get-first-payment-sum
-                   (assoc application :budget-granted 50000)
+                   (assoc application :budget-oph-share 50000)
                    (-> grant
                      (assoc-in [:content :multiplemaksuera] true)
                      (assoc-in [:content :payment-size-limit] "no-limit")
                      (assoc-in [:content :payment-min-first-batch] 50))))
         (should= 25000
                  (payments-data/get-first-payment-sum
-                   (assoc application :budget-granted 50000)
+                   (assoc application :budget-oph-share 50000)
                    (-> grant
                      (assoc-in [:content :multiplemaksuera] true)
                      (assoc-in [:content :payment-size-limit] "fixed-limit")
@@ -356,7 +350,7 @@
                      (assoc-in [:content :payment-min-first-batch] 50))))
         (should= 50000
                  (payments-data/get-first-payment-sum
-                   (assoc application :budget-granted 50000)
+                   (assoc application :budget-oph-share 50000)
                    (-> grant
                      (assoc-in [:content :multiplemaksuera] true)
                      (assoc-in [:content :payment-size-limit] "fixed-limit")
@@ -364,7 +358,7 @@
                      (assoc-in [:content :payment-min-first-batch] 50))))
         (should= 60000
                  (payments-data/get-first-payment-sum
-                   (assoc application :budget-granted 100000)
+                   (assoc application :budget-oph-share 100000)
                    (-> grant
                      (assoc-in [:content :multiplemaksuera] true)))))))
 
@@ -385,14 +379,11 @@
   (it "updates payment"
       (let [grant (first (grant-data/get-grants))
             payment (create-payment grant)
-            updated-payment-raw
-            (payments-data/update-payment
-              (assoc payment
-                     :state 1
-                     :filename "example.xml")
-              example-identity)
-            updated-payment (payments-data/get-payment
-                              (:id updated-payment-raw))]
+            updated-payment (payments-data/update-payment
+                              (assoc payment
+                                     :state 1
+                                     :filename "example.xml")
+                              example-identity)]
         (should (some? payment))
         (should (some? updated-payment))
         (should= 1 (:state updated-payment))
