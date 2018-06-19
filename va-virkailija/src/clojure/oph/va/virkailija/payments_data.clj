@@ -88,6 +88,9 @@
 (defn create-payment [payment-data identity]
   (let [application (application-data/get-application
                       (:application-id payment-data))]
+    (when (> (+ (total-paid (:application-id payment-data))
+                (:payment-sum payment-data))
+             (:budget-oph-share application)))
     (-> payment-data
         (assoc :application-version (:version application)
                :grant-id (:grant-id application))
@@ -177,13 +180,13 @@
   (int
     (if (and
           (get-in grant [:content :multiplemaksuera] false)
-          (or (= (get-in grant [:content :payment-size-limit] "no-limit")
-                 "no-limit")
-              (>= (:budget-granted application)
-                  (get-in grant [:content :payment-fixed-limit]))))
+             (or (= (get-in grant [:content :payment-size-limit] "no-limit")
+                    "no-limit")
+                 (>= (:budget-oph-share application)
+                     (get-in grant [:content :payment-fixed-limit]))))
       (* (/ (get-in grant [:content :payment-min-first-batch] 60) 100.0)
-         (:budget-granted application))
-      (:budget-granted application))))
+         (:budget-oph-share application))
+      (:budget-oph-share application))))
 
 (defn create-payment-values [application sum phase]
   {:application-id (:id application)

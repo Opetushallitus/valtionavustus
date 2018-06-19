@@ -25,12 +25,12 @@ export default class ApplicationPayments extends Component {
   calculateDefaultValue(grant, application, payments) {
     if ((!payments || payments.length === 0) &&
         (grant.content["payment-size-limit"] === "no-limit" ||
-         application.arvio["budget-granted"] >=
+         application["budget-oph-share"] >=
          grant.content["payment-fixed-limit"])) {
-      return application.arvio["budget-granted"] *
+      return application["budget-oph-share"] *
         grant.content["payment-min-first-batch"] / 100.0
     } else {
-      return application.arvio["budget-granted"] - this.paidToDate(payments)
+      return application["budget-oph-share"] - this.paidToDate(payments)
     }
   }
 
@@ -86,10 +86,9 @@ export default class ApplicationPayments extends Component {
     const {application, grant, index, readonly} = this.props
     const payments = this.props.payments || []
     const renderPaymentPercentage =
-          this.createPaymentPercentageRenderer(
-            application.arvio["budget-granted"])
+          this.createPaymentPercentageRenderer(application["budget-oph-share"])
     const paidToDate = this.paidToDate(payments)
-    const grantLeft = application.arvio["budget-granted"] - paidToDate
+    const grantLeft = application["budget-oph-share"] - paidToDate
     const addEnabled = !readonly && grantLeft > 0 && index === payments.length
     const newPaymentSum = addEnabled ? this.state.newPaymentSum : 0
 
@@ -107,13 +106,13 @@ export default class ApplicationPayments extends Component {
                 <td className="payment-money-column">
                   {this.localeString(
                     application["budget-total"] -
-                    application.arvio["budget-granted"])} €
+                    application["budget-oph-share"])} €
                 </td>
               </tr>
               <tr>
                 <td>OPH:n avustus</td>
                 <td className="payment-money-column">
-                  {this.localeString(application.arvio["budget-granted"])} €
+                  {this.localeString(application["budget-oph-share"])} €
                 </td>
               </tr>
               {payments.map(this.renderPayment)}
@@ -157,10 +156,9 @@ export default class ApplicationPayments extends Component {
               <tr>
                 <td>Yhteensä</td>
                 <td className="payment-money-column">
-                  { application.arvio["budget-granted"] ?
+                  {
                     (100.0 * (paidToDate + newPaymentSum) /
-                     application.arvio["budget-granted"]).toFixed(0)
-                    : 0
+                     application["budget-oph-share"]).toFixed(0)
                   } %
                 </td>
               </tr>
