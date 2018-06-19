@@ -56,8 +56,8 @@ Haun roolista huolimatta kuka tahansa VA-käyttäjä voi kommentoida hakemuksia.
 
 * [Node.js](https://nodejs.org/), versio 8.x
   * asennus esim. [nvm](https://github.com/creationix/nvm):n tai [nodenv](https://github.com/nodenv/nodenv):n kautta
-* [npm](https://www.npmjs.com/), versio 6.x
-* [Leiningen](https://leiningen.org/), versio 2.7.1
+* [npm](https://www.npmjs.com/), versio 6.1.0
+* [Leiningen](https://leiningen.org/), versio 2.8.1
 * [Java SE Development Kit](http://www.oracle.com/technetwork/java/javase/index.html), versio 8
 * [PostgreSQL](https://www.postgresql.org/), vähintään versio 9.4
 * [GNU make](https://www.gnu.org/software/make/), vähintään versio 3.81
