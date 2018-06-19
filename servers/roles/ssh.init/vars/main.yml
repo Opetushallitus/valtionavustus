@@ -1,4 +1,10 @@
 adminusers:
+  anttu:
+    state: present
+    name: Antero Fagerstedt
+  juusostr:
+    state: present
+    name: Juuso Strömberg
   pam:
     state: present
     name: Petri Ämmälä
