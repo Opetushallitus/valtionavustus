@@ -6,10 +6,19 @@
             [oph.va.hakija.api.queries :as hakija-queries])
   (:import (oph.va.jdbc.enums)))
 
+(defn get-application-evaluation [application-id]
+  (convert-to-dash-keys
+    (first (exec :virkailija-db
+                 virkailija-queries/get-application-evaluation
+                 {:application_id application-id}))))
+
 (defn get-application [id]
-  (convert-to-dash-keys (first (exec :form-db
-                                     hakija-queries/get-application
-                                     {:application_id id}))))
+  (convert-to-dash-keys
+    (merge
+      (first (exec :form-db
+                   hakija-queries/get-application
+                   {:application_id id}))
+      (get-application-evaluation id))))
 
 (defn find-application-by-register-number [register-number]
   (convert-to-dash-keys
@@ -17,12 +26,6 @@
       (exec :form-db
             hakija-queries/find-application-by-register-number
             {:register_number register-number}))))
-
-(defn get-application-evaluation [application-id]
-  (convert-to-dash-keys
-    (first (exec :virkailija-db
-                 virkailija-queries/get-application-evaluation
-                 {:application_id application-id}))))
 
 (defn get-applications-with-evaluation-by-grant [grant-id]
   (mapv
