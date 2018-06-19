@@ -9,11 +9,10 @@ import ShouldPayComments from './ShouldPayComments.jsx'
 export default class Seuranta extends React.Component {
   render() {
     const {controller, hakemus, avustushaku, translations, hakuData} = this.props
-    const allowEditing = this.props.selectedHakemusAccessControl.allowHakemusStateChanges
     return (
       <div className="seuranta">
-        <ShouldPay controller={controller} hakemus={hakemus} allowEditing={allowEditing}/>
-        <ShouldPayComments controller={controller} hakemus={hakemus} allowEditing={allowEditing}/>
+        <ShouldPay controller={controller} hakemus={hakemus} allowEditing={true}/>
+        <ShouldPayComments controller={controller} hakemus={hakemus} allowEditing={true}/>
         <div className="seuranta-section">
         <PresenterComment controller={controller} hakemus={hakemus}/>
           <SeurantaBudgetEditing avustushaku={avustushaku} hakuData={hakuData} translations={translations} controller={controller} hakemus={hakemus}/>
