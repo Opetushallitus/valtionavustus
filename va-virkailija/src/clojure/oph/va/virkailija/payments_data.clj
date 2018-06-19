@@ -90,7 +90,7 @@
                       (:application-id payment-data))]
     (when (> (+ (total-paid (:application-id payment-data))
                 (:payment-sum payment-data))
-             (:budget-oph-share application)))
+             (:budget-granted application)))
     (-> payment-data
         (assoc :application-version (:version application)
                :grant-id (:grant-id application))
@@ -182,11 +182,11 @@
           (get-in grant [:content :multiplemaksuera] false)
              (or (= (get-in grant [:content :payment-size-limit] "no-limit")
                     "no-limit")
-                 (>= (:budget-oph-share application)
+                 (>= (:budget-granted application)
                      (get-in grant [:content :payment-fixed-limit]))))
       (* (/ (get-in grant [:content :payment-min-first-batch] 60) 100.0)
-         (:budget-oph-share application))
-      (:budget-oph-share application))))
+         (:budget-granted application))
+      (:budget-granted application))))
 
 (defn create-payment-values [application sum phase]
   {:application-id (:id application)
