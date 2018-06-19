@@ -197,7 +197,17 @@ cd '$(1)' && rm -fr resources/public/js
 endef
 
 define npm_install_modules
-cd '$(1)' && npm install --no-save
+cd '$(1)' && { npm install || { \
+  echo "WARN: npm install failed for $(1), trying workaround… <https://github.com/npm/npm/issues/17444>" && \
+  rm -fr node_modules package-lock.json && \
+  npm install && \
+  git checkout -- package-lock.json && \
+  npm install \
+  ; } }
+cd '$(1)' && { git status -s | wc -l | grep -q '\<0\>' || { \
+  echo "WARN: npm install for $(1) left changes in package-lock.json, discarding…" && \
+  git checkout -- package-lock.json \
+  ; } }
 endef
 
 define npm_lint
