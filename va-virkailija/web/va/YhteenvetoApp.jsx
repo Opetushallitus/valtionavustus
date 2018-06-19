@@ -183,25 +183,30 @@ class SummaryListing extends Component {
     return (
       <table key="hakemusListing" className="summary-hakemus-table">
         <thead>
-        <tr><th colSpan="5" className="status-heading-column">{heading}</th></tr>
-        <tr>
-          <th className="organization-column">Hakija</th>
-          <th className="project-name-column">Hanke</th>
-          <th className="applied-money-column">Haettu</th>
-          <th className="granted-money-column">Myönnetty</th>
-          <th className="comment-column">Huom</th>
-        </tr></thead>
+          <tr>
+            <th colSpan="5" className="status-heading-column">{heading}</th>
+          </tr>
+          <tr>
+            <th className="organization-column">Hakija</th>
+            <th className="project-name-column">Hanke</th>
+            <th className="applied-money-column">Haettu</th>
+            <th className="granted-money-column">Myönnetty</th>
+            <th className="comment-column">Huom</th>
+          </tr>
+        </thead>
         <tbody>
           {hakemusElements}
         </tbody>
-        <tfoot><tr>
-          <td colSpan="2" className="total-applications-column">
-            &nbsp;
-          </td>
-          <td className="applied-money-column"><span className="money sum">{ophShareSum}</span></td>
-          <td className="granted-money-column"><span className="money sum">{budgetGrantedSum}</span></td>
-          <td className="comment-column">&nbsp;</td>
-        </tr></tfoot>
+        <tfoot>
+          <tr>
+            <td colSpan="2" className="total-applications-column">
+              &nbsp;
+            </td>
+            <td className="applied-money-column"><span className="money sum">{ophShareSum}</span></td>
+            <td className="granted-money-column"><span className="money sum">{budgetGrantedSum}</span></td>
+            <td className="comment-column">&nbsp;</td>
+          </tr>
+        </tfoot>
       </table>
     )
   }
