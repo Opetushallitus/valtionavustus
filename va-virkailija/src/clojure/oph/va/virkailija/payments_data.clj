@@ -177,10 +177,10 @@
   (int
     (if (and
           (get-in grant [:content :multiplemaksuera] false)
-             (or (= (get-in grant [:content :payment-size-limit] "no-limit")
-                    "no-limit")
-                 (>= (:budget-granted application)
-                     (get-in grant [:content :payment-fixed-limit]))))
+          (or (= (get-in grant [:content :payment-size-limit] "no-limit")
+                 "no-limit")
+              (>= (:budget-granted application)
+                  (get-in grant [:content :payment-fixed-limit]))))
       (* (/ (get-in grant [:content :payment-min-first-batch] 60) 100.0)
          (:budget-granted application))
       (:budget-granted application))))
