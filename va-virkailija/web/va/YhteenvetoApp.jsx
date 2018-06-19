@@ -218,17 +218,18 @@ class SummaryListing extends Component {
 }
 
 const HakemusRow = ({hakemus}) => {
-    const htmlId = "hakemus-" + hakemus.id
-    const hakemusName = hakemus["project-name"]
-    return (
-      <tr id={htmlId} className="overview-row">
-        <td className="organization-column" title={hakemus["organization-name"]}>{hakemus["organization-name"]}</td>
-        <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
-        <td className="applied-money-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
-        <td className="granted-money-column"><span className="money">{hakemus.arvio["budget-granted"]}</span></td>
-        <td className="comment-column" title={hakemus.arvio["summary-comment"]}>{hakemus.arvio["summary-comment"]}</td>
+  const htmlId = "hakemus-" + hakemus.id
+  const hakemusName = hakemus["project-name"]
+
+  return (
+    <tr id={htmlId} className="overview-row">
+      <td className="organization-column" title={hakemus["organization-name"]}>{hakemus["organization-name"]}</td>
+      <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
+      <td className="applied-money-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
+      <td className="granted-money-column"><span className="money">{hakemus.arvio["budget-granted"]}</span></td>
+      <td className="comment-column" title={hakemus.arvio["summary-comment"]}>{hakemus.arvio["summary-comment"]}</td>
     </tr>
-    )
+  )
 }
 
 
