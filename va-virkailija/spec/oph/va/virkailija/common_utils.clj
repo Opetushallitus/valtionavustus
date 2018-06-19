@@ -90,10 +90,11 @@
        (hakija-api/get-avustushaku (:avustushaku application))
        (:id application)
        {:status status
-        :overridden-answers {}
+        :overridden-answers {:value []}
         :roles {:evaluators []}
         :perustelut nil
-        :acedemy-size 0
+        :academysize 0
+        :useDetailedCosts false
         :costsGranted 30000
         :budget-granted 30000
         :oppilaitokset []
