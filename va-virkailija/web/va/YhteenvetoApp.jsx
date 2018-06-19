@@ -21,8 +21,11 @@ export default class SummaryApp extends Component {
     const avustushaku = hakuData.avustushaku
     const applicationsByStatus = _.groupBy(hakemusList, h => h.arvio.status)
     const summaryListings = _.isEmpty(avustushaku.content.rahoitusalueet) ?
-      BuildSummaryList(SummaryApp.statusesInOrder(),applicationsByStatus) :
-      <RahoitusalueList hakemusList={hakemusList}/>
+      BuildSummaryList(
+        SummaryApp.statusesInOrder(), applicationsByStatus,
+        state.hakuData.avustushaku) :
+      <RahoitusalueList hakemusList={hakemusList}
+                        grant={state.hakuData.avustushaku}/>
 
     const titleString = SummaryApp.titleString(avustushaku)
     const mailToBody = encodeURIComponent(titleString + "\n\nLinkki päätöslistaan:\n\n" + location.href)
@@ -60,18 +63,20 @@ export default class SummaryApp extends Component {
   }
 }
 
-const BuildSummaryList = (statuses,applicationsByStatuses)=>{
+const BuildSummaryList = (statuses, applicationsByStatuses, grant)=>{
   const summaryListingsAll = []
   _.each(statuses, s => {
     if (_.contains(_.keys(applicationsByStatuses), s)) {
       const applications = applicationsByStatuses[s]
-      summaryListingsAll.push(<SummaryListing key={s} arvioStatus={s} hakemusList={applications} />)
+      summaryListingsAll.push(
+        <SummaryListing
+          key={s} arvioStatus={s} hakemusList={applications} grant={grant} />)
     }
   })
   return summaryListingsAll
 }
 
-const RahoitusalueList = ({hakemusList})=>{
+const RahoitusalueList = ({hakemusList, grant})=>{
   const applicationsByRahoitusalue = _.groupBy(hakemusList, h => h.arvio.rahoitusalue)
   const nullValue = "null"
   const undefinedValue = "undefined"
@@ -92,7 +97,7 @@ const RahoitusalueList = ({hakemusList})=>{
     value()
   const rahoitusalueet = rahoitusAlueetNameValues.map((item)=>{
     const applicationsByStatuses = _.groupBy(item.values, h => h.arvio.status)
-    const summaryByStates = BuildSummaryList(SummaryApp.statusesInOrder(),applicationsByStatuses)
+    const summaryByStates = BuildSummaryList(SummaryApp.statusesInOrder(),applicationsByStatuses, grant)
     return (<div key={item.name}>
       <h2 className="rahoitusalue-heading">{item.name}</h2>
       {summaryByStates}
@@ -172,12 +177,19 @@ const SummaryTableRow = ({label, count, applied, granted, isTotalSummary = false
 
 class SummaryListing extends Component {
   render() {
-    const hakemusList = this.props.hakemusList
+    const {hakemusList, grant} = this.props
     const hakemusListSorted = _.sortBy(hakemusList,'organization-name')
     const hakemusCount = hakemusListSorted.length
     const heading = SummaryListing.arvioStatusFiForSummary(this.props.arvioStatus) + " (" + hakemusCount + ")"
     const ophShareSum = SumByOphShare(hakemusListSorted)
-    const hakemusElements = hakemusListSorted.map(hakemus => <HakemusRow key={hakemus.id} hakemus={hakemus} />)
+    const multiBatch = grant.content.multiplemaksuera &&
+          grant.content["payment-size-limit"]
+    const hakemusElements = hakemusListSorted.map(
+      hakemus =>
+        <HakemusRow key={hakemus.id}
+                    hakemus={hakemus}
+                    multiBatch={multiBatch}
+                    grant={this.props.grant}/>)
     const budgetGrantedSum = SumByBudgetGranted(hakemusListSorted)
 
     return (
@@ -191,6 +203,10 @@ class SummaryListing extends Component {
             <th className="project-name-column">Hanke</th>
             <th className="applied-money-column">Haettu</th>
             <th className="granted-money-column">Myönnetty</th>
+            {multiBatch ?
+              <th className="batch-column">1. erä</th> : null}
+            {multiBatch ?
+              <th className="batch-column">2. erä</th> : null}
             <th className="comment-column">Huom</th>
           </tr>
         </thead>
@@ -202,8 +218,14 @@ class SummaryListing extends Component {
             <td colSpan="2" className="total-applications-column">
               &nbsp;
             </td>
-            <td className="applied-money-column"><span className="money sum">{ophShareSum}</span></td>
-            <td className="granted-money-column"><span className="money sum">{budgetGrantedSum}</span></td>
+            <td className="applied-money-column">
+              <span className="money sum">{ophShareSum}</span>
+            </td>
+            <td className="granted-money-column">
+              <span className="money sum">{budgetGrantedSum}</span>
+            </td>
+            {multiBatch ? <td className="batch-column">&nbsp;</td> : null}
+            {multiBatch ? <td className="batch-column">&nbsp;</td> : null}
             <td className="comment-column">&nbsp;</td>
           </tr>
         </tfoot>
@@ -222,9 +244,22 @@ class SummaryListing extends Component {
   }
 }
 
-const HakemusRow = ({hakemus}) => {
+function calculateBatchSize(application, grant) {
+  if (grant.content["payment-size-limit"] === "no-limit" ||
+      application.arvio["budget-granted"]
+      >= grant.content["payment-fixed-limit"]) {
+    return application.arvio["budget-granted"] *
+      grant.content["payment-min-first-batch"] / 100.0
+  } else {
+    return application.arvio["budget-granted"]
+  }
+}
+
+
+const HakemusRow = ({hakemus, multiBatch, grant}) => {
   const htmlId = "hakemus-" + hakemus.id
   const hakemusName = hakemus["project-name"]
+  const firstBatch = multiBatch ? calculateBatchSize(hakemus, grant) : 0
 
   return (
     <tr id={htmlId} className="overview-row">
@@ -232,7 +267,14 @@ const HakemusRow = ({hakemus}) => {
       <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
       <td className="applied-money-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
       <td className="granted-money-column"><span className="money">{hakemus.arvio["budget-granted"]}</span></td>
-      <td className="comment-column" title={hakemus.arvio["summary-comment"]}>{hakemus.arvio["summary-comment"]}</td>
+      {multiBatch ?
+        <td className="batch-column">{firstBatch.toFixed(0)} €</td> : null}
+      {multiBatch ?
+        <td className="batch-column">
+          {(hakemus.arvio["budget-granted"] - firstBatch).toFixed(0)} €
+        </td> : null
+      }
+        <td className="comment-column" title={hakemus.arvio["summary-comment"]}>{hakemus.arvio["summary-comment"]}</td>
     </tr>
   )
 }
