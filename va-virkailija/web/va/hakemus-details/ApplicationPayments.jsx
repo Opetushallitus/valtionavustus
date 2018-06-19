@@ -157,9 +157,10 @@ export default class ApplicationPayments extends Component {
               <tr>
                 <td>Yhteensä</td>
                 <td className="payment-money-column">
-                  {
+                  { application.arvio["budget-granted"] ?
                     (100.0 * (paidToDate + newPaymentSum) /
                      application.arvio["budget-granted"]).toFixed(0)
+                    : 0
                   } %
                 </td>
               </tr>
