@@ -4,6 +4,7 @@
         [clojure.tools.trace :only [trace]])
   (:require [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.db.queries :as queries]
+            [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.hakija.api :as hakija-api]
             [clojure.string :as string]
             [clojure.java.jdbc :as jdbc]
@@ -331,3 +332,14 @@
                                       "order by first_name, surname, email"])
                         escaped-terms-for-like-exprs)
                   {:row-fn db->va-user}))))
+
+(defn create-application-token [application-id]
+  (let [existing-token
+        (first (exec :form-db hakija-queries/get-application-token
+                       {:application_id application-id}))]
+
+      (if (some? existing-token)
+        {:token (:token existing-token)}
+        (first
+          (exec :form-db hakija-queries/create-application-token
+                {:application_id application-id :token (generate-hash-id)})))))
