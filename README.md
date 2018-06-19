@@ -231,7 +231,8 @@ make npm-test
 
 ### Backend
 
-Varmista, `JAVA_HOME`-ympäristömuuttuja osoittaa haluamaasi JDK:hon.
+Varmista, että `JAVA_HOME`-ympäristömuuttuja osoittaa haluamaasi
+JDK:hon.
 
 Asenna ensin backendien riippuvuudet paikalliseen
 `~/.m2`-hakemistoon. Tarvitset tätä varten OPH:n VPN:n, koska osa
