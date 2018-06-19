@@ -14,7 +14,7 @@
     [clojure.string :as str]
     [oph.va.virkailija.decision :as decision]
     [oph.soresu.common.config :refer [config]]
-    [oph.va.virkailija.application-data :refer [get-application-token]]
+    [oph.va.virkailija.application-data :refer [get-application-token create-application-token]]
     [oph.va.virkailija.payments-data :as payments-data]
     [oph.va.virkailija.authentication :as authentication]))
 
@@ -42,7 +42,7 @@
         decision (decision/paatos-html hakemus-id)
         arvio (virkailija-db/get-arvio hakemus-id)
         token (when (get-in config [:application-change :refuse-enabled?])
-                (get-application-token (:id hakemus)))]
+                  (create-application-token (:id hakemus)))]
     (log/info "Sending paatos email for hakemus" hakemus-id " to " emails)
     (if (and (some? token) (not= (:status arvio) "rejected"))
       (email/send-paatos-refuse!
