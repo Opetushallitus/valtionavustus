@@ -18,7 +18,9 @@ export default class SummaryApp extends Component {
   render() {
     const state = this.props.state
     const hakuData = state.hakuData
-    const hakemusList = hakuData.hakemukset
+    const hakemusList = hakuData.hakemukset.map(
+      h => h.refused ?
+        {...h, status: "refused", arvio: {...h.arvio, status: "refused"}} : h)
     const avustushaku = hakuData.avustushaku
     const applicationsByStatus = _.groupBy(hakemusList, h => h.arvio.status)
     const titleString = SummaryApp.titleString(avustushaku)
@@ -43,7 +45,7 @@ export default class SummaryApp extends Component {
   }
 
   static statusesInOrder() {
-    const statuses = _.cloneDeep(HakemusArviointiStatuses.allStatuses())
+    const statuses = ["refused"].concat(HakemusArviointiStatuses.allStatuses())
     statuses.reverse()
     return statuses
   }
@@ -257,6 +259,8 @@ class SummaryListing extends Component {
         return "Kielteiset päätökset"
       case "accepted":
         return "Myönteiset päätökset"
+      case "refused":
+        return "Vastaanottamatta jättäneet"
     }
     return HakemusArviointiStatuses.statusToFI(status)
   }
