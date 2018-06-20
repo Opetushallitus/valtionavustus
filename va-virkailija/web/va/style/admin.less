@@ -487,8 +487,9 @@ table.translation {
 }
 
 .name-option-renderer {
-  cursor: default;
-  min-height: 50px;
+  overflow: hidden;
+  white-space: nowrap;
+  padding-left: 5px;
 }
 
 .name-option-renderer:hover {
@@ -503,6 +504,10 @@ table.translation {
 .code-value-renderer {
   cursor: default;
   overflow: hidden;
+}
+
+.code-values .editor-row-element {
+  padding-right: 5px;
 }
 
 .payments-fields {
