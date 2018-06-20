@@ -30,7 +30,7 @@ export default class SummaryApp extends Component {
       <section id="container" className="section-container">
         <SummaryHeading avustushaku={avustushaku} hakemusList={hakemusList}/>
         {_.isEmpty(avustushaku.content.rahoitusalueet) ?
-          BuildSummaryList(
+          buildSummaryList(
             SummaryApp.statusesInOrder(), applicationsByStatus,
             state.hakuData.avustushaku) :
           <RahoitusalueList hakemusList={hakemusList}
