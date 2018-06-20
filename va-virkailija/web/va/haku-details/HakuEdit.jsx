@@ -72,7 +72,7 @@ export default class HakuEdit extends Component {
             </tr>
           </tbody>
         </table>
-        <div className="editor-field-row">
+        <div className="editor-field-row code-values">
           <div className="editor-row-element">
             <h3 className="required">Toimintayksikkö</h3>
             <AutoCompleteCodeValue
