@@ -79,16 +79,16 @@
     (str (get application :register-number)
          " - "
          (:organization-name application))
-    (when (seq (:project-name application))
-      [:div
-       [:label {:style {:font-weight "bold" :padding-right 5}}
-        "Hanke:"]
-       (:project-name application)])
     [:div
      [:label
       {:style {:font-weight "bold" :padding-right 5}}
       "Avustushaku:"]
-     (:grant-name application)]))
+     (:grant-name application)]
+    (when (seq (:project-name application))
+      [:div
+       [:label {:style {:font-weight "bold" :padding-right 5}}
+        "Hanke:"]
+       (:project-name application)])))
 
 (defn- render-search [results title renderer searching?]
   [:div
