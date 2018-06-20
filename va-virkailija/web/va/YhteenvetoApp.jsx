@@ -26,7 +26,7 @@ export default class SummaryApp extends Component {
 
     return (
       <section id="container" className="section-container">
-        <SummaryHeading avustushaku={avustushaku} hakemusList={hakemusList} />
+        <SummaryHeading avustushaku={avustushaku} hakemusList={hakemusList}/>
         {_.isEmpty(avustushaku.content.rahoitusalueet) ?
           BuildSummaryList(
             SummaryApp.statusesInOrder(), applicationsByStatus,
@@ -61,7 +61,7 @@ export default class SummaryApp extends Component {
   }
 }
 
-const BuildSummaryList = (statuses, applicationsByStatuses, grant)=>{
+const BuildSummaryList = (statuses, applicationsByStatuses, grant) => {
   const statusKeys = _.keys(applicationsByStatuses)
   const summaryListingsAll = statuses.filter(
     s => _.contains(statusKeys, s)).map(
@@ -72,32 +72,34 @@ const BuildSummaryList = (statuses, applicationsByStatuses, grant)=>{
   return summaryListingsAll
 }
 
-const RahoitusalueList = ({hakemusList, grant})=>{
+const RahoitusalueList = ({hakemusList, grant}) => {
   const applicationsByRahoitusalue = _.groupBy(hakemusList, h => h.arvio.rahoitusalue)
   const nullValue = "null"
   const undefinedValue = "undefined"
   const withoutLabel = "Muut"
   const applicationsWithoutRahoitusalue = (applicationsByRahoitusalue[nullValue] || []).concat(applicationsByRahoitusalue[undefinedValue] || [])
-  if(applicationsWithoutRahoitusalue.length>0){
+
+  if (applicationsWithoutRahoitusalue.length>0){
     applicationsByRahoitusalue[withoutLabel] = applicationsWithoutRahoitusalue
   }
-  const rahoitusAlueetNameValues = _.chain(applicationsByRahoitusalue).
-    omit([nullValue,undefinedValue]).
-    keys().
-    sortBy((x)=> x === withoutLabel ? 9999: Rahoitusalueet.indexOf(x)).
-    map((x)=>{return {
-      name:x,
-      values:applicationsByRahoitusalue[x]
-    }
-    }).
-    value()
-  const rahoitusalueet = rahoitusAlueetNameValues.map((item)=>{
+
+  const rahoitusAlueetNameValues = _.chain(applicationsByRahoitusalue).omit(
+    [nullValue,undefinedValue]).keys().sortBy(
+      (x)=> x === withoutLabel ? 9999: Rahoitusalueet.indexOf(x)).map(
+        (x)=>{
+          return { name:x, values:applicationsByRahoitusalue[x]}
+    }).value()
+
+  const rahoitusalueet = rahoitusAlueetNameValues.map((item) => {
     const applicationsByStatuses = _.groupBy(item.values, h => h.arvio.status)
-    const summaryByStates = BuildSummaryList(SummaryApp.statusesInOrder(),applicationsByStatuses, grant)
-    return (<div key={item.name}>
-      <h2 className="rahoitusalue-heading">{item.name}</h2>
-      {summaryByStates}
-    </div>)
+    const summaryByStates = BuildSummaryList(
+      SummaryApp.statusesInOrder(), applicationsByStatuses, grant)
+    return (
+      <div key={item.name}>
+        <h2 className="rahoitusalue-heading">{item.name}</h2>
+        {summaryByStates}
+      </div>
+    )
   })
 
   return (
@@ -107,14 +109,16 @@ const RahoitusalueList = ({hakemusList, grant})=>{
   )
 }
 
-
 const SumBy = (list,fieldFunc) => _.sum(list.map(fieldFunc))
-const SumByOphShare = _.partialRight(SumBy, (hakemus)=>hakemus["budget-oph-share"])
-const SumByBudgetGranted = _.partialRight(SumBy, (hakemus)=>hakemus.arvio["budget-granted"])
+const SumByOphShare = _.partialRight(
+  SumBy, (hakemus) => hakemus["budget-oph-share"])
+const SumByBudgetGranted = _.partialRight(
+  SumBy, (hakemus) => hakemus.arvio["budget-granted"])
 
 class SummaryHeading extends Component {
   render() {
-    const titleString = SummaryApp.avustusHakuLabelString(this.props.avustushaku)
+    const titleString = SummaryApp.avustusHakuLabelString(
+      this.props.avustushaku)
     const hakemusList = this.props.hakemusList
     const ophShareSum = SumByOphShare(hakemusList)
     const budgetGrantedSum = SumByBudgetGranted(hakemusList)
@@ -147,7 +151,12 @@ class SummaryHeading extends Component {
             {statusSummaryRows}
           </tbody>
           <tfoot>
-            <SummaryTableRow key="total-summary-row" label="Yhteensä" count={hakemusList.length} applied={ophShareSum} granted={budgetGrantedSum} isTotalSummary={true} />
+            <SummaryTableRow key="total-summary-row"
+                             label="Yhteensä"
+                             count={hakemusList.length}
+                             applied={ophShareSum}
+                             granted={budgetGrantedSum}
+                             isTotalSummary={true}/>
           </tfoot>
         </table>
       </div>
@@ -155,28 +164,30 @@ class SummaryHeading extends Component {
   }
 }
 
-const SummaryTableRow = ({label, count, applied, granted, isTotalSummary = false}) => {
-  const moneyClasses = isTotalSummary ? "money sum" : "money"
-  return (
-    <tr className="summary-heading-table-row">
-      <td className="arvio-status-column">{label}</td>
-      <td className="count-column">{count}</td>
-      <td className="applied-money-column">
-        <span className={moneyClasses}>{applied}</span>
-      </td>
-      <td className="granted-money-column">
-        <span className={moneyClasses}>{granted}</span>
-      </td>
-    </tr>
-  )
-}
+const SummaryTableRow = (
+  {label, count, applied, granted, isTotalSummary = false}) => {
+    const moneyClasses = isTotalSummary ? "money sum" : "money"
+    return (
+      <tr className="summary-heading-table-row">
+        <td className="arvio-status-column">{label}</td>
+        <td className="count-column">{count}</td>
+        <td className="applied-money-column">
+          <span className={moneyClasses}>{applied}</span>
+        </td>
+        <td className="granted-money-column">
+          <span className={moneyClasses}>{granted}</span>
+        </td>
+      </tr>
+    )
+  }
 
 class SummaryListing extends Component {
   render() {
     const {hakemusList, grant} = this.props
     const hakemusListSorted = _.sortBy(hakemusList,'organization-name')
     const hakemusCount = hakemusListSorted.length
-    const heading = SummaryListing.arvioStatusFiForSummary(this.props.arvioStatus) + " (" + hakemusCount + ")"
+    const heading = SummaryListing.arvioStatusFiForSummary(
+      this.props.arvioStatus) + " (" + hakemusCount + ")"
     const ophShareSum = SumByOphShare(hakemusListSorted)
     const multiBatch = grant.content.multiplemaksuera &&
           grant.content["payment-size-limit"]
@@ -259,10 +270,18 @@ const HakemusRow = ({hakemus, multiBatch, grant}) => {
 
   return (
     <tr id={htmlId} className="overview-row">
-      <td className="organization-column" title={hakemus["organization-name"]}>{hakemus["organization-name"]}</td>
-      <td className="project-name-column" title={hakemusName}>{hakemusName}</td>
-      <td className="applied-money-column"><span className="money">{hakemus["budget-oph-share"]}</span></td>
-      <td className="granted-money-column"><span className="money">{hakemus.arvio["budget-granted"]}</span></td>
+      <td className="organization-column" title={hakemus["organization-name"]}>
+        {hakemus["organization-name"]}
+      </td>
+      <td className="project-name-column" title={hakemusName}>
+        {hakemusName}
+      </td>
+      <td className="applied-money-column">
+        <span className="money">{hakemus["budget-oph-share"]}</span>
+      </td>
+      <td className="granted-money-column">
+        <span className="money">{hakemus.arvio["budget-granted"]}</span>
+      </td>
       {multiBatch ?
         <td className="batch-column">{firstBatch.toFixed(0)} €</td> : null}
       {multiBatch ?
@@ -270,16 +289,21 @@ const HakemusRow = ({hakemus, multiBatch, grant}) => {
           {(hakemus.arvio["budget-granted"] - firstBatch).toFixed(0)} €
         </td> : null
       }
-        <td className="comment-column" title={hakemus.arvio["summary-comment"]}>{hakemus.arvio["summary-comment"]}</td>
+      <td className="comment-column" title={hakemus.arvio["summary-comment"]}>
+        {hakemus.arvio["summary-comment"]}
+      </td>
     </tr>
   )
 }
 
 
-const parsedRoute = new RouteParser('/yhteenveto/avustushaku/:avustushaku_id/listaus/:saved_search_id/').match(location.pathname)
+const parsedRoute = new RouteParser(
+  '/yhteenveto/avustushaku/:avustushaku_id/listaus/:saved_search_id/').match(
+    location.pathname)
 if (!parsedRoute || _.isUndefined(parsedRoute["avustushaku_id"])) {
   setInterval(() => {
-    const redirectUrlFromServer = localStorage.getItem("va.arviointi.admin.summary.url")
+    const redirectUrlFromServer = localStorage.getItem(
+      "va.arviointi.admin.summary.url")
     if (!_.isEmpty(redirectUrlFromServer)) {
       localStorage.removeItem("va.arviointi.admin.summary.url")
       window.location.href = redirectUrlFromServer
@@ -292,6 +316,7 @@ const stateP = controller.initializeState(parsedRoute)
 
 stateP.onValue((state) => {
   if (state.hakuData && state.userInfo) {
-    ReactDOM.render(<SummaryApp state={state} controller={controller}/>, document.getElementById('app'))
+    ReactDOM.render(<SummaryApp state={state} controller={controller}/>,
+      document.getElementById('app'))
   }
 })
