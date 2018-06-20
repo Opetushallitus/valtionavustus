@@ -61,7 +61,7 @@ export default class SummaryApp extends Component {
   }
 }
 
-const BuildSummaryList = (statuses, applicationsByStatuses, grant) => {
+const buildSummaryList = (statuses, applicationsByStatuses, grant) => {
   const statusKeys = _.keys(applicationsByStatuses)
   const summaryListingsAll = statuses.filter(
     s => _.contains(statusKeys, s)).map(
@@ -92,7 +92,7 @@ const RahoitusalueList = ({hakemusList, grant}) => {
 
   const rahoitusalueet = rahoitusAlueetNameValues.map((item) => {
     const applicationsByStatuses = _.groupBy(item.values, h => h.arvio.status)
-    const summaryByStates = BuildSummaryList(
+    const summaryByStates = buildSummaryList(
       SummaryApp.statusesInOrder(), applicationsByStatuses, grant)
     return (
       <div key={item.name}>
@@ -109,19 +109,19 @@ const RahoitusalueList = ({hakemusList, grant}) => {
   )
 }
 
-const SumBy = (list,fieldFunc) => _.sum(list.map(fieldFunc))
-const SumByOphShare = _.partialRight(
-  SumBy, (hakemus) => hakemus["budget-oph-share"])
-const SumByBudgetGranted = _.partialRight(
-  SumBy, (hakemus) => hakemus.arvio["budget-granted"])
+const sumBy = (list,fieldFunc) => _.sum(list.map(fieldFunc))
+const sumByOphShare = _.partialRight(
+  sumBy, (hakemus) => hakemus["budget-oph-share"])
+const sumByBudgetGranted = _.partialRight(
+  sumBy, (hakemus) => hakemus.arvio["budget-granted"])
 
 class SummaryHeading extends Component {
   render() {
     const titleString = SummaryApp.avustusHakuLabelString(
       this.props.avustushaku)
     const hakemusList = this.props.hakemusList
-    const ophShareSum = SumByOphShare(hakemusList)
-    const budgetGrantedSum = SumByBudgetGranted(hakemusList)
+    const ophShareSum = sumByOphShare(hakemusList)
+    const budgetGrantedSum = sumByBudgetGranted(hakemusList)
 
     const applicationsByStatus = _.groupBy(hakemusList, h => h.arvio.status)
     const statusKeys = _.keys(applicationsByStatus)
@@ -149,8 +149,8 @@ class SummaryHeading extends Component {
                              key={s}
                              label={SummaryListing.arvioStatusFiForSummary(s)}
                              count={applicationsByStatus[s].length}
-                             applied={SumByOphShare(applications)}
-                             granted={SumByBudgetGranted(applications)}/>
+                             applied={sumByOphShare(applications)}
+                             granted={sumByBudgetGranted(applications)}/>
                   }
                 )
             }
@@ -193,7 +193,7 @@ class SummaryListing extends Component {
     const hakemusCount = hakemusListSorted.length
     const heading = SummaryListing.arvioStatusFiForSummary(
       this.props.arvioStatus) + " (" + hakemusCount + ")"
-    const ophShareSum = SumByOphShare(hakemusListSorted)
+    const ophShareSum = sumByOphShare(hakemusListSorted)
     const multiBatch = grant.content.multiplemaksuera &&
           grant.content["payment-size-limit"]
     const hakemusElements = hakemusListSorted.map(
@@ -202,7 +202,7 @@ class SummaryListing extends Component {
                     hakemus={hakemus}
                     multiBatch={multiBatch}
                     grant={this.props.grant}/>)
-    const budgetGrantedSum = SumByBudgetGranted(hakemusListSorted)
+    const budgetGrantedSum = sumByBudgetGranted(hakemusListSorted)
 
     return (
       <table key="hakemusListing" className="summary-hakemus-table">
