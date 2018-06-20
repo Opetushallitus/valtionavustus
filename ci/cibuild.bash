@@ -28,12 +28,12 @@ recreate_database=false
 va_hakija_default_source_path="va-hakija/target/uberjar/hakija-*-standalone.jar"
 va_virkailija_default_source_path="va-virkailija/target/uberjar/virkailija-*-standalone.jar"
 
-function clean() {
+clean() {
   time git clean -fd
   time make clean
 }
 
-function add_git_head_snippets() {
+add_git_head_snippets() {
   echo "Adding git head snippets..."
   for m in va-hakija va-virkailija; do
     pushd "$m"
@@ -42,19 +42,19 @@ function add_git_head_snippets() {
   done
 }
 
-function build() {
+build() {
   add_git_head_snippets
   time make build
 }
 
-function start_postgresql_in_docker() {
+start_postgresql_in_docker() {
   start_postgresql_in_container
   wait_for_postgresql_to_be_available
   # give_schema_to_va hakija  # When using our own schema that is owned by va, we don't need to give it access
   create_va_virkailija_user
 }
 
-function run_tests() {
+run_tests() {
   if [ "$run_docker_postgresql" = true ]; then
     start_postgresql_in_docker
   fi
@@ -78,12 +78,12 @@ function run_tests() {
   fi
 }
 
-function drop_database() {
+drop_database() {
   echo "Dropping database..."
   $SSH "sudo -u postgres /usr/local/bin/run_sql.bash ${CURRENT_DIR}/va-hakija/resources/sql/drop_schema.sql -v schema_name=hakija"
 }
 
-function restart_application() {
+restart_application() {
   module_name=$1
   echo "Stopping application..."
   if [ "$target_server_name" = "va-dev" ] || [[ "$target_server_name" == *".csc.fi" ]]; then
@@ -105,7 +105,7 @@ function restart_application() {
   $SSH "${APP_COMMAND}"
 }
 
-function do_deploy_jar() {
+do_deploy_jar() {
   if [[ -z $target_server_name ]]; then
     echo "deploy: Please provide target server name with -s option."
     exit 4
@@ -139,15 +139,15 @@ function do_deploy_jar() {
   echo "Success in starting $module_name"
 }
 
-function deploy_hakija() {
+deploy_hakija() {
   do_deploy_jar va-hakija ${va_hakija_default_source_path} 8081
 }
 
-function deploy_virkailija() {
+deploy_virkailija() {
   do_deploy_jar va-virkailija ${va_virkailija_default_source_path} 6071
 }
 
-function deploy_jar() {
+deploy_jar() {
   if [ -z ${module_to_deploy+x} ]; then
     echo "deploy_jar: Please provide module name with -m option."
     show_usage
@@ -164,7 +164,7 @@ function deploy_jar() {
   fi
 }
 
-function deploy() {
+deploy() {
   deploy_hakija
   deploy_virkailija
 }
