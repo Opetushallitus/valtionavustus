@@ -36,7 +36,7 @@ npm-clean-frontends:
 	$(call npm_clean_frontend,va-virkailija)
 
 .PHONY: npm-build
-npm-build: npm-version npm-install-modules npm-lint npm-build-frontends
+npm-build: npm-install-modules npm-lint npm-build-frontends
 
 .PHONY: npm-install-modules
 npm-install-modules:
@@ -59,10 +59,6 @@ npm-test:
 npm-outdated-dependencies:
 	$(foreach npm_project,$(NPM_PROJECTS),$(call npm_outdated_dependencies,$(npm_project))$(newline))
 
-.PHONY: npm-version
-npm-version:
-	npm --version
-
 .PHONY: lein-clean
 lein-clean: lein-clean-frontends lein-clean-targets
 
@@ -78,7 +74,7 @@ lein-clean-frontends:
 	rm -rf va-admin-ui/node_modules
 
 .PHONY: lein-build
-lein-build: lein-version lein-install-jar-commons lein-build-frontends lein-build-backends
+lein-build: lein-install-jar-commons lein-build-frontends lein-build-backends
 
 .PHONY: lein-install-jar-commons
 lein-install-jar-commons:
@@ -119,10 +115,6 @@ lein-install-checkouts: $(LEIN_CHECKOUT_DIRS)
 lein-clean-checkouts:
 	rm -fr $(LEIN_CHECKOUTS_BASEDIRS)
 
-.PHONY: lein-version
-lein-version:
-	 cd va-common && $(LEIN) --version
-
 define newline
 
 
@@ -140,7 +132,7 @@ Targets:
   npm-clean                     `npm-clean-modules`, `npm-clean-frontends`
   npm-clean-modules             Remove installed npm modules from $$NPM_PROJECTS.
   npm-clean-frontends           Remove frontend build products from va-hakija and va-virkailija.
-  npm-build                     `npm-version`, `npm-lint`, `npm-install-modules`, `npm-build-frontends`
+  npm-build                     `npm-lint`, `npm-install-modules`, `npm-build-frontends`
   npm-lint                      Run JavaScript linter for $$NPM_PROJECTS.
   npm-install-modules           Install npm modules for $$NPM_PROJECTS.
   npm-build-frontends           Build frontend sources for va-hakija and va-virkailija.
@@ -150,7 +142,7 @@ Targets:
   lein-clean                    `lein-clean-admin-frontend`, `lein-clean-targets`
   lein-clean-targets            Remove Leiningen target directories from $$LEIN_PROJECTS.
   lein-clean-frontends          Remove CLJS build artifacts from va-virkailija and va-hakija, produced by va-admin-ui.
-  lein-build                    `lein-version`, `lein-install-jar-commons`, `lein-build-frontends`, `lein-build-backends`
+  lein-build                    `lein-install-jar-commons`, `lein-build-frontends`, `lein-build-backends`
   lein-install-jar-commons      Install jars for soresu-form and va-common.
   lein-build-frontends		Build CLJS fronends for va-virkailija and va-hakija (va-admin-ui)
   lein-build-backends           Build backend uberjars for va-hakija and va-virkailija.

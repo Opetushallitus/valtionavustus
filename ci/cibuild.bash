@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+source /etc/profile.d/npm.sh
+
 function cd_project_root_dir() {
   local script_dir=$(dirname "$0")
   cd "$script_dir/.." || exit 3
@@ -27,6 +29,11 @@ run_docker_postgresql=true
 recreate_database=false
 va_hakija_default_source_path="va-hakija/target/uberjar/hakija-*-standalone.jar"
 va_virkailija_default_source_path="va-virkailija/target/uberjar/virkailija-*-standalone.jar"
+
+show_tool_versions() {
+    echo "npm: $(npm --version)"
+    echo "lein: $(./lein --version)"
+}
 
 clean() {
   time git clean -fd
@@ -225,6 +232,8 @@ while [[ $# > 0 ]]; do
 done
 
 source `dirname $0`/postgresql_container_functions.bash
+
+show_tool_versions
 
 for (( i = 0; i < ${#commands[@]} ; i++ )); do
     printf "\n**** ${commands[$i]} *****\n\n"
