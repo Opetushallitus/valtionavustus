@@ -62,15 +62,13 @@ export default class SummaryApp extends Component {
 }
 
 const BuildSummaryList = (statuses, applicationsByStatuses, grant)=>{
-  const summaryListingsAll = []
-  _.each(statuses, s => {
-    if (_.contains(_.keys(applicationsByStatuses), s)) {
-      const applications = applicationsByStatuses[s]
-      summaryListingsAll.push(
-        <SummaryListing
-          key={s} arvioStatus={s} hakemusList={applications} grant={grant} />)
-    }
-  })
+  const statusKeys = _.keys(applicationsByStatuses)
+  const summaryListingsAll = statuses.filter(
+    s => _.contains(statusKeys, s)).map(
+      s => <SummaryListing key={s}
+                           arvioStatus={s}
+                           hakemusList={applicationsByStatuses[s]}
+                           grant={grant} />)
   return summaryListingsAll
 }
 
