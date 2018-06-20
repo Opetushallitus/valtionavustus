@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-
 source /etc/profile.d/npm.sh
+
+set -euo pipefail
 
 function cd_project_root_dir() {
   local script_dir=$(dirname "$0")
