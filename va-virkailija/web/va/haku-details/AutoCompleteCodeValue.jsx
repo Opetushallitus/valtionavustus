@@ -23,11 +23,12 @@ export default class AutocompleteCodeValue extends Component {
     }
   }
 
-  NameOptionRenderer({key, option, selectValue}) {
+  NameOptionRenderer({key, option, selectValue, style}) {
     const onChange = () => selectValue(option)
     return (
       <div
         className="Select-input name-option-renderer code-value-renderer"
+        style={style}
         key={key}
         onClick={onChange}>
         <span>{option.code}</span>
