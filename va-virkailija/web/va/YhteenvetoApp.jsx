@@ -52,15 +52,15 @@ export default class SummaryApp extends Component {
     return "Päätöslista – " + SummaryApp.avustusHakuLabelString(avustushaku)
   }
 
+  static toDateStr(dateTime) {
+    return DateUtil.asDateString(dateTime)
+  }
+
   static avustusHakuLabelString(avustushaku) {
     const hakuDuration = avustushaku.content.duration
-    const durationString = toDateStr(hakuDuration.start)
-          + "-" + toDateStr(hakuDuration.end)
+    const durationString = SummaryApp.toDateStr(hakuDuration.start)
+          + "-" + SummaryApp.toDateStr(hakuDuration.end)
     return avustushaku.content.name.fi +  " (" + durationString + ")"
-
-    function toDateStr(dateTime) {
-      return DateUtil.asDateString(dateTime)
-    }
   }
 }
 
