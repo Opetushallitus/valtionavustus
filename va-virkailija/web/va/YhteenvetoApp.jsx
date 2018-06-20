@@ -20,13 +20,6 @@ export default class SummaryApp extends Component {
     const hakemusList = hakuData.hakemukset
     const avustushaku = hakuData.avustushaku
     const applicationsByStatus = _.groupBy(hakemusList, h => h.arvio.status)
-    const summaryListings = _.isEmpty(avustushaku.content.rahoitusalueet) ?
-      BuildSummaryList(
-        SummaryApp.statusesInOrder(), applicationsByStatus,
-        state.hakuData.avustushaku) :
-      <RahoitusalueList hakemusList={hakemusList}
-                        grant={state.hakuData.avustushaku}/>
-
     const titleString = SummaryApp.titleString(avustushaku)
     const mailToBody = encodeURIComponent(titleString + "\n\nLinkki päätöslistaan:\n\n" + location.href)
     const mailToLink = "mailto:?subject=" + titleString + "&body=" + mailToBody
@@ -34,7 +27,12 @@ export default class SummaryApp extends Component {
     return (
       <section id="container" className="section-container">
         <SummaryHeading avustushaku={avustushaku} hakemusList={hakemusList} />
-        {summaryListings}
+        {_.isEmpty(avustushaku.content.rahoitusalueet) ?
+          BuildSummaryList(
+            SummaryApp.statusesInOrder(), applicationsByStatus,
+            state.hakuData.avustushaku) :
+          <RahoitusalueList hakemusList={hakemusList}
+                            grant={state.hakuData.avustushaku}/>}
         <div id="summary-link">
           <a href={mailToLink}>Lähetä linkki sähköpostilla</a>
         </div>
