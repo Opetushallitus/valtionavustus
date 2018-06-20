@@ -6,7 +6,8 @@ import _ from 'lodash'
 import RouteParser from 'route-parser'
 
 import YhteenvetoController from './YhteenvetoController.jsx'
-import HakemusArviointiStatuses from './hakemus-details/HakemusArviointiStatuses'
+import HakemusArviointiStatuses
+  from './hakemus-details/HakemusArviointiStatuses'
 import DateUtil from 'soresu-form/web/DateUtil'
 import Rahoitusalueet from './data/Rahoitusalueet'
 
@@ -21,7 +22,8 @@ export default class SummaryApp extends Component {
     const avustushaku = hakuData.avustushaku
     const applicationsByStatus = _.groupBy(hakemusList, h => h.arvio.status)
     const titleString = SummaryApp.titleString(avustushaku)
-    const mailToBody = encodeURIComponent(titleString + "\n\nLinkki päätöslistaan:\n\n" + location.href)
+    const mailToBody = encodeURIComponent(
+      titleString + "\n\nLinkki päätöslistaan:\n\n" + location.href)
     const mailToLink = "mailto:?subject=" + titleString + "&body=" + mailToBody
 
     return (
@@ -52,7 +54,8 @@ export default class SummaryApp extends Component {
 
   static avustusHakuLabelString(avustushaku) {
     const hakuDuration = avustushaku.content.duration
-    const durationString = toDateStr(hakuDuration.start) + "-" + toDateStr(hakuDuration.end)
+    const durationString = toDateStr(hakuDuration.start)
+          + "-" + toDateStr(hakuDuration.end)
     return avustushaku.content.name.fi +  " (" + durationString + ")"
 
     function toDateStr(dateTime) {
@@ -73,11 +76,14 @@ const buildSummaryList = (statuses, applicationsByStatuses, grant) => {
 }
 
 const RahoitusalueList = ({hakemusList, grant}) => {
-  const applicationsByRahoitusalue = _.groupBy(hakemusList, h => h.arvio.rahoitusalue)
+  const applicationsByRahoitusalue = _.groupBy(
+    hakemusList, h => h.arvio.rahoitusalue)
   const nullValue = "null"
   const undefinedValue = "undefined"
   const withoutLabel = "Muut"
-  const applicationsWithoutRahoitusalue = (applicationsByRahoitusalue[nullValue] || []).concat(applicationsByRahoitusalue[undefinedValue] || [])
+  const applicationsWithoutRahoitusalue =
+        (applicationsByRahoitusalue[nullValue] || []).concat(
+          applicationsByRahoitusalue[undefinedValue] || [])
 
   if (applicationsWithoutRahoitusalue.length>0){
     applicationsByRahoitusalue[withoutLabel] = applicationsWithoutRahoitusalue
