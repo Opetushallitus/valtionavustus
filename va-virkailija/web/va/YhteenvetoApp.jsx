@@ -124,15 +124,7 @@ class SummaryHeading extends Component {
     const budgetGrantedSum = SumByBudgetGranted(hakemusList)
 
     const applicationsByStatus = _.groupBy(hakemusList, h => h.arvio.status)
-    const statusSummaryRows = []
-    _.each(SummaryApp.statusesInOrder(), s => {
-      if (_.contains(_.keys(applicationsByStatus), s)) {
-        const applications = applicationsByStatus[s]
-        const appliedOphShareSum = SumByOphShare(applications)
-        const grantedSum = SumByBudgetGranted(applications)
-        statusSummaryRows.push(<SummaryTableRow key={s} label={SummaryListing.arvioStatusFiForSummary(s)} count={applications.length} applied={appliedOphShareSum} granted={grantedSum} />)
-      }
-    })
+    const statusKeys = _.keys(applicationsByStatus)
 
     return (
       <div>
@@ -148,7 +140,20 @@ class SummaryHeading extends Component {
             </tr>
           </thead>
           <tbody>
-            {statusSummaryRows}
+            {
+              SummaryApp.statusesInOrder().filter(
+                s => _.contains(statusKeys, s)).map(
+                  s => {
+                    const applications = applicationsByStatus[s]
+                    return <SummaryTableRow
+                             key={s}
+                             label={SummaryListing.arvioStatusFiForSummary(s)}
+                             count={applicationsByStatus[s].length}
+                             applied={SumByOphShare(applications)}
+                             granted={SumByBudgetGranted(applications)}/>
+                  }
+                )
+            }
           </tbody>
           <tfoot>
             <SummaryTableRow key="total-summary-row"
