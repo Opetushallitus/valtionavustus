@@ -85,15 +85,15 @@ const RahoitusalueList = ({hakemusList, grant}) => {
         (applicationsByRahoitusalue[nullValue] || []).concat(
           applicationsByRahoitusalue[undefinedValue] || [])
 
-  if (applicationsWithoutRahoitusalue.length>0){
+  if (applicationsWithoutRahoitusalue.length > 0){
     applicationsByRahoitusalue[withoutLabel] = applicationsWithoutRahoitusalue
   }
 
   const rahoitusAlueetNameValues = _.chain(applicationsByRahoitusalue).omit(
     [nullValue,undefinedValue]).keys().sortBy(
       (x)=> x === withoutLabel ? 9999: Rahoitusalueet.indexOf(x)).map(
-        (x)=>{
-          return { name:x, values:applicationsByRahoitusalue[x]}
+        (x) => {
+          return {name:x, values:applicationsByRahoitusalue[x]}
     }).value()
 
   const rahoitusalueet = rahoitusAlueetNameValues.map((item) => {
