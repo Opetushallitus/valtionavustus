@@ -88,7 +88,8 @@
          (:organization-name application))
     (item-row "Avustushaku" (:grant-name application))
     (when (seq (:project-name application))
-      (item-row "Hanke" (:project-name application)))))
+      (item-row "Hanke" (:project-name application)))
+    (item-row "Haettu summa" (:budget-oph-share application))))
 
 (defn- render-search [results title renderer searching?]
   [:div
