@@ -70,8 +70,7 @@
 
 (defn- selvitys-form-keyword [selvitys-type]
   (let [key (str "form_" selvitys-type)]
-    (keyword key))
-)
+    (keyword key)))
 
 (defn- get-id []
   (compojure-api/GET "/:id" [id]
