@@ -200,7 +200,7 @@
         (va-db/refuse-application application comment)
         (let [roles (filter #(= (:role %) "presenting_officer")
                             (va-db/get-avustushaku-roles (:id grant)))]
-          (when (some #(when (some? (:email %))) roles)
+          (when (some #(when (some? (:email %)) true) roles)
             (va-email/send-refused-message-to-presenter!
               (map :email (filter #(some? (:email %)) roles))
               grant
