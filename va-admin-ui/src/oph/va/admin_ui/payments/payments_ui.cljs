@@ -86,7 +86,7 @@
        [table/table-row-column]
        [table/table-row-column {:style {:text-align "right"}}
         (.toLocaleString
-          (reduce #(+ %1 (get %2 :budget-granted 0)) 0 filtered-payments))
+          (reduce #(+ %1 (get %2 :payment-sum 0)) 0 filtered-payments))
         " €"]]]]))
 
 (defn- sortable-header-column
