@@ -45,13 +45,13 @@ psql-jq -d va-prod -h localhost -p 30022 -U va_hakija -c "select * from hakija.h
 Jos tiedät hakemuksen id:n:
 
 ``` sql
-select id as hakemus_id, user_key, avustushaku as avustushaku_id from hakija.hakemukset where id = 5346 and version_closed is null
+select id as hakemus_id, user_key, avustushaku as avustushaku_id from hakija.hakemukset where id = 5346 and version_closed is null;
 ```
 
 Jos tiedät hakemuksen user_key:n:
 
 ``` sql
-select id as hakemus_id, user_key, avustushaku as avustushaku_id from hakija.hakemukset where user_key = 'a4244aa43ddd6e3ef9e64bb80f4ee952f68232aa008d3da9c78e3b627e5675c8' and version_closed is null
+select id as hakemus_id, user_key, avustushaku as avustushaku_id from hakija.hakemukset where user_key = 'a4244aa43ddd6e3ef9e64bb80f4ee952f68232aa008d3da9c78e3b627e5675c8' and version_closed is null;
 ```
 
 ### Tietyn hakemuksen kaikkien tilojen haku
@@ -60,7 +60,7 @@ Esimerkkinä hakemuksen 5806 kaikkien tilojen (status) haku,
 luontijärjestyksessä:
 
 ``` sql
-select created_at, status, form_submission_id, form_submission_version from hakija.hakemukset where id = 5007 order by created_at
+select created_at, status, form_submission_id, form_submission_version from hakija.hakemukset where id = 5007 order by created_at;
 ```
 
 ### Avustushaun hakeminen lomakkeen sisällön perusteella
@@ -68,6 +68,62 @@ select created_at, status, form_submission_id, form_submission_version from haki
 ``` sql
 select avustushaut.id as avustushaku_id, forms.id as form_id from hakija.forms join hakija.avustushaut on forms.id = avustushaut.form where forms.content::text ilike '%liiketaloudellisin perustein toimiva yhtiö%'
 ```
+
+### Hakemuksen tai selvityksen version palautus
+
+Seuraavassa esimerkissä 9324 on hakemukseen liitetyn lomakkeen
+vastauksien (form_submission) id. Hakemuksen id on 9308:
+
+``` sql
+begin;
+
+-- sulje hakemukseen liitetty viimeisin versio (version = 149) lomakkeen vastauksista
+update hakija.form_submissions
+set version_closed = now()
+where id = 9324 and version = 149;
+
+-- luo uusi versio (150) lomakkeen vastauksista aikaisemman palautettavan version pohjalta (version = 145)
+insert into hakija.form_submissions (id, version, version_closed, form, answers)
+select 9324, 150, null, form, answers from hakija.form_submissions where id = 9324 and version = 145;
+
+-- sulje viimeisin versio hakemuksesta (version = 150)
+update hakija.hakemukset
+set version_closed = now()
+where id = 9308 and version = 150;
+
+-- luo uusi versio (151) hakemuksesta aikaisemman palautettavan version pohjalta (version = 146)
+insert into hakija.hakemukset (id, version, version_closed, form_submission_id, form_submission_version, user_key, status, last_status_change_at, avustushaku, budget_total, budget_oph_share, organization_name, project_name, register_number, status_change_comment, user_oid, user_first_name, user_last_name, user_email, hakemus_type, parent_id, selvitys_email, status_valiselvitys, status_loppuselvitys, language, refused, refused_comment, refused_at)
+select 9308, 151, null, 9324, 150, user_key, status, last_status_change_at, avustushaku, budget_total, budget_oph_share, organization_name, project_name, register_number, status_change_comment, user_oid, user_first_name, user_last_name, user_email, hakemus_type, parent_id, selvitys_email, status_valiselvitys, status_loppuselvitys, language, refused, refused_comment, refused_at from hakija.hakemukset where id = 9308 and version = 146;
+
+commit;
+```
+
+Tämän jälkeen pitää tarkistaa viitataanko palautetussa hakemuksessa
+liitetiedostoihin, jotka on myöhemmin merkitty poistetuiksi. Tälläisten
+liitetiedostojen poistomerkintä pitää poistaa.
+
+Etsi kaikki hakemuksen liitetiedostot:
+
+``` bash
+psql-jq -d va-prod -U va_hakija -h localhost -p 30022 -c "select h.id, h.version, h.version_closed, h.form_submission_id, h.form_submission_version, fs.answers from hakija.hakemukset h left join hakija.form_submissions fs on h.form_submission_id = fs.id and h.form_submission_version = fs.version where h.id = 9308 and h.version = 151" | grep -C2 -i attachment
+```
+
+Tarkista, että tietokannassa on liitetiedostot näillä kentillä ja
+tiedostonimillä:
+
+``` sql
+select id, version, hakemus_id, hakemus_version, version_closed, created_at, field_id, filename, content_type, file_size from hakija.attachments where hakemus_id = 9308;
+```
+
+Palauta liitetiedostot, joihin viitataan hakemuksen vastauksista ja
+jotka on merkitty poistetuiksi (`version_closed`-sarakkeessa on
+päivämäärä):
+
+``` sql
+update hakija.attachments set version_closed = null where id = 6727 and version = 1 and hakemus_id = 9308;
+```
+
+Avaa hakemus va-hakijassa, tarkista ettei virheitä tule.
 
 ### Tietokannan dumpin luonti
 
