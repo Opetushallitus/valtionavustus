@@ -71,6 +71,13 @@
     (format-title grant)
     (format-duration (get-in grant [:content :duration]))))
 
+(defn- item-row [title value]
+  [:div
+     [:label
+      {:style {:font-weight "bold" :padding-right 5}}
+      title ": "]
+   (or value "-")])
+
 (defn- render-application [i application]
   (render-result-item
     i
@@ -79,16 +86,9 @@
     (str (get application :register-number)
          " - "
          (:organization-name application))
-    [:div
-     [:label
-      {:style {:font-weight "bold" :padding-right 5}}
-      "Avustushaku:"]
-     (:grant-name application)]
+    (item-row "Avustushaku" (:grant-name application))
     (when (seq (:project-name application))
-      [:div
-       [:label {:style {:font-weight "bold" :padding-right 5}}
-        "Hanke:"]
-       (:project-name application)])))
+      (item-row "Hanke" (:project-name application)))))
 
 (defn- render-search [results title renderer searching?]
   [:div
