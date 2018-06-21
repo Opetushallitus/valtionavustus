@@ -18,7 +18,4 @@
                     :scheduling "0 00 04 ? * *"
                     :strict-host-key-checking :yes}
  :payments {:enabled? true :delete-payments? true}
- :multibatch-payments {:enabled? true}
- :va-code-values {:enabled? true}
- :reports {:enabled? true}
  :application-change {:refuse-enabled? true}}

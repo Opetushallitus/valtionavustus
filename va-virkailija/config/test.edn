@@ -9,6 +9,4 @@
  :email {:print-mail-on-disable? false}
  :va-users {:use-cache? false}
  :payments {:enabled? true :delete-payments? true}
- :multibatch-payments {:enabled? true}
- :va-code-values {:enabled? true}
- :reports {:enabled? true}}
+ :application-change {:refuse-enabled? true}}
