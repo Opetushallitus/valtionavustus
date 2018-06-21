@@ -11,5 +11,6 @@
 
 (deftest test-query->str
   (is (= (router/query->str {:search "term"}) "search=term"))
-  (is (= (router/query->str {:search "term" :other "param" :nmbr 6}) "search=term&other=param&nmbr=6"))
+  (is (= (router/query->str {:search "term" :other "param" :nmbr 6})
+         "search=term&other=param&nmbr=6"))
   (is (= (router/query->str nil) "")))

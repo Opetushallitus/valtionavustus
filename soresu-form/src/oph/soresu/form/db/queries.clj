@@ -12,4 +12,5 @@
 (defquery lock-submission "sql/submission/lock.sql")
 (defquery close-existing-submission! "sql/submission/close-existing.sql")
 (defquery get-form-submission "sql/submission/get.sql")
+(defquery get-form-submission-version "sql/submission/get-version.sql")
 (defquery get-form-submission-versions "sql/submission/get-versions.sql")

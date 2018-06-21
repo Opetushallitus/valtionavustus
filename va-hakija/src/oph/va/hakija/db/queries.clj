@@ -7,6 +7,8 @@
 (defquery update-hakemus-parent-id! "sql/hakemus/update-parent-id.sql")
 (defquery find-by-parent-id-and-hakemus-type "sql/hakemus/find-by-parent-id-and-hakemus-type.sql")
 (defquery get-hakemus-by-user-id "sql/hakemus/get_by_user_id.sql")
+(defquery get-hakemus-version-by-user-id
+  "sql/hakemus/get-version-by-user-id.sql")
 (defquery get-hakemus-paatokset "sql/hakemus-paatokset/get.sql")
 (defquery list-hakemus-change-requests-by-user-id "sql/hakemus/list-change-requests-by-user-id.sql")
 (defquery update-hakemus-submission<! "sql/hakemus/update-submission.sql")
@@ -24,6 +26,7 @@
 (defquery get-avustushaku "sql/avustushaku/get.sql")
 (defquery list-avustushaut "sql/avustushaku/list.sql")
 (defquery create-paatos-view!  "sql/hakemus-paatokset-views/create.sql")
+(defquery get-avustushaku-roles "sql/avustushaku/get-roles.sql")
 
 (defquery attachment-exists? "sql/attachment/exists.sql")
 (defquery list-attachments "sql/attachment/list.sql")

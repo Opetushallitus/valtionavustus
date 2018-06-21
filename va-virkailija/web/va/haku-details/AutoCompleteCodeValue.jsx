@@ -13,21 +13,25 @@ export default class AutocompleteCodeValue extends Component {
 
   updateValue (option) {
     if (option == null) {
-      this.props.controller.onChangeListener(this.props.avustushaku, {id: this.props.id}, null)
+      this.props.controller.onChangeListener(
+        this.props.avustushaku, {id: this.props.id}, null)
       this.props.avustushaku[this.props.codeType] = null
     } else {
-      this.props.controller.onChangeListener(this.props.avustushaku, {id: this.props.id}, option.id)
+      this.props.controller.onChangeListener(
+        this.props.avustushaku, {id: this.props.id}, option.id)
       this.props.avustushaku[this.props.codeType] = option.id
-      }
+    }
   }
 
-  NameOptionRenderer({key, option }) {
+  NameOptionRenderer({key, option, selectValue}) {
+    const onChange = () => selectValue(option)
     return (
       <div
-        className="Select-input name-option-renderer"
+        className="Select-input name-option-renderer code-value-renderer"
         key={key}
-        onClick={() => this.updateValue(option)} >
-        {option.code + " " + option["code-value"]}
+        onClick={onChange}>
+        <span>{option.code}</span>
+        <span>{option["code-value"]}</span>
       </div>
     )
   }
@@ -36,7 +40,8 @@ export default class AutocompleteCodeValue extends Component {
   codeValueRenderer(option){
     return (
       <div className="code-value-renderer">
-        {option.code} {option["code-value"]}
+        <span>{option.code}</span>
+        <span>{option["code-value"]}</span>
       </div>)
   }
 
@@ -44,14 +49,12 @@ export default class AutocompleteCodeValue extends Component {
   render() {
     return (
       <VirtualizedSelect
-        id={this.props.codeType}
         labelKey='code'
         placeholder="Valitse listasta"
         backspaceRemoves={true}
         options={this.props.codeOptions}
         onChange={this.updateValue}
         optionRenderer={this.NameOptionRenderer}
-        valueKey='code-value'
         value={this.props.selectedValue}
         valueRenderer={this.codeValueRenderer}
       />

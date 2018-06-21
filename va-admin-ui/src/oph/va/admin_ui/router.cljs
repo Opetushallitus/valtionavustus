@@ -32,7 +32,7 @@
       (.pushState "" "" path)))
 
 (defn get-param [query param]
-  (when (not (empty? query))
+  (when (seq query)
     (-> (.split query "&")
         (js->clj)
         (split-params)
@@ -54,4 +54,5 @@
       .-href
       (set! url)))
 
-(defn get-current-param [param] (get-param (get-current-query) param))
+(defn get-current-param [param]
+  (get-param (get-current-query) param))

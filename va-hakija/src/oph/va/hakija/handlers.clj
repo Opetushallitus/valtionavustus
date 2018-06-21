@@ -6,7 +6,8 @@
             [oph.common.datetime :as datetime]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.validation :as validation]
-            [oph.soresu.form.routes :refer :all]
+            [oph.soresu.form.routes
+             :refer [get-form-submission without-id update-form-submission]]
             [oph.soresu.form.formutil :refer :all]
             [oph.va.routes :refer :all]
             [oph.soresu.form.schema :refer :all]
@@ -114,6 +115,27 @@
       (not-found))
     (not-found)))
 
+(defn on-get-decision-answers [haku-id hakemus-id form-key]
+  (let [avustushaku (va-db/get-avustushaku haku-id)
+        form-id (form-key avustushaku)
+        form (form-db/get-form form-id)
+        current-hakemus (va-db/get-hakemus hakemus-id)
+        paatos (va-db/get-hakemus-paatos (:id current-hakemus))]
+    (if (nil? paatos)
+      (no-content)
+      (let [hakemus (va-db/get-hakemus-version hakemus-id (:hakemus_version paatos))
+            submission-id (:form_submission_id hakemus)
+            submission (form-db/get-form-submission-version
+                         form-id submission-id
+                         (:form_submission_version hakemus))
+            submission-version (:version submission)
+            answers (:answers submission)
+            attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
+            budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+            validation (merge (validation/validate-form form answers attachments)
+                              (va-budget/validate-budget-hakija answers budget-totals form))]
+        (hakemus-ok-response hakemus submission validation)))))
+
 (defn on-get-current-answers [haku-id hakemus-id form-key]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         form-id (form-key avustushaku)
@@ -167,7 +189,8 @@
         grant (va-db/get-avustushaku (:avustushaku application))
         submission (:body (get-form-submission
                             (:form grant)
-                            (:form_submission_id application)))]
+                            (:form_submission_id application)))
+        lang (keyword (get-in application [:hakemus :language] "fi"))]
     (cond
       (not (va-db/valid-token? token (:id application)))
       (unauthorized "Incorrect token")
@@ -175,6 +198,15 @@
              (not (:refused application)))
       (do
         (va-db/refuse-application application comment)
+        (let [roles (filter #(= (:role %) "presenting_officer")
+                            (va-db/get-avustushaku-roles (:id grant)))]
+          (when (seq roles)
+            (va-email/send-refused-message-to-presenter!
+              (map :email roles) grant (:id application))))
+        (when-let [email (find-answer-value
+                           (:answers submission) "primary-email")]
+          (va-email/send-refused-message!
+            lang [email] (get-in grant [:content :name lang])))
         (hakemus-ok-response (va-db/get-hakemus application-id) submission {}))
       :else (hakemus-conflict-response application))))
 

@@ -6,6 +6,7 @@ import Bacon from 'baconjs'
 import queryString from 'query-string'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
+import DateUtil from 'soresu-form/web/DateUtil'
 
 import FormController from 'soresu-form/web/form/FormController'
 import FieldUpdateHandler from 'soresu-form/web/form/FieldUpdateHandler'
@@ -170,7 +171,31 @@ function initFormController() {
   const initialValues = {language: VaUrlCreator.chooseInitialLanguage(urlContent)}
   const stateProperty = controller.initialize(formOperations, initialValues, urlContent)
   return { stateProperty: stateProperty, getReactComponent: function getReactComponent(state) {
-    return <VaForm controller={controller} state={state} hakemusType={selvitysType} useBusinessIdSearch={false} />
+    const expired = state.configuration.environment["selvitys-limit"] &&
+          state.configuration.environment["selvitys-limit"]["enabled?"] &&
+          ((selvitysType === "valiselvitys" &&
+           DateUtil.isPast(state.avustushaku.valiselvitysdate)) ||
+          (selvitysType === "loppuselvitys" &&
+           DateUtil.isPast(state.avustushaku.loppuselvitysdate)))
+
+    if (!showPreview && expired) {
+      const previewUrl = formOperations.urlCreator.existingSubmissionPreviewUrl(
+        state.avustushaku.id,
+        state.saveStatus.hakemusId,
+        lang,
+        state.configuration.develMode,
+        state.token
+      )
+
+      window.location.href = previewUrl
+    }
+
+    return (
+      <VaForm controller={controller}
+              state={state}
+              hakemusType={selvitysType}
+              useBusinessIdSearch={false}
+              isExpired={expired}/>)
   }}
 }
 

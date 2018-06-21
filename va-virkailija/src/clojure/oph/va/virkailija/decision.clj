@@ -9,17 +9,20 @@
             [oph.soresu.form.formutil :as formutil]
             [oph.va.virkailija.kayttosuunnitelma :as ks]
             [oph.va.virkailija.koulutusosio :as koulutusosio]
-            [schema.core :as s]))
+            [schema.core :as s]
+            [hiccup.core :refer [html]]
+            [clojure.tools.logging :as log]))
 
 (defn decision-translation [translations lang keyword-or-key]
   (let [key (if (keyword? keyword-or-key) keyword-or-key (keyword keyword-or-key))]
     (-> translations :paatos key lang)))
 
+
+
 (defn content-with-paragraphs [content]
   (let [rows (str/split content #"\n")
-        rows-list (mapv (fn [row] (str "<p>" row "</p>")) rows)
-        rows-p (str/join " " rows-list)]
-    rows-p))
+        rows-list (html [:span (for [row rows] [:p row])])]
+    rows-list))
 
 (defn decision-field [decision key lang]
   (-> decision key lang))
@@ -27,7 +30,7 @@
 (defn section [title-key content translate create-paragraph]
   (let [content-p  (if create-paragraph (content-with-paragraphs content) content)
         title (translate title-key)]
-    (str "<section class='section'><h2>" title "</h2><div class='content'>" content-p "</div></section>")))
+      (html [:section {:class "section"} [:h2 title] [:div {:class "content"} content-p]])))
 
 (defn optional-section-content [title content translate]
   (let [content-length (count content)]
@@ -43,11 +46,10 @@
   (section title-key (translate content-key) translate create-paragraph))
 
 (defn asia-section [avustushaku-name translate]
-  (let [content (str "<p>" (translate :asia-title) "</p>\n"
-                     "<p>" avustushaku-name "</p>\n")]
-    (section :asia content translate false)))
+  (let [content [:span [:p (str (translate :asia-title))] [:p avustushaku-name]]]
+  (section :asia content translate false)))
 
-(defn avustuksen-maksu [avustushaku bic iban total-paid lang translate]
+(defn avustuksen-maksu [avustushaku bic iban total-paid lang translate arvio]
   (let [decision (:decision avustushaku)
         maksu-date (:maksudate decision)
         maksu (decision-field decision :maksu lang)
@@ -55,13 +57,15 @@
         multiple-maksuera (and has-multiple-maksuera (> total-paid 60000))
         first-round-paid (if multiple-maksuera (Math/round (* 0.6 total-paid)) total-paid)
         paid-formatted (ks/format-number first-round-paid)
-        extra-no-multiple "<span>.</span>"
-        extra-multiple (str "<span> " (translate :ja-loppuera-viimeistaan) " " maksu-date ".</span>")
+        extra-no-multiple "."
+        extra-multiple [:span (str  (translate :ja-loppuera-viimeistaan) "" maksu-date)]
         extra (if multiple-maksuera extra-multiple extra-no-multiple)
-        content1 (str "<p>" (translate "avustus-maksetaan") ":</p><p><strong>" iban ", " bic "</strong>" "</p>")
-        content2 (str "<p>" (translate "maksuerat-ja-ajat") ": " paid-formatted " " maksu extra "</p>")
-        content (str content1 content2)]
+        content1 [:span [:p (str (translate "avustus-maksetaan") ":")] [:p [:strong (str iban ", " bic)]]]
+        content2 [:p (str (translate "maksuerat-ja-ajat") ": " paid-formatted " " maksu extra)]
+        content3 (when-not (nil? (:talousarviotili arvio)) [:p (str (translate "talousarviotili") ": " (:talousarviotili arvio))])
+        content [:span content1 content2 content3]]
     (section :avustuksen-maksu content translate false)))
+
 
 (defn myonteinen-lisateksti [avustushaku hakemus lang]
   (let [rahoitusalueet (-> avustushaku :content :rahoitusalueet)
@@ -87,13 +91,13 @@
      :version (:version row)}))
 
 (defn liite-row [liite lang]
-  (if-some [liite-id (:id liite)]
-    (let [liite-version (:version liite)
-          lang-str (name lang)
-          link (str "/liitteet/" liite-id liite-version "_" lang-str ".pdf")
-          liite-name (get-in liite [:langs lang])]
-      (str "<div><a href='" link "'>" liite-name "</a></div>"))
-    ""))
+ (if-some [liite-id (:id liite)]
+   (let [liite-version (:version liite)
+         lang-str (name lang)
+         link (str "/liitteet/" liite-id liite-version "_" lang-str ".pdf")
+         liite-name (get-in liite [:langs lang])]
+     (html
+       [:div [:a {:href link} liite-name]]))))
 
 (defn liitteet-list [avustushaku hakemus translate lang has-budget]
   (let [liitteet (-> avustushaku :decision :liitteet)
@@ -102,7 +106,7 @@
         ehdot (find-liite liitteet "Ehdot")
         oikaisuvaatimus (find-liite liitteet "Oikaisuvaatimusosoitus")
         yleisohje (find-liite liitteet "Valtionavustusten yleisohje")
-        row-kayttosuunnitelma (str "<div>" (translate :kayttosuunnitelma) "</div>")
+        row-kayttosuunnitelma (html [:div (str (translate :kayttosuunnitelma))])
         row-oikaisuvaatimus (liite-row oikaisuvaatimus lang)
         row-ehdot (liite-row ehdot lang)
         row-yleisohje (liite-row yleisohje lang)
@@ -146,7 +150,7 @@
         translate (partial decision-translation translations language)
         johtaja (decision-field decision :johtaja language)
         valmistelija (decision-field decision :valmistelija language)
-        avustuksen-maksu (avustuksen-maksu avustushaku bic iban total-granted language translate)
+        avustuksen-maksu (avustuksen-maksu avustushaku bic iban total-granted language translate arvio)
         myonteinen-lisateksti (myonteinen-lisateksti avustushaku hakemus language)
         form-content (-> haku-data :form :content)
         kayttosuunnitelma (ks/kayttosuunnitelma avustushaku hakemus form-content answers translate language)

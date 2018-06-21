@@ -2,8 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [clojure.core.async :refer [<!!]]
             [compojure.api.sweet :as compojure-api]
-            [ring.util.http-response
-             :refer [ok no-content conflict]]
+            [ring.util.http-response :refer [ok no-content conflict]]
             [oph.va.virkailija.payment-batches-data :as data]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.schema :as schema]
@@ -11,13 +10,14 @@
             [oph.va.virkailija.utils :refer [either?]])
   (:import (java.time LocalDate)))
 
-(defn- find-payment-batch []
+(defn- find-payment-batches []
   (compojure-api/GET
     "/" []
     :query-params [date :- LocalDate grant-id :- Long]
-    :summary "Find payment batch by date and grant id"
-    (if-let [batch (data/find-batch date grant-id)]
-      (ok batch)
+    :return [schema/PaymentBatch]
+    :summary "Find payment batches by date and grant id"
+    (if-let [batches (data/find-batches date grant-id)]
+      (ok batches)
       (no-content))))
 
 (defn- create-payment-batch []
@@ -28,10 +28,9 @@
                                    "Create payment batch")]
     :return schema/PaymentBatch
     :summary "Create new payment batch"
-    (if (some?
-          (data/find-batch
-            (:receipt-date batch-values) (:grant-id batch-values)))
-      (conflict "Payment batch already exists")
+    (if (seq (data/find-batches
+               (:receipt-date batch-values) (:grant-id batch-values)))
+      (conflict {:error "Payment batch already exists"})
       (ok (data/create-batch batch-values)))))
 
 (defn- send-payments []
@@ -65,9 +64,43 @@
              (and (= (:error-count result) 0) (> (:count result) 0))
              :errors (map :error-type (:errors result))})))))
 
+(defn- get-documents []
+  (compojure-api/GET
+    "/:id/documents/" []
+    :path-params [id :- Long]
+    :return [schema/BatchDocument]
+    :summary "Get payment batch documents"
+    (ok (data/get-batch-documents id))))
+
+(defn- create-document []
+  (compojure-api/POST
+    "/:id/documents/" []
+    :path-params [id :- Long]
+    :body [document
+           (compojure-api/describe schema/BatchDocument
+                                   "Payment batch document")]
+    :return schema/BatchDocument
+    :summary "Create new payment batch document"
+    (if (some
+          #(when (= (:phase %) (:phase document)) %)
+          (data/get-batch-documents id))
+      (conflict {:error "No multiple documents per phase is allowed"})
+      (ok (data/create-batch-document id document)))))
+
+(defn- send-payments-email []
+  (compojure-api/POST
+    "/:id/payments-email/" []
+    :path-params [id :- Long]
+    :summary "Send batch payments email"
+    (data/send-batch-emails id)
+    (ok "")))
+
 (compojure-api/defroutes
   routes
   "payment batches routes"
-  (find-payment-batch)
+  (find-payment-batches)
   (create-payment-batch)
-  (send-payments))
+  (send-payments)
+  (get-documents)
+  (create-document)
+  (send-payments-email))

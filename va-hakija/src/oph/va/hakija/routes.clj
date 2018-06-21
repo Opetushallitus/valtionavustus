@@ -84,9 +84,12 @@
 (defn- get-hakemus []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
     :path-params [haku-id :- Long hakemus-id :- s/Str]
+    :query-params [{decision-version :- s/Bool false}]
     :return  Hakemus
-    :summary "Get current answers"
-    (on-get-current-answers haku-id hakemus-id :form)))
+    :summary "Get answers"
+    (if decision-version
+      (on-get-decision-answers haku-id hakemus-id :form)
+      (on-get-current-answers haku-id hakemus-id :form))))
 
 (defn- get-selvitys []
   (compojure-api/GET "/:haku-id/selvitys/:selvitys-type/:hakemus-id" [haku-id hakemus-id selvitys-type]

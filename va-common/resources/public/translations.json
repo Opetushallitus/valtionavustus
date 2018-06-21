@@ -28,6 +28,18 @@
       "fi": "Ilmoitus avustuksen vastaanottamatta jättämisestä lähetetty hakijan toimesta.",
       "sv": "Anmälan om att man inte tar emot understödet har lämnats in av den sökande."
     },
+    "form-is-expired": {
+      "fi": "{{formtype}} jättämisen määräaika on umpeutunut",
+      "sv": "Tiden för att lämna in {{formtype}} har gått ut"
+    },
+    "form-final": {
+      "fi": "Loppuselvityksen",
+      "sv": "slutredovisningen"
+    },
+    "form-middle": {
+      "fi": "Väliselvityksen",
+      "sv": "mellanredovisningen"
+    },
     "heading": {
       "fi": "Hakemus",
       "sv": "Ansökan"
@@ -495,6 +507,10 @@
     "maksuerat-ja-ajat":{
       "fi":"Maksuerät ja -ajat",
       "sv":"Betalningsrater och tidpunkter för utbetalning"
+    },
+    "talousarviotili":{
+      "fi":"Talousarviotili",
+      "sv":"Budgetmoment"
     },
     "ja-loppuera-viimeistaan":{
       "fi":"ja loppuerä viimeistään",

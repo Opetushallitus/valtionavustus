@@ -13,17 +13,22 @@
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.soresu.common.config :refer [config]]
             [oph.va.virkailija.rondo-service :refer :all]
-            [oph.va.virkailija.remote-file-service :refer :all])
+            [oph.va.virkailija.remote-file-service :refer :all]
+            [oph.va.virkailija.invoice :as invoice]
+            [clj-time.core :as t]
+            [clj-time.format :as f]
+            [oph.va.virkailija.email :as email])
   (:import [oph.va.virkailija.rondo_service RondoFileService]))
 
+(def date-formatter (f/formatter "dd.MM.YYYY"))
 
 (def timeout-limit 10000)
 
-(defn find-batch [date grant-id]
-  (-> (exec :virkailija-db queries/find-batch {:batch_date date :grant_id grant-id})
-      first
-      convert-to-dash-keys
-      convert-timestamps-from-sql))
+(defn find-batches [date grant-id]
+  (->> (exec :virkailija-db queries/find-batches
+             {:batch_date date :grant_id grant-id})
+      (map convert-to-dash-keys)
+      (map convert-timestamps-from-sql)))
 
 (defn create-batch [values]
   (->> values
@@ -44,7 +49,8 @@
   ([payment] (create-filename payment  #(System/currentTimeMillis))))
 
 (defn send-to-rondo! [payment application grant filename batch]
-  (let [rondo-service (rondo-service/create-service (get-in config [:server :rondo-sftp]))]
+  (let [rondo-service (rondo-service/create-service
+                        (get-in config [:server :rondo-sftp]))]
   (with-timeout
     #(try
        (send-payment-to-rondo! rondo-service
@@ -73,7 +79,8 @@
       (doseq [application
               (filter
                 payments-data/valid-for-send-payment?
-                (grant-data/get-grant-applications-with-evaluation (:id grant)))]
+                (grant-data/get-grant-applications-with-evaluation
+                  (:id grant)))]
         (let [payments (application-data/get-application-unsent-payments
                          (:id application))]
           (if (empty? payments)
@@ -81,11 +88,46 @@
             (doseq [payment payments]
               (let [result (send-payment payment application data)]
                 (when (:success result)
-                  (do
-                    (payments-data/update-payment
-                      (assoc (:payment result)
-                             :state 2 :filename (:filename result)) identity)
-                    (application-data/revoke-application-tokens (:id application))))
+                  (payments-data/update-payment
+                    (assoc (:payment result)
+                           :state 2 :filename (:filename result)) identity)
+                  (application-data/revoke-application-tokens
+                    (:id application)))
                 (a/>! c result))))))
       (a/close! c))
     c))
+
+(defn get-batch-documents [batch-id]
+  (->> (exec :virkailija-db queries/get-batch-documents {:batch_id batch-id})
+      (map convert-to-dash-keys)
+      (map convert-timestamps-from-sql)))
+
+(defn create-batch-document [batch-id document]
+  (->> (assoc document :batch-id batch-id)
+       convert-to-underscore-keys
+       (exec :virkailija-db queries/create-batch-document)
+       first
+       convert-to-dash-keys))
+
+(defn create-batch-document-email
+  [{:keys [grant batch document payments]}]
+  {:receivers [(:presenter-email document) (:acceptor-email document)]
+   :batch-key (invoice/get-batch-key batch grant)
+   :title (get-in grant [:content :name])
+   :date (f/unparse date-formatter (t/now))
+   :count (count payments)
+   :total-granted (reduce #(+ %1 (:payment-sum %2)) 0 payments)})
+
+(defn send-batch-emails [batch-id]
+  (let [batch (get-batch batch-id)
+        grant (grant-data/get-grant (:grant-id batch))
+        payments (payments-data/get-batch-payments batch-id)]
+    (doseq [document (get-batch-documents batch-id)]
+      (email/send-payments-info!
+        (create-batch-document-email
+          {:grant grant
+           :batch batch
+           :document document
+           :payments (filter
+                       #(= (:phase %) (:phase document))
+                       payments)})))))

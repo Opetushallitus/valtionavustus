@@ -3,7 +3,10 @@
             [cljs-time.core :as t]))
 
 (def re-email
-  #"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+  (re-pattern
+    (str "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]"
+         "(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:.[a-zA-Z0-9]"
+         "(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")))
 
 (def date-formatter (tf/formatter "dd.MM.yyyy"))
 
@@ -14,13 +17,15 @@
 (def today-end (t/today-at 23 59 59))
 
 (defn- to-date [d f]
-  (if (empty? d)
-    nil
+  (when (seq d)
     (when-let [parsed (tf/parse d)]
       (f parsed))))
 
+(defn format-to-simple-date [d]
+  (tf/unparse-local date-formatter d))
+
 (defn to-simple-date [d]
-  (to-date d #(tf/unparse-local date-formatter %)))
+  (to-date d format-to-simple-date))
 
 (defn to-simple-date-time [d]
   (to-date d #(tf/unparse-local date-time-formatter %)))
@@ -36,7 +41,7 @@
     (and (= (count ks) (count selected-keys))
          (every? some? (vals selected-keys)))))
 
-(defn not-empty? [v] (not (empty? v)))
+(defn not-empty? [v] (seq v))
 
 (defn get-current-year-short []
   "Get current year as a short version (i.e. 17)"
@@ -46,16 +51,23 @@
   "Parse integer from string. If parsing fails (NaN) nil will be returned"
   (let [value (js/parseInt s)] (when-not (js/isNaN value) value)))
 
-(defn assoc-all [c k v] (into [] (map #(assoc % k v) c)))
+(defn assoc-all [c k v] (vec (map #(assoc % k v) c)))
 
 (defn remove-nil [m] (into {} (filter (comp some? val) m)))
 
 (defn find-index-of
   ([col pred i m]
-   (if (>= i m) nil (if (pred (nth col i)) i (recur col pred (inc i) m))))
-  ([col pred] (find-index-of col pred 0 (count col))))
+   (when-not (>= i m)
+     (if (pred (nth col i))
+       i
+       (recur col pred (inc i) m))))
+  ([col pred]
+   (find-index-of col pred 0 (count col))))
 
-(defn valid-email? [v] (and (not-empty? v) (not-nil? (re-matches re-email v))))
+(defn valid-email? [v]
+  (and
+    (not-empty? v)
+    (not-nil? (re-matches re-email v))))
 
 (defn is-today? [d]
   (let [date (if (string? d)
@@ -66,3 +78,8 @@
       (= (t/day date) (t/day today))
       (= (t/year date) (t/year today))
       (= (t/month date) (t/month today)))))
+
+(defn phase-to-name [phase]
+  (if (zero? phase)
+    "Arviointi"
+    (str phase ". väliselvitys")))

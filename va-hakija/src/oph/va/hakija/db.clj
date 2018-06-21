@@ -25,6 +25,9 @@
   (->> (exec :form-db queries/get-avustushaku {:id id})
        first))
 
+(defn get-avustushaku-roles [avustushaku-id]
+  (exec :form-db queries/get-avustushaku-roles {:avustushaku avustushaku-id}))
+
 (defn list-avustushaut []
   (exec :form-db queries/list-avustushaut {}))
 
@@ -50,6 +53,11 @@
   (->> {:user_key hakemus-id}
        (exec :form-db queries/get-hakemus-by-user-id)
        first))
+
+(defn get-hakemus-version [hakemus-id version]
+  (first
+    (exec :form-db queries/get-hakemus-version-by-user-id
+          {:user_key hakemus-id :version version})))
 
 (defn get-hakemus-paatos [hakemus-id]
   (->> {:hakemus_id hakemus-id}
