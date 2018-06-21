@@ -1,8 +1,10 @@
 # Yleisiä tietokantaoperaatioita
 
-Komento [psql-jq](../scripts/psql-jq) on wrapperi komennoille `psql` ja `jq`.
+Komento [psql-jq](../scripts/psql-jq) on wrapperi komennoille
+[`psql`](https://www.postgresql.org/docs/current/static/app-psql.html)
+ja [`jq`](https://stedolan.github.io/jq/).
 
-### Tiedotteen asettamimen
+### Tiedotteen asettaminen
 
 Tiedote näkyy va-hakijassa ja va-virkailijassa sivuston yläosassa.
 
@@ -38,18 +40,33 @@ palvelimen porttiin 5432. Komenna sitten lokaalisti:
 psql-jq -d va-prod -h localhost -p 30022 -U va_hakija -c "select * from hakija.hakemukset where id = 5582 and version_closed is null" | less
 ```
 
+### Hakemuksen tunnisteiden selvitys
+
+Jos tiedät hakemuksen id:n:
+
+``` sql
+select id as hakemus_id, user_key, avustushaku as avustushaku_id from hakija.hakemukset where id = 5346 and version_closed is null
+```
+
+Jos tiedät hakemuksen user_key:n:
+
+``` sql
+select id as hakemus_id, user_key, avustushaku as avustushaku_id from hakija.hakemukset where user_key = 'a4244aa43ddd6e3ef9e64bb80f4ee952f68232aa008d3da9c78e3b627e5675c8' and version_closed is null
+```
+
 ### Tietyn hakemuksen kaikkien tilojen haku
 
-On yleistä, että asiakas pyytää tarkistamaan tietyn hakemuksen tilan, erityisesti onko hakemus lähetetty avustushaun määräaikaan mennessä. Esimerkkinä hakemuksen 5806 kaikkien tilojen haku tuotannosta:
+Esimerkkinä hakemuksen 5806 kaikkien tilojen (status) haku,
+luontijärjestyksessä:
 
-``` bash
-psql -U va_hakija -h localhost -p 30022 -d va-prod -c "select created_at, status, form_submission_id, form_submission_version from hakija.hakemukset where id = 5007 order by created_at" | less
+``` sql
+select created_at, status, form_submission_id, form_submission_version from hakija.hakemukset where id = 5007 order by created_at
 ```
 
 ### Avustushaun hakeminen lomakkeen sisällön perusteella
 
-``` bash
-psql -U va_hakija -h localhost -p 30022 -d va-prod -c "select avustushaut.id as avustushaku_id, forms.id as form_id from hakija.forms join hakija.avustushaut on forms.id = avustushaut.form where forms.content::text ilike '%liiketaloudellisin perustein toimiva yhtiö%'"
+``` sql
+select avustushaut.id as avustushaku_id, forms.id as form_id from hakija.forms join hakija.avustushaut on forms.id = avustushaut.form where forms.content::text ilike '%liiketaloudellisin perustein toimiva yhtiö%'
 ```
 
 ### Tietokannan dumpin luonti
