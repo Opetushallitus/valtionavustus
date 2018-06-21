@@ -53,6 +53,8 @@
 
 (defquery get-application-evaluation
   "sql/virkailija/applications/get-application-evaluation.sql")
+(defquery get-application-full-evaluation
+  "sql/virkailija/applications/get-full-evaluation.sql")
 (defquery get-application-payments
   "sql/virkailija/applications/get-application-payments.sql")
 (defquery get-total-paid "sql/virkailija/applications/get-total-paid.sql")
