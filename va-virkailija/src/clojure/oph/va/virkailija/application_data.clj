@@ -12,6 +12,12 @@
                  virkailija-queries/get-application-evaluation
                  {:application_id application-id}))))
 
+(defn get-application-full-evaluation [application-id]
+  (convert-to-dash-keys
+    (first (exec :virkailija-db
+                 virkailija-queries/get-application-full-evaluation
+                 {:application_id application-id}))))
+
 (defn get-application [id]
   (convert-to-dash-keys
     (merge
@@ -46,11 +52,13 @@
                                   {:application_id id})))
 
 (defn find-applications [search-term]
-  (map convert-to-dash-keys
-       (exec :form-db
-             hakija-queries/find-applications
-             {:search_term
-              (str "%" (clojure.string/lower-case search-term) "%")})))
+  (map
+    #(assoc (convert-to-dash-keys %)
+            :evaluation (get-application-full-evaluation (:id %)))
+    (exec :form-db
+          hakija-queries/find-applications
+          {:search_term
+           (str "%" (clojure.string/lower-case search-term) "%")})))
 
 
 
