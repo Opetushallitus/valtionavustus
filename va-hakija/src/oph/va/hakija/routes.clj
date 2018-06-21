@@ -1,6 +1,6 @@
 (ns oph.va.hakija.routes
   (:use [clojure.tools.trace :only [trace]]
-        [oph.soresu.common.db])
+        [oph.soresu.common.db :only [generate-hash-id exec]])
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
