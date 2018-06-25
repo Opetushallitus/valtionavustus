@@ -74,11 +74,11 @@
     (with-timeout
       #(try
          (get-remote-file-list rondo-service)
-         {:success true}
+         {:success true :error ""}
          (catch Exception e
-           {:success false :error {:error-type :exception :exception e}}))
+           {:success false :error (.getMessage e)}))
       (get-in config [:server :healthcheck-timeout] 5000)
-      {:success false :error {:error-type :timeout}}))))
+      {:success false :error "Timeout"}))))
 
 (defn- without-id [x]
   (dissoc x :id))
