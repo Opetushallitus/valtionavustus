@@ -196,7 +196,7 @@
         "sv": "Den egna finansieringsandelen (%) ska vara minst"
       },
       "ophFinancingAmount": {
-        "fi": "OPH:lta haettava avustus",
+        "fi": "OPH:n myöntämä avustus",
         "sv": "Understöd som ansöks av Utbildningsstyrelsen"
       },
       "ophFinancingPercentage": {
