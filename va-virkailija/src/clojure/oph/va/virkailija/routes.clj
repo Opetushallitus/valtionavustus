@@ -64,7 +64,7 @@
     (not-found)))
 
 (defn- on-integration-healthcheck []
-  (ok healthcheck/list-status))
+  (ok (healthcheck/get-last-status)))
 
 (defn- without-id [x]
   (dissoc x :id))
@@ -123,10 +123,10 @@
   (compojure-api/HEAD "/" [] (on-healthcheck))
 
   (compojure-api/GET
-    "/rondo/" []
-    :summary "Rondo service healthcheck"
+    "/integrations/" []
+    :summary "Integrations healthcheck"
     :return [virkailija-schema/HealthCheckResult]
-    (on-rondo-healthcheck)))
+    (on-integration-healthcheck)))
 
 (compojure-api/defroutes resource-routes
   (compojure-api/GET "/translations.json" []
